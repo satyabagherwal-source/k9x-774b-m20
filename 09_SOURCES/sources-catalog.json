@@ -945,8 +945,8 @@
     "sourceUrl": "https://huggingface.co/bigscience/bloom",
     "sourceVersion": "hf-bigscience-bloom",
     "license": "Open-Source",
-    "contentHash": "ec505c79ee4761b967e295bd432e5a4fa7ea8cf65c889cd69a0e43741a5d8ad2",
-    "lastHarvestedAt": "2026-10-18T02:51:39.872Z",
+    "contentHash": "cc38b024862414596b4afa1e614d262814dd1fe75ba32959b449f284a4e2c1bd",
+    "lastHarvestedAt": "2026-10-19T11:42:06.443Z",
     "learningId": "learn-huggingface-bigscience-bloom"
   },
   "hf-openai-gpt-oss-20b": {
@@ -1493,11 +1493,11 @@
     "repository": "nguyenphutrong/quotio",
     "platform": "github",
     "sourceUrl": "https://github.com/nguyenphutrong/quotio",
-    "sourceVersion": "dfa5beeb",
+    "sourceVersion": "04e93bd5",
     "license": "MIT",
-    "contentHash": "5a419bdfb765dfc7bf710d3e4da26697f9a26c64fb18b9a155e41cb71b514b22",
-    "lastHarvestedAt": "2026-10-14T16:21:12.921Z",
-    "learningId": "learn-github-nguyenphutrong-quotio-mv8bh96o"
+    "contentHash": "fbf9982e8d2361ddf8688405c208d2b5c288aa8908cd47bcf0f73b9c1d23ad6d",
+    "lastHarvestedAt": "2026-10-19T11:42:07.112Z",
+    "learningId": "learn-github-nguyenphutrong-quotio"
   },
   "pathwaycom-serviette": {
     "repository": "pathwaycom/serviette",
@@ -7918,5 +7918,15 @@
     "contentHash": "b18183a19c66b49013f16df58fb98d49c3b34d89a6f28823dfb3ce82d35cda5c",
     "lastHarvestedAt": "2026-10-19T11:36:17.935Z",
     "learningId": "learn-github-lapce-lapce"
+  },
+  "sindresorhus-gifski": {
+    "repository": "sindresorhus/Gifski",
+    "platform": "github",
+    "sourceUrl": "https://github.com/sindresorhus/Gifski",
+    "sourceVersion": "e184b284",
+    "license": "MIT",
+    "contentHash": "30240e46243227bd9d9447a748eb128f942aa0d179637ebaae0c1324385834e1",
+    "lastHarvestedAt": "2026-10-19T11:42:12.170Z",
+    "learningId": "learn-github-sindresorhus-gifski"
   }
 }

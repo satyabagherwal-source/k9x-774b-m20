@@ -1,10 +1,10 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md`  
 > **Source**: github ([https://github.com/nguyenphutrong/quotio](https://github.com/nguyenphutrong/quotio))  
-> **Source Version**: `dfa5beeb`  
+> **Source Version**: `04e93bd5`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-14T16:21:12.768Z  
-> **Learning ID**: `learn-github-nguyenphutrong-quotio-mv8bh96o`  
+> **Timestamp**: 2026-10-19T11:42:06.950Z  
+> **Learning ID**: `learn-github-nguyenphutrong-quotio`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nguyenphutrong/quotio](https://github.com/nguyenphutrong/quotio))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-14T16:21:11.755Z  
+> **Harvest Timestamp**: 2026-10-19T11:42:06.946Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Stop juggling AI accounts. Quotio is a beautiful native macOS menu bar app that unifies your Claude, Gemini, OpenAI, Qwen, and Antigravity subscriptions – with real-time quota tracking and smart auto-failover for AI coding tools like Claude Code, OpenCode, and Droid.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4889 stars
+- **Stars / Engagement**: 4898 stars
 
 ---
 
@@ -1019,209 +1019,6 @@ public struct ProviderSettingsState: Sendable {
 
 ```
 
-### Core Architecture Module: `Packages/QuotioCore/Sources/QuotioApplication/Accounts/ProxyCLIAuthentication.swift`
-```
-import Foundation
-
-public enum ProxyCLIAuthCommand: Equatable, Sendable {
-    case copilotLogin
-    case kiroGoogleLogin
-    case kiroAWSLogin
-    case kiroAWSAuthCode
-    case kiroImport
-
-    public var arguments: [String] {
-        switch self {
-        case .copilotLogin: ["-github-copilot-login"]
-        case .kiroGoogleLogin: ["-kiro-google-login"]
-        case .kiroAWSLogin: ["-kiro-aws-login"]
-        case .kiroAWSAuthCode: ["-kiro-aws-authcode"]
-        case .kiroImport: ["-kiro-import"]
-        }
-    }
-}
-
-public struct ProxyCLIAuthRuntime: Equatable, Sendable {
-    public let binaryPath: String
-    public let configurationPath: String
-
-    public init(binaryPath: String, configurationPath: String) {
-        self.binaryPath = binaryPath
-        self.configurationPath = configurationPath
-    }
-}
-
-public struct LocalProxyOAuthRuntime: Equatable, Sendable {
-    public let cli: ProxyCLIAuthRuntime?
-    public let management: ProxyManagementConnection?
-
-    public init(cli: ProxyCLIAuthRuntime?, management: ProxyManagementConnection?) {
-        self.cli = cli
-        self.management = management
-    }
-}
-
-public enum ProxyCLIAuthStatus: Equatable, Sendable {
-    case authenticationCompleted
-    case authenticationCancelled
-    case copilotBrowserOpened(deviceCode: String?)
-    case browserOpened
-    case failedToStart(details: String)
-}
-
-public struct ProxyCLIAuthResult: Equatable, Sendable {
-    public let success: Bool
-    public let status: ProxyCLIAuthStatus
-    public let deviceCode: String?
-
-    public init(success: Bool, status: ProxyCLIAuthStatus, deviceCode: String?) {
-        self.success = success
-        self.status = status
-        self.deviceCode = deviceCode
-    }
-}
-
-public protocol ProxyCLIAuthenticating: Sendable {
-    func run(_ command: ProxyCLIAuthCommand, runtime: ProxyCLIAuthRuntime) async -> ProxyCLIAuthResult
-    func terminate() async
-}
-
-public protocol AntigravityAuthFileWorkaroundApplying: Sendable {
-    func apply(in authDirectory: String) async
-    func remove(in authDirectory: String) async
-}
-
-```
-
-### Core Architecture Module: `Packages/QuotioCore/Sources/QuotioApplication/Agents/AgentConfigurationService.swift`
-```
-import QuotioDomain
-
-public actor AgentConfigurationService {
-    private let adapters: [CLIAgent: any AgentConfigurationRepository]
-    private let detector: any AgentDetecting
-    private let shellProfiles: any ShellProfileRepository
-    private let modelCatalog: any AgentModelCatalogRepository
-
-    public init(
-        adapters: [any AgentConfigurationRepository],
-        detector: any AgentDetecting,
-        shellProfiles: any ShellProfileRepository,
-        modelCatalog: any AgentModelCatalogRepository
-    ) {
-        self.adapters = Dictionary(uniqueKeysWithValues: adapters.map { ($0.agent, $0) })
-        self.detector = detector
-        self.shellProfiles = shellProfiles
-        self.modelCatalog = modelCatalog
-    }
-
-    public func detectAgents(forceRefresh: Bool = false) async -> [AgentStatus] {
-        await detector.detectAll(forceRefresh: forceRefresh)
-    }
-
-    public func detectAgent(_ agent: CLIAgent) async -> AgentStatus {
-        await detector.detect(agent)
-    }
-
-    public func inspect(_ agent: CLIAgent) async throws -> SavedAgentConfiguration? {
-        try await adapter(for: agent).inspect()
-    }
-
-    public func generatePreview(_ request: AgentConfigurationRequest) async throws -> AgentConfigResult {
-        try request.configuration.validate()
-        let repository = try adapter(for: request.configuration.agent)
-        if request.configuration.setupMode == .defaultSetup {
-            return try await repository.reset(mode: .manual)
-        }
-        return try await repository.preview(request)
-    }
-
-    public func apply(_ request: AgentConfigurationRequest, shellProfile: ShellProfile) async throws -> AgentConfigResult {
-        try request.configuration.validate()
-        let repository = try adapter(for: request.configuration.agent)
-        if request.configuration.setupMode == .defaultSetup {
-            let result = try await repository.reset(mode: request.mode)
-            if result.success, request.mode == .automatic {
-                await detector.clearConfigured(request.configuration.agent)
-            }
-            return result
-        }
-        let result = try await repository.apply(request)
-
-        let agent = request.configuration.agent
-        let shouldUpdateShell = agent.configType == .both
-            ? (request.storageOption == .shellOnly || request.storageOption == .both)
-            : agent.configType != .file
-
-        if result.success,
-           shouldUpdateShell,
-           let shellConfig = result.shellConfig {
-            try await shellProfiles.add(configuration: shellConfig, for: agent, to: shellProfile)
-        }
-
-        if result.success {
-            await detector.markConfigured(agent)
-        }
-        return result
-    }
-
-    public func testConnection(
-        agent: CLIAgent,
-        configuration: AgentConfiguration
-    ) async -> ConnectionTestResult {
-        await modelCatalog.testConnection(agent: agent, configuration: configuration)
-    }
-
-    public func listBackups(for agent: CLIAgent) async throws -> [AgentBackupFile] {
-        try await adapter(for: agent).listBackups()
-    }
-
-    public func restore(_ backup: AgentBackupFile) async throws {
-        try await adapter(for: backup.agent).restore(backup)
-    }
-
-    public func reset(agent: CLIAgent, mode: ConfigurationMode) async throws -> AgentConfigResult {
-        let result = try await adapter(for: agent).reset(mode: mode)
-        if result.success, mode == .automatic {
-            await detector.clearConfigured(agent)
-        }
-        return result
-    }
-
-    public func detectShellProfile() async -> ShellProfile {
-        await shellProfiles.detect()
-    }
-
-    public func addToShellProfile(
-        configuration: String,
-        agent: CLIAgent,
-        profile: ShellProfile
-    ) async throws {
-        try await shellProfiles.add(configuration: configuration, for: agent, to: profile)
-        await detector.markConfigured(agent)
-    }
-
-    public func fetchModelCatalog(configuration: AgentConfiguration) async throws -> [ModelCatalogEntry] {
-        try await modelCatalog.fetchCatalog(configuration: configuration)
-    }
-
-    public func fetchAvailableModels(configuration: AgentConfiguration) async throws -> [AvailableModel] {
-        try await modelCatalog.fetchAvailableModels(configuration: configuration)
-    }
-
-    private func adapter(for agent: CLIAgent) throws -> any AgentConfigurationRepository {
-        guard let adapter = adapters[agent] else {
-            throw AgentConfigurationServiceError.missingAdapter(agent)
-        }
-        guard adapter.agent == agent else {
-            throw AgentConfigurationServiceError.adapterMismatch(expected: agent, actual: adapter.agent)
-        }
-        return adapter
-    }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1230,46 +1027,9 @@ public actor AgentConfigurationService {
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
 - **Issue #529** (2026-09-14): **Claude Code tool-search (defer_loading) not forwarded — MCP tools load fully into prefix instead of on-demand**
   *Symptoms*: ### What happened?  When Claude Code is pointed at CLIProxyAPI via ANTHROPIC_BASE_URL (used via Quotio's local proxy), MCP tool definitions are not deferred/loaded on-demand — they get loaded fully into every request's prefix, massively inflating context usage.  ### Steps to reproduce  - Same account, same project, same MCP servers (~250-265 tools) - Through CLIProxyAPI (ANTHROPIC_BASE_URL=http://127.0.0.1:8317): /context shows MCP tools: 180.4k tokens (247 tools), no "(loaded on-demand)" label - Direct connection (native claude.ai login, no base URL override): /context shows MCP tools: 12.3k tokens (265 tools) · loaded on-demand  ### Expected behavior  MCP tool definitions should be deferred/loaded on-demand (same as a direct connection), not loaded fully into every request. Native login shows "MCP tools: 12.3k tokens (265 tools) · loaded on-demand"; through the proxy it's "180.4k tokens (247 tools)" with no on-demand label — a ~15x overhead difference for the same tool set.  ### Severity  🟠 High - Core feature broken, no workaround  ### Affected component  Proxy Server (CLIProxyAPI)  ### Provider (if applicable)  Anthropic Claude  ### CLI Agent (if applicable)  Claude Code  ### macOS Version  26.6.2 (25G83) Tahoe  ### Quotio Version  0.31.0  ### App Mode  Full Mode (Proxy running)  ### Screenshots  _No response_  ### Logs (optional)  ```shell  ```  ### Additional context  Root cause is likely upstream in CLIProxyAPI, not Quotio's UI. Claude Code requests tool search via an
-  **Post-Mortem & Fix Analysis**:
-  > This appears to be an upstream CLIProxyAPI issue rather than a Quotio issue.  The failure is in the Anthropic request path through the local gateway: Claude Code's `anthropic-beta`, `defer_loading`, and `tool_reference` fields need to be preserved end-to-end by CLIProxyAPI. Quotio configures and launches the local endpoint, but it does not implement Anthropic protocol forwarding or deferred-tool handling.  The direct-Claude control works while the same client and MCP setup through the gateway expands deferred tools into the request prefix, which points to the CLIProxyAPI Anthropic executor / pass-through layer.  This should be tracked upstream at: https://github.com/router-for-me/CLIProxyAPI/issues  For an upstream report, include a request log or minimal curl repro showing the incoming and outgoing `anthropic-beta` and tool fields. Related but not identical: https://github.com/router-for-me/CLIProxyAPI/issues/4561 
 
 - **Issue #514** (2026-08-25): **App crashes with EXC_BREAKPOINT (SIGTRAP) in background Swift Task — v0.29.1 (70)**
   *Symptoms*: ### What happened?  ### Title App crashes with EXC_BREAKPOINT (SIGTRAP) in background Swift Task — v0.29.1 (70)  ### Environment - Quotio: 0.29.1 (build 70) - macOS: 26.5.2 (25F84) - Device: MacBook Pro, Apple M2 Max (Mac14,5), 32GB RAM  ### Crash Summary - Exception: EXC_BREAKPOINT (SIGTRAP), code 1 - esr: brk 1 (Swift runtime trap — not memory corruption; likely fatalError / force-unwrap of nil / array out-of-bounds / try! failure) - Crashing thread: Thread 6, dispatch queue `com.apple.root.user-initiated-qos.cooperative` (inside a background Swift Task) - Entire crash stack is within the app's own binary; symbols are stripped in this release build, so it can't be resolved to function names without the matching dSYM  ### Possibly Related Context At the time of the crash, another thread was mid-call into LocalAuthentication (`LAContext setInteractionNotAllowed`), suggesting a biometric auth flow was active during this session. Not confirmed to be causally related — noting it as context only.  ### Request Could you symbolicate the following addresses against the dSYM for 0.29.1 (build 70) to pinpoint the exact crash location? - 0x1001bc9e4 (base +477668) - 0x1001cb914 (base +538900) - 0x10040f61d (base +2913821) - 0x100189b81 (base +269185) - 0x10033df7d (base +2056061)  Full crash log attached below.  [crash_report.txt](https://github.com/user-attachments/files/31423602/crash_report.txt)  ### Steps to reproduce  1. Launch Quotio 2. crash  ### Expected behavior  App should co
-  **Post-Mortem & Fix Analysis**:
-  > This is a regression. Downgrading to **0.24 resolves the issue completely**. The crash has been present in **every version from 0.25 onward**, including the current 0.29.1 (70).
-  > Hi @royisme,   Thanks for the detailed crash report. I traced the crash to the Antigravity protobuf parser. It converted an untrusted field length from `UInt64` to `Int` before validating the value, which triggered the reported `SIGTRAP` during startup.  I opened #516 to validate protobuf lengths, varints, and field bounds before conversion or data slicing. The PR also adds regression tests for the crash payload and preserves valid old-format OAuth extraction.  Once a build containing this fix is available, could you verify that Quotio starts correctly in Full Mode with your existing Antigravity state?
-  > @nguyenphutrong Thanks for your help, I already testd by main branch and it's worked.
-
-- **Issue #447** (2026-08-21): **Repeated macOS keychain password prompts: ad-hoc code signature prevents XARA partition approval from persisting**
-  *Symptoms*: ### What happened?  **Repo:** nguyenphutrong/quotio **Version:** 0.25.0 **Severity:** High — user is prompted for their macOS login password several times a day, indefinitely, with no setting that stops it.  ---  ## Environment  | | | |---|---| | macOS | 26.5.2 (build 25F84) | | Hardware | Mac mini, arm64 | | Quotio | 0.25.0, installed to `/Applications/Quotio.app` | | Bundle ID | `dev.quotio.desktop` | | Code signature | `flags=0x2(adhoc)`, `Signature=adhoc`, `TeamIdentifier=not set` | | CDHash | `a7f5c328c9ad08f466e182ebf8a83aded418ff36` | | FileVault | On | | Login keychain | `no-timeout`, does not lock on sleep |  ---  ## Summary  Quotio reads the GitHub CLI's OAuth token from the macOS login keychain (generic password, service `gh:github.com`). Because Quotio ships **ad-hoc signed with no Team ID**, macOS can only identify it in the keychain's XARA partition list by CDHash. Approving "Always Allow" writes that CDHash entry, but the approval does not survive the next Quotio launch — securityd raises a fresh partition mismatch and prompts again.  Net effect: an unavoidable, recurring macOS login-password prompt. On this machine it fires roughly twice a day, aligned with Sparkle and cliproxy release checks, plus once on every app restart.  ---  ## Steps to reproduce  1. Authenticate the GitHub CLI so a token exists in the login keychain: `gh auth login`. This creates generic password items with service `gh:github.com`. 2. Install Quotio 0.25.0 from the release page (ad-hoc 
-  **Post-Mortem & Fix Analysis**:
-  > I don't even want to use Github as provider, and I cant remove it from Quotio and I keep getting this message. Very annoying...
-  > Thank you for the exceptionally detailed report and `securityd` evidence. The problematic path has been confirmed in Quotio 0.25.0.  One implementation detail differs from the initial diagnosis: Quotio does not use the `gh:github.com` token for Sparkle or CLIProxyAPI release checks. It is read by GitHub Copilot quota auto-discovery. Copilot discovery currently runs during startup and periodic quota refreshes even when the user has not explicitly enabled or configured Copilot, which explains both the recurring prompts and the report from users who do not use GitHub as a provider.  The main finding is still correct: Quotio's releases are currently ad-hoc signed, so there is no stable Team ID for macOS to use when persisting cross-application Keychain authorization. More importantly, background credential discovery should never be allowed to present a macOS password dialog in the first place.  The application-level fix will make all reads of credentials owned by other applications non-int
-  > I guess the temporary fix is to disable automatic Quota checking and to manually check when one is ready to close the password prompt.
-
-- **Issue #433** (2026-07-14): **Quota screen only shows one bucket per account (Antigravity → Claude only, Codex → Session only); menu bar shows the full breakdown**
-  *Symptoms*: ### What happened?  # Quota screen only shows one bucket per account (Antigravity → Claude only, Codex → Session only); menu bar shows the full breakdown  ## Environment  - **Quotio version:** 0.22.0 (build 60) - **macOS:** 26.5.2 (25F84) - **App mode:** Monitor Only - **Providers affected:** Antigravity, OpenAI Codex (likely any multi-quota provider)  ## Summary  In the main **Quota** screen, each account renders only a **single** usage bar — the lowest/primary bucket — instead of the full set of quotas the provider exposes. The **menu bar popover** for the same accounts correctly shows every bucket. There is no way I can find (display-style dropdown, per-row click, right-click, or Settings) to make the main window show the other quotas.  Concretely:  - **Antigravity:** the Quota screen shows only a `Claude` group row (with a "2" model-count badge). The other model groups (Gemini 3 Pro, Gemini 3 Flash, Gemini 3 Image) never appear. The menu bar shows all four. - **Codex:** the Quota screen shows only a `Session` bar. The second window (weekly) is never shown. Same in the menu bar for the weekly bucket.  ## Possible regression  Two previously shipped features that would control this appear to be missing or non-functional in 0.22.0:  - **v0.4.1 – "Antigravity 4-Group Display"**: *"expandable group rows in QuotaScreen with individual model details… model count badge and individual progress bars when expanded."* → In 0.22.0 the rows are not expandable and only one group shows. -
-  **Post-Mortem & Fix Analysis**:
-  > Thanks, that was quick.
-
-- **Issue #429** (2026-07-14): **Menu bar shows duplicate accounts despite setting only one account to display**
-  *Symptoms*: ### What happened?  The menu bar account display does not match the configured setting. In Settings, the menu bar is configured to show only one account, but the macOS menu bar still shows multiple/repeated account entries.  Screenshot: <img width="236" height="690" alt="Image" src="https://github.com/user-attachments/assets/d3816db2-c79c-4516-b495-4bec5c285dd4" />  ### Steps to reproduce  1. Open Quotio. 2. Go to Settings and configure the menu bar/account display to show only one account. 3. Check the Quotio item in the macOS menu bar. 4. Notice that multiple/repeated account entries are still shown.  ### Expected behavior  When the setting is configured to show only one account, the macOS menu bar should display only one account entry and should not duplicate or repeat account entries.  ### Severity  🟢 Low - Minor issue, cosmetic  ### Affected component  Menu Bar  ### Provider (if applicable)  None  ### CLI Agent (if applicable)  None  ### macOS Version  Not specified  ### Quotio Version  Not specified  ### App Mode  Full Mode (Proxy running)  ### Screenshots  _No response_  ### Logs (optional)  ```shell  ```  ### Additional context  The uploaded screenshot shows the mismatch: the setting is configured for a single account, but the menu bar displays multiple account entries.
-
-- **Issue #412** (2026-05-14): **Local agent automatically stops**
-  *Symptoms*: ### What happened?  When I was using quotio, after using it for a while, the local proxy automatically stopped.    ### Steps to reproduce  1. my app version is ：版本0.17.0 (54) 2. mac：26.3.1 (a)  3. open the proxy of quotio 4. using the agent for a while  ### Expected behavior  local proxy running normally  ### Severity  🟠 High - Core feature broken, no workaround  ### Affected component  Proxy Server (CLIProxyAPI)  ### Provider (if applicable)  OpenAI Codex  ### CLI Agent (if applicable)  Claude Code  ### macOS Version  26.3.1 (a)  ### Quotio Version  0.17.0 (54)  ### App Mode  Full Mode (Proxy running)  ### Screenshots  _No response_  ### Logs (optional)  ```shell  ```  ### Additional context  _No response_
-  **Post-Mortem & Fix Analysis**:
-  > Please try 0.17.1 
-  > Duplicate #394 
-
-- **Issue #407** (2026-05-10): **[URGENT] Quotio dropped the API key automatically**
-  *Symptoms*: ### What happened?  Since a update, Quotio started to ask a permission for Keychain every time I restarted my Mac. I refused the permission request yesterday, and Quotio cannot store the API key anymore.  <img width="1112" height="852" alt="Image" src="https://github.com/user-attachments/assets/33b01157-286c-4ebe-b58d-a36c99559f94" />  The `generate API key` button is unusable, i can still create an API key but it will instantly appear without any error alert.   ### Steps to reproduce  1. Refuse the Keychain permission 2. API key disappears  ### Expected behavior  I don't think it is reasonable for a local proxy to ask for my administer password. It should just store the API key on normal database since i don't think local api key is sensitive.  Also, the Quotio's error handling path seems messy. If a critical error is occurring, it should exit and report an error instead of silently trapping a strange state.  ### Severity  🔴 Critical - App crashes or completely unusable  ### Affected component  Dashboard  ### Provider (if applicable)  None  ### CLI Agent (if applicable)  None  ### macOS Version  Tahoe 26.1  ### Quotio Version  0.17.0  ### App Mode  Full Mode (Proxy running)  ### Screenshots  _No response_  ### Logs (optional)  ```shell  ```  ### Additional context  _No response_
-
-- **Issue #397** (2026-05-06): **Quotio 使用过程中异常断开：8317 管理端口停止监听，但 CLIProxyAPI 仍然正常**
-  *Symptoms*: ### What happened?  Quotio 0.16.1 在 macOS 26.4.1 上使用过程中会异常失效，表现为本地代理/管理服务自动断开，Quotio 面板无法继续访问，需要手动重启 Quotio 才能恢复。    故障发生时观察到：   - CLIProxyAPI 仍在监听 127.0.0.1:18317，且 /healthz 返回 200   - 但 Quotio 管理/UI 端口 8317 已经不再监听   - 在 8317 断开前，日志中反复出现 /v0/management/debug 返回 401，随后变成 403   - /v0/management/config 和 /v0/management/routing/strategy 也会连续返回 403   - 重启 Quotio 后，8317 恢复监听，管理页面和代理功能恢复正常    用户侧现象：   - 使用过程中 Quotio 会突然不可用   - 本地代理看自动断开   - 管理页面报 HTTP error: 403 或无法访问   - 必须重启 Quotio 才能恢复  挂掉之后显示：代理未运行，需要手动启动，基本每隔10分钟就会断。 <img width="480" height="358" alt="Image" src="https://github.com/user-attachments/assets/947e26c3-99a2-420e-8b98-5f6423ae264f" />  ### Steps to reproduce  暂时没有稳定复现步骤。我的使用场景是长时间运行 Quotio，并通过本地代理给 Codex/Claude Code 等 CLI 工具使用。    大致过程：    1. 启动 Quotio 0.16.1。   2. 本地代理正常工作，CLIProxyAPI 监听 `127.0.0.1:18317`，Quotio 管理端口监听 `8317`。   3. 持续使用一段时间后，Quotio 突然不可用。   4. 管理页面出现 `HTTP error: 403`，或者无法访问。   5. 检查发现 `127.0.0.1:18317` 仍然正常，`/healthz` 返回 200。   6. 但 Quotio 管理/UI 端口 `8317` 已经不再监听。   7. 重启 Quotio 后恢复正常。  ### Expected behavior  Quotio 应该在长时间使用过程中保持稳定运行。    即使管理接口鉴权状态异常，也不应该导致管理/UI 端口 `8317` 停止监听。本地代理和管理页面应该持续可用，或者在异常时自动恢复，而不是必须手动重启 Quotio。  ### Severity  🔴 Critical - App crashes or completely unusable  ### Affected component  Dashboard  ### Provider (if applicable)  None  ### CLI Agent (if applicable)  None  ### macOS Version  macOS 26.4.1  ### Quotio Version  0.16.1  ### App Mode  Full Mode (Proxy running)  ### Screenshots  _No response_  ### Logs (optional)  ```sh
-  **Post-Mortem & Fix Analysis**:
-  > +1 同楼主的异常一毛一样，在三个版本之前好像都没有这种情况
-  > Closing this as a duplicate of #394 so we can keep tracking the proxy/management port crash in one place.
-  > 同样的问题，好烦啊 有没有的解决 version  0.17.0 cpa 6.10.9
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1286,982 +1046,233 @@ public actor AgentConfigurationService {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `17258af6` (2026-10-13)
-**Commit Message**: fix(macos): NFC-normalize only Claude config directories
+### Incident Patch 1: `3372e125` (2026-10-17)
+**Commit Message**: fix(cli): defer the adoption marker until the former config is seeded
 
-Codex, Grok and gh read the directory as typed, so normalizing it could point them at a different path on a normalization-sensitive volume.
+A failed seed was only logged while the marker still landed, so a
+config held under the CLI's lock was never retried. An unparseable
+former config counts as complete so adoption cannot wedge.
 
-**File**: `Packages/QuotioCore/Sources/QuotioInfrastructure/QuotioCLI/QuotioCLIBackend.swift` (modified, +1/-1)
+**File**: `apps/cli/src/accounts/adopt.rs` (modified, +21/-5)
 ```diff
-@@ -332,7 +332,7 @@ public actor QuotioCLIBackend: AccountManaging, QuotaCoordinating, MonitoringSet
-     public func addLocalAccount(provider: QuotaProvider, kind: String, configDirectory: String, entryKey: String?, label: String?) async throws {
-         guard let client else { throw LocalAccountFailure.unknown }
-         // Claude Code NFC-normalizes CLAUDE_CONFIG_DIR before hashing it into its Keychain service.
--        let directory = configDirectory.precomposedStringWithCanonicalMapping
-+        let directory = kind == "claude_native" ? configDirectory.precomposedStringWithCanonicalMapping : configDirectory
-         let body = try JSONEncoder.quotioCLI.encode(LocalSourceBody(kind: kind, configDir: directory, entryKey: entryKey, label: label))
-         do {
-             do {
-```
-
----
-
-### Incident Patch 2: `0aa57882` (2026-10-13)
-**Commit Message**: fix(macos): keep the config directory when re-authorizing a source
-
-NativeSourcePermission now carries the saved source's directory into v2/sources/authorize, so a custom Claude or Copilot source authorizes its own Keychain item instead of the default one.
-
-**File**: `Packages/QuotioCore/Sources/QuotioApplication/Accounts/AccountService.swift` (modified, +7/-2)
-```diff
-@@ -52,15 +52,20 @@ public struct NativeSourcePermission: Codable, Hashable, Identifiable, Sendable
-     public let kind: String
-     public let location: String?
-     public let keychainAccount: String?
-+    public let configDirectory: String?
- 
--    public init(provider: QuotaProvider, kind: String, location: String?, keychainAccount: String? = nil) {
-+    public init(provider: QuotaProvider, kind: String, location: String?, keychainAccount: String? = nil,
-+                configDirectory: String? = nil) {
-         self.provider = provider
-         self.kind = kind
-         self.location = location
-         self.keychainAccount = keychainAccount
-+        self.configDirectory = configDirectory
+@@ -29,23 +29,35 @@ impl Source {
      }
- 
--    public var id: String { provider.rawValue + ":" + kind + ":" + (location ?? "") + ":" + (keychainAccount ?? "") }
-+    public var id: String {
-+        provider.rawValue + ":" + kind + ":" + (location ?? "") + ":" + (keychainAccount ?? "") + ":" + (configDirectory ?? "")
-+    }
  }
  
- public struct NativeDiscoverySnapshot: Sendable {
-```
-
-**File**: `Packages/QuotioCore/Sources/QuotioInfrastructure/QuotioCLI/QuotioCLIBackend.swift` (modified, +3/-1)
-```diff
-@@ -21,6 +21,7 @@ public actor QuotioCLIBackend: AccountManaging, QuotaCoordinating, MonitoringSet
-         let kind: String
-         let location: String?
-         let entryKey: String?
-+        let configDir: String?
+-pub fn config(source: &Source, store: &crate::settings::SettingsStore) {
++/// Returns whether config adoption is complete; a transient failure retries next launch.
++pub fn config(source: &Source, store: &crate::settings::SettingsStore) -> bool {
+     let Some(path) = &source.config else {
+-        return;
++        return true;
+     };
+     if source.adopted() {
+-        return;
++        return true;
      }
-     private struct LocalSourceBody: Encodable {
-         let kind: String
-@@ -296,7 +297,8 @@ public actor QuotioCLIBackend: AccountManaging, QuotaCoordinating, MonitoringSet
- 
-     public func authorizeNativeSource(_ source: NativeSourcePermission) async throws {
-         guard let client else { throw QuotioHostClientError.disconnected }
--        let body = try JSONEncoder.quotioCLI.encode(NativeSourceBody(kind: source.kind, location: source.location, entryKey: source.keychainAccount))
-+        let body = try JSONEncoder.quotioCLI.encode(NativeSourceBody(kind: source.kind, location: source.location,
-+            entryKey: source.keychainAccount, configDir: source.configDirectory))
-         do {
-             try await mutate(
-                 client: client,
-```
-
-**File**: `Packages/QuotioCore/Sources/QuotioPresentation/Settings/AccountSettingsRow.swift` (modified, +1/-1)
-```diff
-@@ -137,7 +137,7 @@ struct AccountSettingsRow: View {
-         case .authorize:
-             guard let source, let kind = source.credentialReference else { return .retry }
-             return .authorize(NativeSourcePermission(provider: provider, kind: kind, location: source.location,
--                keychainAccount: source.keychainAccount))
-+                keychainAccount: source.keychainAccount, configDirectory: source.directory))
-         case .refreshInSourceApp, .retry:
-             return .retry
-         }
-```
-
----
-
-### Incident Patch 3: `315ccf92` (2026-10-13)
-**Commit Message**: fix(cli): tighten config-dir discovery and removal
-
-Grok config-dir discovery now runs after the provider capability check and honors the 64-entry limit. Removing a config-dir source suppresses it when its credential path is one native discovery scans, so ~/.codex or ~/.grok chosen as a directory no longer comes back on the next rescan.
-
-**File**: `apps/cli/src/accounts/discovery.rs` (modified, +12/-8)
-```diff
-@@ -183,25 +183,29 @@ impl Registry {
-             inspect,
-             config_dir,
-         } = request;
-+        if !crate::providers::capabilities::capability(provider)
-+            .source_references
-+            .iter()
-+            .any(|s| s.kind == kind)
-+        {
-+            return Err(AccountError::Input);
+     match store.seed_from_file(path) {
+-        Ok(keys) => tracing::info!(keys, "vault_adoption_config_seeded"),
+-        Err(error) => tracing::warn!(?error, "vault_adoption_config_skipped"),
++        Ok(keys) => {
++            tracing::info!(keys, "vault_adoption_config_seeded");
++            true
 +        }
-         if let Some(dir) = config_dir {
-             if kind != "grok_native" || location.is_some() || domain.is_some() || !inspect {
-                 return Err(AccountError::Input);
-             }
--            let candidates: Vec<Value> = GrokNativeReference::entries_in(&dir)?
-+            let entries = GrokNativeReference::entries_in(&dir)?;
-+            if entries.len() > LIMIT {
-+                return Err(AccountError::Corrupt);
-+            }
-+            let candidates: Vec<Value> = entries
-                 .into_iter()
-                 .map(|(entry_key, label)| {
-                     json!({"label":label,"status":"available","source":{"kind":kind,"config_dir":dir.as_str(),"entry_key":entry_key}})
-                 })
-                 .collect();
-             return Ok(json!({"schema_version":2,"status":"checked","candidates":candidates}));
-         }
--        if !crate::providers::capabilities::capability(provider)
--            .source_references
--            .iter()
--            .any(|s| s.kind == kind)
--        {
--            return Err(AccountError::Input);
--        }
-         let locations: &[&str] = match kind.as_str() {
-             "codex_native" => &["default", "config", "codex_home"],
-             "claude_native" => &["code_file", "code_keychain"],
-```
-
-**File**: `apps/cli/src/accounts/mod.rs` (modified, +1/-3)
-```diff
-@@ -575,9 +575,7 @@ impl Document {
-             .ok_or(AccountError::NotFound)?;
-         let account = self.accounts[index].clone();
-         self.reserve_factory_refresh(&account.id, &account.credential)?;
--        // Discovery never scans a custom config directory, so there is nothing to opt out of.
--        if account.origin() == AccountOrigin::BorrowedNative
--            && account.credential.config_directory().is_none()
-+        if account.origin() == AccountOrigin::BorrowedNative && account.credential.rediscoverable()
-         {
-             self.enable_resolved_accounts()?;
-             self.resolved
-```
-
-**File**: `apps/cli/src/accounts/sources.rs` (modified, +24/-0)
-```diff
-@@ -924,6 +924,30 @@ impl CodexNativeReference {
++        Err(crate::settings::SettingsError::Invalid) => {
++            tracing::warn!("vault_adoption_config_invalid");
++            true
++        }
++        Err(error) => {
++            tracing::warn!(?error, "vault_adoption_config_skipped");
++            false
++        }
+     }
  }
  
- impl Credential {
-+    /// Whether native discovery can register this source again after its removal.
-+    /// A config directory that names a scanned default location still can.
-+    pub fn rediscoverable(&self) -> bool {
-+        match self {
-+            Self::ClaudeNative { source } => source.config_dir.is_none(),
-+            Self::CodexNative { source } if source.config_dir.is_some() => [
-+                CodexLocation::Default,
-+                CodexLocation::Config,
-+                CodexLocation::CodexHome,
-+            ]
-+            .into_iter()
-+            .filter_map(|location| CodexNativeReference::system(location).ok())
-+            .any(|default| default.path == source.path),
-+            Self::GrokNative { source } if source.config_dir.is_some() => {
-+                crate::providers::catalog::oauth_editors::grok_auth_path()
-+                    .is_some_and(|default| default == source.path)
-+            }
-+            Self::CopilotNative { source } if source.config_dir.is_some() => {
-+                CopilotNativeReference::system(CopilotLocation::GhHosts, "github.com".into())
-+                    .is_ok_and(|default| default.path == source.path)
-+            }
-+            _ => true,
-+        }
+ pub async fn vault(
+     source: &Source,
+     target: &Vault,
+     history: Option<&crate::history::History>,
++    config_adopted: bool,
+ ) -> bool {
+     if source.adopted() {
+         return false;
+@@ -93,6 +105,10 @@ pub async fn vault(
+             return absorbed.changed;
+         }
+     };
++    if !config_adopted {
++        tracing::info!("vault_adoption_marker_deferred");
++        return absorbed.changed || rows > 0;
 +    }
-     pub fn config_directory(&self) -> Option<String> {
-         match self {
-             Self::ClaudeNative { source } => source.config_dir.clone(),
+     let marker = Marker {
+         schema_version: 1,
+         adopted_at: time::OffsetDateTime::now_utc(),
 ```
 
-**File**: `apps/cli/src/server/tests.rs` (modified, +68/-0)
+**File**: `apps/cli/src/server.rs` (modified, +10/-4)
 ```diff
-@@ -1111,13 +1111,31 @@ fn config_dir_sources_run_with_an_isolated_home() {
-             ".grok-multi/auth.json",
-             r#"{"https://auth.x.ai::user-a":{"key":"synthetic-grok-a","expires_at":"2099-01-01T00:00:00Z","email":"a@example.com"},"https://auth.x.ai::user-b":{"key":"synthetic-grok-b","expires_at":"2099-01-01T00:00:00Z","email":"b@example.com"}}"#,
-         ),
-+        (
-+            ".codex/auth.json",
-+            r#"{"tokens":{"access_token":"synthetic-default-secret","account_id":"default-id"}}"#,
-+        ),
-         ("not-a-dir", "file"),
-     ];
-     for (relative, bytes) in fixtures {
-         let path = dir.join(relative);
-         std::fs::create_dir_all(path.parent().unwrap()).unwrap();
-         std::fs::write(path, bytes).unwrap();
-     }
-+    let many: serde_json::Map<String, Value> = (0..65)
-+        .map(|index| {
-+            (
-+                format!("https://auth.x.ai::user-{index}"),
-+                json!({"key":"synthetic-grok","expires_at":"2099-01-01T00:00:00Z"}),
+@@ -1195,9 +1195,9 @@ pub async fn run(args: ServeArgs) -> Result<(), ServerError> {
+             provider_timeout: args.timeout,
+         },
+     );
+-    if let Some(source) = &adoption {
+-        crate::accounts::adopt::config(source, &store);
+-    }
++    let config_adopted = adoption
++        .as_ref()
++        .is_none_or(|source| crate::accounts::adopt::config(source, &store));
+     let mut parent = if args.parent_pipe {
+         Some(bootstrap::Parent::open().await?)
+     } else {
+@@ -1323,7 +1323,13 @@ pub async fn run(args: ServeArgs) -> Result<(), ServerError> {
+         if let (Some(source), Some(vault)) = (&adoption, &worker_state.vault)
+             && let Ok(_guard) =
+                 crate::accounts::service::mutation_guard(&worker_state.commit_guard).await
+-            && crate::accounts::adopt::vault(source, vault, worker_state.history.as_ref()).await
++            && crate::accounts::adopt::vault(
++                source,
++                vault,
++                worker_state.history.as_ref(),
++                config_adopted,
 +            )
-+        })
-+        .collect();
-+    std::fs::create_dir_all(dir.join(".grok-many")).unwrap();
-+    std::fs::write(
-+        dir.join(".grok-many/auth.json"),
-+        serde_json::to_vec(&many).unwrap(),
-+    )
-+    .unwrap();
-     let output = std::process::Command::new(std::env::current_exe().unwrap())
-         .args([
-             "--exact",
-@@ -1359,6 +1377,56 @@ async fn config_dir_sources_child() {
-             .resolved
-             .is_none_or(|registry| registry.suppressed_providers().is_empty())
-     );
-+    let discover = |body: Value| {
-+        client
-+            .post(format!("{base}/v2/sources/discover"))
-+            .bearer_auth(token)
-+            .json(&body)
-+            .send()
-+    };
-+    for body in [
-+        json!({"provider":"codex","kind":"grok_native","inspect":true,"config_dir":"~/.grok-multi"}),
-+        json!({"provider":"grok","kind":"grok_native","inspect":true,"config_dir":"~/.grok-many"}),
-+    ] {
-+        assert_ne!(
-+            discover(body.clone()).await.unwrap().status(),
-+            200,
-+            "{body}"
-+        );
-+    }
-+    let response = post(
-+        "default-dir".into(),
-+        json!({"kind":"codex_native","config_dir":"~/.codex"}),
-+    )
-+    .await
-+    .unwrap();
-+    let operation: Value = response.json().await.unwrap();
-+    let completed =
-+        serde_json::to_value(done(&state, operation["id"].as_str().unwrap()).await).unwrap();
-+    assert_eq!(completed["status"], "completed", "{completed}");
-+    let default_dir = completed["result"]["account_id"].as_str().unwrap();
-+    let response: Value = client
-+        .delete(format!("{base}/v2/accounts/{default_dir}"))
-+        .bearer_auth(token)
-+        .header("Idempotency-Key", "remove-default-dir")
-+        .send()
-+        .await
-+        .unwrap()
-+        .json()
-+        .await
-+        .unwrap();
-+    assert_eq!(
-+        done(&state, response["id"].as_str().unwrap()).await.status,
-+        "completed"
-+    );
-+    let suppressed = vault
-+        .begin()
-+        .unwrap()
-+        .document
-+        .resolved
-+        .map(|registry| registry.suppressed_providers())
-+        .unwrap_or_default();
-+    assert!(suppressed.contains("codex"), "{suppressed:?}");
-     server.abort();
-     for job in state.jobs.lock().unwrap().drain(..) {
-         job.abort();
-```
-
----
-
-### Incident Patch 4: `518bf917` (2026-10-13)
-**Commit Message**: fix(macos): refresh vault state when adding a local account fails
-
-The sheet now surfaces the account-vault recovery like the other account flows. The directory is sent NFC-normalized, matching how Claude Code hashes it.
-
-**File**: `Packages/QuotioCore/Sources/QuotioInfrastructure/QuotioCLI/QuotioCLIBackend.swift` (modified, +2/-1)
-```diff
-@@ -314,7 +314,8 @@ public actor QuotioCLIBackend: AccountManaging, QuotaCoordinating, MonitoringSet
- 
-     public func addLocalAccount(provider: QuotaProvider, kind: String, configDirectory: String, label: String?) async throws {
-         guard let client else { throw LocalAccountFailure.unknown }
--        let body = try JSONEncoder.quotioCLI.encode(LocalSourceBody(kind: kind, configDir: configDirectory, label: label))
-+        // Claude Code NFC-normalizes CLAUDE_CONFIG_DIR before hashing it into its Keychain service.
-+        let body = try JSONEncoder.quotioCLI.encode(LocalSourceBody(kind: kind, configDir: configDirectory.precomposedStringWithCanonicalMapping, label: label))
-         do {
-             do {
-                 try await mutate(client: client, path: "v2/sources", method: "POST", body: body)
-```
-
-**File**: `Packages/QuotioCore/Sources/QuotioPresentation/Accounts/AccountsScreenModel.swift` (modified, +6/-1)
-```diff
-@@ -75,7 +75,12 @@ public final class AccountsScreenModel {
-     }
- 
-     public func addLocalAccount(provider: QuotaProvider, kind: String, configDirectory: String, label: String?) async throws {
--        try await accountService.addLocalAccount(provider: provider, kind: kind, configDirectory: configDirectory, label: label)
-+        do {
-+            try await accountService.addLocalAccount(provider: provider, kind: kind, configDirectory: configDirectory, label: label)
-+        } catch {
-+            storageProblem = await accountService.accountStorageProblem()
-+            throw error
-+        }
-         storageProblem = await accountService.accountStorageProblem()
-         await reloadAccounts()
-     }
-```
-
----
-
-### Incident Patch 5: `513cc0b5` (2026-10-13)
-**Commit Message**: fix(cli): keep the exact CLAUDE_CONFIG_DIR spelling for Keychain lookup
-
-Claude Code hashes the exported string verbatim, so normalizing a trailing slash or a doubled separator pointed Quotio at a different Keychain item.
-
-**File**: `apps/cli/src/accounts/sources.rs` (modified, +17/-13)
-```diff
-@@ -4,22 +4,24 @@ use serde::{Deserialize, Serialize};
- 
- /// An existing directory chosen in place of a tool's default home, such as
- /// `CLAUDE_CONFIG_DIR`. `~` is expanded the way a shell expands the exported
--/// value, so `as_str` is the string the tool itself sees.
-+/// value, so `as_str` is the string the tool itself sees. The spelling is kept
-+/// as is: Claude Code hashes it verbatim, trailing slash included.
- #[derive(Clone, Debug, PartialEq, Eq)]
--pub struct ConfigDir(std::path::PathBuf);
-+pub struct ConfigDir(String);
- impl ConfigDir {
-     pub fn parse(raw: &str) -> Result<Self, AccountError> {
-         let expanded = match raw.strip_prefix('~') {
-             Some(rest) if rest.is_empty() || rest.starts_with('/') => {
--                let home = std::env::var_os("HOME").ok_or(AccountError::NotFound)?;
--                std::path::PathBuf::from(home).join(rest.trim_start_matches('/'))
-+                let home = std::env::var("HOME").map_err(|_| AccountError::NotFound)?;
-+                format!("{home}{rest}")
-             }
-             Some(_) => return Err(AccountError::Input),
--            None => std::path::PathBuf::from(raw),
-+            None => raw.to_owned(),
-         };
-+        let path = std::path::Path::new(&expanded);
-         if raw.len() > 1024
--            || !expanded.is_absolute()
--            || expanded.components().any(|c| {
-+            || !path.is_absolute()
-+            || path.components().any(|c| {
-                 matches!(
-                     c,
-                     std::path::Component::ParentDir | std::path::Component::CurDir
-@@ -28,18 +30,16 @@ impl ConfigDir {
++            .await
          {
-             return Err(AccountError::Input);
+             worker_state.invalidate().await;
          }
--        let path: std::path::PathBuf = expanded.components().collect();
--        path.to_str().ok_or(AccountError::Input)?;
-         if !path.is_dir() {
-             return Err(AccountError::NotFound);
-         }
--        Ok(Self(path))
-+        Ok(Self(expanded))
-     }
-     pub fn as_str(&self) -> &str {
--        self.0.to_str().expect("validated as UTF-8")
-+        &self.0
-     }
-     pub fn join(&self, file: &str) -> std::path::PathBuf {
--        self.0.join(file)
-+        std::path::Path::new(&self.0).join(file)
-     }
- }
- impl<'de> Deserialize<'de> for ConfigDir {
-@@ -1470,7 +1470,7 @@ mod tests {
-         )
-         .unwrap();
-         let config = ConfigDir::parse(&format!("{}/", dir.display())).unwrap();
--        assert_eq!(config.as_str(), dir.to_str().unwrap());
-+        assert_eq!(config.as_str(), format!("{}/", dir.display()));
-         let file = ClaudeNativeReference::in_config_dir(&config, ClaudeLocation::CodeFile).unwrap();
-         assert_eq!(file.path.as_deref(), Some(&*dir.join(".credentials.json")));
-         assert_eq!(file.metadata_path(), Some(dir.join(".claude.json")));
-@@ -1491,6 +1491,10 @@ mod tests {
-                 ClaudeNativeReference::in_config_dir(&config, ClaudeLocation::CodeKeychain)
-                     .unwrap();
-             assert_eq!(
-+                keychain.keychain_service(),
-+                claude_keychain_service(Some(&format!("{}/", dir.display())))
-+            );
-+            assert_ne!(
-                 keychain.keychain_service(),
-                 claude_keychain_service(Some(dir.to_str().unwrap()))
-             );
-```
-
-**File**: `apps/cli/src/server/tests.rs` (modified, +1/-1)
-```diff
-@@ -1268,7 +1268,7 @@ async fn config_dir_sources_child() {
-     assert_eq!(work["sources"][0]["kind"], "codex_native");
-     assert_eq!(
-         work["sources"][0]["directory"],
--        format!("{home}/.codex-work")
-+        format!("{home}/.codex-work/")
-     );
-     let claude: Value = account(ids[2].clone()).await.json().await.unwrap();
-     assert_eq!(claude["sources"][0]["location"], "code_file");
 ```
 
 ---
 
-### Incident Patch 6: `4608d137` (2026-10-13)
-**Commit Message**: build(cli): bump quinn-proto to 0.11.19
+### Incident Patch 2: `6401b3a9` (2026-10-18)
+**Commit Message**: fix(cli): ask for Keychain access when adopting a former app vault
 
-Fixes RUSTSEC-2026-0338 through RUSTSEC-2026-0342, published after master's last advisory run.
+The former vault's Keychain item trusts only the helper identifier that
+created it. The app now bundles a helper signed as dev.quotio.cli, so the
+non-interactive read failed, no marker was written, and upgrading users
+saw an empty account list on every launch. Read the former vault with the
+Keychain prompt allowed and without the 10-second transaction timeout, so
+the user approves access once and adoption completes.
+
+**File**: `apps/cli/src/accounts/adopt.rs` (modified, +10/-2)
+```diff
+@@ -62,14 +62,22 @@ pub async fn vault(
+     if source.adopted() {
+         return false;
+     }
+-    let former = match Vault::isolated_for_usage(&source.namespace, &source.data_dir) {
++    // The former Keychain item trusts only the helper that created it. A helper
++    // signed under another identifier needs the user's approval to read it once.
++    let former = match Vault::isolated_interactive(&source.namespace, &source.data_dir) {
+         Ok(former) => former,
+         Err(error) => {
+             tracing::warn!(?error, "vault_adoption_source_unavailable");
+             return false;
+         }
+     };
+-    let document = match super::service::begin(former.clone()).await {
++    let reader = former.clone();
++    // No timeout: the read waits for the user to answer the prompt.
++    let read = tokio::task::spawn_blocking(move || reader.begin())
++        .await
++        .map_err(|_| super::AccountError::Storage)
++        .and_then(|read| read);
++    let document = match read {
+         Ok(transaction) => transaction.document,
+         Err(error) => {
+             tracing::warn!(?error, "vault_adoption_source_unavailable");
+```
+
+**File**: `apps/cli/src/accounts/vault.rs` (modified, +19/-1)
+```diff
+@@ -291,11 +291,29 @@ impl Vault {
+     pub fn isolated_for_usage(
+         namespace: &VaultNamespace,
+         data_directory: &std::path::Path,
++    ) -> Result<Self, AccountError> {
++        Self::isolated(false, namespace, data_directory)
++    }
++    /// Reads can wait on a Keychain prompt until the user answers it.
++    pub fn isolated_interactive(
++        namespace: &VaultNamespace,
++        data_directory: &std::path::Path,
++    ) -> Result<Self, AccountError> {
++        Self::isolated(true, namespace, data_directory)
++    }
++    fn isolated(
++        interactive: bool,
++        namespace: &VaultNamespace,
++        data_directory: &std::path::Path,
+     ) -> Result<Self, AccountError> {
+         if !data_directory.is_absolute() {
+             return Err(AccountError::Storage);
+         }
+-        Self::system_with_interaction(false, Some(namespace), Some(data_directory.to_owned()))
++        Self::system_with_interaction(
++            interactive,
++            Some(namespace),
++            Some(data_directory.to_owned()),
++        )
+     }
+     fn system_with_interaction(
+         _interactive: bool,
+```
+
+**File**: `apps/macos/CHANGELOG.md` (modified, +1/-1)
+```diff
+@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ 
+ ### Changed
+ 
+-- Quotio and Quotio Beta now share accounts, quota history, and settings with the standalone `quotio` CLI. The first launch moves the app's existing accounts, history, and settings into the shared store once; an account that exists in both keeps the fresher sign-in. Keep the CLI at least as new as the app.
++- Quotio and Quotio Beta now share accounts, quota history, and settings with the standalone `quotio` CLI. The first launch moves the app's existing accounts, history, and settings into the shared store once; an account that exists in both keeps the fresher sign-in. macOS asks once for permission to read the app's former accounts from the Keychain; allow it, or the move is retried on the next launch. Keep the CLI at least as new as the app.
+ 
+ ## [1.0.0-beta.7] - 2026-10-16
+ 
+```
+
+**File**: `apps/macos/RELEASE.md` (modified, +1/-1)
+```diff
+@@ -62,7 +62,7 @@ Versions matching `X.Y.Z-alpha-N`, `X.Y.Z-beta-N`, or `X.Y.Z-rc-N` (also accepti
+ | App updates | Sparkle | Manual download and installation |
+ | Accounts, quota history, and helper settings | Shared with the `quotio` CLI in `~/Library/Application Support/quotio/` | Shared with the `quotio` CLI in `~/Library/Application Support/quotio/` |
+ 
+-App preferences, Quotio-owned Keychain services, and Antigravity profile backups are also scoped to the app identity. Stable and beta share one account vault with the standalone CLI only when the bundled helper is signed with Developer ID as `dev.quotio.cli`. On its first launch, such a build folds the identity's former private helper store (`<bundle identifier>/QuotioCLI` and `quotio-cli.toml`) into the shared vault, history, and `config.toml` once, and records completion in `QuotioCLI/accounts-<namespace>.adopted`. The former store stays in place. Ad-hoc and Debug builds keep a private helper store per identity. Beta does not import legacy production accounts or preferences. Beta only stops proxy processes it owns; an occupied port is an error, not permission to terminate another instance.
++App preferences, Quotio-owned Keychain services, and Antigravity profile backups are also scoped to the app identity. Stable and beta share one account vault with the standalone CLI only when the bundled helper is signed with Developer ID as `dev.quotio.cli`. On its first launch, such a build folds the identity's former private helper store (`<bundle identifier>/QuotioCLI` and `quotio-cli.toml`) into the shared vault, history, and `config.toml` once, and records completion in `QuotioCLI/accounts-<namespace>.adopted`. The former Keychain item trusts only the helper identifier that created it, so this first read shows one macOS Keychain prompt. If the user denies it, no marker is written and the next launch asks again. The former store stays in place. Ad-hoc and Debug builds keep a private helper store per identity. Beta does not import legacy production accounts or preferences. Beta only stops proxy processes it owns; an occupied port is an error, not permission to terminate another instance.
+ 
+ Install `Quotio Beta.app` beside the stable app. Prereleases do not modify the stable appcast or update the Homebrew tap. They publish `appcast-beta.xml` to the rolling `macos-beta-appcast` GitHub release, which stays marked as a prerelease so `releases/latest` keeps resolving to the stable appcast. The beta bundle's `SUFeedURL` points at that file, so Quotio Beta updates itself through Sparkle to newer betas only. Betas published before this change have no feed; install the first auto-updating beta manually.
+ 
+```
+
+---
+
+### Incident Patch 3: `9f423cbc` (2026-10-16)
+**Commit Message**: fix(cli): update rustls to 0.23.46
+
+RUSTSEC-2026-0346 through 0349 affect rustls 0.23.45 and fail the dependency advisory check.
 
 **File**: `apps/cli/Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -1560,9 +1560,9 @@ dependencies = [
+@@ -1870,9 +1870,9 @@ dependencies = [
  
  [[package]]
- name = "quinn-proto"
--version = "0.11.16"
-+version = "0.11.19"
+ name = "rustls"
+-version = "0.23.45"
++version = "0.23.46"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "2f4bfc015262b9df63c8845072ce59068853ff5872180c2ce2f13038b970e560"
-+checksum = "0e750cca55fe4f0439a15d0bb529da9651e79993e8e72c61a899a36d462befbe"
+-checksum = "0d41d731c7d2f962d1ccc364cec258de3c0e93b38c2fb3ba97ac74513048d634"
++checksum = "48e13bd8c0e9365c43cfa5c9e8f9ad49d3c8444926c9aac819e0e4dc503c8fdf"
  dependencies = [
-  "bytes",
-  "getrandom 0.4.2",
-```
-
----
-
-### Incident Patch 7: `3e188ce8` (2026-10-13)
-**Commit Message**: fix(cli): name config-dir accounts by their full directory
-
-Two directories with the same final component, such as ~/client-a/.claude and ~/client-b/.claude, produced the same generated label and the second failed as a duplicate. The label now uses the path with $HOME written as ~, and a long path keeps its tail plus an identity prefix.
-
-**File**: `apps/cli/src/accounts/api.rs` (modified, +11/-7)
-```diff
-@@ -704,13 +704,17 @@ pub async fn prepare_source(input: SourceInput) -> Result<PreparedAccount, Accou
-         "Local Cursor account".into()
-     } else if let Some(directory) = directory {
-         // Generated names must differ per directory; the account label is unique per provider.
--        let name: String = std::path::Path::new(&directory)
--            .file_name()
--            .and_then(|name| name.to_str())
--            .unwrap_or(&directory)
--            .chars()
--            .take(40)
--            .collect();
-+        let path = std::env::var("HOME")
-+            .ok()
-+            .and_then(|home| directory.strip_prefix(&home).map(|rest| format!("~{rest}")))
-+            .unwrap_or(directory);
-+        let chars: Vec<char> = path.chars().collect();
-+        let name: String = if chars.len() <= 40 {
-+            path
-+        } else {
-+            let tail: String = chars[chars.len() - 30..].iter().collect();
-+            format!("…{tail} {}", identity.chars().take(8).collect::<String>())
-+        };
-         format!(
-             "{} ({name})",
-             resolved.label.chars().take(36).collect::<String>()
-```
-
-**File**: `apps/cli/src/server/tests.rs` (modified, +21/-0)
-```diff
-@@ -1099,6 +1099,14 @@ fn config_dir_sources_run_with_an_isolated_home() {
-             ".claude-work/.credentials.json",
-             r#"{"claudeAiOauth":{"accessToken":"synthetic-claude-secret","refreshToken":"owner-refresh"}}"#,
-         ),
-+        (
-+            "client-a/.claude/.credentials.json",
-+            r#"{"claudeAiOauth":{"accessToken":"synthetic-client-a"}}"#,
-+        ),
-+        (
-+            "client-b/.claude/.credentials.json",
-+            r#"{"claudeAiOauth":{"accessToken":"synthetic-client-b"}}"#,
-+        ),
-         ("not-a-dir", "file"),
-     ];
-     for (relative, bytes) in fixtures {
-@@ -1226,6 +1234,14 @@ async fn config_dir_sources_child() {
-             "claude",
-             json!({"kind":"claude_native","config_dir":"~/.claude-work"}),
-         ),
-+        (
-+            "client-a",
-+            json!({"kind":"claude_native","config_dir":"~/client-a/.claude"}),
-+        ),
-+        (
-+            "client-b",
-+            json!({"kind":"claude_native","config_dir":"~/client-b/.claude"}),
-+        ),
-     ] {
-         let response = post(key.into(), input).await.unwrap();
-         assert_eq!(response.status(), 202);
-@@ -1261,6 +1277,11 @@ async fn config_dir_sources_child() {
-         format!("{home}/.claude-work")
-     );
-     assert!(!claude.to_string().contains("synthetic-"));
-+    let client_a: Value = account(ids[3].clone()).await.json().await.unwrap();
-+    assert_eq!(
-+        client_a["display_name"],
-+        "Claude Code file (~/client-a/.claude)"
-+    );
-     let document = vault.begin().unwrap().document;
-     assert_eq!(document.version, 22);
-     let codex_paths: Vec<_> = document
-```
-
----
-
-### Incident Patch 8: `197f5c84` (2026-10-12)
-**Commit Message**: fix(macos): handle unknown host client errors in history requests
-
-**File**: `Packages/QuotioCore/Sources/QuotioInfrastructure/QuotioCLI/QuotioCLIBackend.swift` (modified, +1/-0)
-```diff
-@@ -70,6 +70,7 @@ public actor QuotioCLIBackend: AccountManaging, QuotaCoordinating, MonitoringSet
-                     if code.contains("storage") { throw QuotaHistoryError.storage }
-                     throw QuotaHistoryError.requestFailed
-                 case .timeout: throw QuotaHistoryError.requestFailed
-+                @unknown default: throw QuotaHistoryError.requestFailed
-                 }
-             }
-             if let network = error as? URLError, [.notConnectedToInternet, .cannotConnectToHost, .cannotFindHost, .networkConnectionLost].contains(network.code) {
-```
-
----
-
-### Incident Patch 9: `9027a9bf` (2026-10-12)
-**Commit Message**: fix(cli): keep timeout classification for unsent Claude refreshes
-
-**File**: `apps/cli/src/accounts/oauth/claude.rs` (modified, +1/-1)
-```diff
-@@ -147,7 +147,7 @@ async fn refresh_at(
-     })).send().await {
-         Ok(response) => response,
-         Err(error) if error.is_connect() => {
--            return Err(AccountError::RefreshUnused(ProviderError::Transient));
-+            return Err(AccountError::RefreshUnused(http::send_error(error)));
-         }
-         Err(error) => return Err(http::send_error(error).into()),
-     };
-```
-
----
-
-### Incident Patch 10: `248efe89` (2026-10-12)
-**Commit Message**: fix(cli): finish the Claude fence release after a cancelled read
-
-The fetch deadline could drop the read while the release waited for
-the vault, leaving refresh_pending set for an unused token. Run the
-release in a detached task that keeps the refresh lock until it commits.
-
-**File**: `apps/cli/src/accounts/service.rs` (modified, +89/-10)
-```diff
-@@ -927,16 +927,24 @@ impl ManagedProvider {
-         let updated = match self.operations.refresh(context, &latest).await {
-             Ok(updated) => updated,
-             Err(AccountError::RefreshUnused(error)) => {
--                let mut tx = begin(self.vault.clone()).await?;
--                if let Some(account) = tx
--                    .document
--                    .accounts
--                    .iter_mut()
--                    .find(|a| a.id == self.id && a.credential == latest)
--                {
--                    account.credential = credential;
--                    commit(tx).await?;
--                }
-+                let (vault, id) = (self.vault.clone(), self.id.clone());
-+                // Detached so the fetch deadline cannot drop the release before it commits.
-+                tokio::spawn(async move {
-+                    let _guard = guard;
-+                    let mut tx = begin(vault).await?;
-+                    if let Some(account) = tx
-+                        .document
-+                        .accounts
-+                        .iter_mut()
-+                        .find(|a| a.id == id && a.credential == latest)
-+                    {
-+                        account.credential = credential;
-+                        commit(tx).await?;
-+                    }
-+                    Ok::<_, AccountError>(())
-+                })
-+                .await
-+                .map_err(|_| AccountError::Storage)??;
-                 return Err(error.into());
-             }
-             Err(error) => return Err(error),
-@@ -4613,6 +4621,77 @@ mod tests {
-         cleanup(path);
-     }
-     #[tokio::test]
-+    async fn claude_refresh_fence_release_survives_a_dropped_read() {
-+        struct HeldVault {
-+            vault: Vault,
-+            held: std::sync::Mutex<Option<Transaction>>,
-+        }
-+        impl Operations for HeldVault {
-+            fn quota<'a>(
-+                &'a self,
-+                _: &'a ProviderContext,
-+                _: Provider,
-+                _: &'a Credential,
-+            ) -> OperationFuture<'a, ProviderUsage> {
-+                Box::pin(async { unreachable!("an expired token never reads quota") })
-+            }
-+            fn refresh<'a>(
-+                &'a self,
-+                _: &'a ProviderContext,
-+                _: &'a Credential,
-+            ) -> OperationFuture<'a, Credential> {
-+                Box::pin(async move {
-+                    *self.held.lock().unwrap() = Some(self.vault.begin().unwrap());
-+                    Err(AccountError::RefreshUnused(ProviderError::RateLimited))
-+                })
-+            }
-+        }
-+        let (vault, fake, id, _, path) = setup(0, false, false, false);
-+        let original = Credential::ClaudeOAuth {
-+            access_token: "old".into(),
-+            refresh_token: "refresh".into(),
-+            account_id: "id".into(),
-+            email: "demo@example.com".into(),
-+            expires_at: 0,
-+            refresh_pending: false,
-+        };
-+        let mut tx = vault.begin().unwrap();
-+        tx.document.accounts[0].provider = Provider::Catalog("claude");
-+        tx.document.accounts[0].credential = original.clone();
-+        tx.document.reserve_factory_refresh(&id, &original).unwrap();
-+        tx.commit().unwrap();
-+        let operations = Arc::new(HeldVault {
-+            vault: vault.clone(),
-+            held: std::sync::Mutex::new(None),
-+        });
-+        let mut adapter = managed(vault.clone(), fake, id, Provider::Catalog("claude"));
-+        adapter.operations = operations.clone();
-+        let context = http::fixture::context();
-+        assert!(
-+            tokio::time::timeout(Duration::from_millis(200), adapter.read(&context))
-+                .await
-+                .is_err()
-+        );
-+        drop(operations.held.lock().unwrap().take());
-+        let restored = tokio::time::timeout(Duration::from_secs(5), async {
-+            loop {
-+                if vault
-+                    .begin()
-+                    .is_ok_and(|tx| tx.document.accounts[0].credential == original)
-+                {
-+                    return;
-+                }
-+                tokio::time::sleep(Duration::from_millis(25)).await;
-+            }
-+        })
-+        .await;
-+        assert!(
-+            restored.is_ok(),
-+            "the fence release outlives the dropped read"
-+        );
-+        cleanup(path);
-+    }
-+    #[tokio::test]
-     async fn claude_refresh_fence_survives_failure_restart_and_removal() {
-         for failure in [false, true] {
-             let (vault, fake, id, _, path) = setup(0, false, failure, false);
-```
-
----
-
-### Incident Patch 11: `618c128f` (2026-10-12)
-**Commit Message**: fix(cli): release Claude refresh fence before waiting out a 429
-
-The fetch deadline cancels the read while json_response sleeps for
-Retry-After, so the fence release never ran. Return RefreshUnused as
-soon as the token endpoint answers 429.
-
-**File**: `apps/cli/src/accounts/oauth/claude.rs` (modified, +28/-10)
-```diff
-@@ -151,16 +151,11 @@ async fn refresh_at(
-         }
-         Err(error) => return Err(http::send_error(error).into()),
-     };
--    let throttled = response.status() == reqwest::StatusCode::TOO_MANY_REQUESTS;
--    let tokens = http::json_response(response, context.clock.now())
--        .await
--        .map_err(|error| {
--            if throttled {
--                AccountError::RefreshUnused(error)
--            } else {
--                error.into()
--            }
--        })?;
-+    // Waiting out Retry-After here could outlive the fetch deadline and skip the fence release.
-+    if response.status() == reqwest::StatusCode::TOO_MANY_REQUESTS {
-+        return Err(AccountError::RefreshUnused(ProviderError::RateLimited));
-+    }
-+    let tokens = http::json_response(response, context.clock.now()).await?;
-     credential(tokens, Some(previous), context.clock.now().unix_timestamp())
- }
- #[cfg(test)]
-@@ -199,6 +194,29 @@ mod tests {
-             refresh_at(&http::fixture::context(), &previous, &url).await,
-             Err(AccountError::RefreshUnused(ProviderError::Transient))
-         ));
-+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
-+        let url = format!("http://{}", listener.local_addr().unwrap());
-+        let task = tokio::spawn(async move {
-+            use tokio::io::{AsyncReadExt, AsyncWriteExt};
-+            let (mut socket, _) = listener.accept().await.unwrap();
-+            let mut request = vec![0; 8192];
-+            let _ = socket.read(&mut request).await.unwrap();
-+            socket
-+                .write_all(b"HTTP/1.1 429 Test\r\nRetry-After: 600\r\nContent-Length: 0\r\nConnection: close\r\n\r\n")
-+                .await
-+                .unwrap();
-+        });
-+        let result = tokio::time::timeout(
-+            std::time::Duration::from_secs(5),
-+            refresh_at(&http::fixture::context(), &previous, &url),
-+        )
-+        .await
-+        .expect("a 429 must not wait out Retry-After");
-+        assert!(matches!(
-+            result,
-+            Err(AccountError::RefreshUnused(ProviderError::RateLimited))
-+        ));
-+        task.await.unwrap();
-     }
-     #[tokio::test]
-     async fn exchange_and_refresh_contract() {
-```
-
----
-
-### Incident Patch 12: `0fed9637` (2026-10-12)
-**Commit Message**: fix(cli): release Claude refresh fence when the token was never used
-
-A failed Claude OAuth refresh left refresh_pending set forever, so one
-offline wake or one 429 from the token endpoint forced a new sign-in.
-When the request never reached the provider or was rate limited, the
-refresh token is still unused, so restore the pre-fence credential and
-let the next read retry. Every other failure keeps the fence.
-
-**File**: `apps/cli/src/accounts/mod.rs` (modified, +3/-0)
-```diff
-@@ -71,6 +71,9 @@ pub enum AccountError {
-     CallbackPort,
-     #[error("OAuth callback or token response is invalid")]
-     OAuth,
-+    /// The provider never processed the refresh request, so its refresh token is still unused.
-+    #[error("credential validation failed: {0}")]
-+    RefreshUnused(ProviderError),
- }
- 
- #[derive(Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
-```
-
-**File**: `apps/cli/src/accounts/oauth/claude.rs` (modified, +19/-2)
-```diff
-@@ -1,6 +1,7 @@
- use super::{Authorization, challenge};
- use crate::{
-     accounts::{AccountError, Credential, random_string},
-+    error::ProviderError,
-     providers::{ProviderContext, http},
- };
- use serde::Deserialize;
-@@ -141,9 +142,25 @@ async fn refresh_at(
-     let Credential::ClaudeOAuth { refresh_token, .. } = previous else {
-         return Err(AccountError::Unsupported);
-     };
--    let tokens = http::json(context.http.post(endpoint).json(&json!({
-+    let response = match context.http.post(endpoint).json(&json!({
-         "grant_type": "refresh_token", "refresh_token": refresh_token, "client_id": CLIENT_ID, "scope": SCOPE,
--    })), context.clock.now()).await?;
-+    })).send().await {
-+        Ok(response) => response,
-+        Err(error) if error.is_connect() => {
-+            return Err(AccountError::RefreshUnused(ProviderError::Transient));
-+        }
-+        Err(error) => return Err(http::send_error(error).into()),
-+    };
-+    let throttled = response.status() == reqwest::StatusCode::TOO_MANY_REQUESTS;
-+    let tokens = http::json_response(response, context.clock.now())
-+        .await
-+        .map_err(|error| {
-+            if throttled {
-+                AccountError::RefreshUnused(error)
-+            } else {
-+                error.into()
-+            }
-+        })?;
-     credential(tokens, Some(previous), context.clock.now().unix_timestamp())
- }
- #[cfg(test)]
-```
-
-**File**: `apps/cli/src/accounts/service.rs` (modified, +17/-1)
-```diff
-@@ -924,7 +924,23 @@ impl ManagedProvider {
-             account.credential = latest.clone();
-             commit(tx).await?;
-         }
--        let updated = self.operations.refresh(context, &latest).await?;
-+        let updated = match self.operations.refresh(context, &latest).await {
-+            Ok(updated) => updated,
-+            Err(AccountError::RefreshUnused(error)) => {
-+                let mut tx = begin(self.vault.clone()).await?;
-+                if let Some(account) = tx
-+                    .document
-+                    .accounts
-+                    .iter_mut()
-+                    .find(|a| a.id == self.id && a.credential == latest)
-+                {
-+                    account.credential = credential;
-+                    commit(tx).await?;
-+                }
-+                return Err(error.into());
-+            }
-+            Err(error) => return Err(error),
-+        };
-         let mut tx = begin(self.vault.clone()).await?;
-         tx.document.reserve_factory_refresh(&self.id, &updated)?;
-         let result = match tx
-```
-
----
-
-### Incident Patch 13: `0d0ead13` (2026-10-11)
-**Commit Message**: fix(cli): read Claude quota while refresh is uncertain
-
-**File**: `apps/cli/src/accounts/service.rs` (modified, +24/-4)
-```diff
-@@ -796,6 +796,29 @@ impl ManagedProvider {
-             return Err(AccountError::SourceDisabled);
-         }
-         let credential = account.credential;
-+        if let Credential::ClaudeOAuth {
-+            refresh_pending: true,
-+            expires_at,
-+            ..
-+        } = &credential
-+        {
-+            if *expires_at <= context.clock.now().unix_timestamp() {
-+                return Err(ProviderError::Authentication.into());
-+            }
-+            // An uncertain refresh forbids replay, but its access token can still read quota.
-+            let mut quota_credential = credential.clone();
-+            if let Credential::ClaudeOAuth {
-+                refresh_pending, ..
-+            } = &mut quota_credential
-+            {
-+                *refresh_pending = false;
-+            }
-+            let usage = self
-+                .operations
-+                .quota(context, self.provider, &quota_credential)
-+                .await?;
-+            return self.verify_current(&credential, usage).await;
-+        }
-         if matches!(
-             credential,
-             Credential::GrokOAuth {
-@@ -804,9 +827,6 @@ impl ManagedProvider {
-             } | Credential::FactoryOAuth {
-                 refresh_pending: true,
-                 ..
--            } | Credential::ClaudeOAuth {
--                refresh_pending: true,
--                ..
-             } | Credential::KiroOAuth {
-                 refresh_pending: true,
-                 ..
-@@ -4550,7 +4570,7 @@ mod tests {
-             if failure {
-                 assert!(matches!(
-                     restarted.read(&http::fixture::context()).await,
--                    Err(AccountError::CommitUncertain)
-+                    Err(AccountError::Provider(ProviderError::Authentication))
-                 ));
-                 assert!(
-                     restarted
-```
-
----
-
-### Incident Patch 14: `dbbf0097` (2026-10-12)
-**Commit Message**: fix(quota): keep burn chart labels readable near the reset
-
-Now joins the reset label instead of disappearing when the two would collide, and a weekly window's start shows its date because it shares the reset's weekday.
-
-**File**: `Packages/QuotioCore/Sources/QuotioPresentation/Quota/QuotaPaceViews.swift` (modified, +13/-6)
-```diff
-@@ -500,20 +500,27 @@ private struct QuotaBurnChart: View {
-     }
- 
-     /// Start and reset labels pin to the edges; "Now" and the projected empty
--    /// day sit under their points and drop out when they would collide.
-+    /// day sit under their points and drop out when they would collide. Close
-+    /// to the reset, "Now" joins the reset label instead.
-     private func axisLabels(now: Date) -> some View {
-         GeometryReader { proxy in
-             let width = proxy.size.width
-             let nowX = xPosition(now, width: width)
-             let emptyX = pace.projectedEmpty.map { xPosition($0, width: width) }
--            let reset = Text(String(format: "quota.chart.reset".localized(), edgeText(pace.resetsAt)))
-+            let resetText = edgeText(pace.resetsAt)
-+            let startText = edgeText(pace.windowStart)
-             ZStack(alignment: .topLeading) {
--                Text(edgeText(pace.windowStart))
-+                // A weekly window opens and resets on the same weekday, so the start shows its date.
-+                Text(startText == resetText ? QuotaTimeText.day(pace.windowStart) : startText)
-                     .foregroundStyle(.secondary)
-                     .frame(maxWidth: .infinity, alignment: .leading)
--                reset
--                    .foregroundStyle(.blue)
--                    .frame(maxWidth: .infinity, alignment: .trailing)
-+                HStack(spacing: 6) {
-+                    if nowX >= width - 75 {
-+                        Text("quota.chart.now".localized()).foregroundStyle(.primary)
-+                    }
-+                    Text(String(format: "quota.chart.reset".localized(), resetText)).foregroundStyle(.blue)
-+                }
-+                .frame(maxWidth: .infinity, alignment: .trailing)
-                 if nowX > 40, nowX < width - 75, !isBehind || emptyX.map({ abs($0 - nowX) > 40 }) ?? true {
-                     Text("quota.chart.now".localized())
-                         .foregroundStyle(.primary)
-```
-
----
-
-### Incident Patch 15: `4ed37573` (2026-10-11)
-**Commit Message**: build: require Local.xcconfig for scripts/dev macos
-
-Without a development team the app is signed ad hoc and asks for keychain access on every launch.
-
-**File**: `scripts/dev` (modified, +5/-0)
-```diff
-@@ -81,6 +81,11 @@ case "${1:-help}" in
-         ;;
-     macos)
-         shift
-+        # Without a team the app is signed ad hoc and asks for keychain access on every launch.
-+        [[ -f "$ROOT/apps/macos/Config/Local.xcconfig" ]] || {
-+            echo "error: copy apps/macos/Config/Local.xcconfig.example to Local.xcconfig and set DEVELOPMENT_TEAM" >&2
-+            exit 2
-+        }
-         exec "$ROOT/apps/macos/scripts/build_and_run.sh" "$@"
-         ;;
-     ios-sim)
+  "once_cell",
+  "ring",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #565** (2026-10-16): fix(cli): update rustls to 0.23.46 (@nguyenphutrong)
+- **PR #564** (2026-10-17): feat(macos): share the standalone CLI vault and config (@nguyenphutrong)
+- **PR #563** (2026-10-17): refactor(macos): remove retired agent setup and clarify legacy contributions (@nguyenphutrong)
+- **PR #562** (closed): feat: add MiniMax fallback models (@octo-patch)
+- **PR #561** (closed): feat(desktop): add the Tauri app for Windows and Linux (@nguyenphutrong)
 - **PR #560** (2026-10-13): feat: add local accounts with a custom config directory (@nguyenphutrong)
-- **PR #558** (closed): fix(quota): stop Antigravity all-models sheet crashing on layout (@mvanhorn)
-- **PR #557** (2026-10-12): fix(cli): release Claude refresh fence when the token was never used (@nguyenphutrong)
-- **PR #556** (2026-10-12): fix(cli): read Claude quota while refresh is uncertain (@1of1Adam)
-- **PR #554** (2026-10-08): fix(cli): show cached quota sooner and honor the refresh cadence (@nguyenphutrong)
-- **PR #553** (2026-10-08): fix(accounts): tell a newer or corrupt account store apart from denied Keychain access (@nguyenphutrong)
-- **PR #552** (2026-10-08): fix(macos): show status menu in the system appearance (@nguyenphutrong)
-- **PR #551** (2026-10-07): fix(claude): restore account metadata and quota display (@nguyenphutrong)
 
 ---
 
@@ -2281,28 +1292,52 @@ Without a development team the app is signed ad hoc and asks for keychain access
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. macos): NFC-normalize only Claude config directories
+## X. cli): defer the adoption marker until the former config is seeded
 
 **RULE**:
-When implementing operations in `Packages/QuotioCore/Sources/QuotioInfrastructure/QuotioCLI/QuotioCLIBackend.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nguyenphutrong/quotio. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/cli/src/accounts/adopt.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nguyenphutrong/quotio. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `17258af6`: macos): NFC-normalize only Claude config directories. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3372e125`: cli): defer the adoption marker until the former config is seeded. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Packages/QuotioCore/Sources/QuotioInfrastructure/QuotioCLI/QuotioCLIBackend.swift`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/cli/src/accounts/adopt.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        let directory = kind == "claude_native" ? configDirectory.precomposedStringWithCanonicalMapping : configDirectory
+/// Returns whether config adoption is complete; a transient failure retries next launch.
+pub fn config(source: &Source, store: &crate::settings::SettingsStore) -> bool {
+        return true;
+        return true;
+        Ok(keys) => {
+            tracing::info!(keys, "vault_adoption_config_seeded");
+            true
+        }
+        Err(crate::settings::SettingsError::Invalid) => {
+            tracing::warn!("vault_adoption_config_invalid");
+            true
+        }
+        Err(error) => {
+            tracing::warn!(?error, "vault_adoption_config_skipped");
+            false
+        }
+    config_adopted: bool,
+    if !config_adopted {
+        tracing::info!("vault_adoption_marker_deferred");
+        return absorbed.changed || rows > 0;
+    }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        let directory = configDirectory.precomposedStringWithCanonicalMapping
+pub fn config(source: &Source, store: &crate::settings::SettingsStore) {
+        return;
+        return;
+        Ok(keys) => tracing::info!(keys, "vault_adoption_config_seeded"),
+        Err(error) => tracing::warn!(?error, "vault_adoption_config_skipped"),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `17258af6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3372e125` are properly handled with clean fallback behavior.

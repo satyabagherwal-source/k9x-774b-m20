@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T11:36:19.624Z",
-  "total_verified_learnings": 806,
+  "last_updated": "2026-10-19T11:42:12.145Z",
+  "total_verified_learnings": 807,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -14073,7 +14073,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/bigscience/bloom",
       "source_version": "hf-bigscience-bloom",
-      "content_hash": "ec505c79ee4761b967e295bd432e5a4fa7ea8cf65c889cd69a0e43741a5d8ad2",
+      "content_hash": "cc38b024862414596b4afa1e614d262814dd1fe75ba32959b449f284a4e2c1bd",
       "dossier_path": "07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md",
       "promoted_rules": [
@@ -14110,7 +14110,7 @@
         "learn-huggingface-hf-bigscience-bloom-mv3wl1kr",
         "learn-huggingface-hf-bigscience-bloom-mv4ba34m"
       ],
-      "verified_at": "2026-10-18T02:51:39.825Z",
+      "verified_at": "2026-10-19T11:42:06.414Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37953,22 +37953,35 @@
     "learn-github-sindresorhus-gifski": {
       "learning_id": "learn-github-sindresorhus-gifski",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "sindresorhus-gifski",
+      "source": "sindresorhus/Gifski",
+      "repository": "sindresorhus/Gifski",
       "slug": "sindresorhus-gifski",
       "platform": "github",
       "source_url": "https://github.com/sindresorhus/Gifski",
-      "source_version": "HEAD",
-      "content_hash": "2c7a33da649311f7de9aab32ef6df2811afabe055501d0192ce77cc28fd2320c",
+      "source_version": "e184b284",
+      "content_hash": "30240e46243227bd9d9447a748eb128f942aa0d179637ebaae0c1324385834e1",
       "dossier_path": "07_PROJECT_LEARNING/sindresorhus-gifski-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sindresorhus-gifski-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2551,
+          "title": "blank preview for screen recordings",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.559Z"
+      "verified_at": "2026-10-19T11:42:12.140Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-sindresorhus-keyboardshortcuts": {
       "learning_id": "learn-github-sindresorhus-keyboardshortcuts",
@@ -51038,12 +51051,13 @@
     "learn-github-nguyenphutrong-quotio": {
       "learning_id": "learn-github-nguyenphutrong-quotio",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "nguyenphutrong/quotio",
       "repository": "nguyenphutrong/quotio",
       "slug": "nguyenphutrong-quotio",
       "platform": "github",
       "source_url": "https://github.com/nguyenphutrong/quotio",
-      "source_version": "dfa5beeb",
-      "content_hash": "5a419bdfb765dfc7bf710d3e4da26697f9a26c64fb18b9a155e41cb71b514b22",
+      "source_version": "04e93bd5",
+      "content_hash": "fbf9982e8d2361ddf8688405c208d2b5c288aa8908cd47bcf0f73b9c1d23ad6d",
       "dossier_path": "07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md",
       "promoted_rules": [
@@ -51051,20 +51065,26 @@
           "number": 925,
           "title": "macos): NFC-normalize only Claude config directories",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2550,
+          "title": "cli): defer the adoption marker until the former config is seeded",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T11:42:07.082Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
         "content_hash_verified": true,
         "rules_verified": true,
         "index_read_back_verified": true
-      },
-      "verified_at": "2026-10-14T16:21:12.868Z"
+      }
     },
     "learn-github-pathwaycom-serviette": {
       "learning_id": "learn-github-pathwaycom-serviette",
@@ -86491,6 +86511,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T11:36:19.612Z"
+    },
+    "rule-2550": {
+      "learning_id": "rule-2550",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2550,
+      "title": "cli): defer the adoption marker until the former config is seeded",
+      "source_url": "https://github.com/nguyenphutrong/quotio",
+      "source_version": "04e93bd5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T11:42:07.082Z"
+    },
+    "rule-2551": {
+      "learning_id": "rule-2551",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2551,
+      "title": "blank preview for screen recordings",
+      "source_url": "https://github.com/sindresorhus/Gifski",
+      "source_version": "e184b284",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T11:42:12.140Z"
     }
   },
   "aliases": {

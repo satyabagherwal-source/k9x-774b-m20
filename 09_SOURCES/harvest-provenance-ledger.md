@@ -3207,3 +3207,6 @@ Every entry in this ledger must capture:
 | `learn-github-microsoft-fluentui` | `https://github.com/microsoft/fluentui` | `12b576f6` | Multi-dimensional audit evidence | 2026-10-19T11:36:17.193Z |
 | `learn-github-lapce-lapce` | `https://github.com/lapce/lapce` | `f66ffaa9` | Multi-dimensional audit evidence | 2026-10-19T11:36:17.935Z |
 | `learn-huggingface-stabilityai-stable-diffusion-3-medium` | `https://huggingface.co/stabilityai/stable-diffusion-3-medium` | `hf-stabili` | Multi-dimensional audit evidence | 2026-10-19T11:36:19.670Z |
+| `learn-huggingface-bigscience-bloom` | `https://huggingface.co/bigscience/bloom` | `hf-bigscie` | Multi-dimensional audit evidence | 2026-10-19T11:42:06.443Z |
+| `learn-github-nguyenphutrong-quotio` | `https://github.com/nguyenphutrong/quotio` | `04e93bd5` | Multi-dimensional audit evidence | 2026-10-19T11:42:07.112Z |
+| `learn-github-sindresorhus-gifski` | `https://github.com/sindresorhus/Gifski` | `e184b284` | Multi-dimensional audit evidence | 2026-10-19T11:42:12.170Z |
