@@ -3393,10 +3393,10 @@
     "repository": "skyhook-io/radar",
     "platform": "github",
     "sourceUrl": "https://github.com/skyhook-io/radar",
-    "sourceVersion": "dd4598bc",
+    "sourceVersion": "62a81997",
     "license": "Apache-2.0",
-    "contentHash": "9aaaf39330fd134039331c9d42933f6575af851e83842d85b02d9990cb9ca532",
-    "lastHarvestedAt": "2026-10-19T11:35:15.629Z",
+    "contentHash": "99b3534a14783bb72c3b748517b2378e4754332bb65e6c77a4bb4cdda1c57507",
+    "lastHarvestedAt": "2026-10-19T23:09:31.139Z",
     "learningId": "learn-github-skyhook-io-radar"
   },
   "mitmproxy-mitmproxy": {
@@ -7303,10 +7303,10 @@
     "repository": "zenbu-labs/terminal-browser",
     "platform": "github",
     "sourceUrl": "https://github.com/zenbu-labs/terminal-browser",
-    "sourceVersion": "3a405655",
+    "sourceVersion": "c35a6aa6",
     "license": "MIT",
-    "contentHash": "9ef317778cc055410320b1c8a57071aeec2d334bf0279dd67eeb2d0e9995413c",
-    "lastHarvestedAt": "2026-10-19T08:32:02.414Z",
+    "contentHash": "c6765665de37789d9a6f72c53b77c0995c0cad98f6549cb5d12da1b242605bf7",
+    "lastHarvestedAt": "2026-10-19T23:09:23.140Z",
     "learningId": "learn-github-zenbu-labs-terminal-browser"
   },
   "kosi-libs-kodein": {
@@ -9408,5 +9408,25 @@
     "contentHash": "ee7372977c53eceafce2285adff63e27e8e21efbd898f78e7f8517d348a24678",
     "lastHarvestedAt": "2026-10-19T23:02:55.107Z",
     "learningId": "learn-github-sindresorhus-keyboardshortcuts"
+  },
+  "cheeriojs-dom-serializer": {
+    "repository": "cheeriojs/dom-serializer",
+    "platform": "github",
+    "sourceUrl": "https://github.com/cheeriojs/dom-serializer",
+    "sourceVersion": "afefe5c6",
+    "license": "MIT",
+    "contentHash": "9f38a0287349273eac941a5fefb26eb3f390c38f7da177c7bd2c36a7ba7987c5",
+    "lastHarvestedAt": "2026-10-19T23:09:25.203Z",
+    "learningId": "learn-github-cheeriojs-dom-serializer"
+  },
+  "paololeonardi-waterfallgrid": {
+    "repository": "paololeonardi/WaterfallGrid",
+    "platform": "github",
+    "sourceUrl": "https://github.com/paololeonardi/WaterfallGrid",
+    "sourceVersion": "c7c08652",
+    "license": "MIT",
+    "contentHash": "6ddbcc919fc21e580b87a1b70f26c78da35f46d9e61cb7750d5d6e9e6e3a24e6",
+    "lastHarvestedAt": "2026-10-19T23:09:28.540Z",
+    "learningId": "learn-github-paololeonardi-waterfallgrid"
   }
 }

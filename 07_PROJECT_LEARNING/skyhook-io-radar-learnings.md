@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source**: github ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
-> **Source Version**: `dd4598bc`  
+> **Source Version**: `62a81997`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T11:35:15.369Z  
+> **Timestamp**: 2026-10-19T23:09:30.902Z  
 > **Learning ID**: `learn-github-skyhook-io-radar`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T11:35:15.361Z  
+> **Harvest Timestamp**: 2026-10-19T23:09:30.221Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The missing open-source Kubernetes UI with a built-in MCP server for AI agents. See what's broken, why, and what changed. Issues, Topology, event timeline, Helm, GitOps, live service traffic, and cluster audits - all in one Go binary.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 3859 stars
+- **Stars / Engagement**: 3866 stars
 
 ---
 
@@ -1742,7 +1742,7 @@ func (s *Server) aiRunManager() *ai.RunManager {
 // can't supply, and investigations are the embedding host's job (e.g. Radar
 // Hub). An operator-managed shared installation is never a user's own machine.
 func (s *Server) aiDeploymentSupported() bool {
-	return s.configManagement() != "operator" && !s.authConfig.Enabled() && s.mcpHandler != nil &&
+	return s.configManagement() != "operator" && !s.authConfig.Enabled() &&
 		s.mcpInvestigationHandler != nil && s.aiInvestigationRefs != nil
 }
 
@@ -2203,512 +2203,221 @@ export function AWSMachineRenderer({ data }: Props) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dd4598bc` (2026-10-19)
-**Commit Message**: Rename the issue category network_policy_block to network_policy_denied (#2212)
+### Incident Patch 1: `93abe42d` (2026-10-16)
+**Commit Message**: fix(helm): avoid unrelated repo cache failures during chart load
 
-## Rename the issue category `network_policy_block` to
-`network_policy_denied`
-
-### Why
-`network_policy_block` is byte-for-byte the id of a SREGym benchmark
-problem. SREGym checks a run's exported artifacts with a case-sensitive
-substring search for the problem id, and it refuses to export a run that
-contains it. When Radar reports a NetworkPolicy deny-all issue during
-that problem, the `issues` output includes the category, so the run
-produces no transcript or trajectory and can't be submitted.
-
-### What changed
-- `issuesapi.CategoryNetworkPolicyBlock` (`"network_policy_block"`) is
-now `issuesapi.CategoryNetworkPolicyDenied` (`"network_policy_denied"`).
-The name follows the resource-plus-outcome pattern of `rbac_forbidden`
-and keeps the same scope.
-- UI label: "Network policy block" is now "Traffic denied by
-NetworkPolicy". This matches the sibling labels, which name a state
-("Evictions blocked", "Ingress backend missing").
-- Tests are updated to match. The catalog description, group and
-classifier behaviour are unchanged.
-
-### Compatibility
-- No released Radar has emitted this category. Through v1.17
-
-**File**: `internal/issues/category.go` (modified, +1/-1)
+**File**: `internal/helm/client.go` (modified, +7/-1)
 ```diff
-@@ -205,7 +205,7 @@ func classifyProblem(in classifyInput) issuesapi.Category {
- 	case "DuplicateEnvVar", "StaleSecretEnv":
- 		return issuesapi.CategoryInvalidConfiguration
- 	case k8s.NetworkPolicyDenyAllIngressReason:
--		return issuesapi.CategoryNetworkPolicyBlock
-+		return issuesapi.CategoryNetworkPolicyDenied
- 	case "Missing referenced Service":
- 		return issuesapi.CategoryMissingConfigRef
- 	case "Service port mismatch":
-```
-
-**File**: `internal/issues/category_test.go` (modified, +1/-1)
-```diff
-@@ -31,7 +31,7 @@ func TestClassify(t *testing.T) {
- 		{"coredns service rewrite", classifyInput{Source: SourceProblem, Kind: "ConfigMap", Reason: "CoreDNS service DNS rewrite"}, issuesapi.CategoryDNSFailure},
- 		{"env missing service", classifyInput{Source: SourceProblem, Kind: "Deployment", Reason: "Missing referenced Service"}, issuesapi.CategoryMissingConfigRef},
- 		{"env service port mismatch", classifyInput{Source: SourceProblem, Kind: "Deployment", Reason: "Service port mismatch"}, issuesapi.CategoryMissingConfigRef},
--		{"networkpolicy denies all ingress", classifyInput{Source: SourceProblem, Kind: "NetworkPolicy", APIGroup: "networking.k8s.io", Reason: k8s.NetworkPolicyDenyAllIngressReason}, issuesapi.CategoryNetworkPolicyBlock},
-+		{"networkpolicy denies all ingress", classifyInput{Source: SourceProblem, Kind: "NetworkPolicy", APIGroup: "networking.k8s.io", Reason: k8s.NetworkPolicyDenyAllIngressReason}, issuesapi.CategoryNetworkPolicyDenied},
- 		{"deployment duplicate env", classifyInput{Source: SourceProblem, Kind: "Deployment", Reason: "DuplicateEnvVar"}, issuesapi.CategoryInvalidConfiguration},
- 		{"job duplicate env is not job failure", classifyInput{Source: SourceProblem, Kind: "Job", Reason: "DuplicateEnvVar"}, issuesapi.CategoryInvalidConfiguration},
- 		{"cronjob duplicate env", classifyInput{Source: SourceProblem, Kind: "CronJob", Reason: "DuplicateEnvVar"}, issuesapi.CategoryInvalidConfiguration},
-```
-
-**File**: `internal/issues/network_policy_context_test.go` (modified, +1/-1)
-```diff
-@@ -31,7 +31,7 @@ func TestNetworkPolicyIssueRelatesToIsolatedResources(t *testing.T) {
- 	readAll := RelatedIssueOptions{CanReadRelated: func(Ref) bool { return true }}
- 	for _, ref := range append([]Ref{{Group: "networking.k8s.io", Kind: "NetworkPolicy", Namespace: "shop", Name: "deny-all"}}, netpolAffected...) {
- 		got := RelatedIssues(p, readAll, ref.Group, ref.Kind, ref.Namespace, ref.Name)
--		if len(got) != 1 || got[0].Kind != "NetworkPolicy" || got[0].Category != issuesapi.CategoryNetworkPolicyBlock {
-+		if len(got) != 1 || got[0].Kind != "NetworkPolicy" || got[0].Category != issuesapi.CategoryNetworkPolicyDenied {
- 			t.Errorf("RelatedIssues(%s %s) = %+v, want the NetworkPolicy issue", ref.Kind, ref.Name, got)
- 		}
+@@ -3053,7 +3053,13 @@ func (c *Client) loadTargetChart(actionConfig *action.Configuration, rel *releas
+ 		locate.SetRegistryClient(rc)
+ 	}
+ 
+-	cp, err := locate.ChartPathOptions.LocateChart(chartPath, c.settings)
++	locatePath := chartPath
++	if resolvedRepo != "oci" {
++		// A repo-qualified reference keeps Helm on the repository selected above.
++		// Passing the absolute URL makes Helm scan every configured cache first.
++		locatePath = resolvedRepo + "/" + chartName
++	}
++	cp, err := locate.ChartPathOptions.LocateChart(locatePath, c.settings)
+ 	if err != nil {
+ 		return nil, fmt.Errorf("failed to locate chart: %w", err)
  	}
 ```
 
-**File**: `packages/k8s-ui/src/components/issues/issues.test.ts` (modified, +1/-1)
+**File**: `internal/helm/client_test.go` (modified, +90/-0)
 ```diff
-@@ -540,7 +540,7 @@ describe('IssueRow diagnosis raw messages', () => {
+@@ -9,6 +9,8 @@ import (
+ 	"errors"
+ 	"fmt"
+ 	"io"
++	"net/http"
++	"net/http/httptest"
+ 	"os"
+ 	"path/filepath"
+ 	"sort"
+@@ -1857,6 +1859,94 @@ func TestResolveUpgradeChartPath_UsesSourceAffinity(t *testing.T) {
+ 	}
+ }
  
-   it("doesn't present Radar's own summary as a raw error", () => {
-     const base = {
--      category: 'network_policy_block',
-+      category: 'network_policy_denied',
-       category_group: 'networking',
-       severity: 'warning' as const,
-       reason: 'NetworkPolicy denies all ingress',
-```
-
-**File**: `packages/k8s-ui/src/components/issues/severity.ts` (modified, +1/-1)
-```diff
-@@ -77,7 +77,7 @@ const CATEGORY_LABEL: Record<string, string> = {
-   gateway_not_ready: 'Gateway not ready',
-   gateway_route_invalid: 'Gateway route invalid',
-   dns_failure: 'DNS failure',
--  network_policy_block: 'Network policy block',
-+  network_policy_denied: 'Traffic denied by NetworkPolicy',
-   pvc_pending: 'PVC pending',
-   pvc_lost: 'PVC lost',
-   pv_failed: 'PV failed',
-```
-
-**File**: `pkg/issuesapi/catalog.go` (modified, +2/-2)
-```diff
-@@ -62,7 +62,7 @@ var catalogOrder = []Category{
- 	CategoryMissingConfigRef, CategoryInvalidConfiguration, CategoryPDBBlocksEvictions, CategorySecretSyncFailed,
- 	// Networking
- 	CategoryServiceNoEndpoints, CategoryServiceMixedBackends, CategoryIngressBackendMissing, CategoryIngressClassMissing, CategoryLoadBalancerPending,
--	CategoryGatewayNotReady, CategoryGatewayRouteInvalid, CategoryDNSFailure, CategoryNetworkPolicyBlock,
-+	CategoryGatewayNotReady, CategoryGatewayRouteInvalid, CategoryDNSFailure, CategoryNetworkPolicyDenied,
- 	// Storage
- 	CategoryPVCPending, CategoryPVCLost, CategoryPVFailed, CategoryPVCResizeFailed,
- 	CategoryVolumeMountFailed, CategoryVolumeAccessModeConflict,
-@@ -119,7 +119,7 @@ var categoryDescription = map[Category]string{
- 	CategoryLoadBalancerPending:   "A LoadBalancer Service is stuck Pending — the cloud controller hasn't provisioned an external IP.",
- 	CategoryGatewayNotReady:       "A Gateway (Gateway API) isn't accepted or programmed — its listeners aren't serving.",
- 	CategoryGatewayRouteInvalid:   "An HTTPRoute (or other route) was rejected or not accepted by its parent Gateway.",
--	CategoryNetworkPolicyBlock:    "A NetworkPolicy leaves a Service's pods with no allowed inbound traffic, so new connections to it would be dropped where the network plugin enforces the policy. Existing connections can keep working, so this often shows no symptom at first.",
-+	CategoryNetworkPolicyDenied:   "A NetworkPolicy leaves a Service's pods with no allowed inbound traffic, so new connections to it would be dropped where the network plugin enforces the policy. Existing connections can keep working, so this often shows no symptom at first.",
- 	CategoryDNSFailure:            "CoreDNS's Corefile has a rule (an NXDOMAIN template or a rewrite) that can override Kubernetes service DNS — a misconfiguration that risks breaking in-cluster name resolution.",
- 	// Storage
- 	CategoryPVCPending:               "A PersistentVolumeClaim is stuck Pending — no matching volume and provisioning hasn't completed.",
-```
-
-**File**: `pkg/issuesapi/types.go` (modified, +2/-2)
-```diff
-@@ -65,7 +65,7 @@ const (
- 	CategoryGatewayNotReady          Category = "gateway_not_ready"
- 	CategoryGatewayRouteInvalid      Category = "gateway_route_invalid"
- 	CategoryDNSFailure               Category = "dns_failure"
--	CategoryNetworkPolicyBlock       Category = "network_policy_block"
-+	CategoryNetworkPolicyDenied      Category = "network_policy_denied"
- 	CategoryPVCPending               Category = "pvc_pending"
- 	CategoryPVCLost                  Category = "pvc_lost"
- 	CategoryPVFailed                 Category = "pv_failed"
-@@ -145,7 +145,7 @@ var categoryGroup = map[Category]CategoryGroup{
- 	CategoryGatewayNotReady:          GroupNetworking,
- 	CategoryGatewayRouteInvalid:      GroupNetworking,
- 	CategoryDNSFailure:               GroupNetworking,
--	CategoryNetworkPolicyBlock:       GroupNetworking,
-+	CategoryNetworkPolicyDenied:      GroupNetworking,
- 	CategoryPVCPending:               GroupStorage,
- 	CategoryPVCLost:                  GroupStorage,
- 	CategoryPVFailed:                 GroupStorage,
++func TestLoadTargetChart_IgnoresMissingUnrelatedRepositoryIndex(t *testing.T) {
++	targetChart := &chart.Chart{Metadata: &chart.Metadata{
++		APIVersion: "v2",
++		Name:       "kube-prometheus-stack",
++		Version:    "92.9.0",
++	}}
++	archivePath, err := chartutil.Save(targetChart, t.TempDir())
++	if err != nil {
++		t.Fatal(err)
++	}
++	archive, err := os.ReadFile(archivePath)
++	if err != nil {
++		t.Fatal(err)
++	}
++
++	var repository *httptest.Server
++	repository = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		switch r.URL.Path {
++		case "/index.yaml":
++			_, _ = fmt.Fprintf(w, `apiVersion: v1
++entries:
++  kube-prometheus-stack:
++  - apiVersion: v2
++    name: kube-prometheus-stack
++    version: 92.9.0
++    urls: [%s/kube-prometheus-stack-92.9.0.tgz]
++`, repository.URL)
++		case "/kube-prometheus-stack-92.9.0.tgz":
++			_, _ = w.Write(archive)
++		default:
++			http.NotFound(w, r)
++		}
++	}))
++	t.Cleanup(repository.Close)
++
++	dir := t.TempDir()
++	cacheDir := filepath.Join(dir, "cache")
++	if err := os.Mkdir(cacheDir, 0o755); err != nil {
++		t.Fatal(err)
++	}
++	repoFile := filepath.Join(dir, "repositories.yaml")
++	if err := os.WriteFile(repoFile, []byte(fmt.Sprintf(`apiVersion: v1
++generated: "2026-10-16T00:00:00Z"
++repositories:
++- name: bitnami
++  url: https://charts.bitnami.com/bitnami
++- name: prometheus-community
++  url: %s
++`, repository.URL)), 0o600); err != nil {
++		t.Fatal(err)
++	}
++	if err := os.WriteFile(filepath.Join(cacheDir, "prometheus-community-index.yaml"), []byte(fmt.Sprintf(`apiVersion: v1
++entries:
++  kube-prometheus-stack:
++  - apiVersion: v2
++    name: kube-prometheus-stack
++    version: 92.9.0
++    urls: [%s/kube-prometheus-stack-92.9.0.tgz]
++generated: "2026-10-16T00:00:00Z"
++`, repository.URL)), 0o600); err != nil {
++		t.Fatal(err)
++	}
++
++	client := &Client{settings: &cli.EnvSettings{
++		RepositoryConfig: repoFile,
++		RepositoryCache:  cacheDir,
++	}}
++	rel := &release.Release{
++		Name: "monitoring",
++		Chart: &chart.Chart{Metadata: &chart.Metadata{
++			Name:    "kube-prometheus-stack",
++			Version: "77.12.0",
++			Home:    repository.URL,
++		}},
++	}
++
++	loaded, err := client.loadTargetChart(
++		&action.Configuration{}, rel, "92.9.0", "prometheus-community",
++		func(string, string, string) {},
++	)
++	if err != nil {
++		t.Fatal(err)
++	}
++	if loaded.Metadata.Name != "kube-prometheus-stack" || loaded.Metadata.Version != "92.9.0" {
++		t.Fatalf("loaded chart = %s %s", loaded.Metadata.Name, loaded.Metadata.Version)
++	}
++}
++
+ func TestResolveUpgradeChartPath_RepositoryHintDoesNotFallback(t *testing.T) {
+ 	client := testHelmClientWithRepoVersions(t, map[string][]string{
+ 		"bitnami": {"9.5.11"},
 ```
 
 ---
 
-### Incident Patch 2: `e90ef18d` (2026-10-19)
-**Commit Message**: Issues: link the rejecting quota or webhook in Radar's first minutes, and state same-second ties (#2211)
+### Incident Patch 2: `9085596a` (2026-10-15)
+**Commit Message**: GitOps tree test: look up the Flux source node by its full id
 
-## Description
-
-When an admission rejection (a ResourceQuota, LimitRange or webhook
-refusing a workload's pods) shows up in Radar's first five minutes, the
-`issues` row now carries the link to the rejecting object and the line
-that says which side changed last. Before, per-issue change correlation
-was skipped entirely until Radar had observed for five minutes. Because
-of that, a Radar started shortly before a rollout was rejected returned
-the bare rejection with no `correlated_changes`.
-
-- **Short observation.** Recorded changes are attached from the start.
-The five-minute floor now gates only claims that rest on the absence of
-a change: the `no_recent_changes` marker, and an order inferred from one
-side having no recorded change. Deferred informers (ResourceQuota and
-LimitRange among them) may still be filling during those minutes. When
-both sides have a recorded change, the order is stated at any age,
-because each record shows that side was already being watched.
-- **Startup listing.** A ResourceQuota or LimitRange listed when its
-informer syncs is recorded as an add at list 
-
-**File**: `internal/k8s/detect_scheduling.go` (modified, +4/-2)
+**File**: `packages/k8s-ui/src/components/gitops/tree/GitOpsTreeGraph.test.ts` (modified, +3/-2)
 ```diff
-@@ -1241,12 +1241,14 @@ func replicaSetDeploymentOwnerName(rs *appsv1.ReplicaSet) (string, bool) {
- // Returns ok=false for FailedCreate messages that aren't admission denials
- // (e.g. transient "object is being deleted") so we don't over-report.
- func classifyAdmissionFailure(msg string) (string, bool) {
-+	// client-go's event aggregation prefixes a burst of similar events.
-+	msg = strings.TrimPrefix(strings.TrimSpace(msg), "(combined from similar events): ")
- 	lower := strings.ToLower(msg)
--	if admissionWebhookCallFailurePattern.MatchString(strings.TrimSpace(msg)) {
-+	if admissionWebhookCallFailurePattern.MatchString(msg) {
- 		return "WebhookUnavailable", true
- 	}
- 	switch {
--	case admissionWebhookDenialPattern.MatchString(strings.TrimSpace(msg)):
-+	case admissionWebhookDenialPattern.MatchString(msg):
- 		return "WebhookDenied", true
- 	case strings.Contains(lower, "exceeded quota"), strings.Contains(lower, "failed quota"):
- 		return "QuotaExceeded", true
+@@ -134,14 +134,15 @@ describe('nodeCause', () => {
+       health: 'Progressing',
+       topologyStatus: 'degraded',
+     })
+-    const [cause] = buildCauseByRef([{
++    // Keyed like the tree's own nodes, so the issue's ref finds this node.
++    const cause = buildCauseByRef([{
+       severity: 'warning',
+       scope: 'tree',
+       reason: 'SourceNotReady',
+       message: 'GitRepository flux-system/podinfo can\'t fetch updates.',
+       cause: 'authentication required',
+       refs: [{ group: 'source.toolkit.fluxcd.io', kind: 'GitRepository', namespace: 'flux-system', name: 'podinfo' }],
+-    }]).values()
++    }]).get('source.toolkit.fluxcd.io/GitRepository/flux-system/podinfo')
+     expect(nodeCause(source, cause)).toBe('Possible cause: authentication required')
+   })
+ 
 ```
 
-**File**: `internal/k8s/detect_scheduling_test.go` (modified, +7/-0)
+---
+
+### Incident Patch 3: `d8b726d9` (2026-10-19)
+**Commit Message**: Fix repeated clipboard permission prompt in Monaco paste
+
+**File**: `cmd/desktop/menu.go` (modified, +11/-2)
 ```diff
-@@ -362,6 +362,11 @@ func TestClassifyAdmissionFailure(t *testing.T) {
- 		{`Error creating job: admission webhook "jobs.example.com" denied the request: nope`, "WebhookDenied", true},
- 		{`Error creating job: Internal error occurred: failed calling webhook "jobs.example.com": context deadline exceeded`, "WebhookUnavailable", true},
- 		{`some unrelated message`, "", false},
-+		// client-go's event aggregation prefixes a burst of similar events.
-+		{`(combined from similar events): Error creating: admission webhook "vpod.example.com" denied the request: nope`, "WebhookDenied", true},
-+		{`(combined from similar events): Error creating: admission webhook "policy.example.com" denied the request: exceeded quota`, "WebhookDenied", true},
-+		{`(combined from similar events): Error creating: Internal error occurred: failed calling webhook "validate.example.com": failed to call webhook: Post "https://policy-webhook.hooks.svc:443/validate?timeout=10s": no endpoints available for service "policy-webhook"`, "WebhookUnavailable", true},
-+		{`(combined from similar events): Error creating: pods "x" is forbidden: failed quota: memory-limit-quota: must specify memory for: app`, "QuotaExceeded", true},
- 	}
- 	for _, c := range cases {
- 		reason, ok := classifyAdmissionFailure(c.msg)
-@@ -531,6 +536,8 @@ func TestParseAdmissionBlocker(t *testing.T) {
- 		{"limit range", `pods "api-x" is forbidden: maximum memory usage per Container is 512Mi, but limit is 1Gi`, AdmissionBlocker{Kind: "LimitRange"}, true},
- 		{"webhook denial", `pod creation blocked: Error creating: admission webhook "deny-root.policy.example.com" denied the request: runAsNonRoot is required`, AdmissionBlocker{WebhookName: "deny-root.policy.example.com"}, true},
- 		{"webhook call failure", `Internal error occurred: failed calling webhook "inject.mesh.example.com": Post "https://mesh.mesh-system.svc:443/inject": no endpoints available for service "mesh"`, AdmissionBlocker{WebhookName: "inject.mesh.example.com"}, true},
-+		{"aggregated webhook denial", `pod creation blocked: (combined from similar events): Error creating: admission webhook "deny-root.policy.example.com" denied the request: runAsNonRoot is required`, AdmissionBlocker{WebhookName: "deny-root.policy.example.com"}, true},
-+		{"aggregated failed quota", `pod creation blocked: (combined from similar events): Error creating: pods "search-x" is forbidden: failed quota: memory-limit-quota: must specify memory for: hotel-reserv-search`, AdmissionBlocker{Kind: "ResourceQuota", Name: "memory-limit-quota"}, true},
- 		{"pod security names no object", `pods "x" is forbidden: violates PodSecurity "restricted:latest": allowPrivilegeEscalation != false`, AdmissionBlocker{}, false},
- 		{"not an admission failure", `object is being deleted: replicasets.apps "x" already exists`, AdmissionBlocker{}, false},
- 	}
+@@ -122,8 +122,9 @@ func createMenu(desktopApp *DesktopApp, version, goos string) *menu.Menu {
+ 	//
+ 	// Paste: Must use explicit WindowExecJS because WKWebView's native paste:
+ 	// doesn't work for complex editors like Monaco. On macOS read through Wails
+-	// to avoid WKWebView's clipboard confirmation, then dispatch a synthetic
+-	// ClipboardEvent. The accelerator is dropped on Windows — see pasteAccelerator.
++	// to avoid WKWebView's clipboard confirmation. Paste text directly into a
++	// focused Monaco editor; other inputs receive a synthetic ClipboardEvent.
++	// The accelerator is dropped on Windows - see pasteAccelerator.
+ 	//
+ 	// Undo/Redo/SelectAll: Use WindowExecJS (these work fine via execCommand).
+ 	editMenu := appMenu.AddSubmenu("Edit")
+@@ -148,6 +149,14 @@ func createMenu(desktopApp *DesktopApp, version, goos string) *menu.Menu {
+ 		runtime.WindowExecJS(desktopApp.ctx, clipboardSource+`
+ 			.then(function(text) {
+ 				if (!text) return;
++				// Monaco's DOM paste handler reads the system clipboard again for
++				// rich paste formats. Use its text paste command with the text we
++				// already have so WKWebView does not request clipboard permission.
++				var editor = window.__radarMonacoEditor;
++				if (editor && editor.hasTextFocus()) {
++					editor.trigger('keyboard', 'paste', {text: text});
++					return;
++				}
+ 				var el = document.activeElement || document.body;
+ 				try {
+ 					var dt = new DataTransfer();
 ```
 
-**File**: `internal/mcp/issue_admission_blocker.go` (modified, +65/-15)
+**File**: `web/src/utils/wails-clipboard.ts` (modified, +3/-1)
 ```diff
-@@ -33,6 +33,12 @@ const admissionOrderFetchLimit = 10
- // seconds, from the controller) and Radar's receipt time for the policy change.
- const admissionOnsetSlop = 30 * time.Second
- 
-+// admissionRecordLag is how far a policy add's recorded time may trail the
-+// object's creationTimestamp and still date the creation. An add recorded
-+// from an informer's (re)list can trail it by up to 30s (isSyncAdd); clock
-+// skew between Radar and the API server is the rest of the allowance.
-+const admissionRecordLag = 5 * time.Second
-+
- const (
- 	admissionBlockerRankReason    = "the object named by the admission rejection"
- 	admissionLimitRangeRankReason = "a LimitRange in the rejecting namespace (LimitRange rejections name none)"
-@@ -52,6 +58,41 @@ type admissionBlockerEvidence struct {
- 	complete bool
- }
- 
-+// policyCreatedAt returns a cached ResourceQuota or LimitRange's
-+// creationTimestamp; ok=false when it isn't cached or isn't one of those kinds.
-+var policyCreatedAt = func(kind, namespace, name string) (time.Time, bool) {
-+	cache := k8s.GetResourceCache()
-+	if cache == nil {
-+		return time.Time{}, false
-+	}
-+	switch kind {
-+	case "ResourceQuota":
-+		if l := cache.ResourceQuotas(); l != nil {
-+			if o, err := l.ResourceQuotas(namespace).Get(name); err == nil {
-+				return o.CreationTimestamp.Time, true
-+			}
-+		}
-+	case "LimitRange":
-+		if l := cache.LimitRanges(); l != nil {
-+			if o, err := l.LimitRanges(namespace).Get(name); err == nil {
-+				return o.CreationTimestamp.Time, true
-+			}
-+		}
-+	}
-+	return time.Time{}, false
-+}
-+
-+// creationTimeKnown reports whether a policy change's recorded time dates it:
-+// false for an add recorded well after the object was created, as one listed
-+// when its informer (re)synced is.
-+func creationTimeKnown(c issuesapi.RecentChange) bool {
-+	if c.ChangeType != "add" {
-+		return true
-+	}
-+	created, ok := policyCreatedAt(c.Kind, c.Namespace, c.Name)
-+	return !ok || changeTime(c).Sub(created) <= admissionRecordLag
-+}
-+
- func isAdmissionIssue(iss *issuesapi.Issue) bool {
- 	return iss.Category == issuesapi.CategoryQuotaExceeded || iss.Category == issuesapi.CategoryAdmissionWebhookBlocking
- }
-@@ -162,17 +203,18 @@ func admissionBlockerForIssue(ctx context.Context, iss *issuesapi.Issue, window
- // states which side changed last, and withdraws a "started at resource
- // creation" timing that the policy change contradicts. subject holds the
- // workload side's visible changes; subjectComplete says an empty subject list
--// is a true "no recorded change". It returns false, leaving the issue
--// untouched, when neither side has a visible change.
--func attachAdmissionBlocker(iss *issuesapi.Issue, ev *admissionBlockerEvidence, subject []issuesapi.RecentChange, subjectComplete bool, window time.Duration) bool {
-+// is a true "no recorded change". absenceKnown says Radar has observed long
-+// enough for a side with no recorded change to count as unchanged. It returns
-+// false, leaving the issue untouched, when neither side has a visible change.
-+func attachAdmissionBlocker(iss *issuesapi.Issue, ev *admissionBlockerEvidence, subject []issuesapi.RecentChange, subjectComplete, absenceKnown bool, window time.Duration) bool {
- 	refs := append([]issuesapi.RecentChange{}, ev.changes[:min(len(ev.changes), admissionBlockerMaxChanges)]...)
- 	refs = append(refs, subject[:min(len(subject), correlationChangeCap-len(refs))]...)
- 	if len(refs) == 0 {
- 		return false
- 	}
- 	iss.CorrelatedChanges = refs
- 
--	sentence, policyChangedLast := admissionChangeOrder(iss, ev, subject, subjectComplete, window)
-+	sentence, policyChangedLast := admissionChangeOrder(iss, ev, subject, subjectComplete, absenceKnown, window)
- 	if sentence == "" {
- 		return true
- 	}
-@@ -199,7 +241,10 @@ func attachAdmissionBlocker(iss *issuesapi.Issue, ev *admissionBlockerEvidence,
- // admissionChangeOrder states which side of an admission rejection changed
- // last, from recorded changes only. Empty when neither side has a recorded
- // change, or when the side without one may have changes Radar did not see.
--func admissionChangeOrder(iss *issuesapi.Issue, ev *admissionBlockerEvidence, subject []issuesapi.RecentChange, subjectComplete bool, windowDur time.Duration) (string, bool) {
-+// When both sides have one, each record shows that side was being watched by
-+// then, so the order holds however young the store is; a side with none
-+// counts as unchanged only when absenceKnown.
-+func admissionChangeOrder(iss *issuesapi.Issue, ev *admissionBlockerEvidence, subject []issuesapi.RecentChange, subjectComplete, absenceKnown bool, windowDur time.Duration) (string, bool) {
- 	workload := iss.Kind + " " + iss.Name
- 	// The workload object only, as in newestWorkloadChange.
- 	var newestSubject *issuesapi.RecentChange
-@@ -218,10 +263,11 @@ func admissionChangeOrder(iss *issuesapi.Issue, ev *admissionBlockerEvidence, su
- 		// there would reverse it.
- 		policy := ev.changes[0]
- 		if changeTime(policy).Equal(changeTime(*newestSubject)) {
--			return "
-```
-
-**File**: `internal/mcp/issue_admission_blocker_test.go` (modified, +153/-3)
-```diff
-@@ -55,6 +55,14 @@ func initAdmissionCache(t *testing.T) {
- 	t.Cleanup(k8s.ResetTestState)
- }
- 
-+// setPolicyCreatedAt stands in for the cached policy object's creationTimestamp.
-+func setPolicyCreatedAt(t *testing.T, at time.Time) {
-+	t.Helper()
-+	prev := policyCreatedAt
-+	policyCreatedAt = func(string, string, string) (time.Time, bool) { return at, true }
-+	t.Cleanup(func() { policyCreatedAt = prev })
-+}
-+
- // The bench case: the Deployment is created, a ResourceQuota lands after it,
- // and the recreated ReplicaSet's pods are rejected. The quota is linked first,
- // named as the last change, and the at-creation timing is withdrawn.
-@@ -287,8 +295,13 @@ func TestAdmissionBlocker_OnlyClaimsRecordedOrder(t *testing.T) {
- 		appendChange(t, store, timeline.TimelineEvent{Timestamp: at, Kind: "ResourceQuota", APIVersion: "v1", Namespace: "shop", Name: "compute", EventType: timeline.EventTypeAdd})
- 		resp := issues.ListResponse{Issues: []issuesapi.Issue{admissionIssue(issuesapi.CategoryQuotaExceeded, "Deployment", "web", quotaMsg, at)}}
- 		attachIssueChangeCorrelation(context.Background(), &resp)
--		if iss := resp.Issues[0]; len(iss.CorrelatedChanges) != 2 || strings.Contains(iss.TimingSummary, "changed last") || iss.IssueTiming == "" {
--			t.Fatalf("same-second changes ordered: %+v", iss)
-+		iss := resp.Issues[0]
-+		want := "ResourceQuota compute was created at " + utc(at) + " and Deployment web was created at " + utc(at) + ": Radar recorded both in the same second, so it can't tell which changed last."
-+		if len(iss.CorrelatedChanges) != 2 || !strings.HasSuffix(iss.TimingSummary, want) {
-+			t.Fatalf("same-second changes:\n got %q\nwant suffix %q", iss.TimingSummary, want)
-+		}
-+		if iss.IssueTiming != "started_at_resource_creation" {
-+			t.Fatalf("a tie withdrew at-creation timing: %q", iss.IssueTiming)
- 		}
- 	})
- 
-@@ -312,7 +325,7 @@ func TestAdmissionBlocker_OnlyClaimsRecordedOrder(t *testing.T) {
- 		cm := []issuesapi.RecentChange{{Kind: "ConfigMap", Namespace: "shop", Name: "web-config", ChangeType: "update", Timestamp: now.Add(-2 * time.Minute).Format(time.RFC3339)}}
- 		ev := admissionBlockerForIssue(context.Background(), &issuesapi.Issue{Category: issuesapi.CategoryQuotaExceeded, Kind: "Deployment", Namespace: "shop", Name: "web", Message: quotaMsg}, time.Hour)
- 		subject := append(cm, issuesapi.RecentChange{Kind: "Deployment", Namespace: "shop", Name: "web", ChangeType: "add", Timestamp: now.Add(-20 * time.Minute).Format(time.RFC3339)})
--		sentence, policyLast := admissionChangeOrder(&issuesapi.Issue{Kind: "Deployment", Name: "web"}, ev, subject, true, time.Hour)
-+		sentence, policyLast := admissionChangeOrder(&issuesapi.Issue{Kind: "Deployment", Name: "web"}, ev, subject, true, true, time.Hour)
- 		if !policyLast || !strings.HasSuffix(sentence, "the ResourceQuota changed last.") {
- 			t.Fatalf("a ConfigMap edit decided the order: %q", sentence)
- 		}
-@@ -353,3 +366,140 @@ func TestAdmissionBlocker_OnlyClaimsRecordedOrder(t *testing.T) {
- 		}
- 	})
- }
-+
-+// Radar restarted a few minutes before the rejection (the kind bench restarts
-+// it per trial): the store holds both sides' changes, so the quota is linked
-+// and the order stated, before the five minutes a "no recent changes" claim
-+// needs. The message is the client-go aggregated form seen on kind.
-+func TestAdmissionBlocker_YoungStore(t *testing.T) {
-+	kindMsg := `(combined from similar events): Error creating: pods "search-7d996cf85b-hpdb9" is forbidden: failed quota: memory-limit-quota: must specify memory for: hotel-reserv-search`
-+	now := time.Now().Truncate(time.Second)
-+
-+	t.Run("both sides recorded", func(t *testing.T) {
-+		initAdmissionCache(t)
-+		store := initCorrelationStore(t)
-+		timeline.SetObservationStartForTest(now.Add(-170 * time.Second))
-+		deployAt, quotaAt := now.Add(-23*time.Second), now.Add(-10*time.Second)
-+		appendChange(t, store, timeline.TimelineEvent{Timestamp: deployAt, Kind: "Deployment", APIVersion: "apps/v1", Namespace: "shop", Name: "search", EventType: timeline.EventTypeAdd})
-+		appendChange(t, store, timeline.TimelineEvent{Timestamp: quotaAt, Kind: "ResourceQuota", APIVersion: "v1", Namespace: "shop", Name: "memory-limit-quota", EventType: timeline.EventTypeAdd})
-+
-+		resp := issues.ListResponse{Issues: []issuesapi.Issue{admissionIssue(issuesapi.CategoryQuotaExceeded, "Deployment", "search", kindMsg, quotaAt.Add(3*time.Second))}}
-+		attachIssueChangeCorrelation(context.Background(), &resp)
-+		iss := resp.Issues[0]
-+		if len(iss.CorrelatedChanges) != 2 || iss.CorrelatedChanges[0].Kind != "ResourceQuota" {
-+			t.Fatalf("want quota + deployment refs, got %+v", iss.CorrelatedChanges)
-+		}
-+		want := "ResourceQuota memory-limit-quota was created at " + utc(quotaAt) + ", after Deployment search was created at " + utc(deployAt) + ": the ResourceQuota changed last."
-+		if iss.TimingSummary != want {
-+			t.Fatalf("timing_summary:\n got %q\nwant %q", iss.TimingSummary, want)
-+		}
-+		if iss.NoRecentChanges != nil {
-+			t.Fatalf
-```
-
-**File**: `internal/mcp/issue_correlation.go` (modified, +10/-11)
-```diff
-@@ -35,15 +35,16 @@ const (
- 	correlationFieldLimit = 5
- )
- 
--// correlationMinObservation is the least watch time that justifies a "no
--// recent changes" claim. Below it (fresh start, recent restart) the marker is
--// omitted entirely — a 90-second-old store asserting anything about the past
--// hour would be fiction.
-+// correlationMinObservation is the least watch time that justifies a claim
-+// resting on the absence of a change: the no_recent_changes marker, or an
-+// admission order inferred from one side having no recorded change. Below it
-+// (fresh start, recent restart) deferred informers may still be filling, so
-+// only recorded changes are reported.
- const correlationMinObservation = 5 * time.Minute
- 
- // correlationWindow returns the truthful claim window: the default lookback
- // clamped to how long this process's store has actually been observing.
--// Returns 0 when observation is too short to claim anything.
-+// Returns 0 when no store is observing.
- func correlationWindow() time.Duration {
- 	window := meaningfulchanges.DefaultSince
- 	start := timeline.ObservationStart()
-@@ -53,9 +54,6 @@ func correlationWindow() time.Duration {
- 	if observed := time.Since(start); observed < window {
- 		window = observed
- 	}
--	if window < correlationMinObservation {
--		return 0
--	}
- 	return window
- }
- 
-@@ -72,7 +70,7 @@ func correlationWindow() time.Duration {
- func attachIssueChangeCorrelation(ctx context.Context, resp *issues.ListResponse) {
- 	window := correlationWindow()
- 	if window == 0 {
--		return // not enough observation to claim anything, in either direction
-+		return // no store observing
- 	}
- 	checked := 0
- 	for _, severity := range []issuesapi.Severity{issuesapi.SeverityCritical, issuesapi.SeverityWarning} {
-@@ -142,16 +140,17 @@ func correlateIssue(ctx context.Context, iss *issuesapi.Issue, window time.Durat
- 	// all are unknown, not "no changes".
- 	subjectComplete := subjectTracked && !result.FetchSaturated && !rbacHidden && !sourcesWithheld &&
- 		correlationHistoryComplete(obj, iss.Namespace, result.History)
-+	absenceKnown := window >= correlationMinObservation
- 	if blocker := admissionBlockerForIssue(ctx, iss, window); blocker != nil &&
--		attachAdmissionBlocker(iss, blocker, changes, subjectComplete, window) {
-+		attachAdmissionBlocker(iss, blocker, changes, subjectComplete, absenceKnown, window) {
- 		iss.CorrelatedChangesIncomplete = result.FetchSaturated || blocker.saturated
- 		return
- 	}
- 	if !subjectTracked {
- 		return
- 	}
- 	if len(changes) == 0 {
--		if !subjectComplete {
-+		if !subjectComplete || !absenceKnown {
- 			return
- 		}
- 		iss.NoRecentChanges = &issuesapi.NoRecentChangesMarker{
-```
-
-**File**: `internal/mcp/issue_correlation_test.go` (modified, +20/-8)
-```diff
-@@ -42,17 +42,29 @@ func setConnectedForTest(t *testing.T) {
- 	t.Cleanup(func() { k8s.SetConnectionStatus(prev) })
- }
- 
--// A store that has only just started observing must emit NO markers — in
--// either direction — rather than claim an hour-long window it never watched.
--func TestAttachIssueChangeCorrelation_SkipsOnShortObservation(t *testing.T) {
--	initCorrelationStore(t)
-+// A store that has only just started observing must not claim "no recent
-+// changes", but the changes it did record are still evidence.
-+func TestAttachIssueChangeCorrelation_ShortObservation(t *testing.T) {
-+	store := initCorrelationStore(t)
- 	timeline.SetObservationStartForTest(time.Now().Add(-90 * time.Second))
-+	if err := store.Append(context.Background(), timeline.TimelineEvent{
-+		ID: "web-spec", Timestamp: time.Now().Add(-30 * time.Second),
-+		Source: timeline.SourceInformer, ClusterContext: k8s.ActiveClusterContext(),
-+		Kind: "Deployment", APIVersion: "apps/v1", Namespace: "shop", Name: "web",
-+		EventType: timeline.EventTypeUpdate,
-+		Diff:      &timeline.DiffInfo{Fields: []timeline.FieldChange{{Path: "spec.template.spec.containers[web].image", OldValue: "web:1", NewValue: "web:2"}}, Summary: "image web:1→web:2"},
-+	}); err != nil {
-+		t.Fatalf("append: %v", err)
-+	}
- 
--	resp := issues.ListResponse{Issues: []issuesapi.Issue{criticalIssue("Deployment", "web")}}
-+	resp := issues.ListResponse{Issues: []issuesapi.Issue{criticalIssue("Deployment", "web"), criticalIssue("Deployment", "api")}}
- 	attachIssueChangeCorrelation(context.Background(), &resp)
- 
--	if resp.Issues[0].NoRecentChanges != nil || len(resp.Issues[0].CorrelatedChanges) > 0 {
--		t.Fatalf("90s-old store must not claim anything: %+v", resp.Issues[0])
-+	if web := resp.Issues[0]; len(web.CorrelatedChanges) != 1 || web.NoRecentChanges != nil {
-+		t.Fatalf("recorded change must be attached: %+v", web)
-+	}
-+	if api := resp.Issues[1]; api.NoRecentChanges != nil || len(api.CorrelatedChanges) > 0 {
-+		t.Fatalf("90s-old store must not claim no recent changes: %+v", api)
- 	}
- }
- 
-@@ -156,7 +168,7 @@ func TestCorrelationWindow_ClampsToObservation(t *testing.T) {
- 	}{
- 		{"observed longer than default window", 2 * time.Hour, meaningfulchanges.DefaultSince},
- 		{"clamped to observation time", 30 * time.Minute, 30 * time.Minute},
--		{"below minimum observation", 4 * time.Minute, 0},
-+		{"below minimum observation", 4 * time.Minute, 4 * time.Minute},
- 		{"zero observation start", 0, 0},
- 	}
- 	for _, tt := range cases {
+@@ -11,7 +11,9 @@
+ //     does NOT dispatch a DOM copy/cut event from the native copy: selector.
+ //     The keydown event DOES reach JS, so we intercept it here.
+ //   Cmd+V: Handled by menu.go's explicit WindowExecJS callback, which reads
+-//     through Wails on macOS and dispatches a synthetic paste event.
++//     through Wails on macOS. Focused Monaco editors receive a text paste command
++//     to avoid their rich paste handler reading the clipboard again. Other
++//     inputs receive a synthetic paste event.
+ //   Right-click Copy/Cut (Monaco): Monaco calls document.execCommand('copy'/'cut'),
+ //     intercepted by the monkey-patch below.
+ //   Right-click Paste (Monaco): Not supported — Monaco calls navigator.clipboard
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2225** (2026-10-19): Add server-wide read-only MCP mode (@hisco)
+- **PR #2224** (closed): feat(mcp): add --mcp-read-only flag to restrict MCP server to read-only tools (@AbdullahNM)
+- **PR #2222** (2026-10-19): Explain incomplete issue checks and add retry (@hisco)
+- **PR #2215** (2026-10-19): fix(audit): detect tag on images from ported registries (@amdadulbari)
 - **PR #2212** (2026-10-19): Rename the issue category network_policy_block to network_policy_denied (@nadaverell)
 - **PR #2211** (2026-10-19): Issues: link the rejecting quota or webhook in Radar's first minutes, and state same-second ties (@nadaverell)
-- **PR #2205** (2026-10-18): Fix data race in the helm target-namespace test server (@nadaverell)
-- **PR #2203** (2026-10-18): Issues: link the quota, LimitRange or webhook that rejected a workload's pods, and say which side changed last (@nadaverell)
-- **PR #2202** (2026-10-18): Change feed: terminating Pods no longer read as spec changes (@nadaverell)
-- **PR #2201** (2026-10-18): Settle NetworkPolicy predictions from Service probes, never from a meshed probe Job (@nadaverell)
 
 ---
 
@@ -2728,28 +2437,34 @@ informer syncs is recorded as an add at list
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Rename the issue category network_policy_block to network_policy_denied (#2212)
+## X. helm): avoid unrelated repo cache failures during chart load
 
 **RULE**:
-When implementing operations in `internal/issues/category.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/helm/client.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dd4598bc`: Rename the issue category network_policy_block to network_policy_denied (#2212). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `93abe42d`: helm): avoid unrelated repo cache failures during chart load. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/issues/category.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/helm/client.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		return issuesapi.CategoryNetworkPolicyDenied
+	locatePath := chartPath
+	if resolvedRepo != "oci" {
+		// A repo-qualified reference keeps Helm on the repository selected above.
+		// Passing the absolute URL makes Helm scan every configured cache first.
+		locatePath = resolvedRepo + "/" + chartName
+	}
+	cp, err := locate.ChartPathOptions.LocateChart(locatePath, c.settings)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		return issuesapi.CategoryNetworkPolicyBlock
+	cp, err := locate.ChartPathOptions.LocateChart(chartPath, c.settings)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dd4598bc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `93abe42d` are properly handled with clean fallback behavior.

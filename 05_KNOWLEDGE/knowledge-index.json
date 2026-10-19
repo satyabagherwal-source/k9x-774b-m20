@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T23:03:34.964Z",
-  "total_verified_learnings": 956,
+  "last_updated": "2026-10-19T23:09:31.106Z",
+  "total_verified_learnings": 958,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -35010,22 +35010,29 @@
     "learn-github-paololeonardi-waterfallgrid": {
       "learning_id": "learn-github-paololeonardi-waterfallgrid",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "paololeonardi-waterfallgrid",
+      "source": "paololeonardi/WaterfallGrid",
+      "repository": "paololeonardi/WaterfallGrid",
       "slug": "paololeonardi-waterfallgrid",
       "platform": "github",
       "source_url": "https://github.com/paololeonardi/WaterfallGrid",
-      "source_version": "HEAD",
-      "content_hash": "0b5a02fac743813e9ad34dfb44940ecf5b78d00f3fc39bc19297f4a30daa0fc3",
+      "source_version": "c7c08652",
+      "content_hash": "6ddbcc919fc21e580b87a1b70f26c78da35f46d9e61cb7750d5d6e9e6e3a24e6",
       "dossier_path": "07_PROJECT_LEARNING/paololeonardi-waterfallgrid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/paololeonardi-waterfallgrid-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.975Z"
+      "verified_at": "2026-10-19T23:09:28.491Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-paradedb-paradedb": {
       "learning_id": "learn-github-paradedb-paradedb",
@@ -39753,8 +39760,8 @@
       "slug": "skyhook-io-radar",
       "platform": "github",
       "source_url": "https://github.com/skyhook-io/radar",
-      "source_version": "dd4598bc",
-      "content_hash": "9aaaf39330fd134039331c9d42933f6575af851e83842d85b02d9990cb9ca532",
+      "source_version": "62a81997",
+      "content_hash": "99b3534a14783bb72c3b748517b2378e4754332bb65e6c77a4bb4cdda1c57507",
       "dossier_path": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "promoted_rules": [
@@ -39767,6 +39774,11 @@
           "number": 2542,
           "title": "Rename the issue category network_policy_block to network_policy_denied (#2212)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2881,
+          "title": "helm): avoid unrelated repo cache failures during chart load",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39774,7 +39786,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T11:35:15.573Z",
+      "verified_at": "2026-10-19T23:09:31.096Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46088,8 +46100,8 @@
       "slug": "zenbu-labs-terminal-browser",
       "platform": "github",
       "source_url": "https://github.com/zenbu-labs/terminal-browser",
-      "source_version": "3a405655",
-      "content_hash": "9ef317778cc055410320b1c8a57071aeec2d334bf0279dd67eeb2d0e9995413c",
+      "source_version": "c35a6aa6",
+      "content_hash": "c6765665de37789d9a6f72c53b77c0995c0cad98f6549cb5d12da1b242605bf7",
       "dossier_path": "07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md",
       "promoted_rules": [
@@ -46107,6 +46119,11 @@
           "number": 2412,
           "title": "Agent Tool Non-Disruptive Standard Output Protocol",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": "EXISTING",
+          "title": "release check",
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -46114,7 +46131,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T08:32:02.359Z",
+      "verified_at": "2026-10-19T23:09:23.094Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -57495,20 +57512,35 @@
     "learn-github-cheeriojs-dom-serializer": {
       "learning_id": "learn-github-cheeriojs-dom-serializer",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "cheeriojs/dom-serializer",
       "repository": "cheeriojs/dom-serializer",
       "slug": "cheeriojs-dom-serializer",
       "platform": "github",
       "source_url": "https://github.com/cheeriojs/dom-serializer",
-      "source_version": "main",
-      "content_hash": "eb609fff5e671d2ad9176030239140564de2f93f754bc7ba3f559354de9029b7",
+      "source_version": "afefe5c6",
+      "content_hash": "9f38a0287349273eac941a5fefb26eb3f390c38f7da177c7bd2c36a7ba7987c5",
       "dossier_path": "07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2880,
+          "title": "build(deps): bump github/codeql-action from 4.38.3 to 4.39.0 (#1750)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T23:09:25.163Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-unifiedjs-unified": {
       "learning_id": "learn-github-unifiedjs-unified",
@@ -94186,6 +94218,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T23:03:34.948Z"
+    },
+    "rule-2880": {
+      "learning_id": "rule-2880",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2880,
+      "title": "build(deps): bump github/codeql-action from 4.38.3 to 4.39.0 (#1750)",
+      "source_url": "https://github.com/cheeriojs/dom-serializer",
+      "source_version": "afefe5c6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T23:09:25.163Z"
+    },
+    "rule-2881": {
+      "learning_id": "rule-2881",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2881,
+      "title": "helm): avoid unrelated repo cache failures during chart load",
+      "source_url": "https://github.com/skyhook-io/radar",
+      "source_version": "62a81997",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T23:09:31.096Z"
     }
   },
   "aliases": {

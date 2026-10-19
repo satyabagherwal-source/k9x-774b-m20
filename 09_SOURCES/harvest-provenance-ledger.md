@@ -3555,3 +3555,7 @@ Every entry in this ledger must capture:
 | `learn-github-fb55-css-select` | `https://github.com/fb55/css-select` | `66d88088` | Multi-dimensional audit evidence | 2026-10-19T23:02:53.838Z |
 | `learn-github-sindresorhus-keyboardshortcuts` | `https://github.com/sindresorhus/KeyboardShortcuts` | `772133d9` | Multi-dimensional audit evidence | 2026-10-19T23:02:55.107Z |
 | `learn-github-lingui-js-lingui` | `https://github.com/lingui/js-lingui` | `60e823f9` | Multi-dimensional audit evidence | 2026-10-19T23:03:35.019Z |
+| `learn-github-zenbu-labs-terminal-browser` | `https://github.com/zenbu-labs/terminal-browser` | `c35a6aa6` | Multi-dimensional audit evidence | 2026-10-19T23:09:23.140Z |
+| `learn-github-cheeriojs-dom-serializer` | `https://github.com/cheeriojs/dom-serializer` | `afefe5c6` | Multi-dimensional audit evidence | 2026-10-19T23:09:25.203Z |
+| `learn-github-paololeonardi-waterfallgrid` | `https://github.com/paololeonardi/WaterfallGrid` | `c7c08652` | Multi-dimensional audit evidence | 2026-10-19T23:09:28.540Z |
+| `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `62a81997` | Multi-dimensional audit evidence | 2026-10-19T23:09:31.139Z |

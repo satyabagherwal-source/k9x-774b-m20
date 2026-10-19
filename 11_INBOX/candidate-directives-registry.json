@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T22:06:45.346Z",
+  "last_updated": "2026-10-19T23:09:28.543Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1993,6 +1993,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-kruszoneq-macusb"
+    },
+    {
+      "id": "CD-9JKV",
+      "directive_title": "issue #13 (#14)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "paololeonardi/WaterfallGrid",
+      "source_commit": "c7c08652",
+      "date_staged": "2026-10-19",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule title references repository-specific PR/issue rather than a universal engineering principle",
+      "learning_id": "learn-github-paololeonardi-waterfallgrid"
     }
   ]
 }
