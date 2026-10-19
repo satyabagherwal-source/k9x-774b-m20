@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T01:57:11.151Z",
+  "last_updated": "2026-10-19T02:03:23.557Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -303,14 +303,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-moonshotai-kimi-k3",
-      "content_hash": "da4322f4df4939f811c7020fa499dfefbb0e5f645583a0566e76b6c5841a192b",
-      "verified_at": "2026-10-17T22:00:55.750Z",
+      "content_hash": "0f81bc6a120235821aac5432b5a8985eef46f3e2e368d21d0d6117f6229ba210",
+      "verified_at": "2026-10-19T02:03:09.613Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T22:00:55.750Z"
+      "last_updated": "2026-10-19T02:03:09.613Z"
     },
     "stabilityai/stable-diffusion-xl-base-1.0": {
       "repository": "stabilityai/stable-diffusion-xl-base-1.0",
@@ -7207,6 +7207,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T01:57:11.150Z"
+    },
+    "DouyinFE/semi-design": {
+      "repository": "DouyinFE/semi-design",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-douyinfe-semi-design",
+      "content_hash": "ca1d5a34ddaf55ba7f8240a1bcc1bdfedc3ad6f344b94375beb8b27fbbae2481",
+      "verified_at": "2026-10-19T02:03:09.764Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T02:03:09.764Z"
+    },
+    "pimalaya/himalaya": {
+      "repository": "pimalaya/himalaya",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-pimalaya-himalaya",
+      "content_hash": "211c6784b4ee1421c45570fdcc88eeb259c52779d3b55a31c10f3f5213f298b8",
+      "verified_at": "2026-10-19T02:03:10.892Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T02:03:10.892Z"
+    },
+    "wcandillon/react-native-skia": {
+      "repository": "wcandillon/react-native-skia",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-wcandillon-react-native-skia",
+      "content_hash": "de9d957f09305a183505ac8932844d7a74ba4e387d02905c69826497bf181c9b",
+      "verified_at": "2026-10-19T02:03:16.908Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T02:03:16.908Z"
+    },
+    "saltstack/salt": {
+      "repository": "saltstack/salt",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-saltstack-salt",
+      "content_hash": "0007a2987bedabd0bbd5958ca29f564b3457a3f09051ec50db998818fc357487",
+      "verified_at": "2026-10-19T02:03:18.419Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T02:03:18.419Z"
+    },
+    "etcd-io/etcd": {
+      "repository": "etcd-io/etcd",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-etcd-io-etcd",
+      "content_hash": "625458707fb9d02f6ee1c62b271fbcdfbf337f106af5a0b78d07d0e61e3e38b2",
+      "verified_at": "2026-10-19T02:03:23.556Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T02:03:23.556Z"
     }
   },
   "repos": {

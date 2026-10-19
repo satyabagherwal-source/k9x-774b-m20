@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md`  
+> **Source**: github ([https://github.com/pimalaya/himalaya](https://github.com/pimalaya/himalaya))  
+> **Source Version**: `4df380ba`  
+> **License**: Apache-2.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T02:03:10.669Z  
+> **Learning ID**: `learn-github-pimalaya-himalaya`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): pimalaya/himalaya
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pimalaya/himalaya](https://github.com/pimalaya/himalaya))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T02:04:02.041Z  
+> **Harvest Timestamp**: 2026-10-19T02:03:10.661Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: CLI to manage emails
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7393 stars
+- **Stars / Engagement**: 7483 stars
 
 ---
 
@@ -1427,209 +1441,20 @@ impl fmt::Display for AccountsTable {
 
 ```
 
-### Core Architecture Module: `src/account/mod.rs`
-```
-//! # Account
-//!
-//! The `account` command family: inspecting the accounts a configuration
-//! declares, and the merged runtime account every other command consumes.
-
-pub mod check;
-pub mod cli;
-pub mod context;
-pub mod list;
-
-```
-
-### Core Architecture Module: `src/backend.rs`
-```
-//! # Backend
-//!
-//! The `--backend` global flag: which backend the shared, cross-protocol
-//! commands target.
-
-use std::fmt;
-
-use clap::ValueEnum;
-
-/// Selects which backend a cross-protocol command targets.
-///
-/// `auto` picks the first configured backend the command supports, and a
-/// named one pins it, which then bails when the account has no such block
-/// or the operation no such arm. The protocol-specific subcommands ignore
-/// it entirely.
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, ValueEnum)]
-pub enum Backend {
-    /// Let the command pick the first backend it is configured for.
-    #[default]
-    Auto,
-    /// Pin the command to the account's IMAP backend.
-    Imap,
-    /// Pin the command to the account's JMAP backend.
-    Jmap,
-    /// Pin the command to the account's Gmail backend.
-    Gmail,
-    /// Pin the command to the account's Microsoft Graph backend.
-    Msgraph,
-    /// Pin the command to the account's Maildir backend.
-    Maildir,
-    /// Pin the command to the account's m2dir backend.
-    M2dir,
-    /// Pin the command to the account's mbox backend.
-    Mbox,
-    /// Pin the command to the account's pimdir backend.
-    Pimdir,
-    /// Pin the command to the account's SMTP backend.
-    Smtp,
-    /// Pin the command to the account's ManageSieve backend.
-    Sieve,
-}
-
-#[allow(unused)]
-impl Backend {
-    /// Every backend this build compiles in, `auto` aside.
-    pub const COMPILED: &[Self] = &[
-        #[cfg(feature = "imap")]
-        Self::Imap,
-        #[cfg(feature = "jmap")]
-        Self::Jmap,
-        #[cfg(feature = "gmail")]
-        Self::Gmail,
-        #[cfg(feature = "msgraph")]
-        Self::Msgraph,
-        #[cfg(feature = "maildir")]
-        Self::Maildir,
-        #[cfg(feature = "m2dir")]
-        Self::M2dir,
-        #[cfg(feature = "mbox")]
-        Self::Mbox,
-        #[cfg(feature = "pimdir")]
-        Self::Pimdir,
-        #[cfg(feature = "smtp")]
-        Self::Smtp,
-        #[cfg(feature = "sieve")]
-        Self::Sieve,
-    ];
-
-    /// Whether the IMAP arm of a shared command may run.
-    pub fn allows_imap(self) -> bool {
-        matches!(self, Self::Auto | Self::Imap)
-    }
-
-    /// Whether the JMAP arm of a shared command may run.
-    pub fn allows_jmap(self) -> bool {
-        matches!(self, Self::Auto | Self::Jmap)
-    }
-
-    /// Whether the Gmail arm of a shared command may run.
-    pub fn allows_gmail(self) -> bool {
-        matches!(self, Self::Auto | Self::Gmail)
-    }
-
-    /// Whether the Microsoft Graph arm of a shared command may run.
-    pub fn allows_msgraph(self) -> bool {
-        matches!(self, Self::Auto | Self::Msgraph)
-    }
-
-    /// Whether the Maildir arm of a shared command may run.
-    pub fn allows_maildir(self) -> bool {
-        matches!(self, Self::Auto | Self::Maildir)
-    }
-
-    /// Whether the m2dir arm of a shared command may run.
-    pub fn allows_m2dir(self) -> bool {
-        matches!(self, Self::Auto | Self::M2dir)
-    }
-
-    /// Whether the mbox arm of a shared command may run.
-    pub fn allows_mbox(self) -> bool {
-        matches!(self, Self::Auto | Self::Mbox)
-    }
-
-    /// Whether the pimdir arm of a shared command may run.
-    pub fn allows_pimdir(self) -> bool {
-        matches!(self, Self::Auto | Self::Pimdir)
-    }
-
-    /// Whether the SMTP arm of a shared command may run.
-    pub fn allows_smtp(self) -> bool {
-        matches!(self, Self::Auto | Self::Smtp)
-    }
-
-    /// Whether the ManageSieve account-check arm may run.
-    pub fn allows_sieve(self) -> bool {
-        matches!(self, Self::Auto | Self::Sieve)
-    }
-}
-
-impl fmt::Display for Backend {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Self::Auto => write!(f, "auto"),
-            Self::Imap => write!(f, "imap"),
-            Self::Jmap => write!(f, "jmap"),
-            Self::Gmail => write!(f, "gmail"),
-            Self::Msgraph => write!(f, "msgraph"),
-            Self::Maildir => write!(f, "maildir"),
-            Self::M2dir => write!(f, "m2dir"),
-            Self::Mbox => write!(f, "mbox"),
-            Self::Pimdir => write!(f, "pimdir"),
-            Self::Smtp => write!(f, "smtp"),
-            Self::Sieve => write!(f, "sieve"),
-        }
-    }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #772** (2026-10-05): **config option for posting style**
-  *Symptoms*: When replying with `himalaya message reply`, `--posting-style [top|bottom]` sets posting style, defaulting to `top`.  Would be nice to have a config file option for this to avoid having to set `--posting-style bottom` on each reply, while still having the CLI argument take priority if set.
-  **Post-Mortem & Fix Analysis**:
-  > Thanks for the suggestion! It landed on master in ac97df2 and will ship with the next release.  You can now set the posting style in your config, globally or per account:  ```toml message.reply.posting-style = "bottom" message.forward.posting-style = "top"  [accounts.example] message.reply.posting-style = "none" ```  It takes `top`, `bottom` or `none`, and `--posting-style` still wins over it when passed. With nothing set, the default stays `top`.  If you're coming from v1, this replaces `template.reply.posting-style` (see MIGRATION.md).
-  > Thank you for the quick response here and an excellent tool!
+- **Issue #794** (2026-10-15): **fix: fail when no given message id exists**
+  *Symptoms*: Closes #777.  `store_flags` now returns how many of the given messages were found, on every backend, and `flag add`, `flag set`, `flag remove`, `message move` and `message copy` exit 1 when that is zero. The flag commands report the count (`Successfully added flags to 2 message(s): seen`, and `count` beside `flags` under `--json`), and their plain output ends with a newline.  Only IMAP needed counting: the other backends already fail on an unknown id. It reads the `UID STORE` echoes and runs a `UID SEARCH UID <set>` when they are fewer than the ids given, the same search the copy and move counts of #781 use. Since that fix `message move` and `message copy` already count correctly, so for them this only turns "no id matched" into exit code 1.  On Gmail and Graph, the early return #785 added to `store_flags` (only `\Answered` or `$Forwarded`, nothing to patch) now returns `ids.len()`: no request is made, so the ids are not checked there and count as found, rather than failing every such call.  `message delete` goes a little beyond what we discussed, so tell me if you would rather leave it out: it fails the same way when it moves to the trash and nothing matched (it printed `Successfully moved 0 message(s) to the trash`). Deleting from the trash itself is unchanged: `delete_messages` does not return a count.  The Cairn proposal is in `cairn/changes/message-ids-no-match`, folded into the spec with its log entry.  Tested by hand against Gmail over IMAP, next to the released 2.2.1:
 
-- **Issue #771** (2026-10-03): **fix: keep control characters out of envelope and attachment tables**
-  *Symptoms*: Subjects, display names, filenames, mailbox names and ids were printed exactly as the message or the server supplied them, so a sender could put terminal escape sequences in front of the reader (an OSC 52 clipboard write, hidden text, a cleared screen) or disguise a filename with bidi overrides.  - The single-line fields of the envelope, attachment, mailbox, ID, pimdir queue, JMAP, Gmail and Graph outputs go through `pimalaya_cli::table::sanitize` (pimalaya-cli 0.2.6). JMAP set errors are sanitized once, in `format_set_error`. Multi-line fields (vacation bodies, the send-as signature) are left as they are. - `write_bytes_or_save` also refuses DEL and C1 on a terminal. Bytes that are not UTF-8 are read as Latin-1, so UTF-8 continuation bytes in 0x80..=0x9f are not taken for C1. - The Cairn change `plain-output-is-printable` is narrowed to single-line fields, folded into `cairn/spec/commands.md` and logged.  Testing:  - Tests rendering the envelope and attachment tables from strings holding OSC 52, SGR and screen-clearing sequences, and tests of the binary check (C0, DEL, UTF-8 and raw C1, UTF-8 text with continuation bytes in that range). - `cargo test`, `cargo clippy --all-targets` (also with `pimdir,m2dir,mbox`) and `cargo fmt --check` are clean; the reduced builds from CONTRIBUTING.md pass.  LLM tools were used. 
+- **Issue #793** (2026-10-16): **feat(pimdir): stage any flag through pimdir flag**
+  *Symptoms*: Refs #790.  The Cairn proposal for `himalaya pimdir flag list|add|set|remove`, as suggested on #790: keywords written through the pimdir namespace, in the shape of `m2dir flag`, with the shared `flag` commands unchanged. No code yet; I will write the patch once the proposal suits you.  Two points I would like your view on first:  - `store_flags` would check every message before the first enqueue, so a multi-id call refused part-way queues nothing. That also changes the shared flag commands on pimdir. - What neverest should do with a keyword other than `$Important` on a Gmail source, which declares keywords in part.  As far as I can tell m2dir needs nothing: `m2dir flag` already takes free-form flags.  AI disclosure: written with Claude Code (Anthropic); every claim about current behaviour was checked against master. 
   **Post-Mortem & Fix Analysis**:
-  > Thanks for the report and the clear write-up, the problem is real.  Since cardamum and calendula share the same tables, I moved the function into pimalaya-cli and credited you as co-author. It's released in 0.2.6 as `pimalaya_cli::table::sanitize`. It's your `printable()`, with one addition: it also replaces bidi controls (U+202A–202E, U+2066–2069). Without that, a filename like `invoice\u{202e}fdp.exe` displays as `invoiceexe.pdf`.  The approach is approved, so please finish it in this PR:  - Bump `pimalaya-cli` to 0.2.6, remove `printable()` from `src/shared/table.rs`, and use `sanitize` in its place. - Convert the other renderings listed in your tasks (IMAP fetch, ID and mailbox list, pimdir queue, JMAP, Gmail, Graph). - In `src/shared/output.rs`, have the binary check also catch DEL and C1. - Narrow the Cairn delta to single-line fields from a message or a server (subjects, names, filenames, mailbox names, ids). Message bodies are guarded by the binary check, and they need to keep 
-  > Thanks, and for moving it into pimalaya-cli. Done in 80a99a9, rebased on master:  - bumped pimalaya-cli to 0.2.6 and replaced `printable()` with `sanitize`; - converted the IMAP, pimdir, JMAP, Gmail and Graph outputs (JMAP set errors once, in `format_set_error`); multi-line fields such as vacation bodies and the send-as signature are left alone; - the binary check now refuses DEL and C1 too; - narrowed the Cairn delta to single-line fields, folded it into `commands.md` and added the log entry; - one-line CHANGELOG, and the BudgetScan line is gone.  One side effect of the binary check: bytes that are not UTF-8 are read as Latin-1 to catch raw C1, so an 8-bit Windows-1252 body with bytes in 0x80..=0x9f is now refused on a terminal as well. It still prints when stdout is redirected or with `--output`.
-  > Thanks, all good. The Windows-1252 side effect is fine for now; we'll revisit if it turns out to bite. Merging.
-
-- **Issue #770** (2026-10-02): **fix(search): compile eval with msgraph backend alone**
-  *Symptoms*: ## Problem  `cargo install` with `msgraph` but without any local backend fails (v2.2.1):  ```text error[E0432]: unresolved import `crate::email::search::eval`   --> src/msgraph/backend.rs:36:18    | 36 |         search::{eval::sort_envelopes, query::SearchEmailsQuery},    |                  ^^^^ could not find `eval` in `search`  ```  `src/email/search/mod.rs` gates `eval` on `maildir`, `m2dir`, `mbox` and `pimdir` only. That was correct until 537bcf6 added Graph `search_envelopes`, which sorts each page locally via `eval::sort_envelopes` (Graph refuses `$skip`/`$orderby` beside `$search`) without extending the gate. Default features mask it since they always include the local backends.   ## Change   - Gate `eval` also on `feature = "msgraph"` (`msgraph` already pulls in `mail-parser`, which `eval` needs). One line, no behavior change.   ## Verification   - `cargo build --no-default-features --features msgraph,rustls-ring`: failed before, passes after.  - `cargo build --no-default-features --features imap,smtp,rustls-ring`: passes.  - `cargo build --no-default-features --features jmap,rustls-ring`: passes.  - `cargo test --no-default-features --features sieve,rustls-ring`: passes.
-  **Post-Mortem & Fix Analysis**:
-  > Nice catch, thanks for the contribution!
-
-- **Issue #769** (2026-10-01): **UTF-8 shouldn't be hardcoded with every IMAP request**
-  *Symptoms*: Recent commit c64bda8cc38cc4d347f717f6a187744004d83ffc (related to this commit on io-imap https://github.com/pimalaya/io-imap/commit/6cfb2a3a4d83be6009c17a5c83c96a3a3081a522) fixed an issue with Gmail not accepting queries with non-ascii chars. But this breaks outlook, which doesn't support UTF-8 searches over IMAP.  ```bash > himalaya -a "outlook" envelope --log-level debug search from "something" ... redacted ... [DEBUG io_sasl::xoauth2] xoauth2 exchange completed [DEBUG io_imap::sasl::auth_xoauth2] fetch capabilities Error: IMAP SEARCH failed: NO The specified charset is not supported. ```  It seems that change was a regression fix for an old issue #3 on io-imap. I think that the latest change to force it should be left in place but only as a default, and add a new `--charset` flag to `envelop search` or other similar commands that allow the user to override it.  So in gmail I could use `himalaya envelope <--json> search $filter` or `himalaya envelope <--json> --charset utf-8 search $filter` and it would be equivalent, but I could also use `himalaya envelope <--json> --chartset ascii search $filter` which would work on outlook (although it would fail in gmail but now the user can fix it).
-  **Post-Mortem & Fix Analysis**:
-  > Dear GAFAM, how annoying you are. You fix an issue on one, it breaks the other…  I agree with your proposition. I would just reverse the logic: utf-8 is widely used and supported and should remain the default. I don't understand why Microsoft does not support it. So Microsoft users will have to put a different charset either via argument or in the config file.  
-  > I did not go for the `--charset` nor config option. Instead the search checks by itself is it requires or not the UTF-8 charset. In case there is an UTF-8 search string and it sends to Microsoft, it will fail and it is the "normal" behaviour: Microsoft does not support UTF-8 search. For all the rest it should work as expected, for both providers.
-  > Just confirming that commit 763ecc1569105e1f0f9f07db27363d3af0d28c19 fixed the issue, IMAP searches are working on gmail and outlook without the need for the `--charset` flag.
-
-- **Issue #768** (2026-09-28): **fix: strip surrounding quotes from quoted search patterns**
-  *Symptoms*: The `quoted_pattern` parser used `.to_slice()`, which returned the raw input slice including the enclosing double-quote characters. A search like `from "alice smith"` stored the pattern as `"alice smith"` (with literal `"` chars), so every backend that consumes the parsed filter — client-side evaluation, IMAP `SEARCH`, JMAP `Email/query`, and Gmail `q` — looked for double-quote characters in the address or header, which never matched.  The concrete failure: `himalaya envelope search 'from "alice smith"'` against a maildir containing a message from `Alice Smith <alice.smith@example.org>` returns no results, because `addresses_contain` checks whether `alice.smith@example.org` contains `"alice smith"` (with quotes), and it does not. The same pattern reaches IMAP as `FROM "\"alice smith\""` and Gmail as `from:"\"alice smith\""`, both wrong.  The fix replaces `.to_slice()` with `.ignore_then()` / `.then_ignore()` / `.collect()`, so the quote characters are consumed as delimiters and only the inner characters — with escape sequences already handled by the existing `bslash().ignore_then(one_of(...))` combinator — are collected into the pattern string.  The existing tests are updated to expect the stripped values, and a new assertion covers an escaped quote inside the pattern (`"escaped \" quote"` producing `escaped " quote`).  ---  **AI disclosure** (per [AI_POLICY.md](https://github.com/pimalaya/.github/blob/master/AI_POLICY.md)): this defect was found by a defect-hunting pipeline 
-  **Post-Mortem & Fix Analysis**:
-  > Thanks for the fix!
-
-- **Issue #766** (2026-09-26): **fix: parse display names in To, Cc and Bcc the same way as From**
-  *Symptoms*: `--to 'Alice <alice@example.org>'` composes `To: <Alice <alice@example.org>>`, which no SMTP server accepts. The same happens with `--cc` and `--bcc`, in `message compose`, `reply` and `forward`.  This is the recipient side of #727. That fix taught the builder to parse `--from` as a mailbox, but the `addresses()` helper behind the three recipient headers still hands each value over as a bare address. This change makes it go through `parse_mailbox` too, so the display name reaches the builder apart from the address. A value with no email address is now rejected with the same error as `--from`, instead of producing an invalid header.  The test `compose_to_keeps_a_spelled_out_display_name_apart` is added next to the existing `--from` test. It fails on master, where the header contains `<Alice <alice@example.org>>`, and passes with the change; the full `cargo test` run passes. The CHANGELOG entry and the Cairn log are included, spec unchanged.  Refs: #727  ## AI disclosure  Found and fixed by a defect-hunting pipeline built and run by [@Dev-next-gen](https://github.com/Dev-next-gen), using Claude Code for code analysis, patch generation, and test authoring. The human reviewed the diff, the test logic, and the proof output before approving submission.  Nothing this pipeline produces is submitted without human approval. The entire pull request — the code change, the tests, and this description — was reviewed by a human before the pipeline was allowed to submit it.  (@
-  **Post-Mortem & Fix Analysis**:
-  > Thanks! Merged. Display names containing commas ("Doe, Alice" <…>) are still split by the `,` delimiter before parsing, I'll handle that in a follow-up.
-
-- **Issue #765** (2026-09-26): **fix(imap): terminate the last raw command with CRLF**
-  *Symptoms*: Closes #764.  When the last command passed to `imap raw` had no terminator, it was appended as a bare LF. io-imap accepts that as a complete line, but Gmail never answers a bare-LF command, so the exchange hung until `stream stopped responding after 60s`. Commands piped through stdin always hit it: `RawCommandArg::resolve` joins stdin lines with CRLF and leaves the last one bare.  The terminator is now a full CRLF. It lives in a small `terminate` helper with unit tests. The spec (`cairn/spec/commands.md`) already requires a trailing CRLF, so only a log entry and a CHANGELOG line were added.  ## Verification  - `cargo test --locked imap::raw`: 3 new tests pass. - `cargo build --release --locked`. - Against Gmail (read-only), all of these previously hung for 60 s and now answer immediately:   - `himalaya imap raw -- 'a1 NOOP'` → `a1 OK Success`   - `printf 'a1 NOOP\r\n' | himalaya imap raw` → `a1 OK Success`   - `himalaya imap raw -- 'a1 EXAMINE "[Gmail]/All Mail"\r\na2 UID SEARCH X-GM-RAW "…"'` → `a2 OK SEARCH completed`  🤖 Generated with [Claude Code](https://claude.com/claude-code)  https://claude.ai/code/session_01MiqyKJUdNzRBBMHQNGxLKn 
-  **Post-Mortem & Fix Analysis**:
-  > I pushed the changes directly on `master`, I left you as co-author. Thanks for the contribution!
-
-- **Issue #764** (2026-09-26): **imap raw: last command terminated with bare LF instead of CRLF, hangs on Gmail**
-  *Symptoms*: `himalaya imap raw` terminates the last command with a bare LF instead of CRLF. Gmail silently ignores LF-terminated command lines, so the command hangs until the stream timeout:  ``` $ himalaya imap raw -- 'a1 NOOP' Error: stream stopped responding after 60s ```  ## Environment  - himalaya v2.1.0 (Homebrew, macOS aarch64), IMAP backend, Gmail (`imap.gmail.com:993`, AUTH=PLAIN) - Other IMAP commands (`imap list`, `imap search`, `envelope search`) work fine against the same account.  ## Reproduction  All of these hang for 60 s, then fail with `stream stopped responding after 60s`:  ```sh himalaya imap raw -- 'a1 NOOP' himalaya imap raw -- 'a1 EXAMINE "[Gmail]/All Mail"\r\na2 UID SEARCH ALL'   # last command without trailing \r\n printf 'a1 NOOP\r\n' | himalaya imap raw                                    # stdin, even with a real CRLF ```  With `--log-level trace`, authentication succeeds and the batch is logged as:  ``` [TRACE io_imap::rfc3501::raw] build raw batch (1 command(s)): a1 NOOP\n [DEBUG pimalaya_stream::retry] give up on stream after 0 retries: Resource temporarily unavailable (os error 35) ```  The same log prints other lines with `\r\n` (e.g. the greeting), so the CR is really missing on the wire.  Gmail does not answer bare-LF commands. Checked with `openssl s_client -quiet -connect imap.gmail.com:993` before authentication: `a1 CAPABILITY\n` gets no reply at all, while `a1 CAPABILITY\r\n` is answered immediately.  ## Cause  - `src/imap/raw.rs`, `ImapRawCommand::
+  > @bobberb thanks, this matches what I had in mind on #790, go ahead with the code in this PR.  On your two points: yes to checking every message before the first enqueue. Today `store_flags` in `src/pimdir/backend.rs` can leave a multi-id call half staged, which is a bug on the shared commands too. Give it its own requirement in `delta.md` and a CHANGELOG entry so the shared-side change shows up. For Gmail, what neverest does with a keyword it can't map is up to the sync engine, not himalaya. I'd drop the manual Gmail task and the "the warning will name the outcome" line, and just surface the declaration's warning as it is.  One nit: `delta.md` should declare `cairn: delta`, not `cairn: change`.
+  > Thanks. Updated in 9c7e532a: the all-or-nothing check now has its own requirement, with a scenario covering the shared commands, and the tasks carry a CHANGELOG entry for it; the manual Gmail task and the outcome line are gone, the declaration's warning being surfaced as it is; and `delta.md` declares `cairn: delta`. The code follows in this PR.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1646,1732 +1471,694 @@ impl fmt::Display for Backend {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3449355e` (2026-10-05)
-**Commit Message**: fix(pimdir): name a performer for a collection only declared
+### Incident Patch 1: `6dd8658c` (2026-10-14)
+**Commit Message**: fix(message): sanitize the human-readable message view (#783)
 
-A collection the sync engine declared without syncing has no source
-syncing it, so the account's candidates count as a declaration: a
-mailbox can be created in a store that holds no item yet.
+Rebase PR #783 onto the latest upstream master, retaining the existing attachment-download changelog entry and the command spec. Preserve decoded-body sanitization and unchanged JSON/raw output.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: OpenAI Codex <[REDACTED_EMAIL]>
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- ### Added
+@@ -45,6 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
- - Added the role of a pimdir mailbox (pimdir draft-04, io-pimdir `ef8eae0`): `mailbox list` shows the role the sync engine recorded from the server (`collections.role`), and a role name (`inbox`, `sent`, `drafts`, `trash`, …) addresses its mailbox in every command, as on IMAP and JMAP.
-+- Fixed `pimdir mailbox create` refusing a store whose collections the sync engine only declared (`neverest sync --declare-only`): the account's candidates count as a declaration, not only the sources syncing the anchor.
- - Added a stable `code` to the `--json` error output for failures a caller is expected to act on, found anywhere in the error chain. The first is `body-pending`: a pimdir message listed but whose body is not downloaded yet.
- - Added the `wizard` cargo feature, on by default, gating the interactive configuration: the `configure` command and the offer a first run makes. A build without it drops the prompts and the dependencies only they use, and a missing configuration points at the documented sample instead.
- - Added `pimdir message add` and `pimdir message send`, staging as the shared commands do and printing the queue row with the `Message-ID`, and `pimdir queue show <ROW>`, saying whether a row is pending, parked (with why), applied (with the id of the message an add created; a message sent or a mailbox created once the sync engine acknowledges it) or unknown.
-```
-
-**File**: `src/pimdir/client.rs` (modified, +5/-1)
-```diff
-@@ -144,11 +144,15 @@ impl PimdirClient {
-         collection: &str,
-         capability: &str,
-     ) -> Result<Option<String>> {
-+        // NOTE: a collection the sync engine only declared (`neverest sync
-+        // --declare-only`) has no source syncing it yet, so the account's
-+        // candidates count too.
-         let declared = producer
-             .capabilities(collection)
-             .map_err(|err| anyhow!("Read the capabilities of `{collection}`: {err}"))?
-             .iter()
--            .any(|source| source.declared.is_some());
-+            .any(|source| source.declared.is_some())
-+            || !self.performers(capability)?.0.is_empty();
-         if !declared {
-             return Ok(None);
-         }
-```
-
----
-
-### Incident Patch 2: `cbfe9bb0` (2026-10-04)
-**Commit Message**: fix: keep pimdir details out of the shared outputs
-
-Drop the pimdir-only queued count from envelope list, the queueId from message send, message add --send and the composers, and the notes wrapping the shared writes. The pimdir backend logs a queued send's row id and a partially supported write instead; pimdir queue list shows what is queued.
-
-**File**: `CHANGELOG.md` (modified, +2/-2)
-```diff
-@@ -11,16 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- - Added the `wizard` cargo feature, on by default, gating the interactive configuration: the `configure` command and the offer a first run makes. A build without it drops the prompts and the dependencies only they use, and a missing configuration points at the documented sample instead.
- - Added the `pimdir performer` command, showing which sources can perform a capability such as `mail.submit` for the account and recording the user's choice among them (pimdir draft-03, STORAGE §15.6).
--- Added notes to the pimdir writes: a write passing on a source that supports it only in part ends with a `Note:` line, and a `notes` array under `--json`.
- 
- ### Changed
- 
--- Changed the pimdir writes to be refused before they are queued when a source of the store does not support them, naming the capability, the source and why, and a send to be refused while several sources can send and none is chosen.
-+- Changed the pimdir writes to be refused before they are queued when a source of the store does not support them, naming the capability, the source and why, and a send to be refused while several sources can send and none is chosen. A write a source supports only in part logs a warning.
- - Changed a pimdir send asking for a copy to carry it in the queued send, so the copy is filed only once the message is sent; a store whose owner declares no capabilities still gets the copy queued beside the send.
- 
- ### Fixed
- 
+ - Fixed the wizard creating new configuration files with permissions that could expose raw credentials. New files use exclusive creation and Unix mode 0600, and new directories use mode 0700. Existing file and directory permissions are preserved.
+ - Fixed attachment downloads following dangling symlinks or overwriting existing files after filename suffixes are exhausted. Concurrent downloads now reserve filenames exclusively.
++- Fixed decoded message bodies, headers and MIME metadata emitting terminal control or bidi characters in the human-readable view. JSON and explicitly requested raw output remain unchanged.
  - Fixed control and bidi characters from messages and servers reaching the terminal through the plain output.
-+- Fixed pimdir queue details leaking into the shared outputs: `envelope list` no longer reports a `queued` count, and `message send`, `message add --send` and the composers no longer print a `queueId`. `himalaya pimdir queue list` shows what is queued, and a queued send logs its row id at info level.
- 
- ## [2.2.1] - 2026-10-02
- 
+ - Fixed pimdir queue details leaking into the shared outputs: `envelope list` no longer reports a `queued` count, and `message send`, `message add --send` and the composers no longer print a `queueId`. `himalaya pimdir queue list` shows what is queued, and a queued send logs its row id at info level.
+ - Fixed `message compose`, `reply` and `forward` writing a `Message-ID` on the hostname of the machine (`<…@myhost>`), which disclosed it to every recipient. The id now sits on the domain of the `From` address; without one, or with a domain that is not a plain dot-atom, the hostname is still used.
 ```
 
-**File**: `cairn/changes/shared-output-free-of-pimdir/delta.md` (added, +22/-0)
+**File**: `cairn/changes/message-display-sanitization/delta.md` (added, +9/-0)
 ```diff
-@@ -0,0 +1,22 @@
+@@ -0,0 +1,9 @@
 +---
-+cairn: change
-+change: shared-output-free-of-pimdir
++cairn: delta
++change: message-display-sanitization
 +---
-+
-+# Delta
-+
-+## ADDED Requirements
-+
-+### Requirement: Shared outputs carry no backend details
-+The output of a shared command SHALL NOT carry a field that only one backend fills. A backend detail worth showing SHALL be logged by that backend's adapter or shown by its own namespace.
 +
 +## MODIFIED Requirements
 +
-+### Requirement: A queued creation is reported, not listed
-+A queued creation has no public id until the store's owner applies it, so the pimdir backend SHALL NOT project one as an envelope, and SHALL NOT put a placeholder in `Envelope.id`. `add_message` returns the link id it staged, which identifies the creation across the window. `himalaya pimdir queue list` is where queued creations show.
-+
-+### Requirement: pimdir sends by queueing a submit intent
-+The command SHALL NOT report the queue row id in its output; the pimdir backend SHALL log it at info level.
-+
-+### Requirement: The queue view shows queued sends
-+`himalaya pimdir queue list` SHALL render a queued `submit` as a message, derived from the body it pins as a create is, marked as a send, beside the queued creates of the same mailbox.
++### Requirement: Plain output is printable
++Single-line fields from messages and servers SHALL replace control and bidi characters with U+FFFD. The designed message view SHALL replace those characters in decoded bodies too, preserving tabs and line feeds, on terminals and redirected stdout alike. JSON strings and explicitly requested raw bytes SHALL remain unchanged.
 ```
 
-**File**: `cairn/changes/shared-output-free-of-pimdir/proposal.md` (added, +16/-0)
+**File**: `cairn/changes/message-display-sanitization/proposal.md` (added, +14/-0)
 ```diff
-@@ -0,0 +1,16 @@
+@@ -0,0 +1,14 @@
 +---
 +cairn: change
-+id: shared-output-free-of-pimdir
++id: message-display-sanitization
 +status: landed
-+created: 2026-10-04
++created: 2026-10-10
 +---
 +
-+# Keep pimdir details out of the shared outputs
++# Sanitize the human-readable message view
 +
 +## Why
-+
-+The shared commands are a protocol-agnostic API, and pimdir is one backend among several. Yet their outputs grew pimdir-only fields: a `queued` count on `envelope list`, a `queueId` on `message send`, `message add --send` and the composers, and a `notes` array wrapping every write. Each was empty or absent on every other backend, so they described one backend's store rather than the operation.
++Decoded bodies and MIME headers reach stdout verbatim, allowing mail to send terminal commands through the normal message view.
 +
 +## What
-+
-+The shared outputs drop `queued`, `queueId` and `notes`. A queued send logs its row id at info level, a write a source supports only in part logs a warning, and `himalaya pimdir queue list` remains the place to see what is queued. `EmailClient::send_message` returns only whether the backend filed the sent copy itself, documented without naming a backend.
++Sanitize single-line fields with the existing shared sanitizer. Replace control and bidi characters in decoded bodies while retaining tabs and newlines. Preserve JSON strings and explicitly requested raw bytes. The user approved these security fixes and fork-first validation before implementation on 2026-10-10.
 ```
 
-**File**: `cairn/changes/shared-output-free-of-pimdir/tasks.md` (added, +11/-0)
+**File**: `cairn/changes/message-display-sanitization/tasks.md` (added, +8/-0)
 ```diff
-@@ -0,0 +1,11 @@
+@@ -0,0 +1,8 @@
 +---
 +cairn: tasks
-+change: shared-output-free-of-pimdir
++change: message-display-sanitization
 +---
 +
-+# Tasks
-+
-+- [x] Remove `Noted`, `take_notes` and the `notes` field from the shared write outputs and their JSON schemas; log partial support as a warning in the pimdir client.
-+- [x] Remove `queueId` from `MessageRouteOutput` and `MessageAddOutput`, and the queue id from `Outcome`; log the row id in the pimdir backend.
-+- [x] Remove `queued` from `Envelopes` and `EmailClient::queued_messages`.
-+- [x] Fold the delta into [cairn/spec/backends.md](../../spec/backends.md); write the log entry.
++- [x] Sanitize headers, MIME metadata and rendered bodies.
++- [x] Test hostile bodies and metadata while preserving JSON and ordinary formatting.
++- [x] Update the command specification and changelog, then record validation.
 ```
 
-**File**: `cairn/log/2026-10-04-shared-output-free-of-pimdir.md` (added, +11/-0)
+**File**: `cairn/log/2026-10-10-message-display-sanitization.md` (added, +11/-0)
 ```diff
 @@ -0,0 +1,11 @@
 +---
 +cairn: log
-+change: shared-output-free-of-pimdir
-+landed: 2026-10-04
++change: message-display-sanitization
++landed: 2026-10-10
 +---
 +
-+# Shared outputs drop the pimdir queue details
++# Sanitize the human-readable message view
 +
-+`envelope list` no longer carries a `queued` count, `message send`, `message add --send` and the composers no longer print a `queueId`, and the shared writes no longer end with notes or carry a `notes` array. Each field was filled by pimdir alone. The pimdir backend logs a queued send's row id at info level and a capability its source supports only in part as a warning; `himalaya pimdir queue list` shows what is queued. `EmailClient::send_message` returns only whether the backend filed the sent copy itself.
++Applied the existing single-line sanitizer to address fields, subjects, attachment names and MIME metadata. Decoded text and HTML-only bodies replace control and bidi characters with U+FFFD, retaining tabs and line feeds and normalizing CRLF to LF. JSON strings and explicit raw bytes are preserved.
 +
-+Capabilities moved: **backends** (shared outputs carry no backend details; queued creations and sends shown by `pimdir queue list` alone).
++Updated commands and the command help. Regression tests cover OSC 52, screen controls, C1, DEL, bare CR, bidi overrides, MIME headers, HTML-only messages and JSON preservation.
 ```
 
-**File**: `cairn/spec/backends.md` (modified, +7/-6)
+**File**: `cairn/spec/commands.md` (modified, +1/-1)
 ```diff
-@@ -11,6 +11,9 @@ Each backend is a `<Proto>Client` wrapper that derefs onto the io-* `*Std` clien
- ### Requirement: Shared operation set
- The shared adapters SHALL cover, per backend: `list_mailboxes`, `list_envelopes`, `search_envelopes`, `store_flags`, `get_message`, `add_message`, `copy_messages`, `move_messages`, and `send_message`. A backend that cannot model an operation opts out of it rather than emulating it.
+@@ -43,7 +43,7 @@ A failure a caller is expected to act on SHALL carry a stable code, printed unde
+ - THEN the command exits 1 and prints `{"code":"body-pending","error":"…","sources":[],"backtrace":null}`
  
-+### Requirement: Shared outputs carry no backend details
-+The output of a shared command SHALL NOT carry a field that only one backend fills. A backend detail worth showing SHALL be logged by that backend's adapter or shown by its own namespace.
-+
- ### Requirement: The envelope carries its threading pointers
- The shared `Envelope` SHALL carry `message_id` and `in_reply_to`, the RFC 5322 §3.6.4 identity of a message and of the message(s) it replies to, so a client can pair a reply with its parent from a listing rather than by reading bodies.
+ ### Requirement: Plain output is printable
+-A single-line field taken from a message or a server (a subject, a name, a filename, a mailbox name, an id) SHALL have its control characters (C0, DEL and C1) and bidi controls (U+202A to U+202E, U+2066 to U+2069) replaced with U+FFFD before it is printed as plain output, so it can neither drive the terminal nor reorder what is displayed. Message bodies keep their tabs and newlines; on a terminal they SHALL be refused as binary when they hold any other control character, DEL and C1 included. The `--json` output SHALL keep the strings unchanged.
++A single-line field taken from a message or a server (a subject, a name, a filename, a mailbox name, an id) SHALL have its control characters (C0, DEL and C1) and bidi controls (U+202A to U+202E, U+2066 to U+2069) replaced with U+FFFD before it is printed as plain output, so it can neither drive the terminal nor reorder what is displayed. The designed `message read` and `message parse` views SHALL replace those characters in decoded bodies too, retaining tabs and line feeds and normalizing CRLF to LF, on terminals and redirected stdout alike. JSON strings and explicitly requested raw bytes SHALL remain unchanged. Other byte writers SHALL retain their binary-content guard on terminals.
  
-@@ -98,9 +101,7 @@ A write SHALL be staged as a queued `PimdirAction` through a producer handle (`s
- An added message SHALL derive its link id through io-pimdir's mail derivation (`summary::mail::derive`), the one implementation of SPEC Annex A.1, which is the bare `Message-ID` with nothing prepended, and SHALL name it on the queued `Add`. The action carries no summary: the owner derives the summary and the sort key from the body when it applies the action, through the same call, so the two never disagree. A staged `Add` whose link id the collection already holds SHALL park (pimdir SPEC §15.3): it neither deduplicates against the stored copy nor mints a second key. Minting is the store's answer to what a source hands over; parking is its answer to a producer authoring a message the collection already has.
- 
- ### Requirement: A queued creation is reported, not listed
--A queued creation has no public id until the store's owner applies it, so the pimdir backend SHALL NOT project one as an envelope, and SHALL NOT put a placeholder in `Envelope.id`. `add_message` returns the link id it staged, which identifies the creation across the window.
--
--An envelope listing SHALL report how many creations the mailbox has queued and name the command that shows them, so a saved message that is not in the list reads as queued rather than as lost. A backend that stages nothing reports none, which every backend whose writes reach the server as they are made does. An envelope *search* SHALL report none whatever the backend: a queued creation is never matched against the query, so a count its filter never saw would be misleading.
-+A queued creation has no public id until the store's owner applies it, so the pimdir backend SHALL NOT project one as an envelope, and SHALL NOT put a placeholder in `Envelope.id`. `add_message` returns the link id it staged, which identifies the creation across the window. `himalaya pimdir queue list` is where queued creations show.
- 
- ### Requirement: The pimdir subcommand reads and retracts the queue
- Himalaya SHALL carry a `pimdir` subcommand for what the operator CLI cannot do without knowing mail. `queue list` SHALL render a queued creation as a message (flags, subject, recipient, and when it was queued, from the row's `created_at`) where the kind-agnostic `pimdir` binary can only print ids and hashes. The queued action carries no summary, so the row SHALL be derived from the body the action pins, through the same derivation the owner applies; an action pinning no body renders with its flags alone. `queue cancel` SHALL retract one row through io-pimdir's scoped owner operation, confirming first unless `--yes`.
-@@ -119,12 +120,12 @@ The payload SHALL be `v: 1` JSON carrying `object` (the body hash), `from`, `rcp
- 
- The row SHALL anchor on the `--save` mailbox when one is given, else on the mailbox `mailbox.alias.sent` names; with neither, the send SHALL be refused, naming the alias to set, rather than create a collection.
- 
--The command SHALL report the queue row id, and its text SHALL say the message is queued for sending, not sent.
-+The command SHALL NOT report the queue row id in its output; the pimdir backend SHALL log it at info level.
- 
- #### Scenario: A send made offline waits in the queue
- - GIVEN a pimdir account with `mailbox.alias.sent` set and no network
- - WHEN a message is sent
--- THEN one `submit` row is queued on the sent mailbox with the message's envelope, and the command prints its row id
-+- THEN one `submit` row is queued on the sent mailbox with the message's envelope
- 
- #### Scenario: A Bcc recipient is in the envelope
- - GIVEN a message with `To: a@x.org` and `Bcc: b@x.org`
-@@ -137,7 +138,7 @@ The command SHALL report the queue row id, and its text SHALL say the message is
- - THEN nothing is staged and the error names `mailbox.alias.sent`
- 
- ### Requirement: The queue view shows queued sends
--`himalaya pimdir queue list` SHALL render a queued `submit` as a message, derived from the body it pins as a create is, marked as
+ ### Requirement: Generation commands print to the standard output
+ The `completion`, `manual` and `json-schema` commands SHALL share one shape: a positional list selecting what to generate, defaulting to everything, and an optional `--dir` deciding where it lands. Without a directory they SHALL print the single selected item to the standard output, so a packaging helper can capture it and a shell can redirect it to a file, and SHALL fail when several items are selected rather than concatenating pieces valid for nothing. With a directory they SHALL write one file per selected item in it, creating the directory when missing, and report where each landed.
 ```
 
-**File**: `src/json_schema.rs` (modified, +6/-12)
+**File**: `src/shared/message/read.rs` (modified, +84/-12)
 ```diff
-@@ -47,34 +47,28 @@ pub fn schemas() -> BTreeMap<String, Value> {
-             "himalaya-envelope-search",
-             crate::shared::envelope::list::Envelopes
-         );
--        insert!(
--            "himalaya-flag-add",
--            crate::shared::note::Noted<crate::shared::flag::add::AddedFlags>
--        );
--        insert!(
--            "himalaya-flag-set",
--            crate::shared::note::Noted<crate::shared::flag::set::SetFlags>
--        );
-+        insert!("himalaya-flag-add", crate::shared::flag::add::AddedFlags);
-+        insert!("himalaya-flag-set", crate::shared::flag::set::SetFlags);
-         insert!(
-             "himalaya-flag-remove",
--            crate::shared::note::Noted<crate::shared::flag::remove::RemovedFlags>
-+            crate::shared::flag::remove::RemovedFlags
-         );
-         insert!(
-             "himalaya-message-add",
--            crate::shared::note::Noted<crate::shared::message::add::MessageAddOutput>
-+            crate::shared::message::add::MessageAddOutput
-         );
-         // NOTE: `message send` prints the confirmation line only.
-         insert!(
-             "himalaya-message-send",
--            crate::shared::note::Noted<crate::shared::message::handler::MessageRouteOutput>
-+            crate::shared::message::handler::MessageRouteOutput
-         );
-         insert!(
-             "himalaya-message-read",
-             crate::shared::message::read::MessageView
-         );
-         insert!(
-             "himalaya-message-delete",
--            crate::shared::note::Noted<crate::shared::message::delete::DeleteReport>
-+            crate::shared::message::delete::DeleteReport
-         );
-         // NOTE: the composers print a `MessageTemplate` when neither
-         // saving nor sending, and a confirmation line otherwise.
-```
-
-**File**: `src/pimdir/backend.rs` (modified, +9/-21)
-```diff
-@@ -37,7 +37,7 @@ use io_pimdir::{
-         mail::{self, PimdirMailSummary},
-     },
- };
--use log::warn;
-+use log::{info, warn};
+@@ -14,7 +14,10 @@ use chrono::{FixedOffset, NaiveDate, TimeZone};
+ use clap::Parser;
+ use humansize::{BINARY, format_size};
+ use mail_parser::{Addr, Address, ContentType, HeaderValue, Message, MessagePart, MimeHeaders};
+-use pimalaya_cli::printer::{Message as PrinterMessage, Printer};
++use pimalaya_cli::{
++    printer::{Message as PrinterMessage, Printer},
++    table::sanitize,
++};
+ use schemars::JsonSchema;
  use serde::Serialize;
  
- use crate::{
-@@ -176,16 +176,6 @@ impl PimdirClient {
-         Ok(paginate(hits, page, page_size))
+@@ -44,6 +47,8 @@ use crate::{
+ /// its headers decoded, its text and HTML bodies decoded to UTF-8, and
+ /// every leaf part with its id, role (body, inline or attachment), type,
+ /// file name and size. `--raw` dumps the original RFC 5322 bytes instead.
++/// Plain output replaces terminal control and bidi characters, retaining
++/// body tabs and newlines. JSON and raw output keep their contents.
+ ///
+ /// A message nested deeper than 8 levels, or holding more than 200 parts
+ /// or 500 header lines, is refused whole with the `message-too-complex`
+@@ -534,16 +539,16 @@ impl fmt::Display for MessageView {
+             writeln!(f, "Date: {}", date.to_rfc822())?;
+         }
+         if let Some(from) = message.from() {
+-            writeln!(f, "From: {}", format_address(from))?;
++            writeln!(f, "From: {}", sanitize(&format_address(from)))?;
+         }
+         if let Some(to) = message.to() {
+-            writeln!(f, "To: {}", format_address(to))?;
++            writeln!(f, "To: {}", sanitize(&format_address(to)))?;
+         }
+         if let Some(cc) = message.cc() {
+-            writeln!(f, "Cc: {}", format_address(cc))?;
++            writeln!(f, "Cc: {}", sanitize(&format_address(cc)))?;
+         }
+         if let Some(subject) = message.subject() {
+-            writeln!(f, "Subject: {subject}")?;
++            writeln!(f, "Subject: {}", sanitize(subject))?;
+         }
+ 
+         // NOTE: HTML markup is verbose and `--raw` covers it, so a part
+@@ -554,10 +559,11 @@ impl fmt::Display for MessageView {
+         // commands and the JSON view take.
+         for part::Leaf { id, part, .. } in part::leaves(message) {
+             let mime = part_mime(part);
++            let mime = sanitize(&mime);
+             let size = format_size(part.len() as u64, BINARY);
+             writeln!(f)?;
+             match part.attachment_name() {
+-                Some(name) => writeln!(f, "[{id}] {mime} — {name} ({size})")?,
++                Some(name) => writeln!(f, "[{id}] {mime} — {} ({size})", sanitize(name))?,
+                 None => writeln!(f, "[{id}] {mime} ({size})")?,
+             }
+             render_part_headers(f, part)?;
+@@ -574,14 +580,30 @@ impl fmt::Display for MessageView {
+                     .filter(|t| !t.is_empty())
+             {
+                 writeln!(f)?;
+-                writeln!(f, "{text}")?;
++                writeln!(f, "{}", sanitize_body(text))?;
+             }
+         }
+ 
+         Ok(())
      }
+ }
  
--    /// How many messages the mailbox has queued for creation or sending and
--    /// not synced yet.
--    ///
--    /// A queued create or send has no public id, so it is no envelope and
--    /// has no row. The count is what a listing reports instead, so a saved
--    /// or sent message reads as queued rather than as lost.
--    pub fn queued_messages(&mut self, mailbox: &str) -> Result<usize> {
--        Ok(self.queued_mail(mailbox)?.len())
--    }
--
-     /// The mailbox's queued creations and sends, rendered as mail.
-     ///
-     /// The operator CLI is kind-agnostic and prints ids, hashes and flags.
-@@ -309,8 +299,7 @@ impl PimdirClient {
-         Ok(link_id.0)
++/// Replaces unsafe body characters while retaining its text layout.
++fn sanitize_body(text: &str) -> String {
++    text.replace("\r\n", "\n")
++        .chars()
++        .map(|c| {
++            if (c.is_control() && !matches!(c, '\t' | '\n'))
++                || matches!(c, '\u{202a}'..='\u{202e}' | '\u{2066}'..='\u{2069}')
++            {
++                char::REPLACEMENT_CHARACTER
++            } else {
++                c
++            }
++        })
++        .collect()
++}
++
+ /// Whether the sole text part of the message is a single HTML one, which
+ /// is what makes printing its markup worth it.
+ fn is_html_only(message: &Message) -> bool {
+@@ -601,23 +623,27 @@ fn is_html_only(message: &Message) -> bool {
+ /// line, each shown only when it is present.
+ fn render_part_headers(f: &mut fmt::Formatter<'_>, part: &MessagePart) -> fmt::Result {
+     if let Some(ctype) = part.content_type() {
+-        writeln!(f, "    Content-Type: {}", format_content_type(ctype))?;
++        writeln!(
++            f,
++            "    Content-Type: {}",
++            sanitize(&format_content_type(ctype))
++        )?;
      }
- 
--    /// Queues a message for the store's owner to send, returning the queue
--    /// row id.
-+    /// Queues a message for the store's owner to send.
-     ///
-     /// The body is stored as given, `Bcc:` included, and the row carries the
-     /// envelope derived from its headers, the `submit` intent any owner of
-@@ -327,13 +316,13 @@ impl PimdirClient {
-     /// the field and would ignore it, so the copy is left to the caller
-     /// there, as before.
-     ///
--    /// Returns the queue row id, and whether the intent carries the copy.
-+    /// Returns whether the intent carries the copy.
-     pub fn send_message(
-         &mut self,
-         mailbox: Option<&str>,
-         raw: Vec<u8>,
-         copy: bool,
--    ) -> Result<(i64, bool)> {
-+    ) -> Result<bool> {
-         let Some(mailbox) = mailbox else {
-             bail!(
-                 "A pimdir account queues a sent message under a mailbox: \
-@@ -373,7 +362,8 @@ impl PimdirClient {
-         let id = self
-             .enqueue(&mut producer, &collection, &action, Some(&object))
-             .map_err(|err| anyhow!("Queue send in `{mailbox}`: {err}"))?;
--        Ok((id, carried))
-+        info!("message queued for sending as action {id}, see `himalaya pimdir queue list`");
-+        Ok(carried)
+     if let Some(encoding) = part.content_transfer_encoding() {
+-        writeln!(f, "    Content-Transfer-Encoding: {encoding}")?;
++        writeln!(f, "    Content-Transfer-Encoding: {}", sanitize(encoding))?;
      }
- 
-     /// Copies each id from `from` to `to`, staged as `Copy` (a server-side copy
-@@ -878,13 +868,12 @@ mod tests {
-     fn a_sent_message_is_one_submit_row_with_its_envelope() {
-         let (_dir, mut client) = sent_store();
- 
--        let (row, _) = client
-+        client
-             .send_message(Some("imap/Sent"), RAW.to_vec(), false)
-             .unwrap();
- 
-         let pending = client.store.pending_actions("imap/Sent").unwrap();
-         assert_eq!(pending.len(), 1);
--        assert_eq!(pending[0].id, row);
-         let PimdirAction::Unknown {
-             kind,
-             payload,
-@@ -918,14 +907,13 @@ mod tests {
-         assert_eq!(queued.len(), 1);
-         assert!(queued[0].send);
-         assert_eq!(queued[0].envelope.subject, "hi");
--        assert_eq!(client.queued_messages("imap/Sent").unwrap(), 1);
+     if let Some(disposition) = part.content_disposition() {
+         writeln!(
+             f,
+             "    Content-Disposition: {}",
+-            format_content_type(disposition)
++            sanitize(&format_content_type(disposition))
+         )?;
      }
- 
-     #[test]
-     fn a_send_asking_for_a_copy_leaves_it_to_the_caller_on_an_undeclared_owner() {
-         let (_dir, mut client) = sent_store();
- 
--        let (_, carried) = client
-+        let carried = client
-             .send_message(Some("imap/Sent"), RAW.to_vec(), true)
-             .unwrap();
- 
-@@ -963,7 +951,7 @@ mod tests {
-         store.declare("imap", &declaration).unwrap();
-         drop(store);
- 
--        let (_, carried) = client
-+        let carried = client
-             .send_message(Some("imap/Sent"), RAW.to_vec(), true)
-             .unwrap();
-         assert!(carried);
+     if let Some(id) = part.content_id() {
+-        writeln!(f, "    Content-ID: {id}")?;
++        writeln!(f, "    Content-ID: {}", sanitize(id))?;
+     }
+     if let Some(description) = part.content_description() {
+-        writeln!(f, "    Content-Description: {description}")?;
++        writeln!(f, "    Content-Description: {}", sanitize(description))?;
+     }
+     Ok(())
+ }
+@@ -691,6 +717,52 @@ mod tests {
+         MessageReadOutput::new(part::parse(raw).expect("parse")).to_string()
+   
 ```
 
 ---
 
-### Incident Patch 3: `1dc3ad0f` (2026-10-03)
-**Commit Message**: fix: keep control and bidi characters out of the plain output (#771)
+### Incident Patch 2: `40f8cfa5` (2026-10-14)
+**Commit Message**: fix(wizard): save new configurations privately (#784)
 
-* fix: keep control characters out of envelope and attachment tables
+Use exclusive creation and Unix modes 0600 for new files and 0700 for new directories. Preserve the existing append behavior and permissions. Follow the review of PR #784 by removing snapshots, FIFO handling, ACL FFI and the direct libc dependency, and consolidate the Cairn records into one change.
 
-Subjects, sender names and attachment names were printed exactly as
-the message carried them, so any sender could put escape sequences in
-front of the reader: rewrite the clipboard (OSC 52), hide text, clear
-the screen.
+Co-authored-by: OpenAI Codex <[REDACTED_EMAIL]>
 
-printable() replaces control characters with U+FFFD in the cells of
-envelope list, envelope search and attachment list. The JSON output is
-unchanged. The cairn change lists the other plain renderings of
-server-supplied strings to convert next.
-
-* fix: sanitize server strings in every plain output
-
-Use pimalaya_cli::table::sanitize from pimalaya-cli 0.2.6, which also
-replaces bidi controls, in place of the local printable(), and apply it
-to the single-line fields of the IMAP, pimdir, JMAP, Gmail and Graph
-outputs. JMAP set errors are sanitized once, in format_set_error().
-
-The binary check of write_bytes_or_save() now also refuses DEL and C1,
-reading bytes that are not UTF-8 as Latin-1, so that UTF-8 continuation
-bytes are not mistaken for C1.
-
-Narrow the cairn delta to single-line fields, fold it into the commands
-spec and log 
-
-**File**: `CHANGELOG.md` (modified, +4/-0)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -43,6 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
- ## [Unreleased]
+ ### Fixed
  
-+### Fixed
-+
-+- Fixed control and bidi characters from messages and servers reaching the terminal through the plain output.
-+
- ## [2.2.1] - 2026-10-02
- 
- ### Added
++- Fixed the wizard creating new configuration files with permissions that could expose raw credentials. New files use exclusive creation and Unix mode 0600, and new directories use mode 0700. Existing file and directory permissions are preserved.
+ - Fixed attachment downloads following dangling symlinks or overwriting existing files after filename suffixes are exhausted. Concurrent downloads now reserve filenames exclusively.
+ - Fixed control and bidi characters from messages and servers reaching the terminal through the plain output.
+ - Fixed pimdir queue details leaking into the shared outputs: `envelope list` no longer reports a `queued` count, and `message send`, `message add --send` and the composers no longer print a `queueId`. `himalaya pimdir queue list` shows what is queued, and a queued send logs its row id at info level.
 ```
 
-**File**: `Cargo.lock` (modified, +2/-2)
+**File**: `cairn/changes/wizard-private-config/delta.md` (added, +9/-0)
 ```diff
-@@ -1942,9 +1942,9 @@ checksum = "9b4f627cb1b25917193a259e49bdad08f671f8d9708acfd5fe0a8c1455d87220"
- 
- [[package]]
- name = "pimalaya-cli"
--version = "0.2.5"
-+version = "0.2.6"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "df3482c0af710d2f95f8cdbe660a8d89eaa361ac07daed47cb28b00e0c5d6289"
-+checksum = "1886248cd5b085601f5dc17d7a984972b854efad78ea59d0488fa158202e6a69"
- dependencies = [
-  "anyhow",
-  "clap",
-```
-
-**File**: `Cargo.toml` (modified, +2/-2)
-```diff
-@@ -35,7 +35,7 @@ strip = "symbols"
- panic = "abort"
- 
- [build-dependencies]
--pimalaya-cli = { version = "0.2", default-features = false, features = ["build"] }
-+pimalaya-cli = { version = "0.2.6", default-features = false, features = ["build"] }
- 
- [dev-dependencies]
- tempfile = "3"
-@@ -69,7 +69,7 @@ mail-parser = { version = "0.11", features = ["full_encoding", "serde"], optiona
- mime_guess = "2"
- open = "5"
- percent-encoding = "2"
--pimalaya-cli = { version = "0.2", default-features = false, features = ["terminal", "table", "prompt", "wizard", "imap", "smtp", "jmap", "spinner"] }
-+pimalaya-cli = { version = "0.2.6", default-features = false, features = ["terminal", "table", "prompt", "wizard", "imap", "smtp", "jmap", "spinner"] }
- pimalaya-config = { version = "0.2.1", default-features = false, features = ["toml", "secret"] }
- pimalaya-stream = { version = "0.3", default-features = false, features = ["std"] }
- rfc2047-decoder = { version = "1", optional = true }
-```
-
-**File**: `cairn/changes/plain-output-is-printable/delta.md` (added, +11/-0)
-```diff
-@@ -0,0 +1,11 @@
+@@ -0,0 +1,9 @@
 +---
-+cairn: change
-+change: plain-output-is-printable
++cairn: delta
++change: wizard-private-config
 +---
-+
-+# Delta
 +
 +## ADDED Requirements
 +
-+### Requirement: Plain output is printable
-+A single-line field taken from a message or a server (a subject, a name, a filename, a mailbox name, an id) SHALL have its control characters (C0, DEL and C1) and bidi controls (U+202A to U+202E, U+2066 to U+2069) replaced with U+FFFD before it is printed as plain output, so it can neither drive the terminal nor reorder what is displayed. Message bodies keep their tabs and newlines; on a terminal they SHALL be refused as binary when they hold any other control character, DEL and C1 included. The `--json` output SHALL keep the strings unchanged.
++### Requirement: Generated configuration files are private
++The wizard SHALL create new configuration files exclusively, failing rather than overwriting an existing entry. On Unix, it SHALL create new files with mode 0600 and missing parent directories with mode 0700, subject to a more restrictive umask. It SHALL NOT change the permissions of existing files or directories. Appending SHALL preserve the existing bytes and add the generated account as plain text.
 ```
 
-**File**: `cairn/changes/plain-output-is-printable/proposal.md` (added, +16/-0)
+**File**: `cairn/changes/wizard-private-config/proposal.md` (added, +14/-0)
 ```diff
-@@ -0,0 +1,16 @@
+@@ -0,0 +1,14 @@
 +---
 +cairn: change
-+id: plain-output-is-printable
++id: wizard-private-config
 +status: landed
-+created: 2026-10-02
++created: 2026-10-10
 +---
 +
-+# Keep control characters out of the plain output
++# Save generated accounts privately
 +
 +## Why
-+
-+The tables print subjects, display names, filenames and other strings exactly as the message or the server supplied them, so anyone who can send a message can put terminal escape sequences in front of the reader. A subject ending in `ESC ] 52 ; c ; … BEL` rewrites the clipboard in terminals that honour OSC 52, `ESC [ 8 m` hides the rest of the line and `ESC [ 2 J` clears the screen. The `--json` output escapes the C0 characters, ESC included, and is left as it is.
++The wizard can render raw credentials but creates configuration files using only the process umask, leaving them readable by other users under a common umask.
 +
 +## What
-+
-+`pimalaya_cli::table::sanitize` (pimalaya-cli 0.2.6, shared with cardamum and calendula) replaces every control character (C0, DEL and C1) and the bidi controls with U+FFFD, and borrows the string when there is none. It is applied where a single-line field from a message or a server is rendered: the envelope, attachment, mailbox, ID, pimdir queue, JMAP, Gmail and Graph outputs. Message bodies keep their tabs and newlines; the binary check of `write_bytes_or_save` now also refuses DEL and C1 on a terminal. The data and the `--json` output keep the original strings.
++Create new configuration files exclusively with Unix mode 0600 and missing parent directories with mode 0700. Keep the existing plain text append and its permissions. Use only the standard library, as requested in the maintainer's review of PR #784.
 ```
 
-**File**: `cairn/changes/plain-output-is-printable/tasks.md` (added, +17/-0)
+**File**: `cairn/changes/wizard-private-config/tasks.md` (added, +9/-0)
 ```diff
-@@ -0,0 +1,17 @@
+@@ -0,0 +1,9 @@
 +---
 +cairn: tasks
-+change: plain-output-is-printable
++change: wizard-private-config
 +---
 +
-+# Tasks
-+
-+- [x] `sanitize` in pimalaya-cli 0.2.6, replacing the local `printable`.
-+- [x] `envelope list` and `envelope search`: id, subject, and the FROM or TO names.
-+- [x] `attachment list`: id, filename, type and path.
-+- [x] IMAP: `imap fetch` headers and structure, `imap mailbox list`, `imap id`.
-+- [x] `pimdir queue list`: subject and recipients.
-+- [x] JMAP: set errors (`format_set_error`), `jmap identity delete`, `jmap vacation get`.
-+- [x] Gmail: `threads get`, `threads list`, `settings sendas get`, `settings vacation get`, filter ids and summaries.
-+- [x] Graph: `attachments list`, `mail-folders list`.
-+- [x] The binary check of src/shared/output.rs also refuses DEL and C1.
-+- [x] Fold the delta into [cairn/spec/commands.md](../../spec/commands.md); write [cairn/log/2026-10-03-plain-output-is-printable.md](../../log/2026-10-03-plain-output-is-printable.md).
++- [x] Create new files exclusively and set private Unix creation modes.
++- [x] Preserve existing content and permissions when appending.
++- [x] Test creation modes, occupied paths and append compatibility.
++- [x] Update the wizard specification and changelog, then record validation.
 ```
 
-**File**: `cairn/log/2026-10-03-plain-output-is-printable.md` (added, +15/-0)
+**File**: `cairn/log/2026-10-14-wizard-private-config.md` (added, +11/-0)
 ```diff
-@@ -0,0 +1,15 @@
+@@ -0,0 +1,11 @@
 +---
 +cairn: log
-+change: plain-output-is-printable
-+landed: 2026-10-03
++change: wizard-private-config
++landed: 2026-10-14
 +---
 +
-+# Plain output keeps control and bidi characters out of the terminal
++# Save generated accounts privately
 +
-+Subjects, names, filenames, mailbox names and ids reached the plain output as the message or the server supplied them, so a sender could drive the terminal with escape sequences (rewriting the clipboard with OSC 52, hiding text, clearing the screen) or disguise a filename with bidi overrides.
++New configuration files use exclusive creation and Unix mode 0600. Missing parent directories use mode 0700. Existing files retain their permissions and bytes when a generated account is appended, and existing directories retain their permissions. The implementation uses the standard library without snapshots, FIFO handling or ACL FFI, following the maintainer's PR #784 review.
 +
-+The single-line fields of the envelope, attachment, mailbox, ID, pimdir queue, JMAP, Gmail and Graph outputs now go through `pimalaya_cli::table::sanitize` from pimalaya-cli 0.2.6, which replaces C0, DEL, C1 and the bidi controls with U+FFFD. JMAP set errors are sanitized once, in `format_set_error`. Message bodies keep their tabs and newlines; `write_bytes_or_save` now refuses DEL and C1 on a terminal as well, reading bytes that are not UTF-8 as Latin-1. The `--json` output is unchanged.
-+
-+Capabilities moved: **commands** (plain output is printable).
-+
-+Verified with unit tests rendering the envelope and attachment tables from strings holding OSC 52, SGR and screen-clearing sequences, and with tests of the binary check for C0, DEL, UTF-8 encoded and raw C1, and UTF-8 text whose continuation bytes fall in 0x80..=0x9f.
++Folded the private creation requirement into wizard and updated the changelog. Regression tests cover nested creation modes, existing permissions and contents, occupied files, dangling symlinks and missing append targets. The all-feature suite passed 273 tests with one ignored. Formatting, diff checks and all-target/all-feature clippy with warnings denied passed. Clippy used the system OpenSSL because vendored assembly generation failed in this environment.
 ```
 
-**File**: `cairn/spec/commands.md` (modified, +3/-0)
+**File**: `cairn/spec/wizard.md` (modified, +3/-0)
 ```diff
-@@ -29,6 +29,9 @@ The active account context SHALL be threaded as a sibling argument through every
- ### Requirement: Output discipline
- Data and errors SHALL go to stdout through the printer; `--json` switches every command to JSON. stderr carries logs only. Each command's doc comment is its `--help` text, so `himalaya <command> --help` is the canonical per-command usage reference.
+@@ -55,3 +55,6 @@ The wizard SHALL write a configuration file that does not exist and append a pla
  
-+### Requirement: Plain output is printable
-+A single-line field taken from a message or a server (a subject, a name, a filename, a mailbox name, an id) SHALL have its control characters (C0, DEL and C1) and bidi controls (U+202A to U+202E, U+2066 to U+2069) replaced with U+FFFD before it is printed as plain output, so it can neither drive the terminal nor reorder what is displayed. Message bodies keep their tabs and newlines; on a terminal they SHALL be refused as binary when they hold any other control character, DEL and C1 included. The `--json` output SHALL keep the strings unchanged.
+ ### Requirement: A generated account reads in a deliberate order
+ The serializer SHALL decide what a generated account holds, so a defaulted field is omitted and no field is enumerated twice, but the rendering SHALL order what it emits: the groups run most-defining first (`default`, the identity, the storage backend, the transport, the mailboxes, the rendering options), an unrecognised group renders after them rather than being dropped, a group's `server` key reads before the credentials qualifying it, and a blank line separates groups.
 +
- ### Requirement: Generation commands print to the standard output
- The `completion`, `manual` and `json-schema` commands SHALL share one shape: a positional list selecting what to generate, defaulting to everything, and an optional `--dir` deciding where it lands. Without a directory they SHALL print the single selected item to the standard output, so a packaging helper can capture it and a shell can redirect it to a file, and SHALL fail when several items are selected rather than concatenating pieces valid for nothing. With a directory they SHALL write one file per selected item in it, creating the directory when missing, and report where each landed.
++### Requirement: Generated configuration files are private
++The wizard SHALL create new configuration files exclusively, failing rather than overwriting an existing entry. On Unix, it SHALL create new files with mode 0600 and missing parent directories with mode 0700, subject to a more restrictive umask. It SHALL NOT change the permissions of existing files or directories. Appending SHALL preserve the existing bytes and add the generated account as plain text.
+```
+
+**File**: `src/wizard/configure.rs` (modified, +130/-21)
+```diff
+@@ -20,11 +20,14 @@
  
+ use std::{
+     fmt,
+-    fs::{self, OpenOptions},
++    fs::{DirBuilder, OpenOptions},
+     io::{IsTerminal, Write, stdin, stdout},
+     path::{Path, PathBuf},
+ };
+ 
++#[cfg(unix)]
++use std::os::unix::fs::{DirBuilderExt, OpenOptionsExt};
++
+ use anyhow::{Context, Result, bail};
+ use clap::Parser;
+ use pimalaya_cli::{printer::Printer, prompt};
+@@ -208,16 +211,7 @@ fn save_or_print(printer: &mut impl Printer, path: &Path, config: ConfigureOutpu
+         return printer.out(config);
+     }
+ 
+-    if let Some(parent) = path
+-        .parent()
+-        .filter(|parent| !parent.as_os_str().is_empty())
+-    {
+-        fs::create_dir_all(parent)
+-            .with_context(|| format!("Create the config directory {}", parent.display()))?;
+-    }
+-
+-    fs::write(path, config.to_string())
+-        .with_context(|| format!("Write the config file {}", path.display()))?;
++    write_configuration(path, &config.to_string(), false)?;
+ 
+     print_saved(path, &config);
+ 
+@@ -233,23 +227,49 @@ fn append_or_print(printer: &mut impl Printer, path: &Path, config: ConfigureOut
+         return printer.out(config);
+     }
+ 
+-    let mut file = OpenOptions::new()
+-        .append(true)
+-        .open(path)
+-        .with_context(|| format!("Open the config file {}", path.display()))?;
+-
+     // NOTE: appending text keeps every comment and hand-written line as
+     // they are, which re-serializing the document would not. The leading
+     // newline separates the two tables, and terminates the last line of a
+     // file that ends without one.
+-    write!(file, "\n{config}")
+-        .with_context(|| format!("Append to the config file {}", path.display()))?;
++    write_configuration(path, &format!("\n{config}"), true)?;
+ 
+     print_saved(path, &config);
+ 
+     Ok(())
+ }
+ 
++/// Creates a private configuration or appends without changing permissions.
++fn write_configuration(path: &Path, document: &str, append: bool) -> Result<()> {
++    let mut options = OpenOptions::new();
++    options.write(true);
++
++    if append {
++        options.append(true);
++    } else {
++        if let Some(parent) = path.parent().filter(|p| !p.as_os_str().is_empty()) {
++            let mut directory = DirBuilder::new();
++            directory.recursive(true);
++            #[cfg(unix)]
++            directory.mode(0o700);
++            directory
++                .create(parent)
++                .with_context(|| format!("Create the config directory {}", parent.display()))?;
++        }
++
++        options.create_new(true);
++        #[cfg(unix)]
++        options.mode(0o600);
++    }
++
++    let mut file = options
++        .open(path)
++        .with_context(|| format!("Open the config file {}", path.display()))?;
++    file.write_all(document.as_bytes())
++        .with_context(|| format!("Write the config file {}", path.display()))?;
++
++    Ok(())
++}
++
+ /// Tells where the account landed, under which name, and what to run
+ /// next.
+ ///
+@@ -279,6 +299,9 @@ mod tests {
+     use super::*;
+     use crate::config::{AccountConfig, MaildirConfig};
+ 
++    #[cfg(unix)]
++    use std::os::unix::fs::{PermissionsExt, symlink};
++
+     static NEXT_CONFIG: AtomicUsize = AtomicUsize::new(0);
+ 
+     /// A path in the temporary directory no other test writes to.
+@@ -358,9 +381,8 @@ mod tests {
+         let document = account(!existing.has_default)
+             .render("perso")
+             .expect("render the account");
+-        let mut file = OpenOptions::new().append(true).open(&path).expect("open");
+-        write!(file, "\n{document}").expect("append the generated account");
+-        drop(file);
++        write_configuration(&path, &format!("\n{document}"), true)
++            .expect("append the generated account");
+ 
+         let content = fs::read_to_string(&path).expect("read back");
+         let config: Config = toml::from_str(&content).expect("parse the appended config");
+@@ -397,4 +419,91 @@ mod tests {
+ 
+         assert!(existing.is_none());
+     }
++
++    #[cfg(unix)]
++    #[test]
++    fn generated_configuration_and_new_directories_are_private() {
++        let dir = tempfile::tempdir().unwrap();
++        let path = dir.path().join("first/second/config.toml");
++        let document = "password.raw = \"dummy\"\n";
++
++        write_configuration(&path, document, false).unwrap();
++
++        assert_eq!(fs::read_to_string(&path).unwrap(), document);
++        assert_eq!(
++            fs::metadata(&path).unwrap().permissions().mode() & 0o777,
++            0o600
++        );
++        for parent in [dir.path().join("first"), dir.path().join("first/second")] {
++            assert_eq!(
++                fs::metadata(parent).unwrap().permissions().mode() & 0o777,
++                0o700
++            );
++        }
++    }
++
++    #[cfg(unix)]
++    #[test]
++    fn appending_keeps_existing_content_and_permissions() {
++        let dir = tempfile::tempdir().unwrap();
++        let path = dir.path().join("config.toml");
++        fs::write(&path, "# keep this comment\n").unwrap();
+
 ```
 
 ---
 
-### Incident Patch 4: `09f171b1` (2026-10-02)
-**Commit Message**: fix(search): compile eval with msgraph backend alone
+### Incident Patch 3: `92876018` (2026-10-13)
+**Commit Message**: build: align the Pimalaya libraries on their pushed revisions
 
-Refs: #770
+io-pimdir 0.8 (189db40), io-msgraph 0.6 (2ae2637), io-jmap 0.6
+(919eab4) and io-gmail 0.5, with io-http (e181530) and io-imap
+(b1ab38e) patched to their unreleased fixes bounding what a server
+can make the client buffer. The pimdir reads take no date floor, the
+new query fields keep their defaults and the new JMAP submission
+errors are named; outputs are unchanged.
 
-**File**: `src/email/search/mod.rs` (modified, +4/-3)
+Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -1,15 +1,16 @@
- //! # Search
- //!
- //! The shared search query: a filter, a sort, the grammar parsing both
--//! from one string, and the client-side evaluation the local backends
--//! run it with.
-+//! from one string, and the client-side evaluation run locally
-+//! (filter + sort for local backends, sort-after-search for Graph).
+@@ -36,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - Changed the size `attachment list` reports, and the bytes `attachment download` writes, to be the part's bytes once its transfer encoding is undone, in its own charset: a text attachment is no longer converted to UTF-8, and an attached message is written alone rather than with the whole message holding it.
+ - Changed the pimdir writes to be refused before they are queued when a source of the store does not support them, naming the capability, the source and why, and a send to be refused while several sources can send and none is chosen. A write a source supports only in part logs a warning.
+ - Changed a pimdir send asking for a copy to carry it in the queued send, so the copy is filed only once the message is sent; a store whose owner declares no capabilities still gets the copy queued beside the send.
++- Bumped io-pimdir to 0.8 (`189db40`), io-msgraph to 0.6 (`2ae2637`), io-jmap to 0.6 (`919eab4`) and io-gmail to 0.5, and pinned io-http at `e181530` and io-imap at `b1ab38e`, whose unreleased fixes bound what a server can make the client hold: an HTTP response head is capped at 64 KiB and a body at 256 MiB, failing with a typed error rather than buffering without end, an IMAP greeting carrying a literal fails rather than panicking, a `STARTTLS` response line is capped, and `LOGIN` and `AUTHENTICATE` no longer log credentials at trace level. A JMAP submission refused as `tooLarge`, `forbidden`, `overQuota` or `rateLimit` now names that type rather than `unknown`. The pimdir reads take no date floor; outputs are unchanged.
  
- pub mod error;
- #[cfg(any(
-     feature = "maildir",
-     feature = "m2dir",
-     feature = "mbox",
--    feature = "pimdir"
-+    feature = "pimdir",
-+    feature = "msgraph"
- ))]
- pub mod eval;
- pub mod filter;
+ ### Fixed
+ 
 ```
 
----
-
-### Incident Patch 5: `5b12b2a8` (2026-10-02)
-**Commit Message**: build: fix ci issue, prepare v2.2.1
-
-**File**: `CHANGELOG.md` (modified, +7/-2)
+**File**: `Cargo.lock` (modified, +10/-14)
 ```diff
-@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ## [Unreleased]
- 
--## [2.2.0] - 2026-10-02
-+## [2.2.1] - 2026-10-02
- 
- ### Added
- 
-@@ -207,6 +207,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
-   `message read --seen` and `flag add` reported success and left the message untouched, a Maildir name in `new` having nowhere to carry a flag. The message now moves to `cur` under the same id with its flags in the name, which is the transition every Maildir client performs.
- 
-+## [2.2.0] - 2026-10-02
-+
-+Tagged and released on GitHub, but never published to crates.io: the upload failed on `Cargo.toml` declaring six keywords, one over the limit. Its changes ship in [2.2.1].
-+
- ## [2.1.0] - 2026-08-16
- 
- ### Added
-@@ -1388,7 +1392,8 @@ Few major concepts changed:
- [core#1]: https://github.com/pimalaya/core/issues/1
- [core#10]: https://github.com/pimalaya/core/issues/10
- 
--[unreleased]: https://github.com/pimalaya/himalaya/compare/v2.2.0...HEAD
-+[unreleased]: https://github.com/pimalaya/himalaya/compare/v2.2.1...HEAD
-+[2.2.1]: https://github.com/pimalaya/himalaya/compare/v2.1.0...v2.2.1
- [2.2.0]: https://github.com/pimalaya/himalaya/compare/v2.1.0...v2.2.0
- [2.1.0]: https://github.com/pimalaya/himalaya/compare/v2.0.0...v2.1.0
- [2.0.0]: https://github.com/pimalaya/himalaya/compare/v1.2.0...v2.0.0
-```
-
-**File**: `Cargo.lock` (modified, +1/-1)
-```diff
-@@ -934,7 +934,7 @@ checksum = "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea"
+@@ -1195,9 +1195,9 @@ dependencies = [
  
  [[package]]
- name = "himalaya"
--version = "2.2.0"
-+version = "2.2.1"
- dependencies = [
-  "anyhow",
-  "ariadne",
-```
-
-**File**: `Cargo.toml` (modified, +2/-2)
-```diff
-@@ -1,13 +1,13 @@
- [package]
- name = "himalaya"
- description = "CLI to manage emails"
--version = "2.2.0"
-+version = "2.2.1"
- authors = ["Clément DOUIN (soywod) <pimalaya.org@posteo.net>"]
- rust-version = "1.89"
- edition = "2024"
- license = "MIT OR Apache-2.0"
- categories = ["command-line-utilities", "email"]
--keywords = ["cli", "email", "imap", "maildir", "sieve", "smtp"]
-+keywords = ["cli", "mail", "imap", "smtp", "jmap"]
- homepage = "https://pimalaya.org"
- repository = "https://github.com/pimalaya/himalaya"
- 
-```
-
-**File**: `default.nix` (modified, +1/-1)
-```diff
-@@ -17,7 +17,7 @@ in
- pimalaya.mkDefault (
-   {
-     src = ./.;
--    version = "2.2.0";
-+    version = "2.2.1";
-     mkPackage = (
-       {
-         lib,
-```
-
----
-
-### Incident Patch 6: `86605b7f` (2026-10-02)
-**Commit Message**: build: prepare v2.2.0
-
-**File**: `CHANGELOG.md` (modified, +5/-2)
-```diff
-@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ## [Unreleased]
- 
-+## [2.2.0] - 2026-10-02
-+
- ### Added
- 
- - Added `message.send.save-copy`, the mailbox a sent message is copied to when `--save` is not passed, and `--no-save` on `message send`, `compose`, `reply` and `forward` to skip it.
-@@ -115,7 +117,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
-   The stripping was therefore a guess at the sync engine's convention, needing a config key wherever it could not decide. The id is now the only spelling, as it already is for JMAP's opaque ids, and `mailbox.alias.inbox = "imap/INBOX"` is how you stop typing it.
- 
--- **BREAKING**: renamed the plural commands that name no vendor resource to their singular, the plural staying as a hidden alias.
-+- Renamed the plural commands that name no vendor resource to their singular, the plural staying as a hidden alias.
- 
-   `imap flags`, `maildir messages`, `maildir flags`, `m2dir messages` and `m2dir flags` become `imap flag`, `maildir message`, `maildir flag`, `m2dir message` and `m2dir flag`. Every old spelling keeps working, hidden from `--help`.
- 
-@@ -1386,7 +1388,8 @@ Few major concepts changed:
- [core#1]: https://github.com/pimalaya/core/issues/1
- [core#10]: https://github.com/pimalaya/core/issues/10
- 
--[unreleased]: https://github.com/pimalaya/himalaya/compare/v2.1.0...HEAD
-+[unreleased]: https://github.com/pimalaya/himalaya/compare/v2.2.0...HEAD
-+[2.2.0]: https://github.com/pimalaya/himalaya/compare/v2.1.0...v2.2.0
- [2.1.0]: https://github.com/pimalaya/himalaya/compare/v2.0.0...v2.1.0
- [2.0.0]: https://github.com/pimalaya/himalaya/compare/v1.2.0...v2.0.0
- [1.2.0]: https://github.com/pimalaya/himalaya/compare/v1.1.0...v1.2.0
-```
-
-**File**: `Cargo.lock` (modified, +1/-1)
-```diff
-@@ -934,7 +934,7 @@ checksum = "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea"
- 
- [[package]]
- name = "himalaya"
--version = "2.1.0"
-+version = "2.2.0"
- dependencies = [
-  "anyhow",
-  "ariadne",
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- [package]
- name = "himalaya"
- description = "CLI to manage emails"
--version = "2.1.0"
-+version = "2.2.0"
- authors = ["Clément DOUIN (soywod) <pimalaya.org@posteo.net>"]
- rust-version = "1.89"
- edition = "2024"
-```
-
-**File**: `default.nix` (modified, +1/-1)
-```diff
-@@ -17,7 +17,7 @@ in
- pimalaya.mkDefault (
-   {
-     src = ./.;
--    version = "2.1.0";
-+    version = "2.2.0";
-     mkPackage = (
-       {
-         lib,
-```
-
----
-
-### Incident Patch 7: `beac82e7` (2026-10-02)
-**Commit Message**: build: bump io-msgraph
-
-**File**: `Cargo.lock` (modified, +2/-2)
-```diff
-@@ -1323,9 +1323,9 @@ dependencies = [
- 
- [[package]]
- name = "io-msgraph"
--version = "0.4.2"
-+version = "0.4.3"
+ name = "io-gmail"
+-version = "0.4.0"
++version = "0.5.0"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "b19bc84f171926f974f7cb49fd7d699e0b4c12ed83e83d862893c7ecb0a965de"
-+checksum = "bf5b9c7de32943e38be0e1f99c03c9280aca59d9041f90073404b17e2c861fb9"
+-checksum = "76991fe82eed84da4d85fb04c392fe0d93cad5ca1419c25faedb9d9a42a8a20b"
++checksum = "9395ae6abe2e10289147290316e62226bedbd20a6b29fd6d9ae903d1483344c0"
  dependencies = [
   "anyhow",
   "base64 0.23.1",
-```
-
----
-
-### Incident Patch 8: `88f1c382` (2026-10-01)
-**Commit Message**: ci: fix cross builds
-
-**File**: `default.nix` (modified, +0/-7)
-```diff
-@@ -62,13 +62,6 @@ pimalaya.mkDefault (
-         (drv: {
-           buildInputs = (drv.buildInputs or [ ]) ++ lib.optional systemSqlite sqlite';
+@@ -1214,8 +1214,7 @@ dependencies = [
+ [[package]]
+ name = "io-http"
+ version = "0.5.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "4fe2064378f85c13e3f3aca141308fa541c4478ff5cf5ebadd7dcbcce1a44281"
++source = "git+https://github.com/pimalaya/io-http?rev=e1815307771c1ec65a86b77256d46c33241d3038#e1815307771c1ec65a86b77256d46c33241d3038"
+ dependencies = [
+  "anyhow",
+  "base64 0.23.1",
+@@ -1231,8 +1230,7 @@ dependencies = [
+ [[package]]
+ name = "io-imap"
+ version = "0.7.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "df059b417ac8888b21787a4464a146260aba38d59f0d1945cd3b727777eb8297"
++source = "git+https://github.com/pimalaya/io-imap?rev=b1ab38ea9f24578b46dda56aa009600571b6b9ef#b1ab38ea9f24578b46dda56aa009600571b6b9ef"
+ dependencies = [
+  "anyhow",
+  "base64 0.23.1",
+@@ -1248,9 +1246,8 @@ dependencies = [
  
--          # pkg-config hands the linker libsqlite3 but no rpath, leaving a
--          # binary that cannot find it: not in postInstall, which runs it, nor
--          # once installed.
--          env = (drv.env or { }) // {
--            NIX_LDFLAGS = lib.optionalString systemSqlite ("-rpath " + lib.getLib sqlite' + "/lib");
--          };
--
-           postInstall =
-             let
-               inherit (pkgs) stdenv;
-```
-
-**File**: `flake.lock` (modified, +3/-3)
-```diff
-@@ -41,11 +41,11 @@
-     "pimalaya": {
-       "flake": false,
-       "locked": {
--        "lastModified": 1790857452,
--        "narHash": "sha256-sJbXBLaJLmkH1W7fRmiy9aCrwjT8ypn3g/sjvoHQYPc=",
-+        "lastModified": 1790888248,
-+        "narHash": "sha256-KjU8CrD6bo77bHrsaXtaGxLhv34PYHULvldbbXRVgVE=",
-         "owner": "pimalaya",
-         "repo": "nix",
--        "rev": "c09ccff8d979c5311493ca1bf32739df0ee3e35e",
-+        "rev": "82fb3477f7b5a21aa08d68eb9de4febb0632e099",
-         "type": "github"
-       },
-       "original": {
-```
-
----
-
-### Incident Patch 9: `c23743f3` (2026-10-01)
-**Commit Message**: build: bump deps
-
-**File**: `Cargo.lock` (modified, +2/-2)
-```diff
-@@ -1363,9 +1363,9 @@ dependencies = [
+ [[package]]
+ name = "io-jmap"
+-version = "0.4.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "cac88102ac3621a7da2dc6a306c5251c293f2c5b0c16fbc08ccea1fad849188b"
++version = "0.6.0"
++source = "git+https://github.com/pimalaya/io-jmap?rev=919eab465ab620b323f9191ab8de2f640bc4a1d2#919eab465ab620b323f9191ab8de2f640bc4a1d2"
+ dependencies = [
+  "anyhow",
+  "io-http",
+@@ -1323,9 +1320,8 @@ dependencies = [
+ 
+ [[package]]
+ name = "io-msgraph"
+-version = "0.4.3"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "bf5b9c7de32943e38be0e1f99c03c9280aca59d9041f90073404b17e2c861fb9"
++version = "0.6.0"
++source = "git+https://github.com/pimalaya/io-msgraph?rev=2ae26370aefa671c16316dbad98107634436bce6#2ae26370aefa671c16316dbad98107634436bce6"
+ dependencies = [
+  "anyhow",
+  "base64 0.23.1",
+@@ -1363,8 +1359,8 @@ dependencies = [
  
  [[package]]
  name = "io-pimdir"
--version = "0.5.0"
-+version = "0.5.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1fe9a53f7f303ae84c20591e0a9c7f53880fd7495f4391c08c945c161882e52e"
-+checksum = "731a6a53112d974335dfb31724b68434b7f72bb2232b503f3f95d6679f7509bc"
+-version = "0.6.0"
+-source = "git+https://github.com/pimalaya/io-pimdir?rev=be03184246e1ad7e45bd657de5076d99a1b34922#be03184246e1ad7e45bd657de5076d99a1b34922"
++version = "0.8.0"
++source = "git+https://github.com/pimalaya/io-pimdir?rev=189db408bdbeee33c1c535709c5f40f3464c7ecb#189db408bdbeee33c1c535709c5f40f3464c7ecb"
  dependencies = [
   "blake3",
   "fs4",
 ```
 
----
-
-### Incident Patch 10: `0733b7fe` (2026-10-01)
-**Commit Message**: ci: fix sqlite on windows
-
-**File**: `default.nix` (modified, +13/-3)
+**File**: `Cargo.toml` (modified, +12/-4)
 ```diff
-@@ -29,7 +29,17 @@ pimalaya.mkDefault (
-       }:
- 
-       let
--        inherit (pkgs) sqlite;
-+        inherit (pkgs) sqlite stdenv windows;
-+
-+        # NOTE: nixpkgs' mingw sqlite fails its pthread probe and compiles
-+        # single-threaded, defining no sqlite3_mutex_* rusqlite links against
-+        sqlite' =
-+          if stdenv.hostPlatform.isWindows then
-+            sqlite.overrideAttrs (old: {
-+              buildInputs = (old.buildInputs or [ ]) ++ [ windows.pthreads ];
-+            })
-+          else
-+            sqlite;
- 
-         buildFeatures = lib.splitString "," features;
- 
-@@ -50,13 +60,13 @@ pimalaya.mkDefault (
-       # HACK: needed until the v2.1.0 derivation lands on nixpkgs's master
-       .overrideAttrs
-         (drv: {
--          buildInputs = (drv.buildInputs or [ ]) ++ lib.optional systemSqlite sqlite;
-+          buildInputs = (drv.buildInputs or [ ]) ++ lib.optional systemSqlite sqlite';
- 
-           # pkg-config hands the linker libsqlite3 but no rpath, leaving a
-           # binary that cannot find it: not in postInstall, which runs it, nor
-           # once installed.
-           env = (drv.env or { }) // {
--            NIX_LDFLAGS = lib.optionalString systemSqlite ("-rpath " + lib.getLib sqlite + "/lib");
-+            NIX_LDFLAGS = lib.optionalString systemSqlite ("-rpath " + lib.getLib sqlite' + "/lib");
-           };
- 
-           postInstall =
-```
-
----
-
-### Incident Patch 11: `97eea351` (2026-10-01)
-**Commit Message**: ci: fix nix build
-
-**File**: `default.nix` (modified, +22/-6)
-```diff
-@@ -28,21 +28,37 @@ pimalaya.mkDefault (
-         buildPackages,
-       }:
- 
-+      let
-+        inherit (pkgs) sqlite;
-+
-+        buildFeatures = lib.splitString "," features;
-+
-+        systemSqlite =
-+          (defaultFeatures || builtins.elem "pimdir" buildFeatures)
-+          && !builtins.elem "vendored" buildFeatures;
-+
-+      in
-       (pkgs.callPackage "${nixpkgs}/pkgs/by-name/hi/himalaya/package.nix" {
--        inherit lib rustPlatform;
--        # the nixpkgs derivation runs the binary it just built, which needs
--        # a native one when cross compiling
-+        inherit lib rustPlatform buildFeatures;
-         buildPackages = buildPackages // {
-           inherit himalaya;
-         };
-         installShellCompletions = false;
-         installManPages = false;
-         buildNoDefaultFeatures = !defaultFeatures;
--        buildFeatures = lib.splitString "," features;
-       })
-       # HACK: needed until the v2.1.0 derivation lands on nixpkgs's master
-       .overrideAttrs
--        {
-+        (drv: {
-+          buildInputs = (drv.buildInputs or [ ]) ++ lib.optional systemSqlite sqlite;
-+
-+          # pkg-config hands the linker libsqlite3 but no rpath, leaving a
-+          # binary that cannot find it: not in postInstall, which runs it, nor
-+          # once installed.
-+          env = (drv.env or { }) // {
-+            NIX_LDFLAGS = lib.optionalString systemSqlite ("-rpath " + lib.getLib sqlite + "/lib");
-+          };
-+
-           postInstall =
-             let
-               inherit (pkgs) stdenv;
-@@ -58,7 +74,7 @@ pimalaya.mkDefault (
-               ${exe} manual -d "$out"/share/man
-               ${exe} json-schema -d "$out"/share/schemas
-             '';
--        }
-+        })
-     );
-   }
-   // removeAttrs args [ "pimalaya" ]
-```
-
----
-
-### Incident Patch 12: `763ecc15` (2026-10-01)
-**Commit Message**: fix: sending issues and search charset
-
-Closes: #769
-
-**File**: `CHANGELOG.md` (modified, +13/-2)
-```diff
-@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ### Added
- 
-+- Added `message.send.save-copy`, the mailbox a sent message is copied to when `--save` is not passed, and `--no-save` on `message send`, `compose`, `reply` and `forward` to skip it.
-+
-+  It takes a mailbox name, alias or role, and the v1 `true` still reads as the `sent` mailbox. Leave it unset on Gmail and Microsoft Graph, which file the sent message themselves.
-+
- - Added `envelope.list.datetime-relative`, rendering recent dates relative to today: the time for today, `yesterday`, then the weekday for the past week, older dates falling back to `datetime-fmt` ([#510]).
- 
- - Added `proxy`, a per-account SOCKS5 or HTTP proxy every network backend connects through, and `<backend>.proxy` to override it for one backend ([#742]).
-@@ -67,6 +71,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ### Changed
- 
-+- Saving and sending at once (`--save` with `--send`, `message send --save`, `message add --send`) now sends first, so a failed send leaves no copy behind. A save failing after the send reports that the message was sent.
-+
- - A pimdir account sends through the store's queue and no longer uses its `smtp` section. **Behaviour change.**
- 
- - `-m/--mailbox` resolves a role after the aliases, so `-m sent` reaches the sent mailbox without an alias. A role carried by several mailboxes is an error naming them.
-@@ -125,9 +131,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ### Fixed
- 
-+- Fixed a message sent over JMAP staying in the drafts mailbox as a draft.
-+
-+  The submission now asks the server to move it to the sent mailbox, unset `$draft` and set `$seen` once sent (RFC 8621 section 7.5 `onSuccessUpdateEmail`). The sent mailbox is the `sent`-role one, or the new `jmap.sent-mailbox-id`; without either, the message only loses `$draft`.
-+
- - Fixed a successful IMAP append being reported as failed when its UID could not be recovered ([#759]).
- 
--  A server may acknowledge `APPEND` without `APPENDUID`, even with UIDPLUS, and some (QQ Exmail) also rewrite the `Message-ID` the fallback search looks for. The save now succeeds with an unknown id, so `message send --save` goes on to send, and `message add --json` can return `"id": null`.
-+  A server may acknowledge `APPEND` without `APPENDUID`, even with UIDPLUS, and some (QQ Exmail) also rewrite the `Message-ID` the fallback search looks for. The save now succeeds with an unknown id, and `message add --json` can return `"id": null`.
- 
- - Fixed the "No backend matching `auto`" error saying nothing of the cause ([#740]). It now names the account and either the supported backends this build compiles in or the missing `<backend>` block, and points at MIGRATION.md when the account still carries the v1 `backend` table.
- 
-@@ -141,7 +151,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- - Fixed IMAP searches with non-ASCII text being rejected by Gmail ([io-imap#3](https://github.com/pimalaya/io-imap/issues/3)).
- 
--  Bumped io-imap to 0.6.1, which sends `CHARSET UTF-8` with every `SEARCH` again, a fix lost since v1.2.0 (#635).
-+  Bumped io-imap to 0.7.1, whose `SEARCH` carries `CHARSET UTF-8` when its criteria hold non-ASCII text, a fix lost since v1.2.0 (#635). An ASCII search sends no charset, Outlook rejecting the UTF-8 one ([#769]).
- 
- - Fixed the `Bcc:` field being transmitted over SMTP, disclosing blind recipients to everyone (#747).
- 
-@@ -1367,6 +1377,7 @@ Few major concepts changed:
- [#759]: https://github.com/pimalaya/himalaya/issues/759
- [#762]: https://github.com/pimalaya/himalaya/issues/762
- [#764]: https://github.com/pimalaya/himalaya/issues/764
-+[#769]: https://github.com/pimalaya/himalaya/issues/769
- 
- [core#1]: https://github.com/pimalaya/core/issues/1
- [core#10]: https://github.com/pimalaya/core/issues/10
-```
-
-**File**: `Cargo.lock` (modified, +10/-10)
-```diff
-@@ -1230,9 +1230,9 @@ dependencies = [
- 
- [[package]]
- name = "io-imap"
--version = "0.7.0"
-+version = "0.7.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "5ae85f32a2430a3533ca168618b5058fcce00f8169f43e11759e1839d5ef7978"
-+checksum = "df059b417ac8888b21787a4464a146260aba38d59f0d1945cd3b727777eb8297"
- dependencies = [
-  "anyhow",
-  "base64 0.23.1",
-@@ -1248,9 +1248,9 @@ dependencies = [
- 
- [[package]]
- name = "io-jmap"
--version = "0.4.0"
-+version = "0.4.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "dfba5d15f9451ed373c5fbdb9280dc94da0ee9de313615bc05ee8d7068a61a16"
-+checksum = "cac88102ac3621a7da2dc6a306c5251c293f2c5b0c16fbc08ccea1fad849188b"
- dependencies = [
-  "anyhow",
-  "io-http",
-@@ -1340,9 +1340,9 @@ dependencies = [
- 
- [[package]]
- name = "io-pim-discovery"
--version = "0.7.0"
-+version = "0.8.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "da1a1cd982a92647cd760d2fa84f9695e496526bba22a95c69e3e8460681ba69"
-+checksum = "091245d7c51eee2b93a613f95e3615b164377364819e7506f61f62bf1e5643cc"
- dependencies = [
-  "anyhow",
-  "base64 0.23.1",
-@@ -1942,9 +1942,9 @@ checksum = "9b4f627cb1b25917193a259e49bdad08f671f8d9708acfd5fe0a8c1455d87220"
- 
- [[package]]
- name = "pimalaya-cli"
--version = "0.2.4"
-+version = "0.2.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d4db8af1fd7b9ffa9bed65ccc090f3cf3e06ef4e30d9138261081196f5271033"
-+checksum = "df3482c0af710d2f95f8cdbe660a8d89eaa361ac07daed47cb28b00e0c5d6289"
- dependencies = [
-  "anyhow",
-  "clap",
-@@ -3140,9 +3140,9 @@ dependencies = [
- 
- [[package]]
- name = "yoke-derive"
--version = "0.8.3"
-+version = "0.8.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "33811428bee40dbceb6d545e95754741d17a6aef9a4849f0fd62e2ba4f412a78"
-+checksum = "ec8ebde2db3681e8c9980cc27822030e68752690ddfa9473e739aeb4dbde6d71"
- dependencies = [
-  "proc-macro2",
-  "quote",
-```
-
-**File**: `Cargo.toml` (modified, +3/-3)
-```diff
-@@ -52,14 +52,14 @@ crossterm = { version = "0.29", default-features = false, features = ["serde"] }
+@@ -52,16 +52,16 @@ convert_case = { version = "0.12", optional = true }
+ crossterm = { version = "0.29", default-features = false, features = ["serde"] }
  dirs = "7"
  humansize = "2"
- io-gmail = { version = "0.4", default-features = false, optional = true }
--io-imap = { version = "0.7", default-features = false, optional = true }
--io-jmap = { version = "0.4", default-features = false, optional = true }
-+io-imap = { version = "0.7.1", default-features = false, optional = true }
-+io-jmap = { version = "0.4.1", default-features = false, optional = true }
+-io-gmail = { version = "0.4", default-features = false, optional = true }
++io-gmail = { version = "0.5", default-features = false, optional = true }
+ io-imap = { version = "0.7.1", default-features = false, optional = true }
+-io-jmap = { version = "0.4.1", default-features = false, optional = true }
++io-jmap = { version = "0.6", default-features = false, optional = true }
  io-m2dir = { version = "0.2", default-features = false, optional = true }
  io-maildir = { version = "0.3", default-features = false, optional = true }
  io-mbox = { version = "0.1", default-features = false, optional = true }
  io-managesieve = { version = "0.2", default-features = false, optional = true }
- io-msgraph = { version = "0.4", default-features = false, optional = true }
--io-pim-discovery = { version = "0.7", default-features = false, features = ["autoconfig", "pacc", "rfc6186", "rfc8620"] }
-+io-pim-discovery = { version = "0.8", default-features = false, features = ["autoconfig", "pacc", "rfc6186", "rfc8620"] }
- io-pimdir = { version = "0.5", default-features = false, features = ["client"], optional = true }
+-io-msgraph = { version = "0.4", default-features = false, optional = true }
++io-msgraph = { version = "0.6", default-features = false, optional = true }
+ io-pim-discovery = { version = "0.8", default-features = false, features = ["autoconfig", "pacc", "rfc6186", "rfc8620", "stream"], optional = true }
+-io-pimdir = { git = "https://github.com/pimalaya/io-pimdir", rev = "be03184246e1ad7e45bd657de5076d99a1b34922", default-features = false, features = ["client"], optional = true }
++io-pimdir = { version = "0.8", default-features = false, features = ["client"], optional = true }
  io-sasl = { version = "0.1", default-features = false, features = ["scram"] }
- io-smtp = { version = "0.5", default-features = false, optional = true }
-```
-
-**File**: `cairn/changes/jmap-sent-leaves-drafts/delta.md` (added, +9/-0)
-```diff
-@@ -0,0 +1,9 @@
-+---
-+cairn: delta
-+change: jmap-sent-leaves-drafts
-+---
-+
-+## ADDED Requirements
-+
-+### Requirement: A JMAP send files the message as sent
-+A JMAP send SHALL stage the message in the drafts mailbox with `$draft`, then submit it with an `onSuccessUpdateEmail` patch (RFC 8621 section 7.5) moving it to the sent mailbox, unsetting `$draft` and setting `$seen`. The drafts mailbox SHALL be `jmap.drafts-mailbox-id`, else the `drafts`-role one, the send failing without either; the sent mailbox SHALL be `jmap.sent-mailbox-id`, else the `sent`-role one, the message only losing `$draft` without either.
-```
-
-**File**: `cairn/changes/jmap-sent-leaves-drafts/proposal.md` (added, +18/-0)
-```diff
-@@ -0,0 +1,18 @@
-+---
-+cairn: change
-+id: jmap-sent-leaves-drafts
-+status: landed
-+created: 2026-10-01
-+---
-+
-+# A message sent over JMAP leaves the drafts mailbox
-+
-+## Why
-+
-+JMAP send imports the message into the drafts mailbox with `$draft`, then submits it, and nothing moved it afterwards: every sent message stayed a draft and never reached the sent mailbox. io-jmap could not express RFC 8621 section 7.5 `onSuccessUpdateEmail`.
-+
-+## What
-+
-+- io-jmap gains `JmapEmailSubmissionSetArgs` with `onSuccessUpdateEmail` and `onSuccessDestroyEmail`, additive (0.4.1).
-+- The submission patches the email once sent: out of the drafts mailbox, into the sent one, `$draft` unset, `$seen` set.
-+- The sent mailbox is `jmap.sent-mailbox-id`, else the `sent`-role mailbox, read in the same `Mailbox/get` as the drafts one. Without either, the email only loses `$draft`.
-```
-
-**File**: `cairn/changes/jmap-sent-leaves-drafts/tasks.md` (added, +10/-0)
-```diff
-@@ -0,0 +1,10 @@
-+---
-+cairn: tasks
-+change: jmap-sent-leaves-drafts
-+---
-+
-+- [x] `onSuccessUpdateEmail` and `onSuccessDestroyEmail` in io-jmap `EmailSubmission/set`
-+- [x] Patch the submitted email into the sent mailbox, `$draft` unset, `$seen` set
-+- [x] `jmap.sent-mailbox-id`, else the `sent` role
-+- [x] Verified against Stalwart 0.16
-+- [x] CHANGELOG, config.sample.toml, spec, log
-```
-
-**File**: `cairn/changes/message-send-save-copy/delta.md` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+---
-+cairn: delta
-+change: message-send-save-copy
-+---
-+
-+## ADDED Requirements
-+
-+### Requirement: Sent copies are configured per account
-+`message.send.save-copy`, global or per account, SHALL be the mailbox a sending command (`message send`, and `message compose`, `message reply` and `message forward` with `--send`) appends a copy to when `--save` is not passed. It takes a mailbox name, alias or role, resolved as `--save` is; `true` SHALL stand for `sent` and `false` for no copy. `--no-save` SHALL skip it for one call and conflict with `--save`. The `message` table SHALL accept unknown keys, so a v1 `[message]` table keeps loading.
-+
-+### Requirement: Saving a sent message follows the send
-+A command both saving and sending (`--save` with `--send`, `message send --save`, `message add --send`) SHALL send first and save afterwards, so a failed send leaves no copy. A save failing after a successful send SHALL fail the command with an error stating that the message was sent.
-```
-
-**File**: `cairn/changes/message-send-save-copy/proposal.md` (added, +23/-0)
-```diff
-@@ -0,0 +1,23 @@
-+---
-+cairn: change
-+id: message-send-save-copy
-+status: landed
-+created: 2026-10-01
-+---
-+
-+# `message.send.save-copy` names the mailbox a sent message is copied to
-+
-+## Why
-+
-+v2 dropped v1's `message.send.save-copy`, so a message sent over SMTP is kept nowhere unless every call passes `--save`. Each front-end (himalaya-emacs, himalaya-vim, himalaya-tui) would otherwise grow its own option, none of them knowing which backend an account sends through, while the need is per account: Gmail and Microsoft Graph file the sent message themselves, SMTP does not.
-+
-+`--save` also appends before sending, so a send that fails leaves a copy of a message that never left.
-+
-+## What
-+
-+- `message.send.save-copy`, global or per account, is the `--save` a sending command falls back on. A mailbox name, alias or role; `true` stands for `sent`, `false` for none, a v1 boolean thereby reading as it used to.
-+- `message send`, `message compose`, `message reply` and `message forward` gain `--no-save`, conflicting with `--save`, to skip the configured copy for one send.
-+- Saving and sending, `--save` or `message add --send` alike, send first and save afterwards. A save failing after the send reports that the message was sent.
-+- The `message` table stays open to unknown keys, so the rest of a v1 `[message]` table keeps loading.
-+
-+Left out: the wizard does not write the option. IMAP resolves no `sent` role until LIST `RETURN (SPECIAL-USE)` lands (imap-special-use-aliases), and the wizard writes no `mailbox.alias.sent`, so a generated `save-copy = "sent"` would fail on every IMAP send.
-```
-
----
-
-### Incident Patch 13: `6da6ad6c` (2026-09-30)
-**Commit Message**: fix(imap): accept append without recovered UID
-
-Closes #759.
-
-Co-authored-by: Liyuan Shang <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +5/-0)
-```diff
-@@ -109,6 +109,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ io-smtp = { version = "0.6", default-features = false, optional = true }
+ log = "0.4"
+@@ -85,3 +85,11 @@ url = { version = "2.2", features = ["serde"] }
  
- ### Fixed
- 
-+- Fixed a successful IMAP append being reported as failed when its UID could not be recovered ([#759]).
+ [target.'cfg(windows)'.dependencies]
+ uds_windows = "1"
 +
-+  A server may acknowledge `APPEND` without `APPENDUID`, even with UIDPLUS, and some (QQ Exmail) also rewrite the `Message-ID` the fallback search looks for. The save now succeeds with an unknown id, so `message send --save` goes on to send, and `message add --json` can return `"id": null`.
-+
- - Fixed the "No backend matching `auto`" error saying nothing of the cause ([#740]). It now names the account and either the supported backends this build compiles in or the missing `<backend>` block, and points at MIGRATION.md when the account still carries the v1 `backend` table.
- 
- - Fixed `envelope list` and `envelope search` truncating the ID column under `--max-width`.
-@@ -1342,6 +1346,7 @@ Few major concepts changed:
- [#740]: https://github.com/pimalaya/himalaya/issues/740
- [#742]: https://github.com/pimalaya/himalaya/issues/742
- [#743]: https://github.com/pimalaya/himalaya/issues/743
-+[#759]: https://github.com/pimalaya/himalaya/issues/759
- [#762]: https://github.com/pimalaya/himalaya/issues/762
- [#764]: https://github.com/pimalaya/himalaya/issues/764
- 
++# NOTE: unreleased fixes, to be replaced by released versions.
++[patch.crates-io]
++io-http = { git = "https://github.com/pimalaya/io-http", rev = "e1815307771c1ec65a86b77256d46c33241d3038" }
++io-imap = { git = "https://github.com/pimalaya/io-imap", rev = "b1ab38ea9f24578b46dda56aa009600571b6b9ef" }
++io-jmap = { git = "https://github.com/pimalaya/io-jmap", rev = "919eab465ab620b323f9191ab8de2f640bc4a1d2" }
++io-msgraph = { git = "https://github.com/pimalaya/io-msgraph", rev = "2ae26370aefa671c16316dbad98107634436bce6" }
++io-pimdir = { git = "https://github.com/pimalaya/io-pimdir", rev = "189db408bdbeee33c1c535709c5f40f3464c7ecb" }
 ```
 
-**File**: `cairn/changes/imap-append-without-uid/delta.md` (added, +13/-0)
+**File**: `cairn/log/2026-10-13-pimalaya-libs-unreleased.md` (added, +13/-0)
 ```diff
 @@ -0,0 +1,13 @@
-+---
-+cairn: change
-+change: imap-append-without-uid
-+---
-+
-+# Delta
-+
-+## MODIFIED Requirements
-+
-+### Requirement: Append and search gaps
-+Gmail and Graph SHALL NOT implement `add_message` (neither API has an append) and SHALL NOT implement shared `search_envelopes`. IMAP, JMAP, Maildir and m2dir implement search (see the search capability).
-+
-+The shared `add_message` result SHALL carry an optional id, absent only when an IMAP or JMAP server acknowledges the write without reporting one. An IMAP `APPEND` acknowledged by the server SHALL stay a success when neither `APPENDUID` (RFC 4315) nor the fallback `Message-ID` search yields a UID, and a requested send SHALL go on. An `APPEND` rejected by the server SHALL stay an error.
-```
-
-**File**: `cairn/changes/imap-append-without-uid/proposal.md` (added, +16/-0)
-```diff
-@@ -0,0 +1,16 @@
-+---
-+cairn: change
-+id: imap-append-without-uid
-+status: landed
-+created: 2026-09-22
-+---
-+
-+# Accept a successful IMAP append without a recoverable UID
-+
-+## Why
-+
-+RFC 4315 makes `APPENDUID` a SHOULD, so a server can acknowledge `APPEND` without it, even after advertising UIDPLUS. Himalaya then searches the submitted `Message-ID`, but QQ Exmail rewrites that header and the search finds nothing. The message is saved, yet Himalaya reports a failure and the send half of `message send --save` never runs.
-+
-+## What
-+
-+The shared `add_message` returns an optional id. IMAP returns none when an acknowledged append yields no UID, logging why at debug level; JMAP returns none when `Email/import` reports no id, instead of an empty string. Maildir, m2dir and pimdir keep returning an id. `message add` reports the save without an id, `null` in JSON, and save-then-send goes on.
-```
-
-**File**: `cairn/changes/imap-append-without-uid/tasks.md` (added, +13/-0)
-```diff
-@@ -0,0 +1,13 @@
-+---
-+cairn: tasks
-+change: imap-append-without-uid
-+---
-+
-+# Tasks
-+
-+- [x] IMAP and JMAP `add_message` return an optional id; Maildir, m2dir and pimdir keep a plain id, wrapped by `EmailClient::add_message`.
-+- [x] Log at debug level why an appended UID is unknown.
-+- [x] `message add` renders a missing id in text and as `null` in JSON.
-+- [x] Manual provider test (contributor, QQ Exmail): save-then-send goes on when the UID cannot be recovered.
-+- [x] The CHANGELOG entry.
-+- [x] Fold the delta into [cairn/spec/backends.md](../../spec/backends.md); write [cairn/log/2026-09-30-imap-append-without-uid.md](../../log/2026-09-30-imap-append-without-uid.md).
-```
-
-**File**: `cairn/log/2026-09-30-imap-append-without-uid.md` (added, +25/-0)
-```diff
-@@ -0,0 +1,25 @@
 +---
 +cairn: log
-+change: imap-append-without-uid
-+landed: 2026-09-30
++change: pimalaya-libs-unreleased
++landed: 2026-10-13
 +---
 +
-+# Accept a successful IMAP append without a recoverable UID
++# Pimalaya libraries aligned on their pushed, unreleased revisions
 +
-+`message send --save` saves before it sends. A server acknowledging the append without `APPENDUID` made Himalaya search the submitted `Message-ID` for the new UID; QQ Exmail rewrites that header, so the search found nothing, Himalaya failed, and SMTP never ran although the copy was saved. Contributed in [#759].
++io-pimdir moves from `be03184` to `189db40` (0.8), io-msgraph from 0.4.3 to `2ae2637` (0.6), io-jmap from 0.4.1 to `919eab4` (0.6) and io-gmail from 0.4 to 0.5; io-http (`e181530`) and io-imap (`b1ab38e`) are patched to their pushed fixes, the same combination the Android app compiles. The `[patch.crates-io]` table holds the git revisions until they are released.
 +
-+## What landed
++Code moved only where the libraries broke their API: the pimdir reads `count_unread` and `list_mail_page_filtered` take their new `since` floor as `None`, the JMAP `Email/query` and the Graph message listing fill the new fields with their defaults, and the JMAP submission errors `tooLarge`, `forbidden`, `overQuota` and `rateLimit` are named. No `--json` output changes shape. Tests run with the default features and with `--no-default-features --features rustls-ring,imap,smtp,msgraph,pimdir`, as MOA builds it.
 +
-+**The shared `add_message` returns an optional id.** IMAP returns none when an acknowledged append has neither `APPENDUID` nor a search match, logging which at debug level; a rejected `APPEND` still fails before any send. JMAP returns none when `Email/import` reports no id, where it used to return an empty string. Maildir, m2dir and pimdir keep returning an id.
-+
-+**`message add` reports the save without an id**, `null` under `--json`, and save-then-send goes on.
-+
-+## Capabilities moved
-+
-+- backends: *Append and search gaps* gains the optional add id
-+
-+## Verification
-+
-+`cargo test --all-features` passes and clippy reports nothing. The contributor reproduced the failure and the fix against QQ Exmail. Whether QQ reports `UIDNOTSTICKY` or just omits `APPENDUID` is still unknown, no IMAP trace having been shared.
-+
-+[#759]: https://github.com/pimalaya/himalaya/pull/759
++Capabilities moved: none.
 ```
 
-**File**: `cairn/spec/backends.md` (modified, +2/-0)
+**File**: `src/jmap/backend.rs` (modified, +1/-0)
 ```diff
-@@ -100,6 +100,8 @@ Taking the owner role briefly is what cancelling costs (pimdir SPEC §15.5); the
- ### Requirement: Append and search gaps
- Gmail and Graph SHALL NOT implement `add_message` (neither API has an append) and SHALL NOT implement shared `search_envelopes`. IMAP, JMAP, Maildir and m2dir implement search (see the search capability).
+@@ -121,6 +121,7 @@ impl JmapClient {
+             position,
+             limit,
+             properties: Some(envelope_properties()),
++            ..Default::default()
+         })?;
  
-+The shared `add_message` result SHALL carry an optional id, absent only when an IMAP or JMAP server acknowledges the write without reporting one. An IMAP `APPEND` acknowledged by the server SHALL stay a success when neither `APPENDUID` (RFC 4315) nor the fallback `Message-ID` search yields a UID, and a requested send SHALL go on. An `APPEND` rejected by the server SHALL stay an error.
-+
- ### Requirement: Sending transport
- Backends that self-send (JMAP, Gmail, Graph) SHALL route `send_message` through their own API. Storage backends that cannot send (IMAP, Maildir, m2dir) SHALL send through the account's SMTP transport, adapted in `src/smtp/backend.rs` over io-smtp, which parses the RFC 5321 envelope from the raw message headers. The transmitted message SHALL NOT carry the `Bcc:` field (RFC 5322 3.6.3), which io-smtp removes after the envelope is derived. The protocol-level `smtp send` SHALL transmit its message verbatim, its envelope being explicit.
- 
+         let mut envelopes: Vec<Envelope> = output.emails.into_iter().map(envelope_from).collect();
 ```
 
-**File**: `src/imap/backend.rs` (modified, +22/-12)
+**File**: `src/jmap/email/query.rs` (modified, +1/-0)
 ```diff
-@@ -253,7 +253,15 @@ impl ImapClient {
+@@ -147,6 +147,7 @@ impl JmapEmailQueryCommand {
+             position: Some(self.page.saturating_sub(1) * self.page_size),
+             limit: Some(self.page_size),
+             properties: None,
++            ..Default::default()
+         })?;
  
-     /// Appends a message and returns its UID, from the UIDPLUS
-     /// `APPENDUID` or, failing that, a UID `SEARCH` on its `Message-ID`.
--    pub fn add_message(&mut self, mailbox: &str, flags: &[Flag], raw: Vec<u8>) -> Result<String> {
-+    ///
-+    /// RFC 4315 §3 makes `APPENDUID` a SHOULD, so an acknowledged append
-+    /// whose UID cannot be recovered is still a success, with no UID.
-+    pub fn add_message(
-+        &mut self,
-+        mailbox: &str,
-+        flags: &[Flag],
-+        raw: Vec<u8>,
-+    ) -> Result<Option<String>> {
-         let mbox = parse_mailbox(mailbox)?;
-         let imap_flags: Vec<ImapFlag<'static>> = flags.iter().map(flag_from).collect();
- 
-@@ -268,34 +276,36 @@ impl ImapClient {
-         )?;
- 
-         if let Some((_, uid)) = appenduid {
--            return Ok(uid.to_string());
-+            return Ok(Some(uid.to_string()));
-         }
- 
--        // NOTE: without UIDPLUS the UID is recovered by searching the
--        // message's own `Message-ID`, which it therefore has to carry.
-+        // NOTE: without `APPENDUID`, which a server may omit even with
-+        // UIDPLUS, the UID is recovered by searching the message's own
-+        // `Message-ID`, which it therefore has to carry.
-         let message_id = MessageParser::default()
-             .parse_headers(&raw)
-             .and_then(|parsed| parsed.message_id().map(str::to_string))
-             .filter(|id| !id.is_empty());
-         let Some(message_id) = message_id else {
--            bail!(
--                "Cannot resolve appended UID: server lacks UIDPLUS and message has no Message-ID"
--            );
-+            debug!("no APPENDUID and no Message-ID to search, appended UID unknown");
-+            return Ok(None);
+         let table = EmailsTable {
+```
+
+**File**: `src/jmap/error.rs` (modified, +8/-0)
+```diff
+@@ -208,6 +208,10 @@ impl JmapSetError for JmapEmailSubmissionSetItemError {
+             | Self::ForbiddenToSend { description }
+             | Self::CannotUnsendMessage { description }
+             | Self::InvalidEmail { description }
++            | Self::TooLarge { description, .. }
++            | Self::Forbidden { description }
++            | Self::OverQuota { description }
++            | Self::RateLimit { description }
+             | Self::NotFound { description }
+             | Self::InvalidProperties { description, .. } => description.as_deref(),
+             Self::Unknown => None,
+@@ -231,6 +235,10 @@ impl JmapSetError for JmapEmailSubmissionSetItemError {
+             Self::ForbiddenToSend { .. } => "forbiddenToSend",
+             Self::CannotUnsendMessage { .. } => "cannotUnsendMessage",
+             Self::InvalidEmail { .. } => "invalidEmail",
++            Self::TooLarge { .. } => "tooLarge",
++            Self::Forbidden { .. } => "forbidden",
++            Self::OverQuota { .. } => "overQuota",
++            Self::RateLimit { .. } => "rateLimit",
+             Self::NotFound { .. } => "notFound",
+             Self::InvalidProperties { .. } => "invalidProperties",
+             Self::Unknown => "unknown",
+```
+
+**File**: `src/msgraph/messages/list.rs` (modified, +1/-0)
+```diff
+@@ -87,6 +87,7 @@ impl MsgraphMessageListCommand {
+             search,
+             orderby,
+             count,
++            ..Default::default()
          };
- 
-         self.select(mbox, ImapMailboxSelectOptions::default())?;
- 
-         let field =
-             AString::try_from("Message-ID").map_err(|_| anyhow!("Invalid IMAP search header"))?;
--        let value = AString::try_from(message_id)
-+        let value = AString::try_from(message_id.clone())
-             .map_err(|_| anyhow!("Invalid IMAP search Message-ID value"))?;
-         let criteria = Vec1::from(SearchKey::Header(field, value));
-         let uids = self.search(criteria, ImapMessageSearchOptions { uid: true })?;
- 
--        uids.into_iter()
--            .max()
--            .map(|uid| uid.to_string())
--            .ok_or_else(|| anyhow!("Fallback UID search returned no match"))
-+        let uid = uids.into_iter().max().map(|uid| uid.to_string());
-+        if uid.is_none() {
-+            debug!("no APPENDUID and no match for {message_id}, appended UID unknown");
-+        }
-+
-+        Ok(uid)
-     }
- 
-     /// Copies a UID set between two mailboxes.
-```
-
-**File**: `src/jmap/backend.rs` (modified, +9/-3)
-```diff
-@@ -216,8 +216,14 @@ impl JmapClient {
-     }
- 
-     /// Uploads `raw` as a blob then imports it into `mailbox` with the
--    /// requested keywords. Returns the created email id.
--    pub fn add_message(&mut self, mailbox: &str, flags: &[Flag], raw: Vec<u8>) -> Result<String> {
-+    /// requested keywords. Returns the created email id, when the server
-+    /// reports one.
-+    pub fn add_message(
-+        &mut self,
-+        mailbox: &str,
-+        flags: &[Flag],
-+        raw: Vec<u8>,
-+    ) -> Result<Option<String>> {
-         let blob_id = self.upload(raw)?;
- 
-         let mut mailbox_ids = BTreeMap::new();
-@@ -246,7 +252,7 @@ impl JmapClient {
-             .get("new")
-             .ok_or_else(|| anyhow!("Email/import did not create the imported email"))?;
- 
--        Ok(email.id.clone().unwrap_or_default())
-+        Ok(email.id.clone())
-     }
- 
-     /// Copies an email id set into `to` by adding `to`'s mailbox id.
-```
-
----
-
-### Incident Patch 14: `76884c1d` (2026-09-29)
-**Commit Message**: fix: message composition args
-
-**File**: `CHANGELOG.md` (modified, +10/-0)
-```diff
-@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ### Added
- 
-+- Added `--posting-style none` to `message reply` and `message forward`, sending the written body without quoting the source.
-+
-+- Added a decoded template to `message compose`, `message reply` and `message forward` under `--json` when neither saving nor sending.
-+
-+  It carries `from`, `to`, `cc`, `bcc`, `subject` and a `body` without the signature, so an editor can lay the message out and hand it back through the flags.
-+
- - Added `messages-added-details` to `gmail history list --json`, preserving each arrival's message id, optional thread id and supplied label ids alongside the existing message-id arrays.
- 
- - A pimdir write now shows on the next read instead of on the next sync.
-@@ -83,6 +89,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ### Fixed
- 
-+- Fixed `envelope list` and `envelope search` truncating the ID column under `--max-width`.
-+
-+  A long id, such as a Maildir file name, came out cut with an ellipsis and was unusable by any follow-up command. The ID column now keeps its content width, and the header, like the rows, stays on one line.
-+
- - Fixed `--to`, `--cc` and `--bcc` carrying a display name composing a `To: <Alice <alice@example.org>>` no SMTP server accepts, as `--from` did before ([#727]). Each value is now parsed as an address list, so a comma inside a quoted display name (`"Doe, Alice" <alice@example.org>`) no longer splits it.
- 
- - Fixed `imap raw` hanging until the stream timed out when the last command was not terminated by an explicit `\r\n` ([#764]).
-```
-
-**File**: `cairn/log/2026-09-28-composer-editor-template.md` (added, +21/-0)
-```diff
-@@ -0,0 +1,21 @@
-+---
-+cairn: log
-+change: composer-editor-template
-+landed: 2026-09-28
-+---
-+
-+# Composers serve editor integrations
-+
-+Needed by the himalaya-vim Vim9 rewrite, which composes through `message compose/reply/forward` flags since `message send` compiles no MML.
-+
-+The composers printed wire-format bytes, RFC 2047 encoded words and a quoted-printable body included, which an editor cannot show as editable text. Under `--json`, neither saving nor sending, they now print a `MessageTemplate` decoded by mail-parser, registered as the schema of all three. Its body leaves the signature out, since sending appends the configured one: the template call skips the signature resolution entirely.
-+
-+Reply and forward always quoted the source, so a body already holding an edited quote carried it twice. `PostingStyle::None` sends the written body alone, which also keeps interleaved replies possible.
-+
-+## Capabilities moved
-+
-+- [commands](../spec/commands.md): *Composers default the From header* gains the template and the `none` posting style.
-+
-+## Envelope ids stay whole
-+
-+Found driving the rewritten plugin against a Maildir: `--max-width` let comfy-table truncate the ID column, so a Maildir file name came out as `1790625978.#0M4188811…` and `message read` could not locate it. The ID column is now constrained to its content width in `Envelopes`, and the header row is capped to one line like the data rows, so a narrow width no longer stacks header names vertically.
-```
-
-**File**: `cairn/spec/commands.md` (modified, +2/-0)
-```diff
-@@ -57,6 +57,8 @@ The name SHALL be handed to the MIME builder apart from the address, so that a n
- 
- The same composers SHALL end the body with the account's `signature`, introduced by its `signature-delim`, when neither `--signature` nor `--signature-file` is passed. `--signature` SHALL win, and `--signature-file` SHALL win too, the configured signature standing down rather than shadowing the file the flag names.
- 
-+With `--json` and neither `--save` nor `--send`, the same composers SHALL print the decoded `from`, `to`, `cc`, `bcc`, `subject` and `body` instead of the raw bytes, the body without any signature, so an editor can lay the message out and hand it back through the flags, sending appending the signature once. `--posting-style none` SHALL send the written body alone, the source left unquoted, for a writer who already laid the quote out.
-+
- ### Requirement: Raw message input is shared
- A command taking a raw RFC 5322 message SHALL resolve it through the shared `MessageArg`: a file path, an inline value after `--`, or piped stdin. The resolved message is normalised to CRLF and rejected when empty, so no backend receives a zero-length message.
- 
-```
-
-**File**: `src/json_schema.rs` (modified, +14/-0)
-```diff
-@@ -65,6 +65,20 @@ pub fn schemas() -> BTreeMap<String, Value> {
-             "himalaya-message-delete",
-             crate::shared::message::delete::DeleteReport
-         );
-+        // NOTE: the composers print a `MessageTemplate` when neither
-+        // saving nor sending, and a confirmation line otherwise.
-+        insert!(
-+            "himalaya-message-compose",
-+            crate::shared::message::handler::MessageTemplate
-+        );
-+        insert!(
-+            "himalaya-message-reply",
-+            crate::shared::message::handler::MessageTemplate
-+        );
-+        insert!(
-+            "himalaya-message-forward",
-+            crate::shared::message::handler::MessageTemplate
-+        );
-         insert!(
-             "himalaya-attachment-list",
-             crate::shared::attachment::list::Attachments
-```
-
-**File**: `src/shared/envelope/list.rs` (modified, +12/-2)
-```diff
-@@ -9,7 +9,9 @@ use chrono::{DateTime, FixedOffset, Local};
- use clap::Parser;
- use humansize::{BINARY, format_size};
- use pimalaya_cli::printer::Printer;
--use pimalaya_cli::table::{Cell, CellAlignment, Color, ContentArrangement, Row, Table};
-+use pimalaya_cli::table::{
-+    Cell, CellAlignment, Color, ColumnConstraint, ContentArrangement, Row, Table,
-+};
- use schemars::JsonSchema;
- use serde::Serialize;
- 
-@@ -183,11 +185,13 @@ impl fmt::Display for Envelopes {
-         header.push(Cell::new(if self.recipient { "TO" } else { "FROM" }));
-         header.push(Cell::new("DATE"));
-         header.push(Cell::new("SIZE").set_alignment(CellAlignment::Right));
-+        let mut header = Row::from(header);
-+        header.max_height(1);
- 
-         table
-             .load_style(style_from_preset(&self.preset))
-             .set_content_arrangement(self.arrangement.clone())
--            .set_header(Row::from(header))
-+            .set_header(header)
-             .add_rows(self.envelopes.iter().map(|env| {
-                 let mut row = Row::new();
-                 row.max_height(1);
-@@ -227,6 +231,12 @@ impl fmt::Display for Envelopes {
-                 row
-             }));
- 
-+        // NOTE: an id is what a follow-up command takes, so squeezing
-+        // the table into `--max-width` truncates any column but this one.
-+        if let Some(column) = table.column_mut(0) {
-+            column.set_constraint(ColumnConstraint::ContentWidth);
-+        }
-+
-         if let Some(width) = self.max_width {
-             table.set_width(width);
-         }
-```
-
-**File**: `src/shared/message/builder.rs` (modified, +7/-1)
-```diff
-@@ -28,6 +28,9 @@ pub enum PostingStyle {
-     Top,
-     /// The quoted source body above the written body.
-     Bottom,
-+    /// The written body alone, the source left unquoted, for a writer
-+    /// who already laid the quote out.
-+    None,
- }
- 
- /// Everything the MIME assembler needs, which each command fills in from
-@@ -315,7 +318,7 @@ fn compose_body(
-     };
- 
-     let mut body = match (style, quote.is_empty()) {
--        (_, true) => user_body.to_string(),
-+        (PostingStyle::None, _) | (_, true) => user_body.to_string(),
-         (PostingStyle::Top, false) => {
-             if user_body.is_empty() {
-                 quote
-@@ -736,6 +739,9 @@ Original body line.\r\n";
-         );
-         assert_eq!(bottom, "wrote:\n> theirs\n\nmine");
- 
-+        let unquoted = compose_body("mine", "theirs", "wrote:", "", "-- \n", PostingStyle::None);
-+        assert_eq!(unquoted, "mine");
-+
-         let signed = compose_body("mine", "", "", "Alice", "-- \n", PostingStyle::Top);
-         assert_eq!(signed, "mine\n\n-- \nAlice");
-     }
-```
-
-**File**: `src/shared/message/compose.rs` (modified, +10/-4)
-```diff
-@@ -22,7 +22,9 @@ use crate::{
- /// Compose a new message from flags.
- ///
- /// The RFC 5322 bytes go to stdout, unless `--save` appends a copy to a
--/// mailbox, `--send` pushes the message out, or both.
-+/// mailbox, `--send` pushes the message out, or both. With `--json` and
-+/// neither, the decoded fields come out instead, without the signature
-+/// that sending appends.
- ///
- /// Multipart MIME, MML directives, signing and editor-driven workflows
- /// belong to a standalone composer such as mml, piped into `message send`
-@@ -90,8 +92,12 @@ impl MessageComposeCommand {
-         client: &mut EmailClient,
-     ) -> Result<()> {
-         let (from, from_name) = account.resolve_from(self.from.as_deref());
--        let signature =
--            account.resolve_signature(self.signature.as_deref(), self.signature_file.as_deref());
-+        let template = printer.is_json() && !self.send && self.save.is_none();
-+        let signature_file = self.signature_file.as_deref().filter(|_| !template);
-+        let signature = match template {
-+            true => None,
-+            false => account.resolve_signature(self.signature.as_deref(), signature_file),
-+        };
- 
-         let raw = builder::build(
-             BuilderArgs {
-@@ -105,7 +111,7 @@ impl MessageComposeCommand {
-                 body_file: self.body_file.as_deref(),
-                 attach: &self.attach,
-                 signature,
--                signature_file: self.signature_file.as_deref(),
-+                signature_file,
-                 signature_delim: account.signature_delim(),
-             },
-             None,
-```
-
-**File**: `src/shared/message/forward.rs` (modified, +9/-4)
-```diff
-@@ -25,7 +25,8 @@ use crate::{
- ///
- /// The source is fetched to pre-fill the `Fwd:` subject and the
- /// `References` header, and to quote the body. The result goes to stdout,
--/// `--save` or `--send`.
-+/// `--save` or `--send`. With `--json` and neither, the decoded fields
-+/// come out instead, without the signature that sending appends.
- ///
- /// Richer composition is `message read <id>` piped into a standalone
- /// composer, whose output feeds `message send` or `message add`.
-@@ -117,8 +118,12 @@ impl MessageForwardCommand {
-         let source = client.get_message(&mailbox, &self.id, false)?;
- 
-         let (from, from_name) = account.resolve_from(self.from.as_deref());
--        let signature =
--            account.resolve_signature(self.signature.as_deref(), self.signature_file.as_deref());
-+        let template = printer.is_json() && !self.send && self.save.is_none();
-+        let signature_file = self.signature_file.as_deref().filter(|_| !template);
-+        let signature = match template {
-+            true => None,
-+            false => account.resolve_signature(self.signature.as_deref(), signature_file),
-+        };
- 
-         let raw = builder::build(
-             BuilderArgs {
-@@ -132,7 +137,7 @@ impl MessageForwardCommand {
-                 body_file: self.body_file.as_deref(),
-                 attach: &self.attach,
-                 signature,
--                signature_file: self.signature_file.as_deref(),
-+                signature_file,
-                 signature_delim: account.signature_delim(),
-             },
-             Some(SourceArgs {
-```
-
----
-
-### Incident Patch 15: `ec59a66c` (2026-09-28)
-**Commit Message**: fix: typos in prev commit
-
-**File**: `CHANGELOG.md` (modified, +2/-4)
-```diff
-@@ -105,11 +105,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
-   The client-side search evaluation the backend calls was gated on the `maildir` and `m2dir` features alone, so `--no-default-features --features pimdir` did not build. The default feature set was unaffected.
- 
--- `message move` and `message delete` now work on IMAP servers without the MOVE extension.
-+- Fixed `message move` and `message delete` on IMAP servers without the MOVE extension.
- 
--  Moving always sent `UID MOVE` (RFC 6851), which servers that do not advertise MOVE reject, OVH's hosted Dovecot among them. Deleting failed with it, since outside the trash it moves to the trash.
--
--  Without MOVE, the move is now the sequence RFC 6851 describes for such servers: `UID COPY`, then `\Deleted` and, when UIDPLUS (RFC 4315) is advertised, a `UID EXPUNGE` of the source UIDs `COPYUID` reported. Without UIDPLUS the messages stay flagged `\Deleted` in the source, as `message delete` already does in the trash, so they stay recoverable and unrelated `\Deleted` messages are never touched.
-+  Without MOVE, a move is now `UID COPY`, `\Deleted` and, with UIDPLUS, `UID EXPUNGE` of the copied UIDs. Without UIDPLUS the messages stay flagged `\Deleted` in the source.
- 
- - Preserved message MIME payloads in `gmail threads get --json`, including full-format bodies and attachment metadata ([#750](https://github.com/pimalaya/himalaya/issues/750)).
- 
-```
-
-**File**: `src/imap/backend.rs` (modified, +7/-16)
-```diff
-@@ -15,7 +15,6 @@ use std::{
- 
- use anyhow::{Result, anyhow, bail};
- use chrono::{DateTime, FixedOffset};
--use log::debug;
- use io_imap::{
-     rfc3501::{
-         append::ImapMessageAppendOptions,
-@@ -41,6 +40,7 @@ use io_imap::{
-         status::{StatusDataItem, StatusDataItemName},
-     },
- };
-+use log::debug;
- use mail_parser::MessageParser;
- use rfc2047_decoder::{Decoder, RecoverStrategy};
- 
-@@ -343,10 +343,8 @@ impl ImapClient {
-                     return Ok(0);
-                 }
- 
--                // NOTE: `COPYUID` names the source UIDs that were actually
--                // copied, which can be a subset of the requested set.
-                 let to_remove = match copy_uid {
--                    Some((_, source_uids, _)) => sequence_set_from_uids(source_uids)?,
-+                    Some((_, source_uids, _)) => uid_sequence_set(source_uids)?,
-                     None => sequence_set,
-                 };
- 
-@@ -661,23 +659,16 @@ fn parse_mailbox(name: &str) -> Result<ImapMailbox<'static>> {
- 
- /// Parses stringified UIDs into an IMAP [`SequenceSet`].
- fn parse_uids(ids: &[&str]) -> Result<SequenceSet> {
--    if ids.is_empty() {
--        bail!("Empty UID set");
--    }
--
--    let uids: Vec<NonZeroU32> = ids
-+    let uids = ids
-         .iter()
--        .map(|s| {
--            s.parse::<NonZeroU32>()
--                .map_err(|_| anyhow!("Invalid message UID `{s}`"))
--        })
-+        .map(|s| s.parse().map_err(|_| anyhow!("Invalid message UID `{s}`")))
-         .collect::<Result<_>>()?;
- 
--    SequenceSet::try_from(uids).map_err(|_| anyhow!("Invalid UID set"))
-+    uid_sequence_set(uids)
- }
- 
--/// Builds an IMAP [`SequenceSet`] from `COPYUID` source UIDs.
--fn sequence_set_from_uids(uids: Vec<u32>) -> Result<SequenceSet> {
-+/// Builds an IMAP [`SequenceSet`] from numeric UIDs.
-+fn uid_sequence_set(uids: Vec<u32>) -> Result<SequenceSet> {
-     if uids.is_empty() {
-         bail!("Empty UID set");
-     }
+         let response = client
+             .messages_list(self.folder.as_deref(), &params)?
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #771** (2026-10-03): fix: keep control characters out of envelope and attachment tables (@Huge)
-- **PR #770** (2026-10-02): fix(search): compile eval with msgraph backend alone (@posteego)
-- **PR #768** (2026-09-28): fix: strip surrounding quotes from quoted search patterns (@Dev-next-gen)
-- **PR #766** (2026-09-26): fix: parse display names in To, Cc and Bcc the same way as From (@Dev-next-gen)
-- **PR #765** (closed): fix(imap): terminate the last raw command with CRLF (@rofrol)
-- **PR #762** (closed): feat(imap): fetch whole messages with imap fetch --body (@AndreyVGo)
-- **PR #761** (closed): fix(smtp): do not transmit the Bcc field (@gianlucamazza)
-- **PR #760** (2026-09-28): fix(imap): move without the MOVE extension (@gianlucamazza)
+- **PR #794** (2026-10-15): fix: fail when no given message id exists (@jontxux)
+- **PR #793** (2026-10-16): feat(pimdir): stage any flag through pimdir flag (@bobberb)
+- **PR #792** (2026-10-14): docs(readme): add himalaya-fzf to interfaces (@kezhenxu94)
+- **PR #791** (2026-10-14): feat(message): reply to all recipients with message reply --all (@jadhavgaurav)
+- **PR #789** (closed): feat(gmail): accept --thread-id on gmail messages send (@tom-haines)
+- **PR #788** (2026-10-16): fix(message): forward carries the attachments of the source (@blrain3)
 
 ---
 
@@ -3385,3 +2172,34 @@ Co-authored-by: Liyuan Shang <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. message): sanitize the human-readable message view (#783)
+
+**RULE**:
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pimalaya/himalaya. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `6dd8658c`: message): sanitize the human-readable message view (#783). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+- Fixed decoded message bodies, headers and MIME metadata emitting terminal control or bidi characters in the human-readable view. JSON and explicitly requested raw output remain unchanged.
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `6dd8658c` are properly handled with clean fallback behavior.

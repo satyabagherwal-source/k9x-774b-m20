@@ -275,8 +275,8 @@
     "sourceUrl": "https://huggingface.co/moonshotai/Kimi-K3",
     "sourceVersion": "hf-moonshotai-kimi-k3",
     "license": "Open-Source",
-    "contentHash": "da4322f4df4939f811c7020fa499dfefbb0e5f645583a0566e76b6c5841a192b",
-    "lastHarvestedAt": "2026-10-17T22:00:55.747Z",
+    "contentHash": "0f81bc6a120235821aac5432b5a8985eef46f3e2e368d21d0d6117f6229ba210",
+    "lastHarvestedAt": "2026-10-19T02:03:09.607Z",
     "learningId": "learn-huggingface-moonshotai-kimi-k3"
   },
   "hf-stabilityai-stable-diffusion-xl-base-1.0": {
@@ -4728,5 +4728,55 @@
     "contentHash": "16bf406f9eb213afd37199093d39d8c1bc4b201b8500345e7c4017e390bb6ae1",
     "lastHarvestedAt": "2026-10-19T01:57:11.146Z",
     "learningId": "learn-github-sqlpage-sqlpage"
+  },
+  "douyinfe-semi-design": {
+    "repository": "DouyinFE/semi-design",
+    "platform": "github",
+    "sourceUrl": "https://github.com/DouyinFE/semi-design",
+    "sourceVersion": "7a13c45a",
+    "license": "NOASSERTION",
+    "contentHash": "ca1d5a34ddaf55ba7f8240a1bcc1bdfedc3ad6f344b94375beb8b27fbbae2481",
+    "lastHarvestedAt": "2026-10-19T02:03:09.759Z",
+    "learningId": "learn-github-douyinfe-semi-design"
+  },
+  "pimalaya-himalaya": {
+    "repository": "pimalaya/himalaya",
+    "platform": "github",
+    "sourceUrl": "https://github.com/pimalaya/himalaya",
+    "sourceVersion": "4df380ba",
+    "license": "Apache-2.0",
+    "contentHash": "211c6784b4ee1421c45570fdcc88eeb259c52779d3b55a31c10f3f5213f298b8",
+    "lastHarvestedAt": "2026-10-19T02:03:10.888Z",
+    "learningId": "learn-github-pimalaya-himalaya"
+  },
+  "shopify-react-native-skia": {
+    "repository": "wcandillon/react-native-skia",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Shopify/react-native-skia",
+    "sourceVersion": "23001a3d",
+    "license": "MIT",
+    "contentHash": "de9d957f09305a183505ac8932844d7a74ba4e387d02905c69826497bf181c9b",
+    "lastHarvestedAt": "2026-10-19T02:03:16.904Z",
+    "learningId": "learn-github-wcandillon-react-native-skia"
+  },
+  "saltstack-salt": {
+    "repository": "saltstack/salt",
+    "platform": "github",
+    "sourceUrl": "https://github.com/saltstack/salt",
+    "sourceVersion": "88a27b2b",
+    "license": "Apache-2.0",
+    "contentHash": "0007a2987bedabd0bbd5958ca29f564b3457a3f09051ec50db998818fc357487",
+    "lastHarvestedAt": "2026-10-19T02:03:18.414Z",
+    "learningId": "learn-github-saltstack-salt"
+  },
+  "etcd-io-etcd": {
+    "repository": "etcd-io/etcd",
+    "platform": "github",
+    "sourceUrl": "https://github.com/etcd-io/etcd",
+    "sourceVersion": "22cc5d9a",
+    "license": "Apache-2.0",
+    "contentHash": "625458707fb9d02f6ee1c62b271fbcdfbf337f106af5a0b78d07d0e61e3e38b2",
+    "lastHarvestedAt": "2026-10-19T02:03:23.552Z",
+    "learningId": "learn-github-etcd-io-etcd"
   }
 }

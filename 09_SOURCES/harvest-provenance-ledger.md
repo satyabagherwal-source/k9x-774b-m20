@@ -2783,3 +2783,9 @@ Every entry in this ledger must capture:
 | `learn-huggingface-deepseek-ai-deepseek-r1` | `https://huggingface.co/deepseek-ai/DeepSeek-R1` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-19T01:57:08.905Z |
 | `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `b9e87ddf` | Multi-dimensional audit evidence | 2026-10-19T01:57:10.298Z |
 | `learn-github-sqlpage-sqlpage` | `https://github.com/sqlpage/SQLPage` | `3b33609f` | Multi-dimensional audit evidence | 2026-10-19T01:57:11.146Z |
+| `learn-huggingface-moonshotai-kimi-k3` | `https://huggingface.co/moonshotai/Kimi-K3` | `hf-moonsho` | Multi-dimensional audit evidence | 2026-10-19T02:03:09.607Z |
+| `learn-github-douyinfe-semi-design` | `https://github.com/DouyinFE/semi-design` | `7a13c45a` | Multi-dimensional audit evidence | 2026-10-19T02:03:09.759Z |
+| `learn-github-pimalaya-himalaya` | `https://github.com/pimalaya/himalaya` | `4df380ba` | Multi-dimensional audit evidence | 2026-10-19T02:03:10.888Z |
+| `learn-github-wcandillon-react-native-skia` | `https://github.com/Shopify/react-native-skia` | `23001a3d` | Multi-dimensional audit evidence | 2026-10-19T02:03:16.904Z |
+| `learn-github-saltstack-salt` | `https://github.com/saltstack/salt` | `88a27b2b` | Multi-dimensional audit evidence | 2026-10-19T02:03:18.414Z |
+| `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `22cc5d9a` | Multi-dimensional audit evidence | 2026-10-19T02:03:23.552Z |

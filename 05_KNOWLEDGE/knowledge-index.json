@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T01:57:11.112Z",
-  "total_verified_learnings": 494,
+  "last_updated": "2026-10-19T02:03:23.501Z",
+  "total_verified_learnings": 499,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -6100,22 +6100,35 @@
     "learn-github-douyinfe-semi-design": {
       "learning_id": "learn-github-douyinfe-semi-design",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "douyinfe-semi-design",
+      "source": "DouyinFE/semi-design",
+      "repository": "DouyinFE/semi-design",
       "slug": "douyinfe-semi-design",
       "platform": "github",
       "source_url": "https://github.com/DouyinFE/semi-design",
-      "source_version": "HEAD",
-      "content_hash": "8e1e35cfd8443351e7776f277b828e4f8d4ad8237fe2656c14b71d4fe3c1f8f2",
+      "source_version": "7a13c45a",
+      "content_hash": "ca1d5a34ddaf55ba7f8240a1bcc1bdfedc3ad6f344b94375beb8b27fbbae2481",
       "dossier_path": "07_PROJECT_LEARNING/douyinfe-semi-design-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/douyinfe-semi-design-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2000,
+          "title": "Merge pull request #3362 from smile-alive/fix/react-root-disposal",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.685Z"
+      "verified_at": "2026-10-19T02:03:09.709Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-dragonflydb-dragonfly": {
       "learning_id": "learn-github-dragonflydb-dragonfly",
@@ -7208,22 +7221,35 @@
     "learn-github-etcd-io-etcd": {
       "learning_id": "learn-github-etcd-io-etcd",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "etcd-io-etcd",
+      "source": "etcd-io/etcd",
+      "repository": "etcd-io/etcd",
       "slug": "etcd-io-etcd",
       "platform": "github",
       "source_url": "https://github.com/etcd-io/etcd",
-      "source_version": "HEAD",
-      "content_hash": "f932d40b6f2bcac3da668d188edcfc6994215529d35d0a9256de1c041c6b9646",
+      "source_version": "22cc5d9a",
+      "content_hash": "625458707fb9d02f6ee1c62b271fbcdfbf337f106af5a0b78d07d0e61e3e38b2",
       "dossier_path": "07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2004,
+          "title": "CHANGELOG(3.7): add processMessages order fix",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.813Z"
+      "verified_at": "2026-10-19T02:03:23.493Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-evalstate-fast-agent": {
       "learning_id": "learn-github-evalstate-fast-agent",
@@ -17716,7 +17742,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/moonshotai/Kimi-K3",
       "source_version": "hf-moonshotai-kimi-k3",
-      "content_hash": "da4322f4df4939f811c7020fa499dfefbb0e5f645583a0566e76b6c5841a192b",
+      "content_hash": "0f81bc6a120235821aac5432b5a8985eef46f3e2e368d21d0d6117f6229ba210",
       "dossier_path": "07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md",
       "promoted_rules": [],
@@ -17738,7 +17764,7 @@
         "learn-huggingface-hf-moonshotai-kimi-k3-mv4438bt",
         "learn-huggingface-hf-moonshotai-kimi-k3-mv4hc41y"
       ],
-      "verified_at": "2026-10-17T22:00:55.702Z",
+      "verified_at": "2026-10-19T02:03:09.523Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -30431,22 +30457,35 @@
     "learn-github-pimalaya-himalaya": {
       "learning_id": "learn-github-pimalaya-himalaya",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "pimalaya-himalaya",
+      "source": "pimalaya/himalaya",
+      "repository": "pimalaya/himalaya",
       "slug": "pimalaya-himalaya",
       "platform": "github",
       "source_url": "https://github.com/pimalaya/himalaya",
-      "source_version": "HEAD",
-      "content_hash": "72f8fdd5964019f05df292a9f8154b7cdc9fa31c75e22d9b3a702ecdb9e3088b",
+      "source_version": "4df380ba",
+      "content_hash": "211c6784b4ee1421c45570fdcc88eeb259c52779d3b55a31c10f3f5213f298b8",
       "dossier_path": "07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2001,
+          "title": "message): sanitize the human-readable message view (#783)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.026Z"
+      "verified_at": "2026-10-19T02:03:10.837Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-pinecone-io-examples": {
       "learning_id": "learn-github-pinecone-io-examples",
@@ -32565,22 +32604,35 @@
     "learn-github-saltstack-salt": {
       "learning_id": "learn-github-saltstack-salt",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "saltstack-salt",
+      "source": "saltstack/salt",
+      "repository": "saltstack/salt",
       "slug": "saltstack-salt",
       "platform": "github",
       "source_url": "https://github.com/saltstack/salt",
-      "source_version": "HEAD",
-      "content_hash": "edfb66a13cc1e67b21be2b7642c85c0e04653c5288b3131b9c6066d17fe70dc0",
+      "source_version": "88a27b2b",
+      "content_hash": "0007a2987bedabd0bbd5958ca29f564b3457a3f09051ec50db998818fc357487",
       "dossier_path": "07_PROJECT_LEARNING/saltstack-salt-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/saltstack-salt-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2003,
+          "title": "build-packages: rename SIGNING_GPG_KEY -> NIGHTLY_SIGNING_GPG_KEY",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.368Z"
+      "verified_at": "2026-10-19T02:03:18.364Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-salvo-rs-salvo": {
       "learning_id": "learn-github-salvo-rs-salvo",
@@ -37922,22 +37974,35 @@
     "learn-github-wcandillon-react-native-skia": {
       "learning_id": "learn-github-wcandillon-react-native-skia",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "wcandillon-react-native-skia",
-      "slug": "wcandillon-react-native-skia",
+      "source": "wcandillon/react-native-skia",
+      "repository": "wcandillon/react-native-skia",
+      "slug": "shopify-react-native-skia",
       "platform": "github",
-      "source_url": "https://github.com/wcandillon/react-native-skia",
-      "source_version": "HEAD",
-      "content_hash": "7e404bcd07057fbc62dcee2625a166c7277987f9552ac9be4dd8b38ec4b37550",
-      "dossier_path": "07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "source_url": "https://github.com/Shopify/react-native-skia",
+      "source_version": "23001a3d",
+      "content_hash": "de9d957f09305a183505ac8932844d7a74ba4e387d02905c69826497bf181c9b",
+      "dossier_path": "07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 2002,
+          "title": "⬆️): Update to Skia m157 (#4268)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.308Z"
+      "verified_at": "2026-10-19T02:03:16.854Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-weaviate-weaviate": {
       "learning_id": "learn-github-weaviate-weaviate",
@@ -73559,6 +73624,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T01:57:11.106Z"
+    },
+    "rule-2000": {
+      "learning_id": "rule-2000",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2000,
+      "title": "Merge pull request #3362 from smile-alive/fix/react-root-disposal",
+      "source_url": "https://github.com/DouyinFE/semi-design",
+      "source_version": "7a13c45a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T02:03:09.709Z"
+    },
+    "rule-2001": {
+      "learning_id": "rule-2001",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2001,
+      "title": "message): sanitize the human-readable message view (#783)",
+      "source_url": "https://github.com/pimalaya/himalaya",
+      "source_version": "4df380ba",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T02:03:10.837Z"
+    },
+    "rule-2002": {
+      "learning_id": "rule-2002",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2002,
+      "title": "⬆️): Update to Skia m157 (#4268)",
+      "source_url": "https://github.com/Shopify/react-native-skia",
+      "source_version": "23001a3d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T02:03:16.854Z"
+    },
+    "rule-2003": {
+      "learning_id": "rule-2003",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2003,
+      "title": "build-packages: rename SIGNING_GPG_KEY -> NIGHTLY_SIGNING_GPG_KEY",
+      "source_url": "https://github.com/saltstack/salt",
+      "source_version": "88a27b2b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T02:03:18.364Z"
+    },
+    "rule-2004": {
+      "learning_id": "rule-2004",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2004,
+      "title": "CHANGELOG(3.7): add processMessages order fix",
+      "source_url": "https://github.com/etcd-io/etcd",
+      "source_version": "22cc5d9a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T02:03:23.493Z"
     }
   },
   "aliases": {

@@ -2776,3 +2776,9 @@
 | `CYCLE-20261019-TBJ7` | `2026-10-19T01:57:08.899Z` | `deepseek-ai/DeepSeek-R1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1995, Rule 1996, Rule 1997` | Yes (`1aaa21c2...`) |
 | `CYCLE-20261019-TCLW` | `2026-10-19T01:57:10.292Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1998` | Yes (`acb6deed...`) |
 | `CYCLE-20261019-TD9H` | `2026-10-19T01:57:11.141Z` | `sqlpage/SQLPage` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1999` | Yes (`16bf406f...`) |
+| `CYCLE-20261019-11UQ` | `2026-10-19T02:03:09.602Z` | `moonshotai/Kimi-K3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md` | Yes (`0f81bc6a...`) |
+| `CYCLE-20261019-11YX` | `2026-10-19T02:03:09.753Z` | `DouyinFE/semi-design` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2000` | Yes (`ca1d5a34...`) |
+| `CYCLE-20261019-12U9` | `2026-10-19T02:03:10.881Z` | `pimalaya/himalaya` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2001` | Yes (`211c6784...`) |
+| `CYCLE-20261019-17HD` | `2026-10-19T02:03:16.897Z` | `wcandillon/react-native-skia` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2002` | Yes (`de9d957f...`) |
+| `CYCLE-20261019-18NC` | `2026-10-19T02:03:18.408Z` | `saltstack/salt` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2003` | Yes (`0007a298...`) |
+| `CYCLE-20261019-1CM5` | `2026-10-19T02:03:23.549Z` | `etcd-io/etcd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2004` | Yes (`62545870...`) |

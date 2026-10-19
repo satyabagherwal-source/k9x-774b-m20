@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/douyinfe-semi-design-learnings.md`  
+> **Source**: github ([https://github.com/DouyinFE/semi-design](https://github.com/DouyinFE/semi-design))  
+> **Source Version**: `7a13c45a`  
+> **License**: NOASSERTION  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T02:03:09.498Z  
+> **Learning ID**: `learn-github-douyinfe-semi-design`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): DouyinFE/semi-design
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/douyinfe-semi-design-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DouyinFE/semi-design](https://github.com/DouyinFE/semi-design))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T01:57:30.853Z  
+> **Harvest Timestamp**: 2026-10-19T02:03:08.457Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: 🚀A modern, comprehensive, flexible design system and React UI library, AI-friendly built-in.🎨Provide 3000+ Design Tokens, easy to build your design system. Make Semi Design to Any Design.🧑🏻‍💻 Design to Code in one click
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 10400 stars
+- **Stars / Engagement**: 10415 stars
 
 ---
 
@@ -1459,25 +1473,6 @@ export default QueueStyledTransition;
 
 ```
 
-### Core Architecture Module: `packages/semi-animation-react/src/utils/invokeFns.ts`
-```
-export default function invokeFns(fns: any[], args: any[] = []) {
-    if (Array.isArray(fns) && fns.length) {
-        fns.forEach(fn => {
-            if (typeof fn === 'function') {
-                fn(...args);
-            }
-        });
-    }
-}
-
-```
-
-### Core Architecture Module: `packages/semi-animation-react/src/utils/noop.ts`
-```
-export default function noop() { }
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1489,26 +1484,6 @@ export default function noop() { }
 
 - **Issue #3295** (2026-05-21): **[BUG][Cascader] 搜索选中后，选项的高亮丢失，且 separator 中的空格被吞掉**
   *Symptoms*: ### Is there an existing issue for this?  - [x] I have searched the existing issues  ### Which Component  Cascader  ### Semi Version  @douyinfe/semi-ui@2.98.0（官网最新版本可复现）  ### Current Behavior  在可搜索的 Cascader（`filterTreeNode` 开启）中：  1. 输入关键词进行搜索后，下拉中命中的选项会以「父节点 / 子节点 / 叶子节点」这种带空格的路径形式展示，且关键词文字会被加粗高亮。 2. 当点击其中一项进行选中后，再次点开下拉，会发现：    - **高亮丢失**：刚刚选中的那一项里，关键词不再被高亮（虽然搜索框里的关键词仍然存在）。    - **路径中的空格丢失**：路径分隔符 `separator` 默认为 ` / `（前后各有一个空格）。在某些渲染分支下（比如关键词刚好与 `separator` 相邻、或者 `searchText` 中混入了 `separator` 字符串），高亮拆分后路径里 ` / ` 两边的空格会被吃掉，视觉上变成了 `浙江省/杭州市/西湖区`，与未搜索时的展示不一致。  可在 [官网 Cascader「可搜索的」示例](https://semi.design/zh-CN/input/cascader#可搜索的) 直接复现。  ### Expected Behavior  1. 选中某个搜索结果后，下次打开下拉，搜索框关键词存在时，对应已选中项中的关键词应继续保持高亮态，与刚搜索时一致。 2. 高亮渲染过程不应该改变 `separator` 中的空格，路径分隔符在视觉上应该保持原样，例如默认情况下始终展示为 `A / B / C`，前后空格不丢失。  ### Steps To Reproduce  1. 打开 https://semi.design/zh-CN/input/cascader#可搜索的 2. 在第一个「默认对 label 值进行搜索」的 Cascader 输入框中输入 `杭`。 3. 在下拉列表中点击 `浙江省 / 杭州市 / 西湖区`。 4. 观察 trigger 中回填的文本，以及再次点开下拉时该选中项的渲染。 5. 可以看到：    - 选中项里 `杭` 不再以高亮色加粗显示；    - 路径中 `/` 两边的空格出现丢失，与初次搜索时显示的样式不一致。  ### ReproducibleCode  ```jsx import React from 'react'; import { Cascader } from '@douyinfe/semi-ui';  () => {     const treeData = [         {             label: '浙江省',             value: 'zhejiang',             children: [                 {                     label: '杭州市',                     value: 'hangzhou',                     children: [                         { label: '西湖区', value: 'xihu' },                  
-
-- **Issue #2908** (2026-05-09): **[JsonViewer] 多行替换时光标位置不符合预期**
-  *Symptoms*: ### Is there an existing issue for this?  - [x] I have searched the existing issues  ### Which Component  JsonViewer  ### Semi Version  latest   ### Current Behavior 多行替换时光标位置不符合预期 ![Image](https://github.com/user-attachments/assets/d41425aa-0486-477b-9218-116af7c7828e)  ### Expected Behavior    ### Steps To Reproduce  _No response_  ### ReproducibleCode  ```markdown  ```  ### Environment  ```markdown - OS: - browser: ```  ### Anything else?  _No response_
-
-- **Issue #2870** (2025-06-20): **[DatePicker] type monthRange 且英文 locale 下点击月份后，不会自动滚动到非禁用项目**
-  *Symptoms*: ### Is there an existing issue for this?  - [x] I have searched the existing issues  ### Which Component  DatePicker  ### Semi Version  latest  ### Current Behavior  type monthRange 且在英文 locale 下点击月份后，不会自动滚动到非禁用项目 ![Image](https://github.com/user-attachments/assets/27eb540f-8040-4cc4-aeb0-50a0c9ce7aec)  ### Expected Behavior  对其中文 locale 下的表现，在type monthRange 且英文 locale 下点击月份后，会自动滚动到非禁用项目  ### Steps To Reproduce  _No response_  ### ReproducibleCode  ```markdown import React from 'react'; import en_GB from '@douyinfe/semi-ui/lib/es/locale/source/en_GB'; import zh_CN from '@douyinfe/semi-ui/lib/es/locale/source/zh_CN'; import { LocaleProvider } from '@douyinfe/semi-ui';  class I18nDemo extends React.Component {     constructor(props) {         super(props);     }     render() {            return (             <>                   <LocaleProvider locale={en_GB}>                     <DatePicker type="monthRange" onChange={(date, dateString) => console.log(dateString)} />                 </LocaleProvider>                 <LocaleProvider locale={zh_CN}>                     <DatePicker type="monthRange" onChange={(date, dateString) => console.log(dateString)} />                 </LocaleProvider>             </>         );     } } ```  ### Environment  ```markdown - OS: - browser: ```  ### Anything else?  _No response_
-
-- **Issue #2863** (2026-03-20): **[TEST] 时间范围类型的 DatePicker 组件中的 Input 在 active/hover 时，背景色样式优先级不够高导致样式被覆盖**
-  *Symptoms*: ### Is there an existing issue for this?  - [x] I have searched the existing issues  ### Which Component  DatePicker  ### Semi Version  _No response_  ### Current Behavior  时间范围类型的 DatePicker 组件中的 Input 在 active/hover 时，背景色样式优先级不够高导致样式被覆盖  ### Expected Behavior  时间范围类型的 DatePicker 组件中的 Input 在 active/hover 时，背景色正确  ### Steps To Reproduce  _No response_  ### ReproducibleCode  ```markdown  ```  ### Environment  ```markdown - OS: - browser: ```  ### Anything else?  _No response_
-
-- **Issue #2853** (2025-06-09): **[Select] Select 在分组 label 为 reactnode 情况下filter 搜索展示错误**
-  *Symptoms*: ### Is there an existing issue for this?  - [x] I have searched the existing issues  ### Which Component  Select  ### Semi Version  latest  ### Current Behavior  先搜索 a，再搜索 b，列表中出现两个 b  ### Expected Behavior  先搜索 a，再搜索 b，列表中仍然只有一个 b  ### Steps To Reproduce  ![Image](https://github.com/user-attachments/assets/6a7a0ad7-d1f4-4235-85ec-499bc371f735)  ### ReproducibleCode  ```markdown import React from 'react'; import { Select } from '@douyinfe/semi-ui';  () => (     <Select placeholder="" style={{ width: 180 }} filter>         <Select.OptGroup label={<div>a</div>} key="a">             <Select.Option value="a-1">a-1</Select.Option>             <Select.Option value="a-2">a-2</Select.Option>         </Select.OptGroup>         <Select.OptGroup label={<div>b</div>} key="b">             <Select.Option value="b-1">b-1</Select.Option>             <Select.Option value="b-2">b-2</Select.Option>         </Select.OptGroup>         <Select.OptGroup label={<div>c</div>} key="c">             <Select.Option value="c-1">c-1</Select.Option>         </Select.OptGroup>     </Select> ); ```  ### Environment  ```markdown - OS: - browser: ```  ### Anything else?  _No response_
-
-- **Issue #2801** (2026-04-08): **[BUG] Resizable 中的 handler 的 z-index 过高，会浮在 modal 之上**
-  *Symptoms*: ### Is there an existing issue for this?  - [x] I have searched the existing issues  ### Which Component  Resizable  ### Semi Version  2.78.0  ### Current Behavior  ![Image](https://github.com/user-attachments/assets/723f8b94-e912-444f-898a-166960df1735)  ### Expected Behavior  handler 不应该在弹出层的上方  ### Steps To Reproduce  _No response_  ### ReproducibleCode  ```markdown import React, { useState } from 'react'; import { ResizeItem, ResizeHandler, ResizeGroup, Toast } from '@douyinfe/semi-ui';  function Demo() {     const [text, setText] = useState('Drag to resize');     const [visible, setVisible] = useState(false);     const showDialog = () => {         setVisible(true);     };     const handleOk = () => {         setVisible(false);         console.log('Ok button clicked');     };     const handleCancel = () => {         setVisible(false);         console.log('Cancel button clicked');     };     const handleAfterClose = () => {         console.log('After Close callback executed');     };     return (         <div style={{ width: '1000px', height: '100px' }}>             <ResizeGroup direction="horizontal">                 <ResizeItem                     style={{                         backgroundColor: 'rgba(var(--semi-grey-1), 1)',                         border: 'var(--semi-color-border) 1px solid',                     }}                     defaultSize={'400px'}                     min={'10%'}                     onChange={() => {                         setText('resizing')
-  **Post-Mortem & Fix Analysis**:
-  > modal 有个zIndex属性来控制遮罩的层级 @YyumeiZhang 
-
-- **Issue #2781** (2025-04-08): **[BUG] collapsible Tabs 设置 activeKey 不会自动滚动到当前 active tab 的位置**
-  *Symptoms*: ### Is there an existing issue for this?  - [x] I have searched the existing issues  ### Which Component  Tabs  ### Semi Version  latest  ### Current Behavior  collapsible Tabs 设置 activeKey 不会自动滚动到当前 active tab 的位置  ### Expected Behavior  collapsible Tabs 设置 activeKey 初始化时希望能自动滚动到当前 active tab 的位置   ### ReproducibleCode  ```markdown import React from 'react'; import { Tabs, TabPane } from '@douyinfe/semi-ui';  class App extends React.Component {     render() {         return (             <Tabs style={{ width: '60%', margin: '20px' }} defaultActiveKey="Tab-7" type="card" collapsible>                 {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(i => (                     <TabPane tab={`Tab-${i}`} itemKey={`Tab-${i}`} key={i}>                         Content of card tab {i}                     </TabPane>                 ))}             </Tabs>         );     } } ```  ### Environment  ```markdown - OS: - browser: ```  ### Anything else? **问题归因** 现在 tabs 仅在 componentDidUpdate 的时候根据 activeKey 和 collapsible 判断需不需要执行 scrollActiveTabItemIntoView 操作，需要手动改变一下 activeKey 的值才能成功执行 scrollActiveTabItemIntoView，感觉这个行为像 bug，可以按照下述方式临时规避下。 ```markdown import React from 'react'; import { Tabs, TabPane } from '@douyinfe/semi-ui'; class App extends React.Component {      constructor(props) {         super(props);         this.state = {             activeKey: 'Tab-8'          };     }     componentDidMount() {         this.setState({ activeKey: 'Tab-9' });     }     render() {         return (             
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1525,1551 +1500,454 @@ export default function noop() { }
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2a4ec362` (2026-09-15)
-**Commit Message**: Merge pull request #3348 from chuhuangvio-itch/fix/unhandled-regexp-syntaxerror-on-user-inp
+### Incident Patch 1: `b2b476a1` (2026-10-08)
+**Commit Message**: Merge pull request #3362 from smile-alive/fix/react-root-disposal
 
-fix(timePicker): escape regExp special characters in format separator to avoid SyntaxError
+fix: 修复 Modal、Toast 和 Notification 在 React 提交阶段同步卸载 root 的错误
 
-**File**: `packages/semi-foundation/timePicker/utils/index.ts` (modified, +2/-1)
+**File**: `packages/semi-ui/_utils/__test__/static-root-disposal.test.js` (added, +76/-0)
 ```diff
-@@ -131,7 +131,8 @@ export const isTimeFormatLike = (time: string, formatToken: string) => {
-     const hmsReg = /[H|m|s]{1,2}/;
-     const formatSplitted = formatToken.split(formatNotSupportChReg); // => ['HH', 'mm'];
-     const timeSeparator = formatToken.replace(formatSupportChReg, ''); // => :
--    const timeReg = new RegExp(`[${timeSeparator}]`, 'g'); // => /[:]/g
-+    const escapedTimeSeparator = timeSeparator.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&'); // escape regExp special characters to avoid invalid regExp, e.g. format="HH\\mm"
-+    const timeReg = new RegExp(`[${escapedTimeSeparator}]`, 'g'); // => /[:]/g
-     const timeSplitted = time.split(timeReg); // => ['12', '0]
- 
-     if (formatSplitted.length !== timeSplitted.length) {
-```
-
-**File**: `packages/semi-ui/timePicker/__test__/timePicker.test.js` (modified, +5/-0)
-```diff
-@@ -300,6 +300,11 @@ describe(`TimePicker`, () => {
-             ['上午 12:00:02', 'a h:mm:ss', true],
-             ['上午 12:00:0', 'a h:mm:ss', false],
-             ['上午 12:0:00', 'a h:mm:ss', false],
-+            // format separator containing a regExp-special character should not throw (regression test,
-+            // previously threw "SyntaxError: Invalid regular expression" because the separator was
-+            // interpolated into a RegExp character class without escaping)
-+            ['12\\00', 'HH\\mm', true],
-+            ['12.00', 'HH.mm', true],
-         ];
- 
-         testCases.forEach(test => {
-```
-
----
-
-### Incident Patch 2: `2e0964d0` (2026-09-15)
-**Commit Message**: Merge pull request #3355 from toyeshhm/fix-doc-typos
-
-docs: fix typos across component docs and contributing guide
-
-**File**: `CONTRIBUTING-en-US.md` (modified, +1/-1)
-```diff
-@@ -21,7 +21,7 @@ cd semi-design
- ```bash
- git checkout -b <TOPIC_BRANCH_NAME>
- ```
-->Before installing the enviroment,make sure that there is a dependency of `lerna` and `yarn` locally, if not, should run:
-+>Before installing the environment, make sure that there is a dependency of `lerna` and `yarn` locally, if not, should run:
- ```base
- corepack enable
- ```
-```
-
-**File**: `content/advanced/design-to-code/index-en-US.md` (modified, +1/-1)
-```diff
-@@ -36,7 +36,7 @@ For more detailed usage instructions, you can visit <a href="/code" target="_bla
- 
- Here is a link to the Figma example mockup and its corresponding Codesandbox transpiled using the Semi Figma plugin.
- 
--| Screenshot & Figma URL                                                                                                                                                                                                                                                                                                                         | Draft Type                                                                                        | Desciption                                                                                          | Codesandbox                                                                                  |
-+| Screenshot & Figma URL                                                                                                                                                                                                                                                                                                                         | Draft Type                                                                                        | Description                                                                                          | Codesandbox                                                                                  |
- |------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------|
- | <a href='https://www.figma.com/file/TlLeWouyImYUexTmhdLiIn/D2C-Getting-Start-Demo?node-id=5%3A2092' target="_blank" rel="noreferrer noopener"><img src='https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/semi-linker/simple-demo-1.jpg' style={{ width:  400 }} /></a>                                               | A module with simple content without components                                                   | Can be used to quickly restore layout and content                                                   | <a href='https://codesandbox.io/s/w1z9yx' target="_blank" rel="noreferrer noopener">Link</a> |
- | <a href='https://www.figma.com/file/TlLeWouyImYUexTmhdLiIn/D2C-Getting-Start-Demo?node-id=1%3A275' target="_blank" rel="noreferrer noopener"><img src='https://lf3-files.qingfuwucdn.net/obj/inspirecloud-file/baas/tt38q7/2468f1c4f1756bc0_1676603194364.png' style={{ width:  400 }} /></a>                                                  | Modules that do not contain components, have more content, or have a slightly more complex layout | Can be used to quickly restore layout and content                                                   | <a href='https://codesandbox.io/s/905ncn' target="_blank" rel="noreferrer noopener">Link</a> |
-```
-
-**File**: `content/basic/button/index-en-US.md` (modified, +1/-1)
-```diff
-@@ -332,7 +332,7 @@ function ButtonDemo() {
-         <div>
-             <Button disabled>Disabled</Button>
-             <Button disabled theme="borderless">No background and disabled</Button>
--            <Button disabled theme="light">Light and disbaled</Button>
-+            <Button disabled theme="light">Light and disabled</Button>
-             <Button disabled theme="borderless" type="primary">No background, primary and disabled</Button>
-             <Button disabled theme="solid" type="warning">Solid, warning and disabled</Button>
-         </div>
-```
-
-**File**: `content/basic/typography/index-en-US.md` (modified, +4/-4)
-```diff
-@@ -46,7 +46,7 @@ function Demo() {
- 
- ### Text
- 
--Text component has different built-in styles. You could also pass `icon` to use the build-in styles for icon. Different from passing icon to children, using `icon` for link will have no underline in compliance with Semi Design principles.
-+Text component has different built-in styles. You could also pass `icon` to use the built-in styles for icon. Different from passing icon to children, using `icon` for link will have no underline in compliance with Semi Design principles.
- 
- ```jsx live=true
- import React from 'react';
-@@ -427,7 +427,7 @@ function Demo() {
-             <Text 
-                 ellipsis={{ 
-                     showTooltip: {
--                        opts: { content: 'Insfrastructure|Data-inf|bytegraph.cheetah.user_relation' }
-+                        opts: { content: 'Infrastructure|Data-inf|bytegraph.cheetah.user_relation' }
-                     }
-                 }}
-                 style={{ width: 150 }}
-@@ -438,7 +438,7 @@ function Demo() {
-             <Text 
-                 ellipsis={{ 
-                     showTooltip: {
--                        opts: { content: 'Insfrastructure|Data-inf|bytegraph.cheetah.user_relation', className: 'components-typography-demo' }
-+                        opts: { content: 'Infrastructure|Data-inf|bytegraph.cheetah.user_relation', className: 'components-typography-demo' }
-                     }
-                 }}
-                 style={{ width: 150 }}
-@@ -449,7 +449,7 @@ function Demo() {
-             <Text 
-                 ellipsis={{
-                     showTooltip: {
--                        opts: { content: 'Insfrastructure|Data-inf|bytegraph.cheetah.user_relation', style: { wordBreak: 'break-all' } }
-+                        opts: { content: 'Infrastructure|Data-inf|bytegraph.cheetah.user_relation', style: { wordBreak: 'break-all' } }
-                     }
-                 }}
-                 style={{ width: 150 }}
-```
-
-**File**: `content/ecosystem/faq/index-en-US.md` (modified, +1/-1)
-```diff
-@@ -26,7 +26,7 @@ No plans for this. Specific reasons: [Issue 311](https://github.com/DouyinFE/sem
- 
- 
- #### What is the relationship between Semi 2.x (open source version) and Semi 1.x?
-- - The Semi v2.0 version is refactored based on v1.x using ts, which brings a better ts experience, bettter a11y support and a more out-of-the-box engineering solution, which solves the coexistence of multi-component libraries in the micro front-end scenario Style conflict issues, etc. All subsequent long-term work of the Semi team will be based on the v2.x version
-+ - The Semi v2.0 version is refactored based on v1.x using ts, which brings a better ts experience, better a11y support and a more out-of-the-box engineering solution, which solves the coexistence of multi-component libraries in the micro front-end scenario Style conflict issues, etc. All subsequent long-term work of the Semi team will be based on the v2.x version
-  - v1.x has stopped iterative maintenance, no more feature additions or complex changes, only necessary bug fix changes are provided.
-  - For new projects, we recommend that you directly use 2.x [@douyin/semi-ui](https://semi.design) for development. For existing projects, we also recommend that you upgrade as soon as possible. In order to reduce the cost of upgrading, we provide a cli tool one-click migration (@ies/semi-codemod-v2) that can help you automatically complete up to 90% of the migration and modification (limited by the AST implementation principle, there are still a small number of cases that require manual labor review modification, but not much 😉)
-  - Upgrade from Semi 1.x to Semi 2.x for detailed operation steps [From v1 to v2](https://semi.design/en-US/start/update-to-v2)
-```
-
-**File**: `content/ecosystem/update-to-v2/index-en-US.md` (modified, +1/-1)
-```diff
-@@ -66,7 +66,7 @@ All warning logs will be output in the semi-codemod-log.log file under ProjectPa
- 
- ##### 4. Update the usage of Css Variable
- 
--If you use Semi's css variable in your code, in addition to using semi-codemod-v2, you also need to use the style-lint tool we provide to automatically update all css varable usage
-+If you use Semi's css variable in your code, in addition to using semi-codemod-v2, you also need to use the style-lint tool we provide to automatically update all css variable usage
- 
- - Install Semi style-lint package
- 
-```
-
-**File**: `content/input/form/index-en-US.md` (modified, +2/-2)
-```diff
-@@ -43,7 +43,7 @@ Properties are hijacked by Form, so
- 
- <Notice type="primary" title="Notice">
- 
--1. No longer need to manually bind the onChange event and update the value as controled component. But you can continue to listen onChange events for the latest values if you want
-+1. No longer need to manually bind the onChange event and update the value as controlled component. But you can continue to listen onChange events for the latest values if you want
- 2. You cannot set the state of component with attributes such as `value`, `defaultValue`, `checked`, `defaultChecked`, etc. The default value can be set by Field's `initValue` or Form's `unitValues`
- 3. You should not modify the value of Form State directly, all changes to the data in the Form should be done by providing `formApi`, `fieldApi`
- 
-@@ -1145,7 +1145,7 @@ class FormLevelValidateSync extends React.Component {
-             errors.sex = 'must be woman';
-         }
-         errors.familyName = [
--            { before: 'before errror balabala ', after: 'after error balabala' },
-+            { before: 'before error balabala ', after: 'after error balabala' },
-             'familyName[1] error balabala'
-         ];
-         return errors;
-```
-
-**File**: `content/input/form/index.md` (modified, +2/-2)
-```diff
-@@ -1222,7 +1222,7 @@ class FormLevelValidateSync extends React.Component {
-             errors.sex = 'must be woman';
-         }
-         errors.familyName = [
--            { before: 'before errror balabala ', after: 'after error balabala' },
-+            { before: 'before error balabala ', after: 'after error balabala' },
-             'familyName[1] error balabala'
-         ];
-         return errors;
-@@ -2525,7 +2525,7 @@ const { ErrorMessage } = Form;
- | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
- | valueKey          | 组件表示值的属性，如 Switch、Radio 的是'checked'，Input 的是'value'                                                                                                                                                                           | 'value'    |
- | onKeyChangeFnName | 组件值变化时的回调函数，一般为'onChange'                                                                                                                                                                                                      | 'onChange' |
--| valuePath         | 值属性在回调函数中第一个参数的路径,如 Radio 的 onChange(e.target.checked)，那么该值需要设为 target.checkd；RadioGroup 的 onChange(e.target.value)，该值为'target.value'；若第一个参数就是值本身，无需再往下取值，该项不需要设                 |            |
-+| valuePath         | 值属性在回调函数中第一个参数的路径,如 Radio 的 onChange(e.target.checked)，那么该值需要设为 target.checked；RadioGroup 的 onChange(e.target.value)，该值为'target.value'；若第一个参数就是值本身，无需再往下取值，该项不需要设                 |            |
- 
- ## Accessibility
- 
-```
-
----
-
-### Incident Patch 3: `381e57be` (2026-09-15)
-**Commit Message**: Merge pull request #3357 from DouyinFE/codex/fix-3350-radio-icon-center
-
-【Auto】Fix: Radio 选中白点在 Safari 下偏移（显式 SVG 尺寸替代 em）
-
-**File**: `packages/semi-foundation/radio/radio.scss` (modified, +9/-0)
-```diff
-@@ -236,6 +236,15 @@ $inner-width: $width-icon-medium;
-                 width: 100%;
-                 height: 100%;
-                 font-size: 14px;
+@@ -0,0 +1,76 @@
++import React, { useEffect, useLayoutEffect } from 'react';
++import Toast, { ToastFactory } from '../../toast';
++import Notification from '../../notification';
++import * as reactRender from '../reactRender';
 +
-+                // #3350: 显式设置 svg 尺寸并 block 化，替代 svg 自带的 width/height="1em"。
-+                // Safari 对以 em 指定尺寸的内联 SVG 存在渲染偏差，会导致 checked 状态
-+                // 的白点视觉偏移；100% 让 svg 与图标容器严格同尺寸，无偏移空间。
-+                svg {
-+                    display: block;
-+                    width: 100%;
-+                    height: 100%;
-+                }
-             }
-         }
-     }
-```
-
----
-
-### Incident Patch 4: `f4b63a35` (2026-09-15)
-**Commit Message**: fix(radio): explicit svg sizing for checked icon to avoid Safari offset (#3350)
-
-**File**: `packages/semi-foundation/radio/radio.scss` (modified, +9/-0)
-```diff
-@@ -236,6 +236,15 @@ $inner-width: $width-icon-medium;
-                 width: 100%;
-                 height: 100%;
-                 font-size: 14px;
-+
-+                // #3350: 显式设置 svg 尺寸并 block 化，替代 svg 自带的 width/height="1em"。
-+                // Safari 对以 em 指定尺寸的内联 SVG 存在渲染偏差，会导致 checked 状态
-+                // 的白点视觉偏移；100% 让 svg 与图标容器严格同尺寸，无偏移空间。
-+                svg {
-+                    display: block;
-+                    width: 100%;
-+                    height: 100%;
-+                }
-             }
-         }
-     }
-```
-
----
-
-### Incident Patch 5: `d418618e` (2026-09-15)
-**Commit Message**: Merge pull request #3339 from kakiuwang-ui/fix/resize-group-display-none-recalc
-
-fix(Resizable): recalculate ResizeGroup item sizes after it becomes visible (#3336)
-
-**File**: `packages/semi-foundation/resizable/group/index.ts` (modified, +19/-0)
-```diff
-@@ -73,6 +73,9 @@ export class ResizeGroupFoundation<P = Record<string, any>, S = Record<string, a
-     totalMinus: number;
-     itemPercentMap: Map<number, number>; // 内部维护一个百分比数组，消除浮点计算误差
-     type?: ResizeEventType;
-+    // 首次 initSpace 时 group 是否可测量（非 display:none）。
-+    // Whether the group was measurable (not inside display:none) on the first initSpace run. #3336
-+    sizeInitialized: boolean = false;
- 
- 
-     init(): void {
-@@ -81,6 +84,19 @@ export class ResizeGroupFoundation<P = Record<string, any>, S = Record<string, a
-         this.itemPercentMap = new Map();
-         this.initSpace();
-     }
-+
-+    /**
-+     * When the group is initially mounted inside a display:none container, its own size
-+     * and the handler sizes are all 0, so item sizes are computed with a `- 0px` handler
-+     * offset and never corrected once the container becomes visible. Recalculate the layout
-+     * the first time the group becomes measurable. Once it has a valid size, later resizes
-+     * must NOT re-run initSpace, otherwise the user's manual drag results would be reset. #3336
-+     */
-+    handleGroupResize = () => {
-+        if (!this.sizeInitialized && this.groupSize > 0) {
-+            this.initSpace();
-+        }
-+    }
-     get window(): Window | null {
-         return this.groupRef.ownerDocument.defaultView as Window ?? null;
-     }
-@@ -231,6 +247,9 @@ export class ResizeGroupFoundation<P = Record<string, any>, S = Record<string, a
-         // calculate accurate space for group item
-         let handlerSizes = new Array(this._adapter.getHandlerCount()).fill(0);
-         let parentSize = this.groupSize;
-+        // Mark whether the group is measurable now; if not (e.g. inside display:none),
-+        // handleGroupResize will re-run initSpace once it becomes visible. #3336
-+        this.sizeInitialized = parentSize > 0;
-         this.totalMinus = 0;
-         for (let i = 0; i < this._adapter.getHandlerCount(); i++) {
-             let handlerSize = direction === 'horizontal' ? this._adapter.getHandler(i).offsetWidth : this._adapter.getHandler(i).offsetHeight;
-```
-
-**File**: `packages/semi-ui/resizable/__test__/resizeGroupFoundation.test.js` (added, +90/-0)
-```diff
-@@ -0,0 +1,90 @@
-+import { ResizeGroupFoundation } from '../../../semi-foundation/resizable/group';
-+
-+/**
-+ * Reproduces #3336 at the foundation level: when a ResizeGroup is mounted inside a
-+ * display:none container, the group and its handlers report offset size 0, so item
-+ * sizes are computed with a `- 0px` handler offset. After the container becomes
-+ * visible the sizes must be recalculated (handleGroupResize), otherwise the two items
-+ * plus the handler overflow the group by the handler size.
-+ *
-+ * The jsdom ResizeObserver mock never fires a callback, so we drive handleGroupResize
-+ * directly to emulate the group becoming measurable.
-+ */
-+function createMockAdapter({ groupEl, handlerEls, itemEls, direction }) {
-+    return {
-+        getProp: key => ({ direction }[key]),
-+        getProps: () => ({ direction }),
-+        getState: () => undefined,
-+        getStates: () => ({}),
-+        getContext: () => undefined,
-+        getContexts: () => ({}),
-+        getGroupRef: () => groupEl,
-+        getHandler: i => handlerEls[i],
-+        getHandlerCount: () => handlerEls.length,
-+        getItem: i => itemEls[i],
-+        getItemCount: () => itemEls.length,
-+        getItemMin: () => undefined,
-+        getItemMax: () => undefined,
-+        getItemDefaultSize: () => undefined,
-+        getItemStart: () => undefined,
-+        getItemChange: () => undefined,
-+        getItemEnd: () => undefined,
-+        registerEvents: () => {},
-+        unregisterEvents: () => {},
-+    };
-+}
-+
-+const makeEl = size => ({ offsetWidth: size, offsetHeight: size, style: {} });
-+
-+describe('ResizeGroupFoundation - recalc after becoming visible (#3336)', () => {
-+    it('recalculates item sizes with the handler offset once the group is measurable', () => {
-+        // vertical group, 2 items + 1 handler, mounted inside display:none => all sizes 0
-+        const groupEl = makeEl(0);
-+        const handlerEls = [makeEl(0)];
-+        const itemEls = [makeEl(0), makeEl(0)];
-+        const adapter = createMockAdapter({ groupEl, handlerEls, itemEls, direction: 'vertical' });
-+        const foundation = new ResizeGroupFoundation(adapter);
-+
-+        foundation.init();
-+
-+        // initial (hidden) layout: 50% each, handler offset 0 => `- 0px`
-+        expect(foundation.sizeInitialized).toBe(false);
-+        expect(itemEls[0].style.height).toContain('- 0px');
-+        expect(itemEls[1].style.height).toContain('- 0px');
-+
-+        // become visible: group 100px tall, handler 10px
-+        groupEl.offsetHeight = 100;
-+        groupEl.offsetWidth = 100;
-+        handlerEls[0].offsetHeight = 10;
-+        handlerEls[0].offsetWidth = 10;
-+
-+        foundation.handleGroupResize();
-+
-+        // recalculated: each item reserves half of the handler (10 / 2 = 5px)
-+        expect(foundation.sizeInitialized).toBe(true);
-+        expect(itemEls[0].style.height).toBe('calc(50% - 5px)');
-+        expect(itemEls[1].style.height).toBe('calc(50% - 5px)');
++describe.each([
++    ['Toast', Toast, '.semi-toast-wrapper'],
++    ['ToastFactory', ToastFactory.create(), '.semi-toast-wrapper'],
++    ['Notification', Notification, '.semi-notification-wrapper'],
++])('%s root disposal', (name, api, selector) => {
++    afterEach(async () => {
++        api.destroyAll();
++        await Promise.resolve();
++        jest.restoreAllMocks();
 +    });
 +
-+    it('does not re-run initSpace on later resizes (keeps user drag results)', () => {
-+        const groupEl = makeEl(100);
-+        const handlerEls = [makeEl(10)];
-+        const itemEls = [makeEl(50), makeEl(50)];
-+        const adapter = createMockAdapter({ groupEl, handlerEls, itemEls, direction: 'vertical' });
-+        const foundation = new ResizeGroupFoundation(adapter);
++    it.each([
++        ['layout', useLayoutEffect],
++        ['passive', useEffect],
++    ])('defers root disposal from a %s effect cleanup', async (effect, useCleanupEffect) => {
++        const unmountSpy = jest.spyOn(reactRender, 'unmount');
++        function Page() {
++            useCleanupEffect(() => () => {
++                api.destroyAll();
++                api.destroyAll();
++            }, []);
++            return null;
++        }
++        const page = mount(<Page />);
++        api.info({ content: 'old', duration: 0, motion: false });
++        const wrapper = document.querySelector(selector);
 +
-+        foundation.init();
-+        expect(foundation.sizeInitialized).toBe(true);
++        page.unmount();
 +
-+        // simulate the user having dragged item 0
-+        itemEls[0].style.height = 'calc(70% - 5px)';
-+        itemEls[1].style.height = 'calc(30% - 5px)';
++        expect(unmountSpy).not.toHaveBeenCalled();
++        expect(wrapper.isConnected).toBe(true);
 +
-+        // a later group resize must not reset the layout back to the default 50/50
-+        groupEl.offsetHeight = 200;
-+        foundation.handleGroupResize();
++        await Promise.resolve();
 +
-+        expect(itemEls[0].style.height).toBe('calc(70% - 5px)');
-+        expect(itemEls[1].style.height).toBe('calc(30% - 5px)');
++        expect(unmountSpy).toHaveBeenCalledTimes(1);
++        expect(unmountSpy).toHaveBeenCalledWith(wrapper);
++        expect(wrapper.isConnected).toBe(false);
++        expect(document.querySelector(selector)).toBeNull();
++    });
++
++    it('keeps a newly opened instance when pending disposal finishes', async () => {
++        api.info({ content: 'old', duration: 0, motion: false });
++        const oldWrapper = document.querySelector(selector);
++        api.destroyAll();
++        api.info({ content: 'new', duration: 0, motion: false });
++        const newWrapper = [...document.querySelectorAll(selector)].find(wrapper => wrapper !== oldWrapper);
++
++        await Promise.resolve();
++
++        expect(oldWrapper.isConnected).toBe(false);
++        expect(newWrapper.isConnected).toBe(true);
++        expect(newWrapper.textContent).toContain('new');
++
++        api.destroyAll();
++        await Promise.resolve();
++
++        expect(newWrapper.isConnected).toBe(false);
++        expect(document.querySelector(selector)).toBeNull();
++    });
++
++    it('disposes both instances when a replacement closes before the microtask', async () => {
++        api.info({ content: 'old', duration: 0, motion: false });
++        api.destroyAll();
++        api.info({ content: 'new', duration: 0, motion: false });
++        api.destroyAll();
++
++        await Promise.resolve();
++
++        expect(document.querySelector(selector)).toBeNull();
 +    });
 +});
 ```
 
-**File**: `packages/semi-ui/resizable/group/resizeGroup.tsx` (modified, +13/-0)
+**File**: `packages/semi-ui/modal/__test__/confirm.test.js` (modified, +36/-0)
 ```diff
-@@ -72,6 +72,7 @@ class ResizeGroup extends BaseComponent<ResizeGroupProps, ResizeGroupState> {
-     groupRef: React.RefObject<HTMLDivElement>;
-     groupSize: number;
-     availableSize: number;
-+    resizeObserver: ResizeObserver | null = null;
-     static contextType = ResizeContext;
-     context: ResizeGroupProps;
-     // 在context中使用的属性需要考虑在strictMode下会执行两次，所以用Map来维护
-@@ -89,6 +90,14 @@ class ResizeGroup extends BaseComponent<ResizeGroupProps, ResizeGroupState> {
-         this.foundation.init();
-         // 监听窗口大小变化，保证一些限制仍生效
-         window.addEventListener('resize', this.foundation.ensureConstraint);
-+        // 当 group 初次挂载在 display:none 容器内时 offset 尺寸为 0，item 尺寸会以 0px handler 计算且不再更新；
-+        // 监听 group 自身尺寸变化，待其可见（可测量）后重新计算一次布局。#3336
-+        if (typeof ResizeObserver !== 'undefined' && this.groupRef.current) {
-+            this.resizeObserver = new ResizeObserver(() => {
-+                this.foundation.handleGroupResize();
+@@ -3,6 +3,8 @@ import { Icon, Modal } from '../../index';
+ import { BASE_CLASS_PREFIX } from '../../../semi-foundation/base/constants';
+ 
+ import { IconSend } from '@douyinfe/semi-icons';
++import * as reactRender from '../../_utils/reactRender';
++import { destroyFns } from '../Modal';
+ 
+ 
+ function getModal(modalProps, children) {
+@@ -185,6 +187,40 @@ describe('modal', () => {
+         expect(modalDom.querySelector(`.${BASE_CLASS_PREFIX}-modal-confirm-content`).textContent).toEqual('Updated Content');
+     });
+ 
++    it.each(['confirm', 'cancel', 'destroy'])('defers disposal after %s until the close commit finishes', async action => {
++        const renderSpy = jest.spyOn(reactRender, 'render');
++        const unmountSpy = jest.spyOn(reactRender, 'unmount');
++        const afterClose = jest.fn();
++        const pendingBefore = destroyFns.length;
++        const instance = Modal.confirm({ title: 'Semi', content: 'Content', motion: false, afterClose });
++        const container = renderSpy.mock.calls[0][1];
++
++        try {
++            if (action === 'destroy') {
++                instance.destroy();
++                instance.destroy();
++            } else {
++                document.querySelector(`.${BASE_CLASS_PREFIX}-modal-confirm button[aria-label="${action}"]`).click();
++            }
++
++            expect(afterClose).toHaveBeenCalledTimes(1);
++            expect(unmountSpy).not.toHaveBeenCalled();
++            expect(container.isConnected).toBe(true);
++
++            await Promise.resolve();
++
++            expect(unmountSpy).toHaveBeenCalledTimes(1);
++            expect(unmountSpy).toHaveBeenCalledWith(container);
++            expect(container.isConnected).toBe(false);
++            expect(document.querySelector(`.${BASE_CLASS_PREFIX}-modal-confirm`)).toBeNull();
++            expect(destroyFns).toHaveLength(pendingBefore);
++            expect(afterClose).toHaveBeenCalledTimes(1);
++        } finally {
++            renderSpy.mockRestore();
++            unmountSpy.mockRestore();
++        }
++    });
++
+     // TODO: modal destroy
+     // async function destroy(modal) {
+     //     modal.destroy && modal.destroy();
+```
+
+**File**: `packages/semi-ui/modal/confirm.tsx` (modified, +4/-1)
+```diff
+@@ -18,6 +18,7 @@ export default function confirm<T>(props: ConfirmProps) {
+     document.body.appendChild(div);
+ 
+     let currentConfig = { ...props };
++    let closing = false;
+ 
+     const destroy = () => {
+         reactUnmount(div);
+@@ -39,8 +40,10 @@ export default function confirm<T>(props: ConfirmProps) {
+     function render(renderProps: ConfirmProps) {
+         const { afterClose } = renderProps;
+         reactRender(<ConfirmModal {...renderProps} afterClose={() => {
++            if (closing) return;
++            closing = true;
+             afterClose?.();
+-            destroy();
++            Promise.resolve().then(destroy);
+         }} motion={props.motion}/>, div);
+     }
+ 
+```
+
+**File**: `packages/semi-ui/notification/index.tsx` (modified, +10/-7)
+```diff
+@@ -183,16 +183,19 @@ class NotificationList extends BaseComponent<NotificationListProps, Notification
+ 
+     static destroyAll() {
+         if (ref) {
+-            ref.destroyAll();
++            const instance = ref;
+             const wrapper = document.querySelector(`#${this.wrapperId}`);
+-            
+-            if (wrapper) {
+-                reactUnmount(wrapper);
+-                wrapper.parentNode?.removeChild(wrapper);
+-            }
+-            
++            wrapper?.removeAttribute('id');
+             ref = null;
+             this.wrapperId = null;
++
++            Promise.resolve().then(() => {
++                instance.destroyAll();
++                if (wrapper) {
++                    reactUnmount(wrapper);
++                    wrapper.parentNode?.removeChild(wrapper);
++                }
 +            });
-+            this.resizeObserver.observe(this.groupRef.current);
-+        }
+         }
      }
  
-     componentDidUpdate(prevProps: ResizeGroupProps) {
-@@ -108,6 +117,10 @@ class ResizeGroup extends BaseComponent<ResizeGroupProps, ResizeGroupState> {
-     componentWillUnmount() {
-         this.foundation.destroy();
-         window.removeEventListener('resize', this.foundation.ensureConstraint);
-+        if (this.resizeObserver) {
-+            this.resizeObserver.disconnect();
-+            this.resizeObserver = null;
-+        }
-     }
- 
-     get adapter(): ResizeGroupAdapter<ResizeGroupProps, ResizeGroupState> {
 ```
 
----
-
-### Incident Patch 6: `f777b9a8` (2026-09-15)
-**Commit Message**: Merge pull request #3352 from dvd233/fix/modal-esc-top-only
-
-fix(modal): ESC closes only the top-most modal
-
-**File**: `packages/semi-foundation/modal/modalContentFoundation.ts` (modified, +22/-0)
+**File**: `packages/semi-ui/toast/__test__/toast-command-call.test.js` (modified, +2/-1)
 ```diff
-@@ -30,6 +30,15 @@ export interface ModalContentAdapter extends DefaultAdapter<ModalContentProps, M
-     prevFocusElementReFocus: () => void
- }
- 
-+/**
-+ * Stack of `handleKeyDown` handlers for modals that currently listen on
-+ * `document`. Every ModalContent registers its own document-level keydown
-+ * listener, so `stopPropagation()` cannot stop sibling listeners on the same
-+ * node — one ESC used to close every open dialog. Only the most recently
-+ * mounted (top-most) listener should respond.
-+ */
-+const escListenerStack: Array<(e: any) => void> = [];
-+
- export default class ModalContentFoundation extends BaseFoundation<ModalContentAdapter> {
- 
-     constructor(adapter: ModalContentAdapter) {
-@@ -53,6 +62,12 @@ export default class ModalContentFoundation extends BaseFoundation<ModalContentA
-     handleKeyDown = (e: any) => {
-         const { closeOnEsc } = this.getProps();
-         if (closeOnEsc && e.keyCode === KeyCode.ESC) {
-+            // Multiple open modals each registered a document-level keydown
-+            // listener; only the top-most (most recently mounted) one may
-+            // close, so a single ESC closes dialogs one at a time.
-+            if (escListenerStack[escListenerStack.length - 1] !== this.handleKeyDown) {
-+                return;
-+            }
-             e.stopPropagation();
-             this.close(e);
-             return;
-@@ -61,10 +76,17 @@ export default class ModalContentFoundation extends BaseFoundation<ModalContentA
- 
-     handleKeyDownEventListenerMount() {
-         this._adapter.addKeyDownEventListener();
-+        if (this.getProps().closeOnEsc) {
-+            escListenerStack.push(this.handleKeyDown);
-+        }
-     }
- 
-     handleKeyDownEventListenerUnmount() {
-         this._adapter.removeKeyDownEventListener();
-+        const index = escListenerStack.indexOf(this.handleKeyDown);
-+        if (index !== -1) {
-+            escListenerStack.splice(index, 1);
-+        }
-     }
- 
-     getMouseState() {
-```
-
-**File**: `packages/semi-ui/modal/__test__/modal.test.js` (modified, +45/-0)
-```diff
-@@ -336,4 +336,49 @@ describe('modal', () => {
-         expect(modal.exists(`div.${testClass}`)).toEqual(true);
-         modal.unmount();
+@@ -62,8 +62,9 @@ describe('Toast - 2', () => {
+         expect(style.right).toEqual('40px');
      });
-+
-+    it('esc closes only the top-most modal when multiple are open', () => {
-+        const onCancelOuter = jest.fn();
-+        const onCancelInner = jest.fn();
-+        class StackedModals extends React.Component {
-+            state = {
-+                outerVisible: true,
-+                innerVisible: true,
-+            };
-+
-+            handleOuterCancel = (e) => {
-+                onCancelOuter(e);
-+                this.setState({ outerVisible: false });
-+            };
-+
-+            handleInnerCancel = (e) => {
-+                onCancelInner(e);
-+                this.setState({ innerVisible: false });
-+            };
-+
-+            render() {
-+                return (
-+                    <>
-+                        {getModal({ visible: this.state.outerVisible, onCancel: this.handleOuterCancel })}
-+                        {getModal({ visible: this.state.innerVisible, onCancel: this.handleInnerCancel })}
-+                    </>
-+                );
-+            }
-+        }
-+
-+        const stacked = mount(<StackedModals />, { attachTo: document.getElementById('container') });
-+
-+        document.dispatchEvent(new KeyboardEvent('keydown', { keyCode: 27 }));
-+
-+        // Only the most recently mounted (top-most) modal should close.
-+        expect(onCancelInner).toHaveBeenCalledTimes(1);
-+        expect(onCancelOuter).toHaveBeenCalledTimes(0);
-+
-+        // After the top modal unmounts, the next ESC reaches the outer one.
-+        stacked.update();
-+        document.dispatchEvent(new KeyboardEvent('keydown', { keyCode: 27 }));
-+        expect(onCancelOuter).toHaveBeenCalledTimes(1);
-+
-+        stacked.unmount();
-+    });
- })
+ 
+-    it('set global config', () => {
++    it('set global config', async () => {
+         Toast.destroyAll();
++        await Promise.resolve();
+         Toast.config({
+             theme: 'light',
+             duration: 0,
 ```
 
----
-
-### Incident Patch 7: `17055c72` (2026-09-15)
-**Commit Message**: Merge pull request #3356 from DouyinFE/codex/fix-3354-datepicker-popup-flash
-
-【Auto】Fix: DatePicker 弹层打开时位置闪烁（等待尺寸稳定后定位）
-
-**File**: `packages/semi-ui/tooltip/__test__/tooltip.test.js` (modified, +55/-2)
+**File**: `packages/semi-ui/toast/index.tsx` (modified, +10/-7)
 ```diff
-@@ -376,7 +376,8 @@ describe(`Tooltip`, () => {
-       // Browser lays out portal-inner, then ResizeObserver fires
-       laidOut = true;
-       observers.forEach(o => o.cb && o.cb());
--      await sleep(10);
-+      // #3354: 首次定位会等待尺寸稳定（32ms 稳定窗口）后再执行
-+      await sleep(60);
+@@ -166,16 +166,19 @@ const createBaseToast = () => class ToastList extends BaseComponent<ToastListPro
  
-       // The layout-driven ResizeObserver callback should have triggered positioning
-       expect(calcSpy.called).toBe(true);
-@@ -411,7 +412,8 @@ describe(`Tooltip`, () => {
-           <Button>trigger</Button>
-         </Tooltip>
-       );
--      await sleep(10);
-+      // #3354: 等待首次定位完成（尺寸稳定窗口 32ms）后再制造内容增长
-+      await sleep(60);
- 
-       const instance = demo.find(Tooltip).instance();
-       const calcSpy = sinon.spy(instance.foundation, 'calcPosition');
-@@ -420,9 +422,60 @@ describe(`Tooltip`, () => {
-       // against a valid, but incomplete, initial size.
-       popupHeight = 342;
-       observers.forEach(o => o.cb && o.cb());
-+      await sleep(30);
+     static destroyAll() {
+         if (ToastList.ref) {
+-            ToastList.ref.destroyAll();
++            const instance = ToastList.ref;
+             const wrapper = document.querySelector(`#${this.wrapperId}`);
+-            
+-            if (wrapper) {
+-                reactUnmount(wrapper);
+-                wrapper.parentNode?.removeChild(wrapper);
+-            }
+-            
++            wrapper?.removeAttribute('id');
+             ToastList.ref = null;
+             this.wrapperId = null;
 +
-+      expect(calcSpy.calledOnce).toBe(true);
-+      calcSpy.restore();
-+      demo.unmount();
-+    } finally {
-+      global.ResizeObserver = realResizeObserver;
-+      Object.defineProperty(global.HTMLElement.prototype, 'offsetWidth', offsetWidthDesc);
-+      Object.defineProperty(global.HTMLElement.prototype, 'offsetHeight', offsetHeightDesc);
-+    }
-+  });
-+
-+  it(`positions once after popup size stabilizes to avoid flicker (#3354)`, async () => {
-+    const realResizeObserver = global.ResizeObserver;
-+    const offsetWidthDesc = Object.getOwnPropertyDescriptor(global.HTMLElement.prototype, 'offsetWidth');
-+    const offsetHeightDesc = Object.getOwnPropertyDescriptor(global.HTMLElement.prototype, 'offsetHeight');
-+
-+    const observers = [];
-+    // DatePicker-like popup: a small non-zero size first, then it grows.
-+    // Positioning against that intermediate size causes a flip/jump once the
-+    // final size arrives, which is visible as flickering.
-+    let popupHeight = 32;
-+    global.ResizeObserver = class {
-+      constructor(cb) { this.cb = cb; observers.push(this); }
-+      observe() {}
-+      unobserve() {}
-+      disconnect() {}
-+    };
-+    Object.defineProperty(global.HTMLElement.prototype, 'offsetWidth', { configurable: true, get() { return 120; } });
-+    Object.defineProperty(global.HTMLElement.prototype, 'offsetHeight', { configurable: true, get() { return popupHeight; } });
-+
-+    try {
-+      const demo = mount(
-+        <Tooltip motion={false} content={'Content'} visible={true} trigger={'custom'} position="bottom">
-+          <Button>trigger</Button>
-+        </Tooltip>
-+      );
-+      await sleep(10);
-+
-+      const instance = demo.find(Tooltip).instance();
-+      const calcSpy = sinon.spy(instance.foundation, 'calcPosition');
-+
-+      // The popup grows before the size-stabilize window elapses
-+      popupHeight = 342;
-+      observers.forEach(o => o.cb && o.cb());
-       await sleep(10);
- 
-+      // Must not position against the unstable intermediate size
-+      expect(calcSpy.called).toBe(false);
-+
-+      // After the size stabilizes, positioning runs exactly once
-+      await sleep(60);
-       expect(calcSpy.calledOnce).toBe(true);
-+
-       calcSpy.restore();
-       demo.unmount();
-     } finally {
-```
-
-**File**: `packages/semi-ui/tooltip/index.tsx` (modified, +26/-4)
-```diff
-@@ -204,6 +204,7 @@ export default class Tooltip extends BaseComponent<TooltipProps, TooltipState> {
-     scrollHandler: any;
-     popupResizeObserver: ResizeObserver;
-     popupResizeTimer: ReturnType<typeof setTimeout>;
-+    popupSizeStabilizeTimer: ReturnType<typeof setTimeout>;
-     getPopupContainer: () => HTMLElement;
-     containerPosition: string;
-     foundation: TooltipFoundation;
-@@ -291,6 +292,18 @@ export default class Tooltip extends BaseComponent<TooltipProps, TooltipState> {
-                                     emit();
-                                 }
-                             };
-+                            // #3354: 等待 popup 尺寸稳定后再做首次定位。
-+                            // DatePicker 等内容会先以较小的非零尺寸完成初次布局，
-+                            // 若此时立即定位（快路径或首次 RO 回调），尺寸扩展后会因
-+                            // 溢出判定变化而翻转，视觉上表现为位置跳变（闪烁）。
-+                            const scheduleStableEmit = () => {
-+                                clearTimeout(this.popupSizeStabilizeTimer);
-+                                this.popupSizeStabilizeTimer = setTimeout(() => {
-+                                    if (!emitted && this.cachedLatestTransitionState === 'enter') {
-+                                        emitOnce();
-+                                    }
-+                                }, 32);
-+                            };
-                             const ro = new ResizeObserver(() => {
-                                 const width = el.offsetWidth;
-                                 const height = el.offsetHeight;
-@@ -301,7 +314,7 @@ export default class Tooltip extends BaseComponent<TooltipProps, TooltipState> {
-                                 lastWidth = width;
-                                 lastHeight = height;
-                                 if (!emitted) {
--                                    emitOnce();
-+                                    scheduleStableEmit();
-                                 } else if (sizeChanged && this.cachedLatestTransitionState === 'enter') {
-                                     clearTimeout(this.popupResizeTimer);
-                                     this.popupResizeTimer = setTimeout(() => {
-@@ -314,14 +327,14 @@ export default class Tooltip extends BaseComponent<TooltipProps, TooltipState> {
-                             this.popupResizeObserver = ro;
-                             ro.observe(el);
-                             if (lastWidth > 0 && lastHeight > 0) {
--                                emitOnce();
-+                                scheduleStableEmit();
-                             }
--                            // Safety net: bail out after 50ms even if RO never fires
-+                            // Safety net: bail out after 100ms even if RO never fires
-                             setTimeout(() => {
-                                 if (!emitted) {
-                                     emitOnce();
-                                 }
--                            }, 50);
-+                            }, 100);
-                             return;
-                         }
-                         // Fallback for browsers without ResizeObserver.
-@@ -374,6 +387,14 @@ export default class Tooltip extends BaseComponent<TooltipProps, TooltipState> {
-                         scrollLeft: container.scrollLeft,
-                         scrollTop: container.scrollTop,
-                     };
-+                    // #3354: body 的高度通常只是内容高度，而弹层实际可显示区域是视口；
-+                    // 用 body 边界做溢出判断会把正常能放下的弹层误判为溢出并 pin 到错误位置。
-+                    // 这里使用 clientWidth/clientHeight（视口内容区，不含滚动条），
-+                    // 避免在 Windows/Linux 经典滚动条下弹层贴边时被滚动条遮挡。
-+                    if (container === document.body) {
-+                        rect.right = Math.max(boundingRect.right, document.documentElement.clientWidth);
-+                        rect.bottom = Math.max(boundingRect.bottom, document.documentElement.clientHeight);
-+                    }
-                 }
- 
-                 return rect;
-@@ -586,6 +607,7 @@ export default class Tooltip extends BaseComponent<TooltipProps, TooltipState> {
- 
-     disconnectPopupResizeObserver = () => {
-         clearTimeout(this.popupResizeTimer);
-+        clearTimeout(this.popupSizeStabilizeTimer);
-         this.popupResizeObserver?.disconnect();
-         this.popupResizeObserver = null;
-     };
-```
-
----
-
-### Incident Patch 8: `dacca934` (2026-09-15)
-**Commit Message**: fix(tooltip): use viewport client size for popup container overflow bounds (#3354)
-
-**File**: `packages/semi-ui/tooltip/index.tsx` (modified, +4/-2)
-```diff
-@@ -389,9 +389,11 @@ export default class Tooltip extends BaseComponent<TooltipProps, TooltipState> {
-                     };
-                     // #3354: body 的高度通常只是内容高度，而弹层实际可显示区域是视口；
-                     // 用 body 边界做溢出判断会把正常能放下的弹层误判为溢出并 pin 到错误位置。
-+                    // 这里使用 clientWidth/clientHeight（视口内容区，不含滚动条），
-+                    // 避免在 Windows/Linux 经典滚动条下弹层贴边时被滚动条遮挡。
-                     if (container === document.body) {
--                        rect.right = Math.max(boundingRect.right, window.innerWidth);
--                        rect.bottom = Math.max(boundingRect.bottom, window.innerHeight);
-+                        rect.right = Math.max(boundingRect.right, document.documentElement.clientWidth);
-+                        rect.bottom = Math.max(boundingRect.bottom, document.documentElement.clientHeight);
-                     }
-                 }
- 
-```
-
----
-
-### Incident Patch 9: `b4b781e0` (2026-09-15)
-**Commit Message**: fix(tooltip): wait for stable popup size before initial positioning (#3354)
-
-**File**: `packages/semi-ui/tooltip/__test__/tooltip.test.js` (modified, +55/-2)
-```diff
-@@ -376,7 +376,8 @@ describe(`Tooltip`, () => {
-       // Browser lays out portal-inner, then ResizeObserver fires
-       laidOut = true;
-       observers.forEach(o => o.cb && o.cb());
--      await sleep(10);
-+      // #3354: 首次定位会等待尺寸稳定（32ms 稳定窗口）后再执行
-+      await sleep(60);
- 
-       // The layout-driven ResizeObserver callback should have triggered positioning
-       expect(calcSpy.called).toBe(true);
-@@ -411,7 +412,8 @@ describe(`Tooltip`, () => {
-           <Button>trigger</Button>
-         </Tooltip>
-       );
--      await sleep(10);
-+      // #3354: 等待首次定位完成（尺寸稳定窗口 32ms）后再制造内容增长
-+      await sleep(60);
- 
-       const instance = demo.find(Tooltip).instance();
-       const calcSpy = sinon.spy(instance.foundation, 'calcPosition');
-@@ -420,9 +422,60 @@ describe(`Tooltip`, () => {
-       // against a valid, but incomplete, initial size.
-       popupHeight = 342;
-       observers.forEach(o => o.cb && o.cb());
-+      await sleep(30);
-+
-+      expect(calcSpy.calledOnce).toBe(true);
-+      calcSpy.restore();
-+      demo.unmount();
-+    } finally {
-+      global.ResizeObserver = realResizeObserver;
-+      Object.defineProperty(global.HTMLElement.prototype, 'offsetWidth', offsetWidthDesc);
-+      Object.defineProperty(global.HTMLElement.prototype, 'offsetHeight', offsetHeightDesc);
-+    }
-+  });
-+
-+  it(`positions once after popup size stabilizes to avoid flicker (#3354)`, async () => {
-+    const realResizeObserver = global.ResizeObserver;
-+    const offsetWidthDesc = Object.getOwnPropertyDescriptor(global.HTMLElement.prototype, 'offsetWidth');
-+    const offsetHeightDesc = Object.getOwnPropertyDescriptor(global.HTMLElement.prototype, 'offsetHeight');
-+
-+    const observers = [];
-+    // DatePicker-like popup: a small non-zero size first, then it grows.
-+    // Positioning against that intermediate size causes a flip/jump once the
-+    // final size arrives, which is visible as flickering.
-+    let popupHeight = 32;
-+    global.ResizeObserver = class {
-+      constructor(cb) { this.cb = cb; observers.push(this); }
-+      observe() {}
-+      unobserve() {}
-+      disconnect() {}
-+    };
-+    Object.defineProperty(global.HTMLElement.prototype, 'offsetWidth', { configurable: true, get() { return 120; } });
-+    Object.defineProperty(global.HTMLElement.prototype, 'offsetHeight', { configurable: true, get() { return popupHeight; } });
-+
-+    try {
-+      const demo = mount(
-+        <Tooltip motion={false} content={'Content'} visible={true} trigger={'custom'} position="bottom">
-+          <Button>trigger</Button>
-+        </Tooltip>
-+      );
-+      await sleep(10);
-+
-+      const instance = demo.find(Tooltip).instance();
-+      const calcSpy = sinon.spy(instance.foundation, 'calcPosition');
-+
-+      // The popup grows before the size-stabilize window elapses
-+      popupHeight = 342;
-+      observers.forEach(o => o.cb && o.cb());
-       await sleep(10);
- 
-+      // Must not position against the unstable intermediate size
-+      expect(calcSpy.called).toBe(false);
-+
-+      // After the size stabilizes, positioning runs exactly once
-+      await sleep(60);
-       expect(calcSpy.calledOnce).toBe(true);
-+
-       calcSpy.restore();
-       demo.unmount();
-     } finally {
-```
-
-**File**: `packages/semi-ui/tooltip/index.tsx` (modified, +24/-4)
-```diff
-@@ -204,6 +204,7 @@ export default class Tooltip extends BaseComponent<TooltipProps, TooltipState> {
-     scrollHandler: any;
-     popupResizeObserver: ResizeObserver;
-     popupResizeTimer: ReturnType<typeof setTimeout>;
-+    popupSizeStabilizeTimer: ReturnType<typeof setTimeout>;
-     getPopupContainer: () => HTMLElement;
-     containerPosition: string;
-     foundation: TooltipFoundation;
-@@ -291,6 +292,18 @@ export default class Tooltip extends BaseComponent<TooltipProps, TooltipState> {
-                                     emit();
-                                 }
-                             };
-+                            // #3354: 等待 popup 尺寸稳定后再做首次定位。
-+                            // DatePicker 等内容会先以较小的非零尺寸完成初次布局，
-+                            // 若此时立即定位（快路径或首次 RO 回调），尺寸扩展后会因
-+                            // 溢出判定变化而翻转，视觉上表现为位置跳变（闪烁）。
-+                            const scheduleStableEmit = () => {
-+                                clearTimeout(this.popupSizeStabilizeTimer);
-+                                this.popupSizeStabilizeTimer = setTimeout(() => {
-+                                    if (!emitted && this.cachedLatestTransitionState === 'enter') {
-+                                        emitOnce();
-+                                    }
-+                                }, 32);
-+                            };
-                             const ro = new ResizeObserver(() => {
-                                 const width = el.offsetWidth;
-                                 const height = el.offsetHeight;
-@@ -301,7 +314,7 @@ export default class Tooltip extends BaseComponent<TooltipProps, TooltipState> {
-                                 lastWidth = width;
-                                 lastHeight = height;
-                                 if (!emitted) {
--                                    emitOnce();
-+                                    scheduleStableEmit();
-                                 } else if (sizeChanged && this.cachedLatestTransitionState === 'enter') {
-                                     clearTimeout(this.popupResizeTimer);
-                                     this.popupResizeTimer = setTimeout(() => {
-@@ -314,14 +327,14 @@ export default class Tooltip extends BaseComponent<TooltipProps, TooltipState> {
-                             this.popupResizeObserver = ro;
-                             ro.observe(el);
-                             if (lastWidth > 0 && lastHeight > 0) {
--                                emitOnce();
-+                                scheduleStableEmit();
-                             }
--                            // Safety net: bail out after 50ms even if RO never fires
-+                            // Safety net: bail out after 100ms even if RO never fires
-                             setTimeout(() => {
-                                 if (!emitted) {
-                                     emitOnce();
-                                 }
--                            }, 50);
-+                            }, 100);
-                             return;
-                         }
-                         // Fallback for browsers without ResizeObserver.
-@@ -374,6 +387,12 @@ export default class Tooltip extends BaseComponent<TooltipProps, TooltipState> {
-                         scrollLeft: container.scrollLeft,
-                         scrollTop: container.scrollTop,
-                     };
-+                    // #3354: body 的高度通常只是内容高度，而弹层实际可显示区域是视口；
-+                    // 用 body 边界做溢出判断会把正常能放下的弹层误判为溢出并 pin 到错误位置。
-+                    if (container === document.body) {
-+                        rect.right = Math.max(boundingRect.right, window.innerWidth);
-+                        rect.bottom = Math.max(boundingRect.bottom, window.innerHeight);
-+                    }
-                 }
- 
-                 return rect;
-@@ -586,6 +605,7 @@ export default class Tooltip extends BaseComponent<TooltipProps, TooltipState> {
- 
-     disconnectPopupResizeObserver = () => {
-         clearTimeout(this.popupResizeTimer);
-+        clearTimeout(this.popupSizeStabilizeTimer);
-         this.popupResizeObserver?.disconnect();
-         this.popupResizeObserver = null;
-     };
-```
-
----
-
-### Incident Patch 10: `8db432d4` (2026-09-10)
-**Commit Message**: fix(modal): ESC closes only the top-most modal
-
-Keep only the most recently mounted ModalContent keydown handler active so one ESC closes one dialog at a time. Add a controlled nested-modal regression test.
-
-Fixes #3351
-
-**File**: `packages/semi-foundation/modal/modalContentFoundation.ts` (modified, +22/-0)
-```diff
-@@ -30,6 +30,15 @@ export interface ModalContentAdapter extends DefaultAdapter<ModalContentProps, M
-     prevFocusElementReFocus: () => void
- }
- 
-+/**
-+ * Stack of `handleKeyDown` handlers for modals that currently listen on
-+ * `document`. Every ModalContent registers its own document-level keydown
-+ * listener, so `stopPropagation()` cannot stop sibling listeners on the same
-+ * node — one ESC used to close every open dialog. Only the most recently
-+ * mounted (top-most) listener should respond.
-+ */
-+const escListenerStack: Array<(e: any) => void> = [];
-+
- export default class ModalContentFoundation extends BaseFoundation<ModalContentAdapter> {
- 
-     constructor(adapter: ModalContentAdapter) {
-@@ -53,6 +62,12 @@ export default class ModalContentFoundation extends BaseFoundation<ModalContentA
-     handleKeyDown = (e: any) => {
-         const { closeOnEsc } = this.getProps();
-         if (closeOnEsc && e.keyCode === KeyCode.ESC) {
-+            // Multiple open modals each registered a document-level keydown
-+            // listener; only the top-most (most recently mounted) one may
-+            // close, so a single ESC closes dialogs one at a time.
-+            if (escListenerStack[escListenerStack.length - 1] !== this.handleKeyDown) {
-+                return;
-+            }
-             e.stopPropagation();
-             this.close(e);
-             return;
-@@ -61,10 +76,17 @@ export default class ModalContentFoundation extends BaseFoundation<ModalContentA
- 
-     handleKeyDownEventListenerMount() {
-         this._adapter.addKeyDownEventListener();
-+        if (this.getProps().closeOnEsc) {
-+            escListenerStack.push(this.handleKeyDown);
-+        }
-     }
- 
-     handleKeyDownEventListenerUnmount() {
-         this._adapter.removeKeyDownEventListener();
-+        const index = escListenerStack.indexOf(this.handleKeyDown);
-+        if (index !== -1) {
-+            escListenerStack.splice(index, 1);
-+        }
-     }
- 
-     getMouseState() {
-```
-
-**File**: `packages/semi-ui/modal/__test__/modal.test.js` (modified, +45/-0)
-```diff
-@@ -336,4 +336,49 @@ describe('modal', () => {
-         expect(modal.exists(`div.${testClass}`)).toEqual(true);
-         modal.unmount();
-     });
-+
-+    it('esc closes only the top-most modal when multiple are open', () => {
-+        const onCancelOuter = jest.fn();
-+        const onCancelInner = jest.fn();
-+        class StackedModals extends React.Component {
-+            state = {
-+                outerVisible: true,
-+                innerVisible: true,
-+            };
-+
-+            handleOuterCancel = (e) => {
-+                onCancelOuter(e);
-+                this.setState({ outerVisible: false });
-+            };
-+
-+            handleInnerCancel = (e) => {
-+                onCancelInner(e);
-+                this.setState({ innerVisible: false });
-+            };
-+
-+            render() {
-+                return (
-+                    <>
-+                        {getModal({ visible: this.state.outerVisible, onCancel: this.handleOuterCancel })}
-+                        {getModal({ visible: this.state.innerVisible, onCancel: this.handleInnerCancel })}
-+                    </>
-+                );
-+            }
-+        }
-+
-+        const stacked = mount(<StackedModals />, { attachTo: document.getElementById('container') });
-+
-+        document.dispatchEvent(new KeyboardEvent('keydown', { keyCode: 27 }));
-+
-+        // Only the most recently mounted (top-most) modal should close.
-+        expect(onCancelInner).toHaveBeenCalledTimes(1);
-+        expect(onCancelOuter).toHaveBeenCalledTimes(0);
-+
-+        // After the top modal unmounts, the next ESC reaches the outer one.
-+        stacked.update();
-+        document.dispatchEvent(new KeyboardEvent('keydown', { keyCode: 27 }));
-+        expect(onCancelOuter).toHaveBeenCalledTimes(1);
-+
-+        stacked.unmount();
-+    });
- })
-```
-
----
-
-### Incident Patch 11: `2b5acd79` (2026-09-09)
-**Commit Message**: docs: fix typos across component docs and contributing guide
-
-- Transfer: `searchRender:flase` in the default TreeProps example is not
-  valid TypeScript; corrected to `false` (en-US and zh-CN)
-- Descriptions: frontmatter key `breif` corrected to `brief` so the page
-  summary is picked up like every other component page
-- Form (zh-CN): valuePath example `target.checkd` corrected to
-  `target.checked` to match the Radio onChange event
-- Tooltip (zh-CN): trigger value `hove` corrected to `hover`
-- Select: `mutilple` corrected to `multiple` in the autoClearSearchValue
-  description (en-US and zh-CN)
-- Tree: doubled word "for for" in searchStyle description
-- Spelling fixes in prose, headings and demo text: environment, Description,
-  disabled, built-in, Infrastructure, better, variable, controlled, error,
-  Triggered, support, Explanation, Different, image, Optional, Content,
-  Retention, demonstrate, deletable, wrapper
-
-**File**: `CONTRIBUTING-en-US.md` (modified, +1/-1)
-```diff
-@@ -21,7 +21,7 @@ cd semi-design
- ```bash
- git checkout -b <TOPIC_BRANCH_NAME>
- ```
-->Before installing the enviroment,make sure that there is a dependency of `lerna` and `yarn` locally, if not, should run:
-+>Before installing the environment,make sure that there is a dependency of `lerna` and `yarn` locally, if not, should run:
- ```base
- corepack enable
- ```
-```
-
-**File**: `content/advanced/design-to-code/index-en-US.md` (modified, +1/-1)
-```diff
-@@ -36,7 +36,7 @@ For more detailed usage instructions, you can visit <a href="/code" target="_bla
- 
- Here is a link to the Figma example mockup and its corresponding Codesandbox transpiled using the Semi Figma plugin.
- 
--| Screenshot & Figma URL                                                                                                                                                                                                                                                                                                                         | Draft Type                                                                                        | Desciption                                                                                          | Codesandbox                                                                                  |
-+| Screenshot & Figma URL                                                                                                                                                                                                                                                                                                                         | Draft Type                                                                                        | Description                                                                                          | Codesandbox                                                                                  |
- |------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------|
- | <a href='https://www.figma.com/file/TlLeWouyImYUexTmhdLiIn/D2C-Getting-Start-Demo?node-id=5%3A2092' target="_blank" rel="noreferrer noopener"><img src='https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/semi-linker/simple-demo-1.jpg' style={{ width:  400 }} /></a>                                               | A module with simple content without components                                                   | Can be used to quickly restore layout and content                                                   | <a href='https://codesandbox.io/s/w1z9yx' target="_blank" rel="noreferrer noopener">Link</a> |
- | <a href='https://www.figma.com/file/TlLeWouyImYUexTmhdLiIn/D2C-Getting-Start-Demo?node-id=1%3A275' target="_blank" rel="noreferrer noopener"><img src='https://lf3-files.qingfuwucdn.net/obj/inspirecloud-file/baas/tt38q7/2468f1c4f1756bc0_1676603194364.png' style={{ width:  400 }} /></a>                                                  | Modules that do not contain components, have more content, or have a slightly more complex layout | Can be used to quickly restore layout and content                                                   | <a href='https://codesandbox.io/s/905ncn' target="_blank" rel="noreferrer noopener">Link</a> |
-```
-
-**File**: `content/basic/button/index-en-US.md` (modified, +1/-1)
-```diff
-@@ -332,7 +332,7 @@ function ButtonDemo() {
-         <div>
-             <Button disabled>Disabled</Button>
-             <Button disabled theme="borderless">No background and disabled</Button>
--            <Button disabled theme="light">Light and disbaled</Button>
-+            <Button disabled theme="light">Light and disabled</Button>
-             <Button disabled theme="borderless" type="primary">No background, primary and disabled</Button>
-             <Button disabled theme="solid" type="warning">Solid, warning and disabled</Button>
-         </div>
-```
-
-**File**: `content/basic/typography/index-en-US.md` (modified, +4/-4)
-```diff
-@@ -46,7 +46,7 @@ function Demo() {
- 
- ### Text
- 
--Text component has different built-in styles. You could also pass `icon` to use the build-in styles for icon. Different from passing icon to children, using `icon` for link will have no underline in compliance with Semi Design principles.
-+Text component has different built-in styles. You could also pass `icon` to use the built-in styles for icon. Different from passing icon to children, using `icon` for link will have no underline in compliance with Semi Design principles.
- 
- ```jsx live=true
- import React from 'react';
-@@ -427,7 +427,7 @@ function Demo() {
-             <Text 
-                 ellipsis={{ 
-                     showTooltip: {
--                        opts: { content: 'Insfrastructure|Data-inf|bytegraph.cheetah.user_relation' }
-+                        opts: { content: 'Infrastructure|Data-inf|bytegraph.cheetah.user_relation' }
-                     }
-                 }}
-                 style={{ width: 150 }}
-@@ -438,7 +438,7 @@ function Demo() {
-             <Text 
-                 ellipsis={{ 
-                     showTooltip: {
--                        opts: { content: 'Insfrastructure|Data-inf|bytegraph.cheetah.user_relation', className: 'components-typography-demo' }
-+                        opts: { content: 'Infrastructure|Data-inf|bytegraph.cheetah.user_relation', className: 'components-typography-demo' }
-                     }
-                 }}
-                 style={{ width: 150 }}
-@@ -449,7 +449,7 @@ function Demo() {
-             <Text 
-                 ellipsis={{
-                     showTooltip: {
--                        opts: { content: 'Insfrastructure|Data-inf|bytegraph.cheetah.user_relation', style: { wordBreak: 'break-all' } }
-+                        opts: { content: 'Infrastructure|Data-inf|bytegraph.cheetah.user_relation', style: { wordBreak: 'break-all' } }
-                     }
-                 }}
-                 style={{ width: 150 }}
-```
-
-**File**: `content/ecosystem/faq/index-en-US.md` (modified, +1/-1)
-```diff
-@@ -26,7 +26,7 @@ No plans for this. Specific reasons: [Issue 311](https://github.com/DouyinFE/sem
- 
- 
- #### What is the relationship between Semi 2.x (open source version) and Semi 1.x?
-- - The Semi v2.0 version is refactored based on v1.x using ts, which brings a better ts experience, bettter a11y support and a more out-of-the-box engineering solution, which solves the coexistence of multi-component libraries in the micro front-end scenario Style conflict issues, etc. All subsequent long-term work of the Semi team will be based on the v2.x version
-+ - The Semi v2.0 version is refactored based on v1.x using ts, which brings a better ts experience, better a11y support and a more out-of-the-box engineering solution, which solves the coexistence of multi-component libraries in the micro front-end scenario Style conflict issues, etc. All subsequent long-term work of the Semi team will be based on the v2.x version
-  - v1.x has stopped iterative maintenance, no more feature additions or complex changes, only necessary bug fix changes are provided.
-  - For new projects, we recommend that you directly use 2.x [@douyin/semi-ui](https://semi.design) for development. For existing projects, we also recommend that you upgrade as soon as possible. In order to reduce the cost of upgrading, we provide a cli tool one-click migration (@ies/semi-codemod-v2) that can help you automatically complete up to 90% of the migration and modification (limited by the AST implementation principle, there are still a small number of cases that require manual labor review modification, but not much 😉)
-  - Upgrade from Semi 1.x to Semi 2.x for detailed operation steps [From v1 to v2](https://semi.design/en-US/start/update-to-v2)
-```
-
-**File**: `content/ecosystem/update-to-v2/index-en-US.md` (modified, +1/-1)
-```diff
-@@ -66,7 +66,7 @@ All warning logs will be output in the semi-codemod-log.log file under ProjectPa
- 
- ##### 4. Update the usage of Css Variable
- 
--If you use Semi's css variable in your code, in addition to using semi-codemod-v2, you also need to use the style-lint tool we provide to automatically update all css varable usage
-+If you use Semi's css variable in your code, in addition to using semi-codemod-v2, you also need to use the style-lint tool we provide to automatically update all css variable usage
- 
- - Install Semi style-lint package
- 
-```
-
-**File**: `content/input/form/index-en-US.md` (modified, +2/-2)
-```diff
-@@ -43,7 +43,7 @@ Properties are hijacked by Form, so
- 
- <Notice type="primary" title="Notice">
- 
--1. No longer need to manually bind the onChange event and update the value as controled component. But you can continue to listen onChange events for the latest values if you want
-+1. No longer need to manually bind the onChange event and update the value as controlled component. But you can continue to listen onChange events for the latest values if you want
- 2. You cannot set the state of component with attributes such as `value`, `defaultValue`, `checked`, `defaultChecked`, etc. The default value can be set by Field's `initValue` or Form's `unitValues`
- 3. You should not modify the value of Form State directly, all changes to the data in the Form should be done by providing `formApi`, `fieldApi`
- 
-@@ -1145,7 +1145,7 @@ class FormLevelValidateSync extends React.Component {
-             errors.sex = 'must be woman';
++            Promise.resolve().then(() => {
++                instance.destroyAll();
++                if (wrapper) {
++                    reactUnmount(wrapper);
++                    wrapper.parentNode?.removeChild(wrapper);
++                }
++            });
          }
-         errors.familyName = [
--            { before: 'before errror balabala ', after: 'after error balabala' },
-+            { before: 'before error balabala ', after: 'after error balabala' },
-             'familyName[1] error balabala'
-         ];
-         return errors;
-```
-
-**File**: `content/input/form/index.md` (modified, +2/-2)
-```diff
-@@ -1222,7 +1222,7 @@ class FormLevelValidateSync extends React.Component {
-             errors.sex = 'must be woman';
-         }
-         errors.familyName = [
--            { before: 'before errror balabala ', after: 'after error balabala' },
-+            { before: 'before error balabala ', after: 'after error balabala' },
-             'familyName[1] error balabala'
-         ];
-         return errors;
-@@ -2525,7 +2525,7 @@ const { ErrorMessage } = Form;
- | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
- | valueKey          | 组件表示值的属性，如 Switch、Radio 的是'checked'，Input 的是'value'                                                                                                                                                                           | 'value'    |
- | onKeyChangeFnName | 组件值变化时的回调函数，一般为'onChange'                                                                                                                                                                                                      | 'onChange' |
--| valuePath         | 值属性在回调函数中第一个参数的路径,如 Radio 的 onChange(e.target.checked)，那么该值需要设为 target.checkd；RadioGroup 的 onChange(e.target.value)，该值为'target.value'；若第一个参数就是值本身，无需再往下取值，该项不需要设                 |            |
-+| valuePath         | 值属性在回调函数中第一个参数的路径,如 Radio 的 onChange(e.target.checked)，那么该值需要设为 target.checked；RadioGroup 的 onChange(e.target.value)，该值为'target.value'；若第一个参数就是值本身，无需再往下取值，该项不需要设                 |            |
- 
- ## Accessibility
- 
+     }
+     static getWrapperId() {
 ```
 
 ---
 
-### Incident Patch 12: `1a7497cf` (2026-09-05)
-**Commit Message**: Merge branch 'release' into fix/resize-group-display-none-recalc
+### Incident Patch 2: `9ebef4af` (2026-10-08)
+**Commit Message**: Merge pull request #3363 from quanru/docs/semi-ui-rendered-verification-release
 
-**File**: `content/ai/aiComponent/index-en-US.md` (modified, +2/-2)
+docs: add optional rendered UI verification to Semi skills
+
+**File**: `ecosystem/semi-ui-skills/SKILL.md` (modified, +4/-2)
 ```diff
-@@ -30,7 +30,7 @@ For `AI Icon`, single-color, dual-color, and multi-color icons are supported, to
+@@ -1,6 +1,6 @@
+ ---
+ name: semi-design-guide
+-description: 使用 Semi Design 组件的完整指南，包括 MCP 工具使用流程、常见模式、最佳实践。当你需要查询 Semi Design 组件、生成组件代码或解决使用问题时，请使用此技能。
++description: 使用 Semi Design 组件的完整指南，包括 MCP 工具使用流程、常见模式、生成页面后的验证和最佳实践。当你需要查询 Semi Design 组件、生成组件页面或解决使用问题时，请使用此技能。
+ ---
  
- For AI-style `Button`, `Tag`, and `FloatButton`, the `Colorful` property of the component can be enabled.
+ # Semi Design 使用指南
+@@ -13,12 +13,13 @@ description: 使用 Semi Design 组件的完整指南，包括 MCP 工具使用
  
--Below are some examples of basic AI components. For more examples and use cases, please see [AI Token](/en-US/basic/tokens), [AI Icon](en-US/basic/icon), [AI Button](/en-US/basic/button#AI%20%E9%A3%8E%E6%A0%BC%20-%20%E5%A4%9A%E5%BD%A9%E6%8C%89%E9%92%AE), [AI Tag](/en-US/show/tag#AI%20%E9%A3%8E%E6%A0%BC%20-%20%E5%A4%9A%E5%BD%A9%E6%A0%87%E7%AD%BE), [AI FloatButton](/en-US/basic/floatbutton#AI%20%E9%A3%8E%E6%A0%BC%20-%20%E5%A4%9A%E5%BD%A9%E6%82%AC%E6%B5%AE%E6%8C%89%E9%92%AE).
-+Below are some examples of basic AI components. For more examples and use cases, please see [AI Token](/en-US/basic/tokens), [AI Icon](/en-US/basic/icon), [AI Button](/en-US/basic/button#AI%20%E9%A3%8E%E6%A0%BC%20-%20%E5%A4%9A%E5%BD%A9%E6%8C%89%E9%92%AE), [AI Tag](/en-US/show/tag#AI%20%E9%A3%8E%E6%A0%BC%20-%20%E5%A4%9A%E5%BD%A9%E6%A0%87%E7%AD%BE), [AI FloatButton](/en-US/basic/floatbutton#AI%20%E9%A3%8E%E6%A0%BC%20-%20%E5%A4%9A%E5%BD%A9%E6%82%AC%E6%B5%AE%E6%8C%89%E9%92%AE).
+ ### WORKFLOWS.md
  
- ```jsx live=true dir="column"
- import React from 'react';
-@@ -552,4 +552,4 @@ render(AIChatInputWithDialogue);
-          - [AIChatDialogue](/en-US/ai/aiChatDialogue) message display is more flexible。
-             1. The component supports OpenAI's [Response](https://platform.openai.com/docs/api-reference/responses/create) / [Chat Completion](https://platform.openai.com/docs/api-reference/chat/create) Object format standard by default. Calling the [internal message conversion function](/en-US/ai/aiChatDialogue#%E6%B6%88%E6%81%AF%E6%95%B0%E6%8D%AE%E8%BD%AC%E6%8D%A2) can easily convert the results returned by OpenAI into the data structure required by the component.
-             2. It provides an API for [customized display based on message type](/en-US/ai/aiChatDialogue#%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B8%B2%E6%9F%93%E6%B6%88%E6%81%AF%E5%86%85%E5%AE%B9) to facilitate quick and easy message display.
--            3. By default, message [reference](/en-US/ai/aiChatDialogue#%E5%BC%95%E7%94%A8) and [select](/en-US/ai/aiChatDialogue#%E9%80%89%E6%8B%A9) operations are supported.
-\ No newline at end of file
-+            3. By default, message [reference](/en-US/ai/aiChatDialogue#%E5%BC%95%E7%94%A8) and [select](/en-US/ai/aiChatDialogue#%E9%80%89%E6%8B%A9) operations are supported.
+-**内容**：使用 Semi MCP 工具的完整工作流程。
++**内容**：使用 Semi MCP 工具的完整工作流程，以及生成页面后的浏览器验证步骤。
+ 
+ **包含**：
+ - MCP 工具概览：介绍 `get_semi_document`、`get_component_file_list`、`get_file_code`、`get_function_code` 四个工具的功能和使用场景
+ - 基础查询流程：查找组件 → 查询详情 → 查看源码 → 查看函数实现的四步走流程
+ - 完整任务示例：包含 Table 筛选、表单验证、级联选择器、拖拽排序等常见场景的详细步骤
++- 渲染后验证：优先复用项目现有测试；需要视觉语义验证时可选用 Midscene
+ - 常用查询技巧：指定版本查询、获取完整代码、错误排查流程等
+ 
+ **何时使用**：当你需要查询组件文档、了解组件 API、实现某个具体功能但不确定如何下手时。
+@@ -40,6 +41,7 @@ description: 使用 Semi Design 组件的完整指南，包括 MCP 工具使用
+ | 需求 | 查看 |
+ |------|------|
+ | 如何使用 MCP 工具查询组件 | [WORKFLOWS.md](WORKFLOWS.md) |
++| 如何验证生成页面的交互 | [WORKFLOWS.md](WORKFLOWS.md#生成后验证渲染与交互) |
+ | 组件使用的最佳实践 | [BEST_PRACTICES.md](BEST_PRACTICES.md) |
+ 
+ ## 概述
 ```
 
-**File**: `content/ai/aiComponent/index.md` (modified, +1/-1)
+**File**: `ecosystem/semi-ui-skills/WORKFLOWS.md` (modified, +50/-0)
 ```diff
-@@ -29,7 +29,7 @@ AI 基础组件包括 `AI Icon`、AI 风格的 `Button` / `Tag` / `FloatButton`
+@@ -177,6 +177,56 @@
+ 3. **查看拖拽相关源码**
+ 4. **生成带拖拽功能的 Table 代码**
  
- 对于 AI 风格的 `Button / Tag / FloatButton`，可通过组件的 `Colorful` 属性开启。
++## 生成后验证渲染与交互
++
++生成组件代码后，先运行项目现有的构建或类型检查，再启动本地预览。根据需求写出一个可观察的操作和结果，例如“空表单点击提交后，必填项显示错误提示”。优先复用项目已有的组件测试或浏览器测试来检查这个结果。
++
++### 可选：使用 Midscene 做视觉语义验证
++
++如果生成页面的结构经常变化，固定选择器难以维护，并且项目已有可用的视觉模型，可以用 Midscene 对本地预览做语义操作和断言。这一步需要单独[配置模型](https://midscenejs.com/model-config)，会产生模型调用费用；使用 Semi Skill 本身不需要安装 Midscene。
++
++下面是一个可复制的最小脚本，放在需要视觉验证的项目中运行：
++
++```bash
++npm install --save-dev @midscene/web playwright @playwright/test
++npx playwright install chromium
++```
++
++`@midscene/web/playwright` 会加载 `@playwright/test`；直接使用 `PlaywrightAgent` 时也需要安装它。
++
++```js
++// verify-ui.mjs
++import { chromium } from 'playwright';
++import { PlaywrightAgent } from '@midscene/web/playwright';
++
++const { PREVIEW_URL, UI_ACTION, UI_EXPECTED } = process.env;
++if (!PREVIEW_URL || !UI_ACTION || !UI_EXPECTED) {
++    throw new Error('Set PREVIEW_URL, UI_ACTION and UI_EXPECTED before running');
++}
++
++const browser = await chromium.launch({ headless: true });
++try {
++    const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
++    await page.goto(PREVIEW_URL, { waitUntil: 'domcontentloaded' });
++    const agent = new PlaywrightAgent(page);
++    await agent.aiAct(UI_ACTION);
++    await agent.aiAssert(UI_EXPECTED);
++} finally {
++    await browser.close();
++}
++```
++
++例如，验证生成的表单时，先用本地数据打开预览，再运行：
++
++```bash
++PREVIEW_URL=http://localhost:3000 \
++UI_ACTION='保持必填项为空，点击提交按钮' \
++UI_EXPECTED='表单仍然可见，必填项旁显示错误提示' \
++node verify-ui.mjs
++```
++
++断言失败时，查看 Midscene 生成的 [运行报告](https://midscenejs.com/integrate-with-playwright)，定位实际页面状态，修改代码后重新验证。涉及提交、上传等操作时，使用本地测试数据，避免触发真实服务。
++
+ ## 常用查询技巧
  
--以下是 AI 基础组件的一些示例，更多示例及使用场景详见 [AI Token](/zh-CN/basic/tokens)、[AI Icon](zh-CN/basic/icon)、[AI Button](/zh-CN/basic/button#AI%20%E9%A3%8E%E6%A0%BC%20-%20%E5%A4%9A%E5%BD%A9%E6%8C%89%E9%92%AE)、[AI Tag](/zh-CN/show/tag#AI%20%E9%A3%8E%E6%A0%BC%20-%20%E5%A4%9A%E5%BD%A9%E6%A0%87%E7%AD%BE)、[AI FloatButton](/zh-CN/basic/floatbutton#AI%20%E9%A3%8E%E6%A0%BC%20-%20%E5%A4%9A%E5%BD%A9%E6%82%AC%E6%B5%AE%E6%8C%89%E9%92%AE)。
-+以下是 AI 基础组件的一些示例，更多示例及使用场景详见 [AI Token](/zh-CN/basic/tokens)、[AI Icon](/zh-CN/basic/icon)、[AI Button](/zh-CN/basic/button#AI%20%E9%A3%8E%E6%A0%BC%20-%20%E5%A4%9A%E5%BD%A9%E6%8C%89%E9%92%AE)、[AI Tag](/zh-CN/show/tag#AI%20%E9%A3%8E%E6%A0%BC%20-%20%E5%A4%9A%E5%BD%A9%E6%A0%87%E7%AD%BE)、[AI FloatButton](/zh-CN/basic/floatbutton#AI%20%E9%A3%8E%E6%A0%BC%20-%20%E5%A4%9A%E5%BD%A9%E6%82%AC%E6%B5%AE%E6%8C%89%E9%92%AE)。
-  
- 
- ```jsx live=true dir="column"
-```
-
----
-
-### Incident Patch 13: `fba4b2de` (2026-09-01)
-**Commit Message**: fix(timePicker): escape regExp special characters in format separator to avoid SyntaxError
-
-**File**: `packages/semi-foundation/timePicker/utils/index.ts` (modified, +2/-1)
-```diff
-@@ -131,7 +131,8 @@ export const isTimeFormatLike = (time: string, formatToken: string) => {
-     const hmsReg = /[H|m|s]{1,2}/;
-     const formatSplitted = formatToken.split(formatNotSupportChReg); // => ['HH', 'mm'];
-     const timeSeparator = formatToken.replace(formatSupportChReg, ''); // => :
--    const timeReg = new RegExp(`[${timeSeparator}]`, 'g'); // => /[:]/g
-+    const escapedTimeSeparator = timeSeparator.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&'); // escape regExp special characters to avoid invalid regExp, e.g. format="HH\\mm"
-+    const timeReg = new RegExp(`[${escapedTimeSeparator}]`, 'g'); // => /[:]/g
-     const timeSplitted = time.split(timeReg); // => ['12', '0]
- 
-     if (formatSplitted.length !== timeSplitted.length) {
-```
-
-**File**: `packages/semi-ui/timePicker/__test__/timePicker.test.js` (modified, +5/-0)
-```diff
-@@ -300,6 +300,11 @@ describe(`TimePicker`, () => {
-             ['上午 12:00:02', 'a h:mm:ss', true],
-             ['上午 12:00:0', 'a h:mm:ss', false],
-             ['上午 12:0:00', 'a h:mm:ss', false],
-+            // format separator containing a regExp-special character should not throw (regression test,
-+            // previously threw "SyntaxError: Invalid regular expression" because the separator was
-+            // interpolated into a RegExp character class without escaping)
-+            ['12\\00', 'HH\\mm', true],
-+            ['12.00', 'HH.mm', true],
-         ];
- 
-         testCases.forEach(test => {
-```
-
----
-
-### Incident Patch 14: `477f0ba1` (2026-08-24)
-**Commit Message**: docs: fix AI Icon links
-
-**File**: `content/ai/aiComponent/index-en-US.md` (modified, +2/-2)
-```diff
-@@ -30,7 +30,7 @@ For `AI Icon`, single-color, dual-color, and multi-color icons are supported, to
- 
- For AI-style `Button`, `Tag`, and `FloatButton`, the `Colorful` property of the component can be enabled.
- 
--Below are some examples of basic AI components. For more examples and use cases, please see [AI Token](/en-US/basic/tokens), [AI Icon](en-US/basic/icon), [AI Button](/en-US/basic/button#AI%20%E9%A3%8E%E6%A0%BC%20-%20%E5%A4%9A%E5%BD%A9%E6%8C%89%E9%92%AE), [AI Tag](/en-US/show/tag#AI%20%E9%A3%8E%E6%A0%BC%20-%20%E5%A4%9A%E5%BD%A9%E6%A0%87%E7%AD%BE), [AI FloatButton](/en-US/basic/floatbutton#AI%20%E9%A3%8E%E6%A0%BC%20-%20%E5%A4%9A%E5%BD%A9%E6%82%AC%E6%B5%AE%E6%8C%89%E9%92%AE).
-+Below are some examples of basic AI components. For more examples and use cases, please see [AI Token](/en-US/basic/tokens), [AI Icon](/en-US/basic/icon), [AI Button](/en-US/basic/button#AI%20%E9%A3%8E%E6%A0%BC%20-%20%E5%A4%9A%E5%BD%A9%E6%8C%89%E9%92%AE), [AI Tag](/en-US/show/tag#AI%20%E9%A3%8E%E6%A0%BC%20-%20%E5%A4%9A%E5%BD%A9%E6%A0%87%E7%AD%BE), [AI FloatButton](/en-US/basic/floatbutton#AI%20%E9%A3%8E%E6%A0%BC%20-%20%E5%A4%9A%E5%BD%A9%E6%82%AC%E6%B5%AE%E6%8C%89%E9%92%AE).
- 
- ```jsx live=true dir="column"
- import React from 'react';
-@@ -552,4 +552,4 @@ render(AIChatInputWithDialogue);
-          - [AIChatDialogue](/en-US/ai/aiChatDialogue) message display is more flexible。
-             1. The component supports OpenAI's [Response](https://platform.openai.com/docs/api-reference/responses/create) / [Chat Completion](https://platform.openai.com/docs/api-reference/chat/create) Object format standard by default. Calling the [internal message conversion function](/en-US/ai/aiChatDialogue#%E6%B6%88%E6%81%AF%E6%95%B0%E6%8D%AE%E8%BD%AC%E6%8D%A2) can easily convert the results returned by OpenAI into the data structure required by the component.
-             2. It provides an API for [customized display based on message type](/en-US/ai/aiChatDialogue#%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B8%B2%E6%9F%93%E6%B6%88%E6%81%AF%E5%86%85%E5%AE%B9) to facilitate quick and easy message display.
--            3. By default, message [reference](/en-US/ai/aiChatDialogue#%E5%BC%95%E7%94%A8) and [select](/en-US/ai/aiChatDialogue#%E9%80%89%E6%8B%A9) operations are supported.
-\ No newline at end of file
-+            3. By default, message [reference](/en-US/ai/aiChatDialogue#%E5%BC%95%E7%94%A8) and [select](/en-US/ai/aiChatDialogue#%E9%80%89%E6%8B%A9) operations are supported.
-```
-
-**File**: `content/ai/aiComponent/index.md` (modified, +1/-1)
-```diff
-@@ -29,7 +29,7 @@ AI 基础组件包括 `AI Icon`、AI 风格的 `Button` / `Tag` / `FloatButton`
- 
- 对于 AI 风格的 `Button / Tag / FloatButton`，可通过组件的 `Colorful` 属性开启。
- 
--以下是 AI 基础组件的一些示例，更多示例及使用场景详见 [AI Token](/zh-CN/basic/tokens)、[AI Icon](zh-CN/basic/icon)、[AI Button](/zh-CN/basic/button#AI%20%E9%A3%8E%E6%A0%BC%20-%20%E5%A4%9A%E5%BD%A9%E6%8C%89%E9%92%AE)、[AI Tag](/zh-CN/show/tag#AI%20%E9%A3%8E%E6%A0%BC%20-%20%E5%A4%9A%E5%BD%A9%E6%A0%87%E7%AD%BE)、[AI FloatButton](/zh-CN/basic/floatbutton#AI%20%E9%A3%8E%E6%A0%BC%20-%20%E5%A4%9A%E5%BD%A9%E6%82%AC%E6%B5%AE%E6%8C%89%E9%92%AE)。
-+以下是 AI 基础组件的一些示例，更多示例及使用场景详见 [AI Token](/zh-CN/basic/tokens)、[AI Icon](/zh-CN/basic/icon)、[AI Button](/zh-CN/basic/button#AI%20%E9%A3%8E%E6%A0%BC%20-%20%E5%A4%9A%E5%BD%A9%E6%8C%89%E9%92%AE)、[AI Tag](/zh-CN/show/tag#AI%20%E9%A3%8E%E6%A0%BC%20-%20%E5%A4%9A%E5%BD%A9%E6%A0%87%E7%AD%BE)、[AI FloatButton](/zh-CN/basic/floatbutton#AI%20%E9%A3%8E%E6%A0%BC%20-%20%E5%A4%9A%E5%BD%A9%E6%82%AC%E6%B5%AE%E6%8C%89%E9%92%AE)。
-  
- 
- ```jsx live=true dir="column"
+ ### 1. 指定版本查询
 ```
 
 ---
 
-### Incident Patch 15: `24f47819` (2026-09-01)
-**Commit Message**: Merge pull request #3346 from DouyinFE/fix/auto-upload-batch-autoremove
+### Incident Patch 3: `21eda141` (2026-10-08)
+**Commit Message**: Merge pull request #3366 from vicuts/fix/locale-ro
 
-【Auto】Fix: Upload 批量 beforeUpload autoRemove 文件残留（React 18 批处理）
+fix(locale): correct Romanian (ro) translations
 
-**File**: `packages/semi-foundation/upload/foundation.ts` (modified, +81/-27)
+**File**: `packages/semi-ui/locale/source/ro.ts` (modified, +17/-14)
 ```diff
-@@ -110,13 +110,53 @@ class UploadFoundation<P = Record<string, any>, S = Record<string, any>> extends
-      * When paste event is successfully handled, we ignore the subsequent keydown event.
-      */
-     _pasteHandled: boolean = false;
-+    /**
-+     * Working copy of fileList used during a synchronous startUpload batch.
-+     * Do NOT rely on React state fileList here: setState is async (batched in React 18),
-+     * so reading getState('fileList') between iterations of a sync loop returns a stale
-+     * snapshot and earlier removals get overwritten by later ones (see #3335).
-+     * Seeded at the start of startUpload and cleared when the sync loop finishes (see
-+     * try/finally in startUpload); async (promise) results fall back to _latestFileList
-+     * then React state.
-+     */
-+    _batchFileList: Array<BaseFileItem> | null = null;
-+    /**
-+     * The most recent fileList produced by handleBeforeUploadResultInObject.
-+     * Unlike React state (which is flushed asynchronously under React 18 automatic
-+     * batching), this is updated synchronously, so a later async beforeUpload result
-+     * composes with earlier sync removals of the same batch instead of reading a stale
-+     * snapshot (mixed sync + async beforeUpload results, see #3335).
-+     */
-+    _latestFileList: Array<BaseFileItem> | null = null;
-+    /**
-+     * Unify all fileList commits: keep _latestFileList in sync synchronously so async
-+     * beforeUpload results compose with recent mutations even before React flushes
-+     * setState (React 18 automatic batching). (#3335)
-+     */
-+    updateFileListInternal(newFileList: Array<BaseFileItem>, callback?: () => void): void {
-+        if (this._batchFileList) {
-+            this._batchFileList = newFileList;
-+        }
-+        this._latestFileList = newFileList;
-+        this._adapter.updateFileList(newFileList, callback);
-+    }
-+
-+    /** Keep the synchronous snapshot aligned with an externally controlled fileList. */
-+    syncLatestFileList(fileList: Array<BaseFileItem>): void {
-+        this._latestFileList = fileList.slice();
-+    }
-+
-+    getLatestFileList(): Array<BaseFileItem> {
-+        return this._batchFileList || this._latestFileList || this.getState('fileList');
-+    }
-     constructor(adapter: UploadAdapter<P, S>) {
-         super({ ...adapter });
-     }
- 
-     init(): void {
-         // make sure state reset, otherwise may cause upload abort in React StrictMode, like https://github.com/DouyinFE/semi-design/pull/843
-         this.destroyState = false;
-+        this.syncLatestFileList(this.getState('fileList'));
-         // In controlled mode, parent may keep and pass back fileList with blob url.
-         // Sync them into internal map so later remove/clear can revoke correctly.
-         this._syncLocalUrlsFromFileList();
-@@ -160,6 +200,8 @@ class UploadFoundation<P = Record<string, any>, S = Record<string, any>> extends
-         if (!disabled) {
-             this.unbindPastingHandler();
-         }
-+        this._batchFileList = null;
-+        this._latestFileList = null;
-         this.destroyState = true;
-     }
- 
-@@ -363,7 +405,7 @@ class UploadFoundation<P = Record<string, any>, S = Record<string, any>> extends
-         }
-         newFileList.splice(replaceIdx, 1, newFileItem);
-         this._adapter.notifyChange({ currentFile: newFileItem, fileList: newFileList });
--        this._adapter.updateFileList(newFileList, () => {
-+        this.updateFileListInternal(newFileList, () => {
-             this._adapter.resetReplaceInput();
-             if (!newFileItem._sizeInvalid) {
-                 this.upload(newFileItem);
-@@ -405,7 +447,7 @@ class UploadFoundation<P = Record<string, any>, S = Record<string, any>> extends
-         const { uploadTrigger } = this.getProps();
-         const currentFiles = files.map(item => this.buildFileItem(item, uploadTrigger));
-         this._adapter.notifyChange({ fileList: currentFiles, currentFile: currentFiles[0] });
--        this._adapter.updateFileList(currentFiles, () => {
-+        this.updateFileListInternal(currentFiles, () => {
-             if (uploadTrigger === TRIGGER_AUTO) {
-                 this.startUpload(currentFiles);
-             }
-@@ -425,7 +467,7 @@ class UploadFoundation<P = Record<string, any>, S = Record<string, any>> extends
-                 this._adapter.notifyChange({ fileList, currentFile: file });
-             }
-         });
--        this._adapter.updateFileList(fileList, () => {
-+        this.updateFileListInternal(fileList, () => {
-             if (uploadTrigger === TRIGGER_AUTO) {
-                 this.startUpload(currentFiles);
-             }
-@@ -506,7 +548,7 @@ class UploadFoundation<P = Record<string, any>, S = Record<string, any>> extends
- 
-         this._adapter.notifyFileSelect(currentFileList);
-         this._adapter.notifyChange({ fileList: newFileList, currentFile: null });
--        this._adapter.updateFileList(newFileList, () => {
-+        this.updateFileListInternal(newFileList, () => {
-       
-```
-
-**File**: `packages/semi-ui/upload/__test__/uploadBatchAutoRemove.test.js` (added, +212/-0)
-```diff
-@@ -0,0 +1,212 @@
-+import UploadFoundation from '../../../semi-foundation/upload/foundation';
-+
-+/**
-+ * Regression tests for #3335:
-+ * When multiple files are uploaded at once and `beforeUpload` returns
-+ * `{ shouldUpload: false, autoRemove: true }` for several of them, every file
-+ * should be removed from fileList.
-+ *
-+ * The bug only reproduces when setState is batched (React 18 automatic batching):
-+ * `startUpload` iterates synchronously and each `autoRemove` used to read the
-+ * React state snapshot, which is not flushed between iterations, so later
-+ * removals overwrite earlier ones and some files "revive".
-+ *
-+ * Semi's own test harness runs on React 16 (synchronous flush), so we drive the
-+ * foundation directly with a mock adapter that simulates batching: updateFileList
-+ * does NOT reflect into getState synchronously; only the last update is committed
-+ * when the synchronous batch finishes.
-+ */
-+describe('Upload foundation - batched autoRemove (#3335)', () => {
-+    function createFoundation({ initialFileList, beforeUpload, ...uploadProps }) {
-+        // committed React state; getState/getStates read this
-+        let committedFileList = initialFileList.slice();
-+        // pending (batched) update; not visible via getState until flushed
-+        let pendingFileList = null;
-+        const changes = [];
-+
-+        const adapter = {
-+            getContext: () => undefined,
-+            getContexts: () => ({}),
-+            getProp: key => ({ beforeUpload, ...uploadProps })[key],
-+            getProps: () => ({ beforeUpload, ...uploadProps }),
-+            getState: key => ({ fileList: committedFileList })[key],
-+            getStates: () => ({ fileList: committedFileList }),
-+            updateFileList: (fileList) => {
-+                // simulate React 18 batching: keep the latest scheduled value but
-+                // do NOT flush it into committed state during the synchronous loop
-+                pendingFileList = fileList;
-+            },
-+            notifyChange: ({ fileList }) => changes.push(fileList),
-+            notifyProgress: () => {},
-+            updateLocalUrls: () => {},
-+            notifyBeforeUpload: ({ file, fileList }) => beforeUpload({ file, fileList }),
-+        };
-+
-+        const foundation = new UploadFoundation(adapter);
-+        // flush the last batched update, mimicking React committing setState
-+        const flush = () => {
-+            if (pendingFileList !== null) {
-+                committedFileList = pendingFileList;
-+                pendingFileList = null;
-+            }
-+            return committedFileList;
-+        };
-+        const setCommittedFileList = fileList => {
-+            committedFileList = fileList.slice();
-+            pendingFileList = null;
-+        };
-+        return { foundation, flush, setCommittedFileList, getChanges: () => changes };
-+    }
-+
-+    const makeFile = uid => ({ uid, name: `${uid}.png`, size: '10KB', status: 'wait', fileInstance: { uid } });
-+
-+    it('removes every file when multiple files return autoRemove synchronously', () => {
-+        const fileA = makeFile('a');
-+        const fileB = makeFile('b');
-+
-+        const beforeUpload = () => ({ shouldUpload: false, autoRemove: true });
-+        const { foundation, flush } = createFoundation({ initialFileList: [fileA, fileB], beforeUpload });
-+
-+        foundation.startUpload([fileA, fileB]);
-+
-+        // after the synchronous batch is committed, no file should remain
-+        expect(flush()).toEqual([]);
-+    });
-+
-+    it('keeps only the non-autoRemove file when removals are interleaved', () => {
-+        const fileA = makeFile('a');
-+        const fileB = makeFile('b');
-+        const fileC = makeFile('c');
-+
-+        // remove a and c, keep b
-+        const beforeUpload = ({ file }) =>
-+            file.uid === 'b'
-+                ? { shouldUpload: false, autoRemove: false }
-+                : { shouldUpload: false, autoRemove: true };
-+        const { foundation, flush } = createFoundation({ initialFileList: [fileA, fileB, fileC], beforeUpload });
-+
-+        foundation.startUpload([fileA, fileB, fileC]);
-+
-+        const result = flush();
-+        expect(result.map(f => f.uid)).toEqual(['b']);
-+    });
-+
-+    it('falls back to React state outside a startUpload batch and clears the working copy', () => {
-+        const fileA = makeFile('a');
-+        const fileB = makeFile('b');
-+
-+        const beforeUpload = () => ({ shouldUpload: false, autoRemove: true });
-+        const { foundation, flush } = createFoundation({ initialFileList: [fileA, fileB], beforeUpload });
-+
-+        // a single upload (e.g. the replace flow) is not part of a startUpload batch
-+        foundation.upload(fileA);
-+        expect(flush().map(f => f.uid)).toEqual(['b']);
-+        // the batch working copy must not leak outside startUpload
-+        expect(foundation._batchFileList).toBeNull();
-+    });
-+
-+    it('composes mixed sync + async beforeUpload results (sync remove then async r
-```
-
-**File**: `packages/semi-ui/upload/index.tsx` (modified, +6/-0)
-```diff
-@@ -491,6 +491,12 @@ class Upload extends BaseComponent<UploadProps, UploadState> {
-         this.foundation.init();
-     }
- 
-+    componentDidUpdate(): void {
-+        if ('fileList' in this.props) {
-+            this.foundation.syncLatestFileList(this.props.fileList || []);
-+        }
-+    }
-+
-     componentWillUnmount(): void {
-         this.foundation.destroy();
-     }
+@@ -85,7 +85,7 @@ const local: Locale = {
+             Thu: 'Joi',
+             Fri: 'Vin',
+             Sat: 'Sâm',
+-            Sun: 'dum',
++            Sun: 'Dum',
+         },
+         localeFormatToken: {
+             FORMAT_SWITCH_DATE: 'dd.MM.yyyy',
+@@ -100,37 +100,37 @@ const local: Locale = {
+         expandText: 'Extinde bara laterală',
+     },
+     Table: {
+-        emptyText: 'Nici un rezultat',
+-        pageText: 'Arată ${currentStart} la ${currentEnd} de ${total}',
+-        descend: 'Faceți clic pentru a coborî',
+-        ascend: 'Faceți clic pentru a urca',
+-        cancelSort: 'Anulați sortarea',
++        emptyText: 'Niciun rezultat',
++        pageText: 'Se afișează de la ${currentStart} la ${currentEnd} din ${total}',
++        descend: 'Dă clic pentru sortare descrescătoare',
++        ascend: 'Dă clic pentru sortare crescătoare',
++        cancelSort: 'Anulează sortarea',
+         confirmFilter: 'OK',
+         resetFilter: 'Resetare',
+     },
+     Select: {
+-        emptyText: 'Nici un rezultat',
++        emptyText: 'Niciun rezultat',
+         createText: 'Creează',
+     },
+     Tree: {
+-        emptyText: 'Nici un rezultat',
++        emptyText: 'Niciun rezultat',
+         searchPlaceholder: 'Căutare',
+     },
+     Cascader: {
+-        emptyText: 'Nici un rezultat',
++        emptyText: 'Niciun rezultat',
+     },
+     List: {
+-        emptyText: 'Nici un rezultat',
++        emptyText: 'Niciun rezultat',
+     },
+     Calendar: {
+         allDay: 'Toată ziua',
+         AM: '${time} AM',
+         PM: '${time} PM',
+         datestring: '',
+-        remaining: 'Cantitate ramasa: ${remained}',
++        remaining: 'Încă ${remained}',
+     },
+     Upload: {
+-        mainText: 'Dă clic pentru a descărca fișierul sau trage fișierul aici',
++        mainText: 'Dă clic pentru a încărca fișierul sau trage fișierul aici',
+         illegalTips: 'Acest tip de fișier nu este acceptat',
+         legalTips: 'Eliberează și începe încărcarea',
+         retry: 'Încearcă din nou',
+@@ -139,6 +139,9 @@ const local: Locale = {
+         selectedFiles: 'Fișiere selectate',
+         illegalSize: 'Dimensiunea greșită a fișierului',
+         fail: 'Eșec de încărcare',
++        cropTitle: 'Decupare imagine',
++        cropOk: 'OK',
++        cropCancel: 'Anulează',
+     },
+     TreeSelect: {
+         searchPlaceholder: 'Căutare',
+@@ -201,7 +204,7 @@ const local: Locale = {
+         rateChange: 'Schimbați viteza la ${rate}',
+         qualityChange: 'Schimbați calitatea la ${quality}',
+         routeChange: 'Schimbați ruta la ${route}',
+-        mirror: 'Mirror',
++        mirror: 'Oglindire',
+         cancelMirror: 'Anulează oglindirea',
+         loading: 'Se încarcă',
+         stall: 'Se încarcă',
+@@ -225,7 +228,7 @@ const local: Locale = {
+         cancel: 'Anulează'
+     },
+     AIChatInput: {
+-        template: 'Sablon',
++        template: 'Șablon',
+         configure: 'Configurare',
+         selected: '${count} articole selectate',
+     },
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3367** (2026-10-08): docs: Delete 'Related materials' section (@GeoDaoyu)
+- **PR #3366** (2026-10-08): fix(locale): correct Romanian (ro) translations (@vicuts)
+- **PR #3363** (2026-10-08): docs: add optional rendered UI verification to Semi skills (@quanru)
+- **PR #3362** (2026-10-08): fix: 修复 Modal、Toast 和 Notification 在 React 提交阶段同步卸载 root 的错误 (@smile-alive)
 - **PR #3361** (closed): fix: 修复 Modal、Toast 和 Notification 在 React 提交阶段同步卸载 root 的错误 (@smile-alive)
 - **PR #3359** (closed): ci: remove CodeSandbox --ignore-engines workaround by upgrading to Node 22 (@SudoUserReal)
-- **PR #3358** (closed): chore: 临时对照 - chromatic baseline 检查（请勿合并） (@SudoUserReal)
-- **PR #3357** (2026-09-15): 【Auto】Fix: Radio 选中白点在 Safari 下偏移（显式 SVG 尺寸替代 em） (@SudoUserReal)
-- **PR #3356** (2026-09-15): 【Auto】Fix: DatePicker 弹层打开时位置闪烁（等待尺寸稳定后定位） (@SudoUserReal)
-- **PR #3355** (2026-09-15): docs: fix typos across component docs and contributing guide (@toyeshhm)
-- **PR #3353** (closed): fix(Tooltip): skip showing hover-triggered tooltip when mouse is not on the trigger element (@holdxen)
-- **PR #3352** (2026-09-15): fix(modal): ESC closes only the top-most modal (@dvd233)
 
 ---
 
@@ -3083,3 +1961,68 @@ Fixes #3351
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. Merge pull request #3362 from smile-alive/fix/react-root-disposal
+
+**RULE**:
+When implementing operations in `packages/semi-ui/_utils/__test__/static-root-disposal.test.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DouyinFE/semi-design. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `b2b476a1`: Merge pull request #3362 from smile-alive/fix/react-root-disposal. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/semi-ui/_utils/__test__/static-root-disposal.test.js`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+import React, { useEffect, useLayoutEffect } from 'react';
+import Toast, { ToastFactory } from '../../toast';
+import Notification from '../../notification';
+import * as reactRender from '../reactRender';
+
+describe.each([
+    ['Toast', Toast, '.semi-toast-wrapper'],
+    ['ToastFactory', ToastFactory.create(), '.semi-toast-wrapper'],
+    ['Notification', Notification, '.semi-notification-wrapper'],
+])('%s root disposal', (name, api, selector) => {
+    afterEach(async () => {
+        api.destroyAll();
+        await Promise.resolve();
+        jest.restoreAllMocks();
+    });
+
+    it.each([
+        ['layout', useLayoutEffect],
+        ['passive', useEffect],
+    ])('defers root disposal from a %s effect cleanup', async (effect, useCleanupEffect) => {
+        const unmountSpy = jest.spyOn(reactRender, 'unmount');
+        function Page() {
+            useCleanupEffect(() => () => {
+                api.destroyAll();
+                api.destroyAll();
+            }, []);
+            return null;
+        }
+        const page = mount(<Page />);
+        api.info({ content: 'old', duration: 0, motion: false });
+        const wrapper = document.querySelector(selector);
+
+        page.unmount();
+
+  
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `b2b476a1` are properly handled with clean fallback behavior.
