@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-ZDG9",
-    "timestamp": "2026-10-19T03:53:49.785Z",
-    "repository": "XingChen-AGI/Xing4.0-29B-A4B",
-    "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
-    "contentHash": "e974c8fd7f414ad971584e2d372d55b87fe6c465fe5c2deb04d281af71f8cbfd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-ZE3M",
-    "timestamp": "2026-10-19T03:53:50.626Z",
-    "repository": "Checkmarx/kics",
-    "learningId": "learn-github-checkmarx-kics",
-    "contentHash": "7ac9f43a3d021b86bb8bd19f1d7af19e9ca16d911e083e021c27dfe73a2a0a9c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-ZH8K",
-    "timestamp": "2026-10-19T03:53:54.692Z",
-    "repository": "olric-data/olric",
-    "learningId": "learn-github-olric-data-olric",
-    "contentHash": "bd698514ba711b342540a28413bf2f7f85f5ff6ddad34b0ca93a81ac545cf1a4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-0DHO",
     "timestamp": "2026-10-19T03:54:36.492Z",
     "repository": "carbon-design-system/carbon-components-svelte",
@@ -7492,6 +7447,51 @@
     "contentHash": "74a69825a8fd9ef6b52413e1afd5cd3ad85c4f66a27e98b9d1525ea90e55aee0",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-5N1N",
+    "timestamp": "2026-10-19T17:02:31.403Z",
+    "repository": "argoproj/argo-workflows",
+    "learningId": "learn-github-argoproj-argo-workflows",
+    "contentHash": "55b94a4ffcd6638b71ef26fac06cca30b5e36f459ce4d7b41c68576830587ba2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-7J6Z",
+    "timestamp": "2026-10-19T17:03:59.723Z",
+    "repository": "thebaselab/codeapp",
+    "learningId": "learn-github-thebaselab-codeapp",
+    "contentHash": "b5de191c0931e776f5060201b4de451c8bd73902fa3df6e1524498155edc894a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-9KR9",
+    "timestamp": "2026-10-19T17:05:35.061Z",
+    "repository": "serpapi/google-search-results-ruby",
+    "learningId": "learn-github-serpapi-google-search-results-ruby",
+    "contentHash": "0e32b69d08753cdb81a57809e7d2d4ec107da6efbd7c58e36af6ed9756359333",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

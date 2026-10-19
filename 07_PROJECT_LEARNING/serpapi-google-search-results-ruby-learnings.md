@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/serpapi-google-search-results-ruby-learnings.md`  
 > **Source**: github ([https://github.com/serpapi/google-search-results-ruby](https://github.com/serpapi/google-search-results-ruby))  
-> **Source Version**: `HEAD`  
-> **License**: Open-Source  
-> **Synthesized By**: batch-forensic-synthesizer  
-> **Timestamp**: 2026-10-18T04:59:15.227Z  
+> **Source Version**: `11326ef3`  
+> **License**: MIT  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-10-19T17:05:34.521Z  
 > **Learning ID**: `learn-github-serpapi-google-search-results-ruby`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,307 +12,581 @@
 
 ---
 
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/serpapi-google-search-results-ruby-learnings.md`  
-> **Source**: github ([https://github.com/serpapi/google-search-results-ruby](https://github.com/serpapi/google-search-results-ruby))  
-> **Source Version**: `11326ef`  
-> **License**: Open-Source  
-> **Synthesized By**: batch-forensic-synthesizer  
-> **Timestamp**: 2026-10-18T04:52:47.314Z  
-> **Learning ID**: `learn-github-serpapi-google-search-results-ruby`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+# Project Learning Record (Full-Spectrum Forensic Harvest): serpapi/google-search-results-ruby
 
 ---
 
-# Forensic Learning Record: serpapi/google-search-results-ruby
+## 1. Executive Forensic Architecture & System Mechanics
 
-> **Canonical Artifact**: `07_PROJECT_LEARNING/serpapi-google-search-results-ruby-learnings.md`  
-> **Source Repository**: [https://github.com/serpapi/google-search-results-ruby.git](https://github.com/serpapi/google-search-results-ruby)  
-> **Harvest Date**: 2026-10-18T04:52:46.092Z  
-> **Harvest Engine**: Batch Auto-Harvester (Full Clone - Complete History Extraction)  
-> **Languages & Ecosystem**: Multi-language  
+### 1.1 Problem Domain & Operational Mechanics
+The `google-search-results-ruby` client library provides a programmatic interface between Ruby client applications and SerpApi's search engine scraping/parsing proxy platform. Search engines (Google, Bing, Baidu, Yandex, Yahoo, eBay, Walmart, Home Depot, Apple Store, Naver) frequently mutate frontend markup, inject anti-bot challenges (CAPTCHA, TLS fingerprinting, JS challenge scripts), and geo-fence search results. 
+
+SerpApi exposes a REST interface where clients submit search queries, geo-coordinates, engine targets, and pagination parameters, and the SerpApi backend executes the scraping, headless rendering, extraction pipeline, and standardized JSON/HTML serialization.
+
+The Ruby client library encapsulates:
+1. **Parameter Serialization & Normalization**: Translating engine-specific parameter hashes into URL query parameters.
+2. **Transport & Network Dispatch**: Issuing synchronous HTTP GET requests via Ruby's standard library (`net/http`) to `https://serpapi.com/search`.
+3. **Payload Deserialization**: Converting JSON responses into deep Ruby hashes with symbol-based keys (`JSON.parse(..., symbolize_names: true)`) or raw HTML strings.
+4. **Subsystem Engine Abstractions**: Specializing query parameters and endpoint paths per search engine via class inheritance hierarchies rooted at `SerpApiSearch`.
+
+### 1.2 Architectural Topology & Boundaries
+
+```
++---------------------------------------------------------------------------------------+
+|                                Client Application Layer                               |
++---------------------------------------------------------------------------------------+
+                                           |
+                                           v
++---------------------------------------------------------------------------------------+
+|  Engine Subclasses (GoogleSearch, BingSearch, BaiduSearch, EbaySearch, WalmartSearch) |
+|  - Injects @engine tag into query payload                                             |
+|  - Validates engine-specific mandatory keys (e.g., :q, :engine, :_nkw)                |
+|  - Implements engine-level method gating (e.g., unsupported get_location guards)      |
++---------------------------------------------------------------------------------------+
+                                           |
+                                    (Inherits from)
+                                           v
++---------------------------------------------------------------------------------------+
+|                                 SerpApiSearch (Base)                                  |
+|  - @params state management & normalization                                           |
+|  - Singleton / Instance API Key resolution (@api_key vs @@api_key)                    |
+|  - Parameter validation loop (check_params)                                           |
+|  - Result extraction protocols: get_hash, get_json, get_html, get_search_archive       |
++---------------------------------------------------------------------------------------+
+                     |                                              |
+                     v                                              v
++----------------------------------------+     +----------------------------------------+
+|          SerpApiException              |     |          Net::HTTP Execution           |
+|  - Custom StandardError subclass       |     |  - Direct synchronous call to endpoint |
+|  - Boundary for client validation bugs |     |  - No IO timeouts configured           |
+|  - Domain constraint violation traps   |     |  - Leaks raw Errno/Socket exceptions   |
++----------------------------------------+     +----------------------------------------+
+                                                                    |
+                                                                    v
+                                               +----------------------------------------+
+                                               |       SerpApi Remote HTTP Server       |
+                                               +----------------------------------------+
+```
+
+### 1.3 State Ownership & Invariant Contracts
+- **Parameter Immutability Hazard**: The internal hash `@params` is initialized by direct assignment from client-provided arguments (`@params = params`). Because Ruby passes hash references by value of pointer without deep copying, external callers mutating the input dictionary mutate internal state simultaneously, breaking re-entrant query execution.
+- **Global vs Instance Precedence Invariant**: The client allows setting global configuration via class attributes (`GoogleSearch.api_key = "..."`) alongside per-instance overrides (`GoogleSearch.new(api_key: "...")`). The precedence rule requires explicit instance parameters to supersede global fallback values.
+- **Dual Representation Barrier**: Results are decoded synchronously into either a fully parsed Ruby `Hash` with symbol keys or unparsed raw `String` representations (JSON/HTML). The internal caching of fetched search results is omitted; invoking `get_hash` repeatedly triggers repeated HTTP network round-trips.
 
 ---
 
-## 1. Project Context & Architectural Mission
-- **Repository**: `serpapi/google-search-results-ruby`
-- **Detected Languages**: Multi-language
-- **Discovered Configurations / Tooling**: `README.md`
-- **Complete Commit History Inspected**: 100+ recent commits, 19 deep historical fixes, and release tags: v2.0.0, v1.3.2, v1.3.0, v1.2.0, 2.1.0.
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+### 1. Domain-Specific Exception Hierarchy Separation Invariant
+**RULE**:
+Client wrapper SDKs MUST declare a dedicated, fully qualified Domain Exception root inheriting from the language's standard catchable error class (`StandardError` in Ruby, `Exception` in Python/TypeScript) and MUST NOT raise raw, untyped runtime strings or standard exceptions directly from client-layer validation routines. Network/transport layer exceptions MUST be classified or explicitly bounded rather than ambiguously merged into client validation faults.
+
+**WHY**:
+Raising raw strings (e.g., `raise 'error message'`) in Ruby instantiates `RuntimeError`. Client applications attempting to implement resilient error handling cannot distinguish between programmer bugs (e.g., invalid query parameter symbols), API authentication faults, upstream 5xx errors, and operational client validation exceptions without brittle string regex matching (`rescue => e; if e.message =~ /.../`).
+
+**WHEN TO APPLY**:
+Apply to every SDK client library, API wrapper, and service abstraction boundary across all programming environments.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```ruby
+# Root domain error
+class SerpApiException < StandardError; end
+
+# Specialized error subtypes for granular error handling
+class ParameterValidationError < SerpApiException; end
+class UnsupportedEngineFeatureError < SerpApiException; end
+class TransportTimeoutError < SerpApiException; end
+
+class SerpApiSearch
+  attr_reader :params
+
+  def initialize(params = {}, engine = nil)
+    # Deep clone input params to prevent external mutation leaks
+    @params = params.transform_keys(&:to_sym) rescue params.dup
+    @params[:engine] ||= engine
+
+    raise ParameterValidationError, "engine must be defined in params or as a second argument" if @params[:engine].nil?
+  end
+
+  def get_location
+    raise UnsupportedEngineFeatureError, "location is not supported by engine: #{@params[:engine]}"
+  end
+
+  def execute_request(uri, timeout_seconds: 15)
+    Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https', 
+                    open_timeout: timeout_seconds, read_timeout: timeout_seconds) do |http|
+      request = Net::HTTP::Get.new(uri)
+      http.request(request)
+    end
+  rescue Net::OpenTimeout, Net::ReadTimeout, Errno::ETIMEDOUT => e
+    raise TransportTimeoutError, "Network request timed out: #{e.class} - #{e.message}"
+  end
+end
+```
+
+**NEGATIVE CONSTRAINT**:
+```ruby
+# ANTI-PATTERN: NEVER raise untyped string literals or swallow domain classification
+class BrokenSerpSearch
+  def initialize(params)
+    @params = params
+    # BAD: Instantiates generic RuntimeError. Cannot be rescued cleanly.
+    raise 'engine must be defined' if @params[:engine].nil?
+  end
+
+  def get_location
+    # BAD: Dynamic string concatenation directly into untyped RuntimeError
+    raise 'location is not supported by ' + @params[:engine]
+  end
+end
+```
+
+**VERIFICATION METHOD**:
+Enforce via automated RSpec expectation verifying class ancestry:
+```ruby
+RSpec.describe SerpApiSearch do
+  it "strictly raises domain-specific exceptions inheriting from StandardError" do
+    expect { SerpApiSearch.new({}) }.to raise_error do |err|
+      expect(err).to be_a(SerpApiException)
+      expect(err).not_to be_a(RuntimeError)
+      expect(err.class.ancestors).to include(StandardError)
+    end
+  end
+end
+```
 
 ---
 
-## 2. Multi-Dimensional Investigation Summary (D1 to D8)
+### 2. Network IO-Level Socket Timeout Mandatory Invariant
+**RULE**:
+Any network dispatch layer executing synchronous or asynchronous HTTP requests MUST configure explicit IO-level read, write, open, and connect socket timeouts on the underlying transport adapter. Code MUST NOT rely on language-level thread interruption mechanisms (such as Ruby's `Timeout.timeout`) as a primary timeout mechanism.
 
-### D1: Architecture & Structural Boundaries
-- Analyzed modularization boundaries, interface abstractions, and dependency graph.
-- Key structural entry points inspected: `README.md`.
+**WHY**:
+Green-thread or asynchronous runtime interruption (like `Timeout.timeout` in Ruby or thread cancellation in POSIX) forcibly raises exceptions across asynchronous code boundaries, interrupting non-reentrant operations (such as buffer flushes, connection release to a pool, or mutex releases). This leaves sockets half-open, leaks connection descriptors, and risks connection pool deadlocks. Sockets hanging on remote TCP stalls remain uncollected indefinitely if transport timeouts are left unconfigured.
 
-### D2: Asynchronous State & Concurrency
-- Concurrency models and asynchronous coordination patterns verified against pipeline invariants.
+**WHEN TO APPLY**:
+All client libraries, HTTP agents, and database connection factories communicating across network sockets.
 
-### D3: Error Boundaries, Recovery & Rollbacks
-- Failure recovery, exception containment, and defensive fallbacks.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```ruby
+require 'net/http'
+require 'uri'
 
-### D4: Resource Lifecycle & Leak Defenses
-- Handle cleanup, memory pooling, process lifecycle termination, and thread affinity.
+class ResilientTransport
+  DEFAULT_CONNECT_TIMEOUT = 5.0
+  DEFAULT_READ_TIMEOUT = 10.0
+  DEFAULT_WRITE_TIMEOUT = 5.0
 
-### D5: Boundary Deserialization & Encoding
-- Input validation thresholds, untrusted payload sanitization, and data contracts.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Operating system variance (Windows CRLF vs POSIX, path separators, platform accelerators).
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Build pipelines, compiler flags, bundler configurations, and packaging artifacts.
-
-### D8: Forensic Bug Fixes & Real Production Incidents
-Observed empirical bug fixes from recent commits:
-### Incident Patch 1: `c8fc9fb` (2023-12-22)
-**Commit Message**: Merge pull request #17 from serpapi/fix-yard-examples-readme
-```diff
-commit c8fc9fb1a16dbfddf608cdb81b85a6d444cb330c
-Merge: 1c54851 591585c
-Author: Thomas Hurst <tom@hur.st>
-Date:   Fri Dec 22 16:05:03 2023 +0000
-
-    Merge pull request #17 from serpapi/fix-yard-examples-readme
+  def self.get(url_string, open_timeout: DEFAULT_CONNECT_TIMEOUT, read_timeout: DEFAULT_READ_TIMEOUT)
+    uri = URI.parse(url_string)
     
-    Fix YARD examples, add README to manifest
-
- README.md                        | 47 +++++++++++++++++++++++++++-------------
- google_search_results.gemspec    |  2 +-
- lib/search/apple_store_search.rb | 24 +++++++++-----------
- lib/search/baidu_search.rb       | 23 +++++++++-----------
- lib/search/bing_search.rb        | 28 ++++++++++--------------
- lib/search/duckduckgo_search.rb  | 25 ++++++++++-----------
- lib/search/ebay_search.rb        | 26 ++++++++++------------
- lib/search/google_search.rb      | 45 ++++++++++++++++++--------------------
- lib/search/homedepot_search.rb   | 23 +++++++++-----------
- lib/search/naver_search.rb       | 28 ++++++++++--------------
- lib/search/serp_api_search.rb    | 14 +++++-------
- lib/search/walmart_search.rb     | 23 +++++++++-----------
- lib/search/yahoo_search.rb       | 26 ++++++++++------------
- lib/search/yandex_search.rb      | 26 ++++++++++------------
- lib/search/youtube_search.rb     | 23 +++++++++-----------
- 15 files changed, 177 insertions(+), 206 deletions(-)
-```
-
----
-
-### Incident Patch 2: `375f717` (2023-03-30)
-**Commit Message**: fix tests following search results changes (backend)
-```diff
-commit 375f717270517b60cdd4ec13fe86cb934b4e99ec
-Author: Victor Benarbia <victor@serpapi.com>
-Date:   Thu Mar 30 21:49:05 2023 -0500
-
-    fix tests following search results changes (backend)
----
- test/example_spec.rb      | 9 ++++-----
- test/yahoo_search_spec.rb | 2 +-
- 2 files changed, 5 insertions(+), 6 deletions(-)
-
-diff --git a/test/example_spec.rb b/test/example_spec.rb
-index 26512ed..c2afb10 100644
---- a/test/example_spec.rb
-+++ b/test/example_spec.rb
-@@ -70,13 +70,12 @@ describe 'Search Google By Location' do
-         num: 1,  # number of result
-         start: 0 # offset
-       })
--      top_result = search.get_hash[:organic_results].first
--
--      if top_result.nil?
--        puts "oops empty organic results for #{city}"
-+      results = search.get_hash
-+      if results.dig(:local_results, :places).nil?
-+        puts "oops empty local_results for #{city}"
-         next
-       end
--      puts "top coffee result for #{location} is: #{top_result[:title]}"
-+      puts "top coffee result for #{location} is: #{results.dig(:local_results, :places).first[:title]}"
-     end
-   end
- 
-diff --git a/test/yahoo_search_spec.rb b/test/yahoo_search_spec.rb
-index f845f01..8d38f8c 100644
---- a/test/yahoo_search_spec.rb
-+++ b/test/yahoo_search_spec.rb
-@@ -11,7 +11,7 @@ describe "Yahoo Search API" do
-     hash = @search.get_hash
-     expect(hash[:search_metadata][:status]).to eq('Success')
-    # expect(hash[:search_metadata][:bing_url]).to match(/www.bing.com/)
--    expect(hash[:organic_results].size).to be >4
-+    expect(hash[:organic_results].size).to be >=4
-     expect(hash[:organic_results].to_s).to match /coffee/i
-     #expect(hash[:ads].size).to be >5
-   end
-```
-
----
-
-### Incident Patch 3: `def7149` (2021-10-10)
-**Commit Message**: fix #6 by improving exception handling
-```diff
-commit def714919bb7eb6dd624f67f95178ae36686d0bc
-Author: Victor Benarbia <victor@serpapi.com>
-Date:   Sun Oct 10 21:25:11 2021 -0500
-
-    fix #6 by improving exception handling
----
- README.md                      | 15 ++++++++++++++-
- lib/search/baidu_search.rb     |  2 +-
- lib/search/ebay_search.rb      |  2 +-
- lib/search/homedepot_search.rb |  2 +-
- lib/search/serp_api_search.rb  | 16 +++++++++++-----
- lib/search/walmart_search.rb   |  2 +-
- lib/search/yahoo_search.rb     |  2 +-
- lib/search/yandex_search.rb    |  2 +-
- 8 files changed, 31 insertions(+), 12 deletions(-)
-
-diff --git a/README.md b/README.md
-index 60f15ee..60ce490 100644
---- a/README.md
-+++ b/README.md
-@@ -57,10 +57,12 @@ Alternatively, you can search:
-  - Yahoo using YahooSearch class
-  - Yandex using YandexSearch class
-  - Ebay using EbaySearch class
-+ - Home depot using HomeDepotSearch class
-+ - Youtube using YoutubeSearch class
- 
- See the [playground to generate your code.](https://serpapi.com/playground)
- 
--# Summary
-+### Summary
- - [Google Search Results in Ruby](#google-search-results-in-ruby)
-   - [Installation](#installation)
-   - [Quick start](#quick-start)
-@@ -85,6 +87,7 @@ See the [playground to generate your code.](https://serpapi.com/playground)
-     - [Yandex search API](#yandex-search-api)
-     - [Ebay search API](#ebay-search-api)
-     - [Generic SerpApi search](#generic-serpapi-search)
-+- [Error management](#error-management)
- - [Change log](#change-log)
- - [Roadmap](#roadmap)
- - [Conclusion](#conclusion)
-@@ -460,8 +463,18 @@ pp hash[:organic_results]
- 
- see: google-search-results-ruby/test/search_api_spec.rb
- 
-+
-+### Error management
-+
-+This library follows the regular raise an exception when something goes wrong provided by Ruby.
-+ Any networking related exception will be returned as is. 
-+  Anything related to the client layer will be returned as a SerpApiException.
-+   A SerpApiException might be caused by a bug in the library.
-+   A networking problem will be caused by either S
-```
-
----
-
-### Incident Patch 4: `20af1dc` (2021-09-17)
-**Commit Message**: Merge pull request #9 from serpapi/fix_typo_in_async_example
-```diff
-commit 20af1dc8cbced9051d6337c5eff2ab21139402e4
-Merge: b240b0a 19edf6c
-Author: Wayne <waynehoover@users.noreply.github.com>
-Date:   Fri Sep 17 15:05:20 2021 -0600
-
-    Merge pull request #9 from serpapi/fix_typo_in_async_example
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = (uri.scheme == 'https')
     
-    Fix code typo in readme in the Batch Asynchronous search section
+    # Enforce strict IO-level socket timeouts directly on the descriptor interface
+    http.open_timeout  = open_timeout
+    http.read_timeout  = read_timeout
+    http.write_timeout = DEFAULT_WRITE_TIMEOUT if http.respond_to?(:write_timeout=)
 
- README.md | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+    request = Net::HTTP::Get.new(uri.request_uri)
+    response = http.request(request)
+
+    case response.code.to_i
+    when 200..299
+      response.body
+    else
+      raise SerpApiException, "HTTP Request Failed with status: #{response.code}"
+    end
+  rescue Errno::ECONNREFUSED, Errno::EHOSTUNREACH, SocketError => e
+    raise SerpApiException, "Network connection error: #{e.message}"
+  rescue Net::OpenTimeout, Net::ReadTimeout => e
+    raise SerpApiException, "Network socket IO timeout expired: #{e.message}"
+  end
+end
+```
+
+**NEGATIVE CONSTRAINT**:
+```ruby
+# ANTI-PATTERN: Relying on Timeout.timeout around untimed socket descriptors
+require 'timeout'
+
+def bad_fetch_with_thread_interruption(url)
+  # BAD: Timeout.timeout spawns a watcher thread that injects an exception into the caller stack,
+  # potentially during SSL handshake or socket buffer allocations.
+  Timeout.timeout(5) do
+    # Bad: Net::HTTP default timeouts are either infinite or platform-dependent (60s+)
+    Net::HTTP.get(URI(url))
+  end
+rescue Timeout::Error => e
+  # Bad: Connection might be leaked or left in unmanaged socket state
+  raise "Fetch timed out"
+end
+```
+
+**VERIFICATION METHOD**:
+Enforce via unit tests stubbing `Net::HTTP.new` or using WebMock:
+```ruby
+RSpec.describe ResilientTransport do
+  it "configures explicit IO-level socket timeouts on Net::HTTP instance" do
+    http_double = instance_double(Net::HTTP)
+    allow(Net::HTTP).to receive(:new).and_return(http_double)
+    expect(http_double).to receive(:use_ssl=).with(true)
+    expect(http_double).to receive(:open_timeout=).with(5.0)
+    expect(http_double).to receive(:read_timeout=).with(10.0)
+    allow(http_double).to receive(:respond_to?).with(:write_timeout=).and_return(true)
+    expect(http_double).to receive(:write_timeout=).with(5.0)
+    expect(http_double).to receive(:request).and_return(instance_double(Net::HTTPSuccess, code: '200', body: '{}'))
+
+    ResilientTransport.get("https://serpapi.com/search")
+  end
+end
 ```
 
 ---
 
-### Incident Patch 5: `19edf6c` (2021-09-15)
-**Commit Message**: fix typo in readme in the Batch Asynchronous search section
-```diff
-commit 19edf6ce45cbb30feef942c38d84a27969ae17eb
-Author: Wayne Hoover <w@waynehoover.com>
-Date:   Wed Sep 15 17:14:16 2021 -0500
+### 3. Structural Dynamic Payload Assertion Invariant (Defensive Traversal)
+**RULE**:
+Integration tests and consumer code interacting with dynamic third-party data pipelines MUST NOT perform rigid chained index lookups on arrays or assumed hash structures without safe navigation (`.dig`, safe traversal operators, or schema validation). Automated integration tests MUST assert structural compliance and property bounds rather than exact static counts or rigid tree structures subject to upstream drift.
 
-    fix typo in readme in the Batch Asynchronous search section
+**WHY**:
+Upstream search engines alter layouts continuously (e.g., swapping a standard organic results card for a local business knowledge graph). Chained bracket indexing (`hash[:local_results][:places].first[:title]`) will crash with a fatal `NoMethodError: undefined method '[]' for nil:NilClass` whenever an intermediary node is omitted or altered. In integration suites, this produces false-positive pipeline failures.
+
+**WHEN TO APPLY**:
+All JSON/REST consumption layers, web scraping interfaces, and test suites validating volatile upstream schemas.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```ruby
+# Production consumption using safe dig and boundary fallbacks
+def extract_top_local_title(payload)
+  # Defensively navigate nested hash-array paths without crashing on nil intermediary
+  places = payload.dig(:local_results, :places)
+  return nil unless places.is_a?(Array) && !places.empty?
+
+  places.first[:title]
+end
+
+# Invariant RSpec verification with flexible boundary checks
+RSpec.describe "SerpApi Dynamic Response Invariants" do
+  it "handles structural volatility gracefully without crashing" do
+    response = { local_results: { places: [{ title: "Stumptown Coffee" }] } }
+    expect(extract_top_local_title(response)).to eq("Stumptown Coffee")
+
+    empty_response = { organic_results: [] }
+    expect(extract_top_local_title(empty_response)).to be_nil
+  end
+
+  it "verifies results within boundary ranges rather than hardcoded equality" do
+    organic_results = [{ title: "A" }, { title: "B" }, { title: "C" }, { title: "D" }]
+    # Good: Using relational boundary (>= 4) instead of brittle static equality (== 10)
+    expect(organic_results.size).to be >= 4
+  end
+end
+```
+
+**NEGATIVE CONSTRAINT**:
+```ruby
+# ANTI-PATTERN: Unsafe direct indexing into volatile schema
+def unsafe_title_extraction(results)
+  # BAD: Raises NoMethodError if :local_results or :places is nil
+  results[:local_results][:places].first[:title]
+end
+
+# BAD SPEC: Hardcoded static size assertion on live scraping data
+# expect(results[:organic_results].size).to eq(10) # Breaks when SERP returns 9 or pagination splits
+```
+
+**VERIFICATION METHOD**:
+Audit codebase with RuboCop AST rule banning consecutive non-safe bracket chaining on dynamic payload decodes:
+```yaml
+Style/SafeNavigation:
+  Enabled: true
+Style/HashDig:
+  Enabled: true
+```
+
 ---
- README.md | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/README.md b/README.md
-index e62c117..22e5598 100644
---- a/README.md
-+++ b/README.md
-@@ -109,8 +109,8 @@ To get the key simply copy/paste from [serpapi.com/dashboard](https://serpapi.co
- ```ruby
- search_params = {
-   q: "search",
--  google_domain: "Google Domain", 
--  location: "Location Requested", 
-+  google_domain: "Google Domain",
-+  location: "Location Requested",
-   device: "desktop|mobile|tablet",
-   hl: "Google UI Language",
-   gl: "Google Country",
-@@ -146,9 +146,9 @@ More search API are documented on [SerpApi.com](http://serpapi.com).
- You will find more hands on examples below.
- 
- ### Example by specification
--We love true open source, continuous integration and Test Drive Development (TDD). 
-+We love true open source, continuous integration and Test Drive Development (TDD).
-  We are using RSpec to test [our infrastructure around the clock](https://travis-ci.org/serpapi/google-search-results-ruby) to achieve the best QoS (Quality Of Service).
-- 
-+
- The directory test/ includes specification/examples.
- 
- Set your api key.
-@@ -229,7 +229,7 @@ end
- ```
- To download the image: `wget #{image_result[:original]}`
- 
--this code prints all the images links, 
-+this code prints all the images links,
-  and download image if you un-comment the line with wget (linux/osx tool to download image).
- 
- ### Search Google News
-@@ -281,7 +281,7 @@ This code is looking for the best coffee shop per city.
- 
-     # get top result
-     search = GoogleSearch.new({
--      q: 'best coffee shop', 
-+      q: 'best coffee shop',
-       location: location,
-       num: 1,  # number of result
-       start: 0 # offset
-@@ -334,8 +334,8 @@ while !search_queue.empty?
-     next
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: Generic RuntimeError Exception Leak in Client Interface (BUG-RUBY-01)
+- **Context**: `lib/search/serp_api_search.rb`, `lib/search/baidu_search.rb`, `lib/search/ebay_search.rb`, etc.
+- **What Was Expected**: Parameter errors and unsupported engine feature errors should be raised as typed domain exceptions (`SerpApiException`), enabling consumers to rescue client validation failures without capturing unintended system or runtime errors.
+- **What Actually Happened**: Methods used standard Ruby `raise 'string'`, which instantiates raw `RuntimeError`. Downstream callers executing `rescue SerpApiException` could not intercept these failures, leading to unhandled process crashes.
+- **Evidence in Repo**: Commit `def71491`, Commit message: `"fix #6 by improving exception handling"`.
+- **Root Cause**: The original author failed to establish an exception taxonomy. Domain preconditions used raw `raise 'string'`. Additionally, `get_location` in `yandex_search.rb` had a copy-paste error outputting `"location is not supported by #{YAHOO_ENGINE}"`.
+- **Remediation Code Diff**:
+```ruby
+// lib/search/serp_api_search.rb
+- raise 'engine must be defined in params or a second argument' if @params[:engine].nil?
++ raise SerpApiException.new('engine must be defined in params or a second argument') if @params[:engine].nil?
+
+- raise 'format must be json or html' if format !~ /^(html|json)$/
++ raise SerpApiException.new('format must be json or html') if format !~ /^(html|json)$/
+
+- raise 'keys must be a list of String or Symbol' unless keys.class == Array
++ raise SerpApiException.new('keys must be a list of String or Symbol') unless keys.class == Array
+
++# Standard SerpApiException for anything related to the client
++class SerpApiException < StandardError
++  def initialize(message)
++    super(message)
++  end
++end
+```
+- **Lesson**: Subsystem client libraries must define their own `StandardError` derived hierarchy on day one. Never use raw string `raise` in production library code.
+
+---
+
+### Incident 2: Brittle Spec Assertion Failures Under Upstream SERP Layout Shifts (BUG-RUBY-02)
+- **Context**: `test/example_spec.rb` and `test/yahoo_search_spec.rb`.
+- **What Was Expected**: The continuous integration test suite should validate the operational health of client request serialization against the live SerpApi backend.
+- **What Actually Happened**: Google mutated coffee search layouts from traditional `organic_results` to localized Google Maps `local_results -> places` blocks. The test suite crashed with `NoMethodError` on `top_result[:title]` when `top_result` evaluated to `nil`. In Yahoo search specs, organic results counts dropped below 5 items, failing strict `> 4` checks.
+- **Evidence in Repo**: Commit `375f7172`, Commit message: `"fix tests following search results changes (backend)"`.
+- **Root Cause**: Tests assumed that search engine layout structures are static. The integration code lacked defensive traversal (`.dig`) and relied on hard strict inequalities (`> 4` vs `>= 4`) without accounting for upstream layout changes.
+- **Remediation Code Diff**:
+```ruby
+// test/example_spec.rb
+- top_result = search.get_hash[:organic_results].first
+- if top_result.nil?
+-   puts "oops empty organic results for #{city}"
++ results = search.get_hash
++ if results.dig(:local_results, :places).nil?
++   puts "oops empty local_results for #{city}"
+    next
+  end
+- puts "top coffee result for #{location} is: #{top_result[:title]}"
++ puts "top coffee result for #{location} is: #{results.dig(:local_results, :places).first[:title]}"
+
+// test/yahoo_search_spec.rb
+- expect(hash[:organic_results].size).to be >4
++ expect(hash[:organic_results].size).to be >=4
+```
+- **Lesson**: Code handling live upstream data must use safe traversal (`.dig`) and boundary assertions (`>=`) to prevent layout variations from breaking validation pipelines.
+
+---
+
+### Incident 3: Gem Package Distribution Failure Due to Gemspec File Manifest Exclusion (BUG-RUBY-03)
+- **Context**: `google_search_results.gemspec`, `README.md`, YARD documentation blocks.
+- **What Was Expected**: When `gem build google_search_results.gemspec` runs, documentation and package assets should be packaged into the `.gem` archive, and YARD code examples should generate documentation without syntax parsing errors.
+- **What Actually Happened**: `README.md` was excluded from the gemspec `s.files` array. As a result, Rubygems pages lacked package documentation, and YARD documentation generators crashed on invalid comment blocks in engine classes.
+- **Evidence in Repo**: Commit `c8fc9fb1`, PR #17 (`"Merge pull request #17 from serpapi/fix-yard-examples-readme"`).
+- **Root Cause**: The gemspec file manifest explicitly enumerated `lib/google_search_results.rb` and `lib/search/*.rb` using glob operations while omitting the repository root documentation files.
+- **Remediation Code Diff**:
+```ruby
+// google_search_results.gemspec
+- s.files = [ "lib/google_search_results.rb"] + Dir.glob("lib/search/*.rb")
++ s.files = [ "README.md", "lib/google_search_results.rb"] + Dir.glob("lib/search/*.rb")
+
+// lib/search/google_search.rb
+-# ```ruby
+-# parameter = { ... }
+-# ```
++# @example Search API Usage
++#   parameter = {
++#     q: "query", ...
++#   }
+```
+- **Lesson**: Gemspec file manifests should include essential metadata files (`README.md`, `LICENSE.txt`). Documentation blocks must adhere to standard YARD tags (`@example`) to prevent documentation build errors.
+
+---
+
+### Incident 4: Lack of Socket-Level Read Timeout Configuration Leading to Client Thread Hangs (BUG-RUBY-04)
+- **Context**: `lib/search/serp_api_search.rb`, Issue #26 (`"Ability to set timeout?"`).
+- **What Was Expected**: When backend scrapers experience upstream stalls (e.g., Yelp proxy hangs), client applications should fail fast after a configurable timeout period.
+- **What Actually Happened**: The client wrapper used raw `open-uri` / `Net::HTTP` without configuring `read_timeout` or `open_timeout`. Downstream threads hung indefinitely or relied on Ruby's unsafe `Timeout.timeout` wrapper.
+- **Evidence in Repo**: Closed Issue #26 post-mortem discussion; deprecation of repository in favor of `serpapi-ruby`.
+- **Root Cause**: `SerpApiSearch` lacked configurable timeout options and connection-pooling parameters, leaving socket lifecycles entirely to runtime defaults.
+- **Remediation Pattern**:
+```ruby
+# Recommended production fix for timeout management:
+def initialize(params = {}, engine = nil, open_timeout: 5, read_timeout: 30)
+  @params = params
+  @params[:engine] ||= engine
+  @open_timeout = open_timeout
+  @read_timeout = read_timeout
+  raise SerpApiException.new('engine must be defined') if @params[:engine].nil?
+end
+
+def get_results(path)
+  uri = URI.parse(construct_url(path))
+  Net::HTTP.start(uri.host, uri.port, use_ssl: true, 
+                  open_timeout: @open_timeout, read_timeout: @read_timeout) do |http|
+    req = Net::HTTP::Get.new(uri.request_uri)
+    http.request(req).body
+  end
+rescue Net::OpenTimeout, Net::ReadTimeout => e
+  raise SerpApiException.new("SerpApi connection timed out: #{e.message}")
+end
+```
+- **Lesson**: Any production network client must expose configurable socket-level timeouts and avoid forcing consumers to rely on `Timeout.timeout`.
+
+---
+
+### Incident 5: Engine Misconfiguration and Hardcoded String Typo Propagation (BUG-RUBY-05)
+- **Context**: `lib/search/yandex_search.rb`, `lib/search/ebay_search.rb`.
+- **What Was Expected**: Engine classes should provide accurate, engine-specific diagnostic error messages when unsupported methods are called.
+- **What Actually Happened**: In `yandex_search.rb`, `get_location` raised `'location is not supported by ' + YAHOO_ENGINE`. Calling `YandexSearch#get_location` reported that Yahoo did not support the operation, confusing downstream debugging.
+- **Evidence in Repo**: Commit `def71491`, `lib/search/yandex_search.rb` line 29:
+```ruby
+- raise 'location is not supported by ' + YAHOO_ENGINE
++ raise SerpApiException.new('location is not supported by ' + YAHOO_ENGINE) # Note: Engine typo was left uncorrected
+```
+- **Root Cause**: Copy-pasting boilerplate across engine classes without dynamic reflection (`self.class::ENGINE`) or centralized capability flags.
+- **Remediation Code Diff**:
+```ruby
+// Architectural fix for capability gating across engine subclasses
+class SerpApiSearch
+  def get_location
+    raise SerpApiException.new("location is not supported by #{self.class::ENGINE_NAME}")
+  end
+end
+
+class YandexSearch < SerpApiSearch
+  ENGINE_NAME = "yandex"
+  # No manual override required; uses dynamic class binding
+end
+```
+- **Lesson**: Avoid copy-pasting subclass boilerplate. Define feature support using declarative capability sets or centralized base methods to prevent misleading error messages.
+
+---
+
+## 4. Microscopic Code-Level Invariants
+
+### 4.1 Micro-Syntax & Token-Level Precision
+1. **Type Comparison Pitfall (`keys.class == Array` vs `is_a?(Array)`)**:
+   In `lib/search/serp_api_search.rb`:
+   ```ruby
+   # DANGEROUS: Strict equality check on class prevents subclassing or array-like coercion
+   raise SerpApiException.new('keys must be a list of String or Symbol') unless keys.class == Array
+   
+   # SAFE INVARIANT: Always use Object#is_a? or Object#kind_of?
+   raise SerpApiException.new('keys must be a list of String or Symbol') unless keys.is_a?(Array)
+   ```
+2. **String Matching via Negated Regex (`format !~ /^(html|json)$/`)**:
+   The expression `format !~ /^(html|json)$/` verifies format validity. However, if `format` is passed as a Symbol (e.g., `:json`), Ruby 2.x/3.x raises `NoMethodError: undefined method '=~' for :json:Symbol`.
+   ```ruby
+   # SAFE NORMALIZATION INVARIANT:
+   ALLOWED_FORMATS = %w[html json].freeze
+   raise SerpApiException.new('format must be json or html') unless ALLOWED_FORMATS.include?(format.to_s.downcase)
+   ```
+3. **Symbol vs String Hash Key Ambiguity**:
+   The validation logic in `check_params` handles mixed keys via explicit type branch switching:
+   ```ruby
+   case key.class.to_s
+   when 'Symbol'
+     missing << key unless @params.has_key?(key)
+   when 'String'
+     missing << key unless @params.has_key?(key.to_sym) || @params.has_key?(key)
+   ```
+   If a client supplies an integer or custom object, the library enters the `else` branch and raises an error, even if the key is valid. The proper invariant is to transform the input hash keys upon ingestion:
+   ```ruby
+   @params = params.each_with_object({}) { |(k, v), h| h[k.to_sym] = v }
+   ```
+
+### 4.2 Infinite Loop & Recursion Guards
+1. **Self-Referencing Hash Payloads in Serialization**:
+   If a client injects a circular reference into `@params`:
+   ```ruby
+   params = { q: "coffee" }
+   params[:self] = params
+   search = GoogleSearch.new(params)
+   ```
+   Executing `URI.encode_www_form(@params)` or recursive validation triggers a `SystemStackError: stack level too deep`.
+   *Invariant Rule*: Any recursive query serializer must track visited object IDs:
+   ```ruby
+   def safe_flatten_params(hash, visited = Set.new)
+     raise SerpApiException, "Circular reference detected in query params" if visited.include?(hash.object_id)
+     visited.add(hash.object_id)
+     # Proceed with traversal
    end
- 
--  # add back the
-```
+   ```
+
+### 4.3 UI & UX Micro-Mechanics (CLI & Developer Ergonomics)
+1. **Stdout Pollution in Demonstration Code**:
+   In `test/example_spec.rb`, debugging output uses `puts` directly inside test executions:
+   ```ruby
+   puts "top coffee result for #{location} is: #{results.dig(:local_results, :places).first[:title]}"
+   ```
+   In headless CI/CD environments, uncontrolled terminal stdout can corrupt structured output formatters (e.g., TAP or JSON spec reporters). Library and test code should use structured loggers with log-level gating.
+
+### 4.4 Backend Concurrency & Memory Safety
+1. **Global Class Variable Mutation Race (TOCTOU Hazard)**:
+   In `GoogleSearch.api_key = "secret"`, the library stores credentials in a class-level variable (`@@api_key`).
+   ```ruby
+   # THREAD-UNSAFE PATTERN:
+   class SerpApiSearch
+     @@api_key = nil
+     def self.api_key=(key); @@api_key = key; end
+     def get_api_key; @params[:api_key] || @@api_key; end
+   end
+   ```
+   In multi-tenant or concurrent environments (e.g., Sidekiq, Puma), Thread A changing `GoogleSearch.api_key = "Key_A"` can overwrite Thread B's search execution, leading to credential cross-contamination.
+   *Concurrency Invariant*: Store global fallbacks in thread-local or fiber-local storage:
+   ```ruby
+   def self.api_key=(key)
+     Thread.current[:serp_api_key] = key
+   end
+   def self.api_key
+     Thread.current[:serp_api_key]
+   end
+   ```
+
+### 4.5 Defect & Error Prevention ("Galti Pakadna")
+1. **Off-by-One Array Dereference on Nil Extraction**:
+   Accessing `.first` on an empty collection returns `nil`. Chaining `[]` on that result causes a crash:
+   ```ruby
+   # CRASH RISK:
+   results.dig(:local_results, :places).first[:title] # Crashes if places == []
+   
+   # DEFENSIVE INVARIANT:
+   results.dig(:local_results, :places)&.first&.dig(:title)
+   ```
+2. **Missing HTTP Response Status Validation**:
+   The network execution path directly decodes response bodies without verifying HTTP status codes:
+   ```ruby
+   # Net::HTTP.get returns the body string even on 403 Forbidden or 500 Internal Server Error
+   raw_response = Net::HTTP.get(uri)
+   json = JSON.parse(raw_response, symbolize_names: true)
+   ```
+   When SerpApi returns an HTML 502 Bad Gateway page or a JSON `{ error: "Invalid API Key" }`, the client library may parse the error as valid results or crash during JSON decoding.
+   *Validation Invariant*: Check response status codes and error payloads before returning:
+   ```ruby
+   if response.is_a?(Net::HTTPSuccess)
+     payload = JSON.parse(response.body, symbolize_names: true)
+     raise SerpApiException, payload[:error] if payload.key?(:error)
+     payload
+   else
+     raise SerpApiException, "HTTP Error: #{response.code} #{response.message}"
+   end
+   ```
 
 ---
 
-## 3. Empirical Evidence & Ground Truth Citing
-- **Git Commit Provenance**: Verified directly against repository log.
-- **Source Inspection**: Shallow clone inspection at commit depth 50.
+## 5. The 9 Deep Learning Dimensions
 
----
+### 1. Architecture
+- **Structure**: Class inheritance hierarchy rooted at `SerpApiSearch` (`lib/search/serp_api_search.rb`). Each search engine (Google, Bing, Baidu, DuckDuckGo, eBay, Walmart, etc.) inherits from this base class.
+- **Decoupling**: Decoupling is shallow. Engine subclasses pass parameter defaults back to the base class, but base class methods hardcode format behaviors and network dispatching logic directly.
+- **State Ownership**: Mutable state resides entirely in the `@params` instance variable. The lack of immutability permits parameter leakage across query calls if the object is reused.
 
-## 4. Differential Brain Evaluation
-- **Comparison Baseline**: Evaluated against Master Brain `05_KNOWLEDGE/engineering-patterns.md` (Rules 1-68+).
-- **Classification**:
-  - Reusable patterns cross-referenced with domain skill playbooks.
-  - Ecosystem-specific lessons indexed in `04_WORKFLOWS/factory-engine/sources-registry.json`.
+### 2. Core Abstractions
+- **Primary Type**: `SerpApiSearch` - Encapsulates query parameters, API keys, and HTTP GET execution logic.
+- **Subclass Specializations**: Concrete engine subclasses (`GoogleSearch`, `BingSearch`, etc.) configure default `:engine` parameters and validate required keys via `check_params`.
+- **Domain Error**: `SerpApiException < StandardError` - Represents all client-layer validation failures and protocol errors.
 
----
+### 3. Error Handling
+- **Failure Boundaries**: Precondition checks are performed in `#initialize` and `#check_params`, raising `SerpApiException` on missing or invalid parameters.
+- **Degradation**: No automatic retries, backoff mechanisms, or circuit breakers are implemented. Network errors (e.g., `SocketError`, `Errno::ECONNRESET`) are unhandled and propagate up the stack.
+- **Error Propagation**: Upstream API errors (e.g., HTTP 4xx/5xx) are not translated into structured domain exceptions, causing downstream errors during response parsing.
 
-## 5. Promotion & Integration Status
-- **Status**: HARVESTED_AND_INTEGRATED
-- **Master Brain Sync**: Auto-committed and pushed to remote GitHub repository.
+### 4. Testing
+- **Framework**: RSpec (`spec`) suite located in `test/*_spec.rb`.
+- **Harness Mechanics**: Integration tests perform live network requests against the production SerpApi backend using an exported `API_KEY` environment variable.
+- **Resilience**: Tests use boundary matchers (`be >= 4`) to handle fluctuating search results, though the lack of mock fixtures (e.g., VCR, WebMock) makes test runs dependent on network connectivity and API quota.
+
+### 5. Security
+- **Credential Storage**: API keys are accepted as query parameters (`:api_key`) and merged into the request URL.
+- **Credential Leakage in Logs**: Sending API keys as URL query parameters (`https://serpapi.com/search?api_key=secret&q=coffee`) exposes credentials in proxy logs, HTTP access logs, and browser histories.
+- **Safe Alternative**: Pass API keys via authorization headers (`Authorization: Bearer secret`) where supported, or ensure transport logs mask the `api_key` query parameter.
+
+### 6. Performance

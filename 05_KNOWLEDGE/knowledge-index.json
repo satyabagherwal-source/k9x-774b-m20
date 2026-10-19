@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T16:56:13.207Z",
-  "total_verified_learnings": 857,
+  "last_updated": "2026-10-19T17:05:35.018Z",
+  "total_verified_learnings": 858,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -2472,14 +2472,19 @@
       "slug": "argoproj-argo-workflows",
       "platform": "github",
       "source_url": "https://github.com/argoproj/argo-workflows",
-      "source_version": "f40f8dc6",
-      "content_hash": "0a6807d766a7f3afea3d733010a5dc1fa2d510c962ae3b21fefeaacbe076d20d",
+      "source_version": "e2dcb0be",
+      "content_hash": "55b94a4ffcd6638b71ef26fac06cca30b5e36f459ce4d7b41c68576830587ba2",
       "dossier_path": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "promoted_rules": [
         {
           "number": 2145,
           "title": "deps): update step-security/harden-runner action to v2.22.1 (main) (#17202)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2695,
+          "title": "controller): template timeout must only tighten pod activeDeadlineSeconds (#1721",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -2488,7 +2493,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T04:47:05.952Z",
+      "verified_at": "2026-10-19T17:02:31.350Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41389,22 +41394,45 @@
     "learn-github-thebaselab-codeapp": {
       "learning_id": "learn-github-thebaselab-codeapp",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "thebaselab-codeapp",
+      "source": "thebaselab/codeapp",
+      "repository": "thebaselab/codeapp",
       "slug": "thebaselab-codeapp",
       "platform": "github",
       "source_url": "https://github.com/thebaselab/codeapp",
-      "source_version": "HEAD",
-      "content_hash": "d0e08fe42e5722b6ffec82070c1feab99cdcbd826650b6137a7c8458c4a27413",
+      "source_version": "9b8475e2",
+      "content_hash": "b5de191c0931e776f5060201b4de451c8bd73902fa3df6e1524498155edc894a",
       "dossier_path": "07_PROJECT_LEARNING/thebaselab-codeapp-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/thebaselab-codeapp-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2696,
+          "title": "Persistent Event Listener Retention In Hybrid Web-Native Bridges",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2697,
+          "title": "Atomic Inter-Process Stream Synchronization via Coordinated IPC",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2698,
+          "title": "Deliberate Deferred Tree Invalidation in Complex SwiftUI View Hierarchies",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.947Z"
+      "verified_at": "2026-10-19T17:03:59.670Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-thecodingmachine-react-native-boilerplate": {
       "learning_id": "learn-github-thecodingmachine-react-native-boilerplate",
@@ -54223,17 +54251,33 @@
       "slug": "serpapi-google-search-results-ruby",
       "platform": "github",
       "source_url": "https://github.com/serpapi/google-search-results-ruby",
-      "source_version": "HEAD",
-      "content_hash": "a73c3b36c804dd371c56cf53c83b26e0be7451b835f6687fce56d93220ad7b5d",
+      "source_version": "11326ef3",
+      "content_hash": "0e32b69d08753cdb81a57809e7d2d4ec107da6efbd7c58e36af6ed9756359333",
       "dossier_path": "07_PROJECT_LEARNING/serpapi-google-search-results-ruby-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/serpapi-google-search-results-ruby-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2699,
+          "title": "Domain-Specific Exception Hierarchy Separation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2700,
+          "title": "Network IO-Level Socket Timeout Mandatory Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2701,
+          "title": "Structural Dynamic Payload Assertion Invariant (Defensive Traversal)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T04:59:15.345Z",
+      "verified_at": "2026-10-19T17:05:35.006Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -89722,6 +89766,104 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T16:56:13.195Z"
+    },
+    "rule-2695": {
+      "learning_id": "rule-2695",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2695,
+      "title": "controller): template timeout must only tighten pod activeDeadlineSeconds (#1721",
+      "source_url": "https://github.com/argoproj/argo-workflows",
+      "source_version": "e2dcb0be",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T17:02:31.350Z"
+    },
+    "rule-2696": {
+      "learning_id": "rule-2696",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2696,
+      "title": "Persistent Event Listener Retention In Hybrid Web-Native Bridges",
+      "source_url": "https://github.com/thebaselab/codeapp",
+      "source_version": "9b8475e2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T17:03:59.670Z"
+    },
+    "rule-2697": {
+      "learning_id": "rule-2697",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2697,
+      "title": "Atomic Inter-Process Stream Synchronization via Coordinated IPC",
+      "source_url": "https://github.com/thebaselab/codeapp",
+      "source_version": "9b8475e2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T17:03:59.670Z"
+    },
+    "rule-2698": {
+      "learning_id": "rule-2698",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2698,
+      "title": "Deliberate Deferred Tree Invalidation in Complex SwiftUI View Hierarchies",
+      "source_url": "https://github.com/thebaselab/codeapp",
+      "source_version": "9b8475e2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T17:03:59.670Z"
+    },
+    "rule-2699": {
+      "learning_id": "rule-2699",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2699,
+      "title": "Domain-Specific Exception Hierarchy Separation Invariant",
+      "source_url": "https://github.com/serpapi/google-search-results-ruby",
+      "source_version": "11326ef3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T17:05:35.006Z"
+    },
+    "rule-2700": {
+      "learning_id": "rule-2700",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2700,
+      "title": "Network IO-Level Socket Timeout Mandatory Invariant",
+      "source_url": "https://github.com/serpapi/google-search-results-ruby",
+      "source_version": "11326ef3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T17:05:35.006Z"
+    },
+    "rule-2701": {
+      "learning_id": "rule-2701",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2701,
+      "title": "Structural Dynamic Payload Assertion Invariant (Defensive Traversal)",
+      "source_url": "https://github.com/serpapi/google-search-results-ruby",
+      "source_version": "11326ef3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T17:05:35.006Z"
     }
   },
   "aliases": {

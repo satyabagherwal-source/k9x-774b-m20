@@ -3376,3 +3376,6 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `27363b95` | Multi-dimensional audit evidence | 2026-10-19T16:50:00.717Z |
 | `learn-github-fastapi-fastapi` | `https://github.com/fastapi/fastapi` | `e5fc7ef5` | Multi-dimensional audit evidence | 2026-10-19T16:56:06.732Z |
 | `learn-github-ehpanda-team-ehpanda` | `https://github.com/EhPanda-Team/EhPanda` | `37b97996` | Multi-dimensional audit evidence | 2026-10-19T16:56:13.266Z |
+| `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `e2dcb0be` | Multi-dimensional audit evidence | 2026-10-19T17:02:31.406Z |
+| `learn-github-thebaselab-codeapp` | `https://github.com/thebaselab/codeapp` | `9b8475e2` | Multi-dimensional audit evidence | 2026-10-19T17:03:59.726Z |
+| `learn-github-serpapi-google-search-results-ruby` | `https://github.com/serpapi/google-search-results-ruby` | `11326ef3` | Multi-dimensional audit evidence | 2026-10-19T17:05:35.064Z |

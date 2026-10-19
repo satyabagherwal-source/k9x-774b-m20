@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T16:56:13.273Z",
+  "last_updated": "2026-10-19T17:05:35.071Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2899,14 +2899,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-serpapi-google-search-results-ruby",
-      "content_hash": "a73c3b36c804dd371c56cf53c83b26e0be7451b835f6687fce56d93220ad7b5d",
-      "verified_at": "2026-10-18T04:59:15.458Z",
+      "content_hash": "0e32b69d08753cdb81a57809e7d2d4ec107da6efbd7c58e36af6ed9756359333",
+      "verified_at": "2026-10-19T17:05:35.071Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T04:59:15.458Z"
+      "last_updated": "2026-10-19T17:05:35.071Z"
     },
     "CrawlCove/xml-sitemap-validator": {
       "repository": "CrawlCove/xml-sitemap-validator",
@@ -8989,14 +8989,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-argoproj-argo-workflows",
-      "content_hash": "0a6807d766a7f3afea3d733010a5dc1fa2d510c962ae3b21fefeaacbe076d20d",
-      "verified_at": "2026-10-19T04:47:06.014Z",
+      "content_hash": "55b94a4ffcd6638b71ef26fac06cca30b5e36f459ce4d7b41c68576830587ba2",
+      "verified_at": "2026-10-19T17:02:31.412Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T04:47:06.014Z"
+      "last_updated": "2026-10-19T17:02:31.412Z"
     },
     "postgresml/postgresml": {
       "repository": "postgresml/postgresml",
@@ -12672,6 +12672,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T16:56:13.272Z"
+    },
+    "thebaselab/codeapp": {
+      "repository": "thebaselab/codeapp",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-thebaselab-codeapp",
+      "content_hash": "b5de191c0931e776f5060201b4de451c8bd73902fa3df6e1524498155edc894a",
+      "verified_at": "2026-10-19T17:03:59.733Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T17:03:59.733Z"
     }
   },
   "repos": {

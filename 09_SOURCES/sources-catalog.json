@@ -1843,10 +1843,10 @@
     "repository": "serpapi/google-search-results-ruby",
     "platform": "github",
     "sourceUrl": "https://github.com/serpapi/google-search-results-ruby",
-    "sourceVersion": "HEAD",
-    "license": "Open-Source",
-    "contentHash": "a73c3b36c804dd371c56cf53c83b26e0be7451b835f6687fce56d93220ad7b5d",
-    "lastHarvestedAt": "2026-10-18T04:59:15.438Z",
+    "sourceVersion": "11326ef3",
+    "license": "MIT",
+    "contentHash": "0e32b69d08753cdb81a57809e7d2d4ec107da6efbd7c58e36af6ed9756359333",
+    "lastHarvestedAt": "2026-10-19T17:05:35.064Z",
     "learningId": "learn-github-serpapi-google-search-results-ruby"
   },
   "crawlcove-crawlcove-sitemap-validator": {
@@ -5913,10 +5913,10 @@
     "repository": "argoproj/argo-workflows",
     "platform": "github",
     "sourceUrl": "https://github.com/argoproj/argo-workflows",
-    "sourceVersion": "f40f8dc6",
+    "sourceVersion": "e2dcb0be",
     "license": "Apache-2.0",
-    "contentHash": "0a6807d766a7f3afea3d733010a5dc1fa2d510c962ae3b21fefeaacbe076d20d",
-    "lastHarvestedAt": "2026-10-19T04:47:06.008Z",
+    "contentHash": "55b94a4ffcd6638b71ef26fac06cca30b5e36f459ce4d7b41c68576830587ba2",
+    "lastHarvestedAt": "2026-10-19T17:02:31.406Z",
     "learningId": "learn-github-argoproj-argo-workflows"
   },
   "postgresml-postgresml": {
@@ -8418,5 +8418,15 @@
     "contentHash": "74a69825a8fd9ef6b52413e1afd5cd3ad85c4f66a27e98b9d1525ea90e55aee0",
     "lastHarvestedAt": "2026-10-19T16:56:13.266Z",
     "learningId": "learn-github-ehpanda-team-ehpanda"
+  },
+  "thebaselab-codeapp": {
+    "repository": "thebaselab/codeapp",
+    "platform": "github",
+    "sourceUrl": "https://github.com/thebaselab/codeapp",
+    "sourceVersion": "9b8475e2",
+    "license": "MIT",
+    "contentHash": "b5de191c0931e776f5060201b4de451c8bd73902fa3df6e1524498155edc894a",
+    "lastHarvestedAt": "2026-10-19T17:03:59.726Z",
+    "learningId": "learn-github-thebaselab-codeapp"
   }
 }
