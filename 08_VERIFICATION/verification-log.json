@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-R0WX",
-    "timestamp": "2026-10-19T05:39:18.753Z",
-    "repository": "Open-Source-Legal/OpenContracts",
-    "learningId": "learn-github-open-source-legal-opencontracts",
-    "contentHash": "c9a3699220d94537905625772bccb626347108d0d84c8e102ae7fdffeaf5ed7e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-YUXM",
-    "timestamp": "2026-10-19T05:45:24.250Z",
-    "repository": "unsloth/Qwen-Image-2.1-GGUF",
-    "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
-    "contentHash": "7706bbbb2c9a763787245d7aca3504f831ddc326c385c4527ac0bd96a61f3bcb",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-YV1Z",
-    "timestamp": "2026-10-19T05:45:24.407Z",
-    "repository": "fastapi/fastapi",
-    "learningId": "learn-github-fastapi-fastapi",
-    "contentHash": "693159c1922165e2957c3bc14d6d882a0f9fdf295aaddfd177123a629f63266b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-YVZD",
     "timestamp": "2026-10-19T05:45:25.609Z",
     "repository": "Ataraxy-Labs/sem",
@@ -7490,6 +7445,51 @@
     "repository": "touchlab/Kermit",
     "learningId": "learn-github-touchlab-kermit",
     "contentHash": "49ed82c729b00b5b313796d0c8be56994042ada43916f02cb0a2e593acac40e8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-B90D",
+    "timestamp": "2026-10-19T20:22:50.461Z",
+    "repository": "GateNLP/ultimate-sitemap-parser",
+    "learningId": "learn-github-gatenlp-ultimate-sitemap-parser",
+    "contentHash": "57823c25039c7b0f92df7edd533339cb8306338a13ffa4045d05d19739a9c725",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-B9S5",
+    "timestamp": "2026-10-19T20:22:51.461Z",
+    "repository": "KevinnZou/compose-webview-multiplatform",
+    "learningId": "learn-github-kevinnzou-compose-webview-multiplatform",
+    "contentHash": "3854aa43175b3881de8c940b332e4b40d40c8af68efeb2bfa08e5b9fcf55a801",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-BF9T",
+    "timestamp": "2026-10-19T20:22:58.577Z",
+    "repository": "tursodatabase/turso",
+    "learningId": "learn-github-tursodatabase-turso",
+    "contentHash": "a8c83568e7570b4f50b2c104c4893200fc813d84e2ed9feb03e449f2912b8ea4",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

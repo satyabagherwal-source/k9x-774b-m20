@@ -7033,10 +7033,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/turso",
-    "sourceVersion": "65b33d6c",
+    "sourceVersion": "d64e478e",
     "license": "MIT",
-    "contentHash": "9f63667c0c3159bce18e490ce8d3f6ff062f72b8cbc330ff44886330e4533273",
-    "lastHarvestedAt": "2026-10-19T07:29:48.254Z",
+    "contentHash": "a8c83568e7570b4f50b2c104c4893200fc813d84e2ed9feb03e449f2912b8ea4",
+    "lastHarvestedAt": "2026-10-19T20:22:58.579Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "flux-iac-tofu-controller": {
@@ -8918,5 +8918,25 @@
     "contentHash": "49ed82c729b00b5b313796d0c8be56994042ada43916f02cb0a2e593acac40e8",
     "lastHarvestedAt": "2026-10-19T20:16:52.942Z",
     "learningId": "learn-github-touchlab-kermit"
+  },
+  "gatenlp-ultimate-sitemap-parser": {
+    "repository": "GateNLP/ultimate-sitemap-parser",
+    "platform": "github",
+    "sourceUrl": "https://github.com/GateNLP/ultimate-sitemap-parser",
+    "sourceVersion": "6ab7704f",
+    "license": "GPL-3.0",
+    "contentHash": "57823c25039c7b0f92df7edd533339cb8306338a13ffa4045d05d19739a9c725",
+    "lastHarvestedAt": "2026-10-19T20:22:50.463Z",
+    "learningId": "learn-github-gatenlp-ultimate-sitemap-parser"
+  },
+  "kevinnzou-compose-webview-multiplatform": {
+    "repository": "KevinnZou/compose-webview-multiplatform",
+    "platform": "github",
+    "sourceUrl": "https://github.com/KevinnZou/compose-webview-multiplatform",
+    "sourceVersion": "68e76907",
+    "license": "Apache-2.0",
+    "contentHash": "3854aa43175b3881de8c940b332e4b40d40c8af68efeb2bfa08e5b9fcf55a801",
+    "lastHarvestedAt": "2026-10-19T20:22:51.462Z",
+    "learningId": "learn-github-kevinnzou-compose-webview-multiplatform"
   }
 }

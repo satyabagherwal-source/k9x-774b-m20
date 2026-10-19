@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T20:16:52.880Z",
-  "total_verified_learnings": 907,
+  "last_updated": "2026-10-19T20:22:58.544Z",
+  "total_verified_learnings": 909,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -26755,22 +26755,35 @@
     "learn-github-kevinnzou-compose-webview-multiplatform": {
       "learning_id": "learn-github-kevinnzou-compose-webview-multiplatform",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "kevinnzou-compose-webview-multiplatform",
+      "source": "KevinnZou/compose-webview-multiplatform",
+      "repository": "KevinnZou/compose-webview-multiplatform",
       "slug": "kevinnzou-compose-webview-multiplatform",
       "platform": "github",
       "source_url": "https://github.com/KevinnZou/compose-webview-multiplatform",
-      "source_version": "HEAD",
-      "content_hash": "bccb7090cdc6bbc5729f1618a57e11d91f80c2157d3ac6d7247b699de93fdcef",
+      "source_version": "68e76907",
+      "content_hash": "3854aa43175b3881de8c940b332e4b40d40c8af68efeb2bfa08e5b9fcf55a801",
       "dossier_path": "07_PROJECT_LEARNING/kevinnzou-compose-webview-multiplatform-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kevinnzou-compose-webview-multiplatform-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2794,
+          "title": "Merge pull request #367 from adamhill/adamhill/fix-desktop-docs",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.784Z"
+      "verified_at": "2026-10-19T20:22:51.427Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-keybase-client": {
       "learning_id": "learn-github-keybase-client",
@@ -42961,13 +42974,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-limbo",
+      "slug": "tursodatabase-turso",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/limbo",
-      "source_version": "89b9e75b",
-      "content_hash": "215fcede91debd5fe4e5a0d7f8ba07b22d1cb3d65fb798eed340a60ecdf96ef4",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "source_url": "https://github.com/tursodatabase/turso",
+      "source_version": "d64e478e",
+      "content_hash": "a8c83568e7570b4f50b2c104c4893200fc813d84e2ed9feb03e449f2912b8ea4",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
       "promoted_rules": [
         {
           "number": 2188,
@@ -42987,7 +43000,7 @@
         {
           "number": 2750,
           "title": "Merge 'core/incremental: give the materialized view cursor a null row flag' from",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42995,7 +43008,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T18:36:07.706Z",
+      "verified_at": "2026-10-19T20:22:58.535Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56097,22 +56110,36 @@
     "learn-github-gatenlp-ultimate-sitemap-parser": {
       "learning_id": "learn-github-gatenlp-ultimate-sitemap-parser",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "GateNLP/ultimate-sitemap-parser",
       "repository": "GateNLP/ultimate-sitemap-parser",
       "slug": "gatenlp-ultimate-sitemap-parser",
       "platform": "github",
       "source_url": "https://github.com/GateNLP/ultimate-sitemap-parser",
-      "source_version": "main",
-      "content_hash": "c9fdd160a326e2f8c5fd14784136bee5570501c6a402018c734655dd67f10b70",
+      "source_version": "6ab7704f",
+      "content_hash": "57823c25039c7b0f92df7edd533339cb8306338a13ffa4045d05d19739a9c725",
       "dossier_path": "07_PROJECT_LEARNING/gatenlp-ultimate-sitemap-parser-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gatenlp-ultimate-sitemap-parser-learnings.md",
       "promoted_rules": [
-        "Rule 1630"
+        "Rule 1630",
+        {
+          "number": 2793,
+          "title": "Prepare 1.8.1 fix (#134)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
       ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T20:22:50.426Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-jafforgehq-site-analytics-tool": {
       "learning_id": "learn-github-jafforgehq-site-analytics-tool",
@@ -91480,14 +91507,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 2750,
       "title": "Merge 'core/incremental: give the materialized view cursor a null row flag' from",
-      "source_url": "https://github.com/tursodatabase/limbo",
-      "source_version": "89b9e75b",
+      "source_url": "https://github.com/tursodatabase/turso",
+      "source_version": "d64e478e",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-19T18:36:07.706Z"
+      "verified_at": "2026-10-19T20:22:58.535Z"
     },
     "rule-2751": {
       "learning_id": "rule-2751",
@@ -92076,6 +92103,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T20:16:52.868Z"
+    },
+    "rule-2793": {
+      "learning_id": "rule-2793",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2793,
+      "title": "Prepare 1.8.1 fix (#134)",
+      "source_url": "https://github.com/GateNLP/ultimate-sitemap-parser",
+      "source_version": "6ab7704f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T20:22:50.426Z"
+    },
+    "rule-2794": {
+      "learning_id": "rule-2794",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2794,
+      "title": "Merge pull request #367 from adamhill/adamhill/fix-desktop-docs",
+      "source_url": "https://github.com/KevinnZou/compose-webview-multiplatform",
+      "source_version": "68e76907",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T20:22:51.427Z"
     }
   },
   "aliases": {

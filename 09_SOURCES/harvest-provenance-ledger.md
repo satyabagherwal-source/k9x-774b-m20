@@ -3475,3 +3475,6 @@ Every entry in this ledger must capture:
 | `learn-github-dicklesworthstone-destructive_command_guard` | `https://github.com/Dicklesworthstone/destructive_command_guard` | `f6fdf447` | Multi-dimensional audit evidence | 2026-10-19T20:16:48.783Z |
 | `learn-github-sundios-seo-dashboard` | `https://github.com/sundios/SEO-Dashboard` | `8ca76eb6` | Multi-dimensional audit evidence | 2026-10-19T20:16:51.485Z |
 | `learn-github-touchlab-kermit` | `https://github.com/touchlab/Kermit` | `3a4042f3` | Multi-dimensional audit evidence | 2026-10-19T20:16:52.942Z |
+| `learn-github-gatenlp-ultimate-sitemap-parser` | `https://github.com/GateNLP/ultimate-sitemap-parser` | `6ab7704f` | Multi-dimensional audit evidence | 2026-10-19T20:22:50.463Z |
+| `learn-github-kevinnzou-compose-webview-multiplatform` | `https://github.com/KevinnZou/compose-webview-multiplatform` | `68e76907` | Multi-dimensional audit evidence | 2026-10-19T20:22:51.462Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `d64e478e` | Multi-dimensional audit evidence | 2026-10-19T20:22:58.579Z |

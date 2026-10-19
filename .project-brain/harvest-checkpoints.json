@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T20:16:52.949Z",
+  "last_updated": "2026-10-19T20:22:58.584Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9514,14 +9514,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "215fcede91debd5fe4e5a0d7f8ba07b22d1cb3d65fb798eed340a60ecdf96ef4",
-      "verified_at": "2026-10-19T18:36:07.763Z",
+      "content_hash": "a8c83568e7570b4f50b2c104c4893200fc813d84e2ed9feb03e449f2912b8ea4",
+      "verified_at": "2026-10-19T20:22:58.584Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T18:36:07.763Z"
+      "last_updated": "2026-10-19T20:22:58.584Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",
@@ -13422,6 +13422,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T20:16:52.949Z"
+    },
+    "GateNLP/ultimate-sitemap-parser": {
+      "repository": "GateNLP/ultimate-sitemap-parser",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-gatenlp-ultimate-sitemap-parser",
+      "content_hash": "57823c25039c7b0f92df7edd533339cb8306338a13ffa4045d05d19739a9c725",
+      "verified_at": "2026-10-19T20:22:50.467Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T20:22:50.467Z"
+    },
+    "KevinnZou/compose-webview-multiplatform": {
+      "repository": "KevinnZou/compose-webview-multiplatform",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-kevinnzou-compose-webview-multiplatform",
+      "content_hash": "3854aa43175b3881de8c940b332e4b40d40c8af68efeb2bfa08e5b9fcf55a801",
+      "verified_at": "2026-10-19T20:22:51.467Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T20:22:51.467Z"
     }
   },
   "repos": {

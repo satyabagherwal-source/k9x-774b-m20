@@ -3468,3 +3468,6 @@
 | `CYCLE-20261019-3HXO` | `2026-10-19T20:16:48.780Z` | `Dicklesworthstone/destructive_command_guard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2790` | Yes (`c75ace10...`) |
 | `CYCLE-20261019-3K0Q` | `2026-10-19T20:16:51.482Z` | `sundios/SEO-Dashboard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2791` | Yes (`b1d5ffd9...`) |
 | `CYCLE-20261019-3L58` | `2026-10-19T20:16:52.940Z` | `touchlab/Kermit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2792` | Yes (`49ed82c7...`) |
+| `CYCLE-20261019-B90D` | `2026-10-19T20:22:50.461Z` | `GateNLP/ultimate-sitemap-parser` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2793` | Yes (`57823c25...`) |
+| `CYCLE-20261019-B9S5` | `2026-10-19T20:22:51.461Z` | `KevinnZou/compose-webview-multiplatform` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2794` | Yes (`3854aa43...`) |
+| `CYCLE-20261019-BF9T` | `2026-10-19T20:22:58.577Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2750` | Yes (`a8c83568...`) |
