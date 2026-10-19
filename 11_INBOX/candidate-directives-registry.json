@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T05:51:47.704Z",
+  "last_updated": "2026-10-19T06:44:52.747Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1762,6 +1762,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-mantinedev-mantine"
+    },
+    {
+      "id": "CD-3CEI",
+      "directive_title": "Forensic Data Integrity Guard (Null-Repo Detection)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "facebook/sam3",
+      "source_commit": "hf-facebook-",
+      "date_staged": "2026-10-19",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-huggingface-facebook-sam3"
     }
   ]
 }

@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261018-22C4",
-    "timestamp": "2026-10-18T21:52:00.340Z",
-    "repository": "codewhale-hq/Codewhale",
-    "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "a24fba2bc347f8c35ed8d1365d4a080299ab95a5c111d40c053bb07effba71b6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-25A8",
-    "timestamp": "2026-10-18T21:52:04.160Z",
-    "repository": "zulip/zulip",
-    "learningId": "learn-github-zulip-zulip",
-    "contentHash": "3824c31bed5adc6bd206e5d2080f799d860fa520ab41a94f0b4cb797369286cc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-27J4",
-    "timestamp": "2026-10-18T21:52:07.072Z",
-    "repository": "goodrain/rainbond",
-    "learningId": "learn-github-goodrain-rainbond",
-    "contentHash": "004bd1e987eb0799063b0bcd92e5a56c7061997f517de8b7b1fef631919a472d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-297D",
-    "timestamp": "2026-10-18T21:52:09.241Z",
-    "repository": "bee-san/Ciphey",
-    "learningId": "learn-github-bee-san-ciphey",
-    "contentHash": "aa7de433ed9c5005f44d6a2faadb8374e5b52a2eb7be31510545ada9aea6afe2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-2AY7",
-    "timestamp": "2026-10-18T21:52:11.503Z",
-    "repository": "pingcap/autoflow",
-    "learningId": "learn-github-pingcap-autoflow",
-    "contentHash": "303f3e1ce837d54c4cf9718c7bc1f47b8fae0ad2c83de6d2c5d2107ed664e804",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-9VTQ",
-    "timestamp": "2026-10-18T21:58:05.150Z",
-    "repository": "saadeghi/daisyui",
-    "learningId": "learn-github-saadeghi-daisyui",
-    "contentHash": "66e52a5b98474891fae2bb064ba3216dae735740d039ac8c26788f366c0cda68",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261018-9XST",
     "timestamp": "2026-10-18T21:58:07.709Z",
     "repository": "ajeetdsouza/zoxide",
@@ -7490,6 +7400,96 @@
     "repository": "pathwaycom/serviette",
     "learningId": "learn-github-pathwaycom-serviette",
     "contentHash": "cd22d0d6a84ba7cf10abe156882f1a90dfb6c8da171d8503c20b2b60245848fb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-39N2",
+    "timestamp": "2026-10-19T06:44:49.166Z",
+    "repository": "chakra-ui/chakra-ui",
+    "learningId": "learn-github-chakra-ui-chakra-ui",
+    "contentHash": "b4ced02168852efccc36374d89caeaa63f7d348856a438a1d675827d6deac8f5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-3AWN",
+    "timestamp": "2026-10-19T06:44:50.807Z",
+    "repository": "sachaos/viddy",
+    "learningId": "learn-github-sachaos-viddy",
+    "contentHash": "7f5eaf3b9727f29276f1a8dd880af4124b773cc32980d006b589d57ab9421c28",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-3CEC",
+    "timestamp": "2026-10-19T06:44:52.740Z",
+    "repository": "facebook/sam3",
+    "learningId": "learn-huggingface-facebook-sam3",
+    "contentHash": "acdf4e9c8c4d913a90cbb79595df46881001b6cc2f82c313c50ba92d5153816c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-3EGD",
+    "timestamp": "2026-10-19T06:44:55.405Z",
+    "repository": "kotest/kotest",
+    "learningId": "learn-github-kotest-kotest",
+    "contentHash": "71761a5ad0e2a2f4a6f5cefe879a908a8c2f383ad4f632129f3f71a2eacc22d4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-3H1R",
+    "timestamp": "2026-10-19T06:44:58.767Z",
+    "repository": "projectcontour/contour",
+    "learningId": "learn-github-projectcontour-contour",
+    "contentHash": "8eefe91bccd90bcdcfbaf0f06b2b5c6e30a1095da1f967d36a87a7dc91acf7ca",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-3JYT",
+    "timestamp": "2026-10-19T06:45:02.549Z",
+    "repository": "topoteretes/cognee",
+    "learningId": "learn-github-topoteretes-cognee",
+    "contentHash": "07a5645f8b59618ae92a4d1b5ae3b290ed7442499003c1e212ee127aaf6e7010",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -625,8 +625,8 @@
     "sourceUrl": "https://huggingface.co/facebook/sam3",
     "sourceVersion": "hf-facebook-sam3",
     "license": "Open-Source",
-    "contentHash": "b78e33a292eff68092867297f318128ab189fc7e43e1d72ead0110f8d675c90b",
-    "lastHarvestedAt": "2026-10-18T00:22:37.859Z",
+    "contentHash": "acdf4e9c8c4d913a90cbb79595df46881001b6cc2f82c313c50ba92d5153816c",
+    "lastHarvestedAt": "2026-10-19T06:44:52.743Z",
     "learningId": "learn-huggingface-facebook-sam3"
   },
   "hf-unsloth-qwen3.8-27b-gguf": {
@@ -6758,5 +6758,55 @@
     "contentHash": "753b5f8f12346aa1dfcca38f50b75b0e8c834f1a0f12b6bbf40cfb1adcd5b17c",
     "lastHarvestedAt": "2026-10-19T06:38:42.029Z",
     "learningId": "learn-github-open-policy-agent-gatekeeper"
+  },
+  "chakra-ui-chakra-ui": {
+    "repository": "chakra-ui/chakra-ui",
+    "platform": "github",
+    "sourceUrl": "https://github.com/chakra-ui/chakra-ui",
+    "sourceVersion": "fa9696f3",
+    "license": "MIT",
+    "contentHash": "b4ced02168852efccc36374d89caeaa63f7d348856a438a1d675827d6deac8f5",
+    "lastHarvestedAt": "2026-10-19T06:44:49.168Z",
+    "learningId": "learn-github-chakra-ui-chakra-ui"
+  },
+  "sachaos-viddy": {
+    "repository": "sachaos/viddy",
+    "platform": "github",
+    "sourceUrl": "https://github.com/sachaos/viddy",
+    "sourceVersion": "b56efe08",
+    "license": "MIT",
+    "contentHash": "7f5eaf3b9727f29276f1a8dd880af4124b773cc32980d006b589d57ab9421c28",
+    "lastHarvestedAt": "2026-10-19T06:44:50.810Z",
+    "learningId": "learn-github-sachaos-viddy"
+  },
+  "kotest-kotest": {
+    "repository": "kotest/kotest",
+    "platform": "github",
+    "sourceUrl": "https://github.com/kotest/kotest",
+    "sourceVersion": "f7b221c4",
+    "license": "Apache-2.0",
+    "contentHash": "71761a5ad0e2a2f4a6f5cefe879a908a8c2f383ad4f632129f3f71a2eacc22d4",
+    "lastHarvestedAt": "2026-10-19T06:44:55.408Z",
+    "learningId": "learn-github-kotest-kotest"
+  },
+  "projectcontour-contour": {
+    "repository": "projectcontour/contour",
+    "platform": "github",
+    "sourceUrl": "https://github.com/projectcontour/contour",
+    "sourceVersion": "617a205b",
+    "license": "Apache-2.0",
+    "contentHash": "8eefe91bccd90bcdcfbaf0f06b2b5c6e30a1095da1f967d36a87a7dc91acf7ca",
+    "lastHarvestedAt": "2026-10-19T06:44:58.770Z",
+    "learningId": "learn-github-projectcontour-contour"
+  },
+  "topoteretes-cognee": {
+    "repository": "topoteretes/cognee",
+    "platform": "github",
+    "sourceUrl": "https://github.com/topoteretes/cognee",
+    "sourceVersion": "37f788bd",
+    "license": "Apache-2.0",
+    "contentHash": "07a5645f8b59618ae92a4d1b5ae3b290ed7442499003c1e212ee127aaf6e7010",
+    "lastHarvestedAt": "2026-10-19T06:45:02.552Z",
+    "learningId": "learn-github-topoteretes-cognee"
   }
 }

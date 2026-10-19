@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T06:38:45.748Z",
-  "total_verified_learnings": 691,
+  "last_updated": "2026-10-19T06:45:02.511Z",
+  "total_verified_learnings": 696,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -4205,22 +4205,35 @@
     "learn-github-chakra-ui-chakra-ui": {
       "learning_id": "learn-github-chakra-ui-chakra-ui",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "chakra-ui-chakra-ui",
+      "source": "chakra-ui/chakra-ui",
+      "repository": "chakra-ui/chakra-ui",
       "slug": "chakra-ui-chakra-ui",
       "platform": "github",
       "source_url": "https://github.com/chakra-ui/chakra-ui",
-      "source_version": "HEAD",
-      "content_hash": "eb196f1ba4d651c88afdaf7954f681c464f9681ba84f253c70555e41f063bbe2",
+      "source_version": "fa9696f3",
+      "content_hash": "b4ced02168852efccc36374d89caeaa63f7d348856a438a1d675827d6deac8f5",
       "dossier_path": "07_PROJECT_LEARNING/chakra-ui-chakra-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/chakra-ui-chakra-ui-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2251,
+          "title": "test(react): add a react render benchmark",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.238Z"
+      "verified_at": "2026-10-19T06:44:49.117Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-chakra-ui-zag": {
       "learning_id": "learn-github-chakra-ui-zag",
@@ -16269,7 +16282,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/facebook/sam3",
       "source_version": "hf-facebook-sam3",
-      "content_hash": "b78e33a292eff68092867297f318128ab189fc7e43e1d72ead0110f8d675c90b",
+      "content_hash": "acdf4e9c8c4d913a90cbb79595df46881001b6cc2f82c313c50ba92d5153816c",
       "dossier_path": "07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md",
       "promoted_rules": [
@@ -16326,7 +16339,7 @@
         "learn-huggingface-hf-facebook-sam3-mv47u4yi",
         "learn-huggingface-hf-facebook-sam3-mv4l4ga1"
       ],
-      "verified_at": "2026-10-18T00:22:37.821Z",
+      "verified_at": "2026-10-19T06:44:52.690Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25308,22 +25321,35 @@
     "learn-github-kotest-kotest": {
       "learning_id": "learn-github-kotest-kotest",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "kotest-kotest",
+      "source": "kotest/kotest",
+      "repository": "kotest/kotest",
       "slug": "kotest-kotest",
       "platform": "github",
       "source_url": "https://github.com/kotest/kotest",
-      "source_version": "HEAD",
-      "content_hash": "1bfe7b1d04abaa516fdcc1dfe2ef3ad44628dbda14eb127aeb7e0f4b6aec0412",
+      "source_version": "f7b221c4",
+      "content_hash": "71761a5ad0e2a2f4a6f5cefe879a908a8c2f383ad4f632129f3f71a2eacc22d4",
       "dossier_path": "07_PROJECT_LEARNING/kotest-kotest-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kotest-kotest-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2253,
+          "title": "Make the `shouldBeSingleton` block overloads infix (#6223)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.855Z"
+      "verified_at": "2026-10-19T06:44:55.355Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-kotlin-kmp-production-sample": {
       "learning_id": "learn-github-kotlin-kmp-production-sample",
@@ -32790,22 +32816,35 @@
     "learn-github-projectcontour-contour": {
       "learning_id": "learn-github-projectcontour-contour",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "projectcontour-contour",
+      "source": "projectcontour/contour",
+      "repository": "projectcontour/contour",
       "slug": "projectcontour-contour",
       "platform": "github",
       "source_url": "https://github.com/projectcontour/contour",
-      "source_version": "HEAD",
-      "content_hash": "a54430f9ee2a3388dd0c1a6de36fc78755f34748964ce41899c77a86e64fe8ad",
+      "source_version": "617a205b",
+      "content_hash": "8eefe91bccd90bcdcfbaf0f06b2b5c6e30a1095da1f967d36a87a7dc91acf7ca",
       "dossier_path": "07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2254,
+          "title": "build(deps): bump sigs.k8s.io/controller-runtime from 0.25.1 to 0.25.2 (#7750)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.110Z"
+      "verified_at": "2026-10-19T06:44:58.718Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-projectdiscovery-nuclei": {
       "learning_id": "learn-github-projectdiscovery-nuclei",
@@ -34684,22 +34723,35 @@
     "learn-github-sachaos-viddy": {
       "learning_id": "learn-github-sachaos-viddy",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "sachaos-viddy",
+      "source": "sachaos/viddy",
+      "repository": "sachaos/viddy",
       "slug": "sachaos-viddy",
       "platform": "github",
       "source_url": "https://github.com/sachaos/viddy",
-      "source_version": "HEAD",
-      "content_hash": "2e4282b4c608f0ed61e0e5c0040bd7d3819cf4a7930e0503dd5e8dbabdd45eab",
+      "source_version": "b56efe08",
+      "content_hash": "7f5eaf3b9727f29276f1a8dd880af4124b773cc32980d006b589d57ab9421c28",
       "dossier_path": "07_PROJECT_LEARNING/sachaos-viddy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sachaos-viddy-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2252,
+          "title": "Merge pull request #159 from sachaos/fix-panic-bug",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.359Z"
+      "verified_at": "2026-10-19T06:44:50.756Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-saladday-pi-from-scratch": {
       "learning_id": "learn-github-saladday-pi-from-scratch",
@@ -38782,22 +38834,35 @@
     "learn-github-topoteretes-cognee": {
       "learning_id": "learn-github-topoteretes-cognee",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "topoteretes-cognee",
+      "source": "topoteretes/cognee",
+      "repository": "topoteretes/cognee",
       "slug": "topoteretes-cognee",
       "platform": "github",
       "source_url": "https://github.com/topoteretes/cognee",
-      "source_version": "HEAD",
-      "content_hash": "b7fcd8aaa1af96873daa22579eaec9dbea1359d40edf2f5ae6a839cf6c3f935e",
+      "source_version": "37f788bd",
+      "content_hash": "07a5645f8b59618ae92a4d1b5ae3b290ed7442499003c1e212ee127aaf6e7010",
       "dossier_path": "07_PROJECT_LEARNING/topoteretes-cognee-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/topoteretes-cognee-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2255,
+          "title": "Curate every new entry per distill run by default (SDK-1140) (#5935)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.011Z"
+      "verified_at": "2026-10-19T06:45:02.500Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-totec448-spec-chat-on-steroids": {
       "learning_id": "learn-github-totec448-spec-chat-on-steroids",
@@ -79864,6 +79929,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T06:38:41.995Z"
+    },
+    "rule-2251": {
+      "learning_id": "rule-2251",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2251,
+      "title": "test(react): add a react render benchmark",
+      "source_url": "https://github.com/chakra-ui/chakra-ui",
+      "source_version": "fa9696f3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:44:49.117Z"
+    },
+    "rule-2252": {
+      "learning_id": "rule-2252",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2252,
+      "title": "Merge pull request #159 from sachaos/fix-panic-bug",
+      "source_url": "https://github.com/sachaos/viddy",
+      "source_version": "b56efe08",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:44:50.756Z"
+    },
+    "rule-2253": {
+      "learning_id": "rule-2253",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2253,
+      "title": "Make the `shouldBeSingleton` block overloads infix (#6223)",
+      "source_url": "https://github.com/kotest/kotest",
+      "source_version": "f7b221c4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:44:55.355Z"
+    },
+    "rule-2254": {
+      "learning_id": "rule-2254",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2254,
+      "title": "build(deps): bump sigs.k8s.io/controller-runtime from 0.25.1 to 0.25.2 (#7750)",
+      "source_url": "https://github.com/projectcontour/contour",
+      "source_version": "617a205b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:44:58.718Z"
+    },
+    "rule-2255": {
+      "learning_id": "rule-2255",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2255,
+      "title": "Curate every new entry per distill run by default (SDK-1140) (#5935)",
+      "source_url": "https://github.com/topoteretes/cognee",
+      "source_version": "37f788bd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:45:02.500Z"
     }
   },
   "aliases": {

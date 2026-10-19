@@ -3030,3 +3030,9 @@ Every entry in this ledger must capture:
 | `learn-github-kizitonwose-calendar` | `https://github.com/kizitonwose/Calendar` | `c2711b3c` | Multi-dimensional audit evidence | 2026-10-19T06:38:39.487Z |
 | `learn-github-open-policy-agent-gatekeeper` | `https://github.com/open-policy-agent/gatekeeper` | `180cc830` | Multi-dimensional audit evidence | 2026-10-19T06:38:42.029Z |
 | `learn-github-pathwaycom-serviette` | `https://github.com/pathwaycom/serviette` | `e2a7a09b` | Multi-dimensional audit evidence | 2026-10-19T06:38:45.774Z |
+| `learn-github-chakra-ui-chakra-ui` | `https://github.com/chakra-ui/chakra-ui` | `fa9696f3` | Multi-dimensional audit evidence | 2026-10-19T06:44:49.168Z |
+| `learn-github-sachaos-viddy` | `https://github.com/sachaos/viddy` | `b56efe08` | Multi-dimensional audit evidence | 2026-10-19T06:44:50.810Z |
+| `learn-huggingface-facebook-sam3` | `https://huggingface.co/facebook/sam3` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-10-19T06:44:52.743Z |
+| `learn-github-kotest-kotest` | `https://github.com/kotest/kotest` | `f7b221c4` | Multi-dimensional audit evidence | 2026-10-19T06:44:55.408Z |
+| `learn-github-projectcontour-contour` | `https://github.com/projectcontour/contour` | `617a205b` | Multi-dimensional audit evidence | 2026-10-19T06:44:58.770Z |
+| `learn-github-topoteretes-cognee` | `https://github.com/topoteretes/cognee` | `37f788bd` | Multi-dimensional audit evidence | 2026-10-19T06:45:02.552Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T06:38:45.778Z",
+  "last_updated": "2026-10-19T06:45:02.559Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1908,14 +1908,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-facebook-sam3",
-      "content_hash": "b78e33a292eff68092867297f318128ab189fc7e43e1d72ead0110f8d675c90b",
-      "verified_at": "2026-10-18T00:22:37.863Z",
+      "content_hash": "acdf4e9c8c4d913a90cbb79595df46881001b6cc2f82c313c50ba92d5153816c",
+      "verified_at": "2026-10-19T06:44:52.750Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T00:22:37.863Z"
+      "last_updated": "2026-10-19T06:44:52.750Z"
     },
     "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF": {
       "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
@@ -10196,6 +10196,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T06:38:42.033Z"
+    },
+    "chakra-ui/chakra-ui": {
+      "repository": "chakra-ui/chakra-ui",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-chakra-ui-chakra-ui",
+      "content_hash": "b4ced02168852efccc36374d89caeaa63f7d348856a438a1d675827d6deac8f5",
+      "verified_at": "2026-10-19T06:44:49.174Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T06:44:49.174Z"
+    },
+    "sachaos/viddy": {
+      "repository": "sachaos/viddy",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-sachaos-viddy",
+      "content_hash": "7f5eaf3b9727f29276f1a8dd880af4124b773cc32980d006b589d57ab9421c28",
+      "verified_at": "2026-10-19T06:44:50.816Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T06:44:50.816Z"
+    },
+    "kotest/kotest": {
+      "repository": "kotest/kotest",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-kotest-kotest",
+      "content_hash": "71761a5ad0e2a2f4a6f5cefe879a908a8c2f383ad4f632129f3f71a2eacc22d4",
+      "verified_at": "2026-10-19T06:44:55.413Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T06:44:55.413Z"
+    },
+    "projectcontour/contour": {
+      "repository": "projectcontour/contour",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-projectcontour-contour",
+      "content_hash": "8eefe91bccd90bcdcfbaf0f06b2b5c6e30a1095da1f967d36a87a7dc91acf7ca",
+      "verified_at": "2026-10-19T06:44:58.776Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T06:44:58.776Z"
+    },
+    "topoteretes/cognee": {
+      "repository": "topoteretes/cognee",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-topoteretes-cognee",
+      "content_hash": "07a5645f8b59618ae92a4d1b5ae3b290ed7442499003c1e212ee127aaf6e7010",
+      "verified_at": "2026-10-19T06:45:02.558Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T06:45:02.558Z"
     }
   },
   "repos": {
