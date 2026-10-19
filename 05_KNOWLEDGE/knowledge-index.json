@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T10:54:42.493Z",
-  "total_verified_learnings": 795,
+  "last_updated": "2026-10-19T11:02:01.175Z",
+  "total_verified_learnings": 796,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -5338,17 +5338,22 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "hmbown-codewhale",
+      "slug": "codewhale-hq-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/Hmbown/Codewhale",
-      "source_version": "7877c62d",
-      "content_hash": "a24fba2bc347f8c35ed8d1365d4a080299ab95a5c111d40c053bb07effba71b6",
-      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "273ac2db",
+      "content_hash": "2be40e2094560b701e29d18cacff241c69659b8affc6193a115d08aacffb3f9e",
+      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": 1747,
           "title": "engine): refuse a shell or gate command the safety check blocks before asking to",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2516,
+          "title": "hooks): Esc stops a running tool_call_before hook",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -5357,7 +5362,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:52:00.302Z",
+      "verified_at": "2026-10-19T11:01:04.175Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -16405,7 +16410,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro",
       "source_version": "hf-deepseek-ai-deepseek-v4-pro",
-      "content_hash": "ef8c851881b016d9e130a7868b61c33182c6a03a17b5cb6f5c0faeaffeef94c3",
+      "content_hash": "7a6c106197acf7b1e6f0892c539f2c49580e0b78f50ab7f50ac519d7a362805e",
       "dossier_path": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md",
       "promoted_rules": [
@@ -16422,6 +16427,21 @@
         {
           "number": 1425,
           "title": "Strided KV-Cache Compression Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2518,
+          "title": "Doubly Stochastic Manifold Projection for Hyper-Connected Residuals",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2519,
+          "title": "Sqrt-Softplus Gating with Strict SwiGLU Bounding for Low-Bit MoE",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2520,
+          "title": "Non-Uniform Alternating Compression Schedule for Linear-Bounded KV Caches",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -16443,7 +16463,7 @@
         "learn-huggingface-hf-deepseek-ai-deepseek-v4-pro-mv4anlp3",
         "learn-huggingface-hf-deepseek-ai-deepseek-v4-pro-mv4o0odx"
       ],
-      "verified_at": "2026-10-18T02:30:05.603Z",
+      "verified_at": "2026-10-19T11:02:01.163Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -29036,22 +29056,35 @@
     "learn-github-meshtastic-meshtastic-android": {
       "learning_id": "learn-github-meshtastic-meshtastic-android",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "meshtastic-meshtastic-android",
+      "source": "meshtastic/Meshtastic-Android",
+      "repository": "meshtastic/Meshtastic-Android",
       "slug": "meshtastic-meshtastic-android",
       "platform": "github",
       "source_url": "https://github.com/meshtastic/Meshtastic-Android",
-      "source_version": "HEAD",
-      "content_hash": "7b8047dc8d2ac16d58da0adaee75261546a4ad254bcb41574864d045c96ed2c5",
+      "source_version": "50b58563",
+      "content_hash": "a982e631ca24e7fc32110d62fa8bde8b5a193f7dffbfb2df4e864df726b38f3f",
       "dossier_path": "07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2517,
+          "title": "node): remove every unheard node from the banner's Remove (#7667)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.268Z"
+      "verified_at": "2026-10-19T11:01:08.731Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-metalbear-co-mirrord": {
       "learning_id": "learn-github-metalbear-co-mirrord",
@@ -85752,6 +85785,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T10:54:42.485Z"
+    },
+    "rule-2516": {
+      "learning_id": "rule-2516",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2516,
+      "title": "hooks): Esc stops a running tool_call_before hook",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "273ac2db",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T11:01:04.175Z"
+    },
+    "rule-2517": {
+      "learning_id": "rule-2517",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2517,
+      "title": "node): remove every unheard node from the banner's Remove (#7667)",
+      "source_url": "https://github.com/meshtastic/Meshtastic-Android",
+      "source_version": "50b58563",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T11:01:08.731Z"
+    },
+    "rule-2518": {
+      "learning_id": "rule-2518",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2518,
+      "title": "Doubly Stochastic Manifold Projection for Hyper-Connected Residuals",
+      "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro",
+      "source_version": "hf-deepseek-ai-deepseek-v4-pro",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T11:02:01.163Z"
+    },
+    "rule-2519": {
+      "learning_id": "rule-2519",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2519,
+      "title": "Sqrt-Softplus Gating with Strict SwiGLU Bounding for Low-Bit MoE",
+      "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro",
+      "source_version": "hf-deepseek-ai-deepseek-v4-pro",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T11:02:01.163Z"
+    },
+    "rule-2520": {
+      "learning_id": "rule-2520",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2520,
+      "title": "Non-Uniform Alternating Compression Schedule for Linear-Bounded KV Caches",
+      "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro",
+      "source_version": "hf-deepseek-ai-deepseek-v4-pro",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T11:02:01.163Z"
     }
   },
   "aliases": {

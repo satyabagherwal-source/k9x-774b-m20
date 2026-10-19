@@ -3183,3 +3183,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-fishaudio-drama-3` | `https://huggingface.co/fishaudio/drama-3` | `hf-fishaud` | Multi-dimensional audit evidence | 2026-10-19T10:54:35.952Z |
 | `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `da5921d6` | Multi-dimensional audit evidence | 2026-10-19T10:54:38.131Z |
 | `learn-github-mohamedrejeb-compose-rich-editor` | `https://github.com/MohamedRejeb/compose-rich-editor` | `b972d50f` | Multi-dimensional audit evidence | 2026-10-19T10:54:42.521Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `273ac2db` | Multi-dimensional audit evidence | 2026-10-19T11:01:04.234Z |
+| `learn-github-meshtastic-meshtastic-android` | `https://github.com/meshtastic/Meshtastic-Android` | `50b58563` | Multi-dimensional audit evidence | 2026-10-19T11:01:08.788Z |
+| `learn-huggingface-deepseek-ai-deepseek-v4-pro` | `https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-19T11:02:01.221Z |

@@ -885,8 +885,8 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro",
     "sourceVersion": "hf-deepseek-ai-deepseek-v4-pro",
     "license": "Open-Source",
-    "contentHash": "ef8c851881b016d9e130a7868b61c33182c6a03a17b5cb6f5c0faeaffeef94c3",
-    "lastHarvestedAt": "2026-10-18T02:30:05.652Z",
+    "contentHash": "7a6c106197acf7b1e6f0892c539f2c49580e0b78f50ab7f50ac519d7a362805e",
+    "lastHarvestedAt": "2026-10-19T11:02:01.221Z",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro"
   },
   "hf-tongyi-mai-z-image-turbo": {
@@ -7798,5 +7798,25 @@
     "contentHash": "f9f02a4e9ce648c1c3b5cbe7028d69b42765eb6d8e23f66b810584eacadf9523",
     "lastHarvestedAt": "2026-10-19T10:54:42.521Z",
     "learningId": "learn-github-mohamedrejeb-compose-rich-editor"
+  },
+  "codewhale-hq-codewhale": {
+    "repository": "codewhale-hq/Codewhale",
+    "platform": "github",
+    "sourceUrl": "https://github.com/codewhale-hq/Codewhale",
+    "sourceVersion": "273ac2db",
+    "license": "MIT",
+    "contentHash": "2be40e2094560b701e29d18cacff241c69659b8affc6193a115d08aacffb3f9e",
+    "lastHarvestedAt": "2026-10-19T11:01:04.234Z",
+    "learningId": "learn-github-codewhale-hq-codewhale"
+  },
+  "meshtastic-meshtastic-android": {
+    "repository": "meshtastic/Meshtastic-Android",
+    "platform": "github",
+    "sourceUrl": "https://github.com/meshtastic/Meshtastic-Android",
+    "sourceVersion": "50b58563",
+    "license": "GPL-3.0",
+    "contentHash": "a982e631ca24e7fc32110d62fa8bde8b5a193f7dffbfb2df4e864df726b38f3f",
+    "lastHarvestedAt": "2026-10-19T11:01:08.788Z",
+    "learningId": "learn-github-meshtastic-meshtastic-android"
   }
 }

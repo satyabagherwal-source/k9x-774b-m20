@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-7UKX",
-    "timestamp": "2026-10-19T00:16:28.305Z",
-    "repository": "react-bootstrap/react-bootstrap",
-    "learningId": "learn-github-react-bootstrap-react-bootstrap",
-    "contentHash": "574f53d671feceb9bba48e06c0d3a72d96712392d77f3a9a10e4989a27e30146",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-7WEV",
-    "timestamp": "2026-10-19T00:16:30.679Z",
-    "repository": "orf/gping",
-    "learningId": "learn-github-orf-gping",
-    "contentHash": "d57df5fc815798b7672c19f2a4afb61c6412f85d30a82076992cfe634a515c94",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-806A",
-    "timestamp": "2026-10-19T00:16:35.554Z",
-    "repository": "leecade/react-native-swiper",
-    "learningId": "learn-github-leecade-react-native-swiper",
-    "contentHash": "bbd2052848de8b9aa316dea7878621aef3a19a7991202287568bf81622d9cbfc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-81Q5",
     "timestamp": "2026-10-19T00:16:37.565Z",
     "repository": "argoproj/argo-events",
@@ -7492,6 +7447,51 @@
     "contentHash": "f9f02a4e9ce648c1c3b5cbe7028d69b42765eb6d8e23f66b810584eacadf9523",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-8T47",
+    "timestamp": "2026-10-19T11:01:04.231Z",
+    "repository": "codewhale-hq/Codewhale",
+    "learningId": "learn-github-codewhale-hq-codewhale",
+    "contentHash": "2be40e2094560b701e29d18cacff241c69659b8affc6193a115d08aacffb3f9e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-8WMP",
+    "timestamp": "2026-10-19T11:01:08.785Z",
+    "repository": "meshtastic/Meshtastic-Android",
+    "learningId": "learn-github-meshtastic-meshtastic-android",
+    "contentHash": "a982e631ca24e7fc32110d62fa8bde8b5a193f7dffbfb2df4e864df726b38f3f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-A136",
+    "timestamp": "2026-10-19T11:02:01.218Z",
+    "repository": "deepseek-ai/DeepSeek-V4-Pro",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
+    "contentHash": "7a6c106197acf7b1e6f0892c539f2c49580e0b78f50ab7f50ac519d7a362805e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
