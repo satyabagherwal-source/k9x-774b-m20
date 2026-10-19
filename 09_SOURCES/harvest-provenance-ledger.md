@@ -2677,3 +2677,9 @@ Every entry in this ledger must capture:
 | `learn-github-akveo-react-native-ui-kitten` | `https://github.com/akveo/react-native-ui-kitten` | `e73dce62` | Multi-dimensional audit evidence | 2026-10-19T00:04:06.076Z |
 | `learn-github-go-dev-frame-sponge` | `https://github.com/go-dev-frame/sponge` | `beef9eec` | Multi-dimensional audit evidence | 2026-10-19T00:04:09.059Z |
 | `learn-github-spacejam-sled` | `https://github.com/spacejam/sled` | `e449d171` | Multi-dimensional audit evidence | 2026-10-19T00:04:13.056Z |
+| `learn-github-themeselection-flyonui` | `https://github.com/themeselection/flyonui` | `80e33d44` | Multi-dimensional audit evidence | 2026-10-19T00:10:14.371Z |
+| `learn-github-clementtsang-bottom` | `https://github.com/ClementTsang/bottom` | `7d65d62c` | Multi-dimensional audit evidence | 2026-10-19T00:10:17.587Z |
+| `learn-github-jhen0409-react-native-debugger` | `https://github.com/jhen0409/react-native-debugger` | `bd3435a4` | Multi-dimensional audit evidence | 2026-10-19T00:10:20.009Z |
+| `learn-github-go-chassis-go-chassis` | `https://github.com/go-chassis/go-chassis` | `6bcf5150` | Multi-dimensional audit evidence | 2026-10-19T00:10:25.573Z |
+| `learn-huggingface-edge0-audio8-asr-infinite` | `https://huggingface.co/Edge0/Audio8-ASR-Infinite` | `hf-edge0-a` | Multi-dimensional audit evidence | 2026-10-19T00:10:28.556Z |
+| `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `5c06d922` | Multi-dimensional audit evidence | 2026-10-19T00:10:31.112Z |

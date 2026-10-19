@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T00:04:13.013Z",
-  "total_verified_learnings": 410,
+  "last_updated": "2026-10-19T00:10:31.065Z",
+  "total_verified_learnings": 415,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -4070,22 +4070,35 @@
     "learn-github-clementtsang-bottom": {
       "learning_id": "learn-github-clementtsang-bottom",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "clementtsang-bottom",
+      "source": "ClementTsang/bottom",
+      "repository": "ClementTsang/bottom",
       "slug": "clementtsang-bottom",
       "platform": "github",
       "source_url": "https://github.com/ClementTsang/bottom",
-      "source_version": "HEAD",
-      "content_hash": "fb9240634b2ee17992218cbf74d81a4a91583548927c766f93c89d263d03ccf6",
+      "source_version": "7d65d62c",
+      "content_hash": "ab92b1aec66d2c5c54679360559c8c43cd60a4744459c3883fbfd40231e843c4",
       "dossier_path": "07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1894,
+          "title": "other: allow clippy lint for regex creation in loops (#2270)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.320Z"
+      "verified_at": "2026-10-19T00:10:17.537Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-clickhouse-clickhouse": {
       "learning_id": "learn-github-clickhouse-clickhouse",
@@ -8469,22 +8482,35 @@
     "learn-github-go-chassis-go-chassis": {
       "learning_id": "learn-github-go-chassis-go-chassis",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "go-chassis-go-chassis",
+      "source": "go-chassis/go-chassis",
+      "repository": "go-chassis/go-chassis",
       "slug": "go-chassis-go-chassis",
       "platform": "github",
       "source_url": "https://github.com/go-chassis/go-chassis",
-      "source_version": "HEAD",
-      "content_hash": "f04d3f25e25fb7e799528875052f115cff608107f72ce8e605824a69aa1ef8b1",
+      "source_version": "6bcf5150",
+      "content_hash": "310ff7d96d72b217fad33ac1382eb0d5d00ba77051ffbb602c71dda96e15c2ff",
       "dossier_path": "07_PROJECT_LEARNING/go-chassis-go-chassis-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/go-chassis-go-chassis-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1896,
+          "title": "fix nil panic (#1064)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.096Z"
+      "verified_at": "2026-10-19T00:10:25.522Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-go-dev-frame-sponge": {
       "learning_id": "learn-github-go-dev-frame-sponge",
@@ -14330,7 +14356,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
       "source_version": "hf-edge0-audio8-asr-infinite",
-      "content_hash": "9909d14e61b425547030a89891b9fd4cac30563e2ecd72d75cf2037d7e65d7cb",
+      "content_hash": "2a11d60adc25fdb6d822f4ea917a4c7e9186173a3391212f17a25eede8782b2d",
       "dossier_path": "07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md",
       "promoted_rules": [
@@ -14357,6 +14383,21 @@
         {
           "number": 1314,
           "title": "Strict Invariance of Left-Padding Temporal Buffer Depth Across Streaming Chunk Boundaries",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1897,
+          "title": "Temporal Resolution Conditioning via Embedding",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1898,
+          "title": "Rolling KV Cache for Unbounded Streaming",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1899,
+          "title": "Semantic VAD for Turn Detection",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -14700,7 +14741,7 @@
         "learn-huggingface-hf-edge0-audio8-asr-infinite-mv41u2xc",
         "learn-huggingface-hf-edge0-audio8-asr-infinite-mv4fpi3i"
       ],
-      "verified_at": "2026-10-17T20:57:34.495Z",
+      "verified_at": "2026-10-19T00:10:28.506Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -22406,22 +22447,35 @@
     "learn-github-jhen0409-react-native-debugger": {
       "learning_id": "learn-github-jhen0409-react-native-debugger",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "jhen0409-react-native-debugger",
+      "source": "jhen0409/react-native-debugger",
+      "repository": "jhen0409/react-native-debugger",
       "slug": "jhen0409-react-native-debugger",
       "platform": "github",
       "source_url": "https://github.com/jhen0409/react-native-debugger",
-      "source_version": "HEAD",
-      "content_hash": "a4187496fde0e6fb4fe171bc7fca40955d38fe3a101ba18bad4d41f4e0fd23fb",
+      "source_version": "bd3435a4",
+      "content_hash": "e2f0e3616c236d7e5585b3efdda920ff9548825996d5fe5c51ae890255b218a7",
       "dossier_path": "07_PROJECT_LEARNING/jhen0409-react-native-debugger-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jhen0409-react-native-debugger-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1895,
+          "title": "Redux DevTools: Fix overflow",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.686Z"
+      "verified_at": "2026-10-19T00:10:19.961Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-jhspetersson-fselect": {
       "learning_id": "learn-github-jhspetersson-fselect",
@@ -25069,22 +25123,35 @@
     "learn-github-materializeinc-materialize": {
       "learning_id": "learn-github-materializeinc-materialize",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "materializeinc-materialize",
+      "source": "MaterializeInc/materialize",
+      "repository": "MaterializeInc/materialize",
       "slug": "materializeinc-materialize",
       "platform": "github",
       "source_url": "https://github.com/MaterializeInc/materialize",
-      "source_version": "HEAD",
-      "content_hash": "07d5141e2d9b09a26ee42af3bb9f8ad7a172f559b7dfee05caaab0176feba1f3",
+      "source_version": "5c06d922",
+      "content_hash": "d88078ab0ed1dc2dd703566f7430a737d02d5a4e028ec069f701190be90678ca",
       "dossier_path": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1900,
+          "title": "build(deps): bump python-slugify from 8.0.4 to 9.1.3 in /misc/dbt-materialize (#",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.174Z"
+      "verified_at": "2026-10-19T00:10:31.058Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-matrixorigin-matrixone": {
       "learning_id": "learn-github-matrixorigin-matrixone",
@@ -35009,22 +35076,35 @@
     "learn-github-themeselection-flyonui": {
       "learning_id": "learn-github-themeselection-flyonui",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "themeselection-flyonui",
+      "source": "themeselection/flyonui",
+      "repository": "themeselection/flyonui",
       "slug": "themeselection-flyonui",
       "platform": "github",
       "source_url": "https://github.com/themeselection/flyonui",
-      "source_version": "HEAD",
-      "content_hash": "7488b8a162c556797fc03a372fd5d393a2d9359139cc0b3cd079d5e4633b8d60",
+      "source_version": "80e33d44",
+      "content_hash": "176c07da52e5bb22eada30c526102a692470f5f0ad458dce6d47ac7830e7d2a6",
       "dossier_path": "07_PROJECT_LEARNING/themeselection-flyonui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/themeselection-flyonui-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1893,
+          "title": "release): change publish command to use npm instead of runtime variable",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.967Z"
+      "verified_at": "2026-10-19T00:10:14.310Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-thudm-agentbench": {
       "learning_id": "learn-github-thudm-agentbench",
@@ -70869,6 +70949,118 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T00:04:13.007Z"
+    },
+    "rule-1893": {
+      "learning_id": "rule-1893",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1893,
+      "title": "release): change publish command to use npm instead of runtime variable",
+      "source_url": "https://github.com/themeselection/flyonui",
+      "source_version": "80e33d44",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:10:14.310Z"
+    },
+    "rule-1894": {
+      "learning_id": "rule-1894",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1894,
+      "title": "other: allow clippy lint for regex creation in loops (#2270)",
+      "source_url": "https://github.com/ClementTsang/bottom",
+      "source_version": "7d65d62c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:10:17.537Z"
+    },
+    "rule-1895": {
+      "learning_id": "rule-1895",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1895,
+      "title": "Redux DevTools: Fix overflow",
+      "source_url": "https://github.com/jhen0409/react-native-debugger",
+      "source_version": "bd3435a4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:10:19.961Z"
+    },
+    "rule-1896": {
+      "learning_id": "rule-1896",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1896,
+      "title": "fix nil panic (#1064)",
+      "source_url": "https://github.com/go-chassis/go-chassis",
+      "source_version": "6bcf5150",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:10:25.522Z"
+    },
+    "rule-1897": {
+      "learning_id": "rule-1897",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1897,
+      "title": "Temporal Resolution Conditioning via Embedding",
+      "source_url": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
+      "source_version": "hf-edge0-audio8-asr-infinite",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:10:28.506Z"
+    },
+    "rule-1898": {
+      "learning_id": "rule-1898",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1898,
+      "title": "Rolling KV Cache for Unbounded Streaming",
+      "source_url": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
+      "source_version": "hf-edge0-audio8-asr-infinite",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:10:28.506Z"
+    },
+    "rule-1899": {
+      "learning_id": "rule-1899",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1899,
+      "title": "Semantic VAD for Turn Detection",
+      "source_url": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
+      "source_version": "hf-edge0-audio8-asr-infinite",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:10:28.506Z"
+    },
+    "rule-1900": {
+      "learning_id": "rule-1900",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1900,
+      "title": "build(deps): bump python-slugify from 8.0.4 to 9.1.3 in /misc/dbt-materialize (#",
+      "source_url": "https://github.com/MaterializeInc/materialize",
+      "source_version": "5c06d922",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:10:31.058Z"
     }
   },
   "aliases": {

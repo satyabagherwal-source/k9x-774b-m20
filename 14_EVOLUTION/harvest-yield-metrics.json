@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T00:04:13.058Z",
-  "total_cycles_completed": 2647,
-  "total_learnings_persisted": 2647,
-  "total_rules_promoted": 1670,
+  "last_updated": "2026-10-19T00:10:31.115Z",
+  "total_cycles_completed": 2653,
+  "total_learnings_persisted": 2653,
+  "total_rules_promoted": 1678,
   "history": [
-    {
-      "timestamp": "2026-10-18T21:00:47.562Z",
-      "repository": "dkhamsing/open-source-ios-apps",
-      "learningId": "learn-github-dkhamsing-open-source-ios-apps",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T21:00:50.682Z",
-      "repository": "moby/buildkit",
-      "learningId": "learn-github-moby-buildkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T21:00:53.111Z",
-      "repository": "microsoft/agent-governance-toolkit",
-      "learningId": "learn-github-microsoft-agent-governance-toolkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T21:00:58.199Z",
-      "repository": "SynaLinks/synalinks-skills",
-      "learningId": "learn-github-synalinks-synalinks-skills",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T21:01:34.962Z",
-      "repository": "facebook/docusaurus",
-      "learningId": "learn-github-facebook-docusaurus",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T21:01:39.500Z",
-      "repository": "TabbyML/tabby",
-      "learningId": "learn-github-tabbyml-tabby",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-18T21:07:32.440Z",
       "repository": "trhhubsd/ARTEX",
@@ -1402,6 +1360,48 @@
       "timestamp": "2026-10-19T00:04:13.058Z",
       "repository": "spacejam/sled",
       "learningId": "learn-github-spacejam-sled",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T00:10:14.374Z",
+      "repository": "themeselection/flyonui",
+      "learningId": "learn-github-themeselection-flyonui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T00:10:17.589Z",
+      "repository": "ClementTsang/bottom",
+      "learningId": "learn-github-clementtsang-bottom",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T00:10:20.012Z",
+      "repository": "jhen0409/react-native-debugger",
+      "learningId": "learn-github-jhen0409-react-native-debugger",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T00:10:25.576Z",
+      "repository": "go-chassis/go-chassis",
+      "learningId": "learn-github-go-chassis-go-chassis",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T00:10:28.559Z",
+      "repository": "Edge0/Audio8-ASR-Infinite",
+      "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T00:10:31.115Z",
+      "repository": "MaterializeInc/materialize",
+      "learningId": "learn-github-materializeinc-materialize",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

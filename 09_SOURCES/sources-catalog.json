@@ -125,8 +125,8 @@
     "sourceUrl": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
     "sourceVersion": "hf-edge0-audio8-asr-infinite",
     "license": "Open-Source",
-    "contentHash": "9909d14e61b425547030a89891b9fd4cac30563e2ecd72d75cf2037d7e65d7cb",
-    "lastHarvestedAt": "2026-10-17T20:57:34.538Z",
+    "contentHash": "2a11d60adc25fdb6d822f4ea917a4c7e9186173a3391212f17a25eede8782b2d",
+    "lastHarvestedAt": "2026-10-19T00:10:28.556Z",
     "learningId": "learn-huggingface-edge0-audio8-asr-infinite"
   },
   "hf-abenzerps-qwen-image-2.1-uncensored-gguf": {
@@ -3878,5 +3878,55 @@
     "contentHash": "daafd916f7ed55e4f806042e8f9c5aea1ab10466fff2bbf0717400d8921c16c8",
     "lastHarvestedAt": "2026-10-19T00:04:13.056Z",
     "learningId": "learn-github-spacejam-sled"
+  },
+  "themeselection-flyonui": {
+    "repository": "themeselection/flyonui",
+    "platform": "github",
+    "sourceUrl": "https://github.com/themeselection/flyonui",
+    "sourceVersion": "80e33d44",
+    "license": "NOASSERTION",
+    "contentHash": "176c07da52e5bb22eada30c526102a692470f5f0ad458dce6d47ac7830e7d2a6",
+    "lastHarvestedAt": "2026-10-19T00:10:14.371Z",
+    "learningId": "learn-github-themeselection-flyonui"
+  },
+  "clementtsang-bottom": {
+    "repository": "ClementTsang/bottom",
+    "platform": "github",
+    "sourceUrl": "https://github.com/ClementTsang/bottom",
+    "sourceVersion": "7d65d62c",
+    "license": "MIT",
+    "contentHash": "ab92b1aec66d2c5c54679360559c8c43cd60a4744459c3883fbfd40231e843c4",
+    "lastHarvestedAt": "2026-10-19T00:10:17.587Z",
+    "learningId": "learn-github-clementtsang-bottom"
+  },
+  "jhen0409-react-native-debugger": {
+    "repository": "jhen0409/react-native-debugger",
+    "platform": "github",
+    "sourceUrl": "https://github.com/jhen0409/react-native-debugger",
+    "sourceVersion": "bd3435a4",
+    "license": "MIT",
+    "contentHash": "e2f0e3616c236d7e5585b3efdda920ff9548825996d5fe5c51ae890255b218a7",
+    "lastHarvestedAt": "2026-10-19T00:10:20.009Z",
+    "learningId": "learn-github-jhen0409-react-native-debugger"
+  },
+  "go-chassis-go-chassis": {
+    "repository": "go-chassis/go-chassis",
+    "platform": "github",
+    "sourceUrl": "https://github.com/go-chassis/go-chassis",
+    "sourceVersion": "6bcf5150",
+    "license": "Apache-2.0",
+    "contentHash": "310ff7d96d72b217fad33ac1382eb0d5d00ba77051ffbb602c71dda96e15c2ff",
+    "lastHarvestedAt": "2026-10-19T00:10:25.573Z",
+    "learningId": "learn-github-go-chassis-go-chassis"
+  },
+  "materializeinc-materialize": {
+    "repository": "MaterializeInc/materialize",
+    "platform": "github",
+    "sourceUrl": "https://github.com/MaterializeInc/materialize",
+    "sourceVersion": "5c06d922",
+    "license": "NOASSERTION",
+    "contentHash": "d88078ab0ed1dc2dd703566f7430a737d02d5a4e028ec069f701190be90678ca",
+    "lastHarvestedAt": "2026-10-19T00:10:31.112Z",
+    "learningId": "learn-github-materializeinc-materialize"
   }
 }
