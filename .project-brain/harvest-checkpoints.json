@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T18:48:48.783Z",
+  "last_updated": "2026-10-19T18:57:38.515Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9724,14 +9724,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meilisearch-meilisearch",
-      "content_hash": "636de5a12800c7c02d0c6e92424a139199cc9cb03429be3f0f0c40d39a1afb0d",
-      "verified_at": "2026-10-19T05:52:00.819Z",
+      "content_hash": "f3af69b03e8b5a5c30fd07b25c852b1c5b7714bd094e586d1a5efe0acec794b0",
+      "verified_at": "2026-10-19T18:55:14.581Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T05:52:00.819Z"
+      "last_updated": "2026-10-19T18:55:14.581Z"
     },
     "dip/cmdk": {
       "repository": "dip/cmdk",
@@ -13047,6 +13047,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T18:48:48.782Z"
+    },
+    "michaelbull/kotlin-result": {
+      "repository": "michaelbull/kotlin-result",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-michaelbull-kotlin-result",
+      "content_hash": "75f2ee147c5a14c4445ecda1ad6c05e462f5875132803f55505380d9dcb22a9a",
+      "verified_at": "2026-10-19T18:55:08.780Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T18:55:08.780Z"
+    },
+    "mitrovicsinisaa/schemaorg-rs": {
+      "repository": "mitrovicsinisaa/schemaorg-rs",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-mitrovicsinisaa-schemaorg-rs",
+      "content_hash": "e372a57ce3e6f884b8c518ef8e945ee1e61d229a032918f81fdee618593e44b2",
+      "verified_at": "2026-10-19T18:57:38.515Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T18:57:38.515Z"
     }
   },
   "repos": {

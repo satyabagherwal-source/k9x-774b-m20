@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T18:48:48.731Z",
-  "total_verified_learnings": 882,
+  "last_updated": "2026-10-19T18:57:38.470Z",
+  "total_verified_learnings": 884,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -29691,8 +29691,8 @@
       "slug": "meilisearch-meilisearch",
       "platform": "github",
       "source_url": "https://github.com/meilisearch/meilisearch",
-      "source_version": "541dd6e9",
-      "content_hash": "636de5a12800c7c02d0c6e92424a139199cc9cb03429be3f0f0c40d39a1afb0d",
+      "source_version": "451f092d",
+      "content_hash": "f3af69b03e8b5a5c30fd07b25c852b1c5b7714bd094e586d1a5efe0acec794b0",
       "dossier_path": "07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md",
       "promoted_rules": [
@@ -29707,7 +29707,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T05:52:00.761Z",
+      "verified_at": "2026-10-19T18:55:14.516Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -30115,22 +30115,35 @@
     "learn-github-michaelbull-kotlin-result": {
       "learning_id": "learn-github-michaelbull-kotlin-result",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "michaelbull-kotlin-result",
+      "source": "michaelbull/kotlin-result",
+      "repository": "michaelbull/kotlin-result",
       "slug": "michaelbull-kotlin-result",
       "platform": "github",
       "source_url": "https://github.com/michaelbull/kotlin-result",
-      "source_version": "HEAD",
-      "content_hash": "d9154e227ead9656ded669c440f37f7c13fd877919ff5dd896170bad1aa715fe",
+      "source_version": "aed7438b",
+      "content_hash": "75f2ee147c5a14c4445ecda1ad6c05e462f5875132803f55505380d9dcb22a9a",
       "dossier_path": "07_PROJECT_LEARNING/michaelbull-kotlin-result-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/michaelbull-kotlin-result-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2755,
+          "title": "Update best practices in LLM guidance files",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.288Z"
+      "verified_at": "2026-10-19T18:55:08.726Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-micro-go-micro": {
       "learning_id": "learn-github-micro-go-micro",
@@ -55383,22 +55396,36 @@
     "learn-github-mitrovicsinisaa-schemaorg-rs": {
       "learning_id": "learn-github-mitrovicsinisaa-schemaorg-rs",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "mitrovicsinisaa/schemaorg-rs",
       "repository": "mitrovicsinisaa/schemaorg-rs",
       "slug": "mitrovicsinisaa-schemaorg-rs",
       "platform": "github",
       "source_url": "https://github.com/mitrovicsinisaa/schemaorg-rs",
-      "source_version": "main",
-      "content_hash": "3100969facd743620b9b653641268a6384b1192075a32f82f631ea781ccb721a",
+      "source_version": "34463033",
+      "content_hash": "e372a57ce3e6f884b8c518ef8e945ee1e61d229a032918f81fdee618593e44b2",
       "dossier_path": "07_PROJECT_LEARNING/mitrovicsinisaa-schemaorg-rs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mitrovicsinisaa-schemaorg-rs-learnings.md",
       "promoted_rules": [
-        "Rule 1626"
+        "Rule 1626",
+        {
+          "number": 2756,
+          "title": "resolve CI failures (formatting, cli_tests feature gate, WASM build)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
       ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:27:04.005893Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T18:57:38.459Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-raghav453-multilipi-hreflang-generator": {
       "learning_id": "learn-github-raghav453-multilipi-hreflang-generator",
@@ -91141,6 +91168,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T18:48:48.720Z"
+    },
+    "rule-2755": {
+      "learning_id": "rule-2755",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2755,
+      "title": "Update best practices in LLM guidance files",
+      "source_url": "https://github.com/michaelbull/kotlin-result",
+      "source_version": "aed7438b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T18:55:08.726Z"
+    },
+    "rule-2756": {
+      "learning_id": "rule-2756",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2756,
+      "title": "resolve CI failures (formatting, cli_tests feature gate, WASM build)",
+      "source_url": "https://github.com/mitrovicsinisaa/schemaorg-rs",
+      "source_version": "34463033",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T18:57:38.459Z"
     }
   },
   "aliases": {
