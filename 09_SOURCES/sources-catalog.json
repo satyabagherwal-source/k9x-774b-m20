@@ -995,8 +995,8 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V3",
     "sourceVersion": "hf-deepseek-ai-deepseek-v3",
     "license": "Open-Source",
-    "contentHash": "776b78ea8cc89c29e528318122b07c783c98fe5747e265ba4bda41757d454d19",
-    "lastHarvestedAt": "2026-10-18T03:12:11.120Z",
+    "contentHash": "c17a3552891323bf83ddde1b1c0f6ee3985191c613915f8005fd7d3ed2fe3ba7",
+    "lastHarvestedAt": "2026-10-19T12:20:13.987Z",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v3"
   },
   "hf-baidu-unlimited-ocr": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "7453abcc",
+    "sourceVersion": "9d3b1ffd",
     "license": "NOASSERTION",
-    "contentHash": "030cda2c79e2b7281bb271cc600dc1eab35b72d6e8a524fb37e9228840681698",
-    "lastHarvestedAt": "2026-10-19T11:55:00.441Z",
+    "contentHash": "61e0fa41c78b6eb84e2f8eaaad06af6a3ec421f0028dcf1ee601da634712cac3",
+    "lastHarvestedAt": "2026-10-19T12:20:29.098Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -7978,5 +7978,15 @@
     "contentHash": "932dc95cbcda5c7c4de352f8edcfa293a2f06af084ce1c214dcda2dec1da7c43",
     "lastHarvestedAt": "2026-10-19T12:14:03.446Z",
     "learningId": "learn-github-juanpe-about-swiftui"
+  },
+  "dimillian-icecubesapp": {
+    "repository": "Dimillian/IceCubesApp",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Dimillian/IceCubesApp",
+    "sourceVersion": "98098b9c",
+    "license": "AGPL-3.0",
+    "contentHash": "915b744f052f2855b470bc62c121f84c4bef65cd8a0c5b8c1bc6e861d069326d",
+    "lastHarvestedAt": "2026-10-19T12:20:19.291Z",
+    "learningId": "learn-github-dimillian-icecubesapp"
   }
 }

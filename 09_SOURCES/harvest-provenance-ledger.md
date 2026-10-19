@@ -3233,3 +3233,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-datalab-to-indra-ocr` | `https://huggingface.co/datalab-to/indra-ocr` | `hf-datalab` | Multi-dimensional audit evidence | 2026-10-19T12:13:58.601Z |
 | `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `4cb42676` | Multi-dimensional audit evidence | 2026-10-19T12:13:58.794Z |
 | `learn-github-juanpe-about-swiftui` | `https://github.com/Juanpe/About-SwiftUI` | `59a740fc` | Multi-dimensional audit evidence | 2026-10-19T12:14:03.446Z |
+| `learn-huggingface-deepseek-ai-deepseek-v3` | `https://huggingface.co/deepseek-ai/DeepSeek-V3` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-19T12:20:13.987Z |
+| `learn-github-dimillian-icecubesapp` | `https://github.com/Dimillian/IceCubesApp` | `98098b9c` | Multi-dimensional audit evidence | 2026-10-19T12:20:19.291Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `9d3b1ffd` | Multi-dimensional audit evidence | 2026-10-19T12:20:29.098Z |

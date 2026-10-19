@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T12:14:03.452Z",
+  "last_updated": "2026-10-19T12:20:29.106Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1309,14 +1309,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-v3",
-      "content_hash": "776b78ea8cc89c29e528318122b07c783c98fe5747e265ba4bda41757d454d19",
-      "verified_at": "2026-10-18T03:12:11.123Z",
+      "content_hash": "c17a3552891323bf83ddde1b1c0f6ee3985191c613915f8005fd7d3ed2fe3ba7",
+      "verified_at": "2026-10-19T12:20:13.993Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T03:12:11.123Z"
+      "last_updated": "2026-10-19T12:20:13.993Z"
     },
     "baidu/Unlimited-OCR": {
       "repository": "baidu/Unlimited-OCR",
@@ -3679,14 +3679,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "030cda2c79e2b7281bb271cc600dc1eab35b72d6e8a524fb37e9228840681698",
-      "verified_at": "2026-10-19T11:55:00.448Z",
+      "content_hash": "61e0fa41c78b6eb84e2f8eaaad06af6a3ec421f0028dcf1ee601da634712cac3",
+      "verified_at": "2026-10-19T12:20:29.106Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T11:55:00.448Z"
+      "last_updated": "2026-10-19T12:20:29.106Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -11997,6 +11997,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T12:14:03.452Z"
+    },
+    "Dimillian/IceCubesApp": {
+      "repository": "Dimillian/IceCubesApp",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-dimillian-icecubesapp",
+      "content_hash": "915b744f052f2855b470bc62c121f84c4bef65cd8a0c5b8c1bc6e861d069326d",
+      "verified_at": "2026-10-19T12:20:19.297Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T12:20:19.297Z"
     }
   },
   "repos": {

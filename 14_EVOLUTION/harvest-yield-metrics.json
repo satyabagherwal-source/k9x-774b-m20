@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T12:14:03.449Z",
-  "total_cycles_completed": 3203,
-  "total_learnings_persisted": 3203,
-  "total_rules_promoted": 2359,
+  "last_updated": "2026-10-19T12:20:29.103Z",
+  "total_cycles_completed": 3206,
+  "total_learnings_persisted": 3206,
+  "total_rules_promoted": 2360,
   "history": [
-    {
-      "timestamp": "2026-10-19T06:44:55.411Z",
-      "repository": "kotest/kotest",
-      "learningId": "learn-github-kotest-kotest",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T06:44:58.774Z",
-      "repository": "projectcontour/contour",
-      "learningId": "learn-github-projectcontour-contour",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T06:45:02.556Z",
-      "repository": "topoteretes/cognee",
-      "learningId": "learn-github-topoteretes-cognee",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T06:52:02.743Z",
       "repository": "radix-ui/primitives",
@@ -1403,6 +1382,27 @@
       "repository": "Juanpe/About-SwiftUI",
       "learningId": "learn-github-juanpe-about-swiftui",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T12:20:13.991Z",
+      "repository": "deepseek-ai/DeepSeek-V3",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T12:20:19.294Z",
+      "repository": "Dimillian/IceCubesApp",
+      "learningId": "learn-github-dimillian-icecubesapp",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T12:20:29.103Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

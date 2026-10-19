@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T12:14:03.401Z",
-  "total_verified_learnings": 812,
+  "last_updated": "2026-10-19T12:20:29.041Z",
+  "total_verified_learnings": 813,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -6359,8 +6359,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "7453abcc",
-      "content_hash": "030cda2c79e2b7281bb271cc600dc1eab35b72d6e8a524fb37e9228840681698",
+      "source_version": "9d3b1ffd",
+      "content_hash": "61e0fa41c78b6eb84e2f8eaaad06af6a3ec421f0028dcf1ee601da634712cac3",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -6415,7 +6415,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T11:55:00.383Z",
+      "verified_at": "2026-10-19T12:20:29.028Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -6923,22 +6923,35 @@
     "learn-github-dimillian-icecubesapp": {
       "learning_id": "learn-github-dimillian-icecubesapp",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "dimillian-icecubesapp",
+      "source": "Dimillian/IceCubesApp",
+      "repository": "Dimillian/IceCubesApp",
       "slug": "dimillian-icecubesapp",
       "platform": "github",
       "source_url": "https://github.com/Dimillian/IceCubesApp",
-      "source_version": "HEAD",
-      "content_hash": "a8c4bbb106700228ec4b7840ae80a21a9f5552d3d8e21a3f22b32aff893b40f7",
+      "source_version": "98098b9c",
+      "content_hash": "915b744f052f2855b470bc62c121f84c4bef65cd8a0c5b8c1bc6e861d069326d",
       "dossier_path": "07_PROJECT_LEARNING/dimillian-icecubesapp-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dimillian-icecubesapp-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2571,
+          "title": "prevent composer rotation crash (#2473)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.623Z"
+      "verified_at": "2026-10-19T12:20:19.219Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-dimillian-redditos": {
       "learning_id": "learn-github-dimillian-redditos",
@@ -16457,7 +16470,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V3",
       "source_version": "hf-deepseek-ai-deepseek-v3",
-      "content_hash": "776b78ea8cc89c29e528318122b07c783c98fe5747e265ba4bda41757d454d19",
+      "content_hash": "c17a3552891323bf83ddde1b1c0f6ee3985191c613915f8005fd7d3ed2fe3ba7",
       "dossier_path": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3-learnings.md",
       "promoted_rules": [],
@@ -16478,7 +16491,7 @@
         "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv3x3khf",
         "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv4btd7d"
       ],
-      "verified_at": "2026-10-18T03:12:11.079Z",
+      "verified_at": "2026-10-19T12:20:13.935Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -86940,6 +86953,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T12:14:03.390Z"
+    },
+    "rule-2571": {
+      "learning_id": "rule-2571",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2571,
+      "title": "prevent composer rotation crash (#2473)",
+      "source_url": "https://github.com/Dimillian/IceCubesApp",
+      "source_version": "98098b9c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T12:20:19.219Z"
     }
   },
   "aliases": {

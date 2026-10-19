@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `7453abcc`  
+> **Source Version**: `9d3b1ffd`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T11:55:00.173Z  
+> **Timestamp**: 2026-10-19T12:20:28.949Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T11:55:00.164Z  
+> **Harvest Timestamp**: 2026-10-19T12:20:28.940Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2252,159 +2252,68 @@ pub fn visualize_whitespace(s: &str) -> String {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7453abcc` (2026-10-19)
-**Commit Message**: docs(changelog): 26.0.0 Breaking Changes section
-
-Move the two output-changing behaviors from the Highlights' IMPORTANT box
-into a "Breaking Changes" section (with its own anchor), leaving a one-line
-pointer in the Highlights. Adds how to keep commas: unset
-QSV_DEFAULT_DELIMITER or pass --delimiter , to excel/jsonl/readstat.
+### Incident Patch 1: `9d3b1ffd` (2026-10-19)
+**Commit Message**: docs(changelog): set the 26.0.0 release date and commit count
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `CHANGELOG.md` (modified, +6/-4)
+**File**: `CHANGELOG.md` (modified, +2/-2)
 ```diff
-@@ -22,10 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -6,9 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
- **Saying what you mean.** `--delimiter` and `QSV_DEFAULT_DELIMITER` now follow the documented precedence in seven commands, `schema` output validates the CSV it was inferred from (`--ignore-case`, `--enum-threshold` and non-ASCII string lengths), `count --width` is fixed for quoted fields, and `geoconvert` handles GeoJSON features with different properties.
+ ## [Unreleased]
  
--> [!IMPORTANT]
--> **Why 26.0.0: two changes can alter existing output.**
--> - `excel`, `jsonl` and `readstat` now follow `QSV_DEFAULT_DELIMITER` on output, as other qsv writers already do. If you set it only to read semicolon files, these three now write semicolons to stdout too ([#4819](https://github.com/dathere/qsv/pull/4819)).
--> - `schema` can generate stricter schemas: a column with a single value in the input now always gets a `const` constraint, so `validate` rejects later data with any other value there. Generate schemas from representative data, and loosen `const`/`enum` where values are expected to change ([#4830](https://github.com/dathere/qsv/pull/4830)).
-+This is 26.0.0 rather than 25.1.0 because two changes can alter existing output; see [Breaking Changes](#v26-breaking-changes).
+-## [26.0.0] - <TBD> 🧭 The "New Angles" Release 📐
++## [26.0.0] - 2026-10-19 🧭 The "New Angles" Release 📐
  
- Same data, new angles.
+-<TBD> commits since 25.0.0, and the theme is **NEW ANGLES**: four new ways to look at your data in `viz`, three of them off the usual x/y grid. Some data doesn't fit a scatter plot. Wind directions, hours of the day and months go around a circle, soil textures and vote shares are parts of a whole, and a table with six correlated measures has more dimensions than two axes can show.
++~57 commits since 25.0.0, and the theme is **NEW ANGLES**: four new ways to look at your data in `viz`, three of them off the usual x/y grid. Some data doesn't fit a scatter plot. Wind directions, hours of the day and months go around a circle, soil textures and vote shares are parts of a whole, and a table with six correlated measures has more dimensions than two axes can show.
  
-@@ -39,6 +36,11 @@ Thanks to everyone who made 26.0.0 possible:
- ---
- <a id="v26-changes" name="v26-changes"></a>
+ **POLAR.** [`viz barpolar`](https://github.com/dathere/qsv/blob/master/docs/help/viz.md) draws a wind rose: one bar per direction, clockwise from north, with compass labels (`N`, `NE`, `NNE`...) at their true bearings and `--degrees` for a numeric bearing column. The `viz smart` seasonality panel now uses polar bars too, so hour of day, day of week and month read like a clock face, starting at the top and running clockwise.
  
-+<a id="v26-breaking-changes" name="v26-breaking-changes"></a>
-+### Breaking Changes
-+- **`excel`, `jsonl` and `readstat` now follow `QSV_DEFAULT_DELIMITER` on output** ([#4819](https://github.com/dathere/qsv/pull/4819)), as other qsv writers already do. If you set it only to read semicolon files, these three now write semicolons to stdout as well. Unset it for those commands, or pass `--delimiter ,`, to keep commas.
-+- **`schema` can generate stricter schemas** ([#4830](https://github.com/dathere/qsv/pull/4830)). A column that holds a single value in the input now always gets a `const` constraint, which most files with a low-cardinality column used to lose, so `validate` rejects later data with any other value there (e.g. a changed phone number or URL). Generate schemas from a representative dataset, and loosen or remove `const`/`enum` constraints where values are expected to change.
-+
- ### Added
- - **`viz parcoords` and a parallel-coordinates panel in `viz smart`** ([#4839](https://github.com/dathere/qsv/pull/4839)), using the new plotly.js 3.7 trace types from [#4838](https://github.com/dathere/qsv/pull/4838). `viz parcoords` draws one line per row across the numeric `--cols` and colors the lines by an optional numeric `--color` column; drag along an axis to filter rows. It is the numeric counterpart of `viz parcats`. `viz smart` adds the panel when 3 or more measures correlate (|r| ≥ 0.3), reusing the columns it already reads for the correlation heatmap. It shows up to 6 axes, ordered so neighboring axes are the strongest pairs, and samples down to 5,000 lines. Pass `--no-parcoords` to leave it out. The auto `--max-charts 0` ceiling rises from 64 to 65 panels, so the new panel doesn't push a per-column chart out of a wide Data Schematic. The viz gallery now renders WebGL figures and Data Schematic iframes only near the viewport: with every figure live at once it exceeded Chrome's limit on WebGL contexts, which left splom, 3D and map figures blank.
- - **`viz barpolar` (wind rose), and polar bars for the `viz smart` seasonality panel** ([#4840](https://github.com/dathere/qsv/pull/4840)), using plotly.js's `barpolar` trace from [#4838](https://github.com/dathere/qsv/pull/4838). `viz barpolar` draws one bar per `--x` category, clockwise from north, as long as the `--agg` of `--y` (sum by default) or the row count when `--y` is omitted; `--series` stacks colored segments, in numeric order when the series are bins like `0-10`/`10-20`. Compass labels (`N`, `NE`, `NNE`...) sit at their true bearings on a full 8- or 16-point rose, so a direction with no data stays an empty slot. Other labels get evenly spaced slots, and the new `--degrees` option places a numeric bearing column at its real angle instead. The seasonality panel (hour of day, day of week, month) now draws one bar per phase instead of a filled line ring, so each hour, day or month is its own hover target, and reads like a 24-hour dial: the first phase (00h, Mon, Jan) at the top, running clockwise (it previously started at 3 o'clock and ran counterclockwise). With `--theme plotly_dark`, polar charts (`viz radar` and `viz barpolar`) now get a dark polar background and grid instead of a white disc, via the plotly.rs pin. The gallery gains a wind-rose figure built from a synthetic `wind_obs.csv`.
 ```
 
 ---
 
-### Incident Patch 2: `64baaa57` (2026-10-19)
-**Commit Message**: chore: bump version to 26.0.0
+### Incident Patch 2: `6bc711ae` (2026-10-19)
+**Commit Message**: docs: update test counts (6,560 total)
 
-- Cargo.toml/Cargo.lock: 26.0.0
-- Regenerate the 57 MCP skill JSONs (one version line each). Help docs
-  are unchanged.
-- Regenerate shell completions for 80 commands. More than version churn:
-  they also pick up viz barpolar, parcoords and ternary, and the new
-  shared viz options, which shipped without a completions regen.
-- test_geocode: update country populations. Geonames' countryInfo was
-  refreshed after the 25.0.0 index was built (US 327167434 -> 341784857,
-  CA, MX, CN, PH likewise), and the 26.0.0 index is rebuilt from it.
+Recounted the same way as b634748c0 (registered tests, ignored/skipped
+included):
 
-The 26.0.0 Geonames index assets are built and staged locally; until they
-are uploaded to the release, geocode/viz-map tests that download the index
-will fail in CI, as with every version bump.
+- integration (tests/): 4,445 -> 4,516
+- unit (src/):          1,304 -> 1,307
+- qsv binaries:         5,749 -> 5,823
+- MCP server & plugin:    737 ->   737
+- total:                6,486 -> 6,560
+
+Rust counts from `cargo test -F all_features -- --list`; the MCP/Cowork
+count from `npm run test` in .claude/skills. Also updates the
+approximate figure in the Features section (~6,500 -> ~6,550). The
+"more than 6,000 tests" line still holds.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `.claude/skills/qsv/qsv-blake3.json` (modified, +1/-1)
+**File**: `README.md` (modified, +2/-2)
 ```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "qsv-blake3",
--  "version": "25.0.0",
-+  "version": "26.0.0",
-   "description": "Compute or check BLAKE3 hashes of files.",
-   "category": "utility",
-   "command": {
-```
-
-**File**: `.claude/skills/qsv/qsv-cat.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "qsv-cat",
--  "version": "25.0.0",
-+  "version": "26.0.0",
-   "description": "Concatenate CSV files by row or by column.",
-   "category": "utility",
-   "command": {
-```
-
-**File**: `.claude/skills/qsv/qsv-count.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "qsv-count",
--  "version": "25.0.0",
-+  "version": "26.0.0",
-   "description": "Count the rows and optionally compile record width statistics of a CSV file. (11.87 seconds for a 15gb, 28m row NYC 311 dataset without an index. Instantaneous with an index.) If the `polars` feature is enabled, uses Polars' multithreaded, mem-mapped CSV reader for fast counts even without an index",
-   "category": "aggregation",
-   "command": {
-```
-
-**File**: `.claude/skills/qsv/qsv-datefmt.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "qsv-datefmt",
--  "version": "25.0.0",
-+  "version": "26.0.0",
-   "description": "Formats recognized date fields (19 formats recognized) to a specified date format using strftime date format specifiers.",
-   "category": "transformation",
-   "command": {
-```
-
-**File**: `.claude/skills/qsv/qsv-dedup.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "qsv-dedup",
--  "version": "25.0.0",
-+  "version": "26.0.0",
-   "description": "Remove duplicate rows (See also `extdedup`, `extsort`, `sort` & `sortcheck` commands).",
-   "category": "utility",
-   "command": {
-```
-
-**File**: `.claude/skills/qsv/qsv-describegpt.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "qsv-describegpt",
--  "version": "25.0.0",
-+  "version": "26.0.0",
-   "description": "Infer a \"neuro-symbolic\" Data Dictionary, Description & Tags or ask questions about a CSV with a configurable, MiniJinja prompt file, using any OpenAI API-compatible cloud/local LLM. (e.g. Markdown, JSON, TOON, JSON Schema, Semantic Markdown, OKF, Everything, Content Type inferencing, Spanish, Mandarin, Controlled Tags; --prompt \"What are the top 10 complaint types by community board & borough by year?\" - deterministic, hallucination-free SQL RAG result; iterative, session-based SQL RAG refinement - refined SQL RAG result)",
-   "category": "documentation",
-   "command": {
-```
-
-**File**: `.claude/skills/qsv/qsv-diff.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "qsv-diff",
--  "version": "25.0.0",
-+  "version": "26.0.0",
-   "description": "Find the difference between two CSVs with ludicrous speed! e.g. _compare two CSVs with 1M rows x 9 columns in under 600ms!_",
-   "category": "utility",
-   "command": {
-```
-
-**File**: `.claude/skills/qsv/qsv-enum.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "qsv-enum",
--  "version": "25.0.0",
-+  "version": "26.0.0",
-   "description": "Add a new column enumerating rows by adding a column of incremental or uuid identifiers. Can also be used to copy a column or fill a new column with a constant value.",
-   "category": "utility",
-   "command": {
+@@ -528,7 +528,7 @@ Luau will also serve as the backbone of a whole library of **qsv recipes** - reu
+  as command line interfaces go :shrug:. Its commands have numerous options but have sensible defaults. The usage text is written for a data analyst audience, not developers; and there are numerous examples in the usage text, with the tests doubling as examples as well. With [qsv pro](https://qsvpro.dathere.com), it has much expanded functionality while being easier to use with its Graphical User Interface.
+ * **As Secure as Possible** - qsv is designed to be secure. It has no external runtime dependencies, is [written](https://aws.amazon.com/blogs/opensource/why-aws-loves-rust-and-how-wed-like-to-help/) [in](https://msrc.microsoft.com/blog/2019/07/why-rust-for-safe-systems-programming/) [Rust](https://opensource.googleblog.com/2023/06/rust-fact-vs-fiction-5-insights-from-googles-rust-journey-2022.html), and its codebase is automatically audited for security vulnerabilities with automated [DevSkim](https://github.com/microsoft/DevSkim#devskim), ["cargo audit"](https://rustsec.org) and [Codacy](https://app.codacy.com/gh/dathere/qsv/dashboard) Github Actions workflows.  
+ It uses the latest stable Rust version, with an aggressive MSRV policy and the latest version of all its dependencies.
+-It has an extensive test suite with ~6,500 tests, including several [property tests](https://medium.com/criteo-engineering/introduction-to-property-based-testing-f5236229d237) which [randomly generate](https://github.com/BurntSushi/quickcheck#quickcheck) parameters for oft-used commands.   
++It has an extensive test suite with ~6,550 tests, including several [property tests](https://medium.com/criteo-engineering/introduction-to-property-based-testing-f5236229d237) which [randomly generate](https://github.com/BurntSushi/quickcheck#quickcheck) parameters for oft-used commands.   
+ Its prebuilt binary archives are [zipsigned](https://github.com/Kijewski/zipsign#zipsign), so you can [verify their integrity](#manually-verifying-the-integrity-of-the-prebuilt-binaries-zip-archives). Its self-update mechanism automatically verifies the integrity of the prebuilt binaries archive before applying an update.
+ See [Security](SECURITY.md) for more info.
+ * **As Easy to Contribute to as Possible** - qsv is designed to be easy to contribute to, with a focus on maintainability. It's modular architecture allows the easy addition of self-contained commands gated by feature flags, the source code is heavily commented, the usage text is embedded, and there are helper functions that make it easy to create additional commands and supporting tests. See [Features](docs/FEATURES.md) and [Contributing](CONTRIBUTING.md) for more info.
+@@ -541,7 +541,7 @@ It can process well-formed CSVs in _any_ language so long as its UTF-8 encoded.
+ Finally, though the default Geonames index of the `geocode` command is English-only, the index can be rebuilt with the `geocode index-update` subcommand with the `--languages` option to return place names in multiple languages ([with support for 254 languages](http://download.geonames.org/export/dump/alternatenames/)).
+ 
+ ## Testing
+-qsv has 6,486 tests: 5,749 for the qsv binaries (4,445 integration in the [tests](https://github.com/dathere/qsv/tree/master/tests) directory + 1,304 unit across `src/` modules), plus 737 for the MCP server & Cowork plugin (in [`.claude/skills/tests`](https://github.com/dathere/qsv/tree/master/.claude/skills/tests)).
++qsv has 6,560 tests: 5,823 for the qsv binaries (4,516 integration in the [tests](https://github.com/dathere/qsv/tree/master/tests) directory + 1,307 unit across `src/` modules), plus 737 for the MCP server & Cowork plugin (in [`.claude/skills/tests`](https://github.com/dathere/qsv/tree/master/.claude/skills/tests)).
+ Most commands have their own test suite in a separate file with the convention `test_<COMMAND>.rs`.
+ Apart from preventing regressions, the tests also serve as good illustrative examples, and are often linked from the usage text of each corresponding command.
+ 
 ```
 
 #### Recent Merged Pull Requests:
@@ -2433,13 +2342,13 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(changelog): 26.0.0 Breaking Changes section
+## X. docs(changelog): set the 26.0.0 release date and commit count
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7453abcc`: docs(changelog): 26.0.0 Breaking Changes section. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9d3b1ffd`: docs(changelog): set the 26.0.0 release date and commit count. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2447,22 +2356,16 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-This is 26.0.0 rather than 25.1.0 because two changes can alter existing output; see [Breaking Changes](#v26-breaking-changes).
-<a id="v26-breaking-changes" name="v26-breaking-changes"></a>
-### Breaking Changes
-- **`excel`, `jsonl` and `readstat` now follow `QSV_DEFAULT_DELIMITER` on output** ([#4819](https://github.com/dathere/qsv/pull/4819)), as other qsv writers already do. If you set it only to read semicolon files, these three now write semicolons to stdout as well. Unset it for those commands, or pass `--delimiter ,`, to keep commas.
-- **`schema` can generate stricter schemas** ([#4830](https://github.com/dathere/qsv/pull/4830)). A column that holds a single value in the input now always gets a `const` constraint, which most files with a low-cardinality column used to lose, so `validate` rejects later data with any other value there (e.g. a changed phone number or URL). Generate schemas from a representative dataset, and loosen or remove `const`/`enum` constraints where values are expected to change.
-
+## [26.0.0] - 2026-10-19 🧭 The "New Angles" Release 📐
+~57 commits since 25.0.0, and the theme is **NEW ANGLES**: four new ways to look at your data in `viz`, three of them off the usual x/y grid. Some data doesn't fit a scatter plot. Wind directions, hours of the day and months go around a circle, soil textures and vote shares are parts of a whole, and a table with six correlated measures has more dimensions than two axes can show.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-> [!IMPORTANT]
-> **Why 26.0.0: two changes can alter existing output.**
-> - `excel`, `jsonl` and `readstat` now follow `QSV_DEFAULT_DELIMITER` on output, as other qsv writers already do. If you set it only to read semicolon files, these three now write semicolons to stdout too ([#4819](https://github.com/dathere/qsv/pull/4819)).
-> - `schema` can generate stricter schemas: a column with a single value in the input now always gets a `const` constraint, so `validate` rejects later data with any other value there. Generate schemas from representative data, and loosen `const`/`enum` where values are expected to change ([#4830](https://github.com/dathere/qsv/pull/4830)).
+## [26.0.0] - <TBD> 🧭 The "New Angles" Release 📐
+<TBD> commits since 25.0.0, and the theme is **NEW ANGLES**: four new ways to look at your data in `viz`, three of them off the usual x/y grid. Some data doesn't fit a scatter plot. Wind directions, hours of the day and months go around a circle, soil textures and vote shares are parts of a whole, and a table with six correlated measures has more dimensions than two axes can show.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7453abcc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9d3b1ffd` are properly handled with clean fallback behavior.

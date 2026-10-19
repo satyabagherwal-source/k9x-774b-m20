@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T11:35:20.725Z",
+  "last_updated": "2026-10-19T12:20:29.102Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1817,6 +1817,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Generic header title rejected",
       "learning_id": "learn-github-lioensky-vcptoolbox"
+    },
+    {
+      "id": "CD-2XPQ",
+      "directive_title": "docs(changelog): set the 26.0.0 release date and commit count",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "dathere/qsv",
+      "source_commit": "9d3b1ffd",
+      "date_staged": "2026-10-19",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-dathere-qsv"
     }
   ]
 }
