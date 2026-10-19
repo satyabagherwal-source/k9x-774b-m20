@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T23:09:28.543Z",
+  "last_updated": "2026-10-19T23:40:55.448Z",
   "directives": [
     {
       "id": "CD-001",
@@ -2004,6 +2004,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Rule title references repository-specific PR/issue rather than a universal engineering principle",
       "learning_id": "learn-github-paololeonardi-waterfallgrid"
+    },
+    {
+      "id": "CD-DZIW",
+      "directive_title": "Empirical Invariant Guard in project.pbxproj",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "ming1016/SwiftPamphletApp",
+      "source_commit": "0d07d106",
+      "date_staged": "2026-10-19",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-github-ming1016-swiftpamphletapp"
     }
   ]
 }

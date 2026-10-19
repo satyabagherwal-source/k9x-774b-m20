@@ -3571,3 +3571,6 @@ Every entry in this ledger must capture:
 | `learn-github-agent-of-empires-agent-of-empires` | `https://github.com/agent-of-empires/agent-of-empires` | `2ba93cd0` | Multi-dimensional audit evidence | 2026-10-19T23:34:37.405Z |
 | `learn-github-syntax-tree-hast-util-to-html` | `https://github.com/syntax-tree/hast-util-to-html` | `d115f5be` | Multi-dimensional audit evidence | 2026-10-19T23:34:38.160Z |
 | `learn-github-stikdebug-stikdebug` | `https://github.com/StikDebug/StikDebug` | `17b1e1d9` | Multi-dimensional audit evidence | 2026-10-19T23:34:40.124Z |
+| `learn-github-pamburus-hl` | `https://github.com/pamburus/hl` | `737b0ddb` | Multi-dimensional audit evidence | 2026-10-19T23:40:50.832Z |
+| `learn-github-remarkjs-remark` | `https://github.com/remarkjs/remark` | `1146b3a2` | Multi-dimensional audit evidence | 2026-10-19T23:40:53.405Z |
+| `learn-github-ming1016-swiftpamphletapp` | `https://github.com/ming1016/SwiftPamphletApp` | `0d07d106` | Multi-dimensional audit evidence | 2026-10-19T23:40:55.444Z |

@@ -7473,10 +7473,10 @@
     "repository": "pamburus/hl",
     "platform": "github",
     "sourceUrl": "https://github.com/pamburus/hl",
-    "sourceVersion": "5270fb3f",
+    "sourceVersion": "737b0ddb",
     "license": "MIT",
-    "contentHash": "2085203b1fbbb0687efeb1d46cf1f9a37150fa59e1fc3ad1b2ea515f40747ca9",
-    "lastHarvestedAt": "2026-10-19T09:12:43.272Z",
+    "contentHash": "3c3723f2ce83232eacd043aa40864647a4cccb636ef7d4bcdab8c07db6ce674a",
+    "lastHarvestedAt": "2026-10-19T23:40:50.832Z",
     "learningId": "learn-github-pamburus-hl"
   },
   "linkwarden-linkwarden": {
@@ -9508,5 +9508,25 @@
     "contentHash": "dd923dd2d384a06867daaa7b028265a15c2aeca5998a8493ed8bfe6c69c301a2",
     "lastHarvestedAt": "2026-10-19T23:34:40.124Z",
     "learningId": "learn-github-stikdebug-stikdebug"
+  },
+  "remarkjs-remark": {
+    "repository": "remarkjs/remark",
+    "platform": "github",
+    "sourceUrl": "https://github.com/remarkjs/remark",
+    "sourceVersion": "1146b3a2",
+    "license": "MIT",
+    "contentHash": "b11d95ba1a1918ac2d8c5d206585072bd036ec5884c0a653827c7935be97711a",
+    "lastHarvestedAt": "2026-10-19T23:40:53.405Z",
+    "learningId": "learn-github-remarkjs-remark"
+  },
+  "ming1016-swiftpamphletapp": {
+    "repository": "ming1016/SwiftPamphletApp",
+    "platform": "github",
+    "sourceUrl": "https://github.com/ming1016/SwiftPamphletApp",
+    "sourceVersion": "0d07d106",
+    "license": "MIT",
+    "contentHash": "97cb1b1716bd8e2eb05ea7b431eb3798d99978e1a1136083efa37dab230b7fb9",
+    "lastHarvestedAt": "2026-10-19T23:40:55.444Z",
+    "learningId": "learn-github-ming1016-swiftpamphletapp"
   }
 }

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T23:34:40.078Z",
-  "total_verified_learnings": 966,
+  "last_updated": "2026-10-19T23:40:55.405Z",
+  "total_verified_learnings": 968,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -31155,22 +31155,29 @@
     "learn-github-ming1016-swiftpamphletapp": {
       "learning_id": "learn-github-ming1016-swiftpamphletapp",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "ming1016-swiftpamphletapp",
+      "source": "ming1016/SwiftPamphletApp",
+      "repository": "ming1016/SwiftPamphletApp",
       "slug": "ming1016-swiftpamphletapp",
       "platform": "github",
       "source_url": "https://github.com/ming1016/SwiftPamphletApp",
-      "source_version": "HEAD",
-      "content_hash": "be60a58b77ba0fc08b66a72eb4d712911c6b4f531dfdc9e86842cdc5b7fbded6",
+      "source_version": "0d07d106",
+      "content_hash": "97cb1b1716bd8e2eb05ea7b431eb3798d99978e1a1136083efa37dab230b7fb9",
       "dossier_path": "07_PROJECT_LEARNING/ming1016-swiftpamphletapp-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ming1016-swiftpamphletapp-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.372Z"
+      "verified_at": "2026-10-19T23:40:55.394Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-minishlab-semble": {
       "learning_id": "learn-github-minishlab-semble",
@@ -35008,14 +35015,19 @@
       "slug": "pamburus-hl",
       "platform": "github",
       "source_url": "https://github.com/pamburus/hl",
-      "source_version": "5270fb3f",
-      "content_hash": "2085203b1fbbb0687efeb1d46cf1f9a37150fa59e1fc3ad1b2ea515f40747ca9",
+      "source_version": "737b0ddb",
+      "content_hash": "3c3723f2ce83232eacd043aa40864647a4cccb636ef7d4bcdab8c07db6ce674a",
       "dossier_path": "07_PROJECT_LEARNING/pamburus-hl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pamburus-hl-learnings.md",
       "promoted_rules": [
         {
           "number": 2458,
           "title": "build(deps): bump github/codeql-action/init from 4.38.3 to 4.39.0 (#1593)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2897,
+          "title": "build(cross): link aarch64 musl without the noisy linker wrapper (#1601)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -35024,7 +35036,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T09:12:43.240Z",
+      "verified_at": "2026-10-19T23:40:50.783Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -57805,20 +57817,35 @@
     "learn-github-remarkjs-remark": {
       "learning_id": "learn-github-remarkjs-remark",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "remarkjs/remark",
       "repository": "remarkjs/remark",
       "slug": "remarkjs-remark",
       "platform": "github",
       "source_url": "https://github.com/remarkjs/remark",
-      "source_version": "main",
-      "content_hash": "6fc549bb9b1090795cb493b50a63ae991a48fac81f7e5afe218b251222f15f4c",
+      "source_version": "1146b3a2",
+      "content_hash": "b11d95ba1a1918ac2d8c5d206585072bd036ec5884c0a653827c7935be97711a",
       "dossier_path": "07_PROJECT_LEARNING/remarkjs-remark-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/remarkjs-remark-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2898,
+          "title": "Add paragraph on security",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T23:40:53.357Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-wooorm-parse-entities": {
       "learning_id": "learn-github-wooorm-parse-entities",
@@ -94608,6 +94635,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T23:34:40.067Z"
+    },
+    "rule-2897": {
+      "learning_id": "rule-2897",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2897,
+      "title": "build(cross): link aarch64 musl without the noisy linker wrapper (#1601)",
+      "source_url": "https://github.com/pamburus/hl",
+      "source_version": "737b0ddb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T23:40:50.783Z"
+    },
+    "rule-2898": {
+      "learning_id": "rule-2898",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2898,
+      "title": "Add paragraph on security",
+      "source_url": "https://github.com/remarkjs/remark",
+      "source_version": "1146b3a2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T23:40:53.357Z"
     }
   },
   "aliases": {

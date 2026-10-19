@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-G7V6",
-    "timestamp": "2026-10-19T07:50:52.626Z",
-    "repository": "Cloudflare/clef-flash",
-    "learningId": "learn-huggingface-cloudflare-clef-flash",
-    "contentHash": "8367edcc3251fc150bcd1bdff5ce687932f1d0510186b1d4edea061e39d22f00",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-GP0I",
-    "timestamp": "2026-10-19T07:51:14.850Z",
-    "repository": "arxanas/git-branchless",
-    "learningId": "learn-github-arxanas-git-branchless",
-    "contentHash": "f102e100c0b5a7d160c416f00e0eeee7515076a7cbab8cf1ceb904a8e69720d7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-GZ56",
-    "timestamp": "2026-10-19T07:51:27.978Z",
-    "repository": "pingcap/tidb",
-    "learningId": "learn-github-pingcap-tidb",
-    "contentHash": "d831b0e7e24cbc9dc01a29fd40dc3c8bd8ad882239b2f6455bd7c8f9ce1b0cbd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-H7WT",
     "timestamp": "2026-10-19T07:51:39.341Z",
     "repository": "neondatabase/neon",
@@ -7492,6 +7447,51 @@
     "contentHash": "dd923dd2d384a06867daaa7b028265a15c2aeca5998a8493ed8bfe6c69c301a2",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-DVYM",
+    "timestamp": "2026-10-19T23:40:50.830Z",
+    "repository": "pamburus/hl",
+    "learningId": "learn-github-pamburus-hl",
+    "contentHash": "3c3723f2ce83232eacd043aa40864647a4cccb636ef7d4bcdab8c07db6ce674a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-DXY2",
+    "timestamp": "2026-10-19T23:40:53.402Z",
+    "repository": "remarkjs/remark",
+    "learningId": "learn-github-remarkjs-remark",
+    "contentHash": "b11d95ba1a1918ac2d8c5d206585072bd036ec5884c0a653827c7935be97711a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-DZIP",
+    "timestamp": "2026-10-19T23:40:55.441Z",
+    "repository": "ming1016/SwiftPamphletApp",
+    "learningId": "learn-github-ming1016-swiftpamphletapp",
+    "contentHash": "97cb1b1716bd8e2eb05ea7b431eb3798d99978e1a1136083efa37dab230b7fb9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
