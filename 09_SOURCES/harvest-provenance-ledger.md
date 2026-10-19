@@ -3543,3 +3543,6 @@ Every entry in this ledger must capture:
 | `learn-github-crate-crate` | `https://github.com/crate/crate` | `175689d8` | Multi-dimensional audit evidence | 2026-10-19T22:26:52.453Z |
 | `learn-github-lxml-lxml` | `https://github.com/lxml/lxml` | `584df5c8` | Multi-dimensional audit evidence | 2026-10-19T22:32:57.282Z |
 | `learn-github-mazzzystar-queryable` | `https://github.com/mazzzystar/Queryable` | `b95a05a8` | Multi-dimensional audit evidence | 2026-10-19T22:32:57.915Z |
+| `learn-github-zvec-ai-zvec-grep` | `https://github.com/zvec-ai/zvec-grep` | `a424e0ce` | Multi-dimensional audit evidence | 2026-10-19T22:41:18.150Z |
+| `learn-github-html5lib-html5lib-python` | `https://github.com/html5lib/html5lib-python` | `fd4f032b` | Multi-dimensional audit evidence | 2026-10-19T22:41:20.288Z |
+| `learn-github-relatedcode-progresshud` | `https://github.com/relatedcode/ProgressHUD` | `25471d6e` | Multi-dimensional audit evidence | 2026-10-19T22:42:04.323Z |

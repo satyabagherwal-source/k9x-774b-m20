@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-M1MH",
-    "timestamp": "2026-10-19T06:59:25.241Z",
-    "repository": "topgrade-rs/topgrade",
-    "learningId": "learn-github-topgrade-rs-topgrade",
-    "contentHash": "98d2d92c579c2374b923807ff2b266a326f5814d17c9550edc85aa26491636bb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-M1PP",
-    "timestamp": "2026-10-19T06:59:25.357Z",
-    "repository": "lucide-icons/lucide",
-    "learningId": "learn-github-lucide-icons-lucide",
-    "contentHash": "2582575ee814413b55acb99aa177e672a51f616ce75b2d40fce06e3d50ac227f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-M4FL",
-    "timestamp": "2026-10-19T06:59:28.881Z",
-    "repository": "iconoir-icons/iconoir",
-    "learningId": "learn-github-iconoir-icons-iconoir",
-    "contentHash": "adbbc4cbbe970ebefa35dda7d2d512d509eb59442f352940e8ec5b3ec9651d8c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-M6RV",
     "timestamp": "2026-10-19T06:59:31.915Z",
     "repository": "gardener/gardener",
@@ -7492,6 +7447,51 @@
     "contentHash": "04301fa8710f99a3b7ea63fb6bde5313e991b195125ac7df10bcfc637ecd45b2",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-9B9G",
+    "timestamp": "2026-10-19T22:41:18.148Z",
+    "repository": "zvec-ai/zvec-grep",
+    "learningId": "learn-github-zvec-ai-zvec-grep",
+    "contentHash": "6adc10bf98ce81a01b4516884951b3cc11b23c328a01f721f0dbe3a0e6736b9c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-9CWT",
+    "timestamp": "2026-10-19T22:41:20.285Z",
+    "repository": "html5lib/html5lib-python",
+    "learningId": "learn-github-html5lib-html5lib-python",
+    "contentHash": "519837382e46bef0beebf156a29fc155072734cf00ad49d2827dd5b38b278575",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-AAW1",
+    "timestamp": "2026-10-19T22:42:04.321Z",
+    "repository": "relatedcode/ProgressHUD",
+    "learningId": "learn-github-relatedcode-progresshud",
+    "contentHash": "1c4f1c9463e0939f50342ac1db8041311c0da88e03ccf3ad13cdf517ac463d79",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T22:32:57.857Z",
-  "total_verified_learnings": 948,
+  "last_updated": "2026-10-19T22:42:04.276Z",
+  "total_verified_learnings": 950,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -37220,22 +37220,40 @@
     "learn-github-relatedcode-progresshud": {
       "learning_id": "learn-github-relatedcode-progresshud",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "relatedcode-progresshud",
+      "source": "relatedcode/ProgressHUD",
+      "repository": "relatedcode/ProgressHUD",
       "slug": "relatedcode-progresshud",
       "platform": "github",
       "source_url": "https://github.com/relatedcode/ProgressHUD",
-      "source_version": "HEAD",
-      "content_hash": "a7cd40910ee705e754b4b8c8f248c53c3cd6436b0952a904237e2791bc169562",
+      "source_version": "25471d6e",
+      "content_hash": "1c4f1c9463e0939f50342ac1db8041311c0da88e03ccf3ad13cdf517ac463d79",
       "dossier_path": "07_PROJECT_LEARNING/relatedcode-progresshud-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/relatedcode-progresshud-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2866,
+          "title": "Synchronized Phase-Staggering in Core Animation Groups",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2867,
+          "title": "Privacy Manifest Resource Packaging Isolation",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.250Z"
+      "verified_at": "2026-10-19T22:42:04.262Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-reshaped-ui-reshaped": {
       "learning_id": "learn-github-reshaped-ui-reshaped",
@@ -46525,8 +46543,8 @@
       "slug": "zvec-ai-zvec-grep",
       "platform": "github",
       "source_url": "https://github.com/zvec-ai/zvec-grep",
-      "source_version": "f2256bd3",
-      "content_hash": "06f03d4ace2f43c67abbd9687e095310970a74d4f5d498d8b0951005e0e143c3",
+      "source_version": "a424e0ce",
+      "content_hash": "6adc10bf98ce81a01b4516884951b3cc11b23c328a01f721f0dbe3a0e6736b9c",
       "dossier_path": "07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
       "promoted_rules": [
@@ -46544,6 +46562,21 @@
           "number": 2349,
           "title": "Non-Destructive Invariant Preservation for External Config Schemas",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2860,
+          "title": "Vector Norm Pre-Validation Before Storage Ingestion",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2861,
+          "title": "Strict CLI Exit Code & Readiness State Synchronization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2862,
+          "title": "Boolean Exclusion in Integer Validation Guardrails",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -46551,7 +46584,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T07:59:12.449Z",
+      "verified_at": "2026-10-19T22:41:18.089Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -57233,20 +57266,45 @@
     "learn-github-html5lib-html5lib-python": {
       "learning_id": "learn-github-html5lib-html5lib-python",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "html5lib/html5lib-python",
       "repository": "html5lib/html5lib-python",
       "slug": "html5lib-html5lib-python",
       "platform": "github",
       "source_url": "https://github.com/html5lib/html5lib-python",
-      "source_version": "main",
-      "content_hash": "0e25ff8585451c4981612dcf60dd47bcd3b7524cb9a1f201bd855ed6ad49a528",
+      "source_version": "fd4f032b",
+      "content_hash": "519837382e46bef0beebf156a29fc155072734cf00ad49d2827dd5b38b278575",
       "dossier_path": "07_PROJECT_LEARNING/html5lib-html5lib-python-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/html5lib-html5lib-python-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2863,
+          "title": "Ingestion Buffer Split-Boundary Code-Point Preservation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2864,
+          "title": "Method Dispatch Binding via Descriptors Over Dynamic Attributes",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2865,
+          "title": "Strict Tree-Walker Tag and Attribute String Type Invariance",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T22:41:20.227Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-withfinite-selectolax": {
       "learning_id": "learn-github-withfinite-selectolax",
@@ -93734,6 +93792,118 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T22:32:57.844Z"
+    },
+    "rule-2860": {
+      "learning_id": "rule-2860",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2860,
+      "title": "Vector Norm Pre-Validation Before Storage Ingestion",
+      "source_url": "https://github.com/zvec-ai/zvec-grep",
+      "source_version": "a424e0ce",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T22:41:18.089Z"
+    },
+    "rule-2861": {
+      "learning_id": "rule-2861",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2861,
+      "title": "Strict CLI Exit Code & Readiness State Synchronization",
+      "source_url": "https://github.com/zvec-ai/zvec-grep",
+      "source_version": "a424e0ce",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T22:41:18.089Z"
+    },
+    "rule-2862": {
+      "learning_id": "rule-2862",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2862,
+      "title": "Boolean Exclusion in Integer Validation Guardrails",
+      "source_url": "https://github.com/zvec-ai/zvec-grep",
+      "source_version": "a424e0ce",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T22:41:18.089Z"
+    },
+    "rule-2863": {
+      "learning_id": "rule-2863",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2863,
+      "title": "Ingestion Buffer Split-Boundary Code-Point Preservation",
+      "source_url": "https://github.com/html5lib/html5lib-python",
+      "source_version": "fd4f032b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T22:41:20.227Z"
+    },
+    "rule-2864": {
+      "learning_id": "rule-2864",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2864,
+      "title": "Method Dispatch Binding via Descriptors Over Dynamic Attributes",
+      "source_url": "https://github.com/html5lib/html5lib-python",
+      "source_version": "fd4f032b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T22:41:20.227Z"
+    },
+    "rule-2865": {
+      "learning_id": "rule-2865",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2865,
+      "title": "Strict Tree-Walker Tag and Attribute String Type Invariance",
+      "source_url": "https://github.com/html5lib/html5lib-python",
+      "source_version": "fd4f032b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T22:41:20.227Z"
+    },
+    "rule-2866": {
+      "learning_id": "rule-2866",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2866,
+      "title": "Synchronized Phase-Staggering in Core Animation Groups",
+      "source_url": "https://github.com/relatedcode/ProgressHUD",
+      "source_version": "25471d6e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T22:42:04.262Z"
+    },
+    "rule-2867": {
+      "learning_id": "rule-2867",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2867,
+      "title": "Privacy Manifest Resource Packaging Isolation",
+      "source_url": "https://github.com/relatedcode/ProgressHUD",
+      "source_version": "25471d6e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T22:42:04.262Z"
     }
   },
   "aliases": {

@@ -7133,10 +7133,10 @@
     "repository": "zvec-ai/zvec-grep",
     "platform": "github",
     "sourceUrl": "https://github.com/zvec-ai/zvec-grep",
-    "sourceVersion": "f2256bd3",
+    "sourceVersion": "a424e0ce",
     "license": "Apache-2.0",
-    "contentHash": "06f03d4ace2f43c67abbd9687e095310970a74d4f5d498d8b0951005e0e143c3",
-    "lastHarvestedAt": "2026-10-19T07:59:12.509Z",
+    "contentHash": "6adc10bf98ce81a01b4516884951b3cc11b23c328a01f721f0dbe3a0e6736b9c",
+    "lastHarvestedAt": "2026-10-19T22:41:18.150Z",
     "learningId": "learn-github-zvec-ai-zvec-grep"
   },
   "jetbrains-kotlinconf-app": {
@@ -9328,5 +9328,25 @@
     "contentHash": "04301fa8710f99a3b7ea63fb6bde5313e991b195125ac7df10bcfc637ecd45b2",
     "lastHarvestedAt": "2026-10-19T22:32:57.915Z",
     "learningId": "learn-github-mazzzystar-queryable"
+  },
+  "html5lib-html5lib-python": {
+    "repository": "html5lib/html5lib-python",
+    "platform": "github",
+    "sourceUrl": "https://github.com/html5lib/html5lib-python",
+    "sourceVersion": "fd4f032b",
+    "license": "MIT",
+    "contentHash": "519837382e46bef0beebf156a29fc155072734cf00ad49d2827dd5b38b278575",
+    "lastHarvestedAt": "2026-10-19T22:41:20.288Z",
+    "learningId": "learn-github-html5lib-html5lib-python"
+  },
+  "relatedcode-progresshud": {
+    "repository": "relatedcode/ProgressHUD",
+    "platform": "github",
+    "sourceUrl": "https://github.com/relatedcode/ProgressHUD",
+    "sourceVersion": "25471d6e",
+    "license": "MIT",
+    "contentHash": "1c4f1c9463e0939f50342ac1db8041311c0da88e03ccf3ad13cdf517ac463d79",
+    "lastHarvestedAt": "2026-10-19T22:42:04.323Z",
+    "learningId": "learn-github-relatedcode-progresshud"
   }
 }
