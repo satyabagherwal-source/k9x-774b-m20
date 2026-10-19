@@ -3012,3 +3012,9 @@ Every entry in this ledger must capture:
 | `learn-github-actions-actions-runner-controller` | `https://github.com/actions/actions-runner-controller` | `5aed393a` | Multi-dimensional audit evidence | 2026-10-19T06:19:04.890Z |
 | `learn-github-vectifyai-pageindex` | `https://github.com/VectifyAI/PageIndex` | `50a71b68` | Multi-dimensional audit evidence | 2026-10-19T06:19:09.980Z |
 | `learn-github-epicweb-dev-advanced-react-patterns` | `https://github.com/epicweb-dev/advanced-react-patterns` | `97a16015` | Multi-dimensional audit evidence | 2026-10-19T06:20:19.332Z |
+| `learn-github-dalance-procs` | `https://github.com/dalance/procs` | `16604d07` | Multi-dimensional audit evidence | 2026-10-19T06:26:17.660Z |
+| `learn-github-ionic-team-ionic-framework` | `https://github.com/ionic-team/ionic-framework` | `2e46d429` | Multi-dimensional audit evidence | 2026-10-19T06:26:18.155Z |
+| `learn-huggingface-psrben-visionhope` | `https://huggingface.co/PSRben/VisionHOPE` | `hf-psrben-` | Multi-dimensional audit evidence | 2026-10-19T06:26:21.505Z |
+| `learn-github-lysine-dev-okio` | `https://github.com/lysine-dev/okio` | `c0ac5061` | Multi-dimensional audit evidence | 2026-10-19T06:26:22.896Z |
+| `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `1b0403e3` | Multi-dimensional audit evidence | 2026-10-19T06:26:25.391Z |
+| `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `3fb4f56c` | Multi-dimensional audit evidence | 2026-10-19T06:26:30.642Z |

@@ -595,8 +595,8 @@
     "sourceUrl": "https://huggingface.co/PSRben/VisionHOPE",
     "sourceVersion": "hf-psrben-visionhope",
     "license": "Open-Source",
-    "contentHash": "24427e629877512fccaea7d7d36ada2b63a1d62c79178dc6e36a61af33e2a0d9",
-    "lastHarvestedAt": "2026-10-18T00:09:18.544Z",
+    "contentHash": "19b205d1233408fa434236d9017ba83b2a125741fd11e054364a7872afc46d67",
+    "lastHarvestedAt": "2026-10-19T06:26:21.505Z",
     "learningId": "learn-huggingface-psrben-visionhope"
   },
   "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf": {
@@ -6628,5 +6628,55 @@
     "contentHash": "9cadb5c2e881a6103b485c6ce618162569c01801c1c3a75b95029c11d5db41d3",
     "lastHarvestedAt": "2026-10-19T06:20:19.332Z",
     "learningId": "learn-github-epicweb-dev-advanced-react-patterns"
+  },
+  "dalance-procs": {
+    "repository": "dalance/procs",
+    "platform": "github",
+    "sourceUrl": "https://github.com/dalance/procs",
+    "sourceVersion": "16604d07",
+    "license": "MIT",
+    "contentHash": "0a2de188b285590e53198b00f2d2d511ca59eac5eac3a60ce70202ae738615ef",
+    "lastHarvestedAt": "2026-10-19T06:26:17.660Z",
+    "learningId": "learn-github-dalance-procs"
+  },
+  "ionic-team-ionic-framework": {
+    "repository": "ionic-team/ionic-framework",
+    "platform": "github",
+    "sourceUrl": "https://github.com/ionic-team/ionic-framework",
+    "sourceVersion": "2e46d429",
+    "license": "MIT",
+    "contentHash": "b9ea123d51352b372dee5af287d3a7760dba1ac9f46eb3229fa7536e40c83b79",
+    "lastHarvestedAt": "2026-10-19T06:26:18.155Z",
+    "learningId": "learn-github-ionic-team-ionic-framework"
+  },
+  "lysine-dev-okio": {
+    "repository": "lysine-dev/okio",
+    "platform": "github",
+    "sourceUrl": "https://github.com/lysine-dev/okio",
+    "sourceVersion": "c0ac5061",
+    "license": "Apache-2.0",
+    "contentHash": "456384abd542e67c7392346ed3e2fc5d22d114faded1ad80b2a33b5deaf46452",
+    "lastHarvestedAt": "2026-10-19T06:26:22.896Z",
+    "learningId": "learn-github-lysine-dev-okio"
+  },
+  "nginx-kubernetes-ingress": {
+    "repository": "nginx/kubernetes-ingress",
+    "platform": "github",
+    "sourceUrl": "https://github.com/nginx/kubernetes-ingress",
+    "sourceVersion": "1b0403e3",
+    "license": "Apache-2.0",
+    "contentHash": "015320d156fe4d1c8e1a51d13794fd0dda42e1b97e144bbfbf27ba126ce64b71",
+    "lastHarvestedAt": "2026-10-19T06:26:25.391Z",
+    "learningId": "learn-github-nginx-kubernetes-ingress"
+  },
+  "milvus-io-milvus": {
+    "repository": "milvus-io/milvus",
+    "platform": "github",
+    "sourceUrl": "https://github.com/milvus-io/milvus",
+    "sourceVersion": "3fb4f56c",
+    "license": "Apache-2.0",
+    "contentHash": "e021a1ce67e5cc4aa8ee469b407f1023d3b58863fe93e8cc09e8cdfcad75fb25",
+    "lastHarvestedAt": "2026-10-19T06:26:30.642Z",
+    "learningId": "learn-github-milvus-io-milvus"
   }
 }

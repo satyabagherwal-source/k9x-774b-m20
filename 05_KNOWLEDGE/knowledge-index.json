@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T06:20:19.291Z",
-  "total_verified_learnings": 678,
+  "last_updated": "2026-10-19T06:26:30.609Z",
+  "total_verified_learnings": 683,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -5595,22 +5595,35 @@
     "learn-github-dalance-procs": {
       "learning_id": "learn-github-dalance-procs",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "dalance-procs",
+      "source": "dalance/procs",
+      "repository": "dalance/procs",
       "slug": "dalance-procs",
       "platform": "github",
       "source_url": "https://github.com/dalance/procs",
-      "source_version": "HEAD",
-      "content_hash": "0e094abce0a4635277482f52cf598a0b255bd733f54c31340f392a1e576af644",
+      "source_version": "16604d07",
+      "content_hash": "0a2de188b285590e53198b00f2d2d511ca59eac5eac3a60ce70202ae738615ef",
       "dossier_path": "07_PROJECT_LEARNING/dalance-procs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dalance-procs-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2237,
+          "title": "build(deps): bump libc from 0.2.189 to 0.2.190",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.483Z"
+      "verified_at": "2026-10-19T06:26:17.620Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-damascenorafael-reminders-menubar": {
       "learning_id": "learn-github-damascenorafael-reminders-menubar",
@@ -19950,7 +19963,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/PSRben/VisionHOPE",
       "source_version": "hf-psrben-visionhope",
-      "content_hash": "24427e629877512fccaea7d7d36ada2b63a1d62c79178dc6e36a61af33e2a0d9",
+      "content_hash": "19b205d1233408fa434236d9017ba83b2a125741fd11e054364a7872afc46d67",
       "dossier_path": "07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md",
       "promoted_rules": [
@@ -20002,6 +20015,16 @@
           "number": 1567,
           "title": "Task-Specific Checkpoint Isolation Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2239,
+          "title": "Hierarchical Dimensional Bottleneck Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2240,
+          "title": "Multi-Task Checkpoint Isolation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -20022,7 +20045,7 @@
         "learn-huggingface-hf-psrben-visionhope-mv47isqm",
         "learn-huggingface-hf-psrben-visionhope-mv4ksdgc"
       ],
-      "verified_at": "2026-10-18T00:09:18.507Z",
+      "verified_at": "2026-10-19T06:26:21.463Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -23784,22 +23807,35 @@
     "learn-github-ionic-team-ionic-framework": {
       "learning_id": "learn-github-ionic-team-ionic-framework",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "ionic-team-ionic-framework",
+      "source": "ionic-team/ionic-framework",
+      "repository": "ionic-team/ionic-framework",
       "slug": "ionic-team-ionic-framework",
       "platform": "github",
       "source_url": "https://github.com/ionic-team/ionic-framework",
-      "source_version": "HEAD",
-      "content_hash": "4ef945b81317b527ce4f6ca781dbcddfecd43227fa19086869d0ee4299fdb63d",
+      "source_version": "2e46d429",
+      "content_hash": "b9ea123d51352b372dee5af287d3a7760dba1ac9f46eb3229fa7536e40c83b79",
       "dossier_path": "07_PROJECT_LEARNING/ionic-team-ionic-framework-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ionic-team-ionic-framework-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2238,
+          "title": "input, select, textarea): prevent floating label from overflowing while it float",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.620Z"
+      "verified_at": "2026-10-19T06:26:18.116Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-iplug2-iplug2": {
       "learning_id": "learn-github-iplug2-iplug2",
@@ -26833,22 +26869,29 @@
     "learn-github-lysine-dev-okio": {
       "learning_id": "learn-github-lysine-dev-okio",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "lysine-dev-okio",
+      "source": "lysine-dev/okio",
+      "repository": "lysine-dev/okio",
       "slug": "lysine-dev-okio",
       "platform": "github",
       "source_url": "https://github.com/lysine-dev/okio",
-      "source_version": "HEAD",
-      "content_hash": "99122d6963be6250e25ae7ec64f9eec32399af62167ab1707d805d7b7f1363e0",
+      "source_version": "c0ac5061",
+      "content_hash": "456384abd542e67c7392346ed3e2fc5d22d114faded1ad80b2a33b5deaf46452",
       "dossier_path": "07_PROJECT_LEARNING/lysine-dev-okio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lysine-dev-okio-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.115Z"
+      "verified_at": "2026-10-19T06:26:22.851Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-madslorentzen-ai-job-search": {
       "learning_id": "learn-github-madslorentzen-ai-job-search",
@@ -28357,22 +28400,35 @@
     "learn-github-milvus-io-milvus": {
       "learning_id": "learn-github-milvus-io-milvus",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "milvus-io-milvus",
+      "source": "milvus-io/milvus",
+      "repository": "milvus-io/milvus",
       "slug": "milvus-io-milvus",
       "platform": "github",
       "source_url": "https://github.com/milvus-io/milvus",
-      "source_version": "HEAD",
-      "content_hash": "4ca51da429e4a606e81fa78359dc9f1cdc541acc2b4217c7cc8504872b95be58",
+      "source_version": "3fb4f56c",
+      "content_hash": "e021a1ce67e5cc4aa8ee469b407f1023d3b58863fe93e8cc09e8cdfcad75fb25",
       "dossier_path": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2242,
+          "title": "remove canceled DQL tasks from queue (#52939)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.364Z"
+      "verified_at": "2026-10-19T06:26:30.600Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-mimblewimble-grin": {
       "learning_id": "learn-github-mimblewimble-grin",
@@ -29871,22 +29927,35 @@
     "learn-github-nginx-kubernetes-ingress": {
       "learning_id": "learn-github-nginx-kubernetes-ingress",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "nginx-kubernetes-ingress",
+      "source": "nginx/kubernetes-ingress",
+      "repository": "nginx/kubernetes-ingress",
       "slug": "nginx-kubernetes-ingress",
       "platform": "github",
       "source_url": "https://github.com/nginx/kubernetes-ingress",
-      "source_version": "HEAD",
-      "content_hash": "59c1c9d07485a6c59bd6a5775af93a7469a773420bcceee059654612d3aaae29",
+      "source_version": "1b0403e3",
+      "content_hash": "015320d156fe4d1c8e1a51d13794fd0dda42e1b97e144bbfbf27ba126ce64b71",
       "dossier_path": "07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2241,
+          "title": "e2e test stability fixes (#10850)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.637Z"
+      "verified_at": "2026-10-19T06:26:25.350Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-nikmcfly-mirofish-offline": {
       "learning_id": "learn-github-nikmcfly-mirofish-offline",
@@ -79495,6 +79564,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T06:20:19.280Z"
+    },
+    "rule-2237": {
+      "learning_id": "rule-2237",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2237,
+      "title": "build(deps): bump libc from 0.2.189 to 0.2.190",
+      "source_url": "https://github.com/dalance/procs",
+      "source_version": "16604d07",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:26:17.620Z"
+    },
+    "rule-2238": {
+      "learning_id": "rule-2238",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2238,
+      "title": "input, select, textarea): prevent floating label from overflowing while it float",
+      "source_url": "https://github.com/ionic-team/ionic-framework",
+      "source_version": "2e46d429",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:26:18.116Z"
+    },
+    "rule-2239": {
+      "learning_id": "rule-2239",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2239,
+      "title": "Hierarchical Dimensional Bottleneck Invariant",
+      "source_url": "https://huggingface.co/PSRben/VisionHOPE",
+      "source_version": "hf-psrben-visionhope",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:26:21.463Z"
+    },
+    "rule-2240": {
+      "learning_id": "rule-2240",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2240,
+      "title": "Multi-Task Checkpoint Isolation Invariant",
+      "source_url": "https://huggingface.co/PSRben/VisionHOPE",
+      "source_version": "hf-psrben-visionhope",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:26:21.463Z"
+    },
+    "rule-2241": {
+      "learning_id": "rule-2241",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2241,
+      "title": "e2e test stability fixes (#10850)",
+      "source_url": "https://github.com/nginx/kubernetes-ingress",
+      "source_version": "1b0403e3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:26:25.350Z"
+    },
+    "rule-2242": {
+      "learning_id": "rule-2242",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2242,
+      "title": "remove canceled DQL tasks from queue (#52939)",
+      "source_url": "https://github.com/milvus-io/milvus",
+      "source_version": "3fb4f56c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:26:30.600Z"
     }
   },
   "aliases": {

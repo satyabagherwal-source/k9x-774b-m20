@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T06:20:19.338Z",
+  "last_updated": "2026-10-19T06:26:30.647Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -740,14 +740,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-psrben-visionhope",
-      "content_hash": "24427e629877512fccaea7d7d36ada2b63a1d62c79178dc6e36a61af33e2a0d9",
-      "verified_at": "2026-10-18T00:09:18.546Z",
+      "content_hash": "19b205d1233408fa434236d9017ba83b2a125741fd11e054364a7872afc46d67",
+      "verified_at": "2026-10-19T06:26:21.510Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T00:09:18.546Z"
+      "last_updated": "2026-10-19T06:26:21.510Z"
     },
     "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF": {
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
@@ -10000,6 +10000,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T06:19:09.987Z"
+    },
+    "dalance/procs": {
+      "repository": "dalance/procs",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-dalance-procs",
+      "content_hash": "0a2de188b285590e53198b00f2d2d511ca59eac5eac3a60ce70202ae738615ef",
+      "verified_at": "2026-10-19T06:26:17.665Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T06:26:17.665Z"
+    },
+    "ionic-team/ionic-framework": {
+      "repository": "ionic-team/ionic-framework",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-ionic-team-ionic-framework",
+      "content_hash": "b9ea123d51352b372dee5af287d3a7760dba1ac9f46eb3229fa7536e40c83b79",
+      "verified_at": "2026-10-19T06:26:18.160Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T06:26:18.160Z"
+    },
+    "lysine-dev/okio": {
+      "repository": "lysine-dev/okio",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-lysine-dev-okio",
+      "content_hash": "456384abd542e67c7392346ed3e2fc5d22d114faded1ad80b2a33b5deaf46452",
+      "verified_at": "2026-10-19T06:26:22.900Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T06:26:22.900Z"
+    },
+    "nginx/kubernetes-ingress": {
+      "repository": "nginx/kubernetes-ingress",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-nginx-kubernetes-ingress",
+      "content_hash": "015320d156fe4d1c8e1a51d13794fd0dda42e1b97e144bbfbf27ba126ce64b71",
+      "verified_at": "2026-10-19T06:26:25.396Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T06:26:25.396Z"
+    },
+    "milvus-io/milvus": {
+      "repository": "milvus-io/milvus",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-milvus-io-milvus",
+      "content_hash": "e021a1ce67e5cc4aa8ee469b407f1023d3b58863fe93e8cc09e8cdfcad75fb25",
+      "verified_at": "2026-10-19T06:26:30.647Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T06:26:30.647Z"
     }
   },
   "repos": {
