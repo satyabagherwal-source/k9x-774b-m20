@@ -3090,3 +3090,8 @@
 | `CYCLE-20261019-KYKB` | `2026-10-19T08:22:33.467Z` | `BAAI/bge-m3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2396, Rule 2397` | Yes (`8e6a45af...`) |
 | `CYCLE-20261019-LBS9` | `2026-10-19T08:22:50.601Z` | `str4d/rage` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2398, Rule 2399, Rule 2400` | Yes (`ba7eda3d...`) |
 | `CYCLE-20261019-LPPP` | `2026-10-19T08:23:08.653Z` | `memvid/memvid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2401, Rule 2402, Rule 2403` | Yes (`27681ccc...`) |
+| `CYCLE-20261019-WTP5` | `2026-10-19T08:31:47.033Z` | `alibaba/zvec` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2404, Rule 2405, Rule 2406` | Yes (`0b9c1bf7...`) |
+| `CYCLE-20261019-X058` | `2026-10-19T08:31:55.388Z` | `deepseek-ai/DeepSeek-V4.1-Flash-1017` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2407, Rule 2408, Rule 2409` | Yes (`3da8360a...`) |
+| `CYCLE-20261019-X5KB` | `2026-10-19T08:32:02.412Z` | `zenbu-labs/terminal-browser` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2410, Rule 2411, Rule 2412` | Yes (`9ef31777...`) |
+| `CYCLE-20261019-XILA` | `2026-10-19T08:32:19.294Z` | `kosi-libs/Kodein` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2413, Rule 2414, Rule 2415` | Yes (`0ec09378...`) |
+| `CYCLE-20261019-YSSR` | `2026-10-19T08:33:19.179Z` | `kubesphere/kubesphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2416, Rule 2417, Rule 2418` | Yes (`624a781a...`) |

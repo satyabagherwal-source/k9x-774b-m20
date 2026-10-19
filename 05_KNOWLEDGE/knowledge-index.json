@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T08:23:08.614Z",
-  "total_verified_learnings": 743,
+  "last_updated": "2026-10-19T08:33:19.138Z",
+  "total_verified_learnings": 747,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -1251,22 +1251,45 @@
     "learn-github-alibaba-zvec": {
       "learning_id": "learn-github-alibaba-zvec",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "alibaba-zvec",
+      "source": "alibaba/zvec",
+      "repository": "alibaba/zvec",
       "slug": "alibaba-zvec",
       "platform": "github",
       "source_url": "https://github.com/alibaba/zvec",
-      "source_version": "HEAD",
-      "content_hash": "39e36c5d611b42238e4855c877aa3a92c0ebe6f64eed7d522d8833d2cabe2e3c",
+      "source_version": "c133f205",
+      "content_hash": "0b9c1bf70d68c56077bb46333529f25dda56b195360fa822c96c3a10e928511f",
       "dossier_path": "07_PROJECT_LEARNING/alibaba-zvec-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/alibaba-zvec-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2404,
+          "title": "In-Lock Iterator De-referencing (Iterator Read-Before-Unlock)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2405,
+          "title": "Nested Thread Pool Saturation Guard (Hierarchical Task Subjugation)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2406,
+          "title": "Iterative Tree Flattening for Unlimited AST Predicate Depth",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.742Z"
+      "verified_at": "2026-10-19T08:31:46.982Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-alin23-lunar": {
       "learning_id": "learn-github-alin23-lunar",
@@ -25881,22 +25904,45 @@
     "learn-github-kosi-libs-kodein": {
       "learning_id": "learn-github-kosi-libs-kodein",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "kosi-libs-kodein",
+      "source": "kosi-libs/Kodein",
+      "repository": "kosi-libs/Kodein",
       "slug": "kosi-libs-kodein",
       "platform": "github",
       "source_url": "https://github.com/kosi-libs/Kodein",
-      "source_version": "HEAD",
-      "content_hash": "bfec2a5790ffc9bc0ad2c3af90c81f6f9e86c57891a78be231fa78c617fb8665",
+      "source_version": "f26ea0c9",
+      "content_hash": "0ec0937820fc9fb745a9039cf33deeab3b518eced58e6a1d4a29eb1db48ff308",
       "dossier_path": "07_PROJECT_LEARNING/kosi-libs-kodein-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kosi-libs-kodein-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2413,
+          "title": "LinkageError Boundary Containment for Dynamic Member Reflection",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2414,
+          "title": "Full-Fidelity TypeToken Propagation Across UI Component Factories",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2415,
+          "title": "Logcat Tag Length Compliance for Internal Module Loggers",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.852Z"
+      "verified_at": "2026-10-19T08:32:19.241Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-kotest-kotest": {
       "learning_id": "learn-github-kotest-kotest",
@@ -26292,22 +26338,45 @@
     "learn-github-kubesphere-kubesphere": {
       "learning_id": "learn-github-kubesphere-kubesphere",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "kubesphere-kubesphere",
+      "source": "kubesphere/kubesphere",
+      "repository": "kubesphere/kubesphere",
       "slug": "kubesphere-kubesphere",
       "platform": "github",
       "source_url": "https://github.com/kubesphere/kubesphere",
-      "source_version": "HEAD",
-      "content_hash": "73decd624d088768a3ebd00dad32c7d79d36ca14d797cbbb7c349d25c67df8fb",
+      "source_version": "04a29b5c",
+      "content_hash": "624a781a08aab5b829ccc492331f6f604b267bb51614bf910e79efc957aaad24",
       "dossier_path": "07_PROJECT_LEARNING/kubesphere-kubesphere-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kubesphere-kubesphere-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2416,
+          "title": "Verification-Gated Configuration Hash Mutation in Distributed Controllers",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2417,
+          "title": "Multi-Cluster Cryptographic Identity Pinning",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2418,
+          "title": "Server-Side Network Request Protocol & Target Sandboxing",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.907Z"
+      "verified_at": "2026-10-19T08:33:19.127Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-kucherenko-jscpd": {
       "learning_id": "learn-github-kucherenko-jscpd",
@@ -42825,22 +42894,45 @@
     "learn-github-zenbu-labs-terminal-browser": {
       "learning_id": "learn-github-zenbu-labs-terminal-browser",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "zenbu-labs-terminal-browser",
+      "source": "zenbu-labs/terminal-browser",
+      "repository": "zenbu-labs/terminal-browser",
       "slug": "zenbu-labs-terminal-browser",
       "platform": "github",
       "source_url": "https://github.com/zenbu-labs/terminal-browser",
-      "source_version": "HEAD",
-      "content_hash": "35598a69c2b7800cbb41e1414a90d6818ec61f14cc83be3e8b9da6934fa26dd8",
+      "source_version": "3a405655",
+      "content_hash": "9ef317778cc055410320b1c8a57071aeec2d334bf0279dd67eeb2d0e9995413c",
       "dossier_path": "07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2410,
+          "title": "Atomic Buffer Boundary Truncation for File Stream Pollers",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2411,
+          "title": "Disjoint Three-Span Rasterization for Anti-Aliased Rectangles",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2412,
+          "title": "Agent Tool Non-Disruptive Standard Output Protocol",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.517Z"
+      "verified_at": "2026-10-19T08:32:02.359Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-zeromicro-go-zero": {
       "learning_id": "learn-github-zeromicro-go-zero",
@@ -51431,16 +51523,32 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017",
       "source_version": "hf-deepseek-ai-deepseek-v4.1-flash-1017",
-      "content_hash": "4a44016216ab5e0125fef85aff7885d5d2b648d98571f83cc9ed6009a59b7f3a",
+      "content_hash": "3da8360aa9db115be6133dc78e982d248bd694a75e46f522be4da093e2c48c01",
       "dossier_path": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2407,
+          "title": "Cross-Layer KV Cache Source-Pointer Synchronization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2408,
+          "title": "No-Auxiliary-Loss Token-Choice (noaux_tc) Numerical Clamping Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2409,
+          "title": "Dynamic FP8/FP4 Quantization Scale-Factor Tiling Alignment",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T01:04:56.982Z",
+      "verified_at": "2026-10-19T08:31:55.324Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -83209,6 +83317,216 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T08:23:08.603Z"
+    },
+    "rule-2404": {
+      "learning_id": "rule-2404",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2404,
+      "title": "In-Lock Iterator De-referencing (Iterator Read-Before-Unlock)",
+      "source_url": "https://github.com/alibaba/zvec",
+      "source_version": "c133f205",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:31:46.982Z"
+    },
+    "rule-2405": {
+      "learning_id": "rule-2405",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2405,
+      "title": "Nested Thread Pool Saturation Guard (Hierarchical Task Subjugation)",
+      "source_url": "https://github.com/alibaba/zvec",
+      "source_version": "c133f205",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:31:46.982Z"
+    },
+    "rule-2406": {
+      "learning_id": "rule-2406",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2406,
+      "title": "Iterative Tree Flattening for Unlimited AST Predicate Depth",
+      "source_url": "https://github.com/alibaba/zvec",
+      "source_version": "c133f205",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:31:46.982Z"
+    },
+    "rule-2407": {
+      "learning_id": "rule-2407",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2407,
+      "title": "Cross-Layer KV Cache Source-Pointer Synchronization Invariant",
+      "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017",
+      "source_version": "hf-deepseek-ai-deepseek-v4.1-flash-1017",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:31:55.324Z"
+    },
+    "rule-2408": {
+      "learning_id": "rule-2408",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2408,
+      "title": "No-Auxiliary-Loss Token-Choice (noaux_tc) Numerical Clamping Invariant",
+      "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017",
+      "source_version": "hf-deepseek-ai-deepseek-v4.1-flash-1017",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:31:55.324Z"
+    },
+    "rule-2409": {
+      "learning_id": "rule-2409",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2409,
+      "title": "Dynamic FP8/FP4 Quantization Scale-Factor Tiling Alignment",
+      "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017",
+      "source_version": "hf-deepseek-ai-deepseek-v4.1-flash-1017",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:31:55.324Z"
+    },
+    "rule-2410": {
+      "learning_id": "rule-2410",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2410,
+      "title": "Atomic Buffer Boundary Truncation for File Stream Pollers",
+      "source_url": "https://github.com/zenbu-labs/terminal-browser",
+      "source_version": "3a405655",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:32:02.359Z"
+    },
+    "rule-2411": {
+      "learning_id": "rule-2411",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2411,
+      "title": "Disjoint Three-Span Rasterization for Anti-Aliased Rectangles",
+      "source_url": "https://github.com/zenbu-labs/terminal-browser",
+      "source_version": "3a405655",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:32:02.359Z"
+    },
+    "rule-2412": {
+      "learning_id": "rule-2412",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2412,
+      "title": "Agent Tool Non-Disruptive Standard Output Protocol",
+      "source_url": "https://github.com/zenbu-labs/terminal-browser",
+      "source_version": "3a405655",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:32:02.359Z"
+    },
+    "rule-2413": {
+      "learning_id": "rule-2413",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2413,
+      "title": "LinkageError Boundary Containment for Dynamic Member Reflection",
+      "source_url": "https://github.com/kosi-libs/Kodein",
+      "source_version": "f26ea0c9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:32:19.241Z"
+    },
+    "rule-2414": {
+      "learning_id": "rule-2414",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2414,
+      "title": "Full-Fidelity TypeToken Propagation Across UI Component Factories",
+      "source_url": "https://github.com/kosi-libs/Kodein",
+      "source_version": "f26ea0c9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:32:19.241Z"
+    },
+    "rule-2415": {
+      "learning_id": "rule-2415",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2415,
+      "title": "Logcat Tag Length Compliance for Internal Module Loggers",
+      "source_url": "https://github.com/kosi-libs/Kodein",
+      "source_version": "f26ea0c9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:32:19.241Z"
+    },
+    "rule-2416": {
+      "learning_id": "rule-2416",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2416,
+      "title": "Verification-Gated Configuration Hash Mutation in Distributed Controllers",
+      "source_url": "https://github.com/kubesphere/kubesphere",
+      "source_version": "04a29b5c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:33:19.127Z"
+    },
+    "rule-2417": {
+      "learning_id": "rule-2417",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2417,
+      "title": "Multi-Cluster Cryptographic Identity Pinning",
+      "source_url": "https://github.com/kubesphere/kubesphere",
+      "source_version": "04a29b5c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:33:19.127Z"
+    },
+    "rule-2418": {
+      "learning_id": "rule-2418",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2418,
+      "title": "Server-Side Network Request Protocol & Target Sandboxing",
+      "source_url": "https://github.com/kubesphere/kubesphere",
+      "source_version": "04a29b5c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:33:19.127Z"
     }
   },
   "aliases": {

@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T08:23:08.660Z",
-  "total_cycles_completed": 3067,
-  "total_learnings_persisted": 3067,
-  "total_rules_promoted": 2190,
+  "last_updated": "2026-10-19T08:33:19.186Z",
+  "total_cycles_completed": 3072,
+  "total_learnings_persisted": 3072,
+  "total_rules_promoted": 2205,
   "history": [
-    {
-      "timestamp": "2026-10-19T04:13:25.264Z",
-      "repository": "StarTrail-org/LEANN",
-      "learningId": "learn-github-startrail-org-leann",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T04:19:27.690Z",
-      "repository": "adonisjs/core",
-      "learningId": "learn-github-adonisjs-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T04:19:28.573Z",
-      "repository": "mlua-rs/mlua",
-      "learningId": "learn-github-mlua-rs-mlua",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T04:19:32.768Z",
-      "repository": "apple/LensVLM-9B",
-      "learningId": "learn-huggingface-apple-lensvlm-9b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T04:19:33.515Z",
-      "repository": "APSL/react-native-keyboard-aware-scroll-view",
-      "learningId": "learn-github-apsl-react-native-keyboard-aware-scroll-view",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T04:19:36.478Z",
       "repository": "kcl-lang/kcl",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-10-19T08:23:08.660Z",
       "repository": "memvid/memvid",
       "learningId": "learn-github-memvid-memvid",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T08:31:47.039Z",
+      "repository": "alibaba/zvec",
+      "learningId": "learn-github-alibaba-zvec",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T08:31:55.394Z",
+      "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T08:32:02.418Z",
+      "repository": "zenbu-labs/terminal-browser",
+      "learningId": "learn-github-zenbu-labs-terminal-browser",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T08:32:19.301Z",
+      "repository": "kosi-libs/Kodein",
+      "learningId": "learn-github-kosi-libs-kodein",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T08:33:19.186Z",
+      "repository": "kubesphere/kubesphere",
+      "learningId": "learn-github-kubesphere-kubesphere",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

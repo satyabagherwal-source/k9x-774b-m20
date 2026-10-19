@@ -1695,8 +1695,8 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017",
     "sourceVersion": "hf-deepseek-ai-deepseek-v4.1-flash-1017",
     "license": "Open-Source",
-    "contentHash": "4a44016216ab5e0125fef85aff7885d5d2b648d98571f83cc9ed6009a59b7f3a",
-    "lastHarvestedAt": "2026-10-18T01:04:57.018Z",
+    "contentHash": "3da8360aa9db115be6133dc78e982d248bd694a75e46f522be4da093e2c48c01",
+    "lastHarvestedAt": "2026-10-19T08:31:55.391Z",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017"
   },
   "tw93-pake": {
@@ -7288,5 +7288,45 @@
     "contentHash": "27681cccbf757a3f2230f376f02a98eb6291f236774033bb567b1ba3bff42bde",
     "lastHarvestedAt": "2026-10-19T08:23:08.656Z",
     "learningId": "learn-github-memvid-memvid"
+  },
+  "alibaba-zvec": {
+    "repository": "alibaba/zvec",
+    "platform": "github",
+    "sourceUrl": "https://github.com/alibaba/zvec",
+    "sourceVersion": "c133f205",
+    "license": "Apache-2.0",
+    "contentHash": "0b9c1bf70d68c56077bb46333529f25dda56b195360fa822c96c3a10e928511f",
+    "lastHarvestedAt": "2026-10-19T08:31:47.036Z",
+    "learningId": "learn-github-alibaba-zvec"
+  },
+  "zenbu-labs-terminal-browser": {
+    "repository": "zenbu-labs/terminal-browser",
+    "platform": "github",
+    "sourceUrl": "https://github.com/zenbu-labs/terminal-browser",
+    "sourceVersion": "3a405655",
+    "license": "MIT",
+    "contentHash": "9ef317778cc055410320b1c8a57071aeec2d334bf0279dd67eeb2d0e9995413c",
+    "lastHarvestedAt": "2026-10-19T08:32:02.414Z",
+    "learningId": "learn-github-zenbu-labs-terminal-browser"
+  },
+  "kosi-libs-kodein": {
+    "repository": "kosi-libs/Kodein",
+    "platform": "github",
+    "sourceUrl": "https://github.com/kosi-libs/Kodein",
+    "sourceVersion": "f26ea0c9",
+    "license": "MIT",
+    "contentHash": "0ec0937820fc9fb745a9039cf33deeab3b518eced58e6a1d4a29eb1db48ff308",
+    "lastHarvestedAt": "2026-10-19T08:32:19.296Z",
+    "learningId": "learn-github-kosi-libs-kodein"
+  },
+  "kubesphere-kubesphere": {
+    "repository": "kubesphere/kubesphere",
+    "platform": "github",
+    "sourceUrl": "https://github.com/kubesphere/kubesphere",
+    "sourceVersion": "04a29b5c",
+    "license": "NOASSERTION",
+    "contentHash": "624a781a08aab5b829ccc492331f6f604b267bb51614bf910e79efc957aaad24",
+    "lastHarvestedAt": "2026-10-19T08:33:19.182Z",
+    "learningId": "learn-github-kubesphere-kubesphere"
   }
 }

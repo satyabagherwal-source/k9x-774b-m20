@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T08:23:08.663Z",
+  "last_updated": "2026-10-19T08:33:19.189Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2673,14 +2673,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
-      "content_hash": "4a44016216ab5e0125fef85aff7885d5d2b648d98571f83cc9ed6009a59b7f3a",
-      "verified_at": "2026-10-18T01:04:57.020Z",
+      "content_hash": "3da8360aa9db115be6133dc78e982d248bd694a75e46f522be4da093e2c48c01",
+      "verified_at": "2026-10-19T08:31:55.396Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T01:04:57.020Z"
+      "last_updated": "2026-10-19T08:31:55.396Z"
     },
     "tw93/Pake": {
       "repository": "tw93/Pake",
@@ -10976,6 +10976,66 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T08:23:08.662Z"
+    },
+    "alibaba/zvec": {
+      "repository": "alibaba/zvec",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-alibaba-zvec",
+      "content_hash": "0b9c1bf70d68c56077bb46333529f25dda56b195360fa822c96c3a10e928511f",
+      "verified_at": "2026-10-19T08:31:47.042Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T08:31:47.042Z"
+    },
+    "zenbu-labs/terminal-browser": {
+      "repository": "zenbu-labs/terminal-browser",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-zenbu-labs-terminal-browser",
+      "content_hash": "9ef317778cc055410320b1c8a57071aeec2d334bf0279dd67eeb2d0e9995413c",
+      "verified_at": "2026-10-19T08:32:02.420Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T08:32:02.420Z"
+    },
+    "kosi-libs/Kodein": {
+      "repository": "kosi-libs/Kodein",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-kosi-libs-kodein",
+      "content_hash": "0ec0937820fc9fb745a9039cf33deeab3b518eced58e6a1d4a29eb1db48ff308",
+      "verified_at": "2026-10-19T08:32:19.304Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T08:32:19.304Z"
+    },
+    "kubesphere/kubesphere": {
+      "repository": "kubesphere/kubesphere",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-kubesphere-kubesphere",
+      "content_hash": "624a781a08aab5b829ccc492331f6f604b267bb51614bf910e79efc957aaad24",
+      "verified_at": "2026-10-19T08:33:19.188Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T08:33:19.188Z"
     }
   },
   "repos": {

@@ -3097,3 +3097,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-baai-bge-m3` | `https://huggingface.co/BAAI/bge-m3` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-19T08:22:33.470Z |
 | `learn-github-str4d-rage` | `https://github.com/str4d/rage` | `b5b68c4f` | Multi-dimensional audit evidence | 2026-10-19T08:22:50.604Z |
 | `learn-github-memvid-memvid` | `https://github.com/memvid/memvid` | `e6bd9f7b` | Multi-dimensional audit evidence | 2026-10-19T08:23:08.656Z |
+| `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `c133f205` | Multi-dimensional audit evidence | 2026-10-19T08:31:47.036Z |
+| `learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017` | `https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-19T08:31:55.391Z |
+| `learn-github-zenbu-labs-terminal-browser` | `https://github.com/zenbu-labs/terminal-browser` | `3a405655` | Multi-dimensional audit evidence | 2026-10-19T08:32:02.414Z |
+| `learn-github-kosi-libs-kodein` | `https://github.com/kosi-libs/Kodein` | `f26ea0c9` | Multi-dimensional audit evidence | 2026-10-19T08:32:19.296Z |
+| `learn-github-kubesphere-kubesphere` | `https://github.com/kubesphere/kubesphere` | `04a29b5c` | Multi-dimensional audit evidence | 2026-10-19T08:33:19.182Z |

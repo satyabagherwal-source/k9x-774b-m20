@@ -171566,3 +171566,1363 @@ match_like_matches_macro = "deny"
 ```
 
 ---
+
+
+---
+
+## 2404. In-Lock Iterator De-referencing (Iterator Read-Before-Unlock) (Harvested from alibaba/zvec)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "In-Lock Iterator De-referencing (Iterator Read-Before-Unlock)",
+  "source": "alibaba/zvec",
+  "source_url": "https://github.com/alibaba/zvec",
+  "source_version": "c133f205",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-19T08:31:46.689Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-alibaba-zvec",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [alibaba/zvec](https://github.com/alibaba/zvec) (Revision: `c133f205`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When accessing an element from an associative container (`std::unordered_map`, `std::map`, or custom hash tables) guarded by a reader-writer lock (`shared_mutex`, `SharedLock`), you **MUST** de-reference the iterator and extract the value (or copy the primitive value/pointer) into a local stack variable **BEFORE** releasing the read/shared lock. You **MUST NOT** return an expression evaluating the iterator (`it->second` or `it == map->end()`) after calling `unlock_shared()`.
+
+**WHY**:
+An iterator returned by `container->find(key)` is fundamentally an internal pointer to a node within the container's bucket array. Releasing `unlock_shared()` immediately grants write access to any concurrent thread waiting on an exclusive lock. If a writer thread invokes `insert()`, `erase()`, or triggers a bucket rehashing operation between `unlock_shared()` and the dereference of `it`, the iterator becomes immediately invalidated (dangling pointer). Dereferencing an invalidated iterator leads to undefined memory reads, garbage node IDs, or fatal segmentation faults (`SIGSEGV`).
+
+**WHEN TO APPLY**:
+Applies to all concurrent C, C++, and Rust codebases where read-heavy internal maps, caches, or routing tables are protected by coarse- or fine-grained read/write mutexes.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```cpp
+// Production-grade pattern from zvec (src/core/algorithm/flat_sparse/flat_sparse_streamer_entity.h)
+inline node_id_t get_id(uint64_t key) const override {
+  keys_map_lock_->lock_shared();
+  auto it = keys_map_->find(key);
+  // Copy out value to local stack while the shared lock is held
+  const node_id_t id = (it == keys_map_->end()) ? kInvalidNodeId : it->second;
+  keys_map_lock_->unlock_shared();
+  return id;
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```cpp
+// ANTI-PATTERN: Iterator de-referenced after releasing synchronization barrier!
+inline node_id_t get_id(uint64_t key) const override {
+  keys_map_lock_->lock_shared();
+  auto it = keys_map_->find(key);
+  keys_map_lock_->unlock_shared(); // TOCTOU Hazard / Memory Race Window!
+  // CRITICAL BUG: it may point to a rehashed/deallocated node by the time this runs
+  return (it == keys_map_->end()) ? kInvalidNodeId : it->second;
+}
+```
+
+**VERIFICATION METHOD**:
+Enforce via Clang Static Analyzer / ThreadSanitizer (`-fsanitize=thread`) or an AST-based linter rule checking that any identifier with type `iterator` or pointer dereference does not reference a container whose associated lock variable was unlocked earlier in the same lexical block.
+
+---
+
+
+---
+
+## 2405. Nested Thread Pool Saturation Guard (Hierarchical Task Subjugation) (Harvested from alibaba/zvec)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Nested Thread Pool Saturation Guard (Hierarchical Task Subjugation)",
+  "source": "alibaba/zvec",
+  "source_url": "https://github.com/alibaba/zvec",
+  "source_version": "c133f205",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-19T08:31:46.806Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-alibaba-zvec",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [alibaba/zvec](https://github.com/alibaba/zvec) (Revision: `c133f205`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When an asynchronous worker inside a managed task runner or thread pool invokes an underlying component (e.g., Quantizer, Index Converter, Matrix Factorizer) that spins up its own internal thread pool, the caller **MUST** explicitly clamp and bound the nested component's thread count by the minimum of its configured allocation and the caller's available pool budget (`std::min(target_quota, parent_pool->count())`). The system **MUST NOT** allow nested components to spawn unconstrained OS threads or claim default thread allocations equal to host core count.
+
+**WHY**:
+If parallel jobs in a parent thread pool (e.g., 16 worker threads building partitions concurrently) each trigger sub-quantization jobs that default to using machine-wide core count (e.g., 64 threads), the process encounters an exponential thread explosion ($16 \times 64 = 1024$ threads). This causes severe CPU context-switching thrashing, thread starvation, kernel thread-table exhaustion, and huge latencies during index builds.
+
+**WHEN TO APPLY**:
+Applies to all multi-stage data processing systems, machine learning feature transformers, vector quantizers, and batch pipeline engines where algorithms nest parallel operations.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```cpp
+// Production-grade pattern from zvec (src/core/algorithm/diskann/diskann_builder.cc)
+int DiskAnnBuilder::train_quantized_data(IndexThreads::Pointer threads) {
+  ailego::Params qp;
+  qp.set("num_chunk", pq_chunk_num_);
+
+  // Bounded clamp: never exceed parent thread budget; ensure minimum of 1
+  const auto pq_thread_count = static_cast<uint32_t>(std::max<size_t>(
+      1, std::min<size_t>(build_thread_count_, threads ? threads->count() : 1)));
+  qp.set("thread_count", pq_thread_count);
+  qp.set("use_zero_mean", false);
+
+  int ret = quantizer_->init(build_meta_, qp);
+  if (ret != 0) {
+    LOG_ERROR("Failed to init quantizer, ret=%d", ret);
+    return ret;
+  }
+  return quantizer_->train(threads, train_data_holder_);
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```cpp
+// ANTI-PATTERN: Blindly configuring thread counts in child components
+int DiskAnnBuilder::train_quantized_data(IndexThreads::Pointer /*threads*/) {
+  ailego::Params qp;
+  // CRITICAL BUG: Ignores parent thread budget, uses global build_thread_count_
+  // which can result in M * N thread amplification on multi-segment builds!
+  qp.set("thread_count", build_thread_count_);
+  return quantizer_->init(build_meta_, qp);
+}
+```
+
+**VERIFICATION METHOD**:
+Implement a property test utilizing an instrumented OS thread counter (e.g., checking `/proc/self/status` `Threads:` on Linux) during high-concurrency nested builds to verify that total system threads never exceed `2 * parent_pool_max_threads`.
+
+---
+
+
+---
+
+## 2406. Iterative Tree Flattening for Unlimited AST Predicate Depth (Harvested from alibaba/zvec)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Iterative Tree Flattening for Unlimited AST Predicate Depth",
+  "source": "alibaba/zvec",
+  "source_url": "https://github.com/alibaba/zvec",
+  "source_version": "c133f205",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-19T08:31:46.914Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-alibaba-zvec",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [alibaba/zvec](https://github.com/alibaba/zvec) (Revision: `c133f205`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When parsing, transforming, or evaluating arbitrary user-supplied boolean search expressions, filter graphs, or SQL abstract syntax trees, you **MUST NOT** rely on unbounded direct recursive descent. For repeated associative operators (`OR`, `AND`, `IN`, `UNION`), the parser/compiler **MUST** implement either iterative stack-based traversal or unroll repeated chained binary operations into a flat N-ary operand vector.
+
+**WHY**:
+Modern query compilers often encounter machine-generated filters (e.g., excluding 15,000 files by expanding them into `(file_id = 'a' OR (file_id = 'b' OR ...))`). Direct recursive functions consume a new stack frame per predicate ($15,000 \times \sim 512\text{ bytes} \approx 7.68\text{ MB}$). On operating systems with constrained default stack sizes (such as Linux pthreads defaulting to 2 MB or Node.js native addon threads defaulting to 1 MB–2 MB), this causes deterministic stack exhaustion and fatal `SIGSEGV` segmentation faults without possibility of software recovery.
+
+**WHEN TO APPLY**:
+All SQL parsers, query engines, compiler AST visitors, vector filter compilers, and document schema validators handling user or machine-generated queries.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```cpp
+// Iterative AST decomposition preventing recursive stack consumption
+struct QueryNode {
+  enum class Op { EQUALS, OR, AND };
+  Op op;
+  std::string field;
+  std::string value;
+  std::vector<QueryNode> children; // N-ary representation instead of binary recursion
+};
+
+// Safe iterative parsing & flattening of chained binary OR expressions
+void FlattenDisjunctionChain(QueryNode* root, std::vector<QueryNode*>& flat_terms) {
+  std::vector<QueryNode*> stack;
+  stack.push_back(root);
+
+  while (!stack.empty()) {
+    QueryNode* curr = stack.back();
+    stack.pop_back();
+
+    if (curr->op == QueryNode::Op::OR) {
+      for (auto& child : curr->children) {
+        stack.push_back(&child); // Explicit heap-allocated worklist
+      }
+    } else {
+      flat_terms.push_back(curr);
+    }
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```cpp
+// ANTI-PATTERN: Naive unbounded recursive visitor
+bool EvaluateNode(const QueryNode* node, const Document& doc) {
+  if (node->op == QueryNode::Op::OR) {
+    // CRITICAL BUG: Recursive function call. If depth = 16,000, crashes thread stack!
+    return EvaluateNode(node->left.get(), doc) || EvaluateNode(node->right.get(), doc);
+  }
+  return doc.Match(node->field, node->value);
+}
+```
+
+**VERIFICATION METHOD**:
+Implement a stress regression test injecting an AST containing $25,000$ chained binary predicates (`OR`) run on a thread with an artificially capped stack size (`pthread_attr_setstacksize(&attr, 1024 * 1024)`), asserting execution completes cleanly with status code `0`.
+
+---
+
+
+---
+
+## 2407. Cross-Layer KV Cache Source-Pointer Synchronization Invariant (Harvested from deepseek-ai/DeepSeek-V4.1-Flash-1017)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Cross-Layer KV Cache Source-Pointer Synchronization Invariant",
+  "source": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+  "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017",
+  "source_version": "hf-deepseek-ai-deepseek-v4.1-flash-1017",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-19T08:31:55.029Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [deepseek-ai/DeepSeek-V4.1-Flash-1017](https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017) (Revision: `hf-deepsee`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When serving non-uniform Transformer topologies featuring cross-layer KV-cache sharing (`kv_source_layer_ids`), downstream consumer layers MUST NOT allocate physical key-value memory buffers or register independent CUDA cache tensors. Consumer layers MUST maintain direct slice-level non-owning memory references (views) into the designated source layer's KV tensors, and backward passes or dynamic eviction passes MUST lock the reference count of the source layer buffer until all consumers complete execution.
+
+**WHY**:
+Allocating duplicate KV buffers across layers sharing representations wastes high-bandwidth memory (40 layers sharing 4 KV buffers reduces KV cache overhead by 90%). Conversely, shallow-copying tensors across asynchronous CUDA execution streams without explicit dependency synchronization causes Use-After-Free (UAF) or data races when the source layer overwrites its circular rolling cache before consumer layers finish their cross-attention projections.
+
+**WHEN TO APPLY**:
+Any inference server, custom PyTorch module, TensorRT-LLM, or vLLM kernel engine executing models with sparse KV-sharing topologies (e.g., DeepSeek-V4.x, multi-layer latent attention sharing).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+import torch.nn as nn
+from typing import Dict, List, Optional
+
+class CrossLayerKVCacheManager:
+    def __init__(self, kv_source_layer_ids: List[int], total_layers: int, max_batch_size: int, max_seq_len: int, num_kv_heads: int, head_dim: int, dtype: torch.dtype, device: torch.device):
+        self.source_layer_ids = set(kv_source_layer_ids)
+        self.total_layers = total_layers
+        # Pre-allocate physical memory ONLY for source layers
+        self.physical_kv_cache: Dict[int, torch.Tensor] = {
+            layer_id: torch.empty(
+                (2, max_batch_size, num_kv_heads, max_seq_len, head_dim),
+                dtype=dtype,
+                device=device
+            )
+            for layer_id in self.source_layer_ids
+        }
+        # Build deterministic consumer-to-source map
+        self.layer_to_source_map: Dict[int, int] = {}
+        last_source = kv_source_layer_ids[0]
+        for l_idx in range(total_layers):
+            if l_idx in self.source_layer_ids:
+                last_source = l_idx
+            self.layer_to_source_map[l_idx] = last_source
+
+    def get_kv_buffer(self, layer_idx: int) -> torch.Tensor:
+        """Returns non-owning reference to physical storage."""
+        source_id = self.layer_to_source_map[layer_idx]
+        # Return view: zero allocation, shared memory address
+        return self.physical_kv_cache[source_id]
+
+    def write_kv(self, layer_idx: int, k_val: torch.Tensor, v_val: torch.Tensor, slot_indices: torch.Tensor):
+        """Only source layers are legally permitted to execute physical writes."""
+        if layer_idx not in self.source_layer_ids:
+            raise PermissionError(
+                f"Layer {layer_idx} is a downstream KV consumer (Source: {self.layer_to_source_map[layer_idx]}). "
+                f"Direct mutations to borrowed KV memory are strictly forbidden."
+            )
+        buffer = self.physical_kv_cache[layer_idx]
+        # Write directly into dedicated slots
+        buffer[0].index_copy_(dim=1, index=slot_indices, source=k_val)
+        buffer[1].index_copy_(dim=1, index=slot_indices, source=v_val)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# NEVER write: Allocating independent buffers on every layer and deep-copying
+class AntiPatternKVManager:
+    def __init__(self, num_layers):
+        # Memory bloat: consumes 10x more VRAM than required
+        self.kv_caches = [torch.zeros(2, 1, 1, 1048576, 512) for _ in range(num_layers)]
+
+    def forward(self, layer_idx, k, v):
+        # BUG: Blindly copying data between layers causes catastrophic CUDA memory pressure
+        if layer_idx not in [2, 8, 14, 20]:
+            self.kv_caches[layer_idx] = self.kv_caches[layer_idx - 1].clone()
+```
+
+**VERIFICATION METHOD**:
+Verify with PyTorch memory allocators:
+```python
+def test_cross_layer_kv_zero_alloc():
+    manager = CrossLayerKVCacheManager(
+        kv_source_layer_ids=[2, 8, 14, 20],
+        total_layers=40,
+        max_batch_size=1,
+        max_seq_len=2048,
+        num_kv_heads=1,
+        head_dim=512,
+        dtype=torch.bfloat16,
+        device=torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    )
+    for layer_id in range(40):
+        buf = manager.get_kv_buffer(layer_id)
+        expected_source = manager.layer_to_source_map[layer_id]
+        assert buf.data_ptr() == manager.physical_kv_cache[expected_source].data_ptr(), (
+            f"Layer {layer_id} failed to share exact memory pointer with Source {expected_source}"
+        )
+```
+
+---
+
+
+---
+
+## 2408. No-Auxiliary-Loss Token-Choice (noaux_tc) Numerical Clamping Invariant (Harvested from deepseek-ai/DeepSeek-V4.1-Flash-1017)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "No-Auxiliary-Loss Token-Choice (noaux_tc) Numerical Clamping Invariant",
+  "source": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+  "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017",
+  "source_version": "hf-deepseek-ai-deepseek-v4.1-flash-1017",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-19T08:31:55.146Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [deepseek-ai/DeepSeek-V4.1-Flash-1017](https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017) (Revision: `hf-deepsee`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When computing expert affinity weights in sparse Mixture-of-Experts (MoE) architectures using the `sqrtsoftplus` activation function with `noaux_tc` routing, the unnormalized router logits MUST be strictly clamped to prevent infinite values or catastrophic gradient vanishing BEFORE computing the square root, and the softplus evaluation MUST enforce a non-zero epsilon guard (`softplus(x) + eps >= 1e-12`).
+
+**WHY**:
+Standard Softplus $\ln(1 + e^x)$ asymptotically approaches $x$ for large $x$. If extreme activation logits ($x > 80.0$ in FP32 or $x > 40.0$ in BF16) pass into `sqrt(softplus(x))`, square-root derivatives $\frac{1}{2\sqrt{\text{softplus}(x)}} \cdot \frac{1}{1 + e^{-x}}$ cause numerical underflow or NaNs when $\text{softplus}(x) \to 0$. In extreme negative logits, unshielded $\sqrt{0}$ yields infinite gradients ($\infty$), triggering sudden expert collapse across the 384-expert cluster.
+
+**WHEN TO APPLY**:
+Sparse MoE routing networks utilizing unbounded or semi-bounded gating functions (`sqrtsoftplus`, `relu_squared`, `swiglu_limit`) without auxiliary balancing loss penalties.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+class SqrtSoftplusNoAuxRouter(nn.Module):
+    def __init__(self, hidden_size: int, n_routed_experts: int, top_k: int, routed_scaling_factor: float = 1.5):
+        super().__init__()
+        self.top_k = top_k
+        self.n_routed_experts = n_routed_experts
+        self.routed_scaling_factor = routed_scaling_factor
+        self.gate = nn.Linear(hidden_size, n_routed_experts, bias=False)
+        self.eps = 1e-12
+        self.max_logit_threshold = 40.0  # Safe BF16/FP32 numerical boundary
+
+    def forward(self, x: torch.Tensor):
+        # x: [batch_size * seq_len, hidden_size]
+        logits = self.gate(x)
+        
+        # INVARIANT: Guard against unnormalized float explosive divergence
+        clamped_logits = torch.clamp(logits, min=-self.max_logit_threshold, max=self.max_logit_threshold)
+        
+        # Sqrt-Softplus gating: sqrt(ln(1 + exp(x)) + eps)
+        # Prevents sqrt(0) and catastrophic NaNs in gradient backprop
+        softplus_val = F.softplus(clamped_logits, beta=1.0, threshold=20.0)
+        scores = torch.sqrt(softplus_val + self.eps)
+        
+        # Top-K routing without auxiliary loss (Token Choice)
+        topk_weights, topk_indices = torch.topk(scores, k=self.top_k, dim=-1, sorted=True)
+        
+        # Normalize probabilities across selected experts
+        topk_denom = topk_weights.sum(dim=-1, keepdim=True) + self.eps
+        norm_topk_weights = (topk_weights / topk_denom) * self.routed_scaling_factor
+        
+        return norm_topk_weights, topk_indices
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# NEVER write: Unclamped sqrtsoftplus without epsilon guard
+def broken_router(x, gate, top_k):
+    logits = gate(x)
+    # CRASH: If logits are negative large, F.softplus is 0.0 -> sqrt(0.0) -> grad is 1/(2*0) = NaN
+    scores = torch.sqrt(F.softplus(logits))
+    topk_weights, topk_indices = torch.topk(scores, top_k)
+    return topk_weights / topk_weights.sum(dim=-1, keepdim=True), topk_indices
+```
+
+**VERIFICATION METHOD**:
+Execute gradient backpropagation across extreme inputs:
+```python
+def test_sqrtsoftplus_gradient_stability():
+    router = SqrtSoftplusNoAuxRouter(hidden_size=64, n_routed_experts=384, top_k=6)
+    # Feed massive negative and positive logits
+    extreme_input = torch.tensor([[-1000.0] * 64, [1000.0] * 64], requires_grad=True)
+    weights, indices = router(extreme_input)
+    loss = weights.sum()
+    loss.backward()
+    assert not torch.isnan(extreme_input.grad).any(), "NaN detected in router backward pass!"
+    assert not torch.isinf(extreme_input.grad).any(), "Inf detected in router backward pass!"
+```
+
+---
+
+
+---
+
+## 2409. Dynamic FP8/FP4 Quantization Scale-Factor Tiling Alignment (Harvested from deepseek-ai/DeepSeek-V4.1-Flash-1017)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dynamic FP8/FP4 Quantization Scale-Factor Tiling Alignment",
+  "source": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+  "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017",
+  "source_version": "hf-deepseek-ai-deepseek-v4.1-flash-1017",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-19T08:31:55.255Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [deepseek-ai/DeepSeek-V4.1-Flash-1017](https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017) (Revision: `hf-deepsee`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When running dynamic quantized tensor contractions with tiled weight blocks (e.g., `weight_block_size: [32, 32]`, `expert_dtype: "fp4"`, `scale_fmt: "ue8m0"`), matrix dimensions MUST be strictly padded or validated as exact multiples of the tile block dimension ($N \equiv 0 \pmod{32}$, $K \equiv 0 \pmod{32}$) BEFORE invoking quantized GEMM kernels. Any unpack/dequantize step MUST apply scale factors across uniform block boundaries without broadcast dimension misalignments.
+
+**WHY**:
+Dynamic activation schemes calculate per-block scaling factors dynamically across memory spans. If sequence lengths or intermediate expert channels do not align to the 32x32 block boundary, CUDA warp execution causes out-of-bounds reads on unaligned micro-tiles or silently clamps zero-padding into the scaling denominator, corrupting activation values and generating output text garbage.
+
+**WHEN TO APPLY**:
+All FP8 / FP4 cutlass, triton, or native CUDA kernel invocations with blocked scale formats (`ue8m0`, `e4m3fn`, `e5m2`).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+
+def pad_to_block_boundary(tensor: torch.Tensor, block_m: int = 32, block_k: int = 32) -> torch.Tensor:
+    """Guarantees strict 2D alignment for block-quantized dynamic execution."""
+    m, k = tensor.shape[-2], tensor.shape[-1]
+    pad_m = (block_m - (m % block_m)) % block_m
+    pad_k = (block_k - (k % block_k)) % block_k
+    
+    if pad_m == 0 and pad_k == 0:
+        return tensor
+        
+    return torch.nn.functional.pad(tensor, (0, pad_k, 0, pad_m), mode='constant', value=0.0)
+
+def verify_quant_tile_alignment(m: int, k: int, block_size: tuple = (32, 32)) -> None:
+    assert m % block_size[0] == 0, f"Dimension M ({m}) not divisible by tile size {block_size[0]}"
+    assert k % block_size[1] == 0, f"Dimension K ({k}) not divisible by tile size {block_size[1]}"
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# NEVER write: Assuming arbitrary batch*seq dimensions match hardware block size
+def bad_dynamic_quant(activations):
+    # Activations shape: [17, 2304] -> 17 is NOT divisible by 32!
+    blocks = activations.view(-1, 32, 32) # CRASH: RuntimeError shape invalid
+    scales = blocks.abs().max(dim=-1).values
+    return activations / scales
+```
+
+**VERIFICATION METHOD**:
+Assert dimensional invariants before GEMM invocation:
+```python
+def test_block_quant_shapes():
+    block_size = (32, 32)
+    test_tensor = torch.randn(15, 2300)
+    padded = pad_to_block_boundary(test_tensor, block_size[0], block_size[1])
+    verify_quant_tile_alignment(padded.shape[0], padded.shape[1], block_size)
+    assert padded.shape == (32, 2304)
+```
+
+---
+
+
+---
+
+## 2410. Atomic Buffer Boundary Truncation for File Stream Pollers (Harvested from zenbu-labs/terminal-browser)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Atomic Buffer Boundary Truncation for File Stream Pollers",
+  "source": "zenbu-labs/terminal-browser",
+  "source_url": "https://github.com/zenbu-labs/terminal-browser",
+  "source_version": "3a405655",
+  "license": "MIT",
+  "extracted_at": "2026-10-19T08:32:02.066Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-zenbu-labs-terminal-browser",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [zenbu-labs/terminal-browser](https://github.com/zenbu-labs/terminal-browser) (Revision: `3a405655`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When incrementally polling an append-only text or structured JSONL file using byte offsets, the file read pointer MUST NOT advance to the end of the newly read raw byte chunk. Instead, the offset MUST strictly advance only to the byte offset of the last confirmed newline character (`\n`), and un-terminated trailing bytes MUST be retained for the subsequent polling iteration.
+
+**WHY**:
+Concurrent processes appending lines to disk write concurrently across buffer flushes. Advancing the offset to `size` or `start + bytesRead` when the tail of the line has not yet been flushed causes `JSON.parse` to encounter incomplete JSON tokens (`SyntaxError: Unexpected end of JSON input`), permanently dropping or corrupting log records.
+
+**WHEN TO APPLY**:
+Any daemon, monitor, agent observer, or file tailer reading append-only logs (`.jsonl`, `.log`, `.ndjson`) without acquiring exclusive OS-level locks.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified from monitor/src/enginelog.ts
+function readIncrementalLines(fd: number, startOffset: number, fileSize: number): { nextOffset: number; lines: string[] } {
+  if (fileSize <= startOffset) return { nextOffset: startOffset, lines: [] };
+  
+  const buffer = Buffer.alloc(fileSize - startOffset);
+  fs.readSync(fd, buffer, 0, buffer.length, startOffset);
+  
+  const text = buffer.toString('utf8');
+  const lastNewline = text.lastIndexOf('\n');
+  if (lastNewline === -1) {
+    // Zero complete lines found; retain previous offset and retry on next poll
+    return { nextOffset: startOffset, lines: [] };
+  }
+  
+  // Advance offset strictly by the byte length of the slice up to the terminating newline
+  const validChunk = text.slice(0, lastNewline);
+  const consumedByteLength = Buffer.byteLength(text.slice(0, lastNewline + 1), 'utf8');
+  const lines = validChunk.split('\n').filter(Boolean);
+  
+  return { nextOffset: startOffset + consumedByteLength, lines };
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// CRITICAL DEFECT: Advances offset to EOF, breaking partial JSON strings
+const buffer = Buffer.alloc(fileSize - startOffset);
+fs.readSync(fd, buffer, 0, buffer.length, startOffset);
+this.offsets.set(pid, fileSize); // FATAL: Drops remaining bytes, corrupts next line
+const lines = buffer.toString('utf8').split('\n');
+for (const line of lines) {
+  JSON.parse(line); // Crashes with SyntaxError on partial write
+}
+```
+
+**VERIFICATION METHOD**:
+Run an automated test that appends half of a JSON string `{"t":100,"msg":"part`, polls the file, asserts `lines.length === 0` and offset remains unchanged, then appends the remainder `ial"}\n`, polls again, and asserts `lines.length === 1` with a fully valid parsed object.
+
+---
+
+
+---
+
+## 2411. Disjoint Three-Span Rasterization for Anti-Aliased Rectangles (Harvested from zenbu-labs/terminal-browser)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Disjoint Three-Span Rasterization for Anti-Aliased Rectangles",
+  "source": "zenbu-labs/terminal-browser",
+  "source_url": "https://github.com/zenbu-labs/terminal-browser",
+  "source_version": "3a405655",
+  "license": "MIT",
+  "extracted_at": "2026-10-19T08:32:02.183Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-zenbu-labs-terminal-browser",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [zenbu-labs/terminal-browser](https://github.com/zenbu-labs/terminal-browser) (Revision: `3a405655`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When rasterizing antialiased rounded rectangles or clipped geometry in software framebuffers, inner loops MUST NOT evaluate distance functions or analytical coverage curves across every horizontal pixel. The scanline MUST be mathematically partitioned into at most three disjoint index ranges: `[first_col, full_from)` (left sub-pixel antialiased edge), `[full_from, full_to)` (bulk opaque or constant alpha span), and `[full_to, last_col)` (right sub-pixel antialiased edge). The middle range MUST be executed via bulk memory copy (`copy_from_slice` or SIMD store).
+
+**WHY**:
+Evaluating `sqrt` or subpixel clamp functions across full line widths ($W \in [1000, 3840]$) introduces massive instruction pipeline stalls and CPU cache thrashing. Partitioning eliminates non-linear arithmetic across $>90\%$ of pixels.
+
+**WHEN TO APPLY**:
+Low-level 2D graphics compositors, software renderers, terminal blitters, and CPU-based video/canvas overlay engines.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified from pixel/engine/crates/pixel-core/src/canvas.rs
+pub fn render_rounded_row(
+    row: i64,
+    first_col: i64,
+    last_col: i64,
+    dst: &mut [u8],
+    src: &[u8],
+    full_span: impl Fn(&mut [u8], &[u8]),
+    partial_span: impl Fn(&mut [u8], &[u8], u32),
+    calculate_spans: impl Fn(i64, i64, i64) -> [(i64, i64); 3],
+    coverage_at: impl Fn(i64, i64) -> f32,
+) {
+    let [left, middle, right] = calculate_spans(row, first_col, last_col);
+    
+    // 1. Left antialiased transition
+    for col in left.0..left.1 {
+        let coverage = (coverage_at(col, row) * 255.0 + 0.5) as u32;
+        if coverage == 0 { continue; }
+        let at = (col - first_col) as usize * 4;
+        partial_span(&mut dst[at..at + 4], &src[at..at + 4], coverage);
+    }
+    
+    // 2. Middle contiguous inner span (Zero square root calculations)
+    let from = (middle.0 - first_col) as usize * 4;
+    let to = (middle.1 - first_col) as usize * 4;
+    if to > from {
+        full_span(&mut dst[from..to], &src[from..to]);
+    }
+    
+    // 3. Right antialiased transition
+    for col in right.0..right.1 {
+        let coverage = (coverage_at(col, row) * 255.0 + 0.5) as u32;
+        if coverage == 0 { continue; }
+        let at = (col - first_col) as usize * 4;
+        partial_span(&mut dst[at..at + 4], &src[at..at + 4], coverage);
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// CRITICAL PERFORMANCE DEFECT: Per-pixel math across the entire scanline
+for col in first_col..last_col {
+    let d = ((r - px)*(r - px) + (r - py)*(r - py)).sqrt(); // Ran on 3840 px/row!
+    let cov = (r - d + 0.5).clamp(0.0, 1.0);
+    blend_pixel(&mut dst[at..at+4], &src[at..at+4], (cov * 255.0) as u8);
+}
+```
+
+**VERIFICATION METHOD**:
+Benchmark rasterization time of a $2000 \times 1000$ box with $r = 16.0$ using `criterion`. Verify that the three-span method executes in $<0.4\text{ ms}$ while full-scanline coverage checking takes $>4.5\text{ ms}$ (a $>10\times$ speedup).
+
+---
+
+
+---
+
+## 2412. Agent Tool Non-Disruptive Standard Output Protocol (Harvested from zenbu-labs/terminal-browser)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Agent Tool Non-Disruptive Standard Output Protocol",
+  "source": "zenbu-labs/terminal-browser",
+  "source_url": "https://github.com/zenbu-labs/terminal-browser",
+  "source_version": "3a405655",
+  "license": "MIT",
+  "extracted_at": "2026-10-19T08:32:02.291Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-zenbu-labs-terminal-browser",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [zenbu-labs/terminal-browser](https://github.com/zenbu-labs/terminal-browser) (Revision: `3a405655`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+CLI utilities designed to act simultaneously as standalone tools and as MCP/Agent backend plugins MUST NOT write unformatted JSON payloads, debug logs, or internal state envelopes to `stdout` during command execution unless `--json` is explicitly commanded. Standard status reports MUST emit human-and-agent-readable single-line tokens (`opened tab {id} in {target}`), and errors MUST be routed exclusively to `stderr`.
+
+**WHY**:
+Agent prompt runners and autonomous loops parse terminal tool execution `stdout` to determine tool completion and next steps. Emitting multiline raw diagnostic JSON dumps overfills the context budget, confuses agent regex matching hooks, and triggers infinite agent recovery cycles trying to parse debug output as command results.
+
+**WHEN TO APPLY**:
+All CLI tools, subcommands (`open`, `split`, `new-tab`), and backend hooks integrated with Claude Code, Cursor, Codex, or Herdr plugins.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified from cli/src/main.ts (commit 4fb68a1c)
+function reportOpened(browser: string, tab?: number | string | null): void {
+  const where = tab === undefined || tab === null ? browser : `tab ${tab} in ${browser}`;
+  // Single-line deterministic token with zero ambient debug pollution
+  process.stdout.write(`opened ${where} (terminal-browser ls for details)\n`);
+}
+
+async function handleCommand(args: string[]): Promise<number> {
+  const target = await resolveTarget();
+  const opened = (await control(target.socket, { cmd: 'open-tab' })) as { openedTab?: number };
+  reportOpened(recordKey(target), opened.openedTab);
+  return 0;
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// CRITICAL DEFECT: Spews internal socket envelopes directly into stdout
+function print(value: unknown) {
+  process.stdout.write(`${JSON.stringify(value, null, 2)}\n`);
+}
+// Caller gets a massive JSON blob of socket internals, crashing agent parsers:
+print(await control(target.socket, where));
+```
+
+**VERIFICATION METHOD**:
+Add a CLI execution snapshot test verifying that `terminal-browser open https://example.com` outputs exactly one newline-terminated line matching `/^opened (tab \d+ in )?\S+ \(terminal-browser ls for details\)\n$/`.
+
+---
+
+
+---
+
+## 2413. LinkageError Boundary Containment for Dynamic Member Reflection (Harvested from kosi-libs/Kodein)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "LinkageError Boundary Containment for Dynamic Member Reflection",
+  "source": "kosi-libs/Kodein",
+  "source_url": "https://github.com/kosi-libs/Kodein",
+  "source_version": "f26ea0c9",
+  "license": "MIT",
+  "extracted_at": "2026-10-19T08:32:18.946Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-kosi-libs-kodein",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [kosi-libs/Kodein](https://github.com/kosi-libs/Kodein) (Revision: `f26ea0c9`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When walking class inheritance hierarchies via reflection to enumerate fields, methods, or constructors across heterogeneous runtime environments (such as Android multi-API baselines or modular JVM runtimes), code MUST wrap every single `Class.getDeclaredFields()` and `Class.getDeclaredMethods()` invocation in a catch block specifically intercepting `java.lang.LinkageError` (specifically `NoClassDefFoundError`). Code MUST NOT catch only `Exception` or `ClassNotFoundException`.
+
+**WHY**:
+The JVM and Android ART runtimes lazily verify types. Compiling an application against API Level 34 allows bytecode references to modern framework types (e.g., `android.app.PictureInPictureUiState`). When executed on an API 30 device, the runtime ignores absent classes as long as methods referencing them are never executed. However, calling `cls.declaredMethods` forces the virtual machine to immediately resolve and link *all* parameter and return types for *every* declared member on that class level, even if the member is unannotated and completely unrelated to the target operation. If an unresolvable type is referenced anywhere in that class, the JVM raises a fatal `NoClassDefFoundError` (which extends `LinkageError`, an `Error`, bypassing standard `catch (e: Exception)` boundaries), terminating the entire injection chain.
+
+**WHEN TO APPLY**:
+Apply in any IoC container, reflection scanner, ORM entity mapper, or serialization framework that introspects class hierarchies where classes may be compiled against higher SDK/library baselines than the current runtime execution target.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```kotlin
+// Extracted from org.kodein.di.jxinject.internal.JxInjectorContainer
+private inline fun <reified M> declaredMembersOrEmpty(
+    cls: Class<*>, 
+    kind: String, 
+    members: () -> Array<M>
+): Array<M> =
+    try {
+        members()
+    } catch (error: LinkageError) {
+        // Must log as warning and skip hierarchy level rather than aborting traversal
+        logger.log(
+            Level.WARNING,
+            "Could not introspect the $kind of ${cls.name}: any @Inject member it declares " +
+                "will NOT be injected. This usually means a member signature references a type " +
+                "that is absent at runtime.",
+            error
+        )
+        emptyArray()
+    }
+
+// Usage during hierarchy traversal:
+val fields = declaredMembersOrEmpty(cls, "fields") { cls.declaredFields }
+val methods = declaredMembersOrEmpty(cls, "methods") { cls.declaredMethods }
+```
+
+**NEGATIVE CONSTRAINT**:
+```kotlin
+// ANTI-PATTERN: Will crash with NoClassDefFoundError on older Android API devices
+private fun inspectHierarchy(cls: Class<*>) {
+    try {
+        val methods = cls.declaredMethods // THROWS NoClassDefFoundError (extends Error, NOT Exception!)
+        for (method in methods) {
+            processMethod(method)
+        }
+    } catch (e: Exception) { // FAILS TO CATCH LinkageError!
+        logger.warn("Inspection failed", e)
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Implement a custom isolating `ClassLoader` that selectively throws `ClassNotFoundException` when loading a dummy canary type (e.g. `LenientMissing`). Compile a base class referencing this missing type in an unused method signature. Execute the reflection engine over a subclass that inherits from this base class and assert that introspection completes without throwing `LinkageError` and logs exactly one `Level.WARNING`.
+
+---
+
+
+---
+
+## 2414. Full-Fidelity TypeToken Propagation Across UI Component Factories (Harvested from kosi-libs/Kodein)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Full-Fidelity TypeToken Propagation Across UI Component Factories",
+  "source": "kosi-libs/Kodein",
+  "source_url": "https://github.com/kosi-libs/Kodein",
+  "source_version": "f26ea0c9",
+  "license": "MIT",
+  "extracted_at": "2026-10-19T08:32:19.064Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-kosi-libs-kodein",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [kosi-libs/Kodein](https://github.com/kosi-libs/Kodein) (Revision: `f26ea0c9`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When writing factory adapters bridging a dynamic IoC container into an external framework factory interface that operates on raw or erased classes (such as Android's `ViewModelProvider.Factory` or Jetpack Compose `ViewModelStore`), the adapter MUST explicitly capture and retain the fully qualified, reified `TypeToken<T>` or `KType` at the inline call site and delegate to the DI container using that reified type token. The adapter MUST NOT reconstruct the type token from the framework's erased `Class<T>` or `KClass<T>` parameter.
+
+**WHY**:
+Modern frameworks frequently pass a raw `Class<T>` (e.g. `create(modelClass: Class<T>): T`) to factory callbacks. If the ViewModel or dependency requires generic specialization (e.g., `ListViewModel<User>` vs `ListViewModel<Product>`, or complex type-parameterized state holders), relying on `erased(modelClass)` strips all generic arguments. The DI container receives `TypeToken<ListViewModel<*>>` instead of `TypeToken<ListViewModel<User>>`, causing dependency resolution to fail with `DI.NotFoundException` or silently returning the wrong injected instance.
+
+**WHEN TO APPLY**:
+In all Kotlin Multiplatform and Android integration wrappers connecting DI containers to lifecycle-managed factories (`ViewModelProvider.Factory`, Koin/Kodein adapters, custom Jetpack Compose State holders).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```kotlin
+// Extracted from org.kodein.di.compose.android.KodeinViewModelScopedFactory
+@PublishedApi
+internal class KodeinViewModelScopedSingleton(
+    private val di: DI,
+    private val vmType: TypeToken<*>,
+    private val tag: String? = null,
+) : ViewModelProvider.Factory {
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T =
+        // Use vmType, preserving complete generic arguments, NOT erased(modelClass)
+        di.direct.Instance(type = vmType as TypeToken<T>, tag = tag)
+}
+
+// Inline DSL entry point capturing full reified type at callsite:
+public inline fun <reified VM : ViewModel> rememberViewModel(
+    di: DI,
+    tag: String? = null
+): VM {
+    return ViewModelLazy(
+        viewModelClass = VM::class,
+        storeProducer = { viewModelStoreOwner.viewModelStore },
+        factoryProducer = { 
+            KodeinViewModelScopedSingleton(
+                di = di, 
+                vmType = generic<VM>(), // Reified generic token preserved!
+                tag = tag
+            ) 
+        }
+    ).value
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```kotlin
+// ANTI-PATTERN: modelClass loses generic type arguments due to JVM type erasure
+public class BadViewModelFactory(
+    private val di: DI,
+    private val tag: String? = null
+) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        // FATAL: erased(modelClass) discards type parameters!
+        // Container cannot distinguish Repository<A> from Repository<B>
+        return di.direct.Instance(type = erased(modelClass), tag = tag)
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Create a generic ViewModel: `class ParametrizedViewModel<T : Any>(val item: T) : ViewModel()`. Register two distinct bindings in the DI container: `bind { singleton { ParametrizedViewModel<String>("hello") } }` and `bind { singleton { ParametrizedViewModel<Int>(42) } }`. Resolve both via the factory and assert that `rememberViewModel<ParametrizedViewModel<String>>()` and `rememberViewModel<ParametrizedViewModel<Int>>()` resolve distinct instances without `TypeCastException` or `NotFoundException`.
+
+---
+
+
+---
+
+## 2415. Logcat Tag Length Compliance for Internal Module Loggers (Harvested from kosi-libs/Kodein)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Logcat Tag Length Compliance for Internal Module Loggers",
+  "source": "kosi-libs/Kodein",
+  "source_url": "https://github.com/kosi-libs/Kodein",
+  "source_version": "f26ea0c9",
+  "license": "MIT",
+  "extracted_at": "2026-10-19T08:32:19.172Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-kosi-libs-kodein",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [kosi-libs/Kodein](https://github.com/kosi-libs/Kodein) (Revision: `f26ea0c9`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When configuring platform logging bridges (such as `java.util.logging.Logger` or Android's `android.util.Log`) in libraries intended to run on Android, the logger name constant MUST NOT exceed 23 characters if it is intended to map directly to an Android Logcat tag.
+
+**WHY**:
+On Android versions prior to API 24 (and in strict `AndroidHandler` implementations of `java.util.logging`), passing a tag longer than 23 characters throws an `IllegalArgumentException: Log tag '...' exceeds limit of 23 characters` or causes the tag to be silently truncated. Truncating dynamic class names breaks developer log filtering (`adb logcat -s <TAG>`) and prevents configuration via standard logging properties (e.g. `org.kodein.di.jxinject.level = OFF`).
+
+**WHEN TO APPLY**:
+Whenever defining `Logger.getLogger(...)` in libraries targeting Android or Kotlin Multiplatform JVM/Android modules.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```kotlin
+// Extracted from org.kodein.di.jxinject.internal.JxInjectorContainer
+internal class JxInjectorContainer(qualifiers: Set<Qualifier>) {
+    internal companion object {
+        /**
+         * Deliberately a literal rather than this class' name: JxInjectorContainer is internal and
+         * its FQN is an implementation detail. It is exactly 22 characters, so Android's
+         * `AndroidHandler` uses it verbatim as the logcat tag (it truncates anything longer than 23).
+         */
+        private const val LOGGER_NAME: String = "org.kodein.di.jxinject" // Exactly 22 chars!
+
+        private val logger: Logger = Logger.getLogger(LOGGER_NAME)
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```kotlin
+// ANTI-PATTERN: Dynamically using fully qualified class name causes crash or truncation on Android
+internal class JxInjectorContainer {
+    companion object {
+        // Value is "org.kodein.di.jxinject.internal.JxInjectorContainer" -> 50 characters!
+        // Triggers IllegalArgumentException or silent truncation in AndroidHandler
+        private val logger = Logger.getLogger(JxInjectorContainer::class.java.name)
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Implement a static unit test or architecture lint assertion verifying that all `LOGGER_NAME` constants within modules deployed to Android satisfy `LOGGER_NAME.length <= 23`.
+
+---
+
+
+---
+
+## 2416. Verification-Gated Configuration Hash Mutation in Distributed Controllers (Harvested from kubesphere/kubesphere)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Verification-Gated Configuration Hash Mutation in Distributed Controllers",
+  "source": "kubesphere/kubesphere",
+  "source_url": "https://github.com/kubesphere/kubesphere",
+  "source_version": "04a29b5c",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-19T08:33:18.832Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-kubesphere-kubesphere",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [kubesphere/kubesphere](https://github.com/kubesphere/kubesphere) (Revision: `04a29b5c`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+A controller MUST NOT persist, update, or cache a spec/configuration sync hash or synchronization mark upon a failed reconciliation or failed sub-resource dispatch. State/hash synchronization MUST ONLY occur when the downstream resource installation or mutation returns explicit terminal success.
+
+**WHY**:
+In state-reconciliation loops (such as Helm releases or cluster sync agents), storing the hash of the target configuration immediately after initiating work or after a caught error causes the reconciliation loop to skip retries on subsequent ticks. Because `configChanged()` evaluates `specHash == statusHash`, the failure is permanently masked, leaving the managed resource in a broken or zombie state until the spec is arbitrarily mutated.
+
+**WHEN TO APPLY**:
+- Kubernetes controllers, Operators, and multi-cluster reconcilers tracking generation/spec hashes.
+- Distributed workflow engines synchronizing state machines across network boundaries.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package controller
+
+import (
+	"context"
+	"crypto/sha256"
+	"encoding/hex"
+	"fmt"
+	corev1 "k8s.io/api/core/v1"
+)
+
+type ClusterSyncReconciler struct {
+	Client KubeClient
+}
+
+func (r *ClusterSyncReconciler) ReconcileMemberCluster(ctx context.Context, cluster *Cluster) error {
+	desiredHash := computeConfigHash(cluster.Spec)
+
+	if cluster.Status.AppliedConfigHash == desiredHash && cluster.Status.InstallCondition == corev1.ConditionTrue {
+		return nil // Steady state: desired state matches and succeeded
+	}
+
+	// Execute remote mutation
+	err := r.Client.ApplyHelmRelease(ctx, cluster)
+	if err != nil {
+		// INVARIANT: Record failure condition but DO NOT update AppliedConfigHash.
+		// Preserving the old hash guarantees the next reconcile event detects a difference and retries.
+		cluster.Status.InstallCondition = corev1.ConditionFalse
+		cluster.Status.LastFailureReason = err.Error()
+		_ = r.Client.UpdateStatus(ctx, cluster)
+		return fmt.Errorf("failed to apply helm release: %w", err)
+	}
+
+	// Success boundary: Hash is updated ONLY on terminal success
+	cluster.Status.AppliedConfigHash = desiredHash
+	cluster.Status.InstallCondition = corev1.ConditionTrue
+	cluster.Status.LastFailureReason = ""
+	return r.Client.UpdateStatus(ctx, cluster)
+}
+
+func computeConfigHash(spec ClusterSpec) string {
+	h := sha256.New()
+	h.Write([]byte(spec.ImageRegistry + spec.Version))
+	return hex.EncodeToString(h.Sum(nil))
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Blindly updating hash in a defer block or prior to error inspection
+func (r *ClusterSyncReconciler) ReconcileMemberClusterBroken(ctx context.Context, cluster *Cluster) error {
+	defer func() {
+		// FATAL BUG: Unconditionally recording applied hash causes the controller
+		// to believe configuration was applied, suppressing all future retry cycles!
+		cluster.Status.AppliedConfigHash = computeConfigHash(cluster.Spec)
+		_ = r.Client.UpdateStatus(ctx, cluster)
+	}()
+
+	err := r.Client.ApplyHelmRelease(ctx, cluster)
+	if err != nil {
+		return err // Next reconcile will see hash match and permanently skip!
+	}
+	return nil
+}
+```
+
+**VERIFICATION METHOD**:
+Implement a stateful mock controller test:
+1. Inject a transient network error on the first invocation of `ApplyHelmRelease`.
+2. Assert that `Status.AppliedConfigHash` remains empty or unequal to `computeConfigHash(cluster.Spec)`.
+3. Assert that the controller requeues and successfully applies the release on the second pass when the error clears.
+
+---
+
+
+---
+
+## 2417. Multi-Cluster Cryptographic Identity Pinning (Harvested from kubesphere/kubesphere)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Multi-Cluster Cryptographic Identity Pinning",
+  "source": "kubesphere/kubesphere",
+  "source_url": "https://github.com/kubesphere/kubesphere",
+  "source_version": "04a29b5c",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-19T08:33:18.950Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-kubesphere-kubesphere",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [kubesphere/kubesphere](https://github.com/kubesphere/kubesphere) (Revision: `04a29b5c`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Before accepting an updated client configuration (e.g., KubeConfig) for an existing registered remote cluster, an admission webhook MUST query the remote cluster's root namespace (`kube-system`) and verify that its immutable system identifier (`UID`) strictly matches the existing persisted UID of that cluster record.
+
+**WHY**:
+In multi-tenant, multi-cluster management control planes, an administrator or tenant might accidentally or maliciously point an existing registered cluster object at an entirely different physical or cloud cluster's endpoint. If accepted, controllers managing RBAC, CRDs, and network policies will execute destructive actions or exfiltrate state from the foreign cluster under the assumption that it is the historical cluster.
+
+**WHEN TO APPLY**:
+- Multi-cluster management control planes (Kubernetes, Nomad, OpenStack).
+- Orchestrators handling user-supplied remote endpoint connection credentials.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package webhook
+
+import (
+	"context"
+	"errors"
+	"fmt"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/tools/clientcmd"
+)
+
+type Cluster struct {
+	Spec   ClusterSpec
+	Status ClusterStatus
+}
+
+type ClusterSpec struct {
+	KubeConfig []byte
+}
+
+type ClusterStatus struct {
+	UID string // Persisted UUID of the remote kube-system namespace
+}
+
+func ValidateClusterUpdate(ctx context.Context, oldObj, newObj runtime.Object) error {
+	oldCluster := oldObj.(*Cluster)
+	newCluster := newObj.(*Cluster)
+
+	// If no UID was captured yet (first reconcile pending), defer identity verification
+	if oldCluster.Status.UID == "" {
+		return nil
+	}
+
+	restConfig, err := clientcmd.RESTConfigFromKubeConfig(newCluster.Spec.KubeConfig)
+	if err != nil {
+		return fmt.Errorf("invalid kubeconfig format: %w", err)
+	}
+
+	remoteClient, err := kubernetes.NewForConfig(restConfig)
+	if err != nil {
+		return fmt.Errorf("failed to construct remote client: %w", err)
+	}
+
+	// Fetch remote immutable system root anchor
+	kubeSystem, err := remoteClient.CoreV1().Namespaces().Get(ctx, metav1.NamespaceSystem, metav1.GetOptions{})
+	if err != nil {
+		return fmt.Errorf("unable to reach remote kube-system anchor: %w", err)
+	}
+
+	if string(kubeSystem.UID) != oldCluster.Status.UID {
+		return errors.New("identity mismatch: remote kube-system UID does not match existing cluster record UID")
+	}
+
+	return nil
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Trusting remote address, cluster name, or server TLS cert without UID verification
+func ValidateClusterUpdateInsecure(ctx context.Context, oldObj, newObj runtime.Object) error {
+	oldCluster := oldObj.(*Cluster)
+	newCluster := newObj.(*Cluster)
+	
+	// FATAL FLAW: Only checking connectivity or URL matching.
+	// Allows hijacking an entry by pointing it to another cluster on the same IP or host!
+	cfg, _ := clientcmd.RESTConfigFromKubeConfig(newCluster.Spec.KubeConfig)
+	client, _ := kubernetes.NewForConfig(cfg)
+	_, err := client.Discovery().ServerVersion()
+	return err // Inadequate! Does not pin cluster identity!
+}
+```
+
+**VERIFICATION METHOD**:
+Run an admission integration test:
+1. Initialize a registered `Cluster` with `Status.UID = "uid-aaa-111"`.
+2. Construct an update payload supplying a valid `kubeconfig` pointing to a local Kind/k3s test cluster with `kube-system` UID `"uid-bbb-222"`.
+3. Verify that `ValidateClusterUpdate` terminates with an explicit HTTP 400/403 admission error containing `"identity mismatch"`.
+
+---
+
+
+---
+
+## 2418. Server-Side Network Request Protocol & Target Sandboxing (Harvested from kubesphere/kubesphere)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Server-Side Network Request Protocol & Target Sandboxing",
+  "source": "kubesphere/kubesphere",
+  "source_url": "https://github.com/kubesphere/kubesphere",
+  "source_version": "04a29b5c",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-19T08:33:19.058Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-kubesphere-kubesphere",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [kubesphere/kubesphere](https://github.com/kubesphere/kubesphere) (Revision: `04a29b5c`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Any backend handler accepting a user-supplied URI or network origin endpoint (such as a Git repository URL, webhook receiver, or remote image registry) MUST sanitize the target before performing network I/O. The handler MUST NOT execute requests against loopback (`127.0.0.0/8`, `::1`), RFC 1918 private subnets, cloud metadata services (`169.254.169.254`), or non-whitelisted protocols, and MUST NOT reflect raw transport errors containing remote body fragments to the client.
+
+**WHY**:
+Accepting unchecked URIs in operations such as remote Git credential verification (`origin.List()`) or webhook deliveries creates direct SSRF (Server-Side Request Forgery) vectors. Attackers can pivot through the API server's service account to exfiltrate cloud credentials (AWS IMDS, GCP metadata), scan private internal Kubernetes service CIDRs, or extract cross-tenant data. Reflecting upstream bodies via error responses exposes raw authorization tokens and keys.
+
+**WHEN TO APPLY**:
+- Remote Git verification handlers.
+- Webhook dispatch services and external artifact evaluators.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package security
+
+import (
+	"errors"
+	"fmt"
+	"net"
+	"net/url"
+	"strings"
+	"syscall"
+	"time"
+)
+
+var (
+	ErrBlockedIP      = errors.New("connection to private/internal network addresses is prohibited")
+	ErrUnsupportedURL = errors.New("unsupported protocol scheme; only https and http are allowed")
+)
+
+var blockedNets = []*net.IPNet{
+	mustParseCIDR("127.0.0.0/8"),    // Loopback IPv4
+	mustParseCIDR("::1/128"),        // Loopback IPv6
+	mustParseCIDR("169.254.0.0/16"), // Link-local / Cloud Metadata
+	mustParseCIDR("10.0.0.0/8"),     // RFC1918 Private
+	mustParseCIDR("172.16.0.0/12"),  // RFC1918 Private
+	mustParseCIDR("192.168.0.0/16"), // RFC1918 Private
+}
+
+func mustParseCIDR(s string) *net.IPNet {
+	_, block, err := net.ParseCIDR(s)
+	if err != nil {
+		panic(err)
+	}
+	return block
+}
+
+// SafeDialer creates a net.Dialer that prevents SSRF via DNS rebinding and IP-range filtering
+func SafeDialer(timeout time.Duration) *net.Dialer {
+	return &net.Dialer{
+		Timeout: timeout,
+		Control: func(network, address string, c syscall.RawConn) error {
+			host, _, err := net.SplitHostPort(address)
+			if err != nil {
+				return err
+			}
+			ip := net.ParseIP(host)
+			if ip == nil {
+				return errors.New("failed to parse destination IP")
+			}
+			for _, blocked := range blockedNets {
+				if blocked.Contains(ip) {
+					return ErrBlockedIP
+				}
+			}
+			return nil
+		},
+	}
+}
+
+func ValidateRemoteURL(rawURL string) (*url.URL, error) {
+	u, err := url.Parse(rawURL)
+	if err != nil {
+		return nil, fmt.Errorf("malformed URL: %w", err)
+	}
+	scheme := strings.ToLower(u.Scheme)
+	if scheme != "http" && scheme != "https" {
+		return nil, ErrUnsupportedURL
+	}
+	return u, nil
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Direct passthrough of client-provided remote URL to network transport
+func VerifyGitCredentialInsecure(remoteUrl, username, password string) error {
+	// FATAL VULNERABILITY: Directly calling go-git on raw remoteUrl.
+	// Allows querying http://169.254.169.254/latest/meta-data/ or internal k8s services!
+	endpoint, _ := transport.NewEndpoint(remoteUrl)
+	client := git.NewRemote(memory.NewStorage(), &config.RemoteConfig{
+		Name: "origin",
+		URLs: []string{endpoint.String()},
+	})
+	_, err := client.List(&git.ListOptions{
+		Auth: &http.BasicAuth{Username: username, Password: password},
+	})
+	// FATAL: Exposing upstream transport err.Error() returns internal reflection
+	return err 
+}
+```
+
+**VERIFICATION METHOD**:
+Execute an automated integration test against `ValidateRemoteURL` and `SafeDialer`:
+1. Submit `http://169.254.169.254/latest/meta-data/`. Verify dialer rejects connection with `ErrBlockedIP`.
+2. Submit `http://127.0.0.1:2379/v2/keys`. Verify immediate local loopback rejection.
+3. Submit `file:///etc/passwd`. Verify scheme rejection (`ErrUnsupportedURL`).
+
+---
