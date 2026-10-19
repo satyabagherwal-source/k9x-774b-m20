@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T21:52:49.570Z",
-  "total_cycles_completed": 3491,
-  "total_learnings_persisted": 3491,
-  "total_rules_promoted": 2636,
+  "last_updated": "2026-10-19T22:00:48.922Z",
+  "total_cycles_completed": 3497,
+  "total_learnings_persisted": 3497,
+  "total_rules_promoted": 2644,
   "history": [
-    {
-      "timestamp": "2026-10-19T15:11:28.629Z",
-      "repository": "intfloat/multilingual-e5-small",
-      "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T15:11:28.655Z",
-      "repository": "franken-ui/ui",
-      "learningId": "learn-github-franken-ui-ui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T15:11:35.560Z",
-      "repository": "bernaferrari/FigmaToCode",
-      "learningId": "learn-github-bernaferrari-figmatocode",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T15:11:39.752Z",
-      "repository": "projectdiscovery/nuclei",
-      "learningId": "learn-github-projectdiscovery-nuclei",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T15:11:43.185Z",
-      "repository": "etcd-io/etcd",
-      "learningId": "learn-github-etcd-io-etcd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T15:17:39.981Z",
-      "repository": "argmaxinc/whisperkit-coreml",
-      "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T15:17:40.233Z",
       "repository": "adonisjs/core",
@@ -1403,6 +1361,48 @@
       "repository": "yannickl/DynamicColor",
       "learningId": "learn-github-yannickl-dynamiccolor",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T21:59:27.256Z",
+      "repository": "topgrade-rs/topgrade",
+      "learningId": "learn-github-topgrade-rs-topgrade",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T21:59:29.477Z",
+      "repository": "jina-ai/reader",
+      "learningId": "learn-github-jina-ai-reader",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T21:59:31.802Z",
+      "repository": "RevenueCat/purchases-ios",
+      "learningId": "learn-github-revenuecat-purchases-ios",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T21:59:34.587Z",
+      "repository": "karmada-io/karmada",
+      "learningId": "learn-github-karmada-io-karmada",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T21:59:39.074Z",
+      "repository": "paradedb/paradedb",
+      "learningId": "learn-github-paradedb-paradedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T22:00:48.922Z",
+      "repository": "reflection/Beam-1.0-501B-A23B",
+      "learningId": "learn-huggingface-reflection-beam-1-0-501b-a23b",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

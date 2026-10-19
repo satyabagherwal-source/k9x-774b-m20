@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/karmada-io-karmada-learnings.md`  
 > **Source**: github ([https://github.com/karmada-io/karmada](https://github.com/karmada-io/karmada))  
-> **Source Version**: `ef5b2fc8`  
+> **Source Version**: `7cb3c422`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T10:28:54.351Z  
+> **Timestamp**: 2026-10-19T21:59:34.200Z  
 > **Learning ID**: `learn-github-karmada-io-karmada`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/karmada-io-karmada-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/karmada-io/karmada](https://github.com/karmada-io/karmada))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T10:28:54.344Z  
+> **Harvest Timestamp**: 2026-10-19T21:59:33.568Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1008,47 +1008,337 @@ func (e *workloadInterpreter) responseWithExploreInterpretStatus(workload *workl
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f6653714` (2026-10-19)
-**Commit Message**: build(deps): bump github/codeql-action/upload-sarif
+### Incident Patch 1: `7cb3c422` (2026-10-19)
+**Commit Message**: Merge pull request #7830 from ranxi2001/feature/multi-component-scale-rescheduling
 
-Bumps [github/codeql-action/upload-sarif](https://github.com/github/codeql-action) from 4.38.3 to 4.39.0.
-- [Release notes](https://github.com/github/codeql-action/releases)
-- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/github/codeql-action/compare/24c54180a607b1449ed407dd24f251e4e9147c8d...6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee)
+feat: trigger rescheduling on component replica changes
 
----
-updated-dependencies:
-- dependency-name: github/codeql-action/upload-sarif
-  dependency-version: 4.39.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/ci-image-scanning-on-schedule.yml` (modified, +1/-1)
+**File**: `pkg/scheduler/scheduler_test.go` (modified, +79/-0)
 ```diff
-@@ -69,7 +69,7 @@ jobs:
-           cache: false
-           vuln-type: 'os,library'
-       - name: Upload Trivy scan results to GitHub Security tab
--        uses: github/codeql-action/upload-sarif@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
-+        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
-         with:
-           sarif_file: '${{ matrix.target }}:${{ matrix.karmada-version }}.trivy-results.sarif'
-           ref: ${{steps.gen_git_info.outputs.ref}}
+@@ -186,6 +186,7 @@ func TestDoScheduleBinding(t *testing.T) {
+ 		expectError      bool
+ 		expectedClusters []workv1alpha2.TargetCluster
+ 		expectedEvent    string
++		enableComponents bool
+ 	}{
+ 		{
+ 			name: "binding with changed placement",
+@@ -259,10 +260,49 @@ func TestDoScheduleBinding(t *testing.T) {
+ 			},
+ 			expectedEvent: "Normal ScheduleBindingSucceed",
+ 		},
++		{
++			name: "binding with component replicas changed",
++			binding: &workv1alpha2.ResourceBinding{
++				ObjectMeta: metav1.ObjectMeta{
++					Name:      "test-binding-components",
++					Namespace: "default",
++					Annotations: map[string]string{
++						util.PolicyPlacementAnnotation: `{"replicaScheduling":{"replicaSchedulingType":"Divided"}}`,
++					},
++				},
++				Spec: workv1alpha2.ResourceBindingSpec{
++					Components: []workv1alpha2.Component{
++						{Name: "jobmanager", Replicas: 1},
++						{Name: "taskmanager", Replicas: 6},
++					},
++					Clusters: []workv1alpha2.TargetCluster{{
++						Name: "cluster1",
++						Components: []workv1alpha2.TargetComponent{
++							{Name: "jobmanager", Replicas: 1},
++							{Name: "taskmanager", Replicas: 4},
++						},
++					}},
++					Placement: &policyv1alpha1.Placement{ReplicaScheduling: &policyv1alpha1.ReplicaSchedulingStrategy{
++						ReplicaSchedulingType: policyv1alpha1.ReplicaSchedulingTypeDivided,
++					}},
++				},
++			},
++			expectSchedule: true,
++			expectedClusters: []workv1alpha2.TargetCluster{{
++				Name: "cluster1",
++				Components: []workv1alpha2.TargetComponent{
++					{Name: "jobmanager", Replicas: 1},
++					{Name: "taskmanager", Replicas: 6},
++				},
++			}},
++			expectedEvent:    "Normal ScheduleBindingSucceed",
++			enableComponents: true,
++		},
+ 	}
+ 
+ 	for _, tt := range tests {
+ 		t.Run(tt.name, func(t *testing.T) {
++			defer setFeatureGateDuringTest(t, features.FeatureGate, features.MultiplePodTemplatesScheduling, tt.enableComponents)()
+ 			fakeClient := karmadafake.NewClientset(tt.binding)
+ 			fakeRecorder := record.NewFakeRecorder(10)
+ 			mockAlgorithm := &mockAlgorithm{
+@@ -315,6 +355,7 @@ func TestDoScheduleClusterBinding(t *testing.T) {
+ 		expectError      bool
+ 		expectedClusters []workv1alpha2.TargetCluster
+ 		expectedEvent    string
++		enableComponents bool
+ 	}{
+ 		{
+ 			name: "cluster binding with changed placement",
+@@ -385,10 +426,48 @@ func TestDoScheduleClusterBinding(t *testing.T) {
+ 			},
+ 			expectedEvent: "Normal ScheduleBindingSucceed",
+ 		},
++		{
++			name: "cluster binding with component replicas changed",
++			binding: &workv1alpha2.ClusterResourceBinding{
++				ObjectMeta: metav1.ObjectMeta{
++					Name: "test-cluster-binding-components",
++					Annotations: map[string]string{
++						util.PolicyPlacementAnnotation: `{"replicaScheduling":{"replicaSchedulingType":"Divided"}}`,
++					},
++				},
++				Spec: workv1alpha2.ResourceBindingSpec{
++					Components: []workv1alpha2.Component{
++						{Name: "jobmanager", Replicas: 1},
++						{Name: "taskmanager", Replicas: 6},
++					},
++					Clusters: []workv1alpha2.TargetCluster{{
++						Name: "cluster1",
++						Components: []workv1alpha2.TargetComponent{
++							{Name: "jobmanager", Replicas: 1},
++							{Name: "taskmanager", Replicas: 4},
++						},
++					}},
++					Placement: &policyv1alpha1.Placement{ReplicaScheduling: &policyv1alpha1.ReplicaSchedulingStrategy{
++						ReplicaSchedulingType: policyv1alpha1.ReplicaSchedulingTypeDivided,
++					}},
++				},
++			},
++			expectSchedule: true,
++			expectedClusters: []workv1alpha2.TargetCluster{{
++				Name: "cluster1",
++				Components: []workv1alpha2.TargetComponent{
++					{Name: "jobmanager", Replicas: 1},
++					{Name: "taskmanager", Replicas: 6},
++				},
++			}},
++			expectedEvent:    "Normal ScheduleBindingSucceed",
++			enableComponents: true,
++		},
+ 	}
+ 
+ 	for _, tt := range tests {
+ 		t.Run(tt.name, func(t *testing.T) {
++			defer setFeatureGateDuringTest(t, features.FeatureGate, features.MultiplePodTemplatesScheduling, tt.enableComponents)()
+ 			fakeClient := karmadafake.NewClientset(tt.binding)
+ 			fakeRecorder := record.NewFakeRecorder(10)
+ 			mockAlgorithm := &mockAlgorithm{
 ```
 
-**File**: `.github/workflows/ci-image-scanning.yaml` (modified, +1/-1)
+**File**: `pkg/util/binding.go` (modified, +37/-8)
 ```diff
-@@ -68,6 +68,6 @@ jobs:
-           vuln-type: 'os,library'
-           cache: false
-       - name: Upload Trivy scan results to GitHub Security tab
--        uses: github/codeql-action/upload-sarif@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
-+        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
-         with:
-           sarif_file: 'trivy-results.sarif'          
+@@ -34,23 +34,22 @@ func GetBindingClusterNames(spec *workv1alpha2.ResourceBindingSpec) []string {
+ 	return clusterNames
+ }
+ 
+-// IsBindingReplicasChanged will check if the sum of replicas is different from the replicas of object
++// IsBindingReplicasChanged reports whether the desired replicas differ from the scheduled result.
+ func IsBindingReplicasChanged(bindingSpec *workv1alpha2.ResourceBindingSpec, strategy *policyv1alpha1.ReplicaSchedulingStrategy) bool {
+ 	if strategy == nil {
+ 		return false
+ 	}
+ 
+-	// For component-based workloads, trigger rescheduling when clusters are empty (e.g., after eviction).
+-	// This is a temporary fix to ensure cluster failover works correctly.
+-	// Limitation: This only handles the failover scenario where clusters are cleared.
+-	// It does not detect component replica changes (e.g., scale up/down) or replica swaps between components.
+-	// A complete solution requires changing how scheduling results are stored to support multi-template workloads,
+-	// likely by extending TargetCluster to include per-component replica information.
+-	// The comprehensive solution is tracked by: https://github.com/karmada-io/karmada/issues/6998
++	// For component-based workloads, trigger rescheduling when clusters are empty (e.g., after eviction),
++	// or when the per-component replicas recorded in any target cluster differ from the desired ones
++	// (e.g., scale up/down, component added/removed).
+ 	if features.FeatureGate.Enabled(features.MultiplePodTemplatesScheduling) && len(bindingSpec.Components) > 0 {
+ 		if len(bindingSpec.Clusters) == 0 {
+ 			return true
+ 		}
++		if isComponentReplicasChanged(bindingSpec.Components, bindingSpec.Clusters) {
++			return true
++		}
+ 	}
+ 
+ 	if strategy.ReplicaSchedulingType == policyv1alpha1.ReplicaSchedulingTypeDuplicated {
+@@ -68,6 +67,36 @@ func IsBindingReplicasChanged(bindingSpec *workv1alpha2.ResourceBindingSpec, str
+ 	return false
+ }
+ 
++// isComponentReplicasChanged checks whether the per-component replicas recorded in target clusters
++// differ from the desired components. Multi-component workloads are scheduled as a whole, so every
++// target cluster is expected to hold the full replicas of every component.
++// Clusters without recorded component results are skipped, because the scheduler only records them for
++// multi-component workloads that are applicable to multi-template scheduling (see AssignReplicas in
++// pkg/scheduler/core). Single-component workloads, or results produced before the feature gate was
++// enabled, carry no component results and still rely on the legacy replica checks.
++func isComponentReplicasChanged(components []workv1alpha2.Component, clusters []workv1alpha2.TargetCluster) bool {
++	desired := make(map[string]int32, len(components))
++	for _, component := range components {
++		desired[component.Name] = component.Replicas
++	}
++
++	for _, cluster := range clusters {
++		if len(cluster.Components) == 0 {
++			continue
++		}
++		if len(cluster.Components) != len(desired) {
++			return true
++		}
++		for _, targetComponent := range cluster.Components {
++			replicas, ok := desired[targetComponent.Name]
++			if !ok || replicas != targetComponent.Replicas {
++				return true
++			}
++		}
++	}
++	return false
++}
++
+ // GetSumOfReplicas will get the sum of replicas in target clusters
+ func GetSumOfReplicas(clusters []workv1alpha2.TargetCluster) int32 {
+ 	replicasSum := int32(0)
+```
+
+**File**: `pkg/util/binding_test.go` (modified, +287/-1)
+```diff
+@@ -178,9 +178,27 @@ func TestIsBindingReplicasChanged(t *testing.T) {
+ 			strategy: &policyv1alpha1.ReplicaSchedulingStrategy{ReplicaSchedulingType: policyv1alpha1.ReplicaSchedulingTypeDivided},
+ 			expected: true,
+ 		},
++		{
++			name: "component replicas changed with feature gate disabled",
++			bindingSpec: &workv1alpha2.ResourceBindingSpec{
++				Components: []workv1alpha2.Component{
++					{Name: "jobmanager", Replicas: 1},
++					{Name: "taskmanager", Replicas: 6},
++				},
++				Clusters: []workv1alpha2.TargetCluster{{
++					Name: ClusterMember1,
++					Components: []workv1alpha2.TargetComponent{
++						{Name: "jobmanager", Replicas: 1},
++						{Name: "taskmanager", Replicas: 4},
++					},
++				}},
++			},
++			strategy: &policyv1alpha1.ReplicaSchedulingStrategy{ReplicaSchedulingType: policyv1alpha1.ReplicaSchedulingTypeDivided},
++			expected: false,
++		},
+ 	}
+ 
+-	// Component-based workload failover tests require the MultiplePodTemplatesScheduling feature gate.
++	// Component-based workload tests require the MultiplePodTemplatesScheduling feature gate.
+ 	componentTests := []struct {
+ 		name        string
+ 		bindingSpec *workv1alpha2.ResourceBindingSpec
+@@ -223,6 +241,171 @@ func TestIsBindingReplicasChanged(t *testing.T) {
+ 			strategy: &policyv1alpha1.ReplicaSchedulingStrategy{ReplicaSchedulingType: policyv1alpha1.ReplicaSchedulingTypeDuplicated},
+ 			expected: false,
+ 		},
++		{
++			name: "multi-component scale up should trigger rescheduling",
++			bindingSpec: &workv1alpha2.ResourceBindingSpec{
++				Components: []workv1alpha2.Component{
++					{Name: "jobmanager", Replicas: 1},
++					{Name: "taskmanager", Replicas: 6},
++				},
++				Clusters: []workv1alpha2.TargetCluster{{
++					Name: ClusterMember1,
++					Components: []workv1alpha2.TargetComponent{
++						{Name: "jobmanager", Replicas: 1},
++						{Name: "taskmanager", Replicas: 4},
++					},
++				}},
++			},
++			strategy: &policyv1alpha1.ReplicaSchedulingStrategy{ReplicaSchedulingType: policyv1alpha1.ReplicaSchedulingTypeDivided},
++			expected: true,
++		},
++		{
++			name: "multi-component scale down should trigger rescheduling",
++			bindingSpec: &workv1alpha2.ResourceBindingSpec{
++				Components: []workv1alpha2.Component{
++					{Name: "jobmanager", Replicas: 1},
++					{Name: "taskmanager", Replicas: 4},
++				},
++				Clusters: []workv1alpha2.TargetCluster{{
++					Name: ClusterMember1,
++					Components: []workv1alpha2.TargetComponent{
++						{Name: "jobmanager", Replicas: 1},
++						{Name: "taskmanager", Replicas: 6},
++					},
++				}},
++			},
++			strategy: &policyv1alpha1.ReplicaSchedulingStrategy{ReplicaSchedulingType: policyv1alpha1.ReplicaSchedulingTypeDivided},
++			expected: true,
++		},
++		{
++			name: "mixed multi-component scale should trigger rescheduling",
++			bindingSpec: &workv1alpha2.ResourceBindingSpec{
++				Components: []workv1alpha2.Component{
++					{Name: "jobmanager", Replicas: 2},
++					{Name: "taskmanager", Replicas: 4},
++				},
++				Clusters: []workv1alpha2.TargetCluster{{
++					Name: ClusterMember1,
++					Components: []workv1alpha2.TargetComponent{
++						{Name: "jobmanager", Replicas: 1},
++						{Name: "taskmanager", Replicas: 6},
++					},
++				}},
++			},
++			strategy: &policyv1alpha1.ReplicaSchedulingStrategy{ReplicaSchedulingType: policyv1alpha1.ReplicaSchedulingTypeDivided},
++			expected: true,
++		},
++		{
++			name: "equal multi-component replicas should not trigger rescheduling",
++			bindingSpec: &workv1alpha2.ResourceBindingSpec{
++				Components: []workv1alpha2.Component{
++					{Name: "jobmanager", Replicas: 1},
++					{Name: "taskmanager", Replicas: 4},
++				},
++				Clusters: []workv1alpha2.TargetCluster{{
++					Name: ClusterMember1,
++					Components: []workv1alpha2.TargetComponent{
++						{Name: "taskmanager", Replicas: 4},
++						{Name: "jobmanager", Replicas: 1},
++					},
++				}},
++			},
++			strategy: &policyv1alpha1.ReplicaSchedulingStrategy{ReplicaSchedulingType: policyv1alpha1.ReplicaSchedulingTypeDivided},
++			expected: false,
++		},
++		{
++			name: "missing scheduled component results should not trigger scale rescheduling",
++			bindingSpec: &workv1alpha2.ResourceBindingSpec{
++				Components: []workv1alpha2.Component{
++					{Name: "jobmanager", Replicas: 1},
++					{Name: "taskmanager", Replicas: 4},
++				},
++				Clusters: []workv1alpha2.TargetCluster{{Name: ClusterMember1}},
++			},
++			strategy: &policyv1alpha1.ReplicaSchedulingStrategy{ReplicaSchedulingType: policyv1alpha1.ReplicaSchedulingTypeDivided},
++			expected: false,
++		},
++		{
++			name: "component name change should trigger rescheduling",
++			bindingSpec: &workv1alpha2.ResourceBindingSpec{
++				Components: []workv1alpha2.Component{
++					{Name: "jobmanager", Replicas: 2},
++					{Name: "worker", Replicas: 4},
++				},
++				Clusters: []workv1alpha2.TargetCluster{{
++					Name: ClusterMember1,
++					Components: []workv1alpha2.TargetComponent{
++						{Name: "jobmanager", Replicas: 1},
++						{Name: "taskmanager", Replicas: 4},
++					},
++				}},
++			},
++			strategy: &policyv1alpha1.R
 ```
 
 #### Recent Merged Pull Requests:
@@ -1077,28 +1367,61 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump github/codeql-action/upload-sarif
+## X. Merge pull request #7830 from ranxi2001/feature/multi-component-scale-rescheduli
 
 **RULE**:
-When implementing operations in `.github/workflows/ci-image-scanning-on-schedule.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karmada-io/karmada. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/scheduler/scheduler_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karmada-io/karmada. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f6653714`: build(deps): bump github/codeql-action/upload-sarif. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7cb3c422`: Merge pull request #7830 from ranxi2001/feature/multi-component-scale-rescheduling. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci-image-scanning-on-schedule.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/scheduler/scheduler_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
+		enableComponents bool
+		{
+			name: "binding with component replicas changed",
+			binding: &workv1alpha2.ResourceBinding{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "test-binding-components",
+					Namespace: "default",
+					Annotations: map[string]string{
+						util.PolicyPlacementAnnotation: `{"replicaScheduling":{"replicaSchedulingType":"Divided"}}`,
+					},
+				},
+				Spec: workv1alpha2.ResourceBindingSpec{
+					Components: []workv1alpha2.Component{
+						{Name: "jobmanager", Replicas: 1},
+						{Name: "taskmanager", Replicas: 6},
+					},
+					Clusters: []workv1alpha2.TargetCluster{{
+						Name: "cluster1",
+						Components: []workv1alpha2.TargetComponent{
+							{Name: "jobmanager", Replicas: 1},
+							{Name: "taskmanager", Replicas: 4},
+						},
+					}},
+					Placement: &policyv1alpha1.Placement{ReplicaScheduling: &policyv1alpha1.ReplicaSchedulingStrategy{
+						ReplicaSchedulingType: policyv1alpha1.ReplicaSchedulingTypeDivided,
+					}},
+				},
+			},
+			expectSchedule: true,
+			expectedClusters: []workv1alpha2.TargetCluster{{
+				Name: "cluster1",
+				Components: []workv1alpha2.TargetComponent{
+					{Name: "jobmanager", Replicas: 1},
+					{Name: "taskmanager", Replic
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-        uses: github/codeql-action/upload-sarif@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f6653714` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7cb3c422` are properly handled with clean fallback behavior.

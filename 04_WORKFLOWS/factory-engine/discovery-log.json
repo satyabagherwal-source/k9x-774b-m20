@@ -18163,5 +18163,17 @@
     "downloads": 3672,
     "qualityScore": 3800,
     "discoveredAt": "2026-10-19T18:14:12.746Z"
+  },
+  {
+    "name": "reflection/Beam-1.0-501B-A23B",
+    "fullName": "reflection/Beam-1.0-501B-A23B",
+    "url": "https://huggingface.co/reflection/Beam-1.0-501B-A23B",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: reflection/Beam-1.0-501B-A23B (164 likes, 2097 downloads)",
+    "likes": 164,
+    "downloads": 2097,
+    "qualityScore": 3640,
+    "discoveredAt": "2026-10-19T21:57:08.333Z"
   }
 ]

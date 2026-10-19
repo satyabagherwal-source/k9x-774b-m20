@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T21:52:49.573Z",
+  "last_updated": "2026-10-19T22:00:48.926Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4339,14 +4339,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-karmada-io-karmada",
-      "content_hash": "f0bc8d47e55450b5629fb165df3e6bf8b2449a9fc9dfeed57516f26eb66544d3",
-      "verified_at": "2026-10-19T10:28:54.543Z",
+      "content_hash": "f65cba1bce65642e44d5df12cf9a4ed38307fc49f18524cb7bc61ce9e9a0ba46",
+      "verified_at": "2026-10-19T21:59:34.590Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T10:28:54.543Z"
+      "last_updated": "2026-10-19T21:59:34.590Z"
     },
     "milvus-io/bootcamp": {
       "repository": "milvus-io/bootcamp",
@@ -10354,14 +10354,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-topgrade-rs-topgrade",
-      "content_hash": "98d2d92c579c2374b923807ff2b266a326f5814d17c9550edc85aa26491636bb",
-      "verified_at": "2026-10-19T06:59:25.249Z",
+      "content_hash": "f2bf0d380b954d04a628dc242b39f465f0e5672eae48d02186f7d0af39550979",
+      "verified_at": "2026-10-19T21:59:27.259Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T06:59:25.249Z"
+      "last_updated": "2026-10-19T21:59:27.259Z"
     },
     "lucide-icons/lucide": {
       "repository": "lucide-icons/lucide",
@@ -11359,14 +11359,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-paradedb-paradedb",
-      "content_hash": "67e6367e4ce55053a21951853eef357bf1cfde31b3382a26702717ef2628cc6d",
-      "verified_at": "2026-10-19T09:35:27.495Z",
+      "content_hash": "a3ccbb35e1e656b5fc12e4ba30919b75049c1ffa7ce70c02eb555c7d086dabf4",
+      "verified_at": "2026-10-19T21:59:39.077Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T09:35:27.495Z"
+      "last_updated": "2026-10-19T21:59:39.077Z"
     },
     "imsnif/diskonaut": {
       "repository": "imsnif/diskonaut",
@@ -13842,6 +13842,51 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T21:52:49.573Z"
+    },
+    "jina-ai/reader": {
+      "repository": "jina-ai/reader",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-jina-ai-reader",
+      "content_hash": "b946fbda5861fb4732e24669307103111976c900b665addc0a0ba26db294947a",
+      "verified_at": "2026-10-19T21:59:29.480Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T21:59:29.480Z"
+    },
+    "RevenueCat/purchases-ios": {
+      "repository": "RevenueCat/purchases-ios",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-revenuecat-purchases-ios",
+      "content_hash": "9b510e3a514cec586e6e678a850ed9ac0b91cee0630f35587c1012d25dc5a61c",
+      "verified_at": "2026-10-19T21:59:31.805Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T21:59:31.805Z"
+    },
+    "reflection/Beam-1.0-501B-A23B": {
+      "repository": "reflection/Beam-1.0-501B-A23B",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-reflection-beam-1-0-501b-a23b",
+      "content_hash": "8d0bfc90a5267fe201b211d7fe22ffb41e5f7972d9bbeaa25aabe11602a14828",
+      "verified_at": "2026-10-19T22:00:48.925Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T22:00:48.925Z"
     }
   },
   "repos": {

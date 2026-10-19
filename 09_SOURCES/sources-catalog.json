@@ -2803,10 +2803,10 @@
     "repository": "karmada-io/karmada",
     "platform": "github",
     "sourceUrl": "https://github.com/karmada-io/karmada",
-    "sourceVersion": "ef5b2fc8",
+    "sourceVersion": "7cb3c422",
     "license": "Apache-2.0",
-    "contentHash": "f0bc8d47e55450b5629fb165df3e6bf8b2449a9fc9dfeed57516f26eb66544d3",
-    "lastHarvestedAt": "2026-10-19T10:28:54.537Z",
+    "contentHash": "f65cba1bce65642e44d5df12cf9a4ed38307fc49f18524cb7bc61ce9e9a0ba46",
+    "lastHarvestedAt": "2026-10-19T21:59:34.583Z",
     "learningId": "learn-github-karmada-io-karmada"
   },
   "milvus-io-bootcamp": {
@@ -6863,10 +6863,10 @@
     "repository": "topgrade-rs/topgrade",
     "platform": "github",
     "sourceUrl": "https://github.com/topgrade-rs/topgrade",
-    "sourceVersion": "8c5ef9cc",
+    "sourceVersion": "f022ebfe",
     "license": "GPL-3.0",
-    "contentHash": "98d2d92c579c2374b923807ff2b266a326f5814d17c9550edc85aa26491636bb",
-    "lastHarvestedAt": "2026-10-19T06:59:25.244Z",
+    "contentHash": "f2bf0d380b954d04a628dc242b39f465f0e5672eae48d02186f7d0af39550979",
+    "lastHarvestedAt": "2026-10-19T21:59:27.251Z",
     "learningId": "learn-github-topgrade-rs-topgrade"
   },
   "lucide-icons-lucide": {
@@ -7543,10 +7543,10 @@
     "repository": "paradedb/paradedb",
     "platform": "github",
     "sourceUrl": "https://github.com/paradedb/paradedb",
-    "sourceVersion": "fa7c7432",
+    "sourceVersion": "d9e5536c",
     "license": "AGPL-3.0",
-    "contentHash": "67e6367e4ce55053a21951853eef357bf1cfde31b3382a26702717ef2628cc6d",
-    "lastHarvestedAt": "2026-10-19T09:35:27.490Z",
+    "contentHash": "a3ccbb35e1e656b5fc12e4ba30919b75049c1ffa7ce70c02eb555c7d086dabf4",
+    "lastHarvestedAt": "2026-10-19T21:59:39.070Z",
     "learningId": "learn-github-paradedb-paradedb"
   },
   "imsnif-diskonaut": {
@@ -9198,5 +9198,35 @@
     "contentHash": "b7565f002012e0ff7cd134b4c6b758bcd91f7b94de81556847a4998e96e55cb6",
     "lastHarvestedAt": "2026-10-19T21:52:49.566Z",
     "learningId": "learn-github-yannickl-dynamiccolor"
+  },
+  "jina-ai-reader": {
+    "repository": "jina-ai/reader",
+    "platform": "github",
+    "sourceUrl": "https://github.com/jina-ai/reader",
+    "sourceVersion": "1574bfd3",
+    "license": "Apache-2.0",
+    "contentHash": "b946fbda5861fb4732e24669307103111976c900b665addc0a0ba26db294947a",
+    "lastHarvestedAt": "2026-10-19T21:59:29.473Z",
+    "learningId": "learn-github-jina-ai-reader"
+  },
+  "revenuecat-purchases-ios": {
+    "repository": "RevenueCat/purchases-ios",
+    "platform": "github",
+    "sourceUrl": "https://github.com/RevenueCat/purchases-ios",
+    "sourceVersion": "f93701d2",
+    "license": "MIT",
+    "contentHash": "9b510e3a514cec586e6e678a850ed9ac0b91cee0630f35587c1012d25dc5a61c",
+    "lastHarvestedAt": "2026-10-19T21:59:31.798Z",
+    "learningId": "learn-github-revenuecat-purchases-ios"
+  },
+  "hf-reflection-beam-1.0-501b-a23b": {
+    "repository": "reflection/Beam-1.0-501B-A23B",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/reflection/Beam-1.0-501B-A23B",
+    "sourceVersion": "hf-reflection-beam-1.0-501b-a23b",
+    "license": "Open-Source",
+    "contentHash": "8d0bfc90a5267fe201b211d7fe22ffb41e5f7972d9bbeaa25aabe11602a14828",
+    "lastHarvestedAt": "2026-10-19T22:00:48.918Z",
+    "learningId": "learn-huggingface-reflection-beam-1-0-501b-a23b"
   }
 }

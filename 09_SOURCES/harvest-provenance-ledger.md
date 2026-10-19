@@ -3521,3 +3521,9 @@ Every entry in this ledger must capture:
 | `learn-github-domcyrus-rustnet` | `https://github.com/domcyrus/rustnet` | `298be28e` | Multi-dimensional audit evidence | 2026-10-19T21:52:45.193Z |
 | `learn-github-scrapy-plugins-scrapy-zyte-api` | `https://github.com/scrapy-plugins/scrapy-zyte-api` | `681d1450` | Multi-dimensional audit evidence | 2026-10-19T21:52:46.406Z |
 | `learn-github-yannickl-dynamiccolor` | `https://github.com/yannickl/DynamicColor` | `cf7c6eed` | Multi-dimensional audit evidence | 2026-10-19T21:52:49.566Z |
+| `learn-github-topgrade-rs-topgrade` | `https://github.com/topgrade-rs/topgrade` | `f022ebfe` | Multi-dimensional audit evidence | 2026-10-19T21:59:27.251Z |
+| `learn-github-jina-ai-reader` | `https://github.com/jina-ai/reader` | `1574bfd3` | Multi-dimensional audit evidence | 2026-10-19T21:59:29.473Z |
+| `learn-github-revenuecat-purchases-ios` | `https://github.com/RevenueCat/purchases-ios` | `f93701d2` | Multi-dimensional audit evidence | 2026-10-19T21:59:31.798Z |
+| `learn-github-karmada-io-karmada` | `https://github.com/karmada-io/karmada` | `7cb3c422` | Multi-dimensional audit evidence | 2026-10-19T21:59:34.583Z |
+| `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `d9e5536c` | Multi-dimensional audit evidence | 2026-10-19T21:59:39.070Z |
+| `learn-huggingface-reflection-beam-1-0-501b-a23b` | `https://huggingface.co/reflection/Beam-1.0-501B-A23B` | `hf-reflect` | Multi-dimensional audit evidence | 2026-10-19T22:00:48.918Z |

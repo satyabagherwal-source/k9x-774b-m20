@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source**: github ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
-> **Source Version**: `fa7c7432`  
+> **Source Version**: `d9e5536c`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T09:35:27.275Z  
+> **Timestamp**: 2026-10-19T21:59:38.715Z  
 > **Learning ID**: `learn-github-paradedb-paradedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T09:35:27.269Z  
+> **Harvest Timestamp**: 2026-10-19T21:59:37.997Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: One Postgres for your application data, full-text search, vector retrieval, and aggregations. Home of the pg_search extension.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9413 stars
+- **Stars / Engagement**: 9416 stars
 
 ---
 
@@ -2301,11 +2301,11 @@ static mut PREV_PLANNER_HOOK: pg_sys::planner_hook_type = None;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6796** (2026-10-15): **Concurrent upserts and cancellations accumulate BM25 segments and crash background merger with buffer pin exhaustion**
-  *Symptoms*: ## Problem  Concurrent whole-row upserts can accumulate thousands of BM25 segments, followed by `no unpinned buffers available` and a background merger exiting with code 1. In one local stress run, the backlog remained unchanged through 30 seconds of idle time after the crash. VACUUM subsequently restarted merging and the index recovered.  This was observed on 0.26.1 / PostgreSQL 18. It is a single observed stress run; scheduling-dependent results may vary. A fix on current main has not been verified.  ## Full reproduction  Requires Docker and Python 3 (standard library only). No published ports are needed. Start a fresh disposable container:  ```sh docker run -d --rm --name segment-backlog-repro \   --cpus=4 --memory=4g \   -e POSTGRES_PASSWORD=local-repro-only \   paradedb/paradedb:0.26.1-pg18 \   -c shared_buffers=256MB \   -c max_worker_processes=16 \   -c max_parallel_workers=8 \   -c max_connections=100  docker exec segment-backlog-repro pg_isready -U postgres ```  Wait for `pg_isready` to report accepting connections. Save the following as `repro.py`, then run `python3 repro.py`. Run in a fresh directory so `concurrent-results/events.jsonl` does not contain previous runs. Runtime is approximately three minutes plus merge/recovery time.  <details> <summary>Complete Python harness</summary>  ```python import subprocess, threading, time, json, pathlib, collections  OUT=pathlib.Path('concurrent-results') OUT.mkdir(exist_ok=True) BASE=['docker','exec','-i','segment-backlog-
+- **Issue #6884** (2026-10-19): **IVF training ignores cancel and terminate during CREATE INDEX and merges**
+  *Symptoms*: # What happens?  When a vector index trains its IVF centroids, the backend ignores `pg_cancel_backend` and `pg_terminate_backend` until training ends. `SuperKMeansIvfClusterer::train` calls `superkmeans::train_owned`, which has no interrupt hook. The assign step after it polls `wants_cancel` in `mvcc.rs`. That reads `QueryCancelPending` but not `ProcDiePending`, so a cancel lands there and a terminate doesn't.  Background merges attach the same clusterer (`SearchIndexMerger::open`). A merger that is training ignores `SIGTERM` the same way, and a fast shutdown waits for it.  Measured on 0.26.2 with `CREATE INDEX` on 1M rows of `vector(512)` and `target_segment_count = 1`. The build reports `train=29264 assign=22265 encode=21265` ms.  | Phase | `pg_cancel_backend` | `pg_terminate_backend` | |---|---|---| | train (29 s) | waits for train to end | waits for train and assign to end | | assign (22 s) | lands in 0.6 s | waits for assign to end | | encode (21 s) | lands in 0.1 s | lands in 0.1 s |  A terminate sent during training landed after 41.7 s. A cancel sent during training landed after 14.4 s, when the phase ended. Training time grows with rows times dims, so I'd expect a few million 1536-dim rows to train for minutes.  Found while we looked for paths that hold interrupts (see #6881). A fix needs two parts, I think. `wants_cancel` should also test `ProcDiePending`, and the clusterer needs a check between splits, which `superkmeans` doesn't expose today.  ## To Reproduce  1. S
 
-- **Issue #6790** (2026-10-15): **Parallel Base Scan workers keep the first round's parameter after a Gather rescan**
-  *Symptoms*: # What happens?  A parallel Base Scan under a rescanned `Gather Merge` keeps the first round's value of a parameter in its workers, for a parameter in a heap filter and for one inside the search query. The leader's rows are right; the workers' rows are those of the first outer row, every round.  The leader solves its parameters into constants (`solve_parameters` replaces each `Param` with a `Const`; a `PostgresExpression` is replaced by its value) and serializes that solved query into the DSM once, in `initialize_dsm_custom_scan`. `reinitialize_dsm_custom_scan` resets the counters only, so the relaunched workers deserialize round one's constants. The values Postgres ships for `Gather.initParam` (#5727, #5886) cannot reach them: by then their expressions hold no `Param`.  Reproduces on `main` (`9c7ff146c`, PG18, release build). With `max_parallel_workers = 0`, so the leader scans alone, the rows are right, and so are they with `paradedb.enable_custom_scan = off`. Found while fixing #6734 in #6751, where the leader rebuilds the bitmap each round and hides it. #6639 has the same symptom for the Aggregate Scan through a different path (`chgParam` is never set).  ## To Reproduce  ```sql CREATE EXTENSION IF NOT EXISTS pg_search CASCADE; CREATE TABLE clean_units (id bigint PRIMARY KEY, bank_id text NOT NULL, body text NOT NULL); INSERT INTO clean_units SELECT i, 'bank' || (i % 4), 'alpha beta ' || i FROM generate_series(1, 20000) i; CREATE INDEX clean_search ON clean_units USING par
+- **Issue #6872** (2026-10-19): **`unicode_words` strips emojis**
+  *Symptoms*: ### What happens?  `pdb.unicode_words` removes emojis unless it is given no options. It removes them for 'remove_emojis=false', and also for unrelated options such as 'columnar=true', 'pnorms=true', 'bitmap_postings=false' or 'lowercase=false'. The docs say emojis are kept by default and only removed with `remove_emojis`.  Cause: `UnicodeWordsTypmod::try_from` (pg_search/src/api/tokenizers/typmod/definitions.rs) reads the option as `parsed.try_get("remove_emojis", 0).is_some()`. `try_get(key, 0)` falls back to the property in slot 0 when the key is absent, so any first option makes `.is_some()` true.  An index built with `(description::pdb.unicode_words('columnar=true'))`, as in docs/reference/indexing/columnar.mdx, cannot find emoji terms.  I have a fix ready that reads the option by key, or as the bare flag, instead of by position. Indexes built with these options were built with emojis removed, so it comes with a changelog note about reindexing.  ### To Reproduce  ```sql SELECT 'Hello 😊 world'::pdb.unicode_words::text[]; -- {hello,😊,world}  SELECT 'Hello 😊 world'::pdb.unicode_words('remove_emojis=false')::text[]; -- expected {hello,😊,world} -- observed {hello,world}  SELECT 'Hello 😊 world'::pdb.unicode_words('columnar=true')::text[]; -- expected {hello,😊,world} -- observed {hello,world} ```   ### OS:  `macOS (Apple Silicon, aarch64); not OS-specific`  ### ParadeDB Version (e.g. output of `SELECT * FROM paradedb.version_info();`):  `main (current)` (or paste `SELECT *
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2322,761 +2322,678 @@ static mut PREV_PLANNER_HOOK: pg_sys::planner_hook_type = None;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bad19fd8` (2026-10-15)
-**Commit Message**: fix: launch the background merger under backpressure and release its pins per candidate (#6855)
+### Incident Patch 1: `84d2be45` (2026-10-19)
+**Commit Message**: fix: reject out-of-range date values during index build and insert (#6730) (#6876)
+
+### Summary
+Fixes #6730 - Rejects PostgreSQL `date` values exceeding year 294276 AD
+during index build and mutable insert with a specific error message,
+preventing deferred indexing panics and table search corruption.
+
+### Root Cause
+PostgreSQL `date` values support years up to 5,874,897 AD, whereas
+`timestamp` (and Tantivy datetime fast fields) are stored as signed
+64-bit microseconds from the PostgreSQL epoch, bounding finite values to
+4713-11-24 BC through 294276-12-31 AD (`MAX_PG_MICROS =
+9_223_371_331_200_000_000 - 1`).
+
+Prior to this fix:
+1. `From<pgrx::datum::Date> for PostgresDateTime` panicked via
+`.expect(...)` when converting dates beyond 294276 AD (either by integer
+overflow in `checked_mul(ONE_DAY_MICROS)` for year >= ~300,000 AD or in
+`try_from_raw` for years 294,277-300,000 AD).
+2. `TantivyValue::try_from(Date)` called `PostgresDateTime::from(val)`
+directly, bypassing fallible error handling.
+3. In `InsertMode::Mutable` (the default when `mutable_segment_rows >
+0`), `aminsert` buffered `ctid`s without validating date values.
+Out-of-range dates were committed to the PostgreSQL heap tab
+
+**File**: `pg_search/src/postgres/datetime.rs` (modified, +52/-10)
+```diff
+@@ -177,7 +177,7 @@ impl PostgresDateTime {
+ 
+     pub fn try_from_date_str(s: &str) -> Result<Self, DateTimeConversionError> {
+         let date = pgrx::datum::Date::from_str(s)?;
+-        Ok(Self::from(date))
++        Self::try_from(date)
+     }
+ 
+     pub fn try_from_time_str(s: &str) -> Result<Self, DateTimeConversionError> {
+@@ -261,21 +261,22 @@ impl From<PostgresDateTime> for String {
+         format!("{}Z", value.0.to_iso_string())
+     }
+ }
+-impl From<pgrx::datum::Date> for PostgresDateTime {
+-    fn from(value: pgrx::datum::Date) -> Self {
++impl TryFrom<pgrx::datum::Date> for PostgresDateTime {
++    type Error = DateTimeConversionError;
++
++    fn try_from(value: pgrx::datum::Date) -> Result<Self, Self::Error> {
+         // `date` keeps `infinity` and `-infinity` as the extreme day counts, and `timestamp` keeps
+         // them as the extreme microsecond counts. Map one onto the other: scaling them overflows.
+         if value.is_infinity() {
+-            return Self(pgrx::datum::Timestamp::positive_infinity());
++            return Ok(Self(pgrx::datum::Timestamp::positive_infinity()));
+         }
+         if value.is_neg_infinity() {
+-            return Self(pgrx::datum::Timestamp::negative_infinity());
++            return Ok(Self(pgrx::datum::Timestamp::negative_infinity()));
+         }
+         let midnight_micros = (value.to_pg_epoch_days() as i64)
+             .checked_mul(ONE_DAY_MICROS)
+-            .expect("days to micros should never overflow");
++            .ok_or(DateTimeConversionError::FieldOverflow)?;
+         Self::try_from_raw(midnight_micros)
+-            .expect("Date->Timestamp conversion should always be valid")
+     }
+ }
+ impl From<PostgresDateTime> for pgrx::datum::Date {
+@@ -579,20 +580,61 @@ mod tests {
+ 
+     #[test]
+     fn date_infinity_maps_to_timestamp_infinity_and_back() {
+-        let infinity = PostgresDateTime::from(pgrx::datum::Date::positive_infinity());
+-        let neg_infinity = PostgresDateTime::from(pgrx::datum::Date::negative_infinity());
++        let infinity = PostgresDateTime::try_from(pgrx::datum::Date::positive_infinity()).unwrap();
++        let neg_infinity =
++            PostgresDateTime::try_from(pgrx::datum::Date::negative_infinity()).unwrap();
+         assert_eq!(infinity.into_inner(), i64::MAX);
+         assert_eq!(neg_infinity.into_inner(), i64::MIN);
+         assert!(pgrx::datum::Date::from(infinity).is_infinity());
+         assert!(pgrx::datum::Date::from(neg_infinity).is_neg_infinity());
+ 
+         // 2024-01-01 is 8766 days after the Postgres epoch.
+         let date_2024 = unsafe { pgrx::datum::Date::from_pg_epoch_days(8766) };
+-        let pg_dt = PostgresDateTime::from(date_2024);
++        let pg_dt = PostgresDateTime::try_from(date_2024).unwrap();
+         assert_eq!(pg_dt.into_inner(), PG_MICROS_2024);
+         assert_eq!(pgrx::datum::Date::from(pg_dt).to_pg_epoch_days(), 8766);
+     }
+ 
++    #[test]
++    fn date_bounds_conversion() {
++        // Upper bound: 294276-12-31 is 106,751,982 days after the Postgres epoch.
++        let max_date = unsafe { pgrx::datum::Date::from_pg_epoch_days(106_751_982) };
++        let pg_dt = PostgresDateTime::try_from(max_date);
++        assert!(pg_dt.is_ok());
++
++        // 294277-01-01 is 106,751,983 days after the Postgres epoch (overflows MAX_TIMESTAMP).
++        let out_of_range_date = unsafe { pgrx::datum::Date::from_pg_epoch_days(106_751_983) };
++        assert!(matches!(
++            PostgresDateTime::try_from(out_of_range_date),
++            Err(DateTimeConversionError::OutOfRange)
++        ));
++
++        // Lower bound: 4713-11-24 BC is -2,451,545 days after the Postgres epoch.
++        let min_date = unsafe { pgrx::datum::Date::from_pg_epoch_days(-2_451_545) };
++        assert!(PostgresDateTime::try_from(min_date).is_ok());
++
++        // Days before min_date are out of range for Timestamp.
++        let before_min_date = unsafe { pgrx::datum::Date::from_pg_epoch_days(-2_451_546) };
++        assert!(matches!(
++            PostgresDateTime::try_from(before_min_date),
++            Err(DateTimeConversionError::OutOfRange)
++        ));
++
++        // Extreme future date: finite day count multiplied by ONE_DAY_MICROS overflows i64.
++        let extreme_date = unsafe { pgrx::datum::Date::from_pg_epoch_days(i32::MAX - 1) };
++        assert!(matches!(
++            PostgresDateTime::try_from(extreme_date),
++            Err(DateTimeConversionError::FieldOverflow)
++        ));
++
++        // Extreme past date: finite day count multiplied by ONE_DAY_MICROS underflows i64.
++        let extreme_past_date = unsafe { pgrx::datum::Date::from_pg_epoch_days(i32::MIN + 1) };
++        assert!(matches!(
++            PostgresDateTime::try_from(extreme_past_date),
++            Err(DateTimeConversionError::FieldOverflow)
++        ));
++    }
++
+     #[pg_test]
+     fn infinity_round_trips_through_serde() {
+         for raw in [i64::MAX, i64::MIN] {
+```
+
+**File**: `pg_search/src/postgres/insert.rs` (modified, +72/-1)
+```diff
+@@ -29,12 +29,14 @@ use crate::postgres::storage::block::{
+     MutableSegmentEntry, SegmentMetaEntry, SegmentMetaEntryContent, SegmentMetaEntryMutable,
+ };
+ use crate::postgres::storage::metadata::MetaPage;
++use crate::postgres::types::TantivyValue;
+ use crate::postgres::utils::{
+     collect_composites_for_unpacking, get_field_value, item_pointer_to_u64, row_to_search_document,
++    scalar_datum_to_tantivy_value, unwrap_alias_datum,
+ };
+ use crate::schema::{CategorizedFieldData, SearchField};
+ 
+-use pgrx::{PgMemoryContexts, pg_guard, pg_sys};
++use pgrx::{PgBuiltInOids, PgMemoryContexts, PgOid, pg_guard, pg_sys};
+ use tantivy::TantivyDocument;
+ use tantivy::index::SegmentId;
+ 
+@@ -64,6 +66,7 @@ impl InsertModeImmutable {
+ pub struct InsertModeMutable {
+     ctids: Vec<u64>,
+     row_limit: usize,
++    date_fields: Vec<(SearchField, CategorizedFieldData)>,
+ }
+ 
+ pub enum InsertMode {
+@@ -99,10 +102,24 @@ impl InsertState {
+             pg_sys::ALLOCSET_DEFAULT_MAXSIZE as usize,
+         );
+ 
++        let schema = indexrel.schema()?;
++        let date_fields: Vec<(SearchField, CategorizedFieldData)> = schema
++            .categorized_fields()
++            .iter()
++            .filter(|(_, cat)| {
++                matches!(
++                    cat.base_oid,
++                    PgOid::BuiltIn(PgBuiltInOids::DATEOID | PgBuiltInOids::DATERANGEOID)
++                )
++            })
++            .cloned()
++            .collect();
++
+         let mode = if let Some(row_limit) = indexrel.options().mutable_segment_rows() {
+             InsertMode::Mutable(InsertModeMutable {
+                 ctids: Vec::new(),
+                 row_limit: row_limit.into(),
++                date_fields,
+             })
+         } else {
+             InsertMode::Immutable(InsertModeImmutable::new(indexrel)?)
+@@ -296,6 +313,18 @@ unsafe fn insert(
+             cxt.reset();
+         }),
+         InsertMode::Mutable(mode) => {
++            if !mode.date_fields.is_empty() {
++                state.per_row_context.switch_to(|cxt| {
++                    validate_date_fields(
++                        &mode.date_fields,
++                        values,
++                        isnull,
++                        state.index_created_by_version,
++                    );
++                    cxt.reset();
++                });
++            }
++
+             if mode.ctids.len() < mode.row_limit {
+                 mode.ctids.push(ctid);
+                 return;
+@@ -321,6 +350,48 @@ unsafe fn insert(
+     }
+ }
+ 
++unsafe fn validate_date_fields(
++    date_fields: &[(SearchField, CategorizedFieldData)],
++    values: *mut pg_sys::Datum,
++    isnull: *mut bool,
++    created_by_version: Option<Version>,
++) {
++    let unpacked_composites = CompositeSlotValues::from_composites(
++        collect_composites_for_unpacking(date_fields.iter().map(|(_, cat)| cat), values, isnull),
++    );
++
++    for (field, categorized) in date_fields {
++        let (datum, is_null) = get_field_value(
++            &categorized.source,
++            categorized.attno,
++            values,
++            isnull,
++            &unpacked_composites,
++        );
++        if is_null {
++            continue;
++        }
++
++        let actual_datum = unwrap_alias_datum(datum, categorized.pg_type);
++
++        if categorized.is_array {
++            if let Err(e) = TantivyValue::try_from_datum_array(actual_datum, categorized.base_oid) {
++                panic!("could not parse field `{}`: {e}", field.field_name());
++            }
++        } else {
++            let res = scalar_datum_to_tantivy_value(
++                actual_datum,
++                field.field_type(),
++                categorized.base_oid,
++                created_by_version,
++            );
++            if let Err(e) = res {
++                panic!("could not parse field `{}`: {e}", field.field_name());
++            }
++        }
++    }
++}
++
+ #[cfg(any(feature = "pg17", feature = "pg18"))]
+ #[pg_guard]
+ pub unsafe extern "C-unwind" fn aminsertcleanup(
+```
+
+**File**: `pg_search/src/postgres/types.rs` (modified, +6/-6)
+```diff
+@@ -1028,9 +1028,9 @@ impl TryFrom<pgrx::datum::Date> for TantivyValue {
+     type Error = TantivyValueError;
+ 
+     fn try_from(val: pgrx::datum::Date) -> Result<Self, Self::Error> {
+-        Ok(TantivyValue(PdbOwnedValue::Date(PostgresDateTime::from(
+-            val,
+-        ))))
++        let pg_dt =
++            PostgresDateTime::try_from(val).map_err(|_| TantivyValueError::DateOutOfRange)?;
++        Ok(TantivyValue(PdbOwnedValue::Date(pg_dt)))
+     }
+ }
+ 
+@@ -1271,9 +1271,6 @@ impl TryFrom<ConstNode> for TantivyValue {
+ 
+ #[derive(Error, Debug)]
+ pub enum TantivyValueError {
+-    #[error("date {0} is out of range: {1}")]
+-    DateOutOfRange(pgrx::datum::Date, String),
+-
+     #[error(transparent)]
+     PgrxNumericError(#[from] pgrx::datum::numeric_support::error::Error),
+ 
+@@ -1283,6 +1280,9 @@ pub enum TantivyValueError {
+     #[error(transparent)]
+     UuidError(#[from] uuid::Error),
+ 
++    #[error("Date value out of range")]
++    DateOutOfRange,
++
+     #[error("Could not generate datetime datum")]
+     DateTimeConversionError(#[from] DateTimeConversionError),
+ 
+```
+
+**File**: `pg_search/src/postgres/utils.rs` (modified, +10/-1)
+```diff
+@@ -309,6 +309,15 @@ mod tests {
+             prop_assert_eq!(us, pg);
+         });
+     }
++
++    #[pg_test]
++    fn convert_pg_date_string_test() {
++        use crate::postgres::utils::convert_pg_date_string;
++        use pgrx::PgBuiltInOids;
++
++        let dt = convert_pg_date_string(PgBuiltInOids::DATEOID.into(), "2024-01-01");
++        assert!(!dt.is_infinity());
++    }
+ }
+ 
+ #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
+@@ -1075,7 +1084,7 @@ pub fn convert_pg_date_string(typeoid: PgOid, date_string: &str) -> PostgresDate
+         PgOid::BuiltIn(PgBuiltInOids::DATEOID | PgBuiltInOids::DATERANGEOID) => {
+             let d = pgrx::datum::Date::from_str(date_string)
+                 .expect("must be valid postgres date format");
+-            PostgresDateTime::from(d)
++            PostgresDateTime::try_from(d).expect("date out of range")
+         }
+         // For TIMESTAMPOID, Used only by legacy indexes as of v0.24.0.
+         PgOid::BuiltIn(PgBuiltInOids::TIMESTAMPOID | PgBuiltInOids::TSRANGEOID) => {
+```
+
+**File**: `pg_search/tests/pg_regress/expected/issue_6730.out` (added, +62/-0)
+```diff
+@@ -0,0 +1,62 @@
++-- Tests that date values beyond 294276 AD are rejected during index build and insert,
++-- and that failed inserts do not corrupt subsequent searches on the table (issue #6730).
++CREATE EXTENSION IF NOT EXISTS pg_search;
++-- 1. Far date in table before index build: CREATE INDEX fails with clean error.
++CREATE TABLE issue_6730_build (id serial PRIMARY KEY, d date);
++INSERT INTO issue_6730_build (d) VALUES ('294277-01-01');
++CREATE INDEX issue_6730_build_idx ON issue_6730_build USING paradedb (id, d);
++ERROR:  could not parse field `d`: Date value out of range
++-- 2. Clean table with index: inserting far date fails immediately and does not poison searches.
++CREATE TABLE issue_6730_insert (id serial PRIMARY KEY, d date);
++CREATE INDEX issue_6730_insert_idx ON issue_6730_insert USING paradedb (id, d);
++INSERT INTO issue_6730_insert (d) VALUES ('2024-01-01');
++-- Mutable insert of out-of-range date fails.
++INSERT INTO issue_6730_insert (d) VALUES ('294277-01-01');
++ERROR:  could not parse field `d`: Date value out of range
++-- The table remains clean and searchable; subsequent search succeeds.
++SELECT id, d FROM issue_6730_insert WHERE id @@@ pdb.all() ORDER BY id;
++ id |     d      
++----+------------
++  1 | 01-01-2024
++(1 row)
++
++-- 3. Immutable insert mode (mutable_segment_rows = 0) also rejects out-of-range dates.
++CREATE TABLE issue_6730_immutable (id serial PRIMARY KEY, d date);
++CREATE INDEX issue_6730_immutable_idx ON issue_6730_immutable
++USING paradedb (id, d) WITH (mutable_segment_rows = 0);
++INSERT INTO issue_6730_immutable (d) VALUES ('2024-01-01');
++INSERT INTO issue_6730_immutable (d) VALUES ('294277-01-01');
++ERROR:  could not parse field `d`: Date value out of range
++SELECT id, d FROM issue_6730_immutable WHERE id @@@ pdb.all() ORDER BY id;
++ id |     d      
++----+------------
++  1 | 01-01-2024
++(1 row)
++
++-- 4. Upper bound date 294276-12-31 is supported and succeeds.
++CREATE TABLE issue_6730_boundary (id serial PRIMARY KEY, d date);
++CREATE INDEX issue_6730_boundary_idx ON issue_6730_boundary USING paradedb (id, d);
++INSERT INTO issue_6730_boundary (d) VALUES ('294276-12-31');
++SELECT count(*) FROM issue_6730_boundary WHERE id @@@ pdb.all();
++ count 
++-------
++     1
++(1 row)
++
++-- 5. Date array field: inserting out-of-range date in array fails cleanly and preserves table searchability.
++CREATE TABLE issue_6730_array (id serial PRIMARY KEY, dates date[]);
++CREATE INDEX issue_6730_array_idx ON issue_6730_array USING paradedb (id, dates);
++INSERT INTO issue_6730_array (dates) VALUES ('{2024-01-01}');
++INSERT INTO issue_6730_array (dates) VALUES ('{294277-01-01}');
++ERROR:  could not parse field `dates`: Date value out of range
++SELECT count(*) FROM issue_6730_array WHERE id @@@ pdb.all();
++ count 
++-------
++     1
++(1 row)
++
++DROP TABLE issue_6730_build;
++DROP TABLE issue_6730_insert;
++DROP TABLE issue_6730_immutable;
++DROP TABLE issue_6730_boundary;
++DROP TABLE issue_6730_array;
+```
+
+**File**: `pg_search/tests/pg_regress/sql/issue_6730.sql` (added, +46/-0)
+```diff
+@@ -0,0 +1,46 @@
++-- Tests that date values beyond 294276 AD are rejected during index build and insert,
++-- and that failed inserts do not corrupt subsequent searches on the table (issue #6730).
++CREATE EXTENSION IF NOT EXISTS pg_search;
++
++-- 1. Far date in table before index build: CREATE INDEX fails with clean error.
++CREATE TABLE issue_6730_build (id serial PRIMARY KEY, d date);
++INSERT INTO issue_6730_build (d) VALUES ('294277-01-01');
++CREATE INDEX issue_6730_build_idx ON issue_6730_build USING paradedb (id, d);
++
++-- 2. Clean table with index: inserting far date fails immediately and does not poison searches.
++CREATE TABLE issue_6730_insert (id serial PRIMARY KEY, d date);
++CREATE INDEX issue_6730_insert_idx ON issue_6730_insert USING paradedb (id, d);
++INSERT INTO issue_6730_insert (d) VALUES ('2024-01-01');
++
++-- Mutable insert of out-of-range date fails.
++INSERT INTO issue_6730_insert (d) VALUES ('294277-01-01');
++
++-- The table remains clean and searchable; subsequent search succeeds.
++SELECT id, d FROM issue_6730_insert WHERE id @@@ pdb.all() ORDER BY id;
++
++-- 3. Immutable insert mode (mutable_segment_rows = 0) also rejects out-of-range dates.
++CREATE TABLE issue_6730_immutable (id serial PRIMARY KEY, d date);
++CREATE INDEX issue_6730_immutable_idx ON issue_6730_immutable
++USING paradedb (id, d) WITH (mutable_segment_rows = 0);
++INSERT INTO issue_6730_immutable (d) VALUES ('2024-01-01');
++INSERT INTO issue_6730_immutable (d) VALUES ('294277-01-01');
++SELECT id, d FROM issue_6730_immutable WHERE id @@@ pdb.all() ORDER BY id;
++
++-- 4. Upper bound date 294276-12-31 is supported and succeeds.
++CREATE TABLE issue_6730_boundary (id serial PRIMARY KEY, d date);
++CREATE INDEX issue_6730_boundary_idx ON issue_6730_boundary USING paradedb (id, d);
++INSERT INTO issue_6730_boundary (d) VALUES ('294276-12-31');
++SELECT count(*) FROM issue_6730_boundary WHERE id @@@ pdb.all();
++
++-- 5. Date array field: inserting out-of-range date in array fails cleanly and preserves table searchability.
++CREATE TABLE issue_6730_array (id serial PRIMARY KEY, dates date[]);
++CREATE INDEX issue_6730_array_idx ON issue_6730_array USING paradedb (id, dates);
++INSERT INTO issue_6730_array (dates) VALUES ('{2024-01-01}');
++INSERT INTO issue_6730_array (dates) VALUES ('{294277-01-01}');
++SELECT count(*) FROM issue_6730_array WHERE id @@@ pdb.all();
++
++DROP TABLE issue_6730_build;
++DROP TABLE issue_6730_insert;
++DROP TABLE issue_6730_immutable;
++DROP TABLE issue_6730_boundary;
++DROP TABLE issue_6730_array;
+```
+
+---
+
+### Incident Patch 2: `eebf862a` (2026-10-19)
+**Commit Message**: fix: unicode_words only removes emojis when remove_emojis is set (#6873)
 
 # Ticket(s) Closed
 
-- Closes #6796
+- Closes #6872
 
 ## What
 
-Two fixes for segments piling up under concurrent writers and the
-background merger then failing with `no unpinned buffers available`:
+`pdb.unicode_words` only removes emojis for the bare `remove_emojis`
+flag or `remove_emojis=true`.
+`remove_emojis=false`, and any other first option (`columnar=true`,
+`pnorms=true`, `bitmap_postings=false`,
+`lowercase=false`, ...), keep them, as documented.
 
-1. **Launch under backpressure** (`be108fecc`). An insert under
-backpressure (more than 2 mutable segments) merged in the foreground and
-did not launch the background merger, because the launch required
-`needs_background_merge && !need_backpressure`. With concurrent writers
-that is nearly every insert that creates a segment (195 of 199 in a
-30-writer test), so a merger rarely ran while writers were active.
-`do_merge` now also launches the merger after the foreground merge when
-there is background work.
-2. **Release pins per candidate** (`1b009de84`). The merger keeps every
-segment file's reader in `MVCCDirectory.readers`, and each reader keeps
-its pages pinned. `drop_pins` released only the pin-cushion pin, so the
-merger's pins grew with every candidate until it exited, and a merge
-over a large pile pinned all of `shared_buffers`. `drop_pins` now also
-removes the merged segments' readers
-(`SegmentMetaEntry::g
+## Why
 
-**File**: `pg_search/src/index/directory/mvcc.rs` (modified, +10/-0)
+`UnicodeWordsTypmod::try_from` read the option with
+`parsed.try_get("remove_emojis", 0).is_some()`. `try_get`
+falls back to the property in slot 0 when the key is absent, so any
+first option made it true.
+
+## How
+
+Add `ParsedTypmod::get_flag(key, index)`. It reads `key=true`,
+`key=false`, or the bare `key` (true), and a
+keyless `true`/`false` only in the option's positional slot. It never
+treats a different option as `key`.
+`UnicodeWordsTypmod` uses it. Existing forms
+(`unicode_words(remove_emojis)`, `'remove_emojis=true'`) behave as
+before. Indexes created with one of the affected options were built with
+emojis removed, so the changelog note
+says to reindex them.
+
+## Tests
+
+- `pg_regress` `unicode_words`: added `remove_emojis=true`,
+`remove_emojis=false`, `columnar=true` and
+  `columnar=true, remove_em
+
+**File**: `docs/project/changelog/unreleased/6873.stability.mdx` (added, +5/-0)
 ```diff
-@@ -592,12 +592,16 @@ impl MVCCDirectory {
- 
-     /// Drop the pins that are held on the specified [`SegmentId`]s.
-     ///
-+    /// This includes the pages that the cached readers of their files keep pinned.
-+    ///
-     /// # Safety
-     ///
-     /// This does not remove the segments themselves from being accessible by Tantivy, which means
-     /// that attempts to use these segments after dropping their pins will likely lead to incorrect
-     /// behavior.  It is the callers responsibility to ensure this does not happen.
-     pub(crate) unsafe fn drop_pins(&mut self, segment_ids: &[SegmentId]) -> tantivy::Result<()> {
-+        // Lock `readers` first, as `get_file_handle` does.
-+        let mut readers = self.readers.lock();
-         let all_entries = self.all_entries.lock();
-         let mut pin_cushion = self.pin_cushion.lock();
-         let pin_cushion = pin_cushion
-@@ -608,6 +612,12 @@ impl MVCCDirectory {
-                 TantivyError::SystemError(format!("segment {segment_id} not found in pin cushion"))
-             })?;
-             pin_cushion.remove(entry.pintest_blockno());
+@@ -0,0 +1,5 @@
++---
++header: stability
++---
 +
-+            let (LoadedSegmentMetaEntry::Persisted { meta, .. }
-+            | LoadedSegmentMetaEntry::Memory { meta, .. }) = entry;
-+            for path in meta.get_component_paths() {
-+                readers.remove(&path);
-+            }
++Fixed `pdb.unicode_words` removing emojis whenever its first option was anything other than `remove_emojis`, for example `'remove_emojis=false'`, `'columnar=true'`, `'pnorms=true'` or `'lowercase=false'`. Only the bare `remove_emojis` flag and `remove_emojis=true` remove emojis now, as documented. Existing indexes created with one of those options were built with emojis removed, so reindex them to make emojis searchable.
+```
+
+**File**: `pg_search/src/api/tokenizers/typmod/definitions.rs` (modified, +1/-1)
+```diff
+@@ -410,7 +410,7 @@ impl TryFrom<i32> for UnicodeWordsTypmod {
+     fn try_from(typmod: i32) -> Result<Self, Self::Error> {
+         let parsed = Self::parsed(typmod)?;
+         let filters = SearchTokenizerFilters::from(&parsed);
+-        let remove_emojis = parsed.try_get("remove_emojis", 0).is_some();
++        let remove_emojis = parsed.get_flag("remove_emojis", 0).unwrap_or(false);
+         Ok(UnicodeWordsTypmod {
+             remove_emojis,
+             filters,
+```
+
+**File**: `pg_search/src/api/tokenizers/typmod/mod.rs` (modified, +17/-0)
+```diff
+@@ -516,6 +516,23 @@ impl ParsedTypmod {
          }
- 
-         Ok(())
-```
-
-**File**: `pg_search/src/postgres/merge.rs` (modified, +6/-0)
-```diff
-@@ -361,6 +361,12 @@ pub unsafe fn do_merge(
-             current_xid.expect("foreground merging requires a current transaction id"),
-             next_xid.expect("foreground merging requires a next transaction id"),
-         );
-+
-+        // The foreground merge only covers the foreground layers, so the background layers still
-+        // need a merger.
-+        if needs_background_merge {
-+            try_launch_background_merger(index, largest_layer_size);
-+        }
+         Some(prop)
      }
- 
-     // merge_lock is dropped here
-```
-
-**File**: `stressgres/suites/bulk-update-merge-pressure.toml` (modified, +246/-1)
-```diff
-@@ -66,11 +66,71 @@ BEGIN
-         p_expected_text, p_query, chr(10) || full_plan;
- END;
- $$ LANGUAGE plpgsql;
 +
-+-- Many concurrent writers running small upserts, the workload from
-+-- https://github.com/paradedb/paradedb/issues/6796, where inserts under backpressure did not
-+-- launch the background merger and immutable segments piled up for as long as the writers ran.
-+-- VACUUM launches the background merger regardless of backpressure, so keep it off this table.
-+DROP TABLE IF EXISTS upserts CASCADE;
-+CREATE TABLE upserts (
-+    id BIGINT NOT NULL PRIMARY KEY,
-+    body TEXT,
-+    title TEXT
-+) WITH (autovacuum_enabled = false);
-+
-+INSERT INTO upserts (id, body, title)
-+SELECT id, md5(id::text) || ' ' || md5((id * 7)::text), md5(id::text)
-+FROM generate_series(1, 200000) AS id;
-+
-+CREATE INDEX idxupserts ON upserts USING paradedb (id, body, title) WITH (target_segment_count = 16);
-+
-+DROP TABLE IF EXISTS segment_sightings, segment_counts;
-+CREATE UNLOGGED TABLE segment_sightings (
-+    segno TEXT PRIMARY KEY,
-+    num_docs NUMERIC,
-+    last_seen TIMESTAMPTZ NOT NULL
-+);
-+CREATE UNLOGGED TABLE segment_counts (
-+    sampled_at TIMESTAMPTZ PRIMARY KEY,
-+    immutable_segments BIGINT NOT NULL
-+);
-+
-+-- With no foreground layers configured, foreground merges only take mutable and empty segments,
-+-- and VACUUM is off, so a non-empty immutable segment can only disappear into a background merge.
-+CREATE OR REPLACE FUNCTION assert_background_merging(merge_window INTERVAL, max_growth BIGINT)
-+RETURNS BIGINT LANGUAGE plpgsql AS $$
-+DECLARE
-+    sampled_now TIMESTAMPTZ := clock_timestamp();
-+    segments_now BIGINT;
-+    segments_then BIGINT;
-+    merged_away BIGINT;
-+BEGIN
-+    INSERT INTO segment_sightings (segno, num_docs, last_seen)
-+    SELECT segno, num_docs, sampled_now FROM paradedb.index_info('idxupserts') WHERE NOT mutable
-+    ON CONFLICT (segno) DO UPDATE SET num_docs = EXCLUDED.num_docs, last_seen = EXCLUDED.last_seen;
-+    GET DIAGNOSTICS segments_now = ROW_COUNT;
-+    INSERT INTO segment_counts VALUES (sampled_now, segments_now);
-+
-+    SELECT immutable_segments INTO segments_then FROM segment_counts
-+    WHERE sampled_at <= sampled_now - merge_window ORDER BY sampled_at DESC LIMIT 1;
-+    SELECT count(*) INTO merged_away FROM segment_sightings
-+    WHERE last_seen < sampled_now AND last_seen >= sampled_now - merge_window AND num_docs > 0;
-+
-+    DELETE FROM segment_counts WHERE sampled_at < sampled_now - 2 * merge_window;
-+    DELETE FROM segment_sightings WHERE last_seen < sampled_now - 2 * merge_window;
-+
-+    IF segments_now - segments_then > max_growth AND merged_away = 0 THEN
-+        RAISE EXCEPTION 'Assertion failed: idxupserts grew from % to % immutable segments in % and none were merged away',
-+            segments_then, segments_now, merge_window;
-+    END IF;
-+    RETURN merged_away;
-+END;
-+$$;
- """
- 
- [server.teardown]
- sql = """
--DROP TABLE test CASCADE;
-+DROP TABLE test, upserts, segment_sightings, segment_counts CASCADE;
- DROP EXTENSION pg_search CASCADE;
- """
- [server.monitor]
-@@ -117,6 +177,191 @@ SET severity = (severity + 1) % 5
- WHERE id < 10000;
- """
- 
-+[[jobs]]
-+refresh_ms = 1000
-+title = "Background Merging"
-+log_tps = false
-+log_columns = ["merged_away"]
-+sql = """
-+SELECT assert_background_merging('60 seconds', 16) AS merged_away;
-+"""
-+
-+[[jobs]]
-+refresh_ms = 1
-+title = "Upsert 1"
-+log_tps = true
-+sql = """
-+INSERT INTO upserts (id, body, title)
-+SELECT g, md5(g::text) || ' ' || md5(random()::text), md5(random()::text)
-+FROM (SELECT 1 + (random() * 12400)::int8 AS b) s, generate_series(s.b, s.b + 99) AS g
-+ON CONFLICT (id) DO UPDATE SET body = EXCLUDED.body, title = EXCLUDED.title;
-+"""
-+
-+[[jobs]]
-+refresh_ms = 1
-+title = "Upsert 2"
-+log_tps = true
-+sql = """
-+INSERT INTO upserts (id, body, title)
-+SELECT g, md5(g::text) || ' ' || md5(random()::text), md5(random()::text)
-+FROM (SELECT 12501 + (random() * 12400)::int8 AS b) s, generate_series(s.b, s.b + 99) AS g
-+ON CONFLICT (id) DO UPDATE SET body = EXCLUDED.body, title = EXCLUDED.title;
-+"""
-+
-+[[jobs]]
-+refresh_ms = 1
-+title = "Upsert 3"
-+log_tps = true
-+sql = """
-+INSERT INTO upserts (id, body, title)
-+SELECT g, md5(g::text) || ' ' || md5(random()::text), md5(random()::text)
-+FROM (SELECT 25001 + (random() * 12400)::int8 AS b) s, generate_series(s.b, s.b + 99) AS g
-+ON CONFLICT (id) DO UPDATE SET body = EXCLUDED.body, title = EXCLUDED.title;
-+"""
-+
-+[[jobs]]
-+refresh_ms = 1
-+title = "Upsert 4"
-+log_tps = true
-+sql = """
-+INSERT INTO upserts (id, body, title)
-+SELECT g, md5(g::text) || ' ' || md5(random()::text), md5(random()::text)
-+FROM (SELECT 37501 + (random() * 12400)::int8 AS b) s, generate_series(s.b, s.b + 99) AS g
-+ON CONFLICT (id) DO UPDATE SET body = EXCLUDED.body, title = EXCLUDED.title;
-+"""
-+
-+[[jobs]]
-+refresh_ms = 1
-+title = "Upsert 5"
-+log_tps = true
-+sql = """
-+INSERT INTO upserts (id, body, title)
-+SELECT g, md5(g::text) || ' ' || md5(random()::text), md5(random()::text)
-+FROM (SELECT 50001 + (rando
-```
-
-**File**: `tests/tests/replication.rs` (modified, +124/-0)
-```diff
-@@ -870,3 +870,127 @@ async fn test_background_merge_commits_without_synchronous_replication_standby()
-     conn.execute("SELECT pg_reload_conf()").await?;
-     result
- }
-+
-+// A background merger works through all of its candidates in one transaction, so it must release
-+// the buffer pins of each segment it merges. Otherwise a merge over many small segments pins all
-+// of shared_buffers and fails with "no unpinned buffers available" (paradedb/paradedb#6796).
-+#[async_std::test]
-+async fn test_ephemeral_background_merge_releases_merged_segment_pins() -> Result<()> {
-+    // 2048 buffers: without the release, the merger fills them after about 125 small segments.
-+    let postgres = EphemeralPostgres::new(
-+        Some("shared_preload_libraries = 'pg_search'\nshared_buffers = '16MB'\nautovacuum = off"),
-+        None,
-+    );
-+    let mut conn = postgres.connection().await?;
-+    conn.execute("CREATE EXTENSION pg_search CASCADE").await?;
-+    conn.execute("CREATE TABLE merge_pins (id bigint, body text)")
-+        .await?;
-+    // Each insert seals its own segment, and nothing merges them until the background layers
-+    // are set below.
-+    conn.execute(
-+        "CREATE INDEX merge_pins_idx ON merge_pins USING paradedb (id, body) \
-+         WITH (background_layer_sizes = '0', target_segment_count = 1, mutable_segment_rows = 0)",
-+    )
-+    .await?;
-+    for id in 0..500_i64 {
-+        sqlx::query("INSERT INTO merge_pins VALUES ($1, 'beer wine cheese ' || $1)")
-+            .bind(id)
-+            .execute(&mut conn)
-+            .await?;
-+    }
-+    let segments = "SELECT count(*) FROM paradedb.index_info('merge_pins_idx')";
-+    let (before,): (i64,) = sqlx::query_as(segments).fetch_one(&mut conn).await?;
-+    conn.execute("ALTER INDEX merge_pins_idx SET (background_layer_sizes = '1kb,10kb,64kb')")
-+        .await?;
-+    // There are no mutable segments, so no backpressure: this insert launches the merger.
-+    conn.execute("INSERT INTO merge_pins VALUES (500, 'beer wine cheese 500')")
-+        .await?;
-+
-+    let deadline = Instant::now() + Duration::from_secs(60);
-+    loop {
-+        let (after,): (i64,) = sqlx::query_as(segments).fetch_one(&mut conn).await?;
-+        if after < before / 10 {
-+            break;
++    /// Reads a boolean option written as `key=true`, `key=false`, or just `key` (which means
++    /// true). A keyless `true`/`false` only counts at `index`, the option's positional slot.
++    ///
++    /// Unlike [`Self::try_get`], this never mistakes a different option for `key`: with
++    /// `try_get`, `columnar=true` in slot 0 would be read as a value for `remove_emojis`.
++    pub fn get_flag(&self, key: &str, index: usize) -> Option<bool> {
++        for (i, prop) in self.properties.iter().enumerate() {
++            match prop {
++                Property::Boolean(Some(k), b) if k == key => return Some(*b),
++                Property::String(None, s) if s == key => return Some(true),
++                Property::Boolean(None, b) if i == index => return Some(*b),
++                _ => {}
++            }
 +        }
-+        anyhow::ensure!(
-+            Instant::now() < deadline,
-+            "the background merge stopped at {after} of {before} segments"
-+        );
-+        async_std::task::sleep(Duration::from_millis(50)).await;
++        None
 +    }
-+    let passed: Option<bool> = sqlx::query_scalar(
-+        "SELECT bool_and(passed) FROM pdb.verify_index('merge_pins_idx', heapallindexed => true)",
-+    )
-+    .fetch_one(&mut conn)
-+    .await?;
-+    anyhow::ensure!(passed == Some(true), "verify_index failed after the merge");
-+    Ok(())
-+}
+ }
+ 
+ /// A prepared statement kept for the life of the backend.
+```
+
+**File**: `pg_search/tests/pg_regress/expected/tokenize-uuid.out` (modified, +5/-5)
+```diff
+@@ -39,11 +39,11 @@ DROP INDEX idx_test_table_uuid;
+ -- use alias
+ CREATE INDEX idx_test_table_uuid ON test_table USING paradedb (id, (uuid::pdb.unicode_words('alias=uuid_words')));
+ SELECT * FROM paradedb.schema('idx_test_table_uuid');
+-    name    | field_type | stored | indexed | fast | fieldnorms | expand_dots |            tokenizer            |  record  | normalizer 
+-------------+------------+--------+---------+------+------------+-------------+---------------------------------+----------+------------
+- ctid       | U64        | f      | t       | t    | f          |             |                                 |          | 
+- id         | I64        | f      | t       | t    | f          |             |                                 |          | 
+- uuid_words | Str        | f      | t       | f    | t          |             | unicode_words_removeemojis:true | position | 
++    name    | field_type | stored | indexed | fast | fieldnorms | expand_dots |            tokenizer             |  record  | normalizer 
++------------+------------+--------+---------+------+------------+-------------+----------------------------------+----------+------------
++ ctid       | U64        | f      | t       | t    | f          |             |                                  |          | 
++ id         | I64        | f      | t       | t    | f          |             |                                  |          | 
++ uuid_words | Str        | f      | t       | f    | t          |             | unicode_words_removeemojis:false | position | 
+ (3 rows)
+ 
+ DROP INDEX idx_test_table_uuid;
+```
+
+**File**: `pg_search/tests/pg_regress/expected/unicode_words.out` (modified, +24/-0)
+```diff
+@@ -23,6 +23,30 @@ select 'it''s Paul''s birthday today!  🎂🚨👀🥜🛜🫨🫩'::pdb.unicod
+  {it's,paul's,birthday,today}
+ (1 row)
+ 
++select 'it''s Paul''s birthday today!  🎂🚨👀🥜🛜🫨🫩'::pdb.unicode_words('remove_emojis=true')::text[];
++             text             
++------------------------------
++ {it's,paul's,birthday,today}
++(1 row)
 +
-+// With more than 2 mutable segments an insert is under backpressure and merges them in the
-+// foreground. With no foreground layers configured that merge leaves the immutable segments
-+// alone, so the insert must still launch the background merger, or concurrent writers keep it
-+// from ever running (paradedb/paradedb#6796).
-+#[async_std::test]
-+async fn test_ephemeral_insert_under_backpressure_launches_background_merger() -> Result<()> {
-+    let postgres = EphemeralPostgres::new(
-+        Some("shared_preload_libraries = 'pg_search'\nautovacuum = off"),
-+        None,
-+    );
-+    let mut conn = postgres.connection().await?;
-+    conn.execute("CREATE EXTENSION pg_search CASCADE").await?;
-+    conn.execute("CREATE TABLE merge_launch (id bigint, body text)")
-+        .await?;
-+    conn.execute(
-+        "CREATE INDEX merge_launch_idx ON merge_launch USING paradedb (id, body) \
-+         WITH (background_layer_sizes = '0', target_segment_count = 1)",
-+    )
-+    .await?;
-+    // Immutable segments, which only the background merger merges.
-+    conn.execute("SET paradedb.global_mutable_segment_rows = 0")
-+        .await?;
-+    for _ in 0..12 {
-+        conn.execute(
-+            "INSERT INTO merge_launch SELECT i, 'beer wine cheese ' || i FROM generate_series(1, 1000) s(i)",
-+        )
-+        .await?;
-+    }
-+    // Single-row inserts alternately create a mutable segment and fill it, which leaves two
-+    // frozen mutable segments.
-+    conn.execute("SET paradedb.global_mutable_segment_rows = 1")
-+        .await?;
-+    for id in 0..4_i64 {
-+        sqlx::query("INSERT INTO merge_launch VALUES ($1, 'single row')")
-+            .bind(id)
-+            .execute(&mut conn)
-+            .await?;
-+    }
-+    let immutable =
-+        "SELECT count(*) FROM paradedb.index_info('merge_launch_idx') WHERE NOT mutable";
-+    let (before,): (i64,) = sqlx::query_as(immutable).fetch_one(&mut conn).await?;
-+    conn.execute("ALTER INDEX merge_launch_idx SET (background_layer_sizes = '1kb,10kb,64kb')")
-+        .await?;
-+    // A third mutable segment puts this insert under backpressure.
-+    conn.execute("INSERT INTO merge_launch VALUES (4, 'single row')")
-+        .await?;
++select 'it''s Paul''s birthday today!  🎂🚨👀🥜🛜🫨🫩'::pdb.unicode_words('remove_emojis=false')::text[];
++                       text                        
++---------------------------------------------------
++ {it's,paul's,birthday,today,🎂,🚨,👀,🥜,🛜,🫨,🫩}
++(1 row)
 +
++select 'it''s Paul''s birthday today!  🎂🚨👀🥜🛜🫨🫩'::pdb.unicode_words('columnar=true')::text[];
++                       text                        
++---------------------------------------------------
++ {it's,paul's,birthday,today,🎂,🚨,👀,🥜,🛜,🫨,🫩}
++(1 row)
++
++select 'it''s Paul''s birthday today!  🎂🚨👀🥜🛜🫨🫩'::pdb.unicode_words('columnar=true', 'remove_emojis=true')::text[];
++             text             
++------------------------------
++ {it's,paul's,birthday,today}
++(1 row)
++
+ select '😀 😃 😄 😁 😆 😅 😂 🤣 🥲 ☺️ 😊 😇 🙂 🙃 😉 😌 😍 🥰 😘 😗 😙 😚 😋 😛 😜 🤪 😝 🤑 🤗 🤫 🤭 🤔 🤨 🧐 🙄 😒 😲 🤐 🤨 🤥 😶 🫥 😐 😑 😬 🙄 😯 😦 😧 😮 😲 😴 🤤 😪 😵 🤯 🫨 🤠 🥳 🥸 😎 🤓 🧐 🤡 💩 👻 💀 ☠️ 👽 👾 🤖 🎃 😺 😸 😹 😻 😼 😽 🙀 😿 😾 🙈 🙉 🙊👋 👐 🙌 👏 🙏 🤲 🤝 👍 👎 👊 ✊ 🤛 🤜 🤞 ✌️ 🤘 🤌 🤏 👌 👈 👉 👆 👇 ☝️ ✋ 🤚 🖐 🖖 👋 🤙 💪 🖕 ✍️ 🤳 💅 🦵 🦶 👂 🦻 👃 🧠 🦷 🦴 👁 👀 👅 👄 💋 🩸👤 👶 👦 👧 👨 👩 👱‍♂️ 👱‍♀️ 👴 👵 👲 👳‍♂️ 👳‍♀️ 🧕 👮‍♂️ 👮‍♀️ 👷‍♂️ 👷‍♀️ 💂‍♂️ 💂‍♀️ 🕵️‍♂️ 🕵️‍♀️ 👩‍⚕️ 👨‍⚕️ 👩‍🌾 👨‍🌾 👩‍🍳 👨‍🍳 👩‍🎓 👨‍🎓 👩‍🎤 👨‍🎤 👩‍🏫 👨‍🏫 👩‍🏭 👨‍🏭 👩‍💻 👨‍💻 👩‍💼 👨‍💼 👩‍🔧 👨‍🔧 👩‍🔬 👨‍🔬 👩‍🎨 👨‍🎨 👩‍🚒 👨‍🚒 👩‍✈️ 👨‍✈️ 👩‍🚀 👨‍🚀 👩‍⚖️ 👨‍⚖️ 🦸‍♂️ 🦸‍♀️ 🦹‍♂️ 🦹‍♀️ 🤶 🎅 👸 🤴 👰 🤵 👼 🤰 🤱 🏃‍♂️ 🏃‍♀️ 🚶‍♂️ 🚶‍♀️ 💃 🕺 👯‍♂️ 👯‍♀️ 🧘‍♂️ 🧘‍♀️🐻 🐶 🐱 🐭 🐹 🐰 🦊 🐻 🐼 🐨 🐯 🦁 🐮 🐷 🐽 🐸 🐵 🙈 🙉 🙊 🐒 🐔 🐧 🐦 🐤 🐣 🐥 🦆 🦢 🦉 🦚 🦜 🐸 🐊 🐢 🦎 🐍 🐳 🐋 🐬 🐟 🐠 🐡 🦈 🐙 🐚 🐌 🦋 🐛 🐜 🐝 🐞 🦗 🕷 🕸 🦂 💐 🌸 💮 🏵 🌹 🥀 🌺 🌻 🌼 🌷 🌱 🌲 🌳 🌴 🌵 🌾 🌿 ☘️ 🍀 🍁 🍂 🍃🍔 🍏 🍎 🍐 🍊 🍋 🍌 🍉 🍇 🍓 🍈 🍒 🍑 🍍 🥭 🍅 🍆 🥑 🥦 🥒 🥬 🌶 🌽 🥕 🥔 🍠 🥐 🍞 🥖 🥨 🧀 🥚 🍳 🥞 🥓 🥩 🍗 🍖 🌭 🍔 🍟 🍕 🥪 🥙 🌮 🌯 🥗 🥘 🍲 🥣 🥫 🍝 🍜 🍣 🍱 🍛 🍚 🍙 🍘 🍢 🍡 🍧 🍦 🍨 🥧 🍰 🎂 🍮 🍭 🍬 🍫 🍿 🍩 🍪 🥛 🍼 ☕ 🍵 🥤 🍺 🍻 🍷 🍸 🍹 🍾 🧊⚽ ⚽ 🏀 🏈 ⚾ 🥎 🎾 🏐 🏉 🥏 🎱 🏓 🏸 🥅 🏒 🏑 🏏 ⛳ 🏹 🎣 🥊 🥋 🎽 🛹 🛼 🛷 ⛸ 🎿 ⛷ 🏂 🏋️‍♂️ 🏋️‍♀️ 🤺 🤼‍♂️ 🤼‍♀️ 🤸‍♂️ 🤸‍♀️ ⛹️‍♂️ ⛹️‍♀️ 🏀 🤾‍♂️ 🤾‍♀️ 🏌️‍♂️ 🏌️‍♀️ 🏄‍♂️ 🏄‍♀️ 🏊‍♂️ 🏊‍♀️ 🤽‍♂️ 🤽‍♀️ 🚣‍♂️ 🚣‍♀️ 🏇 🚴‍♂️ 🚴‍♀️ 🚵‍♂️ 🚵‍♀️ 🧗‍♂️ 🧗‍♀️ 🧗‍♀️ 🪂 🏆 🥇 🥈 🥉 🎟 🎫 🎪 🤹‍♂️ 🤹‍♀️ 🎭 🎨 🎬 🎤 🎧 🎼 🎹 🥁 🎷 🎺 🎸 🎻 🎲 🧩 ♟ 🎯 🎳 🎮 🎰🚀 🚗 🚕 🚙 🚌 🚎 🏎 🚓 🚑 🚒 🚐 🚚 🚛 🚜 🚲 🛴 🛵 🦼 🦽 🚂 🚃 🚄 🚅 🚆 🚇 🚈 🚉 🚊 🚝 🚞 🚋 🚌 🚍 🚏 🗺 🧭 🏖 🏝 🏜 🌋 ⛰ 🏔 🗻 🏕 ⛺ 🏞 🛣 🛤 🌅 🌇 🌉 🏙 🌆 🌃 🌌 🌉 🗼 🏭 ⛲ 🚢 🚤 🛥 ⛵ ⛴ ⚓ ⛽ 🚧 🚦 🚥 🪧 🛑 ⚓ 🎡 🎢 🎠 ⛲ 🏛 🏦 🏨 🏪 🏫 🏬 🏭 🏢 🏰 💒 ⛪ 🕌 🕍 ⛩ 🕋 ⛲ ⛺ 🧳 🌂 ☂️ 🧵 🧶💡 👓 🕶 🥽 🥼 🦺 👔 👕 👖 👗 👘 👙 👚 👛 👜 👝 🛍 🎒 👞 👟 🥾 🥿 👠 👡 👢 👑 👒 🎩 🎓 🧢 💄 💍 💎 🔇 🔈 🔉 🔊 📢 📣 📻 📱 📲 ☎️ 📞 🔋 🔌 💻 🖥 🖨 ⌨️ 🖱 🖲 💽 💾 💿 📼 🎥 📽 🎞 🎬 📺 📷 📸 📹 📼 🔍 🔎 🕯 💡 🔦 🏮 🧱 🪤 🔨 ⛏ ⚒ 🛠 🗡 ⚔️ 🔫 🪓 🔧 🔩 ⚙️ 🗜 ⚖️ 🔗 ⛓ 🦯 🧰 🧲 🧪 🧫 🧬 🔬 🔭 📡 💉 🩸 💊 🩹 🩺 🚪 🪑 🛋 🛏 🛌 🚪 🛎 🗝 🔑 🔐 🔓 🔒 🗄 🗑 🛢 🛒 🛍 🎁 🎈 🎌 🎍 🎏 🎐 🎑 🎀 🎟 🎫 🎖 🏆 🏅 💄 💍💕 ❤️ 🧡 💛 💚 💙 💜 🖤 🤍 🤎 💔 ❣️ 💕 💓 💗 💖 💘 💝 💟 ☮️ ✝️ ☪️ 🕉 ☸️ ✡️ 🔯 🕎 ☯️ ☦️ 🛐 ♈ ♉ ♊ ♋ ♌ ♍ ♎ ♏ ♐ ♑ ♒ ♓ 🆔 ⚛️ 🉑 ☢️ ☣️ 📴 📳 🈶 🈚 🈸 🈺 🈷️ 🈹 🉐 🈴 🈵 🈲 🈳 🈸 🈵 🈴 ㊗️ ㊙️ 🈹 🅰️ 🅱️ 🆎 🆑 🅾️ 🆘 🛑 ❌ ⭕ 🚫 💯 💢 ♨️ 🚷 🚯 🚳 🚱 🔞 📵 🚸 ⚜️ 〽️ ⚠️ 🚸 🔰 ♻️ 🔱 📛 🟢 🟡 🔴 🔵 🟤 🟣 🟧 🟦 🟩 🟨 🟥 🟪 🔲 🔳 🤍 🖤 🤎 👁️‍🗨️ 🗨️ 🗯️ 💭 💬 💤🎌 🏁 🚩 🏳️ 🏳️‍🌈 🏴 🏴‍☠️ 🇦🇫 🇦🇽 🇦🇱 🇩🇿 🇦🇸 🇦🇩 🇦🇴 🇦🇮 🇦🇶 🇦🇬 🇦🇷 🇦🇲 🇦🇼 🇦🇺 🇦🇹 🇦🇿 🇧🇸 🇧🇭 🇧🇩 🇧🇧 🇧🇾 🇧🇪 🇧🇿 🇧🇯 🇧🇲 🇧🇹 🇧🇴 🇧🇦 🇧🇼 🇧🇷 🇮🇴 🇻🇬 🇧🇳 🇧🇬 🇧🇫 🇲🇮 🇰🇭 🇨🇲 🇨🇦 🇮🇨 🇨🇻 🇧🇶 🇰🇾 🇨🇫 🇹🇩 🇨🇱 🇨🇳 🇨🇽 🇨🇨 🇨🇴 🇰🇲 🇨🇬 🇨🇩 🇨🇰 🇨🇷 🇨🇮 🇭🇷 🇨🇺 🇨🇼 🇨🇾 🇨🇿 🇩🇰 🇩🇯 🇩🇲 🇩🇴 🇪🇨 🇪🇬 🇸🇻 🇬🇶 🇪🇷 🇪🇪 🇪🇹 🇪🇺 🇫🇰 🇫🇴 🇫🇯 🇫🇮 🇫🇷 🇬🇫 🇵🇫 🇹🇫 🇬🇦 🇬🇲 🇬🇪 🇩🇪 🇬🇭 🇬🇮 🇬🇷 🇬🇱 🇬🇩 🇬🇵 🇬🇺 🇬🇹 🇬🇬 🇬🇳 🇬🇼 🇬🇾 🇭🇹 🇭🇳 🇭🇰 🇭🇺 🇮🇸 🇮🇳 🇮🇩 🇮🇷 🇮🇶 🇮🇪 🇮🇲 🇮🇱 🇮🇹 🇯🇲 🇯🇵 🎌 🇯🇪 🇯🇴 🇰🇿 🇰🇪 🇰🇮 🇽🇰 🇰🇼 🇰🇬 🇱🇦 🇱🇻 🇱🇧 🇱🇸 🇱🇷 🇱🇾 🇱🇮 🇱🇹 🇱🇺 🇲🇴 🇲🇰 🇲🇬 🇲🇼 🇲🇾 🇲🇻 🇲🇱 🇲🇹 🇲🇭 🇲🇶 🇲🇷 🇲🇺 🇲🇽 🇫🇲 🇲🇩 🇲🇨 🇲🇳 🇲🇪 🇲🇸 🇲🇦 🇲🇿 🇲🇲 🇳🇦 🇳🇷 🇳🇵 🇳🇱 🇳🇨 🇳🇿 🇳🇮 🇳🇪 🇳🇬 🇳🇺 🇳🇫 🇲🇵 🇳🇴 🇴🇲 🇵🇰 🇵🇼 🇵🇸 🇵🇦 🇵🇬 🇵🇾 🇵🇪 🇵🇭 🇵🇳 🇵🇱 🇵🇹 🇵🇷 🇶🇦 🇷🇪 🇷🇴 🇷🇺 🇷🇼 🇼🇸 🇸🇲 🇸🇹 🇸🇦 🇸🇳 🇷🇸 🇸🇨 🇸🇱 🇸🇬 🇸🇽 🇸🇰 🇸🇮 🇸🇧 🇸🇴 🇿🇦 🇰🇷 🇸🇸 🇪🇸 🇱🇰 🇸🇩 🇸🇷 🇸🇿 🇸🇪 🇨🇭 🇸🇾 🇹🇼 🇹🇯 🇹🇿 🇹🇭 🇹🇱 🇹🇬 🇹🇰 🇹🇹 🇹🇳 🇹🇷 🇹🇲 🇹🇨 🇹🇻 🇺🇬 🇺🇦 🇦🇪 🇬🇧 🇺🇸 🇺🇾 🇺🇿 🇻🇺 🇻🇦 🇻🇪 🇻🇳 🇼🇫 🇪🇭 🇾🇪 🇿🇲 🇿🇼'::pdb
+```
+
+**File**: `pg_search/tests/pg_regress/sql/unicode_words.sql` (modified, +4/-0)
+```diff
+@@ -11,6 +11,10 @@ SELECT * FROM unicode_words WHERE t @@@ pdb.parse_with_field('🚨');
+ 
+ select 'it''s Paul''s birthday today!  🎂🚨👀🥜🛜🫨🫩'::pdb.unicode_words::text[];
+ select 'it''s Paul''s birthday today!  🎂🚨👀🥜🛜🫨🫩'::pdb.unicode_words(remove_emojis)::text[];
++select 'it''s Paul''s birthday today!  🎂🚨👀🥜🛜🫨🫩'::pdb.unicode_words('remove_emojis=true')::text[];
++select 'it''s Paul''s birthday today!  🎂🚨👀🥜🛜🫨🫩'::pdb.unicode_words('remove_emojis=false')::text[];
++select 'it''s Paul''s birthday today!  🎂🚨👀🥜🛜🫨🫩'::pdb.unicode_words('columnar=true')::text[];
++select 'it''s Paul''s birthday today!  🎂🚨👀🥜🛜🫨🫩'::pdb.unicode_words('columnar=true', 'remove_emojis=true')::text[];
+ 
+ select '😀 😃 😄 😁 😆 😅 😂 🤣 🥲 ☺️ 😊 😇 🙂 🙃 😉 😌 😍 🥰 😘 😗 😙 😚 😋 😛 😜 🤪 😝 🤑 🤗 🤫 🤭 🤔 🤨 🧐 🙄 😒 😲 🤐 🤨 🤥 😶 🫥 😐 😑 😬 🙄 😯 😦 😧 😮 😲 😴 🤤 😪 😵 🤯 🫨 🤠 🥳 🥸 😎 🤓 🧐 🤡 💩 👻 💀 ☠️ 👽 👾 🤖 🎃 😺 😸 😹 😻 😼 😽 🙀 😿 😾 🙈 🙉 🙊👋 👐 🙌 👏 🙏 🤲 🤝 👍 👎 👊 ✊ 🤛 🤜 🤞 ✌️ 🤘 🤌 🤏 👌 👈 👉 👆 👇 ☝️ ✋ 🤚 🖐 🖖 👋 🤙 💪 🖕 ✍️ 🤳 💅 🦵 🦶 👂 🦻 👃 🧠 🦷 🦴 👁 👀 👅 👄 💋 🩸👤 👶 👦 👧 👨 👩 👱‍♂️ 👱‍♀️ 👴 👵 👲 👳‍♂️ 👳‍♀️ 🧕 👮‍♂️ 👮‍♀️ 👷‍♂️ 👷‍♀️ 💂‍♂️ 💂‍♀️ 🕵️‍♂️ 🕵️‍♀️ 👩‍⚕️ 👨‍⚕️ 👩‍🌾 👨‍🌾 👩‍🍳 👨‍🍳 👩‍🎓 👨‍🎓 👩‍🎤 👨‍🎤 👩‍🏫 👨‍🏫 👩‍🏭 👨‍🏭 👩‍💻 👨‍💻 👩‍💼 👨‍💼 👩‍🔧 👨‍🔧 👩‍🔬 👨‍🔬 👩‍🎨 👨‍🎨 👩‍🚒 👨‍🚒 👩‍✈️ 👨‍✈️ 👩‍🚀 👨‍🚀 👩‍⚖️ 👨‍⚖️ 🦸‍♂️ 🦸‍♀️ 🦹‍♂️ 🦹‍♀️ 🤶 🎅 👸 🤴 👰 🤵 👼 🤰 🤱 🏃‍♂️ 🏃‍♀️ 🚶‍♂️ 🚶‍♀️ 💃 🕺 👯‍♂️ 👯‍♀️ 🧘‍♂️ 🧘‍♀️🐻 🐶 🐱 🐭 🐹 🐰 🦊 🐻 🐼 🐨 🐯 🦁 🐮 🐷 🐽 🐸 🐵 🙈 🙉 🙊 🐒 🐔 🐧 🐦 🐤 🐣 🐥 🦆 🦢 🦉 🦚 🦜 🐸 🐊 🐢 🦎 🐍 🐳 🐋 🐬 🐟 🐠 🐡 🦈 🐙 🐚 🐌 🦋 🐛 🐜 🐝 🐞 🦗 🕷 🕸 🦂 💐 🌸 💮 🏵 🌹 🥀 🌺 🌻 🌼 🌷 🌱 🌲 🌳 🌴 🌵 🌾 🌿 ☘️ 🍀 🍁 🍂 🍃🍔 🍏 🍎 🍐 🍊 🍋 🍌 🍉 🍇 🍓 🍈 🍒 🍑 🍍 🥭 🍅 🍆 🥑 🥦 🥒 🥬 🌶 🌽 🥕 🥔 🍠 🥐 🍞 🥖 🥨 🧀 🥚 🍳 🥞 🥓 🥩 🍗 🍖 🌭 🍔 🍟 🍕 🥪 🥙 🌮 🌯 🥗 🥘 🍲 🥣 🥫 🍝 🍜 🍣 🍱 🍛 🍚 🍙 🍘 🍢 🍡 🍧 🍦 🍨 🥧 🍰 🎂 🍮 🍭 🍬 🍫 🍿 🍩 🍪 🥛 🍼 ☕ 🍵 🥤 🍺 🍻 🍷 🍸 🍹 🍾 🧊⚽ ⚽ 🏀 🏈 ⚾ 🥎 🎾 🏐 🏉 🥏 🎱 🏓 🏸 🥅 🏒 🏑 🏏 ⛳ 🏹 🎣 🥊 🥋 🎽 🛹 🛼 🛷 ⛸ 🎿 ⛷ 🏂 🏋️‍♂️ 🏋️‍♀️ 🤺 🤼‍♂️ 🤼‍♀️ 🤸‍♂️ 🤸‍♀️ ⛹️‍♂️ ⛹️‍♀️ 🏀 🤾‍♂️ 🤾‍♀️ 🏌️‍♂️ 🏌️‍♀️ 🏄‍♂️ 🏄‍♀️ 🏊‍♂️ 🏊‍♀️ 🤽‍♂️ 🤽‍♀️ 🚣‍♂️ 🚣‍♀️ 🏇 🚴‍♂️ 🚴‍♀️ 🚵‍♂️ 🚵‍♀️ 🧗‍♂️ 🧗‍♀️ 🧗‍♀️ 🪂 🏆 🥇 🥈 🥉 🎟 🎫 🎪 🤹‍♂️ 🤹‍♀️ 🎭 🎨 🎬 🎤 🎧 🎼 🎹 🥁 🎷 🎺 🎸 🎻 🎲 🧩 ♟ 🎯 🎳 🎮 🎰🚀 🚗 🚕 🚙 🚌 🚎 🏎 🚓 🚑 🚒 🚐 🚚 🚛 🚜 🚲 🛴 🛵 🦼 🦽 🚂 🚃 🚄 🚅 🚆 🚇 🚈 🚉 🚊 🚝 🚞 🚋 🚌 🚍 🚏 🗺 🧭 🏖 🏝 🏜 🌋 ⛰ 🏔 🗻 🏕 ⛺ 🏞 🛣 🛤 🌅 🌇 🌉 🏙 🌆 🌃 🌌 🌉 🗼 🏭 ⛲ 🚢 🚤 🛥 ⛵ ⛴ ⚓ ⛽ 🚧 🚦 🚥 🪧 🛑 ⚓ 🎡 🎢 🎠 ⛲ 🏛 🏦 🏨 🏪 🏫 🏬 🏭 🏢 🏰 💒 ⛪ 🕌 🕍 ⛩ 🕋 ⛲ ⛺ 🧳 🌂 ☂️ 🧵 🧶💡 👓 🕶 🥽 🥼 🦺 👔 👕 👖 👗 👘 👙 👚 👛 👜 👝 🛍 🎒 👞 👟 🥾 🥿 👠 👡 👢 👑 👒 🎩 🎓 🧢 💄 💍 💎 🔇 🔈 🔉 🔊 📢 📣 📻 📱 📲 ☎️ 📞 🔋 🔌 💻 🖥 🖨 ⌨️ 🖱 🖲 💽 💾 💿 📼 🎥 📽 🎞 🎬 📺 📷 📸 📹 📼 🔍 🔎 🕯 💡 🔦 🏮 🧱 🪤 🔨 ⛏ ⚒ 🛠 🗡 ⚔️ 🔫 🪓 🔧 🔩 ⚙️ 🗜 ⚖️ 🔗 ⛓ 🦯 🧰 🧲 🧪 🧫 🧬 🔬 🔭 📡 💉 🩸 💊 🩹 🩺 🚪 🪑 🛋 🛏 🛌 🚪 🛎 🗝 🔑 🔐 🔓 🔒 🗄 🗑 🛢 🛒 🛍 🎁 🎈 🎌 🎍 🎏 🎐 🎑 🎀 🎟 🎫 🎖 🏆 🏅 💄 💍💕 ❤️ 🧡 💛 💚 💙 💜 🖤 🤍 🤎 💔 ❣️ 💕 💓 💗 💖 💘 💝 💟 ☮️ ✝️ ☪️ 🕉 ☸️ ✡️ 🔯 🕎 ☯️ ☦️ 🛐 ♈ ♉ ♊ ♋ ♌ ♍ ♎ ♏ ♐ ♑ ♒ ♓ 🆔 ⚛️ 🉑 ☢️ ☣️ 📴 📳 🈶 🈚 🈸 🈺 🈷️ 🈹 🉐 🈴 🈵 🈲 🈳 🈸 🈵 🈴 ㊗️ ㊙️ 🈹 🅰️ 🅱️ 🆎 🆑 🅾️ 🆘 🛑 ❌ ⭕ 🚫 💯 💢 ♨️ 🚷 🚯 🚳 🚱 🔞 📵 🚸 ⚜️ 〽️ ⚠️ 🚸 🔰 ♻️ 🔱 📛 🟢 🟡 🔴 🔵 🟤 🟣 🟧 🟦 🟩 🟨 🟥 🟪 🔲 🔳 🤍 🖤 🤎 👁️‍🗨️ 🗨️ 🗯️ 💭 💬 💤🎌 🏁 🚩 🏳️ 🏳️‍🌈 🏴 🏴‍☠️ 🇦🇫 🇦🇽 🇦🇱 🇩🇿 🇦🇸 🇦🇩 🇦🇴 🇦🇮 🇦🇶 🇦🇬 🇦🇷 🇦🇲 🇦🇼 🇦🇺 🇦🇹 🇦🇿 🇧🇸 🇧🇭 🇧🇩 🇧🇧 🇧🇾 🇧🇪 🇧🇿 🇧🇯 🇧🇲 🇧🇹 🇧🇴 🇧🇦 🇧🇼 🇧🇷 🇮🇴 🇻🇬 🇧🇳 🇧🇬 🇧🇫 🇲🇮 🇰🇭 🇨🇲 🇨🇦 🇮🇨 🇨🇻 🇧🇶 🇰🇾 🇨🇫 🇹🇩 🇨🇱 🇨🇳 🇨🇽 🇨🇨 🇨🇴 🇰🇲 🇨🇬 🇨🇩 🇨🇰 🇨🇷 🇨🇮 🇭🇷 🇨🇺 🇨🇼 🇨🇾 🇨🇿 🇩🇰 🇩🇯 🇩🇲 🇩🇴 🇪🇨 🇪🇬 🇸🇻 🇬🇶 🇪🇷 🇪🇪 🇪🇹 🇪🇺 🇫🇰 🇫🇴 🇫🇯 🇫🇮 🇫🇷 🇬🇫 🇵🇫 🇹🇫 🇬🇦 🇬🇲 🇬🇪 🇩🇪 🇬🇭 🇬🇮 🇬🇷 🇬🇱 🇬🇩 🇬🇵 🇬🇺 🇬🇹 🇬🇬 🇬🇳 🇬🇼 🇬🇾 🇭🇹 🇭🇳 🇭🇰 🇭🇺 🇮🇸 🇮🇳 🇮🇩 🇮🇷 🇮🇶 🇮🇪 🇮🇲 🇮🇱 🇮🇹 🇯🇲 🇯🇵 🎌 🇯🇪 🇯🇴 🇰🇿 🇰🇪 🇰🇮 🇽🇰 🇰🇼 🇰🇬 🇱🇦 🇱🇻 🇱🇧 🇱🇸 🇱🇷 🇱🇾 🇱🇮 🇱🇹 🇱🇺 🇲🇴 🇲🇰 🇲🇬 🇲🇼 🇲🇾 🇲🇻 🇲🇱 🇲🇹 🇲🇭 🇲🇶 🇲🇷 🇲🇺 🇲🇽 🇫🇲 🇲🇩 🇲🇨 🇲🇳 🇲🇪 🇲🇸 🇲🇦 🇲🇿 🇲🇲 🇳🇦 🇳🇷 🇳🇵 🇳🇱 🇳🇨 🇳🇿 🇳🇮 🇳🇪 🇳🇬 🇳🇺 🇳🇫 🇲🇵 🇳🇴 🇴🇲 🇵🇰 🇵🇼 🇵🇸 🇵🇦 🇵🇬 🇵🇾 🇵🇪 🇵🇭 🇵🇳 🇵🇱 🇵🇹 🇵🇷 🇶🇦 🇷🇪 🇷🇴 🇷🇺 🇷🇼 🇼🇸 🇸🇲 🇸🇹 🇸🇦 🇸🇳 🇷🇸 🇸🇨 🇸🇱 🇸🇬 🇸🇽 🇸🇰 🇸🇮 🇸🇧 🇸🇴 🇿🇦 🇰🇷 🇸🇸 🇪🇸 🇱🇰 🇸🇩 🇸🇷 🇸🇿 🇸🇪 🇨🇭 🇸🇾 🇹🇼 🇹🇯 🇹🇿 🇹🇭 🇹🇱 🇹🇬 🇹🇰 🇹🇹 🇹🇳 🇹🇷 🇹🇲 🇹🇨 🇹🇻 🇺🇬 🇺🇦 🇦🇪 🇬🇧 🇺🇸 🇺🇾 🇺🇿 🇻🇺 🇻🇦 🇻🇪 🇻🇳 🇼🇫 🇪🇭 🇾🇪 🇿🇲 🇿🇼'::pdb.unicode_words::text[];
+ select '😀 😃 😄 😁 😆 😅 😂 🤣 🥲 ☺️ 😊 😇 🙂 🙃 😉 😌 😍 🥰 😘 😗 😙 😚 😋 😛 😜 🤪 😝 🤑 🤗 🤫 🤭 🤔 🤨 🧐 🙄 😒 😲 🤐 🤨 🤥 😶 🫥 😐 😑 😬 🙄 😯 😦 😧 😮 😲 😴 🤤 😪 😵 🤯 🫨 🤠 🥳 🥸 😎 🤓 🧐 🤡 💩 👻 💀 ☠️ 👽 👾 🤖 🎃 😺 😸 😹 😻 😼 😽 🙀 😿 😾 🙈 🙉 🙊👋 👐 🙌 👏 🙏 🤲 🤝 👍 👎 👊 ✊ 🤛 🤜 🤞 ✌️ 🤘 🤌 🤏 👌 👈 👉 👆 👇 ☝️ ✋ 🤚 🖐 🖖 👋 🤙 💪 🖕 ✍️ 🤳 💅 🦵 🦶 👂 🦻 👃 🧠
 ```
 
 ---
 
-### Incident Patch 2: `e0e1164a` (2026-10-16)
-**Commit Message**: chore: Fixes for the `0.26.2` release. (#6865)
+### Incident Patch 3: `dc015422` (2026-10-19)
+**Commit Message**: test: accommodate worker skew in parallel build test assertion (#6648) (#6892)
 
-The `0.26.2` release failed to sync its changes back to `main`, and
-consequently failed to create the Release object.
+# Ticket(s) Closed
 
-Fixes:
-- Sync `0.26.2` release artifacts
-(`pg_search/sql/pg_search--0.26.1--0.26.2.sql`,
-`docs/project/changelog/0.26.2.mdx`, `docs/docs.json`, and deployment
-doc versions) to `main` and remove consumed `unreleased` fragments.
-- Fix `format_changelog_item` in `.github/scripts/release.py` (and
-`docs/project/changelog/0.26.2.mdx`) to indent continuation lines of
-multi-line bullet items by 2 spaces so generated changelogs pass
-`prettier`.
-- Move `Create GitHub Release` immediately after `Create Tag` in
-`.github/workflows/publish-github-release.yml` so post-release branch
-sync steps cannot block release creation after a tag is pushed.
-- Remove the unused `docs/snippets/version.mdx` file and updated
-`.github/scripts/extract_code_snippets.py`,
-`.github/scripts/release.py`, and
-`.github/workflows/publish-github-release.yml` to use `docs/docs.json`
-directly.
-- Updated `SchemaBot` to include newly added or modified versioned
-upgrade scripts (`pg_search/sql/pg_search--*--*.sql`) alongside
-`pg_search/sql/unreleased/*.sql`.
+- Closes #6648
 
-Addi
+## Related PRs & CI Runs
 
-**File**: `.github/scripts/extract_code_snippets.py` (modified, +7/-6)
+- Closes #6648 (`pg_test_parallel_build_large_configurations fails when
+fewer parallel workers start`)
+- Fixes CI failure seen in PR #6608 (PG18 system amd64, [job
+111167257970](https://github.com/paradedb/paradedb/actions/runs/37110465933/job/111167257970),
+`got 26`)
+- Fixes CI failure seen in PR #6247 (PG16 system arm64, job
+102334942912, `got 27`)
+- Builds upon PR #4187 (which previously widened `28..=32` to `28..=33`
+when an extra segment was observed)
+- Originated from PR #4041 (where `parallel_build_large` was ported from
+`pg_regress` SQL to Rust `#[pg_test]`)
+
+## What
+
+Widens the segment count assertion in
+`test_parallel_build_large_configurations` for `target_segment_count =
+32` from `28..=33` to `24..=33`, using a named range in the assertion
+message.
+
+## Why
+
+During a parallel index build on an unpartitioned table
+(`parallel_build_large` with 35,000 rows), each worker is assigned a
+slice of `target_segment_count` (`worker_segment_target`) and flushes a
+segment every `estimate_heap_reltuples / nlaunched /
+worker_segment_target` docum
+
+**File**: `pg_search/src/postgres/build_parallel.rs` (modified, +8/-7)
 ```diff
-@@ -49,23 +49,24 @@
- DOCS_ROOT = SCRIPT_DIR.parent.parent / "docs"
- OUTPUT_ROOT = SCRIPT_DIR / "verify"
- COVERAGE_PATH = SCRIPT_DIR / "docs_snippet_coverage.json"
--VERSION_SNIPPET = DOCS_ROOT / "snippets" / "version.mdx"
-+DOCS_JSON_PATH = DOCS_ROOT / "docs.json"
+@@ -1820,14 +1820,15 @@ mod tests {
+                                 mw, lp, mwm, ts, count
+                             );
+                         } else if *ts == 32 {
++                            // The parallel heap scan hands out blocks on demand, so a participant
++                            // short on CPU scans fewer rows and flushes fewer segments than its
++                            // quota, while its peers merge back down to theirs. Skew only ever
++                            // pulls the total below the target. The floor tolerates about a
++                            // quarter of the rows moving between participants.
++                            let expected = 24..=33;
+                             assert!(
+-                                (28..=33).contains(&count),
+-                                "Expected 28-33 segments with workers={}, leader={}, mem={}, segments={}, got {}",
+-                                mw,
+-                                lp,
+-                                mwm,
+-                                ts,
+-                                count
++                                expected.contains(&count),
++                                "Expected {expected:?} segments with workers={mw}, leader={lp}, mem={mwm}, segments={ts}, got {count}"
+                             );
+                         }
  
- 
- @cache
- def current_docs_version():
-     """The release version that the deploy docs are pinned to."""
--    match = re.search(r'version = "([^"]+)"', VERSION_SNIPPET.read_text())
--    if not match:
--        raise ValueError(f"No version found in {VERSION_SNIPPET}")
--    return match[1]
-+    docs_data = json.loads(DOCS_JSON_PATH.read_text(encoding="utf-8"))
-+    versions = docs_data.get("navigation", {}).get("versions", [])
-+    if not versions or "version" not in versions[0]:
-+        raise ValueError(f"No navigation version found in {DOCS_JSON_PATH}")
-+    return versions[0]["version"].lstrip("v")
- 
- 
- def fence_digest(info, body):
-     """Fingerprint a fence's language label and unchanged source.
- 
-     The release process rewrites the current version into deploy examples
--    alongside docs/snippets/version.mdx, so it is masked out: a release bump
-+    alongside docs/docs.json, so it is masked out: a release bump
-     is not an edit that needs a new review.
-     """
-     normalized = body.replace(current_docs_version(), "{version}")
-```
-
-**File**: `.github/scripts/release.py` (modified, +15/-19)
-```diff
-@@ -4,7 +4,7 @@
- Unified release artifact assembler for ParadeDB:
- - Assembles unreleased SQL migration fragments into pg_search--<prev>--<target>.sql
- - Assembles unreleased changelog fragments into docs/project/changelog/<version>.mdx
--- Registers new versions in docs navigation, snippets, and installation examples
-+- Registers new versions in docs navigation and installation examples
- """
- 
- # pylint: disable=too-many-lines,fixme
-@@ -459,13 +459,15 @@ def render_changelog(version, headers_map, grouped, extras):
- 
- def format_changelog_item(item_str):
-     """Ensure changelog item starts with a bullet point."""
--    formatted_lines = []
--    for i, line in enumerate(item_str.strip().splitlines()):
--        if i == 0 and not line.strip().startswith("-"):
--            formatted_lines.append(f"- {line}")
--        else:
--            formatted_lines.append(line)
--    return "\n".join(formatted_lines)
-+    lines = item_str.strip().splitlines()
-+    if not lines:
-+        return ""
-+    if lines[0].lstrip().startswith("-"):
-+        return "\n".join(lines)
-+    return "\n".join(
-+        f"- {line}" if i == 0 else (f"  {line}" if line.strip() else "")
-+        for i, line in enumerate(lines)
-+    )
- 
- 
- def semver_key(page_str):
-@@ -641,14 +643,8 @@ def update_docs_json(docs_json_path, new_version, is_latest=True, repo_root=None
-         return False
- 
- 
--def update_version_snippet(repo_root, clean_ver):
--    """Update the shared version snippet and current installation examples."""
--    snippet_file = repo_root / "docs" / "snippets" / "version.mdx"
--    snippet_file.parent.mkdir(parents=True, exist_ok=True)
--    content = f'export const version = "{clean_ver}";\n'
--    with open(snippet_file, "w", encoding="utf-8") as f:
--        f.write(content)
--    print(f"✅ Updated {snippet_file} with version '{clean_ver}'")
-+def update_docs_version_examples(repo_root, clean_ver):
-+    """Update current installation and upgrade examples in docs."""
-     update_installation_version(repo_root, clean_ver)
-     update_kubernetes_version(repo_root, clean_ver)
-     update_digitalocean_version(repo_root, clean_ver)
-@@ -748,7 +744,7 @@ def assemble_changelog_files(
- 
-     if not preserve_fragments:
-         if is_latest:
--            update_version_snippet(repo_root, clean_ver)
-+            update_docs_version_examples(repo_root, clean_ver)
-         for fpath in files:
-             print(f"Removing consumed fragment: {fpath.name}")
-             fpath.unlink()
-@@ -929,7 +925,7 @@ def handle_changelog_command(args, repo_root):
-         if docs_json.exists():
-             update_docs_json(docs_json, clean_ver, args.is_latest, repo_root=repo_root)
-         if args.is_latest:
--            update_version_snippet(repo_root, clean_ver)
-+            update_docs_version_examples(repo_root, clean_ver)
-         return
- 
-     assemble_changelog_files(
-@@ -1480,7 +1476,7 @@ def build_parser():
-     cl_parser.add_argument(
-         "--register-only",
-         action="store_true",
--        help="Only update docs navigation, version snippet, and installation examples",
-+        help="Only update docs navigation and installation examples",
-     )
-     cl_parser.add_argument(
-         "--is-latest",
-```
-
-**File**: `.github/workflows/publish-github-release.yml` (modified, +15/-24)
-```diff
-@@ -232,6 +232,20 @@ jobs:
-           git verify-tag "$TAG"
-           git push origin "refs/tags/$TAG"
- 
-+      # The tag_name will have "-rc.X" suffix and be marked as a prerelease for beta releases,
-+      # and no suffix and marked as a full release for prod releases. The tag has already been
-+      # created in the step above, so this step just attaches the release to it.
-+      - name: Create GitHub Release
-+        uses: softprops/action-gh-release@v3
-+        with:
-+          tag_name: v${{ github.event.inputs.version }}
-+          target_commitish: ${{ github.ref_name }} # Deploy the branch that this workflow is being run from
-+          prerelease: ${{ github.event.inputs.beta }} # Whether this release is a beta release
-+          make_latest: ${{ steps.release_latest.outputs.is_latest }}
-+          generate_release_notes: true
-+        env:
-+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-+
-       - name: Stage Release Artifacts on Main
-         if: github.repository == 'paradedb/paradedb' && github.ref_name != 'main' && github.event.inputs.beta != 'true'
-         env:
-@@ -243,7 +257,6 @@ jobs:
- 
-           # Record newly created release files and consumed fragment paths from the release commit
-           NEW_SQL="pg_search/sql/pg_search--*--${CLEAN_VERSION}.sql"
--          DOCS_SNIPPET="docs/snippets/version.mdx"
- 
-           # Determine changelog location on the release branch
-           # TODO: Legacy accommodation for 0.25.x (remove after 0.25.x is EOL):
-@@ -261,11 +274,7 @@ jobs:
-           git checkout main
- 
-           echo "Checking out assembled release files from the release commit..."
--          CHECKOUT_FILES="${NEW_SQL} ${BRANCH_CHANGELOG}"
--          if [[ "$IS_LATEST" == "true" ]]; then
--            CHECKOUT_FILES="${CHECKOUT_FILES} ${DOCS_SNIPPET}"
--          fi
--          git checkout "$RELEASE_REF" -- ${CHECKOUT_FILES}
-+          git checkout "$RELEASE_REF" -- ${NEW_SQL} "${BRANCH_CHANGELOG}"
- 
-           # TODO: Legacy accommodation for 0.25.x (remove after 0.25.x is EOL):
-           # Move changelog to docs/project/changelog/ if it was checked out from docs/changelog/
-@@ -317,7 +326,6 @@ jobs:
-         if: github.repository == 'paradedb/paradedb' && github.ref_name != 'main' && github.event.inputs.beta != 'true'
-         env:
-           COMMIT_CREATED: ${{ steps.sync-commit.outputs.created }}
--          RELEASE_REF: ${{ github.ref_name }}
-         run: |
-           if [[ "$COMMIT_CREATED" == "true" ]]; then
-             git push origin main
-@@ -326,9 +334,6 @@ jobs:
-             echo "No changes needed on main."
-           fi
- 
--          # Switch back to the release branch for release creation
--          git checkout "$RELEASE_REF"
--
-       - name: Create Stable Branch
-         if: github.ref_name == 'main' && github.event.inputs.beta != 'true'
-         env:
-@@ -351,20 +356,6 @@ jobs:
-             echo "ℹ️ Stable branch ${STABLE_BRANCH} already exists."
-           fi
- 
--      # The tag_name will have "-rc.X" suffix and be marked as a prerelease for beta releases,
--      # and no suffix and marked as a full release for prod releases. The tag has already been
--      # created in the step above, so this step just attaches the release to it.
--      - name: Create GitHub Release
--        uses: softprops/action-gh-release@v3
--        with:
--          tag_name: v${{ github.event.inputs.version }}
--          target_commitish: ${{ github.ref_name }} # Deploy the branch that this workflow is being run from
--          prerelease: ${{ github.event.inputs.beta }} # Whether this release is a beta release
--          make_latest: ${{ steps.release_latest.outputs.is_latest }}
--          generate_release_notes: true
--        env:
--          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
--
-       - name: Remove Bot Signing Key
-         if: always()
-         run: rm -f "$RUNNER_TEMP/github-bot-signing-key" "$RUNNER_TEMP/github-bot-signing-key.allowed-signers"
-```
-
-**File**: `.github/workflows/test-pg_search-schema.yml` (modified, +2/-1)
-```diff
-@@ -166,7 +166,8 @@ jobs:
- 
-             SUGGESTED_FILE="pg_search/sql/unreleased/${PR_NUMBER:-<PR_NUMBER>}.<short_description>.sql"
-             shopt -s nullglob
--            MATCHING_FILES=(pg_search/sql/unreleased/*.sql)
-+            mapfile -t RELEASED_FILES < <(git diff --name-only --diff-filter=AM FETCH_HEAD HEAD -- 'pg_search/sql/pg_search--*--*.sql')
-+            MATCHING_FILES=(pg_search/sql/unreleased/*.sql "${RELEASED_FILES[@]}")
- 
-             if (( ${#MATCHING_FILES[@]} == 0 )); then
-               echo "❌ ERROR: Schema changed but no SQL migration fragment found in pg_search/sql/unreleased/"
-```
-
-**File**: `docs/docs.json` (modified, +2/-1)
-```diff
-@@ -15,7 +15,7 @@
-   "navigation": {
-     "versions": [
-       {
--        "version": "v0.26.1",
-+        "version": "v0.26.2",
-         "tabs": [
-           {
-             "tab": "Start",
-@@ -333,6 +333,7 @@
-                   {
-                     "group": "v0.26",
-                     "pages": [
-+                      "project/changelog/0.26.2",
-                       "project/changelog/0.26.1",
-                       "project/changelog/0.26.0"
-                     ],
-```
-
-**File**: `docs/operate/deploy/cloud-platforms/digitalocean.mdx` (modified, +1/-1)
-```diff
-@@ -30,7 +30,7 @@ curl -fsSL https://get.docker.com | sh
- The `tag` query parameter pins the ParadeDB version. See the [Docker Hub page](https://hub.docker.com/r/paradedb/paradedb/tags) for available tags.
- 
- ```bash
--curl -fsSL "https://paradedb.com/install.sh?tag=0.26.1-pg18" | sh
-+curl -fsSL "https://paradedb.com/install.sh?tag=0.26.2-pg18" | sh
- ```
- 
- Once the install completes, note the password printed to the terminal. You will need it for the `psql` connection string below.
-```
-
-**File**: `docs/operate/deploy/self-hosted/extension.mdx` (modified, +8/-8)
-```diff
-@@ -36,12 +36,12 @@ Packages are available for `amd64` and `arm64`. Adjust the ParadeDB version, Pos
- <CodeGroup>
- 
- ```bash Debian 12
--curl -L "https://github.com/paradedb/paradedb/releases/download/v0.26.1/postgresql-18-pg-search_0.26.1-1PARADEDB-bookworm_amd64.deb" -o /tmp/pg_search.deb
-+curl -L "https://github.com/paradedb/paradedb/releases/download/v0.26.2/postgresql-18-pg-search_0.26.2-1PARADEDB-bookworm_amd64.deb" -o /tmp/pg_search.deb
- sudo apt-get install -y /tmp/*.deb
- ```
- 
- ```bash Debian 13
--curl -L "https://github.com/paradedb/paradedb/releases/download/v0.26.1/postgresql-18-pg-search_0.26.1-1PARADEDB-trixie_amd64.deb" -o /tmp/pg_search.deb
-+curl -L "https://github.com/paradedb/paradedb/releases/download/v0.26.2/postgresql-18-pg-search_0.26.2-1PARADEDB-trixie_amd64.deb" -o /tmp/pg_search.deb
- sudo apt-get install -y /tmp/*.deb
- ```
- 
-@@ -56,12 +56,12 @@ Packages are available for `amd64` and `arm64`. Adjust the ParadeDB version, Pos
- <CodeGroup>
- 
- ```bash Ubuntu 24.04
--curl -L "https://github.com/paradedb/paradedb/releases/download/v0.26.1/postgresql-18-pg-search_0.26.1-1PARADEDB-noble_amd64.deb" -o /tmp/pg_search.deb
-+curl -L "https://github.com/paradedb/paradedb/releases/download/v0.26.2/postgresql-18-pg-search_0.26.2-1PARADEDB-noble_amd64.deb" -o /tmp/pg_search.deb
- sudo apt-get install -y /tmp/*.deb
- ```
- 
- ```bash Ubuntu 26.04
--curl -L "https://github.com/paradedb/paradedb/releases/download/v0.26.1/postgresql-18-pg-search_0.26.1-1PARADEDB-resolute_amd64.deb" -o /tmp/pg_search.deb
-+curl -L "https://github.com/paradedb/paradedb/releases/download/v0.26.2/postgresql-18-pg-search_0.26.2-1PARADEDB-resolute_amd64.deb" -o /tmp/pg_search.deb
- sudo apt-get install -y /tmp/*.deb
- ```
- 
-@@ -76,12 +76,12 @@ Packages are available for `x86_64` and `aarch64`. Adjust the ParadeDB version,
- <CodeGroup>
- 
- ```bash RHEL 9
--curl -L "https://github.com/paradedb/paradedb/releases/download/v0.26.1/pg_search_18-0.26.1-1PARADEDB.el9.x86_64.rpm" -o /tmp/pg_search.rpm
-+curl -L "https://github.com/paradedb/paradedb/releases/download/v0.26.2/pg_search_18-0.26.2-1PARADEDB.el9.x86_64.rpm" -o /tmp/pg_search.rpm
- sudo dnf install -y /tmp/*.rpm
- ```
- 
- ```bash RHEL 10
--curl -L "https://github.com/paradedb/paradedb/releases/download/v0.26.1/pg_search_18-0.26.1-1PARADEDB.el10.x86_64.rpm" -o /tmp/pg_search.rpm
-+curl -L "https://github.com/paradedb/paradedb/releases/download/v0.26.2/pg_search_18-0.26.2-1PARADEDB.el10.x86_64.rpm" -o /tmp/pg_search.rpm
- sudo dnf install -y /tmp/*.rpm
- ```
- 
-@@ -96,12 +96,12 @@ Packages are available for Apple Silicon (`arm64`) only. Adjust the ParadeDB ver
- <CodeGroup>
- 
- ```bash macOS 15 (Sequoia)
--curl -L "https://github.com/paradedb/paradedb/releases/download/v0.26.1/pg_search@18--0.26.1.arm64_sequoia.pkg" -o ~/Downloads/pg_search.pkg
-+curl -L "https://github.com/paradedb/paradedb/releases/download/v0.26.2/pg_search@18--0.26.2.arm64_sequoia.pkg" -o ~/Downloads/pg_search.pkg
- sudo installer -pkg ~/Downloads/pg_search.pkg -target /
- ```
- 
- ```bash macOS 26 (Tahoe)
--curl -L "https://github.com/paradedb/paradedb/releases/download/v0.26.1/pg_search@18--0.26.1.arm64_tahoe.pkg" -o ~/Downloads/pg_search.pkg
-+curl -L "https://github.com/paradedb/paradedb/releases/download/v0.26.2/pg_search@18--0.26.2.arm64_tahoe.pkg" -o ~/Downloads/pg_search.pkg
- sudo installer -pkg ~/Downloads/pg_search.pkg -target /
- ```
- 
-```
-
-**File**: `docs/operate/deploy/self-hosted/kubernetes.mdx` (modified, +3/-3)
-```diff
-@@ -182,7 +182,7 @@ spec:
-           reference: ghcr.io/cloudnative-pg/pgvector:0.8.6-18-trixie
-       - name: pg_search
-         image:
--          reference: docker.io/paradedb/paradedb-extension:0.26.1-18-trixie
-+          reference: docker.io/paradedb/paradedb-extension:0.26.2-18-trixie
-         extension_control_path:
-           - share
-         dynamic_library_path:
-@@ -215,7 +215,7 @@ spec:
-           reference: ghcr.io/cloudnative-pg/pgvector:0.8.6-18-trixie
-       - name: pg_search
-         image:
--          reference: docker.io/paradedb/paradedb-enterprise-extension:0.26.1-18-trixie
-+          reference: docker.io/paradedb/paradedb-enterprise-extension:0.26.2-18-trixie
-         extension_control_path:
-           - share
-         dynamic_library_path:
-@@ -242,7 +242,7 @@ spec:
-     - name: vector
-       version: "0.8.6"
-     - name: pg_search
--      version: "0.26.1"
-+      version: "0.26.2"
- ```
- 
- ### Installing the Extension Image
-```
-
----
-
-### Incident Patch 3: `401aa91c` (2026-10-15)
-**Commit Message**: fix: pin Mintlify CLI to a published version for docs CI (#6826)
-
-Docs CI failed during `npm install -g mintlify` because the latest
-wrapper referenced unpublished `@mintlify/cli@4.0.1636`. Pin Mintlify to
-the published `4.2.1039` release, which installs successfully and passes
-the documentation broken-link check.
-
-Merge current `main` to resolve the Tantivy and Nix conflicts. `main`
-already includes the deferred doc-ID optimization through Tantivy
-`5b63c629`, so preserve its newer dependency pins, lockfile, and
-matching Nix hash. The resulting diff against `main` is only the
-Mintlify version pin.
-
-Validation:
-- Installed `mintlify@4.2.1039` and ran `mintlify broken-links` with
-Node 24: no broken links.
-- SEO validation, changelog fragment lint, and documentation snippet
-coverage passed.
-- Commit hooks passed, including YAML validation, actionlint, and
-Prettier.
-
----------
-
-Co-authored-by: paradedb-github-bot[bot] <282009505+paradedb-github-bot[bot]@users.noreply.github.com>
-
-**File**: `.github/workflows/test-paradedb-docs.yml` (modified, +1/-1)
-```diff
-@@ -70,7 +70,7 @@ jobs:
-           dotnet-version: 10.0.x
- 
-       - name: Install Mintlify CLI
--        run: npm install -g mintlify
-+        run: npm install -g mintlify@4.2.1039
- 
-       - name: Test Docs for Broken Links
-         working-directory: docs/
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6897** (closed): chore: Split join disjunctive score sort by selectivity. (@stuhood)
-- **PR #6882** (2026-10-17): perf: size default segments by query parallelism and partition keys (@paradedb-github-bot[bot])
-- **PR #6875** (2026-10-16): fix: Centralize pg->arrow type mappings (@paradedb-github-bot[bot])
-- **PR #6874** (2026-10-17): perf: size default segments by query parallelism and partition keys (@rebasedming)
-- **PR #6866** (2026-10-16): chore: Fixes for the `0.26.2` release. (@paradedb-github-bot[bot])
-- **PR #6865** (2026-10-16): chore: Fixes for the `0.26.2` release. (@stuhood)
+- **PR #6916** (2026-10-19): chore: update Tantivy to latest main (@rebasedming)
+- **PR #6915** (2026-10-19): fix: reject out-of-range date values during index build and insert (#6730) (@paradedb-github-bot[bot])
+- **PR #6912** (2026-10-19): fix: Re-enable joinscan support for post-datafusion postgres projections (@paradedb-github-bot[bot])
+- **PR #6905** (2026-10-19): fix: unicode_words only removes emojis when remove_emojis is set (@paradedb-github-bot[bot])
+- **PR #6904** (2026-10-19): fix: handle range bounds at and beyond the edges of integer fields (@paradedb-github-bot[bot])
+- **PR #6903** (2026-10-19): fix: Improve handling of empty relations (@paradedb-github-bot[bot])
 
 ---
 
@@ -3096,37 +3013,58 @@ Co-authored-by: paradedb-github-bot[bot] <282009505+paradedb-github-bot[bot]@use
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. launch the background merger under backpressure and release its pins per candida
+## X. reject out-of-range date values during index build and insert (#6730) (#6876)
 
 **RULE**:
-When implementing operations in `pg_search/src/index/directory/mvcc.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pg_search/src/postgres/datetime.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bad19fd8`: launch the background merger under backpressure and release its pins per candidate (#6855). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `84d2be45`: reject out-of-range date values during index build and insert (#6730) (#6876). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `pg_search/src/index/directory/mvcc.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `pg_search/src/postgres/datetime.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// This includes the pages that the cached readers of their files keep pinned.
-    ///
-        // Lock `readers` first, as `get_file_handle` does.
-        let mut readers = self.readers.lock();
+        Self::try_from(date)
+impl TryFrom<pgrx::datum::Date> for PostgresDateTime {
+    type Error = DateTimeConversionError;
 
-            let (LoadedSegmentMetaEntry::Persisted { meta, .. }
-            | LoadedSegmentMetaEntry::Memory { meta, .. }) = entry;
-            for path in meta.get_component_paths() {
-                readers.remove(&path);
-            }
+    fn try_from(value: pgrx::datum::Date) -> Result<Self, Self::Error> {
+            return Ok(Self(pgrx::datum::Timestamp::positive_infinity()));
+            return Ok(Self(pgrx::datum::Timestamp::negative_infinity()));
+            .ok_or(DateTimeConversionError::FieldOverflow)?;
+        let infinity = PostgresDateTime::try_from(pgrx::datum::Date::positive_infinity()).unwrap();
+        let neg_infinity =
+            PostgresDateTime::try_from(pgrx::datum::Date::negative_infinity()).unwrap();
+        let pg_dt = PostgresDateTime::try_from(date_2024).unwrap();
+    #[test]
+    fn date_bounds_conversion() {
+        // Upper bound: 294276-12-31 is 106,751,982 days after the Postgres epoch.
+        let max_date = unsafe { pgrx::datum::Date::from_pg_epoch_days(106_751_982) };
+        let pg_dt = PostgresDateTime::try_from(max_date);
+        assert!(pg_dt.is_ok());
+
+        // 294277-01-01 is 106,751,983 days after the Postgres epoch (overflows MAX_TIMESTAMP).
+        let out_of_range_date = unsafe { pgrx::datum::Date::from_pg_epoch_days(106_751_983) };
+        as
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        Ok(Self::from(date))
+impl From<pgrx::datum::Date> for PostgresDateTime {
+    fn from(value: pgrx::datum::Date) -> Self {
+            return Self(pgrx::datum::Timestamp::positive_infinity());
+            return Self(pgrx::datum::Timestamp::negative_infinity());
+            .expect("days to micros should never overflow");
+            .expect("Date->Timestamp conversion should always be valid")
+        let infinity = PostgresDateTime::from(pgrx::datum::Date::positive_infinity());
+        let neg_infinity = PostgresDateTime::from(pgrx::datum::Date::negative_infinity());
+        let pg_dt = PostgresDateTime::from(date_2024);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bad19fd8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `84d2be45` are properly handled with clean fallback behavior.

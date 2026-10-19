@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T21:52:49.500Z",
-  "total_verified_learnings": 935,
+  "last_updated": "2026-10-19T22:00:48.864Z",
+  "total_verified_learnings": 938,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -26677,8 +26677,8 @@
       "slug": "karmada-io-karmada",
       "platform": "github",
       "source_url": "https://github.com/karmada-io/karmada",
-      "source_version": "ef5b2fc8",
-      "content_hash": "f0bc8d47e55450b5629fb165df3e6bf8b2449a9fc9dfeed57516f26eb66544d3",
+      "source_version": "7cb3c422",
+      "content_hash": "f65cba1bce65642e44d5df12cf9a4ed38307fc49f18524cb7bc61ce9e9a0ba46",
       "dossier_path": "07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
       "promoted_rules": [
@@ -26686,6 +26686,11 @@
           "number": 1692,
           "title": "build(deps): bump github/codeql-action/upload-sarif",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 2839,
+          "title": "Merge pull request #7830 from ranxi2001/feature/multi-component-scale-rescheduli",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -26693,7 +26698,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T10:28:54.482Z",
+      "verified_at": "2026-10-19T21:59:34.512Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -34914,14 +34919,19 @@
       "slug": "paradedb-paradedb",
       "platform": "github",
       "source_url": "https://github.com/paradedb/paradedb",
-      "source_version": "fa7c7432",
-      "content_hash": "67e6367e4ce55053a21951853eef357bf1cfde31b3382a26702717ef2628cc6d",
+      "source_version": "d9e5536c",
+      "content_hash": "a3ccbb35e1e656b5fc12e4ba30919b75049c1ffa7ce70c02eb555c7d086dabf4",
       "dossier_path": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "promoted_rules": [
         {
           "number": 2470,
           "title": "launch the background merger under backpressure and release its pins per candida",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2840,
+          "title": "reject out-of-range date values during index build and insert (#6730) (#6876)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -34930,7 +34940,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T09:35:27.441Z",
+      "verified_at": "2026-10-19T21:59:39.003Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37251,22 +37261,35 @@
     "learn-github-revenuecat-purchases-ios": {
       "learning_id": "learn-github-revenuecat-purchases-ios",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "revenuecat-purchases-ios",
+      "source": "RevenueCat/purchases-ios",
+      "repository": "RevenueCat/purchases-ios",
       "slug": "revenuecat-purchases-ios",
       "platform": "github",
       "source_url": "https://github.com/RevenueCat/purchases-ios",
-      "source_version": "HEAD",
-      "content_hash": "bc8ea25df4bd6206bd5c7640b0e6afeaddfcf60068897d82bc6a5e52f0a544a8",
+      "source_version": "f93701d2",
+      "content_hash": "9b510e3a514cec586e6e678a850ed9ac0b91cee0630f35587c1012d25dc5a61c",
       "dossier_path": "07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2838,
+          "title": "Paywalls) Intro Offer Eligibility checks were not resumable and sometimes slow (",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.264Z"
+      "verified_at": "2026-10-19T21:59:31.719Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-rickclephas-kmp-nativecoroutines": {
       "learning_id": "learn-github-rickclephas-kmp-nativecoroutines",
@@ -42540,14 +42563,19 @@
       "slug": "topgrade-rs-topgrade",
       "platform": "github",
       "source_url": "https://github.com/topgrade-rs/topgrade",
-      "source_version": "8c5ef9cc",
-      "content_hash": "98d2d92c579c2374b923807ff2b266a326f5814d17c9550edc85aa26491636bb",
+      "source_version": "f022ebfe",
+      "content_hash": "f2bf0d380b954d04a628dc242b39f465f0e5672eae48d02186f7d0af39550979",
       "dossier_path": "07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md",
       "promoted_rules": [
         {
           "number": 2264,
           "title": "locale): correct French plural in \"Finding available software\" (#2436)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2836,
+          "title": "opencode): support opencode v1 version format (#2428)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -42556,7 +42584,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T06:59:25.196Z",
+      "verified_at": "2026-10-19T21:59:27.180Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56894,20 +56922,35 @@
     "learn-github-jina-ai-reader": {
       "learning_id": "learn-github-jina-ai-reader",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "jina-ai/reader",
       "repository": "jina-ai/reader",
       "slug": "jina-ai-reader",
       "platform": "github",
       "source_url": "https://github.com/jina-ai/reader",
-      "source_version": "main",
-      "content_hash": "45de66164e85fbe8c8ff1abca5db504ac27e551eb67a28106671090d39fc27a9",
+      "source_version": "1574bfd3",
+      "content_hash": "b946fbda5861fb4732e24669307103111976c900b665addc0a0ba26db294947a",
       "dossier_path": "07_PROJECT_LEARNING/jina-ai-reader-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jina-ai-reader-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2837,
+          "title": "pass locale as argument to evaluateOnNewDocument (#1244)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T21:59:29.403Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-webrecorder-pywb": {
       "learning_id": "learn-github-webrecorder-pywb",
@@ -93146,6 +93189,161 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T21:52:49.484Z"
+    },
+    "rule-2836": {
+      "learning_id": "rule-2836",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2836,
+      "title": "opencode): support opencode v1 version format (#2428)",
+      "source_url": "https://github.com/topgrade-rs/topgrade",
+      "source_version": "f022ebfe",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T21:59:27.180Z"
+    },
+    "rule-2837": {
+      "learning_id": "rule-2837",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2837,
+      "title": "pass locale as argument to evaluateOnNewDocument (#1244)",
+      "source_url": "https://github.com/jina-ai/reader",
+      "source_version": "1574bfd3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T21:59:29.403Z"
+    },
+    "rule-2838": {
+      "learning_id": "rule-2838",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2838,
+      "title": "Paywalls) Intro Offer Eligibility checks were not resumable and sometimes slow (",
+      "source_url": "https://github.com/RevenueCat/purchases-ios",
+      "source_version": "f93701d2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T21:59:31.719Z"
+    },
+    "rule-2839": {
+      "learning_id": "rule-2839",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2839,
+      "title": "Merge pull request #7830 from ranxi2001/feature/multi-component-scale-rescheduli",
+      "source_url": "https://github.com/karmada-io/karmada",
+      "source_version": "7cb3c422",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T21:59:34.512Z"
+    },
+    "rule-2840": {
+      "learning_id": "rule-2840",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2840,
+      "title": "reject out-of-range date values during index build and insert (#6730) (#6876)",
+      "source_url": "https://github.com/paradedb/paradedb",
+      "source_version": "d9e5536c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T21:59:39.003Z"
+    },
+    "learn-huggingface-reflection-beam-1-0-501b-a23b": {
+      "learning_id": "learn-huggingface-reflection-beam-1-0-501b-a23b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "reflection/Beam-1.0-501B-A23B",
+      "repository": "reflection/Beam-1.0-501B-A23B",
+      "slug": "hf-reflection-beam-1.0-501b-a23b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/reflection/Beam-1.0-501B-A23B",
+      "source_version": "hf-reflection-beam-1.0-501b-a23b",
+      "content_hash": "8d0bfc90a5267fe201b211d7fe22ffb41e5f7972d9bbeaa25aabe11602a14828",
+      "dossier_path": "07_PROJECT_LEARNING/hf-reflection-beam-1.0-501b-a23b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-reflection-beam-1.0-501b-a23b-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 2841,
+          "title": "Invariant Top-K Normalization in Ultra-Sparse MoE Routing",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2842,
+          "title": "Disjoint Multi-Token Termination Evaluation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2843,
+          "title": "Asymmetric Hybrid RoPE Theta Isolation",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T22:00:48.847Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-2841": {
+      "learning_id": "rule-2841",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2841,
+      "title": "Invariant Top-K Normalization in Ultra-Sparse MoE Routing",
+      "source_url": "https://huggingface.co/reflection/Beam-1.0-501B-A23B",
+      "source_version": "hf-reflection-beam-1.0-501b-a23b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T22:00:48.847Z"
+    },
+    "rule-2842": {
+      "learning_id": "rule-2842",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2842,
+      "title": "Disjoint Multi-Token Termination Evaluation Invariant",
+      "source_url": "https://huggingface.co/reflection/Beam-1.0-501B-A23B",
+      "source_version": "hf-reflection-beam-1.0-501b-a23b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T22:00:48.847Z"
+    },
+    "rule-2843": {
+      "learning_id": "rule-2843",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2843,
+      "title": "Asymmetric Hybrid RoPE Theta Isolation",
+      "source_url": "https://huggingface.co/reflection/Beam-1.0-501B-A23B",
+      "source_version": "hf-reflection-beam-1.0-501b-a23b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T22:00:48.847Z"
     }
   },
   "aliases": {
