@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md`  
+> **Source**: github ([https://github.com/kubernetes-sigs/aws-load-balancer-controller](https://github.com/kubernetes-sigs/aws-load-balancer-controller))  
+> **Source Version**: `fbc97ecf`  
+> **License**: Apache-2.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T06:32:39.352Z  
+> **Learning ID**: `learn-github-kubernetes-sigs-aws-load-balancer-controller`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): kubernetes-sigs/aws-load-balancer-controller
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kubernetes-sigs/aws-load-balancer-controller](https://github.com/kubernetes-sigs/aws-load-balancer-controller))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-05T18:16:30.027Z  
+> **Harvest Timestamp**: 2026-10-19T06:32:39.343Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: A Kubernetes controller for Elastic Load Balancers
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 4333 stars
+- **Stars / Engagement**: 4342 stars
 
 ---
 
@@ -1567,149 +1581,17 @@ func IsLBConfigInUseByGateway(ctx context.Context, lbConfig *elbv2gw.LoadBalance
 
 ```
 
-### Core Architecture Module: `pkg/gateway/model/utilities.go`
-```
-package model
-
-import (
-	elbv2model "sigs.k8s.io/aws-load-balancer-controller/v3/pkg/model/elbv2"
-	"strings"
-)
-
-func isIPv6Supported(ipAddressType elbv2model.IPAddressType) bool {
-	switch ipAddressType {
-	case elbv2model.IPAddressTypeDualStack, elbv2model.IPAddressTypeDualStackWithoutPublicIPV4:
-		return true
-	default:
-		return false
-	}
-}
-
-// TODO - Refactor?
-func isIPv6CIDR(cidr string) bool {
-	return strings.Contains(cidr, ":")
-}
-
-```
-
-### Core Architecture Module: `pkg/gateway/routeutils/attachment_helper.go`
-```
-package routeutils
-
-import (
-	"context"
-
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	gwv1 "sigs.k8s.io/gateway-api/apis/v1"
-)
-
-// doesResourceAttachToGateway checks if a target resource (route, listenerset) wishes to connect to the gateway.
-// this is done by following Gateway API conventions on the parent reference found within target resource.
-func doesResourceAttachToGateway(parentRef gwv1.ParentReference, resourceNamespace string, gw gwv1.Gateway) bool {
-	// Default for kind is Gateway.
-	if parentRef.Kind != nil && *parentRef.Kind != gatewayKind {
-		return false
-	}
-
-	var namespaceToCompare string
-
-	if parentRef.Namespace != nil {
-		namespaceToCompare = string(*parentRef.Namespace)
-	} else {
-		namespaceToCompare = resourceNamespace
-	}
-
-	nameCheck := string(parentRef.Name) == gw.Name
-	nsCheck := gw.Namespace == namespaceToCompare
-	return nameCheck && nsCheck
-}
-
-func doesResourceAllowNamespace(ctx context.Context, fromNamespaces gwv1.FromNamespaces, labelSelector *metav1.LabelSelector, nsSelector namespaceSelector, resourceNamespace string, parentNamespace string) (bool, error) {
-	switch fromNamespaces {
-	case gwv1.NamespacesFromNone:
-		return false, nil
-	case gwv1.NamespacesFromSame:
-		return parentNamespace == resourceNamespace, nil
-	case gwv1.NamespacesFromAll:
-		return true, nil
-	case gwv1.NamespacesFromSelector:
-		if labelSelector == nil {
-			return false, nil
-		}
-		// This should be executed off the client-go cache, hence we do not need to perform local caching.
-		namespaces, err := nsSelector.getNamespacesFromSelector(ctx, labelSelector)
-		if err != nil {
-			return false, err
-		}
-
-		if !namespaces.Has(resourceNamespace) {
-			return false, nil
-		}
-		return true, nil
-	default:
-		// Unclear what to do in this case, we'll just filter out this route.
-		return false, nil
-	}
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4919** (2026-10-03): **fix: ignore unpermitted cross namespace TCPRoutes in gateway target TGC deletion guard**
-  *Symptoms*:   ### Issue  The in-use guard for a Gateway-targeted TargetGroupConfiguration lists TCPRoutes cluster-wide and matches on backendRef name plus resolved namespace alone, with no ReferenceGrant check. A TCPRoute in any namespace can therefore pin the TGC's finalizer indefinitely and leave the TGC's namespace stuck in Terminating, without the consent ReferenceGrant exists to require.  ### Description  The route loader already rejects an unpermitted cross namespace Gateway backendRef at attachment time so no target group is provisioned for it and the guard has nothing to protect.  Added similar cross namespace validation  check to ignore TCPRoutes with no valid grant. Same namespace references are unaffected and still block deletion.  ### Checklist - [x] Added tests that cover your change (if possible) - [ ] Added/modified documentation as required (such as the `README.md`, or the `docs` directory) - [x] Manually tested - [x] Made sure the title of the PR is a good description that can go into the release notes  ### BONUS POINTS checklist: complete for good vibes and maybe prizes?! :exploding_head: - [ ] Backfilled missing tests for code in same general area :tada: - [] Refactored something and made the world a better place :star2: 
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/kubernetes-sigs/aws-load-balancer-controller/pull/4919?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=kubernetes-sigs) Report :x: Patch coverage is `75.00000%` with `2 lines` in your changes missing coverage. Please review. :white_check_mark: Project coverage is 57.71%. Comparing base ([`2fcd20d`](https://app.codecov.io/gh/kubernetes-sigs/aws-load-balancer-controller/commit/2fcd20de477ea1f383050039cae25223f984ced3?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=kubernetes-sigs)) to head ([`ae29477`](https://app.codecov.io/gh/kubernetes-sigs/aws-load-balancer-controller/commit/ae29477fb955b144ff9c714dadbe5ede111788c9?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=kubernetes-sigs)). :warning: Report is 53 commits behind head on main.  |
-  > /lgtm
-  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/kubernetes-sigs/aws-load-balancer-controller/pull/4919#" title="Author self-approved">shraddhabang</a>*, *<a href="https://github.com/kubernetes-sigs/aws-load-balancer-controller/pull/4919#pullrequestreview-5397815252" title="Approved">wweiwei-li</a>*  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=kubernetes-sigs%2Faws-load-balancer-controller).  The pull request process is described [here](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process)  <details > Needs approval from an approver in each of these files:  - ~~[OWNERS](https://github.com/kubernetes-sigs/aws-load-balancer-controller/blob/main/OWNERS)~~ [shraddhabang,wweiwei-li]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!--
+- **Issue #4928** (2026-10-07): **fix(networking): treat InvalidGroup.NotFound as success in releaseSG**
+  *Symptoms*: ## Problem  When deleting the backend security group during Ingress cleanup, if the EC2 `DeleteSecurityGroup` API returns `InvalidGroup.NotFound`, the controller enters an infinite reconcile error loop. The `autoGeneratedSG` field is never cleared, so every subsequent reconcile attempts to delete the same non-existent SG and fails forever.  ## Root cause  The AWS SDK client timeout can fire before EC2 responds to a `DeleteSecurityGroup` request. The SDK retries internally, but by the time the retry reaches EC2 the original request has already succeeded and the group is gone. The retry then returns `InvalidGroup.NotFound`, which `releaseSG()` treated as a failure, returning an error without clearing `autoGeneratedSG`. Each later reconcile hits the same `NotFound` and the loop never ends.  ## Fix  In `releaseSG()`, treat `InvalidGroup.NotFound` on the delete path as a successful deletion: clear `autoGeneratedSG` and return nil. The `isEC2SecurityGroupNotFoundError` helper already existed in the same file but was not used in the deletion path.  ## Testing  - Added a unit test case to `Test_defaultBackendSGProvider_Release` where `DeleteSecurityGroup` returns `InvalidGroup.NotFound` and `Release` is expected to succeed. - `go test ./pkg/networking/` passes; `go vet` and `gofmt` are clean.
 
-- **Issue #4916** (2026-09-30): **fix: use '/' separator in Gateway route-loader cache keys to avoid co…**
-  *Symptoms*: …llisions  ### Issue  The route loader built its resource cache key by joining kind, name, and namespace with "-". Since "-" is legal in both Kubernetes names and namespaces, the key is non-injective: HTTPRoute "a" in namespace "b-team" and HTTPRoute "a-b" in namespace "team" both produce "HTTPRoute-a-b-team".  ### Description Switch the separator to "/", which is illegal in Kubernetes names and namespaces, so distinct routes can no longer collide. This matches the existing GetRouteIdentifier pattern and the TargetGroupBinding fix in #4864. Extract the resource cache key into a generateResourceCacheKey helper and apply the same fix to generateRouteDataCacheKey (status-update dedup only, no routing impact). With an injective key the cache can only return the descriptor for the route it belongs to, so no allowedRoutes re-check on the cache-hit path is needed.   ### Checklist - [x ] Added tests that cover your change (if possible) - [ ] Added/modified documentation as required (such as the `README.md`, or the `docs` directory) - [ ] Manually tested - [ x] Made sure the title of the PR is a good description that can go into the release notes  ### BONUS POINTS checklist: complete for good vibes and maybe prizes?! :exploding_head: - [ ] Backfilled missing tests for code in same general area :tada: - [ ] Refactored something and made the world a better place :star2: 
-  **Post-Mortem & Fix Analysis**:
-  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/kubernetes-sigs/aws-load-balancer-controller/pull/4916#pullrequestreview-5370866861" title="Approved">shraddhabang</a>*, *<a href="https://github.com/kubernetes-sigs/aws-load-balancer-controller/pull/4916#" title="Author self-approved">wweiwei-li</a>*  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=kubernetes-sigs%2Faws-load-balancer-controller).  The pull request process is described [here](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process)  <details > Needs approval from an approver in each of these files:  - ~~[OWNERS](https://github.com/kubernetes-sigs/aws-load-balancer-controller/blob/main/OWNERS)~~ [shraddhabang,wweiwei-li]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!--
-  > ## [Codecov](https://app.codecov.io/gh/kubernetes-sigs/aws-load-balancer-controller/pull/4916?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=kubernetes-sigs) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 57.68%. Comparing base ([`2fcd20d`](https://app.codecov.io/gh/kubernetes-sigs/aws-load-balancer-controller/commit/2fcd20de477ea1f383050039cae25223f984ced3?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=kubernetes-sigs)) to head ([`13fff66`](https://app.codecov.io/gh/kubernetes-sigs/aws-load-balancer-controller/commit/13fff6683c4bf17786cecb7f6c15bdbe04947691?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=kubernetes-sigs)). :warning: Report is 48 commits behind head on main.  <details><summary>Additio
-
-- **Issue #4912** (2026-09-22): **chore: OIDC permission messaging**
-  *Symptoms*: Adds some clarification on how OIDC secret permissions work. 
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/kubernetes-sigs/aws-load-balancer-controller/pull/4912?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=kubernetes-sigs) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 57.48%. Comparing base ([`2fcd20d`](https://app.codecov.io/gh/kubernetes-sigs/aws-load-balancer-controller/commit/2fcd20de477ea1f383050039cae25223f984ced3?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=kubernetes-sigs)) to head ([`747085c`](https://app.codecov.io/gh/kubernetes-sigs/aws-load-balancer-controller/commit/747085c97b924a96a6276226ccc98973257d148d?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=kubernetes-sigs)). :warning: Report is 31 commits behind head on main.  <details><summary>Additio
-  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/kubernetes-sigs/aws-load-balancer-controller/pull/4912#pullrequestreview-5283955380" title="LGTM">shraddhabang</a>*, *<a href="https://github.com/kubernetes-sigs/aws-load-balancer-controller/pull/4912#" title="Author self-approved">zac-nixon</a>*  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=kubernetes-sigs%2Faws-load-balancer-controller).  The pull request process is described [here](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process)  <details > Needs approval from an approver in each of these files:  - ~~[OWNERS](https://github.com/kubernetes-sigs/aws-load-balancer-controller/blob/main/OWNERS)~~ [shraddhabang,zac-nixon]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META=
-
-- **Issue #4911** (2026-09-23): **test: default GRPC/UDP images to public ECR to fix the tests**
-  *Symptoms*:   ### Description  Default gateway gRPC/UDP e2e images to public ECR; --resolve-image-tags switches to the private mirror + resolver for partitions.  ### Checklist - [ ] Added tests that cover your change (if possible) - [ ] Added/modified documentation as required (such as the `README.md`, or the `docs` directory) - [x] Manually tested - [ ] Made sure the title of the PR is a good description that can go into the release notes  ### BONUS POINTS checklist: complete for good vibes and maybe prizes?! :exploding_head: - [ ] Backfilled missing tests for code in same general area :tada: - [ ] Refactored something and made the world a better place :star2: 
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/kubernetes-sigs/aws-load-balancer-controller/pull/4911?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=kubernetes-sigs) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 57.48%. Comparing base ([`2fcd20d`](https://app.codecov.io/gh/kubernetes-sigs/aws-load-balancer-controller/commit/2fcd20de477ea1f383050039cae25223f984ced3?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=kubernetes-sigs)) to head ([`07156c4`](https://app.codecov.io/gh/kubernetes-sigs/aws-load-balancer-controller/commit/07156c4efaad78686010c069d03041557077c3ba?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=kubernetes-sigs)). :warning: Report is 32 commits behind head on main.  <details><summary>Additio
-  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/kubernetes-sigs/aws-load-balancer-controller/pull/4911#" title="Author self-approved">shraddhabang</a>*, *<a href="https://github.com/kubernetes-sigs/aws-load-balancer-controller/pull/4911#pullrequestreview-5284969584" title="Approved">wweiwei-li</a>*  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=kubernetes-sigs%2Faws-load-balancer-controller).  The pull request process is described [here](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process)  <details > Needs approval from an approver in each of these files:  - ~~[OWNERS](https://github.com/kubernetes-sigs/aws-load-balancer-controller/blob/main/OWNERS)~~ [shraddhabang,wweiwei-li]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!--
-  > /lgtm
-
-- **Issue #4909** (2026-09-24): **Fix TGB networking with empty ports**
-  *Symptoms*: ### Issue  Fixes #4907  ### Description  Fixes TargetGroupBinding networking rules with an empty or unspecified `ports` list.  The API defines an empty `ports` list as allowing all TCP ports, but `computeIngressPermissionsForTGBNetworking` accidentally shadows the accumulated `permissions` variable in this path. The computed permission is therefore discarded and no security group rule is returned.  This change:  * avoids shadowing the outer permissions accumulator; * appends the computed all-TCP permission to the result; * adds regression coverage verifying that an empty ports list produces a TCP permission for ports `0-65535`.  The regression test fails on the previous implementation because it returns no permissions for the empty-ports case.  Validation:  * `go test -race ./pkg/networking/... -run Test_defaultNetworkingManager_computeIngressPermissionsForTGBNetworking -count=1 -v` * `go test ./pkg/networking/...` * `go vet ./pkg/networking/...` * `make fast-unit-test` * `git diff --check`  ### Checklist  * [x] Added tests that cover your change (if possible) * [x] Added/modified documentation as required (such as the `README.md`, or the `docs` directory) * [ ] Manually tested * [x] Made sure the title of the PR is a good description that can go into the release notes  ### BONUS POINTS checklist: complete for good vibes and maybe prizes?! :exploding_head:  * [x] Backfilled missing tests for code in same general area :tada: * [ ] Refactored
-  **Post-Mortem & Fix Analysis**:
-  > Welcome @dlanov! <br><br>It looks like this is your first PR to <a href='https://github.com/kubernetes-sigs/aws-load-balancer-controller'>kubernetes-sigs/aws-load-balancer-controller</a> 🎉. Please refer to our [pull request process documentation](https://www.kubernetes.dev/docs/guide/pull-requests/) to help your PR have a smooth ride to approval. <br><br>You will be prompted by a bot to use commands during the review process. Do not be afraid to follow the prompts! It is okay to experiment. [Here is the bot commands documentation](https://go.k8s.io/bot-commands). <br><br>You can also check if kubernetes-sigs/aws-load-balancer-controller has [its own contribution guidelines](https://github.com/kubernetes-sigs/aws-load-balancer-controller/tree/master/CONTRIBUTING.md). <br><br>You may want to refer to our [testing guide](https://git.k8s.io/community/contributors/devel/sig-testing/testing.md) if you run into trouble with your tests not passing. <br><br>If you are having difficulty getting
-  > Hi @dlanov. Thanks for your PR.  I'm waiting for a [kubernetes-sigs](https://github.com/orgs/kubernetes-sigs/people) member to verify that this patch is reasonable to test. If it is, they should reply with `/ok-to-test` on its own line. Until that is done, I will not automatically test new commits in this PR, but the usual testing commands by org members will still work.  >[!TIP] >**We noticed you've done this a few times! Consider [joining the org](https://git.k8s.io/community/community-membership.md#member) to skip this step and gain `/lgtm` and other bot rights.** We recommend asking approvers on your previous PRs to sponsor you.  Once the patch is verified, the new status will be reflected by the `ok-to-test` label.  I understand the commands that are listed [here](https://go.k8s.io/bot-commands?repo=kubernetes-sigs%2Faws-load-balancer-controller).  <details>  Instructions for interacting with me using PR comments are available [here](https://git.k8s.io/community/contributors/guide
-  > Up load API
-
-- **Issue #4908** (2026-09-17): **test/gateway: make e2e suite partition-aware and register ECR tag resolver**
-  *Symptoms*:  ### Issue  E2e tests break in non commercial partitions due to test images  <!-- Please link the GitHub issues related to this PR, if available -->  ### Description  <!-- Please explain the changes you made here.  Help your reviewers by guiding them through your key changes, implementation decisions etc. You can even include snippets of output or screenshots.  A good, clear description == a faster review :) --> - Prefix UDP/GRPC pod images with test-image-registry  - Derive TestHostname wildcard from region + partition DNS suffix; expose image   constants as vars so downstream forks can override - Add opt-in --resolve-image-tags flag with an ECR-backed manifest.ImageResolver   that reassigns image vars to newest multi-arch versioned tags (non-ADC ECRs   don't replicate :latest)  Manually ran a few e2e tests - PASS  ``` > kubectl get gateways -A -w NAMESPACE                             NAME          CLASS                    ADDRESS                                                                          nlb-gateway-tcp-udp-quic-e2e-a29213   gateway-e2e   gwclass-e2e-nlb-ae119f   k8s-nlbgatew-gatewaye-cc2a9ff6b9-2a1276ac4e420dff.elb.us-west-2.amazonaws.com   True         4m5s ```  ### Checklist - [ ] Added tests that cover your change (if possible) - [ ] Added/modified documentation as required (such as the `README.md`, or the `docs` directory) - [x] Manually tested - [ ] Made sure the title of the PR is a good description that can go into 
-  **Post-Mortem & Fix Analysis**:
-  > Hi @jupdec. Thanks for your PR.  I'm waiting for a [kubernetes-sigs](https://github.com/orgs/kubernetes-sigs/people) member to verify that this patch is reasonable to test. If it is, they should reply with `/ok-to-test` on its own line. Until that is done, I will not automatically test new commits in this PR, but the usual testing commands by org members will still work.  >[!TIP] >**We noticed you've done this a few times! Consider [joining the org](https://git.k8s.io/community/community-membership.md#member) to skip this step and gain `/lgtm` and other bot rights.** We recommend asking approvers on your previous PRs to sponsor you.  Once the patch is verified, the new status will be reflected by the `ok-to-test` label.  I understand the commands that are listed [here](https://go.k8s.io/bot-commands?repo=kubernetes-sigs%2Faws-load-balancer-controller).  <details>  Instructions for interacting with me using PR comments are available [here](https://git.k8s.io/community/contributors/guide
-  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/kubernetes-sigs/aws-load-balancer-controller/pull/4908#" title="Author self-approved">jupdec</a>*, *<a href="https://github.com/kubernetes-sigs/aws-load-balancer-controller/pull/4908#pullrequestreview-5242018437" title="LGTM">shraddhabang</a>*  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=kubernetes-sigs%2Faws-load-balancer-controller).  The pull request process is described [here](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process)  <details > Needs approval from an approver in each of these files:  - ~~[OWNERS](https://github.com/kubernetes-sigs/aws-load-balancer-controller/blob/main/OWNERS)~~ [shraddhabang]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":
-
-- **Issue #4907** (2026-09-24): **If len(rule.Ports) == 0, the result of computeIngressPermissionsForTGBNetworking is not used, causing missing SGR**
-  *Symptoms*: **Bug Description**  https://github.com/kubernetes-sigs/aws-load-balancer-controller/blob/main/pkg/networking/networking_manager.go#L403  This line shadows `permissions`, unlike in the `range.rulePorts` branch, which has the effect that if no port is set, no rule is created, when the intended behaviour is for a rule to be created with ports 0-65535.     **Steps to Reproduce**  Create a TGB like this, replacing the TG and SG values as required.  ``` apiVersion: elbv2.k8s.aws/v1beta1 kind: TargetGroupBinding metadata:   name: repro   namespace: tgb-repro spec:   targetType: ip   serviceRef: {name: repro, port: 8080}   targetGroupARN: <TG_ARN>   networking:     ingress:       - from:           - securityGroup:               groupID: <SRC_SG>         ports: []                                                        # <----- the relevant line --- apiVersion: v1 kind: Pod metadata:   name: app   namespace: tgb-repro   labels: {app: repro} spec:   containers:     - name: pause       image: registry.k8s.io/pause:3.9 --- apiVersion: v1 kind: Service metadata:   name: repro   namespace: tgb-repro spec:   selector: {app: repro}   ports: [{port: 8080, targetPort: 8080}] ```   **Expected Behavior**  An ingress rule on the pod ENI's security group, 0-65535 TCP from the SG given in the TGB.  **Actual Behavior**  Succesful reconcile, no security group rule created.  **Regression** Was the functionality working correctly in a previous version ? [Yes / No] If yes, specify the last version where
-  **Post-Mortem & Fix Analysis**:
-  > I'm working on this. I'll add regression coverage for TGB networking rules with an empty ports list and fix the lost ingress permissions.
-
-- **Issue #4904** (2026-09-22): **fix: canonicalize CIDRs for security group inbound rules to avoid reconciliation failures**
-  *Symptoms*: ### Issue  https://github.com/kubernetes-sigs/aws-load-balancer-controller/issues/4893  ### Description  Convert security group inbound CIDRs to canonicalized form for ingress, service and gateway. This aligns with how EC2 handles CIDRs in [AuthorizeSecurityGroupIngress API](https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_AuthorizeSecurityGroupIngress.html).   From docs >AWS [canonicalizes](https://en.wikipedia.org/wiki/Canonicalization) IPv4 and IPv6 CIDRs. For example, if you specify 100.68.0.18/18 for the CIDR block, AWS canonicalizes the CIDR block to 100.68.0.0/18. Any subsequent DescribeSecurityGroups and DescribeSecurityGroupRules calls will return the canonicalized form of the CIDR block. Additionally, if you attempt to add another rule with the non-canonical form of the CIDR (such as 100.68.0.18/18) and there is already a rule for the canonicalized form of the CIDR block (such as 100.68.0.0/18), the API throws an duplicate rule error.  ### Checklist - [x] Added tests that cover your change (if possible) - [x] Added/modified documentation as required (such as the `README.md`, or the `docs` directory) - [x] Manually tested - [x] Made sure the title of the PR is a good description that can go into the release notes  ### BONUS POINTS checklist: complete for good vibes and maybe prizes?! :exploding_head: - [ ] Backfilled missing tests for code in same general area :tada: - [ ] Refactored something and made the world a better place :star2: 
-  **Post-Mortem & Fix Analysis**:
-  > Hi @bobert-2. Thanks for your PR.  I'm waiting for a [kubernetes-sigs](https://github.com/orgs/kubernetes-sigs/people) member to verify that this patch is reasonable to test. If it is, they should reply with `/ok-to-test` on its own line. Until that is done, I will not automatically test new commits in this PR, but the usual testing commands by org members will still work.  >[!TIP] >**We noticed you've done this a few times! Consider [joining the org](https://git.k8s.io/community/community-membership.md#member) to skip this step and gain `/lgtm` and other bot rights.** We recommend asking approvers on your previous PRs to sponsor you.  Once the patch is verified, the new status will be reflected by the `ok-to-test` label.  I understand the commands that are listed [here](https://go.k8s.io/bot-commands?repo=kubernetes-sigs%2Faws-load-balancer-controller).  <details>  Instructions for interacting with me using PR comments are available [here](https://git.k8s.io/community/contributors/gui
-  > /lgtm /approved
-  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/kubernetes-sigs/aws-load-balancer-controller/pull/4904#" title="Author self-approved">bobert-2</a>*, *<a href="https://github.com/kubernetes-sigs/aws-load-balancer-controller/pull/4904#pullrequestreview-5270649981" title="Approved">wweiwei-li</a>*  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=kubernetes-sigs%2Faws-load-balancer-controller).  The pull request process is described [here](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process)  <details > Needs approval from an approver in each of these files:  - ~~[OWNERS](https://github.com/kubernetes-sigs/aws-load-balancer-controller/blob/main/OWNERS)~~ [wweiwei-li]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers
+- **Issue #4922** (2026-10-05): **fix(scripts): eks-charts sync gh CLI compat + docs version bump**
+  *Symptoms*: ## Summary  - Fix `scripts/sync-to-eks-charts.sh` to work with modern `gh` CLI versions:   - Stop forcing a download of the pinned `gh` v0.10.1 (x86_64 build) whenever the installed `gh` version doesn't match. On arm64 (Apple Silicon) hosts this caused the x86_64 `gh`/`git` to shell out to `xcrun`, which fails since Command Line Tools on those machines don't ship an x86_64 slice. Now the script only installs `gh` if it is missing from `PATH`.   - Replace `gh repo fork $CHARTS_REPO --clone --remote`, which modern `gh` rejects when a repo argument is given (`--remote` is unsupported in that case), with an explicit fork (no clone) + clone of the fork as `origin` + `upstream` remote added separately. This preserves the remote layout (`origin` = fork, `upstream` = aws/eks-charts) the rest of the script relies on.   - Strip `*.bak`, `*~`, `*.orig` files from the copied chart directory before committing, so stray local editor/backup artifacts are never published to the upstream sync PR. - Bump the `docs-publish` Makefile target's `mike` version alias from `v3.5` to `v3.6`, matching the current `IMG` release version, so published docs track the current release line.  ## Testing  - Ran `scripts/sync-to-eks-charts.sh -b aws-load-balancer-controller -n` end-to-end on an Apple Silicon Mac with `gh` 2.102.0; completed successfully and opened aws/eks-charts#1377 with only the expected chart files (no backup artifacts). - Verified `make -n docs-publish` resolves to `pipenv run mike deploy v
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1726,472 +1608,295 @@ func doesResourceAllowNamespace(ctx context.Context, fromNamespaces gwv1.FromNam
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ba14bc87` (2026-10-03)
-**Commit Message**: Merge pull request #4919 from shraddhabang/fix/tgc-gateway-guard-reference-grant
+### Incident Patch 1: `c27ac737` (2026-10-07)
+**Commit Message**: fix(networking): treat InvalidGroup.NotFound as success in releaseSG (#4928)
 
-fix: ignore unpermitted cross namespace TCPRoutes in gateway target TGC deletion guard
+* fix(networking): treat InvalidGroup.NotFound as success in releaseSG
 
-**File**: `controllers/gateway/targetgroup_configuration_controller.go` (modified, +14/-0)
+When deleting the backend security group during Ingress cleanup, the
+EC2 DeleteSecurityGroup API can return InvalidGroup.NotFound even though
+the group was deleted. The AWS SDK client timeout can fire before EC2
+responds, the SDK retries internally, and by the time the retry reaches
+EC2 the original request has already deleted the group. The retry then
+returns InvalidGroup.NotFound.
+
+releaseSG treated that as a failure and returned an error without
+clearing autoGeneratedSG, so every subsequent reconcile retried the
+same delete against a group that no longer exists and failed forever.
+
+Treat InvalidGroup.NotFound in the deletion path as a successful delete:
+clear autoGeneratedSG and return nil. The isEC2SecurityGroupNotFoundError
+helper already existed in this file but was not used on the delete path.
+
+Signed-off-by: Nakul Shah <[REDACTED_EMAIL]>
+
+* test(networking): assert autoGeneratedSG is cleared after delete
+
+The Release test only checked that releaseSG returned nil, so removing
+the autoGeneratedSG reset would still pass while lea
+
+**File**: `pkg/networking/backend_sg_provider.go` (modified, +5/-0)
 ```diff
-@@ -17,7 +17,9 @@ import (
- 	"sigs.k8s.io/aws-load-balancer-controller/v3/pkg/gateway/constants"
- 	"sigs.k8s.io/aws-load-balancer-controller/v3/pkg/gateway/gatewayutils"
- 	"sigs.k8s.io/aws-load-balancer-controller/v3/pkg/gateway/referencecounter"
-+	"sigs.k8s.io/aws-load-balancer-controller/v3/pkg/gateway/routeutils"
- 	"sigs.k8s.io/aws-load-balancer-controller/v3/pkg/k8s"
-+	"sigs.k8s.io/aws-load-balancer-controller/v3/pkg/shared_utils"
- 	ctrl "sigs.k8s.io/controller-runtime"
- 	"sigs.k8s.io/controller-runtime/pkg/client"
- 	"sigs.k8s.io/controller-runtime/pkg/controller"
-@@ -29,6 +31,7 @@ import (
- 
- const (
- 	targetReferenceKindGateway = "Gateway"
-+	gatewayAPIGroup            = "gateway.networking.k8s.io"
- )
- 
- // NewTargetGroupConfigurationReconciler constructs a reconciler that responds to targetgroup configuration changes
-@@ -214,6 +217,17 @@ func (r *targetgroupConfigurationReconciler) isGatewayTargetTGCInUse(ctx context
- 
- 	inUseRoutes := make([]string, 0)
- 	for _, route := range eventhandlers.GetImpactedTCPRoutes(tcpRouteList, tgConf) {
-+		if route.Namespace != tgConf.Namespace {
-+			allowed, err := shared_utils.ValidateCrossNamespaceReference(ctx, r.k8sClient, route.Namespace, gatewayAPIGroup, string(routeutils.TCPRouteKind), gatewayAPIGroup, targetReferenceKindGateway, tgConf.Namespace, tgConf.Spec.TargetReference.Name)
-+			if err != nil {
-+				return "", err
-+			}
-+			if !allowed {
-+				r.logger.V(1).Info("ignoring tcproute with cross namespace reference that no ReferenceGrant permits",
-+					"targetgroupconfiguration", k8s.NamespacedName(tgConf), "tcproute", k8s.NamespacedName(route))
-+				continue
-+			}
+@@ -425,6 +425,11 @@ func (p *defaultBackendSGProvider) releaseSG(ctx context.Context) error {
+ 		_, err := p.ec2Client.DeleteSecurityGroupWithContext(ctx, req)
+ 		return err
+ 	}); err != nil {
++		if isEC2SecurityGroupNotFoundError(err) {
++			p.logger.Info("backend securityGroup already deleted", "ID", p.autoGeneratedSG)
++			p.autoGeneratedSG = ""
++			return nil
 +		}
- 		inUseRoutes = append(inUseRoutes, k8s.NamespacedName(route).String())
+ 		return errors.Wrap(err, "failed to delete securityGroup")
  	}
- 
+ 	p.logger.Info("deleted securityGroup", "ID", p.autoGeneratedSG)
 ```
 
-**File**: `controllers/gateway/targetgroup_configuration_controller_test.go` (modified, +159/-0)
+**File**: `pkg/networking/backend_sg_provider_test.go` (modified, +24/-0)
 ```diff
-@@ -4,11 +4,13 @@ import (
- 	"context"
- 	"testing"
- 
-+	awssdk "github.com/aws/aws-sdk-go-v2/aws"
- 	"github.com/go-logr/logr"
- 	"github.com/golang/mock/gomock"
- 	"github.com/stretchr/testify/assert"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 	elbv2gw "sigs.k8s.io/aws-load-balancer-controller/v3/apis/gateway/v1"
-+	"sigs.k8s.io/aws-load-balancer-controller/v3/pkg/gateway/routeutils"
- 	"sigs.k8s.io/aws-load-balancer-controller/v3/pkg/k8s"
- 	"sigs.k8s.io/aws-load-balancer-controller/v3/pkg/testutils"
- 	"sigs.k8s.io/controller-runtime/pkg/client"
-@@ -126,3 +128,160 @@ func TestTargetGroupConfigurationReconciler_handleDelete_GatewayTargetNotInUse(t
- 	err := r.handleDelete(tgConf)
- 	assert.NoError(t, err)
- }
-+
-+func crossNamespaceGatewayTGCFixtures() (*elbv2gw.TargetGroupConfiguration, *gwv1.TCPRoute) {
-+	targetKind := targetReferenceKindGateway
-+	tgConf := &elbv2gw.TargetGroupConfiguration{
-+		ObjectMeta: metav1.ObjectMeta{
-+			Name:       "gateway-tgc",
-+			Namespace:  "alb-ns",
-+			Finalizers: []string{testTargetGroupConfigurationFinalizer},
-+		},
-+		Spec: elbv2gw.TargetGroupConfigurationSpec{
-+			TargetReference: &elbv2gw.Reference{
-+				Name: "chained-gateway",
-+				Kind: &targetKind,
+@@ -1022,6 +1022,27 @@ func Test_defaultBackendSGProvider_Release(t *testing.T) {
+ 			},
+ 			wantErr: errors.New("failed to delete securityGroup: api error Something.Else: unable to delete SG"),
+ 		},
++		{
++			name: "SG delete returns InvalidGroup.NotFound is treated as success",
++			fields: fields{
++				autogenSG: "sg-autogen",
++				listIngressCalls: []listIngressCall{
++					{},
++				},
++				listServicesCalls: []listServicesCall{
++					{},
++				},
++				deleteSGCalls: []deleteSecurityGroupWithContextCall{
++					{
++						req: &ec2sdk.DeleteSecurityGroupInput{
++							GroupId: awssdk.String("sg-autogen"),
++						},
++						err: &smithy.GenericAPIError{Code: "InvalidGroup.NotFound", Message: "The security group does not exist"},
++					},
++				},
++				inactiveIngresses: []*networking.Ingress{ing},
 +			},
 +		},
-+	}
-+
-+	routeKind := gwv1.Kind(targetReferenceKindGateway)
-+	backendNamespace := gwv1.Namespace("alb-ns")
-+	route := &gwv1.TCPRoute{
-+		ObjectMeta: metav1.ObjectMeta{
-+			Name:      "tcp-route",
-+			Namespace: "nlb-ns",
-+		},
-+		Spec: gwv1.TCPRouteSpec{
-+			Rules: []gwv1.TCPRouteRule{
-+				{
-+					BackendRefs: []gwv1.BackendRef{
-+						{
-+							BackendObjectReference: gwv1.BackendObjectReference{
-+								Name:      "chained-gateway",
-+								Kind:      &routeKind,
-+								Namespace: &backendNamespace,
-+							},
-+						},
-+					},
-+				},
-+			},
-+		},
-+	}
-+	return tgConf, route
-+}
-+
-+// A TCPRoute in another namespace that no ReferenceGrant permits provisions nothing, so it must not
-+// keep the finalizer. Otherwise any namespace could block deletion of this TGC and its namespace.
-+func TestTargetGroupConfigurationReconciler_handleDelete_GatewayTargetCrossNamespaceWithoutReferenceGrant(t *testing.T) {
-+	ctrl := gomock.NewController(t)
-+	defer ctrl.Finish()
-+
-+	k8sClient := testutils.GenerateTestClient()
-+	finalizerManager := k8s.NewMockFinalizerManager(ctrl)
-+
-+	tgConf, route := crossNamespaceGatewayTGCFixtures()
-+	assert.NoError(t, k8sClient.Create(context.Background(), tgConf))
-+	assert.NoError(t, k8sClient.Create(context.Background(), route))
-+
-+	finalizerManager.EXPECT().
-+		RemoveFinalizers(context.Background(), tgConf, testTargetGroupConfigurationFinalizer).
-+		Return(nil)
-+
-+	r := &targetgroupConfigurationReconciler{
-+		k8sClient:        k8sClient,
-+		logger:           logr.Discard(),
-+		finalizerManager: finalizerManager,
-+		finalizer:        testTargetGroupConfigurationFinalizer,
-+		gwRetrieveFn: func(ctx context.Context, k8sClient client.Client, gwController string) ([]*gwv1.Gateway, error) {
-+			return nil, nil
-+		},
-+	}
-+
-+	err := r.handleDelete(tgConf)
-+	assert.NoError(t, err)
-+}
-+
-+// With a permitting ReferenceGrant the reference is effective, so deletion must still be blocked.
-+func TestTargetGroupConfigurationReconciler_handleDelete_GatewayTargetCrossNamespaceWithReferenceGrant(t *testing.T) {
-+	for _, tt := range []struct {
-+		name    string
-+		toName  *gwv1.ObjectName
-+		blocked bool
-+	}{
-+		{
-+			name:    "grant naming the gateway",
-+			toName:  (*gwv1.ObjectName)(awssdk.String("chained-gateway")),
-+			blocked: true,
-+		},
-+		{
-+			name:    "grant with no name acts as a wildcard",
-+			toName:  nil,
-+			blocked: true,
-+		},
-+		{
-+			name:    "grant naming a different gateway does not apply",
-+			toName:  (*gwv1.ObjectName)(awssdk.String("other-gateway")),
-+			blocked: false,
-+		},
-+	} {
-+		t.Run(tt.name, func(t *testing.T) {
-+			ctrl := gomock.NewController(t)
-+			defer ctrl.Finish()
-+
-+			k8sClient := testutils.GenerateTestClient()
-+			finalizerManager := k8s.NewMockFinalizerManager(ctrl)
-+
-+			tgConf, route := crossNamespaceGatewayTGCFixtures()
-+			grant := &gwv1.ReferenceGrant{
-+				ObjectMeta: metav1.ObjectMeta{
-+					Name:      "allow-nlb-ns",
-+					Namespace: "alb-ns",
-+				},
-+				Spec: gwv1.ReferenceGrantSpec{
-+					From: []gwv1.ReferenceGrantFrom{
-+						{
-+							Group:     gatewayAPIGroup,
-+							Kind:      gwv1.Kind(routeutils.TCPRouteKind),
-+							Namespace: "nlb-ns",
-+						},
-+					},
-+					To: []gwv1.ReferenceGrantTo{
-+						{
-+							Group: gatewayAPIGroup,
-+							Kind:  targetReferenceKindGateway,
-+							Name:  tt.toName,
-+						},
-+					},
-+				},
-+			}
-+
-+			assert.NoError(t, k8sClient.Create(context.Background(), tgConf))
-+			assert.NoError(t, k8sClient.Create(context.Background(), route))
-+			assert.NoError(t, k8sClient.Create(context.Background(), grant))
-+
-+			if !tt.blocked {
-+				finalizerManager.EXPECT().
-+					RemoveFinalizers(context.Background(), tgConf, testTargetGroupConfigurationFinalizer).
-+					Return(nil)
-+			}
-+
-+			r := &targetgroupConfigurationRe
-```
-
-**File**: `go.mod` (modified, +1/-1)
-```diff
-@@ -187,7 +187,7 @@ require (
- 	k8s.io/kubectl v0.36.2 // indirect
- 	k8s.io/streaming v0.36.2 // indirect
- 	moul.io/http2curl/v2 v2.3.0 // indirect
--	oras.land/oras-go/v2 v2.6.1 // indirect
-+	oras.land/oras-go/v2 v2.6.2 // indirect
- 	sigs.k8s.io/json v0.0.0-20250730193827-2d320260d730 // indirect
- 	sigs.k8s.io/kustomize/api v0.21.1 // indirect
- 	sigs.k8s.io/kustomize/kyaml v0.21.1 // indirect
-```
-
-**File**: `go.sum` (modified, +2/-2)
-```diff
-@@ -663,8 +663,8 @@ k8s.io/utils v0.0.0-20260319190234-28399d86e0b5 h1:kBawHLSnx/mYHmRnNUf9d4CpjREbe
- k8s.io/utils v0.0.0-20260319190234-28399d86e0b5/go.mod h1:xDxuJ0whA3d0I4mf/C4ppKHxXynQ+fxnkmQH0vTHnuk=
- moul.io/http2curl/v2 v2.3.0 h1:9r3JfDzWPcbIklMOs2TnIFzDYvfAZvjeavG6EzP7jYs=
- moul.io/http2curl/v2 v2.3.0/go.mod h1:RW4hyBjTWSYDOxapodpNEtX0g5Eb16sxklBqmd2RHcE=
--oras.land/oras-go/v2 v2.6.1 h1:bonOEkjLfp8tt6qXWRRWP6p1F+9octchOf2EqnWB4Zs=
--oras.land/oras-go/v2 v2.6.1/go.mod h1:dhtFrFOuZuDtAVeZ9FUnaa5zfzplG3ZnFX9/uH1J/Yk=
-+oras.land/oras-go/v2 v2.6.2 h1:N04RXngAp1LJKTG6ifz3xHPipasEkWr+hFmInja5YKo=
-+oras.land/oras-go/v2 v2.6.2/go.mod h1:PlTtg4JTDJkDe8yVHpM2wz7/YDc00GVas+i4jAW2TZ4=
- sigs.k8s.io/controller-runtime v0.24.1 h1:miPEwrmirImAvgME1L9qebGHrOnGJoVmVdtOU9fRfo4=
- sigs.k8s.io/controller-runtime v0.24.1/go.mod h1:vFkfY5fGt5xAC/sKb8IBFKgWPNKG9OUG29dR8Y2wImw=
- sigs.k8s.io/gateway-api v1.6.0 h1:735YBRj5NXFrOGX0GoSjwzUIzbz8kiEOfADsqHFmHgE=
+ 		{
+ 			name: "k8s ingress list returns error",
+ 			fields: fields{
+@@ -1134,6 +1155,9 @@ func Test_defaultBackendSGProvider_Release(t *testing.T) {
+ 				assert.EqualError(t, gotErr, tt.wantErr.Error())
+ 			} else {
+ 				assert.NoError(t, gotErr)
++				if len(tt.fields.deleteSGCalls) > 0 {
++					assert.Empty(t, sgProvider.autoGeneratedSG)
++				}
+ 			}
+ 		})
+ 	}
 ```
 
 ---
 
-### Incident Patch 2: `ae29477f` (2026-10-02)
-**Commit Message**: fix: ignore unpermitted cross namespace TCPRoutes in gateway target TGC deletion guard
+### Incident Patch 2: `afdf53b2` (2026-09-22)
+**Commit Message**: fix: canonicalize CIDRs for security group inbound rules to avoid reconciliation failures (#4904)
 
-**File**: `controllers/gateway/targetgroup_configuration_controller.go` (modified, +14/-0)
+**File**: `apis/gateway/v1/loadbalancerconfig_types.go` (modified, +1/-0)
 ```diff
-@@ -17,7 +17,9 @@ import (
- 	"sigs.k8s.io/aws-load-balancer-controller/v3/pkg/gateway/constants"
- 	"sigs.k8s.io/aws-load-balancer-controller/v3/pkg/gateway/gatewayutils"
- 	"sigs.k8s.io/aws-load-balancer-controller/v3/pkg/gateway/referencecounter"
-+	"sigs.k8s.io/aws-load-balancer-controller/v3/pkg/gateway/routeutils"
- 	"sigs.k8s.io/aws-load-balancer-controller/v3/pkg/k8s"
-+	"sigs.k8s.io/aws-load-balancer-controller/v3/pkg/shared_utils"
- 	ctrl "sigs.k8s.io/controller-runtime"
- 	"sigs.k8s.io/controller-runtime/pkg/client"
- 	"sigs.k8s.io/controller-runtime/pkg/controller"
-@@ -29,6 +31,7 @@ import (
+@@ -255,6 +255,7 @@ type LoadBalancerConfigurationSpec struct {
+ 	SecurityGroupPrefixes *[]string `json:"securityGroupPrefixes,omitempty"`
  
- const (
- 	targetReferenceKindGateway = "Gateway"
-+	gatewayAPIGroup            = "gateway.networking.k8s.io"
- )
+ 	// sourceRanges an optional list of CIDRs that are allowed to access the LB.
++	// IPv4 and IPv6 CIDRs are canonicalized. Defaults to 0.0.0.0/0 and ::/0.
+ 	// +optional
+ 	SourceRanges *[]string `json:"sourceRanges,omitempty"`
  
- // NewTargetGroupConfigurationReconciler constructs a reconciler that responds to targetgroup configuration changes
-@@ -214,6 +217,17 @@ func (r *targetgroupConfigurationReconciler) isGatewayTargetTGCInUse(ctx context
+```
+
+**File**: `apis/gateway/v1beta1/loadbalancerconfig_types.go` (modified, +1/-0)
+```diff
+@@ -255,6 +255,7 @@ type LoadBalancerConfigurationSpec struct {
+ 	SecurityGroupPrefixes *[]string `json:"securityGroupPrefixes,omitempty"`
  
- 	inUseRoutes := make([]string, 0)
- 	for _, route := range eventhandlers.GetImpactedTCPRoutes(tcpRouteList, tgConf) {
-+		if route.Namespace != tgConf.Namespace {
-+			allowed, err := shared_utils.ValidateCrossNamespaceReference(ctx, r.k8sClient, route.Namespace, gatewayAPIGroup, string(routeutils.TCPRouteKind), gatewayAPIGroup, targetReferenceKindGateway, tgConf.Namespace, tgConf.Spec.TargetReference.Name)
-+			if err != nil {
-+				return "", err
-+			}
-+			if !allowed {
-+				r.logger.V(1).Info("ignoring tcproute with cross namespace reference that no ReferenceGrant permits",
-+					"targetgroupconfiguration", k8s.NamespacedName(tgConf), "tcproute", k8s.NamespacedName(route))
-+				continue
-+			}
-+		}
- 		inUseRoutes = append(inUseRoutes, k8s.NamespacedName(route).String())
+ 	// sourceRanges an optional list of CIDRs that are allowed to access the LB.
++	// IPv4 and IPv6 CIDRs are canonicalized. Defaults to 0.0.0.0/0 and ::/0.
+ 	// +optional
+ 	SourceRanges *[]string `json:"sourceRanges,omitempty"`
+ 
+```
+
+**File**: `config/crd/gateway/gateway-crds.yaml` (modified, +6/-4)
+```diff
+@@ -1217,8 +1217,9 @@ spec:
+                     type: boolean
+                 type: object
+               sourceRanges:
+-                description: sourceRanges an optional list of CIDRs that are allowed
+-                  to access the LB.
++                description: |-
++                  sourceRanges an optional list of CIDRs that are allowed to access the LB.
++                  IPv4 and IPv6 CIDRs are canonicalized. Defaults to 0.0.0.0/0 and ::/0.
+                 items:
+                   type: string
+                 type: array
+@@ -1567,8 +1568,9 @@ spec:
+                     type: boolean
+                 type: object
+               sourceRanges:
+-                description: sourceRanges an optional list of CIDRs that are allowed
+-                  to access the LB.
++                description: |-
++                  sourceRanges an optional list of CIDRs that are allowed to access the LB.
++                  IPv4 and IPv6 CIDRs are canonicalized. Defaults to 0.0.0.0/0 and ::/0.
+                 items:
+                   type: string
+                 type: array
+```
+
+**File**: `config/crd/gateway/gateway.k8s.aws_loadbalancerconfigurations.yaml` (modified, +6/-4)
+```diff
+@@ -320,8 +320,9 @@ spec:
+                     type: boolean
+                 type: object
+               sourceRanges:
+-                description: sourceRanges an optional list of CIDRs that are allowed
+-                  to access the LB.
++                description: |-
++                  sourceRanges an optional list of CIDRs that are allowed to access the LB.
++                  IPv4 and IPv6 CIDRs are canonicalized. Defaults to 0.0.0.0/0 and ::/0.
+                 items:
+                   type: string
+                 type: array
+@@ -670,8 +671,9 @@ spec:
+                     type: boolean
+                 type: object
+               sourceRanges:
+-                description: sourceRanges an optional list of CIDRs that are allowed
+-                  to access the LB.
++                description: |-
++                  sourceRanges an optional list of CIDRs that are allowed to access the LB.
++                  IPv4 and IPv6 CIDRs are canonicalized. Defaults to 0.0.0.0/0 and ::/0.
+                 items:
+                   type: string
+                 type: array
+```
+
+**File**: `docs/guide/ingress/annotations.md` (modified, +2/-0)
+```diff
+@@ -705,6 +705,8 @@ Access control for LoadBalancer can be controlled with following annotations:
+ 
+ - <a name="inbound-cidrs">`alb.ingress.kubernetes.io/inbound-cidrs`</a> specifies the CIDRs that are allowed to access LoadBalancer.
+ 
++    The Load Balancer Controller canonicalizes CIDRs.
++
+     !!!note "Merge Behavior"
+         `inbound-cidrs` is merged across all Ingresses in IngressGroup, but is exclusive per listen-port.
+ 
+```
+
+**File**: `docs/guide/service/annotations.md` (modified, +1/-0)
+```diff
+@@ -610,6 +610,7 @@ Load balancer access can be controlled via following annotations:
+     !!!tip
+         - We recommend specifying CIDRs in the service `spec.loadBalancerSourceRanges` instead
+         - For enhanced security with `internal` network load balancers, we recommend limiting access by specifying allowed source IP ranges.  This can be done using either the `service.beta.kubernetes.io/load-balancer-source-ranges` annotation or the `spec.loadBalancerSourceRanges` field.
++        - The Load Balancer Controller canonicalizes CIDRs
+ 
+     !!!note "Default"
+         - `0.0.0.0/0` will be used if the IPAddressType is "ipv4"
+```
+
+**File**: `helm/aws-load-balancer-controller/crds/gateway-crds.yaml` (modified, +6/-4)
+```diff
+@@ -1217,8 +1217,9 @@ spec:
+                     type: boolean
+                 type: object
+               sourceRanges:
+-                description: sourceRanges an optional list of CIDRs that are allowed
+-                  to access the LB.
++                description: |-
++                  sourceRanges an optional list of CIDRs that are allowed to access the LB.
++                  IPv4 and IPv6 CIDRs are canonicalized. Defaults to 0.0.0.0/0 and ::/0.
+                 items:
+                   type: string
+                 type: array
+@@ -1567,8 +1568,9 @@ spec:
+                     type: boolean
+                 type: object
+               sourceRanges:
+-                description: sourceRanges an optional list of CIDRs that are allowed
+-                  to access the LB.
++                description: |-
++                  sourceRanges an optional list of CIDRs that are allowed to access the LB.
++                  IPv4 and IPv6 CIDRs are canonicalized. Defaults to 0.0.0.0/0 and ::/0.
+                 items:
+                   type: string
+                 type: array
+```
+
+**File**: `pkg/gateway/model/model_build_security_group.go` (modified, +15/-5)
+```diff
+@@ -6,6 +6,7 @@ import (
+ 	"encoding/hex"
+ 	"fmt"
+ 	"regexp"
++	"slices"
+ 
+ 	awssdk "github.com/aws/aws-sdk-go-v2/aws"
+ 	ec2types "github.com/aws/aws-sdk-go-v2/service/ec2/types"
+@@ -156,7 +157,11 @@ func (builder *securityGroupBuilderImpl) buildManagedSecurityGroup(stack core.St
+ 		return nil, err
  	}
  
-```
-
-**File**: `controllers/gateway/targetgroup_configuration_controller_test.go` (modified, +159/-0)
-```diff
-@@ -4,11 +4,13 @@ import (
- 	"context"
- 	"testing"
- 
-+	awssdk "github.com/aws/aws-sdk-go-v2/aws"
- 	"github.com/go-logr/logr"
- 	"github.com/golang/mock/gomock"
- 	"github.com/stretchr/testify/assert"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 	elbv2gw "sigs.k8s.io/aws-load-balancer-controller/v3/apis/gateway/v1"
-+	"sigs.k8s.io/aws-load-balancer-controller/v3/pkg/gateway/routeutils"
- 	"sigs.k8s.io/aws-load-balancer-controller/v3/pkg/k8s"
- 	"sigs.k8s.io/aws-load-balancer-controller/v3/pkg/testutils"
- 	"sigs.k8s.io/controller-runtime/pkg/client"
-@@ -126,3 +128,160 @@ func TestTargetGroupConfigurationReconciler_handleDelete_GatewayTargetNotInUse(t
- 	err := r.handleDelete(tgConf)
- 	assert.NoError(t, err)
+-	ingressPermissions := builder.buildManagedSecurityGroupIngressPermissions(lbConf, listeners, ipAddressType)
++	ingressPermissions, err := builder.buildManagedSecurityGroupIngressPermissions(lbConf, listeners, ipAddressType)
++	if err != nil {
++		return nil, err
++	}
++
+ 	return ec2model.NewSecurityGroup(stack, resourceIDManagedSecurityGroup, ec2model.SecurityGroupSpec{
+ 		GroupName:   name,
+ 		Description: managedSGDescription,
+@@ -178,12 +183,11 @@ func (builder *securityGroupBuilderImpl) buildManagedSecurityGroupName(gw *gwv1.
+ 	return fmt.Sprintf("k8s-%.8s-%.8s-%.10s", sanitizedNamespace, sanitizedName, uuid)
  }
-+
-+func crossNamespaceGatewayTGCFixtures() (*elbv2gw.TargetGroupConfiguration, *gwv1.TCPRoute) {
-+	targetKind := targetReferenceKindGateway
-+	tgConf := &elbv2gw.TargetGroupConfiguration{
-+		ObjectMeta: metav1.ObjectMeta{
-+			Name:       "gateway-tgc",
-+			Namespace:  "alb-ns",
-+			Finalizers: []string{testTargetGroupConfigurationFinalizer},
-+		},
-+		Spec: elbv2gw.TargetGroupConfigurationSpec{
-+			TargetReference: &elbv2gw.Reference{
-+				Name: "chained-gateway",
-+				Kind: &targetKind,
-+			},
-+		},
+ 
+-func (builder *securityGroupBuilderImpl) buildManagedSecurityGroupIngressPermissions(lbConf elbv2gw.LoadBalancerConfiguration, listeners []gwv1.Listener, ipAddressType elbv2model.IPAddressType) []ec2model.IPPermission {
++func (builder *securityGroupBuilderImpl) buildManagedSecurityGroupIngressPermissions(lbConf elbv2gw.LoadBalancerConfiguration, listeners []gwv1.Listener, ipAddressType elbv2model.IPAddressType) ([]ec2model.IPPermission, error) {
+ 	var permissions []ec2model.IPPermission
+ 
+ 	// Default to 0.0.0.0/0 and ::/0
+ 	// If user specified actual ranges, then these values will be overridden.
+-	// TODO - Document this
+ 	sourceRanges := []string{
+ 		"0.0.0.0/0",
+ 		"::/0",
+@@ -205,12 +209,18 @@ func (builder *securityGroupBuilderImpl) buildManagedSecurityGroupIngressPermiss
+ 
+ 	includeIPv6 := isIPv6Supported(ipAddressType)
+ 
++	ipv4CIDRs, ipv6CIDRs, err := networking.CanonicalizeCIDRs(sourceRanges)
++	if err != nil {
++		return nil, err
 +	}
++	cidrs := slices.Concat(ipv4CIDRs, ipv6CIDRs)
 +
-+	routeKind := gwv1.Kind(targetReferenceKindGateway)
-+	backendNamespace := gwv1.Namespace("alb-ns")
-+	route := &gwv1.TCPRoute{
-+		ObjectMeta: metav1.ObjectMeta{
-+			Name:      "tcp-route",
-+			Namespace: "nlb-ns",
-+		},
-+		Spec: gwv1.TCPRouteSpec{
-+			Rules: []gwv1.TCPRouteRule{
-+				{
-+					BackendRefs: []gwv1.BackendRef{
-+						{
-+							BackendObjectReference: gwv1.BackendObjectReference{
-+								Name:      "chained-gateway",
-+								Kind:      &routeKind,
-+								Namespace: &backendNamespace,
-+							},
-+						},
-+					},
-+				},
-+			},
-+		},
-+	}
-+	return tgConf, route
-+}
-+
-+// A TCPRoute in another namespace that no ReferenceGrant permits provisions nothing, so it must not
-+// keep the finalizer. Otherwise any namespace could block deletion of this TGC and its namespace.
-+func TestTargetGroupConfigurationReconciler_handleDelete_GatewayTargetCrossNamespaceWithoutReferenceGrant(t *testing.T) {
-+	ctrl := gomock.NewController(t)
-+	defer ctrl.Finish()
-+
-+	k8sClient := testutils.GenerateTestClient()
-+	finalizerManager := k8s.NewMockFinalizerManager(ctrl)
-+
-+	tgConf, route := crossNamespaceGatewayTGCFixtures()
-+	assert.NoError(t, k8sClient.Create(context.Background(), tgConf))
-+	assert.NoError(t, k8sClient.Create(context.Background(), route))
-+
-+	finalizerManager.EXPECT().
-+		RemoveFinalizers(context.Background(), tgConf, testTargetGroupConfigurationFinalizer).
-+		Return(nil)
-+
-+	r := &targetgroupConfigurationReconciler{
-+		k8sClient:        k8sClient,
-+		logger:           logr.Discard(),
-+		finalizerManager: finalizerManager,
-+		finalizer:        testTargetGroupConfigurationFinalizer,
-+		gwRetrieveFn: func(ctx context.Context, k8sClient client.Client, gwController string) ([]*gwv1.Gateway, error) {
-+			return nil, nil
-+		},
-+	}
-+
-+	err := r.handleDelete(tgConf)
-+	assert.NoError(t, err)
-+}
-+
-+// With a permitting ReferenceGrant the reference is effective, so deletion must still be blocked.
-+func TestTargetGroupConfigurationReconciler_handleDelete_GatewayTargetCrossNamespaceWithReferenceGrant(t *testing.T) {
-+	for _, tt := range []struct {
-+		name    string
-+		toName  *gwv1.ObjectName
-+		blocked bool
-+	}{
-+		{
-+			name:    "grant naming the gateway",
-+			toName:  (*gwv1.ObjectName)(awssdk.String("chained-gateway")),
-+			blocked: true,
-+		},
-+		{
-+			name:    "grant with no name acts as a wildcard",
-+			toName:  nil,
-+			blocked: true,
-+		},
-+		{
-+			name:    "grant naming a different gateway does not apply",
-+			toName:  (*gwv1.ObjectName)(awssdk.String("other-gateway")),
-+			blocked: false,
-+		},
-+	} {
-+		t.Run(tt.name, func(t *testing.T) {
-+			ctrl := gomock.NewController(t)
-+			defer ctrl.Finish()
-+
-+			k8sClient := testutils.GenerateTestClient()
-+			finalizerManager := k8s.NewMockFinalizerManager(ctrl)
-+
-+			tgConf, route := crossNamespaceGatewayTGCFixtures()
-+			grant := &gwv1.ReferenceGrant{
-+				ObjectMeta: metav1.ObjectMeta{
-+					Name:      "allow-nlb-ns",
-+					Namespace: "alb-ns",
-+				},
-+				Spec: gwv1.ReferenceGrantSpec{
-+					From: []gwv1.ReferenceGrantFrom{
-+						{
-+							Group:     gatewayAPIGroup,
-+							Kind:      gwv1.Kind(routeutils.TCPRouteKind),
-+							Namespace: "nlb-ns",
-+						},
-+					},
-+					To: []gwv1.ReferenceGrantTo{
-+						{
-+							Group: gatewayAPIGroup,
-+							Kind:  targetReferenceKindGateway,
-+							Name:  tt.toName,
-+						},
-+					},
-+				},
-+			}
-+
-+			assert.NoError(t, k8sClient.Create(context.Background(), tgConf))
-+			assert.NoError(t, k8sClient.Create(context.Background(), route))
-+			assert.NoError(t, k8sClient.Create(context.Background(), grant))
-+
-+			if !tt.blocked {
-+				finalizerManager.EXPECT().
-+					RemoveFinalizers(context.Background(), tgConf, testTargetGroupConfigurationFinalizer).
-+					Return(nil)
-+			}
-+
-+			r := &targetgroupConfigurationRe
-```
-
-**File**: `go.mod` (modified, +1/-1)
-```diff
-@@ -187,7 +187,7 @@ require (
- 	k8s.io/kubectl v0.36.2 // indirect
- 	k8s.io/streaming v0.36.2 // indirect
- 	moul.io/http2curl/v2 v2.3.0 // indirect
--	oras.land/oras-go/v2 v2.6.1 // indirect
-+	oras.land/oras-go/v2 v2.6.2 // indirect
- 	sigs.k8s.io/json v0.0.0-20250730193827-2d320260d730 // indirect
- 	sigs.k8s.io/kustomize/api v0.21.1 // indirect
- 	sigs.k8s.io/kustomize/kyaml v0.21.1 // indirect
-```
-
-**File**: `go.sum` (modified, +2/-2)
-```diff
-@@ -663,8 +663,8 @@ k8s.io/utils v0.0.0-20260319190234-28399d86e0b5 h1:kBawHLSnx/mYHmRnNUf9d4CpjREbe
- k8s.io/utils v0.0.0-20260319190234-28399d86e0b5/go.mod h1:xDxuJ0whA3d0I4mf/C4ppKHxXynQ+fxnkmQH0vTHnuk=
- moul.io/http2curl/v2 v2.3.0 h1:9r3JfDzWPcbIklMOs2TnIFzDYvfAZvjeavG6EzP7jYs=
- moul.io/http2curl/v2 v2.3.0/go.mod h1:RW4hyBjTWSYDOxapodpNEtX0g5Eb16sxklBqmd2RHcE=
--oras.land/oras-go/v2 v2.6.1 h1:bonOEkjLfp8tt6qXWRRWP6p1F+9octchOf2EqnWB4Zs=
--oras.land/oras-go/v2 v2.6.1/go.mod h1:dhtFrFOuZuDtAVeZ9FUnaa5zfzplG3ZnFX9/uH1J/Yk=
-+oras.land/oras-go/v2 v2.6.2 h1:N04RXngAp1LJKTG6ifz3xHPipasEkWr+hFmInja5YKo=
-+oras.land/oras-go/v2 v2.6.2/go.mod h1:PlTtg4JTDJkDe8yVHpM2wz7/YDc00GVas+i4jAW2TZ4=
- sigs.k8s.io/controller-runtime v0.24.1 h1:miPEwrmirImAvgME1L9qebGHrOnGJoVmVdtOU9fRfo4=
- sigs.k8s.io/controller-runtime v0.24.1/go.mod h1:vFkfY5fGt5xAC/sKb8IBFKgWPNKG9OUG29dR8Y2wImw=
- sigs.k8s.io/gateway-api v1.6.0 h1:735YBRj5NXFrOGX0GoSjwzUIzbz8kiEOfADsqHFmHgE=
+ 	//listener loop
+ 	for _, listener := range listeners {
+ 		port := int32(listener.Port)
+ 		protocol := getSgRuleProtocol(listener.Protocol)
+ 		// CIDR Loop
+-		for _, cidr := range sourceRanges {
++		for _, cidr := range cidrs {
+ 			isIPv6 := isIPv6CIDR(cidr)
+ 
+ 			if !isIPv6 {
+@@ -278,7 +288,7 @@ func (builder *securityGroupBuilderImpl) buildManagedSecurityGroupIngressPermiss
+ 			})
+ 		} // PL loop
+ 	} // listener loop
+-	return permissions
++	return permissions, nil
+ }
+ 
+ func getSgRuleProtocol(protocol gwv1.ProtocolType) ec2types.Protocol {
 ```
 
 ---
@@ -2433,1647 +2138,13 @@ fix: ignore unpermitted cross namespace TCPRoutes in gateway target TGC deletion
 +}
 ```
 
----
-
-### Incident Patch 4: `0658e1f8` (2026-10-01)
-**Commit Message**: Merge pull request #4847 from niv1612/acm-fix-upstream
-
-fix: use public Route 53 zone for Amazon-issued ACM DNS validation in split-horizon DNS
-
-**File**: `docs/guide/ingress/certificate_management.md` (modified, +3/-1)
-```diff
-@@ -35,9 +35,11 @@ This reconciliation might fail if there are no certificates present to autodisco
- ### Certificate Validation
- 
- Amazon Issued certificates are currently validated using DNS Method and Route53 records. Validation can take [up to 30 minutes](https://docs.aws.amazon.com/acm/latest/userguide/dns-validation.html). 
--E-Mail validation is not supported due to significant higher delays between requesting a certificate and it's issuance. 
-+E-Mail validation is not supported due to significant higher delays between requesting a certificate and its issuance. 
- When using a PCA, certificates don't have to be validated.
- 
-+Because ACM validates Amazon-issued certificates over **public** DNS, the controller writes the validation record into the nearest-ancestor **public** Route53 hosted zone. In split-horizon setups (a private zone that is a subdomain of a public zone), the private zone is skipped so the record lands where ACM can resolve it. If no public hosted zone matches the domain (private-only domain, or the public parent lives in an account the controller can't see), the controller fails fast. In that case, pre-create the certificate yourself and reference it with the [`certificate-arn`](annotations.md#certificate-arn) annotation.
-+
- ## Ingress Group Behavior
- 
- When using certificate management with [IngressGroups](ingress_class.md#specgroup), each ingress in the group gets its own certificate based on its own hostnames. All certificates are attached to the shared ALB's HTTPS listener.
-```
-
-**File**: `pkg/aws/services/route53.go` (modified, +30/-5)
-```diff
-@@ -22,6 +22,7 @@ const (
- type Route53 interface {
- 	ChangeRecordsWithContext(ctx context.Context, input *route53.ChangeResourceRecordSetsInput) (*route53.ChangeResourceRecordSetsOutput, error)
- 	GetHostedZoneID(ctx context.Context, domain string) (*string, error)
-+	GetPublicHostedZoneID(ctx context.Context, domain string) (*string, error)
- }
- 
- func NewRoute53(awsClientsProvider provider.AWSClientsProvider) Route53 {
-@@ -57,11 +58,39 @@ func (c *route53Client) GetHostedZoneID(ctx context.Context, domain string) (*st
- 		return nil, err
- 	}
- 
-+	if bestID := findHostedZoneID(zones, domain, false); bestID != nil {
-+		return bestID, nil
-+	}
-+
-+	return nil, fmt.Errorf("no hosted zone found for validation records")
-+}
-+
-+// GetPublicHostedZoneID skips private zones: Amazon-issued ACM certificates are
-+// validated over public DNS, so a validation record in a private zone (e.g. the
-+// most-specific match in split-horizon Route 53) leaves the cert in PENDING_VALIDATION.
-+func (c *route53Client) GetPublicHostedZoneID(ctx context.Context, domain string) (*string, error) {
-+	zones, err := c.listHostedZones(ctx)
-+	if err != nil {
-+		return nil, err
-+	}
-+
-+	if bestID := findHostedZoneID(zones, domain, true); bestID != nil {
-+		return bestID, nil
-+	}
-+
-+	return nil, fmt.Errorf("no public Route 53 hosted zone found for %q", domain)
-+}
-+
-+// findHostedZoneID returns the nearest-ancestor hosted zone (longest matching suffix).
-+func findHostedZoneID(zones []types.HostedZone, domain string, publicOnly bool) *string {
- 	recParts := strings.Split(domain, ".")
- 
- 	var bestID *string
- 	bestLen := -1
- 	for _, zone := range zones {
-+		if publicOnly && zone.Config != nil && zone.Config.PrivateZone {
-+			continue
-+		}
- 		zoneParts := strings.Split(strings.TrimRight(*zone.Name, "."), ".")
- 		if len(zoneParts) > len(recParts) {
- 			continue
-@@ -72,11 +101,7 @@ func (c *route53Client) GetHostedZoneID(ctx context.Context, domain string) (*st
- 		}
- 	}
- 
--	if bestID != nil {
--		return bestID, nil
--	}
--
--	return nil, fmt.Errorf("no hosted zone found for validation records")
-+	return bestID
- }
- 
- func (c *route53Client) listHostedZones(ctx context.Context) ([]types.HostedZone, error) {
-```
-
-**File**: `pkg/aws/services/route53_mocks.go` (modified, +15/-0)
-```diff
-@@ -64,3 +64,18 @@ func (mr *MockRoute53MockRecorder) GetHostedZoneID(arg0, arg1 interface{}) *gomo
- 	mr.mock.ctrl.T.Helper()
- 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetHostedZoneID", reflect.TypeOf((*MockRoute53)(nil).GetHostedZoneID), arg0, arg1)
- }
-+
-+// GetPublicHostedZoneID mocks base method.
-+func (m *MockRoute53) GetPublicHostedZoneID(arg0 context.Context, arg1 string) (*string, error) {
-+	m.ctrl.T.Helper()
-+	ret := m.ctrl.Call(m, "GetPublicHostedZoneID", arg0, arg1)
-+	ret0, _ := ret[0].(*string)
-+	ret1, _ := ret[1].(error)
-+	return ret0, ret1
-+}
-+
-+// GetPublicHostedZoneID indicates an expected call of GetPublicHostedZoneID.
-+func (mr *MockRoute53MockRecorder) GetPublicHostedZoneID(arg0, arg1 interface{}) *gomock.Call {
-+	mr.mock.ctrl.T.Helper()
-+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPublicHostedZoneID", reflect.TypeOf((*MockRoute53)(nil).GetPublicHostedZoneID), arg0, arg1)
-+}
-```
-
-**File**: `pkg/aws/services/route53_test.go` (modified, +70/-0)
-```diff
-@@ -24,6 +24,14 @@ func hostedZone(id, name string) types.HostedZone {
- 	return types.HostedZone{Id: awssdk.String(id), Name: awssdk.String(name)}
- }
- 
-+func privateHostedZone(id, name string) types.HostedZone {
-+	return types.HostedZone{
-+		Id:     awssdk.String(id),
-+		Name:   awssdk.String(name),
-+		Config: &types.HostedZoneConfig{PrivateZone: true},
-+	}
-+}
-+
- func TestGetHostedZoneID(t *testing.T) {
- 	tests := []struct {
- 		name   string
-@@ -63,3 +71,65 @@ func TestGetHostedZoneID(t *testing.T) {
- 		})
- 	}
- }
-+
-+func TestGetPublicHostedZoneID(t *testing.T) {
-+	tests := []struct {
-+		name    string
-+		domain  string
-+		zones   []types.HostedZone
-+		want    string
-+		wantErr bool
-+	}{
-+		{
-+			name:   "split-horizon: public chosen even though private zone is more specific",
-+			domain: "app.sub.example.com",
-+			zones: []types.HostedZone{
-+				hostedZone("Z_PUBLIC", "example.com."),
-+				privateHostedZone("Z_PRIVATE", "sub.example.com."),
-+			},
-+			want: "Z_PUBLIC",
-+		},
-+		{
-+			name:   "only a private zone matches: fail fast",
-+			domain: "app.sub.example.com",
-+			zones: []types.HostedZone{
-+				privateHostedZone("Z_PRIVATE", "sub.example.com."),
-+			},
-+			wantErr: true,
-+		},
-+		{
-+			name:   "multiple public zones match: longest suffix wins",
-+			domain: "*.app.sub.example.com",
-+			zones: []types.HostedZone{
-+				hostedZone("Z_PARENT", "example.com."),
-+				hostedZone("Z_SUB", "sub.example.com."),
-+			},
-+			want: "Z_SUB",
-+		},
-+	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			c := newCachedRoute53Client(tt.zones)
-+			got, err := c.GetPublicHostedZoneID(context.Background(), tt.domain)
-+			if tt.wantErr {
-+				assert.Error(t, err)
-+				return
-+			}
-+			assert.NoError(t, err)
-+			assert.Equal(t, tt.want, awssdk.ToString(got))
-+		})
-+	}
-+}
-+
-+// The unfiltered lookup (delete path) must still resolve private zones so legacy
-+// records written there can be cleaned up.
-+func TestGetHostedZoneID_UnfilteredReturnsPrivate(t *testing.T) {
-+	c := newCachedRoute53Client([]types.HostedZone{
-+		hostedZone("Z_PUBLIC", "example.com."),
-+		privateHostedZone("Z_PRIVATE", "sub.example.com."),
-+	})
-+	got, err := c.GetHostedZoneID(context.Background(), "app.sub.example.com")
-+	assert.NoError(t, err)
-+	assert.Equal(t, "Z_PRIVATE", awssdk.ToString(got))
-+}
-```
-
-**File**: `pkg/deploy/acm/certificate_manager.go` (modified, +45/-27)
-```diff
-@@ -83,7 +83,7 @@ func (c *defaultCertificateManager) CreateWithValidationRecords(ctx context.Cont
- 		if _, checked := hostedZoneByDomain[host]; checked {
- 			continue
- 		}
--		zoneID, err := c.route53Client.GetHostedZoneID(ctx, host)
-+		zoneID, err := c.route53Client.GetPublicHostedZoneID(ctx, host)
- 		if err != nil {
- 			return nil, fmt.Errorf("pre-check failed for domain %q: %w", host, err)
- 		}
-@@ -226,6 +226,12 @@ func (c *defaultCertificateManager) DeleteWithValidationRecords(ctx context.Cont
- 
- 	for _, opts := range desc.Certificate.DomainValidationOptions {
- 		if opts.ValidationMethod == acmtypes.ValidationMethodDns {
-+			if opts.ResourceRecord == nil {
-+				// ACM populates ResourceRecord asynchronously; a certificate deleted right
-+				// after creation may not have one yet, so there is no record to clean up.
-+				c.logger.Info("no resource record on validation option, skipping validation record cleanup", "domain", awssdk.ToString(opts.DomainName))
-+				continue
-+			}
- 			c.logger.Info("deleting validation records for certificate", "certificateARN", arn)
- 			id, err := c.route53Client.GetHostedZoneID(ctx, awssdk.ToString(opts.DomainName))
- 			if err != nil {
-@@ -237,37 +243,49 @@ func (c *defaultCertificateManager) DeleteWithValidationRecords(ctx context.Cont
- 				}
- 				return err
- 			}
--			input := &route53sdk.ChangeResourceRecordSetsInput{
--				HostedZoneId: id,
--				ChangeBatch: &route53types.ChangeBatch{
--					Changes: []route53types.Change{
--						{
--							Action: "DELETE",
--							ResourceRecordSet: &route53types.ResourceRecordSet{
--								Name: opts.ResourceRecord.Name,
--								Type: route53types.RRType(opts.ResourceRecord.Type),
--								TTL:  awssdk.Int64(validationRecordTTL),
--								ResourceRecords: []route53types.ResourceRecord{
--									{
--										Value: opts.ResourceRecord.Value,
-+			// The validation record lives in the nearest public zone (written by current
-+			// controllers) or, for certificates created by controller versions that
-+			// predate the public-zone selection fix (issue #4840), in the most-specific
-+			// zone regardless of visibility. Attempt cleanup in both when they differ;
-+			// a delete against the wrong zone fails with "not found", which is
-+			// tolerated below.
-+			zoneIDs := []*string{id}
-+			if publicID, err := c.route53Client.GetPublicHostedZoneID(ctx, awssdk.ToString(opts.DomainName)); err == nil && awssdk.ToString(publicID) != awssdk.ToString(id) {
-+				zoneIDs = append(zoneIDs, publicID)
-+			}
-+			for _, zoneID := range zoneIDs {
-+				input := &route53sdk.ChangeResourceRecordSetsInput{
-+					HostedZoneId: zoneID,
-+					ChangeBatch: &route53types.ChangeBatch{
-+						Changes: []route53types.Change{
-+							{
-+								Action: "DELETE",
-+								ResourceRecordSet: &route53types.ResourceRecordSet{
-+									Name: opts.ResourceRecord.Name,
-+									Type: route53types.RRType(opts.ResourceRecord.Type),
-+									TTL:  awssdk.Int64(validationRecordTTL),
-+									ResourceRecords: []route53types.ResourceRecord{
-+										{
-+											Value: opts.ResourceRecord.Value,
-+										},
- 									},
- 								},
- 							},
- 						},
- 					},
--				},
--			}
--			_, err = c.route53Client.ChangeRecordsWithContext(ctx, input)
--			if err != nil && strings.Contains(err.Error(), "not found") {
--				c.logger.Info("validation records no longer found, ignoring", "name", opts.ResourceRecord.Name, "value", opts.ResourceRecord.Value, "type", opts.ResourceRecord.Type)
--				continue
--			}
--			if err != nil && strings.Contains(err.Error(), "do not match the current values") {
--				c.logger.Info("validation records have been reused for another certificate, ignoring", "name", opts.ResourceRecord.Name, "value", opts.ResourceRecord.Value, "type", opts.ResourceRecord.Type)
--				continue
--			}
--			if err != nil {
--				return err
-+				}
-+				_, err = c.route53Client.ChangeRecordsWithContext(ctx, input)
-+				if err != nil && strings.Contains(err.Error(), "not found") {
-+					c.logger.Info("validation records no longer found, ignoring", "name", opts.ResourceRecord.Name, "value", opts.ResourceRecord.Value, "type", opts.ResourceRecord.Type)
-+					continue
-+				}
-+				if err != nil && strings.Contains(err.Error(), "do not match the current values") {
-+					c.logger.Info("validation records have been reused for another certificate, ignoring", "name", opts.ResourceRecord.Name, "value", opts.ResourceRecord.Value, "type", opts.ResourceRecord.Type)
-+					continue
-+				}
-+				if err != nil {
-+					return err
-+				}
- 			}
- 		}
- 	}
-```
-
-**File**: `pkg/deploy/acm/certificate_manager_test.go` (added, +126/-0)
-```diff
-@@ -0,0 +1,126 @@
-+package acm
-+
-+import (
-+	"context"
-+	"errors"
-+	"testing"
-+
-+	awssdk "github.com/aws/aws-sdk-go-v2/aws"
-+	"github.com/aws/aws-sdk-go-v2/service/acm"
-+	acmtypes "github.com/aws/aws-sdk-go-v2/service/acm/types"
-+	"github.com/aws/aws-sdk-go-v2/service/route53"
-+	route53types "github.com/aws/aws-sdk-go-v2/service/route53/types"
-+	"github.com/go-logr/logr"
-+	"github.com/golang/mock/gomock"
-+	"github.com/stretchr/testify/assert"
-+	"sigs.k8s.io/aws-load-balancer-controller/v3/pkg/aws/services"
-+	"sigs.k8s.io/controller-runtime/pkg/log"
-+)
-+
-+// Split-horizon cleanup: the unfiltered lookup resolves the private zone (legacy
-+// records) while the public lookup resolves the public zone (records written by
-+// current controllers). Delete must attempt cleanup in both zones.
-+func TestDeleteWithValidationRecords_SplitHorizonCleansBothZones(t *testing.T) {
-+	ctrl := gomock.NewController(t)
-+	defer ctrl.Finish()
-+
-+	mockACM := services.NewMockACM(ctrl)
-+	mockRoute53 := services.NewMockRoute53(ctrl)
-+	m := &defaultCertificateManager{
-+		acmClient:     mockACM,
-+		route53Client: mockRoute53,
-+		logger:        logr.New(&log.NullLogSink{}),
-+	}
-+
-+	arn := "arn:aws:acm:us-east-1:123456789012:certificate/test"
-+	mockACM.EXPECT().DescribeCertificateWithContext(gomock.Any(), gomock.Eq(&acm.DescribeCertificateInput{
-+		CertificateArn: awssdk.String(arn),
-+	})).Return(&acm.DescribeCertificateOutput{
-+		Certificate: &acmtypes.CertificateDetail{
-+			DomainValidationOptions: []acmtypes.DomainValidation{
-+				{
-+					ValidationMethod: acmtypes.ValidationMethodDns,
-+					DomainName:       awssdk.String("app.sub.example.com"),
-+					ResourceRecord: &acmtypes.ResourceRecord{
-+						Name:  awssdk.String("cname-name"),
-+						Value: awssdk.String("cname-value"),
-+						Type:  acmtypes.RecordTypeCname,
-+					},
-+				},
-+			},
-+		},
-+	}, nil)
-+
-+	mockRoute53.EXPECT().GetHostedZoneID(gomock.Any(), gomock.Eq("app.sub.example.com")).Return(awssdk.String("Z_PRIVATE"), nil)
-+	mockRoute53.EXPECT().GetPublicHostedZoneID(gomock.Any(), gomock.Eq("app.sub.example.com")).Return(awssdk.String("Z_PUBLIC"), nil)
-+
-+	deleteInput := func(zoneID string) *route53.ChangeResourceRecordSetsInput {
-+		return &route53.ChangeResourceRecordSetsInput{
-+			HostedZoneId: awssdk.String(zoneID),
-+			ChangeBatch: &route53types.ChangeBatch{
-+				Changes: []route53types.Change{
-+					{
-+						Action: "DELETE",
-+						ResourceRecordSet: &route53types.ResourceRecordSet{
-+							Name: awssdk.String("cname-name"),
-+							Type: route53types.RRType(acmtypes.RecordTypeCname),
-+							TTL:  awssdk.Int64(validationRecordTTL),
-+							ResourceRecords: []route53types.ResourceRecord{
-+								{Value: awssdk.String("cname-value")},
-+							},
-+						},
-+					},
-+				},
-+			},
-+		}
-+	}
-+	// record was written to the public zone: private-zone delete fails "not found" (tolerated)
-+	mockRoute53.EXPECT().ChangeRecordsWithContext(gomock.Any(), gomock.Eq(deleteInput("Z_PRIVATE"))).
-+		Return(nil, errors.New("InvalidChangeBatch: Tried to delete resource record set but it was not found"))
-+	mockRoute53.EXPECT().ChangeRecordsWithContext(gomock.Any(), gomock.Eq(deleteInput("Z_PUBLIC"))).
-+		Return(&route53.ChangeResourceRecordSetsOutput{}, nil)
-+
-+	mockACM.EXPECT().DeleteCertificateWithContext(gomock.Any(), gomock.Eq(&acm.DeleteCertificateInput{
-+		CertificateArn: awssdk.String(arn),
-+	})).Return(&acm.DeleteCertificateOutput{}, nil)
-+
-+	err := m.DeleteWithValidationRecords(context.Background(), arn)
-+	assert.NoError(t, err)
-+}
-+
-+// A DNS validation option may have no ResourceRecord yet (ACM populates it
-+// asynchronously); delete must skip record cleanup instead of panicking.
-+func TestDeleteWithValidationRecords_NilResourceRecordSkipsCleanup(t *testing.T) {
-+	ctrl := gomock.NewController(t)
-+	defer ctrl.Finish()
-+
-+	mockACM := services.NewMockACM(ctrl)
-+	mockRoute53 := services.NewMockRoute53(ctrl)
-+	m := &defaultCertificateManager{
-+		acmClient:     mockACM,
-+		route53Client: mockRoute53,
-+		logger:        logr.New(&log.NullLogSink{}),
-+	}
-+
-+	arn := "arn:aws:acm:us-east-1:123456789012:certificate/test"
-+	mockACM.EXPECT().DescribeCertificateWithContext(gomock.Any(), gomock.Eq(&acm.DescribeCertificateInput{
-+		CertificateArn: awssdk.String(arn),
-+	})).Return(&acm.DescribeCertificateOutput{
-+		Certificate: &acmtypes.CertificateDetail{
-+			DomainValidationOptions: []acmtypes.DomainValidation{
-+				{
-+					ValidationMethod: acmtypes.ValidationMethodDns,
-+					DomainName:       awssdk.String("app.sub.example.com"),
-+					ResourceRecord:   nil,
-+				},
-+			},
-+		},
-+	}, nil)
-+
-+	mockACM.EXPECT().DeleteCertificateWithContext(gomock.Any(), gomock.Eq(&acm.DeleteCertificateInput{
-+		CertificateArn: awssdk.String(arn),
-+	})).Return(&acm.DeleteCertificateOutput{}, nil)
-+
-+	err := m.DeleteWithValidationRecords(context.Background(), arn)
-+	assert.NoError(t, err)
-+}
-```
-
-**File**: `pkg/deploy/acm/certificate_synthesizer_test.go` (modified, +8/-6)
-```diff
-@@ -83,7 +83,7 @@ func Test_Synthesizer(t *testing.T) {
- 					},
- 				}, nil)
- 
--				mockRoute53.EXPECT().GetHostedZoneID(gomock.Any(), gomock.Eq("example.com")).Return(awssdk.String("Z0382403B3S5MSK4SVXX"), nil)
-+				mockRoute53.EXPECT().GetPublicHostedZoneID(gomock.Any(), gomock.Eq("example.com")).Return(awssdk.String("Z0382403B3S5MSK4SVXX"), nil)
- 
- 				mockRoute53.EXPECT().ChangeRecordsWithContext(gomock.Any(), gomock.Eq(&route53.ChangeResourceRecordSetsInput{
- 					HostedZoneId: awssdk.String("Z0382403B3S5MSK4SVXX"),
-@@ -242,8 +242,8 @@ func Test_Synthesizer(t *testing.T) {
- 					},
- 				}, nil)
- 
--				mockRoute53.EXPECT().GetHostedZoneID(gomock.Any(), gomock.Eq("example.com")).Return(awssdk.String("Z0382403B3S5MSK4SVXX"), nil)
--				mockRoute53.EXPECT().GetHostedZoneID(gomock.Any(), gomock.Eq("otherexample.com")).Return(awssdk.String("Z0922506B3S0MGK4SALX"), nil)
-+				mockRoute53.EXPECT().GetPublicHostedZoneID(gomock.Any(), gomock.Eq("example.com")).Return(awssdk.String("Z0382403B3S5MSK4SVXX"), nil)
-+				mockRoute53.EXPECT().GetPublicHostedZoneID(gomock.Any(), gomock.Eq("otherexample.com")).Return(awssdk.String("Z0922506B3S0MGK4SALX"), nil)
- 				mockRoute53.EXPECT().ChangeRecordsWithContext(gomock.Any(), gomock.Eq(&route53.ChangeResourceRecordSetsInput{
- 					HostedZoneId: awssdk.String("Z0382403B3S5MSK4SVXX"),
- 					ChangeBatch: &route53types.ChangeBatch{
-@@ -366,6 +366,8 @@ func Test_Synthesizer(t *testing.T) {
- 				}, nil)
- 
- 				mockRoute53.EXPECT().GetHostedZoneID(gomock.Any(), gomock.Eq("example.com")).Return(awssdk.String("Z0382403B3S5MSK4SVXX"), nil)
-+				// delete path also checks the public zone; same ID → single DELETE
-+				mockRoute53.EXPECT().GetPublicHostedZoneID(gomock.Any(), gomock.Eq("example.com")).Return(awssdk.String("Z0382403B3S5MSK4SVXX"), nil)
- 				mockRoute53.EXPECT().ChangeRecordsWithContext(gomock.Any(), gomock.Eq(&route53.ChangeResourceRecordSetsInput{
- 					HostedZoneId: awssdk.String("Z0382403B3S5MSK4SVXX"),
- 					ChangeBatch: &route53types.ChangeBatch{
-@@ -411,7 +413,7 @@ func Test_Synthesizer(t *testing.T) {
- 					},
- 				}, nil)
- 
--				mockRoute53.EXPECT().GetHostedZoneID(gomock.Any(), gomock.Eq("example.com")).Return(awssdk.String("Z0382403B3S5MSK4SVXX"), nil)
-+				mockRoute53.EXPECT().GetPublicHostedZoneID(gomock.Any(), gomock.Eq("example.com")).Return(awssdk.String("Z0382403B3S5MSK4SVXX"), nil)
- 
- 				mockRoute53.EXPECT().ChangeRecordsWithContext(gomock.Any(), gomock.Eq(&route53.ChangeResourceRecordSetsInput{
- 					HostedZoneId: awssdk.String("Z0382403B3S5MSK4SVXX"),
-@@ -510,8 +512,8 @@ func Test_Synthesizer(t *testing.T) {
- 				mockACM.EXPECT().ListCertificatesAsList(gomock.Any(), gomock.Eq(&acm.ListCertificatesInput{})).
- 					Return([]acmtypes.CertificateSummary{}, nil)
- 
--				// Pre-check: GetHostedZoneID fails — no cert should be requested
--				mockRoute53.EXPECT().GetHostedZoneID(gomock.Any(), gomock.Eq("wrong.nonexistent-domain.com")).
-+				// Pre-check: GetPublicHostedZoneID fails — no cert should be requested
-+				mockRoute53.EXPECT().GetPublicHostedZoneID(gomock.Any(), gomock.Eq("wrong.nonexistent-domain.com")).
- 					Return(nil, fmt.Errorf("no hosted zone found for validation records"))
- 
- 				// RequestCertificate should NOT be called
-```
-
----
-
-### Incident Patch 5: `08db5bc3` (2026-07-19)
-**Commit Message**: Fix typo in certificate management guide
-
-Signed-off-by: niv1612 <[REDACTED_EMAIL]>
-
-**File**: `docs/guide/ingress/certificate_management.md` (modified, +1/-1)
-```diff
-@@ -35,7 +35,7 @@ This reconciliation might fail if there are no certificates present to autodisco
- ### Certificate Validation
- 
- Amazon Issued certificates are currently validated using DNS Method and Route53 records. Validation can take [up to 30 minutes](https://docs.aws.amazon.com/acm/latest/userguide/dns-validation.html). 
--E-Mail validation is not supported due to significant higher delays between requesting a certificate and it's issuance. 
-+E-Mail validation is not supported due to significant higher delays between requesting a certificate and its issuance. 
- When using a PCA, certificates don't have to be validated.
- 
- Because ACM validates Amazon-issued certificates over **public** DNS, the controller writes the validation record into the nearest-ancestor **public** Route53 hosted zone. In split-horizon setups (a private zone that is a subdomain of a public zone), the private zone is skipped so the record lands where ACM can resolve it. If no public hosted zone matches the domain (private-only domain, or the public parent lives in an account the controller can't see), the controller fails fast. In that case, pre-create the certificate yourself and reference it with the [`certificate-arn`](annotations.md#certificate-arn) annotation.
-```
-
----
-
-### Incident Patch 6: `44621146` (2026-09-30)
-**Commit Message**: fix: use '/' separator in Gateway route-loader cache keys to avoid collisions (#4916)
-
-**File**: `pkg/gateway/routeutils/loader.go` (modified, +12/-4)
-```diff
-@@ -6,6 +6,7 @@ import (
- 
- 	"github.com/go-logr/logr"
- 	"github.com/pkg/errors"
-+	"k8s.io/apimachinery/pkg/types"
- 	"k8s.io/apimachinery/pkg/util/sets"
- 	elbv2gw "sigs.k8s.io/aws-load-balancer-controller/v3/apis/gateway/v1"
- 	"sigs.k8s.io/aws-load-balancer-controller/v3/pkg/config"
-@@ -183,9 +184,7 @@ func (l *loaderImpl) loadChildResources(ctx context.Context, preloadedRoutes map
- 
- 	for port, preloadedRouteList := range preloadedRoutes {
- 		for _, preloadedRoute := range preloadedRouteList {
--			namespacedNameRoute := preloadedRoute.GetRouteNamespacedName()
--			routeKind := preloadedRoute.GetRouteKind()
--			cacheKey := fmt.Sprintf("%s-%s-%s", routeKind, namespacedNameRoute.Name, namespacedNameRoute.Namespace)
-+			cacheKey := generateResourceCacheKey(preloadedRoute.GetRouteKind(), preloadedRoute.GetRouteNamespacedName())
- 
- 			cachedRoute, ok := resourceCache[cacheKey]
- 			if ok {
-@@ -259,6 +258,13 @@ func (l *loaderImpl) loadChildResources(ctx context.Context, preloadedRoutes map
- 	return loadedRouteData, failedRoutes, nil
- }
- 
-+// generateResourceCacheKey builds the key for the Gateway-scoped route resource cache.
-+// It uses "/" as the separator because "/" is illegal in Kubernetes names and namespaces, so the key
-+// is unique per route.
-+func generateResourceCacheKey(routeKind RouteKind, nn types.NamespacedName) string {
-+	return fmt.Sprintf("%s/%s", routeKind, nn.String())
-+}
-+
- func generateRouteDataCacheKey(rd RouteData) string {
- 	port := ""
- 
-@@ -278,5 +284,7 @@ func generateRouteDataCacheKey(rd RouteData) string {
- 	if rd.ParentRef.Namespace != nil {
- 		namespace = string(*rd.ParentRef.Namespace)
- 	}
--	return fmt.Sprintf("%s-%s-%s-%s-%s-%s-%s-%s", kind, rd.RouteMetadata.RouteName, rd.RouteMetadata.RouteNamespace, rd.RouteMetadata.RouteKind, rd.ParentRef.Name, namespace, port, sectionName)
-+	// Dedup key for status updates only (no routing impact). Use "/" not "-": "/" is illegal in k8s
-+	// names/namespaces, so distinct routes can't collide and suppress each other's status update.
-+	return fmt.Sprintf("%s/%s/%s/%s/%s/%s/%s/%s", kind, rd.RouteMetadata.RouteName, rd.RouteMetadata.RouteNamespace, rd.RouteMetadata.RouteKind, rd.ParentRef.Name, namespace, port, sectionName)
- }
-```
-
-**File**: `pkg/gateway/routeutils/loader_test.go` (modified, +107/-57)
-```diff
-@@ -234,9 +234,9 @@ func Test_LoadRoutesForGateway(t *testing.T) {
- 				80: loadedHTTPRoutes,
- 			},
- 			expectedReconcileQueue: map[string]bool{
--				"Gateway-http1-http1-ns-HTTPRoute-gw-gw-ns--": true,
--				"Gateway-http2-http2-ns-HTTPRoute-gw-gw-ns--": true,
--				"Gateway-http3-http3-ns-HTTPRoute-gw-gw-ns--": true,
-+				"Gateway/http1/http1-ns/HTTPRoute/gw/gw-ns//": true,
-+				"Gateway/http2/http2-ns/HTTPRoute/gw/gw-ns//": true,
-+				"Gateway/http3/http3-ns/HTTPRoute/gw/gw-ns//": true,
- 			},
- 		},
- 		{
-@@ -267,9 +267,9 @@ func Test_LoadRoutesForGateway(t *testing.T) {
- 				80: loadedHTTPRoutes,
- 			},
- 			expectedReconcileQueue: map[string]bool{
--				"Gateway-http1-http1-ns-HTTPRoute-gw-gw-ns--sect1": true,
--				"Gateway-http2-http2-ns-HTTPRoute-gw-gw-ns--sect2": true,
--				"Gateway-http3-http3-ns-HTTPRoute-gw-gw-ns--sect3": true,
-+				"Gateway/http1/http1-ns/HTTPRoute/gw/gw-ns//sect1": true,
-+				"Gateway/http2/http2-ns/HTTPRoute/gw/gw-ns//sect2": true,
-+				"Gateway/http3/http3-ns/HTTPRoute/gw/gw-ns//sect3": true,
- 			},
- 		},
- 		{
-@@ -300,9 +300,9 @@ func Test_LoadRoutesForGateway(t *testing.T) {
- 				80: loadedHTTPRoutes,
- 			},
- 			expectedReconcileQueue: map[string]bool{
--				"Gateway-http1-http1-ns-HTTPRoute-gw-gw-ns-80-": true,
--				"Gateway-http2-http2-ns-HTTPRoute-gw-gw-ns-80-": true,
--				"Gateway-http3-http3-ns-HTTPRoute-gw-gw-ns-80-": true,
-+				"Gateway/http1/http1-ns/HTTPRoute/gw/gw-ns/80/": true,
-+				"Gateway/http2/http2-ns/HTTPRoute/gw/gw-ns/80/": true,
-+				"Gateway/http3/http3-ns/HTTPRoute/gw/gw-ns/80/": true,
- 			},
- 		},
- 		{
-@@ -336,9 +336,9 @@ func Test_LoadRoutesForGateway(t *testing.T) {
- 				80: loadedHTTPRoutes,
- 			},
- 			expectedReconcileQueue: map[string]bool{
--				"Gateway-http1-http1-ns-HTTPRoute-gw-gw-ns-80-sect1": true,
--				"Gateway-http2-http2-ns-HTTPRoute-gw-gw-ns-80-sect2": true,
--				"Gateway-http3-http3-ns-HTTPRoute-gw-gw-ns-80-sect3": true,
-+				"Gateway/http1/http1-ns/HTTPRoute/gw/gw-ns/80/sect1": true,
-+				"Gateway/http2/http2-ns/HTTPRoute/gw/gw-ns/80/sect2": true,
-+				"Gateway/http3/http3-ns/HTTPRoute/gw/gw-ns/80/sect3": true,
- 			},
- 		},
- 		{
-@@ -369,9 +369,9 @@ func Test_LoadRoutesForGateway(t *testing.T) {
- 				80: loadedHTTPRoutes,
- 			},
- 			expectedReconcileQueue: map[string]bool{
--				"Gateway-http1-http1-ns-HTTPRoute-gw-gw-ns--": true,
--				"Gateway-http2-http2-ns-HTTPRoute-gw-gw-ns--": true,
--				"Gateway-http3-http3-ns-HTTPRoute-gw-gw-ns--": true,
-+				"Gateway/http1/http1-ns/HTTPRoute/gw/gw-ns//": true,
-+				"Gateway/http2/http2-ns/HTTPRoute/gw/gw-ns//": true,
-+				"Gateway/http3/http3-ns/HTTPRoute/gw/gw-ns//": true,
- 			},
- 		},
- 		{
-@@ -402,9 +402,9 @@ func Test_LoadRoutesForGateway(t *testing.T) {
- 				80: loadedHTTPRoutes,
- 			},
- 			expectedReconcileQueue: map[string]bool{
--				"ListenerSet-http1-http1-ns-HTTPRoute-ls-gw-ns--": true,
--				"ListenerSet-http2-http2-ns-HTTPRoute-ls-gw-ns--": true,
--				"ListenerSet-http3-http3-ns-HTTPRoute-ls-gw-ns--": true,
-+				"ListenerSet/http1/http1-ns/HTTPRoute/ls/gw-ns//": true,
-+				"ListenerSet/http2/http2-ns/HTTPRoute/ls/gw-ns//": true,
-+				"ListenerSet/http3/http3-ns/HTTPRoute/ls/gw-ns//": true,
- 			},
- 		},
- 		{
-@@ -453,12 +453,12 @@ func Test_LoadRoutesForGateway(t *testing.T) {
- 				80: loadedHTTPRoutes,
- 			},
- 			expectedReconcileQueue: map[string]bool{
--				"ListenerSet-http1-http1-ns-HTTPRoute-ls-gw-ns--": true,
--				"ListenerSet-http2-http2-ns-HTTPRoute-ls-gw-ns--": true,
--				"ListenerSet-http3-http3-ns-HTTPRoute-ls-gw-ns--": true,
--				"Gateway-http1-http1-ns-HTTPRoute-gw-gw-ns--":     true,
--				"Gateway-http2-http2-ns-HTTPRoute-gw-gw-ns--":     true,
--				"Gateway-http3-http3-ns-HTTPRoute-gw-gw-ns--":     true,
-+				"ListenerSet/http1/http1-ns/HTTPRoute/ls/gw-ns//": true,
-+				"ListenerSet/http2/http2-ns/HTTPRoute/ls/gw-ns//": true,
-+				"ListenerSet/http3/http3-ns/HTTPRoute/ls/gw-ns//": true,
-+				"Gateway/http1/http1-ns/HTTPRoute/gw/gw-ns//":     true,
-+				"Gateway/http2/http2-ns/HTTPRoute/gw/gw-ns//":     true,
-+				"Gateway/http3/http3-ns/HTTPRoute/gw/gw-ns//":     true,
- 			},
- 		},
- 		{
-@@ -507,12 +507,12 @@ func Test_LoadRoutesForGateway(t *testing.T) {
- 				80: loadedHTTPRoutes,
- 			},
- 			expectedReconcileQueue: map[string]bool{
--				"ListenerSet-http1-http1-ns-HTTPRoute-gw-gw-ns--": true,
--				"ListenerSet-http2-http2-ns-HTTPRoute-gw-gw-ns--": true,
--				"ListenerSet-http3-http3-ns-HTTPRoute-gw-gw-ns--": true,
--				"Gateway-http1-http1-ns-HTTPRoute-gw-gw-ns--":     true,
--				"Gateway-http2-http2-ns-HTTPRoute-gw-gw-ns--":     true,
--				"Gateway-http3-http3-ns-HTTPRoute-gw-gw-ns--":     true,
-+				"ListenerSet/http1/http1-ns/HTTPRoute/gw/gw-ns//": true,
-+				"ListenerSet/http2/http2-ns/HTTPRoute/gw/gw-ns//": true,
-+				"ListenerSet/http3/http3-ns/HTTPRoute/gw/gw-ns//": true,
-+				"Gateway/http1/http1-ns/HTTPRoute/gw/gw-ns//":     true,
-+				"Gateway/http2/http2-ns/HTTPRoute/gw/gw-ns//":     true,
-+				"Gateway/http3/http3-ns/HTTPRoute/gw/gw-ns//":     true,
- 			},
- 		},
- 		{
-
-```
-
----
-
-### Incident Patch 7: `11f91b24` (2026-09-25)
-**Commit Message**: Fixed wrong default for frontend-nlb-eip-allocations in annotation docs (#4871)
-
-**File**: `docs/guide/ingress/annotations.md` (modified, +1/-1)
-```diff
-@@ -86,7 +86,7 @@ You can add annotations to kubernetes Ingress and Service objects to customize t
- | [alb.ingress.kubernetes.io/frontend-nlb-healthcheck-unhealthy-threshold-count](#frontend-nlb-healthcheck-unhealthy-threshold-count) | integer                     |3| Ingress | N/A           |
- | [alb.ingress.kubernetes.io/frontend-nlb-healthcheck-success-codes](#frontend-nlb-healthcheck-success-codes) | string                                     |200| Ingress | N/A           |
- | [alb.ingress.kubernetes.io/frontend-nlb-tags](#frontend-nlb-tags) | stringMap | N/A | Ingress | Exclusive |
--| [alb.ingress.kubernetes.io/frontend-nlb-eip-allocations](#frontend-nlb-eip-allocations) | stringList                                     |200| Ingress | N/A           |
-+| [alb.ingress.kubernetes.io/frontend-nlb-eip-allocations](#frontend-nlb-eip-allocations) | stringList                                     |N/A| Ingress | N/A           |
- | [alb.ingress.kubernetes.io/target-control-port.${serviceName}.${servicePort}](#target-control-port)                                       | integer                                    |N/A| Ingress | N/A           |
- | [alb.ingress.kubernetes.io/frontend-nlb-attributes](#frontend-nlb-attributes) | stringList                                     |N/A| Ingress | N/A           |
- 
-```
-
----
-
-### Incident Patch 8: `73af7ec0` (2026-09-24)
-**Commit Message**: Fix TGB networking with empty ports (#4909)
-
-Signed-off-by: Dennis Lanov <[REDACTED_EMAIL]>
-
-**File**: `pkg/networking/networking_manager.go` (modified, +2/-2)
-```diff
-@@ -400,11 +400,11 @@ func (m *defaultNetworkingManager) computeIngressPermissionsForTGBNetworking(ctx
- 					Protocol: &protocolTCP,
- 					Port:     nil,
- 				}
--				permissions, err := m.computePermissionsForPeerPort(ctx, rulePeer, allTCPPort, pods)
-+				permissionsForPeerPort, err := m.computePermissionsForPeerPort(ctx, rulePeer, allTCPPort, pods)
- 				if err != nil {
- 					return nil, err
- 				}
--				permissions = append(permissions, permissions...)
-+				permissions = append(permissions, permissionsForPeerPort...)
- 			}
- 		}
- 	}
-```
-
-**File**: `pkg/networking/networking_manager_test.go` (modified, +35/-0)
-```diff
-@@ -73,6 +73,41 @@ func Test_defaultNetworkingManager_computeIngressPermissionsForTGBNetworking(t *
- 				},
- 			},
- 		},
-+		{
-+			name: "with one rule / one peer / empty ports",
-+			args: args{
-+				tgbNetworking: elbv2api.TargetGroupBindingNetworking{
-+					Ingress: []elbv2api.NetworkingIngressRule{
-+						{
-+							From: []elbv2api.NetworkingPeer{
-+								{
-+									SecurityGroup: &elbv2api.SecurityGroup{
-+										GroupID: "sg-abcdefg",
-+									},
-+								},
-+							},
-+							Ports: []elbv2api.NetworkingPort{},
-+						},
-+					},
-+				},
-+			},
-+			want: []IPPermissionInfo{
-+				{
-+					Permission: ec2types.IpPermission{
-+						IpProtocol: awssdk.String("tcp"),
-+						FromPort:   awssdk.Int32(0),
-+						ToPort:     awssdk.Int32(65535),
-+						UserIdGroupPairs: []ec2types.UserIdGroupPair{
-+							{
-+								Description: awssdk.String("elbv2.k8s.aws/targetGroupBinding=shared"),
-+								GroupId:     awssdk.String("sg-abcdefg"),
-+							},
-+						},
-+					},
-+					Labels: map[string]string{tgbNetworkingIPPermissionLabelKey: tgbNetworkingIPPermissionLabelValue},
-+				},
-+			},
-+		},
- 		{
- 			name: "with one rule / multiple peer / multiple port",
- 			args: args{
-```
-
----
-
-### Incident Patch 9: `88df31ed` (2026-09-23)
-**Commit Message**: Merge pull request #4911 from shraddhabang/fix-grpc-udp-public-image-default
-
-test: default GRPC/UDP images to public ECR to fix the tests
-
-**File**: `go.mod` (modified, +5/-5)
-```diff
-@@ -36,10 +36,10 @@ require (
- 	github.com/spf13/pflag v1.0.10
- 	github.com/stretchr/testify v1.11.1
- 	go.uber.org/zap v1.28.0
--	golang.org/x/net v0.57.0
-+	golang.org/x/net v0.58.0
- 	golang.org/x/time v0.15.0
- 	gomodules.xyz/jsonpatch/v2 v2.4.0
--	google.golang.org/grpc v1.82.1
-+	google.golang.org/grpc v1.83.2
- 	google.golang.org/protobuf v1.36.12-0.20260120151049-f2248ac996af
- 	gopkg.in/yaml.v3 v3.0.1
- 	helm.sh/helm/v3 v3.21.3
-@@ -169,15 +169,15 @@ require (
- 	go.uber.org/multierr v1.11.0 // indirect
- 	go.yaml.in/yaml/v2 v2.4.4 // indirect
- 	go.yaml.in/yaml/v3 v3.0.4 // indirect
--	golang.org/x/crypto v0.54.0 // indirect
-+	golang.org/x/crypto v0.55.0 // indirect
- 	golang.org/x/mod v0.38.0 // indirect
- 	golang.org/x/oauth2 v0.36.0 // indirect
- 	golang.org/x/sync v0.22.0 // indirect
- 	golang.org/x/sys v0.47.0 // indirect
- 	golang.org/x/term v0.45.0 // indirect
--	golang.org/x/text v0.40.0 // indirect
-+	golang.org/x/text v0.41.0 // indirect
- 	golang.org/x/tools v0.48.0 // indirect
--	google.golang.org/genproto/googleapis/rpc v0.0.0-20260523011958-0a33c5d7ca68 // indirect
-+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa // indirect
- 	gopkg.in/evanphx/json-patch.v4 v4.13.0 // indirect
- 	gopkg.in/inf.v0 v0.9.1 // indirect
- 	k8s.io/apiextensions-apiserver v0.36.2 // indirect
-```
-
-**File**: `go.sum` (modified, +22/-22)
-```diff
-@@ -471,8 +471,8 @@ go.opentelemetry.io/contrib/exporters/autoexport v0.67.0 h1:4fnRcNpc6YFtG3zsFw9a
- go.opentelemetry.io/contrib/exporters/autoexport v0.67.0/go.mod h1:qTvIHMFKoxW7HXg02gm6/Wofhq5p3Ib/A/NNt1EoBSQ=
- go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.68.0 h1:CqXxU8VOmDefoh0+ztfGaymYbhdB/tT3zs79QaZTNGY=
- go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.68.0/go.mod h1:BuhAPThV8PBHBvg8ZzZ/Ok3idOdhWIodywz2xEcRbJo=
--go.opentelemetry.io/otel v1.43.0 h1:mYIM03dnh5zfN7HautFE4ieIig9amkNANT+xcVxAj9I=
--go.opentelemetry.io/otel v1.43.0/go.mod h1:JuG+u74mvjvcm8vj8pI5XiHy1zDeoCS2LB1spIq7Ay0=
-+go.opentelemetry.io/otel v1.44.0 h1:JjwHmHpA4iZ3wBxluu2fbbE7j4kqlE8jXyAyPXH7HqU=
-+go.opentelemetry.io/otel v1.44.0/go.mod h1:BMgjTHL9WPRlRjL2oZCBTL4whCGtXch2H4BhOPIAyYc=
- go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc v0.19.0 h1:Dn8rkudDzY6KV9dr/D/bTUuWgqDf9xe0rr4G2elrn0Y=
- go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc v0.19.0/go.mod h1:gMk9F0xDgyN9M/3Ed5Y1wKcx/9mlU91NXY2SNq7RQuU=
- go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp v0.19.0 h1:HIBTQ3VO5aupLKjC90JgMqpezVXwFuq6Ryjn0/izoag=
-@@ -497,16 +497,16 @@ go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.43.0 h1:mS47AX77OtFfKG4
- go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.43.0/go.mod h1:PJnsC41lAGncJlPUniSwM81gc80GkgWJWr3cu2nKEtU=
- go.opentelemetry.io/otel/log v0.19.0 h1:KUZs/GOsw79TBBMfDWsXS+KZ4g2Ckzksd1ymzsIEbo4=
- go.opentelemetry.io/otel/log v0.19.0/go.mod h1:5DQYeGmxVIr4n0/BcJvF4upsraHjg6vudJJpnkL6Ipk=
--go.opentelemetry.io/otel/metric v1.43.0 h1:d7638QeInOnuwOONPp4JAOGfbCEpYb+K6DVWvdxGzgM=
--go.opentelemetry.io/otel/metric v1.43.0/go.mod h1:RDnPtIxvqlgO8GRW18W6Z/4P462ldprJtfxHxyKd2PY=
--go.opentelemetry.io/otel/sdk v1.43.0 h1:pi5mE86i5rTeLXqoF/hhiBtUNcrAGHLKQdhg4h4V9Dg=
--go.opentelemetry.io/otel/sdk v1.43.0/go.mod h1:P+IkVU3iWukmiit/Yf9AWvpyRDlUeBaRg6Y+C58QHzg=
-+go.opentelemetry.io/otel/metric v1.44.0 h1:1w0gILTcHdr3YI+ixLyjemwrVnsMURbTZFrSYCdDdmc=
-+go.opentelemetry.io/otel/metric v1.44.0/go.mod h1:8O7hanEPBNgEMmybD3s2VBKcgWOCsA6tzHBPODAiquo=
-+go.opentelemetry.io/otel/sdk v1.44.0 h1:nHYwb9lK+fJPU/dnT6s7W7Z8itMWyqrnVfbheVYrZ58=
-+go.opentelemetry.io/otel/sdk v1.44.0/go.mod h1:Osuydd3Se74nqjAKxid74N5eC+jfEqfTegHRnq58oK0=
- go.opentelemetry.io/otel/sdk/log v0.19.0 h1:scYVLqT22D2gqXItnWiocLUKGH9yvkkeql5dBDiXyko=
- go.opentelemetry.io/otel/sdk/log v0.19.0/go.mod h1:vFBowwXGLlW9AvpuF7bMgnNI95LiW10szrOdvzBHlAg=
--go.opentelemetry.io/otel/sdk/metric v1.43.0 h1:S88dyqXjJkuBNLeMcVPRFXpRw2fuwdvfCGLEo89fDkw=
--go.opentelemetry.io/otel/sdk/metric v1.43.0/go.mod h1:C/RJtwSEJ5hzTiUz5pXF1kILHStzb9zFlIEe85bhj6A=
--go.opentelemetry.io/otel/trace v1.43.0 h1:BkNrHpup+4k4w+ZZ86CZoHHEkohws8AY+WTX09nk+3A=
--go.opentelemetry.io/otel/trace v1.43.0/go.mod h1:/QJhyVBUUswCphDVxq+8mld+AvhXZLhe+8WVFxiFff0=
-+go.opentelemetry.io/otel/sdk/metric v1.44.0 h1:3LlKgI+VjbVsjNRFZJZAJ30WjXC5VkNRks6si09iEfI=
-+go.opentelemetry.io/otel/sdk/metric v1.44.0/go.mod h1:5B5pMARnXxKhltooO4xUuCBorl65a4EpnTalObqOigA=
-+go.opentelemetry.io/otel/trace v1.44.0 h1:jxF5CsGYCe74MCRx2X4g7WsY/VBKRqqpNvXlX/6gtIk=
-+go.opentelemetry.io/otel/trace v1.44.0/go.mod h1:oLl1jrMQAVo6v3GAggN+1VH9VIz9iUSvW53sW1Q8PIE=
- go.opentelemetry.io/proto/otlp v1.10.0 h1:IQRWgT5srOCYfiWnpqUYz9CVmbO8bFmKcwYxpuCSL2g=
- go.opentelemetry.io/proto/otlp v1.10.0/go.mod h1:/CV4QoCR/S9yaPj8utp3lvQPoqMtxXdzn7ozvvozVqk=
- go.uber.org/goleak v1.3.0 h1:2K3zAYmnTNqV73imy9J1T3WC+gmCePx2hEGkimedGto=
-@@ -524,8 +524,8 @@ golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8U
- golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
- golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a/go.mod h1:P+XmwS30IXTQdn5tA2iutPOUgjI07+tq3H3K9MVA1s8=
- golang.org/x/crypto v0.0.0-20220214200702-86341886e292/go.mod h1:IxCIyHEi3zRg3s0A5j5BB6A9Jmi73HwBIUl50j+osU4=
--golang.org/x/crypto v0.54.0 h1:YLIA59K4fiNzHzjnZt2tUJQjQtUWfWbeHBqKtk3eScw=
--golang.org/x/crypto v0.54.0/go.mod h1:KWL8ny2AZdGR2cWmzeHrp2azQPGogOv+HeQaVEXC2dk=
-+golang.org/x/crypto v0.55.0 h1:+KWHjbgOaAQ66dh/YlkZKHlz9ZUlq61AFirAR9ntP8M=
-+golang.org/x/crypto v0.55.0/go.mod h1:uq0V9dE/fzQuJtbnL+2EhWOE63vo164FY8xqEnV9xis=
- golang.org/x/mod v0.3.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
- golang.org/x/mod v0.4.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
- golang.org/x/mod v0.4.2/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
-@@ -541,8 +541,8 @@ golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4/go.mod h1:p54w0d4576C0XHj96b
- golang.org/x/net v0.0.0-20210510120150-4163338589ed/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=
- golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=
- golang.org/x/net v0.0.0-20220225172249-27dd8689420f/go.mod h1:CfG3xpIq0wQ8r1q4Su4UZFWDARRcnwPjda9FqA0JpMk=
--golang.org/x/net v0.57.0 h1:K5+3DljvIuDG9/Jv9rvyMywYNFCQ9RSUY6OOTTkT+tE=
--golang.org/x/net v0.
-```
-
-**File**: `test/e2e/gateway/test_resources/init.go` (modified, +5/-2)
-```diff
-@@ -6,17 +6,20 @@ import (
- 
- 	"sigs.k8s.io/aws-load-balancer-controller/v3/test/framework"
- 	"sigs.k8s.io/aws-load-balancer-controller/v3/test/framework/manifest"
-+	"sigs.k8s.io/aws-load-balancer-controller/v3/test/framework/utils"
- )
- 
--// InitGatewayFramework wraps framework.InitFramework with gateway-specific per-partition wiring.
--// Callers use this in package InitTF; sets TestHostname and, if --resolve-image-tags is on, rewrites image vars.
-+// InitGatewayFramework initializes the framework, sets TestHostname, and selects the GRPC/UDP image source.
- func InitGatewayFramework(ctx context.Context) (*framework.Framework, error) {
- 	tf, err := framework.InitFramework()
- 	if err != nil {
- 		return nil, err
- 	}
- 	SetTestHostnameForRegion(tf.Options.AWSRegion)
-+	// Default is public (constants.go); --resolve-image-tags switches to the mirror + resolver.
- 	if tf.Options.ResolveImageTags {
-+		utils.UDPImage = utils.MirrorUDPImage
-+		utils.GRPCImage = utils.MirrorGRPCImage
- 		r, err := manifest.NewImageResolver(ctx, tf.Options.TestImageRegistry, tf.Logger)
- 		if err != nil {
- 			return nil, fmt.Errorf("init image resolver: %w", err)
-```
-
-**File**: `test/framework/utils/constants.go` (modified, +10/-2)
-```diff
-@@ -1,9 +1,17 @@
- package utils
- 
-+// UDP/GRPC image sources; InitGatewayFramework selects public (default) or mirror per --resolve-image-tags.
-+const (
-+	PublicUDPImage  = "public.ecr.aws/u6k2n8q7/nixozach/udp-echoserver:latest"
-+	PublicGRPCImage = "public.ecr.aws/u6k2n8q7/nixozach/grpc-echoserver:latest"
-+	MirrorUDPImage  = "networking-e2e-test-images/udp-echoserver:latest"
-+	MirrorGRPCImage = "networking-e2e-test-images/grpc-echoserver:latest"
-+)
-+
- // Test image paths; vars so downstream can override with resolved (non-`:latest`) tags.
- var (
- 	HelloImage       = "networking-e2e-test-images/hello-multi:latest"
- 	ColortellerImage = "networking-e2e-test-images/colorteller:latest"
--	UDPImage         = "networking-e2e-test-images/udp-echoserver:latest"
--	GRPCImage        = "networking-e2e-test-images/grpc-echoserver:latest"
-+	UDPImage         = PublicUDPImage
-+	GRPCImage        = PublicGRPCImage
- )
-```
-
-**File**: `test/framework/utils/image.go` (modified, +16/-0)
-```diff
-@@ -1,5 +1,21 @@
- package utils
- 
-+import "strings"
-+
-+// GetDeploymentImage prefixes the registry only for relative refs; fully-qualified refs are returned as-is.
- func GetDeploymentImage(registry string, image string) string {
-+	if isRegistryQualified(image) {
-+		return image
-+	}
- 	return registry + "/" + image
- }
-+
-+// isRegistryQualified reports whether image's first segment is a registry host (contains "." or ":", or is "localhost").
-+func isRegistryQualified(image string) bool {
-+	i := strings.IndexByte(image, '/')
-+	if i < 0 {
-+		return false
-+	}
-+	first := image[:i]
-+	return first == "localhost" || strings.ContainsAny(first, ".:")
-+}
-```
-
----
-
-### Incident Patch 10: `afdf53b2` (2026-09-22)
-**Commit Message**: fix: canonicalize CIDRs for security group inbound rules to avoid reconciliation failures (#4904)
-
-**File**: `apis/gateway/v1/loadbalancerconfig_types.go` (modified, +1/-0)
-```diff
-@@ -255,6 +255,7 @@ type LoadBalancerConfigurationSpec struct {
- 	SecurityGroupPrefixes *[]string `json:"securityGroupPrefixes,omitempty"`
- 
- 	// sourceRanges an optional list of CIDRs that are allowed to access the LB.
-+	// IPv4 and IPv6 CIDRs are canonicalized. Defaults to 0.0.0.0/0 and ::/0.
- 	// +optional
- 	SourceRanges *[]string `json:"sourceRanges,omitempty"`
- 
-```
-
-**File**: `apis/gateway/v1beta1/loadbalancerconfig_types.go` (modified, +1/-0)
-```diff
-@@ -255,6 +255,7 @@ type LoadBalancerConfigurationSpec struct {
- 	SecurityGroupPrefixes *[]string `json:"securityGroupPrefixes,omitempty"`
- 
- 	// sourceRanges an optional list of CIDRs that are allowed to access the LB.
-+	// IPv4 and IPv6 CIDRs are canonicalized. Defaults to 0.0.0.0/0 and ::/0.
- 	// +optional
- 	SourceRanges *[]string `json:"sourceRanges,omitempty"`
- 
-```
-
-**File**: `config/crd/gateway/gateway-crds.yaml` (modified, +6/-4)
-```diff
-@@ -1217,8 +1217,9 @@ spec:
-                     type: boolean
-                 type: object
-               sourceRanges:
--                description: sourceRanges an optional list of CIDRs that are allowed
--                  to access the LB.
-+                description: |-
-+                  sourceRanges an optional list of CIDRs that are allowed to access the LB.
-+                  IPv4 and IPv6 CIDRs are canonicalized. Defaults to 0.0.0.0/0 and ::/0.
-                 items:
-                   type: string
-                 type: array
-@@ -1567,8 +1568,9 @@ spec:
-                     type: boolean
-                 type: object
-               sourceRanges:
--                description: sourceRanges an optional list of CIDRs that are allowed
--                  to access the LB.
-+                description: |-
-+                  sourceRanges an optional list of CIDRs that are allowed to access the LB.
-+                  IPv4 and IPv6 CIDRs are canonicalized. Defaults to 0.0.0.0/0 and ::/0.
-                 items:
-                   type: string
-                 type: array
-```
-
-**File**: `config/crd/gateway/gateway.k8s.aws_loadbalancerconfigurations.yaml` (modified, +6/-4)
-```diff
-@@ -320,8 +320,9 @@ spec:
-                     type: boolean
-                 type: object
-               sourceRanges:
--                description: sourceRanges an optional list of CIDRs that are allowed
--                  to access the LB.
-+                description: |-
-+                  sourceRanges an optional list of CIDRs that are allowed to access the LB.
-+                  IPv4 and IPv6 CIDRs are canonicalized. Defaults to 0.0.0.0/0 and ::/0.
-                 items:
-                   type: string
-                 type: array
-@@ -670,8 +671,9 @@ spec:
-                     type: boolean
-                 type: object
-               sourceRanges:
--                description: sourceRanges an optional list of CIDRs that are allowed
--                  to access the LB.
-+                description: |-
-+                  sourceRanges an optional list of CIDRs that are allowed to access the LB.
-+                  IPv4 and IPv6 CIDRs are canonicalized. Defaults to 0.0.0.0/0 and ::/0.
-                 items:
-                   type: string
-                 type: array
-```
-
-**File**: `docs/guide/ingress/annotations.md` (modified, +2/-0)
-```diff
-@@ -705,6 +705,8 @@ Access control for LoadBalancer can be controlled with following annotations:
- 
- - <a name="inbound-cidrs">`alb.ingress.kubernetes.io/inbound-cidrs`</a> specifies the CIDRs that are allowed to access LoadBalancer.
- 
-+    The Load Balancer Controller canonicalizes CIDRs.
-+
-     !!!note "Merge Behavior"
-         `inbound-cidrs` is merged across all Ingresses in IngressGroup, but is exclusive per listen-port.
- 
-```
-
-**File**: `docs/guide/service/annotations.md` (modified, +1/-0)
-```diff
-@@ -610,6 +610,7 @@ Load balancer access can be controlled via following annotations:
-     !!!tip
-         - We recommend specifying CIDRs in the service `spec.loadBalancerSourceRanges` instead
-         - For enhanced security with `internal` network load balancers, we recommend limiting access by specifying allowed source IP ranges.  This can be done using either the `service.beta.kubernetes.io/load-balancer-source-ranges` annotation or the `spec.loadBalancerSourceRanges` field.
-+        - The Load Balancer Controller canonicalizes CIDRs
- 
-     !!!note "Default"
-         - `0.0.0.0/0` will be used if the IPAddressType is "ipv4"
-```
-
-**File**: `helm/aws-load-balancer-controller/crds/gateway-crds.yaml` (modified, +6/-4)
-```diff
-@@ -1217,8 +1217,9 @@ spec:
-                     type: boolean
-                 type: object
-               sourceRanges:
--                description: sourceRanges an optional list of CIDRs that are allowed
--                  to access the LB.
-+                description: |-
-+                  sourceRanges an optional list of CIDRs that are allowed to access the LB.
-+                  IPv4 and IPv6 CIDRs are canonicalized. Defaults to 0.0.0.0/0 and ::/0.
-                 items:
-                   type: string
-                 type: array
-@@ -1567,8 +1568,9 @@ spec:
-                     type: boolean
-                 type: object
-               sourceRanges:
--                description: sourceRanges an optional list of CIDRs that are allowed
--                  to access the LB.
-+                description: |-
-+                  sourceRanges an optional list of CIDRs that are allowed to access the LB.
-+                  IPv4 and IPv6 CIDRs are canonicalized. Defaults to 0.0.0.0/0 and ::/0.
-                 items:
-                   type: string
-                 type: array
-```
-
-**File**: `pkg/gateway/model/model_build_security_group.go` (modified, +15/-5)
-```diff
-@@ -6,6 +6,7 @@ import (
- 	"encoding/hex"
- 	"fmt"
- 	"regexp"
-+	"slices"
- 
- 	awssdk "github.com/aws/aws-sdk-go-v2/aws"
- 	ec2types "github.com/aws/aws-sdk-go-v2/service/ec2/types"
-@@ -156,7 +157,11 @@ func (builder *securityGroupBuilderImpl) buildManagedSecurityGroup(stack core.St
- 		return nil, err
- 	}
- 
--	ingressPermissions := builder.buildManagedSecurityGroupIngressPermissions(lbConf, listeners, ipAddressType)
-+	ingressPermissions, err := builder.buildManagedSecurityGroupIngressPermissions(lbConf, listeners, ipAddressType)
-+	if err != nil {
-+		return nil, err
-+	}
-+
- 	return ec2model.NewSecurityGroup(stack, resourceIDManagedSecurityGroup, ec2model.SecurityGroupSpec{
- 		GroupName:   name,
- 		Description: managedSGDescription,
-@@ -178,12 +183,11 @@ func (builder *securityGroupBuilderImpl) buildManagedSecurityGroupName(gw *gwv1.
- 	return fmt.Sprintf("k8s-%.8s-%.8s-%.10s", sanitizedNamespace, sanitizedName, uuid)
- }
- 
--func (builder *securityGroupBuilderImpl) buildManagedSecurityGroupIngressPermissions(lbConf elbv2gw.LoadBalancerConfiguration, listeners []gwv1.Listener, ipAddressType elbv2model.IPAddressType) []ec2model.IPPermission {
-+func (builder *securityGroupBuilderImpl) buildManagedSecurityGroupIngressPermissions(lbConf elbv2gw.LoadBalancerConfiguration, listeners []gwv1.Listener, ipAddressType elbv2model.IPAddressType) ([]ec2model.IPPermission, error) {
- 	var permissions []ec2model.IPPermission
- 
- 	// Default to 0.0.0.0/0 and ::/0
- 	// If user specified actual ranges, then these values will be overridden.
--	// TODO - Document this
- 	sourceRanges := []string{
- 		"0.0.0.0/0",
- 		"::/0",
-@@ -205,12 +209,18 @@ func (builder *securityGroupBuilderImpl) buildManagedSecurityGroupIngressPermiss
- 
- 	includeIPv6 := isIPv6Supported(ipAddressType)
- 
-+	ipv4CIDRs, ipv6CIDRs, err := networking.CanonicalizeCIDRs(sourceRanges)
-+	if err != nil {
-+		return nil, err
-+	}
-+	cidrs := slices.Concat(ipv4CIDRs, ipv6CIDRs)
-+
- 	//listener loop
- 	for _, listener := range listeners {
- 		port := int32(listener.Port)
- 		protocol := getSgRuleProtocol(listener.Protocol)
- 		// CIDR Loop
--		for _, cidr := range sourceRanges {
-+		for _, cidr := range cidrs {
- 			isIPv6 := isIPv6CIDR(cidr)
- 
- 			if !isIPv6 {
-@@ -278,7 +288,7 @@ func (builder *securityGroupBuilderImpl) buildManagedSecurityGroupIngressPermiss
- 			})
- 		} // PL loop
- 	} // listener loop
--	return permissions
-+	return permissions, nil
- }
- 
- func getSgRuleProtocol(protocol gwv1.ProtocolType) ec2types.Protocol {
-```
-
----
-
-### Incident Patch 11: `07156c4e` (2026-09-22)
-**Commit Message**: build(deps): bump google.golang.org/grpc to v1.83.2
-
-Resolves the vulnerabilities that the Dependency Review workflow flags on
-the pinned grpc version:
-  - GO-2026-6348 (govulncheck, "called"): fixed in grpc v1.83.1
-  - GHSA-2v4p-qf9q-27wj (gRPC xDS server DoS, high): affects >=1.83.0,<1.83.2
-    and <1.82.2; fixed in grpc v1.83.2
-
-v1.83.2 clears both. Verified with go1.26.6 (.go-version): the only
-remaining govulncheck "called" vuln is GO-2026-5932 (x/crypto openpgp,
-already in the ignore list pending Helm v4), and every transitively
-upgraded module (x/net 0.58.0, x/crypto 0.55.0, x/text 0.41.0) is above
-its advisory fix line.
-
-**File**: `go.mod` (modified, +5/-5)
-```diff
-@@ -36,10 +36,10 @@ require (
- 	github.com/spf13/pflag v1.0.10
- 	github.com/stretchr/testify v1.11.1
- 	go.uber.org/zap v1.28.0
--	golang.org/x/net v0.57.0
-+	golang.org/x/net v0.58.0
- 	golang.org/x/time v0.15.0
- 	gomodules.xyz/jsonpatch/v2 v2.4.0
--	google.golang.org/grpc v1.82.1
-+	google.golang.org/grpc v1.83.2
- 	google.golang.org/protobuf v1.36.12-0.20260120151049-f2248ac996af
- 	gopkg.in/yaml.v3 v3.0.1
- 	helm.sh/helm/v3 v3.21.3
-@@ -169,15 +169,15 @@ require (
- 	go.uber.org/multierr v1.11.0 // indirect
- 	go.yaml.in/yaml/v2 v2.4.4 // indirect
- 	go.yaml.in/yaml/v3 v3.0.4 // indirect
--	golang.org/x/crypto v0.54.0 // indirect
-+	golang.org/x/crypto v0.55.0 // indirect
- 	golang.org/x/mod v0.38.0 // indirect
- 	golang.org/x/oauth2 v0.36.0 // indirect
- 	golang.org/x/sync v0.22.0 // indirect
- 	golang.org/x/sys v0.47.0 // indirect
- 	golang.org/x/term v0.45.0 // indirect
--	golang.org/x/text v0.40.0 // indirect
-+	golang.org/x/text v0.41.0 // indirect
- 	golang.org/x/tools v0.48.0 // indirect
--	google.golang.org/genproto/googleapis/rpc v0.0.0-20260523011958-0a33c5d7ca68 // indirect
-+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa // indirect
- 	gopkg.in/evanphx/json-patch.v4 v4.13.0 // indirect
- 	gopkg.in/inf.v0 v0.9.1 // indirect
- 	k8s.io/apiextensions-apiserver v0.36.2 // indirect
-```
-
-**File**: `go.sum` (modified, +22/-22)
-```diff
-@@ -471,8 +471,8 @@ go.opentelemetry.io/contrib/exporters/autoexport v0.67.0 h1:4fnRcNpc6YFtG3zsFw9a
- go.opentelemetry.io/contrib/exporters/autoexport v0.67.0/go.mod h1:qTvIHMFKoxW7HXg02gm6/Wofhq5p3Ib/A/NNt1EoBSQ=
- go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.68.0 h1:CqXxU8VOmDefoh0+ztfGaymYbhdB/tT3zs79QaZTNGY=
- go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.68.0/go.mod h1:BuhAPThV8PBHBvg8ZzZ/Ok3idOdhWIodywz2xEcRbJo=
--go.opentelemetry.io/otel v1.43.0 h1:mYIM03dnh5zfN7HautFE4ieIig9amkNANT+xcVxAj9I=
--go.opentelemetry.io/otel v1.43.0/go.mod h1:JuG+u74mvjvcm8vj8pI5XiHy1zDeoCS2LB1spIq7Ay0=
-+go.opentelemetry.io/otel v1.44.0 h1:JjwHmHpA4iZ3wBxluu2fbbE7j4kqlE8jXyAyPXH7HqU=
-+go.opentelemetry.io/otel v1.44.0/go.mod h1:BMgjTHL9WPRlRjL2oZCBTL4whCGtXch2H4BhOPIAyYc=
- go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc v0.19.0 h1:Dn8rkudDzY6KV9dr/D/bTUuWgqDf9xe0rr4G2elrn0Y=
- go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc v0.19.0/go.mod h1:gMk9F0xDgyN9M/3Ed5Y1wKcx/9mlU91NXY2SNq7RQuU=
- go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp v0.19.0 h1:HIBTQ3VO5aupLKjC90JgMqpezVXwFuq6Ryjn0/izoag=
-@@ -497,16 +497,16 @@ go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.43.0 h1:mS47AX77OtFfKG4
- go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.43.0/go.mod h1:PJnsC41lAGncJlPUniSwM81gc80GkgWJWr3cu2nKEtU=
- go.opentelemetry.io/otel/log v0.19.0 h1:KUZs/GOsw79TBBMfDWsXS+KZ4g2Ckzksd1ymzsIEbo4=
- go.opentelemetry.io/otel/log v0.19.0/go.mod h1:5DQYeGmxVIr4n0/BcJvF4upsraHjg6vudJJpnkL6Ipk=
--go.opentelemetry.io/otel/metric v1.43.0 h1:d7638QeInOnuwOONPp4JAOGfbCEpYb+K6DVWvdxGzgM=
--go.opentelemetry.io/otel/metric v1.43.0/go.mod h1:RDnPtIxvqlgO8GRW18W6Z/4P462ldprJtfxHxyKd2PY=
--go.opentelemetry.io/otel/sdk v1.43.0 h1:pi5mE86i5rTeLXqoF/hhiBtUNcrAGHLKQdhg4h4V9Dg=
--go.opentelemetry.io/otel/sdk v1.43.0/go.mod h1:P+IkVU3iWukmiit/Yf9AWvpyRDlUeBaRg6Y+C58QHzg=
-+go.opentelemetry.io/otel/metric v1.44.0 h1:1w0gILTcHdr3YI+ixLyjemwrVnsMURbTZFrSYCdDdmc=
-+go.opentelemetry.io/otel/metric v1.44.0/go.mod h1:8O7hanEPBNgEMmybD3s2VBKcgWOCsA6tzHBPODAiquo=
-+go.opentelemetry.io/otel/sdk v1.44.0 h1:nHYwb9lK+fJPU/dnT6s7W7Z8itMWyqrnVfbheVYrZ58=
-+go.opentelemetry.io/otel/sdk v1.44.0/go.mod h1:Osuydd3Se74nqjAKxid74N5eC+jfEqfTegHRnq58oK0=
- go.opentelemetry.io/otel/sdk/log v0.19.0 h1:scYVLqT22D2gqXItnWiocLUKGH9yvkkeql5dBDiXyko=
- go.opentelemetry.io/otel/sdk/log v0.19.0/go.mod h1:vFBowwXGLlW9AvpuF7bMgnNI95LiW10szrOdvzBHlAg=
--go.opentelemetry.io/otel/sdk/metric v1.43.0 h1:S88dyqXjJkuBNLeMcVPRFXpRw2fuwdvfCGLEo89fDkw=
--go.opentelemetry.io/otel/sdk/metric v1.43.0/go.mod h1:C/RJtwSEJ5hzTiUz5pXF1kILHStzb9zFlIEe85bhj6A=
--go.opentelemetry.io/otel/trace v1.43.0 h1:BkNrHpup+4k4w+ZZ86CZoHHEkohws8AY+WTX09nk+3A=
--go.opentelemetry.io/otel/trace v1.43.0/go.mod h1:/QJhyVBUUswCphDVxq+8mld+AvhXZLhe+8WVFxiFff0=
-+go.opentelemetry.io/otel/sdk/metric v1.44.0 h1:3LlKgI+VjbVsjNRFZJZAJ30WjXC5VkNRks6si09iEfI=
-+go.opentelemetry.io/otel/sdk/metric v1.44.0/go.mod h1:5B5pMARnXxKhltooO4xUuCBorl65a4EpnTalObqOigA=
-+go.opentelemetry.io/otel/trace v1.44.0 h1:jxF5CsGYCe74MCRx2X4g7WsY/VBKRqqpNvXlX/6gtIk=
-+go.opentelemetry.io/otel/trace v1.44.0/go.mod h1:oLl1jrMQAVo6v3GAggN+1VH9VIz9iUSvW53sW1Q8PIE=
- go.opentelemetry.io/proto/otlp v1.10.0 h1:IQRWgT5srOCYfiWnpqUYz9CVmbO8bFmKcwYxpuCSL2g=
- go.opentelemetry.io/proto/otlp v1.10.0/go.mod h1:/CV4QoCR/S9yaPj8utp3lvQPoqMtxXdzn7ozvvozVqk=
- go.uber.org/goleak v1.3.0 h1:2K3zAYmnTNqV73imy9J1T3WC+gmCePx2hEGkimedGto=
-@@ -524,8 +524,8 @@ golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8U
- golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
- golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a/go.mod h1:P+XmwS30IXTQdn5tA2iutPOUgjI07+tq3H3K9MVA1s8=
- golang.org/x/crypto v0.0.0-20220214200702-86341886e292/go.mod h1:IxCIyHEi3zRg3s0A5j5BB6A9Jmi73HwBIUl50j+osU4=
--golang.org/x/crypto v0.54.0 h1:YLIA59K4fiNzHzjnZt2tUJQjQtUWfWbeHBqKtk3eScw=
--golang.org/x/crypto v0.54.0/go.mod h1:KWL8ny2AZdGR2cWmzeHrp2azQPGogOv+HeQaVEXC2dk=
-+golang.org/x/crypto v0.55.0 h1:+KWHjbgOaAQ66dh/YlkZKHlz9ZUlq61AFirAR9ntP8M=
-+golang.org/x/crypto v0.55.0/go.mod h1:uq0V9dE/fzQuJtbnL+2EhWOE63vo164FY8xqEnV9xis=
- golang.org/x/mod v0.3.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
- golang.org/x/mod v0.4.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
- golang.org/x/mod v0.4.2/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
-@@ -541,8 +541,8 @@ golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4/go.mod h1:p54w0d4576C0XHj96b
- golang.org/x/net v0.0.0-20210510120150-4163338589ed/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=
- golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=
- golang.org/x/net v0.0.0-20220225172249-27dd8689420f/go.mod h1:CfG3xpIq0wQ8r1q4Su4UZFWDARRcnwPjda9FqA0JpMk=
--golang.org/x/net v0.57.0 h1:K5+3DljvIuDG9/Jv9rvyMywYNFCQ9RSUY6OOTTkT+tE=
--golang.org/x/net v0.
-```
-
----
-
-### Incident Patch 12: `0465d72b` (2026-09-17)
-**Commit Message**: test/gateway: make e2e suite partition-aware and register ECR tag resolver
-
-**File**: `go.mod` (modified, +1/-0)
-```diff
-@@ -10,6 +10,7 @@ require (
- 	github.com/aws/aws-sdk-go-v2/service/acm v1.28.4
- 	github.com/aws/aws-sdk-go-v2/service/appmesh v1.27.7
- 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.173.0
-+	github.com/aws/aws-sdk-go-v2/service/ecr v1.30.0
- 	github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2 v1.54.0
- 	github.com/aws/aws-sdk-go-v2/service/globalaccelerator v1.26.3
- 	github.com/aws/aws-sdk-go-v2/service/resourcegroupstaggingapi v1.23.3
-```
-
-**File**: `go.sum` (modified, +2/-0)
-```diff
-@@ -49,6 +49,8 @@ github.com/aws/aws-sdk-go-v2/service/appmesh v1.27.7 h1:q44a6kysAfej9zZwRnraOg9s
- github.com/aws/aws-sdk-go-v2/service/appmesh v1.27.7/go.mod h1:ZYSmrgAMp0rTCHH+SGsoxZo+PPbgsDqBzewTp3tSJ60=
- github.com/aws/aws-sdk-go-v2/service/ec2 v1.173.0 h1:ta62lid9JkIpKZtZZXSj6rP2AqY5x1qYGq53ffxqD9Q=
- github.com/aws/aws-sdk-go-v2/service/ec2 v1.173.0/go.mod h1:o6QDjdVKpP5EF0dp/VlvqckzuSDATr1rLdHt3A5m0YY=
-+github.com/aws/aws-sdk-go-v2/service/ecr v1.30.0 h1:WsWG+jupMFNpMCF3g4y1jVWbXKBsG1DyTs2tM48yuJE=
-+github.com/aws/aws-sdk-go-v2/service/ecr v1.30.0/go.mod h1:WadVIk+UrTvWuAsCp6BKGX4i2snurpz8mPWhJQnS7Dg=
- github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2 v1.54.0 h1:7Aa/utljEengXYcL+29baOrd6eRtP0JoX3UJwYNA83Y=
- github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2 v1.54.0/go.mod h1:DpGMmFhQwV/HH9zugLT5Ovf9HMKdQ+6ejfJybqEC9i4=
- github.com/aws/aws-sdk-go-v2/service/globalaccelerator v1.26.3 h1:G8qcrur/MG4c7Wu+LMtpAPUSzmmaOa4ssHgYtefeJoo=
-```
-
-**File**: `test/e2e/gateway/alb_tests/alb_test_helper.go` (modified, +3/-3)
-```diff
-@@ -48,11 +48,11 @@ func (s *ALBTestStack) DeployGRPC(ctx context.Context, f *framework.Framework, g
- 	}
- 
- 	svc := test_resources.BuildGRPCServiceSpec(test_resources.GRPCDefaultName, labels)
--	dp := test_resources.BuildGRPCDeploymentSpec(test_resources.GRPCDefaultName, "Hello World", labels)
-+	dp := test_resources.BuildGRPCDeploymentSpec(test_resources.GRPCDefaultName, "Hello World", labels, f.Options.TestImageRegistry)
- 	tgc := test_resources.BuildTargetGroupConfig(test_resources.DefaultTgConfigName, tgConfSpec, svc)
- 
- 	svcOther := test_resources.BuildGRPCServiceSpec(test_resources.GRPCDefaultName+"-other", otherLabels)
--	dpOther := test_resources.BuildGRPCDeploymentSpec(test_resources.GRPCDefaultName+"-other", "Hello World - Other", otherLabels)
-+	dpOther := test_resources.BuildGRPCDeploymentSpec(test_resources.GRPCDefaultName+"-other", "Hello World - Other", otherLabels, f.Options.TestImageRegistry)
- 	tgcOther := test_resources.BuildTargetGroupConfig(test_resources.DefaultTgConfigName+"-other", tgConfSpec, svcOther)
- 
- 	return s.deploy(ctx, f, gwListeners, []*gwv1.HTTPRoute{}, grpcrs, []*appsv1.Deployment{dp, dpOther}, []*corev1.Service{svc, svcOther}, lbConfSpec, []*elbv2gw.TargetGroupConfiguration{tgc, tgcOther}, lrConfSpec, nil, readinessGateEnabled)
-@@ -70,7 +70,7 @@ func (s *ALBTestStack) DeployHTTPAndGRPC(ctx context.Context, f *framework.Frame
- 		"app.kubernetes.io/instance": test_resources.GRPCDefaultName,
- 	}
- 	grpcSvc := test_resources.BuildGRPCServiceSpec(test_resources.GRPCDefaultName, grpcLabels)
--	grpcDp := test_resources.BuildGRPCDeploymentSpec(test_resources.GRPCDefaultName, "Hello World", grpcLabels)
-+	grpcDp := test_resources.BuildGRPCDeploymentSpec(test_resources.GRPCDefaultName, "Hello World", grpcLabels, f.Options.TestImageRegistry)
- 	grpcTgc := test_resources.BuildTargetGroupConfig(test_resources.DefaultTgConfigName+"-grpc", tgConfSpec, grpcSvc)
- 
- 	return s.deploy(ctx, f, gwListeners, httprs, grpcrs,
-```
-
-**File**: `test/e2e/gateway/alb_tests/state.go` (modified, +7/-2)
-```diff
-@@ -1,6 +1,11 @@
- package alb_tests
- 
--import "sigs.k8s.io/aws-load-balancer-controller/v3/test/framework"
-+import (
-+	"context"
-+
-+	"sigs.k8s.io/aws-load-balancer-controller/v3/test/e2e/gateway/test_resources"
-+	"sigs.k8s.io/aws-load-balancer-controller/v3/test/framework"
-+)
- 
- var tf *framework.Framework
- 
-@@ -12,6 +17,6 @@ func InitTF() error {
- 		return nil
- 	}
- 	var err error
--	tf, err = framework.InitFramework()
-+	tf, err = test_resources.InitGatewayFramework(context.Background())
- 	return err
- }
-```
-
-**File**: `test/e2e/gateway/chained_gateway_tests/state.go` (modified, +7/-2)
-```diff
-@@ -1,6 +1,11 @@
- package chained_gateway_tests
- 
--import "sigs.k8s.io/aws-load-balancer-controller/v3/test/framework"
-+import (
-+	"context"
-+
-+	"sigs.k8s.io/aws-load-balancer-controller/v3/test/e2e/gateway/test_resources"
-+	"sigs.k8s.io/aws-load-balancer-controller/v3/test/framework"
-+)
- 
- var tf *framework.Framework
- 
-@@ -12,6 +17,6 @@ func InitTF() error {
- 		return nil
- 	}
- 	var err error
--	tf, err = framework.InitFramework()
-+	tf, err = test_resources.InitGatewayFramework(context.Background())
- 	return err
- }
-```
-
-**File**: `test/e2e/gateway/listenerset_tests/state.go` (modified, +7/-2)
-```diff
-@@ -1,6 +1,11 @@
- package listenerset_tests
- 
--import "sigs.k8s.io/aws-load-balancer-controller/v3/test/framework"
-+import (
-+	"context"
-+
-+	"sigs.k8s.io/aws-load-balancer-controller/v3/test/e2e/gateway/test_resources"
-+	"sigs.k8s.io/aws-load-balancer-controller/v3/test/framework"
-+)
- 
- var tf *framework.Framework
- 
-@@ -12,6 +17,6 @@ func InitTF() error {
- 		return nil
- 	}
- 	var err error
--	tf, err = framework.InitFramework()
-+	tf, err = test_resources.InitGatewayFramework(context.Background())
- 	return err
- }
-```
-
-**File**: `test/e2e/gateway/nlb_tests/nlb_test_helper.go` (modified, +4/-4)
-```diff
-@@ -28,7 +28,7 @@ func (s *NLBTestStack) Deploy(ctx context.Context, f *framework.Framework, auxil
- 	dpTCP := test_resources.BuildDeploymentSpec(f.Options.TestImageRegistry)
- 	svcTCP := test_resources.BuildServiceSpec(map[string]string{})
- 
--	dpUDP := test_resources.BuildUDPDeploymentSpec()
-+	dpUDP := test_resources.BuildUDPDeploymentSpec(f.Options.TestImageRegistry)
- 	svcUDP := test_resources.BuildUDPServiceSpec()
- 	gwc := test_resources.BuildGatewayClassSpec(test_resources.NLBGatewayControllerName)
- 
-@@ -154,7 +154,7 @@ func (s *NLBTestStack) DeployTCPWeightedStack(ctx context.Context, f *framework.
- }
- 
- func (s *NLBTestStack) DeployTCP_UDP(ctx context.Context, f *framework.Framework, lbConfSpec elbv2gw.LoadBalancerConfigurationSpec, tgConfSpec elbv2gw.TargetGroupConfigurationSpec, readinessGateEnabled bool) error {
--	dpUDP := test_resources.BuildUDPDeploymentSpec()
-+	dpUDP := test_resources.BuildUDPDeploymentSpec(f.Options.TestImageRegistry)
- 	svcUDP := test_resources.BuildUDPServiceSpec()
- 	gwc := test_resources.BuildGatewayClassSpec(test_resources.NLBGatewayControllerName)
- 
-@@ -185,7 +185,7 @@ func (s *NLBTestStack) DeployTCP_UDP(ctx context.Context, f *framework.Framework
- }
- 
- func (s *NLBTestStack) DeployQUIC(ctx context.Context, f *framework.Framework, lbConfSpec elbv2gw.LoadBalancerConfigurationSpec, tgConfSpec elbv2gw.TargetGroupConfigurationSpec, namespaceLabels map[string]string) error {
--	dpUDP := test_resources.BuildUDPDeploymentSpec()
-+	dpUDP := test_resources.BuildUDPDeploymentSpec(f.Options.TestImageRegistry)
- 	svcUDP := test_resources.BuildUDPServiceSpec()
- 
- 	dpUDP.Spec.Template.Annotations = make(map[string]string)
-@@ -212,7 +212,7 @@ func (s *NLBTestStack) DeployQUIC(ctx context.Context, f *framework.Framework, l
- }
- 
- func (s *NLBTestStack) DeployTCP_QUIC(ctx context.Context, f *framework.Framework, lbConfSpec elbv2gw.LoadBalancerConfigurationSpec, tgConfSpec elbv2gw.TargetGroupConfigurationSpec, namespaceLabels map[string]string) error {
--	dpUDP := test_resources.BuildUDPDeploymentSpec()
-+	dpUDP := test_resources.BuildUDPDeploymentSpec(f.Options.TestImageRegistry)
- 	svcUDP := test_resources.BuildUDPServiceSpec()
- 
- 	dpUDP.Spec.Template.Annotations = make(map[string]string)
-```
-
-**File**: `test/e2e/gateway/nlb_tests/state.go` (modified, +7/-2)
-```diff
-@@ -1,6 +1,11 @@
- package nlb_tests
- 
--import "sigs.k8s.io/aws-load-balancer-controller/v3/test/framework"
-+import (
-+	"context"
-+
-+	"sigs.k8s.io/aws-load-balancer-controller/v3/test/e2e/gateway/test_resources"
-+	"sigs.k8s.io/aws-load-balancer-controller/v3/test/framework"
-+)
- 
- var tf *framework.Framework
- 
-@@ -12,6 +17,6 @@ func InitTF() error {
- 		return nil
- 	}
- 	var err error
--	tf, err = framework.InitFramework()
-+	tf, err = test_resources.InitGatewayFramework(context.Background())
- 	return err
- }
-```
-
----
-
-### Incident Patch 13: `84e31c0e` (2026-09-01)
-**Commit Message**: e2e: init sibling gateway tf in cross-importing suites
-
-Suites blank-importing alb_tests/nlb_tests transitively register those
-packages' Describes into the test binary; without calling their InitTF
-the imported BeforeEach nil-derefs on tf.Options.
-
-**File**: `test/e2e/gateway/chained_gateway_tests/chained_gateway_suite_test.go` (modified, +5/-0)
-```diff
-@@ -5,6 +5,8 @@ import (
- 
- 	. "github.com/onsi/ginkgo/v2"
- 	. "github.com/onsi/gomega"
-+	"sigs.k8s.io/aws-load-balancer-controller/v3/test/e2e/gateway/alb_tests"
-+	"sigs.k8s.io/aws-load-balancer-controller/v3/test/e2e/gateway/nlb_tests"
- )
- 
- func TestChainedGateway(t *testing.T) {
-@@ -14,4 +16,7 @@ func TestChainedGateway(t *testing.T) {
- 
- var _ = BeforeSuite(func() {
- 	Expect(InitTF()).To(Succeed())
-+	// Init imported packages' tf; their Describes are transitively registered here.
-+	Expect(alb_tests.InitTF()).To(Succeed())
-+	Expect(nlb_tests.InitTF()).To(Succeed())
- })
-```
-
-**File**: `test/e2e/gateway/nlb_tests/nlb_gateway_suite_test.go` (modified, +3/-0)
-```diff
-@@ -5,6 +5,7 @@ import (
- 
- 	. "github.com/onsi/ginkgo/v2"
- 	. "github.com/onsi/gomega"
-+	"sigs.k8s.io/aws-load-balancer-controller/v3/test/e2e/gateway/alb_tests"
- )
- 
- func TestNLBGateway(t *testing.T) {
-@@ -14,4 +15,6 @@ func TestNLBGateway(t *testing.T) {
- 
- var _ = BeforeSuite(func() {
- 	Expect(InitTF()).To(Succeed())
-+	// Init imported package's tf; its Describes are transitively registered here.
-+	Expect(alb_tests.InitTF()).To(Succeed())
- })
-```
-
-**File**: `test/e2e/globalaccelerator/globalaccelerator_suite_test.go` (modified, +5/-0)
-```diff
-@@ -5,6 +5,8 @@ import (
- 
- 	. "github.com/onsi/ginkgo/v2"
- 	. "github.com/onsi/gomega"
-+	"sigs.k8s.io/aws-load-balancer-controller/v3/test/e2e/gateway/alb_tests"
-+	"sigs.k8s.io/aws-load-balancer-controller/v3/test/e2e/gateway/nlb_tests"
- 	"sigs.k8s.io/aws-load-balancer-controller/v3/test/framework"
- 	"sigs.k8s.io/aws-load-balancer-controller/v3/test/framework/utils"
- )
-@@ -24,4 +26,7 @@ var _ = BeforeSuite(func() {
- 	if !utils.IsCommercialPartition(tf.Options.AWSRegion) {
- 		Skip("GlobalAccelerator is only available in commercial AWS partition")
- 	}
-+	// Init imported packages' tf; their Describes are transitively registered here.
-+	Expect(alb_tests.InitTF()).To(Succeed())
-+	Expect(nlb_tests.InitTF()).To(Succeed())
- })
-```
-
----
-
-### Incident Patch 14: `0d277bbf` (2026-08-27)
-**Commit Message**: fix(waf): ignore waf acl set to empty string
-
-**File**: `pkg/ingress/model_build_load_balancer_addons.go` (modified, +3/-1)
-```diff
-@@ -2,6 +2,7 @@ package ingress
- 
- import (
- 	"context"
-+
- 	"github.com/pkg/errors"
- 	"k8s.io/apimachinery/pkg/util/sets"
- 	"sigs.k8s.io/aws-load-balancer-controller/v3/pkg/annotations"
-@@ -60,7 +61,8 @@ func (t *defaultModelBuildTask) buildWAFv2WebACLAssociation(ctx context.Context,
- 			}
- 
- 			rawWebACLARN := ""
--			if exists := t.annotationParser.ParseStringAnnotation(annotations.IngressSuffixWAFv2ACLARN, &rawWebACLARN, member.Ing.Annotations); !exists {
-+			exists := t.annotationParser.ParseStringAnnotation(annotations.IngressSuffixWAFv2ACLARN, &rawWebACLARN, member.Ing.Annotations)
-+			if !exists || rawWebACLARN == "" {
- 				continue
- 			}
- 			explicitWebACLARNs.Insert(rawWebACLARN)
-```
-
-**File**: `pkg/ingress/model_build_load_balancer_addons_test.go` (modified, +25/-0)
-```diff
-@@ -69,6 +69,31 @@ func Test_defaultModelBuildTask_buildWAFv2WebACLAssociation(t *testing.T) {
- 			want:    nil,
- 			wantErr: assert.NoError,
- 		},
-+		{
-+			name: " wafv2-acl-arn set to empty string",
-+			fields: fields{
-+				ingGroup: Group{
-+					Members: []ClassifiedIngress{
-+						{
-+							Ing: &networking.Ingress{
-+								ObjectMeta: metav1.ObjectMeta{
-+									Namespace: "awesome-ns",
-+									Name:      "awesome-ing-0",
-+									Annotations: map[string]string{
-+										"alb.ingress.kubernetes.io/wafv2-acl-arn": "",
-+									},
-+								},
-+							},
-+						},
-+					},
-+				},
-+			},
-+			args: args{
-+				lbARN: core.LiteralStringToken("awesome-lb-arn"),
-+			},
-+			want:    nil,
-+			wantErr: assert.NoError,
-+		},
- 		{
- 			name: "when all ingresses have wafv2-acl-arn annotation set to wafv2-arn-1",
- 			fields: fields{
-```
-
----
-
-### Incident Patch 15: `ed2b707b` (2026-08-17)
-**Commit Message**: fix: handle DeletedFinalStateUnknown tombstones in TypedInformer's DeleteFunc (#4879)
-
-* fix: handle DeletedFinalStateUnknown tombstones in TypedInformer's DeleteFunc
-
-TypedInformer[T].DeleteFunc asserted the deleted object directly to T. When
-the informer misses a delete event (e.g. right after a watch reconnect) and
-only notices the deletion on the next relist, client-go delivers a
-cache.DeletedFinalStateUnknown tombstone instead of the real object. The
-bare type assertion panics on that tombstone, and because apimachinery's
-crash handler re-panics after logging, the panic crashes the whole
-controller process instead of staying isolated to the informer goroutine.
-
-Only the Pod informer used for TargetGroupBinding readiness gates (added in
-#4678) goes through TypedInformer, so this is the only watch affected.
-
-Unwrap the tombstone before asserting, and log-and-skip instead of panicking
-if the object still doesn't match.
-
-* fix: ignore Pod delete events instead of asserting them to T
-
-Per review feedback: the TargetGroupBinding controller also watches
-EndpointSlices, which already reflect a Pod's removal, so the Pod informer's
-Delete event doesn't need to reach the handler at all. 
-
-**File**: `pkg/k8s/typed_informer.go` (modified, +2/-5)
-```diff
-@@ -42,11 +42,8 @@ func (is *TypedInformer[T]) Start(ctx context.Context, queue workqueue.TypedRate
- 				ObjectNew: newObj.(T),
- 			}, queue)
- 		},
--		DeleteFunc: func(obj any) {
--			is.Handler.Delete(ctx, event.TypedDeleteEvent[T]{
--				Object: obj.(T),
--			}, queue)
--		},
-+		// Ignored: EndpointSlice watches already reflect a Pod's removal.
-+		DeleteFunc: func(obj any) {},
- 	}
- 
- 	_, err := is.Informer.AddEventHandlerWithOptions(handler, toolscache.HandlerOptions{})
-```
-
 #### Recent Merged Pull Requests:
+- **PR #4928** (2026-10-07): fix(networking): treat InvalidGroup.NotFound as success in releaseSG (@nakshah87)
+- **PR #4922** (2026-10-05): fix(scripts): eks-charts sync gh CLI compat + docs version bump (@shraddhabang)
+- **PR #4921** (2026-10-05): cut v3.6.0 release (@shraddhabang)
 - **PR #4919** (2026-10-03): fix: ignore unpermitted cross namespace TCPRoutes in gateway target TGC deletion guard (@shraddhabang)
+- **PR #4918** (2026-10-09): Move mutual auth helpers to shared utils (@bobert-2)
 - **PR #4916** (2026-09-30): fix: use '/' separator in Gateway route-loader cache keys to avoid co… (@wweiwei-li)
-- **PR #4912** (2026-09-22): chore: OIDC permission messaging (@zac-nixon)
-- **PR #4911** (2026-09-23): test: default GRPC/UDP images to public ECR to fix the tests (@shraddhabang)
-- **PR #4909** (2026-09-24): Fix TGB networking with empty ports (@dlanov)
-- **PR #4908** (2026-09-17): test/gateway: make e2e suite partition-aware and register ECR tag resolver (@jupdec)
-- **PR #4904** (2026-09-22): fix: canonicalize CIDRs for security group inbound rules to avoid reconciliation failures (@bobert-2)
-- **PR #4902** (2026-09-25): docs: warn against manually deleting controller-generated TargetGroupBinding (@shashankvarma499)
 
 ---
 
@@ -4087,3 +2158,38 @@ Delete event doesn't need to reach the handler at all.
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. networking): treat InvalidGroup.NotFound as success in releaseSG (#4928)
+
+**RULE**:
+When implementing operations in `pkg/networking/backend_sg_provider.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubernetes-sigs/aws-load-balancer-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `c27ac737`: networking): treat InvalidGroup.NotFound as success in releaseSG (#4928). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/networking/backend_sg_provider.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+		if isEC2SecurityGroupNotFoundError(err) {
+			p.logger.Info("backend securityGroup already deleted", "ID", p.autoGeneratedSG)
+			p.autoGeneratedSG = ""
+			return nil
+		}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `c27ac737` are properly handled with clean fallback behavior.

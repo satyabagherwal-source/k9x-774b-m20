@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T06:26:30.645Z",
-  "total_cycles_completed": 2988,
-  "total_learnings_persisted": 2988,
-  "total_rules_promoted": 2028,
+  "last_updated": "2026-10-19T06:32:44.388Z",
+  "total_cycles_completed": 2994,
+  "total_learnings_persisted": 2994,
+  "total_rules_promoted": 2032,
   "history": [
-    {
-      "timestamp": "2026-10-19T02:48:51.146Z",
-      "repository": "chakra-ui/ark",
-      "learningId": "learn-github-chakra-ui-ark",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T02:54:53.022Z",
-      "repository": "alibaba-fusion/next",
-      "learningId": "learn-github-alibaba-fusion-next",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T02:54:54.982Z",
-      "repository": "webrtc-rs/webrtc",
-      "learningId": "learn-github-webrtc-rs-webrtc",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T02:54:58.081Z",
-      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
-      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T02:55:01.673Z",
-      "repository": "midudev/preguntas-entrevista-react",
-      "learningId": "learn-github-midudev-preguntas-entrevista-react",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T02:55:02.624Z",
-      "repository": "Orange-Cyberdefense/GOAD",
-      "learningId": "learn-github-orange-cyberdefense-goad",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T02:55:08.347Z",
       "repository": "trinodb/trino",
@@ -1402,6 +1360,48 @@
       "timestamp": "2026-10-19T06:26:30.645Z",
       "repository": "milvus-io/milvus",
       "learningId": "learn-github-milvus-io-milvus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T06:32:30.615Z",
+      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
+      "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T06:32:30.622Z",
+      "repository": "cosscom/ui",
+      "learningId": "learn-github-cosscom-ui",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T06:32:32.018Z",
+      "repository": "ynqa/jnv",
+      "learningId": "learn-github-ynqa-jnv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T06:32:37.202Z",
+      "repository": "sqldelight/sqldelight",
+      "learningId": "learn-github-sqldelight-sqldelight",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T06:32:39.596Z",
+      "repository": "kubernetes-sigs/aws-load-balancer-controller",
+      "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T06:32:44.388Z",
+      "repository": "qdrant/qdrant",
+      "learningId": "learn-github-qdrant-qdrant",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

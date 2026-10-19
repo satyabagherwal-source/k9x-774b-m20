@@ -1,10 +1,10 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cosscom-ui-learnings.md`  
 > **Source**: github ([https://github.com/cosscom/ui](https://github.com/cosscom/ui))  
-> **Source Version**: `28645cd8`  
+> **Source Version**: `a597c630`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-12T19:59:38.556Z  
-> **Learning ID**: `learn-github-cosscom-ui-mv5oegcc`  
+> **Timestamp**: 2026-10-19T06:32:30.458Z  
+> **Learning ID**: `learn-github-cosscom-ui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cosscom-ui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cosscom/ui](https://github.com/cosscom/ui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-12T19:59:37.373Z  
+> **Harvest Timestamp**: 2026-10-19T06:32:29.516Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: coss.com/ui is the official design system of Cal.com
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 10686 stars
+- **Stars / Engagement**: 10721 stars
 
 ---
 
@@ -1061,106 +1061,17 @@ export function useScrollHide(threshold = DEFAULT_SCROLL_THRESHOLD) {
 
 ```
 
-### Core Architecture Module: `apps/origin/hooks/use-config.ts`
-```
-import { useAtom } from "jotai";
-import { atomWithStorage } from "jotai/utils";
-
-type Config = {
-  packageManager: "npm" | "yarn" | "pnpm" | "bun";
-};
-
-const configAtom = atomWithStorage<Config>("config", {
-  packageManager: "pnpm",
-});
-
-export function useConfig() {
-  return useAtom(configAtom);
-}
-
-```
-
-### Core Architecture Module: `apps/origin/hooks/use-copy.ts`
-```
-import { useState } from "react";
-
-export function useCopy(duration = 1500) {
-  const [copied, setCopied] = useState<boolean>(false);
-
-  const copy = async (text: string) => {
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopied(true);
-      setTimeout(() => setCopied(false), duration);
-      return true;
-    } catch (err) {
-      console.error("Failed to copy text: ", err);
-      return false;
-    }
-  };
-
-  return {
-    copied,
-    copy,
-  };
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #867** (2026-10-12): **fix(ui): preserve composer focus and align border radii**
-  *Symptoms*: ## What & why  Port the shared Composer fixes from [calcom/cal#10182](https://github.com/calcom/cal/pull/10182). Clicking Send while the editor is focused now preserves that focus, avoiding iOS keyboard dismissal. The frame and its `::before` layer share `--composer-radius`, retaining the inner layer's 1px inset when consumers customize roundness.  Updates the registry source, generated installable Composer JSON, and package copy. This PR targets `main`; chat-specific reply, reaction, menu, and drawer-demo changes are excluded because those components are not on main yet. #858 is unchanged. No tests are added under the UI source folders.  ## Validation  - Docs app and UI package TypeScript checks pass. - Registry dependency validation, registry generation, and package synchronization pass. - Focused Biome check and `git diff --check` pass. - Chrome: sending from both the native textarea and adaptive contenteditable examples clears the draft and leaves the input focused. Computed radii are 14px outer / 13px inner. - iOS device behavior needs confirmation on this Coss branch; browser checks do not emulate the software keyboard. Full build and screenshots skipped as requested.  ## Risk & rollback  Pointer submission changes only when the primary pointer is pressed while this Composer's input is already focused. Keyboard activation retains its existing behavior. Revert this PR to restore the previous focus and radius handling; no dependencies or migrations change. 
-  **Post-Mortem & Fix Analysis**:
-  > [vc]: #LG61N2C6RvWlhozqmRCnfDiS3YVWpn9qG4S8iiW6vhI=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJjb3NzLWNvbS11aSIsInByb2plY3RJZCI6InByal9ZVkNUNmlGWGhiS0xqUHRuSDVrVVNYUDk0OTd4Iiwicm9vdERpcmVjdG9yeSI6ImFwcHMvdWkiLCJsaXZlRmVlZGJhY2siOnsicmVzb2x2ZWQiOjAsInVucmVzb2x2ZWQiOjAsInRvdGFsIjowLCJsaW5rIjoiY29zcy1jb20tdWktZ2l0LWNvZGV4LWNvbXBvc2VyLWZvY3VzLXJhZGl1cy1jYWwudmVyY2VsLmFwcCJ9LCJpbnNwZWN0b3JVcmwiOiJodHRwczovL3ZlcmNlbC5jb20vY2FsL2Nvc3MtY29tLXVpL0VmZWIzbllxNkJibmJpUlZHc2Q3b2dWeGJvdTEiLCJwcmV2aWV3VXJsIjoiY29zcy1jb20tdWktZ2l0LWNvZGV4LWNvbXBvc2VyLWZvY3VzLXJhZGl1cy1jYWwudmVyY2VsLmFwcCIsIm5leHRDb21taXRTdGF0dXMiOiJERVBMT1lFRCJ9LHsibmFtZSI6ImNvc3MtZXhhbXBsZXMtY2FsY29tIiwicHJvamVjdElkIjoicHJqX3ZOWU45MGY1bENiS2pwM2V3UnpJc2JZVW1sd00iLCJyb290RGlyZWN0b3J5IjoiYXBwcy9leGFtcGxlcy9jYWxjb20iLCJsaXZlRmVlZGJhY2siOnsicmVzb2x2ZWQiOjAsInVucmVzb2x2ZWQiOjAsInRvdGFsIjowLCJsaW5rIjoiY29zcy1leGFtcGxlcy1jYWxjb20tZ2l0LWNvZGV4LWNvbXBvc2VyLWZvY3VzLXJhZGl1cy1jYWwudmVyY2VsLmFwcCJ9LCJpbnNwZWN0b3JV
-  > <!-- linear-linkback --> <p><a href="https://linear.app/calcom/issue/PRO-2553">PRO-2553</a></p>
+- **Issue #903** (2026-10-17): **feat(agent): approval cards, response feedback, and error recovery**
+  *Symptoms*: Ticket 08, turn content B. **Stacks on #900** (agent family scaffold); the base is `claude/agent-family-scaffold-132151`.  ## Summary  ```diff  apps/ui/registry/default/agent/ +├── agent-approval-card.tsx      # AgentApprovalCard, AgentApprovalGroupCard +├── agent-response-feedback.tsx  # AgentResponseFeedback (inside AgentMessageActions) +├── agent-error-recovery.tsx     # AgentErrorRecovery slot +├── hooks/use-agent-pending-choice.ts  # host callback → pending / failed +└── lib/ +    ├── get-agent-approval-state.ts  # getAgentApprovalState, getAgentApprovalGroupShared +    └── get-agent-feedback.ts        # getAgentFeedbackAction, getAgentFeedbackSubmission ```  The approval state is derived by one pure rule, so hosts stop re-implementing resolved rows:  ```text getAgentApprovalState({ decision, responding, error })   decision set          → "approved" | "denied"   (the runtime wins over stale local state)   responding / promise  → "responding"   error / throw / reject→ "error"   (can answer again)   otherwise             → "idle" ```  - **Group card:** approve all / skip all call `onRespond(decision)` once. It asks one shared question (`sharedQuestion ?? question`) when every item asks the same question, otherwise one per item. An approve verb that every item shares replaces “Approve all”. - **Feedback:** controlled `value`; `onFeedback` returns a promise. When it rejects, the component shows an inline error (beside the thumbs or in the dialog) and announces it. Retries ar
 
-- **Issue #866** (2026-10-12): **chore: add @pasqualevitiello as CODEOWNER for apps/ui**
-  *Symptoms*: Adds a `.github/CODEOWNERS` file assigning @pasqualevitiello as owner of all files under `apps/ui/`.  🤖 Generated with [Claude Code](https://claude.com/claude-code)
-  **Post-Mortem & Fix Analysis**:
-  > <!-- linear-linkback --> <p><a href="https://linear.app/calcom/issue/ENG-5941">ENG-5941</a></p>
-  > [vc]: #ZMcuDFcGSKW7HHXDSCLsTNpBwk59eDHe+MCosZomIHc=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJjb3NzLWNvbS11aSIsInByb2plY3RJZCI6InByal9ZVkNUNmlGWGhiS0xqUHRuSDVrVVNYUDk0OTd4Iiwicm9vdERpcmVjdG9yeSI6ImFwcHMvdWkiLCJsaXZlRmVlZGJhY2siOnsicmVzb2x2ZWQiOjAsInVucmVzb2x2ZWQiOjAsInRvdGFsIjowLCJsaW5rIjoiY29zcy1jb20tdWktZ2l0LWNsYXVkZS1jb2Rlb3duZXItYXBwcy11aS0zMmU2OTAtY2FsLnZlcmNlbC5hcHAifSwiaW5zcGVjdG9yVXJsIjoiaHR0cHM6Ly92ZXJjZWwuY29tL2NhbC9jb3NzLWNvbS11aS9FU3ZkNHRCR1Y2bmJSemRjRjZRY3RzeDhrSnA0IiwicHJldmlld1VybCI6ImNvc3MtY29tLXVpLWdpdC1jbGF1ZGUtY29kZW93bmVyLWFwcHMtdWktMzJlNjkwLWNhbC52ZXJjZWwuYXBwIiwibmV4dENvbW1pdFN0YXR1cyI6IkRFUExPWUVEIn0seyJuYW1lIjoiY29zcy1jb20tb3JpZ2luIiwicHJvamVjdElkIjoicHJqX3owZHhSdlljOXFrZlNuUlBKaGh4T3BkeGVybVUiLCJyb290RGlyZWN0b3J5IjoiYXBwcy9vcmlnaW4iLCJsaXZlRmVlZGJhY2siOnsicmVzb2x2ZWQiOjAsInVucmVzb2x2ZWQiOjAsInRvdGFsIjowLCJsaW5rIjoiY29zcy1jb20tb3JpZ2luLWdpdC1jbGF1ZGUtY29kZW93bmVyLWFwcHMtdWktMzJlNjkwLWNhbC52ZXJjZWwuYXBwIn0sImluc3BlY3RvclVybCI6Imh0
-
-- **Issue #865** (2026-10-12): **style(ui): match composer chrome to textarea**
-  *Symptoms*: ## Summary - Give Composer the same field chrome as textarea and input: the inner `::before` border highlight, `bg-clip-padding`, dark `bg-input/32` fill, and focus/disabled/invalid ring and shadow treatments. - Apply the usual 1px padding compensation against the border, and keep pill-shaped particles (`p-composer-9`, `p-composer-11`) in sync with a matching `before` radius.  ## Test plan - [ ] Compare Composer and Textarea on `/ui/docs/components/composer` and `/ui/docs/components/textarea` in light and dark: top/bottom highlight, fill, and drop shadow should match. - [ ] Focus the stacked and adaptive composers and confirm the 3px ring appears and the inner highlight/drop shadow go away. - [ ] Check `p-composer-9` and `p-composer-11` so the highlight follows the pill radius in both single-line and wrapped layouts. - [ ] Confirm disabled and `aria-invalid` states dim and use the destructive border/ring.   Made with [Cursor](https://cursor.com)
-  **Post-Mortem & Fix Analysis**:
-  > <!-- linear-linkback --> <p><a href="https://linear.app/calcom/issue/ENG-5940">ENG-5940</a></p>
-  > [vc]: #buBeXWDtq2dhUM8cG3mcjjJwKR3V4ZClQ4CkRQn9LUk=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJjb3NzLWNvbS11aSIsInByb2plY3RJZCI6InByal9ZVkNUNmlGWGhiS0xqUHRuSDVrVVNYUDk0OTd4Iiwicm9vdERpcmVjdG9yeSI6ImFwcHMvdWkiLCJsaXZlRmVlZGJhY2siOnsicmVzb2x2ZWQiOjAsInVucmVzb2x2ZWQiOjAsInRvdGFsIjowLCJsaW5rIjoiY29zcy1jb20tdWktZ2l0LXN0eWxlLWNvbXBvc2VyLWZpZWxkLWNocm9tZS1jYWwudmVyY2VsLmFwcCJ9LCJpbnNwZWN0b3JVcmwiOiJodHRwczovL3ZlcmNlbC5jb20vY2FsL2Nvc3MtY29tLXVpL0NCUUZqUEJrVWU4TEtES2pVQzI0NDFNaVBNVFQiLCJwcmV2aWV3VXJsIjoiY29zcy1jb20tdWktZ2l0LXN0eWxlLWNvbXBvc2VyLWZpZWxkLWNocm9tZS1jYWwudmVyY2VsLmFwcCIsIm5leHRDb21taXRTdGF0dXMiOiJERVBMT1lFRCJ9LHsibmFtZSI6ImNvc3MtY29tLW9yaWdpbiIsInByb2plY3RJZCI6InByal96MGR4UnZZYzlxa2ZTblJQSmhoeE9wZHhlcm1VIiwicm9vdERpcmVjdG9yeSI6ImFwcHMvb3JpZ2luIiwibGl2ZUZlZWRiYWNrIjp7InJlc29sdmVkIjowLCJ1bnJlc29sdmVkIjowLCJ0b3RhbCI6MCwibGluayI6IiJ9LCJpbnNwZWN0b3JVcmwiOiJodHRwczovL3ZlcmNlbC5jb20vY2FsL2Nvc3MtY29tLW9yaWdpbi9OMzVvYWpSU1ZOeXJkRmVjWU1ERG9ReEtlYUVSIiwicHJldmll
-
-- **Issue #863** (2026-10-12): **feat(shipyard): shipyard's website and docs at coss.com/shipyard**
-  *Symptoms*: ## What  A new app, **`apps/shipyard`**, served at **coss.com/shipyard** the way coss ui is served at `/ui` (`basePath: "/shipyard"`).  **Landing page** (`/shipyard`): the page from berthd.app, under coss.com's header, rails and theme. - The dithered harbour that comes alive at night, the six chapters with the app's line scenes and loops, the install line. Its own type (Inter, JetBrains Mono) and tokens stay; night follows the site's theme switch instead of its own. - Header: `coss.com shipyard`, Docs, Download, the docs' search (⌘K), GitHub with cosscom/shipyard's stars, theme switch. - The film's lightbox is left out until the film is hosted.  **Docs** (`/shipyard/docs`): moved here from `cosscom/shipyard`'s `docs/` folder (47 pages), on the same Fumadocs setup as coss ui's docs: `source.config.ts`, docs layout, sidebar, search, table of contents, Copy Markdown, `.md` routes. Shipyard's own pieces are ported into `components/docs/`: callouts, the stage, the numbered path of cards, screenshots (light/dark), diagrams, the line scenes, and the rehype plugin that makes the reference tables linkable. Internal links are rewritten to `/docs/...`.  **Shared:** `SiteHeader` / `GitHubLink` take an optional `github={{ repo, href }}` so a product can point at its own repository (default unchanged). `siteConfig.products` has `shipyard`.  ## Stays on berthd.app (built from cosscom/shipyard)  The app downloads, the live demo (`berthd.app/demo/`), the box install line (`berthd.app/install`
-  **Post-Mortem & Fix Analysis**:
-  > [vc]: #UKTTFfk1y1WddNReTHC0P5mzHIqcWSmrg8EKWpjG2Mg=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJjb3NzLWNvbS1vcmlnaW4iLCJwcm9qZWN0SWQiOiJwcmpfejBkeFJ2WWM5cWtmU25SUEpoaHhPcGR4ZXJtVSIsInJvb3REaXJlY3RvcnkiOiJhcHBzL29yaWdpbiIsImluc3BlY3RvclVybCI6Imh0dHBzOi8vdmVyY2VsLmNvbS9jYWwvY29zcy1jb20tb3JpZ2luL0haOHh3d1ZlZkNvWVdnUnFFSENLcUxKUXZUM00iLCJwcmV2aWV3VXJsIjoiY29zcy1jb20tb3JpZ2luLWdpdC1mZWF0LXNoaXB5YXJkLWFwcC1jYWwudmVyY2VsLmFwcCIsIm5leHRDb21taXRTdGF0dXMiOiJERVBMT1lFRCIsImxpdmVGZWVkYmFjayI6eyJyZXNvbHZlZCI6MCwidW5yZXNvbHZlZCI6MCwidG90YWwiOjAsImxpbmsiOiJjb3NzLWNvbS1vcmlnaW4tZ2l0LWZlYXQtc2hpcHlhcmQtYXBwLWNhbC52ZXJjZWwuYXBwIn19LHsibmFtZSI6ImNvc3MtY29tLXVpIiwicHJvamVjdElkIjoicHJqX1lWQ1Q2aUZYaGJLTGpQdG5INWtVU1hQOTQ5N3giLCJyb290RGlyZWN0b3J5IjoiYXBwcy91aSIsImluc3BlY3RvclVybCI6Imh0dHBzOi8vdmVyY2VsLmNvbS9jYWwvY29zcy1jb20tdWkvNzh5YlVteTR4dFNXbkhIVkM5OU5nTHFURFpxZCIsInByZXZpZXdVcmwiOiJjb3NzLWNvbS11aS1naXQtZmVhdC1zaGlweWFyZC1hcHAtY2FsLnZlcmNlbC5hcHAiLCJuZXh0Q29tbWl0U3RhdHVzIjoi
-  > <!-- linear-linkback --> <p><a href="https://linear.app/calcom/issue/ENG-5928">ENG-5928</a></p>
-
-- **Issue #862** (2026-10-12): **style(ui): use bold titles for overlays and empty states**
-  *Symptoms*: ## Summary - Use `font-bold` for alert dialog, dialog, drawer, empty, and sheet titles. - Sync package components and rebuild registry JSON.  ## Checks - `bunx biome check` on affected registry components - `bun run ui:sync` - `bun run registry:build` - `git diff --check`
-  **Post-Mortem & Fix Analysis**:
-  > [vc]: #C6sxBeCTq5goaF3GfmXEcRgNobMU/++QLUQnMwqp0qo=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJjb3NzLWNvbS11aSIsInByb2plY3RJZCI6InByal9ZVkNUNmlGWGhiS0xqUHRuSDVrVVNYUDk0OTd4Iiwicm9vdERpcmVjdG9yeSI6ImFwcHMvdWkiLCJpbnNwZWN0b3JVcmwiOiJodHRwczovL3ZlcmNlbC5jb20vY2FsL2Nvc3MtY29tLXVpLzZ6UzRWMXJBVkJkclhqSlJ2MTh2dDlOZ2JlMnYiLCJwcmV2aWV3VXJsIjoiY29zcy1jb20tdWktZ2l0LWNvZGV4LWJvbGQtb3ZlcmxheS10aXRsZXMtY2FsLnZlcmNlbC5hcHAiLCJuZXh0Q29tbWl0U3RhdHVzIjoiREVQTE9ZRUQiLCJsaXZlRmVlZGJhY2siOnsicmVzb2x2ZWQiOjAsInVucmVzb2x2ZWQiOjAsInRvdGFsIjowLCJsaW5rIjoiY29zcy1jb20tdWktZ2l0LWNvZGV4LWJvbGQtb3ZlcmxheS10aXRsZXMtY2FsLnZlcmNlbC5hcHAifX0seyJuYW1lIjoiY29zcy1jb20tb3JpZ2luIiwicHJvamVjdElkIjoicHJqX3owZHhSdlljOXFrZlNuUlBKaGh4T3BkeGVybVUiLCJyb290RGlyZWN0b3J5IjoiYXBwcy9vcmlnaW4iLCJsaXZlRmVlZGJhY2siOnsicmVzb2x2ZWQiOjAsInVucmVzb2x2ZWQiOjAsInRvdGFsIjowLCJsaW5rIjoiIn0sImluc3BlY3RvclVybCI6Imh0dHBzOi8vdmVyY2VsLmNvbS9jYWwvY29zcy1jb20tb3JpZ2luLzVNSFZZSjJaZWtnTHNLeVFoUXQ2bTg3TVByQjIiLCJwcmV2aWV3VXJs
-  > <!-- linear-linkback --> <p><a href="https://linear.app/calcom/issue/DES-228">DES-228</a></p>
-
-- **Issue #861** (2026-10-12): **fix(ui): handle bottom drawer keyboards automatically**
-  *Symptoms*: Bottom drawers now keep focused fields above the iOS software keyboard using Base UI's virtual keyboard provider. Partial snap points adjust while the keyboard is open and return to their selected position afterward. The scroll viewport avoids duplicate keyboard padding, and bottom drawers use more of the available height while respecting the top safe area.  The responsive form example now scrolls its fields and actions together. This keeps the form usable when space is limited by the keyboard.  Validation: - Device Hub, iPhone 18 Pro / iOS 27.0: ordinary and long forms, textarea focus, nested drawers, partial snap points, Composer, and the responsive form example. - Temporarily applied the proposed primitives to Cal's design-system app and checked its chat, dialog, alert dialog, sheet, and right-side drawer. Cal's chat text-visibility issue also occurs with its original Drawer primitive; the right-side drawer footer remains outside this bottom-drawer change. - TypeScript, registry dependency validation, registry build, package sync, and formatting checks passed. No automated tests added.  This PR is based on main, including the merged #860 fix. Its diff contains only Drawer changes; no Composer dependency is required. 
-  **Post-Mortem & Fix Analysis**:
-  > [vc]: #/gnwno1y8NOhCjhtNhYVRNyEFkiBcOPdelLNlXafICQ=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJjb3NzLWV4YW1wbGVzLWNhbGNvbSIsInByb2plY3RJZCI6InByal92TllOOTBmNWxDYktqcDNld1J6SXNiWVVtbHdNIiwicm9vdERpcmVjdG9yeSI6ImFwcHMvZXhhbXBsZXMvY2FsY29tIiwiaW5zcGVjdG9yVXJsIjoiaHR0cHM6Ly92ZXJjZWwuY29tL2NhbC9jb3NzLWV4YW1wbGVzLWNhbGNvbS85UkFDcUtTdGlNZXdla2c1UDNMU0plTXhjZDVBIiwicHJldmlld1VybCI6ImNvc3MtZXhhbXBsZXMtY2FsY29tLWdpdC1jb2RleC1kcmF3ZXIta2V5Ym9hcmQtZGVmYXVsdC1jYWwudmVyY2VsLmFwcCIsIm5leHRDb21taXRTdGF0dXMiOiJERVBMT1lFRCIsImxpdmVGZWVkYmFjayI6eyJyZXNvbHZlZCI6MCwidW5yZXNvbHZlZCI6MCwidG90YWwiOjAsImxpbmsiOiJjb3NzLWV4YW1wbGVzLWNhbGNvbS1naXQtY29kZXgtZHJhd2VyLWtleWJvYXJkLWRlZmF1bHQtY2FsLnZlcmNlbC5hcHAifX0seyJuYW1lIjoiY29zcy1jb20tdWkiLCJwcm9qZWN0SWQiOiJwcmpfWVZDVDZpRlhoYktMalB0bkg1a1VTWFA5NDk3eCIsInJvb3REaXJlY3RvcnkiOiJhcHBzL3VpIiwiaW5zcGVjdG9yVXJsIjoiaHR0cHM6Ly92ZXJjZWwuY29tL2NhbC9jb3NzLWNvbS11aS81OWpjU0VuOXRTODloellSdHNGYUV1RFpxY2VoIiwicHJldmlld1VybCI6ImNvc3MtY29tLXVpLWdpdC1j
-  > <!-- linear-linkback --> <p><a href="https://linear.app/calcom/issue/ENG-5903">ENG-5903</a></p>
-
-- **Issue #860** (2026-10-11): **fix(ui): prevent iOS Safari clipping after modal dismissal**
-  *Symptoms*: Closing a modal on iOS Safari could leave coss.com cropped above the browser toolbar. Limit the fixed header-corner decoration to the header height so the page continues rendering behind Safari's toolbar after scroll unlock.  The shared trigger was reproduced with a plain body scroll-lock/unlock cycle: the full-viewport fixed decoration caused clipping, while hiding or bounding it prevented clipping. This explains why Drawer was affected even though its backdrop already used absolute positioning on iOS.  Also align Dialog, Alert Dialog, Sheet, and CommandDialog backdrops with [Base UI's iOS Safari guidance](https://base-ui.com/react/overview/quick-start#ios-26-safari), using the same iOS absolute-positioning rule as Drawer. The body already has relative positioning. No viewport resizing or JavaScript workarounds are added. Registry JSON and package components are synced.  before <img width="635" height="1295" alt="ios-safari-before" src="https://github.com/user-attachments/assets/f42c18e6-9e16-4a38-ade7-396fc602a03b" />  after <img width="2788" height="2576" alt="ChatGPT Image Oct 11, 2026, 03_37_34 PM" src="https://github.com/user-attachments/assets/af660f45-55fb-4cfa-af52-8bbfc1f810e5" />   Validation: - Device Hub, iPhone 18 Pro simulator, iOS 27.0: verified opening and closing Dialog, Drawer, Alert Dialog, Sheet, and CommandDialog retains content behind Safari's toolbar. - Isolated stripe reproduction plus the normal particle examples for Dialog and Drawer.
-  **Post-Mortem & Fix Analysis**:
-  > [vc]: #aKFBJFebatkbWs+BriwK6VkahpiTVM5JEy6VsWWdSaE=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJjb3NzLWV4YW1wbGVzLWNhbGNvbSIsInByb2plY3RJZCI6InByal92TllOOTBmNWxDYktqcDNld1J6SXNiWVVtbHdNIiwicm9vdERpcmVjdG9yeSI6ImFwcHMvZXhhbXBsZXMvY2FsY29tIiwiaW5zcGVjdG9yVXJsIjoiaHR0cHM6Ly92ZXJjZWwuY29tL2NhbC9jb3NzLWV4YW1wbGVzLWNhbGNvbS81THBubUh3SmMxWmFOYktRZW9IZWNHTXE4ZzJ1IiwicHJldmlld1VybCI6ImNvc3MtZXhhbXBsZXMtY2FsY29tLWdpdC1jb2RleC1pb3Mtc2FmYXJpLW92ZXJsYXktY2xpcHBpbmctY2FsLnZlcmNlbC5hcHAiLCJuZXh0Q29tbWl0U3RhdHVzIjoiREVQTE9ZRUQiLCJsaXZlRmVlZGJhY2siOnsicmVzb2x2ZWQiOjAsInVucmVzb2x2ZWQiOjAsInRvdGFsIjowLCJsaW5rIjoiY29zcy1leGFtcGxlcy1jYWxjb20tZ2l0LWNvZGV4LWlvcy1zYWZhcmktb3ZlcmxheS1jbGlwcGluZy1jYWwudmVyY2VsLmFwcCJ9fSx7Im5hbWUiOiJjb3NzLWNvbS11aSIsInByb2plY3RJZCI6InByal9ZVkNUNmlGWGhiS0xqUHRuSDVrVVNYUDk0OTd4Iiwicm9vdERpcmVjdG9yeSI6ImFwcHMvdWkiLCJpbnNwZWN0b3JVcmwiOiJodHRwczovL3ZlcmNlbC5jb20vY2FsL2Nvc3MtY29tLXVpLzdNM0s5UW5zektYUDFuaUtQZ01TOTlqN3Zjb1IiLCJwcmV2aWV3VXJsIjoiY29zcy1jb20t
-  > <!-- linear-linkback --> <p><a href="https://linear.app/calcom/issue/ENG-5885">ENG-5885</a></p>
-
-- **Issue #859** (2026-10-12): **feat: add composable chat composer**
-  *Symptoms*: ## Summary  Add a reusable Composer for chat and AI assistant interfaces, with a contenteditable input or a native textarea through the same compositional API. It supports configurable mention and slash triggers, custom token rendering, async suggestions, submission controls, responsive row limits, and an adaptive layout that moves actions below multiline drafts.  - Keep editing, selection, history, and suggestion behavior in supporting hooks and libraries, with styled Composer parts for the UI. - Use the automatic bottom-drawer keyboard handling from #861 for the mobile drawer example; no `keyboardAware` prop is required. Merge the standalone Drawer fix first. - Include eleven composer particles, a drawer example, API documentation, gallery illustrations, registry entries, and package copies.  ## Validation  UI TypeScript checks, focused Biome checks, registry dependency validation and generation, desktop browser interaction checks, a responsive layout matrix, and portrait iPhone simulator checks were completed during implementation. No automated test suites were run in the recent implementation passes.  ## Remaining validation  Keep this PR in draft pending the mobile overlay audit. An iOS simulator check reproduced a landscape issue when rotating a drawer with the keyboard open: the remaining viewport can collapse the composer and clip its input. Physical-device coverage, Android, VoiceOver, IME/dictation/autocorrect, and comprehensive clipboard/history checks remain outst
-  **Post-Mortem & Fix Analysis**:
-  > [vc]: #u46jSEiOYAQcfyNPIGbF8iJC5MGjMK8etnXb92wF954=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJjb3NzLWNvbS11aSIsInByb2plY3RJZCI6InByal9ZVkNUNmlGWGhiS0xqUHRuSDVrVVNYUDk0OTd4Iiwicm9vdERpcmVjdG9yeSI6ImFwcHMvdWkiLCJsaXZlRmVlZGJhY2siOnsicmVzb2x2ZWQiOjAsInVucmVzb2x2ZWQiOjAsInRvdGFsIjowLCJsaW5rIjoiY29zcy1jb20tdWktZ2l0LWNvZGV4LWNvbXBvc2VyLWNhbC52ZXJjZWwuYXBwIn0sImluc3BlY3RvclVybCI6Imh0dHBzOi8vdmVyY2VsLmNvbS9jYWwvY29zcy1jb20tdWkvMnVHRHQyUnZCVGtZY2RKdHNZcE0zamQ1NmNlTSIsInByZXZpZXdVcmwiOiJjb3NzLWNvbS11aS1naXQtY29kZXgtY29tcG9zZXItY2FsLnZlcmNlbC5hcHAiLCJuZXh0Q29tbWl0U3RhdHVzIjoiREVQTE9ZRUQifSx7Im5hbWUiOiJjb3NzLWNvbS1vcmlnaW4iLCJwcm9qZWN0SWQiOiJwcmpfejBkeFJ2WWM5cWtmU25SUEpoaHhPcGR4ZXJtVSIsInJvb3REaXJlY3RvcnkiOiJhcHBzL29yaWdpbiIsImxpdmVGZWVkYmFjayI6eyJyZXNvbHZlZCI6MCwidW5yZXNvbHZlZCI6MCwidG90YWwiOjAsImxpbmsiOiIifSwiaW5zcGVjdG9yVXJsIjoiaHR0cHM6Ly92ZXJjZWwuY29tL2NhbC9jb3NzLWNvbS1vcmlnaW4vOFBibnhpOWl0TkZWRm03YkwzdERycjVHcHNYZiIsInByZXZpZXdVcmwiOiIiLCJuZXh0Q29tbWl0U3RhdHVz
-  > Hey there and thank you for opening this pull request! 👋🏼  We require pull request titles to follow the [Conventional Commits specification](https://www.conventionalcommits.org/en/v1.0.0/) and it looks like your proposed title needs to be adjusted.  Details:  ``` No release type found in pull request title "Add composable chat composer and keyboard-aware drawer". Add a prefix to indicate what kind of release this pull request corresponds to. For reference, see https://www.conventionalcommits.org/  Available types:  - feat: A new feature  - fix: A bug fix  - docs: Documentation only changes  - style: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)  - refactor: A code change that neither fixes a bug nor adds a feature  - perf: A code change that improves performance  - test: Adding missing tests or correcting existing tests  - build: Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)
-  > <!-- linear-linkback --> <p><a href="https://linear.app/calcom/issue/PRO-2509">PRO-2509</a></p>
+- **Issue #902** (2026-10-17): **feat(agent): add action bar, history, and conversation menu**
+  *Symptoms*: Ticket 09, Chrome A. Stacks on #900 (`claude/agent-family-scaffold-132151`).  ## Summary  ```diff  apps/ui/registry/default/agent/ +├── agent-action-bar.tsx          # AgentActionBar, AgentActionBarSession, AgentActionBarLauncher +├── agent-history.tsx             # AgentHistory on coss Combobox +├── agent-conversation-menu.tsx   # AgentConversationMenu (copy as Markdown, delete + AlertDialog)  └── lib/ +    ├── is-agent-session-unread.ts  # pure unread rule +    ├── filter-agent-history.ts     # pure search + newest-first +    └── copy-agent-text.ts          # clipboard write → boolean, so failure can be announced ```  ```text <AgentActionBar label>                       role=group   <AgentActionBarSession label active unread unreadLabel closeLabel onClose onCloseOthers? />     rest props → session button (works as a PopoverTrigger render)     close: opacity-0 + pointer-events-none on fine pointers until chip :hover/:focus-within; always on coarse   <AgentActionBarLauncher mark={<YourOrb/>} active onClick>Ask</…>  <AgentHistory items labels activeId onSelect onStartChat? loading trigger />   value = active item → coss ComboboxItem check marks the open conversation   item onClick → onSelect (Enter clicks too, so reselecting the open one still reaches the host)   empty: coss Empty · loading: Spinner · popup: coss defaults + w-96  <AgentConversationMenu labels markdown? onDelete? announcer />   copy → copyAgentText → announcer.announce(copied | copyFailed)   # no local live reg
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1177,267 +1088,21 @@ export function useCopy(duration = 1500) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `28645cd8` (2026-10-12)
-**Commit Message**: fix(ui): preserve composer focus and align border radii (#867)
+### Incident Patch 1: `d40c6603` (2026-10-15)
+**Commit Message**: fix(ui): mirror switch-style menu item thumbs in right-to-left layouts (#870)
 
-**File**: `apps/ui/public/r/composer.json` (modified, +1/-1)
-```diff
-@@ -11,7 +11,7 @@
-   "files": [
-     {
-       "path": "registry/default/ui/composer.tsx",
--      "content": "\"use client\";\n\nimport { Button as ButtonPrimitive } from \"@base-ui/react/button\";\nimport { mergeProps } from \"@base-ui/react/merge-props\";\nimport { Popover as PopoverPrimitive } from \"@base-ui/react/popover\";\nimport { useRender } from \"@base-ui/react/use-render\";\nimport type {\n  ComponentProps,\n  MouseEvent,\n  ReactElement,\n  ReactNode,\n} from \"react\";\nimport { createPortal } from \"react-dom\";\nimport {\n  type ComposerEditorOptions,\n  ComposerEditorProvider,\n  type ComposerItemValue,\n  type ComposerTokenPart,\n  focusComposerInput,\n  getComposerText,\n  useComposerAnchorContext,\n  useComposerEditorContext,\n  useComposerInputLayout,\n  useComposerItem,\n  useComposerSuggestionsContext,\n} from \"@/registry/default/lib/composer-editor\";\nimport { cn } from \"@/registry/default/lib/utils\";\nimport { ScrollArea } from \"@/registry/default/ui/scroll-area\";\n\ntype ComposerPopupProps = ComponentProps<typeof PopoverPrimitive.Popup> & {\n  anchor?: ComponentProps<typeof PopoverPrimitive.Positioner>[\"anchor\"];\n  side?: ComponentProps<typeof PopoverPrimitive.Positioner>[\"side\"];\n  align?: ComponentProps<typeof PopoverPrimitive.Positioner>[\"align\"];\n  sideOffset?: ComponentProps<typeof PopoverPrimitive.Positioner>[\"sideOffset\"];\n  alignOffset?: ComponentProps<\n    typeof PopoverPrimitive.Positioner\n  >[\"alignOffset\"];\n  positionerClassName?: string;\n  portalProps?: ComponentProps<typeof PopoverPrimitive.Portal>;\n};\n\ntype ComposerFormProps = useRender.ComponentProps<\"form\">;\ntype ComposerLayout = \"stacked\" | \"adaptive\";\ntype ComposerTokenVariant = \"default\" | \"chip\";\nconst composerTokenClassName =\n  \"wrap-break-word inline cursor-default align-baseline font-normal text-primary data-[variant=default]:font-medium data-[variant=chip]:box-decoration-clone data-[variant=chip]:rounded-md data-[variant=chip]:bg-accent data-[variant=chip]:px-1.5 data-[variant=chip]:py-px data-[variant=chip]:text-accent-foreground [&_[data-slot=composer-token-icon]:empty]:hidden [&_[data-slot=composer-token-icon]>svg]:size-3.5\";\n\nfunction ComposerFrame({\n  className,\n  layout = \"stacked\",\n  render,\n  ref,\n  name,\n  children,\n  ...props\n}: ComposerFormProps & { layout?: ComposerLayout }): ReactElement {\n  const editor = useComposerEditorContext();\n  const anchorRef = useComposerAnchorContext();\n  const defaultProps = {\n    \"data-slot\": \"composer\",\n    \"data-layout\": layout,\n    \"data-base-ui-swipe-ignore\": \"\",\n    onMouseDown: (event: MouseEvent<HTMLFormElement>): void => {\n      focusComposerInput(event, true);\n    },\n    onClick: (event: MouseEvent<HTMLFormElement>): void => {\n      focusComposerInput(event, false);\n    },\n    \"data-disabled\": editor?.disabled ? \"\" : undefined,\n    \"data-readonly\": editor?.readOnly ? \"\" : undefined,\n    children: (\n      <>\n        {children}\n        {name && (\n          <input\n            type=\"hidden\"\n            name={name}\n            value={getComposerText(editor?.value ?? [])}\n            disabled={editor?.disabled}\n          />\n        )}\n      </>\n    ),\n    className: cn(\n      \"relative flex min-h-0 min-w-0 cursor-text flex-col rounded-xl border border-input bg-background not-dark:bg-clip-padding pb-[calc(var(--composer-padding)-1px)] text-foreground shadow-xs/5 ring-ring/24 transition-shadow [--composer-max-rows:4] [--composer-padding:--spacing(2)] before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-xl)-1px)] not-data-disabled:not-has-[[data-slot=composer-input]:focus-visible]:not-has-aria-invalid:before:shadow-[0_1px_--theme(--color-black/4%)] has-[[data-slot=composer-input]:focus-visible]:has-aria-invalid:border-destructive/64 has-[[data-slot=composer-input]:focus-visible]:has-aria-invalid:ring-destructive/16 has-[[data-slot=composer-input]:focus-visible]:border-ring has-aria-invalid:border-destructive/36 has-[[data-slot=composer-input]:focus-visible]:shadow-none has-aria-invalid:shadow-none has-[[data-slot=composer-input]:focus-visible]:ring-[3px] aria-invalid:border-destructive/36 aria-invalid:shadow-none data-disabled:opacity-64 data-disabled:shadow-none dark:bg-input/32 dark:aria-invalid:ring-destructive/24 dark:has-aria-invalid:ring-destructive/24 dark:not-data-disabled:not-has-[[data-slot=composer-input]:focus-visible]:not-has-aria-invalid:before:shadow-[0_-1px_--theme(--color-white/6%)] md:[--composer-max-rows:8]\",\n      \"data-[layout=adaptive]:data-multiline:grid-rows-[minmax(0,1fr)_auto] data-[layout=adaptive]:grid data-[layout=adaptive]:grid-cols-[auto_minmax(0,1fr)_auto] data-[layout=adaptive]:items-center data-[layout=adaptive]:not-data-multiline:px-[calc(--spacing(2)-1px)] data-[layout=adaptive]:not-data-multiline:pt-[calc(var(--composer-padding)-1px)]\",\n      className,\n    ),\n  };\n  return useRen
-```
+The switch variant of the Menu, ContextMenu and DrawerMenu checkbox items
+draws its own thumb, which overflowed the track in RTL like Switch did.
+Mirror its travel and press-scale origin with rtl: variants. LTR output is
+unchanged.
 
-**File**: `apps/ui/registry/default/ui/composer.tsx` (modified, +13/-1)
-```diff
-@@ -7,6 +7,7 @@ import { useRender } from "@base-ui/react/use-render";
- import type {
-   ComponentProps,
-   MouseEvent,
-+  PointerEvent,
-   ReactElement,
-   ReactNode,
- } from "react";
-@@ -82,7 +83,7 @@ function ComposerFrame({
-       </>
-     ),
-     className: cn(
--      "relative flex min-h-0 min-w-0 cursor-text flex-col rounded-xl border border-input bg-background not-dark:bg-clip-padding pb-[calc(var(--composer-padding)-1px)] text-foreground shadow-xs/5 ring-ring/24 transition-shadow [--composer-max-rows:4] [--composer-padding:--spacing(2)] before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-xl)-1px)] not-data-disabled:not-has-[[data-slot=composer-input]:focus-visible]:not-has-aria-invalid:before:shadow-[0_1px_--theme(--color-black/4%)] has-[[data-slot=composer-input]:focus-visible]:has-aria-invalid:border-destructive/64 has-[[data-slot=composer-input]:focus-visible]:has-aria-invalid:ring-destructive/16 has-[[data-slot=composer-input]:focus-visible]:border-ring has-aria-invalid:border-destructive/36 has-[[data-slot=composer-input]:focus-visible]:shadow-none has-aria-invalid:shadow-none has-[[data-slot=composer-input]:focus-visible]:ring-[3px] aria-invalid:border-destructive/36 aria-invalid:shadow-none data-disabled:opacity-64 data-disabled:shadow-none dark:bg-input/32 dark:aria-invalid:ring-destructive/24 dark:has-aria-invalid:ring-destructive/24 dark:not-data-disabled:not-has-[[data-slot=composer-input]:focus-visible]:not-has-aria-invalid:before:shadow-[0_-1px_--theme(--color-white/6%)] md:[--composer-max-rows:8]",
-+      "relative flex min-h-0 min-w-0 cursor-text flex-col rounded-(--composer-radius) border border-input bg-background not-dark:bg-clip-padding pb-[calc(var(--composer-padding)-1px)] text-foreground shadow-xs/5 ring-ring/24 transition-shadow [--composer-max-rows:4] [--composer-padding:--spacing(2)] [--composer-radius:var(--radius-xl)] before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--composer-radius)-1px)] not-data-disabled:not-has-[[data-slot=composer-input]:focus-visible]:not-has-aria-invalid:before:shadow-[0_1px_--theme(--color-black/4%)] has-[[data-slot=composer-input]:focus-visible]:has-aria-invalid:border-destructive/64 has-[[data-slot=composer-input]:focus-visible]:has-aria-invalid:ring-destructive/16 has-[[data-slot=composer-input]:focus-visible]:border-ring has-aria-invalid:border-destructive/36 has-[[data-slot=composer-input]:focus-visible]:shadow-none has-aria-invalid:shadow-none has-[[data-slot=composer-input]:focus-visible]:ring-[3px] aria-invalid:border-destructive/36 aria-invalid:shadow-none data-disabled:opacity-64 data-disabled:shadow-none dark:bg-input/32 dark:aria-invalid:ring-destructive/24 dark:has-aria-invalid:ring-destructive/24 dark:not-data-disabled:not-has-[[data-slot=composer-input]:focus-visible]:not-has-aria-invalid:before:shadow-[0_-1px_--theme(--color-white/6%)] md:[--composer-max-rows:8]",
-       "data-[layout=adaptive]:data-multiline:grid-rows-[minmax(0,1fr)_auto] data-[layout=adaptive]:grid data-[layout=adaptive]:grid-cols-[auto_minmax(0,1fr)_auto] data-[layout=adaptive]:items-center data-[layout=adaptive]:not-data-multiline:px-[calc(--spacing(2)-1px)] data-[layout=adaptive]:not-data-multiline:pt-[calc(var(--composer-padding)-1px)]",
-       className,
-     ),
-@@ -460,6 +461,17 @@ export function ComposerSubmit({
-     "data-slot": "composer-submit",
-     type: "button" as const,
-     disabled: disabled ?? !editor?.canSubmit,
-+    onPointerDown: (event: PointerEvent<HTMLButtonElement>): void => {
-+      const input = editor?.rootRef.current?.querySelector(
-+        '[data-slot="composer-input"]',
-+      );
-+      if (
-+        event.button === 0 &&
-+        input === event.currentTarget.ownerDocument.activeElement
-+      ) {
-+        event.preventDefault();
-+      }
-+    },
-     onClick: (event: MouseEvent<HTMLButtonElement>): void => {
-       if (event.defaultPrevented || disabled) return;
-       event.preventDefault();
-```
-
-**File**: `packages/ui/src/components/composer.tsx` (modified, +13/-1)
-```diff
-@@ -22,6 +22,7 @@ import { cn } from "@coss/ui/lib/utils";
- import type {
-   ComponentProps,
-   MouseEvent,
-+  PointerEvent,
-   ReactElement,
-   ReactNode,
- } from "react";
-@@ -82,7 +83,7 @@ function ComposerFrame({
-       </>
-     ),
-     className: cn(
--      "relative flex min-h-0 min-w-0 cursor-text flex-col rounded-xl border border-input bg-background not-dark:bg-clip-padding pb-[calc(var(--composer-padding)-1px)] text-foreground shadow-xs/5 ring-ring/24 transition-shadow [--composer-max-rows:4] [--composer-padding:--spacing(2)] before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-xl)-1px)] not-data-disabled:not-has-[[data-slot=composer-input]:focus-visible]:not-has-aria-invalid:before:shadow-[0_1px_--theme(--color-black/4%)] has-[[data-slot=composer-input]:focus-visible]:has-aria-invalid:border-destructive/64 has-[[data-slot=composer-input]:focus-visible]:has-aria-invalid:ring-destructive/16 has-[[data-slot=composer-input]:focus-visible]:border-ring has-aria-invalid:border-destructive/36 has-[[data-slot=composer-input]:focus-visible]:shadow-none has-aria-invalid:shadow-none has-[[data-slot=composer-input]:focus-visible]:ring-[3px] aria-invalid:border-destructive/36 aria-invalid:shadow-none data-disabled:opacity-64 data-disabled:shadow-none dark:bg-input/32 dark:aria-invalid:ring-destructive/24 dark:has-aria-invalid:ring-destructive/24 dark:not-data-disabled:not-has-[[data-slot=composer-input]:focus-visible]:not-has-aria-invalid:before:shadow-[0_-1px_--theme(--color-white/6%)] md:[--composer-max-rows:8]",
-+      "relative flex min-h-0 min-w-0 cursor-text flex-col rounded-(--composer-radius) border border-input bg-background not-dark:bg-clip-padding pb-[calc(var(--composer-padding)-1px)] text-foreground shadow-xs/5 ring-ring/24 transition-shadow [--composer-max-rows:4] [--composer-padding:--spacing(2)] [--composer-radius:var(--radius-xl)] before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--composer-radius)-1px)] not-data-disabled:not-has-[[data-slot=composer-input]:focus-visible]:not-has-aria-invalid:before:shadow-[0_1px_--theme(--color-black/4%)] has-[[data-slot=composer-input]:focus-visible]:has-aria-invalid:border-destructive/64 has-[[data-slot=composer-input]:focus-visible]:has-aria-invalid:ring-destructive/16 has-[[data-slot=composer-input]:focus-visible]:border-ring has-aria-invalid:border-destructive/36 has-[[data-slot=composer-input]:focus-visible]:shadow-none has-aria-invalid:shadow-none has-[[data-slot=composer-input]:focus-visible]:ring-[3px] aria-invalid:border-destructive/36 aria-invalid:shadow-none data-disabled:opacity-64 data-disabled:shadow-none dark:bg-input/32 dark:aria-invalid:ring-destructive/24 dark:has-aria-invalid:ring-destructive/24 dark:not-data-disabled:not-has-[[data-slot=composer-input]:focus-visible]:not-has-aria-invalid:before:shadow-[0_-1px_--theme(--color-white/6%)] md:[--composer-max-rows:8]",
-       "data-[layout=adaptive]:data-multiline:grid-rows-[minmax(0,1fr)_auto] data-[layout=adaptive]:grid data-[layout=adaptive]:grid-cols-[auto_minmax(0,1fr)_auto] data-[layout=adaptive]:items-center data-[layout=adaptive]:not-data-multiline:px-[calc(--spacing(2)-1px)] data-[layout=adaptive]:not-data-multiline:pt-[calc(var(--composer-padding)-1px)]",
-       className,
-     ),
-@@ -460,6 +461,17 @@ export function ComposerSubmit({
-     "data-slot": "composer-submit",
-     type: "button" as const,
-     disabled: disabled ?? !editor?.canSubmit,
-+    onPointerDown: (event: PointerEvent<HTMLButtonElement>): void => {
-+      const input = editor?.rootRef.current?.querySelector(
-+        '[data-slot="composer-input"]',
-+      );
-+      if (
-+        event.button === 0 &&
-+        input === event.currentTarget.ownerDocument.activeElement
-+      ) {
-+        event.preventDefault();
-+      }
-+    },
-     onClick: (event: MouseEvent<HTMLButtonElement>): void => {
-       if (event.defaultPrevented || disabled) return;
-       event.preventDefault();
-```
-
----
-
-### Incident Patch 2: `22430889` (2026-10-12)
-**Commit Message**: chore: add @pasqualevitiello as CODEOWNER for apps/ui (#866)
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `.github/CODEOWNERS` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+/apps/ui/ @pasqualevitiello
-```
-
----
-
-### Incident Patch 3: `b43d83bf` (2026-10-12)
-**Commit Message**: style(ui): match composer chrome to textarea (#865)
-
-Give the composer frame the same inner border highlight, dark input fill, and focus/disabled/invalid treatments as other form controls.
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-**File**: `apps/ui/public/r/composer.json` (modified, +1/-1)
-```diff
-@@ -11,7 +11,7 @@
-   "files": [
-     {
-       "path": "registry/default/ui/composer.tsx",
--      "content": "\"use client\";\n\nimport { Button as ButtonPrimitive } from \"@base-ui/react/button\";\nimport { mergeProps } from \"@base-ui/react/merge-props\";\nimport { Popover as PopoverPrimitive } from \"@base-ui/react/popover\";\nimport { useRender } from \"@base-ui/react/use-render\";\nimport type {\n  ComponentProps,\n  MouseEvent,\n  ReactElement,\n  ReactNode,\n} from \"react\";\nimport { createPortal } from \"react-dom\";\nimport {\n  type ComposerEditorOptions,\n  ComposerEditorProvider,\n  type ComposerItemValue,\n  type ComposerTokenPart,\n  focusComposerInput,\n  getComposerText,\n  useComposerAnchorContext,\n  useComposerEditorContext,\n  useComposerInputLayout,\n  useComposerItem,\n  useComposerSuggestionsContext,\n} from \"@/registry/default/lib/composer-editor\";\nimport { cn } from \"@/registry/default/lib/utils\";\nimport { ScrollArea } from \"@/registry/default/ui/scroll-area\";\n\ntype ComposerPopupProps = ComponentProps<typeof PopoverPrimitive.Popup> & {\n  anchor?: ComponentProps<typeof PopoverPrimitive.Positioner>[\"anchor\"];\n  side?: ComponentProps<typeof PopoverPrimitive.Positioner>[\"side\"];\n  align?: ComponentProps<typeof PopoverPrimitive.Positioner>[\"align\"];\n  sideOffset?: ComponentProps<typeof PopoverPrimitive.Positioner>[\"sideOffset\"];\n  alignOffset?: ComponentProps<\n    typeof PopoverPrimitive.Positioner\n  >[\"alignOffset\"];\n  positionerClassName?: string;\n  portalProps?: ComponentProps<typeof PopoverPrimitive.Portal>;\n};\n\ntype ComposerFormProps = useRender.ComponentProps<\"form\">;\ntype ComposerLayout = \"stacked\" | \"adaptive\";\ntype ComposerTokenVariant = \"default\" | \"chip\";\nconst composerTokenClassName =\n  \"wrap-break-word inline cursor-default align-baseline font-normal text-primary data-[variant=default]:font-medium data-[variant=chip]:box-decoration-clone data-[variant=chip]:rounded-md data-[variant=chip]:bg-accent data-[variant=chip]:px-1.5 data-[variant=chip]:py-px data-[variant=chip]:text-accent-foreground [&_[data-slot=composer-token-icon]:empty]:hidden [&_[data-slot=composer-token-icon]>svg]:size-3.5\";\n\nfunction ComposerFrame({\n  className,\n  layout = \"stacked\",\n  render,\n  ref,\n  name,\n  children,\n  ...props\n}: ComposerFormProps & { layout?: ComposerLayout }): ReactElement {\n  const editor = useComposerEditorContext();\n  const anchorRef = useComposerAnchorContext();\n  const defaultProps = {\n    \"data-slot\": \"composer\",\n    \"data-layout\": layout,\n    \"data-base-ui-swipe-ignore\": \"\",\n    onMouseDown: (event: MouseEvent<HTMLFormElement>): void => {\n      focusComposerInput(event, true);\n    },\n    onClick: (event: MouseEvent<HTMLFormElement>): void => {\n      focusComposerInput(event, false);\n    },\n    \"data-disabled\": editor?.disabled ? \"\" : undefined,\n    \"data-readonly\": editor?.readOnly ? \"\" : undefined,\n    children: (\n      <>\n        {children}\n        {name && (\n          <input\n            type=\"hidden\"\n            name={name}\n            value={getComposerText(editor?.value ?? [])}\n            disabled={editor?.disabled}\n          />\n        )}\n      </>\n    ),\n    className: cn(\n      \"relative flex min-h-0 min-w-0 cursor-text flex-col rounded-xl border border-input bg-background pb-(--composer-padding) text-foreground shadow-xs/5 transition-shadow [--composer-max-rows:4] [--composer-padding:--spacing(2)] has-[[data-slot=composer-input]:focus-visible]:border-ring has-[[data-slot=composer-input]:focus-visible]:ring-[3px] has-[[data-slot=composer-input]:focus-visible]:ring-ring/24 md:[--composer-max-rows:8]\",\n      \"data-[layout=adaptive]:data-multiline:grid-rows-[minmax(0,1fr)_auto] data-[layout=adaptive]:grid data-[layout=adaptive]:grid-cols-[auto_minmax(0,1fr)_auto] data-[layout=adaptive]:items-center data-[layout=adaptive]:not-data-multiline:px-2 data-[layout=adaptive]:not-data-multiline:pt-(--composer-padding)\",\n      className,\n    ),\n  };\n  return useRender({\n    defaultTagName: \"form\",\n    render,\n    ref: [anchorRef ?? null, ref ?? null],\n    props: mergeProps<\"form\">(defaultProps, editor?.formProps ?? {}, props),\n  });\n}\n\nexport type ComposerProps = Omit<\n  ComposerFormProps,\n  \"defaultValue\" | \"onSubmit\" | \"name\"\n> &\n  ComposerEditorOptions & { layout?: ComposerLayout };\n\nexport function Composer({\n  layout,\n  value,\n  defaultValue,\n  onValueChange,\n  onSubmit,\n  onQueryChange,\n  triggers,\n  disabled,\n  readOnly,\n  submitDisabled,\n  allowEmpty,\n  submitOnEnter,\n  name,\n  getSuggestionsAnnouncement,\n  ...frameProps\n}: ComposerProps): ReactElement {\n  return (\n    <ComposerEditorProvider\n      value={value}\n      defaultValue={defaultValue}\n      onValueChange={onValueChange}\n      onSubmit={onSubmit}\n      onQueryChange={onQueryChange}\n      triggers={triggers}\n      disabled={disabled}\n      readOnly={r
-```
-
-**File**: `apps/ui/public/r/p-composer-11.json` (modified, +1/-1)
-```diff
-@@ -12,7 +12,7 @@
-   "files": [
-     {
-       "path": "registry/default/particles/p-composer-11.tsx",
--      "content": "\"use client\";\n\nimport { ArrowUpIcon } from \"lucide-react\";\nimport { useState } from \"react\";\nimport { Button } from \"@/registry/default/ui/button\";\nimport {\n  Composer,\n  ComposerActionGroup,\n  ComposerActions,\n  ComposerInput,\n  ComposerSubmit,\n  type ComposerValue,\n  getComposerText,\n} from \"@/registry/default/ui/composer\";\n\nexport default function Particle() {\n  const [value, setValue] = useState<ComposerValue>([]);\n  const [notice, setNotice] = useState(\"\");\n\n  return (\n    <div className=\"flex w-full max-w-xl flex-col gap-2\">\n      <Composer\n        className=\"rounded-[calc(--spacing(5.5)+1px)] [--composer-padding:--spacing(1)] data-[layout=adaptive]:not-data-multiline:px-1 sm:rounded-[calc(--spacing(5)+1px)]\"\n        layout=\"adaptive\"\n        value={value}\n        onValueChange={setValue}\n        onSubmit={(draft) => {\n          setNotice(`Sent: ${getComposerText(draft)}`);\n          setValue([]);\n        }}\n      >\n        <ComposerInput\n          aria-label=\"Message\"\n          className=\"px-2\"\n          placeholder=\"Write a message…\"\n        />\n        <ComposerActions className=\"mx-1\">\n          <ComposerActionGroup align=\"end\">\n            <ComposerSubmit\n              render={\n                <Button\n                  aria-label=\"Send message\"\n                  className=\"rounded-full\"\n                  size=\"icon\"\n                >\n                  <ArrowUpIcon aria-hidden=\"true\" />\n                </Button>\n              }\n            />\n          </ComposerActionGroup>\n        </ComposerActions>\n      </Composer>\n      <p className=\"min-h-5 text-muted-foreground text-sm\" role=\"status\">\n        {notice}\n      </p>\n    </div>\n  );\n}\n",
-+      "content": "\"use client\";\n\nimport { ArrowUpIcon } from \"lucide-react\";\nimport { useState } from \"react\";\nimport { Button } from \"@/registry/default/ui/button\";\nimport {\n  Composer,\n  ComposerActionGroup,\n  ComposerActions,\n  ComposerInput,\n  ComposerSubmit,\n  type ComposerValue,\n  getComposerText,\n} from \"@/registry/default/ui/composer\";\n\nexport default function Particle() {\n  const [value, setValue] = useState<ComposerValue>([]);\n  const [notice, setNotice] = useState(\"\");\n\n  return (\n    <div className=\"flex w-full max-w-xl flex-col gap-2\">\n      <Composer\n        className=\"rounded-[calc(--spacing(5.5)+1px)] [--composer-padding:--spacing(1)] before:rounded-[--spacing(5.5)] data-[layout=adaptive]:not-data-multiline:px-[calc(--spacing(1)-1px)] sm:rounded-[calc(--spacing(5)+1px)] sm:before:rounded-[--spacing(5)]\"\n        layout=\"adaptive\"\n        value={value}\n        onValueChange={setValue}\n        onSubmit={(draft) => {\n          setNotice(`Sent: ${getComposerText(draft)}`);\n          setValue([]);\n        }}\n      >\n        <ComposerInput\n          aria-label=\"Message\"\n          className=\"px-2\"\n          placeholder=\"Write a message…\"\n        />\n        <ComposerActions className=\"mx-[calc(--spacing(1)-1px)]\">\n          <ComposerActionGroup align=\"end\">\n            <ComposerSubmit\n              render={\n                <Button\n                  aria-label=\"Send message\"\n                  className=\"rounded-full\"\n                  size=\"icon\"\n                >\n                  <ArrowUpIcon aria-hidden=\"true\" />\n                </Button>\n              }\n            />\n          </ComposerActionGroup>\n        </ComposerActions>\n      </Composer>\n      <p className=\"min-h-5 text-muted-foreground text-sm\" role=\"status\">\n        {notice}\n      </p>\n    </div>\n  );\n}\n",
-       "type": "registry:block"
-     }
-   ],
-```
-
-**File**: `apps/ui/public/r/p-composer-9.json` (modified, +1/-1)
-```diff
-@@ -12,7 +12,7 @@
-   "files": [
-     {
-       "path": "registry/default/particles/p-composer-9.tsx",
--      "content": "\"use client\";\n\nimport { ArrowUpIcon, PlusIcon } from \"lucide-react\";\nimport { useState } from \"react\";\nimport { Button } from \"@/registry/default/ui/button\";\nimport {\n  Composer,\n  ComposerActionGroup,\n  ComposerActions,\n  ComposerInput,\n  ComposerSubmit,\n  type ComposerValue,\n  getComposerText,\n} from \"@/registry/default/ui/composer\";\n\nexport default function Particle() {\n  const [value, setValue] = useState<ComposerValue>([]);\n  const [notice, setNotice] = useState(\"\");\n\n  return (\n    <div className=\"flex w-full max-w-xl flex-col gap-2\">\n      <Composer\n        className=\"rounded-[calc(--spacing(6.5)+1px)] sm:rounded-[calc(--spacing(6)+1px)]\"\n        layout=\"adaptive\"\n        value={value}\n        onValueChange={setValue}\n        onSubmit={(draft) => {\n          setNotice(`Sent: ${getComposerText(draft)}`);\n          setValue([]);\n        }}\n      >\n        <ComposerInput aria-label=\"Message\" placeholder=\"Write a message…\" />\n        <ComposerActions>\n          <ComposerActionGroup>\n            <Button\n              aria-label=\"Add an attachment\"\n              className=\"rounded-full\"\n              size=\"icon\"\n              type=\"button\"\n              variant=\"ghost\"\n              onClick={() => setNotice(\"Add an attachment\")}\n            >\n              <PlusIcon aria-hidden=\"true\" />\n            </Button>\n          </ComposerActionGroup>\n          <ComposerActionGroup align=\"end\">\n            <ComposerSubmit\n              render={\n                <Button\n                  aria-label=\"Send message\"\n                  className=\"rounded-full\"\n                  size=\"icon\"\n                >\n                  <ArrowUpIcon aria-hidden=\"true\" />\n                </Button>\n              }\n            />\n          </ComposerActionGroup>\n        </ComposerActions>\n      </Composer>\n      <p className=\"min-h-5 text-muted-foreground text-sm\" role=\"status\">\n        {notice}\n      </p>\n    </div>\n  );\n}\n",
-+      "content": "\"use client\";\n\nimport { ArrowUpIcon, PlusIcon } from \"lucide-react\";\nimport { useState } from \"react\";\nimport { Button } from \"@/registry/default/ui/button\";\nimport {\n  Composer,\n  ComposerActionGroup,\n  ComposerActions,\n  ComposerInput,\n  ComposerSubmit,\n  type ComposerValue,\n  getComposerText,\n} from \"@/registry/default/ui/composer\";\n\nexport default function Particle() {\n  const [value, setValue] = useState<ComposerValue>([]);\n  const [notice, setNotice] = useState(\"\");\n\n  return (\n    <div className=\"flex w-full max-w-xl flex-col gap-2\">\n      <Composer\n        className=\"rounded-[calc(--spacing(6.5)+1px)] before:rounded-[--spacing(6.5)] sm:rounded-[calc(--spacing(6)+1px)] sm:before:rounded-[--spacing(6)]\"\n        layout=\"adaptive\"\n        value={value}\n        onValueChange={setValue}\n        onSubmit={(draft) => {\n          setNotice(`Sent: ${getComposerText(draft)}`);\n          setValue([]);\n        }}\n      >\n        <ComposerInput aria-label=\"Message\" placeholder=\"Write a message…\" />\n        <ComposerActions>\n          <ComposerActionGroup>\n            <Button\n              aria-label=\"Add an attachment\"\n              className=\"rounded-full\"\n              size=\"icon\"\n              type=\"button\"\n              variant=\"ghost\"\n              onClick={() => setNotice(\"Add an attachment\")}\n            >\n              <PlusIcon aria-hidden=\"true\" />\n            </Button>\n          </ComposerActionGroup>\n          <ComposerActionGroup align=\"end\">\n            <ComposerSubmit\n              render={\n                <Button\n                  aria-label=\"Send message\"\n                  className=\"rounded-full\"\n                  size=\"icon\"\n                >\n                  <ArrowUpIcon aria-hidden=\"true\" />\n                </Button>\n              }\n            />\n          </ComposerActionGroup>\n        </ComposerActions>\n      </Composer>\n      <p className=\"min-h-5 text-muted-foreground text-sm\" role=\"status\">\n        {notice}\n      </p>\n    </div>\n  );\n}\n",
-       "type": "registry:block"
-     }
-   ],
-```
-
-**File**: `apps/ui/registry/default/particles/p-composer-11.tsx` (modified, +2/-2)
-```diff
-@@ -20,7 +20,7 @@ export default function Particle() {
-   return (
-     <div className="flex w-full max-w-xl flex-col gap-2">
-       <Composer
--        className="rounded-[calc(--spacing(5.5)+1px)] [--composer-padding:--spacing(1)] data-[layout=adaptive]:not-data-multiline:px-1 sm:rounded-[calc(--spacing(5)+1px)]"
-+        className="rounded-[calc(--spacing(5.5)+1px)] [--composer-padding:--spacing(1)] before:rounded-[--spacing(5.5)] data-[layout=adaptive]:not-data-multiline:px-[calc(--spacing(1)-1px)] sm:rounded-[calc(--spacing(5)+1px)] sm:before:rounded-[--spacing(5)]"
-         layout="adaptive"
-         value={value}
-         onValueChange={setValue}
-@@ -34,7 +34,7 @@ export default function Particle() {
-           className="px-2"
-           placeholder="Write a message…"
-         />
--        <ComposerActions className="mx-1">
-+        <ComposerActions className="mx-[calc(--spacing(1)-1px)]">
-           <ComposerActionGroup align="end">
-             <ComposerSubmit
-               render={
-```
-
-**File**: `apps/ui/registry/default/particles/p-composer-9.tsx` (modified, +1/-1)
-```diff
-@@ -20,7 +20,7 @@ export default function Particle() {
-   return (
-     <div className="flex w-full max-w-xl flex-col gap-2">
-       <Composer
--        className="rounded-[calc(--spacing(6.5)+1px)] sm:rounded-[calc(--spacing(6)+1px)]"
-+        className="rounded-[calc(--spacing(6.5)+1px)] before:rounded-[--spacing(6.5)] sm:rounded-[calc(--spacing(6)+1px)] sm:before:rounded-[--spacing(6)]"
-         layout="adaptive"
-         value={value}
-         onValueChange={setValue}
-```
-
-**File**: `apps/ui/registry/default/ui/composer.tsx` (modified, +5/-5)
-```diff
-@@ -82,8 +82,8 @@ function ComposerFrame({
-       </>
-     ),
-     className: cn(
--      "relative flex min-h-0 min-w-0 cursor-text flex-col rounded-xl border border-input bg-background pb-(--composer-padding) text-foreground shadow-xs/5 transition-shadow [--composer-max-rows:4] [--composer-padding:--spacing(2)] has-[[data-slot=composer-input]:focus-visible]:border-ring has-[[data-slot=composer-input]:focus-visible]:ring-[3px] has-[[data-slot=composer-input]:focus-visible]:ring-ring/24 md:[--composer-max-rows:8]",
--      "data-[layout=adaptive]:data-multiline:grid-rows-[minmax(0,1fr)_auto] data-[layout=adaptive]:grid data-[layout=adaptive]:grid-cols-[auto_minmax(0,1fr)_auto] data-[layout=adaptive]:items-center data-[layout=adaptive]:not-data-multiline:px-2 data-[layout=adaptive]:not-data-multiline:pt-(--composer-padding)",
-+      "relative flex min-h-0 min-w-0 cursor-text flex-col rounded-xl border border-input bg-background not-dark:bg-clip-padding pb-[calc(var(--composer-padding)-1px)] text-foreground shadow-xs/5 ring-ring/24 transition-shadow [--composer-max-rows:4] [--composer-padding:--spacing(2)] before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-xl)-1px)] not-data-disabled:not-has-[[data-slot=composer-input]:focus-visible]:not-has-aria-invalid:before:shadow-[0_1px_--theme(--color-black/4%)] has-[[data-slot=composer-input]:focus-visible]:has-aria-invalid:border-destructive/64 has-[[data-slot=composer-input]:focus-visible]:has-aria-invalid:ring-destructive/16 has-[[data-slot=composer-input]:focus-visible]:border-ring has-aria-invalid:border-destructive/36 has-[[data-slot=composer-input]:focus-visible]:shadow-none has-aria-invalid:shadow-none has-[[data-slot=composer-input]:focus-visible]:ring-[3px] aria-invalid:border-destructive/36 aria-invalid:shadow-none data-disabled:opacity-64 data-disabled:shadow-none dark:bg-input/32 dark:aria-invalid:ring-destructive/24 dark:has-aria-invalid:ring-destructive/24 dark:not-data-disabled:not-has-[[data-slot=composer-input]:focus-visible]:not-has-aria-invalid:before:shadow-[0_-1px_--theme(--color-white/6%)] md:[--composer-max-rows:8]",
-+      "data-[layout=adaptive]:data-multiline:grid-rows-[minmax(0,1fr)_auto] data-[layout=adaptive]:grid data-[layout=adaptive]:grid-cols-[auto_minmax(0,1fr)_auto] data-[layout=adaptive]:items-center data-[layout=adaptive]:not-data-multiline:px-[calc(--spacing(2)-1px)] data-[layout=adaptive]:not-data-multiline:pt-[calc(var(--composer-padding)-1px)]",
-       className,
-     ),
-   };
-@@ -171,7 +171,7 @@ export function ComposerInput({
-     "data-placeholder": placeholder,
-     "aria-placeholder": editor ? placeholder : undefined,
-     className: cn(
--      "field-sizing-content wrap-anywhere relative block min-h-[calc(var(--composer-min-rows,1)*1lh+--spacing(2))] w-full min-w-0 resize-none whitespace-pre-wrap border-0 bg-transparent in-[[data-layout=adaptive]:not([data-multiline])]:px-1 px-3 py-1 outline-none placeholder:text-muted-foreground/72 data-empty:before:pointer-events-none data-empty:before:absolute data-empty:before:text-muted-foreground/72 data-empty:before:content-[attr(data-placeholder)] md:in-data-[layout=adaptive]:min-h-[calc(var(--composer-min-rows,1)*1lh+--spacing(2))] md:min-h-[calc(var(--composer-min-rows,2)*1lh+--spacing(2))]",
-+      "field-sizing-content wrap-anywhere relative block min-h-[calc(var(--composer-min-rows,1)*1lh+--spacing(2))] w-full min-w-0 resize-none whitespace-pre-wrap border-0 bg-transparent in-[[data-layout=adaptive]:not([data-multiline])]:px-1 px-[calc(--spacing(3)-1px)] py-1 outline-none placeholder:text-muted-foreground/72 data-empty:before:pointer-events-none data-empty:before:absolute data-empty:before:text-muted-foreground/72 data-empty:before:content-[attr(data-placeholder)] md:in-data-[layout=adaptive]:min-h-[calc(var(--composer-min-rows,1)*1lh+--spacing(2))] md:min-h-[calc(var(--composer-min-rows,2)*1lh+--spacing(2))]",
-       className,
-     ),
-   };
-@@ -198,7 +198,7 @@ export function ComposerInput({
-       {/* The drawer reserves keyboard space; its nested input scroller needs no extra bottom padding. */}
-       <ScrollArea
-         ref={scrollRef}
--        className="in-[[data-layout=adaptive][data-multiline]]:col-span-full in-[[data-layout=adaptive][data-multiline]]:col-start-1 in-data-[layout=adaptive]:col-start-2 in-data-[layout=adaptive]:row-start-1 flex h-auto! min-h-0 min-w-0 flex-col in-[[data-layout=adaptive][data-multiline]]:self-stretch rounded-t-[inherit] text-base [--composer-scroll-padding:var(--composer-padding)] in-[[data-layout=adaptive]:not([data-multiline])]:[--composer-scroll-padding:0px] **:data-[slot=scroll-area-viewport]:h-auto! **:data-[slot=scroll-area-viewport]:max-h-[min(var(--composer-max-height,calc(var(--composer-max-rows,8)*var(--composer-line-height,1lh)+var(--composer-input-padding,--spacing(2))+var(--composer-scroll-padding))),50dvh)] **:data-[slot=scroll-area-viewport]:min-h-0 **:data-[slot=scroll-area-conten
-```
-
-**File**: `packages/ui/src/components/composer.tsx` (modified, +5/-5)
-```diff
-@@ -82,8 +82,8 @@ function ComposerFrame({
-       </>
-     ),
-     className: cn(
--      "relative flex min-h-0 min-w-0 cursor-text flex-col rounded-xl border border-input bg-background pb-(--composer-padding) text-foreground shadow-xs/5 transition-shadow [--composer-max-rows:4] [--composer-padding:--spacing(2)] has-[[data-slot=composer-input]:focus-visible]:border-ring has-[[data-slot=composer-input]:focus-visible]:ring-[3px] has-[[data-slot=composer-input]:focus-visible]:ring-ring/24 md:[--composer-max-rows:8]",
--      "data-[layout=adaptive]:data-multiline:grid-rows-[minmax(0,1fr)_auto] data-[layout=adaptive]:grid data-[layout=adaptive]:grid-cols-[auto_minmax(0,1fr)_auto] data-[layout=adaptive]:items-center data-[layout=adaptive]:not-data-multiline:px-2 data-[layout=adaptive]:not-data-multiline:pt-(--composer-padding)",
-+      "relative flex min-h-0 min-w-0 cursor-text flex-col rounded-xl border border-input bg-background not-dark:bg-clip-padding pb-[calc(var(--composer-padding)-1px)] text-foreground shadow-xs/5 ring-ring/24 transition-shadow [--composer-max-rows:4] [--composer-padding:--spacing(2)] before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-xl)-1px)] not-data-disabled:not-has-[[data-slot=composer-input]:focus-visible]:not-has-aria-invalid:before:shadow-[0_1px_--theme(--color-black/4%)] has-[[data-slot=composer-input]:focus-visible]:has-aria-invalid:border-destructive/64 has-[[data-slot=composer-input]:focus-visible]:has-aria-invalid:ring-destructive/16 has-[[data-slot=composer-input]:focus-visible]:border-ring has-aria-invalid:border-destructive/36 has-[[data-slot=composer-input]:focus-visible]:shadow-none has-aria-invalid:shadow-none has-[[data-slot=composer-input]:focus-visible]:ring-[3px] aria-invalid:border-destructive/36 aria-invalid:shadow-none data-disabled:opacity-64 data-disabled:shadow-none dark:bg-input/32 dark:aria-invalid:ring-destructive/24 dark:has-aria-invalid:ring-destructive/24 dark:not-data-disabled:not-has-[[data-slot=composer-input]:focus-visible]:not-has-aria-invalid:before:shadow-[0_-1px_--theme(--color-white/6%)] md:[--composer-max-rows:8]",
-+      "data-[layout=adaptive]:data-multiline:grid-rows-[minmax(0,1fr)_auto] data-[layout=adaptive]:grid data-[layout=adaptive]:grid-cols-[auto_minmax(0,1fr)_auto] data-[layout=adaptive]:items-center data-[layout=adaptive]:not-data-multiline:px-[calc(--spacing(2)-1px)] data-[layout=adaptive]:not-data-multiline:pt-[calc(var(--composer-padding)-1px)]",
-       className,
-     ),
-   };
-@@ -171,7 +171,7 @@ export function ComposerInput({
-     "data-placeholder": placeholder,
-     "aria-placeholder": editor ? placeholder : undefined,
-     className: cn(
--      "field-sizing-content wrap-anywhere relative block min-h-[calc(var(--composer-min-rows,1)*1lh+--spacing(2))] w-full min-w-0 resize-none whitespace-pre-wrap border-0 bg-transparent in-[[data-layout=adaptive]:not([data-multiline])]:px-1 px-3 py-1 outline-none placeholder:text-muted-foreground/72 data-empty:before:pointer-events-none data-empty:before:absolute data-empty:before:text-muted-foreground/72 data-empty:before:content-[attr(data-placeholder)] md:in-data-[layout=adaptive]:min-h-[calc(var(--composer-min-rows,1)*1lh+--spacing(2))] md:min-h-[calc(var(--composer-min-rows,2)*1lh+--spacing(2))]",
-+      "field-sizing-content wrap-anywhere relative block min-h-[calc(var(--composer-min-rows,1)*1lh+--spacing(2))] w-full min-w-0 resize-none whitespace-pre-wrap border-0 bg-transparent in-[[data-layout=adaptive]:not([data-multiline])]:px-1 px-[calc(--spacing(3)-1px)] py-1 outline-none placeholder:text-muted-foreground/72 data-empty:before:pointer-events-none data-empty:before:absolute data-empty:before:text-muted-foreground/72 data-empty:before:content-[attr(data-placeholder)] md:in-data-[layout=adaptive]:min-h-[calc(var(--composer-min-rows,1)*1lh+--spacing(2))] md:min-h-[calc(var(--composer-min-rows,2)*1lh+--spacing(2))]",
-       className,
-     ),
-   };
-@@ -198,7 +198,7 @@ export function ComposerInput({
-       {/* The drawer reserves keyboard space; its nested input scroller needs no extra bottom padding. */}
-       <ScrollArea
-         ref={scrollRef}
--        className="in-[[data-layout=adaptive][data-multiline]]:col-span-full in-[[data-layout=adaptive][data-multiline]]:col-start-1 in-data-[layout=adaptive]:col-start-2 in-data-[layout=adaptive]:row-start-1 flex h-auto! min-h-0 min-w-0 flex-col in-[[data-layout=adaptive][data-multiline]]:self-stretch rounded-t-[inherit] text-base [--composer-scroll-padding:var(--composer-padding)] in-[[data-layout=adaptive]:not([data-multiline])]:[--composer-scroll-padding:0px] **:data-[slot=scroll-area-viewport]:h-auto! **:data-[slot=scroll-area-viewport]:max-h-[min(var(--composer-max-height,calc(var(--composer-max-rows,8)*var(--composer-line-height,1lh)+var(--composer-input-padding,--spacing(2))+var(--composer-scroll-padding))),50dvh)] **:data-[slot=scroll-area-viewport]:min-h-0 **:data-[slot=scroll-area-conten
-```
-
----
-
-### Incident Patch 4: `a5a88935` (2026-10-12)
-**Commit Message**: style(ui): use bold overlay and empty titles (#862)
-
-**File**: `apps/ui/public/r/alert-dialog.json` (modified, +1/-1)
+**File**: `apps/ui/public/r/context-menu.json` (modified, +1/-1)
 ```diff
 @@ -7,7 +7,7 @@
    "files": [
      {
-       "path": "registry/default/ui/alert-dialog.tsx",
--      "content": "\"use client\";\n\nimport { AlertDialog as AlertDialogPrimitive } from \"@base-ui/react/alert-dialog\";\nimport type React from \"react\";\nimport { cn } from \"@/registry/default/lib/utils\";\n\nexport const AlertDialogCreateHandle: typeof AlertDialogPrimitive.createHandle =\n  AlertDialogPrimitive.createHandle;\n\nexport const AlertDialog: typeof AlertDialogPrimitive.Root =\n  AlertDialogPrimitive.Root;\n\nexport const AlertDialogPortal: typeof AlertDialogPrimitive.Portal =\n  AlertDialogPrimitive.Portal;\n\nexport function AlertDialogTrigger(\n  props: AlertDialogPrimitive.Trigger.Props,\n): React.ReactElement {\n  return (\n    <AlertDialogPrimitive.Trigger data-slot=\"alert-dialog-trigger\" {...props} />\n  );\n}\n\nexport function AlertDialogBackdrop({\n  className,\n  ...props\n}: AlertDialogPrimitive.Backdrop.Props): React.ReactElement {\n  return (\n    <AlertDialogPrimitive.Backdrop\n      className={cn(\n        \"fixed inset-0 z-50 bg-black/32 backdrop-blur-sm transition-all duration-200 data-ending-style:opacity-0 data-starting-style:opacity-0 supports-[-webkit-touch-callout:none]:absolute\",\n        className,\n      )}\n      data-slot=\"alert-dialog-backdrop\"\n      {...props}\n    />\n  );\n}\n\nexport function AlertDialogViewport({\n  className,\n  ...props\n}: AlertDialogPrimitive.Viewport.Props): React.ReactElement {\n  return (\n    <AlertDialogPrimitive.Viewport\n      className={cn(\n        \"fixed inset-0 z-50 grid grid-rows-[1fr_auto_3fr] justify-items-center p-4\",\n        className,\n      )}\n      data-slot=\"alert-dialog-viewport\"\n      {...props}\n    />\n  );\n}\n\nexport function AlertDialogPopup({\n  className,\n  bottomStickOnMobile = true,\n  portalProps,\n  ...props\n}: AlertDialogPrimitive.Popup.Props & {\n  bottomStickOnMobile?: boolean;\n  portalProps?: AlertDialogPrimitive.Portal.Props;\n}): React.ReactElement {\n  return (\n    <AlertDialogPortal {...portalProps}>\n      <AlertDialogBackdrop />\n      <AlertDialogViewport\n        className={cn(\n          bottomStickOnMobile &&\n            \"max-sm:grid-rows-[1fr_auto] max-sm:p-0 max-sm:pt-12\",\n        )}\n      >\n        <AlertDialogPrimitive.Popup\n          className={cn(\n            \"relative row-start-2 flex max-h-full min-h-0 w-full min-w-0 max-w-lg origin-center flex-col rounded-2xl border bg-popover not-dark:bg-clip-padding text-popover-foreground opacity-[calc(1-var(--nested-dialogs))] shadow-lg/5 transition-[scale,opacity,translate] duration-200 ease-in-out will-change-transform before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-2xl)-1px)] before:shadow-[0_1px_--theme(--color-black/4%)] data-ending-style:opacity-0 data-starting-style:opacity-0 sm:scale-[calc(1-0.1*var(--nested-dialogs))] sm:data-ending-style:scale-98 sm:data-starting-style:scale-98 dark:before:shadow-[0_-1px_--theme(--color-white/6%)]\",\n            bottomStickOnMobile &&\n              \"max-sm:max-w-none max-sm:origin-bottom max-sm:rounded-none max-sm:border-x-0 max-sm:border-t max-sm:border-b-0 max-sm:data-ending-style:translate-y-4 max-sm:data-starting-style:translate-y-4 max-sm:before:hidden max-sm:before:rounded-none\",\n            className,\n          )}\n          data-slot=\"alert-dialog-popup\"\n          {...props}\n        />\n      </AlertDialogViewport>\n    </AlertDialogPortal>\n  );\n}\n\nexport function AlertDialogHeader({\n  className,\n  ...props\n}: React.ComponentProps<\"div\">): React.ReactElement {\n  return (\n    <div\n      className={cn(\n        \"flex flex-col gap-2 p-6 text-center max-sm:pb-4 sm:text-left\",\n        className,\n      )}\n      data-slot=\"alert-dialog-header\"\n      {...props}\n    />\n  );\n}\n\nexport function AlertDialogFooter({\n  className,\n  variant = \"default\",\n  ...props\n}: React.ComponentProps<\"div\"> & {\n  variant?: \"default\" | \"bare\";\n}): React.ReactElement {\n  return (\n    <div\n      className={cn(\n        \"flex flex-col-reverse gap-2 px-6 sm:flex-row sm:justify-end sm:rounded-b-[calc(var(--radius-2xl)-1px)]\",\n        variant === \"default\" && \"border-t bg-muted/72 py-4\",\n        variant === \"bare\" && \"pb-6\",\n        className,\n      )}\n      data-slot=\"alert-dialog-footer\"\n      {...props}\n    />\n  );\n}\n\nexport function AlertDialogTitle({\n  className,\n  ...props\n}: AlertDialogPrimitive.Title.Props): React.ReactElement {\n  return (\n    <AlertDialogPrimitive.Title\n      className={cn(\n        \"font-heading font-semibold text-xl leading-none\",\n        className,\n      )}\n      data-slot=\"alert-dialog-title\"\n      {...props}\n    />\n  );\n}\n\nexport function AlertDialogDescription({\n  className,\n  ...props\n}: AlertDialogPrimitive.Description.Props): React.ReactElement {\n  return (\n    <AlertDialogPrimitive.Description\n      className={cn(\"text-muted-foregro
-```
-
-**File**: `apps/ui/public/r/dialog.json` (modified, +1/-1)
-```diff
-@@ -11,7 +11,7 @@
-   "files": [
-     {
-       "path": "registry/default/ui/dialog.tsx",
--      "content": "\"use client\";\n\nimport { Dialog as DialogPrimitive } from \"@base-ui/react/dialog\";\nimport { mergeProps } from \"@base-ui/react/merge-props\";\nimport { useRender } from \"@base-ui/react/use-render\";\nimport { XIcon } from \"lucide-react\";\nimport type React from \"react\";\nimport { cn } from \"@/registry/default/lib/utils\";\nimport { Button } from \"@/registry/default/ui/button\";\nimport { ScrollArea } from \"@/registry/default/ui/scroll-area\";\n\nexport const DialogCreateHandle: typeof DialogPrimitive.createHandle =\n  DialogPrimitive.createHandle;\n\nexport const Dialog: typeof DialogPrimitive.Root = DialogPrimitive.Root;\n\nexport const DialogPortal: typeof DialogPrimitive.Portal =\n  DialogPrimitive.Portal;\n\nexport function DialogTrigger(\n  props: DialogPrimitive.Trigger.Props,\n): React.ReactElement {\n  return <DialogPrimitive.Trigger data-slot=\"dialog-trigger\" {...props} />;\n}\n\nexport function DialogClose(\n  props: DialogPrimitive.Close.Props,\n): React.ReactElement {\n  return <DialogPrimitive.Close data-slot=\"dialog-close\" {...props} />;\n}\n\nexport function DialogBackdrop({\n  className,\n  ...props\n}: DialogPrimitive.Backdrop.Props): React.ReactElement {\n  return (\n    <DialogPrimitive.Backdrop\n      className={cn(\n        \"fixed inset-0 z-50 bg-black/32 backdrop-blur-sm transition-all duration-200 data-ending-style:opacity-0 data-starting-style:opacity-0 supports-[-webkit-touch-callout:none]:absolute\",\n        className,\n      )}\n      data-slot=\"dialog-backdrop\"\n      {...props}\n    />\n  );\n}\n\nexport function DialogViewport({\n  className,\n  ...props\n}: DialogPrimitive.Viewport.Props): React.ReactElement {\n  return (\n    <DialogPrimitive.Viewport\n      className={cn(\n        \"fixed inset-0 z-50 grid grid-rows-[1fr_auto_3fr] justify-items-center p-4\",\n        className,\n      )}\n      data-slot=\"dialog-viewport\"\n      {...props}\n    />\n  );\n}\n\nexport function DialogPopup({\n  className,\n  children,\n  showCloseButton = true,\n  bottomStickOnMobile = true,\n  closeProps,\n  portalProps,\n  ...props\n}: DialogPrimitive.Popup.Props & {\n  showCloseButton?: boolean;\n  bottomStickOnMobile?: boolean;\n  closeProps?: DialogPrimitive.Close.Props;\n  portalProps?: DialogPrimitive.Portal.Props;\n}): React.ReactElement {\n  return (\n    <DialogPortal {...portalProps}>\n      <DialogBackdrop />\n      <DialogViewport\n        className={cn(\n          bottomStickOnMobile &&\n            \"max-sm:grid-rows-[1fr_auto] max-sm:p-0 max-sm:pt-12\",\n        )}\n      >\n        <DialogPrimitive.Popup\n          className={cn(\n            \"relative row-start-2 flex max-h-full min-h-0 w-full min-w-0 max-w-lg origin-center flex-col rounded-2xl border bg-popover not-dark:bg-clip-padding text-popover-foreground opacity-[calc(1-var(--nested-dialogs))] shadow-lg/5 outline-none transition-[scale,opacity,translate] duration-200 ease-in-out will-change-transform before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-2xl)-1px)] before:shadow-[0_1px_--theme(--color-black/4%)] data-ending-style:opacity-0 data-starting-style:opacity-0 sm:scale-[calc(1-0.1*var(--nested-dialogs))] sm:data-ending-style:scale-98 sm:data-starting-style:scale-98 dark:before:shadow-[0_-1px_--theme(--color-white/6%)]\",\n            bottomStickOnMobile &&\n              \"max-sm:max-w-none max-sm:origin-bottom max-sm:rounded-none max-sm:border-x-0 max-sm:border-t max-sm:border-b-0 max-sm:data-ending-style:translate-y-4 max-sm:data-starting-style:translate-y-4 max-sm:before:hidden max-sm:before:rounded-none\",\n            className,\n          )}\n          data-slot=\"dialog-popup\"\n          {...props}\n        >\n          {children}\n          {showCloseButton && (\n            <DialogPrimitive.Close\n              aria-label=\"Close\"\n              className=\"absolute end-2 top-2\"\n              render={<Button size=\"icon\" variant=\"ghost\" />}\n              {...closeProps}\n            >\n              <XIcon />\n            </DialogPrimitive.Close>\n          )}\n        </DialogPrimitive.Popup>\n      </DialogViewport>\n    </DialogPortal>\n  );\n}\n\nexport function DialogHeader({\n  className,\n  render,\n  ...props\n}: useRender.ComponentProps<\"div\">): React.ReactElement {\n  const defaultProps = {\n    className: cn(\n      \"flex flex-col gap-2 p-6 in-[[data-slot=dialog-popup]:has([data-slot=dialog-panel])]:pb-3 max-sm:pb-4\",\n      className,\n    ),\n    \"data-slot\": \"dialog-header\",\n  };\n\n  return useRender({\n    defaultTagName: \"div\",\n    props: mergeProps<\"div\">(defaultProps, props),\n    render,\n  });\n}\n\nexport function DialogFooter({\n  className,\n  variant = \"default\",\n  render,\n  ...props\n}: useRender.ComponentProps<\"div\"> & {\n  variant?: \"default\" | \"bare\";\n}): React.ReactElement {\
+       "path": "registry/default/ui/context-menu.tsx",
+-      "content": "\"use client\";\n\nimport { ContextMenu as ContextMenuPrimitive } from \"@base-ui/react/context-menu\";\nimport { ChevronRightIcon } from \"lucide-react\";\nimport type * as React from \"react\";\nimport { cn } from \"@/registry/default/lib/utils\";\n\nexport const ContextMenu: typeof ContextMenuPrimitive.Root =\n  ContextMenuPrimitive.Root;\n\nexport const ContextMenuPortal: typeof ContextMenuPrimitive.Portal =\n  ContextMenuPrimitive.Portal;\n\nexport function ContextMenuTrigger({\n  className,\n  children,\n  ...props\n}: ContextMenuPrimitive.Trigger.Props): React.ReactElement {\n  return (\n    <ContextMenuPrimitive.Trigger\n      className={className}\n      data-slot=\"context-menu-trigger\"\n      {...props}\n    >\n      {children}\n    </ContextMenuPrimitive.Trigger>\n  );\n}\n\nexport function ContextMenuPopup({\n  children,\n  className,\n  sideOffset = 4,\n  align = \"center\",\n  alignOffset,\n  side = \"bottom\",\n  anchor,\n  portalProps,\n  ...props\n}: ContextMenuPrimitive.Popup.Props & {\n  align?: ContextMenuPrimitive.Positioner.Props[\"align\"];\n  sideOffset?: ContextMenuPrimitive.Positioner.Props[\"sideOffset\"];\n  alignOffset?: ContextMenuPrimitive.Positioner.Props[\"alignOffset\"];\n  side?: ContextMenuPrimitive.Positioner.Props[\"side\"];\n  anchor?: ContextMenuPrimitive.Positioner.Props[\"anchor\"];\n  portalProps?: ContextMenuPrimitive.Portal.Props;\n}): React.ReactElement {\n  return (\n    <ContextMenuPortal {...portalProps}>\n      <ContextMenuPrimitive.Positioner\n        align={align}\n        alignOffset={alignOffset}\n        anchor={anchor}\n        className=\"z-50\"\n        data-slot=\"context-menu-positioner\"\n        side={side}\n        sideOffset={sideOffset}\n      >\n        <ContextMenuPrimitive.Popup\n          className={cn(\n            \"relative flex not-[class*='w-']:min-w-32 origin-(--transform-origin) rounded-lg border bg-popover not-dark:bg-clip-padding shadow-lg/5 outline-none before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] before:shadow-[0_1px_--theme(--color-black/4%)] focus:outline-none dark:before:shadow-[0_-1px_--theme(--color-white/6%)]\",\n            className,\n          )}\n          data-slot=\"context-menu-popup\"\n          {...props}\n        >\n          <div className=\"max-h-(--available-height) w-full overflow-y-auto p-1\">\n            {children}\n          </div>\n        </ContextMenuPrimitive.Popup>\n      </ContextMenuPrimitive.Positioner>\n    </ContextMenuPortal>\n  );\n}\n\nexport function ContextMenuGroup(\n  props: ContextMenuPrimitive.Group.Props,\n): React.ReactElement {\n  return (\n    <ContextMenuPrimitive.Group data-slot=\"context-menu-group\" {...props} />\n  );\n}\n\nexport function ContextMenuItem({\n  className,\n  inset,\n  variant = \"default\",\n  ...props\n}: ContextMenuPrimitive.Item.Props & {\n  inset?: boolean;\n  variant?: \"default\" | \"destructive\";\n}): React.ReactElement {\n  return (\n    <ContextMenuPrimitive.Item\n      className={cn(\n        \"flex min-h-8 cursor-default select-none items-center gap-2 rounded-sm px-2 py-1 text-base text-foreground outline-none data-disabled:pointer-events-none data-highlighted:bg-accent data-inset:ps-8 data-[variant=destructive]:text-destructive-foreground data-highlighted:text-accent-foreground data-disabled:opacity-64 sm:min-h-7 sm:text-sm [&>svg:not([class*='opacity-'])]:opacity-80 [&>svg:not([class*='size-'])]:size-4.5 sm:[&>svg:not([class*='size-'])]:size-4 [&>svg]:pointer-events-none [&>svg]:-mx-0.5 [&>svg]:shrink-0\",\n        className,\n      )}\n      data-inset={inset}\n      data-slot=\"context-menu-item\"\n      data-variant={variant}\n      {...props}\n    />\n  );\n}\n\nexport function ContextMenuLinkItem({\n  className,\n  inset,\n  variant = \"default\",\n  closeOnClick = true,\n  ...props\n}: ContextMenuPrimitive.LinkItem.Props & {\n  inset?: boolean;\n  variant?: \"default\" | \"destructive\";\n}): React.ReactElement {\n  return (\n    <ContextMenuPrimitive.LinkItem\n      className={cn(\n        \"flex min-h-8 cursor-default select-none items-center gap-2 rounded-sm px-2 py-1 text-base text-foreground outline-none data-disabled:pointer-events-none data-highlighted:bg-accent data-inset:ps-8 data-[variant=destructive]:text-destructive-foreground data-highlighted:text-accent-foreground data-disabled:opacity-64 sm:min-h-7 sm:text-sm [&>svg:not([class*='opacity-'])]:opacity-80 [&>svg:not([class*='size-'])]:size-4.5 sm:[&>svg:not([class*='size-'])]:size-4 [&>svg]:pointer-events-none [&>svg]:-mx-0.5 [&>svg]:shrink-0\",\n        className,\n      )}\n      closeOnClick={closeOnClick}\n      data-inset={inset}\n      data-slot=\"context-menu-link-item\"\n      data-variant={variant}\n      {...props}\n    />\n  );\n}\n\nexport function ContextMenuCheckboxItem({\n  className,\n  children,\n
 ```
 
 **File**: `apps/ui/public/r/drawer.json` (modified, +2/-2)
@@ -1449,1317 +1114,499 @@ Co-authored-by: Cursor <[REDACTED_EMAIL]>
 -      "content": "\"use client\";\n\nimport { Checkbox as CheckboxPrimitive } from \"@base-ui/react/checkbox\";\nimport { Drawer as DrawerPrimitive } from \"@base-ui/react/drawer\";\nimport { mergeProps } from \"@base-ui/react/merge-props\";\nimport { Radio as RadioPrimitive } from \"@base-ui/react/radio\";\nimport { RadioGroup as RadioGroupPrimitive } from \"@base-ui/react/radio-group\";\nimport { useRender } from \"@base-ui/react/use-render\";\nimport { ChevronRightIcon, XIcon } from \"lucide-react\";\nimport type React from \"react\";\nimport { createContext, useContext } from \"react\";\nimport { cn } from \"@/registry/default/lib/utils\";\nimport { Button } from \"@/registry/default/ui/button\";\nimport { ScrollArea } from \"@/registry/default/ui/scroll-area\";\n\ntype DrawerPosition = \"right\" | \"left\" | \"top\" | \"bottom\";\n\nconst DrawerContext: React.Context<{ position: DrawerPosition }> =\n  createContext<{ position: DrawerPosition }>({\n    position: \"bottom\",\n  });\n\nconst directionMap: Record<\n  DrawerPosition,\n  DrawerPrimitive.Root.Props[\"swipeDirection\"]\n> = {\n  bottom: \"down\",\n  left: \"left\",\n  right: \"right\",\n  top: \"up\",\n};\n\nexport const DrawerCreateHandle: typeof DrawerPrimitive.createHandle =\n  DrawerPrimitive.createHandle;\n\nexport function Drawer({\n  swipeDirection,\n  position = \"bottom\",\n  ...props\n}: DrawerPrimitive.Root.Props & {\n  position?: DrawerPosition;\n}): React.ReactElement {\n  return (\n    <DrawerContext.Provider value={{ position }}>\n      <DrawerPrimitive.Root\n        swipeDirection={swipeDirection ?? directionMap[position]}\n        {...props}\n      />\n    </DrawerContext.Provider>\n  );\n}\n\nexport const DrawerPortal: typeof DrawerPrimitive.Portal =\n  DrawerPrimitive.Portal;\n\nexport function DrawerTrigger(\n  props: DrawerPrimitive.Trigger.Props,\n): React.ReactElement {\n  return <DrawerPrimitive.Trigger data-slot=\"drawer-trigger\" {...props} />;\n}\n\nexport function DrawerClose(\n  props: DrawerPrimitive.Close.Props,\n): React.ReactElement {\n  return <DrawerPrimitive.Close data-slot=\"drawer-close\" {...props} />;\n}\n\nexport function DrawerSwipeArea({\n  className,\n  position: positionProp,\n  ...props\n}: DrawerPrimitive.SwipeArea.Props & {\n  position?: DrawerPosition;\n}): React.ReactElement {\n  const { position: contextPosition } = useContext(DrawerContext);\n  const position = positionProp ?? contextPosition;\n\n  return (\n    <DrawerPrimitive.SwipeArea\n      className={cn(\n        \"fixed z-50 touch-none\",\n        position === \"bottom\" && \"inset-x-0 bottom-0 h-8\",\n        position === \"top\" && \"inset-x-0 top-0 h-8\",\n        position === \"left\" && \"inset-y-0 left-0 w-8\",\n        position === \"right\" && \"inset-y-0 right-0 w-8\",\n        className,\n      )}\n      data-slot=\"drawer-swipe-area\"\n      {...props}\n    />\n  );\n}\n\nexport function DrawerBackdrop({\n  className,\n  ...props\n}: DrawerPrimitive.Backdrop.Props): React.ReactElement {\n  return (\n    <DrawerPrimitive.Backdrop\n      className={cn(\n        \"fixed inset-0 z-50 bg-black/32 opacity-[calc(1-var(--drawer-swipe-progress))] backdrop-blur-sm transition-opacity duration-450 ease-[cubic-bezier(0.32,0.72,0,1)] data-ending-style:opacity-0 data-starting-style:opacity-0 data-ending-style:duration-[calc(var(--drawer-swipe-strength)*400ms)] data-swiping:duration-0 supports-[-webkit-touch-callout:none]:absolute\",\n        className,\n      )}\n      data-slot=\"drawer-backdrop\"\n      {...props}\n    />\n  );\n}\n\nexport function DrawerViewport({\n  className,\n  position,\n  variant = \"default\",\n  ...props\n}: DrawerPrimitive.Viewport.Props & {\n  position?: DrawerPosition;\n  variant?: \"default\" | \"straight\" | \"inset\";\n}): React.ReactElement {\n  return (\n    <DrawerPrimitive.Viewport\n      className={cn(\n        \"fixed inset-0 z-50 [--bleed:--spacing(12)] [--inset:0px]\",\n        \"touch-none\",\n        position === \"bottom\" &&\n          \"grid grid-rows-[1fr_auto] pt-[max(--spacing(2),env(safe-area-inset-top,0px))]\",\n        position === \"top\" && \"grid grid-rows-[auto_1fr] pb-12\",\n        position === \"left\" && \"flex justify-start\",\n        position === \"right\" && \"flex justify-end\",\n        variant === \"inset\" && \"px-(--inset) sm:[--inset:--spacing(4)]\",\n        variant === \"inset\" && position !== \"bottom\" && \"pt-(--inset)\",\n        variant === \"inset\" && position !== \"top\" && \"pb-(--inset)\",\n        className,\n      )}\n      data-slot=\"drawer-viewport\"\n      {...props}\n    />\n  );\n}\n\nexport function DrawerPopup({\n  className,\n  children,\n  showCloseButton = false,\n  position: positionProp,\n  variant = \"default\",\n  showBar = false,\n  portalProps,\n  ...props\n}: DrawerPrimitive.Popup.Props & {\n  showCloseButton?: boolean;\n  position?: DrawerPosition;\
 ```
 
-**File**: `apps/ui/public/r/empty.json` (modified, +1/-1)
-```diff
-@@ -4,7 +4,7 @@
-   "files": [
-     {
-       "path": "registry/default/ui/empty.tsx",
--      "content": "import { cva, type VariantProps } from \"class-variance-authority\";\nimport type React from \"react\";\nimport { cn } from \"@/registry/default/lib/utils\";\n\nconst emptyMediaVariants = cva(\n  \"flex shrink-0 items-center justify-center [&_svg]:pointer-events-none [&_svg]:shrink-0\",\n  {\n    defaultVariants: {\n      variant: \"default\",\n    },\n    variants: {\n      variant: {\n        default: \"bg-transparent\",\n        icon: \"relative flex size-9 shrink-0 items-center justify-center rounded-md border bg-card not-dark:bg-clip-padding text-foreground shadow-sm/5 before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-md)-1px)] before:shadow-[0_1px_--theme(--color-black/4%)] dark:before:shadow-[0_-1px_--theme(--color-white/6%)] [&_svg:not([class*='size-'])]:size-4.5\",\n      },\n    },\n  },\n);\n\nexport function Empty({\n  className,\n  ...props\n}: React.ComponentProps<\"div\">): React.ReactElement {\n  return (\n    <div\n      className={cn(\n        \"flex min-w-0 flex-1 flex-col items-center justify-center gap-6 text-balance px-6 py-12 text-center md:py-20\",\n        className,\n      )}\n      data-slot=\"empty\"\n      {...props}\n    />\n  );\n}\n\nexport function EmptyHeader({\n  className,\n  ...props\n}: React.ComponentProps<\"div\">): React.ReactElement {\n  return (\n    <div\n      className={cn(\n        \"flex max-w-sm flex-col items-center text-center\",\n        className,\n      )}\n      data-slot=\"empty-header\"\n      {...props}\n    />\n  );\n}\n\nexport function EmptyMedia({\n  className,\n  variant = \"default\",\n  ...props\n}: React.ComponentProps<\"div\"> &\n  VariantProps<typeof emptyMediaVariants>): React.ReactElement {\n  return (\n    <div\n      className={cn(\"relative mb-6\", className)}\n      data-slot=\"empty-media\"\n      data-variant={variant}\n      {...props}\n    >\n      {variant === \"icon\" && (\n        <>\n          <div\n            aria-hidden=\"true\"\n            className={cn(\n              emptyMediaVariants({ className, variant }),\n              \"pointer-events-none absolute bottom-px origin-bottom-left -translate-x-0.5 -rotate-10 scale-84 shadow-none\",\n            )}\n          />\n          <div\n            aria-hidden=\"true\"\n            className={cn(\n              emptyMediaVariants({ className, variant }),\n              \"pointer-events-none absolute bottom-px origin-bottom-right translate-x-0.5 rotate-10 scale-84 shadow-none\",\n            )}\n          />\n        </>\n      )}\n      <div\n        className={cn(emptyMediaVariants({ className, variant }))}\n        {...props}\n      />\n    </div>\n  );\n}\n\nexport function EmptyTitle({\n  className,\n  ...props\n}: React.ComponentProps<\"div\">): React.ReactElement {\n  return (\n    <div\n      className={cn(\"font-heading font-semibold text-xl\", className)}\n      data-slot=\"empty-title\"\n      {...props}\n    />\n  );\n}\n\nexport function EmptyDescription({\n  className,\n  ...props\n}: React.ComponentProps<\"p\">): React.ReactElement {\n  return (\n    <div\n      className={cn(\n        \"text-muted-foreground text-sm [&>a:hover]:text-primary [&>a]:underline [&>a]:underline-offset-4 [[data-slot=empty-title]+&]:mt-1\",\n        className,\n      )}\n      data-slot=\"empty-description\"\n      {...props}\n    />\n  );\n}\n\nexport function EmptyContent({\n  className,\n  ...props\n}: React.ComponentProps<\"div\">): React.ReactElement {\n  return (\n    <div\n      className={cn(\n        \"flex w-full min-w-0 max-w-sm flex-col items-center gap-4 text-balance text-sm\",\n        className,\n      )}\n      data-slot=\"empty-content\"\n      {...props}\n    />\n  );\n}\n",
-+      "content": "import { cva, type VariantProps } from \"class-variance-authority\";\nimport type React from \"react\";\nimport { cn } from \"@/registry/default/lib/utils\";\n\nconst emptyMediaVariants = cva(\n  \"flex shrink-0 items-center justify-center [&_svg]:pointer-events-none [&_svg]:shrink-0\",\n  {\n    defaultVariants: {\n      variant: \"default\",\n    },\n    variants: {\n      variant: {\n        default: \"bg-transparent\",\n        icon: \"relative flex size-9 shrink-0 items-center justify-center rounded-md border bg-card not-dark:bg-clip-padding text-foreground shadow-sm/5 before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-md)-1px)] before:shadow-[0_1px_--theme(--color-black/4%)] dark:before:shadow-[0_-1px_--theme(--color-white/6%)] [&_svg:not([class*='size-'])]:size-4.5\",\n      },\n    },\n  },\n);\n\nexport function Empty({\n  className,\n  ...props\n}: React.ComponentProps<\"div\">): React.ReactElement {\n  return (\n    <div\n      className={cn(\n        \"flex min-w-0 flex-1 flex-col items-center justify-center gap-6 text-balance px-6 py-12 text-center md:py-20\",\n        className,\n 
-```
-
-**File**: `apps/ui/public/r/sheet.json` (modified, +1/-1)
-```diff
-@@ -11,7 +11,7 @@
-   "files": [
-     {
-       "path": "registry/default/ui/sheet.tsx",
--      "content": "\"use client\";\n\nimport { Dialog as SheetPrimitive } from \"@base-ui/react/dialog\";\nimport { mergeProps } from \"@base-ui/react/merge-props\";\nimport { useRender } from \"@base-ui/react/use-render\";\nimport { XIcon } from \"lucide-react\";\nimport type React from \"react\";\nimport { cn } from \"@/registry/default/lib/utils\";\nimport { Button } from \"@/registry/default/ui/button\";\nimport { ScrollArea } from \"@/registry/default/ui/scroll-area\";\n\nexport const Sheet: typeof SheetPrimitive.Root = SheetPrimitive.Root;\n\nexport const SheetPortal: typeof SheetPrimitive.Portal = SheetPrimitive.Portal;\n\nexport function SheetTrigger(\n  props: SheetPrimitive.Trigger.Props,\n): React.ReactElement {\n  return <SheetPrimitive.Trigger data-slot=\"sheet-trigger\" {...props} />;\n}\n\nexport function SheetClose(\n  props: SheetPrimitive.Close.Props,\n): React.ReactElement {\n  return <SheetPrimitive.Close data-slot=\"sheet-close\" {...props} />;\n}\n\nexport function SheetBackdrop({\n  className,\n  ...props\n}: SheetPrimitive.Backdrop.Props): React.ReactElement {\n  return (\n    <SheetPrimitive.Backdrop\n      className={cn(\n        \"fixed inset-0 z-50 bg-black/32 backdrop-blur-sm transition-all duration-200 data-ending-style:opacity-0 data-starting-style:opacity-0 supports-[-webkit-touch-callout:none]:absolute\",\n        className,\n      )}\n      data-slot=\"sheet-backdrop\"\n      {...props}\n    />\n  );\n}\n\nexport function SheetViewport({\n  className,\n  side,\n  variant = \"default\",\n  ...props\n}: SheetPrimitive.Viewport.Props & {\n  side?: \"right\" | \"left\" | \"top\" | \"bottom\";\n  variant?: \"default\" | \"inset\";\n}): React.ReactElement {\n  return (\n    <SheetPrimitive.Viewport\n      className={cn(\n        \"fixed inset-0 z-50 grid\",\n        side === \"bottom\" && \"grid grid-rows-[1fr_auto] pt-12\",\n        side === \"top\" && \"grid grid-rows-[auto_1fr] pb-12\",\n        side === \"left\" && \"flex justify-start\",\n        side === \"right\" && \"flex justify-end\",\n        variant === \"inset\" && \"sm:p-4\",\n        className,\n      )}\n      data-slot=\"sheet-viewport\"\n      {...props}\n    />\n  );\n}\n\nexport function SheetPopup({\n  className,\n  children,\n  showCloseButton = true,\n  side = \"right\",\n  variant = \"default\",\n  closeProps,\n  portalProps,\n  ...props\n}: SheetPrimitive.Popup.Props & {\n  showCloseButton?: boolean;\n  side?: \"right\" | \"left\" | \"top\" | \"bottom\";\n  variant?: \"default\" | \"inset\";\n  closeProps?: SheetPrimitive.Close.Props;\n  portalProps?: SheetPrimitive.Portal.Props;\n}): React.ReactElement {\n  return (\n    <SheetPortal {...portalProps}>\n      <SheetBackdrop />\n      <SheetViewport side={side} variant={variant}>\n        <SheetPrimitive.Popup\n          className={cn(\n            \"relative flex max-h-full min-h-0 w-full min-w-0 flex-col bg-popover not-dark:bg-clip-padding text-popover-foreground shadow-lg/5 transition-[opacity,translate] duration-200 ease-in-out will-change-transform before:pointer-events-none before:absolute before:inset-0 before:shadow-[0_1px_--theme(--color-black/4%)] data-ending-style:opacity-0 data-starting-style:opacity-0 max-sm:before:hidden dark:before:shadow-[0_-1px_--theme(--color-white/6%)]\",\n            side === \"bottom\" &&\n              \"row-start-2 border-t data-ending-style:translate-y-8 data-starting-style:translate-y-8\",\n            side === \"top\" &&\n              \"border-b data-ending-style:-translate-y-8 data-starting-style:-translate-y-8\",\n            side === \"left\" &&\n              \"w-[calc(100%-(--spacing(12)))] max-w-md border-e data-ending-style:-translate-x-8 data-starting-style:-translate-x-8\",\n            side === \"right\" &&\n              \"col-start-2 w-[calc(100%-(--spacing(12)))] max-w-md border-s data-ending-style:translate-x-8 data-starting-style:translate-x-8\",\n            variant === \"inset\" &&\n              \"before:hidden sm:rounded-2xl sm:border sm:before:rounded-[calc(var(--radius-2xl)-1px)] sm:**:data-[slot=sheet-footer]:rounded-b-[calc(var(--radius-2xl)-1px)]\",\n            className,\n          )}\n          data-slot=\"sheet-popup\"\n          {...props}\n        >\n          {children}\n          {showCloseButton && (\n            <SheetPrimitive.Close\n              aria-label=\"Close\"\n              className=\"absolute end-2 top-2\"\n              render={<Button size=\"icon\" variant=\"ghost\" />}\n              {...closeProps}\n            >\n              <XIcon />\n            </SheetPrimitive.Close>\n          )}\n        </SheetPrimitive.Popup>\n      </SheetViewport>\n    </SheetPortal>\n  );\n}\n\nexport function SheetHeader({\n  className,\n  render,\n  ...props\n}: useRender.ComponentProps<\"div\">): React.ReactElement {\n  const defaultProps = {\n    className: cn(\n      \"flex flex-col gap-2 p-6 
-```
-
-**File**: `apps/ui/registry/default/ui/alert-dialog.tsx` (modified, +1/-4)
-```diff
-@@ -129,10 +129,7 @@ export function AlertDialogTitle({
- }: AlertDialogPrimitive.Title.Props): React.ReactElement {
-   return (
-     <AlertDialogPrimitive.Title
--      className={cn(
--        "font-heading font-semibold text-xl leading-none",
--        className,
--      )}
-+      className={cn("font-bold font-heading text-xl leading-none", className)}
-       data-slot="alert-dialog-title"
-       {...props}
-     />
-```
-
-**File**: `apps/ui/registry/default/ui/dialog.tsx` (modified, +1/-4)
-```diff
-@@ -163,10 +163,7 @@ export function DialogTitle({
- }: DialogPrimitive.Title.Props): React.ReactElement {
-   return (
-     <DialogPrimitive.Title
--      className={cn(
--        "font-heading font-semibold text-xl leading-none",
--        className,
--      )}
-+      className={cn("font-bold font-heading text-xl leading-none", className)}
-       data-slot="dialog-title"
-       {...props}
-     />
-```
-
-**File**: `apps/ui/registry/default/ui/drawer.tsx` (modified, +1/-4)
-```diff
-@@ -296,10 +296,7 @@ export function DrawerTitle({
- }: DrawerPrimitive.Title.Props): React.ReactElement {
-   return (
-     <DrawerPrimitive.Title
--      className={cn(
--        "font-heading font-semibold text-xl leading-none",
--        className,
--      )}
-+      className={cn("font-bold font-heading text-xl leading-none", className)}
-       data-slot="drawer-title"
-       {...props}
-     />
-```
-
----
-
-### Incident Patch 5: `7faa1386` (2026-10-12)
-**Commit Message**: fix(ui): handle bottom drawer keyboards automatically (#861)
-
-* fix(ui): handle bottom drawer keyboards automatically
-
-* fix: give drawer forms more space on mobile
-
-**File**: `apps/ui/content/docs/components/drawer.mdx` (modified, +6/-0)
-```diff
-@@ -263,6 +263,12 @@ Primitive content wrapper used for polymorphic composition with the `render` pro
- 
- <ComponentPreview name="p-drawer-6" />
- 
-+### Software keyboard
-+
-+Bottom drawers automatically handle software-keyboard focus and spacing for inputs, textareas, and contenteditable fields. No additional prop is needed. Drawers without a focused input keep their normal layout. With snap points, the drawer moves up as needed while the keyboard is open and returns to the selected snap point when it closes.
-+
-+Put scrolling fields in `DrawerPanel`. For a persistent input or action row, place it after the panel, outside its scroll area. Set `--drawer-height` on `DrawerPopup` when the layout needs a fixed height; keyboard handling does not set the drawer height.
-+
- ### Nested drawers
- 
- <ComponentPreview name="p-drawer-7" />
-```
-
-**File**: `apps/ui/public/r/drawer.json` (modified, +1/-1)
-```diff
-@@ -11,7 +11,7 @@
-   "files": [
-     {
-       "path": "registry/default/ui/drawer.tsx",
--      "content": "\"use client\";\n\nimport { Checkbox as CheckboxPrimitive } from \"@base-ui/react/checkbox\";\nimport { Drawer as DrawerPrimitive } from \"@base-ui/react/drawer\";\nimport { mergeProps } from \"@base-ui/react/merge-props\";\nimport { Radio as RadioPrimitive } from \"@base-ui/react/radio\";\nimport { RadioGroup as RadioGroupPrimitive } from \"@base-ui/react/radio-group\";\nimport { useRender } from \"@base-ui/react/use-render\";\nimport { ChevronRightIcon, XIcon } from \"lucide-react\";\nimport type React from \"react\";\nimport { createContext, useContext } from \"react\";\nimport { cn } from \"@/registry/default/lib/utils\";\nimport { Button } from \"@/registry/default/ui/button\";\nimport { ScrollArea } from \"@/registry/default/ui/scroll-area\";\n\ntype DrawerPosition = \"right\" | \"left\" | \"top\" | \"bottom\";\n\nconst DrawerContext: React.Context<{ position: DrawerPosition }> =\n  createContext<{ position: DrawerPosition }>({\n    position: \"bottom\",\n  });\n\nconst directionMap: Record<\n  DrawerPosition,\n  DrawerPrimitive.Root.Props[\"swipeDirection\"]\n> = {\n  bottom: \"down\",\n  left: \"left\",\n  right: \"right\",\n  top: \"up\",\n};\n\nexport const DrawerCreateHandle: typeof DrawerPrimitive.createHandle =\n  DrawerPrimitive.createHandle;\n\nexport function Drawer({\n  swipeDirection,\n  position = \"bottom\",\n  ...props\n}: DrawerPrimitive.Root.Props & {\n  position?: DrawerPosition;\n}): React.ReactElement {\n  return (\n    <DrawerContext.Provider value={{ position }}>\n      <DrawerPrimitive.Root\n        swipeDirection={swipeDirection ?? directionMap[position]}\n        {...props}\n      />\n    </DrawerContext.Provider>\n  );\n}\n\nexport const DrawerPortal: typeof DrawerPrimitive.Portal =\n  DrawerPrimitive.Portal;\n\nexport function DrawerTrigger(\n  props: DrawerPrimitive.Trigger.Props,\n): React.ReactElement {\n  return <DrawerPrimitive.Trigger data-slot=\"drawer-trigger\" {...props} />;\n}\n\nexport function DrawerClose(\n  props: DrawerPrimitive.Close.Props,\n): React.ReactElement {\n  return <DrawerPrimitive.Close data-slot=\"drawer-close\" {...props} />;\n}\n\nexport function DrawerSwipeArea({\n  className,\n  position: positionProp,\n  ...props\n}: DrawerPrimitive.SwipeArea.Props & {\n  position?: DrawerPosition;\n}): React.ReactElement {\n  const { position: contextPosition } = useContext(DrawerContext);\n  const position = positionProp ?? contextPosition;\n\n  return (\n    <DrawerPrimitive.SwipeArea\n      className={cn(\n        \"fixed z-50 touch-none\",\n        position === \"bottom\" && \"inset-x-0 bottom-0 h-8\",\n        position === \"top\" && \"inset-x-0 top-0 h-8\",\n        position === \"left\" && \"inset-y-0 left-0 w-8\",\n        position === \"right\" && \"inset-y-0 right-0 w-8\",\n        className,\n      )}\n      data-slot=\"drawer-swipe-area\"\n      {...props}\n    />\n  );\n}\n\nexport function DrawerBackdrop({\n  className,\n  ...props\n}: DrawerPrimitive.Backdrop.Props): React.ReactElement {\n  return (\n    <DrawerPrimitive.Backdrop\n      className={cn(\n        \"fixed inset-0 z-50 bg-black/32 opacity-[calc(1-var(--drawer-swipe-progress))] backdrop-blur-sm transition-opacity duration-450 ease-[cubic-bezier(0.32,0.72,0,1)] data-ending-style:opacity-0 data-starting-style:opacity-0 data-ending-style:duration-[calc(var(--drawer-swipe-strength)*400ms)] data-swiping:duration-0 supports-[-webkit-touch-callout:none]:absolute\",\n        className,\n      )}\n      data-slot=\"drawer-backdrop\"\n      {...props}\n    />\n  );\n}\n\nexport function DrawerViewport({\n  className,\n  position,\n  variant = \"default\",\n  ...props\n}: DrawerPrimitive.Viewport.Props & {\n  position?: DrawerPosition;\n  variant?: \"default\" | \"straight\" | \"inset\";\n}): React.ReactElement {\n  return (\n    <DrawerPrimitive.Viewport\n      className={cn(\n        \"fixed inset-0 z-50 [--bleed:--spacing(12)] [--inset:0px]\",\n        \"touch-none\",\n        position === \"bottom\" && \"grid grid-rows-[1fr_auto] pt-12\",\n        position === \"top\" && \"grid grid-rows-[auto_1fr] pb-12\",\n        position === \"left\" && \"flex justify-start\",\n        position === \"right\" && \"flex justify-end\",\n        variant === \"inset\" && \"px-(--inset) sm:[--inset:--spacing(4)]\",\n        variant === \"inset\" && position !== \"bottom\" && \"pt-(--inset)\",\n        variant === \"inset\" && position !== \"top\" && \"pb-(--inset)\",\n        className,\n      )}\n      data-slot=\"drawer-viewport\"\n      {...props}\n    />\n  );\n}\n\nexport function DrawerPopup({\n  className,\n  children,\n  showCloseButton = false,\n  position: positionProp,\n  variant = \"default\",\n  showBar = false,\n  portalProps,\n  ...props\n}: DrawerPrimitive.Popup.Props & {\n  showCloseButton?: boolean;\n  position?: DrawerPosition;\n  variant?: \"default\" | \"straight\" | \"inset\";\n  s
-```
-
-**File**: `apps/ui/public/r/p-drawer-12.json` (modified, +1/-1)
-```diff
-@@ -14,7 +14,7 @@
-   "files": [
-     {
-       "path": "registry/default/particles/p-drawer-12.tsx",
--      "content": "\"use client\";\n\nimport { useMediaQuery } from \"@/registry/default/hooks/use-media-query\";\nimport { Button } from \"@/registry/default/ui/button\";\nimport {\n  Dialog,\n  DialogClose,\n  DialogDescription,\n  DialogFooter,\n  DialogHeader,\n  DialogPanel,\n  DialogPopup,\n  DialogTitle,\n  DialogTrigger,\n} from \"@/registry/default/ui/dialog\";\nimport {\n  Drawer,\n  DrawerClose,\n  DrawerDescription,\n  DrawerFooter,\n  DrawerHeader,\n  DrawerPanel,\n  DrawerPopup,\n  DrawerTitle,\n  DrawerTrigger,\n} from \"@/registry/default/ui/drawer\";\nimport { Field, FieldLabel } from \"@/registry/default/ui/field\";\nimport { Form } from \"@/registry/default/ui/form\";\nimport { Input } from \"@/registry/default/ui/input\";\n\nconst FORM_TITLE = \"Edit profile\";\nconst FORM_DESCRIPTION =\n  \"Make changes to your profile here. Click save when you're done.\";\nconst TRIGGER_LABEL = \"Open\";\nconst CANCEL_LABEL = \"Cancel\";\nconst SAVE_LABEL = \"Save\";\n\nconst formFields = (\n  <>\n    <Field>\n      <FieldLabel>Name</FieldLabel>\n      <Input defaultValue=\"Margaret Welsh\" type=\"text\" />\n    </Field>\n    <Field>\n      <FieldLabel>Username</FieldLabel>\n      <Input defaultValue=\"@maggie.welsh\" type=\"text\" />\n    </Field>\n  </>\n);\n\nexport default function Particle() {\n  const isMobile = useMediaQuery(\"max-md\");\n\n  if (isMobile) {\n    return (\n      <Drawer>\n        <DrawerTrigger render={<Button variant=\"outline\" />}>\n          {TRIGGER_LABEL}\n        </DrawerTrigger>\n        <DrawerPopup showBar>\n          <DrawerHeader>\n            <DrawerTitle>{FORM_TITLE}</DrawerTitle>\n            <DrawerDescription>{FORM_DESCRIPTION}</DrawerDescription>\n          </DrawerHeader>\n          <Form className=\"contents\">\n            <DrawerPanel className=\"grid gap-4\" scrollable={false}>\n              {formFields}\n            </DrawerPanel>\n            <DrawerFooter>\n              <DrawerClose render={<Button variant=\"ghost\" />}>\n                {CANCEL_LABEL}\n              </DrawerClose>\n              <Button type=\"submit\">{SAVE_LABEL}</Button>\n            </DrawerFooter>\n          </Form>\n        </DrawerPopup>\n      </Drawer>\n    );\n  }\n\n  return (\n    <Dialog>\n      <DialogTrigger render={<Button variant=\"outline\" />}>\n        {TRIGGER_LABEL}\n      </DialogTrigger>\n      <DialogPopup className=\"sm:max-w-sm\">\n        <DialogHeader>\n          <DialogTitle>{FORM_TITLE}</DialogTitle>\n          <DialogDescription>{FORM_DESCRIPTION}</DialogDescription>\n        </DialogHeader>\n        <Form className=\"contents\">\n          <DialogPanel className=\"grid gap-4\">{formFields}</DialogPanel>\n          <DialogFooter>\n            <DialogClose render={<Button variant=\"ghost\" />}>\n              {CANCEL_LABEL}\n            </DialogClose>\n            <Button type=\"submit\">{SAVE_LABEL}</Button>\n          </DialogFooter>\n        </Form>\n      </DialogPopup>\n    </Dialog>\n  );\n}\n",
-+      "content": "\"use client\";\n\nimport { useMediaQuery } from \"@/registry/default/hooks/use-media-query\";\nimport { Button } from \"@/registry/default/ui/button\";\nimport {\n  Dialog,\n  DialogClose,\n  DialogDescription,\n  DialogFooter,\n  DialogHeader,\n  DialogPanel,\n  DialogPopup,\n  DialogTitle,\n  DialogTrigger,\n} from \"@/registry/default/ui/dialog\";\nimport {\n  Drawer,\n  DrawerClose,\n  DrawerDescription,\n  DrawerHeader,\n  DrawerPanel,\n  DrawerPopup,\n  DrawerTitle,\n  DrawerTrigger,\n} from \"@/registry/default/ui/drawer\";\nimport { Field, FieldLabel } from \"@/registry/default/ui/field\";\nimport { Form } from \"@/registry/default/ui/form\";\nimport { Input } from \"@/registry/default/ui/input\";\n\nconst FORM_TITLE = \"Edit profile\";\nconst FORM_DESCRIPTION =\n  \"Make changes to your profile here. Click save when you're done.\";\nconst TRIGGER_LABEL = \"Open\";\nconst CANCEL_LABEL = \"Cancel\";\nconst SAVE_LABEL = \"Save\";\n\nconst formFields = (\n  <>\n    <Field>\n      <FieldLabel>Name</FieldLabel>\n      <Input defaultValue=\"Margaret Welsh\" type=\"text\" />\n    </Field>\n    <Field>\n      <FieldLabel>Username</FieldLabel>\n      <Input defaultValue=\"@maggie.welsh\" type=\"text\" />\n    </Field>\n  </>\n);\n\nexport default function Particle() {\n  const isMobile = useMediaQuery(\"max-md\");\n\n  if (isMobile) {\n    return (\n      <Drawer>\n        <DrawerTrigger render={<Button variant=\"outline\" />}>\n          {TRIGGER_LABEL}\n        </DrawerTrigger>\n        <DrawerPopup showBar>\n          <DrawerHeader>\n            <DrawerTitle>{FORM_TITLE}</DrawerTitle>\n            <DrawerDescription>{FORM_DESCRIPTION}</DrawerDescription>\n          </DrawerHeader>\n          <Form className=\"contents\">\n            <DrawerPanel className=\"grid gap-4\">\n              {formFields}\n              <div className=\"flex 
-```
-
-**File**: `apps/ui/registry/default/particles/p-drawer-12.tsx` (modified, +7/-8)
-```diff
-@@ -17,7 +17,6 @@ import {
-   Drawer,
-   DrawerClose,
-   DrawerDescription,
--  DrawerFooter,
-   DrawerHeader,
-   DrawerPanel,
-   DrawerPopup,
-@@ -63,15 +62,15 @@ export default function Particle() {
-             <DrawerDescription>{FORM_DESCRIPTION}</DrawerDescription>
-           </DrawerHeader>
-           <Form className="contents">
--            <DrawerPanel className="grid gap-4" scrollable={false}>
-+            <DrawerPanel className="grid gap-4">
-               {formFields}
-+              <div className="flex flex-col-reverse gap-2">
-+                <DrawerClose render={<Button variant="ghost" />}>
-+                  {CANCEL_LABEL}
-+                </DrawerClose>
-+                <Button type="submit">{SAVE_LABEL}</Button>
-+              </div>
-             </DrawerPanel>
--            <DrawerFooter>
--              <DrawerClose render={<Button variant="ghost" />}>
--                {CANCEL_LABEL}
--              </DrawerClose>
--              <Button type="submit">{SAVE_LABEL}</Button>
--            </DrawerFooter>
-           </Form>
-         </DrawerPopup>
-       </Drawer>
-```
-
-**File**: `apps/ui/registry/default/ui/drawer.tsx` (modified, +14/-4)
-```diff
-@@ -121,7 +121,8 @@ export function DrawerViewport({
-       className={cn(
-         "fixed inset-0 z-50 [--bleed:--spacing(12)] [--inset:0px]",
-         "touch-none",
--        position === "bottom" && "grid grid-rows-[1fr_auto] pt-12",
-+        position === "bottom" &&
-+          "grid grid-rows-[1fr_auto] pt-[max(--spacing(2),env(safe-area-inset-top,0px))]",
-         position === "top" && "grid grid-rows-[auto_1fr] pb-12",
-         position === "left" && "flex justify-start",
-         position === "right" && "flex justify-end",
-@@ -155,7 +156,7 @@ export function DrawerPopup({
-   const { position: contextPosition } = useContext(DrawerContext);
-   const position = positionProp ?? contextPosition;
- 
--  return (
-+  const popup = (
-     <DrawerPortal {...portalProps}>
-       <DrawerBackdrop />
-       <DrawerViewport position={position} variant={variant}>
-@@ -164,7 +165,7 @@ export function DrawerPopup({
-             "relative flex max-h-full min-h-0 w-full min-w-0 flex-col bg-popover not-dark:bg-clip-padding text-popover-foreground shadow-lg/5 outline-none transition-[transform,box-shadow,height,background-color] duration-450 ease-[cubic-bezier(0.32,0.72,0,1)] will-change-transform [--peek:calc(--spacing(6)-1px)] [--scale-base:calc(max(0,1-(var(--nested-drawers)*var(--stack-step))))] [--scale:clamp(0,calc(var(--scale-base)+(var(--stack-step)*var(--stack-progress))),1)] [--shrink:calc(1-var(--scale))] [--stack-peek-offset:max(0px,calc((var(--nested-drawers)-var(--stack-progress))*var(--peek)))] [--stack-progress:clamp(0,var(--drawer-swipe-progress),1)] [--stack-step:0.05] before:pointer-events-none before:absolute before:inset-0 before:shadow-[0_1px_--theme(--color-black/4%)] after:pointer-events-none after:absolute after:bg-popover data-swiping:select-none data-nested-drawer-open:overflow-hidden data-nested-drawer-open:bg-[color-mix(in_srgb,var(--popover),var(--color-black)_calc(2%*(var(--nested-drawers)-var(--stack-progress))))] data-ending-style:shadow-transparent data-starting-style:shadow-transparent data-ending-style:duration-[calc(var(--drawer-swipe-strength)*400ms)] dark:data-nested-drawer-open:bg-[color-mix(in_srgb,var(--popover),var(--color-black)_calc(6%*(var(--nested-drawers)-var(--stack-progress))))] dark:before:shadow-[0_-1px_--theme(--color-white/6%)]",
-             "touch-none",
-             position === "bottom" &&
--              "transform-[translateY(calc(var(--drawer-snap-point-offset)+var(--drawer-swipe-movement-y)))] data-ending-style:transform-[translateY(calc(100%+env(safe-area-inset-bottom,0px)+var(--inset)))] data-starting-style:transform-[translateY(calc(100%+env(safe-area-inset-bottom,0px)+var(--inset)))] row-start-2 -mb-[max(0px,calc(var(--drawer-snap-point-offset,0px)+clamp(0,1,var(--drawer-snap-point-offset,0px)/1px)*var(--drawer-swipe-movement-y,0px)))] border-t pb-[max(0px,calc(env(safe-area-inset-bottom,0px)+var(--drawer-snap-point-offset,0px)+clamp(0,1,var(--drawer-snap-point-offset,0px)/1px)*var(--drawer-swipe-movement-y,0px)))] not-data-starting-style:not-data-ending-style:transition-[transform,box-shadow,height,background-color,margin,padding] after:inset-x-0 after:top-full after:h-(--bleed) has-data-[slot=drawer-bar]:pt-2 data-ending-style:mb-0 data-starting-style:mb-0 data-ending-style:pb-0 data-starting-style:pb-0",
-+              "transform-[translateY(calc(var(--keyboard-snap-offset)+var(--drawer-swipe-movement-y)))] data-ending-style:transform-[translateY(calc(100%+env(safe-area-inset-bottom,0px)+var(--inset)))] data-starting-style:transform-[translateY(calc(100%+env(safe-area-inset-bottom,0px)+var(--inset)))] row-start-2 -mb-[max(0px,calc(var(--keyboard-snap-offset)+clamp(0,1,var(--keyboard-snap-offset)/1px)*var(--drawer-swipe-movement-y,0px)))] border-t pb-[max(0px,calc(max(env(safe-area-inset-bottom,0px),var(--drawer-keyboard-inset,0px))+var(--keyboard-snap-offset)+clamp(0,1,var(--keyboard-snap-offset)/1px)*var(--drawer-swipe-movement-y,0px)))] not-data-starting-style:not-data-ending-style:transition-[transform,box-shadow,height,background-color,margin,padding] [--keyboard-snap-offset:max(0px,calc(var(--drawer-snap-point-offset,0px)-var(--drawer-keyboard-inset,0px)))] after:inset-x-0 after:top-full after:h-(--bleed) has-data-[slot=drawer-bar]:pt-2 data-ending-style:mb-0 data-starting-style:mb-0 data-ending-style:pb-0 data-starting-style:pb-0",
-             position === "top" &&
-               "data-starting-style:transform-[translateY(calc(-100%-var(--inset)))] data-ending-style:transform-[translateY(calc(-100%-var(--inset)))] transform-[translateY(var(--drawer-swipe-movement-y))] border-b after:inset-x-0 after:bottom-full after:h-(--bleed) has-data-[slot=drawer-bar]:pb-2",
-             position === "left" &&
-@@ -225,6 +226,14 @@ export function DrawerPopup({
-       </DrawerViewport>
-     </DrawerPortal>
-   );
-+
-+  return position === "bottom" ? (
-+    <DrawerPrimitive.VirtualKeyboardProvider>
-+      {popup}
-+    </DrawerPrimitive.VirtualKeyboardProvider>
-+  ) : (
-
-```
-
-**File**: `packages/ui/src/components/drawer.tsx` (modified, +14/-4)
-```diff
-@@ -121,7 +121,8 @@ export function DrawerViewport({
-       className={cn(
-         "fixed inset-0 z-50 [--bleed:--spacing(12)] [--inset:0px]",
-         "touch-none",
--        position === "bottom" && "grid grid-rows-[1fr_auto] pt-12",
-+        position === "bottom" &&
-+          "grid grid-rows-[1fr_auto] pt-[max(--spacing(2),env(safe-area-inset-top,0px))]",
-         position === "top" && "grid grid-rows-[auto_1fr] pb-12",
-         position === "left" && "flex justify-start",
-         position === "right" && "flex justify-end",
-@@ -155,7 +156,7 @@ export function DrawerPopup({
-   const { position: contextPosition } = useContext(DrawerContext);
-   const position = positionProp ?? contextPosition;
- 
--  return (
-+  const popup = (
-     <DrawerPortal {...portalProps}>
-       <DrawerBackdrop />
-       <DrawerViewport position={position} variant={variant}>
-@@ -164,7 +165,7 @@ export function DrawerPopup({
-             "relative flex max-h-full min-h-0 w-full min-w-0 flex-col bg-popover not-dark:bg-clip-padding text-popover-foreground shadow-lg/5 outline-none transition-[transform,box-shadow,height,background-color] duration-450 ease-[cubic-bezier(0.32,0.72,0,1)] will-change-transform [--peek:calc(--spacing(6)-1px)] [--scale-base:calc(max(0,1-(var(--nested-drawers)*var(--stack-step))))] [--scale:clamp(0,calc(var(--scale-base)+(var(--stack-step)*var(--stack-progress))),1)] [--shrink:calc(1-var(--scale))] [--stack-peek-offset:max(0px,calc((var(--nested-drawers)-var(--stack-progress))*var(--peek)))] [--stack-progress:clamp(0,var(--drawer-swipe-progress),1)] [--stack-step:0.05] before:pointer-events-none before:absolute before:inset-0 before:shadow-[0_1px_--theme(--color-black/4%)] after:pointer-events-none after:absolute after:bg-popover data-swiping:select-none data-nested-drawer-open:overflow-hidden data-nested-drawer-open:bg-[color-mix(in_srgb,var(--popover),var(--color-black)_calc(2%*(var(--nested-drawers)-var(--stack-progress))))] data-ending-style:shadow-transparent data-starting-style:shadow-transparent data-ending-style:duration-[calc(var(--drawer-swipe-strength)*400ms)] dark:data-nested-drawer-open:bg-[color-mix(in_srgb,var(--popover),var(--color-black)_calc(6%*(var(--nested-drawers)-var(--stack-progress))))] dark:before:shadow-[0_-1px_--theme(--color-white/6%)]",
-             "touch-none",
-             position === "bottom" &&
--              "transform-[translateY(calc(var(--drawer-snap-point-offset)+var(--drawer-swipe-movement-y)))] data-ending-style:transform-[translateY(calc(100%+env(safe-area-inset-bottom,0px)+var(--inset)))] data-starting-style:transform-[translateY(calc(100%+env(safe-area-inset-bottom,0px)+var(--inset)))] row-start-2 -mb-[max(0px,calc(var(--drawer-snap-point-offset,0px)+clamp(0,1,var(--drawer-snap-point-offset,0px)/1px)*var(--drawer-swipe-movement-y,0px)))] border-t pb-[max(0px,calc(env(safe-area-inset-bottom,0px)+var(--drawer-snap-point-offset,0px)+clamp(0,1,var(--drawer-snap-point-offset,0px)/1px)*var(--drawer-swipe-movement-y,0px)))] not-data-starting-style:not-data-ending-style:transition-[transform,box-shadow,height,background-color,margin,padding] after:inset-x-0 after:top-full after:h-(--bleed) has-data-[slot=drawer-bar]:pt-2 data-ending-style:mb-0 data-starting-style:mb-0 data-ending-style:pb-0 data-starting-style:pb-0",
-+              "transform-[translateY(calc(var(--keyboard-snap-offset)+var(--drawer-swipe-movement-y)))] data-ending-style:transform-[translateY(calc(100%+env(safe-area-inset-bottom,0px)+var(--inset)))] data-starting-style:transform-[translateY(calc(100%+env(safe-area-inset-bottom,0px)+var(--inset)))] row-start-2 -mb-[max(0px,calc(var(--keyboard-snap-offset)+clamp(0,1,var(--keyboard-snap-offset)/1px)*var(--drawer-swipe-movement-y,0px)))] border-t pb-[max(0px,calc(max(env(safe-area-inset-bottom,0px),var(--drawer-keyboard-inset,0px))+var(--keyboard-snap-offset)+clamp(0,1,var(--keyboard-snap-offset)/1px)*var(--drawer-swipe-movement-y,0px)))] not-data-starting-style:not-data-ending-style:transition-[transform,box-shadow,height,background-color,margin,padding] [--keyboard-snap-offset:max(0px,calc(var(--drawer-snap-point-offset,0px)-var(--drawer-keyboard-inset,0px)))] after:inset-x-0 after:top-full after:h-(--bleed) has-data-[slot=drawer-bar]:pt-2 data-ending-style:mb-0 data-starting-style:mb-0 data-ending-style:pb-0 data-starting-style:pb-0",
-             position === "top" &&
-               "data-starting-style:transform-[translateY(calc(-100%-var(--inset)))] data-ending-style:transform-[translateY(calc(-100%-var(--inset)))] transform-[translateY(var(--drawer-swipe-movement-y))] border-b after:inset-x-0 after:bottom-full after:h-(--bleed) has-data-[slot=drawer-bar]:pb-2",
-             position === "left" &&
-@@ -225,6 +226,14 @@ export function DrawerPopup({
-       </DrawerViewport>
-     </DrawerPortal>
-   );
-+
-+  return position === "bottom" ? (
-+    <DrawerPrimitive.VirtualKeyboardProvider>
-+      {popup}
-+    </DrawerPrimitive.VirtualKeyboardProvider>
-+  ) : (
-
-```
-
----
-
-### Incident Patch 6: `28135b07` (2026-10-11)
-**Commit Message**: fix(ui): prevent iOS Safari clipping after modal dismissal (#860)
-
-* fix(ui): prevent iOS Safari clipping after modal dismissal
-
-* chore(ui): remove layout explanation comment
-
-* docs: add iOS Safari before and after screenshots
-
-* chore: remove PR screenshots from diff
-
-**File**: `apps/ui/app/layout.tsx` (modified, +1/-1)
-```diff
-@@ -37,7 +37,7 @@ export default function RootLayout({
-                 />
-                 <div
-                   aria-hidden="true"
--                  className="container pointer-events-none fixed inset-0 z-45 before:absolute before:top-[calc(var(--header-height)-4.5px)] before:-left-[11.5px] before:z-1 before:-ml-1 before:size-2 before:rounded-[2px] before:border before:border-border before:bg-popover before:bg-clip-padding before:shadow-xs/5 after:absolute after:top-[calc(var(--header-height)-4.5px)] after:-right-[11.5px] after:z-1 after:-mr-1 after:size-2 after:rounded-[2px] after:border after:border-border after:bg-background after:bg-clip-padding after:shadow-xs/5 dark:after:bg-clip-border dark:before:bg-clip-border"
-+                  className="container pointer-events-none fixed inset-x-0 top-0 z-45 h-(--header-height) before:absolute before:top-[calc(var(--header-height)-4.5px)] before:-left-[11.5px] before:z-1 before:-ml-1 before:size-2 before:rounded-[2px] before:border before:border-border before:bg-popover before:bg-clip-padding before:shadow-xs/5 after:absolute after:top-[calc(var(--header-height)-4.5px)] after:-right-[11.5px] after:z-1 after:-mr-1 after:size-2 after:rounded-[2px] after:border after:border-border after:bg-background after:bg-clip-padding after:shadow-xs/5 dark:after:bg-clip-border dark:before:bg-clip-border"
-                 />
-                 <SiteHeader />
-                 {children}
-```
-
-**File**: `apps/ui/public/r/alert-dialog.json` (modified, +1/-1)
+**File**: `apps/ui/public/r/menu.json` (modified, +1/-1)
 ```diff
 @@ -7,7 +7,7 @@
    "files": [
      {
-       "path": "registry/default/ui/alert-dialog.tsx",
--      "content": "\"use client\";\n\nimport { AlertDialog as AlertDialogPrimitive } from \"@base-ui/react/alert-dialog\";\nimport type React from \"react\";\nimport { cn } from \"@/registry/default/lib/utils\";\n\nexport const AlertDialogCreateHandle: typeof AlertDialogPrimitive.createHandle =\n  AlertDialogPrimitive.createHandle;\n\nexport const AlertDialog: typeof AlertDialogPrimitive.Root =\n  AlertDialogPrimitive.Root;\n\nexport const AlertDialogPortal: typeof AlertDialogPrimitive.Portal =\n  AlertDialogPrimitive.Portal;\n\nexport function AlertDialogTrigger(\n  props: AlertDialogPrimitive.Trigger.Props,\n): React.ReactElement {\n  return (\n    <AlertDialogPrimitive.Trigger data-slot=\"alert-dialog-trigger\" {...props} />\n  );\n}\n\nexport function AlertDialogBackdrop({\n  className,\n  ...props\n}: AlertDialogPrimitive.Backdrop.Props): React.ReactElement {\n  return (\n    <AlertDialogPrimitive.Backdrop\n      className={cn(\n        \"fixed inset-0 z-50 bg-black/32 backdrop-blur-sm transition-all duration-200 data-ending-style:opacity-0 data-starting-style:opacity-0\",\n        className,\n      )}\n      data-slot=\"alert-dialog-backdrop\"\n      {...props}\n    />\n  );\n}\n\nexport function AlertDialogViewport({\n  className,\n  ...props\n}: AlertDialogPrimitive.Viewport.Props): React.ReactElement {\n  return (\n    <AlertDialogPrimitive.Viewport\n      className={cn(\n        \"fixed inset-0 z-50 grid grid-rows-[1fr_auto_3fr] justify-items-center p-4\",\n        className,\n      )}\n      data-slot=\"alert-dialog-viewport\"\n      {...props}\n    />\n  );\n}\n\nexport function AlertDialogPopup({\n  className,\n  bottomStickOnMobile = true,\n  portalProps,\n  ...props\n}: AlertDialogPrimitive.Popup.Props & {\n  bottomStickOnMobile?: boolean;\n  portalProps?: AlertDialogPrimitive.Portal.Props;\n}): React.ReactElement {\n  return (\n    <AlertDialogPortal {...portalProps}>\n      <AlertDialogBackdrop />\n      <AlertDialogViewport\n        className={cn(\n          bottomStickOnMobile &&\n            \"max-sm:grid-rows-[1fr_auto] max-sm:p-0 max-sm:pt-12\",\n        )}\n      >\n        <AlertDialogPrimitive.Popup\n          className={cn(\n            \"relative row-start-2 flex max-h-full min-h-0 w-full min-w-0 max-w-lg origin-center flex-col rounded-2xl border bg-popover not-dark:bg-clip-padding text-popover-foreground opacity-[calc(1-var(--nested-dialogs))] shadow-lg/5 transition-[scale,opacity,translate] duration-200 ease-in-out will-change-transform before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-2xl)-1px)] before:shadow-[0_1px_--theme(--color-black/4%)] data-ending-style:opacity-0 data-starting-style:opacity-0 sm:scale-[calc(1-0.1*var(--nested-dialogs))] sm:data-ending-style:scale-98 sm:data-starting-style:scale-98 dark:before:shadow-[0_-1px_--theme(--color-white/6%)]\",\n            bottomStickOnMobile &&\n              \"max-sm:max-w-none max-sm:origin-bottom max-sm:rounded-none max-sm:border-x-0 max-sm:border-t max-sm:border-b-0 max-sm:data-ending-style:translate-y-4 max-sm:data-starting-style:translate-y-4 max-sm:before:hidden max-sm:before:rounded-none\",\n            className,\n          )}\n          data-slot=\"alert-dialog-popup\"\n          {...props}\n        />\n      </AlertDialogViewport>\n    </AlertDialogPortal>\n  );\n}\n\nexport function AlertDialogHeader({\n  className,\n  ...props\n}: React.ComponentProps<\"div\">): React.ReactElement {\n  return (\n    <div\n      className={cn(\n        \"flex flex-col gap-2 p-6 text-center max-sm:pb-4 sm:text-left\",\n        className,\n      )}\n      data-slot=\"alert-dialog-header\"\n      {...props}\n    />\n  );\n}\n\nexport function AlertDialogFooter({\n  className,\n  variant = \"default\",\n  ...props\n}: React.ComponentProps<\"div\"> & {\n  variant?: \"default\" | \"bare\";\n}): React.ReactElement {\n  return (\n    <div\n      className={cn(\n        \"flex flex-col-reverse gap-2 px-6 sm:flex-row sm:justify-end sm:rounded-b-[calc(var(--radius-2xl)-1px)]\",\n        variant === \"default\" && \"border-t bg-muted/72 py-4\",\n        variant === \"bare\" && \"pb-6\",\n        className,\n      )}\n      data-slot=\"alert-dialog-footer\"\n      {...props}\n    />\n  );\n}\n\nexport function AlertDialogTitle({\n  className,\n  ...props\n}: AlertDialogPrimitive.Title.Props): React.ReactElement {\n  return (\n    <AlertDialogPrimitive.Title\n      className={cn(\n        \"font-heading font-semibold text-xl leading-none\",\n        className,\n      )}\n      data-slot=\"alert-dialog-title\"\n      {...props}\n    />\n  );\n}\n\nexport function AlertDialogDescription({\n  className,\n  ...props\n}: AlertDialogPrimitive.Description.Props): React.ReactElement {\n  return (\n    <AlertDialogPrimitive.Description\n      className={cn(\"text-muted-foreground text-sm\", className)}\n      data-slot=\"a
+       "path": "registry/default/ui/menu.tsx",
+-      "content": "\"use client\";\n\nimport { Menu as MenuPrimitive } from \"@base-ui/react/menu\";\nimport { ChevronRightIcon } from \"lucide-react\";\nimport type * as React from \"react\";\nimport { cn } from \"@/registry/default/lib/utils\";\n\nexport const MenuCreateHandle: typeof MenuPrimitive.createHandle =\n  MenuPrimitive.createHandle;\n\nexport const Menu: typeof MenuPrimitive.Root = MenuPrimitive.Root;\n\nexport const MenuPortal: typeof MenuPrimitive.Portal = MenuPrimitive.Portal;\n\nexport function MenuTrigger({\n  className,\n  children,\n  ...props\n}: MenuPrimitive.Trigger.Props): React.ReactElement {\n  return (\n    <MenuPrimitive.Trigger\n      className={className}\n      data-slot=\"menu-trigger\"\n      {...props}\n    >\n      {children}\n    </MenuPrimitive.Trigger>\n  );\n}\n\nexport function MenuPopup({\n  children,\n  className,\n  sideOffset = 4,\n  align = \"center\",\n  alignOffset,\n  side = \"bottom\",\n  anchor,\n  portalProps,\n  ...props\n}: MenuPrimitive.Popup.Props & {\n  align?: MenuPrimitive.Positioner.Props[\"align\"];\n  sideOffset?: MenuPrimitive.Positioner.Props[\"sideOffset\"];\n  alignOffset?: MenuPrimitive.Positioner.Props[\"alignOffset\"];\n  side?: MenuPrimitive.Positioner.Props[\"side\"];\n  anchor?: MenuPrimitive.Positioner.Props[\"anchor\"];\n  portalProps?: MenuPrimitive.Portal.Props;\n}): React.ReactElement {\n  return (\n    <MenuPortal {...portalProps}>\n      <MenuPrimitive.Positioner\n        align={align}\n        alignOffset={alignOffset}\n        anchor={anchor}\n        className=\"z-50\"\n        data-slot=\"menu-positioner\"\n        side={side}\n        sideOffset={sideOffset}\n      >\n        <MenuPrimitive.Popup\n          className={cn(\n            \"relative flex not-[class*='w-']:min-w-32 origin-(--transform-origin) rounded-lg border bg-popover not-dark:bg-clip-padding shadow-lg/5 outline-none before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] before:shadow-[0_1px_--theme(--color-black/4%)] focus:outline-none dark:before:shadow-[0_-1px_--theme(--color-white/6%)]\",\n            className,\n          )}\n          data-slot=\"menu-popup\"\n          {...props}\n        >\n          <div className=\"max-h-(--available-height) w-full overflow-y-auto p-1\">\n            {children}\n          </div>\n        </MenuPrimitive.Popup>\n      </MenuPrimitive.Positioner>\n    </MenuPortal>\n  );\n}\n\nexport function MenuGroup(\n  props: MenuPrimitive.Group.Props,\n): React.ReactElement {\n  return <MenuPrimitive.Group data-slot=\"menu-group\" {...props} />;\n}\n\nexport function MenuItem({\n  className,\n  inset,\n  variant = \"default\",\n  ...props\n}: MenuPrimitive.Item.Props & {\n  inset?: boolean;\n  variant?: \"default\" | \"destructive\";\n}): React.ReactElement {\n  return (\n    <MenuPrimitive.Item\n      className={cn(\n        \"flex min-h-8 cursor-default select-none items-center gap-2 rounded-sm px-2 py-1 text-base text-foreground outline-none data-disabled:pointer-events-none data-highlighted:bg-accent data-inset:ps-8 data-[variant=destructive]:text-destructive-foreground data-highlighted:text-accent-foreground data-disabled:opacity-64 sm:min-h-7 sm:text-sm [&>svg:not([class*='opacity-'])]:opacity-80 [&>svg:not([class*='size-'])]:size-4.5 sm:[&>svg:not([class*='size-'])]:size-4 [&>svg]:pointer-events-none [&>svg]:-mx-0.5 [&>svg]:shrink-0\",\n        className,\n      )}\n      data-inset={inset}\n      data-slot=\"menu-item\"\n      data-variant={variant}\n      {...props}\n    />\n  );\n}\n\nexport function MenuLinkItem({\n  className,\n  inset,\n  variant = \"default\",\n  closeOnClick = true,\n  ...props\n}: MenuPrimitive.LinkItem.Props & {\n  inset?: boolean;\n  variant?: \"default\" | \"destructive\";\n}): React.ReactElement {\n  return (\n    <MenuPrimitive.LinkItem\n      className={cn(\n        \"flex min-h-8 cursor-default select-none items-center gap-2 rounded-sm px-2 py-1 text-base text-foreground outline-none data-disabled:pointer-events-none data-highlighted:bg-accent data-inset:ps-8 data-[variant=destructive]:text-destructive-foreground data-highlighted:text-accent-foreground data-disabled:opacity-64 sm:min-h-7 sm:text-sm [&>svg:not([class*='opacity-'])]:opacity-80 [&>svg:not([class*='size-'])]:size-4.5 sm:[&>svg:not([class*='size-'])]:size-4 [&>svg]:pointer-events-none [&>svg]:-mx-0.5 [&>svg]:shrink-0\",\n        className,\n      )}\n      closeOnClick={closeOnClick}\n      data-inset={inset}\n      data-slot=\"menu-link-item\"\n      data-variant={variant}\n      {...props}\n    />\n  );\n}\n\nexport function MenuCheckboxItem({\n  className,\n  children,\n  checked,\n  variant = \"default\",\n  ...props\n}: MenuPrimitive.CheckboxItem.Props & {\n  variant?: \"default\" | \"switch\";\n}): React.ReactElement {\n  return (\n    <MenuPrimitive.CheckboxItem\n      checked={checked}\n      c
 ```
 
-**File**: `apps/ui/public/r/command.json` (modified, +1/-1)
+**File**: `apps/ui/registry/default/ui/context-menu.tsx` (modified, +1/-1)
 ```diff
-@@ -10,7 +10,7 @@
-   "files": [
-     {
-       "path": "registry/default/ui/command.tsx",
--      "content": "\"use client\";\n\nimport { Dialog as CommandDialogPrimitive } from \"@base-ui/react/dialog\";\nimport { SearchIcon } from \"lucide-react\";\nimport type * as React from \"react\";\nimport { cn } from \"@/registry/default/lib/utils\";\nimport {\n  Autocomplete,\n  AutocompleteCollection,\n  AutocompleteEmpty,\n  AutocompleteGroup,\n  AutocompleteGroupLabel,\n  AutocompleteInput,\n  AutocompleteItem,\n  AutocompleteList,\n  AutocompleteSeparator,\n} from \"@/registry/default/ui/autocomplete\";\n\nexport const CommandDialog: typeof CommandDialogPrimitive.Root =\n  CommandDialogPrimitive.Root;\n\nexport const CommandDialogPortal: typeof CommandDialogPrimitive.Portal =\n  CommandDialogPrimitive.Portal;\n\nexport const CommandCreateHandle: typeof CommandDialogPrimitive.createHandle =\n  CommandDialogPrimitive.createHandle;\n\nexport function CommandDialogTrigger(\n  props: CommandDialogPrimitive.Trigger.Props,\n): React.ReactElement {\n  return (\n    <CommandDialogPrimitive.Trigger\n      data-slot=\"command-dialog-trigger\"\n      {...props}\n    />\n  );\n}\n\nexport function CommandDialogBackdrop({\n  className,\n  ...props\n}: CommandDialogPrimitive.Backdrop.Props): React.ReactElement {\n  return (\n    <CommandDialogPrimitive.Backdrop\n      className={cn(\n        \"fixed inset-0 z-50 bg-black/32 backdrop-blur-sm transition-all duration-200 data-ending-style:opacity-0 data-starting-style:opacity-0\",\n        className,\n      )}\n      data-slot=\"command-dialog-backdrop\"\n      {...props}\n    />\n  );\n}\n\nexport function CommandDialogViewport({\n  className,\n  ...props\n}: CommandDialogPrimitive.Viewport.Props): React.ReactElement {\n  return (\n    <CommandDialogPrimitive.Viewport\n      className={cn(\n        \"fixed inset-0 z-50 flex flex-col items-center px-4 py-[max(--spacing(4),4vh)] sm:py-[10vh]\",\n        className,\n      )}\n      data-slot=\"command-dialog-viewport\"\n      {...props}\n    />\n  );\n}\n\nexport function CommandDialogPopup({\n  className,\n  children,\n  portalProps,\n  ...props\n}: CommandDialogPrimitive.Popup.Props & {\n  portalProps?: CommandDialogPrimitive.Portal.Props;\n}): React.ReactElement {\n  return (\n    <CommandDialogPortal {...portalProps}>\n      <CommandDialogBackdrop />\n      <CommandDialogViewport>\n        <CommandDialogPrimitive.Popup\n          className={cn(\n            \"relative row-start-2 flex max-h-105 min-h-0 w-full min-w-0 max-w-xl -translate-y-[calc(1.25rem*var(--nested-dialogs))] scale-[calc(1-0.1*var(--nested-dialogs))] flex-col rounded-2xl border bg-popover not-dark:bg-clip-padding text-popover-foreground opacity-[calc(1-0.1*var(--nested-dialogs))] shadow-lg/5 outline-none transition-[scale,opacity,translate] duration-200 ease-in-out will-change-transform before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-2xl)-1px)] before:bg-muted/72 before:shadow-[0_1px_--theme(--color-black/4%)] data-nested:data-ending-style:translate-y-8 data-nested:data-starting-style:translate-y-8 data-nested-dialog-open:origin-top data-ending-style:scale-98 data-starting-style:scale-98 data-ending-style:opacity-0 data-starting-style:opacity-0 **:data-[slot=scroll-area-viewport]:data-has-overflow-y:pe-1 dark:before:shadow-[0_-1px_--theme(--color-white/6%)]\",\n            className,\n          )}\n          data-slot=\"command-dialog-popup\"\n          {...props}\n        >\n          {children}\n        </CommandDialogPrimitive.Popup>\n      </CommandDialogViewport>\n    </CommandDialogPortal>\n  );\n}\n\nexport function Command({\n  autoHighlight = \"always\",\n  keepHighlight = true,\n  ...props\n}: React.ComponentProps<typeof Autocomplete>): React.ReactElement {\n  return (\n    <Autocomplete\n      autoHighlight={autoHighlight}\n      inline\n      keepHighlight={keepHighlight}\n      open\n      {...props}\n    />\n  );\n}\n\nexport function CommandInput({\n  className,\n  placeholder = undefined,\n  ...props\n}: React.ComponentProps<typeof AutocompleteInput>): React.ReactElement {\n  return (\n    <div className=\"px-2.5 py-1.5\">\n      <AutocompleteInput\n        autoFocus\n        className={cn(\n          \"border-transparent! bg-transparent! shadow-none before:hidden has-focus-visible:ring-0\",\n          className,\n        )}\n        placeholder={placeholder}\n        size=\"lg\"\n        startAddon={<SearchIcon />}\n        {...props}\n      />\n    </div>\n  );\n}\n\nexport function CommandList({\n  className,\n  ...props\n}: React.ComponentProps<typeof AutocompleteList>): React.ReactElement {\n  return (\n    <AutocompleteList\n      className={cn(\"not-empty:scroll-py-2 not-empty:p-2\", className)}\n      data-slot=\"command-list\"\n      {...props}\n    />\n  );\n}\n\nexport function CommandEmpty({\n  className,\n  ...props\n}: React.ComponentProps<typeof AutocompleteEmpty>): React.ReactElement {\
-```
-
-**File**: `apps/ui/public/r/dialog.json` (modified, +1/-1)
-```diff
-@@ -11,7 +11,7 @@
-   "files": [
-     {
-       "path": "registry/default/ui/dialog.tsx",
--      "content": "\"use client\";\n\nimport { Dialog as DialogPrimitive } from \"@base-ui/react/dialog\";\nimport { mergeProps } from \"@base-ui/react/merge-props\";\nimport { useRender } from \"@base-ui/react/use-render\";\nimport { XIcon } from \"lucide-react\";\nimport type React from \"react\";\nimport { cn } from \"@/registry/default/lib/utils\";\nimport { Button } from \"@/registry/default/ui/button\";\nimport { ScrollArea } from \"@/registry/default/ui/scroll-area\";\n\nexport const DialogCreateHandle: typeof DialogPrimitive.createHandle =\n  DialogPrimitive.createHandle;\n\nexport const Dialog: typeof DialogPrimitive.Root = DialogPrimitive.Root;\n\nexport const DialogPortal: typeof DialogPrimitive.Portal =\n  DialogPrimitive.Portal;\n\nexport function DialogTrigger(\n  props: DialogPrimitive.Trigger.Props,\n): React.ReactElement {\n  return <DialogPrimitive.Trigger data-slot=\"dialog-trigger\" {...props} />;\n}\n\nexport function DialogClose(\n  props: DialogPrimitive.Close.Props,\n): React.ReactElement {\n  return <DialogPrimitive.Close data-slot=\"dialog-close\" {...props} />;\n}\n\nexport function DialogBackdrop({\n  className,\n  ...props\n}: DialogPrimitive.Backdrop.Props): React.ReactElement {\n  return (\n    <DialogPrimitive.Backdrop\n      className={cn(\n        \"fixed inset-0 z-50 bg-black/32 backdrop-blur-sm transition-all duration-200 data-ending-style:opacity-0 data-starting-style:opacity-0\",\n        className,\n      )}\n      data-slot=\"dialog-backdrop\"\n      {...props}\n    />\n  );\n}\n\nexport function DialogViewport({\n  className,\n  ...props\n}: DialogPrimitive.Viewport.Props): React.ReactElement {\n  return (\n    <DialogPrimitive.Viewport\n      className={cn(\n        \"fixed inset-0 z-50 grid grid-rows-[1fr_auto_3fr] justify-items-center p-4\",\n        className,\n      )}\n      data-slot=\"dialog-viewport\"\n      {...props}\n    />\n  );\n}\n\nexport function DialogPopup({\n  className,\n  children,\n  showCloseButton = true,\n  bottomStickOnMobile = true,\n  closeProps,\n  portalProps,\n  ...props\n}: DialogPrimitive.Popup.Props & {\n  showCloseButton?: boolean;\n  bottomStickOnMobile?: boolean;\n  closeProps?: DialogPrimitive.Close.Props;\n  portalProps?: DialogPrimitive.Portal.Props;\n}): React.ReactElement {\n  return (\n    <DialogPortal {...portalProps}>\n      <DialogBackdrop />\n      <DialogViewport\n        className={cn(\n          bottomStickOnMobile &&\n            \"max-sm:grid-rows-[1fr_auto] max-sm:p-0 max-sm:pt-12\",\n        )}\n      >\n        <DialogPrimitive.Popup\n          className={cn(\n            \"relative row-start-2 flex max-h-full min-h-0 w-full min-w-0 max-w-lg origin-center flex-col rounded-2xl border bg-popover not-dark:bg-clip-padding text-popover-foreground opacity-[calc(1-var(--nested-dialogs))] shadow-lg/5 outline-none transition-[scale,opacity,translate] duration-200 ease-in-out will-change-transform before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-2xl)-1px)] before:shadow-[0_1px_--theme(--color-black/4%)] data-ending-style:opacity-0 data-starting-style:opacity-0 sm:scale-[calc(1-0.1*var(--nested-dialogs))] sm:data-ending-style:scale-98 sm:data-starting-style:scale-98 dark:before:shadow-[0_-1px_--theme(--color-white/6%)]\",\n            bottomStickOnMobile &&\n              \"max-sm:max-w-none max-sm:origin-bottom max-sm:rounded-none max-sm:border-x-0 max-sm:border-t max-sm:border-b-0 max-sm:data-ending-style:translate-y-4 max-sm:data-starting-style:translate-y-4 max-sm:before:hidden max-sm:before:rounded-none\",\n            className,\n          )}\n          data-slot=\"dialog-popup\"\n          {...props}\n        >\n          {children}\n          {showCloseButton && (\n            <DialogPrimitive.Close\n              aria-label=\"Close\"\n              className=\"absolute end-2 top-2\"\n              render={<Button size=\"icon\" variant=\"ghost\" />}\n              {...closeProps}\n            >\n              <XIcon />\n            </DialogPrimitive.Close>\n          )}\n        </DialogPrimitive.Popup>\n      </DialogViewport>\n    </DialogPortal>\n  );\n}\n\nexport function DialogHeader({\n  className,\n  render,\n  ...props\n}: useRender.ComponentProps<\"div\">): React.ReactElement {\n  const defaultProps = {\n    className: cn(\n      \"flex flex-col gap-2 p-6 in-[[data-slot=dialog-popup]:has([data-slot=dialog-panel])]:pb-3 max-sm:pb-4\",\n      className,\n    ),\n    \"data-slot\": \"dialog-header\",\n  };\n\n  return useRender({\n    defaultTagName: \"div\",\n    props: mergeProps<\"div\">(defaultProps, props),\n    render,\n  });\n}\n\nexport function DialogFooter({\n  className,\n  variant = \"default\",\n  render,\n  ...props\n}: useRender.ComponentProps<\"div\"> & {\n  variant?: \"default\" | \"bare\";\n}): React.ReactElement {\n  const defaultProps = {\n    className: cn(\n
-```
-
-**File**: `apps/ui/public/r/sheet.json` (modified, +1/-1)
-```diff
-@@ -11,7 +11,7 @@
-   "files": [
-     {
-       "path": "registry/default/ui/sheet.tsx",
--      "content": "\"use client\";\n\nimport { Dialog as SheetPrimitive } from \"@base-ui/react/dialog\";\nimport { mergeProps } from \"@base-ui/react/merge-props\";\nimport { useRender } from \"@base-ui/react/use-render\";\nimport { XIcon } from \"lucide-react\";\nimport type React from \"react\";\nimport { cn } from \"@/registry/default/lib/utils\";\nimport { Button } from \"@/registry/default/ui/button\";\nimport { ScrollArea } from \"@/registry/default/ui/scroll-area\";\n\nexport const Sheet: typeof SheetPrimitive.Root = SheetPrimitive.Root;\n\nexport const SheetPortal: typeof SheetPrimitive.Portal = SheetPrimitive.Portal;\n\nexport function SheetTrigger(\n  props: SheetPrimitive.Trigger.Props,\n): React.ReactElement {\n  return <SheetPrimitive.Trigger data-slot=\"sheet-trigger\" {...props} />;\n}\n\nexport function SheetClose(\n  props: SheetPrimitive.Close.Props,\n): React.ReactElement {\n  return <SheetPrimitive.Close data-slot=\"sheet-close\" {...props} />;\n}\n\nexport function SheetBackdrop({\n  className,\n  ...props\n}: SheetPrimitive.Backdrop.Props): React.ReactElement {\n  return (\n    <SheetPrimitive.Backdrop\n      className={cn(\n        \"fixed inset-0 z-50 bg-black/32 backdrop-blur-sm transition-all duration-200 data-ending-style:opacity-0 data-starting-style:opacity-0\",\n        className,\n      )}\n      data-slot=\"sheet-backdrop\"\n      {...props}\n    />\n  );\n}\n\nexport function SheetViewport({\n  className,\n  side,\n  variant = \"default\",\n  ...props\n}: SheetPrimitive.Viewport.Props & {\n  side?: \"right\" | \"left\" | \"top\" | \"bottom\";\n  variant?: \"default\" | \"inset\";\n}): React.ReactElement {\n  return (\n    <SheetPrimitive.Viewport\n      className={cn(\n        \"fixed inset-0 z-50 grid\",\n        side === \"bottom\" && \"grid grid-rows-[1fr_auto] pt-12\",\n        side === \"top\" && \"grid grid-rows-[auto_1fr] pb-12\",\n        side === \"left\" && \"flex justify-start\",\n        side === \"right\" && \"flex justify-end\",\n        variant === \"inset\" && \"sm:p-4\",\n        className,\n      )}\n      data-slot=\"sheet-viewport\"\n      {...props}\n    />\n  );\n}\n\nexport function SheetPopup({\n  className,\n  children,\n  showCloseButton = true,\n  side = \"right\",\n  variant = \"default\",\n  closeProps,\n  portalProps,\n  ...props\n}: SheetPrimitive.Popup.Props & {\n  showCloseButton?: boolean;\n  side?: \"right\" | \"left\" | \"top\" | \"bottom\";\n  variant?: \"default\" | \"inset\";\n  closeProps?: SheetPrimitive.Close.Props;\n  portalProps?: SheetPrimitive.Portal.Props;\n}): React.ReactElement {\n  return (\n    <SheetPortal {...portalProps}>\n      <SheetBackdrop />\n      <SheetViewport side={side} variant={variant}>\n        <SheetPrimitive.Popup\n          className={cn(\n            \"relative flex max-h-full min-h-0 w-full min-w-0 flex-col bg-popover not-dark:bg-clip-padding text-popover-foreground shadow-lg/5 transition-[opacity,translate] duration-200 ease-in-out will-change-transform before:pointer-events-none before:absolute before:inset-0 before:shadow-[0_1px_--theme(--color-black/4%)] data-ending-style:opacity-0 data-starting-style:opacity-0 max-sm:before:hidden dark:before:shadow-[0_-1px_--theme(--color-white/6%)]\",\n            side === \"bottom\" &&\n              \"row-start-2 border-t data-ending-style:translate-y-8 data-starting-style:translate-y-8\",\n            side === \"top\" &&\n              \"border-b data-ending-style:-translate-y-8 data-starting-style:-translate-y-8\",\n            side === \"left\" &&\n              \"w-[calc(100%-(--spacing(12)))] max-w-md border-e data-ending-style:-translate-x-8 data-starting-style:-translate-x-8\",\n            side === \"right\" &&\n              \"col-start-2 w-[calc(100%-(--spacing(12)))] max-w-md border-s data-ending-style:translate-x-8 data-starting-style:translate-x-8\",\n            variant === \"inset\" &&\n              \"before:hidden sm:rounded-2xl sm:border sm:before:rounded-[calc(var(--radius-2xl)-1px)] sm:**:data-[slot=sheet-footer]:rounded-b-[calc(var(--radius-2xl)-1px)]\",\n            className,\n          )}\n          data-slot=\"sheet-popup\"\n          {...props}\n        >\n          {children}\n          {showCloseButton && (\n            <SheetPrimitive.Close\n              aria-label=\"Close\"\n              className=\"absolute end-2 top-2\"\n              render={<Button size=\"icon\" variant=\"ghost\" />}\n              {...closeProps}\n            >\n              <XIcon />\n            </SheetPrimitive.Close>\n          )}\n        </SheetPrimitive.Popup>\n      </SheetViewport>\n    </SheetPortal>\n  );\n}\n\nexport function SheetHeader({\n  className,\n  render,\n  ...props\n}: useRender.ComponentProps<\"div\">): React.ReactElement {\n  const defaultProps = {\n    className: cn(\n      \"flex flex-col gap-2 p-6 in-[[data-slot=sheet-popup]:has([data-slot=shee
-```
-
-**File**: `apps/ui/registry/default/ui/alert-dialog.tsx` (modified, +1/-1)
-```diff
-@@ -28,7 +28,7 @@ export function AlertDialogBackdrop({
-   return (
-     <AlertDialogPrimitive.Backdrop
-       className={cn(
--        "fixed inset-0 z-50 bg-black/32 backdrop-blur-sm transition-all duration-200 data-ending-style:opacity-0 data-starting-style:opacity-0",
-+        "fixed inset-0 z-50 bg-black/32 backdrop-blur-sm transition-all duration-200 data-ending-style:opacity-0 data-starting-style:opacity-0 supports-[-webkit-touch-callout:none]:absolute",
-         className,
-       )}
-       data-slot="alert-dialog-backdrop"
-```
-
-**File**: `apps/ui/registry/default/ui/command.tsx` (modified, +1/-1)
-```diff
-@@ -43,7 +43,7 @@ export function CommandDialogBackdrop({
-   return (
-     <CommandDialogPrimitive.Backdrop
-       className={cn(
--        "fixed inset-0 z-50 bg-black/32 backdrop-blur-sm transition-all duration-200 data-ending-style:opacity-0 data-starting-style:opacity-0",
-+        "fixed inset-0 z-50 bg-black/32 backdrop-blur-sm transition-all duration-200 data-ending-style:opacity-0 data-starting-style:opacity-0 supports-[-webkit-touch-callout:none]:absolute",
-         className,
-       )}
-       data-slot="command-dialog-backdrop"
-```
-
-**File**: `apps/ui/registry/default/ui/dialog.tsx` (modified, +1/-1)
-```diff
-@@ -36,7 +36,7 @@ export function DialogBackdrop({
-   return (
-     <DialogPrimitive.Backdrop
-       className={cn(
--        "fixed inset-0 z-50 bg-black/32 backdrop-blur-sm transition-all duration-200 data-ending-style:opacity-0 data-starting-style:opacity-0",
-+        "fixed inset-0 z-50 bg-black/32 backdrop-blur-sm transition-all duration-200 data-ending-style:opacity-0 data-starting-style:opacity-0 supports-[-webkit-touch-callout:none]:absolute",
-         className,
-       )}
-       data-slot="dialog-backdrop"
-```
-
----
-
-### Incident Patch 7: `81151ba8` (2026-10-07)
-**Commit Message**: feat(ui): update Cal Sans to 2.010 (#857)
-
-Pick up the latest cossui cut so product UI gets the 2.010 kerning and accent fixes.
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-**File**: `packages/ui/src/fonts/README.md` (modified, +1/-1)
-```diff
-@@ -24,7 +24,7 @@ export default function RootLayout({ children }) {
- 
- ## Available Fonts
- 
--- `fontSans` — Cal Sans 2.0 variable font (`CalSansVF.woff2` upright, `CalSansVF-Italic.woff2` italic)
-+- `fontSans` — Cal Sans 2.010 variable font (`CalSansVF.woff2` upright, `CalSansVF-Italic.woff2` italic)
- - `fontHeading` — Alias of `fontSans`; use when wiring a separate `--font-heading` variable
- - `fontMono` — Paper Mono for code and monospace UI
- 
-```
-
----
-
-### Incident Patch 8: `dd49ec9c` (2026-09-30)
-**Commit Message**: fix(ui): resize textarea wrapper for WebKit placeholder sizing (#856)
-
-WebKit grows field-sizing textareas for long placeholders but does not
-expand inline-flex wrappers, so the border stayed shorter than the text.
-Use inline-grid on the textarea control wrapper so it tracks the child.
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-**File**: `apps/ui/public/r/textarea.json` (modified, +1/-1)
-```diff
-@@ -7,7 +7,7 @@
-   "files": [
-     {
-       "path": "registry/default/ui/textarea.tsx",
--      "content": "\"use client\";\n\nimport { Field as FieldPrimitive } from \"@base-ui/react/field\";\nimport { mergeProps } from \"@base-ui/react/merge-props\";\nimport type * as React from \"react\";\nimport { cn } from \"@/registry/default/lib/utils\";\n\nexport type TextareaProps = React.ComponentPropsWithoutRef<\"textarea\"> &\n  React.RefAttributes<HTMLTextAreaElement> & {\n    size?: \"sm\" | \"default\" | \"lg\" | number;\n    unstyled?: boolean;\n  };\n\nexport function Textarea({\n  className,\n  size = \"default\",\n  unstyled = false,\n  ref,\n  ...props\n}: TextareaProps): React.ReactElement {\n  return (\n    <span\n      className={\n        cn(\n          !unstyled &&\n            \"relative inline-flex w-full rounded-lg border border-input bg-background not-dark:bg-clip-padding text-base shadow-xs/5 ring-ring/24 transition-shadow before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] has-focus-visible:has-aria-invalid:border-destructive/64 has-focus-visible:has-aria-invalid:ring-destructive/16 has-aria-invalid:border-destructive/36 has-focus-visible:border-ring has-disabled:opacity-64 has-[:disabled,:focus-visible,[aria-invalid]]:shadow-none has-focus-visible:ring-[3px] not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-[0_1px_--theme(--color-black/4%)] sm:text-sm dark:bg-input/32 dark:has-aria-invalid:ring-destructive/24 dark:not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-[0_-1px_--theme(--color-white/6%)]\",\n          className,\n        ) || undefined\n      }\n      data-size={size}\n      data-slot=\"textarea-control\"\n    >\n      <FieldPrimitive.Control\n        ref={ref}\n        value={props.value}\n        defaultValue={props.defaultValue}\n        disabled={props.disabled}\n        id={props.id}\n        name={props.name}\n        render={(defaultProps: React.ComponentProps<\"textarea\">) => (\n          <textarea\n            className={cn(\n              \"field-sizing-content min-h-17.5 w-full rounded-[inherit] px-[calc(--spacing(3)-1px)] py-[calc(--spacing(1.5)-1px)] text-foreground outline-none placeholder:text-muted-foreground/72 max-sm:min-h-20.5\",\n              size === \"sm\" &&\n                \"min-h-16.5 px-[calc(--spacing(2.5)-1px)] py-[calc(--spacing(1)-1px)] max-sm:min-h-19.5\",\n              size === \"lg\" &&\n                \"min-h-18.5 py-[calc(--spacing(2)-1px)] max-sm:min-h-21.5\",\n            )}\n            data-slot=\"textarea\"\n            {...mergeProps(defaultProps, props)}\n          />\n        )}\n      />\n    </span>\n  );\n}\n\nexport { FieldPrimitive };\n",
-+      "content": "\"use client\";\n\nimport { Field as FieldPrimitive } from \"@base-ui/react/field\";\nimport { mergeProps } from \"@base-ui/react/merge-props\";\nimport type * as React from \"react\";\nimport { cn } from \"@/registry/default/lib/utils\";\n\nexport type TextareaProps = React.ComponentPropsWithoutRef<\"textarea\"> &\n  React.RefAttributes<HTMLTextAreaElement> & {\n    size?: \"sm\" | \"default\" | \"lg\" | number;\n    unstyled?: boolean;\n  };\n\nexport function Textarea({\n  className,\n  size = \"default\",\n  unstyled = false,\n  ref,\n  ...props\n}: TextareaProps): React.ReactElement {\n  return (\n    <span\n      className={\n        cn(\n          !unstyled &&\n            \"relative inline-grid w-full rounded-lg border border-input bg-background not-dark:bg-clip-padding text-base shadow-xs/5 ring-ring/24 transition-shadow before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] has-focus-visible:has-aria-invalid:border-destructive/64 has-focus-visible:has-aria-invalid:ring-destructive/16 has-aria-invalid:border-destructive/36 has-focus-visible:border-ring has-disabled:opacity-64 has-[:disabled,:focus-visible,[aria-invalid]]:shadow-none has-focus-visible:ring-[3px] not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-[0_1px_--theme(--color-black/4%)] sm:text-sm dark:bg-input/32 dark:has-aria-invalid:ring-destructive/24 dark:not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-[0_-1px_--theme(--color-white/6%)]\",\n          className,\n        ) || undefined\n      }\n      data-size={size}\n      data-slot=\"textarea-control\"\n    >\n      <FieldPrimitive.Control\n        ref={ref}\n        value={props.value}\n        defaultValue={props.defaultValue}\n        disabled={props.disabled}\n        id={props.id}\n        name={props.name}\n        render={(defaultProps: React.ComponentProps<\"textarea\">) => (\n          <textarea\n            className={cn(\n              \"field-sizing-content min-h-17.5 w-full rounded-[inherit] px-[calc(--spacing(3)-1px)] py-[calc(--spacing(1.5)-1px)] text-foreground outline-none placeholder:text-muted-foreground/72 max-sm:min-h-20.5\",\n              siz
-```
-
-**File**: `apps/ui/registry/default/ui/textarea.tsx` (modified, +1/-1)
-```diff
-@@ -23,7 +23,7 @@ export function Textarea({
-       className={
-         cn(
-           !unstyled &&
--            "relative inline-flex w-full rounded-lg border border-input bg-background not-dark:bg-clip-padding text-base shadow-xs/5 ring-ring/24 transition-shadow before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] has-focus-visible:has-aria-invalid:border-destructive/64 has-focus-visible:has-aria-invalid:ring-destructive/16 has-aria-invalid:border-destructive/36 has-focus-visible:border-ring has-disabled:opacity-64 has-[:disabled,:focus-visible,[aria-invalid]]:shadow-none has-focus-visible:ring-[3px] not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-[0_1px_--theme(--color-black/4%)] sm:text-sm dark:bg-input/32 dark:has-aria-invalid:ring-destructive/24 dark:not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-[0_-1px_--theme(--color-white/6%)]",
-+            "relative inline-grid w-full rounded-lg border border-input bg-background not-dark:bg-clip-padding text-base shadow-xs/5 ring-ring/24 transition-shadow before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] has-focus-visible:has-aria-invalid:border-destructive/64 has-focus-visible:has-aria-invalid:ring-destructive/16 has-aria-invalid:border-destructive/36 has-focus-visible:border-ring has-disabled:opacity-64 has-[:disabled,:focus-visible,[aria-invalid]]:shadow-none has-focus-visible:ring-[3px] not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-[0_1px_--theme(--color-black/4%)] sm:text-sm dark:bg-input/32 dark:has-aria-invalid:ring-destructive/24 dark:not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-[0_-1px_--theme(--color-white/6%)]",
-           className,
-         ) || undefined
-       }
-```
-
-**File**: `packages/ui/src/components/textarea.tsx` (modified, +1/-1)
-```diff
-@@ -23,7 +23,7 @@ export function Textarea({
-       className={
-         cn(
-           !unstyled &&
--            "relative inline-flex w-full rounded-lg border border-input bg-background not-dark:bg-clip-padding text-base shadow-xs/5 ring-ring/24 transition-shadow before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] has-focus-visible:has-aria-invalid:border-destructive/64 has-focus-visible:has-aria-invalid:ring-destructive/16 has-aria-invalid:border-destructive/36 has-focus-visible:border-ring has-disabled:opacity-64 has-[:disabled,:focus-visible,[aria-invalid]]:shadow-none has-focus-visible:ring-[3px] not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-[0_1px_--theme(--color-black/4%)] sm:text-sm dark:bg-input/32 dark:has-aria-invalid:ring-destructive/24 dark:not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-[0_-1px_--theme(--color-white/6%)]",
-+            "relative inline-grid w-full rounded-lg border border-input bg-background not-dark:bg-clip-padding text-base shadow-xs/5 ring-ring/24 transition-shadow before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] has-focus-visible:has-aria-invalid:border-destructive/64 has-focus-visible:has-aria-invalid:ring-destructive/16 has-aria-invalid:border-destructive/36 has-focus-visible:border-ring has-disabled:opacity-64 has-[:disabled,:focus-visible,[aria-invalid]]:shadow-none has-focus-visible:ring-[3px] not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-[0_1px_--theme(--color-black/4%)] sm:text-sm dark:bg-input/32 dark:has-aria-invalid:ring-destructive/24 dark:not-has-disabled:has-not-focus-visible:not-has-aria-invalid:before:shadow-[0_-1px_--theme(--color-white/6%)]",
-           className,
-         ) || undefined
-       }
-```
-
----
-
-### Incident Patch 9: `8423f18a` (2026-09-27)
-**Commit Message**: feat(ui): add palette Select and radio card particles (#855)
-
-* feat(ui): add color palette selector particles
-
-* refactor(ui): focus palette particle on coss Select
-
-* fix(ui): align palette select popup with trigger
-
-* feat(ui): add three-column palette radio cards
-
-* fix(ui): hide palette card radio indicators
-
-* style(ui): make palette cards compact and inline
-
-* feat(ui): show palette names in swatch card tooltips
-
-* fix(ui): disable hoverable palette tooltips
-
-* style(ui): arrange palette cards in four columns
-
-**File**: `apps/ui/public/r/p-radio-group-10.json` (added, +24/-0)
-```diff
-@@ -0,0 +1,24 @@
-+{
-+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
-+  "name": "p-radio-group-10",
-+  "description": "Color palette radio cards in a four-column grid",
-+  "registryDependencies": [
-+    "@coss/radio-group",
-+    "@coss/tooltip"
-+  ],
-+  "files": [
-+    {
-+      "path": "registry/default/particles/p-radio-group-10.tsx",
-+      "content": "\"use client\";\n\nimport { RadioGroup, RadioPrimitive } from \"@/registry/default/ui/radio-group\";\nimport {\n  Tooltip,\n  TooltipPopup,\n  TooltipProvider,\n  TooltipTrigger,\n} from \"@/registry/default/ui/tooltip\";\n\nconst palettes = [\n  { label: \"Mono\", value: \"mono\", colors: [\"#18181B\", \"#A1A1AA\", \"#FAFAFA\"] },\n  {\n    label: \"Porcelain\",\n    value: \"porcelain\",\n    colors: [\"#AA8F73\", \"#C8B79A\", \"#889FA3\"],\n  },\n  { label: \"Ember\", value: \"ember\", colors: [\"#B94724\", \"#DB8649\", \"#EDD0A0\"] },\n  { label: \"Terra\", value: \"terra\", colors: [\"#A64F3C\", \"#C78F70\", \"#896577\"] },\n  { label: \"Rosé\", value: \"rose\", colors: [\"#9B3F60\", \"#C98693\", \"#E9B9A5\"] },\n  { label: \"Dusk\", value: \"dusk\", colors: [\"#BE835B\", \"#8E7C9F\", \"#6E97AE\"] },\n  {\n    label: \"Orchard\",\n    value: \"orchard\",\n    colors: [\"#63794B\", \"#ADA66B\", \"#83A18A\"],\n  },\n  {\n    label: \"Petrol\",\n    value: \"petrol\",\n    colors: [\"#326A76\", \"#C97868\", \"#C9AD81\"],\n  },\n  {\n    label: \"Lagoon\",\n    value: \"lagoon\",\n    colors: [\"#247E92\", \"#4CAFA3\", \"#B6D8C7\"],\n  },\n  {\n    label: \"Borealis\",\n    value: \"borealis\",\n    colors: [\"#267F69\", \"#527FB8\", \"#9A83BF\"],\n  },\n  {\n    label: \"Cobalt\",\n    value: \"cobalt\",\n    colors: [\"#244E9A\", \"#607DA9\", \"#B5C9DD\"],\n  },\n  { label: \"Iris\", value: \"iris\", colors: [\"#7361A3\", \"#AC87A5\", \"#DBC3CA\"] },\n];\n\nexport default function Particle() {\n  return (\n    <fieldset className=\"w-full space-y-3\">\n      <legend className=\"font-medium text-sm\">Color palette</legend>\n      <TooltipProvider>\n        <RadioGroup\n          aria-label=\"Color palette\"\n          className=\"grid grid-cols-4 gap-2\"\n          defaultValue=\"dusk\"\n        >\n          {palettes.map((palette) => (\n            <Tooltip key={palette.value} disableHoverablePopup>\n              <TooltipTrigger\n                render={\n                  <RadioPrimitive.Root\n                    aria-label={palette.label}\n                    value={palette.value}\n                    className=\"flex items-center justify-center rounded-lg border p-2.5 outline-none hover:bg-accent/50 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background data-checked:border-primary/48 data-checked:bg-accent/50\"\n                  />\n                }\n              >\n                <span aria-hidden=\"true\" className=\"flex shrink-0 -space-x-1\">\n                  {palette.colors.map((color) => (\n                    <span\n                      key={color}\n                      className=\"size-4 rounded-full ring-1 ring-background\"\n                      style={{ backgroundColor: color }}\n                    />\n                  ))}\n                </span>\n              </TooltipTrigger>\n              <TooltipPopup>{palette.label}</TooltipPopup>\n            </Tooltip>\n          ))}\n        </RadioGroup>\n      </TooltipProvider>\n    </fieldset>\n  );\n}\n",
-+      "type": "registry:block"
-+    }
-+  ],
-+  "meta": {
-+    "className": "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-96"
-+  },
-+  "categories": [
-+    "radio group",
-+    "tooltip"
-+  ],
-+  "type": "registry:block"
-+}
-\ No newline at end of file
-```
-
-**File**: `apps/ui/public/r/p-select-24.json` (added, +22/-0)
-```diff
-@@ -0,0 +1,22 @@
-+{
-+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
-+  "name": "p-select-24",
-+  "description": "Color palette select with three-color swatches",
-+  "registryDependencies": [
-+    "@coss/select"
-+  ],
-+  "files": [
-+    {
-+      "path": "registry/default/particles/p-select-24.tsx",
-+      "content": "\"use client\";\n\nimport {\n  Select,\n  SelectItem,\n  SelectLabel,\n  SelectPopup,\n  SelectTrigger,\n  SelectValue,\n} from \"@/registry/default/ui/select\";\n\nconst palettes = [\n  { label: \"Mono\", value: \"mono\", colors: [\"#18181B\", \"#A1A1AA\", \"#FAFAFA\"] },\n  {\n    label: \"Porcelain\",\n    value: \"porcelain\",\n    colors: [\"#AA8F73\", \"#C8B79A\", \"#889FA3\"],\n  },\n  { label: \"Ember\", value: \"ember\", colors: [\"#B94724\", \"#DB8649\", \"#EDD0A0\"] },\n  { label: \"Terra\", value: \"terra\", colors: [\"#A64F3C\", \"#C78F70\", \"#896577\"] },\n  { label: \"Rosé\", value: \"rose\", colors: [\"#9B3F60\", \"#C98693\", \"#E9B9A5\"] },\n  { label: \"Dusk\", value: \"dusk\", colors: [\"#BE835B\", \"#8E7C9F\", \"#6E97AE\"] },\n  {\n    label: \"Orchard\",\n    value: \"orchard\",\n    colors: [\"#63794B\", \"#ADA66B\", \"#83A18A\"],\n  },\n  {\n    label: \"Petrol\",\n    value: \"petrol\",\n    colors: [\"#326A76\", \"#C97868\", \"#C9AD81\"],\n  },\n  {\n    label: \"Lagoon\",\n    value: \"lagoon\",\n    colors: [\"#247E92\", \"#4CAFA3\", \"#B6D8C7\"],\n  },\n  {\n    label: \"Borealis\",\n    value: \"borealis\",\n    colors: [\"#267F69\", \"#527FB8\", \"#9A83BF\"],\n  },\n  {\n    label: \"Cobalt\",\n    value: \"cobalt\",\n    colors: [\"#244E9A\", \"#607DA9\", \"#B5C9DD\"],\n  },\n  { label: \"Iris\", value: \"iris\", colors: [\"#7361A3\", \"#AC87A5\", \"#DBC3CA\"] },\n];\n\nexport default function Particle() {\n  return (\n    <Select\n      defaultValue={palettes[5]}\n      items={palettes}\n      itemToStringValue={(palette) => palette.value}\n    >\n      <SelectLabel>Color palette</SelectLabel>\n      <SelectTrigger>\n        <SelectValue>\n          {(palette: (typeof palettes)[number]) => (\n            <span className=\"flex items-center gap-2\">\n              <span aria-hidden=\"true\" className=\"flex shrink-0 -space-x-1\">\n                {palette.colors.map((color) => (\n                  <span\n                    key={color}\n                    className=\"size-4 rounded-full ring-1 ring-background\"\n                    style={{ backgroundColor: color }}\n                  />\n                ))}\n              </span>\n              <span className=\"truncate\">{palette.label}</span>\n            </span>\n          )}\n        </SelectValue>\n      </SelectTrigger>\n      <SelectPopup>\n        {palettes.map((palette) => (\n          <SelectItem key={palette.value} value={palette}>\n            <span className=\"flex items-center gap-2\">\n              <span aria-hidden=\"true\" className=\"flex shrink-0 -space-x-1\">\n                {palette.colors.map((color) => (\n                  <span\n                    key={color}\n                    className=\"size-4 rounded-full ring-1 ring-background\"\n                    style={{ backgroundColor: color }}\n                  />\n                ))}\n              </span>\n              {palette.label}\n            </span>\n          </SelectItem>\n        ))}\n      </SelectPopup>\n    </Select>\n  );\n}\n",
-+      "type": "registry:block"
-+    }
-+  ],
-+  "meta": {
-+    "className": "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-64"
-+  },
-+  "categories": [
-+    "select"
-+  ],
-+  "type": "registry:block"
-+}
-\ No newline at end of file
-```
-
-**File**: `apps/ui/public/r/registry.json` (modified, +42/-0)
-```diff
-@@ -8824,6 +8824,28 @@
-       ],
-       "type": "registry:block"
-     },
-+    {
-+      "categories": [
-+        "radio group",
-+        "tooltip"
-+      ],
-+      "description": "Color palette radio cards in a four-column grid",
-+      "files": [
-+        {
-+          "path": "registry/default/particles/p-radio-group-10.tsx",
-+          "type": "registry:block"
-+        }
-+      ],
-+      "meta": {
-+        "className": "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-96"
-+      },
-+      "name": "p-radio-group-10",
-+      "registryDependencies": [
-+        "@coss/radio-group",
-+        "@coss/tooltip"
-+      ],
-+      "type": "registry:block"
-+    },
-     {
-       "categories": [
-         "scroll area"
-@@ -9365,6 +9387,26 @@
-       ],
-       "type": "registry:block"
-     },
-+    {
-+      "categories": [
-+        "select"
-+      ],
-+      "description": "Color palette select with three-color swatches",
-+      "files": [
-+        {
-+          "path": "registry/default/particles/p-select-24.tsx",
-+          "type": "registry:block"
-+        }
-+      ],
-+      "meta": {
-+        "className": "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-64"
-+      },
-+      "name": "p-select-24",
-+      "registryDependencies": [
-+        "@coss/select"
-+      ],
-+      "type": "registry:block"
-+    },
-     {
-       "categories": [
-         "select"
-```
-
-**File**: `apps/ui/registry.json` (modified, +42/-0)
-```diff
-@@ -8824,6 +8824,28 @@
-       ],
-       "type": "registry:block"
-     },
-+    {
-+      "categories": [
-+        "radio group",
-+        "tooltip"
-+      ],
-+      "description": "Color palette radio cards in a four-column grid",
-+      "files": [
-+        {
-+          "path": "registry/default/particles/p-radio-group-10.tsx",
-+          "type": "registry:block"
-+        }
-+      ],
-+      "meta": {
-+        "className": "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-96"
-+      },
-+      "name": "p-radio-group-10",
-+      "registryDependencies": [
-+        "@coss/radio-group",
-+        "@coss/tooltip"
-+      ],
-+      "type": "registry:block"
-+    },
-     {
-       "categories": [
-         "scroll area"
-@@ -9365,6 +9387,26 @@
-       ],
-       "type": "registry:block"
-     },
-+    {
-+      "categories": [
-+        "select"
-+      ],
-+      "description": "Color palette select with three-color swatches",
-+      "files": [
-+        {
-+          "path": "registry/default/particles/p-select-24.tsx",
-+          "type": "registry:block"
-+        }
-+      ],
-+      "meta": {
-+        "className": "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-64"
-+      },
-+      "name": "p-select-24",
-+      "registryDependencies": [
-+        "@coss/select"
-+      ],
-+      "type": "registry:block"
-+    },
-     {
-       "categories": [
-         "select"
-```
-
-**File**: `apps/ui/registry/__index__.tsx` (modified, +36/-0)
-```diff
-@@ -7603,6 +7603,24 @@ export const Index: Record<string, any> = {
-     categories: ["radio group","segmented control"],
-     meta: undefined,
-   },
-+  "p-radio-group-10": {
-+    name: "p-radio-group-10",
-+    description: "Color palette radio cards in a four-column grid",
-+    type: "registry:block",
-+    registryDependencies: ["@coss/radio-group","@coss/tooltip"],
-+    files: [{
-+      path: "registry/default/particles/p-radio-group-10.tsx",
-+      type: "registry:block",
-+      target: ""
-+    }],
-+    component: React.lazy(async () => {
-+      const mod = await import("@/registry/default/particles/p-radio-group-10.tsx")
-+      const exportName = Object.keys(mod).find(key => typeof mod[key] === 'function' || typeof mod[key] === 'object') || item.name
-+      return { default: mod.default || mod[exportName] }
-+    }),
-+    categories: ["radio group","tooltip"],
-+    meta: {"className":"**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-96"},
-+  },
-   "p-scroll-area-1": {
-     name: "p-scroll-area-1",
-     description: "Basic scroll area",
-@@ -8089,6 +8107,24 @@ export const Index: Record<string, any> = {
-     categories: ["select"],
-     meta: {"className":"**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-64"},
-   },
-+  "p-select-24": {
-+    name: "p-select-24",
-+    description: "Color palette select with three-color swatches",
-+    type: "registry:block",
-+    registryDependencies: ["@coss/select"],
-+    files: [{
-+      path: "registry/default/particles/p-select-24.tsx",
-+      type: "registry:block",
-+      target: ""
-+    }],
-+    component: React.lazy(async () => {
-+      const mod = await import("@/registry/default/particles/p-select-24.tsx")
-+      const exportName = Object.keys(mod).find(key => typeof mod[key] === 'function' || typeof mod[key] === 'object') || item.name
-+      return { default: mod.default || mod[exportName] }
-+    }),
-+    categories: ["select"],
-+    meta: {"className":"**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-64"},
-+  },
-   "p-select-11": {
-     name: "p-select-11",
-     description: "Select in form",
-```
-
-**File**: `apps/ui/registry/default/particles/p-radio-group-10.tsx` (added, +88/-0)
-```diff
-@@ -0,0 +1,88 @@
-+"use client";
-+
-+import { RadioGroup, RadioPrimitive } from "@/registry/default/ui/radio-group";
-+import {
-+  Tooltip,
-+  TooltipPopup,
-+  TooltipProvider,
-+  TooltipTrigger,
-+} from "@/registry/default/ui/tooltip";
-+
-+const palettes = [
-+  { label: "Mono", value: "mono", colors: ["#18181B", "#A1A1AA", "#FAFAFA"] },
-+  {
-+    label: "Porcelain",
-+    value: "porcelain",
-+    colors: ["#AA8F73", "#C8B79A", "#889FA3"],
-+  },
-+  { label: "Ember", value: "ember", colors: ["#B94724", "#DB8649", "#EDD0A0"] },
-+  { label: "Terra", value: "terra", colors: ["#A64F3C", "#C78F70", "#896577"] },
-+  { label: "Rosé", value: "rose", colors: ["#9B3F60", "#C98693", "#E9B9A5"] },
-+  { label: "Dusk", value: "dusk", colors: ["#BE835B", "#8E7C9F", "#6E97AE"] },
-+  {
-+    label: "Orchard",
-+    value: "orchard",
-+    colors: ["#63794B", "#ADA66B", "#83A18A"],
-+  },
-+  {
-+    label: "Petrol",
-+    value: "petrol",
-+    colors: ["#326A76", "#C97868", "#C9AD81"],
-+  },
-+  {
-+    label: "Lagoon",
-+    value: "lagoon",
-+    colors: ["#247E92", "#4CAFA3", "#B6D8C7"],
-+  },
-+  {
-+    label: "Borealis",
-+    value: "borealis",
-+    colors: ["#267F69", "#527FB8", "#9A83BF"],
-+  },
-+  {
-+    label: "Cobalt",
-+    value: "cobalt",
-+    colors: ["#244E9A", "#607DA9", "#B5C9DD"],
-+  },
-+  { label: "Iris", value: "iris", colors: ["#7361A3", "#AC87A5", "#DBC3CA"] },
-+];
-+
-+export default function Particle() {
-+  return (
-+    <fieldset className="w-full space-y-3">
-+      <legend className="font-medium text-sm">Color palette</legend>
-+      <TooltipProvider>
-+        <RadioGroup
-+          aria-label="Color palette"
-+          className="grid grid-cols-4 gap-2"
-+          defaultValue="dusk"
-+        >
-+          {palettes.map((palette) => (
-+            <Tooltip key={palette.value} disableHoverablePopup>
-+              <TooltipTrigger
-+                render={
-+                  <RadioPrimitive.Root
-+                    aria-label={palette.label}
-+                    value={palette.value}
-+                    className="flex items-center justify-center rounded-lg border p-2.5 outline-none hover:bg-accent/50 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background data-checked:border-primary/48 data-checked:bg-accent/50"
-+                  />
-+                }
-+              >
-+                <span aria-hidden="true" className="flex shrink-0 -space-x-1">
-+                  {palette.colors.map((color) => (
-+                    <span
-+                      key={color}
-+                      className="size-4 rounded-full ring-1 ring-background"
-+                      style={{ backgroundColor: color }}
-+                    />
-+                  ))}
-+                </span>
-+              </TooltipTrigger>
-+              <TooltipPopup>{palette.label}</TooltipPopup>
-+            </Tooltip>
-+          ))}
-+        </RadioGroup>
-+      </TooltipProvider>
-+    </fieldset>
-+  );
-+}
-```
-
-**File**: `apps/ui/registry/default/particles/p-select-24.tsx` (added, +97/-0)
-```diff
-@@ -0,0 +1,97 @@
-+"use client";
-+
-+import {
-+  Select,
-+  SelectItem,
-+  SelectLabel,
-+  SelectPopup,
-+  SelectTrigger,
-+  SelectValue,
-+} from "@/registry/default/ui/select";
-+
-+const palettes = [
-+  { label: "Mono", value: "mono", colors: ["#18181B", "#A1A1AA", "#FAFAFA"] },
-+  {
-+    label: "Porcelain",
-+    value: "porcelain",
-+    colors: ["#AA8F73", "#C8B79A", "#889FA3"],
-+  },
-+  { label: "Ember", value: "ember", colors: ["#B94724", "#DB8649", "#EDD0A0"] },
-+  { label: "Terra", value: "terra", colors: ["#A64F3C", "#C78F70", "#896577"] },
-+  { label: "Rosé", value: "rose", colors: ["#9B3F60", "#C98693", "#E9B9A5"] },
-+  { label: "Dusk", value: "dusk", colors: ["#BE835B", "#8E7C9F", "#6E97AE"] },
-+  {
-+    label: "Orchard",
-+    value: "orchard",
-+    colors: ["#63794B", "#ADA66B", "#83A18A"],
-+  },
-+  {
-+    label: "Petrol",
-+    value: "petrol",
-+    colors: ["#326A76", "#C97868", "#C9AD81"],
-+  },
-+  {
-+    label: "Lagoon",
-+    value: "lagoon",
-+    colors: ["#247E92", "#4CAFA3", "#B6D8C7"],
-+  },
-+  {
-+    label: "Borealis",
-+    value: "borealis",
-+    colors: ["#267F69", "#527FB8", "#9A83BF"],
-+  },
-+  {
-+    label: "Cobalt",
-+    value: "cobalt",
-+    colors: ["#244E9A", "#607DA9", "#B5C9DD"],
-+  },
-+  { label: "Iris", value: "iris", colors: ["#7361A3", "#AC87A5", "#DBC3CA"] },
-+];
-+
-+export default function Particle() {
-+  return (
-+    <Select
-+      defaultValue={palettes[5]}
-+      items={palettes}
-+      itemToStringValue={(palette) => palette.value}
-+    >
-+      <SelectLabel>Color palette</SelectLabel>
-+      <SelectTrigger>
-+        <SelectValue>
-+          {(palette: (typeof palettes)[number]) => (
-+            <span className="flex items-center gap-2">
-+              <span aria-hidden="true" className="flex shrink-0 -space-x-1">
-+                {palette.colors.map((color) => (
-+                  <span
-+                    key={color}
-+                    className="size-4 rounded-full ring-1 ring-background"
-+                    style={{ backgroundColor: color }}
-+                  />
-+                ))}
-+              </span>
-+              <span className="truncate">{palette.label}</span>
-+            </span>
-+          )}
-+        </SelectValue>
-+      </SelectTrigger>
-+      <SelectPopup>
-+        {palettes.map((palette) => (
-+          <SelectItem key={palette.value} value={palette}>
-+            <span className="flex items-center gap-2">
-+              <span aria-hidden="true" className="flex shrink-0 -space-x-1">
-+                {palette.colors.map((color) => (
-+                  <span
-+                    key={color}
-+                    className="size-4 rounded-full ring-1 ring-background"
-+                    style={{ backgroundColor: color }}
-+                  />
-+                ))}
-+              </span>
-+              {palette.label}
-+            </span>
-+          </SelectItem>
-+        ))}
-+      </SelectPopup>
-+    </Select>
-+  );
-+}
-```
-
-**File**: `apps/ui/registry/registry-particles.ts` (modified, +24/-0)
-```diff
-@@ -4195,6 +4195,18 @@ export const particles: ParticleItem[] = [
-     registryDependencies: ["@coss/radio-group", "@coss/segmented-control"],
-     type: "registry:block",
-   },
-+  {
-+    categories: categories("radio group", "tooltip"),
-+    description: "Color palette radio cards in a four-column grid",
-+    files: [{ path: "particles/p-radio-group-10.tsx", type: "registry:block" }],
-+    meta: {
-+      className:
-+        "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-96",
-+    },
-+    name: "p-radio-group-10",
-+    registryDependencies: ["@coss/radio-group", "@coss/tooltip"],
-+    type: "registry:block",
-+  },
-   {
-     categories: categories("scroll area"),
-     description: "Basic scroll area",
-@@ -4505,6 +4517,18 @@ export const particles: ParticleItem[] = [
-     registryDependencies: ["@coss/select"],
-     type: "registry:block",
-   },
-+  {
-+    categories: categories("select"),
-+    description: "Color palette select with three-color swatches",
-+    files: [{ path: "particles/p-select-24.tsx", type: "registry:block" }],
-+    meta: {
-+      className:
-+        "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-64",
-+    },
-+    name: "p-select-24",
-+    registryDependencies: ["@coss/select"],
-+    type: "registry:block",
-+  },
-   {
-     categories: categories("select"),
-     description: "Select in form",
-```
-
----
-
-### Incident Patch 10: `59e8c88c` (2026-09-22)
-**Commit Message**: feat(ui): update Cal Sans to 2.003 (#853)
-
-Co-authored-by: Devin AI <158243242+devin-ai-integration[bot]@users.noreply.github.com>
-
-**File**: `packages/ui/src/fonts/README.md` (modified, +1/-1)
-```diff
-@@ -24,7 +24,7 @@ export default function RootLayout({ children }) {
- 
- ## Available Fonts
- 
--- `fontSans` — Cal Sans 2.0 variable font (`CalSansVF.woff2`)
-+- `fontSans` — Cal Sans 2.0 variable font (`CalSansVF.woff2` upright, `CalSansVF-Italic.woff2` italic)
- - `fontHeading` — Alias of `fontSans`; use when wiring a separate `--font-heading` variable
- - `fontMono` — Paper Mono for code and monospace UI
- 
-```
-
-**File**: `packages/ui/src/fonts/index.ts` (modified, +5/-2)
-```diff
-@@ -8,9 +8,12 @@ export const fontMono = localFont({
- 
- export const fontSans = localFont({
-   display: "swap",
--  src: "./CalSansVF.woff2",
-+  src: [
-+    { path: "./CalSansVF.woff2", style: "normal" },
-+    { path: "./CalSansVF-Italic.woff2", style: "italic" },
-+  ],
-   variable: "--font-sans",
--  weight: "300 700",
-+  weight: "400 700",
- });
- 
- /** Same variable font as `fontSans`; optional when wiring a separate `--font-heading`. */
-```
-
----
-
-### Incident Patch 11: `60b6b444` (2026-09-21)
-**Commit Message**: docs(ui): remove the Early Access callout from the Introduction (#852)
-
-Co-authored-by: Devin AI <158243242+devin-ai-integration[bot]@users.noreply.github.com>
-
-**File**: `apps/ui/content/docs/(root)/index.mdx` (modified, +0/-12)
-```diff
-@@ -9,18 +9,6 @@ We think Base UI is the best foundation for modern web applications. We've taken
- 
- This is the component library we'll be progressively adopting for [Cal.com](https://cal.com). We're building it in the open for anyone who wants to create beautiful, reliable user interfaces.
- 
--<Alert className="bg-muted/24">
--  <InfoIcon />
--  <AlertTitle>Early Access</AlertTitle>
--  <AlertDescription>
--    coss ui is currently in early development. We're building this library in
--    the open and actively working on new components and features. Base UI itself
--    is also in beta, so you may encounter breaking changes as both projects
--    evolve. We recommend using this in projects where you're comfortable
--    adapting to changes.
--  </AlertDescription>
--</Alert>
--
- ## How It Works
- 
- Our approach is simple: you should own your code. We're inspired by the copy-paste ethos of **shadcn/ui**.
-```
-
----
-
-### Incident Patch 12: `81634815` (2026-09-16)
-**Commit Message**: fix(ui): keep drawer close button above drag bar (#851)
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-**File**: `apps/ui/public/r/drawer.json` (modified, +1/-1)
-```diff
-@@ -11,7 +11,7 @@
-   "files": [
-     {
-       "path": "registry/default/ui/drawer.tsx",
--      "content": "\"use client\";\n\nimport { Checkbox as CheckboxPrimitive } from \"@base-ui/react/checkbox\";\nimport { Drawer as DrawerPrimitive } from \"@base-ui/react/drawer\";\nimport { mergeProps } from \"@base-ui/react/merge-props\";\nimport { Radio as RadioPrimitive } from \"@base-ui/react/radio\";\nimport { RadioGroup as RadioGroupPrimitive } from \"@base-ui/react/radio-group\";\nimport { useRender } from \"@base-ui/react/use-render\";\nimport { ChevronRightIcon, XIcon } from \"lucide-react\";\nimport type React from \"react\";\nimport { createContext, useContext } from \"react\";\nimport { cn } from \"@/registry/default/lib/utils\";\nimport { Button } from \"@/registry/default/ui/button\";\nimport { ScrollArea } from \"@/registry/default/ui/scroll-area\";\n\ntype DrawerPosition = \"right\" | \"left\" | \"top\" | \"bottom\";\n\nconst DrawerContext: React.Context<{ position: DrawerPosition }> =\n  createContext<{ position: DrawerPosition }>({\n    position: \"bottom\",\n  });\n\nconst directionMap: Record<\n  DrawerPosition,\n  DrawerPrimitive.Root.Props[\"swipeDirection\"]\n> = {\n  bottom: \"down\",\n  left: \"left\",\n  right: \"right\",\n  top: \"up\",\n};\n\nexport const DrawerCreateHandle: typeof DrawerPrimitive.createHandle =\n  DrawerPrimitive.createHandle;\n\nexport function Drawer({\n  swipeDirection,\n  position = \"bottom\",\n  ...props\n}: DrawerPrimitive.Root.Props & {\n  position?: DrawerPosition;\n}): React.ReactElement {\n  return (\n    <DrawerContext.Provider value={{ position }}>\n      <DrawerPrimitive.Root\n        swipeDirection={swipeDirection ?? directionMap[position]}\n        {...props}\n      />\n    </DrawerContext.Provider>\n  );\n}\n\nexport const DrawerPortal: typeof DrawerPrimitive.Portal =\n  DrawerPrimitive.Portal;\n\nexport function DrawerTrigger(\n  props: DrawerPrimitive.Trigger.Props,\n): React.ReactElement {\n  return <DrawerPrimitive.Trigger data-slot=\"drawer-trigger\" {...props} />;\n}\n\nexport function DrawerClose(\n  props: DrawerPrimitive.Close.Props,\n): React.ReactElement {\n  return <DrawerPrimitive.Close data-slot=\"drawer-close\" {...props} />;\n}\n\nexport function DrawerSwipeArea({\n  className,\n  position: positionProp,\n  ...props\n}: DrawerPrimitive.SwipeArea.Props & {\n  position?: DrawerPosition;\n}): React.ReactElement {\n  const { position: contextPosition } = useContext(DrawerContext);\n  const position = positionProp ?? contextPosition;\n\n  return (\n    <DrawerPrimitive.SwipeArea\n      className={cn(\n        \"fixed z-50 touch-none\",\n        position === \"bottom\" && \"inset-x-0 bottom-0 h-8\",\n        position === \"top\" && \"inset-x-0 top-0 h-8\",\n        position === \"left\" && \"inset-y-0 left-0 w-8\",\n        position === \"right\" && \"inset-y-0 right-0 w-8\",\n        className,\n      )}\n      data-slot=\"drawer-swipe-area\"\n      {...props}\n    />\n  );\n}\n\nexport function DrawerBackdrop({\n  className,\n  ...props\n}: DrawerPrimitive.Backdrop.Props): React.ReactElement {\n  return (\n    <DrawerPrimitive.Backdrop\n      className={cn(\n        \"fixed inset-0 z-50 bg-black/32 opacity-[calc(1-var(--drawer-swipe-progress))] backdrop-blur-sm transition-opacity duration-450 ease-[cubic-bezier(0.32,0.72,0,1)] data-ending-style:opacity-0 data-starting-style:opacity-0 data-ending-style:duration-[calc(var(--drawer-swipe-strength)*400ms)] data-swiping:duration-0 supports-[-webkit-touch-callout:none]:absolute\",\n        className,\n      )}\n      data-slot=\"drawer-backdrop\"\n      {...props}\n    />\n  );\n}\n\nexport function DrawerViewport({\n  className,\n  position,\n  variant = \"default\",\n  ...props\n}: DrawerPrimitive.Viewport.Props & {\n  position?: DrawerPosition;\n  variant?: \"default\" | \"straight\" | \"inset\";\n}): React.ReactElement {\n  return (\n    <DrawerPrimitive.Viewport\n      className={cn(\n        \"fixed inset-0 z-50 [--bleed:--spacing(12)] [--inset:0px]\",\n        \"touch-none\",\n        position === \"bottom\" && \"grid grid-rows-[1fr_auto] pt-12\",\n        position === \"top\" && \"grid grid-rows-[auto_1fr] pb-12\",\n        position === \"left\" && \"flex justify-start\",\n        position === \"right\" && \"flex justify-end\",\n        variant === \"inset\" && \"px-(--inset) sm:[--inset:--spacing(4)]\",\n        variant === \"inset\" && position !== \"bottom\" && \"pt-(--inset)\",\n        variant === \"inset\" && position !== \"top\" && \"pb-(--inset)\",\n        className,\n      )}\n      data-slot=\"drawer-viewport\"\n      {...props}\n    />\n  );\n}\n\nexport function DrawerPopup({\n  className,\n  children,\n  showCloseButton = false,\n  position: positionProp,\n  variant = \"default\",\n  showBar = false,\n  portalProps,\n  ...props\n}: DrawerPrimitive.Popup.Props & {\n  showCloseButton?: boolean;\n  position?: DrawerPosition;\n  variant?: \"default\" | \"straight\" | \"inset\";\n  s
+@@ -158,7 +158,7 @@ export function ContextMenuCheckboxItem({
+             className="inset-shadow-[0_1px_--theme(--color-black/4%)] inline-flex h-[calc(var(--thumb-size)+2px)] w-[calc(var(--thumb-size)*2-2px)] shrink-0 items-center rounded-full p-px outline-none transition-[background-color,box-shadow] duration-200 [--thumb-size:--spacing(4)] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background data-checked:bg-primary data-unchecked:bg-input data-disabled:opacity-64 sm:[--thumb-size:--spacing(3)]"
+             keepMounted
+           >
+-            <span className="pointer-events-none block aspect-square h-full in-[[data-slot=context-menu-checkbox-item][data-checked]]:origin-[var(--thumb-size)_50%] origin-left in-[[data-slot=context-menu-checkbox-item][data-checked]]:translate-x-[calc(var(--thumb-size)-4px)] in-[[data-slot=context-menu-checkbox-item]:active]:not-data-disabled:scale-x-110 in-[[data-slot=context-menu-checkbox-item]:active]:rounded-[var(--thumb-size)/calc(var(--thumb-size)*1.10)] rounded-(--thumb-size) bg-background shadow-sm/5 will-change-transform [transition:translate_.15s,border-radius_.15s,scale_.1s_.1s,transform-origin_.15s]" />
++            <span className="pointer-events-none block aspect-square h-full in-[[data-slot=context-menu-checkbox-item][data-checked]]:origin-[var(--thumb-size)_50%] origin-left in-[[data-slot=context-menu-checkbox-item][data-checked]]:translate-x-[calc(var(--thumb-size)-4px)] in-[[data-slot=context-menu-checkbox-item]:active]:not-data-disabled:scale-x-110 in-[[data-slot=context-menu-checkbox-item]:active]:rounded-[var(--thumb-size)/calc(var(--thumb-size)*1.10)] rounded-(--thumb-size) bg-background shadow-sm/5 will-change-transform [transition:translate_.15s,border-radius_.15s,scale_.1s_.1s,transform-origin_.15s] rtl:in-[[data-slot=context-menu-checkbox-item][data-checked]]:origin-left rtl:origin-right rtl:in-[[data-slot=context-menu-checkbox-item][data-checked]]:-translate-x-[calc(var(--thumb-size)-4px)]" />
+           </ContextMenuPrimitive.CheckboxItemIndicator>
+         </>
+       ) : (
 ```
 
 **File**: `apps/ui/registry/default/ui/drawer.tsx` (modified, +1/-1)
 ```diff
-@@ -214,7 +214,7 @@ export function DrawerPopup({
-           {showCloseButton && (
-             <DrawerPrimitive.Close
-               aria-label="Close"
--              className="absolute end-2 top-2"
-+              className="absolute end-2 top-2 z-1"
-               render={<Button size="icon" variant="ghost" />}
-             >
-               <XIcon />
+@@ -552,7 +552,7 @@ export function DrawerMenuCheckboxItem({
+             className="inset-shadow-[0_1px_--theme(--color-black/4%)] col-start-2 inline-flex h-[calc(var(--thumb-size)+2px)] w-[calc(var(--thumb-size)*2-2px)] shrink-0 items-center rounded-full p-px outline-none transition-[background-color,box-shadow] duration-200 [--thumb-size:--spacing(4)] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background data-checked:bg-primary data-unchecked:bg-input data-disabled:opacity-64 sm:[--thumb-size:--spacing(3)]"
+             keepMounted
+           >
+-            <span className="pointer-events-none block aspect-square h-full in-[[data-slot=drawer-menu-checkbox-item][data-checked]]:origin-[var(--thumb-size)_50%] origin-left in-[[data-slot=drawer-menu-checkbox-item][data-checked]]:translate-x-[calc(var(--thumb-size)-4px)] in-[[data-slot=drawer-menu-checkbox-item]:active]:not-data-disabled:scale-x-110 in-[[data-slot=drawer-menu-checkbox-item]:active]:rounded-[var(--thumb-size)/calc(var(--thumb-size)*1.10)] rounded-(--thumb-size) bg-background shadow-sm/5 will-change-transform [transition:translate_.15s,border-radius_.15s,scale_.1s_.1s,transform-origin_.15s]" />
++            <span className="pointer-events-none block aspect-square h-full in-[[data-slot=drawer-menu-checkbox-item][data-checked]]:origin-[var(--thumb-size)_50%] origin-left in-[[data-slot=drawer-menu-checkbox-item][data-checked]]:translate-x-[calc(var(--thumb-size)-4px)] in-[[data-slot=drawer-menu-checkbox-item]:active]:not-data-disabled:scale-x-110 in-[[data-slot=drawer-menu-checkbox-item]:active]:rounded-[var(--thumb-size)/calc(var(--thumb-size)*1.10)] rounded-(--thumb-size) bg-background shadow-sm/5 will-change-transform [transition:translate_.15s,border-radius_.15s,scale_.1s_.1s,transform-origin_.15s] rtl:in-[[data-slot=drawer-menu-checkbox-item][data-checked]]:origin-left rtl:origin-right rtl:in-[[data-slot=drawer-menu-checkbox-item][data-checked]]:-translate-x-[calc(var(--thumb-size)-4px)]" />
+           </CheckboxPrimitive.Indicator>
+         </>
+       ) : (
+```
+
+**File**: `apps/ui/registry/default/ui/menu.tsx` (modified, +1/-1)
+```diff
+@@ -157,7 +157,7 @@ export function MenuCheckboxItem({
+             className="inset-shadow-[0_1px_--theme(--color-black/4%)] inline-flex h-[calc(var(--thumb-size)+2px)] w-[calc(var(--thumb-size)*2-2px)] shrink-0 items-center rounded-full p-px outline-none transition-[background-color,box-shadow] duration-200 [--thumb-size:--spacing(4)] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background data-checked:bg-primary data-unchecked:bg-input data-disabled:opacity-64 sm:[--thumb-size:--spacing(3)]"
+             keepMounted
+           >
+-            <span className="pointer-events-none block aspect-square h-full in-[[data-slot=menu-checkbox-item][data-checked]]:origin-[var(--thumb-size)_50%] origin-left in-[[data-slot=menu-checkbox-item][data-checked]]:translate-x-[calc(var(--thumb-size)-4px)] in-[[data-slot=menu-checkbox-item]:active]:not-data-disabled:scale-x-110 in-[[data-slot=menu-checkbox-item]:active]:rounded-[var(--thumb-size)/calc(var(--thumb-size)*1.10)] rounded-(--thumb-size) bg-background shadow-sm/5 will-change-transform [transition:translate_.15s,border-radius_.15s,scale_.1s_.1s,transform-origin_.15s]" />
++            <span className="pointer-events-none block aspect-square h-full in-[[data-slot=menu-checkbox-item][data-checked]]:origin-[var(--thumb-size)_50%] origin-left in-[[data-slot=menu-checkbox-item][data-checked]]:translate-x-[calc(var(--thumb-size)-4px)] in-[[data-slot=menu-checkbox-item]:active]:not-data-disabled:scale-x-110 in-[[data-slot=menu-checkbox-item]:active]:rounded-[var(--thumb-size)/calc(var(--thumb-size)*1.10)] rounded-(--thumb-size) bg-background shadow-sm/5 will-change-transform [transition:translate_.15s,border-radius_.15s,scale_.1s_.1s,transform-origin_.15s] rtl:in-[[data-slot=menu-checkbox-item][data-checked]]:origin-left rtl:origin-right rtl:in-[[data-slot=menu-checkbox-item][data-checked]]:-translate-x-[calc(var(--thumb-size)-4px)]" />
+           </MenuPrimitive.CheckboxItemIndicator>
+         </>
+       ) : (
+```
+
+**File**: `packages/ui/src/components/context-menu.tsx` (modified, +1/-1)
+```diff
+@@ -158,7 +158,7 @@ export function ContextMenuCheckboxItem({
+             className="inset-shadow-[0_1px_--theme(--color-black/4%)] inline-flex h-[calc(var(--thumb-size)+2px)] w-[calc(var(--thumb-size)*2-2px)] shrink-0 items-center rounded-full p-px outline-none transition-[background-color,box-shadow] duration-200 [--thumb-size:--spacing(4)] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background data-checked:bg-primary data-unchecked:bg-input data-disabled:opacity-64 sm:[--thumb-size:--spacing(3)]"
+             keepMounted
+           >
+-            <span className="pointer-events-none block aspect-square h-full in-[[data-slot=context-menu-checkbox-item][data-checked]]:origin-[var(--thumb-size)_50%] origin-left in-[[data-slot=context-menu-checkbox-item][data-checked]]:translate-x-[calc(var(--thumb-size)-4px)] in-[[data-slot=context-menu-checkbox-item]:active]:not-data-disabled:scale-x-110 in-[[data-slot=context-menu-checkbox-item]:active]:rounded-[var(--thumb-size)/calc(var(--thumb-size)*1.10)] rounded-(--thumb-size) bg-background shadow-sm/5 will-change-transform [transition:translate_.15s,border-radius_.15s,scale_.1s_.1s,transform-origin_.15s]" />
++            <span className="pointer-events-none block aspect-square h-full in-[[data-slot=context-menu-checkbox-item][data-checked]]:origin-[var(--thumb-size)_50%] origin-left in-[[data-slot=context-menu-checkbox-item][data-checked]]:translate-x-[calc(var(--thumb-size)-4px)] in-[[data-slot=context-menu-checkbox-item]:active]:not-data-disabled:scale-x-110 in-[[data-slot=context-menu-checkbox-item]:active]:rounded-[var(--thumb-size)/calc(var(--thumb-size)*1.10)] rounded-(--thumb-size) bg-background shadow-sm/5 will-change-transform [transition:translate_.15s,border-radius_.15s,scale_.1s_.1s,transform-origin_.15s] rtl:in-[[data-slot=context-menu-checkbox-item][data-checked]]:origin-left rtl:origin-right rtl:in-[[data-slot=context-menu-checkbox-item][data-checked]]:-translate-x-[calc(var(--thumb-size)-4px)]" />
+           </ContextMenuPrimitive.CheckboxItemIndicator>
+         </>
+       ) : (
 ```
 
 **File**: `packages/ui/src/components/drawer.tsx` (modified, +1/-1)
 ```diff
-@@ -214,7 +214,7 @@ export function DrawerPopup({
-           {showCloseButton && (
-             <DrawerPrimitive.Close
-               aria-label="Close"
--              className="absolute end-2 top-2"
-+              className="absolute end-2 top-2 z-1"
-               render={<Button size="icon" variant="ghost" />}
-             >
-               <XIcon />
+@@ -552,7 +552,7 @@ export function DrawerMenuCheckboxItem({
+             className="inset-shadow-[0_1px_--theme(--color-black/4%)] col-start-2 inline-flex h-[calc(var(--thumb-size)+2px)] w-[calc(var(--thumb-size)*2-2px)] shrink-0 items-center rounded-full p-px outline-none transition-[background-color,box-shadow] duration-200 [--thumb-size:--spacing(4)] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background data-checked:bg-primary data-unchecked:bg-input data-disabled:opacity-64 sm:[--thumb-size:--spacing(3)]"
+             keepMounted
+           >
+-            <span className="pointer-events-none block aspect-square h-full in-[[data-slot=drawer-menu-checkbox-item][data-checked]]:origin-[var(--thumb-size)_50%] origin-left in-[[data-slot=drawer-menu-checkbox-item][data-checked]]:translate-x-[calc(var(--thumb-size)-4px)] in-[[data-slot=drawer-menu-checkbox-item]:active]:not-data-disabled:scale-x-110 in-[[data-slot=drawer-menu-checkbox-item]:active]:rounded-[var(--thumb-size)/calc(var(--thumb-size)*1.10)] rounded-(--thumb-size) bg-background shadow-sm/5 will-change-transform [transition:translate_.15s,border-radius_.15s,scale_.1s_.1s,transform-origin_.15s]" />
++            <span className="pointer-events-none block aspect-square h-full in-[[data-slot=drawer-menu-checkbox-item][data-checked]]:origin-[var(--thumb-size)_50%] origin-left in-[[data-slot=drawer-menu-checkbox-item][data-checked]]:translate-x-[calc(var(--thumb-size)-4px)] in-[[data-slot=drawer-menu-checkbox-item]:active]:not-data-disabled:scale-x-110 in-[[data-slot=drawer-menu-checkbox-item]:active]:rounded-[var(--thumb-size)/calc(var(--thumb-size)*1.10)] rounded-(--thumb-size) bg-background shadow-sm/5 will-change-transform [transition:translate_.15s,border-radius_.15s,scale_.1s_.1s,transform-origin_.15s] rtl:in-[[data-slot=drawer-menu-checkbox-item][data-checked]]:origin-left rtl:origin-right rtl:in-[[data-slot=drawer-menu-checkbox-item][data-checked]]:-translate-x-[calc(var(--thumb-size)-4px)]" />
+           </CheckboxPrimitive.Indicator>
+         </>
+       ) : (
 ```
 
 ---
 
-### Incident Patch 13: `3bab6543` (2026-09-07)
-**Commit Message**: chore(ui): define Tailwind CSS compatibility (#847)
+### Incident Patch 2: `a5234452` (2026-10-15)
+**Commit Message**: fix(ui): mirror switch thumb in right-to-left layouts (#869)
 
-**File**: `bun.lock` (modified, +1/-0)
-```diff
-@@ -200,6 +200,7 @@
-       "peerDependencies": {
-         "next": "^16.2.5",
-         "react": "^19.2.6",
-+        "tailwindcss": ">=4.1.17 <5",
-       },
-     },
-   },
-```
+In RTL, the checked switch thumb translated in the physical direction and
+overflowed the track. Mirror its travel and press-scale origin with rtl:
+variants. LTR output is unchanged.
 
-**File**: `packages/ui/package.json` (modified, +2/-1)
-```diff
-@@ -39,7 +39,8 @@
-   "name": "@coss/ui",
-   "peerDependencies": {
-     "next": "^16.2.5",
--    "react": "^19.2.6"
-+    "react": "^19.2.6",
-+    "tailwindcss": ">=4.1.17 <5"
-   },
-   "scripts": {
-     "clean": "rm -rf node_modules",
-```
-
----
-
-### Incident Patch 14: `4b1240be` (2026-09-07)
-**Commit Message**: chore(ui): update Base UI to 1.8.0 (#846)
-
-**File**: `apps/ui/content/docs/components/avatar.mdx` (modified, +15/-1)
-```diff
-@@ -60,6 +60,20 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
- </Avatar>
- ```
- 
-+Use `keepMounted` when the image relies on native lazy loading or an optimized image component. The fallback remains visible while the image loads or if it fails:
-+
-+```tsx
-+<Avatar>
-+  <AvatarImage
-+    src="/avatars/01.png"
-+    alt="User avatar"
-+    loading="lazy"
-+    keepMounted
-+  />
-+  <AvatarFallback>JD</AvatarFallback>
-+</Avatar>
-+```
-+
- ## API Reference
- 
- ### Avatar
-@@ -68,7 +82,7 @@ Root component. Styled wrapper for `Avatar.Root` from Base UI with default size
- 
- ### AvatarImage
- 
--Image element for the avatar. Styled wrapper for `Avatar.Image` from Base UI.
-+Image element for the avatar. Styled wrapper for `Avatar.Image` from Base UI with support for `keepMounted` images.
- 
- ### AvatarFallback
- 
-```
-
-**File**: `apps/ui/content/docs/components/combobox.mdx` (modified, +32/-1)
-```diff
-@@ -59,6 +59,7 @@ import {
-   ComboboxItem,
-   ComboboxList,
-   ComboboxPopup,
-+  createComboboxItems,
- } from "@/components/ui/combobox"
- ```
- 
-@@ -81,6 +82,33 @@ const items = [
- </Combobox>
- ```
- 
-+When your source items are objects but selection should use a stable primitive value, create a typed collection with `createComboboxItems`:
-+
-+```tsx
-+const users = [
-+  { id: "ada", name: "Ada Lovelace" },
-+  { id: "grace", name: "Grace Hopper" },
-+]
-+
-+const userItems = createComboboxItems(users, {
-+  getLabel: (user) => user.name,
-+  getValue: (user) => user.id,
-+})
-+
-+<Combobox defaultValue="ada" items={userItems}>
-+  <ComboboxInput placeholder="Select a user..." />
-+  <ComboboxPopup>
-+    <ComboboxList>
-+      {(user) => (
-+        <ComboboxItem key={user.id} value={user.id}>
-+          {user.name}
-+        </ComboboxItem>
-+      )}
-+    </ComboboxList>
-+  </ComboboxPopup>
-+</Combobox>
-+```
-+
- ### Multiple Selection
- 
- ```tsx
-@@ -145,6 +173,10 @@ The root combobox component. Manages the combobox state and provides context to
- | `open`     | `boolean`                               | Controls whether the popup is open                |
- | `...props` | `React.ComponentProps<typeof Combobox>` | All Base UI Combobox props are supported          |
- 
-+### createComboboxItems
-+
-+Creates a typed item collection that derives primitive selection values and labels from object items. Define static collections outside components and memoize dynamic collections.
-+
- ### ComboboxInput
- 
- The input field component for single selection mode with extended features for size variants and addon support.
-@@ -328,4 +360,3 @@ Use `SelectButton` as a `render` prop on `ComboboxTrigger` to make the combobox
- ### Form Integration - Multiple
- 
- <ComponentPreview name="p-combobox-12" />
--
-```
-
-**File**: `apps/ui/package.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "dependencies": {
--    "@base-ui/react": "1.6.0",
-+    "@base-ui/react": "1.8.0",
-     "@coss/ui": "workspace:*",
-     "@daypicker/react": "10.0.1",
-     "@hugeicons/core-free-icons": "^2.0.0",
-```
-
-**File**: `apps/ui/public/r/avatar.json` (modified, +1/-1)
+**File**: `apps/ui/public/r/switch.json` (modified, +1/-1)
 ```diff
 @@ -7,7 +7,7 @@
    "files": [
      {
-       "path": "registry/default/ui/avatar.tsx",
--      "content": "\"use client\";\n\nimport { Avatar as AvatarPrimitive } from \"@base-ui/react/avatar\";\nimport type React from \"react\";\nimport { cn } from \"@/registry/default/lib/utils\";\n\nexport function Avatar({\n  className,\n  ...props\n}: AvatarPrimitive.Root.Props): React.ReactElement {\n  return (\n    <AvatarPrimitive.Root\n      className={cn(\n        \"inline-flex size-8 shrink-0 select-none items-center justify-center overflow-hidden rounded-full bg-background align-middle font-medium text-xs\",\n        className,\n      )}\n      data-slot=\"avatar\"\n      {...props}\n    />\n  );\n}\n\nexport function AvatarImage({\n  className,\n  ...props\n}: AvatarPrimitive.Image.Props): React.ReactElement {\n  return (\n    <AvatarPrimitive.Image\n      className={cn(\"size-full object-cover\", className)}\n      data-slot=\"avatar-image\"\n      {...props}\n    />\n  );\n}\n\nexport function AvatarFallback({\n  className,\n  ...props\n}: AvatarPrimitive.Fallback.Props): React.ReactElement {\n  return (\n    <AvatarPrimitive.Fallback\n      className={cn(\n        \"flex size-full items-center justify-center rounded-full bg-muted\",\n        className,\n      )}\n      data-slot=\"avatar-fallback\"\n      {...props}\n    />\n  );\n}\n\nexport { AvatarPrimitive };\n",
-+      "content": "\"use client\";\n\nimport { Avatar as AvatarPrimitive } from \"@base-ui/react/avatar\";\nimport type React from \"react\";\nimport { cn } from \"@/registry/default/lib/utils\";\n\nexport function Avatar({\n  className,\n  ...props\n}: AvatarPrimitive.Root.Props): React.ReactElement {\n  return (\n    <AvatarPrimitive.Root\n      className={cn(\n        \"relative isolate inline-flex size-8 shrink-0 select-none items-center justify-center overflow-hidden rounded-full bg-background align-middle font-medium text-xs\",\n        className,\n      )}\n      data-slot=\"avatar\"\n      {...props}\n    />\n  );\n}\n\nexport function AvatarImage({\n  className,\n  ...props\n}: AvatarPrimitive.Image.Props): React.ReactElement {\n  return (\n    <AvatarPrimitive.Image\n      className={cn(\n        \"absolute inset-0 z-10 size-full object-cover data-error:invisible data-loading:invisible\",\n        className,\n      )}\n      data-slot=\"avatar-image\"\n      {...props}\n    />\n  );\n}\n\nexport function AvatarFallback({\n  className,\n  ...props\n}: AvatarPrimitive.Fallback.Props): React.ReactElement {\n  return (\n    <AvatarPrimitive.Fallback\n      className={cn(\n        \"absolute inset-0 flex size-full items-center justify-center rounded-full bg-muted\",\n        className,\n      )}\n      data-slot=\"avatar-fallback\"\n      {...props}\n    />\n  );\n}\n\nexport { AvatarPrimitive };\n",
+       "path": "registry/default/ui/switch.tsx",
+-      "content": "\"use client\";\n\nimport { Switch as SwitchPrimitive } from \"@base-ui/react/switch\";\nimport type React from \"react\";\nimport { cn } from \"@/registry/default/lib/utils\";\n\nexport function Switch({\n  className,\n  ...props\n}: SwitchPrimitive.Root.Props): React.ReactElement {\n  return (\n    <SwitchPrimitive.Root\n      className={cn(\n        \"inline-flex h-[calc(var(--thumb-size)+2px)] w-[calc(var(--thumb-size)*2-2px)] shrink-0 items-center rounded-full p-px outline-none transition-[background-color,box-shadow] duration-200 [--thumb-size:--spacing(5)] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background data-disabled:cursor-not-allowed data-checked:bg-primary data-unchecked:bg-input data-disabled:opacity-64 sm:[--thumb-size:--spacing(4)]\",\n        className,\n      )}\n      data-slot=\"switch\"\n      {...props}\n    >\n      <SwitchPrimitive.Thumb\n        className={cn(\n          \"pointer-events-none block aspect-square h-full origin-left in-[[role=switch]:active,[data-slot=label]:active,[data-slot=field-label]:active]:not-data-disabled:scale-x-110 in-[[role=switch]:active,[data-slot=label]:active,[data-slot=field-label]:active]:rounded-[var(--thumb-size)/calc(var(--thumb-size)*1.1)] rounded-(--thumb-size) bg-background shadow-sm/5 will-change-transform [transition:translate_.15s,border-radius_.15s,scale_.1s_.1s,transform-origin_.15s] data-checked:origin-[var(--thumb-size)_50%] data-checked:translate-x-[calc(var(--thumb-size)-4px)]\",\n        )}\n        data-slot=\"switch-thumb\"\n      />\n    </SwitchPrimitive.Root>\n  );\n}\n\nexport { SwitchPrimitive };\n",
++      "content": "\"use client\";\n\nimport { Switch as SwitchPrimitive } from \"@base-ui/react/switch\";\nimport type React from \"react\";\nimport { cn } from \"@/registry/default/lib/utils\";\n\nexport function Switch({\n  className,\n  ...props\n}: SwitchPrimitive.Root.Props): React.ReactElement {\n  return (\n    <SwitchPrimitive.Root\n      className={cn(\n        \"inline-flex h-[calc(var(--thumb-size)+2px)] w-[calc(var(--thumb-size)*2-2px)] shrink-0 items-center rounded-full p-px outline-none transition-[background-color,box-shadow] duration-200 [--thumb-size:--spacing(5)] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background data-disabled:cursor-not-allowed data-checked:bg-primary data-unchecked:bg-input data-disabled:opacity-64 sm:[--thumb-size:--spacing(4)]\",\n        className,\n      )}\n      data-slot=\"switch\"\n      {...props}\n    >\n      <SwitchPrimitive.Thumb\n        className={cn(\n          \"pointer-events-none block aspect-square h-full origin-left in-[[role=switch]:active,[data-slot=label]:active,[data-slot=field-label]:active]:not-data-disabled:scale-x-110 in-[[role=switch]:active,[data-slot=label]:active,[data-slot=field-label]:active]:rounded-[var(--thumb-size)/calc(var(--thumb-size)*1.1)] rounded-(--thumb-size) bg-background shadow-sm/5 will-change-transform [transition:translate_.15s,border-radius_.15s,scale_.1s_.1s,transform-origin_.15s] data-checked:origin-[var(--thumb-size)_50%] data-checked:translate-x-[calc(var(--thumb-size)-4px)] rtl:origin-right rtl:data-checked:origin-left rtl:data-checked:-translate-x-[calc(var(--thumb-size)-4px)]\",\n        )}\n        data-slot=\"switch-thumb\"\n      />\n    </SwitchPrimitive.Root>\n  );\n}\n\nexport { SwitchPrimitive };\n",
        "type": "registry:ui"
      }
    ],
 ```
 
-**File**: `apps/ui/public/r/combobox.json` (modified, +1/-1)
+**File**: `apps/ui/registry/default/ui/switch.tsx` (modified, +1/-1)
 ```diff
-@@ -11,7 +11,7 @@
-   "files": [
-     {
-       "path": "registry/default/ui/combobox.tsx",
--      "content": "\"use client\";\n\nimport { Combobox as ComboboxPrimitive } from \"@base-ui/react/combobox\";\nimport { ChevronsUpDownIcon, XIcon } from \"lucide-react\";\nimport * as React from \"react\";\nimport { cn } from \"@/registry/default/lib/utils\";\nimport { Input } from \"@/registry/default/ui/input\";\nimport { ScrollArea } from \"@/registry/default/ui/scroll-area\";\n\nexport const ComboboxContext: React.Context<{\n  chipsRef: React.RefObject<Element | null> | null;\n  multiple: boolean;\n}> = React.createContext<{\n  chipsRef: React.RefObject<Element | null> | null;\n  multiple: boolean;\n}>({\n  chipsRef: null,\n  multiple: false,\n});\n\nexport function Combobox<Value, Multiple extends boolean | undefined = false>(\n  props: ComboboxPrimitive.Root.Props<Value, Multiple>,\n): React.ReactElement {\n  const chipsRef = React.useRef<Element | null>(null);\n  return (\n    <ComboboxContext.Provider value={{ chipsRef, multiple: !!props.multiple }}>\n      <ComboboxPrimitive.Root {...props} />\n    </ComboboxContext.Provider>\n  );\n}\n\nexport function ComboboxChipsInput({\n  className,\n  size,\n  ...props\n}: Omit<ComboboxPrimitive.Input.Props, \"size\"> & {\n  size?: \"sm\" | \"default\" | \"lg\" | number;\n  ref?: React.Ref<HTMLInputElement>;\n}): React.ReactElement {\n  const sizeValue = (size ?? \"default\") as \"sm\" | \"default\" | \"lg\" | number;\n\n  return (\n    <ComboboxPrimitive.Input\n      className={cn(\n        \"min-w-12 flex-1 text-base text-foreground outline-none sm:text-sm [[data-slot=combobox-chip]+&]:ps-0.5\",\n        sizeValue === \"sm\" ? \"ps-1.5\" : \"ps-2\",\n        className,\n      )}\n      data-size={typeof sizeValue === \"string\" ? sizeValue : undefined}\n      data-slot=\"combobox-chips-input\"\n      size={typeof sizeValue === \"number\" ? sizeValue : undefined}\n      {...props}\n    />\n  );\n}\n\nexport function ComboboxInput({\n  className,\n  showTrigger = true,\n  showClear = false,\n  startAddon,\n  size,\n  triggerProps,\n  clearProps,\n  ...props\n}: Omit<ComboboxPrimitive.Input.Props, \"size\"> & {\n  showTrigger?: boolean;\n  showClear?: boolean;\n  startAddon?: React.ReactNode;\n  size?: \"sm\" | \"default\" | \"lg\" | number;\n  ref?: React.Ref<HTMLInputElement>;\n  triggerProps?: ComboboxPrimitive.Trigger.Props;\n  clearProps?: ComboboxPrimitive.Clear.Props;\n}): React.ReactElement {\n  const sizeValue = (size ?? \"default\") as \"sm\" | \"default\" | \"lg\" | number;\n\n  return (\n    <ComboboxPrimitive.InputGroup\n      className=\"relative not-has-[>*.w-full]:w-fit w-full text-foreground has-disabled:opacity-64\"\n      data-slot=\"combobox-input-group\"\n    >\n      {startAddon && (\n        <div\n          aria-hidden=\"true\"\n          className=\"pointer-events-none absolute inset-y-0 start-px z-10 flex items-center ps-[calc(--spacing(3)-1px)] opacity-80 has-[+[data-size=sm]]:ps-[calc(--spacing(2.5)-1px)] [&_svg:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 [&_svg]:-mx-0.5\"\n          data-slot=\"combobox-start-addon\"\n        >\n          {startAddon}\n        </div>\n      )}\n      <ComboboxPrimitive.Input\n        className={cn(\n          startAddon &&\n            \"data-[size=sm]:*:data-[slot=combobox-input]:ps-[calc(--spacing(7.5)-1px)] *:data-[slot=combobox-input]:ps-[calc(--spacing(8.5)-1px)] sm:data-[size=sm]:*:data-[slot=combobox-input]:ps-[calc(--spacing(7)-1px)] sm:*:data-[slot=combobox-input]:ps-[calc(--spacing(8)-1px)]\",\n          sizeValue === \"sm\"\n            ? \"has-[+[data-slot=combobox-trigger],+[data-slot=combobox-clear]]:*:data-[slot=combobox-input]:pe-6.5\"\n            : \"has-[+[data-slot=combobox-trigger],+[data-slot=combobox-clear]]:*:data-[slot=combobox-input]:pe-7\",\n          className,\n        )}\n        data-slot=\"combobox-input\"\n        render={\n          <Input\n            className=\"has-disabled:opacity-100\"\n            nativeInput\n            size={sizeValue}\n          />\n        }\n        {...props}\n      />\n      {showTrigger && (\n        <ComboboxTrigger\n          className={cn(\n            \"absolute top-1/2 inline-flex size-8 shrink-0 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md border border-transparent opacity-80 outline-none transition-opacity pointer-coarse:after:absolute pointer-coarse:after:min-h-11 pointer-coarse:after:min-w-11 hover:opacity-100 has-[+[data-slot=combobox-clear]]:hidden sm:size-7 [&_svg:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0\",\n            sizeValue === \"sm\" ? \"end-0\" : \"end-0.5\",\n          )}\n          {...triggerProps}\n        >\n          <ComboboxPrimitive.Icon data-slot=\"combobox-icon\">\n            <ChevronsUpDownIcon />\n          </ComboboxPrimitive.Icon>\n        </ComboboxTrigger>\n      )}\n      {show
+@@ -19,7 +19,7 @@ export function Switch({
+     >
+       <SwitchPrimitive.Thumb
+         className={cn(
+-          "pointer-events-none block aspect-square h-full origin-left in-[[role=switch]:active,[data-slot=label]:active,[data-slot=field-label]:active]:not-data-disabled:scale-x-110 in-[[role=switch]:active,[data-slot=label]:active,[data-slot=field-label]:active]:rounded-[var(--thumb-size)/calc(var(--thumb-size)*1.1)] rounded-(--thumb-size) bg-background shadow-sm/5 will-change-transform [transition:translate_.15s,border-radius_.15s,scale_.1s_.1s,transform-origin_.15s] data-checked:origin-[var(--thumb-size)_50%] data-checked:translate-x-[calc(var(--thumb-size)-4px)]",
++          "pointer-events-none block aspect-square h-full origin-left in-[[role=switch]:active,[data-slot=label]:active,[data-slot=field-label]:active]:not-data-disabled:scale-x-110 in-[[role=switch]:active,[data-slot=label]:active,[data-slot=field-label]:active]:rounded-[var(--thumb-size)/calc(var(--thumb-size)*1.1)] rounded-(--thumb-size) bg-background shadow-sm/5 will-change-transform [transition:translate_.15s,border-radius_.15s,scale_.1s_.1s,transform-origin_.15s] data-checked:origin-[var(--thumb-size)_50%] data-checked:translate-x-[calc(var(--thumb-size)-4px)] rtl:origin-right rtl:data-checked:origin-left rtl:data-checked:-translate-x-[calc(var(--thumb-size)-4px)]",
+         )}
+         data-slot="switch-thumb"
+       />
 ```
 
-**File**: `apps/ui/registry/default/ui/avatar.tsx` (modified, +6/-3)
+**File**: `packages/ui/src/components/switch.tsx` (modified, +1/-1)
 ```diff
-@@ -11,7 +11,7 @@ export function Avatar({
-   return (
-     <AvatarPrimitive.Root
-       className={cn(
--        "inline-flex size-8 shrink-0 select-none items-center justify-center overflow-hidden rounded-full bg-background align-middle font-medium text-xs",
-+        "relative isolate inline-flex size-8 shrink-0 select-none items-center justify-center overflow-hidden rounded-full bg-background align-middle font-medium text-xs",
-         className,
-       )}
-       data-slot="avatar"
-@@ -26,7 +26,10 @@ export function AvatarImage({
- }: AvatarPrimitive.Image.Props): React.ReactElement {
-   return (
-     <AvatarPrimitive.Image
--      className={cn("size-full object-cover", className)}
-+      className={cn(
-+        "absolute inset-0 z-10 size-full object-cover data-error:invisible data-loading:invisible",
-+        className,
-+      )}
-       data-slot="avatar-image"
-       {...props}
-     />
-@@ -40,7 +43,7 @@ export function AvatarFallback({
-   return (
-     <AvatarPrimitive.Fallback
-       className={cn(
--        "flex size-full items-center justify-center rounded-full bg-muted",
-+        "absolute inset-0 flex size-full items-center justify-center rounded-full bg-muted",
-         className,
-       )}
-       data-slot="avatar-fallback"
-```
-
-**File**: `apps/ui/registry/default/ui/combobox.tsx` (modified, +9/-2)
-```diff
-@@ -18,8 +18,12 @@ export const ComboboxContext: React.Context<{
-   multiple: false,
- });
- 
--export function Combobox<Value, Multiple extends boolean | undefined = false>(
--  props: ComboboxPrimitive.Root.Props<Value, Multiple>,
-+export function Combobox<
-+  Value,
-+  Multiple extends boolean | undefined = false,
-+  Item = Value,
-+>(
-+  props: ComboboxPrimitive.Root.Props<Value, Multiple, Item>,
- ): React.ReactElement {
-   const chipsRef = React.useRef<Element | null>(null);
-   return (
-@@ -429,6 +433,9 @@ export function ComboboxChipRemove(
-   );
- }
- 
-+export const createComboboxItems: typeof ComboboxPrimitive.createItems =
-+  ComboboxPrimitive.createItems;
-+
- export const useComboboxFilter: typeof ComboboxPrimitive.useFilter =
-   ComboboxPrimitive.useFilter;
- 
-```
-
-**File**: `apps/ui/skills/coss/references/primitives/avatar.md` (modified, +2/-0)
-```diff
-@@ -32,6 +32,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
- </Avatar>
- ```
- 
-+Use `keepMounted` on `AvatarImage` when the image relies on native lazy loading or an optimized image component. The image and fallback are layered so the fallback remains visible while the image loads or if it fails.
-+
- ## Patterns from coss particles
- 
- ### Key patterns
+@@ -19,7 +19,7 @@ export function Switch({
+     >
+       <SwitchPrimitive.Thumb
+         className={cn(
+-          "pointer-events-none block aspect-square h-full origin-left in-[[role=switch]:active,[data-slot=label]:active,[data-slot=field-label]:active]:not-data-disabled:scale-x-110 in-[[role=switch]:active,[data-slot=label]:active,[data-slot=field-label]:active]:rounded-[var(--thumb-size)/calc(var(--thumb-size)*1.1)] rounded-(--thumb-size) bg-background shadow-sm/5 will-change-transform [transition:translate_.15s,border-radius_.15s,scale_.1s_.1s,transform-origin_.15s] data-checked:origin-[var(--thumb-size)_50%] data-checked:translate-x-[calc(var(--thumb-size)-4px)]",
++          "pointer-events-none block aspect-square h-full origin-left in-[[role=switch]:active,[data-slot=label]:active,[data-slot=field-label]:active]:not-data-disabled:scale-x-110 in-[[role=switch]:active,[data-slot=label]:active,[data-slot=field-label]:active]:rounded-[var(--thumb-size)/calc(var(--thumb-size)*1.1)] rounded-(--thumb-size) bg-background shadow-sm/5 will-change-transform [transition:translate_.15s,border-radius_.15s,scale_.1s_.1s,transform-origin_.15s] data-checked:origin-[var(--thumb-size)_50%] data-checked:translate-x-[calc(var(--thumb-size)-4px)] rtl:origin-right rtl:data-checked:origin-left rtl:data-checked:-translate-x-[calc(var(--thumb-size)-4px)]",
+         )}
+         data-slot="switch-thumb"
+       />
 ```
 
 ---
 
-### Incident Patch 15: `705cb737` (2026-09-05)
-**Commit Message**: fix(toast): keep anchored toasts above later-opened popovers (#845)
+### Incident Patch 3: `a597c630` (2026-10-16)
+**Commit Message**: docs(skill): fix footer order, async confirms, and field validation guidance (#894)
 
-* fix(toast): keep anchored toasts above later-opened popovers
+- drawer: put Cancel before the primary action in the footer example and
+  explain the flex-col-reverse / sm:flex-row ordering.
+- alert-dialog: add the async confirmation pattern (controlled open, confirm
+  as a loading Button, close on success, Cancel stays AlertDialogClose).
+- card: document CardAction and the CardFrame family (header, title,
+  description, action, footer) with particle references.
+- field: show the React Hook Form variant (noValidate, no constraint
+  attributes, invalid + FieldError children) and explain why native or
+  Base UI constraint validation blocks the library's submit handler.
+- tooltip/button: document the span-wrapper trigger for explaining a
+  disabled button, since disabled buttons get no hover or focus.
+- menu: destructive items go last after a separator; confirms open a
+  sibling AlertDialog controlled by state, never one nested in MenuPopup.
 
-The anchored toast portal stays mounted at z-50, so a popover opened afterward stacks on top of it.
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-* change z-index
-
-* build reg
-
----------
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-**File**: `apps/ui/public/r/toast.json` (modified, +1/-1)
+**File**: `apps/ui/skills/coss/references/primitives/alert-dialog.md` (modified, +50/-1)
 ```diff
-@@ -10,7 +10,7 @@
-   "files": [
-     {
-       "path": "registry/default/ui/toast.tsx",
--      "content": "\"use client\";\n\nimport { Toast } from \"@base-ui/react/toast\";\nimport {\n  CircleAlertIcon,\n  CircleCheckIcon,\n  InfoIcon,\n  LoaderCircleIcon,\n  TriangleAlertIcon,\n} from \"lucide-react\";\nimport type React from \"react\";\nimport { cn } from \"@/registry/default/lib/utils\";\nimport { buttonVariants } from \"@/registry/default/ui/button\";\n\nconst TOAST_ICONS = {\n  error: CircleAlertIcon,\n  info: InfoIcon,\n  loading: LoaderCircleIcon,\n  success: CircleCheckIcon,\n  warning: TriangleAlertIcon,\n} as const;\n\ntype SwipeDirection = \"up\" | \"down\" | \"left\" | \"right\";\n\ntype ToastData = {\n  rootProps?: Omit<\n    React.ComponentProps<typeof Toast.Root>,\n    \"children\" | \"className\" | \"swipeDirection\" | \"toast\"\n  >;\n  tooltipStyle?: boolean;\n};\n\nfunction getSwipeDirection(position: ToastPosition): SwipeDirection[] {\n  const verticalDirection: SwipeDirection = position.startsWith(\"top\")\n    ? \"up\"\n    : \"down\";\n\n  if (position.includes(\"center\")) {\n    return [verticalDirection];\n  }\n\n  if (position.includes(\"left\")) {\n    return [\"left\", verticalDirection];\n  }\n\n  return [\"right\", verticalDirection];\n}\n\nfunction upsertReplayClassName(toast: {\n  type?: string;\n  updateKey?: number;\n}): string | undefined {\n  const k = toast.updateKey ?? 0;\n  if (k <= 0) return undefined;\n  const isEven = k % 2 === 0;\n  if (toast.type === \"error\") {\n    return isEven ? \"animate-toast-error-even\" : \"animate-toast-error-odd\";\n  }\n  return isEven ? \"animate-toast-success-even\" : \"animate-toast-success-odd\";\n}\n\nfunction Toasts({\n  position,\n  portalProps,\n}: {\n  position: ToastPosition;\n  portalProps?: React.ComponentProps<typeof Toast.Portal>;\n}): React.ReactElement {\n  const { toasts } = Toast.useToastManager();\n  const swipeDirection = getSwipeDirection(position);\n\n  return (\n    <Toast.Portal data-slot=\"toast-portal\" {...portalProps}>\n      <Toast.Viewport\n        className={cn(\n          \"fixed z-60 mx-auto flex w-[calc(100%-var(--toast-inset)*2)] max-w-90 [--toast-inset:--spacing(4)] sm:[--toast-inset:--spacing(8)]\",\n          // Vertical positioning\n          \"data-[position*=top]:top-(--toast-inset)\",\n          \"data-[position*=bottom]:bottom-(--toast-inset)\",\n          // Horizontal positioning\n          \"data-[position*=left]:left-(--toast-inset)\",\n          \"data-[position*=right]:right-(--toast-inset)\",\n          \"data-[position*=center]:left-1/2 data-[position*=center]:-translate-x-1/2\",\n        )}\n        data-position={position}\n        data-slot=\"toast-viewport\"\n      >\n        {toasts.map((toast) => {\n          const Icon = toast.type\n            ? TOAST_ICONS[toast.type as keyof typeof TOAST_ICONS]\n            : null;\n          const toastData = toast.data as ToastData | undefined;\n\n          return (\n            <Toast.Root\n              key={toast.id}\n              className={cn(\n                \"absolute z-[calc(9999-var(--toast-index))] h-(--toast-calc-height) w-full select-none rounded-lg border bg-[color-mix(in_srgb,var(--popover),var(--color-black)_calc(1%*max(0,var(--toast-index,0))))] not-dark:bg-clip-padding text-popover-foreground shadow-lg/5 [transition:transform_.5s_cubic-bezier(.22,1,.36,1),opacity_.5s,height_.15s,background-color_.5s] before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] before:shadow-[0_1px_--theme(--color-black/4%)] data-expanded:bg-popover dark:bg-[color-mix(in_srgb,var(--popover),var(--color-black)_calc(6%*max(0,var(--toast-index,0))))] dark:data-expanded:bg-popover dark:before:shadow-[0_-1px_--theme(--color-white/6%)]\",\n                // Base positioning using data-position\n                \"data-[position*=right]:right-0 data-[position*=right]:left-auto\",\n                \"data-[position*=left]:right-auto data-[position*=left]:left-0\",\n                \"data-[position*=center]:right-0 data-[position*=center]:left-0\",\n                \"data-[position*=top]:top-0 data-[position*=top]:bottom-auto data-[position*=top]:origin-[50%_calc(50%-50%*min(var(--toast-index,0),1))]\",\n                \"data-[position*=bottom]:top-auto data-[position*=bottom]:bottom-0 data-[position*=bottom]:origin-[50%_calc(50%+50%*min(var(--toast-index,0),1))]\",\n                // Gap fill for hover\n                \"after:absolute after:left-0 after:h-[calc(var(--toast-gap)+1px)] after:w-full\",\n                \"data-[position*=top]:after:top-full\",\n                \"data-[position*=bottom]:after:bottom-full\",\n                // Define some variables\n                \"[--toast-calc-height:var(--toast-frontmost-height,var(--toast-height))] [--toast-gap:--spacing(3)] [--toast-peek:--spacing(3)] [--toast-scale:calc(max(0,1-(var(--toast-index)*.1)))] [--toast-shrink:calc(1-var(--toast-scale))]\",\
+@@ -62,19 +62,68 @@ import {
+ </AlertDialog>
+ ```
+ 
++`AlertDialogClose` closes the dialog as soon as it is clicked, so use it as the confirm only when the action is synchronous. For async work, see **Async confirmation** below.
++
+ ## Patterns from coss particles
+ 
+ - **Portal forwarding**: optional `portalProps` on `AlertDialogPopup` → Base UI `AlertDialog.Portal` (`keepMounted`, `container`, …). See [portal-props.md](../portal-props.md).
+ - **Section structure**: keep `AlertDialogHeader` and `AlertDialogFooter` as direct sections of `AlertDialogPopup` (there is no `AlertDialogPanel`; add a `div` or fragment between them only if you need extra body content).
+-- **Action composition**: use `AlertDialogClose render={<Button ... />}` for cancel/confirm actions to preserve button semantics and styling.
++- **Action composition**: use `AlertDialogClose render={<Button ... />}` for Cancel and for synchronous confirms to preserve button semantics and styling.
+ - **Destructive affordance**: pair destructive trigger/confirm variants (`destructive-outline`, `destructive`) for clear risk signaling.
+ - **Footer variants**: use `AlertDialogFooter variant="bare"` when border/background framing should be removed.
+ - **Close confirmation chain**: for unsaved changes in broader workflows, pair with dialog flows like `p-dialog-4`.
+ 
++### Key patterns
++
++Async confirmation (the dialog stays open until the mutation settles):
++
++```tsx
++const [open, setOpen] = useState(false)
++const [isPending, setIsPending] = useState(false)
++
++async function handleDelete() {
++  setIsPending(true)
++  try {
++    await deleteAccount()
++    setOpen(false)
++  } catch {
++    // Keep the dialog open so the user can retry; surface the error (e.g. a toast).
++  } finally {
++    setIsPending(false)
++  }
++}
++
++<AlertDialog onOpenChange={setOpen} open={open}>
++  <AlertDialogTrigger render={<Button variant="destructive-outline" />}>
++    Delete Account
++  </AlertDialogTrigger>
++  <AlertDialogPopup>
++    <AlertDialogHeader>
++      <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
++      <AlertDialogDescription>
++        This action cannot be undone.
++      </AlertDialogDescription>
++    </AlertDialogHeader>
++    <AlertDialogFooter>
++      <AlertDialogClose render={<Button variant="ghost" />}>Cancel</AlertDialogClose>
++      <Button loading={isPending} onClick={handleDelete} variant="destructive">
++        Delete Account
++      </Button>
++    </AlertDialogFooter>
++  </AlertDialogPopup>
++</AlertDialog>
++```
++
++- The confirm is a plain `Button` (not `AlertDialogClose`) with `loading`, which disables it and shows the spinner while the request runs.
++- Close the dialog from the success path (`setOpen(false)`); on failure keep it open so the user can retry.
++- Cancel stays an `AlertDialogClose` ghost button. Keep Cancel first in source: the footer is `flex-col-reverse` / `sm:flex-row sm:justify-end`, so the confirm renders on the right (or on top when stacked).
++- With a query library, use its pending state (for example `mutation.isPending`) instead of local state.
++
+ ## Common pitfalls
+ 
+ - Using AlertDialog as a generic content modal instead of high-risk confirmation UI.
+ - Omitting explicit destructive/cancel action distinction.
++- Confirming an async action with `AlertDialogClose`: the dialog closes before the mutation settles, so there is no loading state and nowhere to show a failure.
+ - Wrapping dialog sections in extra containers that break built-in layout (use `className="contents"` only when needed).
+ - Mixing Dialog/Popover composition APIs without validating this primitive's parts.
+ - Skipping focus-return and escape-key verification on real trigger flows.
 ```
 
-**File**: `apps/ui/registry/default/ui/toast.tsx` (modified, +1/-1)
+**File**: `apps/ui/skills/coss/references/primitives/button.md` (modified, +1/-0)
 ```diff
-@@ -209,7 +209,7 @@ function AnchoredToasts({
-           return (
-             <Toast.Positioner
-               key={toast.id}
--              className="z-50 max-w-[min(--spacing(64),var(--available-width))]"
-+              className="z-60 max-w-[min(--spacing(64),var(--available-width))]"
-               data-slot="toast-positioner"
-               sideOffset={positionerProps.sideOffset ?? 4}
-               toast={toast}
+@@ -99,6 +99,7 @@ Prefer the `loading` prop for typical async actions. Use the composite approach
+ 
+ - Omitting explicit `type` inside forms/dialogs and triggering unintended submit behavior.
+ - Using icon-only buttons without `aria-label` on the button.
++- Expecting a disabled button to show a tooltip: `disabled` sets the native attribute plus `pointer-events-none`, so the button gets no hover or focus. Wrap it in a focusable `span` rendered as the `TooltipTrigger` (see [tooltip.md](./tooltip.md)).
+ - Rebuilding button state styling with ad-hoc classes instead of variants/sizes.
+ - Using `SelectButton` as if it were a general-purpose `Button`; `SelectButton` is a select-flavored trigger helper and should be treated as a `select`/`combobox` pattern.
+ 
 ```
 
-**File**: `packages/ui/src/components/toast.tsx` (modified, +1/-1)
+**File**: `apps/ui/skills/coss/references/primitives/card.md` (modified, +43/-1)
 ```diff
-@@ -209,7 +209,7 @@ function AnchoredToasts({
-           return (
-             <Toast.Positioner
-               key={toast.id}
--              className="z-50 max-w-[min(--spacing(64),var(--available-width))]"
-+              className="z-60 max-w-[min(--spacing(64),var(--available-width))]"
-               data-slot="toast-positioner"
-               sideOffset={positionerProps.sideOffset ?? 4}
-               toast={toast}
+@@ -22,14 +22,23 @@ Manual deps from docs:
+ ```tsx
+ import {
+   Card,
++  CardAction,
+   CardDescription,
+   CardFooter,
++  CardFrame,
++  CardFrameAction,
++  CardFrameDescription,
++  CardFrameFooter,
++  CardFrameHeader,
++  CardFrameTitle,
+   CardHeader,
+   CardPanel,
+   CardTitle,
+ } from "@/components/ui/card"
+ ```
+ 
++`CardPanel` is also exported as `CardContent`.
++
+ ## Minimal pattern
+ 
+ ```tsx
+@@ -70,16 +79,49 @@ Card with form content:
+ 
+ Keep `CardHeader`, `CardPanel`, and `CardFooter` as direct children of `Card` to preserve built-in spacing and layout.
+ 
++Put header actions in `CardAction`, a sibling of `CardTitle` and `CardDescription` inside `CardHeader`; it is placed top-right via the header grid.
++
++### CardFrame
++
++`CardFrame` is a muted outer shell with its own header and footer around one or more inner `Card`s (or a `Table variant="card"`). Use it when a section needs a title row, an optional action, and a footnote outside the main surface.
++
++```tsx
++<CardFrame>
++  <CardFrameHeader>
++    <CardFrameTitle>Projects</CardFrameTitle>
++    <CardFrameDescription>Manage your projects</CardFrameDescription>
++    <CardFrameAction>
++      <Button variant="outline">
++        <PlusIcon aria-hidden="true" />
++        Add
++      </Button>
++    </CardFrameAction>
++  </CardFrameHeader>
++  <Card>
++    <CardPanel>Content</CardPanel>
++  </Card>
++  <CardFrameFooter>Footnote or secondary info</CardFrameFooter>
++</CardFrame>
++```
++
++- Keep `CardFrameHeader`, the inner `Card`(s), and `CardFrameFooter` as direct children of `CardFrame`; the frame clips, rounds, and removes shadows on direct `Card` children only.
++- `CardFrameAction` goes inside `CardFrameHeader` as a sibling of the title and description; it sits in the second grid column, vertically centered.
++- Do not use `CardHeader`/`CardFooter` on the frame itself; those belong to the inner `Card`.
++- For tables, render `Table variant="card"` as a direct child of `CardFrame` (see table guide, `p-table-6` through `p-table-8`).
++
+ ### More examples
+ 
+-See `p-card-1` through `p-card-8` for various card compositions.
++See `p-card-1` through `p-card-11` for various card compositions.
+ 
+ ## Common pitfalls
+ 
+ - Skipping `CardHeader`/`CardPanel`/`CardFooter` structure in composed cards.
+ - Mixing unrelated layout wrappers that break spacing between card sections.
+ - Using cards as generic wrappers when `Frame` or plain layout would be clearer.
++- Nesting a `Card` inside another wrapper within `CardFrame`, which skips the frame's clipping and radius rules for direct `Card` children.
+ 
+ ## Useful particle references
+ 
+ - core patterns: `p-card-1`, `p-card-2`, `p-card-3`, `p-card-4`, `p-card-5`, `p-card-6`, `p-card-7`, `p-card-8`
++- `CardFrame` with footer: `p-card-4`; with header: `p-card-5`; header + footer: `p-card-6`, `p-card-7`
++- `CardFrame` with header action: `p-card-11`
+```
+
+**File**: `apps/ui/skills/coss/references/primitives/drawer.md` (modified, +4/-1)
+```diff
+@@ -87,13 +87,15 @@ Drawer with a visible drag handle:
+       {/* Form content */}
+     </DrawerPanel>
+     <DrawerFooter>
+-      <Button>Save</Button>
+       <DrawerClose render={<Button variant="ghost" />}>Cancel</DrawerClose>
++      <Button>Save</Button>
+     </DrawerFooter>
+   </DrawerPopup>
+ </Drawer>
+ ```
+ 
++**Footer action order**: write Cancel first and the primary action last. `DrawerFooter` is `flex-col-reverse` on mobile and `sm:flex-row sm:justify-end` from `sm` up, so source order puts the primary action on the right on desktop and on top when stacked. The same applies to `DialogFooter` and `AlertDialogFooter`.
++
+ Responsive drawer + dialog (drawer on mobile, dialog on desktop): see `p-drawer-12`.
+ 
+ ### More examples
+@@ -104,6 +106,7 @@ See `p-drawer-1` through `p-drawer-13` for inset, straight, scrollable, nested,
+ 
+ - Choosing Sheet for desktop side panels; use Drawer. Use Dialog for centered modal flows.
+ - Forgetting responsive switch logic when drawer is mobile-only variant.
++- Putting the primary action before Cancel in `DrawerFooter`; the reversed mobile stack then puts Cancel on top and the primary on the left on desktop.
+ - Breaking section layout by putting the whole dialog in a block-level `<form>`; prefer **header outside**, **`Form className="contents"`** around **panel + footer** (see dialog/form skills).
+ 
+ ## Useful particle references
+```
+
+**File**: `apps/ui/skills/coss/references/primitives/field.md` (modified, +30/-2)
+```diff
+@@ -50,17 +50,44 @@ import { Input } from "@/components/ui/input"
+ 
+ ### Key patterns
+ 
+-Required field with error:
++Required field with error (Base UI constraint validation):
+ 
+ ```tsx
+ <Field name="email">
+-  <FieldLabel>Email *</FieldLabel>
++  <FieldLabel>
++    Email <span className="text-destructive-foreground">*</span>
++  </FieldLabel>
+   <Input type="email" required placeholder="name@company.com" />
+   <FieldDescription>We'll never share your email.</FieldDescription>
+   <FieldError>Please enter a valid email.</FieldError>
+ </Field>
+ ```
+ 
++Native constraint attributes (`required`, `type="email"`, `min`, `pattern`, …) are the validation source here: `Field` reads the control's `ValidityState` and `FieldError` renders when it fails. Use this only when the browser constraints are the single source of truth.
++
++Required field with React Hook Form (or another schema/form library):
++
++```tsx
++const { formState: { errors }, handleSubmit, register } = useForm<Values>({
++  resolver: zodResolver(schema),
++})
++
++<form noValidate onSubmit={handleSubmit(onSubmit)}>
++  <Field invalid={!!errors.email} name="email">
++    <FieldLabel>
++      Email <span className="text-destructive-foreground">*</span>
++    </FieldLabel>
++    <Input type="email" {...register("email")} placeholder="name@company.com" />
++    <FieldError>{errors.email?.message}</FieldError>
++  </Field>
++</form>
++```
++
++- Let the library own validation: drop `required` (and other constraint attributes like `min`/`max`/`pattern`) from the control and express them in the schema.
++- Use a plain `<form noValidate>`. Without `noValidate`, the browser's native validation blocks submit and shows its own bubble before `handleSubmit` runs; with it, `type="email"` can stay for the mobile keyboard and autofill.
++- If you wrap the fields in coss `Form` instead: it already sets `noValidate`, but each `Field` inside it still runs native constraint checks on submit (including `type="email"` mismatches) and cancels the submit, focusing the first invalid control, before your `onSubmit` handler fires. Remove every constraint attribute in that case (use `inputMode="email"` for the keyboard).
++- Drive the error state from the library: `invalid` on `Field` and the message as `FieldError` children. The asterisk is visual only; the schema enforces it.
++
+ Field wrapping an autocomplete:
+ 
+ ```tsx
+@@ -86,6 +113,7 @@ See `p-field-1` through `p-field-9` for required, disabled, error, validity, inp
+ 
+ - Rendering errors detached from the related control, breaking context.
+ - Missing `name` in form flows, causing silent submit omissions.
++- Mixing native constraint attributes (`required`, `min`, `pattern`) with React Hook Form or another schema validator; native/Base UI validation runs first and the library's errors never show.
+ - Using field wrapper without corresponding label/description/error semantics.
+ 
+ ## Useful particle references
+```
+
+**File**: `apps/ui/skills/coss/references/primitives/menu.md` (modified, +29/-1)
+```diff
+@@ -62,6 +62,31 @@ import {
+ 
+ Use popup positioning props like `align` / `sideOffset` only when a layout needs explicit tuning.
+ 
++Destructive item with confirmation:
++
++```tsx
++const [confirmOpen, setConfirmOpen] = useState(false)
++
++<>
++  <Menu>
++    <MenuTrigger render={<Button aria-label="Project actions" size="icon" variant="ghost" />}>
++      <EllipsisIcon aria-hidden="true" />
++    </MenuTrigger>
++    <MenuPopup align="end">
++      <MenuItem>Rename</MenuItem>
++      <MenuItem>Duplicate</MenuItem>
++      <MenuSeparator />
++      <MenuItem onClick={() => setConfirmOpen(true)} variant="destructive">
++        Delete
++      </MenuItem>
++    </MenuPopup>
++  </Menu>
++  <AlertDialog onOpenChange={setConfirmOpen} open={confirmOpen}>
++    <AlertDialogPopup>{/* header + footer, see alert-dialog.md */}</AlertDialogPopup>
++  </AlertDialog>
++</>
++```
++
+ ## Patterns from coss particles
+ 
+ - **Portal forwarding**: optional `portalProps` on `MenuPopup` → Base UI `Menu.Portal` (`keepMounted`, `container`, …). See [portal-props.md](../portal-props.md).
+@@ -72,7 +97,8 @@ Use popup positioning props like `align` / `sideOffset` only when a layout needs
+ - Use `MenuCheckboxItem variant="switch"` for toggle-style preferences.
+ - Use `MenuRadioGroup` + `MenuRadioItem` with a `defaultValue` when enforcing single-choice selection.
+ - Use `MenuShortcut` to display keyboard hints in dense command menus.
+-- Use `variant="destructive"` on dangerous actions.
++- Use `variant="destructive"` on dangerous actions, and put them last, after a `MenuSeparator`, so they are visually apart from routine actions and harder to hit by accident.
++- When an item needs confirmation (e.g. Delete), the item only sets state; render the `AlertDialog` (or `Dialog`) as a sibling of `Menu`, controlled by `open` / `onOpenChange`. Never nest the dialog inside `MenuPopup`: the popup unmounts when the menu closes, taking the dialog with it. See `p-dialog-2`.
+ - For responsive action menus, keep desktop on `Menu` and switch mobile to `DrawerMenu` / `DrawerMenuTrigger` / `DrawerMenuItem` patterns.
+ - In `DrawerMenu` flows, wrap actionable rows with `DrawerClose render={<DrawerMenuItem />}` when selection should dismiss the drawer.
+ 
+@@ -81,6 +107,8 @@ Use popup positioning props like `align` / `sideOffset` only when a layout needs
+ - Forgetting `MenuGroup` around grouped structures.
+ - Missing submenu pair (`MenuSubTrigger` + `MenuSubPopup`) for nested actions.
+ - Mixing navigation and action items without clear close behavior (`closeOnClick`) and semantics.
++- Placing destructive items in the middle of the list or without a separator.
++- Nesting an `AlertDialog`/`Dialog` (or its trigger) inside `MenuPopup` for a confirm step; keep it a sibling of `Menu` driven by state.
+ 
+ ## Useful particle references
+ 
+```
+
+**File**: `apps/ui/skills/coss/references/primitives/tooltip.md` (modified, +17/-0)
+```diff
+@@ -63,6 +63,22 @@ Tooltip on an icon-only button:
+ </Tooltip>
+ ```
+ 
++Tooltip explaining why a button is disabled:
++
++```tsx
++<Tooltip>
++  <TooltipTrigger render={<span className="inline-flex" tabIndex={0} />}>
++    <Button disabled>Publish</Button>
++  </TooltipTrigger>
++  <TooltipPopup>Add a title before publishing</TooltipPopup>
++</Tooltip>
++```
++
++- A disabled `Button` sets the native `disabled` attribute and `pointer-events-none`, so it never receives hover or focus. Putting `TooltipTrigger render={<Button disabled />}` directly on it means the tooltip never opens.
++- Render the trigger as a wrapper `span` instead (`TooltipTrigger` renders a `<button>` by default, which cannot contain another button). Hover passes through the disabled button to the span.
++- `tabIndex={0}` keeps the reason reachable by keyboard, since the disabled button is skipped in tab order. Use `inline-flex` (or `block`/`w-full` for full-width buttons) so the wrapper matches the button's box.
++- When the button becomes enabled, drop the wrapper or render the tooltip only while disabled, so the span does not add an extra tab stop.
++
+ Grouped tooltips (shared delay/provider):
+ 
+ ```tsx
+@@ -87,6 +103,7 @@ See `p-tooltip-1` through `p-tooltip-3` for basic, grouped, and animated tooltip
+ - Placing interactive controls inside tooltip content (tooltip should stay informational).
+ - Relying on tooltip as sole label for icon-only controls (still provide accessible name).
+ - Using tooltip for long-form content that should be popover/dialog.
++- Attaching a tooltip trigger directly to a disabled button; wrap it in a focusable `span` trigger instead (see above).
+ 
+ ## Useful particle references
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #867** (2026-10-12): fix(ui): preserve composer focus and align border radii (@pasqualevitiello)
-- **PR #866** (2026-10-12): chore: add @pasqualevitiello as CODEOWNER for apps/ui (@keithwillcode)
-- **PR #865** (2026-10-12): style(ui): match composer chrome to textarea (@pasqualevitiello)
-- **PR #863** (2026-10-12): feat(shipyard): shipyard's website and docs at coss.com/shipyard (@PeerRich)
-- **PR #862** (2026-10-12): style(ui): use bold titles for overlays and empty states (@pasqualevitiello)
-- **PR #861** (2026-10-12): fix(ui): handle bottom drawer keyboards automatically (@pasqualevitiello)
-- **PR #860** (2026-10-11): fix(ui): prevent iOS Safari clipping after modal dismissal (@pasqualevitiello)
-- **PR #859** (2026-10-12): feat: add composable chat composer (@pasqualevitiello)
+- **PR #903** (closed): feat(agent): approval cards, response feedback, and error recovery (@pasqualevitiello)
+- **PR #902** (closed): feat(agent): add action bar, history, and conversation menu (@pasqualevitiello)
+- **PR #901** (closed): feat(agent): turn content: status, reasoning, tool activity, result list and AgentTurn (@pasqualevitiello)
+- **PR #900** (closed): feat(agent): add agent family scaffold with conversation, message, actions, and announcer (@pasqualevitiello)
+- **PR #899** (closed): feat(chat): add timestamp, markdown, and streaming parts for agent use (@pasqualevitiello)
+- **PR #898** (closed): feat(composer): restore stacking, chip, popup, and submit footprint details (@pasqualevitiello)
 
 ---
 

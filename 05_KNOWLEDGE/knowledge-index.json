@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T06:26:30.609Z",
-  "total_verified_learnings": 683,
+  "last_updated": "2026-10-19T06:32:44.341Z",
+  "total_verified_learnings": 687,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -17337,7 +17337,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
       "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf",
-      "content_hash": "735dde92b3b26c26411fd828d746b607e5780f61e4f4324aa124443c6d93c4cf",
+      "content_hash": "7109823f8898ac102514e5a36f40d28c5f99d5f9215896f45b8b1964b70ef41c",
       "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings.md",
       "promoted_rules": [
@@ -17370,7 +17370,7 @@
         "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv47md9a",
         "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv4kw31t"
       ],
-      "verified_at": "2026-10-18T00:12:29.698Z",
+      "verified_at": "2026-10-19T06:32:30.554Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25534,22 +25534,35 @@
     "learn-github-kubernetes-sigs-aws-load-balancer-controller": {
       "learning_id": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "kubernetes-sigs-aws-load-balancer-controller",
+      "source": "kubernetes-sigs/aws-load-balancer-controller",
+      "repository": "kubernetes-sigs/aws-load-balancer-controller",
       "slug": "kubernetes-sigs-aws-load-balancer-controller",
       "platform": "github",
       "source_url": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
-      "source_version": "HEAD",
-      "content_hash": "ed839c1d0148b7142f37a9abc7d3cf95ed6306e335b0ec66b6afb755dc7ae7d1",
+      "source_version": "fbc97ecf",
+      "content_hash": "8cb329bc711160fb9f719701875c1ccf1533bdee7961a21b24410e73412d04ff",
       "dossier_path": "07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2245,
+          "title": "networking): treat InvalidGroup.NotFound as success in releaseSG (#4928)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.892Z"
+      "verified_at": "2026-10-19T06:32:39.541Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-kuberwastaken-claurst": {
       "learning_id": "learn-github-kuberwastaken-claurst",
@@ -33056,22 +33069,35 @@
     "learn-github-qdrant-qdrant": {
       "learning_id": "learn-github-qdrant-qdrant",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "qdrant-qdrant",
+      "source": "qdrant/qdrant",
+      "repository": "qdrant/qdrant",
       "slug": "qdrant-qdrant",
       "platform": "github",
       "source_url": "https://github.com/qdrant/qdrant",
-      "source_version": "HEAD",
-      "content_hash": "2f8e6a721443f985d081725f346fce57ce10c9946c164bcc0252b8423748d45d",
+      "source_version": "016542aa",
+      "content_hash": "27b83912203b302abe4155641241909ce0237d864350397e332cac11c29ca41b",
       "dossier_path": "07_PROJECT_LEARNING/qdrant-qdrant-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/qdrant-qdrant-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2246,
+          "title": "build(deps): bump urllib3 and pyjwt in /tests (#10912)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.159Z"
+      "verified_at": "2026-10-19T06:32:44.330Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-qhjqhj00-memorag": {
       "learning_id": "learn-github-qhjqhj00-memorag",
@@ -36592,22 +36618,35 @@
     "learn-github-sqldelight-sqldelight": {
       "learning_id": "learn-github-sqldelight-sqldelight",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "sqldelight-sqldelight",
+      "source": "sqldelight/sqldelight",
+      "repository": "sqldelight/sqldelight",
       "slug": "sqldelight-sqldelight",
       "platform": "github",
       "source_url": "https://github.com/sqldelight/sqldelight",
-      "source_version": "HEAD",
-      "content_hash": "2b6f68d6804e09c7a90d66edd93a0acaa73e84eed8fb60abd96b4462f0e19021",
+      "source_version": "efd1689d",
+      "content_hash": "d5983c2d273256cac7900eba205cebcfce055b83d063a3424a27d30077e70045",
       "dossier_path": "07_PROJECT_LEARNING/sqldelight-sqldelight-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sqldelight-sqldelight-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2244,
+          "title": "Keep query files in-memory for the duration of a task (#6374)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.662Z"
+      "verified_at": "2026-10-19T06:32:37.147Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-sqlpage-sqlpage": {
       "learning_id": "learn-github-sqlpage-sqlpage",
@@ -41307,22 +41346,35 @@
     "learn-github-ynqa-jnv": {
       "learning_id": "learn-github-ynqa-jnv",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "ynqa-jnv",
+      "source": "ynqa/jnv",
+      "repository": "ynqa/jnv",
       "slug": "ynqa-jnv",
       "platform": "github",
       "source_url": "https://github.com/ynqa/jnv",
-      "source_version": "HEAD",
-      "content_hash": "d1a3a809a5543442a43b54f373fa1d55ce9121540727c2a24974ab675f8eacb8",
+      "source_version": "76bbf857",
+      "content_hash": "519a6d1db62f93aeba433c07e2edb5c21796db0f294ff86acf5722e819a0288c",
       "dossier_path": "07_PROJECT_LEARNING/ynqa-jnv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ynqa-jnv-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2243,
+          "title": "Merge pull request #125 from VXNCXNX/fix/config-error-not-silent",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.469Z"
+      "verified_at": "2026-10-19T06:32:31.965Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-yohey-w-multi-agent-shogun": {
       "learning_id": "learn-github-yohey-w-multi-agent-shogun",
@@ -79648,6 +79700,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T06:26:30.600Z"
+    },
+    "rule-2243": {
+      "learning_id": "rule-2243",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2243,
+      "title": "Merge pull request #125 from VXNCXNX/fix/config-error-not-silent",
+      "source_url": "https://github.com/ynqa/jnv",
+      "source_version": "76bbf857",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:32:31.965Z"
+    },
+    "rule-2244": {
+      "learning_id": "rule-2244",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2244,
+      "title": "Keep query files in-memory for the duration of a task (#6374)",
+      "source_url": "https://github.com/sqldelight/sqldelight",
+      "source_version": "efd1689d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:32:37.147Z"
+    },
+    "rule-2245": {
+      "learning_id": "rule-2245",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2245,
+      "title": "networking): treat InvalidGroup.NotFound as success in releaseSG (#4928)",
+      "source_url": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
+      "source_version": "fbc97ecf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:32:39.541Z"
+    },
+    "rule-2246": {
+      "learning_id": "rule-2246",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2246,
+      "title": "build(deps): bump urllib3 and pyjwt in /tests (#10912)",
+      "source_url": "https://github.com/qdrant/qdrant",
+      "source_version": "016542aa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:32:44.330Z"
     }
   },
   "aliases": {

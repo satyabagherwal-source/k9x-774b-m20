@@ -605,8 +605,8 @@
     "sourceUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
     "sourceVersion": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf",
     "license": "Open-Source",
-    "contentHash": "735dde92b3b26c26411fd828d746b607e5780f61e4f4324aa124443c6d93c4cf",
-    "lastHarvestedAt": "2026-10-18T00:12:29.749Z",
+    "contentHash": "7109823f8898ac102514e5a36f40d28c5f99d5f9215896f45b8b1964b70ef41c",
+    "lastHarvestedAt": "2026-10-19T06:32:30.610Z",
     "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf"
   },
   "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf": {
@@ -1333,11 +1333,11 @@
     "repository": "cosscom/ui",
     "platform": "github",
     "sourceUrl": "https://github.com/cosscom/ui",
-    "sourceVersion": "28645cd8",
+    "sourceVersion": "a597c630",
     "license": "AGPL-3.0",
-    "contentHash": "b0b6b233b446e06ab95e6410d88046819990fb657168f77596bdbddfcd6ac60b",
-    "lastHarvestedAt": "2026-10-12T19:59:38.672Z",
-    "learningId": "learn-github-cosscom-ui-mv5oegcc"
+    "contentHash": "4b1db7866b586de97d63f34224045bdf9edeb645d81bef47199249f4ac9db162",
+    "lastHarvestedAt": "2026-10-19T06:32:30.618Z",
+    "learningId": "learn-github-cosscom-ui"
   },
   "ebony-vinyl-dsh-our-free-model": {
     "repository": "Ebony-Vinyl/dsh-our-free-model",
@@ -6678,5 +6678,45 @@
     "contentHash": "e021a1ce67e5cc4aa8ee469b407f1023d3b58863fe93e8cc09e8cdfcad75fb25",
     "lastHarvestedAt": "2026-10-19T06:26:30.642Z",
     "learningId": "learn-github-milvus-io-milvus"
+  },
+  "ynqa-jnv": {
+    "repository": "ynqa/jnv",
+    "platform": "github",
+    "sourceUrl": "https://github.com/ynqa/jnv",
+    "sourceVersion": "76bbf857",
+    "license": "MIT",
+    "contentHash": "519a6d1db62f93aeba433c07e2edb5c21796db0f294ff86acf5722e819a0288c",
+    "lastHarvestedAt": "2026-10-19T06:32:32.015Z",
+    "learningId": "learn-github-ynqa-jnv"
+  },
+  "sqldelight-sqldelight": {
+    "repository": "sqldelight/sqldelight",
+    "platform": "github",
+    "sourceUrl": "https://github.com/sqldelight/sqldelight",
+    "sourceVersion": "efd1689d",
+    "license": "Apache-2.0",
+    "contentHash": "d5983c2d273256cac7900eba205cebcfce055b83d063a3424a27d30077e70045",
+    "lastHarvestedAt": "2026-10-19T06:32:37.199Z",
+    "learningId": "learn-github-sqldelight-sqldelight"
+  },
+  "kubernetes-sigs-aws-load-balancer-controller": {
+    "repository": "kubernetes-sigs/aws-load-balancer-controller",
+    "platform": "github",
+    "sourceUrl": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
+    "sourceVersion": "fbc97ecf",
+    "license": "Apache-2.0",
+    "contentHash": "8cb329bc711160fb9f719701875c1ccf1533bdee7961a21b24410e73412d04ff",
+    "lastHarvestedAt": "2026-10-19T06:32:39.593Z",
+    "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller"
+  },
+  "qdrant-qdrant": {
+    "repository": "qdrant/qdrant",
+    "platform": "github",
+    "sourceUrl": "https://github.com/qdrant/qdrant",
+    "sourceVersion": "016542aa",
+    "license": "Apache-2.0",
+    "contentHash": "27b83912203b302abe4155641241909ce0237d864350397e332cac11c29ca41b",
+    "lastHarvestedAt": "2026-10-19T06:32:44.383Z",
+    "learningId": "learn-github-qdrant-qdrant"
   }
 }

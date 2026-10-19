@@ -3018,3 +3018,9 @@ Every entry in this ledger must capture:
 | `learn-github-lysine-dev-okio` | `https://github.com/lysine-dev/okio` | `c0ac5061` | Multi-dimensional audit evidence | 2026-10-19T06:26:22.896Z |
 | `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `1b0403e3` | Multi-dimensional audit evidence | 2026-10-19T06:26:25.391Z |
 | `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `3fb4f56c` | Multi-dimensional audit evidence | 2026-10-19T06:26:30.642Z |
+| `learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-10-19T06:32:30.610Z |
+| `learn-github-cosscom-ui` | `https://github.com/cosscom/ui` | `a597c630` | Multi-dimensional audit evidence | 2026-10-19T06:32:30.618Z |
+| `learn-github-ynqa-jnv` | `https://github.com/ynqa/jnv` | `76bbf857` | Multi-dimensional audit evidence | 2026-10-19T06:32:32.015Z |
+| `learn-github-sqldelight-sqldelight` | `https://github.com/sqldelight/sqldelight` | `efd1689d` | Multi-dimensional audit evidence | 2026-10-19T06:32:37.199Z |
+| `learn-github-kubernetes-sigs-aws-load-balancer-controller` | `https://github.com/kubernetes-sigs/aws-load-balancer-controller` | `fbc97ecf` | Multi-dimensional audit evidence | 2026-10-19T06:32:39.593Z |
+| `learn-github-qdrant-qdrant` | `https://github.com/qdrant/qdrant` | `016542aa` | Multi-dimensional audit evidence | 2026-10-19T06:32:44.383Z |
