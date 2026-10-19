@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T14:33:33.011Z",
-  "total_verified_learnings": 833,
+  "last_updated": "2026-10-19T14:39:59.792Z",
+  "total_verified_learnings": 834,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -74,14 +74,19 @@
       "slug": "1jehuang-jcode",
       "platform": "github",
       "source_url": "https://github.com/1jehuang/jcode",
-      "source_version": "b1037848",
-      "content_hash": "439607893e1d5511b1dcf25831efec02e5ab5bc7fd47422e5613ca0524d60041",
+      "source_version": "48aa83e9",
+      "content_hash": "c67e41ece24590fd612d647e07713b54cc665b9a7b64ad5a862d2c22949bfe1a",
       "dossier_path": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "promoted_rules": [
         {
           "number": 1860,
           "title": "Tick every 10ms while the fast-start transcript is still rendering",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2632,
+          "title": "Test KV account-failover attribution end to end through the agent turn loop",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -90,7 +95,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T23:39:06.899Z",
+      "verified_at": "2026-10-19T14:39:54.558Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -21428,7 +21433,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct",
       "source_version": "hf-qwen-qwen3-vl-8b-instruct",
-      "content_hash": "2e5abfebe1232e1a5a36d4f92041373494725f7beb42d71767a62674e5f5a70b",
+      "content_hash": "d9164200c0784ba3cad0aff47ca2c4d7b2f545d8cbe64f047210fbe70b7da771",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md",
       "promoted_rules": [
@@ -21465,7 +21470,7 @@
         "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv3yxxno",
         "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv4dj7y1"
       ],
-      "verified_at": "2026-10-18T04:23:15.623Z",
+      "verified_at": "2026-10-19T14:39:53.213Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -32318,22 +32323,35 @@
     "learn-github-nsh07-tomato": {
       "learning_id": "learn-github-nsh07-tomato",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "nsh07-tomato",
+      "source": "nsh07/Tomato",
+      "repository": "nsh07/Tomato",
       "slug": "nsh07-tomato",
       "platform": "github",
       "source_url": "https://github.com/nsh07/Tomato",
-      "source_version": "HEAD",
-      "content_hash": "62c8fcca7c89d442e96f3bacf4d208adee8b08d514b5fe07cf04b4716451446a",
+      "source_version": "98fa69ed",
+      "content_hash": "3763145c0b5d577e4c0a70f2296d737c5e5e4fa166063d044964ff5f6cf9eebe",
       "dossier_path": "07_PROJECT_LEARNING/nsh07-tomato-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nsh07-tomato-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2633,
+          "title": "alarm): fix IllegalStateExceptions related to alarm state changes",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.695Z"
+      "verified_at": "2026-10-19T14:39:59.773Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-ntex-rs-ntex": {
       "learning_id": "learn-github-ntex-rs-ntex",
@@ -88284,6 +88302,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T14:33:33.001Z"
+    },
+    "rule-2632": {
+      "learning_id": "rule-2632",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2632,
+      "title": "Test KV account-failover attribution end to end through the agent turn loop",
+      "source_url": "https://github.com/1jehuang/jcode",
+      "source_version": "48aa83e9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T14:39:54.558Z"
+    },
+    "rule-2633": {
+      "learning_id": "rule-2633",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2633,
+      "title": "alarm): fix IllegalStateExceptions related to alarm state changes",
+      "source_url": "https://github.com/nsh07/Tomato",
+      "source_version": "98fa69ed",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T14:39:59.773Z"
     }
   },
   "aliases": {

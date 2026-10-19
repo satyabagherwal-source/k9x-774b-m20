@@ -3301,3 +3301,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-openai-community-gpt2` | `https://huggingface.co/openai-community/gpt2` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-19T14:33:24.594Z |
 | `learn-github-vinceglb-filekit` | `https://github.com/vinceglb/FileKit` | `b6fd7ac4` | Multi-dimensional audit evidence | 2026-10-19T14:33:30.310Z |
 | `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `f6ad73c8` | Multi-dimensional audit evidence | 2026-10-19T14:33:33.049Z |
+| `learn-huggingface-qwen-qwen3-vl-8b-instruct` | `https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-19T14:39:53.276Z |
+| `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `48aa83e9` | Multi-dimensional audit evidence | 2026-10-19T14:39:54.631Z |
+| `learn-github-nsh07-tomato` | `https://github.com/nsh07/Tomato` | `98fa69ed` | Multi-dimensional audit evidence | 2026-10-19T14:39:59.841Z |

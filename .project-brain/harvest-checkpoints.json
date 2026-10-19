@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T14:33:33.055Z",
+  "last_updated": "2026-10-19T14:39:59.848Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1534,14 +1534,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
-      "content_hash": "2e5abfebe1232e1a5a36d4f92041373494725f7beb42d71767a62674e5f5a70b",
-      "verified_at": "2026-10-18T04:23:15.676Z",
+      "content_hash": "d9164200c0784ba3cad0aff47ca2c4d7b2f545d8cbe64f047210fbe70b7da771",
+      "verified_at": "2026-10-19T14:39:53.282Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T04:23:15.676Z"
+      "last_updated": "2026-10-19T14:39:53.282Z"
     },
     "nomic-ai/nomic-embed-text-v1.5": {
       "repository": "nomic-ai/nomic-embed-text-v1.5",
@@ -5539,14 +5539,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-1jehuang-jcode",
-      "content_hash": "439607893e1d5511b1dcf25831efec02e5ab5bc7fd47422e5613ca0524d60041",
-      "verified_at": "2026-10-18T23:39:06.952Z",
+      "content_hash": "c67e41ece24590fd612d647e07713b54cc665b9a7b64ad5a862d2c22949bfe1a",
+      "verified_at": "2026-10-19T14:39:54.640Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T23:39:06.952Z"
+      "last_updated": "2026-10-19T14:39:54.640Z"
     },
     "wix/Detox": {
       "repository": "wix/Detox",
@@ -12312,6 +12312,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T14:33:30.316Z"
+    },
+    "nsh07/Tomato": {
+      "repository": "nsh07/Tomato",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-nsh07-tomato",
+      "content_hash": "3763145c0b5d577e4c0a70f2296d737c5e5e4fa166063d044964ff5f6cf9eebe",
+      "verified_at": "2026-10-19T14:39:59.848Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T14:39:59.848Z"
     }
   },
   "repos": {

@@ -1155,8 +1155,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct",
     "sourceVersion": "hf-qwen-qwen3-vl-8b-instruct",
     "license": "Open-Source",
-    "contentHash": "2e5abfebe1232e1a5a36d4f92041373494725f7beb42d71767a62674e5f5a70b",
-    "lastHarvestedAt": "2026-10-18T04:23:15.673Z",
+    "contentHash": "d9164200c0784ba3cad0aff47ca2c4d7b2f545d8cbe64f047210fbe70b7da771",
+    "lastHarvestedAt": "2026-10-19T14:39:53.276Z",
     "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct"
   },
   "hf-nomic-ai-nomic-embed-text-v1.5": {
@@ -3613,10 +3613,10 @@
     "repository": "1jehuang/jcode",
     "platform": "github",
     "sourceUrl": "https://github.com/1jehuang/jcode",
-    "sourceVersion": "b1037848",
+    "sourceVersion": "48aa83e9",
     "license": "MIT",
-    "contentHash": "439607893e1d5511b1dcf25831efec02e5ab5bc7fd47422e5613ca0524d60041",
-    "lastHarvestedAt": "2026-10-18T23:39:06.945Z",
+    "contentHash": "c67e41ece24590fd612d647e07713b54cc665b9a7b64ad5a862d2c22949bfe1a",
+    "lastHarvestedAt": "2026-10-19T14:39:54.631Z",
     "learningId": "learn-github-1jehuang-jcode"
   },
   "wix-detox": {
@@ -8188,5 +8188,15 @@
     "contentHash": "45424590ea360dcb7b7b7695f35a20147b8552e1028a8b9bd5a1188cfc70e29d",
     "lastHarvestedAt": "2026-10-19T14:33:30.310Z",
     "learningId": "learn-github-vinceglb-filekit"
+  },
+  "nsh07-tomato": {
+    "repository": "nsh07/Tomato",
+    "platform": "github",
+    "sourceUrl": "https://github.com/nsh07/Tomato",
+    "sourceVersion": "98fa69ed",
+    "license": "GPL-3.0",
+    "contentHash": "3763145c0b5d577e4c0a70f2296d737c5e5e4fa166063d044964ff5f6cf9eebe",
+    "lastHarvestedAt": "2026-10-19T14:39:59.841Z",
+    "learningId": "learn-github-nsh07-tomato"
   }
 }

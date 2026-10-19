@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T14:33:33.052Z",
-  "total_cycles_completed": 3271,
-  "total_learnings_persisted": 3271,
-  "total_rules_promoted": 2426,
+  "last_updated": "2026-10-19T14:39:59.845Z",
+  "total_cycles_completed": 3274,
+  "total_learnings_persisted": 3274,
+  "total_rules_promoted": 2428,
   "history": [
-    {
-      "timestamp": "2026-10-19T08:33:19.186Z",
-      "repository": "kubesphere/kubesphere",
-      "learningId": "learn-github-kubesphere-kubesphere",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T08:40:48.115Z",
-      "repository": "DavidHDev/react-bits",
-      "learningId": "learn-github-davidhdev-react-bits",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T08:40:49.491Z",
-      "repository": "Qwen/Qwen3-0.6B",
-      "learningId": "learn-huggingface-qwen-qwen3-0-6b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T08:40:56.589Z",
       "repository": "loft-sh/vcluster",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-19T14:33:33.052Z",
       "repository": "aws/aws-cdk",
       "learningId": "learn-github-aws-aws-cdk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T14:39:53.280Z",
+      "repository": "Qwen/Qwen3-VL-8B-Instruct",
+      "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T14:39:54.636Z",
+      "repository": "1jehuang/jcode",
+      "learningId": "learn-github-1jehuang-jcode",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T14:39:59.845Z",
+      "repository": "nsh07/Tomato",
+      "learningId": "learn-github-nsh07-tomato",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

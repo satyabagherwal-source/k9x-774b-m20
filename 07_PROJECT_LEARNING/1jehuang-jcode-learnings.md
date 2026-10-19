@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md`  
 > **Source**: github ([https://github.com/1jehuang/jcode](https://github.com/1jehuang/jcode))  
-> **Source Version**: `b1037848`  
+> **Source Version**: `48aa83e9`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T23:39:06.719Z  
+> **Timestamp**: 2026-10-19T14:39:54.273Z  
 > **Learning ID**: `learn-github-1jehuang-jcode`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/1jehuang/jcode](https://github.com/1jehuang/jcode))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T23:39:05.070Z  
+> **Harvest Timestamp**: 2026-10-19T14:39:54.262Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: High performance coding agent harness written in Rust, built for heavy multi-agent dev workflows
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 21011 stars
+- **Stars / Engagement**: 21030 stars
 
 ---
 
@@ -192,6 +192,29 @@ impl Agent {
         }
     }
 
+    /// OAuth account serving this request. Prompt caches are per account, so
+    /// a failover between accounts must be attributed, not reported as an
+    /// unexplained provider eviction.
+    fn kv_cache_account_identity(&self) -> Option<String> {
+        if self.provider.active_resolved_credential()
+            != Some(jcode_provider_core::ResolvedCredential::Oauth)
+        {
+            return None;
+        }
+        // An unbound runtime authenticates with the globally active account.
+        self.provider.oauth_account_label().or_else(|| {
+            match jcode_provider_core::parse_provider_hint(self.provider.name()) {
+                Some(jcode_provider_core::ActiveProvider::Claude) => {
+                    crate::auth::claude::active_account_label()
+                }
+                Some(jcode_provider_core::ActiveProvider::OpenAI) => {
+                    crate::auth::codex::active_account_label()
+                }
+                _ => None,
+            }
+        })
+    }
+
     fn begin_kv_cache_monitor_request(&mut self, event: &ServerEvent, model: &str) {
         let ServerEvent::KvCacheRequest {
             system_static_hash,
@@ -212,6 +235,7 @@ impl Agent {
             provider,
             model: model.to_string(),
             upstream_provider: self.last_upstream_provider.clone(),
+            account: self.kv_cache_account_identity(),
         };
         let signature = crate::kv_cache_monitor::RequestSignature {
             system_static_hash: *system_static_hash,
@@ -239,14 +263,18 @@ impl Agent {
             cache_creation,
         );
         let miss = self.kv_cache_monitor.finish_request(reusable, cache_read)?;
-        let expected_refresh = miss.reason == crate::kv_cache_monitor::MissReason::Compaction;
+        let expected_refresh = matches!(
+            miss.reason,
+            crate::kv_cache_monitor::MissReason::Compaction
+                | crate::kv_cache_monitor::MissReason::DailyRollover
+        );
         let label = if expected_refresh {
             "KV_CACHE_REFRESH"
         } else {
             "KV_CACHE_MISS"
         };
         let diagnostic = format!(
-            "{label} session={} reason={} harness_caused={} missed={} expected={} read={} documented={:?}",
+            "{label} session={} reason={} harness_caused={} missed={} expected={} read={} documented={:?} detail={:?}",
             self.session.id,
             miss.reason.id(),
             miss.reason.harness_caused(),
@@ -254,6 +282,7 @@ impl Agent {
             miss.expected_tokens,
             miss.read_tokens,
             miss.documented_cause,
+            miss.detail,
         );
         if expected_refresh {
             logging::info(&diagnostic);
@@ -279,45 +308,7 @@ fn log_agent_provider_stream_lifecycle(
     api_start: Instant,
     fields: Vec<(&str, String)>,
 ) {
-    let mut owned = vec![
-        ("phase".to_string(), phase.to_string()),
-        ("provider".to_string(), agent.provider.name().to_string()),
-        ("model".to_string(), agent.provider.model()),
-        ("session_id".to_string(), agent.session.id.clone()),
-        (
-            "provider_session_id".to_string(),
-            agent
-                .provider_session_id
-                .clone()
-                .unwrap_or_else(|| "none".to_string()),
-        ),
-        (
-            "connection_type".to_string(),
-            agent
-                .last_connection_type
-                .clone()
-                .unwrap_or_else(|| "unknown".to_string()),
-        ),
-        (
-            "elapsed_ms".to_string(),
-            api_start.elapsed().as_millis().to_string(),
-        ),
-    ];
-    owned.extend(
-        fields
-            .into_iter()
-            .map(|(key, value)| (key.to_string(), value)),
-    );
-    logging::event(level, "AGENT_PROVIDER_STREAM_LIFECYCLE", owned);
-}
-
-/// Token usage from the last API request
-#[derive(Debug, Clone, Default, serde::Serialize)]
-pub struct TokenUsage {
-    pub input_tokens: u64,
-    pub output_tokens: u64,
-    pub cache_read_input_tokens: Option<u64>,
-    pub cache_cr
+    let mut owned =
 ```
 
 ### Core Architecture Module: `crates/jcode-app-core/src/agent/compaction.rs`
@@ -2071,23 +2062,6 @@ impl Agent {
         pending
     }
 
-    fn append_current_turn_system_reminder(&self, split: &mut crate::prompt::SplitSystemPrompt) {
-        let Some(reminder) = self
-            .current_turn_system_reminder
-            .as_ref()
-            .map(|value| value.trim())
-            .filter(|value| !value.is_empty())
-        else {
-            return;
-        };
-
-        if !split.dynamic_part.is_empty() {
-            split.dynamic_part.push_str("\n\n");
-        }
-        split.dynamic_part.push_str("# System Reminder\n\n");
-        split.dynamic_part.push_str(reminder);
-    }
-
     /// Build split system prompt for better caching
     /// Returns static (cacheable) and dynamic (not cached) parts separately
     pub(super) fn build_system_prompt_split(
@@ -2101,11 +2075,10 @@ impl Agent {
             };
         }
 
-        let skills = self.current_skills_snapshot();
-        let skill_prompt = self
-            .active_skill
-            .as_ref()
-            .and_then(|name| skills.get(name).map(|skill| skill.get_prompt().to_string()));
+        // The active skill prompt is announced once in the transcript when the
+        // skill is activated (see `announce_active_skill`). Keeping it out of
+        // the system prompt means switching skills never invalidates the cache.
+        let skill_prompt: Option<String> = None;
 
         // Frozen per session so skill installs never rewrite the cached
         // system prefix. Later installs are announced in the transcript.
@@ -2117,7 +2090,7 @@ impl Agent {
             .as_ref()
             .map(std::path::PathBuf::from);
 
-        let (mut split, _context_info) = crate::prompt::build_system_prompt_split_with_agents_md(
+        let (split, _context_info) = crate::prompt::build_system_prompt_split_with_agents_md(
             skill_prompt.as_deref(),
             available_skills,
             self.session.is_canary,
@@ -2125,8 +2098,6 @@ impl Agent {
             working_dir.as_deref(),
             self.agents_md_snapshot.clone(),
         );
-
-        self.append_current_turn_system_reminder(&mut split);
 
         split
     }
@@ -2446,188 +2417,649 @@ impl Agent {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bd5cdd45` (2026-10-18)
-**Commit Message**: Tick every 10ms while the fast-start transcript is still rendering
+### Incident Patch 1: `48aa83e9` (2026-10-19)
+**Commit Message**: Test KV account-failover attribution end to end through the agent turn loop
 
-Nothing wakes the remote event loop when the transcript thread finishes,
-so polling at the loop top alone still waits for the next wakeup (the
-1s remote-startup tick). Use a 10ms tick only while the transcript is
-pending; it reverts to the normal schedule once it is applied.
+Replays the 2026-10-19 incident numbers (33,096-token prefix, 0 read after
+claude-fox -> claude-otter) through run_turn_streaming_mpsc and asserts the
+emitted KvCacheMiss event, plus the same-account zero-read wording and the
+remote TUI in-place correction of a provisional zero-read notice.
 
-**File**: `crates/jcode-tui/src/tui/app/run_shell.rs` (modified, +9/-1)
+**File**: `crates/jcode-app-core/src/agent/cache_monitor_tests.rs` (modified, +142/-0)
 ```diff
-@@ -30,6 +30,8 @@ const STATUS_SPINNER_FPS: f32 = 12.5;
- /// construction, so this mostly costs nothing; it is capped so a pathological
- /// repo never delays first paint noticeably.
- const FIRST_FRAME_GIT_BUDGET: std::time::Duration = std::time::Duration::from_millis(40);
-+/// Tick cadence while the reload fast-start transcript is still rendering.
-+const STARTUP_TRANSCRIPT_POLL: std::time::Duration = std::time::Duration::from_millis(10);
- pub(super) const STATUS_SPINNER_ONLY_INTERVAL: Duration = Duration::from_millis(80);
- 
- pub(super) fn redraw_timer(period: Duration) -> tokio::time::Interval {
-@@ -890,7 +892,13 @@ impl App {
-                 // remote startup ticks are 1s apart, which held a ready
-                 // transcript back 0.5-0.7s until server History landed anyway.
-                 needs_redraw |= self.poll_pending_startup_transcript();
--                let desired_redraw = crate::tui::redraw_interval(&self);
-+                let desired_redraw = if self.pending_startup_transcript.is_some() {
-+                    // Nothing wakes the loop when the transcript thread
-+                    // finishes, so poll briefly until it does (~tens of ms).
-+                    STARTUP_TRANSCRIPT_POLL
-+                } else {
-+                    crate::tui::redraw_interval(&self)
-+                };
-                 if desired_redraw != redraw_period {
-                     redraw_period = desired_redraw;
-                     redraw_interval = redraw_timer(redraw_period);
-```
-
----
-
-### Incident Patch 2: `6e345388` (2026-10-18)
-**Commit Message**: fix: replace new panic-prone expects with graceful fallbacks
-
-**File**: `crates/jcode-app-core/src/server/client_actions.rs` (modified, +8/-6)
-```diff
-@@ -423,12 +423,14 @@ pub(super) fn handle_run_subagent(
-         let tool_name_for_exec = tool_name.clone();
-         let result = match crate::runtime_activity::spawn(async move {
-             registry.execute(&tool_name_for_exec, tool_input, ctx).await
--        })
--        .expect("subagent task inherits its admitted parent activity")
--        .await
--        {
--            Ok(result) => result,
--            Err(error) => Err(anyhow::anyhow!("Tool task panicked: {}", error)),
-+        }) {
-+            Some(handle) => match handle.await {
-+                Ok(result) => result,
-+                Err(error) => Err(anyhow::anyhow!("Tool task panicked: {}", error)),
-+            },
-+            None => Err(anyhow::anyhow!(
-+                "Tool task was not admitted because the runtime is shutting down"
-+            )),
-         };
-         let duration_ms = started.elapsed().as_millis().min(u64::MAX as u128) as u64;
- 
-```
-
-**File**: `crates/jcode-app-core/src/server/idle_hibernation.rs` (modified, +3/-1)
-```diff
-@@ -137,7 +137,9 @@ async fn reclaim_idle_caches(
-         // Agent and roster lock. RSS is process-wide, not a per-session metric.
-         crate::process_memory::release_retained_heap("server_idle_hibernation");
-         let after = crate::process_memory::snapshot_with_source("server_idle_hibernation_after");
--        let before = before.expect("a release always captures the pre-eviction sample");
-+        let before = before.unwrap_or_else(|| {
-+            crate::process_memory::snapshot_with_source("server_idle_hibernation_before")
-+        });
-         let session_ids = releases
-             .iter()
-             .map(|(id, _)| id.as_str())
-```
-
-**File**: `crates/jcode-base/src/recent_session_index.rs` (modified, +9/-7)
-```diff
-@@ -65,14 +65,16 @@ fn with_connection<R>(f: impl FnOnce(&Connection) -> Result<R>) -> Result<R> {
-         .lock()
-         .unwrap_or_else(|poisoned| poisoned.into_inner());
-     // JCODE_HOME can change (tests); reopen when the path moves.
--    if guard.as_ref().is_none_or(|shared| shared.path != path) {
--        *guard = Some(SharedConnection {
--            connection: open_at(&path)?,
--            path,
--        });
-+    match guard.as_ref() {
-+        Some(shared) if shared.path == path => f(&shared.connection),
-+        _ => {
-+            let shared = guard.insert(SharedConnection {
-+                connection: open_at(&path)?,
-+                path,
-+            });
-+            f(&shared.connection)
-+        }
+@@ -168,3 +168,145 @@ async fn native_compaction_cache_refresh_is_classified_before_compaction_is_anno
+         assert_eq!(compaction_seen, !discard_compaction);
      }
--    let shared = guard.as_ref().expect("connection initialized above");
--    f(&shared.connection)
  }
- 
- fn open_at(path: &std::path::Path) -> Result<Connection> {
-```
-
----
-
-### Incident Patch 3: `c0474674` (2026-10-18)
-**Commit Message**: fix(tui): clear stale service tiers when catalog identity changes
-
-**File**: `crates/jcode-tui/src/tui/app/inline_interactive.rs` (modified, +2/-0)
-```diff
-@@ -700,6 +700,7 @@ impl App {
-         if let Some(name) = snapshot.provider_name
-             && self.remote_provider_name.as_deref() != Some(name.as_str())
-         {
-+            self.remote_available_service_tiers = None;
-             self.remote_provider_name = Some(name);
-             provider_meta_changed = true;
-             provider_name_changed = true;
-@@ -708,6 +709,7 @@ impl App {
-             && self.remote_provider_model.as_deref() != Some(model.as_str())
-         {
-             self.update_context_limit_for_model(&model, None);
-+            self.remote_available_service_tiers = None;
-             self.remote_provider_model = Some(model);
-             provider_meta_changed = true;
-         }
-```
-
-**File**: `crates/jcode-tui/src/tui/app/tests/remote_startup_input_01/part_01.rs` (modified, +30/-0)
-```diff
-@@ -847,6 +847,36 @@ fn test_available_models_updated_event_surfaces_authed_provider_in_remote_model_
-     }));
- }
- 
-+#[test]
-+fn test_catalog_snapshot_invalidates_service_tiers_only_when_identity_changes() {
-+    for (provider, model, should_clear) in [
-+        ("openai", "gpt-6-astra", false),
-+        ("openai", "gpt-6.1-sol", true),
-+        ("jcode", "gpt-6-astra", true),
-+    ] {
-+        let mut app = create_test_app();
-+        app.is_remote = true;
-+        app.remote_provider_name = Some("openai".into());
-+        app.remote_provider_model = Some("gpt-6-astra".into());
-+        app.remote_available_service_tiers = Some(vec!["priority".into()]);
 +
-+        app.replace_remote_model_catalog_snapshot(
-+            jcode_provider_core::ModelCatalogSnapshot::new(
-+                Some(provider.into()),
-+                Some(model.into()),
-+                vec![],
-+                vec![],
-+            ),
-+        );
++/// Replays the 2026-10-19 incident: a 429 on account `claude-fox` failed the
++/// turn over to `claude-otter` with the same model. The new account read 0
++/// cached tokens, which used to be reported as an unexplained zero read.
++#[derive(Clone)]
++struct AccountFailoverProvider {
++    calls: Arc<AtomicUsize>,
++    account: Arc<std::sync::Mutex<String>>,
++}
 +
-+        assert_eq!(
-+            app.remote_available_service_tiers.is_none(),
-+            should_clear,
-+            "provider={provider}, model={model}"
-+        );
++#[async_trait]
++impl Provider for AccountFailoverProvider {
++    async fn complete(
++        &self,
++        _: &[Message],
++        _: &[ToolDefinition],
++        _: &str,
++        _: Option<&str>,
++    ) -> Result<crate::provider::EventStream> {
++        let call = self.calls.fetch_add(1, Ordering::SeqCst);
++        let (read, write) = if call == 0 { (33_000, 96) } else { (0, 39_721) };
++        Ok(Box::pin(futures::stream::iter(vec![
++            Ok(StreamEvent::TokenUsage {
++                input_tokens: Some(483),
++                output_tokens: Some(5),
++                cache_read_input_tokens: Some(read),
++                cache_creation_input_tokens: Some(write),
++            }),
++            Ok(StreamEvent::TextDelta("answer".into())),
++            Ok(StreamEvent::MessageEnd {
++                stop_reason: Some("end_turn".into()),
++            }),
++        ])))
++    }
++
++    fn name(&self) -> &str {
++        "claude"
++    }
++
++    fn model(&self) -> String {
++        "claude-opus-5-5".into()
++    }
++
++    fn active_resolved_credential(&self) -> Option<jcode_provider_core::ResolvedCredential> {
++        Some(jcode_provider_core::ResolvedCredential::Oauth)
++    }
++
++    fn oauth_account_label(&self) -> Option<String> {
++        Some(self.account.lock().unwrap().clone())
++    }
++
++    fn fork(&self) -> Arc<dyn Provider> {
++        Arc::new(self.clone())
 +    }
 +}
 +
++async fn run_account_turns(switch_account: bool) -> Vec<ServerEvent> {
++    let account = Arc::new(std::sync::Mutex::new("claude-fox".to_string()));
++    let provider: Arc<dyn Provider> = Arc::new(AccountFailoverProvider {
++        calls: Arc::new(AtomicUsize::new(0)),
++        account: account.clone(),
++    });
++    let registry = Registry::new(provider.clone()).await;
++    let mut agent = Agent::new(provider, registry);
++    let (tx, mut rx) = mpsc::unbounded_channel();
++    for (index, text) in ["warm cache", "continue"].into_iter().enumerate() {
++        if index == 1 && switch_account {
++            // Same as an accepted failover route: rebind runtime and session.
++            *account.lock().unwrap() = "claude-otter".into();
++            agent.session.route_api_method = Some("claude-oauth@claude-otter".into());
++        }
++        agent.add_message(
++            Role::User,
++            vec![ContentBlock::Text {
++                text: text.into(),
++                cache_control: None,
++            }],
++        );
++        agent.run_turn_streaming_mpsc(tx.clone()).await.unwrap();
++    }
++    let mut misses = Vec::new();
++    while let Ok(event) = rx.try_recv() {
++        if matches!(event, ServerEvent::KvCacheMiss { .. }) {
++            misses.push(event);
++        }
++    }
++    misses
++}
++
++#[tokio::test]
++async fn account_failover_miss_names_both_accounts_with_readable_counts() {
++    let _home = crate::auth::test_sandbox::AuthTestSandbox::new().unwrap();
++    let misses = run_account_turns(true).await;
++    assert_eq!(misses.len(), 1, "{misses:?}");
++    let ServerEvent::KvCacheMiss {
++        reason,
++        harness_caused,
++        missed_tokens,
++        expected_tokens,
++        read_tokens,
++        message,
++        ..
++    } = &misses[0]
++    else {
++        unreachable!()
++    };
++    eprintln!("account failover notice: {message}");
++    assert_eq!(reason, "account_switch");
++    assert!(!harness_caused);
++    assert_eq!(
++        (*expected_tokens, *read_tokens, *missed_tokens),
++        (33_096, 0, 33_096)
++    );
++    assert!(message.contains("[account_switch]"), "{message}");
++    assert!(message.contains("claude-fox -> claude-otter"), "{message}");
++    assert!(message.contains("~33.1K tokens resent"), "{message}");
++    assert!(!message.contains("33096"), "raw count leaked: {message}");
++}
++
++#[tokio::test]
++async fn same_account_zero_read_explains_what_was_ruled_out() {
++    let _home = crate::auth::test_sandbox::AuthTestSandbox::new().unwrap();
++    let misses = run_account_turns(false).await;
++    assert_eq!(misses.len(), 1, "{misses:?}");
++    let ServerEvent::KvCacheMiss {
++        reason, message, ..
++    } = &misses[0]
++    else {
++        unreachable!()
++    };
++    eprintln!("same-account zero read notice: {message}");
++    assert_eq!(reason, "zero_read");
++    assert!(
++        message.contains("read 0 of the 33.1K-token prefix"),
++        "{message}"
++    );
++    assert!(message.contains("after the previous call"), "{message}");
++    assert!(
++        message.contains("same prov
+```
+
+**File**: `crates/jcode-tui/src/tui/app/remote/kv_cache_miss_tests.rs` (modified, +31/-0)
+```diff
+@@ -289,3 +289,34 @@ fn remote_daily_rollover_corrects_provisional_low_read_in_place() {
+         KvCacheMissReason::DailyRollover
+     );
+ }
++
++#[test]
++fn remote_account_switch_corrects_provisional_zero_read_in_place() {
++    let mut app = create_test_app();
++    app.kv_cache.kv_cache_turn_number = Some(2);
++    app.kv_cache.kv_cache_turn_call_index = 2;
++    app.kv_cache.kv_cache_miss_samples.push(KvCacheMissSample {
++        turn_number: 2,
++        call_index: 2,
++        missed_tokens: 33_096,
++        reason: KvCacheMissReason::ZeroRead,
++    });
++    app.push_display_message(DisplayMessage::system(
++        "ℹ️ KV cache miss [zero read] turn 2 call 2: 0 cached / 33.1K expected tokens",
++    ));
++    let count = app.display_messages.len();
++    let corrected = "KV cache miss [account_switch]: ~33.1K tokens resent (account switched claude-fox -> claude-otter (e.g. failover after a rate limit); prompt caches are per account).";
++    assert!(handle_kv_cache_miss(
++        &mut app,
++        "account_switch",
++        33_096,
++        corrected.into(),
++        true
++    ));
++    assert_eq!(app.display_messages.len(), count, "replaced, not appended");
++    assert_eq!(app.display_messages[count - 1].content, corrected);
++    assert_eq!(
++        app.kv_cache.kv_cache_miss_samples[0].reason,
++        KvCacheMissReason::AccountSwitch
++    );
++}
+```
+
+---
+
+### Incident Patch 2: `c5e02c9e` (2026-10-19)
+**Commit Message**: fix(tui): typing during account auto-switch countdown no longer cancels it
+
+Any non-scroll key canceled the pending failover, so typing the next
+prompt left the session on the rate-limited account and the new prompt
+hit the same 429. Only Esc cancels now. Enter on a plain prompt queues
+it behind the switch and held resend. Slash/shell commands still cancel.
+
+**File**: `crates/jcode-tui/src/tui/app/input.rs` (modified, +2/-8)
+```diff
+@@ -3180,14 +3180,8 @@ impl App {
+             return Ok(());
+         }
+ 
+-        if self.pending_provider_failover.is_some() && !self.is_processing {
+-            if code == KeyCode::Esc {
+-                self.cancel_pending_provider_failover("Provider auto-switch canceled");
+-                return Ok(());
+-            }
+-            if !is_scroll_only_key(self, code, modifiers) {
+-                self.cancel_pending_provider_failover("Provider auto-switch canceled");
+-            }
++        if self.handle_key_during_provider_failover(code) {
++            return Ok(());
+         }
+ 
+         // Accept an armed post-error fallback offer: switch to the next best
+```
+
+**File**: `crates/jcode-tui/src/tui/app/model_context.rs` (modified, +46/-0)
+```diff
+@@ -190,6 +190,52 @@ impl App {
+         self.set_status_notice(notice);
+     }
+ 
++    /// Key handling while an automatic account switch counts down. Returns
++    /// true when the key was fully consumed.
++    ///
++    /// Only Esc cancels. Typing the next prompt must not silently abort the
++    /// switch and leave the session on the exhausted account. Enter on a plain
++    /// prompt queues it to run after the switch and the held resend. Slash and
++    /// shell commands (for example a manual `/model`) cancel and run as usual.
++    pub(super) fn handle_key_during_provider_failover(
++        &mut self,
++        code: crossterm::event::KeyCode,
++    ) -> bool {
++        use crossterm::event::KeyCode;
++        if self.pending_provider_failover.is_none() || self.is_processing {
++            return false;
++        }
++        match code {
++            KeyCode::Esc => {
++                self.cancel_pending_provider_failover("Provider auto-switch canceled");
++                true
++            }
++            KeyCode::Enter => {
++                let trimmed = self.input.trim();
++                if trimmed.is_empty() {
++                    return true;
++                }
++                if trimmed.starts_with('/')
++                    || trimmed.starts_with('!')
++                    || !self.pending_images.is_empty()
++                {
++                    self.cancel_pending_provider_failover("Provider auto-switch canceled");
++                    return false;
++                }
++                let prepared = super::input::take_prepared_input(self);
++                self.queued_messages.push(prepared.expanded);
++                let to_label = self
++                    .pending_provider_failover
++                    .as_ref()
++                    .map(|pending| pending.prompt.to_label.clone())
++                    .unwrap_or_default();
++                self.set_status_notice(format!("Queued. Sends after switching → {to_label}"));
++                true
++            }
++            _ => false,
++        }
++    }
++
+     fn failover_countdown_message(to_label: &str) -> String {
+         format!("↪ Switching to {to_label} in 3s. Esc to cancel.")
+     }
+```
+
+**File**: `crates/jcode-tui/src/tui/app/remote/key_handling.rs` (modified, +2/-8)
+```diff
+@@ -238,14 +238,8 @@ async fn handle_remote_key_internal(
+     let mut modifiers = modifiers;
+     ctrl_bracket_fallback_to_esc(&mut code, &mut modifiers);
+ 
+-    if app.pending_provider_failover.is_some() && !app.is_processing {
+-        if code == KeyCode::Esc {
+-            app.cancel_pending_provider_failover("Provider auto-switch canceled");
+-            return Ok(());
+-        }
+-        if !input::is_scroll_only_key(app, code, modifiers) {
+-            app.cancel_pending_provider_failover("Provider auto-switch canceled");
+-        }
++    if app.handle_key_during_provider_failover(code) {
++        return Ok(());
+     }
+ 
+     if app.handle_ssh_login_key(code, modifiers, text_input.as_deref()) {
+```
+
+**File**: `crates/jcode-tui/src/tui/app/tests/remote_failover_routes.rs` (modified, +31/-0)
+```diff
+@@ -430,6 +430,37 @@ fn test_remote_failover_esc_cancels_without_route_request_or_resend() {
+     });
+ }
+ 
++#[test]
++fn test_remote_failover_typing_and_enter_queue_instead_of_canceling() {
++    with_temp_jcode_home(|| {
++        write_test_config("[provider]\ncross_provider_failover = \"countdown\"\n");
++        let rt = tokio::runtime::Runtime::new().unwrap();
++        let _guard = rt.enter();
++        let (mut app, mut remote) = remote_exact_failover_fixture();
++        app.input.clear();
++        app.cursor_pos = 0;
++        for key in [KeyCode::Char('n'), KeyCode::Char('x'), KeyCode::Enter] {
++            rt.block_on(remote::handle_remote_key_event(
++                &mut app,
++                crossterm::event::KeyEvent::new(key, KeyModifiers::NONE),
++                &mut remote,
++            ))
++            .unwrap();
++            assert!(
++                app.pending_provider_failover.is_some(),
++                "{key:?} must not cancel the account switch"
++            );
++        }
++        assert!(app.input.is_empty());
++        assert_eq!(app.queued_messages, vec!["nx".to_string()]);
++        assert!(
++            !app.display_messages
++                .iter()
++                .any(|message| message.content.contains("Auto-switch canceled"))
++        );
++    });
++}
++
  #[test]
- fn test_duplicate_available_models_updated_event_is_a_no_op() {
-     // Temp home: handling the event persists the remote catalog cache, which
+ fn test_cancel_image_only_failover_restores_attachments() {
+     with_temp_jcode_home(|| {
+```
+
+---
+
+### Incident Patch 3: `4c5e4917` (2026-10-19)
+**Commit Message**: fix: recover TUI from a vanished or unresponsive server instead of retrying forever (fixes #1887)
+
+- Reconnect loop: after 3 failed attempts with no live listener and no reload
+  in flight, reap a stale socket and spawn a replacement server (throttled to
+  once per 60s per client). Previously only the reload path could respawn.
+- Long disconnects (>30s) redraw every 5s instead of every 1s, so a client
+  that cannot connect no longer burns a core redrawing a large transcript.
+- Windows keepalive: drop the held connection as soon as the server stops
+  answering pings, and give it an unheld interval so idle exit can run,
+  instead of pinning a zombie server for days.
+- Prune dead-PID servers.json entries before spawning a server at launch.
+
+**File**: `crates/jcode-tui/src/tui/app/remote/reconnect.rs` (modified, +103/-7)
+```diff
+@@ -24,6 +24,33 @@ pub(in crate::tui::app) struct RemoteRunState {
+     pub server_reload_in_progress: bool,
+     pub reload_recovery_attempted: bool,
+     pub last_reload_pid: Option<u32>,
++    /// When this client last tried to start a replacement for a server that
++    /// vanished outside a reload. Throttles respawns (issue #1887).
++    pub last_dead_server_respawn: Option<Instant>,
++}
++
++/// Failed attempts before a client concludes the server is gone, not restarting.
++const DEAD_SERVER_RESPAWN_MIN_ATTEMPTS: u32 = 3;
++/// Minimum spacing between replacement-server spawns from one client.
++const DEAD_SERVER_RESPAWN_INTERVAL: Duration = Duration::from_secs(60);
++/// After this long disconnected, redraw much less often. Nothing on screen
++/// changes between attempts except spinners, and a large transcript makes each
++/// full redraw expensive enough to hold a core when it runs forever (#1887).
++const LONG_DISCONNECT_THRESHOLD: Duration = Duration::from_secs(30);
++const LONG_DISCONNECT_REDRAW: Duration = Duration::from_secs(5);
++
++pub(in crate::tui::app) fn should_respawn_dead_server(
++    state: &RemoteRunState,
++    ssh_remote: bool,
++    now: Instant,
++) -> bool {
++    !ssh_remote
++        && !state.initial_server_start
++        && !state.server_reload_in_progress
++        && state.reconnect_attempts >= DEAD_SERVER_RESPAWN_MIN_ATTEMPTS
++        && state
++            .last_dead_server_respawn
++            .is_none_or(|at| now.duration_since(at) >= DEAD_SERVER_RESPAWN_INTERVAL)
+ }
+ 
+ #[expect(
+@@ -188,12 +215,27 @@ fn set_disconnect_status_message(app: &mut App, state: &mut RemoteRunState, cont
+     }
+ }
+ 
+-fn disconnected_redraw_interval(initial_connect: bool) -> tokio::time::Interval {
+-    let period = if initial_connect {
++pub(in crate::tui::app) fn disconnected_redraw_period(
++    initial_connect: bool,
++    disconnected_for: Option<Duration>,
++) -> Duration {
++    if initial_connect {
+         crate::tui::REDRAW_REMOTE_STARTUP
++    } else if disconnected_for.is_some_and(|elapsed| elapsed >= LONG_DISCONNECT_THRESHOLD) {
++        LONG_DISCONNECT_REDRAW
+     } else {
+         Duration::from_millis(1000)
+-    };
++    }
++}
++
++fn disconnected_redraw_interval(
++    initial_connect: bool,
++    state: &RemoteRunState,
++) -> tokio::time::Interval {
++    let period = disconnected_redraw_period(
++        initial_connect,
++        state.disconnect_start.map(|start| start.elapsed()),
++    );
+     let mut interval = tokio::time::interval(period);
+     interval.set_missed_tick_behavior(MissedTickBehavior::Skip);
+     interval
+@@ -309,7 +351,7 @@ async fn wait_for_reload_handoff_before_reconnect(
+             ));
+             let wait = crate::server::wait_for_reload_handoff_event(pid, &socket_path);
+             tokio::pin!(wait);
+-            let mut redraw = disconnected_redraw_interval(false);
++            let mut redraw = disconnected_redraw_interval(false, state);
+             loop {
+                 tokio::select! {
+                     _ = &mut wait => break,
+@@ -380,6 +422,57 @@ async fn recover_reloading_server(
+     }
+ }
+ 
++/// Start a replacement when the server disappeared outside a reload.
++///
++/// Without this, a client whose daemon crashed or idle-exited (or whose
++/// registry/pipe state went stale on Windows) retried forever against nothing
++/// (issue #1887). Only spawns when no listener answers on the socket, so a slow
++/// but live server is never duplicated.
++async fn respawn_dead_server(
++    app: &mut App,
++    terminal: &mut DefaultTerminal,
++    state: &mut RemoteRunState,
++) -> Result<bool> {
++    if !should_respawn_dead_server(state, crate::tui::is_ssh_remote(), Instant::now())
++        || reload_handoff_active(state)
++        || crate::server_spawn::is_running().await
++    {
++        return Ok(false);
++    }
++    state.last_dead_server_respawn = Some(Instant::now());
++
++    let detail = "server is not running; starting a replacement server";
++    set_disconnect_status_message(app, state, reconnect_status_message(app, state, detail));
++    terminal.draw(|frame| crate::tui::ui::draw(frame, app))?;
++    crate::logging::warn(&format!(
++        "Reconnect: no live server after {} attempts; spawning a replacement shared server",
++        state.reconnect_attempts
++    ));
++
++    let socket_path = crate::server::socket_path();
++    if crate::server::reap_stale_socket_if_dead(&socket_path).await {
++        crate::logging::info("Reconnect: reaped stale socket before respawn");
++    }
++
++    match crate::server_spawn::spawn_default_server().await {
++        Ok(()) => {
++            state.initial_server_start = true;
++            state.last_disconnect_reason =
++                Some("replacement server started; reconnecting".to_string());
++            crate::logging::info("Replacement shared server started after server loss");
++            Ok(true)
++        }
++        Err(error) => {
++            state.last_disconnect_reason =
++                Some(format!("failed to start a replacement server: {er
+```
+
+**File**: `crates/jcode-tui/src/tui/app/remote_tests.rs` (modified, +50/-0)
+```diff
+@@ -177,6 +177,56 @@ fn client_interaction_restores_focus_so_scroll_redraws_at_full_rate() {
+ 
+ include!("remote_tests/auth_mapping.rs");
+ 
++#[test]
++fn dead_server_respawn_waits_for_repeated_failures_and_throttles() {
++    use std::time::{Duration, Instant};
++    let now = Instant::now();
++    let mut state = RemoteRunState {
++        reconnect_attempts: 2,
++        ..Default::default()
++    };
++    assert!(!reconnect::should_respawn_dead_server(&state, false, now));
++
++    state.reconnect_attempts = 3;
++    assert!(reconnect::should_respawn_dead_server(&state, false, now));
++    assert!(
++        !reconnect::should_respawn_dead_server(&state, true, now),
++        "SSH clients must not spawn a local server"
++    );
++
++    state.server_reload_in_progress = true;
++    assert!(!reconnect::should_respawn_dead_server(&state, false, now));
++    state.server_reload_in_progress = false;
++
++    state.initial_server_start = true;
++    assert!(
++        !reconnect::should_respawn_dead_server(&state, false, now),
++        "a server we just started gets its startup window first"
++    );
++    state.initial_server_start = false;
++
++    state.last_dead_server_respawn = Some(now);
++    assert!(!reconnect::should_respawn_dead_server(
++        &state,
++        false,
++        now + Duration::from_secs(10)
++    ));
++    assert!(reconnect::should_respawn_dead_server(
++        &state,
++        false,
++        now + Duration::from_secs(61)
++    ));
++}
++
++#[test]
++fn long_disconnect_redraws_slowly() {
++    use std::time::Duration;
++    let short = reconnect::disconnected_redraw_period(false, Some(Duration::from_secs(5)));
++    let long = reconnect::disconnected_redraw_period(false, Some(Duration::from_secs(120)));
++    assert_eq!(short, Duration::from_secs(1));
++    assert!(long >= Duration::from_secs(5), "issue #1887: {long:?}");
++}
++
+ #[test]
+ fn reload_handoff_inactive_without_flag_or_marker() {
+     // `reload_handoff_active` falls back to the on-disk reload marker in the
+```
+
+**File**: `src/cli/dispatch.rs` (modified, +39/-15)
+```diff
+@@ -928,6 +928,12 @@ async fn run_default_command(args: Args) -> Result<()> {
+         if server::reap_stale_socket_if_dead(&server::socket_path()).await {
+             output::stderr_info("Removed a stale jcode socket from a previous server.");
+         }
++        // Dead servers leave their registry entries behind, the Windows analog
++        // of a stale socket file (issue #1887). Prune them before the spawn so
++        // this cannot race the new server's own registration.
++        if let Ok(mut registry) = crate::registry::ServerRegistry::load().await {
++            let _ = registry.cleanup_stale().await;
++        }
+ 
+         maybe_prompt_server_bootstrap_login(&args.provider).await?;
+         spawn_server(
+@@ -1464,6 +1470,20 @@ async fn spawn_server_with_lifetime(
+     Ok(())
+ }
+ 
++/// True when the shared server accepts a fresh connection and answers a ping.
++///
++/// A Ping is a one-shot control request, so sending it over the held keepalive
++/// connection would make the server close that connection after replying.
++/// Probe through a short-lived client instead.
++async fn keepalive_server_answers_ping() -> bool {
++    tokio::time::timeout(std::time::Duration::from_secs(5), async {
++        let mut probe = server::Client::connect().await?;
++        probe.ping().await
++    })
++    .await
++    .is_ok_and(|result| result.unwrap_or(false))
++}
++
+ async fn run_server_keepalive(
+     provider_choice: &ProviderChoice,
+     model: Option<&str>,
+@@ -1481,6 +1501,7 @@ async fn run_server_keepalive(
+     });
+     let mut client: Option<server::Client> = None;
+     let mut first_attempt = true;
++    let mut unhealthy_server_hold_skip = false;
+ 
+     loop {
+         let delay = if first_attempt {
+@@ -1495,25 +1516,28 @@ async fn run_server_keepalive(
+             _ = &mut owner_closed => return Ok(()),
+             _ = tokio::time::sleep(delay) => {
+                 if client.is_some() {
+-                    // A Ping is a one-shot control request, so sending it over
+-                    // the held connection would make the server close that
+-                    // connection after replying. Probe through a short-lived
+-                    // client instead and leave the counted keepalive connected.
+-                    let healthy = tokio::time::timeout(
+-                        std::time::Duration::from_secs(5),
+-                        async {
+-                            let mut probe = server::Client::connect().await?;
+-                            probe.ping().await
+-                        },
+-                    )
+-                    .await
+-                    .is_ok_and(|result| result.unwrap_or(false));
+-                    if healthy {
++                    if keepalive_server_answers_ping().await {
+                         continue;
+                     }
++                    // Release the hold before anything else. A server that has
++                    // a listener but no longer answers must not be pinned: the
++                    // held connection is what kept such zombies alive for days
++                    // (issue #1887). Without it the server's idle exit can run.
+                     client = None;
++                    unhealthy_server_hold_skip = true;
++                }
++                if !server::has_live_listener(&server::socket_path()).await {
++                    unhealthy_server_hold_skip = false;
++                    if spawn_server(provider_choice, model, provider_profile).await.is_err() {
++                        continue;
++                    }
++                } else if unhealthy_server_hold_skip {
++                    // Give the unresponsive server one full interval with no
++                    // hold so it can idle-exit before we probe it again.
++                    unhealthy_server_hold_skip = false;
++                    continue;
+                 }
+-                if spawn_server(provider_choice, model, provider_profile).await.is_ok()
++                if keepalive_server_answers_ping().await
+                     && let Ok(connected) = server::Client::connect().await
+                 {
+                     client = Some(connected);
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1890** (2026-10-19): Make Jev decision models configurable (@Tapraj-Pathak)
+- **PR #1886** (2026-10-19): feat(provider): native Muse subscription login without the Muse CLI (@vallabha717)
 - **PR #1870** (closed): fix(swarm): wire swarm-member rename to the coordinator (RenameSwarmSession) (@KooshaPari)
+- **PR #1869** (2026-10-19): feat(jev): support local/self-hosted Laya (/v1/systemone) provider (#1868) (@xsa-dev)
 - **PR #1867** (closed): feat(provider): Muse Code subscription support via MSP (@vallabha717)
 - **PR #1861** (closed): fix(a2/auto-dream): make LLM-stub path honest (parked, not WouldConsolidate) (@KooshaPari)
-- **PR #1844** (closed): chore(fmt): cargo fmt cleanup + clippy followup (122 files, +704/-10619) (@KooshaPari)
-- **PR #1798** (closed): docs(hooks): document array hook values and the turn_start hook (@hann-yun)
-- **PR #1793** (2026-10-11): fix(menubar): stable macOS signing identity and a [menubar] enabled opt-out (@1jehuang)
 
 ---
 
@@ -2647,36 +3079,59 @@ pending; it reverts to the normal schedule once it is applied.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Tick every 10ms while the fast-start transcript is still rendering
+## X. Test KV account-failover attribution end to end through the agent turn loop
 
 **RULE**:
-When implementing operations in `crates/jcode-tui/src/tui/app/run_shell.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 1jehuang/jcode. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/jcode-app-core/src/agent/cache_monitor_tests.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 1jehuang/jcode. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bd5cdd45`: Tick every 10ms while the fast-start transcript is still rendering. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `48aa83e9`: Test KV account-failover attribution end to end through the agent turn loop. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/jcode-tui/src/tui/app/run_shell.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/jcode-app-core/src/agent/cache_monitor_tests.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// Tick cadence while the reload fast-start transcript is still rendering.
-const STARTUP_TRANSCRIPT_POLL: std::time::Duration = std::time::Duration::from_millis(10);
-                let desired_redraw = if self.pending_startup_transcript.is_some() {
-                    // Nothing wakes the loop when the transcript thread
-                    // finishes, so poll briefly until it does (~tens of ms).
-                    STARTUP_TRANSCRIPT_POLL
-                } else {
-                    crate::tui::redraw_interval(&self)
-                };
+
+/// Replays the 2026-10-19 incident: a 429 on account `claude-fox` failed the
+/// turn over to `claude-otter` with the same model. The new account read 0
+/// cached tokens, which used to be reported as an unexplained zero read.
+#[derive(Clone)]
+struct AccountFailoverProvider {
+    calls: Arc<AtomicUsize>,
+    account: Arc<std::sync::Mutex<String>>,
+}
+
+#[async_trait]
+impl Provider for AccountFailoverProvider {
+    async fn complete(
+        &self,
+        _: &[Message],
+        _: &[ToolDefinition],
+        _: &str,
+        _: Option<&str>,
+    ) -> Result<crate::provider::EventStream> {
+        let call = self.calls.fetch_add(1, Ordering::SeqCst);
+        let (read, write) = if call == 0 { (33_000, 96) } else { (0, 39_721) };
+        Ok(Box::pin(futures::stream::iter(vec![
+            Ok(StreamEvent::TokenUsage {
+                input_tokens: Some(483),
+                output_tokens: Some(5),
+                cache_read_input_tokens: Some(read),
+                cache_creation_input_tokens: Some(write),
+            }),
+            Ok(StreamEvent::TextDelta("answer".into())),
+            Ok(StreamEvent::MessageEnd {
+                stop_reason: Some("end_turn".into()),
+            })
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-                let desired_redraw = crate::tui::redraw_interval(&self);
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bd5cdd45` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `48aa83e9` are properly handled with clean fallback behavior.
