@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T19:03:37.656Z",
-  "total_verified_learnings": 886,
+  "last_updated": "2026-10-19T19:10:01.413Z",
+  "total_verified_learnings": 888,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -2757,8 +2757,8 @@
       "slug": "assistant-ui-assistant-ui",
       "platform": "github",
       "source_url": "https://github.com/assistant-ui/assistant-ui",
-      "source_version": "1960f3c2",
-      "content_hash": "72b7c39dd4592aceb4eabaa63860c430ab1f6ebf85176d6ff8ae5f25b7e59368",
+      "source_version": "727a02dc",
+      "content_hash": "388be72ad51b985805371dcc1685745865f4b4f86d8d1f08e964d2783df97531",
       "dossier_path": "07_PROJECT_LEARNING/assistant-ui-assistant-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/assistant-ui-assistant-ui-learnings.md",
       "promoted_rules": [
@@ -2781,6 +2781,11 @@
           "number": 2374,
           "title": "Hard-Capped Stream Ingestion with Early Transport Cancellation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2761,
+          "title": "store): update captured selectors when forwarding targets change (#9108)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2788,7 +2793,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T08:07:12.038Z",
+      "verified_at": "2026-10-19T19:09:55.542Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -3234,22 +3239,35 @@
     "learn-github-badoo-reaktive": {
       "learning_id": "learn-github-badoo-reaktive",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "badoo-reaktive",
+      "source": "badoo/Reaktive",
+      "repository": "badoo/Reaktive",
       "slug": "badoo-reaktive",
       "platform": "github",
       "source_url": "https://github.com/badoo/Reaktive",
-      "source_version": "HEAD",
-      "content_hash": "8a260e2b535c5c3cb63d0187396edb483e5f807a91108522f5c69aadd070de36",
+      "source_version": "9d6cb630",
+      "content_hash": "237eae6d9b7ce7848ab98521d42feb6aa8468fcae2550098b4e4f4d6dbab114b",
       "dossier_path": "07_PROJECT_LEARNING/badoo-reaktive-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/badoo-reaktive-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2763,
+          "title": "Merge pull request #785 from arkivanov/fix-RefCountThreadingTest",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.024Z"
+      "verified_at": "2026-10-19T19:10:01.394Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-bahdotsh-wrkflw": {
       "learning_id": "learn-github-bahdotsh-wrkflw",
@@ -55487,22 +55505,36 @@
     "learn-github-aliarifsoydas-sitemap-checker": {
       "learning_id": "learn-github-aliarifsoydas-sitemap-checker",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "aliarifsoydas/sitemap-checker",
       "repository": "aliarifsoydas/sitemap-checker",
       "slug": "aliarifsoydas-sitemap-checker",
       "platform": "github",
       "source_url": "https://github.com/aliarifsoydas/sitemap-checker",
-      "source_version": "main",
-      "content_hash": "ddcad69298277d534a3be55623bc64e951c18f6ec3bc4dc5e1c3a8870660e4c4",
+      "source_version": "8eef8767",
+      "content_hash": "8c430725c05dc523d90b709925e3f1e24fdd18f5d9d3d7507e68ec5e81dc53f0",
       "dossier_path": "07_PROJECT_LEARNING/aliarifsoydas-sitemap-checker-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aliarifsoydas-sitemap-checker-learnings.md",
       "promoted_rules": [
-        "Rule 1627"
+        "Rule 1627",
+        {
+          "number": 2762,
+          "title": "Redesign: warm light UI, drop AI design cliches",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
       ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:27:04.005893Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T19:09:56.243Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-samvelik-sitemap-checker": {
       "learning_id": "learn-github-samvelik-sitemap-checker",
@@ -91289,6 +91321,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T19:03:37.650Z"
+    },
+    "rule-2761": {
+      "learning_id": "rule-2761",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2761,
+      "title": "store): update captured selectors when forwarding targets change (#9108)",
+      "source_url": "https://github.com/assistant-ui/assistant-ui",
+      "source_version": "727a02dc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T19:09:55.542Z"
+    },
+    "rule-2762": {
+      "learning_id": "rule-2762",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2762,
+      "title": "Redesign: warm light UI, drop AI design cliches",
+      "source_url": "https://github.com/aliarifsoydas/sitemap-checker",
+      "source_version": "8eef8767",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T19:09:56.243Z"
+    },
+    "rule-2763": {
+      "learning_id": "rule-2763",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2763,
+      "title": "Merge pull request #785 from arkivanov/fix-RefCountThreadingTest",
+      "source_url": "https://github.com/badoo/Reaktive",
+      "source_version": "9d6cb630",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T19:10:01.394Z"
     }
   },
   "aliases": {

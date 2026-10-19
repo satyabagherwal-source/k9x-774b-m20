@@ -2373,10 +2373,10 @@
     "repository": "assistant-ui/assistant-ui",
     "platform": "github",
     "sourceUrl": "https://github.com/assistant-ui/assistant-ui",
-    "sourceVersion": "1960f3c2",
+    "sourceVersion": "727a02dc",
     "license": "MIT",
-    "contentHash": "72b7c39dd4592aceb4eabaa63860c430ab1f6ebf85176d6ff8ae5f25b7e59368",
-    "lastHarvestedAt": "2026-10-19T08:07:12.102Z",
+    "contentHash": "388be72ad51b985805371dcc1685745865f4b4f86d8d1f08e964d2783df97531",
+    "lastHarvestedAt": "2026-10-19T19:09:55.609Z",
     "learningId": "learn-github-assistant-ui-assistant-ui"
   },
   "ducaale-xh": {
@@ -8708,5 +8708,25 @@
     "contentHash": "921dbf6799a3a6a62331356e8396a22adfd77943d54ea3b530023740ed59d22f",
     "lastHarvestedAt": "2026-10-19T19:03:33.787Z",
     "learningId": "learn-github-yshrsmz-buildkonfig"
+  },
+  "aliarifsoydas-sitemap-checker": {
+    "repository": "aliarifsoydas/sitemap-checker",
+    "platform": "github",
+    "sourceUrl": "https://github.com/aliarifsoydas/sitemap-checker",
+    "sourceVersion": "8eef8767",
+    "license": "PERMISSIVE_OPEN_SOURCE",
+    "contentHash": "8c430725c05dc523d90b709925e3f1e24fdd18f5d9d3d7507e68ec5e81dc53f0",
+    "lastHarvestedAt": "2026-10-19T19:09:56.316Z",
+    "learningId": "learn-github-aliarifsoydas-sitemap-checker"
+  },
+  "badoo-reaktive": {
+    "repository": "badoo/Reaktive",
+    "platform": "github",
+    "sourceUrl": "https://github.com/badoo/Reaktive",
+    "sourceVersion": "9d6cb630",
+    "license": "Apache-2.0",
+    "contentHash": "237eae6d9b7ce7848ab98521d42feb6aa8468fcae2550098b4e4f4d6dbab114b",
+    "lastHarvestedAt": "2026-10-19T19:10:01.481Z",
+    "learningId": "learn-github-badoo-reaktive"
   }
 }

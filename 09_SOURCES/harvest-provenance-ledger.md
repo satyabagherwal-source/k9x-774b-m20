@@ -3441,3 +3441,6 @@ Every entry in this ledger must capture:
 | `learn-github-raghav453-multilipi-hreflang-generator` | `https://github.com/raghav453/multilipi-hreflang-generator` | `ca4d146c` | Multi-dimensional audit evidence | 2026-10-19T19:03:30.159Z |
 | `learn-github-yshrsmz-buildkonfig` | `https://github.com/yshrsmz/BuildKonfig` | `f460ddf9` | Multi-dimensional audit evidence | 2026-10-19T19:03:33.787Z |
 | `learn-github-projectcontour-contour` | `https://github.com/projectcontour/contour` | `16f633ee` | Multi-dimensional audit evidence | 2026-10-19T19:03:37.682Z |
+| `learn-github-assistant-ui-assistant-ui` | `https://github.com/assistant-ui/assistant-ui` | `727a02dc` | Multi-dimensional audit evidence | 2026-10-19T19:09:55.609Z |
+| `learn-github-aliarifsoydas-sitemap-checker` | `https://github.com/aliarifsoydas/sitemap-checker` | `8eef8767` | Multi-dimensional audit evidence | 2026-10-19T19:09:56.316Z |
+| `learn-github-badoo-reaktive` | `https://github.com/badoo/Reaktive` | `9d6cb630` | Multi-dimensional audit evidence | 2026-10-19T19:10:01.481Z |

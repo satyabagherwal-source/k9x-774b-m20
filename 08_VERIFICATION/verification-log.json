@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-JLH3",
-    "timestamp": "2026-10-19T05:05:32.535Z",
-    "repository": "u-root/u-root",
-    "learningId": "learn-github-u-root-u-root",
-    "contentHash": "41edc1c57bd8ce4613b62da2c63a3fde41c4f0fbdb2006ce2fdd0185b0c02f4d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-JOV8",
-    "timestamp": "2026-10-19T05:05:36.932Z",
-    "repository": "shoutem/ui",
-    "learningId": "learn-github-shoutem-ui",
-    "contentHash": "e1b3f1b92d02624182961128f4267216b2969e7fd3cdc10c957ef1db1286ad7c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-JR5L",
-    "timestamp": "2026-10-19T05:05:39.897Z",
-    "repository": "databricks/click",
-    "learningId": "learn-github-databricks-click",
-    "contentHash": "7986d0e4f235c31105077b04a8330ff073271b2f06fa63d13eb2c57331f2e677",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-JVZI",
     "timestamp": "2026-10-19T05:05:46.158Z",
     "repository": "ClickHouse/ClickHouse",
@@ -7490,6 +7445,51 @@
     "repository": "projectcontour/contour",
     "learningId": "learn-github-projectcontour-contour",
     "contentHash": "94e6c70e37c207754d8a4be26e5a48529e5d2430cfa194b0ddd8e5bfc994db3e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-PHCN",
+    "timestamp": "2026-10-19T19:09:55.607Z",
+    "repository": "assistant-ui/assistant-ui",
+    "learningId": "learn-github-assistant-ui-assistant-ui",
+    "contentHash": "388be72ad51b985805371dcc1685745865f4b4f86d8d1f08e964d2783df97531",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-PHW9",
+    "timestamp": "2026-10-19T19:09:56.313Z",
+    "repository": "aliarifsoydas/sitemap-checker",
+    "learningId": "learn-github-aliarifsoydas-sitemap-checker",
+    "contentHash": "8c430725c05dc523d90b709925e3f1e24fdd18f5d9d3d7507e68ec5e81dc53f0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-PLVQ",
+    "timestamp": "2026-10-19T19:10:01.478Z",
+    "repository": "badoo/Reaktive",
+    "learningId": "learn-github-badoo-reaktive",
+    "contentHash": "237eae6d9b7ce7848ab98521d42feb6aa8468fcae2550098b4e4f4d6dbab114b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
