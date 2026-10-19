@@ -3428,3 +3428,7 @@ Every entry in this ledger must capture:
 | `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `e63326d6` | Multi-dimensional audit evidence | 2026-10-19T18:36:01.184Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `b012a600` | Multi-dimensional audit evidence | 2026-10-19T18:36:04.243Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `89b9e75b` | Multi-dimensional audit evidence | 2026-10-19T18:36:07.758Z |
+| `learn-github-matthews-wong-structured-data-validator` | `https://github.com/matthews-wong/structured-data-validator` | `e85df7a4` | Multi-dimensional audit evidence | 2026-10-19T18:42:20.874Z |
+| `learn-github-simonschubert-kai` | `https://github.com/SimonSchubert/Kai` | `628900a9` | Multi-dimensional audit evidence | 2026-10-19T18:42:23.443Z |
+| `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `4a85f985` | Multi-dimensional audit evidence | 2026-10-19T18:42:26.139Z |
+| `learn-github-gravitl-netmaker` | `https://github.com/gravitl/netmaker` | `82df6b46` | Multi-dimensional audit evidence | 2026-10-19T18:42:28.586Z |

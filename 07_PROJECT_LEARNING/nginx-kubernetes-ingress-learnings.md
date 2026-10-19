@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md`  
 > **Source**: github ([https://github.com/nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress))  
-> **Source Version**: `1b0403e3`  
+> **Source Version**: `4a85f985`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T06:26:25.197Z  
+> **Timestamp**: 2026-10-19T18:42:25.982Z  
 > **Learning ID**: `learn-github-nginx-kubernetes-ingress`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T06:26:25.190Z  
+> **Harvest Timestamp**: 2026-10-19T18:42:25.975Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: NGINX and  NGINX Plus Ingress Controllers for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: pyproject.toml, go.mod, README.md
-- **Stars / Engagement**: 5085 stars
+- **Stars / Engagement**: 5086 stars
 
 ---
 
@@ -1285,856 +1285,192 @@ NIC prints a startup warning when set. Requires -plm-storage-url.`)
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e1bfa30e` (2026-10-16)
-**Commit Message**: e2e test stability fixes (#10850)
+### Incident Patch 1: `4a85f985` (2026-10-19)
+**Commit Message**: Update python dependencies (main) (#11156)
 
-* test: add e2e run ID label helpers
+Update python dependencies
 
-Provide function-scoped run IDs and helpers for labeling workload pod templates without changing workload selectors.\n\nThis establishes the ownership primitives used to scope later e2e pod operations.
+| datasource | package        | from   | to     |
+| ---------- | -------------- | ------ | ------ |
+| pypi       | cachetools     | 7.2.1  | 7.2.2  |
+| pypi       | google-auth    | 2.61.0 | 2.62.0 |
+| pypi       | more-itertools | 11.1.0 | 11.2.1 |
+| pypi       | playwright     | 1.63.0 | 1.64.0 |
+| pypi       | pluggy         | 1.6.0  | 1.7.0  |
+| pypi       | wrapt          | 2.5.0  | 2.5.1  |
 
-Assisted-by: OpenCode
+Signed-off-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
-* test: label e2e workload pod templates
-
-Thread caller-supplied run IDs through workload creators and add them to pod templates before creation.\n\nMutate generic kubectl apply manifests in memory while leaving source manifests and teardown paths unchanged.
-
-Assisted-by: OpenCode
-
-* test: scope pod utilities by e2e run ID
-
-Allow pod selection, readiness, counts, and pod metrics to use workload ownership selectors.\n\nIgnore terminating pods during readiness checks so prior teardown does not block a new run.
-
-Assisted-by: OpenCode
-
-* test: scope shared fixture pod operations
-
-Assign stable run IDs to shared ingress controller and DoS fixture workloads.\n\nUse their selectors for creation waits, controller bundle setup, and failure-log collection.
-
-Assisted-by: OpenCode
-
-* test: scope function backend waits by run ID
-
-Pass each test invocation's run ID through direct example-app creation a
-
-**File**: `.github/workflows/lint-format.yml` (modified, +20/-0)
+**File**: `.github/scripts/requirements.txt` (modified, +102/-102)
 ```diff
-@@ -65,6 +65,26 @@ jobs:
-           version: v2.14.0
-           only-new-issues: true
- 
-+  python-unit:
-+    name: Python Test Utils Unit Tests
-+    if: github.repository == 'nginx/kubernetes-ingress'
-+    runs-on: ubuntu-24.04
-+    steps:
-+      - name: Checkout Repository
-+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-+
-+      - name: Setup Python
-+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
-+        with:
-+          python-version: "3.14"
-+
-+      - name: Install test dependencies
-+        run: pip install --require-hashes --no-deps -r tests/requirements.txt
-+
-+      - name: Run unit tests
-+        # --noconftest: these tests mock the Kubernetes API and must not load the cluster fixtures
-+        run: PYTHONPATH=tests python -m pytest --noconftest -m utils tests/suite/utils
-+
-   actionlint:
-     name: Actionlint
-     if: github.repository == 'nginx/kubernetes-ingress'
+@@ -565,106 +565,106 @@ urllib3==2.8.0 \
+     # via
+     #   pygithub
+     #   requests
+-wrapt==2.5.0 \
+-    --hash=sha256:05246a100da68259af521b88788f131ba005465f1c95d358cc3c03ec5e351b52 \
+-    --hash=sha256:05b7a271e21598694dcb7a6d6224f04e80ecc24b00a31ec57c658196377b0b29 \
+-    --hash=sha256:0810e060e58f7960405172ad21080df8e7335841c9fe97417bd7d3f05af24f90 \
+-    --hash=sha256:0a7a369e7fca9fc8c2c50df634382009b09af416853da3d4515e4bb048a5b9ee \
+-    --hash=sha256:0cabb9c17ab79b2549d1f23b36f436473ad9253ef53995a817feba26fae69d5b \
+-    --hash=sha256:0d245ac03f5ae77f1eea6eb19edd9e778c2f772490c20496c2f1cd3a102ee1b6 \
+-    --hash=sha256:0dfc38cb672af51fc29696ba9c6f05d2315f5e62c4af2564e50f07f81198a163 \
+-    --hash=sha256:0ea62bc142f4fa8b2e0ab058f50699ccd679ef6199c8fa3cc1c2396c7a659000 \
+-    --hash=sha256:107eea1a511e98a3a5033b0c2cb403fbb37f05dee6ac1fb85c0460d311ec278c \
+-    --hash=sha256:1122f4f9e363da804ccba05a9f0f39baa3716eb82452c929258bc3f1420c899b \
+-    --hash=sha256:148052fc55013930217f531c6978e918ab210a12bd73cc9bd6de661a7adaf620 \
+-    --hash=sha256:181a45000506a6382eb337354ca7e8525690702f1ccf2eae4f23a210ff339543 \
+-    --hash=sha256:18baaf966bdc22dbdbe6e4323da8c17c0b7e8ea941dccf5426e741ae398953d9 \
+-    --hash=sha256:1a3c4035d2026b87ef23dd8d165f1f8d3853ee2bd02791cfd22bd8c6226c41ce \
+-    --hash=sha256:1b35ef7379323a149a6398f6261248bf48b61666210bd69e2ab24a9a9afdedc0 \
+-    --hash=sha256:1ccd22ef8690ca302425f26d4c3e8b24f1284d4351d20e49ce21f9c0dd58d64d \
+-    --hash=sha256:1d4da5f0e9a719471502b0db80d5c97503aeca796b7aeb9ab8f47403b2be76e6 \
+-    --hash=sha256:1ebc0d09906057ada57a32158a657364ca40b8f86e604da3e7d979069b601502 \
+-    --hash=sha256:1f17c5a3836397bf59fd57b0e5b0dc42969b1daa70d31aa361c6e13cbf138b5a \
+-    --hash=sha256:1ffb2823c95dbeb8a47fedfba9636b2afeb0a8ef94b66df97bd081bdfe5a263f \
+-    --hash=sha256:21cfe343ef9c2deb865ad0d5c57822266447c88dcf6d8805dd8c363fe367f30c \
+-    --hash=sha256:23a9d6cb6413359b76f030d6bbb75340b7669c69da245dde2919a4c93708993b \
+-    --hash=sha256:2ac82ef59ee05e259902bc7cf73dee5e6397845e8ccdc376d9d25536b59a877c \
+-    --hash=sha256:2e3d110d7f99644946f249927c346d9dba507a78815d1bcebdbf0d94c14c5649 \
+-    --hash=sha256:2fd8a61c31220840c7f52621cf51c961af5058bd009a55bcdf4a6732bdb13b35 \
+-    --hash=sha256:30cf86d1e35a57e772e4709a137c1731751255439368a41b1a2519561e385f4e \
+-    --hash=sha256:36703cafc2ec059e118c2175e6cb7ad7299c2924aecdcb1b7a7ebbf7a3e20c19 \
+-    --hash=sha256:3f5dfb867d3f58fde0d850a302f1164bb83f4a922b037882bcc7e0474aa8312f \
+-    --hash=sha256:425349a99b8c9540399d36620c376dc26e6aca93071cd6fafa239c2f1b5d53a4 \
+-    --hash=sha256:4343880acd72e74233baf092285aaaf4306244e31d7601828bd2600316027df0 \
+-    --hash=sha256:439523506fd0d9af4f76d75f2e46aa4979e164fecba6890859326ff06edbaf9c \
+-    --hash=sha256:47abb2bb7f15b416e72fbe5e68e49a6f09331dae6af1ca6055f5aa2251d2bd2f \
+-    --hash=sha256:513dd1f4a1f91030d5656d9f4b3af8aa490d4db1eb53481e6846b8a5ee7acfcd \
+-    --hash=sha256:5375ff1d2159e2ef847449e3dd2329441423d0a3d895d123273a67095fe7ca0c \
+-    --hash=sha256:5421acb5c363a9bc959122a8645e3f1f42010c932dc53885b11a5ff5b5a6d730 \
+-    --hash=sha256:557ebf4ce5568588368675014a2540405db687c2e4c7ad1eb83aa7e857be1864 \
+-    --hash=sha256:57fa1a3fd1279b3ca7655b943ad61d298f2a2464a4cdca7ff298058e408322f9 \
+-    --hash=sha256:58b2a87c65cbfb20917ec48ace47f71b1962c1f81dbf18a4052e3037abf72028 \
+-    --hash=sha256:5df50c6133a63071fb77a0a091ceae36e78467b728d65e711ded02510edd9855 \
+-    --hash=sha256:6058e12e9caa33468f9a36fb88c15a4bb30a479f997b37834b83abdbf062f264 \
+-    --hash=sha256:6119e5d5bda268171af1f68ab5e7544c618f02a9bdc7c3929a458b719b88cd03 \
+-    --hash=sha256:61253431e5a6f0eaeae71e2a101753fbaf4360b3e4dd8e118177d565ae119d40 \
+-    --hash=sha256:6269637d9a54990430b4a769df15833935a46c4d004d9fe8a153bbadf0b9a097 \
+-    --hash=sha256:63e58f96849f622ce769dcd705f83c7445cd9829bce1dae00e78bb031aec8096 \
+-    --hash=sha256:65f2ee406dc592a5b22a7dc6abac13e8a3e8de4b2ecf5dc3c22937865496e4b6 \
+-    --hash=sha256:672dd1bab4256311db1520b1b50e7a10cbaeaae2b0ac6bc5d858cc387ee605a2 \
+-    --hash=sha256:6761765cc520ff9616fb035c02a85d1d744f7f70edd4649718fd0d09c589eacf \
+-    --hash=sha256:691671ea05684f921ffc2e935fd3f9311c1795a10fbbfa006b46269733668f66 \
+-    --hash=sha256:6a31cc61ad1be4091f5b094c91d53d206609928af13b7b24573cb857a3bc07fc \
+-    --hash=sha256:6a9ee62a970075738909909bdbef3a7da9f7ae03dfca584db283547a29503b56 \
+-    --hash=sha256:7138b0e7990e5555a905c519e8dad17c1da1f20e08b283e202c414229065740f \
+-    --hash=sha256:734ea79e4707751fb7cc4f716123b2115cd16ed0c4926e803540aece22e3ba67 \
+-    --hash=sha256:76fb341d5a707a4f211631b8c77259b2df149147e9d9c245ae6ba3dd936bfdfb \
+-    --hash=sha256:77f0a74ff6f6cf89f5b673a732d5afe1911a6e6b1c017260836fdfdf85518dc1 \
+-    --hash=sha256:78b7bdaa8b27b7f7607c66bdb6ab15c1dcbd9e9a1556a253a347dad511f615d1 \
+-    --hash=sha256:79e68f0fd7d381b9bbd71776f602a2d5440d4d2077459128e02fd6607465422c \
+-    --hash=sha256:7e25e9697f60af41fb86b08697e470b1e7eb6cd6ac0eb25e4b1f519839adc
 ```
 
-**File**: `docs/developer/parallel-e2e-plan.md` (added, +376/-0)
+**File**: `tests/requirements.txt` (modified, +21/-21)
 ```diff
-@@ -0,0 +1,376 @@
-+# Plan: Parallel Python E2E Tests
-+
-+## Status: Draft
-+
-+## Summary
-+
-+**Goal:** cut the wall time each CI run spends on the Python e2e tests.
-+
-+**Baseline**, from [run 29586045012](https://github.com/nginx/kubernetes-ingress/actions/runs/29586045012?pr=10492):
-+
-+- The CI critical path is about 47 minutes.
-+- The slowest shard is `ingresses 1/3 alpine-plus` at 28:40.
-+- One test (`test_dos.py::test_dos_under_attack_with_learning`) took 752 s, and its upper limit is 900 s.
-+
-+**Route:**
-+
-+1. **Several kind clusters per runner.** This is
-+   [#10492](https://github.com/nginx/kubernetes-ingress/pull/10492)'s
-+   "Option B". It needs no changes to the tests and makes small shards
-+   cheap.
-+2. **pytest-xdist workers inside each cluster.** This is #10492's "Option A".
-+   Each shard gets shorter directly. It needs the tests to be isolated and
-+   independent of run order.
-+
-+Running several clusters per runner **does not shorten wall time on its
-+own**. It packs shards onto fewer runners, which saves runner-minutes, but
-+the run still takes as long as its slowest shard. Wall time only drops
-+when we:
-+
-+- split shards finer, which becomes cheap once one runner hosts several
-+  clusters, or
-+- run tests in parallel inside a shard, which is what xdist does.
-+
-+**Where the PRs fit:**
-+
-+| PR | What it does | Phases |
-+|---|---|---|
-+| [#10850](https://github.com/nginx/kubernetes-ingress/pull/10850) | Labels each test's workloads with a run ID, so pod waits and lookups only see that test's pods. A prerequisite for xdist; reduces flakes now. | 0, prerequisite for 3–5 |
-+| [#10492](https://github.com/nginx/kubernetes-ingress/pull/10492) | Design doc, duration tooling, and a proof of concept for several kind clusters per runner. Also proposes ways to get PRs merged faster. | 1, 2, plus [Throughput work](#throughput-work-alongside-not-on-the-critical-path) |
-+
-+Every step below is tagged with where it comes from: **[10850]**,
-+**[10492]**, or **[new]** for work neither PR covers.
-+
-+## Target End State
-+
-+Each CI matrix job:
-+
-+- runs on one runner hosting N kind clusters;
-+- runs one pytest process per cluster;
-+- runs `-n M` xdist workers in each process;
-+- runs a short serial pass at the end.
-+
-+The shards come from measured durations, not from hand-numbered splits
-+like `policies 1/9`.
-+
-+### Acceptance criteria
-+
-+| # | Requirement | How we verify it |
-+|---|---|---|
-+| 1 | **No bleed.** A test only creates, waits on, reads and deletes its own resources. | (a) Fail any unscoped `list_namespaced_pod` or readiness wait in a lint or unit check. (b) Within a cluster: run the parallel suite with `-n 2` on the same commit as a serial run, and compare the failure sets. (c) Across clusters: Phase 5 audit, where failures among shards sharing a runner are close to uncorrelated. |
-+| 2 | **No order dependence.** Every test class passes in any class order, and when run alone. | A nightly job using `pytest -p random_order` (or `pytest-randomly`) with a recorded seed, plus `--dist loadscope`. |
-+| 3 | **Serial group.** Tests that need the whole cluster or controller are marked `@pytest.mark.serial` and run in their own pass after the parallel pass. | CI runs `-m "not serial" -n M`, then `-m serial`. Review checklist: any test that changes cluster-wide state must carry the marker. |
-+| 4 | **Wall time.** The critical path drops at each phase (targets below). | The `longest_test_job.py --mode jobs` trend in each phase's PR. |
-+
-+### Wall-time targets
-+
-+The rough numbers come from 10492's measurements. Phase 1 re-measures
-+them.
-+
-+| After phase | Smoke critical path | Bound by |
-+|---|---|---|
-+| Today | ~29 min shard, ~47 min CI | `ingresses 1/3`, `ingresses 1/2` |
-+| 1 (split outlier shards) | ~16 min | `AP_DOS 3/3`, unless DoS learning moves to nightly |
-+| 2 (several clusters per runner) | ~16 min, fewer runners | longest single shard |
-+| 5–6 (xdist in each cluster) | longest *class* in a shard, plus the serial pass | `test_dos`, `test_app_protect_waf_policies` |
-+
-+## Phases
-+
-+### Phase 0 — Stability groundwork **[10850]**
-+
-+**Why:** concurrent tests can't share a namespace while their pod waits
-+match every pod in it. Flakes also eat the gains from every later phase.
-+
-+**Done in #10850:**
-+
-+- `e2e.nginx.org/run-id` label on the pod templates of workloads created
-+  through `create_deployment`, `create_daemon_set`, `create_stateful_set`,
-+  `create_items_from_yaml`, `create_example_app` and
-+  `create_generic_from_yaml`.
-+- `wait_until_all_pods_are_ready` and `are_all_pods_in_ready_state` now
-+  *require* a label selector.
-+- `get_pod_list` and `get_first_pod_name` skip pods that are terminating.
-+- The Ingress Controller is selected with `IC_SELECTOR` (`app=nginx-ingress`)
-+  instead of "first pod in the namespace".
-+- `scale_deployment` and `create_dos_arbitrator` wait on the Deployment's own
-+  `matchLabels`. When scaling up, `scale_deployment` first waits until the
-+  requested number of pods
-```
-
-**File**: `perf-tests/conftest.py` (modified, +9/-6)
-```diff
-@@ -15,7 +15,7 @@
-     DEFAULT_SERVICE,
-     NUM_REPLICAS,
- )
--from suite.utils.resources_utils import get_first_pod_name
-+from suite.utils.resources_utils import IC_SELECTOR, get_first_pod_name
- 
- 
- def pytest_addoption(parser) -> None:
-@@ -156,8 +156,11 @@ def pytest_runtest_makereport(item) -> None:
- 
-     # we only look at actual failing test calls, not setup/teardown
-     if rep.when == "call" and rep.failed and item.config.getoption("--show-ic-logs") == "yes":
--        pod_namespace = item.funcargs["ingress_controller_prerequisites"].namespace
--        pod_name = get_first_pod_name(item.funcargs["kube_apis"].v1, pod_namespace)
--        print("\n===================== IC Logs Start =====================")
--        print(item.funcargs["kube_apis"].v1.read_namespaced_pod_log(pod_name, pod_namespace))
--        print("\n===================== IC Logs End =====================")
-+        try:
-+            pod_namespace = item.funcargs["ingress_controller_prerequisites"].namespace
-+            pod_name = get_first_pod_name(item.funcargs["kube_apis"].v1, pod_namespace, IC_SELECTOR)
-+            print("\n===================== IC Logs Start =====================")
-+            print(item.funcargs["kube_apis"].v1.read_namespaced_pod_log(pod_name, pod_namespace))
-+            print("\n===================== IC Logs End =====================")
-+        except Exception as e:
-+            print(f"\nFailed to retrieve NGINX Ingress Controller Pod Logs: {e}")
-```
-
-**File**: `perf-tests/suite/test_ap_reload_perf.py` (modified, +7/-3)
-```diff
-@@ -16,6 +16,7 @@
-     delete_ap_policy,
- )
- from suite.utils.resources_utils import (
-+    IC_SELECTOR,
-     create_example_app,
-     create_ingress,
-     create_ingress_with_ap_annotations,
-@@ -24,6 +25,8 @@
-     delete_items_from_yaml,
-     ensure_connection_to_public_endpoint,
-     ensure_response_from_backend,
-+    generate_e2e_run_id,
-+    get_e2e_run_selector,
-     get_resource_metrics,
-     replace_ingress_with_ap_annotations,
-     wait_before_test,
-@@ -62,7 +65,7 @@ def enable_prometheus_port(
-     body = kube_apis.apps_v1_api.read_namespaced_deployment("nginx-ingress", namespace)
-     body.spec.template.spec.containers[0].ports.append(port)
-     kube_apis.apps_v1_api.patch_namespaced_deployment("nginx-ingress", namespace, body)
--    wait_until_all_pods_are_ready(kube_apis.v1, namespace)
-+    wait_until_all_pods_are_ready(kube_apis.v1, namespace, IC_SELECTOR)
- 
- 
- @pytest.fixture(scope="class")
-@@ -80,9 +83,10 @@ def appprotect_setup(
-     """
- 
-     print("------------------------- Deploy simple backend application -------------------------")
--    create_example_app(kube_apis, "simple", test_namespace)
-+    e2e_run_id = generate_e2e_run_id()
-+    create_example_app(kube_apis, "simple", test_namespace, e2e_run_id=e2e_run_id)
-     req_url = f"https://{ingress_controller_endpoint.public_ip}:{ingress_controller_endpoint.port_ssl}/backend1"
--    wait_until_all_pods_are_ready(kube_apis.v1, test_namespace)
-+    wait_until_all_pods_are_ready(kube_apis.v1, test_namespace, get_e2e_run_selector(e2e_run_id))
-     ensure_connection_to_public_endpoint(
-         ingress_controller_endpoint.public_ip,
-         ingress_controller_endpoint.port,
-```
-
-**File**: `perf-tests/suite/test_ingress_perf.py` (modified, +5/-2)
-```diff
-@@ -13,6 +13,8 @@
-     delete_secret,
-     ensure_connection,
-     ensure_connection_to_public_endpoint,
-+    generate_e2e_run_id,
-+    get_e2e_run_selector,
-     get_resource_metrics,
-     wait_before_test,
-     wait_until_all_pods_are_ready,
-@@ -37,10 +39,11 @@ def __init__(self, req_url):
- @pytest.fixture(scope="class")
- def setup(request, kube_apis, ingress_controller_prerequisites, ingress_controller_endpoint, test_namespace) -> Setup:
-     print("------------------------- Deploy prerequisites -----------------------------------")
-+    e2e_run_id = generate_e2e_run_id()
-     secret_name = create_secret_from_yaml(kube_apis.v1, test_namespace, f"{TEST_DATA}/smoke/smoke-secret.yaml")
- 
--    create_example_app(kube_apis, "simple", test_namespace)
--    wait_until_all_pods_are_ready(kube_apis.v1, test_namespace)
-+    create_example_app(kube_apis, "simple", test_namespace, e2e_run_id=e2e_run_id)
-+    wait_until_all_pods_are_ready(kube_apis.v1, test_namespace, get_e2e_run_selector(e2e_run_id))
-     req_url = f"https://{ingress_controller_endpoint.public_ip}:{ingress_controller_endpoint.port_ssl}/backend1"
-     ensure_connection_to_public_endpoint(
-         ingress_controller_endpoint.public_ip,
-```
-
-**File**: `pyproject.toml` (modified, +1/-0)
-```diff
-@@ -78,6 +78,7 @@ markers = [
-     "ts",
-     "ts_tcp",
-     "ts_udp",
-+    "utils",
-     "upgrade",
-     "vs",
-     "vs_api",
-```
-
-**File**: `tests/conftest.py` (modified, +19/-11)
-```diff
-@@ -17,6 +17,7 @@
-     NUM_REPLICAS,
- )
- from suite.utils.resources_utils import (
-+    IC_SELECTOR,
-     are_all_pods_in_ready_state,
-     get_first_pod_name,
-     wait_before_test,
-@@ -239,17 +240,24 @@ def pytest_runtest_makereport(item) -> None:
- 
-     # we only look at actual failing test calls, not setup/teardown
-     if rep.when == "call" and rep.failed and item.config.getoption("--show-ic-logs") == "yes":
--        pod_namespace = item.funcargs["ingress_controller_prerequisites"].namespace
--        pod_name = get_first_pod_name(item.funcargs["kube_apis"].v1, pod_namespace)
--        print("\n::group::NGINX Ingress Controller Pod Logs")
--        count = 0
--        while (not are_all_pods_in_ready_state(item.funcargs["kube_apis"].v1, pod_namespace)) and count < 10:
--            count += 1
--            wait_before_test()
--        pod = item.funcargs["kube_apis"].v1.read_namespaced_pod(pod_name, pod_namespace)
--        container_name = pod.spec.containers[0].name
--        print(item.funcargs["kube_apis"].v1.read_namespaced_pod_log(pod_name, pod_namespace, container=container_name))
--        print("::endgroup::")
-+        try:
-+            pod_namespace = item.funcargs["ingress_controller_prerequisites"].namespace
-+            pod_name = get_first_pod_name(item.funcargs["kube_apis"].v1, pod_namespace, IC_SELECTOR)
-+            print("\n::group::NGINX Ingress Controller Pod Logs")
-+            count = 0
-+            while (
-+                not are_all_pods_in_ready_state(item.funcargs["kube_apis"].v1, pod_namespace, IC_SELECTOR)
-+            ) and count < 10:
-+                count += 1
-+                wait_before_test()
-+            pod = item.funcargs["kube_apis"].v1.read_namespaced_pod(pod_name, pod_namespace)
-+            container_name = pod.spec.containers[0].name
-+            print(
-+                item.funcargs["kube_apis"].v1.read_namespaced_pod_log(pod_name, pod_namespace, container=container_name)
-+            )
-+            print("::endgroup::")
-+        except Exception as e:
-+            print(f"\nFailed to retrieve NGINX Ingress Controller Pod Logs: {e}")
- 
-     if rep.when == "call" and item.config.getoption("--skip-fixture-teardown") == "yes":
-         print("\n===================== WARNING =====================")
-```
-
-**File**: `tests/suite/fixtures/custom_resource_fixtures.py` (modified, +30/-15)
-```diff
-@@ -5,6 +5,7 @@
- from suite.fixtures.fixtures import PublicEndpoint
- from suite.utils.custom_resources_utils import create_gc_from_yaml, create_ts_from_yaml, delete_gc, delete_ts
- from suite.utils.resources_utils import (
-+    IC_SELECTOR,
-     create_deployment_with_name,
-     create_example_app,
-     create_items_from_yaml,
-@@ -15,6 +16,8 @@
-     delete_items_from_yaml,
-     delete_namespace,
-     delete_service,
-+    generate_e2e_run_id,
-+    get_e2e_run_selector,
-     get_first_pod_name,
-     wait_until_all_pods_are_ready,
- )
-@@ -101,13 +104,14 @@ def virtual_server_setup(request, kube_apis, ingress_controller_endpoint, test_n
-     :return: VirtualServerSetup
-     """
-     print("------------------------- Deploy Virtual Server Example -----------------------------------")
-+    e2e_run_id = generate_e2e_run_id()
-     vs_source = f"{TEST_DATA}/{request.param['example']}/standard/virtual-server.yaml"
-     vs_name = create_virtual_server_from_yaml(kube_apis.custom_objects, vs_source, test_namespace)
-     vs_host = get_first_host_from_yaml(vs_source)
-     vs_paths = get_paths_from_vs_yaml(vs_source)
-     if request.param.get("app_type"):
--        create_example_app(kube_apis, request.param["app_type"], test_namespace)
--        wait_until_all_pods_are_ready(kube_apis.v1, test_namespace)
-+        create_example_app(kube_apis, request.param["app_type"], test_namespace, e2e_run_id)
-+        wait_until_all_pods_are_ready(kube_apis.v1, test_namespace, get_e2e_run_selector(e2e_run_id))
- 
-     def fin():
-         if request.config.getoption("--skip-fixture-teardown") == "no":
-@@ -157,20 +161,21 @@ def transport_server_setup(
-     :return: TransportServerSetup
-     """
-     print("------------------------- Deploy Transport Server Example -----------------------------------")
-+    e2e_run_id = generate_e2e_run_id()
- 
-     # deploy global config
-     global_config_file = f"{TEST_DATA}/{request.param['example']}/standard/global-configuration.yaml"
-     gc_resource = create_gc_from_yaml(kube_apis.custom_objects, global_config_file, "nginx-ingress")
- 
-     # deploy service_file
-     service_file = f"{TEST_DATA}/{request.param['example']}/standard/service_deployment.yaml"
--    create_items_from_yaml(kube_apis, service_file, test_namespace)
-+    create_items_from_yaml(kube_apis, service_file, test_namespace, e2e_run_id)
- 
-     # deploy transport server
-     transport_server_file = f"{TEST_DATA}/{request.param['example']}/standard/transport-server.yaml"
-     ts_resource = create_ts_from_yaml(kube_apis.custom_objects, transport_server_file, test_namespace)
- 
--    wait_until_all_pods_are_ready(kube_apis.v1, test_namespace)
-+    wait_until_all_pods_are_ready(kube_apis.v1, test_namespace, get_e2e_run_selector(e2e_run_id))
- 
-     def fin():
-         if request.config.getoption("--skip-fixture-teardown") == "no":
-@@ -181,7 +186,7 @@ def fin():
- 
-     request.addfinalizer(fin)
- 
--    ic_pod_name = get_first_pod_name(kube_apis.v1, ingress_controller_prerequisites.namespace)
-+    ic_pod_name = get_first_pod_name(kube_apis.v1, ingress_controller_prerequisites.namespace, IC_SELECTOR)
-     ic_namespace = ingress_controller_prerequisites.namespace
- 
-     metrics_url = f"http://{ingress_controller_endpoint.public_ip}:{ingress_controller_endpoint.metrics_port}/metrics"
-@@ -210,16 +215,24 @@ def v_s_route_app_setup(request, kube_apis, v_s_route_setup) -> None:
-     :return:
-     """
-     print("---------------------- Deploy a VS Route Example Application ----------------------------")
-+    e2e_run_id = generate_e2e_run_id()
-     svc_one = create_service_with_name(kube_apis.v1, v_s_route_setup.route_m.namespace, "backend1-svc")
-     svc_three = create_service_with_name(kube_apis.v1, v_s_route_setup.route_m.namespace, "backend3-svc")
--    deployment_one = create_deployment_with_name(kube_apis.apps_v1_api, v_s_route_setup.route_m.namespace, "backend1")
--    deployment_three = create_deployment_with_name(kube_apis.apps_v1_api, v_s_route_setup.route_m.namespace, "backend3")
-+    deployment_one = create_deployment_with_name(
-+        kube_apis.apps_v1_api, v_s_route_setup.route_m.namespace, "backend1", e2e_run_id
-+    )
-+    deployment_three = create_deployment_with_name(
-+        kube_apis.apps_v1_api, v_s_route_setup.route_m.namespace, "backend3", e2e_run_id
-+    )
- 
-     svc_two = create_service_with_name(kube_apis.v1, v_s_route_setup.route_s.namespace, "backend2-svc")
--    deployment_two = create_deployment_with_name(kube_apis.apps_v1_api, v_s_route_setup.route_s.namespace, "backend2")
-+    deployment_two = create_deployment_with_name(
-+        kube_apis.apps_v1_api, v_s_route_setup.route_s.namespace, "backend2", e2e_run_id
-+    )
- 
--    wait_until_all_pods_are_ready(kube_apis.v1, v_s_route_setup.route_m.namespace)
--    wait_until_all_pods_are_ready(kube_apis.v1, v_s_route_setup.route_s.namespace)
-+    selector = get_e2e_run_selector(e2e_run_id)
-+    wait_until_all_pods_are_ready(kube_apis.v1, v_s_route_setup.route_m.namespace, selector)
-+   
+@@ -185,9 +185,9 @@ attrs==26.1.0 \
+     --hash=sha256:c647aa4a12dfbad9333ca4e71fe62ddc36f4e63b2d260a37a8b83d2f043ac309 \
+     --hash=sha256:d03ceb89cb322a8fd706d4fb91940737b6642aa36998fe130a9bc96c985eff32
+     # via -r requirements.in
+-cachetools==7.2.1 \
+-    --hash=sha256:63aa53dfe7473c10cccdd5a01dedf76ef2c4b73a58840d9396e7d0752cbdac3b \
+-    --hash=sha256:b1a7537025c06abf96fcc1443e496af9a3fb95e774e70e1f0af226f73f7f2dcc
++cachetools==7.2.2 \
++    --hash=sha256:39b6c9291adde28c5de6622d25329375fadf3e8a678226e7872e2e72854e4549 \
++    --hash=sha256:d521dc98d501ba9efd8d2b1663bbf88163509c0c0a090eea6dc154b421ec5410
+     # via
+     #   -r requirements.in
+     #   google-auth
+@@ -694,9 +694,9 @@ frozenlist==1.8.0 \
+     # via
+     #   aiohttp
+     #   aiosignal
+-google-auth==2.61.0 \
+-    --hash=sha256:37f0815967322e8c32b12bf422531e8b637cafdaae0acbb9141117cfe6a96f23 \
+-    --hash=sha256:ca60266a37475ae68b63bac007272f46094b3d571abe92aded329b6cfb568025
++google-auth==2.62.0 \
++    --hash=sha256:0bef0ce54bdf9ce226c5d66e4264413bd918141c31bbe49fb52eac882f513d69 \
++    --hash=sha256:4ff4319aeb4ad128409759d397a9fcafad126d0031d241cc0dd6b9a00b43e3f3
+     # via
+     #   -r requirements.in
+ gprof2dot==2025.4.14 \
+@@ -1095,9 +1095,9 @@ mock==5.2.0 \
+     --hash=sha256:4e460e818629b4b173f32d08bf30d3af8123afbb8e04bb5707a1fd4799e503f0 \
+     --hash=sha256:7ba87f72ca0e915175596069dbbcc7c75af7b5e9b9bc107ad6349ede0819982f
+     # via -r requirements.in
+-more-itertools==11.1.0 \
+-    --hash=sha256:48e8f4d9e7e5878571ecf6f2b4e57634f93cd474cc8cfbd2376f2d11b396e30d \
+-    --hash=sha256:4b65538ae22f6fed0ce4874efd317463a7489796a0939fa66824dd542125a192
++more-itertools==11.2.1 \
++    --hash=sha256:35a7377edd1dd6608dcb2cdf534ded55ea32d49448875ad042cd3f879fb1ded0 \
++    --hash=sha256:cbf08fd0af284dc69718b9b76a8e6203df624d70209ea511e4219d350c856f63
+     # via -r requirements.in
+ multidict==7.1.0 \
+     --hash=sha256:0179698c3c913eb64f32397083747fad20ed0f0a2b7469a08cd1a8a95d14d90e \
+@@ -1287,19 +1287,19 @@ packaging==26.3 \
+     #   -r requirements.in
+     #   forcediphttpsadapter
+     #   pytest
+-playwright==1.63.0 \
+-    --hash=sha256:1e4a3a838ce22fb68ad17193fcd142a19610d9d70fb9966d2239f5dddc0cc05b \
+-    --hash=sha256:2f9a707a6c6c91157ed77bff2b8caeb04b3c8d46e70d585fc134298cbe4b5cc6 \
+-    --hash=sha256:354e15b29503565fc598b89f16fbe070459343bef9d7498a93e304864000c6a7 \
+-    --hash=sha256:660c00c62639e31b16700ba5456b351ddba55bb766b7ce8261223aa34928e482 \
+-    --hash=sha256:84c540759e8e7f01e690e197e04060f48899d37cea322299f255843273d3385d \
+-    --hash=sha256:ad21bc07516b187965a7521c5cf0df0bd657b17482eaad74335272d35a2b07de \
+-    --hash=sha256:c89fc4736502a1f0fac2c8ca5d10c0cbc1c669f1f4774a2d8507a43140e4d53f \
+-    --hash=sha256:fd1aa00631d44d55e56e0975bf3f3f285fac4a9fd2813183f0c12a488f1a1b24
++playwright==1.64.0 \
++    --hash=sha256:2c14d105548876b15bea5e7eca77bf0d8ff4ba0c607c1ae931067f3d1b010369 \
++    --hash=sha256:5a59af1b230b234008524a5d42b613b233d4256f73bc1dd25bf3f11db0c81b75 \
++    --hash=sha256:61e4e0801bfd76b30e04635aaec45647df707881ccf14382471fcb0eaeb1d16f \
++    --hash=sha256:727d20be6a0884e946b2471774dd960ec95519ba533e61329038526d9aea9a23 \
++    --hash=sha256:8b9f18dc1c23143ac0a5b3c59015db30e9413cc52e1ddddfc2836a7fbad7165a \
++    --hash=sha256:8de42430e9a7c8b04ec963856d484d36ffd452882318ebad2df3e6fb49a8197a \
++    --hash=sha256:97a5c247f1130f3343f097caf3bb1e79358d6b6cfa3550d97ecd721d1905911a \
++    --hash=sha256:d76a501c9930b5a097b00e2448cda2200122a1e8e4be762ff535c1b076277737
+     # via -r requirements.in
+-pluggy==1.6.0 \
+-    --hash=sha256:7dcc130b76258d33b90f61b658791dede3486c3e6bfb003ee5c9bfb396dd22f3 \
+-    --hash=sha256:e920276dd6813095e9377c0bc5566d94c932c33b27a3e3945d8389c374dd4746
++pluggy==1.7.0 \
++    --hash=sha256:7dd7b0d8832ba3cb632c306926ded123429211b83641b35dc5c41ad2d34f9bec \
++    --hash=sha256:d1eaa46ebb595891b860ab086b4d09c8588af65ebd4361b8e8f4bb8920b90ba8
+     # via
+     #   -r requirements.in
+     #   pytest
 ```
 
 ---
 
-### Incident Patch 2: `33037435` (2026-10-14)
-**Commit Message**: security hardening and minor bug fixes for main
+### Incident Patch 2: `8de2a0fe` (2026-10-19)
+**Commit Message**: Update python:3.15-trixie Docker digest to a07fc5d (main) (#11185)
 
-**File**: `.github/scripts/tech-specs.json` (modified, +17/-4)
+Update python:3.15-trixie Docker digest to a07fc5d
+
+Signed-off-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+
+**File**: `tests/Dockerfile` (modified, +1/-1)
 ```diff
-@@ -2,9 +2,16 @@
-   "nic_k8s": {
-     "shortcode_row": {
-       "k8s_versions": "1.30 - 1.37",
--      "nginx_version": "1.31.6 / R37.1.1.2"
-+      "nginx_version": "1.31.7 / R37.2.0.1"
-     },
-     "rows": [
-+      {
-+        "nic_version": "5.6.3",
-+        "k8s_versions": "1.30 - 1.37",
-+        "helm_version": "2.7.3",
-+        "operator_version": "3.7.3",
-+        "nginx_version": "1.31.6 / R37.1.1.2"
-+      },
-       {
-         "nic_version": "5.5.4",
-         "k8s_versions": "1.29 - 1.36",
-@@ -65,11 +72,17 @@
-   },
-   "nic_nap": {
-     "shortcode_row": {
--      "nap_waf_prefix": "37.1",
--      "compiler_version": "5.715.0",
--      "waf_release_version": "5.15.0"
-+      "nap_waf_prefix": "37.2",
-+      "compiler_version": "5.777.0",
-+      "waf_release_version": "5.16.0"
-     },
-     "rows": [
-+      {
-+        "nic_version": "5.6.3",
-+        "nap_waf_version": "37.1+5.715.0",
-+        "config_mgr_version": "5.15.0",
-+        "enforcer_version": "5.15.0"
-+      },
-       {
-         "nic_version": "5.5.4",
-         "nap_waf_version": "37.0+5.690.0",
-```
-
-**File**: `.github/workflows/regression.yml` (modified, +1/-1)
-```diff
-@@ -347,7 +347,7 @@ jobs:
+@@ -1,5 +1,5 @@
+ # syntax=docker/dockerfile:1.28
+-FROM python:3.15-trixie@sha256:7ed0e89cdeceffde3d2d2dcdf332a66e7a35e65561c9d8a95f7dddf84f2e3910
++FROM python:3.15-trixie@sha256:a07fc5df0a3f5f1b5dcb197f442492e8953f5595747e6e761232763167de74c6
+ ARG ARCH=amd64
  
-       - name: Generate WAF v5 tgz from JSON
-         run: |
--          docker run --rm --user root -v /var/run/docker.sock:/var/run/docker.sock -v ${{ github.workspace }}/tests/data/ap-waf-v5:/data gcr.io/f5-gcs-7899-ptg-ingrss-ctlr/nap/waf-compiler:5.15.0 -p /data/wafv5.json -o /data/wafv5.tgz
-+          docker run --rm --user root -v /var/run/docker.sock:/var/run/docker.sock -v ${{ github.workspace }}/tests/data/ap-waf-v5:/data gcr.io/f5-gcs-7899-ptg-ingrss-ctlr/nap/waf-compiler:5.16.0 -p /data/wafv5.json -o /data/wafv5.tgz
-         if: ${{ contains(matrix.images.image, 'nap-v5')}}
- 
-       - name: Generate secrets for tests
-```
-
-**File**: `.github/workflows/setup-smoke.yml` (modified, +1/-1)
-```diff
-@@ -198,7 +198,7 @@ jobs:
- 
-       - name: Generate WAF v5 tgz from JSON
-         run: |
--          docker run --rm --user root -v /var/run/docker.sock:/var/run/docker.sock -v ${{ github.workspace }}/tests/data/ap-waf-v5:/data gcr.io/f5-gcs-7899-ptg-ingrss-ctlr/nap/waf-compiler:5.15.0 -p /data/wafv5.json -o /data/wafv5.tgz
-+          docker run --rm --user root -v /var/run/docker.sock:/var/run/docker.sock -v ${{ github.workspace }}/tests/data/ap-waf-v5:/data gcr.io/f5-gcs-7899-ptg-ingrss-ctlr/nap/waf-compiler:5.16.0 -p /data/wafv5.json -o /data/wafv5.tgz
-         if: ${{ contains(inputs.image, 'nap-v5')}}
- 
-       - name: Run Smoke Tests
-```
-
-**File**: `Makefile` (modified, +6/-6)
-```diff
-@@ -11,13 +11,13 @@ WAF_REPO					  ?= "pkgs.nginx.com" ## The package repo to install nginx app prot
- DOS_REPO					  ?= "pkgs.nginx.com" ## The package repo to install nginx app protect dos from
- 
- # renovate: datasource=docker depName=nginx/nginx
--NGINX_OSS_VERSION             ?= 1.31.6
--NGINX_PLUS_VERSION            ?= R37.1
-+NGINX_OSS_VERSION             ?= 1.31.7
-+NGINX_PLUS_VERSION            ?= R37.2
- 
--NAP_WAF_VERSION               ?= 37.1+5.715
--NAP_WAF_COMMON_VERSION        ?= 11.792
--NAP_WAF_PLUGIN_VERSION        ?= 6.31
--NAP_WAF_IPI_VERSION           ?= 1.61
-+NAP_WAF_VERSION               ?= 37.2+5.777
-+NAP_WAF_COMMON_VERSION        ?= 11.869
-+NAP_WAF_PLUGIN_VERSION        ?= 6.32
-+NAP_WAF_IPI_VERSION           ?= 1.68
- 
- AGENT_V2_VERSION              ?= 2
- AGENT_V3_VERSION              ?= 3
-```
-
-**File**: `build/Dockerfile` (modified, +6/-6)
-```diff
-@@ -2,12 +2,12 @@
- ARG BUILD_OS=debian
- 
- # renovate: datasource=docker depName=nginx/nginx
--ARG NGINX_OSS_VERSION=1.31.6
--ARG NGINX_PLUS_VERSION=R37.1
--ARG NAP_WAF_VERSION=37.1+5.715
--ARG NAP_WAF_COMMON_VERSION=11.792
--ARG NAP_WAF_PLUGIN_VERSION=6.31
--ARG NAP_WAF_IPI_VERSION=1.61
-+ARG NGINX_OSS_VERSION=1.31.7
-+ARG NGINX_PLUS_VERSION=R37.2
-+ARG NAP_WAF_VERSION=37.2+5.777
-+ARG NAP_WAF_COMMON_VERSION=11.869
-+ARG NAP_WAF_PLUGIN_VERSION=6.32
-+ARG NAP_WAF_IPI_VERSION=1.68
- ARG AGENT_V3_VERSION=3
- ARG AGENT_V2_VERSION=2
- 
-```
-
-**File**: `charts/nginx-ingress/values.schema.json` (modified, +15/-15)
-```diff
-@@ -388,10 +388,10 @@
-                     },
-                     "tag": {
-                       "type": "string",
--                      "default": "5.15.0",
-+                      "default": "5.16.0",
-                       "title": "The tag of the  App Protect WAF v5 Enforcer image",
-                       "examples": [
--                        "5.15.0"
-+                        "5.16.0"
-                       ]
-                     },
-                     "digest": {
-@@ -427,7 +427,7 @@
-                   "examples": [
-                     {
-                       "repository": "private-registry.nginx.com/nap/waf-enforcer",
--                      "tag": "5.15.0",
-+                      "tag": "5.16.0",
-                       "pullPolicy": "IfNotPresent"
-                     }
-                   ]
-@@ -465,10 +465,10 @@
-                     },
-                     "tag": {
-                       "type": "string",
--                      "default": "5.15.0",
-+                      "default": "5.16.0",
-                       "title": "The tag of the  App Protect WAF v5 Config Manager image",
-                       "examples": [
--                        "5.15.0"
-+                        "5.16.0"
-                       ]
-                     },
-                     "digest": {
-@@ -504,7 +504,7 @@
-                   "examples": [
-                     {
-                       "repository": "private-registry.nginx.com/nap/waf-config-mgr",
--                      "tag": "5.15.0",
-+                      "tag": "5.16.0",
-                       "pullPolicy": "IfNotPresent"
-                     }
-                   ]
-@@ -561,10 +561,10 @@
-                     },
-                     "tag": {
-                       "type": "string",
--                      "default": "5.15.0",
-+                      "default": "5.16.0",
-                       "title": "The tag of the App Protect WAF v5 IP Intelligence image",
-                       "examples": [
--                        "5.15.0"
-+                        "5.16.0"
-                       ]
-                     },
-                     "digest": {
-@@ -600,7 +600,7 @@
-                   "examples": [
-                     {
-                       "repository": "private-registry.nginx.com/nap/waf-ip-intelligence",
--                      "tag": "5.15.0",
-+                      "tag": "5.16.0",
-                       "pullPolicy": "IfNotPresent"
-                     }
-                   ]
-@@ -2347,15 +2347,15 @@
-               "port": 50000,
-               "image": {
-                 "repository": "private-registry.nginx.com/nap/waf-enforcer",
--                "tag": "5.15.0",
-+                "tag": "5.16.0",
-                 "pullPolicy": "IfNotPresent"
-               },
-               "securityContext": {}
-             },
-             "configManager": {
-               "image": {
-                 "repository": "private-registry.nginx.com/nap/waf-config-mgr",
--                "tag": "5.15.0",
-+                "tag": "5.16.0",
-                 "pullPolicy": "IfNotPresent"
-               },
-               "securityContext": {
-@@ -2373,7 +2373,7 @@
-               "enable": false,
-               "image": {
-                 "repository": "private-registry.nginx.com/nap/waf-ip-intelligence",
--                "tag": "5.15.0",
-+                "tag": "5.16.0",
-                 "pullPolicy": "IfNotPresent"
-               },
-               "securityContext": {
-@@ -2975,15 +2975,15 @@
-             "port": 50000,
-             "image": {
-               "repository": "private-registry.nginx.com/nap/waf-enforcer",
--              "tag": "5.15.0",
-+              "tag": "5.16.0",
-               "pullPolicy": "IfNotPresent"
-             },
-             "securityContext": {}
-           },
-           "configManager": {
-             "image": {
-               "repository": "private-registry.nginx.com/nap/waf-config-mgr",
--              "tag": "5.15.0",
-+              "tag": "5.16.0",
-               "pullPolicy": "IfNotPresent"
-             },
-             "securityContext": {
-@@ -3001,7 +3001,7 @@
-             "enable": false,
-             "image": {
-               "repository": "private-registry.nginx.com/nap/waf-ip-intelligence",
--              "tag": "5.15.0",
-+              "tag": "5.16.0",
-               "pullPolicy": "IfNotPresent"
-             },
-             "securityContext": {
-```
-
-**File**: `charts/nginx-ingress/values.yaml` (modified, +3/-3)
-```diff
-@@ -92,7 +92,7 @@ controller:
-         repository: private-registry.nginx.com/nap/waf-enforcer
- 
-         ## The tag of the App Protect WAF v5 Enforcer image.
--        tag: "5.15.0"
-+        tag: "5.16.0"
-         ## The digest of the App Protect WAF v5 Enforcer image.
-         ## If digest is specified it has precedence over tag and will be used instead
-         # digest: "sha256:CHANGEME"
-@@ -116,7 +116,7 @@ controller:
-         repository: private-registry.nginx.com/nap/waf-config-mgr
- 
-         ## The tag of the App Protect WAF v5 Configuration Manager image.
--        tag: "5.15.0"
-+        tag: "5.16.0"
-         ## The digest of the App Protect WAF v5 Configuration Manager image.
-         ## If digest is specified it has precedence over tag and will be used instead
-         # digest: "sha256:CHANGEME"
-@@ -162,7 +162,7 @@ controller:
-         repository: private-registry.nginx.com/nap/waf-ip-intelligence
- 
-         ## The tag of the App Protect WAF v5 IP Intelligence image.
--        tag: "5.15.0"
-+        tag: "5.16.0"
-         ## The digest of the App Protect WAF v5 IP Intelligence image.
-         ## If digest is specified it has precedence over tag and will be used instead
-         # digest: "sha256:CHANGEME"
-```
-
-**File**: `charts/tests/__snapshots__/helmunit_test.snap` (modified, +12/-12)
-```diff
-@@ -2355,7 +2355,7 @@ spec:
-           - -enable-telemetry-reporting=true
-           - -weight-changes-dynamic-reload=false
-       - name: waf-enforcer
--        image: private-registry.nginx.com/nap/waf-enforcer:5.15.0
-+        image: private-registry.nginx.com/nap/waf-enforcer:5.16.0
-         imagePullPolicy: "IfNotPresent"
-         env:
-           - name: ENFORCER_PORT
-@@ -2366,7 +2366,7 @@ spec:
-           - name: app-protect-bd-config
-             mountPath: /opt/app_protect/bd_config
-       - name: waf-config-mgr
--        image: private-registry.nginx.com/nap/waf-config-mgr:5.15.0
-+        image: private-registry.nginx.com/nap/waf-config-mgr:5.16.0
-         imagePullPolicy: "IfNotPresent"
-         securityContext:
-             allowPrivilegeEscalation: false
-@@ -3942,7 +3942,7 @@ spec:
-           - -enable-telemetry-reporting=true
-           - -weight-changes-dynamic-reload=false
-       - name: waf-enforcer
--        image: my.private.reg/nap/waf-enforcer:5.15.0
-+        image: my.private.reg/nap/waf-enforcer:5.16.0
-         imagePullPolicy: "IfNotPresent"
-         env:
-           - name: ENFORCER_PORT
-@@ -3955,7 +3955,7 @@ spec:
-           - name: app-protect-ipi-db
-             mountPath: /var/IpRep
-       - name: waf-config-mgr
--        image: my.private.reg/nap/waf-config-mgr:5.15.0
-+        image: my.private.reg/nap/waf-config-mgr:5.16.0
-         imagePullPolicy: "IfNotPresent"
-         securityContext:
-             allowPrivilegeEscalation: false
-@@ -3972,7 +3972,7 @@ spec:
-           - name: app-protect-bundles
-             mountPath: /etc/app_protect/bundles
-       - name: waf-ip-intelligence
--        image: my.private.reg/nap/waf-ip-intelligence:5.15.0
-+        image: my.private.reg/nap/waf-ip-intelligence:5.16.0
-         imagePullPolicy: "IfNotPresent"
-         securityContext:
-             allowPrivilegeEscalation: false
-@@ -4541,7 +4541,7 @@ spec:
-           - -agent=true
-           - -agent-instance-group=app-protect-wafv5-agentv2-nginx-ingress-controller
-       - name: waf-enforcer
--        image: my.private.reg/nap/waf-enforcer:5.15.0
-+        image: my.private.reg/nap/waf-enforcer:5.16.0
-         imagePullPolicy: "IfNotPresent"
-         env:
-           - name: ENFORCER_PORT
-@@ -4552,7 +4552,7 @@ spec:
-           - name: app-protect-bd-config
-             mountPath: /opt/app_protect/bd_config
-       - name: waf-config-mgr
--        image: my.private.reg/nap/waf-config-mgr:5.15.0
-+        image: my.private.reg/nap/waf-config-mgr:5.16.0
-         imagePullPolicy: "IfNotPresent"
-         securityContext:
-             allowPrivilegeEscalation: false
-@@ -5117,7 +5117,7 @@ spec:
-           - -weight-changes-dynamic-reload=false
-           - -agent=true
-       - name: waf-enforcer
--        image: my.private.reg/nap/waf-enforcer:5.15.0
-+        image: my.private.reg/nap/waf-enforcer:5.16.0
-         imagePullPolicy: "IfNotPresent"
-         env:
-           - name: ENFORCER_PORT
-@@ -5128,7 +5128,7 @@ spec:
-           - name: app-protect-bd-config
-             mountPath: /opt/app_protect/bd_config
-       - name: waf-config-mgr
--        image: my.private.reg/nap/waf-config-mgr:5.15.0
-+        image: my.private.reg/nap/waf-config-mgr:5.16.0
-         imagePullPolicy: "IfNotPresent"
-         securityContext:
-             allowPrivilegeEscalation: false
-@@ -5630,7 +5630,7 @@ spec:
-           - -enable-telemetry-reporting=true
-           - -weight-changes-dynamic-reload=false
-       - name: waf-enforcer
--        image: my.private.reg/nap/waf-enforcer:5.15.0
-+        image: my.private.reg/nap/waf-enforcer:5.16.0
-         imagePullPolicy: "IfNotPresent"
-         resources:
-             limits:
-@@ -5650,7 +5650,7 @@ spec:
-           - name: app-protect-ipi-db
-             mountPath: /var/IpRep
-       - name: waf-config-mgr
--        image: my.private.reg/nap/waf-config-mgr:5.15.0
-+        image: my.private.reg/nap/waf-config-mgr:5.16.0
-         imagePullPolicy: "IfNotPresent"
-         securityContext:
-             allowPrivilegeEscalation: false
-@@ -5674,7 +5674,7 @@ spec:
-           - name: app-protect-bundles
-             mountPath: /etc/app_protect/bundles
-       - name: waf-ip-intelligence
--        image: my.private.reg/nap/waf-ip-intelligence:5.15.0
-+        image: my.private.reg/nap/waf-ip-intelligence:5.16.0
-         imagePullPolicy: "IfNotPresent"
-         securityContext:
-             allowPrivilegeEscalation: false
-```
-
----
-
-### Incident Patch 3: `106c210f` (2026-10-14)
-**Commit Message**: Prevent race condition when release tries to push an untagged image (#11140)
-
-**File**: `.github/workflows/image-promotion.yml` (modified, +8/-2)
-```diff
-@@ -236,7 +236,10 @@ jobs:
-     # pushes edge images to docker hub
-     if: github.repository == 'nginx/kubernetes-ingress' && (!cancelled() && !failure() && github.ref_name == github.event.repository.default_branch)
-     name: Release Docker OSS
--    needs: [checks, build-artifacts]
-+    needs:
-+      - checks
-+      - build-artifacts
-+      - tag-stable
-     uses: ./.github/workflows/oss-release.yml
-     with:
-       gcr_release_registry: false
-@@ -258,7 +261,10 @@ jobs:
-     # pushes plus edge images to nginx registry
-     if: github.repository == 'nginx/kubernetes-ingress' && (!cancelled() && !failure() && github.ref_name == github.event.repository.default_branch)
-     name: Release Docker Plus
--    needs: [checks, build-artifacts]
-+    needs:
-+      - checks
-+      - build-artifacts
-+      - tag-stable
-     uses: ./.github/workflows/plus-release.yml
-     with:
-       nginx_registry: true
+ ENV PYTHONUNBUFFERED=1
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11176** (2026-10-16): Update contrib SKILL.md (@vepatel)
-- **PR #11173** (2026-10-16): cherry-pick to release-5.7: e2e test stability fixes (#10850) (@javorszky)
-- **PR #11172** (2026-10-16): cherry-pick to release-2026-lts: e2e test stability fixes (#10850) (@javorszky)
-- **PR #11161** (2026-10-16): Update dependency helm/helm to v4.3.1 (release-5.7) (@renovate[bot])
-- **PR #11160** (2026-10-16): Update Red Hat UBI images (release-5.7) (@renovate[bot])
-- **PR #11159** (2026-10-16): Update ghcr.io/nginx/dependencies/nginx-ubi:ubi10 Docker digest to 07e03f9 (release-5.7) (@renovate[bot])
+- **PR #11186** (closed): Update module sigs.k8s.io/structured-merge-diff/v6 to v7 (main) (@renovate[bot])
+- **PR #11185** (2026-10-19): Update python:3.15-trixie Docker digest to a07fc5d (main) (@renovate[bot])
+- **PR #11183** (2026-10-19): Update module github.com/dlclark/regexp2/v2 to v2.9.1 (release-2026-lts) (@renovate[bot])
+- **PR #11182** (2026-10-19): Update dependency golangci/golangci-lint to v2.15.0 (release-2026-lts) (@renovate[bot])
+- **PR #11181** (2026-10-19): Update dependency wrapt to v2.5.1 (release-2026-lts) (@renovate[bot])
+- **PR #11180** (2026-10-19): Update module github.com/dlclark/regexp2/v2 to v2.9.1 (release-5.7) (@renovate[bot])
 
 ---
 
@@ -2148,53 +1484,3 @@ Pass each test invocation's run ID through direct example-app creation a
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. e2e test stability fixes (#10850)
-
-**RULE**:
-When implementing operations in `.github/workflows/lint-format.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nginx/kubernetes-ingress. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `e1bfa30e`: e2e test stability fixes (#10850). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/lint-format.yml`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```go
-// Verified production-grade fix pattern:
-  python-unit:
-    name: Python Test Utils Unit Tests
-    if: github.repository == 'nginx/kubernetes-ingress'
-    runs-on: ubuntu-24.04
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - name: Setup Python
-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
-        with:
-          python-version: "3.14"
-
-      - name: Install test dependencies
-        run: pip install --require-hashes --no-deps -r tests/requirements.txt
-
-      - name: Run unit tests
-        # --noconftest: these tests mock the Kubernetes API and must not load the cluster fixtures
-        run: PYTHONPATH=tests python -m pytest --noconftest -m utils tests/suite/utils
-
-```
-
-**NEGATIVE CONSTRAINT**:
-```go
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e1bfa30e` are properly handled with clean fallback behavior.

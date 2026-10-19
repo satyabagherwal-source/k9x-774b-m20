@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-3D3H",
-    "timestamp": "2026-10-19T04:52:55.181Z",
-    "repository": "htmlstreamofficial/preline",
-    "learningId": "learn-github-htmlstreamofficial-preline",
-    "contentHash": "5083e7e87435dcb186b98d464aaa1f3d83f9713d4ac59a28ed63fc6c24cfc877",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-3E7F",
-    "timestamp": "2026-10-19T04:52:56.619Z",
-    "repository": "gotham-rs/gotham",
-    "learningId": "learn-github-gotham-rs-gotham",
-    "contentHash": "ea37a84fe4fec7adbfd941920171178ad02f16b2d9aa035d7984eae43a3b43c5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-3HKT",
-    "timestamp": "2026-10-19T04:53:00.989Z",
-    "repository": "react-native-webrtc/react-native-webrtc",
-    "learningId": "learn-github-react-native-webrtc-react-native-webrtc",
-    "contentHash": "441e6fac6b0089350f8c3a1e5ae93830f9405ccd16c3639f4b2c100e482e726d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-3JHT",
-    "timestamp": "2026-10-19T04:53:03.473Z",
-    "repository": "rook/rook",
-    "learningId": "learn-github-rook-rook",
-    "contentHash": "76958713ce02a22b91f676e044a74b692a82ed47ab2e1e62919bb51929e1996f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-3JYB",
     "timestamp": "2026-10-19T04:53:04.067Z",
     "repository": "TaichuAI/ZDTaichu5.0-9B",
@@ -7490,6 +7430,66 @@
     "repository": "tursodatabase/turso",
     "learningId": "learn-github-tursodatabase-turso",
     "contentHash": "215fcede91debd5fe4e5a0d7f8ba07b22d1cb3d65fb798eed340a60ecdf96ef4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-Q0JR",
+    "timestamp": "2026-10-19T18:42:20.871Z",
+    "repository": "matthews-wong/structured-data-validator",
+    "learningId": "learn-github-matthews-wong-structured-data-validator",
+    "contentHash": "b7214187e35c7c004f641ccf041469c8f9aa4e43689da9a1a5fa1045ca402d85",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-Q2J4",
+    "timestamp": "2026-10-19T18:42:23.440Z",
+    "repository": "SimonSchubert/Kai",
+    "learningId": "learn-github-simonschubert-kai",
+    "contentHash": "b77c198bd02f10bb4cba77b569db8cf29a04207da62c665039c6fc2528fd3da8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-Q4LZ",
+    "timestamp": "2026-10-19T18:42:26.135Z",
+    "repository": "nginx/kubernetes-ingress",
+    "learningId": "learn-github-nginx-kubernetes-ingress",
+    "contentHash": "b832f0cac0991dd078fe20a9858fee4a186182873581b210a33293292d393bb9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-Q6HZ",
+    "timestamp": "2026-10-19T18:42:28.583Z",
+    "repository": "gravitl/netmaker",
+    "learningId": "learn-github-gravitl-netmaker",
+    "contentHash": "989efc7e2a5d4b6c88d2f13cdf48cdf88f62acf4d96418ee2a9bb73cc11e71c1",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

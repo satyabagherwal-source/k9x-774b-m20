@@ -3703,10 +3703,10 @@
     "repository": "gravitl/netmaker",
     "platform": "github",
     "sourceUrl": "https://github.com/gravitl/netmaker",
-    "sourceVersion": "e8c0f0bc",
+    "sourceVersion": "82df6b46",
     "license": "NOASSERTION",
-    "contentHash": "caa4c2fd17278c0e270e0961a8150dfe75d31242067671f48f3ec82b37fd2f59",
-    "lastHarvestedAt": "2026-10-19T12:38:47.541Z",
+    "contentHash": "989efc7e2a5d4b6c88d2f13cdf48cdf88f62acf4d96418ee2a9bb73cc11e71c1",
+    "lastHarvestedAt": "2026-10-19T18:42:28.586Z",
     "learningId": "learn-github-gravitl-netmaker"
   },
   "pixeltable-pixeltable": {
@@ -6663,10 +6663,10 @@
     "repository": "nginx/kubernetes-ingress",
     "platform": "github",
     "sourceUrl": "https://github.com/nginx/kubernetes-ingress",
-    "sourceVersion": "1b0403e3",
+    "sourceVersion": "4a85f985",
     "license": "Apache-2.0",
-    "contentHash": "015320d156fe4d1c8e1a51d13794fd0dda42e1b97e144bbfbf27ba126ce64b71",
-    "lastHarvestedAt": "2026-10-19T06:26:25.391Z",
+    "contentHash": "b832f0cac0991dd078fe20a9858fee4a186182873581b210a33293292d393bb9",
+    "lastHarvestedAt": "2026-10-19T18:42:26.139Z",
     "learningId": "learn-github-nginx-kubernetes-ingress"
   },
   "milvus-io-milvus": {
@@ -8628,5 +8628,25 @@
     "contentHash": "46480066a8c4de92578fb7614983caacd5cfa3cf3ab38b5283aa0e1feea2ef3d",
     "lastHarvestedAt": "2026-10-19T18:35:57.059Z",
     "learningId": "learn-github-hi-manshu-charty"
+  },
+  "matthews-wong-structured-data-validator": {
+    "repository": "matthews-wong/structured-data-validator",
+    "platform": "github",
+    "sourceUrl": "https://github.com/matthews-wong/structured-data-validator",
+    "sourceVersion": "e85df7a4",
+    "license": "MIT",
+    "contentHash": "b7214187e35c7c004f641ccf041469c8f9aa4e43689da9a1a5fa1045ca402d85",
+    "lastHarvestedAt": "2026-10-19T18:42:20.874Z",
+    "learningId": "learn-github-matthews-wong-structured-data-validator"
+  },
+  "simonschubert-kai": {
+    "repository": "SimonSchubert/Kai",
+    "platform": "github",
+    "sourceUrl": "https://github.com/SimonSchubert/Kai",
+    "sourceVersion": "628900a9",
+    "license": "Apache-2.0",
+    "contentHash": "b77c198bd02f10bb4cba77b569db8cf29a04207da62c665039c6fc2528fd3da8",
+    "lastHarvestedAt": "2026-10-19T18:42:23.443Z",
+    "learningId": "learn-github-simonschubert-kai"
   }
 }

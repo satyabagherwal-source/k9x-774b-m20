@@ -3421,3 +3421,7 @@
 | `CYCLE-20261019-HVKU` | `2026-10-19T18:36:01.182Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2748` | Yes (`3aa2bbee...`) |
 | `CYCLE-20261019-HXXT` | `2026-10-19T18:36:04.241Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2749` | Yes (`8b6adbbc...`) |
 | `CYCLE-20261019-I0NG` | `2026-10-19T18:36:07.756Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2750` | Yes (`215fcede...`) |
+| `CYCLE-20261019-Q0JR` | `2026-10-19T18:42:20.871Z` | `matthews-wong/structured-data-validator` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2751` | Yes (`b7214187...`) |
+| `CYCLE-20261019-Q2J4` | `2026-10-19T18:42:23.440Z` | `SimonSchubert/Kai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2752` | Yes (`b77c198b...`) |
+| `CYCLE-20261019-Q4LZ` | `2026-10-19T18:42:26.135Z` | `nginx/kubernetes-ingress` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md` | Yes (`b832f0ca...`) |
+| `CYCLE-20261019-Q6HZ` | `2026-10-19T18:42:28.583Z` | `gravitl/netmaker` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2753` | Yes (`989efc7e...`) |

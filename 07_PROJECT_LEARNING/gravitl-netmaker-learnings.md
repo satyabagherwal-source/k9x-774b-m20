@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gravitl-netmaker-learnings.md`  
 > **Source**: github ([https://github.com/gravitl/netmaker](https://github.com/gravitl/netmaker))  
-> **Source Version**: `e8c0f0bc`  
+> **Source Version**: `82df6b46`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T12:38:47.378Z  
+> **Timestamp**: 2026-10-19T18:42:28.285Z  
 > **Learning ID**: `learn-github-gravitl-netmaker`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gravitl-netmaker-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gravitl/netmaker](https://github.com/gravitl/netmaker))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T12:38:47.374Z  
+> **Harvest Timestamp**: 2026-10-19T18:42:28.278Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Netmaker makes networks with WireGuard. Netmaker automates fast, secure, and distributed virtual networks.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11832 stars
+- **Stars / Engagement**: 11831 stars
 
 ---
 
@@ -1017,471 +1017,228 @@ const CheckInInterval = 1
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `730e6078` (2026-10-19)
-**Commit Message**: Merge pull request #4191 from gravitl/fix-email-case-v1-7-0
+### Incident Patch 1: `04f53b73` (2026-10-19)
+**Commit Message**: build(deps): bump github.com/posthog/posthog-go from 1.23.1 to 1.34.0 (#4186)
 
-Lower-case emails when checking invites
-
-**File**: `schema/user_invites.go` (modified, +4/-4)
-```diff
-@@ -52,19 +52,19 @@ func (u *UserInvite) Get(ctx context.Context) error {
- 
- func (u *UserInvite) GetValidationInvite(ctx context.Context) error {
- 	return db.FromContext(ctx).Model(&UserInvite{}).
--		Where("invite_code = ? AND email = ? AND type = ?", u.InviteCode, u.Email, ValidationInvite).
-+		Where("invite_code = ? AND LOWER(email) = LOWER(?) AND type = ?", u.InviteCode, u.Email, ValidationInvite).
- 		First(u).Error
- }
- 
- func (u *UserInvite) GetPendingValidationInvite(ctx context.Context) error {
- 	return db.FromContext(ctx).Model(&UserInvite{}).
--		Where("email = ? AND type = ?", u.Email, ValidationInvite).
-+		Where("LOWER(email) = LOWER(?) AND type = ?", u.Email, ValidationInvite).
- 		First(u).Error
- }
- 
- func (u *UserInvite) GetByEmail(ctx context.Context) error {
- 	query := db.FromContext(ctx).Model(&UserInvite{}).
--		Where("email = ? AND type = ?", u.Email, MembershipInvite)
-+		Where("LOWER(email) = LOWER(?) AND type = ?", u.Email, MembershipInvite)
- 	if scopeID := scope.ID(ctx); scopeID != "" {
- 		query = query.
- 			Where(fmt.Sprintf("%s.scope = ?", userInvitesTable), scope.Level(ctx)).
-@@ -94,7 +94,7 @@ func (u *UserInvite) ListAll(ctx context.Context, options ...dbtypes.Option) ([]
- 
- func (u *UserInvite) DeleteByEmail(ctx context.Context) error {
- 	query := db.FromContext(ctx).Model(&UserInvite{}).
--		Where("email = ? AND type = ?", u.Email, MembershipInvite)
-+		Where("LOWER(email) = LOWER(?) AND type = ?", u.Email, MembershipInvite)
- 	if scopeID := scope.ID(ctx); scopeID != "" {
- 		query = query.
- 			Where(fmt.Sprintf("%s.scope = ?", userInvitesTable), scope.Level(ctx)).
-```
+Bumps [github.com/posthog/posthog-go](https://github.com/posthog/posthog-go) from 1.23.1 to 1.34.0.
+- [Release notes](https://github.com/posthog/posthog-go/releases)
+- [Changelog](https://github.com/PostHog/posthog-go/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/posthog/posthog-go/compare/v1.23.1...v1.34.0)
 
 ---
+updated-dependencies:
+- dependency-name: github.com/posthog/posthog-go
+  dependency-version: 1.34.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
 
-### Incident Patch 2: `91a95f64` (2026-10-12)
-**Commit Message**: fix(go): lower-case emails when checking invites;
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `schema/user_invites.go` (modified, +4/-4)
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -52,19 +52,19 @@ func (u *UserInvite) Get(ctx context.Context) error {
- 
- func (u *UserInvite) GetValidationInvite(ctx context.Context) error {
- 	return db.FromContext(ctx).Model(&UserInvite{}).
--		Where("invite_code = ? AND email = ? AND type = ?", u.InviteCode, u.Email, ValidationInvite).
-+		Where("invite_code = ? AND LOWER(email) = LOWER(?) AND type = ?", u.InviteCode, u.Email, ValidationInvite).
- 		First(u).Error
- }
- 
- func (u *UserInvite) GetPendingValidationInvite(ctx context.Context) error {
- 	return db.FromContext(ctx).Model(&UserInvite{}).
--		Where("email = ? AND type = ?", u.Email, ValidationInvite).
-+		Where("LOWER(email) = LOWER(?) AND type = ?", u.Email, ValidationInvite).
- 		First(u).Error
- }
- 
- func (u *UserInvite) GetByEmail(ctx context.Context) error {
- 	query := db.FromContext(ctx).Model(&UserInvite{}).
--		Where("email = ? AND type = ?", u.Email, MembershipInvite)
-+		Where("LOWER(email) = LOWER(?) AND type = ?", u.Email, MembershipInvite)
- 	if scopeID := scope.ID(ctx); scopeID != "" {
- 		query = query.
- 			Where(fmt.Sprintf("%s.scope = ?", userInvitesTable), scope.Level(ctx)).
-@@ -94,7 +94,7 @@ func (u *UserInvite) ListAll(ctx context.Context, options ...dbtypes.Option) ([]
- 
- func (u *UserInvite) DeleteByEmail(ctx context.Context) error {
- 	query := db.FromContext(ctx).Model(&UserInvite{}).
--		Where("email = ? AND type = ?", u.Email, MembershipInvite)
-+		Where("LOWER(email) = LOWER(?) AND type = ?", u.Email, MembershipInvite)
- 	if scopeID := scope.ID(ctx); scopeID != "" {
- 		query = query.
- 			Where(fmt.Sprintf("%s.scope = ?", userInvitesTable), scope.Level(ctx)).
-```
-
----
-
-### Incident Patch 3: `fc73f7db` (2026-10-19)
-**Commit Message**: Fixes: Auto Select Gateway (#4176)
-
-* feat(go): add func to reassign auto assigned clients on gw disconnect;
-
-* feat(go): reassign auto assign clients on gw node disconnect through api;
-
-* feat(go): reassign auto assign clients on gw node disconnect through netclient;
-
-* feat(go): reject auto relay request if gw is disconnected;
-
-* feat(go): reassign auto-assigned gw post disconnect node update;
-
-* fix(go): assign/unassign gw in db;
-
-* fix(go): optimize unassign gw;
-
-* fix(go): use correct field name;
-
-* feat(go): optimize ReassignAutoAssignedClients;
-
-**File**: `controllers/hosts.go` (modified, +6/-15)
-```diff
-@@ -542,7 +542,7 @@ func hostUpdateFallback(w http.ResponseWriter, r *http.Request) {
- 		logic.ReturnErrorResponse(w, r, logic.FormatError(err, "badrequest"))
- 		return
- 	}
--	var sendPeerUpdate, sendDeletedNodeUpdate, replacePeers, runPostureChecks bool
-+	var sendPeerUpdate, sendDeletedNodeUpdate, replacePeers, runPostureChecks, reassignGwClients bool
- 	var hostUpdate models.HostUpdate
- 	err = json.NewDecoder(r.Body).Decode(&hostUpdate)
- 	if err != nil {
-@@ -590,20 +590,8 @@ func hostUpdateFallback(w http.ResponseWriter, r *http.Request) {
- 			return
- 		}
- 	case models.UpdateNode:
--		var displacedGwNodes []models.Node
--		sendDeletedNodeUpdate, sendPeerUpdate, displacedGwNodes = logic.UpdateHostNode(r.Context(), &hostUpdate.Host, &hostUpdate.Node)
--		if len(displacedGwNodes) > 0 {
--			go func() {
--				for _, dNode := range displacedGwNodes {
--					dHost := &schema.Host{ID: dNode.HostID}
--					if err := dHost.Get(db.WithContext(context.TODO())); err != nil {
--						slog.Error("fallback disconnect gw: failed to get host for displaced node", "node", dNode.ID, "error", err)
--						continue
--					}
--					mq.HostUpdate(&models.HostUpdate{Action: models.CheckAutoAssignGw, Host: *dHost, Node: dNode})
--				}
--			}()
--		}
-+		sendDeletedNodeUpdate, sendPeerUpdate = logic.UpdateHostNode(r.Context(), &hostUpdate.Host, &hostUpdate.Node)
-+		reassignGwClients = !hostUpdate.Node.Connected
- 	case models.UpdateMetrics:
- 		nodeID := hostUpdate.Node.ID.String()
- 		mq.UpdateMetricsFallBack(r.Context(), nodeID, hostUpdate.NewMetrics)
-@@ -705,6 +693,9 @@ func hostUpdateFallback(w http.ResponseWriter, r *http.Request) {
- 			}
- 
- 		}
-+		if reassignGwClients {
-+			mq.ReassignAutoAssignedClients(ctx, hostUpdate.Node.ID.String())
-+		}
- 		if sendDeletedNodeUpdate {
- 			_ = mq.PublishDeletedNodePeerUpdate(ctx, nil, &hostUpdate.Node)
- 		}
-```
-
-**File**: `controllers/node.go` (modified, +12/-11)
-```diff
-@@ -947,17 +947,7 @@ func updateNode(w http.ResponseWriter, r *http.Request) {
- 				_ = logic.UpdateMetrics(ctx, newNode.ID.String(), metrics)
- 			}
- 			go logic.SetPeerMetricsDisconnected(ctx, newNode.ID.String())
--			if servercfg.IsPro {
--				displacedNodes := logic.DisplaceAutoRelayedNodes(newNode.ID.String())
--				for _, dNode := range displacedNodes {
--					dHost := &schema.Host{ID: dNode.HostID}
--					if err := dHost.Get(ctx); err != nil {
--						slog.Error("disconnect gw: failed to get host for displaced node", "node", dNode.ID, "error", err)
--						continue
--					}
--					mq.HostUpdate(&models.HostUpdate{Action: models.CheckAutoAssignGw, Host: *dHost, Node: dNode})
--				}
--			}
-+			mq.ReassignAutoAssignedClients(ctx, newNode.ID.String())
- 		}
- 		// On exit disconnect (fail open) or reconnect (restore full tunnel), push
- 		// exit-client peer updates first before the global mesh update.
-@@ -1216,6 +1206,17 @@ func bulkUpdateNodeStatus(w http.ResponseWriter, r *http.Request) {
- 			}
- 		}
- 
-+		// Reassign auto-assigned clients only after every disconnected gw has been
-+		// sent its node update, so clients are less likely to re-pick a gw that is
-+		// still up but about to tear down.
-+		if !req.Connected {
-+			gwNodeIDs := make([]string, 0, len(nodeIDs))
-+			for i := range nodeIDs {
-+				gwNodeIDs = append(gwNodeIDs, nodeIDs[i].(string))
-+			}
-+			mq.ReassignAutoAssignedClients(ctx, gwNodeIDs...)
-+		}
-+
- 		// On exit disconnect (fail open) or reconnect (restore full tunnel), push
- 		// exit-client peer updates first before the global mesh update.
- 		seenClient := map[string]struct{}{}
-```
-
-**File**: `logic/hosts.go` (modified, +42/-21)
-```diff
-@@ -21,7 +21,6 @@ import (
- 
- 	"github.com/gravitl/netmaker/logger"
- 	"github.com/gravitl/netmaker/models"
--	"github.com/gravitl/netmaker/servercfg"
- 	"github.com/gravitl/netmaker/utils"
+@@ -26,7 +26,7 @@ require (
+ require (
+ 	filippo.io/edwards25519 v1.2.0
+ 	github.com/c-robinson/iplib v1.0.8
+-	github.com/posthog/posthog-go v1.23.1
++	github.com/posthog/posthog-go v1.34.0
  )
  
-@@ -370,7 +369,7 @@ func UpdateHostFromClient(ctx context.Context, newHost, currHost *schema.Host) (
- }
- 
- // UpdateHostNode -  handles updates from client nodes
--func UpdateHostNode(ctx context.Context, h *schema.Host, newNode *models.Node) (publishDeletedNodeUpdate, publishPeerUpdate bool, displacedGwNodes []models.Node) {
-+func UpdateHostNode(ctx context.Context, h *schema.Host, newNode *models.Node) (publishDeletedNodeUpdate, publishPeerUpdate bool) {
- 	currentNode, err := GetNodeByID(newNode.ID.String())
- 	if err != nil {
- 		return
-@@ -386,9 +385,6 @@ func UpdateHostNode(ctx context.Context, h *schema.Host, newNode *models.Node) (
- 	UpsertNode(&currentNode)
- 	if !newNode.Connected {
- 		publishDeletedNodeUpdate = true
--		if servercfg.IsPro {
--			displacedGwNodes = DisplaceAutoRelayedNodes(newNode.ID.String())
--		}
- 		go SetPeerMetricsDisconnected(ctx, newNode.ID.String())
- 	}
- 	publishPeerUpdate = true
-@@ -398,27 +394,52 @@ func UpdateHostNode(ctx context.Context, h *schema.Host, newNode *models.Node) (
- }
- 
- // DisplaceAutoRelayedNodes removes auto-assigned nodes from a disconnected gateway
--// and returns the displaced nodes that need re-assignment.
--func DisplaceAutoRelayedNodes(nodeID string) []models.Node {
--	gwNode, err := GetNodeByID(nodeID)
--	if err != nil || !gwNode.IsGw || len(gwNode.RelayedNodes) == 0 {
-+// and returns the displaced nodes that need re-assignment, as stored after the
-+// removal (i.e. no longer relayed).
-+func DisplaceAutoRelayedNodes(ctx context.Context, nodeID string) []models.Node {
-+	gwNode := &schema.Node{
-+		ID: nodeID,
-+	}
-+	err := gwNode.Get(ctx)
-+	if err != nil || !gwNode.IsGateway || len(gwNode.RelayedClients) == 0 {
- 		return nil
- 	}
--	var newRelayedNodes []string
--	var displacedNodes []models.Node
--	for _, relayedNodeID := range gwNode.RelayedNodes {
--		relayedNode, err := GetNodeByID(relayedNodeID)
--		if err != nil {
--			continue
-+	relayedClientIDs := make([]string, 0, len(gwNode.RelayedClients))
-+	for relayedClientID := range gwNode.RelayedClients {
-+		relayedClientIDs = append(relayedClientIDs, relayedClientID)
-+	}
-+	relayedNodes, err := (&schema.Node{}).ListByIDs(ctx, relayedClientIDs)
-+	if err != nil {
-+		return nil
-+	}
-+	var displacedNodeIDs []string
-+	for _, relayedNode := range relayedNodes {
-+		if relayedNode.AutoAssignGateway &&
-+			relayedNode.RelayedByNodeID != nil && *relayedNode.RelayedByNodeID == gwNode.ID {
-+			displacedNodeIDs = append(displacedNodeIDs, relayedNode.ID)
- 		}
--		if relayedNode.AutoAssignGateway && relayedNode.RelayedBy == gwNode.ID.String() {
--			displacedNodes = append(displacedNodes, relayedNode)
-+	}
-+	if len(displacedNodeIDs) == 0 {
-+		return nil
-+	}
-+
-+	err = gwNode.UnassignGatewayForClients(ctx, displacedNodeIDs)
-+	if err != nil {
-+		slog.Error("failed to unassign auto-assigned nodes from gw", "gw", nodeID, "error", err)
-+		return nil
-+	}
-+	// re-read so callers see the cleared relay state, not the pre-removal snapshot
-+	displacedNodesByID, err := GetNodesByIDs(ctx, displacedNodeIDs)
-+	if err != nil {
-+		return nil
-+	}
-+	displacedNodes := make([]models.Node, 0, len(displacedNodesByID))
-+	for _, displacedNode := range displacedNodesByID {
-+		// skip nodes that moved to another gw before the unassign
-+		if displacedNode.IsRelayed {
- 			continue
- 		}
--		newRelayedNodes = append(newRelayedNodes, relayedNodeID)
--	}
--	if len(displacedNodes) > 0 {
--		UpdateRelayNodes(gwNode.ID.String(), gwNode.RelayedNodes, newRelayedNodes)
-+		displacedNodes = append(displacedNodes, displacedNode)
- 	}
- 	return displacedNodes
- }
+ require (
 ```
 
-**File**: `logic/nodes.go` (modified, +2/-6)
+**File**: `go.sum` (modified, +2/-2)
 ```diff
-@@ -496,22 +496,18 @@ func GetNodeByID(nodeID string) (models.Node, error) {
- // This avoids the N+1 (and N^2) query patterns that arise when callers loop
- // over peer IDs and call GetNodeByID per peer (e.g. status / connectivity
- // checks driven by metrics).
--func GetNodesByIDs(ids []string) (map[string]models.Node, error) {
-+func GetNodesByIDs(ctx context.Context, ids []string) (map[string]models.Node, error) {
- 	if len(ids) == 0 {
- 		return map[string]models.Node{}, nil
- 	}
- 	_nodes, err := (&schema.Node{}).ListByIDs(
--		db.WithContext(context.TODO()),
-+		ctx,
- 		ids,
- 		dbtypes.WithAllPreloads(),
- 	)
- 	if err != nil {
- 		return nil, err
- 	}
--	ctx := db.WithContext(context.TODO())
--	if len(_nodes) > 0 {
--		ctx = scope.WithContext(ctx, scope.TenantScope, _nodes[0].TenantID)
--	}
- 	modelsNodes := make([]models.Node, len(_nodes))
- 	for i := range _nodes {
- 		n := ConvertSchemaNodeToModelsNodeWithContext(ctx, &_nodes[i], SkipViolations())
+@@ -139,8 +139,8 @@ github.com/paulmach/orb v0.13.0/go.mod h1:6scRWINywA2Jf05dcjOfLfxrUIMECvTSG2MVbR
+ github.com/pierrec/lz4/v4 v4.1.27 h1:+PhzhWDrjRj89TH2sw43nE3+4+W8lSxIuQadEHZyjUk=
+ github.com/pierrec/lz4/v4 v4.1.27/go.mod h1:EoQMVJgeeEOMsCqCzqFm2O0cJvljX2nGZjcRIPL34O4=
+ github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
+-github.com/posthog/posthog-go v1.23.1 h1:Xw8QnH1WdCjHoqEbej7FI3CfM1g0jBJb8aBqIpBvQeM=
+-github.com/posthog/posthog-go v1.23.1/go.mod h1:seY9mmw3mYGT9i2Wr5Dn3JXWPiAkZ6aolwH/5l8eVQE=
++github.com/posthog/posthog-go v1.34.0 h1:vHVkrnFw4Bz34UFriZPEqfolpzfLEq39AlOcLeea6io=
++github.com/posthog/posthog-go v1.34.0/go.mod h1:rN0C9Urenhytgo3KQ/QVorGkyGfpouquDTSs2Ujzr+g=
+ github.com/pquerna/otp v1.5.0 h1:NMMR+WrmaqXU4EzdGJEE1aUUI0AMRzsp96fFFWNPwxs=
+ github.com/pquerna/otp v1.5.0/go.mod h1:dkJfzwRKNiegxyNb54X/3fLwhCynbMspSyWKnvi1AEg=
+ github.com/prashantv/gostub v1.1.0 h1:BTyx3RfQjRHnUWaGF9oQos79AlQ5k8WNktv7VGvVH4g=
 ```
 
-**File**: `mq/publishers.go` (modified, +36/-0)
+---
+
+### Incident Patch 2: `82df6b46` (2026-10-19)
+**Commit Message**: build(deps): bump github.com/go-playground/validator/v10 (#4188)
+
+Bumps [github.com/go-playground/validator/v10](https://github.com/go-playground/validator) from 10.30.3 to 10.30.5.
+- [Release notes](https://github.com/go-playground/validator/releases)
+- [Commits](https://github.com/go-playground/validator/compare/v10.30.3...v10.30.5)
+
+---
+updated-dependencies:
+- dependency-name: github.com/go-playground/validator/v10
+  dependency-version: 10.30.5
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `go.mod` (modified, +7/-7)
 ```diff
-@@ -305,6 +305,42 @@ func PublishPeerUpdatesForExitClientsFirst(ctx context.Context, clientNodes []mo
- 	return PublishPeerUpdate(ctx, false)
- }
- 
-+func ReassignAutoAssignedClients(ctx context.Context, gwNodeIDs ...string) {
-+	if !servercfg.IsPro {
-+		return
-+	}
-+	// displace from every gw first, so all nodes are listed once and each peer
-+	// update reflects the whole batch
-+	var displacedNodes []models.Node
-+	for _, gwNodeID := range gwNodeIDs {
-+		displacedNodes = append(displacedNodes, logic.DisplaceAutoRelayedNodes(ctx, gwNodeID)...)
-+	}
-+	if len(displacedNodes) == 0 {
-+		return
-+	}
-+	allNodes, err := logic.GetAllNodes(ctx)
-+	if err != nil {
-+		slog.Error("reassign auto-assigned clients: failed to list nodes", "gws", gwNodeIDs, "error", err)
-+	}
-+	for i := range displacedNodes {
-+		node := displacedNodes[i]
-+		host := &schema.Host{ID: node.HostID}
-+		if err := host.Get(ctx); err != nil {
-+			slog.Error("reassign auto-assigned clients: failed to get host for displaced node", "node", node.ID, "error", err)
-+			continue
-+		}
-+
-+		if allNodes != nil {
-+			if err := PublishSingleHostPeerUpdate(ctx, host, allNodes, nil, nil, nil, false, nil); err != nil {
-+				slog.Error("reassign auto-assigned clients: failed to publish peer update", "host", host.ID, "error", err)
-+			}
-+		}
-+		if err := HostUpdate(&models.HostUpdate{Action: models.CheckAutoAssignGw, Host: *host, Node: node}); err != nil {
-+			slog.Error("reassign auto-assigned clients: failed to send gateway check", "host", host.ID, "error", err)
-+		}
-+	}
-+}
-+
- // NodeUpdate -- publishes a node update
- func NodeUpdate(node *models.Node) error {
- 	host := &schema.Host{ID: node.HostID}
+@@ -5,7 +5,7 @@ go 1.26.0
+ require (
+ 	github.com/blang/semver v3.5.1+incompatible
+ 	github.com/eclipse/paho.mqtt.golang v1.5.1
+-	github.com/go-playground/validator/v10 v10.30.3
++	github.com/go-playground/validator/v10 v10.30.5
+ 	github.com/golang-jwt/jwt/v4 v4.5.2
+ 	github.com/google/uuid v1.6.0
+ 	github.com/gorilla/handlers v1.5.2
+@@ -14,11 +14,11 @@ require (
+ 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
+ 	github.com/stretchr/testify v1.12.1
+ 	go.uber.org/automaxprocs v1.6.0
+-	golang.org/x/crypto v0.55.0
++	golang.org/x/crypto v0.57.0
+ 	golang.org/x/net v0.58.0 // indirect
+ 	golang.org/x/oauth2 v0.37.0
+-	golang.org/x/sys v0.47.0 // indirect
+-	golang.org/x/text v0.41.0 // indirect
++	golang.org/x/sys v0.48.0 // indirect
++	golang.org/x/text v0.42.0 // indirect
+ 	golang.zx2c4.com/wireguard/wgctrl v0.0.0-20221104135756-97bc4ad4a1cb
+ 	gopkg.in/yaml.v3 v3.0.1
+ )
+@@ -68,7 +68,7 @@ require (
+ 	github.com/andybalholm/brotli v1.2.6 // indirect
+ 	github.com/boombuler/barcode v1.0.1-0.20190219062509-6c824513bacc // indirect
+ 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
+-	github.com/gabriel-vasile/mimetype v1.4.13 // indirect
++	github.com/gabriel-vasile/mimetype v1.4.15 // indirect
+ 	github.com/go-faster/city v1.0.1 // indirect
+ 	github.com/go-faster/errors v0.7.1 // indirect
+ 	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
+@@ -110,7 +110,7 @@ require (
+ 	github.com/go-playground/locales v0.14.1 // indirect
+ 	github.com/go-playground/universal-translator v0.18.1 // indirect
+ 	github.com/hashicorp/go-version v1.9.0
+-	github.com/leodido/go-urn v1.4.0 // indirect
++	github.com/leodido/go-urn v1.5.0 // indirect
+ 	github.com/mattn/go-runewidth v0.0.16 // indirect
+-	golang.org/x/sync v0.22.0 // indirect
++	golang.org/x/sync v0.23.0 // indirect
+ )
 ```
 
-**File**: `pro/controllers/auto_relay.go` (modified, +37/-10)
+**File**: `go.sum` (modified, +14/-14)
 ```diff
-@@ -249,6 +249,17 @@ func autoRelayME(w http.ResponseWriter, r *http.Request) {
- 		)
- 		return
- 	}
-+	if !autoRelayNode.Connected {
-+		logic.ReturnErrorResponse(
-+			w,
-+			r,
-+			logic.FormatError(
-+				fmt.Errorf("req-from: %s, autorelay node is disconnected", host.Name),
-+				"badrequest",
-+			),
-+		)
-+		return
-+	}
- 
- 	var sendPeerUpdate bool
- 	peerNode, err := logic.GetNodeByID(autoRelayReq.NodeID)
-@@ -487,6 +498,17 @@ func autoRelayMEUpdate(w http.ResponseWriter, r *http.Request) {
- 		)
- 		return
- 	}
-+	if !autoRelayNode.Connected {
-+		logic.ReturnErrorResponse(
-+			w,
-+			r,
-+			logic.FormatError(
-+				fmt.Errorf("req-from: %s, autorelay node is disconnected", host.Name),
-+				"badrequest",
-+			),
-+		)
-+		return
-+	}
- 	if !autoRelayNode.IsGw {
- 		logic.ReturnErrorResponse(
- 			w,
-@@ -503,17 +525,22 @@ func autoRelayMEUpdate(w http.ResponseWriter, r *http.Request) {
- 	// (checked on node/peerNode above and in SetAutoRelayCtx).
- 	if node.AutoAssignGateway {
- 		if node.RelayedBy != autoRelayReq.AutoRelayGwID {
--			if node.RelayedBy != "" {
--				// unset relayed node from the curr relay
--				currRelayNode, err := logic.GetNodeByID(node.RelayedBy)
--				if err == nil {
--					newRelayedNodes := logic.RemoveAllFromSlice(currRelayNode.RelayedNodes, node.ID.String())
--					logic.UpdateRelayNodes(currRelayNode.ID.String(), currRelayNode.RelayedNodes, newRelayedNodes)
--				}
-+			_node := &schema.Node{
-+				ID: node.ID.String(),
-+			}
-+			err = _node.Get(r.Context())
-+			if err != nil {
-+				logic.ReturnErrorResponse(w, r, logic.FormatError(err, logic.Internal))
-+				return
-+			}
-+			gwNodeID := autoRelayNode.ID.String()
-+			_node.RelayedByNodeID = &gwNodeID
-+			_node.IsIGWClient = false
-+			err = _node.AssignGateway(r.Context())
-+			if err != nil {
-+				logic.ReturnErrorResponse(w, r, logic.FormatError(fmt.Errorf("failed to assign gw: %v", err), logic.Internal))
-+				return
- 			}
--			newNodes := []string{node.ID.String()}
--			newNodes = append(newNodes, autoRelayNode.RelayedNodes...)
--			logic.UpdateRelayNodes(autoRelayNode.ID.String(), autoRelayNode.RelayedNodes, newNodes)
- 			ctx := scope.WithContext(db.WithContext(context.Background()), scope.Level(r.Context()), scope.ID(r.Context()))
- 			go mq.PublishPeerUpdate(ctx, false)
- 		}
+@@ -35,8 +35,8 @@ github.com/fatih/color v1.16.0 h1:zmkK9Ngbjj+K0yRhTVONQh1p/HknKYSlNT+vZCzyokM=
+ github.com/fatih/color v1.16.0/go.mod h1:fL2Sau1YI5c0pdGEVCbKQbLXB6edEj1ZgiY4NijnWvE=
+ github.com/felixge/httpsnoop v1.1.0 h1:3YtUj32ZZkqZtt3sZZsClsymw/QDuVfpNhoA31zeORc=
+ github.com/felixge/httpsnoop v1.1.0/go.mod h1:Zqxgdd+1Rkcz8euOqdr7lqgCRJztwr5hp9vDSi5UZCE=
+-github.com/gabriel-vasile/mimetype v1.4.13 h1:46nXokslUBsAJE/wMsp5gtO500a4F3Nkz9Ufpk2AcUM=
+-github.com/gabriel-vasile/mimetype v1.4.13/go.mod h1:d+9Oxyo1wTzWdyVUPMmXFvp4F9tea18J8ufA774AB3s=
++github.com/gabriel-vasile/mimetype v1.4.15 h1:05iP/CYtZ/w455R/KZM6rZ5ieAdh99UPtd+d3YzLmaI=
++github.com/gabriel-vasile/mimetype v1.4.15/go.mod h1:azpTcoLcDZRNgFou5j+APrqQx9HqVPWa6ijYQIIVswQ=
+ github.com/go-faster/city v1.0.1 h1:4WAxSZ3V2Ws4QRDrscLEDcibJY8uf41H6AhXDrNDcGw=
+ github.com/go-faster/city v1.0.1/go.mod h1:jKcUJId49qdW3L1qKHH/3wPeUstCVpVSXTM6vO3VcTw=
+ github.com/go-faster/errors v0.7.1 h1:MkJTnDoEdi9pDabt1dpWf7AA8/BaSYZqibYyhZ20AYg=
+@@ -54,8 +54,8 @@ github.com/go-playground/locales v0.14.1 h1:EWaQ/wswjilfKLTECiXz7Rh+3BjFhfDFKv/o
+ github.com/go-playground/locales v0.14.1/go.mod h1:hxrqLVvrK65+Rwrd5Fc6F2O76J/NuW9t0sjnWqG1slY=
+ github.com/go-playground/universal-translator v0.18.1 h1:Bcnm0ZwsGyWbCzImXv+pAJnYK9S473LQFuzCbDbfSFY=
+ github.com/go-playground/universal-translator v0.18.1/go.mod h1:xekY+UJKNuX9WP91TpwSH2VMlDf28Uj24BCp08ZFTUY=
+-github.com/go-playground/validator/v10 v10.30.3 h1:4MU6YkEwx7GbcPJOZxrtbu+QfF3pJLJuaYTeAH0DYy8=
+-github.com/go-playground/validator/v10 v10.30.3/go.mod h1:4Axh7oCNGcoGkqLoE4YWt6n20mcEIsPRlB7vPk3lpyc=
++github.com/go-playground/validator/v10 v10.30.5 h1:YyCXvVShZbs2Sm3Mb53eNOlhRXctSOzW5QJAouCTZL4=
++github.com/go-playground/validator/v10 v10.30.5/go.mod h1:wEqiaov48pXX1kjhc3Da8y0M0Dtg/BK7gurFBLgwFrQ=
+ github.com/go-sql-driver/mysql v1.7.0/go.mod h1:OXbVy3sEdcQ2Doequ6Z5BW6fXNQTmx+9S1MCJN5yJMI=
+ github.com/go-sql-driver/mysql v1.8.1 h1:LedoTUt/eveggdHS9qUFC1EFSa8bU2+1pZjSRpvNJ1Y=
+ github.com/go-sql-driver/mysql v1.8.1/go.mod h1:wEBSXgmK//2ZFJyE+qWnIsVGmvmEKlqwuVSjsCm7DZg=
+@@ -119,8 +119,8 @@ github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
+ github.com/kr/pretty v0.3.1/go.mod h1:hoEshYVHaxMs3cyo3Yncou5ZscifuDolrwPKZanG3xk=
+ github.com/kr/text v0.2.0 h1:5Nx0Ya0ZqY2ygV366QzturHI13Jq95ApcVaJBhpS+AY=
+ github.com/kr/text v0.2.0/go.mod h1:eLer722TekiGuMkidMxC/pM04lWEeraHUUmBw8l2grE=
+-github.com/leodido/go-urn v1.4.0 h1:WT9HwE9SGECu3lg4d/dIA+jxlljEa1/ffXKmRjqdmIQ=
+-github.com/leodido/go-urn v1.4.0/go.mod h1:bvxc+MVxLKB4z00jd1z+Dvzr47oO32F/QSNjSBOlFxI=
++github.com/leodido/go-urn v1.5.0 h1:pLqT2kq1zpHW/1D18QMjMpdtX7cekxqtJJjg5ANyWw0=
++github.com/leodido/go-urn v1.5.0/go.mod h1:9BORnCDhdPBJNDEX+w1bJisa8yOKYi116VeO96s4ifE=
+ github.com/matryer/is v1.4.1 h1:55ehd8zaGABKLXQUe2awZ99BD/PTc2ls+KV/dXphgEQ=
+ github.com/matryer/is v1.4.1/go.mod h1:8I/i5uYgLzgsgEloJE1U6xx5HkBQpAZvepWuujKwMRU=
+ github.com/mattn/go-colorable v0.1.13 h1:fFA4WZxdEF4tXPZVKMLwD8oUnCTTo08duU7wxecdEvA=
+@@ -189,20 +189,20 @@ go.uber.org/automaxprocs v1.6.0/go.mod h1:ifeIMSnPZuznNm6jmdzmU3/bfk01Fe2fotchwE
+ go.yaml.in/yaml/v3 v3.0.4/go.mod h1:DhzuOOF2ATzADvBadXxruRBLzYTpT36CKvDb3+aBEFg=
+ go.yaml.in/yaml/v3 v3.0.5 h1:N6y/pJk8buWs9NY5ERU2HSMfm+IuD/OtfdAnq6kESPw=
+ go.yaml.in/yaml/v3 v3.0.5/go.mod h1:HVTZu1O7/Vkt2N+BFy8Zza+lnLsABggaTM2ZpNIGuKg=
+-golang.org/x/crypto v0.55.0 h1:+KWHjbgOaAQ66dh/YlkZKHlz9ZUlq61AFirAR9ntP8M=
+-golang.org/x/crypto v0.55.0/go.mod h1:uq0V9dE/fzQuJtbnL+2EhWOE63vo164FY8xqEnV9xis=
++golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
++golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
+ golang.org/x/exp v0.0.0-20230522175609-2e198f4a06a1 h1:k/i9J1pBpvlfR+9QsetwPyERsqu1GIbi967PQMq3Ivc=
+ golang.org/x/exp v0.0.0-20230522175609-2e198f4a06a1/go.mod h1:V1LtkGg67GoY2N1AnLN78QLrzxkLyJw7RJb1gzOOz9w=
+ golang.org/x/net v0.58.0 h1:ynWG7rqYi4ccpTEuPZ2QGWHktVEM9DMCj9yzDE0Q7To=
+ golang.org/x/net v0.58.0/go.mod h1:YwCddHnFlT7eLQqVprV19OnhLGtc5xOKgE0RyqgfWAU=
+ golang.org/x/oauth2 v0.37.0 h1:JUlcxA8oAtauLfiH8FX2/FkAWHAdi0QtGCGc+hofE98=
+ golang.org/x/oauth2 v0.37.0/go.mod h1:IxwZNxUULJmpBFf9K/9NTMSIfZZuvuTy1gGxhigP/58=
+-golang.org/x/sync v0.22.0 h1:SZjpbeLmrCk4xhRSZFNZW5gFUeCeFgjekvI/+gfScek=
+-golang.org/x/sync v0.22.0/go.mod h1:9xrNwdLfx4jkKbNva9FpL6vEN7evnE43NNNJQ2LF3+0=
+-golang.org/x/sys v0.47.0 h1:o7XGOvZQCADBQQ4Y7VNq2dRWQR7JmOUW8Kxx4ZsNgWs=
+-golang.org/x/sys v0.47.0/go.mod h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=
+-golang.org/x/text v0.41.0 h1:vz/seA0lnX87Othu2f/0L24RcgrXD9/YFTSuGjj3rH8=
+-golang.org/x/text v0.41.0/go.mod h1:jvf1O8ajNzZqhSrQBPbutR/EB83Cc0CFrezNQIwbb5M=
++golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
++golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
++golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
++golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
++golang.org/x/tex
 ```
 
-**File**: `pro/logic/status.go` (modified, +1/-1)
+---
+
+### Incident Patch 3: `f972dbb2` (2026-10-19)
+**Commit Message**: build(deps): bump github.com/klauspost/compress from 1.19.1 to 1.20.3 (#4187)
+
+Bumps [github.com/klauspost/compress](https://github.com/klauspost/compress) from 1.19.1 to 1.20.3.
+- [Release notes](https://github.com/klauspost/compress/releases)
+- [Commits](https://github.com/klauspost/compress/compare/v1.19.1...v1.20.3)
+
+---
+updated-dependencies:
+- dependency-name: github.com/klauspost/compress
+  dependency-version: 1.20.3
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -196,7 +196,7 @@ func buildPeerCache(ctx context.Context, node *models.Node, metrics *models.Metr
- 	for id := range idSet {
- 		ids = append(ids, id)
- 	}
--	peers, err := logic.GetNodesByIDs(ids)
-+	peers, err := logic.GetNodesByIDs(ctx, ids)
- 	if err != nil {
- 		return map[string]models.Node{}
- 	}
+@@ -43,7 +43,7 @@ require (
+ 	github.com/goombaio/namegenerator v0.0.0-20181006234301-989e774b106e
+ 	github.com/guumaster/tablewriter v0.0.10
+ 	github.com/hashicorp/go-retryablehttp v0.7.8
+-	github.com/klauspost/compress v1.19.1
++	github.com/klauspost/compress v1.20.3
+ 	github.com/matryer/is v1.4.1
+ 	github.com/pquerna/otp v1.5.0
+ 	github.com/spf13/cobra v1.10.2
 ```
 
-**File**: `schema/event.go` (modified, +1/-1)
+**File**: `go.sum` (modified, +2/-2)
 ```diff
-@@ -227,7 +227,7 @@ func (a *Event) DeleteAllForTenant(ctx context.Context) error {
- 
- func (a *Event) DeleteOldEvents(ctx context.Context, retentionDays int) error {
- 	cutoff := time.Now().AddDate(0, 0, -retentionDays)
--	query := db.FromContext(ctx).Model(&Event{}).Where("created_at < ?", cutoff)
-+	query := db.FromContext(ctx).Model(&Event{}).Where("time_stamp < ?", cutoff)
- 	if tenantID := scope.ID(ctx); tenantID != "" {
- 		query = dbtypes.WithFilter(fmt.Sprintf("%s.tenant_id", eventsTable), tenantID)(query)
- 	}
+@@ -113,8 +113,8 @@ github.com/jinzhu/inflection v1.0.0 h1:K317FqzuhWc8YvSVlFMCCUb36O/S9MCKRDI7QkRKD
+ github.com/jinzhu/inflection v1.0.0/go.mod h1:h+uFLlag+Qp1Va5pdKtLDYj+kHp5pxUVkryuEj+Srlc=
+ github.com/jinzhu/now v1.1.5 h1:/o9tlHleP7gOFmsnYNz3RGnqzefHA47wQpKrrdTIwXQ=
+ github.com/jinzhu/now v1.1.5/go.mod h1:d3SSVoowX0Lcu0IBviAWJpolVfI5UJVZZ7cO71lE/z8=
+-github.com/klauspost/compress v1.19.1 h1:VsB4HPswih7mmZ8WleSFQ75c/Ui1M4trX5oAsJnhSlk=
+-github.com/klauspost/compress v1.19.1/go.mod h1:cwPg85FWrGar70rWktvGQj8/hthj3wpl0PGDogxkrSQ=
++github.com/klauspost/compress v1.20.3 h1:zWNoFqq/lSuYQRim3dUXlXeA0IqwuZGicdG5ZTfY5j4=
++github.com/klauspost/compress v1.20.3/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
+ github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
+ github.com/kr/pretty v0.3.1/go.mod h1:hoEshYVHaxMs3cyo3Yncou5ZscifuDolrwPKZanG3xk=
+ github.com/kr/text v0.2.0 h1:5Nx0Ya0ZqY2ygV366QzturHI13Jq95ApcVaJBhpS+AY=
 ```
 
 #### Recent Merged Pull Requests:
@@ -1490,7 +1247,7 @@ Lower-case emails when checking invites
 - **PR #4192** (2026-10-19): Derive AES Key using ECDH (@VishalDalwadi)
 - **PR #4191** (2026-10-19): Lower-case emails when checking invites (@VishalDalwadi)
 - **PR #4190** (2026-10-19): Release v1.7.0 (@abhishek9686)
-- **PR #4185** (2026-10-16): Fixes: v1.8.0 (@VishalDalwadi)
+- **PR #4189** (2026-10-19): build(deps): bump golang.org/x/oauth2 from 0.36.0 to 0.37.0 (@dependabot[bot])
 
 ---
 
@@ -1510,34 +1267,28 @@ Lower-case emails when checking invites
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #4191 from gravitl/fix-email-case-v1-7-0
+## X. build(deps): bump github.com/posthog/posthog-go from 1.23.1 to 1.34.0 (#4186)
 
 **RULE**:
-When implementing operations in `schema/user_invites.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gravitl/netmaker. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gravitl/netmaker. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `730e6078`: Merge pull request #4191 from gravitl/fix-email-case-v1-7-0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `04f53b73`: build(deps): bump github.com/posthog/posthog-go from 1.23.1 to 1.34.0 (#4186). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `schema/user_invites.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		Where("invite_code = ? AND LOWER(email) = LOWER(?) AND type = ?", u.InviteCode, u.Email, ValidationInvite).
-		Where("LOWER(email) = LOWER(?) AND type = ?", u.Email, ValidationInvite).
-		Where("LOWER(email) = LOWER(?) AND type = ?", u.Email, MembershipInvite)
-		Where("LOWER(email) = LOWER(?) AND type = ?", u.Email, MembershipInvite)
+	github.com/posthog/posthog-go v1.34.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		Where("invite_code = ? AND email = ? AND type = ?", u.InviteCode, u.Email, ValidationInvite).
-		Where("email = ? AND type = ?", u.Email, ValidationInvite).
-		Where("email = ? AND type = ?", u.Email, MembershipInvite)
-		Where("email = ? AND type = ?", u.Email, MembershipInvite)
+	github.com/posthog/posthog-go v1.23.1
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `730e6078` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `04f53b73` are properly handled with clean fallback behavior.

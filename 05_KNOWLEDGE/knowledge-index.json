@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T18:36:07.714Z",
-  "total_verified_learnings": 878,
+  "last_updated": "2026-10-19T18:42:28.529Z",
+  "total_verified_learnings": 880,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -11373,8 +11373,8 @@
       "slug": "gravitl-netmaker",
       "platform": "github",
       "source_url": "https://github.com/gravitl/netmaker",
-      "source_version": "e8c0f0bc",
-      "content_hash": "caa4c2fd17278c0e270e0961a8150dfe75d31242067671f48f3ec82b37fd2f59",
+      "source_version": "82df6b46",
+      "content_hash": "989efc7e2a5d4b6c88d2f13cdf48cdf88f62acf4d96418ee2a9bb73cc11e71c1",
       "dossier_path": "07_PROJECT_LEARNING/gravitl-netmaker-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gravitl-netmaker-learnings.md",
       "promoted_rules": [
@@ -11387,6 +11387,11 @@
           "number": 2577,
           "title": "Merge pull request #4191 from gravitl/fix-email-case-v1-7-0",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2753,
+          "title": "build(deps): bump github.com/posthog/posthog-go from 1.23.1 to 1.34.0 (#4186)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11394,7 +11399,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T12:38:47.500Z",
+      "verified_at": "2026-10-19T18:42:28.517Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -32379,8 +32384,8 @@
       "slug": "nginx-kubernetes-ingress",
       "platform": "github",
       "source_url": "https://github.com/nginx/kubernetes-ingress",
-      "source_version": "1b0403e3",
-      "content_hash": "015320d156fe4d1c8e1a51d13794fd0dda42e1b97e144bbfbf27ba126ce64b71",
+      "source_version": "4a85f985",
+      "content_hash": "b832f0cac0991dd078fe20a9858fee4a186182873581b210a33293292d393bb9",
       "dossier_path": "07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
       "promoted_rules": [
@@ -32395,7 +32400,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T06:26:25.350Z",
+      "verified_at": "2026-10-19T18:42:26.064Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38921,22 +38926,35 @@
     "learn-github-simonschubert-kai": {
       "learning_id": "learn-github-simonschubert-kai",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "simonschubert-kai",
+      "source": "SimonSchubert/Kai",
+      "repository": "SimonSchubert/Kai",
       "slug": "simonschubert-kai",
       "platform": "github",
       "source_url": "https://github.com/SimonSchubert/Kai",
-      "source_version": "HEAD",
-      "content_hash": "ea7c2d0a36a18cb20103603806c3da35662ef6533195952823dd5d3d429da561",
+      "source_version": "628900a9",
+      "content_hash": "b77c198bd02f10bb4cba77b569db8cf29a04207da62c665039c6fc2528fd3da8",
       "dossier_path": "07_PROJECT_LEARNING/simonschubert-kai-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/simonschubert-kai-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2752,
+          "title": "Don't retry provider errors that a retry can't fix",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.548Z"
+      "verified_at": "2026-10-19T18:42:23.380Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-simonschubert-linuxcommandlibrary": {
       "learning_id": "learn-github-simonschubert-linuxcommandlibrary",
@@ -55255,22 +55273,36 @@
     "learn-github-matthews-wong-structured-data-validator": {
       "learning_id": "learn-github-matthews-wong-structured-data-validator",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "matthews-wong/structured-data-validator",
       "repository": "matthews-wong/structured-data-validator",
       "slug": "matthews-wong-structured-data-validator",
       "platform": "github",
       "source_url": "https://github.com/matthews-wong/structured-data-validator",
-      "source_version": "main",
-      "content_hash": "fe16b774dc717566a4fc8deca87f539444e01679266b2206c477ab5faaafacf8",
+      "source_version": "e85df7a4",
+      "content_hash": "b7214187e35c7c004f641ccf041469c8f9aa4e43689da9a1a5fa1045ca402d85",
       "dossier_path": "07_PROJECT_LEARNING/matthews-wong-structured-data-validator-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/matthews-wong-structured-data-validator-learnings.md",
       "promoted_rules": [
-        "Rule 1626"
+        "Rule 1626",
+        {
+          "number": 2751,
+          "title": "Add code of conduct, security policy, and issue/PR templates",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
       ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:27:04.005893Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T18:42:20.785Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-a4csi-schema-org-validate": {
       "learning_id": "learn-github-a4csi-schema-org-validate",
@@ -91031,6 +91063,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T18:36:07.706Z"
+    },
+    "rule-2751": {
+      "learning_id": "rule-2751",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2751,
+      "title": "Add code of conduct, security policy, and issue/PR templates",
+      "source_url": "https://github.com/matthews-wong/structured-data-validator",
+      "source_version": "e85df7a4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T18:42:20.785Z"
+    },
+    "rule-2752": {
+      "learning_id": "rule-2752",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2752,
+      "title": "Don't retry provider errors that a retry can't fix",
+      "source_url": "https://github.com/SimonSchubert/Kai",
+      "source_version": "628900a9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T18:42:23.380Z"
+    },
+    "rule-2753": {
+      "learning_id": "rule-2753",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2753,
+      "title": "build(deps): bump github.com/posthog/posthog-go from 1.23.1 to 1.34.0 (#4186)",
+      "source_url": "https://github.com/gravitl/netmaker",
+      "source_version": "82df6b46",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T18:42:28.517Z"
     }
   },
   "aliases": {
