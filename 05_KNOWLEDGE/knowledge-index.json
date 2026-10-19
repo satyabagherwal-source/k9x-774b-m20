@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T16:43:50.679Z",
-  "total_verified_learnings": 854,
+  "last_updated": "2026-10-19T16:50:00.670Z",
+  "total_verified_learnings": 856,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -6498,8 +6498,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "27dafb82",
-      "content_hash": "7de1a0251c476c0e4d7148eeaa4b0893e036166313778b2345ef82a91684ebaf",
+      "source_version": "27363b95",
+      "content_hash": "5c1c8b5872cc89f1f21e5de6c5026129e9000f4efc1489fc8db950614c6b0ad9",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -6552,6 +6552,11 @@
           "number": 2644,
           "title": "benchmarks: use qsvpy314 instead of qsvpy313 for python benchmarks",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2692,
+          "title": "benchmarks: 26.0.0 run",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6559,7 +6564,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T14:59:16.129Z",
+      "verified_at": "2026-10-19T16:50:00.660Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -7100,22 +7105,35 @@
     "learn-github-dimillian-redditos": {
       "learning_id": "learn-github-dimillian-redditos",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "dimillian-redditos",
+      "source": "Dimillian/RedditOS",
+      "repository": "Dimillian/RedditOS",
       "slug": "dimillian-redditos",
       "platform": "github",
       "source_url": "https://github.com/Dimillian/RedditOS",
-      "source_version": "HEAD",
-      "content_hash": "143343ae7fa9e305a314f39ef391a09e5c1f1eb41907fa8cc3b62e262f028d56",
+      "source_version": "525cd241",
+      "content_hash": "e8a57e4828415c9527c1d126debf373317f9adec0de8cb586ceeb85ce02b292c",
       "dossier_path": "07_PROJECT_LEARNING/dimillian-redditos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dimillian-redditos-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2691,
+          "title": "Comments: Add thread line fix #33",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.626Z"
+      "verified_at": "2026-10-19T16:49:51.366Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-dingodb-dingo": {
       "learning_id": "learn-github-dingodb-dingo",
@@ -54249,20 +54267,35 @@
     "learn-github-jeffli1993-seo-audit-skill": {
       "learning_id": "learn-github-jeffli1993-seo-audit-skill",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "JeffLi1993/seo-audit-skill",
       "repository": "JeffLi1993/seo-audit-skill",
       "slug": "jeffli1993-seo-audit-skill",
       "platform": "github",
       "source_url": "https://github.com/JeffLi1993/seo-audit-skill",
-      "source_version": "523bdfb2c9",
-      "content_hash": "a7fc942e1921b563969f791c4e9487b4d7718619a60413e10e791cd1802dfccf",
+      "source_version": "523bdfb2",
+      "content_hash": "9f8a8b6475d3ced469f953275afdfa6d96c328f801dbf849dc77a75cad7057a1",
       "dossier_path": "07_PROJECT_LEARNING/jeffli1993-seo-audit-skill-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jeffli1993-seo-audit-skill-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2690,
+          "title": "V2.0 fix report template css",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T05:30:30.975Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T16:49:48.721Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-anonymousaak-seo-skills": {
       "learning_id": "learn-github-anonymousaak-seo-skills",
@@ -89601,6 +89634,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T16:43:50.670Z"
+    },
+    "rule-2690": {
+      "learning_id": "rule-2690",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2690,
+      "title": "V2.0 fix report template css",
+      "source_url": "https://github.com/JeffLi1993/seo-audit-skill",
+      "source_version": "523bdfb2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T16:49:48.721Z"
+    },
+    "rule-2691": {
+      "learning_id": "rule-2691",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2691,
+      "title": "Comments: Add thread line fix #33",
+      "source_url": "https://github.com/Dimillian/RedditOS",
+      "source_version": "525cd241",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T16:49:51.366Z"
+    },
+    "rule-2692": {
+      "learning_id": "rule-2692",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2692,
+      "title": "benchmarks: 26.0.0 run",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "27363b95",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T16:50:00.660Z"
     }
   },
   "aliases": {

@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "27dafb82",
+    "sourceVersion": "27363b95",
     "license": "NOASSERTION",
-    "contentHash": "7de1a0251c476c0e4d7148eeaa4b0893e036166313778b2345ef82a91684ebaf",
-    "lastHarvestedAt": "2026-10-19T14:59:16.158Z",
+    "contentHash": "5c1c8b5872cc89f1f21e5de6c5026129e9000f4efc1489fc8db950614c6b0ad9",
+    "lastHarvestedAt": "2026-10-19T16:50:00.717Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -8388,5 +8388,25 @@
     "contentHash": "83f174a0fc5f125605d011104fecfd9955d391ad1c2a3f6e8ed23d4b0dab632e",
     "lastHarvestedAt": "2026-10-19T16:43:41.775Z",
     "learningId": "learn-github-touchlab-xcode-kotlin"
+  },
+  "jeffli1993-seo-audit-skill": {
+    "repository": "JeffLi1993/seo-audit-skill",
+    "platform": "github",
+    "sourceUrl": "https://github.com/JeffLi1993/seo-audit-skill",
+    "sourceVersion": "523bdfb2",
+    "license": "MIT",
+    "contentHash": "9f8a8b6475d3ced469f953275afdfa6d96c328f801dbf849dc77a75cad7057a1",
+    "lastHarvestedAt": "2026-10-19T16:49:48.774Z",
+    "learningId": "learn-github-jeffli1993-seo-audit-skill"
+  },
+  "dimillian-redditos": {
+    "repository": "Dimillian/RedditOS",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Dimillian/RedditOS",
+    "sourceVersion": "525cd241",
+    "license": "Apache-2.0",
+    "contentHash": "e8a57e4828415c9527c1d126debf373317f9adec0de8cb586ceeb85ce02b292c",
+    "lastHarvestedAt": "2026-10-19T16:49:51.419Z",
+    "learningId": "learn-github-dimillian-redditos"
   }
 }

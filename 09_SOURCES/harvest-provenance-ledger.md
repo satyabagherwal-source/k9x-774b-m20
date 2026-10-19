@@ -3371,3 +3371,6 @@ Every entry in this ledger must capture:
 | `learn-github-carbon-design-system-carbon` | `https://github.com/carbon-design-system/carbon` | `50efc61f` | Multi-dimensional audit evidence | 2026-10-19T16:43:34.811Z |
 | `learn-github-touchlab-xcode-kotlin` | `https://github.com/touchlab/xcode-kotlin` | `00970b1c` | Multi-dimensional audit evidence | 2026-10-19T16:43:41.775Z |
 | `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `81c6a3eb` | Multi-dimensional audit evidence | 2026-10-19T16:43:50.726Z |
+| `learn-github-jeffli1993-seo-audit-skill` | `https://github.com/JeffLi1993/seo-audit-skill` | `523bdfb2` | Multi-dimensional audit evidence | 2026-10-19T16:49:48.774Z |
+| `learn-github-dimillian-redditos` | `https://github.com/Dimillian/RedditOS` | `525cd241` | Multi-dimensional audit evidence | 2026-10-19T16:49:51.419Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `27363b95` | Multi-dimensional audit evidence | 2026-10-19T16:50:00.717Z |

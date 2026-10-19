@@ -1794,8 +1794,8 @@
     "officialUrl": "https://github.com/bee-san/Ciphey",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-19T13:49:37.963Z",
-    "lastVerified": "2026-10-19T13:49:37.963Z",
+    "lastChecked": "2026-10-19T16:49:50.727Z",
+    "lastVerified": "2026-10-19T16:49:50.727Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bee-san-ciphey",
@@ -6694,12 +6694,12 @@
     "revisionIdentifier": "871d5335"
   },
   "mufeedvh-code2prompt": {
-    "name": "mufeedvh/code2prompt",
+    "name": "code2prompt",
     "officialUrl": "https://github.com/mufeedvh/code2prompt",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-19T01:41:07.997Z",
-    "lastVerified": "2026-10-19T01:41:07.997Z",
+    "lastChecked": "2026-10-19T16:49:40.670Z",
+    "lastVerified": "2026-10-19T16:49:40.670Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mufeedvh-code2prompt",
@@ -6708,7 +6708,8 @@
     "recentFixesCount": 9,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "66585136"
   },
   "timvisee-ffsend": {
     "name": "timvisee/ffsend",
@@ -10289,12 +10290,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "netflix-dynomite": {
-    "name": "Netflix/dynomite",
+    "name": "dynomite",
     "officialUrl": "https://github.com/Netflix/dynomite",
     "sourceType": "github",
     "technology": "C",
-    "lastChecked": "2026-10-19T03:47:35.902Z",
-    "lastVerified": "2026-10-19T03:47:35.902Z",
+    "lastChecked": "2026-10-19T16:49:53.224Z",
+    "lastVerified": "2026-10-19T16:49:53.224Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-netflix-dynomite",
@@ -10303,7 +10304,8 @@
     "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "2046b05e"
   },
   "headroomlabs-ai-headroom": {
     "name": "headroomlabs-ai/headroom",
@@ -10693,12 +10695,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "someengineering-fixinventory": {
-    "name": "someengineering/fixinventory",
+    "name": "fixinventory",
     "officialUrl": "https://github.com/someengineering/fixinventory",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-19T04:34:07.229Z",
-    "lastVerified": "2026-10-19T04:34:07.229Z",
+    "lastChecked": "2026-10-19T16:49:48.253Z",
+    "lastVerified": "2026-10-19T16:49:48.253Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-someengineering-fixinventory",
@@ -10707,7 +10709,8 @@
     "recentFixesCount": 17,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "21183338"
   },
   "camptocamp-terraboard": {
     "name": "camptocamp/terraboard",
@@ -17607,14 +17610,15 @@
     "officialUrl": "https://github.com/Dimillian/RedditOS",
     "sourceType": "github",
     "technology": "Swift",
-    "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-01T05:23:04.233Z",
-    "lastVerified": "2026-10-01T05:23:04.233Z",
+    "lastChecked": "2026-10-19T16:49:51.175Z",
+    "lastVerified": "2026-10-19T16:49:51.175Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
-    "learningId": null,
-    "promotedRulesCount": 0,
-    "recentFixesCount": 27,
+    "learningId": "learn-github-dimillian-redditos",
+    "contentHash": "e8a57e4828415c9527c1d126debf373317f9adec0de8cb586ceeb85ce02b292c",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 8,
+    "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   },
@@ -18264,22 +18268,21 @@
     "revisionIdentifier": "6e2b5850"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-19T16:24:49.319Z",
-    "lastVerified": "2026-10-19T16:24:49.319Z",
+    "lastChecked": "2026-10-19T16:50:00.472Z",
+    "lastVerified": "2026-10-19T16:50:00.472Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "7de1a0251c476c0e4d7148eeaa4b0893e036166313778b2345ef82a91684ebaf",
+    "contentHash": "5c1c8b5872cc89f1f21e5de6c5026129e9000f4efc1489fc8db950614c6b0ad9",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "27dafb82"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
@@ -21253,12 +21256,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "emilkowalski-vaul": {
-    "name": "emilkowalski/vaul",
+    "name": "vaul",
     "officialUrl": "https://github.com/emilkowalski/vaul",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-19T05:39:01.983Z",
-    "lastVerified": "2026-10-19T05:39:01.983Z",
+    "lastChecked": "2026-10-19T16:49:38.201Z",
+    "lastVerified": "2026-10-19T16:49:38.201Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-emilkowalski-vaul",
@@ -21267,7 +21270,8 @@
     "recentFixesCount": 17,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "3e97aac6"
   },
   "envoyproxy-envoy": {
     "name": "envoyproxy/envoy",
@@ -24767,17 +24771,21 @@
     "autoUpdatePolicy": "AUTO_HARVEST_BATCH"
   },
   "jeffli1993-seo-audit-skill": {
-    "name": "seo-audit-skill",
+    "name": "JeffLi1993/seo-audit-skill",
     "officialUrl": "https://github.com/JeffLi1993/seo-audit-skill",
-    "sourceType": "JavaScript",
-    "technology": "jeffli1993-seo-audit-skill",
-    "lastChecked": "2026-10-18T05:34:52.793Z",
-    "lastVerified": "2026-10-18T05:34:52.793Z",
-    "learningStatus": "VERIFIED",
-    "revisionIdentifier": "523bdfb2c9",
-    "promotedRulesCount": 0,
-    "verificationMethod": "full-clone-forensic-audit",
-    "autoUpdatePolicy": "AUTO_HARVEST_BATCH"
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-10-19T16:49:47.767Z",
+    "lastVerified": "2026-10-19T16:49:47.767Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-jeffli1993-seo-audit-skill",
+    "contentHash": "9f8a8b6475d3ced469f953275afdfa6d96c328f801dbf849dc77a75cad7057a1",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "anonymousaak-seo-skills": {
     "name": "seo-skills",
@@ -26287,8 +26295,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-19T16:43:53.273Z",
-    "lastVerified": "2026-10-19T16:43:53.273Z",
+    "lastChecked": "2026-10-19T16:50:03.248Z",
+    "lastVerified": "2026-10-19T16:50:03.248Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
