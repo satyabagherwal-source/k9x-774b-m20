@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T11:09:14.349Z",
+  "last_updated": "2026-10-19T11:15:25.044Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1174,14 +1174,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
-      "content_hash": "99edbc2d0c2d13fc49a8df3cd84cf318162aea1addeb6948e531c5e37e54f424",
-      "verified_at": "2026-10-18T02:38:32.471Z",
+      "content_hash": "56337c47a0e5489f1e703065bd2635b8f9b52372fabe8556c2e064f7911779c2",
+      "verified_at": "2026-10-19T11:15:25.043Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T02:38:32.471Z"
+      "last_updated": "2026-10-19T11:15:25.043Z"
     },
     "openai/gpt-oss-120b": {
       "repository": "openai/gpt-oss-120b",
@@ -11786,6 +11786,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T11:09:12.565Z"
+    },
+    "rtk-ai/rtk": {
+      "repository": "rtk-ai/rtk",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-rtk-ai-rtk",
+      "content_hash": "b94f1db5c66907f8fde13932863bae1c014a01aeeb5b36439fbbf1c14f307483",
+      "verified_at": "2026-10-19T11:15:16.670Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T11:15:16.670Z"
+    },
+    "gao-sun/eul": {
+      "repository": "gao-sun/eul",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-gao-sun-eul",
+      "content_hash": "bf01ea57d7d2460dfce7e126f04bc5f4f1a9248f2d53e9abe553cc2bb11b305d",
+      "verified_at": "2026-10-19T11:15:21.031Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T11:15:21.031Z"
     }
   },
   "repos": {

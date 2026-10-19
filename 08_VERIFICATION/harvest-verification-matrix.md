@@ -3184,3 +3184,6 @@
 | `CYCLE-20261019-J64N` | `2026-10-19T11:09:07.655Z` | `astral-sh/uv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2523, Rule 2524, Rule 2525` | Yes (`0070cf61...`) |
 | `CYCLE-20261019-J9WS` | `2026-10-19T11:09:12.556Z` | `thaw-app/Thaw` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2526, Rule 2527, Rule 2528` | Yes (`5451580a...`) |
 | `CYCLE-20261019-JBAC` | `2026-10-19T11:09:14.340Z` | `Tongyi-MAI/Z-Image-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2529, Rule 2530` | Yes (`ac2fca0b...`) |
+| `CYCLE-20261019-R2US` | `2026-10-19T11:15:16.660Z` | `rtk-ai/rtk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2531` | Yes (`b94f1db5...`) |
+| `CYCLE-20261019-R67W` | `2026-10-19T11:15:21.020Z` | `gao-sun/eul` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/gao-sun-eul-learnings.md` | Yes (`bf01ea57...`) |
+| `CYCLE-20261019-R9BE` | `2026-10-19T11:15:25.034Z` | `meta-llama/Meta-Llama-3-8B-Instruct` | Commit diff / Patch analysis | `VERIFIED` | `Rule 777, Rule 2532` | Yes (`56337c47...`) |

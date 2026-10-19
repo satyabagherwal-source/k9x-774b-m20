@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T11:09:14.299Z",
-  "total_verified_learnings": 798,
+  "last_updated": "2026-10-19T11:15:24.994Z",
+  "total_verified_learnings": 800,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -9716,22 +9716,29 @@
     "learn-github-gao-sun-eul": {
       "learning_id": "learn-github-gao-sun-eul",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "gao-sun-eul",
+      "source": "gao-sun/eul",
+      "repository": "gao-sun/eul",
       "slug": "gao-sun-eul",
       "platform": "github",
       "source_url": "https://github.com/gao-sun/eul",
-      "source_version": "HEAD",
-      "content_hash": "fe79db7c14344a8a67a484db78994f91a037e8efcd201e4de8ccdda30328c867",
+      "source_version": "b5c3bd0a",
+      "content_hash": "bf01ea57d7d2460dfce7e126f04bc5f4f1a9248f2d53e9abe553cc2bb11b305d",
       "dossier_path": "07_PROJECT_LEARNING/gao-sun-eul-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gao-sun-eul-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.013Z"
+      "verified_at": "2026-10-19T11:15:20.954Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-gardener-gardener": {
       "learning_id": "learn-github-gardener-gardener",
@@ -19294,7 +19301,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct",
       "source_version": "hf-meta-llama-meta-llama-3-8b-instruct",
-      "content_hash": "99edbc2d0c2d13fc49a8df3cd84cf318162aea1addeb6948e531c5e37e54f424",
+      "content_hash": "56337c47a0e5489f1e703065bd2635b8f9b52372fabe8556c2e064f7911779c2",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md",
       "promoted_rules": [
@@ -19322,6 +19329,11 @@
         {
           "number": 552,
           "title": "Prompt Injection & Output Sanitization Boundary",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 777,
+          "title": "Artifact-Code Separation Invariant",
           "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
@@ -19393,6 +19405,11 @@
           "number": 1594,
           "title": "Inference Context Window & Memory Bound Enforcement",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2532,
+          "title": "License-Gated Access Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -19413,7 +19430,7 @@
         "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv4auvsz",
         "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv4o8ney"
       ],
-      "verified_at": "2026-10-18T02:38:32.430Z",
+      "verified_at": "2026-10-19T11:15:24.983Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36155,22 +36172,35 @@
     "learn-github-rtk-ai-rtk": {
       "learning_id": "learn-github-rtk-ai-rtk",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "rtk-ai-rtk",
+      "source": "rtk-ai/rtk",
+      "repository": "rtk-ai/rtk",
       "slug": "rtk-ai-rtk",
       "platform": "github",
       "source_url": "https://github.com/rtk-ai/rtk",
-      "source_version": "HEAD",
-      "content_hash": "851b6d20aed22ea51cdcb3b879ef53231ebc716ca862995099a1414b6c04b3e2",
+      "source_version": "9a501c8d",
+      "content_hash": "b94f1db5c66907f8fde13932863bae1c014a01aeeb5b36439fbbf1c14f307483",
       "dossier_path": "07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2531,
+          "title": "hooks): leave git unrewritten in Claude Code managed worktrees",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.321Z"
+      "verified_at": "2026-10-19T11:15:16.607Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-run-llama-llama_index": {
       "learning_id": "learn-github-run-llama-llama_index",
@@ -61207,15 +61237,15 @@
       "learning_id": "rule-777",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 777,
-      "title": "Artifact-Code Separation Invariant (Harvested from meta-llama/Meta-Llama-3-8B)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Artifact-Code Separation Invariant",
+      "source_url": "https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct",
+      "source_version": "hf-meta-llama-meta-llama-3-8b-instruct",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.813Z"
+      "verified_at": "2026-10-19T11:15:24.983Z"
     },
     "rule-778": {
       "learning_id": "rule-778",
@@ -86061,6 +86091,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T11:09:14.288Z"
+    },
+    "rule-2531": {
+      "learning_id": "rule-2531",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2531,
+      "title": "hooks): leave git unrewritten in Claude Code managed worktrees",
+      "source_url": "https://github.com/rtk-ai/rtk",
+      "source_version": "9a501c8d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T11:15:16.607Z"
+    },
+    "rule-2532": {
+      "learning_id": "rule-2532",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2532,
+      "title": "License-Gated Access Invariant",
+      "source_url": "https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct",
+      "source_version": "hf-meta-llama-meta-llama-3-8b-instruct",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T11:15:24.983Z"
     }
   },
   "aliases": {

@@ -3191,3 +3191,6 @@ Every entry in this ledger must capture:
 | `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `83e4aeed` | Multi-dimensional audit evidence | 2026-10-19T11:09:07.658Z |
 | `learn-github-thaw-app-thaw` | `https://github.com/thaw-app/Thaw` | `75795724` | Multi-dimensional audit evidence | 2026-10-19T11:09:12.559Z |
 | `learn-huggingface-tongyi-mai-z-image-turbo` | `https://huggingface.co/Tongyi-MAI/Z-Image-Turbo` | `hf-tongyi-` | Multi-dimensional audit evidence | 2026-10-19T11:09:14.343Z |
+| `learn-github-rtk-ai-rtk` | `https://github.com/rtk-ai/rtk` | `9a501c8d` | Multi-dimensional audit evidence | 2026-10-19T11:15:16.663Z |
+| `learn-github-gao-sun-eul` | `https://github.com/gao-sun/eul` | `b5c3bd0a` | Multi-dimensional audit evidence | 2026-10-19T11:15:21.023Z |
+| `learn-huggingface-meta-llama-meta-llama-3-8b-instruct` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-19T11:15:25.037Z |

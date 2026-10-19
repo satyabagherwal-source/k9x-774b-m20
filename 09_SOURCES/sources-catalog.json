@@ -905,8 +905,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct",
     "sourceVersion": "hf-meta-llama-meta-llama-3-8b-instruct",
     "license": "Open-Source",
-    "contentHash": "99edbc2d0c2d13fc49a8df3cd84cf318162aea1addeb6948e531c5e37e54f424",
-    "lastHarvestedAt": "2026-10-18T02:38:32.468Z",
+    "contentHash": "56337c47a0e5489f1e703065bd2635b8f9b52372fabe8556c2e064f7911779c2",
+    "lastHarvestedAt": "2026-10-19T11:15:25.037Z",
     "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct"
   },
   "hf-openai-gpt-oss-120b": {
@@ -7838,5 +7838,25 @@
     "contentHash": "5451580a37e9558e287fa94fb64ea8d84ee167035082eb8e7aadb90ea6b7b405",
     "lastHarvestedAt": "2026-10-19T11:09:12.559Z",
     "learningId": "learn-github-thaw-app-thaw"
+  },
+  "rtk-ai-rtk": {
+    "repository": "rtk-ai/rtk",
+    "platform": "github",
+    "sourceUrl": "https://github.com/rtk-ai/rtk",
+    "sourceVersion": "9a501c8d",
+    "license": "Apache-2.0",
+    "contentHash": "b94f1db5c66907f8fde13932863bae1c014a01aeeb5b36439fbbf1c14f307483",
+    "lastHarvestedAt": "2026-10-19T11:15:16.663Z",
+    "learningId": "learn-github-rtk-ai-rtk"
+  },
+  "gao-sun-eul": {
+    "repository": "gao-sun/eul",
+    "platform": "github",
+    "sourceUrl": "https://github.com/gao-sun/eul",
+    "sourceVersion": "b5c3bd0a",
+    "license": "MIT",
+    "contentHash": "bf01ea57d7d2460dfce7e126f04bc5f4f1a9248f2d53e9abe553cc2bb11b305d",
+    "lastHarvestedAt": "2026-10-19T11:15:21.023Z",
+    "learningId": "learn-github-gao-sun-eul"
   }
 }
