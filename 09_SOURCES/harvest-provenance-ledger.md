@@ -3180,3 +3180,6 @@ Every entry in this ledger must capture:
 | `learn-github-tokio-rs-tokio` | `https://github.com/tokio-rs/tokio` | `0d322ce7` | Multi-dimensional audit evidence | 2026-10-19T10:48:31.318Z |
 | `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `9cc73706` | Multi-dimensional audit evidence | 2026-10-19T10:48:36.075Z |
 | `learn-github-simonschubert-linuxcommandlibrary` | `https://github.com/SimonSchubert/LinuxCommandLibrary` | `f884f5a1` | Multi-dimensional audit evidence | 2026-10-19T10:48:43.750Z |
+| `learn-huggingface-fishaudio-drama-3` | `https://huggingface.co/fishaudio/drama-3` | `hf-fishaud` | Multi-dimensional audit evidence | 2026-10-19T10:54:35.952Z |
+| `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `da5921d6` | Multi-dimensional audit evidence | 2026-10-19T10:54:38.131Z |
+| `learn-github-mohamedrejeb-compose-rich-editor` | `https://github.com/MohamedRejeb/compose-rich-editor` | `b972d50f` | Multi-dimensional audit evidence | 2026-10-19T10:54:42.521Z |

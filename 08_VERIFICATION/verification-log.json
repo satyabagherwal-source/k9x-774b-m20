@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-02OS",
-    "timestamp": "2026-10-19T00:10:25.564Z",
-    "repository": "go-chassis/go-chassis",
-    "learningId": "learn-github-go-chassis-go-chassis",
-    "contentHash": "310ff7d96d72b217fad33ac1382eb0d5d00ba77051ffbb602c71dda96e15c2ff",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-04ZQ",
-    "timestamp": "2026-10-19T00:10:28.550Z",
-    "repository": "Edge0/Audio8-ASR-Infinite",
-    "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
-    "contentHash": "2a11d60adc25fdb6d822f4ea917a4c7e9186173a3391212f17a25eede8782b2d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-06YP",
-    "timestamp": "2026-10-19T00:10:31.105Z",
-    "repository": "MaterializeInc/materialize",
-    "learningId": "learn-github-materializeinc-materialize",
-    "contentHash": "d88078ab0ed1dc2dd703566f7430a737d02d5a4e028ec069f701190be90678ca",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-7UKX",
     "timestamp": "2026-10-19T00:16:28.305Z",
     "repository": "react-bootstrap/react-bootstrap",
@@ -7492,6 +7447,51 @@
     "contentHash": "4c162668139e7206e02862efa8e50377ae0579ebf9948b9bdd86d57c7493647f",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-0HIM",
+    "timestamp": "2026-10-19T10:54:35.950Z",
+    "repository": "fishaudio/drama-3",
+    "learningId": "learn-huggingface-fishaudio-drama-3",
+    "contentHash": "6076fbd316a81d519902df36f7fbc3cbe70bd42e2f8324481a5ff78ab9543264",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-0J75",
+    "timestamp": "2026-10-19T10:54:38.129Z",
+    "repository": "zed-industries/zed",
+    "learningId": "learn-github-zed-industries-zed",
+    "contentHash": "7a112788d80e54076c9f88496ceb8024046c5dc87035f6d0c7ced0f6149da6a9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-0ML3",
+    "timestamp": "2026-10-19T10:54:42.519Z",
+    "repository": "MohamedRejeb/compose-rich-editor",
+    "learningId": "learn-github-mohamedrejeb-compose-rich-editor",
+    "contentHash": "f9f02a4e9ce648c1c3b5cbe7028d69b42765eb6d8e23f66b810584eacadf9523",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T10:48:43.757Z",
+  "last_updated": "2026-10-19T10:54:42.526Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2255,14 +2255,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-fishaudio-drama-3",
-      "content_hash": "f4616de61edf1b5905a8809344a2268c15d1f65560f731532dfeaa16d6951d27",
-      "verified_at": "2026-10-18T02:26:54.900Z",
+      "content_hash": "6076fbd316a81d519902df36f7fbc3cbe70bd42e2f8324481a5ff78ab9543264",
+      "verified_at": "2026-10-19T10:54:35.957Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T02:26:54.900Z"
+      "last_updated": "2026-10-19T10:54:35.957Z"
     },
     "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8": {
       "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
@@ -11711,6 +11711,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T10:48:43.757Z"
+    },
+    "zed-industries/zed": {
+      "repository": "zed-industries/zed",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-zed-industries-zed",
+      "content_hash": "7a112788d80e54076c9f88496ceb8024046c5dc87035f6d0c7ced0f6149da6a9",
+      "verified_at": "2026-10-19T10:54:38.135Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T10:54:38.135Z"
+    },
+    "MohamedRejeb/compose-rich-editor": {
+      "repository": "MohamedRejeb/compose-rich-editor",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-mohamedrejeb-compose-rich-editor",
+      "content_hash": "f9f02a4e9ce648c1c3b5cbe7028d69b42765eb6d8e23f66b810584eacadf9523",
+      "verified_at": "2026-10-19T10:54:42.525Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T10:54:42.525Z"
     }
   },
   "repos": {

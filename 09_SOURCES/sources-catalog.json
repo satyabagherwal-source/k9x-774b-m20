@@ -1455,8 +1455,8 @@
     "sourceUrl": "https://huggingface.co/fishaudio/drama-3",
     "sourceVersion": "hf-fishaudio-drama-3",
     "license": "Open-Source",
-    "contentHash": "f4616de61edf1b5905a8809344a2268c15d1f65560f731532dfeaa16d6951d27",
-    "lastHarvestedAt": "2026-10-18T02:26:54.897Z",
+    "contentHash": "6076fbd316a81d519902df36f7fbc3cbe70bd42e2f8324481a5ff78ab9543264",
+    "lastHarvestedAt": "2026-10-19T10:54:35.952Z",
     "learningId": "learn-huggingface-fishaudio-drama-3"
   },
   "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8": {
@@ -7778,5 +7778,25 @@
     "contentHash": "4c162668139e7206e02862efa8e50377ae0579ebf9948b9bdd86d57c7493647f",
     "lastHarvestedAt": "2026-10-19T10:48:43.750Z",
     "learningId": "learn-github-simonschubert-linuxcommandlibrary"
+  },
+  "zed-industries-zed": {
+    "repository": "zed-industries/zed",
+    "platform": "github",
+    "sourceUrl": "https://github.com/zed-industries/zed",
+    "sourceVersion": "da5921d6",
+    "license": "NOASSERTION",
+    "contentHash": "7a112788d80e54076c9f88496ceb8024046c5dc87035f6d0c7ced0f6149da6a9",
+    "lastHarvestedAt": "2026-10-19T10:54:38.131Z",
+    "learningId": "learn-github-zed-industries-zed"
+  },
+  "mohamedrejeb-compose-rich-editor": {
+    "repository": "MohamedRejeb/compose-rich-editor",
+    "platform": "github",
+    "sourceUrl": "https://github.com/MohamedRejeb/compose-rich-editor",
+    "sourceVersion": "b972d50f",
+    "license": "Apache-2.0",
+    "contentHash": "f9f02a4e9ce648c1c3b5cbe7028d69b42765eb6d8e23f66b810584eacadf9523",
+    "lastHarvestedAt": "2026-10-19T10:54:42.521Z",
+    "learningId": "learn-github-mohamedrejeb-compose-rich-editor"
   }
 }

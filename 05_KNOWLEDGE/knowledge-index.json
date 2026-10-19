@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T10:48:43.707Z",
-  "total_verified_learnings": 793,
+  "last_updated": "2026-10-19T10:54:42.493Z",
+  "total_verified_learnings": 795,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -30292,22 +30292,35 @@
     "learn-github-mohamedrejeb-compose-rich-editor": {
       "learning_id": "learn-github-mohamedrejeb-compose-rich-editor",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "mohamedrejeb-compose-rich-editor",
+      "source": "MohamedRejeb/compose-rich-editor",
+      "repository": "MohamedRejeb/compose-rich-editor",
       "slug": "mohamedrejeb-compose-rich-editor",
       "platform": "github",
       "source_url": "https://github.com/MohamedRejeb/compose-rich-editor",
-      "source_version": "HEAD",
-      "content_hash": "721e479a08ba9a0377e2b85fb0290a9f75ec7a4e93aba9f25028df5a2fb3bb9f",
+      "source_version": "b972d50f",
+      "content_hash": "f9f02a4e9ce648c1c3b5cbe7028d69b42765eb6d8e23f66b810584eacadf9523",
       "dossier_path": "07_PROJECT_LEARNING/mohamedrejeb-compose-rich-editor-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mohamedrejeb-compose-rich-editor-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2515,
+          "title": "Merge pull request #832 from MohamedRejeb/fix/heading-on-line-break-block",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.466Z"
+      "verified_at": "2026-10-19T10:54:42.485Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-momenbasel-puremac": {
       "learning_id": "learn-github-momenbasel-puremac",
@@ -43662,22 +43675,35 @@
     "learn-github-zed-industries-zed": {
       "learning_id": "learn-github-zed-industries-zed",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "zed-industries-zed",
+      "source": "zed-industries/zed",
+      "repository": "zed-industries/zed",
       "slug": "zed-industries-zed",
       "platform": "github",
       "source_url": "https://github.com/zed-industries/zed",
-      "source_version": "HEAD",
-      "content_hash": "7cb8c3c8eb2cbf2be59b7392f6605b9a376f457c9abab1cc254da3e36e32a660",
+      "source_version": "da5921d6",
+      "content_hash": "7a112788d80e54076c9f88496ceb8024046c5dc87035f6d0c7ced0f6149da6a9",
       "dossier_path": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2514,
+          "title": "agent_ui: Keep queued message text readable in narrow panels (#65638)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.511Z"
+      "verified_at": "2026-10-19T10:54:38.095Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-zekunyan-ttgtagcollectionview": {
       "learning_id": "learn-github-zekunyan-ttgtagcollectionview",
@@ -51732,7 +51758,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/fishaudio/drama-3",
       "source_version": "hf-fishaudio-drama-3",
-      "content_hash": "f4616de61edf1b5905a8809344a2268c15d1f65560f731532dfeaa16d6951d27",
+      "content_hash": "6076fbd316a81d519902df36f7fbc3cbe70bd42e2f8324481a5ff78ab9543264",
       "dossier_path": "07_PROJECT_LEARNING/hf-fishaudio-drama-3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-fishaudio-drama-3-learnings.md",
       "promoted_rules": [
@@ -51757,7 +51783,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T02:26:54.864Z",
+      "verified_at": "2026-10-19T10:54:35.921Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -85698,6 +85724,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T10:48:43.695Z"
+    },
+    "rule-2514": {
+      "learning_id": "rule-2514",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2514,
+      "title": "agent_ui: Keep queued message text readable in narrow panels (#65638)",
+      "source_url": "https://github.com/zed-industries/zed",
+      "source_version": "da5921d6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T10:54:38.095Z"
+    },
+    "rule-2515": {
+      "learning_id": "rule-2515",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2515,
+      "title": "Merge pull request #832 from MohamedRejeb/fix/heading-on-line-break-block",
+      "source_url": "https://github.com/MohamedRejeb/compose-rich-editor",
+      "source_version": "b972d50f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T10:54:42.485Z"
     }
   },
   "aliases": {
