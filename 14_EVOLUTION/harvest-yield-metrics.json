@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T06:45:02.556Z",
-  "total_cycles_completed": 3006,
-  "total_learnings_persisted": 3006,
-  "total_rules_promoted": 2042,
+  "last_updated": "2026-10-19T06:53:27.195Z",
+  "total_cycles_completed": 3012,
+  "total_learnings_persisted": 3012,
+  "total_rules_promoted": 2050,
   "history": [
-    {
-      "timestamp": "2026-10-19T03:07:49.882Z",
-      "repository": "gocd/gocd",
-      "learningId": "learn-github-gocd-gocd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T03:07:54.593Z",
-      "repository": "citusdata/citus",
-      "learningId": "learn-github-citusdata-citus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T03:13:50.163Z",
-      "repository": "reshaped-ui/reshaped",
-      "learningId": "learn-github-reshaped-ui-reshaped",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T03:13:52.123Z",
-      "repository": "actix/actix-web",
-      "learningId": "learn-github-actix-actix-web",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T03:13:57.284Z",
-      "repository": "wix/react-native-ui-lib",
-      "learningId": "learn-github-wix-react-native-ui-lib",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T03:13:59.288Z",
-      "repository": "goss-org/goss",
-      "learningId": "learn-github-goss-org-goss",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T03:14:01.769Z",
       "repository": "Contrastive-LM/CLM-v0.1-8B",
@@ -1403,6 +1361,48 @@
       "repository": "topoteretes/cognee",
       "learningId": "learn-github-topoteretes-cognee",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T06:52:02.743Z",
+      "repository": "radix-ui/primitives",
+      "learningId": "learn-github-radix-ui-primitives",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T06:52:03.476Z",
+      "repository": "domcyrus/rustnet",
+      "learningId": "learn-github-domcyrus-rustnet",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T06:52:08.555Z",
+      "repository": "futurice/pepperoni-app-kit",
+      "learningId": "learn-github-futurice-pepperoni-app-kit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T06:52:10.657Z",
+      "repository": "kube-rs/kube",
+      "learningId": "learn-github-kube-rs-kube",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T06:52:15.647Z",
+      "repository": "weaviate/weaviate",
+      "learningId": "learn-github-weaviate-weaviate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T06:53:27.195Z",
+      "repository": "unsloth/Qwen3.8-27B-GGUF",
+      "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

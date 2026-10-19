@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T06:45:02.559Z",
+  "last_updated": "2026-10-19T06:53:27.198Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -785,14 +785,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
-      "content_hash": "ab8f6336529bcce9c512cbad1227a9914f529e12300473885725576b38918e03",
-      "verified_at": "2026-10-18T00:25:49.010Z",
+      "content_hash": "815a1cea3573a016ed372d5c4e5f68bfdc7fafd7feabd233f6264c14d97aafd7",
+      "verified_at": "2026-10-19T06:53:27.198Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T00:25:49.010Z"
+      "last_updated": "2026-10-19T06:53:27.198Z"
     },
     "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF": {
       "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
@@ -10271,6 +10271,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T06:45:02.558Z"
+    },
+    "radix-ui/primitives": {
+      "repository": "radix-ui/primitives",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-radix-ui-primitives",
+      "content_hash": "592a4f49606d0da4ce0a8630184a8c206a0ffd154d85d2659a4acac5eb2624fc",
+      "verified_at": "2026-10-19T06:52:02.745Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T06:52:02.745Z"
+    },
+    "domcyrus/rustnet": {
+      "repository": "domcyrus/rustnet",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-domcyrus-rustnet",
+      "content_hash": "5670150ca621779bda1d5c501f6e6b8f6be4091fe57bce93cc819c4758b302b5",
+      "verified_at": "2026-10-19T06:52:03.479Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T06:52:03.479Z"
+    },
+    "futurice/pepperoni-app-kit": {
+      "repository": "futurice/pepperoni-app-kit",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-futurice-pepperoni-app-kit",
+      "content_hash": "ba3804092bb4d768fe1d87941cc96c28b4680108130fcf0cc4ac6534d41a2d5f",
+      "verified_at": "2026-10-19T06:52:08.558Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T06:52:08.558Z"
+    },
+    "kube-rs/kube": {
+      "repository": "kube-rs/kube",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-kube-rs-kube",
+      "content_hash": "064a13d110b830fe03048313650fcdfcc1e2474003536f660d3d66cbf10f56d6",
+      "verified_at": "2026-10-19T06:52:10.659Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T06:52:10.659Z"
+    },
+    "weaviate/weaviate": {
+      "repository": "weaviate/weaviate",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-weaviate-weaviate",
+      "content_hash": "6cdff9023491f93ef725e0e24b6d875be945f5ae6c814d153eb4406ba5efc732",
+      "verified_at": "2026-10-19T06:52:15.650Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T06:52:15.650Z"
     }
   },
   "repos": {

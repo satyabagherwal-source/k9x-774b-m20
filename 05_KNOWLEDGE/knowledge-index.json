@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T06:45:02.511Z",
-  "total_verified_learnings": 696,
+  "last_updated": "2026-10-19T06:53:27.151Z",
+  "total_verified_learnings": 701,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -6685,22 +6685,35 @@
     "learn-github-domcyrus-rustnet": {
       "learning_id": "learn-github-domcyrus-rustnet",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "domcyrus-rustnet",
+      "source": "domcyrus/rustnet",
+      "repository": "domcyrus/rustnet",
       "slug": "domcyrus-rustnet",
       "platform": "github",
       "source_url": "https://github.com/domcyrus/rustnet",
-      "source_version": "HEAD",
-      "content_hash": "5224da4c3a8ccf3b79b11cde638c72eeffbc7451d7defcc2cf711e5710e28092",
+      "source_version": "def84b48",
+      "content_hash": "5670150ca621779bda1d5c501f6e6b8f6be4091fe57bce93cc819c4758b302b5",
       "dossier_path": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2257,
+          "title": "ci: cache builds and cancel superseded PR runs (#685)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.662Z"
+      "verified_at": "2026-10-19T06:52:03.419Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-donchitos-claude-code-game-studios": {
       "learning_id": "learn-github-donchitos-claude-code-game-studios",
@@ -9149,22 +9162,35 @@
     "learn-github-futurice-pepperoni-app-kit": {
       "learning_id": "learn-github-futurice-pepperoni-app-kit",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "futurice-pepperoni-app-kit",
+      "source": "futurice/pepperoni-app-kit",
+      "repository": "futurice/pepperoni-app-kit",
       "slug": "futurice-pepperoni-app-kit",
       "platform": "github",
       "source_url": "https://github.com/futurice/pepperoni-app-kit",
-      "source_version": "HEAD",
-      "content_hash": "24011d11d74d7222c211f0019ac58160f1937623262043864dbfa127ab609296",
+      "source_version": "f58c1410",
+      "content_hash": "ba3804092bb4d768fe1d87941cc96c28b4680108130fcf0cc4ac6534d41a2d5f",
       "dossier_path": "07_PROJECT_LEARNING/futurice-pepperoni-app-kit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/futurice-pepperoni-app-kit-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2258,
+          "title": "Merge branch 'master' into bugfix/android-hmr",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.011Z"
+      "verified_at": "2026-10-19T06:52:08.501Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-gao-sun-eul": {
       "learning_id": "learn-github-gao-sun-eul",
@@ -22093,7 +22119,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF",
       "source_version": "hf-unsloth-qwen3.8-27b-gguf",
-      "content_hash": "ab8f6336529bcce9c512cbad1227a9914f529e12300473885725576b38918e03",
+      "content_hash": "815a1cea3573a016ed372d5c4e5f68bfdc7fafd7feabd233f6264c14d97aafd7",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md",
       "promoted_rules": [
@@ -22105,6 +22131,21 @@
         {
           "number": 1381,
           "title": "Multi-Token Prediction (MTP) Speculative Rollback Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2261,
+          "title": "Hybrid Recurrent-Attention State Initialization & Type Pinning",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2262,
+          "title": "Multi-Token Prediction (MTP) Shared Embedding Constraint",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2263,
+          "title": "Gated Attention Logit Normalization Invariant",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -22126,7 +22167,7 @@
         "learn-huggingface-hf-unsloth-qwen3-8-27b-gguf-mv47yc4x",
         "learn-huggingface-hf-unsloth-qwen3-8-27b-gguf-mv4l85qv"
       ],
-      "verified_at": "2026-10-18T00:25:48.961Z",
+      "verified_at": "2026-10-19T06:53:27.140Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25487,22 +25528,35 @@
     "learn-github-kube-rs-kube": {
       "learning_id": "learn-github-kube-rs-kube",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "kube-rs-kube",
+      "source": "kube-rs/kube",
+      "repository": "kube-rs/kube",
       "slug": "kube-rs-kube",
       "platform": "github",
       "source_url": "https://github.com/kube-rs/kube",
-      "source_version": "HEAD",
-      "content_hash": "261d4e18e35961c28a1165616a8590e94da9359358d41aa10710dc1a6ca89e10",
+      "source_version": "1be7f0d9",
+      "content_hash": "064a13d110b830fe03048313650fcdfcc1e2474003536f660d3d66cbf10f56d6",
       "dossier_path": "07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2259,
+          "title": "Retry-After overflow panic in the default retry policy (#2097)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.877Z"
+      "verified_at": "2026-10-19T06:52:10.601Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-kubearmor-kubearmor": {
       "learning_id": "learn-github-kubearmor-kubearmor",
@@ -33233,22 +33287,35 @@
     "learn-github-radix-ui-primitives": {
       "learning_id": "learn-github-radix-ui-primitives",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "radix-ui-primitives",
+      "source": "radix-ui/primitives",
+      "repository": "radix-ui/primitives",
       "slug": "radix-ui-primitives",
       "platform": "github",
       "source_url": "https://github.com/radix-ui/primitives",
-      "source_version": "HEAD",
-      "content_hash": "f4b7bdcdb2a4d862d2e4f11c623128c6af27b7bda280f17043a190fd3d3bdb74",
+      "source_version": "eb3a2b70",
+      "content_hash": "592a4f49606d0da4ce0a8630184a8c206a0ffd154d85d2659a4acac5eb2624fc",
       "dossier_path": "07_PROJECT_LEARNING/radix-ui-primitives-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/radix-ui-primitives-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2256,
+          "title": "select: Use overflow x + y instead of overflow shorthand (#4211)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.169Z"
+      "verified_at": "2026-10-19T06:52:02.688Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-radix-ui-themes": {
       "learning_id": "learn-github-radix-ui-themes",
@@ -40652,22 +40719,35 @@
     "learn-github-weaviate-weaviate": {
       "learning_id": "learn-github-weaviate-weaviate",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "weaviate-weaviate",
+      "source": "weaviate/weaviate",
+      "repository": "weaviate/weaviate",
       "slug": "weaviate-weaviate",
       "platform": "github",
       "source_url": "https://github.com/weaviate/weaviate",
-      "source_version": "HEAD",
-      "content_hash": "3d84c39a29b3d5a0d872e1afcc65be1755a3e6f15e774b63823d126d3c6a1b3c",
+      "source_version": "1baf1620",
+      "content_hash": "6cdff9023491f93ef725e0e24b6d875be945f5ae6c814d153eb4406ba5efc732",
       "dossier_path": "07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2260,
+          "title": "Test that unflushed writes of a suspended namespace survive a crash",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.314Z"
+      "verified_at": "2026-10-19T06:52:15.593Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-webrtc-rs-webrtc": {
       "learning_id": "learn-github-webrtc-rs-webrtc",
@@ -79999,6 +80079,118 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T06:45:02.500Z"
+    },
+    "rule-2256": {
+      "learning_id": "rule-2256",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2256,
+      "title": "select: Use overflow x + y instead of overflow shorthand (#4211)",
+      "source_url": "https://github.com/radix-ui/primitives",
+      "source_version": "eb3a2b70",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:52:02.688Z"
+    },
+    "rule-2257": {
+      "learning_id": "rule-2257",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2257,
+      "title": "ci: cache builds and cancel superseded PR runs (#685)",
+      "source_url": "https://github.com/domcyrus/rustnet",
+      "source_version": "def84b48",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:52:03.419Z"
+    },
+    "rule-2258": {
+      "learning_id": "rule-2258",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2258,
+      "title": "Merge branch 'master' into bugfix/android-hmr",
+      "source_url": "https://github.com/futurice/pepperoni-app-kit",
+      "source_version": "f58c1410",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:52:08.501Z"
+    },
+    "rule-2259": {
+      "learning_id": "rule-2259",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2259,
+      "title": "Retry-After overflow panic in the default retry policy (#2097)",
+      "source_url": "https://github.com/kube-rs/kube",
+      "source_version": "1be7f0d9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:52:10.601Z"
+    },
+    "rule-2260": {
+      "learning_id": "rule-2260",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2260,
+      "title": "Test that unflushed writes of a suspended namespace survive a crash",
+      "source_url": "https://github.com/weaviate/weaviate",
+      "source_version": "1baf1620",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:52:15.593Z"
+    },
+    "rule-2261": {
+      "learning_id": "rule-2261",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2261,
+      "title": "Hybrid Recurrent-Attention State Initialization & Type Pinning",
+      "source_url": "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF",
+      "source_version": "hf-unsloth-qwen3.8-27b-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:53:27.140Z"
+    },
+    "rule-2262": {
+      "learning_id": "rule-2262",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2262,
+      "title": "Multi-Token Prediction (MTP) Shared Embedding Constraint",
+      "source_url": "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF",
+      "source_version": "hf-unsloth-qwen3.8-27b-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:53:27.140Z"
+    },
+    "rule-2263": {
+      "learning_id": "rule-2263",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2263,
+      "title": "Gated Attention Logit Normalization Invariant",
+      "source_url": "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF",
+      "source_version": "hf-unsloth-qwen3.8-27b-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T06:53:27.140Z"
     }
   },
   "aliases": {

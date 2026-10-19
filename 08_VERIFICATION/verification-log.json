@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261018-9XST",
-    "timestamp": "2026-10-18T21:58:07.709Z",
-    "repository": "ajeetdsouza/zoxide",
-    "learningId": "learn-github-ajeetdsouza-zoxide",
-    "contentHash": "99b3f5be27f488309e4b8f5eb7f8174dc47e1cbb255d77a3b9fbf4bf00b476b1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-A232",
-    "timestamp": "2026-10-18T21:58:13.262Z",
-    "repository": "react-native-elements/react-native-elements",
-    "learningId": "learn-github-react-native-elements-react-native-elements",
-    "contentHash": "7bdca67a3aae98c34f151d852d2c095c2712e4b3cf445eb4ace199453e5aca21",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-A5N7",
-    "timestamp": "2026-10-18T21:58:17.875Z",
-    "repository": "Permify/permify",
-    "learningId": "learn-github-permify-permify",
-    "contentHash": "add33db40e79e3a60a504f8bd621d93557bf2844431479a056f64c6907d5e70e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-A61C",
-    "timestamp": "2026-10-18T21:58:18.384Z",
-    "repository": "rustls/rustls",
-    "learningId": "learn-github-rustls-rustls",
-    "contentHash": "85c739eaeaac9af5e5ecf95b504de2c73e4c49b167795d862d6869d26ad5aa2c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-A69F",
-    "timestamp": "2026-10-18T21:58:18.675Z",
-    "repository": "liyupi/yu-ai-agent",
-    "learningId": "learn-github-liyupi-yu-ai-agent",
-    "contentHash": "56c3ff58db3217a7898f12ef6927e6620dd4713ebb0f1ca6086ab6900ca8c0c4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-HQEM",
-    "timestamp": "2026-10-18T22:04:11.374Z",
-    "repository": "Tencent/omi",
-    "learningId": "learn-github-tencent-omi",
-    "contentHash": "a648c692785d376cd822cbf836b0ef4513c74c6f23bb1402204b325587a3c175",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261018-HRTL",
     "timestamp": "2026-10-18T22:04:13.209Z",
     "repository": "googleworkspace/cli",
@@ -7492,6 +7402,96 @@
     "contentHash": "07a5645f8b59618ae92a4d1b5ae3b290ed7442499003c1e212ee127aaf6e7010",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-CK6O",
+    "timestamp": "2026-10-19T06:52:02.736Z",
+    "repository": "radix-ui/primitives",
+    "learningId": "learn-github-radix-ui-primitives",
+    "contentHash": "592a4f49606d0da4ce0a8630184a8c206a0ffd154d85d2659a4acac5eb2624fc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-CKR2",
+    "timestamp": "2026-10-19T06:52:03.470Z",
+    "repository": "domcyrus/rustnet",
+    "learningId": "learn-github-domcyrus-rustnet",
+    "contentHash": "5670150ca621779bda1d5c501f6e6b8f6be4091fe57bce93cc819c4758b302b5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-COO5",
+    "timestamp": "2026-10-19T06:52:08.549Z",
+    "repository": "futurice/pepperoni-app-kit",
+    "learningId": "learn-github-futurice-pepperoni-app-kit",
+    "contentHash": "ba3804092bb4d768fe1d87941cc96c28b4680108130fcf0cc4ac6534d41a2d5f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-CQAI",
+    "timestamp": "2026-10-19T06:52:10.650Z",
+    "repository": "kube-rs/kube",
+    "learningId": "learn-github-kube-rs-kube",
+    "contentHash": "064a13d110b830fe03048313650fcdfcc1e2474003536f660d3d66cbf10f56d6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-CU55",
+    "timestamp": "2026-10-19T06:52:15.641Z",
+    "repository": "weaviate/weaviate",
+    "learningId": "learn-github-weaviate-weaviate",
+    "contentHash": "6cdff9023491f93ef725e0e24b6d875be945f5ae6c814d153eb4406ba5efc732",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-EDCL",
+    "timestamp": "2026-10-19T06:53:27.189Z",
+    "repository": "unsloth/Qwen3.8-27B-GGUF",
+    "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
+    "contentHash": "815a1cea3573a016ed372d5c4e5f68bfdc7fafd7feabd233f6264c14d97aafd7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

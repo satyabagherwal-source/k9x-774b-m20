@@ -3036,3 +3036,9 @@ Every entry in this ledger must capture:
 | `learn-github-kotest-kotest` | `https://github.com/kotest/kotest` | `f7b221c4` | Multi-dimensional audit evidence | 2026-10-19T06:44:55.408Z |
 | `learn-github-projectcontour-contour` | `https://github.com/projectcontour/contour` | `617a205b` | Multi-dimensional audit evidence | 2026-10-19T06:44:58.770Z |
 | `learn-github-topoteretes-cognee` | `https://github.com/topoteretes/cognee` | `37f788bd` | Multi-dimensional audit evidence | 2026-10-19T06:45:02.552Z |
+| `learn-github-radix-ui-primitives` | `https://github.com/radix-ui/primitives` | `eb3a2b70` | Multi-dimensional audit evidence | 2026-10-19T06:52:02.739Z |
+| `learn-github-domcyrus-rustnet` | `https://github.com/domcyrus/rustnet` | `def84b48` | Multi-dimensional audit evidence | 2026-10-19T06:52:03.473Z |
+| `learn-github-futurice-pepperoni-app-kit` | `https://github.com/futurice/pepperoni-app-kit` | `f58c1410` | Multi-dimensional audit evidence | 2026-10-19T06:52:08.552Z |
+| `learn-github-kube-rs-kube` | `https://github.com/kube-rs/kube` | `1be7f0d9` | Multi-dimensional audit evidence | 2026-10-19T06:52:10.653Z |
+| `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `1baf1620` | Multi-dimensional audit evidence | 2026-10-19T06:52:15.644Z |
+| `learn-huggingface-unsloth-qwen3-8-27b-gguf` | `https://huggingface.co/unsloth/Qwen3.8-27B-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-10-19T06:53:27.192Z |

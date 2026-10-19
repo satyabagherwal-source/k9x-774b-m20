@@ -635,8 +635,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF",
     "sourceVersion": "hf-unsloth-qwen3.8-27b-gguf",
     "license": "Open-Source",
-    "contentHash": "ab8f6336529bcce9c512cbad1227a9914f529e12300473885725576b38918e03",
-    "lastHarvestedAt": "2026-10-18T00:25:49.007Z",
+    "contentHash": "815a1cea3573a016ed372d5c4e5f68bfdc7fafd7feabd233f6264c14d97aafd7",
+    "lastHarvestedAt": "2026-10-19T06:53:27.192Z",
     "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf"
   },
   "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf": {
@@ -6808,5 +6808,55 @@
     "contentHash": "07a5645f8b59618ae92a4d1b5ae3b290ed7442499003c1e212ee127aaf6e7010",
     "lastHarvestedAt": "2026-10-19T06:45:02.552Z",
     "learningId": "learn-github-topoteretes-cognee"
+  },
+  "radix-ui-primitives": {
+    "repository": "radix-ui/primitives",
+    "platform": "github",
+    "sourceUrl": "https://github.com/radix-ui/primitives",
+    "sourceVersion": "eb3a2b70",
+    "license": "MIT",
+    "contentHash": "592a4f49606d0da4ce0a8630184a8c206a0ffd154d85d2659a4acac5eb2624fc",
+    "lastHarvestedAt": "2026-10-19T06:52:02.739Z",
+    "learningId": "learn-github-radix-ui-primitives"
+  },
+  "domcyrus-rustnet": {
+    "repository": "domcyrus/rustnet",
+    "platform": "github",
+    "sourceUrl": "https://github.com/domcyrus/rustnet",
+    "sourceVersion": "def84b48",
+    "license": "Apache-2.0",
+    "contentHash": "5670150ca621779bda1d5c501f6e6b8f6be4091fe57bce93cc819c4758b302b5",
+    "lastHarvestedAt": "2026-10-19T06:52:03.473Z",
+    "learningId": "learn-github-domcyrus-rustnet"
+  },
+  "futurice-pepperoni-app-kit": {
+    "repository": "futurice/pepperoni-app-kit",
+    "platform": "github",
+    "sourceUrl": "https://github.com/futurice/pepperoni-app-kit",
+    "sourceVersion": "f58c1410",
+    "license": "MIT",
+    "contentHash": "ba3804092bb4d768fe1d87941cc96c28b4680108130fcf0cc4ac6534d41a2d5f",
+    "lastHarvestedAt": "2026-10-19T06:52:08.552Z",
+    "learningId": "learn-github-futurice-pepperoni-app-kit"
+  },
+  "kube-rs-kube": {
+    "repository": "kube-rs/kube",
+    "platform": "github",
+    "sourceUrl": "https://github.com/kube-rs/kube",
+    "sourceVersion": "1be7f0d9",
+    "license": "Apache-2.0",
+    "contentHash": "064a13d110b830fe03048313650fcdfcc1e2474003536f660d3d66cbf10f56d6",
+    "lastHarvestedAt": "2026-10-19T06:52:10.653Z",
+    "learningId": "learn-github-kube-rs-kube"
+  },
+  "weaviate-weaviate": {
+    "repository": "weaviate/weaviate",
+    "platform": "github",
+    "sourceUrl": "https://github.com/weaviate/weaviate",
+    "sourceVersion": "1baf1620",
+    "license": "NOASSERTION",
+    "contentHash": "6cdff9023491f93ef725e0e24b6d875be945f5ae6c814d153eb4406ba5efc732",
+    "lastHarvestedAt": "2026-10-19T06:52:15.644Z",
+    "learningId": "learn-github-weaviate-weaviate"
   }
 }

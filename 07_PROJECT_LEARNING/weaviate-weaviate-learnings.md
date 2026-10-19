@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/weaviate-weaviate-learnings.md`  
+> **Source**: github ([https://github.com/weaviate/weaviate](https://github.com/weaviate/weaviate))  
+> **Source Version**: `1baf1620`  
+> **License**: NOASSERTION  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T06:52:15.413Z  
+> **Learning ID**: `learn-github-weaviate-weaviate`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): weaviate/weaviate
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/weaviate-weaviate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/weaviate/weaviate](https://github.com/weaviate/weaviate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-05T18:27:41.029Z  
+> **Harvest Timestamp**: 2026-10-19T06:52:15.405Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: Weaviate is an open-source vector database that stores both objects and vectors, allowing for the combination of vector search with structured filtering with the fault tolerance and scalability of a cloud-native database​.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: pyproject.toml, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 16864 stars
+- **Stars / Engagement**: 16890 stars
 
 ---
 
@@ -1691,308 +1705,6 @@ func (s *State) SetGraphQLIfCurrent(gql graphql.GraphQL, gen uint64) bool {
 
 ```
 
-### Core Architecture Module: `adapters/repos/db/inverted_reindexer_utils.go`
-```
-//                           _       _
-// __      _____  __ ___   ___  __ _| |_ ___
-// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
-//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
-//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
-//
-//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
-//
-//  CONTACT: hello@weaviate.io
-//
-
-package db
-
-import (
-	"regexp"
-
-	"github.com/weaviate/weaviate/adapters/repos/db/helpers"
-	"github.com/weaviate/weaviate/entities/models"
-	"github.com/weaviate/weaviate/entities/schema"
-)
-
-func GetPropNameAndIndexTypeFromBucketName(bucketName string) (string, PropertyIndexType) {
-	propRegexpGroup := "(?P<propName>.*)"
-
-	types := []struct {
-		indexType    PropertyIndexType
-		bucketNameFn func(string) string
-	}{
-		{
-			IndexTypePropNull,
-			helpers.BucketFromPropNameNullLSM,
-		},
-		{
-			IndexTypePropLength,
-			helpers.BucketFromPropNameLengthLSM,
-		},
-		{
-			IndexTypePropSearchableValue,
-			helpers.BucketSearchableFromPropNameLSM,
-		},
-		{
-			IndexTypePropMetaCount,
-			helpers.BucketFromPropNameMetaCountLSM,
-		},
-		{
-			IndexTypePropValue,
-			helpers.BucketFromPropNameLSM,
-		},
-	}
-
-	for _, t := range types {
-		r, err := regexp.Compile("^" + t.bucketNameFn(propRegexpGroup) + "$")
-		if err != nil {
-			continue
-		}
-		matches := r.FindStringSubmatch(bucketName)
-		if len(matches) > 0 {
-			return matches[r.SubexpIndex("propName")], t.indexType
-		}
-	}
-	return "", 0
-}
-
-type reindexablePropertyChecker struct {
-	reindexables map[string]map[PropertyIndexType]struct{}
-	props        map[string]*models.Property
-}
-
-func newReindexablePropertyChecker(reindexableProperties []ReindexableProperty, class *models.Class) *reindexablePropertyChecker {
-	reindexables := map[string]map[PropertyIndexType]struct{}{}
-	props := map[string]*models.Property{}
-	for _, property := range reindexableProperties {
-		if _, ok := reindexables[property.PropertyName]; !ok {
-			reindexables[property.PropertyName] = map[PropertyIndexType]struct{}{}
-		}
-		reindexables[property.PropertyName][property.IndexType] = struct{}{}
-		props[property.PropertyName], _ = schema.GetPropertyByName(class, property.PropertyName)
-	}
-	return &reindexablePropertyChecker{reindexables, props}
-}
-
-func (c *reindexablePropertyChecker) isReindexable(propName string, indexType PropertyIndexType) bool {
-	if _, ok := c.reindexables[propName]; ok {
-		_, ok := c.reindexables[propName][indexType]
-		return ok
-	}
-	return false
-}
-
-func (c *reindexablePropertyChecker) getSchemaProp(propName string) *models.Property {
-	return c.props[propName]
-}
-
-```
-
-### Core Architecture Module: `adapters/repos/db/priorityqueue/queue.go`
-```
-//                           _       _
-// __      _____  __ ___   ___  __ _| |_ ___
-// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
-//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
-//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
-//
-//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
-//
-//  CONTACT: hello@weaviate.io
-//
-
-package priorityqueue
-
-type supportedValueType interface {
-	any | uint64
-}
-
-// Item represents a queue item supporting an optional additional Value
-type Item[T supportedValueType] struct {
-	ID       uint64
-	Dist     float32
-	Rescored bool
-	Value    T
-}
-
-// Queue is a priority queue supporting generic item values
-type Queue[T supportedValueType] struct {
-	items []Item[T]
-	less  func(items []Item[T], i, j int) bool
-}
-
-// NewMin constructs a priority queue which prioritizes items with smaller distance
-func NewMin[T supportedValueType](capacity int) *Queue[T] {
-	return &Queue[T]{
-		items: make([]Item[T], 0, capacity),
-		less: func(items []Item[T], i, j int) bool {
-			return items[i].Dist < items[j].Dist
-		},
-	}
-}
-
-// NewMin constructs a priority queue which prioritizes items with larger distance and smaller ID:
-// - higher scores first
-// - if tied, lower document id first
-// Thus, the signs in the Less function are opposite for scores and ids
-func NewMinWithId[T supportedValueType](capacity int) *Queue[T] {
-	return &Queue[T]{
-		items: make([]Item[T], 0, capacity),
-		less: func(items []Item[T], i, j int) bool {
-			if items[i].Dist == items[j].Dist {
-				return items[i].ID > items[j].ID
-			}
-			return items[i].Dist < items[j].Dist
-		},
-	}
-}
-
-// NewMax constructs a priority queue which prioritizes items with greater distance
-func NewMax[T supportedValueType](capacity int) *Queue[T] {
-	return &Queue[T]{
-		items: make([]Item[T], 0, capacity),
-		less: func(items []Item[T], i, j int) bool {
-			return items[i].Dist > items[j].Dist
-		},
-	}
-}
-
-func (q *Queue[T]) ShouldEnqueue(distance float32, limit int) bool {
-	// read items[0].Dist directly rather than via Top(), which returns the whole
-	// Item by value (a multi-word copy) on this hot path.
-	return len(q.items) < limit || q.items[0].Dist < distance
-}
-
-func (q *Queue[T]) InsertAndPop(id uint64, score float64, limit int, worstDist *float64, val T) {
-	q.InsertWithValue(id, float32(score), val)
-	for q.Len() > limit {
-		q.Pop()
-	}
-	// only update the worst distance when the queue is full, otherwise results can be missing if the first
-	// entry that is checked already has a very high score
-	if q.Len() >= limit {
-		*worstDist = float64(q.Top().Dist)
-	}
-}
-
-// Pop removes the next item in the queue and returns it
-func (q *Queue[T]) Pop() Item[T] {
-	out := q.items[0]
-	q.items[0] = q.items[len(q.items)-1]
-	q.items = q.items[:len(q.items)-1]
-	q.heapify(0)
-	return out
-}
-
-// Top peeks at the next item in the queue
-func (q *Queue[T]) Top() Item[T] {
-	return q.items[0]
-}
-
-// Len returns the length of the queue
-func (q *Queue[T]) Len() int {
-	return len(q.items)
-}
-
-// Cap returns the remaining capacity of the queue
-func (q *Queue[T]) Cap() int {
-	return cap(q.items)
-}
-
-// Reset clears all items from the queue
-func (q *Queue[T]) Reset() {
-	q.items = q.items[:0]
-}
-
-// ResetCap drops existing queue items, and allocates a new queue with the given capacity
-func (q *Queue[T]) ResetCap(capacity int) {
-	q.items = make([]Item[T], 0, capacity)
-}
-
-// Insert creates a valueless item and adds it to the queue
-func (q *Queue[T]) Insert(id uint64, distance float32) int {
-	item := Item[T]{
-		ID:   id,
-		Dist: distance,
-	}
-	return q.insert(item)
-}
-
-// InsertWithValue creates an item with a T type value and adds it to the queue
-func (q *Queue[T]) InsertWithValue(id uint64, distance float32, val T) int {
-	item := Item[T]{
-		ID:    id,
-		Dist:  distance,
-		Value: val,
-	}
-	return q.insert(item)
-}
-
-// DeleteItem deletes item meeting predicate's conditions
-// TODO aliszka optimize?
-func (q *Queue[T]) DeleteItem(match func(item Item[T]) bool) bool {
-	for i := range q.items {
-		if match(q.items[i]) {
-			if i == 0 {
-				q.Pop()
-			} else {
-				last := q.Len() - 1
-				q.items[i] = q.items[last]
-				q.items = q.items[:last]
-				q.heapify(0)
-			}
-			return true
-		}
-	}
-	return false
-}
-
-func (q *Queue[T]) insert(item Item[T]) int {
-	q.items = append(q.items, item)
-	i := len(q.items) - 1
-	for i != 0 && q.less(q.items, i, q.parent(i)) {
-		q.swap(i, q.parent(i))
-		i = q.parent(i)
-	}
-	return i
-}
-
-func (q *Queue[T]) left(i int) int {
-	return 2*i + 1
-}
-
-func (q *Queue[T]) right(i int) int {
-	return 2*i + 2
-}
-
-func (q *Queue[T]) parent(i int) int {
-	return (i - 1) / 2
-}
-
-func (q *Queue[T]) swap(i, j int) {
-	q.items[i], q.items[j] = q.items[j], q.items[i]
-}
-
-func (q *Queue[T]) heapify(i int) {
-	left := q.left(i)
-	right := q.right(i)
-	smallest := i
-	if left < len(q.items) && q.less(q.items, left, i) {
-		smallest = left
-	}
-
-	if right < len(q.items) && q.less(q.items, right, smallest) {
-		smallest = right
-	}
-
-	if smallest != i {
-		q.swap(i, smallest)
-		q.heapify(smallest)
-	}
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -2001,45 +1713,9 @@ func (q *Queue[T]) heapify(i int) {
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
 - **Issue #12935** (2026-09-07): **HNSW: panic in packedconn.decodeInto — ACORN search reads a neighbor's connections without its lock**
   *Symptoms*: ## Summary  `hnsw/search.go:425` (the ACORN filter branch) iterates a **neighbor** vertex's connections while holding only the *candidate* vertex's mutex. `packedconn.Connections` has no internal lock, so a concurrent writer holding the neighbor's mutex tears the read and the decode indexes past the end of the connection data.  The panic is recovered by the errgroup wrapper, so the node survives and the query fails.  Observed on 2026-09-04 on a WCS dev cluster:  ``` Recovered from panic: shard: NjlDaweeJExh, collection: SimClass, vectorIndex: vectors_alt_vector, panic: runtime error: index out of range [0] with length 0 ```  ``` github.com/weaviate/weaviate/entities/vectorindex/hnsw/packedconn.decodeInto(...) 	entities/vectorindex/hnsw/packedconn/connections.go:242 github.com/weaviate/weaviate/entities/vectorindex/hnsw/packedconn.decodeValues(...) 	entities/vectorindex/hnsw/packedconn/connections.go:276 github.com/weaviate/weaviate/entities/vectorindex/hnsw/packedconn.(*Connections).ElementIterator(...) 	entities/vectorindex/hnsw/packedconn/connections.go:637 github.com/weaviate/weaviate/adapters/repos/db/vector/hnsw.(*hnsw).searchLayerByVectorWithDistancerWithStrategy.func3(...) 	adapters/repos/db/vector/hnsw/search.go:425 github.com/weaviate/weaviate/adapters/repos/db/vector/hnsw.(*hnsw).knnSearchByVector(...) 	adapters/repos/db/vector/hnsw/search.go:1008 github.com/weaviate/weaviate/adapters/repos/db.(*Shard).ObjectVectorSearch.func2() 	adapters/repos/db/shard_read.go:774 
-  **Post-Mortem & Fix Analysis**:
-  > I'll work on this. Could you assign it to me?  I'll reproduce from the report, fix the failure path, and add a test so it stays fixed. 
-  > Fix in progress on `jose/fix-acorn-neighbor-connection-locking`.  **Tests first, both red against current `main`:**  * `TestSearchConcurrentWithConnectionUpdates` — a table over both filter strategies, running filtered searches while inserts update the graph. The `acorn` case reports the race under `-race` on the exact production path (`search.go:425` → `ElementIterator` → `decodeInto`, against `InsertAtLayer`/`appendToLayer`); `sweeping` is clean. * `TestSearchReleasesEntrypointLockWhenEntrypointHasNoLayers` — deterministic, no race detector needed. With a zero-layer entrypoint the search never returns, because it blocks on the mutex it leaked a few lines earlier.  **Fix:**  The candidate's mutex is now released as soon as its own connections have been copied, and each neighbor is locked on its own while its layer is copied into a pooled buffer. Nesting the neighbor's mutex inside the candidate's would have deadlocked instead: no other code in the package holds two vertex mutexes, and
-  > Thanks for your initiative @modelpath-dev . I already had most of the context and a repro, so went ahead and submitted a tentative fix.
 
 - **Issue #12749** (2026-08-24): **gRPC batch stream: recv goroutine leaks on unbuffered errCh/reqCh send when the stream ends via context cancellation**
   *Symptoms*: ## Summary  The gRPC batch-stream handler leaks one goroutine every time a stream ends through context cancellation. The `recv` helper's child goroutine blocks forever on an unbuffered channel send that no one will ever read. Observed on a 1.39.0 production cluster; the code is unchanged on `main`.  ## Evidence  5-node cluster, v1.39.0, batch-stream ingest whose client streams ended abnormally (the client aborted stream starts after its 60 s timeout). `debug/pprof/goroutine` on the three nodes that had been up longest showed 16, 9, and 10 goroutines parked in:  ``` 16 @ 0x48ee4e 0x41ba3c 0x41b637 0x2e20bb1 0xb2e753 0x496f21 #	github.com/weaviate/weaviate/adapters/handlers/grpc/v1/batch.(*StreamHandler).recv.func1+0xd0  adapters/handlers/grpc/v1/batch/stream.go:387 #	github.com/weaviate/weaviate/entities/errors.GoWrapper.func1+0x52                              entities/errors/go_wrapper.go:35 ```  No `Handle`/`sender`/`receiver` goroutines existed at the same time — these are orphans of streams that ended long before. Each leak correlates with a `"context cancelled, closing stream"` log line. Nodes that restarted recently had none; counts only grow.  ## Root cause  [`stream.go#L372-L394` (v1.39.0)](https://github.com/weaviate/weaviate/blob/v1.39.0/adapters/handlers/grpc/v1/batch/stream.go#L372-L394):  ```go func (h *StreamHandler) recv(stream pb.Weaviate_BatchStreamServer) (chan *pb.BatchStreamRequest, chan error) { 	reqCh := make(chan *pb.BatchStreamRequest) 	errCh := make(ch
-  **Post-Mortem & Fix Analysis**:
-  > Closed by https://github.com/weaviate/weaviate/pull/12627
-  > Confirmed against the merged fix in #12627 — the shape landed exactly as described here: both errCh <- err and reqCh <- req in recv are now wrapped in select with case <-ctx.Done(), and ctx is the stream's own cancellable context rather than the raw stream context, so every receiver exit path (grace-period cancel included) reliably unblocks the sender.  One thing worth flagging for anyone reading this later: the fix isn't just adding the select branches. recv now also unconditionally closes both channels via defer, and receiver's select loop was changed to check the second ok value on each channel read. That's necessary because a select that takes the ctx.Done() branch returns without ever sending — if receiver is still reading from errCh/reqCh for any other reason at that point, it needs the channel-closed signal, not just cancellation, to know recv is gone and avoid its own equivalent block. 
-
-- **Issue #12536** (2026-08-18): **Hybrid search silently caps boost.depth at QUERY_HYBRID_MAXIMUM_RESULTS, causing incorrect ranking**
-  *Symptoms*: ### How to reproduce this bug?  Start Weaviate and run:  ```bash python - <<'PY' import time  import grpc import requests from google.protobuf.json_format import ParseDict from weaviate.proto.v1 import search_get_pb2 from weaviate.proto.v1 import weaviate_pb2_grpc  HTTP = "http://localhost:8080" GRPC = "localhost:50051" CLASS_NAME = "HybridBoostDepthBug" HIGH_ID = "00000000-0000-0000-0000-000000000121"  requests.delete(f"{HTTP}/v1/schema/{CLASS_NAME}")  schema = {     "class": CLASS_NAME,     "vectorizer": "none",     "properties": [         {"name": "title", "dataType": ["text"]},         {"name": "likes", "dataType": ["number"]},     ], }  response = requests.post(f"{HTTP}/v1/schema", json=schema) response.raise_for_status()  objects = [] for i in range(150):     object_id = f"00000000-0000-0000-0000-{i + 1:012d}"      # BM25 rank intentionally decreases with term frequency.     title = ("needle " * (150 - i)).strip()      # The object around rank 121 has the highest likes value and should be boosted.     likes = 1000 if object_id == HIGH_ID else 0      objects.append({         "class": CLASS_NAME,         "id": object_id,         "properties": {             "title": title,             "likes": likes,         },     })  response = requests.post(     f"{HTTP}/v1/batch/objects",     json={"objects": objects}, ) response.raise_for_status()  time.sleep(2)  channel = grpc.insecure_channel(GRPC) stub = weaviate_pb2_grpc.WeaviateStub(channel)   def run(use_boost):     request = { 
-
-- **Issue #12199** (2026-08-05): **INDEX_RANGEABLE_IN_MEMORY=true during an enable-rangeable reindex: post-swap rangeable bucket serves EMPTY range results (no disk fallback) until restart**
-  *Symptoms*: ## Summary  When the global `INDEX_RANGEABLE_IN_MEMORY=true` knob is active **while** an `enable-rangeable` runtime reindex runs, the runtime-created rangeable ingest bucket is opened with `keepSegmentsInMemory=true` but an **empty** in-memory representation. The bulk backfill enters that bucket via a file-level segment copy (`PrependSegmentsFromBucket`) that updates the on-disk segment list but **never** the in-memory representation. After the per-shard swap + ready-flip, the range-query path reads the empty in-memory representation and **ignores the fully-populated disk segments, with no disk fallback**.  Net effect: range filters on the migrated property (`prop >= X && prop <= Y`) silently return **empty (or live-writes-only) results** from the moment each shard's swap completes until the next process restart. There is no error and no log. A restart heals it, because the boot-time rebuild reconstructs the in-memory representation from all disk segments.  This is **strictly worse than #12189**: that issue was benign on a single node because the completed shards served correct data from the rangeable **disk** reader. With the in-mem knob on, the disk reader is never consulted, so **this is a silent wrong-results bug even on a single node.**  Found during prod-scale QA of the Runtime Reindex **Preview** feature (a 165M-object, 3-shard collection reindexed on a single-node v1.38.4 instance). Verdict is from a read-only code trace; empirical confirmation is in progress.  ## Aff
-  **Post-Mortem & Fix Analysis**:
-  > 👋 Thanks for opening this issue!  I found a similar issue in our tracker that might address your problem:  _[Issue weaviate/weaviate#10675: Runtime Property Reindex](https://github.com/weaviate/weaviate/issues/10675)_  _This is the closest semantic match because it covers the runtime reindex framework, including `enable-rangeable` migrations, `PrependSegmentsFromBucket`, bucket swapping, and the need to coordinate shard visibility during migration. Your report is a more specific correctness bug within that flow: the rangeable in-memory representation is not rebuilt after the segment copy, causing silent wrong results until restart._  Please check if this is the same issue. If so, consider adding your input there or closing this one. Thanks for helping us keep the issue tracker organized! 🚀  --- <div align="center"> <img src="https://tse1.mm.bing.net/th/id/OIP.A-2PG7j0L0X0H3M3lHuB4QHaHa" width="32" height="32" alt="Weaviate Logo"> <br> <sub><strong>Powered by Weaviate</strong></sub> <
-  > ## Follow-up: empirical reproduction  Adding an empirical reproduction of the behavior described in this issue (verdict (c): with `INDEX_RANGEABLE_IN_MEMORY=true` active *during* an `enable-rangeable` reindex, the swapped-in rangeable bucket serves range queries from an **empty** in-memory representation with **no disk fallback**, until the next process restart rebuilds it from the on-disk segments). Empirically reproduced on a single-node **v1.38.4** instance (git `6af189f`) with a small synthetic collection. The runtime behavior matches the analysis exactly.  ## TL;DR  With `INDEX_RANGEABLE_IN_MEMORY=true`, enabling a rangeable index and **not** restarting makes every range query on that property return **0 results** (silent — no error, no log), while the unfiltered control and every non-range query stay correct, and the on-disk rangeable segments are fully populated. A restart (no re-index) heals it. The in-memory representation is built **empty** at bucket creation and never re-pop
-  > SuperClaude here.  Closing as fixed. Fixed by weaviate/weaviate#12215 (merge `7f409b6`), first released in **v1.38.7**, also in v1.38.8 and v1.39.0; `main` carries the same change (`2c8019e`, `ed90a4a`). v1.38.6 and earlier remain affected.  The root cause is removed rather than patched around: reindex `RoaringSetRange` buckets now always open with `keepSegmentsInMemory=false`, so the ingest bucket never has an in-memory representation for the file-level segment copy to desync — post-swap range queries serve from the disk reader, correct from the moment of each per-shard swap, no restart needed. Three backstops on top:  1. `PrependSegmentsFromBucket` refuses (pre-mutation) to splice into a `RoaringSetRange` group with a live in-memory rep (`ErrPrependWouldDesyncInMemoryRep`) — any future caller recreating this state fails loudly instead of serving wrong results. 2. The read path now falls back to disk when the rep is unpopulated but disk segments exist (with a WARN) — the "no disk fall
-
-- **Issue #12097** (2026-07-10): **Jaccard IVF search returns no results even when all indexed vectors are scanned**
-  *Symptoms*: ### How to reproduce this bug?  1. Install the Python client/library version listed under **Supporting information**.  2. Create an IVF Flat index with one inverted list and configure it to use the Jaccard metric.  3. Set `nprobe` to `1`, so the only inverted list is searched.  4. Add the following vectors:     - `[1, 0, 1]`    - `[1, 1, 0]`    - `[0, 1, 1]`  5. Search for `[1, 0, 1]` with `k=1`.  6. Compare the result with a Flat index using the same Jaccard metric.  7. Optionally, apply the dimension permutation `[2, 0, 1]` to both the indexed vectors and the query, and repeat the search.  Minimal reproduction:  ```python import faiss import numpy as np   def make_ivf(d):     quantizer = faiss.IndexFlat(d, faiss.METRIC_L2)     index = faiss.IndexIVFFlat(         quantizer,         d,         1,         faiss.METRIC_Jaccard,     )     index.nprobe = 1     return index   def run(label, xb, xq, k=1):     flat = faiss.IndexFlat(         xb.shape[1],         faiss.METRIC_Jaccard,     )     flat.add(xb)     flat_distances, flat_ids = flat.search(xq, k)      ivf = make_ivf(xb.shape[1])     ivf.train(xb)     ivf.add(xb)     ivf_distances, ivf_ids = ivf.search(xq, k)      print(f"{label} flat distances:", flat_distances.tolist())     print(f"{label} flat ids:", flat_ids.tolist())     print(f"{label} ivf distances:", ivf_distances.tolist())     print(f"{label} ivf ids:", ivf_ids.tolist())     print(         f"{label} ivf list sizes:",         [ivf.invlists.list_size(i) for i in range
-
-- **Issue #12041** (2026-07-08): **Batch delete returns HTTP 500 instead of 422 when match.where or match.class is missing**
-  *Symptoms*: ### How to reproduce this bug?   Clean weaviate v1.38.2 container, default config. Create any class, then send a batch delete missing a required field:  ```bash # Setup curl -X POST "http://localhost:8080/v1/schema" \   -H "Content-Type: application/json" \   -d '{"class":"BoundaryTestBatchDelete","vectorizer":"none",        "properties":[{"name":"title","dataType":["text"]}]}' ```  **Case A — `match.class` present, `match.where` absent** (docs mark `where` as required):  ```bash curl -X DELETE "http://localhost:8080/v1/batch/objects" \   -H "Content-Type: application/json" \   -d '{"match":{"class":"BoundaryTestBatchDelete"},"output":"minimal"}' ```  **Case B — empty `match` object** (both required fields absent):  ```bash curl -X DELETE "http://localhost:8080/v1/batch/objects" \   -H "Content-Type: application/json" \   -d '{"match":{},"output":"minimal"}' ```  ---  ### What is the expected behavior?   Per the [batch delete docs](https://weaviate.io/developers/weaviate/api/rest/batch#delete-objects), both `match.class` and `match.where` are listed as **required** fields:  ``` "match": {   "class": "<ClassName>",   # required   "where": { ... },         # required } ```  A missing required field is a client-side validation error, so the server should return **`422 Unprocessable Entity`** (or `400`) with the same message body — consistent with how weaviate handles other invalid request bodies elsewhere in the batch endpoint.  ---   ### What is the actual behavior?   Both case
-  **Post-Mortem & Fix Analysis**:
-  > 👋 Thanks for opening this issue!  I found a similar issue in our tracker that might address your problem:  _[Issue weaviate/weaviate#2929: [BUG] invalid pagination params: query maximum results exceeded?](https://github.com/weaviate/weaviate/issues/2929)_  _This closed issue is the closest match because it discusses validation/pagination errors on Weaviate’s REST query path and the `query maximum results exceeded` behavior. It’s not the same bug, but it is the nearest semantically similar issue among the available matches._  Please check if this is the same issue. If so, consider adding your input there or closing this one. Thanks for helping us keep the issue tracker organized! 🚀  --- <div align="center"> <img src="https://tse1.mm.bing.net/th/id/OIP.A-2PG7j0L0X0H3M3lHuB4QHaHa" width="32" height="32" alt="Weaviate Logo"> <br> <sub><strong>Powered by Weaviate</strong></sub> </div>
-
-- **Issue #11981** (2026-07-06): **POST /v1/batch/objects accepts empty vector `[]` and reports per-item SUCCESS (singular POST /v1/objects rejects with 422)**
-  *Symptoms*: ### How to reproduce this bug?   ```bash # 1. Start Weaviate v1.38.2 (single node, anonymous access, no vectorizer module) docker run -d --name weaviate-batch-vector-bug \   -e AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED=true \   -e DEFAULT_VECTORIZER_MODULE=none \   -e PERSISTENCE_DATA_PATH=/var/lib/weaviate \   -p 8080:8080 \   semitechnologies/weaviate:1.38.2  # Wait for startup sleep 8  # 2. Create a class (vectorizer=none, distance=cosine, dimension implied by first vector) curl -s -o /dev/null -w "create class: %{http_code}\n" -X POST http://localhost:8080/v1/schema \   -H "Content-Type: application/json" \   -d '{     "class": "BatchVectorBugRepro",     "vectorizer": "none",     "vectorIndexType": "hnsw",     "vectorIndexConfig": {"distance": "cosine"}   }'  # 3. CONTROL: singular POST /v1/objects with vector=[] correctly returns 422 curl -s -o /dev/null -w "singular POST /v1/objects with vector=[]: %{http_code}\n" -X POST http://localhost:8080/v1/objects \   -H "Content-Type: application/json" \   -d '{     "class": "BatchVectorBugRepro",     "properties": {"name": "control-singular"},     "vector": []   }' # Expected output: singular POST /v1/objects with vector=[]: 422  # 4. BUG: POST /v1/batch/objects with a mixed batch (valid item + empty-vector item) returns 200, #    and BOTH items report per-item "result.status": "SUCCESS" curl -s -X POST http://localhost:8080/v1/batch/objects \   -H "Content-Type: application/json" \   -d '{     "objects": [       {         "class
-  **Post-Mortem & Fix Analysis**:
-  > 👋 Thanks for opening this issue!  I found a similar issue in our tracker that might address your problem:  _[Issue weaviate/weaviate#4499: Dimensional consistency on batch is not being checked (Closed)](https://github.com/weaviate/weaviate/issues/4499)_  _This closed issue is the closest match because it reports batch ingestion skipping vector validation and allowing invalid vectors through while single-object insertion correctly rejects them. It describes the same kind of batch-vs-singular validation inconsistency, though for vector dimensions rather than empty vectors._  Please check if this is the same issue. If so, consider adding your input there or closing this one. Thanks for helping us keep the issue tracker organized! 🚀  --- <div align="center"> <img src="https://tse1.mm.bing.net/th/id/OIP.A-2PG7j0L0X0H3M3lHuB4QHaHa" width="32" height="32" alt="Weaviate Logo"> <br> <sub><strong>Powered by Weaviate</strong></sub> </div>
-  > Thanks for the detailed report! After investigating, this is working as intended, and the "expected behavior" in the issue rests on a claim about the OpenAPI spec that doesn't hold. Details below.  1. The OpenAPI spec does not require a non-empty vector  The issue states the vector field is "documented as a non-empty float array (min_length=1)". That constraint does not exist. The object's vector field references C11yVector, which is a plain array of floats with no minItems/minLength:  - Spec definition: openapi-specs/schema.json → C11yVector (https://github.com/weaviate/weaviate/blob/3bb5576a5f441f385cce3b7f158f0c9b0d54f1cc/openapi-specs/schema.json#L515-L521) - A repo-wide grep for minItems/minLength in openapi-specs/ returns nothing. - The generated validator C11yVector.Validate() (https://github.com/weaviate/weaviate/blob/3bb5576a5f441f385cce3b7f158f0c9b0d54f1cc/entities/models/c11y_vector.go#L31-L33) is return nil — an empty vector is a valid value per the API contract.  2. An emp
-
-- **Issue #11917** (2026-06-30): **Dropping a named vector index makes later non-vector object writes fail**
-  *Symptoms*: ### How to reproduce this bug?  Start Weaviate with the experimental drop-vector-index endpoint enabled: ``` ENABLE_EXPERIMENTAL_ALTER_SCHEMA_DROP_VECTOR_INDEX_ENDPOINT=true ``` Then run the following commands: ```bash # 1. Create a collection with one named vector index "foo" curl -s -X POST localhost:8080/v1/schema \   -H 'Content-Type: application/json' \   -d '{     "class": "DropVectorBug",     "vectorConfig": {       "foo": {         "vectorizer": { "none": {} },         "vectorIndexType": "hnsw",         "vectorIndexConfig": { "distance": "cosine" }       }     },     "properties": [       { "name": "text", "dataType": ["text"] }     ]   }'  # 2. Before dropping the vector index, writing an object without vector "foo" succeeds. curl -i -X POST localhost:8080/v1/objects \   -H 'Content-Type: application/json' \   -d '{     "class": "DropVectorBug",     "properties": { "text": "before drop" }   }'  # 3. Drop the named vector index "foo". curl -i -X DELETE localhost:8080/v1/schema/DropVectorBug/vectors/foo/index  # 4. Write another object that also does not carry vector "foo". # Expected: this should still succeed. # Actual: this fails before storage. curl -i -X POST localhost:8080/v1/objects \   -H 'Content-Type: application/json' \   -d '{     "class": "DropVectorBug",     "properties": { "text": "after drop" }   }' ``` Observed error: ``` vectorize check for target vector foo: vector index config (<nil>) is not of type HNSW ```  ### What is the expected behavior?  The 
-  **Post-Mortem & Fix Analysis**:
-  > 👋 Thanks for opening this issue!  I found a similar issue in our tracker that might address your problem:  _[Issue weaviate/weaviate#1800: Allow inserting object without vector - even when class generally has an index (Closed)](https://github.com/weaviate/weaviate/issues/1800)_  _This issue is the closest semantic match because it discusses allowing object writes to succeed even when a class has a vector index but the specific object does not provide a vector. Your report is a more specific named-vector/drop-index variant of the same underlying behavior._  Please check if this is the same issue. If so, consider adding your input there or closing this one. Thanks for helping us keep the issue tracker organized! 🚀  --- <div align="center"> <img src="https://tse1.mm.bing.net/th/id/OIP.A-2PG7j0L0X0H3M3lHuB4QHaHa" width="32" height="32" alt="Weaviate Logo"> <br> <sub><strong>Powered by Weaviate</strong></sub> </div>
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2056,210 +1732,86 @@ func (q *Queue[T]) heapify(i int) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `204977d0` (2026-08-27)
-**Commit Message**: Add an authorizer method that requires a class's namespace to be active
+### Incident Patch 1: `9cd62c1f` (2026-10-15)
+**Commit Message**: Test that unflushed writes of a suspended namespace survive a crash
 
-**File**: `adapters/handlers/graphql/local/aggregate/helpers_for_test.go` (modified, +4/-0)
+**File**: `adapters/repos/db/backup_integration_test.go` (modified, +6/-4)
 ```diff
-@@ -36,6 +36,10 @@ func (m *mockAuthorizer) Authorize(ctx context.Context, principal *models.Princi
- 	return nil
- }
- 
-+func (m *mockAuthorizer) AuthorizeAndRequireActiveNamespace(ctx context.Context, principal *models.Principal, action string, class string, resource ...string) error {
-+	return nil
-+}
-+
- func (m *mockAuthorizer) AuthorizeSilent(ctx context.Context, principal *models.Principal, action string, resource ...string) error {
- 	return nil
- }
-```
-
-**File**: `adapters/handlers/graphql/local/explore/helpers_for_test.go` (modified, +4/-0)
-```diff
-@@ -45,6 +45,10 @@ func (a *fakeAuthorizer) Authorize(ctx context.Context, principal *models.Princi
- 	return nil
- }
- 
-+func (a *fakeAuthorizer) AuthorizeAndRequireActiveNamespace(ctx context.Context, principal *models.Principal, verb string, class string, resource ...string) error {
-+	return nil
-+}
-+
- func (a *fakeAuthorizer) AuthorizeSilent(ctx context.Context, principal *models.Principal, verb string, resource ...string) error {
- 	return nil
- }
-```
-
-**File**: `adapters/handlers/graphql/local/get/helper_test.go` (modified, +4/-0)
-```diff
-@@ -630,6 +630,10 @@ func (f *fakeAuthorizer) Authorize(ctx context.Context, principal *models.Princi
- 	return nil
- }
- 
-+func (f *fakeAuthorizer) AuthorizeAndRequireActiveNamespace(ctx context.Context, principal *models.Principal, action string, class string, resource ...string) error {
-+	return nil
-+}
-+
- func (f *fakeAuthorizer) AuthorizeSilent(ctx context.Context, principal *models.Principal, action string, resource ...string) error {
- 	return nil
- }
-```
-
-**File**: `adapters/handlers/grpc/v1/service_test.go` (modified, +4/-4)
-```diff
-@@ -78,7 +78,7 @@ func TestClassGetterWithAuthzFuncMemoization(t *testing.T) {
- 
- 			// second call hits the memo, so the class is authorized exactly once
- 			require.Equal(t, []authMocks.AuthZReq{
--				{Principal: principal, Verb: authorization.READ, Resources: tt.expectedResources},
-+				{Principal: principal, Verb: authorization.READ, Resources: tt.expectedResources, Method: authMocks.MethodAuthorize},
- 			}, authorizer.Calls())
- 		})
- 	}
-@@ -125,7 +125,7 @@ func TestClassGetterWithAuthzFuncMemoizesMissingClass(t *testing.T) {
- 		require.Contains(t, err.Error(), "could not find class Foo")
- 	}
- 	require.Equal(t, []authMocks.AuthZReq{
--		{Principal: principal, Verb: authorization.READ, Resources: authorization.CollectionsData("Foo")},
-+		{Principal: principal, Verb: authorization.READ, Resources: authorization.CollectionsData("Foo"), Method: authMocks.MethodAuthorize},
- 	}, authorizer.Calls())
- }
- 
-@@ -150,8 +150,8 @@ func TestClassGetterWithAuthzFuncMemoizesPerClass(t *testing.T) {
- 
- 	// each distinct class is authorized once; repeats hit the memo
- 	require.Equal(t, []authMocks.AuthZReq{
--		{Principal: principal, Verb: authorization.READ, Resources: authorization.CollectionsData("Foo")},
--		{Principal: principal, Verb: authorization.READ, Resources: authorization.CollectionsData("Bar")},
-+		{Principal: principal, Verb: authorization.READ, Resources: authorization.CollectionsData("Foo"), Method: authMocks.MethodAuthorize},
-+		{Principal: principal, Verb: authorization.READ, Resources: authorization.CollectionsData("Bar"), Method: authMocks.MethodAuthorize},
- 	}, authorizer.Calls())
- }
- 
-```
-
-**File**: `adapters/handlers/mcp/read/tenants_test.go` (modified, +4/-0)
-```diff
-@@ -39,6 +39,10 @@ func (r *recordingAuthorizer) Authorize(ctx context.Context, principal *models.P
- 	return nil
- }
- 
-+func (r *recordingAuthorizer) AuthorizeAndRequireActiveNamespace(ctx context.Context, principal *models.Principal, verb string, class string, resources ...string) error {
-+	return r.Authorize(ctx, principal, verb, resources...)
-+}
-+
- func (r *recordingAuthorizer) AuthorizeSilent(ctx context.Context, principal *models.Principal, verb string, resources ...string) error {
- 	return r.Authorize(ctx, principal, verb, resources...)
- }
-```
-
-**File**: `adapters/handlers/rest/configure_server.go` (modified, +7/-0)
-```diff
-@@ -163,6 +163,13 @@ func configureAnonymousAccess(appState *state.State) *anonymous.Client {
- }
- 
- func configureAuthorizer(appState *state.State) error {
-+	// configureOIDC and configureAPIKey take appState.NamespacesController
-+	// earlier in boot and neither rejects a typed nil, so this is the first
-+	// place it is checked.
-+	if appState.ServerConfig.Config.Namespaces.Enabled && appState.NamespacesController == nil {
-+		return fmt.Errorf("NAMESPACES_ENABLED=true requires a namespace controller, but it wasn't initialized")
-+	}
-+
- 	if appState.ServerConfig.Config.Authorization.Rbac.Enabled {
- 		// if rbac enforcer enabled, start forcing all requests using the casbin enforcer
- 		rbacController, err := rbac.New(
-```
-
-**File**: `adapters/handlers/rest/configure_server_test.go` (modified, +20/-0)
-```diff
-@@ -15,10 +15,15 @@ import (
- 	"context"
- 	"testing"
- 
-+	"github.com/sirupsen/logrus/hooks/test"
- 	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/weaviate/weaviate/adapters/handlers/rest/state"
- 	"github.com/weaviate/weaviate/entities/models"
- 	"github.com/weaviate/weaviate/usecases/auth/authorization"
- 	"github.com/weaviate/weaviate/usecases/auth/authorization/adminlist"
-+	"github.com/weaviate/weaviate/usecases/auth/authorization/rbac/rbacconf"
- 	"github.com/weaviate/weaviate/usecases/config"
+@@ -44,6 +44,7 @@ import (
+ 	backupUC "github.com/weaviate/weaviate/usecases/backup"
+ 	"github.com/weaviate/weaviate/usecases/cluster"
+ 	"github.com/weaviate/weaviate/usecases/memwatch"
++	"github.com/weaviate/weaviate/usecases/namespaces"
+ 	"github.com/weaviate/weaviate/usecases/sharding"
  )
  
-@@ -56,3 +61,18 @@ func Test_AdminListAuthorizer(t *testing.T) {
- 		})
- 	})
- }
-+
-+func TestConfigureAuthorizerRefusesNamespacesWithoutController(t *testing.T) {
-+	logger, _ := test.NewNullLogger()
-+	appState := &state.State{
-+		Logger: logger,
-+		ServerConfig: &config.WeaviateConfig{Config: config.Config{
-+			Namespaces: config.Namespaces{Enabled: true},
-+			Authorization: config.Authorization{
-+				Rbac: rbacconf.Config{Enabled: true, RootUsers: []string{"root"}},
-+			},
-+		}},
-+	}
-+
-+	require.ErrorContains(t, configureAuthorizer(appState), "requires a namespace controller")
-+}
-```
-
-**File**: `adapters/handlers/rest/handlers_schema_security_test.go` (modified, +6/-0)
-```diff
-@@ -35,6 +35,7 @@ import (
- type denyAuthorizer struct {
- 	forbidden authzerrors.Forbidden
- 	verb      string
-+	class     string
- 	resources []string
+@@ -287,13 +288,14 @@ func setupTestDB(t *testing.T, rootDir string, classes ...*models.Class) *DB {
+ // setupTestDBWithConfig builds a single-node DB on a single shard. override, when
+ // non-nil, adjusts the Config before the DB is created.
+ func setupTestDBWithConfig(t *testing.T, rootDir string, override func(*Config), classes ...*models.Class) *DB {
+-	return setupTestDBWithShardState(t, rootDir, singleShardState(), override, classes...)
++	return setupTestDBWithShardState(t, rootDir, singleShardState(), override, nil, classes...)
  }
  
-@@ -43,6 +44,11 @@ func (d *denyAuthorizer) Authorize(_ context.Context, _ *models.Principal, verb
- 	return d.forbidden
+ // setupTestDBWithShardState builds a single-node DB that holds the given shards.
+-// override, when non-nil, adjusts the Config before the DB is created.
++// override, when non-nil, adjusts the Config before the DB is created. exister
++// answers the namespace of a <ns>:<Class> name, and may be nil without one.
+ func setupTestDBWithShardState(t *testing.T, rootDir string, shardState *sharding.State,
+-	override func(*Config), classes ...*models.Class,
++	override func(*Config), exister namespaces.Exister, classes ...*models.Class,
+ ) *DB {
+ 	logger, _ := test.NewNullLogger()
+ 
+@@ -335,7 +337,7 @@ func setupTestDBWithShardState(t *testing.T, rootDir string, shardState *shardin
+ 		override(&cfg)
+ 	}
+ 	db, err := New(logger, "node1", cfg, &FakeRemoteClient{}, mockNodeSelector, &FakeRemoteNodeClient{}, &FakeReplicationClient{}, nil, memwatch.NewDummyMonitor(),
+-		mockNodeSelector, mockSchemaReader, mockReplicationFSMReader, nil)
++		mockNodeSelector, mockSchemaReader, mockReplicationFSMReader, exister)
+ 	require.Nil(t, err)
+ 	db.SetSchemaGetter(schemaGetter)
+ 	require.Nil(t, db.WaitForStartup(testCtx()))
+```
+
+**File**: `adapters/repos/db/batch_delete_limit_integration_test.go` (modified, +2/-2)
+```diff
+@@ -502,7 +502,7 @@ func newBatchDeleteRepoAt(t *testing.T, rootDir string, class *models.Class,
+ 
+ 	return setupTestDBWithShardState(t, rootDir, shardState, func(cfg *Config) {
+ 		cfg.QueryMaximumResults = queryMaximumResults
+-	}, class)
++	}, nil, class)
  }
  
-+func (d *denyAuthorizer) AuthorizeAndRequireActiveNamespace(_ context.Context, _ *models.Principal, verb string, class string, resources ...string) error {
-+	d.verb, d.class, d.resources = verb, class, resources
-+	return d.forbidden
-+}
-+
- func (d *denyAuthorizer) AuthorizeSilent(context.Context, *models.Principal, string, ...string) error {
- 	return d.forbidden
- }
+ // TestBatchDeleteObjects_DeadDocIDDoesNotBurnASlot pins that a doc id with no object row costs a read, not a limit slot.
+@@ -848,7 +848,7 @@ func TestObjectsTTLSweepResolvesPastDeadDocIDs(t *testing.T) {
+ 			newTTLRepo := func() *DB {
+ 				return setupTestDBWithShardState(t, rootDir, shardState, func(cfg *Config) {
+ 					cfg.ObjectsTTLBatchSize = configRuntime.NewDynamicValue(sweepBatch)
+-				}, class)
++				}, nil, class)
+ 			}
+ 
+ 			repo := newTTLRepo()
 ```
 
----
-
-### Incident Patch 2: `de0c64e9` (2026-10-05)
-**Commit Message**: fix(aggregator): stop a scan whose caller has gone (#13401)
-
-* fix(aggregator): stop a scan whose caller has gone
-
-**File**: `adapters/repos/db/aggregator/iterator.go` (modified, +5/-0)
+**File**: `adapters/repos/db/index_objects_ttl_integration_test.go` (modified, +1/-1)
 ```diff
-@@ -110,7 +110,12 @@ func iteratorConcurrently(ctx context.Context, b *lsmkv.Bucket, newCursor func()
- 	if len(seeds) == 0 {
- 		c := newCursor()
- 		defer c.Close()
-+		count := 0
- 		for k, v, vv, bi := c.First(); k != nil; k, v, vv, bi = c.Next() {
-+			count++
-+			if count%contextCheckInterval == 0 && ctx.Err() != nil {
-+				return ctx.Err()
-+			}
- 			err := aggregateFunc(k, v, vv, bi)
- 			if err != nil {
- 				return err
+@@ -147,7 +147,7 @@ func setupTTLRepo(t *testing.T, batchSize int, shardState *sharding.State, class
+ 
+ 	repo := setupTestDBWithShardState(t, t.TempDir(), shardState, func(cfg *Config) {
+ 		cfg.ObjectsTTLBatchSize = configRuntime.NewDynamicValue(batchSize)
+-	}, class)
++	}, nil, class)
+ 	t.Cleanup(func() { require.NoError(t, repo.Shutdown(context.Background())) })
+ 
+ 	insertTTLObjects(t, repo, tenant, expiredCount, aliveCount)
 ```
 
-**File**: `adapters/repos/db/aggregator/iterator_cancel_integration_test.go` (added, +181/-0)
+**File**: `adapters/repos/db/namespace_suspend_crash_integration_test.go` (added, +79/-0)
 ```diff
-@@ -0,0 +1,181 @@
+@@ -0,0 +1,79 @@
 +//                           _       _
 +// __      _____  __ ___   ___  __ _| |_ ___
 +// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
@@ -2273,3290 +1825,136 @@ Observed empirical fixes and code patches:
 +
 +//go:build integrationTest
 +
-+package aggregator
-+
-+import (
-+	"context"
-+	"fmt"
-+	"runtime"
-+	"sync/atomic"
-+	"testing"
-+
-+	"github.com/sirupsen/logrus/hooks/test"
-+	"github.com/stretchr/testify/require"
-+	"github.com/weaviate/sroar"
-+
-+	"github.com/weaviate/weaviate/adapters/repos/db/lsmkv"
-+	"github.com/weaviate/weaviate/entities/cyclemanager"
-+)
-+
-+// Ensure at least one seeded range exceeds contextCheckInterval on every machine.
-+var iteratorCancelKeyCount = (2*runtime.GOMAXPROCS(0) + 1) * (contextCheckInterval + 1)
-+
-+// iteratorStrategy pairs a bucket strategy that reaches iteratorConcurrently
-+// with the cursor its call sites use. No cursor aborts on a cancelled context
-+// itself: the Ctx constructors only cap merge concurrency.
-+type iteratorStrategy struct {
-+	name     string
-+	strategy string
-+	put      func(tb testing.TB, b *lsmkv.Bucket, i int)
-+	newCurs  func(ctx context.Context, b *lsmkv.Bucket) func() Cursor
-+}
-+
-+func iteratorStrategies() []iteratorStrategy {
-+	return []iteratorStrategy{
-+		{
-+			name:     "replace",
-+			strategy: lsmkv.StrategyReplace,
-+			put: func(tb testing.TB, b *lsmkv.Bucket, i int) {
-+				require.NoError(tb, b.Put(iteratorKey(i), []byte(fmt.Sprintf("value-%06d", i))))
-+			},
-+			newCurs: func(_ context.Context, b *lsmkv.Bucket) func() Cursor {
-+				return func() Cursor { return ReplaceCursor{b.Cursor()} }
-+			},
-+		},
-+		{
-+			name:     "set collection",
-+			strategy: lsmkv.StrategySetCollection,
-+			put: func(tb testing.TB, b *lsmkv.Bucket, i int) {
-+				require.NoError(tb, b.SetAdd(iteratorKey(i), [][]byte{[]byte(fmt.Sprintf("value-%06d", i))}))
-+			},
-+			newCurs: func(_ context.Context, b *lsmkv.Bucket) func() Cursor {
-+				return func() Cursor { return SetCursor{b.SetCursor()} }
-+			},
-+		},
-+		{
-+			name:     "roaring set",
-+			strategy: lsmkv.StrategyRoaringSet,
-+			put: func(tb testing.TB, b *lsmkv.Bucket, i int) {
-+				require.NoError(tb, b.RoaringSetAddOne(iteratorKey(i), uint64(i)))
-+			},
-+			newCurs: func(ctx context.Context, b *lsmkv.Bucket) func() Cursor {
-+				// the call sites hand the query's context to the cursor, so do the same
-+				return func() Cursor { return RoaringCursor{b.CursorRoaringSetCtx(ctx)} }
-+			},
-+		},
-+	}
-+}
-+
-+func iteratorKey(i int) []byte {
-+	return []byte(fmt.Sprintf("key-%06d", i))
-+}
-+
-+// TestIteratorConcurrentlyStopsWhenTheCallerGivesUp pins that an aggregation
-+// whose client has hung up stops scanning, in every strategy and both branches.
-+func TestIteratorConcurrentlyStopsWhenTheCallerGivesUp(t *testing.T) {
-+	for _, bs := range iteratorStrategies() {
-+		// A flushed bucket has disk segments, so QuantileKeys seeds the parallel
-+		// branches; an unflushed one has none and takes the single-cursor branch.
-+		for _, flush := range []bool{false, true} {
-+			t.Run(fmt.Sprintf("%s/flushed=%v", bs.name, flush), func(t *testing.T) {
-+				ctx := context.Background()
-+				logger, _ := test.NewNullLogger()
-+				b := bucketFixture(t, ctx, bs, iteratorCancelKeyCount, flush)
-+
-+				seeds := b.QuantileKeys(2 * runtime.GOMAXPROCS(0))
-+				if flush {
-+					require.NotEmpty(t, seeds, "flushed keys must seed the parallel branches")
-+				} else {
-+					require.Empty(t, seeds, "unflushed keys must take the single-cursor branch")
-+				}
-+
-+				scanCtx, cancel := context.WithCancel(ctx)
-+				defer cancel()
-+
-+				var seen atomic.Int64
-+				err := iteratorConcurrently(scanCtx, b, bs.newCurs(scanCtx, b),
-+					func(k, v []byte, vv [][]byte, bi *sroar.Bitmap) error {
-+						if seen.Add(1) == 1 {
-+							cancel()
-+						}
-+						return nil
-+					}, logger)
-+
-+				require.ErrorIs(t, err, context.Canceled)
-+				require.Less(t, seen.Load(), int64(iteratorCancelKeyCount),
-+					"the scan must stop early, not run to the end")
-+			})
-+		}
-+	}
-+}
-+
-+// TestIteratorConcurrentlyScansEverythingForACallerThatStays is the control:
-+// the check must not cut a live scan short.
-+func TestIteratorConcurrentlyScansEverythingForACallerThatStays(t *testing.T) {
-+	for _, bs := range iteratorStrategies() {
-+		for _, flush := range []bool{false, true} {
-+			t.Run(fmt.Sprintf("%s/flushed=%v", bs.name, flush), func(t *testing.T) {
-+				ctx := context.Background()
-+				logger, _ := test.NewNullLogger()
-+				b := bucketFixture(t, ctx, bs, iteratorCancelKeyCount, flush)
-+
-+				var seen atomic.Int64
-+				err := iteratorConcurrently(ctx, b, bs.newCurs(ctx, b),
-+					func(k, v []byte, vv [][]byte, bi *sroar.Bitmap) error {
-+						seen.Add(1)
-+						return nil
-+					}, logger)
-+
-+				require.NoError(t, err)
-+				require.Equal(t, int64(iteratorCancelKeyCount), seen.Load())
-+			})
-+		}
-+	}
-+}
-+
-+// bucketFixture builds a buck
-```
-
----
-
-### Incident Patch 3: `c4143c5f` (2026-10-05)
-**Commit Message**: Merge pull request #13392 from weaviate/fix-generative-digitalocean-env-var-support
-
-fix(generative-digitalocean): add env var support and model list validation
-
-**File**: `modules/generative-digitalocean/clients/digitalocean.go` (modified, +6/-0)
-```diff
-@@ -28,6 +28,7 @@ import (
- 	"github.com/weaviate/weaviate/entities/moduletools"
- 	"github.com/weaviate/weaviate/modules/generative-digitalocean/config"
- 	digitaloceanparams "github.com/weaviate/weaviate/modules/generative-digitalocean/parameters"
-+	"github.com/weaviate/weaviate/usecases/build"
- 	"github.com/weaviate/weaviate/usecases/modulecomponents"
- 	"github.com/weaviate/weaviate/usecases/modulecomponents/generative"
- 	"github.com/weaviate/weaviate/usecases/monitoring"
-@@ -100,6 +101,11 @@ func (c *client) doGenerate(ctx context.Context, cfg moduletools.ClassConfig, pr
- 
- 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", key))
- 	req.Header.Set("Content-Type", "application/json")
-+	if weaviateUUID := config.NewClassSettings(cfg).WeaviateUUID(); weaviateUUID != "" {
-+		req.Header.Set("User-Agent", fmt.Sprintf("vector-db/weaviate/%s %s", weaviateUUID, build.Version))
-+	} else {
-+		req.Header.Set("User-Agent", fmt.Sprintf("vector-db/weaviate/unknown %s", build.Version))
-+	}
- 
- 	res, err := c.httpClient.Do(req)
- 	if res != nil {
-```
-
-**File**: `modules/generative-digitalocean/clients/digitalocean_test.go` (modified, +42/-0)
-```diff
-@@ -14,9 +14,11 @@ package clients
- import (
- 	"context"
- 	"encoding/json"
-+	"fmt"
- 	"io"
- 	"net/http"
- 	"net/http/httptest"
-+	"strings"
- 	"testing"
- 	"time"
- 
-@@ -26,6 +28,7 @@ import (
- 	"github.com/stretchr/testify/require"
- 	"github.com/weaviate/weaviate/entities/modulecapabilities"
- 	digitaloceanparams "github.com/weaviate/weaviate/modules/generative-digitalocean/parameters"
-+	"github.com/weaviate/weaviate/usecases/build"
- )
- 
- func nullLogger() logrus.FieldLogger {
-@@ -267,6 +270,45 @@ func TestGenerateRequest(t *testing.T) {
- 	}
- }
- 
-+func TestGenerateUserAgent(t *testing.T) {
-+	tests := []struct {
-+		name         string
-+		weaviateUUID string
-+		expected     string
-+	}{
-+		{
-+			name:         "uuid set",
-+			weaviateUUID: "test-uuid",
-+			expected:     fmt.Sprintf("vector-db/weaviate/test-uuid %s", build.Version),
-+		},
-+		{
-+			name:     "uuid not set",
-+			expected: fmt.Sprintf("vector-db/weaviate/unknown %s", build.Version),
-+		},
-+	}
-+
-+	properties := []*modulecapabilities.GenerateProperties{{Text: map[string]string{"prop": "value"}}}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			t.Setenv("VECTOR_DB_UUID", tt.weaviateUUID)
-+
-+			var gotUserAgent string
-+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+				gotUserAgent = r.Header.Get("User-Agent")
-+				w.Write([]byte(`{"choices":[{"message":{"role":"assistant","content":"ok"}}]}`))
-+			}))
-+			defer server.Close()
-+
-+			c := New("key", time.Minute, nullLogger())
-+			params := digitaloceanparams.Params{BaseURL: server.URL}
-+			_, err := c.GenerateAllResults(context.Background(), properties, "task", params, false, nil)
-+			require.NoError(t, err)
-+			assert.Equal(t, strings.TrimSpace(tt.expected), gotUserAgent)
-+		})
-+	}
-+}
-+
- func TestMetaInfo(t *testing.T) {
- 	meta, err := New("key", 0, nullLogger()).MetaInfo()
- 	require.NoError(t, err)
-```
-
-**File**: `modules/generative-digitalocean/clients/models.go` (added, +26/-0)
-```diff
-@@ -0,0 +1,26 @@
-+//                           _       _
-+// __      _____  __ ___   ___  __ _| |_ ___
-+// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
-+//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
-+//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
-+//
-+//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
-+//
-+//  CONTACT: hello@weaviate.io
-+//
-+
-+package clients
-+
-+import (
-+	"time"
-+
-+	"github.com/weaviate/weaviate/modules/generative-digitalocean/config"
-+	"github.com/weaviate/weaviate/usecases/modulecomponents/clients/digitalocean"
-+)
-+
-+// init registers the default model lister with the config package so that
-+// ValidateClass can call out to DigitalOcean without config depending on this
-+// package.
-+func init() {
-+	config.DefaultModelLister = digitalocean.NewModelLister(30 * time.Second)
-+}
-```
-
-**File**: `modules/generative-digitalocean/config.go` (modified, +1/-1)
-```diff
-@@ -35,7 +35,7 @@ func (m *GenerativeDigitalOceanModule) ValidateClass(ctx context.Context,
- 	class *models.Class, cfg moduletools.ClassConfig,
- ) error {
- 	settings := config.NewClassSettings(cfg)
--	return settings.Validate(class)
-+	return settings.Validate(ctx, class)
- }
- 
- var _ = modulecapabilities.ClassConfigurator(New())
-```
-
-**File**: `modules/generative-digitalocean/config/class_settings.go` (modified, +51/-1)
-```diff
-@@ -12,6 +12,11 @@
- package config
- 
- import (
-+	"context"
-+	"fmt"
-+	"os"
-+	"slices"
-+
- 	"github.com/pkg/errors"
- 	"github.com/weaviate/weaviate/entities/models"
- 	"github.com/weaviate/weaviate/entities/moduletools"
-@@ -34,6 +39,18 @@ var (
- 	DefaultModel   = "llama-4-maverick"
- )
- 
-+// ModelLister returns the set of available model ids from a DigitalOcean
-+// Serverless Inference endpoint. It is implemented in the clients package and
-+// injected here through DefaultModelLister to keep config free of HTTP-client
-+// dependencies. Tests can override DefaultModelLister with a fake.
-+type ModelLister interface {
-+	ListModels(ctx context.Context, baseURL, apiKey string, weaviateUUID string) ([]string, error)
-+}
-+
-+// DefaultModelLister is the lister used by Validate. The clients package
-+// registers an HTTP-backed implementation at init time.
-+var DefaultModelLister ModelLister
-+
- type classSettings struct {
- 	cfg                  moduletools.ClassConfig
- 	propertyValuesHelper basesettings.PropertyValuesHelper
-@@ -43,7 +60,9 @@ func NewClassSettings(cfg moduletools.ClassConfig) *classSettings {
- 	return &classSettings{cfg: cfg, propertyValuesHelper: basesettings.NewPropertyValuesHelper("generative-digitalocean")}
- }
- 
--func (ic *classSettings) Validate(class *models.Class) error {
-+// Validate checks the class config and, when DIGITALOCEAN_APIKEY is set,
-+// checks the model against the endpoint's /v1/models list.
-+func (ic *classSettings) Validate(ctx context.Context, class *models.Class) error {
- 	if ic.cfg == nil {
- 		// we would receive a nil-config on cross-class requests, such as Explore{}
- 		return errors.New("empty config")
-@@ -66,9 +85,40 @@ func (ic *classSettings) Validate(class *models.Class) error {
- 	if presencePenalty := ic.PresencePenalty(); presencePenalty != nil && (*presencePenalty < -2 || *presencePenalty > 2) {
- 		return errors.New("wrong presencePenalty configuration, values are between -2.0 and 2.0")
- 	}
-+
-+	lister := DefaultModelLister
-+	apiKey := ic.apiKey()
-+	if lister == nil || apiKey == "" {
-+		// Without a server-side API key the model can't be checked against
-+		// /v1/models; the endpoint rejects an unknown model at generate time,
-+		// where users can supply their own key via X-Digitalocean-Api-Key.
-+		return nil
-+	}
-+
-+	if model := ic.Model(); model != "" {
-+		available, err := lister.ListModels(ctx, ic.BaseURL(), apiKey, ic.WeaviateUUID())
-+		if err != nil {
-+			return errors.Wrap(err, "list DigitalOcean models")
-+		}
-+		if !slices.Contains(available, model) {
-+			return fmt.Errorf("model %q is not available on the DigitalOcean Serverless Inference endpoint; available models: %v", model, available)
-+		}
-+	}
- 	return nil
- }
- 
-+// apiKey resolves the DigitalOcean API key from the DIGITALOCEAN_APIKEY
-+// environment variable. The model check runs at collection-create time, where the
-+// per-request header is not available, so only the server-level env var is
-+// consulted.
-+func (ic *classSettings) apiKey() string {
-+	return os.Getenv("DIGITALOCEAN_APIKEY")
-+}
-+
-+func (ic *classSettings) WeaviateUUID() string {
-+	return os.Getenv("VECTOR_DB_UUID")
-+}
-+
- func (ic *classSettings) BaseURL() string {
- 	return ic.propertyValuesHelper.GetPropertyAsString(ic.cfg, baseURLProperty, DefaultBaseURL)
- }
-```
-
-**File**: `modules/generative-digitalocean/config/class_settings_test.go` (modified, +12/-1)
-```diff
-@@ -12,10 +12,12 @@
- package config
- 
- import (
-+	"context"
- 	"testing"
- 
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
-+	"github.com/weaviate/weaviate/entities/models"
- 	"github.com/weaviate/weaviate/entities/moduletools"
- 	"github.com/weaviate/weaviate/entities/schema"
- 	"github.com/weaviate/weaviate/usecases/config"
-@@ -103,7 +105,7 @@ func TestClassSettings(t *testing.T) {
- 		t.Run(tt.name, func(t *testing.T) {
- 			settings := NewClassSettings(tt.cfg)
- 
--			err := settings.Validate(nil)
-+			err := settings.Validate(context.Background(), &models.Class{Class: "Test"})
- 			if tt.expectedErr != "" {
- 				require.Error(t, err)
- 				assert.Contains(t, err.Error(), tt.expectedErr)
-@@ -123,6 +125,15 @@ func TestClassSettings(t *testing.T) {
- 	}
- }
- 
-+func TestClassSettingsEnvVars(t *testing.T) {
-+	t.Setenv("DIGITALOCEAN_APIKEY", "dop_v1_test")
-+	t.Setenv("VECTOR_DB_UUID", "test-uuid")
-+
-+	settings := NewClassSettings(fakeClassConfig{})
-+	assert.Equal(t, "dop_v1_test", settings.apiKey())
-+	assert.Equal(t, "test-uuid", settings.WeaviateUUID())
-+}
-+
- func ptr[T any](v T) *T {
- 	return &v
- }
-```
-
-**File**: `modules/generative-digitalocean/config_test.go` (added, +131/-0)
-```diff
-@@ -0,0 +1,131 @@
-+//                           _       _
-+// __      _____  __ ___   ___  __ _| |_ ___
-+// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
-+//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
-+//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
-+//
-+//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
-+//
-+//  CONTACT: hello@weaviate.io
-+//
-+
-+package modgenerativedigitalocean
-+
-+import (
-+	"context"
-+	"errors"
-+	"testing"
-+
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/weaviate/weaviate/entities/models"
-+	"github.com/weaviate/weaviate/entities/schema"
-+	"github.com/weaviate/weaviate/modules/generative-digitalocean/config"
-+	usecasesconfig "github.com/weaviate/weaviate/usecases/config"
-+)
-+
-+func TestValidateClass(t *testing.T) {
-+	tests := []struct {
-+		name          string
-+		cfg           fakeClassConfig
-+		lister        *fakeModelLister
-+		apiKeyEnv     string
-+		expectedErr   string
-+		wantNoListing bool
-+	}{
-+		{
-+			name:      "model available",
-+			cfg:       fakeClassConfig{"model": "llama-4-maverick"},
-+			lister:    &fakeModelLister{models: []string{"llama-4-maverick"}},
-+			apiKeyEnv: "dop_v1_test",
-+		},
-+		{
-+			name:          "api key missing skips the model check",
-+			cfg:           fakeClassConfig{"model": "retired-model"},
-+			lister:        &fakeModelLister{models: []string{"llama-4-maverick"}},
-+			wantNoListing: true,
-+		},
-+		{
-+			name:          "empty model skips the model check",
-+			cfg:           fakeClassConfig{"model": ""},
-+			lister:        &fakeModelLister{models: []string{"llama-4-maverick"}},
-+			apiKeyEnv:     "dop_v1_test",
-+			wantNoListing: true,
-+		},
-+		{
-+			name:        "model not available",
-+			cfg:         fakeClassConfig{"model": "retired-model"},
-+			lister:      &fakeModelLister{models: []string{"llama-4-maverick"}},
-+			apiKeyEnv:   "dop_v1_test",
-+			expectedErr: `model "retired-model" is not available`,
-+		},
-+		{
-+			name:        "lister error",
-+			cfg:         fakeClassConfig{"model": "llama-4-maverick"},
-+			lister:      &fakeModelLister{err: errors.New("endpoint unreachable")},
-+			apiKeyEnv:   "dop_v1_test",
-+			expectedErr: "list DigitalOcean models: endpoint unreachable",
-+		},
-+		{
-+			name:          "invalid local config fails before the model check",
-+			cfg:           fakeClassConfig{"temperature": 3.0},
-+			lister:        &fakeModelLister{models: []string{"llama-4-maverick"}},
-+			apiKeyEnv:     "dop_v1_test",
-+			expectedErr:   "wrong temperature configuration",
-+			wantNoListing: true,
-+		},
-+	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			t.Setenv("DIGITALOCEAN_APIKEY", tt.apiKeyEnv)
-+
-+			prev := config.DefaultModelLister
-+			config.DefaultModelLister = tt.lister
-+			t.Cleanup(func() { config.DefaultModelLister = prev })
-+
-+			m := &GenerativeDigitalOceanModule{}
-+			err := m.ValidateClass(context.Background(), &models.Class{Class: "Test"}, tt.cfg)
-+			if tt.expectedErr != "" {
-+				require.Error(t, err)
-+				assert.Contains(t, err.Error(), tt.expectedErr)
-+			} else {
-+				require.NoError(t, err)
-+			}
-+			if tt.wantNoListing {
-+				assert.Zero(t, tt.lister.calls)
-+			}
-+		})
-+	}
-+}
-+
-+type fakeModelLister struct {
-+	models []string
-+	err    error
-+	calls  int
-+}
-+
-+func (f *fakeModelLister) ListModels(_ context.Context, _, _, _ string) ([]string, error) {
-+	f.calls++
-+	if f.err != nil {
-+		return nil, f.err
-+	}
-+	return f.models, nil
-+}
-+
-+type fakeClassConfig map[string]any
-+
-+func (f fakeClassConfig) Class() map[string]any { return f }
-+
-+func (f fakeClassConfig) Tenant() string { return "" }
-+
-+func (f fakeClassConfig) ClassByModuleName(moduleName string) map[string]any { return f }
-+
-+func (f fakeClassConfig) Property(propName string) map[string]any { return nil }
-+
-+func (f fakeClassConfig) TargetVector() string { return "" }
-+
-+func (f fakeClassConfig) PropertiesDataTypes() map[string]schema.DataType { return nil }
-+
-+func (f fakeClassConfig) Config() *usecasesconfig.Config { return nil }
-```
-
-**File**: `modules/text2vec-digitalocean/clients/models.go` (modified, +2/-133)
-```diff
-@@ -12,146 +12,15 @@
- package clients
- 
- import (
--	"context"
--	"crypto/sha256"
--	"encoding/json"
--	"fmt"
--	"io"
--	"net/http"
--	"net/url"
--	"sync"
- 	"time"
- 
--	"github.com/pkg/errors"
--
- 	"github.com/weaviate/weaviate/modules/text2vec-digitalocean/ent"
--	"github.com/weaviate/weaviate/usecases/build"
--	"github.com/weaviate/weaviate/usecases/modulecomponents"
-+	"github.com/weaviate/weaviate/usecases/modulecomponents/clients/digitalocean"
- )
- 
--// modelCacheTTL controls how long a successful /v1/models response is cached
--// per (baseURL, apiKey-hash). The DigitalOcean model catalogue changes rarely
--// and Validate is called every time a collection is created or its module
--// config changes, so a short TTL is a reasonable trade-off between freshness
--// and avoiding excessive calls.
--const modelCacheTTL = 5 * time.Minute
--
--type modelListResponse struct {
--	Object string             `json:"object"`
--	Data   []modelListItem    `json:"data"`
--	Error  *digitalOceanError `json:"error,omitempty"`
--}
--
--type modelListItem struct {
--	ID      string `json:"id"`
--	Object  string `json:"object"`
--	OwnedBy string `json:"owned_by"`
--	Created int64  `json:"created"`
--}
--
--type modelCacheEntry struct {
--	models    []string
--	fetchedAt time.Time
--}
--
--// ModelLister fetches the model catalogue from a DigitalOcean Serverless
--// Inference endpoint and caches the result in-memory.
--type ModelLister struct {
--	httpClient *http.Client
--
--	mu    sync.Mutex
--	cache map[string]modelCacheEntry
--}
--
--func NewModelLister(timeout time.Duration) *ModelLister {
--	return &ModelLister{
--		httpClient: modulecomponents.NewBaseHttpClient(timeout),
--		cache:      map[string]modelCacheEntry{},
--	}
--}
--
--func (l *ModelLister) ListModels(ctx context.Context, baseURL, apiKey, weaviateUUID string) ([]string, error) {
--	cacheKey := l.cacheKey(baseURL, apiKey)
--
--	l.mu.Lock()
--	if entry, ok := l.cache[cacheKey]; ok && time.Since(entry.fetchedAt) < modelCacheTTL {
--		l.mu.Unlock()
--		return entry.models, nil
--	}
--	l.mu.Unlock()
--
--	models, err := l.fetch(ctx, baseURL, apiKey, weaviateUUID)
--	if err != nil {
--		return nil, err
--	}
--
--	l.mu.Lock()
--	l.cache[cacheKey] = modelCacheEntry{models: models, fetchedAt: time.Now()}
--	l.mu.Unlock()
--
--	return models, nil
--}
--
--func (l *ModelLister) fetch(ctx context.Context, baseURL, apiKey, weaviateUUID string) ([]string, error) {
--	endpoint, err := url.JoinPath(baseURL, "/v1/models")
--	if err != nil {
--		return nil, errors.Wrap(err, "build /v1/models URL")
--	}
--
--	req, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint, nil)
--	if err != nil {
--		return nil, errors.Wrap(err, "create GET request")
--	}
--	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", apiKey))
--	req.Header.Set("Content-Type", "application/json")
--	if weaviateUUID != "" {
--		req.Header.Set("User-Agent", fmt.Sprintf("vector-db/weaviate/%s %s", weaviateUUID, build.Version))
--	} else {
--		req.Header.Set("User-Agent", fmt.Sprintf("vector-db/weaviate/unknown %s", build.Version))
--	}
--
--	res, err := l.httpClient.Do(req)
--	if err != nil {
--		return nil, errors.Wrap(err, "send GET request")
--	}
--	defer res.Body.Close()
--
--	body, err := io.ReadAll(res.Body)
--	if err != nil {
--		return nil, errors.Wrap(err, "read response body")
--	}
--
--	var parsed modelListResponse
--	if err := json.Unmarshal(body, &parsed); err != nil {
--		return nil, fmt.Errorf("failed to parse /v1/models response (status %d): %w", res.StatusCode, err)
--	}
--
--	if res.StatusCode != http.StatusOK || parsed.Error != nil {
--		msg := fmt.Sprintf("DigitalOcean /v1/models returned status %d", res.StatusCode)
--		if parsed.Error != nil && parsed.Error.Message != "" {
--			msg = fmt.Sprintf("%s: %s", msg, parsed.Error.Message)
--		}
--		return nil, errors.New(msg)
--	}
--
--	ids := make([]string, 0, len(parsed.Data))
--	for _, m := range parsed.Data {
--		if m.ID == "" {
--			continue
--		}
--		ids = append(ids, m.ID)
--	}
--	return ids, nil
--}
--
--func (l *ModelLister) cacheKey(baseURL, apiKey string) string {
--	h := sha256.Sum256([]byte(apiKey))
--	return fmt.Sprintf("%s|%x", baseURL, h)
--}
--
- // init registers the default model lister with the ent package so that
- // ValidateClass can call out to DigitalOcean without ent depending on this
- // package.
- func init() {
--	ent.DefaultModelLister = NewModelLister(30 * time.Second)
-+	ent.DefaultModelLister = digitalocean.NewModelLister(30 * time.Second)
- }
-```
-
----
-
-### Incident Patch 4: `a7e67845` (2026-10-02)
-**Commit Message**: [api] fix(generative-digitalocean): restore hard failure on model check for parity with text2vec
-
-**File**: `modules/generative-digitalocean/clients/models.go` (modified, +2/-3)
-```diff
-@@ -20,8 +20,7 @@ import (
- 
- // init registers the default model lister with the config package so that
- // ValidateClass can call out to DigitalOcean without config depending on this
--// package. The timeout is short because the model check only warns, and it
--// also runs during backup restore.
-+// package.
- func init() {
--	config.DefaultModelLister = digitalocean.NewModelLister(5 * time.Second)
-+	config.DefaultModelLister = digitalocean.NewModelLister(30 * time.Second)
- }
-```
-
-**File**: `modules/generative-digitalocean/config.go` (modified, +1/-1)
-```diff
-@@ -35,7 +35,7 @@ func (m *GenerativeDigitalOceanModule) ValidateClass(ctx context.Context,
- 	class *models.Class, cfg moduletools.ClassConfig,
- ) error {
- 	settings := config.NewClassSettings(cfg)
--	return settings.Validate(ctx, class, m.logger)
-+	return settings.Validate(ctx, class)
- }
- 
- var _ = modulecapabilities.ClassConfigurator(New())
-```
-
-**File**: `modules/generative-digitalocean/config/class_settings.go` (modified, +12/-14)
-```diff
-@@ -13,11 +13,11 @@ package config
- 
- import (
- 	"context"
-+	"fmt"
- 	"os"
- 	"slices"
- 
- 	"github.com/pkg/errors"
--	"github.com/sirupsen/logrus"
- 	"github.com/weaviate/weaviate/entities/models"
- 	"github.com/weaviate/weaviate/entities/moduletools"
- 	basesettings "github.com/weaviate/weaviate/usecases/modulecomponents/settings"
-@@ -60,11 +60,9 @@ func NewClassSettings(cfg moduletools.ClassConfig) *classSettings {
- 	return &classSettings{cfg: cfg, propertyValuesHelper: basesettings.NewPropertyValuesHelper("generative-digitalocean")}
- }
- 
--// Validate checks the class config. It also checks the model against the
--// endpoint's /v1/models list, but only logs a warning when the model is
--// missing or the list can't be fetched: that check depends on a remote
--// service, so it must not block collection creation or backup restore.
--func (ic *classSettings) Validate(ctx context.Context, class *models.Class, logger logrus.FieldLogger) error {
-+// Validate checks the class config and, when DIGITALOCEAN_APIKEY is set,
-+// checks the model against the endpoint's /v1/models list.
-+func (ic *classSettings) Validate(ctx context.Context, class *models.Class) error {
- 	if ic.cfg == nil {
- 		// we would receive a nil-config on cross-class requests, such as Explore{}
- 		return errors.New("empty config")
-@@ -97,14 +95,14 @@ func (ic *classSettings) Validate(ctx context.Context, class *models.Class, logg
- 		return nil
- 	}
- 
--	model := ic.Model()
--	available, err := lister.ListModels(ctx, ic.BaseURL(), apiKey, ic.WeaviateUUID())
--	if err != nil {
--		logger.Warnf("collection %q: failed to list DigitalOcean models: %v", class.Class, err)
--		return nil
--	}
--	if !slices.Contains(available, model) {
--		logger.Warnf("collection %q: model %q is not available on the DigitalOcean Serverless Inference endpoint; available models: %v", class.Class, model, available)
-+	if model := ic.Model(); model != "" {
-+		available, err := lister.ListModels(ctx, ic.BaseURL(), apiKey, ic.WeaviateUUID())
-+		if err != nil {
-+			return errors.Wrap(err, "list DigitalOcean models")
-+		}
-+		if !slices.Contains(available, model) {
-+			return fmt.Errorf("model %q is not available on the DigitalOcean Serverless Inference endpoint; available models: %v", model, available)
-+		}
- 	}
- 	return nil
- }
-```
-
-**File**: `modules/generative-digitalocean/config/class_settings_test.go` (modified, +1/-3)
-```diff
-@@ -15,7 +15,6 @@ import (
- 	"context"
- 	"testing"
- 
--	"github.com/sirupsen/logrus/hooks/test"
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
- 	"github.com/weaviate/weaviate/entities/models"
-@@ -105,9 +104,8 @@ func TestClassSettings(t *testing.T) {
- 	for _, tt := range tests {
- 		t.Run(tt.name, func(t *testing.T) {
- 			settings := NewClassSettings(tt.cfg)
--			logger, _ := test.NewNullLogger()
- 
--			err := settings.Validate(context.Background(), &models.Class{Class: "Test"}, logger)
-+			err := settings.Validate(context.Background(), &models.Class{Class: "Test"})
- 			if tt.expectedErr != "" {
- 				require.Error(t, err)
- 				assert.Contains(t, err.Error(), tt.expectedErr)
-```
-
-**File**: `modules/generative-digitalocean/config_test.go` (modified, +31/-36)
-```diff
-@@ -16,8 +16,6 @@ import (
- 	"errors"
- 	"testing"
- 
--	"github.com/sirupsen/logrus"
--	"github.com/sirupsen/logrus/hooks/test"
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
- 
-@@ -29,12 +27,12 @@ import (
- 
- func TestValidateClass(t *testing.T) {
- 	tests := []struct {
--		name        string
--		cfg         fakeClassConfig
--		lister      *fakeModelLister
--		apiKeyEnv   string
--		expectedErr string
--		expectedLog string
-+		name          string
-+		cfg           fakeClassConfig
-+		lister        *fakeModelLister
-+		apiKeyEnv     string
-+		expectedErr   string
-+		wantNoListing bool
- 	}{
- 		{
- 			name:      "model available",
-@@ -43,30 +41,39 @@ func TestValidateClass(t *testing.T) {
- 			apiKeyEnv: "dop_v1_test",
- 		},
- 		{
--			name:   "api key missing skips the model check",
--			cfg:    fakeClassConfig{"model": "retired-model"},
--			lister: &fakeModelLister{models: []string{"llama-4-maverick"}},
-+			name:          "api key missing skips the model check",
-+			cfg:           fakeClassConfig{"model": "retired-model"},
-+			lister:        &fakeModelLister{models: []string{"llama-4-maverick"}},
-+			wantNoListing: true,
- 		},
- 		{
--			name:        "model not available only warns",
-+			name:          "empty model skips the model check",
-+			cfg:           fakeClassConfig{"model": ""},
-+			lister:        &fakeModelLister{models: []string{"llama-4-maverick"}},
-+			apiKeyEnv:     "dop_v1_test",
-+			wantNoListing: true,
-+		},
-+		{
-+			name:        "model not available",
- 			cfg:         fakeClassConfig{"model": "retired-model"},
- 			lister:      &fakeModelLister{models: []string{"llama-4-maverick"}},
- 			apiKeyEnv:   "dop_v1_test",
--			expectedLog: `model "retired-model" is not available`,
-+			expectedErr: `model "retired-model" is not available`,
- 		},
- 		{
--			name:        "lister error only warns",
-+			name:        "lister error",
- 			cfg:         fakeClassConfig{"model": "llama-4-maverick"},
- 			lister:      &fakeModelLister{err: errors.New("endpoint unreachable")},
- 			apiKeyEnv:   "dop_v1_test",
--			expectedLog: "endpoint unreachable",
-+			expectedErr: "list DigitalOcean models: endpoint unreachable",
- 		},
- 		{
--			name:        "invalid local config still fails",
--			cfg:         fakeClassConfig{"temperature": 3.0},
--			lister:      &fakeModelLister{models: []string{"llama-4-maverick"}},
--			apiKeyEnv:   "dop_v1_test",
--			expectedErr: "wrong temperature configuration",
-+			name:          "invalid local config fails before the model check",
-+			cfg:           fakeClassConfig{"temperature": 3.0},
-+			lister:        &fakeModelLister{models: []string{"llama-4-maverick"}},
-+			apiKeyEnv:     "dop_v1_test",
-+			expectedErr:   "wrong temperature configuration",
-+			wantNoListing: true,
- 		},
- 	}
- 
-@@ -78,29 +85,17 @@ func TestValidateClass(t *testing.T) {
- 			config.DefaultModelLister = tt.lister
- 			t.Cleanup(func() { config.DefaultModelLister = prev })
- 
--			logger, hook := test.NewNullLogger()
--			m := &GenerativeDigitalOceanModule{logger: logger}
--
-+			m := &GenerativeDigitalOceanModule{}
- 			err := m.ValidateClass(context.Background(), &models.Class{Class: "Test"}, tt.cfg)
- 			if tt.expectedErr != "" {
- 				require.Error(t, err)
- 				assert.Contains(t, err.Error(), tt.expectedErr)
--				assert.Empty(t, hook.AllEntries())
--				return
-+			} else {
-+				require.NoError(t, err)
- 			}
--			require.NoError(t, err)
--
--			if tt.apiKeyEnv == "" {
-+			if tt.wantNoListing {
- 				assert.Zero(t, tt.lister.calls)
- 			}
--			if tt.expectedLog == "" {
--				assert.Empty(t, hook.AllEntries())
--				return
--			}
--			require.Len(t, hook.AllEntries(), 1)
--			assert.Equal(t, logrus.WarnLevel, hook.LastEntry().Level)
--			assert.Contains(t, hook.LastEntry().Message, tt.expectedLog)
--			assert.Contains(t, hook.LastEntry().Message, `collection "Test"`)
- 		})
- 	}
- }
-```
-
-**File**: `modules/generative-digitalocean/module.go` (modified, +0/-2)
-```diff
-@@ -33,7 +33,6 @@ func New() *GenerativeDigitalOceanModule {
- type GenerativeDigitalOceanModule struct {
- 	generative                   generativeClient
- 	additionalPropertiesProvider map[string]modulecapabilities.GenerativeProperty
--	logger                       logrus.FieldLogger
- }
- 
- type generativeClient interface {
-@@ -66,7 +65,6 @@ func (m *GenerativeDigitalOceanModule) initAdditional(ctx context.Context, timeo
- 
- 	client := clients.New(apiKey, timeout, logger)
- 	m.generative = client
--	m.logger = logger
- 	m.additionalPropertiesProvider = parameters.AdditionalGenerativeParameters(m.generative)
- 
- 	return nil
-```
-
----
-
-### Incident Patch 5: `d68e762b` (2026-10-02)
-**Commit Message**: fix(hnsw): exclude HFresh's centroid index from the node ID limit explicitly
-
-Its node IDs are posting IDs, not document IDs. It escaped the limit only
-because its directory holds no counter file; the index now says so.
-
-**File**: `adapters/repos/db/vector/hnsw/index.go` (modified, +2/-0)
-```diff
-@@ -202,6 +202,7 @@ type hnsw struct {
- 	store                 *lsmkv.Store
- 
- 	allocChecker              memwatch.AllocChecker
-+	hfreshMode                bool
- 	tombstoneMemCheckInterval time.Duration
- 	tombstoneCleanupRunning   atomic.Bool
- 
-@@ -400,6 +401,7 @@ func New(cfg Config, uc ent.UserConfig,
- 
- 		store:                     store,
- 		allocChecker:              cfg.AllocChecker,
-+		hfreshMode:                cfg.HFreshMode,
- 		tombstoneMemCheckInterval: 500 * time.Millisecond,
- 		visitedListPoolMaxSize:    cfg.VisitedListPoolMaxSize,
- 		asyncIndexingEnabled:      cfg.AsyncIndexingEnabled,
-```
-
-**File**: `adapters/repos/db/vector/hnsw/index_test.go` (modified, +3/-0)
-```diff
-@@ -598,11 +598,13 @@ func TestRestoreFromDisk_NodeIDBeyondDocIDCounter(t *testing.T) {
- 		counterFile   bool
- 		counter       uint64
- 		multivector   ent.MultivectorConfig
-+		hfresh        bool
- 		wantTruncated bool
- 	}{
- 		{name: "beyond the counter and its slack", counterFile: true, counter: counter, wantTruncated: true},
- 		{name: "muvera node IDs are document IDs", counterFile: true, counter: counter, multivector: muvera, wantTruncated: true},
- 		{name: "multivector node IDs are not document IDs", counterFile: true, counter: counter, multivector: multivector},
-+		{name: "hfresh centroid node IDs are not document IDs", counterFile: true, counter: counter, hfresh: true},
- 		{name: "zero counter means no limit", counterFile: true, counter: 0},
- 		{name: "no counter file means no limit"},
- 	}
-@@ -612,6 +614,7 @@ func TestRestoreFromDisk_NodeIDBeyondDocIDCounter(t *testing.T) {
- 			cfg := createVectorHnswIndexTestConfig()
- 			cfg.RootPath = t.TempDir()
- 			cfg.MultiVectorForIDThunk = testMultiVectorForID
-+			cfg.HFreshMode = tc.hfresh
- 			if tc.counterFile {
- 				writeDocIDCounterForTest(t, cfg.RootPath, tc.counter)
- 			}
-```
-
-**File**: `adapters/repos/db/vector/hnsw/startup.go` (modified, +3/-3)
-```diff
-@@ -82,9 +82,9 @@ func (h *hnsw) restoreFromDisk() error {
- 	loader := compact.NewLoader(compact.LoaderConfig{
- 		Dir:    dir,
- 		Logger: h.logger,
--		// Multivector indexes without Muvera number their nodes separately.
--		// HFresh's centroid index lives in a subdirectory without the counter.
--		NodeIDsAreDocIDs: !h.multivector.Load() || h.muvera.Load(),
-+		// Multivector indexes without Muvera number their nodes separately, and
-+		// HFresh's centroid index numbers them by posting ID.
-+		NodeIDsAreDocIDs: !h.hfreshMode && (!h.multivector.Load() || h.muvera.Load()),
- 	})
- 
- 	loadResult, err := loader.Load()
-```
-
----
-
-### Incident Patch 6: `cbab8afb` (2026-10-02)
-**Commit Message**: fix(compact): save the tail a node-ID truncation drops
-
-The limit comes from the document-ID counter, so a wrong counter would
-otherwise cut valid records for good. The dropped tail is now copied to
-<file>.<offset>.corrupt and fsynced before truncating, and the log names the
-offset, the bytes dropped and the copy. If the copy fails, the load fails
-and the file stays as it is.
-
-**File**: `adapters/repos/db/vector/hnsw/compact/crash_recovery_test.go` (modified, +24/-1)
-```diff
-@@ -1675,13 +1675,17 @@ func TestCrashRecovery_NodeIDBeyondLimitIsNeverApplied(t *testing.T) {
- 				dir := nodeIDLimitTestDir(t)
- 				path := filepath.Join(dir, nodeIDLimitTestName(fileType))
- 				writeNodeIDLimitFixture(t, path, fileType)
--				appendToFile(t, path, walBytes(t, func(w *WALWriter) { require.NoError(t, rec.write(w)) }))
-+				tail := walBytes(t, func(w *WALWriter) { require.NoError(t, rec.write(w)) })
-+				appendToFile(t, path, tail)
- 
- 				first := load(dir)
- 				assert.True(t, first.RecoveredFromCrash, "a node ID beyond the limit must be detected as corruption")
- 				assert.Less(t, len(first.State.Graph.Nodes), g, "node index sized to the garbage ID")
- 				assertGraphEqual(t, clean.State, first.State)
- 				require.Equal(t, cleanSize, fileSizeOf(t, path), "file must be truncated before the record")
-+				saved, err := os.ReadFile(fmt.Sprintf("%s.%d.corrupt", path, cleanSize))
-+				require.NoError(t, err, "the dropped tail must be saved")
-+				require.Equal(t, tail, saved)
- 
- 				second := load(dir)
- 				assert.False(t, second.RecoveredFromCrash, "second load must be clean after truncation")
-@@ -1746,3 +1750,22 @@ func TestCrashRecovery_NodeIDBeyondLimitDoesNotPresizeSnapshot(t *testing.T) {
- 	require.NotNil(t, nodeAt(res.State, 7), "records before the corruption must survive")
- 	assert.Equal(t, validSize, fileSizeOf(t, rawPath), "raw log must be truncated before the record")
- }
-+
-+// TestCrashRecovery_NodeIDBeyondLimitKeepsFileWhenTailCannotBeSaved pins that
-+// a truncation the counter decides never happens without a copy: when the
-+// dropped tail cannot be saved, the load fails and the file stays as it is.
-+func TestCrashRecovery_NodeIDBeyondLimitKeepsFileWhenTailCannotBeSaved(t *testing.T) {
-+	dir := nodeIDLimitTestDir(t)
-+	path := filepath.Join(dir, "1000")
-+	writeNodeIDLimitFixture(t, path, FileTypeRaw)
-+	validSize := fileSizeOf(t, path)
-+	appendToFile(t, path, walBytes(t, func(w *WALWriter) { require.NoError(t, w.WriteAddNode(nodeIDLimitTestGarbage, 0)) }))
-+	size := fileSizeOf(t, path)
-+
-+	// A directory where the saved tail would go makes saving it fail.
-+	require.NoError(t, os.Mkdir(fmt.Sprintf("%s.%d.corrupt", path, validSize), 0o755))
-+
-+	_, err := NewLoader(LoaderConfig{Dir: dir, Logger: quietLogger(), NodeIDsAreDocIDs: true}).Load()
-+	require.Error(t, err)
-+	assert.Equal(t, size, fileSizeOf(t, path), "file must not be truncated without a saved copy")
-+}
-```
-
-**File**: `adapters/repos/db/vector/hnsw/compact/loader.go` (modified, +48/-4)
-```diff
-@@ -12,7 +12,9 @@
- package compact
- 
- import (
-+	"fmt"
- 	"io"
-+	"os"
- 	"path/filepath"
- 	"sort"
- 
-@@ -284,12 +286,22 @@ func (l *Loader) loadWALFile(f FileInfo, state *ent.DeserializationResult) (*ent
- 		if errors.Is(err, errNodeIDBeyondLimit) {
- 			// Only corruption, such as a misaligned read of a torn log, names a
- 			// node the index cannot hold; everything after it is unreliable too.
-+			// The limit comes from the document-ID counter, so the dropped tail
-+			// is kept in case the counter, not the log, is wrong.
-+			offset := walReader.LastValidOffset()
-+			saved, dropped, saveErr := l.saveTail(f.Path, offset)
-+			if saveErr != nil {
-+				return result, false, errors.Wrapf(saveErr, "save the tail of %s before truncating it (%v)", f.Path, err)
-+			}
- 			l.config.Logger.WithFields(logrus.Fields{
--				"action": "hnsw_loader",
--				"file":   f.Path,
--				"type":   f.Type.String(),
-+				"action":        "hnsw_loader",
-+				"file":          f.Path,
-+				"type":          f.Type.String(),
-+				"offset":        offset,
-+				"dropped_bytes": dropped,
-+				"saved_to":      saved,
- 			}).Errorf("commit log names a node beyond the index's limit - truncating before it: %v", err)
--			l.truncateToLastValidRecord(f.Path, walReader.LastValidOffset())
-+			l.truncateToLastValidRecord(f.Path, offset)
- 			return result, true, nil
- 		}
- 		switch f.Type {
-@@ -374,6 +386,38 @@ func (l *Loader) nodeIDLimit() uint64 {
- 	return counter + docIDCounterSlack
- }
- 
-+// saveTail copies path from offset to its end into a sibling file the loader
-+// never reads, so a truncation can be undone by appending it back.
-+func (l *Loader) saveTail(path string, offset int64) (string, int64, error) {
-+	src, err := l.fs.Open(path)
-+	if err != nil {
-+		return "", 0, err
-+	}
-+	defer src.Close()
-+	st, err := src.Stat()
-+	if err != nil {
-+		return "", 0, err
-+	}
-+
-+	dst := fmt.Sprintf("%s.%d.corrupt", path, offset)
-+	out, err := l.fs.OpenFile(dst, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0o644)
-+	if err != nil {
-+		return "", 0, err
-+	}
-+	n, err := io.Copy(out, io.NewSectionReader(src, offset, st.Size()-offset))
-+	if err == nil {
-+		err = out.Sync()
-+	}
-+	closeErr := out.Close()
-+	if err == nil {
-+		err = closeErr
-+	}
-+	if err != nil {
-+		return "", 0, err
-+	}
-+	return dst, n, nil
-+}
-+
- // truncateToLastValidRecord truncates a corrupt WAL file back to the end of its
- // last fully decoded commit (walReader.LastValidOffset), removing a torn or
- // garbage-appended tail. After this the file is a valid, shorter WAL again, so a
-```
-
----
-
-### Incident Patch 7: `e9161755` (2026-10-02)
-**Commit Message**: [api] fix(generative-digitalocean): only warn when the model check fails
-
-**File**: `modules/generative-digitalocean/clients/models.go` (modified, +3/-2)
-```diff
-@@ -20,7 +20,8 @@ import (
- 
- // init registers the default model lister with the config package so that
- // ValidateClass can call out to DigitalOcean without config depending on this
--// package.
-+// package. The timeout is short because the model check only warns, and it
-+// also runs during backup restore.
- func init() {
--	config.DefaultModelLister = digitalocean.NewModelLister(30 * time.Second)
-+	config.DefaultModelLister = digitalocean.NewModelLister(5 * time.Second)
- }
-```
-
-**File**: `modules/generative-digitalocean/config.go` (modified, +1/-1)
-```diff
-@@ -35,7 +35,7 @@ func (m *GenerativeDigitalOceanModule) ValidateClass(ctx context.Context,
- 	class *models.Class, cfg moduletools.ClassConfig,
- ) error {
- 	settings := config.NewClassSettings(cfg)
--	return settings.Validate(ctx, class)
-+	return settings.Validate(ctx, class, m.logger)
- }
- 
- var _ = modulecapabilities.ClassConfigurator(New())
-```
-
-**File**: `modules/generative-digitalocean/config/class_settings.go` (modified, +14/-19)
-```diff
-@@ -13,10 +13,11 @@ package config
- 
- import (
- 	"context"
--	"fmt"
- 	"os"
-+	"slices"
- 
- 	"github.com/pkg/errors"
-+	"github.com/sirupsen/logrus"
- 	"github.com/weaviate/weaviate/entities/models"
- 	"github.com/weaviate/weaviate/entities/moduletools"
- 	basesettings "github.com/weaviate/weaviate/usecases/modulecomponents/settings"
-@@ -59,7 +60,11 @@ func NewClassSettings(cfg moduletools.ClassConfig) *classSettings {
- 	return &classSettings{cfg: cfg, propertyValuesHelper: basesettings.NewPropertyValuesHelper("generative-digitalocean")}
- }
- 
--func (ic *classSettings) Validate(ctx context.Context, class *models.Class) error {
-+// Validate checks the class config. It also checks the model against the
-+// endpoint's /v1/models list, but only logs a warning when the model is
-+// missing or the list can't be fetched: that check depends on a remote
-+// service, so it must not block collection creation or backup restore.
-+func (ic *classSettings) Validate(ctx context.Context, class *models.Class, logger logrus.FieldLogger) error {
- 	if ic.cfg == nil {
- 		// we would receive a nil-config on cross-class requests, such as Explore{}
- 		return errors.New("empty config")
-@@ -82,17 +87,10 @@ func (ic *classSettings) Validate(ctx context.Context, class *models.Class) erro
- 	if presencePenalty := ic.PresencePenalty(); presencePenalty != nil && (*presencePenalty < -2 || *presencePenalty > 2) {
- 		return errors.New("wrong presencePenalty configuration, values are between -2.0 and 2.0")
- 	}
--	return ic.validateModel(ctx)
--}
- 
--func (ic *classSettings) validateModel(ctx context.Context) error {
- 	lister := DefaultModelLister
--	if lister == nil {
--		return nil
--	}
--
- 	apiKey := ic.apiKey()
--	if apiKey == "" {
-+	if lister == nil || apiKey == "" {
- 		// Without a server-side API key the model can't be checked against
- 		// /v1/models; the endpoint rejects an unknown model at generate time,
- 		// where users can supply their own key via X-Digitalocean-Api-Key.
-@@ -102,20 +100,17 @@ func (ic *classSettings) validateModel(ctx context.Context) error {
- 	model := ic.Model()
- 	available, err := lister.ListModels(ctx, ic.BaseURL(), apiKey, ic.WeaviateUUID())
- 	if err != nil {
--		return errors.Wrap(err, "list DigitalOcean models")
-+		logger.Warnf("collection %q: failed to list DigitalOcean models: %v", class.Class, err)
-+		return nil
- 	}
--
--	for _, id := range available {
--		if id == model {
--			return nil
--		}
-+	if !slices.Contains(available, model) {
-+		logger.Warnf("collection %q: model %q is not available on the DigitalOcean Serverless Inference endpoint; available models: %v", class.Class, model, available)
- 	}
--
--	return fmt.Errorf("model %q is not available on the DigitalOcean Serverless Inference endpoint; available models: %v", model, available)
-+	return nil
- }
- 
- // apiKey resolves the DigitalOcean API key from the DIGITALOCEAN_APIKEY
--// environment variable. Validation runs at collection-create time, where the
-+// environment variable. The model check runs at collection-create time, where the
- // per-request header is not available, so only the server-level env var is
- // consulted.
- func (ic *classSettings) apiKey() string {
-```
-
-**File**: `modules/generative-digitalocean/config/class_settings_test.go` (modified, +4/-81)
-```diff
-@@ -13,11 +13,12 @@ package config
- 
- import (
- 	"context"
--	"errors"
- 	"testing"
- 
-+	"github.com/sirupsen/logrus/hooks/test"
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
-+	"github.com/weaviate/weaviate/entities/models"
- 	"github.com/weaviate/weaviate/entities/moduletools"
- 	"github.com/weaviate/weaviate/entities/schema"
- 	"github.com/weaviate/weaviate/usecases/config"
-@@ -104,8 +105,9 @@ func TestClassSettings(t *testing.T) {
- 	for _, tt := range tests {
- 		t.Run(tt.name, func(t *testing.T) {
- 			settings := NewClassSettings(tt.cfg)
-+			logger, _ := test.NewNullLogger()
- 
--			err := settings.Validate(context.Background(), nil)
-+			err := settings.Validate(context.Background(), &models.Class{Class: "Test"}, logger)
- 			if tt.expectedErr != "" {
- 				require.Error(t, err)
- 				assert.Contains(t, err.Error(), tt.expectedErr)
-@@ -125,71 +127,6 @@ func TestClassSettings(t *testing.T) {
- 	}
- }
- 
--func TestClassSettingsValidateModel(t *testing.T) {
--	tests := []struct {
--		name          string
--		cfg           fakeClassConfig
--		lister        *fakeModelLister
--		apiKeyEnv     string
--		wantErrMsg    string
--		wantNoListing bool
--	}{
--		{
--			name:      "model is in the available list",
--			cfg:       fakeClassConfig{"model": "openai-gpt-4o"},
--			lister:    &fakeModelLister{models: []string{"llama-4-maverick", "openai-gpt-4o"}},
--			apiKeyEnv: "dop_v1_test",
--		},
--		{
--			name:      "default model is in the available list",
--			cfg:       fakeClassConfig{},
--			lister:    &fakeModelLister{models: []string{"llama-4-maverick"}},
--			apiKeyEnv: "dop_v1_test",
--		},
--		{
--			name:       "model is not in the available list",
--			cfg:        fakeClassConfig{"model": "made-up-model"},
--			lister:     &fakeModelLister{models: []string{"llama-4-maverick"}},
--			apiKeyEnv:  "dop_v1_test",
--			wantErrMsg: `model "made-up-model" is not available`,
--		},
--		{
--			name:          "api key missing - validation skipped",
--			cfg:           fakeClassConfig{"model": "made-up-model"},
--			lister:        &fakeModelLister{models: []string{"llama-4-maverick"}},
--			wantNoListing: true,
--		},
--		{
--			name:       "lister returns error",
--			cfg:        fakeClassConfig{"model": "llama-4-maverick"},
--			lister:     &fakeModelLister{err: errors.New("boom")},
--			apiKeyEnv:  "dop_v1_test",
--			wantErrMsg: "list DigitalOcean models",
--		},
--	}
--
--	for _, tt := range tests {
--		t.Run(tt.name, func(t *testing.T) {
--			t.Setenv("DIGITALOCEAN_APIKEY", tt.apiKeyEnv)
--
--			prev := DefaultModelLister
--			DefaultModelLister = tt.lister
--			t.Cleanup(func() { DefaultModelLister = prev })
--
--			err := NewClassSettings(tt.cfg).Validate(context.Background(), nil)
--			if tt.wantErrMsg == "" {
--				assert.NoError(t, err)
--			} else {
--				require.Error(t, err)
--				assert.Contains(t, err.Error(), tt.wantErrMsg)
--			}
--			if tt.wantNoListing {
--				assert.Equal(t, 0, tt.lister.calls)
--			}
--		})
--	}
--}
--
- func TestClassSettingsEnvVars(t *testing.T) {
- 	t.Setenv("DIGITALOCEAN_APIKEY", "dop_v1_test")
- 	t.Setenv("VECTOR_DB_UUID", "test-uuid")
-@@ -199,20 +136,6 @@ func TestClassSettingsEnvVars(t *testing.T) {
- 	assert.Equal(t, "test-uuid", settings.WeaviateUUID())
- }
- 
--type fakeModelLister struct {
--	models []string
--	err    error
--	calls  int
--}
--
--func (f *fakeModelLister) ListModels(_ context.Context, _, _, _ string) ([]string, error) {
--	f.calls++
--	if f.err != nil {
--		return nil, f.err
--	}
--	return f.models, nil
--}
--
- func ptr[T any](v T) *T {
- 	return &v
- }
-```
-
-**File**: `modules/generative-digitalocean/config_test.go` (added, +136/-0)
-```diff
-@@ -0,0 +1,136 @@
-+//                           _       _
-+// __      _____  __ ___   ___  __ _| |_ ___
-+// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
-+//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
-+//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
-+//
-+//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
-+//
-+//  CONTACT: hello@weaviate.io
-+//
-+
-+package modgenerativedigitalocean
-+
-+import (
-+	"context"
-+	"errors"
-+	"testing"
-+
-+	"github.com/sirupsen/logrus"
-+	"github.com/sirupsen/logrus/hooks/test"
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/weaviate/weaviate/entities/models"
-+	"github.com/weaviate/weaviate/entities/schema"
-+	"github.com/weaviate/weaviate/modules/generative-digitalocean/config"
-+	usecasesconfig "github.com/weaviate/weaviate/usecases/config"
-+)
-+
-+func TestValidateClass(t *testing.T) {
-+	tests := []struct {
-+		name        string
-+		cfg         fakeClassConfig
-+		lister      *fakeModelLister
-+		apiKeyEnv   string
-+		expectedErr string
-+		expectedLog string
-+	}{
-+		{
-+			name:      "model available",
-+			cfg:       fakeClassConfig{"model": "llama-4-maverick"},
-+			lister:    &fakeModelLister{models: []string{"llama-4-maverick"}},
-+			apiKeyEnv: "dop_v1_test",
-+		},
-+		{
-+			name:   "api key missing skips the model check",
-+			cfg:    fakeClassConfig{"model": "retired-model"},
-+			lister: &fakeModelLister{models: []string{"llama-4-maverick"}},
-+		},
-+		{
-+			name:        "model not available only warns",
-+			cfg:         fakeClassConfig{"model": "retired-model"},
-+			lister:      &fakeModelLister{models: []string{"llama-4-maverick"}},
-+			apiKeyEnv:   "dop_v1_test",
-+			expectedLog: `model "retired-model" is not available`,
-+		},
-+		{
-+			name:        "lister error only warns",
-+			cfg:         fakeClassConfig{"model": "llama-4-maverick"},
-+			lister:      &fakeModelLister{err: errors.New("endpoint unreachable")},
-+			apiKeyEnv:   "dop_v1_test",
-+			expectedLog: "endpoint unreachable",
-+		},
-+		{
-+			name:        "invalid local config still fails",
-+			cfg:         fakeClassConfig{"temperature": 3.0},
-+			lister:      &fakeModelLister{models: []string{"llama-4-maverick"}},
-+			apiKeyEnv:   "dop_v1_test",
-+			expectedErr: "wrong temperature configuration",
-+		},
-+	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			t.Setenv("DIGITALOCEAN_APIKEY", tt.apiKeyEnv)
-+
-+			prev := config.DefaultModelLister
-+			config.DefaultModelLister = tt.lister
-+			t.Cleanup(func() { config.DefaultModelLister = prev })
-+
-+			logger, hook := test.NewNullLogger()
-+			m := &GenerativeDigitalOceanModule{logger: logger}
-+
-+			err := m.ValidateClass(context.Background(), &models.Class{Class: "Test"}, tt.cfg)
-+			if tt.expectedErr != "" {
-+				require.Error(t, err)
-+				assert.Contains(t, err.Error(), tt.expectedErr)
-+				assert.Empty(t, hook.AllEntries())
-+				return
-+			}
-+			require.NoError(t, err)
-+
-+			if tt.apiKeyEnv == "" {
-+				assert.Zero(t, tt.lister.calls)
-+			}
-+			if tt.expectedLog == "" {
-+				assert.Empty(t, hook.AllEntries())
-+				return
-+			}
-+			require.Len(t, hook.AllEntries(), 1)
-+			assert.Equal(t, logrus.WarnLevel, hook.LastEntry().Level)
-+			assert.Contains(t, hook.LastEntry().Message, tt.expectedLog)
-+			assert.Contains(t, hook.LastEntry().Message, `collection "Test"`)
-+		})
-+	}
-+}
-+
-+type fakeModelLister struct {
-+	models []string
-+	err    error
-+	calls  int
-+}
-+
-+func (f *fakeModelLister) ListModels(_ context.Context, _, _, _ string) ([]string, error) {
-+	f.calls++
-+	if f.err != nil {
-+		return nil, f.err
-+	}
-+	return f.models, nil
-+}
-+
-+type fakeClassConfig map[string]any
-+
-+func (f fakeClassConfig) Class() map[string]any { return f }
-+
-+func (f fakeClassConfig) Tenant() string { return "" }
-+
-+func (f fakeClassConfig) ClassByModuleName(moduleName string) map[string]any { return f }
-+
-+func (f fakeClassConfig) Property(propName string) map[string]any { return nil }
-+
-+func (f fakeClassConfig) TargetVector() string { return "" }
-+
-+func (f fakeClassConfig) PropertiesDataTypes() map[string]schema.DataType { return nil }
-+
-+func (f fakeClassConfig) Config() *usecasesconfig.Config { return nil }
-```
-
-**File**: `modules/generative-digitalocean/module.go` (modified, +2/-0)
-```diff
-@@ -33,6 +33,7 @@ func New() *GenerativeDigitalOceanModule {
- type GenerativeDigitalOceanModule struct {
- 	generative                   generativeClient
- 	additionalPropertiesProvider map[string]modulecapabilities.GenerativeProperty
-+	logger                       logrus.FieldLogger
- }
- 
- type generativeClient interface {
-@@ -65,6 +66,7 @@ func (m *GenerativeDigitalOceanModule) initAdditional(ctx context.Context, timeo
- 
- 	client := clients.New(apiKey, timeout, logger)
- 	m.generative = client
-+	m.logger = logger
- 	m.additionalPropertiesProvider = parameters.AdditionalGenerativeParameters(m.generative)
- 
- 	return nil
-```
-
-**File**: `usecases/modulecomponents/clients/digitalocean/models.go` (modified, +19/-4)
-```diff
-@@ -35,10 +35,14 @@ import (
- // and avoiding excessive calls.
- const modelCacheTTL = 5 * time.Minute
- 
-+// modelListResponse covers both error formats: DigitalOcean's native
-+// top-level {"id","message","request_id"} and the OpenAI-style {"error":{...}}.
- type modelListResponse struct {
--	Object string          `json:"object"`
--	Data   []modelListItem `json:"data"`
--	Error  *modelListError `json:"error,omitempty"`
-+	Object    string          `json:"object"`
-+	Data      []modelListItem `json:"data"`
-+	Message   string          `json:"message,omitempty"`
-+	RequestID string          `json:"request_id,omitempty"`
-+	Error     *modelListError `json:"error,omitempty"`
- }
- 
- type modelListError struct {
-@@ -90,8 +94,14 @@ func (l *ModelLister) ListModels(ctx context.Context, baseURL, apiKey, weaviateU
- 		return nil, err
- 	}
- 
-+	now := time.Now()
- 	l.mu.Lock()
--	l.cache[cacheKey] = modelCacheEntry{models: models, fetchedAt: time.Now()}
-+	for key, entry := range l.cache {
-+		if now.Sub(entry.fetchedAt) >= modelCacheTTL {
-+			delete(l.cache, key)
-+		}
-+	}
-+	l.cache[cacheKey] = modelCacheEntry{models: models, fetchedAt: now}
- 	l.mu.Unlock()
- 
- 	return models, nil
-@@ -135,6 +145,11 @@ func (l *ModelLister) fetch(ctx context.Context, baseURL, apiKey, weaviateUUID s
- 		msg := fmt.Sprintf("DigitalOcean /v1/models returned status %d", res.StatusCode)
- 		if parsed.Error != nil && parsed.Error.Message != "" {
- 			msg = fmt.Sprintf("%s: %s", msg, parsed.Error.Message)
-+		} else if parsed.Message != "" {
-+			msg = fmt.Sprintf("%s: %s", msg, parsed.Message)
-+		}
-+		if parsed.RequestID != "" {
-+			msg = fmt.Sprintf("%s request_id: %s", msg, parsed.RequestID)
- 		}
- 		return nil, errors.New(msg)
- 	}
-```
-
-**File**: `usecases/modulecomponents/clients/digitalocean/models_test.go` (modified, +56/-6)
-```diff
-@@ -69,16 +69,66 @@ func TestModelLister_Cache(t *testing.T) {
- 	assert.Equal(t, int32(2), atomic.LoadInt32(&calls))
- }
- 
--func TestModelLister_Error(t *testing.T) {
-+func TestModelLister_PrunesExpiredEntries(t *testing.T) {
- 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
--		w.WriteHeader(http.StatusUnauthorized)
--		_, _ = io.WriteString(w, `{"error":{"message":"bad token","code":"unauthorized"}}`)
-+		w.Header().Set("Content-Type", "application/json")
-+		_, _ = io.WriteString(w, `{"object":"list","data":[{"id":"m1","object":"model","owned_by":"do","created":1}]}`)
- 	}))
- 	t.Cleanup(server.Close)
- 
- 	l := NewModelLister(5 * time.Second)
-+	expiredKey := l.cacheKey("https://expired.example.com", "old-key")
-+	freshKey := l.cacheKey("https://fresh.example.com", "other-key")
-+	l.cache[expiredKey] = modelCacheEntry{models: []string{"old"}, fetchedAt: time.Now().Add(-modelCacheTTL)}
-+	l.cache[freshKey] = modelCacheEntry{models: []string{"fresh"}, fetchedAt: time.Now()}
-+
- 	_, err := l.ListModels(context.Background(), server.URL, "test-key", "test-uuid")
--	require.Error(t, err)
--	assert.Contains(t, err.Error(), "status 401")
--	assert.Contains(t, err.Error(), "bad token")
-+	require.NoError(t, err)
-+
-+	assert.NotContains(t, l.cache, expiredKey)
-+	assert.Contains(t, l.cache, freshKey)
-+	assert.Contains(t, l.cache, l.cacheKey(server.URL, "test-key"))
-+}
-+
-+func TestModelLister_Error(t *testing.T) {
-+	tests := []struct {
-+		name        string
-+		statusCode  int
-+		body        string
-+		expectedErr string
-+	}{
-+		{
-+			name:        "openai-style error",
-+			statusCode:  http.StatusUnauthorized,
-+			body:        `{"error":{"message":"bad token","code":"unauthorized"}}`,
-+			expectedErr: "DigitalOcean /v1/models returned status 401: bad token",
-+		},
-+		{
-+			name:        "native error",
-+			statusCode:  http.StatusPaymentRequired,
-+			body:        `{"id":"Payment Required","message":"insufficient balance","request_id":"req-123"}`,
-+			expectedErr: "DigitalOcean /v1/models returned status 402: insufficient balance request_id: req-123",
-+		},
-+		{
-+			name:        "status only",
-+			statusCode:  http.StatusInternalServerError,
-+			body:        `{}`,
-+			expectedErr: "DigitalOcean /v1/models returned status 500",
-+		},
-+	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+				w.WriteHeader(tt.statusCode)
-+				_, _ = io.WriteString(w, tt.body)
-+			}))
-+			t.Cleanup(server.Close)
-+
-+			l := NewModelLister(5 * time.Second)
-+			_, err := l.ListModels(context.Background(), server.URL, "test-key", "test-uuid")
-+			require.Error(t, err)
-+			assert.Equal(t, tt.expectedErr, err.Error())
-+		})
-+	}
- }
-```
-
----
-
-### Incident Patch 8: `9992c3d0` (2026-10-02)
-**Commit Message**: [api] fix(generative-digitalocean): add env var support and model list validation
-
-**File**: `modules/generative-digitalocean/clients/digitalocean.go` (modified, +6/-0)
-```diff
-@@ -28,6 +28,7 @@ import (
- 	"github.com/weaviate/weaviate/entities/moduletools"
- 	"github.com/weaviate/weaviate/modules/generative-digitalocean/config"
- 	digitaloceanparams "github.com/weaviate/weaviate/modules/generative-digitalocean/parameters"
-+	"github.com/weaviate/weaviate/usecases/build"
- 	"github.com/weaviate/weaviate/usecases/modulecomponents"
- 	"github.com/weaviate/weaviate/usecases/modulecomponents/generative"
- 	"github.com/weaviate/weaviate/usecases/monitoring"
-@@ -100,6 +101,11 @@ func (c *client) doGenerate(ctx context.Context, cfg moduletools.ClassConfig, pr
- 
- 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", key))
- 	req.Header.Set("Content-Type", "application/json")
-+	if weaviateUUID := config.NewClassSettings(cfg).WeaviateUUID(); weaviateUUID != "" {
-+		req.Header.Set("User-Agent", fmt.Sprintf("vector-db/weaviate/%s %s", weaviateUUID, build.Version))
-+	} else {
-+		req.Header.Set("User-Agent", fmt.Sprintf("vector-db/weaviate/unknown %s", build.Version))
-+	}
- 
- 	res, err := c.httpClient.Do(req)
- 	if res != nil {
-```
-
-**File**: `modules/generative-digitalocean/clients/digitalocean_test.go` (modified, +42/-0)
-```diff
-@@ -14,9 +14,11 @@ package clients
- import (
- 	"context"
- 	"encoding/json"
-+	"fmt"
- 	"io"
- 	"net/http"
- 	"net/http/httptest"
-+	"strings"
- 	"testing"
- 	"time"
- 
-@@ -26,6 +28,7 @@ import (
- 	"github.com/stretchr/testify/require"
- 	"github.com/weaviate/weaviate/entities/modulecapabilities"
- 	digitaloceanparams "github.com/weaviate/weaviate/modules/generative-digitalocean/parameters"
-+	"github.com/weaviate/weaviate/usecases/build"
- )
- 
- func nullLogger() logrus.FieldLogger {
-@@ -267,6 +270,45 @@ func TestGenerateRequest(t *testing.T) {
- 	}
- }
- 
-+func TestGenerateUserAgent(t *testing.T) {
-+	tests := []struct {
-+		name         string
-+		weaviateUUID string
-+		expected     string
-+	}{
-+		{
-+			name:         "uuid set",
-+			weaviateUUID: "test-uuid",
-+			expected:     fmt.Sprintf("vector-db/weaviate/test-uuid %s", build.Version),
-+		},
-+		{
-+			name:     "uuid not set",
-+			expected: fmt.Sprintf("vector-db/weaviate/unknown %s", build.Version),
-+		},
-+	}
-+
-+	properties := []*modulecapabilities.GenerateProperties{{Text: map[string]string{"prop": "value"}}}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			t.Setenv("VECTOR_DB_UUID", tt.weaviateUUID)
-+
-+			var gotUserAgent string
-+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+				gotUserAgent = r.Header.Get("User-Agent")
-+				w.Write([]byte(`{"choices":[{"message":{"role":"assistant","content":"ok"}}]}`))
-+			}))
-+			defer server.Close()
-+
-+			c := New("key", time.Minute, nullLogger())
-+			params := digitaloceanparams.Params{BaseURL: server.URL}
-+			_, err := c.GenerateAllResults(context.Background(), properties, "task", params, false, nil)
-+			require.NoError(t, err)
-+			assert.Equal(t, strings.TrimSpace(tt.expected), gotUserAgent)
-+		})
-+	}
-+}
-+
- func TestMetaInfo(t *testing.T) {
- 	meta, err := New("key", 0, nullLogger()).MetaInfo()
- 	require.NoError(t, err)
-```
-
-**File**: `modules/generative-digitalocean/clients/models.go` (added, +157/-0)
-```diff
-@@ -0,0 +1,157 @@
-+//                           _       _
-+// __      _____  __ ___   ___  __ _| |_ ___
-+// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
-+//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
-+//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
-+//
-+//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
-+//
-+//  CONTACT: hello@weaviate.io
-+//
-+
-+package clients
-+
-+import (
-+	"context"
-+	"crypto/sha256"
-+	"encoding/json"
-+	"fmt"
-+	"io"
-+	"net/http"
-+	"net/url"
-+	"sync"
-+	"time"
-+
-+	"github.com/pkg/errors"
-+
-+	"github.com/weaviate/weaviate/modules/generative-digitalocean/config"
-+	"github.com/weaviate/weaviate/usecases/build"
-+	"github.com/weaviate/weaviate/usecases/modulecomponents"
-+)
-+
-+// modelCacheTTL controls how long a successful /v1/models response is cached
-+// per (baseURL, apiKey-hash). The DigitalOcean model catalogue changes rarely
-+// and Validate is called every time a collection is created or its module
-+// config changes, so a short TTL is a reasonable trade-off between freshness
-+// and avoiding excessive calls.
-+const modelCacheTTL = 5 * time.Minute
-+
-+type modelListResponse struct {
-+	Object string          `json:"object"`
-+	Data   []modelListItem `json:"data"`
-+	Error  *apiError       `json:"error,omitempty"`
-+}
-+
-+type modelListItem struct {
-+	ID      string `json:"id"`
-+	Object  string `json:"object"`
-+	OwnedBy string `json:"owned_by"`
-+	Created int64  `json:"created"`
-+}
-+
-+type modelCacheEntry struct {
-+	models    []string
-+	fetchedAt time.Time
-+}
-+
-+// ModelLister fetches the model catalogue from a DigitalOcean Serverless
-+// Inference endpoint and caches the result in-memory.
-+type ModelLister struct {
-+	httpClient *http.Client
-+
-+	mu    sync.Mutex
-+	cache map[string]modelCacheEntry
-+}
-+
-+func NewModelLister(timeout time.Duration) *ModelLister {
-+	return &ModelLister{
-+		httpClient: modulecomponents.NewBaseHttpClient(timeout),
-+		cache:      map[string]modelCacheEntry{},
-+	}
-+}
-+
-+func (l *ModelLister) ListModels(ctx context.Context, baseURL, apiKey, weaviateUUID string) ([]string, error) {
-+	cacheKey := l.cacheKey(baseURL, apiKey)
-+
-+	l.mu.Lock()
-+	if entry, ok := l.cache[cacheKey]; ok && time.Since(entry.fetchedAt) < modelCacheTTL {
-+		l.mu.Unlock()
-+		return entry.models, nil
-+	}
-+	l.mu.Unlock()
-+
-+	models, err := l.fetch(ctx, baseURL, apiKey, weaviateUUID)
-+	if err != nil {
-+		return nil, err
-+	}
-+
-+	l.mu.Lock()
-+	l.cache[cacheKey] = modelCacheEntry{models: models, fetchedAt: time.Now()}
-+	l.mu.Unlock()
-+
-+	return models, nil
-+}
-+
-+func (l *ModelLister) fetch(ctx context.Context, baseURL, apiKey, weaviateUUID string) ([]string, error) {
-+	endpoint, err := url.JoinPath(baseURL, "/v1/models")
-+	if err != nil {
-+		return nil, errors.Wrap(err, "build /v1/models URL")
-+	}
-+
-+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint, nil)
-+	if err != nil {
-+		return nil, errors.Wrap(err, "create GET request")
-+	}
-+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", apiKey))
-+	req.Header.Set("Content-Type", "application/json")
-+	if weaviateUUID != "" {
-+		req.Header.Set("User-Agent", fmt.Sprintf("vector-db/weaviate/%s %s", weaviateUUID, build.Version))
-+	} else {
-+		req.Header.Set("User-Agent", fmt.Sprintf("vector-db/weaviate/unknown %s", build.Version))
-+	}
-+
-+	res, err := l.httpClient.Do(req)
-+	if err != nil {
-+		return nil, errors.Wrap(err, "send GET request")
-+	}
-+	defer res.Body.Close()
-+
-+	body, err := io.ReadAll(res.Body)
-+	if err != nil {
-+		return nil, errors.Wrap(err, "read response body")
-+	}
-+
-+	var parsed modelListResponse
-+	if err := json.Unmarshal(body, &parsed); err != nil {
-+		return nil, fmt.Errorf("failed to parse /v1/models response (status %d): %w", res.StatusCode, err)
-+	}
-+
-+	if res.StatusCode != http.StatusOK || parsed.Error != nil {
-+		msg := fmt.Sprintf("DigitalOcean /v1/models returned status %d", res.StatusCode)
-+		if parsed.Error != nil && parsed.Error.Message != "" {
-+			msg = fmt.Sprintf("%s: %s", msg, parsed.Error.Message)
-+		}
-+		return nil, errors.New(msg)
-+	}
-+
-+	ids := make([]string, 0, len(parsed.Data))
-+	for _, m := range parsed.Data {
-+		if m.ID == "" {
-+			continue
-+		}
-+		ids = append(ids, m.ID)
-+	}
-+	return ids, nil
-+}
-+
-+func (l *ModelLister) cacheKey(baseURL, apiKey string) string {
-+	h := sha256.Sum256([]byte(apiKey))
-+	return fmt.Sprintf("%s|%x", baseURL, h)
-+}
-+
-+// init registers the default model lister with the config package so that
-+// ValidateClass can call out to DigitalOcean without config depending on this
-+// package.
-+func init() {
-+	config.DefaultModelLister = NewModelLister(30 * time.Second)
-+}
-```
-
-**File**: `modules/generative-digitalocean/clients/models_test.go` (added, +84/-0)
-```diff
-@@ -0,0 +1,84 @@
-+//                           _       _
-+// __      _____  __ ___   ___  __ _| |_ ___
-+// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
-+//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
-+//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
-+//
-+//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
-+//
-+//  CONTACT: hello@weaviate.io
-+//
-+
-+package clients
-+
-+import (
-+	"context"
-+	"io"
-+	"net/http"
-+	"net/http/httptest"
-+	"sync/atomic"
-+	"testing"
-+	"time"
-+
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+func TestModelLister_ListModels_Success(t *testing.T) {
-+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		assert.Equal(t, http.MethodGet, r.Method)
-+		assert.Equal(t, "/v1/models", r.URL.Path)
-+		assert.Equal(t, "Bearer test-key", r.Header.Get("Authorization"))
-+		w.Header().Set("Content-Type", "application/json")
-+		_, _ = io.WriteString(w, `{
-+			"object": "list",
-+			"data": [
-+				{"id": "qwen3-embedding-0.6b", "object": "model", "owned_by": "digitalocean", "created": 1},
-+				{"id": "openai-gpt-oss-20b", "object": "model", "owned_by": "digitalocean", "created": 2}
-+			]
-+		}`)
-+	}))
-+	t.Cleanup(server.Close)
-+
-+	l := NewModelLister(5 * time.Second)
-+	ids, err := l.ListModels(context.Background(), server.URL, "test-key", "test-uuid")
-+	require.NoError(t, err)
-+	assert.Equal(t, []string{"qwen3-embedding-0.6b", "openai-gpt-oss-20b"}, ids)
-+}
-+
-+func TestModelLister_Cache(t *testing.T) {
-+	var calls int32
-+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		atomic.AddInt32(&calls, 1)
-+		w.Header().Set("Content-Type", "application/json")
-+		_, _ = io.WriteString(w, `{"object":"list","data":[{"id":"m1","object":"model","owned_by":"do","created":1}]}`)
-+	}))
-+	t.Cleanup(server.Close)
-+
-+	l := NewModelLister(5 * time.Second)
-+	for i := 0; i < 5; i++ {
-+		ids, err := l.ListModels(context.Background(), server.URL, "test-key", "test-uuid")
-+		require.NoError(t, err)
-+		assert.Equal(t, []string{"m1"}, ids)
-+	}
-+	assert.Equal(t, int32(1), atomic.LoadInt32(&calls), "second and later calls should be served from cache")
-+
-+	// different api key should miss the cache
-+	_, err := l.ListModels(context.Background(), server.URL, "other-key", "test-uuid")
-+	require.NoError(t, err)
-+	assert.Equal(t, int32(2), atomic.LoadInt32(&calls))
-+}
-+
-+func TestModelLister_Error(t *testing.T) {
-+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		w.WriteHeader(http.StatusUnauthorized)
-+		_, _ = io.WriteString(w, `{"error":{"message":"bad token","code":"unauthorized"}}`)
-+	}))
-+	t.Cleanup(server.Close)
-+
-+	l := NewModelLister(5 * time.Second)
-+	_, err := l.ListModels(context.Background(), server.URL, "test-key", "test-uuid")
-+	require.Error(t, err)
-+	assert.Contains(t, err.Error(), "status 401")
-+	assert.Contains(t, err.Error(), "bad token")
-+}
-```
-
-**File**: `modules/generative-digitalocean/config.go` (modified, +1/-1)
-```diff
-@@ -35,7 +35,7 @@ func (m *GenerativeDigitalOceanModule) ValidateClass(ctx context.Context,
- 	class *models.Class, cfg moduletools.ClassConfig,
- ) error {
- 	settings := config.NewClassSettings(cfg)
--	return settings.Validate(class)
-+	return settings.Validate(ctx, class)
- }
- 
- var _ = modulecapabilities.ClassConfigurator(New())
-```
-
-**File**: `modules/generative-digitalocean/config/class_settings.go` (modified, +59/-2)
-```diff
-@@ -12,6 +12,10 @@
- package config
- 
- import (
-+	"context"
-+	"fmt"
-+	"os"
-+
- 	"github.com/pkg/errors"
- 	"github.com/weaviate/weaviate/entities/models"
- 	"github.com/weaviate/weaviate/entities/moduletools"
-@@ -34,6 +38,18 @@ var (
- 	DefaultModel   = "llama-4-maverick"
- )
- 
-+// ModelLister returns the set of available model ids from a DigitalOcean
-+// Serverless Inference endpoint. It is implemented in the clients package and
-+// injected here through DefaultModelLister to keep config free of HTTP-client
-+// dependencies. Tests can override DefaultModelLister with a fake.
-+type ModelLister interface {
-+	ListModels(ctx context.Context, baseURL, apiKey string, weaviateUUID string) ([]string, error)
-+}
-+
-+// DefaultModelLister is the lister used by Validate. The clients package
-+// registers an HTTP-backed implementation at init time.
-+var DefaultModelLister ModelLister
-+
- type classSettings struct {
- 	cfg                  moduletools.ClassConfig
- 	propertyValuesHelper basesettings.PropertyValuesHelper
-@@ -43,7 +59,7 @@ func NewClassSettings(cfg moduletools.ClassConfig) *classSettings {
- 	return &classSettings{cfg: cfg, propertyValuesHelper: basesettings.NewPropertyValuesHelper("generative-digitalocean")}
- }
- 
--func (ic *classSettings) Validate(class *models.Class) error {
-+func (ic *classSettings) Validate(ctx context.Context, class *models.Class) error {
- 	if ic.cfg == nil {
- 		// we would receive a nil-config on cross-class requests, such as Explore{}
- 		return errors.New("empty config")
-@@ -66,7 +82,48 @@ func (ic *classSettings) Validate(class *models.Class) error {
- 	if presencePenalty := ic.PresencePenalty(); presencePenalty != nil && (*presencePenalty < -2 || *presencePenalty > 2) {
- 		return errors.New("wrong presencePenalty configuration, values are between -2.0 and 2.0")
- 	}
--	return nil
-+	return ic.validateModel(ctx)
-+}
-+
-+func (ic *classSettings) validateModel(ctx context.Context) error {
-+	lister := DefaultModelLister
-+	if lister == nil {
-+		return nil
-+	}
-+
-+	apiKey := ic.apiKey()
-+	if apiKey == "" {
-+		// Without a server-side API key the model can't be checked against
-+		// /v1/models; the endpoint rejects an unknown model at generate time,
-+		// where users can supply their own key via X-Digitalocean-Api-Key.
-+		return nil
-+	}
-+
-+	model := ic.Model()
-+	available, err := lister.ListModels(ctx, ic.BaseURL(), apiKey, ic.WeaviateUUID())
-+	if err != nil {
-+		return errors.Wrap(err, "list DigitalOcean models")
-+	}
-+
-+	for _, id := range available {
-+		if id == model {
-+			return nil
-+		}
-+	}
-+
-+	return fmt.Errorf("model %q is not available on the DigitalOcean Serverless Inference endpoint; available models: %v", model, available)
-+}
-+
-+// apiKey resolves the DigitalOcean API key from the DIGITALOCEAN_APIKEY
-+// environment variable. Validation runs at collection-create time, where the
-+// per-request header is not available, so only the server-level env var is
-+// consulted.
-+func (ic *classSettings) apiKey() string {
-+	return os.Getenv("DIGITALOCEAN_APIKEY")
-+}
-+
-+func (ic *classSettings) WeaviateUUID() string {
-+	return os.Getenv("VECTOR_DB_UUID")
- }
- 
- func (ic *classSettings) BaseURL() string {
-```
-
-**File**: `modules/generative-digitalocean/config/class_settings_test.go` (modified, +91/-1)
-```diff
-@@ -12,6 +12,8 @@
- package config
- 
- import (
-+	"context"
-+	"errors"
- 	"testing"
- 
- 	"github.com/stretchr/testify/assert"
-@@ -103,7 +105,7 @@ func TestClassSettings(t *testing.T) {
- 		t.Run(tt.name, func(t *testing.T) {
- 			settings := NewClassSettings(tt.cfg)
- 
--			err := settings.Validate(nil)
-+			err := settings.Validate(context.Background(), nil)
- 			if tt.expectedErr != "" {
- 				require.Error(t, err)
- 				assert.Contains(t, err.Error(), tt.expectedErr)
-@@ -123,6 +125,94 @@ func TestClassSettings(t *testing.T) {
- 	}
- }
- 
-+func TestClassSettingsValidateModel(t *testing.T) {
-+	tests := []struct {
-+		name          string
-+		cfg           fakeClassConfig
-+		lister        *fakeModelLister
-+		apiKeyEnv     string
-+		wantErrMsg    string
-+		wantNoListing bool
-+	}{
-+		{
-+			name:      "model is in the available list",
-+			cfg:       fakeClassConfig{"model": "openai-gpt-4o"},
-+			lister:    &fakeModelLister{models: []string{"llama-4-maverick", "openai-gpt-4o"}},
-+			apiKeyEnv: "dop_v1_test",
-+		},
-+		{
-+			name:      "default model is in the available list",
-+			cfg:       fakeClassConfig{},
-+			lister:    &fakeModelLister{models: []string{"llama-4-maverick"}},
-+			apiKeyEnv: "dop_v1_test",
-+		},
-+		{
-+			name:       "model is not in the available list",
-+			cfg:        fakeClassConfig{"model": "made-up-model"},
-+			lister:     &fakeModelLister{models: []string{"llama-4-maverick"}},
-+			apiKeyEnv:  "dop_v1_test",
-+			wantErrMsg: `model "made-up-model" is not available`,
-+		},
-+		{
-+			name:          "api key missing - validation skipped",
-+			cfg:           fakeClassConfig{"model": "made-up-model"},
-+			lister:        &fakeModelLister{models: []string{"llama-4-maverick"}},
-+			wantNoListing: true,
-+		},
-+		{
-+			name:       "lister returns error",
-+			cfg:        fakeClassConfig{"model": "llama-4-maverick"},
-+			lister:     &fakeModelLister{err: errors.New("boom")},
-+			apiKeyEnv:  "dop_v1_test",
-+			wantErrMsg: "list DigitalOcean models",
-+		},
-+	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			t.Setenv("DIGITALOCEAN_APIKEY", tt.apiKeyEnv)
-+
-+			prev := DefaultModelLister
-+			DefaultModelLister = tt.lister
-+			t.Cleanup(func() { DefaultModelLister = prev })
-+
-+			err := NewClassSettings(tt.cfg).Validate(context.Background(), nil)
-+			if tt.wantErrMsg == "" {
-+				assert.NoError(t, err)
-+			} else {
-+				require.Error(t, err)
-+				assert.Contains(t, err.Error(), tt.wantErrMsg)
-+			}
-+			if tt.wantNoListing {
-+				assert.Equal(t, 0, tt.lister.calls)
-+			}
-+		})
-+	}
-+}
-+
-+func TestClassSettingsEnvVars(t *testing.T) {
-+	t.Setenv("DIGITALOCEAN_APIKEY", "dop_v1_test")
-+	t.Setenv("VECTOR_DB_UUID", "test-uuid")
-+
-+	settings := NewClassSettings(fakeClassConfig{})
-+	assert.Equal(t, "dop_v1_test", settings.apiKey())
-+	assert.Equal(t, "test-uuid", settings.WeaviateUUID())
-+}
-+
-+type fakeModelLister struct {
-+	models []string
-+	err    error
-+	calls  int
-+}
-+
-+func (f *fakeModelLister) ListModels(_ context.Context, _, _, _ string) ([]string, error) {
-+	f.calls++
-+	if f.err != nil {
-+		return nil, f.err
-+	}
-+	return f.models, nil
-+}
-+
- func ptr[T any](v T) *T {
- 	return &v
- }
-```
-
----
-
-### Incident Patch 9: `b808913e` (2026-10-01)
-**Commit Message**: Merge pull request #13307 from weaviate/fix/ttl-collect-recovered-panics
-
-fix(object-ttl): report a recovered panic in a delete or abort goroutine
-
-**File**: `adapters/handlers/rest/clusterapi/object_ttl.go` (modified, +3/-1)
-```diff
-@@ -194,7 +194,9 @@ func (d *ObjectTTL) incomingDelete() http.Handler {
- 					time.UnixMilli(classPayload.DelMilli), countDeleted, classPayload.ClassVersion)
- 			}
- 
--			eg.Wait() // ignore errors from goroutines, they are collected in ec
-+			// every closure returns nil, so a recovered panic is all Wait can report,
-+			// and the collector files it beside the errors the closures added themselves
-+			_ = eg.WaitAndCollect(ec.AddGroups)
- 
- 			err = ec.ToError()
- 		}, d.logger)
-```
-
-**File**: `adapters/handlers/rest/clusterapi/object_ttl_test.go` (modified, +100/-3)
-```diff
-@@ -27,6 +27,7 @@ import (
- 
- 	"github.com/sirupsen/logrus"
- 	logrustest "github.com/sirupsen/logrus/hooks/test"
-+	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
- 	"github.com/weaviate/weaviate/adapters/handlers/rest/clusterapi"
- 	"github.com/weaviate/weaviate/entities/errorcompounder"
-@@ -187,16 +188,21 @@ func (s *waitingTTLSchema) ReadOnlyClassWithVersion(ctx context.Context, class s
- 	return nil, fmt.Errorf("class %q: schema version not reached", class)
- }
- 
--// sweptTTLRepo records the collections the sweep asked it for.
-+// sweptTTLRepo records the collections the sweep asked it for. indexFor, when
-+// set before the sweep starts, decides what each collection dispatches.
- type sweptTTLRepo struct {
--	lock  sync.Mutex
--	asked []string
-+	lock     sync.Mutex
-+	asked    []string
-+	indexFor func(schema.ClassName) sharding.RemoteIndexIncomingRepo
- }
- 
- func (r *sweptTTLRepo) GetIndexForIncomingSharding(class schema.ClassName) sharding.RemoteIndexIncomingRepo {
- 	r.lock.Lock()
- 	defer r.lock.Unlock()
- 	r.asked = append(r.asked, string(class))
-+	if r.indexFor != nil {
-+		return r.indexFor(class)
-+	}
- 	return noopTTLIndex{}
- }
- 
-@@ -352,6 +358,97 @@ func TestIncomingDeleteHandsBackTheSlotOnABadBody(t *testing.T) {
- 	postTTLDelete(t, server, 1)
- }
- 
-+// ttlDispatchIndex dispatches a collection's deletes however the caller wants
-+// them to run, in place of the shard loop the sweep reaches in production.
-+type ttlDispatchIndex struct {
-+	sharding.RemoteIndexIncomingRepo
-+	dispatch func(eg *enterrors.ErrorGroupWrapper, ec errorcompounder.ErrorCompounder)
-+}
-+
-+func (i ttlDispatchIndex) IncomingDeleteObjectsExpired(_ context.Context, eg *enterrors.ErrorGroupWrapper,
-+	ec errorcompounder.ErrorCompounder, _ string, _, _ time.Time, _ func(int32), _ uint64,
-+) {
-+	i.dispatch(eg, ec)
-+}
-+
-+// ttlDeletePanic is what a delete goroutine panics with. It names no collection,
-+// so a row cannot pass on the panic's own text where the report owes it a group.
-+const ttlDeletePanic = "delete goroutine panicked"
-+
-+var errTTLDeleteFailed = errors.New("delete failed")
-+
-+// dispatchPanic hands every collection a delete goroutine that panics.
-+func dispatchPanic(schema.ClassName) sharding.RemoteIndexIncomingRepo {
-+	return ttlDispatchIndex{dispatch: func(eg *enterrors.ErrorGroupWrapper, _ errorcompounder.ErrorCompounder) {
-+		eg.Go(func() error { panic(ttlDeletePanic) })
-+	}}
-+}
-+
-+// The group returns a recovered panic rather than filing it in the compounder.
-+// A sweep reading only the compounder reports a collection whose deletes never
-+// ran as one that was swept.
-+func TestIncomingDeleteReportsRecoveredPanics(t *testing.T) {
-+	tests := []struct {
-+		name        string
-+		collections int
-+		indexFor    func(schema.ClassName) sharding.RemoteIndexIncomingRepo
-+		wantErr     []string
-+		wantPanics  int
-+	}{
-+		{
-+			name:        "every panicking collection is reported, not only the one Wait returns",
-+			collections: 3,
-+			indexFor:    dispatchPanic,
-+			wantErr:     []string{ttlDeletePanic},
-+			wantPanics:  3,
-+		},
-+		{
-+			name:        "a panic does not displace an error a sibling filed itself",
-+			collections: 2,
-+			indexFor: func(class schema.ClassName) sharding.RemoteIndexIncomingRepo {
-+				if class == "Collection0" {
-+					return dispatchPanic(class)
-+				}
-+				return ttlDispatchIndex{dispatch: func(eg *enterrors.ErrorGroupWrapper, ec errorcompounder.ErrorCompounder) {
-+					eg.Go(func() error {
-+						ec.AddGroups(errTTLDeleteFailed, string(class))
-+						return nil
-+					})
-+				}}
-+			},
-+			wantErr:    []string{ttlDeletePanic, "\"Collection1\": {" + errTTLDeleteFailed.Error()},
-+			wantPanics: 1,
-+		},
-+	}
-+
-+	for _, test := range tests {
-+		t.Run(test.name, func(t *testing.T) {
-+			// the integration job disables recovery, under which a panic takes the
-+			// test binary down instead of reaching the group
-+			t.Setenv("DISABLE_RECOVERY_ON_PANIC", "false")
-+
-+			server, repo, status, sweepOutcome := ttlTestServer(t, &waitingTTLSchema{entered: make(chan struct{})})
-+			repo.indexFor = test.indexFor
-+
-+			postTTLDelete(t, server, test.collections)
-+
-+			// the slot is released by the outermost defer, so waiting on it means
-+			// the defer that logs the outcome read below has run
-+			require.Eventually(t, func() bool { return !status.IsRunning() },
-+				ttlProbeTimeout, 10*time.Millisecond, "the sweep must run to completion")
-+
-+			failed, returned := sweepOutcome()
-+			require.True(t, returned)
-+			require.Error(t, failed, "a sweep that lost a collection's deletes must not report success")
-+			for _, want := range test.wantErr {
-+				assert.ErrorContains(t, failed, want)
-+			}
-+			assert.Equal(t, test.wantPanics, strings.Count(failed.Error(), "panic occurred"),
-+				"one entry per panicking collection, since Wait reports only the first")
-+		})
-+	}
-+}
-+
- // The abort endpoint reports the running deletion without releasing its slot,
- // which only the deletion itself does once it has 
-```
-
-**File**: `usecases/object_ttl/object_ttl.go` (modified, +12/-3)
-```diff
-@@ -192,6 +192,11 @@ func (c *Coordinator) Abort(ctx context.Context, targetOwnNode bool) (bool, erro
- 
- 	abortedNodes := make(map[string]bool, len(remoteNodes)+1)
- 	abortedNodes[localNode] = localAborted
-+	// a panicking goroutine never reaches its write below, and a node missing
-+	// from the map reads as one the abort never asked
-+	for _, nodeName := range remoteNodes {
-+		abortedNodes[nodeName] = false
-+	}
- 	anyAborted := localAborted
- 	abortedLock := new(sync.Mutex)
- 
-@@ -206,9 +211,11 @@ func (c *Coordinator) Abort(ctx context.Context, targetOwnNode bool) (bool, erro
- 			abortedNodes[nodeName] = aborted
- 			abortedLock.Unlock()
- 			return nil
--		})
-+		}, nodeName)
- 	}
--	eg.Wait()
-+	// every closure returns nil, so a recovered panic is all Wait can report,
-+	// and the collector files it under the node that raised it
-+	_ = eg.WaitAndCollect(ec.AddGroups)
- 	err := ec.ToError()
- 
- 	l := c.logger.WithFields(logrus.Fields{
-@@ -287,7 +294,9 @@ func (c *Coordinator) triggerDeletionObjectsExpiredLocalNode(ctx context.Context
- 		c.db.DeleteExpiredObjects(ttlCtx, eg, ec, name, deleteOnPropName, ttlThreshold, deletionTime, countDeleted, collection.version)
- 	}
- 
--	eg.Wait() // ignore errors from eg as they are already collected in ec
-+	// every closure returns nil, so a recovered panic is all Wait can report,
-+	// and the collector files it beside the errors the closures added themselves
-+	_ = eg.WaitAndCollect(ec.AddGroups)
- 
- 	if err := ec.ToError(); err != nil {
- 		return fmt.Errorf("deletion of expired objects on local node: %w", err)
-```
-
-**File**: `usecases/object_ttl/object_ttl_test.go` (modified, +161/-19)
-```diff
-@@ -533,6 +533,37 @@ func TestLocalSweepKeepsTheCounterMapOffTheDeleteGoroutines(t *testing.T) {
- 	// first collection's deletes are still running
- 	classes := []string{"Collection0", "Collection1"}
- 
-+	probe := newTTLCounterProbe()
-+	hook, err := runLocalSweep(t, classes, probe)
-+	require.NoError(t, err)
-+
-+	require.True(t, probe.overlapped,
-+		"the reader must be running before the loop writes the next entry")
-+	require.False(t, probe.timedOut,
-+		"the reader hit its deadline, so the loop never reached the next collection")
-+
-+	report := logEntry(hook, "ttl deletion on local node finished")
-+	require.NotNil(t, report, "the sweep must report what it deleted")
-+	assert.Equal(t, probe.counted, report.Data["c_"+probe.firstClass],
-+		"the collection is credited with what its own closure counted")
-+}
-+
-+// logEntry returns the first entry logged with msg, which is how a test reads a
-+// value the code under test reports to an operator and nowhere else.
-+func logEntry(hook *logrustest.Hook, msg string) *logrus.Entry {
-+	for _, entry := range hook.AllEntries() {
-+		if entry.Message == msg {
-+			return entry
-+		}
-+	}
-+	return nil
-+}
-+
-+// runLocalSweep sweeps classes through deleter on a single-node cluster, so the
-+// sweep takes the local path rather than handing the round to a remote node.
-+func runLocalSweep(t *testing.T, classes []string, deleter expiredObjectsDeleter) (*logrustest.Hook, error) {
-+	t.Helper()
-+
- 	logger, hook := logrustest.NewNullLogger()
- 	logger.SetLevel(logrus.DebugLevel)
- 
-@@ -547,35 +578,146 @@ func TestLocalSweepKeepsTheCounterMapOffTheDeleteGoroutines(t *testing.T) {
- 		return nil
- 	})
- 
--	// one node, so the sweep runs on the local path rather than being handed
--	// to a remote node
- 	getter := schemaUC.NewMockSchemaGetter(t)
- 	getter.EXPECT().NodeName().Return("node1")
- 	getter.EXPECT().Nodes().Return([]string{"node1"})
- 
--	probe := newTTLCounterProbe()
--	c := NewCoordinator(reader, getter, namespaces.NewController(logger), probe,
-+	c := NewCoordinator(reader, getter, namespaces.NewController(logger), deleter,
- 		configRuntime.NewDynamicValue[float64](1), logger, nil, nil, NewLocalStatus())
- 
- 	now := time.Now()
--	require.NoError(t, c.Start(context.Background(), false, now, now))
-+	return hook, c.Start(context.Background(), false, now, now)
-+}
- 
--	require.True(t, probe.overlapped,
--		"the reader must be running before the loop writes the next entry")
--	require.False(t, probe.timedOut,
--		"the reader hit its deadline, so the loop never reached the next collection")
-+// deleterFunc dispatches a collection's deletes however the caller wants them
-+// to run, in place of the store the sweep hands each collection to.
-+type deleterFunc func(eg *enterrors.ErrorGroupWrapper, ec errorcompounder.ErrorCompounder, className string)
- 
--	report := localSweepReport(hook)
--	require.NotNil(t, report, "the sweep must report what it deleted")
--	assert.Equal(t, probe.counted, report.Data["c_"+probe.firstClass],
--		"the collection is credited with what its own closure counted")
-+func (f deleterFunc) DeleteExpiredObjects(_ context.Context, eg *enterrors.ErrorGroupWrapper,
-+	ec errorcompounder.ErrorCompounder, className, _ string, _, _ time.Time, _ func(int32), _ uint64,
-+) {
-+	f(eg, ec, className)
- }
- 
--func localSweepReport(hook *logrustest.Hook) *logrus.Entry {
--	for _, entry := range hook.AllEntries() {
--		if entry.Message == "ttl deletion on local node finished" {
--			return entry
--		}
-+// deletePanic is what a delete goroutine panics with. It names no collection, so
-+// a row cannot pass on the panic's own text where the report owes it a group.
-+const deletePanic = "delete goroutine panicked"
-+
-+var errDeleteFailed = errors.New("delete failed")
-+
-+// A recovered panic files no error in the compounder and deletes no objects, so
-+// a sweep that only reads it reports a round that never ran as a clean one.
-+func TestLocalSweepReportsRecoveredPanics(t *testing.T) {
-+	tests := []struct {
-+		name       string
-+		classes    []string
-+		dispatch   deleterFunc
-+		wantErr    []string
-+		wantPanics int
-+	}{
-+		{
-+			name:    "every panicking collection is reported, not only the one Wait returns",
-+			classes: []string{"Collection0", "Collection1", "Collection2"},
-+			dispatch: func(eg *enterrors.ErrorGroupWrapper, _ errorcompounder.ErrorCompounder, _ string) {
-+				eg.Go(func() error { panic(deletePanic) })
-+			},
-+			wantErr:    []string{deletePanic},
-+			wantPanics: 3,
-+		},
-+		{
-+			name:    "a panic does not displace an error a sibling filed itself",
-+			classes: []string{"Collection0", "Collection1"},
-+			dispatch: func(eg *enterrors.ErrorGroupWrapper, ec errorcompounder.ErrorCompounder, className string) {
-+				if className == "Collection0" {
-+					eg.Go(func() error { panic(deletePanic) })
-+					return
-+				}
-+				eg.Go(func() error {
-+					ec.AddGroups(errDeleteFailed, className)
-+					return nil
-+				})
-+			},
-+			wantErr:    []string{deletePanic, "\"Collection1\": {" + errDeleteFailed.Error()},
-+			wan
-```
-
----
-
-### Incident Patch 10: `33421359` (2026-10-01)
-**Commit Message**: Address review feedback on the TTL recovered-panic tests
-
-Keep one row per wrong fix: every panicking collection, and a panic
-beside a sibling's error, for both the local sweep and the incoming
-delete, plus the mixed abort round. The dropped rows either pass without
-the fix or pin a property the error group and compounder tests already
-cover. The panic-beside-an-abort test goes with them, which was also the
-only new test with a timing handshake.
-
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-
-**File**: `adapters/handlers/rest/clusterapi/object_ttl_test.go` (modified, +0/-57)
-```diff
-@@ -395,13 +395,6 @@ func TestIncomingDeleteReportsRecoveredPanics(t *testing.T) {
- 		wantErr     []string
- 		wantPanics  int
- 	}{
--		{
--			name:        "a panicking delete goroutine is reported",
--			collections: 1,
--			indexFor:    dispatchPanic,
--			wantErr:     []string{ttlDeletePanic},
--			wantPanics:  1,
--		},
- 		{
- 			name:        "every panicking collection is reported, not only the one Wait returns",
- 			collections: 3,
-@@ -456,56 +449,6 @@ func TestIncomingDeleteReportsRecoveredPanics(t *testing.T) {
- 	}
- }
- 
--// abortingTTLSchema answers the first collection at once and holds every later
--// one until the sweep is cancelled. A test can then abort a sweep whose first
--// collection already has a delete goroutine in flight.
--type abortingTTLSchema struct {
--	held chan struct{}
--	once sync.Once
--}
--
--func (s *abortingTTLSchema) ReadOnlyClassWithVersion(ctx context.Context, class string, _ uint64) (*models.Class, error) {
--	if class == "Collection0" {
--		return &models.Class{Class: class}, nil
--	}
--	s.once.Do(func() { close(s.held) })
--	<-ctx.Done()
--	// the real wait reports the version it never reached, carrying neither the
--	// context's error nor its cause
--	return nil, fmt.Errorf("class %q: schema version not reached", class)
--}
--
--// An abort and a panic reach the same compounder, and an operator aborting a
--// sweep is how they meet. Both have to survive being rendered together.
--func TestIncomingDeleteReportsAPanicBesideAnAbort(t *testing.T) {
--	t.Setenv("DISABLE_RECOVERY_ON_PANIC", "false")
--
--	ttlSchema := &abortingTTLSchema{held: make(chan struct{})}
--	server, repo, status, sweepOutcome := ttlTestServer(t, ttlSchema)
--	repo.indexFor = dispatchPanic
--
--	postTTLDelete(t, server, 2)
--
--	select {
--	case <-ttlSchema.held:
--	case <-time.After(ttlProbeTimeout):
--		t.Fatal("the sweep never reached the second collection")
--	}
--
--	require.True(t, status.Abort(), "the sweep is running, so there is one to abort")
--
--	require.Eventually(t, func() bool { return !status.IsRunning() },
--		ttlProbeTimeout, 10*time.Millisecond, "the sweep must run to completion")
--
--	failed, returned := sweepOutcome()
--	require.True(t, returned)
--	require.Error(t, failed)
--	assert.ErrorIs(t, failed, objectttl.ErrAborted,
--		"the abort must stay matchable with a panic rendered beside it")
--	assert.ErrorContains(t, failed, ttlDeletePanic,
--		"and the panic must not be displaced by the abort")
--}
--
- // The abort endpoint reports the running deletion without releasing its slot,
- // which only the deletion itself does once it has drained.
- func TestIncomingAbortKeepsTheSlotReserved(t *testing.T) {
-```
-
-**File**: `usecases/object_ttl/object_ttl_test.go` (modified, +31/-115)
-```diff
-@@ -613,25 +613,8 @@ func TestLocalSweepReportsRecoveredPanics(t *testing.T) {
- 		classes    []string
- 		dispatch   deleterFunc
- 		wantErr    []string
--		wantIs     error
- 		wantPanics int
- 	}{
--		{
--			name:    "a sweep whose deletes all return reports nothing",
--			classes: []string{"Collection0"},
--			dispatch: func(eg *enterrors.ErrorGroupWrapper, _ errorcompounder.ErrorCompounder, _ string) {
--				eg.Go(func() error { return nil })
--			},
--		},
--		{
--			name:    "a panicking delete goroutine is reported",
--			classes: []string{"Collection0"},
--			dispatch: func(eg *enterrors.ErrorGroupWrapper, _ errorcompounder.ErrorCompounder, _ string) {
--				eg.Go(func() error { panic(deletePanic) })
--			},
--			wantErr:    []string{deletePanic},
--			wantPanics: 1,
--		},
- 		{
- 			name:    "every panicking collection is reported, not only the one Wait returns",
- 			classes: []string{"Collection0", "Collection1", "Collection2"},
-@@ -657,16 +640,6 @@ func TestLocalSweepReportsRecoveredPanics(t *testing.T) {
- 			wantErr:    []string{deletePanic, "\"Collection1\": {" + errDeleteFailed.Error()},
- 			wantPanics: 1,
- 		},
--		{
--			name:    "a panic raised with an error stays matchable",
--			classes: []string{"Collection0"},
--			dispatch: func(eg *enterrors.ErrorGroupWrapper, _ errorcompounder.ErrorCompounder, _ string) {
--				eg.Go(func() error { panic(errDeleteFailed) })
--			},
--			wantErr:    []string{errDeleteFailed.Error()},
--			wantIs:     errDeleteFailed,
--			wantPanics: 1,
--		},
- 	}
- 
- 	for _, test := range tests {
-@@ -677,31 +650,16 @@ func TestLocalSweepReportsRecoveredPanics(t *testing.T) {
- 
- 			_, err := runLocalSweep(t, test.classes, test.dispatch)
- 
--			if len(test.wantErr) == 0 {
--				require.NoError(t, err)
--				return
--			}
- 			require.Error(t, err, "a sweep that lost a collection's deletes must not report success")
- 			for _, want := range test.wantErr {
- 				assert.ErrorContains(t, err, want)
- 			}
--			if test.wantIs != nil {
--				assert.ErrorIs(t, err, test.wantIs, "the compounder keeps the panic's own error reachable")
--			}
- 			assert.Equal(t, test.wantPanics, strings.Count(err.Error(), "panic occurred"),
- 				"one entry per panicking collection, since Wait reports only the first")
- 		})
- 	}
- }
- 
--// panickingNodeResolver panics where the abort goroutine resolves its node,
--// standing in for any panic that goroutine's work can raise.
--type panickingNodeResolver struct{}
--
--func (panickingNodeResolver) NodeHostname(nodeName string) (string, bool) {
--	panic("resolving " + nodeName)
--}
--
- // scriptedNodeResolver answers for every node but two, panicking for one and
- // failing to resolve the other, so one abort round carries all three outcomes.
- type scriptedNodeResolver struct {
-@@ -723,85 +681,43 @@ func (r scriptedNodeResolver) NodeHostname(nodeName string) (string, bool) {
- // An abort reports per node, so a node whose goroutine panicked must reach the
- // caller as a node that was not aborted rather than as one that was.
- func TestCoordinatorAbortReportsRecoveredPanics(t *testing.T) {
--	tests := []struct {
--		name        string
--		nodes       []string
--		resolver    func(host string) nodeResolver
--		wantAborted bool
--		wantErr     []string
--		wantNodes   map[string]bool
--	}{
--		{
--			name:        "an abort every node answers reports no error",
--			nodes:       []string{"node1", "node2", "node3"},
--			resolver:    func(host string) nodeResolver { return fixedNodeResolver(host) },
--			wantAborted: true,
--			wantNodes:   map[string]bool{"node1": false, "node2": true, "node3": true},
--		},
--		{
--			name:     "every panicking node is reported under its own name",
--			nodes:    []string{"node1", "node2", "node3"},
--			resolver: func(string) nodeResolver { return panickingNodeResolver{} },
--			wantErr: []string{
--				"panic occurred", "\"node2\": {", "\"node3\": {",
--				"resolving node2", "resolving node3",
--			},
--			wantNodes: map[string]bool{"node1": false, "node2": false, "node3": false},
--		},
--		{
--			name:  "a panicking node is reported beside a node that failed and one that aborted",
--			nodes: []string{"node1", "node2", "node3", "node4"},
--			resolver: func(host string) nodeResolver {
--				return scriptedNodeResolver{host: host, panicking: "node3", unresolvable: "node4"}
--			},
--			wantAborted: true,
--			wantErr: []string{
--				"\"node3\": {panic occurred", "resolving node3",
--				"\"node4\": {unable to resolve hostname for node4",
--			},
--			wantNodes: map[string]bool{"node1": false, "node2": true, "node3": false, "node4": false},
--		},
--	}
-+	// the integration job disables recovery, under which a panic takes the
-+	// test binary down instead of reaching the group
-+	t.Setenv("DISABLE_RECOVERY_ON_PANIC", "false")
- 
--	for _, test := range tests {
--		t.Run(test.name, func(t *testing.T) {
--			t.Setenv("DISABLE_RECOVERY_ON_PANIC", "false")
-+	logger, hook := logrustest.NewNullLogger()
- 
--			logger, hook := logrustest.NewNullLogger()
-+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWr
-```
-
----
-
-### Incident Patch 11: `426bdaff` (2026-09-28)
-**Commit Message**: Report a recovered panic in a TTL delete or abort goroutine
-
-Three error groups discarded what Wait returned, under a comment saying
-the errors were already in the compounder. That was true while every
-callback filed its own errors and returned nil, and stopped being true
-once panics are recovered, because a recovered panic is returned by
-Wait rather than filed. A collection whose delete goroutine panicked
-reached the log and nothing else, and the sweep reported itself as
-clean.
-
-The abort group also labels each goroutine with its node, so a panic
-there is filed under the node that raised it rather than at the top of
-the report. Its node map is seeded before dispatch, because a
-goroutine that panics never reaches its own write: the map now means
-asked and did not report aborted, rather than asked.
-
-Co-Authored-By: Claude Opus 5 (1M context) <[REDACTED_EMAIL]>
-
-**File**: `adapters/handlers/rest/clusterapi/object_ttl.go` (modified, +3/-1)
-```diff
-@@ -194,7 +194,9 @@ func (d *ObjectTTL) incomingDelete() http.Handler {
- 					time.UnixMilli(classPayload.DelMilli), countDeleted, classPayload.ClassVersion)
- 			}
- 
--			eg.Wait() // ignore errors from goroutines, they are collected in ec
-+			// every closure returns nil, so a recovered panic is all Wait can report,
-+			// and the collector files it beside the errors the closures added themselves
-+			_ = eg.WaitAndCollect(ec.AddGroups)
- 
- 			err = ec.ToError()
- 		}, d.logger)
-```
-
-**File**: `adapters/handlers/rest/clusterapi/object_ttl_test.go` (modified, +157/-3)
-```diff
-@@ -27,6 +27,7 @@ import (
- 
- 	"github.com/sirupsen/logrus"
- 	logrustest "github.com/sirupsen/logrus/hooks/test"
-+	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
- 	"github.com/weaviate/weaviate/adapters/handlers/rest/clusterapi"
- 	"github.com/weaviate/weaviate/entities/errorcompounder"
-@@ -187,16 +188,21 @@ func (s *waitingTTLSchema) ReadOnlyClassWithVersion(ctx context.Context, class s
- 	return nil, fmt.Errorf("class %q: schema version not reached", class)
- }
- 
--// sweptTTLRepo records the collections the sweep asked it for.
-+// sweptTTLRepo records the collections the sweep asked it for. indexFor, when
-+// set before the sweep starts, decides what each collection dispatches.
- type sweptTTLRepo struct {
--	lock  sync.Mutex
--	asked []string
-+	lock     sync.Mutex
-+	asked    []string
-+	indexFor func(schema.ClassName) sharding.RemoteIndexIncomingRepo
- }
- 
- func (r *sweptTTLRepo) GetIndexForIncomingSharding(class schema.ClassName) sharding.RemoteIndexIncomingRepo {
- 	r.lock.Lock()
- 	defer r.lock.Unlock()
- 	r.asked = append(r.asked, string(class))
-+	if r.indexFor != nil {
-+		return r.indexFor(class)
-+	}
- 	return noopTTLIndex{}
- }
- 
-@@ -352,6 +358,154 @@ func TestIncomingDeleteHandsBackTheSlotOnABadBody(t *testing.T) {
- 	postTTLDelete(t, server, 1)
- }
- 
-+// ttlDispatchIndex dispatches a collection's deletes however the caller wants
-+// them to run, in place of the shard loop the sweep reaches in production.
-+type ttlDispatchIndex struct {
-+	sharding.RemoteIndexIncomingRepo
-+	dispatch func(eg *enterrors.ErrorGroupWrapper, ec errorcompounder.ErrorCompounder)
-+}
-+
-+func (i ttlDispatchIndex) IncomingDeleteObjectsExpired(_ context.Context, eg *enterrors.ErrorGroupWrapper,
-+	ec errorcompounder.ErrorCompounder, _ string, _, _ time.Time, _ func(int32), _ uint64,
-+) {
-+	i.dispatch(eg, ec)
-+}
-+
-+// ttlDeletePanic is what a delete goroutine panics with. It names no collection,
-+// so a row cannot pass on the panic's own text where the report owes it a group.
-+const ttlDeletePanic = "delete goroutine panicked"
-+
-+var errTTLDeleteFailed = errors.New("delete failed")
-+
-+// dispatchPanic hands every collection a delete goroutine that panics.
-+func dispatchPanic(schema.ClassName) sharding.RemoteIndexIncomingRepo {
-+	return ttlDispatchIndex{dispatch: func(eg *enterrors.ErrorGroupWrapper, _ errorcompounder.ErrorCompounder) {
-+		eg.Go(func() error { panic(ttlDeletePanic) })
-+	}}
-+}
-+
-+// The group returns a recovered panic rather than filing it in the compounder.
-+// A sweep reading only the compounder reports a collection whose deletes never
-+// ran as one that was swept.
-+func TestIncomingDeleteReportsRecoveredPanics(t *testing.T) {
-+	tests := []struct {
-+		name        string
-+		collections int
-+		indexFor    func(schema.ClassName) sharding.RemoteIndexIncomingRepo
-+		wantErr     []string
-+		wantPanics  int
-+	}{
-+		{
-+			name:        "a panicking delete goroutine is reported",
-+			collections: 1,
-+			indexFor:    dispatchPanic,
-+			wantErr:     []string{ttlDeletePanic},
-+			wantPanics:  1,
-+		},
-+		{
-+			name:        "every panicking collection is reported, not only the one Wait returns",
-+			collections: 3,
-+			indexFor:    dispatchPanic,
-+			wantErr:     []string{ttlDeletePanic},
-+			wantPanics:  3,
-+		},
-+		{
-+			name:        "a panic does not displace an error a sibling filed itself",
-+			collections: 2,
-+			indexFor: func(class schema.ClassName) sharding.RemoteIndexIncomingRepo {
-+				if class == "Collection0" {
-+					return dispatchPanic(class)
-+				}
-+				return ttlDispatchIndex{dispatch: func(eg *enterrors.ErrorGroupWrapper, ec errorcompounder.ErrorCompounder) {
-+					eg.Go(func() error {
-+						ec.AddGroups(errTTLDeleteFailed, string(class))
-+						return nil
-+					})
-+				}}
-+			},
-+			wantErr:    []string{ttlDeletePanic, "\"Collection1\": {" + errTTLDeleteFailed.Error()},
-+			wantPanics: 1,
-+		},
-+	}
-+
-+	for _, test := range tests {
-+		t.Run(test.name, func(t *testing.T) {
-+			// the integration job disables recovery, under which a panic takes the
-+			// test binary down instead of reaching the group
-+			t.Setenv("DISABLE_RECOVERY_ON_PANIC", "false")
-+
-+			server, repo, status, sweepOutcome := ttlTestServer(t, &waitingTTLSchema{entered: make(chan struct{})})
-+			repo.indexFor = test.indexFor
-+
-+			postTTLDelete(t, server, test.collections)
-+
-+			// the slot is released by the outermost defer, so waiting on it means
-+			// the defer that logs the outcome read below has run
-+			require.Eventually(t, func() bool { return !status.IsRunning() },
-+				ttlProbeTimeout, 10*time.Millisecond, "the sweep must run to completion")
-+
-+			failed, returned := sweepOutcome()
-+			require.True(t, returned)
-+			require.Error(t, failed, "a sweep that lost a collection's deletes must not report success")
-+			for _, want := range test.wantErr {
-+				assert.ErrorContains(t, failed, want)
-+			}
-+			assert.Equal(t, test.wantPanics, strings.Count(failed.Error(), "panic occurred"),
-+				"one entry per panicking collect
-```
-
-**File**: `usecases/object_ttl/object_ttl.go` (modified, +12/-3)
-```diff
-@@ -192,6 +192,11 @@ func (c *Coordinator) Abort(ctx context.Context, targetOwnNode bool) (bool, erro
- 
- 	abortedNodes := make(map[string]bool, len(remoteNodes)+1)
- 	abortedNodes[localNode] = localAborted
-+	// a panicking goroutine never reaches its write below, and a node missing
-+	// from the map reads as one the abort never asked
-+	for _, nodeName := range remoteNodes {
-+		abortedNodes[nodeName] = false
-+	}
- 	anyAborted := localAborted
- 	abortedLock := new(sync.Mutex)
- 
-@@ -206,9 +211,11 @@ func (c *Coordinator) Abort(ctx context.Context, targetOwnNode bool) (bool, erro
- 			abortedNodes[nodeName] = aborted
- 			abortedLock.Unlock()
- 			return nil
--		})
-+		}, nodeName)
- 	}
--	eg.Wait()
-+	// every closure returns nil, so a recovered panic is all Wait can report,
-+	// and the collector files it under the node that raised it
-+	_ = eg.WaitAndCollect(ec.AddGroups)
- 	err := ec.ToError()
- 
- 	l := c.logger.WithFields(logrus.Fields{
-@@ -287,7 +294,9 @@ func (c *Coordinator) triggerDeletionObjectsExpiredLocalNode(ctx context.Context
- 		c.db.DeleteExpiredObjects(ttlCtx, eg, ec, name, deleteOnPropName, ttlThreshold, deletionTime, countDeleted, collection.version)
- 	}
- 
--	eg.Wait() // ignore errors from eg as they are already collected in ec
-+	// every closure returns nil, so a recovered panic is all Wait can report,
-+	// and the collector files it beside the errors the closures added themselves
-+	_ = eg.WaitAndCollect(ec.AddGroups)
- 
- 	if err := ec.ToError(); err != nil {
- 		return fmt.Errorf("deletion of expired objects on local node: %w", err)
-```
-
-**File**: `usecases/object_ttl/object_ttl_test.go` (modified, +245/-19)
-```diff
-@@ -533,6 +533,37 @@ func TestLocalSweepKeepsTheCounterMapOffTheDeleteGoroutines(t *testing.T) {
- 	// first collection's deletes are still running
- 	classes := []string{"Collection0", "Collection1"}
- 
-+	probe := newTTLCounterProbe()
-+	hook, err := runLocalSweep(t, classes, probe)
-+	require.NoError(t, err)
-+
-+	require.True(t, probe.overlapped,
-+		"the reader must be running before the loop writes the next entry")
-+	require.False(t, probe.timedOut,
-+		"the reader hit its deadline, so the loop never reached the next collection")
-+
-+	report := logEntry(hook, "ttl deletion on local node finished")
-+	require.NotNil(t, report, "the sweep must report what it deleted")
-+	assert.Equal(t, probe.counted, report.Data["c_"+probe.firstClass],
-+		"the collection is credited with what its own closure counted")
-+}
-+
-+// logEntry returns the first entry logged with msg, which is how a test reads a
-+// value the code under test reports to an operator and nowhere else.
-+func logEntry(hook *logrustest.Hook, msg string) *logrus.Entry {
-+	for _, entry := range hook.AllEntries() {
-+		if entry.Message == msg {
-+			return entry
-+		}
-+	}
-+	return nil
-+}
-+
-+// runLocalSweep sweeps classes through deleter on a single-node cluster, so the
-+// sweep takes the local path rather than handing the round to a remote node.
-+func runLocalSweep(t *testing.T, classes []string, deleter expiredObjectsDeleter) (*logrustest.Hook, error) {
-+	t.Helper()
-+
- 	logger, hook := logrustest.NewNullLogger()
- 	logger.SetLevel(logrus.DebugLevel)
- 
-@@ -547,35 +578,230 @@ func TestLocalSweepKeepsTheCounterMapOffTheDeleteGoroutines(t *testing.T) {
- 		return nil
- 	})
- 
--	// one node, so the sweep runs on the local path rather than being handed
--	// to a remote node
- 	getter := schemaUC.NewMockSchemaGetter(t)
- 	getter.EXPECT().NodeName().Return("node1")
- 	getter.EXPECT().Nodes().Return([]string{"node1"})
- 
--	probe := newTTLCounterProbe()
--	c := NewCoordinator(reader, getter, namespaces.NewController(logger), probe,
-+	c := NewCoordinator(reader, getter, namespaces.NewController(logger), deleter,
- 		configRuntime.NewDynamicValue[float64](1), logger, nil, nil, NewLocalStatus())
- 
- 	now := time.Now()
--	require.NoError(t, c.Start(context.Background(), false, now, now))
-+	return hook, c.Start(context.Background(), false, now, now)
-+}
- 
--	require.True(t, probe.overlapped,
--		"the reader must be running before the loop writes the next entry")
--	require.False(t, probe.timedOut,
--		"the reader hit its deadline, so the loop never reached the next collection")
-+// deleterFunc dispatches a collection's deletes however the caller wants them
-+// to run, in place of the store the sweep hands each collection to.
-+type deleterFunc func(eg *enterrors.ErrorGroupWrapper, ec errorcompounder.ErrorCompounder, className string)
- 
--	report := localSweepReport(hook)
--	require.NotNil(t, report, "the sweep must report what it deleted")
--	assert.Equal(t, probe.counted, report.Data["c_"+probe.firstClass],
--		"the collection is credited with what its own closure counted")
-+func (f deleterFunc) DeleteExpiredObjects(_ context.Context, eg *enterrors.ErrorGroupWrapper,
-+	ec errorcompounder.ErrorCompounder, className, _ string, _, _ time.Time, _ func(int32), _ uint64,
-+) {
-+	f(eg, ec, className)
- }
- 
--func localSweepReport(hook *logrustest.Hook) *logrus.Entry {
--	for _, entry := range hook.AllEntries() {
--		if entry.Message == "ttl deletion on local node finished" {
--			return entry
--		}
-+// deletePanic is what a delete goroutine panics with. It names no collection, so
-+// a row cannot pass on the panic's own text where the report owes it a group.
-+const deletePanic = "delete goroutine panicked"
-+
-+var errDeleteFailed = errors.New("delete failed")
-+
-+// A recovered panic files no error in the compounder and deletes no objects, so
-+// a sweep that only reads it reports a round that never ran as a clean one.
-+func TestLocalSweepReportsRecoveredPanics(t *testing.T) {
-+	tests := []struct {
-+		name       string
-+		classes    []string
-+		dispatch   deleterFunc
-+		wantErr    []string
-+		wantIs     error
-+		wantPanics int
-+	}{
-+		{
-+			name:    "a sweep whose deletes all return reports nothing",
-+			classes: []string{"Collection0"},
-+			dispatch: func(eg *enterrors.ErrorGroupWrapper, _ errorcompounder.ErrorCompounder, _ string) {
-+				eg.Go(func() error { return nil })
-+			},
-+		},
-+		{
-+			name:    "a panicking delete goroutine is reported",
-+			classes: []string{"Collection0"},
-+			dispatch: func(eg *enterrors.ErrorGroupWrapper, _ errorcompounder.ErrorCompounder, _ string) {
-+				eg.Go(func() error { panic(deletePanic) })
-+			},
-+			wantErr:    []string{deletePanic},
-+			wantPanics: 1,
-+		},
-+		{
-+			name:    "every panicking collection is reported, not only the one Wait returns",
-+			classes: []string{"Collection0", "Collection1", "Collection2"},
-+			dispatch: func(eg *enterrors.ErrorGroupWrapper, _ errorcompounder.ErrorCompounder, _ string) {
-+				eg.Go(func() error { panic(deletePanic) })
-+			},
-+			wantErr
-```
-
----
-
-### Incident Patch 12: `3e645e62` (2026-10-01)
-**Commit Message**: Merge pull request #13390 from weaviate/hotfix/reindex-recovery-flag-skip
-
-hotfix: skip reindex recovery scan at startup when RUNTIME_REINDEX_ENABLED is off
-
-**File**: `adapters/handlers/rest/configure_api.go` (modified, +1/-0)
-```diff
-@@ -858,6 +858,7 @@ func MakeAppState(ctx, serverShutdownCtx context.Context, options *swag.CommandL
- 	// decide which migrations are still in flight.
- 	recoveredReindexes, recoveryErr := db.DiscoverInFlightReindexTasks(
- 		appState.ServerConfig.Config.Persistence.DataPath,
-+		appState.ServerConfig.Config.RuntimeReindexEnabled,
- 		appState.Logger,
- 		appState.SchemaManager,
- 	)
-```
-
-**File**: `adapters/repos/db/reindex_provider_barrier_integration_test.go` (modified, +1/-1)
-```diff
-@@ -302,7 +302,7 @@ func TestReindexProviderBarrierIntegration_CrashAfterPersistRecoveryRecord(t *te
- 	// disk and never invokes schema operations until buildRecoveryTasks
- 	// fires (which only fires for dirs with started + reindexed).
- 	rootPath := idx.Config.RootPath
--	recovered, err := DiscoverInFlightReindexTasks(rootPath, idx.logger, nil)
-+	recovered, err := DiscoverInFlightReindexTasks(rootPath, true, idx.logger, nil)
- 	require.NoError(t, err, "discover must not error on a started.mig-less dir")
- 	for _, r := range recovered {
- 		assert.NotEqualf(t, taskID, r.Descriptor.ID,
-```
-
-**File**: `adapters/repos/db/reindex_provider_dir_ownership_test.go` (modified, +2/-2)
-```diff
-@@ -266,7 +266,7 @@ func TestRecoveryNamesTheDirectoriesItRecoveredFrom(t *testing.T) {
- 
- 			onDisk := seedInFlightMigration(t, p, lsm, tc, 3, 41)
- 
--			recovered, err := DiscoverInFlightReindexTasks(root, p.logger, nil)
-+			recovered, err := DiscoverInFlightReindexTasks(root, true, p.logger, nil)
- 			require.NoError(t, err)
- 			require.NotEmpty(t, recovered, "an unswapped migration is in flight on this shard")
- 
-@@ -300,7 +300,7 @@ func TestRecoverySkipsATrackerDirectoryThatNamesNoGeneration(t *testing.T) {
- 					filepath.Join(lsm, migrationsDir, base)))
- 			}
- 
--			recovered, err := DiscoverInFlightReindexTasks(root, p.logger, nil)
-+			recovered, err := DiscoverInFlightReindexTasks(root, true, p.logger, nil)
- 			require.NoError(t, err)
- 			require.Empty(t, recoveredMigrationDirs(recovered),
- 				"a directory name with no generation gives recovery nothing to rebuild from")
-```
-
-**File**: `adapters/repos/db/reindex_recovery.go` (modified, +4/-1)
-```diff
-@@ -72,10 +72,13 @@ type RecoveredReindex struct {
- // belonging to the same task is the caller's job.
- func DiscoverInFlightReindexTasks(
- 	rootPath string,
-+	runtimeReindexEnabled bool,
- 	logger logrus.FieldLogger,
- 	schemaManager *schema.Manager,
- ) ([]RecoveredReindex, error) {
--	if rootPath == "" {
-+	// The scan lists a directory per shard, which delays startup by minutes
-+	// on clusters with many tenants, so it only runs with the feature on.
-+	if rootPath == "" || !runtimeReindexEnabled {
- 		return nil, nil
- 	}
- 	indices, err := os.ReadDir(rootPath)
-```
-
-**File**: `adapters/repos/db/reindex_recovery_kill_switch_test.go` (added, +46/-0)
-```diff
-@@ -0,0 +1,46 @@
-+//                           _       _
-+// __      _____  __ ___   ___  __ _| |_ ___
-+// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
-+//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
-+//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
-+//
-+//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
-+//
-+//  CONTACT: hello@weaviate.io
-+//
-+
 +package db
 +
 +import (
-+	"os"
++	"context"
 +	"path/filepath"
++	"sync/atomic"
 +	"testing"
 +
++	"github.com/go-openapi/strfmt"
++	"github.com/stretchr/testify/assert"
 +	"github.com/stretchr/testify/require"
++
++	"github.com/weaviate/weaviate/cluster/proto/api"
++	"github.com/weaviate/weaviate/entities/additional"
++	"github.com/weaviate/weaviate/entities/models"
++	"github.com/weaviate/weaviate/entities/schema"
++	"github.com/weaviate/weaviate/usecases/namespaces"
 +)
 +
-+// The data dir holds a recoverable migration, so a scan that ran returns it.
-+func TestDiscoverInFlightReindexTasks_RuntimeReindexDisabled(t *testing.T) {
-+	tests := []struct {
-+		name          string
-+		enabled       bool
-+		wantRecovered bool
-+	}{
-+		{name: "disabled skips the scan"},
-+		{name: "enabled keeps the scan", enabled: true, wantRecovered: true},
-+	}
++// A node that crashes while a suspended namespace's shards hold unflushed writes
++// boots without registering those shards. Their write-ahead logs stay on disk
++// until a resume opens the shards and replays them.
++func TestSuspendedNamespace_UnflushedWriteSurvivesACrash(t *testing.T) {
++	const className = "alpha:Product"
++	ctx := testCtx()
++	id := strfmt.UUID("6f3e9a4c-1b2d-4c5e-8f70-9a1b2c3d4e5f")
++	// Both DBs read one sharding state, whose shard name is random.
++	shardState := singleShardState()
 +
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			p, _ := newTestProvider(t)
-+			root := t.TempDir()
-+			lsm := filepath.Join(root, "books", "shard-1", "lsm")
-+			require.NoError(t, os.MkdirAll(lsm, 0o777))
-+			seedInFlightMigration(t, p, lsm, recoverableDirOwnershipCases()[0], 3, 3)
++	liveDir := t.TempDir()
++	live := setupTestDBWithShardState(t, liveDir, shardState, nil,
++		existerWithState(t, api.NamespaceStateActive), makeTestClass(className))
++	t.Cleanup(func() { require.NoError(t, live.Shutdown(context.Background())) })
++	require.NoError(t, live.PutObject(ctx, &models.Object{
++		Class: className, ID: id, Properties: map[string]any{"stringProp": "kept"},
++	}, nil, nil, nil, nil, 0))
 +
-+			recovered, err := DiscoverInFlightReindexTasks(root, tt.enabled, p.logger, nil)
-+			require.NoError(t, err)
-+			require.Equal(t, tt.wantRecovered, len(recovered) > 0)
-+		})
-+	}
++	// PutObject writes the WAL to its file before it returns, and the memtable
++	// flushes only after MemtablesFlushDirtyAfter, so a copy is what a kill leaves.
++	crashDir := t.TempDir()
++	copyDirTree(t, liveDir, crashDir)
++	wals, err := filepath.Glob(filepath.Join(crashDir, "*", "*", "lsm", "objects", "*.wal"))
++	require.NoError(t, err)
++	require.NotEmpty(t, wals, "the write must still be unflushed when the node crashes")
++
++	var state atomic.Value
++	state.Store(api.NamespaceStateSuspended)
++	exister := namespaces.NewMockExister(t)
++	exister.EXPECT().GetNamespace("alpha").RunAndReturn(func(string) (api.Namespace, bool) {
++		return api.Namespace{Name: "alpha", State: state.Load().(api.NamespaceState)}, true
++	}).Maybe()
++	booted := setupTestDBWithShardState(t, crashDir, shardState, nil, exister, makeTestClass(className))
++	t.Cleanup(func() { require.NoError(t, booted.Shutdown(context.Background())) })
++	idx := booted.GetIndex(schema.ClassName(className))
++	require.NotNil(t, idx)
++	assert.Empty(t, registeredShards(t, idx), "a suspended namespace's shard must not open at boot")
++
++	state.Store(api.NamespaceStateResuming)
++	require.NoError(t, booted.ReopenShard(ctx, className, shardState.AllPhysicalShards()[0]))
++	state.Store(api.NamespaceStateActive)
++
++	obj, err := booted.Object(ctx, className, id, nil, additional.Properties{}, nil, "")
++	require.NoError(t, err)
++	require.NotNil(t, obj, "the resume must replay the WAL the crash left")
++	assert.Equal(t, "kept", obj.Schema.(map[string]any)["stringProp"])
 +}
+```
+
+**File**: `test/acceptance/namespace/suspend_shards_test.go` (modified, +3/-3)
+```diff
+@@ -375,9 +375,9 @@ func TestNamespaces_SuspendedNamespaceLoadsNoShardsAfterRestart(t *testing.T) {
+ 		require.NoError(t, sharedCompose.EnsureRunning(ctx, restartNodeIndex))
+ 	})
+ 
+-	// The kill can happen during the sweep's unload, because the listing empties
+-	// before the flush ends. That leaves what a kill during a tenant
+-	// deactivation leaves, since both end in shutdownOrRestoreShard.
++	// The kill meets shards the sweep released or is still flushing, as a kill
++	// during a tenant deactivation can. adapters/repos/db's
++	// TestSuspendedNamespace_UnflushedWriteSurvivesACrash crashes before the sweep.
+ 	t.Run("after a crash the suspended namespace loads no shards", func(t *testing.T) {
+ 		zero := time.Duration(0)
+ 		require.NoError(t, sharedCompose.StopNode(ctx, restartNodeIndex, &zero))
 ```
 
 ---
 
-### Incident Patch 13: `9574c81b` (2026-10-01)
-**Commit Message**: Merge pull request #13374 from weaviate/fix-lsmkv-flush-cycle-race
+### Incident Patch 2: `94dda712` (2026-10-14)
+**Commit Message**: Merge pull request #13530 from weaviate/fix-migrate-properties-settings-change
 
-fix(lsmkv): read active memtable under flush lock in flush cycle
+fix(schema): reject module setting changes for modules with migrate properties
 
-**File**: `adapters/repos/db/lsmkv/bucket.go` (modified, +2/-1)
+**File**: `cluster/schema/manager.go` (modified, +3/-0)
 ```diff
-@@ -1832,6 +1832,8 @@ func (b *Bucket) flushAndSwitchIfThresholdsMet(shouldAbort cyclemanager.ShouldAb
- 	walTooLarge := uint64(commitLogSize) >= b.walThreshold
- 	dirtyTooLong := b.active.DirtyDuration() >= b.flushDirtyAfter
- 	shouldSwitch := memtableTooLarge || walTooLarge || dirtyTooLong
-+	// read under the lock, a FlushAndSwitch from elsewhere replaces b.active
-+	cycleLength := b.active.ActiveDuration()
- 
- 	// If true, the parent shard has indicated that it has
- 	// entered an immutable state. During this time, the
-@@ -1857,7 +1859,6 @@ func (b *Bucket) flushAndSwitchIfThresholdsMet(shouldAbort cyclemanager.ShouldAb
- 	b.flushLock.RUnlock()
- 	if shouldSwitch {
- 		b.haltedFlushTimer.Reset()
--		cycleLength := b.active.ActiveDuration()
- 		if err := b.FlushAndSwitch(); err != nil {
- 			b.logger.WithField("action", "lsm_memtable_flush").
- 				WithField("path", b.GetDir()).
+@@ -549,6 +549,9 @@ func (s *SchemaManager) UpdateClass(cmd *command.ApplyRequest, nodeID string, sc
+ 		meta.Class.VectorIndexConfig = u.VectorIndexConfig
+ 		meta.Class.InvertedIndexConfig = u.InvertedIndexConfig
+ 		meta.Class.VectorConfig = u.VectorConfig
++		if u.ModuleConfig != nil {
++			meta.Class.ModuleConfig = u.ModuleConfig
++		}
+ 		meta.Class.ReplicationConfig = u.ReplicationConfig
+ 		meta.Class.MultiTenancyConfig = u.MultiTenancyConfig
+ 		meta.Class.ObjectTTLConfig = u.ObjectTTLConfig
 ```
 
-**File**: `adapters/repos/db/lsmkv/bucket_flush_cycle_race_test.go` (added, +49/-0)
+**File**: `cluster/schema/update_class_module_settings_test.go` (modified, +13/-0)
 ```diff
-@@ -0,0 +1,49 @@
+@@ -165,3 +165,16 @@ func TestSchemaManager_UpdateClass_MutableSettings(t *testing.T) {
+ 		})
+ 	}
+ }
++
++func TestSchemaManager_UpdateClass_WithoutModuleConfigKeepsStoredModuleConfig(t *testing.T) {
++	sm := newSchemaManagerWithModules(t)
++	stored := classShapes[1].build(moduleSettings("a", "m"))
++	stored.ModuleConfig = map[string]any{"generative-fake": map[string]any{"model": "g"}}
++	require.NoError(t, sm.AddClass(addClassRequest(t, stored), "node1", true, false))
++
++	update := classShapes[1].build(moduleSettings("a", "m"))
++	update.Description = "new description"
++	require.NoError(t, sm.UpdateClass(updateClassRequest(t, update, 2), "node1", true, false))
++	require.Equal(t, map[string]any{"generative-fake": map[string]any{"model": "g"}},
++		sm.NewSchemaReader().ReadOnlyClass(className).ModuleConfig)
++}
+```
+
+**File**: `usecases/modules/migrate_vectorizer_settings_test.go` (added, +133/-0)
+```diff
+@@ -0,0 +1,133 @@
 +//                           _       _
 +// __      _____  __ ___   ___  __ _| |_ ___
 +// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
@@ -5568,792 +1966,594 @@ fix(lsmkv): read active memtable under flush lock in flush cycle
 +//  CONTACT: hello@weaviate.io
 +//
 +
-+package lsmkv
++package modules
 +
 +import (
 +	"context"
-+	"sync"
++	"testing"
++
++	"github.com/sirupsen/logrus/hooks/test"
++	"github.com/stretchr/testify/assert"
++
++	"github.com/weaviate/weaviate/entities/models"
++	"github.com/weaviate/weaviate/entities/modulecapabilities"
++	"github.com/weaviate/weaviate/entities/moduletools"
++	"github.com/weaviate/weaviate/entities/schema"
++	"github.com/weaviate/weaviate/usecases/config"
++)
++
++type migratingText2VecModule struct {
++	dummyText2VecModuleNoCapabilities
++}
++
++func (migratingText2VecModule) MigrateProperties() []modulecapabilities.MigrateProperty {
++	return []modulecapabilities.MigrateProperty{{Name: "baseURL"}, {Name: "dimensions"}}
++}
++
++func (migratingText2VecModule) ClassConfigDefaults() map[string]any {
++	return map[string]any{"baseURL": "https://a", "dimensions": 512, "vectorizeClassName": true}
++}
++
++func (migratingText2VecModule) PropertyConfigDefaults(*schema.DataType) map[string]any { return nil }
++
++func (migratingText2VecModule) ValidateClass(context.Context, *models.Class, moduletools.ClassConfig) error {
++	return nil
++}
++
++// defaultsText2VecModule has class config defaults but no migrate properties.
++type defaultsText2VecModule struct {
++	dummyText2VecModuleNoCapabilities
++}
++
++func (defaultsText2VecModule) ClassConfigDefaults() map[string]any {
++	return map[string]any{"baseURL": "https://a"}
++}
++
++func (defaultsText2VecModule) PropertyConfigDefaults(*schema.DataType) map[string]any { return nil }
++
++func (defaultsText2VecModule) ValidateClass(context.Context, *models.Class, moduletools.ClassConfig) error {
++	return nil
++}
++
++func TestMigrateVectorizerSettings(t *testing.T) {
++	const (
++		migrating = "text2vec-migrating"
++		defaults  = "text2vec-defaults"
++	)
++	logger, _ := test.NewNullLogger()
++	p := NewProvider(logger, config.Config{})
++	p.Register(migratingText2VecModule{newDummyText2VecModule(migrating, nil)})
++	p.Register(defaultsText2VecModule{newDummyText2VecModule(defaults, nil)})
++
++	tests := []struct {
++		name         string
++		module       string
++		stored       map[string]any
++		update       map[string]any
++		wantMigrated bool
++		wantEqual    bool
++	}{
++		{
++			name:         "added setting missing from the stored settings, set to a value other than the default",
++			module:       migrating,
++			stored:       map[string]any{"model": "small"},
++			update:       map[string]any{"model": "small", "baseURL": "https://custom"},
++			wantMigrated: true,
++		},
++		{
++			name:         "added setting decoded as a float, default declared as an int",
++			module:       migrating,
++			stored:       map[string]any{"model": "small"},
++			update:       map[string]any{"model": "small", "dimensions": float64(512)},
++			wantMigrated: true,
++			wantEqual:    true,
++		},
++		{
++			name:         "added setting stored as an empty string",
++			module:       migrating,
++			stored:       map[string]any{"model": "small", "baseURL": ""},
++			update:       map[string]any{"model": "small", "baseURL": "https://a"},
++			wantMigrated: true,
++			wantEqual:    true,
++		},
++		{
++			name:         "defaulted setting outside the migrate properties missing from the stored settings",
++			module:       migrating,
++			stored:       map[string]any{"model": "small"},
++			update:       map[string]any{"model": "small", "vectorizeClassName": true},
++			wantMigrated: true,
++			wantEqual:    true,
++		},
++		{
++			name:         "stored custom value, update sets the default",
++			module:       migrating,
++			stored:       map[string]any{"model": "small", "baseURL": "https://custom"},
++			update:       map[string]any{"model": "small", "baseURL": "https://a"},
++			wantMigrated: true,
++		},
++		{
++			name:   "module without migrate properties, setting missing from the stored settings, update sets the default",
++			module: defaults,
++			stored: map[string]any{"model": "small"},
++			update: map[string]any{"model": "small", "baseURL": "https://a"},
++		},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			stored := map[string]any{tt.module: tt.stored}
++			update := map[string]any{tt.module: tt.update}
++
++			assert.Equal(t, tt.wantMigrated, p.MigrateVectorizerSettings(stored, update))
++			assert.Equal(t, tt.wantEqual, assert.ObjectsAreEqual(stored, update), "stored: %v, update: %v", stored, update)
++		})
++	}
++}
+```
+
+**File**: `usecases/modules/modules.go` (modified, +47/-7)
+```diff
+@@ -12,9 +12,10 @@
+ package modules
+ 
+ import (
++	"bytes"
+ 	"context"
++	"encoding/json"
+ 	"fmt"
+-	"maps"
+ 	"regexp"
+ 	"slices"
+ 	"sync"
+@@ -1169,6 +1170,7 @@ func (p *Provider) settingsConfig(moduleName string, settings map[string]any) mo
+ // MigrateVectorizerSettings compares and migrates module settings if module settings
+ // changed, an example would be renaming of baseUrl property setting to baseURL
+ // in that case we need to migrate baseURL value to new property name.
++// Both configs are changed in place, so a stored config must be passed as a copy.
+ func (p *Provider) MigrateVectorizerSettings(oldVectorizerConfig, newVectorizerConfig any) bool {
+ 	migratedSettings := false
+ 	oldVectorizerCfg, oldVectorizerCfgOk := oldVectorizerConfig.(map[string]any)
+@@ -1177,19 +1179,57 @@ func (p *Provider) MigrateVectorizerSettings(oldVectorizerConfig, newVectorizerC
+ 		for modName, modSettings := range newVectorizerCfg {
+ 			migratedNewVectorizer := p.migrateVectorizerSettings(modName, modSettings)
+ 			migratedOldVectorizer := p.migrateVectorizerSettings(modName, oldVectorizerCfg[modName])
+-			if settings, ok := modSettings.(map[string]any); ok {
+-				if oldSettings, ok := oldVectorizerCfg[modName].(map[string]any); ok {
+-					maps.Copy(oldSettings, settings)
+-				}
+-			}
+-			if migratedNewVectorizer || migratedOldVectorizer {
++			copiedDefaults := p.copyOnlyMigratedSettings(modName, oldVectorizerCfg[modName], modSettings)
++			if migratedNewVectorizer || migratedOldVectorizer || copiedDefaults {
+ 				migratedSettings = true
+ 			}
+ 		}
+ 	}
+ 	return migratedSettings
+ }
+ 
++// copyOnlyMigratedSettings copies settings the old settings lack, or hold as an empty string, from the new settings
++// when the new value is the module's default, which is what the module used while the setting was missing. It only
++// applies to modules that declare migrate properties. Every other setting is left as is so that a changed value
++// still fails the comparison that follows the migration. It reports whether it copied a setting.
++func (p *Provider) copyOnlyMigratedSettings(modName string, oldModuleSettings, newModuleSettings any) bool {
++	mod := p.GetByName(modName)
++	if mod == nil {
++		return false
++	}
++	if _, ok := mod.(modulecapabilities.MigrateProperties); !ok {
++		return false
++	}
++	configurator, ok := mod.(modulecapabilities.ClassConfigurator)
++	if !ok {
++		return false
++	}
++	oldSettings, oldOk := oldModuleSettings.(map[string]any)
++	newSettings, newOk := newModuleSettings.(map[string]any)
++	if !oldOk || !newOk {
++		return false
++	}
++	copied := false
++	for name, defaultValue := range configurator.ClassConfigDefaults() {
++		newValue, ok := newSettings[name]
++		if !ok {
++			continue
++		}
++		if oldValue, ok := oldSettings[name]; ok && oldValue != "" {
++			continue
++		}
++		// Compared by JSON form, so that numbers decoded as float64 or json.Number equal the int a module declares.
++		newJSON, newErr := json.Marshal(newValue)
++		defaultJSON, defaultErr := json.Marshal(defaultValue)
++		if newErr != nil || defaultErr != nil || !bytes.Equal(newJSON, defaultJSON) {
++			continue
++		}
++		oldSettings[name] = newValue
++		copied = true
++	}
++	return copied
++}
++
+ func (p *Provider) migrateVectorizerSettings(modName string, moduleSettings any) bool {
+ 	if mod := p.GetByName(modName); mod != nil {
+ 		if migrate, ok := mod.(modulecapabilities.MigrateProperties); ok {
+```
+
+**File**: `usecases/schema/class.go` (modified, +4/-2)
+```diff
+@@ -1757,9 +1757,11 @@ func validateImmutableFields(initial, updated *models.Class, modulesProvider mod
+ 			// There might be module settings that need to be migrated to new names, for example
+ 			// if baseUrl property setting was renamed to baseURL then we need to adjust module settings
+ 			// and migrate baseUrl to baseURL
+-			if modulesProvider.MigrateVectorizerSettings(initial.VectorConfig[k].Vectorizer, v.Vectorizer) {
++			// initial shares its maps with the stored schema, so the migration runs on a copy.
++			initialVectorizer := structToMap(initial.VectorConfig[k].Vectorizer)
++			if modulesProvider.MigrateVectorizerSettings(initialVectorizer, v.Vectorizer) {
+ 				// Module settings have been migrated, let's recheck vectorizer settings
+-				if deepEqualVectorizerSettings(initial.VectorConfig[k].Vectorizer, v.Vectorizer) {
++				if deepEqualVectorizerSettings(initialVectorizer, v.Vectorizer) {
+ 					continue
+ 				}
+ 			}
+```
+
+**File**: `usecases/schema/migrate_vectorizer_settings_test.go` (added, +105/-0)
+```diff
+@@ -0,0 +1,105 @@
++//                           _       _
++// __      _____  __ ___   ___  __ _| |_ ___
++// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
++//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
++//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
++//
++//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
++//
++//  CONTACT: hello@weaviate.io
++//
++
++package schema
++
++import (
 +	"testing"
 +
 +	"github.com/sirupsen/logrus/hooks/test"
 +	"github.com/stretchr/testify/require"
-+	"github.com/weaviate/weaviate/entities/cyclemanager"
++
++	"github.com/weaviate/weaviate/entities/models"
++	"github.com/weaviate/weaviate/entities/vectorindex/hnsw"
++	text2vecopenai "github.com/weaviate/weaviate/modules/text2vec-openai"
++	"github.com/weaviate/weaviate/usecases/config"
++	"github.com/weaviate/weaviate/usecases/fakes"
++	"github.com/weaviate/weaviate/usecases/modules"
++	shardingcfg "github.com/weaviate/weaviate/usecases/sharding/config"
 +)
 +
-+// The flush cycle and a FlushAndSwitch called from elsewhere, as by a shard
-+// halted for a backup, run on the same bucket at the same time. Run with -race.
-+func TestBucket_FlushCycleConcurrentWithFlushAndSwitch(t *testing.T) {
-+	ctx := context.Background()
++// text2vec-openai declares baseURL as a migrate property, so baseURL may be missing from the stored settings,
++// but every other difference must still be rejected.
++func TestParseClassUpdate_ModuleWithMigrateProperties(t *testing.T) {
++	const openai = "text2vec-openai"
 +	logger, _ := test.NewNullLogger()
-+	b, err := NewBucketCreator().NewBucket(ctx, t.TempDir(), "", logger, nil,
-+		cyclemanager.NewCallbackGroupNoop(), cyclemanager.NewCallbackGroupNoop(),
-+		WithStrategy(StrategyReplace), WithMemtableThreshold(1), WithMinWalThreshold(0))
-+	require.NoError(t, err)
-+	defer b.Shutdown(ctx)
-+
-+	for i := range 200 {
-+		require.NoError(t, b.Put([]byte{byte(i)}, []byte{byte(i)}))
-+		var wg sync.WaitGroup
-+		wg.Add(2)
-+		go func() {
-+			defer wg.Done()
-+			b.flushAndSwitchIfThresholdsMet(func() bool { return false })
-+		}()
-+		go func() {
-+			defer wg.Done()
-+			require.NoError(t, b.FlushAndSwitch())
-+		}()
-+		wg.Wait()
++	provider := modules.NewProvider(logger, config.Config{})
++	provider.Register(text2vecopenai.New())
++	p := NewParser(fakes.NewFakeClusterState(), dummyParseVectorConfig, fakeValidator{}, provider, nil, nil)
++	shardingConfig := shardingcfg.Config{
++		DesiredCount: 1, VirtualPerPhysical: 128, ActualCount: 1, DesiredVirtualCount: 128, Key: "_id", Strategy: "hash", Function: "murmur3",
 +	}
-+}
-```
-
----
-
-### Incident Patch 14: `5a639f09` (2026-10-01)
-**Commit Message**: Merge pull request #13282 from weaviate/fix/ttl-abort-vs-finish
-
-fix(object-ttl): keep an aborted deletion's slot reserved until it finishes
-
-**File**: `adapters/handlers/rest/clusterapi/object_ttl.go` (modified, +11/-6)
-```diff
-@@ -120,15 +120,14 @@ func (d *ObjectTTL) incomingDelete() http.Handler {
- 
- 		var body []objectttl.ObjectsExpiredPayload
- 		if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
--			d.localStatus.ResetRunning("bad request")
-+			d.localStatus.Finish()
- 			http.Error(w, "Error parsing JSON body", http.StatusBadRequest)
- 			return
- 		}
- 
- 		// run the deletion in a separate goroutine to free up the HTTP handler immediately
- 		enterrors.GoWrapper(func() {
--			// make sure to unlock the requestRunning flag when all deletions are done
--			defer d.localStatus.ResetRunning("finished")
-+			defer d.localStatus.Finish()
- 
- 			started := time.Now()
- 
-@@ -179,9 +178,15 @@ func (d *ObjectTTL) incomingDelete() http.Handler {
- 				countDeleted := objsDeletedCounters.CounterFor(className)
- 
- 				// TODO aliszka:ttl handle graceful index close / drop
--				idx, err := d.remoteIndex.IndexForIncomingWrite(context.Background(), className, classPayload.ClassVersion)
-+				idx, err := d.remoteIndex.IndexForIncomingWrite(ttlCtx, className, classPayload.ClassVersion)
- 				if err != nil {
--					ec.AddGroups(fmt.Errorf("get index: %w", err), className)
-+					// an abort still fails the schema wait as "local index not found:
-+					// deadline exceeded", so report the abort instead
-+					if cause := context.Cause(ttlCtx); cause != nil {
-+						ec.AddGroups(cause, className)
-+					} else {
-+						ec.AddGroups(fmt.Errorf("get index: %w", err), className)
-+					}
- 					continue
- 				}
- 
-@@ -203,7 +208,7 @@ func (d *ObjectTTL) incomingAbort() http.Handler {
- 		defer r.Body.Close()
- 
- 		response := objectttl.ObjectsExpiredAbortResponse{
--			Aborted: d.localStatus.ResetRunning("aborted"),
-+			Aborted: d.localStatus.Abort(),
- 		}
- 
- 		d.logger.WithFields(logrus.Fields{
-```
-
-**File**: `adapters/handlers/rest/clusterapi/object_ttl_test.go` (modified, +226/-1)
-```diff
-@@ -16,16 +16,18 @@ import (
- 	"context"
- 	"encoding/json"
- 	"errors"
-+	"fmt"
- 	"net/http"
- 	"net/http/httptest"
-+	"strings"
-+	"sync"
- 	"sync/atomic"
- 	"testing"
- 	"time"
- 
- 	"github.com/sirupsen/logrus"
- 	logrustest "github.com/sirupsen/logrus/hooks/test"
- 	"github.com/stretchr/testify/require"
--
- 	"github.com/weaviate/weaviate/adapters/handlers/rest/clusterapi"
- 	"github.com/weaviate/weaviate/entities/errorcompounder"
- 	enterrors "github.com/weaviate/weaviate/entities/errors"
-@@ -156,3 +158,226 @@ func ttlSweepReport(hook *logrustest.Hook) *logrus.Entry {
- 	}
- 	return nil
- }
-+
-+// waitingTTLSchema stands in for the versioned schema read, which waits for the
-+// node to catch up and gives up on its own deadline. waitTimeout stands in for
-+// that deadline, and a zero one is a node already caught up.
-+type waitingTTLSchema struct {
-+	waitTimeout time.Duration
-+	entered     chan struct{}
-+	once        sync.Once
-+}
-+
-+func (s *waitingTTLSchema) ReadOnlyClassWithVersion(ctx context.Context, class string, _ uint64) (*models.Class, error) {
-+	s.once.Do(func() { close(s.entered) })
-+
-+	if s.waitTimeout == 0 && ctx.Err() == nil {
-+		return &models.Class{Class: class}, nil
++	stored := func() map[string]any {
++		return map[string]any{"model": "text-embedding-3-small", "baseURL": "https://api.openai.com", "vectorizeClassName": true}
 +	}
-+	if s.waitTimeout > 0 {
-+		timer := time.NewTimer(s.waitTimeout)
-+		defer timer.Stop()
-+		select {
-+		case <-ctx.Done():
-+		case <-timer.C:
++	withoutBaseURL := func(settings map[string]any) map[string]any {
++		delete(settings, "baseURL")
++		return settings
++	}
++	// A named vector created on v1.24 is stored with only the settings the client sent.
++	createdOnV124 := func() map[string]any {
++		return map[string]any{"properties": []any{"text"}, "vectorizeClassName": false, "vectorizePropertyName": false}
++	}
++	with := func(settings map[string]any, key string, value any) map[string]any {
++		settings[key] = value
++		return settings
++	}
++	classLevel := func(settings map[string]any) *models.Class {
++		return &models.Class{
++			Class: "Doc", Vectorizer: openai, VectorIndexType: hnswT, VectorIndexConfig: hnsw.NewDefaultUserConfig(),
++			ModuleConfig: map[string]any{openai: settings},
 +		}
 +	}
-+	// the real wait reports the version it never reached, carrying neither the
-+	// context's error nor its cause, whether it gave up or was cancelled
-+	return nil, fmt.Errorf("class %q: schema version not reached", class)
-+}
-+
-+// sweptTTLRepo records the collections the sweep asked it for.
-+type sweptTTLRepo struct {
-+	lock  sync.Mutex
-+	asked []string
-+}
-+
-+func (r *sweptTTLRepo) GetIndexForIncomingSharding(class schema.ClassName) sharding.RemoteIndexIncomingRepo {
-+	r.lock.Lock()
-+	defer r.lock.Unlock()
-+	r.asked = append(r.asked, string(class))
-+	return noopTTLIndex{}
-+}
-+
-+func (r *sweptTTLRepo) sweptCollections() []string {
-+	r.lock.Lock()
-+	defer r.lock.Unlock()
-+	return append([]string(nil), r.asked...)
-+}
-+
-+// noopTTLIndex embeds the interface so only the one method the sweep calls is
-+// implemented. It dispatches nothing, so the sweep's own flow is what a test sees.
-+type noopTTLIndex struct {
-+	sharding.RemoteIndexIncomingRepo
-+}
-+
-+func (noopTTLIndex) IncomingDeleteObjectsExpired(context.Context, *enterrors.ErrorGroupWrapper,
-+	errorcompounder.ErrorCompounder, string, time.Time, time.Time, func(int32), uint64,
-+) {
-+}
-+
-+// ttlTestServer serves the object_ttl endpoints over ttlSchema. The returned
-+// outcome reads the handler's log, because the deletion outlives the request.
-+func ttlTestServer(t *testing.T, ttlSchema sharding.RemoteIncomingSchema) (
-+	server *httptest.Server, repo *sweptTTLRepo, status *objectttl.LocalStatus,
-+	sweepOutcome func() (failed error, returned bool),
-+) {
-+	t.Helper()
-+
-+	logger, hook := logrustest.NewNullLogger()
-+	logger.SetLevel(logrus.DebugLevel)
-+
-+	repo = &sweptTTLRepo{}
-+	status = objectttl.NewLocalStatus()
-+	d := clusterapi.NewObjectTTL(sharding.NewRemoteIndexIncoming(repo, ttlSchema, nil),
-+		clusterapi.NewNoopAuthHandler(), logger,
-+		config.Config{ObjectsTTLConcurrencyFactor: configRuntime.NewDynamicValue[float64](1)},
-+		status)
-+
-+	mux := http.NewServeMux()
-+	mux.Handle("/cluster/object_ttl/", d.Expired())
-+	server = httptest.NewServer(mux)
-+	t.Cleanup(server.Close)
-+
-+	return server, repo, status, func() (error, bool) {
-+		for _, e := range hook.AllEntries() {
-+			if !strings.HasPrefix(e.Message, "incoming ttl deletion on remote node f") {
-+				continue
-+			}
-+			failed, _ := e.Data[logrus.ErrorKey].(error)
-+			return failed, true
-+		}
-+		return nil, false
-+	}
-+}
-+
-+func postTTLDelete(t *testing.T, server *httptest.Server, collections int) {
-+	t.Helper()
-+
-+	payload := make([]objectttl.ObjectsExpiredPayload, collections)
-+	for i := range payload {
-+		payload[i] = objectttl.ObjectsExpiredPayload{
-+			Class:        fmt.Sprintf("Collection%d", i),
-+			ClassVersion: 1,
-+			Prop:         "expiresAt",
-+			TtlMilli:     time.Now().UnixMilli(),
-+			DelMilli:     time.Now().UnixMilli(),
++	namedVector := func(settings map[string]any) *models.Class {
++		return &models.Class{
++			Class: "Doc",
++			VectorConfig: map[string]models.VectorConfig{"text": {
++				VectorIndexType: hnswT, VectorIndexConfig: hnsw.NewDefaultUserConfig(),
++				Vectorizer: map[string]any{openai: settings},
++			}},
 +		}
 +	}
-+	body, err := json.Marshal(payload)
-+	require.NoError(t, err)
-+
-+	resp, err := http.Post(server.URL+"/cluster/object_ttl/delete_expired",
-+		"application/json", bytes.NewReader(body))
-+	require.NoError(t, err)
-+	require.NoError(t, resp.Body.Close())
-+	require.Equal(t, http.StatusAccepted, resp.StatusCode)
-+}
-+
-+// An abort that cannot reach the schema wait leaves the sweep sitting out one
-+// schema deadline per collection in the body, holding the slot for all of them.
-+func TestIncomingDeleteAbortReachesTheSchemaWait(t *testing.T) {
-+	const (
-+		collections = 10
-+		schemaWait  = 500 * time.Millisecond
-+	)
-+
-+	ttlSchema := &waitingTTLSchema{waitTimeout: schemaWait, entered: make(chan struct{})}
-+	server, _, status, sweepOutcome := ttlTestServer(t, ttlSchema)
-+
-+	sweepReturned := func() bool { _, returned := sweepOutcome(); return returned }
-+
-+	// the swe
-```
-
-**File**: `entities/errors/context.go` (modified, +11/-7)
-```diff
-@@ -16,20 +16,24 @@ import (
- 	"fmt"
- )
- 
--func NewCanceledCause(cause string) error {
--	return &CanceledCause{
--		err: fmt.Sprintf("%s: %s", context.Canceled, cause),
-+// NewCanceledCause pairs context.Canceled with reason, so a caller can tell one
-+// cancellation from another. A nil reason gives back plain context.Canceled,
-+// because CanceledCause.Error would render it as "%!s(<nil>)".
-+func NewCanceledCause(reason error) error {
-+	if reason == nil {
-+		return context.Canceled
- 	}
-+	return &CanceledCause{reason: reason}
- }
- 
- type CanceledCause struct {
--	err string
-+	reason error
- }
- 
- func (c *CanceledCause) Error() string {
--	return c.err
-+	return fmt.Sprintf("%s: %s", context.Canceled, c.reason)
- }
- 
--func (c *CanceledCause) Unwrap() error {
--	return context.Canceled
-+func (c *CanceledCause) Unwrap() []error {
-+	return []error{context.Canceled, c.reason}
- }
-```
-
-**File**: `entities/errors/context_test.go` (added, +34/-0)
-```diff
-@@ -0,0 +1,34 @@
-+//                           _       _
-+// __      _____  __ ___   ___  __ _| |_ ___
-+// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
-+//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
-+//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
-+//
-+//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
-+//
-+//  CONTACT: hello@weaviate.io
-+//
-+
-+package errors
-+
-+import (
-+	"context"
-+	"errors"
-+	"testing"
-+
-+	"github.com/stretchr/testify/require"
-+)
-+
-+// A cause is matched with errors.Is from both ends, so both arms of the unwrap
-+// have to be reachable.
-+func TestNewCanceledCause(t *testing.T) {
-+	reason := errors.New("aborted")
-+
-+	withReason := NewCanceledCause(reason)
-+	require.ErrorIs(t, withReason, context.Canceled)
-+	require.ErrorIs(t, withReason, reason)
-+	require.Equal(t, "context canceled: aborted", withReason.Error())
-+
-+	require.Equal(t, context.Canceled, NewCanceledCause(nil),
-+		"no reason is plain context.Canceled, not a cause that prints as one")
-+}
-```
-
-**File**: `usecases/object_ttl/object_ttl.go` (modified, +30/-5)
-```diff
-@@ -15,6 +15,7 @@ import (
- 	"bytes"
- 	"context"
- 	"encoding/json"
-+	"errors"
- 	"fmt"
- 	"io"
- 	"math/rand"
-@@ -172,7 +173,7 @@ func (c *Coordinator) Abort(ctx context.Context, targetOwnNode bool) (bool, erro
- 		}
- 	}
- 
--	localAborted := c.localStatus.ResetRunning("aborted")
-+	localAborted := c.localStatus.Abort()
- 
- 	// abort just on local node
- 	if targetOwnNode || len(remoteNodes) == 0 {
-@@ -230,7 +231,7 @@ func (c *Coordinator) triggerDeletionObjectsExpiredLocalNode(ctx context.Context
- 	if !ok {
- 		return fmt.Errorf("another request is still being processed")
- 	}
--	defer c.localStatus.ResetRunning("finished")
-+	defer c.localStatus.Finish()
- 
- 	started := time.Now()
- 
-@@ -520,6 +521,13 @@ func (dc DeletedCounters) ToLogFields(maxCollectionNameLen int) (fields logrus.F
- 
- // ----------------------------------------------------------------------------
- 
-+// A TTL deletion's context is cancelled with one of these, so a caller can match
-+// on it with errors.Is instead of reading the message.
-+var (
-+	ErrAborted  = errors.New("aborted")
-+	ErrFinished = errors.New("finished")
-+)
-+
- // LocalStatus keeps status of ongoing TTL deletion on local node.
- // isRunning is set to true when TTL deletion start and reset when finishes.
- // Status is global per node. Only one deletion can run at a time, following requests
-@@ -562,17 +570,34 @@ func (s *LocalStatus) SetRunning() (success bool, ctx context.Context) {
- 	return true, s.runningCtx
- }
- 
--func (s *LocalStatus) ResetRunning(cause string) (success bool) {
-+// Abort cancels the running deletion and reports whether there was one. The slot
-+// stays reserved until that deletion finishes, because it observes the
-+// cancellation only between batches.
-+func (s *LocalStatus) Abort() (aborted bool) {
- 	s.lock.Lock()
- 	defer s.lock.Unlock()
- 
- 	if !s.isRunning {
- 		return false
- 	}
- 
--	s.runningCancel(enterrors.NewCanceledCause(cause))
-+	s.runningCancel(enterrors.NewCanceledCause(ErrAborted))
-+	return true
-+}
-+
-+// Finish releases the slot, cancelling so that nothing still reading the
-+// context keeps going. A deletion already aborted keeps the cause it was
-+// cancelled with.
-+func (s *LocalStatus) Finish() {
-+	s.lock.Lock()
-+	defer s.lock.Unlock()
-+
-+	if !s.isRunning {
-+		return
-+	}
-+
-+	s.runningCancel(enterrors.NewCanceledCause(ErrFinished))
- 
- 	s.isRunning = false
- 	s.runningCtx, s.runningCancel = nil, nil
--	return true
- }
-```
-
-**File**: `usecases/object_ttl/object_ttl_test.go` (modified, +78/-47)
-```diff
-@@ -198,84 +198,114 @@ func TestLocalState(t *testing.T) {
- 		assert.True(t, s.IsRunning(), "should still be running after failed SetRunning")
- 	})
- 
--	t.Run("ResetRunning succeeds when running and cancels context", func(t *testing.T) {
-+	t.Run("Abort cancels the context and keeps the slot", func(t *testing.T) {
- 		s := NewLocalStatus()
- 		ok, ctx := s.SetRunning()
- 		require.True(t, ok)
- 		require.NotNil(t, ctx)
- 
--		aborted := s.ResetRunning("finished")
-+		aborted := s.Abort()
- 
- 		assert.True(t, aborted)
--		assert.False(t, s.IsRunning())
-+		assert.True(t, s.IsRunning(),
-+			"the deletion observes the cancellation only between batches, so it is still draining")
- 
--		// context must be cancelled
- 		select {
- 		case <-ctx.Done():
- 			// expected
- 		default:
--			t.Fatal("context should be done after ResetRunning")
-+			t.Fatal("context should be done after Abort")
- 		}
-+		assert.ErrorIs(t, ctx.Err(), context.Canceled)
-+		assert.ErrorIs(t, context.Cause(ctx), ErrAborted)
- 	})
- 
--	t.Run("ResetRunning sets context error to context.Canceled", func(t *testing.T) {
-+	t.Run("Finish cancels the context and releases the slot", func(t *testing.T) {
- 		s := NewLocalStatus()
- 		ok, ctx := s.SetRunning()
- 		require.True(t, ok)
- 
--		s.ResetRunning("finished")
-+		s.Finish()
- 
-+		assert.False(t, s.IsRunning())
- 		assert.ErrorIs(t, ctx.Err(), context.Canceled)
-+		assert.ErrorIs(t, context.Cause(ctx), ErrFinished)
- 	})
- 
--	t.Run("ResetRunning cause contains the provided reason", func(t *testing.T) {
-+	t.Run("an aborted deletion keeps the cause it was aborted with", func(t *testing.T) {
- 		s := NewLocalStatus()
- 		ok, ctx := s.SetRunning()
- 		require.True(t, ok)
- 
--		s.ResetRunning("aborted")
-+		require.True(t, s.Abort())
-+		s.Finish()
- 
--		cause := context.Cause(ctx)
--		require.NotNil(t, cause)
--		assert.ErrorIs(t, cause, context.Canceled)
--		assert.Contains(t, cause.Error(), "aborted")
-+		assert.ErrorIs(t, context.Cause(ctx), ErrAborted,
-+			"a deletion that returned because it was aborted must not report itself as finished")
-+		assert.NotErrorIs(t, context.Cause(ctx), ErrFinished)
- 	})
- 
--	t.Run("ResetRunning fails when not running", func(t *testing.T) {
-+	t.Run("an aborted deletion's cleanup cannot cancel its successor", func(t *testing.T) {
- 		s := NewLocalStatus()
-+		ok, ctx1 := s.SetRunning()
-+		require.True(t, ok)
-+
-+		require.True(t, s.Abort())
-+
-+		// while the aborted deletion drains, the slot is not up for grabs
-+		taken, ctx2 := s.SetRunning()
-+		require.False(t, taken, "a successor must not start on top of a draining deletion")
-+		require.Nil(t, ctx2)
- 
--		aborted := s.ResetRunning("aborted")
-+		s.Finish()
-+
-+		taken, ctx2 = s.SetRunning()
-+		require.True(t, taken)
-+		require.NotNil(t, ctx2)
-+		assert.NoError(t, ctx2.Err(),
-+			"the successor's context is its own, not one its predecessor's cleanup reaches")
-+		assert.ErrorIs(t, ctx1.Err(), context.Canceled)
-+	})
-+
-+	t.Run("Abort reports false when nothing is running", func(t *testing.T) {
-+		s := NewLocalStatus()
-+
-+		aborted := s.Abort()
- 
- 		assert.False(t, aborted)
- 		assert.False(t, s.IsRunning())
- 	})
- 
--	t.Run("ResetRunning on fresh LocalStatus returns false", func(t *testing.T) {
-+	t.Run("a repeated Abort still reports the draining deletion", func(t *testing.T) {
- 		s := NewLocalStatus()
-+		ok, _ := s.SetRunning()
-+		require.True(t, ok)
-+
-+		assert.True(t, s.Abort())
-+		assert.True(t, s.Abort(), "the deletion has not returned yet, so there is still one to report")
- 
--		result := s.ResetRunning("some cause")
-+		s.Finish()
- 
--		assert.False(t, result)
-+		assert.False(t, s.Abort())
- 	})
- 
--	t.Run("second ResetRunning after first returns false", func(t *testing.T) {
-+	t.Run("Finish on a released slot is a no-op", func(t *testing.T) {
- 		s := NewLocalStatus()
- 		ok, _ := s.SetRunning()
- 		require.True(t, ok)
- 
--		first := s.ResetRunning("finished")
--		second := s.ResetRunning("finished again")
-+		s.Finish()
-+		s.Finish()
- 
--		assert.True(t, first)
--		assert.False(t, second)
-+		assert.False(t, s.IsRunning())
- 	})
- 
--	t.Run("SetRunning can be called again after ResetRunning", func(t *testing.T) {
-+	t.Run("SetRunning can be called again after Finish", func(t *testing.T) {
- 		s := NewLocalStatus()
- 
- 		ok1, ctx1 := s.SetRunning()
- 		require.True(t, ok1)
--		s.ResetRunning("finished")
-+		s.Finish()
- 
- 		ok2, ctx2 := s.SetRunning()
- 
-@@ -293,7 +323,7 @@ func TestLocalState(t *testing.T) {
- 
- 		ok1, ctx1 := s.SetRunning()
- 		require.True(t, ok1)
--		s.ResetRunning("round 1")
-+		s.Finish()
- 
- 		ok2, ctx2 := s.SetRunning()
- 		require.True(t, ok2)
-@@ -302,7 +332,7 @@ func TestLocalState(t *testing.T) {
- 		assert.ErrorIs(t, ctx1.Err(), context.Canceled)
- 		assert.NoError(t, ctx2.Err())
- 
--		s.ResetRunning("round 2")
-+		s.Finish()
- 
- 		assert.ErrorIs(t, ctx2.Err(), context.Canceled)
- 	})
-@@ -330,31 +360,32 @@ func TestLocalState(t *testing.T) {
- 		assert.True(t, s.IsRunning())
- 	})
- 
--	t.Run("concurrent ResetRunning calls: only one succeeds", func(t *testing.T) {
-+	t.Run("con
-```
-
----
-
-### Incident Patch 15: `e64dd8f6` (2026-10-01)
-**Commit Message**: raft: elect a sole voter without waiting for the heartbeat timeout
-
-**File**: `cluster/store.go` (modified, +43/-0)
-```diff
-@@ -554,6 +554,8 @@ func (st *Store) Open(ctx context.Context) (err error) {
- 		"last_snapshot_index":               snapIndex,
- 	}).Info("raft node constructed")
- 
-+	st.electIfSoleVoter(st.raft.Load())
-+
- 	// There's no hard limit on the migration, so it should take as long as necessary.
- 	// However, we believe that 1 day should be more than sufficient.
- 	f := func() { st.onLeaderFound(time.Hour * 24) }
-@@ -1213,6 +1215,47 @@ func (st *Store) recoverSingleNode(force bool) error {
- 	return nil
- }
- 
-+// electIfSoleVoter starts an election now rather than after the randomized
-+// heartbeat timeout (5-10s by default) when this node is the only voter: it
-+// would elect itself anyway, so only the timing changes. Lowering the heartbeat
-+// timeout makes a follower's timer fire at once; the configured value is put
-+// back right away.
-+func (st *Store) electIfSoleVoter(rn *raft.Raft) {
-+	fut := rn.GetConfiguration()
-+	if err := fut.Error(); err != nil {
-+		st.log.Warnf("cannot read raft configuration to check for a sole voter: %v", err)
-+		return
-+	}
-+	if !isSoleVoter(fut.Configuration(), raft.ServerID(st.cfg.NodeID)) {
-+		return
-+	}
-+
-+	configured := rn.ReloadableConfig()
-+	lowered := configured
-+	lowered.HeartbeatTimeout--
-+	if err := rn.ReloadConfig(lowered); err != nil {
-+		st.log.Warnf("cannot start an immediate election as the sole voter, waiting for the heartbeat timeout: %v", err)
-+		return
-+	}
-+	if err := rn.ReloadConfig(configured); err != nil {
-+		st.log.Errorf("cannot restore the raft heartbeat timeout to %s: %v", configured.HeartbeatTimeout, err)
-+		return
-+	}
-+	st.log.WithField("action", "raft_sole_voter").Info("this node is the only voter, starting the election now")
-+}
-+
-+func isSoleVoter(c raft.Configuration, id raft.ServerID) bool {
-+	voters, self := 0, false
-+	for _, s := range c.Servers {
-+		if s.Suffrage != raft.Voter {
-+			continue
-+		}
-+		voters++
-+		self = self || s.ID == id
-+	}
-+	return voters == 1 && self
-+}
-+
- // setClusterID records the cluster identity in memory, set-once (first
- // writer wins; a duplicate from replay or snapshot restore is a logged no-op).
- func (st *Store) setClusterID(clusterID string) {
-```
-
-**File**: `cluster/store_cluster_rpc.go` (modified, +2/-0)
-```diff
-@@ -140,6 +140,8 @@ func (st *Store) Notify(id, addr string) (err error) {
- 			"action": "bootstrap",
- 			"warn":   err,
- 		}).Warn("bootstrapping cluster")
-+	} else {
-+		st.electIfSoleVoter(st.raft.Load())
- 	}
- 	st.bootstrapped.Store(true)
- 	return nil
-```
-
-**File**: `cluster/store_cluster_rpc_test.go` (modified, +101/-0)
-```diff
-@@ -16,8 +16,12 @@ import (
- 	"fmt"
- 	"sync"
- 	"testing"
-+	"time"
- 
-+	"github.com/hashicorp/raft"
-+	"github.com/prometheus/client_golang/prometheus"
- 	logrustest "github.com/sirupsen/logrus/hooks/test"
-+	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/mock"
- 	"github.com/stretchr/testify/require"
- 
-@@ -87,3 +91,100 @@ func TestNotifyConcurrentBootstrapOnce(t *testing.T) {
- 	require.True(t, st.bootstrapped.Load())
- 	require.Zero(t, st.candidatesLen())
- }
-+
-+// raftHeartbeatTimeout is the raft default times the default RAFT_TIMEOUTS_MULTIPLIER:
-+// an election that waits for it cannot start within 5s.
-+const raftHeartbeatTimeout = 5 * time.Second
-+
-+func openRaftForElectionTest(t *testing.T, m *MockStore) *Raft {
-+	t.Helper()
-+	s := NewFSM(m.cfg, nil, prometheus.NewPedanticRegistry())
-+	s.schemaManager.SetReplicationFSM(m.replicationFSM)
-+	m.store = &s
-+	srv := NewRaft(mocks.NewMockNodeSelector(), m.store, nil)
-+	require.NoError(t, srv.Open(context.Background(), m.indexer))
-+	return srv
-+}
-+
-+func newElectionTestStore(t *testing.T) MockStore {
-+	t.Helper()
-+	m := NewMockStore(t, "Node-1", utils.MustGetFreeTCPPort())
-+	m.cfg.HeartbeatTimeout = raftHeartbeatTimeout
-+	m.cfg.ElectionTimeout = raftHeartbeatTimeout
-+	m.indexer.On("Open", mock.Anything).Return(nil)
-+	m.indexer.On("Close", mock.Anything).Return(nil)
-+	m.indexer.On("TriggerSchemaUpdateCallbacks").Return()
-+	return m
-+}
-+
-+// TestSoleVoterElectsWithoutWaitingForHeartbeatTimeout pins that a node that
-+// is the only voter elects itself at once, on a first start and on a restart,
-+// and keeps its configured heartbeat timeout.
-+func TestSoleVoterElectsWithoutWaitingForHeartbeatTimeout(t *testing.T) {
-+	ctx := context.Background()
-+	m := newElectionTestStore(t)
-+	addr := fmt.Sprintf("%s:%d", m.cfg.Host, m.cfg.RaftPort)
-+
-+	requireLeaderBeforeHeartbeatTimeout := func(srv *Raft) {
-+		t.Helper()
-+		require.True(t, tryNTimesWithWait(200, 10*time.Millisecond, srv.store.IsLeader),
-+			"node did not become leader within 2s")
-+		require.Equal(t, raftHeartbeatTimeout, srv.store.raft.Load().ReloadableConfig().HeartbeatTimeout)
-+	}
-+
-+	// first start: the single-node bootstrap goes through Notify
-+	srv := openRaftForElectionTest(t, &m)
-+	require.NoError(t, srv.store.Notify(m.cfg.NodeID, addr))
-+	requireLeaderBeforeHeartbeatTimeout(srv)
-+	require.NoError(t, srv.Close(ctx))
-+
-+	// restart: the configuration is read back from the raft log
-+	srv = openRaftForElectionTest(t, &m)
-+	defer srv.Close(ctx)
-+	requireLeaderBeforeHeartbeatTimeout(srv)
-+}
-+
-+// TestSharedVoteKeepsHeartbeatTimeout pins that a node that shares the vote
-+// with other voters does not start an election before its heartbeat timeout.
-+func TestSharedVoteKeepsHeartbeatTimeout(t *testing.T) {
-+	ctx := context.Background()
-+	m := newElectionTestStore(t)
-+	m.cfg.BootstrapExpect = 3
-+	srv := openRaftForElectionTest(t, &m)
-+	defer srv.Close(ctx)
-+
-+	require.NoError(t, srv.store.Notify(m.cfg.NodeID, fmt.Sprintf("%s:%d", m.cfg.Host, m.cfg.RaftPort)))
-+	require.NoError(t, srv.store.Notify("Node-2", "127.0.0.1:1"))
-+	require.NoError(t, srv.store.Notify("Node-3", "127.0.0.1:2"))
-+	require.True(t, srv.store.bootstrapped.Load())
-+
-+	rn := srv.store.raft.Load()
-+	assert.False(t, tryNTimesWithWait(100, 10*time.Millisecond, func() bool {
-+		return rn.State() != raft.Follower
-+	}), "node started an election before its heartbeat timeout")
-+	assert.Equal(t, raftHeartbeatTimeout, rn.ReloadableConfig().HeartbeatTimeout)
-+}
-+
-+func TestIsSoleVoter(t *testing.T) {
-+	voter := func(id string) raft.Server { return raft.Server{ID: raft.ServerID(id), Suffrage: raft.Voter} }
-+	nonvoter := func(id string) raft.Server { return raft.Server{ID: raft.ServerID(id), Suffrage: raft.Nonvoter} }
 +
 +	tests := []struct {
-+		name    string
-+		servers []raft.Server
-+		want    bool
++		name            string
++		stored, updated map[string]any
++		wantErr         bool
 +	}{
-+		{name: "empty configuration", servers: nil, want: false},
-+		{name: "only voter", servers: []raft.Server{voter("self")}, want: true},
-+		{name: "only voter with non-voters", servers: []raft.Server{voter("self"), nonvoter("b")}, want: true},
-+		{name: "another node is the only voter", servers: []raft.Server{voter("b")}, want: false},
-+		{name: "non-voter beside the only voter", servers: []raft.Server{nonvoter("self"), voter("b")}, want: false},
-+		{name: "shared vote", servers: []raft.Server{voter("self"), voter("b"), voter("c")}, want: false},
-+		{name: "staging", servers: []raft.Server{voter("self"), {ID: "b", Suffrage: raft.Staging}}, want: true},
++		{
++			name: "model and baseURL missing from the stored settings, update fills the defaults", stored: createdOnV124(),
++			updated: with(with(createdOnV124(), "model", "text-embedding-3-small"), "baseURL", "https://api.openai.com"),
++		},
++		{
++			name: "changed model, baseURL missing from the stored settings", stored: withoutBaseURL(stored()),
++			updated: with(stored(), "model", "text-embedding-3-large"), wantErr: true,
++		},
 +	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			assert.Equal(t, tt.want, isSoleVoter(raft.Configuration{Servers: tt.servers}, "self"))
-+		})
++	for _, build := range []struct {
++		name  string
++		class func(map[string]any) *models.Class
++	}{{"class level", classLevel}, {"named vector", namedVector}} {
++		for _, tt := range tests {
++			t.Run(build.name+"/"+tt.name, func(t *testing.T) {
++				storedClass := build.class(tt.stored)
++				storedClass.ShardingConfig = shardingConfig
++				storedBefore := structToMap(storedClass)
++
++				_, err := p.ParseClassUpdate(storedClass, build.class(tt.updated))
++				if tt.wantErr {
++					require.Error(t, err)
++				} else {
++					require.NoError(t, err)
++				}
++				require.Equal(t, storedBefore, structToMap(storedClass), "the stored class must not be changed")
++			})
++		}
 +	}
 +}
+```
+
+**File**: `usecases/schema/mutable_settings_test.go` (modified, +2/-2)
+```diff
+@@ -50,8 +50,8 @@ func (mutableModules) MutableSettings(module string, current, updated map[string
+ 	return reflect.DeepEqual(current, updated)
+ }
+ 
+-// MigrateVectorizerSettings copies the new settings over the stored ones like modules.Provider does, and reports a
+-// migration when a module whose name contains "migrating" is present.
++// MigrateVectorizerSettings copies all new settings over the stored ones, and reports a migration when a module
++// whose name contains "migrating" is present.
+ func (mutableModules) MigrateVectorizerSettings(initial, updated any) bool {
+ 	initialConfig, _ := initial.(map[string]any)
+ 	updatedConfig, _ := updated.(map[string]any)
+```
+
+**File**: `usecases/schema/parser.go` (modified, +15/-16)
+```diff
+@@ -14,6 +14,7 @@ package schema
+ import (
+ 	"encoding/json"
+ 	"fmt"
++	"maps"
+ 	"reflect"
+ 	"slices"
+ 	"sort"
+@@ -517,47 +518,45 @@ func (p *Parser) validateModuleConfigsParityAndImmutables(initial, updated *mode
+ 		// There might be module settings that need to be migrated to new names, for example
+ 		// if baseUrl property setting was renamed to baseURL then we need to adjust module settings
+ 		// and migrate baseUrl to baseURL
+-		if p.modules.MigrateVectorizerSettings(initialModConf, updatedModConf) {
++		// initialModConf is the stored schema's map, so the migration runs on a copy.
++		migratedInitialModConf := structToMap(initialModConf)
++		if p.modules.MigrateVectorizerSettings(migratedInitialModConf, updatedModConf) {
+ 			// Module settings have been migrated, let's recheck vectorizer settings
+-			if deepEqualVectorizerSettings(initialModConf[module], updatedModConf[module]) {
++			if deepEqualVectorizerSettings(migratedInitialModConf[module], updatedModConf[module]) {
+ 				continue
+ 			}
+ 		}
+ 
+ 		return fmt.Errorf("can only update generative and reranker module configs, or settings the module allows to change. Got: %v for class: %s", module, updated.Class)
+ 	}
+ 
+-	if initial.ModuleConfig == nil {
+-		initial.ModuleConfig = updatedModConf
++	if initialModConf == nil {
++		updated.ModuleConfig = updatedModConf
+ 		return nil
+ 	}
+ 
+-	if _, ok := initial.ModuleConfig.(map[string]any); !ok {
+-		initial.ModuleConfig = updatedModConf
+-		return nil
+-	}
++	// initialModConf is the stored schema's map and the caller may still reject the update, so merge into a copy.
++	mergedModConf := maps.Clone(initialModConf)
+ 	if hasGenerativeUpdate {
+ 		// clear out old generative module
+-		for module := range initialModConf {
++		for module := range mergedModConf {
+ 			if p.modules.IsGenerative(module) {
+-				delete(initialModConf, module)
++				delete(mergedModConf, module)
+ 			}
+ 		}
+ 	}
+ 
+ 	if hasRerankerUpdate {
+ 		// clear out old reranker module
+-		for module := range initialModConf {
++		for module := range mergedModConf {
+ 			if p.modules.IsReranker(module) {
+-				delete(initialModConf, module)
++				delete(mergedModConf, module)
+ 			}
+ 		}
+ 	}
+ 
+-	for module := range updatedModConf {
+-		initialModConf[module] = updatedModConf[module]
+-	}
+-	updated.ModuleConfig = initialModConf
++	maps.Copy(mergedModConf, updatedModConf)
++	updated.ModuleConfig = mergedModConf
+ 	return nil
+ }
+ 
+```
+
+---
+
+### Incident Patch 3: `f5788cff` (2026-10-15)
+**Commit Message**: Revert "shard: a config update the index accepted is written to its mapping record"
+
+This reverts commit 78cc22636f92e3afe3ae888636c3c96ab6541ed4.
+
+**File**: `adapters/repos/db/shard.go` (modified, +2/-29)
+```diff
+@@ -535,34 +535,10 @@ func (s *Shard) UpdateVectorIndexConfig(ctx context.Context, updated schemaConfi
+ 	// collection that dropped its last vector carries an inert legacy config in
+ 	// the schema, but its shards were built without a legacy index and there is
+ 	// nothing to reconfigure.
+-	found, err := s.WithVectorIndex("", func(index VectorIndex) error {
++	_, err := s.WithVectorIndex("", func(index VectorIndex) error {
+ 		return index.UpdateUserConfig(updated, noopCallback)
+ 	})
+-	if err != nil || !found {
+-		return err
+-	}
+-	return s.recordAdoptedVectorIndexConfig("", updated)
+-}
+-
+-// recordAdoptedVectorIndexConfig writes the config the index of targetVector
+-// just accepted into its mapping record, so the record never says a config
+-// the index is not running with. A vector without a record, a skipped one,
+-// has nothing to record. This is the bridge that keeps the records correct
+-// while the schema still pushes config into loaded shards directly; it goes
+-// when that push does.
+-func (s *Shard) recordAdoptedVectorIndexConfig(targetVector string, cfg schemaConfig.VectorIndexConfig) error {
+-	rec, ok, err := s.mapping.Get(targetVector)
+-	if err != nil {
+-		return err
+-	}
+-	if !ok {
+-		return nil
+-	}
+-	rec, changed := rec.adopted(cfg)
+-	if !changed {
+-		return nil
+-	}
+-	return s.mapping.Put(targetVector, rec)
++	return err
+ }
+ 
+ func (s *Shard) UpdateVectorIndexConfigs(ctx context.Context, updated map[string]schemaConfig.VectorIndexConfig) error {
+@@ -590,9 +566,6 @@ func (s *Shard) UpdateVectorIndexConfigs(ctx context.Context, updated map[string
+ 			if err != nil {
+ 				break
+ 			}
+-			if err = s.recordAdoptedVectorIndexConfig(targetVector, targetCfg); err != nil {
+-				break
+-			}
+ 		} else {
+ 			// dont lazy load segments on config update
+ 			if err = s.initTargetVector(ctx, targetVector, targetCfg, false); err != nil {
+```
+
+**File**: `adapters/repos/db/shard_update_vector_config_test.go` (removed, +0/-89)
+```diff
+@@ -1,89 +0,0 @@
+-//                           _       _
+-// __      _____  __ ___   ___  __ _| |_ ___
+-// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
+-//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
+-//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
+-//
+-//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
+-//
+-//  CONTACT: hello@weaviate.io
+-//
+-
+-package db
+-
+-import (
+-	"context"
+-	"testing"
+-
+-	"github.com/stretchr/testify/assert"
+-	"github.com/stretchr/testify/require"
+-
+-	"github.com/weaviate/weaviate/entities/models"
+-	schemaConfig "github.com/weaviate/weaviate/entities/schema/config"
+-	enthnsw "github.com/weaviate/weaviate/entities/vectorindex/hnsw"
+-)
+-
+-// A config update that the index accepted is written to the vector's mapping
+-// record, so the record says what the index runs with. One the index refused
+-// leaves the record as it was.
+-func TestUpdateVectorIndexConfigs_RecordsTheAdoptedConfig(t *testing.T) {
+-	ctx := context.Background()
+-	legacy := enthnsw.NewDefaultUserConfig()
+-	foo := enthnsw.NewDefaultUserConfig()
+-	foo.RQ.Enabled = true
+-	foo.RQ.Bits = 8
+-	class := &models.Class{Class: "AdoptedConfig", VectorConfig: map[string]models.VectorConfig{
+-		"foo": {VectorIndexType: foo.IndexType(), VectorIndexConfig: foo},
+-	}}
+-	shardLike, _ := testShardWithSettings(t, ctx, class, legacy, false, false, func(i *Index) {
+-		i.vectorIndexUserConfigs = map[string]schemaConfig.VectorIndexConfig{"foo": foo}
+-	})
+-	shard := underlyingShard(t, shardLike)
+-
+-	// the first load recorded the config each index was built with
+-	assert.Equal(t, recorded(shard, "foo", "vectors_foo", "ready"), mustRecord(t, shard, "foo"))
+-	assert.Equal(t, recorded(shard, "", "main", "ready"), mustRecord(t, shard, ""))
+-
+-	// a named vector's update, accepted: the record follows
+-	updated := foo
+-	updated.EF = 200
+-	require.NoError(t, shard.UpdateVectorIndexConfigs(ctx, map[string]schemaConfig.VectorIndexConfig{"foo": updated}))
+-	rec := mustRecord(t, shard, "foo")
+-	assert.Equal(t, updated, rec.Config)
+-	assert.Equal(t, "vectors_foo", rec.QueueID)
+-	assert.Equal(t, "ready", rec.State)
+-
+-	// the legacy vector's update, accepted: the record follows
+-	legacyUpdated := legacy
+-	legacyUpdated.EF = 300
+-	require.NoError(t, shard.UpdateVectorIndexConfig(ctx, legacyUpdated))
+-	assert.Equal(t, legacyUpdated, mustRecord(t, shard, "").Config)
+-
+-	// refused by the index: nothing is recorded
+-	refused := updated
+-	refused.RQ.Bits = 1
+-	err := shard.UpdateVectorIndexConfigs(ctx, map[string]schemaConfig.VectorIndexConfig{"foo": refused})
+-	require.ErrorContains(t, err, "rq bits is immutable")
+-	assert.Equal(t, updated, mustRecord(t, shard, "foo").Config, "a refused config is not the index's config")
+-
+-	// the same config again writes nothing new
+-	require.NoError(t, shard.UpdateVectorIndexConfigs(ctx, map[string]schemaConfig.VectorIndexConfig{"foo": updated}))
+-	assert.Equal(t, updated, mustRecord(t, shard, "foo").Config)
+-
+-	// a skipped vector added by an update owns no record to write to
+-	require.NoError(t, shard.UpdateVectorIndexConfigs(ctx, map[string]schemaConfig.VectorIndexConfig{
+-		"skipped": enthnsw.UserConfig{Skip: true},
+-	}))
+-	_, ok, err := shard.mapping.Get("skipped")
+-	require.NoError(t, err)
+-	assert.False(t, ok)
+-}
+-
+-// mustRecord is name's mapping record, which must exist.
+-func mustRecord(t *testing.T, shard *Shard, name string) vectorIndexRecord {
+-	t.Helper()
+-	rec, ok, err := shard.mapping.Get(name)
+-	require.NoError(t, err)
+-	require.True(t, ok, "no record for %q", name)
+-	return rec
+-}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #13434** (2026-10-05): Gate wl/ code behind a license decision made outside wl/ (@jeroiraz)
-- **PR #13430** (2026-10-05): Merge stable/v1.40 into main (@antas-marcin)
-- **PR #13420** (2026-10-05): Merge stable/v1.39 into stable/v1.40 (@antas-marcin)
-- **PR #13419** (2026-10-05): prepare release v1.39.9 (@antas-marcin)
-- **PR #13418** (2026-10-05): Merge stable/v1.38 into stable/v1.39 (@antas-marcin)
-- **PR #13417** (2026-10-05): Merge stable/v1.38 into stable/v1.39 (@antas-marcin)
-- **PR #13411** (2026-10-05): Exclude main from auto-generation to avoid write strings of go code to files to get around it (@tsmith023)
-- **PR #13403** (2026-10-05): fix(modules): read a fractional json.Number in float module settings (@jfrancoa)
+- **PR #13556** (2026-10-16): Retry user creation on any 422 in the Python namespace test setup (@dirkkul)
+- **PR #13555** (2026-10-16): perf(lsmkv): compare keys once per tree level and drop a flatten allocation (@aliszka)
+- **PR #13554** (2026-10-16): perf(inverted): build batched Contains keys once per filter value (@aliszka)
+- **PR #13552** (2026-10-16): perf(lsmkv): stop timing segment reads whose duration is never recorded (@aliszka)
+- **PR #13551** (2026-10-16): perf(lsmkv): compare NotFound and Deleted directly before errors.Is (@aliszka)
+- **PR #13549** (2026-10-16): Keep the vector_index_tombstones gauge equal to the tombstone count (@dirkkul)
 
 ---
 
@@ -6367,3 +2567,42 @@ fix(object-ttl): keep an aborted deletion's slot reserved until it finishes
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. Test that unflushed writes of a suspended namespace survive a crash
+
+**RULE**:
+When implementing operations in `adapters/repos/db/backup_integration_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in weaviate/weaviate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `9cd62c1f`: Test that unflushed writes of a suspended namespace survive a crash. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `adapters/repos/db/backup_integration_test.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+	"github.com/weaviate/weaviate/usecases/namespaces"
+	return setupTestDBWithShardState(t, rootDir, singleShardState(), override, nil, classes...)
+// override, when non-nil, adjusts the Config before the DB is created. exister
+// answers the namespace of a <ns>:<Class> name, and may be nil without one.
+	override func(*Config), exister namespaces.Exister, classes ...*models.Class,
+		mockNodeSelector, mockSchemaReader, mockReplicationFSMReader, exister)
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+	return setupTestDBWithShardState(t, rootDir, singleShardState(), override, classes...)
+// override, when non-nil, adjusts the Config before the DB is created.
+	override func(*Config), classes ...*models.Class,
+		mockNodeSelector, mockSchemaReader, mockReplicationFSMReader, nil)
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `9cd62c1f` are properly handled with clean fallback behavior.
