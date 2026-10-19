@@ -375,8 +375,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo",
     "sourceVersion": "hf-qwen-qwen-image-2.1-turbo",
     "license": "Open-Source",
-    "contentHash": "28e860ef6a74379dc9bfa5f3bb067d179a6fa3f803970398699b48e831539b8a",
-    "lastHarvestedAt": "2026-10-17T22:50:45.294Z",
+    "contentHash": "da244fa3713ac70a29afdc7755076c3a10ef8bf27a8930d633e6055904fb9178",
+    "lastHarvestedAt": "2026-10-19T03:47:23.025Z",
     "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo"
   },
   "hf-xingchen-agi-xing4.0-29b-a4b": {
@@ -5428,5 +5428,55 @@
     "contentHash": "38c77d50db1a3025e719f1a2cd2753a0d5fa92bfd41db87862c77758e75dfeb9",
     "lastHarvestedAt": "2026-10-19T03:39:26.951Z",
     "learningId": "learn-github-ydb-platform-ydb"
+  },
+  "arco-design-arco-design-vue": {
+    "repository": "arco-design/arco-design-vue",
+    "platform": "github",
+    "sourceUrl": "https://github.com/arco-design/arco-design-vue",
+    "sourceVersion": "ee158dd7",
+    "license": "MIT",
+    "contentHash": "f2bbd8814c0577ae66e6f790ddb97c00685dcf2947316315ce928d3a5cd7d98a",
+    "lastHarvestedAt": "2026-10-19T03:47:22.991Z",
+    "learningId": "learn-github-arco-design-arco-design-vue"
+  },
+  "telemt-telemt": {
+    "repository": "telemt/telemt",
+    "platform": "github",
+    "sourceUrl": "https://github.com/telemt/telemt",
+    "sourceVersion": "9d5b896b",
+    "license": "NOASSERTION",
+    "contentHash": "ef26eb7b070052c4d4f9a98d8907242fe5fbf6ac24f52471e01268c02467cebb",
+    "lastHarvestedAt": "2026-10-19T03:47:24.258Z",
+    "learningId": "learn-github-telemt-telemt"
+  },
+  "react-native-modal-react-native-modal": {
+    "repository": "react-native-modal/react-native-modal",
+    "platform": "github",
+    "sourceUrl": "https://github.com/react-native-modal/react-native-modal",
+    "sourceVersion": "3e413c4c",
+    "license": "MIT",
+    "contentHash": "f2ba2dc259459c82b8b2352a315d6525225bfb1f65dbc07caf30c0deb825ea20",
+    "lastHarvestedAt": "2026-10-19T03:47:28.921Z",
+    "learningId": "learn-github-react-native-modal-react-native-modal"
+  },
+  "octodns-octodns": {
+    "repository": "octodns/octodns",
+    "platform": "github",
+    "sourceUrl": "https://github.com/octodns/octodns",
+    "sourceVersion": "89bd5f2a",
+    "license": "MIT",
+    "contentHash": "9174c29dd8ca3e7bdd18ad1a76b1886ecd08f9e2879a7507e490ad7a6dba25a5",
+    "lastHarvestedAt": "2026-10-19T03:47:31.450Z",
+    "learningId": "learn-github-octodns-octodns"
+  },
+  "netflix-dynomite": {
+    "repository": "Netflix/dynomite",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Netflix/dynomite",
+    "sourceVersion": "2046b05e",
+    "license": "Apache-2.0",
+    "contentHash": "5b75bdb88e944276f87c81af024889c355a55ded7f36913a439252aaf5d72359",
+    "lastHarvestedAt": "2026-10-19T03:47:36.147Z",
+    "learningId": "learn-github-netflix-dynomite"
   }
 }

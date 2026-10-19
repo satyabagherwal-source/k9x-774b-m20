@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T03:39:26.913Z",
-  "total_verified_learnings": 563,
+  "last_updated": "2026-10-19T03:47:36.101Z",
+  "total_verified_learnings": 567,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -19422,7 +19422,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo",
       "source_version": "hf-qwen-qwen-image-2.1-turbo",
-      "content_hash": "28e860ef6a74379dc9bfa5f3bb067d179a6fa3f803970398699b48e831539b8a",
+      "content_hash": "da244fa3713ac70a29afdc7755076c3a10ef8bf27a8930d633e6055904fb9178",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-turbo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-turbo-learnings.md",
       "promoted_rules": [
@@ -19493,7 +19493,7 @@
         "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv455o5m",
         "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv4if4tl"
       ],
-      "verified_at": "2026-10-17T22:50:45.248Z",
+      "verified_at": "2026-10-19T03:47:22.970Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -28634,22 +28634,35 @@
     "learn-github-netflix-dynomite": {
       "learning_id": "learn-github-netflix-dynomite",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "netflix-dynomite",
+      "source": "Netflix/dynomite",
+      "repository": "Netflix/dynomite",
       "slug": "netflix-dynomite",
       "platform": "github",
       "source_url": "https://github.com/Netflix/dynomite",
-      "source_version": "HEAD",
-      "content_hash": "b7849abba86c0dc98e3c6b2afdb639ffb4fd195c5ab78dc6a4fe37b4fa0a4e8a",
+      "source_version": "2046b05e",
+      "content_hash": "5b75bdb88e944276f87c81af024889c355a55ded7f36913a439252aaf5d72359",
       "dossier_path": "07_PROJECT_LEARNING/netflix-dynomite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/netflix-dynomite-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2089,
+          "title": "Merge pull request #809 from Netflix/fix/large-payload-crash",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.603Z"
+      "verified_at": "2026-10-19T03:47:36.092Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-neuml-txtai": {
       "learning_id": "learn-github-neuml-txtai",
@@ -29505,22 +29518,35 @@
     "learn-github-octodns-octodns": {
       "learning_id": "learn-github-octodns-octodns",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "octodns-octodns",
+      "source": "octodns/octodns",
+      "repository": "octodns/octodns",
       "slug": "octodns-octodns",
       "platform": "github",
       "source_url": "https://github.com/octodns/octodns",
-      "source_version": "HEAD",
-      "content_hash": "2bea0c7383a4f433e6baba8530708db90941a3ec573ffb6deef99fa09e755b76",
+      "source_version": "89bd5f2a",
+      "content_hash": "9174c29dd8ca3e7bdd18ad1a76b1886ecd08f9e2879a7507e490ad7a6dba25a5",
       "dossier_path": "07_PROJECT_LEARNING/octodns-octodns-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/octodns-octodns-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2088,
+          "title": "Merge pull request #1466 from octodns/clarify-changelog-guidance",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.748Z"
+      "verified_at": "2026-10-19T03:47:31.395Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-okteto-okteto": {
       "learning_id": "learn-github-okteto-okteto",
@@ -32307,22 +32333,35 @@
     "learn-github-react-native-modal-react-native-modal": {
       "learning_id": "learn-github-react-native-modal-react-native-modal",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "react-native-modal-react-native-modal",
+      "source": "react-native-modal/react-native-modal",
+      "repository": "react-native-modal/react-native-modal",
       "slug": "react-native-modal-react-native-modal",
       "platform": "github",
       "source_url": "https://github.com/react-native-modal/react-native-modal",
-      "source_version": "HEAD",
-      "content_hash": "0f71f4dd378ee56d4f45c6a1cec39643d346390fe6d8d5b9d34a8f958cde43d4",
+      "source_version": "3e413c4c",
+      "content_hash": "f2ba2dc259459c82b8b2352a315d6525225bfb1f65dbc07caf30c0deb825ea20",
       "dossier_path": "07_PROJECT_LEARNING/react-native-modal-react-native-modal-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-native-modal-react-native-modal-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2087,
+          "title": "back-handler",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.215Z"
+      "verified_at": "2026-10-19T03:47:28.867Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-react-native-webrtc-react-native-webrtc": {
       "learning_id": "learn-github-react-native-webrtc-react-native-webrtc",
@@ -36516,22 +36555,35 @@
     "learn-github-telemt-telemt": {
       "learning_id": "learn-github-telemt-telemt",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "telemt-telemt",
+      "source": "telemt/telemt",
+      "repository": "telemt/telemt",
       "slug": "telemt-telemt",
       "platform": "github",
       "source_url": "https://github.com/telemt/telemt",
-      "source_version": "HEAD",
-      "content_hash": "8c28b364303504024ed59817ff6f5e190c91ff4c4e113e8558739ccb9321d19b",
+      "source_version": "9d5b896b",
+      "content_hash": "ef26eb7b070052c4d4f9a98d8907242fe5fbf6ac24f52471e01268c02467cebb",
       "dossier_path": "07_PROJECT_LEARNING/telemt-telemt-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/telemt-telemt-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2086,
+          "title": "Bridge JS semicolon warnings fixed",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.898Z"
+      "verified_at": "2026-10-19T03:47:24.204Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-temporalio-temporal": {
       "learning_id": "learn-github-temporalio-temporal",
@@ -75657,6 +75709,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T03:39:26.905Z"
+    },
+    "rule-2086": {
+      "learning_id": "rule-2086",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2086,
+      "title": "Bridge JS semicolon warnings fixed",
+      "source_url": "https://github.com/telemt/telemt",
+      "source_version": "9d5b896b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:47:24.204Z"
+    },
+    "rule-2087": {
+      "learning_id": "rule-2087",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2087,
+      "title": "back-handler",
+      "source_url": "https://github.com/react-native-modal/react-native-modal",
+      "source_version": "3e413c4c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:47:28.867Z"
+    },
+    "rule-2088": {
+      "learning_id": "rule-2088",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2088,
+      "title": "Merge pull request #1466 from octodns/clarify-changelog-guidance",
+      "source_url": "https://github.com/octodns/octodns",
+      "source_version": "89bd5f2a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:47:31.395Z"
+    },
+    "rule-2089": {
+      "learning_id": "rule-2089",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2089,
+      "title": "Merge pull request #809 from Netflix/fix/large-payload-crash",
+      "source_url": "https://github.com/Netflix/dynomite",
+      "source_version": "2046b05e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:47:36.092Z"
     }
   },
   "aliases": {

@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261018-87SN",
-    "timestamp": "2026-10-18T00:29:05.015Z",
-    "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
-    "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
-    "contentHash": "e9c6de91198110f0d84cfc7a5650e2cb1213758162817a9fc6ed846249beb5df",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-C1DO",
-    "timestamp": "2026-10-18T00:32:03.324Z",
-    "repository": "canberkkkkkk/ema-lightning",
-    "learningId": "learn-huggingface-canberkkkkkk-ema-lightning",
-    "contentHash": "090fe1e27d31fa1913f22754bc5ad9185df404de4da2902beb6abaf58df83ce5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-GAQ7",
-    "timestamp": "2026-10-18T00:35:22.063Z",
-    "repository": "google/embeddinggemma-2",
-    "learningId": "learn-huggingface-google-embeddinggemma-2",
-    "contentHash": "7c72724cae876ee738c491a9b00daca129adcfb4c9675bb994c6e1969091ae33",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-KH9B",
-    "timestamp": "2026-10-18T00:38:37.151Z",
-    "repository": "unsloth/embeddinggemma-2-GGUF",
-    "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
-    "contentHash": "fb270749794e22cca4918e128c80c340af08944a2e3c2915e4710f90b8cd48d3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-PL5E",
-    "timestamp": "2026-10-18T00:42:35.474Z",
-    "repository": "Cloudflare/clef",
-    "learningId": "learn-huggingface-cloudflare-clef",
-    "contentHash": "81f630351dd6f162406ed19908ce33335230ae90ceeacfd05eaadbf5b4b63a43",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-WUIM",
-    "timestamp": "2026-10-18T00:48:14.206Z",
-    "repository": "Cloudflare/clef-flash",
-    "learningId": "learn-huggingface-cloudflare-clef-flash",
-    "contentHash": "835ab192b4dee9b5740689bec6c44afe364f4a283107291f3db6d80c6cf09813",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261018-17SV",
     "timestamp": "2026-10-18T00:51:38.047Z",
     "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
@@ -7490,6 +7400,96 @@
     "repository": "ydb-platform/ydb",
     "learningId": "learn-github-ydb-platform-ydb",
     "contentHash": "38c77d50db1a3025e719f1a2cd2753a0d5fa92bfd41db87862c77758e75dfeb9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-R2ZR",
+    "timestamp": "2026-10-19T03:47:22.983Z",
+    "repository": "arco-design/arco-design-vue",
+    "learningId": "learn-github-arco-design-arco-design-vue",
+    "contentHash": "f2bbd8814c0577ae66e6f790ddb97c00685dcf2947316315ce928d3a5cd7d98a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-R30U",
+    "timestamp": "2026-10-19T03:47:23.022Z",
+    "repository": "Qwen/Qwen-Image-2.1-Turbo",
+    "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo",
+    "contentHash": "da244fa3713ac70a29afdc7755076c3a10ef8bf27a8930d633e6055904fb9178",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-R3YZ",
+    "timestamp": "2026-10-19T03:47:24.251Z",
+    "repository": "telemt/telemt",
+    "learningId": "learn-github-telemt-telemt",
+    "contentHash": "ef26eb7b070052c4d4f9a98d8907242fe5fbf6ac24f52471e01268c02467cebb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-R7KI",
+    "timestamp": "2026-10-19T03:47:28.914Z",
+    "repository": "react-native-modal/react-native-modal",
+    "learningId": "learn-github-react-native-modal-react-native-modal",
+    "contentHash": "f2ba2dc259459c82b8b2352a315d6525225bfb1f65dbc07caf30c0deb825ea20",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-R9IR",
+    "timestamp": "2026-10-19T03:47:31.443Z",
+    "repository": "octodns/octodns",
+    "learningId": "learn-github-octodns-octodns",
+    "contentHash": "9174c29dd8ca3e7bdd18ad1a76b1886ecd08f9e2879a7507e490ad7a6dba25a5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-RD58",
+    "timestamp": "2026-10-19T03:47:36.140Z",
+    "repository": "Netflix/dynomite",
+    "learningId": "learn-github-netflix-dynomite",
+    "contentHash": "5b75bdb88e944276f87c81af024889c355a55ded7f36913a439252aaf5d72359",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T03:39:26.957Z",
+  "last_updated": "2026-10-19T03:47:36.153Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1817,14 +1817,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen-image-2-1-turbo",
-      "content_hash": "28e860ef6a74379dc9bfa5f3bb067d179a6fa3f803970398699b48e831539b8a",
-      "verified_at": "2026-10-17T22:50:45.297Z",
+      "content_hash": "da244fa3713ac70a29afdc7755076c3a10ef8bf27a8930d633e6055904fb9178",
+      "verified_at": "2026-10-19T03:47:23.030Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T22:50:45.297Z"
+      "last_updated": "2026-10-19T03:47:23.030Z"
     },
     "Phocinae/Phocinae-Largha-150M-v1": {
       "repository": "Phocinae/Phocinae-Largha-150M-v1",
@@ -8257,6 +8257,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T03:39:26.956Z"
+    },
+    "arco-design/arco-design-vue": {
+      "repository": "arco-design/arco-design-vue",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-arco-design-arco-design-vue",
+      "content_hash": "f2bbd8814c0577ae66e6f790ddb97c00685dcf2947316315ce928d3a5cd7d98a",
+      "verified_at": "2026-10-19T03:47:22.996Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T03:47:22.996Z"
+    },
+    "telemt/telemt": {
+      "repository": "telemt/telemt",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-telemt-telemt",
+      "content_hash": "ef26eb7b070052c4d4f9a98d8907242fe5fbf6ac24f52471e01268c02467cebb",
+      "verified_at": "2026-10-19T03:47:24.263Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T03:47:24.263Z"
+    },
+    "react-native-modal/react-native-modal": {
+      "repository": "react-native-modal/react-native-modal",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-react-native-modal-react-native-modal",
+      "content_hash": "f2ba2dc259459c82b8b2352a315d6525225bfb1f65dbc07caf30c0deb825ea20",
+      "verified_at": "2026-10-19T03:47:28.926Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T03:47:28.926Z"
+    },
+    "octodns/octodns": {
+      "repository": "octodns/octodns",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-octodns-octodns",
+      "content_hash": "9174c29dd8ca3e7bdd18ad1a76b1886ecd08f9e2879a7507e490ad7a6dba25a5",
+      "verified_at": "2026-10-19T03:47:31.456Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T03:47:31.456Z"
+    },
+    "Netflix/dynomite": {
+      "repository": "Netflix/dynomite",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-netflix-dynomite",
+      "content_hash": "5b75bdb88e944276f87c81af024889c355a55ded7f36913a439252aaf5d72359",
+      "verified_at": "2026-10-19T03:47:36.153Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T03:47:36.153Z"
     }
   },
   "repos": {
