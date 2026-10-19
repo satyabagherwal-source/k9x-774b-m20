@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T08:42:31.542Z",
-  "total_verified_learnings": 751,
+  "last_updated": "2026-10-19T08:50:22.114Z",
+  "total_verified_learnings": 755,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -17382,7 +17382,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google-t5/t5-small",
       "source_version": "hf-google-t5-t5-small",
-      "content_hash": "9eedf2e48afe1304cbab3be6a5912df84647a7996369255cd0d8c8fd9a04d52a",
+      "content_hash": "f265bae85e0b1475d54cf863b67e3a956b56d99b9403124a0019073c219968f1",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md",
       "promoted_rules": [
@@ -17394,6 +17394,16 @@
         {
           "number": 1408,
           "title": "Relative Attention Position Bias Logarithmic Clamping Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2442,
+          "title": "Disjoint Sentinel Reservation Invariant in Unified Autoregressive Vocabularies",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2443,
+          "title": "Relative Position Logarithmic Bucketing Boundary Invariant",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -17415,7 +17425,7 @@
         "learn-huggingface-hf-google-t5-t5-small-mv498vvv",
         "learn-huggingface-hf-google-t5-t5-small-mv4mm4dm"
       ],
-      "verified_at": "2026-10-18T01:11:39.021Z",
+      "verified_at": "2026-10-19T08:49:48.430Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25690,22 +25700,40 @@
     "learn-github-killercup-cargo-edit": {
       "learning_id": "learn-github-killercup-cargo-edit",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "killercup-cargo-edit",
+      "source": "killercup/cargo-edit",
+      "repository": "killercup/cargo-edit",
       "slug": "killercup-cargo-edit",
       "platform": "github",
       "source_url": "https://github.com/killercup/cargo-edit",
-      "source_version": "HEAD",
-      "content_hash": "d883bd1816c0c52d8e90e7bb6edf18a73dfffa19a02a715f27c5caeee0527c44",
+      "source_version": "138d4e29",
+      "content_hash": "7151778c49b0ec2fd4d94fb36d1f6995126e964527099dbac6629e6cd51b8c35",
       "dossier_path": "07_PROJECT_LEARNING/killercup-cargo-edit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/killercup-cargo-edit-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2444,
+          "title": "Fallback Degradation Prohibition for Downstream-Impacting Invariants",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2445,
+          "title": "State-Aware Progressive Diagnostic Guidance Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.803Z"
+      "verified_at": "2026-10-19T08:50:22.108Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-kitlangton-hex": {
       "learning_id": "learn-github-kitlangton-hex",
@@ -36831,22 +36859,35 @@
     "learn-github-siderolabs-talos": {
       "learning_id": "learn-github-siderolabs-talos",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "siderolabs-talos",
+      "source": "siderolabs/talos",
+      "repository": "siderolabs/talos",
       "slug": "siderolabs-talos",
       "platform": "github",
       "source_url": "https://github.com/siderolabs/talos",
-      "source_version": "HEAD",
-      "content_hash": "ea32ec8182d560fe34b00fe3b9e69e4bf03c288cc427f2e261844eef70ab7405",
+      "source_version": "d21101a9",
+      "content_hash": "565f9b2d44a29f5456afecfc3d814636beb8a9a1e53da299c62475ecea34251b",
       "dossier_path": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2440,
+          "title": "test: bound NUMA reconciliation triggers by suite lifetime",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.507Z"
+      "verified_at": "2026-10-19T08:48:55.278Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-signerlabs-klee": {
       "learning_id": "learn-github-signerlabs-klee",
@@ -40656,22 +40697,35 @@
     "learn-github-tw93-mole": {
       "learning_id": "learn-github-tw93-mole",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "tw93-mole",
+      "source": "tw93/Mole",
+      "repository": "tw93/Mole",
       "slug": "tw93-mole",
       "platform": "github",
       "source_url": "https://github.com/tw93/Mole",
-      "source_version": "HEAD",
-      "content_hash": "beffb6e1a0435973902f05219e6cdd6f856d39cb8f8623ff817452606bdf7084",
+      "source_version": "a6be7507",
+      "content_hash": "44a14631ccbe434e5e4708043167718615e0244740840161e6cf6012f333597f",
       "dossier_path": "07_PROJECT_LEARNING/tw93-mole-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tw93-mole-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2439,
+          "title": "block macOS e2e actions after prerequisite failure",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.114Z"
+      "verified_at": "2026-10-19T08:48:52.777Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-twostraws-controlroom": {
       "learning_id": "learn-github-twostraws-controlroom",
@@ -43275,22 +43329,35 @@
     "learn-github-zilliztech-claude-context": {
       "learning_id": "learn-github-zilliztech-claude-context",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "zilliztech-claude-context",
+      "source": "zilliztech/claude-context",
+      "repository": "zilliztech/claude-context",
       "slug": "zilliztech-claude-context",
       "platform": "github",
       "source_url": "https://github.com/zilliztech/claude-context",
-      "source_version": "HEAD",
-      "content_hash": "2edf4e8826ff7a7b2dda3f40a2d61255f8b0b4b0248712c8e04d3e3bf3b2de07",
+      "source_version": "6fc318b4",
+      "content_hash": "c76fe0b1a5d7c991cba6ba172af2eb6338add2f432147fa0b40f8bd72d4cbe27",
       "dossier_path": "07_PROJECT_LEARNING/zilliztech-claude-context-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zilliztech-claude-context-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2441,
+          "title": "core): support gitignore negation patterns",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.549Z"
+      "verified_at": "2026-10-19T08:49:00.321Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-zilliztech-deep-searcher": {
       "learning_id": "learn-github-zilliztech-deep-searcher",
@@ -83939,6 +84006,104 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T08:42:31.534Z"
+    },
+    "rule-2439": {
+      "learning_id": "rule-2439",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2439,
+      "title": "block macOS e2e actions after prerequisite failure",
+      "source_url": "https://github.com/tw93/Mole",
+      "source_version": "a6be7507",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:48:52.777Z"
+    },
+    "rule-2440": {
+      "learning_id": "rule-2440",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2440,
+      "title": "test: bound NUMA reconciliation triggers by suite lifetime",
+      "source_url": "https://github.com/siderolabs/talos",
+      "source_version": "d21101a9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:48:55.278Z"
+    },
+    "rule-2441": {
+      "learning_id": "rule-2441",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2441,
+      "title": "core): support gitignore negation patterns",
+      "source_url": "https://github.com/zilliztech/claude-context",
+      "source_version": "6fc318b4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:49:00.321Z"
+    },
+    "rule-2442": {
+      "learning_id": "rule-2442",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2442,
+      "title": "Disjoint Sentinel Reservation Invariant in Unified Autoregressive Vocabularies",
+      "source_url": "https://huggingface.co/google-t5/t5-small",
+      "source_version": "hf-google-t5-t5-small",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:49:48.430Z"
+    },
+    "rule-2443": {
+      "learning_id": "rule-2443",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2443,
+      "title": "Relative Position Logarithmic Bucketing Boundary Invariant",
+      "source_url": "https://huggingface.co/google-t5/t5-small",
+      "source_version": "hf-google-t5-t5-small",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:49:48.430Z"
+    },
+    "rule-2444": {
+      "learning_id": "rule-2444",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2444,
+      "title": "Fallback Degradation Prohibition for Downstream-Impacting Invariants",
+      "source_url": "https://github.com/killercup/cargo-edit",
+      "source_version": "138d4e29",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:50:22.108Z"
+    },
+    "rule-2445": {
+      "learning_id": "rule-2445",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2445,
+      "title": "State-Aware Progressive Diagnostic Guidance Invariant",
+      "source_url": "https://github.com/killercup/cargo-edit",
+      "source_version": "138d4e29",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:50:22.108Z"
     }
   },
   "aliases": {

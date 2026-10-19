@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T08:42:31.585Z",
-  "total_cycles_completed": 3079,
-  "total_learnings_persisted": 3079,
-  "total_rules_promoted": 2225,
+  "last_updated": "2026-10-19T08:50:22.149Z",
+  "total_cycles_completed": 3084,
+  "total_learnings_persisted": 3084,
+  "total_rules_promoted": 2232,
   "history": [
-    {
-      "timestamp": "2026-10-19T04:27:56.559Z",
-      "repository": "NVIDIA/cuda-rust",
-      "learningId": "learn-github-nvidia-cuda-rust",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T04:33:58.155Z",
-      "repository": "typestack/routing-controllers",
-      "learningId": "learn-github-typestack-routing-controllers",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T04:33:58.460Z",
-      "repository": "fastino/GLiNER2.5-Decide",
-      "learningId": "learn-huggingface-fastino-gliner2-5-decide",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T04:33:59.561Z",
-      "repository": "ntex-rs/ntex",
-      "learningId": "learn-github-ntex-rs-ntex",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T04:34:04.975Z",
-      "repository": "learnapollo/learnapollo",
-      "learningId": "learn-github-learnapollo-learnapollo",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T04:34:07.480Z",
       "repository": "someengineering/fixinventory",
@@ -1403,6 +1368,41 @@
       "repository": "railwayapp/nixpacks",
       "learningId": "learn-github-railwayapp-nixpacks",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T08:48:52.812Z",
+      "repository": "tw93/Mole",
+      "learningId": "learn-github-tw93-mole",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T08:48:55.314Z",
+      "repository": "siderolabs/talos",
+      "learningId": "learn-github-siderolabs-talos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T08:49:00.357Z",
+      "repository": "zilliztech/claude-context",
+      "learningId": "learn-github-zilliztech-claude-context",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T08:49:48.464Z",
+      "repository": "google-t5/t5-small",
+      "learningId": "learn-huggingface-google-t5-t5-small",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T08:50:22.149Z",
+      "repository": "killercup/cargo-edit",
+      "learningId": "learn-github-killercup-cargo-edit",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

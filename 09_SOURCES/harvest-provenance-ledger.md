@@ -3109,3 +3109,8 @@ Every entry in this ledger must capture:
 | `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `f2a5c72f` | Multi-dimensional audit evidence | 2026-10-19T08:41:04.242Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `08b6eada` | Multi-dimensional audit evidence | 2026-10-19T08:41:18.318Z |
 | `learn-github-railwayapp-nixpacks` | `https://github.com/railwayapp/nixpacks` | `144b4f9a` | Multi-dimensional audit evidence | 2026-10-19T08:42:31.583Z |
+| `learn-github-tw93-mole` | `https://github.com/tw93/Mole` | `a6be7507` | Multi-dimensional audit evidence | 2026-10-19T08:48:52.809Z |
+| `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `d21101a9` | Multi-dimensional audit evidence | 2026-10-19T08:48:55.311Z |
+| `learn-github-zilliztech-claude-context` | `https://github.com/zilliztech/claude-context` | `6fc318b4` | Multi-dimensional audit evidence | 2026-10-19T08:49:00.355Z |
+| `learn-huggingface-google-t5-t5-small` | `https://huggingface.co/google-t5/t5-small` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-19T08:49:48.462Z |
+| `learn-github-killercup-cargo-edit` | `https://github.com/killercup/cargo-edit` | `138d4e29` | Multi-dimensional audit evidence | 2026-10-19T08:50:22.146Z |

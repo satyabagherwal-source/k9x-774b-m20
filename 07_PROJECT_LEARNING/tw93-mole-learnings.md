@@ -1,19 +1,33 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tw93-mole-learnings.md`  
+> **Source**: github ([https://github.com/tw93/Mole](https://github.com/tw93/Mole))  
+> **Source Version**: `a6be7507`  
+> **License**: GPL-3.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T08:48:52.643Z  
+> **Learning ID**: `learn-github-tw93-mole`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): tw93/Mole
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tw93-mole-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tw93/Mole](https://github.com/tw93/Mole))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T04:22:30.346Z  
+> **Harvest Timestamp**: 2026-10-19T08:48:52.202Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `tw93/Mole`
-- **Description**: 🐹 Clean, uninstall, analyze, optimize, and monitor your Mac. Free open-source CLI, plus a native Mac app.
+- **Description**: 🐹 Keep your Mac and PC clean, light, and running like new. Fast open-source CLI, plus native Mac and Windows apps.
 - **Primary Language / Ecosystem**: Shell
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 69372 stars
+- **Stars / Engagement**: 71447 stars
 
 ---
 
@@ -58,7 +72,10 @@ import (
 // permission denials can be cached and still reads as partial.
 // v6: deletions invalidate ancestor totals and overview measurements.
 // v7: Library overview totals count cross-directory hardlinks once again.
-const cacheSchemaVersion = 7
+// v8: APFS clones that share every block count once, so v7 totals can be inflated.
+// v9: mixed clone/hardlink groups deduplicate together; bounded lists use path ties.
+// v10: shortened directory listings must refresh before they are browsed.
+const cacheSchemaVersion = 10
 
 type overviewSizeSnapshot struct {
 	Size          int64     `json:"size"`
@@ -337,13 +354,7 @@ type resolvedCacheDir struct {
 	err  error
 }
 
-var cachedAnalyzerDir atomic.Pointer[resolvedCacheDir]
-
-// getCacheDir is the analyzer-owned subdirectory. Keeping analyzer entries out
-// of the shared root is what lets the legacy sweep and the entry caps operate
-// on a directory whose every file the analyzer owns.
-//
-// The MkdirAll r
+var cachedAnalyzerDir atomic.Pointer[resolv
 ```
 
 ### Core Architecture Module: `cmd/analyze/cleanable.go`
@@ -495,6 +506,79 @@ var projectDependencyDirs = map[string]bool{
 
 ```
 
+### Core Architecture Module: `cmd/analyze/clone_darwin.go`
+```
+//go:build darwin
+
+package main
+
+import (
+	"encoding/binary"
+	"unsafe"
+
+	"golang.org/x/sys/unix"
+)
+
+// Extended common attributes (sys/attr.h). With FSOPT_ATTR_CMN_EXTENDED they
+// travel in the fork group of the attribute list, not in commonattr: asked for
+// there, the kernel quietly answers with the plain common attributes (text
+// encoding and creation time) and nothing says so.
+const (
+	attrCmnextCloneID  uint32 = 0x00000100
+	attrCmnextExtFlags uint32 = 0x00000200
+	efSharesAllBlocks  uint64 = 0x00000040
+)
+
+type attrList struct {
+	bitmapCount uint16
+	reserved    uint16
+	commonAttr  uint32
+	volAttr     uint32
+	dirAttr     uint32
+	fileAttr    uint32
+	forkAttr    uint32
+}
+
+// cloneIdentity reports an APFS file's clone id and whether it still shares
+// every block with another file. ok is false when the volume cannot say
+// (no clone tracking, a network share) or the path cannot be read, and the
+// caller then sizes the file the plain way.
+func cloneIdentity(path string) (cloneID uint64, sharesAll bool, ok bool) {
+	p, err := unix.BytePtrFromString(path)
+	if err != nil {
+		return 0, false, false
+	}
+	list := attrList{
+		bitmapCount: unix.ATTR_BIT_MAP_COUNT,
+		forkAttr:    attrCmnextCloneID | attrCmnextExtFlags,
+	}
+	// Reply: u32 length, then the clone id and the extended flags, both u64.
+	var buf [20]byte
+	_, _, errno := unix.Syscall6(unix.SYS_GETATTRLIST, //nolint:gosec,staticcheck // x/sys has no getattrlist wrapper; the buffers outlive the call
+		uintptr(unsafe.Pointer(p)), uintptr(unsafe.Pointer(&list)), //nolint:gosec // see above
+		uintptr(unsafe.Pointer(&buf[0])), uintptr(len(buf)), //nolint:gosec // see above
+		uintptr(unix.FSOPT_NOFOLLOW|unix.FSOPT_ATTR_CMN_EXTENDED), 0)
+	if errno != 0 || binary.LittleEndian.Uint32(buf[0:4]) < uint32(len(buf)) {
+		return 0, false, false
+	}
+	return binary.LittleEndian.Uint64(buf[4:12]), binary.LittleEndian.Uint64(buf[12:20])&efSharesAllBlocks != 0, true
+}
+
+```
+
+### Core Architecture Module: `cmd/analyze/clone_other.go`
+```
+//go:build !darwin
+
+package main
+
+// cloneIdentity has no answer off macOS; files are sized the plain way.
+func cloneIdentity(string) (cloneID uint64, sharesAll bool, ok bool) {
+	return 0, false, false
+}
+
+```
+
 ### Core Architecture Module: `cmd/analyze/constants.go`
 ```
 //go:build darwin
@@ -504,6 +588,7 @@ package main
 import "time"
 
 const (
+	// Bound cached and recursive summaries, not the browsed directory listing.
 	maxEntries    = 30
 	maxLargeFiles = 20
 	barWidth      = 24
@@ -520,7 +605,6 @@ const (
 	mdlsTimeout            = 5 * time.Second
 	maxConcurrentOverview  = 8
 	batchUpdateSize        = 100
-	cacheModTimeGrace      = 30 * time.Minute
 	staleCacheTTL          = 3 * 24 * time.Hour
 
 	// Analyzer cache admission and eviction budget. A subtree is only worth a
@@ -846,24 +930,29 @@ const trashTimeout = 30 * time.Second
 // Finder fallback.
 const trashBinary = "/usr/bin/trash"
 
-func deletePathCmd(path string, counter *int64) tea.Cmd {
+func deletePathCmd(path string, counter *int64, audit *deleteAudit) tea.Cmd {
 	return func() tea.Msg {
+		audit.begin()
 		count, err := trashPathWithProgress(path, counter)
+		audit.record(path, err)
+		audit.end()
 		return deleteProgressMsg{
-			done:  true,
-			err:   err,
-			count: count,
-			path:  path,
+			done:       true,
+			err:        err,
+			count:      count,
+			path:       path,
+			logWarning: audit.warning(),
 		}
 	}
 }
 
 // deleteMultiplePathsCmd moves paths to Trash and aggregates results.
-func deleteMultiplePathsCmd(paths []string, counter *int64) tea.Cmd {
+func deleteMultiplePathsCmd(paths []string, counter *int64, audit *deleteAudit) tea.Cmd {
 	return func() tea.Msg {
 		var totalCount int64
 		var errors []string
 		var removedPaths []string
+		audit.begin()
 
 		// Process deeper paths first to avoid parent/child conflicts.
 		pathsToDelete := append([]string(nil), paths...)
@@ -873,6 +962,7 @@ func deleteMultiplePathsCmd(paths []string, counter *int64) tea.Cmd {
 
 		for _, path := range pathsToDelete {
 			count, err := trashPathWithProgress(path, counter)
+			audit.record(path, err)
 			totalCount += count
 			if err != nil {
 				if os.IsNotExist(err) {
@@ -889,6 +979,7 @@ func deleteMultiplePathsCmd(paths []string, counter *int64) tea.Cmd {
 		if len(errors) > 0 {
 			resultErr = &multiDeleteError{errors: errors}
 		}
+		audit.end()
 
 		return deleteProgressMsg{
 			done:         true,
@@ -896,6 +987,7 @@ func deleteMultiplePathsCmd(paths []string, counter *int64) tea.Cmd {
 			count:        totalCount,
 			path:         "",
 			removedPaths: removedPaths,
+			logWarning:   audit.warning(),
 		}
 	}
 }
@@ -1144,13 +1236,7 @@ func isProtectedAnalyzeDeletePath(path string) bool {
 		return false
 	}
 
-	for _, homeRoot := range homeRoots {
-		if cleanPath == homeRoot || isSameExistingPath(cleanPath, homeRoot) {
-			return true
-		}
-
-		dockerDesktopState := filepath.Join(homeRoot, "Library", "Containers", "com.docker.docker")
-		if cleanPath == dockerDesktopState
+	for _, homeRoot := r
 ```
 
 ### Core Architecture Module: `cmd/analyze/format.go`
@@ -1461,6 +1547,15 @@ func measuredSizeLabel(size int64, state scanState) string {
 	return label
 }
 
+// sizeColumn fills the 10-column size field with the partial marker in its
+// own last column, so units line up whether or not a row is partial.
+func sizeColumn(label string) string {
+	if trimmed, partial := strings.CutSuffix(label, "+"); partial {
+		return fmt.Sprintf("%9s+", trimmed)
+	}
+	return fmt.Sprintf("%9s ", label)
+}
+
 func scanSummary(size int64, state scanState) string {
 	if state != scanComplete {
 		return "Partial scan · " + measuredSizeLabel(size, state)
@@ -1479,9 +1574,23 @@ package main
 // entryHeap is a min-heap of dirEntry used to keep Top N largest entries.
 type entryHeap []dirEntry
 
-func (h entryHeap) Len() int           { return len(h) }
-func (h entryHeap) Less(i, j int) bool { return h[i].Size < h[j].Size }
-func (h entryHeap) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
+// sizePathBefore is the ordering shared by selection and rendering.
+func sizePathBefore(size int64, path string, otherSize int64, otherPath string) bool {
+	if size != otherSize {
+		return size > otherSize
+	}
+	return path < otherPath
+}
+
+func (h entryHeap) Len() int { return len(h) }
+
+// The heap evicts its smallest item first. Equal sizes fall back to the path
+// (the later path goes first), so the surviving rows and their pop order do
+// not depend on which worker finished first.
+func (h entryHeap) Less(i, j int) bool {
+	return sizePathBefore(h[j].Size, h[j].Path, h[i].Size, h[i].Path)
+}
+func (h entryHeap) Swap(i, j int) { h[i], h[j] = h[j], h[i] }
 
 func (h *entryHeap) Push(x any) {
 	*h = append(*h, x.(dirEntry))
@@ -1498,9 +1607,11 @@ func (h *entryHeap) Pop() any {
 // largeFileHeap is a min-heap for fileEntry.
 type largeFileHeap []fileEntry
 
-func (h largeFileHeap) Len() int           { return len(h) }
-func (h largeFileHeap) Less(i, j int) bool { return h[i].Size < h[j].Size }
-func (h largeFileHeap) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
+func (h largeFileHeap) Len() int { return len(h) }
+func (h largeFileHeap) Less(i, j int) bool {
+	return sizePathBefore(h[j].Size, h[j].Path, h[i].Size, h[i].Path)
+}
+func (h largeFileHeap) Swap(i, j int) { h[i], h[j] = h[j], h[i] }
 
 func (h *largeFileHeap) Push(x any) {
 	*h = append(*h, x.(fileEntry))
@@ -1685,7 +1796,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"sort"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -1781,9 +1891,7 @@ func performOverviewScanForJSONWithEntries(path string, insightEntries, overview
 		entries = append(entries, entry)
 	}
 
-	sort.SliceStable(entries, func(i, j int) bool {
-		return entries[i].Size > entries[j].Size
-	})
+	sortDirEntriesBySize(entries)
 
 	return jsonOutput{
 		Path:       path,
@@ -1879,771 +1987,17 @@ func jsonFileEntriesFromFileEntries(files []fileEntry) []jsonFileEntry {
 
 ```
 
-### Core Architecture Module: `cmd/analyze/live_config.go`
-```
-//go:build darwin
-
-package main
-
-import (
-	"os"
-	"strings"
-)
-
-const liveSortModeEnv = "MOLE_ANALYZE_LIVE_SORT"
-
-func liveScanSortModeFromEnv() liveSortMode {
-	switch strings.ToLower(strings.TrimSpace(os.Getenv(liveSortModeEnv))) {
-	case "continuous":
-		return liveSortContinuous
-	default:
-		return liveSortFreezeOnMove
-	}
-}
-
-func nextLiveSortMode(mode liveSortMode) liveSortMode {
-	if mode == liveSortContinuous {
-		return liveSortFreezeOnMove
-	}
-	return liveSortContinuous
-}
-
-func liveSortModeLabel(mode liveSortMode) string {
-	if mode == liveSortFreezeOnMove {
-		return "freeze-on-move"
-	}
-	return "continuous"
-}
-
-```
-
-### Core Architecture Module: `cmd/analyze/live_scan.go`
-```
-//go:build darwin
-
-package main
-
-import (
-	"container/heap"
-	"context"
-	"errors"
-	"io/fs"
-	"os"
-	"path/filepath"
-	"slices"
-	"sort"
-	"sync"
-	"sync/atomic"
-	"time"
-
-	tea "github.com/charmbracelet/bubbletea"
-)
-
-var nextLiveScanID atomic.Int64
-
-type liveScanTargetKind int
-
-const (
-	liveScanTargetDirectory liveScanTargetKind = iota + 1
-	liveScanTargetFoldedDirectory
-	liveScanTargetHomeLibrary
-)
-
-type liveScanTarget struct {
-	name string
-	path string
-	kind liveScanTargetKind
-}
-
-// liveScanEventStream uses the scan publication boundary for event delivery.
-// Progress is lossy and may use only the non-reserved portion of the buffer;
-// one slot per target plus the final completion slot stays available.
-type liveScanEventStream struct {
-	publication   *scanPublication
-	events        chan liveScanEventMsg
-	requiredSlots int
-	closed        bool
-}
-
-func newLiveScanEventStream(publication *scanPublication, targetCount int) *liveScanEventStream {
-	return &liveScanEventStream{
-		publication:   publication,
-		events:        make(chan liveScanEventMsg, max(targetCount*4, 1)),
-		requiredSlots: targetCount + 1,
-	}
-}
-
-func (s *liveScanEventStream) cancel() {
-	s.publication.cancel()
-}
-
-func (s *liveScanEventStream) publish(msg liveScanEventMsg) {
-	_ = s.publication.commit(func() error {
-		if s.closed {
-			return nil
-		}
-		// Progress publication reserves enough capacity that every target can
-		// emit one result or failure and the coordinator can emit completion.
-		s.events <- msg
-		return nil
-	})
-}
-
-func (s *liveScanEventStream) publishProgress(msg liveScanEventMsg) {
-	_ = s.publication.commit(func() error {
-		if s.closed || len(s.events) >= cap(s.events)-s.requiredSlots {
-			return nil
-		}
-		s.events <- msg
-		return nil
-	})
-}
-
-func (s *liveScanEventStream) close() {
-	s.publication.finish(func() {
-		if s.closed {
-			return
-		}
-		s.closed = true
-		close(s.events)
-	})
-}
-
-func startLiveScanCmd(path string, filesScanned, dirsScanned, bytesScanned *int64, currentPath *atomic.Value) tea.Cmd {
-	return startLiveScanCmdWithPolicy(path, filesScanned, dirsScanned, bytesScanned, currentPath, scanCacheReuse)
-}
-
-func startLiveScanCmdWithPolicy(path string, filesScanned, dirsScanned, bytesScanned *int64, currentPath *atomic.Value, cachePolicy scanCachePolicy) tea.Cmd {
-	return func() tea.Msg {
-		id := nextLiveScanID.Add(1)
-		ctx, cancelContext := context.WithCancel(context.Background())
-
-		limiter := newScanLimiter(0)
-		initial, targets, err := readLiveScanInitialEntries(path, limiter)
-		if err != nil {
-			cancelContext()
-			return liveScanStartMsg{id: id, path: path, err: err}
-		}
-
-		if initial.TotalFiles > 0 {
-			atomic.AddInt64(filesScanned, initial.TotalFiles)
-		}
-		if initial.TotalSize > 0 {
-			atomic.AddInt64(bytesScanned, initial.TotalSize)
-		}
-
-		publication := newScanPublication(ctx, cancelContext)
-		stream := newLiveScanEventStream(publication, len(targets))
-		go runLiveScan(ctx, id, path, initial, targets, limiter, filesScanned, dirsScanned, bytesScanned, currentPath, stream, cachePolicy)
-
-		scanningPaths := make([]string, 0, len(targets))
-		for _, target := range targets {
-			scanningPaths = append(scanningPaths, target.path)
-		}
-
-		return liveScanStartMsg{
-			state:         initial.State,
-			id:            id,
-			path:          path,
-			entries:       initial.Entries,
-			totalSize:     initial.TotalSize,
-			totalFiles:    initial.TotalFiles,
-			largeFiles:    initial.LargeFiles,
-			scanningPaths: scanningPaths,
-			events:        stream.events,
-			cancel:        stream.cancel,
-		}
-	}
-}
-
-func readLiveScanInitialEntries(root string, limiter *scanLimiter) (scanResult, []liveScanTarget, error) {
-	children, err := os.ReadDir(root)
-	if err != nil {
-		return scanResult{}, nil, err
-	}
-	if limiter == nil {
-		limiter = newScanLimiter(len(children))
-	}
-
-	isRootDir := root == "/"
-	home := os.Getenv("HOME")
-	isHomeDir := home != "" && root == home
-
-	entries := make([]dirEntry, 0, len(children))
-	targets := make([]liveScanTarget, 0, len(children))
-	largeFiles := make([]fileEntry, 0)
-	var totalSize int64
-	var totalFiles int64
-	state := scanComplete
-	transient := false
-
-	for _, child := range children {
-		fullPath := filepath.Join(root, child.Name())
-
-		if child.Type()&fs.ModeSymlink != 0 {
-			targetInfo, err := os.Stat(fullPath)
-			isDir := false
-			if err == nil && targetInfo.IsDir() {
-				isDir = true
-			}
-			info, err := child.Info()
-			if err != nil {
-				state = scanPartial
-				transient = transient || isTransientFailure(err)
-				continue
-			}
-			size := getActualFileSize(fullPath, info)
-			totalSize += size
-			entries = append(entries, dirEntry{
-				Name:       child.Name() + " →",
-				Path:       fullPath,
-				Size:       size,
-				IsDir:      isDir,
-				LastAccess: getLastAccessTimeFromInfo(info),
-			})
-			continue
-		}
-
-		if child.IsDir() {
-			if defaultSkipDirs[child.Name()] {
-				continue
-			}
-			if isRootDir && skipSystemDirs[child.Name()] {
-				continue
-			}
-
-			targetKind := liveScanTargetDirectory
-			if isHomeDir && child.Name() == "Library" {
-				targetKind = liveScanTargetHomeLibrary
-			} else if shouldFoldDirWithPath(child.Name(), fullPath) {
-				targetKind = liveScanTargetFoldedDirectory
-			}
-
-			entries = append(entries, dirEntry{
-				Name:  child.Name(),
-				Path:  fullPath,
-				Size:  -1,
-				IsDir: true,
-			})
-			targets = append(targets, liveScanTarget{
-				name: child.Name(),
-				path: fullPath,
-				kind: targetKind,
-			})
-			continue
-		}
-
-		info, err := child.Info()
-		if err != nil {
-			state = scanPartial
-			transient = transient || isTransientFailure(err)
-			continue
-		}
-		size, _ := countableFileSize(info, &limiter.seen)
-		totalSize += size
-		totalFiles++
-		entries = append(entries, dirEntry{
-			Name:       child.Name(),
-			Path:       fullPath,
-			Size:       size,
-			IsDir:      false,
-			LastAccess: getLastAccessTimeFromInfo(info),
-		})
-		if !shouldSkipFileForLargeTracking(fullPath) && size >= largeFileWarmupMinSize {
-			largeFiles = append(largeFiles, fileEntry{Name: child.Name(), Path: fullPath, Size: size})
-		}
-	}
-
-	sortDirEntriesBySize(entries)
-	largeFiles = topLargeFiles(largeFiles)
-	return scanResult{Entries: entries, TotalSize: totalSize, TotalFiles: totalFiles, LargeFiles: largeFiles, State: state, transientFailure: transient}, targets, nil
-}
-
-func runLiveScan(
-	ctx context.Context,
-	id int64,
-	root string,
-	initial scanResult,
-	targets []liveScanTarget,
-	limiter *scanLimiter,
-	filesScanned, dirsScanned, bytesScanned *int64,
-	currentPath *atomic.Value,
-	stream *liveScanEventStream,
-	cachePolicy scanCachePolicy,
-) {
-	defer stream.close()
-
-	entriesByPath := make(map[string]dirEntry, len(initial.Entries))
-	for _, entry := range initial.Entries {
-		entriesByPath[entry.Path] = entry
-	}
-
-	var totalSize atomic.Int64
-	var totalFiles atomic.Int64
-	totalSize.Store(initial.TotalSize)
-	totalFiles.Store(initial.TotalFiles)
-
-	largeFileChan := make(chan fileEntry, maxLargeFiles*2)
-	largeFileMinSize := int64(largeFileWarmupMinSize)
-	largeFilesDone := make(chan []fileEntry, 1)
-	go collectLiveLargeFiles(initial.LargeFiles, largeFileChan, &largeFileMinSize, largeFilesDone)
-
-	var dedupedHardlink atomic.Bool
-	var incomplete atomic.Bool
-	var transient atomic.Bool
-	incomplete.Store(initial.State != scanComplete)
-	transient.Store(initial.transientFailure)
-	var mu sync.Mutex
-	var wg sync.WaitGroup
-
-	for _, target := range targets {
-		if ctx.Err() != nil {
-			break
-		}
-		target := target
-		scanTarget := func() {
-			defer wg.Done()
-			result, err := scanLiveTargetWithProgress(ctx, id, root, target, largeFileChan, limiter, currentPath, stream, cachePolicy)
-			if err != nil && !errors.Is(err, context.Canceled) {
-				incomplete.Store(true)
-				if isTransientFailure(err) {
-					transient.Store(true)
-				}
-				mu.Lock()
-				entriesByPath[target.path] = dirEntry{Name: target.name, Path: target.path, IsDir: true, State: scanUnavailable}
-				mu.Unlock()
-				stream.publish(liveScanEventMsg{id: id, path: root, kind: liveScanFailed, entry: dirEntry{Name: target.name, Path: target.path, IsDir: true, State: scanUnavailable}, err: err})
-				return
-			}
-			if ctx.Err() != nil {
-				return
-			}
-
-			entry := dirEntry{
-				Name:  target.name,
-				Path:  target.path,
-				Size:  result.TotalSize,
-				State: result.State,
-				IsDir: true,
-			}
-			mu.Lock()
-			entriesByPath[target.path] = entry
-			mu.Unlock()
-
-			// The child result carries its own failure classification.
-			if result.State != scanComplete {
-				incomplete.Store(true)
-			}
-			if result.transientFailure {
-				transient.Store(true)
-			}
-			totalSize.Add(result.TotalSize)
-			if result.TotalFiles > 0 {
-				totalFiles.Add(result.TotalFiles)
-			}
-			if result.dedupedHardlink {
-				dedupedHardlink.Store(true)
-			}
-			atomic.AddInt64(dirsScanned, 1)
-			if result.TotalFiles > 0 {
-				atomic.AddInt64(filesScanned, result.TotalFiles)
-			}
-			if result.TotalSize > 0 {
-				atomic.AddInt64(bytesScanned, result.TotalSize)
-			}
-
-			stream.publish(liveScanEventMsg{
-				id:     id,
-				path:   root,
-				kind:   liveScanChildDone,
-				entry:  entry,
-				result: result,
-			})
-		}
-
-		wg.Add(1)
-		if limiter.tryAcquireEntry() {
-			go func() {
-				defer limiter.releaseEntry()
-				scanTarget()
-			}()
-		} else {
-			scanTarget()
-		}
-	}
-
-	wg.Wait()
-	close(largeFileChan)
-	largeFiles := <-largeFilesDone
-
-	if ctx.Err() != nil {
-		return
-	}
-
-	mu.Lock()
-	finalEntries := make([]dirEntry, 0, len(entriesByPath))
-	for _, entry := range entriesByPath {
-		finalEntries = append(finalEntries, entry)
-	}
-	mu.Unlock()
-	sortDirEntriesBySize(finalEntries)
-	if len(finalEntries) > maxEntries {
-		finalEntries = finalEntries[:maxEntries]
-	}
-
-	state := scanComplete
-	if incomplete.Load() {
-		state = scanPartial
-	}
-	result := scanResult{
-		State:            state,
-		Entries:          finalEntries,
-		LargeFiles:       largeFiles,
-		TotalSize:        totalSize.Load(),
-		TotalFiles:       totalFiles.Load(),
-		dedupedHardlink:  dedupedHardlink.Load(),
-		transientFailure: transient.Load(),
-	}
-
-	stream.publish(liveScanEventMsg{id: id, path: root, 
-```
-
-### Core Architecture Module: `cmd/analyze/main.go`
-```
-//go:build darwin
-
-package main
-
-import (
-	"context"
-	"errors"
-	"flag"
-	"fmt"
-	"io"
-	"os"
-	"os/exec"
-	"path/filepath"
-	"sync/atomic"
-	"syscall"
-	"time"
-
-	tea "github.com/charmbracelet/bubbletea"
-)
-
-var (
-	jsonMode = flag.Bool("json", false, "output analysis as JSON instead of TUI")
-)
-
-// usageText is the help every other Mole subcommand prints by hand. The Go flag
-// package would otherwise render "Usage of /usr/local/bin/analyze-go:", naming a
-// bundled binary the user never typed, so the text is written out here instead.
-const usageText = `Usage: mo analyze [OPTIONS] [PATH]
-
-Explore disk usage. Without PATH, scans a machine-wide overview.
-
-Options:
-  --json          Output the analysis as JSON instead of the interactive TUI
-  -h, --help      Show this help message
-
-Examples:
-  mo analyze                 Machine-wide overview
-  mo analyze ~/Library       Scan one directory
-  mo analyze --json /Volumes Machine-readable output
-`
-
-// parseArgs applies Mole's CLI conventions to the flag package: help goes to
-// stdout and exits 0, and an unknown flag goes to stderr and exits 1 the way
-// every bash subcommand does, rather than the flag package's stderr-and-2.
-// It returns the exit code and whether main should keep running.
-func parseArgs(args []string, stdout, stderr io.Writer) (int, bool) {
-	flag.CommandLine.Init("mo analyze", flag.ContinueOnError)
-	// Parse must not print: this function decides which stream each message
-	// belongs on, and the default handler writes usage to stderr for both.
-	flag.CommandLine.SetOutput(io.Discard)
-	flag.CommandLine.Usage = func() {}
-
-	err := flag.CommandLine.Parse(args)
-	switch {
-	case errors.Is(err, flag.ErrHelp):
-		_, _ = fmt.Fprint(stdout, usageText)
-		return 0, false
-	case err != nil:
-		_, _ = fmt.Fprintln(stderr, err)
-		_, _ = fmt.Fprintln(stderr, "Use 'mo analyze --help' for usage information")
-		return 1, false
-	}
-	return 0, true
-}
-
-func main() {
-	if code, keepGoing := parseArgs(os.Args[1:], os.Stdout, os.Stderr); !keepGoing {
-		os.Exit(code)
-	}
-
-	abs, isOverview, err := resolveScanTarget(os.Getenv("MO_ANALYZE_PATH"), flag.Args())
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
-	}
-
-	go pruneAnalyzerCache()
-	if *jsonMode {
-		runJSONMode(abs, isOverview)
-	} else {
-		runTUIMode(abs, isOverview)
-	}
-}
-
-// resolveScanTarget decides which scan a given invocation asks for. Kept
-// separate from main so the overview-vs-directory routing has a test that fails
-// when it flips: an end-to-end overview scan measures the real /Applications
-// and /Library, which cost 106s of a single CI test file's 134s.
-func resolveScanTarget(envPath string, args []string) (string, bool, error) {
-	target := envPath
-	if target == "" && len(args) > 0 {
-		target = args[0]
-	}
-
-	// No explicit target means the machine-wide overview, not the root
-	// directory: "/" is only where the overview rows are anchored.
-	if target == "" {
-		return "/", true, nil
-	}
-
-	abs, err := filepath.Abs(target)
-	if err != nil {
-		return "", false, fmt.Errorf("cannot resolve %q: %v", target, err)
-	}
-	return abs, false, nil
-}
-
-func runTUIMode(path string, isOverview bool) {
-	m := newModel(path, isOverview)
-	defer m.cancelBackgroundCacheWrites(nil)
-	// Warm overview cache only when the user opens a specific directory.
-	// Overview mode already schedules the same measurements for the foreground UI;
-	// running the prefetcher there doubles the du/io workload on cold start.
-	if !isOverview {
-		prefetchCtx, prefetchCancel := context.WithTimeout(context.Background(), 30*time.Second)
-		defer prefetchCancel()
-		m.startOverviewPrefetch(prefetchCtx)
-	}
-
-	p := tea.NewProgram(m, tea.WithAltScreen())
-	if _, err := p.Run(); err != nil {
-		fmt.Fprintf(os.Stderr, "analyzer error: %v\n", err)
-		os.Exit(1)
-	}
-}
-
-func newModel(path string, isOverview bool) model {
-	var filesScanned, dirsScanned, bytesScanned int64
-	currentPath := &atomic.Value{}
-	currentPath.Store("")
-	var diskFreeBytes int64
-	var stat syscall.Statfs_t
-	if err := syscall.Statfs(path, &stat); err == nil {
-		diskFreeBytes = int64(stat.Bavail) * int64(stat.Bsize)
-	}
-
-	m := model{
-		path:                path,
-		selected:            0,
-		status:              "Preparing scan...",
-		diskFree:            diskFreeBytes,
-		scanning:            !isOverview,
-		filesScanned:        &filesScanned,
-		dirsScanned:         &dirsScanned,
-		bytesScanned:        &bytesScanned,
-		currentPath:         currentPath,
-		showLargeFiles:      false,
-		isOverview:          isOverview,
-		cache:               make(map[string]historyEntry),
-		overviewSizeCache:   make(map[string]int64),
-		overviewScanningSet: make(map[string]*scanPublication),
-		cachePublications:   make(map[string]*scanPublication),
-		multiSelected:       make(map[string]bool),
-		largeMultiSelected:  make(map[string]bool),
-		liveSortMode:        liveScanSortModeFromEnv(),
-		snapshotRunner:      runLocalSnapshotCommand,
-	}
-
-	if isOverview {
-		m.scanning = false
-		m.hydrateOverviewEntries()
-		m.selected = 0
-		m.offset = 0
-		if nextPendingOverviewIndex(m.entries) >= 0 {
-			m.overviewScanning = true
-			m.status = "Checking system folders..."
-		} else {
-			m.status = "Ready"
-		}
-	}
-
-	// Try to peek last total files for progress bar, even if cache is stale
-	if !isOverview {
-		if total, err := peekCacheTotalFiles(path); err == nil && total > 0 {
-			m.lastTotalFiles = total
-		}
-	}
-
-	return m
-}
-
-func createOverviewEntries() []dirEntry {
-	return createOverviewEntriesWithInsights(createInsightEntries())
-}
-
-func createOverviewEntriesWithInsights(insightEntries []dirEntry) []dirEntry {
-	home := os.Getenv("HOME")
-	entries := []dirEntry{}
-
-	// Separate Home and ~/Library to avoid double counting.
-	if home != "" {
-		entries = append(entries, dirEntry{Name: "Home", Path: home, IsDir: true, Size: -1})
-
-		userLibrary := filepath.Join(home, "Library")
-		if _, err := os.Stat(userLibrary); err == nil {
-			// Renamed from "App Library" to "User Library" so it parallels
-			// "System Library" (`/Library`) and is not confused with
-			// `/Applications`. Path unchanged.
-			entries = append(entries, dirEntry{Name: "User Library", Path: userLibrary, IsDir: true, Size: -1})
-		}
-	}
-
-	entries = append(entries, systemOverviewRoots()...)
-
-	// Hidden space insights: paths that silently accumulate disk usage.
-	entries = append(entries, insightEntries...)
-
-	return entries
-}
-
-func systemOverviewRoots() []dirEntry {
-	return []dirEntry{
-		{Name: "Applications", Path: "/Applications", IsDir: true, Size: -1},
-		{Name: "System Library", Path: "/Library", IsDir: true, Size: -1},
-	}
-}
-
-func sumKnownEntrySizes(entries []dirEntry) int64 {
-	var total int64
-	for _, entry := range entries {
-		if entry.Size > 0 {
-			total += entry.Size
-		}
-	}
-	return total
-}
-
-func nextPendingOverviewIndex(entries []dirEntry) int {
-	for i, entry := range entries {
-		if entry.Size < 0 {
-			return i
-		}
-	}
-	return -1
-}
-
-func hasPendingOverviewEntries(entries []dirEntry) bool {
-	for _, entry := range entries {
-		if entry.Size < 0 {
-			return true
-		}
-	}
-	return false
-}
-
-func safeOpen(path string, reveal bool) error {
-	if err := validatePath(path); err != nil {
-		return err
-	}
-	ctx, cancel := context.WithTimeout(context.Background(), openCommandTimeout)
-	defer cancel()
-	args := []string{path}
-	if reveal {
-		args = []string{"-R", path}
-	}
-	return exec.CommandContext(ctx, "open", args...).Run()
-}
-
-// safePreview opens the file with the default macOS application.
-func safePreview(path string) error {
-	if err := validatePath(path); err != nil {
-		return err
-	}
-	ctx, cancel := context.WithTimeout(context.Background(), openCommandTimeout)
-	defer cancel()
-	return exec.CommandContext(ctx, "open", path).Run()
-}
-
-```
-
-### Core Architecture Module: `cmd/analyze/main_stub.go`
-```
-//go:build !darwin
-
-package main
-
-import (
-	"fmt"
-	"os"
-)
-
-func main() {
-	fmt.Fprintln(os.Stderr, "analyze is only supported on macOS")
-	os.Exit(1)
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1669** (2026-10-04): **[BUG] Leftovers cannot be removed in mole uninstall**
-  *Symptoms*: ## Describe the bug  Whenever I try to uninstall any software, it always shows:  > Scanning files...xxx: some paths could not be read, so shared leftovers are left in place  Only the main executable file gets deleted.  ## Steps to reproduce  1. Run command: `mo uninstall` 2. Select an app 3. See error  ## Expected behavior  The main app file and all related leftovers can be scanned and removed.  ## Debug logs  Please run the command with `--debug` flag and paste the output here:  ```bash mo <command> --debug # Example: mo clean --debug ```  <details> <summary>Summary</summary>  ```text [DEBUG] Bundle id xxx is shared with a live sibling; removing only the selected app bundle for xxx ```  </details>  ## Environment  Paste the output of `mo --version` from the version used to reproduce the problem:  ```text Mole version 1.56.1 macOS: 27.0 Architecture: arm64 Kernel: 27.0.0 SIP: Enabled Disk Free: 180.27GB Install: Homebrew Shell: /bin/zsh ```
-  **Post-Mortem & Fix Analysis**:
-  > @junytang Thanks for sending the logs. Version 1.57.0 fixes the Time Machine snapshot scan failure that was keeping your app leftovers in place.  Run `mo update`, confirm `mo --version` shows 1.57.0 or newer, then try `mo uninstall` again. Please reopen this issue if the same warning remains. 
+- **Issue #1761** (2026-10-17): **[Mac App Bug] 「App 快取與記錄」中部分 App 的快取大小顯示不正確**
+  *Symptoms*: ### Mole Mac app version  1.17.0 (331)  ### macOS version  15.8.2 (Sequoia)  ### Mac model  Mac16,10 (Apple M4)  ### Affected area  Clean  ### What happened?  最近發現 Mole 在「清理」→「App 快取與記錄」功能中，似乎有部分位於 `~/Library/Caches/` 底下的 App 快取資料夾，無法正確顯示實際大小。  這次發現的例子是 **Clicker for Netflix**，這是一款已經停止維護，但目前仍可正常使用的第三方 Netflix 客戶端。  它的快取資料夾位於：  `~/Library/Caches/com.dbklabs.clicker-for-netflix`  由於這款 App 會儲存 Netflix 的影片快取，因此該資料夾經常累積數百 MB，甚至數 GB 的資料。  不過，從下方截圖可以看到：  - **Mole 顯示的快取大小：** 2.61 MB - **Finder 顯示的實際大小：** 63.9 MB（磁碟上 65.4 MB，共 619 個項目）  由於截圖前我已經手動清理過一次快取，因此這次資料夾的容量相對較小，但仍然能明顯看出兩者的差異。  比較奇怪的是，雖然 Mole 顯示的快取大小明顯偏小，但實際執行清理時，卻仍然會將該資料夾內的快取全部清除。  因此有點懷疑，目前 Mole 對於 `~/Library/Caches/` 底下部分資料夾的大小計算邏輯，是否存在某些問題，導致顯示的可清理容量與實際清理的資料量不一致？  目前還不確定是否有其他 App 也存在相同情況，只是 Clicker for Netflix 的快取通常比較大，因此這個問題特別容易被注意到。  ### Steps to reproduce  1. 使用 Clicker for Netflix 播放影片，產生一定容量的影片快取。 2. 透過 Finder 查看 `~/Library/Caches/com.dbklabs.clicker-for-netflix` 的實際資料夾大小。 3. 開啟 Mole，進入「清理」→「App 快取與記錄」。 4. 找到 `com.dbklabs.clicker-for-netflix`，比較 Mole 顯示的大小與 Finder 的結果。 5. 可以發現 Mole 顯示的容量明顯小於實際大小，但執行清理時仍會完全清除整個資料夾的快取。  ### Expected behavior  希望 Mole 能正確計算並顯示 App 快取資料夾的大小，讓「清理」功能中顯示的可清理容量，與實際執行清理時所刪除的資料量一致。  如果是部分特殊檔案類型或資料夾結構造成計算差異，也希望能協助確認是否有改善的空間。  ### Screenshots or safe logs  <img width="1166" height="334" alt="Image" src="https://github.com/user-attachments/assets/1b682b26-7a78-4293-a7c1-0449f17affb7" />  <img width="603" height="426" alt="Image" src="https://github.com/user-attachments/assets/777cfb17-0ac6-46ee-8ea
 
-- **Issue #1660** (2026-10-03): **[Mac App Bug] 关于主界面风扇显示不完全的问题**
-  *Symptoms*: ### Mole Mac app version  v1.16.0 (297)  ### macOS version  macOS 27.0.1  ### Mac model  _No response_  ### Affected area  Status  ### What happened?  界面显示转速的位置，显示不完全，好几个版本都是这样  <img width="265" height="185" alt="Image" src="https://github.com/user-attachments/assets/5f815b09-5df0-404e-99f1-7380cb3d475a" />  ### Steps to reproduce  主界面 状态页面默认显示  ### Expected behavior  将文字显示完全，(RPM)  ### Screenshots or safe logs  _No response_  ### Before submitting  - [x] I updated to the latest stable Mole Mac app, reopened it, and reproduced this problem (or this report explains why I cannot update). - [x] I did not include license keys, order numbers, or private data.
-  **Post-Mortem & Fix Analysis**:
-  > @VincentPhoton 抱歉转速单位一直显示不全，[1.16.0 Preview 300](https://mole.fit/Mole-preview-300.dmg) 已修复风扇卡片里 RPM 被截断的问题。  退出 Mole 后替换应用程序里的旧版，再打开状态页检查，如果同样的窗口大小下仍显示不全，在这里回复，我会重新打开这个 issue。 
-
-- **Issue #1659** (2026-10-03): **[BUG] Stuck in "Finalizing list ..." in mole uninstall**
-  *Symptoms*: ## Describe the bug  Stuck in "Finalizing list ..." in mole uninstall  ## Steps to reproduce  1. Run command: `mo uninstall` 2. Stuck in "Finalizing list ..."  ## Environment  Paste the output of `mo --version` from the version used to reproduce the problem:  ```text Mole version 1.56.1 macOS: 27.0 Architecture: arm64 Kernel: 27.0.0 SIP: Enabled Disk Free: 112.59GB Install: Homebrew Shell: /bin/bash ``` 
-  **Post-Mortem & Fix Analysis**:
-  > @junytang I haven't reproduced the hang with isolated application fixtures on Bash 3.2, including the active spinner and the conditional call used by interactive uninstall, so the cause is still unconfirmed.  In a second terminal while it is stuck, does this command return?  ```bash mo uninstall --list >/dev/null 2>&1; echo "exit=$?" ```  This uses the listing path without terminal progress output and does not uninstall anything. Just the exit code, or whether it also hangs, would help distinguish the scan from terminal progress/selection; no application inventory needs to be shared.  AI-assisted investigation. 
-  > > [@junytang](https://github.com/junytang) I haven't reproduced the hang with isolated application fixtures on Bash 3.2, including the active spinner and the conditional call used by interactive uninstall, so the cause is still unconfirmed. >  > In a second terminal while it is stuck, does this command return? >  > mo uninstall --list >/dev/null 2>&1; echo "exit=$?" > This uses the listing path without terminal progress output and does not uninstall anything. Just the exit code, or whether it also hangs, would help distinguish the scan from terminal progress/selection; no application inventory needs to be shared. >  > AI-assisted investigation.  Thanks for the respond. The above command's return is "exit=0"
-  > @junytang Thanks — `--list` returning 0 narrows this to the interactive path, but does not yet identify the spinner as the cause.  I also checked the current scan → load → selector path in a real pseudo-terminal on macOS/Bash 3.2, using one synthetic app and an isolated cache. The scan returned, the selector rendered, and Q cancelled with no selection. This is a negative reproduction, not proof that your hang is fixed. V1.56.1 is still the latest stable release.  Which terminal app are you using, and does Ctrl+C return to the prompt while “Finalizing list...” is stuck? That will help distinguish a blocked scan/child wait from terminal input or rendering. No app inventory or private paths are needed.  AI-assisted investigation. 
-
-- **Issue #1650** (2026-10-03): **[Mac App Bug] Analyze: Rescanning entire disk does not refresh cached subdirectory views after external file deletion**
-  *Symptoms*: ### Mole Mac app version  1.15.0 (294)  ### macOS version  27.0.0  ### Mac model  Mac16,10 (Apple M4)  ### Affected area  Analyze  ### What happened?  After performing a full disk scan in the **Analyze** module, I located a 22 GB file and permanently deleted it externally via Finder while keeping Mole open.   When I triggered a rescan/refresh of the entire disk from the root view, the top-level folder correctly reflected the 22 GB size reduction. However, when I clicked into that top-level folder and navigated down to the deleted file's parent directory, the view still displayed the stale folder size and listed the deleted 22 GB file. The deleted file only disappeared after I manually clicked the refresh button in the top-right corner within that specific subdirectory view.  ### Steps to reproduce  1. Open Mole and go to **Analyze** to scan the entire disk. 2. Navigate through the directory tree to locate a large file (e.g., 22 GB). 3. Keep Mole open, switch to **Finder**, and permanently delete that file. 4. Return to Mole's root disk view and rescan/refresh the entire disk. 5. Observe that the top-level directory size has decreased by 22 GB as expected. 6. Click into the top-level directory and drill down to the parent folder of the deleted file. 7. See that the parent folder still shows the old size and the deleted file is still listed (until manually clicking the top-right refresh button inside that folder view).  ### Expected behavior  I expected Mole to invalidate and u
-  **Post-Mortem & Fix Analysis**:
-  > @wbpluto Thanks for the clear steps, and sorry the deeper folders kept showing the file you had already deleted.  This is fixed in Preview 299. Refreshing a folder now also clears the saved results for every folder below it, so after a full rescan from the root view, drilling down shows current sizes without refreshing each folder again.  You can install it from https://mole.fit/Mole-preview.dmg. If a subfolder still lists a deleted file after a full rescan, reopen this issue. 
-
-- **Issue #1647** (2026-09-30): **mo status: network rates are wrong when traffic goes through a virtual interface (utun*)**
-  *Symptoms*: Environment - Mole 1.56.0 (Homebrew) - macOS 26 (Darwin 25.6.0), Apple Silicon  Description When the default route goes through a virtual interface like utun* (a VPN, a packet-tunnel network extension, WireGuard, and so on), mo status doesn't report network activity correctly. It only lists physical interfaces (en0, en4, en6…) and leaves out all utun* interfaces. For those it just shows a Proxy: TUN utun0+ label.  It gets worse when a tunnel network extension is active: macOS may count inbound packets only on the virtual interface. The physical interface then reports 0 received bytes, so Mole shows download = 0 all the time, even during heavy transfers.  Steps to reproduce 1. Connect to any VPN or tunnel that creates a utun* interface and sets it as the default route (route -n get default → interface: utunN). 2. Generate traffic, for example a large download. 3. Run mo status --json (or --watch).  Expected Network rates include the interface that actually carries the traffic, utunN here.  Actual utunN is missing and en0 shows rx_rate_mbs: 0:  "network": [   {"name": "en0", "rx_rate_mbs": 0, "tx_rate_mbs": 0.059, "ip": "10.x.x.x"},   {"name": "en4", "rx_rate_mbs": 0, "tx_rate_mbs": 0, "ip": ""},   {"name": "en6", "rx_rate_mbs": 0, "tx_rate_mbs": 0, "ip": ""} ], "proxy": {"enabled": true, "type": "TUN", "host": "utun0+"}  Kernel counters (netstat -ib) at the same time:  Name   Ipkts     Ibytes        Opkts    Obytes en0    0         0             3832524  1237606173 utunN  1827
-  **Post-Mortem & Fix Analysis**:
-  > @cookiemonsterq Thanks for reporting this. The IPv4 default-route tunnel is now included in nightly, and the network graph uses its rates without adding the same traffic from the physical interface. IPv6 and split-tunnel accounting are not covered by this change.  Your Homebrew installation follows stable releases. To try nightly separately, make sure Go is installed (`brew install go` if needed), then run:  ```sh installer=$(mktemp -t mole-install) curl -fsSL https://raw.githubusercontent.com/tw93/Mole/main/install.sh -o "$installer" &&   bash "$installer" main --prefix "$HOME/.local/bin" "$HOME/.local/bin/mo" status ```  Please reopen if download traffic still stays at zero with the tunnel as the IPv4 default route. 
-  > It does work.  TY !   😎🤟
-
-- **Issue #1645** (2026-09-29): **[BUG] opendesign 卸载不干净**
-  *Symptoms*: mole 卸载 opendesign  <img width="1372" height="397" alt="Image" src="https://github.com/user-attachments/assets/19fd8220-43e5-42b0-b520-c8fcb15f1a8b" />
-
-- **Issue #1634** (2026-10-01): **[Mac App Bug] 查看运行中的 ChatGPT 卸载文件时连续崩溃（AttributeGraph / SIGABRT，macOS 27）**
-  *Symptoms*: ### Mole Mac app version  1.15.0 (294)  ### macOS version  27.0.0  ### Mac model  Mac17,9 (Apple M5 Pro)  ### Affected area  Uninstall  ### What happened?  在 Mole 的「软件 → 卸载」中选择 ChatGPT，只想查看它有哪些关联文件，并不准备真正卸载。当时 ChatGPT 仍在运行，Mole 随后报错退出；重新打开后再次遇到同样情况，共发生两次。未主动确认删除或卸载 ChatGPT。  两份 macOS 崩溃报告确认： - 第一次：2026-09-29 09:49:55 +08:00（启动于 09:44:57，运行约 298 秒）。 - 第二次：2026-09-29 09:50:37 +08:00（重新启动于 09:50:00，运行约 37 秒）。 - 两次均为主线程 EXC_CRASH (SIGABRT) / Abort trap: 6，顶部都经过 AttributeGraph 的 AG::precondition_failure → AG::data::table::grow_region。 - 系统日志在对应时刻均记录 com.apple.attributegraph 的 precondition failure；具体错误文本被系统隐去为 <private>。  初步定位：崩溃发生在 SwiftUI/AttributeGraph 构建或布局界面、分配图数据的路径。两份主线程堆栈分别有 508 / 429 帧，包含大量重复的 ModifiedElements / ViewList / sizeThatFits 调用。建议检查卸载文件预览及「应用仍在运行」相关界面的视图构建、状态更新或递归布局，以及 macOS 27 兼容性。此处是排查方向，尚不能证明是无限递归、内存泄漏或正在运行检测本身造成。  环境补充： - 当前显示为 ChatGPT 的应用：26.924.22138 (11645)，Bundle ID 为 com.openai.codex；安装来源未确认。它与另外安装的 ChatGPT Classic（com.openai.chat）不同。 - Mole 已安装版本、两份崩溃报告均为 1.15.0 (294)，与提交时官方 https://mole.fit/appcast.xml 最新版本一致，无更高版本可更新。两次崩溃之间已经重新启动 Mole。 - 本次排查仅检查日志和版本，没有再次尝试实际卸载，也没有终止 ChatGPT。  ### Steps to reproduce  1. 保持 ChatGPT 在运行。 2. 打开 Mole 1.15.0 (294)，进入「软件 → 卸载」。 3. 选择 ChatGPT，查看待卸载/关联文件（目的只是预览，不确认删除）。 4. 在目标应用仍运行的这个场景下，Mole 报错并退出。 5. 重新打开 Mole，再次执行同样的查看操作，又发生一次退出。  以上步骤根据实际使用情况整理；未保存报错弹窗的原文，也尚未对「目标应用退出后是否仍会崩溃」做对照测试。  ### Expected behavior  应能安全查看应用及关联文件；若目标应用正在运行，应正常显示提示并允许取消或继续查看，Mole 不应崩溃。只有在用户明确确认卸载后，才应关闭目标应用或删除文件。  ### Screenshots or safe logs  以下仅为脱敏后的
-  **Post-Mortem & Fix Analysis**:
-  > @marsxxl 谢谢反馈，这个崩溃已在当前 1.16.0 Preview（299）修复，大量关联文件会按组和分页展示，我已验证运行中的 ChatGPT 文件预览、展开和换页，无需退出或卸载 ChatGPT。  可以安装 [Preview 299](https://mole.fit/Mole-preview-299.dmg) 后重新查看关联文件，这条先关闭；如果仍出现崩溃，可以在这里补充反馈，我会继续排查。 
-
-- **Issue #1624** (2026-09-28): **[BUG] mo uninstall fails with exit 1 during same-bundle scan on enterprise/restricted macOS (sudo blocked, scan fails before escalation)**
-  *Symptoms*: ## Before submitting  - [x] I updated and reproduced the problem, or this report explains why I cannot update.  ## Describe the bug  In version 1.56.0, `mo uninstall` fails unconditionally during the live same-bundle scan step when executed on a restricted or enterprise-managed macOS machine (MDM / managed permissions / custom URL handlers).  Because `mo` explicitly disallows running via `sudo` (`Run Mole without sudo`), and the internal privilege escalation step happens **after** the scan phase, the tool enters a deadlock where the scan fails before requesting necessary access, completely blocking uninstallation.  ## Steps to reproduce  1. Run command: `mo uninstall` 2. Select any installed application (e.g., Google Chrome or Safe Exam Browser). 3. Proceed with uninstallation. 4. The scanner fails with `Could not verify whether other installs share... bundle id; nothing was removed` and exits with code 1.  ## Expected behavior  Scan failures (such as missing or unresolvable Bundle IDs, or restricted system index access) should log a warning instead of triggering a fatal `exit 1` error that cancels the entire uninstallation transaction. Alternatively, a flag like `--skip-scan` should be provided to bypass same-bundle checks.  ## Debug logs  <details> <summary>Debug output</summary>  ```text ---------------------------------------------------------------------- Mole Debug Session, 2026-09-28 08:44:16 ---------------------------------------------------------------------- User: 
-  **Post-Mortem & Fix Analysis**:
-  > @ilypopv Thanks for the detailed report and the debug log.  This is fixed in V1.56.1. When Mole cannot finish checking for other copies of an app, for example because package receipts or an app folder are unreadable on a managed Mac, it no longer stops the uninstall. It removes only the app you selected and leaves any shared leftovers in place, with a warning that says why. Mole still refuses to run under sudo on purpose, and no extra flag is needed.  The Homebrew update to 1.56.1 is in review now. Once it lands, run `brew upgrade mole` and retry `mo uninstall`. If it still fails, reopen this issue with the new `mo uninstall --debug` output. 
+- **Issue #1760** (2026-10-17): **[Mac App Bug] Ability to change temps to Fahrenheit is missing?**
+  *Symptoms*: ### Mole Mac app version  1.16.0  ### macOS version  27.0.1  ### Mac model  MacBook Pro M2  ### Affected area  Status  ### What happened?  For some reason after updating to the latest version 1.16.0, my temperatures in the Mac menu bar from Mole as well as within the GUI app only display in Celsius. I can't seem to be able to change that back to Fahrenheit.  ### Steps to reproduce  View temps anywhere within the app  ### Expected behavior  Expecting the temps to be displayed in Fahrenheit instead of Celsius  ### Screenshots or safe logs  _No response_  ### Before submitting  - [x] I updated to the latest stable Mole Mac app, reopened it, and reproduced this problem (or this report explains why I cannot update). - [x] I did not include license keys, order numbers, or private data.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2660,2582 +2014,523 @@ func main() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8f7605fa` (2026-10-06)
-**Commit Message**: fix(clean): name what timed out; a go clean timeout skips only that cache (#1691)
+### Incident Patch 1: `8b49a13a` (2026-10-18)
+**Commit Message**: fix: block macOS e2e actions after prerequisite failure
 
-* fix(clean): name what timed out in the summary and mole.log
+Keep-going may continue independent checks but must not authorize installation or mutation after failed preparation, integrity checks or fixture actions. Exercise the real orchestration with mocks in the existing Bats suite.
 
-A cancelled `mo clean` only said "a scan or size check timed out (exit
-124)", and no log recorded which step it was. Record the first label
-offered while a cancellation unwinds (owner command or safe_clean
-description, else the step name), show it in the summary, and write it
-with its section to mole.log. Owner-command timeouts that the terminal
-keeps quiet are logged there too.
-
-* fix(clean): let a go clean timeout skip only that cache
-
-Since #1628 an owner-command timeout in clean_tool_cache skips that one
-tool, but clean_go_cache_root still cancelled every remaining section.
-A timed-out `go clean` now prints "stopped (timed out)" for that cache
-and the run continues; a signal still cancels.
-
-**File**: `bin/clean.sh` (modified, +22/-3)
+**File**: `.claude/rules/tests.md` (modified, +2/-1)
 ```diff
-@@ -1148,6 +1148,7 @@ _safe_clean_impl() {
-             fi
-             MOLE_CLEAN_CANCEL_STATUS=$cleanup_interrupt_rc
-             export MOLE_CLEAN_CANCEL_STATUS
-+            _mole_note_clean_cancel_source "$description"
-             return "$cleanup_interrupt_rc"
-         fi
- 
-@@ -1370,6 +1371,7 @@ _safe_clean_impl() {
-     if [[ $cleanup_interrupt_rc -ne 0 ]]; then
-         MOLE_CLEAN_CANCEL_STATUS=$cleanup_interrupt_rc
-         export MOLE_CLEAN_CANCEL_STATUS
-+        _mole_note_clean_cancel_source "$description"
-         return "$cleanup_interrupt_rc"
-     fi
- 
-@@ -1439,6 +1441,8 @@ start_cleanup() {
-     export MOLE_CURRENT_COMMAND="clean"
-     MOLE_CLEAN_CANCEL_STATUS=0
-     export MOLE_CLEAN_CANCEL_STATUS
-+    MOLE_CLEAN_CANCEL_SOURCE=""
-+    export MOLE_CLEAN_CANCEL_SOURCE
-     MOLE_CLEAN_SIZING_TIMEOUTS=0
-     export MOLE_CLEAN_SIZING_TIMEOUTS
-     MOLE_CLEAN_REMOVAL_TIMEOUTS=0
-@@ -1672,9 +1676,11 @@ perform_cleanup() {
-         if mole_rc_timeout_or_signal "$step_rc"; then
-             MOLE_CLEAN_CANCEL_STATUS=$step_rc
-             export MOLE_CLEAN_CANCEL_STATUS
-+            _mole_note_clean_cancel_source "$step_name"
-             return "$step_rc"
-         fi
-         if mole_rc_timeout_or_signal "$pending_clean_cancel"; then
-+            _mole_note_clean_cancel_source "$step_name"
-             return "$pending_clean_cancel"
-         fi
-         if [[ "$required" == "true" && $step_rc -ne 0 ]]; then
-@@ -1846,13 +1852,26 @@ perform_cleanup() {
- 
-     local -a summary_details=()
-     if [[ $cleanup_cancel_rc -ne 0 ]]; then
-+        local cancel_source=""
-+        cancel_source=$(mole_terminal_safe_text "${MOLE_CLEAN_CANCEL_SOURCE:-}")
-+        local cancel_reason=""
-         if mole_rc_timeout "$cleanup_cancel_rc"; then
--            summary_details+=("${GRAY}${ICON_WARNING}${NC} Cancelled: a scan or size check timed out (exit 124). Remaining cleanup was skipped.")
-+            if [[ -n "$cancel_source" ]]; then
-+                cancel_reason="Cancelled: $cancel_source timed out (exit $cleanup_cancel_rc)."
-+            else
-+                cancel_reason="Cancelled: a scan or size check timed out (exit $cleanup_cancel_rc)."
-+            fi
-         elif [[ $cleanup_cancel_rc -ge 128 ]]; then
--            summary_details+=("${GRAY}${ICON_WARNING}${NC} Cancelled: a cleanup step was interrupted (exit $cleanup_cancel_rc). Remaining cleanup was skipped.")
-+            if [[ -n "$cancel_source" ]]; then
-+                cancel_reason="Cancelled: $cancel_source was interrupted (exit $cleanup_cancel_rc)."
-+            else
-+                cancel_reason="Cancelled: a cleanup step was interrupted (exit $cleanup_cancel_rc)."
-+            fi
-         else
--            summary_details+=("${GRAY}${ICON_WARNING}${NC} A required cleanup step failed (exit $cleanup_cancel_rc). Remaining cleanup was skipped.")
-+            cancel_reason="A required cleanup step failed (exit $cleanup_cancel_rc)."
-         fi
-+        summary_details+=("${GRAY}${ICON_WARNING}${NC} $cancel_reason Remaining cleanup was skipped.")
-+        log_warning_to_file "$cancel_reason Section: ${CURRENT_SECTION:-unknown}."
-     fi
- 
-     # Emit one "Free space" line, with the measured delta in parentheses when
+@@ -2,6 +2,7 @@
+ paths:
+   - "tests/**"
+   - "scripts/test.sh"
++  - "scripts/e2e_macos.py"
+   - "scripts/audit_bats_assertions.py"
+   - ".github/workflows/*.yml"
+   - "cmd/**/*_test.go"
+@@ -20,5 +21,5 @@ Suite-level rules (summary line, `$TERM`, cancelled CI runs, never piping into `
+   - `scripts/audit_bats_assertions.py` enforces all of this from `check.sh` in test bodies and `run ... bash <<EOF` script bodies; mock function bodies, data heredocs and a computation without a comparison such as `(( n++ ))` are exempt.
+   - Every guard test must be observed red against the pre-fix path and green after restoration. The complete vacuous-test and shared-`HOME` checklist lives in `.claude/skills/bugs/references/test-validity-and-refusal-diagnostics.md`.
+ - Tests that intentionally replace `safe_clean` are a seam; see the `declare -f` shim rule in `.claude/rules/clean.md`.
+-- `scripts/e2e_macos.py` is the real-Mac release run (`.claude/skills/release-flow/SKILL.md` pre-flight step 7), not a CI job: it needs a logged-in user session, network and the user's real `~/Downloads`. Its first run found two defects that every unit test missed, an analyze cache that ignored directory changes for 30 minutes and `--help` refused by `update` and `remove`, so when a step fails, read its transcript before loosening the step.
++- `scripts/e2e_macos.py` is the real-Mac release run (`.claude/skills/release-flow/SKILL.md` pre-flight step 7), not a CI job: it needs a logged-in user session, network and the user's real `~/Downloads`. Its first run found two defects that every unit test missed, an analyze cache that ignored directory changes for 30 minutes and `--help` refused by `update` and `remove`, so when a step fails, read its transcript before loosening the step. `--keep-going` permits only independent checks: failed build, download, integrity, install or launch steps cannot authorize dependent mutations, and a failed uninstall retains its installer. `tests/e2e_harness_test.py`, called from `tests/cli.bats`, locks this with mocked actions and network; it does not run the real fixture.
+ - Release preflight requires Check/Validation/CodeQL/Nix success on the tagged SHA. CodeQL and Nix ignore docs-only pushes, so the gate allows those two to be absent only when every changed file is `docs/**` or `*.md` and the nearest code-changing ancestor has both runs green; every required workflow also accepts `workflow_dispatch` so a missing run has a recovery path. A cancelled run is still not evidence.
 ```
 
-**File**: `lib/clean/dev.sh` (modified, +18/-3)
+**File**: `scripts/e2e_macos.py` (modified, +19/-15)
 ```diff
-@@ -44,13 +44,17 @@ clean_tool_cache() {
-             note_activity
-         elif ! mole_rc_timeout_or_signal "$command_rc" || mole_rc_timeout "$command_rc"; then
-             # Routine owner failures stay in diagnostics, without a success
--            # row or activity marker. A timeout here skips this one tool.
-+            # row or activity marker. A timeout here skips this one tool, and
-+            # mole.log names it so a slow tool is not left to guesswork.
-             debug_log "$description: owner command exited $command_rc: $*"
-+            if mole_rc_timeout "$command_rc"; then
-+                log_warning_to_file "$description timed out and was skipped: $*"
-+            fi
-         else
-             # Ctrl-C while the owner command holds the terminal reaches only
-             # the child. Record it and hand it back so no later owner command
-             # starts.
--            _mole_record_clean_cancellation "$command_rc"
-+            _mole_record_clean_cancellation "$command_rc" "$description"
-             return "$command_rc"
-         fi
+@@ -170,11 +170,12 @@ def __init__(self, keep_going):
+         self.leftovers = []
+         self.failed = False
+ 
+-    def step(self, name, func):
+-        if self.failed and not self.keep_going:
+-            self.steps.append({"name": name, "status": "skipped", "detail": "an earlier step failed"})
++    def step(self, name, func, ready=True):
++        if not ready or (self.failed and not self.keep_going):
++            detail = "a required step did not pass" if not ready else "an earlier step failed"
++            self.steps.append({"name": name, "status": "skipped", "detail": detail})
+             print(f"  SKIP  {name}")
+-            return
++            return False
+         start = time.monotonic()
+         try:
+             detail = func() or ""
+@@ -188,6 +189,7 @@ def step(self, name, func):
+         seconds = round(time.monotonic() - start, 1)
+         self.steps.append({"name": name, "status": status, "seconds": seconds, "detail": detail})
+         print(f"  {'PASS' if status == 'passed' else 'FAIL'}  {name} ({seconds}s){': ' + detail if detail else ''}")
++        return status == "passed"
+ 
+     def log(self, name):
+         return self.dir / f"{len(self.steps) + 1:02d}-{name}.log"
+@@ -506,27 +508,29 @@ def smoke(run):
+ def main():
+     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+     parser.add_argument("--skip-build", action="store_true", help="use the existing bin/*-go builds")
+-    parser.add_argument("--keep-going", action="store_true", help="run later steps after a failure")
++    parser.add_argument("--keep-going", action="store_true", help="continue independent checks after a failure")
+     args = parser.parse_args()
+     if platform.system() != "Darwin":
+         sys.exit("macOS only")
+     run = Run(args.keep_going)
+     print(f"Mole e2e {run.id}, report in {run.dir}")
+     try:
+-        run.step("preflight", lambda: preflight(run))
++        ready = run.step("preflight", lambda: preflight(run))
+     except Refused as exc:
+         print(f"  REFUSED  {exc}")
+         sys.exit(2)
+     if not args.skip_build:
+-        run.step("build", lambda: build(run))
+-    run.step("download fixture", lambda: download(run))
+-    run.step("install fixture", lambda: install(run))
+-    run.step("launch fixture", lambda: launch(run))
+-    run.step("mo uninstall", lambda: uninstall(run))
+-    run.step("mo history", lambda: history(run))
+-    run.step("mo installer --dry-run", lambda: installer(run))
+-    run.step("mo analyze delete", lambda: analyze(run))
+-    run.step("smoke commands", lambda: smoke(run))
++        ready = run.step("build", lambda: build(run), ready=ready)
++    # A failed digest or install is never permission for the next mutation,
++    # even with --keep-going. Keep the fixture when uninstall did not finish.
++    downloaded = run.step("download fixture", lambda: download(run), ready=ready)
++    installed = run.step("install fixture", lambda: install(run), ready=downloaded)
++    launched = run.step("launch fixture", lambda: launch(run), ready=installed)
++    removed = run.step("mo uninstall", lambda: uninstall(run), ready=launched)
++    run.step("mo history", lambda: history(run), ready=removed)
++    run.step("mo installer --dry-run", lambda: installer(run), ready=downloaded)
++    run.step("mo analyze delete", lambda: analyze(run), ready=removed)
++    run.step("smoke commands", lambda: smoke(run), ready=ready)
+ 
+     leftover = [str(APP_PATH)] if APP_PATH.exists() else []
+     leftover += fixture_traces()
+```
+
+**File**: `tests/cli.bats` (modified, +6/-0)
+```diff
+@@ -980,3 +980,9 @@ PY
+ 	run python3 "$PROJECT_ROOT/tests/main_menu_pty.py"
+ 	[ "$status" -eq 0 ] || { echo "$output"; return 1; }
+ }
++
++@test "e2e harness keeps failed prerequisites from authorizing later mutations" {
++	command -v python3 >/dev/null 2>&1 || skip "python3 not available"
++	run env MOLE_TEST_NO_AUTH=1 PYTHONDONTWRITEBYTECODE=1 python3 "$PROJECT_ROOT/tests/e2e_harness_test.py"
++	[ "$status" -eq 0 ] || { echo "$output"; return 1; }
++}
+```
+
+**File**: `tests/e2e_harness_test.py` (added, +104/-0)
+```diff
+@@ -0,0 +1,104 @@
++"""Exercise release-run failure boundaries without using the host Mac."""
++
++from contextlib import ExitStack, redirect_stdout
++import importlib.util
++import io
++import json
++from pathlib import Path
++import tempfile
++import unittest
++from unittest.mock import patch
++
++
++SPEC = importlib.util.spec_from_file_location(
++    "e2e_macos", Path(__file__).resolve().parents[1] / "scripts/e2e_macos.py")
++E2E = importlib.util.module_from_spec(SPEC)
++SPEC.loader.exec_module(E2E)
++
++
++class DependencyTests(unittest.TestCase):
++    def run_candidate(self, failed=None, keep_going=True, skip_build=False, download_fixture=None):
++        with tempfile.TemporaryDirectory() as tmp, ExitStack() as stack:
++            root = Path(tmp)
++            run = object.__new__(E2E.Run)
++            run.id, run.dir = "fixture", root
++            run.keep_going, run.steps, run.failed = keep_going, [], False
++            run.dmg = None
++            run.token = "fixture"
++            calls = []
++            real_download = E2E.download
++            names = ("preflight", "build", "download", "install", "launch", "uninstall",
++                     "history", "installer", "analyze", "smoke")
++            for name in names:
++                def action(_run, name=name):
++                    calls.append(name)
++                    if name == "download" and download_fixture:
++                        return real_download(_run)
++                    if name == failed:
++                        raise E2E.StepFailed("injected failure: " + name)
++                stack.enter_context(patch.object(E2E, name, side_effect=action))
++            stack.enter_context(patch.object(E2E, "Run", return_value=run))
++            stack.enter_context(patch.object(E2E, "APP_PATH", root / "absent.app"))
++            stack.enter_context(patch.object(E2E, "fixture_traces", return_value=[]))
++            stack.enter_context(patch.object(E2E.platform, "system", return_value="Darwin"))
++            stack.enter_context(patch.object(E2E.subprocess, "run", side_effect=AssertionError("real process")))
++            stack.enter_context(patch.object(E2E.subprocess, "Popen", side_effect=AssertionError("real terminal")))
++            stack.enter_context(patch.object(E2E.urllib.request, "urlopen", side_effect=AssertionError("real network")))
++            if download_fixture:
++                (root / "Downloads").mkdir()
++                stack.enter_context(patch.object(E2E, "HOME", root))
++                asset = {"name": "fixture.dmg", "browser_download_url": "https://fixture.invalid/fixture.dmg",
++                         "digest": "sha256:" + "0" * 64}
++                response = io.BytesIO(json.dumps({"assets": [asset]}).encode())
++                payload = OSError("download interrupted") if download_fixture == "network" else io.BytesIO(b"unverified image")
++                stack.enter_context(patch.object(E2E.urllib.request, "urlopen", side_effect=[response, payload]))
++            argv = ["e2e"] + (["--keep-going"] if keep_going else []) + (["--skip-build"] if skip_build else [])
++            stack.enter_context(patch("sys.argv", argv))
++            with redirect_stdout(io.StringIO()), self.assertRaises(SystemExit) as exit_result:
++                E2E.main()
++            report = json.loads((root / "report.json").read_text())
++            self.assertEqual(exit_result.exception.code, 1 if failed else 0)
++            return calls, report["steps"]
++
++    def test_failed_prerequisites_block_dependent_actions_with_keep_going(self):
++        expected = {
++            "preflight": ["preflight"],
++            "build": ["preflight", "build"],
++            "download": ["preflight", "build", "download", "smoke"],
++            "install": ["preflight", "build", "download", "install", "installer", "smoke"],
++            "launch": ["preflight", "build", "download", "install", "launch", "installer", "smoke"],
++            "uninstall": ["preflight", "build", "download", "install", "launch", "uninstall", "installer", "smoke"],
++        }
++        for failed, wanted in expected.items():
++            with self.subTest(failed=failed):
++                calls, steps = self.run_candidate(failed)
++                self.assertEqual(calls, wanted)
++                self.assertIn("skipped", [step["status"] for step in steps])
++
++    def test_read_only_failure_keeps_independent_analyze_and_smoke(self):
++        calls, _ = self.run_candidate("installer")
++        self.assertEqual(calls[-3:], ["installer", "analyze", "smoke"])
++
++    def test_default_stops_after_first_failure(self):
++        calls, _ = self.run_candidate("download", keep_going=False)
++        self.assertEqual(calls, ["preflight", "build", "download"])
++
++    def test_failed_transfer_and_checksum_block_installation(self):
++        for failure in ("network", "checksum"):
++            with self.subTest(failure=failure):
++                calls, steps = self.run_candidate("download", download_fixture=failure)
++                self.
+```
+
+---
+
+### Incident Patch 2: `e9fbcf8e` (2026-10-18)
+**Commit Message**: fix: require confirmed roots before owner cache cleanup
+
+Do not authorize owner commands from guessed defaults after failed cache-root probes. Check every configured Conda package root against the whitelist, preserve signal cancellation and retain data when discovery is incomplete.
+
+**File**: `.claude/rules/clean-dev.md` (modified, +3/-0)
+```diff
+@@ -24,6 +24,9 @@ General clean target policy, including the owner-command rule, is in `.claude/ru
+ 
+ ## Recovery contracts
+ 
++- uv, npm, pip and mise owner cache commands require a successful absolute-root query (or mise's explicit absolute `MISE_CACHE_DIR`). Failed, empty, relative or multiline answers skip that owner command; a signal still cancels. Never whitelist a guessed default and then let the owner mutate its separately configured root. Known npm default residuals keep their existing safe-clean guards. Locked by the four `owner cleanup requires a confirmed cache root` cases in `tests/clean_dev_caches.bats`.
++- Conda validates every `pkgs_dirs` entry from one successful `conda info --json` snapshot before running its owner cleanup. An absent, empty, invalid or partially readable list skips the command; any whitelisted root or descendant protects the entire command. Locked by `conda owner cleanup protects every configured package cache root` in `tests/clean_dev_caches.bats`.
++
+ - **Classify cleanup by recovery contract, not by directory name or download cost.** Re-downloading is a real cost but not an automatic veto when the user explicitly runs `clean`: Go's module cache is owner-documented, machine-resolvable, and independently whitelistable, so it is reset through `go clean -modcache`.
+ - Directly consumed or mixed-state stores still stay: `registry/src`, Cargo `git`, `$DENO_DIR`, `~/.ivy2/cache`, `~/.m2/repository`, `~/.nuget/packages`, `~/.cabal/packages`, and `~/.cpan/sources`. Cargo's compressed `registry/cache` is redundant with extracted sources, while Cargo 1.88+ owns age-aware GC for sources and git dependencies.
+ - Downloaded model and experiment roots (`~/.cache/huggingface`, `~/.cache/torch`, `~/.cache/tensorflow`, `~/.cache/wandb`) and toolchain payloads (`~/.sbt/boot`, `~/.sbt/launchers`, `~/.stack/programs`) stay off the blanket delete path. `DENO_DIR` is review-only because the owner command removes the entire root, including origin storage and downloaded runtime payloads.
+```
+
+**File**: `lib/clean/dev.sh` (modified, +52/-24)
+```diff
+@@ -98,11 +98,13 @@ clean_corepack_cache() {
+ clean_uv_cache() {
+     local uv_cache_path="$HOME/.cache/uv"
+     if command -v uv > /dev/null 2>&1 && run_with_timeout "$MOLE_TIMEOUT_QUICK_DETECT_SEC" uv --version > /dev/null 2>&1; then
+-        local detected_cache
+-        detected_cache=$(run_with_timeout "$MOLE_TIMEOUT_QUICK_DETECT_SEC" uv cache dir 2> /dev/null || true)
+-        if [[ -n "$detected_cache" && "$detected_cache" == /* ]]; then
+-            uv_cache_path="$detected_cache"
+-        fi
++        local detected_cache cache_rc=0
++        detected_cache=$(run_with_timeout "$MOLE_TIMEOUT_QUICK_DETECT_SEC" uv cache dir 2> /dev/null) || cache_rc=$?
++        mole_rc_signal "$cache_rc" && return "$cache_rc"
++        # The owner may use a configured root. A failed lookup is not permission
++        # to check the default path and mutate a different one.
++        [[ $cache_rc -eq 0 && "$detected_cache" == /* && "$detected_cache" != *$'\n'* ]] || return 0
++        uv_cache_path="$detected_cache"
+         clean_tool_cache "uv cache" "$uv_cache_path" run_with_timeout "$MOLE_TIMEOUT_PKG_CLEANUP_SEC" uv cache prune || return $?
      else
-@@ -993,7 +997,17 @@ clean_go_cache_root() {
-         note_activity
+         safe_clean "$uv_cache_path"/* "uv cache"
+@@ -295,9 +297,29 @@ clean_conda_metadata_caches() {
          return 0
      fi
-+    if mole_rc_timeout "$command_status"; then
-+        # Like every other owner command (clean_tool_cache), a timed-out `go
-+        # clean` skips this one cache instead of cancelling unrelated cleanup.
-+        # Go may already have removed part of the root, so say it stopped.
-+        echo -e "  ${GRAY}${ICON_WARNING}${NC} ${display_name} · stopped (timed out)"
-+        note_activity
-+        log_warning_to_file "$display_name timed out after ${MOLE_TIMEOUT_PKG_CLEANUP_SEC}s and was skipped: go clean $clean_flag $physical_root"
-+        return 0
-+    fi
-     if mole_rc_timeout_or_signal "$command_status"; then
-+        _mole_record_clean_cancellation "$command_status" "$display_name"
-         return "$command_status"
-     fi
  
-@@ -5386,12 +5400,13 @@ _run_developer_cleanup_step() {
-     "$@" || step_rc=$?
-     debug_timer_end "developer cleanup step: $step_name" _perf_step_start
-     if mole_rc_timeout_or_signal "$step_rc"; then
--        _mole_record_clean_cancellation "$step_rc"
-+        _mole_record_clean_cancellation "$step_rc" "$step_name"
-         return "$step_rc"
+-    local conda_cache_hint="$HOME/.conda/pkgs"
+     if command -v conda > /dev/null 2>&1 && run_with_timeout "$MOLE_TIMEOUT_QUICK_DETECT_SEC" conda --version > /dev/null 2>&1; then
+-        clean_tool_cache "conda index/tarball/log caches" "$conda_cache_hint" \
++        # Conda also cleans custom pkgs_dirs. Validate the complete owner
++        # snapshot before authorizing a command that can touch all of them.
++        local conda_info="" info_rc=0 root_count="" root="" i=0
++        conda_info=$(run_with_timeout "$MOLE_TIMEOUT_QUICK_DETECT_SEC" conda info --json 2> /dev/null) || info_rc=$?
++        mole_rc_signal "$info_rc" && return "$info_rc"
++        [[ $info_rc -eq 0 ]] || return 0
++        root_count=$(printf '%s' "$conda_info" | /usr/bin/plutil -extract pkgs_dirs raw -expect array -o - - 2> /dev/null) || return 0
++        [[ "$root_count" =~ ^[0-9]+$ && "$root_count" -gt 0 ]] || return 0
++        conda_pkg_roots=()
++        for ((i = 0; i < root_count; i++)); do
++            # Retain trailing newlines so malformed paths cannot become valid.
++            root=$(
++                printf '%s' "$conda_info" | /usr/bin/plutil -extract "pkgs_dirs.$i" raw -expect string -o - - 2> /dev/null || exit $?
++                printf '\001'
++            ) || return 0
++            root="${root%$'\001'}"
++            root="${root%$'\n'}"
++            [[ "$root" == /* && "$root" != *$'\n'* ]] || return 0
++            conda_pkg_roots+=("$root")
++        done
++        conda_cache_whitelisted "${conda_pkg_roots[@]}" && return 0
++        clean_tool_cache "conda index/tarball/log caches" "${conda_pkg_roots[0]}" \
+             run_with_timeout "$MOLE_TIMEOUT_DISK_VERIFY_SEC" conda clean --yes --index-cache --tarballs --logfiles || return $?
+         return 0
      fi
+@@ -460,14 +482,18 @@ clean_dev_npm() {
  
-     pending_clean_cancel="${MOLE_CLEAN_CANCEL_STATUS:-0}"
-     if mole_rc_timeout_or_signal "$pending_clean_cancel"; then
-+        _mole_note_clean_cancel_source "$step_name"
-         return "$pending_clean_cancel"
-     fi
-     [[ "$strict" == "true" && $step_rc -ne 0 ]] && return "$step_rc"
-```
-
-**File**: `lib/core/file_ops.sh` (modified, +15/-1)
-```diff
-@@ -1404,18 +1404,32 @@ _record_file_ops_dry_run_target() {
- # Preserve the first timeout or signal observed by a clean deletion sink. Some
- # older cleanup families intentionally treat ordinary item failures as
- # best-effort; this sticky status prevents those `|| true` paths from turning a
--# user interrupt into permission to continue deleting later targets.
-+# user interrupt into permission to continue deleting later targets. An
-+# optional label names what was running; see _mole_note_clean_cancel_source.
- _mole_record_clean_cancellation() {
-     local status="$1"
-+    local source="${2:-}"
-     if [[ "${MOLE_CURRENT_COMMAND:-}" == "clean" ]] && mole_rc_timeout_or_signal "$status"; then
-         local existing="${MOLE_CLEAN_CANCEL_STATUS:-0}"
-         if ! mole_rc_timeout_or_signal "$existing"; then
-             MOLE_CLEAN_CANCEL_STATUS=$status
-             export MOLE_CLEAN_CANCEL_STATUS
+     if command -v npm > /dev/null 2>&1; then
+         start_section_spinner "Checking npm cache path..."
+-        npm_cache_path=$(run_with_timeout "$MOLE_TIMEOUT_QUICK_DETECT_SEC" npm config get cache 2> /dev/null) || npm_cache_path=""
++        local npm_cache_rc=0
++        npm_cache_path=$(run_with_timeout "$MOLE_TIMEOUT_QUICK_DETECT_SEC" npm config get cache 2> /dev/null) || npm_cache_rc=$?
+         stop_section_spinner
++        mole_rc_signal "$npm_cache_rc" && return "$npm_cache_rc"
+ 
+-        if [[ -z "$npm_cache_path" || "$npm_cache_path" != /* ]]; then
++        if [[ $npm_cache_rc -eq 0 && "$npm_cache_path" == /* && "$npm_cache_path" != *$'\n'* ]]; then
++            clean_tool_cache "npm cache" "$npm_cache_path" run_with_timeout "$MOLE_TIMEOUT_PKG_CLEANUP_SEC" npm cache clean --force || return $?
++        else
++            # Known default residuals below retain their own safe-clean guards;
++            # do not run an owner command against an unresolved configured root.
+             npm_cache_path="$npm_default_cache"
          fi
-+        _mole_note_clean_cancel_source "$source"
+-
+-        clean_tool_cache "npm cache" "$npm_cache_path" run_with_timeout "$MOLE_TIMEOUT_PKG_CLEANUP_SEC" npm cache clean --force || return $?
      fi
- }
  
-+# Name what a clean cancellation came from, so the summary and mole.log can say
-+# what timed out instead of only the exit status. A cancellation unwinds from
-+# the innermost caller outward, so the first label wins and the step runners
-+# only fill the gap when nothing deeper knew a better name.
-+_mole_note_clean_cancel_source() {
-+    local source="${1:-}"
-+    [[ -n "$source" && -z "${MOLE_CLEAN_CANCEL_SOURCE:-}" ]] || return 0
-+    MOLE_CLEAN_CANCEL_SOURCE="$source"
-+    export MOLE_CLEAN_CANCEL_SOURCE
-+}
-+
- # Safe wrapper around rm -rf with validation
- safe_remove() {
-     local path="$1"
+     # These residual directories are not removed by `npm cache clean --force`
+@@ -801,12 +827,12 @@ clean_clang_module_cache() {
+ clean_dev_python() {
+     # Check pip3 is functional (not just macOS stub that triggers CLT install dialog)
+     if command -v pip3 > /dev/null 2>&1 && run_with_timeout "$MOLE_TIMEOUT_QUICK_DETECT_SEC" pip3 --version > /dev/null 2>&1; then
+-        local pip_cache_path
+-        pip_cache_path=$(run_with_timeout "$MOLE_TIMEOUT_QUICK_DETECT_SEC" pip3 cache dir 2> /dev/null) || pip_cache_path=""
+-        if [[ -z "$pip_cache_path" || "$pip_cache_path" != /* ]]; then
+-            pip_cache_path="$HOME/Library/Caches/pip"
++        local pip_cache_path pi
 ```
 
-**File**: `lib/core/log.sh` (modified, +11/-0)
+**File**: `tests/clean_dev_caches.bats` (modified, +134/-0)
 ```diff
-@@ -150,6 +150,17 @@ log_warning() {
-     fi
+@@ -37,6 +37,68 @@ SCRIPT
+     chmod +x "$HOME/bin/gh"
  }
  
-+# Record a warning in mole.log without printing it, for diagnostics the
-+# terminal deliberately stays quiet about, such as a skipped owner timeout.
-+log_warning_to_file() {
-+    local timestamp
-+    timestamp=$(get_timestamp)
-+    append_log_line "$LOG_FILE" "[$timestamp] WARNING: $1"
-+    if [[ "${MO_DEBUG:-}" == "1" ]]; then
-+        append_log_line "$DEBUG_LOG_FILE" "[$timestamp] WARNING: $1"
-+    fi
-+}
-+
- # shellcheck disable=SC2329
- log_error() {
-     echo -e "${YELLOW}${ICON_ERROR}${NC} $1" >&2
-```
-
-**File**: `tests/clean_dev_caches.bats` (modified, +66/-4)
-```diff
-@@ -2995,7 +2995,61 @@ EOF
-     [[ "$output" == *"build=1 module=0"* ]]
- }
- 
--@test "clean_dev_go propagates owner cleanup cancellation" {
-+@test "clean_dev_go skips a timed-out owner cleanup without cancelling" {
-+    # A timed-out `go clean` is an owner command timeout, so like every
-+    # clean_tool_cache owner it skips this cache instead of stopping all later
-+    # cleanup. The build cache still runs and mole.log names what timed out.
-+    local module_root="$HOME/go-module-timeout"
-+    local build_root="$HOME/go-build-timeout"
-+    local trace="$HOME/go-clean-timeout.trace"
-+    mkdir -p "$module_root" "$build_root"
-+    rm -f "$trace" "$HOME/Library/Logs/mole/mole.log"
-+
-+    run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" \
-+        GO_MODULE_ROOT="$module_root" GO_BUILD_ROOT="$build_root" GO_TRACE="$trace" \
-+        /bin/bash --noprofile --norc <<'EOF'
++assert_owner_cleanup_requires_confirmed_root() {
++    local owner_tool="$1" owner_entry="$2"
++    run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" PATH="/usr/bin:/bin" \
++        MOLE_TEST_NO_AUTH=1 OWNER_TOOL="$owner_tool" OWNER_ENTRY="$owner_entry" /bin/bash --noprofile --norc <<'EOF'
 +set -euo pipefail
 +source "$PROJECT_ROOT/lib/core/common.sh"
 +source "$PROJECT_ROOT/lib/clean/dev.sh"
 +DRY_RUN=false
-+MOLE_CURRENT_COMMAND=clean
-+MOLE_CLEAN_CANCEL_STATUS=0
-+go() { :; }
-+run_with_timeout() {
-+    shift
-+    if [[ "$1" == "go" && "$2" == "env" ]]; then
-+        if [[ "$3" == "GOMODCACHE" ]]; then
-+            printf '%s\n' "$GO_MODULE_ROOT"
-+        else
-+            printf '%s\n' "$GO_BUILD_ROOT"
-+        fi
-+        return 0
-+    fi
-+    printf '%s\n' "$*" >> "$GO_TRACE"
-+    [[ "$*" == *"-modcache"* ]] && return 124
-+    return 0
-+}
-+is_path_whitelisted() { return 1; }
-+should_protect_path() { return 1; }
-+go_cache_process_state() { return 1; }
-+note_activity() { :; }
-+clean_rc=0
-+clean_dev_go || clean_rc=$?
-+printf 'rc=%s\n' "$clean_rc"
-+printf 'CANCEL=%s\n' "${MOLE_CLEAN_CANCEL_STATUS:-0}"
-+EOF
-+
-+    [ "$status" -eq 0 ] || { echo "$output"; return 1; }
-+    [[ "$output" == *"rc=0"* ]] || return 1
-+    [[ "$output" == *"CANCEL=0"* ]] || return 1
-+    [[ "$output" == *"Go module cache · stopped (timed out)"* ]] || return 1
-+    grep -qFx "env GOCACHE=$build_root go clean -cache" "$trace" || return 1
-+    grep -qF "Go module cache timed out after" "$HOME/Library/Logs/mole/mole.log" || return 1
-+    rm -f "$trace"
-+    rm -rf "$module_root" "$build_root"
-+}
-+
-+@test "clean_dev_go propagates an interrupted owner cleanup" {
-     local module_root="$HOME/go-module-cancel"
-     mkdir -p "$module_root"
- 
-@@ -3005,14 +3059,16 @@ set -euo pipefail
- source "$PROJECT_ROOT/lib/core/common.sh"
- source "$PROJECT_ROOT/lib/clean/dev.sh"
- DRY_RUN=false
-+MOLE_CURRENT_COMMAND=clean
-+MOLE_CLEAN_CANCEL_STATUS=0
- go() { :; }
- run_with_timeout() {
-     shift
-     if [[ "$1" == "go" && "$2" == "env" ]]; then
-         [[ "$3" == "GOMODCACHE" ]] && printf '%s\n' "$GO_MODULE_ROOT" || return 1
-         return 0
-     fi
--    return 124
-+    return 130
- }
- is_path_whitelisted() { return 1; }
- should_protect_path() { return 1; }
-@@ -3021,10 +3077,14 @@ note_activity() { :; }
- clean_rc=0
- clean_dev_go || clean_rc=$?
- printf 'rc=%s\n' "$clean_rc"
-+printf 'CANCEL=%s\n' "${MOLE_CLEAN_CANCEL_STATUS:-0}"
-+printf 'SOURCE=%s\n' "${MOLE_CLEAN_CANCEL_SOURCE:-}"
- EOF
- 
-     [ "$status" -eq 0 ] || { echo "$output"; return 1; }
--    [[ "$output" == *"rc=124"* ]] || return 1
-+    [[ "$output" == *"rc=130"* ]] || return 1
-+    [[ "$output" == *"CANCEL=130"* ]] || return 1
-+    [[ "$output" == *"SOURCE=Go module cache"* ]] || return 1
-     rm -rf "$module_root"
- }
- 
-@@ -3894,7 +3954,9 @@ EOF
-     [[ "$output" != *"failing cache"* ]] || return 1
-     [[ "$output" != *"slow cache"* ]] || return 1
-     [[ "$output" == *"ACTIVITIES=1"* ]] || return 1
--    [[ "$output" == *"CANCEL=0"* ]]
-+    [[ "$output" == *"CANCEL=0"* ]] || return 1
-+    grep -qF "WARNING: slow cache timed out and was skipped: owner_timeout" \
-+        "$HOME/Library/Logs/mole/mole.log"
- }
- 
- @test "an interrupted owner command stops the next pnpm store before its probe or prune" {
-```
-
-**File**: `tests/clean_summary_cancel.bats` (modified, +40/-0)
-```diff
-@@ -96,6 +96,46 @@ EOF
-     [[ "$output" == *"Remaining cleanup was skipped"* ]]
- }
- 
-+@test "a timeout names the cancelled step in the summary and mole.log" {
-+    run_perform_cleanup_with 124
-+
-+    [ "$status" -eq 124 ] || { echo "$output"; return 1; }
-+    [[ "$output" == *"Cancelled: clean_user_essentials timed out (exit 124)."* ]] || return 1
-+    grep -qF "WARNING: Cancelled: clean_user_essentials timed out (exit 124). Section: User essentials." \
-+        "$HOME/Library/Logs/mole/mole.log"
-+}
-+
-+@test "the innermost cancellation label wins over the step name" {
-+    run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" \
-+        /bin/bash --noprofile --norc << 'EOF'
-+set -euo pipefail
-+source "$PROJECT_ROOT/bin/clean.sh"
-+for fn in clean_user_essentials clean_finder_metadata clean_app_caches \
-+    clean_browsers run_cloud_and_office_cleanup clean_developer_tools \
-+    clean_user_gui_applications clean_virtualization_tools \
-+    clean_application_support_logs clean_orphaned_app_data \
-+    clean_orphaned_system_services clean_orphaned_container_stubs \
-+    show_user_launch_agent_hint_notice \
-+    clean_apple_silicon_caches clean_cached_device_firmware \
-+    clean_time_machine_failed_backups check_large_file_candidates \
-+    show_project_artifact_hint_notice; do
-+    eval "$fn() { return 0; }"
-+done
-+clean_app_caches() {
-+    MOLE_CURRENT_COMMAND=clean
-+    _mole_record_clean_cancellation 124 "Slow owner cache"
-+    return 124
-+}
-+perform_cleanup
-+EOF
-+
-+    [ "$status" -eq 124 ] || { echo "$output"; return 1; }
-+    [[ "$output" == *"Cancelled: Slow owner cache timed out (exit 124)."* ]] || return 1
-+    [[ "$output" != *"clean_app_caches timed out"* ]] || return 1
-+    grep -qF "WARNING: Cancelled: Slow owner cache timed out (exit 124). Section: App caches." \
-+        "$HOME/Library/Logs/mole/mole.log"
-+}
-+
- @test "interrupted section (>=128) prints an interrupted summary" {
-     run_perform_cleanup_with 130
- 
-```
-
----
-
-### Incident Patch 2: `4ab50c73` (2026-10-06)
-**Commit Message**: fix(clean): keep the DiagnosticReports directory when cleaning user logs (#1690)
-
-`~/Library/Logs/*` matched DiagnosticReports as a whole directory and
-removed it. macOS's crash-report helper cannot recreate it under its
-sandbox, so later crash reports were dropped ("Destination unavailable").
-
-Skip the directory itself and clean only the files inside it. Still a
-single safe_clean call, so dry-run, Trash routing, whitelist and logging
-are unchanged.
-
-Fixes #1689
-
-**File**: `lib/clean/user.sh` (modified, +9/-1)
-```diff
-@@ -231,7 +231,15 @@ clean_user_essentials() {
-     fi
-     stop_section_spinner
- 
--    safe_clean ~/Library/Logs/* "User app logs"
-+    # Keep the DiagnosticReports directory itself: macOS cannot recreate it
-+    # under the sandbox, so removing it silently disables crash reporting (#1689).
-+    local -a user_log_targets=()
-+    local log_entry
-+    for log_entry in ~/Library/Logs/* ~/Library/Logs/DiagnosticReports/*; do
-+        [[ "$log_entry" == "$HOME/Library/Logs/DiagnosticReports" ]] && continue
-+        user_log_targets+=("$log_entry")
-+    done
-+    safe_clean "${user_log_targets[@]}" "User app logs"
- 
-     if [[ "${MOLE_SKIP_TRASH_CLEANUP:-0}" != "1" ]]; then
-         clean_trash
-```
-
-**File**: `tests/clean_user_core.bats` (modified, +25/-1)
-```diff
-@@ -164,7 +164,7 @@ source "$PROJECT_ROOT/lib/core/common.sh"
- source "$PROJECT_ROOT/lib/clean/user.sh"
- start_section_spinner() { :; }
- stop_section_spinner() { :; }
--safe_clean() { echo "SAFE:$2"; }
-+safe_clean() { echo "SAFE:${!#}"; }
- clean_trash() { echo "TRASH"; }
- _clean_recent_items() { :; }
- _clean_mail_downloads() { :; }
-@@ -489,6 +489,30 @@ EOF
-     rm -rf "$test_home"
- }
- 
-+@test "clean_user_essentials keeps the DiagnosticReports directory (#1689)" {
-+    local test_home="$HOME/diag-home"
-+    mkdir -p "$test_home/Library/Logs/DiagnosticReports"
-+    touch "$test_home/Library/Logs/DiagnosticReports/App.ips"
-+
-+    run env HOME="$test_home" PROJECT_ROOT="$PROJECT_ROOT" MOLE_TEST_NO_AUTH=1 \
-+        /bin/bash --noprofile --norc <<'EOF'
-+set -euo pipefail
-+source "$PROJECT_ROOT/bin/clean.sh"
-+DRY_RUN=false
 +start_section_spinner() { :; }
 +stop_section_spinner() { :; }
-+clean_trash() { :; }
-+_clean_recent_items() { :; }
-+_clean_mail_downloads() { :; }
-+clean_user_essentials
-+EOF
-+
-+    [ "$status" -eq 0 ] || return 1
-+    [[ -d "$test_home/Library/Logs/DiagnosticReports" ]] || return 1
-+    [[ ! -e "$test_home/Library/Logs/DiagnosticReports/App.ips" ]] || return 1
-+    rm -rf "$test_home"
-+}
-+
- @test "a custom whitelist still protects system caches, Poetry virtualenvs and the renv cache" {
-     # clean_user_essentials sweeps every child of ~/Library/Caches, and
-     # load_mole_whitelist replaces DEFAULT_WHITELIST_PATTERNS wholesale once a
-```
-
----
-
-### Incident Patch 3: `e3f2e3bd` (2026-10-05)
-**Commit Message**: fix(analyze): count Library hardlinks once in overview
-
-Use one du traversal for Library so hardlinks across child directories share an inode set. Invalidate cached totals from the parallel measurement and cover hardlink accounting and old cache schemas with regression tests.
-
-**File**: `cmd/analyze/analyze_test.go` (modified, +5/-5)
-```diff
-@@ -4152,9 +4152,9 @@ func TestUnavailableEntryCannotBeSelectedForDeletion(t *testing.T) {
- 	}
- }
- 
--func TestSchemaFiveSizesAreRejectedByEveryLoader(t *testing.T) {
-+func TestOldSchemaSizesAreRejectedByEveryLoader(t *testing.T) {
- 	for _, loader := range []string{"fresh", "stale", "overview-gob", "overview-json"} {
--		for _, version := range []int{5, cacheSchemaVersion} {
-+		for _, version := range []int{5, 6, cacheSchemaVersion} {
- 			t.Run(fmt.Sprintf("%s/schema%d", loader, version), func(t *testing.T) {
- 				home := t.TempDir()
- 				t.Setenv("HOME", home)
-@@ -4203,10 +4203,10 @@ func TestSchemaFiveSizesAreRejectedByEveryLoader(t *testing.T) {
- 				case "overview-json":
- 					_, _, err = loadStoredOverviewMeasurement(target)
- 				}
--				if version == 5 && err == nil {
--					t.Fatal("schema 5 stale sizes were accepted")
-+				if version <= 6 && err == nil {
-+					t.Fatalf("schema %d stale sizes were accepted", version)
- 				}
--				if version != 5 && err != nil {
-+				if version > 6 && err != nil {
- 					t.Fatalf("current schema rejected: %v", err)
- 				}
- 			})
-```
-
-**File**: `cmd/analyze/cache.go` (modified, +2/-1)
-```diff
-@@ -30,7 +30,8 @@ import (
- // v5: entries record their scan state, so a partial result lost only to
- // permission denials can be cached and still reads as partial.
- // v6: deletions invalidate ancestor totals and overview measurements.
--const cacheSchemaVersion = 6
-+// v7: Library overview totals count cross-directory hardlinks once again.
-+const cacheSchemaVersion = 7
- 
- type overviewSizeSnapshot struct {
- 	Size          int64     `json:"size"`
-```
-
-**File**: `cmd/analyze/scanner.go` (modified, +2/-16)
-```diff
-@@ -1055,14 +1055,6 @@ func getDirectorySizeFromDuWithExcludeAndIgnores(ctx context.Context, path strin
- 		return kb * 1024, nil
- 	}
- 
--	// One serial du over ~/Library routinely outlives duTimeout, so measure it
--	// per child like Home. The ignored names must also be skipped as immediate
--	// children: du given an operand matching its own -I prints nothing, which
--	// runDuSize reports as a failure. Deeper matches still go through -I.
--	if excludePath == "" && isUserLibraryPath(path) {
--		return getDirectorySizeFromDuSkippingImmediateChild(ctx, path, "", ignoreNames, runDuSize)
--	}
--
- 	// When excluding a path (e.g., ~/Library), subtract only that exact directory instead of ignoring every "Library"
- 	if excludePath != "" {
- 		if filepath.Dir(filepath.Clean(excludePath)) == filepath.Clean(path) {
-@@ -1086,6 +1078,7 @@ func getDirectorySizeFromDuWithExcludeAndIgnores(ctx context.Context, path strin
- 		return totalSize - excludeSize, nil
- 	}
- 
-+	// Library needs one traversal so cross-directory hardlinks count once.
- 	return runDuSize(path)
- }
- 
-@@ -1136,14 +1129,7 @@ func overviewIgnoreNamesForPath(path string) []string {
- 	return ignoreNames
- }
- 
--func isUserLibraryPath(path string) bool {
--	home := os.Getenv("HOME")
--	return home != "" && filepath.IsAbs(home) && filepath.Clean(path) == filepath.Join(home, "Library")
--}
--
--// overviewChildDuSem caps the per-child du processes that every overview
--// measurement shares, so measuring Home and ~/Library together runs no more
--// du processes than Home alone did with its own pool.
-+// overviewChildDuSem caps concurrent per-child Home measurements.
- var overviewChildDuSem = make(chan struct{}, min(max(runtime.NumCPU()*2, 2), 8))
- 
- // getDirectorySizeFromDuSkippingImmediateChild runs du once per immediate
-```
-
-**File**: `cmd/analyze/scanner_test.go` (modified, +35/-10)
-```diff
-@@ -9,7 +9,7 @@ import (
- 	"os"
- 	"os/exec"
- 	"path/filepath"
--	"slices"
-+	"strconv"
- 	"strings"
- 	"sync/atomic"
- 	"testing"
-@@ -83,7 +83,7 @@ func TestGetDirectorySizeFromDuSkippingImmediateChildDoesNotMeasureExcludedPath(
- 	}
- }
- 
--func TestGetDirectorySizeFromDuMeasuresUserLibraryPerChild(t *testing.T) {
-+func TestGetDirectorySizeFromDuMeasuresUserLibraryInOneTraversal(t *testing.T) {
- 	home := t.TempDir()
- 	t.Setenv("HOME", home)
- 	library := filepath.Join(home, "Library")
-@@ -121,14 +121,8 @@ func TestGetDirectorySizeFromDuMeasuresUserLibraryPerChild(t *testing.T) {
- 		t.Fatalf("read du operands: %v", err)
- 	}
- 	got := strings.Split(strings.TrimSpace(string(data)), "\n")
--	want := []string{
--		filepath.Join(library, "Application Support"),
--		filepath.Join(library, "Caches"),
--		filepath.Join(library, "Containers"),
--	}
--	slices.Sort(got)
--	if !slices.Equal(got, want) {
--		t.Fatalf("expected one du per child directory except Mobile Documents, got %q", got)
-+	if len(got) != 1 || got[0] != library {
-+		t.Fatalf("expected one Library traversal for shared hardlink accounting, got %q", got)
- 	}
- }
- 
-@@ -437,3 +431,34 @@ func TestOverviewMeasurementStoresDenialOnlyPartial(t *testing.T) {
- 		t.Fatalf("cancellation lost: %v", err)
- 	}
- }
-+
-+func TestUserLibraryOverviewDeduplicatesHardlinks(t *testing.T) {
-+	home := t.TempDir()
-+	t.Setenv("HOME", home)
-+	library := filepath.Join(home, "Library")
-+	original := filepath.Join(library, "Application Support", "payload")
-+	writeFileWithSize(t, original, 1024*1024)
-+	for _, link := range []string{filepath.Join(library, "Caches", "payload"), filepath.Join(library, "top-link")} {
-+		if err := os.MkdirAll(filepath.Dir(link), 0755); err != nil {
-+			t.Fatal(err)
-+		}
-+		if err := os.Link(original, link); err != nil {
-+			t.Fatal(err)
-+		}
-+	}
-+	out, err := exec.Command("/usr/bin/du", "-skPx", library).Output()
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	kb, err := strconv.ParseInt(strings.Fields(string(out))[0], 10, 64)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	got, err := getDirectorySizeFromDuWithExcludeAndIgnores(context.Background(), library, "", nil)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	if got != kb*1024 {
-+		t.Fatalf("Library size = %d, single du = %d; hardlinks must count once", got, kb*1024)
-+	}
-+}
-```
-
----
-
-### Incident Patch 4: `5beaf0c9` (2026-10-05)
-**Commit Message**: fix(optimize): skip DNS flush under an active VPN
-
-Both DNS & Spotlight Check and Network Cache Refresh sent SIGHUP to
-mDNSResponder with no VPN gate. VPN clients that watch DNS configuration,
-such as WireGuard, read that as a network change and reconnect on every
-optimize run; Mole Mac hit this with a paying user and dropped the task.
-
-flush_dns_cache now asks has_active_vpn_interface first. An active VPN
-skips the flush and reports skipped; an unknown VPN state also skips and
-reports failed, matching Network Stack Refresh, since the probe could not
-rule a VPN out. Dry-run previews the same decision. MOLE_DNS_FLUSHED is
-still set only after a real or previewed flush, so the second task never
-claims work the first one skipped.
-
-SIGHUP purges the resolver cache without restarting the process, so the
-"mDNSResponder restarted" lines are dropped.
-
-A Mac with no default route (offline) used to read as "VPN state unknown"
-and would now fail both DNS tasks, so a missing default route counts as no
-VPN; other route errors stay unknown. The health JSON description no longer
-says the task restarts mDNSResponder (contract hash updated, only that line
-changed). The VPN probe tests now load comm
-
-**File**: `lib/optimize/catalog.sh` (modified, +1/-1)
-```diff
-@@ -42,7 +42,7 @@ _optimize_catalog_register fix_broken_configs opt_fix_broken_configs \
-     "Fix corrupted preferences files" true
- _optimize_catalog_register network_optimization opt_network_optimization \
-     "Network Cache Refresh" "Network Cache Refresh" \
--    "Optimize DNS cache & restart mDNSResponder" true
-+    "Refresh DNS cache" true
- _optimize_catalog_register sqlite_vacuum opt_sqlite_vacuum \
-     "Database Optimization" "Database Optimization" \
-     "Compress SQLite databases for Mail, Safari & Messages (skips if apps are running)" true
-```
-
-**File**: `lib/optimize/tasks.sh` (modified, +56/-19)
-```diff
-@@ -137,8 +137,13 @@ has_active_vpn_interface() {
-     fi
-     local route_output=""
-     local route_status=0
--    route_output=$(LC_ALL=C run_with_timeout "$MOLE_TIMEOUT_SHORT_QUERY_SEC" route -n get default 2> /dev/null) || route_status=$?
-+    route_output=$(LC_ALL=C run_with_timeout "$MOLE_TIMEOUT_SHORT_QUERY_SEC" route -n get default 2>&1) || route_status=$?
-     if [[ $route_status -ne 0 ]]; then
-+        # No default route at all (offline): no full-tunnel VPN can be
-+        # routing traffic, so that is a known "none", not an unknown state.
-+        if [[ "$route_output" == *"not in table"* ]]; then
-+            return 1
-+        fi
-         return 2
-     fi
-     local default_iface
-@@ -151,7 +156,21 @@ has_active_vpn_interface() {
-     return 1
- }
- 
-+# Return 0 when the DNS cache was flushed (or would be in dry-run), 1 when the
-+# flush failed or admin access is missing, 2 when an active VPN skipped it, and
-+# 3 when the VPN state is unknown. SIGHUP makes mDNSResponder drop its cache,
-+# and VPN clients that watch DNS configuration (WireGuard and similar) treat
-+# that as a network change and reconnect. An unknown state also skips, like
-+# opt_network_stack_optimize, because the probe could not rule a VPN out.
- flush_dns_cache() {
-+    local vpn_status=0
-+    has_active_vpn_interface || vpn_status=$?
-+    case "$vpn_status" in
-+        0) return 2 ;;
-+        1) ;;
-+        *) return 3 ;;
-+    esac
-+
-     if [[ "${MOLE_DRY_RUN:-0}" == "1" ]]; then
-         MOLE_DNS_FLUSHED=1
-         return 0
-@@ -176,11 +195,13 @@ opt_system_maintenance() {
-         return 0
-     fi
- 
--    local dns_flushed="false"
--    if flush_dns_cache; then
--        opt_msg "DNS cache flushed"
--        dns_flushed="true"
--    fi
-+    local dns_status=0
-+    flush_dns_cache || dns_status=$?
-+    case "$dns_status" in
-+        0) opt_msg "DNS cache flushed" ;;
-+        2) opt_msg "DNS cache flush skipped, active VPN detected" ;;
-+        3) echo -e "  ${YELLOW}${ICON_WARNING}${NC} Failed to inspect active VPN state" ;;
-+    esac
- 
-     local spotlight_status=""
-     local spotlight_failed=0
-@@ -195,8 +216,13 @@ opt_system_maintenance() {
- 
-     local applied=0
-     local failed="$spotlight_failed"
--    [[ "$dns_flushed" == "true" ]] && applied=1 || failed=$((failed + 1))
--    optimize_task_result_from_counts "$applied" "$failed"
-+    local skipped=0
-+    case "$dns_status" in
-+        0) applied=1 ;;
-+        2) skipped=1 ;;
-+        *) failed=$((failed + 1)) ;;
-+    esac
-+    optimize_task_result_from_counts "$applied" "$failed" "$skipped"
- }
- 
- # Refresh Finder caches (QuickLook/icon services).
-@@ -417,15 +443,14 @@ opt_fix_broken_configs() {
- # DNS cache refresh.
- opt_network_optimization() {
-     if [[ "${MO_DEBUG:-}" == "1" ]]; then
--        debug_operation_start "Network Optimization" "Refresh DNS cache and restart mDNSResponder"
--        debug_operation_detail "Method" "Flush DNS cache via dscacheutil and killall mDNSResponder"
-+        debug_operation_start "Network Optimization" "Refresh DNS cache"
-+        debug_operation_detail "Method" "dscacheutil -flushcache, then SIGHUP to mDNSResponder (skipped under an active VPN)"
-         debug_operation_detail "Expected outcome" "Faster DNS resolution, fixed network connectivity issues"
-         debug_risk_level "LOW" "DNS cache is automatically rebuilt"
-     fi
- 
-     if [[ "${MOLE_DNS_FLUSHED:-0}" == "1" ]]; then
-         opt_msg "DNS cache already refreshed"
--        opt_msg "mDNSResponder already restarted"
-         optimize_task_result "$MOLE_OPTIMIZE_OUTCOME_UNCHANGED"
-         return 0
-     fi
-@@ -436,14 +461,26 @@ opt_network_optimization() {
-         return 0
-     fi
- 
--    if flush_dns_cache; then
--        opt_msg "DNS cache refreshed"
--        opt_msg "mDNSResponder restarted"
--        optimize_task_result "$MOLE_OPTIMIZE_OUTCOME_APPLIED"
--    else
--        echo -e "  ${YELLOW}${ICON_WARNING}${NC} Failed to refresh DNS cache"
--        optimize_task_result "$MOLE_OPTIMIZE_OUTCOME_FAILED"
--    fi
-+    local dns_status=0
-+    flush_dns_cache || dns_status=$?
-+    case "$dns_status" in
-+        0)
-+            opt_msg "DNS cache refreshed"
-+            optimize_task_result "$MOLE_OPTIMIZE_OUTCOME_APPLIED"
-+            ;;
-+        2)
-+            opt_msg "DNS cache refresh skipped, active VPN detected"
-+            optimize_task_result "$MOLE_OPTIMIZE_OUTCOME_SKIPPED"
-+            ;;
-+        3)
-+            echo -e "  ${YELLOW}${ICON_WARNING}${NC} Failed to inspect active VPN state"
-+            optimize_task_result "$MOLE_OPTIMIZE_OUTCOME_FAILED"
-+            ;;
-+        *)
-+            echo -e "  ${YELLOW}${ICON_WARNING}${NC} Failed to refresh DNS cache"
-+            optimize_task_result "$MOLE_OPTIMIZE_OUTCOME_FAILED"
-+            ;;
-+    esac
- }
- 
- # Quarantine database cleanup (Gatekeeper download history).
-```
-
-**File**: `tests/optimize.bats` (modified, +140/-3)
-```diff
-@@ -115,7 +115,94 @@ EOF
- 
- 	[ "$status" -eq 0 ]
- 	[[ "$output" == *"DNS cache refreshed"* ]] || return 1
--	[[ "$output" == *"mDNSResponder restarted"* ]]
-+	[[ "$output" != *"mDNSResponder"* ]]
-+}
-+
-+@test "DNS flush is skipped in both optimize tasks while a VPN is active" {
-+	run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" MOLE_ASSUME_VPN_ACTIVE=1 MOLE_OPTIMIZE_SUDO_AVAILABLE=true MOLE_DRY_RUN=0 /bin/bash --noprofile --norc <<'EOF'
-+set -euo pipefail
-+source "$PROJECT_ROOT/lib/core/common.sh"
-+source "$PROJECT_ROOT/lib/optimize/tasks.sh"
-+unset MOLE_TEST_NO_AUTH MOLE_TEST_MODE
-+sudo() { echo "UNEXPECTED_SUDO:$*"; return 0; }
-+mdutil() { echo "Indexing enabled."; }
-+
-+execute_optimization system_maintenance
-+execute_optimization network_optimization
-+[[ "$(optimize_outcome_count skipped)" == "2" ]] || exit 1
-+[[ "$(optimize_outcome_count applied)" == "0" ]] || exit 1
-+[[ "$(optimize_outcome_count failed)" == "0" ]] || exit 1
-+[[ "${MOLE_DNS_FLUSHED:-0}" == "0" ]] || exit 1
-+EOF
-+
-+	[[ "$status" -eq 0 ]] || { echo "$output"; return 1; }
-+	[[ "$output" == *"DNS cache flush skipped, active VPN detected"* ]] || return 1
-+	[[ "$output" == *"DNS cache refresh skipped, active VPN detected"* ]] || return 1
-+	[[ "$output" != *"UNEXPECTED_SUDO"* ]] || return 1
-+	[[ "$output" != *"already refreshed"* ]]
-+}
-+
-+@test "dry-run previews the VPN skip instead of a DNS flush" {
-+	run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" MOLE_ASSUME_VPN_ACTIVE=1 MOLE_DRY_RUN=1 /bin/bash --noprofile --norc <<'EOF'
-+set -euo pipefail
-+source "$PROJECT_ROOT/lib/core/common.sh"
-+source "$PROJECT_ROOT/lib/optimize/tasks.sh"
-+mdutil() { echo "Indexing enabled."; }
-+
-+execute_optimization system_maintenance
-+execute_optimization network_optimization
-+[[ "$(optimize_outcome_count skipped)" == "2" ]] || exit 1
-+EOF
-+
-+	[[ "$status" -eq 0 ]] || { echo "$output"; return 1; }
-+	[[ "$output" == *"DNS cache flush skipped, active VPN detected"* ]] || return 1
-+	[[ "$output" != *"DNS cache flushed"* ]] || return 1
-+	[[ "$output" != *"DNS cache refreshed"* ]]
-+}
-+
-+@test "DNS flush runs once without a VPN and the second task reports it unchanged" {
-+	run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" MOLE_ASSUME_VPN_ACTIVE=0 MOLE_OPTIMIZE_SUDO_AVAILABLE=true MOLE_DRY_RUN=0 /bin/bash --noprofile --norc <<'EOF'
-+set -euo pipefail
-+source "$PROJECT_ROOT/lib/core/common.sh"
-+source "$PROJECT_ROOT/lib/optimize/tasks.sh"
-+unset MOLE_TEST_NO_AUTH MOLE_TEST_MODE
-+sudo() { echo "SUDO:$*"; return 0; }
-+mdutil() { echo "Indexing enabled."; }
-+
-+execute_optimization system_maintenance
-+execute_optimization network_optimization
-+[[ "$(optimize_outcome_count applied)" == "1" ]] || exit 1
-+[[ "$(optimize_outcome_count unchanged)" == "1" ]] || exit 1
-+EOF
-+
-+	[[ "$status" -eq 0 ]] || { echo "$output"; return 1; }
-+	[[ "$output" == *"SUDO:dscacheutil -flushcache"* ]] || return 1
-+	[[ "$output" == *"SUDO:killall -HUP mDNSResponder"* ]] || return 1
-+	[[ "$(grep -c 'SUDO:dscacheutil -flushcache' <<< "$output")" == "1" ]] || return 1
-+	[[ "$output" == *"DNS cache flushed"* ]] || return 1
-+	[[ "$output" == *"DNS cache already refreshed"* ]] || return 1
-+	[[ "$output" != *"restarted"* ]]
-+}
-+
-+@test "DNS flush fails closed when the VPN state cannot be determined" {
-+	run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" MOLE_OPTIMIZE_SUDO_AVAILABLE=true MOLE_DRY_RUN=0 /bin/bash --noprofile --norc <<'EOF'
-+set -euo pipefail
-+source "$PROJECT_ROOT/lib/core/common.sh"
-+source "$PROJECT_ROOT/lib/optimize/tasks.sh"
-+unset MOLE_TEST_NO_AUTH MOLE_TEST_MODE MOLE_ASSUME_VPN_ACTIVE
-+has_active_vpn_interface() { return 2; }
-+sudo() { echo "UNEXPECTED_SUDO:$*"; return 0; }
-+mdutil() { echo "Indexing enabled."; }
-+
-+execute_optimization system_maintenance
-+execute_optimization network_optimization
-+[[ "$(optimize_outcome_count failed)" == "2" ]] || exit 1
-+[[ "$(optimize_outcome_count applied)" == "0" ]] || exit 1
-+EOF
-+
-+	[[ "$status" -eq 0 ]] || { echo "$output"; return 1; }
-+	[[ "$(grep -c 'Failed to inspect active VPN state' <<< "$output")" == "2" ]] || return 1
-+	[[ "$output" != *"UNEXPECTED_SUDO"* ]]
- }
- 
- @test "fix_broken_preferences repairs only non-Apple preference plists" {
-@@ -1802,7 +1889,9 @@ EOF
- @test "flush_dns_cache does not invoke sudo under MOLE_TEST_NO_AUTH" {
- 	# Reproduces the reported regression: ad-hoc flush_dns_cache under test
- 	# mode used to fall through optimize_sudo_available and reach `sudo dscacheutil`.
--	run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" MOLE_TEST_NO_AUTH=1 /bin/bash --noprofile --norc <<'EOF'
-+	# Pin "no VPN": on a host routing through utun the VPN gate would return
-+	# first and this test would pass without reaching the sudo guard.
-+	run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" MOLE_TEST_NO_AUTH=1 MOLE_ASSUME_VPN_ACTIVE=0 /bin/bash --noprofile --norc <<'EOF'
- set -euo pipefail
- source "$PROJECT_ROOT/lib/core/common.sh"
- source "$PROJECT_ROOT/lib/optimize/tasks.sh"
-@@ -1920,6 +2009,7 @@ EOF
- @test "has_active_vpn_interface respects M
-```
-
-**File**: `tests/optimize_catalog.bats` (modified, +2/-2)
-```diff
-@@ -84,7 +84,7 @@ system_maintenance|opt_system_maintenance|DNS & Spotlight Check|DNS & Spotlight
- cache_refresh|opt_cache_refresh|Finder Cache Refresh|Finder Cache Refresh|Refresh QuickLook thumbnails & icon services cache|true
- saved_state_cleanup|opt_saved_state_cleanup|App State Cleanup|App State Cleanup|Remove old saved application states (30+ days)|true
- fix_broken_configs|opt_fix_broken_configs|Broken Config Repair|Broken Config Repair|Fix corrupted preferences files|true
--network_optimization|opt_network_optimization|Network Cache Refresh|Network Cache Refresh|Optimize DNS cache & restart mDNSResponder|true
-+network_optimization|opt_network_optimization|Network Cache Refresh|Network Cache Refresh|Refresh DNS cache|true
- sqlite_vacuum|opt_sqlite_vacuum|Database Optimization|Database Optimization|Compress SQLite databases for Mail, Safari & Messages (skips if apps are running)|true
- prevent_network_dsstore|opt_prevent_network_dsstore|Prevent Finder .DS_Store|Prevent Finder .DS_Store|Set a persistent Finder preference to stop writing .DS_Store on SMB/AFP/NFS and USB volumes|true
- legacy_overrides_audit|opt_legacy_overrides_audit|Legacy Overrides|Legacy Overrides|Remove hidden App Nap and disk-image verification overrides left by old tweak tools|true
-@@ -148,7 +148,7 @@ contract_hash=$(
-         shasum -a 256 |
-         awk '{print $1}'
- )
--expected_hash="dc42553fcae1b1d1ebf768d3cfec6d8c0171140dd5a2a532ebacfee91d27146f"
-+expected_hash="f90bfe44f54c07e7b2e5d257a392b92fb7b62a7581b2d8ded9499036330a8069"
- if [[ "$contract_hash" != "$expected_hash" ]]; then
-     echo "health optimization contract hash: expected $expected_hash, got $contract_hash"
-     exit 1
-```
-
----
-
-### Incident Patch 5: `0518facf` (2026-10-05)
-**Commit Message**: fix(clean): preview every Trash item a real clean empties
-
-The Trash dry run validated each item before sizing it and then let the
-recorder apply should_protect_path again, without the #1517 top-level
-Trash exemption the real sink uses, so items such as input method plists
-were emptied for real but missing from the preview count. Validate once
-after sizing with the sink's own predicate and mark the record
-prevalidated. A validation timeout or signal now stops the step like any
-other cancellation instead of silently skipping the item.
-
-**File**: `lib/clean/user.sh` (modified, +17/-2)
-```diff
-@@ -61,8 +61,7 @@ clean_trash() {
-                 [[ -e "$trash_item" ]] || continue
-                 if is_path_whitelisted "$trash_item" 2> /dev/null ||
-                     (declare -f holds_compiled_model_cache > /dev/null 2>&1 &&
--                        holds_compiled_model_cache "$trash_item" 2> /dev/null) ||
--                    ! validate_path_for_deletion "$trash_item" 2> /dev/null; then
-+                        holds_compiled_model_cache "$trash_item" 2> /dev/null); then
-                     continue
-                 fi
-                 local trash_item_kb
-@@ -71,7 +70,23 @@ clean_trash() {
-                 [[ $size_rc -eq 0 ]] || _mole_record_clean_cancellation "$size_rc"
-                 [[ $size_rc -eq 0 ]] || return "$size_rc"
-                 [[ "$trash_item_kb" =~ ^[0-9]+$ ]] || trash_item_kb=0
-+                if (declare -f holds_compiled_model_cache > /dev/null 2>&1 &&
-+                    holds_compiled_model_cache "$trash_item" 2> /dev/null); then
-+                    continue
-+                fi
-+                # Same final predicate as the real sink, including the #1517
-+                # top-level Trash exemption, run after sizing so live-owner and
-+                # SQLite state is current. The recorder then skips its own
-+                # should_protect_path pass, which lacks that exemption.
-+                local validate_rc=0
-+                validate_path_for_deletion "$trash_item" 2> /dev/null || validate_rc=$?
-+                if mole_rc_timeout_or_signal "$validate_rc"; then
-+                    _mole_record_clean_cancellation "$validate_rc"
-+                    return "$validate_rc"
-+                fi
-+                [[ $validate_rc -eq 0 ]] || continue
-                 if declare -f record_dry_run_cleanup_target > /dev/null 2>&1; then
-+                    local _MOLE_DRY_RUN_TARGET_PREVALIDATED=true
-                     record_dry_run_cleanup_target "$trash_item" "$trash_item_kb" 1 true || continue
-                 fi
-                 preview_count=$((preview_count + 1))
-```
-
-**File**: `tests/clean_user_core.bats` (modified, +66/-0)
-```diff
-@@ -688,6 +688,72 @@ EOF
-     [[ ! -d "$HOME/.Trash/Input Methods" ]]
- }
- 
-+@test "clean_trash dry run previews protected-name Trash items real mode empties (#1517)" {
-+    rm -rf "$HOME/.Trash" # SAFE: reset this test's temporary HOME fixture before populating it
-+    mkdir -p "$HOME/.Trash/Input Methods"
-+    touch "$HOME/.Trash/com.sogou.inputmethod.sogou.plist"
-+    touch "$HOME/.Trash/com.tencent.inputmethod.QQInput.plist"
-+
-+    run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" /bin/bash --noprofile --norc << 'EOF'
-+set -euo pipefail
-+source "$PROJECT_ROOT/lib/core/common.sh"
-+source "$PROJECT_ROOT/lib/clean/user.sh"
-+eval "$(awk '/^register_dry_run_cleanup_target\(\)/,/^}/' "$PROJECT_ROOT/bin/clean.sh")"
-+eval "$(awk '/^record_dry_run_cleanup_target\(\)/,/^}/' "$PROJECT_ROOT/bin/clean.sh")"
-+append_dry_run_cleanup_target() { :; }
-+CLEAN_PREVIEW_LEDGER_FILE="$HOME/.ledger"
-+: > "$CLEAN_PREVIEW_LEDGER_FILE"
-+DRY_RUN=true
-+stop_section_spinner() { :; }
 +note_activity() { :; }
-+is_path_whitelisted() { return 1; }
-+clean_trash
-+EOF
-+
-+    rm -rf "$HOME/.Trash" "$HOME/.ledger" # SAFE: test fixture HOME
-+    [ "$status" -eq 0 ] || {
-+        echo "$output"
-+        return 1
-+    }
-+    [[ "$output" == *"Trash · would empty, 3 items"* ]]
++safe_clean() { :; }
++clean_pnpm_stores() { :; }
++clean_corepack_cache() { :; }
++clean_conda_metadata_caches() { :; }
++run_with_timeout() { shift; "$@"; }
++owner_stub() {
++    case "$*" in
++        --version) return 0 ;;
++        'cache dir' | 'cache path' | 'config get cache')
++            case "$probe_mode" in
++                failed) printf '%s\n' "$HOME/protected-owner"; return 1 ;;
++                timeout) return 124 ;;
++                signal) return 130 ;;
++                relative) echo relative-cache ;;
++                multiline) printf '%s\nextra\n' "$HOME/protected-owner" ;;
++                empty) return 0 ;;
++                *) printf '%s\n' "$HOME/protected-owner" ;;
++            esac ;;
++        'cache prune' | 'cache clean --force' | 'cache purge' | 'cache clear')
++            echo owner >> "$HOME/owner-root.trace" ;;
++        *) return 1 ;;
++    esac
 +}
-+
-+@test "clean_trash dry run stops when the final Trash validation times out" {
-+    rm -rf "$HOME/.Trash" # SAFE: reset this test's temporary HOME fixture before populating it
-+    mkdir -p "$HOME/.Trash"
-+    touch "$HOME/.Trash/one.tmp" "$HOME/.Trash/two.tmp"
-+
-+    run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" MOLE_CURRENT_COMMAND=clean /bin/bash --noprofile --norc << 'EOF'
-+set -euo pipefail
-+source "$PROJECT_ROOT/lib/core/common.sh"
-+source "$PROJECT_ROOT/lib/clean/user.sh"
-+DRY_RUN=true
-+stop_section_spinner() { :; }
-+note_activity() { :; }
-+is_path_whitelisted() { return 1; }
-+validate_path_for_deletion() {
-+    echo "VALIDATE:$1"
-+    return 124
-+}
-+record_dry_run_cleanup_target() { echo "UNEXPECTED_RECORD:$1"; }
-+rc=0
-+clean_trash || rc=$?
-+printf 'RC=%s CANCEL=%s\n' "$rc" "${MOLE_CLEAN_CANCEL_STATUS:-0}"
-+EOF
-+
-+    rm -rf "$HOME/.Trash" # SAFE: test fixture HOME
-+    [ "$status" -eq 0 ] || {
-+        echo "$output"
-+        return 1
-+    }
-+    [[ "$output" == *"RC=124 CANCEL=124"* ]] || return 1
-+    [[ "$output" != *"UNEXPECTED_RECORD"* ]] || return 1
-+    [[ "$output" != *"would empty"* ]] || return 1
-+    local validate_calls
-+    validate_calls=$(grep -c '^VALIDATE:' <<< "$output" || true)
-+    [ "$validate_calls" -eq 1 ]
-+}
-+
- @test "clean_user_essentials keeps Mole runtime logs while cleaning other user logs" {
-     mkdir -p "$HOME/Library/Logs/mole"
-     mkdir -p "$HOME/Library/Logs/OtherApp"
-```
-
----
-
-### Incident Patch 6: `a55b82a1` (2026-10-05)
-**Commit Message**: perf(core): inline the protection glob in its hot loops
-
-should_protect_path and should_protect_data called bundle_matches_pattern
-once per pattern per path, hundreds of thousands of function calls in one
-clean. The loops now run the same unquoted case-sensitive glob test
-inline, with the empty-pattern guard, so every verdict is unchanged
-(identical over 269 real ~/Library paths). AGENTS.md notes that quoting
-the right-hand side would turn wildcard protections into exact matches.
-About 3 s of a clean dry run.
-
-**File**: `AGENTS.md` (modified, +1/-1)
-```diff
-@@ -108,7 +108,7 @@ Public docs and examples should prefer the installed `mo` command. Use `./mole`
- - `WORKLOG.md` is an untracked cross-session handoff ledger and is never committed. Durable rules go into this file or a skill; release and queue evidence belongs in the release notes and issue threads. A tracked copy was removed in `0123a42a`, came back with the V1.57.0 triage, and went stale within two days, publishing unsent-email and private-diagnostic bookkeeping.
- - Check `should_protect_path()` before adding cleanup behavior.
- - Check app protection helpers before adding app cache, uninstall, or leftover cleanup behavior.
--- Bundle protection matching is case-sensitive glob (`bundle_matches_pattern`), and macOS system bundles report inconsistent casing across releases (macOS 26 ships `com.apple.bootcampassistant` alongside the older `com.apple.BootCampAssistant`). When the monthly bundle drift audit reports gaps, add the exact IDs as the audit printed them, and check the runtime blanket `com.apple.*` guard before rating the gap's severity. The audit workflow's issue path requires the `bundle-drift` label to exist in the repo.
-+- Bundle protection matching is case-sensitive glob (`bundle_matches_pattern`; the hot loops in `should_protect_path` and `should_protect_data` inline the same `[[ -n "$pattern" && "$x" == $pattern ]]` test, and quoting that right-hand side silently turns every wildcard protection into an exact match), and macOS system bundles report inconsistent casing across releases (macOS 26 ships `com.apple.bootcampassistant` alongside the older `com.apple.BootCampAssistant`). When the monthly bundle drift audit reports gaps, add the exact IDs as the audit printed them, and check the runtime blanket `com.apple.*` guard before rating the gap's severity. The audit workflow's issue path requires the `bundle-drift` label to exist in the repo.
- - **A new cleanup target needs measured value and an explicit non-target list.** State bytes actually reclaimable on a real app version, not just the target's total footprint; name sibling directories excluded as user data and prove protection covers every reachable cleanup path. "It looks like a cache" is not evidence, and zero measured value stays out of scope. An encrypted or opaque index cannot prove a directory is unreferenced, so exclude it. A third-party owner command is still a deletion sink: the supported release must expose every mutated root machine-readably, dry-run and real mode must share one candidate plan, downstream traversal must enforce no-follow physical containment, and partial failures must be observable. Selective prune and dependency-store GC additionally require one lock or generation protocol across the complete mutation. A documented whole-cache reset may omit a shared lock only when the root contains no authored, session, installed, or toolchain state and interruption is equivalent to an ordinary cache miss. Unless the owner explicitly guarantees safe same-machine concurrent use, rebind a tri-state owner-process guard at the command boundary. Mole still validates and whitelists lexical and physical roots, rebinds their identities at the sink, propagates timeout or signal cancellation, and never falls back to direct deletion.
- - **Classify cleanup by recovery contract, not by directory name or download cost.** Re-downloading is a real cost but not an automatic veto when the user explicitly runs `clean`: Go's module cache is owner-documented, machine-resolvable, and independently whitelistable, so it is reset through `go clean -modcache`. Directly consumed or mixed-state stores still stay: `registry/src`, Cargo `git`, `$DENO_DIR`, `~/.ivy2/cache`, `~/.m2/repository`, `~/.nuget/packages`, `~/.cabal/packages`, and `~/.cpan/sources`. Cargo's compressed `registry/cache` is redundant with extracted sources, while Cargo 1.88+ owns age-aware GC for sources and git dependencies. Downloaded model and experiment roots (`~/.cache/huggingface`, `~/.cache/torch`, `~/.cache/tensorflow`, `~/.cache/wandb`) and toolchain payloads (`~/.sbt/boot`, `~/.sbt/launchers`, `~/.stack/programs`) stay off the blanket delete path. `DENO_DIR` is review-only because the owner command removes the entire root, including origin storage and downloaded runtime payloads. A default whitelist row is not protection once the user saves a custom file, so fix the delete path itself and remove whitelist inventory entries for targets Mole no longer deletes.
- - Keep AI-tool cache cleanup conservative. Claude Code, opencode, Copilot CLI, Zed, Warp, Ghostty, and similar developer tools may have active versions, config, credentials, or session state that must not be removed accidentally.
-```
-
-**File**: `lib/core/app_protection.sh` (modified, +10/-5)
-```diff
-@@ -231,7 +231,8 @@ should_protect_data() {
-         com.tencent.* | com.sogou.* | com.baidu.* | com.googlecode.* | im.rime.*)
-             # These might have wildcards, check detailed list
-             for pattern in "${DATA_PROTECTED_BUNDLES[@]}"; do
--                if bundle_matches_pattern "$bundle_id" "$pattern"; then
-+                # shellcheck disable=SC2053 # unquoted RHS is the glob, as in bundle_matches_pattern
-+                if [[ -n "$pattern" && "$bundle_id" == $pattern ]]; then
-                     return 0
-                 fi
-             done
-@@ -241,7 +242,8 @@ should_protect_data() {
- 
-     # Fallback: check against the full DATA_PROTECTED_BUNDLES list
-     for pattern in "${DATA_PROTECTED_BUNDLES[@]}"; do
--        if bundle_matches_pattern "$bundle_id" "$pattern"; then
-+        # shellcheck disable=SC2053 # unquoted RHS is the glob, as in bundle_matches_pattern
-+        if [[ -n "$pattern" && "$bundle_id" == $pattern ]]; then
-             return 0
-         fi
-     done
-@@ -581,20 +583,23 @@ should_protect_path() {
-         if [[ "${MOLE_UNINSTALL_MODE:-0}" == "1" ]]; then
-             # Uninstall mode: first check if it's an uninstallable Apple app
-             for pattern in "${APPLE_UNINSTALLABLE_APPS[@]}"; do
--                if bundle_matches_pattern "$path" "$pattern"; then
-+                # shellcheck disable=SC2053 # unquoted RHS is the glob, as in bundle_matches_pattern
-+                if [[ -n "$pattern" && "$path" == $pattern ]]; then
-                     return 1 # Can be uninstalled
-                 fi
-             done
-             # Then check system-critical components
-             for pattern in "${SYSTEM_CRITICAL_BUNDLES[@]}"; do
--                if bundle_matches_pattern "$path" "$pattern"; then
-+                # shellcheck disable=SC2053 # unquoted RHS is the glob, as in bundle_matches_pattern
-+                if [[ -n "$pattern" && "$path" == $pattern ]]; then
-                     return 0
-                 fi
-             done
-         else
-             # Normal mode (cleanup): protect both system-critical and data-protected bundles
-             for pattern in "${SYSTEM_CRITICAL_BUNDLES[@]}" "${DATA_PROTECTED_BUNDLES[@]}"; do
--                if bundle_matches_pattern "$path" "$pattern"; then
-+                # shellcheck disable=SC2053 # unquoted RHS is the glob, as in bundle_matches_pattern
-+                if [[ -n "$pattern" && "$path" == $pattern ]]; then
-                     return 0
-                 fi
-             done
-```
-
-**File**: `tests/uninstall_safety.bats` (modified, +41/-0)
-```diff
-@@ -946,3 +946,44 @@ EOF
- 		return 1
- 	}
- }
-+
-+@test "protection pattern loops match globs inline, without a per-pattern call" {
-+	# should_protect_path and should_protect_data run once per candidate across
-+	# hundreds of patterns, so each loop tests the glob inline instead of
-+	# calling bundle_matches_pattern. The verdicts pin that the unquoted RHS
-+	# is still a glob: quoting it would turn a wildcard row such as
-+	# *wireguard* into an exact-string match and drop the protection.
-+	run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" /bin/bash --noprofile --norc <<'EOF'
-+set -euo pipefail
-+source "$PROJECT_ROOT/lib/core/common.sh"
-+calls="$HOME/bundle-match-calls"
-+: >"$calls"
-+bundle_matches_pattern() {
-+    printf '.' >>"$calls"
-+    [[ -z "$2" ]] && return 1
-+    # shellcheck disable=SC2053 # unquoted RHS is the glob
-+    [[ "$1" == $2 ]]
-+}
-+verdict() { if "$@"; then echo "$*=protected"; else echo "$*=open"; fi; }
-+verdict should_protect_data "com.sogou.inputmethod.pinyin"
-+verdict should_protect_data "com.sogou.cloud"
-+verdict should_protect_data "im.rime.squirrel"
-+verdict should_protect_data "org.example.wireguard-ui"
-+verdict should_protect_data "org.example.plain"
-+verdict should_protect_path "$HOME/Library/Caches/org.example.wireguard-ui/data"
-+verdict should_protect_path "$HOME/Library/Caches/org.example.plain/data"
-+MOLE_UNINSTALL_MODE=1 verdict should_protect_path "com.apple.loginitems.agent"
-+MOLE_UNINSTALL_MODE=1 verdict should_protect_path "$HOME/Library/Caches/org.example.plain/data"
-+echo "calls=$(wc -c <"$calls" | tr -d ' ')"
-+EOF
-+	[ "$status" -eq 0 ] || return 1
-+	[[ "$output" == *"should_protect_data com.sogou.inputmethod.pinyin=protected"* ]] || return 1
-+	[[ "$output" == *"should_protect_data com.sogou.cloud=open"* ]] || return 1
-+	[[ "$output" == *"should_protect_data im.rime.squirrel=protected"* ]] || return 1
-+	[[ "$output" == *"should_protect_data org.example.wireguard-ui=protected"* ]] || return 1
-+	[[ "$output" == *"should_protect_data org.example.plain=open"* ]] || return 1
-+	[[ "$output" == *"org.example.wireguard-ui/data=protected"* ]] || return 1
-+	[[ "$output" == *"should_protect_path com.apple.loginitems.agent=protected"* ]] || return 1
-+	[[ "$output" == *"org.example.plain/data=open"*"org.example.plain/data=open"* ]] || return 1
-+	[[ "${lines[${#lines[@]} - 1]}" == "calls=0" ]]
-+}
-```
-
----
-
-### Incident Patch 7: `3b94520d` (2026-10-05)
-**Commit Message**: perf(core): throttle progress from the shell clock instead of date
-
-update_progress_if_needed forked date on every call to decide whether a
-second had passed, and clean calls it for every scanned item. Anchor one
-epoch reading per shell and add $SECONDS, which gives the same integer
-clock without a process. About 0.8 s of a clean dry run.
-
-**File**: `lib/core/base.sh` (modified, +7/-3)
-```diff
-@@ -1419,9 +1419,13 @@ update_progress_if_needed() {
-     local last_update_var="$3" # Name of variable holding last update time
-     local interval="${4:-2}"   # Default: update every 2 seconds
- 
--    # Get current time
--    local current_time
--    current_time=$(get_epoch_seconds)
-+    # Get current time. Callers tick once per item, so anchor $SECONDS to the
-+    # epoch once per shell instead of forking date on every call; the sum is
-+    # the same epoch that callers seed the last update time with.
-+    if [[ ! "${_MOLE_PROGRESS_EPOCH_BASE:-}" =~ ^[0-9]+$ ]]; then
-+        _MOLE_PROGRESS_EPOCH_BASE=$(($(get_epoch_seconds) - SECONDS))
-+    fi
-+    local current_time=$((_MOLE_PROGRESS_EPOCH_BASE + SECONDS))
- 
-     # Get last update time from variable
-     local last_time
-```
-
-**File**: `tests/core_common.bats` (modified, +21/-0)
-```diff
-@@ -1068,6 +1068,27 @@ EOF
-     [[ "$raw_content" == *"PID_STABLE"* ]] || { cat -v "$raw"; return 1; }
- }
- 
-+@test "update_progress_if_needed reads the epoch clock once per shell" {
-+    local calls="$HOME/epoch-calls"
-+    local spins="$HOME/spinner-text"
-+    # shellcheck disable=SC2016  # inner bash expands these from its environment
-+    run env PROJECT_ROOT="$PROJECT_ROOT" CALLS="$calls" SPINS="$spins" \
-+        /bin/bash --noprofile --norc -c '
-+            source "$PROJECT_ROOT/lib/core/common.sh"
-+            get_epoch_seconds() { printf "x\n" >> "$CALLS"; echo 1000000; }
-+            start_section_spinner() { printf "%s\n" "$1" >> "$SPINS"; }
-+            last_tick=0
-+            for i in 1 2 3 4 5 6 7 8 9 10; do
-+                update_progress_if_needed "$i" 10 last_tick 60 || true
-+            done
-+            echo "last_tick=$last_tick"
-+        '
-+    [ "$status" -eq 0 ]
-+    [[ "$(wc -l < "$calls" | tr -d ' ')" == "1" ]] || return 1
-+    [[ "$(cat "$spins")" == "Scanning items... 1/10" ]] || return 1
-+    [[ "$output" == "last_tick=1000000" || "$output" == "last_tick=1000001" ]]
-+}
-+
- @test "safe_clear_lines emits the same erase sequence per line to the target device" {
-     local out="$HOME/clear-lines.out"
-     run /bin/bash --noprofile --norc -c \
-```
-
----
-
-### Incident Patch 8: `ad93511a` (2026-10-05)
-**Commit Message**: perf(clean): prune build outputs from the project cache scan
-
-The project cache scan walked Rust target/, SwiftPM .build/, .gradle,
-Xcode Index.noindex and npm _cacache trees, none of which hold a cache
-this step cleans. On a real ~/www they were half of the 60k directories
-visited, so on a busy disk the scan crossed its 6 s timeout and the
-whole root was skipped, leaving its Python bytecode caches uncleaned in
-about half of runs. Pruning them takes the walk from 3.0 s to 0.8 s with
-the same matches, and three dry runs no longer skip the root.
-
-**File**: `lib/clean/caches.sh` (modified, +5/-1)
-```diff
-@@ -366,9 +366,13 @@ scan_project_cache_root() {
-     [[ -d "$root" ]] || return 0
-     : > "$output_file"
- 
-+    # Build outputs and package stores (target, .build, .gradle, Index.noindex,
-+    # _cacache) never hold a project cache worth cleaning, but on a typical
-+    # projects folder they can be half of the directories walked, enough to push
-+    # the scan past its timeout on a busy disk and skip the whole root.
-     local -a find_args=(
-         find -P "$root" -maxdepth 9 -mount
--        "(" -name "Library" -o -name ".Trash" -o -name "node_modules" -o -name ".git" -o -name ".svn" -o -name ".hg" -o -name ".venv" -o -name "venv" -o -name ".pnpm-store" -o -name ".fvm" -o -name "DerivedData" -o -name "Pods" -o -name "miniconda3" -o -name "anaconda3" -o -name "miniforge3" -o -name "mambaforge" -o -name "site-packages" ")"
-+        "(" -name "Library" -o -name ".Trash" -o -name "node_modules" -o -name ".git" -o -name ".svn" -o -name ".hg" -o -name ".venv" -o -name "venv" -o -name ".pnpm-store" -o -name ".fvm" -o -name "DerivedData" -o -name "Pods" -o -name "miniconda3" -o -name "anaconda3" -o -name "miniforge3" -o -name "mambaforge" -o -name "site-packages" -o -name "target" -o -name ".build" -o -name ".gradle" -o -name "Index.noindex" -o -name "_cacache" ")"
-         -prune -o
-         -type d
-         "(" -name ".next" -o -name "__pycache__" -o -name ".dart_tool" ")"
-```
-
-**File**: `tests/clean_system_caches.bats` (modified, +30/-0)
-```diff
-@@ -1233,6 +1233,36 @@ EOF
-     rm -rf "$HOME/Projects" "$output_file"
- }
- 
-+@test "scan_project_cache_root prunes build outputs and package stores" {
-+    local name
-+    for name in target .build .gradle Index.noindex _cacache; do
-+        mkdir -p "$HOME/Projects/app/$name/sub/__pycache__"
-+        touch "$HOME/Projects/app/$name/sub/__pycache__/mod.pyc"
-+    done
-+    mkdir -p "$HOME/Projects/app/__pycache__"
-+    touch "$HOME/Projects/app/pyproject.toml"
-+    touch "$HOME/Projects/app/__pycache__/mod.pyc"
-+
-+    local output_file
-+    output_file=$(mktemp)
-+
-+    run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" /bin/bash --noprofile --norc <<EOF
-+set -euo pipefail
-+source "\$PROJECT_ROOT/lib/core/common.sh"
-+source "\$PROJECT_ROOT/lib/clean/caches.sh"
-+run_with_timeout() { shift; "\$@"; }
-+scan_project_cache_root "$HOME/Projects" "$output_file"
-+cat "$output_file"
-+EOF
-+    [ "$status" -eq 0 ]
-+    [[ "$output" == *"app/__pycache__"* ]] || return 1
-+    for name in target .build .gradle Index.noindex _cacache; do
-+        [[ "$output" != *"/$name/"* ]] || return 1
-+    done
-+
-+    rm -rf "$HOME/Projects" "$output_file"
-+}
-+
- @test "clean_project_caches excludes Library and Trash directories" {
-     mkdir -p "$HOME/Library/.next/cache"
-     mkdir -p "$HOME/.Trash/.next/cache"
-```
-
----
-
-### Incident Patch 9: `ad524824` (2026-10-05)
-**Commit Message**: perf(core): answer is_root_user from EUID
-
-is_root_user forked id -u on every call, about 185 times in one traced
-mo clean. EUID holds the same value in the shell; id stays as the
-fallback when EUID is unset.
-
-**File**: `lib/core/base.sh` (modified, +3/-1)
-```diff
-@@ -694,8 +694,10 @@ get_optimal_parallel_jobs() {
- # User Context Utilities
- # ============================================================================
- 
-+# EUID answers the same question as id -u without a subprocess; clean asks
-+# it for many targets.
- is_root_user() {
--    [[ "$(id -u)" == "0" ]]
-+    [[ "${EUID:-$(id -u)}" == "0" ]]
- }
- 
- get_invoking_uid() {
-```
-
-**File**: `tests/core_common.bats` (modified, +16/-0)
-```diff
-@@ -501,6 +501,22 @@ EOF
-     [ "$output" = OK ]
- }
- 
-+@test "is_root_user answers from EUID without forking id" {
-+    run /bin/bash --noprofile --norc << 'EOF'
-+source "$PROJECT_ROOT/lib/core/common.sh"
-+id() { echo called >> "$HOME/id-calls"; command id "$@"; }
-+rc=0
-+is_root_user || rc=$?
-+expected=1
-+[[ "$(command id -u)" == "0" ]] && expected=0
-+[[ $rc -eq $expected ]] || { echo "RC=$rc EXPECTED=$expected"; exit 1; }
-+[[ ! -e "$HOME/id-calls" ]] || { echo "FORKED_ID"; exit 1; }
-+echo OK
-+EOF
-+    [ "$status" -eq 0 ] || { echo "$output"; return 1; }
-+    [ "$output" = OK ]
-+}
-+
- @test "is_critical_system_component ignores case and leaves nocasematch as it was" {
-     run /bin/bash --noprofile --norc << 'EOF'
- source "$PROJECT_ROOT/lib/core/common.sh"
-```
-
----
-
-### Incident Patch 10: `6e793654` (2026-10-05)
-**Commit Message**: perf(clean): stop forking per candidate in hot clean loops
-
-A traced mo clean spent over a thousand subprocesses on string work: a tr
-per candidate in is_critical_system_component and the Application Support
-log loop, and a basename per project in the artifact hint scan. Match the
-critical-component patterns with nocasematch, lowercase ASCII with shell
-substitutions that produce the same bytes as LC_ALL=C tr, and take names
-with parameter expansion. A dry run on one Mac went from about 42 s to
-38 s with the same rows.
-
-**File**: `lib/clean/apps.sh` (modified, +2/-2)
-```diff
-@@ -459,7 +459,7 @@ is_bundle_orphaned() {
- 
-     # 2. Fast path: check sensitive data patterns (in-memory, instant)
-     local bundle_lower
--    bundle_lower=$(echo "$bundle_id" | LC_ALL=C tr '[:upper:]' '[:lower:]')
-+    mole_ascii_lowercase bundle_lower "$bundle_id"
-     for pattern in "${ORPHAN_NEVER_DELETE_PATTERNS[@]}"; do
-         # shellcheck disable=SC2053
-         if [[ "$bundle_lower" == $pattern ]]; then
-@@ -814,7 +814,7 @@ clean_orphaned_app_data() {
-                     if [[ $iteration_count -gt $MOLE_MAX_ORPHAN_ITERATIONS ]]; then
-                         break
-                     fi
--                    local bundle_id=$(basename "$match")
-+                    local bundle_id="${match##*/}"
-                     bundle_id="${bundle_id%.savedState}"
-                     bundle_id="${bundle_id%.binarycookies}"
-                     bundle_id="${bundle_id%.plist}"
-```
-
-**File**: `lib/clean/hints.sh` (modified, +4/-4)
-```diff
-@@ -296,8 +296,8 @@ probe_project_artifact_hints() {
-             fi
-             [[ -d "$project_dir" ]] || continue
- 
--            local project_name
--            project_name=$(basename "$project_dir")
-+            local project_name="${project_dir%/}"
-+            project_name="${project_name##*/}"
-             [[ "$project_name" == .* ]] && continue
- 
-             if [[ $root_projects_scanned -ge $max_projects_per_root ]]; then
-@@ -350,8 +350,8 @@ probe_project_artifact_hints() {
-                 fi
-                 [[ -d "$nested_dir" ]] || continue
- 
--                local nested_name
--                nested_name=$(basename "$nested_dir")
-+                local nested_name="${nested_dir%/}"
-+                nested_name="${nested_name##*/}"
-                 [[ "$nested_name" == .* ]] && continue
- 
-                 case "$nested_name" in
-```
-
-**File**: `lib/clean/user.sh` (modified, +1/-1)
-```diff
-@@ -2261,7 +2261,7 @@ clean_application_support_logs() {
-             is_protected=true
-         else
-             local app_name_lower
--            app_name_lower=$(echo "$app_name" | LC_ALL=C tr '[:upper:]' '[:lower:]')
-+            mole_ascii_lowercase app_name_lower "$app_name"
-             if should_protect_data "$app_name_lower"; then
-                 is_protected=true
-             fi
-```
-
-**File**: `lib/core/app_protection.sh` (modified, +15/-9)
-```diff
-@@ -47,22 +47,28 @@ xcode_build_tooling_process_state() {
-     return 1
- }
- 
--# Centralized check for critical system components (case-insensitive)
-+# Centralized check for critical system components (case-insensitive).
-+# nocasematch instead of a lowercasing tr: clean asks this once per
-+# candidate, so a subprocess here cost seconds per run.
- is_critical_system_component() {
-     local token="$1"
-     [[ -z "$token" ]] && return 1
- 
--    local lower
--    lower=$(echo "$token" | LC_ALL=C tr '[:upper:]' '[:lower:]')
--
--    case "$lower" in
-+    local restore_nocasematch=false
-+    if ! shopt -q nocasematch; then
-+        shopt -s nocasematch
-+        restore_nocasematch=true
-+    fi
-+    local critical=1
-+    case "$token" in
-         *backgroundtaskmanagement* | *loginitems* | *systempreferences* | *systemsettings* | *settings* | *preferences* | *controlcenter* | *biometrickit* | *sfl* | *tcc*)
--            return 0
--            ;;
--        *)
--            return 1
-+            critical=0
-             ;;
-     esac
-+    if [[ "$restore_nocasematch" == "true" ]]; then
-+        shopt -u nocasematch
-+    fi
-+    return "$critical"
- }
- 
- # Check if bundle ID matches pattern (glob support)
-```
-
-**File**: `lib/core/base.sh` (modified, +34/-0)
-```diff
-@@ -617,6 +617,40 @@ mole_filter_nested_paths() {
- # Wait in the owning shell so Bash 3.2 can reap any completed scan worker.
- # The first argument names a caller variable receiving the completed PID;
- # the return status belongs to that worker, or to an interrupted polling sleep.
-+# Lowercase ASCII letters into the variable named by $1, the same bytes
-+# `LC_ALL=C tr '[:upper:]' '[:lower:]'` produces, without a subprocess:
-+# hot loops call this once per candidate, and each tr cost a fork.
-+mole_ascii_lowercase() {
-+    local _lowercase_value="${2:-}"
-+    _lowercase_value=${_lowercase_value//A/a}
-+    _lowercase_value=${_lowercase_value//B/b}
-+    _lowercase_value=${_lowercase_value//C/c}
-+    _lowercase_value=${_lowercase_value//D/d}
-+    _lowercase_value=${_lowercase_value//E/e}
-+    _lowercase_value=${_lowercase_value//F/f}
-+    _lowercase_value=${_lowercase_value//G/g}
-+    _lowercase_value=${_lowercase_value//H/h}
-+    _lowercase_value=${_lowercase_value//I/i}
-+    _lowercase_value=${_lowercase_value//J/j}
-+    _lowercase_value=${_lowercase_value//K/k}
-+    _lowercase_value=${_lowercase_value//L/l}
-+    _lowercase_value=${_lowercase_value//M/m}
-+    _lowercase_value=${_lowercase_value//N/n}
-+    _lowercase_value=${_lowercase_value//O/o}
-+    _lowercase_value=${_lowercase_value//P/p}
-+    _lowercase_value=${_lowercase_value//Q/q}
-+    _lowercase_value=${_lowercase_value//R/r}
-+    _lowercase_value=${_lowercase_value//S/s}
-+    _lowercase_value=${_lowercase_value//T/t}
-+    _lowercase_value=${_lowercase_value//U/u}
-+    _lowercase_value=${_lowercase_value//V/v}
-+    _lowercase_value=${_lowercase_value//W/w}
-+    _lowercase_value=${_lowercase_value//X/x}
-+    _lowercase_value=${_lowercase_value//Y/y}
-+    _lowercase_value=${_lowercase_value//Z/z}
-+    printf -v "$1" '%s' "$_lowercase_value"
-+}
-+
- mole_wait_for_any_worker() {
-     local _wait_output_name="$1"
-     shift
-```
-
-**File**: `tests/core_common.bats` (modified, +42/-0)
-```diff
-@@ -478,6 +478,48 @@ PY
-     [ "$status" -eq 0 ]
- }
- 
-+@test "mole_ascii_lowercase matches LC_ALL=C tr byte for byte" {
-+    run /bin/bash --noprofile --norc << 'EOF'
-+source "$PROJECT_ROOT/lib/core/common.sh"
-+while IFS= read -r sample; do
-+    expected=$(printf '%s' "$sample" | LC_ALL=C tr '[:upper:]' '[:lower:]')
-+    actual=""
-+    mole_ascii_lowercase actual "$sample"
-+    [[ "$actual" == "$expected" ]] || { printf 'MISMATCH [%s] [%s] [%s]\n' "$sample" "$actual" "$expected"; exit 1; }
-+done << 'SAMPLES'
-+com.Apple.SystemSettings
-+Zed Nightly
-+ÄÖÜ Café ÉCOLE
-+微信 WeChat
-+[A-Z]*?{Glob}
-+  Leading And Trailing  
-+
-+SAMPLES
-+echo OK
-+EOF
-+    [ "$status" -eq 0 ] || { echo "$output"; return 1; }
-+    [ "$output" = OK ]
-+}
-+
-+@test "is_critical_system_component ignores case and leaves nocasematch as it was" {
-+    run /bin/bash --noprofile --norc << 'EOF'
-+source "$PROJECT_ROOT/lib/core/common.sh"
-+for token in com.apple.SystemSettings "System Preferences" LoginItems com.apple.TCC ControlCenter; do
-+    is_critical_system_component "$token" || { echo "MISSED $token"; exit 1; }
-+done
-+for token in com.example.app Slack "Visual Studio Code"; do
-+    ! is_critical_system_component "$token" || { echo "FLAGGED $token"; exit 1; }
-+done
-+shopt -q nocasematch && { echo "LEFT_ON"; exit 1; }
-+shopt -s nocasematch
-+is_critical_system_component "LoginItems" || exit 1
-+shopt -q nocasematch || { echo "TURNED_OFF"; exit 1; }
-+echo OK
-+EOF
-+    [ "$status" -eq 0 ] || { echo "$output"; return 1; }
-+    [ "$output" = OK ]
-+}
-+
- @test "bytes_to_human converts byte counts into readable units" {
-     output="$(
-         HOME="$HOME" /bin/bash --noprofile --norc << 'EOF'
-```
-
----
-
-### Incident Patch 11: `3ad8a2fd` (2026-10-05)
-**Commit Message**: fix(update): point Homebrew nightly requests at the formula's main build
-
-mo update --nightly on a Homebrew install told users to reinstall via the
-script, but install.sh exits while Homebrew owns mole, so the advice led
-nowhere. The core formula's head builds main, so suggest
-`brew uninstall mole && brew install --HEAD mole` instead.
-
-**File**: `lib/manage/update.sh` (modified, +3/-1)
-```diff
-@@ -1024,7 +1024,9 @@ update_mole() (
-         if [[ "$nightly_update" == "true" ]]; then
-             local review_icon="${ICON_REVIEW:-⊙}"
-             log_error "Nightly update is only available for script installations. Homebrew installs follow stable releases."
--            printf '%s Reinstall via script to use: mo update --nightly\n' "$review_icon"
-+            # install.sh exits while Homebrew owns mole; the formula's head
-+            # builds main, so stay on Homebrew to try it.
-+            printf '%s To try main: brew uninstall mole && brew install --HEAD mole\n' "$review_icon"
-             exit 1
-         fi
-         update_via_homebrew "$VERSION"
-```
-
-**File**: `tests/update.bats` (modified, +24/-0)
-```diff
-@@ -926,6 +926,30 @@ EOF
- 	grep -q '^upgrade mole$' "$brew_log"
- }
- 
-+@test "mo update --nightly sends Homebrew installs to the formula's main build" {
-+	local fake_brew_bin="$TEST_ROOT/homebrew/bin"
-+	local fake_brew_mole="$TEST_ROOT/homebrew/Cellar/mole/9.9.9/bin/mole"
-+	local brew_log="$TEST_ROOT/brew.log"
-+
-+	make_homebrew_shadow "$fake_brew_bin" "$fake_brew_mole"
-+	: > "$brew_log"
-+
-+	run env \
-+		HOME="$HOME" \
-+		PATH="$fake_brew_bin:/usr/bin:/bin" \
-+		BREW_LOG="$brew_log" \
-+		"$fake_brew_bin/mo" update --nightly
-+
-+	[ "$status" -eq 1 ] || { echo "$output"; return 1; }
-+	[[ "$output" == *"brew install --HEAD mole"* ]] || { echo "$output"; return 1; }
-+	# The script install refuses while Homebrew owns mole.
-+	[[ "$output" != *"via script"* ]] || { echo "$output"; return 1; }
-+	if grep -q '^upgrade' "$brew_log"; then
-+		cat "$brew_log"
-+		return 1
-+	fi
-+}
-+
- @test "Homebrew update bounds fallback installed-binary version probes" {
- 	run env HOME="$HOME/bounded-homebrew-version" PROJECT_ROOT="$PROJECT_ROOT" /bin/bash --noprofile --norc << 'EOF'
- set -euo pipefail
-```
-
----
-
-### Incident Patch 12: `2e9d6da6` (2026-10-05)
-**Commit Message**: fix(clean): keep a Flutter build/ that holds a nested repository
-
-build/ is cleaned as Flutter output only because a .dart_tool sits beside
-it, and a repository inside it, such as a plugin checkout or a vendored
-package, is authored work the outer Git listing never sees: clean removed
-it together with its .git. Look for a nested .git with one bounded find
-first, and keep the folder when one is found or the scan cannot finish.
-
-**File**: `lib/clean/caches.sh` (modified, +28/-1)
-```diff
-@@ -623,6 +623,28 @@ project_cache_git_status() {
-     return 2
- }
- 
-+# build/ counts as Flutter output by convention only, and a repository inside
-+# it (a plugin checkout, a vendored package) is authored work the outer Git
-+# listing never sees. 0 keeps the folder, 1 clears it, a signal propagates;
-+# a scan that cannot finish keeps the folder.
-+_project_cache_holds_nested_repo() {
-+    local dir="$1"
-+    local found="" scan_rc=0
-+    found=$(run_with_timeout "$MOLE_TIMEOUT_MEDIUM_PROBE_SEC" find -P "$dir" -mindepth 1 -name .git -print -quit 2> /dev/null) || scan_rc=$?
-+    [[ $scan_rc -gt 128 ]] && return "$scan_rc"
-+    local reason=""
-+    if [[ $scan_rc -ne 0 ]]; then
-+        reason="nested repository check incomplete"
-+    elif [[ -n "$found" ]]; then
-+        reason="holds a nested git repository"
++eval "$OWNER_TOOL() { owner_stub \"\$@\"; }"
++if [[ "$OWNER_TOOL" == pip3 ]]; then clean_uv_cache() { :; }; fi
++unset MISE_CACHE_DIR
++export UV_CACHE_DIR="$HOME/protected-owner"
++for probe_mode in failed timeout signal relative multiline empty whitelisted known; do
++    MOLE_CLEAN_CANCEL_STATUS=0
++    WHITELIST_PATTERNS=("$HOME/protected-owner")
++    [[ "$probe_mode" != known && "$probe_mode" != failed ]] || WHITELIST_PATTERNS=()
++    : > "$HOME/owner-root.trace"
++    rc=0
++    "$OWNER_ENTRY" || rc=$?
++    if [[ "$probe_mode" == signal ]]; then
++        [[ "$rc" == 130 ]] || exit 1
 +    else
-+        return 1
++        [[ "$rc" == 0 ]] || exit 1
 +    fi
-+    debug_log "Keeping project cache, $reason: $dir"
-+    log_operation "clean" "SKIPPED" "$dir" "$reason"
-+    return 0
-+}
-+
- project_cache_has_tracked_files() {
-     local cache_path="$1"
-     local tracked_rc=0
-@@ -752,7 +774,12 @@ _process_project_cache_matches_indexed() {
-                     clean_project_cache_target "$cache_dir" "Flutter build cache (.dart_tool)" || return $?
-                     local build_dir="$(dirname "$cache_dir")/build"
-                     if [[ -d "$build_dir" ]]; then
--                        clean_project_cache_target "$build_dir" "Flutter build cache (build/)" || return $?
-+                        local nested_rc=0
-+                        _project_cache_holds_nested_repo "$build_dir" || nested_rc=$?
-+                        [[ $nested_rc -gt 128 ]] && return "$nested_rc"
-+                        if [[ $nested_rc -eq 1 ]]; then
-+                            clean_project_cache_target "$build_dir" "Flutter build cache (build/)" || return $?
-+                        fi
-                     fi
-                 fi
-                 ;;
-```
-
-**File**: `tests/clean_system_caches.bats` (modified, +48/-0)
-```diff
-@@ -728,6 +728,54 @@ EOF
-     rm -rf "$HOME/Projects" "$HOME/Other"
- }
- 
-+@test "clean_project_caches keeps a Flutter build/ that holds a nested repository" {
-+    run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" /bin/bash --noprofile --norc <<'EOF'
-+set -euo pipefail
-+source "$PROJECT_ROOT/lib/core/common.sh"
-+source "$PROJECT_ROOT/lib/clean/caches.sh"
-+app="$HOME/Projects/app"
-+mkdir -p "$app/.dart_tool" "$app/build/plugins/local_plugin/lib"
-+touch "$app/pubspec.yaml" "$app/.dart_tool/state" "$app/build/plugins/local_plugin/lib/main.dart"
-+git init -q "$app"
-+git init -q "$app/build/plugins/local_plugin"
-+DRY_RUN=false
-+clean_project_caches
-+[[ ! -e "$app/.dart_tool" ]] || exit 11
-+[[ -d "$app/build/plugins/local_plugin/.git" ]] || exit 12
-+[[ -f "$app/build/plugins/local_plugin/lib/main.dart" ]] || exit 13
-+EOF
-+    [ "$status" -eq 0 ] || { echo "$output"; return 1; }
-+
-+    rm -rf "$HOME/Projects"
-+}
-+
-+@test "clean_project_caches keeps a Flutter build/ whose nested repository check cannot finish" {
-+    run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" /bin/bash --noprofile --norc <<'EOF'
-+set -euo pipefail
-+source "$PROJECT_ROOT/lib/core/common.sh"
-+source "$PROJECT_ROOT/lib/clean/caches.sh"
-+app="$HOME/Projects/app"
-+mkdir -p "$app/.dart_tool" "$app/build"
-+touch "$app/pubspec.yaml" "$app/.dart_tool/state" "$app/build/out.bin"
-+git init -q "$app"
-+eval "real_$(declare -f run_with_timeout)"
-+run_with_timeout() {
-+    # Only the nested-repository probe times out; discovery still runs.
-+    if [[ "$2" == find && "$*" == *"-mindepth 1 -name .git -print -quit"* ]]; then
-+        return 124
++    if [[ "$probe_mode" == known ]]; then
++        [[ "$(cat "$HOME/owner-root.trace")" == owner ]] || exit 1
++    else
++        [[ ! -s "$HOME/owner-root.trace" ]] || { echo "UNEXPECTED:$probe_mode"; exit 1; }
 +    fi
-+    real_run_with_timeout "$@"
-+}
-+DRY_RUN=false
-+clean_project_caches
-+[[ ! -e "$app/.dart_tool" ]] || exit 11
-+[[ -f "$app/build/out.bin" ]] || exit 12
-+EOF
-+    [ "$status" -eq 0 ] || { echo "$output"; return 1; }
-+
-+    rm -rf "$HOME/Projects"
-+}
-+
- @test "project cache index gives no free pass to a path it never saw" {
-     run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" /bin/bash --noprofile --norc <<'EOF'
- set -euo pipefail
-```
-
----
-
-### Incident Patch 13: `d929d156` (2026-10-05)
-**Commit Message**: fix(clean): keep project caches that Git tracks (#1686)
-
-mo clean found project caches by name (__pycache__, .dart_tool, the
-Flutter build/ beside it, .next/cache) and removed them even when Git
-tracked files inside, such as bytecode committed by mistake or a test
-fixture under .dart_tool. Keep any such cache, and keep it when Git
-cannot answer.
-
-Clean asks Git once per repository: candidates are grouped by repository
-and one bounded ls-files listing, under a deadline shared by the whole
-step, is matched against all of them, so a tree with hundreds of caches
-costs about the same as before. A failed or late listing, git's own
-fatal exit, a name Git normalizes differently, a linked .next/cache or
-build/, and any path the listing never saw are kept. Purge's
-tracked-content probe shares the same Git invocation.
-
-**File**: `lib/clean/caches.sh` (modified, +228/-2)
-```diff
-@@ -449,13 +449,208 @@ project_cache_group_root() {
-     printf '%s\n' "$scan_root"
- }
- 
-+# Project caches are found by name only. Keep any that Git tracks, such as a
-+# committed test fixture under .dart_tool or bytecode checked in by mistake,
-+# and keep them when Git could not answer.
-+#
-+# process_project_cache_matches asks Git once per repository and records each
-+# candidate as T (tracked), U (unknown) or C (clear), one per line, held here
-+# with a leading and trailing newline so a lookup needs no extra process. One
-+# bounded probe per cache cost about 120 ms each, which a repository with
-+# hundreds of __pycache__ folders turned into minutes.
-+_project_cache_git_index=""
-+
-+# Printable ASCII only, judged bytewise whatever the caller's locale.
-+_project_cache_path_is_ascii() {
-+    local LC_ALL=C
-+    [[ "$1" != *[![:print:]]* ]]
-+}
-+
-+# Build the index for every candidate a matches file will reach. All Git
-+# listings share one deadline; a repository that cannot be listed in time, or
-+# whose listing fails, marks its candidates unknown. Signals propagate.
-+project_cache_build_git_index() {
-+    local matches_file="$1"
-+    local index_file="$2"
-+    local deadline="$3"
-+    local work_dir=""
-+    : > "$index_file" || return 1
-+    work_dir=$(create_temp_dir) || return 1
-+
-+    local -a logical_roots=() physical_roots=()
-+    local record_root="" cache_dir="" candidate="" physical="" repo="" i
-+    local candidates_file="$work_dir/candidates"
-+    : > "$candidates_file"
-+    while IFS=$'\t' read -r record_root cache_dir; do
-+        [[ -n "$record_root" && -n "$cache_dir" ]] || continue
-+        # find -P never follows links below its root, so only the record root
-+        # can carry an alias; resolve it once and keep each suffix as found.
-+        local root_physical=""
-+        for ((i = 0; i < ${#logical_roots[@]}; i++)); do
-+            if [[ "${logical_roots[$i]}" == "$record_root" ]]; then
-+                root_physical="${physical_roots[$i]}"
-+                break
-+            fi
-+        done
-+        if [[ -z "$root_physical" ]]; then
-+            root_physical=$(cd "$record_root" 2> /dev/null && /bin/pwd -P) || root_physical="?"
-+            logical_roots+=("$record_root")
-+            physical_roots+=("$root_physical")
-+        fi
-+        local -a candidates=()
-+        case "${cache_dir##*/}" in
-+            ".next")
-+                # A linked cache folder puts its children in another tree that
-+                # this repository cannot answer for; keep all of them.
-+                if [[ -L "$cache_dir/cache" ]]; then
-+                    for candidate in "$cache_dir/cache"/*; do
-+                        printf 'U%s\n' "$candidate" >> "$index_file"
-+                    done
-+                    continue
-+                fi
-+                for candidate in "$cache_dir/cache"/*; do
-+                    [[ -e "$candidate" || -L "$candidate" ]] && candidates+=("$candidate")
-+                done
-+                ;;
-+            "__pycache__") candidates=("$cache_dir") ;;
-+            ".dart_tool")
-+                candidates=("$cache_dir")
-+                if [[ -L "$(dirname "$cache_dir")/build" ]]; then
-+                    printf 'U%s\n' "$(dirname "$cache_dir")/build" >> "$index_file"
-+                elif [[ -d "$(dirname "$cache_dir")/build" ]]; then
-+                    candidates+=("$(dirname "$cache_dir")/build")
-+                fi
-+                ;;
-+        esac
-+        for candidate in "${candidates[@]+"${candidates[@]}"}"; do
-+            if [[ "$root_physical" == "?" || "$candidate" != "$record_root"/* ]]; then
-+                printf 'U%s\n' "$candidate" >> "$index_file"
-+                continue
-+            fi
-+            physical="$root_physical/${candidate#"$record_root"/}"
-+            if mole_find_git_repo_root "$physical"; then
-+                repo="$MOLE_GIT_REPO_ROOT"
-+                if [[ "$repo" == "$physical" ]]; then
-+                    # A cache folder that is its own repository is not a cache.
-+                    printf 'U%s\n' "$candidate" >> "$index_file"
-+                    continue
-+                fi
-+                local rel="${physical#"$repo"/}"
-+                if ! _project_cache_path_is_ascii "$rel"; then
-+                    # Git lists macOS names precomposed while the disk may keep
-+                    # them decomposed, so bytes cannot be compared. Let Git
-+                    # normalize this one directory; a file stays unknown.
-+                    local probe_rc=2
-+                    if [[ -d "$candidate" && ! -L "$candidate" ]]; then
-+                        probe_rc=0
-+                        mole_path_has_git_tracked_files "$candidate" "$deadline" || probe_rc=$?
-+                    fi
-+                    case "$probe_rc" in
-+                        0) printf 'T%s\n' "$candidate" >> "$index_file" ;;
-+                        1) printf 'C%s\n' "$candidate" >> "$index_file" ;;
-+                        *) printf 'U%s\n' "$candid
-```
-
-**File**: `lib/clean/project.sh` (modified, +3/-16)
-```diff
-@@ -509,7 +509,6 @@ purge_artifact_has_authored_content() {
-     local probe_timeout=""
-     [[ -d "$path" ]] || return 1
-     # A configured root can cross a symlink before reaching the candidate.
--    # Git ancestry must follow the actual repository, not the alias spelling.
-     path=$(cd "$path" 2> /dev/null && /bin/pwd -P) || return 2
-     local evidence=""
-     # Do not follow links or read key contents. This walks the whole artifact
-@@ -520,21 +519,9 @@ purge_artifact_has_authored_content() {
-         \( -name .git -o -name '*-keypair.json' \) -print -quit 2> /dev/null) || return 2
-     [[ -z "$evidence" ]] || return 0
- 
--    local ancestor="$path"
--    while [[ "$ancestor" != "/" && -n "$ancestor" ]]; do
--        if [[ -e "$ancestor/.git" || -L "$ancestor/.git" ]]; then
--            # Ignore inherited Git routing; inspect this directory's own repo.
--            probe_timeout=$(_mole_timeout_with_deadline "$MOLE_TIMEOUT_HINT_SCAN_SEC" "$deadline") || return 2
--            evidence=$(run_with_timeout "$probe_timeout" \
--                env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE -u GIT_COMMON_DIR \
--                GIT_OPTIONAL_LOCKS=0 GIT_LITERAL_PATHSPECS=1 \
--                git -c core.fsmonitor=false --git-dir="$ancestor/.git" --work-tree="$ancestor" -C "$path" ls-files -- . 2> /dev/null) || return 2
--            [[ -n "$evidence" ]]
--            return $?
--        fi
--        ancestor="${ancestor%/*}"
--    done
--    return 1
-+    local tracked_rc=0
-+    mole_path_has_git_tracked_files "$path" "$deadline" || tracked_rc=$?
-+    return "$tracked_rc"
- }
- 
- # Set by is_protected_purge_artifact: true when the verdict came from an
-```
-
-**File**: `lib/clean/purge_shared.sh` (modified, +56/-0)
-```diff
-@@ -164,6 +164,62 @@ mole_purge_is_project_root() {
-     return 1
- }
- 
-+# The repository that owns a physical path: the nearest ancestor holding .git
-+# (a directory, or a file for linked worktrees and submodules). Sets
-+# MOLE_GIT_REPO_ROOT without a subshell, for callers that ask per candidate.
-+mole_find_git_repo_root() {
-+    local ancestor="${1%/}"
-+    MOLE_GIT_REPO_ROOT=""
-+    while [[ "$ancestor" != "/" && -n "$ancestor" ]]; do
-+        if [[ -e "$ancestor/.git" || -L "$ancestor/.git" ]]; then
-+            MOLE_GIT_REPO_ROOT="$ancestor"
-+            return 0
-+        fi
-+        ancestor="${ancestor%/*}"
-+    done
-+    return 1
-+}
-+
-+mole_git_repo_root() {
-+    mole_find_git_repo_root "$1" || return 1
-+    printf '%s\n' "$MOLE_GIT_REPO_ROOT"
-+}
-+
-+# Run a bounded `git ls-files` in a repository from directory $3. Inherited Git
-+# routing is ignored so the repository's own index answers, fsmonitor hooks
-+# never run, and pathspecs stay literal. Returns git's or the timeout's status.
-+mole_git_ls_files() {
-+    local repo="$1"
-+    local deadline="$2"
-+    local dir="$3"
-+    shift 3
-+    local probe_timeout=""
-+    probe_timeout=$(_mole_timeout_with_deadline "$MOLE_TIMEOUT_HINT_SCAN_SEC" "$deadline") || return 124
-+    run_with_timeout "$probe_timeout" \
-+        env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE -u GIT_COMMON_DIR \
-+        GIT_OPTIONAL_LOCKS=0 GIT_LITERAL_PATHSPECS=1 \
-+        git -c core.fsmonitor=false --git-dir="$repo/.git" --work-tree="$repo" -C "$dir" ls-files "$@" 2> /dev/null
-+}
-+
-+# Whether Git tracks files below a directory, asked of the repository that owns
-+# it. Names do not prove a directory is disposable: build/ can hold tracked
-+# source and a cache-named folder a committed fixture. Returns 0 when Git tracks
-+# files there, 1 when no repository owns the path or it tracks nothing there,
-+# and 2 when the probe timed out or failed.
-+mole_path_has_git_tracked_files() {
-+    local path="${1%/}"
-+    local deadline="${2:-}"
-+    local evidence="" repo=""
-+    [[ -d "$path" ]] || return 1
-+    # A configured root can cross a symlink before reaching the candidate.
-+    # Git ancestry must follow the actual repository, not the alias spelling.
-+    path=$(cd "$path" 2> /dev/null && /bin/pwd -P) || return 2
-+    repo=$(mole_git_repo_root "$path") || return 1
-+    evidence=$(mole_git_ls_files "$repo" "$deadline" "$path" -- .) || return 2
-+    [[ -n "$evidence" ]] && return 0
-+    return 1
-+}
-+
- mole_dir_has_cachedir_tag() {
-     local dir="$1"
-     local tag="$dir/$MOLE_CACHEDIR_TAG_NAME"
-```
-
-**File**: `tests/clean_system_caches.bats` (modified, +213/-0)
-```diff
-@@ -533,6 +533,219 @@ EOF
-     rm -rf "$HOME/Projects" "$HOME/export.txt"
- }
- 
-+@test "clean_project_caches keeps project caches that Git tracks" {
-+    run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" /bin/bash --noprofile --norc <<'EOF'
-+set -euo pipefail
-+source "$PROJECT_ROOT/lib/core/common.sh"
-+source "$PROJECT_ROOT/lib/clean/caches.sh"
-+repo="$HOME/Projects/repo"
-+mkdir -p "$repo/py/pkg/__pycache__" "$repo/py/committed/__pycache__" \
-+    "$repo/app/.dart_tool" "$repo/app/build" "$repo/app/test/fixtures/.dart_tool"
-+touch "$repo/py/pyproject.toml" "$repo/app/pubspec.yaml"
-+touch "$repo/py/pkg/__pycache__/local.pyc" "$repo/py/committed/__pycache__/committed.pyc"
-+touch "$repo/app/.dart_tool/state" "$repo/app/build/output"
-+printf '{}' > "$repo/app/test/fixtures/.dart_tool/package_config.json"
-+git init -q "$repo"
-+git -C "$repo" add -f py/committed/__pycache__/committed.pyc app/test/fixtures/.dart_tool/package_config.json
-+DRY_RUN=false
-+clean_project_caches
-+[[ ! -e "$repo/py/pkg/__pycache__" ]] || exit 11
-+[[ -f "$repo/py/committed/__pycache__/committed.pyc" ]] || exit 12
-+[[ ! -e "$repo/app/.dart_tool" ]] || exit 13
-+[[ ! -e "$repo/app/build" ]] || exit 14
-+[[ -f "$repo/app/test/fixtures/.dart_tool/package_config.json" ]] || exit 15
-+EOF
-+    [ "$status" -eq 0 ]
-+
-+    rm -rf "$HOME/Projects"
-+}
-+
-+@test "clean_project_caches keeps a project cache whose Git listing cannot finish" {
-+    run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" /bin/bash --noprofile --norc <<'EOF'
-+set -euo pipefail
-+source "$PROJECT_ROOT/lib/core/common.sh"
-+source "$PROJECT_ROOT/lib/clean/caches.sh"
-+mkdir -p "$HOME/Projects/app/.dart_tool" "$HOME/Projects/py/pkg/__pycache__"
-+touch "$HOME/Projects/app/pubspec.yaml" "$HOME/Projects/py/pyproject.toml"
-+touch "$HOME/Projects/py/pkg/__pycache__/module.pyc"
-+git init -q "$HOME/Projects"
-+mole_git_ls_files() { return 124; }
-+log_operation() { printf 'LOG:%s|%s\n' "$3" "$4" >> "$HOME/oplog"; }
-+DRY_RUN=false
-+clean_project_caches
-+[[ -d "$HOME/Projects/app/.dart_tool" ]] || exit 11
-+[[ -f "$HOME/Projects/py/pkg/__pycache__/module.pyc" ]] || exit 12
-+grep -q 'git status unknown' "$HOME/oplog" || exit 13
-+! grep -q 'tracked by git' "$HOME/oplog" || exit 14
-+EOF
-+    [ "$status" -eq 0 ] || { echo "$output"; return 1; }
-+
-+    rm -rf "$HOME/Projects"
-+}
-+
-+@test "clean_project_caches asks Git once per repository" {
-+    run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" /bin/bash --noprofile --norc <<'EOF'
-+set -euo pipefail
-+source "$PROJECT_ROOT/lib/core/common.sh"
-+source "$PROJECT_ROOT/lib/clean/caches.sh"
-+repo="$HOME/Projects/mono"
-+for pkg in a b c d e f; do
-+    mkdir -p "$repo/svc/$pkg/__pycache__"
-+    touch "$repo/svc/$pkg/__pycache__/m.pyc"
 +done
-+touch "$repo/svc/pyproject.toml"
-+git init -q "$repo"
-+git -C "$repo" add -f svc/c/__pycache__/m.pyc
-+eval "real_$(declare -f mole_git_ls_files)"
-+mole_git_ls_files() { printf 'call\n' >> "$HOME/ls-files.calls"; real_mole_git_ls_files "$@"; }
-+DRY_RUN=false
-+clean_project_caches
-+[[ "$(wc -l < "$HOME/ls-files.calls" | tr -d ' ')" == 1 ]] || { cat "$HOME/ls-files.calls"; exit 11; }
-+[[ -f "$repo/svc/c/__pycache__/m.pyc" ]] || exit 12
-+for pkg in a b d e f; do
-+    [[ ! -e "$repo/svc/$pkg/__pycache__" ]] || exit 13
-+done
++echo ROOT_GUARD_OK
 +EOF
 +    [ "$status" -eq 0 ] || { echo "$output"; return 1; }
-+
-+    rm -rf "$HOME/Projects"
++    [[ "$output" == *ROOT_GUARD_OK* ]] || return 1
 +}
 +
-+@test "clean_project_caches keeps tracked Next.js cache files and Flutter build beside a kept .dart_tool" {
-+    run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" /bin/bash --noprofile --norc <<'EOF'
+ @test "clean_github_cli_cache uses gh owner command for the default cache" {
+     local trace="$HOME/gh-default.trace"
+     mkdir -p "$HOME/.cache/gh"
+@@ -4554,3 +4616,75 @@ EOF
+     grep -qx 'PIP3:--version' "$trace"
+ }
+ 
++
++@test "uv owner cleanup requires a confirmed cache root" {
++    assert_owner_cleanup_requires_confirmed_root uv clean_uv_cache
++}
++
++@test "npm owner cleanup requires a confirmed cache root" {
++    assert_owner_cleanup_requires_confirmed_root npm clean_dev_npm
++}
++
++@test "pip3 owner cleanup requires a confirmed cache root" {
++    assert_owner_cleanup_requires_confirmed_root pip3 clean_dev_python
++}
++
++@test "mise owner cleanup requires a confirmed cache root" {
++    assert_owner_cleanup_requires_confirmed_root mise clean_dev_mise
++}
++
++@test "conda owner cleanup protects every configured package cache root" {
++    run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" MOLE_TEST_NO_AUTH=1 \
++        /bin/bash --noprofile --norc <<'EOF'
 +set -euo pipefail
 +source "$PROJECT_ROOT/lib/core/common.sh"
-+source "$PROJECT_ROOT/lib/clean/caches.sh"
-+repo="$HOME/Projects/site"
-+mkdir -p "$repo/web/.next/cache/images" "$repo/flutter/.dart_tool" "$repo/flutter/build"
-+touch "$repo/web/package.json" "$repo/flutter/pubspec.yaml"
-+printf 'pinned' > "$repo/web/.next/cache/fixture.json"
-+touch "$repo/web/.next/cache/images/a.webp" "$repo/flutter/build/out.bin"
-+printf '{}' > "$repo/flutter/.dart_tool/package_config.json"
-+git init -q "$repo"
-+git -C "$repo" add -f web/.next/cache/fixture.json flutter/.dart_tool/package_config.json
-+DRY_RUN=false
-+clean_project_caches
-+# A tracked file directly under .next/cache stays; its untracked sibling goes.
-+[[ -f "$repo/web/.next/cache/fixture.json" ]] || exit 11
-+[[ ! -e "$repo/web/.next/cache/images" ]] || exit 12
-+# build/ is Flutter output only beside a disposable .dart_tool.
-+[[ -f "$repo/flutter/.dart_tool/package_config.json" ]] || exit 13
-+[[ -f "$repo/flutter/build/out.bin" ]] || exit 14
-+EOF
-+    [ "$status" -eq 0 ] || { echo "$output"; return 1; }
-+
-+    rm -rf "$HOME/Projects"
++source "$PROJECT_ROOT/lib/clean/dev.sh"
++run_with_timeout() { shift; "$@"; }
++note_activity() { :; }
++conda() {
++    case "$*" in
++        --version) return 0 ;;
++        'info --json')
++            case "$probe_mode" in
++                failed) return 1 ;;
++                timeout) return 124 ;;
++                signal) return 130 ;;
++                malformed) echo '{' ;;
++                missing) echo '{}' ;;
++                empty) echo '{"pkgs_dirs":[]}' ;;
++                itemtype) echo '{"pkgs_dirs":["/first",1]}' ;;
++                newline) printf '{"pkgs_dirs":["/first\\n"]}\n' ;;
++                single) printf '{"pkgs_dirs":["%s/first-cache"]}\n' "$HOME" ;;
++                wrongtype) echo '{"pkgs_dirs":"/unexpected"}' ;;
++                relative) echo '{"pkgs_dirs":["/first","relative"]}' ;;
++                *) printf '{"platform":"osx-arm64","active_prefix":null,"root_writable":true,"pkgs_dirs":["%s/first-cache","%s/custom-cache"],"envs":[]}\n' "$HOME" "$HOME" ;;
++            esac ;;
++        'clean --yes --index-cache --tarballs --logfiles') echo owner >> "$HOME/conda-root.trace" ;;
++        *) return 1 ;;
++    esac
 +}
-+
-+@test "clean_project_caches stops on a signal during the Git listing" {
-+    run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" /bin/bash --noprofile --norc <<'EOF'
-+set -uo pipefail
-+source "$PROJECT_ROOT/lib/core/common.sh"
-+source "$PROJECT_ROOT/lib/clean/caches.sh"
-+mkdir -p "$HOME/Projects/py/pkg/__pycache__"
-+touch "$HOME/Projects/
++for DRY_RUN in false true; do
++    for probe_mode in protected child failed timeout signal malformed missing empty itemtype newline wrongtype relative single known; do
++        WHITELIST_PATTERNS=()
++        [[ "$probe_mode" != protected ]] || WHITELIST_PATTERNS=("$HOME/custom-cache")
++        [[ "$probe_mode" != child ]] || WHITELIST_PATTERNS=("$HOME/custom-cac
 ```
 
 ---
 
-### Incident Patch 14: `19f14e40` (2026-10-05)
-**Commit Message**: fix: keep one analyze animation loop across entry points
+### Incident Patch 3: `e6b94dc8` (2026-10-18)
+**Commit Message**: fix(analyze): refresh a directory changed soon after its scan
 
-The refill guard alone left raw tick starts in refresh, navigation, and deletion paths, while Init updated only a model copy. Initialize through Update and route every entry point through the shared guard so fast completions and repeated actions cannot create extra loops.
+A 30-minute mtime grace kept serving a directory's cached listing as
+current, so a file downloaded after a scan stayed invisible and a deleted
+one stayed listed until the window passed; a parent scan also folded the
+outdated child total into its own. The comment already promised refusal
+for any change. Drop the grace: the TUI still paints the old listing
+immediately and refreshes behind it, and the rescan costs one level. The
+change helper now bumps the mtime one minute after the scan, which the
+old code fails.
 
-Cover initialization, active and idle transitions, navigation, deletion, and restart behavior with entry-point regression tests verified against the old code.
-
-**File**: `cmd/analyze/analyze_test.go` (modified, +161/-0)
+**File**: `cmd/analyze/analyze_test.go` (modified, +5/-4)
 ```diff
-@@ -10,6 +10,8 @@ import (
- 	"fmt"
- 	"os"
- 	"path/filepath"
-+	"reflect"
-+	"runtime"
- 	"slices"
- 	"strings"
- 	"sync/atomic"
-@@ -4280,6 +4282,165 @@ func TestOverviewRefillsKeepOneTickLoop(t *testing.T) {
+@@ -3116,7 +3116,7 @@ func TestLoadCacheExpiresWhenDirectoryChanges(t *testing.T) {
+ 	if _, err := os.Stat(cachePath); err != nil {
+ 		t.Fatalf("stat cache: %v", err)
+ 	}
+-	oldTime := time.Now().Add(-cacheModTimeGrace - time.Minute)
++	oldTime := time.Now().Add(-time.Hour)
+ 	if err := os.Chtimes(cachePath, oldTime, oldTime); err != nil {
+ 		t.Fatalf("chtimes cache: %v", err)
+ 	}
+@@ -3151,11 +3151,12 @@ func TestLoadCacheExpiresWhenDirectoryChanges(t *testing.T) {
  	}
  }
  
-+// Inspect dispatch without running scan, snapshot, or deletion commands. The
-+// positive control below pins Bubble Tea's tick and batch command identities.
-+func scheduledTickCount(t *testing.T, cmd tea.Cmd) int {
-+	t.Helper()
-+	if cmd == nil {
-+		return 0
-+	}
-+	name := runtime.FuncForPC(reflect.ValueOf(cmd).Pointer()).Name()
-+	if strings.Contains(name, ".Tick.") {
-+		return 1
-+	}
-+	if strings.Contains(name, ".compactCmds[") {
-+		batch, ok := cmd().(tea.BatchMsg)
-+		if !ok {
-+			t.Fatalf("batch command returned an unexpected message: %s", name)
-+		}
-+		count := 0
-+		for _, sub := range batch {
-+			count += scheduledTickCount(t, sub)
-+		}
-+		return count
-+	}
-+	return 0
-+}
-+
-+func newTickLoopTestModel(t *testing.T, overview bool) model {
-+	t.Helper()
-+	t.Setenv("HOME", t.TempDir())
-+	resetOverviewSnapshotForTest()
-+	t.Cleanup(resetOverviewSnapshotForTest)
-+	m := newModel(filepath.Join(t.TempDir(), "missing"), false)
-+	m.isOverview = overview
-+	if overview {
-+		m.path = "/"
-+	}
-+	m.scanning = !overview
-+	for i := range maxConcurrentOverview + 3 {
-+		m.entries = append(m.entries, dirEntry{
-+			Name: fmt.Sprintf("fixture-%d", i), Path: filepath.Join(os.Getenv("HOME"), fmt.Sprintf("missing-%d", i)),
-+			IsDir: true, Size: -1,
-+		})
-+	}
-+	return m
-+}
-+
-+func TestTickLoopEntrypoints(t *testing.T) {
-+	if got := scheduledTickCount(t, tea.Batch(tickCmd(), tea.Batch(tickCmd(), nil))); got != 2 {
-+		t.Fatalf("tick counter positive control = %d, want 2", got)
-+	}
-+
-+	for _, overview := range []bool{false, true} {
-+		t.Run(fmt.Sprintf("init overview=%t", overview), func(t *testing.T) {
-+			m := newTickLoopTestModel(t, overview)
-+			defer func() { m.cancelOverviewScans(nil); m.cancelBackgroundCacheWrites(nil) }()
-+			msg := m.Init()()
-+			var cmd tea.Cmd
-+			if batch, ok := msg.(tea.BatchMsg); ok {
-+				cmd = tea.Batch(batch...)
-+			} else {
-+				updated, next := m.Update(msg)
-+				m, cmd = updated.(model), next
-+			}
-+			if got := scheduledTickCount(t, cmd); got != 1 || !m.tickRunning {
-+				t.Fatalf("initial ticks=%d, retained running=%t; want one retained loop", got, m.tickRunning)
-+			}
-+			if overview {
-+				path := m.entries[0].Path
-+				updated, refill := m.Update(overviewSizeMsg{Path: path, Size: 1, publication: m.overviewScanningSet[path]})
-+				m = updated.(model)
-+				if got := scheduledTickCount(t, refill); got != 0 {
-+					t.Fatalf("completion before the first tick added %d loops", got)
-+				}
-+			}
-+		})
-+	}
-+
-+	cases := []struct {
-+		name  string
-+		setup func(*model)
-+		msg   tea.Msg
-+	}{
-+		{"overview refresh", func(m *model) { m.isOverview, m.path = true, "/" }, tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'r'}}},
-+		{"directory refresh", func(m *model) {}, tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'r'}}},
-+		{"return to pending overview", func(m *model) {}, tea.KeyMsg{Type: tea.KeyEsc}},
-+		{"return to full overview", func(m *model) {
-+			m.isOverview, m.path = true, "/"
-+			m.scheduleOverviewScans()
-+			m.isOverview, m.path = false, "/fixture"
-+		}, tea.KeyMsg{Type: tea.KeyEsc}},
-+		{"history overview", func(m *model) {
-+			m.isOverview, m.path = true, "/"
-+			m.scheduleOverviewScans()
-+			m.history = []historyEntry{{Path: "/", IsOverview: true, Entries: m.entries}}
-+			m.isOverview, m.path = false, "/fixture"
-+		}, tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'b'}}},
-+		{"stale history", func(m *model) {
-+			m.history = []historyEntry{{Path: "/fixture/parent", NeedsRefresh: true}}
-+		}, tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'b'}}},
-+		{"enter directory", func(m *model) {}, tea.KeyMsg{Type: tea.KeyEnter}},
-+		{"enter stale directory", func(m *model) {
-+			m.cache[m.entries[0].Path] = historyEntry{NeedsRefresh: true}
-+		}, tea.KeyMsg{Type: tea.KeyEnter}},
-+		{"stale scan result", func(m *model) {}, scanResultMsg{stale: true}},
-+		{"single delete", func(m *model) {
-+			m.deleteConfirm, m.deleteTarget = true, &m.entries[0]
-+		}, tea.KeyMsg{Type: tea.KeyEnter}},
-+		{"batch delete", func(m *model) {
-+			m.deleteConfirm = true
-+			m.multiSelected = map[string]bool{m.entries[0].Path: true, m.entries[1].Path: true}
-+		}, tea.KeyMsg{Type: tea.KeyEnter}},
-+		{"scan after delete", func(m *model) { m.deleting = true }, deleteProgressMsg{done: true, path: "/fixture/removed"}},
-+	}
-+	for _, tc := range cases {
-+		for _, running := range []bool{false, true} {
-+			t.Run(fmt.Sprintf("%s running=%t", tc.name, running), func(t *testing.T) {
-+				m := newTickLoopTestModel(t, false)
-+				defer func() { m.cancelOverviewScans(nil); m.cancelBackgroundCacheWrites(nil) }()
-+				tc.setup(&m)
-+				m.tickRunning = running
-+				updated, cmd := m.Update(tc.msg)
-+				m = updated.(model)
-+				want := 1
-+				if running {
-+					want = 0
-+				}
-+				if got := scheduledTickCount(t, cmd); got != want || !m.tickRunning {
+-// setChangedAfterRecentScan runs save while dir's mtime is 2h old, then moves
+-// the mtime to now: past the grace window, with the scan only just recorded.
++// setChangedAfterRecentScan runs save while dir's mtime is a minute old, then
++// moves the mtime to now: a file added or removed right after the scan, as when
++// a user downloads something and reopens analyze.
+ func setChangedAfterRecentScan(t *testing.T, dir string, save func()) {
+ 	t.Helper()
+-	old := time.Now().Add(-2 * time.Hour)
++	old := time.Now().Add(-time.Minute)
+ 	if err := os.Chtimes(dir, old, old); err != nil {
+ 		t.Fatalf("chtimes %s: %v", dir, err)
+ 	}
 ```
 
-**File**: `cmd/analyze/model.go` (modified, +2/-0)
+**File**: `cmd/analyze/cache.go` (modified, +1/-3)
 ```diff
-@@ -192,6 +192,8 @@ type overviewSizeMsg struct {
- 	Err         error
- }
+@@ -638,9 +638,7 @@ func loadCacheFromDisk(path string) (*cacheEntry, error) {
+ 	// loadStaleCacheFromDisk and refreshes behind it, and the rescan reuses the
+ 	// unchanged subtrees below, so refusing costs one level, not a full scan.
+ 	if info.ModTime().After(entry.ModTime) {
+-		if cacheModTimeGrace <= 0 || info.ModTime().Sub(entry.ModTime) > cacheModTimeGrace {
+-			return nil, fmt.Errorf("cache expired: directory modified")
+-		}
++		return nil, fmt.Errorf("cache expired: directory modified")
+ 	}
  
-+type initializeMsg struct{}
-+
- type tickMsg time.Time
- 
- type deleteProgressMsg struct {
+ 	return entry, nil
 ```
 
-**File**: `cmd/analyze/update.go` (modified, +34/-16)
+**File**: `cmd/analyze/constants.go` (modified, +0/-1)
 ```diff
-@@ -76,10 +76,11 @@ func (m *model) scheduleOverviewScans() tea.Cmd {
- }
+@@ -21,7 +21,6 @@ const (
+ 	mdlsTimeout            = 5 * time.Second
+ 	maxConcurrentOverview  = 8
+ 	batchUpdateSize        = 100
+-	cacheModTimeGrace      = 30 * time.Minute
+ 	staleCacheTTL          = 3 * 24 * time.Hour
  
- func (m model) Init() tea.Cmd {
--	if m.inOverviewMode() {
--		return tea.Batch(m.scheduleOverviewScans(), m.detectLocalSnapshotsCmd())
-+	// Init receives a copy. Start work through Update so the running model
-+	// retains the tick guard before any scan completion can refill the queue.
-+	return func() tea.Msg {
-+		return initializeMsg{}
- 	}
--	return tea.Batch(m.scanCmd(m.path), tickCmd())
- }
- 
- func (m model) scanCmd(path string) tea.Cmd {
-@@ -133,8 +134,8 @@ func tickCmd() tea.Cmd {
- 
- // startTick arms the animation loop only when none is running. Each loop
- // re-arms itself while work remains, so a second one would double the
--// spinner speed; overview refills start scans one at a time and must not
--// add a loop per completion.
-+// spinner speed. Every scan, navigation, and deletion entry point shares
-+// this guard, including overview refills before the first tick arrives.
- func (m *model) startTick() tea.Cmd {
- 	if m.tickRunning {
- 		return nil
-@@ -302,6 +303,14 @@ func (m *model) selectEntryPath(path string) {
- 
- func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
- 	switch msg := msg.(type) {
-+	case initializeMsg:
-+		var cmd tea.Cmd
-+		if m.inOverviewMode() {
-+			cmd = tea.Batch(m.scheduleOverviewScans(), m.detectLocalSnapshotsCmd())
-+		} else {
-+			cmd = tea.Batch(m.scanCmd(m.path), m.startTick())
-+		}
-+		return m, cmd
- 	case tea.KeyMsg:
- 		return m.updateKey(msg)
- 	case tea.WindowSizeMsg:
-@@ -364,7 +373,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
- 				if m.currentPath != nil {
- 					m.currentPath.Store("")
- 				}
--				return m, tea.Batch(m.scanCmd(m.path), tickCmd())
-+				cmd := tea.Batch(m.scanCmd(m.path), m.startTick())
-+				return m, cmd
- 			}
- 			if msg.err != nil {
- 				m.status = fmt.Sprintf("Failed to delete: %v", msg.err)
-@@ -429,7 +439,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
- 			if m.currentPath != nil {
- 				m.currentPath.Store("")
- 			}
--			return m, tea.Batch(m.scanFreshCmd(m.path), tickCmd())
-+			cmd := tea.Batch(m.scanFreshCmd(m.path), m.startTick())
-+			return m, cmd
- 		}
- 
- 		m.status = scanSummary(m.totalSize, m.scanState)
-@@ -613,11 +624,13 @@ func (m model) updateKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
- 			if len(pathsToDelete) == 1 {
- 				targetPath := pathsToDelete[0]
- 				m.status = fmt.Sprintf("Deleting %s...", filepath.Base(targetPath))
--				return m, tea.Batch(deletePathCmd(targetPath, m.deleteCount), tickCmd())
-+				cmd := tea.Batch(deletePathCmd(targetPath, m.deleteCount), m.startTick())
-+				return m, cmd
- 			}
- 
- 			m.status = fmt.Sprintf("Deleting %d items...", len(pathsToDelete))
--			return m, tea.Batch(deleteMultiplePathsCmd(pathsToDelete, m.deleteCount), tickCmd())
-+			cmd := tea.Batch(deleteMultiplePathsCmd(pathsToDelete, m.deleteCount), m.startTick())
-+			return m, cmd
- 		case "esc", "q":
- 			m.status = "Cancelled"
- 			m.deleteConfirm = false
-@@ -738,7 +751,8 @@ func (m model) updateKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
- 			m.status = "Refreshing..."
- 			m.overviewScanning = true
- 			m.snapshotProbeID++
--			return m, tea.Batch(m.scheduleOverviewScans(), m.detectLocalSnapshotsCmd(), tickCmd())
-+			cmd := tea.Batch(m.scheduleOverviewScans(), m.detectLocalSnapshotsCmd(), m.startTick())
-+			return m, cmd
- 		}
- 
- 		m.cancelOverviewScans([]string{m.path})
-@@ -755,7 +769,8 @@ func (m model) updateKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
- 		if m.currentPath != nil {
- 			m.currentPath.Store("")
- 		}
--		return m, tea.Batch(m.scanBypassingCacheCmd(m.path), tickCmd())
-+		cmd := tea.Batch(m.scanBypassingCacheCmd(m.path), m.startTick())
-+		return m, cmd
- 	case "t", "T":
- 		if m.scanning {
- 			m.status = "Top files are available after the scan finishes"
-@@ -1180,7 +1195,8 @@ func (m model) goBack() (tea.Model, tea.Cmd) {
- 		if m.currentPath != nil {
- 			m.currentPath.Store("")
- 		}
--		return m, tea.Batch(m.scanFreshCmd(m.path), tickCmd())
-+		cmd := tea.Batch(m.scanFreshCmd(m.path), m.startTick())
-+		return m, cmd
- 	}
- 	m.status = scanSummary(m.totalSize, m.scanState)
- 	m.scanning = false
-@@ -1210,12 +1226,12 @@ func (m *model) switchToOverviewMode() tea.Cmd {
- 	if cmd == nil {
- 		if m.overviewScanning {
- 			m.status = "Checking system folders..."
--			return tea.Batch(m.detectLocalSnapshotsCmd(), tickCmd())
-+			return tea.Batch(m.detectLocalSnapshotsCmd(), m.startTick())
- 		}
- 		m.status = "Ready"
- 		return m.detectLocalSnapshotsCmd()
- 	}
--	return tea.Batch(cmd, m.detectLocalSnapshotsCmd(), tickCmd())
-+	return tea.Batch(cmd, m.detectLocalSnapshotsCmd(), m.startTick())
- }
- 
- func (m model) enterSelectedDir() (tea.Model, tea.Cmd) {
-@@ -1282,7 +1298,8 @@ func (m model) enterSelectedDir() (tea.Model, tea.Cmd) {
- 				if m.totalFiles > 0 {
- 					m.lastTotalFiles = m.totalFiles
- 				}
--				return m, tea.Batch(m.scanFreshCmd(m.path), tickCmd())
-+				cmd := tea.Batch(m.scanFreshCmd(m.path), m.startTick())
-+				return m, cmd
- 			}
- 			m.status = fmt.Sprintf(
-```
-
----
-
-### Incident Patch 15: `6aa93263` (2026-10-05)
-**Commit Message**: fix(analyze): keep one spinner loop while overview scans refill
-
-Refilling one overview slot per completed scan also armed a new tick loop
-each time, and every loop re-arms itself while work remains, so the spinner
-sped up with each finished row: five loops for twelve rows where V1.57.0
-had two. Arm a loop only when none is running and track it from the tick
-handler.
-
-**File**: `cmd/analyze/analyze_test.go` (modified, +49/-3)
-```diff
-@@ -4237,6 +4237,49 @@ func TestOverviewScanRefillsOnlyAvailableSlots(t *testing.T) {
- 	}
- }
- 
-+// countTickMsgs runs cmd and every command it batches, counting the tick
-+// loops it would start. Scan commands for missing fixture paths return fast.
-+func countTickMsgs(t *testing.T, cmd tea.Cmd) int {
-+	t.Helper()
-+	if cmd == nil {
-+		return 0
-+	}
-+	switch msg := cmd().(type) {
-+	case tickMsg:
-+		return 1
-+	case tea.BatchMsg:
-+		total := 0
-+		for _, sub := range msg {
-+			total += countTickMsgs(t, sub)
-+		}
-+		return total
-+	default:
-+		return 0
-+	}
-+}
-+
-+func TestOverviewRefillsKeepOneTickLoop(t *testing.T) {
-+	m := model{path: "/", isOverview: true}
-+	for i := range maxConcurrentOverview + 4 {
-+		m.entries = append(m.entries, dirEntry{Path: fmt.Sprintf("/nonexistent-mole-fixture/%d", i), Size: -1})
-+	}
-+	t.Cleanup(func() { m.cancelOverviewScans(nil) })
-+	if got := countTickMsgs(t, m.scheduleOverviewScans()); got != 1 {
-+		t.Fatalf("initial dispatch started %d tick loops, want 1", got)
-+	}
-+	// Each completion refills one slot. The running loop keeps the spinner
-+	// moving, so a refill that also armed a loop would speed it up per row.
-+	for i := range 4 {
-+		completed := m.entries[i].Path
-+		m.entries[i].Size = 1
-+		m.overviewScanningSet[completed].cancel()
-+		delete(m.overviewScanningSet, completed)
-+		if got := countTickMsgs(t, m.scheduleOverviewScans()); got != 0 {
-+			t.Fatalf("refill %d started %d extra tick loops", i+1, got)
-+		}
-+	}
-+}
-+
- func TestSwitchToOverviewKeepsFullBudgetScanning(t *testing.T) {
- 	t.Setenv("HOME", t.TempDir())
- 	resetOverviewSnapshotForTest()
-@@ -4273,10 +4316,11 @@ func TestGoBackToOverviewRestartsFullBudgetTick(t *testing.T) {
- 	m.path = "/fixture/completed"
- 	m.status = "Loaded folder"
- 	m.scanning = false
--	_, cmd := m.Update(tickMsg{})
-+	stopped, cmd := m.Update(tickMsg{})
- 	if cmd != nil {
- 		t.Fatal("completed drill-down must stop its tick chain")
- 	}
-+	m = stopped.(model)
- 	updated, cmd := m.goBack()
- 	got := updated.(model)
- 	if cmd == nil || !got.overviewScanning || got.status == "Loaded folder" {
-@@ -4389,7 +4433,9 @@ func TestDeleteCancelsOverviewPublicationBeforeInvalidation(t *testing.T) {
- 	}
- 	m.path, m.isOverview = "/", true
- 	m.entries = []dirEntry{{Name: "Project", Path: root, IsDir: true, Size: -1}, {Name: "Applications", Path: sibling, IsDir: true, Size: -1}}
--	newBatch := m.scheduleOverviewScans()().(tea.BatchMsg)
-+	// The first dispatch's tick loop is still running, so this refill is the
-+	// scan command alone rather than a batch with another tick.
-+	newScan := m.scheduleOverviewScans()
- 	newPublication := m.overviewScanningSet[root]
- 	if newPublication == nil || newPublication == oldPublication {
- 		t.Fatal("replacement scan missing")
-@@ -4402,7 +4448,7 @@ func TestDeleteCancelsOverviewPublicationBeforeInvalidation(t *testing.T) {
- 	if _, ok := m.overviewSizeCache[root]; ok {
- 		t.Fatal("old message restored an in-memory size")
- 	}
--	fresh := newBatch[0]().(overviewSizeMsg)
-+	fresh := newScan().(overviewSizeMsg)
- 	updated, _ = m.Update(fresh)
- 	m = updated.(model)
- 	if fresh.Err != nil || m.overviewSizeCache[root] != 4096 {
-```
-
-**File**: `cmd/analyze/model.go` (modified, +1/-0)
-```diff
-@@ -215,6 +215,7 @@ type model struct {
- 	totalSize           int64
- 	scanning            bool
- 	spinner             int
-+	tickRunning         bool // one tickCmd loop is already re-arming itself
- 	filesScanned        *int64
- 	dirsScanned         *int64
- 	bytesScanned        *int64
-```
-
-**File**: `cmd/analyze/update.go` (modified, +16/-2)
-```diff
-@@ -71,7 +71,7 @@ func (m *model) scheduleOverviewScans() tea.Cmd {
- 		}
- 	}
- 
--	cmds = append(cmds, tickCmd())
-+	cmds = append(cmds, m.startTick())
- 	return tea.Batch(cmds...)
- }
- 
-@@ -131,6 +131,18 @@ func tickCmd() tea.Cmd {
- 	})
- }
- 
-+// startTick arms the animation loop only when none is running. Each loop
-+// re-arms itself while work remains, so a second one would double the
-+// spinner speed; overview refills start scans one at a time and must not
-+// add a loop per completion.
-+func (m *model) startTick() tea.Cmd {
-+	if m.tickRunning {
-+		return nil
-+	}
-+	m.tickRunning = true
-+	return tickCmd()
-+}
-+
- func (m *model) cancelLiveScan() {
- 	if m.liveScanCancel != nil {
- 		m.liveScanCancel()
-@@ -551,8 +563,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
- 					m.status = fmt.Sprintf("Moving to Trash... %s items", formatNumber(count))
- 				}
- 			}
-+			m.tickRunning = true
- 			return m, tickCmd()
- 		}
-+		m.tickRunning = false
- 		return m, nil
- 	default:
- 		return m, nil
-@@ -1147,7 +1161,7 @@ func (m model) goBack() (tea.Model, tea.Cmd) {
- 			cmd := m.scheduleOverviewScans()
- 			if cmd == nil && m.overviewScanning {
- 				m.status = "Checking system folders..."
--				cmd = tickCmd()
-+				cmd = m.startTick()
- 			}
- 			return m, cmd
- 		}
+ 	// Analyzer cache admission and eviction budget. A subtree is only worth a
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1691** (2026-10-06): fix(clean): name what timed out; a go clean timeout skips only that cache (@HaraldNordgren)
-- **PR #1690** (2026-10-06): fix(clean): keep the DiagnosticReports directory when cleaning user logs (@md786-dotcom)
-- **PR #1688** (2026-10-06): Keep operation history tied to each run (@M-Hassan-Raza)
-- **PR #1686** (2026-10-05): fix(clean): keep project caches that Git tracks (@cdeil)
-- **PR #1683** (2026-10-05): test: isolate cleanup process probes and strengthen Xcode guards (@Yuxin-Qiao)
-- **PR #1682** (2026-10-05): test: isolate Mail and remaining batch uninstall fixtures (@Yuxin-Qiao)
-- **PR #1681** (2026-10-04): test(uninstall): isolate batch fixtures from host inventory (@Yuxin-Qiao)
-- **PR #1680** (2026-10-04): fix(purge): share root scan deadline with content probes (@Yuxin-Qiao)
+- **PR #1776** (2026-10-19): fix(update): fall back to git release tags when stable API lookup fails (@viniciusdsandrade)
+- **PR #1774** (2026-10-19): fix(uninstall): include fish configuration in reference scan (@viniciusdsandrade)
+- **PR #1772** (2026-10-19): fix(purge): answer -h for usage and exit 0 (@viniciusdsandrade)
+- **PR #1769** (2026-10-19): fix(whitelist): include all Xcode DeviceSupport platforms in cache whitelist (@viniciusdsandrade)
+- **PR #1768** (2026-10-19): fix(clean): quote downloads directory path in incomplete downloads scan (@viniciusdsandrade)
+- **PR #1767** (closed): fix(completion): enforce command boundary when detecting installed shell completion (@viniciusdsandrade)
 
 ---
 
@@ -5249,3 +2544,35 @@ handler.
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. block macOS e2e actions after prerequisite failure
+
+**RULE**:
+When implementing operations in `.claude/rules/tests.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Mole. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `8b49a13a`: block macOS e2e actions after prerequisite failure. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Shell data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/tests.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```shell
+// Verified production-grade fix pattern:
+  - "scripts/e2e_macos.py"
+- `scripts/e2e_macos.py` is the real-Mac release run (`.claude/skills/release-flow/SKILL.md` pre-flight step 7), not a CI job: it needs a logged-in user session, network and the user's real `~/Downloads`. Its first run found two defects that every unit test missed, an analyze cache that ignored directory changes for 30 minutes and `--help` refused by `update` and `remove`, so when a step fails, read its transcript before loosening the step. `--keep-going` permits only independent checks: failed build, download, integrity, install or launch steps cannot authorize dependent mutations, and a failed uninstall retains its installer. `tests/e2e_harness_test.py`, called from `tests/cli.bats`, locks this with mocked actions and network; it does not run the real fixture.
+```
+
+**NEGATIVE CONSTRAINT**:
+```shell
+// Anti-pattern to NEVER write (induced failure mode):
+- `scripts/e2e_macos.py` is the real-Mac release run (`.claude/skills/release-flow/SKILL.md` pre-flight step 7), not a CI job: it needs a logged-in user session, network and the user's real `~/Downloads`. Its first run found two defects that every unit test missed, an analyze cache that ignored directory changes for 30 minutes and `--help` refused by `update` and `remove`, so when a step fails, read its transcript before loosening the step.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `8b49a13a` are properly handled with clean fallback behavior.

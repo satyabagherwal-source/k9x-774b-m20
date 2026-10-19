@@ -755,8 +755,8 @@
     "sourceUrl": "https://huggingface.co/google-t5/t5-small",
     "sourceVersion": "hf-google-t5-t5-small",
     "license": "Open-Source",
-    "contentHash": "9eedf2e48afe1304cbab3be6a5912df84647a7996369255cd0d8c8fd9a04d52a",
-    "lastHarvestedAt": "2026-10-18T01:11:39.069Z",
+    "contentHash": "f265bae85e0b1475d54cf863b67e3a956b56d99b9403124a0019073c219968f1",
+    "lastHarvestedAt": "2026-10-19T08:49:48.462Z",
     "learningId": "learn-huggingface-google-t5-t5-small"
   },
   "hf-comfy-org-minimax-h3": {
@@ -7368,5 +7368,45 @@
     "contentHash": "90c7c2750f953f5d010019e64bf891c7a36cab71ca1f714d686f631958a0bdad",
     "lastHarvestedAt": "2026-10-19T08:42:31.583Z",
     "learningId": "learn-github-railwayapp-nixpacks"
+  },
+  "tw93-mole": {
+    "repository": "tw93/Mole",
+    "platform": "github",
+    "sourceUrl": "https://github.com/tw93/Mole",
+    "sourceVersion": "a6be7507",
+    "license": "GPL-3.0",
+    "contentHash": "44a14631ccbe434e5e4708043167718615e0244740840161e6cf6012f333597f",
+    "lastHarvestedAt": "2026-10-19T08:48:52.809Z",
+    "learningId": "learn-github-tw93-mole"
+  },
+  "siderolabs-talos": {
+    "repository": "siderolabs/talos",
+    "platform": "github",
+    "sourceUrl": "https://github.com/siderolabs/talos",
+    "sourceVersion": "d21101a9",
+    "license": "MPL-2.0",
+    "contentHash": "565f9b2d44a29f5456afecfc3d814636beb8a9a1e53da299c62475ecea34251b",
+    "lastHarvestedAt": "2026-10-19T08:48:55.311Z",
+    "learningId": "learn-github-siderolabs-talos"
+  },
+  "zilliztech-claude-context": {
+    "repository": "zilliztech/claude-context",
+    "platform": "github",
+    "sourceUrl": "https://github.com/zilliztech/claude-context",
+    "sourceVersion": "6fc318b4",
+    "license": "MIT",
+    "contentHash": "c76fe0b1a5d7c991cba6ba172af2eb6338add2f432147fa0b40f8bd72d4cbe27",
+    "lastHarvestedAt": "2026-10-19T08:49:00.355Z",
+    "learningId": "learn-github-zilliztech-claude-context"
+  },
+  "killercup-cargo-edit": {
+    "repository": "killercup/cargo-edit",
+    "platform": "github",
+    "sourceUrl": "https://github.com/killercup/cargo-edit",
+    "sourceVersion": "138d4e29",
+    "license": "MIT",
+    "contentHash": "7151778c49b0ec2fd4d94fb36d1f6995126e964527099dbac6629e6cd51b8c35",
+    "lastHarvestedAt": "2026-10-19T08:50:22.146Z",
+    "learningId": "learn-github-killercup-cargo-edit"
   }
 }
