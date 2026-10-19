@@ -3158,3 +3158,7 @@ Every entry in this ledger must capture:
 | `learn-github-facebook-folly` | `https://github.com/facebook/folly` | `ea41cb2f` | Multi-dimensional audit evidence | 2026-10-19T10:16:11.398Z |
 | `learn-github-kotlin-kmp-production-sample` | `https://github.com/Kotlin/kmp-production-sample` | `b0bed628` | Multi-dimensional audit evidence | 2026-10-19T10:16:16.403Z |
 | `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `e50e2c4e` | Multi-dimensional audit evidence | 2026-10-19T10:16:21.121Z |
+| `learn-huggingface-vllm-sr-d3` | `https://huggingface.co/vllm-sr/d3` | `hf-vllm-sr` | Multi-dimensional audit evidence | 2026-10-19T10:22:25.464Z |
+| `learn-github-google-tcmalloc` | `https://github.com/google/tcmalloc` | `4a1cc807` | Multi-dimensional audit evidence | 2026-10-19T10:22:26.502Z |
+| `learn-github-russhwolf-multiplatform-settings` | `https://github.com/russhwolf/multiplatform-settings` | `f95cdff4` | Multi-dimensional audit evidence | 2026-10-19T10:22:32.738Z |
+| `learn-github-tickernelz-opencode-mem` | `https://github.com/tickernelz/opencode-mem` | `6289ac4a` | Multi-dimensional audit evidence | 2026-10-19T10:22:38.752Z |

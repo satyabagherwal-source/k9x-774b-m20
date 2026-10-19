@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T10:16:21.125Z",
-  "total_cycles_completed": 3128,
-  "total_learnings_persisted": 3128,
-  "total_rules_promoted": 2275,
+  "last_updated": "2026-10-19T10:22:38.756Z",
+  "total_cycles_completed": 3132,
+  "total_learnings_persisted": 3132,
+  "total_rules_promoted": 2277,
   "history": [
-    {
-      "timestamp": "2026-10-19T05:25:25.365Z",
-      "repository": "megh-bari/pattern-craft",
-      "learningId": "learn-github-megh-bari-pattern-craft",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T05:25:29.088Z",
-      "repository": "golutra/golutra",
-      "learningId": "learn-github-golutra-golutra",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T05:25:32.793Z",
-      "repository": "gitpoint/git-point",
-      "learningId": "learn-github-gitpoint-git-point",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T05:25:34.190Z",
-      "repository": "inclusionAI/Ming-Image-0.1-Design",
-      "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T05:25:34.751Z",
       "repository": "linkerd/linkerd2",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-19T10:16:21.125Z",
       "repository": "nolabs-ai/nono",
       "learningId": "learn-github-nolabs-ai-nono",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T10:22:25.468Z",
+      "repository": "vllm-sr/d3",
+      "learningId": "learn-huggingface-vllm-sr-d3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T10:22:26.505Z",
+      "repository": "google/tcmalloc",
+      "learningId": "learn-github-google-tcmalloc",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T10:22:32.741Z",
+      "repository": "russhwolf/multiplatform-settings",
+      "learningId": "learn-github-russhwolf-multiplatform-settings",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T10:22:38.756Z",
+      "repository": "tickernelz/opencode-mem",
+      "learningId": "learn-github-tickernelz-opencode-mem",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

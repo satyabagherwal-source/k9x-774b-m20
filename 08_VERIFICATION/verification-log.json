@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261018-BYKU",
-    "timestamp": "2026-10-18T23:51:40.494Z",
-    "repository": "Orange-OpenSource/hurl",
-    "learningId": "learn-github-orange-opensource-hurl",
-    "contentHash": "6346b83e9d0cf860d008db5b401fa42a3086e7ef3ce4483fc4ccfbfd071523f0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-C2N3",
-    "timestamp": "2026-10-18T23:51:45.759Z",
-    "repository": "gregberge/svgr",
-    "learningId": "learn-github-gregberge-svgr",
-    "contentHash": "eed26716f85feb5a550e03687816700ba7cf6d101103ddce04b3a9b061a4213f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-C2XM",
-    "timestamp": "2026-10-18T23:51:46.138Z",
-    "repository": "autotrust/JEV-27B-VL",
-    "learningId": "learn-huggingface-autotrust-jev-27b-vl",
-    "contentHash": "fc79ac052c66cfb2ed188a10ac0a292e557a944654735404777cea5d029dd342",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-C4KB",
-    "timestamp": "2026-10-18T23:51:48.251Z",
-    "repository": "alibaba/sentinel-golang",
-    "learningId": "learn-github-alibaba-sentinel-golang",
-    "contentHash": "20ab7a1a0adfe485b4c3d59c8eeb2fd9e69af3d8470815f2d38932e5c692c229",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261018-C5OD",
     "timestamp": "2026-10-18T23:51:49.693Z",
     "repository": "microsoft/Security-101",
@@ -7490,6 +7430,66 @@
     "repository": "nolabs-ai/nono",
     "learningId": "learn-github-nolabs-ai-nono",
     "contentHash": "b910691a9b8652b97c698bec9014040c182e6487ad6b450bb9b7d2a9696f69ca",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-V3XX",
+    "timestamp": "2026-10-19T10:22:25.461Z",
+    "repository": "vllm-sr/d3",
+    "learningId": "learn-huggingface-vllm-sr-d3",
+    "contentHash": "de2a2e474b540b6129a46e2ed20cfba9d5e59784866328a951b73b99287de963",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-V4QR",
+    "timestamp": "2026-10-19T10:22:26.499Z",
+    "repository": "google/tcmalloc",
+    "learningId": "learn-github-google-tcmalloc",
+    "contentHash": "881ba1bf8baa0471ae45311fd12aa2acbd65a5a47a5d3f4ad2dab9eba7cad4f1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-V9JZ",
+    "timestamp": "2026-10-19T10:22:32.735Z",
+    "repository": "russhwolf/multiplatform-settings",
+    "learningId": "learn-github-russhwolf-multiplatform-settings",
+    "contentHash": "2ef025f506ab3f8c54a4156eb255898f8ae2a59fdb26205882629297ffc578d4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-VE72",
+    "timestamp": "2026-10-19T10:22:38.750Z",
+    "repository": "tickernelz/opencode-mem",
+    "learningId": "learn-github-tickernelz-opencode-mem",
+    "contentHash": "40ab09ea475305bfbcc1893dea681bedebb743db8b48913d1052f41a9fc243bc",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

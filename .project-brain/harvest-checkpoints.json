@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T10:16:21.128Z",
+  "last_updated": "2026-10-19T10:22:38.759Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2196,14 +2196,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tickernelz-opencode-mem",
-      "content_hash": "031e0d9085ea5359781e3ea82520b2a0428ff385b4f381bf9b17683e1bbc77c3",
-      "verified_at": "2026-10-18T21:20:21.224Z",
+      "content_hash": "40ab09ea475305bfbcc1893dea681bedebb743db8b48913d1052f41a9fc243bc",
+      "verified_at": "2026-10-19T10:22:38.758Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T21:20:21.224Z"
+      "last_updated": "2026-10-19T10:22:38.758Z"
     },
     "autotrust/JEV-35B-NVFP4": {
       "repository": "autotrust/JEV-35B-NVFP4",
@@ -2299,14 +2299,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-vllm-sr-d3",
-      "content_hash": "874e3b7af901ed37d2874cc8b297056d42782dbb83d3420a2be0cad004ee7cc3",
-      "verified_at": "2026-10-18T02:05:34.307Z",
+      "content_hash": "de2a2e474b540b6129a46e2ed20cfba9d5e59784866328a951b73b99287de963",
+      "verified_at": "2026-10-19T10:22:25.471Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T02:05:34.307Z"
+      "last_updated": "2026-10-19T10:22:25.471Z"
     },
     "nguyenphutrong/quotio": {
       "repository": "nguyenphutrong/quotio",
@@ -11561,6 +11561,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T10:16:16.411Z"
+    },
+    "google/tcmalloc": {
+      "repository": "google/tcmalloc",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-google-tcmalloc",
+      "content_hash": "881ba1bf8baa0471ae45311fd12aa2acbd65a5a47a5d3f4ad2dab9eba7cad4f1",
+      "verified_at": "2026-10-19T10:22:26.508Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T10:22:26.508Z"
+    },
+    "russhwolf/multiplatform-settings": {
+      "repository": "russhwolf/multiplatform-settings",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-russhwolf-multiplatform-settings",
+      "content_hash": "2ef025f506ab3f8c54a4156eb255898f8ae2a59fdb26205882629297ffc578d4",
+      "verified_at": "2026-10-19T10:22:32.744Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T10:22:32.744Z"
     }
   },
   "repos": {

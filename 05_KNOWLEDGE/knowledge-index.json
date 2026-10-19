@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T10:16:21.077Z",
-  "total_verified_learnings": 783,
+  "last_updated": "2026-10-19T10:22:38.708Z",
+  "total_verified_learnings": 785,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -10646,22 +10646,29 @@
     "learn-github-google-tcmalloc": {
       "learning_id": "learn-github-google-tcmalloc",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "google-tcmalloc",
+      "source": "google/tcmalloc",
+      "repository": "google/tcmalloc",
       "slug": "google-tcmalloc",
       "platform": "github",
       "source_url": "https://github.com/google/tcmalloc",
-      "source_version": "HEAD",
-      "content_hash": "748bd78fc5d2079b2a783adce0ea9e4ca60893697e329d1ee4480c5a2e5d27f7",
+      "source_version": "4a1cc807",
+      "content_hash": "881ba1bf8baa0471ae45311fd12aa2acbd65a5a47a5d3f4ad2dab9eba7cad4f1",
       "dossier_path": "07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.163Z"
+      "verified_at": "2026-10-19T10:22:26.441Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-googleworkspace-cli": {
       "learning_id": "learn-github-googleworkspace-cli",
@@ -36056,22 +36063,35 @@
     "learn-github-russhwolf-multiplatform-settings": {
       "learning_id": "learn-github-russhwolf-multiplatform-settings",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "russhwolf-multiplatform-settings",
+      "source": "russhwolf/multiplatform-settings",
+      "repository": "russhwolf/multiplatform-settings",
       "slug": "russhwolf-multiplatform-settings",
       "platform": "github",
       "source_url": "https://github.com/russhwolf/multiplatform-settings",
-      "source_version": "HEAD",
-      "content_hash": "970613161374b0aaddec0091e176b2bb544e079fdb089c1e9560820310400b2b",
+      "source_version": "f95cdff4",
+      "content_hash": "2ef025f506ab3f8c54a4156eb255898f8ae2a59fdb26205882629297ffc578d4",
       "dossier_path": "07_PROJECT_LEARNING/russhwolf-multiplatform-settings-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/russhwolf-multiplatform-settings-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2489,
+          "title": "Extract shared base class for SettingsDecoder and SettingsRemover, and add test",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.340Z"
+      "verified_at": "2026-10-19T10:22:32.670Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-rustcrypto-hashes": {
       "learning_id": "learn-github-rustcrypto-hashes",
@@ -50329,8 +50349,8 @@
       "slug": "tickernelz-opencode-mem",
       "platform": "github",
       "source_url": "https://github.com/tickernelz/opencode-mem",
-      "source_version": "60ae1a25",
-      "content_hash": "031e0d9085ea5359781e3ea82520b2a0428ff385b4f381bf9b17683e1bbc77c3",
+      "source_version": "6289ac4a",
+      "content_hash": "40ab09ea475305bfbcc1893dea681bedebb743db8b48913d1052f41a9fc243bc",
       "dossier_path": "07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md",
       "promoted_rules": [
@@ -50343,6 +50363,11 @@
           "number": 1718,
           "title": "test(stats): raise aggregation test timeout for Windows CI",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2490,
+          "title": "Merge pull request #419 from tickernelz/dependabot/bun/minor-and-patch-f700e6cb3",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -50350,7 +50375,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:20:21.174Z",
+      "verified_at": "2026-10-19T10:22:38.697Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51474,7 +51499,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/vllm-sr/d3",
       "source_version": "hf-vllm-sr-d3",
-      "content_hash": "874e3b7af901ed37d2874cc8b297056d42782dbb83d3420a2be0cad004ee7cc3",
+      "content_hash": "de2a2e474b540b6129a46e2ed20cfba9d5e59784866328a951b73b99287de963",
       "dossier_path": "07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md",
       "promoted_rules": [
@@ -51514,7 +51539,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T02:05:34.266Z",
+      "verified_at": "2026-10-19T10:22:25.413Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -85143,6 +85168,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T10:16:21.065Z"
+    },
+    "rule-2489": {
+      "learning_id": "rule-2489",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2489,
+      "title": "Extract shared base class for SettingsDecoder and SettingsRemover, and add test",
+      "source_url": "https://github.com/russhwolf/multiplatform-settings",
+      "source_version": "f95cdff4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T10:22:32.670Z"
+    },
+    "rule-2490": {
+      "learning_id": "rule-2490",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2490,
+      "title": "Merge pull request #419 from tickernelz/dependabot/bun/minor-and-patch-f700e6cb3",
+      "source_url": "https://github.com/tickernelz/opencode-mem",
+      "source_version": "6289ac4a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T10:22:38.697Z"
     }
   },
   "aliases": {

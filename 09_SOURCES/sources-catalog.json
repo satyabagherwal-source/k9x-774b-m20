@@ -1413,10 +1413,10 @@
     "repository": "tickernelz/opencode-mem",
     "platform": "github",
     "sourceUrl": "https://github.com/tickernelz/opencode-mem",
-    "sourceVersion": "60ae1a25",
+    "sourceVersion": "6289ac4a",
     "license": "MIT",
-    "contentHash": "031e0d9085ea5359781e3ea82520b2a0428ff385b4f381bf9b17683e1bbc77c3",
-    "lastHarvestedAt": "2026-10-18T21:20:21.221Z",
+    "contentHash": "40ab09ea475305bfbcc1893dea681bedebb743db8b48913d1052f41a9fc243bc",
+    "lastHarvestedAt": "2026-10-19T10:22:38.752Z",
     "learningId": "learn-github-tickernelz-opencode-mem"
   },
   "hf-autotrust-jev-35b-nvfp4": {
@@ -1485,8 +1485,8 @@
     "sourceUrl": "https://huggingface.co/vllm-sr/d3",
     "sourceVersion": "hf-vllm-sr-d3",
     "license": "Open-Source",
-    "contentHash": "874e3b7af901ed37d2874cc8b297056d42782dbb83d3420a2be0cad004ee7cc3",
-    "lastHarvestedAt": "2026-10-18T02:05:34.304Z",
+    "contentHash": "de2a2e474b540b6129a46e2ed20cfba9d5e59784866328a951b73b99287de963",
+    "lastHarvestedAt": "2026-10-19T10:22:25.464Z",
     "learningId": "learn-huggingface-vllm-sr-d3"
   },
   "nguyenphutrong-quotio": {
@@ -7678,5 +7678,25 @@
     "contentHash": "f0af857c19886d3c8c77cbf15c8a994ffbf021100686238ea885e0bde05c03fa",
     "lastHarvestedAt": "2026-10-19T10:16:16.403Z",
     "learningId": "learn-github-kotlin-kmp-production-sample"
+  },
+  "google-tcmalloc": {
+    "repository": "google/tcmalloc",
+    "platform": "github",
+    "sourceUrl": "https://github.com/google/tcmalloc",
+    "sourceVersion": "4a1cc807",
+    "license": "Apache-2.0",
+    "contentHash": "881ba1bf8baa0471ae45311fd12aa2acbd65a5a47a5d3f4ad2dab9eba7cad4f1",
+    "lastHarvestedAt": "2026-10-19T10:22:26.502Z",
+    "learningId": "learn-github-google-tcmalloc"
+  },
+  "russhwolf-multiplatform-settings": {
+    "repository": "russhwolf/multiplatform-settings",
+    "platform": "github",
+    "sourceUrl": "https://github.com/russhwolf/multiplatform-settings",
+    "sourceVersion": "f95cdff4",
+    "license": "Apache-2.0",
+    "contentHash": "2ef025f506ab3f8c54a4156eb255898f8ae2a59fdb26205882629297ffc578d4",
+    "lastHarvestedAt": "2026-10-19T10:22:32.738Z",
+    "learningId": "learn-github-russhwolf-multiplatform-settings"
   }
 }

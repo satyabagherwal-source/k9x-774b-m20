@@ -3151,3 +3151,7 @@
 | `CYCLE-20261019-N3B7` | `2026-10-19T10:16:11.395Z` | `facebook/folly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2487` | Yes (`ec454c8d...`) |
 | `CYCLE-20261019-N768` | `2026-10-19T10:16:16.400Z` | `Kotlin/kmp-production-sample` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/kotlin-kmp-production-sample-learnings.md` | Yes (`f0af857c...`) |
 | `CYCLE-20261019-NATB` | `2026-10-19T10:16:21.119Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2488` | Yes (`b910691a...`) |
+| `CYCLE-20261019-V3XX` | `2026-10-19T10:22:25.461Z` | `vllm-sr/d3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md` | Yes (`de2a2e47...`) |
+| `CYCLE-20261019-V4QR` | `2026-10-19T10:22:26.499Z` | `google/tcmalloc` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/google-tcmalloc-learnings.md` | Yes (`881ba1bf...`) |
+| `CYCLE-20261019-V9JZ` | `2026-10-19T10:22:32.735Z` | `russhwolf/multiplatform-settings` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2489` | Yes (`2ef025f5...`) |
+| `CYCLE-20261019-VE72` | `2026-10-19T10:22:38.750Z` | `tickernelz/opencode-mem` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2490` | Yes (`40ab09ea...`) |

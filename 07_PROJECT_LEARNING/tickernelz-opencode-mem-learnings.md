@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md`  
 > **Source**: github ([https://github.com/tickernelz/opencode-mem](https://github.com/tickernelz/opencode-mem))  
-> **Source Version**: `60ae1a25`  
+> **Source Version**: `6289ac4a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T21:20:21.023Z  
+> **Timestamp**: 2026-10-19T10:22:38.500Z  
 > **Learning ID**: `learn-github-tickernelz-opencode-mem`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tickernelz/opencode-mem](https://github.com/tickernelz/opencode-mem))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T21:20:21.016Z  
+> **Harvest Timestamp**: 2026-10-19T10:22:38.493Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -995,1234 +995,183 @@ export function removeFromSet<T>(set: Set<T>, value: T): Set<T> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `edd98083` (2026-10-18)
-**Commit Message**: test(stats): raise aggregation test timeout for Windows CI
+### Incident Patch 1: `6289ac4a` (2026-10-19)
+**Commit Message**: Merge pull request #419 from tickernelz/dependabot/bun/minor-and-patch-f700e6cb3d
 
-The stats aggregation test creates two shards, inserts three vectors,
-and runs the full handleStats walk in one it(). On the windows-latest
-runner that exceeds bun's default 5s per-test timeout; the timeout runs
-afterEach cleanup while the walk is still in flight, so per-shard reads
-fail against the deleted temp dir and the orphaned assertions report
-total 0. Give the test the same 30s budget plugin-bundle-boundary uses.
-
-**File**: `tests/stats-service.test.ts` (modified, +4/-1)
+**File**: `bun.lock` (modified, +8/-8)
 ```diff
-@@ -142,5 +142,8 @@ describe("handleStats health data", () => {
-     expect(daily?.find((item) => item.date === day(3))?.compactionInjections).toBe(1);
-     expect(daily?.find((item) => item.date === day(4))?.profileInjections).toBe(1);
-     expect(result.data?.shardsError).toBeUndefined();
--  });
-+    // Windows CI needs >5s for two shard creations, three vector inserts, and
-+    // the full stats walk; the default 5s per-test timeout races afterEach
-+    // cleanup against the in-flight walk. Same budget as plugin-bundle-boundary.
-+  }, 30_000);
- });
+@@ -276,21 +276,21 @@
+ 
+     "@npmcli/run-script": ["@npmcli/run-script@10.0.4", "", { "dependencies": { "@npmcli/node-gyp": "^5.0.0", "@npmcli/package-json": "^7.0.0", "@npmcli/promise-spawn": "^9.0.0", "node-gyp": "^12.1.0", "proc-log": "^6.0.0" } }, "sha512-mGUWr1uMnf0le2TwfOZY4SFxZGXGfm4Jtay/nwAa2FLNAKXUoUwaGwBMNH36UHPtinWfTSJ3nqFQr0091CxVGg=="],
+ 
+-    "@opencode-ai/plugin": ["@opencode-ai/plugin@1.19.0", "", { "dependencies": { "@ai-sdk/provider": "3.0.8", "@opencode-ai/sdk": "1.19.0", "effect": "4.0.0-beta.83", "zod": "4.1.8" }, "peerDependencies": { "@opentui/core": ">=0.4.5", "@opentui/keymap": ">=0.4.5", "@opentui/solid": ">=0.4.5" }, "optionalPeers": ["@opentui/core", "@opentui/keymap", "@opentui/solid"] }, "sha512-DgtiRekVKeHIQuDD7OndZrQlJ+V8pK/cUuksfB+OPTekmLD8beYT+zX8gMax94s9xhKxEGFhSunjr3V1rkCDEA=="],
++    "@opencode-ai/plugin": ["@opencode-ai/plugin@1.19.2", "", { "dependencies": { "@ai-sdk/provider": "3.0.8", "@opencode-ai/sdk": "1.19.2", "effect": "4.0.0-beta.83", "zod": "4.1.8" }, "peerDependencies": { "@opentui/core": ">=0.4.5", "@opentui/keymap": ">=0.4.5", "@opentui/solid": ">=0.4.5" }, "optionalPeers": ["@opentui/core", "@opentui/keymap", "@opentui/solid"] }, "sha512-aS4WUtjHMuCqAT+SHq9N3O8xx+VEa/wN7PhWL94uhrY2YOcniq6yqDM6BWwmWopOvXCkcDp3nSG+43r1yDcj4w=="],
+ 
+-    "@opencode-ai/sdk": ["@opencode-ai/sdk@1.19.0", "", { "dependencies": { "cross-spawn": "7.0.6" } }, "sha512-lDFYTD6qxzq1mfwxF6Kq1DAs6rEwF4xoZ2I3G1sB7hAZ8Yb28JurtSmmcK7ZzZ8Z4qBUYbZimHJ6DM4JFq5amw=="],
++    "@opencode-ai/sdk": ["@opencode-ai/sdk@1.19.2", "", { "dependencies": { "cross-spawn": "7.0.6" } }, "sha512-1KG4L3iWVgXzaliqilcorRikw3idrGPhLllgiO78VL3o1AY64FgFrr3ftIW0V9koIsj0kyrcWfJ8jGOftRs+ug=="],
+ 
+-    "@opencode/ai": ["@opencode/ai@2.0.27", "", { "dependencies": { "@aws-sdk/credential-providers": "3.1057.0", "@opencode/schema": "2.0.27", "@smithy/eventstream-codec": "4.2.14", "@smithy/util-utf8": "4.2.2", "aws4fetch": "1.0.20", "effect": "4.0.1", "google-auth-library": "10.5.0" } }, "sha512-RiVtSBo1veffbDnrWo++04XdlcSEzqCAxo1TWDtG/5fZSjWLuiII6OT6Fo/N8ScU/awy9X3omfvun1aq4Lfttw=="],
++    "@opencode/ai": ["@opencode/ai@2.0.30", "", { "dependencies": { "@aws-sdk/credential-providers": "3.1057.0", "@opencode/schema": "2.0.30", "@smithy/eventstream-codec": "4.2.14", "@smithy/util-utf8": "4.2.2", "aws4fetch": "1.0.20", "effect": "4.0.1", "google-auth-library": "10.5.0" } }, "sha512-N+P3qE9qIaBvO9qM+aQPr8T8yjpUGG7QIuHvl59AAIa2FXgGhqfMRq3o6zlFB9B2cvavsHEXKPWuqxIP2MHPXg=="],
+ 
+-    "@opencode/client": ["@opencode/client@2.0.27", "", { "dependencies": { "@opencode/protocol": "2.0.27", "@opencode/schema": "2.0.27" }, "peerDependencies": { "effect": "4.0.1", "solid-js": ">=1.9.0" }, "optionalPeers": ["effect", "solid-js"] }, "sha512-RqJodg+QsUgqqJVo+b2PGk2w96l7424nM4BijUSb49Iep9IyUfjDH3zfii4OGfCsmZkNCYK83Mgk9e9EeRA1iQ=="],
++    "@opencode/client": ["@opencode/client@2.0.30", "", { "dependencies": { "@opencode/protocol": "2.0.30", "@opencode/schema": "2.0.30" }, "peerDependencies": { "effect": "4.0.1", "solid-js": ">=1.9.0" }, "optionalPeers": ["effect", "solid-js"] }, "sha512-KUglC9ak8mhLDC84247i+laGVExvYQKrcMjkOozP9FOyMSHLh/o9fVDb85I6SD6lTM0mtexljXcZi6AbHEfvOQ=="],
+ 
+-    "@opencode/plugin": ["@opencode/plugin@2.0.27", "", { "dependencies": { "@ai-sdk/provider": "3.0.8", "@opencode/ai": "2.0.27", "@opencode/client": "2.0.27", "@opencode/protocol": "2.0.27", "@opencode/schema": "2.0.27", "@opencode/util": "2.0.27", "effect": "4.0.1" }, "peerDependencies": { "@opencode/theme": "2.0.27", "@opentui/core": ">=0.5.17", "@opentui/solid": ">=0.5.17", "solid-js": ">=1.9.0" }, "optionalPeers": ["@opencode/theme", "@opentui/core", "@opentui/solid", "solid-js"] }, "sha512-TlK5PhHDCIieQEt/zjPlb/5BYbsyQnMSjXWhqL3rYjobKIauUNxdG+UCSCaLyQPhS9ab5zThg9v9tF6xiSyFyw=="],
++    "@opencode/plugin": ["@opencode/plugin@2.0.30", "", { "dependencies": { "@ai-sdk/provider": "3.0.8", "@opencode/ai": "2.0.30", "@opencode/client": "2.0.30", "@opencode/protocol": "2.0.30", "@opencode/schema": "2.0.30", "@opencode/util": "2.0.30", "effect": "4.0.1" }, "peerDependencies": { "@opencode/theme": "2.0.30", "@opentui/core": ">=0.5.17", "@opentui/solid": ">=0.5.17", "solid-js": ">=1.9.0" }, "optionalPeers": ["@opencode/theme", "@opentui/core", "@opentui/solid", "solid-js"] }, "sha512-/69jdd7+RgaiXV5EE+2OepGy+edjbCuOWtdvtfcqZT9LCoZNTkl3a4T6oO2x9PDXznekBpmhahxHCf7zbaN16g=="],
+ 
+-    "@opencode/protocol": ["@opencode/protocol@2.0.27", "", { "dependencies": { "@opencode/schema": "2.0.27", "effect": "4.0.1" } }, "sha512-t1j+m5T3TBusHaL58t6gSSQQEFoi+qjVyQ0Eta/4mLeZLJDqSV8BNN6N93GFpV2MJ1iBpGmrH0C02n2Q+nDHfw=="],
++    "@opencode/protocol": ["@opencode/protocol@2.0.30", "", { "dependencies": { "@opencode/schema": "2.0.30", "effect": "4.0.1" } }, "sha512-2iHVE4z3iDBEW0JCV8K9xlNshO0x5Ers+xxlPrFS+51S+iA4dUdH8gi497PToBdmQHL94FOD8CHcND/QYxDAhA=="],
+ 
+-    "@opencode/schema": ["@opencode/schema@2.0.27", "", { "dependencies": { "@standard-schema/spec": "1.1.0", "effect": "4.0.1" } }, "
+```
+
+**File**: `web/bun.lock` (modified, +3/-3)
+```diff
+@@ -12,7 +12,7 @@
+       },
+       "devDependencies": {
+         "@fontsource-variable/jetbrains-mono": "^5.3.0",
+-        "@lucide/svelte": "^1.56.0",
++        "@lucide/svelte": "^1.58.0",
+         "@resvg/resvg-js": "^2.6.2",
+         "@sveltejs/vite-plugin-svelte": "^7.3.1",
+         "@tailwindcss/vite": "^4.3.3",
+@@ -52,7 +52,7 @@
+ 
+     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.31", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, "sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw=="],
+ 
+-    "@lucide/svelte": ["@lucide/svelte@1.56.0", "", { "peerDependencies": { "svelte": "^5" } }, "sha512-YzbcmneHmPog3wAdXSl7oORgJhFc6klu8rRLMmm5uXwPQ8B0740c7dcNd3oJ72nCPvlbCW1XEmsWa4I0SDIogw=="],
++    "@lucide/svelte": ["@lucide/svelte@1.58.0", "", { "peerDependencies": { "svelte": "^5" } }, "sha512-yUKVOUokJews09DTEf23We9/0Lju+XR+1Pcr6rYZBilpf4Uf6T3XRmalUgOsQW0drFfCI53WlIzgokkq2EqwYg=="],
+ 
+     "@oxc-project/types": ["@oxc-project/types@0.152.0", "", {}, "sha512-oM/5rLBm2tPkg0iBgkH/FOeR3PCDpY19GTgAZjMFM8h9WI9VW7cLgzp6nwtarYKmovavIQZ+Fe/RKX/8C8O/Rw=="],
+ 
+@@ -244,7 +244,7 @@
+ 
+     "postcss": ["postcss@8.5.29", "", { "dependencies": { "nanoid": "^3.3.19", "picocolors": "^1.1.1", "source-map-js": "^1.2.2" } }, "sha512-49cGhUbXj8Qenv0iTMxA1cFBzxXoctpC9Ujd77t1WcbJIr6nF/eI7g/8MgxrYldFRuAXvja7xQRwavoW7kgrxQ=="],
+ 
+-    "prettier": ["prettier@3.9.9", "", { "bin": { "prettier": "bin/prettier.cjs" } }, "sha512-Z/CJHIkdujO/OtN7nXUii0Rf3VT5SRuhjBA82Xvu2XhBUgX3nhP67T0LHceBdQLex7OOFGTox+Q5Yg8Jk2Qivg=="],
++    "prettier": ["prettier@3.9.10", "", { "bin": { "prettier": "bin/prettier.cjs" } }, "sha512-skGHTH1Yb9QvaTC4hWnRTzEYtCpApF0UMBPz+t/0ZPzP8ihefo/btKd+QA7pUE0fEwA1SbS/NmhyEcstdXOIdA=="],
+ 
+     "prettier-plugin-svelte": ["prettier-plugin-svelte@4.1.1", "", { "peerDependencies": { "prettier": "^3.0.0", "svelte": "^5.0.0" } }, "sha512-wXvbXMjSvb4C9ENWTHXyd+ihakKCsJ6rJhLP6/8HFNj4GkZr48jqL9PoKsl2sk7SyCZRTnJ7O2TTowUpOxP/KA=="],
+ 
+```
+
+**File**: `web/package.json` (modified, +1/-1)
+```diff
+@@ -18,7 +18,7 @@
+   },
+   "devDependencies": {
+     "@fontsource-variable/jetbrains-mono": "^5.3.0",
+-    "@lucide/svelte": "^1.56.0",
++    "@lucide/svelte": "^1.58.0",
+     "@resvg/resvg-js": "^2.6.2",
+     "@sveltejs/vite-plugin-svelte": "^7.3.1",
+     "@tailwindcss/vite": "^4.3.3",
 ```
 
 ---
 
-### Incident Patch 2: `01b8323b` (2026-10-18)
-**Commit Message**: feat(web): add health/stats view to the web UI
+### Incident Patch 2: `32d9ff72` (2026-10-19)
+**Commit Message**: chore(deps): bump the minor-and-patch group across 2 directories with 4 updates
 
-Extend GET /api/stats with per-shard memory health (counts, newest/oldest
-ages, same-tag duplication proxy, file/registration mismatch), an active
-user-profile summary, and a 14-day activity series parsed from the
-plugin's structured logs (captures, skips, profile/compaction injections,
-errors bucketed by message). Add a Stats tab rendering it, with per-section
-degradation so the view keeps reporting during database incidents.
-Read-only: no new writes or capture/injection behavior changes.
+Bumps the minor-and-patch group with 3 updates in the / directory: @opencode-ai/plugin, [@opencode-ai/sdk](https://github.com/sst/opencode-sdk-js) and [@opencode/plugin](https://github.com/anomalyco/opencode).
+Bumps the minor-and-patch group with 1 update in the /web directory: [@lucide/svelte](https://github.com/lucide-icons/lucide/tree/HEAD/packages/svelte).
 
-**File**: `README.md` (modified, +4/-0)
+
+Updates `@opencode-ai/plugin` from 1.19.0 to 1.19.2
+
+Updates `@opencode-ai/sdk` from 1.19.0 to 1.19.2
+- [Release notes](https://github.com/sst/opencode-sdk-js/releases)
+- [Changelog](https://github.com/anomalyco/opencode-sdk-js/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/sst/opencode-sdk-js/commits)
+
+Updates `@opencode/plugin` from 2.0.27 to 2.0.30
+- [Release notes](https://github.com/anomalyco/opencode/releases)
+- [Changelog](https://github.com/anomalyco/opencode/blob/dev/CHANGELOG.md)
+- [Commits](https://github.com/anomalyco/opencode/compare/v2.0.27...v2.0.30)
+
+Updates `@lucide/svelte` from 1.56.0 to 1.58.0
+- [Release notes](https://github.com/lucide-icons/lucide/releases)
+- [Commits](https://github.com/lucide-icons/lucide/commits/
+
+**File**: `bun.lock` (modified, +8/-8)
 ```diff
-@@ -179,6 +179,10 @@ Rule of thumb: lasting always-on project instructions → `AGENTS.md`; growing w
- - Optional HTTP catalog for other OpenCode instances: `"skills": ["http://127.0.0.1:4747/skills/"]` (serves `/skills/index.json` and `/skills/<id>/<id>.md` — separate from the UI path).
- - REST: `GET/POST /api/skills`, `GET/PUT/DELETE /api/skills/:id`.
+@@ -276,21 +276,21 @@
  
-+### Health stats
-+
-+The web UI's **Stats** tab (at `/stats`) shows memory-system health at a glance: totals per scope, per-shard memory counts with stale/missing-shard warnings and a same-tag duplication proxy, the active user-profile version, and a 14-day activity series (captures, skipped captures, profile/compaction injections, and errors bucketed by message) parsed from the plugin's own structured logs in `~/.opencode-mem/`. It is read-only — `GET /api/stats` — and degrades per section if a database is unavailable, so it keeps reporting during incidents.
-+
- ### Intelligent prompt-based memory extraction
+     "@npmcli/run-script": ["@npmcli/run-script@10.0.4", "", { "dependencies": { "@npmcli/node-gyp": "^5.0.0", "@npmcli/package-json": "^7.0.0", "@npmcli/promise-spawn": "^9.0.0", "node-gyp": "^12.1.0", "proc-log": "^6.0.0" } }, "sha512-mGUWr1uMnf0le2TwfOZY4SFxZGXGfm4Jtay/nwAa2FLNAKXUoUwaGwBMNH36UHPtinWfTSJ3nqFQr0091CxVGg=="],
  
- That phrase in the feature list is **auto-capture**: after a conversation, a background AI request summarizes technical work and saves it as memory. No special prompt from you is required. It uses `opencodeProvider` / `opencodeModel` when set, otherwise the manual `memoryProvider` fallback.
+-    "@opencode-ai/plugin": ["@opencode-ai/plugin@1.19.0", "", { "dependencies": { "@ai-sdk/provider": "3.0.8", "@opencode-ai/sdk": "1.19.0", "effect": "4.0.0-beta.83", "zod": "4.1.8" }, "peerDependencies": { "@opentui/core": ">=0.4.5", "@opentui/keymap": ">=0.4.5", "@opentui/solid": ">=0.4.5" }, "optionalPeers": ["@opentui/core", "@opentui/keymap", "@opentui/solid"] }, "sha512-DgtiRekVKeHIQuDD7OndZrQlJ+V8pK/cUuksfB+OPTekmLD8beYT+zX8gMax94s9xhKxEGFhSunjr3V1rkCDEA=="],
++    "@opencode-ai/plugin": ["@opencode-ai/plugin@1.19.2", "", { "dependencies": { "@ai-sdk/provider": "3.0.8", "@opencode-ai/sdk": "1.19.2", "effect": "4.0.0-beta.83", "zod": "4.1.8" }, "peerDependencies": { "@opentui/core": ">=0.4.5", "@opentui/keymap": ">=0.4.5", "@opentui/solid": ">=0.4.5" }, "optionalPeers": ["@opentui/core", "@opentui/keymap", "@opentui/solid"] }, "sha512-aS4WUtjHMuCqAT+SHq9N3O8xx+VEa/wN7PhWL94uhrY2YOcniq6yqDM6BWwmWopOvXCkcDp3nSG+43r1yDcj4w=="],
+ 
+-    "@opencode-ai/sdk": ["@opencode-ai/sdk@1.19.0", "", { "dependencies": { "cross-spawn": "7.0.6" } }, "sha512-lDFYTD6qxzq1mfwxF6Kq1DAs6rEwF4xoZ2I3G1sB7hAZ8Yb28JurtSmmcK7ZzZ8Z4qBUYbZimHJ6DM4JFq5amw=="],
++    "@opencode-ai/sdk": ["@opencode-ai/sdk@1.19.2", "", { "dependencies": { "cross-spawn": "7.0.6" } }, "sha512-1KG4L3iWVgXzaliqilcorRikw3idrGPhLllgiO78VL3o1AY64FgFrr3ftIW0V9koIsj0kyrcWfJ8jGOftRs+ug=="],
+ 
+-    "@opencode/ai": ["@opencode/ai@2.0.27", "", { "dependencies": { "@aws-sdk/credential-providers": "3.1057.0", "@opencode/schema": "2.0.27", "@smithy/eventstream-codec": "4.2.14", "@smithy/util-utf8": "4.2.2", "aws4fetch": "1.0.20", "effect": "4.0.1", "google-auth-library": "10.5.0" } }, "sha512-RiVtSBo1veffbDnrWo++04XdlcSEzqCAxo1TWDtG/5fZSjWLuiII6OT6Fo/N8ScU/awy9X3omfvun1aq4Lfttw=="],
++    "@opencode/ai": ["@opencode/ai@2.0.30", "", { "dependencies": { "@aws-sdk/credential-providers": "3.1057.0", "@opencode/schema": "2.0.30", "@smithy/eventstream-codec": "4.2.14", "@smithy/util-utf8": "4.2.2", "aws4fetch": "1.0.20", "effect": "4.0.1", "google-auth-library": "10.5.0" } }, "sha512-N+P3qE9qIaBvO9qM+aQPr8T8yjpUGG7QIuHvl59AAIa2FXgGhqfMRq3o6zlFB9B2cvavsHEXKPWuqxIP2MHPXg=="],
+ 
+-    "@opencode/client": ["@opencode/client@2.0.27", "", { "dependencies": { "@opencode/protocol": "2.0.27", "@opencode/schema": "2.0.27" }, "peerDependencies": { "effect": "4.0.1", "solid-js": ">=1.9.0" }, "optionalPeers": ["effect", "solid-js"] }, "sha512-RqJodg+QsUgqqJVo+b2PGk2w96l7424nM4BijUSb49Iep9IyUfjDH3zfii4OGfCsmZkNCYK83Mgk9e9EeRA1iQ=="],
++    "@opencode/client": ["@opencode/client@2.0.30", "", { "dependencies": { "@opencode/protocol": "2.0.30", "@opencode/schema": "2.0.30" }, "peerDependencies": { "effect": "4.0.1", "solid-js": ">=1.9.0" }, "optionalPeers": ["effect", "solid-js"] }, "sha512-KUglC9ak8mhLDC84247i+laGVExvYQKrcMjkOozP9FOyMSHLh/o9fVDb85I6SD6lTM0mtexljXcZi6AbHEfvOQ=="],
+ 
+-    "@opencode/plugin": ["@opencode/plugin@2.0.27", "", { "dependencies": { "@ai-sdk/provider": "3.0.8", "@opencode/ai": "2.0.27", "@opencode/client": "2.0.27", "@opencode/protocol": "2.0.27", "@opencode/schema": "2.0.27", "@opencode/util": "2.0.27", "effect": "4.0.1" }, "peerDependencies": { "@opencode/theme": "2.0.27", "@opentui/core": ">=0.5.17", "@opentui/solid": ">=0.5.17", "solid-js": ">=1.9.0" }, "optionalPeers": ["@opencode/theme", "@opentui/core", "@opentui/solid", "solid-js"] }, "sha512-TlK5PhHDCIieQEt/zjPlb/5BYbsyQnMSjXWhqL3rYjobKIauUNxdG+UCSCaLyQPhS9ab5zThg9v9tF6xiSyFyw=="],
++    "@opencode/plugin": ["@opencode/plugin@2.0.30", "", { "dependencies": { "@ai-sdk/provider": "3.0.8", "@opencode/ai": "2.0.30", "@opencode/client": "2.0.30", "@opencode/protocol": "2.0.30", "@opencode/schema": "2.0.30", "@opencode/util": "2.0.30", "effect": "4.0.1" }, "peerDependencies": { "@opencode/theme": "2.0.30", "@opentui/core": ">=0.5.17", "@opentui/solid": ">=0.5.17", "solid-js": ">=1.9.0" }, "optionalPeers": ["@opencode/theme", "@opentui/core", "@opentui/solid", "solid-js"] }, "sha512-/69jdd7+RgaiXV5EE+2OepGy+edjbCuOWtdvtfcqZT9LCoZNTkl3a4T6oO2x9PDXznekBpmhahxHCf7zbaN16g=="],
+ 
+-    "@opencode/protocol": ["@opencode/protocol@2.0.27", "", { "dependencies": { "@opencode/schema": "2.0.27", "effect": "4.0.1" } }, "sha512-t1j+m5T3TBusHaL58t6gSSQQEFoi+qjVyQ0Eta/4mLeZLJDqSV8BNN6N93GFpV2MJ1iBpGmrH0C02n2Q+nDHfw=="],
++    "@opencode/protocol": ["@opencode/protocol@2.0.30", "", { "dependencies": { "@opencode/schema": "2.0.30", "effect": "4.0.1" } }, "sha512-2iHVE4z3iDBEW0JCV8K9xlNshO0x5Ers+xxlPrFS+51S+iA4dUdH8gi497PToBdmQHL94FOD8CHcND/QYxDAhA=="],
+ 
+-    "@opencode/schema": ["@opencode/schema@2.0.27", "", { "dependencies": { "@standard-schema/spec": "1.1.0", "effect": "4.0.1" } }, "
 ```
 
-**File**: `src/services/api-handlers.ts` (modified, +32/-18)
+**File**: `web/bun.lock` (modified, +3/-3)
 ```diff
-@@ -13,6 +13,12 @@ import type { UserProfileData } from "./user-profile/types.js";
- import { sortProfileItems } from "../utils/profile.js";
- import { toPublicProfileData } from "./user-profile/profile-utils.js";
- import type { ShardInfo } from "./turso/types.js";
-+import {
-+  collectDailyStats,
-+  collectProfileStats,
-+  collectShardStats,
-+  type CollectDailyStatsOptions,
-+} from "./stats-service.js";
- 
- async function getAllMemoryShards(): Promise<ShardInfo[]> {
-   await ensureTursoReady();
-@@ -793,37 +799,45 @@ export async function handleSearch(
-   }
- }
- 
--export async function handleStats(): Promise<
-+export async function handleStats(
-+  options: Pick<CollectDailyStatsOptions, "logDir" | "now"> = {}
-+): Promise<
-   ApiResponse<{
-     total: number;
-     byScope: { user: number; project: number };
-     byType: Record<string, number>;
-+    generatedAt: string;
-+    shards: Awaited<ReturnType<typeof collectShardStats>>["shards"];
-+    shardsError?: string;
-+    profile: Awaited<ReturnType<typeof collectProfileStats>>;
-+    daily: ReturnType<typeof collectDailyStats>;
-   }>
- > {
-   try {
-     // Stats only counts Turso/libSQL rows; no embedding needed.
-     // See handleListTags comment - keep embedding init out of read paths.
--    const shards = await getAllMemoryShards();
--    let userCount = 0,
--      projectCount = 0;
--    const typeCount: Record<string, number> = {};
--    for (const shard of shards) {
--      const db = await tursoConnectionManager.getConnection(shard.dbPath);
--      const memories = await tursoVectorSearch.getAllMemories(db);
--      for (const r of memories) {
--        const containerTag = String(r.container_tag ?? "");
--        const type = r.type ? String(r.type) : "";
--        if (containerTag.includes("_user_")) userCount++;
--        else if (containerTag.includes("_project_")) projectCount++;
--        if (type) typeCount[type] = (typeCount[type] || 0) + 1;
--      }
-+    let memoryShards: ShardInfo[] = [];
-+    let shardsError: string | undefined;
-+    try {
-+      memoryShards = await getAllMemoryShards();
-+    } catch (error) {
-+      shardsError = error instanceof Error ? error.message : String(error);
-     }
-+    const [shardStats, profile] = await Promise.all([
-+      collectShardStats(memoryShards),
-+      collectProfileStats(),
-+    ]);
-     return {
-       success: true,
-       data: {
--        total: userCount + projectCount,
--        byScope: { user: userCount, project: projectCount },
--        byType: typeCount,
-+        total: shardStats.total,
-+        byScope: shardStats.byScope,
-+        byType: shardStats.byType,
-+        generatedAt: new Date().toISOString(),
-+        shards: shardStats.shards,
-+        ...(shardsError ? { shardsError } : {}),
-+        profile,
-+        daily: collectDailyStats(options),
+@@ -12,7 +12,7 @@
        },
-     };
-   } catch (error) {
-```
-
-**File**: `src/services/stats-service.ts` (added, +363/-0)
-```diff
-@@ -0,0 +1,363 @@
-+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
-+import { homedir } from "node:os";
-+import { basename, join } from "node:path";
-+import { CONFIG } from "../config.js";
-+import { tursoConnectionManager } from "./turso/connection-manager.js";
-+import type { ShardInfo } from "./turso/types.js";
-+import type { UserProfile } from "./user-profile/types.js";
-+
-+export type DailyCounter =
-+  "captures" | "captureSkipped" | "profileInjections" | "compactionInjections";
-+
-+export interface ParsedLogLine {
-+  date: string;
-+  message: string;
-+  payload?: string;
-+}
-+
-+export interface LogClassification {
-+  counter?: DailyCounter;
-+  errorBucket?: string;
-+}
-+
-+export interface DailyStats {
-+  date: string;
-+  captures: number;
-+  captureSkipped: number;
-+  profileInjections: number;
-+  compactionInjections: number;
-+  errors: Record<string, number>;
-+}
-+
-+export interface ShardStats {
-+  shardId: number | null;
-+  scope: "user" | "project";
-+  scopeHash: string;
-+  shardIndex: number;
-+  fileName: string;
-+  fileExists: boolean;
-+  isActive: boolean;
-+  registeredVectorCount: number;
-+  memoryCount: number;
-+  oldestCreatedAt: string | null;
-+  newestCreatedAt: string | null;
-+  duplicateTagCount: number;
-+  error?: string;
-+}
-+
-+export interface ShardCollection {
-+  shards: ShardStats[];
-+  total: number;
-+  byScope: { user: number; project: number };
-+  byType: Record<string, number>;
-+}
-+
-+interface CachedLogEvent {
-+  date: string;
-+  classification: LogClassification;
-+}
-+
-+interface CachedLogFile {
-+  signature: string;
-+  events: CachedLogEvent[];
-+}
-+
-+const parsedLogFiles = new Map<string, CachedLogFile>();
-+
-+/** Parse a structured logger line, splitting the message only at the first `: {`. */
-+export function parseLogLine(line: string): ParsedLogLine | null {
-+  const normalizedLine = line.endsWith("\r") ? line.slice(0, -1) : line;
-+  const match = normalizedLine.match(
-+    /^\[(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}[+-]\d{2}:\d{2})\]\s(.*)$/
-+  );
-+  if (!match || !Number.isFinite(Date.parse(match[1]!))) return null;
-+
-+  const content = match[2]!;
-+  const payloadSeparator = content.indexOf(": {");
-+  if (payloadSeparator === -1) {
-+    return { date: match[1]!.slice(0, 10), message: content };
-+  }
-+
-+  return {
-+    date: match[1]!.slice(0, 10),
-+    message: content.slice(0, payloadSeparator),
-+    payload: content.slice(payloadSeparator + 2),
-+  };
-+}
-+
-+/** Classify a parsed logger message as one daily counter or a named error bucket. */
-+export function classifyLogMessage(message: string): LogClassification {
-+  if (message.startsWith("Auto-capture memory persisted")) return { counter: "captures" };
-+  if (message.startsWith("Auto-capture skipped")) return { counter: "captureSkipped" };
-+  if (message.startsWith("profile inject")) return { counter: "profileInjections" };
-+  if (message.startsWith("Compaction memory injected")) {
-+    return { counter: "compactionInjections" };
-+  }
-+
-+  if (message.endsWith(": error")) {
-+    return { errorBucket: message.slice(0, -": error".length) };
-+  }
-+  if (message.startsWith("Turso ready gate failed")) {
-+    return { errorBucket: "Turso ready gate failed" };
-+  }
-+  if (message.startsWith("Failed to load skills for OpenCode registration")) {
-+    return { errorBucket: "Failed to load skills for OpenCode registration" };
-+  }
-+  return {};
-+}
-+
-+function formatLocalDate(date: Date): string {
-+  const pad = (value: number) => String(value).padStart(2, "0");
-+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
-+}
-+
-+function zeroDay(date: string): DailyStats {
-+  return {
-+    date,
-+    captures: 0,
-+    captureSkipped: 0,
-+    profileInjections: 0,
-+    compactionInjections: 0,
-+    errors: {},
-+  };
-+}
-+
-+function listLogFiles(logDir: string): string[] {
-+  try {
-+    const files = readdirSync(logDir);
-+    return files
-+      .filter((file) => /^opencode-mem-\d{4}-\d{2}-\d{2}\.log$/.test(file))
-+      .map((file) => join(logDir, file))
-+      .concat(
-+        ["opencode-mem.log", "opencode-mem.log.old"]
-+          .filter((file) => files.includes(file))
-+          .map((file) => join(logDir, file))
-+      );
-+  } catch {
-+    return [];
-+  }
-+}
-+
-+function getCachedEvents(filePath: string): CachedLogEvent[] | null {
-+  try {
-+    const stats = statSync(filePath);
-+    if (!stats.isFile()) return null;
-+
-+    const signature = `${stats.size}:${stats.mtimeMs}`;
-+    const cached = parsedLogFiles.get(filePath);
-+    if (cached?.signature === signature) return cached.events;
-+
-+    const events: CachedLogEvent[] = [];
-+    for (const line of readFileSync(filePath, "utf8").split("\n")) {
-+      const parsed = parseLogLine(line);
-+      if (!parsed) continue;
-+      const classification = classifyLogMessage(parsed.message);
-+      if (classification.counter || classification.errorBucket) {
-+        events.push({ date: parsed.date, classification });
-+      }
-+    }
-+    parse
-```
-
-**File**: `tests/stats-log-parsing.test.ts` (added, +58/-0)
-```diff
-@@ -0,0 +1,58 @@
-+import { describe, expect, it } from "bun:test";
-+import { classifyLogMessage, parseLogLine } from "../src/services/stats-service.js";
-+
-+describe("stats log parsing", () => {
-+  it("parses counter signatures", () => {
-+    const fixtures = [
-+      ['Auto-capture memory persisted: {"id":"memory-1"}', "captures"],
-+      ['Auto-capture skipped: {"reason":"short"}', "captureSkipped"],
-+      ['profile inject: {"prefs":[]}', "profileInjections"],
-+      ['Compaction memory injected: {"count":1}', "compactionInjections"],
-+    ] as const;
-+
-+    for (const [content, counter] of fixtures) {
-+      const parsed = parseLogLine(`[2026-10-16T19:18:33.096+11:00] ${content}`);
-+      expect(parsed).not.toBeNull();
-+      expect(classifyLogMessage(parsed!.message)).toEqual({ counter });
-+    }
-+  });
-+
-+  it("classifies the known structured error signatures", () => {
-+    const fixtures = [
-+      [
-+        `[2026-10-16T19:18:33.096+11:00] Turso ready gate failed: {"error":"Error: failed to open database /home/x/.opencode-mem/data/user-profiles.db: I/O error: short read on WAL frame at offset 32: expected 4096 bytes, got 0"}`,
-+        "Turso ready gate failed",
-+      ],
-+      [
-+        `[2026-10-13T00:32:31.331+11:00] Failed to load skills for OpenCode registration: {"error":"TypeError: The database connection is not open"}`,
-+        "Failed to load skills for OpenCode registration",
-+      ],
-+      [
-+        `[2026-10-16T19:18:46.118+11:00] listMemories: error: {"error":"failed to open database ... short read on WAL frame"}`,
-+        "listMemories",
-+      ],
-+    ] as const;
-+
-+    for (const [line, errorBucket] of fixtures) {
-+      const parsed = parseLogLine(line);
-+      expect(parsed).not.toBeNull();
-+      expect(classifyLogMessage(parsed!.message)).toEqual({ errorBucket });
-+    }
-+  });
-+
-+  it("ignores separators and malformed lines and splits payload at the structured delimiter", () => {
-+    expect(parseLogLine("\n--- Session started: 2026-10-18T12:00:00.000+00:00 ---")).toBeNull();
-+    expect(parseLogLine("not a timestamp: Auto-capture memory persisted")).toBeNull();
-+    expect(parseLogLine("[2026-99-99T19:18:33.096+11:00] Auto-capture skipped")).toBeNull();
-+
-+    const parsed = parseLogLine(
-+      `[2026-10-16T19:18:33.096+11:00] request: error: {"detail":"url: https://example.test/a"}`
-+    );
-+    expect(parsed).toEqual({
-+      date: "2026-10-16",
-+      message: "request: error",
-+      payload: `{"detail":"url: https://example.test/a"}`,
-+    });
-+    expect(classifyLogMessage(parsed!.message)).toEqual({ errorBucket: "request" });
-+  });
-+});
-```
-
-**File**: `tests/stats-service.test.ts` (added, +146/-0)
-```diff
-@@ -0,0 +1,146 @@
-+import { afterEach, describe, expect, it } from "bun:test";
-+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
-+import { tmpdir } from "node:os";
-+import { join } from "node:path";
-+import { cleanupTursoTestDirectory } from "./turso-test-utils.js";
-+
-+describe("handleStats health data", () => {
-+  let baseDir: string | undefined;
-+  let logDir: string | undefined;
-+
-+  afterEach(async () => {
-+    await cleanupTursoTestDirectory(baseDir);
-+    if (logDir) rmSync(logDir, { recursive: true, force: true });
-+    baseDir = undefined;
-+    logDir = undefined;
-+  });
-+
-+  it("aggregates shards and returns zero-filled daily log counters", async () => {
-+    baseDir = mkdtempSync(join(tmpdir(), "turso-stats-db-"));
-+    logDir = mkdtempSync(join(tmpdir(), "turso-stats-logs-"));
-+
-+    const { CONFIG } = await import("../src/config.js");
-+    CONFIG.storagePath = baseDir;
-+    CONFIG.embeddingDimensions = 768;
-+
-+    const { closeTursoAndInvalidateCaches } = await import("../src/services/turso/lifecycle.js");
-+    await closeTursoAndInvalidateCaches();
-+
-+    const { tursoShardManager } = await import("../src/services/turso/shard-manager.js");
-+    const { tursoConnectionManager } = await import("../src/services/turso/connection-manager.js");
-+    const { tursoVectorSearch } = await import("../src/services/turso/vector-search.js");
-+
-+    const vector = new Float32Array(768);
-+    vector[0] = 1;
-+    const userHash = "aaaaaaaaaaaaaaaa";
-+    const projectHash = "bbbbbbbbbbbbbbbb";
-+    const userShard = await tursoShardManager.createShard("user", userHash, 0);
-+    const projectShard = await tursoShardManager.createShard("project", projectHash, 0);
-+    const userDb = await tursoConnectionManager.getConnection(userShard.dbPath);
-+    const projectDb = await tursoConnectionManager.getConnection(projectShard.dbPath);
-+    const firstCreatedAt = Date.UTC(2026, 9, 12);
-+    const newestCreatedAt = Date.UTC(2026, 9, 16);
-+
-+    const memory = (id: string, createdAt: number, containerTag: string, tags: string) => ({
-+      id,
-+      content: `memory ${id}`,
-+      vector,
-+      containerTag,
-+      tags,
-+      type: "context",
-+      createdAt,
-+      updatedAt: createdAt,
-+    });
-+    await tursoVectorSearch.insertVector(
-+      userDb,
-+      memory("user-1", firstCreatedAt, `opencode_user_${userHash}`, "shared-tag")
-+    );
-+    await tursoVectorSearch.insertVector(
-+      userDb,
-+      memory("user-2", newestCreatedAt, `opencode_user_${userHash}`, "shared-tag")
-+    );
-+    await tursoVectorSearch.insertVector(
-+      projectDb,
-+      memory("project-1", newestCreatedAt, `opencode_project_${projectHash}`, "project-tag")
-+    );
-+
-+    const now = new Date(2026, 9, 18, 12, 0, 0);
-+    const day = (offset: number) => {
-+      const date = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-+      date.setDate(date.getDate() - offset);
-+      const pad = (value: number) => String(value).padStart(2, "0");
-+      return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
-+    };
-+    const timestamp = (date: string, hour: string) => `[${date}T${hour}+00:00]`;
-+    writeFileSync(
-+      join(logDir, "opencode-mem-2026-10-01.log"),
-+      [
-+        `${timestamp(day(1), "10:00:00.000")} Auto-capture memory persisted: {"id":"1"}`,
-+        `${timestamp(day(1), "10:01:00.000")} Auto-capture skipped: {"reason":"short"}`,
-+        `${timestamp(day(1), "10:02:00.000")} listMemories: error: {"error":"fixture"}`,
-+      ].join("\n")
-+    );
-+    writeFileSync(
-+      join(logDir, "opencode-mem.log.old"),
-+      `${timestamp(day(3), "11:00:00.000")} Compaction memory injected: {"count":1}\n`
-+    );
-+    writeFileSync(
-+      join(logDir, "opencode-mem.log"),
-+      `${timestamp(day(4), "09:00:00.000")} profile inject: {"prefs":[]}\n`
-+    );
-+
-+    const { handleStats } = await import("../src/services/api-handlers.js");
-+    const result = await handleStats({ logDir, now });
-+    expect(result.success).toBe(true);
-+    expect(result.data).toBeDefined();
-+    expect(result.data?.total).toBe(3);
-+    expect(result.data?.byScope).toEqual({ user: 2, project: 1 });
-+    expect(result.data?.byType).toEqual({ context: 3 });
-+    expect(result.data?.generatedAt).toMatch(/^\d{4}-\d{2}-\d{2}T/);
-+    expect(result.data?.profile).toEqual({ exists: false });
-+
-+    const userStats = result.data?.shards.find((shard) => shard.scope === "user");
-+    const projectStats = result.data?.shards.find((shard) => shard.scope === "project");
-+    expect(result.data?.shards).toHaveLength(2);
-+    expect(userStats).toMatchObject({
-+      scope: "user",
-+      fileName: "user_aaaaaaaaaaaaaaaa_shard_0.db",
-+      fileExists: true,
-+      registeredVectorCount: 2,
-+      memoryCount: 2,
-+      oldestCreatedAt: new Date(firstCreatedAt).toISOString(),
-+      newestCreatedAt: new Date(newestCreatedAt).toISOString(),
-+      duplicateTagCount: 1,
-+    });
-+    expect(projectStats).toMatchObject({
-```
-
-**File**: `web/sim/stats.json` (modified, +191/-1)
-```diff
-@@ -1,6 +1,196 @@
- {
-   "success": true,
-   "data": {
--    "total": 12
-+    "total": 1512,
-+    "byScope": { "user": 384, "project": 1128 },
-+    "byType": { "context": 931, "fact": 205, "preference": 376 },
-+    "generatedAt": "2026-10-18T09:41:12.000Z",
-+    "shards": [
-+      {
-+        "shardId": 41,
-+        "scope": "project",
-+        "scopeHash": "b1c2d3e4f5a6b7c8",
-+        "shardIndex": 0,
-+        "fileName": "project_b1c2d3e4f5a6b7c8_shard_0.db",
-+        "fileExists": true,
-+        "isActive": true,
-+        "registeredVectorCount": 964,
-+        "memoryCount": 961,
-+        "oldestCreatedAt": "2026-05-02T08:15:00.000Z",
-+        "newestCreatedAt": "2026-10-18T07:02:44.000Z",
-+        "duplicateTagCount": 34
-+      },
-+      {
-+        "shardId": 42,
-+        "scope": "project",
-+        "scopeHash": "b1c2d3e4f5a6b7c8",
-+        "shardIndex": 1,
-+        "fileName": "project_b1c2d3e4f5a6b7c8_shard_1.db",
-+        "fileExists": true,
-+        "isActive": false,
-+        "registeredVectorCount": 167,
-+        "memoryCount": 167,
-+        "oldestCreatedAt": "2026-06-11T19:30:00.000Z",
-+        "newestCreatedAt": "2026-08-29T14:11:09.000Z",
-+        "duplicateTagCount": 6
-+      },
-+      {
-+        "shardId": 7,
-+        "scope": "user",
-+        "scopeHash": "a9f8e7d6c5b4a3f2",
-+        "shardIndex": 0,
-+        "fileName": "user_a9f8e7d6c5b4a3f2_shard_0.db",
-+        "fileExists": true,
-+        "isActive": true,
-+        "registeredVectorCount": 384,
-+        "memoryCount": 384,
-+        "oldestCreatedAt": "2026-04-18T11:00:00.000Z",
-+        "newestCreatedAt": "2026-10-18T05:47:21.000Z",
-+        "duplicateTagCount": 11
-+      },
-+      {
-+        "shardId": 55,
-+        "scope": "project",
-+        "scopeHash": "0d1e2f3a4b5c6d7e",
-+        "shardIndex": 0,
-+        "fileName": "project_0d1e2f3a4b5c6d7e_shard_0.db",
-+        "fileExists": false,
-+        "isActive": true,
-+        "registeredVectorCount": 23,
-+        "memoryCount": 0,
-+        "oldestCreatedAt": null,
-+        "newestCreatedAt": null,
-+        "duplicateTagCount": 0,
-+        "error": "Shard DB file missing: ~/.opencode-mem/data/projects/project_0d1e2f3a4b5c6d7e_shard_0.db"
-+      }
-+    ],
-+    "profile": {
-+      "exists": true,
-+      "version": 23,
-+      "counts": { "preferences": 9, "patterns": 14, "workflows": 3 },
-+      "lastAnalyzedAt": "2026-10-17T22:10:05.000Z",
-+      "totalPromptsAnalyzed": 1290
-+    },
-+    "daily": [
-+      {
-+        "date": "2026-10-05",
-+        "captures": 9,
-+        "captureSkipped": 2,
-+        "profileInjections": 12,
-+        "compactionInjections": 1,
-+        "errors": {}
-+      },
-+      {
-+        "date": "2026-10-06",
-+        "captures": 14,
-+        "captureSkipped": 3,
-+        "profileInjections": 18,
-+        "compactionInjections": 0,
-+        "errors": {}
-+      },
-+      {
-+        "date": "2026-10-07",
-+        "captures": 11,
-+        "captureSkipped": 1,
-+        "profileInjections": 15,
-+        "compactionInjections": 2,
-+        "errors": {}
-+      },
-+      {
-+        "date": "2026-10-08",
-+        "captures": 16,
-+        "captureSkipped": 4,
-+        "profileInjections": 21,
-+        "compactionInjections": 0,
-+        "errors": { "listMemories": 2 }
-+      },
-+      {
-+        "date": "2026-10-09",
-+        "captures": 8,
-+        "captureSkipped": 2,
-+        "profileInjections": 10,
-+        "compactionInjections": 1,
-+        "errors": {}
-+      },
-+      {
-+        "date": "2026-10-10",
-+        "captures": 12,
-+        "captureSkipped": 0,
-+        "profileInjections": 16,
-+        "compactionInjections": 0,
-+        "errors": {}
-+      },
-+      {
-+        "date": "2026-10-11",
-+        "captures": 10,
-+        "captureSkipped": 5,
-+        "profileInjections": 13,
-+        "compactionInjections": 3,
-+        "errors": {}
-+      },
-+      {
-+        "date": "2026-10-12",
-+        "captures": 15,
-+        "captureSkipped": 2,
-+        "profileInjections": 19,
-+        "compactionInjections": 1,
-+        "errors": {}
-+      },
-+      {
-+        "date": "2026-10-13",
-+        "captures": 6,
-+        "captureSkipped": 9,
-+        "profileInjections": 8,
-+        "compactionInjections": 0,
-+        "errors": {
-+          "Failed to load skills for OpenCode registration": 61,
-+          "Turso ready gate failed": 2
-+        }
-+      },
-+      {
-+        "date": "2026-10-14",
-+        "captures": 4,
-+        "captureSkipped": 11,
-+        "profileInjections": 7,
-+        "compactionInjections": 0,
-+        "errors": { "Failed to load skills for OpenCode registration": 74 }
-+      },
-+      {
-+        "date": "2026-10-15",
-+        "captures": 7,
-+        "captureSkipped": 8,
-+        "profileInjections": 9,
-+        "compactionInjections": 1,
-+        "errors": { "Failed to load skills for OpenCode registration": 58 }
-+      },
-+      {
-+        "date": "2026-10-16",
-+        "captures": 5,
-+        "captureSkipped": 10,
-+        "profileInjections": 6,
-+       
-```
-
-**File**: `web/src/App.svelte` (modified, +17/-1)
-```diff
-@@ -15,6 +15,7 @@
-   import ProfileView from "$lib/components/explorer/ProfileView.svelte";
-   import SkillDialog from "$lib/components/explorer/SkillDialog.svelte";
-   import SkillsView from "$lib/components/explorer/SkillsView.svelte";
-+  import StatsView from "$lib/components/explorer/StatsView.svelte";
-   import TagMigrationDialog from "$lib/components/explorer/TagMigrationDialog.svelte";
-   import TagFilter from "$lib/components/explorer/TagFilter.svelte";
-   import Alert from "$lib/components/ui/alert.svelte";
-@@ -31,6 +32,7 @@
-   import { createRouter } from "$lib/router.svelte";
-   import { createMemoriesExplorer } from "$lib/stores/memories-explorer.svelte";
-   import { createSkillsStore } from "$lib/stores/skills.svelte";
-+  import { createStatsStore } from "$lib/stores/stats.svelte";
-   import { createUserProfile } from "$lib/stores/user-profile.svelte";
-   import {
-     GAP,
-@@ -60,6 +62,7 @@
-   const explorer = createMemoriesExplorer();
-   const profile = createUserProfile();
-   const skills = createSkillsStore();
-+  const stats = createStatsStore();
+       "devDependencies": {
+         "@fontsource-variable/jetbrains-mono": "^5.3.0",
+-        "@lucide/svelte": "^1.56.0",
++        "@lucide/svelte": "^1.58.0",
+         "@resvg/resvg-js": "^2.6.2",
+         "@sveltejs/vite-plugin-svelte": "^7.3.1",
+         "@tailwindcss/vite": "^4.3.3",
+@@ -52,7 +52,7 @@
  
-   let sidebarOpen = $state(false);
-   let sidebarCollapsed = $state(readCollapsed());
-@@ -71,7 +74,9 @@
-       ? i18n.t("tab-project")
-       : router.view === "skills"
-         ? i18n.t("tab-skills")
--        : i18n.t("tab-profile")
-+        : router.view === "stats"
-+          ? i18n.t("tab-stats")
-+          : i18n.t("tab-profile")
-   );
+     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.31", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, "sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw=="],
  
-   $effect(() => {
-@@ -119,6 +124,9 @@
-     if (router.view === "skills") {
-       void skills.loadSkills();
-     }
-+    if (router.view === "stats") {
-+      void stats.loadStats();
-+    }
-   });
+-    "@lucide/svelte": ["@lucide/svelte@1.56.0", "", { "peerDependencies": { "svelte": "^5" } }, "sha512-YzbcmneHmPog3wAdXSl7oORgJhFc6klu8rRLMmm5uXwPQ8B0740c7dcNd3oJ72nCPvlbCW1XEmsWa4I0SDIogw=="],
++    "@lucide/svelte": ["@lucide/svelte@1.58.0", "", { "peerDependencies": { "svelte": "^5" } }, "sha512-yUKVOUokJews09DTEf23We9/0Lju+XR+1Pcr6rYZBilpf4Uf6T3XRmalUgOsQW0drFfCI53WlIzgokkq2EqwYg=="],
  
-   function onLangToggle() {
-@@ -149,6 +157,7 @@
-     projectLabel={i18n.t("tab-project")}
-     profileLabel={i18n.t("tab-profile")}
-     skillsLabel={i18n.t("tab-skills")}
-+    statsLabel={i18n.t("tab-stats")}
-     {langLabel}
-     languageLabel={i18n.t("nav-language")}
-     themeLabel={i18n.t("nav-theme")}
-@@ -386,6 +395,13 @@
-           onEdit={skills.openEdit}
-           onDelete={skills.deleteSkill}
-         />
-+      {:else if router.view === "stats"}
-+        <StatsView
-+          data={stats.data}
-+          loading={stats.loading}
-+          error={stats.error}
-+          onRefresh={stats.loadStats}
-+        />
-       {:else}
-         <ProfileView
-           profile={profile.userProfile}
-```
-
-**File**: `web/src/lib/components/explorer/AppSidebar.svelte` (modified, +16/-0)
-```diff
-@@ -1,4 +1,5 @@
- <script lang="ts">
-+  import Activity from "@lucide/svelte/icons/activity";
-   import Brain from "@lucide/svelte/icons/brain";
-   import Folder from "@lucide/svelte/icons/folder";
-   import Languages from "@lucide/svelte/icons/languages";
-@@ -32,6 +33,7 @@
-     projectLabel: string;
-     profileLabel: string;
-     skillsLabel: string;
-+    statsLabel: string;
-     langLabel: string;
-     languageLabel: string;
-     themeLabel: string;
-@@ -48,6 +50,7 @@
-     projectLabel,
-     profileLabel,
-     skillsLabel,
-+    statsLabel,
-     langLabel,
-     languageLabel,
-     themeLabel,
-@@ -179,6 +182,19 @@
-         <span class="truncate text-start">{skillsLabel}</span>
-       {/if}
-     </a>
-+    <a
-+      href={ROUTES.stats}
-+      class={navClass(currentView === "stats")}
-+      aria-current={currentView === "stats" ? "page" : undefined}
-+      title={statsLabel}
-+      aria-label={statsLabel}
-+      onclick={(e) => onNavClick(e, ROUTES.stats)}
-+    >
-+      <Activity class={cn(ICON, "shrink-0")} aria-hidden="true" />
-+      {#if !iconOnly}
-+        <span class="truncate text-start">{statsLabel}</span>
-+      {/if}
-+    </a>
-   </nav>
+     "@oxc-project/types": ["@oxc-project/types@0.152.0", "", {}, "sha512-oM/5rLBm2tPkg0iBgkH/FOeR3PCDpY19GTgAZjMFM8h9WI9VW7cLgzp6nwtarYKmovavIQZ+Fe/RKX/8C8O/Rw=="],
  
-   <div class={cn("mt-auto", iconOnly ? "p-2" : "p-3")}>
-```
-
----
-
-### Incident Patch 3: `05b0effd` (2026-10-18)
-**Commit Message**: fix(web): harden stats endpoint for probe and partial failures
-
-Keep ownership probes cheap with ?probe=1, commit shard totals only after a
-full walk succeeds, hard-fail shard listing for explorer totals, and align
-the sim fixture total with memories.json.
-
-**File**: `src/services/api-handlers.ts` (modified, +22/-11)
-```diff
-@@ -800,33 +800,44 @@ export async function handleSearch(
- }
+@@ -244,7 +244,7 @@
  
- export async function handleStats(
--  options: Pick<CollectDailyStatsOptions, "logDir" | "now"> = {}
-+  options: Pick<CollectDailyStatsOptions, "logDir" | "now"> & { probe?: boolean } = {}
- ): Promise<
-   ApiResponse<{
-     total: number;
-     byScope: { user: number; project: number };
-     byType: Record<string, number>;
-     generatedAt: string;
-     shards: Awaited<ReturnType<typeof collectShardStats>>["shards"];
--    shardsError?: string;
-     profile: Awaited<ReturnType<typeof collectProfileStats>>;
-     daily: ReturnType<typeof collectDailyStats>;
-+    dailyError?: string;
-   }>
- > {
-   try {
-+    // Ownership/liveness probes must stay cheap: auth already ran, do not open
-+    // shards or scan logs under the 2s checkServerAvailable timeout.
-+    if (options.probe) {
-+      return { success: true };
-+    }
-+
-     // Stats only counts Turso/libSQL rows; no embedding needed.
-     // See handleListTags comment - keep embedding init out of read paths.
--    let memoryShards: ShardInfo[] = [];
--    let shardsError: string | undefined;
--    try {
--      memoryShards = await getAllMemoryShards();
--    } catch (error) {
--      shardsError = error instanceof Error ? error.message : String(error);
--    }
-+    // Shard listing failures stay hard errors so /api/stats consumers (explorer
-+    // header total) never treat an empty total as a successful empty store.
-+    const memoryShards = await getAllMemoryShards();
-     const [shardStats, profile] = await Promise.all([
-       collectShardStats(memoryShards),
-       collectProfileStats(),
-     ]);
-+
-+    let daily: ReturnType<typeof collectDailyStats> = [];
-+    let dailyError: string | undefined;
-+    try {
-+      daily = collectDailyStats(options);
-+    } catch (error) {
-+      dailyError = error instanceof Error ? error.message : String(error);
-+    }
-+
-     return {
-       success: true,
-       data: {
-@@ -835,9 +846,9 @@ export async function handleStats(
-         byType: shardStats.byType,
-         generatedAt: new Date().toISOString(),
-         shards: shardStats.shards,
--        ...(shardsError ? { shardsError } : {}),
-         profile,
--        daily: collectDailyStats(options),
-+        daily,
-+        ...(dailyError ? { dailyError } : {}),
-       },
-     };
-   } catch (error) {
-```
-
-**File**: `src/services/stats-service.ts` (modified, +35/-7)
-```diff
-@@ -94,15 +94,27 @@ export function classifyLogMessage(message: string): LogClassification {
-     return { counter: "compactionInjections" };
-   }
+     "postcss": ["postcss@8.5.29", "", { "dependencies": { "nanoid": "^3.3.19", "picocolors": "^1.1.1", "source-map-js": "^1.2.2" } }, "sha512-49cGhUbXj8Qenv0iTMxA1cFBzxXoctpC9Ujd77t1WcbJIr6nF/eI7g/8MgxrYldFRuAXvja7xQRwavoW7kgrxQ=="],
  
--  if (message.endsWith(": error")) {
--    return { errorBucket: message.slice(0, -": error".length) };
--  }
-   if (message.startsWith("Turso ready gate failed")) {
-     return { errorBucket: "Turso ready gate failed" };
-   }
-   if (message.startsWith("Failed to load skills for OpenCode registration")) {
-     return { errorBucket: "Failed to load skills for OpenCode registration" };
-   }
-+  if (message.startsWith("Auto-capture final error")) {
-+    return { errorBucket: "Auto-capture final error" };
-+  }
-+  if (message.startsWith("Compaction handler error")) {
-+    return { errorBucket: "Compaction handler error" };
-+  }
-+  if (message.startsWith("Idle processing error")) {
-+    return { errorBucket: "Idle processing error" };
-+  }
-+
-+  // Match `listMemories: error`, `chat.message: ERROR`, etc.
-+  const errorSuffix = message.match(/^(.*):\s*error$/i);
-+  if (errorSuffix) {
-+    return { errorBucket: errorSuffix[1]!.trim() };
-+  }
-   return {};
- }
+-    "prettier": ["prettier@3.9.9", "", { "bin": { "prettier": "bin/prettier.cjs" } }, "sha512-Z/CJHIkdujO/OtN7nXUii0Rf3VT5SRuhjBA82Xvu2XhBUgX3nhP67T0LHceBdQLex7OOFGTox+Q5Yg8Jk2Qivg=="],
++    "prettier": ["prettier@3.9.10", "", { "bin": { "prettier": "bin/prettier.cjs" } }, "sha512-skGHTH1Yb9QvaTC4hWnRTzEYtCpApF0UMBPz+t/0ZPzP8ihefo/btKd+QA7pUE0fEwA1SbS/NmhyEcstdXOIdA=="],
  
-@@ -258,7 +270,7 @@ export async function collectShardStats(shards: ShardInfo[]): Promise<ShardColle
-     };
- 
-     if (!stats.fileExists) {
--      stats.error = `Shard DB file missing: ${shard.dbPath}`;
-+      stats.error = `Shard DB file missing: ${stats.fileName}`;
-       shardStats.push(stats);
-       continue;
-     }
-@@ -268,6 +280,12 @@ export async function collectShardStats(shards: ShardInfo[]): Promise<ShardColle
- 
-       // Aggregate instead of `SELECT *` (getAllMemories): stats is polled every
-       // 30s by the web UI and must not drag vector blobs for every memory.
-+      // Accumulators stay local until every query for this shard succeeds so a
-+      // mid-walk failure cannot inflate global totals while memoryCount stays 0.
-+      let shardUserCount = 0;
-+      let shardProjectCount = 0;
-+      const shardTypeCount: Record<string, number> = {};
-+
-       const scopeTypeCounts = await db.all<{
-         container_tag: unknown;
-         type: unknown;
-@@ -277,9 +295,9 @@ export async function collectShardStats(shards: ShardInfo[]): Promise<ShardColle
-         const containerTag = String(row.container_tag ?? "");
-         const type = row.type ? String(row.type) : "";
-         const count = Number(row.c ?? 0);
--        if (containerTag.includes("_user_")) userCount += count;
--        else if (containerTag.includes("_project_")) projectCount += count;
--        if (type) typeCount[type] = (typeCount[type] || 0) + count;
-+        if (containerTag.includes("_user_")) shardUserCount += count;
-+        else if (containerTag.includes("_project_")) shardProjectCount += count;
-+        if (type) shardTypeCount[type] = (shardTypeCount[type] || 0) + count;
-       }
- 
-       const aggregate = await db.get<{ c: number | bigint; mn: unknown; mx: unknown }>(
-@@ -296,7 +314,17 @@ export async function collectShardStats(shards: ShardInfo[]): Promise<ShardColle
-         (total, row) => total + Math.max(0, Number(row.c) - 1),
-         0
-       );
-+
-+      userCount += shardUserCount;
-+      projectCount += shardProjectCount;
-+      for (const [type, count] of Object.entries(shardTypeCount)) {
-+        typeCount[type] = (typeCount[type] || 0) + count;
-+      }
-     } catch (error) {
-+      stats.memoryCount = 0;
-+      stats.oldestCreatedAt = null;
-+      stats.newestCreatedAt = null;
-+      stats.duplicateTagCount = 0;
-       stats.error = error instanceof Error ? error.message : String(error);
-     }
+     "prettier-plugin-svelte": ["prettier-plugin-svelte@4.1.1", "", { "peerDependencies": { "prettier": "^3.0.0", "svelte": "^5.0.0" } }, "sha512-wXvbXMjSvb4C9ENWTHXyd+ihakKCsJ6rJhLP6/8HFNj4GkZr48jqL9PoKsl2sk7SyCZRTnJ7O2TTowUpOxP/KA=="],
  
 ```
 
-**File**: `src/services/web-server.ts` (modified, +6/-2)
+**File**: `web/package.json` (modified, +1/-1)
 ```diff
-@@ -423,7 +423,10 @@ export class WebServer {
-       const headers = this.config.apiToken
-         ? { Authorization: `Bearer ${this.config.apiToken}` }
-         : undefined;
--      const endpoint = this.config.apiToken ? "/api/stats" : "/api/health";
-+      // With an API token, probe authenticated /api/stats?probe=1 (cheap) so we
-+      // prove ownership without walking shards or scanning logs. Health stays
-+      // unauthenticated and is only safe when no token is configured.
-+      const endpoint = this.config.apiToken ? "/api/stats?probe=1" : "/api/health";
-       const response = await fetch(`${this.getUrl()}${endpoint}`, {
-         method: "GET",
-         headers,
-@@ -571,7 +574,8 @@ export class WebServer {
-       }
- 
-       if (path === "/api/stats" && method === "GET") {
--        const result = await handleStats();
-+        const probe = url.searchParams.get("probe") === "1";
-+        const result = await handleStats({ probe });
-         return this.jsonResponse(result);
-       }
- 
-```
-
-**File**: `tests/stats-log-parsing.test.ts` (modified, +13/-0)
-```diff
-@@ -31,6 +31,19 @@ describe("stats log parsing", () => {
-         `[2026-10-16T19:18:46.118+11:00] listMemories: error: {"error":"failed to open database ... short read on WAL frame"}`,
-         "listMemories",
-       ],
-+      [
-+        `[2026-10-16T19:20:00.000+11:00] Auto-capture final error after 3 attempts: {"error":"timeout"}`,
-+        "Auto-capture final error",
-+      ],
-+      [
-+        `[2026-10-16T19:21:00.000+11:00] Compaction handler error: {"error":"boom"}`,
-+        "Compaction handler error",
-+      ],
-+      [
-+        `[2026-10-16T19:22:00.000+11:00] Idle processing error: {"error":"boom"}`,
-+        "Idle processing error",
-+      ],
-+      [`[2026-10-16T19:23:00.000+11:00] chat.message: ERROR: {"error":"boom"}`, "chat.message"],
-     ] as const;
- 
-     for (const [line, errorBucket] of fixtures) {
-```
-
-**File**: `tests/stats-service.test.ts` (modified, +55/-1)
-```diff
-@@ -141,9 +141,63 @@ describe("handleStats health data", () => {
-     });
-     expect(daily?.find((item) => item.date === day(3))?.compactionInjections).toBe(1);
-     expect(daily?.find((item) => item.date === day(4))?.profileInjections).toBe(1);
--    expect(result.data?.shardsError).toBeUndefined();
-+    expect(result.data?.dailyError).toBeUndefined();
-     // Windows CI needs >5s for two shard creations, three vector inserts, and
-     // the full stats walk; the default 5s per-test timeout races afterEach
-     // cleanup against the in-flight walk. Same budget as plugin-bundle-boundary.
-   }, 30_000);
-+
-+  it("probe mode returns success without opening shards or scanning logs", async () => {
-+    const { handleStats } = await import("../src/services/api-handlers.js");
-+    const result = await handleStats({ probe: true });
-+    expect(result).toEqual({ success: true });
-+    expect(result.data).toBeUndefined();
-+  });
-+
-+  it("excludes a shard from totals when a later query fails mid-walk", async () => {
-+    const shardDir = mkdtempSync(join(tmpdir(), "turso-stats-partial-"));
-+    const dbPath = join(shardDir, "user_aaaaaaaaaaaaaaaa_shard_0.db");
-+    writeFileSync(dbPath, "");
-+
-+    const { collectShardStats } = await import("../src/services/stats-service.js");
-+    const { tursoConnectionManager } = await import("../src/services/turso/connection-manager.js");
-+    const original = tursoConnectionManager.getConnection.bind(tursoConnectionManager);
-+
-+    tursoConnectionManager.getConnection = (async () => ({
-+      all: async (sql: string) => {
-+        if (sql.includes("GROUP BY container_tag")) {
-+          return [{ container_tag: "opencode_user_aaaaaaaaaaaaaaaa", type: "context", c: 4 }];
-+        }
-+        throw new Error("duplicate query failed");
-+      },
-+      get: async () => ({ c: 4, mn: Date.UTC(2026, 9, 1), mx: Date.UTC(2026, 9, 10) }),
-+    })) as typeof tursoConnectionManager.getConnection;
-+
-+    try {
-+      const result = await collectShardStats([
-+        {
-+          id: 1,
-+          scope: "user",
-+          scopeHash: "aaaaaaaaaaaaaaaa",
-+          shardIndex: 0,
-+          dbPath,
-+          vectorCount: 4,
-+          isActive: true,
-+        } as never,
-+      ]);
-+
-+      expect(result.total).toBe(0);
-+      expect(result.byScope).toEqual({ user: 0, project: 0 });
-+      expect(result.byType).toEqual({});
-+      expect(result.shards).toHaveLength(1);
-+      expect(result.shards[0]).toMatchObject({
-+        memoryCount: 0,
-+        duplicateTagCount: 0,
-+        error: "duplicate query failed",
-+      });
-+    } finally {
-+      tursoConnectionManager.getConnection = original;
-+      rmSync(shardDir, { recursive: true, force: true });
-+    }
-+  });
- });
-```
-
-**File**: `tests/web-server-health.test.ts` (modified, +5/-2)
-```diff
-@@ -3,10 +3,12 @@ import { createServer } from "node:http";
- import { WebServer, nextFallbackPort } from "../src/services/web-server.js";
- 
- describe("web server health check", () => {
--  it("authenticates the stats request when an API token is configured", async () => {
-+  it("authenticates the stats probe when an API token is configured", async () => {
-     const originalFetch = globalThis.fetch;
-+    let requestUrl: string | undefined;
-     let requestHeaders: Headers | undefined;
--    globalThis.fetch = async (_input, init) => {
-+    globalThis.fetch = async (input, init) => {
-+      requestUrl = String(input);
-       requestHeaders = new Headers(init?.headers);
-       return new Response(JSON.stringify({ success: true }), { status: 200 });
-     };
-@@ -20,6 +22,7 @@ describe("web server health check", () => {
-       });
- 
-       expect(await server.checkServerAvailable()).toBe(true);
-+      expect(requestUrl).toBe("http://0.0.0.0:4747/api/stats?probe=1");
-       expect(requestHeaders?.get("Authorization")).toBe("Bearer health-token");
-     } finally {
-       globalThis.fetch = originalFetch;
-```
-
-**File**: `web/sim/stats.json` (modified, +14/-14)
-```diff
-@@ -1,9 +1,9 @@
- {
-   "success": true,
-   "data": {
--    "total": 1512,
--    "byScope": { "user": 384, "project": 1128 },
--    "byType": { "context": 931, "fact": 205, "preference": 376 },
-+    "total": 14,
-+    "byScope": { "user": 5, "project": 9 },
-+    "byType": { "context": 8, "fact": 3, "preference": 3 },
-     "generatedAt": "2026-10-18T09:41:12.000Z",
-     "shards": [
-       {
-@@ -14,11 +14,11 @@
-         "fileName": "project_b1c2d3e4f5a6b7c8_shard_0.db",
-         "fileExists": true,
-         "isActive": true,
--        "registeredVectorCount": 964,
--        "memoryCount": 961,
-+        "registeredVectorCount": 8,
-+        "memoryCount": 7,
-         "oldestCreatedAt": "2026-05-02T08:15:00.000Z",
-         "newestCreatedAt": "2026-10-18T07:02:44.000Z",
--        "duplicateTagCount": 34
-+        "duplicateTagCount": 2
-       },
-       {
-         "shardId": 42,
-@@ -28,11 +28,11 @@
-         "fileName": "project_b1c2d3e4f5a6b7c8_shard_1.db",
-         "fileExists": true,
-         "isActive": false,
--        "registeredVectorCount": 167,
--        "memoryCount": 167,
-+        "registeredVectorCount": 2,
-+        "memoryCount": 2,
-         "oldestCreatedAt": "2026-06-11T19:30:00.000Z",
-         "newestCreatedAt": "2026-08-29T14:11:09.000Z",
--        "duplicateTagCount": 6
-+        "duplicateTagCount": 0
-       },
-       {
-         "shardId": 7,
-@@ -42,11 +42,11 @@
-         "fileName": "user_a9f8e7d6c5b4a3f2_shard_0.db",
-         "fileExists": true,
-         "isActive": true,
--        "registeredVectorCount": 384,
--        "memoryCount": 384,
-+        "registeredVectorCount": 5,
-+        "memoryCount": 5,
-         "oldestCreatedAt": "2026-04-18T11:00:00.000Z",
-         "newestCreatedAt": "2026-10-18T05:47:21.000Z",
--        "duplicateTagCount": 11
-+        "duplicateTagCount": 1
-       },
-       {
-         "shardId": 55,
-@@ -56,12 +56,12 @@
-         "fileName": "project_0d1e2f3a4b5c6d7e_shard_0.db",
-         "fileExists": false,
-         "isActive": true,
--        "registeredVectorCount": 23,
-+        "registeredVectorCount": 3,
-         "memoryCount": 0,
-         "oldestCreatedAt": null,
-         "newestCreatedAt": null,
-         "duplicateTagCount": 0,
--        "error": "Shard DB file missing: ~/.opencode-mem/data/projects/project_0d1e2f3a4b5c6d7e_shard_0.db"
-+        "error": "Shard DB file missing: project_0d1e2f3a4b5c6d7e_shard_0.db"
-       }
-     ],
-     "profile": {
-```
-
-**File**: `web/src/lib/components/explorer/StatsView.svelte` (modified, +11/-12)
-```diff
-@@ -102,12 +102,12 @@
-       <div class={cn(SURFACE_CARD, CARD_PAD, STACK)}>
-         <h2 class="text-sm text-muted-foreground">{i18n.t("stats-active-shards")}</h2>
-         <p class="text-3xl font-semibold tabular-nums text-foreground-bright">
--          {data.shards && !data.shardsError ? shards.filter((shard) => shard.isActive).length : "—"}
-+          {data.shards ? shards.filter((shard) => shard.isActive).length : "—"}
-         </p>
-         <p class="text-xs text-muted-foreground">
--          {data.shardsError || !data.shards
--            ? i18n.t("stats-unavailable")
--            : i18n.t("text-total", { count: shards.length })}
-+          {data.shards
-+            ? i18n.t("text-total", { count: shards.length })
-+            : i18n.t("stats-unavailable")}
-         </p>
-       </div>
-       <div class={cn(SURFACE_CARD, CARD_PAD, STACK)}>
-@@ -157,7 +157,12 @@
-       <h2 id="stats-daily-heading" class="text-lg font-semibold text-foreground-bright">
-         {i18n.t("stats-daily")}
-       </h2>
--      {#if !data.daily}
-+      {#if data.dailyError}
-+        <Alert variant="destructive">
-+          <TriangleAlert aria-hidden="true" />
-+          <AlertDescription class="break-words">{data.dailyError}</AlertDescription>
-+        </Alert>
-+      {:else if !data.daily}
-         <EmptyState>{i18n.t("stats-unavailable")}</EmptyState>
-       {:else if daily.length === 0}
-         <EmptyState>{i18n.t("stats-no-activity")}</EmptyState>
-@@ -228,12 +233,6 @@
-       <h2 id="stats-shards-heading" class="text-lg font-semibold text-foreground-bright">
-         {i18n.t("stats-shards")}
-       </h2>
--      {#if data.shardsError}
--        <Alert variant="destructive">
--          <TriangleAlert aria-hidden="true" />
--          <AlertDescription class="break-words">{data.shardsError}</AlertDescription>
--        </Alert>
--      {/if}
-       {#if shards.length}
-         <div class={cn(SURFACE_CARD, "overflow-x-auto focus-ring")}>
-           <table class="w-full text-sm tabular-nums">
-@@ -301,7 +300,7 @@
-             </tbody>
-           </table>
-         </div>
--      {:else if !data.shardsError}
-+      {:else}
-         <EmptyState>{i18n.t(data.shards ? "stats-no-shards" : "stats-unavailable")}</EmptyState>
-       {/if}
-     </section>
+@@ -18,7 +18,7 @@
+   },
+   "devDependencies": {
+     "@fontsource-variable/jetbrains-mono": "^5.3.0",
+-    "@lucide/svelte": "^1.56.0",
++    "@lucide/svelte": "^1.58.0",
+     "@resvg/resvg-js": "^2.6.2",
+     "@sveltejs/vite-plugin-svelte": "^7.3.1",
+     "@tailwindcss/vite": "^4.3.3",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #419** (2026-10-19): chore(deps): bump the minor-and-patch group across 2 directories with 4 updates (@dependabot[bot])
 - **PR #417** (2026-10-18): chore(release): release v2.32.0 (@EyJunge1)
 - **PR #416** (2026-10-18): feat(web): add health/stats view to the web UI (@Phototonic)
 - **PR #415** (2026-10-16): docs: move translated READMEs into i18n/ (@EyJunge1)
 - **PR #414** (2026-10-15): chore(release): release v2.31.3 (@EyJunge1)
 - **PR #413** (2026-10-15): fix(skills): reopen DB after boot-time Turso close (@EyJunge1)
-- **PR #411** (2026-10-15): fix(config): preserve quoted strings when stripping JSONC trailing commas (@March-7)
 
 ---
 
@@ -2242,31 +1191,34 @@ the sim fixture total with memories.json.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test(stats): raise aggregation test timeout for Windows CI
+## X. Merge pull request #419 from tickernelz/dependabot/bun/minor-and-patch-f700e6cb3
 
 **RULE**:
-When implementing operations in `tests/stats-service.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tickernelz/opencode-mem. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `bun.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tickernelz/opencode-mem. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `edd98083`: test(stats): raise aggregation test timeout for Windows CI. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6289ac4a`: Merge pull request #419 from tickernelz/dependabot/bun/minor-and-patch-f700e6cb3d. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/stats-service.test.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `bun.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    // Windows CI needs >5s for two shard creations, three vector inserts, and
-    // the full stats walk; the default 5s per-test timeout races afterEach
-    // cleanup against the in-flight walk. Same budget as plugin-bundle-boundary.
-  }, 30_000);
+    "@opencode-ai/plugin": ["@opencode-ai/plugin@1.19.2", "", { "dependencies": { "@ai-sdk/provider": "3.0.8", "@opencode-ai/sdk": "1.19.2", "effect": "4.0.0-beta.83", "zod": "4.1.8" }, "peerDependencies": { "@opentui/core": ">=0.4.5", "@opentui/keymap": ">=0.4.5", "@opentui/solid": ">=0.4.5" }, "optionalPeers": ["@opentui/core", "@opentui/keymap", "@opentui/solid"] }, "sha512-aS4WUtjHMuCqAT+SHq9N3O8xx+VEa/wN7PhWL94uhrY2YOcniq6yqDM6BWwmWopOvXCkcDp3nSG+43r1yDcj4w=="],
+    "@opencode-ai/sdk": ["@opencode-ai/sdk@1.19.2", "", { "dependencies": { "cross-spawn": "7.0.6" } }, "sha512-1KG4L3iWVgXzaliqilcorRikw3idrGPhLllgiO78VL3o1AY64FgFrr3ftIW0V9koIsj0kyrcWfJ8jGOftRs+ug=="],
+    "@opencode/ai": ["@opencode/ai@2.0.30", "", { "dependencies": { "@aws-sdk/credential-providers": "3.1057.0", "@opencode/schema": "2.0.30", "@smithy/eventstream-codec": "4.2.14", "@smithy/util-utf8": "4.2.2", "aws4fetch": "1.0.20", "effect": "4.0.1", "google-auth-library": "10.5.0" } }, "sha512-N+P3qE9qIaBvO9qM+aQPr8T8yjpUGG7QIuHvl59AAIa2FXgGhqfMRq3o6zlFB9B2cvavsHEXKPWuqxIP2MHPXg=="],
+    "@opencode/client": ["@opencode/client@2.0.30", "", { "dependencies": { "@opencode/protocol": "2.0.30", "@opencode/schema": "2.0.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-  });
+    "@opencode-ai/plugin": ["@opencode-ai/plugin@1.19.0", "", { "dependencies": { "@ai-sdk/provider": "3.0.8", "@opencode-ai/sdk": "1.19.0", "effect": "4.0.0-beta.83", "zod": "4.1.8" }, "peerDependencies": { "@opentui/core": ">=0.4.5", "@opentui/keymap": ">=0.4.5", "@opentui/solid": ">=0.4.5" }, "optionalPeers": ["@opentui/core", "@opentui/keymap", "@opentui/solid"] }, "sha512-DgtiRekVKeHIQuDD7OndZrQlJ+V8pK/cUuksfB+OPTekmLD8beYT+zX8gMax94s9xhKxEGFhSunjr3V1rkCDEA=="],
+    "@opencode-ai/sdk": ["@opencode-ai/sdk@1.19.0", "", { "dependencies": { "cross-spawn": "7.0.6" } }, "sha512-lDFYTD6qxzq1mfwxF6Kq1DAs6rEwF4xoZ2I3G1sB7hAZ8Yb28JurtSmmcK7ZzZ8Z4qBUYbZimHJ6DM4JFq5amw=="],
+    "@opencode/ai": ["@opencode/ai@2.0.27", "", { "dependencies": { "@aws-sdk/credential-providers": "3.1057.0", "@opencode/schema": "2.0.27", "@smithy/eventstream-codec": "4.2.14", "@smithy/util-utf8": "4.2.2", "aws4fetch": "1.0.20", "effect": "4.0.1", "google-auth-library": "10.5.0" } }, "sha512-RiVtSBo1veffbDnrWo++04XdlcSEzqCAxo1TWDtG/5fZSjWLuiII6OT6Fo/N8ScU/awy9X3omfvun1aq4Lfttw=="],
+    "@opencode/client": ["@opencode/client@2.0.27", "", { "dependencies": { "@opencode/protocol": "2.0.27", "@opencode/schema": "2.0.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `edd98083` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6289ac4a` are properly handled with clean fallback behavior.
