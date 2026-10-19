@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-G3ZO",
-    "timestamp": "2026-10-19T00:22:53.748Z",
-    "repository": "krakend/krakend-ce",
-    "learningId": "learn-github-krakend-krakend-ce",
-    "contentHash": "5837eeffb9679282327164723905c58ae31ddd141737e15a01d5331aa59809f9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-G7AF",
-    "timestamp": "2026-10-19T00:22:58.023Z",
-    "repository": "trailbaseio/trailbase",
-    "learningId": "learn-github-trailbaseio-trailbase",
-    "contentHash": "77deab97882f474eaa677f0b9587cfc16a0f4d7ed17c145a3b6514b5503544d3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-NN14",
-    "timestamp": "2026-10-19T00:28:45.016Z",
-    "repository": "tremorlabs/tremor-npm",
-    "learningId": "learn-github-tremorlabs-tremor-npm",
-    "contentHash": "a3ec5efd08c5849c5498bff17763789ef19075c0877e4575217ea847015958e6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-NP0Y",
     "timestamp": "2026-10-19T00:28:47.602Z",
     "repository": "GitoxideLabs/gitoxide",
@@ -7492,6 +7447,51 @@
     "contentHash": "56337c47a0e5489f1e703065bd2635b8f9b52372fabe8556c2e064f7911779c2",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-Z3I9",
+    "timestamp": "2026-10-19T11:21:30.753Z",
+    "repository": "openai/gpt-oss-120b",
+    "learningId": "learn-huggingface-openai-gpt-oss-120b",
+    "contentHash": "00feebe04d1eb97a71939c194acc05274ed5f2436bf24f2e416e70edf1ca33ce",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-Z5A2",
+    "timestamp": "2026-10-19T11:21:33.050Z",
+    "repository": "sxyazi/yazi",
+    "learningId": "learn-github-sxyazi-yazi",
+    "contentHash": "74403a069eaa9e4d97b8aa0c970295a283af88ec92d8936e50aa0d52de9af2bc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-Z8XU",
+    "timestamp": "2026-10-19T11:21:37.794Z",
+    "repository": "ronitsingh10/FineTune",
+    "learningId": "learn-github-ronitsingh10-finetune",
+    "contentHash": "92ab7cb876fd28fa0b0a8cae64c59e64e8f053d9756aa1f9d854190ee65b85f2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

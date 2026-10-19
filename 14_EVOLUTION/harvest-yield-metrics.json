@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T11:15:25.041Z",
-  "total_cycles_completed": 3164,
-  "total_learnings_persisted": 3164,
-  "total_rules_promoted": 2321,
+  "last_updated": "2026-10-19T11:21:37.800Z",
+  "total_cycles_completed": 3167,
+  "total_learnings_persisted": 3167,
+  "total_rules_promoted": 2323,
   "history": [
-    {
-      "timestamp": "2026-10-19T06:04:39.698Z",
-      "repository": "Alissonerdx/BFS-Best-Face-Swap",
-      "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T06:04:39.742Z",
-      "repository": "shadcn-ui/taxonomy",
-      "learningId": "learn-github-shadcn-ui-taxonomy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T06:04:41.598Z",
-      "repository": "SilasMarvin/lsp-ai",
-      "learningId": "learn-github-silasmarvin-lsp-ai",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T06:04:45.750Z",
       "repository": "ResoCoder/flutter-tdd-clean-architecture-course",
@@ -1403,6 +1382,27 @@
       "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
       "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T11:21:30.760Z",
+      "repository": "openai/gpt-oss-120b",
+      "learningId": "learn-huggingface-openai-gpt-oss-120b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T11:21:33.056Z",
+      "repository": "sxyazi/yazi",
+      "learningId": "learn-github-sxyazi-yazi",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T11:21:37.800Z",
+      "repository": "ronitsingh10/FineTune",
+      "learningId": "learn-github-ronitsingh10-finetune",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T11:15:25.044Z",
+  "last_updated": "2026-10-19T11:21:37.804Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1189,14 +1189,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openai-gpt-oss-120b",
-      "content_hash": "f3ac8f53b12a4e66ed08f2634998fc3ce14412aa1196f42a5ee588f881b97435",
-      "verified_at": "2026-10-18T02:41:26.688Z",
+      "content_hash": "00feebe04d1eb97a71939c194acc05274ed5f2436bf24f2e416e70edf1ca33ce",
+      "verified_at": "2026-10-19T11:21:30.762Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T02:41:26.688Z"
+      "last_updated": "2026-10-19T11:21:30.762Z"
     },
     "zai-org/GLM-5.2": {
       "repository": "zai-org/GLM-5.2",
@@ -11816,6 +11816,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T11:15:21.031Z"
+    },
+    "sxyazi/yazi": {
+      "repository": "sxyazi/yazi",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-sxyazi-yazi",
+      "content_hash": "74403a069eaa9e4d97b8aa0c970295a283af88ec92d8936e50aa0d52de9af2bc",
+      "verified_at": "2026-10-19T11:21:33.102Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T11:21:33.102Z"
+    },
+    "ronitsingh10/FineTune": {
+      "repository": "ronitsingh10/FineTune",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-ronitsingh10-finetune",
+      "content_hash": "92ab7cb876fd28fa0b0a8cae64c59e64e8f053d9756aa1f9d854190ee65b85f2",
+      "verified_at": "2026-10-19T11:21:37.803Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T11:21:37.803Z"
     }
   },
   "repos": {

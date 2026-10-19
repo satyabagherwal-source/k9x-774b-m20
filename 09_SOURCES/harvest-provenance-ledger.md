@@ -3194,3 +3194,6 @@ Every entry in this ledger must capture:
 | `learn-github-rtk-ai-rtk` | `https://github.com/rtk-ai/rtk` | `9a501c8d` | Multi-dimensional audit evidence | 2026-10-19T11:15:16.663Z |
 | `learn-github-gao-sun-eul` | `https://github.com/gao-sun/eul` | `b5c3bd0a` | Multi-dimensional audit evidence | 2026-10-19T11:15:21.023Z |
 | `learn-huggingface-meta-llama-meta-llama-3-8b-instruct` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-19T11:15:25.037Z |
+| `learn-huggingface-openai-gpt-oss-120b` | `https://huggingface.co/openai/gpt-oss-120b` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-19T11:21:30.756Z |
+| `learn-github-sxyazi-yazi` | `https://github.com/sxyazi/yazi` | `9561890a` | Multi-dimensional audit evidence | 2026-10-19T11:21:33.053Z |
+| `learn-github-ronitsingh10-finetune` | `https://github.com/ronitsingh10/FineTune` | `2285279d` | Multi-dimensional audit evidence | 2026-10-19T11:21:37.796Z |

@@ -915,8 +915,8 @@
     "sourceUrl": "https://huggingface.co/openai/gpt-oss-120b",
     "sourceVersion": "hf-openai-gpt-oss-120b",
     "license": "Open-Source",
-    "contentHash": "f3ac8f53b12a4e66ed08f2634998fc3ce14412aa1196f42a5ee588f881b97435",
-    "lastHarvestedAt": "2026-10-18T02:41:26.686Z",
+    "contentHash": "00feebe04d1eb97a71939c194acc05274ed5f2436bf24f2e416e70edf1ca33ce",
+    "lastHarvestedAt": "2026-10-19T11:21:30.756Z",
     "learningId": "learn-huggingface-openai-gpt-oss-120b"
   },
   "hf-zai-org-glm-5.2": {
@@ -7858,5 +7858,25 @@
     "contentHash": "bf01ea57d7d2460dfce7e126f04bc5f4f1a9248f2d53e9abe553cc2bb11b305d",
     "lastHarvestedAt": "2026-10-19T11:15:21.023Z",
     "learningId": "learn-github-gao-sun-eul"
+  },
+  "sxyazi-yazi": {
+    "repository": "sxyazi/yazi",
+    "platform": "github",
+    "sourceUrl": "https://github.com/sxyazi/yazi",
+    "sourceVersion": "9561890a",
+    "license": "MIT",
+    "contentHash": "74403a069eaa9e4d97b8aa0c970295a283af88ec92d8936e50aa0d52de9af2bc",
+    "lastHarvestedAt": "2026-10-19T11:21:33.053Z",
+    "learningId": "learn-github-sxyazi-yazi"
+  },
+  "ronitsingh10-finetune": {
+    "repository": "ronitsingh10/FineTune",
+    "platform": "github",
+    "sourceUrl": "https://github.com/ronitsingh10/FineTune",
+    "sourceVersion": "2285279d",
+    "license": "GPL-3.0",
+    "contentHash": "92ab7cb876fd28fa0b0a8cae64c59e64e8f053d9756aa1f9d854190ee65b85f2",
+    "lastHarvestedAt": "2026-10-19T11:21:37.796Z",
+    "learningId": "learn-github-ronitsingh10-finetune"
   }
 }

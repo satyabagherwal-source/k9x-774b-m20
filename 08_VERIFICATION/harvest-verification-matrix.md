@@ -3187,3 +3187,6 @@
 | `CYCLE-20261019-R2US` | `2026-10-19T11:15:16.660Z` | `rtk-ai/rtk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2531` | Yes (`b94f1db5...`) |
 | `CYCLE-20261019-R67W` | `2026-10-19T11:15:21.020Z` | `gao-sun/eul` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/gao-sun-eul-learnings.md` | Yes (`bf01ea57...`) |
 | `CYCLE-20261019-R9BE` | `2026-10-19T11:15:25.034Z` | `meta-llama/Meta-Llama-3-8B-Instruct` | Commit diff / Patch analysis | `VERIFIED` | `Rule 777, Rule 2532` | Yes (`56337c47...`) |
+| `CYCLE-20261019-Z3I9` | `2026-10-19T11:21:30.753Z` | `openai/gpt-oss-120b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md` | Yes (`00feebe0...`) |
+| `CYCLE-20261019-Z5A2` | `2026-10-19T11:21:33.050Z` | `sxyazi/yazi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2533` | Yes (`74403a06...`) |
+| `CYCLE-20261019-Z8XU` | `2026-10-19T11:21:37.794Z` | `ronitsingh10/FineTune` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2534` | Yes (`92ab7cb8...`) |

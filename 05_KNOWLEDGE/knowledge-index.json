@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T11:15:24.994Z",
-  "total_verified_learnings": 800,
+  "last_updated": "2026-10-19T11:21:37.754Z",
+  "total_verified_learnings": 802,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -20093,7 +20093,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openai/gpt-oss-120b",
       "source_version": "hf-openai-gpt-oss-120b",
-      "content_hash": "f3ac8f53b12a4e66ed08f2634998fc3ce14412aa1196f42a5ee588f881b97435",
+      "content_hash": "00feebe04d1eb97a71939c194acc05274ed5f2436bf24f2e416e70edf1ca33ce",
       "dossier_path": "07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md",
       "promoted_rules": [],
@@ -20115,7 +20115,7 @@
         "learn-huggingface-hf-openai-gpt-oss-120b-mv4ayjzd",
         "learn-huggingface-hf-openai-gpt-oss-120b-mv4oc8h1"
       ],
-      "verified_at": "2026-10-18T02:41:26.659Z",
+      "verified_at": "2026-10-19T11:21:30.698Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36039,22 +36039,35 @@
     "learn-github-ronitsingh10-finetune": {
       "learning_id": "learn-github-ronitsingh10-finetune",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "ronitsingh10-finetune",
+      "source": "ronitsingh10/FineTune",
+      "repository": "ronitsingh10/FineTune",
       "slug": "ronitsingh10-finetune",
       "platform": "github",
       "source_url": "https://github.com/ronitsingh10/FineTune",
-      "source_version": "HEAD",
-      "content_hash": "552ebb262bb6da30dfa5370c8f1bfceec5473c47c197033eb2722a7c2c230627",
+      "source_version": "2285279d",
+      "content_hash": "92ab7cb876fd28fa0b0a8cae64c59e64e8f053d9756aa1f9d854190ee65b85f2",
       "dossier_path": "07_PROJECT_LEARNING/ronitsingh10-finetune-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ronitsingh10-finetune-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2534,
+          "title": "ddc): stop crash on DDC volume change (#361)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.298Z"
+      "verified_at": "2026-10-19T11:21:37.738Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-rook-rook": {
       "learning_id": "learn-github-rook-rook",
@@ -39342,22 +39355,35 @@
     "learn-github-sxyazi-yazi": {
       "learning_id": "learn-github-sxyazi-yazi",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "sxyazi-yazi",
+      "source": "sxyazi/yazi",
+      "repository": "sxyazi/yazi",
       "slug": "sxyazi-yazi",
       "platform": "github",
       "source_url": "https://github.com/sxyazi/yazi",
-      "source_version": "HEAD",
-      "content_hash": "14015a71e1caec627c0c5104bfeb54c59d3b48254d9f363f26a224b780ec99d7",
+      "source_version": "9561890a",
+      "content_hash": "74403a069eaa9e4d97b8aa0c970295a283af88ec92d8936e50aa0d52de9af2bc",
       "dossier_path": "07_PROJECT_LEARNING/sxyazi-yazi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sxyazi-yazi-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2533,
+          "title": "make terminal probe timeout earlier to startup (#4432)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.791Z"
+      "verified_at": "2026-10-19T11:21:32.983Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-sylphai-inc-adalflow": {
       "learning_id": "learn-github-sylphai-inc-adalflow",
@@ -86119,6 +86145,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T11:15:24.983Z"
+    },
+    "rule-2533": {
+      "learning_id": "rule-2533",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2533,
+      "title": "make terminal probe timeout earlier to startup (#4432)",
+      "source_url": "https://github.com/sxyazi/yazi",
+      "source_version": "9561890a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T11:21:32.983Z"
+    },
+    "rule-2534": {
+      "learning_id": "rule-2534",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2534,
+      "title": "ddc): stop crash on DDC volume change (#361)",
+      "source_url": "https://github.com/ronitsingh10/FineTune",
+      "source_version": "2285279d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T11:21:37.738Z"
     }
   },
   "aliases": {
