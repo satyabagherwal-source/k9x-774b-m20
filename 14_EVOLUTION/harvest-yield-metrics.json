@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T10:22:38.756Z",
-  "total_cycles_completed": 3132,
-  "total_learnings_persisted": 3132,
-  "total_rules_promoted": 2277,
+  "last_updated": "2026-10-19T10:28:56.137Z",
+  "total_cycles_completed": 3137,
+  "total_learnings_persisted": 3137,
+  "total_rules_promoted": 2281,
   "history": [
-    {
-      "timestamp": "2026-10-19T05:25:34.751Z",
-      "repository": "linkerd/linkerd2",
-      "learningId": "learn-github-linkerd-linkerd2",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T05:25:41.718Z",
-      "repository": "tursodatabase/libsql",
-      "learningId": "learn-github-tursodatabase-libsql",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T05:31:54.710Z",
-      "repository": "yvgude/lean-ctx",
-      "learningId": "learn-github-yvgude-lean-ctx",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T05:31:59.771Z",
-      "repository": "gkd-kit/gkd",
-      "learningId": "learn-github-gkd-kit-gkd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T05:32:02.385Z",
-      "repository": "envoyproxy/envoy",
-      "learningId": "learn-github-envoyproxy-envoy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T05:32:07.856Z",
       "repository": "tursodatabase/turso",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-10-19T10:22:38.756Z",
       "repository": "tickernelz/opencode-mem",
       "learningId": "learn-github-tickernelz-opencode-mem",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T10:28:45.016Z",
+      "repository": "openai/whisper-large-v3",
+      "learningId": "learn-huggingface-openai-whisper-large-v3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T10:28:47.384Z",
+      "repository": "oven-sh/bun",
+      "learningId": "learn-github-oven-sh-bun",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T10:28:51.454Z",
+      "repository": "CodeEditApp/CodeEdit",
+      "learningId": "learn-github-codeeditapp-codeedit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T10:28:54.540Z",
+      "repository": "karmada-io/karmada",
+      "learningId": "learn-github-karmada-io-karmada",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T10:28:56.137Z",
+      "repository": "DefGuard/defguard",
+      "learningId": "learn-github-defguard-defguard",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

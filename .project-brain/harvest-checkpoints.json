@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T10:22:38.759Z",
+  "last_updated": "2026-10-19T10:28:56.141Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1084,14 +1084,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openai-whisper-large-v3",
-      "content_hash": "e70aa4610db3a5e5b413f8e2d01dd17cf3ae4ef5ee6d5e7d3a87893c4e9a0bce",
-      "verified_at": "2026-10-18T02:08:38.531Z",
+      "content_hash": "e30f0df9f5670e4b5dbbbbc67379c5ba395c94815fbcdea301e752d4835be381",
+      "verified_at": "2026-10-19T10:28:45.019Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T02:08:38.531Z"
+      "last_updated": "2026-10-19T10:28:45.019Z"
     },
     "black-forest-labs/FLUX.1-schnell": {
       "repository": "black-forest-labs/FLUX.1-schnell",
@@ -3798,14 +3798,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-defguard-defguard",
-      "content_hash": "ea945c14f705f4d768e0364dd5dcbb8abcb6dcbc7c866731407af666af49469a",
-      "verified_at": "2026-10-18T21:32:42.317Z",
+      "content_hash": "27cf1079ef5c70a814cb40d2d1278a2d64ad2ebb9f8c8f79415797ba95097eed",
+      "verified_at": "2026-10-19T10:28:56.140Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T21:32:42.317Z"
+      "last_updated": "2026-10-19T10:28:56.140Z"
     },
     "tamagui/tamagui": {
       "repository": "tamagui/tamagui",
@@ -4338,14 +4338,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-karmada-io-karmada",
-      "content_hash": "541f946ccf186f4350ad4cd30dd094a07893cc2db35f1326e3fc7884bb82580a",
-      "verified_at": "2026-10-18T22:10:18.157Z",
+      "content_hash": "f0bc8d47e55450b5629fb165df3e6bf8b2449a9fc9dfeed57516f26eb66544d3",
+      "verified_at": "2026-10-19T10:28:54.543Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T22:10:18.157Z"
+      "last_updated": "2026-10-19T10:28:54.543Z"
     },
     "milvus-io/bootcamp": {
       "repository": "milvus-io/bootcamp",
@@ -11591,6 +11591,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T10:22:32.744Z"
+    },
+    "oven-sh/bun": {
+      "repository": "oven-sh/bun",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-oven-sh-bun",
+      "content_hash": "64ffd42ad0d294c3a53c7ff971a0272281f08c92e82e9fca8e834912aeb1c598",
+      "verified_at": "2026-10-19T10:28:47.386Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T10:28:47.386Z"
+    },
+    "CodeEditApp/CodeEdit": {
+      "repository": "CodeEditApp/CodeEdit",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-codeeditapp-codeedit",
+      "content_hash": "fef2cfe8b6daf43bb6991dee7c8cdd0d25997673b53c815476c061c7a61fc84c",
+      "verified_at": "2026-10-19T10:28:51.457Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T10:28:51.457Z"
     }
   },
   "repos": {

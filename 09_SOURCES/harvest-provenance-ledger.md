@@ -3162,3 +3162,8 @@ Every entry in this ledger must capture:
 | `learn-github-google-tcmalloc` | `https://github.com/google/tcmalloc` | `4a1cc807` | Multi-dimensional audit evidence | 2026-10-19T10:22:26.502Z |
 | `learn-github-russhwolf-multiplatform-settings` | `https://github.com/russhwolf/multiplatform-settings` | `f95cdff4` | Multi-dimensional audit evidence | 2026-10-19T10:22:32.738Z |
 | `learn-github-tickernelz-opencode-mem` | `https://github.com/tickernelz/opencode-mem` | `6289ac4a` | Multi-dimensional audit evidence | 2026-10-19T10:22:38.752Z |
+| `learn-huggingface-openai-whisper-large-v3` | `https://huggingface.co/openai/whisper-large-v3` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-19T10:28:45.011Z |
+| `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `91e7e3b1` | Multi-dimensional audit evidence | 2026-10-19T10:28:47.380Z |
+| `learn-github-codeeditapp-codeedit` | `https://github.com/CodeEditApp/CodeEdit` | `fa2aebd8` | Multi-dimensional audit evidence | 2026-10-19T10:28:51.450Z |
+| `learn-github-karmada-io-karmada` | `https://github.com/karmada-io/karmada` | `ef5b2fc8` | Multi-dimensional audit evidence | 2026-10-19T10:28:54.537Z |
+| `learn-github-defguard-defguard` | `https://github.com/DefGuard/defguard` | `2d1fc1de` | Multi-dimensional audit evidence | 2026-10-19T10:28:56.133Z |

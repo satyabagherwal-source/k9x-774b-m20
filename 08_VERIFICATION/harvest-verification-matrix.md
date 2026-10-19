@@ -3155,3 +3155,8 @@
 | `CYCLE-20261019-V4QR` | `2026-10-19T10:22:26.499Z` | `google/tcmalloc` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/google-tcmalloc-learnings.md` | Yes (`881ba1bf...`) |
 | `CYCLE-20261019-V9JZ` | `2026-10-19T10:22:32.735Z` | `russhwolf/multiplatform-settings` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2489` | Yes (`2ef025f5...`) |
 | `CYCLE-20261019-VE72` | `2026-10-19T10:22:38.750Z` | `tickernelz/opencode-mem` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2490` | Yes (`40ab09ea...`) |
+| `CYCLE-20261019-38SW` | `2026-10-19T10:28:45.008Z` | `openai/whisper-large-v3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md` | Yes (`e30f0df9...`) |
+| `CYCLE-20261019-3AMP` | `2026-10-19T10:28:47.377Z` | `oven-sh/bun` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2491` | Yes (`64ffd42a...`) |
+| `CYCLE-20261019-3DRQ` | `2026-10-19T10:28:51.446Z` | `CodeEditApp/CodeEdit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2492` | Yes (`fef2cfe8...`) |
+| `CYCLE-20261019-3G5I` | `2026-10-19T10:28:54.534Z` | `karmada-io/karmada` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1692` | Yes (`f0bc8d47...`) |
+| `CYCLE-20261019-3HDV` | `2026-10-19T10:28:56.131Z` | `DefGuard/defguard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2493` | Yes (`27cf1079...`) |

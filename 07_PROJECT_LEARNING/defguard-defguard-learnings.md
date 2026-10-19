@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/defguard-defguard-learnings.md`  
 > **Source**: github ([https://github.com/DefGuard/defguard](https://github.com/DefGuard/defguard))  
-> **Source Version**: `b6b437f9`  
+> **Source Version**: `2d1fc1de`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T21:32:42.114Z  
+> **Timestamp**: 2026-10-19T10:28:55.876Z  
 > **Learning ID**: `learn-github-defguard-defguard`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/defguard-defguard-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DefGuard/defguard](https://github.com/DefGuard/defguard))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T21:32:41.326Z  
+> **Harvest Timestamp**: 2026-10-19T10:28:55.869Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Zero-Trust access management with true WireGuard® 2FA/MFA
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2874 stars
+- **Stars / Engagement**: 2876 stars
 
 ---
 
@@ -2125,8 +2125,8 @@ impl Token {
   **Post-Mortem & Fix Analysis**:
   > Duplicates https://github.com/DefGuard/gateway/issues/385
 
-- **Issue #3844** (2026-10-15): **Incorrect "Edit workflow" label for MFA flow form**
-  *Symptoms*: Should probably be "Edit MFA Flow" like in the breadcrumbs  <img width="754" height="388" alt="Image" src="https://github.com/user-attachments/assets/d49f23de-fca2-4d89-8e5d-ce22fc46242b" />
+- **Issue #3846** (2026-10-19): **Unable to delete MFA Flow**
+  *Symptoms*: - create MFA Flow - assign it as the default flow in a location - disable MFA in this location - try to delete flow  In this scenario the removal is blocked and there is no way to "unassign" the default flow. The only workaround is to change the default flow.  We should probably allow removing flows assigned as default if MFA is disabled for a given location.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2143,908 +2143,52 @@ impl Token {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d8b8e8e0` (2026-09-25)
-**Commit Message**: fix(LDAP): handle escaped commas when parsing DNs (#3703)
+### Incident Patch 1: `2d1fc1de` (2026-10-19)
+**Commit Message**: add job to ci (#3885)
 
-* handle parsing escape characters in DN values
-
-* normalize value for comparison
-
-* add tests
-
-* cleanup
-
-* update rename path
-
-**File**: `crates/defguard_core/src/enterprise/ldap/client.rs` (modified, +5/-3)
+**File**: `.github/workflows/current.yml` (modified, +28/-0)
 ```diff
-@@ -11,7 +11,7 @@ use ldap3::{
-     drive, ldap_escape,
- };
- 
--use super::{LDAPConfig, LDAPConnection, error::LdapError};
-+use super::{LDAPConfig, LDAPConnection, dn::find_unescaped_separator, error::LdapError};
- use crate::enterprise::ldap::model::{Dn, LdapEntry, extract_rdn_value, is_search_entry};
- 
- const STREAMING_PAGE_SIZE: i32 = 500;
-@@ -212,7 +212,9 @@ impl LDAPConnection {
-     {
-         self.ldap.modify(old_dn, mods).await?;
-         if old_dn != new_dn {
--            if let Some((new_rdn, _rest)) = new_dn.split_once(',') {
-+            if let Some(new_rdn) =
-+                find_unescaped_separator(new_dn, b',').and_then(|index| new_dn.get(..index))
-+            {
-                 self.ldap.modifydn(old_dn, new_rdn, true, None).await?;
-             } else {
-                 warn!("Failed to rename LDAP object {old_dn} to {new_dn}, new DN is invalid");
-@@ -262,7 +264,7 @@ impl LDAPConnection {
-                     let members = members
-                         .iter()
-                         .filter_map(|v| {
--                            if let Some(user) = dn_map.get(&Dn::from(v.as_str())) {
-+                            if let Some(user) = dn_map.get(&self.config.dn_match_key(v)) {
-                                 Some(*user)
-                             } else {
-                                 debug!(
-```
-
-**File**: `crates/defguard_core/src/enterprise/ldap/dn.rs` (added, +127/-0)
-```diff
-@@ -0,0 +1,127 @@
-+//! Distinguished name string handling, as defined by RFC 4514.
+@@ -49,3 +49,31 @@ jobs:
+     uses: ./.github/workflows/alert-e2e-failure.yml
+     secrets:
+       ALERT_TOKEN: ${{ secrets.ALERT_TOKEN }}
 +
-+/// Returns the byte index of the first `separator` that is not escaped.
-+///
-+/// `separator` must be ASCII, which every DN separator is. UTF-8 never uses a byte below 0x80
-+/// inside a multi-byte character, so a byte-wise hit is always a real separator.
-+#[must_use]
-+pub(crate) fn find_unescaped_separator(input: &str, separator: u8) -> Option<usize> {
-+    let bytes = input.as_bytes();
-+    let mut index = 0;
-+    while index < bytes.len() {
-+        match bytes[index] {
-+            // Skip the escape and whatever it protects, which may itself be a separator.
-+            b'\\' => index += 2,
-+            byte if byte == separator => return Some(index),
-+            _ => index += 1,
-+        }
-+    }
-+
-+    None
-+}
-+
-+/// Decodes the escapes in one RDN value: `Doe\, John` and `Doe\2c John` both give `Doe, John`.
-+///
-+/// Returns `None` for a value that is malformed or decodes to bytes that are not valid UTF-8. This
-+/// text is stored as a user's `ldap_rdn`, so a name Defguard cannot hold faithfully is refused.
-+#[must_use]
-+pub(crate) fn unescape_value(value: &str) -> Option<String> {
-+    String::from_utf8(unescape_value_bytes(value)?).ok()
-+}
-+
-+/// Decodes to bytes, because a hex pair can carry one byte of a multi-byte character, as the
-+/// `\c5\82` of `Micha\c5\82` does.
-+fn unescape_value_bytes(value: &str) -> Option<Vec<u8>> {
-+    let bytes = value.as_bytes();
-+    let mut unescaped = Vec::with_capacity(bytes.len());
-+    let mut index = 0;
-+    while index < bytes.len() {
-+        if bytes[index] != b'\\' {
-+            unescaped.push(bytes[index]);
-+            index += 1;
-+            continue;
-+        }
-+
-+        if let Some(byte) = bytes.get(index + 1..index + 3).and_then(hex_pair) {
-+            unescaped.push(byte);
-+            index += 3;
-+        } else {
-+            // Every character RFC 4514 escapes this way is ASCII, so taking one byte cannot cut a
-+            // multi-byte character in half. Nothing left to protect means the value is malformed.
-+            unescaped.push(*bytes.get(index + 1)?);
-+            index += 2;
-+        }
-+    }
-+
-+    Some(unescaped)
-+}
-+
-+fn hex_pair(digits: &[u8]) -> Option<u8> {
-+    // `from_str_radix` would accept a leading sign, which would read `\+a` as a hex pair.
-+    if !digits.iter().all(u8::is_ascii_hexdigit) {
-+        return None;
-+    }
-+
-+    u8::from_str_radix(str::from_utf8(digits).ok()?, 16).ok()
-+}
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::{find_unescaped_separator, unescape_value};
-+
-+    #[test]
-+    fn test_find_unescaped_separator_skips_escaped_separators() {
-+        assert_eq!(
-+            find_unescaped_separator("cn=user,dc=example", b','),
-+            Some(7)
-+        );
-+        assert_eq!(
-+            find_unescaped_separator("cn=user,dc=example", b'='),
-+            Some(2)
-+        );
-+        assert_eq!(
-+            find_unescaped_separator(r"cn=Doe\, John,ou=users", b','),
-+            Some(13)
-+        );
-+        assert_eq!(
-+            find_unescaped_separator(r"cn=Doe\2c John,ou=users", b','),
-+            Some(14)
-+        );
-+        assert_eq!(
-+            find_unescaped_separator(r"cn=Doe\5c,ou=users", b','),
-+            Some(9)
-+        );
-+        assert_eq!(find_unescaped_separator(r"cn=Doe\,John", b','), None);
-+        assert_eq!(find_unescaped_separator("", b','), None);
-+        assert_eq!(
-+            find_unescaped_separator("cn=Michał,dc=example", b','),
-+            Some(10)
-+        );
-+    }
-+
-+    #[test]
-+    fn test_unescape_value_resolves_both_escape_forms() {
-+        assert_eq!(
-+            unescape_value("plain value").as_deref(),
-+            Some("plain value")
-+        );
-+        assert_eq!(unescape_value(r"Doe\, John").as_deref(), Some("Doe, John"));
-+        assert_eq!(unescape_value(r"Doe\2c John").as_deref(), Some("Doe, John"));
-+        assert_eq!(unescape_value(r"Doe\2C John").as_deref(), Some("Doe, John"));
-+        assert_eq!(
-+            unescape_value(r#"a\+b\"c\\d\#e"#).as_deref(),
-+            Some("a+b\"c\\d#e")
-+        );
-+        assert_eq!(unescape_value(r"edge\ ").as_deref(), Some("edge "));
-+        assert_eq!(unescape_value(r"Micha\c5\82").as_deref(), Some("Michał"));
-+        // A sign is not a hex digit, so this is the character escape for a plus.
-+        assert_eq!(unescape_value(r"a\+5").as_deref(), Some("a+5"));
-+    }
-+
-+    #[test]
-+    fn test_unescape_value_rejects_malformed_and_invalid_utf8() {
-+        assert_eq!(unescape_value(r"a\ff"), None);
-+        assert_eq!(unescape_value(r"Micha\c5"), None);
-+        assert_eq!(unescape_value(r"trailing\"), None);
-+    }
-+}
-```
-
-**File**: `crates/defguard_core/src/enterprise/ldap/mod.rs` (modified, +24/-4)
-```diff
-@@ -21,10 +21,13 @@ use self::error::LdapError;
- use crate::{
-     enterprise::{
-         is_business_license_active,
--        ldap::model::{
--            Dn, UAC_NORMAL_ACCOUNT, extract_dn_path, group_in_list, has_obj_class,
--            ldap_sync_allowed_for_user, uac_from_entry, uac_with_active, user_as_ldap_attrs,
--            user_as_ldap_mod, user_from_searchentry,
-+        ldap::{
-+            dn::unescape_value,
-+            model::{
-+                Dn, UAC_NORMAL_ACCOUNT, extract_dn_path, group_in_list, has_obj_class,
-+                ldap_sync_allowed_for_user, split_first_rdn, uac_from_entry, uac_with_active,
-+                user_as_ldap_attrs, user_as_ldap_mod, user_from_searchentry,
-+            },
-         },
-         limits::update_counts,
-     },
-@@ -34,6 +37,7 @@ use crate::{
- 
- #[cfg(not(test))]
- pub mod client;
-+pub mod dn;
- pub mod error;
- pub mod hash;
- pub mod model;
-@@ -236,6 +240,22 @@ impl LDAPConfig {
-             .ldap_user_path
-             .as_deref()
-             .unwrap_or(&self.ldap_user_search_base);
-+        self.dn_from_parts(rdn_value, path)
-+    }
-+
-+    /// Respells a DN the server sent the way `user_dn` builds one, for comparison.
-+    ///
-+    /// A server may escape a comma as `\,` where Defguard writes `\2c`, so a `member` value can name
-+    /// a user and still differ from that user's DN byte for byte.
-+    #[must_use]
-+    pub(crate) fn dn_match_key(&self, dn: &str) -> Dn {
-+        split_first_rdn(dn)
-+            .and_then(|(value, path)| Some(self.dn_from_parts(&unescape_value(value)?, path)))
-+            .unwrap_or_else(|| dn.into())
-+    }
-+
-+    #[must_use]
-+    fn dn_from_parts(&self, rdn_value: &str, path: &str) -> Dn {
-         format!("{}={},{path}", self.get_rdn_attr(), dn_escape(rdn_value)).into()
-     }
- 
-```
-
-**File**: `crates/defguard_core/src/enterprise/ldap/model.rs` (modified, +20/-15)
-```diff
-@@ -14,6 +14,7 @@ use sqlx::{PgExecutor, query_as};
- 
- use super::{
-     LDAPConfig,
-+    dn::{find_unescaped_separator, unescape_value},
-     error::{LdapError, sanitize_ldap_string},
- };
- use crate::{handlers::user::check_username, hashset};
-@@ -443,14 +444,19 @@ pub(super) fn group_in_list(groups: &[String], name: &str) -> bool {
-         .any(|g| g.to_lowercase() == name.to_lowercase())
- }
- 
--/// Get first value from distinguished name, for example: cn=<value>,...
-+/// Splits a DN into the still-escaped value of its first component and the path after it.
-+#[must_use]
-+pub(super) fn split_first_rdn(dn: &str) -> Option<(&str, &str)> {
-+    let comma_index = find_unescaped_separator(dn, b',')?;
-+    let rdn = &dn[..comma_index];
-+    let eq_index = find_unescaped_separator(rdn, b'=')?;
-+    Some((&rdn[(eq_index + 1)..], &dn[(comma_index + 1)..]))
-+}
-+
-+/// Returns the unescaped value of the first component, so `cn=Doe\, John,ou=x` gives `Doe, John`.
- #[must_use]
- pub(crate) fn extract_rdn_value(dn: &str) -> Option<String> {
--    if let (Some(eq_index), Some(comma_index)) = (dn.find('='), dn.find(',')) {
--        dn.get((eq_index + 1)..comma_index).map(str::to_owned)
--    } else {
--        None
--    }
-+    split_first_rdn(dn).and_then(|(value, _)| unescape_value(value))
- }
- 
- /// Returns true only for a SearchResultEntry (LDAP protocol op id 4).
-@@ -463,18 +469,17 @@ pub(super) fn is_search_entry(entry: &ResultEntry) -> bool {
-     entry.0.id == 4
- }
- 
--/// Extract the remaining part of the distinguished name after the first comma, for example:
--/// `cn=user,dc=example,dc=com` should return `dc=example,dc=com`.
-+/// Returns the part after the first unescaped comma, so `cn=Doe\, John,ou=x` gives `ou=x`.
- #[must_use]
- pub(crate) fn extract_dn_path(dn: &str) -> Option<String> {
--    if let Some(parts) = dn.split_once(',') {
--        let path = parts.1.to_owned();
--        debug!("Extracted DN path '{path}' from DN '{dn}'");
--        Some(path)
--    } else {
-+    let Some(comma_index) = find_unescaped_separator(dn, b',') else {
-         warn!("Failed to extract DN path from '{dn}': no comma found");
--        None
--    }
-+        return None;
-+    };
-+
-+    let path = dn[(comma_index + 1)..].to_owned();
-+    debug!("Extracted DN path '{path}' from DN '{dn}'");
-+    Some(path)
- }
- 
- #[cfg(test)]
-```
-
-**File**: `crates/defguard_core/src/enterprise/ldap/test_client.rs` (modified, +24/-13)
-```diff
-@@ -223,8 +223,13 @@ impl TestClient {
- 
-     pub(super) fn add_test_user(&mut self, user: &User, config: &LDAPConfig) {
-         let dn = config.user_dn(user);
-+        self.add_test_user_with_dn(user, &dn);
-+    }
-+
-+    /// Records an entry under the DN given, for a test that needs the directory's own spelling.
-+    pub(super) fn add_test_user_with_dn(&mut self, user: &User, dn: &str) {
-         self.objects
--            .insert(dn, Object::User(Box::new(user.clone())));
-+            .insert(dn.into(), Object::User(Box::new(user.clone())));
-     }
- 
-     pub(super) fn remove_test_user(&mut self, user: &User, config: &LDAPConfig) {
-@@ -239,12 +244,22 @@ impl TestClient {
-     }
- 
-     pub(super) fn add_test_membership(&mut self, group: &Group, user: &User, config: &LDAPConfig) {
--        let group_dn = config.group_dn(&group.name);
-         let user_dn = config.user_dn(user);
-+        self.add_test_membership_with_dn(group, &user_dn, config);
-+    }
-+
-+    /// Records a member under the DN given, for a test that needs the directory's own spelling.
-+    pub(super) fn add_test_membership_with_dn(
-+        &mut self,
-+        group: &Group,
-+        user_dn: &str,
-+        config: &LDAPConfig,
-+    ) {
-+        let group_dn = config.group_dn(&group.name);
-         self.memberships
-             .entry(group_dn)
-             .or_default()
--            .insert(user_dn);
-+            .insert(user_dn.into());
-     }
- 
-     pub(super) fn remove_test_membership(
-@@ -492,21 +507,17 @@ impl LDAPConnection {
-     ) -> Result<HashMap<String, HashSet<&'a User>>, LdapError> {
-         let memberships = self.test_client.memberships.clone();
-         let mut result = HashMap::new();
--        let user_dns = all_ldap_users
-+        let users_by_dn = all_ldap_users
-             .iter()
--            .map(|user| self.config.user_dn(user))
--            .collect::<HashSet<_>>();
-+            .map(|user| (self.config.user_dn(user), user))
-+            .collect::<HashMap<_, _>>();
-         for (group_dn, member_dns) in memberships {
-             let members = member_dns
-                 .iter()
-                 .filter_map(|member_dn| {
--                    if user_dns.contains(member_dn) {
--                        all_ldap_users
--                            .iter()
--                            .find(|user| self.config.user_dn(user) == *member_dn)
--                    } else {
--                        None
--                    }
-+                    users_by_dn
-+                        .get(&self.config.dn_match_key(member_dn))
-+                        .copied()
-                 })
-                 .collect::<HashSet<_>>();
-             let group_name = extract_rdn_value(&group_dn).unwrap();
-```
-
-**File**: `crates/defguard_core/src/enterprise/ldap/tests.rs` (modified, +121/-0)
-```diff
-@@ -1891,6 +1891,58 @@ async fn test_fix_missing_user_path(_: PgPoolOptions, options: PgConnectOptions)
-     }
- }
- 
-+/// A group member the directory spells with `\,` must resolve to the user it names.
-+#[sqlx::test]
-+async fn test_sync_resolves_membership_for_comma_in_rdn(
-+    _: PgPoolOptions,
-+    options: PgConnectOptions,
-+) {
-+    let pool = setup_pool(options).await;
-+    let (wg_tx, _wg_rx) = wg_test_channel();
-+    let (ldap_tx, _ldap_rx) = ldap_test_channel();
-+    let _ = initialize_current_settings(&pool).await;
-+    set_test_license_business();
-+
-+    let mut ldap_conn = super::LDAPConnection::create().await.unwrap();
-+    ldap_conn.config.ldap_username_attr = "uid".to_owned();
-+    ldap_conn.config.ldap_user_rdn_attr = Some("cn".to_owned());
-+    let config = ldap_conn.config.clone();
-+
-+    let group = Group::new("directory-group").save(&pool).await.unwrap();
-+    let path = "OU=Members,DC=example,DC=com";
-+    let ldap_user = make_test_user(
-+        "jdoe",
-+        Some("Doe, John - jdoe".to_owned()),
-+        Some(path.to_owned()),
-+    );
-+    let directory_dn = format!(r"CN=Doe\, John - jdoe,{path}");
-+    assert_ne!(config.user_dn(&ldap_user), Dn::from(directory_dn.as_str()));
-+
-+    let mut defguard_user = ldap_user.clone();
-+    defguard_user.from_ldap = true;
-+    let defguard_user = defguard_user.save(&pool).await.unwrap();
-+
-+    ldap_conn
-+        .test_client_mut()
-+        .add_test_user_with_dn(&ldap_user, &directory_dn);
-+    let ldap_group = group.clone().as_noid();
-+    ldap_conn
-+        .test_client_mut()
-+        .add_test_group(&ldap_group, &config);
-+    ldap_conn
-+        .test_client_mut()
-+        .add_test_membership_with_dn(&ldap_group, &directory_dn, &config);
-+
-+    ldap_conn
-+        .sync(&pool, false, &wg_tx, &ldap_tx)
-+        .await
-+        .unwrap();
-+
-+    assert_eq!(
-+        group.member_usernames(&pool).await.unwrap(),
-+        vec![defguard_user.username]
-+    );
-+}
- /// A dry run must preview the additions/removals a full sync would make while writing nothing
- /// to LDAP or the Defguard database. This guards the hard "no import" requirement of the LDAP
- /// setup preview.
-@@ -3203,6 +3255,35 @@ async fn test_get_empty_user_path(_: PgPoolOptions, options: PgConnectOptions) {
-     assert_eq!(user_found.username, user.username);
- }
- 
-+#[test]
-+fn test_dn_match_key_reconciles_escape_spellings() {
-+    let config = LDAPConfig {
-+        ldap_username_attr: "uid".to_owned(),
-+        ldap_user_rdn_attr: Some("cn".to_owned()),
-+        ..LDAPConfig::default()
-+    };
-+    let path = "OU=Members,DC=example,DC=com";
-+    let user = make_test_user(
-+        "jdoe",
-+        Some("Doe, John - jdoe".to_owned()),
-+        Some(path.to_owned()),
-+    );
-+
-+    let member_dn = format!(r"CN=Doe\, John - jdoe,{path}");
-+    let rebuilt = config.user_dn(&user);
-+    assert_ne!(Dn::from(member_dn.as_str()), rebuilt);
-+    assert_eq!(config.dn_match_key(&member_dn), rebuilt);
-+
-+    // Either spelling a server may choose lands on one key.
-+    let hexpair_dn = format!(r"CN=Doe\2c John - jdoe,{path}");
-+    assert_eq!(
-+        config.dn_match_key(&hexpair_dn),
-+        config.dn_match_key(&member_dn)
-+    );
-+
-+    assert_eq!(config.dn_match_key("value"), Dn::from("value"));
-+}
-+
- #[test]
- fn test_extract_dn_value() {
-     assert_eq!(
-@@ -3367,6 +3448,31 @@ fn test_from_searchentry() {
-         ));
-     }
- 
-+    // escaped RDN value
-+    {
-+        let mut attrs = HashMap::new();
-+        attrs.insert("sn".to_owned(), vec!["lastname1".to_owned()]);
-+        attrs.insert("givenName".to_owned(), vec!["firstname1".to_owned()]);
-+        attrs.insert("mail".to_owned(), vec!["user1@example.com".to_owned()]);
-+
-+        let entry = LdapEntry::new(
-+            r"cn=Doe\, John,ou=users,dc=example,dc=com".into(),
-+            attrs.clone(),
-+        );
-+        let user = user_from_searchentry(&entry, "jdoe", None, &LDAPConfig::default()).unwrap();
-+        assert_eq!(user.ldap_rdn.as_deref(), Some("Doe, John"));
-+        assert_eq!(
-+            user.ldap_user_path.as_deref(),
-+            Some("ou=users,dc=example,dc=com")
-+        );
-+
-+        let entry = LdapEntry::new(r"cn=bad\ff,dc=example,dc=com".into(), attrs);
-+        assert!(matches!(
-+            user_from_searchentry(&entry, "jdoe", None, &LDAPConfig::default()),
-+            Err(LdapError::InvalidDN(_))
-+        ));
-+    }
-+
-     // invalid username
-     {
-         let mut attrs = HashMap::new();
-@@ -3775,6 +3881,21 @@ fn test_extract_dn_path_various_cases() {
-         extract_dn_path(" cn=abc ,dc=example,dc=com "),
-         Some("dc=example,dc=com ".to_owned())
-     );
-+
-+    assert_eq!(
-+        extract_dn_path(r"cn=Doe\, John,ou=users,dc=example,dc=com"),
-+        Some("ou=users,dc=example,dc=com".to_owned())
-+    );
-+    assert_eq!(
-+        extract_dn_path(r"cn=Doe\2c John,ou=users,dc=example,dc=com"),
-+        Some("ou=users,dc=example,dc=com".to_owned())
-+    );
-+    // An escaped backslash does not pro
-```
-
-**File**: `crates/defguard_core/tests/integration/ldap/mod.rs` (modified, +65/-0)
-```diff
-@@ -1718,3 +1718,68 @@ async fn test_sync_skips_referral_pdus_without_aborting(
-     let _ = ldap_conn.delete_user(&user).await;
-     let _ = ldap_conn.delete_group("referral_grp").await;
- }
-+
-+/// A comma in the RDN value must not stop the sync from applying the group membership.
-+///
-+/// Only a real server chooses the escape spelling, which is what makes this worth a live test.
-+#[ignore = "requires LDAP server"]
-+#[sqlx::test]
-+async fn test_sync_pulls_membership_for_comma_in_rdn(_: PgPoolOptions, options: PgConnectOptions) {
-+    let pool = setup_pool(options).await;
-+    const TEST_GROUP: &str = "comma_rdn_group";
-+    set_sync_settings(&pool, TEST_GROUP, true).await;
-+
-+    // The comma belongs in the RDN, so the username must come from a different attribute than the
-+    // one `just test-ldap` sets: `check_username` rejects a comma.
-+    let mut settings = Settings::get_current_settings();
-+    settings.ldap_username_attr = Some(if env::var("LDAP_USES_AD").is_ok() {
-+        "sAMAccountName".to_owned()
-+    } else {
-+        "uid".to_owned()
-+    });
-+    settings.ldap_user_rdn_attr = Some("cn".to_owned());
-+    set_settings(Some(settings));
-+
-+    let mut user = User::new(
-+        "comma_rdn_user",
-+        Some("pass123"),
-+        "Person",
-+        "Example",
-+        "comma.rdn@test.defguard",
-+        None,
-+    )
-+    .save(&pool)
-+    .await
-+    .unwrap();
-+    user.ldap_rdn = Some("Example, Person".to_owned());
-+
-+    let (wg_tx, _wg_rx) = wg_test_channel();
-+    let mut ldap_conn = LDAPConnection::create().await.unwrap();
-+    ldap_conn.config.ldap_uses_ad = env::var("LDAP_USES_AD").is_ok();
-+    let _ = ldap_conn.delete_user(&user).await;
-+    let _ = ldap_conn.delete_group(TEST_GROUP).await;
-+
-+    ldap_conn
-+        .add_user(&mut user, Some("pass123"), &pool)
-+        .await
-+        .unwrap();
-+    ldap_conn
-+        .add_user_to_group(&user, TEST_GROUP)
-+        .await
-+        .unwrap();
-+
-+    sync_ldap(&mut ldap_conn, &pool, true, &wg_tx).await;
-+
-+    let synced = User::find_by_username(&pool, "comma_rdn_user")
-+        .await
-+        .unwrap()
-+        .expect("user should still exist after sync");
-+    let groups = synced.member_of_names(&pool).await.unwrap();
-+    assert!(
-+        groups.iter().any(|group| group == TEST_GROUP),
-+        "expected {TEST_GROUP} in {groups:?}"
-+    );
-+
-+    ldap_conn.delete_group(TEST_GROUP).await.unwrap();
-+    ldap_conn.delete_user(&user).await.unwrap();
-+}
-```
-
----
-
-### Incident Patch 2: `46ee0daa` (2026-08-28)
-**Commit Message**: Fix sync issues during a failed HTTP request to provider (#3610)
-
-**File**: `crates/defguard_core/src/enterprise/directory_sync/mod.rs` (modified, +4/-1)
-```diff
-@@ -1333,9 +1333,12 @@ pub(crate) async fn do_directory_sync(
-                             }
-                             Err(err) => {
-                                 error!(
--                                    "Failed to get members of group '{}' for the user sync filter: {err}",
-+                                    "Failed to get members of group '{}' for the user sync filter, \
-+                                    aborting the sync to avoid acting on an incomplete list of \
-+                                    allowed users: {err}",
-                                     group.name
-                                 );
-+                                return Err(err);
-                             }
-                         }
-                     }
-```
-
-**File**: `crates/defguard_core/src/enterprise/directory_sync/testprovider.rs` (modified, +15/-1)
-```diff
-@@ -1,5 +1,9 @@
- use super::{DirectoryGroup, DirectorySync, DirectorySyncError, DirectoryUser};
- 
-+/// Name of a directory group whose member query always fails, so tests can simulate a
-+/// provider API error in the middle of a sync.
-+pub(crate) const FAILING_GROUP: &str = "failing-group";
-+
- #[allow(dead_code)]
- pub(crate) struct TestProviderDirectorySync;
- 
-@@ -18,6 +22,10 @@ impl DirectorySync for TestProviderDirectorySync {
-                 id: "3".into(),
-                 name: "group3".into(),
-             },
-+            DirectoryGroup {
-+                id: "4".into(),
-+                name: FAILING_GROUP.into(),
-+            },
-         ])
-     }
- 
-@@ -33,9 +41,15 @@ impl DirectorySync for TestProviderDirectorySync {
- 
-     async fn get_group_members(
-         &self,
--        _group: &DirectoryGroup,
-+        group: &DirectoryGroup,
-         _all_users_helper: Option<&[DirectoryUser]>,
-     ) -> Result<Vec<String>, DirectorySyncError> {
-+        if group.name == FAILING_GROUP {
-+            return Err(DirectorySyncError::RequestError(format!(
-+                "Failed to make GET request to /groups/{}/members",
-+                group.id
-+            )));
-+        }
-         Ok(vec![
-             "testuser@email.com".into(),
-             "testuserdisabled@email.com".into(),
-```
-
-**File**: `crates/defguard_core/src/enterprise/directory_sync/tests.rs` (modified, +40/-1)
-```diff
-@@ -17,7 +17,7 @@ mod test {
-     use sqlx::postgres::{PgConnectOptions, PgPoolOptions};
-     use tokio::sync::{broadcast, mpsc};
- 
--    use super::super::*;
-+    use super::super::{testprovider::FAILING_GROUP, *};
-     use crate::{
-         device_access::join_device_to_all_networks,
-         enterprise::{
-@@ -1017,6 +1017,45 @@ mod test {
-         assert!(gateway_rx.try_recv().is_err());
-     }
- 
-+    #[sqlx::test]
-+    async fn test_user_sync_filter_keeps_users_when_member_query_fails(
-+        _: PgPoolOptions,
-+        options: PgConnectOptions,
-+    ) {
-+        let pool = setup_pool(options).await;
-+
-+        let config = DefGuardConfig::new_test_config();
-+        let _ = SERVER_CONFIG.set(config.clone());
-+        let (gateway_tx, _gateway_rx) = broadcast::channel::<GatewayCommand>(16);
-+
-+        // limit the sync to a group whose member query always fails
-+        let mut provider = make_test_provider(
-+            &pool,
-+            DirectorySyncUserBehavior::Delete,
-+            DirectorySyncUserBehavior::Delete,
-+            DirectorySyncTarget::Users,
-+            true,
-+        )
-+        .await;
-+        provider.directory_sync_user_groups = Some(vec![FAILING_GROUP.to_owned()]);
-+        provider.save(&pool).await.unwrap();
-+
-+        make_test_user_and_device("FirstName", &pool).await;
-+        make_test_user_and_device("LastName", &pool).await;
-+        let users_before = User::all(&pool).await.unwrap().len();
-+        assert_eq!(users_before, 2);
-+
-+        let (ldap_tx, _ldap_rx) = ldap_test_channel();
-+        let (dirsync_tx, _dirsync_rx) = dirsync_test_channel();
-+        let result = do_directory_sync(&pool, &gateway_tx, &ldap_tx, &dirsync_tx).await;
-+
-+        // the sync aborts instead of acting on an incomplete list of allowed users
-+        assert_eq!(User::all(&pool).await.unwrap().len(), users_before);
-+        assert!(get_test_user(&pool, "FirstName").await.is_some());
-+        assert!(get_test_user(&pool, "LastName").await.is_some());
-+        assert!(result.is_err());
-+    }
-+
-     #[sqlx::test]
-     async fn test_users_prefetch_allowed_emails(_: PgPoolOptions, options: PgConnectOptions) {
-         let pool = setup_pool(options).await;
-```
-
----
-
-### Incident Patch 3: `86603705` (2026-10-02)
-**Commit Message**: fix gateway trim logic on license expiry (#3787)
-
-* keep one gw per location when license expires
-
-* make edge trim deterministic
-
-**File**: `.sqlx/query-31a7b0bb29abd495b5cec4e6d68f1d575ad4d755e18fa493db2581425309e368.json` (renamed, +2/-2)
-```diff
-@@ -1,12 +1,12 @@
- {
-   "db_name": "PostgreSQL",
--  "query": "UPDATE gateway SET enabled = false WHERE enabled AND id NOT IN (SELECT id FROM gateway WHERE enabled LIMIT 1\n            )",
-+  "query": "UPDATE gateway SET enabled = false WHERE enabled AND id NOT IN (SELECT DISTINCT ON (location_id) id FROM gateway WHERE enabled ORDER BY location_id, id\n            )",
-   "describe": {
-     "columns": [],
-     "parameters": {
-       "Left": []
-     },
-     "nullable": []
-   },
--  "hash": "4b1b06bb9769c0237e467ee7cc5265d9b0c45a5b27368cffd634d858e974d8aa"
-+  "hash": "31a7b0bb29abd495b5cec4e6d68f1d575ad4d755e18fa493db2581425309e368"
- }
-```
-
-**File**: `.sqlx/query-8d074246e8abad4a54b5a53a4414a4bc49c89343e02219514a3e4a4548d5655d.json` (renamed, +2/-2)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "db_name": "PostgreSQL",
--  "query": "SELECT * FROM proxy WHERE enabled AND id NOT IN (SELECT id FROM proxy WHERE enabled LIMIT 1\n            )",
-+  "query": "SELECT * FROM proxy WHERE enabled AND id NOT IN (SELECT id FROM proxy WHERE enabled ORDER BY id LIMIT 1\n            )",
-   "describe": {
-     "columns": [
-       {
-@@ -100,5 +100,5 @@
-       true
-     ]
-   },
--  "hash": "27e7e18a7014af541fe5f8f051f78d61eebe6a79945324e98ca452b50d6abc90"
-+  "hash": "8d074246e8abad4a54b5a53a4414a4bc49c89343e02219514a3e4a4548d5655d"
- }
-```
-
-**File**: `crates/defguard_common/src/db/models/gateway.rs` (modified, +2/-2)
-```diff
-@@ -209,14 +209,14 @@ impl Gateway<Id> {
-         Ok(record)
-     }
- 
--    /// Disable all Gateways except one. Used for expired licence.
-+    /// Keep one enabled Gateway per location. Used for expired licence.
-     pub async fn leave_one_enabled<'e, E>(executor: E) -> sqlx::Result<()>
-     where
-         E: PgExecutor<'e>,
-     {
-         let result = query_scalar!(
-             "UPDATE gateway SET enabled = false WHERE enabled AND id NOT IN (\
--                SELECT id FROM gateway WHERE enabled LIMIT 1
-+                SELECT DISTINCT ON (location_id) id FROM gateway WHERE enabled ORDER BY location_id, id
-             )"
-         )
-         .execute(executor)
-```
-
-**File**: `crates/defguard_common/src/db/models/proxy.rs` (modified, +1/-1)
-```diff
-@@ -173,7 +173,7 @@ impl Proxy<Id> {
-         query_as!(
-             Self,
-             "SELECT * FROM proxy WHERE enabled AND id NOT IN (\
--                SELECT id FROM proxy WHERE enabled LIMIT 1
-+                SELECT id FROM proxy WHERE enabled ORDER BY id LIMIT 1
-             )"
-         )
-         .fetch_all(executor)
-```
-
-**File**: `crates/defguard_core/src/enterprise/license.rs` (modified, +47/-11)
-```diff
-@@ -612,7 +612,7 @@ pub fn update_cached_license(key: Option<&str>) -> Result<(), LicenseError> {
- const RENEWAL_TIME: TimeDelta = TimeDelta::hours(24);
- const MAX_OVERDUE_TIME: TimeDelta = TimeDelta::days(14);
- 
--/// Scale down enabled Gateways and Edges to one (per component).
-+/// Keep one enabled Gateway per location and one Edge per instance.
- async fn trim_gateways_and_edges(
-     pool: &PgPool,
-     proxy_control_tx: &tokio::sync::mpsc::Sender<ProxyControlMessage>,
-@@ -1073,7 +1073,12 @@ mod test {
-     async fn test_trim_gateways_and_edges(_: PgPoolOptions, options: PgConnectOptions) {
-         let pool = setup_pool(options).await;
- 
--        let location = WireguardNetwork::default().save(&pool).await.unwrap();
-+        let mut location_a = WireguardNetwork::default();
-+        location_a.name = "Location A".to_string();
-+        let location_a = location_a.save(&pool).await.unwrap();
-+        let mut location_b = WireguardNetwork::default();
-+        location_b.name = "Location B".to_string();
-+        let location_b = location_b.save(&pool).await.unwrap();
-         let user = User::new(
-             "tester",
-             Some("hunter2"),
-@@ -1087,20 +1092,24 @@ mod test {
-         .unwrap();
-         let fullname = user.fullname();
- 
--        Gateway::new(location.id, "Gateway 1", "localhost", 8000, &fullname)
-+        Gateway::new(location_a.id, "Gateway 1", "localhost", 8000, &fullname)
-             .save(&pool)
-             .await
-             .unwrap();
--        Gateway::new(location.id, "Gateway 2", "localhost", 8001, &fullname)
-+        Gateway::new(location_a.id, "Gateway 2", "localhost", 8001, &fullname)
-+            .save(&pool)
-+            .await
-+            .unwrap();
-+        Gateway::new(location_b.id, "Gateway 3", "localhost", 8002, &fullname)
-             .save(&pool)
-             .await
-             .unwrap();
- 
--        Proxy::new("Proxy 1", "localhost", 9000, &fullname)
-+        let proxy_1 = Proxy::new("Proxy 1", "localhost", 9000, &fullname)
-             .save(&pool)
-             .await
-             .unwrap();
--        Proxy::new("Proxy 2", "localhost", 9001, &fullname)
-+        let proxy_2 = Proxy::new("Proxy 2", "localhost", 9001, &fullname)
-             .save(&pool)
-             .await
-             .unwrap();
-@@ -1113,15 +1122,42 @@ mod test {
-             .unwrap();
- 
-         let all_gateways = Gateway::all(&pool).await.unwrap();
--        assert_eq!(1, all_gateways.iter().filter(|gw| gw.enabled).count());
-+        assert_eq!(2, all_gateways.iter().filter(|gw| gw.enabled).count());
-         assert_eq!(1, all_gateways.iter().filter(|gw| !gw.enabled).count());
-+        assert!(
-+            all_gateways
-+                .iter()
-+                .any(|gateway| gateway.name == "Gateway 1" && gateway.enabled)
-+        );
-+        assert!(
-+            all_gateways
-+                .iter()
-+                .any(|gateway| gateway.name == "Gateway 2" && !gateway.enabled)
-+        );
-+        assert!(
-+            all_gateways
-+                .iter()
-+                .any(|gateway| gateway.name == "Gateway 3" && gateway.enabled)
-+        );
- 
-         let all_proxies = Proxy::all(&pool).await.unwrap();
--        assert_eq!(1, all_proxies.iter().filter(|gw| gw.enabled).count());
--        assert_eq!(1, all_proxies.iter().filter(|gw| !gw.enabled).count());
-+        assert_eq!(1, all_proxies.iter().filter(|proxy| proxy.enabled).count());
-+        assert_eq!(1, all_proxies.iter().filter(|proxy| !proxy.enabled).count());
-+        assert!(
-+            all_proxies
-+                .iter()
-+                .any(|proxy| proxy.id == proxy_1.id && proxy.enabled)
-+        );
-+        assert!(
-+            all_proxies
-+                .iter()
-+                .any(|proxy| proxy.id == proxy_2.id && !proxy.enabled)
-+        );
- 
--        // Only one Proxy has to be shut down.
--        assert!(proxy_control_rx.try_recv().is_ok());
-+        assert!(matches!(
-+            proxy_control_rx.try_recv(),
-+            Ok(ProxyControlMessage::ShutdownConnection(id)) if id == proxy_2.id
-+        ));
-         assert!(proxy_control_rx.try_recv().is_err());
-     }
- }
++  deploy-stable:
++    needs: build-current
++    if: github.event_name == 'push' && startsWith(github.ref_name, 'stable/2.')
++    runs-on: ubuntu-latest
++    permissions:
++      id-token: write
++      contents: read
++    steps:
++      - uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4.3.1
++        with:
++          aws-region: eu-central-1
++          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
++      - name: Update stable instance
++        run: |
++          version=${GITHUB_REF_NAME#stable/}
++          name=defguard-stable-${version//./}
++          id=$(aws ec2 describe-instances \
++            --filters "Name=tag:Name,Values=$name" Name=instance-state-name,Values=running \
++            --query 'Reservations[0].Instances[0].InstanceId' --output text)
++          if [ "$id" = "None" ]; then
++            echo "::notice::No running instance $name, skipping"
++            exit 0
++          fi
++          cmd=$(aws ssm send-command --instance-ids "$id" --document-name AWS-RunShellScript \
++            --parameters 'commands=["cd /home/admin/defguard && docker compose pull -q && docker compose up -d"]' \
++            --query Command.CommandId --output text)
++          aws ssm wait command-executed --command-id "$cmd" --instance-id "$id"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3885** (2026-10-19): Add update instance job - stable (@jakub-tldr)
+- **PR #3884** (2026-10-19): Add update instance job (@jakub-tldr)
+- **PR #3878** (2026-10-19): Server check clients use only hardware keys for fido2 factor (@filipslezaklab)
 - **PR #3875** (2026-10-15): Add desktop and mobile v2.2 as posture-check option (@j-chmielewski)
 - **PR #3873** (2026-10-15): Show error message if OIDC login fails (@t-aleksander)
 - **PR #3871** (2026-10-15): Ensure Defguard and Public urls differ (@j-chmielewski)
-- **PR #3867** (2026-10-14): Copy fixes (@j-chmielewski)
-- **PR #3866** (2026-10-14): Fix MFA Flow button phasing (@jakub-tldr)
-- **PR #3865** (2026-10-14): Fix permissions to allow load-test workflow alerts (@j-chmielewski)
 
 ---
 
@@ -3064,34 +2208,55 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. LDAP): handle escaped commas when parsing DNs (#3703)
+## X. add job to ci (#3885)
 
 **RULE**:
-When implementing operations in `crates/defguard_core/src/enterprise/ldap/client.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DefGuard/defguard. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/current.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DefGuard/defguard. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d8b8e8e0`: LDAP): handle escaped commas when parsing DNs (#3703). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2d1fc1de`: add job to ci (#3885). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/defguard_core/src/enterprise/ldap/client.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/current.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use super::{LDAPConfig, LDAPConnection, dn::find_unescaped_separator, error::LdapError};
-            if let Some(new_rdn) =
-                find_unescaped_separator(new_dn, b',').and_then(|index| new_dn.get(..index))
-            {
-                            if let Some(user) = dn_map.get(&self.config.dn_match_key(v)) {
+
+  deploy-stable:
+    needs: build-current
+    if: github.event_name == 'push' && startsWith(github.ref_name, 'stable/2.')
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4.3.1
+        with:
+          aws-region: eu-central-1
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+      - name: Update stable instance
+        run: |
+          version=${GITHUB_REF_NAME#stable/}
+          name=defguard-stable-${version//./}
+          id=$(aws ec2 describe-instances \
+            --filters "Name=tag:Name,Values=$name" Name=instance-state-name,Values=running \
+            --query 'Reservations[0].Instances[0].InstanceId' --output text)
+          if [ "$id" = "None" ]; then
+            echo "::notice::No running instance $name, skipping"
+            exit 0
+          fi
+          cmd=$(aws ssm send-command --instance-ids "$id" --document-name AWS-RunShellScript \
+            --parameters 'commands=["cd /home/admin/defguard && docker compose pull -q && docker compose up -d"]' \
+            --query Command.CommandId --output text)
+          a
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-use super::{LDAPConfig, LDAPConnection, error::LdapError};
-            if let Some((new_rdn, _rest)) = new_dn.split_once(',') {
-                            if let Some(user) = dn_map.get(&Dn::from(v.as_str())) {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d8b8e8e0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2d1fc1de` are properly handled with clean fallback behavior.

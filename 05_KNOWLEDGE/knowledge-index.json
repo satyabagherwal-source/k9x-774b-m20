@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T10:22:38.708Z",
-  "total_verified_learnings": 785,
+  "last_updated": "2026-10-19T10:28:56.090Z",
+  "total_verified_learnings": 787,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -5268,22 +5268,35 @@
     "learn-github-codeeditapp-codeedit": {
       "learning_id": "learn-github-codeeditapp-codeedit",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "codeeditapp-codeedit",
+      "source": "CodeEditApp/CodeEdit",
+      "repository": "CodeEditApp/CodeEdit",
       "slug": "codeeditapp-codeedit",
       "platform": "github",
       "source_url": "https://github.com/CodeEditApp/CodeEdit",
-      "source_version": "HEAD",
-      "content_hash": "b6047b78dce124dc65a248152cf3b10874b3c87e5b28b67bd3057b8b04eb136e",
+      "source_version": "fa2aebd8",
+      "content_hash": "fef2cfe8b6daf43bb6991dee7c8cdd0d25997673b53c815476c061c7a61fc84c",
       "dossier_path": "07_PROJECT_LEARNING/codeeditapp-codeedit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/codeeditapp-codeedit-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2492,
+          "title": "Ventura Crash (#2106)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.371Z"
+      "verified_at": "2026-10-19T10:28:51.365Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-codefuse-ai-codefuse-chatbot": {
       "learning_id": "learn-github-codefuse-ai-codefuse-chatbot",
@@ -6539,14 +6552,19 @@
       "slug": "defguard-defguard",
       "platform": "github",
       "source_url": "https://github.com/DefGuard/defguard",
-      "source_version": "b6b437f9",
-      "content_hash": "ea945c14f705f4d768e0364dd5dcbb8abcb6dcbc7c866731407af666af49469a",
+      "source_version": "2d1fc1de",
+      "content_hash": "27cf1079ef5c70a814cb40d2d1278a2d64ad2ebb9f8c8f79415797ba95097eed",
       "dossier_path": "07_PROJECT_LEARNING/defguard-defguard-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/defguard-defguard-learnings.md",
       "promoted_rules": [
         {
           "number": 1727,
           "title": "LDAP): handle escaped commas when parsing DNs (#3703)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2493,
+          "title": "add job to ci (#3885)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -6555,7 +6573,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:32:42.267Z",
+      "verified_at": "2026-10-19T10:28:56.078Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -20059,7 +20077,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openai/whisper-large-v3",
       "source_version": "hf-openai-whisper-large-v3",
-      "content_hash": "e70aa4610db3a5e5b413f8e2d01dd17cf3ae4ef5ee6d5e7d3a87893c4e9a0bce",
+      "content_hash": "e30f0df9f5670e4b5dbbbbc67379c5ba395c94815fbcdea301e752d4835be381",
       "dossier_path": "07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md",
       "promoted_rules": [],
@@ -20081,7 +20099,7 @@
         "learn-huggingface-hf-openai-whisper-large-v3-mv4a7pcw",
         "learn-huggingface-hf-openai-whisper-large-v3-mv4nl1uq"
       ],
-      "verified_at": "2026-10-18T02:08:38.501Z",
+      "verified_at": "2026-10-19T10:28:44.952Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25643,8 +25661,8 @@
       "slug": "karmada-io-karmada",
       "platform": "github",
       "source_url": "https://github.com/karmada-io/karmada",
-      "source_version": "aad2a753",
-      "content_hash": "541f946ccf186f4350ad4cd30dd094a07893cc2db35f1326e3fc7884bb82580a",
+      "source_version": "ef5b2fc8",
+      "content_hash": "f0bc8d47e55450b5629fb165df3e6bf8b2449a9fc9dfeed57516f26eb66544d3",
       "dossier_path": "07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
       "promoted_rules": [
@@ -25659,7 +25677,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T22:10:18.104Z",
+      "verified_at": "2026-10-19T10:28:54.482Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33221,22 +33239,35 @@
     "learn-github-oven-sh-bun": {
       "learning_id": "learn-github-oven-sh-bun",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "oven-sh-bun",
+      "source": "oven-sh/bun",
+      "repository": "oven-sh/bun",
       "slug": "oven-sh-bun",
       "platform": "github",
       "source_url": "https://github.com/oven-sh/bun",
-      "source_version": "HEAD",
-      "content_hash": "4a20c856450bc66dc8ef6c1e0f7a9c5a602b63cc21790e3d0975212b461d6b0b",
+      "source_version": "91e7e3b1",
+      "content_hash": "64ffd42ad0d294c3a53c7ff971a0272281f08c92e82e9fca8e834912aeb1c598",
       "dossier_path": "07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2491,
+          "title": "`bun check`: 1.4x to 7.8x faster on large projects. Fixes for `bun check`, `bun",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.952Z"
+      "verified_at": "2026-10-19T10:28:47.314Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-oxc-project-oxc": {
       "learning_id": "learn-github-oxc-project-oxc",
@@ -73848,13 +73879,13 @@
       "rule_number": 1692,
       "title": "build(deps): bump github/codeql-action/upload-sarif",
       "source_url": "https://github.com/karmada-io/karmada",
-      "source_version": "aad2a753",
+      "source_version": "ef5b2fc8",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T22:10:18.104Z"
+      "verified_at": "2026-10-19T10:28:54.482Z"
     },
     "rule-1693": {
       "learning_id": "rule-1693",
@@ -85196,6 +85227,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T10:22:38.697Z"
+    },
+    "rule-2491": {
+      "learning_id": "rule-2491",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2491,
+      "title": "`bun check`: 1.4x to 7.8x faster on large projects. Fixes for `bun check`, `bun",
+      "source_url": "https://github.com/oven-sh/bun",
+      "source_version": "91e7e3b1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T10:28:47.314Z"
+    },
+    "rule-2492": {
+      "learning_id": "rule-2492",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2492,
+      "title": "Ventura Crash (#2106)",
+      "source_url": "https://github.com/CodeEditApp/CodeEdit",
+      "source_version": "fa2aebd8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T10:28:51.365Z"
+    },
+    "rule-2493": {
+      "learning_id": "rule-2493",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2493,
+      "title": "add job to ci (#3885)",
+      "source_url": "https://github.com/DefGuard/defguard",
+      "source_version": "2d1fc1de",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T10:28:56.078Z"
     }
   },
   "aliases": {

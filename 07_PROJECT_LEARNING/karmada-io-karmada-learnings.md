@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/karmada-io-karmada-learnings.md`  
 > **Source**: github ([https://github.com/karmada-io/karmada](https://github.com/karmada-io/karmada))  
-> **Source Version**: `aad2a753`  
+> **Source Version**: `ef5b2fc8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T22:10:17.989Z  
+> **Timestamp**: 2026-10-19T10:28:54.351Z  
 > **Learning ID**: `learn-github-karmada-io-karmada`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/karmada-io-karmada-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/karmada-io/karmada](https://github.com/karmada-io/karmada))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T22:10:17.609Z  
+> **Harvest Timestamp**: 2026-10-19T10:28:54.344Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open, Multi-Cloud, Multi-Cluster Kubernetes Orchestration
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 5729 stars
+- **Stars / Engagement**: 5728 stars
 
 ---
 
@@ -984,11 +984,14 @@ func (e *workloadInterpreter) responseWithExploreInterpretStatus(workload *workl
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7940** (2026-10-12): **build(deps): bump helm/chart-testing-action from 2.8.0 to 2.9.0**
-  *Symptoms*: Bumps [helm/chart-testing-action](https://github.com/helm/chart-testing-action) from 2.8.0 to 2.9.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/helm/chart-testing-action/releases">helm/chart-testing-action's releases</a>.</em></p> <blockquote> <h2>v2.9.0</h2> <h2>What's Changed</h2> <ul> <li>feat: <code>uv_version</code> to pin <code>uv</code> by <a href="https://github.com/jmelahman"><code>@​jmelahman</code></a> in <a href="https://redirect.github.com/helm/chart-testing-action/pull/194">helm/chart-testing-action#194</a></li> <li>Bump the actions group across 1 directory with 3 updates by <a href="https://github.com/dependabot"><code>@​dependabot</code></a>[bot] in <a href="https://redirect.github.com/helm/chart-testing-action/pull/199">helm/chart-testing-action#199</a></li> <li>Fix typo in permissions section of README by <a href="https://github.com/MrLuje"><code>@​MrLuje</code></a> in <a href="https://redirect.github.com/helm/chart-testing-action/pull/187">helm/chart-testing-action#187</a></li> <li>chore: remove outdated defaults from action.yml by <a href="https://github.com/pmalek"><code>@​pmalek</code></a> in <a href="https://redirect.github.com/helm/chart-testing-action/pull/197">helm/chart-testing-action#197</a></li> <li>Bump actions/checkout from 5.0.0 to 6.0.2 by <a href="https://github.com/dependabot"><code>@​dependabot</code></a>[bot] in <a href="https://redirect.github.com/helm/chart-testing-action/pull/200">helm/cha
+- **Issue #7950** (2026-10-19): **Removed github workflow for releasing images to SWR**
+  *Symptoms*: **What type of PR is this?**  /kind cleanup  **What this PR does / why we need it**:  This PR removes all workflow related to publishing container images to SWR.  **Which issue(s) this PR fixes**: Fixes # Part of #7890  **Special notes for your reviewer**:  **Does this PR introduce a user-facing change?**: ```release-note Images will no longer be published to the Huawei Cloud SWR registry (swr.ap-southeast-1.myhuaweicloud.com/karmada) starting from release-1.20. Please pull images from DockerHub (docker.io/karmada) instead.  ```  
+  **Post-Mortem & Fix Analysis**:
+  > :warning: Please install the !['codecov app svg image'](https://github.com/codecov/engineering-team/assets/152432831/e90313f4-9d3a-4b63-8b54-cfe14e7ec20d) to ensure uploads and comments are reliably processed by Codecov.  ## [Codecov](https://app.codecov.io/gh/karmada-io/karmada/pull/7950?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=karmada-io) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 42.46%. Comparing base ([`b14c23c`](https://app.codecov.io/gh/karmada-io/karmada/commit/b14c23c6dfa652d0b1b8d4a0dce28043b33e0c0c?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=karmada-io)) to head ([`1aee66c`](https://app.codecov.io/gh/karmada-io/karmada/commit/1aee66ce4f1e64a0f4871c25763010280f89d944?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comme
+  > [APPROVALNOTIFIER] This PR is **APPROVED**  Approval requirements bypassed by manually added approval.  This pull-request has been approved by:  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=karmada-io%2Fkarmada).  The pull request process is described [here](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process)  <details > Needs approval from an approver in each of these files:  - **[OWNERS](https://github.com/karmada-io/karmada/blob/master/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["whitewindmills"]} -->
 
-- **Issue #7939** (2026-10-12): **build(deps): bump github/codeql-action/upload-sarif from 4.38.2 to 4.38.3**
-  *Symptoms*: Bumps [github/codeql-action/upload-sarif](https://github.com/github/codeql-action) from 4.38.2 to 4.38.3. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/github/codeql-action/releases">github/codeql-action/upload-sarif's releases</a>.</em></p> <blockquote> <h2>v4.38.3</h2> <ul> <li><em>Upcoming breaking change</em>: CodeQL version 2.21.2 and earlier were discontinued on 24 September 2026 alongside GitHub Enterprise Server 3.17, and will be unsupported by the next minor release of the CodeQL Action. Added a deprecation warning for customers using these versions of CodeQL. <a href="https://redirect.github.com/github/codeql-action/pull/4188">#4188</a></li> <li>Update default CodeQL bundle version to <a href="https://github.com/github/codeql-action/releases/tag/codeql-bundle-v2.27.2">2.27.2</a>. <a href="https://redirect.github.com/github/codeql-action/pull/4203">#4203</a></li> <li>Fixed a bug where the decision of whether to use a per-language bundle did not account for custom configurations that reference queries outside of compiled CodeQL packs. This issue was caught during internal testing and did not affect any customer repositories. We will resume the roll out of per-language bundles in the coming weeks. <a href="https://redirect.github.com/github/codeql-action/pull/4184">#4184</a></li> </ul> </blockquote> </details> <details> <summary>Changelog</summary> <p><em>Sourced from <a href="https://github.com/github/codeql-action/blob/mai
+- **Issue #7948** (2026-10-19): **build(deps): bump github/codeql-action/upload-sarif from 4.38.3 to 4.39.0**
+  *Symptoms*: Bumps [github/codeql-action/upload-sarif](https://github.com/github/codeql-action) from 4.38.3 to 4.39.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/github/codeql-action/releases">github/codeql-action/upload-sarif's releases</a>.</em></p> <blockquote> <h2>v4.39.0</h2> <ul> <li><em>Breaking change</em>: Bump the minimum required CodeQL bundle version to 2.20.7. <a href="https://redirect.github.com/github/codeql-action/pull/4205">#4205</a></li> <li>The <code>codeql-action/analyze</code> step now validates that a correct argument for the <code>checkout_path</code> input has been provided. The <code>checkout_path</code> input must be set to the path where the repository that is being analyzed is checked out at on the runner, if that path is something other than the workspace root. If the path does not point to a repository checkout or is different from the path that was used by <code>codeql-action/init</code>, then the CodeQL Action now produces a warning. <a href="https://redirect.github.com/github/codeql-action/pull/4148">#4148</a></li> <li>Resolved an issue with third-party caching implementations that prevented caches from being restored correctly. <a href="https://redirect.github.com/github/codeql-action/pull/4206">#4206</a></li> <li>The <code>codeql-action/start-proxy</code> step that is used in Code Scanning Default Setup now finds CodeQL releases using the same logic as <code>codeql-action/init</code>. This primarily benefit
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1005,134 +1008,56 @@ func (e *workloadInterpreter) responseWithExploreInterpretStatus(workload *workl
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b270ea73` (2026-10-12)
+### Incident Patch 1: `f6653714` (2026-10-19)
 **Commit Message**: build(deps): bump github/codeql-action/upload-sarif
 
-Bumps [github/codeql-action/upload-sarif](https://github.com/github/codeql-action) from 4.38.2 to 4.38.3.
+Bumps [github/codeql-action/upload-sarif](https://github.com/github/codeql-action) from 4.38.3 to 4.39.0.
 - [Release notes](https://github.com/github/codeql-action/releases)
 - [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/github/codeql-action/compare/2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2...24c54180a607b1449ed407dd24f251e4e9147c8d)
+- [Commits](https://github.com/github/codeql-action/compare/24c54180a607b1449ed407dd24f251e4e9147c8d...6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee)
 
 ---
 updated-dependencies:
 - dependency-name: github/codeql-action/upload-sarif
-  dependency-version: 4.38.3
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/ci-image-scanning-on-schedule.yml` (modified, +1/-1)
-```diff
-@@ -69,7 +69,7 @@ jobs:
-           cache: false
-           vuln-type: 'os,library'
-       - name: Upload Trivy scan results to GitHub Security tab
--        uses: github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
-+        uses: github/codeql-action/upload-sarif@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
-         with:
-           sarif_file: '${{ matrix.target }}:${{ matrix.karmada-version }}.trivy-results.sarif'
-           ref: ${{steps.gen_git_info.outputs.ref}}
-```
-
-**File**: `.github/workflows/ci-image-scanning.yaml` (modified, +1/-1)
-```diff
-@@ -68,6 +68,6 @@ jobs:
-           vuln-type: 'os,library'
-           cache: false
-       - name: Upload Trivy scan results to GitHub Security tab
--        uses: github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
-+        uses: github/codeql-action/upload-sarif@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
-         with:
-           sarif_file: 'trivy-results.sarif'          
-```
-
----
-
-### Incident Patch 2: `7657dd2e` (2026-09-28)
-**Commit Message**: build(deps): bump github/codeql-action/upload-sarif
-
-Bumps [github/codeql-action/upload-sarif](https://github.com/github/codeql-action) from 4.38.1 to 4.38.2.
-- [Release notes](https://github.com/github/codeql-action/releases)
-- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/github/codeql-action/compare/1c5b675653bb5c22dbe9b12b556ec555138e09fd...2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2)
-
----
-updated-dependencies:
-- dependency-name: github/codeql-action/upload-sarif
-  dependency-version: 4.38.2
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/ci-image-scanning-on-schedule.yml` (modified, +1/-1)
-```diff
-@@ -69,7 +69,7 @@ jobs:
-           cache: false
-           vuln-type: 'os,library'
-       - name: Upload Trivy scan results to GitHub Security tab
--        uses: github/codeql-action/upload-sarif@1c5b675653bb5c22dbe9b12b556ec555138e09fd # v4.38.1
-+        uses: github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
-         with:
-           sarif_file: '${{ matrix.target }}:${{ matrix.karmada-version }}.trivy-results.sarif'
-           ref: ${{steps.gen_git_info.outputs.ref}}
-```
-
-**File**: `.github/workflows/ci-image-scanning.yaml` (modified, +1/-1)
-```diff
-@@ -68,6 +68,6 @@ jobs:
-           vuln-type: 'os,library'
-           cache: false
-       - name: Upload Trivy scan results to GitHub Security tab
--        uses: github/codeql-action/upload-sarif@1c5b675653bb5c22dbe9b12b556ec555138e09fd # v4.38.1
-+        uses: github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
-         with:
-           sarif_file: 'trivy-results.sarif'          
-```
-
----
-
-### Incident Patch 3: `d1963a41` (2026-09-21)
-**Commit Message**: build(deps): bump codecov/codecov-action from 7.0.0 to 7.1.1
-
-Bumps [codecov/codecov-action](https://github.com/codecov/codecov-action) from 7.0.0 to 7.1.1.
-- [Release notes](https://github.com/codecov/codecov-action/releases)
-- [Changelog](https://github.com/codecov/codecov-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/codecov/codecov-action/compare/fb8b3582c8e4def4969c97caa2f19720cb33a72f...303a32d7a59b442fa8d48b6a1cc6825c09c847a5)
-
----
-updated-dependencies:
-- dependency-name: codecov/codecov-action
-  dependency-version: 7.1.1
+  dependency-version: 4.39.0
   dependency-type: direct:production
   update-type: version-update:semver-minor
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/ci.yml` (modified, +1/-1)
+**File**: `.github/workflows/ci-image-scanning-on-schedule.yml` (modified, +1/-1)
 ```diff
-@@ -91,7 +91,7 @@ jobs:
-         # Prevent running from the forked repository that doesn't need to upload coverage.
-         # In addition, running on the forked repository would fail as missing the necessary secret.
-         if: ${{ github.repository == 'karmada-io/karmada' }}
--        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
-+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
+@@ -69,7 +69,7 @@ jobs:
+           cache: false
+           vuln-type: 'os,library'
+       - name: Upload Trivy scan results to GitHub Security tab
+-        uses: github/codeql-action/upload-sarif@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
++        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
          with:
-           # Even though token upload token is not required for public repos,
-           # but adding a token might increase successful uploads as per:
+           sarif_file: '${{ matrix.target }}:${{ matrix.karmada-version }}.trivy-results.sarif'
+           ref: ${{steps.gen_git_info.outputs.ref}}
+```
+
+**File**: `.github/workflows/ci-image-scanning.yaml` (modified, +1/-1)
+```diff
+@@ -68,6 +68,6 @@ jobs:
+           vuln-type: 'os,library'
+           cache: false
+       - name: Upload Trivy scan results to GitHub Security tab
+-        uses: github/codeql-action/upload-sarif@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
++        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
+         with:
+           sarif_file: 'trivy-results.sarif'          
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7950** (2026-10-19): Removed github workflow for releasing images to SWR (@RainbowMango)
+- **PR #7948** (2026-10-19): build(deps): bump github/codeql-action/upload-sarif from 4.38.3 to 4.39.0 (@dependabot[bot])
 - **PR #7940** (2026-10-12): build(deps): bump helm/chart-testing-action from 2.8.0 to 2.9.0 (@dependabot[bot])
 - **PR #7939** (2026-10-12): build(deps): bump github/codeql-action/upload-sarif from 4.38.2 to 4.38.3 (@dependabot[bot])
 - **PR #7938** (2026-10-12): build(deps): bump actions/upload-artifact from 7.0.1 to 7.0.2 (@dependabot[bot])
 - **PR #7937** (2026-10-12): build(deps): bump actions/download-artifact from 8.0.1 to 8.0.2 (@dependabot[bot])
-- **PR #7932** (2026-10-12): build: bump Go to v1.26.9 (@FengyuanYin)
-- **PR #7916** (2026-10-08): build(deps): bump alpine from 3.24.1 to 3.24.2 in /cluster/images (@dependabot[bot])
 
 ---
 
@@ -1158,7 +1083,7 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 When implementing operations in `.github/workflows/ci-image-scanning-on-schedule.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karmada-io/karmada. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b270ea73`: build(deps): bump github/codeql-action/upload-sarif. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f6653714`: build(deps): bump github/codeql-action/upload-sarif. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci-image-scanning-on-schedule.yml`.
@@ -1166,14 +1091,14 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        uses: github/codeql-action/upload-sarif@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
+        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-        uses: github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
+        uses: github/codeql-action/upload-sarif@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b270ea73` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f6653714` are properly handled with clean fallback behavior.
