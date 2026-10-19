@@ -2671,3 +2671,9 @@ Every entry in this ledger must capture:
 | `learn-github-software-mansion-react-native-reanimated` | `https://github.com/software-mansion/react-native-reanimated` | `f21f7262` | Multi-dimensional audit evidence | 2026-10-18T23:57:58.650Z |
 | `learn-github-liftbridge-io-liftbridge` | `https://github.com/liftbridge-io/liftbridge` | `af2a6626` | Multi-dimensional audit evidence | 2026-10-18T23:58:01.076Z |
 | `learn-github-erikgrinaker-toydb` | `https://github.com/erikgrinaker/toydb` | `2d7cd32e` | Multi-dimensional audit evidence | 2026-10-18T23:58:05.315Z |
+| `learn-huggingface-convaiinnovations-laya` | `https://huggingface.co/convaiinnovations/laya` | `hf-convaii` | Multi-dimensional audit evidence | 2026-10-19T00:03:59.172Z |
+| `learn-github-charlie85270-tail-kit` | `https://github.com/Charlie85270/tail-kit` | `80efd91e` | Multi-dimensional audit evidence | 2026-10-19T00:03:59.382Z |
+| `learn-github-xampprocky-tokei` | `https://github.com/XAMPPRocky/tokei` | `c14f7447` | Multi-dimensional audit evidence | 2026-10-19T00:04:02.081Z |
+| `learn-github-akveo-react-native-ui-kitten` | `https://github.com/akveo/react-native-ui-kitten` | `e73dce62` | Multi-dimensional audit evidence | 2026-10-19T00:04:06.076Z |
+| `learn-github-go-dev-frame-sponge` | `https://github.com/go-dev-frame/sponge` | `beef9eec` | Multi-dimensional audit evidence | 2026-10-19T00:04:09.059Z |
+| `learn-github-spacejam-sled` | `https://github.com/spacejam/sled` | `e449d171` | Multi-dimensional audit evidence | 2026-10-19T00:04:13.056Z |

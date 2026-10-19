@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-18T23:58:05.277Z",
-  "total_verified_learnings": 405,
+  "last_updated": "2026-10-19T00:04:13.013Z",
+  "total_verified_learnings": 410,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -901,22 +901,35 @@
     "learn-github-akveo-react-native-ui-kitten": {
       "learning_id": "learn-github-akveo-react-native-ui-kitten",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "akveo-react-native-ui-kitten",
+      "source": "akveo/react-native-ui-kitten",
+      "repository": "akveo/react-native-ui-kitten",
       "slug": "akveo-react-native-ui-kitten",
       "platform": "github",
       "source_url": "https://github.com/akveo/react-native-ui-kitten",
-      "source_version": "HEAD",
-      "content_hash": "9458ec29886758d5c300f69369fd750127cf195768c1bdd4b3cb7ef40e73e3a6",
+      "source_version": "e73dce62",
+      "content_hash": "2c4b247dd9e0c368917cb67d807a8a8dd6c02e71309881499a91a233c9a2e268",
       "dossier_path": "07_PROJECT_LEARNING/akveo-react-native-ui-kitten-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/akveo-react-native-ui-kitten-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1890,
+          "title": "autocomplete): select an option with the mouse on web (#1934)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.701Z"
+      "verified_at": "2026-10-19T00:04:06.028Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-alephaitech-workbuddyguide": {
       "learning_id": "learn-github-alephaitech-workbuddyguide",
@@ -3718,22 +3731,35 @@
     "learn-github-charlie85270-tail-kit": {
       "learning_id": "learn-github-charlie85270-tail-kit",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "charlie85270-tail-kit",
+      "source": "Charlie85270/tail-kit",
+      "repository": "Charlie85270/tail-kit",
       "slug": "charlie85270-tail-kit",
       "platform": "github",
       "source_url": "https://github.com/Charlie85270/tail-kit",
-      "source_version": "HEAD",
-      "content_hash": "4b92b0ae5e71d8dde44c54441bb07dcac96d9f1d0faf601baa8c60f0ff582ac7",
+      "source_version": "80efd91e",
+      "content_hash": "87afceb944cd2f51eb4f612abbfa874de0c626ce0b2809ec701e310cbc0939cb",
       "dossier_path": "07_PROJECT_LEARNING/charlie85270-tail-kit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/charlie85270-tail-kit-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1888,
+          "title": "update tailwind css v3",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.249Z"
+      "verified_at": "2026-10-19T00:03:59.338Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-chatchat-space-langchain-chatchat": {
       "learning_id": "learn-github-chatchat-space-langchain-chatchat",
@@ -8463,22 +8489,35 @@
     "learn-github-go-dev-frame-sponge": {
       "learning_id": "learn-github-go-dev-frame-sponge",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "go-dev-frame-sponge",
+      "source": "go-dev-frame/sponge",
+      "repository": "go-dev-frame/sponge",
       "slug": "go-dev-frame-sponge",
       "platform": "github",
       "source_url": "https://github.com/go-dev-frame/sponge",
-      "source_version": "HEAD",
-      "content_hash": "8bdb7f9fb6067614195563e34b6ecf063d0cc06f2e33dc72978e18e26745218e",
+      "source_version": "beef9eec",
+      "content_hash": "91b94fed531e3ac0b5e072013db5b5dba5afc63d3d6ddafc834a26bf593f5aef",
       "dossier_path": "07_PROJECT_LEARNING/go-dev-frame-sponge-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/go-dev-frame-sponge-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1891,
+          "title": "test failed",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.101Z"
+      "verified_at": "2026-10-19T00:04:08.990Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-go-eagle-eagle": {
       "learning_id": "learn-github-go-eagle-eagle",
@@ -13121,7 +13160,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/convaiinnovations/laya",
       "source_version": "hf-convaiinnovations-laya",
-      "content_hash": "72b110acb12679c63e4dfd989eaf56c00eba4be5c16b0b893c2c3ef7168ff9de",
+      "content_hash": "14c2229815eae5d381e5264f49b9406b27b002835c8e2206e03d7827897b4369",
       "dossier_path": "07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md",
       "promoted_rules": [
@@ -13534,7 +13573,7 @@
         "learn-huggingface-hf-convaiinnovations-laya-mv41qpya",
         "learn-huggingface-hf-convaiinnovations-laya-mv4flqk7"
       ],
-      "verified_at": "2026-10-17T20:54:20.650Z",
+      "verified_at": "2026-10-19T00:03:59.118Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33188,22 +33227,35 @@
     "learn-github-spacejam-sled": {
       "learning_id": "learn-github-spacejam-sled",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "spacejam-sled",
+      "source": "spacejam/sled",
+      "repository": "spacejam/sled",
       "slug": "spacejam-sled",
       "platform": "github",
       "source_url": "https://github.com/spacejam/sled",
-      "source_version": "HEAD",
-      "content_hash": "340e41493b2197b853dd98d0f9b6c98427ac10f2764a505508981554f2931d1c",
+      "source_version": "e449d171",
+      "content_hash": "daafd916f7ed55e4f806042e8f9c5aea1ab10466fff2bbf0717400d8921c16c8",
       "dossier_path": "07_PROJECT_LEARNING/spacejam-sled-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/spacejam-sled-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1892,
+          "title": "Add block checker deadlock debugger. Fix bug with batch atomicity of the new mer",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.639Z"
+      "verified_at": "2026-10-19T00:04:13.007Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-spacering-net-codeg": {
       "learning_id": "learn-github-spacering-net-codeg",
@@ -36991,22 +37043,35 @@
     "learn-github-xampprocky-tokei": {
       "learning_id": "learn-github-xampprocky-tokei",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "xampprocky-tokei",
+      "source": "XAMPPRocky/tokei",
+      "repository": "XAMPPRocky/tokei",
       "slug": "xampprocky-tokei",
       "platform": "github",
       "source_url": "https://github.com/XAMPPRocky/tokei",
-      "source_version": "HEAD",
-      "content_hash": "2029b4f82a6feee6ceab749bbe62f18e956bf3be0d55b04699750439e276add6",
+      "source_version": "c14f7447",
+      "content_hash": "429729a57793309f9028ae540874aa2a48f77ce046082aff36d37cd8f7a360aa",
       "dossier_path": "07_PROJECT_LEARNING/xampprocky-tokei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/xampprocky-tokei-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1889,
+          "title": "downcast type mismatches in clap_builder (#1310)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.352Z"
+      "verified_at": "2026-10-19T00:04:02.037Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-xcodesorg-xcodesapp": {
       "learning_id": "learn-github-xcodesorg-xcodesapp",
@@ -70734,6 +70799,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-18T23:58:05.271Z"
+    },
+    "rule-1888": {
+      "learning_id": "rule-1888",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1888,
+      "title": "update tailwind css v3",
+      "source_url": "https://github.com/Charlie85270/tail-kit",
+      "source_version": "80efd91e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:03:59.338Z"
+    },
+    "rule-1889": {
+      "learning_id": "rule-1889",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1889,
+      "title": "downcast type mismatches in clap_builder (#1310)",
+      "source_url": "https://github.com/XAMPPRocky/tokei",
+      "source_version": "c14f7447",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:04:02.037Z"
+    },
+    "rule-1890": {
+      "learning_id": "rule-1890",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1890,
+      "title": "autocomplete): select an option with the mouse on web (#1934)",
+      "source_url": "https://github.com/akveo/react-native-ui-kitten",
+      "source_version": "e73dce62",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:04:06.028Z"
+    },
+    "rule-1891": {
+      "learning_id": "rule-1891",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1891,
+      "title": "test failed",
+      "source_url": "https://github.com/go-dev-frame/sponge",
+      "source_version": "beef9eec",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:04:08.990Z"
+    },
+    "rule-1892": {
+      "learning_id": "rule-1892",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1892,
+      "title": "Add block checker deadlock debugger. Fix bug with batch atomicity of the new mer",
+      "source_url": "https://github.com/spacejam/sled",
+      "source_version": "e449d171",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:04:13.007Z"
     }
   },
   "aliases": {

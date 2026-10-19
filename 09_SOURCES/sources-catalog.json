@@ -115,8 +115,8 @@
     "sourceUrl": "https://huggingface.co/convaiinnovations/laya",
     "sourceVersion": "hf-convaiinnovations-laya",
     "license": "Open-Source",
-    "contentHash": "72b110acb12679c63e4dfd989eaf56c00eba4be5c16b0b893c2c3ef7168ff9de",
-    "lastHarvestedAt": "2026-10-17T20:54:20.694Z",
+    "contentHash": "14c2229815eae5d381e5264f49b9406b27b002835c8e2206e03d7827897b4369",
+    "lastHarvestedAt": "2026-10-19T00:03:59.172Z",
     "learningId": "learn-huggingface-convaiinnovations-laya"
   },
   "hf-edge0-audio8-asr-infinite": {
@@ -3828,5 +3828,55 @@
     "contentHash": "8191e09b517614fb79d541d8411326274c5f9be23976c8ed289a4a7fa9c9473d",
     "lastHarvestedAt": "2026-10-18T23:58:05.315Z",
     "learningId": "learn-github-erikgrinaker-toydb"
+  },
+  "charlie85270-tail-kit": {
+    "repository": "Charlie85270/tail-kit",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Charlie85270/tail-kit",
+    "sourceVersion": "80efd91e",
+    "license": "MIT",
+    "contentHash": "87afceb944cd2f51eb4f612abbfa874de0c626ce0b2809ec701e310cbc0939cb",
+    "lastHarvestedAt": "2026-10-19T00:03:59.382Z",
+    "learningId": "learn-github-charlie85270-tail-kit"
+  },
+  "xampprocky-tokei": {
+    "repository": "XAMPPRocky/tokei",
+    "platform": "github",
+    "sourceUrl": "https://github.com/XAMPPRocky/tokei",
+    "sourceVersion": "c14f7447",
+    "license": "NOASSERTION",
+    "contentHash": "429729a57793309f9028ae540874aa2a48f77ce046082aff36d37cd8f7a360aa",
+    "lastHarvestedAt": "2026-10-19T00:04:02.081Z",
+    "learningId": "learn-github-xampprocky-tokei"
+  },
+  "akveo-react-native-ui-kitten": {
+    "repository": "akveo/react-native-ui-kitten",
+    "platform": "github",
+    "sourceUrl": "https://github.com/akveo/react-native-ui-kitten",
+    "sourceVersion": "e73dce62",
+    "license": "MIT",
+    "contentHash": "2c4b247dd9e0c368917cb67d807a8a8dd6c02e71309881499a91a233c9a2e268",
+    "lastHarvestedAt": "2026-10-19T00:04:06.076Z",
+    "learningId": "learn-github-akveo-react-native-ui-kitten"
+  },
+  "go-dev-frame-sponge": {
+    "repository": "go-dev-frame/sponge",
+    "platform": "github",
+    "sourceUrl": "https://github.com/go-dev-frame/sponge",
+    "sourceVersion": "beef9eec",
+    "license": "MIT",
+    "contentHash": "91b94fed531e3ac0b5e072013db5b5dba5afc63d3d6ddafc834a26bf593f5aef",
+    "lastHarvestedAt": "2026-10-19T00:04:09.059Z",
+    "learningId": "learn-github-go-dev-frame-sponge"
+  },
+  "spacejam-sled": {
+    "repository": "spacejam/sled",
+    "platform": "github",
+    "sourceUrl": "https://github.com/spacejam/sled",
+    "sourceVersion": "e449d171",
+    "license": "Apache-2.0",
+    "contentHash": "daafd916f7ed55e4f806042e8f9c5aea1ab10466fff2bbf0717400d8921c16c8",
+    "lastHarvestedAt": "2026-10-19T00:04:13.056Z",
+    "learningId": "learn-github-spacejam-sled"
   }
 }
