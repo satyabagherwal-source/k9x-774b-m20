@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T07:40:37.705Z",
+  "last_updated": "2026-10-19T07:51:42.735Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -875,14 +875,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-cloudflare-clef-flash",
-      "content_hash": "835ab192b4dee9b5740689bec6c44afe364f4a283107291f3db6d80c6cf09813",
-      "verified_at": "2026-10-18T00:48:14.213Z",
+      "content_hash": "8367edcc3251fc150bcd1bdff5ce687932f1d0510186b1d4edea061e39d22f00",
+      "verified_at": "2026-10-19T07:50:52.634Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T00:48:14.213Z"
+      "last_updated": "2026-10-19T07:50:52.634Z"
     },
     "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2": {
       "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
@@ -10676,6 +10676,66 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T07:40:37.704Z"
+    },
+    "arxanas/git-branchless": {
+      "repository": "arxanas/git-branchless",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-arxanas-git-branchless",
+      "content_hash": "f102e100c0b5a7d160c416f00e0eeee7515076a7cbab8cf1ceb904a8e69720d7",
+      "verified_at": "2026-10-19T07:51:14.858Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T07:51:14.858Z"
+    },
+    "pingcap/tidb": {
+      "repository": "pingcap/tidb",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-pingcap-tidb",
+      "content_hash": "d831b0e7e24cbc9dc01a29fd40dc3c8bd8ad882239b2f6455bd7c8f9ce1b0cbd",
+      "verified_at": "2026-10-19T07:51:27.985Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T07:51:27.985Z"
+    },
+    "neondatabase/neon": {
+      "repository": "neondatabase/neon",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-neondatabase-neon",
+      "content_hash": "cc5037e8502e92d629ceb2404a9ecad08984595613d27adcb2afb89ec705238c",
+      "verified_at": "2026-10-19T07:51:39.349Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T07:51:39.349Z"
+    },
+    "necolas/react-native-web": {
+      "repository": "necolas/react-native-web",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-necolas-react-native-web",
+      "content_hash": "6b6ea446af368fd87a6b9803ac1858bff750c73cefc089197657e4ef6721fe2e",
+      "verified_at": "2026-10-19T07:51:42.735Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T07:51:42.735Z"
     }
   },
   "repos": {

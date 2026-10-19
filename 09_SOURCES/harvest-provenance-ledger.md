@@ -3071,3 +3071,8 @@ Every entry in this ledger must capture:
 | `learn-github-bvaughn-react-virtualized` | `https://github.com/bvaughn/react-virtualized` | `dad013db` | Multi-dimensional audit evidence | 2026-10-19T07:40:24.143Z |
 | `learn-github-crate-ci-typos` | `https://github.com/crate-ci/typos` | `7f9d0819` | Multi-dimensional audit evidence | 2026-10-19T07:40:35.174Z |
 | `learn-github-emberstack-kubernetes-reflector` | `https://github.com/emberstack/kubernetes-reflector` | `0d074fb0` | Multi-dimensional audit evidence | 2026-10-19T07:40:37.697Z |
+| `learn-huggingface-cloudflare-clef-flash` | `https://huggingface.co/Cloudflare/clef-flash` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-10-19T07:50:52.629Z |
+| `learn-github-arxanas-git-branchless` | `https://github.com/arxanas/git-branchless` | `03d6ab8d` | Multi-dimensional audit evidence | 2026-10-19T07:51:14.852Z |
+| `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `d886456a` | Multi-dimensional audit evidence | 2026-10-19T07:51:27.980Z |
+| `learn-github-neondatabase-neon` | `https://github.com/neondatabase/neon` | `fa504217` | Multi-dimensional audit evidence | 2026-10-19T07:51:39.344Z |
+| `learn-github-necolas-react-native-web` | `https://github.com/necolas/react-native-web` | `e5534a13` | Multi-dimensional audit evidence | 2026-10-19T07:51:42.729Z |

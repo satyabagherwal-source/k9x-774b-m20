@@ -695,8 +695,8 @@
     "sourceUrl": "https://huggingface.co/Cloudflare/clef-flash",
     "sourceVersion": "hf-cloudflare-clef-flash",
     "license": "Open-Source",
-    "contentHash": "835ab192b4dee9b5740689bec6c44afe364f4a283107291f3db6d80c6cf09813",
-    "lastHarvestedAt": "2026-10-18T00:48:14.209Z",
+    "contentHash": "8367edcc3251fc150bcd1bdff5ce687932f1d0510186b1d4edea061e39d22f00",
+    "lastHarvestedAt": "2026-10-19T07:50:52.629Z",
     "learningId": "learn-huggingface-cloudflare-clef-flash"
   },
   "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
@@ -7088,5 +7088,45 @@
     "contentHash": "4d6bed7552adcccbacf0091a91a8d6407c163c2a9bd9d06ae35f7bfe5e72957f",
     "lastHarvestedAt": "2026-10-19T07:40:37.697Z",
     "learningId": "learn-github-emberstack-kubernetes-reflector"
+  },
+  "arxanas-git-branchless": {
+    "repository": "arxanas/git-branchless",
+    "platform": "github",
+    "sourceUrl": "https://github.com/arxanas/git-branchless",
+    "sourceVersion": "03d6ab8d",
+    "license": "Apache-2.0",
+    "contentHash": "f102e100c0b5a7d160c416f00e0eeee7515076a7cbab8cf1ceb904a8e69720d7",
+    "lastHarvestedAt": "2026-10-19T07:51:14.852Z",
+    "learningId": "learn-github-arxanas-git-branchless"
+  },
+  "pingcap-tidb": {
+    "repository": "pingcap/tidb",
+    "platform": "github",
+    "sourceUrl": "https://github.com/pingcap/tidb",
+    "sourceVersion": "d886456a",
+    "license": "Apache-2.0",
+    "contentHash": "d831b0e7e24cbc9dc01a29fd40dc3c8bd8ad882239b2f6455bd7c8f9ce1b0cbd",
+    "lastHarvestedAt": "2026-10-19T07:51:27.980Z",
+    "learningId": "learn-github-pingcap-tidb"
+  },
+  "neondatabase-neon": {
+    "repository": "neondatabase/neon",
+    "platform": "github",
+    "sourceUrl": "https://github.com/neondatabase/neon",
+    "sourceVersion": "fa504217",
+    "license": "Apache-2.0",
+    "contentHash": "cc5037e8502e92d629ceb2404a9ecad08984595613d27adcb2afb89ec705238c",
+    "lastHarvestedAt": "2026-10-19T07:51:39.344Z",
+    "learningId": "learn-github-neondatabase-neon"
+  },
+  "necolas-react-native-web": {
+    "repository": "necolas/react-native-web",
+    "platform": "github",
+    "sourceUrl": "https://github.com/necolas/react-native-web",
+    "sourceVersion": "e5534a13",
+    "license": "MIT",
+    "contentHash": "6b6ea446af368fd87a6b9803ac1858bff750c73cefc089197657e4ef6721fe2e",
+    "lastHarvestedAt": "2026-10-19T07:51:42.729Z",
+    "learningId": "learn-github-necolas-react-native-web"
   }
 }

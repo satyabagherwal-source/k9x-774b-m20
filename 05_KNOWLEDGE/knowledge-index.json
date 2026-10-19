@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T07:40:37.653Z",
-  "total_verified_learnings": 723,
+  "last_updated": "2026-10-19T07:51:42.695Z",
+  "total_verified_learnings": 727,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -2408,22 +2408,45 @@
     "learn-github-arxanas-git-branchless": {
       "learning_id": "learn-github-arxanas-git-branchless",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "arxanas-git-branchless",
+      "source": "arxanas/git-branchless",
+      "repository": "arxanas/git-branchless",
       "slug": "arxanas-git-branchless",
       "platform": "github",
       "source_url": "https://github.com/arxanas/git-branchless",
-      "source_version": "HEAD",
-      "content_hash": "44676b7701dc0b4c04443068cad1de17a6eb44b89fcb23d1a8c5e87cb2c745de",
+      "source_version": "03d6ab8d",
+      "content_hash": "f102e100c0b5a7d160c416f00e0eeee7515076a7cbab8cf1ceb904a8e69720d7",
       "dossier_path": "07_PROJECT_LEARNING/arxanas-git-branchless-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/arxanas-git-branchless-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2335,
+          "title": "Dual-Phase Working Copy Restoration Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2336,
+          "title": "Multi-Process Progress Bar Deadlock & Re-Entrancy Prevention",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2337,
+          "title": "Worktree-Agnostic Bare Clone Repository Resolution",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.916Z"
+      "verified_at": "2026-10-19T07:51:14.784Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-ascending-llc-jarvis-registry": {
       "learning_id": "learn-github-ascending-llc-jarvis-registry",
@@ -14203,7 +14226,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Cloudflare/clef-flash",
       "source_version": "hf-cloudflare-clef-flash",
-      "content_hash": "835ab192b4dee9b5740689bec6c44afe364f4a283107291f3db6d80c6cf09813",
+      "content_hash": "8367edcc3251fc150bcd1bdff5ce687932f1d0510186b1d4edea061e39d22f00",
       "dossier_path": "07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md",
       "promoted_rules": [
@@ -14353,6 +14376,21 @@
           "number": 1576,
           "title": "Joint‑Head Input Shape Validation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2332,
+          "title": "Invariant Forward-Pass Option Normalization over Autoregressive JSON Parsing",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2333,
+          "title": "Float32 Precision Floor for Hybrid SSM/Linear Attention Recurrences",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2334,
+          "title": "Strict 3D Coordinate Interleaved MRoPE Unification for Heterogeneous Multimodal Tokens",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14373,7 +14411,7 @@
         "learn-huggingface-hf-cloudflare-clef-flash-mv48lefr",
         "learn-huggingface-hf-cloudflare-clef-flash-mv4lz6vs"
       ],
-      "verified_at": "2026-10-18T00:48:14.174Z",
+      "verified_at": "2026-10-19T07:50:52.567Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -30042,22 +30080,45 @@
     "learn-github-necolas-react-native-web": {
       "learning_id": "learn-github-necolas-react-native-web",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "necolas-react-native-web",
+      "source": "necolas/react-native-web",
+      "repository": "necolas/react-native-web",
       "slug": "necolas-react-native-web",
       "platform": "github",
       "source_url": "https://github.com/necolas/react-native-web",
-      "source_version": "HEAD",
-      "content_hash": "2114307541d973c9a2bee5981bf0f5ed91772937e300c1948fcb2b5407affe0c",
+      "source_version": "e5534a13",
+      "content_hash": "6b6ea446af368fd87a6b9803ac1858bff750c73cefc089197657e4ef6721fe2e",
       "dossier_path": "07_PROJECT_LEARNING/necolas-react-native-web-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/necolas-react-native-web-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2344,
+          "title": "Cross-Format Shared State Symbol Scoping",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2345,
+          "title": "Primitive Atomic CSS flex-basis Unit Typing",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2346,
+          "title": "Asynchronous Resource Effect Lifecycle Isolation",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.580Z"
+      "verified_at": "2026-10-19T07:51:42.683Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-neomjs-neo": {
       "learning_id": "learn-github-neomjs-neo",
@@ -30082,22 +30143,45 @@
     "learn-github-neondatabase-neon": {
       "learning_id": "learn-github-neondatabase-neon",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "neondatabase-neon",
+      "source": "neondatabase/neon",
+      "repository": "neondatabase/neon",
       "slug": "neondatabase-neon",
       "platform": "github",
       "source_url": "https://github.com/neondatabase/neon",
-      "source_version": "HEAD",
-      "content_hash": "789acd53f03edd8d9788f7b64d2c529ec9f27c8c4558774c9dd297c83534e43b",
+      "source_version": "fa504217",
+      "content_hash": "cc5037e8502e92d629ceb2404a9ecad08984595613d27adcb2afb89ec705238c",
       "dossier_path": "07_PROJECT_LEARNING/neondatabase-neon-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/neondatabase-neon-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2341,
+          "title": "Zero Layering-Induced Permit Acquisition Cascades",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2342,
+          "title": "Strict Generation Monotonicity in Terminal Reconciliation Operations",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2343,
+          "title": "Failsafe Raw Memory Ingest Boundaries across Foreign C Struct Casts",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.589Z"
+      "verified_at": "2026-10-19T07:51:39.299Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-nervjs-taro": {
       "learning_id": "learn-github-nervjs-taro",
@@ -32914,22 +32998,45 @@
     "learn-github-pingcap-tidb": {
       "learning_id": "learn-github-pingcap-tidb",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "pingcap-tidb",
+      "source": "pingcap/tidb",
+      "repository": "pingcap/tidb",
       "slug": "pingcap-tidb",
       "platform": "github",
       "source_url": "https://github.com/pingcap/tidb",
-      "source_version": "HEAD",
-      "content_hash": "7f1374649b36d1fa6ec908aab266dd6cd7671a81622cbad7be7d49f35f40586b",
+      "source_version": "d886456a",
+      "content_hash": "d831b0e7e24cbc9dc01a29fd40dc3c8bd8ad882239b2f6455bd7c8f9ce1b0cbd",
       "dossier_path": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2338,
+          "title": "Atomic Buffer Compaction via Non-Allocating Memory Overlap",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2339,
+          "title": "Transactional Rollback Isolation from Resource Quota Interrupts",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2340,
+          "title": "Log I/O Fault Boundary Isolation via Configurable Timeout Action",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.042Z"
+      "verified_at": "2026-10-19T07:51:27.914Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-pinterest-gestalt": {
       "learning_id": "learn-github-pinterest-gestalt",
@@ -81681,6 +81788,216 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T07:40:37.642Z"
+    },
+    "rule-2332": {
+      "learning_id": "rule-2332",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2332,
+      "title": "Invariant Forward-Pass Option Normalization over Autoregressive JSON Parsing",
+      "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+      "source_version": "hf-cloudflare-clef-flash",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:50:52.567Z"
+    },
+    "rule-2333": {
+      "learning_id": "rule-2333",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2333,
+      "title": "Float32 Precision Floor for Hybrid SSM/Linear Attention Recurrences",
+      "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+      "source_version": "hf-cloudflare-clef-flash",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:50:52.567Z"
+    },
+    "rule-2334": {
+      "learning_id": "rule-2334",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2334,
+      "title": "Strict 3D Coordinate Interleaved MRoPE Unification for Heterogeneous Multimodal Tokens",
+      "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+      "source_version": "hf-cloudflare-clef-flash",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:50:52.567Z"
+    },
+    "rule-2335": {
+      "learning_id": "rule-2335",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2335,
+      "title": "Dual-Phase Working Copy Restoration Guard",
+      "source_url": "https://github.com/arxanas/git-branchless",
+      "source_version": "03d6ab8d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:51:14.784Z"
+    },
+    "rule-2336": {
+      "learning_id": "rule-2336",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2336,
+      "title": "Multi-Process Progress Bar Deadlock & Re-Entrancy Prevention",
+      "source_url": "https://github.com/arxanas/git-branchless",
+      "source_version": "03d6ab8d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:51:14.784Z"
+    },
+    "rule-2337": {
+      "learning_id": "rule-2337",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2337,
+      "title": "Worktree-Agnostic Bare Clone Repository Resolution",
+      "source_url": "https://github.com/arxanas/git-branchless",
+      "source_version": "03d6ab8d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:51:14.784Z"
+    },
+    "rule-2338": {
+      "learning_id": "rule-2338",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2338,
+      "title": "Atomic Buffer Compaction via Non-Allocating Memory Overlap",
+      "source_url": "https://github.com/pingcap/tidb",
+      "source_version": "d886456a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:51:27.914Z"
+    },
+    "rule-2339": {
+      "learning_id": "rule-2339",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2339,
+      "title": "Transactional Rollback Isolation from Resource Quota Interrupts",
+      "source_url": "https://github.com/pingcap/tidb",
+      "source_version": "d886456a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:51:27.914Z"
+    },
+    "rule-2340": {
+      "learning_id": "rule-2340",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2340,
+      "title": "Log I/O Fault Boundary Isolation via Configurable Timeout Action",
+      "source_url": "https://github.com/pingcap/tidb",
+      "source_version": "d886456a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:51:27.914Z"
+    },
+    "rule-2341": {
+      "learning_id": "rule-2341",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2341,
+      "title": "Zero Layering-Induced Permit Acquisition Cascades",
+      "source_url": "https://github.com/neondatabase/neon",
+      "source_version": "fa504217",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:51:39.299Z"
+    },
+    "rule-2342": {
+      "learning_id": "rule-2342",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2342,
+      "title": "Strict Generation Monotonicity in Terminal Reconciliation Operations",
+      "source_url": "https://github.com/neondatabase/neon",
+      "source_version": "fa504217",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:51:39.299Z"
+    },
+    "rule-2343": {
+      "learning_id": "rule-2343",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2343,
+      "title": "Failsafe Raw Memory Ingest Boundaries across Foreign C Struct Casts",
+      "source_url": "https://github.com/neondatabase/neon",
+      "source_version": "fa504217",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:51:39.299Z"
+    },
+    "rule-2344": {
+      "learning_id": "rule-2344",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2344,
+      "title": "Cross-Format Shared State Symbol Scoping",
+      "source_url": "https://github.com/necolas/react-native-web",
+      "source_version": "e5534a13",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:51:42.683Z"
+    },
+    "rule-2345": {
+      "learning_id": "rule-2345",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2345,
+      "title": "Primitive Atomic CSS flex-basis Unit Typing",
+      "source_url": "https://github.com/necolas/react-native-web",
+      "source_version": "e5534a13",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:51:42.683Z"
+    },
+    "rule-2346": {
+      "learning_id": "rule-2346",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2346,
+      "title": "Asynchronous Resource Effect Lifecycle Isolation",
+      "source_url": "https://github.com/necolas/react-native-web",
+      "source_version": "e5534a13",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:51:42.683Z"
     }
   },
   "aliases": {

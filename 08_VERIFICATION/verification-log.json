@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261018-EE4T",
-    "timestamp": "2026-10-18T22:29:35.117Z",
-    "repository": "lioensky/VCPToolBox",
-    "learningId": "learn-github-lioensky-vcptoolbox",
-    "contentHash": "84ec959e5dfd624930d28f05b37678eaa21cda4466fa4bb070f93ecb4068a6f5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-M32C",
-    "timestamp": "2026-10-18T22:35:34.020Z",
-    "repository": "Megabit/Blazorise",
-    "learningId": "learn-github-megabit-blazorise",
-    "contentHash": "3437382cfc9e108005f6b85b66f4c3f11d9bd1935983f997a0246c3195c0851f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-M337",
-    "timestamp": "2026-10-18T22:35:34.051Z",
-    "repository": "metalbear-co/mirrord",
-    "learningId": "learn-github-metalbear-co-mirrord",
-    "contentHash": "4c9d65d391bd28f42d151544da19eb3c1123984f672bf8ef343163bf990f7b42",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-M4PF",
-    "timestamp": "2026-10-18T22:35:36.147Z",
-    "repository": "CrawlCove/xml-sitemap-validator",
-    "learningId": "learn-github-crawlcove-xml-sitemap-validator",
-    "contentHash": "5fa2c7f66608e5091fc5e32a6bde3365ac0ddbd9f4ab0a662a7c2679116bb0b2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-M8SE",
-    "timestamp": "2026-10-18T22:35:41.438Z",
-    "repository": "openkruise/kruise",
-    "learningId": "learn-github-openkruise-kruise",
-    "contentHash": "0949587a25dc28d08737f7c306a5c723999a601696100355c3c2f29a90fa5001",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261018-M91O",
     "timestamp": "2026-10-18T22:35:41.772Z",
     "repository": "callstack/react-native-paper",
@@ -7490,6 +7415,81 @@
     "repository": "emberstack/kubernetes-reflector",
     "learningId": "learn-github-emberstack-kubernetes-reflector",
     "contentHash": "4d6bed7552adcccbacf0091a91a8d6407c163c2a9bd9d06ae35f7bfe5e72957f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-G7V6",
+    "timestamp": "2026-10-19T07:50:52.626Z",
+    "repository": "Cloudflare/clef-flash",
+    "learningId": "learn-huggingface-cloudflare-clef-flash",
+    "contentHash": "8367edcc3251fc150bcd1bdff5ce687932f1d0510186b1d4edea061e39d22f00",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-GP0I",
+    "timestamp": "2026-10-19T07:51:14.850Z",
+    "repository": "arxanas/git-branchless",
+    "learningId": "learn-github-arxanas-git-branchless",
+    "contentHash": "f102e100c0b5a7d160c416f00e0eeee7515076a7cbab8cf1ceb904a8e69720d7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-GZ56",
+    "timestamp": "2026-10-19T07:51:27.978Z",
+    "repository": "pingcap/tidb",
+    "learningId": "learn-github-pingcap-tidb",
+    "contentHash": "d831b0e7e24cbc9dc01a29fd40dc3c8bd8ad882239b2f6455bd7c8f9ce1b0cbd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-H7WT",
+    "timestamp": "2026-10-19T07:51:39.341Z",
+    "repository": "neondatabase/neon",
+    "learningId": "learn-github-neondatabase-neon",
+    "contentHash": "cc5037e8502e92d629ceb2404a9ecad08984595613d27adcb2afb89ec705238c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-HAIV",
+    "timestamp": "2026-10-19T07:51:42.727Z",
+    "repository": "necolas/react-native-web",
+    "learningId": "learn-github-necolas-react-native-web",
+    "contentHash": "6b6ea446af368fd87a6b9803ac1858bff750c73cefc089197657e4ef6721fe2e",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {
