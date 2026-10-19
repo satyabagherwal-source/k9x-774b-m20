@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T00:48:29.237Z",
-  "total_cycles_completed": 2690,
-  "total_learnings_persisted": 2690,
-  "total_rules_promoted": 1718,
+  "last_updated": "2026-10-19T00:54:44.810Z",
+  "total_cycles_completed": 2696,
+  "total_learnings_persisted": 2696,
+  "total_rules_promoted": 1723,
   "history": [
-    {
-      "timestamp": "2026-10-18T21:39:40.899Z",
-      "repository": "authzed/spicedb",
-      "learningId": "learn-github-authzed-spicedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T21:39:42.538Z",
-      "repository": "hashicorp/boundary",
-      "learningId": "learn-github-hashicorp-boundary",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T21:39:43.557Z",
-      "repository": "zilliztech/attu",
-      "learningId": "learn-github-zilliztech-attu",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T21:45:42.551Z",
-      "repository": "skeletonlabs/skeleton",
-      "learningId": "learn-github-skeletonlabs-skeleton",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T21:45:46.024Z",
-      "repository": "sharkdp/fd",
-      "learningId": "learn-github-sharkdp-fd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T21:45:52.007Z",
-      "repository": "maotoumao/MusicFree",
-      "learningId": "learn-github-maotoumao-musicfree",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-18T21:45:54.693Z",
       "repository": "nats-io/nats.go",
@@ -1403,6 +1361,48 @@
       "repository": "malisper/pgrust",
       "learningId": "learn-github-malisper-pgrust",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T00:54:30.559Z",
+      "repository": "rsuite/rsuite",
+      "learningId": "learn-github-rsuite-rsuite",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T00:54:30.830Z",
+      "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
+      "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T00:54:31.496Z",
+      "repository": "Kuberwastaken/claurst",
+      "learningId": "learn-github-kuberwastaken-claurst",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T00:54:36.887Z",
+      "repository": "aws-amplify/amplify-js",
+      "learningId": "learn-github-aws-amplify-amplify-js",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T00:54:38.865Z",
+      "repository": "go-eagle/eagle",
+      "learningId": "learn-github-go-eagle-eagle",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T00:54:44.810Z",
+      "repository": "Qovery/Replibyte",
+      "learningId": "learn-github-qovery-replibyte",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

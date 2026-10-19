@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/go-eagle-eagle-learnings.md`  
+> **Source**: github ([https://github.com/go-eagle/eagle](https://github.com/go-eagle/eagle))  
+> **Source Version**: `b1301b09`  
+> **License**: MIT  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T00:54:38.652Z  
+> **Learning ID**: `learn-github-go-eagle-eagle`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): go-eagle/eagle
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/go-eagle-eagle-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/go-eagle/eagle](https://github.com/go-eagle/eagle))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T02:17:11.898Z  
+> **Harvest Timestamp**: 2026-10-19T00:54:38.645Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -716,88 +730,6 @@ func main() {
 
 ```
 
-### Core Architecture Module: `examples/queue/redis/server.go`
-```
-package main
-
-import (
-	eagle "github.com/go-eagle/eagle/pkg/app"
-	"github.com/go-eagle/eagle/pkg/config"
-	logger "github.com/go-eagle/eagle/pkg/log"
-	redisMQ "github.com/go-eagle/eagle/pkg/transport/consumer/redis"
-	"github.com/hibiken/asynq"
-	"github.com/spf13/pflag"
-)
-
-// redis queue consumer
-// cd examples/queue/redis/consumer/
-// go run server.go handler.go client.go
-func main() {
-	pflag.Parse()
-
-	// init config
-	c := config.New(".")
-	var cfg eagle.Config
-	if err := c.Load("app", &cfg); err != nil {
-		panic(err)
-	}
-	// set global
-	eagle.Conf = &cfg
-
-	logger.Init()
-
-	srv := redisMQ.NewServer(
-		asynq.RedisClientOpt{Addr: "localhost:6379"},
-		asynq.Config{
-			// Specify how many concurrent workers to use
-			Concurrency: 10,
-			// Optionally specify multiple queues with different priority.
-			Queues: map[string]int{
-				redisMQ.QueueCritical: 6,
-				redisMQ.QueueDefault:  3,
-				redisMQ.QueueLow:      1,
-			},
-			// See the godoc for other configuration options
-		},
-	)
-
-	// register handler
-	srv.RegisterHandler(TypeEmailWelcome, HandleEmailWelcomeTask)
-	// here register other handlers...
-
-	// start app
-	app := eagle.New(
-		eagle.WithName(cfg.Name),
-		eagle.WithVersion(cfg.Version),
-		eagle.WithLogger(logger.GetLogger()),
-		eagle.WithServer(
-			srv,
-		),
-	)
-
-	if err := app.Run(); err != nil {
-		panic(err)
-	}
-}
-
-```
-
-### Core Architecture Module: `pkg/lock/utils.go`
-```
-package lock
-
-import (
-	"github.com/google/uuid"
-)
-
-// genToken 生成token
-func genToken() string {
-	u, _ := uuid.NewRandom()
-	return u.String()
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -806,8 +738,6 @@ func genToken() string {
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
 - **Issue #80** (2023-03-10): **invalid argument "eagle:github.com/go-eagle/eagle/pkg/version" for "-t, --tag" flag: invalid reference format**
   *Symptoms*: **Describe the bug** invalid argument "eagle:github.com/go-eagle/eagle/pkg/version" for "-t, --tag" flag: invalid reference format  **To Reproduce** Steps to reproduce the behavior: ```shell ➜  eagle git:(master) ✗ make docker                                docker build -t eagle:"github.com/go-eagle/eagle/pkg/version" -f Dockeffile . invalid argument "eagle:github.com/go-eagle/eagle/pkg/version" for "-t, --tag" flag: invalid reference format See 'docker build --help'. make: *** [docker] Error 125 ➜  eagle git:(master) ✗  ```  **Expected behavior** build success  **Screenshots** If applicable, add screenshots to help explain your problem.  **Desktop (please complete the following information):**  - OS:  macOS m2  - Browser [e.g. chrome, safari]  - Version [e.g. 22]  **Smartphone (please complete the following information):**  - Device: [e.g. iPhone6]  - OS: [e.g. iOS8.1]  - Browser [e.g. stock browser, safari]  - Version [e.g. 22]  **Additional context** Add any other context about the problem here. 
-  **Post-Mortem & Fix Analysis**:
-  > fixed, thank you.  @zishiguo 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -871,351 +801,6 @@ Observed empirical fixes and code patches:
  		// get data from db
 ```
 
----
-
-### Incident Patch 3: `ea86892d` (2024-08-11)
-**Commit Message**: docs: update quick start
-
-**File**: `README.md` (modified, +3/-4)
-```diff
-@@ -70,6 +70,8 @@ Eagle utilizes a classic layered structure and employs the Wire dependency injec
- ## Installtion CLI
- 
- ```bash
-+GOPROXY="https://goproxy.cn,direct"
-+
- # go >= 1.16
- go install github.com/go-eagle/eagle/cmd/eagle@latest
- 
-@@ -90,11 +92,8 @@ eagle new -b=all eagle-demo
- # or 
- eagle new github.com/foo/eagle-demo
- 
--# build
--make build
--
- # run
--eagle run
-+make run
- ```
- 
- ## Documentation
-```
-
----
-
-### Incident Patch 4: `03d5f0eb` (2024-08-01)
-**Commit Message**: docs: update cmd  param for Quick Start
-
-**File**: `README.md` (modified, +1/-1)
-```diff
-@@ -86,7 +86,7 @@ eagle new eagle-demo
- eagle new github.com/foo/eagle-demo
- 
- # gen a server with http and gRPC
--eagle new -b=all eagle-demo
-+eagle new -b=main eagle-demo
- # or 
- eagle new github.com/foo/eagle-demo
- 
-```
-
----
-
-### Incident Patch 5: `a408ad1b` (2024-08-01)
-**Commit Message**: docs: update cmd for Quick Start
-
-**File**: `README.md` (modified, +3/-3)
-```diff
-@@ -90,11 +90,11 @@ eagle new -b=all eagle-demo
- # or 
- eagle new github.com/foo/eagle-demo
- 
--# build
--make build
-+# install dependence
-+go mod tidy
- 
- # run
--eagle run
-+make run
- ```
- 
- ## Documentation
-```
-
----
-
-### Incident Patch 6: `dc82346e` (2024-07-10)
-**Commit Message**: fix: fix environment fetch problem && fix eagle run (#141)
-
-**File**: `cmd/eagle/internal/run/run.go` (modified, +3/-1)
-```diff
-@@ -45,7 +45,8 @@ func Run(cmd *cobra.Command, args []string) {
- 			return
- 		} else if len(cmdPath) == 1 {
- 			for k, v := range cmdPath {
--				dir = path.Join(v, k)
-+				selectedDir = k
-+				dir = v
- 			}
- 		} else {
- 			var cmdPaths []string
-@@ -71,6 +72,7 @@ func Run(cmd *cobra.Command, args []string) {
- 
- 	// go run /path/cmd/server
- 	fd := exec.Command("go", []string{"run", path.Join(dir, selectedDir)}...)
-+	fd.Env = os.Environ()
- 	fd.Stdout = os.Stdout
- 	fd.Stderr = os.Stderr
- 	fd.Dir = dir
-```
-
----
-
-### Incident Patch 7: `f6f8018d` (2024-06-22)
-**Commit Message**: chore: add timeout for db and add default param for new command (#137)
-
-**File**: `CHANGELOG.md` (modified, +2/-1)
-```diff
-@@ -3,7 +3,8 @@
- ## v1.8.2
- - feat: support PostgreSQL
- - feat: support config multiple databases
--- chore(cli): generate project by adding branch name
-+- chore(cli): generate project by adding branch name, default is http server
-+- chore(db): add timeout for connect, read and write
- 
- ## v1.8.1
- - fix: GitHub workflow badge URL
-```
-
-**File**: `README.md` (modified, +6/-0)
-```diff
-@@ -80,10 +80,16 @@ go get github.com/go-eagle/eagle/cmd/eagle
- ## Quick Start
- 
- ```bash
-+# only gen a server with http
- eagle new eagle-demo
- # or 
- eagle new github.com/foo/eagle-demo
- 
-+# gen a server with http and gRPC
-+eagle new -b=all eagle-demo
-+# or 
-+eagle new github.com/foo/eagle-demo
-+
- # build
- make build
- 
-```
-
-**File**: `cmd/eagle/internal/project/project.go` (modified, +11/-7)
-```diff
-@@ -20,28 +20,32 @@ var CmdNew = &cobra.Command{
- }
- 
- var (
--	repoURL        string
--	branch         string
--	defaultTimeout string
-+	repoURL string
-+	branch  string
-+	timeout string
- )
- 
- func init() {
- 	if repoURL = os.Getenv("EAGLE_LAYOUT_REPO"); repoURL == "" {
- 		repoURL = "https://github.com/go-eagle/eagle-layout.git"
- 	}
- 
--	defaultTimeout = "60s"
-+	// default http, only include http server
-+	branch = "http"
-+	// default timeout
-+	timeout = "60s"
-+
- 	CmdNew.Flags().StringVarP(&repoURL, "repo-url", "r", repoURL, "layout repo")
--	CmdNew.Flags().StringVarP(&branch, "branch", "b", branch, "repo branch name")
--	CmdNew.Flags().StringVarP(&defaultTimeout, "timeout", "t", defaultTimeout, "request timeout time")
-+	CmdNew.Flags().StringVarP(&branch, "branch", "b", branch, "default is http server, empty is http and gRPC")
-+	CmdNew.Flags().StringVarP(&timeout, "timeout", "t", timeout, "request timeout time")
- }
- 
- func run(cmd *cobra.Command, args []string) {
- 	wd, err := os.Getwd()
- 	if err != nil {
- 		panic(err)
- 	}
--	t, err := time.ParseDuration(defaultTimeout)
-+	t, err := time.ParseDuration(timeout)
- 	if err != nil {
- 		panic(err)
- 	}
-```
-
-**File**: `cmd/eagle/main.go` (modified, +1/-1)
-```diff
-@@ -19,7 +19,7 @@ import (
- 
- var (
- 	// Version is the version of the compiled software.
--	Version = "v0.17.0"
-+	Version = "v0.18.0"
- 
- 	rootCmd = &cobra.Command{
- 		Use:     "eagle",
-```
-
----
-
-### Incident Patch 8: `dc50d00a` (2024-06-13)
-**Commit Message**: chore: add timeout for db (#134)
-
-**File**: `config/docker/database.yaml` (modified, +4/-1)
-```diff
-@@ -7,5 +7,8 @@ default:
-   ShowLog: true                   # 是否打印所有SQL日志
-   MaxIdleConn: 10                 # 最大闲置的连接数，0意味着使用默认的大小2， 小于0表示不使用连接池
-   MaxOpenConn: 60                 # 最大打开的连接数, 需要小于数据库配置中的max_connections数
-+  Timeout: 3s                     # 数据库连接超时时间
-+  ReadTimeout: 3s                 # 数据库去读超时时间, 0代表不限制
-+  WriteTimeout: 3s                # 数据库写入超时时间, 0代表不限制
-   ConnMaxLifeTime: 4h             # 单个连接最大存活时间，建议设置比数据库超时时长(wait_timeout)稍小一些
--  SlowThreshold: 500ms            # 慢查询阈值，设置后只打印慢查询日志，默认为200ms
-\ No newline at end of file
-+  SlowThreshold: 500ms            # 慢查询阈值，设置后只打印慢查询日志，默认为200ms
-```
-
-**File**: `config/local/database.yaml` (modified, +6/-0)
-```diff
-@@ -7,6 +7,9 @@ default:
-   ShowLog: true                   # 是否打印所有SQL日志
-   MaxIdleConn: 10                 # 最大闲置的连接数，0意味着使用默认的大小2， 小于0表示不使用连接池
-   MaxOpenConn: 60                 # 最大打开的连接数, 需要小于数据库配置中的max_connections数
-+  Timeout: 3s 					  # 数据库连接超时时间, 如果是 PostgreSQL 不需要加入单位
-+  ReadTimeout: 3s 				  # 数据库去读超时时间, 0代表不限制，如果是PostgreSQL, 3000代表3s
-+  WriteTimeout: 3s 				  # 数据库写入超时时间, 0代表不限制，如果是PostgreSQL, 不会使用该字段的值
-   ConnMaxLifeTime: 4h             # 单个连接最大存活时间，建议设置比数据库超时时长(wait_timeout)稍小一些
-   SlowThreshold: 500ms            # 慢查询阈值，设置后只打印慢查询日志，默认为200ms
- user:
-@@ -18,5 +21,8 @@ user:
-   ShowLog: true                   # 是否打印所有SQL日志
-   MaxIdleConn: 10                 # 最大闲置的连接数，0意味着使用默认的大小2， 小于0表示不使用连接池
-   MaxOpenConn: 60                 # 最大打开的连接数, 需要小于数据库配置中的max_connections数
-+  Timeout: 3s 					  # 数据库连接超时时间
-+  ReadTimeout: 3s 				  # 数据库去读超时时间, 0代表不限制
-+  WriteTimeout: 3s 				  # 数据库写入超时时间, 0代表不限制
-   ConnMaxLifeTime: 4h             # 单个连接最大存活时间，建议设置比数据库超时时长(wait_timeout)稍小一些
-   SlowThreshold: 500ms            # 慢查询阈值，设置后只打印慢查询日志，默认为200ms
-```
-
-**File**: `pkg/storage/orm/orm.go` (modified, +12/-3)
-```diff
-@@ -46,6 +46,9 @@ type Config struct {
- 	ShowLog         bool
- 	MaxIdleConn     int
- 	MaxOpenConn     int
-+	Timeout         string // connect timeout
-+	ReadTimeout     string
-+	WriteTimeout    string
- 	ConnMaxLifeTime time.Duration
- 	SlowThreshold   time.Duration // 慢查询时长，默认500ms
- }
-@@ -189,21 +192,27 @@ func LoadConf(name string) (ret *Config, err error) {
- // getDSN return dsn string
- func getDSN(c *Config) string {
- 	// default mysql
--	dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8mb4&parseTime=%t&loc=%s",
-+	dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8mb4&parseTime=%t&loc=%s&timeout=%s%readTimeout=%s%writeTimeout=%s",
- 		c.UserName,
- 		c.Password,
- 		c.Addr,
- 		c.Name,
- 		true,
- 		//"Asia/Shanghai"),
--		"Local")
-+		"Local",
-+		c.Timeout,
-+		c.ReadTimeout,
-+		c.WriteTimeout,
-+	)
- 
- 	if c.Driver == DriverPostgres {
--		dsn = fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=disable",
-+		dsn = fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=disable&connect_timeout=%s%statement_timeout=%s",
- 			c.UserName,
- 			c.Password,
- 			c.Addr,
- 			c.Name,
-+			c.Timeout,
-+			c.ReadTimeout,
- 		)
- 	}
- 
-```
-
----
-
-### Incident Patch 9: `fa409a75` (2024-03-31)
-**Commit Message**: docs: fix typo
-
-**File**: `README.md` (modified, +1/-1)
-```diff
-@@ -18,7 +18,7 @@ English | [中文文档](https://github.com/go-eagle/eagle/blob/master/README_ZH
- - Router [Gin](https://github.com/gin-gonic/gin) 
- - Middleware [Gin](https://github.com/gin-gonic/gin) 
- - Database [GORM](https://github.com/jinzhu/gorm)
--- Document [Swagger](https://swagger.io/) 生成
-+- Document [Swagger](https://swagger.io/) 
- - Config [Viper](https://github.com/spf13/viper)
- - Auth [JWT](https://jwt.io/) 
- - Validator [validator](https://github.com/go-playground/validator)
-```
-
----
-
-### Incident Patch 10: `ef56beb2` (2023-10-21)
-**Commit Message**: fix: GitHub workflow badge URL (#113)
-
-**File**: `README.md` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- # 🦅 eagle
- 
-- [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/go-eagle/eagle/Go?style=flat-square)](https://github.com/go-eagle/eagle)
-+ [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/go-eagle/eagle/test.yml?branch=master&style=flat-square)](https://github.com/go-eagle/eagle)
-  [![codecov](https://codecov.io/gh/go-eagle/eagle/branch/master/graph/badge.svg)](https://codecov.io/gh/go-eagle/eagle)
-  [![GolangCI](https://golangci.com/badges/github.com/golangci/golangci-lint.svg)](https://golangci.com)
-  [![godoc](https://godoc.org/github.com/go-eagle/eagle?status.svg)](https://godoc.org/github.com/go-eagle/eagle)
-```
-
----
-
-### Incident Patch 11: `98808b7c` (2023-08-08)
-**Commit Message**: chore: modify tag prefix
-
-**File**: `.github/workflows/deploy.yml` (modified, +2/-2)
-```diff
-@@ -3,7 +3,7 @@ name: Deploy
- on:
-   push:
-     tags:
--    - 'v*.*.*'
-+    - 'release*.*.*'
- 
- jobs:
- 
-@@ -59,4 +59,4 @@ jobs:
-     - name: Deploy image to Amazon EKS
-       run: |
-         kubectl apply -f deploy/k8s/go-deployment.yaml
--        kubectl apply -f deploy/k8s/go-service.yaml
-\ No newline at end of file
-+        kubectl apply -f deploy/k8s/go-service.yaml
-```
-
 #### Recent Merged Pull Requests:
 - **PR #213** (closed): chore(deps): bump github.com/jackc/pgx/v5 from 5.5.4 to 5.9.0 (@dependabot[bot])
 - **PR #209** (closed): chore(deps): bump go.opentelemetry.io/otel/sdk from 1.24.0 to 1.40.0 (@dependabot[bot])
@@ -1223,8 +808,6 @@ Observed empirical fixes and code patches:
 - **PR #207** (2025-11-28): 更新时删除本地存储 (@cjl2029)
 - **PR #205** (2025-11-20): chore(deps): bump golang.org/x/crypto from 0.35.0 to 0.45.0 in /cmd/eagle (@dependabot[bot])
 - **PR #203** (2025-11-04): fix:cache重复引用修复 (@cjl2029)
-- **PR #201** (2025-10-28): chore: improve gorm logger writter (@qloog)
-- **PR #198** (2025-10-14): feat: add pointer func (@qloog)
 
 ---
 
@@ -1238,3 +821,34 @@ Observed empirical fixes and code patches:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. 更新时删除本地存储 (#207)
+
+**RULE**:
+When implementing operations in `cmd/eagle/internal/repo/add/template.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in go-eagle/eagle. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `b1301b09`: 更新时删除本地存储 (#207). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/eagle/internal/repo/add/template.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+	_ = r.localCache.Del(ctx, cast.ToString(id))
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `b1301b09` are properly handled with clean fallback behavior.

@@ -175,8 +175,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark",
     "sourceVersion": "hf-autotrust-glm5.3-flash-e224-dgx-spark",
     "license": "Open-Source",
-    "contentHash": "614232b6520193e8d8000dd9315f9bfbb06d89a4a8aef67ad444f515c06c8c51",
-    "lastHarvestedAt": "2026-10-17T21:23:49.205Z",
+    "contentHash": "3da954c6038818ae34bbf4498340f3b6d5bbf4ecc6d45160b2dcefb209294e15",
+    "lastHarvestedAt": "2026-10-19T00:54:30.827Z",
     "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark"
   },
   "hf-liquidai-d1-3b": {
@@ -4228,5 +4228,55 @@
     "contentHash": "235ac09e3435aafb4cc1b625622970fe54f73d21042e9a2891859d4964c98ad8",
     "lastHarvestedAt": "2026-10-19T00:48:29.234Z",
     "learningId": "learn-github-malisper-pgrust"
+  },
+  "rsuite-rsuite": {
+    "repository": "rsuite/rsuite",
+    "platform": "github",
+    "sourceUrl": "https://github.com/rsuite/rsuite",
+    "sourceVersion": "c09c0d5c",
+    "license": "MIT",
+    "contentHash": "5a8120a92a68d6840396cf69160e42d3cabc714a6123150fc00911e2947388df",
+    "lastHarvestedAt": "2026-10-19T00:54:30.556Z",
+    "learningId": "learn-github-rsuite-rsuite"
+  },
+  "kuberwastaken-claurst": {
+    "repository": "Kuberwastaken/claurst",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Kuberwastaken/claurst",
+    "sourceVersion": "85ebb868",
+    "license": "GPL-3.0",
+    "contentHash": "2b731d4357e6e4b1eac3f64c15906f15daab67bff04e3d8c4e5cec4541c1c47f",
+    "lastHarvestedAt": "2026-10-19T00:54:31.494Z",
+    "learningId": "learn-github-kuberwastaken-claurst"
+  },
+  "aws-amplify-amplify-js": {
+    "repository": "aws-amplify/amplify-js",
+    "platform": "github",
+    "sourceUrl": "https://github.com/aws-amplify/amplify-js",
+    "sourceVersion": "26b49ecd",
+    "license": "Apache-2.0",
+    "contentHash": "016f8b446c406943bcededea42577d222e69a558e5c71242b14deb9818071d33",
+    "lastHarvestedAt": "2026-10-19T00:54:36.885Z",
+    "learningId": "learn-github-aws-amplify-amplify-js"
+  },
+  "go-eagle-eagle": {
+    "repository": "go-eagle/eagle",
+    "platform": "github",
+    "sourceUrl": "https://github.com/go-eagle/eagle",
+    "sourceVersion": "b1301b09",
+    "license": "MIT",
+    "contentHash": "52b7bf79d50916dbcfaf35b4a1b27f5aba842863f9d10bcea3e1b8a5939f58ff",
+    "lastHarvestedAt": "2026-10-19T00:54:38.862Z",
+    "learningId": "learn-github-go-eagle-eagle"
+  },
+  "qovery-replibyte": {
+    "repository": "Qovery/Replibyte",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Qovery/Replibyte",
+    "sourceVersion": "5504db91",
+    "license": "GPL-3.0",
+    "contentHash": "1ca8d20fefe83951368ddacbd436584b3df18be1d9d603829f2152189807d893",
+    "lastHarvestedAt": "2026-10-19T00:54:44.807Z",
+    "learningId": "learn-github-qovery-replibyte"
   }
 }

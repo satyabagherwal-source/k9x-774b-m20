@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T00:48:29.194Z",
-  "total_verified_learnings": 445,
+  "last_updated": "2026-10-19T00:54:44.765Z",
+  "total_verified_learnings": 450,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -2499,22 +2499,35 @@
     "learn-github-aws-amplify-amplify-js": {
       "learning_id": "learn-github-aws-amplify-amplify-js",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "aws-amplify-amplify-js",
+      "source": "aws-amplify/amplify-js",
+      "repository": "aws-amplify/amplify-js",
       "slug": "aws-amplify-amplify-js",
       "platform": "github",
       "source_url": "https://github.com/aws-amplify/amplify-js",
-      "source_version": "HEAD",
-      "content_hash": "29352c8315af5c4c9faf22b235e9768e034bf65779033043b9e5ec48d3213a55",
+      "source_version": "26b49ecd",
+      "content_hash": "016f8b446c406943bcededea42577d222e69a558e5c71242b14deb9818071d33",
       "dossier_path": "07_PROJECT_LEARNING/aws-amplify-amplify-js-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aws-amplify-amplify-js-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1942,
+          "title": "auth): bound waiting on inflight OAuth flow with read-time deadline (#14942)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.002Z"
+      "verified_at": "2026-10-19T00:54:36.837Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-aws-aws-cdk": {
       "learning_id": "learn-github-aws-aws-cdk",
@@ -8651,22 +8664,35 @@
     "learn-github-go-eagle-eagle": {
       "learning_id": "learn-github-go-eagle-eagle",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "go-eagle-eagle",
+      "source": "go-eagle/eagle",
+      "repository": "go-eagle/eagle",
       "slug": "go-eagle-eagle",
       "platform": "github",
       "source_url": "https://github.com/go-eagle/eagle",
-      "source_version": "HEAD",
-      "content_hash": "7c0eb41e944535502eb0ac642a69d4524a7a4e59942ceb4cfc6690062d48446d",
+      "source_version": "b1301b09",
+      "content_hash": "52b7bf79d50916dbcfaf35b4a1b27f5aba842863f9d10bcea3e1b8a5939f58ff",
       "dossier_path": "07_PROJECT_LEARNING/go-eagle-eagle-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/go-eagle-eagle-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1943,
+          "title": "更新时删除本地存储 (#207)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.102Z"
+      "verified_at": "2026-10-19T00:54:38.813Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-go-kratos-kratos": {
       "learning_id": "learn-github-go-kratos-kratos",
@@ -11247,7 +11273,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark",
       "source_version": "hf-autotrust-glm5.3-flash-e224-dgx-spark",
-      "content_hash": "614232b6520193e8d8000dd9315f9bfbb06d89a4a8aef67ad444f515c06c8c51",
+      "content_hash": "3da954c6038818ae34bbf4498340f3b6d5bbf4ecc6d45160b2dcefb209294e15",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md",
       "promoted_rules": [
@@ -11295,7 +11321,7 @@
         "learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv430elb",
         "learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv4g91hj"
       ],
-      "verified_at": "2026-10-17T21:23:49.172Z",
+      "verified_at": "2026-10-19T00:54:30.763Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -23834,22 +23860,35 @@
     "learn-github-kuberwastaken-claurst": {
       "learning_id": "learn-github-kuberwastaken-claurst",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "kuberwastaken-claurst",
+      "source": "Kuberwastaken/claurst",
+      "repository": "Kuberwastaken/claurst",
       "slug": "kuberwastaken-claurst",
       "platform": "github",
       "source_url": "https://github.com/Kuberwastaken/claurst",
-      "source_version": "HEAD",
-      "content_hash": "6521039ab9389f56fc1c52a71a6dcad827c1be2a9b957effd1c571c618fdb7c6",
+      "source_version": "85ebb868",
+      "content_hash": "2b731d4357e6e4b1eac3f64c15906f15daab67bff04e3d8c4e5cec4541c1c47f",
       "dossier_path": "07_PROJECT_LEARNING/kuberwastaken-claurst-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kuberwastaken-claurst-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1941,
+          "title": "Merge pull request #505 from Kuberwastaken/fix/495-keybindings-remainder",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.897Z"
+      "verified_at": "2026-10-19T00:54:31.443Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-kubeshark-kubeshark": {
       "learning_id": "learn-github-kubeshark-kubeshark",
@@ -30718,22 +30757,35 @@
     "learn-github-qovery-replibyte": {
       "learning_id": "learn-github-qovery-replibyte",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "qovery-replibyte",
+      "source": "Qovery/Replibyte",
+      "repository": "Qovery/Replibyte",
       "slug": "qovery-replibyte",
       "platform": "github",
       "source_url": "https://github.com/Qovery/Replibyte",
-      "source_version": "HEAD",
-      "content_hash": "046e4d975179e927ddfd274f359c77040ae0bf49140b1a84d23ee9b6e29f6661",
+      "source_version": "5504db91",
+      "content_hash": "1ca8d20fefe83951368ddacbd436584b3df18be1d9d603829f2152189807d893",
       "dossier_path": "07_PROJECT_LEARNING/qovery-replibyte-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/qovery-replibyte-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1944,
+          "title": "mysql tokenize error (#198)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.165Z"
+      "verified_at": "2026-10-19T00:54:44.758Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-radix-ui-primitives": {
       "learning_id": "learn-github-radix-ui-primitives",
@@ -31703,22 +31755,35 @@
     "learn-github-rsuite-rsuite": {
       "learning_id": "learn-github-rsuite-rsuite",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "rsuite-rsuite",
+      "source": "rsuite/rsuite",
+      "repository": "rsuite/rsuite",
       "slug": "rsuite-rsuite",
       "platform": "github",
       "source_url": "https://github.com/rsuite/rsuite",
-      "source_version": "HEAD",
-      "content_hash": "da7ef25abcc8913c4d480dc550f52adf0224b79b8206253386806dc39046507c",
+      "source_version": "c09c0d5c",
+      "content_hash": "5a8120a92a68d6840396cf69160e42d3cabc714a6123150fc00911e2947388df",
       "dossier_path": "07_PROJECT_LEARNING/rsuite-rsuite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rsuite-rsuite-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1940,
+          "title": "Merge pull request #4938 from rsuite/fix/examples-proxy-addr-security",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.316Z"
+      "verified_at": "2026-10-19T00:54:30.484Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-rtk-ai-rtk": {
       "learning_id": "learn-github-rtk-ai-rtk",
@@ -72039,6 +72104,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T00:48:26.736Z"
+    },
+    "rule-1940": {
+      "learning_id": "rule-1940",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1940,
+      "title": "Merge pull request #4938 from rsuite/fix/examples-proxy-addr-security",
+      "source_url": "https://github.com/rsuite/rsuite",
+      "source_version": "c09c0d5c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:54:30.484Z"
+    },
+    "rule-1941": {
+      "learning_id": "rule-1941",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1941,
+      "title": "Merge pull request #505 from Kuberwastaken/fix/495-keybindings-remainder",
+      "source_url": "https://github.com/Kuberwastaken/claurst",
+      "source_version": "85ebb868",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:54:31.443Z"
+    },
+    "rule-1942": {
+      "learning_id": "rule-1942",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1942,
+      "title": "auth): bound waiting on inflight OAuth flow with read-time deadline (#14942)",
+      "source_url": "https://github.com/aws-amplify/amplify-js",
+      "source_version": "26b49ecd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:54:36.837Z"
+    },
+    "rule-1943": {
+      "learning_id": "rule-1943",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1943,
+      "title": "更新时删除本地存储 (#207)",
+      "source_url": "https://github.com/go-eagle/eagle",
+      "source_version": "b1301b09",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:54:38.813Z"
+    },
+    "rule-1944": {
+      "learning_id": "rule-1944",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1944,
+      "title": "mysql tokenize error (#198)",
+      "source_url": "https://github.com/Qovery/Replibyte",
+      "source_version": "5504db91",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:54:44.758Z"
     }
   },
   "aliases": {

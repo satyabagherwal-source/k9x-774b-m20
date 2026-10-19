@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261017-JLE0",
-    "timestamp": "2026-10-17T16:14:02.760Z",
-    "repository": "PSRben/VisionHOPE",
-    "learningId": "learn-huggingface-psrben-visionhope",
-    "contentHash": "79c1a1801cfa28962cff8b3b4c57029e2d18deb1ac4703211b97cd7381ac6250",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-NBAF",
-    "timestamp": "2026-10-17T16:16:56.295Z",
-    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
-    "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
-    "contentHash": "b8ade56338e64a1f801c40dbafde0be9983f2e0947833179a5b2fcef72a41fde",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-R896",
-    "timestamp": "2026-10-17T16:19:58.986Z",
-    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
-    "contentHash": "6bee6c30c228a89b379c15bf3b257f0460e22bc2e4339bfcfadeba794c7733a5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-V7XK",
-    "timestamp": "2026-10-17T16:23:05.192Z",
-    "repository": "facebook/sam3",
-    "learningId": "learn-huggingface-facebook-sam3",
-    "contentHash": "54c5ea4731b7879b3ee19746b354f52697c0bcf8b418aedbee7f3fa3f3805363",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-ZNR3",
-    "timestamp": "2026-10-17T16:26:32.319Z",
-    "repository": "unsloth/Qwen3.8-27B-GGUF",
-    "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
-    "contentHash": "6275e982818483a1bb400f518b0ea7abd54839c0d6defd6c424e2fe9176469e2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-3JIV",
-    "timestamp": "2026-10-17T16:29:33.463Z",
-    "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
-    "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
-    "contentHash": "edb951b0f010f2a18c1eb24472286278106d69f0380a74e568bf7fb61acc7f1a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261017-7LVZ",
     "timestamp": "2026-10-17T16:32:43.151Z",
     "repository": "canberkkkkkk/ema-lightning",
@@ -7492,6 +7402,96 @@
     "contentHash": "235ac09e3435aafb4cc1b625622970fe54f73d21042e9a2891859d4964c98ad8",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-KRKG",
+    "timestamp": "2026-10-19T00:54:30.544Z",
+    "repository": "rsuite/rsuite",
+    "learningId": "learn-github-rsuite-rsuite",
+    "contentHash": "5a8120a92a68d6840396cf69160e42d3cabc714a6123150fc00911e2947388df",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-KRS8",
+    "timestamp": "2026-10-19T00:54:30.824Z",
+    "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
+    "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
+    "contentHash": "3da954c6038818ae34bbf4498340f3b6d5bbf4ecc6d45160b2dcefb209294e15",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-KSAN",
+    "timestamp": "2026-10-19T00:54:31.487Z",
+    "repository": "Kuberwastaken/claurst",
+    "learningId": "learn-github-kuberwastaken-claurst",
+    "contentHash": "2b731d4357e6e4b1eac3f64c15906f15daab67bff04e3d8c4e5cec4541c1c47f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-KWGF",
+    "timestamp": "2026-10-19T00:54:36.879Z",
+    "repository": "aws-amplify/amplify-js",
+    "learningId": "learn-github-aws-amplify-amplify-js",
+    "contentHash": "016f8b446c406943bcededea42577d222e69a558e5c71242b14deb9818071d33",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-KXZC",
+    "timestamp": "2026-10-19T00:54:38.856Z",
+    "repository": "go-eagle/eagle",
+    "learningId": "learn-github-go-eagle-eagle",
+    "contentHash": "52b7bf79d50916dbcfaf35b4a1b27f5aba842863f9d10bcea3e1b8a5939f58ff",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-L2KH",
+    "timestamp": "2026-10-19T00:54:44.801Z",
+    "repository": "Qovery/Replibyte",
+    "learningId": "learn-github-qovery-replibyte",
+    "contentHash": "1ca8d20fefe83951368ddacbd436584b3df18be1d9d603829f2152189807d893",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

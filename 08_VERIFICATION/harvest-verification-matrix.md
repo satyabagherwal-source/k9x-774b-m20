@@ -2713,3 +2713,9 @@
 | `CYCLE-20261019-CWHX` | `2026-10-19T00:48:23.685Z` | `vinceanalytics/vince` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1936` | Yes (`fa12e4ba...`) |
 | `CYCLE-20261019-CYVW` | `2026-10-19T00:48:26.780Z` | `BAAI/bge-small-en-v1.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1937, Rule 1938, Rule 1939` | Yes (`89fdd58b...`) |
 | `CYCLE-20261019-D0S0` | `2026-10-19T00:48:29.232Z` | `malisper/pgrust` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/malisper-pgrust-learnings.md` | Yes (`235ac09e...`) |
+| `CYCLE-20261019-KRKG` | `2026-10-19T00:54:30.544Z` | `rsuite/rsuite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1940` | Yes (`5a8120a9...`) |
+| `CYCLE-20261019-KRS8` | `2026-10-19T00:54:30.824Z` | `autotrust/GLM5.3-Flash-E224-DGX-Spark` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md` | Yes (`3da954c6...`) |
+| `CYCLE-20261019-KSAN` | `2026-10-19T00:54:31.487Z` | `Kuberwastaken/claurst` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1941` | Yes (`2b731d43...`) |
+| `CYCLE-20261019-KWGF` | `2026-10-19T00:54:36.879Z` | `aws-amplify/amplify-js` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1942` | Yes (`016f8b44...`) |
+| `CYCLE-20261019-KXZC` | `2026-10-19T00:54:38.856Z` | `go-eagle/eagle` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1943` | Yes (`52b7bf79...`) |
+| `CYCLE-20261019-L2KH` | `2026-10-19T00:54:44.801Z` | `Qovery/Replibyte` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1944` | Yes (`1ca8d20f...`) |

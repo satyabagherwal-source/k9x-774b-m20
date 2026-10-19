@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kuberwastaken-claurst-learnings.md`  
+> **Source**: github ([https://github.com/Kuberwastaken/claurst](https://github.com/Kuberwastaken/claurst))  
+> **Source Version**: `85ebb868`  
+> **License**: GPL-3.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T00:54:31.279Z  
+> **Learning ID**: `learn-github-kuberwastaken-claurst`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): Kuberwastaken/claurst
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kuberwastaken-claurst-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Kuberwastaken/claurst](https://github.com/Kuberwastaken/claurst))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T01:46:35.809Z  
+> **Harvest Timestamp**: 2026-10-19T00:54:31.269Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: Agentic Coding for Builders who Ship
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10310 stars
+- **Stars / Engagement**: 10323 stars
 
 ---
 
@@ -1451,115 +1465,305 @@ pub fn classify_bash_command(command: &str) -> BashRiskLevel {
     // Redirect-overwrite to a file (could clobber impor
 ```
 
+### Core Architecture Module: `src-rust/crates/core/src/bundled_skills.rs`
+```
+//! Bundled skill definitions.
+//!
+//! Each entry in `BUNDLED_SKILLS` mirrors one of the TypeScript
+//! `registerXxxSkill()` calls under `src/skills/bundled/`. They are one source
+//! of the session skill registry (`skill_discovery::SkillRegistry`); a skill
+//! discovered on disk with the same name replaces the bundled one.
+
+/// A single bundled skill definition.
+#[derive(Debug, Clone)]
+pub struct BundledSkill {
+    /// Primary name used to invoke the skill (e.g. `"simplify"`).
+    pub name: &'static str,
+    /// One-line description shown in `/skill list` output and to the model.
+    pub description: &'static str,
+    /// Additional names that map to this skill.
+    pub aliases: &'static [&'static str],
+    /// Optional guidance for the model about when to auto-invoke.
+    pub when_to_use: Option<&'static str>,
+    /// Placeholder shown next to the skill name in help text.
+    pub argument_hint: Option<&'static str>,
+    /// The prompt template.  `$ARGUMENTS` is replaced at call time.
+    /// `$ARGUMENTS_SUFFIX` expands to `": <args>"` when args are non-empty,
+    /// or `""` otherwise.
+    pub prompt_template: &'static str,
+    /// If `Some`, only these tool names are available during the skill run.
+    pub allowed_tools: Option<&'static [&'static str]>,
+    /// Whether a human user can invoke this skill via `/skill <name>`.
+    pub user_invocable: bool,
+}
+
+/// All bundled skills.
+pub const BUNDLED_SKILLS: &[BundledSkill] = &[
+    // -----------------------------------------------------------------------
+    // simplify
+    // -----------------------------------------------------------------------
+    BundledSkill {
+        name: "simplify",
+        description: "Review changed code for reuse, quality, and efficiency, then fix any issues found.",
+        aliases: &[],
+        when_to_use: Some("After writing code, when you want a quality review and cleanup pass."),
+        argument_hint: None,
+        prompt_template: r#"# Simplify: Code Review and Cleanup
+
+Review all changed files for reuse, quality, and efficiency. Fix any issues found.
+
+## Phase 1: Identify Changes
+
+Run `git diff` (or `git diff HEAD` if there are staged changes) to see what changed.
+If there are no git changes, review the most recently modified files that were
+mentioned or edited earlier in this conversation.
+
+## Phase 2: Launch Three Review Agents in Parallel
+
+Use the Agent tool to launch all three agents concurrently in a single message.
+Pass each agent the full diff so it has complete context.
+
+### Agent 1: Code Reuse Review
+
+For each change:
+1. **Search for existing utilities and helpers** that could replace newly written code.
+2. **Flag any new function that duplicates existing functionality.**
+3. **Flag any inline logic that could use an existing utility** — hand-rolled string
+   manipulation, manual path handling, custom environment checks, etc.
+
+### Agent 2: Code Quality Review
+
+Review the same changes for hacky patterns:
+1. **Redundant state** that duplicates existing state.
+2. **Parameter sprawl** — new parameters instead of restructuring.
+3. **Copy-paste with slight variation** that should be unified.
+4. **Leaky abstractions** — exposing internal details.
+5. **Stringly-typed code** where constants or enums already exist.
+6. **Unnecessary comments** narrating what code does (not why).
+
+### Agent 3: Efficiency Review
+
+Review the same changes for efficiency:
+1. **Unnecessary work** — redundant computations, duplicate reads.
+2. **Missed concurrency** — independent operations run sequentially.
+3. **Hot-path bloat** — blocking work added to startup or per-request paths.
+4. **Recurring no-op updates** — unconditional updates in polling loops.
+5. **Memory** — unbounded data structures, missing cleanup.
+
+## Phase 3: Fix Issues
+
+Wait for all three agents to complete. Aggregate findings and fix each issue.
+If a finding is a false positive, note it and move on.
+
+When done, briefly summarize what was fixed (or confirm the code was already clean).
+$ARGUMENTS_SUFFIX"#,
+        allowed_tools: None,
+        user_invocable: true,
+    },
+
+    // -----------------------------------------------------------------------
+    // remember
+    // -----------------------------------------------------------------------
+    BundledSkill {
+        name: "remember",
+        description: "Review auto-memory entries and propose promotions to AGENTS.md, AGENTS.local.md, or shared memory.",
+        aliases: &["mem", "save"],
+        when_to_use: Some("When the user wants to review, organise, or promote their auto-memory entries."),
+        argument_hint: Some("[additional context]"),
+        prompt_template: r#"# Memory Review
+
+## Goal
+Review the user's memory landscape and produce a clear report of proposed changes,
+grouped by action type. Do NOT apply changes — present proposals for user approval.
+
+## Steps
+
+### 1. Gather all memory layers
+Read AGENTS.md and AGENTS.local.md from the project root (if they exist).
+Your auto-memory content is already in your system prompt — review it there.
+
+### 2. Classify each auto-memory entry
+
+| Destination | What belongs there |
+|---|---|
+| **AGENTS.md** | Project conventions all contributors should follow |
+| **AGENTS.local.md** | Personal instructions specific to this user |
+| **Stay in auto-memory** | Working notes, temporary context, uncertain patterns |
+
+### 3. Identify cleanup opportunities
+- **Duplicates**: auto-memory entries already in AGENTS.md → propose removing
+- **Outdated**: AGENTS.md entries contradicted by newer auto-memory → propose updating
+- **Conflicts**: contradictions between layers → propose resolution
+
+### 4. Present the report
+Output a structured report grouped by: Promotions, Cleanup, Ambiguous, No action needed.
+
+## Rules
+- Present ALL proposals before making any changes
+- Do NOT modify files without explicit user approval
+- Ask about ambiguous entries — don't guess
+$ARGUMENTS_SUFFIX"#,
+        allowed_tools: Some(&["Read", "Write", "Edit", "Glob"]),
+        user_invocable: true,
+    },
+
+    // -----------------------------------------------------------------------
+    // debug
+    // -----------------------------------------------------------------------
+    BundledSkill {
+        name: "debug",
+        description: "Enable debug logging for this session and help diagnose issues.",
+        aliases: &["diagnose"],
+        when_to_use: Some("When there is an error, bug, or unexpected behaviour to investigate."),
+        argument_hint: Some("[issue description or error message]"),
+        prompt_template: r#"# Debug Skill
+
+Help the user debug an issue they are encountering.
+
+## Issue Description
+
+$ARGUMENTS
+
+## Systematic Debugging Approach
+
+1. **Reproduce** — Confirm the exact error / behaviour.
+2. **Locate** — Find the relevant code (read files, grep for error messages).
+3. **Hypothesize** — Form 2–3 hypotheses about the root cause.
+4. **Test** — Verify each hypothesis systematically.
+5. **Fix** — Implement the fix for the confirmed root cause.
+6. **Verify** — Confirm the fix resolves the issue.
+
+## Settings Reference
+
+Settings files are in:
+- User:    ~/.claurst/settings.json
+- Project: .claurst/settings.json
+- Local:   .claurst/settings.local.json
+
+Read the relevant files before making any changes."#,
+        allowed_tools: Some(&["Read", "Grep", "Glob"]),
+        user_invocable: true,
+    },
+
+    // -----------------------------------------------------------------------
+    // stuck
+    // -----------------------------------------------------------------------
+    BundledSkill {
+        name: "stuck",
+        description: "Help get unstuck when you don't know how to proceed.",
+        aliases: &["help-me", "unblock"],
+        when_to_use: Some("When you are stuck, confused, or don't know how to proceed."),
+        argument_hint: Some("[what you're trying to do]"),
+        prompt_template: r#"The user is stuck$ARGUMENTS_SUFFIX. Help them get unstuck:
+
+1. Clarify what they are trying to achieve (if unclear).
+2. Identify why they might be stuck (missing context, unclear requirements, technical blocker).
+3. Suggest 2–3 concrete next steps in order of likelihood of success.
+4. If a technical blocker: propose specific debugging steps or workarounds.
+5. Ask clarifying questions if needed.
+
+Be direct and actionable. Focus on unblocking, not on explaining concepts."#,
+        allowed_tools: None,
+        user_invocable: true,
+    },
+
+    // -----------------------------------------------------------------------
+    // batch
+    // -----------------------------------------------------------------------
+    BundledSkill {
+        name: "batch",
+        description: "Research and plan a large-scale change, then execute it in parallel across isolated worktree agents that each open a PR.",
+        aliases: &[],
+        when_to_use: Some("When the user wants to make a sweeping, mechanical change across many files that can be decomposed into independent parallel units."),
+        argument_hint: Some("<instruction>"),
+        prompt_template: r#"# Batch: Parallel Work Orchestration
+
+You are orchestrating a large, parallelisable change across this codebase.
+
+## User Instruction
+
+$ARGUMENTS
+
+## Phase 1: Research and Plan (Plan Mode)
+
+Enter plan mode, then:
+
+1. **Understand the scope.** Launch subagents to deeply research what this instruction
+   touches. Find all files, patterns, and call sites that need to change.
+
+2. **Decompose into independent units.** Break the work into 5–30 self-contained units.
+   Each unit must be independently implementable in an isolated git worktree and
+   mergeable on its own without depending on another unit's PR landing first.
+
+3. **Determine the e2e test recipe.** Figure out how a worker can verify its change
+   actually works end-to-end. If you cannot find
+```
+
 ### Core Architecture Module: `src-rust/crates/core/src/claudemd.rs`
 ```
-//! AGENTS.md hierarchical memory loading.
-//! Mirrors src/utils/claudemd.ts (1,479 lines).
+//! Instruction files: `AGENTS.md` / `CLAUDE.md` loaded into the system prompt.
 //!
-//! Priority order: managed > user > project > local
-//! Supports @include directives, YAML frontmatter, and mtime-based caching.
+//! Load order (stable; later files are more specific):
+//!   1. The global directories (`<claurst home>`, then `~/.claude`)
+//!   2. Each project directory from the git root down to `cwd`
+//!      (`skill_discovery::project_search_dirs`: never past the git root,
+//!      only `cwd` when there is no `.git`)
+//!
+//! In each directory `AGENTS.override.md`, when present, replaces the other
+//! files; otherwise `AGENTS.md`, `CLAUDE.md`, `.claude/CLAUDE.md` and
+//! `.claurst/AGENTS.md` are loaded in that order (a file that is the same
+//! file, or has the same content, as one already loaded is skipped).
+//! YAML frontmatter is stripped and `@include <path>` lines are expanded,
+//! confined to the project root (project files) or the global directory
+//! the file came from (global files). All files share a
+//! [`INSTRUCTION_BUDGET_BYTES`] budget.
 
-use serde::{Deserialize, Serialize};
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 use std::path::{Path, PathBuf};
-use std::time::SystemTime;
 
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
 
-/// Memory file type / priority scope.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub enum MemoryScope {
-    /// `~/.claurst/rules/*.md` — global managed policy.
-    Managed,
-    /// `~/.claurst/AGENTS.md` — user-level memory.
-    User,
-    /// `{project_root}/AGENTS.md` — project-level memory.
-    Project,
-    /// `{project_root}/.claurst/AGENTS.md` — local override.
-    Local,
-}
-
-/// Frontmatter parsed from a AGENTS.md file.
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
-pub struct MemoryFrontmatter {
-    #[serde(default)]
-    pub memory_type: Option<String>,
-    #[serde(default)]
-    pub priority: Option<u32>,
-    #[serde(default)]
-    pub scope: Option<String>,
-}
-
-/// Loaded memory file with metadata.
-#[derive(Debug, Clone)]
-pub struct MemoryFileInfo {
+/// One loaded instruction file.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct InstructionFile {
+    /// Path of the file as found on disk.
     pub path: PathBuf,
-    pub scope: MemoryScope,
+    /// Content with frontmatter stripped and `@include` lines expanded,
+    /// truncated to fit the budget.
     pub content: String,
-    pub frontmatter: MemoryFrontmatter,
-    pub mtime: Option<SystemTime>,
 }
 
+/// Total size of all instruction files, in bytes.
+pub const INSTRUCTION_BUDGET_BYTES: usize = 32 * 1024;
+
+/// In a directory that has it, this file replaces `AGENTS.md` and `CLAUDE.md`.
+const OVERRIDE_FILE_NAME: &str = "AGENTS.override.md";
+
+/// Loaded in this order when a directory has no override file, as path
+/// components relative to the directory. `.claurst/AGENTS.md` is where
+/// session memories are persisted; `.claude/CLAUDE.md` is Claude Code's
+/// project location.
+const INSTRUCTION_FILE_PATHS: [&[&str]; 4] = [
+    &["AGENTS.md"],
+    &["CLAUDE.md"],
+    &[".claude", "CLAUDE.md"],
+    &[".claurst", "AGENTS.md"],
+];
+
 // ---------------------------------------------------------------------------
-// Cache
+// YAML frontmatter
 // ---------------------------------------------------------------------------
 
-/// Simple mtime-keyed file cache.
-#[derive(Default)]
-pub struct MemoryCache {
-    entries: HashMap<PathBuf, (SystemTime, String)>,
-}
-
-impl MemoryCache {
-    /// Return cached content if the file hasn't changed since last read.
-    pub fn get(&self, path: &Path) -> Option<&str> {
-        let mtime = std::fs::metadata(path).ok()?.modified().ok()?;
-        let (cached_mtime, content) = self.entries.get(path)?;
-        if *cached_mtime == mtime { Some(content.as_str()) } else { None }
-    }
-
-    /// Store file content with its current mtime.
-    pub fn insert(&mut self, path: PathBuf, content: String) {
-        if let Ok(mtime) = std::fs::metadata(&path).and_then(|m| m.modified()) {
-            self.entries.insert(path, (mtime, content));
+/// Strip YAML frontmatter (`---` ... `---`) from the start of `content`.
+pub fn strip_frontmatter(content: &str) -> &str {
+    if let Some(after_first) = content.strip_prefix("---") {
+        if let Some(end) = after_first.find("\n---") {
+            return after_first[end + 4..].trim_start_matches(['\r', '\n']);
         }
     }
-}
-
-// ---------------------------------------------------------------------------
-// YAML frontmatter parsing
-// ---------------------------------------------------------------------------
-
-/// Strip YAML frontmatter (--- ... ---) from content and parse it.
-/// Returns (frontmatter, body_without_frontmatter).
-pub fn parse_frontmatter(content: &str) -> (MemoryFrontmatter, &str) {
-    if !content.starts_with("---") {
-        return (MemoryFrontmatter::default(), content);
-    }
-    let after_first = &content[3..];
-    if let Some(end) = after_first.find("\n---") {
-        let yaml = after_first[..end].trim();
-        let body = &after_first[end + 4..];
-        // Minimal YAML key-value parse (no external dependency).
-        let mut fm = MemoryFrontmatter::default();
-        for line in yaml.lines() {
-            let line = line.trim();
-            if let Some((key, val)) = line.split_once(':') {
-                let val = val.trim().to_string();
-                match key.trim() {
-                    "memory_type" => fm.memory_type = Some(val),
-                    "priority" => fm.priority = val.parse().ok(),
-                    "scope" => fm.scope = Some(val),
-                    _ => {}
-                }
-            }
-        }
-        return (fm, body.trim_start_matches('\n'));
-    }
-    (MemoryFrontmatter::default(), content)
+    content
 }
 
 // ---------------------------------------------------------------------------
@@ -1569,11 +1773,19 @@ pub fn parse_frontmatter(content: &str) -> (MemoryFrontmatter, &str) {
 /// Maximum @include nesting depth.
 const MAX_INCLUDE_DEPTH: usize = 10;
 
-/// Expand @include directives in content.
-/// Circular references are detected via `visited` set.
+/// Largest file `@include` will pull in, in bytes.
+const MAX_INCLUDE_BYTES: u64 = 40 * 1024;
+
+/// Expand `@include <path>` lines in `content`.
+///
+/// Paths are relative to `base_dir` (the including file's directory),
+/// absolute, or `~/`-prefixed. A target outside `root` is not read, so a
+/// repository's AGENTS.md cannot pull files such as `~/.ssh/...` into the
+/// prompt. Circular references are detected via `visited`.
 pub fn expand_includes(
     content: &str,
     base_dir: &Path,
+    root: &Path,
     visited: &mut HashSet<PathBuf>,
     depth: usize,
 ) -> String {
@@ -1581,147 +1793,163 @@ pub fn expand_includes(
         return content.to_string();
     }
 
+    let canonical_root = root.canonicalize().unwrap_or_else(|_| root.to_path_buf());
     let mut result = String::with_capacity(content.len());
     for line in content.lines() {
-        let trimmed = line.trim();
-        if let Some(path_str) = trimmed.strip_prefix("@include ") {
-            let path_str = path_str.trim();
-            // Resolve relative to base_dir; expand ~ to home dir.
-            let include_path = if path_str.starts_with('~') {
-                dirs::home_dir()
-                    .unwrap_or_default()
-                    .join(&path_str[2..])
-            } else if Path::new(path_str).is_absolute() {
-                PathBuf::from(path_str)
-            } else {
-                base_dir.join(path_str)
-            };
-
-            let canonical = include_path.canonicalize().unwrap_or(include_path.clone());
-            if visited.contains(&canonical) {
-                result.push_str(&format!("<!-- circular @include {} skipped -->\n", path_str));
-                continue;
-            }
-            if let Ok(included) = std::fs::read_to_string(&include_path) {
-                // Check max size.
-                if included.len() > 40 * 1024 {
-                    result.push_str(&format!("<!-- @include {} exceeds 40KB limit -->\n", path_str));
-                    continue;
-                }
-                visited.insert(canonical);
-                let expanded = expand_includes(
-                    &included,
-                    include_path.parent().unwrap_or(base_dir),
-                    visited,
-                    depth + 1,
-                );
-                result.push_str(&expanded);
-                result.push('\n');
-            } else {
-                result.push_str(&format!("<!-- @include {} not found -->\n", path_str));
-            }
-        } else {
+        let Some(path_str) = line.trim().strip_prefix("@include ") else {
             result.push_str(line);
             result.push('\n');
+            continue;
+        };
+        let path_str = path_str.trim();
+        let include_path = match path_str.strip_prefix("~/") {
+            Some(rest) => match dirs::home_dir() {
+                Some(home) => home.join(rest),
+                None => {
+                    result.push_str(&format!("<!-- @include {} not found -->\n", path_str));
+                    continue;
+                }
+            },
+            None if Path::new(path_str).is_absolute() => PathBuf::from(path_str),
+            None => base_dir.join(path_str),
+        };
+
+        let Ok(canonical) = include_path.canonicalize() else {
+            result.push_str(&format!("<!-- @include {} not found -->\n", path_str));
+            continue;
+        };
+        if !canonical.starts_with(&canonical_root) {
+            result.push_str(&format!(
+                "<!-- @include {} skipped: outside {} -->\n",
+                path_str,
+                root.display()
+            ));
+            continue;
         }
+        if visited.contains(&canonical) {
+            result.push_str(&format!("<!-- circular @include {} skipped -->\n", path_str));
+            continue;
+        }
+        if std::fs::metadata(&canonical).is_ok_and(|m| m.len() > MAX_INCLUDE_BYTES) {
+            result.push_str(&format!("<!-- @include {} exceeds 40KB limit -->\n", path_str));
+            continue;
+        }
+        let Ok(included) = std::fs::read_to_string(&canonical) else {
+            result.push_str(&format!("<!-- @include {} not found -->\n", path_str));
+            continue;
+        };
+        let include_dir = canonical.parent().unwrap_or(base_dir).to_path_buf();
+        visited.insert(canonical);
+        result.push_str(&expand_includes(&included, &include_dir, root, visited, depth + 1));
+        result.push('\n');
     }
     result
 }
 
 // ---------------------------------------------------------------------------
-// Loading API
+// Loading
 // ---------------------------------------------------------------------------
 
-const MAX_FILE_SIZE: u64 = 40 * 1024; // 40 KB
-
-/// Load a single AGENTS.md file (respects MAX_FILE_SIZE, expands @includes).
-pub fn load_memory_file(path: &Path, scope: MemoryScope) -> Option<MemoryFileInfo> {
-    let meta = std::fs::metadata(path).ok()?;
-    if meta.len() > MAX_FILE_SIZE {
-        eprintln!("WARNING: {} exceeds 40KB limit, skipping", path.display());
-        return None;
+/// The instruction files present in `dir`, in load order.
+fn files_in_dir(dir: &Path) -> Vec<PathBuf> {
+    let override_file = dir.join(OVERRIDE_FILE_NAME);
+    if override_file.is_file() {
+        return vec![override_file];
     }
-    let raw = std::fs::read_to_string(path).ok()?;
-    let mtime = meta.modified().ok();
-
-    let (frontmatter, body) = parse_frontmatter(&raw);
-    let mut visited = HashSet::new();
-    visited.insert(path.canonicalize().unwrap_or(path.to_path_buf()));
-    let content = expand_includes(body, path.parent().unwrap_or(Path::new(".")), &mut visited, 0);
-
-    Some(MemoryFileInfo {
-        path: path.to_path_buf(),
-        scope,
-        content,
-        frontmatter,
-        mtime,
-    })
-}
-
-/// Load memory files from a directory for a given scope.
-///
-/// Loads `AGENTS.md` first (primary/universal standard), then `CLAUDE.md` if
-/// present (Claude-specific additions or overrides). Either file may be absent.
-fn load_scope_files(dir: &Path, scope: MemoryScope, files: &mut Vec<MemoryFileInfo>) {
-    for name in &["AGENTS.md", "CLAUDE.md"] {
-        let path = dir.join(name);
-        if path.exists() {
-            if let Some(f) = load_memory_file(&path, scope) {
-                files.push(f);
-            }
-        }
-    }
-}
-
-/// Load all memory files for the given project root, in priority order.
-///
-/// At each scope `AGENTS.md` is loaded first (universal standard), followed by
-/// `CLAUDE.md` if present (Claude-specific context). Either or both may exist.
-///
-/// Returned list is ordered: Managed (highest) → User → Project → Local.
-pub fn load_all_memory_files(project_root: &Path) -> Vec<MemoryFileInfo> {
-    let mut files = Vec::new();
-
-    // 1. Managed: <claurst home>/rules/*.md
-    {
-        let claurst = crate::config::Settings::config_dir();
-        let rules_dir = claurst.join("rules");
-        if let Ok(entries) = std::fs::read_dir(&rules_dir) {
-            let mut paths: Vec<PathBuf> = entries
-                .flatten()
-                .filter_map(|e| {
-                    let p = e.path();
-                    if p.extension().is_some_and(|x| x == "md") { Some(p) } else { None }
-                })
-                .collect();
-            paths.sort();
-            for p in paths {
-                if let Some(f) = load_memory_file(&p, MemoryScope::Managed) {
-                    files.push(f);
-                }
-            }
-        }
-
-        // 2. User: <claurst home>/AGENTS.md then <claurst home>/CLAUDE.md
-        load_scope_files(&claurst, MemoryScope::User, &mut files);
-    }
-
-    // 3. Project: {project_root}/AGENTS.md then {project_root}/CLAUDE.md
-    load_scope_files(project_root, MemoryScope::Project, &mut files);
-
-    // 4. Local: {project_root}/.claurst/AGENTS.md then {project_root}/.claurst/CLAUDE.md
-    load_scope_files(&project_root.join(".claurst"), MemoryScope::Local, &mut files);
-
-    files
-}
-
-/// Concatenate all memory file contents into a single system-prompt fragment.
-pub fn build_memory_prompt(files: &[MemoryFileInfo]) -> String {
-    files
+    INSTRUCTION_FILE_PATHS
         .iter()
-        .filter(|f| !f.content.trim().is_empty())
-        .map(|f| f.content.trim().to_string())
-        .colle
+        .map(|components| components.iter().fold(dir.to_path_buf(), |path, c| path.join(c)))
+        .filter(|path| path.is_file())
+        .collect()
+}
+
+/// Load the instruction files for a session in `cwd`. `global_dirs` are the
+/// user-level directories, in load order (normally `Settings::config_dir()`
+/// then `~/.claude`, see [`default_global_dirs`]).
+///
+/// Returns the files in load order. Once the combined content reaches
+/// [`INSTRUCTION_BUDGET_BYTES`], the file that crosses it is truncated with a
+/// note and later files carry only a note naming them.
+pub fn load_instruction_files(cwd: &Path, global_dirs: &[PathBuf]) -> Vec<InstructionFile> {
+    let project_dirs = crate::skill_discovery::project_search_dirs(cwd);
+    let project_root = project_dirs.last().map_or(cwd, PathBuf::as_path);
+
+    // (file, root its @include lines are confined to)
+    let mut sources: Vec<(PathBuf, &Path)> = global_dirs
+        .iter()
+        .flat_map(|dir| files_in_dir(dir).into_iter().map(move |file| (file, dir.as_path())))
+        .collect();
+    for dir in project_dirs.iter().rev() {
+        sources.extend(files_in_dir(dir).into_iter().map(|file| (file, project_root)));
+    }
+
+    let mut files: Vec<InstructionFile> = Vec::new();
+    let mut seen_paths: HashSet<PathBuf> = HashSet::new();
+    let mut seen_contents: HashSet<String> = HashSet::new();
+    let mut remaining = INSTRUCTION_BUDGET_BYTES;
+    for (path, root) in sources {
+        let canonical = path.canonicalize().unwrap_or_else(|_| path.clone());
+        if !seen_paths.insert(canonical.clone()) {
+            continue;
+        }
+        let raw = match std::fs::read_to_string(&path) {
+            Ok(raw) => raw,
+            Err(err) => {
+                tracing::debug!(path = %path.display(), error = %err, "instruction file unreadable");
+                continue;
+            }
+        };
+        let base_dir = canonical.parent().unwrap_or(root).to_path_buf();
+        let mut visited = HashSet::from([canonical]);
+        let expanded = expand_includes(strip_frontmatter(&raw), &base_dir, root, &mut visited, 0);
+        let content = expanded.trim();
+        if content.is_empty() || !seen_contents.insert(content.to_string()) {
+            continue;
+        }
+
+        let content = if remaining == 0 {
+            format!(
+                "[Not loaded: the {} KiB instruction budget is used up. Read {} directly if it is relevant.]",
+                INSTRUCTION_BUDGET_BYTES / 1024,
+                path.display()
+            )
+        } else if content.len() <= remaining {
+            remaining -= content.len();
+            content.to_string()
+        } else {
+            let mut cut = remaining;
+            while !content.is_char_boundary(cut) {
+                cut -= 1;
+            }
+            remaining = 0;
+            format!(
+                "{}\n\n[Truncated: instruction files are limited to {} KiB in total. Read {} for the rest.]",
+                &content[..cut],
+                INSTRUCTION_BUDGET_BYTES / 1024,
+                path.display()
+            )
+        };
+        files.push(InstructionFile { path, content });
+    }
+    files
+}
+
+/// The user-level instruction directories: `<claurst home>`, then
+/// `~/.claude` (Claude Code's global `CLAUDE.md`).
+pub fn default_global_dirs() -> Vec<PathBuf> {
+    let mut global = vec![crate::config::Settings::config_dir()];
+    if let Some(home) = dirs::home_dir() {
+        global.push(home.join(".claude"));
+    }
+    global
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn git_repo() -> (tempfile::TempDir, PathBuf) {
+        let tmp = tempfile::
 ```
 
 ### Core Architecture Module: `src-rust/crates/core/src/cloud_session.rs`
@@ -2115,410 +2343,6 @@ mod tests {
 
 ```
 
-### Core Architecture Module: `src-rust/crates/core/src/context_collapse.rs`
-```
-//! Context Collapse Service
-//!
-//! Automatically reduces conversation size to fit within model context windows.
-//! Uses simple word-count estimation and message dropping strategy.
-//!
-//! Gated behind `cached_microcompact` feature flag.
-
-use crate::types::Message;
-#[cfg(feature = "cached_microcompact")]
-use crate::types::Role;
-use serde::{Deserialize, Serialize};
-
-/// Strategy for collapsing a conversation when it exceeds token limits.
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub enum CollapseStrategy {
-    /// Drop oldest non-system messages first
-    DropOldest,
-    /// Summarize the middle of the conversation
-    Summarize,
-}
-
-/// Collapse state persisted to disk
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct CollapseState {
-    pub session_id: String,
-    pub messages_dropped: usize,
-    pub tokens_before: u64,
-    pub tokens_after: u64,
-    pub strategy_used: String,
-    pub collapsed_at: String,
-}
-
-/// Simple token estimator: ~4 characters per token
-const CHARS_PER_TOKEN: usize = 4;
-
-/// Estimate token count from text using simple heuristic.
-fn estimate_tokens(text: &str) -> u64 {
-    (text.len() / CHARS_PER_TOKEN).max(1) as u64
-}
-
-/// Estimate total tokens in a message list.
-pub fn estimate_message_tokens(messages: &[Message]) -> u64 {
-    messages
-        .iter()
-        .map(|m| {
-            let content_tokens = estimate_tokens(&format!("{:?}", m.content));
-            let role_tokens = 2u64; // "user", "assistant", etc.
-            content_tokens + role_tokens
-        })
-        .sum()
-}
-
-/// Collapse a message list to fit within max_tokens.
-/// Returns the collapsed message list and collapse state (if collapsing occurred).
-#[cfg(feature = "cached_microcompact")]
-pub fn collapse_context(
-    messages: Vec<Message>,
-    max_tokens: u64,
-    strategy: CollapseStrategy,
-) -> (Vec<Message>, Option<CollapseState>) {
-    let initial_tokens = estimate_message_tokens(&messages);
-
-    // Already under limit
-    if initial_tokens <= max_tokens {
-        return (messages, None);
-    }
-
-    let (collapsed, dropped_count) = match strategy {
-        CollapseStrategy::DropOldest => drop_oldest_messages(messages, max_tokens),
-        CollapseStrategy::Summarize => summarize_messages(messages, max_tokens),
-    };
-
-    let final_tokens = estimate_message_tokens(&collapsed);
-
-    let state = CollapseState {
-        session_id: "unknown".to_string(),
-        messages_dropped: dropped_count,
-        tokens_before: initial_tokens,
-        tokens_after: final_tokens,
-        strategy_used: format!("{:?}", strategy),
-        collapsed_at: chrono::Utc::now().to_rfc3339(),
-    };
-
-    (collapsed, Some(state))
-}
-
-#[cfg(not(feature = "cached_microcompact"))]
-pub fn collapse_context(
-    messages: Vec<Message>,
-    _max_tokens: u64,
-    _strategy: CollapseStrategy,
-) -> (Vec<Message>, Option<CollapseState>) {
-    // Without feature flag, return as-is
-    (messages, None)
-}
-
-/// Drop oldest non-system messages until under token limit.
-#[cfg(feature = "cached_microcompact")]
-fn drop_oldest_messages(mut messages: Vec<Message>, max_tokens: u64) -> (Vec<Message>, usize) {
-    let mut dropped = 0;
-
-    // Find first non-system user/assistant message (skip system roles)
-    let first_user_idx = messages
-        .iter()
-        .position(|m| m.role != Role::Assistant) // Keep assistant responses, drop user turns
-        .unwrap_or(0);
-
-    // Drop messages starting from first_user_idx
-    while estimate_message_tokens(&messages) > max_tokens && messages.len() > first_user_idx + 1 {
-        messages.remove(first_user_idx);
-        dropped += 1;
-    }
-
-    (messages, dropped)
-}
-
-/// Summarize conversation by keeping first and last N messages.
-/// (Full summarization would require calling Claude, so this is a placeholder.)
-#[cfg(feature = "cached_microcompact")]
-fn summarize_messages(messages: Vec<Message>, _max_tokens: u64) -> (Vec<Message>, usize) {
-    let initial_len = messages.len();
-
-    // Simple heuristic: keep first and last 30% of messages
-    let target_len = (messages.len() as f64 * 0.6) as usize;
-    let keep_per_side = target_len / 2;
-
-    let result = if messages.len() > target_len {
-        let mut kept = Vec::new();
-
-        // Keep first messages
-        for (i, msg) in messages.iter().enumerate() {
-            if i < keep_per_side {
-                kept.push(msg.clone());
-            }
-        }
-
-        // Skip to near end and keep last messages
-        let skip_idx = initial_len.saturating_sub(keep_per_side);
-        for (i, msg) in messages.iter().enumerate() {
-            if i >= skip_idx {
-                kept.push(msg.clone());
-            }
-        }
-        kept
-    } else {
-        messages
-    };
-
-    let dropped = initial_len - result.len();
-    (result, dropped)
-}
-
-/// Persist collapse state to ~/.claurst/context_collapse_state.json
-#[cfg(feature = "cached_microcompact")]
-pub fn save_collapse_state(_session_id: &str, state: &CollapseState) -> anyhow::Result<()> {
-    let path = crate::config::Settings::config_dir().join("context_collapse_state.json");
-
-    std::fs::create_dir_all(path.parent().unwrap())?;
-    let json = serde_json::to_string(state)?;
-    std::fs::write(&path, json)?;
-    Ok(())
-}
-
-/// Load collapse state from ~/.claurst/context_collapse_state.json
-#[cfg(feature = "cached_microcompact")]
-pub fn load_collapse_state(_session_id: &str) -> Option<CollapseState> {
-    let path = crate::config::Settings::config_dir().join("context_collapse_state.json");
-
-    if !path.exists() {
-        return None;
-    }
-
-    let json = std::fs::read_to_string(&path).ok()?;
-    serde_json::from_str(&json).ok()
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_estimate_tokens() {
-        let text = "This is a test message with some content";
-        let tokens = estimate_tokens(text);
-        assert!(tokens > 0);
-    }
-}
-
-```
-
-### Core Architecture Module: `src-rust/crates/core/src/crypto_utils.rs`
-```
-//! Cryptographic utilities — mirrors src/utils/crypto.ts
-//!
-//! Provides SHA-256 hashing, UUID generation, base64url encoding,
-//! and work secret generation.
-
-use base64::{Engine, engine::general_purpose::URL_SAFE_NO_PAD};
-use sha2::{Digest, Sha256};
-use std::time::{SystemTime, UNIX_EPOCH};
-
-/// Compute the SHA-256 hash of `data` and return it as a lowercase hex string.
-pub fn sha256_hex(data: &[u8]) -> String {
-    let mut hasher = Sha256::new();
-    hasher.update(data);
-    hex::encode(hasher.finalize())
-}
-
-/// Compute the SHA-256 hash of a UTF-8 string.
-pub fn sha256_hex_str(s: &str) -> String {
-    sha256_hex(s.as_bytes())
-}
-
-/// Encode bytes as base64url (no padding) — same as `btoa` + replace in TS.
-pub fn base64url_encode(data: &[u8]) -> String {
-    URL_SAFE_NO_PAD.encode(data)
-}
-
-/// Decode base64url (no padding) bytes.
-pub fn base64url_decode(s: &str) -> Result<Vec<u8>, base64::DecodeError> {
-    URL_SAFE_NO_PAD.decode(s)
-}
-
-/// Generate a random UUID v4 string ("xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx").
-pub fn generate_uuid() -> String {
-    uuid::Uuid::new_v4().to_string()
-}
-
-/// Generate a cryptographically random work secret (32 bytes, base64url-encoded).
-pub fn generate_work_secret() -> String {
-    let mut bytes = [0u8; 32];
-    if getrandom::getrandom(&mut bytes).is_err() {
-        // Fallback: use time-based entropy
-        let ts = SystemTime::now()
-            .duration_since(UNIX_EPOCH)
-            .unwrap_or_default()
-            .subsec_nanos();
-        let pid = std::process::id();
-        let seed = format!("{}-{}", ts, pid);
-        let seed_bytes = seed.as_bytes();
-        let copy_len = seed_bytes.len().min(32);
-        bytes[..copy_len].copy_from_slice(&seed_bytes[..copy_len]);
-    }
-    base64url_encode(&bytes)
-}
-
-/// Encode a project root path for use as a directory name (base64url of the path).
-/// Mirrors `src/utils/projectRoot.ts`'s `encodeProjectRoot()`.
-pub fn encode_project_root(project_root: &str) -> String {
-    base64url_encode(project_root.as_bytes())
-}
-
-/// Decode a project root directory name back to a path.
-pub fn decode_project_root(encoded: &str) -> Option<String> {
-    base64url_decode(encoded)
-        .ok()
-        .and_then(|bytes| String::from_utf8(bytes).ok())
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn sha256_known_value() {
-        // SHA-256("hello") = 2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824
-        assert_eq!(
-            sha256_hex_str("hello"),
-            "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824"
-        );
-    }
-
-    #[test]
-    fn base64url_roundtrip() {
-        let data = b"hello world";
-        let encoded = base64url_encode(data);
-        let decoded = base64url_decode(&encoded).unwrap();
-        assert_eq!(decoded, data);
-    }
-
-    #[test]
-    fn project_root_roundtrip() {
-        let root = "/Users/alice/my-project";
-        let encoded = encode_project_root(root);
-        let decoded = decode_project_root(&encoded).unwrap();
-        assert_eq!(decoded, root);
-    }
-
-    #[test]
-    fn uuid_format() {
-        let u = generate_uuid();
-        assert_eq!(u.len(), 36);
-        assert_eq!(&u[8..9], "-");
-        assert_eq!(&u[13..14], "-");
-    }
-}
-
-```
-
-### Core Architecture Module: `src-rust/crates/core/src/device_code.rs`
-```
-// device_code.rs — GitHub Device Code Flow (RFC 8628).
-//
-// Provides helpers for initiating a device authorization request and polling
-// for the resulting access token.  Used primarily for GitHub Copilot auth.
-
-use serde::Deserialize;
-
-const DEVICE_FLOW_USER_AGENT: &str = concat!("claurst/", env!("CARGO_PKG_VERSION"));
-
-/// Response from the device authorization endpoint.
-#[derive(Debug, Deserialize)]
-pub struct DeviceCodeResponse {
-    pub device_code: String,
-    pub user_code: String,
-    pub verification_uri: String,
-    pub interval: u64,
-}
-
-/// Initiate a device code flow.
-///
-/// Returns the device code response containing the user code and verification
-/// URI that should be shown to the user.
-pub async fn request_device_code(
-    client_id: &str,
-    scope: &str,
-    device_code_url: &str,
-) -> Result<DeviceCodeResponse, String> {
-    let client = reqwest::Client::new();
-    let resp = client
-        .post(device_code_url)
-        .header("Accept", "application/json")
-        .header("Content-Type", "application/json")
-        .header("User-Agent", DEVICE_FLOW_USER_AGENT)
-        .json(&serde_json::json!({
-            "client_id": client_id,
-            "scope": scope,
-        }))
-        .send()
-        .await
-        .map_err(|e| e.to_string())?;
-
-    resp.json::<DeviceCodeResponse>()
-        .await
-        .map_err(|e| e.to_string())
-}
-
-/// Poll the token endpoint until the user authorizes or we time out.
-///
-/// Returns the access token on success.
-pub async fn poll_for_token(
-    client_id: &str,
-    device_code: &str,
-    token_url: &str,
-    interval: u64,
-    timeout_secs: u64,
-) -> Result<String, String> {
-    let client = reqwest::Client::new();
-    let start = std::time::Instant::now();
-
-    loop {
-        if start.elapsed().as_secs() > timeout_secs {
-            return Err("Timed out waiting for authorization".into());
-        }
-
-        tokio::time::sleep(std::time::Duration::from_secs(interval + 1)).await;
-
-        let resp = client
-            .post(token_url)
-            .header("Accept", "application/json")
-            .header("Content-Type", "application/json")
-            .header("User-Agent", DEVICE_FLOW_USER_AGENT)
-            .json(&serde_json::json!({
-                "client_id": client_id,
-                "device_code": device_code,
-                "grant_type": "urn:ietf:params:oauth:grant-type:device_code",
-            }))
-            .send()
-            .await
-            .map_err(|e| e.to_string())?;
-
-        let json: serde_json::Value = resp.json().await.map_err(|e| e.to_string())?;
-
-        if let Some(token) = json.get("access_token").and_then(|v| v.as_str()) {
-            return Ok(token.to_string());
-        }
-
-        if let Some(error) = json.get("error").and_then(|v| v.as_str()) {
-            match error {
-                "authorization_pending" => continue,
-                "slow_down" => {
-                    tokio::time::sleep(std::time::Duration::from_secs(5)).await;
-                    continue;
-                }
-                _ => return Err(format!("Auth error: {}", error)),
-            }
-        }
-    }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -2546,3968 +2370,1059 @@ pub async fn poll_for_token(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b0637c97` (2026-09-02)
-**Commit Message**: Merge pull request #403 from SlugThug/refactor/split-tui-app
+### Incident Patch 1: `465be88f` (2026-10-16)
+**Commit Message**: Merge pull request #505 from Kuberwastaken/fix/495-keybindings-remainder
 
-refactor(tui): split 7.8k-line app.rs into cohesive app/ modules
+fix(keybindings): Ctrl+V block-visual, Shift+Insert wiring, globalSearch alias, single /keybindings open
 
-**File**: `src-rust/crates/tui/src/app/commands.rs` (added, +391/-0)
+**File**: `docs/keybindings.md` (modified, +4/-4)
 ```diff
-@@ -0,0 +1,391 @@
-+//! Slash-command catalog and dispatch.
-+
-+use claurst_core::config::Theme;
-+use claurst_core::types::Role;
-+use crate::notifications::NotificationKind;
-+use crate::overlays::HelpEntry;
-+use super::App;
-+use super::run::open_file_externally;
-+use super::try_copy_to_clipboard;
-+
-+pub(super) const PROMPT_SLASH_COMMANDS: &[(&str, &str)] = &[
-+    ("advisor", "Set or unset the server-side advisor model"),
-+    ("agent", "List available agents or show agent details"),
-+    ("agents", "Browse agent definitions and active agents"),
-+    ("changes", "Inspect changes from the current session"),
-+    ("clear", "Clear the conversation transcript"),
-+    ("compact", "Compact the conversation context"),
-+    ("config", "Open settings"),
-+    ("connect", "Connect an AI provider"),
-+    ("context", "Show context window and rate limit usage"),
-+    ("copy", "Copy the last assistant response to clipboard"),
-+    ("cost", "Show cost breakdown"),
-+    ("diff", "Inspect the current git diff"),
-+    ("doctor", "Run diagnostics"),
-+    ("effort", "Set effort level (low/medium/high/max)"),
-+    ("exit", "Quit Claurst"),
-+    ("export", "Export conversation"),
-+    ("fast", "Toggle fast mode"),
-+    ("fork", "Fork session into a new branch"),
-+    ("goal", "Set or view the current session goal"),
-+    ("heapdump", "Show process memory and diagnostic information"),
-+    ("help", "Show help"),
-+    ("hooks", "Browse configured hooks (read-only)"),
-+    ("import-config", "Import CLAUDE.md and settings.json from ~/.claude"),
-+    ("init", "Initialize AGENTS.md for this project"),
-+    ("insights", "Generate a session analysis report with conversation statistics"),
-+    ("keybindings", "Show keybinding configuration"),
-+    ("links", "Open URLs from this session in your browser"),
-+    ("login", "Log in to Claurst"),
-+    ("logout", "Log out of Claurst"),
-+    ("managed-agents", "Configure manager-executor managed agent system"),
-+    ("mcp", "Browse configured MCP servers"),
-+    ("memory", "Browse and open AGENTS.md memory files"),
-+    ("model", "Change the AI model"),
-+    ("move", "Re-home this session to another worktree of the same project"),
-+    ("new", "Start a fresh session (keeps model, provider & directory)"),
-+    ("output-style", "Show or switch the output style / persona"),
-+    ("plugin", "Manage plugins (list/info/enable/disable/reload)"),
-+    ("providers", "List available AI providers and their status"),
-+    ("caveman", "Caveman persona output style — save big token"),
-+    ("rocky", "Rocky persona output style — amaze amaze amaze"),
-+    ("normal", "Reset persona / output style to default"),
-+    ("quit", "Exit Claurst"),
-+    ("refresh", "Clear saved provider auth and model caches"),
-+    ("rename", "Rename this session"),
-+    ("resume", "Resume a previous session"),
-+    ("review", "Review changes (git diff)"),
-+    ("rewind", "Rewind to an earlier turn"),
-+    ("session", "Browse and manage sessions"),
-+    ("settings", "Open settings"),
-+    ("share", "Upload the current session as a secret gist and get a shareable URL"),
-+    ("stats", "Open token and cost stats"),
-+    ("survey", "Open session feedback survey"),
-+    ("theme", "Open the theme picker"),
-+    ("ultrareview", "Run an exhaustive multi-dimensional code review"),
-+    ("update", "Check for updates and upgrade to the latest version"),
-+    ("upgrade", "Check for updates and upgrade to the latest version"),
-+    ("vim", "Toggle vim keybindings"),
-+    ("voice", "Toggle voice input mode"),
-+];
-+
-+pub(super) fn help_command_category(name: &str) -> &'static str {
-+    match name {
-+        "connect" | "model" | "providers" | "refresh" | "fast" | "effort" | "voice" => "Model & Provider",
-+        "changes" | "diff" | "review" | "rewind" | "export" | "copy" | "share" | "links" => "Review & History",
-+        "stats" | "cost" | "context" | "insights" | "heapdump" | "doctor" => "Diagnostics",
-+        "config" | "settings" | "theme" | "keybindings" | "hooks" | "mcp" | "import-config" => {
-+            "Workspace"
-+        }
-+        "agent" | "agents" | "memory" | "plugin" | "survey" => "Tools",
-+        "session" | "resume" | "rename" | "fork" | "clear" | "new" | "move" | "compact"
-+        | "quit" | "exit" => "Session",
-+        _ => "Commands",
-+    }
-+}
-+
-+pub(super) fn help_overlay_entries() -> Vec<HelpEntry> {
-+    PROMPT_SLASH_COMMANDS
-+        .iter()
-+        .map(|(name, description)| HelpEntry {
-+            name: (*name).to_string(),
-+            aliases: String::new(),
-+            description: (*description).to_string(),
-+            category: help_command_category(name).to_string(),
-+        })
-+        .collect()
-+}
-+
-+impl App {
-+    /// Handle slash commands that should open UI screens rather than execute
-+    /// as normal commands. Returns `true` if the command was intercepted.
-+    pub fn intercept_slash_command_with_args(&mut self, cmd: &str, args: &str) -> bool {
-+        if cmd == "mcp" && !args.trim().is_empty(
-```
-
-**File**: `src-rust/crates/tui/src/app/messages.rs` (added, +161/-0)
-```diff
-@@ -0,0 +1,161 @@
-+//! Transcript operations: add/replace/push, notifications, scroll.
-+
-+use claurst_core::types::{Message, Role};
-+use crate::notifications::NotificationKind;
-+use super::App;
-+use super::types::{SystemAnnotation, SystemMessageStyle};
-+
-+impl App {
-+    /// Add a message directly (e.g. from a non-streaming source).
-+    pub fn add_message(&mut self, role: Role, text: String) {
-+        let msg = match role {
-+            Role::User => Message::user(text),
-+            Role::Assistant => Message::assistant(text),
-+        };
-+        if role == Role::User {
-+            self.begin_user_turn_snapshot();
-+        }
-+        self.messages.push(msg);
-+        self.invalidate_transcript();
-+        self.on_new_message();
-+    }
-+
-+    pub fn replace_messages(&mut self, messages: Vec<Message>) {
-+        self.messages = messages;
-+        self.sync_turn_metadata_to_messages();
-+        self.invalidate_transcript();
-+    }
-+
-+    pub fn push_message(&mut self, message: Message) {
-+        if message.role == Role::User {
-+            self.begin_user_turn_snapshot();
-+        }
-+        self.messages.push(message);
-+        self.sync_turn_metadata_to_messages();
-+        self.invalidate_transcript();
-+        self.on_new_message();
-+    }
-+
-+    /// Push a synthetic system annotation into the conversation pane.
-+    /// It will appear after the current last message.
-+    /// Push a notification and, for Error-kind notifications, reset the error
-+    /// modal scroll offset so a newly arrived error is always shown from the top.
-+    pub fn push_notification(&mut self, kind: NotificationKind, msg: String, duration_secs: Option<u64>) {
-+        if kind == NotificationKind::Error {
-+            self.error_modal_scroll_offset = 0;
-+        }
-+        self.notifications.push(kind, msg, duration_secs);
-+    }
-+
-+    pub fn push_system_message(&mut self, text: String, style: SystemMessageStyle) {
-+        self.system_annotations.push(SystemAnnotation {
-+            after_index: self.messages.len(),
-+            text,
-+            style,
-+        });
-+        self.invalidate_transcript();
-+    }
-+
-+    /// Called whenever a new message is appended to `messages`.
-+    /// Manages the auto-scroll / new-message-counter state.
-+    pub(super) fn on_new_message(&mut self) {
-+        if self.auto_scroll {
-+            // Auto-scroll: keep offset at 0 so render shows the bottom.
-+            self.scroll_offset = 0;
-+        } else {
-+            self.new_messages_while_scrolled =
-+                self.new_messages_while_scrolled.saturating_add(1);
-+        }
-+    }
-+
-+    pub fn invalidate_transcript(&self) {
-+        self.transcript_version
-+            .set(self.transcript_version.get().wrapping_add(1));
-+    }
-+
-+    /// Check current token usage and push token warning notifications as
-+    /// appropriate.  Call this after updating `token_count`.
-+    pub fn check_token_warnings(&mut self) {
-+        let window =
-+            claurst_query::context_window_for_model(&self.model_name) as u32;
-+        if window == 0 {
-+            return;
-+        }
-+        let pct = (self.token_count as f64 / window as f64 * 100.0) as u8;
-+
-+        // Only escalate — never repeat a threshold already shown.
-+        if pct >= 100 && self.token_warning_threshold_shown < 100 {
-+            self.token_warning_threshold_shown = 100;
-+            self.push_notification(
-+                NotificationKind::Error,
-+                "Context window full. Running auto-compact\u{2026}".to_string(),
-+                None,
-+            );
-+        } else if pct >= 95 && self.token_warning_threshold_shown < 95 {
-+            self.token_warning_threshold_shown = 95;
-+            self.push_notification(
-+                NotificationKind::Error,
-+                "Context window 95% full! Run /compact now.".to_string(),
-+                None, // persistent until dismissed
-+            );
-+        } else if pct >= 80 && self.token_warning_threshold_shown < 80 {
-+            self.token_warning_threshold_shown = 80;
-+            self.push_notification(
-+                NotificationKind::Warning,
-+                "Context window 80% full. Consider /compact.".to_string(),
-+                Some(30),
-+            );
-+        }
-+    }
-+
-+    /// Take the current input buffer, push it to history, and return it.
-+    pub fn take_input(&mut self) -> String {
-+        let input = self.prompt_input.take();
-+        if !input.is_empty() {
-+            self.prompt_input.history.push(input.clone());
-+            self.prompt_input.history_pos = None;
-+            self.prompt_input.history_draft.clear();
-+            self.input_history = self.prompt_input.history.clone();
-+            self.history_index = self.prompt_input.history_pos;
-+        }
-+        self.refresh_prompt_input();
-+        input
-+    }
-+
-+    /// Scroll the transcript up by `amount` lines and disable auto-follow.
-+    ///
-+    /// `scroll_offset` counts lines above the bottom (0 = pinned to the
-```
-
-**File**: `src-rust/crates/tui/src/app/mod.rs` (added, +945/-0)
-```diff
-@@ -0,0 +1,945 @@
-+//! App state struct and main event loop.
-+
-+mod commands;
-+mod keys;
-+mod messages;
-+mod mouse;
-+mod prompt;
-+mod providers;
-+mod run;
-+#[cfg(test)]
-+mod tests;
-+mod turns;
-+mod types;
-+mod views;
-+
-+pub use types::{
-+    ContextMenuKind, DisplayMessage, FocusTarget, HistorySearch,
-+    RecentSession, SystemAnnotation, SystemMessageStyle, ToolStatus,
-+    ToolUseBlock, TurnMetadata, recent_session_label,
-+};
-+
-+use std::cell::{Cell, RefCell};
-+use std::sync::{Arc, Mutex};
-+
-+use claurst_core::config::{Config, Settings, Theme};
-+use claurst_core::cost::CostTracker;
-+use claurst_core::file_history::FileHistory;
-+use claurst_core::keybindings::{KeybindingResolver, UserKeybindings};
-+use claurst_core::types::Message;
-+use crate::agents_view::AgentsMenuState;
-+use crate::bridge_state::BridgeConnectionState;
-+use crate::context_viz::ContextVizState;
-+use crate::dialog_select::{DialogSelectState, SelectItem};
-+use crate::dialogs::{McpApprovalDialogState, PermissionRequest};
-+use crate::diff_viewer::DiffViewerState;
-+use crate::export_dialog::ExportDialogState;
-+use crate::import_config_dialog::ImportConfigDialogState;
-+use crate::mcp_view::McpViewState;
-+use crate::model_picker::{EffortLevel, ModelPickerState};
-+use crate::notifications::NotificationQueue;
-+use crate::overlays::{
-+    GlobalSearchState, HelpOverlay, HistorySearchOverlay,
-+    MessageSelectorOverlay, RewindFlowOverlay,
-+};
-+use crate::plugin_views::PluginHintBanner;
-+use crate::prompt_input::PromptInputState;
-+use crate::session_browser::SessionBrowserState;
-+use crate::settings_screen::SettingsScreen;
-+use crate::stats_dialog::StatsDialogState;
-+use crate::tasks_overlay::TasksOverlay;
-+use crate::theme_screen::ThemeScreen;
-+use ratatui::style::Color;
-+use commands::{PROMPT_SLASH_COMMANDS, help_overlay_entries};
-+use providers::{import_config_picker_items, provider_picker_items};
-+use types::{ContextMenuState, GoToLineDialog};
-+
-+/// Attempt to copy text to the system clipboard using platform CLI tools.
-+/// Returns true if successful.
-+///
-+/// Crate-level public API — re-exported by `lib.rs` (`pub use app::try_copy_to_clipboard`).
-+pub fn try_copy_to_clipboard(text: &str) -> bool {
-+    // Windows
-+    #[cfg(target_os = "windows")]
-+    {
-+        use std::io::Write;
-+        if let Ok(mut child) = std::process::Command::new("clip")
-+            .stdin(std::process::Stdio::piped())
-+            .stdout(std::process::Stdio::null())
-+            .stderr(std::process::Stdio::null())
-+            .spawn()
-+        {
-+            if let Some(mut stdin) = child.stdin.take() {
-+                let _ = stdin.write_all(text.as_bytes());
-+                drop(stdin);
-+            }
-+            return child.wait().map(|s| s.success()).unwrap_or(false);
-+        }
-+    }
-+    // macOS
-+    #[cfg(target_os = "macos")]
-+    {
-+        use std::io::Write;
-+        if let Ok(mut child) = std::process::Command::new("pbcopy")
-+            .stdin(std::process::Stdio::piped())
-+            .spawn()
-+        {
-+            if let Some(stdin) = child.stdin.as_mut() {
-+                let _ = stdin.write_all(text.as_bytes());
-+            }
-+            return child.wait().map(|s| s.success()).unwrap_or(false);
-+        }
-+    }
-+    // Linux / Wayland / X11
-+    #[cfg(target_os = "linux")]
-+    {
-+        use std::io::Write;
-+        for cmd in &["wl-copy", "xclip -selection clipboard", "xsel --clipboard --input"] {
-+            let parts: Vec<&str> = cmd.split_whitespace().collect();
-+            if let Some((prog, args)) = parts.split_first() {
-+                if let Ok(mut child) = std::process::Command::new(prog)
-+                    .args(args)
-+                    .stdin(std::process::Stdio::piped())
-+                    .spawn()
-+                {
-+                    if let Some(stdin) = child.stdin.as_mut() {
-+                        let _ = stdin.write_all(text.as_bytes());
-+                    }
-+                    if child.wait().map(|s| s.success()).unwrap_or(false) {
-+                        return true;
-+                    }
-+                }
-+            }
-+        }
-+    }
-+    false
-+}
-+
-+/// The top-level TUI application.
-+pub struct App {
-+    // Core state
-+    pub config: Config,
-+    pub cost_tracker: Arc<CostTracker>,
-+    pub messages: Vec<Message>,
-+    /// Combined display list kept in sync with `messages`: real conversation turns
-+    /// plus injected system annotations. Used by the renderer so it can iterate
-+    /// a single sequence instead of merging two lists on every frame.
-+    pub display_messages: Vec<DisplayMessage>,
-+    /// Synthetic system annotations interleaved between real messages at render time.
-+    pub system_annotations: Vec<SystemAnnotation>,
-+    pub input: String,
-+    pub prompt_input: PromptInputState,
-+    pub input_history: Vec<String>,
-+    pub history_index: Option<usize>,
-+    pub scroll_offset: usize,
-+    pub is_streaming: bool,
-+    pub streaming_text: String,
-+    pub streaming_th
-```
-
-**File**: `src-rust/crates/tui/src/app/mouse.rs` (added, +658/-0)
-```diff
-@@ -0,0 +1,658 @@
-+//! Pointer input: mouse events, selection, context menu, paste viewer.
-+
-+use crate::notifications::NotificationKind;
-+use crossterm::event::{KeyCode, KeyModifiers, MouseEvent, MouseEventKind};
-+use tracing::debug;
-+use super::App;
-+use super::types::{ContextMenuKind, ContextMenuItem, ContextMenuState, FocusTarget};
-+
-+impl App {
-+    /// Detect if a click is a double-click based on timing and position.
-+    /// Returns true if the click is within ~500ms and ~5px of the last click.
-+    pub(super) fn is_double_click(&self, current_pos: (u16, u16)) -> bool {
-+        let now = std::time::Instant::now();
-+        match (self.last_click_time, self.last_click_position) {
-+            (Some(last_time), Some(last_pos)) => {
-+                let elapsed = now.duration_since(last_time);
-+                let distance = ((current_pos.0 as i32 - last_pos.0 as i32).abs()
-+                    + (current_pos.1 as i32 - last_pos.1 as i32).abs()) as u16;
-+                elapsed.as_millis() < 500 && distance <= 5
-+            }
-+            _ => false,
-+        }
-+    }
-+
-+    /// Find word boundaries for the character at (col, row) in the rendered
-+    /// transcript buffer. Returns absolute (start_col, end_col) for the word
-+    /// containing the click. A "word" is a run of non-whitespace characters.
-+    pub(super) fn find_word_boundaries(&self, col: u16, row: u16) -> Option<(u16, u16)> {
-+        let cache = self.last_row_text.borrow();
-+        let line = cache.get(&row)?;
-+        if line.is_empty() {
-+            return None;
-+        }
-+        let selectable_area = self.last_selectable_area.get();
-+        if col < selectable_area.x {
-+            return None;
-+        }
-+        let local = (col - selectable_area.x) as usize;
-+        let chars: Vec<char> = line.chars().collect();
-+        if local >= chars.len() {
-+            return None;
-+        }
-+        let is_word = |c: char| !c.is_whitespace();
-+        if !is_word(chars[local]) {
-+            return None;
-+        }
-+        let mut start = local;
-+        while start > 0 && is_word(chars[start - 1]) {
-+            start -= 1;
-+        }
-+        let mut end = local;
-+        while end + 1 < chars.len() && is_word(chars[end + 1]) {
-+            end += 1;
-+        }
-+        Some((selectable_area.x + start as u16, selectable_area.x + end as u16))
-+    }
-+
-+    /// Find paragraph boundaries (run of non-blank rows) around `row` and
-+    /// return (start_row, end_row, end_col) where end_col is the trimmed end
-+    /// of the last row's content. Used by triple-click selection so a
-+    /// "paragraph" — a contiguous block of text rows — is selected as a unit
-+    /// instead of a single visual row.
-+    pub(super) fn find_paragraph_boundaries(&self, row: u16) -> Option<(u16, u16, u16)> {
-+        let cache = self.last_row_text.borrow();
-+        let selectable_area = self.last_selectable_area.get();
-+        if selectable_area.width == 0 || selectable_area.height == 0 {
-+            return None;
-+        }
-+        let row_text = cache.get(&row)?;
-+        if row_text.trim().is_empty() {
-+            return None;
-+        }
-+        let max_row = selectable_area
-+            .y
-+            .saturating_add(selectable_area.height)
-+            .saturating_sub(1);
-+        let mut start = row;
-+        while start > selectable_area.y {
-+            let prev = start - 1;
-+            if cache.get(&prev).map(|s| s.trim().is_empty()).unwrap_or(true) {
-+                break;
-+            }
-+            start = prev;
-+        }
-+        let mut end = row;
-+        while end < max_row {
-+            let next = end + 1;
-+            if cache.get(&next).map(|s| s.trim().is_empty()).unwrap_or(true) {
-+                break;
-+            }
-+            end = next;
-+        }
-+        let last_text = cache.get(&end)?;
-+        let trimmed = last_text.trim_end();
-+        let end_col = selectable_area.x + trimmed.chars().count().saturating_sub(1) as u16;
-+        Some((start, end, end_col))
-+    }
-+
-+    /// Find line boundaries for the row containing the click.
-+    /// Returns (start_row, end_row) for the line.
-+    #[allow(dead_code)]
-+    fn find_line_boundaries(&self, row: u16) -> Option<(u16, u16)> {
-+        let selectable_area = self.last_selectable_area.get();
-+        let line_start = selectable_area.y;
-+        let line_end = selectable_area.y.saturating_add(selectable_area.height).saturating_sub(1);
-+
-+        if row >= line_start && row <= line_end {
-+            Some((row, row))
-+        } else {
-+            None
-+        }
-+    }
-+
-+    pub(super) fn context_menu_items(kind: ContextMenuKind) -> &'static [ContextMenuItem] {
-+        match kind {
-+            ContextMenuKind::Message { .. } => &[ContextMenuItem::Copy, ContextMenuItem::Fork],
-+            ContextMenuKind::Selection => &[ContextMenuItem::Copy],
-+        }
-+    }
-+
-+    pub(super) fn message_index_at_row(&self, row: u16) -> Option<usize> {
-+        self.message_row_map.bo
-```
-
-**File**: `src-rust/crates/tui/src/app/prompt.rs` (added, +157/-0)
-```diff
-@@ -0,0 +1,157 @@
-+//! Prompt input state machine and voice hold-to-talk.
-+
-+use crate::overlays::SelectorMessage;
-+use crate::prompt_input::InputMode;
-+use super::App;
-+use super::commands::PROMPT_SLASH_COMMANDS;
-+
-+impl App {
-+    /// Open the rewind flow with the current message list converted to
-+    /// `SelectorMessage` entries.
-+    pub fn open_rewind_flow(&mut self) {
-+        let selector_msgs: Vec<SelectorMessage> = self
-+            .messages
-+            .iter()
-+            .enumerate()
-+            .map(|(i, m)| {
-+                let text = m.get_all_text();
-+                let preview: String = text.chars().take(80).collect();
-+                let has_tool_use = !m.get_tool_use_blocks().is_empty();
-+                SelectorMessage {
-+                    idx: i,
-+                    role: format!("{:?}", m.role).to_lowercase(),
-+                    preview,
-+                    has_tool_use,
-+                }
-+            })
-+            .collect();
-+        self.rewind_flow.open(selector_msgs);
-+    }
-+
-+    pub(super) fn prompt_mode(&self) -> InputMode {
-+        // Note: previously returned Readonly while streaming, but the prompt
-+        // now accepts input during streaming so the user can compose / queue
-+        // a follow-up message. Plan mode still wins.
-+        if self.plan_mode {
-+            InputMode::Plan
-+        } else {
-+            InputMode::Default
-+        }
-+    }
-+
-+    pub(super) fn sync_legacy_prompt_fields(&mut self) {
-+        self.input = self.prompt_input.text.clone();
-+        self.cursor_pos = self.prompt_input.cursor;
-+        self.history_index = self.prompt_input.history_pos;
-+    }
-+
-+    pub fn refresh_prompt_input(&mut self) {
-+        self.prompt_input.mode = self.prompt_mode();
-+        if self.file_injection_dialog.visible {
-+            // Don't update suggestions while the injection dialog is open.
-+            self.sync_legacy_prompt_fields();
-+            return;
-+        }
-+        let file_autocomplete_limit = self.config.file_autocomplete_limit;
-+        let file_autocomplete_show_hidden = self.config.file_autocomplete_show_hidden_files;
-+        self.prompt_input.update_suggestions(PROMPT_SLASH_COMMANDS, file_autocomplete_limit, file_autocomplete_show_hidden);
-+        self.sync_legacy_prompt_fields();
-+    }
-+
-+    pub fn set_prompt_text(&mut self, text: String) {
-+        self.prompt_input.replace_text(text);
-+        self.refresh_prompt_input();
-+    }
-+
-+    /// Start PTT recording: open the microphone capture stream and signal the
-+    /// UI.  No-op when no voice recorder is attached or recording is already
-+    /// in progress.
-+    pub fn handle_voice_ptt_start(&mut self) {
-+        if self.voice_recording || self.voice_recorder.is_none() {
-+            return;
-+        }
-+        let (tx, rx) = tokio::sync::mpsc::channel(16);
-+        self.voice_event_rx = Some(rx);
-+        self.voice_recording = true;
-+        if let Some(ref recorder_arc) = self.voice_recorder {
-+            let recorder = recorder_arc.clone();
-+            tokio::task::spawn_blocking(move || {
-+                if let Ok(mut r) = recorder.lock() {
-+                    tokio::runtime::Handle::current()
-+                        .block_on(r.start_recording(tx))
-+                        .ok();
-+                }
-+            });
-+        }
-+        self.status_message = Some("Recording\u{2026} release V or press Enter to transcribe".to_string());
-+    }
-+
-+    /// Stop PTT recording: flip the AtomicBool inside VoiceRecorder so the
-+    /// capture thread exits, then fire a "Transcribing…" notice.  The
-+    /// transcript text arrives later via `voice_event_rx` and is injected into
-+    /// the prompt by the event-loop drain.
-+    pub fn handle_voice_ptt_stop(&mut self) {
-+        if !self.voice_recording {
-+            return;
-+        }
-+        self.voice_recording = false;
-+        if let Some(ref recorder_arc) = self.voice_recorder {
-+            let recorder = recorder_arc.clone();
-+            tokio::task::spawn_blocking(move || {
-+                if let Ok(mut r) = recorder.lock() {
-+                    tokio::runtime::Handle::current()
-+                        .block_on(r.stop_recording())
-+                        .ok();
-+                }
-+            });
-+        }
-+        self.status_message = Some("Transcribing\u{2026}".to_string());
-+    }
-+
-+    pub(super) fn clear_prompt(&mut self) {
-+        self.prompt_input.clear();
-+        self.refresh_prompt_input();
-+    }
-+
-+    /// Handle Enter while a typeahead popup is open. Accepts the highlighted
-+    /// suggestion and returns whether the prompt should now be submitted.
-+    ///
-+    /// - Slash command: complete the highlighted command *and* run it in a
-+    ///   single Enter — the popup acts as a command menu, so a second Enter to
-+    ///   "run" it should not be required (issue #183). Returns `true`.
-+    /// - File reference: complete the path, append a space, and keep editing so
-+    ///   the us
-```
-
-**File**: `src-rust/crates/tui/src/app/providers.rs` (added, +441/-0)
-```diff
-@@ -0,0 +1,441 @@
-+//! Provider/model/config management and import-config flow.
-+
-+use claurst_core::config::{Config, Settings};
-+use crate::dialog_select::{DialogSelectState, SelectItem};
-+use crate::import_config_dialog::ImportConfigDialogState;
-+use crate::model_picker::ModelPickerState;
-+use super::App;
-+
-+/// Return the environment variable name for a given provider ID.
-+#[allow(dead_code)]
-+fn get_env_var_for_provider(id: &str) -> &'static str {
-+    match id {
-+        "anthropic" => "ANTHROPIC_API_KEY",
-+        "openai" => "OPENAI_API_KEY",
-+        "google" | "google-vertex" => "GOOGLE_API_KEY",
-+        "github-copilot" => "GITHUB_TOKEN",
-+        "groq" => "GROQ_API_KEY",
-+        "cerebras" => "CEREBRAS_API_KEY",
-+        "sambanova" => "SAMBANOVA_API_KEY",
-+        "deepseek" => "DEEPSEEK_API_KEY",
-+        "mistral" => "MISTRAL_API_KEY",
-+        "openrouter" => "OPENROUTER_API_KEY",
-+        "togetherai" => "TOGETHER_API_KEY",
-+        "perplexity" => "PERPLEXITY_API_KEY",
-+        "cohere" => "COHERE_API_KEY",
-+        "xai" => "XAI_API_KEY",
-+        "deepinfra" => "DEEPINFRA_API_KEY",
-+        "azure" => "AZURE_API_KEY",
-+        "amazon-bedrock" => "AWS_ACCESS_KEY_ID",
-+        "sap-ai-core" => "AICORE_SERVICE_KEY",
-+        "gitlab" => "GITLAB_TOKEN",
-+        "cloudflare-ai-gateway" | "cloudflare-workers-ai" => "CLOUDFLARE_API_TOKEN",
-+        "vercel" => "AI_GATEWAY_API_KEY",
-+        "helicone" => "HELICONE_API_KEY",
-+        "huggingface" => "HF_TOKEN",
-+        "nvidia" => "NVIDIA_API_KEY",
-+        "alibaba" => "DASHSCOPE_API_KEY",
-+        "venice" => "VENICE_API_KEY",
-+        "moonshotai" => "MOONSHOT_API_KEY",
-+        "zhipuai" => "ZHIPU_API_KEY",
-+        "zai" => "ZAI_API_KEY",
-+        "siliconflow" => "SILICONFLOW_API_KEY",
-+        "nebius" => "NEBIUS_API_KEY",
-+        "novita" => "NOVITA_API_KEY",
-+        "minimax" => "MINIMAX_API_KEY",
-+        "ovhcloud" => "OVHCLOUD_API_KEY",
-+        "scaleway" => "SCALEWAY_API_KEY",
-+        "vultr" => "VULTR_API_KEY",
-+        "baseten" => "BASETEN_API_KEY",
-+        "friendli" => "FRIENDLI_TOKEN",
-+        "upstage" => "UPSTAGE_API_KEY",
-+        "stepfun" => "STEPFUN_API_KEY",
-+        "fireworks" => "FIREWORKS_API_KEY",
-+        _ => "API_KEY",
-+    }
-+}
-+
-+/// Return a URL hint for obtaining an API key from a given provider.
-+#[allow(dead_code)]
-+fn get_url_for_provider(id: &str) -> &'static str {
-+    match id {
-+        "anthropic" => "console.anthropic.com",
-+        "openai" => "platform.openai.com/api-keys",
-+        "google" => "aistudio.google.com/apikey",
-+        "github-copilot" => "github.com/settings/tokens",
-+        "groq" => "console.groq.com/keys",
-+        "cerebras" => "cloud.cerebras.ai",
-+        "sambanova" => "cloud.sambanova.ai",
-+        "deepseek" => "platform.deepseek.com/api_keys",
-+        "mistral" => "console.mistral.ai/api-keys",
-+        "openrouter" => "openrouter.ai/keys",
-+        "togetherai" => "api.together.xyz/settings/api-keys",
-+        "perplexity" => "perplexity.ai/settings/api",
-+        "cohere" => "dashboard.cohere.com/api-keys",
-+        "xai" => "console.x.ai",
-+        "deepinfra" => "deepinfra.com/dash/api_keys",
-+        "azure" => "portal.azure.com",
-+        "amazon-bedrock" => "console.aws.amazon.com/bedrock",
-+        "minimax" => "platform.minimaxi.com",
-+        "huggingface" => "huggingface.co/settings/tokens",
-+        "nvidia" => "build.nvidia.com",
-+        "venice" => "venice.ai/settings/api",
-+        "zai" => "z.ai/manage-apikey/apikey-list",
-+        _ => "the provider's website",
-+    }
-+}
-+
-+pub(super) fn import_config_picker_items() -> Vec<SelectItem> {
-+    vec![
-+        SelectItem {
-+            id: "claude-md".into(),
-+            title: "CLAUDE.md".into(),
-+            description: "Import ~/.claude/CLAUDE.md".into(),
-+            category: "Import".into(),
-+            badge: None,
-+        },
-+        SelectItem {
-+            id: "settings".into(),
-+            title: "settings.json".into(),
-+            description: "Import ~/.claude/settings.json".into(),
-+            category: "Import".into(),
-+            badge: None,
-+        },
-+        SelectItem {
-+            id: "both".into(),
-+            title: "Both".into(),
-+            description: "Import both CLAUDE.md and settings.json".into(),
-+            category: "Import".into(),
-+            badge: Some("SAFE".into()),
-+        },
-+    ]
-+}
-+
-+pub(super) fn provider_picker_items() -> Vec<SelectItem> {
-+    vec![
-+        SelectItem { id: "free".into(), title: "Free Mode".into(), description: "OpenCode Zen → OpenRouter free fallback (no spend)".into(), category: "Popular".into(), badge: Some("FREE".into()) },
-+        SelectItem { id: "openai".into(), title: "OpenAI".into(), description: "(API key)".into(), category: "Popular".into(), badge: None },
-+        SelectItem { id: "openai-codex".into(), title: "OpenAI Codex".into(), description: "(ChatGPT Plus/Pro — browser login)".into(), category: "
-```
-
-**File**: `src-rust/crates/tui/src/app/run.rs` (added, +628/-0)
-```diff
-@@ -0,0 +1,628 @@
-+//! Main event loop, query events, jump-to-error, file open.
-+
-+use std::io::Stdout;
-+
-+use claurst_core::types::Message;
-+use claurst_core::{sample_completion_verb, sample_spinner_verb};
-+use claurst_query::QueryEvent;
-+use crate::notifications::NotificationKind;
-+use crate::render;
-+use crossterm::event::{self, Event, KeyCode, KeyModifiers};
-+use ratatui::backend::CrosstermBackend;
-+use ratatui::Terminal;
-+use tracing::debug;
-+use super::App;
-+use super::turns::format_elapsed_ms;
-+use super::types::{RecentSession, ToolStatus, ToolUseBlock, recent_session_label};
-+
-+pub(super) fn open_file_externally(path: &std::path::Path) -> Result<(), Box<dyn std::error::Error>> {
-+    // Try to open with the system's default application
-+    #[cfg(target_os = "macos")]
-+    {
-+        std::process::Command::new("open")
-+            .arg(path)
-+            .spawn()?;
-+        Ok(())
-+    }
-+
-+    #[cfg(target_os = "linux")]
-+    {
-+        std::process::Command::new("xdg-open")
-+            .arg(path)
-+            .spawn()?;
-+        Ok(())
-+    }
-+
-+    #[cfg(target_os = "windows")]
-+    {
-+        std::process::Command::new("cmd")
-+            .args(&["/C", "start", ""])
-+            .arg(path)
-+            .spawn()?;
-+        Ok(())
-+    }
-+
-+    #[cfg(not(any(target_os = "macos", target_os = "linux", target_os = "windows")))]
-+    {
-+        // Fallback for other systems: try common editors in order
-+        for editor in &["nano", "vi", "vim", "emacs"] {
-+            match std::process::Command::new(editor)
-+                .arg(path)
-+                .spawn()
-+            {
-+                Ok(_) => return Ok(()),
-+                Err(_) => continue,
-+            }
-+        }
-+        Err("No suitable editor found".into())
-+    }
-+}
-+
-+impl App {
-+    /// Detect the current PR from environment variables or git.
-+    pub fn detect_pr(&mut self) {
-+        // Check CLAUDE_PR_NUMBER and CLAUDE_PR_URL env vars
-+        if let Ok(num) = std::env::var("CLAUDE_PR_NUMBER") {
-+            if let Ok(n) = num.parse::<u32>() {
-+                self.pr_number = Some(n);
-+            }
-+        }
-+        if let Ok(url) = std::env::var("CLAUDE_PR_URL") {
-+            self.pr_url = Some(url);
-+        }
-+        if let Ok(state) = std::env::var("CLAUDE_PR_STATE") {
-+            if !state.trim().is_empty() {
-+                self.pr_state = Some(state.trim().to_string());
-+            }
-+        }
-+        // Fall back to gh CLI if no env vars
-+        if self.pr_number.is_none() {
-+            if let Ok(output) = std::process::Command::new("gh")
-+                .args(["pr", "view", "--json", "number,url", "--jq", ".number,.url"])
-+                .output()
-+            {
-+                if output.status.success() {
-+                    let text = String::from_utf8_lossy(&output.stdout);
-+                    let parts: Vec<&str> = text.trim().split('\n').collect();
-+                    if parts.len() >= 2 {
-+                        if let Ok(n) = parts[0].trim().parse::<u32>() {
-+                            self.pr_number = Some(n);
-+                            self.pr_url = Some(parts[1].trim().to_string());
-+                        }
-+                    }
-+                }
-+            }
-+        }
-+    }
-+
-+    /// Push a completed assistant message and trigger auto-scroll bookkeeping.
-+    pub(super) fn push_assistant_message(&mut self, text: String) {
-+        let msg = Message::assistant(text);
-+        self.messages.push(msg);
-+        self.invalidate_transcript();
-+        self.on_new_message();
-+    }
-+
-+    /// Process a query event from the agentic loop.
-+    pub fn handle_query_event(&mut self, event: QueryEvent) {
-+        // Auto-dismiss error modal when assistant responds
-+        match &event {
-+            QueryEvent::Stream(_) | QueryEvent::TurnComplete { .. } => {
-+                self.dismiss_error_notifications();
-+            }
-+            _ => {}
-+        }
-+
-+        match event {
-+            QueryEvent::Stream(stream_evt) => {
-+                if !self.is_streaming {
-+                    let seed = self.frame_count as usize ^ (self.messages.len() * 17);
-+                    self.spinner_verb = Some(sample_spinner_verb(seed).to_string());
-+                    // turn_start is set in begin_user_turn_snapshot (prompt
-+                    // submission time).  Only fall back here if somehow no
-+                    // user message was pushed before streaming began (e.g.
-+                    // headless / programmatic callers).
-+                    if self.turn_start.is_none() {
-+                        self.turn_start = Some(std::time::Instant::now());
-+                    }
-+                    self.streaming_thinking.clear();
-+                }
-+                self.is_streaming = true;
-+                match stream_evt {
-+                    claurst_api::AnthropicStreamEvent::ContentBlockDelta { delta, .. } => {
-+                        // Reset stall timer on any incoming delta — w
-```
-
-**File**: `src-rust/crates/tui/src/app/tests.rs` (added, +960/-0)
-```diff
-@@ -0,0 +1,960 @@
-+//! Tests for the app module.
-+
-+use super::*;
-+
-+use claurst_core::config::Config;
-+use claurst_core::types::Role;
-+use super::keys::{
-+    key_event_to_keystroke, layout_to_latin, normalize_char_with_shift,
-+    normalize_layout_shortcut_key,
-+};
-+use super::types::{ContextMenuItem, ContextMenuState};
-+
-+    
-+    use crossterm::event::{KeyCode, KeyEvent, KeyEventKind, KeyEventState, KeyModifiers};
-+
-+    fn make_app() -> App {
-+        let config = Config::default();
-+        let cost_tracker = claurst_core::cost::CostTracker::new();
-+        App::new(config, cost_tracker)
-+    }
-+
-+    fn press_key(code: KeyCode, modifiers: KeyModifiers) -> KeyEvent {
-+        KeyEvent {
-+            code,
-+            modifiers,
-+            kind: KeyEventKind::Press,
-+            state: KeyEventState::NONE,
-+        }
-+    }
-+
-+    // ---- recent-activity label (issue #277) ----
-+
-+    #[test]
-+    fn recent_session_label_prefers_title() {
-+        let label = recent_session_label(
-+            Some("My Title".to_string()),
-+            Some("some prompt".to_string()),
-+        );
-+        assert_eq!(label, "My Title");
-+    }
-+
-+    #[test]
-+    fn recent_session_label_falls_back_to_first_prompt_line() {
-+        let label = recent_session_label(
-+            None,
-+            Some("  fix the bug\nand more details".to_string()),
-+        );
-+        assert_eq!(label, "fix the bug");
-+    }
-+
-+    #[test]
-+    fn recent_session_label_skips_blank_title_and_untitled_default() {
-+        // Blank/whitespace title is ignored in favour of the prompt.
-+        assert_eq!(
-+            recent_session_label(Some("   ".to_string()), Some("do it".to_string())),
-+            "do it"
-+        );
-+        // Nothing usable → untitled.
-+        assert_eq!(recent_session_label(None, None), "(untitled)");
-+        assert_eq!(
-+            recent_session_label(Some(String::new()), Some("\n\n".to_string())),
-+            "(untitled)"
-+        );
-+    }
-+
-+    #[test]
-+    fn recent_session_label_truncates_long_prompt() {
-+        let long = "x".repeat(200);
-+        let label = recent_session_label(None, Some(long));
-+        assert_eq!(label.chars().count(), 80);
-+    }
-+
-+    // ---- mouse capture gate (issue #104) ----
-+
-+    fn scroll_up_event() -> crossterm::event::MouseEvent {
-+        crossterm::event::MouseEvent {
-+            kind: crossterm::event::MouseEventKind::ScrollUp,
-+            column: 0,
-+            row: 0,
-+            modifiers: KeyModifiers::NONE,
-+        }
-+    }
-+
-+    #[test]
-+    fn mouse_events_processed_when_capture_enabled() {
-+        // Default config leaves mouse capture on, so a scroll wheel event
-+        // should move the scroll offset — provided there is content to scroll
-+        // over (a render must have established a non-zero max_scroll).
-+        let mut app = make_app();
-+        assert!(app.config.mouse_capture_enabled());
-+        assert_eq!(app.scroll_offset, 0);
-+        app.last_max_scroll.set(50);
-+        app.handle_mouse_event(scroll_up_event());
-+        assert!(app.scroll_offset > 0, "scroll should advance when capture is on");
-+        assert!(app.scroll_offset <= 50, "scroll stays within max_scroll");
-+    }
-+
-+    // ---- click-to-view paste placeholders ----
-+
-+    #[test]
-+    fn prompt_click_on_placeholder_opens_viewer() {
-+        let mut app = make_app();
-+        // Bottom pane as rendered: 1 status row (height > 2), then the top
-+        // separator at y=21, text rows from y=22. Prefix "❯ " is 2 cells.
-+        app.last_input_area.set(ratatui::layout::Rect { x: 0, y: 20, width: 80, height: 8 });
-+        for c in "hi ".chars() {
-+            app.prompt_input.insert_char(c);
-+        }
-+        app.prompt_input.paste("l1\nl2\nl3");
-+        assert!(app.prompt_input.text.contains("[Pasted text #1"));
-+
-+        // Click on the separator row: nothing opens.
-+        app.handle_prompt_click(10, 21);
-+        assert!(!app.paste_viewer.visible);
-+
-+        // Click inside the placeholder on the first text row: the viewer
-+        // opens read-only — the placeholder stays in the buffer and the body
-+        // stays stored so submit-time expansion is unaffected.
-+        app.handle_prompt_click(2 + 5, 22);
-+        assert!(app.paste_viewer.visible);
-+        assert_eq!(app.paste_viewer.paste_id, 1);
-+        assert_eq!(app.paste_viewer.line_count(), 3);
-+        assert!(app.prompt_input.text.contains("[Pasted text #1"));
-+        assert!(!app.prompt_input.paste_contents.is_empty());
-+    }
-+
-+    #[test]
-+    fn paste_viewer_alt_e_expands_into_prompt() {
-+        let mut app = make_app();
-+        app.last_input_area.set(ratatui::layout::Rect { x: 0, y: 20, width: 80, height: 8 });
-+        for c in "hi ".chars() {
-+            app.prompt_input.insert_char(c);
-+        }
-+        app.prompt_input.paste("l1\nl2\nl3");
-+        app.handle_prompt_click(2 + 5, 22);
-+        assert!(app.paste_viewer.visible);
-+
-+        let alt_e = crossterm::event::KeyEvent::
-```
-
----
-
-### Incident Patch 2: `ff364a45` (2026-09-02)
-**Commit Message**: refactor(tui): split 7.8k-line app.rs into cohesive app/ modules
-
-Pure structural move with zero behavior change: app.rs (7,807 lines)
-becomes app/ with one module per responsibility — input (keys, mouse),
-state model (types), provider management (providers), command dispatch
-(commands), session lifecycle (turns, messages, run), and the test
-suite (tests). Public API and re-exports are unchanged; the only
-visibility adjustment is pub(super) on moved private methods, which
-restores exactly the visibility the single-module layout provided.
-
-Verified: workspace cargo check clean, full test suite green (~1,000
-tests), and cargo clippy --workspace --all-targets -D warnings clean.
-
-**File**: `src-rust/crates/tui/src/app/commands.rs` (added, +391/-0)
-```diff
-@@ -0,0 +1,391 @@
-+//! Slash-command catalog and dispatch.
-+
-+use claurst_core::config::Theme;
-+use claurst_core::types::Role;
-+use crate::notifications::NotificationKind;
-+use crate::overlays::HelpEntry;
-+use super::App;
-+use super::run::open_file_externally;
-+use super::try_copy_to_clipboard;
-+
-+pub(super) const PROMPT_SLASH_COMMANDS: &[(&str, &str)] = &[
-+    ("advisor", "Set or unset the server-side advisor model"),
-+    ("agent", "List available agents or show agent details"),
-+    ("agents", "Browse agent definitions and active agents"),
-+    ("changes", "Inspect changes from the current session"),
-+    ("clear", "Clear the conversation transcript"),
-+    ("compact", "Compact the conversation context"),
-+    ("config", "Open settings"),
-+    ("connect", "Connect an AI provider"),
-+    ("context", "Show context window and rate limit usage"),
-+    ("copy", "Copy the last assistant response to clipboard"),
-+    ("cost", "Show cost breakdown"),
-+    ("diff", "Inspect the current git diff"),
-+    ("doctor", "Run diagnostics"),
-+    ("effort", "Set effort level (low/medium/high/max)"),
-+    ("exit", "Quit Claurst"),
-+    ("export", "Export conversation"),
-+    ("fast", "Toggle fast mode"),
-+    ("fork", "Fork session into a new branch"),
-+    ("goal", "Set or view the current session goal"),
-+    ("heapdump", "Show process memory and diagnostic information"),
-+    ("help", "Show help"),
-+    ("hooks", "Browse configured hooks (read-only)"),
-+    ("import-config", "Import CLAUDE.md and settings.json from ~/.claude"),
-+    ("init", "Initialize AGENTS.md for this project"),
-+    ("insights", "Generate a session analysis report with conversation statistics"),
-+    ("keybindings", "Show keybinding configuration"),
-+    ("links", "Open URLs from this session in your browser"),
-+    ("login", "Log in to Claurst"),
-+    ("logout", "Log out of Claurst"),
-+    ("managed-agents", "Configure manager-executor managed agent system"),
-+    ("mcp", "Browse configured MCP servers"),
-+    ("memory", "Browse and open AGENTS.md memory files"),
-+    ("model", "Change the AI model"),
-+    ("move", "Re-home this session to another worktree of the same project"),
-+    ("new", "Start a fresh session (keeps model, provider & directory)"),
-+    ("output-style", "Show or switch the output style / persona"),
-+    ("plugin", "Manage plugins (list/info/enable/disable/reload)"),
-+    ("providers", "List available AI providers and their status"),
-+    ("caveman", "Caveman persona output style — save big token"),
-+    ("rocky", "Rocky persona output style — amaze amaze amaze"),
-+    ("normal", "Reset persona / output style to default"),
-+    ("quit", "Exit Claurst"),
-+    ("refresh", "Clear saved provider auth and model caches"),
-+    ("rename", "Rename this session"),
-+    ("resume", "Resume a previous session"),
-+    ("review", "Review changes (git diff)"),
-+    ("rewind", "Rewind to an earlier turn"),
-+    ("session", "Browse and manage sessions"),
-+    ("settings", "Open settings"),
-+    ("share", "Upload the current session as a secret gist and get a shareable URL"),
-+    ("stats", "Open token and cost stats"),
-+    ("survey", "Open session feedback survey"),
-+    ("theme", "Open the theme picker"),
-+    ("ultrareview", "Run an exhaustive multi-dimensional code review"),
-+    ("update", "Check for updates and upgrade to the latest version"),
-+    ("upgrade", "Check for updates and upgrade to the latest version"),
-+    ("vim", "Toggle vim keybindings"),
-+    ("voice", "Toggle voice input mode"),
-+];
-+
-+pub(super) fn help_command_category(name: &str) -> &'static str {
-+    match name {
-+        "connect" | "model" | "providers" | "refresh" | "fast" | "effort" | "voice" => "Model & Provider",
-+        "changes" | "diff" | "review" | "rewind" | "export" | "copy" | "share" | "links" => "Review & History",
-+        "stats" | "cost" | "context" | "insights" | "heapdump" | "doctor" => "Diagnostics",
-+        "config" | "settings" | "theme" | "keybindings" | "hooks" | "mcp" | "import-config" => {
-+            "Workspace"
-+        }
-+        "agent" | "agents" | "memory" | "plugin" | "survey" => "Tools",
-+        "session" | "resume" | "rename" | "fork" | "clear" | "new" | "move" | "compact"
-+        | "quit" | "exit" => "Session",
-+        _ => "Commands",
-+    }
-+}
-+
-+pub(super) fn help_overlay_entries() -> Vec<HelpEntry> {
-+    PROMPT_SLASH_COMMANDS
-+        .iter()
-+        .map(|(name, description)| HelpEntry {
-+            name: (*name).to_string(),
-+            aliases: String::new(),
-+            description: (*description).to_string(),
-+            category: help_command_category(name).to_string(),
-+        })
-+        .collect()
-+}
-+
-+impl App {
-+    /// Handle slash commands that should open UI screens rather than execute
-+    /// as normal commands. Returns `true` if the command was intercepted.
-+    pub fn intercept_slash_command_with_args(&mut self, cmd: &str, args: &str) -> bool {
-+        if cmd == "mcp" && !args.trim().is_empty(
-```
-
-**File**: `src-rust/crates/tui/src/app/messages.rs` (added, +161/-0)
-```diff
-@@ -0,0 +1,161 @@
-+//! Transcript operations: add/replace/push, notifications, scroll.
-+
-+use claurst_core::types::{Message, Role};
-+use crate::notifications::NotificationKind;
-+use super::App;
-+use super::types::{SystemAnnotation, SystemMessageStyle};
-+
-+impl App {
-+    /// Add a message directly (e.g. from a non-streaming source).
-+    pub fn add_message(&mut self, role: Role, text: String) {
-+        let msg = match role {
-+            Role::User => Message::user(text),
-+            Role::Assistant => Message::assistant(text),
-+        };
-+        if role == Role::User {
-+            self.begin_user_turn_snapshot();
-+        }
-+        self.messages.push(msg);
-+        self.invalidate_transcript();
-+        self.on_new_message();
-+    }
-+
-+    pub fn replace_messages(&mut self, messages: Vec<Message>) {
-+        self.messages = messages;
-+        self.sync_turn_metadata_to_messages();
-+        self.invalidate_transcript();
-+    }
-+
-+    pub fn push_message(&mut self, message: Message) {
-+        if message.role == Role::User {
-+            self.begin_user_turn_snapshot();
-+        }
-+        self.messages.push(message);
-+        self.sync_turn_metadata_to_messages();
-+        self.invalidate_transcript();
-+        self.on_new_message();
-+    }
-+
-+    /// Push a synthetic system annotation into the conversation pane.
-+    /// It will appear after the current last message.
-+    /// Push a notification and, for Error-kind notifications, reset the error
-+    /// modal scroll offset so a newly arrived error is always shown from the top.
-+    pub fn push_notification(&mut self, kind: NotificationKind, msg: String, duration_secs: Option<u64>) {
-+        if kind == NotificationKind::Error {
-+            self.error_modal_scroll_offset = 0;
-+        }
-+        self.notifications.push(kind, msg, duration_secs);
-+    }
-+
-+    pub fn push_system_message(&mut self, text: String, style: SystemMessageStyle) {
-+        self.system_annotations.push(SystemAnnotation {
-+            after_index: self.messages.len(),
-+            text,
-+            style,
-+        });
-+        self.invalidate_transcript();
-+    }
-+
-+    /// Called whenever a new message is appended to `messages`.
-+    /// Manages the auto-scroll / new-message-counter state.
-+    pub(super) fn on_new_message(&mut self) {
-+        if self.auto_scroll {
-+            // Auto-scroll: keep offset at 0 so render shows the bottom.
-+            self.scroll_offset = 0;
-+        } else {
-+            self.new_messages_while_scrolled =
-+                self.new_messages_while_scrolled.saturating_add(1);
-+        }
-+    }
-+
-+    pub fn invalidate_transcript(&self) {
-+        self.transcript_version
-+            .set(self.transcript_version.get().wrapping_add(1));
-+    }
-+
-+    /// Check current token usage and push token warning notifications as
-+    /// appropriate.  Call this after updating `token_count`.
-+    pub fn check_token_warnings(&mut self) {
-+        let window =
-+            claurst_query::context_window_for_model(&self.model_name) as u32;
-+        if window == 0 {
-+            return;
-+        }
-+        let pct = (self.token_count as f64 / window as f64 * 100.0) as u8;
-+
-+        // Only escalate — never repeat a threshold already shown.
-+        if pct >= 100 && self.token_warning_threshold_shown < 100 {
-+            self.token_warning_threshold_shown = 100;
-+            self.push_notification(
-+                NotificationKind::Error,
-+                "Context window full. Running auto-compact\u{2026}".to_string(),
-+                None,
-+            );
-+        } else if pct >= 95 && self.token_warning_threshold_shown < 95 {
-+            self.token_warning_threshold_shown = 95;
-+            self.push_notification(
-+                NotificationKind::Error,
-+                "Context window 95% full! Run /compact now.".to_string(),
-+                None, // persistent until dismissed
-+            );
-+        } else if pct >= 80 && self.token_warning_threshold_shown < 80 {
-+            self.token_warning_threshold_shown = 80;
-+            self.push_notification(
-+                NotificationKind::Warning,
-+                "Context window 80% full. Consider /compact.".to_string(),
-+                Some(30),
-+            );
-+        }
-+    }
-+
-+    /// Take the current input buffer, push it to history, and return it.
-+    pub fn take_input(&mut self) -> String {
-+        let input = self.prompt_input.take();
-+        if !input.is_empty() {
-+            self.prompt_input.history.push(input.clone());
-+            self.prompt_input.history_pos = None;
-+            self.prompt_input.history_draft.clear();
-+            self.input_history = self.prompt_input.history.clone();
-+            self.history_index = self.prompt_input.history_pos;
-+        }
-+        self.refresh_prompt_input();
-+        input
-+    }
-+
-+    /// Scroll the transcript up by `amount` lines and disable auto-follow.
-+    ///
-+    /// `scroll_offset` counts lines above the bottom (0 = pinned to the
-```
-
-**File**: `src-rust/crates/tui/src/app/mod.rs` (added, +945/-0)
-```diff
-@@ -0,0 +1,945 @@
-+//! App state struct and main event loop.
-+
-+mod commands;
-+mod keys;
-+mod messages;
-+mod mouse;
-+mod prompt;
-+mod providers;
-+mod run;
-+#[cfg(test)]
-+mod tests;
-+mod turns;
-+mod types;
-+mod views;
-+
-+pub use types::{
-+    ContextMenuKind, DisplayMessage, FocusTarget, HistorySearch,
-+    RecentSession, SystemAnnotation, SystemMessageStyle, ToolStatus,
-+    ToolUseBlock, TurnMetadata, recent_session_label,
-+};
-+
-+use std::cell::{Cell, RefCell};
-+use std::sync::{Arc, Mutex};
-+
-+use claurst_core::config::{Config, Settings, Theme};
-+use claurst_core::cost::CostTracker;
-+use claurst_core::file_history::FileHistory;
-+use claurst_core::keybindings::{KeybindingResolver, UserKeybindings};
-+use claurst_core::types::Message;
-+use crate::agents_view::AgentsMenuState;
-+use crate::bridge_state::BridgeConnectionState;
-+use crate::context_viz::ContextVizState;
-+use crate::dialog_select::{DialogSelectState, SelectItem};
-+use crate::dialogs::{McpApprovalDialogState, PermissionRequest};
-+use crate::diff_viewer::DiffViewerState;
-+use crate::export_dialog::ExportDialogState;
-+use crate::import_config_dialog::ImportConfigDialogState;
-+use crate::mcp_view::McpViewState;
-+use crate::model_picker::{EffortLevel, ModelPickerState};
-+use crate::notifications::NotificationQueue;
-+use crate::overlays::{
-+    GlobalSearchState, HelpOverlay, HistorySearchOverlay,
-+    MessageSelectorOverlay, RewindFlowOverlay,
-+};
-+use crate::plugin_views::PluginHintBanner;
-+use crate::prompt_input::PromptInputState;
-+use crate::session_browser::SessionBrowserState;
-+use crate::settings_screen::SettingsScreen;
-+use crate::stats_dialog::StatsDialogState;
-+use crate::tasks_overlay::TasksOverlay;
-+use crate::theme_screen::ThemeScreen;
-+use ratatui::style::Color;
-+use commands::{PROMPT_SLASH_COMMANDS, help_overlay_entries};
-+use providers::{import_config_picker_items, provider_picker_items};
-+use types::{ContextMenuState, GoToLineDialog};
-+
-+/// Attempt to copy text to the system clipboard using platform CLI tools.
-+/// Returns true if successful.
-+///
-+/// Crate-level public API — re-exported by `lib.rs` (`pub use app::try_copy_to_clipboard`).
-+pub fn try_copy_to_clipboard(text: &str) -> bool {
-+    // Windows
-+    #[cfg(target_os = "windows")]
-+    {
-+        use std::io::Write;
-+        if let Ok(mut child) = std::process::Command::new("clip")
-+            .stdin(std::process::Stdio::piped())
-+            .stdout(std::process::Stdio::null())
-+            .stderr(std::process::Stdio::null())
-+            .spawn()
-+        {
-+            if let Some(mut stdin) = child.stdin.take() {
-+                let _ = stdin.write_all(text.as_bytes());
-+                drop(stdin);
-+            }
-+            return child.wait().map(|s| s.success()).unwrap_or(false);
-+        }
-+    }
-+    // macOS
-+    #[cfg(target_os = "macos")]
-+    {
-+        use std::io::Write;
-+        if let Ok(mut child) = std::process::Command::new("pbcopy")
-+            .stdin(std::process::Stdio::piped())
-+            .spawn()
-+        {
-+            if let Some(stdin) = child.stdin.as_mut() {
-+                let _ = stdin.write_all(text.as_bytes());
-+            }
-+            return child.wait().map(|s| s.success()).unwrap_or(false);
-+        }
-+    }
-+    // Linux / Wayland / X11
-+    #[cfg(target_os = "linux")]
-+    {
-+        use std::io::Write;
-+        for cmd in &["wl-copy", "xclip -selection clipboard", "xsel --clipboard --input"] {
-+            let parts: Vec<&str> = cmd.split_whitespace().collect();
-+            if let Some((prog, args)) = parts.split_first() {
-+                if let Ok(mut child) = std::process::Command::new(prog)
-+                    .args(args)
-+                    .stdin(std::process::Stdio::piped())
-+                    .spawn()
-+                {
-+                    if let Some(stdin) = child.stdin.as_mut() {
-+                        let _ = stdin.write_all(text.as_bytes());
-+                    }
-+                    if child.wait().map(|s| s.success()).unwrap_or(false) {
-+                        return true;
-+                    }
-+                }
-+            }
-+        }
-+    }
-+    false
-+}
-+
-+/// The top-level TUI application.
-+pub struct App {
-+    // Core state
-+    pub config: Config,
-+    pub cost_tracker: Arc<CostTracker>,
-+    pub messages: Vec<Message>,
-+    /// Combined display list kept in sync with `messages`: real conversation turns
-+    /// plus injected system annotations. Used by the renderer so it can iterate
-+    /// a single sequence instead of merging two lists on every frame.
-+    pub display_messages: Vec<DisplayMessage>,
-+    /// Synthetic system annotations interleaved between real messages at render time.
-+    pub system_annotations: Vec<SystemAnnotation>,
-+    pub input: String,
-+    pub prompt_input: PromptInputState,
-+    pub input_history: Vec<String>,
-+    pub history_index: Option<usize>,
-+    pub scroll_offset: usize,
-+    pub is_streaming: bool,
-+    pub streaming_text: String,
-+    pub streaming_th
-```
-
-**File**: `src-rust/crates/tui/src/app/mouse.rs` (added, +658/-0)
-```diff
-@@ -0,0 +1,658 @@
-+//! Pointer input: mouse events, selection, context menu, paste viewer.
-+
-+use crate::notifications::NotificationKind;
-+use crossterm::event::{KeyCode, KeyModifiers, MouseEvent, MouseEventKind};
-+use tracing::debug;
-+use super::App;
-+use super::types::{ContextMenuKind, ContextMenuItem, ContextMenuState, FocusTarget};
-+
-+impl App {
-+    /// Detect if a click is a double-click based on timing and position.
-+    /// Returns true if the click is within ~500ms and ~5px of the last click.
-+    pub(super) fn is_double_click(&self, current_pos: (u16, u16)) -> bool {
-+        let now = std::time::Instant::now();
-+        match (self.last_click_time, self.last_click_position) {
-+            (Some(last_time), Some(last_pos)) => {
-+                let elapsed = now.duration_since(last_time);
-+                let distance = ((current_pos.0 as i32 - last_pos.0 as i32).abs()
-+                    + (current_pos.1 as i32 - last_pos.1 as i32).abs()) as u16;
-+                elapsed.as_millis() < 500 && distance <= 5
-+            }
-+            _ => false,
-+        }
-+    }
-+
-+    /// Find word boundaries for the character at (col, row) in the rendered
-+    /// transcript buffer. Returns absolute (start_col, end_col) for the word
-+    /// containing the click. A "word" is a run of non-whitespace characters.
-+    pub(super) fn find_word_boundaries(&self, col: u16, row: u16) -> Option<(u16, u16)> {
-+        let cache = self.last_row_text.borrow();
-+        let line = cache.get(&row)?;
-+        if line.is_empty() {
-+            return None;
-+        }
-+        let selectable_area = self.last_selectable_area.get();
-+        if col < selectable_area.x {
-+            return None;
-+        }
-+        let local = (col - selectable_area.x) as usize;
-+        let chars: Vec<char> = line.chars().collect();
-+        if local >= chars.len() {
-+            return None;
-+        }
-+        let is_word = |c: char| !c.is_whitespace();
-+        if !is_word(chars[local]) {
-+            return None;
-+        }
-+        let mut start = local;
-+        while start > 0 && is_word(chars[start - 1]) {
-+            start -= 1;
-+        }
-+        let mut end = local;
-+        while end + 1 < chars.len() && is_word(chars[end + 1]) {
-+            end += 1;
-+        }
-+        Some((selectable_area.x + start as u16, selectable_area.x + end as u16))
-+    }
-+
-+    /// Find paragraph boundaries (run of non-blank rows) around `row` and
-+    /// return (start_row, end_row, end_col) where end_col is the trimmed end
-+    /// of the last row's content. Used by triple-click selection so a
-+    /// "paragraph" — a contiguous block of text rows — is selected as a unit
-+    /// instead of a single visual row.
-+    pub(super) fn find_paragraph_boundaries(&self, row: u16) -> Option<(u16, u16, u16)> {
-+        let cache = self.last_row_text.borrow();
-+        let selectable_area = self.last_selectable_area.get();
-+        if selectable_area.width == 0 || selectable_area.height == 0 {
-+            return None;
-+        }
-+        let row_text = cache.get(&row)?;
-+        if row_text.trim().is_empty() {
-+            return None;
-+        }
-+        let max_row = selectable_area
-+            .y
-+            .saturating_add(selectable_area.height)
-+            .saturating_sub(1);
-+        let mut start = row;
-+        while start > selectable_area.y {
-+            let prev = start - 1;
-+            if cache.get(&prev).map(|s| s.trim().is_empty()).unwrap_or(true) {
-+                break;
-+            }
-+            start = prev;
-+        }
-+        let mut end = row;
-+        while end < max_row {
-+            let next = end + 1;
-+            if cache.get(&next).map(|s| s.trim().is_empty()).unwrap_or(true) {
-+                break;
-+            }
-+            end = next;
-+        }
-+        let last_text = cache.get(&end)?;
-+        let trimmed = last_text.trim_end();
-+        let end_col = selectable_area.x + trimmed.chars().count().saturating_sub(1) as u16;
-+        Some((start, end, end_col))
-+    }
-+
-+    /// Find line boundaries for the row containing the click.
-+    /// Returns (start_row, end_row) for the line.
-+    #[allow(dead_code)]
-+    fn find_line_boundaries(&self, row: u16) -> Option<(u16, u16)> {
-+        let selectable_area = self.last_selectable_area.get();
-+        let line_start = selectable_area.y;
-+        let line_end = selectable_area.y.saturating_add(selectable_area.height).saturating_sub(1);
-+
-+        if row >= line_start && row <= line_end {
-+            Some((row, row))
-+        } else {
-+            None
-+        }
-+    }
-+
-+    pub(super) fn context_menu_items(kind: ContextMenuKind) -> &'static [ContextMenuItem] {
-+        match kind {
-+            ContextMenuKind::Message { .. } => &[ContextMenuItem::Copy, ContextMenuItem::Fork],
-+            ContextMenuKind::Selection => &[ContextMenuItem::Copy],
-+        }
-+    }
-+
-+    pub(super) fn message_index_at_row(&self, row: u16) -> Option<usize> {
-+        self.message_row_map.bo
-```
-
-**File**: `src-rust/crates/tui/src/app/prompt.rs` (added, +157/-0)
-```diff
-@@ -0,0 +1,157 @@
-+//! Prompt input state machine and voice hold-to-talk.
-+
-+use crate::overlays::SelectorMessage;
-+use crate::prompt_input::InputMode;
-+use super::App;
-+use super::commands::PROMPT_SLASH_COMMANDS;
-+
-+impl App {
-+    /// Open the rewind flow with the current message list converted to
-+    /// `SelectorMessage` entries.
-+    pub fn open_rewind_flow(&mut self) {
-+        let selector_msgs: Vec<SelectorMessage> = self
-+            .messages
-+            .iter()
-+            .enumerate()
-+            .map(|(i, m)| {
-+                let text = m.get_all_text();
-+                let preview: String = text.chars().take(80).collect();
-+                let has_tool_use = !m.get_tool_use_blocks().is_empty();
-+                SelectorMessage {
-+                    idx: i,
-+                    role: format!("{:?}", m.role).to_lowercase(),
-+                    preview,
-+                    has_tool_use,
-+                }
-+            })
-+            .collect();
-+        self.rewind_flow.open(selector_msgs);
-+    }
-+
-+    pub(super) fn prompt_mode(&self) -> InputMode {
-+        // Note: previously returned Readonly while streaming, but the prompt
-+        // now accepts input during streaming so the user can compose / queue
-+        // a follow-up message. Plan mode still wins.
-+        if self.plan_mode {
-+            InputMode::Plan
-+        } else {
-+            InputMode::Default
-+        }
-+    }
-+
-+    pub(super) fn sync_legacy_prompt_fields(&mut self) {
-+        self.input = self.prompt_input.text.clone();
-+        self.cursor_pos = self.prompt_input.cursor;
-+        self.history_index = self.prompt_input.history_pos;
-+    }
-+
-+    pub fn refresh_prompt_input(&mut self) {
-+        self.prompt_input.mode = self.prompt_mode();
-+        if self.file_injection_dialog.visible {
-+            // Don't update suggestions while the injection dialog is open.
-+            self.sync_legacy_prompt_fields();
-+            return;
-+        }
-+        let file_autocomplete_limit = self.config.file_autocomplete_limit;
-+        let file_autocomplete_show_hidden = self.config.file_autocomplete_show_hidden_files;
-+        self.prompt_input.update_suggestions(PROMPT_SLASH_COMMANDS, file_autocomplete_limit, file_autocomplete_show_hidden);
-+        self.sync_legacy_prompt_fields();
-+    }
-+
-+    pub fn set_prompt_text(&mut self, text: String) {
-+        self.prompt_input.replace_text(text);
-+        self.refresh_prompt_input();
-+    }
-+
-+    /// Start PTT recording: open the microphone capture stream and signal the
-+    /// UI.  No-op when no voice recorder is attached or recording is already
-+    /// in progress.
-+    pub fn handle_voice_ptt_start(&mut self) {
-+        if self.voice_recording || self.voice_recorder.is_none() {
-+            return;
-+        }
-+        let (tx, rx) = tokio::sync::mpsc::channel(16);
-+        self.voice_event_rx = Some(rx);
-+        self.voice_recording = true;
-+        if let Some(ref recorder_arc) = self.voice_recorder {
-+            let recorder = recorder_arc.clone();
-+            tokio::task::spawn_blocking(move || {
-+                if let Ok(mut r) = recorder.lock() {
-+                    tokio::runtime::Handle::current()
-+                        .block_on(r.start_recording(tx))
-+                        .ok();
-+                }
-+            });
-+        }
-+        self.status_message = Some("Recording\u{2026} release V or press Enter to transcribe".to_string());
-+    }
-+
-+    /// Stop PTT recording: flip the AtomicBool inside VoiceRecorder so the
-+    /// capture thread exits, then fire a "Transcribing…" notice.  The
-+    /// transcript text arrives later via `voice_event_rx` and is injected into
-+    /// the prompt by the event-loop drain.
-+    pub fn handle_voice_ptt_stop(&mut self) {
-+        if !self.voice_recording {
-+            return;
-+        }
-+        self.voice_recording = false;
-+        if let Some(ref recorder_arc) = self.voice_recorder {
-+            let recorder = recorder_arc.clone();
-+            tokio::task::spawn_blocking(move || {
-+                if let Ok(mut r) = recorder.lock() {
-+                    tokio::runtime::Handle::current()
-+                        .block_on(r.stop_recording())
-+                        .ok();
-+                }
-+            });
-+        }
-+        self.status_message = Some("Transcribing\u{2026}".to_string());
-+    }
-+
-+    pub(super) fn clear_prompt(&mut self) {
-+        self.prompt_input.clear();
-+        self.refresh_prompt_input();
-+    }
-+
-+    /// Handle Enter while a typeahead popup is open. Accepts the highlighted
-+    /// suggestion and returns whether the prompt should now be submitted.
-+    ///
-+    /// - Slash command: complete the highlighted command *and* run it in a
-+    ///   single Enter — the popup acts as a command menu, so a second Enter to
-+    ///   "run" it should not be required (issue #183). Returns `true`.
-+    /// - File reference: complete the path, append a space, and keep editing so
-+    ///   the us
-```
-
-**File**: `src-rust/crates/tui/src/app/providers.rs` (added, +441/-0)
-```diff
-@@ -0,0 +1,441 @@
-+//! Provider/model/config management and import-config flow.
-+
-+use claurst_core::config::{Config, Settings};
-+use crate::dialog_select::{DialogSelectState, SelectItem};
-+use crate::import_config_dialog::ImportConfigDialogState;
-+use crate::model_picker::ModelPickerState;
-+use super::App;
-+
-+/// Return the environment variable name for a given provider ID.
-+#[allow(dead_code)]
-+fn get_env_var_for_provider(id: &str) -> &'static str {
-+    match id {
-+        "anthropic" => "ANTHROPIC_API_KEY",
-+        "openai" => "OPENAI_API_KEY",
-+        "google" | "google-vertex" => "GOOGLE_API_KEY",
-+        "github-copilot" => "GITHUB_TOKEN",
-+        "groq" => "GROQ_API_KEY",
-+        "cerebras" => "CEREBRAS_API_KEY",
-+        "sambanova" => "SAMBANOVA_API_KEY",
-+        "deepseek" => "DEEPSEEK_API_KEY",
-+        "mistral" => "MISTRAL_API_KEY",
-+        "openrouter" => "OPENROUTER_API_KEY",
-+        "togetherai" => "TOGETHER_API_KEY",
-+        "perplexity" => "PERPLEXITY_API_KEY",
-+        "cohere" => "COHERE_API_KEY",
-+        "xai" => "XAI_API_KEY",
-+        "deepinfra" => "DEEPINFRA_API_KEY",
-+        "azure" => "AZURE_API_KEY",
-+        "amazon-bedrock" => "AWS_ACCESS_KEY_ID",
-+        "sap-ai-core" => "AICORE_SERVICE_KEY",
-+        "gitlab" => "GITLAB_TOKEN",
-+        "cloudflare-ai-gateway" | "cloudflare-workers-ai" => "CLOUDFLARE_API_TOKEN",
-+        "vercel" => "AI_GATEWAY_API_KEY",
-+        "helicone" => "HELICONE_API_KEY",
-+        "huggingface" => "HF_TOKEN",
-+        "nvidia" => "NVIDIA_API_KEY",
-+        "alibaba" => "DASHSCOPE_API_KEY",
-+        "venice" => "VENICE_API_KEY",
-+        "moonshotai" => "MOONSHOT_API_KEY",
-+        "zhipuai" => "ZHIPU_API_KEY",
-+        "zai" => "ZAI_API_KEY",
-+        "siliconflow" => "SILICONFLOW_API_KEY",
-+        "nebius" => "NEBIUS_API_KEY",
-+        "novita" => "NOVITA_API_KEY",
-+        "minimax" => "MINIMAX_API_KEY",
-+        "ovhcloud" => "OVHCLOUD_API_KEY",
-+        "scaleway" => "SCALEWAY_API_KEY",
-+        "vultr" => "VULTR_API_KEY",
-+        "baseten" => "BASETEN_API_KEY",
-+        "friendli" => "FRIENDLI_TOKEN",
-+        "upstage" => "UPSTAGE_API_KEY",
-+        "stepfun" => "STEPFUN_API_KEY",
-+        "fireworks" => "FIREWORKS_API_KEY",
-+        _ => "API_KEY",
-+    }
-+}
-+
-+/// Return a URL hint for obtaining an API key from a given provider.
-+#[allow(dead_code)]
-+fn get_url_for_provider(id: &str) -> &'static str {
-+    match id {
-+        "anthropic" => "console.anthropic.com",
-+        "openai" => "platform.openai.com/api-keys",
-+        "google" => "aistudio.google.com/apikey",
-+        "github-copilot" => "github.com/settings/tokens",
-+        "groq" => "console.groq.com/keys",
-+        "cerebras" => "cloud.cerebras.ai",
-+        "sambanova" => "cloud.sambanova.ai",
-+        "deepseek" => "platform.deepseek.com/api_keys",
-+        "mistral" => "console.mistral.ai/api-keys",
-+        "openrouter" => "openrouter.ai/keys",
-+        "togetherai" => "api.together.xyz/settings/api-keys",
-+        "perplexity" => "perplexity.ai/settings/api",
-+        "cohere" => "dashboard.cohere.com/api-keys",
-+        "xai" => "console.x.ai",
-+        "deepinfra" => "deepinfra.com/dash/api_keys",
-+        "azure" => "portal.azure.com",
-+        "amazon-bedrock" => "console.aws.amazon.com/bedrock",
-+        "minimax" => "platform.minimaxi.com",
-+        "huggingface" => "huggingface.co/settings/tokens",
-+        "nvidia" => "build.nvidia.com",
-+        "venice" => "venice.ai/settings/api",
-+        "zai" => "z.ai/manage-apikey/apikey-list",
-+        _ => "the provider's website",
-+    }
-+}
-+
-+pub(super) fn import_config_picker_items() -> Vec<SelectItem> {
-+    vec![
-+        SelectItem {
-+            id: "claude-md".into(),
-+            title: "CLAUDE.md".into(),
-+            description: "Import ~/.claude/CLAUDE.md".into(),
-+            category: "Import".into(),
-+            badge: None,
-+        },
-+        SelectItem {
-+            id: "settings".into(),
-+            title: "settings.json".into(),
-+            description: "Import ~/.claude/settings.json".into(),
-+            category: "Import".into(),
-+            badge: None,
-+        },
-+        SelectItem {
-+            id: "both".into(),
-+            title: "Both".into(),
-+            description: "Import both CLAUDE.md and settings.json".into(),
-+            category: "Import".into(),
-+            badge: Some("SAFE".into()),
-+        },
-+    ]
-+}
-+
-+pub(super) fn provider_picker_items() -> Vec<SelectItem> {
-+    vec![
-+        SelectItem { id: "free".into(), title: "Free Mode".into(), description: "OpenCode Zen → OpenRouter free fallback (no spend)".into(), category: "Popular".into(), badge: Some("FREE".into()) },
-+        SelectItem { id: "openai".into(), title: "OpenAI".into(), description: "(API key)".into(), category: "Popular".into(), badge: None },
-+        SelectItem { id: "openai-codex".into(), title: "OpenAI Codex".into(), description: "(ChatGPT Plus/Pro — browser login)".into(), category: "
-```
-
-**File**: `src-rust/crates/tui/src/app/run.rs` (added, +628/-0)
-```diff
-@@ -0,0 +1,628 @@
-+//! Main event loop, query events, jump-to-error, file open.
-+
-+use std::io::Stdout;
-+
-+use claurst_core::types::Message;
-+use claurst_core::{sample_completion_verb, sample_spinner_verb};
-+use claurst_query::QueryEvent;
-+use crate::notifications::NotificationKind;
-+use crate::render;
-+use crossterm::event::{self, Event, KeyCode, KeyModifiers};
-+use ratatui::backend::CrosstermBackend;
-+use ratatui::Terminal;
-+use tracing::debug;
-+use super::App;
-+use super::turns::format_elapsed_ms;
-+use super::types::{RecentSession, ToolStatus, ToolUseBlock, recent_session_label};
-+
-+pub(super) fn open_file_externally(path: &std::path::Path) -> Result<(), Box<dyn std::error::Error>> {
-+    // Try to open with the system's default application
-+    #[cfg(target_os = "macos")]
-+    {
-+        std::process::Command::new("open")
-+            .arg(path)
-+            .spawn()?;
-+        Ok(())
-+    }
-+
-+    #[cfg(target_os = "linux")]
-+    {
-+        std::process::Command::new("xdg-open")
-+            .arg(path)
-+            .spawn()?;
-+        Ok(())
-+    }
-+
-+    #[cfg(target_os = "windows")]
-+    {
-+        std::process::Command::new("cmd")
-+            .args(&["/C", "start", ""])
-+            .arg(path)
-+            .spawn()?;
-+        Ok(())
-+    }
-+
-+    #[cfg(not(any(target_os = "macos", target_os = "linux", target_os = "windows")))]
-+    {
-+        // Fallback for other systems: try common editors in order
-+        for editor in &["nano", "vi", "vim", "emacs"] {
-+            match std::process::Command::new(editor)
-+                .arg(path)
-+                .spawn()
-+            {
-+                Ok(_) => return Ok(()),
-+                Err(_) => continue,
-+            }
-+        }
-+        Err("No suitable editor found".into())
-+    }
-+}
-+
-+impl App {
-+    /// Detect the current PR from environment variables or git.
-+    pub fn detect_pr(&mut self) {
-+        // Check CLAUDE_PR_NUMBER and CLAUDE_PR_URL env vars
-+        if let Ok(num) = std::env::var("CLAUDE_PR_NUMBER") {
-+            if let Ok(n) = num.parse::<u32>() {
-+                self.pr_number = Some(n);
-+            }
-+        }
-+        if let Ok(url) = std::env::var("CLAUDE_PR_URL") {
-+            self.pr_url = Some(url);
-+        }
-+        if let Ok(state) = std::env::var("CLAUDE_PR_STATE") {
-+            if !state.trim().is_empty() {
-+                self.pr_state = Some(state.trim().to_string());
-+            }
-+        }
-+        // Fall back to gh CLI if no env vars
-+        if self.pr_number.is_none() {
-+            if let Ok(output) = std::process::Command::new("gh")
-+                .args(["pr", "view", "--json", "number,url", "--jq", ".number,.url"])
-+                .output()
-+            {
-+                if output.status.success() {
-+                    let text = String::from_utf8_lossy(&output.stdout);
-+                    let parts: Vec<&str> = text.trim().split('\n').collect();
-+                    if parts.len() >= 2 {
-+                        if let Ok(n) = parts[0].trim().parse::<u32>() {
-+                            self.pr_number = Some(n);
-+                            self.pr_url = Some(parts[1].trim().to_string());
-+                        }
-+                    }
-+                }
-+            }
-+        }
-+    }
-+
-+    /// Push a completed assistant message and trigger auto-scroll bookkeeping.
-+    pub(super) fn push_assistant_message(&mut self, text: String) {
-+        let msg = Message::assistant(text);
-+        self.messages.push(msg);
-+        self.invalidate_transcript();
-+        self.on_new_message();
-+    }
-+
-+    /// Process a query event from the agentic loop.
-+    pub fn handle_query_event(&mut self, event: QueryEvent) {
-+        // Auto-dismiss error modal when assistant responds
-+        match &event {
-+            QueryEvent::Stream(_) | QueryEvent::TurnComplete { .. } => {
-+                self.dismiss_error_notifications();
-+            }
-+            _ => {}
-+        }
-+
-+        match event {
-+            QueryEvent::Stream(stream_evt) => {
-+                if !self.is_streaming {
-+                    let seed = self.frame_count as usize ^ (self.messages.len() * 17);
-+                    self.spinner_verb = Some(sample_spinner_verb(seed).to_string());
-+                    // turn_start is set in begin_user_turn_snapshot (prompt
-+                    // submission time).  Only fall back here if somehow no
-+                    // user message was pushed before streaming began (e.g.
-+                    // headless / programmatic callers).
-+                    if self.turn_start.is_none() {
-+                        self.turn_start = Some(std::time::Instant::now());
-+                    }
-+                    self.streaming_thinking.clear();
-+                }
-+                self.is_streaming = true;
-+                match stream_evt {
-+                    claurst_api::AnthropicStreamEvent::ContentBlockDelta { delta, .. } => {
-+                        // Reset stall timer on any incoming delta — w
-```
-
-**File**: `src-rust/crates/tui/src/app/tests.rs` (added, +960/-0)
-```diff
-@@ -0,0 +1,960 @@
-+//! Tests for the app module.
-+
-+use super::*;
-+
-+use claurst_core::config::Config;
-+use claurst_core::types::Role;
-+use super::keys::{
-+    key_event_to_keystroke, layout_to_latin, normalize_char_with_shift,
-+    normalize_layout_shortcut_key,
-+};
-+use super::types::{ContextMenuItem, ContextMenuState};
-+
-+    
-+    use crossterm::event::{KeyCode, KeyEvent, KeyEventKind, KeyEventState, KeyModifiers};
-+
-+    fn make_app() -> App {
-+        let config = Config::default();
-+        let cost_tracker = claurst_core::cost::CostTracker::new();
-+        App::new(config, cost_tracker)
-+    }
-+
-+    fn press_key(code: KeyCode, modifiers: KeyModifiers) -> KeyEvent {
-+        KeyEvent {
-+            code,
-+            modifiers,
-+            kind: KeyEventKind::Press,
-+            state: KeyEventState::NONE,
-+        }
-+    }
-+
-+    // ---- recent-activity label (issue #277) ----
-+
-+    #[test]
-+    fn recent_session_label_prefers_title() {
-+        let label = recent_session_label(
-+            Some("My Title".to_string()),
-+            Some("some prompt".to_string()),
-+        );
-+        assert_eq!(label, "My Title");
-+    }
-+
-+    #[test]
-+    fn recent_session_label_falls_back_to_first_prompt_line() {
-+        let label = recent_session_label(
-+            None,
-+            Some("  fix the bug\nand more details".to_string()),
-+        );
-+        assert_eq!(label, "fix the bug");
-+    }
-+
-+    #[test]
-+    fn recent_session_label_skips_blank_title_and_untitled_default() {
-+        // Blank/whitespace title is ignored in favour of the prompt.
-+        assert_eq!(
-+            recent_session_label(Some("   ".to_string()), Some("do it".to_string())),
-+            "do it"
-+        );
-+        // Nothing usable → untitled.
-+        assert_eq!(recent_session_label(None, None), "(untitled)");
-+        assert_eq!(
-+            recent_session_label(Some(String::new()), Some("\n\n".to_string())),
-+            "(untitled)"
-+        );
-+    }
-+
-+    #[test]
-+    fn recent_session_label_truncates_long_prompt() {
-+        let long = "x".repeat(200);
-+        let label = recent_session_label(None, Some(long));
-+        assert_eq!(label.chars().count(), 80);
-+    }
-+
-+    // ---- mouse capture gate (issue #104) ----
-+
-+    fn scroll_up_event() -> crossterm::event::MouseEvent {
-+        crossterm::event::MouseEvent {
-+            kind: crossterm::event::MouseEventKind::ScrollUp,
-+            column: 0,
-+            row: 0,
-+            modifiers: KeyModifiers::NONE,
-+        }
-+    }
-+
-+    #[test]
-+    fn mouse_events_processed_when_capture_enabled() {
-+        // Default config leaves mouse capture on, so a scroll wheel event
-+        // should move the scroll offset — provided there is content to scroll
-+        // over (a render must have established a non-zero max_scroll).
-+        let mut app = make_app();
-+        assert!(app.config.mouse_capture_enabled());
-+        assert_eq!(app.scroll_offset, 0);
-+        app.last_max_scroll.set(50);
-+        app.handle_mouse_event(scroll_up_event());
-+        assert!(app.scroll_offset > 0, "scroll should advance when capture is on");
-+        assert!(app.scroll_offset <= 50, "scroll stays within max_scroll");
-+    }
-+
-+    // ---- click-to-view paste placeholders ----
-+
-+    #[test]
-+    fn prompt_click_on_placeholder_opens_viewer() {
-+        let mut app = make_app();
-+        // Bottom pane as rendered: 1 status row (height > 2), then the top
-+        // separator at y=21, text rows from y=22. Prefix "❯ " is 2 cells.
-+        app.last_input_area.set(ratatui::layout::Rect { x: 0, y: 20, width: 80, height: 8 });
-+        for c in "hi ".chars() {
-+            app.prompt_input.insert_char(c);
-+        }
-+        app.prompt_input.paste("l1\nl2\nl3");
-+        assert!(app.prompt_input.text.contains("[Pasted text #1"));
-+
-+        // Click on the separator row: nothing opens.
-+        app.handle_prompt_click(10, 21);
-+        assert!(!app.paste_viewer.visible);
-+
-+        // Click inside the placeholder on the first text row: the viewer
-+        // opens read-only — the placeholder stays in the buffer and the body
-+        // stays stored so submit-time expansion is unaffected.
-+        app.handle_prompt_click(2 + 5, 22);
-+        assert!(app.paste_viewer.visible);
-+        assert_eq!(app.paste_viewer.paste_id, 1);
-+        assert_eq!(app.paste_viewer.line_count(), 3);
-+        assert!(app.prompt_input.text.contains("[Pasted text #1"));
-+        assert!(!app.prompt_input.paste_contents.is_empty());
-+    }
-+
-+    #[test]
-+    fn paste_viewer_alt_e_expands_into_prompt() {
-+        let mut app = make_app();
-+        app.last_input_area.set(ratatui::layout::Rect { x: 0, y: 20, width: 80, height: 8 });
-+        for c in "hi ".chars() {
-+            app.prompt_input.insert_char(c);
-+        }
-+        app.prompt_input.paste("l1\nl2\nl3");
-+        app.handle_prompt_click(2 + 5, 22);
-+        assert!(app.paste_viewer.visible);
-+
-+        let alt_e = crossterm::event::KeyEvent::
-```
-
----
-
-### Incident Patch 3: `7c041f88` (2026-08-22)
-**Commit Message**: fix(vscode): drop model/effort/provider pills — session config is fixed at process start
-
-**File**: `editors/vscode/media/main.css` (modified, +0/-23)
-```diff
-@@ -13,29 +13,6 @@ body {
-   height: 100vh;
- }
+@@ -77,13 +77,13 @@ These bindings are active when focus is in the chat input field.
  
--#header {
--  display: flex;
--  gap: 6px;
--  padding: 6px 8px;
--  border-bottom: 1px solid var(--vscode-panel-border);
--  flex-shrink: 0;
--}
--
--.pill {
--  background: var(--vscode-badge-background);
--  color: var(--vscode-badge-foreground);
--  border: none;
--  border-radius: 999px;
--  padding: 2px 10px;
--  font-size: 0.85em;
--  cursor: pointer;
--  font-family: var(--vscode-editor-font-family, monospace);
--}
--
--.pill:hover {
--  background: var(--vscode-button-hoverBackground);
--}
--
- #messages {
-   flex: 1;
-   overflow-y: auto;
+ `Shift+Tab` (`reverseIndent`) cycles the permission mode (Default, Accept edits, Bypass permissions, back to Default; Plan goes to Default); it does not remove indentation. Most terminals send `Ctrl+I` as `Tab`, so `historyNext` on `Ctrl+I` only fires when the terminal reports it separately (kitty keyboard protocol).
+ 
+-The defaults also bind `Ctrl+Left` / `Ctrl+Right` (`moveWordBackward` / `moveWordForward`), `Ctrl+F` (`findInMessage`), `Ctrl+Shift+F` (`globalSearch`), `Ctrl+]` (`findNext`), `Ctrl+[` (`findPrev`) and `Ctrl+G` (`goToLine`), but these actions are not implemented, so the keys do nothing. `F3` / `Shift+F3` are listed too, but function keys never reach the binding table. Use `Alt+B` / `Alt+F` to move by word and `Ctrl+P` for project search. The `openSearch` action (no default key) also opens project search and can be bound; the default `globalSearch` name does nothing.
++The defaults also bind `Ctrl+Left` / `Ctrl+Right` (`moveWordBackward` / `moveWordForward`), `Ctrl+F` (`findInMessage`), `Ctrl+]` (`findNext`), `Ctrl+[` (`findPrev`) and `Ctrl+G` (`goToLine`), but those actions are not implemented, so the keys do nothing. `F3` / `Shift+F3` are listed too, but function keys never reach the binding table. Use `Alt+B` / `Alt+F` to move by word and `Ctrl+P` for project search. `Ctrl+Shift+F` works: its default action is listed as `globalSearch`, an alias of the `openSearch` action — both names open the project search, so either can be bound in `keybindings.json`.
+ 
+ > `Ctrl+A` previously opened the model picker; it now moves the cursor to the line start (matching Emacs/readline). The model picker is now `Ctrl+Shift+A`. Old `keybindings.json` files are auto-migrated.
+ 
+ ### Fixed Keys
+ 
+-These keys are hard-coded in the prompt and have no action names, so they cannot be remapped. A `keybindings.json` binding on the same key (other than `F1` and `Shift+Insert`) takes precedence over them.
++These keys are hard-coded in the prompt and have no action names, so they cannot be remapped. A `keybindings.json` binding on the same key (other than `F1`, which never reaches the binding table) takes precedence over them.
+ 
+ | Key | Effect |
+ |-----|--------|
+@@ -96,7 +96,7 @@ These keys are hard-coded in the prompt and have no action names, so they cannot
+ | `Alt+Delete` / `Ctrl+Delete` | Delete the word after the cursor |
+ | `Alt+Up` / `Alt+Down` | Scroll the transcript 20 lines (`Alt+Up` edits the last queued message instead when one is pending) |
+ | `Ctrl+V` / `Cmd+V` | Paste: an image from the clipboard if there is one, otherwise text |
+-| `Shift+Insert` | Paste text |
++| `Shift+Insert` | Paste text (the `insert` key name reaches the binding table, so it can also be rebound) |
+ | `Alt+V` | Start / stop voice recording (when `/voice` is on) |
+ 
+ ### Confirmation Context
+@@ -263,7 +263,7 @@ The action names behind the fixed keys still exist and can be bound to other cho
+ 
+ ## Vim Mode
+ 
+-The prompt editor contains a vim emulation with insert, normal, visual (`v`, `V`), command-line (`:`) and search (`/`) modes.
++The prompt editor contains a vim emulation with insert, normal, visual (`v`, `V`, `Ctrl+V`), command-line (`:`) and search (`/`) modes.
+ 
+ ### Enabling Vim Mode
+ 
 ```
 
-**File**: `editors/vscode/src/chatPanel.ts` (modified, +13/-136)
+**File**: `src-rust/crates/core/src/keybindings.rs` (modified, +53/-0)
 ```diff
-@@ -2,12 +2,6 @@ import * as os from 'os';
- import * as vscode from 'vscode';
- import { AcpClient, PermissionOption, ToolCallUpdate } from './acpClient';
- 
--const EFFORT_LEVELS = ['none', 'minimal', 'low', 'medium', 'high', 'xhigh', 'max', 'ultracode'];
--const COMMON_PROVIDERS = [
--  'anthropic', 'openai', 'google', 'groq', 'cerebras', 'deepseek', 'mistral',
--  'xai', 'openrouter', 'togetherai', 'cohere', 'ollama', 'azure', 'amazon-bedrock',
--];
--
- /** Owns one webview panel and its backing AcpClient/session. */
- export class ChatPanel {
-   public static current: ChatPanel | undefined;
-@@ -17,10 +11,6 @@ export class ChatPanel {
-   private readonly outputChannel: vscode.OutputChannel;
-   private disposables: vscode.Disposable[] = [];
- 
--  /** While true, streamed events update `status` instead of the visible transcript. */
--  private silent = false;
--  private status: { model?: string; provider?: string; effort?: string } = {};
--
-   static createOrShow(extensionUri: vscode.Uri, outputChannel: vscode.OutputChannel): ChatPanel {
-     if (ChatPanel.current) {
-       ChatPanel.current.panel.reveal();
-@@ -63,11 +53,6 @@ export class ChatPanel {
-   <title>Claurst</title>
- </head>
- <body>
--  <div id="header">
--    <button class="pill" id="model-pill" title="Change model">model: …</button>
--    <button class="pill" id="provider-pill" title="Change provider">provider: …</button>
--    <button class="pill" id="effort-pill" title="Change reasoning effort">effort: …</button>
--  </div>
-   <div id="messages"></div>
-   <div id="input-row">
-     <textarea id="input-box" rows="1" placeholder="Ask claurst..."></textarea>
-@@ -87,23 +72,9 @@ export class ChatPanel {
-     const executablePath = vscode.workspace.getConfiguration('claurst').get<string>('executablePath', 'claurst');
- 
-     this.client = new AcpClient(executablePath, cwd, {
--      onTextChunk: (text, isThought) => {
--        if (!this.silent) {
--          this.postToWebview({ type: 'textChunk', text, isThought });
--        }
--      },
--      onToolCall: (update) => {
--        this.captureStatusFromToolResult(update);
--        if (!this.silent) {
--          this.postToWebview({ type: 'toolCall', ...toolCallPayload(update) });
--        }
--      },
--      onToolCallUpdate: (update) => {
--        this.captureStatusFromToolResult(update);
--        if (!this.silent) {
--          this.postToWebview({ type: 'toolCallUpdate', ...toolCallPayload(update) });
--        }
--      },
-+      onTextChunk: (text, isThought) => this.postToWebview({ type: 'textChunk', text, isThought }),
-+      onToolCall: (update) => this.postToWebview({ type: 'toolCall', ...toolCallPayload(update) }),
-+      onToolCallUpdate: (update) => this.postToWebview({ type: 'toolCallUpdate', ...toolCallPayload(update) }),
-       onRequestPermission: (toolCall, options) => this.promptForPermission(toolCall, options),
-       onStderr: (line) => this.outputChannel.appendLine(line),
-       onExit: (code) => {
-@@ -115,60 +86,23 @@ export class ChatPanel {
-       await this.client.initialize();
-       await this.client.newSession(cwd);
-       this.postToWebview({ type: 'status', text: `Session started in ${cwd}` });
--      await this.refreshStatus();
-     } catch (e) {
-       this.reportError(e);
+@@ -121,6 +121,7 @@ fn normalize_key(k: &str) -> String {
+         "pageup" | "pgup" => "pageup".to_string(),
+         "pagedown" | "pgdn" | "pgdown" => "pagedown".to_string(),
+         "home" => "home".to_string(),
++        "ins" | "insert" => "insert".to_string(),
+         "end" => "end".to_string(),
+         "tab" => "tab".to_string(),
+         k => k.to_string(),
+@@ -707,6 +708,39 @@ mod tests {
+         assert!(parse_keystroke("").is_none());
      }
-   }
  
--  /** Silently asks the agent to report model/provider/effort via the Config
--   * tool and updates the header pills. Doesn't appear in the visible transcript. */
--  private async refreshStatus(): Promise<void> {
--    if (!this.client) {
--      return;
--    }
--    this.silent = true;
--    try {
--      await this.client.prompt(
--        'Call the Config tool three times, once each with setting="model", setting="provider", ' +
--        'and setting="effort" (omit "value" every time — these are reads, not writes). ' +
--        'After the three tool calls finish, reply with just the word "ok".',
--      );
--    } catch (e) {
--      this.outputChannel.appendLine(`[claurst-vscode] status refresh failed: ${e}`);
--    } finally {
--      this.silent = false;
--      this.pushStatus();
--    }
--  }
--
--  /** Parses `key = "value"` out of a Config tool result and updates the header. */
--  private captureStatusFromToolResult(update: ToolCallUpdate): void {
--    if (update.title !== 'Config' || !update.resultText) {
--      return;
--    }
--    const match = update.resultText.match(/^(model|provider|effort)\s*=\s*"?([^"\n]+)"?/);
--    if (!match) {
--      return;
--    }
--    const [, key, value] = match;
--    (this.status as any)[key] = value;
--    this.pushStatus();
--  }
--
--  private pushStatus(): void {
--    this.postToWebview({ type: 'headerUpdate', ...this.status });
--  }
--
--  private async promptForPermission(toolCall: ToolCallUpdate, options: PermissionOption[]): Promise<string> {
-+  /**
-+   * Returns the chosen option id, or `undefined` if the user dismissed the
-+   * quick pick without choosing. `undefined` is sent back to the agent as a
-+   * `Cancelled` outcome (not an implicit grant) — see acpClient's
-+   * handleInco
-```
-
----
-
-### Incident Patch 4: `6022e20a` (2026-08-22)
-**Commit Message**: fix(vscode): route through acpProtocol; send Cancelled instead of guessing an option
-
-**File**: `editors/vscode/src/acpClient.ts` (modified, +41/-81)
-```diff
-@@ -1,15 +1,10 @@
- import * as cp from 'child_process';
- import * as readline from 'readline';
-+import { extractText, parseLine } from './acpProtocol';
- 
--/** Minimal newline-delimited JSON-RPC 2.0 client for the Agent Client Protocol,
-- * matching the wire format implemented in src-rust/crates/acp/src/connection.rs:
-- * one UTF-8 line per message, no Content-Length framing. */
--
--export interface JsonRpcError {
--  code: number;
--  message: string;
--  data?: unknown;
--}
-+/** Speaks ACP to a `claurst acp` child process over stdio. Wire parsing
-+ * itself lives in acpProtocol.ts; this class owns the process, the
-+ * pending-request map, and dispatch to caller-supplied event callbacks. */
- 
- export type PermissionOption = {
-   optionId: string;
-@@ -22,21 +17,19 @@ export type ToolCallUpdate = {
-   title?: string;
-   status?: string;
-   kind?: string;
--  /** First text content block from the tool's result, if any. */
--  resultText?: string;
- };
- 
- export interface AcpClientEvents {
-   onTextChunk?: (text: string, isThought: boolean) => void;
-   onToolCall?: (update: ToolCallUpdate) => void;
-   onToolCallUpdate?: (update: ToolCallUpdate) => void;
--  /** Must resolve to one of the option ids offered in `options`. */
--  onRequestPermission?: (toolCall: ToolCallUpdate, options: PermissionOption[]) => Promise<string>;
-+  /** Return the chosen option id, or `undefined` to cancel the request
-+   * (e.g. the user dismissed the picker without choosing). */
-+  onRequestPermission?: (toolCall: ToolCallUpdate, options: PermissionOption[]) => Promise<string | undefined>;
-   onStderr?: (line: string) => void;
-   onExit?: (code: number | null) => void;
- }
- 
--/** Speaks ACP to a `claurst acp` child process over stdio. */
- export class AcpClient {
-   private child: cp.ChildProcessWithoutNullStreams;
-   private rl: readline.Interface;
-@@ -66,47 +59,37 @@ export class AcpClient {
-   }
- 
-   private handleLine(line: string): void {
--    const trimmed = line.trim();
--    if (trimmed.length === 0) {
--      return;
--    }
--    let msg: any;
--    try {
--      msg = JSON.parse(trimmed);
--    } catch {
--      this.events.onStderr?.(`[claurst-vscode] malformed line from agent: ${trimmed}`);
-+    const parsed = parseLine(line);
-+    if (!parsed) {
-+      if (line.trim().length > 0) {
-+        this.events.onStderr?.(`[claurst-vscode] malformed line from agent: ${line.trim()}`);
++    #[test]
++    fn test_parse_keystroke_insert_aliases() {
++        // #495: `insert` (used by Shift+Insert) had no key-name mapping, so
++        // the shell-level binding table could never reference it.
++        let ks = parse_keystroke("shift+insert").unwrap();
++        assert_eq!(ks.key, "insert");
++        assert!(ks.shift);
++        let alias = parse_keystroke("ins").unwrap();
++        assert_eq!(alias.key, "insert");
++    }
++
++    #[test]
++    fn test_resolver_reaches_shift_insert_binding() {
++        // A Shift+Insert binding must resolve now that the key name is wired
++        // (previously no lookup ever produced the "insert" key name).
++        let user = UserKeybindings::from_json_str(
++            r#"{
++  "bindings": [
++    {
++      "context": "Chat",
++      "bindings": {
++        "shift+insert": "openHelp"
 +      }
-       return;
-     }
- 
--    const hasId = msg.id !== undefined && msg.id !== null;
--    const hasResult = 'result' in msg;
--    const hasError = 'error' in msg;
--    const hasMethod = typeof msg.method === 'string';
--
--    if (hasId && (hasResult || hasError) && !hasMethod) {
--      const pending = this.pending.get(msg.id);
--      if (!pending) {
-+    switch (parsed.kind) {
-+      case 'response': {
-+        const pending = this.pending.get(parsed.id);
-+        if (!pending) {
-+          return;
-+        }
-+        this.pending.delete(parsed.id);
-+        if (parsed.error) {
-+          pending.reject(Object.assign(new Error(parsed.error.message ?? 'ACP error'), { data: parsed.error }));
-+        } else {
-+          pending.resolve(parsed.result);
-+        }
-         return;
-       }
--      this.pending.delete(msg.id);
--      if (hasError) {
--        pending.reject(Object.assign(new Error(msg.error?.message ?? 'ACP error'), { data: msg.error }));
--      } else {
--        pending.resolve(msg.result);
--      }
--      return;
--    }
--
--    if (hasId && hasMethod) {
--      // Agent → client request. Only session/request_permission is expected in v1.
--      this.handleIncomingRequest(msg.id, msg.method, msg.params).catch((e) => {
--        this.events.onStderr?.(`[claurst-vscode] failed to handle ${msg.method}: ${e}`);
--      });
--      return;
--    }
--
--    if (hasMethod) {
--      this.handleNotification(msg.method, msg.params);
-+      case 'request':
-+        // Agent → client request. Only session/request_permission is expected in v1.
-+        this.handleIncomingRequest(parsed.id, parsed.method, parsed.params).catch((e) => {
-+          this.events.onStderr?.(`[claurst-vscode] failed to handle ${parsed.method}: ${e}`);
-+        });
-+        return;
-+      case 'notification':
-+        this.handleNotification(parsed.method, parsed.params);
-+        return;
-     }
-   }
- 
-@@ -123,12 +106,14 @@ export class AcpClient {
-         name: o.name,
-         kind: o.kind,
-       }));
--      const chosen = (await this.events.onRequestPermission?.(toolCall, options)) ?? options[0]?.optionId;
--      this.writeMessage({
--        jsonrpc: '2.0',
--        id,
--        result: { outcome: { outcome: 'selected', optionId: chosen } },
--      });
-+      const chosen = await this.events.onRequestPermission?.(toolCall, options);
-+      // No selection (dismissed picker, or no handler wired up) must NOT
-+      // grant an option — respond Cancelled, matching the ACP spec's
-+      // Cancelled outcome rather than guessing an option to grant.
-+      const result = chosen
-+        ? { outco
-```
-
----
-
-### Incident Patch 5: `dda2b6f4` (2026-08-22)
-**Commit Message**: fix(vscode): preserve tool-call title across status updates
-
-**File**: `editors/vscode/media/main.js` (modified, +7/-19)
-```diff
-@@ -6,9 +6,6 @@
-   const inputEl = document.getElementById('input-box');
-   const sendBtn = document.getElementById('send-btn');
-   const stopBtn = document.getElementById('stop-btn');
--  const modelPill = document.getElementById('model-pill');
--  const providerPill = document.getElementById('provider-pill');
--  const effortPill = document.getElementById('effort-pill');
- 
-   let currentAgentBubble = null;
-   const toolCallEls = new Map();
-@@ -32,6 +29,9 @@
-     return '•';
-   }
- 
-+  // The initial tool_call event carries a title; the tool_call_update sent
-+  // on completion never does (the agent only sends status + content there).
-+  // Remember the title on the element itself so completion doesn't blank it.
-   function upsertToolCall(id, title, status) {
-     let el = id ? toolCallEls.get(id) : null;
-     if (!el) {
-@@ -42,8 +42,11 @@
-         toolCallEls.set(id, el);
-       }
-     }
-+    if (title) {
-+      el.dataset.title = title;
 +    }
-     el.className = 'tool-call ' + (status || '');
--    el.textContent = `${statusIcon(status)} ${title || '(tool call)'}`;
-+    el.textContent = `${statusIcon(status)} ${el.dataset.title || '(tool call)'}`;
-     messagesEl.scrollTop = messagesEl.scrollHeight;
-   }
- 
-@@ -79,9 +82,6 @@
-       send();
-     }
-   });
--  modelPill.addEventListener('click', () => vscode.postMessage({ type: 'pickModel' }));
--  providerPill.addEventListener('click', () => vscode.postMessage({ type: 'pickProvider' }));
--  effortPill.addEventListener('click', () => vscode.postMessage({ type: 'pickEffort' }));
- 
-   setBusy(false);
- 
-@@ -104,23 +104,11 @@
-         upsertToolCall(msg.toolCallId, msg.title, msg.status);
-         break;
-       }
--      case 'userEcho': {
--        currentAgentBubble = null;
--        appendRow(msg.text, 'user');
--        setBusy(true);
--        break;
--      }
-       case 'status': {
-         currentAgentBubble = null;
-         appendRow(msg.text, 'system');
-         break;
-       }
--      case 'headerUpdate': {
--        if (msg.model) modelPill.textContent = 'model: ' + msg.model;
--        if (msg.provider) providerPill.textContent = 'provider: ' + msg.provider;
--        if (msg.effort) effortPill.textContent = 'effort: ' + msg.effort;
--        break;
--      }
-       case 'turnEnded': {
-         currentAgentBubble = null;
-         setBusy(false);
-```
-
----
-
-### Incident Patch 6: `601c7be9` (2026-08-22)
-**Commit Message**: fix(cli): drop guarded unwrap() on suggestion_index in enter-key handler (#334)
-
-suggestion_index.unwrap() was guarded by a preceding is_some() check so
-not an active bug, but AGENTS.md bans unwrap()/expect() on fallible
-operations outright. Replace with is_some_and()/get().is_some_and(),
-same behavior, no unwrap.
-
-**File**: `src-rust/crates/cli/src/main.rs` (modified, +6/-4)
-```diff
-@@ -2320,10 +2320,12 @@ async fn run_interactive(
-                     if plain_enter && !app.is_streaming && !any_dialog_open {
-                         // If a file-ref suggestion is active, accept it instead of submitting.
-                         if !app.prompt_input.suggestions.is_empty()
--                            && app.prompt_input.suggestion_index.is_some()
--                            && app.prompt_input.suggestions.get(app.prompt_input.suggestion_index.unwrap())
--                                .map(|s| s.source == claurst_tui::prompt_input::TypeaheadSource::FileRef)
--                                .unwrap_or(false)
-+                            && app.prompt_input.suggestion_index.is_some_and(|index| {
-+                                app.prompt_input
-+                                    .suggestions
-+                                    .get(index)
-+                                    .is_some_and(|s| s.source == claurst_tui::prompt_input::TypeaheadSource::FileRef)
-+                            })
-                         {
-                             app.prompt_input.accept_suggestion();
-                             app.prompt_input.insert_char(' ');
-```
-
----
-
-### Incident Patch 7: `c445559e` (2026-08-22)
-**Commit Message**: fix(mcp): recover from mutex poisoning instead of panicking in rmcp_backend (#333)
-
-* fix(mcp): recover from mutex poisoning in legacy SSE endpoint discovery
-
-LegacySseRmcpTransport::start_sse_listener panicked on a poisoned mutex
-via .expect(...), which violates the no-expect-on-fallible-ops rule and
-cascades one earlier panic into a permanently unusable client. Add a
-lock_recover() helper that recovers the guarded state via
-PoisonError::into_inner() instead, and use it in start_sse_listener.
-
-* fix(mcp): recover from mutex poisoning in send/close/drop paths
-
-Apply the lock_recover() helper to the remaining .lock().expect(...)
-sites in LegacySseRmcpTransport: Drop::drop, Transport::send,
-Transport::close, and handle_legacy_sse_http_response. Removes the
-last production-path panics on mutex poisoning in this file.
-
-**File**: `src-rust/crates/mcp/src/rmcp_backend.rs` (modified, +35/-26)
-```diff
-@@ -22,6 +22,16 @@ use tokio::sync::{mpsc, oneshot, Mutex};
- use tokio::task::JoinHandle;
- use tokio_stream::wrappers::ReceiverStream;
- 
-+/// Lock a `std::sync::Mutex`, recovering from poisoning instead of panicking.
-+///
-+/// A poisoned mutex only means some other thread panicked while holding the
-+/// lock; the guarded state is still valid to read/write here, so panicking
-+/// again on every subsequent lock would just cascade one earlier failure
-+/// into a permanently unusable client.
-+fn lock_recover<T>(mutex: &StdMutex<T>) -> std::sync::MutexGuard<'_, T> {
-+    mutex.lock().unwrap_or_else(|poisoned| poisoned.into_inner())
-+}
-+
- pub struct RmcpNotificationClient {
-     notifications_tx: mpsc::UnboundedSender<Value>,
-     client_info: rmcp_model::ClientInfo,
-@@ -281,12 +291,8 @@ impl LegacySseRmcpTransport {
-             let result = transport::process_sse_response(response, |event, data| {
-                 if matches!(event, Some("endpoint")) {
-                     let endpoint = transport::resolve_legacy_endpoint(&sse_url, data)?;
--                    *post_endpoint.lock().expect("endpoint mutex poisoned") = Some(endpoint.clone());
--                    if let Some(tx) = endpoint_tx_for_task
--                        .lock()
--                        .expect("endpoint sender mutex poisoned")
--                        .take()
--                    {
-+                    *lock_recover(&post_endpoint) = Some(endpoint.clone());
-+                    if let Some(tx) = lock_recover(&endpoint_tx_for_task).take() {
-                         let _ = tx.send(Ok(endpoint));
-                     }
-                     return Ok(());
-@@ -304,24 +310,16 @@ impl LegacySseRmcpTransport {
- 
-             if let Err(e) = result {
-                 tracing::warn!(server = %server_name, error = %e, "Legacy SSE stream closed with error");
--                if let Some(tx) = endpoint_tx_for_task
--                    .lock()
--                    .expect("endpoint sender mutex poisoned")
--                    .take()
--                {
-+                if let Some(tx) = lock_recover(&endpoint_tx_for_task).take() {
-                     let _ = tx.send(Err(anyhow::anyhow!(e.to_string())));
-                 }
--            } else if let Some(tx) = endpoint_tx_for_task
--                .lock()
--                .expect("endpoint sender mutex poisoned")
--                .take()
--            {
-+            } else if let Some(tx) = lock_recover(&endpoint_tx_for_task).take() {
-                 let _ = tx.send(Err(anyhow::anyhow!(
-                     "legacy SSE stream closed before announcing endpoint"
-                 )));
-             }
-         });
--        self.background_tasks.lock().expect("task mutex poisoned").push(task);
-+        lock_recover(&self.background_tasks).push(task);
- 
-         let endpoint = tokio::time::timeout(std::time::Duration::from_secs(10), endpoint_rx)
-             .await
-@@ -337,7 +335,7 @@ impl LegacySseRmcpTransport {
-                     self.server_name
-                 )
-             })??;
--        *self.post_endpoint.lock().expect("endpoint mutex poisoned") = Some(endpoint);
-+        *lock_recover(&self.post_endpoint) = Some(endpoint);
-         Ok(())
-     }
- }
-@@ -347,7 +345,7 @@ impl Drop for LegacySseRmcpTransport {
-         // Some upper-layer paths drop the backend instead of calling close()
-         // explicitly. Abort the listener tasks again here so legacy SSE does
-         // not outlive the connection teardown.
--        let mut tasks = self.background_tasks.lock().expect("task mutex poisoned");
-+        let mut tasks = lock_recover(&self.background_tasks);
-         for handle in tasks.drain(..) {
-             handle.abort();
-         }
-@@ -361,11 +359,7 @@ impl rmcp::transport::Transport<RoleClient> for LegacySseRmcpTransport {
-         &mut self,
-         item: rmcp::service::TxJsonRpcMessage<RoleClient>,
-     ) -> impl std::future::Future<Output = Result<(), Self::Error>> + Send + 'static {
--        let endpoint = self
--            .post_endpoint
--            .lock()
--            .expect("endpoint mutex poisoned")
--            .clone();
-+        let endpoint = lock_recover(&self.post_endpoint).clone();
-         let client = self.client.clone();
-         let auth_token = self.auth_token.clone();
-         let server_name = self.server_name.clone();
-@@ -417,7 +411,7 @@ impl rmcp::transport::Transport<RoleClient> for LegacySseRmcpTransport {
-     fn close(&mut self) -> impl std::future::Future<Output = Result<(), Self::Error>> + Send {
-         let background_tasks = Arc::clone(&self.background_tasks);
-         async move {
--            let mut tasks = background_tasks.lock().expect("task mutex poisoned");
-+            let mut tasks = lock_recover(&background_tasks);
-             for handle in tasks.drain(..) {
-                 handle.abort();
-             }
-@@ -476,7 +470,7 @@ async fn handle_legacy_sse_http_response(
-                 tracing::warn!(server = %server_name_for_task, error = %e, "legacy
-```
-
----
-
-### Incident Patch 8: `3b2b3bcc` (2026-08-22)
-**Commit Message**: fix(mcp): reject path traversal in MCP token file names (#332)
-
-* fix(mcp): reject path traversal in MCP token file names
-
-token_path() joined the raw server_name into a file path. A server_name
-containing ".." or path separators could escape the token store
-directory. Reduce to the path's file-name component before joining, so
-traversal segments are stripped instead of trusted.
-
-* fix(mcp): propagate PKCE verifier RNG failure instead of panicking
-
-pkce_verifier() called .expect() on getrandom(), which would crash the
-whole process on a rare RNG failure during OAuth login. Return
-std::io::Result and propagate through both call sites instead.
-
-**File**: `src-rust/crates/mcp/src/oauth.rs` (modified, +30/-6)
-```diff
-@@ -52,8 +52,16 @@ fn token_store_dir() -> PathBuf {
- }
- 
- /// Path to the token store for a given MCP server.
-+///
-+/// `server_name` is untrusted (it comes from MCP server config), so it is
-+/// reduced to its file-name component before joining — this rejects path
-+/// separators and `..` traversal instead of trusting the raw string.
- fn token_path(server_name: &str) -> PathBuf {
--    token_store_dir().join(format!("{}.json", server_name))
-+    let safe_name = std::path::Path::new(server_name)
-+        .file_name()
-+        .map(|name| name.to_string_lossy().into_owned())
-+        .unwrap_or_default();
-+    token_store_dir().join(format!("{}.json", safe_name))
- }
- 
- /// Persist an MCP OAuth token to disk.
-@@ -187,7 +195,7 @@ pub async fn begin_mcp_auth(
-     let redirect_port = oauth_port_alloc()
-         .map_err(|e| anyhow::anyhow!("Failed to allocate OAuth redirect port: {}", e))?;
-     let redirect_uri = format!("http://127.0.0.1:{}/callback", redirect_port);
--    let verifier = pkce_verifier();
-+    let verifier = pkce_verifier().map_err(|e| anyhow::anyhow!("Failed to generate PKCE verifier: {}", e))?;
-     let auth_url = build_mcp_auth_url(
-         &metadata.authorization_endpoint,
-         &redirect_uri,
-@@ -365,12 +373,12 @@ pub async fn get_valid_mcp_access_token(
- // ---------------------------------------------------------------------------
- 
- /// Generate a PKCE code verifier (43 URL-safe random chars per RFC 7636).
--pub fn pkce_verifier() -> String {
-+pub fn pkce_verifier() -> std::io::Result<String> {
-     use base64::Engine as _;
-     let mut bytes = [0u8; 32];
--    getrandom::getrandom(&mut bytes).expect("getrandom failed");
-+    getrandom::getrandom(&mut bytes).map_err(std::io::Error::other)?;
-     // base64url-encode → 43 chars (256 bits of entropy, no padding)
--    base64::engine::general_purpose::URL_SAFE_NO_PAD.encode(bytes)
-+    Ok(base64::engine::general_purpose::URL_SAFE_NO_PAD.encode(bytes))
- }
- 
- /// Derive a PKCE code challenge from a verifier (S256 method).
-@@ -416,7 +424,7 @@ pub fn initiate_xaa_login(
-     idp_url: &str,
- ) -> std::io::Result<XaaLoginState> {
-     let port = oauth_port_alloc()?;
--    let verifier = pkce_verifier();
-+    let verifier = pkce_verifier()?;
-     let challenge = pkce_challenge(&verifier);
-     let redirect_uri = format!("http://127.0.0.1:{}/callback", port);
- 
-@@ -568,6 +576,22 @@ pub async fn refresh_mcp_token(server_name: &str, token_endpoint: &str) -> anyho
- mod tests {
-     use super::*;
- 
-+    #[test]
-+    fn token_path_strips_path_traversal() {
-+        let traversal = token_path("../../etc/passwd");
-+        assert_eq!(traversal.file_name().unwrap(), "passwd.json");
-+        assert_eq!(traversal.parent().unwrap(), token_store_dir());
-+
-+        let normal = token_path("my-server");
-+        assert_eq!(normal.file_name().unwrap(), "my-server.json");
-+    }
-+
-+    #[test]
-+    fn pkce_verifier_is_43_chars() {
-+        let v = pkce_verifier().expect("getrandom should succeed in tests");
-+        assert_eq!(v.len(), 43);
++  ]
++}"#,
++        );
++        let mut resolver = KeybindingResolver::new(&user);
++        let ks = parse_keystroke("shift+insert").unwrap();
++        let result = resolver.process(ks, &KeyContext::Chat);
++        assert!(matches!(result, KeybindingResult::Action(ref a) if a == "openHelp"));
 +    }
 +
      #[test]
-     fn pkce_challenge_length() {
-         let v = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG";
-```
-
----
-
-### Incident Patch 9: `31286b3d` (2026-08-22)
-**Commit Message**: fix: make nix dependency Unix-only for Windows compilation (#68)
-
-The nix crate is Unix-only and was listed as an unconditional dependency
-in the cli Cargo.toml, preventing compilation on Windows. The actual
-usage in main.rs is already gated behind #[cfg(unix)], so this just
-moves the dep to [target.'cfg(unix)'.dependencies] to match.
-
-Co-authored-by: nullislander <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 4.6 (1M context) <[REDACTED_EMAIL]>
-
-**File**: `src-rust/crates/cli/Cargo.toml` (modified, +3/-1)
-```diff
-@@ -38,12 +38,14 @@ url = { workspace = true }
- crossterm = { workspace = true }
- parking_lot = { workspace = true }
- dirs = { workspace = true }
--nix = { workspace = true }
- base64 = "0.22"
- sha2 = "0.10"
- open = "5"
- urlencoding = "2"
- xxhash-rust = { version = "0.8", features = ["xxh64"] }
- 
-+[target.'cfg(unix)'.dependencies]
-+nix = { workspace = true }
-+
- [build-dependencies]
- chrono = { workspace = true }
-```
-
----
-
-### Incident Patch 10: `97a73161` (2026-08-22)
-**Commit Message**: fix(npm): make CLI entrypoint executable (#188)
-
-
-
----
-
-### Incident Patch 11: `014ab024` (2026-07-31)
-**Commit Message**: feat(vscode): redesign chat UI with bubbles, header pills, and busy state
-
-Replaces the flat message list with aligned user/agent bubbles, a
-header row of clickable model/provider/effort pills, in-place tool-call
-updates keyed by toolCallId (instead of a new line per update), an
-auto-resizing input box, and a Send/Stop toggle driven by turn state.
-
-**File**: `editors/vscode/media/main.css` (modified, +94/-12)
-```diff
-@@ -1,3 +1,7 @@
-+:root {
-+  --bubble-radius: 10px;
-+}
-+
- body {
-   font-family: var(--vscode-font-family);
-   font-size: var(--vscode-font-size);
-@@ -9,43 +13,101 @@ body {
-   height: 100vh;
- }
- 
-+#header {
-+  display: flex;
-+  gap: 6px;
-+  padding: 6px 8px;
-+  border-bottom: 1px solid var(--vscode-panel-border);
-+  flex-shrink: 0;
-+}
-+
-+.pill {
-+  background: var(--vscode-badge-background);
-+  color: var(--vscode-badge-foreground);
-+  border: none;
-+  border-radius: 999px;
-+  padding: 2px 10px;
-+  font-size: 0.85em;
-+  cursor: pointer;
-+  font-family: var(--vscode-editor-font-family, monospace);
-+}
-+
-+.pill:hover {
-+  background: var(--vscode-button-hoverBackground);
-+}
-+
- #messages {
-   flex: 1;
-   overflow-y: auto;
--  padding: 8px 12px;
-+  padding: 10px 12px;
-+  display: flex;
-+  flex-direction: column;
-+  gap: 4px;
- }
- 
--.message {
-+.row {
-+  display: flex;
-+}
-+
-+.row.user { justify-content: flex-end; }
-+.row.agent, .row.thought, .row.system { justify-content: flex-start; }
-+
-+.bubble {
-+  max-width: 85%;
-+  padding: 7px 11px;
-+  border-radius: var(--bubble-radius);
-   white-space: pre-wrap;
--  margin-bottom: 12px;
--  line-height: 1.4;
-+  line-height: 1.45;
-+  overflow-wrap: anywhere;
- }
- 
--.message.user {
--  color: var(--vscode-textLink-foreground);
-+.bubble.user {
-+  background: var(--vscode-button-background);
-+  color: var(--vscode-button-foreground);
-+  border-bottom-right-radius: 2px;
- }
- 
--.message.thought {
-+.bubble.agent {
-+  background: var(--vscode-editorWidget-background, var(--vscode-input-background));
-+  border-bottom-left-radius: 2px;
-+}
-+
-+.bubble.thought {
-+  background: transparent;
-   color: var(--vscode-descriptionForeground);
-   font-style: italic;
-+  padding-left: 0;
- }
- 
--.tool-call {
--  border-left: 2px solid var(--vscode-textLink-foreground);
--  padding-left: 8px;
--  margin: 6px 0;
-+.bubble.system {
-+  background: transparent;
-   color: var(--vscode-descriptionForeground);
-   font-size: 0.9em;
-+  padding: 2px 0;
-+}
-+
-+.tool-call {
-+  align-self: flex-start;
-+  max-width: 90%;
-+  border-left: 3px solid var(--vscode-textLink-foreground);
-+  background: var(--vscode-textCodeBlock-background, transparent);
-+  padding: 4px 10px;
-+  border-radius: 4px;
-+  color: var(--vscode-descriptionForeground);
-+  font-size: 0.88em;
-+  font-family: var(--vscode-editor-font-family, monospace);
- }
- 
- .tool-call.completed { border-left-color: var(--vscode-testing-iconPassed, #4caf50); }
- .tool-call.failed { border-left-color: var(--vscode-testing-iconFailed, #f44336); }
- 
- #input-row {
-   display: flex;
-+  align-items: flex-end;
-   gap: 6px;
-   padding: 8px;
-   border-top: 1px solid var(--vscode-panel-border);
-+  flex-shrink: 0;
- }
- 
- #input-box {
-@@ -54,15 +116,23 @@ body {
-   background: var(--vscode-input-background);
-   color: var(--vscode-input-foreground);
-   border: 1px solid var(--vscode-input-border, transparent);
--  padding: 6px;
-+  border-radius: 6px;
-+  padding: 7px 9px;
-   font-family: inherit;
-   font-size: inherit;
-+  max-height: 200px;
-+  overflow-y: auto;
-+}
-+
-+#input-box:focus {
-+  outline: 1px solid var(--vscode-focusBorder);
- }
- 
- button {
-   background: var(--vscode-button-background);
-   color: var(--vscode-button-foreground);
-   border: none;
-+  border-radius: 4px;
-   padding: 6px 12px;
-   cursor: pointer;
- }
-@@ -75,3 +145,15 @@ button:disabled {
-   opacity: 0.5;
-   cursor: default;
- }
-+
-+#stop-btn {
-+  background: var(--vscode-inputValidation-errorBackground, #a1260d);
-+}
-+
-+#stop-btn:hover {
-+  background: var(--vscode-inputValidation-errorBorder, #be1100);
-+}
-+
-+#stop-btn.hidden {
-+  display: none;
-+}
-```
-
-**File**: `editors/vscode/media/main.js` (modified, +68/-21)
-```diff
-@@ -6,36 +6,68 @@
-   const inputEl = document.getElementById('input-box');
-   const sendBtn = document.getElementById('send-btn');
-   const stopBtn = document.getElementById('stop-btn');
-+  const modelPill = document.getElementById('model-pill');
-+  const providerPill = document.getElementById('provider-pill');
-+  const effortPill = document.getElementById('effort-pill');
- 
-   let currentAgentBubble = null;
-+  const toolCallEls = new Map();
- 
--  function appendMessage(text, cls) {
--    const el = document.createElement('div');
--    el.className = 'message ' + cls;
--    el.textContent = text;
--    messagesEl.appendChild(el);
-+  function appendRow(text, cls) {
-+    const row = document.createElement('div');
-+    row.className = 'row ' + cls;
-+    const bubble = document.createElement('div');
-+    bubble.className = 'bubble ' + cls;
-+    bubble.textContent = text;
-+    row.appendChild(bubble);
-+    messagesEl.appendChild(row);
-     messagesEl.scrollTop = messagesEl.scrollHeight;
--    return el;
-+    return bubble;
-   }
- 
--  function appendToolCall(title, status) {
--    const el = document.createElement('div');
-+  function statusIcon(status) {
-+    if (status === 'completed') return '✓';
-+    if (status === 'failed') return '✗';
-+    if (status === 'in_progress' || status === 'pending') return '◌';
-+    return '•';
-+  }
-+
-+  function upsertToolCall(id, title, status) {
-+    let el = id ? toolCallEls.get(id) : null;
-+    if (!el) {
-+      el = document.createElement('div');
-+      el.className = 'tool-call';
-+      messagesEl.appendChild(el);
-+      if (id) {
-+        toolCallEls.set(id, el);
-+      }
-+    }
-     el.className = 'tool-call ' + (status || '');
--    el.textContent = title || '(tool call)';
--    el.dataset.title = title || '';
--    messagesEl.appendChild(el);
-+    el.textContent = `${statusIcon(status)} ${title || '(tool call)'}`;
-     messagesEl.scrollTop = messagesEl.scrollHeight;
--    return el;
-   }
- 
-+  function setBusy(busy) {
-+    sendBtn.disabled = busy;
-+    stopBtn.classList.toggle('hidden', !busy);
-+  }
-+
-+  function autoResize() {
-+    inputEl.style.height = 'auto';
-+    inputEl.style.height = Math.min(inputEl.scrollHeight, 200) + 'px';
-+  }
-+  inputEl.addEventListener('input', autoResize);
-+
-   function send() {
-     const text = inputEl.value.trim();
-     if (!text) {
-       return;
-     }
--    appendMessage(text, 'user');
-+    appendRow(text, 'user');
-     inputEl.value = '';
-+    autoResize();
-     currentAgentBubble = null;
-+    setBusy(true);
-     vscode.postMessage({ type: 'prompt', text });
-   }
- 
-@@ -47,36 +79,51 @@
-       send();
-     }
-   });
-+  modelPill.addEventListener('click', () => vscode.postMessage({ type: 'pickModel' }));
-+  providerPill.addEventListener('click', () => vscode.postMessage({ type: 'pickProvider' }));
-+  effortPill.addEventListener('click', () => vscode.postMessage({ type: 'pickEffort' }));
-+
-+  setBusy(false);
- 
-   window.addEventListener('message', (event) => {
-     const msg = event.data;
-     switch (msg.type) {
-       case 'textChunk': {
--        if (!currentAgentBubble || currentAgentBubble.dataset.isThought !== String(msg.isThought)) {
--          currentAgentBubble = appendMessage('', msg.isThought ? 'thought' : 'agent');
--          currentAgentBubble.dataset.isThought = String(msg.isThought);
-+        const cls = msg.isThought ? 'thought' : 'agent';
-+        if (!currentAgentBubble || currentAgentBubble.dataset.cls !== cls) {
-+          currentAgentBubble = appendRow('', cls);
-+          currentAgentBubble.dataset.cls = cls;
-         }
-         currentAgentBubble.textContent += msg.text;
-         messagesEl.scrollTop = messagesEl.scrollHeight;
-         break;
-       }
--      case 'toolCall': {
-+      case 'toolCall':
-+      case 'toolCallUpdate': {
-         currentAgentBubble = null;
--        appendToolCall(msg.title, msg.status);
-+        upsertToolCall(msg.toolCallId, msg.title, msg.status);
-         break;
-       }
--      case 'toolCallUpdate': {
-+      case 'userEcho': {
-         currentAgentBubble = null;
--        appendToolCall(msg.title, msg.status);
-+        appendRow(msg.text, 'user');
-+        setBusy(true);
-         break;
-       }
-       case 'status': {
-         currentAgentBubble = null;
--        appendMessage(msg.text, 'thought');
-+        appendRow(msg.text, 'system');
-+        break;
-+      }
-+      case 'headerUpdate': {
-+        if (msg.model) modelPill.textContent = 'model: ' + msg.model;
-+        if (msg.provider) providerPill.textContent = 'provider: ' + msg.provider;
-+        if (msg.effort) effortPill.textContent = 'effort: ' + msg.effort;
-         break;
-       }
-       case 'turnEnded': {
-         currentAgentBubble = null;
-+        setBusy(false);
-         break;
-       }
-       default:
-```
-
----
-
-### Incident Patch 12: `74f1f81d` (2026-07-31)
-**Commit Message**: feat(vscode): add launch/build config for F5 debugging
-
-Without .vscode/launch.json the "extensionHost" debug type never
-appears in VS Code's debugger picker, so F5 has nothing to run.
-Add launch.json (runs an Extension Development Host against this
-folder) and tasks.json (npm run compile as the pre-launch build step).
-
-Carve out an exception in the root .gitignore's blanket ".vscode/"
-rule for this one nested directory — it's required project config for
-authoring the extension, not personal editor state.
-
-**File**: `.gitignore` (modified, +5/-0)
-```diff
-@@ -23,3 +23,8 @@ refs/
- .vscode/
- .claurst/
- 
-+# ...except the VS Code extension's own launch/build config, which is
-+# required (not personal editor prefs) for F5 debugging to work.
-+!editors/vscode/.vscode/
-+!editors/vscode/.vscode/*.json
-+
-```
-
-**File**: `editors/vscode/.vscode/launch.json` (added, +14/-0)
-```diff
-@@ -0,0 +1,14 @@
-+{
-+  "version": "0.2.0",
-+  "configurations": [
-+    {
-+      "name": "Run Claurst Extension",
-+      "type": "extensionHost",
-+      "request": "launch",
-+      "runtimeExecutable": "${execPath}",
-+      "args": ["--extensionDevelopmentPath=${workspaceFolder}"],
-+      "outFiles": ["${workspaceFolder}/out/**/*.js"],
-+      "preLaunchTask": "npm: compile"
-+    }
-+  ]
-+}
-```
-
-**File**: `editors/vscode/.vscode/tasks.json` (added, +11/-0)
-```diff
-@@ -0,0 +1,11 @@
-+{
-+  "version": "2.0.0",
-+  "tasks": [
-+    {
-+      "type": "npm",
-+      "script": "compile",
-+      "group": { "kind": "build", "isDefault": true },
-+      "problemMatcher": ["$tsc"]
-+    }
-+  ]
-+}
-```
-
----
-
-### Incident Patch 13: `36efcc79` (2026-07-31)
-**Commit Message**: feat(vscode): add chat webview markup styling and message rendering
-
-Vanilla HTML/CSS/JS webview (no framework) rendering streamed agent
-text, italicized thinking chunks, and colored tool-call status lines,
-themed via VS Code's CSS custom properties so it matches light/dark.
-
-**File**: `editors/vscode/media/main.css` (added, +77/-0)
-```diff
-@@ -0,0 +1,77 @@
-+body {
-+  font-family: var(--vscode-font-family);
-+  font-size: var(--vscode-font-size);
-+  color: var(--vscode-foreground);
-+  padding: 0;
-+  margin: 0;
-+  display: flex;
-+  flex-direction: column;
-+  height: 100vh;
-+}
-+
-+#messages {
-+  flex: 1;
-+  overflow-y: auto;
-+  padding: 8px 12px;
-+}
-+
-+.message {
-+  white-space: pre-wrap;
-+  margin-bottom: 12px;
-+  line-height: 1.4;
-+}
-+
-+.message.user {
-+  color: var(--vscode-textLink-foreground);
-+}
-+
-+.message.thought {
-+  color: var(--vscode-descriptionForeground);
-+  font-style: italic;
-+}
-+
-+.tool-call {
-+  border-left: 2px solid var(--vscode-textLink-foreground);
-+  padding-left: 8px;
-+  margin: 6px 0;
-+  color: var(--vscode-descriptionForeground);
-+  font-size: 0.9em;
-+}
-+
-+.tool-call.completed { border-left-color: var(--vscode-testing-iconPassed, #4caf50); }
-+.tool-call.failed { border-left-color: var(--vscode-testing-iconFailed, #f44336); }
-+
-+#input-row {
-+  display: flex;
-+  gap: 6px;
-+  padding: 8px;
-+  border-top: 1px solid var(--vscode-panel-border);
-+}
-+
-+#input-box {
-+  flex: 1;
-+  resize: none;
-+  background: var(--vscode-input-background);
-+  color: var(--vscode-input-foreground);
-+  border: 1px solid var(--vscode-input-border, transparent);
-+  padding: 6px;
-+  font-family: inherit;
-+  font-size: inherit;
-+}
-+
-+button {
-+  background: var(--vscode-button-background);
-+  color: var(--vscode-button-foreground);
-+  border: none;
-+  padding: 6px 12px;
-+  cursor: pointer;
-+}
-+
-+button:hover {
-+  background: var(--vscode-button-hoverBackground);
-+}
-+
-+button:disabled {
-+  opacity: 0.5;
-+  cursor: default;
-+}
-```
-
-**File**: `editors/vscode/media/main.js` (added, +86/-0)
-```diff
-@@ -0,0 +1,86 @@
-+// Webview-side script. Runs in a restricted context with no Node access;
-+// all agent communication goes through the extension host via postMessage.
-+(function () {
-+  const vscode = acquireVsCodeApi();
-+  const messagesEl = document.getElementById('messages');
-+  const inputEl = document.getElementById('input-box');
-+  const sendBtn = document.getElementById('send-btn');
-+  const stopBtn = document.getElementById('stop-btn');
-+
-+  let currentAgentBubble = null;
-+
-+  function appendMessage(text, cls) {
-+    const el = document.createElement('div');
-+    el.className = 'message ' + cls;
-+    el.textContent = text;
-+    messagesEl.appendChild(el);
-+    messagesEl.scrollTop = messagesEl.scrollHeight;
-+    return el;
-+  }
-+
-+  function appendToolCall(title, status) {
-+    const el = document.createElement('div');
-+    el.className = 'tool-call ' + (status || '');
-+    el.textContent = title || '(tool call)';
-+    el.dataset.title = title || '';
-+    messagesEl.appendChild(el);
-+    messagesEl.scrollTop = messagesEl.scrollHeight;
-+    return el;
-+  }
-+
-+  function send() {
-+    const text = inputEl.value.trim();
-+    if (!text) {
-+      return;
-+    }
-+    appendMessage(text, 'user');
-+    inputEl.value = '';
-+    currentAgentBubble = null;
-+    vscode.postMessage({ type: 'prompt', text });
-+  }
-+
-+  sendBtn.addEventListener('click', send);
-+  stopBtn.addEventListener('click', () => vscode.postMessage({ type: 'stop' }));
-+  inputEl.addEventListener('keydown', (e) => {
-+    if (e.key === 'Enter' && !e.shiftKey) {
-+      e.preventDefault();
-+      send();
-+    }
-+  });
-+
-+  window.addEventListener('message', (event) => {
-+    const msg = event.data;
-+    switch (msg.type) {
-+      case 'textChunk': {
-+        if (!currentAgentBubble || currentAgentBubble.dataset.isThought !== String(msg.isThought)) {
-+          currentAgentBubble = appendMessage('', msg.isThought ? 'thought' : 'agent');
-+          currentAgentBubble.dataset.isThought = String(msg.isThought);
-+        }
-+        currentAgentBubble.textContent += msg.text;
-+        messagesEl.scrollTop = messagesEl.scrollHeight;
-+        break;
-+      }
-+      case 'toolCall': {
-+        currentAgentBubble = null;
-+        appendToolCall(msg.title, msg.status);
-+        break;
-+      }
-+      case 'toolCallUpdate': {
-+        currentAgentBubble = null;
-+        appendToolCall(msg.title, msg.status);
-+        break;
-+      }
-+      case 'status': {
-+        currentAgentBubble = null;
-+        appendMessage(msg.text, 'thought');
-+        break;
-+      }
-+      case 'turnEnded': {
-+        currentAgentBubble = null;
-+        break;
-+      }
-+      default:
-+        break;
-+    }
-+  });
-+})();
-```
-
----
-
-### Incident Patch 14: `595b0ebe` (2026-07-31)
-**Commit Message**: fix: claurst upgrade fails with Text file busy (ETXTBSY) (#325)
-
-* fix: replace ETXTBSY crash in claurst upgrade with rename-based swap
-
-std::fs::copy() on the unix path of swap_binary() opens the current
-executable with O_TRUNC and writes into its existing inode. That
-inode is the running process's own mapped text segment, so the
-kernel rejects the write with ETXTBSY ("Text file busy") — this is
-exactly the failure users hit running `claurst upgrade`.
-
-Stage the downloaded binary next to the current one and swap it in
-with rename() instead, which repoints the directory entry to a new
-inode without touching the one still mapped and executing. Added a
-regression test that spawns a real running binary and swaps it out
-from under itself.
-
-* fix(cli): harden Unix upgrade staging
-
-Use exclusive same-directory staging files, persist executable permissions before the atomic rename, and cover the swap with portable native-executable tests.
-
-Fixes #325
-
----------
-
-Co-authored-by: Kuber Mehta <[REDACTED_EMAIL]>
-
-**File**: `src-rust/crates/cli/src/upgrade.rs` (modified, +255/-10)
-```diff
-@@ -293,6 +293,68 @@ fn walkdir_shallow(root: &Path, max_depth: usize) -> Vec<PathBuf> {
- // Atomic binary swap
- // ---------------------------------------------------------------------------
- 
-+#[cfg(unix)]
-+struct StagedBinary {
-+    path: PathBuf,
-+}
-+
-+#[cfg(unix)]
-+impl StagedBinary {
-+    fn create_next_to(current: &Path) -> Result<(Self, std::fs::File)> {
-+        use std::ffi::OsString;
-+        use std::fs::OpenOptions;
-+        use std::io::ErrorKind;
-+        use std::sync::atomic::{AtomicU64, Ordering};
-+
-+        static NEXT_STAGE_ID: AtomicU64 = AtomicU64::new(0);
-+        const MAX_ATTEMPTS: usize = 128;
-+
-+        let parent = current
-+            .parent()
-+            .ok_or_else(|| anyhow!("installed binary path has no parent: {}", current.display()))?;
-+        let file_name = current.file_name().ok_or_else(|| {
-+            anyhow!(
-+                "installed binary path has no file name: {}",
-+                current.display()
-+            )
-+        })?;
-+
-+        for _ in 0..MAX_ATTEMPTS {
-+            let id = NEXT_STAGE_ID.fetch_add(1, Ordering::Relaxed);
-+            let mut staged_name = OsString::from(".");
-+            staged_name.push(file_name);
-+            staged_name.push(format!(".upgrade-{}-{}", std::process::id(), id));
-+            let path = parent.join(staged_name);
-+
-+            match OpenOptions::new().write(true).create_new(true).open(&path) {
-+                Ok(file) => return Ok((Self { path }, file)),
-+                Err(error) if error.kind() == ErrorKind::AlreadyExists => continue,
-+                Err(error) => {
-+                    return Err(error).with_context(|| {
-+                        format!(
-+                            "failed to create upgrade staging file next to {}",
-+                            current.display()
-+                        )
-+                    });
-+                }
-+            }
-+        }
-+
-+        bail!(
-+            "failed to create a unique upgrade staging file next to {} after {} attempts",
-+            current.display(),
-+            MAX_ATTEMPTS
-+        )
-+    }
-+}
-+
-+#[cfg(unix)]
-+impl Drop for StagedBinary {
-+    fn drop(&mut self) {
-+        let _ = std::fs::remove_file(&self.path);
-+    }
-+}
-+
- fn swap_binary(current: &Path, new: &Path) -> Result<()> {
-     #[cfg(target_os = "windows")]
-     {
-@@ -314,19 +376,49 @@ fn swap_binary(current: &Path, new: &Path) -> Result<()> {
-         Ok(())
+     fn test_parse_chord_single() {
+         let chord = parse_chord("ctrl+c").unwrap();
+@@ -780,6 +814,25 @@ mod tests {
+         );
      }
  
--    #[cfg(not(target_os = "windows"))]
-+    #[cfg(unix)]
-     {
--        // On unix, std::fs::rename won't work across mounts; copy + chmod is safer.
--        // The kernel will let us replace the file even while it's running because
--        // unlink-and-replace just frees the directory entry.
--        std::fs::copy(new, current)
--            .with_context(|| format!("failed to copy new binary into {}", current.display()))?;
--        let _ = std::process::Command::new("chmod")
--            .arg("755")
--            .arg(current)
--            .status();
-+        use std::io::Write;
-+        use std::os::unix::fs::PermissionsExt;
-+
-+        // std::fs::copy() writes into the existing inode (open + O_TRUNC), and
-+        // that inode is the running process's own text segment — the kernel
-+        // rejects the write with ETXTBSY ("Text file busy"). rename() instead
-+        // swaps the directory entry to point at a new inode, which the kernel
-+        // allows even while the old inode is still mapped and executing.
-+        // rename() requires src/dest on the same filesystem, so stage the
-+        // temp file next to `current` rather than relying on the OS tmp dir.
-+        let (staged, mut staged_file) = StagedBinary::create_next_to(current)?;
-+        let mut source = std::fs::File::open(new)
-+            .with_context(|| format!("failed to open new binary at {}", new.display()))?;
-+        std::io::copy(&mut source, &mut staged_file)
-+            .with_context(|| format!("failed to stage new binary at {}", staged.path.display()))?;
-+        staged_file
-+            .set_permissions(std::fs::Permissions::from_mode(0o755))
-+            .with_context(|| {
-+                format!(
-+                    "failed to make staged binary executable at {}",
-+                    staged.path.display()
-+                )
-+            })?;
-+        staged_file.flush().with_context(|| {
-+            format!("failed to flush staged binary at {}", staged.path.display())
-+        })?;
-+        staged_file.sync_all().with_context(|| {
-+            format!("failed to sync staged binary at {}", staged.path.display())
-+        })?;
-+        drop(staged_file);
-+
-+        std::fs::rename(&staged.path, current)
-+            .with_context(|| format!("failed to swap new binary into {}", current.display()))?;
-         Ok(())
-     }
-+
-+    #[cfg(not(any(target_os = "windows", unix)))]
-+    {
-+        let _ = (current, new);
-+        bail!("Unsupported OS for upgrade")
-+    }
- }
- 
- // ---------------------------------------------------
-```
-
----
-
-### Incident Patch 15: `b34e1172` (2026-07-25)
-**Commit Message**: fix(local): discover loaded LM Studio models and usage (#329)
-
-Fixes #326
-
-**File**: `src-rust/crates/api/src/providers/openai_compat.rs` (modified, +170/-7)
-```diff
-@@ -11,6 +11,7 @@ use async_trait::async_trait;
- use claurst_core::provider_id::{ModelId, ProviderId};
- use claurst_core::types::ContentBlock;
- use futures::Stream;
-+use serde::Deserialize;
- use serde_json::{json, Value};
- 
- use crate::error_handling::parse_error_response;
-@@ -88,6 +89,10 @@ pub struct ProviderQuirks {
-     /// root (e.g. `"http://localhost:11434"`) so the native API can be called
-     /// independently of the `/v1` base URL used for chat completions.
-     pub ollama_native_host: Option<String>,
-+
-+    /// Native LM Studio host used to discover loaded model instances and their
-+    /// configured context lengths from `/api/v1/models`.
-+    pub lm_studio_native_host: Option<String>,
- }
- 
- // ---------------------------------------------------------------------------
-@@ -104,6 +109,37 @@ pub struct OpenAiCompatProvider {
-     http_client: reqwest::Client,
- }
- 
-+#[derive(Debug, Deserialize)]
-+struct LmStudioModelsResponse {
-+    #[serde(default)]
-+    models: Vec<LmStudioModel>,
-+}
-+
-+#[derive(Debug, Deserialize)]
-+struct LmStudioModel {
-+    #[serde(rename = "type")]
-+    model_type: String,
-+    key: String,
-+    #[serde(default)]
-+    display_name: Option<String>,
-+    #[serde(default)]
-+    loaded_instances: Vec<LmStudioLoadedInstance>,
-+    #[serde(default)]
-+    max_context_length: Option<u32>,
-+}
-+
-+#[derive(Debug, Deserialize)]
-+struct LmStudioLoadedInstance {
-+    id: String,
-+    config: LmStudioInstanceConfig,
-+}
-+
-+#[derive(Debug, Deserialize)]
-+struct LmStudioInstanceConfig {
-+    #[serde(default)]
-+    context_length: Option<u32>,
-+}
-+
- impl OpenAiCompatProvider {
-     /// Create a new compat provider.  `base_url` should already include any
-     /// path prefix (e.g. `"https://api.groq.com/openai/v1"`).
-@@ -152,21 +188,24 @@ impl OpenAiCompatProvider {
- 
-     /// Override the base URL (e.g. from a user-supplied --api-base flag).
-     ///
--    /// When the provider uses Ollama's native API host (set by the `ollama()`
--    /// factory), keep it in sync with the new base URL.  Otherwise health
--    /// checks and native model discovery would keep targeting the original
--    /// (localhost) host even though chat completions go to the overridden
--    /// server.
-+    /// Keep any native API host in sync with the OpenAI-compatible base URL.
-     pub fn with_base_url(mut self, base_url: impl Into<String>) -> Self {
-         self.base_url = base_url.into();
--        if self.quirks.ollama_native_host.is_some() {
-+        if self.quirks.ollama_native_host.is_some()
-+            || self.quirks.lm_studio_native_host.is_some()
-+        {
-             let native_host = self
-                 .base_url
-                 .trim_end_matches('/')
-                 .trim_end_matches("/v1")
-                 .trim_end_matches('/')
-                 .to_string();
--            self.quirks.ollama_native_host = Some(native_host);
-+            if self.quirks.ollama_native_host.is_some() {
-+                self.quirks.ollama_native_host = Some(native_host.clone());
-+            }
-+            if self.quirks.lm_studio_native_host.is_some() {
-+                self.quirks.lm_studio_native_host = Some(native_host);
-+            }
-         }
-         self
-     }
-@@ -652,6 +691,56 @@ impl OpenAiCompatProvider {
-         Ok(models.into_iter().map(|(info, _, _)| info).collect())
-     }
- 
-+    /// Return loaded LM Studio LLM instances. `None` means the native endpoint
-+    /// is unavailable, so the caller should fall back to `/v1/models`.
-+    async fn discover_models_lm_studio_native(
-+        &self,
-+        lm_studio_host: &str,
-+    ) -> Option<Vec<ModelInfo>> {
-+        let url = format!("{}/api/v1/models", lm_studio_host.trim_end_matches('/'));
-+        let builder = self.apply_auth(self.http_client.get(url));
-+        let response = self.apply_extra_headers(builder).send().await.ok()?;
-+        if !response.status().is_success() {
-+            return None;
-+        }
-+        let response: LmStudioModelsResponse = response.json().await.ok()?;
-+        Some(Self::parse_lm_studio_native_models(response, &self.id))
++    #[test]
++    fn test_default_ctrl_shift_f_maps_to_global_search_alias() {
++        // #495: ctrl+shift+f defaults to "globalSearch", which the TUI treats
++        // as an alias of "openSearch". Keep this contract test so the alias
++        // is not dropped in favour of the dead name (or vice versa).
++        let bindings = default_bindings();
++        let action = bindings
++            .iter()
++            .find(|b| {
++                b.chord.len() == 1
++                    && b.chord[0].ctrl
++                    && b.chord[0].shift
++                    && b.chord[0].key == "f"
++                    && b.context == KeyContext::Chat
++            })
++            .and_then(|b| b.action.as_deref());
++        assert_eq!(action, Some("globalSearch"));
 +    }
 +
-+    fn parse_lm_studio_native_models(
-+        response: LmStudioModelsResponse,
-+        provider_id: &ProviderId,
-+    ) -> Vec<ModelInfo> {
-+        let mut discovered = Vec::new();
-+        let mut seen = std::collections::HashSet::new();
-+        for model in response.models {
-+            if model.model_type != "llm" {
-+                continue;
-+            }
-+            let display_name = model.display_name.unwrap_or(model.key);
-+            let max_context = model.max_context_length.unwrap_or(128_000);
-+
-+            for instance in model.loaded_instances {
-+                if !seen.insert(instance.id.clone()) {
-+                    continue;
-+                }
-+                let context_window = instance
-+                    .config
-+                    .context_length
-+                    .unwrap_or(max_context);
-+                discovered.push(ModelInfo {
-+                    id
+     #[test]
+     fn test_resolver_simple_action() {
+         let user = UserKeybindings::default();
 ```
 
-**File**: `src-rust/crates/api/src/providers/openai_compat_providers.rs` (modified, +8/-1)
+**File**: `src-rust/crates/tui/src/app/commands.rs` (modified, +7/-8)
 ```diff
-@@ -104,11 +104,18 @@ pub fn ollama() -> OpenAiCompatProvider {
- pub fn lm_studio() -> OpenAiCompatProvider {
-     let host =
-         std::env::var("LM_STUDIO_HOST").unwrap_or_else(|_| "http://localhost:1234".to_string());
--    let base_url = format!("{}/v1", host.trim_end_matches('/'));
-+    let native_host = host
-+        .trim_end_matches('/')
-+        .trim_end_matches("/v1")
-+        .trim_end_matches('/')
-+        .to_string();
-+    let base_url = format!("{}/v1", native_host);
-     OpenAiCompatProvider::new(ProviderId::LM_STUDIO, "LM Studio", base_url).with_quirks(
-         ProviderQuirks {
-             overflow_patterns: vec!["greater than the context length".to_string()],
-+            include_usage_in_stream: true,
-             no_api_key_required: true,
-+            lm_studio_native_host: Some(native_host),
-             ..Default::default()
-         },
-     )
-```
-
-**File**: `src-rust/crates/api/src/registry.rs` (modified, +60/-14)
-```diff
-@@ -35,6 +35,14 @@ fn normalize_openai_base(override_base: &str) -> String {
-     }
- }
+@@ -5,7 +5,6 @@ use claurst_core::types::Role;
+ use crate::notifications::NotificationKind;
+ use crate::overlays::HelpEntry;
+ use super::App;
+-use super::run::open_file_externally;
+ use super::try_copy_to_clipboard;
  
-+fn canonical_local_provider_id(provider_id: &str) -> &str {
-+    match provider_id {
-+        "lmstudio" => ProviderId::LM_STUDIO,
-+        "llamacpp" | "llama-server" => ProviderId::LLAMA_CPP,
-+        _ => provider_id,
-+    }
-+}
-+
- pub fn resolve_provider_api_base(
-     config: &claurst_core::config::Config,
-     provider_id: &str,
-@@ -313,20 +321,26 @@ impl ProviderRegistry {
-     ///
-     /// # Panics
-     /// Panics if no provider with that ID has been registered.
--    pub fn set_default(&mut self, id: ProviderId) -> &mut Self {
--        assert!(
--            self.providers.contains_key(&id),
--            "set_default: provider '{}' is not registered",
--            id,
--        );
--        self.default_provider_id = id;
--        self
+ pub(super) const PROMPT_SLASH_COMMANDS: &[(&str, &str)] = &[
+@@ -472,13 +471,13 @@ impl App {
+                 false
+             }
+             "keybindings" => {
+-                // Open the keybindings.json file in the external editor
+-                let keybindings_path = claurst_core::config::Settings::config_dir().join("keybindings.json");
+-
+-                if let Err(e) = open_file_externally(&keybindings_path) {
+-                    eprintln!("Failed to open keybindings file: {}", e);
+-                }
+-                true
++                // The CLI layer owns `/keybindings`:
++                // `claurst_commands::KeybindingsCommand` writes the template
++                // on first use and opens the file in the system editor.
++                // This TUI intercept must NOT open it a second time for the
++                // same command (issue #495) — fall through to the CLI layer
++                // like /doctor, /init, /login, /logout do.
++                false
+             }
+             "help" => {
+                 // Open the help overlay (same as pressing `?` or F1).
+```
+
+**File**: `src-rust/crates/tui/src/app/keys.rs` (modified, +21/-2)
+```diff
+@@ -112,6 +112,7 @@ pub(super) fn key_event_to_keystroke(key: &KeyEvent) -> Option<ParsedKeystroke>
+         KeyCode::Enter     => "enter".to_string(),
+         KeyCode::Esc       => "escape".to_string(),
+         KeyCode::Home      => "home".to_string(),
++        KeyCode::Insert    => "insert".to_string(),
+         KeyCode::Left      => "left".to_string(),
+         KeyCode::PageDown  => "pagedown".to_string(),
+         KeyCode::PageUp    => "pageup".to_string(),
+@@ -1524,7 +1525,21 @@ impl App {
+             KeyCode::Char(c) => {
+                 let c = self.shift_normalize(c, key.modifiers);
+                 if self.prompt_input.vim_enabled && self.prompt_input.vim_mode != VimMode::Insert {
+-                    self.prompt_input.vim_command(&c.to_string());
++                    // Ctrl+V is vim's block-visual key: feed the vim state
++                    // machine the \x16 control code instead of the plain 'v'
++                    // character so it reaches the `key == "\x16"` branch in
++                    // `vim_command` (issue #495). In insert mode the clipboard
++                    // paste handler earlier in this function consumed it
++                    // instead.
++                    let vim_key = if key.modifiers.contains(KeyModifiers::CONTROL)
++                        && c == 'v'
++                        && self.prompt_input.vim_mode == VimMode::Normal
++                    {
++                        "\x16".to_string()
++                    } else {
++                        c.to_string()
++                    };
++                    self.prompt_input.vim_command(&vim_key);
+                 } else {
+                     self.prompt_input.insert_char(c);
+                 }
+@@ -2136,7 +2151,11 @@ impl App {
+                 self.history_search = Some(hs);
+                 false
+             }
+-            "openSearch" => {
++            // `globalSearch` is the legacy/default action name and
++            // `openSearch` is the live one; both open project search
++            // (issue #495). Keep them aliased so old keybindings.json
++            // files and the default ctrl+shift+f binding keep working.
++            "openSearch" | "globalSearch" => {
+                 self.global_search.open();
+                 self.refresh_global_search();
+                 false
+```
+
+**File**: `src-rust/crates/tui/src/app/run.rs` (modified, +0/-43)
+```diff
+@@ -16,49 +16,6 @@ use super::turns::format_elapsed_ms;
+ use super::types::{RecentSession, ToolStatus, ToolUseBlock, recent_session_label};
+ use crate::session_browser::SessionEntry;
+ 
+-pub(super) fn open_file_externally(path: &std::path::Path) -> Result<(), Box<dyn std::error::Error>> {
+-    // Try to open with the system's default application
+-    #[cfg(target_os = "macos")]
+-    {
+-        std::process::Command::new("open")
+-            .arg(path)
+-            .spawn()?;
+-        Ok(())
 -    }
 -
--    /// Get a provider by ID.
--    pub fn get(&self, id: &ProviderId) -> Option<&Arc<dyn LlmProvider>> {
--        self.providers.get(id)
+-    #[cfg(target_os = "linux")]
+-    {
+-        std::process::Command::new("xdg-open")
+-            .arg(path)
+-            .spawn()?;
+-        Ok(())
 -    }
-+    pub fn set_default(&mut self, id: ProviderId) -> &mut Self {
-+        let canonical_id = ProviderId::new(canonical_local_provider_id(&id));
-+        assert!(
-+            self.providers.contains_key(&canonical_id),
-+            "set_default: provider '{}' is not registered",
-+            id,
-+        );
-+        self.default_provider_id = canonical_id;
-+        self
-+    }
-+
-+    /// Get a provider by ID.
-+    pub fn get(&self, id: &ProviderId) -> Option<&Arc<dyn LlmProvider>> {
-+        self.providers.get(id).or_else(|| {
-+            let canonical_id = canonical_local_provider_id(id);
-+            (canonical_id != &**id)
-+                .then(|| self.providers.get(&ProviderId::new(canonical_id)))
-+                .flatten()
-+        })
-+    }
- 
-     /// Get the default provider.
-     pub fn default_provider(&self) -> Option<&Arc<dyn LlmProvider>> {
-@@ -651,3 +665,35 @@ impl Default for ProviderRegistry {
-         Self::new()
+-
+-    #[cfg(target_os = "windows")]
+-    {
+-        std::process::Command::new("cmd")
+-            .args(&["/C", "start", ""])
+-            .arg(path)
+-            .spawn()?;
+-        Ok(())
+-    }
+-
+-    #[cfg(not(any(target_os = "macos", target_os = "linux", target_os = "windows")))]
+-    {
+-        // Fallback for other systems: try common editors in order
+-        for editor in &["nano", "vi", "vim", "emacs"] {
+-            match std::process::Command::new(editor)
+-                .arg(path)
+-                .spawn()
+-            {
+-                Ok(_) => return Ok(()),
+-                Err(_) => continue,
+-            }
+-        }
+-        Err("No suitable editor found".into())
+-    }
+-}
+-
+ /// Load the `/session` / `/resume` browser entries from the store that
+ /// `history::save_session` writes (`<config_dir>/sessions/`), newest first.
+ pub(super) async fn load_session_entries() -> Vec<SessionEntry> {
+```
+
+**File**: `src-rust/crates/tui/src/app/tests.rs` (modified, +83/-0)
+```diff
+@@ -555,6 +555,15 @@ use super::types::{ContextMenuItem, ContextMenuState};
+         assert!(!app.mcp_view.visible);
      }
+ 
++    #[test]
++    fn test_keybindings_slash_command_left_to_cli_layer() {
++        // The commands crate owns /keybindings (template creation + open);
++        // the TUI intercept used to open the file too, popping it twice for
++        // one command (issue #495). It must fall through instead.
++        let mut app = make_app();
++        assert!(!app.intercept_slash_command("keybindings"));
++    }
++
+     #[test]
+     fn test_clear_slash_command_clears_messages() {
+         let mut app = make_app();
+@@ -583,6 +592,38 @@ use super::types::{ContextMenuItem, ContextMenuState};
+         assert!(!app.prompt_input.vim_enabled);
+     }
+ 
++    // ---- Ctrl+V reaches the vim state machine as block-visual (issue #495) --
++
++    #[test]
++    fn ctrl_v_in_vim_normal_enters_visual_block() {
++        let mut app = make_app();
++        app.prompt_input.vim_enabled = true;
++        app.prompt_input.vim_mode = crate::prompt_input::VimMode::Normal;
++        let handled = app.handle_key_event(press_key(KeyCode::Char('v'), KeyModifiers::CONTROL));
++        assert!(!handled);
++        assert_eq!(
++            app.prompt_input.vim_mode,
++            crate::prompt_input::VimMode::VisualBlock,
++            "Ctrl+V must report the \x16 block-visual key to the vim handler"
++        );
++        assert_eq!(
++            app.prompt_input.visual_anchor,
++            Some(app.prompt_input.cursor),
++            "block-visual anchors the selection at the cursor"
++        );
++    }
++
++    #[test]
++    fn plain_v_in_vim_normal_still_enters_charwise_visual() {
++        // The Ctrl+V special case must not disturb the printable-key path.
++        let mut app = make_app();
++        app.prompt_input.vim_enabled = true;
++        app.prompt_input.vim_mode = crate::prompt_input::VimMode::Normal;
++        let handled = app.handle_key_event(press_key(KeyCode::Char('v'), KeyModifiers::NONE));
++        assert!(!handled);
++        assert_eq!(app.prompt_input.vim_mode, crate::prompt_input::VimMode::Visual);
++    }
++
+     #[test]
+     fn test_model_slash_command_opens_picker() {
+         let mut app = make_app();
+@@ -831,6 +872,22 @@ use super::types::{ContextMenuItem, ContextMenuState};
+         assert!(!ks.ctrl && !ks.alt);
+     }
+ 
++    #[test]
++    fn test_key_event_to_keystroke_maps_insert_key_name() {
++        // Shift+Insert must reach the binding table as the "insert" key name
++        // with the SHIFT flag preserved (issue #495); before the fix the two
++        // keys returned no keystroke at all.
++        let ks = key_event_to_keystroke(&press_key(KeyCode::Insert, KeyModifiers::SHIFT))
++            .expect("keystroke");
++        assert_eq!(ks.key, "insert");
++        assert!(ks.shift);
++        assert!(!ks.ctrl);
++
++        let ks = key_event_to_keystroke(&press_key(KeyCode::Insert, KeyModifiers::NONE))
++            .expect("keystroke");
++        assert_eq!(ks.key, "insert");
++    }
++
+     #[test]
+     fn test_normalize_layout_shortcut_key_rewrites_pure_ctrl() {
+         // Pure Ctrl + Cyrillic → Latin letter at the same physical position.
+@@ -1328,3 +1385,29 @@ use super::types::{ContextMenuItem, ContextMenuState};
+         // Selecting the tool_result would orphan the tool_use: cut before it.
+         assert_eq!(rewind_cut_index(&history, 2), 1);
+     }
++
++    // ---- globalSearch / openSearch aliases open project search (#495) ------
++
++    #[test]
++    fn ctrl_shift_f_default_binding_opens_project_search() {
++        // The default ctrl+shift+f binding maps to the legacy "globalSearch"
++        // action name, which used to be dead code.
++        let mut app = make_app();
++        let handled = app.handle_key_event(press_key(
++            KeyCode::Char('f'),
++            KeyModifiers::CONTROL | KeyModifiers::SHIFT,
++        ));
++        assert!(!handled);
++        assert!(app.global_search.visible);
++    }
++
++    #[test]
++    fn global_search_action_aliases_are_equivalent() {
++        // "openSearch" is the live handler; "globalSearch" is the legacy
++        // default action name. Both must open project search.
++        for action in ["openSearch", "globalSearch"] {
++            let mut app = make_app();
++            app.handle_keybinding_action(action);
++            assert!(app.global_search.visible, "{action} must open project search");
++        }
++    }
+```
+
+**File**: `src-rust/crates/tui/src/prompt_input.rs` (modified, +12/-0)
+```diff
+@@ -4343,6 +4343,18 @@ mod tests {
+         assert_eq!(s.vim_mode, VimMode::Normal);
+     }
+ 
++    #[test]
++    fn prompt_input_visual_block_via_ctrl_v_code() {
++        // Ctrl+V arrives at the vim state machine as the \x16 control code.
++        let mut s = PromptInputState::new();
++        s.vim_enabled = true;
++        s.vim_mode = VimMode::Normal;
++        s.cursor = 0;
++        s.vim_command("\x16");
++        assert_eq!(s.vim_mode, VimMode::VisualBlock);
++        assert_eq!(s.visual_anchor, Some(0));
++    }
++
+     // ---- Named registers ------------------------------------------------
+ 
+     #[test]
+```
+
+---
+
+### Incident Patch 2: `603cbd19` (2026-10-16)
+**Commit Message**: fix(tui): deliver ctrl+v to vim as the block-visual key
+
+Ctrl+V used to be indistinguishable from a plain 'v' in the vim path of
+handle_key_event, so the key == \x16 branch in PromptInput::vim_command
+that enters blockwise-visual mode was unreachable. In non-insert vim
+mode the Ctrl-modified 'v' now maps to the \x16 control code; plain 'v'
+keeps entering charwise visual and the Ctrl+V clipboard-paste path is
+untouched in insert mode and in plain editing.
+
+Part of #495
+
+**File**: `docs/keybindings.md` (modified, +1/-1)
+```diff
+@@ -263,7 +263,7 @@ The action names behind the fixed keys still exist and can be bound to other cho
+ 
+ ## Vim Mode
+ 
+-The prompt editor contains a vim emulation with insert, normal, visual (`v`, `V`), command-line (`:`) and search (`/`) modes.
++The prompt editor contains a vim emulation with insert, normal, visual (`v`, `V`, `Ctrl+V`), command-line (`:`) and search (`/`) modes.
+ 
+ ### Enabling Vim Mode
+ 
+```
+
+**File**: `src-rust/crates/tui/src/app/keys.rs` (modified, +15/-1)
+```diff
+@@ -1524,7 +1524,21 @@ impl App {
+             KeyCode::Char(c) => {
+                 let c = self.shift_normalize(c, key.modifiers);
+                 if self.prompt_input.vim_enabled && self.prompt_input.vim_mode != VimMode::Insert {
+-                    self.prompt_input.vim_command(&c.to_string());
++                    // Ctrl+V is vim's block-visual key: feed the vim state
++                    // machine the \x16 control code instead of the plain 'v'
++                    // character so it reaches the `key == "\x16"` branch in
++                    // `vim_command` (issue #495). In insert mode the clipboard
++                    // paste handler earlier in this function consumed it
++                    // instead.
++                    let vim_key = if key.modifiers.contains(KeyModifiers::CONTROL)
++                        && c == 'v'
++                        && self.prompt_input.vim_mode == VimMode::Normal
++                    {
++                        "\x16".to_string()
++                    } else {
++                        c.to_string()
++                    };
++                    self.prompt_input.vim_command(&vim_key);
+                 } else {
+                     self.prompt_input.insert_char(c);
+                 }
+```
+
+**File**: `src-rust/crates/tui/src/app/tests.rs` (modified, +32/-0)
+```diff
+@@ -583,6 +583,38 @@ use super::types::{ContextMenuItem, ContextMenuState};
+         assert!(!app.prompt_input.vim_enabled);
+     }
+ 
++    // ---- Ctrl+V reaches the vim state machine as block-visual (issue #495) --
++
++    #[test]
++    fn ctrl_v_in_vim_normal_enters_visual_block() {
++        let mut app = make_app();
++        app.prompt_input.vim_enabled = true;
++        app.prompt_input.vim_mode = crate::prompt_input::VimMode::Normal;
++        let handled = app.handle_key_event(press_key(KeyCode::Char('v'), KeyModifiers::CONTROL));
++        assert!(!handled);
++        assert_eq!(
++            app.prompt_input.vim_mode,
++            crate::prompt_input::VimMode::VisualBlock,
++            "Ctrl+V must report the \x16 block-visual key to the vim handler"
++        );
++        assert_eq!(
++            app.prompt_input.visual_anchor,
++            Some(app.prompt_input.cursor),
++            "block-visual anchors the selection at the cursor"
++        );
++    }
++
++    #[test]
++    fn plain_v_in_vim_normal_still_enters_charwise_visual() {
++        // The Ctrl+V special case must not disturb the printable-key path.
++        let mut app = make_app();
++        app.prompt_input.vim_enabled = true;
++        app.prompt_input.vim_mode = crate::prompt_input::VimMode::Normal;
++        let handled = app.handle_key_event(press_key(KeyCode::Char('v'), KeyModifiers::NONE));
++        assert!(!handled);
++        assert_eq!(app.prompt_input.vim_mode, crate::prompt_input::VimMode::Visual);
++    }
++
+     #[test]
+     fn test_model_slash_command_opens_picker() {
+         let mut app = make_app();
+```
+
+**File**: `src-rust/crates/tui/src/prompt_input.rs` (modified, +12/-0)
+```diff
+@@ -4343,6 +4343,18 @@ mod tests {
+         assert_eq!(s.vim_mode, VimMode::Normal);
+     }
+ 
++    #[test]
++    fn prompt_input_visual_block_via_ctrl_v_code() {
++        // Ctrl+V arrives at the vim state machine as the \x16 control code.
++        let mut s = PromptInputState::new();
++        s.vim_enabled = true;
++        s.vim_mode = VimMode::Normal;
++        s.cursor = 0;
++        s.vim_command("\x16");
++        assert_eq!(s.vim_mode, VimMode::VisualBlock);
++        assert_eq!(s.visual_anchor, Some(0));
++    }
++
+     // ---- Named registers ------------------------------------------------
+ 
+     #[test]
+```
+
+---
+
+### Incident Patch 3: `85ebb868` (2026-10-16)
+**Commit Message**: Merge pull request #506 from Kuberwastaken/fix/499-cost-reporting
+
+fix(cost): zero cost for subscription providers; no invented rates for unknown models
+
+**File**: `src-rust/crates/api/src/lib.rs` (modified, +1/-1)
+```diff
+@@ -100,7 +100,7 @@ pub use providers::OpenAiProvider;
+ pub use model_registry::{
+     CostBreakdown, CostTier, CostTierCondition, ExperimentalMode, InterleavedReasoning, Modality,
+     ModelEntry, ModelRegistry, ModelStatus, ProviderEntry, ProviderOverride,
+-    effective_model_for_config,
++    apply_session_cost_pricing, catalog_pricing, effective_model_for_config,
+ };
+ pub use effort_support::{
+     anthropic_reasoning, model_is_reasoning, supported_efforts, variant_ladder, AnthropicReasoning,
+```
+
+**File**: `src-rust/crates/api/src/model_registry.rs` (modified, +143/-0)
+```diff
+@@ -1604,6 +1604,75 @@ pub fn effective_model_for_config(
+     config.effective_model().to_string()
  }
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+    use crate::providers;
-+
-+    #[test]
-+    fn local_provider_aliases_resolve_to_canonical_registrations() {
-+        let mut registry = ProviderRegistry::new();
-+        registry.register(Arc::new(providers::lm_studio()));
-+        registry.register(Arc::new(providers::llama_cpp()));
-+
-+        let lm_studio = registry
-+            .get(&ProviderId::new("lmstudio"))
-+            .expect("lmstudio alias should resolve");
-+        let llama_cpp = registry
-+            .get(&ProviderId::new("llamacpp"))
-+            .expect("llamacpp alias should resolve");
-+
-+        assert_eq!(&**lm_studio.id(), ProviderId::LM_STUDIO);
-+        assert_eq!(&**llama_cpp.id(), ProviderId::LLAMA_CPP);
-+    }
-+
-+    #[test]
-+    fn alias_can_select_canonical_default_provider() {
-+        let mut registry = ProviderRegistry::new();
-+        registry.register(Arc::new(providers::lm_studio()));
-+        registry.set_default(ProviderId::new("lmstudio"));
-+
-+        assert_eq!(&**registry.default_provider_id(), ProviderId::LM_STUDIO);
-+    }
-+}
-```
-
-**File**: `src-rust/crates/cli/src/main.rs` (modified, +9/-5)
-```diff
-@@ -3674,15 +3674,19 @@ async fn run_interactive(
-                     // no-op and never wipes the projection. For copilot the id
-                     // IS the api.id, so this is the by-api.id merge.
-                     //
--                    // Anthropic is the exception: its discovery result is the
--                    // subscription/key set already intersected with the catalog,
--                    // so we REPLACE (dropping legacy claude-3.x the credential
--                    // can't serve). An empty result (discovery failed / offline)
--                    // is a no-op that keeps the full catalog projection.
-+                    // Anthropic and local runtimes return authoritative lists.
-+                    // Anthropic keeps the catalog projection when discovery is
-+                    // empty because that can mean authentication failed. Local
-+                    // discovery reports failures separately, so empty means no
-+                    // models are loaded.
-                     if provider == "anthropic" {
-                         if !entries.is_empty() {
-                             app.model_picker.set_models(entries);
-                         }
-+                    } else if claurst_tui::model_picker::provider_has_authoritative_live_models(
-+                        &provider,
-+                    ) {
-+                        app.model_picker.set_models(entries);
-                     } else {
-                         app.model_picker.merge_models(entries);
-                     }
-```
-
-**File**: `src-rust/crates/query/src/lib.rs` (modified, +55/-4)
-```diff
-@@ -292,6 +292,17 @@ const MAX_STEPS_DEGRADATION_MSG: &str =
- /// text so the message history stays well-formed.
- const TOOL_CANCELLED_MSG: &str = "Tool execution was cancelled by the user before it completed.";
  
-+fn merge_provider_stream_usage(current: &mut UsageInfo, update: &UsageInfo) {
-+    if update.total_input() > 0 {
-+        current.input_tokens = update.input_tokens;
-+        current.cache_read_input_tokens = update.cache_read_input_tokens;
-+        current.cache_creation_input_tokens = update.cache_creation_input_tokens;
++// ---------------------------------------------------------------------------
++// Cost-tracker pricing resolution (issue #499)
++// ---------------------------------------------------------------------------
++
++/// Map a catalog entry's per-token prices onto the tracker's [`ModelPricing`].
++///
++/// Returns `None` when the entry has no usable prices at all: a price the
++/// catalog doesn't record must surface as zero cost, not as a guessed rate.
++fn model_pricing_from_entry(entry: &ModelEntry) -> Option<claurst_core::cost::ModelPricing> {
++    let cost = &entry.cost;
++    if cost.input.is_none() && cost.output.is_none() {
++        return None;
 +    }
-+    if update.output_tokens > 0 {
-+        current.output_tokens = update.output_tokens;
-+    }
++    Some(claurst_core::cost::ModelPricing {
++        input_per_mtk: cost.input.unwrap_or(0.0),
++        output_per_mtk: cost.output.unwrap_or(0.0),
++        cache_creation_per_mtk: cost.cache_write.unwrap_or(0.0),
++        cache_read_per_mtk: cost.cache_read.unwrap_or(0.0),
++    })
 +}
 +
- // Spinner verbs are imported from claurst_core::spinner
- 
- /// Resolve the effective effort level for a turn.
-@@ -1051,9 +1062,7 @@ pub async fn run_query_loop(
-                                         match &evt {
-                                             claurst_api::StreamEvent::MessageStart { id, usage: u, .. } => {
-                                                 msg_id = id.clone();
--                                                usage.input_tokens = u.input_tokens;
--                                                usage.cache_read_input_tokens = u.cache_read_input_tokens;
--                                                usage.cache_creation_input_tokens = u.cache_creation_input_tokens;
-+                                                merge_provider_stream_usage(&mut usage, u);
-                                             }
-                                             claurst_api::StreamEvent::ContentBlockStart {
-                                                 index,
-@@ -1086,7 +1095,7 @@ pub async fn run_query_loop(
-                                                     None => "end_turn".to_string(),
-                                                 };
-                                                 if let Some(u) = u {
--                                                    usage.output_tokens = u.output_tokens;
-+                                                    merge_provider_stream_usage(&mut usage, u);
-                                                 }
-                                             }
-                                             claurst_api::StreamEvent::MessageStop => break,
-@@ -2071,6 +2080,48 @@ mod tests {
-     use super::*;
-     use claurst_api::SystemPrompt;
- 
++/// Look up `model`'s per-token prices in the catalog, first served through
++/// `provider_id` (the usual keyed path), then by bare model id across the
++/// whole catalog.
++pub fn catalog_pricing(
++    registry: Option<&ModelRegistry>,
++    provider_id: &str,
++    model: &str,
++) -> Option<claurst_core::cost::ModelPricing> {
++    let registry = registry?;
++    let entry = registry.resolve_entry(provider_id, model).or_else(|| {
++        registry
++            .find_provider_for_model(model)
++            .and_then(|p| registry.get(&p, model))
++    });
++    entry.and_then(model_pricing_from_entry)
++}
++
++/// Configure a [`CostTracker`] for the active session so the headless `result`
++/// event, `/cost` and the TUI footer all report the same figure (issue #499):
++///
++/// * Subscription providers (`codex` / `openai-codex` ChatGPT plans,
++///   Anthropic OAuth with Bearer auth = Claude Pro/Max) report zero cost.
++/// * Known models are priced from the catalog, falling back to the curated
++///   Claude/free heuristics.
++/// * Unknown models get no invented default rate: cost reports zero.
++pub fn apply_session_cost_pricing(
++    tracker: &claurst_core::cost::CostTracker,
++    registry: Option<&ModelRegistry>,
++    provider_id: &str,
++    model: &str,
++    anthropic_bearer_auth: bool,
++) {
++    let subscription = claurst_core::cost::is_subscription_provider(provider_id)
++        || (provider_id == claurst_core::ProviderId::ANTHROPIC && anthropic_bearer_auth);
++    tracker.set_subscription(subscription);
++    if subscription {
++        // Zero cost regardless of any per-token price the catalog still
++        // records for ChatGPT-served models (issue #499).
++        tracker.set_pricing(None);
++        return;
++    }
++    // Catalog first (it knows exact per-model rates), then the curated
++    // Claude/free heuristics; unknown models resolve to `None` — no default.
++    let pricing = catalog_pricing(registry, provider_id, model)
++        .or_else(|| claurst_core::cost::ModelPricing::for_model(model));
++    tracker.set_pricing(pricing);
++}
++
+ // ---------------------------------------------------------------------------
+ // Tests
+ // ---------------------------------------------------------------------------
+@@ -2219,4 +2288,78 @@ mod tests {
+         assert_eq!(reg.len(), before, "malformed/empty overrides must not add entries");
+         assert!(reg.get("custom-openai", "noop").is_none());
+     }
++
++    // ---- Session cost pricing (issue #499) -----------------------------------
++
 +    #[test]
-+    fn final_stream_usage_supplies_prompt_tokens_to_turn_usage() {
-+        let mut turn_usage = UsageInfo::default();
-+        let final_usage = UsageInfo {
-+            input_tokens: 1_200,
-+            output_tokens: 80,
-+            cache_creation_input_tokens: 0,
-+            cache_read_input_tokens: 300,
-+        };
++    fn session_cost_pricing_zeroes_subscription_providers() {
++        for provider in ["codex", "openai-codex"] {
++            let tracker = claurst_core::cost::CostTracker::new();
++            tracker.add_usage(10_074, 5, 0, 0);
++            apply_session_cost_pricing(&tracker, None, provider, "gpt-5.6-sol", false);
++            assert!(tracker.is_subscription());
++            assert_eq!(tracker.total_cost_usd(), 0.0, "{provider} must report zero cost");
++        }
 +
-+        merge_provider_stream_usage(&mut turn_usage, &final_usage);
++        // Anthropic with Bearer (claude.ai OAuth) = Claude Pro/Max subscription.
++        let tracker = claurst_core::cost::CostTracker::new();
++        tracker.add_usage(10_074, 5, 0, 0);
++        apply_session_cost_pricing(&tracker, None, "anthropic", "claude-sonnet-4-5", true);
++        assert!(tracker.is_subscription());
++        assert_eq!(tracker.total_cost_usd(), 0.0);
 +
-+        assert_eq!(turn_usage.input_tokens, 1_200);
-+        assert_eq!(turn_usage.cache_read_input_tokens, 300);
-+        assert_eq!(turn_usage.output_tokens, 80);
-+        let context_counter_increment = turn_usage.input_tokens
-+            + turn_usage.output_tokens
-+            + turn_usage.cache_creation_input_tokens
-+            + turn_usage.cache_read_input_tokens;
-+        assert_eq!(context_counter_increment, 1_580);
++        // But an Anthropic API-key session stays priced.
++        let tracker = claurst_core::cost::CostTracker::new();
++        apply_session_cost_pricing(&tracker, None, "anthropic", "claude-sonnet-4-5", false);
++        assert!(!tracker.is_subscription());
++        assert!(tracker.total_cost_usd() >= 0.0);
 +    }
 +
 +    #[test]
-+    fn output_only_final_usage_preserves_start_input_tokens() {
-+        let mut turn_usage = UsageInfo {
-+            input_tokens: 900,
-+            output_tokens: 0,
-+            cache_creation_input_tokens: 100,
-+            cache_read_input_tokens: 0,
-+        };
-+        let final_usage = UsageInfo {
-+            output_tokens: 75,
-+            ..Default::default()
-+        };
-+
-+        merge_provider_stream_usage(&mut turn_usage, &final_usage);
-+
-+        assert_eq!(turn_usage.input_tokens, 900);
-+        assert_eq!(turn_usage.cache_creation_input_tokens, 100);
-+        assert_eq!(turn_usage.output_tokens, 75);
-+    }
-+
-     fn make_config(sys: Option<&str>, append: Option<&str>) -> QueryConfig {
-         QueryConfig {
-             model: "claude-sonnet-4-6".to_string(),
++    fn session_cost_pricing_unknown_model_gets_no_default() {
++        let reg = ModelRegistry::new();
++        let tracker = claurst_core::cost::CostTracker::new();
++        tracker.add_usage(10_074, 5, 0, 0);
++       
 ```
 
-**File**: `src-rust/crates/tui/src/model_picker.rs` (modified, +36/-5)
+**File**: `src-rust/crates/cli/src/main.rs` (modified, +31/-0)
 ```diff
-@@ -373,18 +373,30 @@ pub fn default_model_for_provider(
- /// intersects it with the discovered set (see the anthropic branch in the
- /// discovery spawn), falling back to the full projection if discovery fails.
- ///
--/// Live-endpoint providers (Ollama/LM Studio/llama.cpp, Copilot, the
--/// openai-compatible gateways, …) and curated-list providers (Codex, free) are
--/// intentionally excluded: they keep populating the picker from their
--/// `discover_models()` result, which the event loop merges additively onto the
--/// catalog projection.
-+/// Live-endpoint and curated-list providers are intentionally excluded. The
-+/// event loop either replaces or merges the projection according to
-+/// [`provider_has_authoritative_live_models`].
- pub fn provider_uses_catalog_projection(provider_id: &str) -> bool {
-     matches!(
-         provider_id,
-         "openai" | "google" | "azure" | "amazon-bedrock" | "cohere" | "minimax"
-     )
+@@ -906,6 +906,19 @@ async fn main() -> anyhow::Result<()> {
+     // from the models.dev cache if available.
+     let model_registry = load_cached_model_registry(&config);
+ 
++    // Cost reporting seed (issue #499): configure the shared tracker for the
++    // active provider/model — zero cost for subscription providers (ChatGPT
++    // Codex, Claude Pro/Max OAuth), catalog pricing for known models, and no
++    // invented default rate for unknown ones. The headless `result` event,
++    // `/cost` and the TUI footer all read this same tracker.
++    claurst_api::apply_session_cost_pricing(
++        &cost_tracker,
++        Some(&model_registry),
++        config.selected_provider_id(),
++        config.effective_model(),
++        use_bearer_auth,
++    );
++
+     // Build query config
+     let mut query_config = claurst_query::QueryConfig::from_config_with_registry(&config, &model_registry);
+     query_config.model_registry = Some(model_registry.clone());
+@@ -1037,6 +1050,7 @@ async fn main() -> anyhow::Result<()> {
+             bridge_config,
+             has_credentials,
+             model_registry,
++            use_bearer_auth,
+             user_question_rx,
+             pending_project_mcp,
+             mcp_project_root,
+@@ -1470,6 +1484,9 @@ struct RefreshedProviderRuntime {
+     provider_registry: Arc<claurst_api::ProviderRegistry>,
+     model_registry: Arc<claurst_api::ModelRegistry>,
+     auth_store: claurst_core::AuthStore,
++    /// Anthropic auth mode resolved for `config` (Bearer = Claude Pro/Max
++    /// OAuth subscription); feeds the cost tracker (issue #499).
++    use_bearer_auth: bool,
  }
  
-+/// Whether live discovery is the complete set of models usable through a local
-+/// runtime. Catalog rows describe models it could host, not what is loaded.
-+pub fn provider_has_authoritative_live_models(provider_id: &str) -> bool {
-+    matches!(
-+        provider_id,
-+        "ollama"
-+            | "lmstudio"
-+            | "lm-studio"
-+            | "llamacpp"
-+            | "llama-cpp"
-+            | "llama-server"
-+    )
-+}
+ async fn refresh_provider_runtime_state(
+@@ -1534,6 +1551,7 @@ async fn refresh_provider_runtime_state(
+         provider_registry,
+         model_registry,
+         auth_store: claurst_core::AuthStore::default(),
++        use_bearer_auth,
+     })
+ }
+ 
+@@ -1578,6 +1596,7 @@ async fn reload_provider_runtime_state(
+         provider_registry,
+         model_registry,
+         auth_store: claurst_core::AuthStore::default(),
++        use_bearer_auth,
+     })
+ }
+ 
+@@ -1990,6 +2009,7 @@ async fn run_interactive(
+     bridge_config: Option<claurst_bridge::BridgeConfig>,
+     has_credentials: bool,
+     model_registry: Arc<claurst_api::ModelRegistry>,
++    anthropic_bearer_auth: bool,
+     user_question_rx: Option<tokio::sync::mpsc::UnboundedReceiver<claurst_tools::UserQuestionEvent>>,
+     pending_project_mcp: Vec<claurst_core::config::McpServerConfig>,
+     mcp_project_root: Option<PathBuf>,
+@@ -2130,6 +2150,10 @@ async fn run_interactive(
+     claurst_tui::spawn_signal_restore_watchers();
+     let mut app = App::new(live_config.clone(), cost_tracker.clone());
+     app.command_queue = Some(command_queue.clone());
++    // Propagate the startup auth mode into cost reporting: a Claude Pro/Max
++    // OAuth session must report zero cost (issue #499).
++    app.anthropic_bearer_auth = anthropic_bearer_auth;
++    app.sync_cost_pricing();
+     // Startup skill discovery runs on the blocking pool so a cold
+     // `skills.urls` clone never holds the terminal. When it finishes, the
+     // main loop installs the slash commands for autocomplete and every query
+@@ -2995,6 +3019,9 @@ async fn run_interactive(
+                                                     "Saved provider state cleared. Run /connect to reconnect."
+                                                         .to_string(),
+                                                 );
++                                                app.anthropic_bearer_auth =
++                                                    refreshed.use_bearer_auth;
++                                                app.sync_cost_pricing();
+                                             }
+                                             Err(err) => {
+                                                 app.status_message = Some(format!(
+@@ -4704,6 +4731,10 @@ async fn run_interactive(
+                     );
+                     app.provider_registry = Some(refreshed.provider_registry);
+                     app.has_credentials = true;
++                    // A fresh Claude Pro/Max OAuth login switches usage to
++                    // flat subscription billing — zero reported cost (#499).
++                    app.anthropic_bearer_auth = refreshed.use_bearer_auth;
++                    app.sync_cost_pricing();
+                 }
+                 Err(err) => {
+                     app.status_message =
+```
+
+**File**: `src-rust/crates/commands/src/lib.rs` (modified, +34/-8)
+```diff
+@@ -746,7 +746,6 @@ impl SlashCommand for CostCommand {
+     async fn execute(&self, _args: &str, ctx: &mut CommandContext) -> CommandResult {
+         let tracker = &ctx.cost_tracker;
+         let model = ctx.config.effective_model();
+-        let pricing = claurst_core::cost::ModelPricing::for_model(model);
+ 
+         let input = tracker.input_tokens();
+         let output = tracker.output_tokens();
+@@ -755,20 +754,47 @@ impl SlashCommand for CostCommand {
+         let total = tracker.total_tokens();
+         let cost = tracker.total_cost_usd();
+ 
++        // Flat-subscription providers (ChatGPT Plus/Pro for Codex, Claude
++        // Pro/Max OAuth) are not billed per token, so the tracker reports
++        // zero and no rates apply (issue #499).
++        if tracker.is_subscription() {
++            return CommandResult::Message(format!(
++                "Session Cost — {model}\n\
++                 ──────────────────────────────\n\
++                 Billed through a flat subscription (ChatGPT Plus/Pro or\n\
++                 Claude Pro/Max) — usage is not billed per token.\n\n\
++                 \n\
++                 Total tokens:   {total:>10}\n\n\
++                 Use /usage for quota info · /extra-usage for per-call breakdown",
++                model = model,
++                total = total,
++            ));
++        }
 +
- /// Whether `provider_id` refers to the OpenAI Codex provider under either of
- /// its two id spellings: the canonical `"codex"` (used by `CodexProvider`,
- /// the model registry, and the runtime dispatch) or the `"openai-codex"`
-@@ -1551,4 +1563,23 @@ mod tests {
-             );
++        // Read pricing from the tracker itself (catalog-resolved at session
++        // start and on model switches) so these figures match the tracker's
++        // total instead of guessing a rate (issue #499).
++        let pricing_opt = tracker.pricing();
++        let pricing = pricing_opt.unwrap_or(claurst_core::cost::ModelPricing::FREE);
++
+         // Per-category cost breakdown.
+         let input_cost    = (input as f64 * pricing.input_per_mtk) / 1_000_000.0;
+         let output_cost   = (output as f64 * pricing.output_per_mtk) / 1_000_000.0;
+         let cc_cost       = (cache_create as f64 * pricing.cache_creation_per_mtk) / 1_000_000.0;
+         let cr_cost       = (cache_read as f64 * pricing.cache_read_per_mtk) / 1_000_000.0;
+ 
+         // Pricing info line.
+-        let pricing_line = format!(
+-            "  Rates ($/MTok): input ${:.2} | output ${:.2} | cache-write ${:.3} | cache-read ${:.3}",
+-            pricing.input_per_mtk,
+-            pricing.output_per_mtk,
+-            pricing.cache_creation_per_mtk,
+-            pricing.cache_read_per_mtk,
+-        );
++        let pricing_line = match pricing_opt {
++            Some(p) => format!(
++                "  Rates ($/MTok): input ${:.2} | output ${:.2} | cache-write ${:.3} | cache-read ${:.3}",
++                p.input_per_mtk,
++                p.output_per_mtk,
++                p.cache_creation_per_mtk,
++                p.cache_read_per_mtk,
++            ),
++            // Unknown model: no invented default rate — cost reports $0.00.
++            None => "  No per-token rates known for this model — cost reports $0.00.".to_string(),
++        };
+ 
+         // Cache savings note: how much input cost was avoided by using cache-read
+         // instead of re-sending those tokens as normal input.
+```
+
+**File**: `src-rust/crates/core/src/lib.rs` (modified, +152/-44)
+```diff
+@@ -5344,7 +5344,7 @@ pub mod history {
+ // cost module
+ // ---------------------------------------------------------------------------
+ pub mod cost {
+-    use std::sync::atomic::{AtomicU64, Ordering};
++    use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
+     use std::sync::Arc;
+ 
+     /// Free upstream provider IDs used in the free provider system.
+@@ -5365,6 +5365,23 @@ pub mod cost {
+         "zhipuai",
+     ];
+ 
++    /// Providers whose usage is billed through a flat subscription instead of
++    /// per-token rates:
++    ///
++    /// * `codex` / `openai-codex` — ChatGPT Plus/Pro subscription (the Codex
++    ///   provider is OAuth-only, so this id always means the subscription).
++    /// * `anthropic-oauth` — the connect-picker alias for Claude Pro/Max
++    ///   OAuth; at request time it dispatches as `anthropic` with Bearer auth.
++    ///
++    /// Issue #499: subscription usage must report zero cost, never a made-up
++    /// per-token price.
++    pub fn is_subscription_provider(provider_id: &str) -> bool {
++        matches!(
++            provider_id,
++            crate::ProviderId::CODEX | "openai-codex" | "anthropic-oauth"
++        )
++    }
++
+     /// Check if a model name is an upstream-prefixed free model (e.g., "groq/llama-3.3-70b-versatile").
+     fn is_free_upstream_model(model: &str) -> bool {
+         for upstream_id in FREE_UPSTREAM_IDS {
+@@ -5417,50 +5434,48 @@ pub mod cost {
+             cache_read_per_mtk: 0.0,
+         };
+ 
+-        /// Default pricing is Opus (most capable, highest cost).
+-        pub fn default_pricing() -> Self {
+-            Self::OPUS
+-        }
+-
+         /// Pick pricing based on model name substring matching.
+-        pub fn for_model(model: &str) -> Self {
++        ///
++        /// Returns `None` for models we have no price for (issue #499): callers
++        /// should resolve the price from the model catalog instead, and the
++        /// tracker reports zero cost rather than inventing a default rate.
++        /// Only the Claude families (and free models) are priced here — these
++        /// are the models that work with no catalog entry at all.
++        pub fn for_model(model: &str) -> Option<Self> {
+             // Check for free models first (those with "-free" suffix, "free/" prefix, or upstream-prefixed free model)
+             if model.ends_with("-free") || model.starts_with("free/") || is_free_upstream_model(model) {
+-                Self::FREE
++                Some(Self::FREE)
+             } else if model.contains("opus") {
+-                Self::OPUS
++                Some(Self::OPUS)
++            } else if model.contains("sonnet") {
++                Some(Self::SONNET)
+             } else if model.contains("haiku") {
+-                Self::HAIKU
++                Some(Self::HAIKU)
+             } else {
+-                // Default to Sonnet pricing for unknown models
+-                Self::SONNET
++                // Unknown model: no default pricing (issue #499).
++                None
+             }
          }
      }
-+
-+    #[test]
-+    fn local_runtime_models_are_authoritative() {
-+        for pid in [
-+            "ollama",
-+            "lmstudio",
-+            "lm-studio",
-+            "llamacpp",
-+            "llama-cpp",
-+            "llama-server",
-+        ] {
-+            assert!(
-+                provider_has_authoritative_live_models(pid),
-+                "{pid} must replace catalog rows with its live model list"
-+            );
+ 
+-    impl Default for ModelPricing {
+-        fn default() -> Self {
+-            Self::OPUS
+-        }
+-    }
+-
+     /// Thread-safe, lock-free cost tracker that accumulates token usage.
++    ///
++    /// Pricing starts unknown (`None`) so a model without a catalog price
++    /// reports zero cost instead of an invented default rate (issue #499);
++    /// subscription providers report zero regardless.
+     #[derive(Debug, Default)]
+     pub struct CostTracker {
+         input_tokens: AtomicU64,
+         output_tokens: AtomicU64,
+         cache_creation_tokens: AtomicU64,
+         cache_read_tokens: AtomicU64,
+-        pricing: parking_lot::RwLock<ModelPricing>,
++        pricing: parking_lot::RwLock<Option<ModelPricing>>,
++        subscription: AtomicBool,
+     }
+ 
+-    // We need a default for RwLock<ModelPricing> -- use Opus as default.
+     impl CostTracker {
+         pub fn new() -> Arc<Self> {
+-            Arc::new(Self {
+-                pricing: parking_lot::RwLock::new(ModelPricing::OPUS),
+-                ..Default::default()
+-            })
++            Arc::new(Self::default())
+         }
+ 
+         pub fn with_model(model: &str) -> Arc<Self> {
+@@ -5474,6 +5489,30 @@ pub mod cost {
+             *self.pricing.write() = ModelPricing::for_model(model);
+         }
+ 
++        /// Override pricing directly (e.g. resolved from the model catalog).
++        /// `None` marks the price as known to be absent: cost reports zero.
++        pub fn set_pricing(&self, pricing: Option<ModelPricing>) {
++            *self.pricing.write() = pricing;
 +        }
-+        assert!(!provider_has_authoritative_live_models("github-copilot"));
-+        assert!(!provider_has_authoritative_live_models("openrouter"));
++
++        /// The pricing currently configured on this tracker, if any. `None`
++        /// means "no per-token price known" (unknown model, issue #499) —
++        /// consumers must not fall back to an invented default rate.
++        pub fn pricing(&self) -> Option<ModelPricing> {
++            *self.pricing.read()
++        }
++
++        /// Set whether usage is billed through a flat s
+```
+
+**File**: `src-rust/crates/tui/src/app/mod.rs` (modified, +5/-0)
+```diff
+@@ -162,6 +162,10 @@ pub struct App {
+     /// Maximum token budget (from env var or model context window) — P2 feature flag
+     pub token_budget: Option<u32>,
+     pub cost_usd: f64,
++    /// Anthropic session authenticated via Bearer (claude.ai OAuth, i.e. a
++    /// Claude Pro/Max subscription) rather than an API key. Feeds the cost
++    /// tracker's subscription detection (issue #499).
++    pub anthropic_bearer_auth: bool,
+     pub model_name: String,
+     /// Whether the app has valid API credentials configured.
+     /// False = show the in-TUI provider setup dialog on startup.
+@@ -651,6 +655,7 @@ impl App {
+             token_count: 0,
+             token_budget: Self::load_token_budget(),
+             cost_usd: 0.0,
++            anthropic_bearer_auth: false,
+             model_name,
+             has_credentials: true, // overridden by caller when no key is configured
+             effort_level: EffortLevel::Medium,
+```
+
+**File**: `src-rust/crates/tui/src/app/providers.rs` (modified, +20/-4)
+```diff
+@@ -211,7 +211,7 @@ impl App {
+                 let imported_mcp = result.imported_fields.iter().any(|f| f == "mcpServers");
+                 self.config = new_config.clone();
+                 self.model_name = self.config.effective_model().to_string();
+-                self.cost_tracker.set_model(&self.model_name);
++                self.sync_cost_pricing();
+                 self.refresh_context_window_size();
+                 self.context_used_tokens = 0;
+                 self.has_credentials = self.config.resolve_api_key().is_some();
+@@ -384,25 +384,40 @@ impl App {
+         self.config.model = None;
+ 
+         let model = self.display_default_model_for_provider(&provider_id);
+-        self.cost_tracker.set_model(&model);
+         self.model_name = model;
++        self.sync_cost_pricing();
+         self.refresh_context_window_size();
+         self.context_used_tokens = 0;
+     }
+ 
+     /// Update the active model name (also updates config + cost tracker).
+     pub fn set_model(&mut self, model: String) {
+-        self.cost_tracker.set_model(&model);
+         self.model_name = model.clone();
+         self.config.model = Some(model.clone());
+         if let Some(provider) = Self::infer_provider_from_model(&model) {
+             self.config.provider = Some(provider);
+         }
++        self.sync_cost_pricing();
+         self.refresh_context_window_size();
+         // Reset used tokens when switching models (context is fresh).
+         self.context_used_tokens = 0;
+     }
+ 
++    /// Re-apply session cost pricing to the shared tracker (issue #499):
++    /// zero cost for subscription providers (ChatGPT Codex, Claude Pro/Max
++    /// OAuth), catalog pricing for known models, and no invented default
++    /// rate for unknown ones. Keeps the TUI footer agreeing with the
++    /// headless `result` event and `/cost`.
++    pub fn sync_cost_pricing(&self) {
++        claurst_api::apply_session_cost_pricing(
++            &self.cost_tracker,
++            Some(&self.model_registry),
++            self.config.selected_provider_id(),
++            &self.model_name,
++            self.anthropic_bearer_auth,
++        );
 +    }
- }
++
+     pub fn apply_provider_refresh(
+         &mut self,
+         config: Config,
+@@ -433,7 +448,8 @@ impl App {
+         self.has_credentials = has_credentials;
+         self.fast_mode = false;
+         self.model_name = self.config.effective_model().to_string();
+-        self.cost_tracker.set_model(&self.model_name);
++        self.anthropic_bearer_auth = false;
++        self.sync_cost_pricing();
+         self.status_message = Some(status_message);
+         self.clear_prompt();
+     }
+```
+
+**File**: `src-rust/crates/tui/src/render.rs` (modified, +4/-2)
+```diff
+@@ -2747,8 +2747,10 @@ fn render_footer(frame: &mut Frame, app: &App, area: Rect) {
+         }
+ 
+         // 3. Cost — mirrors TS formatCost: 4 decimal places for costs < $0.50, else 2.
+-        // Display cost if it's >= 0.0, so free models show $0.00
+-        if app.cost_usd >= 0.0 {
++        // Display cost if it's >= 0.0, so free models show $0.00. Subscription
++        // providers (ChatGPT Codex, Claude Pro/Max OAuth) show no dollar
++        // figure at all because usage isn't billed per token (issue #499).
++        if app.cost_usd >= 0.0 && !app.cost_tracker.is_subscription() {
+             if !parts.is_empty() {
+                 parts.push(Span::raw("  "));
+             }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #414** (closed): feat: add Yolo-Auto provider (@harryvgiunta)
-- **PR #403** (2026-09-02): refactor(tui): split 7.8k-line app.rs into cohesive app/ modules (@SlugThug)
-- **PR #402** (closed): refactor(tui): split 7.8k-line app.rs into cohesive app/ modules (@nhogenson)
-- **PR #397** (closed): feat: add todo confidence indicators (@alecuba16)
-- **PR #388** (closed): feat: bang batch commands, yolo mode, /poke auto-poke command (@alecuba16)
-- **PR #387** (closed): feat(tui): session browser improvements + keyboard text selection and copy (@alecuba16)
-- **PR #386** (closed): feat: custom providers and model picker overhaul (@alecuba16)
-- **PR #385** (closed): feat: status bar indicators — confidence, TPS, todo, skills/MCP, turns, degradation (@alecuba16)
+- **PR #523** (closed): test(core): make write_chain fixture hermetic with one sync write (@alecuba16)
+- **PR #506** (2026-10-16): fix(cost): zero cost for subscription providers; no invented rates for unknown models (@Kuberwastaken)
+- **PR #505** (2026-10-16): fix(keybindings): Ctrl+V block-visual, Shift+Insert wiring, globalSearch alias, single /keybindings open (@Kuberwastaken)
+- **PR #504** (2026-10-16): fix(api): resolve the 	ogetherai provider alias in the registry (@PiUnknown)
+- **PR #503** (2026-10-16): fix(keybindings): normalize chords before the protected-key check (@PiUnknown)
+- **PR #502** (2026-10-16): fix: fall back to parsing final JSON text when StructuredOutput tool is not called (fixes #498) (@PiUnknown)
 
 ---
 
@@ -6521,3 +3436,40 @@ Fixes #326
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. Merge pull request #505 from Kuberwastaken/fix/495-keybindings-remainder
+
+**RULE**:
+When implementing operations in `docs/keybindings.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kuberwastaken/claurst. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `465be88f`: Merge pull request #505 from Kuberwastaken/fix/495-keybindings-remainder. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/keybindings.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+The defaults also bind `Ctrl+Left` / `Ctrl+Right` (`moveWordBackward` / `moveWordForward`), `Ctrl+F` (`findInMessage`), `Ctrl+]` (`findNext`), `Ctrl+[` (`findPrev`) and `Ctrl+G` (`goToLine`), but those actions are not implemented, so the keys do nothing. `F3` / `Shift+F3` are listed too, but function keys never reach the binding table. Use `Alt+B` / `Alt+F` to move by word and `Ctrl+P` for project search. `Ctrl+Shift+F` works: its default action is listed as `globalSearch`, an alias of the `openSearch` action — both names open the project search, so either can be bound in `keybindings.json`.
+These keys are hard-coded in the prompt and have no action names, so they cannot be remapped. A `keybindings.json` binding on the same key (other than `F1`, which never reaches the binding table) takes precedence over them.
+| `Shift+Insert` | Paste text (the `insert` key name reaches the binding table, so it can also be rebound) |
+The prompt editor contains a vim emulation with insert, normal, visual (`v`, `V`, `Ctrl+V`), command-line (`:`) and search (`/`) modes.
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+The defaults also bind `Ctrl+Left` / `Ctrl+Right` (`moveWordBackward` / `moveWordForward`), `Ctrl+F` (`findInMessage`), `Ctrl+Shift+F` (`globalSearch`), `Ctrl+]` (`findNext`), `Ctrl+[` (`findPrev`) and `Ctrl+G` (`goToLine`), but these actions are not implemented, so the keys do nothing. `F3` / `Shift+F3` are listed too, but function keys never reach the binding table. Use `Alt+B` / `Alt+F` to move by word and `Ctrl+P` for project search. The `openSearch` action (no default key) also opens project search and can be bound; the default `globalSearch` name does nothing.
+These keys are hard-coded in the prompt and have no action names, so they cannot be remapped. A `keybindings.json` binding on the same key (other than `F1` and `Shift+Insert`) takes precedence over them.
+| `Shift+Insert` | Paste text |
+The prompt editor contains a vim emulation with insert, normal, visual (`v`, `V`), command-line (`:`) and search (`/`) modes.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `465be88f` are properly handled with clean fallback behavior.

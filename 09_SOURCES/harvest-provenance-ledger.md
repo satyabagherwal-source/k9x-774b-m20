@@ -2720,3 +2720,9 @@ Every entry in this ledger must capture:
 | `learn-github-vinceanalytics-vince` | `https://github.com/vinceanalytics/vince` | `fc06f7a2` | Multi-dimensional audit evidence | 2026-10-19T00:48:23.688Z |
 | `learn-huggingface-baai-bge-small-en-v1-5` | `https://huggingface.co/BAAI/bge-small-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-19T00:48:26.786Z |
 | `learn-github-malisper-pgrust` | `https://github.com/malisper/pgrust` | `79ad992e` | Multi-dimensional audit evidence | 2026-10-19T00:48:29.234Z |
+| `learn-github-rsuite-rsuite` | `https://github.com/rsuite/rsuite` | `c09c0d5c` | Multi-dimensional audit evidence | 2026-10-19T00:54:30.556Z |
+| `learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark` | `https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-19T00:54:30.827Z |
+| `learn-github-kuberwastaken-claurst` | `https://github.com/Kuberwastaken/claurst` | `85ebb868` | Multi-dimensional audit evidence | 2026-10-19T00:54:31.494Z |
+| `learn-github-aws-amplify-amplify-js` | `https://github.com/aws-amplify/amplify-js` | `26b49ecd` | Multi-dimensional audit evidence | 2026-10-19T00:54:36.885Z |
+| `learn-github-go-eagle-eagle` | `https://github.com/go-eagle/eagle` | `b1301b09` | Multi-dimensional audit evidence | 2026-10-19T00:54:38.862Z |
+| `learn-github-qovery-replibyte` | `https://github.com/Qovery/Replibyte` | `5504db91` | Multi-dimensional audit evidence | 2026-10-19T00:54:44.807Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T00:48:29.239Z",
+  "last_updated": "2026-10-19T00:54:44.812Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -154,14 +154,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
-      "content_hash": "614232b6520193e8d8000dd9315f9bfbb06d89a4a8aef67ad444f515c06c8c51",
-      "verified_at": "2026-10-17T21:23:49.208Z",
+      "content_hash": "3da954c6038818ae34bbf4498340f3b6d5bbf4ecc6d45160b2dcefb209294e15",
+      "verified_at": "2026-10-19T00:54:30.832Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T21:23:49.208Z"
+      "last_updated": "2026-10-19T00:54:30.832Z"
     },
     "LiquidAI/d1-3B": {
       "repository": "LiquidAI/d1-3B",
@@ -6457,6 +6457,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T00:48:29.239Z"
+    },
+    "rsuite/rsuite": {
+      "repository": "rsuite/rsuite",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-rsuite-rsuite",
+      "content_hash": "5a8120a92a68d6840396cf69160e42d3cabc714a6123150fc00911e2947388df",
+      "verified_at": "2026-10-19T00:54:30.562Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T00:54:30.562Z"
+    },
+    "Kuberwastaken/claurst": {
+      "repository": "Kuberwastaken/claurst",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-kuberwastaken-claurst",
+      "content_hash": "2b731d4357e6e4b1eac3f64c15906f15daab67bff04e3d8c4e5cec4541c1c47f",
+      "verified_at": "2026-10-19T00:54:31.498Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T00:54:31.498Z"
+    },
+    "aws-amplify/amplify-js": {
+      "repository": "aws-amplify/amplify-js",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-aws-amplify-amplify-js",
+      "content_hash": "016f8b446c406943bcededea42577d222e69a558e5c71242b14deb9818071d33",
+      "verified_at": "2026-10-19T00:54:36.889Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T00:54:36.889Z"
+    },
+    "go-eagle/eagle": {
+      "repository": "go-eagle/eagle",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-go-eagle-eagle",
+      "content_hash": "52b7bf79d50916dbcfaf35b4a1b27f5aba842863f9d10bcea3e1b8a5939f58ff",
+      "verified_at": "2026-10-19T00:54:38.867Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T00:54:38.867Z"
+    },
+    "Qovery/Replibyte": {
+      "repository": "Qovery/Replibyte",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-qovery-replibyte",
+      "content_hash": "1ca8d20fefe83951368ddacbd436584b3df18be1d9d603829f2152189807d893",
+      "verified_at": "2026-10-19T00:54:44.812Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T00:54:44.812Z"
     }
   },
   "repos": {
