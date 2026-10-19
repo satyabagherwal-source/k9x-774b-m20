@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md`  
+> **Source**: github ([https://github.com/tauri-apps/tauri](https://github.com/tauri-apps/tauri))  
+> **Source Version**: `bc1136ba`  
+> **License**: Apache-2.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T17:31:24.888Z  
+> **Learning ID**: `learn-github-tauri-apps-tauri`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): tauri-apps/tauri
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tauri-apps/tauri](https://github.com/tauri-apps/tauri))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-07T21:19:45.704Z  
+> **Harvest Timestamp**: 2026-10-19T17:31:24.879Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: Build smaller, faster, and more secure desktop and mobile applications with a web frontend.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 111647 stars
+- **Stars / Engagement**: 112021 stars
 
 ---
 
@@ -1110,7 +1124,7 @@ impl CommandExt for Command {
     let mut stdout = child.stdout.take().map(BufReader::new).unwrap();
     let stdout_lines = Arc::new(Mutex::new(Vec::new()));
     let stdout_lines_ = stdout_lines.clone();
-    std::thread::spawn(move || {
+    let stdout_thread = std::thread::spawn(move || {
       let mut line = String::new();
       let mut lines = stdout_lines_.lock().unwrap();
       loop {
@@ -1129,7 +1143,7 @@ impl CommandExt for Command {
     let mut stderr = child.stderr.take().map(BufReader::new).unwrap();
     let stderr_lines = Arc::new(Mutex::new(Vec::new()));
     let stderr_lines_ = stderr_lines.clone();
-    std::thread::spawn(move || {
+    let stderr_thread = std::thread::spawn(move || {
       let mut line = String::new();
       let mut lines = stderr_lines_.lock().unwrap();
       loop {
@@ -1146,6 +1160,8 @@ impl CommandExt for Command {
     });
 
     let status = child.wait()?;
+    let _ = stdout_thread.join();
+    let _ = stderr_thread.join();
     let output = Output {
       status,
       stdout: std::mem::take(&mut *stdout_lines.lock().unwrap()),
@@ -1155,8 +1171,15 @@ impl CommandExt for Command {
     if output.status.success() {
       Ok(output)
     } else {
+      // some tools (WiX, signtool) report their errors on stdout
+      let diagnosis = if output.stderr.iter().all(u8::is_ascii_whitespace) {
+        &output.stdout
+      } else {
+        &output.stderr
+      };
       Err(crate::Error::GenericError(format!(
-        "failed to run {program}"
+        "failed to run {program}: {}",
+        String::from_utf8_lossy(diagnosis).trim_end()
       )))
     }
   }
@@ -1168,7 +1191,25 @@ mod tests {
 
   use tauri_utils::resources::resource_relpath;
 
-  use super::is_retina;
+  use super::{CommandExt, is_retina};
+
+  #[test]
+  fn output_ok_keeps_stderr_in_the_error() {
+    let err = std::process::Command::new("sh")
+      .args(["-c", "echo the-diagnosis >&2; exit 1"])
+      .output_ok()
+      .unwrap_err();
+    assert!(err.to_string().contains("the-diagnosis"));
+  }
+
+  #[test]
+  fn output_ok_falls_back_to_stdout_without_stderr() {
+    let err = std::process::Command::new("sh")
+      .args(["-c", "echo the-diagnosis; exit 1"])
+      .output_ok()
+      .unwrap_err();
+    assert!(err.to_string().contains("the-diagnosis"));
+  }
 
   #[test]
   fn retina_icon_paths() {
@@ -1209,9 +1250,8 @@ mod imp {}
 
 #[cfg(windows)]
 mod imp {
-  use std::{iter::once, os::windows::ffi::OsStrExt};
+  use std::{iter::once, os::windows::ffi::OsStrExt, sync::LazyLock};
 
-  use once_cell::sync::Lazy;
   use windows::{
     Win32::{
       Foundation::*,
@@ -1258,12 +1298,12 @@ mod imp {
   type GetSystemMetricsForDpi =
     unsafe extern "system" fn(nindex: SYSTEM_METRICS_INDEX, dpi: u32) -> i32;
 
-  static GET_DPI_FOR_WINDOW: Lazy<Option<GetDpiForWindow>> =
-    Lazy::new(|| get_function!("user32.dll", GetDpiForWindow));
-  static GET_DPI_FOR_MONITOR: Lazy<Option<GetDpiForMonitor>> =
-    Lazy::new(|| get_function!("shcore.dll", GetDpiForMonitor));
-  static GET_SYSTEM_METRICS_FOR_DPI: Lazy<Option<GetSystemMetricsForDpi>> =
-    Lazy::new(|| get_function!("user32.dll", GetSystemMetricsForDpi));
+  static GET_DPI_FOR_WINDOW: LazyLock<Option<GetDpiForWindow>> =
+    LazyLock::new(|| get_function!("user32.dll", GetDpiForWindow));
+  static GET_DPI_FOR_MONITOR: LazyLock<Option<GetDpiForMonitor>> =
+    LazyLock::new(|| get_function!("shcore.dll", GetDpiForMonitor));
+  static GET_SYSTEM_METRICS_FOR_DPI: LazyLock<Option<GetSystemMetricsForDpi>> =
+    LazyLock::new(|| get_function!("user32.dll", GetSystemMetricsForDpi));
 
   #[allow(non_snake_case)]
   pub unsafe fn hwnd_dpi(hwnd: HWND) -> u32 {
@@ -2174,543 +2214,17 @@ mod build {
 
 ```
 
-### Core Architecture Module: `crates/tauri-utils/src/acl/manifest.rs`
-```
-// Copyright 2019-2024 Tauri Programme within The Commons Conservancy
-// SPDX-License-Identifier: Apache-2.0
-// SPDX-License-Identifier: MIT
-
-//! Plugin ACL types.
-
-use std::{collections::BTreeMap, num::NonZeroU64};
-
-use super::{Permission, PermissionSet};
-#[cfg(feature = "schema")]
-use schemars::schema::*;
-use serde::{Deserialize, Serialize};
-
-/// The default permission set of the plugin.
-///
-/// Works similarly to a permission with the "default" identifier.
-#[derive(Debug, Clone, Deserialize, Serialize)]
-#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
-pub struct DefaultPermission {
-  /// The version of the permission.
-  pub version: Option<NonZeroU64>,
-
-  /// Human-readable description of what the permission does.
-  /// Tauri convention is to use `<h4>` headings in markdown content
-  /// for Tauri documentation generation purposes.
-  pub description: Option<String>,
-
-  /// All permissions this set contains.
-  pub permissions: Vec<String>,
-}
-
-/// Permission file that can define a default permission, a set of permissions or a list of inlined permissions.
-#[derive(Debug, Clone, Deserialize, Serialize)]
-#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
-pub struct PermissionFile {
-  /// The default permission set for the plugin
-  pub default: Option<DefaultPermission>,
-
-  /// A list of permissions sets defined
-  #[serde(default, skip_serializing_if = "Vec::is_empty")]
-  pub set: Vec<PermissionSet>,
-
-  /// A list of inlined permissions
-  #[serde(default)]
-  pub permission: Vec<Permission>,
-}
-
-/// Plugin manifest.
-#[derive(Debug, Serialize, Deserialize, Default)]
-pub struct Manifest {
-  /// Default permission.
-  pub default_permission: Option<PermissionSet>,
-  /// Plugin permissions.
-  pub permissions: BTreeMap<String, Permission>,
-  /// Plugin permission sets.
-  pub permission_sets: BTreeMap<String, PermissionSet>,
-  /// The global scope schema.
-  pub global_scope_schema: Option<serde_json::Value>,
-}
-
-impl Manifest {
-  /// Creates a new manifest from the given plugin permission files and global scope schema.
-  pub fn new(
-    permission_files: Vec<PermissionFile>,
-    global_scope_schema: Option<serde_json::Value>,
-  ) -> Self {
-    let mut manifest = Self {
-      default_permission: None,
-      permissions: BTreeMap::new(),
-      permission_sets: BTreeMap::new(),
-      global_scope_schema,
-    };
-
-    for permission_file in permission_files {
-      if let Some(default) = permission_file.default {
-        manifest.default_permission.replace(PermissionSet {
-          identifier: "default".into(),
-          description: default
-            .description
-            .unwrap_or_else(|| "Default plugin permissions.".to_string()),
-          permissions: default.permissions,
-        });
-      }
-
-      for permission in permission_file.permission {
-        let key = permission.identifier.clone();
-        manifest.permissions.insert(key, permission);
-      }
-
-      for set in permission_file.set {
-        let key = set.identifier.clone();
-        manifest.permission_sets.insert(key, set);
-      }
-    }
-
-    manifest
-  }
-}
-
-#[cfg(feature = "schema")]
-type ScopeSchema = (Schema, schemars::Map<String, Schema>);
-
-#[cfg(feature = "schema")]
-impl Manifest {
-  /// Return scope schema and extra schema definitions for this plugin manifest.
-  pub fn global_scope_schema(&self) -> Result<Option<ScopeSchema>, super::Error> {
-    self
-      .global_scope_schema
-      .as_ref()
-      .map(|s| {
-        serde_json::from_value::<RootSchema>(s.clone()).map(|s| {
-          // convert RootSchema to Schema
-          let scope_schema = Schema::Object(SchemaObject {
-            array: Some(Box::new(ArrayValidation {
-              items: Some(Schema::Object(s.schema).into()),
-              ..Default::default()
-            })),
-            ..Default::default()
-          });
-
-          (scope_schema, s.definitions)
-        })
-      })
-      .transpose()
-      .map_err(Into::into)
-  }
-}
-
-#[cfg(any(feature = "build", feature = "build-2"))]
-mod build {
-  use proc_macro2::TokenStream;
-  use quote::{ToTokens, TokenStreamExt, quote};
-  use std::convert::identity;
-
-  use super::*;
-  use crate::{literal_struct, tokens::*};
-
-  impl ToTokens for DefaultPermission {
-    fn to_tokens(&self, tokens: &mut TokenStream) {
-      let version = opt_lit_owned(self.version.as_ref().map(|v| {
-        let v = v.get();
-        quote!(::core::num::NonZeroU64::new(#v).unwrap())
-      }));
-      // Only used in build script and macros, so don't include them in runtime
-      let description = quote! { ::core::option::Option::None };
-      let permissions = vec_lit(&self.permissions, str_lit);
-      literal_struct!(
-        tokens,
-        ::tauri::utils::acl::plugin::DefaultPermission,
-        version,
-        description,
-        permissions
-      )
-    }
-  }
-
-  impl ToTokens for Manifest {
-    fn to_tokens(&self, tokens: &mut TokenStream) {
-      let default_permission = opt_lit(self.default_permission.as_ref());
-
-      let permissions = map_lit(
-        quote! { ::std::collections::BTreeMap },
-        &self.permissions,
-        str_lit,
-        identity,
-      );
-
-      let permission_sets = map_lit(
-        quote! { ::std::collections::BTreeMap },
-        &self.permission_sets,
-        str_lit,
-        identity,
-      );
-
-      // Only used in build script and macros, so don't include them in runtime
-      // let global_scope_schema =
-      //   opt_lit_owned(self.global_scope_schema.as_ref().map(json_value_lit));
-      let global_scope_schema = quote! { ::core::option::Option::None };
-
-      literal_struct!(
-        tokens,
-        ::tauri::utils::acl::manifest::Manifest,
-        default_permission,
-        permissions,
-        permission_sets,
-        global_scope_schema
-      )
-    }
-  }
-}
-
-```
-
-### Core Architecture Module: `crates/tauri-utils/src/acl/mod.rs`
-```
-// Copyright 2019-2024 Tauri Programme within The Commons Conservancy
-// SPDX-License-Identifier: Apache-2.0
-// SPDX-License-Identifier: MIT
-
-//! Access Control List types.
-//!
-//! # Stability
-//!
-//! This is a core functionality that is not considered part of the stable API.
-//! If you use it, note that it may include breaking changes in the future.
-//!
-//! These items are intended to be non-breaking from a de/serialization standpoint only.
-//! Using and modifying existing config values will try to avoid breaking changes, but they are
-//! free to add fields in the future - causing breaking changes for creating and full destructuring.
-//!
-//! To avoid this, [ignore unknown fields when destructuring] with the `{my, config, ..}` pattern.
-//! If you need to create the Rust config directly without deserializing, then create the struct
-//! the [Struct Update Syntax] with `..Default::default()`, which may need a
-//! `#[allow(clippy::needless_update)]` attribute if you are declaring all fields.
-//!
-//! [ignore unknown fields when destructuring]: https://doc.rust-lang.org/book/ch18-03-pattern-syntax.html#ignoring-remaining-parts-of-a-value-with-
-//! [Struct Update Syntax]: https://doc.rust-lang.org/book/ch05-01-defining-structs.html#creating-instances-from-other-instances-with-struct-update-syntax
-
-use anyhow::Context;
-use capability::{Capability, CapabilityFile};
-use serde::{Deserialize, Serialize};
-use std::{
-  collections::{BTreeMap, HashSet},
-  fs,
-  num::NonZeroU64,
-  path::PathBuf,
-  str::FromStr,
-  sync::Arc,
-};
-use thiserror::Error;
-use url::Url;
-
-use crate::{
-  config::{CapabilityEntry, Config},
-  platform::Target,
-};
-
-pub use self::{identifier::*, value::*};
-
-/// Known foldername of the permission schema files
-pub const PERMISSION_SCHEMAS_FOLDER_NAME: &str = "schemas";
-/// Known filename of the permission schema JSON file
-pub const PERMISSION_SCHEMA_FILE_NAME: &str = "schema.json";
-/// Known ACL key for the app permissions.
-pub const APP_ACL_KEY: &str = "__app-acl__";
-/// Known acl manifests file
-pub const ACL_MANIFESTS_FILE_NAME: &str = "acl-manifests.json";
-/// Known capabilities file
-pub const CAPABILITIES_FILE_NAME: &str = "capabilities.json";
-/// Allowed commands file name
-pub const ALLOWED_COMMANDS_FILE_NAME: &str = "allowed-commands.json";
-/// Set by the CLI with when `build > removeUnusedCommands` is set for dead code elimination,
-/// the value is set to the config's directory
-pub const REMOVE_UNUSED_COMMANDS_ENV_VAR: &str = "REMOVE_UNUSED_COMMANDS";
-
-#[cfg(any(feature = "build", feature = "build-2"))]
-pub mod build;
-pub mod capability;
-pub mod identifier;
-pub mod manifest;
-pub mod resolved;
-#[cfg(feature = "schema")]
-pub mod schema;
-pub mod value;
-
-/// Possible errors while processing ACL files.
-#[derive(Debug, Error)]
-pub enum Error {
-  /// Could not find an environmental variable that is set inside of build scripts.
-  ///
-  /// Whatever generated this should be called inside of a build script.
-  #[error(
-    "expected build script env var {0}, but it was not found - ensure this is called in a build script"
-  )]
-  BuildVar(&'static str),
-
-  /// The links field in the manifest **MUST** be set and match the name of the crate.
-  #[error(
-    "package.links field in the Cargo manifest is not set, it should be set to the same as package.name"
-  )]
-  LinksMissing,
-
-  /// The links field in the manifest **MUST** match the name of the crate.
-  #[error(
-    "package.links field in the Cargo manifest MUST be set to the same value as package.name"
-  )]
-  LinksName,
-
-  /// IO error while reading a file
-  #[error("failed to read file '{}': {}", _1.display(), _0)]
-  ReadFile(std::io::Error, PathBuf),
-
-  /// IO error while writing a file
-  #[error("failed to write file '{}': {}", _1.display(), _0)]
-  WriteFile(std::io::Error, PathBuf),
-
-  /// IO error while creating a file
-  #[error("failed to create file '{}': {}", _1.display(), _0)]
-  CreateFile(std::io::Error, PathBuf),
-
-  /// IO error while creating a dir
-  #[error("failed to create dir '{}': {}", _1.display(), _0)]
-  CreateDir(std::io::Error, PathBuf),
-
-  /// [`cargo_metadata`] was not able to complete successfully
-  #[cfg(any(feature = "build", feature = "build-2"))]
-  #[error("failed to execute: {0}")]
-  Metadata(#[from] ::cargo_metadata::Error),
-
-  /// Invalid glob
-  #[error("failed to run glob: {0}")]
-  Glob(#[from] glob::PatternError),
-
-  /// Invalid TOML encountered
-  #[error("failed to parse TOML: {0}")]
-  Toml(#[from] toml::de::Error),
-
-  /// Invalid JSON encountered
-  #[error("failed to parse JSON: {0}")]
-  Json(#[from] serde_json::Error),
-
-  /// Invalid JSON5 encountered
-  #[cfg(feature = "config-json5")]
-  #[error("failed to parse JSON5: {0}")]
-  Json5(#[from] json5::Error),
-
-  /// Invalid permissions file format
-  #[error("unknown permission format {0}")]
-  UnknownPermissionFormat(String),
-
-  /// Invalid capabilities file format
-  #[error("unknown capability format {0}")]
-  UnknownCapabilityFormat(String),
-
-  /// Permission referenced in set not found.
-  #[error("permission {permission} not found from set {set}")]
-  SetPermissionNotFound {
-    /// Permission identifier.
-    permission: String,
-    /// Set identifier.
-    set: String,
-  },
-
-  /// Unknown ACL manifest.
-  #[error("unknown ACL for {key}, expected one of {available}")]
-  UnknownManifest {
-    /// Manifest key.
-    key: String,
-    /// Available manifest keys.
-    available: String,
-  },
-
-  /// Unknown permission.
-  #[error("unknown permission {permission} for {key}")]
-  UnknownPermission {
-    /// Manifest key.
-    key: String,
-
-    /// Permission identifier.
-    permission: String,
-  },
-
-  /// Capability with the given identifier already exists.
-  #[error("capability with identifier `{identifier}` already exists")]
-  CapabilityAlreadyExists {
-    /// Capability identifier.
-    identifier: String,
-  },
-}
-
-/// Allowed and denied commands inside a permission.
-///
-/// If two commands clash inside of `allow` and `deny`, it should be denied by default.
-#[derive(Debug, Clone, Default, Serialize, Deserialize)]
-#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
-pub struct Commands {
-  /// Allowed command.
-  #[serde(default)]
-  pub allow: Vec<String>,
-
-  /// Denied command, which takes priority.
-  #[serde(default)]
-  pub deny: Vec<String>,
-}
-
-/// An argument for fine grained behavior control of Tauri commands.
-///
-/// It can be of any serde serializable type and is used to allow or prevent certain actions inside a Tauri command.
-/// The configured scope is passed to the command and will be enforced by the command implementation.
-///
-/// ## Example
-///
-/// ```json
-/// {
-///   "allow": [{ "path": "$HOME/**" }],
-///   "deny": [{ "path": "$HOME/secret.txt" }]
-/// }
-/// ```
-#[derive(Debug, Default, PartialEq, Clone, Serialize, Deserialize)]
-#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
-pub struct Scopes {
-  /// Data that defines what is allowed by the scope.
-  #[serde(skip_serializing_if = "Option::is_none")]
-  pub allow: Option<Vec<Value>>,
-  /// Data that defines what is denied by the scope. This should be prioritized by validation logic.
-  #[serde(skip_serializing_if = "Option::is_none")]
-  pub deny: Option<Vec<Value>>,
-}
-
-impl Scopes {
-  fn is_empty(&self) -> bool {
-    self.allow.is_none() && self.deny.is_none()
-  }
-}
-
-/// Descriptions of explicit privileges of commands.
-///
-/// It can enable commands to be accessible in the frontend of the application.
-///
-/// If the scope is defined it can be used to fine grain control the access of individual or multiple commands.
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
-#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
-pub struct Permission {
-  /// The version of the permission.
-  #[serde(skip_serializing_if = "Option::is_none")]
-  pub version: Option<NonZeroU64>,
-
-  /// A unique identifier for the permission.
-  pub identifier: String,
-
-  /// Human-readable description of what the permission does.
-  /// Tauri internal convention is to use `<h4>` headings in markdown content
-  /// for Tauri documentation generation purposes.
-  #[serde(skip_serializing_if = "Option::is_none")]
-  pub description: Option<String>,
-
-  /// Allowed or denied commands when using this permission.
-  #[serde(default)]
-  pub commands: Commands,
-
-  /// Allowed or denied scoped when using this permission.
-  #[serde(default, skip_serializing_if = "Scopes::is_empty")]
-  pub scope: Scopes,
-
-  /// Target platforms this permission applies. By default all platforms are affected by this permission.
-  #[serde(skip_serializing_if = "Option::is_none")]
-  pub platforms: Option<Vec<Target>>,
-}
-
-impl Permission {
-  /// Whether this permission should be active based on the platform target or not.
-  pub fn is_active(&self, target: &Target) -> bool {
-    self
-      .platforms
-      .as_ref()
-      .map(|platforms| platforms.contains(target))
-      .unwrap_or(true)
-  }
-}
-
-/// A set of direct permissions grouped together under a new name.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
-pub struct PermissionSet {
-  /// A unique identifier for the permission.
-  pub identifier: String,
-
-  /// Human-readable description of what the permission does.
-  pub description: String,
-
-  /// All permissions this set contains.
-  pub permissions: Vec<String>,
-}
-
-/// UrlPattern for [`ExecutionContext::Remote`].
-#[derive(Debug, Clone)]
-pub struct RemoteUrlPattern(Arc<urlpattern::UrlPattern>, String);
-
-impl FromStr for RemoteUrlPattern {
-  type Err = urlpattern::quirks::Error;
-
-  fn from_str(s: &str) -> std::result::Result<Self, Self::Err> {
-    let mut init = urlpattern::UrlPatternInit::parse_constructor_string::<regex::Regex>(s, None)?;
-    if init.search.as_ref().map(|p| p.is_empty()).unwrap_or(true) {
-      init.search.replace("*".to_string());
-    }
-    if init.hash.as_ref().map(|p| p.is_empty()).unwrap_or(true) {
-      init.hash.replace("*".to_string());
-    }
-    if init
-      .pathname
-      .as_ref(
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #16228** (2026-10-07): **fix(core): do not panic when a replayed queued emit reaches a once handler**
-  *Symptoms*: Fixes #16214.  `Listener::once` panics with `attempted to call handler more than once` when a queued emit is replayed before the handler's own queued unlisten is processed. This needs a listener present that emits the same event from inside its handler: handlers run while the listeners lock is held, so the re-emit and the `once` handler's `unlisten` both queue, and when the queued emit is replayed it can reach the `once` listener a second time before the pending unlisten runs. The reporter's repro on the public API hits the panic 199 out of 200 runs depending on HashMap order.  The `take().expect()` guard was introduced in #15475 to make `once` tolerate multiple calls on one path, but a double dispatch through the queued-emit replay still trips it. A second dispatch of an already-consumed `once` handler should be a no-op, not a panic, so this changes the call site to consume the handler before calling it:  ```rust if let Some(handler) = handler.take() {   handler(event); } ```  This is the same change the reporter validated in the issue (0 out of 200 runs panic with it).  The new `once_survives_a_replayed_queued_emit` test registers 32 re-emitting listeners and one `once` listener on the raw `Listeners` API, then emits. Verified against both forms: it fails with the #16214 panic on the current code and passes with this change. It sits next to the existing `event_no_deadlocks` test, which covers the single-listener variant of this scenario. 
+- **Issue #16335** (2026-10-19): **fix(bundler): fix malformed tokens in NSIS language files**
+  *Symptoms*: same as #16332 but against dev
 
-- **Issue #16222** (2026-10-07): **fix: panic on repeated `once` listener events**
-  *Symptoms*: Fix #16214 closes #16228
-  **Post-Mortem & Fix Analysis**:
-  > <!-- Covector Action --> <!-- Covector Action --> ### Package Changes Through f4d6b2aed88831d5dc9c0182cbc6c3d9e61a765a There are 2 changes which include @tauri-apps/api with patch, tauri with patch  <details> <summary><i>Planned Package Versions</i></summary>  The following package releases are the planned based on the context of changes in this pull request. | package | current | next |   |----|----|----| | @tauri-apps/api | 2.12.1 | 2.12.2 |  tauri | 2.12.1 | 2.12.2 |  </details>  [Add another change file through the GitHub UI by following this link.](https://github.com/Legend-Master/tauri/new/once-listener-panic?filename=.changes/change-pr-16222.md&value=---%0A%22@tauri-apps/api%22:%20patch%0A%22tauri-utils%22:%20patch%0A%22tauri-macos-sign%22:%20patch%0A%22tauri-bundler%22:%20patch%0A%22tauri-runtime%22:%20patch%0A%22tauri-runtime-wry%22:%20patch%0A%22tauri-codegen%22:%20patch%0A%22tauri-macros%22:%20patch%0A%22tauri-plugin%22:%20patch%0A%22tauri-build%22:%20patch%0A%22tauri%22:%20
-
-- **Issue #16214** (2026-10-07): **[bug] `Listener::once` panics when a queued emit is replayed before its queued unlisten**
-  *Symptoms*: ### Describe the bug  `once` wraps the handler as `unlisten(id)` and then `handler.take().expect("attempted to call handler more than once")`. While `emit_filter` holds the handlers lock, that `unlisten` is queued in `pending`. An emit of the same event that arrived while the lock was held is queued there too. If that emit was queued *before* the handler ran, `flush_pending` replays it first. The handler is still registered, so it runs a second time and panics.  #15475 fixed the case where the handler itself emits, but not an emit that was already queued. #15759 makes it more likely, because the replayed emit has lost its target filter, so events for other windows reach the listener too.  ### Reproduction  Intermittent. We hit it on Linux (WebKitGTK) when waiting with `WebviewWindow::once("tauri://resize" | "tauri://move", …)` after `set_size` / `unmaximize`. GTK sends configure events in bursts. It reproduces on 2.11.2 and 2.12.1, and the code is unchanged on `dev`.  ``` panicked at tauri-2.11.2/src/event/listener.rs:173:10: attempted to call handler more than once   Listeners::once::{closure}   Listeners::emit_filter   Listeners::emit             <- replayed Pending::Emit   Listeners::flush_pending   Listeners::emit_filter      <- Window::emit_to_window (tauri://resize)   manager::window::on_window_event ```  ### Expected behavior  A `once` handler runs at most once, without panicking.  ### Suggested fix  Skip a repeat call instead of panicking:  ```rust if let Some(handler
-  **Post-Mortem & Fix Analysis**:
-  > A repro using the public API and the mock runtime (`tauri = { version = "2.12.1", features = ["test"] }`). It doubles as a regression test:  ```rust use std::sync::atomic::{AtomicBool, Ordering}; use tauri::{Emitter, Listener};  #[test] fn once_survives_a_replayed_queued_emit() {     for _ in 0..10 {         let app = tauri::test::mock_app();         for _ in 0..32 {             let handle = app.handle().clone();             let emitted = AtomicBool::new(false);             app.listen("event", move |_| {                 // The listener lock is held while handlers run, so this emit is queued.                 if !emitted.swap(true, Ordering::SeqCst) {                     let _ = handle.emit("event", ());                 }             });         }         app.once("event", |_| {});         // Panics whenever a re-emitter runs before the `once` handler (HashMap order).         app.emit("event", ()).unwrap();     } } ```  - **2.12.1:** fails with `panicked at tauri-2.12.1/src/event/listene
-
-- **Issue #16212** (2026-10-05): **feat(bundler): add `sidecarEntitlements` option to sign macOS sidecars with their own entitlements**
-  *Symptoms*: Closes #16211  ## Problem  On macOS every external binary (`bundle > externalBin`) is signed with the app's entitlements. If the app uses a restricted entitlement (iCloud, associated domains, push notifications, ...), the sidecar claims it too. The embedded provisioning profile only authorizes the main executable, so AMFI kills the sidecar at launch (`Killed: 9`, "No matching profile found"). `codesign --verify` and notarization still pass.  ## Change  - New config option `bundle > macOS > sidecarEntitlements`: path to the entitlements file used to sign external binaries. - When the option is unset, external binaries are signed with the app's entitlements as before. Existing projects see no change. - `SignTarget` gets an `entitlements: SignEntitlements` field (`None`, `App`, `Sidecar`), so each sign target states which entitlements it gets. `sign()` no longer reads the app entitlements for every target. - Libraries, frameworks and the DMG are `SignEntitlements::None`. This restores the intent of #12423, whose `is_an_executable` condition was dropped in #14031. - Executables nested inside bundled frameworks keep the app's entitlements, as they did after #12423. This PR does not change them.  Example:  ```json "bundle": {   "externalBin": ["binaries/my-sidecar"],   "macOS": {     "entitlements": "Entitlements.plist",     "sidecarEntitlements": "Sidecar.entitlements.plist"   } } ```  An empty `<dict/>` plist signs the sidecars with no entitlements.  ## Alternatives considered  -
-
-- **Issue #16211** (2026-10-05): **[bug] macOS: sidecars (externalBin) are signed with the app's entitlements, so restricted entitlements make them crash at launch**
-  *Symptoms*: ### Describe the bug  On macOS, the bundler signs every external binary (`bundle > externalBin`) with the same entitlements file as the app (`bundle > macOS > entitlements`). There is no way to give a sidecar different entitlements, or none.  This breaks any app that combines a sidecar with a *restricted* entitlement, that is, one that must be authorized by a provisioning profile (iCloud, associated domains, push notifications, and so on). The embedded provisioning profile only authorizes the main executable of the bundle. A sidecar that claims the same entitlement has no matching profile, so AMFI kills it at launch. This is the log from a Developer ID signed and notarized build:  ``` amfid: Restricted entitlements not validated, bailing out. Error: Error Domain=AppleMobileFileIntegrityError Code=-413 "No matching profile found" amfid: /path/to/My.app/Contents/MacOS/my-sidecar not valid: Error Domain=AppleMobileFileIntegrityError Code=-413 "No matching profile found" ```  The process exits with `Killed: 9` (exit code 137). `codesign --verify --deep --strict` and notarization both pass, so nothing in the build reports the problem.  Tauri can also trigger this by itself: when the deep-link plugin config has `domains`, the CLI adds `com.apple.developer.associated-domains` to the entitlements (#14031), and that entitlement is then applied to every sidecar too.  Where it happens (tag `tauri-cli-v2.12.1`):  - `crates/tauri-bundler/src/bundle/macos/app.rs` adds each external binary 
-
-- **Issue #16209** (2026-10-04): **[bug] tauri-runtime 2.12 contains breaking changes to RuntimeHandle::primary_monitor which breaks compatibility with tauri 2.11.5**
-  *Symptoms*: ### Describe the bug  tauri-runtime 2.12.1 contains breaking changes to RuntimeHandle::primary_monitor which breaks compatibility with tauri 2.11.5.    ### Reproduction  1. Install tauri 2.11.5 with tauri-runtime 2.12.1. 2. compile  ### Expected behavior  No compile error.  ### Full `tauri info` output  ```text [✔] Environment     - OS: Mac OS 27.0.0 arm64 (X64)     ✔ Xcode Command Line Tools: installed     ✔ Xcode: 26.6     ✔ rustc: 1.100.0-beta.1 (e3feeb59c 2026-09-27)     ✔ cargo: 1.100.0-beta.1 (3d7cf6e93 2026-09-25)     ✔ rustup: 1.29.0 (28d1352db 2026-03-05)     ✔ Rust toolchain: beta-aarch64-apple-darwin (overridden by '/Users/anatawa12/RustroverProjects/vrc-get/rust-toolchain.toml')     - node: 24.18.0     - pnpm: 11.17.0     - yarn: 1.22.22     - npm: 11.16.0     - deno: deno 2.8.1  [-] Packages     - tauri 🦀: 2.11.5, (outdated, latest: 2.12.1)     - tauri-build 🦀: 2.7.1     - wry 🦀: 0.57.0     - tao 🦀: 0.37.1     - @tauri-apps/api  ⱼₛ: 2.11.1 (outdated, latest: 2.12.1)     - @tauri-apps/cli  ⱼₛ: 2.11.4 (outdated, latest: 2.12.1)  [-] Plugins     - tauri-plugin-single-instance 🦀: 2.4.5, (outdated, latest: 2.5.2)     - @tauri-apps/plugin-single-instance  ⱼₛ: not installed!     - tauri-plugin-dialog 🦀: 2.7.3, (outdated, latest: 2.8.1)     - @tauri-apps/plugin-dialog  ⱼₛ: not installed!     - tauri-plugin-fs 🦀: 2.5.2, (outdated, latest: 2.6.0)     - @tauri-apps/plugin-fs  ⱼₛ: not installed!  [-] App     - build-type: build     - CSP: unset     - frontendDist: out
-  **Post-Mortem & Fix Analysis**:
-  > can you share the error message?
-  > https://github.com/tauri-apps/tauri/pull/15630#issuecomment-5236309687 for the reference. Ideally this wouldn't be a problem in the future that we now lock tauri-runtime in tauri to minor versions now.  I don't think there's much we can do here, just update both at the same time 😥 (I think it had breakages in every minor but maybe not affecting tauri, just the implementer crates like the tauri-runtime-wry so nobody noticed)
-  > ahhh i remember, thanks. sucks but it is what it is
-
-- **Issue #16208** (2026-10-04): **[bug] NSIS: signed plugin copies are never used, so System.dll, nsDialogs.dll, StartMenu.dll and NSISdl.dll ship unsigned**
-  *Symptoms*: ### Describe the bug  With Windows signing configured (`bundle.windows.signCommand`), the NSIS bundler logs "Signing NSIS plugins" and signs copies of the stock plugins. The installer it produces still contains unsigned `System.dll`, `nsDialogs.dll`, `StartMenu.dll` and `NSISdl.dll`. Only `nsis_tauri_utils.dll` comes out signed.  The cause is in `crates/tauri-bundler/src/bundle/windows/nsis/mod.rs` (tauri-bundler 2.9.2, as shipped with @tauri-apps/cli 2.11.2):  1. It copies `Plugins/x86-unicode` from the NSIS toolset into `<output>/Plugins` (around line 244). 2. It signs the files in `NSIS_PLUGIN_FILES` inside that copy (around line 646). 3. It hands the copy to makensis through an environment variable: `nsis_cmd.env("NSISPLUGINS", plugins_path)` (line 665).  makensis does not read `NSISPLUGINS`. The name does not appear anywhere in the NSIS 3.11 source. Default plugins are loaded only from `${NSISDIR}/Plugins/<target>` (`Source/build.cpp`, around line 3766 in v311), so the unsigned originals in the toolset are the ones that get packed. `nsis_tauri_utils.dll` is unaffected because `installer.nsi` adds its folder explicitly with `!addplugindir "${ADDITIONALPLUGINSPATH}"`, and when signing that path points at the signed copy.  We observed this bundling on macOS with NSIS 3.11. From reading the source, Windows looks the same, since makensis.exe there also takes its default plugins from its own toolset folder, but we have not run it on Windows.  ### Reproduction  1. Configure `bu
-  **Post-Mortem & Fix Analysis**:
-  > > (tauri-bundler 2.9.2, as shipped with @tauri-apps/cli 2.11.2):  That is crazy unlucky. It was fixed in cli 2.11.3 via https://github.com/tauri-apps/tauri/pull/15422  Please re-test it with a newer version of the cli. If it still has issues we can re-open this issue.
-
-- **Issue #16195** (2026-10-07): **fix(api): return awaitable cleanup from combined event listeners**
-  *Symptoms*: ### What kind of change does this PR introduce?  Bug fix.  The combined cleanup functions returned by `Webview.onDragDropEvent`, `Window.onDragDropEvent` and `Window.onFocusChanged` in `@tauri-apps/api` called each inner unlisten function but discarded the promises they return. The cleanup returned `undefined`, so a rejecting inner unlisten (e.g. the listener was already removed, or the `plugin:event|unlisten` invoke failed) surfaced as an unhandled promise rejection — commonly on React unmount, when cleanup races listener registration or teardown.  ### What is the current behavior?  ```ts return () => {   unlistenDragEnter()   unlistenDragDrop()   unlistenDragOver()   unlistenDragLeave() } ```  Callers have nothing to `await` or `.catch()`. See #16194.  ### What is the new behavior?  Each combined cleanup is now `async` and awaits all inner unlistens:  ```ts return async () => {   await Promise.all([     unlistenDragEnter(),     unlistenDragDrop(),     unlistenDragOver(),     unlistenDragLeave()   ]) } ```  Affected APIs:  - `Webview.onDragDropEvent` (`packages/api/src/webview.ts`) — 4 listeners - `Window.onDragDropEvent` (`packages/api/src/window.ts`) — 4 listeners - `Window.onFocusChanged` (`packages/api/src/window.ts`) — 2 listeners  A grep of `packages/api/src` for other `return () => { unlistenX(); ... }` combined cleanups found no other instances.  ### Backwards compatibility  `UnlistenFn` is typed `() => void`, so an async function stays assignable and the public type
-  **Post-Mortem & Fix Analysis**:
-  > <!-- Covector Action --> <!-- Covector Action --> ### Package Changes Through a3f2e495746cd2778b37d9a15db385dc6d6fc42a There are 1 changes which include @tauri-apps/api with patch  <details> <summary><i>Planned Package Versions</i></summary>  The following package releases are the planned based on the context of changes in this pull request. | package | current | next |   |----|----|----| | @tauri-apps/api | 2.12.1 | 2.12.2 |  </details>  [Add another change file through the GitHub UI by following this link.](https://github.com/alessandrorodi/tauri/new/fix/api-composite-unlisten?filename=.changes/change-pr-16195.md&value=---%0A%22@tauri-apps/api%22:%20patch%0A%22tauri-utils%22:%20patch%0A%22tauri-macos-sign%22:%20patch%0A%22tauri-bundler%22:%20patch%0A%22tauri-runtime%22:%20patch%0A%22tauri-runtime-wry%22:%20patch%0A%22tauri-codegen%22:%20patch%0A%22tauri-macros%22:%20patch%0A%22tauri-plugin%22:%20patch%0A%22tauri-build%22:%20patch%0A%22tauri%22:%20patch%0A%22@tauri-apps/cli%22:%20patc
+- **Issue #16333** (2026-10-19): **fix(nsis): correct the chooseHowToInstall language key**
+  *Symptoms*: 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2727,1677 +2241,708 @@ impl FromStr for RemoteUrlPattern {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a225a18e` (2026-10-07)
-**Commit Message**: fix: panic on repeated `once` listener events (#16222)
+### Incident Patch 1: `d6de22ef` (2026-10-19)
+**Commit Message**: fix(tauri-build): skip the missing capabilities dir watch for inline capabilities (#16326)
 
-* fix: panic on repeated `once` listener events
+Cargo treats a missing `rerun-if-changed` path as changed, so an app that
+lists its capabilities in `app > security > capabilities` and has no
+`capabilities` directory re-ran the build script and recompiled on every
+build. A non-empty list only selects the capability files it references by
+identifier, so creating the directory alone can't change the selection.
+Keep the watch for an empty list, where every file in the directory is
+selected.
 
-* Add change file
+Closes #16319
 
-* Add unit test
-
-Co-authored-by: goosewobbler <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: goosewobbler <[REDACTED_EMAIL]>
-
-**File**: `.changes/once-listener-panic.md` (added, +5/-0)
+**File**: `.changes/fix-capabilities-rerun-missing-dir.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
-+'tauri': 'patch:bug'
++'tauri-build': 'patch:bug'
 +---
 +
-+Fix a panic when a `once` event listener receives multiple events before its queued removal is processed.
++Don't watch the `capabilities` directory when it doesn't exist and the configuration lists capabilities in `app > security > capabilities`. Cargo treats a missing watched path as changed, so these apps re-ran the build script and recompiled on every build.
 ```
 
-**File**: `crates/tauri/src/event/listener.rs` (modified, +43/-6)
+**File**: `crates/tauri-build/src/acl.rs` (modified, +7/-1)
 ```diff
-@@ -169,12 +169,12 @@ impl Listeners {
-     let handler = Cell::new(Some(handler));
- 
-     self.listen(event, target, move |event| {
--      let id = event.id;
--      self_.unlisten(id);
--      let handler = handler
--        .take()
--        .expect("attempted to call handler more than once");
--      handler(event);
-+      // This can potentially be called multiple times if the `unlisten` was queued,
-+      // see https://github.com/tauri-apps/tauri/issues/16214
-+      if let Some(handler) = handler.take() {
-+        self_.unlisten(event.id);
-+        handler(event);
-+      }
-     })
-   }
- 
-@@ -439,6 +439,43 @@ mod test {
-       .unwrap();
-   }
- 
-+  #[test]
-+  fn once_survives_a_replayed_queued_emit() {
-+    use std::sync::atomic::AtomicBool;
-+
-+    let listeners = Listeners::default();
-+    let event = crate::EventName::new("event".to_owned()).unwrap();
-+
-+    // Since the listeners are stored in a HashMap,
-+    // use more listens to make it more likely to have one of these to happen before the `once` handler later
-+    for _ in 0..100 {
-+      let listeners_clone = listeners.clone();
-+      let event_clone = event.clone();
-+      let emitted = AtomicBool::new(false);
-+      listeners.listen(event.clone(), EventTarget::Any, move |_| {
-+        // The listener lock is held while handlers run, so this emit is queued.
-+        if !emitted.swap(true, Ordering::SeqCst) {
-+          listeners_clone
-+            .emit(EmitArgs::new(event_clone.as_str_event(), &()).unwrap())
-+            .unwrap();
-+        }
-+      });
+@@ -449,7 +449,13 @@ pub fn build(
+     let capabilities_dir = std::env::current_dir()
+       .context("resolve current dir for capabilities watch path")?
+       .join("capabilities");
+-    println!("cargo:rerun-if-changed={}", capabilities_dir.display());
++    // For the same reason, skip the watch when the directory doesn't exist and the
++    // configuration lists capabilities in `app > security > capabilities`: that list
++    // only selects the files it references by identifier, so creating the directory
++    // alone doesn't change the selected capabilities.
++    if capabilities_dir.exists() || config.app.security.capabilities.is_empty() {
++      println!("cargo:rerun-if-changed={}", capabilities_dir.display());
 +    }
-+
-+    let calls = Arc::new(AtomicU32::new(0));
-+    let calls_clone = calls.clone();
-+
-+    listeners.once(event.clone(), EventTarget::Any, move |_| {
-+      calls_clone.fetch_add(1, Ordering::SeqCst);
-+    });
-+
-+    listeners
-+      .emit(EmitArgs::new(event.as_str_event(), &()).unwrap())
-+      .unwrap();
-+
-+    assert_eq!(calls.load(Ordering::SeqCst), 1);
-+  }
-+
-   #[test]
-   fn listeners_removed_on_webview_close() {
-     let listeners = Listeners::default();
+     tauri_utils::acl::build::parse_capabilities("./capabilities/**/*")?
+   };
+   // the capabilities that are actually resolved at compile time are the ones returned by
 ```
 
 ---
 
-### Incident Patch 2: `a916205d` (2026-10-07)
-**Commit Message**: fix(api): return awaitable cleanup from combined event listeners (#16195)
+### Incident Patch 2: `5a3cbfcd` (2026-10-14)
+**Commit Message**: fix(macos-codesign): Inline apple-codesign code (#16279)
 
-**File**: `.changes/fix-api-composite-unlisten.md` (added, +5/-0)
+* init
+
+* cleanup
+
+* fix license header check
+
+* fix license header check
+
+* fix license header check
+
+* fix license header check
+
+* fmt
+
+* fix(macos-sign): correct license notices for vendored apple-codesign code
+
+The vendored apple-codesign files carried an invented copyright line
+("2018-2026 apple-codesign-rs developers"). Upstream files have no
+copyright line, only the standard MPL-2.0 notice, and the crate author
+is Gregory Szorc. MPL-2.0 section 3.4 forbids altering existing license
+notices, so the files now keep the upstream notice verbatim, followed by
+an SPDX identifier and a note naming the source (apple-codesign 0.29.0),
+the copyright holders and the fact that Tauri modified the files.
+
+MPL-2.0 is a per-file copyleft license. Section 3.3 explicitly allows
+combining MPL-covered files with code under other licenses in a "Larger
+Work", so vendoring needs no permission from upstream. The obligations
+only apply to the vendored files: they stay MPL-2.0 (including our
+modifications), keep their notices, and their source stays available,
+which the public repository already provides. The rest of
+tauri-macos-sign remains Ap
+
+**File**: `.changes/apple-codesign.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
-+"@tauri-apps/api": patch:bug
++tauri-macos-sign: patch:deps
 +---
 +
-+Return an awaitable cleanup function from `Window.onDragDropEvent`, `Window.onFocusChanged` and `Webview.onDragDropEvent` so rejections from the inner unlisten calls can be handled instead of surfacing as unhandled promise rejections.
++**Breaking Change:** Temporarily inlined the code we need from apple-codesign-rs until its next release to unblock important dependency updates. Technically this is a breaking change to the `CertificateProfile` enum re-export and the `Error::FailedToCreateSelfSignedCertificate` enum variant.
 ```
 
-**File**: `crates/tauri/scripts/bundle.global.js` (modified, +1/-1)
+**File**: `.scripts/ci/check-license-header.js` (modified, +11/-0)
 ```diff
-@@ -1 +1 @@
--var __TAURI_IIFE__=function(e){"use strict";function n(e,n,t,i){if("a"===t&&!i)throw new TypeError("Private accessor was defined without a getter");if("function"==typeof n?e!==n||!i:!n.has(e))throw new TypeError("Cannot read private member from an object whose class did not declare it");return"m"===t?i:"a"===t?i.call(e):i?i.value:n.get(e)}function t(e,n,t,i,r){if("m"===i)throw new TypeError("Private method is not writable");if("a"===i&&!r)throw new TypeError("Private accessor was defined without a setter");if("function"==typeof n?e!==n||!r:!n.has(e))throw new TypeError("Cannot write private member to an object whose class did not declare it");return"a"===i?r.call(e,t):r?r.value=t:n.set(e,t),t}var i,r,s,a,l;"function"==typeof SuppressedError&&SuppressedError;const o="__TAURI_TO_IPC_KEY__";function u(e,n=!1){return window.__TAURI_INTERNALS__.transformCallback(e,n)}class c{constructor(e){i.set(this,void 0),r.set(this,0),s.set(this,[]),a.set(this,void 0),t(this,i,e||(()=>{}),"f"),this.id=u(e=>{const l=e.index;if("end"in e)return void(l==n(this,r,"f")?this.cleanupCallback():t(this,a,l,"f"));const o=e.message;if(l==n(this,r,"f")){for(n(this,i,"f").call(this,o),t(this,r,n(this,r,"f")+1,"f");n(this,r,"f")in n(this,s,"f");){const e=n(this,s,"f")[n(this,r,"f")];n(this,i,"f").call(this,e),delete n(this,s,"f")[n(this,r,"f")],t(this,r,n(this,r,"f")+1,"f")}n(this,r,"f")===n(this,a,"f")&&this.cleanupCallback()}else n(this,s,"f")[l]=o})}cleanupCallback(){window.__TAURI_INTERNALS__.unregisterCallback(this.id)}set onmessage(e){t(this,i,e,"f")}get onmessage(){return n(this,i,"f")}[(i=new WeakMap,r=new WeakMap,s=new WeakMap,a=new WeakMap,o)](){return`__CHANNEL__:${this.id}`}toJSON(){return this[o]()}}class d{constructor(e,n,t){this.plugin=e,this.event=n,this.channelId=t}async unregister(){return h(`plugin:${this.plugin}|remove_listener`,{event:this.event,channelId:this.channelId})}}async function p(e,n,t){const i=new c(t);try{return await h(`plugin:${e}|register_listener`,{event:n,handler:i}),new d(e,n,i.id)}catch{return await h(`plugin:${e}|registerListener`,{event:n,handler:i}),new d(e,n,i.id)}}async function h(e,n={},t){return window.__TAURI_INTERNALS__.invoke(e,n,t)}class w{get rid(){return n(this,l,"f")}constructor(e){l.set(this,void 0),t(this,l,e,"f")}async close(){return h("plugin:resources|close",{rid:this.rid})}async[(l=new WeakMap,Symbol.asyncDispose)](){await this.close()}}var _=Object.freeze({__proto__:null,Channel:c,PluginListener:d,Resource:w,SERIALIZE_TO_IPC_FN:o,addPluginListener:p,checkPermissions:async function(e){return h(`plugin:${e}|check_permissions`)},convertFileSrc:function(e,n="asset"){return window.__TAURI_INTERNALS__.convertFileSrc(e,n)},invoke:h,isTauri:function(){return!!(globalThis||window).isTauri},requestPermissions:async function(e){return h(`plugin:${e}|request_permissions`)},transformCallback:u});class y extends w{constructor(e){super(e)}static async new(e,n,t){return h("plugin:image|new",{rgba:e,width:n,height:t}).then(e=>new y(e))}static async fromBytes(e){return h("plugin:image|from_bytes",{bytes:e}).then(e=>new y(e))}static async fromPath(e){return h("plugin:image|from_path",{path:e}).then(e=>new y(e))}async rgba(){return h("plugin:image|rgba",{rid:this.rid}).then(e=>new Uint8Array(e))}async size(){return h("plugin:image|size",{rid:this.rid})}}function g(e){return null==e?null:"string"==typeof e?e:e instanceof y?e.rid:e}var b,m=Object.freeze({__proto__:null,Image:y,transformImage:g});!function(e){e.Nsis="nsis",e.Msi="msi",e.Deb="deb",e.Rpm="rpm",e.AppImage="appimage",e.App="app"}(b||(b={}));var v=Object.freeze({__proto__:null,get BundleType(){return b},defaultWindowIcon:async function(){return h("plugin:app|default_window_icon").then(e=>e?new y(e):null)},exit:async function(e=0){return h("plugin:app|exit",{code:e})},fetchDataStoreIdentifiers:async function(){return h("plugin:app|fetch_data_store_identifiers")},getBundleType:async function(){return h("plugin:app|bundle_type")},getIdentifier:async function(){return h("plugin:app|identifier")},getName:async function(){return h("plugin:app|name")},getTauriVersion:async function(){return h("plugin:app|tauri_version")},getVersion:async function(){return h("plugin:app|version")},hide:async function(){return h("plugin:app|app_hide")},onBackButtonPress:async function(e){return p("app","back-button",e)},removeDataStore:async function(e){return h("plugin:app|remove_data_store",{uuid:e})},setDockVisibility:async function(e){return h("plugin:app|set_dock_visibility",{visible:e})},setTheme:async function(e){return h("plugin:app|set_app_theme",{theme:e})},show:async function(){return h("plugin:app|app_show")},supportsMultipleWindows:async function(){return h("plugin:app|supports_multiple_windows")}});class f{constructor(...e){this.type="Logical",1===e.length?"Logical"in e[0]?(this.width=e[0].Logical.width,this.height=e[0].Logical.height):(this.width=e[0].width,this.height=e[0].height):(this.width=e[0],this.height=e[1])}toPhysical(e){return 
-```
-
-**File**: `packages/api/src/webview.ts` (modified, +7/-5)
-```diff
-@@ -819,11 +819,13 @@ class Webview {
-       }
-     )
+@@ -15,6 +15,12 @@ const bundlerLicense =
+   '// Copyright 2016-2019 Cargo-Bundle developers <https://github.com/burtonageo/cargo-bundle>'
+ const denoLicense =
+   '// Copyright 2018-2023 the Deno authors. All rights reserved. MIT license.'
++// files vendored from apple-codesign keep their original MPL-2.0 notice
++const mplLicense =
++  '// This Source Code Form is subject to the terms of the Mozilla Public'
++const mplVendored = [
++  path.join('crates', 'tauri-macos-sign', 'src', 'apple_codesign')
++]
  
--    return () => {
--      unlistenDragEnter()
--      unlistenDragDrop()
--      unlistenDragOver()
--      unlistenDragLeave()
-+    return async () => {
-+      await Promise.all([
-+        unlistenDragEnter(),
-+        unlistenDragDrop(),
-+        unlistenDragOver(),
-+        unlistenDragLeave()
-+      ])
-     }
-   }
- }
+ const extensions = ['.rs', '.js', '.ts', '.yml', '.swift', '.kt']
+ const ignore = [
+@@ -40,6 +46,11 @@ async function checkFile(file) {
+     let contents = ``
+     let i = 0
+     for await (let line of rl) {
++      // accept vendored apple-codesign code under the MPL-2.0 license
++      if (line === mplLicense && mplVendored.some((d) => file.includes(d))) {
++        return false
++      }
++
+       // ignore empty lines, allow shebang and bundler license
+       if (
+         line.length === 0
 ```
 
-**File**: `packages/api/src/window.ts` (modified, +9/-8)
+**File**: `Cargo.lock` (modified, +27/-932)
 ```diff
-@@ -2457,11 +2457,13 @@ class Window {
-       }
-     )
+@@ -269,142 +269,6 @@ dependencies = [
+  "tauri-plugin-sample",
+ ]
  
--    return () => {
--      unlistenDrag()
--      unlistenDrop()
--      unlistenDragOver()
--      unlistenCancel()
-+    return async () => {
-+      await Promise.all([
-+        unlistenDrag(),
-+        unlistenDrop(),
-+        unlistenDragOver(),
-+        unlistenCancel()
-+      ])
-     }
-   }
+-[[package]]
+-name = "apple-bundles"
+-version = "0.21.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "c0f40bb8f844cec39fa3aceae717808c2ac3d2b6c474a9dffbeba07a4a945d10"
+-dependencies = [
+- "anyhow",
+- "plist",
+- "simple-file-manifest",
+- "walkdir",
+-]
+-
+-[[package]]
+-name = "apple-codesign"
+-version = "0.29.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f24e9ebdb70a2aee3ca1cea217009fb50776955f0d7678c31d22e48c1524667f"
+-dependencies = [
+- "anyhow",
+- "apple-bundles",
+- "apple-flat-package",
+- "apple-xar",
+- "base64 0.22.1",
+- "bcder",
+- "bitflags 2.13.0",
+- "bytes",
+- "chrono",
+- "clap",
+- "cryptographic-message-syntax",
+- "der",
+- "dialoguer 0.11.0",
+- "difference",
+- "digest 0.10.7",
+- "dirs 5.0.1",
+- "elliptic-curve",
+- "env_logger 0.11.11",
+- "figment",
+- "filetime",
+- "glob",
+- "goblin",
+- "hex",
+- "log",
+- "md-5",
+- "minicbor",
+- "num-traits",
+- "object 0.36.7",
+- "oid-registry",
+- "once_cell",
+- "p12",
+- "p256",
+- "pem",
+- "pkcs1",
+- "pkcs8",
+- "plist",
+- "rand 0.8.6",
+- "rasn",
+- "rayon",
+- "regex",
+- "reqwest 0.12.28",
+- "ring",
+- "rsa",
+- "scroll",
+- "security-framework 2.11.1",
+- "security-framework-sys",
+- "semver",
+- "serde",
+- "serde_json",
+- "serde_yaml",
+- "sha2 0.10.8",
+- "signature",
+- "simple-file-manifest",
+- "spake2",
+- "spki",
+- "subtle",
+- "tempfile",
+- "thiserror 2.0.12",
+- "tokio",
+- "tungstenite 0.24.0",
+- "uuid",
+- "walkdir",
+- "widestring",
+- "windows-sys 0.59.0",
+- "x509",
+- "x509-certificate",
+- "xml-rs",
+- "yasna",
+- "zeroize",
+- "zip 2.4.2",
+- "zip_structs",
+-]
+-
+-[[package]]
+-name = "apple-flat-package"
+-version = "0.20.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "9c9d5a1fd8af4a376cc33d7e816a13f8ce127d52101f5dbc8061fb595397bea0"
+-dependencies = [
+- "apple-xar",
+- "cpio-archive",
+- "flate2",
+- "scroll",
+- "serde",
+- "serde-xml-rs",
+- "thiserror 2.0.12",
+-]
+-
+-[[package]]
+-name = "apple-xar"
+-version = "0.20.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "9631e781df71ebd049d7b4988cdae88712324cb20eb127fd79026bc8f1335d93"
+-dependencies = [
+- "base64 0.22.1",
+- "bcder",
+- "bzip2",
+- "chrono",
+- "cryptographic-message-syntax",
+- "digest 0.10.7",
+- "flate2",
+- "log",
+- "md-5",
+- "rand 0.8.6",
+- "reqwest 0.12.28",
+- "scroll",
+- "serde",
+- "serde-xml-rs",
+- "sha1 0.10.6",
+- "sha2 0.10.8",
+- "signature",
+- "thiserror 2.0.12",
+- "url",
+- "x509-certificate",
+- "xml-rs",
+- "xz2",
+-]
+-
+ [[package]]
+ name = "ar"
+ version = "0.9.0"
+@@ -416,9 +280,6 @@ name = "arbitrary"
+ version = "1.4.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "dde20b3d026af13f561bdd0f15edf01fc734f0dafcedbaf42bba506a9517f223"
+-dependencies = [
+- "derive_arbitrary",
+-]
  
-@@ -2499,9 +2501,8 @@ class Window {
-         handler({ ...event, payload: false })
-       }
-     )
--    return () => {
--      unlistenFocus()
--      unlistenBlur()
-+    return async () => {
-+      await Promise.all([unlistenFocus(), unlistenBlur()])
-     }
-   }
+ [[package]]
+ name = "arg_enum_proc_macro"
+@@ -465,44 +326,6 @@ dependencies = [
+  "stable_deref_trait",
+ ]
  
+-[[package]]
+-name = "asn1-rs"
+-version = "0.6.2"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "5493c3bedbacf7fd7382c6346bbd66687d12bbaad3a89a2d2c303ee6cf20b048"
+-dependencies = [
+- "asn1-rs-derive",
+- "asn1-rs-impl",
+- "displaydoc",
+- "nom 7.1.3",
+- "num-traits",
+- "rusticata-macros",
+- "thiserror 1.0.69",
+-]
+-
+-[[package]]
+-name = "asn1-rs-derive"
+-version = "0.5.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "965c2d33e53cb6b267e148a4cb0760bc01f4904c1cd4bb4002a085bb016d1490"
+-dependencies = [
+- "proc-macro2",
+- "quote",
+- "syn 2.0.117",
+- "synstructure",
+-]
+-
+-[[package]]
+-name = "asn1-rs-impl"
+-version = "0.2.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "7b18050c2cd6fe86c3a76584ef5e0baf286d038cda203eb6223df2cc413565f7"
+-dependencies = [
+- "proc-macro2",
+- "quote",
+- "syn 2.0.117",
+-]
+-
+ [[package]]
+ name = "async-trait"
+ version = "0.1.88"
+@@ -537,15 +360,6 @@ dependencies = [
+  "system-deps",
+ ]
+ 
+-[[package]]
+-name = "atomic"
+-version = "0.6.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "8d818003e740b63afc82337e3160717f4f63078720a810b7b903e70a5d1d2994"
+-dependencies = [
+- "bytemuck",
+-]
+-
+ [[package]]
+ name = "atomic-waker"
+ version = "1.1.2"
+@@ -810,28 +624,6 @@ dependencies = [
+  "no_std_io2",
+ ]
+ 
+-[[package]]
+-name = "bitvec"
+-version = "1.0.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "1bc2832c24239b0141d5674bb9174f9d68a8b5b3f2753311927c172ca46f7e9c"
+-dependencies = [
+- "funty",
+- "radium",
+- "tap",
+- "wyz",
+-]
+-
+-[[package]]
+-name = "bitvec-nom2"
+-version = "0.2.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d988fcc40055ceaa85edc55875a08f8abd29018582647fd82ad6128dba14a5f0"
+-dependencies = [
+- "bitvec",
+- "nom 7.1.3",
+-]
+-
+ [[package]]
+ name = "blake2"
+ version = "0.10.6"
+@@ -996,12 +788,6 @@ dependencies = [
+  "serde",
+ ]
+ 
+-[[package]]
+-name = "bytesize"
+-version = "1.3.0"
+-source = "registry
 ```
 
----
-
-### Incident Patch 3: `61285f6f` (2026-10-04)
-**Commit Message**: fix(tauri-utils): doctests (#16142)
-
-* fix(tauri-utils): doctests
-
-* update config schemas [skip ci]
-
-* reuse tauri fixture
-
-* update schemas
-
-**File**: `.github/workflows/test-core.yml` (modified, +2/-2)
+**File**: `crates/tauri-macos-sign/Cargo.toml` (modified, +10/-2)
 ```diff
-@@ -122,8 +122,8 @@ jobs:
-         run: echo "${{ runner.tool_cache }}/cross/bin" >> $GITHUB_PATH
+@@ -2,7 +2,7 @@
+ name = "tauri-macos-sign"
+ version = "2.4.1"
+ authors = ["Tauri Programme within The Commons Conservancy"]
+-license = "Apache-2.0 OR MIT"
++license = "(Apache-2.0 OR MIT) AND MPL-2.0"
+ keywords = ["codesign", "signing", "macos", "ios", "tauri"]
+ repository = "https://github.com/tauri-apps/tauri"
+ description = "Code signing utilities for macOS and iOS apps"
+@@ -23,10 +23,18 @@ plist = "1"
+ rand = "0.10"
+ dirs = "7"
+ log = { version = "0.4.21", features = ["kv"] }
+-apple-codesign = { version = "0.29", default-features = false }
++# apple-codesign = { version = "0.29", default-features = false }
+ chrono = "0.4"
+ p12 = "0.6"
+ base64 = "0.23"
  
-       - name: test tauri-utils
--        # Using --lib --bins --tests to skip doc tests
--        run: ${{ matrix.platform.cargo }} ${{ matrix.platform.command }} --target ${{ matrix.platform.target }} ${{ matrix.features.args }} --lib --bins --tests --manifest-path crates/tauri-utils/Cargo.toml
-+        # `build` only compiles the lib and bins by default, so also build the tests on mobile
-+        run: ${{ matrix.platform.cargo }} ${{ matrix.platform.command }} --target ${{ matrix.platform.target }} ${{ matrix.features.args }} ${{ matrix.platform.command == 'build' && '--lib --bins --tests' || '' }} --manifest-path crates/tauri-utils/Cargo.toml
- 
-       - name: run acl-tests
-         if: ${{ matrix.features.key != 'no-default' && matrix.platform.command == 'test' }}
++# apple-codesign
++rsa = "0.9"
++rand08 = { package = "rand", version = "0.8" }
++hex = "0.4"
++bcder = "0.7"
++bytes = "1"
++pkcs8 = { version = "0.10.2", features = ["alloc", "std"] }
++
+ [lints]
+ workspace = true
 ```
 
-**File**: `crates/tauri-cli/config.schema.json` (modified, +3/-3)
+**File**: `crates/tauri-macos-sign/src/apple_codesign/README.md` (added, +19/-0)
 ```diff
-@@ -170,7 +170,7 @@
-       "type": "object",
-       "properties": {
-         "windows": {
--          "description": "The app windows configuration.\n\n ## Example:\n\n To create a window at app startup\n\n ```json\n {\n   \"app\": {\n     \"windows\": [\n       { \"width\": 800, \"height\": 600 }\n     ]\n   }\n }\n ```\n\n If not specified, the window's label (its identifier) defaults to \"main\",\n you can use this label to get the window through\n `app.get_webview_window` in Rust or `WebviewWindow.getByLabel` in JavaScript\n\n When working with multiple windows, each window will need an unique label\n\n ```json\n {\n   \"app\": {\n     \"windows\": [\n       { \"label\": \"main\", \"width\": 800, \"height\": 600 },\n       { \"label\": \"secondary\", \"width\": 800, \"height\": 600 }\n     ]\n   }\n }\n ```\n\n You can also set `create` to false and use this config through the Rust APIs\n\n ```json\n {\n   \"app\": {\n     \"windows\": [\n       { \"create\": false, \"width\": 800, \"height\": 600 }\n     ]\n   }\n }\n ```\n\n and use it like this\n\n ```rust\n tauri::Builder::default()\n   .setup(|app| {\n     tauri::WebviewWindowBuilder::from_config(app.handle(), &app.config().app.windows[0])?.build()?;\n     Ok(())\n   });\n ```",
-+          "description": "The app windows configuration.\n\n ## Example:\n\n To create a window at app startup\n\n ```json\n {\n   \"app\": {\n     \"windows\": [\n       { \"width\": 800, \"height\": 600 }\n     ]\n   }\n }\n ```\n\n If not specified, the window's label (its identifier) defaults to \"main\",\n you can use this label to get the window through\n `app.get_webview_window` in Rust or `WebviewWindow.getByLabel` in JavaScript\n\n When working with multiple windows, each window will need an unique label\n\n ```json\n {\n   \"app\": {\n     \"windows\": [\n       { \"label\": \"main\", \"width\": 800, \"height\": 600 },\n       { \"label\": \"secondary\", \"width\": 800, \"height\": 600 }\n     ]\n   }\n }\n ```\n\n You can also set `create` to false and use this config through the Rust APIs\n\n ```json\n {\n   \"app\": {\n     \"windows\": [\n       { \"create\": false, \"width\": 800, \"height\": 600 }\n     ]\n   }\n }\n ```\n\n and use it like this\n\n ```rust,no_run\n tauri::Builder::default()\n   .setup(|app| {\n     tauri::WebviewWindowBuilder::from_config(app.handle(), &app.config().app.windows[0])?.build()?;\n     Ok(())\n   });\n ```",
-           "default": [],
-           "type": "array",
-           "items": {
-@@ -224,7 +224,7 @@
-           "type": "boolean"
-         },
-         "appDirectoriesOverride": {
--          "description": "Overrides the directories returned by the `app_*_dir` path APIs (`app_config_dir`, `app_data_dir`,\n `app_local_data_dir`, `app_cache_dir` and `app_log_dir`) and the matching `$APPCONFIG`, `$APPDATA`,\n `$APPLOCALDATA`, `$APPCACHE` and `$APPLOG` base directory variables.\n\n This is useful for portable apps that keep all of their data next to the executable,\n and for apps that want their app directories in a location they choose, such as `$DOCUMENT/my-app`.\n Everything that resolves paths through these APIs follows the override, including Tauri itself\n (the default webview data directory on Windows and Linux) and plugins,\n so the storage locations do not need to be configured one by one.\n The only exception is a window's `dataDirectory` config, which is not affected.\n\n It can also isolate the data of a development build from an installed version of the app,\n though a distinct `identifier` for development builds achieves that while keeping the production directory layout.\n\n The value is either a single path used as the root of every app directory\n (config, data and local data resolve to the root itself, cache to `<root>/caches` and log to `<root>/logs`),\n or an object that overrides individual directories (`config`, `data`, `localData`, `cache` and `log`),\n each resolving to exactly the configured path. Directories that are not listed in the object keep their default location.\n\n Each path is resolved as follows:\n\n - A path starting with a base directory variable is resolved relative to that directory.\n   The supported variables are `$AUDIO`, `$CACHE`, `$CONFIG`, `$DATA`, `$LOCALDATA`, `$DESKTOP`, `$DOCUMENT`,\n   `$DOWNLOAD`, `$HOME`, `$PICTURE`, `$PUBLIC`, `$TEMP` and `$VIDEO`.\n   `..` components are kept, so `$DATA/../my-app` refers to a sibling of the data directory.\n - An absolute path is used as is.\n - Any other path is resolved relative to the directory containing the executable,\n   which must be writable, see the platform-specific notes below.\n\n ## Examples\n\n Keep all data in an `app-data` folder next to the executable, for a portable build:\n\n ```json\n {\n   \"app\": {\n     \"appDirectoriesOverride\": \"./app-data\"\n   }\n }\n ```\n\n Only move the logs and the cache:\n\n ```json\n {\n   \"app\": {\n     \"appDirectoriesOverride\": {\n       \"log\": \"$DATA/my-app/logs\",\n       \"cache\"
+@@ -0,0 +1,19 @@
++# apple_codesign
++
++This directory contains code vendored from the [`apple-codesign`](https://crates.io/crates/apple-codesign)
++crate, version 0.29.0, part of [apple-platform-rs](https://github.com/indygreg/apple-platform-rs).
++Copyright Gregory Szorc and contributors.
++
++Only the self-signed code signing certificate generation used by `tauri-macos-sign` was kept,
++the rest of the crate was removed. The upstream crate has not been released since 0.29.0 and
++depending on it blocked dependency updates elsewhere in Tauri.
++
++## License
++
++The files vendored from upstream (`certificate.rs` and `error.rs`) are licensed under the
++[Mozilla Public License 2.0](https://mozilla.org/MPL/2.0/), as in the original crate, and each
++keeps its original MPL-2.0 notice. Modifications made to those files are also MPL-2.0.
++
++`mod.rs` and the rest of `tauri-macos-sign` are licensed under Apache-2.0 OR MIT. MPL-2.0
++allows its files to be combined with code under other licenses in a larger work, so the crate
++as a whole is `(Apache-2.0 OR MIT) AND MPL-2.0`.
 ```
 
-**File**: `crates/tauri-schema-generator/schemas/config.schema.json` (modified, +3/-3)
+**File**: `crates/tauri-macos-sign/src/apple_codesign/certificate.rs` (added, +870/-0)
 ```diff
-@@ -170,7 +170,7 @@
-       "type": "object",
-       "properties": {
-         "windows": {
--          "description": "The app windows configuration.\n\n ## Example:\n\n To create a window at app startup\n\n ```json\n {\n   \"app\": {\n     \"windows\": [\n       { \"width\": 800, \"height\": 600 }\n     ]\n   }\n }\n ```\n\n If not specified, the window's label (its identifier) defaults to \"main\",\n you can use this label to get the window through\n `app.get_webview_window` in Rust or `WebviewWindow.getByLabel` in JavaScript\n\n When working with multiple windows, each window will need an unique label\n\n ```json\n {\n   \"app\": {\n     \"windows\": [\n       { \"label\": \"main\", \"width\": 800, \"height\": 600 },\n       { \"label\": \"secondary\", \"width\": 800, \"height\": 600 }\n     ]\n   }\n }\n ```\n\n You can also set `create` to false and use this config through the Rust APIs\n\n ```json\n {\n   \"app\": {\n     \"windows\": [\n       { \"create\": false, \"width\": 800, \"height\": 600 }\n     ]\n   }\n }\n ```\n\n and use it like this\n\n ```rust\n tauri::Builder::default()\n   .setup(|app| {\n     tauri::WebviewWindowBuilder::from_config(app.handle(), &app.config().app.windows[0])?.build()?;\n     Ok(())\n   });\n ```",
-+          "description": "The app windows configuration.\n\n ## Example:\n\n To create a window at app startup\n\n ```json\n {\n   \"app\": {\n     \"windows\": [\n       { \"width\": 800, \"height\": 600 }\n     ]\n   }\n }\n ```\n\n If not specified, the window's label (its identifier) defaults to \"main\",\n you can use this label to get the window through\n `app.get_webview_window` in Rust or `WebviewWindow.getByLabel` in JavaScript\n\n When working with multiple windows, each window will need an unique label\n\n ```json\n {\n   \"app\": {\n     \"windows\": [\n       { \"label\": \"main\", \"width\": 800, \"height\": 600 },\n       { \"label\": \"secondary\", \"width\": 800, \"height\": 600 }\n     ]\n   }\n }\n ```\n\n You can also set `create` to false and use this config through the Rust APIs\n\n ```json\n {\n   \"app\": {\n     \"windows\": [\n       { \"create\": false, \"width\": 800, \"height\": 600 }\n     ]\n   }\n }\n ```\n\n and use it like this\n\n ```rust,no_run\n tauri::Builder::default()\n   .setup(|app| {\n     tauri::WebviewWindowBuilder::from_config(app.handle(), &app.config().app.windows[0])?.build()?;\n     Ok(())\n   });\n ```",
-           "default": [],
-           "type": "array",
-           "items": {
-@@ -224,7 +224,7 @@
-           "type": "boolean"
-         },
-         "appDirectoriesOverride": {
--          "description": "Overrides the directories returned by the `app_*_dir` path APIs (`app_config_dir`, `app_data_dir`,\n `app_local_data_dir`, `app_cache_dir` and `app_log_dir`) and the matching `$APPCONFIG`, `$APPDATA`,\n `$APPLOCALDATA`, `$APPCACHE` and `$APPLOG` base directory variables.\n\n This is useful for portable apps that keep all of their data next to the executable,\n and for apps that want their app directories in a location they choose, such as `$DOCUMENT/my-app`.\n Everything that resolves paths through these APIs follows the override, including Tauri itself\n (the default webview data directory on Windows and Linux) and plugins,\n so the storage locations do not need to be configured one by one.\n The only exception is a window's `dataDirectory` config, which is not affected.\n\n It can also isolate the data of a development build from an installed version of the app,\n though a distinct `identifier` for development builds achieves that while keeping the production directory layout.\n\n The value is either a single path used as the root of every app directory\n (config, data and local data resolve to the root itself, cache to `<root>/caches` and log to `<root>/logs`),\n or an object that overrides individual directories (`config`, `data`, `localData`, `cache` and `log`),\n each resolving to exactly the configured path. Directories that are not listed in the object keep their default location.\n\n Each path is resolved as follows:\n\n - A path starting with a base directory variable is resolved relative to that directory.\n   The supported variables are `$AUDIO`, `$CACHE`, `$CONFIG`, `$DATA`, `$LOCALDATA`, `$DESKTOP`, `$DOCUMENT`,\n   `$DOWNLOAD`, `$HOME`, `$PICTURE`, `$PUBLIC`, `$TEMP` and `$VIDEO`.\n   `..` components are kept, so `$DATA/../my-app` refers to a sibling of the data directory.\n - An absolute path is used as is.\n - Any other path is resolved relative to the directory containing the executable,\n   which must be writable, see the platform-specific notes below.\n\n ## Examples\n\n Keep all data in an `app-data` folder next to the executable, for a portable build:\n\n ```json\n {\n   \"app\": {\n     \"appDirectoriesOverride\": \"./app-data\"\n   }\n }\n ```\n\n Only move the logs and the cache:\n\n ```json\n {\n   \"app\": {\n     \"appDirectoriesOverride\": {\n       \"log\": \"$DATA/my-app/logs\",\n       \"cache\"
+@@ -0,0 +1,870 @@
++// This Source Code Form is subject to the terms of the Mozilla Public
++// License, v. 2.0. If a copy of the MPL was not distributed with this
++// file, You can obtain one at https://mozilla.org/MPL/2.0/.
++//
++// SPDX-License-Identifier: MPL-2.0
++//
++// Vendored from apple-codesign 0.29.0 <https://github.com/indygreg/apple-platform-rs>,
++// Copyright Gregory Szorc and contributors. Modified by the Tauri Programme
++// within The Commons Conservancy. See README.md in this directory.
++
++//! Functionality related to certificates.
++
++use {
++  super::error::AppleCodesignError,
++  bcder::{
++    ConstOid, Oid,
++    encode::{PrimitiveContent, Values},
++  },
++  bytes::Bytes,
++  pkcs8::EncodePrivateKey,
++  std::{
++    fmt::{Display, Formatter},
++    str::FromStr,
++  },
++  x509_certificate::{
++    CapturedX509Certificate, InMemorySigningKeyPair, KeyAlgorithm, X509CertificateBuilder,
++    certificate::KeyUsage, rfc4519::OID_COUNTRY_NAME,
++  },
++};
++
++/// Extended Key Usage extension.
++///
++/// 2.5.29.37
++const OID_EXTENDED_KEY_USAGE: ConstOid = Oid(&[85, 29, 37]);
++
++/// Extended Key Usage purpose for code signing.
++///
++/// 1.3.6.1.5.5.7.3.3
++const OID_EKU_PURPOSE_CODE_SIGNING: ConstOid = Oid(&[43, 6, 1, 5, 5, 7, 3, 3]);
++
++/// Extended Key Usage for purpose of `Safari Developer`.
++///
++/// 1.2.840.113635.100.4.8
++const OID_EKU_PURPOSE_SAFARI_DEVELOPER: ConstOid = Oid(&[42, 134, 72, 134, 247, 99, 100, 4, 8]);
++
++/// Extended Key Usage for purpose of `3rd Party Mac Developer Installer`.
++///
++/// 1.2.840.113635.100.4.9
++const OID_EKU_PURPOSE_3RD_PARTY_MAC_DEVELOPER_INSTALLER: ConstOid =
++  Oid(&[42, 134, 72, 134, 247, 99, 100, 4, 9]);
++
++/// Extended Key Usage for purpose of `Developer ID Installer`.
++///
++/// 1.2.840.113635.100.4.13
++const OID_EKU_PURPOSE_DEVELOPER_ID_INSTALLER: ConstOid =
++  Oid(&[42, 134, 72, 134, 247, 99, 100, 4, 13]);
++
++/// Extension for `Apple Signing`.
++///
++/// 1.2.840.113635.100.6.1.1
++const OID_EXTENSION_APPLE_SIGNING: ConstOid = Oid(&[42, 134, 72, 134, 247, 99, 100, 6, 1, 1]);
++
++/// Extension for `iPhone Developer`.
++///
++/// 1.2.840.113635.100.6.1.2
++const OID_EXTENSION_IPHONE_DEVELOPER: ConstOid = Oid(&[42, 134, 72, 134, 247, 99, 100, 6, 1, 2]);
++
++/// Extension for `Apple iPhone OS Application Signing`
++///
++/// 1.2.840.113635.100.6.1.3
++const OID_EXTENSION_IPHONE_OS_APPLICATION_SIGNING: ConstOid =
++  Oid(&[42, 134, 72, 134, 247, 99, 100, 6, 1, 3]);
++
++/// Extension for `Apple Developer Certificate (Submission)`.
++///
++/// May also be referred to as `iPhone Distribution`.
++///
++/// 1.2.840.113635.100.6.1.4
++const OID_EXTENSION_APPLE_DEVELOPER_CERTIFICATE_SUBMISSION: ConstOid =
++  Oid(&[42, 134, 72, 134, 247, 99, 100, 6, 1, 4]);
++
++/// Extension for `Safari Developer`.
++///
++/// 1.2.840.113635.100.6.1.5
++const OID_EXTENSION_SAFARI_DEVELOPER: ConstOid = Oid(&[42, 134, 72, 134, 247, 99, 100, 6, 1, 5]);
++
++/// Extension for `Apple iPhone OS VPN Signing`
++///
++/// 1.2.840.113635.100.6.1.6
++const OID_EXTENSION_IPHONE_OS_VPN_SIGNING: ConstOid =
++  Oid(&[42, 134, 72, 134, 247, 99, 100, 6, 1, 6]);
++
++/// Extension for `Apple Mac App Signing (Development)`.
++///
++/// May also appear as `3rd Party Mac Developer Application`.
++///
++/// 1.2.840.113635.100.6.1.7
++const OID_EXTENSION_APPLE_MAC_APP_SIGNING_DEVELOPMENT: ConstOid =
++  Oid(&[42, 134, 72, 134, 247, 99, 100, 6, 1, 7]);
++
++/// Extension for `Apple Mac App Signing Submission`.
++///
++/// 1.2.840.113635.100.6.1.8
++const OID_EXTENSION_APPLE_MAC_APP_SIGNING_SUBMISSION: ConstOid =
++  Oid(&[42, 134, 72, 134, 247, 99, 100, 6, 1, 8]);
++
++/// Extension for `Mac App Store Code Signing`.
++///
++/// 1.2.840.113635.100.6.1.9
++const OID_EXTENSION_APPLE_MAC_APP_STORE_CODE_SIGNING: ConstOid =
++  Oid(&[42, 134, 72, 134, 247, 99, 100, 6, 1, 9]);
++
++/// Extension for `Mac App Store Installer Signing`.
++///
++/// 1.2.840.113635.100.6.1.10
++const OID_EXTENSION_APPLE_MAC_APP_STORE_INSTALLER_SIGNING: ConstOid =
++  Oid(&[42, 134, 72, 134, 247, 99, 100, 6, 1, 10]);
++
++// 1.2.840.113635.100.6.1.11 is unknown.
++
++/// Extension for `Mac Developer`.
++///
++/// 1.2.840.113635.100.6.1.12
++const OID_EXTENSION_MAC_DEVELOPER: ConstOid = Oid(&[42, 134, 72, 134, 247, 99, 100, 6, 1, 12]);
++
++/// Extension for `Developer ID Application`.
++///
++/// 1.2.840.113635.100.6.1.13
++const OID_EXTENSION_DEVELOPER_ID_APPLICATION: ConstOid =
++  Oid(&[42, 134, 72, 134, 247, 99, 100, 6, 1, 13]);
++
++/// Extension for `Developer ID Installer`.
++///
++/// 1.2.840.113635.100.6.1.14
++const OID_EXTENSION_DEVELOPER_ID_INSTALLER: ConstOid =
++  Oid(&[42, 134, 72, 134, 247, 99, 100, 6, 1, 14]);
++
++// 1.2.840.113635.100.6.1.15 looks to have something to do with core OS functionality,
++// as it appears in search results for hacking Apple OS booting.
++
++/// Extension for `Apple Pay Passbook Signing`
++///
++/// 1.2.840.113635.100.6.1.16
++const OID_EXTENSION_PASSBOOK_SIGNING: ConstOid = Oid(&[42, 134, 72, 134, 247, 99, 100, 6, 1, 16]);
++
++/// Extension for `Web Site Push Notifications Signing`
++
 ```
 
-**File**: `crates/tauri-utils/build.rs` (added, +7/-0)
+**File**: `crates/tauri-macos-sign/src/apple_codesign/error.rs` (added, +34/-0)
 ```diff
-@@ -0,0 +1,7 @@
+@@ -0,0 +1,34 @@
++// This Source Code Form is subject to the terms of the Mozilla Public
++// License, v. 2.0. If a copy of the MPL was not distributed with this
++// file, You can obtain one at https://mozilla.org/MPL/2.0/.
++//
++// SPDX-License-Identifier: MPL-2.0
++//
++// Vendored from apple-codesign 0.29.0 <https://github.com/indygreg/apple-platform-rs>,
++// Copyright Gregory Szorc and contributors. Modified by the Tauri Programme
++// within The Commons Conservancy. See README.md in this directory.
++
++use thiserror::Error;
++use x509_certificate::X509CertificateError;
++
++/// Unified error type for Apple code signing.
++#[derive(Debug, Error)]
++pub enum AppleCodesignError {
++  #[error("X.509 certificate handler error: {0}")]
++  X509(#[from] X509CertificateError),
++
++  #[error("certificate error: {0}")]
++  CertificateGeneric(String),
++
++  #[error("the given OID does not match a recognized Apple certificate authority extension")]
++  OidIsntCertificateAuthority,
++
++  #[error("the given OID does not match a recognized Apple code signing extension")]
++  OidIsntCodeSigningExtension,
++
++  #[error("error building certificate: {0}")]
++  CertificateBuildError(String),
++
++  #[error("unknown certificate profile: {0}")]
++  UnknownCertificateProfile(String),
++}
+```
+
+**File**: `crates/tauri-macos-sign/src/apple_codesign/mod.rs` (added, +9/-0)
+```diff
+@@ -0,0 +1,9 @@
 +// Copyright 2019-2024 Tauri Programme within The Commons Conservancy
 +// SPDX-License-Identifier: Apache-2.0
 +// SPDX-License-Identifier: MIT
 +
-+// `tauri::generate_context!` writes its output to `OUT_DIR`, which Cargo only sets for the doc tests
-+// of packages that have a build script.
-+fn main() {}
-```
-
-**File**: `crates/tauri-utils/src/config.rs` (modified, +5/-4)
-```diff
-@@ -1956,7 +1956,7 @@ pub struct WindowConfig {
-   ///
-   /// ## Example:
-   ///
--  /// ```rust
-+  /// ```rust,no_run
-   /// tauri::Builder::default()
-   ///   .setup(|app| {
-   ///     tauri::WebviewWindowBuilder::from_config(app.handle(), &app.config().app.windows[0])?.build()?;
-@@ -3353,7 +3353,7 @@ pub struct AppConfig {
-   ///
-   /// and use it like this
-   ///
--  /// ```rust
-+  /// ```rust,no_run
-   /// tauri::Builder::default()
-   ///   .setup(|app| {
-   ///     tauri::WebviewWindowBuilder::from_config(app.handle(), &app.config().app.windows[0])?.build()?;
-@@ -3451,11 +3451,12 @@ pub struct AppConfig {
-   /// or a directory picked by the user, by modifying the config returned by `tauri::generate_context!()`
-   /// before building the app:
-   ///
--  /// ```rust
-+  /// ```rust,no_run
-   /// use tauri::utils::config::AppDirectoriesOverride;
-   ///
-   /// fn main() {
--  ///   let mut context = tauri::generate_context!();
-+  ///   // on an actual app, remove the string argument
-+  ///   let mut context = tauri::generate_context!("../tauri/test/fixture/src-tauri/tauri.conf.json");
-   ///
-   ///   if let Ok(data_dir) = std::env::var("MY_APP_DATA_DIR") {
-   ///     context.config_mut().app.app_directories_override =
++mod certificate;
++mod error;
++
++pub use certificate::{CertificateProfile, create_self_signed_code_signing_certificate};
++pub use error::AppleCodesignError;
 ```
 
 ---
 
-### Incident Patch 4: `1aefcf6e` (2026-09-30)
-**Commit Message**: fix: pnpm audit
+### Incident Patch 3: `7b673dda` (2026-10-14)
+**Commit Message**: fix(core): drop late mobile plugin responses instead of panicking (#16146)
 
-**File**: `pnpm-lock.yaml` (modified, +34/-32)
-```diff
-@@ -163,9 +163,11 @@ settings:
-   excludeLinksFromLockfile: false
- 
- overrides:
-+  axios@<1.20.0: ^1.20.0
-   devalue@<5.9.1: ^5.9.1
-   morgan@<1.12.0: ^1.12.0
-   serialize-javascript@<7.0.5: ^7.0.5
-+  undici@>=7.0.0 <7.29.1: ^7.29.1
- 
- importers:
- 
-@@ -2604,8 +2606,8 @@ packages:
-   asynckit@0.4.0:
-     resolution: {integrity: sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==}
- 
--  axios@1.19.0:
--    resolution: {integrity: sha512-ht/iuYZXEjFxLH/Hkezgd7m6JKlHHXEUSneaDz8uZe1Gj5QZtCnpyDsckvAiEnT89OEbCLmnte4R4sn7P0EKFw==}
-+  axios@1.20.0:
-+    resolution: {integrity: sha512-r8aOh8j9cGKpgQAqpzrUHnSIc6a59Y3Xf/cv8sy1DrHCkZHzQGEuoq1tARk6qSyDdtQGSDgpb9kFlruzPvrgwg==}
- 
-   axobject-query@4.1.0:
-     resolution: {integrity: sha512-qIj0G9wZbMGNLjLmg1PT6v2mE9AH2zlnADJD/2tC6E00hgmhUOfEB6greHPAfLRSufHqROIUTkw6E+M3lH0PTQ==}
-@@ -2712,14 +2714,14 @@ packages:
-     resolution: {integrity: sha512-apC2+fspHGI3mMKj+dGevkGo/tCqVB8jMb6i+OX+E29p0Iposz07fABkRIfVUPNd5A5VbuOz1bZbnmkKLYF+wQ==}
-     engines: {node: '>= 5.10.0'}
- 
--  brace-expansion@1.1.18:
--    resolution: {integrity: sha512-Edep/X9fGqVNmzKBVsDYIOtD+z1tuezV70LBjdCst9Tqu76lsnvRiZ6oTic1n+/BIwX6QDGAO94PN4N2SADvtw==}
-+  brace-expansion@1.1.21:
-+    resolution: {integrity: sha512-9zeA+KLZNNzglF2TPKRQEDyx6Yby7daAkuy8MiPzpXPsYDWi/DRM8jmwUDxokQjYqBpv5DgPiwD4h4ZZSy1Ujw==}
- 
--  brace-expansion@2.1.4:
--    resolution: {integrity: sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg==}
-+  brace-expansion@2.1.7:
-+    resolution: {integrity: sha512-uZbew1NqdmPDTMJ8ah1y+b+9QEJrfkXFk3RcTQw3X0jW/xRUvFKsg1CfQdSYGdTbXZWExtU3J3ccxtnfw1Fi0g==}
- 
--  brace-expansion@5.0.9:
--    resolution: {integrity: sha512-ScQ4IuvIEF1TMlP7Zt+vjJ//9zlPb2SDcxWxM3bk8s6t6GGdJ7KO1dCcTidOPJKePW30LE/2cT7wCyPho9/Wxg==}
-+  brace-expansion@5.0.12:
-+    resolution: {integrity: sha512-YovQ3rzhaLMIrDjNDMkNS01tea93qhEhG5xy8f6+R0l+dw3Ki+5sCoIoI942iuLZTHWogWktgwVDhU09iNEimQ==}
-     engines: {node: 20 || >=22}
- 
-   braces@3.0.3:
-@@ -3671,8 +3673,8 @@ packages:
-       '@types/node':
-         optional: true
- 
--  ip-address@10.7.0:
--    resolution: {integrity: sha512-BGFsyJd5mpXp3rK6jIdADLNgpJUK1jnjzvYF8lK+VyDab9JAmqN0YOKDdP17HlgKb2+ehPgDc8EtnRLbGCAMhA==}
-+  ip-address@10.7.2:
-+    resolution: {integrity: sha512-7H/2gFSIitxc0hG3nOI1glS8QLo/EHBFFLk8vEUjXY/xu0AdL8jZ9U1IzO2PUm0d2D/ofQcAifb0g6OBkt8U7w==}
-     engines: {node: '>= 12'}
- 
-   ipaddr.js@1.9.1:
-@@ -4931,12 +4933,12 @@ packages:
-   undici-types@7.16.0:
-     resolution: {integrity: sha512-Zz+aZWSj8LE6zoxD+xrjh4VfkIG8Ya6LvYkZqtUQGJPZjYl53ypCaUwWqo7eI0x66KBGeRo+mlBEkMSeSZ38Nw==}
- 
--  undici@6.28.1:
--    resolution: {integrity: sha512-zWpdTVD54H48CIybL0rWQ3ukpb9d23wM7eH5RtfdmeP70cWHNjtfo7P4vZX+5CoDcO53J4Pu5uXp7lNfjc6DRA==}
-+  undici@6.29.0:
-+    resolution: {integrity: sha512-R+RODBqp6i2pPflGdq+xIOUkl+RNfGgHwoinecKu/JCuf2uO06cOKoDbI2P7Dn6KcswdKwrczbU6IYJ6K8X+wg==}
-     engines: {node: '>=18.17'}
- 
--  undici@7.29.0:
--    resolution: {integrity: sha512-IDxfleLmmbSskfWSUATiN1nfn2rDuvnMOqb5CWR92iIfojA0Ud+ulOAAEQ57LPr9rWmsreUyf5lwyao+7GNNVw==}
-+  undici@7.30.0:
-+    resolution: {integrity: sha512-dkrQXeHSaoamnItlYbmzG0wFYrM0ZwDxCIg0A7aKjTyyhh9svRzCNFEzV+Vm05/yehjCzjDZ31KXfGEjYSztDQ==}
-     engines: {node: '>=20.18.1'}
- 
-   unenv@2.0.0-rc.24:
-@@ -5320,7 +5322,7 @@ snapshots:
-       '@appium/types': 1.7.0(@appium/logger@2.0.11)
-       async-lock: 1.4.1
-       asyncbox: 6.4.2
--      axios: 1.19.0(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
-+      axios: 1.20.0(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
-       body-parser: 2.3.0(supports-color@8.1.1)
-       express: 5.2.1(supports-color@8.1.1)
-       fastest-levenshtein: 1.0.16
-@@ -5390,7 +5392,7 @@ snapshots:
-       '@appium/types': 1.7.0(@appium/logger@2.0.11)
-       archiver: 8.0.0
-       asyncbox: 6.4.2
--      axios: 1.19.0(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
-+      axios: 1.20.0(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
-       bluebird: 3.7.2
-       bplist-creator: 0.1.1
-       bplist-parser: 0.3.2
-@@ -7401,7 +7403,7 @@ snapshots:
-       ajv-formats: 3.0.1(ajv@8.20.0)
-       argparse: 3.0.0
-       asyncbox: 6.4.2
--      axios: 1.19.0(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
-+      axios: 1.20.0(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
-       lilconfig: 3.1.3
-       lru-cache: 11.5.2
-       ora: 5.4.1
-@@ -7485,7 +7487,7 @@ snapshots:
- 
-   asynckit@0.4.0: {}
- 
--  axios@1.19.0(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1):
-+  axios@1.20.0(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1):
-     dependencies:
-       follow-redirects: 1.16.0(debug@4.4.3(supports-color@8.1.1))
-       form-data: 4.0.6
-@@ -7584,16 +7586,16 @@ snapshots:
-     dependencies:
-       big-integer: 1.6.52
- 
--  brace-expansion@1.1.18:
-+  brace-expansion@1.1.21:
-     dependencies:
-       balanced-match: 1.0.2
-       concat-map: 0.0.1
- 
--  brace-expansion@2.1.4:
-+  b
-```
+`PluginHandle::run_mobile_plugin_async` resolved its oneshot with
+`send(response).unwrap()` inside the native response handler. When the
+caller stops waiting before the native side answers (a timeout or
+`select!` around the call drops the future), the receiver is gone, the
+unwrap panics inside an `extern "C"` / JNI callback, and the panic
+cannot unwind across the FFI boundary: the app aborts with SIGABRT. The
+Android `run_command` also keeps a clone of the handler for its error
+path, so a duplicate response hit `take().unwrap()` on `None` the same
+way.
 
-**File**: `pnpm-workspace.yaml` (modified, +2/-0)
-```diff
-@@ -21,9 +21,11 @@ allowBuilds:
-   workerd: true
- 
- overrides:
-+  axios@<1.20.0: ^1.20.0
-   devalue@<5.9.1: ^5.9.1
-   morgan@<1.12.0: ^1.12.0
-   serialize-javascript@<7.0.5: ^7.0.5
-+  undici@>=7.0.0 <7.29.1: ^7.29.1
- 
- auditConfig:
-   ignoreGhsas:
-```
+Drop late and duplicate responses in both `run_mobile_plugin_async` and
+`run_mobile_plugin`; a caller that gave up never observes the result,
+like any other cancelled future.
 
----
-
-### Incident Patch 5: `a4dcca82` (2026-09-30)
-**Commit Message**: fix(plugin): skip build script writes on docs.rs builds (#16186)
-
-fixes mobile docs.rs builds e.g. https://docs.rs/crate/tauri-plugin-haptics/latest/builds/4610969
-
-> [INFO] [stderr]   thread 'main' (6484) panicked at build.rs:21:16:
-[INFO] [stderr]   called `Result::unwrap()` on an `Err` value: failed to create .tauri directory
-
-**File**: `.changes/plugin-docs-rs-mobile.md` (added, +5/-0)
+**File**: `.changes/mobile-plugin-response-after-cancel.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
-+"tauri-plugin": patch:bug
++"tauri": patch:bug
 +---
 +
-+Skip the Android and iOS project setup in `Builder::build` and `Builder::try_build` when building on docs.rs, which mounts the sources read-only, so plugins with native mobile projects can build their documentation for mobile targets.
++`PluginHandle::run_mobile_plugin_async` and `PluginHandle::run_mobile_plugin` no longer panic (which aborts the process on iOS and Android) when a mobile plugin command resolves after its caller stopped waiting, for example when the async call was cancelled by a timeout. The late response is dropped instead.
 ```
 
-**File**: `crates/tauri-plugin/src/build/mobile.rs` (modified, +6/-0)
+**File**: `crates/tauri/src/plugin/mobile.rs` (modified, +11/-2)
 ```diff
-@@ -109,6 +109,12 @@ pub(crate) fn setup(
-   cfg_alias("mobile", mobile);
-   cfg_alias("desktop", !mobile);
+@@ -304,7 +304,15 @@ impl<R: Runtime> PluginHandle<R> {
+       command,
+       serde_json::to_value(payload).map_err(PluginInvokeError::CannotSerializePayload)?,
+       move |response| {
+-        tx.lock().unwrap().take().unwrap().send(response).unwrap();
++        // The receiver is gone when the caller stopped waiting, for example because
++        // the future was dropped by a timeout, and the sender is gone when the
++        // response arrives twice (the Android `run_command` keeps a clone of the
++        // handler for its error path). This closure runs inside the native response
++        // handler, an `extern "C"` / JNI function where a panic cannot unwind and
++        // aborts the process, so a late or duplicate response is dropped instead.
++        if let Some(tx) = tx.lock().unwrap().take() {
++          let _ = tx.send(response);
++        }
+       },
+     )?;
  
-+  // docs.rs mounts the crate sources read-only, so the native projects can't get their `.tauri` directory,
-+  // and the documentation doesn't need them anyway
-+  if std::env::var_os("DOCS_RS").is_some() {
-+    return Ok(());
-+  }
-+
-   match target_os.as_str() {
-     "android" => {
-       if let Some(path) = android_path {
-```
-
----
-
-### Incident Patch 6: `c9a3cb89` (2026-09-29)
-**Commit Message**: fix: enable macos private apis regardless of feature flags (#16166)
-
-**File**: `.changes/deprecate-macos-private-api.md` (added, +9/-0)
-```diff
-@@ -0,0 +1,9 @@
-+---
-+tauri: patch:bug
-+tauri-utils: patch:bug
-+tauri-runtime: patch:bug
-+tauri-runtime-wry: patch:bug
-+"@tauri-apps/api": patch:bug
-+---
-+
-+The `macos-private-api` feature flag / `macOSPrivateAPI` tauri.conf.json value is no longer required to use transparency or fullscreen on macOS.
-```
-
-**File**: `crates/tauri-cli/config.schema.json` (modified, +2/-2)
-```diff
-@@ -209,7 +209,7 @@
-           ]
-         },
-         "macOSPrivateApi": {
--          "description": "MacOS private API configuration. Enables the transparent background API and sets the `fullScreenEnabled` preference to `true`.",
-+          "description": "MacOS private API configuration. Enables the transparent background API and sets the `fullScreenEnabled` preference to `true`.\n\n No-op in Tauri 2.12.1+ because the APIs are always enabled now.",
-           "default": false,
-           "type": "boolean"
-         },
-@@ -389,7 +389,7 @@
-           "type": "boolean"
-         },
-         "transparent": {
--          "description": "Whether the window is transparent or not.\n\n ## Platform-specific\n\n - **macOS**: Requires the `macos-private-api` Cargo feature, which is enabled by setting\n   `app > macOSPrivateApi` to `true` in the configuration file.\n   **WARNING:** Using private APIs on macOS prevents your application from being accepted to the App Store.\n   If you only need a translucent background, use `windowEffects` instead, which relies on public APIs.\n - **Windows**: Using `noRedirectionBitmap` can help avoid a white flash when creating a transparent window.",
-+          "description": "Whether the window is transparent or not.\n\n ## Platform-specific\n\n - **Windows**: Using `noRedirectionBitmap` can help avoid a white flash when creating a transparent window.",
-           "default": false,
-           "type": "boolean"
-         },
-```
-
-**File**: `crates/tauri-runtime-wry/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -64,6 +64,7 @@ jni = "0.21"
- default = ["x11", "dbus"]
- devtools = ["wry/devtools", "tauri-runtime/devtools"]
- x11 = ["tao/x11", "wry/x11"]
-+# TODO: Remove in v3 - wry does not have this feature anymore
- macos-private-api = ["tauri-runtime/macos-private-api"]
- # TODO: Remove in v3 - wry does not have this feature anymore
- objc-exception = []
-```
-
-**File**: `crates/tauri-runtime-wry/src/lib.rs` (modified, +2/-18)
-```diff
-@@ -811,22 +811,6 @@ impl WindowBuilder for WindowBuilderWrapper {
-       }
-     }
+@@ -333,7 +341,8 @@ impl<R: Runtime> PluginHandle<R> {
+       command,
+       serde_json::to_value(payload).map_err(PluginInvokeError::CannotSerializePayload)?,
+       move |response| {
+-        tx.send(response).unwrap();
++        // Never panic inside the native response handler, see `run_mobile_plugin_async`.
++        let _ = tx.send(response);
+       },
+     )?;
  
--    #[cfg(any(not(target_os = "macos"), feature = "macos-private-api"))]
--    {
--      window = window.transparent(config.transparent);
--    }
--    #[cfg(all(
--      target_os = "macos",
--      not(feature = "macos-private-api"),
--      debug_assertions
--    ))]
--    if config.transparent {
--      eprintln!(
--        "The window is set to be transparent but the `macos-private-api` is not enabled.
--        This can be enabled via the `tauri.macOSPrivateApi` configuration property <https://v2.tauri.app/reference/config/#macosprivateapi>
--      ");
--    }
--
-     #[cfg(any(
-       target_os = "linux",
-       target_os = "dragonfly",
-@@ -885,7 +869,8 @@ impl WindowBuilder for WindowBuilderWrapper {
-       .closable(config.closable)
-       .maximizable(config.maximizable)
-       .minimizable(config.minimizable)
--      .shadow(config.shadow);
-+      .shadow(config.shadow)
-+      .transparent(config.transparent);
- 
-     let mut constraints = WindowSizeConstraints::default();
- 
-@@ -1049,7 +1034,6 @@ impl WindowBuilder for WindowBuilderWrapper {
-     self
-   }
- 
--  #[cfg(any(not(target_os = "macos"), feature = "macos-private-api"))]
-   fn transparent(mut self, transparent: bool) -> Self {
-     self.inner = self.inner.with_transparent(transparent);
-     self
-```
-
-**File**: `crates/tauri-runtime/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -68,6 +68,7 @@ objc2-web-kit = { version = "0.3.2", default-features = false, features = [
- 
- [features]
- devtools = []
-+# TODO: Remove in v3 - wry does not have this feature anymore
- macos-private-api = []
- 
- [lints]
-```
-
-**File**: `crates/tauri-runtime/src/webview.rs` (modified, +1/-5)
-```diff
-@@ -462,6 +462,7 @@ impl From<&WindowConfig> for WebviewAttributes {
-       .browser_extensions_enabled(config.browser_extensions_enabled)
-       .background_throttling(config.background_throttling.clone())
-       .devtools(config.devtools)
-+      .transparent(config.transparent)
-       .scroll_bar_style(match config.scroll_bar_style {
-         ConfigScrollBarStyle::Default => ScrollBarStyle::Default,
-         #[cfg(windows)]
-@@ -471,10 +472,6 @@ impl From<&WindowConfig> for WebviewAttributes {
-       .limit_navigations_to_app_bound_domains(config.limit_navigations_to_app_bound_domains)
-       .general_autofill_enabled(config.general_autofill_enabled);
- 
--    #[cfg(any(not(target_os = "macos"), feature = "macos-private-api"))]
--    {
--      builder = builder.transparent(config.transparent);
--    }
-     #[cfg(target_os = "macos")]
-     {
-       if let Some(position) = &config.traffic_light_position {
-@@ -678,7 +675,6 @@ impl WebviewAttributes {
-   }
- 
-   /// Enable or disable transparency for the WebView.
--  #[cfg(any(not(target_os = "macos"), feature = "macos-private-api"))]
-   #[must_use]
-   pub fn transparent(mut self, transparent: bool) -> Self {
-     self.transparent = transparent;
-```
-
-**File**: `crates/tauri-runtime/src/window.rs` (modified, +0/-5)
-```diff
-@@ -368,11 +368,6 @@ pub trait WindowBuilder: WindowBuilderBase {
-   ///
-   /// On Windows, using `no_redirection_bitmap` can help avoid a white flash when
-   /// creating a transparent window.
--  #[cfg(any(not(target_os = "macos"), feature = "macos-private-api"))]
--  #[cfg_attr(
--    docsrs,
--    doc(cfg(any(not(target_os = "macos"), feature = "macos-private-api")))
--  )]
-   #[must_use]
-   fn transparent(self, transparent: bool) -> Self;
- 
-```
-
-**File**: `crates/tauri-schema-generator/schemas/config.schema.json` (modified, +2/-2)
-```diff
-@@ -209,7 +209,7 @@
-           ]
-         },
-         "macOSPrivateApi": {
--          "description": "MacOS private API configuration. Enables the transparent background API and sets the `fullScreenEnabled` preference to `true`.",
-+          "description": "MacOS private API configuration. Enables the transparent background API and sets the `fullScreenEnabled` preference to `true`.\n\n No-op in Tauri 2.12.1+ because the APIs are always enabled now.",
-           "default": false,
-           "type": "boolean"
-         },
-@@ -389,7 +389,7 @@
-           "type": "boolean"
-         },
-         "transparent": {
--          "description": "Whether the window is transparent or not.\n\n ## Platform-specific\n\n - **macOS**: Requires the `macos-private-api` Cargo feature, which is enabled by setting\n   `app > macOSPrivateApi` to `true` in the configuration file.\n   **WARNING:** Using private APIs on macOS prevents your application from being accepted to the App Store.\n   If you only need a translucent background, use `windowEffects` instead, which relies on public APIs.\n - **Windows**: Using `noRedirectionBitmap` can help avoid a white flash when creating a transparent window.",
-+          "description": "Whether the window is transparent or not.\n\n ## Platform-specific\n\n - **Windows**: Using `noRedirectionBitmap` can help avoid a white flash when creating a transparent window.",
-           "default": false,
-           "type": "boolean"
-         },
-```
-
----
-
-### Incident Patch 7: `64bfdd90` (2026-09-29)
-**Commit Message**: fix: ignore `src-tauri` in vite configs (#16165)
-
-* fix: ignore `src-tauri` in vite configs
-
-* Add change file
-
-**File**: `.changes/ignore-src-tauri-vite.md` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+---
-+"tauri-cli": patch:enhance
-+"@tauri-apps/cli": patch:enhance
-+---
-+
-+Ignore `src-tauri` in `tauri plugin init` example template
-```
-
-**File**: `crates/tauri-cli/templates/plugin/__example-api/tauri-app/vite.config.js` (modified, +3/-0)
-```diff
-@@ -20,5 +20,8 @@ export default defineConfig({
-       host,
-       port: 1421
-     } : undefined,
-+    watch: {
-+      ignored: ['**/src-tauri/**']
-+    },
-   },
- })
-```
-
-**File**: `examples/api/vite.config.js` (modified, +3/-0)
-```diff
-@@ -37,6 +37,9 @@ export default defineConfig({
-           port: 1430
-         }
-       : undefined,
-+    watch: {
-+      ignored: ['**/src-tauri/**']
-+    },
-     fs: {
-       allow: ['.', '../../packages/api/dist']
-     }
-```
-
----
-
-### Incident Patch 8: `793f0c4a` (2026-09-29)
-**Commit Message**: fix(window): copy `WebView2Loader.dll` for nightly (#16164)
-
-**File**: `.changes/webview2-loader-build-dir.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+"tauri-build": "patch:bug"
-+---
-+
-+Fix copying `WebView2Loader.dll` for Windows GNU targets when using Cargo's new build directory layout on nightly.
-```
-
-**File**: `crates/tauri-build/src/lib.rs` (modified, +13/-2)
-```diff
-@@ -886,13 +886,24 @@ pub fn try_build(attributes: Attributes) -> Result<()> {
-           arch => None,
-         };
-         if let Some(target_arch) = target_arch {
--          for entry in fs::read_dir(target_dir.join("build"))? {
-+          // The `out` dir is
-+          //   - `<target dir>/build/<pkg>-<hash>/out` on stable
-+          //   - `<target dir>/build/<pkg>/<hash>/out` on recent nightlies
-+          let build_dir = target_dir.join("build");
-+          let webview2_com_sys_build = build_dir.join("webview2-com-sys");
-+          let (build_dir, new_layout) = if webview2_com_sys_build.exists() {
-+            (webview2_com_sys_build, true)
-+          } else {
-+            (build_dir, false)
-+          };
-+          for entry in fs::read_dir(build_dir)? {
-             let path = entry?.path();
-             let webview2_loader_path = path
-               .join("out")
-               .join(target_arch)
-               .join("WebView2Loader.dll");
--            if path.to_string_lossy().contains("webview2-com-sys") && webview2_loader_path.exists()
-+            if webview2_loader_path.exists()
-+              && (new_layout || path.to_string_lossy().contains("webview2-com-sys"))
-             {
-               fs::copy(webview2_loader_path, target_dir.join("WebView2Loader.dll"))?;
-               break;
-```
-
----
-
-### Incident Patch 9: `d15cf9b1` (2026-09-27)
-**Commit Message**: fix(bundler): make glob error variants available on all platforms (#16149)
-
-**File**: `.changes/bundler-freebsd-glob-error.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+"tauri-bundler": "patch:bug"
-+---
-+
-+Make the `Glob` and `GlobPattern` error variants available on all platforms, fixing a compile error in the Windows bundler utilities on targets other than Windows, macOS and Linux.
-```
-
-**File**: `crates/tauri-bundler/src/error.rs` (modified, +0/-2)
-```diff
-@@ -80,11 +80,9 @@ pub enum Error {
-   #[error("`{0}`")]
-   HttpError(#[from] Box<ureq::Error>),
-   /// Invalid glob pattern.
--  #[cfg(any(target_os = "windows", target_os = "macos", target_os = "linux"))]
-   #[error("{0}")]
-   GlobPattern(#[from] glob::PatternError),
-   /// Failed to use glob pattern.
--  #[cfg(any(target_os = "windows", target_os = "macos", target_os = "linux"))]
-   #[error("`{0}`")]
-   Glob(#[from] glob::GlobError),
-   /// Failed to parse the URL
-```
-
----
-
-### Incident Patch 10: `447fa9f3` (2026-09-26)
-**Commit Message**: fix(core): tauri-utils publish
-
-tauri dep from workspace defines the version, so it has a publish race condition since tauri-utils gets published before tauri, so the new version requirement is not available - we're changing it to be just a path dependency since it's dev only
-
-**File**: `crates/tauri-utils/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -60,7 +60,7 @@ swift-rs = { version = "1.0.8", optional = true, features = ["build"] }
- getrandom = { version = "0.3", features = ["std"] }
- serial_test = "3.5"
- # For doc tests
--tauri = { workspace = true }
-+tauri = { path = "../tauri", default-features = false, features = ["wry"] }
- tempfile = "3.15.0"
- 
- [features]
-```
-
----
-
-### Incident Patch 11: `4f46cfc1` (2026-09-26)
-**Commit Message**: fix(ci): pnpm publish should use "debug" loglevel instead of "silly"
-
-**File**: `.changes/config.json` (modified, +1/-1)
-```diff
-@@ -101,7 +101,7 @@
-           "pipe": true
-         },
-         {
--          "command": "pnpm publish --access public --loglevel silly --no-git-checks",
-+          "command": "pnpm publish --access public --loglevel debug --no-git-checks",
-           "dryRunCommand": "npm publish --dry-run --access public --no-git-checks",
-           "pipe": true
-         },
-```
-
-**File**: `packages/api/package.json` (modified, +1/-1)
-```diff
-@@ -39,7 +39,7 @@
-     "build": "rollup -c --configPlugin typescript",
-     "build:debug": "rollup -c --configPlugin typescript",
-     "npm-pack": "pnpm build && cd ./dist && npm pack",
--    "npm-publish": "pnpm build && cd ./dist && pnpm publish --access public --loglevel silly --no-git-checks",
-+    "npm-publish": "pnpm build && cd ./dist && pnpm publish --access public --loglevel debug --no-git-checks",
-     "ts:check": "tsc --noEmit",
-     "eslint:check": "eslint src/**/*.ts",
-     "eslint:fix": "eslint src/**/*.ts --fix"
-```
-
----
-
-### Incident Patch 12: `dc894d40` (2026-09-26)
-**Commit Message**: chore: remove change file for unreleased fix (#16140)
-
-change file from https://github.com/tauri-apps/tauri/commit/078a0e044102679804b4e0e32547a682404d46e7 is not needed - bug fix for a change not released yet
-
-**File**: `.changes/rust-destroyed-listeners.md` (removed, +0/-5)
-```diff
-@@ -1,5 +0,0 @@
-----
--"tauri": "patch:bug"
-----
--
--Fix Rust `tauri://destroyed` listeners registered on a `Window` or `WebviewWindow` never running, because the window's listeners were purged before the event was emitted.
-```
-
----
-
-### Incident Patch 13: `152529eb` (2026-09-26)
-**Commit Message**: Revert "feat(core): add android activityEmbedding config (#15255)" (#16138)
-
-This reverts commit 93bf07f4bb580a5f15a60180fd636d29012dcad9.
-
-**File**: `.changes/android-embedded-activity-config.md` (removed, +0/-5)
-```diff
-@@ -1,5 +0,0 @@
-----
--"tauri-utils": minor:feat
-----
--
--Added `tauri.conf.json > bundle > android > activityEmbedding` config to enable Activity embedding and define split rules for Android multi-window support.
-```
-
-**File**: `.changes/android-embedded-activity-generator.md` (removed, +0/-5)
-```diff
-@@ -1,5 +0,0 @@
-----
--"tauri-build": minor:feat
-----
--
--Enable Android Activity embedding when `tauri.conf.json > bundle > android > activityEmbedding > enabled` is true: generate the Gradle dependencies, manifest entries and split rules from `splitRules`, plus a default `TauriActivity` subclass for each secondary activity not defined by the app. Generated files and manifest entries are removed again when the feature is disabled.
-```
-
-**File**: `.changes/android-manifest-block-removal.md` (removed, +0/-5)
-```diff
-@@ -1,5 +0,0 @@
-----
--"tauri-utils": minor:feat
-----
--
--Added `build::remove_xml_block`, and `build::update_android_manifest` now removes the generated block when given empty content.
-```
-
-**File**: `crates/tauri-build/src/lib.rs` (modified, +2/-11)
-```diff
-@@ -704,21 +704,12 @@ pub fn try_build(attributes: Attributes) -> Result<()> {
-   println!("cargo:rustc-env=TAURI_ANDROID_PACKAGE_NAME_PREFIX={android_package_prefix}");
- 
-   if let Some(project_dir) = env::var_os("TAURI_ANDROID_PROJECT_PATH").map(PathBuf::from) {
--    let activity_embedding = config
--      .bundle
--      .android
--      .activity_embedding
--      .as_ref()
--      .filter(|c| c.enabled && !c.split_rules.is_empty());
--
--    mobile::generate_gradle_files(project_dir.clone(), activity_embedding)?;
-+    mobile::generate_gradle_files(project_dir)?;
- 
-+    // Update Android manifest with file associations
-     if let Some(associations) = config.bundle.file_associations.as_ref() {
-       mobile::update_android_manifest_file_associations(associations)?;
-     }
--
--    // always runs so previously generated files and manifest entries are removed when disabled
--    mobile::sync_activity_embedding(&project_dir, activity_embedding, &config.identifier)?;
-   }
- 
-   cfg_alias("dev", is_dev());
-```
-
-**File**: `crates/tauri-build/src/mobile.rs` (modified, +4/-813)
-```diff
-@@ -2,19 +2,10 @@
- // SPDX-License-Identifier: Apache-2.0
- // SPDX-License-Identifier: MIT
- 
--use std::{
--  collections::HashSet,
--  path::{Path, PathBuf},
--};
-+use std::{collections::HashSet, path::PathBuf};
- 
- use anyhow::{Context, Result};
--use tauri_utils::{
--  config::{
--    ActivityEmbeddingConfig, AndroidIntentAction, EmbeddingAspectRatio, SplitFinishBehavior,
--    SplitLayoutDirection, SplitPairRule, SplitType,
--  },
--  write_if_changed,
--};
-+use tauri_utils::{config::AndroidIntentAction, write_if_changed};
- 
- /// Updates the Android manifest to add file association intent filters
- pub fn update_android_manifest_file_associations(
-@@ -153,10 +144,7 @@ fn extension_to_mime_type(ext: &str) -> Option<String> {
-   )
- }
- 
--pub fn generate_gradle_files(
--  project_dir: PathBuf,
--  activity_embedding: Option<&ActivityEmbeddingConfig>,
--) -> Result<()> {
-+pub fn generate_gradle_files(project_dir: PathBuf) -> Result<()> {
-   let gradle_settings_path = project_dir.join("tauri.settings.gradle");
-   let app_build_gradle_path = project_dir.join("app").join("tauri.build.gradle.kts");
- 
-@@ -168,11 +156,6 @@ dependencies {
-   implementation(\"androidx.lifecycle:lifecycle-process:2.10.0\")"
-     .to_string();
- 
--  if activity_embedding.is_some() {
--    app_build_gradle.push_str("\n  implementation(\"androidx.window:window:1.5.0\")");
--    app_build_gradle.push_str("\n  implementation(\"androidx.startup:startup-runtime:1.2.0\")");
--  }
--
-   for (env, value) in std::env::vars_os() {
-     let env = env.to_string_lossy();
-     if env.starts_with("DEP_") && env.ends_with("_ANDROID_LIBRARY_PATH") {
-@@ -204,6 +187,7 @@ dependencies {
- 
-   app_build_gradle.push_str("\n}");
- 
-+  // Overwrite only if changed to not trigger rebuilds
-   write_if_changed(&gradle_settings_path, gradle_settings)
-     .context("failed to write tauri.settings.gradle")?;
- 
-@@ -215,796 +199,3 @@ dependencies {
- 
-   Ok(())
- }
--
--/// Identifier of the auto-generated Android manifest block for activity embedding.
--const MANIFEST_BLOCK_ID: &str = "tauri-activity-embedding";
--/// First line of every Kotlin source generated by this module, used to recognize stale files.
--const GENERATED_HEADER: &str =
--  "// THIS IS AN AUTOGENERATED FILE BY TAURI ACTIVITY EMBEDDING. DO NOT EDIT THIS FILE DIRECTLY.";
--const SPLIT_INITIALIZER_CLASS: &str = "TauriSplitInitializer";
--/// Same `configChanges` set the `MainActivity` template uses, so secondary activities
--/// (and their webviews) are not recreated on dark mode, keyboard or locale changes.
--const ACTIVITY_CONFIG_CHANGES: &str =
--  "orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode";
--
--/// The app's Android package name as used by Kotlin sources and by the manifest.
--struct AndroidPackage {
--  /// Package with Kotlin-only keywords escaped with backticks (`package` statements, class references).
--  kotlin: String,
--  /// Raw package name (manifest entries, file system paths).
--  unescaped: String,
--}
--
--impl AndroidPackage {
--  /// Uses the package names exported by the Tauri CLI, deriving them from the identifier when unset.
--  fn resolve(identifier: &str) -> Self {
--    let kotlin = std::env::var("WRY_ANDROID_PACKAGE").ok();
--    let unescaped = std::env::var("TAURI_ANDROID_PACKAGE_UNESCAPED")
--      .ok()
--      .or_else(|| kotlin.as_ref().map(|p| p.replace('`', "")))
--      .unwrap_or_else(|| identifier.replace('-', "_"));
--    Self {
--      kotlin: kotlin.unwrap_or_else(|| unescaped.clone()),
--      unescaped,
--    }
--  }
--}
--
--/// Synchronizes the Android project with the `bundle > android > activityEmbedding` configuration.
--///
--/// When `config` is enabled and has split rules, this validates it, writes
--/// `TauriSplitInitializer.kt` plus a default `TauriActivity` subclass for each secondary
--/// activity the app sources do not define, and declares the secondary activities in the manifest.
--/// Otherwise every previously generated file and manifest entry is removed.
--pub fn sync_activity_embedding(
--  project_dir: &Path,
--  config: Option<&ActivityEmbeddingConfig>,
--  identifier: &str,
--) -> Result<()> {
--  let config = config.filter(|c| c.enabled && !c.split_rules.is_empty());
--  let package = AndroidPackage::resolve(identifier);
--  let out_dir = kotlin_out_dir(project_dir, &package);
--
--  let mut sources: Vec<(String, String)> = Vec::new();
--  let mut manifest_xml = String::new();
--
--  if let Some(config) = config {
--    validate_activity_embedding(config)?;
--
--    let manifest_path = project_dir.join("app/src/main/AndroidManifest.xml");
--    let manifest = if manifest_path.exists() {
--      std::fs::read_to_string(&manifest_path).context("failed to read AndroidManifest.xml")?
--    } else {
--      String::new()
--    };
--    let user_manifest = tauri_utils::build::remove_xml_block(&manifest, MANIFEST_BLOCK_ID);
--
--    manifest_xml = activity_embedding_manifest_xml(config, &package.unescaped, &user_manifest);
--    sources.push((
--      format!("{SPLIT_INITIALIZER_
-```
-
-**File**: `crates/tauri-cli/config.schema.json` (modified, +0/-296)
-```diff
-@@ -4058,306 +4058,10 @@
-             "string",
-             "null"
-           ]
--        },
--        "activityEmbedding": {
--          "description": "Activity embedding for large screens (tablets, foldables).\n\n When set and enabled, Tauri generates the Gradle dependencies, Android manifest entries,\n a `TauriSplitInitializer` Kotlin class and a default `TauriActivity` subclass for each\n secondary activity the app sources do not define.",
--          "anyOf": [
--            {
--              "$ref": "#/definitions/ActivityEmbeddingConfig"
--            },
--            {
--              "type": "null"
--            }
--          ]
--        }
--      },
--      "additionalProperties": false
--    },
--    "ActivityEmbeddingConfig": {
--      "description": "Configuration for Android Activity Embedding, which splits activities\n side by side on large screens.\n\n When enabled with at least one split rule, the build script generates the Gradle\n dependencies, the Android manifest entries and a `TauriSplitInitializer` Kotlin class.\n Each secondary activity is declared in the manifest automatically, and a default\n `TauriActivity` subclass is generated for it unless the app sources already define\n a class with that name in the application package.\n\n See <https://developer.android.com/guide/topics/large-screens/activity-embedding>",
--      "type": "object",
--      "properties": {
--        "enabled": {
--          "description": "When `false`, Tauri does not generate embedding Gradle entries, manifest updates, or `TauriSplitInitializer`.",
--          "default": true,
--          "type": "boolean"
--        },
--        "splitRules": {
--          "description": "Split pair rules defining how activities are laid out side by side.",
--          "default": [],
--          "type": "array",
--          "items": {
--            "$ref": "#/definitions/SplitPairRule"
--          }
--        }
--      },
--      "additionalProperties": false
--    },
--    "SplitPairRule": {
--      "description": "A split pair rule for Android Activity Embedding.\n\n Defines how a primary and secondary activity are displayed side by side\n on screens that satisfy the configured minimum dimensions.\n\n Mirrors the fields of [`androidx.window.embedding.SplitPairRule.Builder`] and\n the [`SplitPairFilter`] it accepts. Only [`primary`](Self::primary) and\n [`secondary`](Self::secondary) are required; all other fields fall back to\n the Android SDK defaults when omitted.\n\n [`androidx.window.embedding.SplitPairRule.Builder`]: https://developer.android.com/reference/androidx/window/embedding/SplitPairRule.Builder\n [`SplitPairFilter`]: https://developer.android.com/reference/androidx/window/embedding/SplitPairFilter",
--      "type": "object",
--      "required": [
--        "primary",
--        "secondary"
--      ],
--      "properties": {
--        "primary": {
--          "description": "The primary activity class name, relative to the application package\n (e.g. `\"MainActivity\"` or a fully-qualified name like\n `\"com.example.MainActivity\"`). The activity must exist and be declared\n in the Android manifest, as `MainActivity` is by default.",
--          "type": "string"
--        },
--        "secondary": {
--          "description": "The secondary activity class name, relative to the application package\n (e.g. `\"DetailActivity\"` or a fully-qualified name).\n\n Secondary activities are declared in the Android manifest automatically\n unless the manifest already declares them. When no source file with this\n name exists in the application package, a default class extending\n `TauriActivity` is generated. A custom implementation must extend\n `TauriActivity` so it can host a webview window.",
--          "type": "string"
--        },
--        "secondaryIntentAction": {
--          "description": "Optional intent action used to match the secondary activity when it is\n started via an implicit intent.",
--          "type": [
--            "string",
--            "null"
--          ]
--        },
--        "splitType": {
--          "description": "How the parent window is split. When omitted, the SDK uses an equal\n 50/50 ratio.",
--          "anyOf": [
--            {
--              "$ref": "#/definitions/SplitType"
--            },
--            {
--              "type": "null"
--            }
--          ]
--        },
--        "layoutDirection": {
--          "description": "The layout direction of the primary/secondary containers. Defaults to\n the system locale direction.",
--          "anyOf": [
--            {
--              "$ref": "#/definitions/SplitLayoutDirection"
--            },
--            {
--              "type": "null"
--            }
--          ]
--        },
--        "minWidthDp": {
--          "description": "Minimum parent window width in dp for the split to apply. Defaults to the\n SDK value (`600`).",
--          "type": [
--            "integer",
--            "null"
--          ],
--          "format": "uint32",
--          "minimum": 0.0
--        },
--        "minHeightD
-```
-
-**File**: `crates/tauri-schema-generator/schemas/config.schema.json` (modified, +0/-296)
-```diff
-@@ -4058,306 +4058,10 @@
-             "string",
-             "null"
-           ]
--        },
--        "activityEmbedding": {
--          "description": "Activity embedding for large screens (tablets, foldables).\n\n When set and enabled, Tauri generates the Gradle dependencies, Android manifest entries,\n a `TauriSplitInitializer` Kotlin class and a default `TauriActivity` subclass for each\n secondary activity the app sources do not define.",
--          "anyOf": [
--            {
--              "$ref": "#/definitions/ActivityEmbeddingConfig"
--            },
--            {
--              "type": "null"
--            }
--          ]
--        }
--      },
--      "additionalProperties": false
--    },
--    "ActivityEmbeddingConfig": {
--      "description": "Configuration for Android Activity Embedding, which splits activities\n side by side on large screens.\n\n When enabled with at least one split rule, the build script generates the Gradle\n dependencies, the Android manifest entries and a `TauriSplitInitializer` Kotlin class.\n Each secondary activity is declared in the manifest automatically, and a default\n `TauriActivity` subclass is generated for it unless the app sources already define\n a class with that name in the application package.\n\n See <https://developer.android.com/guide/topics/large-screens/activity-embedding>",
--      "type": "object",
--      "properties": {
--        "enabled": {
--          "description": "When `false`, Tauri does not generate embedding Gradle entries, manifest updates, or `TauriSplitInitializer`.",
--          "default": true,
--          "type": "boolean"
--        },
--        "splitRules": {
--          "description": "Split pair rules defining how activities are laid out side by side.",
--          "default": [],
--          "type": "array",
--          "items": {
--            "$ref": "#/definitions/SplitPairRule"
--          }
--        }
--      },
--      "additionalProperties": false
--    },
--    "SplitPairRule": {
--      "description": "A split pair rule for Android Activity Embedding.\n\n Defines how a primary and secondary activity are displayed side by side\n on screens that satisfy the configured minimum dimensions.\n\n Mirrors the fields of [`androidx.window.embedding.SplitPairRule.Builder`] and\n the [`SplitPairFilter`] it accepts. Only [`primary`](Self::primary) and\n [`secondary`](Self::secondary) are required; all other fields fall back to\n the Android SDK defaults when omitted.\n\n [`androidx.window.embedding.SplitPairRule.Builder`]: https://developer.android.com/reference/androidx/window/embedding/SplitPairRule.Builder\n [`SplitPairFilter`]: https://developer.android.com/reference/androidx/window/embedding/SplitPairFilter",
--      "type": "object",
--      "required": [
--        "primary",
--        "secondary"
--      ],
--      "properties": {
--        "primary": {
--          "description": "The primary activity class name, relative to the application package\n (e.g. `\"MainActivity\"` or a fully-qualified name like\n `\"com.example.MainActivity\"`). The activity must exist and be declared\n in the Android manifest, as `MainActivity` is by default.",
--          "type": "string"
--        },
--        "secondary": {
--          "description": "The secondary activity class name, relative to the application package\n (e.g. `\"DetailActivity\"` or a fully-qualified name).\n\n Secondary activities are declared in the Android manifest automatically\n unless the manifest already declares them. When no source file with this\n name exists in the application package, a default class extending\n `TauriActivity` is generated. A custom implementation must extend\n `TauriActivity` so it can host a webview window.",
--          "type": "string"
--        },
--        "secondaryIntentAction": {
--          "description": "Optional intent action used to match the secondary activity when it is\n started via an implicit intent.",
--          "type": [
--            "string",
--            "null"
--          ]
--        },
--        "splitType": {
--          "description": "How the parent window is split. When omitted, the SDK uses an equal\n 50/50 ratio.",
--          "anyOf": [
--            {
--              "$ref": "#/definitions/SplitType"
--            },
--            {
--              "type": "null"
--            }
--          ]
--        },
--        "layoutDirection": {
--          "description": "The layout direction of the primary/secondary containers. Defaults to\n the system locale direction.",
--          "anyOf": [
--            {
--              "$ref": "#/definitions/SplitLayoutDirection"
--            },
--            {
--              "type": "null"
--            }
--          ]
--        },
--        "minWidthDp": {
--          "description": "Minimum parent window width in dp for the split to apply. Defaults to the\n SDK value (`600`).",
--          "type": [
--            "integer",
--            "null"
--          ],
--          "format": "uint32",
--          "minimum": 0.0
--        },
--        "minHeightD
-```
-
-**File**: `crates/tauri-utils/src/build.rs` (modified, +10/-75)
-```diff
-@@ -100,7 +100,7 @@ fn link_xcode_library(name: &str, source: impl AsRef<std::path::Path>) {
- /// Updates the Android manifest by inserting XML content into a specified parent tag.
- ///
- /// The content is wrapped in auto-generated comments and will replace any existing
--/// content with the same block identifier. Empty content removes the block.
-+/// content with the same block identifier.
- ///
- /// # Arguments
- ///
-@@ -136,44 +136,27 @@ fn xml_block_comment(id: &str) -> String {
-   format!("<!-- {id}. AUTO-GENERATED. DO NOT REMOVE. -->")
- }
- 
--/// Removes the auto-generated block identified by `block_identifier` from the given XML string.
--///
--/// The block is delimited by the comments written by [`update_android_manifest`].
--/// Returns the input unchanged when no such block exists.
--pub fn remove_xml_block(xml: &str, block_identifier: &str) -> String {
-+fn insert_into_xml(xml: &str, block_identifier: &str, parent_tag: &str, contents: &str) -> String {
-   let block_comment = xml_block_comment(block_identifier);
- 
-   let mut rewritten = Vec::new();
--  let mut in_block = false;
-+  let mut found_block = false;
-+  let parent_closing_tag = format!("</{parent_tag}>");
-   for line in xml.split('\n') {
-     if line.contains(&block_comment) {
--      in_block = !in_block;
-+      found_block = !found_block;
-       continue;
-     }
--    if !in_block {
--      rewritten.push(line);
--    }
--  }
--
--  rewritten.join("\n")
--}
--
--fn insert_into_xml(xml: &str, block_identifier: &str, parent_tag: &str, contents: &str) -> String {
--  let block_comment = xml_block_comment(block_identifier);
--  let without_block = remove_xml_block(xml, block_identifier);
- 
--  // an empty block only removes the previously generated contents
--  if contents.trim().is_empty() {
--    return without_block;
--  }
-+    // found previous block which should be removed
-+    if found_block {
-+      continue;
-+    }
- 
--  let mut rewritten = Vec::new();
--  let parent_closing_tag = format!("</{parent_tag}>");
--  for line in without_block.split('\n') {
-     if let Some(index) = line.find(&parent_closing_tag) {
-       let indentation = " ".repeat(index + 4);
-       rewritten.push(format!("{indentation}{block_comment}"));
--      for l in contents.trim_end_matches('\n').split('\n') {
-+      for l in contents.split('\n') {
-         rewritten.push(format!("{indentation}{l}"));
-       }
-       rewritten.push(format!("{indentation}{block_comment}"));
-@@ -184,51 +167,3 @@ fn insert_into_xml(xml: &str, block_identifier: &str, parent_tag: &str, contents
- 
-   rewritten.join("\n")
- }
--
--#[cfg(test)]
--mod tests {
--  use super::{insert_into_xml, remove_xml_block};
--
--  const MANIFEST: &str = r#"<manifest>
--    <application>
--        <activity android:name=".MainActivity" />
--    </application>
--</manifest>"#;
--
--  #[test]
--  fn inserts_block_before_parent_closing_tag() {
--    let rewritten = insert_into_xml(MANIFEST, "test-block", "application", "<a />\n<b />\n");
--    assert_eq!(
--      rewritten,
--      r#"<manifest>
--    <application>
--        <activity android:name=".MainActivity" />
--        <!-- test-block. AUTO-GENERATED. DO NOT REMOVE. -->
--        <a />
--        <b />
--        <!-- test-block. AUTO-GENERATED. DO NOT REMOVE. -->
--    </application>
--</manifest>"#
--    );
--  }
--
--  #[test]
--  fn replaces_existing_block() {
--    let first = insert_into_xml(MANIFEST, "test-block", "application", "<a />");
--    let second = insert_into_xml(&first, "test-block", "application", "<b />");
--    assert!(!second.contains("<a />"));
--    assert_eq!(second.matches("test-block").count(), 2);
--    assert!(second.contains("<b />"));
--  }
--
--  #[test]
--  fn empty_contents_removes_block() {
--    let inserted = insert_into_xml(MANIFEST, "test-block", "application", "<a />");
--    assert_eq!(
--      insert_into_xml(&inserted, "test-block", "application", ""),
--      MANIFEST
--    );
--    assert_eq!(remove_xml_block(&inserted, "test-block"), MANIFEST);
--    assert_eq!(remove_xml_block(MANIFEST, "test-block"), MANIFEST);
--  }
--}
-```
-
----
-
-### Incident Patch 14: `7456ddd8` (2026-09-26)
-**Commit Message**: Revert "fix(core): proper unique identifier for menu items on channels store" (#16137)
-
-This reverts commit bce71b07ec11c1d693f16ab4bcdaf34b7348e36b.
-
-**File**: `.changes/cleanup-js-menu-channel.md` (modified, +1/-1)
-```diff
-@@ -2,4 +2,4 @@
- "tauri": "patch:bug"
- ---
- 
--Remove the `Channel` used to send event to JavaScript side on dropping the menu. Items sharing the same id each keep their own handler, so dropping one no longer removes another's.
-+Remove the `Channel` used to send event to JavaScript side on dropping the menu
-```
-
-**File**: `crates/tauri/src/menu/mod.rs` (modified, +1/-9)
-```diff
-@@ -95,7 +95,7 @@ macro_rules! gen_wrappers {
- 
-       impl<R: Runtime> Drop for $inner<R> {
-         fn drop(&mut self) {
--          remove_menu_channel(&self.app_handle, self.inner.id(), self as *const Self as usize);
-+          remove_menu_channel(&self.app_handle, self.inner.id());
-           // SAFETY: we will not access `self.inner` after this
-           let inner = unsafe { ManuallyDrop::take(&mut self.inner) };
-           // SAFETY: inner was created on main thread and is being dropped on main thread
-@@ -121,14 +121,6 @@ macro_rules! gen_wrappers {
-         }
-       }
- 
--      impl<R: $crate::Runtime> $type<R> {
--        /// Identifies this item among others sharing the same [`MenuId`],
--        /// matches the key passed to [`remove_menu_channel`] on drop.
--        pub(crate) fn channel_key(&self) -> usize {
--          ::std::sync::Arc::as_ptr(&self.0) as usize
--        }
--      }
--
-       $(
-         impl<R: $crate::Runtime> $crate::menu::sealed::IsMenuItemBase for $type<R> {
-           fn inner_muda(&self) -> &dyn muda::IsMenuItem {
-```
-
-**File**: `crates/tauri/src/menu/plugin.rs` (modified, +40/-90)
-```diff
-@@ -9,7 +9,7 @@ use tauri_runtime::dpi::Position;
- 
- use super::{sealed::ContextMenuBase, *};
- use crate::{
--  Manager, ResourceTable, RunEvent, Runtime, Webview, Window, command,
-+  Manager, ResourceTable, RunEvent, Runtime, State, Webview, Window, command,
-   image::JsImage,
-   ipc::{Channel, channel::JavaScriptChannelId},
-   plugin::{Builder, TauriPlugin},
-@@ -160,7 +160,12 @@ impl CheckMenuItemPayload {
- 
-     if let Some(handler) = self.handler {
-       let handler = handler.channel_on(webview.clone());
--      add_menu_channel(webview, item.id().clone(), item.channel_key(), handler);
-+      webview
-+        .state::<MenuChannels>()
-+        .0
-+        .lock()
-+        .unwrap()
-+        .insert(item.id().clone(), handler);
-     }
- 
-     Ok(item)
-@@ -211,7 +216,12 @@ impl IconMenuItemPayload {
- 
-     if let Some(handler) = self.handler {
-       let handler = handler.channel_on(webview.clone());
--      add_menu_channel(webview, item.id().clone(), item.channel_key(), handler);
-+      webview
-+        .state::<MenuChannels>()
-+        .0
-+        .lock()
-+        .unwrap()
-+        .insert(item.id().clone(), handler);
-     }
- 
-     Ok(item)
-@@ -245,7 +255,12 @@ impl MenuItemPayload {
- 
-     if let Some(handler) = self.handler {
-       let handler = handler.channel_on(webview.clone());
--      add_menu_channel(webview, item.id().clone(), item.channel_key(), handler);
-+      webview
-+        .state::<MenuChannels>()
-+        .0
-+        .lock()
-+        .unwrap()
-+        .insert(item.id().clone(), handler);
-     }
- 
-     Ok(item)
-@@ -346,12 +361,13 @@ fn new<R: Runtime>(
-   webview: Webview<R>,
-   kind: ItemKind,
-   options: Option<NewOptions>,
-+  channels: State<'_, MenuChannels>,
-   handler: Channel<MenuId>,
- ) -> crate::Result<(ResourceId, MenuId)> {
-   let options = options.unwrap_or_default();
-   let mut resources_table = webview.resources_table();
- 
--  let (rid, id, key) = match kind {
-+  let (rid, id) = match kind {
-     ItemKind::Menu => {
-       let mut builder = MenuBuilder::new(&webview);
-       if let Some(id) = options.id {
-@@ -364,10 +380,9 @@ fn new<R: Runtime>(
-       }
-       let menu = builder.build()?;
-       let id = menu.id().clone();
--      let key = menu.channel_key();
-       let rid = resources_table.add(menu);
- 
--      (rid, id, key)
-+      (rid, id)
-     }
- 
-     ItemKind::Submenu => {
-@@ -380,10 +395,9 @@ fn new<R: Runtime>(
-       }
-       .create_item(&webview, &resources_table)?;
-       let id = submenu.id().clone();
--      let key = submenu.channel_key();
-       let rid = resources_table.add(submenu);
- 
--      (rid, id, key)
-+      (rid, id)
-     }
- 
-     ItemKind::MenuItem => {
-@@ -397,9 +411,8 @@ fn new<R: Runtime>(
-       }
-       .create_item(&webview)?;
-       let id = item.id().clone();
--      let key = item.channel_key();
-       let rid = resources_table.add(item);
--      (rid, id, key)
-+      (rid, id)
-     }
- 
-     ItemKind::Predefined => {
-@@ -411,9 +424,8 @@ fn new<R: Runtime>(
-       }
-       .create_item(&webview, &resources_table)?;
-       let id = item.id().clone();
--      let key = item.channel_key();
-       let rid = resources_table.add(item);
--      (rid, id, key)
-+      (rid, id)
-     }
- 
-     ItemKind::Check => {
-@@ -428,9 +440,8 @@ fn new<R: Runtime>(
-       }
-       .create_item(&webview)?;
-       let id = item.id().clone();
--      let key = item.channel_key();
-       let rid = resources_table.add(item);
--      (rid, id, key)
-+      (rid, id)
-     }
- 
-     ItemKind::Icon => {
-@@ -445,13 +456,12 @@ fn new<R: Runtime>(
-       }
-       .create_item(&webview, &resources_table)?;
-       let id = item.id().clone();
--      let key = item.channel_key();
-       let rid = resources_table.add(item);
--      (rid, id, key)
-+      (rid, id)
-     }
-   };
- 
--  add_menu_channel(&webview, id.clone(), key, handler);
-+  channels.0.lock().unwrap().insert(id.clone(), handler);
- 
-   Ok((rid, id))
- }
-@@ -876,40 +886,11 @@ fn set_icon<R: Runtime>(
-   )
- }
- 
--/// JS event handlers tagged with the owning item's [`channel_key`](Menu::channel_key)
--type KeyedChannels = Vec<(usize, Channel<MenuId>)>;
--
--/// JS event handlers by menu id, keyed per item since ids are not unique
--struct MenuChannels(Mutex<HashMap<MenuId, KeyedChannels>>);
--
--fn add_menu_channel<R: Runtime, M: Manager<R>>(
--  manager: &M,
--  id: MenuId,
--  key: usize,
--  channel: Channel<MenuId>,
--) {
--  manager
--    .state::<MenuChannels>()
--    .0
--    .lock()
--    .unwrap()
--    .entry(id)
--    .or_default()
--    .push((key, channel));
--}
-+struct MenuChannels(Mutex<HashMap<MenuId, Channel<MenuId>>>);
- 
- // Called in `Menu`'s `Drop` to clean up the event handlers
--pub(crate) fn remove_menu_channel<R: Runtime>(app: &AppHandle<R>, id: &MenuId, key: usize) {
--  let Some(channels) = app.try_state::<MenuChannels>() else {
--    return;
--  };
--  let mut channels = channels.0.lock().unwrap();
--  if let Some(handlers) = channels.get_mut(id) {
--    handlers.retain(|(k, _)| *k != key);
--    if handlers.is_empty() {
--      channels
-```
-
----
-
-### Incident Patch 15: `15468de7` (2026-09-25)
-**Commit Message**: fix(bundler): recognize deb and rpm as self-contained updater targets (#16064)
-
-* fix(bundler): recognize deb and rpm as self-contained updater targets
-
-The self-contained updater check excluded RPM and the "no updater-enabled targets" warning omitted deb/rpm, although both are signed as updater artifacts and supported by the updater plugin.
-
-* cr
-
-* cr
-
-**File**: `.changes/bundler-updater-targets-deb-rpm.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+"tauri-bundler": "patch:bug"
-+---
-+
-+Recognize `.deb` and `.rpm` as self contained updater artifacts (the updater plugin installs them directly): the "no updater-enabled targets were built" warning is no longer printed when only a `.rpm` bundle is produced, and it now lists both targets. Setting `createUpdaterArtifacts` to `"v1Compatible"` no longer fails with "Unable to find a bundled project for the updater" when only a `.deb` bundle is built; the legacy updater never supported `.deb`, so the bundler now warns that no v1 compatible artifact was created instead.
-```
-
-**File**: `crates/tauri-bundler/src/bundle.rs` (modified, +25/-17)
-```diff
-@@ -219,38 +219,46 @@ pub fn bundle_project(settings: &Settings) -> crate::Result<Vec<Bundle>> {
-   }
- 
-   if let Some(updater) = settings.updater() {
--    if package_types.iter().any(|package_type| {
--      if updater.v1_compatible {
-+    // Targets the legacy v1 updater can consume once they are wrapped in a tar.gz / zip.
-+    let has_v1_target = updater.v1_compatible
-+      && package_types.iter().any(|package_type| {
-         matches!(
-           package_type,
-           PackageType::AppImage
-             | PackageType::MacOsBundle
-             | PackageType::Nsis
-             | PackageType::WindowsMsi
--            | PackageType::Deb
-         )
--      } else {
--        matches!(package_type, PackageType::MacOsBundle)
--      }
--    }) {
-+      });
-+    // Targets the v2 updater plugin installs directly, no wrapping needed.
-+    let has_self_contained_target = package_types.iter().any(|package_type| {
-+      matches!(
-+        package_type,
-+        PackageType::AppImage
-+          | PackageType::Nsis
-+          | PackageType::WindowsMsi
-+          | PackageType::Deb
-+          | PackageType::Rpm
-+      )
-+    });
-+
-+    // the macOS app bundle is always archived, the other v1 targets only for the legacy updater
-+    if package_types.contains(&PackageType::MacOsBundle) || has_v1_target {
-       let updater_paths = updater_bundle::bundle_project(settings, &bundles)?;
-       bundles.push(Bundle {
-         package_type: PackageType::Updater,
-         bundle_paths: updater_paths,
-       });
--    } else if updater.v1_compatible
--      || !package_types.iter().any(|package_type| {
--        // Self contained updater, no need to zip
--        matches!(
--          package_type,
--          PackageType::AppImage | PackageType::Nsis | PackageType::WindowsMsi | PackageType::Deb
--        )
--      })
--    {
-+    } else if updater.v1_compatible {
-       log::warn!(
--        "The bundler was configured to create updater artifacts but no updater-enabled targets were built. Please enable one of these targets: app, appimage, msi, nsis"
-+        "No v1 compatible updater artifact was created: the legacy updater only supports the app, appimage, msi and nsis targets. deb and rpm bundles can only be installed by the v2 updater plugin."
-+      );
-+    } else if !has_self_contained_target {
-+      log::warn!(
-+        "The bundler was configured to create updater artifacts but no updater-enabled targets were built. Please enable one of these targets: app, appimage, deb, rpm, msi, nsis"
-       );
-     }
-+
-     if updater.v1_compatible {
-       log::warn!(
-         "Legacy v1 compatible updater is deprecated and will be removed in v3, change bundle > createUpdaterArtifacts to true when your users are updated to the version with v2 updater plugin"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #16228** (closed): fix(core): do not panic when a replayed queued emit reaches a once handler (@entity-0-0-2)
-- **PR #16222** (2026-10-07): fix: panic on repeated `once` listener events (@Legend-Master)
-- **PR #16212** (closed): feat(bundler): add `sidecarEntitlements` option to sign macOS sidecars with their own entitlements (@ocavuebot)
-- **PR #16195** (2026-10-07): fix(api): return awaitable cleanup from combined event listeners (@alessandrorodi)
-- **PR #16190** (2026-10-06): chore: add publiccode.yml file (@lucasfernog)
-- **PR #16186** (2026-09-30): fix(plugin): skip build script writes on docs.rs builds (@lucasfernog)
-- **PR #16166** (2026-09-29): fix: enable macos private apis regardless of feature flags (@FabianLars)
-- **PR #16165** (2026-09-29): fix: ignore `src-tauri` in vite configs (@Legend-Master)
+- **PR #16335** (2026-10-19): fix(bundler): fix malformed tokens in NSIS language files (@amrbashir)
+- **PR #16333** (2026-10-19): fix(nsis): correct the chooseHowToInstall language key (@amrbashir)
+- **PR #16332** (2026-10-19): fix(bundler): fix malformed tokens in NSIS language files (@amrbashir)
+- **PR #16331** (closed): fix(nsis): quote file association executable paths (@amrbashir)
+- **PR #16330** (2026-10-19): fix(nsis): quote the executable path in file associations (@lazerg)
+- **PR #16326** (2026-10-19): fix(tauri-build): skip the missing capabilities dir watch for inline capabilities (fix #16319) (@jay-tau)
 
 ---
 
@@ -4411,3 +2956,38 @@ The self-contained updater check excluded RPM and the "no updater-enabled target
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. tauri-build): skip the missing capabilities dir watch for inline capabilities (#
+
+**RULE**:
+When implementing operations in `.changes/fix-capabilities-rerun-missing-dir.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tauri-apps/tauri. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `d6de22ef`: tauri-build): skip the missing capabilities dir watch for inline capabilities (#16326). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changes/fix-capabilities-rerun-missing-dir.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+---
+'tauri-build': 'patch:bug'
+---
+
+Don't watch the `capabilities` directory when it doesn't exist and the configuration lists capabilities in `app > security > capabilities`. Cargo treats a missing watched path as changed, so these apps re-ran the build script and recompiled on every build.
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `d6de22ef` are properly handled with clean fallback behavior.

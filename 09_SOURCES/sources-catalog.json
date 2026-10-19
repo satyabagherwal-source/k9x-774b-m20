@@ -6113,10 +6113,10 @@
     "repository": "open-policy-agent/opa",
     "platform": "github",
     "sourceUrl": "https://github.com/open-policy-agent/opa",
-    "sourceVersion": "7bcf8618",
+    "sourceVersion": "45eb1b50",
     "license": "Apache-2.0",
-    "contentHash": "bb2ecf302de9e6e7fed9457f6a1a97f992a0f0b5d537e5e3c33c931659c47e5f",
-    "lastHarvestedAt": "2026-10-19T05:12:52.305Z",
+    "contentHash": "942b2cbe38911df5720ac27ee4171c70fd67d89d26df8ee348cc442a483b91fc",
+    "lastHarvestedAt": "2026-10-19T17:31:26.924Z",
     "learningId": "learn-github-open-policy-agent-opa"
   },
   "dragonflydb-dragonfly": {
@@ -8468,5 +8468,25 @@
     "contentHash": "9dc666b430707d2f1a69149087304c95e4347f5c585b1a59134baf1081ecb2a9",
     "lastHarvestedAt": "2026-10-19T17:25:09.024Z",
     "learningId": "learn-github-software-mansion-react-native-screens"
+  },
+  "speedyapply-jobspy": {
+    "repository": "speedyapply/JobSpy",
+    "platform": "github",
+    "sourceUrl": "https://github.com/speedyapply/JobSpy",
+    "sourceVersion": "b6236bb0",
+    "license": "MIT",
+    "contentHash": "4d408234c03f0083c4ebb67abd10df095b694d0cd3e943618ef405c54429d541",
+    "lastHarvestedAt": "2026-10-19T17:31:16.197Z",
+    "learningId": "learn-github-speedyapply-jobspy"
+  },
+  "tauri-apps-tauri": {
+    "repository": "tauri-apps/tauri",
+    "platform": "github",
+    "sourceUrl": "https://github.com/tauri-apps/tauri",
+    "sourceVersion": "bc1136ba",
+    "license": "Apache-2.0",
+    "contentHash": "9d3e60f6f7b9fa8b1f51742356ef67d1317500806fadc285a25177377bcc3664",
+    "lastHarvestedAt": "2026-10-19T17:31:25.194Z",
+    "learningId": "learn-github-tauri-apps-tauri"
   }
 }

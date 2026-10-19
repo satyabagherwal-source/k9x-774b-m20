@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T17:25:08.951Z",
-  "total_verified_learnings": 862,
+  "last_updated": "2026-10-19T17:31:26.877Z",
+  "total_verified_learnings": 864,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -33522,14 +33522,19 @@
       "slug": "open-policy-agent-opa",
       "platform": "github",
       "source_url": "https://github.com/open-policy-agent/opa",
-      "source_version": "7bcf8618",
-      "content_hash": "bb2ecf302de9e6e7fed9457f6a1a97f992a0f0b5d537e5e3c33c931659c47e5f",
+      "source_version": "45eb1b50",
+      "content_hash": "942b2cbe38911df5720ac27ee4171c70fd67d89d26df8ee348cc442a483b91fc",
       "dossier_path": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "promoted_rules": [
         {
           "number": 2168,
           "title": "topdown: fix substring overflow with huge length",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2713,
+          "title": "docs: Update builtin availability in other interpreters (#9399)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -33538,7 +33543,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T05:12:52.255Z",
+      "verified_at": "2026-10-19T17:31:26.865Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41045,22 +41050,35 @@
     "learn-github-tauri-apps-tauri": {
       "learning_id": "learn-github-tauri-apps-tauri",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "tauri-apps-tauri",
+      "source": "tauri-apps/tauri",
+      "repository": "tauri-apps/tauri",
       "slug": "tauri-apps-tauri",
       "platform": "github",
       "source_url": "https://github.com/tauri-apps/tauri",
-      "source_version": "HEAD",
-      "content_hash": "39e98a98d80485f94f6c58eefc2ab42da52e9b7079f022589d703d2eef29b6a1",
+      "source_version": "bc1136ba",
+      "content_hash": "9d3e60f6f7b9fa8b1f51742356ef67d1317500806fadc285a25177377bcc3664",
       "dossier_path": "07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2712,
+          "title": "tauri-build): skip the missing capabilities dir watch for inline capabilities (#",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.874Z"
+      "verified_at": "2026-10-19T17:31:25.119Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-taylorwilsdon-google_workspace_mcp": {
       "learning_id": "learn-github-taylorwilsdon-google_workspace_mcp",
@@ -90087,6 +90105,81 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T17:25:08.931Z"
+    },
+    "learn-github-speedyapply-jobspy": {
+      "learning_id": "learn-github-speedyapply-jobspy",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "speedyapply/JobSpy",
+      "repository": "speedyapply/JobSpy",
+      "slug": "speedyapply-jobspy",
+      "platform": "github",
+      "source_url": "https://github.com/speedyapply/JobSpy",
+      "source_version": "b6236bb0",
+      "content_hash": "4d408234c03f0083c4ebb67abd10df095b694d0cd3e943618ef405c54429d541",
+      "dossier_path": "07_PROJECT_LEARNING/speedyapply-jobspy-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/speedyapply-jobspy-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 2711,
+          "title": "salary): restore LinkedIn salaries & keep cents on all boards (#380)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T17:31:16.140Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-2711": {
+      "learning_id": "rule-2711",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2711,
+      "title": "salary): restore LinkedIn salaries & keep cents on all boards (#380)",
+      "source_url": "https://github.com/speedyapply/JobSpy",
+      "source_version": "b6236bb0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T17:31:16.140Z"
+    },
+    "rule-2712": {
+      "learning_id": "rule-2712",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2712,
+      "title": "tauri-build): skip the missing capabilities dir watch for inline capabilities (#",
+      "source_url": "https://github.com/tauri-apps/tauri",
+      "source_version": "bc1136ba",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T17:31:25.119Z"
+    },
+    "rule-2713": {
+      "learning_id": "rule-2713",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2713,
+      "title": "docs: Update builtin availability in other interpreters (#9399)",
+      "source_url": "https://github.com/open-policy-agent/opa",
+      "source_version": "45eb1b50",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T17:31:26.865Z"
     }
   },
   "aliases": {

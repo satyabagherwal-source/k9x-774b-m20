@@ -3380,3 +3380,6 @@
 | `CYCLE-20261019-Q7JZ` | `2026-10-19T17:18:31.103Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2709` | Yes (`d11f33d8...`) |
 | `CYCLE-20261019-QAH5` | `2026-10-19T17:18:34.889Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2679` | Yes (`5c4603f2...`) |
 | `CYCLE-20261019-YQL8` | `2026-10-19T17:25:09.020Z` | `software-mansion/react-native-screens` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2710` | Yes (`9dc666b4...`) |
+| `CYCLE-20261019-6LWJ` | `2026-10-19T17:31:16.195Z` | `speedyapply/JobSpy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2711` | Yes (`4d408234...`) |
+| `CYCLE-20261019-6SUF` | `2026-10-19T17:31:25.191Z` | `tauri-apps/tauri` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2712` | Yes (`9d3e60f6...`) |
+| `CYCLE-20261019-6U6H` | `2026-10-19T17:31:26.922Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2713` | Yes (`942b2cbe...`) |

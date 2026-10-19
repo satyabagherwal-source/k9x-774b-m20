@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md`  
 > **Source**: github ([https://github.com/open-policy-agent/opa](https://github.com/open-policy-agent/opa))  
-> **Source Version**: `7bcf8618`  
+> **Source Version**: `45eb1b50`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T05:12:52.039Z  
+> **Timestamp**: 2026-10-19T17:31:26.643Z  
 > **Learning ID**: `learn-github-open-policy-agent-opa`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/open-policy-agent/opa](https://github.com/open-policy-agent/opa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T05:12:52.030Z  
+> **Harvest Timestamp**: 2026-10-19T17:31:26.636Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open Policy Agent (OPA) is an open source, general-purpose policy engine.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 12381 stars
+- **Stars / Engagement**: 12386 stars
 
 ---
 
@@ -968,149 +968,53 @@ func BuildTLSConfig(scheme string, skipVerify bool, cert *tls.Certificate, pool 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5a1e6a8b` (2026-10-13)
-**Commit Message**: topdown: fix substring overflow with huge length
+### Incident Patch 1: `45eb1b50` (2026-10-19)
+**Commit Message**: docs: Update builtin availability in other interpreters (#9399)
 
-start + length overflowed for lengths near MaxInt64, panicking with a
-slice bounds error. Clamp length to the remaining string instead.
+Refreshes the builtins recorded for other Rego interpreters from the
+capabilities
+they publish, so the builtin reference reports their latest releases.
 
-Fixes #9366
+Opened automatically by `.github/workflows/update-implementations.yaml`.
+The diff in
+`internal/cmd/genbuiltinmetadata/implementations.json` shows which
+builtins changed.
 
-Signed-off-by: Stephan Renatus <[REDACTED_EMAIL]>
+Co-authored-by: sspaink <[REDACTED_EMAIL]>
 
-**File**: `v1/topdown/strings.go` (modified, +2/-2)
+**File**: `builtin_metadata.json` (modified, +1/-1)
 ```diff
-@@ -537,7 +537,7 @@ func builtinSubstring(_ BuiltinContext, operands []*ast.Term, iter func(*ast.Ter
- 			return iter(operands[0])
- 		}
- 
--		upto := min(len(sbase), startIndex+length)
-+		upto := startIndex + min(length, len(sbase)-startIndex) // clamp length first: startIndex+length can overflow
- 		return iter(ast.InternedTerm(sbase[startIndex:upto]))
- 	}
- 
-@@ -555,7 +555,7 @@ func builtinSubstring(_ BuiltinContext, operands []*ast.Term, iter func(*ast.Ter
- 	if length < 0 {
- 		s = string(runes[startIndex:])
- 	} else {
--		upto := min(len(runes), startIndex+length)
-+		upto := startIndex + min(length, len(runes)-startIndex) // clamp length first: startIndex+length can overflow
- 		s = string(runes[startIndex:upto])
- 	}
- 
+@@ -265,7 +265,7 @@
+       "id": "java",
+       "label": "Java",
+       "repo": "open-policy-agent/java-opa-sdk",
+-      "version": "0.5.0"
++      "version": "0.6.0"
+     }
+   ],
+   "abs": {
 ```
 
-**File**: `v1/topdown/strings_test.go` (modified, +10/-0)
+**File**: `internal/cmd/genbuiltinmetadata/implementations.json` (modified, +1/-1)
 ```diff
-@@ -8,6 +8,7 @@ import (
- 	"context"
- 	"errors"
- 	"fmt"
-+	"math"
- 	"math/rand/v2"
- 	"slices"
- 	"strconv"
-@@ -586,3 +587,12 @@ func stringsArray(strs []string) *ast.Term {
- 	}
- 	return ast.ArrayTerm(terms...)
- }
-+
-+func TestBuiltinSubstringHugeLength(t *testing.T) {
-+	for _, tc := range []struct{ base, want string }{{"abc", "bc"}, {"äbc", "bc"}} {
-+		for _, length := range []int64{math.MaxInt64, math.MaxInt64 - 1} {
-+			rule := fmt.Sprintf(`p := x if { x := substring(%q, 1, %d) }`, tc.base, length)
-+			runTopDownTestCase(t, map[string]any{}, tc.base, []string{rule}, fmt.Sprintf("%q", tc.want))
-+		}
-+	}
-+}
-```
-
----
-
-### Incident Patch 2: `89d111ce` (2026-10-14)
-**Commit Message**: cmd: give the malformed remote bundle exec tests a longer timeout (#9381)
-
-we have a flaky test:
-https://github.com/open-policy-agent/opa/actions/runs/38514800110/job/115691071777
-
-The failure is in that job's TestExecMalformedRemoteBundle step. The log
-shows Bundle download failed … context deadline exceeded, and the test
-failed in 0.07s with the 50ms timeout. so hopefully increasing the
-timeout will do the trick.
-
-Signed-off-by: Sebastian Spaink <[REDACTED_EMAIL]>
-
-**File**: `cmd/exec_jsonv2_test.go` (modified, +5/-4)
-```diff
-@@ -1506,10 +1506,11 @@ func TestExecMalformedRemoteBundle(t *testing.T) {
- 		"bundles.test.resource=" + bundlePath,
- 	}
- 
--	// Note(philipc): We can set this timeout almost arbitrarily high or
--	// low-- the test will time out before it ever succeeds, due to the
--	// faulty bundle.
--	params.Timeout = time.Millisecond * 50
-+	// The bundle error is returned as soon as the first download fails, well
-+	// before this timeout. It only needs to be long enough for startup and
-+	// that download to finish on a slow runner; otherwise the download is
-+	// cancelled and the error is "context deadline exceeded" instead.
-+	params.Timeout = 10 * time.Second
- 
- 	params.Paths = append(params.Paths, t.TempDir())
- 	err := runExec(params)
-```
-
-**File**: `cmd/exec_test.go` (modified, +5/-4)
-```diff
-@@ -1506,10 +1506,11 @@ func TestExecMalformedRemoteBundle(t *testing.T) {
- 		"bundles.test.resource=" + bundlePath,
- 	}
- 
--	// Note(philipc): We can set this timeout almost arbitrarily high or
--	// low-- the test will time out before it ever succeeds, due to the
--	// faulty bundle.
--	params.Timeout = time.Millisecond * 50
-+	// The bundle error is returned as soon as the first download fails, well
-+	// before this timeout. It only needs to be long enough for startup and
-+	// that download to finish on a slow runner; otherwise the download is
-+	// cancelled and the error is "context deadline exceeded" instead.
-+	params.Timeout = 10 * time.Second
- 
- 	params.Paths = append(params.Paths, t.TempDir())
- 	err := runExec(params)
-```
-
----
-
-### Incident Patch 3: `95c59026` (2026-10-14)
-**Commit Message**: nightly: raise the go get smoke test timeout to 30 minutes (#9379)
-
-A cold proxy.golang.org answers 404 for opa@main, so go get falls back
-to cloning the repo directly. That took about 5 minutes locally and ran
-past the old 10 minute limit on the runner.
-
-Signed-off-by: Sebastian Spaink <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/nightly.yaml` (modified, +1/-1)
-```diff
-@@ -139,7 +139,7 @@ jobs:
-           fi
- 
-           echo "Success: no retracted dependencies"
--        timeout-minutes: 10
-+        timeout-minutes: 30
- 
-       - name: Slack Notification
-         uses: slackapi/slack-github-action@dcb1066f776dd043e64d0e8ba94ca15cc7e1875d # v4.0.0
+@@ -148,7 +148,7 @@
+       "id": "java",
+       "label": "Java",
+       "repo": "open-policy-agent/java-opa-sdk",
+-      "version": "0.5.0",
++      "version": "0.6.0",
+       "builtins": {
+         "abs": "0.1.0",
+         "and": "0.1.0",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #9399** (2026-10-19): docs: Update builtin availability in other interpreters (@johanfylling)
 - **PR #9394** (closed): ast: Avoid keeping slice of all statements on `Module` (@anderseknert)
 - **PR #9392** (2026-10-16): ast: attach annotations to statements in n log n time (@srenatus)
 - **PR #9390** (2026-10-16): ast: keep the number range check off the plain number path (@srenatus)
 - **PR #9387** (2026-10-15): website: Add kubecon schedule to event page (@charlieegan3)
 - **PR #9385** (closed): topdown: fix partial eval panic on negated `every` (@choksi2212)
-- **PR #9381** (2026-10-14): cmd: give the malformed remote bundle exec tests a longer timeout (@sspaink)
 
 ---
 
@@ -1130,30 +1034,28 @@ Signed-off-by: Sebastian Spaink <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. topdown: fix substring overflow with huge length
+## X. docs: Update builtin availability in other interpreters (#9399)
 
 **RULE**:
-When implementing operations in `v1/topdown/strings.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/opa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `builtin_metadata.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/opa. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5a1e6a8b`: topdown: fix substring overflow with huge length. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `45eb1b50`: docs: Update builtin availability in other interpreters (#9399). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `v1/topdown/strings.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `builtin_metadata.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		upto := startIndex + min(length, len(sbase)-startIndex) // clamp length first: startIndex+length can overflow
-		upto := startIndex + min(length, len(runes)-startIndex) // clamp length first: startIndex+length can overflow
+      "version": "0.6.0"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		upto := min(len(sbase), startIndex+length)
-		upto := min(len(runes), startIndex+length)
+      "version": "0.5.0"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5a1e6a8b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `45eb1b50` are properly handled with clean fallback behavior.

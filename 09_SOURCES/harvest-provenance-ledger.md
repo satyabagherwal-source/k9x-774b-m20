@@ -3387,3 +3387,6 @@ Every entry in this ledger must capture:
 | `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `29c60bbb` | Multi-dimensional audit evidence | 2026-10-19T17:18:31.106Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `508b0013` | Multi-dimensional audit evidence | 2026-10-19T17:18:34.892Z |
 | `learn-github-software-mansion-react-native-screens` | `https://github.com/software-mansion/react-native-screens` | `dc59d508` | Multi-dimensional audit evidence | 2026-10-19T17:25:09.024Z |
+| `learn-github-speedyapply-jobspy` | `https://github.com/speedyapply/JobSpy` | `b6236bb0` | Multi-dimensional audit evidence | 2026-10-19T17:31:16.197Z |
+| `learn-github-tauri-apps-tauri` | `https://github.com/tauri-apps/tauri` | `bc1136ba` | Multi-dimensional audit evidence | 2026-10-19T17:31:25.194Z |
+| `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `45eb1b50` | Multi-dimensional audit evidence | 2026-10-19T17:31:26.924Z |

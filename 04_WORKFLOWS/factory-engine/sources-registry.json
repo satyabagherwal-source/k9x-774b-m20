@@ -2183,12 +2183,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "rustcrypto-hashes": {
-    "name": "RustCrypto/hashes",
+    "name": "hashes",
     "officialUrl": "https://github.com/RustCrypto/hashes",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-19T14:27:24.688Z",
-    "lastVerified": "2026-10-19T14:27:24.688Z",
+    "lastChecked": "2026-10-19T17:31:24.400Z",
+    "lastVerified": "2026-10-19T17:31:24.400Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustcrypto-hashes",
@@ -2197,7 +2197,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "98947e90"
   },
   "ascending-llc-jarvis-registry": {
     "name": "ascending-llc/jarvis-registry",
@@ -7195,12 +7196,12 @@
     "revisionIdentifier": "beef9eec"
   },
   "sharkdp-pastel": {
-    "name": "sharkdp/pastel",
+    "name": "pastel",
     "officialUrl": "https://github.com/sharkdp/pastel",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-19T02:27:41.429Z",
-    "lastVerified": "2026-10-19T02:27:41.429Z",
+    "lastChecked": "2026-10-19T17:31:14.417Z",
+    "lastVerified": "2026-10-19T17:31:14.417Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sharkdp-pastel",
@@ -7209,7 +7210,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "01d4252a"
   },
   "go-chassis-go-chassis": {
     "name": "go-chassis",
@@ -14281,14 +14283,14 @@
     "officialUrl": "https://github.com/open-policy-agent/opa",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-19T05:12:52.030Z",
-    "lastVerified": "2026-10-19T05:12:52.030Z",
+    "lastChecked": "2026-10-19T17:31:26.636Z",
+    "lastVerified": "2026-10-19T17:31:26.636Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-open-policy-agent-opa",
-    "contentHash": "bb2ecf302de9e6e7fed9457f6a1a97f992a0f0b5d537e5e3c33c931659c47e5f",
+    "contentHash": "942b2cbe38911df5720ac27ee4171c70fd67d89d26df8ee348cc442a483b91fc",
     "promotedRulesCount": 1,
-    "recentFixesCount": 6,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -15039,12 +15041,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "activeloopai-deeplake": {
-    "name": "activeloopai/deeplake",
+    "name": "deeplake",
     "officialUrl": "https://github.com/activeloopai/deeplake",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-10-19T04:26:13.421Z",
-    "lastVerified": "2026-10-19T04:26:13.421Z",
+    "lastChecked": "2026-10-19T17:31:27.197Z",
+    "lastVerified": "2026-10-19T17:31:27.197Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-activeloopai-deeplake",
@@ -15053,7 +15055,8 @@
     "recentFixesCount": 15,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "f432041f"
   },
   "mariadb-server": {
     "name": "MariaDB/server",
@@ -18322,8 +18325,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-19T17:02:33.870Z",
-    "lastVerified": "2026-10-19T17:02:33.870Z",
+    "lastChecked": "2026-10-19T17:31:29.389Z",
+    "lastVerified": "2026-10-19T17:31:29.389Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -21863,18 +21866,19 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "tauri-apps-tauri": {
-    "name": "tauri-apps-tauri",
+    "name": "tauri-apps/tauri",
     "officialUrl": "https://github.com/tauri-apps/tauri",
     "sourceType": "github",
-    "technology": "code-repository",
-    "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-02T03:28:12.638Z",
-    "lastVerified": "2026-10-02T03:28:12.638Z",
+    "technology": "Rust",
+    "lastChecked": "2026-10-19T17:31:24.879Z",
+    "lastVerified": "2026-10-19T17:31:24.879Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
-    "learningId": null,
-    "promotedRulesCount": 0,
-    "recentFixesCount": 0,
+    "learningId": "learn-github-tauri-apps-tauri",
+    "contentHash": "9d3e60f6f7b9fa8b1f51742356ef67d1317500806fadc285a25177377bcc3664",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 18,
+    "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   },
@@ -25070,9 +25074,9 @@
   "ildrm-northstar-seo": {
     "name": "northstar-seo",
     "officialUrl": "https://github.com/ildrm/northstar-seo",
-    "lastChecked": "2026-10-18T05:57:38.205Z",
+    "lastChecked": "2026-10-19T17:31:16.881Z",
     "revisionIdentifier": "5ec9c7dc23",
-    "lastVerified": "2026-10-18T05:57:38.205Z"
+    "lastVerified": "2026-10-19T17:31:16.881Z"
   },
   "booltools-booltools-seo-crawler": {
     "name": "booltools-seo-crawler",
@@ -26326,8 +26330,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-19T17:25:11.560Z",
-    "lastVerified": "2026-10-19T17:25:11.560Z",
+    "lastChecked": "2026-10-19T17:31:29.462Z",
+    "lastVerified": "2026-10-19T17:31:29.462Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -26738,6 +26742,23 @@
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "speedyapply-jobspy": {
+    "name": "speedyapply/JobSpy",
+    "officialUrl": "https://github.com/speedyapply/JobSpy",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-10-19T17:31:14.701Z",
+    "lastVerified": "2026-10-19T17:31:14.701Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-speedyapply-jobspy",
+    "contentHash": "4d408234c03f0083c4ebb67abd10df095b694d0cd3e943618ef405c54429d541",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 20,
+    "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   }

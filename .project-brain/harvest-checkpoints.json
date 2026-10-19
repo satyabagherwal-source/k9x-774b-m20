@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T17:25:09.031Z",
+  "last_updated": "2026-10-19T17:31:26.931Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9289,14 +9289,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-open-policy-agent-opa",
-      "content_hash": "bb2ecf302de9e6e7fed9457f6a1a97f992a0f0b5d537e5e3c33c931659c47e5f",
-      "verified_at": "2026-10-19T05:12:52.310Z",
+      "content_hash": "942b2cbe38911df5720ac27ee4171c70fd67d89d26df8ee348cc442a483b91fc",
+      "verified_at": "2026-10-19T17:31:26.931Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T05:12:52.310Z"
+      "last_updated": "2026-10-19T17:31:26.931Z"
     },
     "dragonflydb/dragonfly": {
       "repository": "dragonflydb/dragonfly",
@@ -12747,6 +12747,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T17:25:09.031Z"
+    },
+    "speedyapply/JobSpy": {
+      "repository": "speedyapply/JobSpy",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-speedyapply-jobspy",
+      "content_hash": "4d408234c03f0083c4ebb67abd10df095b694d0cd3e943618ef405c54429d541",
+      "verified_at": "2026-10-19T17:31:16.204Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T17:31:16.204Z"
+    },
+    "tauri-apps/tauri": {
+      "repository": "tauri-apps/tauri",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-tauri-apps-tauri",
+      "content_hash": "9d3e60f6f7b9fa8b1f51742356ef67d1317500806fadc285a25177377bcc3664",
+      "verified_at": "2026-10-19T17:31:25.200Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T17:31:25.200Z"
     }
   },
   "repos": {

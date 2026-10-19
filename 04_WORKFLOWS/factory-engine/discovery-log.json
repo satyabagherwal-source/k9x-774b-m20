@@ -18136,5 +18136,20 @@
     "downloads": 2601,
     "qualityScore": 3700,
     "discoveredAt": "2026-10-19T17:16:05.322Z"
+  },
+  {
+    "name": "JobSpy",
+    "fullName": "speedyapply/JobSpy",
+    "url": "https://github.com/speedyapply/JobSpy",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Jobs scraper library for LinkedIn, Indeed, Glassdoor, ZipRecruiter, Bayt, Naukri, BDJobs & HelloWork",
+    "stars": 4509,
+    "forks": 894,
+    "openIssues": 26,
+    "language": "Python",
+    "qualityScore": 2725,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-19T17:27:33.859Z"
   }
 ]
