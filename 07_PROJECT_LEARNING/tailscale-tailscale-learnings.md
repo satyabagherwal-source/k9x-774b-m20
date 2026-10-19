@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `e3c3ef18`  
+> **Source Version**: `374d505a`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T23:32:55.392Z  
+> **Timestamp**: 2026-10-19T18:29:52.818Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T23:32:55.255Z  
+> **Harvest Timestamp**: 2026-10-19T18:29:52.811Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 37719 stars
+- **Stars / Engagement**: 37761 stars
 
 ---
 
@@ -821,670 +821,90 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3c0508fa` (2026-10-06)
-**Commit Message**: net/tstun,wgengine/netstack: avoid deadlocks on full outbound queues
+### Incident Patch 1: `374d505a` (2026-10-19)
+**Commit Message**: licenses: update license notices
 
-Make link queue writes nonblocking: gVisor can generate replies on the
-reader needed to drain the queue. A full queue drops only the rejected
-packet and reports ErrNoBufferSpace, which gVisor counts and TCP handles
-by arming its retransmit timer. UDP sockets do not see the error unless
-IP_RECVERR is set, matching Linux. Count WireGuard-bound drops as
-reason="queue_full" in tailscaled_outbound_dropped_packets_total, and
-per-queue drops in debug and client metrics.
+Signed-off-by: License Updater <[REDACTED_EMAIL]>
 
-Add Wrapper.TryInjectOutbound for best-effort replies generated while
-processing packets (TSMP rejects and pongs, conn25 rejects, fake-mode
-echo replies), so those paths drop instead of stalling behind the
-injection queue's reader. Its drops are also counted as queue_full.
-
-Make outbound injection waits cancellable and close link queues before
-abort-generated replies. Stop the WireGuard injection pump on ErrClosed.
-Release injected packets still queued at Close, outside closeOnce to
-allow reentrant release callbacks; a sender whose send races with Close
-releases the packet itself. Release temporary capture buffers.
-
-Copy injected payload views directly 
-
-**File**: `cmd/tailscaled/netstack.go` (modified, +1/-0)
+**File**: `licenses/apple.md` (modified, +18/-18)
 ```diff
-@@ -32,6 +32,7 @@ func newNetstack(logf logger.Logf, sys *tsd.System, onlyNetstack bool) (tsd.Nets
- 	if err != nil {
- 		return nil, err
- 	}
-+	ns.SetMetricsRegistry(sys.UserMetricsRegistry())
- 	// Only register debug info if we have a debug mux
- 	if debugMux != nil {
- 		expvar.Publish("netstack", ns.ExpVar())
+@@ -12,23 +12,23 @@ See also the dependencies in the [Tailscale CLI][].
+ 
+ 
+  - [filippo.io/edwards25519](https://pkg.go.dev/filippo.io/edwards25519) ([BSD-3-Clause](https://github.com/FiloSottile/edwards25519/blob/v1.2.0/LICENSE))
+- - [github.com/aws/aws-sdk-go-v2](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/v1.46.0/LICENSE.txt))
+- - [github.com/aws/aws-sdk-go-v2/config](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/config) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/config/v1.33.3/config/LICENSE.txt))
+- - [github.com/aws/aws-sdk-go-v2/credentials](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/credentials) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/credentials/v1.20.3/credentials/LICENSE.txt))
+- - [github.com/aws/aws-sdk-go-v2/feature/ec2/imds](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/feature/ec2/imds) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/feature/ec2/imds/v1.19.2/feature/ec2/imds/LICENSE.txt))
+- - [github.com/aws/aws-sdk-go-v2/internal/configsources](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/internal/configsources) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/internal/configsources/v1.5.2/internal/configsources/LICENSE.txt))
+- - [github.com/aws/aws-sdk-go-v2/internal/endpoints/v2](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/internal/endpoints/v2) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/internal/endpoints/v2.8.2/internal/endpoints/v2/LICENSE.txt))
+- - [github.com/aws/aws-sdk-go-v2/internal/sync/singleflight](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/internal/sync/singleflight) ([BSD-3-Clause](https://github.com/aws/aws-sdk-go-v2/blob/v1.46.0/internal/sync/singleflight/LICENSE))
+- - [github.com/aws/aws-sdk-go-v2/internal/v4a](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/internal/v4a) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/internal/v4a/v1.5.2/internal/v4a/LICENSE.txt))
+- - [github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/service/internal/accept-encoding/v1.13.19/service/internal/accept-encoding/LICENSE.txt))
+- - [github.com/aws/aws-sdk-go-v2/service/internal/presigned-url](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/service/internal/presigned-url) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/service/internal/presigned-url/v1.14.2/service/internal/presigned-url/LICENSE.txt))
+- - [github.com/aws/aws-sdk-go-v2/service/signin](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/service/signin) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/service/signin/v1.9.0/service/signin/LICENSE.txt))
++ - [github.com/aws/aws-sdk-go-v2](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/v1.47.3/LICENSE.txt))
++ - [github.com/aws/aws-sdk-go-v2/config](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/config) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/config/v1.33.9/config/LICENSE.txt))
++ - [github.com/aws/aws-sdk-go-v2/credentials](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/credentials) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/credentials/v1.20.9/credentials/LICENSE.txt))
++ - [github.com/aws/aws-sdk-go-v2/feature/ec2/imds](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/feature/ec2/imds) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/feature/ec2/imds/v1.20.3/feature/ec2/imds/LICENSE.txt))
++ - [github.com/aws/aws-sdk-go-v2/internal/configsources](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/internal/configsources) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/internal/configsources/v1.5.6/internal/configsources/LICENSE.txt))
++ - [github.com/aws/aws-sdk-go-v2/internal/endpoints/v2](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/internal/endpoints/v2) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/internal/endpoints/v2.8.6/internal/endpoints/v2/LICENSE.txt))
++ - [github.com/aws/aws-sdk-go-v2/internal/sync/singleflight](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/internal/sync/singleflight) ([BSD-3-Clause](https://github.com/aws/aws-sdk-go-v2/blob/v1.47.3/internal/sync/singleflight/LICENSE))
++ - [github.com/aws/aws-sdk-go-v2/internal/v4a](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/internal/v4a) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/internal/v4a/v1.5.6/internal/v4a/LICENSE.txt))
++ - [github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/service/internal/accept-encoding/v1.13.21/service/internal/accept-encoding/LICENSE.txt))
++ - [github.com/aws/aws-sdk-go-v2/service/internal/presigned-url](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/service/internal/presigned-url) ([Apache-2.0](https://github.com/aw
 ```
 
-**File**: `cmd/tsconnect/wasm/wasm_js.go` (modified, +1/-0)
+**File**: `licenses/tailscale.md` (modified, +18/-18)
 ```diff
-@@ -123,6 +123,7 @@ func newIPN(jsConfig js.Value) map[string]any {
- 	if err != nil {
- 		log.Fatalf("netstack.Create: %v", err)
- 	}
-+	ns.SetMetricsRegistry(sys.UserMetricsRegistry())
- 	sys.Set(ns)
- 	ns.ProcessLocalIPs = true
- 	ns.ProcessSubnets = true
+@@ -20,23 +20,23 @@ Some packages may only be included on certain architectures or operating systems
+  - [github.com/alexbrainman/sspi](https://pkg.go.dev/github.com/alexbrainman/sspi) ([BSD-3-Clause](https://github.com/alexbrainman/sspi/blob/7d374ff0d59e/LICENSE))
+  - [github.com/anmitsu/go-shlex](https://pkg.go.dev/github.com/anmitsu/go-shlex) ([MIT](https://github.com/anmitsu/go-shlex/blob/38f4b401e2be/LICENSE))
+  - [github.com/atotto/clipboard](https://pkg.go.dev/github.com/atotto/clipboard) ([BSD-3-Clause](https://github.com/atotto/clipboard/blob/v0.1.4/LICENSE))
+- - [github.com/aws/aws-sdk-go-v2](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/v1.46.0/LICENSE.txt))
+- - [github.com/aws/aws-sdk-go-v2/config](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/config) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/config/v1.33.3/config/LICENSE.txt))
+- - [github.com/aws/aws-sdk-go-v2/credentials](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/credentials) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/credentials/v1.20.3/credentials/LICENSE.txt))
+- - [github.com/aws/aws-sdk-go-v2/feature/ec2/imds](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/feature/ec2/imds) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/feature/ec2/imds/v1.19.2/feature/ec2/imds/LICENSE.txt))
+- - [github.com/aws/aws-sdk-go-v2/internal/configsources](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/internal/configsources) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/internal/configsources/v1.5.2/internal/configsources/LICENSE.txt))
+- - [github.com/aws/aws-sdk-go-v2/internal/endpoints/v2](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/internal/endpoints/v2) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/internal/endpoints/v2.8.2/internal/endpoints/v2/LICENSE.txt))
+- - [github.com/aws/aws-sdk-go-v2/internal/sync/singleflight](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/internal/sync/singleflight) ([BSD-3-Clause](https://github.com/aws/aws-sdk-go-v2/blob/v1.46.0/internal/sync/singleflight/LICENSE))
+- - [github.com/aws/aws-sdk-go-v2/internal/v4a](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/internal/v4a) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/internal/v4a/v1.5.2/internal/v4a/LICENSE.txt))
+- - [github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/service/internal/accept-encoding/v1.13.19/service/internal/accept-encoding/LICENSE.txt))
+- - [github.com/aws/aws-sdk-go-v2/service/internal/presigned-url](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/service/internal/presigned-url) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/service/internal/presigned-url/v1.14.2/service/internal/presigned-url/LICENSE.txt))
+- - [github.com/aws/aws-sdk-go-v2/service/signin](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/service/signin) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/service/signin/v1.9.0/service/signin/LICENSE.txt))
++ - [github.com/aws/aws-sdk-go-v2](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/v1.47.3/LICENSE.txt))
++ - [github.com/aws/aws-sdk-go-v2/config](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/config) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/config/v1.33.9/config/LICENSE.txt))
++ - [github.com/aws/aws-sdk-go-v2/credentials](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/credentials) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/credentials/v1.20.9/credentials/LICENSE.txt))
++ - [github.com/aws/aws-sdk-go-v2/feature/ec2/imds](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/feature/ec2/imds) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/feature/ec2/imds/v1.20.3/feature/ec2/imds/LICENSE.txt))
++ - [github.com/aws/aws-sdk-go-v2/internal/configsources](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/internal/configsources) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/internal/configsources/v1.5.6/internal/configsources/LICENSE.txt))
++ - [github.com/aws/aws-sdk-go-v2/internal/endpoints/v2](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/internal/endpoints/v2) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/internal/endpoints/v2.8.6/internal/endpoints/v2/LICENSE.txt))
++ - [github.com/aws/aws-sdk-go-v2/internal/sync/singleflight](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/internal/sync/singleflight) ([BSD-3-Clause](https://github.com/aws/aws-sdk-go-v2/blob/v1.47.3/internal/sync/singleflight/LICENSE))
++ - [github.com/aws/aws-sdk-go-v2/internal/v4a](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/internal/v4a) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/internal/v4a/v1.5.6/internal/v4a/LICENSE.txt))
++ - [github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/service/internal/
 ```
 
-**File**: `feature/conn25/datapath.go` (modified, +1/-1)
+**File**: `licenses/windows.md` (modified, +2/-2)
 ```diff
-@@ -166,7 +166,7 @@ func (dh *datapathHandler) HandlePacketFromWireGuard(p *packet.Parsed, tun *tstu
- 				Proto:  p.IPProto,
- 				Reason: packet.RejectedDueToUnknownAppConnectorTransitIP,
- 			}
--			if err := tun.InjectOutbound(packet.Generate(rj, nil)); err != nil {
-+			if err := tun.TryInjectOutbound(packet.Generate(rj, nil)); err != nil && !errors.Is(err, tstun.ErrClosed) {
- 				dh.debugLogf("error sending TSMP flow rejection packet: %v", err)
- 			}
- 			return filter.Drop
-```
-
-**File**: `net/tstun/netstack_disabled.go` (modified, +15/-2)
-```diff
-@@ -9,8 +9,20 @@ type netstack_PacketBuffer struct {
- 	GSOOptions netstack_GSO
- }
- 
--func (*netstack_PacketBuffer) DecRef()   { panic("unreachable") }
--func (*netstack_PacketBuffer) Size() int { panic("unreachable") }
-+func (*netstack_PacketBuffer) DecRef()         { panic("unreachable") }
-+func (*netstack_PacketBuffer) Size() int       { panic("unreachable") }
-+func (*netstack_PacketBuffer) HeaderSize() int { panic("unreachable") }
-+func (*netstack_PacketBuffer) AsViewList() (netstack_ViewList, int) {
-+	panic("unreachable")
-+}
-+
-+type netstack_ViewList struct{}
-+type netstack_View struct{}
-+
-+func (netstack_ViewList) Front() *netstack_View { panic("unreachable") }
-+func (*netstack_View) Next() *netstack_View     { panic("unreachable") }
-+func (*netstack_View) Size() int                { panic("unreachable") }
-+func (*netstack_View) AsSlice() []byte          { panic("unreachable") }
- 
- type netstack_GSOType int
- 
-@@ -67,3 +79,4 @@ func (s slicer) Slice() []byte { panic("unreachable") }
- type netstack_Buffer struct{}
- 
- func (netstack_Buffer) Flatten() []byte { panic("unreachable") }
-+func (netstack_Buffer) Release()        { panic("unreachable") }
-```
-
-**File**: `net/tstun/wrap.go` (modified, +122/-18)
-```diff
-@@ -4,6 +4,7 @@
- package tstun
- 
- import (
-+	"context"
- 	"errors"
- 	"fmt"
- 	"io"
-@@ -67,6 +68,10 @@ var (
- 	ErrClosed = errors.New("device closed")
- 	// ErrFiltered is returned when the acted-on packet is rejected by a filter.
- 	ErrFiltered = errors.New("packet dropped by filter")
-+
-+	// errInjectionQueueFull is returned by TryInjectOutbound when the packet
-+	// cannot be queued immediately.
-+	errInjectionQueueFull = errors.New("injection queue full")
- )
- 
- var (
-@@ -260,6 +265,7 @@ type injectionQueue struct {
- 
- 	// ch carries injected packets to the reader.
- 	// ch is never closed, senders and the reader select on [Wrapper.closed].
-+	// Packets left in ch after Close are released by [Wrapper.drainInjected].
- 	ch chan tunInjectedRead
- }
- 
-@@ -381,9 +387,26 @@ func (t *Wrapper) Close() error {
- 			t.tunDevStatsCloser.Close()
- 		}
- 	})
-+	// Drain outside closeOnce: packet release callbacks may reenter Close.
-+	t.drainInjected()
- 	return err
- }
- 
-+// drainInjected releases packets queued for the injection queue's reader
-+// without waiting for more.
-+func (t *Wrapper) drainInjected() {
-+	for {
-+		select {
-+		case r := <-t.injectionQueue.ch:
-+			if r.packet != nil {
-+				r.packet.DecRef()
-+			}
-+		default:
-+			return
-+		}
-+	}
-+}
-+
- // isClosed reports whether t is closed.
- func (t *Wrapper) isClosed() bool {
- 	select {
-@@ -473,18 +496,61 @@ func (t *Wrapper) InjectionQueue() tun.Queue {
- 	return t.injectionQueue
- }
- 
--// injectOutbound hands r to the injection queue's reader, or releases it if
--// the Wrapper is closed.
--func (t *Wrapper) injectOutbound(r tunInjectedRead) {
-+// injectOutbound transfers r to the injection queue or releases it on error.
-+func (t *Wrapper) injectOutbound(ctx context.Context, r tunInjectedRead) (err error) {
-+	defer func() {
-+		if err != nil && r.packet != nil {
-+			r.packet.DecRef()
-+		}
-+	}()
-+	if err := ctx.Err(); err != nil {
-+		return err
-+	}
-+	if t.isClosed() {
-+		return ErrClosed
-+	}
-+	// Avoid a cancellation select when the queue has space.
-+	select {
-+	case t.injectionQueue.ch <- r:
-+		t.drainIfClosed()
-+		return nil
-+	default:
-+	}
- 	select {
- 	case t.injectionQueue.ch <- r:
-+		t.drainIfClosed()
-+		return nil
-+	case <-ctx.Done():
-+		return ctx.Err()
- 	case <-t.closed:
--		if r.packet != nil {
--			r.packet.DecRef()
--		}
-+		return ErrClosed
- 	}
- }
- 
-+// drainIfClosed is called after a send to the injection queue. A send can race
-+// with Close; if Close's drain may have missed it, release it here.
-+func (t *Wrapper) drainIfClosed() {
-+	if t.isClosed() {
-+		t.drainInjected()
-+	}
-+}
-+
-+// tryInjectOutbound queues data for the injection queue's reader without
-+// waiting. It drops data if the queue is full.
-+func (t *Wrapper) tryInjectOutbound(data []byte) error {
-+	if t.isClosed() {
-+		return ErrClosed
-+	}
-+	select {
-+	case t.injectionQueue.ch <- tunInjectedRead{data: data}:
-+		t.drainIfClosed()
-+		return nil
-+	default:
-+	}
-+	t.metrics.outboundDroppedPacketsTotal.Add(usermetric.DropLabels{Reason: usermetric.ReasonQueueFull}, 1)
-+	return errInjectionQueueFull
-+}
-+
- // snat does SNAT on p if the destination address requires a different source address.
- // snat never mutates packet length or IP address family.
- func (pc *peerConfigTable) snat(p *packet.Parsed) {
-@@ -978,7 +1044,19 @@ func (t *Wrapper) injectedRead(res tunInjectedRead, slab []byte, packets []tun.R
- 		}
- 		bufN := copy(pkt, res.packet.NetworkHeader().Slice())
- 		bufN += copy(pkt[bufN:], res.packet.TransportHeader().Slice())
--		bufN += copy(pkt[bufN:], res.packet.Data().AsRange().ToSlice())
-+		// Copy payload views directly to avoid allocating a flattened copy.
-+		views, offset := res.packet.AsViewList()
-+		// AsViewList's offset points at the first header; skip all headers
-+		// (including link/virtio headers) to reach the start of Data.
-+		offset += res.packet.HeaderSize()
-+		for v := views.Front(); v != nil; v = v.Next() {
-+			if offset >= v.Size() {
-+				offset -= v.Size()
-+				continue
-+			}
-+			bufN += copy(pkt[bufN:], v.AsSlice()[offset:])
-+			offset = 0
-+		}
- 		gso = res.packet.GSOOptions
- 		pkt = pkt[:bufN]
- 		defer res.packet.DecRef() // defer DecRef so we may continue to reference it
-@@ -1173,8 +1251,7 @@ func (t *Wrapper) filterPacketInboundFromWireGuard(p *packet.Parsed, captHook pa
- 			if filt.ShieldsUp() {
- 				rj.Reason = packet.RejectedDueToShieldsUp
- 			}
--			pkt := packet.Generate(rj, nil)
--			t.InjectOutbound(pkt)
-+			t.TryInjectOutbound(packet.Generate(rj, nil))
- 
- 			// TODO(bradfitz): also send a TCP RST, after the TSMP message.
- 
-@@ -1435,30 +1512,57 @@ func (t *Wrapper) injectOutboundPong(pp *packet.Parsed, req packet.TSMPPingReque
- 		return
- 	}
- 
--	t.InjectOutbound(packet.Generate(pong, nil))
-+	t.TryInjectOutbound(packet.Generate(pong, nil))
- }
- 
- // InjectOutbound makes the Wrapper device behave as if a packet
- // with the given contents was sent to the network.
--// It does not block, but takes ownership of the packet.
-+// It blocks until the packet can be queued or the Wrapper closes, an
-```
-
-**File**: `net/tstun/wrap_injection_close_test.go` (added, +28/-0)
-```diff
-@@ -0,0 +1,28 @@
-+// Copyright (c) Tailscale Inc & contributors
-+// SPDX-License-Identifier: BSD-3-Clause
-+
-+//go:build !ts_omit_netstack
-+
-+package tstun
-+
-+import (
-+	"sync/atomic"
-+	"testing"
-+
-+	"tailscale.com/util/eventbus/eventbustest"
-+)
-+
-+// A sender can win its select against closed and enqueue after Close has
-+// drained the injection queue. The sender must then release the packet.
-+func TestInjectionSendAfterCloseDrain(t *testing.T) {
-+	_, w := newFakeTUN(t.Logf, eventbustest.NewBus(t), false)
-+	if err := w.Close(); err != nil {
-+		t.Fatal(err)
-+	}
-+	var released atomic.Int32
-+	w.injectionQueue.ch <- tunInjectedRead{packet: newInjectionTestPacket([]byte{1}, &released)}
-+	w.drainIfClosed()
-+	if got := released.Load(); got != 1 {
-+		t.Fatalf("released %d times, want 1", got)
-+	}
-+}
-```
-
-**File**: `net/tstun/wrap_injection_test.go` (added, +270/-0)
-```diff
-@@ -0,0 +1,270 @@
-+// Copyright (c) Tailscale Inc & contributors
-+// SPDX-License-Identifier: BSD-3-Clause
-+
-+//go:build !ts_omit_netstack
-+
-+package tstun
-+
-+import (
-+	"bytes"
-+	"context"
-+	"errors"
-+	"expvar"
-+	"sync"
-+	"sync/atomic"
-+	"testing"
-+	"testing/synctest"
-+	"time"
-+
-+	"gvisor.dev/gvisor/pkg/buffer"
-+	"gvisor.dev/gvisor/pkg/tcpip/stack"
-+	"tailscale.com/net/packet"
-+	"tailscale.com/util/eventbus/eventbustest"
-+	"tailscale.com/util/usermetric"
-+)
-+
-+func newInjectionTestPacket(data []byte, released *atomic.Int32) *stack.PacketBuffer {
-+	return stack.NewPacketBuffer(stack.PacketBufferOptions{
-+		Payload: buffer.MakeWithData(data), OnRelease: func() { released.Add(1) },
-+	})
-+}
-+
-+func TestInjectOutboundPacketBufferOwnership(t *testing.T) {
-+	for _, state := range []string{"read", "buffered-close", "closed", "canceled", "empty", "oversize", "captured"} {
-+		t.Run(state, func(t *testing.T) {
-+			bus := eventbustest.NewBus(t)
-+			_, w := newFakeTUN(t.Logf, bus, false)
-+			t.Cleanup(func() { w.Close() })
-+			ctx := context.Background()
-+			data := udp4("1.2.3.4", "5.6.7.8", 98, 98)
-+			wantErr := error(nil)
-+			switch state {
-+			case "closed":
-+				w.Close()
-+				wantErr = ErrClosed
-+			case "canceled":
-+				var cancel context.CancelFunc
-+				ctx, cancel = context.WithCancel(ctx)
-+				cancel()
-+				wantErr = context.Canceled
-+			case "empty":
-+				data = nil
-+			case "oversize":
-+				data = make([]byte, MaxPacketSize+1)
-+				wantErr = errPacketTooBig
-+			}
-+			if state == "captured" {
-+				w.InstallCaptureHook(func(path packet.CapturePath, _ time.Time, got []byte, _ packet.CaptureMeta) {
-+					if path != packet.SynthesizedToPeer || !bytes.Equal(got, data) {
-+						t.Errorf("capture = %v, %x", path, got)
-+					}
-+				})
-+			}
-+			var released atomic.Int32
-+			pkt := newInjectionTestPacket(data, &released)
-+			err := w.InjectOutboundPacketBufferContext(ctx, pkt)
-+			if !errors.Is(err, wantErr) {
-+				t.Fatalf("InjectOutboundPacketBufferContext = %v, want %v", err, wantErr)
-+			}
-+			if state == "read" || state == "buffered-close" || state == "captured" {
-+				if got := released.Load(); got != 0 {
-+					t.Fatalf("released %d packets before consuming injection, want 0", got)
-+				}
-+				if state == "buffered-close" {
-+					w.Close()
-+				} else {
-+					w.Start()
-+					slab, packets := getSinglePacketReadArgs()
-+					n, err := w.InjectionQueue().Read(slab, packets)
-+					if n != 1 || err != nil {
-+						t.Fatalf("Read = %d, %v", n, err)
-+					}
-+					if got := slab[packets[0].Offset : packets[0].Offset+packets[0].Size]; !bytes.Equal(got, data) {
-+						t.Errorf("Read = %x, want %x", got, data)
-+					}
-+				}
-+			}
-+			if got := released.Load(); got != 1 {
-+				t.Errorf("released %d packets, want 1", got)
-+			}
-+		})
-+	}
-+}
-+
-+// Cancel a sender waiting behind another sender on a full queue.
-+func TestInjectOutboundCancellationBehindBlockedSender(t *testing.T) {
-+	synctest.Test(t, func(t *testing.T) {
-+		bus := eventbustest.NewBus(t)
-+		_, w := newFakeTUN(t.Logf, bus, false)
-+		t.Cleanup(func() { w.Close() })
-+		var released atomic.Int32
-+		data := udp4("1.2.3.4", "5.6.7.8", 98, 98)
-+		if err := w.InjectOutboundPacketBuffer(newInjectionTestPacket(data, &released)); err != nil {
-+			t.Fatal(err)
-+		}
-+		blocked := make(chan error, 1)
-+		go func() { blocked <- w.InjectOutboundPacketBuffer(newInjectionTestPacket(data, &released)) }()
-+		synctest.Wait()
-+		ctx, cancel := context.WithCancel(context.Background())
-+		defer cancel()
-+		canceled := make(chan error, 1)
-+		go func() { canceled <- w.InjectOutboundPacketBufferContext(ctx, newInjectionTestPacket(data, &released)) }()
-+		synctest.Wait()
-+		cancel()
-+		synctest.Wait()
-+		select {
-+		case err := <-canceled:
-+			if !errors.Is(err, context.Canceled) {
-+				t.Fatalf("injection = %v, want context.Canceled", err)
-+			}
-+		default:
-+			t.Fatal("canceled sender is stuck behind a background sender")
-+		}
-+		if got := released.Load(); got != 1 {
-+			t.Fatalf("released %d packets after cancellation, want 1", got)
-+		}
-+		select {
-+		case err := <-blocked:
-+			t.Fatalf("background sender returned before Wrapper.Close: %v", err)
-+		default:
-+		}
-+		w.Close()
-+		if err := <-blocked; !errors.Is(err, ErrClosed) {
-+			t.Fatalf("background injection = %v, want ErrClosed", err)
-+		}
-+		if got := released.Load(); got != 3 {
-+			t.Errorf("released %d packets after Close, want 3", got)
-+		}
-+	})
-+}
-+
-+func TestInjectOutboundPacketBufferCancellationWithFullQueue(t *testing.T) {
-+	synctest.Test(t, func(t *testing.T) {
-+		bus := eventbustest.NewBus(t)
-+		_, w := newFakeTUN(t.Logf, bus, false)
-+		t.Cleanup(func() { w.Close() })
-+		data := udp4("1.2.3.4", "5.6.7.8", 98, 98)
-+		var released atomic.Int32
-+		if err := w.InjectOutboundPacketBuffer(newInjectionTestPacket(data, &released)); err != nil {
-+			t.Fatal(err)
-+		}
-+		ctx, cancel := context.WithCancel(context.Background())
-+		defer cancel()
-+		done := make(chan error, 1)
-+		go func() {
-+			done <- w.InjectOutboundPacketBufferC
-```
-
-**File**: `net/tstun/wrap_injection_views_test.go` (added, +157/-0)
-```diff
-@@ -0,0 +1,157 @@
-+// Copyright (c) Tailscale Inc & contributors
-+// SPDX-License-Identifier: BSD-3-Clause
-+
-+//go:build !ts_omit_netstack
-+
-+package tstun
-+
-+import (
-+	"bytes"
-+	"fmt"
-+	"net/netip"
-+	"testing"
-+
-+	"github.com/tailscale/wireguard-go/tun"
-+	"gvisor.dev/gvisor/pkg/buffer"
-+	"gvisor.dev/gvisor/pkg/tcpip"
-+	"gvisor.dev/gvisor/pkg/tcpip/header"
-+	"gvisor.dev/gvisor/pkg/tcpip/stack"
-+	"tailscale.com/net/packet"
-+	"tailscale.com/util/eventbus/eventbustest"
-+)
-+
-+func injectionTestPayload(data []byte, viewSize int) buffer.Buffer {
-+	var payload buffer.Buffer
-+	for len(data) > 0 {
-+		n := min(viewSize, len(data))
-+		part := buffer.MakeWithData(data[:n])
-+		payload.Merge(&part)
-+		data = data[n:]
-+	}
-+	return payload
-+}
-+
-+func TestInjectOutboundPacketBufferViews(t *testing.T) {
-+	for _, layout := range []string{"raw", "pushed", "consumed"} {
-+		for _, viewSize := range []int{7, 1280} {
-+			t.Run(fmt.Sprintf("%s/view=%d", layout, viewSize), func(t *testing.T) {
-+				h := &packet.UDP4Header{
-+					IP4Header: packet.IP4Header{Src: netip.MustParseAddr("1.2.3.4"), Dst: netip.MustParseAddr("5.6.7.8")},
-+					SrcPort:   98, DstPort: 98,
-+				}
-+				data := packet.Generate(h, bytes.Repeat([]byte{0x55}, 1280-h.Len()))
-+				body := data
-+				opts := stack.PacketBufferOptions{}
-+				if layout == "pushed" {
-+					body = data[28:]
-+					// Leave unused space before the pushed headers, so the
-+					// start of Data is not simply HeaderSize.
-+					opts.ReserveHeaderBytes = 128
-+				}
-+				opts.Payload = injectionTestPayload(body, viewSize)
-+				pkt := stack.NewPacketBuffer(opts)
-+				defer pkt.DecRef()
-+				switch layout {
-+				case "consumed":
-+					// Header consumption can merge views when headers cross
-+					// their boundaries; the payload may remain fragmented.
-+					if _, ok := pkt.NetworkHeader().Consume(20); !ok {
-+						t.Fatal("consume network header")
-+					}
-+					if _, ok := pkt.TransportHeader().Consume(8); !ok {
-+						t.Fatal("consume transport header")
-+					}
-+				case "pushed":
-+					// Link and virtio headers precede the network header but
-+					// are not part of the injected packet.
-+					copy(pkt.TransportHeader().Push(8), data[20:28])
-+					copy(pkt.NetworkHeader().Push(20), data[:20])
-+					copy(pkt.LinkHeader().Push(14), bytes.Repeat([]byte{0xaa}, 14))
-+					copy(pkt.VirtioNetHeader().Push(10), bytes.Repeat([]byte{0xbb}, 10))
-+				}
-+				original := pkt.Data().AsRange().ToSlice()
-+				_, w := newFakeTUN(t.Logf, eventbustest.NewBus(t), false)
-+				defer w.Close()
-+				w.Start()
-+				// Reuse the packet to detect accidental consumption or
-+				// mutation of its backing views while copying.
-+				for range 2 {
-+					if err := w.InjectOutboundPacketBuffer(pkt.IncRef()); err != nil {
-+						t.Fatal(err)
-+					}
-+					slab, packets := getSinglePacketReadArgs()
-+					n, err := w.InjectionQueue().Read(slab, packets)
-+					if n != 1 || err != nil {
-+						t.Fatalf("Read = %d, %v", n, err)
-+					}
-+					got := slab[packets[0].Offset : packets[0].Offset+packets[0].Size]
-+					if !bytes.Equal(got, data) {
-+						t.Fatalf("Read = %x, want %x", got, data)
-+					}
-+					if !bytes.Equal(pkt.Data().AsRange().ToSlice(), original) {
-+						t.Fatal("copy modified the packet payload")
-+					}
-+				}
-+			})
-+		}
-+	}
-+}
-+
-+func TestInjectOutboundPacketBufferFragmentedGSO(t *testing.T) {
-+	const payloadLen, mss = 384, 64
-+	data := make([]byte, 40+payloadLen)
-+	src, dst := tcpip.AddrFrom4([4]byte{1, 2, 3, 4}), tcpip.AddrFrom4([4]byte{5, 6, 7, 8})
-+	ih := header.IPv4(data[:20])
-+	ih.Encode(&header.IPv4Fields{
-+		TotalLength: uint16(len(data)), TTL: 64, Protocol: uint8(header.TCPProtocolNumber), SrcAddr: src, DstAddr: dst,
-+	})
-+	ih.SetChecksum(^ih.CalculateChecksum())
-+	th := header.TCP(data[20:40])
-+	th.Encode(&header.TCPFields{
-+		SrcPort: 1234, DstPort: 5678, SeqNum: 42, AckNum: 1, DataOffset: 20, Flags: header.TCPFlagAck | header.TCPFlagPsh,
-+	})
-+	th.SetChecksum(^tun.PseudoHeaderChecksum(uint8(header.TCPProtocolNumber), src.AsSlice(), dst.AsSlice(), payloadLen+20))
-+	for i := range data[40:] {
-+		data[40+i] = byte(i)
-+	}
-+	pkt := stack.NewPacketBuffer(stack.PacketBufferOptions{
-+		ReserveHeaderBytes: 128,
-+		Payload:            injectionTestPayload(data[40:], 7),
-+	})
-+	defer pkt.DecRef()
-+	copy(pkt.TransportHeader().Push(20), data[20:40])
-+	copy(pkt.NetworkHeader().Push(20), data[:20])
-+	pkt.GSOOptions = stack.GSO{Type: stack.GSOTCPv4, NeedsCsum: true, CsumOffset: 16, MSS: mss, L3HdrLen: 20}
-+	gso, err := stackGSOToTunGSO(data, pkt.GSOOptions)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	wantSlab := make([]byte, MaxPacketSize+2*tun.ReadPacketSpacing)
-+	wantPackets := make([]tun.ReadPacket, payloadLen/mss)
-+	wantN, err := tun.GSOSplit(data, gso, wantSlab, wantPackets, tun.ReadPacketSpacing)
-+	if err != nil || wantN != len(wantPackets) {
-+		t.Fatalf("reference GSOSplit = %d, %v", wantN, err)
-+	}
-+
-+	_, w := newFakeTUN(t.Logf, eventbustest.NewBus(t), false)
-+	defer w.Close()
-+	w.Start()
-+	if err := w.InjectOutboun
-```
-
----
-
-### Incident Patch 2: `a04b6b16` (2026-10-15)
-**Commit Message**: cmd/tailscale/cli: fix bare "up" hang on a running node with tags (#21798)
-
-On a running node with AdvertiseTags set, a bare "tailscale up" never
-returned. updatePrefs compared the stored tags with the flag-derived
-prefs, which have no tags since no flags were given, concluded that
-the tags had changed, and skipped the justEdit path. runUp then sent
-the simple up's WantRunning=true edit, a no-op on a running node, and
-waited on the IPN bus for a running state that was never sent.
-
-A simple up keeps the current settings, so don't treat its missing
-tags as a change.
-
-Fixes #21774
-
-RELNOTE: Fix "tailscale up" with no flags hanging on a running node with advertised tags.
-
-Signed-off-by: Evan Lowry <[REDACTED_EMAIL]>
-Co-authored-by: Zach Buchheit <[REDACTED_EMAIL]>
-
-**File**: `cmd/tailscale/cli/cli_test.go` (modified, +12/-0)
-```diff
-@@ -1131,6 +1131,18 @@ func TestUpdatePrefs(t *testing.T) {
- 			wantSimpleUp: false,
- 			wantErrSubtr: "tailscale up --accept-dns=false",
- 		},
-+		{
-+			name:  "just_up_running_with_tags",
-+			flags: []string{},
-+			curPrefs: &ipn.Prefs{
-+				ControlURL:    ipn.DefaultControlURL,
-+				Persist:       &persist.Persist{UserProfile: tailcfg.UserProfile{LoginName: "crawshaw.github"}},
-+				AdvertiseTags: []string{"tag:dummy-test"},
-+			},
-+			env:            upCheckEnv{backendState: "Running"},
-+			wantSimpleUp:   true,
-+			wantJustEditMP: &ipn.MaskedPrefs{WantRunningSet: true},
-+		},
- 		{
- 			name:  "just_edit",
- 			flags: []string{},
-```
-
-**File**: `cmd/tailscale/cli/up.go` (modified, +1/-1)
-```diff
-@@ -463,7 +463,7 @@ func updatePrefs(prefs, curPrefs *ipn.Prefs, env upCheckEnv) (simpleUp bool, jus
- 		}
- 	}
- 
--	tagsChanged := !reflect.DeepEqual(curPrefs.AdvertiseTags, prefs.AdvertiseTags)
-+	tagsChanged := !simpleUp && !reflect.DeepEqual(curPrefs.AdvertiseTags, prefs.AdvertiseTags)
- 
- 	justEdit := env.backendState == ipn.Running.String() &&
- 		!env.upArgs.forceReauth &&
+@@ -57,8 +57,8 @@ Windows][].  See also the dependencies in the [Tailscale CLI][].
+  - [golang.org/x/mod](https://pkg.go.dev/golang.org/x/mod) ([BSD-3-Clause](https://cs.opensource.google/go/x/mod/+/v0.41.0:LICENSE))
+  - [golang.org/x/net](https://pkg.go.dev/golang.org/x/net) ([BSD-3-Clause](https://cs.opensource.google/go/x/net/+/v0.60.0:LICENSE))
+  - [golang.org/x/sync](https://pkg.go.dev/golang.org/x/sync) ([BSD-3-Clause](https://cs.opensource.google/go/x/sync/+/v0.23.0:LICENSE))
+- - [golang.org/x/sys](https://pkg.go.dev/golang.org/x/sys) ([BSD-3-Clause](https://cs.opensource.google/go/x/sys/+/v0.48.0:LICENSE))
+- - [golang.org/x/term](https://pkg.go.dev/golang.org/x/term) ([BSD-3-Clause](https://cs.opensource.google/go/x/term/+/v0.46.0:LICENSE))
++ - [golang.org/x/sys](https://pkg.go.dev/golang.org/x/sys) ([BSD-3-Clause](https://cs.opensource.google/go/x/sys/+/v0.49.0:LICENSE))
++ - [golang.org/x/term](https://pkg.go.dev/golang.org/x/term) ([BSD-3-Clause](https://cs.opensource.google/go/x/term/+/v0.47.0:LICENSE))
+  - [golang.org/x/text](https://pkg.go.dev/golang.org/x/text) ([BSD-3-Clause](https://cs.opensource.google/go/x/text/+/v0.42.0:LICENSE))
+  - [golang.zx2c4.com/wintun](https://pkg.go.dev/golang.zx2c4.com/wintun) ([MIT](https://git.zx2c4.com/wintun-go/tree/LICENSE?id=0fa3db229ce2))
+  - [golang.zx2c4.com/wireguard/windows/tunnel/winipcfg](https://pkg.go.dev/golang.zx2c4.com/wireguard/windows/tunnel/winipcfg) ([MIT](https://git.zx2c4.com/wireguard-windows/tree/COPYING?h=v1.0.1))
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #21848** (2026-10-19): licenses: update license notices (@tailscale-code-updater[bot])
 - **PR #21814** (2026-10-16): go.mod: bump aws-sdk-go dependencies (@patrickod)
 - **PR #21812** (2026-10-16): ipn/ipnext: add NodeBackend.NodeBy{Addr,ID} (@mzbenami)
 - **PR #21800** (2026-10-16): tstest/natlab: send "unsupported version" NAT-PMP/PCP responses (@fmarier)
 - **PR #21798** (2026-10-15): cmd/tailscale/cli: fix bare "up" hang on a running node with tags (@Lykathia)
 - **PR #21790** (2026-10-15): feature/acme: report the authorization error when an ACME order fails (@bcreane)
-- **PR #21789** (2026-10-16): cmd/tailscale/cli: use the tcp scheme for tls-terminated-tcp set-config targets (@Vivek1898)
 
 ---
 
@@ -1504,28 +924,38 @@ Co-authored-by: Zach Buchheit <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. net/tstun,wgengine/netstack: avoid deadlocks on full outbound queues
+## X. licenses: update license notices
 
 **RULE**:
-When implementing operations in `cmd/tailscaled/netstack.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `licenses/apple.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3c0508fa`: net/tstun,wgengine/netstack: avoid deadlocks on full outbound queues. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `374d505a`: licenses: update license notices. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/tailscaled/netstack.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `licenses/apple.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	ns.SetMetricsRegistry(sys.UserMetricsRegistry())
+ - [github.com/aws/aws-sdk-go-v2](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/v1.47.3/LICENSE.txt))
+ - [github.com/aws/aws-sdk-go-v2/config](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/config) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/config/v1.33.9/config/LICENSE.txt))
+ - [github.com/aws/aws-sdk-go-v2/credentials](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/credentials) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/credentials/v1.20.9/credentials/LICENSE.txt))
+ - [github.com/aws/aws-sdk-go-v2/feature/ec2/imds](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/feature/ec2/imds) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/feature/ec2/imds/v1.20.3/feature/ec2/imds/LICENSE.txt))
+ - [github.com/aws/aws-sdk-go-v2/internal/configsources](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/internal/configsources) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/internal/configsources/v1.5.6/internal/configsources/LICENSE.txt))
+ - [github.com/aws/aws-sdk-go-v2/internal/endpoints/v2](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/internal/endpoints/v2) ([Apache-2.0](https://github.com/
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+ - [github.com/aws/aws-sdk-go-v2](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/v1.46.0/LICENSE.txt))
+ - [github.com/aws/aws-sdk-go-v2/config](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/config) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/config/v1.33.3/config/LICENSE.txt))
+ - [github.com/aws/aws-sdk-go-v2/credentials](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/credentials) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/credentials/v1.20.3/credentials/LICENSE.txt))
+ - [github.com/aws/aws-sdk-go-v2/feature/ec2/imds](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/feature/ec2/imds) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/feature/ec2/imds/v1.19.2/feature/ec2/imds/LICENSE.txt))
+ - [github.com/aws/aws-sdk-go-v2/internal/configsources](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/internal/configsources) ([Apache-2.0](https://github.com/aws/aws-sdk-go-v2/blob/internal/configsources/v1.5.2/internal/configsources/LICENSE.txt))
+ - [github.com/aws/aws-sdk-go-v2/internal/endpoints/v2](https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/internal/endpoints/v2) ([Apache-2.0](https://github.com/
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3c0508fa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `374d505a` are properly handled with clean fallback behavior.

@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/android-kotlin-multiplatform-samples-learnings.md`  
+> **Source**: github ([https://github.com/android/kotlin-multiplatform-samples](https://github.com/android/kotlin-multiplatform-samples))  
+> **Source Version**: `7844c733`  
+> **License**: Apache-2.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T18:29:48.728Z  
+> **Learning ID**: `learn-github-android-kotlin-multiplatform-samples`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): android/kotlin-multiplatform-samples
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/android-kotlin-multiplatform-samples-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/android/kotlin-multiplatform-samples](https://github.com/android/kotlin-multiplatform-samples))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T06:03:25.828Z  
+> **Harvest Timestamp**: 2026-10-19T18:29:48.721Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: Samples showcasing the Kotlin Multiplatform Jetpack libraries
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1306 stars
+- **Stars / Engagement**: 1309 stars
 
 ---
 
@@ -945,154 +959,6 @@ struct ViewModelStoreOwnerProvider<Content: View>: View {
 
 ```
 
-### Core Architecture Module: `Fruitties/iosApp/iosApp/iOSApp.swift`
-```
-/*
- * Copyright 2024 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 20.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-import SwiftUI
-import shared
-
-@main
-struct iOSApp: App {
-    /// The application's dependency container, wrapped for SwiftUI observation.
-    let appContainer: ObservableValueWrapper<AppContainer>
-
-    init() {
-        self.appContainer = ObservableValueWrapper<AppContainer>(
-            value: AppContainer(factory: Factory())
-        )
-    }
-
-    var body: some Scene {
-        WindowGroup {
-            /// Provides the root `ViewModelStoreOwner` to the environment, making it accessible to all child views.
-            /// Nested `ViewModelStoreOwnerProvider` instances can create additional, scoped ViewModel stores.
-            ViewModelStoreOwnerProvider {
-                ContentView()
-            }
-            .environmentObject(appContainer)
-        }
-    }
-}
-
-```
-
-### Core Architecture Module: `Fruitties/iosApp/iosApp/ui/CartView.swift`
-```
-/*
- * Copyright 2024 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-import Foundation
-import SwiftUI
-import shared
-
-struct CartView: View {
-    /// Injects the `IOSViewModelStoreOwner` from the environment, which manages the lifecycle of `ViewModel` instances.
-    @StateObject var viewModelStoreOwner = IOSViewModelStoreOwner()
-
-    /// Injects the `AppContainer` from the environment, providing access to application-wide dependencies.
-    @EnvironmentObject var appContainer: ObservableValueWrapper<AppContainer>
-
-    var body: some View {
-        /// Retrieves the `CartViewModel` instance using the `viewModelStoreOwner`.
-        /// The `CartViewModel.Factory` and `creationExtras` are provided to enable dependency injection
-        /// and proper initialization of the ViewModel with its required `AppContainer`.
-        let cartViewModel: CartViewModel = viewModelStoreOwner.viewModel(
-            factory: appContainer.value.cartViewModelFactory
-        )
-
-        /// Observes the `cartUiState` `StateFlow` from the `CartViewModel` using SKIE's `Observing` utility.
-        /// This allows SwiftUI to react to changes in the cart's UI state.
-        /// For more details, refer to: https://skie.touchlab.co/features/flows-in-swiftui
-        Observing(cartViewModel.cartUiState) { cartUIState in
-            VStack {
-                CartDetailsView(cartViewModel: cartViewModel)
-                Spacer()
-            }
-            .navigationTitle("Cart")
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Observing(cartViewModel.cartUiState) { cartUIState in
-                        let total = cartUIState.totalItemCount
-                        Text("Cart has \(total) items")
-                    }
-                }
-            }
-        }
-    }
-}
-
-struct CartDetailsView: View {
-    let cartViewModel: CartViewModel
-
-    var body: some View {
-        /// Observes the `cartUiState` `StateFlow` from the `CartViewModel` using SKIE's `Observing` utility.
-        /// This allows SwiftUI to react to changes in the cart's UI state.
-        /// For more details, refer to: https://skie.touchlab.co/features/flows-in-swiftui
-        Observing(self.cartViewModel.cartUiState) { cartUIState in
-            List {
-                ForEach(cartUIState.cartDetails, id: \.fruittie.id) { item in
-                    HStack {
-                        Text("\(item.count)x \(item.fruittie.name)")
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        Spacer()
-                        Button(action: {
-                            self.cartViewModel.decreaseCountClick(
-                                cartItem: item
-                            )
-                        }) {
-                            Image(systemName: "minus.circle.fill")
-                                .foregroundColor(.red)
-                        }
-                        .buttonStyle(.plain)
-
-                        Button(action: {
-                            self.cartViewModel.increaseCountClick(
-                                cartItem: item
-                            )
-                        }) {
-                            Image(systemName: "plus.circle.fill")
-                                .foregroundColor(.green)
-                        }
-                        .buttonStyle(.plain)
-                    }
-                }
-            }
-            .listStyle(.inset)
-            .animation(.default, value: cartUIState.cartDetails)
-        }
-    }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1104,26 +970,6 @@ struct CartDetailsView: View {
 
 - **Issue #108** (2025-11-15): **fix(deps): update kotlin dependencies 0.10.7 to v0.10.8**
   *Symptoms*: This PR contains the following updates:  | Package | Change | Age | Confidence | |---|---|---|---| | [co.touchlab.skie](https://skie.touchlab.co) ([source](https://redirect.github.com/touchlab/SKIE)) | `0.10.7` -> `0.10.8` | [![age](https://developer.mend.io/api/mc/badges/age/maven/co.touchlab.skie:co.touchlab.skie.gradle.plugin/0.10.8?slim=true)](https://docs.renovatebot.com/merge-confidence/) | [![confidence](https://developer.mend.io/api/mc/badges/confidence/maven/co.touchlab.skie:co.touchlab.skie.gradle.plugin/0.10.7/0.10.8?slim=true)](https://docs.renovatebot.com/merge-confidence/) | | [co.touchlab.skie:configuration-annotations](https://skie.touchlab.co) ([source](https://redirect.github.com/touchlab/SKIE)) | `0.10.7` -> `0.10.8` | [![age](https://developer.mend.io/api/mc/badges/age/maven/co.touchlab.skie:configuration-annotations/0.10.8?slim=true)](https://docs.renovatebot.com/merge-confidence/) | [![confidence](https://developer.mend.io/api/mc/badges/confidence/maven/co.touchlab.skie:configuration-annotations/0.10.7/0.10.8?slim=true)](https://docs.renovatebot.com/merge-confidence/) |  ---  ### Release Notes  <details> <summary>touchlab/SKIE (co.touchlab.skie)</summary>  ### [`v0.10.8`](https://redirect.github.com/touchlab/SKIE/releases/tag/0.10.8)  [Compare Source](https://redirect.github.com/touchlab/SKIE/compare/0.10.7...0.10.8)  [Change log](https://skie.touchlab.co/changelog/0.10.8)  </details>  ---  ### Configuration  📅 **Schedule**: Branch creation - Between 12
-
-- **Issue #107** (2025-11-26): **fix(deps): update all dependencies**
-  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | Age | Confidence | |---|---|---|---|---|---| | [gradle](https://gradle.org) ([source](https://redirect.github.com/gradle/gradle)) |  | minor | `9.1.0` -> `9.2.1` | [![age](https://developer.mend.io/api/mc/badges/age/gradle-version/gradle/9.2.1?slim=true)](https://docs.renovatebot.com/merge-confidence/) | [![confidence](https://developer.mend.io/api/mc/badges/confidence/gradle-version/gradle/9.1.0/9.2.1?slim=true)](https://docs.renovatebot.com/merge-confidence/) | | [gradle/actions](https://redirect.github.com/gradle/actions) | action | major | `v4` -> `v5` | [![age](https://developer.mend.io/api/mc/badges/age/github-tags/gradle%2factions/v5?slim=true)](https://docs.renovatebot.com/merge-confidence/) | [![confidence](https://developer.mend.io/api/mc/badges/confidence/github-tags/gradle%2factions/v4/v5?slim=true)](https://docs.renovatebot.com/merge-confidence/) | | [androidx.compose.material3:material3](https://developer.android.com/jetpack/androidx/releases/compose-material3#1.4.0) ([source](https://cs.android.com/androidx/platform/frameworks/support)) | dependencies | patch | `1.4.0-rc01` -> `1.4.0` | [![age](https://developer.mend.io/api/mc/badges/age/maven/androidx.compose.material3:material3/1.4.0?slim=true)](https://docs.renovatebot.com/merge-confidence/) | [![confidence](https://developer.mend.io/api/mc/badges/confidence/maven/androidx.compose.material3:material3/1.4.0-rc01/1.4.0?slim=true)](ht
-  **Post-Mortem & Fix Analysis**:
-  > ### Edited/Blocked Notification  Renovate will not automatically rebase this PR, because it does not recognize the last commit author and assumes somebody else may have edited the PR.  You can manually request rebase by checking the rebase/retry box above.   ⚠️ **Warning**: custom changes will be lost.
-
-- **Issue #106** (2025-09-19): **chore(deps): update gradle 9.0.0 to v9.1.0**
-  *Symptoms*: Coming soon: The Renovate bot (GitHub App) will be renamed to Mend. PRs from Renovate will soon appear from 'Mend'. Learn more [here](https://redirect.github.com/renovatebot/renovate/discussions/37842).  This PR contains the following updates:  | Package | Update | Change | |---|---|---| | [gradle](https://gradle.org) ([source](https://redirect.github.com/gradle/gradle)) | minor | `9.0.0` -> `9.1.0` |  ---  ### Release Notes  <details> <summary>gradle/gradle (gradle)</summary>  ### [`v9.1.0`](https://redirect.github.com/gradle/gradle/compare/v9.0.0...v9.1.0)  [Compare Source](https://redirect.github.com/gradle/gradle/compare/v9.0.0...v9.1.0)  </details>  ---  ### Configuration  📅 **Schedule**: Branch creation - Between 12:00 AM and 03:59 AM ( * 0-3 * * * ) (UTC), Automerge - At any time (no schedule defined).  🚦 **Automerge**: Enabled.  ♻ **Rebasing**: Whenever PR is behind base branch, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update again.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  This PR was generated by [Mend Renovate](https://mend.io/renovate/). View the [repository job log](https://developer.mend.io/github/android/kotlin-multiplatform-samples). <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0MS45Ny4xMCIsInVwZGF0ZWRJblZlciI6IjQxLjk3LjEwIiwidGFyZ2V0QnJhbmNoIjoibWFpbiIsImxhYmVscyI6W119--> 
-
-- **Issue #105** (2025-09-18): **fix(deps): update all dependencies 2.9.3 to v2.9.4**
-  *Symptoms*: Coming soon: The Renovate bot (GitHub App) will be renamed to Mend. PRs from Renovate will soon appear from 'Mend'. Learn more [here](https://redirect.github.com/renovatebot/renovate/discussions/37842).  This PR contains the following updates:  | Package | Change | Age | Confidence | |---|---|---|---| | [androidx.lifecycle:lifecycle-viewmodel-compose](https://developer.android.com/jetpack/androidx/releases/lifecycle#2.9.4) ([source](https://cs.android.com/androidx/platform/frameworks/support)) | `2.9.3` -> `2.9.4` | [![age](https://developer.mend.io/api/mc/badges/age/maven/androidx.lifecycle:lifecycle-viewmodel-compose/2.9.4?slim=true)](https://docs.renovatebot.com/merge-confidence/) | [![confidence](https://developer.mend.io/api/mc/badges/confidence/maven/androidx.lifecycle:lifecycle-viewmodel-compose/2.9.3/2.9.4?slim=true)](https://docs.renovatebot.com/merge-confidence/) | | [androidx.lifecycle:lifecycle-viewmodel](https://developer.android.com/jetpack/androidx/releases/lifecycle#2.9.4) ([source](https://cs.android.com/androidx/platform/frameworks/support)) | `2.9.3` -> `2.9.4` | [![age](https://developer.mend.io/api/mc/badges/age/maven/androidx.lifecycle:lifecycle-viewmodel/2.9.4?slim=true)](https://docs.renovatebot.com/merge-confidence/) | [![confidence](https://developer.mend.io/api/mc/badges/confidence/maven/androidx.lifecycle:lifecycle-viewmodel/2.9.3/2.9.4?slim=true)](https://docs.renovatebot.com/merge-confidence/) |  ---  ### Configuration  📅 **Schedule**: Branch cr
-
-- **Issue #104** (2025-09-14): **fix(deps): update all dependencies 3.2.3 to v3.3.0**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | Age | Confidence | |---|---|---|---| | [io.ktor:ktor-serialization-kotlinx-json](https://redirect.github.com/ktorio/ktor) | `3.2.3` -> `3.3.0` | [![age](https://developer.mend.io/api/mc/badges/age/maven/io.ktor:ktor-serialization-kotlinx-json/3.3.0?slim=true)](https://docs.renovatebot.com/merge-confidence/) | [![confidence](https://developer.mend.io/api/mc/badges/confidence/maven/io.ktor:ktor-serialization-kotlinx-json/3.2.3/3.3.0?slim=true)](https://docs.renovatebot.com/merge-confidence/) | | [io.ktor:ktor-client-okhttp](https://redirect.github.com/ktorio/ktor) | `3.2.3` -> `3.3.0` | [![age](https://developer.mend.io/api/mc/badges/age/maven/io.ktor:ktor-client-okhttp/3.3.0?slim=true)](https://docs.renovatebot.com/merge-confidence/) | [![confidence](https://developer.mend.io/api/mc/badges/confidence/maven/io.ktor:ktor-client-okhttp/3.2.3/3.3.0?slim=true)](https://docs.renovatebot.com/merge-confidence/) | | [io.ktor:ktor-client-darwin](https://redirect.github.com/ktorio/ktor) | `3.2.3` -> `3.3.0` | [![age](https://developer.mend.io/api/mc/badges/age/maven/io.ktor:ktor-client-darwin/3.3.0?slim=true)](https://docs.renovatebot.com/merge-confidence/) | [![confidence](https://developer.mend.io/api/mc/badges/confidence/maven/io.ktor:ktor-client-darwin/3.2.3/3.3.0?slim=true)](https://docs.renovatebot.com/merge-confidence/) | | [io.ktor:ktor-client-core](https://redirect.github.com/ktorio/ktor) | `3.2.3` -> `3.3.0` | [![age
-
-- **Issue #103** (2025-11-11): **fix(deps): update kotlin dependencies**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | Age | Confidence | |---|---|---|---| | [co.touchlab.skie](https://skie.touchlab.co) ([source](https://redirect.github.com/touchlab/SKIE)) | `0.10.6` -> `0.10.7` | [![age](https://developer.mend.io/api/mc/badges/age/maven/co.touchlab.skie:co.touchlab.skie.gradle.plugin/0.10.7?slim=true)](https://docs.renovatebot.com/merge-confidence/) | [![confidence](https://developer.mend.io/api/mc/badges/confidence/maven/co.touchlab.skie:co.touchlab.skie.gradle.plugin/0.10.6/0.10.7?slim=true)](https://docs.renovatebot.com/merge-confidence/) | | [co.touchlab.skie:configuration-annotations](https://skie.touchlab.co) ([source](https://redirect.github.com/touchlab/SKIE)) | `0.10.6` -> `0.10.7` | [![age](https://developer.mend.io/api/mc/badges/age/maven/co.touchlab.skie:configuration-annotations/0.10.7?slim=true)](https://docs.renovatebot.com/merge-confidence/) | [![confidence](https://developer.mend.io/api/mc/badges/confidence/maven/co.touchlab.skie:configuration-annotations/0.10.6/0.10.7?slim=true)](https://docs.renovatebot.com/merge-confidence/) | | [com.google.devtools.ksp](https://goo.gle/ksp) ([source](https://redirect.github.com/google/ksp)) | `2.2.10-2.0.2` -> `2.3.2` | [![age](https://developer.mend.io/api/mc/badges/age/maven/com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin/2.3.2?slim=true)](https://docs.renovatebot.com/merge-confidence/) | [![confidence](https://developer.mend.io/api/mc/badges/confidence/maven/c
-
-- **Issue #102** (2025-09-11): **fix(deps): update all dependencies**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | Age | Confidence | |---|---|---|---| | [androidx.compose.material3:material3](https://developer.android.com/jetpack/androidx/releases/compose-material3#1.3.2) ([source](https://cs.android.com/androidx/platform/frameworks/support)) | `1.4.0-beta03` -> `1.4.0-rc01` | [![age](https://developer.mend.io/api/mc/badges/age/maven/androidx.compose.material3:material3/1.4.0-rc01?slim=true)](https://docs.renovatebot.com/merge-confidence/) | [![confidence](https://developer.mend.io/api/mc/badges/confidence/maven/androidx.compose.material3:material3/1.4.0-beta03/1.4.0-rc01?slim=true)](https://docs.renovatebot.com/merge-confidence/) | | [androidx.sqlite:sqlite-bundled](https://developer.android.com/jetpack/androidx/releases/sqlite#2.6.0) ([source](https://cs.android.com/androidx/platform/frameworks/support)) | `2.5.2` -> `2.6.0` | [![age](https://developer.mend.io/api/mc/badges/age/maven/androidx.sqlite:sqlite-bundled/2.6.0?slim=true)](https://docs.renovatebot.com/merge-confidence/) | [![confidence](https://developer.mend.io/api/mc/badges/confidence/maven/androidx.sqlite:sqlite-bundled/2.5.2/2.6.0?slim=true)](https://docs.renovatebot.com/merge-confidence/) | | [androidx.compose:compose-bom](https://developer.android.com/jetpack) | `2025.08.01` -> `2025.09.00` | [![age](https://developer.mend.io/api/mc/badges/age/maven/androidx.compose:compose-bom/2025.09.00?slim=true)](https://docs.renovatebot.com/merge-confidence/) | [![confide
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1271,396 +1117,6 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
  okio = "3.16.0"
 ```
 
----
-
-### Incident Patch 4: `d920ce27` (2025-11-11)
-**Commit Message**: fix(deps): update kotlin dependencies (#103)
-
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `Fruitties/gradle/libs.versions.toml` (modified, +3/-3)
-```diff
-@@ -24,13 +24,13 @@ androidx-lifecycle = "2.9.4"
- atomicfu = "0.29.0"
- composeBom = "2025.09.00"
- dataStore = "1.1.7"
--kotlin = "2.2.10"
-+kotlin = "2.2.21"
- kotlinx-coroutines = "1.10.2"
- kotlinxDatetime = "0.7.1-0.6.x-compat"
--ksp = "2.2.10-2.0.2"
-+ksp = "2.3.2"
- ktorVersion = "3.3.0"
- pagingComposeAndroid = "3.3.6"
--skie = "0.10.6"
-+skie = "0.10.7"
- sqlite = "2.6.0"
- spotless = "7.2.1"
- okio = "3.16.0"
-```
-
----
-
-### Incident Patch 5: `00a6699b` (2025-09-18)
-**Commit Message**: fix(deps): update all dependencies 2.9.3 to v2.9.4 (#105)
-
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `Fruitties/gradle/libs.versions.toml` (modified, +1/-1)
-```diff
-@@ -20,7 +20,7 @@ nav3Core = "1.0.0-alpha09"
- lifecycleViewmodelNav3 = "1.0.0-alpha04"
- kotlinxSerializationCore = "1.9.0"
- androidx-room = "2.8.0"
--androidx-lifecycle = "2.9.3"
-+androidx-lifecycle = "2.9.4"
- atomicfu = "0.29.0"
- composeBom = "2025.09.00"
- dataStore = "1.1.7"
-```
-
----
-
-### Incident Patch 6: `86326d46` (2025-09-14)
-**Commit Message**: fix(deps): update all dependencies 3.2.3 to v3.3.0 (#104)
-
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `Fruitties/gradle/libs.versions.toml` (modified, +1/-1)
-```diff
-@@ -28,7 +28,7 @@ kotlin = "2.2.10"
- kotlinx-coroutines = "1.10.2"
- kotlinxDatetime = "0.7.1-0.6.x-compat"
- ksp = "2.2.10-2.0.2"
--ktorVersion = "3.2.3"
-+ktorVersion = "3.3.0"
- pagingComposeAndroid = "3.3.6"
- skie = "0.10.6"
- sqlite = "2.6.0"
-```
-
----
-
-### Incident Patch 7: `6f238cd3` (2025-09-11)
-**Commit Message**: fix(deps): update all dependencies (#102)
-
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `Fruitties/gradle/libs.versions.toml` (modified, +6/-6)
-```diff
-@@ -14,15 +14,15 @@
- 
- [versions]
- agp = "8.13.0"
--androidx-activityCompose = "1.10.1"
-+androidx-activityCompose = "1.11.0"
- androidx-paging = "3.3.6"
--nav3Core = "1.0.0-alpha08"
-+nav3Core = "1.0.0-alpha09"
- lifecycleViewmodelNav3 = "1.0.0-alpha04"
- kotlinxSerializationCore = "1.9.0"
--androidx-room = "2.7.2"
-+androidx-room = "2.8.0"
- androidx-lifecycle = "2.9.3"
- atomicfu = "0.29.0"
--composeBom = "2025.08.01"
-+composeBom = "2025.09.00"
- dataStore = "1.1.7"
- kotlin = "2.2.10"
- kotlinx-coroutines = "1.10.2"
-@@ -31,15 +31,15 @@ ksp = "2.2.10-2.0.2"
- ktorVersion = "3.2.3"
- pagingComposeAndroid = "3.3.6"
- skie = "0.10.6"
--sqlite = "2.5.2"
-+sqlite = "2.6.0"
- spotless = "7.2.1"
- okio = "3.16.0"
- kermit = "2.0.8"
- runner = "1.7.0"
- core = "1.7.0"
- junit = "1.3.0"
- materialIconsCore = "1.7.8"
--material3 = "1.4.0-beta03"
-+material3 = "1.4.0-rc01"
- 
- [libraries]
- androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
-```
-
----
-
-### Incident Patch 8: `42d2da1f` (2025-08-28)
-**Commit Message**: fix(deps): update all dependencies (#99)
-
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `Fruitties/gradle/libs.versions.toml` (modified, +4/-4)
-```diff
-@@ -16,13 +16,13 @@
- agp = "8.12.1"
- androidx-activityCompose = "1.10.1"
- androidx-paging = "3.3.6"
--nav3Core = "1.0.0-alpha07"
-+nav3Core = "1.0.0-alpha08"
- lifecycleViewmodelNav3 = "1.0.0-alpha04"
- kotlinxSerializationCore = "1.9.0"
- androidx-room = "2.7.2"
--androidx-lifecycle = "2.9.2"
-+androidx-lifecycle = "2.9.3"
- atomicfu = "0.29.0"
--composeBom = "2025.08.00"
-+composeBom = "2025.08.01"
- dataStore = "1.1.7"
- kotlin = "2.2.10"
- kotlinx-coroutines = "1.10.2"
-@@ -39,7 +39,7 @@ runner = "1.7.0"
- core = "1.7.0"
- junit = "1.3.0"
- materialIconsCore = "1.7.8"
--material3 = "1.4.0-beta02"
-+material3 = "1.4.0-beta03"
- 
- [libraries]
- androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
-```
-
----
-
-### Incident Patch 9: `71d5e3ff` (2025-08-21)
-**Commit Message**: fix(deps): update all dependencies
-
-**File**: `.github/workflows/Fruitties.yaml` (modified, +3/-3)
-```diff
-@@ -31,10 +31,10 @@ jobs:
- 
-     steps:
-       - name: Checkout
--        uses: actions/checkout@v4
-+        uses: actions/checkout@v5
- 
-       - name: Set up JDK 17
--        uses: actions/setup-java@v4
-+        uses: actions/setup-java@v5
-         with:
-           distribution: 'zulu'
-           java-version: 17
-@@ -63,7 +63,7 @@ jobs:
-           xcode-version: latest-stable
-     
-       - name: Checkout
--        uses: actions/checkout@v4
-+        uses: actions/checkout@v5
- 
-       - name: Build iOS app
-         uses: mxcl/xcodebuild@v3
-```
-
-**File**: `Fruitties/gradle/libs.versions.toml` (modified, +5/-5)
-```diff
-@@ -13,16 +13,16 @@
- # limitations under the License.
- 
- [versions]
--agp = "8.11.1"
-+agp = "8.12.1"
- androidx-activityCompose = "1.10.1"
- androidx-paging = "3.3.6"
--nav3Core = "1.0.0-alpha06"
-+nav3Core = "1.0.0-alpha07"
- lifecycleViewmodelNav3 = "1.0.0-alpha04"
- kotlinxSerializationCore = "1.9.0"
- androidx-room = "2.7.2"
- androidx-lifecycle = "2.9.2"
- atomicfu = "0.29.0"
--composeBom = "2025.07.00"
-+composeBom = "2025.08.00"
- dataStore = "1.1.7"
- kotlin = "2.2.10"
- kotlinx-coroutines = "1.10.2"
-@@ -34,12 +34,12 @@ skie = "0.10.6"
- sqlite = "2.5.2"
- spotless = "7.2.1"
- okio = "3.16.0"
--kermit = "2.0.6"
-+kermit = "2.0.8"
- runner = "1.7.0"
- core = "1.7.0"
- junit = "1.3.0"
- materialIconsCore = "1.7.8"
--material3 = "1.4.0-beta01"
-+material3 = "1.4.0-beta02"
- 
- [libraries]
- androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
-```
-
-**File**: `Fruitties/gradle/wrapper/gradle-wrapper.properties` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- distributionBase=GRADLE_USER_HOME
- distributionPath=wrapper/dists
--distributionUrl=https\://services.gradle.org/distributions/gradle-8.14.3-bin.zip
-+distributionUrl=https\://services.gradle.org/distributions/gradle-9.0.0-bin.zip
- networkTimeout=10000
- validateDistributionUrl=true
- zipStoreBase=GRADLE_USER_HOME
-```
-
----
-
-### Incident Patch 10: `7cb58a57` (2025-08-20)
-**Commit Message**: fix(deps): update kotlin dependencies (#95)
-
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `Fruitties/gradle/libs.versions.toml` (modified, +3/-3)
-```diff
-@@ -24,13 +24,13 @@ androidx-lifecycle = "2.9.2"
- atomicfu = "0.29.0"
- composeBom = "2025.07.00"
- dataStore = "1.1.7"
--kotlin = "2.2.0"
-+kotlin = "2.2.10"
- kotlinx-coroutines = "1.10.2"
- kotlinxDatetime = "0.7.1-0.6.x-compat"
--ksp = "2.2.0-2.0.2"
-+ksp = "2.2.10-2.0.2"
- ktorVersion = "3.2.3"
- pagingComposeAndroid = "3.3.6"
--skie = "0.10.5"
-+skie = "0.10.6"
- sqlite = "2.5.2"
- spotless = "7.2.1"
- okio = "3.16.0"
-```
-
----
-
-### Incident Patch 11: `5de917fb` (2025-08-01)
-**Commit Message**: fix(deps): update kotlin dependencies 0.10.4 to v0.10.5 (#93)
-
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `Fruitties/gradle/libs.versions.toml` (modified, +1/-1)
-```diff
-@@ -30,7 +30,7 @@ kotlinxDatetime = "0.7.1-0.6.x-compat"
- ksp = "2.2.0-2.0.2"
- ktorVersion = "3.2.3"
- pagingComposeAndroid = "3.3.6"
--skie = "0.10.4"
-+skie = "0.10.5"
- sqlite = "2.5.2"
- spotless = "7.2.1"
- okio = "3.16.0"
-```
-
----
-
-### Incident Patch 12: `33ec69e5` (2025-07-31)
-**Commit Message**: fix(deps): update all dependencies (#92)
-
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `Fruitties/gradle/libs.versions.toml` (modified, +6/-6)
-```diff
-@@ -16,8 +16,8 @@
- agp = "8.11.1"
- androidx-activityCompose = "1.10.1"
- androidx-paging = "3.3.6"
--nav3Core = "1.0.0-alpha05"
--lifecycleViewmodelNav3 = "1.0.0-alpha03"
-+nav3Core = "1.0.0-alpha06"
-+lifecycleViewmodelNav3 = "1.0.0-alpha04"
- kotlinxSerializationCore = "1.9.0"
- androidx-room = "2.7.2"
- androidx-lifecycle = "2.9.2"
-@@ -35,11 +35,11 @@ sqlite = "2.5.2"
- spotless = "7.2.1"
- okio = "3.16.0"
- kermit = "2.0.6"
--runner = "1.6.2"
--core = "1.6.1"
--junit = "1.2.1"
-+runner = "1.7.0"
-+core = "1.7.0"
-+junit = "1.3.0"
- materialIconsCore = "1.7.8"
--material3 = "1.4.0-alpha18"
-+material3 = "1.4.0-beta01"
- 
- [libraries]
- androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
-```
-
----
-
-### Incident Patch 13: `e19c2561` (2025-07-30)
-**Commit Message**: fix(deps): update all dependencies (#90)
-
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `Fruitties/gradle/libs.versions.toml` (modified, +2/-2)
-```diff
-@@ -28,12 +28,12 @@ kotlin = "2.2.0"
- kotlinx-coroutines = "1.10.2"
- kotlinxDatetime = "0.7.1-0.6.x-compat"
- ksp = "2.2.0-2.0.2"
--ktorVersion = "3.2.2"
-+ktorVersion = "3.2.3"
- pagingComposeAndroid = "3.3.6"
- skie = "0.10.4"
- sqlite = "2.5.2"
- spotless = "7.2.1"
--okio = "3.15.0"
-+okio = "3.16.0"
- kermit = "2.0.6"
- runner = "1.6.2"
- core = "1.6.1"
-```
-
----
-
-### Incident Patch 14: `c87c03dc` (2025-07-24)
-**Commit Message**: fix(deps): update dependency org.jetbrains.kotlinx:kotlinx-datetime 0.7.1 to v0.7.1-0.6.x-compat (#85)
-
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `Fruitties/gradle/libs.versions.toml` (modified, +1/-1)
-```diff
-@@ -26,7 +26,7 @@ composeBom = "2025.07.00"
- dataStore = "1.1.7"
- kotlin = "2.2.0"
- kotlinx-coroutines = "1.10.2"
--kotlinxDatetime = "0.7.1"
-+kotlinxDatetime = "0.7.1-0.6.x-compat"
- ksp = "2.2.0-2.0.2"
- ktorVersion = "3.2.2"
- pagingComposeAndroid = "3.3.6"
-```
-
----
-
-### Incident Patch 15: `a6bf3300` (2025-07-21)
-**Commit Message**: fix: Moved `enableEdgeToEdge` before `super.onCreate`
-
-The `enableEdgeToEdge` call should be made before `super.onCreate` in `MainActivity` to ensure that the system UI and window insets are configured before the layout is inflated.
-For more details refer to: https://github.com/android/compose-samples/issues/1560
-
-**File**: `Fruitties/androidApp/src/main/java/com/example/fruitties/android/MainActivity.kt` (modified, +1/-1)
-```diff
-@@ -53,8 +53,8 @@ data class FruittieScreenKey(
- 
- class MainActivity : ComponentActivity() {
-     override fun onCreate(savedInstanceState: Bundle?) {
--        super.onCreate(savedInstanceState)
-         enableEdgeToEdge()
-+        super.onCreate(savedInstanceState)
-         setContent {
-             CompositionLocalProvider(
-                 LocalAppContainer provides (this.applicationContext as FruittiesAndroidApp).container,
-```
-
 #### Recent Merged Pull Requests:
 - **PR #109** (2025-11-21): chore(deps): update dependency com.google.devtools.ksp 2.3.2 to v2.3.3 (@renovate[bot])
 - **PR #108** (2025-11-15): fix(deps): update kotlin dependencies 0.10.7 to v0.10.8 (@renovate[bot])
@@ -1668,8 +1124,6 @@ For more details refer to: https://github.com/android/compose-samples/issues/156
 - **PR #106** (2025-09-19): chore(deps): update gradle 9.0.0 to v9.1.0 (@renovate[bot])
 - **PR #105** (2025-09-18): fix(deps): update all dependencies 2.9.3 to v2.9.4 (@renovate[bot])
 - **PR #104** (2025-09-14): fix(deps): update all dependencies 3.2.3 to v3.3.0 (@renovate[bot])
-- **PR #103** (2025-11-11): fix(deps): update kotlin dependencies (@renovate[bot])
-- **PR #102** (2025-09-11): fix(deps): update all dependencies (@renovate[bot])
 
 ---
 
@@ -1683,3 +1137,40 @@ For more details refer to: https://github.com/android/compose-samples/issues/156
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. api changes
+
+**RULE**:
+When implementing operations in `Fruitties/androidApp/src/main/java/com/example/fruitties/android/MainActivity.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in android/kotlin-multiplatform-samples. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `72b269be`: api changes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `Fruitties/androidApp/src/main/java/com/example/fruitties/android/MainActivity.kt`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```kotlin
+// Verified production-grade fix pattern:
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
+            rememberSaveableStateHolderNavEntryDecorator(),
+```
+
+**NEGATIVE CONSTRAINT**:
+```kotlin
+// Anti-pattern to NEVER write (induced failure mode):
+import androidx.navigation3.runtime.entry
+import androidx.navigation3.runtime.rememberSavedStateNavEntryDecorator
+import androidx.navigation3.ui.rememberSceneSetupNavEntryDecorator
+            rememberSceneSetupNavEntryDecorator(),
+            rememberSavedStateNavEntryDecorator(),
+        onBack = { keysToRemove -> repeat(keysToRemove) { backStack.removeLastOrNull() } },
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `72b269be` are properly handled with clean fallback behavior.

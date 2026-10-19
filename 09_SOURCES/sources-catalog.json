@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "e3c3ef18",
+    "sourceVersion": "374d505a",
     "license": "BSD-3-Clause",
-    "contentHash": "afdb92da970393584dfbb2c0a6a1a5ba9ec6bed677868941ee5fcb495ea514ca",
-    "lastHarvestedAt": "2026-10-18T23:32:55.527Z",
+    "contentHash": "3c92a155c3c478799176da958fdee914add3c7c24ddcf560e5cf3e6916c090d4",
+    "lastHarvestedAt": "2026-10-19T18:29:53.161Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -6873,10 +6873,10 @@
     "repository": "lucide-icons/lucide",
     "platform": "github",
     "sourceUrl": "https://github.com/lucide-icons/lucide",
-    "sourceVersion": "1ef60af9",
+    "sourceVersion": "02eb9161",
     "license": "NOASSERTION",
-    "contentHash": "2582575ee814413b55acb99aa177e672a51f616ce75b2d40fce06e3d50ac227f",
-    "lastHarvestedAt": "2026-10-19T06:59:25.360Z",
+    "contentHash": "cd9b63b8f8aede7a87d569ad985fdf1c378960981fa3ed898575af4179288bc9",
+    "lastHarvestedAt": "2026-10-19T18:29:42.736Z",
     "learningId": "learn-github-lucide-icons-lucide"
   },
   "iconoir-icons-iconoir": {
@@ -8598,5 +8598,15 @@
     "contentHash": "ae1ed764fb7487d67f8c64b6207bb63c5497531d4897faeff9a31ba8e0355d9d",
     "lastHarvestedAt": "2026-10-19T18:23:17.831Z",
     "learningId": "learn-github-shifthackz-stable-diffusion-kmp"
+  },
+  "android-kotlin-multiplatform-samples": {
+    "repository": "android/kotlin-multiplatform-samples",
+    "platform": "github",
+    "sourceUrl": "https://github.com/android/kotlin-multiplatform-samples",
+    "sourceVersion": "7844c733",
+    "license": "Apache-2.0",
+    "contentHash": "3a76ec1c141829bb1e2a9c7327a7b25b988779abe0bc22cffe15fd2cc2d52908",
+    "lastHarvestedAt": "2026-10-19T18:29:48.945Z",
+    "learningId": "learn-github-android-kotlin-multiplatform-samples"
   }
 }

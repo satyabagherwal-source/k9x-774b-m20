@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T18:23:26.603Z",
-  "total_verified_learnings": 875,
+  "last_updated": "2026-10-19T18:29:53.113Z",
+  "total_verified_learnings": 876,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -1547,22 +1547,35 @@
     "learn-github-android-kotlin-multiplatform-samples": {
       "learning_id": "learn-github-android-kotlin-multiplatform-samples",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "android-kotlin-multiplatform-samples",
+      "source": "android/kotlin-multiplatform-samples",
+      "repository": "android/kotlin-multiplatform-samples",
       "slug": "android-kotlin-multiplatform-samples",
       "platform": "github",
       "source_url": "https://github.com/android/kotlin-multiplatform-samples",
-      "source_version": "HEAD",
-      "content_hash": "23714be05ffe25242dd601221da6f5851584786058c3ce2623ecc9be9c516520",
+      "source_version": "7844c733",
+      "content_hash": "3a76ec1c141829bb1e2a9c7327a7b25b988779abe0bc22cffe15fd2cc2d52908",
       "dossier_path": "07_PROJECT_LEARNING/android-kotlin-multiplatform-samples-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/android-kotlin-multiplatform-samples-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": "EXISTING",
+          "title": "api changes",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.776Z"
+      "verified_at": "2026-10-19T18:29:48.881Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-androoagi-starnet": {
       "learning_id": "learn-github-androoagi-starnet",
@@ -28801,14 +28814,19 @@
       "slug": "lucide-icons-lucide",
       "platform": "github",
       "source_url": "https://github.com/lucide-icons/lucide",
-      "source_version": "1ef60af9",
-      "content_hash": "2582575ee814413b55acb99aa177e672a51f616ce75b2d40fce06e3d50ac227f",
+      "source_version": "02eb9161",
+      "content_hash": "cd9b63b8f8aede7a87d569ad985fdf1c378960981fa3ed898575af4179288bc9",
       "dossier_path": "07_PROJECT_LEARNING/lucide-icons-lucide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lucide-icons-lucide-learnings.md",
       "promoted_rules": [
         {
           "number": 2265,
           "title": "icons): changed `chess-queen` icon (#4613)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2742,
+          "title": "site): Fix build (#5033)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -28817,7 +28835,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T06:59:25.318Z",
+      "verified_at": "2026-10-19T18:29:42.674Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40905,14 +40923,19 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "e3c3ef18",
-      "content_hash": "afdb92da970393584dfbb2c0a6a1a5ba9ec6bed677868941ee5fcb495ea514ca",
+      "source_version": "374d505a",
+      "content_hash": "3c92a155c3c478799176da958fdee914add3c7c24ddcf560e5cf3e6916c090d4",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
         {
           "number": 1857,
           "title": "net/tstun,wgengine/netstack: avoid deadlocks on full outbound queues",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2743,
+          "title": "licenses: update license notices",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -40921,7 +40944,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T23:32:55.501Z",
+      "verified_at": "2026-10-19T18:29:53.100Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -90830,6 +90853,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T18:23:26.591Z"
+    },
+    "rule-2742": {
+      "learning_id": "rule-2742",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2742,
+      "title": "site): Fix build (#5033)",
+      "source_url": "https://github.com/lucide-icons/lucide",
+      "source_version": "02eb9161",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T18:29:42.674Z"
+    },
+    "rule-2743": {
+      "learning_id": "rule-2743",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2743,
+      "title": "licenses: update license notices",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "374d505a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T18:29:53.100Z"
     }
   },
   "aliases": {

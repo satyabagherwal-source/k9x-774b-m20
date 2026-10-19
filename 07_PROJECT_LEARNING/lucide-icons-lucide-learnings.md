@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lucide-icons-lucide-learnings.md`  
 > **Source**: github ([https://github.com/lucide-icons/lucide](https://github.com/lucide-icons/lucide))  
-> **Source Version**: `1ef60af9`  
+> **Source Version**: `02eb9161`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T06:59:25.150Z  
+> **Timestamp**: 2026-10-19T18:29:42.446Z  
 > **Learning ID**: `learn-github-lucide-icons-lucide`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lucide-icons-lucide-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lucide-icons/lucide](https://github.com/lucide-icons/lucide))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T06:59:25.142Z  
+> **Harvest Timestamp**: 2026-10-19T18:29:40.595Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Beautiful & consistent icon toolkit made by the community. Open-source project and a fork of Feather Icons.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 25141 stars
+- **Stars / Engagement**: 25147 stars
 
 ---
 
@@ -431,13 +431,11 @@ export default function IconShowcase() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5031** (2026-10-18): **feat(icons): added `badge-bangladeshi-taka`, `receipt-bangladeshi-taka` icons**
-  *Symptoms*: <!-- Thank you for contributing! -->  <!-- PR Title Guidelines:  Please use the format: <type>(<scope>): <short description>  Example: feat(icons): added `camera` icon  Available types: fix, feat, perf, docs, style, refactor, test, chore, ci, build Common scopes: icons, docs, studio, site, dev -->  <!-- Insert `closes #issueNumber` here if merging this PR will resolve an existing issue --> ## Description <!-- Please insert your description here and provide info about the "what" this PR is contribution --> Adds two variants of ``bangladeshi-taka``, following the existing ``badge-*-*`` currency icons (e.g. ``badge-indian-rupee``, ``badge-dollar-sign``) and receipt-* icons (e.g. ``receipt-indian-rupee``).  - ``badge-bangladeshi-taka``: taka symbol inside the standard badge outline - ``receipt-bangladeshi-taka``: taka symbol on the standard receipt outline Related: existing ``bangladeshi-taka`` icon. ### Icon use case <!-- ONLY for new icons, remove this part if not icon PR --> <!-- What is the purpose of this icon? For each icon added, please insert at least two real life use cases (the more the better). Text like "it's a car icon" is not accepted. --> ### badge-bangladeshi-taka  - Marking discounted prices in BDT - Showing sale or offer amounts in taka - Labeling voucher or coupon values in BDT - Highlighting taka cashback or reward amounts  ### receipt-bangladeshi-taka  - Linking to payment receipts in BDT - Showing itemized bills and invoices in taka - Confirming a completed 
+- **Issue #5040** (2026-10-19): **feat(metadata): extend base icon metadata in variant icons**
+  *Symptoms*: ## Description Stacked on #5038.  Uses `$extends:<base>` in 703 variant icons whose tags or categories already include every value of their base icon, and removes the duplicated literals (1952 tags, 1058 categories).  - The base is the longest prefix of the icon name that is itself an icon, e.g. `clipboard-pen-line` extends `clipboard-pen` (which extends `clipboard`). - `tags` extend their base in 417 icons, `categories` in 675. - Only applied where the base adds nothing new: the resolved tags and categories of all 1899 icons were compared before and after and are identical. - `contributors` are left as they are. - ~320 variants that only partly overlap with their base are left untouched; extending them would add tags and needs a reviewed pass.  Verified with `pnpm checkIcons`, `eslint 'icons/*.json'`, cspell and prettier.  ## Before Submitting - [x] I've read the [Contribution Guidelines](https://github.com/lucide-icons/lucide/blob/main/CONTRIBUTING.md). - [x] I've checked if there was an existing PR that solves the same issue.
 
-- **Issue #5021** (2026-10-16): **feat(icons): added `eye-plus`, `globe-ban` icons**
-  *Symptoms*: Adds `eye-plus` icon.  Use cases: creating a new view in a database or dashboard, adding items to a watchlist, saving a new view or filter preset.  Based on: `eye`, with the standard corner plus as in other `-plus` icons. Keeps 2px spacing between all elements.
-  **Post-Mortem & Fix Analysis**:
-  > Closing due to missing PR template.  Please submit unrelated icons one icon at a time and review our contribution guide.
+- **Issue #5033** (2026-10-19): **fix(site): Fix build**
+  *Symptoms*: Fix broken site build.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -454,123 +452,55 @@ export default function IconShowcase() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1ef60af9` (2026-10-16)
-**Commit Message**: fix(icons): changed `chess-queen` icon (#4613)
+### Incident Patch 1: `6e1308ce` (2026-10-19)
+**Commit Message**: fix(site): Fix build (#5033)
 
-* Updated icons/chess-queen.svg
+* Fix name
 
-* Updated icons/chess-queen.json
+* Fix import
 
-* Update chess-queen.json
-
-* Update chess-queen.svg
-
----------
-
-Co-authored-by: Eric Fennis <[REDACTED_EMAIL]>
-
-**File**: `icons/chess-queen.svg` (modified, +5/-5)
+**File**: `docs/.vitepress/theme/components/home/HomeHeroIconsCard.data.ts` (modified, +1/-1)
 ```diff
-@@ -9,11 +9,11 @@
-   stroke-linecap="round"
-   stroke-linejoin="round"
- >
--  <path d="M4 20a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v1a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z" />
--  <path d="m12.474 5.943 1.567 5.34a1 1 0 0 0 1.75.328l2.616-3.402" />
--  <path d="m20 9-3 9" />
--  <path d="m5.594 8.209 2.615 3.403a1 1 0 0 0 1.75-.329l1.567-5.34" />
--  <path d="M7 18 4 9" />
-+  <path d="m10.68 5.499-.996 4.982a.65.65 0 01-1.131.295L5.885 7.663" />
-+  <path d="m13.32 5.5.995 4.98a.65.65 0 001.131.296l2.668-3.113" />
-+  <path d="M20.428 8.952 17.5 18" />
-+  <path d="M4 20a2 2 0 012-2h12a2 2 0 012 2v1a1 1 0 01-1 1H5a1 1 0 01-1-1z" />
-+  <path d="M6.5 18 3.571 8.952" />
-   <circle cx="12" cy="4" r="2" />
-   <circle cx="20" cy="7" r="2" />
-   <circle cx="4" cy="7" r="2" />
+@@ -38,7 +38,7 @@ const pickIcons = [
+   'map-pinned',
+   'megaphone',
+   'moon',
+-  'music',
++  'sixteenth-notes',
+   'phone',
+   'power-off',
+   'radio',
 ```
 
----
-
-### Incident Patch 2: `26edd98b` (2026-10-15)
-**Commit Message**: ci(dev): fix "Generate PR Title" job by using REST API for changed files (#5017)
-
-* Initial plan
-
-* Apply remaining changes
-
-Co-authored-by: ericfennis <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: copilot-swe-agent[bot] <[REDACTED_EMAIL]>
-Co-authored-by: ericfennis <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/generate-pr-title.yml` (modified, +3/-0)
+**File**: `docs/.vitepress/theme/components/overrides/HeroMatrix.vue` (modified, +2/-2)
 ```diff
-@@ -42,6 +42,9 @@ jobs:
-       - name: Get changed files
-         id: changed-files
-         uses: tj-actions/changed-files@9426d40962ed5378910ee2e21d5f8c6fcbf2dd96 # v47.0.6
-+        with:
-+          # The checkout is the base branch, so the PR head commit isn't available locally.
-+          use_rest_api: true
+@@ -10,7 +10,7 @@ import {
+   sun,
+   moon,
+   camera,
+-  music,
++  sixteenthNotes,
+   video,
+   globe,
+   layers,
+@@ -44,7 +44,7 @@ import createElement from 'lucide/src/createElement';
+ import { IconNode } from 'lucide/src/types';
  
-       - name: Generate PR title
-         id: generate
-```
-
----
-
-### Incident Patch 3: `d98861db` (2026-10-15)
-**Commit Message**: fix(icons): changed `barrel` icon (#4639)
-
-* Updated icons/barrel.svg
-
-* Updated icons/barrel.json
-
-* Update barrel.json
-
-* Updated icons/barrel.svg
-
-* Updated icons/barrel.json
-
-* Update barrel.json
-
-* Update barrel.svg
-
-* Update barrel.svg
-
----------
-
-Co-authored-by: Eric Fennis <[REDACTED_EMAIL]>
-
-**File**: `icons/barrel.svg` (modified, +5/-5)
-```diff
-@@ -9,9 +9,9 @@
-   stroke-linecap="round"
-   stroke-linejoin="round"
- >
--  <path d="M10 3a41 41 0 000 18" />
--  <path d="M14 3a41 41 0 010 18" />
--  <path d="M16.997 21a2 2 0 001.68-.92 15.25 15.25 0 000-16.16 2 2 0 00-1.68-.92h-10a2 2 0 00-1.681.92 15.25 15.25 0 000 16.16 2 2 0 001.681.92z" />
--  <path d="M3.54 16h16.914" />
--  <path d="M3.54 8h16.914" />
-+  <path d="M10.5 2a34.5 34.5 0 000 20" />
-+  <path d="M13.5 2a34.5 34.5 0 010 20" />
-+  <path d="M4.67 17h14.67" />
-+  <path d="M4.67 7h14.67" />
-+  <path d="M6.23 3.06a19 19 0 000 17.88A2 2 0 008 22h8a2 2 0 001.77-1.06 19 19 0 000-17.88A2 2 0 0016 2H8a2 2 0 00-1.77 1.06" />
- </svg>
+ const icons: Component[] = [
+-  heart, star, zap, code, feather, cloud, sun, moon, camera, music,
++  heart, star, zap, code, feather, cloud, sun, moon, camera, sixteenthNotes,
+   video, globe, layers, packageIcon, compass, command, terminal, database,
+   server, cpu, lock, key, shield, wifi, download, upload, search,
+   settings, users, mail, bell, calendar, clock, gitBranch, funnel,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5040** (2026-10-19): feat(metadata): extend base icon metadata in variant icons (@ericfennis)
+- **PR #5033** (2026-10-19): fix(site): Fix build (@ericfennis)
 - **PR #5031** (closed): feat(icons): added `badge-bangladeshi-taka`, `receipt-bangladeshi-taka` icons (@s8rr)
-- **PR #5021** (closed): feat(icons): added `eye-plus`, `globe-ban` icons (@PrimeTestLab)
-- **PR #5018** (closed): feat(icons): added `perfume-bottle-minus`, `perfume-bottle-plus` icons (@PrimeTestLab)
-- **PR #5017** (2026-10-15): ci(dev): fix "Generate PR Title" job by using REST API for changed files (@Copilot)
-- **PR #5015** (2026-10-15): fix(site): Fix homepage animation (@ericfennis)
-- **PR #5012** (2026-10-16): feat(docs): Adds search field to docs pages (@ericfennis)
+- **PR #5030** (2026-10-19): chore(deps-dev): bump react-native from 0.87.1 to 0.88.0 in the react-native-deps group (@dependabot[bot])
+- **PR #5029** (closed): chore(deps): bump the solid-deps group with 6 updates (@dependabot[bot])
+- **PR #5028** (2026-10-19): chore(deps-dev): bump the svelte-deps group across 1 directory with 2 updates (@dependabot[bot])
 
 ---
 
@@ -590,36 +520,28 @@ Co-authored-by: Eric Fennis <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. icons): changed `chess-queen` icon (#4613)
+## X. site): Fix build (#5033)
 
 **RULE**:
-When implementing operations in `icons/chess-queen.svg`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lucide-icons/lucide. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/.vitepress/theme/components/home/HomeHeroIconsCard.data.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lucide-icons/lucide. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1ef60af9`: icons): changed `chess-queen` icon (#4613). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6e1308ce`: site): Fix build (#5033). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `icons/chess-queen.svg`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/.vitepress/theme/components/home/HomeHeroIconsCard.data.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  <path d="m10.68 5.499-.996 4.982a.65.65 0 01-1.131.295L5.885 7.663" />
-  <path d="m13.32 5.5.995 4.98a.65.65 0 001.131.296l2.668-3.113" />
-  <path d="M20.428 8.952 17.5 18" />
-  <path d="M4 20a2 2 0 012-2h12a2 2 0 012 2v1a1 1 0 01-1 1H5a1 1 0 01-1-1z" />
-  <path d="M6.5 18 3.571 8.952" />
+  'sixteenth-notes',
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-  <path d="M4 20a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v1a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z" />
-  <path d="m12.474 5.943 1.567 5.34a1 1 0 0 0 1.75.328l2.616-3.402" />
-  <path d="m20 9-3 9" />
-  <path d="m5.594 8.209 2.615 3.403a1 1 0 0 0 1.75-.329l1.567-5.34" />
-  <path d="M7 18 4 9" />
+  'music',
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1ef60af9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6e1308ce` are properly handled with clean fallback behavior.

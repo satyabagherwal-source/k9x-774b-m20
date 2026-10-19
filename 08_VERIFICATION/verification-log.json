@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-N9YL",
-    "timestamp": "2026-10-19T04:40:24.621Z",
-    "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
-    "contentHash": "3df50024bcd605701c50248446be299dce293238f2eeeb1c2ba7bf0225fbf4db",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-NA2C",
-    "timestamp": "2026-10-19T04:40:24.756Z",
-    "repository": "itinance/react-native-fs",
-    "learningId": "learn-github-itinance-react-native-fs",
-    "contentHash": "a99504977b8586a1af9330dad5b3538565e075a8abd22e4469f99431d323187d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-NBSI",
-    "timestamp": "2026-10-19T04:40:26.994Z",
-    "repository": "camptocamp/terraboard",
-    "learningId": "learn-github-camptocamp-terraboard",
-    "contentHash": "b1791c85819775de18e4210c75ea60d38e971b80bcd3f39e568a5de380cd9272",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-NFUX",
     "timestamp": "2026-10-19T04:40:32.265Z",
     "repository": "vespa-engine/vespa",
@@ -7490,6 +7445,51 @@
     "repository": "duckdb/duckdb",
     "learningId": "learn-github-duckdb-duckdb",
     "contentHash": "737bbdf1f8882be9cc4174df5c8d4c1de8c41e762f2c14581949a0dafb95c610",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-9RKD",
+    "timestamp": "2026-10-19T18:29:42.733Z",
+    "repository": "lucide-icons/lucide",
+    "learningId": "learn-github-lucide-icons-lucide",
+    "contentHash": "cd9b63b8f8aede7a87d569ad985fdf1c378960981fa3ed898575af4179288bc9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-9WCU",
+    "timestamp": "2026-10-19T18:29:48.942Z",
+    "repository": "android/kotlin-multiplatform-samples",
+    "learningId": "learn-github-android-kotlin-multiplatform-samples",
+    "contentHash": "3a76ec1c141829bb1e2a9c7327a7b25b988779abe0bc22cffe15fd2cc2d52908",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-9ZLY",
+    "timestamp": "2026-10-19T18:29:53.158Z",
+    "repository": "tailscale/tailscale",
+    "learningId": "learn-github-tailscale-tailscale",
+    "contentHash": "3c92a155c3c478799176da958fdee914add3c7c24ddcf560e5cf3e6916c090d4",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
