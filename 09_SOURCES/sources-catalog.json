@@ -9158,5 +9158,25 @@
     "contentHash": "7df73c5097f37f2e112ce604e5dc262234d5598fd0bbd4966491cab009dd5c30",
     "lastHarvestedAt": "2026-10-19T21:38:27.412Z",
     "learningId": "learn-github-duongductrong-snapzy"
+  },
+  "scrapy-plugins-scrapy-deltafetch": {
+    "repository": "scrapy-plugins/scrapy-deltafetch",
+    "platform": "github",
+    "sourceUrl": "https://github.com/scrapy-plugins/scrapy-deltafetch",
+    "sourceVersion": "a8caf39d",
+    "license": "PERMISSIVE_OPEN_SOURCE",
+    "contentHash": "00ef35ca38e6c5c73b8e897a7d87f0d0662efb4846881e6a1dfb2488a5408b20",
+    "lastHarvestedAt": "2026-10-19T21:46:02.671Z",
+    "learningId": "learn-github-scrapy-plugins-scrapy-deltafetch"
+  },
+  "signerlabs-shipswift": {
+    "repository": "signerlabs/ShipSwift",
+    "platform": "github",
+    "sourceUrl": "https://github.com/signerlabs/ShipSwift",
+    "sourceVersion": "3341a192",
+    "license": "MIT",
+    "contentHash": "37920ceb9012b655acf2d2c507faed4224eaad1460a2dac2634733f8fcea0b5d",
+    "lastHarvestedAt": "2026-10-19T21:46:36.309Z",
+    "learningId": "learn-github-signerlabs-shipswift"
   }
 }

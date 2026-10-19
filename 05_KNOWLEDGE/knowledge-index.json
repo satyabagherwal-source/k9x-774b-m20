@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T21:38:27.361Z",
-  "total_verified_learnings": 931,
+  "last_updated": "2026-10-19T21:46:36.262Z",
+  "total_verified_learnings": 933,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -39108,22 +39108,45 @@
     "learn-github-signerlabs-shipswift": {
       "learning_id": "learn-github-signerlabs-shipswift",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "signerlabs-shipswift",
+      "source": "signerlabs/ShipSwift",
+      "repository": "signerlabs/ShipSwift",
       "slug": "signerlabs-shipswift",
       "platform": "github",
       "source_url": "https://github.com/signerlabs/ShipSwift",
-      "source_version": "HEAD",
-      "content_hash": "925e4a71539aeeb906cbfa64aad6765cf88e464ef70ca98c76c9d5f7ab3cfb4f",
+      "source_version": "3341a192",
+      "content_hash": "37920ceb9012b655acf2d2c507faed4224eaad1460a2dac2634733f8fcea0b5d",
       "dossier_path": "07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2830,
+          "title": "Dedicated Window Passthrough for Modal Overlays",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2831,
+          "title": "Synchronous Dual-Tier Cached Image Hydration",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2832,
+          "title": "Continuous-Time Gesture Phase Invariant for Autonomous Oscillators",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.517Z"
+      "verified_at": "2026-10-19T21:46:36.247Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-significant-gravitas-autogpt": {
       "learning_id": "learn-github-significant-gravitas-autogpt",
@@ -56715,22 +56738,46 @@
     "learn-github-scrapy-plugins-scrapy-deltafetch": {
       "learning_id": "learn-github-scrapy-plugins-scrapy-deltafetch",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "scrapy-plugins/scrapy-deltafetch",
       "repository": "scrapy-plugins/scrapy-deltafetch",
       "slug": "scrapy-plugins-scrapy-deltafetch",
       "platform": "github",
       "source_url": "https://github.com/scrapy-plugins/scrapy-deltafetch",
-      "source_version": "main",
-      "content_hash": "1161458a16bccb3a76bb746f10614d27e85ab617ba539c263dfde0d70004cc3e",
+      "source_version": "a8caf39d",
+      "content_hash": "00ef35ca38e6c5c73b8e897a7d87f0d0662efb4846881e6a1dfb2488a5408b20",
       "dossier_path": "07_PROJECT_LEARNING/scrapy-plugins-scrapy-deltafetch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/scrapy-plugins-scrapy-deltafetch-learnings.md",
       "promoted_rules": [
-        "Rule 1629"
+        "Rule 1629",
+        {
+          "number": 2827,
+          "title": "Dual-Lifecycle Crawl Pruning Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2828,
+          "title": "Dual-Version Component Adapter Pattern",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2829,
+          "title": "Fail-Safe Key-Value Database Recreation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
       ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T21:46:02.613Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-scrapy-plugins-scrapy-fake-useragent": {
       "learning_id": "learn-github-scrapy-plugins-scrapy-fake-useragent",
@@ -92941,6 +92988,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T21:38:27.349Z"
+    },
+    "rule-2827": {
+      "learning_id": "rule-2827",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2827,
+      "title": "Dual-Lifecycle Crawl Pruning Invariant",
+      "source_url": "https://github.com/scrapy-plugins/scrapy-deltafetch",
+      "source_version": "a8caf39d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T21:46:02.613Z"
+    },
+    "rule-2828": {
+      "learning_id": "rule-2828",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2828,
+      "title": "Dual-Version Component Adapter Pattern",
+      "source_url": "https://github.com/scrapy-plugins/scrapy-deltafetch",
+      "source_version": "a8caf39d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T21:46:02.613Z"
+    },
+    "rule-2829": {
+      "learning_id": "rule-2829",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2829,
+      "title": "Fail-Safe Key-Value Database Recreation Invariant",
+      "source_url": "https://github.com/scrapy-plugins/scrapy-deltafetch",
+      "source_version": "a8caf39d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T21:46:02.613Z"
+    },
+    "rule-2830": {
+      "learning_id": "rule-2830",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2830,
+      "title": "Dedicated Window Passthrough for Modal Overlays",
+      "source_url": "https://github.com/signerlabs/ShipSwift",
+      "source_version": "3341a192",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T21:46:36.247Z"
+    },
+    "rule-2831": {
+      "learning_id": "rule-2831",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2831,
+      "title": "Synchronous Dual-Tier Cached Image Hydration",
+      "source_url": "https://github.com/signerlabs/ShipSwift",
+      "source_version": "3341a192",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T21:46:36.247Z"
+    },
+    "rule-2832": {
+      "learning_id": "rule-2832",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2832,
+      "title": "Continuous-Time Gesture Phase Invariant for Autonomous Oscillators",
+      "source_url": "https://github.com/signerlabs/ShipSwift",
+      "source_version": "3341a192",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T21:46:36.247Z"
     }
   },
   "aliases": {

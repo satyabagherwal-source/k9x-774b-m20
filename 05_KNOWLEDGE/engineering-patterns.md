@@ -202460,3 +202460,579 @@ Subsystems managing Swift data structures, boundary deserialization, API parsing
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `d74508b0` are properly handled with clean fallback behavior.
+
+
+---
+
+## 2827. Dual-Lifecycle Crawl Pruning Invariant (Harvested from scrapy-plugins/scrapy-deltafetch)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dual-Lifecycle Crawl Pruning Invariant",
+  "source": "scrapy-plugins/scrapy-deltafetch",
+  "source_url": "https://github.com/scrapy-plugins/scrapy-deltafetch",
+  "source_version": "a8caf39d",
+  "license": "PERMISSIVE_OPEN_SOURCE",
+  "extracted_at": "2026-10-19T21:46:02.269Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-scrapy-plugins-scrapy-deltafetch",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [scrapy-plugins/scrapy-deltafetch](https://github.com/scrapy-plugins/scrapy-deltafetch) (Revision: `a8caf39d`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+A delta/incremental crawling cache MUST NOT mark an HTTP request as "visited" upon network fetch completion; it MUST ONLY mark the request as resolved when its downstream parsing callback successfully emits at least one domain data entity (Item/Record).
+
+**WHY**:
+Network-level caching flags transient HTTP 200 responses as resolved even when the document was blank, blocked by bot-detection, rate-limited, or failed data extraction validation. Committing the key on Item yield guarantees that downstream extraction logic succeeded. If extraction crashes or yields zero items due to markup mutations, the request is not marked in the persistent store, allowing automatic retry in the subsequent crawl delta.
+
+**WHEN TO APPLY**:
+Any continuous web scraping, API extraction, data ingestion, or incremental ETL pipeline where re-crawling empty or errored targets is mandatory for self-healing.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+def process_spider_output(self, response, result, spider):
+    for r in result:
+        if isinstance(r, Request):
+            key = self._get_key(r)
+            if key in self.db and self._is_enabled_for_request(r):
+                logger.info(f"Ignoring already visited: {r}")
+                if self.stats:
+                    self.stats.inc_value("deltafetch/skipped", spider=spider)
+                continue
+        else:
+            # Commit parent request fingerprint ONLY when yielding an item
+            key = self._get_key(response.request)
+            self.db[key] = str(time.time())
+            if self.stats:
+                self.stats.inc_value("deltafetch/stored", spider=spider)
+        yield r
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Committing fingerprint during response receipt
+def process_response(self, request, response, spider):
+    key = self._get_key(request)
+    # FATAL FLAW: If response contains CAPTCHA or parsing crashes on result,
+    # the URL is permanently skipped in subsequent crawl passes.
+    self.db[key] = str(time.time())
+    return response
+```
+
+**VERIFICATION METHOD**:
+Run an integration test where a mock spider yields 1 Request that returns a 200 OK containing an empty payload (no Item yielded). Run a second crawl pass and assert that the request is NOT skipped (`crawler.stats.get_value("deltafetch/skipped") is None`).
+
+---
+
+
+---
+
+## 2828. Dual-Version Component Adapter Pattern (Harvested from scrapy-plugins/scrapy-deltafetch)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dual-Version Component Adapter Pattern",
+  "source": "scrapy-plugins/scrapy-deltafetch",
+  "source_url": "https://github.com/scrapy-plugins/scrapy-deltafetch",
+  "source_version": "a8caf39d",
+  "license": "PERMISSIVE_OPEN_SOURCE",
+  "extracted_at": "2026-10-19T21:46:02.407Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-scrapy-plugins-scrapy-deltafetch",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [scrapy-plugins/scrapy-deltafetch](https://github.com/scrapy-plugins/scrapy-deltafetch) (Revision: `a8caf39d`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When an upstream framework transitions an API from a static module function returning string primitives to an engine-bound instance method returning raw byte primitives, middleware libraries MUST probe host capabilities using `hasattr(crawler, "engine_attr")` during initialization and coerce all output primitives through an invariant byte encoder.
+
+**WHY**:
+Dynamic dispatch via `getattr`/`try-except` on `crawler` ensures backward compatibility across framework major versions without runtime branching per request. Normalizing the returned signature to `to_bytes(key)` prevents runtime hashing failures and binary DBM key encoding collisions across Python versions.
+
+**WHEN TO APPLY**:
+Extensible plugin ecosystems (Scrapy, Django, Celery, Express) where plugins must remain simultaneously compatible across multiple upstream release cycles.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+@classmethod
+def from_crawler(cls, crawler):
+    o = cls(dir, reset, crawler.stats)
+    # Probe engine-level instance attribute introduced in newer version
+    try:
+        o.fingerprint = crawler.request_fingerprinter.fingerprint
+    except AttributeError:
+        # Fallback to legacy global utility function
+        from scrapy.utils.request import request_fingerprint
+        o.fingerprint = request_fingerprint
+    return o
+
+def _get_key(self, request):
+    key = request.meta.get("deltafetch_key") or self.fingerprint(request)
+    # Invariant: Guarantee bytes regardless of whether fingerprint() returns str or bytes
+    return to_bytes(key)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Direct legacy import without version probing
+from scrapy.utils.request import request_fingerprint
+
+def _get_key(self, request):
+    # CRASH: Raises ImportError on Scrapy >= 2.12.0 where function is removed
+    return request_fingerprint(request)
+```
+
+**VERIFICATION METHOD**:
+Execute test suites across a matrix consisting of minimum supported framework version (`Scrapy==1.1.0`) and modern framework version (`Scrapy>=2.12.0`). Assert that `_get_key` yields an instance of `bytes` under both runtime environments.
+
+---
+
+
+---
+
+## 2829. Fail-Safe Key-Value Database Recreation Invariant (Harvested from scrapy-plugins/scrapy-deltafetch)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Fail-Safe Key-Value Database Recreation Invariant",
+  "source": "scrapy-plugins/scrapy-deltafetch",
+  "source_url": "https://github.com/scrapy-plugins/scrapy-deltafetch",
+  "source_version": "a8caf39d",
+  "license": "PERMISSIVE_OPEN_SOURCE",
+  "extracted_at": "2026-10-19T21:46:02.535Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-scrapy-plugins-scrapy-deltafetch",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [scrapy-plugins/scrapy-deltafetch](https://github.com/scrapy-plugins/scrapy-deltafetch) (Revision: `a8caf39d`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+File-backed embedded key-value stores initialized during process startup MUST implement an explicit rescue branch that unlinks corrupted database files and re-initializes an empty store rather than crashing the primary engine worker.
+
+**WHY**:
+Embedded embedded stores (such as DBM, BerkeleyDB, SQLite) are susceptible to corruption if previous OS processes were killed (`SIGKILL`, OOM killer) mid-transaction. Crashing the entire worker halts production crawler pipelines completely. Dropping corrupt state compromises incremental history (leading to repeated fetches) but preserves data collection continuity.
+
+**WHEN TO APPLY**:
+Autonomous worker processes, scrapers, and daemons using local file-backed persistence for ephemeral caching or state pruning.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from pathlib import Path
+import dbm
+import logging
+
+logger = logging.getLogger(__name__)
+
+def open_or_recover_db(dbpath: Path, reset: bool) -> dbm._Database:
+    flag = "n" if reset else "c"
+    try:
+        return dbm.open(str(dbpath), flag=flag)
+    except Exception as exc:
+        logger.warning(
+            f"Failed to open database at {dbpath} ({exc}), unlinking and recreating"
+        )
+        if dbpath.exists():
+            dbpath.unlink()
+        return dbm.open(str(dbpath), "c")
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Unhandled open with no recovery
+def open_db(dbpath: Path, reset: bool):
+    # FATAL FLAW: dbm.error raised on corrupted header terminates the crawl completely
+    return dbm.open(str(dbpath), "n" if reset else "c")
+```
+
+**VERIFICATION METHOD**:
+Create a corrupted file: `Path("test.db").write_bytes(b"\x00\xFF\xAA\x55CORRUPT")`. Invoke initialization routine and assert that `test.db` is replaced with a valid, accessible DBM database without unhandled exceptions.
+
+---
+
+
+---
+
+## 2830. Dedicated Window Passthrough for Modal Overlays (Harvested from signerlabs/ShipSwift)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dedicated Window Passthrough for Modal Overlays",
+  "source": "signerlabs/ShipSwift",
+  "source_url": "https://github.com/signerlabs/ShipSwift",
+  "source_version": "3341a192",
+  "license": "MIT",
+  "extracted_at": "2026-10-19T21:46:35.891Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-signerlabs-shipswift",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [signerlabs/ShipSwift](https://github.com/signerlabs/ShipSwift) (Revision: `3341a192`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When building global application overlays (toasts, network alerts, in-app notifications) in iOS SwiftUI architectures, you MUST NOT mount them inside the root view hierarchy via `.overlay()`. You MUST mount them in a dedicated secondary `UIWindow` positioned at `UIWindow.Level.alert + 1` with a custom `hitTest(_:with:)` override that returns `nil` for any point outside the active notification bounding box.
+
+**WHY**:
+SwiftUI's root-view `.overlay()` attaches to the root `UIHostingController`. When a view triggers `.sheet()` or `.fullScreenCover()`, UIKit pushes a distinct modal presentation controller with its own window or distinct view controller hierarchy that sits visually and structurally above the root window. Overlays attached to the root view hierarchy become occluded behind the modal presentation. Attempting to delay the presentation until modal dismissal introduces race conditions and state desynchronization.
+
+**WHEN TO APPLY**:
+- Any cross-cutting UI alert, toast, HUD, or connection monitor that must remain visible while users navigate modals, sheets, and authentication flows on iOS 15+.
+- Does NOT apply to macOS, where modal sheets attach to the window and maintain the root view overlay layer.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+#if canImport(UIKit)
+import UIKit
+import SwiftUI
+
+public final class SWPassthroughWindow: UIWindow {
+    public override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        let hitView = super.hitTest(point, with: event)
+        // If the hit view is the hosting controller's container root view, pass touches through
+        return hitView == rootViewController?.view ? nil : hitView
+    }
+}
+
+@MainActor
+public enum SWGlobalOverlayHost {
+    private static var overlayWindow: UIWindow?
+
+    public static func mount<Content: View>(rootView: Content, levelOffset: CGFloat = 1) {
+        guard overlayWindow == nil else { return }
+        
+        let scenes = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
+        guard let activeScene = scenes.first(where: { $0.activationState == .foregroundActive }) ?? scenes.first else {
+            return
+        }
+
+        let hostingController = UIHostingController(rootView: rootView)
+        hostingController.view.backgroundColor = .clear
+
+        let window = SWPassthroughWindow(windowScene: activeScene)
+        window.windowLevel = .alert + levelOffset
+        window.backgroundColor = .clear
+        window.rootViewController = hostingController
+        window.isHidden = false
+
+        self.overlayWindow = window
+    }
+
+    public static func tearDown() {
+        overlayWindow?.isHidden = true
+        overlayWindow = nil
+    }
+}
+#endif
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// ANTI-PATTERN: Attaching toasts inside root-level ZStack or view overlay
+struct RootContentView: View {
+    @StateObject var toastManager = ToastManager.shared
+    
+    var body: some View {
+        NavigationStack {
+            MainView()
+        }
+        // Fails: Any .fullScreenCover or .sheet presented inside MainView
+        // will render on top of this overlay, masking the alert completely.
+        .overlay(alignment: .top) {
+            if toastManager.isShowing {
+                ToastBanner(toastManager.message)
+            }
+        }
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Verify using an automated XCUITest:
+1. Trigger a full-screen modal presentation (`view.fullScreenCover(...)`).
+2. Dispatch an alert via the notification manager.
+3. Assert that `app.otherElements["GlobalAlertBanner"].exists` evaluates to `true` and is hit-testable (`isHittable == true`) while the modal is presented.
+
+---
+
+
+---
+
+## 2831. Synchronous Dual-Tier Cached Image Hydration (Harvested from signerlabs/ShipSwift)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Synchronous Dual-Tier Cached Image Hydration",
+  "source": "signerlabs/ShipSwift",
+  "source_url": "https://github.com/signerlabs/ShipSwift",
+  "source_version": "3341a192",
+  "license": "MIT",
+  "extracted_at": "2026-10-19T21:46:36.033Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-signerlabs-shipswift",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [signerlabs/ShipSwift](https://github.com/signerlabs/ShipSwift) (Revision: `3341a192`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When rendering dynamic images subject to frequent view identity invalidations (e.g., periodic timers, `ForEach` identity mutations, list recycled cells), you MUST NOT use Apple's native `AsyncImage`. You MUST fetch synchronously from an in-memory decoded image cache (`NSCache<NSURL, CGImage>`) during the SwiftUI `body` computation, and back off asynchronously to disk cache (`URLCache`) and network requests only on an in-memory cache miss. Inflight network tasks MUST be deduplicated by URL.
+
+**WHY**:
+SwiftUI's `AsyncImage` holds no in-memory decoded frame cache and operates strictly through asynchronous task lifecycles. When a view's identity changes (such as parent view re-evaluations under `TimelineView` or changes to `id`), `AsyncImage` tears down its pipeline and drops back to its `placeholder` for at least one frame. This causes high-frequency UI flickering and layout instability.
+
+**WHEN TO APPLY**:
+- Re-rendered lists, scrolling avatars in `LazyVStack`/`LazyHStack`, timers, countdown cards, and interactive sliders.
+- Cross-platform deployments (iOS, macOS) requiring immediate frame hydration.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+import SwiftUI
+import ImageIO
+
+public struct SWCachedImage<Content: View, Placeholder: View>: View {
+    public let url: URL?
+    public var scale: CGFloat = 1.0
+    @ViewBuilder public var content: (Image) -> Content
+    @ViewBuilder public var placeholder: () -> Placeholder
+
+    @State private var loaded: (url: URL, image: CGImage)?
+
+    private var cgImage: CGImage? {
+        guard let url else { return nil }
+        if let loaded, loaded.url == url { return loaded.image }
+        // Synchronous lookup on MainActor prevents single-frame placeholder flashing
+        return SWImageCacheEngine.shared.cachedInMemory(url)
+    }
+
+    public var body: some View {
+        Group {
+            if let cgImage {
+                content(Image(decorative: cgImage, scale: scale))
+            } else {
+                placeholder()
+            }
+        }
+        .task(id: url) {
+            guard let url, loaded?.url != url else { return }
+            if let image = await SWImageCacheEngine.shared.image(for: url), !Task.isCancelled {
+                loaded = (url, image)
+            }
+        }
+    }
+}
+
+@MainActor
+public final class SWImageCacheEngine {
+    public static let shared = SWImageCacheEngine()
+    private let memory = NSCache<NSURL, CGImage>()
+    private var inflight: [URL: Task<CGImage?, Never>] = [:]
+    private var deadURLs: Set<URL> = []
+
+    public func cachedInMemory(_ url: URL) -> CGImage? {
+        memory.object(forKey: url as NSURL)
+    }
+
+    public func image(for url: URL) async -> CGImage? {
+        if let cached = cachedInMemory(url) { return cached }
+        if deadURLs.contains(url) { return nil }
+
+        if let existingTask = inflight[url] {
+            return await existingTask.value
+        }
+
+        let task = Task<CGImage?, Never> {
+            defer { Task { @MainActor in self.inflight.removeValue(forKey: url) } }
+            // URLRequest configured with .returnCacheDataElseLoad
+            let request = URLRequest(url: url, cachePolicy: .returnCacheDataElseLoad, timeoutInterval: 15.0)
+            guard let (data, response) = try? await URLSession.shared.data(for: request),
+                  let httpResponse = response as? HTTPURLResponse else {
+                return nil
+            }
+
+            if httpResponse.statusCode == 404 || httpResponse.statusCode == 410 {
+                await MainActor.run { self.deadURLs.insert(url) }
+                return nil
+            }
+
+            guard httpResponse.statusCode == 200,
+                  let source = CGImageSourceCreateWithData(data as CFData, nil),
+                  let cgImage = CGImageSourceCreateImageAtIndex(source, 0, nil) else {
+                return nil
+            }
+
+            let cost = cgImage.bytesPerRow * cgImage.height
+            await MainActor.run {
+                self.memory.setObject(cgImage, forKey: url as NSURL, cost: cost)
+            }
+            return cgImage
+        }
+
+        inflight[url] = task
+        return await task.value
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// ANTI-PATTERN: Native AsyncImage in dynamic or frequent-refresh scopes
+struct AvatarRow: View {
+    let user: User
+    var body: some View {
+        // Will flash placeholder each time AvatarRow identity resets in a TimelineView or LazyVStack
+        AsyncImage(url: user.avatarURL) { phase in
+            switch phase {
+            case .empty: ProgressView()
+            case .success(let image): image.resizable()
+            case .failure: Image(systemName: "person.circle")
+            @unknown default: EmptyView()
+            }
+        }
+        .id(user.stableId) // Changing or re-evaluating id causes 1-frame blank drop
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Write a SwiftUI ViewInspector or unit test:
+1. Warm the memory cache via `SWImageCacheEngine.shared.cachedInMemory(url)`.
+2. Instantiate `SWCachedImage` in a test host view.
+3. Assert that the synchronous property accessor `cgImage` returns a non-nil reference on the first frame of execution, without awaiting asynchronous dispatch.
+
+---
+
+
+---
+
+## 2832. Continuous-Time Gesture Phase Invariant for Autonomous Oscillators (Harvested from signerlabs/ShipSwift)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Continuous-Time Gesture Phase Invariant for Autonomous Oscillators",
+  "source": "signerlabs/ShipSwift",
+  "source_url": "https://github.com/signerlabs/ShipSwift",
+  "source_version": "3341a192",
+  "license": "MIT",
+  "extracted_at": "2026-10-19T21:46:36.167Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-signerlabs-shipswift",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [signerlabs/ShipSwift](https://github.com/signerlabs/ShipSwift) (Revision: `3341a192`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When building interactive animated components that oscillate autonomously via continuous temporal functions (e.g., `sin(t * speed)`) and accept interruptions via direct manipulation gestures (`DragGesture`), you MUST NOT preserve a naive timestamp baseline upon gesture release. You MUST invert the continuous wave equation using the inverse trigonometric function (`asin` for sinusoidal waveforms) over the normalized released coordinate to derive an artificial phase displacement, recalculating the base start date as:
+$$\text{BaseDate} = \text{Date.now} - \frac{\arcsin(\text{ClampedNormalizedPosition})}{\text{Speed}}$$
+
+**WHY**:
+If an animation updates continuously using `Date.now.timeIntervalSince(startDate)` and user manipulation overrides the position, resetting `startDate = Date.now` upon gesture termination will snap the phase back to $t=0$ ($\sin(0) = 0$). This produces an immediate, jarring positional discontinuity (teleportation glitch) upon release.
+
+**WHEN TO APPLY**:
+- UI components where continuous procedural motion (sinusoidal, triangular, or orbital sweeps) must seamlessly blend with user touch drag vectors and resume smoothly.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+import SwiftUI
+
+public struct SWPhaseLockedOscillator: View {
+    public var speed: Double = 1.0
+    public var amplitude: CGFloat = 0.3
+    public var centerOffset: CGFloat = 0.5
+    
+    @State private var startDate: Date = .now
+    @State private var isDragging: Bool = false
+    @State private var manualPos: CGFloat = 0.5
+
+    public var body: some View {
+        TimelineView(.animation(paused: isDragging)) { timeline in
+            let sliderPos: CGFloat = isDragging
+                ? manualPos
+                : centerOffset + CGFloat(sin(timeline.date.timeIntervalSince(startDate) * speed)) * amplitude
+
+            // Visual elements bound to sliderPos...
+            Color.clear
+                .gesture(
+                    DragGesture(minimumDistance: 0)
+                        .onChanged { value in
+                            if !isDragging { isDragging = true }
+                            // Clamping prevents math exceptions outside domain boundaries
+                            manualPos = min(max(value.location.x / 300.0, 0.05), 0.95)
+                        }
+                        .onEnded { _ in
+                            // Inverse Sinusoidal Phase Reconstruction
+                            // Equation: pos = centerOffset + sin(phase * speed) * amplitude
+                            // phase = asin((pos - centerOffset) / amplitude) / speed
+                            let rawRelative = (manualPos - centerOffset) / amplitude
+                            let normalizedClamped = min(max(Double(rawRelative), -1.0), 1.0)
+                            let reconstructedPhase = asin(normalizedClamped) / speed
+                            
+                            // Re-anchor timeline zero so oscillation continues seamlessly from current spot
+                            startDate = Date.now.addingTimeInterval(-reconstructedPhase)
+                            isDragging = false
+                        }
+                )
+        }
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// ANTI-PATTERN: Naive state resumption causing positional jumps
+DragGesture()
+    .onEnded { _ in
+        // Snaps phase to t=0 immediately! 
+        // Position instantly teleports to centerOffset regardless of release point.
+        startDate = Date.now 
+        isDragging = false
+    }
+```
+
+**VERIFICATION METHOD**:
+Verify using a XCTest unit test:
+1. Set `manualPos = 0.8` (`centerOffset = 0.5`, `amplitude = 0.3`).
+2. Run release math: `asin((0.8 - 0.5) / 0.3) / speed` $\to \arcsin(1.0) / 1.0 = \frac{\pi}{2} \approx 1.57079$.
+3. Advance virtual clock by `0.001s` and evaluate position. Verify difference between `manualPos` and evaluated continuous position is $< 0.002$.
+
+---

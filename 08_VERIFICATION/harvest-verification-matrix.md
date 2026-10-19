@@ -3509,3 +3509,5 @@
 | `CYCLE-20261019-QB50` | `2026-10-19T21:30:32.292Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2825` | Yes (`8ebd5b7f...`) |
 | `CYCLE-20261019-0HF8` | `2026-10-19T21:38:26.996Z` | `scrapy-plugins/scrapy-headless` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/scrapy-plugins-scrapy-selenium-learnings.md` | Yes (`5421e737...`) |
 | `CYCLE-20261019-0HQL` | `2026-10-19T21:38:27.405Z` | `duongductrong/Snapzy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2826` | Yes (`7df73c50...`) |
+| `CYCLE-20261019-A90S` | `2026-10-19T21:46:02.668Z` | `scrapy-plugins/scrapy-deltafetch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2827, Rule 2828, Rule 2829` | Yes (`00ef35ca...`) |
+| `CYCLE-20261019-AYZ6` | `2026-10-19T21:46:36.306Z` | `signerlabs/ShipSwift` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2830, Rule 2831, Rule 2832` | Yes (`37920ceb...`) |

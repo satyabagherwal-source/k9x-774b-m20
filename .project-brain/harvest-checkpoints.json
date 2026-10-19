@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T21:38:27.420Z",
+  "last_updated": "2026-10-19T21:46:36.317Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -13782,6 +13782,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T21:38:27.419Z"
+    },
+    "scrapy-plugins/scrapy-deltafetch": {
+      "repository": "scrapy-plugins/scrapy-deltafetch",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-scrapy-plugins-scrapy-deltafetch",
+      "content_hash": "00ef35ca38e6c5c73b8e897a7d87f0d0662efb4846881e6a1dfb2488a5408b20",
+      "verified_at": "2026-10-19T21:46:02.678Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T21:46:02.678Z"
+    },
+    "signerlabs/ShipSwift": {
+      "repository": "signerlabs/ShipSwift",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-signerlabs-shipswift",
+      "content_hash": "37920ceb9012b655acf2d2c507faed4224eaad1460a2dac2634733f8fcea0b5d",
+      "verified_at": "2026-10-19T21:46:36.316Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T21:46:36.316Z"
     }
   },
   "repos": {

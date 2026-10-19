@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T21:38:27.416Z",
-  "total_cycles_completed": 3486,
-  "total_learnings_persisted": 3486,
-  "total_rules_promoted": 2627,
+  "last_updated": "2026-10-19T21:46:36.313Z",
+  "total_cycles_completed": 3488,
+  "total_learnings_persisted": 3488,
+  "total_rules_promoted": 2633,
   "history": [
-    {
-      "timestamp": "2026-10-19T14:59:13.884Z",
-      "repository": "sfu-db/connector-x",
-      "learningId": "learn-github-sfu-db-connector-x",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T14:59:16.161Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T15:05:24.794Z",
       "repository": "google/gemma-4-26B-A4B-it",
@@ -1403,6 +1389,20 @@
       "repository": "duongductrong/Snapzy",
       "learningId": "learn-github-duongductrong-snapzy",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T21:46:02.675Z",
+      "repository": "scrapy-plugins/scrapy-deltafetch",
+      "learningId": "learn-github-scrapy-plugins-scrapy-deltafetch",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T21:46:36.313Z",
+      "repository": "signerlabs/ShipSwift",
+      "learningId": "learn-github-signerlabs-shipswift",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

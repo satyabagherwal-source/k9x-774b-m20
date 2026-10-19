@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-FLYL",
-    "timestamp": "2026-10-19T06:26:25.389Z",
-    "repository": "nginx/kubernetes-ingress",
-    "learningId": "learn-github-nginx-kubernetes-ingress",
-    "contentHash": "015320d156fe4d1c8e1a51d13794fd0dda42e1b97e144bbfbf27ba126ce64b71",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-FQ0G",
-    "timestamp": "2026-10-19T06:26:30.640Z",
-    "repository": "milvus-io/milvus",
-    "learningId": "learn-github-milvus-io-milvus",
-    "contentHash": "e021a1ce67e5cc4aa8ee469b407f1023d3b58863fe93e8cc09e8cdfcad75fb25",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-NFRJ",
     "timestamp": "2026-10-19T06:32:30.607Z",
     "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
@@ -7492,6 +7462,36 @@
     "contentHash": "7df73c5097f37f2e112ce604e5dc262234d5598fd0bbd4966491cab009dd5c30",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-A90S",
+    "timestamp": "2026-10-19T21:46:02.668Z",
+    "repository": "scrapy-plugins/scrapy-deltafetch",
+    "learningId": "learn-github-scrapy-plugins-scrapy-deltafetch",
+    "contentHash": "00ef35ca38e6c5c73b8e897a7d87f0d0662efb4846881e6a1dfb2488a5408b20",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-AYZ6",
+    "timestamp": "2026-10-19T21:46:36.306Z",
+    "repository": "signerlabs/ShipSwift",
+    "learningId": "learn-github-signerlabs-shipswift",
+    "contentHash": "37920ceb9012b655acf2d2c507faed4224eaad1460a2dac2634733f8fcea0b5d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

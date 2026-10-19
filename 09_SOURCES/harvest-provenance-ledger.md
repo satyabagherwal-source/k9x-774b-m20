@@ -3516,3 +3516,5 @@ Every entry in this ledger must capture:
 | `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `6507615a` | Multi-dimensional audit evidence | 2026-10-19T21:30:32.294Z |
 | `learn-github-scrapy-plugins-scrapy-headless` | `https://github.com/scrapy-plugins/scrapy-selenium` | `0eef52b5` | Multi-dimensional audit evidence | 2026-10-19T21:38:26.999Z |
 | `learn-github-duongductrong-snapzy` | `https://github.com/duongductrong/Snapzy` | `969b91d7` | Multi-dimensional audit evidence | 2026-10-19T21:38:27.412Z |
+| `learn-github-scrapy-plugins-scrapy-deltafetch` | `https://github.com/scrapy-plugins/scrapy-deltafetch` | `a8caf39d` | Multi-dimensional audit evidence | 2026-10-19T21:46:02.671Z |
+| `learn-github-signerlabs-shipswift` | `https://github.com/signerlabs/ShipSwift` | `3341a192` | Multi-dimensional audit evidence | 2026-10-19T21:46:36.309Z |
