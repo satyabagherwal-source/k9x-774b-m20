@@ -9348,5 +9348,25 @@
     "contentHash": "1c4f1c9463e0939f50342ac1db8041311c0da88e03ccf3ad13cdf517ac463d79",
     "lastHarvestedAt": "2026-10-19T22:42:04.323Z",
     "learningId": "learn-github-relatedcode-progresshud"
+  },
+  "hmlongco-factory": {
+    "repository": "hmlongco/Factory",
+    "platform": "github",
+    "sourceUrl": "https://github.com/hmlongco/Factory",
+    "sourceVersion": "2a306bcd",
+    "license": "MIT",
+    "contentHash": "9bdb925fbbb87ec8864bd96690e694fd497edc8b817913a33288bf454ef6c551",
+    "lastHarvestedAt": "2026-10-19T22:49:31.588Z",
+    "learningId": "learn-github-hmlongco-factory"
+  },
+  "fb55-htmlparser2": {
+    "repository": "fb55/htmlparser2",
+    "platform": "github",
+    "sourceUrl": "https://github.com/fb55/htmlparser2",
+    "sourceVersion": "dd306fa1",
+    "license": "MIT",
+    "contentHash": "2b7d2a4689449d525df9b72ab632594df6229683a7c3e6d5a916ab5567f53904",
+    "lastHarvestedAt": "2026-10-19T22:50:17.746Z",
+    "learningId": "learn-github-fb55-htmlparser2"
   }
 }

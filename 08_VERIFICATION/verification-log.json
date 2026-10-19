@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-M6RV",
-    "timestamp": "2026-10-19T06:59:31.915Z",
-    "repository": "gardener/gardener",
-    "learningId": "learn-github-gardener-gardener",
-    "contentHash": "9840000f513a42fe73f0a5f953fe9f2aae6696c3a050bbe479d48ca1524ab4a0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-MCPA",
-    "timestamp": "2026-10-19T06:59:39.598Z",
-    "repository": "NirDiamant/RAG_Techniques",
-    "learningId": "learn-github-nirdiamant-rag_techniques",
-    "contentHash": "5f633306cf5146e10801d39ec08e327f3401c53833b19277c6551d9f360a2e39",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-ZJ1A",
     "timestamp": "2026-10-19T07:09:54.334Z",
     "repository": "medialab/xan",
@@ -7490,6 +7460,36 @@
     "repository": "relatedcode/ProgressHUD",
     "learningId": "learn-github-relatedcode-progresshud",
     "contentHash": "1c4f1c9463e0939f50342ac1db8041311c0da88e03ccf3ad13cdf517ac463d79",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-JW02",
+    "timestamp": "2026-10-19T22:49:31.586Z",
+    "repository": "hmlongco/Factory",
+    "learningId": "learn-github-hmlongco-factory",
+    "contentHash": "9bdb925fbbb87ec8864bd96690e694fd497edc8b817913a33288bf454ef6c551",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-KVM7",
+    "timestamp": "2026-10-19T22:50:17.743Z",
+    "repository": "fb55/htmlparser2",
+    "learningId": "learn-github-fb55-htmlparser2",
+    "contentHash": "2b7d2a4689449d525df9b72ab632594df6229683a7c3e6d5a916ab5567f53904",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
     "barriers": {

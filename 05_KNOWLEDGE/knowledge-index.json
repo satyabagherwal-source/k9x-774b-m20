@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T22:42:04.276Z",
-  "total_verified_learnings": 950,
+  "last_updated": "2026-10-19T22:50:17.688Z",
+  "total_verified_learnings": 952,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -24642,22 +24642,35 @@
     "learn-github-hmlongco-factory": {
       "learning_id": "learn-github-hmlongco-factory",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hmlongco-factory",
+      "source": "hmlongco/Factory",
+      "repository": "hmlongco/Factory",
       "slug": "hmlongco-factory",
       "platform": "github",
       "source_url": "https://github.com/hmlongco/Factory",
-      "source_version": "HEAD",
-      "content_hash": "bfe16f968cae0e1e14709685bc72015b292b6d8992fafc68c6e3f94ababf1ec9",
+      "source_version": "2a306bcd",
+      "content_hash": "9bdb925fbbb87ec8864bd96690e694fd497edc8b817913a33288bf454ef6c551",
       "dossier_path": "07_PROJECT_LEARNING/hmlongco-factory-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hmlongco-factory-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2868,
+          "title": "parameter docs in FactoryRegistration that name parameters that don't exist",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.477Z"
+      "verified_at": "2026-10-19T22:49:31.538Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-holaboss-ai-holaos": {
       "learning_id": "learn-github-holaboss-ai-holaos",
@@ -57327,20 +57340,40 @@
     "learn-github-fb55-htmlparser2": {
       "learning_id": "learn-github-fb55-htmlparser2",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "fb55/htmlparser2",
       "repository": "fb55/htmlparser2",
       "slug": "fb55-htmlparser2",
       "platform": "github",
       "source_url": "https://github.com/fb55/htmlparser2",
-      "source_version": "main",
-      "content_hash": "c8caa20962832023a38a1cfa807e8297ceb1118050718316fdad046a76a992d7",
+      "source_version": "dd306fa1",
+      "content_hash": "2b7d2a4689449d525df9b72ab632594df6229683a7c3e6d5a916ab5567f53904",
       "dossier_path": "07_PROJECT_LEARNING/fb55-htmlparser2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fb55-htmlparser2-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2869,
+          "title": "Multi-Byte Stream Decoding Boundary Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2870,
+          "title": "State-Machine Lookahead Tree-Disambiguation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T22:50:17.677Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-inikulin-parse5": {
       "learning_id": "learn-github-inikulin-parse5",
@@ -93904,6 +93937,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T22:42:04.262Z"
+    },
+    "rule-2868": {
+      "learning_id": "rule-2868",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2868,
+      "title": "parameter docs in FactoryRegistration that name parameters that don't exist",
+      "source_url": "https://github.com/hmlongco/Factory",
+      "source_version": "2a306bcd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T22:49:31.538Z"
+    },
+    "rule-2869": {
+      "learning_id": "rule-2869",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2869,
+      "title": "Multi-Byte Stream Decoding Boundary Invariant",
+      "source_url": "https://github.com/fb55/htmlparser2",
+      "source_version": "dd306fa1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T22:50:17.677Z"
+    },
+    "rule-2870": {
+      "learning_id": "rule-2870",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2870,
+      "title": "State-Machine Lookahead Tree-Disambiguation Invariant",
+      "source_url": "https://github.com/fb55/htmlparser2",
+      "source_version": "dd306fa1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T22:50:17.677Z"
     }
   },
   "aliases": {

@@ -3546,3 +3546,5 @@ Every entry in this ledger must capture:
 | `learn-github-zvec-ai-zvec-grep` | `https://github.com/zvec-ai/zvec-grep` | `a424e0ce` | Multi-dimensional audit evidence | 2026-10-19T22:41:18.150Z |
 | `learn-github-html5lib-html5lib-python` | `https://github.com/html5lib/html5lib-python` | `fd4f032b` | Multi-dimensional audit evidence | 2026-10-19T22:41:20.288Z |
 | `learn-github-relatedcode-progresshud` | `https://github.com/relatedcode/ProgressHUD` | `25471d6e` | Multi-dimensional audit evidence | 2026-10-19T22:42:04.323Z |
+| `learn-github-hmlongco-factory` | `https://github.com/hmlongco/Factory` | `2a306bcd` | Multi-dimensional audit evidence | 2026-10-19T22:49:31.588Z |
+| `learn-github-fb55-htmlparser2` | `https://github.com/fb55/htmlparser2` | `dd306fa1` | Multi-dimensional audit evidence | 2026-10-19T22:50:17.746Z |
