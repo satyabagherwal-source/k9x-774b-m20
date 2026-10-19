@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T13:27:33.619Z",
-  "total_cycles_completed": 3237,
-  "total_learnings_persisted": 3237,
-  "total_rules_promoted": 2400,
+  "last_updated": "2026-10-19T13:37:22.189Z",
+  "total_cycles_completed": 3241,
+  "total_learnings_persisted": 3241,
+  "total_rules_promoted": 2401,
   "history": [
-    {
-      "timestamp": "2026-10-19T07:38:35.189Z",
-      "repository": "apollographql/apollo-kotlin",
-      "learningId": "learn-github-apollographql-apollo-kotlin",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T07:40:24.147Z",
-      "repository": "bvaughn/react-virtualized",
-      "learningId": "learn-github-bvaughn-react-virtualized",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T07:40:35.177Z",
-      "repository": "crate-ci/typos",
-      "learningId": "learn-github-crate-ci-typos",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T07:40:37.701Z",
-      "repository": "emberstack/kubernetes-reflector",
-      "learningId": "learn-github-emberstack-kubernetes-reflector",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T07:50:52.632Z",
       "repository": "Cloudflare/clef-flash",
@@ -1403,6 +1375,34 @@
       "repository": "amosgyamfi/open-swiftui-animations",
       "learningId": "learn-github-amosgyamfi-open-swiftui-animations",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T13:37:09.057Z",
+      "repository": "sentence-transformers/all-mpnet-base-v2",
+      "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T13:37:10.278Z",
+      "repository": "metalbear-co/mirrord",
+      "learningId": "learn-github-metalbear-co-mirrord",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T13:37:14.876Z",
+      "repository": "AppPear/ChartView",
+      "learningId": "learn-github-apppear-chartview",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T13:37:22.189Z",
+      "repository": "trailbaseio/trailbase",
+      "learningId": "learn-github-trailbaseio-trailbase",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

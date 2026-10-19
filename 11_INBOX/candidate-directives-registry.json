@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T13:07:58.648Z",
+  "last_updated": "2026-10-19T13:37:22.188Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1839,6 +1839,28 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Generic header title rejected",
       "learning_id": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora"
+    },
+    {
+      "id": "CD-TNJV",
+      "directive_title": "Update 2.0.0 docs, migration, and usage guide",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "AppPear/ChartView",
+      "source_commit": "df0b2641",
+      "date_staged": "2026-10-19",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-apppear-chartview"
+    },
+    {
+      "id": "CD-TT70",
+      "directive_title": "Prepare new release v0.35.1.",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "trailbaseio/trailbase",
+      "source_commit": "c5b932db",
+      "date_staged": "2026-10-19",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-trailbaseio-trailbase"
     }
   ]
 }

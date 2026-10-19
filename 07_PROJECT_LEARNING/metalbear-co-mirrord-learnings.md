@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md`  
 > **Source**: github ([https://github.com/metalbear-co/mirrord](https://github.com/metalbear-co/mirrord))  
-> **Source Version**: `2a29e4d0`  
+> **Source Version**: `ab8dc9ad`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T22:35:33.861Z  
+> **Timestamp**: 2026-10-19T13:37:09.997Z  
 > **Learning ID**: `learn-github-metalbear-co-mirrord`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/metalbear-co/mirrord](https://github.com/metalbear-co/mirrord))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T22:35:32.763Z  
+> **Harvest Timestamp**: 2026-10-19T13:37:08.536Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Run any process, on your machine or in an AI agent's environment, as if it were a pod in your Kubernetes cluster: real env vars, DNS, network, traffic.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 5371 stars
+- **Stars / Engagement**: 5374 stars
 
 ---
 
@@ -1535,189 +1535,64 @@ mod test {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2fa04b22` (2026-10-17)
-**Commit Message**: fix(layer): drop a closed fd's layer state before the kernel close
+### Incident Patch 1: `a9ddd6e3` (2026-10-19)
+**Commit Message**: Show session key instead of license key in the UI
 
-close_detour closed the fd in the kernel first and removed it from
-SOCKETS/OPEN_FILES after. In between, another thread could get the same
-fd number for a new remote file, and the late removal dropped that
-file's mapping and closed it remotely.
-
-- close_layer_fd now runs first, and its doc says so and why.
-- close$NOCANCEL, __close_nocancel and __close go through close_detour,
-  so they get the same order.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `mirrord/layer/src/lib.rs` (modified, +5/-3)
-```diff
-@@ -747,7 +747,9 @@ pub(crate) static CLOSE_FORK_LOCK: Mutex<()> = Mutex::new(());
- 
- /// Shared code for closing `fd` in our data structures.
- ///
--/// Callers should call their respective close before calling this.
-+/// Callers should call this before their respective close: once the kernel frees `fd`, another
-+/// thread can get the same number for a new remote file, and a later call here would drop that
-+/// file instead.
- ///
- /// ## Details
- ///
-@@ -829,9 +831,9 @@ pub(crate) fn close_layer_fd(fd: c_int) {
- #[hook_guard_fn]
- pub(crate) unsafe extern "C" fn close_detour(fd: c_int) -> c_int {
-     unsafe {
--        let res = FN_CLOSE(fd);
-+        // `close_layer_fd` first, then the real close.
-         close_layer_fd(fd);
--        res
-+        FN_CLOSE(fd)
-     }
- }
- 
-```
-
----
-
-### Incident Patch 2: `fce860c9` (2026-10-16)
-**Commit Message**: Pin CI base images to the stable toolchain build
-
-The images pinned at 54901618 were built before the switch to stable Rust,
-so `ci-agent-build` only had the nightly toolchain. Builds that use it
-directly instead of through Bake (the operator's agent build, `test_agent`)
-had rustup download 1.99.0 on every run, and a standalone arm64 cross-build
-would fail without the aarch64 standard library.
-
-Point every CI base image at the set `ci-images.yaml` published for
-eb9bdec7. Nothing else under `ci/` changed since 54901618, so the other
-images are rebuilds of the same Dockerfiles.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/ci.yaml` (modified, +1/-1)
-```diff
-@@ -400,7 +400,7 @@ jobs:
-     needs: plan
-     if: ${{ needs.plan.outputs.rs_changed == 'true' || needs.plan.outputs.ci_changed == 'true' }}
-     container:
--      image: ghcr.io/metalbear-co/ci-agent-build:54901618bd7bdc9b4975fb7e5439e519f6469ac0
-+      image: ghcr.io/metalbear-co/ci-agent-build:eb9bdec72b5792472e3a0bbcde5659bb17aa1e87
-     steps:
-       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-       - uses: metalbear-co/setup-protoc@770e54d44679c8e1d8fdc06d1d9268fa79fbefb4
-```
-
-**File**: `Cross.toml` (modified, +1/-1)
-```diff
-@@ -3,7 +3,7 @@ passthrough = ["MIRRORD_LAYER_FILE"]
- # Dockerfile used for building mirrord-layer for x64 with very old libc
- # this to support centos7 or Amazon Linux 2.
- [target.x86_64-unknown-linux-gnu]
--image = "ghcr.io/metalbear-co/ci-layer-build:54901618bd7bdc9b4975fb7e5439e519f6469ac0"
-+image = "ghcr.io/metalbear-co/ci-layer-build:eb9bdec72b5792472e3a0bbcde5659bb17aa1e87"
- 
- [target.aarch64-unknown-linux-gnu]
- image = "ghcr.io/cross-rs/aarch64-unknown-linux-gnu:main"
-```
-
-**File**: `changelog.d/+ci-images-stable-toolchain.internal.md` (added, +1/-0)
+**File**: `changelog.d/+monitor-session-key.changed.md` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+Pinned the CI base images to the build that has the stable Rust toolchain.
++Renamed the "License key" label in the mirrord UI session details to "Session key".
 ```
 
-**File**: `ci/docker-bake.hcl` (modified, +4/-4)
+**File**: `packages/monitor/src/components/SessionDetail.tsx` (modified, +4/-4)
 ```diff
-@@ -68,8 +68,8 @@ target "agent" {
-   cache-from = compact([PRODUCT_CACHE_FROM])
-   cache-to   = compact([PRODUCT_CACHE_TO])
-   contexts = {
--    "ghcr.io/metalbear-co/ci-agent-build:54901618bd7bdc9b4975fb7e5439e519f6469ac0"  = "target:ci-agent-builder"
--    "ghcr.io/metalbear-co/ci-agent-runtime:54901618bd7bdc9b4975fb7e5439e519f6469ac0" = "target:ci-agent-runtime"
-+    "ghcr.io/metalbear-co/ci-agent-build:eb9bdec72b5792472e3a0bbcde5659bb17aa1e87"  = "target:ci-agent-builder"
-+    "ghcr.io/metalbear-co/ci-agent-runtime:eb9bdec72b5792472e3a0bbcde5659bb17aa1e87" = "target:ci-agent-runtime"
+@@ -14,7 +14,7 @@ import { useChaosRules, type ChaosRuleFields } from '../hooks/useChaosRules'
+ import EventStream from './EventStream'
+ import SessionHeader from './SessionHeader'
+ import MetadataStrip from './MetadataStrip'
+-import { extractLicenseKey } from '../utils'
++import { extractSessionKey } from '../utils'
+ import JoinBar from './JoinBar'
+ import ResizableSplit from './ResizableSplit'
+ import Widget from './Widget'
+@@ -263,9 +263,9 @@ function metadataItems(
+   const items: { label: string; value: React.ReactNode }[] = [
+     { label: 'Session ID', value: session.session_id },
+   ]
+-  const licenseKey = extractLicenseKey(session.config)
+-  if (licenseKey) {
+-    items.push({ label: 'License key', value: licenseKey })
++  const sessionKey = extractSessionKey(session.config)
++  if (sessionKey) {
++    items.push({ label: 'Session key', value: sessionKey })
    }
+   if (portSubs.length > 0) {
+     items.push({
+```
+
+**File**: `packages/monitor/src/utils.ts` (modified, +2/-2)
+```diff
+@@ -152,9 +152,9 @@ export function expectArray<T>(
+   return []
  }
  
-@@ -81,7 +81,7 @@ target "cli" {
-   cache-from = compact([PRODUCT_CACHE_FROM])
-   cache-to   = compact([PRODUCT_CACHE_TO])
-   contexts = {
--    "ghcr.io/metalbear-co/ci-agent-build:54901618bd7bdc9b4975fb7e5439e519f6469ac0" = "target:ci-agent-builder"
-+    "ghcr.io/metalbear-co/ci-agent-build:eb9bdec72b5792472e3a0bbcde5659bb17aa1e87" = "target:ci-agent-builder"
-   }
- }
- 
-@@ -94,7 +94,7 @@ target "sqs-printer" {
-   cache-from = compact([PRODUCT_CACHE_FROM])
-   cache-to   = compact([PRODUCT_CACHE_TO])
-   contexts = {
--    "ghcr.io/metalbear-co/ci-agent-build:54901618bd7bdc9b4975fb7e5439e519f6469ac0" = "target:ci-agent-builder"
-+    "ghcr.io/metalbear-co/ci-agent-build:eb9bdec72b5792472e3a0bbcde5659bb17aa1e87" = "target:ci-agent-builder"
-   }
- }
- 
-```
-
-**File**: `mirrord/agent/Dockerfile` (modified, +2/-2)
-```diff
-@@ -1,4 +1,4 @@
--FROM --platform=$BUILDPLATFORM ghcr.io/metalbear-co/ci-agent-build:54901618bd7bdc9b4975fb7e5439e519f6469ac0 AS builder
-+FROM --platform=$BUILDPLATFORM ghcr.io/metalbear-co/ci-agent-build:eb9bdec72b5792472e3a0bbcde5659bb17aa1e87 AS builder
- ARG TARGETARCH
- WORKDIR /app
- 
-@@ -48,7 +48,7 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry,id=cargo-registry-agent-
-     # Copy binary out of cached target directory
-     cp /app/target/$(cat /.platform)/release/mirrord-agent /mirrord-agent
- 
--FROM ghcr.io/metalbear-co/ci-agent-runtime:54901618bd7bdc9b4975fb7e5439e519f6469ac0
-+FROM ghcr.io/metalbear-co/ci-agent-runtime:eb9bdec72b5792472e3a0bbcde5659bb17aa1e87
- COPY --from=builder /mirrord-agent /
- 
- CMD ["./mirrord-agent"]
-```
-
-**File**: `mirrord/cli/Dockerfile` (modified, +1/-1)
-```diff
-@@ -1,4 +1,4 @@
--FROM --platform=$BUILDPLATFORM ghcr.io/metalbear-co/ci-agent-build:54901618bd7bdc9b4975fb7e5439e519f6469ac0 AS builder
-+FROM --platform=$BUILDPLATFORM ghcr.io/metalbear-co/ci-agent-build:eb9bdec72b5792472e3a0bbcde5659bb17aa1e87 AS builder
- ARG TARGETARCH
- WORKDIR /build
- 
-```
-
-**File**: `tests/rust-sqs-printer/Dockerfile` (modified, +1/-1)
-```diff
-@@ -1,5 +1,5 @@
- # Using the agent's build image, that has rustup targets, zigbuild etc.
--FROM --platform=$BUILDPLATFORM ghcr.io/metalbear-co/ci-agent-build:54901618bd7bdc9b4975fb7e5439e519f6469ac0 AS build-env
-+FROM --platform=$BUILDPLATFORM ghcr.io/metalbear-co/ci-agent-build:eb9bdec72b5792472e3a0bbcde5659bb17aa1e87 AS build-env
- ARG TARGETARCH
- 
- WORKDIR /build
-```
-
----
-
-### Incident Patch 3: `09724972` (2026-10-17)
-**Commit Message**: chore: add changelog fragment for node stat on Linux
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `changelog.d/+node-stat-remote-files.fixed.md` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+On Linux, `lstat` through glibc's `__lxstat` no longer follows symlinks. Node.js sees remote file metadata with the new `experimental.hook_libc_syscall` and `experimental.old_glibc_support` options.
+-// Session config may carry the license `key` as either a plain string or an
++// Session config may carry the session `key` as either a plain string or an
+ // object shape (e.g. { value: "..." }); flatten it to a displayable string.
+-export function extractLicenseKey(config: unknown): string | null {
++export function extractSessionKey(config: unknown): string | null {
+   const rawKey = (config as Record<string, unknown> | null)?.['key']
+   if (!rawKey) return null
+   if (typeof rawKey === 'string') return rawKey
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5106** (2026-10-19): Show session key instead of license key in the UI (@aviramha)
+- **PR #5101** (2026-10-19): Add db_branches namespace option to run branches per key (@vladrbg)
 - **PR #5099** (2026-10-18): Fix truncated Go syscall results on Linux arm64 (@aviramha)
 - **PR #5098** (2026-10-17): Release 3.275.0 (@cubby-mb[bot])
 - **PR #5097** (2026-10-17): COR-2032 Hook libc `syscall` and `__fxstat*` so Node.js sees remote file metadata on Linux (@cristeigabriela)
 - **PR #5095** (2026-10-16): ai: delete the `CLAUDE.md` symlinks (@iniw)
-- **PR #5094** (2026-10-17): more stable shenanigans (@iniw)
-- **PR #5093** (2026-10-17): Pin CI base images to the stable toolchain build (@0x00A5)
 
 ---
 
@@ -1737,34 +1612,28 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. layer): drop a closed fd's layer state before the kernel close
+## X. Show session key instead of license key in the UI
 
 **RULE**:
-When implementing operations in `mirrord/layer/src/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in metalbear-co/mirrord. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/+monitor-session-key.changed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in metalbear-co/mirrord. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2fa04b22`: layer): drop a closed fd's layer state before the kernel close. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a9ddd6e3`: Show session key instead of license key in the UI. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `mirrord/layer/src/lib.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/+monitor-session-key.changed.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// Callers should call this before their respective close: once the kernel frees `fd`, another
-/// thread can get the same number for a new remote file, and a later call here would drop that
-/// file instead.
-        // `close_layer_fd` first, then the real close.
-        FN_CLOSE(fd)
+Renamed the "License key" label in the mirrord UI session details to "Session key".
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-/// Callers should call their respective close before calling this.
-        let res = FN_CLOSE(fd);
-        res
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2fa04b22` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a9ddd6e3` are properly handled with clean fallback behavior.

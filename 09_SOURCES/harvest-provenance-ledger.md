@@ -3267,3 +3267,7 @@ Every entry in this ledger must capture:
 | `learn-github-elastic-eui` | `https://github.com/elastic/eui` | `bfd03740` | Multi-dimensional audit evidence | 2026-10-19T13:27:26.953Z |
 | `learn-github-michael-a-kuykendall-shimmy` | `https://github.com/Michael-A-Kuykendall/shimmy` | `d64d0c8e` | Multi-dimensional audit evidence | 2026-10-19T13:27:28.900Z |
 | `learn-github-amosgyamfi-open-swiftui-animations` | `https://github.com/amosgyamfi/open-swiftui-animations` | `abc1d4ce` | Multi-dimensional audit evidence | 2026-10-19T13:27:33.616Z |
+| `learn-huggingface-sentence-transformers-all-mpnet-base-v2` | `https://huggingface.co/sentence-transformers/all-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-19T13:37:09.053Z |
+| `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `ab8dc9ad` | Multi-dimensional audit evidence | 2026-10-19T13:37:10.274Z |
+| `learn-github-apppear-chartview` | `https://github.com/AppPear/ChartView` | `df0b2641` | Multi-dimensional audit evidence | 2026-10-19T13:37:14.871Z |
+| `learn-github-trailbaseio-trailbase` | `https://github.com/trailbaseio/trailbase` | `c5b932db` | Multi-dimensional audit evidence | 2026-10-19T13:37:22.184Z |
