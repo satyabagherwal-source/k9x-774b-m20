@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/goss-org-goss-learnings.md`  
+> **Source**: github ([https://github.com/goss-org/goss](https://github.com/goss-org/goss))  
+> **Source Version**: `26d35a47`  
+> **License**: Apache-2.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T03:13:59.029Z  
+> **Learning ID**: `learn-github-goss-org-goss`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): goss-org/goss
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/goss-org-goss-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/goss-org/goss](https://github.com/goss-org/goss))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T03:11:53.705Z  
+> **Harvest Timestamp**: 2026-10-19T03:13:59.021Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: Quick and Easy server testing/validation
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 5981 stars
+- **Stars / Engagement**: 5990 stars
 
 ---
 
@@ -1496,136 +1510,6 @@ func (m *ConsistOfMatcher) MarshalJSON() ([]byte, error) {
 
 ```
 
-### Core Architecture Module: `matchers/contain_element_matcher.go`
-```
-package matchers
-
-import (
-	"encoding/json"
-
-	"github.com/onsi/gomega/matchers"
-)
-
-type ContainElementMatcher struct {
-	matchers.ContainElementMatcher
-}
-
-func ContainElement(element interface{}) GossMatcher {
-	return &ContainElementMatcher{
-		matchers.ContainElementMatcher{
-			Element: element,
-		},
-	}
-}
-
-func (m *ContainElementMatcher) FailureResult(actual interface{}) MatcherResult {
-	return MatcherResult{
-		Actual:   actual,
-		Message:  "to contain element matching",
-		Expected: m.Element,
-	}
-}
-
-func (m *ContainElementMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
-	return MatcherResult{
-		Actual:   actual,
-		Message:  "not to contain element matching",
-		Expected: m.Element,
-	}
-}
-
-func (m *ContainElementMatcher) MarshalJSON() ([]byte, error) {
-	j := make(map[string]interface{})
-	j["contain-element"] = m.Element
-	return json.Marshal(j)
-}
-
-```
-
-### Core Architecture Module: `matchers/contain_elements_matcher.go`
-```
-package matchers
-
-import (
-	"encoding/json"
-	"fmt"
-	"reflect"
-
-	"github.com/onsi/gomega/format"
-	"github.com/onsi/gomega/matchers"
-	"github.com/samber/lo"
-)
-
-type ContainElementsMatcher struct {
-	matchers.ContainElementsMatcher
-}
-
-func ContainElements(elements ...interface{}) GossMatcher {
-	return &ContainElementsMatcher{
-		matchers.ContainElementsMatcher{
-			Elements: elements,
-		},
-	}
-}
-
-func (m *ContainElementsMatcher) Match(actual any) (success bool, err error) {
-	if !isArrayOrSlice(actual) && !isMap(actual) {
-		return false, fmt.Errorf("ContainElements matcher expects an array/slice/map.  Got:\n%s", format.Object(actual, 1))
-	}
-	return m.ContainElementsMatcher.Match(actual)
-}
-
-func (m *ContainElementsMatcher) FailureResult(actual interface{}) MatcherResult {
-	missingElements := getUnexported(m, "missingElements")
-	missingEl, ok := missingElements.([]interface{})
-	var foundElements any
-	if ok {
-		foundElements, _ = lo.Difference(m.Elements, missingEl)
-	}
-	return MatcherResult{
-		Actual:          actual,
-		Message:         "to contain elements matching",
-		Expected:        m.Elements,
-		MissingElements: missingElements,
-		FoundElements:   foundElements,
-	}
-}
-
-func (m *ContainElementsMatcher) NegatedFailureResult(actual interface{}) MatcherResult {
-	return MatcherResult{
-		Actual:   actual,
-		Message:  "not to contain elements matching",
-		Expected: m.Elements,
-	}
-}
-
-func (m *ContainElementsMatcher) MarshalJSON() ([]byte, error) {
-	j := make(map[string]interface{})
-	j["contain-elements"] = m.Elements
-	return json.Marshal(j)
-}
-
-func isMap(a any) bool {
-	if a == nil {
-		return false
-	}
-	return reflect.TypeOf(a).Kind() == reflect.Map
-}
-
-func isArrayOrSlice(a any) bool {
-	if a == nil {
-		return false
-	}
-	switch reflect.TypeOf(a).Kind() {
-	case reflect.Array, reflect.Slice:
-		return true
-	default:
-		return false
-	}
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1639,44 +1523,6 @@ func isArrayOrSlice(a any) bool {
 
 - **Issue #1094** (2026-08-15): **goss serve runs one full validation per concurrent request when the cache expires**
   *Symptoms*: **Describe the bug**  When the `goss serve` result cache is cold, every request that arrives runs its own complete validation. There is no deduplication, so N simultaneous requests do N times the work.  This hits the case `goss serve` exists for. Anything scraping `/healthz` on an interval, several Prometheus replicas, a load balancer health check, a Kubernetes probe, will converge on the cache expiry and arrive in the cold window together. The default `--cache` is 5s, so that window comes round often.  `healthHandler` has a `gossMu *sync.Mutex` field (`serve.go:57` and `serve.go:73`) that looks like it was meant for this, but it is never locked anywhere in the package. So there is not even serialisation, let alone deduplication. The runs happen genuinely concurrently, each building its own `system.New` and running every check in the gossfile.  **How To Reproduce**  Save as `stampede_test.go` in the root package and run `go test -run TestStampede -v ./`. It counts the cache-miss line, which is logged once per validation run.  ```go package goss  import ( 	"bytes" 	"log" 	"net/http" 	"net/http/httptest" 	"path/filepath" 	"strings" 	"sync" 	"testing"  	"github.com/goss-org/goss/util" 	"github.com/stretchr/testify/require" )  type syncBuf struct { 	mu  sync.Mutex 	buf bytes.Buffer }  func (s *syncBuf) Write(p []byte) (int, error) { 	s.mu.Lock() 	defer s.mu.Unlock() 	return s.buf.Write(p) }  func (s *syncBuf) String() string { 	s.mu.Lock() 	defer s.mu.Unlock() 	return s.buf.Strin
-  **Post-Mortem & Fix Analysis**:
-  > Independently reproduced on `master` at `4a91642`, darwin/arm64, Go 1.26.5. Your test as written, unmodified:  ``` 16 concurrent requests produced 16 validation runs ```  One run per request, exactly as reported.  **@dukelion — I'm not opening a PR for this.** You said you'd be happy to and you've had it running on a fork for months, so it's yours. I only went as far as checking whether the decision in front of you needs a dependency, because that looked like the thing actually holding it up.  **It doesn't.** The `gossMu` you spotted is enough on its own. Lock it around the cache-miss branch and re-check the cache inside the lock:  ```go } else {     h.gossMu.Lock()     if tmp, found := h.cache.Get(cacheKey); found {         log.Printf("[TRACE] Returning cached[%s].", cacheKey)         tra = tmp.([][]resource.TestResult)     } else {         log.Printf(cacheMissLogFormat, cacheKey)         h.sys = system.New(h.c.PackageManager)         tra = h.validate()         h.cache.SetDefault(cach
-  > One more thing that's directly useful here, found while reading around this: **the repo already has the test file this regression belongs in, and it currently encodes the stampede as normal.**  `serve_concurrency_test.go` — `TestServeHandlesConcurrentRequests` — landed in `056389c` (#1092, 2026-08-04, @VasiliiAlferov), one day after this issue was filed. It drives a single `healthHandler` from **16 goroutines** against `testdata/matching_basic.yaml`, which is the same shape as the reproduction above. Its own comment says it picked a spec with no subprocesses:  > A spec with no subprocesses, so the test stays fast when **every goroutine misses the cache at once**.  So the cold-cache pile-up is already described in the codebase, and already exercised on every CI run — it just isn't treated as a defect, because that test is aimed at a different failure mode. Its stated value is "under `-race` ... a future change that reaches for process-wide mutable state from a request will be caught her
-
-- **Issue #1088** (2026-08-03): **Manual installation broken in v0.4.10**
-  *Symptoms*: The instructions in https://github.com/goss-org/goss#manual-installation suggest running `curl -L https://github.com/goss-org/goss/releases/latest/download/goss-linux-amd64 -o /usr/local/bin/goss`, and that used to work fine up until [v0.4.9](https://github.com/goss-org/goss/releases/tag/v0.4.9), but it's broken in [v0.4.10](https://github.com/goss-org/goss/releases/tag/v0.4.10)  because the asset  `goss-linux-amd64` doesn't exist on that release; it seems to have been replaced by asset `goss_0.4.10_linux_x86_64.tar.gz`.
-  **Post-Mortem & Fix Analysis**:
-  > I'll update the docs later, but it'll be a few hours. If it want to open a PR with the fix, I'm open to merging that.
-  > In the meantime, use the installation script, specifying `GOSS_DST` for the installation location.
-  > Just curious what was the reason for this change? We used it in CI and now I am chasing ghosts because of it in the middle of the night :) We love this project, but changes like this can quite hurt. Would be nicer to introduce such changes gradually so we have time to migrate.
-
-- **Issue #1085** (2026-07-26): **Installation fails using `curl | sh`**
-  *Symptoms*: **Describe the bug**  Goss fails to install using the auto installer: `curl -fsSL https://goss.rocks/install | sh`.  **How To Reproduce** 1. Get a clean Ubuntu 26.04 VM. 2. Run the install script as root: `curl -fsSL https://goss.rocks/install` 3. Observe the error: ``` Downloading https://github.com/goss-org/goss/releases/download/v0.4.9/goss_0.4.9_linux_x86_64.tar.gz   % Total    % Received % Xferd  Average Speed  Time    Time    Time   Current                                  Dload  Upload  Total   Spent   Left   Speed 100      9 100      9   0      0     34      0                              0  gzip: stdin: not in gzip format tar: Child returned status 1 tar: Error is not recoverable: exiting now ```  It looks like the generated download link is wrong. It returns 404 when I try to download it manually.  **Expected Behavior** Successful install.  **Actual Behavior** Failed install. See the error message above.  **Environment:**  - Version of goss: latest (0.4.9)  - OS/Distribution version: Ubuntu 26.04 LTS  - Arch: amd64/x86_64 
-  **Post-Mortem & Fix Analysis**:
-  > This is a duplicate of #1077. The fix is to cut a new release, which hopefully should be happening soon.
-  > This was fixed by the latest v0.4.10 release. See #1077 for further details.
-
-- **Issue #1077** (2026-07-26): **New multi-platform image builds broken**
-  *Symptoms*: **Describe the bug** In commit [2388dfd](https://github.com/goss-org/goss/commit/2388dfd16a636c56a530da2a109041a906f2410d) the `install.sh` script is adjusted to support multiple (new) platforms. However, there is no new release (yet), which causes the script to install the latest `v0.4.9` version but with the updated platform (`x86_64` in my case, https://github.com/goss-org/goss/releases/download/v0.4.9/goss_0.4.9_linux_x86_64.tar.gz). This asset does not exist, causing the goss installation to fail.  **How To Reproduce** Run `curl -fsSL https://goss.rocks/install | sh`, like mentioned in the readme. Even with the `GOSS_VER=` setup this still fails.  **Expected Behavior** I expect to be able to install older versions (or at least the latest version) without any issues.  **Actual Behavior** Like mentioned above, a 404 error occurs which fails the installation.  **Environment:** The output of `uname -m`: ``` $ uname -m x86_64 ```  I think either a new version needs to be released, or the install script needs to be updated somehow so that older versions still can be downloaded with the "old" architecture setup?
-  **Post-Mortem & Fix Analysis**:
-  > This will be fixed when there's a new release. I'm honestly puzzled as to why the install script would be the one at the HEAD of the master branch. There's obviously some automation in place I'm not aware of.
-  > Yes this/ my issue will indeed be fixed when there is a new release.  However, per the documentation, you can also install goss with a specific version (using `GOSS_VER=`). If someone has that pointed to `0.4.9`, then that installation still fails, because the install script is pulled from master and that contains the new platform, which does not exist for older versions. (unless all existing versions also get updated assets, in which case my comment can be disregarded)
-  > I'm hoping I can get the maintainers to cut a new release. While I've been trying to get the project back on track recently with fixes and modernisations, I'm not a maintainer, and fixing this issue will require a maintainer to cut a new release. I think I'm close though, with just a few more PRs that need to be merged.
-
-- **Issue #1065** (2026-07-05): **s390x not working with install.sh (https://goss.rocks/install)**
-  *Symptoms*: **Describe the bug** <!-- A clear and concise description of what the bug is. -->  We are using goss with the architecture s390x using Ubuntu.  To detect the architecture, the install.sh script has the following logic: ``` arch="" if [ "$(uname -m)" = "x86_64" ]; then     arch="amd64" elif [ "$(uname -m)" = "aarch32" ]; then     arch="arm" elif [ "$(uname -m)" = "aarch64" ] || [ "$(uname -m)" = "arm64" ]; then     arch="arm64" else     arch="386" fi ```  "$(uname -m)" in s390x is "s390x", same as in the s390x release of goss. As the default installs the `386` goss, it does not work. Either the default should be "$(uname -m)" or a new elif branch should be added for s390x (with both strings the same value).  **How To Reproduce** <!-- Please provide a minimal reproducible example https://stackoverflow.com/help/minimal-reproducible-example -->  Just run `curl -fsSL https://goss.rocks/install | sh` in a s390x machine.  **Expected Behavior** <!-- A clear and concise description of what you expected to happen. -->  The install script should install the correct binary for the architecture.  **Actual Behavior** <!-- A clear and concise description of what actually happened. -->  The s390x binary should be installed.  **Environment:**  - Version of goss  - Ubuntu 24.04 with arch s390x.
-  **Post-Mortem & Fix Analysis**:
-  > I've created a PR to cover this. While issues around maintainership of goss are up in the air, future PRs are still welcome.
-
-- **Issue #1021** (2026-07-26): **.**
-  *Symptoms*: 
-  **Post-Mortem & Fix Analysis**:
-  > @balajitoverto could you close this issue if it is no longer relevant?
-
-- **Issue #1014** (2026-07-11): **Links in documentation are broken**
-  *Symptoms*: **Describe the bug** <!-- A clear and concise description of what the bug is. -->  Currently the docs contain several links to https://goss.rocks. Those are all broken.  I assume most should be replaced with the appropriate links to https://goss.readthedocs.io/en/stable/ I'm happy to provide a PR to fix those if linking them to readthedocs.io is the prefered solution 😄    Broken Links: https://github.com/goss-org/goss/blob/master/README.md?plain=1#L108-L109 https://github.com/goss-org/goss/blob/master/README.md?plain=1#L164 https://github.com/goss-org/goss/blob/master/README.md?plain=1#L196 https://github.com/goss-org/goss/blob/master/README.md?plain=1#L203 https://github.com/goss-org/goss/blob/master/README.md?plain=1#L209-L211 https://github.com/goss-org/goss/blob/master/README.md?plain=1#L346  https://github.com/goss-org/goss/blob/master/docs/gossfile.md?plain=1#L106 https://github.com/goss-org/goss/blob/master/docs/gossfile.md?plain=1#L115  https://github.com/goss-org/goss/blob/master/.github/ISSUE_TEMPLATE/feature_request.md?plain=1#L14  https://github.com/goss-org/goss/blob/master/.github/CONTRIBUTING.md?plain=1#L38  
-  **Post-Mortem & Fix Analysis**:
-  > Related to: - #925 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1693,1005 +1539,96 @@ func isArrayOrSlice(a any) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f6db0310` (2026-10-04)
-**Commit Message**: build(deps): bump github/codeql-action from 4.38.1 to 4.38.2 (#1138)
+### Incident Patch 1: `a79c8fbe` (2026-08-15)
+**Commit Message**: fix(serve): dedupe concurrent validation runs on a cold cache (#1110)
 
-Bumps [github/codeql-action](https://github.com/github/codeql-action) from 4.38.1 to 4.38.2.
-- [Release notes](https://github.com/github/codeql-action/releases)
-- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/github/codeql-action/compare/v4.38.1...v4.38.2)
+Every request that arrived before the first result was cached ran its own
+full validation, so N probes executed every check N times against the
+machine. gossMu already existed on the handler but was never locked.
 
----
-updated-dependencies:
-- dependency-name: github/codeql-action
-  dependency-version: 4.38.2
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `.github/workflows/docker-goss.yaml` (modified, +1/-1)
+**File**: `serve.go` (modified, +6/-2)
 ```diff
-@@ -88,6 +88,6 @@ jobs:
-           output: "trivy-results.sarif"
- 
-       - name: Upload Trivy scan results to GitHub Security tab
--        uses: github/codeql-action/upload-sarif@v4.38.1
-+        uses: github/codeql-action/upload-sarif@v4.38.2
-         with:
-           sarif_file: "trivy-results.sarif"
-```
-
-**File**: `.github/workflows/trivy-schedule.yaml` (modified, +1/-1)
-```diff
-@@ -22,6 +22,6 @@ jobs:
-           output: "trivy-results.sarif"
- 
-       - name: Upload Trivy scan results to GitHub Security tab
--        uses: github/codeql-action/upload-sarif@v4.38.1
-+        uses: github/codeql-action/upload-sarif@v4.38.2
-         with:
-           sarif_file: "trivy-results.sarif"
-```
-
----
-
-### Incident Patch 2: `b3f544b7` (2026-10-04)
-**Commit Message**: build(deps): bump zensical from 0.0.64 to 0.0.67 in /docs (#1137)
-
-Bumps [zensical](https://github.com/zensical/zensical) from 0.0.64 to 0.0.67.
-- [Release notes](https://github.com/zensical/zensical/releases)
-- [Commits](https://github.com/zensical/zensical/compare/v0.0.64...v0.0.67)
-
----
-updated-dependencies:
-- dependency-name: zensical
-  dependency-version: 0.0.67
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `docs/requirements.txt` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--zensical==0.0.64
-+zensical==0.0.67
-```
-
----
-
-### Incident Patch 3: `08f88210` (2026-09-26)
-**Commit Message**: build(deps): bump zensical from 0.0.62 to 0.0.64 in /docs (#1133)
-
-* build(deps): bump zensical from 0.0.62 to 0.0.64 in /docs
-
-Bumps [zensical](https://github.com/zensical/zensical) from 0.0.62 to 0.0.64.
-- [Release notes](https://github.com/zensical/zensical/releases)
-- [Commits](https://github.com/zensical/zensical/compare/v0.0.62...v0.0.64)
-
----
-updated-dependencies:
-- dependency-name: zensical
-  dependency-version: 0.0.64
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-* Pull in some additional dependency updates
-
-* Fix missed places where the context wasn't passed to unbreak tests
-
----------
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-Co-authored-by: Keith Gaughan <[REDACTED_EMAIL]>
-
-**File**: `docs/requirements.txt` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--zensical==0.0.62
-+zensical==0.0.64
-```
-
-**File**: `go.mod` (modified, +3/-3)
-```diff
-@@ -17,15 +17,15 @@ require (
- 	github.com/miekg/dns v1.1.73
- 	github.com/moby/sys/mountinfo v0.7.2
- 	github.com/oleiade/reflections v1.1.0
--	github.com/onsi/gomega v1.43.0
-+	github.com/onsi/gomega v1.44.0
- 	github.com/patrickmn/go-cache v2.1.0+incompatible
- 	github.com/pmezard/go-difflib v1.0.0
- 	github.com/prometheus/client_golang v1.24.1
- 	github.com/prometheus/common v0.71.0
- 	github.com/samber/lo v1.53.0
- 	github.com/stretchr/testify v1.12.1
- 	github.com/tidwall/gjson v1.19.0
--	github.com/urfave/cli/v3 v3.11.0
-+	github.com/urfave/cli/v3 v3.13.0
- 	go.yaml.in/yaml/v3 v3.0.5
- 	golang.org/x/sys v0.48.0
- 	gopkg.in/yaml.v3 v3.0.1
-@@ -40,7 +40,7 @@ require (
- 	github.com/golang/groupcache v0.0.0-20241129210726-2c02b8208cf8 // indirect
- 	github.com/google/go-cmp v0.7.0 // indirect
- 	github.com/google/uuid v1.6.0 // indirect
--	github.com/huandu/xstrings v1.5.0 // indirect
-+	github.com/huandu/xstrings v1.6.1 // indirect
- 	github.com/mattn/go-colorable v0.1.15 // indirect
- 	github.com/mattn/go-isatty v0.0.24 // indirect
- 	github.com/mitchellh/copystructure v1.2.0 // indirect
-```
-
-**File**: `go.sum` (modified, +6/-6)
-```diff
-@@ -39,8 +39,8 @@ github.com/goss-org/go-ps v0.0.0-20230609005227-7b318e6a56e5 h1:NW0Jo4leMIrQxNOy
- github.com/goss-org/go-ps v0.0.0-20230609005227-7b318e6a56e5/go.mod h1:FYj70SLmogHdTTDGnIVaaK0iczROlsxmoMCwfAUuIE8=
- github.com/hashicorp/logutils v1.0.0 h1:dLEQVugN8vlakKOUE3ihGLTZJRB4j+M2cdTm/ORI65Y=
- github.com/hashicorp/logutils v1.0.0/go.mod h1:QIAnNjmIWmVIIkWDTG1z5v++HQmx9WQRO+LraFDTW64=
--github.com/huandu/xstrings v1.5.0 h1:2ag3IFq9ZDANvthTwTiqSSZLjDc+BedvHPAp5tJy2TI=
--github.com/huandu/xstrings v1.5.0/go.mod h1:y5/lhBue+AyNmUVz9RLU9xbLR0o4KIIExikq4ovT0aE=
-+github.com/huandu/xstrings v1.6.1 h1:yYdKSd6Sjv3fNZt9BDjl1FDsPNfQEaYi19L5LzK2JKs=
-+github.com/huandu/xstrings v1.6.1/go.mod h1:y5/lhBue+AyNmUVz9RLU9xbLR0o4KIIExikq4ovT0aE=
- github.com/klauspost/compress v1.19.1 h1:VsB4HPswih7mmZ8WleSFQ75c/Ui1M4trX5oAsJnhSlk=
- github.com/klauspost/compress v1.19.1/go.mod h1:cwPg85FWrGar70rWktvGQj8/hthj3wpl0PGDogxkrSQ=
- github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
-@@ -65,8 +65,8 @@ github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 h1:C3w9PqII01/Oq
- github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822/go.mod h1:+n7T8mK8HuQTcFwEeznm/DIxMOiR9yIdICNftLE1DvQ=
- github.com/oleiade/reflections v1.1.0 h1:D+I/UsXQB4esMathlt0kkZRJZdUDmhv5zGi/HOwYTWo=
- github.com/oleiade/reflections v1.1.0/go.mod h1:mCxx0QseeVCHs5Um5HhJeCKVC7AwS8kO67tky4rdisA=
--github.com/onsi/gomega v1.43.0 h1:VlG/1FxqNxhSO+lq/OHBNaaqwiBK/mO8JbVkX9Y+FeU=
--github.com/onsi/gomega v1.43.0/go.mod h1:REff/hsDsodHoKlWsP2mAPhu1+5/6hVYNf9rIEBpeSg=
-+github.com/onsi/gomega v1.44.0 h1:eAiGl3Pw5jz5GQdDff0BcxYpAX1JxW8xD7mFUuwNfZQ=
-+github.com/onsi/gomega v1.44.0/go.mod h1:e/C2HwaZ1DhvjzXXuFhcR7hY7Sh9pl7MmoWKEjzwcdA=
- github.com/patrickmn/go-cache v2.1.0+incompatible h1:HRMgzkcYKYpi3C8ajMPV8OFXaaRUnok+kx1WdO15EQc=
- github.com/patrickmn/go-cache v2.1.0+incompatible/go.mod h1:3Qf8kWWT7OJRJbdiICTKqZju1ZixQ/KpMGzzAfe6+WQ=
- github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
-@@ -95,8 +95,8 @@ github.com/tidwall/match v1.2.0 h1:0pt8FlkOwjN2fPt4bIl4BoNxb98gGHN2ObFEDkrfZnM=
- github.com/tidwall/match v1.2.0/go.mod h1:eRSPERbgtNPcGhD8UCthc6PmLEQXEWd3PRB5JTxsfmM=
- github.com/tidwall/pretty v1.2.1 h1:qjsOFOWWQl+N3RsoF5/ssm1pHmJJwhjlSbZ51I6wMl4=
- github.com/tidwall/pretty v1.2.1/go.mod h1:ITEVvHYasfjBbM0u2Pg8T2nJnzm8xPwvNhhsoaGGjNU=
--github.com/urfave/cli/v3 v3.11.0 h1:P/euJp99kb9p0tlVY+iYTLYYTAQlfl0hR2gUO1Img1Q=
--github.com/urfave/cli/v3 v3.11.0/go.mod h1:ysVLtOEmg2tOy6PknnYVhDoouyC/6N42TMeoMzskhso=
-+github.com/urfave/cli/v3 v3.13.0 h1:Dr6jqMfIyyFsRVn7Nz5mqLsMY+ZMpfh3a0aMs+umPVY=
-+github.com/urfave/cli/v3 v3.13.0/go.mod h1:vXn6HxPNccJSzQr2QvwVncOKrgYGIHU0HY5h8B2nQj4=
- github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=
- go.uber.org/goleak v1.3.0 h1:2K3zAYmnTNqV73imy9J1T3WC+gmCePx2hEGkimedGto=
- go.uber.org/goleak v1.3.0/go.mod h1:CoHD4mav9JJNrW/WLlf7HGZPjdw8EucARQHekz1X6bE=
-```
-
-**File**: `resource/dns_test.go` (modified, +1/-1)
-```diff
-@@ -71,7 +71,7 @@ func TestDNSEmptyAddrsWarns(t *testing.T) {
+@@ -104,8 +104,10 @@ func (h healthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+ func (h healthHandler) processAndEnsureCached(negotiatedContentType string, outputer outputs.Outputer) res {
+ 	var tra [][]resource.TestResult
+ 	cacheKey := "res"
+-	tmp, found := h.cache.Get(cacheKey)
+-	if found {
++	// Held across the lookup so a miss does not let a second request start its
++	// own validate() before the first one has filled the cache.
++	h.gossMu.Lock()
++	if tmp, found := h.cache.Get(cacheKey); found {
+ 		log.Printf("[TRACE] Returning cached[%s].", cacheKey)
+ 		tra = tmp.([][]resource.TestResult)
+ 	} else {
+@@ -114,6 +116,8 @@ func (h healthHandler) processAndEnsureCached(negotiatedContentType string, outp
+ 		tra = h.validate()
+ 		h.cache.SetDefault(cacheKey, tra)
  	}
- 
- 	d := &DNS{id: "localhost", Resolvable: false, Addrs: []any{}}
--	out := captureStderr(t, func() { d.Validate(sys) })
-+	out := captureStderr(t, func() { d.Validate(t.Context(), sys) })
- 
- 	if !strings.Contains(out, "WARNING:") || !strings.Contains(out, "dns.addrs") {
- 		t.Errorf("Validate with empty 'addrs' field, stderr = %q, want a WARNING naming dns.addrs", out)
++	h.gossMu.Unlock()
++
+ 	trc := testResultArrayToChan(tra)
+ 	return h.output(trc, outputer)
+ }
 ```
 
-**File**: `resource/interface_test.go` (modified, +1/-1)
+**File**: `serve_concurrency_test.go` (modified, +36/-0)
 ```diff
-@@ -68,7 +68,7 @@ func TestInterfaceEmptyAddrsWarns(t *testing.T) {
- 	}
- 
- 	i := &Interface{id: "eth0", Exists: true, Addrs: []any{}}
--	out := captureStderr(t, func() { i.Validate(sys) })
-+	out := captureStderr(t, func() { i.Validate(t.Context(), sys) })
- 
- 	if !strings.Contains(out, "WARNING:") || !strings.Contains(out, "interface.addrs") {
- 		t.Errorf("Validate with empty 'addrs' field, stderr = %q, want a WARNING naming interface.addrs", out)
-```
-
-**File**: `resource/mount_test.go` (modified, +2/-2)
-```diff
-@@ -31,7 +31,7 @@ func TestMountEmptyOptsWarns(t *testing.T) {
- 	}
- 
- 	m := &Mount{id: "/", Exists: true, Opts: []any{}}
--	out := captureStderr(t, func() { m.Validate(sys) })
-+	out := captureStderr(t, func() { m.Validate(t.Context(), sys) })
- 
- 	if !strings.Contains(out, "WARNING:") || !strings.Contains(out, "mount.opts") {
- 		t.Errorf("Validate with empty 'opts' field, stderr = %q, want a WARNING naming mount.opts", out)
-@@ -47,7 +47,7 @@ func TestMountEmptyVfsOptsWarns(t *testing.T) {
- 	}
- 
- 	m := &Mount{id: "/", Exists: true, VfsOpts: []any{}}
--	out := captureStderr(t, func() { m.Validate(sys) })
-+	out := captureStderr(t, func() { m.Validate(t.Context(), sys) })
- 
- 	if !strings.Contains(out, "WARNING:") || !strings.Contains(out, "mount.vfs-opts") {
- 		t.Errorf("Validate with empty 'vfs-opts' field, stderr = %q, want a WARNING naming mount.vfs-opts", out)
-```
-
-**File**: `resource/port_test.go` (modified, +1/-1)
-```diff
-@@ -69,7 +69,7 @@ func TestPortEmptyIPWarns(t *testing.T) {
- 	}
- 
- 	p := &Port{id: "tcp:9999", Listening: false, IP: []any{}}
--	out := captureStderr(t, func() { p.Validate(sys) })
-+	out := captureStderr(t, func() { p.Validate(t.Context(), sys) })
- 
- 	if !strings.Contains(out, "WARNING:") || !strings.Contains(out, "port.ip") {
- 		t.Errorf("Validate with empty ip stderr = %q, want a WARNING naming port.ip", out)
-```
-
-**File**: `resource/user_test.go` (modified, +1/-1)
-```diff
-@@ -71,7 +71,7 @@ func TestUserEmptyGroupsWarns(t *testing.T) {
- 	}
- 
- 	u := &User{id: "nobody", Exists: true, Groups: []any{}}
--	out := captureStderr(t, func() { u.Validate(sys) })
-+	out := captureStderr(t, func() { u.Validate(t.Context(), sys) })
- 
- 	if !strings.Contains(out, "WARNING:") || !strings.Contains(out, "user.groups") {
- 		t.Errorf("Validate with empty groups stderr = %q, want a WARNING naming user.groups", out)
-```
-
----
-
-### Incident Patch 4: `177f7438` (2026-09-26)
-**Commit Message**: build(deps): bump github/codeql-action from 4.38.0 to 4.38.1 (#1135)
-
-Bumps [github/codeql-action](https://github.com/github/codeql-action) from 4.38.0 to 4.38.1.
-- [Release notes](https://github.com/github/codeql-action/releases)
-- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/github/codeql-action/compare/v4.38.0...v4.38.1)
-
----
-updated-dependencies:
-- dependency-name: github/codeql-action
-  dependency-version: 4.38.1
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `.github/workflows/docker-goss.yaml` (modified, +1/-1)
-```diff
-@@ -88,6 +88,6 @@ jobs:
-           output: "trivy-results.sarif"
- 
-       - name: Upload Trivy scan results to GitHub Security tab
--        uses: github/codeql-action/upload-sarif@v4.38.0
-+        uses: github/codeql-action/upload-sarif@v4.38.1
-         with:
-           sarif_file: "trivy-results.sarif"
-```
-
-**File**: `.github/workflows/trivy-schedule.yaml` (modified, +1/-1)
-```diff
-@@ -22,6 +22,6 @@ jobs:
-           output: "trivy-results.sarif"
- 
-       - name: Upload Trivy scan results to GitHub Security tab
--        uses: github/codeql-action/upload-sarif@v4.38.0
-+        uses: github/codeql-action/upload-sarif@v4.38.1
-         with:
-           sarif_file: "trivy-results.sarif"
-```
-
----
-
-### Incident Patch 5: `814534cd` (2026-09-26)
-**Commit Message**: build(deps): bump alpine from 3.24.1 to 3.24.2 (#1134)
-
-Bumps alpine from 3.24.1 to 3.24.2.
-
----
-updated-dependencies:
-- dependency-name: alpine
-  dependency-version: 3.24.2
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `Dockerfile` (modified, +1/-1)
-```diff
-@@ -1,4 +1,4 @@
--FROM alpine:3.24.1
-+FROM alpine:3.24.2
- 
- ARG TARGETPLATFORM
- COPY $TARGETPLATFORM/goss /usr/bin/
-```
-
-**File**: `Dockerfile_trivy` (modified, +1/-1)
-```diff
-@@ -11,7 +11,7 @@ RUN --mount=target=. \
-     -o "/release/goss" \
-     ./cmd/goss
- 
--FROM alpine:3.24.1
-+FROM alpine:3.24.2
- 
- COPY --from=base /release/* /usr/bin/
- 
-```
-
----
-
-### Incident Patch 6: `f7ebedc6` (2026-09-13)
-**Commit Message**: fix(structured): return a failure exit code so serve reports 503 (#1131)
-
-The structured outputer ended Output() with an unconditional return 0,
-so a failing suite exited 0 and serve.go, which maps a non-zero code to
-503, answered 200. A healthcheck on goss serve -f structured could never
-fail. Summary.Failed was already counted a few lines above.
-
-This is issue #992 for a second format: the same gap was reported for
-prometheus and fixed in #1109, and structured was left behind. Because
-it has now happened twice, the test pins the exit code of all nine
-outputers and fails if a tenth is registered without a choice.
-
-The prometheus outputer accumulates into package-level counters, so each
-case resets them the way prometheus_test.go already does.
-
-Co-authored-by: VXNCXNX <[REDACTED_EMAIL]>
-
-**File**: `outputs/outputs_test.go` (modified, +58/-0)
-```diff
-@@ -1,9 +1,14 @@
- package outputs
+@@ -1,9 +1,12 @@
+ package goss
  
  import (
-+	"io"
- 	"testing"
-+	"time"
- 
- 	"github.com/stretchr/testify/assert"
-+
-+	"github.com/goss-org/goss/resource"
-+	"github.com/goss-org/goss/util"
- )
- 
- func TestIsValidFormat(t *testing.T) {
-@@ -56,3 +61,56 @@ func TestOptionsRegistration(t *testing.T) {
- 	assert.Contains(t, registeredOutputs, "structured")
- 	assert.Contains(t, registeredOutputs, "tap")
- }
-+
-+// TestOutputExitCodes pins what every outputer returns, because serve turns a
-+// non-zero code into a 503 at /healthz. Prometheus was missing this once (#992)
-+// and structured was missing it too, so all of them are pinned at once rather
-+// than one per incident.
-+func TestOutputExitCodes(t *testing.T) {
-+	now := time.Now()
-+	pass := resource.TestResult{
-+		Result: resource.SUCCESS, ResourceType: "File", ResourceId: "/tmp",
-+		Property: "exists", StartTime: now, EndTime: now,
-+	}
-+	// a skip is not a failure, so it must not move the exit code on its own
-+	skip := resource.TestResult{
-+		Result: resource.SKIP, ResourceType: "File", ResourceId: "/skip",
-+		Property: "exists", Skipped: true, StartTime: now, EndTime: now,
-+	}
-+	fail := resource.TestResult{
-+		Result: resource.FAIL, ResourceType: "File", ResourceId: "/nope",
-+		Property: "exists", StartTime: now, EndTime: now,
-+	}
-+
-+	cases := map[string]struct {
-+		outputer Outputer
-+		failing  int
-+	}{
-+		"documentation": {Documentation{}, 1},
-+		"json":          {Json{}, 1},
-+		"junit":         {JUnit{}, 1},
-+		"nagios":        {Nagios{}, 2},
-+		"prometheus":    {Prometheus{}, 1},
-+		"rspecish":      {Rspecish{}, 1},
-+		"silent":        {Silent{}, 1},
-+		"structured":    {Structured{}, 1},
-+		"tap":           {Tap{}, 1},
-+	}
-+
-+	// a new outputer has to make a deliberate choice here rather than default to 0
-+	assert.Len(t, cases, len(Outputers()))
-+
-+	for name, tc := range cases {
-+		t.Run(name, func(t *testing.T) {
-+			// the prometheus outputer accumulates into package-level counters
-+			defer resetMetrics()
-+
-+			assert.Equal(t, 0,
-+				tc.outputer.Output(io.Discard, makeResults(pass, skip), util.OutputConfig{}),
-+				"a suite with no failures must exit 0")
-+			assert.Equal(t, tc.failing,
-+				tc.outputer.Output(io.Discard, makeResults(pass, skip, fail), util.OutputConfig{}),
-+				"a suite containing a failure must not exit 0")
-+		})
-+	}
-+}
-```
-
-**File**: `outputs/structured.go` (modified, +4/-0)
-```diff
-@@ -97,5 +97,9 @@ func (r Structured) Output(w io.Writer, results <-chan []resource.TestResult, ou
- 
- 	fmt.Fprintln(w, string(j))
- 
-+	if result.Summary.Failed > 0 {
-+		return 1
-+	}
-+
- 	return 0
- }
-```
-
----
-
-### Incident Patch 7: `6cefa53a` (2026-09-13)
-**Commit Message**: fix(matchers): report a syntax error for matcher groups with no sub-matchers (#1127)
-
-Gomega's And() with zero matchers is vacuously true, so a group that
-reduces to nothing was reported as a pass without ever looking at the
-value:
-
-    user:
-      orca:
-        groups:
-          and: []          ok 3 - User: orca: groups: matches expectation
-
-The same holds for contain-elements with an empty list and gjson with an
-empty map. consist-of and or are left alone: an empty consist-of asserts
-that the value is empty, and an empty or can never be satisfied, so
-neither reports a false pass.
-
-This follows the errEmptyMatcher treatment an empty matcher map already
-gets from #1118.
-
-**File**: `docs/gossfile.md` (modified, +23/-0)
-```diff
-@@ -847,6 +847,29 @@ Count: 1, Failed: 1, Skipped: 0
- 
- Goss supports advanced matchers by converting YAML input to [gomega](https://onsi.github.io/gomega/) matchers.
- 
-+!!! warning "An empty matcher group is a syntax error"
-+
-+    A matcher group is a set of conditions that must all be satisfied. A group
-+    holding no conditions asserts nothing and would report a pass without the
-+    value ever being looked at, so goss rejects it:
-+
-+    ```yaml
-+    and: []               # syntax error
-+    contain-elements: []  # syntax error
-+    gjson: {}             # syntax error
-+    ```
-+
-+    Two others look similar and are still accepted, because neither can pass
-+    without checking the value:
-+
-+    ```yaml
-+    consist-of: []        # asserts the value is empty
-+    or: []                # can never be satisfied
-+    ```
-+
-+    This is a change in behaviour. A gossfile containing one of the first three
-+    used to be reported as passing.
-+
- #### String Matchers
- 
- These will convert the system attribute to a string prior to matching.
-```
-
-**File**: `resource/gomega.go` (modified, +17/-0)
-```diff
-@@ -11,8 +11,16 @@ import (
- var (
- 	errMissingRequiredAttribute = errors.New("Syntax Error: Missing required attribute")
- 	errEmptyMatcher             = errors.New("Syntax Error: Invalid matcher configuration. An empty map asserts nothing, exactly one matcher is required")
-+	errEmptyMatcherGroup        = errors.New("asserts nothing, at least one matcher is required")
- )
- 
-+// emptyMatcherGroupError reports a matcher that reduces to no sub-matchers at
-+// all. Gomega treats that as vacuously true, so the test would be reported as
-+// passing without ever looking at the value.
-+func emptyMatcherGroupError(name string) error {
-+	return fmt.Errorf("Syntax Error: Invalid '%s' argument. An empty value %w", name, errEmptyMatcherGroup)
-+}
-+
- func matcherToGomegaMatcher(matcher any) (matchers.GossMatcher, error) {
- 	// Default matchers
- 	switch x := matcher.(type) {
-@@ -119,6 +127,9 @@ func matcherToGomegaMatcher(matcher any) (matchers.GossMatcher, error) {
- 		if err != nil {
- 			return nil, err
- 		}
-+		if len(subMatchers) == 0 {
-+			return nil, emptyMatcherGroupError(matchType)
-+		}
- 		var interfaceSlice []any
- 		for _, d := range subMatchers {
- 			interfaceSlice = append(interfaceSlice, d)
-@@ -145,6 +156,9 @@ func matcherToGomegaMatcher(matcher any) (matchers.GossMatcher, error) {
- 		if err != nil {
- 			return nil, err
- 		}
-+		if len(subMatchers) == 0 {
-+			return nil, emptyMatcherGroupError(matchType)
-+		}
- 		return matchers.And(subMatchers...), nil
- 	case "or":
- 		subMatchers, err := sliceToGomega(value, "or")
-@@ -196,6 +210,9 @@ func matcherToGomegaMatcher(matcher any) (matchers.GossMatcher, error) {
- 		if !ok {
- 			return nil, invalidArgSyntaxError("gjson", "map", value)
- 		}
-+		if len(valueI) == 0 {
-+			return nil, emptyMatcherGroupError(matchType)
-+		}
- 		for key, val := range valueI {
- 			subMatcher, err := matcherToGomegaMatcher(val)
- 			if err != nil {
-```
-
-**File**: `resource/gomega_test.go` (modified, +42/-0)
-```diff
-@@ -188,3 +188,45 @@ func TestMatcherToGomegaMatcherEmptyMap(t *testing.T) {
- 		})
- 	}
- }
-+
-+// A matcher group with no sub-matchers is vacuously true in Gomega, so these
-+// used to be reported as passing without ever looking at the value.
-+func TestMatcherToGomegaMatcherEmptyGroup(t *testing.T) {
-+	cases := []struct {
-+		name string
-+		in   string
-+	}{
-+		{name: "and", in: `{"and": []}`},
-+		{name: "contain-elements", in: `{"contain-elements": []}`},
-+		{name: "gjson", in: `{"gjson": {}}`},
-+		{name: "nested in not", in: `{"not": {"and": []}}`},
-+	}
-+
-+	for _, c := range cases {
-+		t.Run(c.name, func(t *testing.T) {
-+			var dat any
-+			if err := json.Unmarshal([]byte(c.in), &dat); err != nil {
-+				t.Fatal(err)
-+			}
-+
-+			got, err := matcherToGomegaMatcher(dat)
-+			assert.Nil(t, got)
-+			assert.ErrorIs(t, err, errEmptyMatcherGroup)
-+		})
-+	}
-+}
-+
-+// consist-of and or are meaningful when empty: the first asserts that the value
-+// is empty, the second can never be satisfied. Neither reports a false pass.
-+func TestMatcherToGomegaMatcherEmptyGroupExceptions(t *testing.T) {
-+	for _, in := range []string{`{"consist-of": []}`, `{"or": []}`} {
-+		var dat any
-+		if err := json.Unmarshal([]byte(in), &dat); err != nil {
-+			t.Fatal(err)
-+		}
-+
-+		got, err := matcherToGomegaMatcher(dat)
-+		assert.NoError(t, err, in)
-+		assert.NotNil(t, got, in)
-+	}
-+}
-```
-
----
-
-### Incident Patch 8: `4898347e` (2026-09-13)
-**Commit Message**: fix(validate): warn on the remaining empty list matchers (#1114)
-
-Empty list matchers previously passed silently without assertion. Now emit
-a warning to alert users to the potential test issue.
-
-**File**: `docs/gossfile.md` (modified, +31/-0)
-```diff
-@@ -306,6 +306,12 @@ dns:
-     timeout: 500 # in milliseconds
- ```
- 
-+!!! warning "An empty list asserts nothing"
-+
-+    As with [`stdout` and `stderr`](#command), `addrs: []` is a list of zero
-+    conditions and always passes. `goss validate` warns on stderr about each
-+    one.
-+
- ### file
- 
- Validates the state of a file, directory, socket, or symbolic link
-@@ -442,6 +448,12 @@ interface:
-     mtu: 1500
- ```
- 
-+!!! warning "An empty list asserts nothing"
-+
-+    As with [`stdout` and `stderr`](#command), `addrs: []` is a list of zero
-+    conditions and always passes. `goss validate` warns on stderr about each
-+    one.
-+
- ### kernel-param
- 
- Validates kernel param (sysctl) value.
-@@ -485,6 +497,12 @@ mount:
-       lt: 95
- ```
- 
-+!!! warning "An empty list asserts nothing"
-+
-+    As with [`stdout` and `stderr`](#command), `opts: []` and `vfs-opts: []`
-+    are lists of zero conditions and always pass. `goss validate` warns on
-+    stderr about each one.
-+
- ### matching
- 
- Validates specified content against a matcher. Best used with [Templates](#templates).
-@@ -589,6 +607,13 @@ port:
-     skip: false
- ```
- 
-+!!! warning "An empty list asserts nothing"
-+
-+    As with [`stdout` and `stderr`](#command), `ip: []` is a list of zero
-+    conditions and always passes. `goss validate` warns on stderr about each
-+    one. `goss add port` only writes `ip` when the port has addresses, so it
-+    never generates an empty list.
-+
- ### process
- 
- Validates if a process is running.
-@@ -652,6 +677,12 @@ user:
-     skip: false
- ```
- 
-+!!! warning "An empty list asserts nothing"
-+
-+    As with [`stdout` and `stderr`](#command), `groups: []` is a list of zero
-+    conditions and always passes. `goss validate` warns on stderr about each
-+    one.
-+
- !!! note
-     This check is inspecting the contents of local passwd file `/etc/passwd`,
-     this does not validate remote users (e.g. LDAP).
-```
-
-**File**: `resource/dns.go` (modified, +1/-1)
-```diff
-@@ -80,7 +80,7 @@ func (d *DNS) Validate(sys *system.System) []TestResult {
- 	if shouldSkip(results) {
- 		skip = true
- 	}
--	if d.Addrs != nil {
-+	if isSetWarnEmpty(d.Addrs, fmt.Sprintf("%s: dns.addrs", d.ID())) {
- 		if d.RetryCount > 0 {
- 			results = append(results, ValidateValueWithRetry(d, "addrs", d.Addrs, func() (any, error) {
- 				sysDNS := sys.NewDNS(ctx, d.GetResolve(), sys, util.Config{Timeout: time.Duration(d.Timeout) * time.Millisecond, Server: d.Server})
-```
-
-**File**: `resource/dns_test.go` (modified, +21/-2)
-```diff
-@@ -1,9 +1,11 @@
- package resource
- 
- import (
-+	"context"
- 	"strings"
- 	"testing"
- 
-+	"github.com/goss-org/goss/system"
- 	"github.com/goss-org/goss/util"
- 	"gopkg.in/yaml.v3"
- )
-@@ -39,7 +41,7 @@ func TestNewDNSLeavesAddrsUnsetWhenEmpty(t *testing.T) {
- 		t.Fatalf("yaml.Marshal returned error: %v", err)
- 	}
- 	if strings.Contains(string(out), "addrs:") {
--		t.Errorf("marshalled yaml contains an addrs key, want it omitted:\n%s", out)
-+		t.Errorf("marshalled YAML contains an 'addrs' field, want it omitted:\n%s", out)
- 	}
- }
- 
-@@ -55,6 +57,23 @@ func TestNewDNSKeepsAddrsWhenPresent(t *testing.T) {
- 		t.Fatalf("yaml.Marshal returned error: %v", err)
- 	}
- 	if !strings.Contains(string(out), "127.0.0.1") {
--		t.Errorf("marshalled yaml is missing the addrs value:\n%s", out)
-+		t.Errorf("marshalled YAML is missing the 'addrs' field:\n%s", out)
-+	}
-+}
-+
-+// dns.addrs used a plain != nil check, so `addrs: []` asserted nothing and
-+// passed silently. It must now warn like file.contents does.
-+func TestDNSEmptyAddrsWarns(t *testing.T) {
-+	sys := &system.System{
-+		NewDNS: func(context.Context, string, *system.System, util.Config) system.DNS {
-+			return &fakeSysDNS{addrs: []string{"127.0.0.1"}}
-+		},
-+	}
-+
-+	d := &DNS{id: "localhost", Resolvable: false, Addrs: []any{}}
-+	out := captureStderr(t, func() { d.Validate(sys) })
-+
-+	if !strings.Contains(out, "WARNING:") || !strings.Contains(out, "dns.addrs") {
-+		t.Errorf("Validate with empty 'addrs' field, stderr = %q, want a WARNING naming dns.addrs", out)
- 	}
- }
-```
-
-**File**: `resource/interface.go` (modified, +1/-1)
-```diff
-@@ -59,7 +59,7 @@ func (i *Interface) Validate(sys *system.System) []TestResult {
- 	if shouldSkip(results) {
- 		skip = true
- 	}
--	if i.Addrs != nil {
-+	if isSetWarnEmpty(i.Addrs, fmt.Sprintf("%s: interface.addrs", i.ID())) {
- 		results = append(results, ValidateValue(i, "addrs", i.Addrs, sysInterface.Addrs, skip))
- 	}
- 	if i.MTU != nil {
-```
-
-**File**: `resource/interface_test.go` (modified, +21/-2)
-```diff
-@@ -1,9 +1,11 @@
- package resource
- 
- import (
-+	"context"
- 	"strings"
- 	"testing"
- 
-+	"github.com/goss-org/goss/system"
- 	"github.com/goss-org/goss/util"
- 	"gopkg.in/yaml.v3"
- )
-@@ -36,7 +38,7 @@ func TestNewInterfaceLeavesAddrsUnsetWhenEmpty(t *testing.T) {
- 		t.Fatalf("yaml.Marshal returned error: %v", err)
- 	}
- 	if strings.Contains(string(out), "addrs:") {
--		t.Errorf("marshalled yaml contains an addrs key, want it omitted:\n%s", out)
-+		t.Errorf("marshalled YAML contains an 'addrs' field, want it omitted:\n%s", out)
- 	}
- }
- 
-@@ -52,6 +54,23 @@ func TestNewInterfaceKeepsAddrsWhenPresent(t *testing.T) {
- 		t.Fatalf("yaml.Marshal returned error: %v", err)
- 	}
- 	if !strings.Contains(string(out), "10.0.0.1/24") {
--		t.Errorf("marshalled yaml is missing the addrs value:\n%s", out)
-+		t.Errorf("marshalled YAML is missing the 'addrs' field:\n%s", out)
-+	}
-+}
-+
-+// interface.addrs used a plain != nil check, so `addrs: []` asserted nothing
-+// and passed silently. It must now warn like file.contents does.
-+func TestInterfaceEmptyAddrsWarns(t *testing.T) {
-+	sys := &system.System{
-+		NewInterface: func(context.Context, string, *system.System, util.Config) system.Interface {
-+			return &fakeSysInterface{addrs: []string{"10.0.0.1/24"}}
-+		},
-+	}
-+
-+	i := &Interface{id: "eth0", Exists: true, Addrs: []any{}}
-+	out := captureStderr(t, func() { i.Validate(sys) })
-+
-+	if !strings.Contains(out, "WARNING:") || !strings.Contains(out, "interface.addrs") {
-+		t.Errorf("Validate with empty 'addrs' field, stderr = %q, want a WARNING naming interface.addrs", out)
- 	}
- }
-```
-
-**File**: `resource/mount.go` (modified, +2/-2)
-```diff
-@@ -68,10 +68,10 @@ func (m *Mount) Validate(sys *system.System) []TestResult {
- 	if shouldSkip(results) {
- 		skip = true
- 	}
--	if m.Opts != nil {
-+	if isSetWarnEmpty(m.Opts, fmt.Sprintf("%s: mount.opts", m.ID())) {
- 		results = append(results, ValidateValue(m, "opts", m.Opts, sysMount.Opts, skip))
- 	}
--	if m.VfsOpts != nil {
-+	if isSetWarnEmpty(m.VfsOpts, fmt.Sprintf("%s: mount.vfs-opts", m.ID())) {
- 		results = append(results, ValidateValue(m, "vfs-opts", m.VfsOpts, sysMount.VfsOpts, skip))
- 	}
- 	if m.Source != nil {
-```
-
-**File**: `resource/mount_test.go` (added, +55/-0)
-```diff
-@@ -0,0 +1,55 @@
-+package resource
-+
-+import (
-+	"context"
++	"log"
+ 	"net/http"
+ 	"net/http/httptest"
++	"os"
+ 	"path/filepath"
 +	"strings"
-+	"testing"
+ 	"sync"
+ 	"testing"
+ 
+@@ -45,3 +48,36 @@ func TestServeHandlesConcurrentRequests(t *testing.T) {
+ 	}
+ 	wg.Wait()
+ }
 +
-+	"github.com/goss-org/goss/system"
-+	"github.com/goss-org/goss/util"
-+)
++// TestServeDeduplicatesConcurrentCacheMisses covers the cold window: when many
++// probes arrive before any result is cached, they must share one validation
++// run rather than each executing every check against the machine.
++func TestServeDeduplicatesConcurrentCacheMisses(t *testing.T) {
++	var logOutput syncBuffer
++	log.SetOutput(&logOutput)
++	t.Cleanup(func() { log.SetOutput(os.Stderr) })
 +
-+// fakeSysMount is a minimal system.Mount so Validate can run without touching
-+// the real mount table.
-+type fakeSysMount struct{}
++	config, err := util.NewConfig(
++		util.WithSpecFile(filepath.Join("testdata", "matching_basic.yaml")),
++		util.WithOutputFormat("json"),
++	)
++	require.NoError(t, err)
 +
-+func (f *fakeSysMount) MountPoint() string          { return "/" }
-+func (f *fakeSysMount) Exists() (bool, error)       { return true, nil }
-+func (f *fakeSysMount) Opts() ([]string, error)     { return []string{"rw"}, nil }
-+func (f *fakeSysMount) VfsOpts() ([]string, error)  { return []string{"rw"}, nil }
-+func (f *fakeSysMount) Source() (string, error)     { return "/dev/sda1", nil }
-+func (f *fakeSysMount) Filesystem() (string, error) { return "ext4", nil }
-+func (f *fakeSysMount) Usage() (int, error)         { return 10, nil }
++	handler, err := newHealthHandler(config)
++	require.NoError(t, err)
 +
-+// mount.opts used a plain != nil check, so `opts: []` asserted nothing and
-+// passed silently. It must now warn like file.contents does.
-+func TestMountEmptyOptsWarns(t *testing.T) {
-+	sys := &system.System{
-+		NewMount: func(context.Context, string, *system.System, util.Config) system.Mount {
-+			return &fakeSysMount{}
-+		},
++	const n = 16
++	var wg sync.WaitGroup
++	wg.Add(n)
++	for range n {
++		go func() {
++			defer wg.Done()
++			rr := httptest.NewRecorder()
++			handler.ServeHTTP(rr, httptest.NewRequest(http.MethodGet, "/healthz", nil))
++		}()
 +	}
++	wg.Wait()
 +
-+	m := &Mount{id: "/", Exists: true, Opts: []any{}}
-+	out := captureStderr(t, func() { m.Validate(sys) })
-+
-+	if !strings.Contains(out, "WARNING:") || !strings.Contains(out, "mount.opts") {
-+		t.Errorf("Validate with empty 'opts' field, stderr = %q, want a WARNING naming mount.opts", out)
-+	}
-+}
-+
-+// mount.vfs-opts had the same plain != nil check as mount.opts.
-+func TestMountEmptyVfsOptsWarns(t *testing.T) {
-+	sys := &system.System{
-+		NewMount: func(context.Context, string, *system.System, util.Config) system.Mount {
-+			return &fakeSysMount{}
-+		},
-+	}
-+
-+	m := &Mount{id: "/", Exists: true, VfsOpts: []any{}}
-+	out := captureStderr(t, func() { m.Validate(sys) })
-+
-+	if !strings.Contains(out, "WARNING:") || !strings.Contains(out, "mount.vfs-opts") {
-+		t.Errorf("Validate with empty 'vfs-opts' field, stderr = %q, want a WARNING naming mount.vfs-opts", out)
-+	}
++	runs := strings.Count(logOutput.String(), "running tests")
++	require.Equal(t, 1, runs, "%d concurrent requests caused %d validation runs, want 1", n, runs)
 +}
 ```
 
-**File**: `resource/port.go` (modified, +1/-1)
-```diff
-@@ -56,7 +56,7 @@ func (p *Port) Validate(sys *system.System) []TestResult {
- 	if shouldSkip(results) {
- 		skip = true
- 	}
--	if p.IP != nil {
-+	if isSetWarnEmpty(p.IP, fmt.Sprintf("%s: port.ip", p.ID())) {
- 		results = append(results, ValidateValue(p, "ip", p.IP, sysPort.IP, skip))
- 	}
- 	return results
-```
-
 ---
 
-### Incident Patch 9: `5cff96a1` (2026-09-13)
-**Commit Message**: build(deps): bump zensical from 0.0.58 to 0.0.60 in /docs (#1129)
-
-Bumps [zensical](https://github.com/zensical/zensical) from 0.0.58 to 0.0.60.
-- [Release notes](https://github.com/zensical/zensical/releases)
-- [Commits](https://github.com/zensical/zensical/compare/v0.0.58...v0.0.60)
-
----
-updated-dependencies:
-- dependency-name: zensical
-  dependency-version: 0.0.60
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `docs/requirements.txt` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--zensical==0.0.58
-+zensical==0.0.60
-```
-
----
-
-### Incident Patch 10: `a0abfee1` (2026-09-13)
-**Commit Message**: build(deps): bump github/codeql-action from 4.37.9 to 4.38.0 (#1130)
-
-Bumps [github/codeql-action](https://github.com/github/codeql-action) from 4.37.9 to 4.38.0.
-- [Release notes](https://github.com/github/codeql-action/releases)
-- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/github/codeql-action/compare/v4.37.9...v4.38.0)
-
----
-updated-dependencies:
-- dependency-name: github/codeql-action
-  dependency-version: 4.38.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `.github/workflows/docker-goss.yaml` (modified, +1/-1)
-```diff
-@@ -88,6 +88,6 @@ jobs:
-           output: "trivy-results.sarif"
- 
-       - name: Upload Trivy scan results to GitHub Security tab
--        uses: github/codeql-action/upload-sarif@v4.37.9
-+        uses: github/codeql-action/upload-sarif@v4.38.0
-         with:
-           sarif_file: "trivy-results.sarif"
-```
-
-**File**: `.github/workflows/trivy-schedule.yaml` (modified, +1/-1)
-```diff
-@@ -22,6 +22,6 @@ jobs:
-           output: "trivy-results.sarif"
- 
-       - name: Upload Trivy scan results to GitHub Security tab
--        uses: github/codeql-action/upload-sarif@v4.37.9
-+        uses: github/codeql-action/upload-sarif@v4.38.0
-         with:
-           sarif_file: "trivy-results.sarif"
-```
-
----
-
-### Incident Patch 11: `678fad7b` (2026-09-06)
-**Commit Message**: build(deps): bump zensical from 0.0.57 to 0.0.58 in /docs (#1126)
-
-Bumps [zensical](https://github.com/zensical/zensical) from 0.0.57 to 0.0.58.
-- [Release notes](https://github.com/zensical/zensical/releases)
-- [Commits](https://github.com/zensical/zensical/compare/v0.0.57...v0.0.58)
-
----
-updated-dependencies:
-- dependency-name: zensical
-  dependency-version: 0.0.58
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `docs/requirements.txt` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--zensical==0.0.57
-+zensical==0.0.58
-```
-
----
-
-### Incident Patch 12: `f4523ad5` (2026-09-02)
+### Incident Patch 2: `f4523ad5` (2026-09-02)
 **Commit Message**: fix(matchers): an empty map matcher panics instead of reporting a syntax error (#1118)
 
 Co-authored-by: VXNCXNX <[REDACTED_EMAIL]>
@@ -2758,7 +1695,7 @@ Co-authored-by: VXNCXNX <[REDACTED_EMAIL]>
 
 ---
 
-### Incident Patch 13: `ad2b9f53` (2026-09-02)
+### Incident Patch 3: `ad2b9f53` (2026-09-02)
 **Commit Message**: fix(http): stop a request-header without a space after the colon panicking (#1115)
 
 **File**: `resource/file_test.go` (modified, +3/-4)
@@ -2861,269 +1798,13 @@ Co-authored-by: VXNCXNX <[REDACTED_EMAIL]>
 +}
 ```
 
----
-
-### Incident Patch 14: `b08b4181` (2026-09-02)
-**Commit Message**: fix: omit empty lists from generator output (#1113)
-
-Co-authored-by: VXNCXNX <[REDACTED_EMAIL]>
-
-**File**: `integration-tests/goss/alpine3/goss-expected.yaml` (modified, +0/-2)
-```diff
-@@ -33,10 +33,8 @@ port:
-     - 0.0.0.0
-   tcp:9999:
-     listening: false
--    ip: []
-   tcp6:80:
-     listening: false
--    ip: []
- service:
-   apache2:
-     enabled: true
-```
-
-**File**: `integration-tests/goss/bullseye/goss-expected.yaml` (modified, +0/-2)
-```diff
-@@ -33,10 +33,8 @@ port:
-     - 0.0.0.0
-   tcp:9999:
-     listening: false
--    ip: []
-   tcp6:80:
-     listening: false
--    ip: []
- service:
-   apache2:
-     enabled: true
-```
-
-**File**: `integration-tests/goss/jammy/goss-expected.yaml` (modified, +0/-2)
-```diff
-@@ -33,10 +33,8 @@ port:
-     - 0.0.0.0
-   tcp:9999:
-     listening: false
--    ip: []
-   tcp6:80:
-     listening: false
--    ip: []
- service:
-   apache2:
-     enabled: true
-```
-
-**File**: `integration-tests/goss/rockylinux9/goss-expected.yaml` (modified, +0/-2)
-```diff
-@@ -33,10 +33,8 @@ port:
-     - 0.0.0.0
-   tcp:9999:
-     listening: false
--    ip: []
-   tcp6:80:
-     listening: false
--    ip: []
- service:
-   foobar:
-     enabled: false
-```
-
-**File**: `resource/dns.go` (modified, +5/-2)
-```diff
-@@ -112,8 +112,11 @@ func NewDNS(sysDNS system.DNS, config util.Config) (*DNS, error) {
- 		Server:     server,
- 	}
- 	if !contains(config.IgnoreList, "addrs") {
--		addrs, _ := sysDNS.Addrs()
--		d.Addrs = addrs
-+		// An empty list asserts nothing, so leave Addrs unset and let omitempty
-+		// drop it rather than generating `addrs: []`.
-+		if addrs, _ := sysDNS.Addrs(); len(addrs) > 0 {
-+			d.Addrs = addrs
-+		}
- 	}
- 	return d, err
- }
-```
-
-**File**: `resource/dns_test.go` (added, +60/-0)
-```diff
-@@ -0,0 +1,60 @@
-+package resource
-+
-+import (
-+	"strings"
-+	"testing"
-+
-+	"github.com/goss-org/goss/util"
-+	"gopkg.in/yaml.v3"
-+)
-+
-+// fakeSysDNS is a minimal system.DNS implementation used to drive NewDNS
-+// without doing a real lookup.
-+type fakeSysDNS struct {
-+	addrs []string
-+}
-+
-+func (f *fakeSysDNS) Host() string              { return "no-such-host-xyz.invalid" }
-+func (f *fakeSysDNS) Addrs() ([]string, error)  { return f.addrs, nil }
-+func (f *fakeSysDNS) Resolvable() (bool, error) { return false, nil }
-+func (f *fakeSysDNS) Exists() (bool, error)     { return false, nil }
-+func (f *fakeSysDNS) Server() string            { return "" }
-+func (f *fakeSysDNS) Qtype() string             { return "" }
-+
-+// TestNewDNSLeavesAddrsUnsetWhenEmpty pins the fix for `goss add dns` writing
-+// `addrs: []` into generated gossfiles for an unresolvable host. An empty list
-+// asserts nothing, so NewDNS must leave Addrs nil (matching the field's
-+// yaml:"addrs,omitempty" tag) rather than assigning the empty slice.
-+func TestNewDNSLeavesAddrsUnsetWhenEmpty(t *testing.T) {
-+	d, err := NewDNS(&fakeSysDNS{addrs: nil}, util.Config{})
-+	if err != nil {
-+		t.Fatalf("NewDNS returned error: %v", err)
-+	}
-+	if d.Addrs != nil {
-+		t.Errorf("NewDNS().Addrs = %#v, want nil", d.Addrs)
-+	}
-+
-+	out, err := yaml.Marshal(d)
-+	if err != nil {
-+		t.Fatalf("yaml.Marshal returned error: %v", err)
-+	}
-+	if strings.Contains(string(out), "addrs:") {
-+		t.Errorf("marshalled yaml contains an addrs key, want it omitted:\n%s", out)
-+	}
-+}
-+
-+// TestNewDNSKeepsAddrsWhenPresent makes sure the empty-list guard does not drop
-+// real values.
-+func TestNewDNSKeepsAddrsWhenPresent(t *testing.T) {
-+	d, err := NewDNS(&fakeSysDNS{addrs: []string{"127.0.0.1"}}, util.Config{})
-+	if err != nil {
-+		t.Fatalf("NewDNS returned error: %v", err)
-+	}
-+	out, err := yaml.Marshal(d)
-+	if err != nil {
-+		t.Fatalf("yaml.Marshal returned error: %v", err)
-+	}
-+	if !strings.Contains(string(out), "127.0.0.1") {
-+		t.Errorf("marshalled yaml is missing the addrs value:\n%s", out)
-+	}
-+}
-```
-
-**File**: `resource/interface.go` (modified, +3/-1)
-```diff
-@@ -76,7 +76,9 @@ func NewInterface(sysInterface system.Interface, config util.Config) (*Interface
- 		Exists: exists,
- 	}
- 	if !contains(config.IgnoreList, "addrs") {
--		if addrs, err := sysInterface.Addrs(); err == nil {
-+		// An empty list asserts nothing, so leave Addrs unset and let omitempty
-+		// drop it rather than generating `addrs: []`.
-+		if addrs, err := sysInterface.Addrs(); err == nil && len(addrs) > 0 {
- 			i.Addrs = addrs
- 		}
- 	}
-```
-
-**File**: `resource/interface_test.go` (added, +57/-0)
-```diff
-@@ -0,0 +1,57 @@
-+package resource
-+
-+import (
-+	"strings"
-+	"testing"
-+
-+	"github.com/goss-org/goss/util"
-+	"gopkg.in/yaml.v3"
-+)
-+
-+// fakeSysInterface is a minimal system.Interface implementation used to drive
-+// NewInterface without touching real network interfaces.
-+type fakeSysInterface struct {
-+	addrs []string
-+}
-+
-+func (f *fakeSysInterface) Name() string             { return "eth0" }
-+func (f *fakeSysInterface) Exists() (bool, error)    { return true, nil }
-+func (f *fakeSysInterface) Addrs() ([]string, error) { return f.addrs, nil }
-+func (f *fakeSysInterface) MTU() (int, error)        { return 1500, nil }
-+
-+// TestNewInterfaceLeavesAddrsUnsetWhenEmpty pins the same empty-list problem as
-+// the file and http generators: an interface with no assigned addresses must
-+// not produce `addrs: []`, which asserts nothing.
-+func TestNewInterfaceLeavesAddrsUnsetWhenEmpty(t *testing.T) {
-+	i, err := NewInterface(&fakeSysInterface{addrs: nil}, util.Config{})
-+	if err != nil {
-+		t.Fatalf("NewInterface returned error: %v", err)
-+	}
-+	if i.Addrs != nil {
-+		t.Errorf("NewInterface().Addrs = %#v, want nil", i.Addrs)
-+	}
-+
-+	out, err := yaml.Marshal(i)
-+	if err != nil {
-+		t.Fatalf("yaml.Marshal returned error: %v", err)
-+	}
-+	if strings.Contains(string(out), "addrs:") {
-+		t.Errorf("marshalled yaml contains an addrs key, want it omitted:\n%s", out)
-+	}
-+}
-+
-+// TestNewInterfaceKeepsAddrsWhenPresent makes sure the empty-list guard does
-+// not drop real values.
-+func TestNewInterfaceKeepsAddrsWhenPresent(t *testing.T) {
-+	i, err := NewInterface(&fakeSysInterface{addrs: []string{"10.0.0.1/24"}}, util.Config{})
-+	if err != nil {
-+		t.Fatalf("NewInterface returned error: %v", err)
-+	}
-+	out, err := yaml.Marshal(i)
-+	if err != nil {
-+		t.Fatalf("yaml.Marshal returned error: %v", err)
-+	}
-+	if !strings.Contains(string(out), "10.0.0.1/24") {
-+		t.Errorf("marshalled yaml is missing the addrs value:\n%s", out)
-+	}
-+}
-```
-
----
-
-### Incident Patch 15: `f9c5af2e` (2026-08-29)
-**Commit Message**: build(deps): bump zensical from 0.0.56 to 0.0.57 in /docs (#1124)
-
-Bumps [zensical](https://github.com/zensical/zensical) from 0.0.56 to 0.0.57.
-- [Release notes](https://github.com/zensical/zensical/releases)
-- [Commits](https://github.com/zensical/zensical/compare/v0.0.56...v0.0.57)
-
----
-updated-dependencies:
-- dependency-name: zensical
-  dependency-version: 0.0.57
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `docs/requirements.txt` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--zensical==0.0.56
-+zensical==0.0.57
-```
-
 #### Recent Merged Pull Requests:
+- **PR #1145** (2026-10-18): build(deps): bump github/codeql-action from 4.38.2 to 4.38.3 (@dependabot[bot])
+- **PR #1144** (2026-10-18): build(deps): bump zensical from 0.0.68 to 0.0.70 in /docs (@dependabot[bot])
+- **PR #1140** (2026-10-11): build(deps): bump zensical from 0.0.67 to 0.0.68 in /docs (@dependabot[bot])
 - **PR #1138** (2026-10-04): build(deps): bump github/codeql-action from 4.38.1 to 4.38.2 (@dependabot[bot])
 - **PR #1137** (2026-10-04): build(deps): bump zensical from 0.0.64 to 0.0.67 in /docs (@dependabot[bot])
 - **PR #1135** (2026-09-26): build(deps): bump github/codeql-action from 4.38.0 to 4.38.1 (@dependabot[bot])
-- **PR #1134** (2026-09-26): build(deps): bump alpine from 3.24.1 to 3.24.2 (@dependabot[bot])
-- **PR #1133** (2026-09-26): build(deps): bump zensical from 0.0.62 to 0.0.64 in /docs (@dependabot[bot])
-- **PR #1132** (closed): Fix missed places where the context wasn't passed (@kgaughan)
-- **PR #1131** (2026-09-13): fix(structured): return a failure exit code so serve reports 503 (@VXNCXNX)
-- **PR #1130** (2026-09-13): build(deps): bump github/codeql-action from 4.37.9 to 4.38.0 (@dependabot[bot])
 
 ---
 
@@ -3137,3 +1818,40 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. serve): dedupe concurrent validation runs on a cold cache (#1110)
+
+**RULE**:
+When implementing operations in `serve.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goss-org/goss. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `a79c8fbe`: serve): dedupe concurrent validation runs on a cold cache (#1110). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `serve.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+	// Held across the lookup so a miss does not let a second request start its
+	// own validate() before the first one has filled the cache.
+	h.gossMu.Lock()
+	if tmp, found := h.cache.Get(cacheKey); found {
+	h.gossMu.Unlock()
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+	tmp, found := h.cache.Get(cacheKey)
+	if found {
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `a79c8fbe` are properly handled with clean fallback behavior.

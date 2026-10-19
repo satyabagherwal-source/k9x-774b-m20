@@ -325,8 +325,8 @@
     "sourceUrl": "https://huggingface.co/Contrastive-LM/CLM-v0.1-8B",
     "sourceVersion": "hf-contrastive-lm-clm-v0.1-8b",
     "license": "Open-Source",
-    "contentHash": "b4bf71e9522566d22f79e228f1bf0498b702f986cbabc23832fb93b62cf02909",
-    "lastHarvestedAt": "2026-10-17T22:33:08.648Z",
+    "contentHash": "c52ceed47b9b61914af121f1c677b1017f4312729b988941e1ee997ef43c9f51",
+    "lastHarvestedAt": "2026-10-19T03:14:01.766Z",
     "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b"
   },
   "hf-nvidia-nemotron-3-diarization": {
@@ -5178,5 +5178,55 @@
     "contentHash": "1fd1048d5f9577e098cf480f84342efc21c2a8537d147752081b4ef70ed02290",
     "lastHarvestedAt": "2026-10-19T03:07:54.590Z",
     "learningId": "learn-github-citusdata-citus"
+  },
+  "reshaped-ui-reshaped": {
+    "repository": "reshaped-ui/reshaped",
+    "platform": "github",
+    "sourceUrl": "https://github.com/reshaped-ui/reshaped",
+    "sourceVersion": "6150f4fc",
+    "license": "MIT",
+    "contentHash": "b17a76beaba0786a18947846a9aab460d26f805fd542a7ac451016fc50b05e8a",
+    "lastHarvestedAt": "2026-10-19T03:13:50.159Z",
+    "learningId": "learn-github-reshaped-ui-reshaped"
+  },
+  "actix-actix-web": {
+    "repository": "actix/actix-web",
+    "platform": "github",
+    "sourceUrl": "https://github.com/actix/actix-web",
+    "sourceVersion": "cb58a7de",
+    "license": "Apache-2.0",
+    "contentHash": "420f2dab0594cd919e0f2e90529755d96d29f4f3a2cc6b6e95b363f574374c6e",
+    "lastHarvestedAt": "2026-10-19T03:13:52.120Z",
+    "learningId": "learn-github-actix-actix-web"
+  },
+  "wix-react-native-ui-lib": {
+    "repository": "wix/react-native-ui-lib",
+    "platform": "github",
+    "sourceUrl": "https://github.com/wix/react-native-ui-lib",
+    "sourceVersion": "1d6f609a",
+    "license": "MIT",
+    "contentHash": "c7c975bbb9d022c4c046b0497d39ee9d52652fde5c41a8abc86bbef02eb50afe",
+    "lastHarvestedAt": "2026-10-19T03:13:57.281Z",
+    "learningId": "learn-github-wix-react-native-ui-lib"
+  },
+  "goss-org-goss": {
+    "repository": "goss-org/goss",
+    "platform": "github",
+    "sourceUrl": "https://github.com/goss-org/goss",
+    "sourceVersion": "26d35a47",
+    "license": "Apache-2.0",
+    "contentHash": "a7ba8ab4c2a6ac4cccf05d966fbe40753c097000342f52f7b84280ee3dcf74a5",
+    "lastHarvestedAt": "2026-10-19T03:13:59.286Z",
+    "learningId": "learn-github-goss-org-goss"
+  },
+  "starrocks-starrocks": {
+    "repository": "StarRocks/starrocks",
+    "platform": "github",
+    "sourceUrl": "https://github.com/StarRocks/starrocks",
+    "sourceVersion": "158cf605",
+    "license": "Apache-2.0",
+    "contentHash": "15e4fad01dfccea7cf407044e888ab6df7be7e2a24ce78500c3bae9ddd9cc8ef",
+    "lastHarvestedAt": "2026-10-19T03:14:05.517Z",
+    "learningId": "learn-github-starrocks-starrocks"
   }
 }

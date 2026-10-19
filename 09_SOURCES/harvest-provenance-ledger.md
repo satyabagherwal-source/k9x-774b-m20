@@ -2838,3 +2838,9 @@ Every entry in this ledger must capture:
 | `learn-github-ptomasroos-react-native-scrollable-tab-view` | `https://github.com/ptomasroos/react-native-scrollable-tab-view` | `583a66f7` | Multi-dimensional audit evidence | 2026-10-19T03:07:47.137Z |
 | `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `9d623e5e` | Multi-dimensional audit evidence | 2026-10-19T03:07:49.879Z |
 | `learn-github-citusdata-citus` | `https://github.com/citusdata/citus` | `84489d85` | Multi-dimensional audit evidence | 2026-10-19T03:07:54.590Z |
+| `learn-github-reshaped-ui-reshaped` | `https://github.com/reshaped-ui/reshaped` | `6150f4fc` | Multi-dimensional audit evidence | 2026-10-19T03:13:50.159Z |
+| `learn-github-actix-actix-web` | `https://github.com/actix/actix-web` | `cb58a7de` | Multi-dimensional audit evidence | 2026-10-19T03:13:52.120Z |
+| `learn-github-wix-react-native-ui-lib` | `https://github.com/wix/react-native-ui-lib` | `1d6f609a` | Multi-dimensional audit evidence | 2026-10-19T03:13:57.281Z |
+| `learn-github-goss-org-goss` | `https://github.com/goss-org/goss` | `26d35a47` | Multi-dimensional audit evidence | 2026-10-19T03:13:59.286Z |
+| `learn-huggingface-contrastive-lm-clm-v0-1-8b` | `https://huggingface.co/Contrastive-LM/CLM-v0.1-8B` | `hf-contras` | Multi-dimensional audit evidence | 2026-10-19T03:14:01.766Z |
+| `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `158cf605` | Multi-dimensional audit evidence | 2026-10-19T03:14:05.517Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T03:07:54.596Z",
+  "last_updated": "2026-10-19T03:14:05.529Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -378,14 +378,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
-      "content_hash": "b4bf71e9522566d22f79e228f1bf0498b702f986cbabc23832fb93b62cf02909",
-      "verified_at": "2026-10-17T22:33:08.651Z",
+      "content_hash": "c52ceed47b9b61914af121f1c677b1017f4312729b988941e1ee997ef43c9f51",
+      "verified_at": "2026-10-19T03:14:01.770Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T22:33:08.651Z"
+      "last_updated": "2026-10-19T03:14:01.770Z"
     },
     "nvidia/Nemotron-3-Diarization": {
       "repository": "nvidia/Nemotron-3-Diarization",
@@ -7882,6 +7882,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T03:07:54.595Z"
+    },
+    "reshaped-ui/reshaped": {
+      "repository": "reshaped-ui/reshaped",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-reshaped-ui-reshaped",
+      "content_hash": "b17a76beaba0786a18947846a9aab460d26f805fd542a7ac451016fc50b05e8a",
+      "verified_at": "2026-10-19T03:13:50.172Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T03:13:50.172Z"
+    },
+    "actix/actix-web": {
+      "repository": "actix/actix-web",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-actix-actix-web",
+      "content_hash": "420f2dab0594cd919e0f2e90529755d96d29f4f3a2cc6b6e95b363f574374c6e",
+      "verified_at": "2026-10-19T03:13:52.125Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T03:13:52.125Z"
+    },
+    "wix/react-native-ui-lib": {
+      "repository": "wix/react-native-ui-lib",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-wix-react-native-ui-lib",
+      "content_hash": "c7c975bbb9d022c4c046b0497d39ee9d52652fde5c41a8abc86bbef02eb50afe",
+      "verified_at": "2026-10-19T03:13:57.285Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T03:13:57.285Z"
+    },
+    "goss-org/goss": {
+      "repository": "goss-org/goss",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-goss-org-goss",
+      "content_hash": "a7ba8ab4c2a6ac4cccf05d966fbe40753c097000342f52f7b84280ee3dcf74a5",
+      "verified_at": "2026-10-19T03:13:59.290Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T03:13:59.290Z"
+    },
+    "StarRocks/starrocks": {
+      "repository": "StarRocks/starrocks",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-starrocks-starrocks",
+      "content_hash": "15e4fad01dfccea7cf407044e888ab6df7be7e2a24ce78500c3bae9ddd9cc8ef",
+      "verified_at": "2026-10-19T03:14:05.529Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T03:14:05.529Z"
     }
   },
   "repos": {

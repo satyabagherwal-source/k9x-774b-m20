@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T03:07:54.547Z",
-  "total_verified_learnings": 539,
+  "last_updated": "2026-10-19T03:14:05.479Z",
+  "total_verified_learnings": 544,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -315,22 +315,35 @@
     "learn-github-actix-actix-web": {
       "learning_id": "learn-github-actix-actix-web",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "actix-actix-web",
+      "source": "actix/actix-web",
+      "repository": "actix/actix-web",
       "slug": "actix-actix-web",
       "platform": "github",
       "source_url": "https://github.com/actix/actix-web",
-      "source_version": "HEAD",
-      "content_hash": "538c13e253ba09433c737e25df331b749594b1c76e9d222e25ad4ed2678365b1",
+      "source_version": "cb58a7de",
+      "content_hash": "420f2dab0594cd919e0f2e90529755d96d29f4f3a2cc6b6e95b363f574374c6e",
       "dossier_path": "07_PROJECT_LEARNING/actix-actix-web-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/actix-actix-web-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2059,
+          "title": "build(deps): bump actions/upload-code-coverage from 1.4.1 to 1.4.4 (#4306)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.559Z"
+      "verified_at": "2026-10-19T03:13:52.050Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-adbar-trafilatura": {
       "learning_id": "learn-github-adbar-trafilatura",
@@ -9528,22 +9541,35 @@
     "learn-github-goss-org-goss": {
       "learning_id": "learn-github-goss-org-goss",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "goss-org-goss",
+      "source": "goss-org/goss",
+      "repository": "goss-org/goss",
       "slug": "goss-org-goss",
       "platform": "github",
       "source_url": "https://github.com/goss-org/goss",
-      "source_version": "HEAD",
-      "content_hash": "ab0ed7e273b251defd8bc8812da6c5e88ddcef8e30c8dfae5bc17747df1edfab",
+      "source_version": "26d35a47",
+      "content_hash": "a7ba8ab4c2a6ac4cccf05d966fbe40753c097000342f52f7b84280ee3dcf74a5",
       "dossier_path": "07_PROJECT_LEARNING/goss-org-goss-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/goss-org-goss-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2061,
+          "title": "serve): dedupe concurrent validation runs on a cold cache (#1110)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.174Z"
+      "verified_at": "2026-10-19T03:13:59.232Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-gotham-rs-gotham": {
       "learning_id": "learn-github-gotham-rs-gotham",
@@ -13793,7 +13819,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Contrastive-LM/CLM-v0.1-8B",
       "source_version": "hf-contrastive-lm-clm-v0.1-8b",
-      "content_hash": "b4bf71e9522566d22f79e228f1bf0498b702f986cbabc23832fb93b62cf02909",
+      "content_hash": "c52ceed47b9b61914af121f1c677b1017f4312729b988941e1ee997ef43c9f51",
       "dossier_path": "07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md",
       "promoted_rules": [
@@ -13803,6 +13829,21 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv3pj25w",
           "verified_at": "2026-10-11T10:55:40.762Z"
+        },
+        {
+          "number": 2062,
+          "title": "Frozen-Encoder Decoupling for Latency-Critical Classification",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2063,
+          "title": "Bidirectional InfoNCE with Hard Negative Mining",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2064,
+          "title": "State-Action Embedding Caching for Agentic Loops",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -13823,7 +13864,7 @@
         "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv44mqua",
         "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv4hvkw7"
       ],
-      "verified_at": "2026-10-17T22:33:08.598Z",
+      "verified_at": "2026-10-19T03:14:01.715Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -32348,22 +32389,35 @@
     "learn-github-reshaped-ui-reshaped": {
       "learning_id": "learn-github-reshaped-ui-reshaped",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "reshaped-ui-reshaped",
+      "source": "reshaped-ui/reshaped",
+      "repository": "reshaped-ui/reshaped",
       "slug": "reshaped-ui-reshaped",
       "platform": "github",
       "source_url": "https://github.com/reshaped-ui/reshaped",
-      "source_version": "HEAD",
-      "content_hash": "fd95f5a025f7fd1227c44c9f54b6825746aae7c92427e3b7c35a682b88978e72",
+      "source_version": "6150f4fc",
+      "content_hash": "b17a76beaba0786a18947846a9aab460d26f805fd542a7ac451016fc50b05e8a",
       "dossier_path": "07_PROJECT_LEARNING/reshaped-ui-reshaped-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/reshaped-ui-reshaped-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2058,
+          "title": "Image: render the fallback when loading fails before hydration (#666)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.254Z"
+      "verified_at": "2026-10-19T03:13:50.105Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-resocoder-flutter-tdd-clean-architecture-course": {
       "learning_id": "learn-github-resocoder-flutter-tdd-clean-architecture-course",
@@ -35041,22 +35095,35 @@
     "learn-github-starrocks-starrocks": {
       "learning_id": "learn-github-starrocks-starrocks",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "starrocks-starrocks",
+      "source": "StarRocks/starrocks",
+      "repository": "StarRocks/starrocks",
       "slug": "starrocks-starrocks",
       "platform": "github",
       "source_url": "https://github.com/StarRocks/starrocks",
-      "source_version": "HEAD",
-      "content_hash": "d9e550945b7c3ce3cac65dbaa5fcca4993e926d3c778007060f3daf2d6245e42",
+      "source_version": "158cf605",
+      "content_hash": "15e4fad01dfccea7cf407044e888ab6df7be7e2a24ce78500c3bae9ddd9cc8ef",
       "dossier_path": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2065,
+          "title": "[BugFix] Drop repeated policy lookups and unbounded waits left by the planner lo",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.690Z"
+      "verified_at": "2026-10-19T03:14:05.467Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-startrail-org-leann": {
       "learning_id": "learn-github-startrail-org-leann",
@@ -38766,22 +38833,35 @@
     "learn-github-wix-react-native-ui-lib": {
       "learning_id": "learn-github-wix-react-native-ui-lib",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "wix-react-native-ui-lib",
+      "source": "wix/react-native-ui-lib",
+      "repository": "wix/react-native-ui-lib",
       "slug": "wix-react-native-ui-lib",
       "platform": "github",
       "source_url": "https://github.com/wix/react-native-ui-lib",
-      "source_version": "HEAD",
-      "content_hash": "289fbcfa6ff3efe247eb25d41d080d8184aec342c22041a814eb6b1f91968e22",
+      "source_version": "1d6f609a",
+      "content_hash": "c7c975bbb9d022c4c046b0497d39ee9d52652fde5c41a8abc86bbef02eb50afe",
       "dossier_path": "07_PROJECT_LEARNING/wix-react-native-ui-lib-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/wix-react-native-ui-lib-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2060,
+          "title": "fix/DynamicFontModule - double callback invocation causing SIGABRT on Android (#",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.339Z"
+      "verified_at": "2026-10-19T03:13:57.218Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-wshobson-agents": {
       "learning_id": "learn-github-wshobson-agents",
@@ -74972,6 +75052,118 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T03:07:54.538Z"
+    },
+    "rule-2058": {
+      "learning_id": "rule-2058",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2058,
+      "title": "Image: render the fallback when loading fails before hydration (#666)",
+      "source_url": "https://github.com/reshaped-ui/reshaped",
+      "source_version": "6150f4fc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:13:50.105Z"
+    },
+    "rule-2059": {
+      "learning_id": "rule-2059",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2059,
+      "title": "build(deps): bump actions/upload-code-coverage from 1.4.1 to 1.4.4 (#4306)",
+      "source_url": "https://github.com/actix/actix-web",
+      "source_version": "cb58a7de",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:13:52.050Z"
+    },
+    "rule-2060": {
+      "learning_id": "rule-2060",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2060,
+      "title": "fix/DynamicFontModule - double callback invocation causing SIGABRT on Android (#",
+      "source_url": "https://github.com/wix/react-native-ui-lib",
+      "source_version": "1d6f609a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:13:57.218Z"
+    },
+    "rule-2061": {
+      "learning_id": "rule-2061",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2061,
+      "title": "serve): dedupe concurrent validation runs on a cold cache (#1110)",
+      "source_url": "https://github.com/goss-org/goss",
+      "source_version": "26d35a47",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:13:59.232Z"
+    },
+    "rule-2062": {
+      "learning_id": "rule-2062",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2062,
+      "title": "Frozen-Encoder Decoupling for Latency-Critical Classification",
+      "source_url": "https://huggingface.co/Contrastive-LM/CLM-v0.1-8B",
+      "source_version": "hf-contrastive-lm-clm-v0.1-8b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:14:01.715Z"
+    },
+    "rule-2063": {
+      "learning_id": "rule-2063",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2063,
+      "title": "Bidirectional InfoNCE with Hard Negative Mining",
+      "source_url": "https://huggingface.co/Contrastive-LM/CLM-v0.1-8B",
+      "source_version": "hf-contrastive-lm-clm-v0.1-8b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:14:01.715Z"
+    },
+    "rule-2064": {
+      "learning_id": "rule-2064",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2064,
+      "title": "State-Action Embedding Caching for Agentic Loops",
+      "source_url": "https://huggingface.co/Contrastive-LM/CLM-v0.1-8B",
+      "source_version": "hf-contrastive-lm-clm-v0.1-8b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:14:01.715Z"
+    },
+    "rule-2065": {
+      "learning_id": "rule-2065",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2065,
+      "title": "[BugFix] Drop repeated policy lookups and unbounded waits left by the planner lo",
+      "source_url": "https://github.com/StarRocks/starrocks",
+      "source_version": "158cf605",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:14:05.467Z"
     }
   },
   "aliases": {
