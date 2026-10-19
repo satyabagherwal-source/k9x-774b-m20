@@ -3476,3 +3476,6 @@
 | `CYCLE-20261019-J1HH` | `2026-10-19T20:28:53.957Z` | `AAkira/Napier` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2796` | Yes (`d0514b50...`) |
 | `CYCLE-20261019-J3BN` | `2026-10-19T20:28:56.339Z` | `loft-sh/vcluster` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2797` | Yes (`94e8f36f...`) |
 | `CYCLE-20261019-J6IG` | `2026-10-19T20:29:00.472Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2798` | Yes (`e98ee9d8...`) |
+| `CYCLE-20261019-R0GO` | `2026-10-19T20:35:05.880Z` | `melihandic/deep-in-gsc` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/melihandic-deep-in-gsc-learnings.md` | Yes (`9fa7fa0c...`) |
+| `CYCLE-20261019-R26M` | `2026-10-19T20:35:08.110Z` | `DamascenoRafael/reminders-menubar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2799` | Yes (`72cf32c7...`) |
+| `CYCLE-20261019-R59T` | `2026-10-19T20:35:12.113Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2800` | Yes (`f386cf51...`) |

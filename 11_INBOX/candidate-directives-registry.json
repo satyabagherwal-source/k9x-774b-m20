@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T20:28:51.118Z",
+  "last_updated": "2026-10-19T20:35:05.886Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1927,6 +1927,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-jafforgehq-site-analytics-tool"
+    },
+    {
+      "id": "CD-R0GU",
+      "directive_title": "initial commit — Deep in GSC v3.1",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "melihandic/deep-in-gsc",
+      "source_commit": "bf8cb859",
+      "date_staged": "2026-10-19",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-melihandic-deep-in-gsc"
     }
   ]
 }

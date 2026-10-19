@@ -3483,3 +3483,6 @@ Every entry in this ledger must capture:
 | `learn-github-aakira-napier` | `https://github.com/AAkira/Napier` | `50835e2e` | Multi-dimensional audit evidence | 2026-10-19T20:28:53.960Z |
 | `learn-github-loft-sh-vcluster` | `https://github.com/loft-sh/vcluster` | `7cba11fd` | Multi-dimensional audit evidence | 2026-10-19T20:28:56.341Z |
 | `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `08e1aba1` | Multi-dimensional audit evidence | 2026-10-19T20:29:00.474Z |
+| `learn-github-melihandic-deep-in-gsc` | `https://github.com/melihandic/deep-in-gsc` | `bf8cb859` | Multi-dimensional audit evidence | 2026-10-19T20:35:05.882Z |
+| `learn-github-damascenorafael-reminders-menubar` | `https://github.com/DamascenoRafael/reminders-menubar` | `3ee6f0ac` | Multi-dimensional audit evidence | 2026-10-19T20:35:08.113Z |
+| `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `b1ba5d4d` | Multi-dimensional audit evidence | 2026-10-19T20:35:12.115Z |

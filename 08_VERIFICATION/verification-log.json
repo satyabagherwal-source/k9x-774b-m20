@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-73Q0",
-    "timestamp": "2026-10-19T05:51:48.888Z",
-    "repository": "sentrux/sentrux",
-    "learningId": "learn-github-sentrux-sentrux",
-    "contentHash": "74a62f23226519e67df1ff1258df6d4f8c78ed721e6da95332936f7e0b3e1d9b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-77AV",
-    "timestamp": "2026-10-19T05:51:53.527Z",
-    "repository": "brianegan/flutter_architecture_samples",
-    "learningId": "learn-github-brianegan-flutter_architecture_samples",
-    "contentHash": "9e331ba10bbf73e0855242e01ad67f4158da61dcc8b729ec5a532b6374a3a5ce",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-79M8",
-    "timestamp": "2026-10-19T05:51:56.528Z",
-    "repository": "prometheus/prometheus",
-    "learningId": "learn-github-prometheus-prometheus",
-    "contentHash": "e4fbce6d73653996a7b91b3dfdbba8a286048f3dfc7ffe43f5e4a5274c688b1f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-7CX6",
     "timestamp": "2026-10-19T05:52:00.810Z",
     "repository": "meilisearch/meilisearch",
@@ -7490,6 +7445,51 @@
     "repository": "clockworklabs/SpacetimeDB",
     "learningId": "learn-github-clockworklabs-spacetimedb",
     "contentHash": "e98ee9d802fcdcd214bf61116ea2531d74fb577a3d82ff377c775edc3a408eb8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-R0GO",
+    "timestamp": "2026-10-19T20:35:05.880Z",
+    "repository": "melihandic/deep-in-gsc",
+    "learningId": "learn-github-melihandic-deep-in-gsc",
+    "contentHash": "9fa7fa0cdb513e20342f6bc25df0d29a2eaeee6e643cd15f249446ac4ccb4624",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-R26M",
+    "timestamp": "2026-10-19T20:35:08.110Z",
+    "repository": "DamascenoRafael/reminders-menubar",
+    "learningId": "learn-github-damascenorafael-reminders-menubar",
+    "contentHash": "72cf32c7e6628df4e6c26bb23dad15c84fa16393d39812056355a04c1bb60e7b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-R59T",
+    "timestamp": "2026-10-19T20:35:12.113Z",
+    "repository": "siderolabs/talos",
+    "learningId": "learn-github-siderolabs-talos",
+    "contentHash": "f386cf51af2f4b023d4d6ec3b927ad2754bd7b6fdfeec4cb408c6904e5131326",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

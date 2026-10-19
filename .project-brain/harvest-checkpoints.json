@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T20:29:00.479Z",
+  "last_updated": "2026-10-19T20:35:12.122Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11119,14 +11119,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-siderolabs-talos",
-      "content_hash": "565f9b2d44a29f5456afecfc3d814636beb8a9a1e53da299c62475ecea34251b",
-      "verified_at": "2026-10-19T08:48:55.315Z",
+      "content_hash": "f386cf51af2f4b023d4d6ec3b927ad2754bd7b6fdfeec4cb408c6904e5131326",
+      "verified_at": "2026-10-19T20:35:12.121Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T08:48:55.315Z"
+      "last_updated": "2026-10-19T20:35:12.121Z"
     },
     "zilliztech/claude-context": {
       "repository": "zilliztech/claude-context",
@@ -13482,6 +13482,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T20:28:53.968Z"
+    },
+    "melihandic/deep-in-gsc": {
+      "repository": "melihandic/deep-in-gsc",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-melihandic-deep-in-gsc",
+      "content_hash": "9fa7fa0cdb513e20342f6bc25df0d29a2eaeee6e643cd15f249446ac4ccb4624",
+      "verified_at": "2026-10-19T20:35:05.890Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T20:35:05.890Z"
+    },
+    "DamascenoRafael/reminders-menubar": {
+      "repository": "DamascenoRafael/reminders-menubar",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-damascenorafael-reminders-menubar",
+      "content_hash": "72cf32c7e6628df4e6c26bb23dad15c84fa16393d39812056355a04c1bb60e7b",
+      "verified_at": "2026-10-19T20:35:08.119Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T20:35:08.119Z"
     }
   },
   "repos": {

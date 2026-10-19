@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source**: github ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
-> **Source Version**: `d21101a9`  
+> **Source Version**: `b1ba5d4d`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T08:48:55.143Z  
+> **Timestamp**: 2026-10-19T20:35:11.811Z  
 > **Learning ID**: `learn-github-siderolabs-talos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T08:48:55.138Z  
+> **Harvest Timestamp**: 2026-10-19T20:35:11.805Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Talos Linux is a modern Linux distribution built for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11372 stars
+- **Stars / Engagement**: 11377 stars
 
 ---
 
@@ -1920,11 +1920,16 @@ func ValidateMemoryManagerState(raw []byte, cfg MemoryManagerConfig, machine Mac
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #14658** (2026-10-18): **Issues 14650**
-  *Symptoms*: # feat: add L7 health checking to KubePrism upstreams  **Closes #14650**  ## Problem  KubePrism uses a bare TCP dial on `:6443` to decide whether an upstream API server is healthy. When the node-local etcd loses quorum or stalls, `kube-apiserver` keeps its TCP listener open but fails `/readyz`. KubePrism keeps routing new connections to it, and long-lived HTTP/2 watches stay pinned to the broken upstream.  Reproduced on a 3-CP HA cluster: with kube-apiserver's client traffic to etcd isolated, `KubePrismStatuses.healthy` stayed `true` on all nodes and 63% of requests through `127.0.0.1:7445` on the affected node failed.  ## Solution  Three changes, matching the proposal in #14650.  ### 1. L7 health check via `upstream.Backend`  `go-loadbalancer` already exposes `HealthCheck(ctx) (Tier, error)`. The TCP dial is replaced with `HTTPS GET /readyz`, verifying the cluster CA. On `401`/`403` the check retries with the node-local client certificate when one is present in the KubePrism kubeconfig. Anonymous and client-cert-authenticated `kube-apiserver` configurations are both covered.  ### 2. TCP fallback when no upstream passes L7  Two independent `upstream.List` instances are maintained: `l7Upstreams` (must pass `/readyz`) and `tcpUpstreams` (TCP-reachable). `HandleConn` prefers L7 and falls back to TCP only when `l7Upstreams.Pick()` returns `ErrNoUpstreams`. During a full etcd quorum loss KubePrism keeps serving traffic, so behaviour is never worse than before. `Healthy()` reflects
+- **Issue #14662** (2026-10-19): **chore: make vulncheck happy**
+  *Symptoms*: we are not affected by either vulnerability 
+  **Post-Mortem & Fix Analysis**:
+  > failing vulncheck:  ``` #25 [lint-vulncheck 1/1] RUN --mount=type=bind,source=.disvulncheck.yaml,target=/src/.disvulncheck.yaml --mount=type=cache,target=/.cache,id=talos/.cache go tool github.com/shanduur/dis-vulncheck ./... #25 38.91  #25 38.91 /**************************/ #25 38.91 /*     DIS-VULNCHECK      */ #25 38.91 /*  Vulnerability report  */ #25 38.91 /**************************/ #25 38.91  #25 38.91 Go Toolchain used:  #25 38.91  #25 38.91 Audit has failed #25 38.91 Found 2 failures, 0 ignored, 1 not affected #25 38.91  #25 38.91 Vulnerability #1: GO-2026-4736 #25 38.91 GoBGP vulnerable to a denial of service via the NEXT_HOP path attribute in github.com/osrg/gobgp #25 38.91 More info: https://pkg.go.dev/vuln/GO-2026-4736 #25 38.91 Affected products:  #25 38.91  - pkg:golang/github.com%2Fosrg%2Fgobgp%2Fv4@v4.9.0 #25 38.91 Your code is affected by this vulnerability #25 38.91  #25 38.91 Vulnerability #2: GO-2026-5932 #25 38.91 The golang.org/x/crypto/op
+  > /m
 
-- **Issue #14656** (2026-10-19): **Talos Containers: Bare minimal needed config to get Stage = Running & Ready = True**
-  *Symptoms*: ## Question  I'm currently testing the Talos Containers feature which was announced at TalsoCon by @majabojarska. I know the docs are still in the works in https://github.com/siderolabs/talos/issues/14366, but I have a question nonetheless I'm able to get my container (a Infraprovider) running using the following code (sensitive code obfuscated):  ``` version: v1alpha1 # Indicates the schema used to decode the contents. debug: false # Enable verbose logging to the console. persist: true machine:     type: worker # Defines the role of the machine within the cluster.     token: dmfrex.a8tlob2crksa4aia # The `token` is used by a machine to join the PKI of the cluster.     ca:         crt: LS0XXX==         key: "" cluster: {} --- apiVersion: v1alpha1 kind: EtcFileConfig name: proxmox-infra-provider.yaml mode: 0o600 contents: |-   proxmox:     username: "root"     password: "XXX"     url: "https://XXX:8006/api2/json"     realm: "pam"     insecureSkipVerify: false --- apiVersion: v1alpha1 kind: ContainerConfig name: omni-infra-provider-proxmox image: ghcr.io/siderolabs/omni-infra-provider-proxmox:v0.3.0 args:   - --config-file   - /etc/proxmox-infra-provider.yaml   - --omni-api-endpoint   - https://omni.XXX.dev/   - --omni-service-account-key   - XXX= mounts:   - hostPath:       source: /etc/proxmox-infra-provider.yaml       destination: /etc/proxmox-infra-provider.yaml       options:         - ro   - tmpfs:       destination: /tmp       size: 128MiB security:   profile: restricted
+- **Issue #14661** (2026-10-19): **feat: update Linux to 6.18.57**
+  *Symptoms*: Use the latest LTS. 
+  **Post-Mortem & Fix Analysis**:
+  > /m
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1941,451 +1946,614 @@ func ValidateMemoryManagerState(raw []byte, cfg MemoryManagerConfig, machine Mac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0e17fa32` (2026-10-08)
-**Commit Message**: test: bound NUMA reconciliation triggers by suite lifetime
+### Incident Patch 1: `6788af40` (2026-10-05)
+**Commit Message**: fix: read VMware guestinfo with SecureBoot enabled
 
-A full trigger channel can block after the suite deadline stops the
-controller, leaving the test stuck until the package timeout. Honor
-cancellation on sends, give malformed records independent runtimes,
-and publish fixture repairs atomically so retries see complete data.
+Since v1.14.1 the kernel runs in lockdown=integrity when booted with UEFI
+SecureBoot, and lockdown denies iopl(2). The VMware detection in
+go-vmw-guestrpc treats that as a fatal error, so the platform never reads
+guestinfo: no network metadata and no machine configuration.
 
-Forced cancellation with a full channel reproduced the blocked send.
-NUMA tests passed ten repetitions each in normal and strict FIPS modes.
-The cancellation regression passed 100 runs and failed when cancellation
-handling was removed. make lint-go passed.
+The backdoor port itself is trapped by the hypervisor and does not need a
+raised I/O privilege level. When iopl fails and SecureBoot is enabled, skip
+that check and probe the backdoor directly, the same way talos-vmtoolsd
+already does.
 
-CI failure:
-https://github.com/siderolabs/talos/actions/runs/37792596983
+Verified on vSphere/vCloud Director with a v1.14.2 build carrying this
+change, booted from the SecureBoot VMware image: hostname and static address
+from guestinfo metadata are applied.
 
-Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
+Fixes #14522
 
-**File**: `internal/app/machined/pkg/controllers/hardware/numa_topology_test.go` (modified, +79/-21)
+Signed-off-by: Daniel Chaplin <[REDACTED_EMAIL]>
+Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
+
+**File**: `internal/app/machined/pkg/controllers/runtime/security_state.go` (modified, +4/-29)
 ```diff
-@@ -5,10 +5,12 @@
- package hardware_test
+@@ -31,6 +31,7 @@ import (
  
- import (
-+	"context"
- 	"os"
- 	"path/filepath"
- 	"strconv"
- 	"testing"
-+	"testing/synctest"
- 	"time"
+ 	machineruntime "github.com/siderolabs/talos/internal/app/machined/pkg/runtime"
+ 	"github.com/siderolabs/talos/internal/app/machined/pkg/runtime/v1alpha1/bootloader/sdboot"
++	"github.com/siderolabs/talos/internal/pkg/lockdown"
+ 	"github.com/siderolabs/talos/internal/pkg/secureboot/eventlog"
+ 	"github.com/siderolabs/talos/internal/pkg/selinux"
+ 	"github.com/siderolabs/talos/pkg/machinery/constants"
+@@ -39,9 +40,6 @@ import (
+ 	"github.com/siderolabs/talos/pkg/machinery/resources/v1alpha1"
+ )
  
- 	"github.com/stretchr/testify/assert"
-@@ -31,7 +33,9 @@ func writeNUMAFile(t *testing.T, root, path, data string) {
+-// kernelLockdownPath is the securityfs file exposing the kernel lockdown level.
+-const kernelLockdownPath = "/sys/kernel/security/lockdown"
+-
+ // lockdownPollInterval is the maximum interval between kernel lockdown level reads when
+ // fsnotify events are not seen. It acts as a safety net against missed inotify events.
+ const lockdownPollInterval = 30 * time.Second
+@@ -52,7 +50,7 @@ type SecurityStateController struct {
  
- 	path = filepath.Join(root, path)
- 	require.NoError(t, os.MkdirAll(filepath.Dir(path), 0o755))
--	require.NoError(t, os.WriteFile(path, []byte(data), 0o644))
-+	// Publish complete records: a controller retry can read concurrently with a repair.
-+	require.NoError(t, os.WriteFile(path+".tmp", []byte(data), 0o644))
-+	require.NoError(t, os.Rename(path+".tmp", path))
+ 	// LockdownPath is the on-disk location of the securityfs kernel lockdown file.
+ 	//
+-	// Defaults to [kernelLockdownPath] when empty; overridable for tests.
++	// Defaults to [lockdown.Path] when empty; overridable for tests.
+ 	LockdownPath string
  }
  
- func numaFixture(t *testing.T) string {
-@@ -61,6 +65,45 @@ func numaFixture(t *testing.T) string {
- 	return root
+@@ -61,7 +59,7 @@ func (ctrl *SecurityStateController) lockdownPath() string {
+ 		return ctrl.LockdownPath
+ 	}
+ 
+-	return kernelLockdownPath
++	return lockdown.Path
  }
  
-+func triggerNUMAReconcile(ctx context.Context, reconcileCh chan<- struct{}) error {
-+	select {
-+	case reconcileCh <- struct{}{}:
-+		return nil
-+	case <-ctx.Done():
-+		return ctx.Err()
-+	}
-+}
-+
-+func TestNUMAReconcileCancellation(t *testing.T) {
-+	t.Parallel()
-+
-+	synctest.Test(t, func(t *testing.T) {
-+		ctx, cancel := context.WithCancel(t.Context())
-+		defer cancel()
-+
-+		reconcileCh := make(chan struct{}, 1)
-+		require.NoError(t, triggerNUMAReconcile(ctx, reconcileCh))
-+
-+		done := make(chan error, 1)
-+
-+		go func() {
-+			done <- triggerNUMAReconcile(ctx, reconcileCh)
-+		}()
-+
-+		synctest.Wait()
-+
-+		select {
-+		case err := <-done:
-+			t.Fatalf("trigger returned before delivery or cancellation: %v", err)
-+		default:
-+		}
-+
-+		cancel()
-+		require.ErrorIs(t, <-done, context.Canceled)
-+		require.Len(t, reconcileCh, 1)
-+	})
-+}
-+
- func (suite *NUMATopologySuite) register(root string) chan struct{} {
- 	reconcileCh := make(chan struct{}, 1)
- 	suite.Require().NoError(suite.Runtime().RegisterController(&hardwarectrl.NUMATopologyController{
-@@ -85,7 +128,7 @@ func (suite *NUMATopologySuite) TestInventoryAndRefresh() {
- 	ctest.AssertResource(suite, hardware.NUMATopologyID, func(r *hardware.NUMATopology, asrt *assert.Assertions) { asrt.Equal(expected, *r.TypedSpec()) })
- 	writeNUMAFile(suite.T(), root, "devices/system/cpu/online", "0-3,8\n")
+ // Name implements controller.Controller interface.
+@@ -246,7 +244,7 @@ func (ctrl *SecurityStateController) watchLockdownState(
+ 	for {
+ 		// the level is read after the watch has been established, so that a change landing while
+ 		// it is being read queues another reconcile instead of being missed
+-		if spec.LockdownState, err = readLockdownState(ctrl.lockdownPath()); err != nil {
++		if spec.LockdownState, err = lockdown.ReadState(ctrl.lockdownPath()); err != nil {
+ 			return fmt.Errorf("failed to get kernel lockdown state: %w", err)
+ 		}
  
--	reconcileCh <- struct{}{}
-+	suite.Require().NoError(triggerNUMAReconcile(suite.Ctx(), reconcileCh))
- 
- 	expected.OnlineCPUs = []uint32{0, 1, 2, 3, 8}
- 
-@@ -98,7 +141,7 @@ func (suite *NUMATopologySuite) TestWithdrawAndRecover() {
- 	ctest.AssertResource(suite, hardware.NUMATopologyID, func(r *hardware.NUMATopology, asrt *assert.Assertions) { asrt.Len(r.TypedSpec().Nodes, 3) })
- 	suite.Require().NoError(os.Remove(filepath.Join(root, "devices/system/node/node2/meminfo")))
- 
--	reconcileCh <- struct{}{}
-+	suite.Require().NoError(triggerNUMAReconcile(suite.Ctx(), reconcileCh))
- 
- 	ctest.AssertNoResource[*hardware.NUMATopology](suite, hardware.NUMATopologyID)
- 	writeNUMAFile(suite.T(), root, "devices/system/node/node2/meminfo", "Node 2 MemTotal: 4096 kB\n")
-@@ -120,31 +163,46 @@ func (suite *NUMATopologySuite) TestFallbackAndMissingNodeInterface() {
- 	// A present interface with a missing online file is not a non-NUMA machine.
- 	suite.Require().NoError(os.MkdirAll(filepath.Join(root, "devices/system/node"), 0o755))
- 
--	reconcileCh <- struct{}{}
-+	suite.Require().NoError(triggerNUMAReconcile(suite.Ctx(), reconcileCh))
- 
- 	ctest.AssertNoResource[*hardware.NUMATopology](suite, hardware.NUMATopologyID)
- }
- 
--func (suite *NUMATopologySuite) TestMalformedMemory() {
--	root := numaFixture(suite.T())
-+// Each malformed record gets its own runtime and deadline, without queued triggers
-+// or restart backoff carried over from a previous withdrawal/recovery cycle.
-+func (suite *NUMATopologySuite) TestMalformedMemoryMissingTotal() {
-+	suite.assertMalformedMemory("Node 2 MemFree: 12 kB\n")
-+}
- 
--	reconcileCh := suite.register(root)
--	for _, record := range []string{
--		"Node 2 MemFree: 12 kB\n",
--		"Node 2 MemTotal: broken kB\n",
--		"Node 2 MemTotal: 12 MB\n",
--		"Node 2 MemTotal: 18446744073709551616 kB\n",
--	} {
--		ctest.AssertResource(suite, hardware.NUMATopologyID, func(r *hardware.NUMATopology, asrt *assert.Assertions) { asrt.Len(r.TypedSpec().Nodes, 3) })
--		writeNUMAFile(suite.T(), root, "devices/system/node/node2/meminfo", record)
-+func (suite *NUMATopologySuite) TestMalformedMemoryInvalidTotal() {
-+	suite.assertMalformedMemory("Node 2 MemTotal: broken kB\n")
-+}
-+
-+func (suite *NUMATopologySuite) TestMalformedMemoryInvalidUnit() {
-+	suite.assertMalformedMemory("Node 2 MemTotal: 12 MB\n")
-+}
- 
--		reconcileCh <- struct{}{}
-+func (suite *NUMATopologySuite) TestMalformedMemoryOverflow() {
-+	suite.assertMalformedMemory("Node 2 MemTotal: 18446744073709551616 kB\n")
-+}
- 
--		ctest.AssertNoResource[*hardware.NUMATopology](suite, hardware.NUMATopologyID)
--		writeNUMAFile(suite.T(), root, "devices/system/node/node2/meminfo", "Node 2 MemTotal: 0 kB\n")
--	}
-+func (suite *NUMATopologySuite) assertMalformedMemory(record string) {
-+	suite.T().Helper()
- 
-+	root := numaFixture(suite.T())
-+	reconcileCh := suite.register(root)
- 	ctest.AssertResource(suite, hardware.NUM
-```
-
----
-
-### Incident Patch 2: `b9e82ebd` (2026-10-08)
-**Commit Message**: fix: vm console queue overflows on read
-
-wip
-
-Signed-off-by: Maja Bojarska <[REDACTED_EMAIL]>
-
-**File**: `internal/app/hypervisord/service.go` (modified, +0/-3)
-```diff
-@@ -198,9 +198,6 @@ func (s *Service) release(name string) {
- }
- 
- func relay(stream grpc.BidiStreamingServer[machine.ConsoleRequest, machine.ConsoleResponse], console io.ReadWriter) error {
--	// There is no guest-data queue. Each direction blocks on its destination.
--	// Returning closes the console and lets gRPC cancel blocked Send/Recv calls.
--	// Each worker can publish its terminal result without waiting for the handler.
- 	done := make(chan error, 2)
- 
- 	go func() { done <- sendOutput(stream, console) }()
-```
-
-**File**: `internal/app/hypervisord/vnc.go` (modified, +0/-2)
-```diff
-@@ -84,8 +84,6 @@ func (s *Service) VNCStream(stream grpc.BidiStreamingServer[machine.VNCRequest,
- 	stop := context.AfterFunc(stream.Context(), closeConnection)
- 	defer stop()
- 
--	// No data queues: both directions propagate destination backpressure.
--	// Returning closes the connection and gRPC cancels blocked Send/Recv calls.
- 	done := make(chan error, 2)
- 	go func() { done <- sendVNCOutput(stream, conn) }()
- 	go func() { done <- receiveVNCInput(stream, conn) }()
-```
-
-**File**: `internal/pkg/libvirt/domain/console.go` (modified, +1/-4)
-```diff
-@@ -51,8 +51,7 @@ func consolePreconditionError(message string) error {
- 
- // OpenConsole attaches exclusively to the first serial device of an active,
- // owned domain. It uses a dedicated connection; Close or context cancellation
--// releases the attachment. Slow readers are disconnected when the bounded
--// output queue fills, rather than retaining unbounded guest output.
-+// releases the attachment.
- func (c *Connector) OpenConsole(ctx context.Context, d Domain) (io.ReadWriteCloser, error) {
- 	if err := validateDomain(d); err != nil {
- 		return nil, err
-@@ -413,8 +412,6 @@ func (c *consoleTransport) route(frame []byte) error {
- 		return nil
- 	case <-c.done:
- 		return net.ErrClosed
--	default:
--		return errors.New("console output queue overflow")
+@@ -294,29 +292,6 @@ func queueOnLockdownChange(ctx context.Context, watcher *fsnotify.Watcher, r con
  	}
  }
  
-```
-
-**File**: `internal/pkg/libvirt/domain/console_test.go` (modified, +43/-19)
-```diff
-@@ -5,6 +5,7 @@
- package domain_test
- 
- import (
-+	"bytes"
- 	"context"
- 	"encoding/binary"
- 	"errors"
-@@ -213,8 +214,8 @@ func serveConsoleStream(conn net.Conn, call []byte, mode string, release <-chan
- 	switch mode {
- 	case "loss":
- 		return nil
--	case "flood":
--		return floodConsole(conn, call)
-+	case "burst":
-+		return burstConsole(conn, call)
- 	}
- 
- 	_, err := io.Copy(io.Discard, conn)
-@@ -237,37 +238,60 @@ func consoleTerminalFrame(mode string) (uint32, []byte, bool) {
- 	}
- }
- 
--func floodConsole(conn net.Conn, call []byte) error {
--	for range 64 {
--		if err := consoleReply(conn, call, 3, 2, []byte("output")); err != nil {
--			return err
--		} // overflow closes the peer
-+// The burst exceeds the 16-frame queue several times over but fits in the
-+// socket buffer, so the peer finishes writing with nobody reading.
-+const (
-+	consoleBurstFrames  = 64
-+	consoleBurstPayload = 1024
-+)
-+
-+func consoleBurstFrame(index int) []byte {
-+	payload := make([]byte, consoleBurstPayload)
-+	for i := range payload {
-+		payload[i] = byte('a' + (index+i)%26)
- 	}
- 
--	_, err := io.Copy(io.Discard, conn)
-+	return payload
-+}
- 
--	return err
-+func consoleBurstOutput() []byte {
-+	output := make([]byte, 0, consoleBurstFrames*consoleBurstPayload)
-+	for i := range consoleBurstFrames {
-+		output = append(output, consoleBurstFrame(i)...)
-+	}
-+
-+	return output
-+}
-+
-+// burstConsole reproduces a guest boot, which dumps its serial output far faster
-+// than the reader can forward it. The client must apply backpressure: it is
-+// never disconnected, and no byte may be dropped or reordered.
-+func burstConsole(conn net.Conn, call []byte) error {
-+	for i := range consoleBurstFrames {
-+		if err := consoleReply(conn, call, 3, 2, consoleBurstFrame(i)); err != nil {
-+			return err
-+		}
-+	}
-+
-+	return consoleReply(conn, call, 3, 0, nil)
- }
- 
--func TestConsoleWireBoundsUnreadOutput(t *testing.T) {
-+func TestConsoleWireBackpressuresUnreadOutput(t *testing.T) {
- 	defer goleak.VerifyNone(t, goleak.IgnoreCurrent())
- 
--	connector, d, done, release := consoleFixture(t, "flood")
-+	connector, d, done, release := consoleFixture(t, "burst")
- 	stream, err := connector.OpenConsole(t.Context(), d)
- 
- 	require.NoError(t, err)
- 	defer func() { require.NoError(t, stream.Close()) }()
- 
- 	close(release)
-+	// The whole burst is on the wire before the first read, so the queue is full.
-+	require.NoError(t, <-done)
- 
--	select {
--	case <-done: // the peer may observe EOF or a write error at the queue bound
--	case <-time.After(3 * time.Second):
--		t.Fatal("unread output did not terminate at queue bound")
+-// readLockdownState reads the current kernel lockdown level from securityfs.
+-//
+-// The file lists every level with the active one in brackets, e.g.:
+-//
+-//	[none] integrity confidentiality
+-func readLockdownState(path string) (runtimeres.LockdownState, error) {
+-	contents, err := os.ReadFile(path)
+-	if err != nil {
+-		return runtimeres.LockdownStateNone, err
 -	}
 -
--	_, err = io.ReadAll(stream)
--	require.ErrorContains(t, err, "queue overflow")
-+	output, err := io.ReadAll(stream)
-+	require.NoError(t, err)
-+	require.True(t, bytes.Equal(consoleBurstOutput(), output), "guest output was dropped or reordered")
- }
+-	for field := range strings.FieldsSeq(string(contents)) {
+-		level, ok := strings.CutPrefix(field, "[")
+-		if !ok {
+-			continue
+-		}
+-
+-		return runtimeres.LockdownStateString(strings.TrimSuffix(level, "]"))
+-	}
+-
+-	return runtimeres.LockdownStateNone, fmt.Errorf("failed to parse kernel lockdown level %q", string(contents))
+-}
+-
+ // secureBootAuthorityFingerprints reports the `db` certificates which the firmware used to
+ // authorize the images loaded in this boot, as recorded in PCR 7 of the TPM event log.
+ //
+```
+
+**File**: `internal/app/machined/pkg/runtime/v1alpha1/platform/vmware/vmware_supported.go` (modified, +18/-0)
+```diff
+@@ -24,6 +24,7 @@ import (
  
- func consoleRoundtrip(conn net.Conn, call []byte) error {
+ 	"github.com/siderolabs/talos/internal/app/machined/pkg/runtime"
+ 	platformerrors "github.com/siderolabs/talos/internal/app/machined/pkg/runtime/v1alpha1/platform/errors"
++	"github.com/siderolabs/talos/internal/pkg/lockdown"
+ 	"github.com/siderolabs/talos/pkg/machinery/constants"
+ 	runtimeres "github.com/siderolabs/talos/pkg/machinery/resources/runtime"
+ )
+@@ -132,6 +133,23 @@ func readConfigFromOvf(rpci *nanotoolbox.RPCI, key string) ([]byte, error) {
+ 
+ func initializeRPCI() (*nanotoolbox.RPCI, error) {
+ 	inVMWare, err := hypercall.IsVMWareVM()
++	if errors.Is(err, hypercall.ErrSetPivilegeLevel) {
++		// kernel lockdown denies iopl(2), which the hypercall package only uses as a pre-check: the backdoor itself does not need it
++		ioplErr := err
++
++		switch lockdownState, lockdownErr := lockdown.ReadState(lockdown.Path); {
++		case lockdownErr != nil:
++			log.Printf("failed to read kernel lockdown state: %s", lockdownErr)
++		case lockdownState != runtimeres.LockdownStateNone:
++			log.Printf("kernel lockdown is %s, ignoring I/O privilege level error and probing the VMware backdoor directly", lockdownState)
++
++			inVMWare, err = hypercall.IsVirtual()
++			if err != nil {
++				err = fmt.Errorf("%w (I/O privilege level pre-check skipped under kernel lockdown: %w)", err, ioplErr)
++			}
++		}
++	}
++
+ 	if err != nil {
+ 		return nil, fmt.Errorf("could not determine if we are running in VMWare VM: %w", err)
+ 	}
+```
+
+**File**: `internal/pkg/lockdown/lockdown.go` (added, +40/-0)
+```diff
+@@ -0,0 +1,40 @@
++// This Source Code Form is subject to the terms of the Mozilla Public
++// License, v. 2.0. If a copy of the MPL was not distributed with this
++// file, You can obtain one at http://mozilla.org/MPL/2.0/.
++
++// Package lockdown reads the kernel lockdown level from securityfs.
++package lockdown
++
++import (
++	"fmt"
++	"os"
++	"strings"
++
++	runtimeres "github.com/siderolabs/talos/pkg/machinery/resources/runtime"
++)
++
++// Path is the securityfs file exposing the kernel lockdown level.
++const Path = "/sys/kernel/security/lockdown"
++
++// ReadState reads the current kernel lockdown level from securityfs.
++//
++// The file lists every level with the active one in brackets, e.g.:
++//
++//	[none] integrity confidentiality
++func ReadState(path string) (runtimeres.LockdownState, error) {
++	contents, err := os.ReadFile(path)
++	if err != nil {
++		return runtimeres.LockdownStateNone, err
++	}
++
++	for field := range strings.FieldsSeq(string(contents)) {
++		level, ok := strings.CutPrefix(field, "[")
++		if !ok {
++			continue
++		}
++
++		return runtimeres.LockdownStateString(strings.TrimSuffix(level, "]"))
++	}
++
++	return runtimeres.LockdownStateNone, fmt.Errorf("failed to parse kernel lockdown level %q", string(contents))
++}
+```
+
+**File**: `internal/pkg/lockdown/lockdown_test.go` (added, +77/-0)
+```diff
+@@ -0,0 +1,77 @@
++// This Source Code Form is subject to the terms of the Mozilla Public
++// License, v. 2.0. If a copy of the MPL was not distributed with this
++// file, You can obtain one at http://mozilla.org/MPL/2.0/.
++
++package lockdown_test
++
++import (
++	"os"
++	"path/filepath"
++	"testing"
++
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++
++	"github.com/siderolabs/talos/internal/pkg/lockdown"
++	runtimeres "github.com/siderolabs/talos/pkg/machinery/resources/runtime"
++)
++
++func TestReadState(t *testing.T) {
++	t.Parallel()
++
++	for _, test := range []struct {
++		name     string
++		contents string
++
++		expected    runtimeres.LockdownState
++		expectError bool
++	}{
++		{
++			name:     "none",
++			contents: "[none] integrity confidentiality\n",
++			expected: runtimeres.LockdownStateNone,
++		},
++		{
++			name:     "integrity",
++			contents: "none [integrity] confidentiality\n",
++			expected: runtimeres.LockdownStateIntegrity,
++		},
++		{
++			name:     "confidentiality",
++			contents: "none integrity [confidentiality]\n",
++			expected: runtimeres.LockdownStateConfidentiality,
++		},
++		{
++			name:        "no active level",
++			contents:    "none integrity confidentiality\n",
++			expectError: true,
++		},
++		{
++			name:        "unknown level",
++			contents:    "[paranoid] none\n",
++			expectError: true,
++		},
++	} {
++		t.Run(test.name, func(t *testing.T) {
++			t.Parallel()
++
++			path := filepath.Join(t.TempDir(), "lockdown")
++			require.NoError(t, os.WriteFile(path, []byte(test.contents), 0o644))
++
++			state, err := lockdown.ReadState(path)
++			if test.expectError {
++				assert.Error(t, err)
++			} else {
++				require.NoError(t, err)
++				assert.Equal(t, test.expected, state)
++			}
++		})
++	}
++
++	t.Run("missing file", func(t *testing.T) {
++		t.Parallel()
++
++		_, err := lockdown.ReadState(filepath.Join(t.TempDir(), "missing"))
++		assert.ErrorIs(t, err, os.ErrNotExist)
++	})
++}
 ```
 
 ---
 
-### Incident Patch 3: `3c0838b3` (2026-10-08)
-**Commit Message**: test: isolate concurrent IPv4 route scope fixtures
+### Incident Patch 2: `715cfccf` (2026-10-01)
+**Commit Message**: fix: parse EFI load options with an empty description
 
-Scope-mismatch fixtures still shared a route key, so overlapping tests
-could fail with EEXIST before checking scope replacement. Use the live
-interface index as the metric and restrict lookup and teardown checks
-to that same key.
+UnmarshalLoadOption finds the end of the description with
+bytes.Index(data[6:], {0, 0}). With an empty description it matches at
+offset 0, the device path starts one byte too far, and a valid entry
+fails with "declared length of FilePath overruns available data". The
+search also matches across characters ("A" followed by U+0100), and
+the parse fails the same way.
 
-Concurrent unchanged fixtures reproduced the failure. The fix passed
-120 concurrent iterations and three route-suite runs each in normal
-and strict FIPS modes. Removing scope comparison still failed the
-test. make lint-go passed.
+Apple firmware writes such an entry (BootFFFF on a Mac mini 2018 has
+an empty description), so talosctl upgrade on these machines fails at
+"failed to create boot entry" after writing the UKI, without a reboot.
 
-CI failure:
-https://github.com/siderolabs/talos/actions/runs/37798863470
+Look for the null terminator on 2-byte boundaries, as the description
+is a UCS-2 string.
 
-Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
+Signed-off-by: Nicolas Brainez <[REDACTED_EMAIL]>
+Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
 
-**File**: `internal/app/machined/pkg/controllers/network/route_spec_test.go` (modified, +16/-12)
+**File**: `internal/pkg/efivarfs/boot.go` (modified, +27/-13)
 ```diff
-@@ -771,7 +771,7 @@ func (suite *RouteSpecSuite) TestMultipathRouteNumberedNextHops() {
- 	suite.Require().NoError(
- 		retry.Constant(3*time.Second, retry.WithUnits(100*time.Millisecond)).Retry(
- 			func() error {
--				return suite.assertNoRouteInTable(nethelpers.FamilyInet4, destination, table)
-+				return suite.assertNoRouteInTable(nethelpers.FamilyInet4, destination, table, 0)
- 			},
- 		),
- 	)
-@@ -791,6 +791,8 @@ func (suite *RouteSpecSuite) TestIPv4RouteScopeMismatch() {
- 	defer conn.Link.Delete(ifaceIndex) //nolint:errcheck
+@@ -8,9 +8,7 @@
+ package efivarfs
  
- 	destination := netip.MustParsePrefix("10.29.0.0/24")
-+	// A live interface index gives concurrent fixtures distinct route keys in the shared namespace.
-+	priority := ifaceIndex
- 
- 	// install the route out of band with a global scope: everything else matches the spec below, so
- 	// the scope is the only reason for the controller to rewrite it
-@@ -805,7 +807,7 @@ func (suite *RouteSpecSuite) TestIPv4RouteScopeMismatch() {
- 				Attributes: rtnetlink.RouteAttributes{
- 					Dst:      destination.Addr().AsSlice(),
- 					OutIface: ifaceIndex,
--					Priority: network.DefaultRouteMetric,
-+					Priority: priority,
- 					Table:    unix.RT_TABLE_MAIN,
- 				},
- 			},
-@@ -818,7 +820,7 @@ func (suite *RouteSpecSuite) TestIPv4RouteScopeMismatch() {
- 		Destination: destination,
- 		OutLinkName: dummyInterface,
- 		Table:       nethelpers.TableMain,
--		Priority:    network.DefaultRouteMetric,
-+		Priority:    priority,
- 		Protocol:    nethelpers.ProtocolStatic,
- 		Type:        nethelpers.TypeUnicast,
- 		Scope:       nethelpers.ScopeLink,
-@@ -830,7 +832,7 @@ func (suite *RouteSpecSuite) TestIPv4RouteScopeMismatch() {
- 	suite.Require().NoError(
- 		retry.Constant(3*time.Second, retry.WithUnits(100*time.Millisecond)).Retry(
- 			func() error {
--				return suite.assertRoute(destination, netip.Addr{}, func(message rtnetlink.RouteMessage) error {
-+				return suite.assertMultipathRoute(nethelpers.FamilyInet4, destination, nethelpers.TableMain, priority, func(message rtnetlink.RouteMessage) error {
- 					if message.Scope != uint8(nethelpers.ScopeLink) {
- 						return retry.ExpectedErrorf(
- 							"route scope expected %d, got %d",
-@@ -848,7 +850,9 @@ func (suite *RouteSpecSuite) TestIPv4RouteScopeMismatch() {
- 	suite.Require().NoError(suite.State().TeardownAndDestroy(suite.Ctx(), route.Metadata()))
- 	suite.Require().NoError(
- 		retry.Constant(3*time.Second, retry.WithUnits(100*time.Millisecond)).Retry(
--			func() error { return suite.assertNoRoute(destination, netip.Addr{}) },
-+			func() error {
-+				return suite.assertNoRouteInTable(nethelpers.FamilyInet4, destination, nethelpers.TableMain, priority)
-+			},
- 		),
- 	)
+ import (
+-	"bytes"
+ 	"encoding/binary"
+-	"errors"
+ 	"fmt"
+ 	"math"
+ 	"strings"
+@@ -113,6 +111,21 @@ func (e *LoadOption) Marshal() ([]byte, error) {
+ 	return data, nil
  }
-@@ -1021,7 +1025,7 @@ func (suite *RouteSpecSuite) TestNextHopChangeInPlace() {
- 			suite.Assert().Zero(stop(), "route was deleted while changing next-hops")
  
- 			suite.Require().NoError(suite.State().TeardownAndDestroy(suite.Ctx(), route.Metadata()))
--			suite.Assert().NoError(suite.assertNoRouteInTable(test.family, test.destination, table))
-+			suite.Assert().NoError(suite.assertNoRouteInTable(test.family, test.destination, table, 0))
- 		})
++// ucs2Terminator returns the offset of the first 00 00 null code on a 2-byte
++// boundary in data, or -1 if there is none.
++//
++// bytes.Index is not suitable here: it also matches across characters (e.g.
++// "A\u0100" encodes as 41 00 00 01), and is off by one for an empty string.
++func ucs2Terminator(data []byte) int {
++	for i := 0; i+1 < len(data); i += 2 {
++		if data[i] == 0x00 && data[i+1] == 0x00 {
++			return i
++		}
++	}
++
++	return -1
++}
++
+ // UnmarshalLoadOption decodes a binary EFI_LOAD_OPTION into a LoadOption.
+ func UnmarshalLoadOption(data []byte) (*LoadOption, error) {
+ 	if len(data) < 6 {
+@@ -126,27 +139,28 @@ func UnmarshalLoadOption(data []byte) (*LoadOption, error) {
+ 	opt.Hidden = attrs&0x08 != 0
+ 	opt.Inactive = attrs&0x01 == 0
+ 	lenPath := binary.LittleEndian.Uint16(data[4:6])
+-	// Search for UTF-16 null code
+-	nullIdx := bytes.Index(data[6:], []byte{0x00, 0x00})
+-	if nullIdx == -1 {
+-		return nil, errors.New("no null code point marking end of Description found")
++
++	if 6+int(lenPath) > len(data) {
++		return nil, fmt.Errorf("declared length of FilePath (%d) overruns available data (%d)", lenPath, len(data)-6)
++	}
++
++	// The Description terminator must leave room for FilePath: bounding the
++	// scan keeps it out of the device path on a malformed (odd length) description.
++	descriptionEnd := ucs2Terminator(data[6 : len(data)-int(lenPath)])
++	if descriptionEnd == -1 {
++		return nil, fmt.Errorf("no null code point marking end of Description found before FilePath (declared length %d)", lenPath)
  	}
- }
-@@ -1085,7 +1089,7 @@ func (suite *RouteSpecSuite) TestReplaceOwnedRoute() {
- 	suite.Assert().Zero(stop(), "route was deleted instead of being replaced")
  
- 	suite.Require().NoError(suite.State().TeardownAndDestroy(suite.Ctx(), route.Metadata()))
--	suite.Assert().NoError(suite.assertNoRouteInTable(nethelpers.FamilyInet4, destination, table))
-+	suite.Assert().NoError(suite.assertNoRouteInTable(nethelpers.FamilyInet4, destination, table, 0))
+-	descriptionEnd := 6 + nullIdx + 1
+-	descriptionRaw := data[6:descriptionEnd]
++	descriptionEnd += 6
+ 
+-	description, err := Encoding.NewDecoder().Bytes(descriptionRaw)
++	description, err := Encoding.NewDecoder().Bytes(data[6:descriptionEnd])
+ 	if err != nil {
+ 		return nil, fmt.Errorf("error decoding UTF-16 in Description: %w", err)
+ 	}
+ 
+ 	descriptionEnd += 2 // 2 null bytes terminating UTF-16 string
+ 	opt.Description = string(description)
+ 
+-	if descriptionEnd+int(lenPath) > len(data) {
+-		return nil, fmt.Errorf("declared length of FilePath (%d) overruns available data (%d)", lenPath, len(data)-descriptionEnd)
+-	}
+-
+ 	filePathData := data[descriptionEnd : descriptionEnd+int(lenPath)]
+ 
+ 	opt.FilePath, filePathData, err = UnmarshalDevicePath(filePathData)
+```
+
+**File**: `internal/pkg/efivarfs/boot_test.go` (modified, +127/-4)
+```diff
+@@ -17,17 +17,26 @@ import (
+ 	"github.com/siderolabs/talos/internal/pkg/efivarfs"
+ )
+ 
+-// Generated with old working marshaler and manually double-checked
+-//
+-// nolint:errcheck
+-var ref, _ = hex.DecodeString(
++func mustDecodeHex(s string) []byte {
++	b, err := hex.DecodeString(s)
++	if err != nil {
++		panic(err)
++	}
++
++	return b
++}
++
++// Generated with old working marshaler and manually double-checked.
++var ref = mustDecodeHex(
+ 	"010000004a004500780061006d0070006c006500000004012a00010000000" +
+ 		"500000000000000080000000000000014b8a76bad9dd11180b400c04fd430" +
+ 		"c8020204041c005c0074006500730074005c0061002e00650066006900000" +
+ 		"07fff0400",
+ )
+ 
+ func TestEncoding(t *testing.T) {
++	t.Parallel()
++
+ 	opt := efivarfs.LoadOption{
+ 		Description: "Example",
+ 		FilePath: efivarfs.DevicePath{
+@@ -54,10 +63,124 @@ func TestEncoding(t *testing.T) {
+ 	require.Equal(t, &opt, got2, "unmarshaled LoadOption does not match original")
  }
  
- // TestForeignRouteUntouched verifies that a route with the same key created by someone else (another protocol, e.g.
-@@ -1215,7 +1219,7 @@ func (suite *RouteSpecSuite) TestTeardownByKey() {
++// Descriptions exercising the edge cases of the UCS-2 null terminator search.
++var descriptions = []string{
++	"",
++	"A",
++	"Example",
++	// "A" is 41 00 and U+0100 is 00 01: the bytes 00 00 in the middle
++	// are not a null terminator.
++	"A\u0100",
++}
++
+ func FuzzDecode(f *testing.F) {
+ 	f.Add(ref)
++	f.Add(appleBootFFFF)
++
++	for _, description := range descriptions {
++		raw, err := (&efivarfs.LoadOption{
++			Description: description,
++			FilePath:    efivarfs.DevicePath{efivarfs.FilePath("/test/a.efi")},
++		}).Marshal()
++		require.NoError(f, err)
++
++		f.Add(raw)
++	}
++
+ 	f.Fuzz(func(t *testing.T, a []byte) {
+ 		// Just try to see if it crashes
+ 		_, _ = efivarfs.UnmarshalLoadOption(a) //nolint:errcheck
  	})
- 
- 	suite.Require().NoError(suite.State().TeardownAndDestroy(suite.Ctx(), route.Metadata()))
--	suite.Assert().NoError(suite.assertNoRouteInTable(nethelpers.FamilyInet4, destination, table))
-+	suite.Assert().NoError(suite.assertNoRouteInTable(nethelpers.FamilyInet4, destination, table, 0))
  }
++
++// BootFFFF as written by the firmware of a Mac mini 2018 (Macmini8,1): an
++// empty description and a device path to the macOS boot loader.
++var appleBootFFFF = mustDecodeHex(
++	"01000000a600000002010c00d041030a0000000001010600001b010106000000" +
++		"0316100001000000000000000000000004012a0006000000102e2f0700000000" +
++		"0000180000000000217485b5adb28e4fa16120dfa4e3b50e0202040450005c00" +
++		"530079007300740065006d005c004c006900620072006100720079005c004300" +
++		"6f0072006500530065007200760069006300650073005c0062006f006f007400" +
++		"2e0065006600690000007fff0400",
++)
++
++func TestDecodeEmptyDescription(t *testing.T) {
++	t.Parallel()
++
++	got, err := efivarfs.UnmarshalLoadOption(appleBootFFFF)
++	require.NoError(t, err)
++
++	require.Equal(t, "", got.Description)
++	require.False(t, got.Inactive)
++	require.Len(t, got.FilePath, 6) // PciRoot, Pci, Pci, NVMe, HD, File
++	require.IsType(t, &efivarfs.HardDrivePath{}, got.FilePath[4])
++	require.Equal(t, efivarfs.FilePath("/System/Library/CoreServices/boot.efi"), got.FilePath[5])
++	require.Empty(t, got.OptionalData)
++
++	reencoded, err := got.Marshal()
++	require.NoError(t, err)
++	require.Equal(t, appleBootFFFF, reencoded)
++}
++
++func TestDescriptionRoundTrip(t *testing.T) {
++	t.Parallel()
++
++	for _, description := range descriptions {
++		t.Run(description, func(t *testing.T) {
++			t.Parallel()
++
++			opt := efivarfs.LoadOption{
++				Description: description,
++				FilePath: efivarfs.DevicePath{
++					efivarfs.FilePath("/test/a.efi"),
++				},
++				OptionalData: []byte{0x01, 0x02},
++			}
++
++			raw, err := opt.Marshal()
++			require.NoError(t, err)
++
++			got, err := efivarfs.UnmarshalLoadOption(raw)
++			require.NoError(t, err)
++			require.Equal(t, &opt, got)
++		})
++	}
++}
++
++func TestDecodeMalformedDescription(t *testing.T) {
++	t.Parallel()
++
++	opt := efivarfs.LoadOption{
++		Description: "Example",
++		FilePath: efivarfs.DevicePath{
++			&efivarfs.HardDrivePath{
++				PartitionNumber:     1,
++				PartitionStartBlock: 5,
++				PartitionSizeBlocks: 8,
++				PartitionMatch: efivarfs.PartitionGPT{
++					PartitionUUID: uuid.NameSpaceX500,
++				},
++			},
++			efivarfs.FilePath("/test/a.efi"),
++		},
++	}
++
++	raw, err := opt.Marshal()
++	require.NoError(t, err)
++
++	// Insert a byte into the description: it is now of odd length and the 00 00
++	// terminator sits at an odd offset. The aligned scan must not pick up a
++	// 00 00 from the HardDrivePath node instead and report a FilePath error.
++	descriptionEnd := 6 + 2*len("Example")
++	malformed := append(append(append([]byte{}, raw[:descriptionEnd]...), 0x41), raw[descriptionEnd:]...)
++
++	_, err = efivarfs.UnmarshalLoadOption(malformed)
++	require.ErrorContains(t, err, "end of Description")
++
++	// Declared FilePath length larger than the whole blob.
++	overrun := append([]byte{}, raw...)
++	overrun[4], overrun[5] = 0xff, 0xff
++
++	_, err = efivarfs.UnmarshalLoadOption(overrun)
++	require.ErrorContains(t, err, "overruns available data")
++}
+```
+
+**File**: `internal/pkg/efivarfs/devicepath_test.go` (modified, +4/-0)
+```diff
+@@ -18,6 +18,8 @@ import (
  
- // TestTeardownAfterProtocolChange verifies that the route is removed on teardown if the spec changed the protocol
-@@ -1263,11 +1267,12 @@ func (suite *RouteSpecSuite) TestTeardownAfterProtocolChange() {
- 	})
+ //nolint:gocyclo
+ func TestMarshalExamples(t *testing.T) {
++	t.Parallel()
++
+ 	cases := []struct {
+ 		name        string
+ 		path        efivarfs.DevicePath
+@@ -77,6 +79,8 @@ func TestMarshalExamples(t *testing.T) {
  
- 	suite.Require().NoError(suite.State().TeardownAndDestroy(suite.Ctx(), route.Metadata()))
--	suite.Assert().NoError(suite.assertNoRouteInTable(nethelpers.FamilyInet4, destination, table))
-+	suite.Assert().NoError(suite.assertNoRouteInTable(nethelpers.FamilyInet4, destination, table, 0))
- }
+ 	for _, c := range cases {
+ 		t.Run(c.name, func(t *testing.T) {
++			t.Parallel()
++
+ 			got, err := c.path.Marshal()
+ 			if err != nil && !c.expectError {
+ 				t.Fatalf("unexpected error: %v", err)
+```
+
+---
+
+### Incident Patch 3: `b1ba5d4d` (2026-10-19)
+**Commit Message**: feat: update Linux to 6.18.57
+
+Use the latest LTS.
+
+Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
+
+**File**: `Makefile` (modified, +1/-1)
+```diff
+@@ -28,7 +28,7 @@ EMBED_TARGET ?= embed
+ TOOLS_PREFIX ?= ghcr.io/siderolabs/tools
+ TOOLS ?= v1.15.0-alpha.0-13-ge952d34
+ PKGS_PREFIX ?= ghcr.io/siderolabs
+-PKGS ?= v1.15.0-alpha.0-55-g465612a
++PKGS ?= v1.15.0-alpha.0-58-g641c033
+ GENERATE_VEX_PREFIX ?= ghcr.io/siderolabs/generate-vex
+ GENERATE_VEX ?= latest
  
- // assertNoRouteInTable checks that there's no route of the family to the destination in the table.
--func (suite *RouteSpecSuite) assertNoRouteInTable(family nethelpers.Family, destination netip.Prefix, table nethelpers.RoutingTable) error {
-+// A zero priority leaves the metric unconstrained.
-+func (suite *RouteSpecSuite) assertNoRouteInTable(family nethelpers.Family, destination netip.Prefix, table nethelpers.RoutingTable, pri
+```
+
+**File**: `hack/release.toml` (modified, +1/-1)
+```diff
+@@ -204,7 +204,7 @@ the name should start with `ptp` (e.g. `/dev/ptp0`, `/dev/ptp_kvm`), and the dev
+     [notes.updates]
+         title = "Component Updates"
+         description = """\
+-Linux: 6.18.56
++Linux: 6.18.57
+ Kubernetes: 1.38.0-alpha.2
+ containerd: 2.3.7
+ runc: 1.5.2
+```
+
+**File**: `pkg/machinery/constants/constants.go` (modified, +1/-1)
+```diff
+@@ -20,7 +20,7 @@ var SupportedArchitectures = []string{
+ 
+ const (
+ 	// DefaultKernelVersion is the default Linux kernel version.
+-	DefaultKernelVersion = "6.18.56-talos"
++	DefaultKernelVersion = "6.18.57-talos"
+ 
+ 	// KernelParamConfig is the kernel parameter name for specifying the URL.
+ 	// to the config.
+```
+
+**File**: `pkg/machinery/gendata/data/pkgs` (modified, +1/-1)
+```diff
+@@ -1 +1 @@
+-v1.15.0-alpha.0-55-g465612a
+\ No newline at end of file
++v1.15.0-alpha.0-58-g641c033
+\ No newline at end of file
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14662** (2026-10-19): chore: make vulncheck happy (@Orzelius)
+- **PR #14661** (2026-10-19): feat: update Linux to 6.18.57 (@smira)
+- **PR #14660** (2026-10-19): fix: high cpu usage by the bridge keepalive dummy qemu vm (@Orzelius)
 - **PR #14658** (closed): Issues 14650 (@vitaly-zverev)
+- **PR #14653** (2026-10-19): fix: route pod CIDRs matching the KubeSpan ULA purpose byte (@eleboucher)
 - **PR #14647** (2026-10-16): release(v1.14.4): prepare release (@smira)
-- **PR #14641** (2026-10-15): release(v1.14.3): prepare release (@smira)
-- **PR #14640** (2026-10-15): fix: disable GSO offload on QEMU 10.2+ (@smira)
-- **PR #14639** (closed): test: ci failures trusted boot and extensions (@shanduur)
-- **PR #14638** (2026-10-14): feat: update containerd to 2.3.7, Linux to 6.18.56 (@smira)
 
 ---
 
@@ -2405,92 +2573,59 @@ Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test: bound NUMA reconciliation triggers by suite lifetime
+## X. read VMware guestinfo with SecureBoot enabled
 
 **RULE**:
-When implementing operations in `internal/app/machined/pkg/controllers/hardware/numa_topology_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/app/machined/pkg/controllers/runtime/security_state.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0e17fa32`: test: bound NUMA reconciliation triggers by suite lifetime. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6788af40`: read VMware guestinfo with SecureBoot enabled. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/app/machined/pkg/controllers/hardware/numa_topology_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/app/machined/pkg/controllers/runtime/security_state.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"context"
-	"testing/synctest"
-	// Publish complete records: a controller retry can read concurrently with a repair.
-	require.NoError(t, os.WriteFile(path+".tmp", []byte(data), 0o644))
-	require.NoError(t, os.Rename(path+".tmp", path))
-func triggerNUMAReconcile(ctx context.Context, reconcileCh chan<- struct{}) error {
-	select {
-	case reconcileCh <- struct{}{}:
-		return nil
-	case <-ctx.Done():
-		return ctx.Err()
-	}
-}
-
-func TestNUMAReconcileCancellation(t *testing.T) {
-	t.Parallel()
-
-	synctest.Test(t, func(t *testing.T) {
-		ctx, cancel := context.WithCancel(t.Context())
-		defer cancel()
-
-		reconcileCh := make(chan struct{}, 1)
-		require.NoError(t, triggerNUMAReconcile(ctx, reconcileCh))
-
-		done := make(chan error, 1)
-
-		go func() {
-			done <- triggerNUMAReconcile(ctx, reconcileCh)
-		}()
-
-		synctest.Wait()
-
-		select {
-		case err := <-done:
-			t.Fatalf("trigger returned before delivery or cancellation: %v", err)
-		default:
-		}
-
-		cancel()
-		require.ErrorIs(t, <-done, context.Canceled)
-		require.Len(t, reconcileCh, 1)
-	})
-}
-
-	suite.Require().NoError(triggerNUMAReconcile(suite.Ctx(), reconcileCh))
-	suite.Require().NoError(triggerNUMAReconcile(suite.Ctx(), reconcileCh))
-	suite.Require().No
+	"github.com/siderolabs/talos/internal/pkg/lockdown"
+	// Defaults to [lockdown.Path] when empty; overridable for tests.
+	return lockdown.Path
+		if spec.LockdownState, err = lockdown.ReadState(ctrl.lockdownPath()); err != nil {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	require.NoError(t, os.WriteFile(path, []byte(data), 0o644))
-	reconcileCh <- struct{}{}
-	reconcileCh <- struct{}{}
-	reconcileCh <- struct{}{}
-func (suite *NUMATopologySuite) TestMalformedMemory() {
-	root := numaFixture(suite.T())
-	reconcileCh := suite.register(root)
-	for _, record := range []string{
-		"Node 2 MemFree: 12 kB\n",
-		"Node 2 MemTotal: broken kB\n",
-		"Node 2 MemTotal: 12 MB\n",
-		"Node 2 MemTotal: 18446744073709551616 kB\n",
-	} {
-		ctest.AssertResource(suite, hardware.NUMATopologyID, func(r *hardware.NUMATopology, asrt *assert.Assertions) { asrt.Len(r.TypedSpec().Nodes, 3) })
-		writeNUMAFile(suite.T(), root, "devices/system/node/node2/meminfo", record)
-		reconcileCh <- struct{}{}
-		ctest.AssertNoResource[*hardware.NUMATopology](suite, hardware.NUMATopologyID)
-		writeNUMAFile(suite.T(), root, "devices/system/node/node2/meminfo", "Node 2 MemTotal: 0 kB\n")
+// kernelLockdownPath is the securityfs file exposing the kernel lockdown level.
+const kernelLockdownPath = "/sys/kernel/security/lockdown"
+
+	// Defaults to [kernelLockdownPath] when empty; overridable for tests.
+	return kernelLockdownPath
+		if spec.LockdownState, err = readLockdownState(ctrl.lockdownPath()); err != nil {
+// readLockdownState reads the current kernel lockdown level from securityfs.
+//
+// The file lists every level with the active one in brackets, e.g.:
+//
+//	[none] integrity confidentiality
+func readLockdownState(path string) (runtimeres.LockdownState, error) {
+	contents, err := os.ReadFile(path)
+	if err != nil {
+		return runtimeres.LockdownStateNone, err
 	}
+
+	for field := range strings.FieldsSeq(string(contents)) {
+		level, ok := strings.CutPrefix(field, "[")
+		if !ok {
+			continue
+		}
+
+		return runtimeres.LockdownStateString(strings.TrimSuffix(level, "]"))
+	}
+
+	return runtimeres.LockdownStateNone, fmt.Errorf("failed to parse kernel lockdown level %q", string(contents))
+}
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0e17fa32` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6788af40` are properly handled with clean fallback behavior.

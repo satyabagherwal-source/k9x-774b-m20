@@ -7383,10 +7383,10 @@
     "repository": "siderolabs/talos",
     "platform": "github",
     "sourceUrl": "https://github.com/siderolabs/talos",
-    "sourceVersion": "d21101a9",
+    "sourceVersion": "b1ba5d4d",
     "license": "MPL-2.0",
-    "contentHash": "565f9b2d44a29f5456afecfc3d814636beb8a9a1e53da299c62475ecea34251b",
-    "lastHarvestedAt": "2026-10-19T08:48:55.311Z",
+    "contentHash": "f386cf51af2f4b023d4d6ec3b927ad2754bd7b6fdfeec4cb408c6904e5131326",
+    "lastHarvestedAt": "2026-10-19T20:35:12.115Z",
     "learningId": "learn-github-siderolabs-talos"
   },
   "zilliztech-claude-context": {
@@ -8958,5 +8958,25 @@
     "contentHash": "d0514b50739a199eaef9530e288d5994fc2e56fe5945fd85d2c24bd6b3a605bd",
     "lastHarvestedAt": "2026-10-19T20:28:53.960Z",
     "learningId": "learn-github-aakira-napier"
+  },
+  "melihandic-deep-in-gsc": {
+    "repository": "melihandic/deep-in-gsc",
+    "platform": "github",
+    "sourceUrl": "https://github.com/melihandic/deep-in-gsc",
+    "sourceVersion": "bf8cb859",
+    "license": "PERMISSIVE_OPEN_SOURCE",
+    "contentHash": "9fa7fa0cdb513e20342f6bc25df0d29a2eaeee6e643cd15f249446ac4ccb4624",
+    "lastHarvestedAt": "2026-10-19T20:35:05.882Z",
+    "learningId": "learn-github-melihandic-deep-in-gsc"
+  },
+  "damascenorafael-reminders-menubar": {
+    "repository": "DamascenoRafael/reminders-menubar",
+    "platform": "github",
+    "sourceUrl": "https://github.com/DamascenoRafael/reminders-menubar",
+    "sourceVersion": "3ee6f0ac",
+    "license": "GPL-3.0",
+    "contentHash": "72cf32c7e6628df4e6c26bb23dad15c84fa16393d39812056355a04c1bb60e7b",
+    "lastHarvestedAt": "2026-10-19T20:35:08.113Z",
+    "learningId": "learn-github-damascenorafael-reminders-menubar"
   }
 }

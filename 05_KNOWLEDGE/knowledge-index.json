@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T20:29:00.445Z",
-  "total_verified_learnings": 911,
+  "last_updated": "2026-10-19T20:35:12.070Z",
+  "total_verified_learnings": 913,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -6291,22 +6291,35 @@
     "learn-github-damascenorafael-reminders-menubar": {
       "learning_id": "learn-github-damascenorafael-reminders-menubar",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "damascenorafael-reminders-menubar",
+      "source": "DamascenoRafael/reminders-menubar",
+      "repository": "DamascenoRafael/reminders-menubar",
       "slug": "damascenorafael-reminders-menubar",
       "platform": "github",
       "source_url": "https://github.com/DamascenoRafael/reminders-menubar",
-      "source_version": "HEAD",
-      "content_hash": "51a7f11bdebba64f5ab88039be968450b506815f9db202ea8724439523ac60f3",
+      "source_version": "3ee6f0ac",
+      "content_hash": "72cf32c7e6628df4e6c26bb23dad15c84fa16393d39812056355a04c1bb60e7b",
       "dossier_path": "07_PROJECT_LEARNING/damascenorafael-reminders-menubar-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/damascenorafael-reminders-menubar-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2799,
+          "title": "Improve UI by showing reminder count hidden from lists and surfaced in Upcoming",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.497Z"
+      "verified_at": "2026-10-19T20:35:08.062Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-danielpetho-fancy": {
       "learning_id": "learn-github-danielpetho-fancy",
@@ -38922,14 +38935,19 @@
       "slug": "siderolabs-talos",
       "platform": "github",
       "source_url": "https://github.com/siderolabs/talos",
-      "source_version": "d21101a9",
-      "content_hash": "565f9b2d44a29f5456afecfc3d814636beb8a9a1e53da299c62475ecea34251b",
+      "source_version": "b1ba5d4d",
+      "content_hash": "f386cf51af2f4b023d4d6ec3b927ad2754bd7b6fdfeec4cb408c6904e5131326",
       "dossier_path": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "promoted_rules": [
         {
           "number": 2440,
           "title": "test: bound NUMA reconciliation triggers by suite lifetime",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2800,
+          "title": "read VMware guestinfo with SecureBoot enabled",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -38938,7 +38956,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T08:48:55.278Z",
+      "verified_at": "2026-10-19T20:35:12.058Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56199,22 +56217,31 @@
     "learn-github-melihandic-deep-in-gsc": {
       "learning_id": "learn-github-melihandic-deep-in-gsc",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "melihandic/deep-in-gsc",
       "repository": "melihandic/deep-in-gsc",
       "slug": "melihandic-deep-in-gsc",
       "platform": "github",
       "source_url": "https://github.com/melihandic/deep-in-gsc",
-      "source_version": "main",
-      "content_hash": "92e91a85b6aff487836b1f33ffee890595b9e7d26b0c7ab838cece5e2eb18b14",
+      "source_version": "bf8cb859",
+      "content_hash": "9fa7fa0cdb513e20342f6bc25df0d29a2eaeee6e643cd15f249446ac4ccb4624",
       "dossier_path": "07_PROJECT_LEARNING/melihandic-deep-in-gsc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/melihandic-deep-in-gsc-learnings.md",
       "promoted_rules": [
         "Rule 1630"
       ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T20:35:05.818Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-joshcarty-google-searchconsole": {
       "learning_id": "learn-github-joshcarty-google-searchconsole",
@@ -92224,6 +92251,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T20:29:00.438Z"
+    },
+    "rule-2799": {
+      "learning_id": "rule-2799",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2799,
+      "title": "Improve UI by showing reminder count hidden from lists and surfaced in Upcoming",
+      "source_url": "https://github.com/DamascenoRafael/reminders-menubar",
+      "source_version": "3ee6f0ac",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T20:35:08.062Z"
+    },
+    "rule-2800": {
+      "learning_id": "rule-2800",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2800,
+      "title": "read VMware guestinfo with SecureBoot enabled",
+      "source_url": "https://github.com/siderolabs/talos",
+      "source_version": "b1ba5d4d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T20:35:12.058Z"
     }
   },
   "aliases": {
