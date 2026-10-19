@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T21:02:31.437Z",
+  "last_updated": "2026-10-19T21:11:40.711Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10984,14 +10984,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-alibaba-zvec",
-      "content_hash": "0b9c1bf70d68c56077bb46333529f25dda56b195360fa822c96c3a10e928511f",
-      "verified_at": "2026-10-19T08:31:47.042Z",
+      "content_hash": "97842af8d1390a3731d3b36ebbaa977d3b35d8b907802b72905027c0e5cc1448",
+      "verified_at": "2026-10-19T21:11:40.711Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T08:31:47.042Z"
+      "last_updated": "2026-10-19T21:11:40.711Z"
     },
     "zenbu-labs/terminal-browser": {
       "repository": "zenbu-labs/terminal-browser",
@@ -13632,6 +13632,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T21:02:31.437Z"
+    },
+    "santifer/santifer-irepair": {
+      "repository": "santifer/santifer-irepair",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-santifer-santifer-irepair",
+      "content_hash": "c01e6ad3c6f8426f1993498e21a76af68569a68e0205032f07b6b93749aea88a",
+      "verified_at": "2026-10-19T21:11:32.022Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T21:11:32.022Z"
+    },
+    "Lessica/TrollFools": {
+      "repository": "Lessica/TrollFools",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-lessica-trollfools",
+      "content_hash": "dd74b76d8a8bcffe199c5c7189fb5e2b5f3c5ebfb8d4e44c014311fbceb1e6ce",
+      "verified_at": "2026-10-19T21:11:34.330Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T21:11:34.330Z"
     }
   },
   "repos": {

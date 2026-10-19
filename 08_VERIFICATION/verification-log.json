@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-NZ7Q",
-    "timestamp": "2026-10-19T06:04:56.198Z",
-    "repository": "pathwaycom/serviette",
-    "learningId": "learn-github-pathwaycom-serviette",
-    "contentHash": "7fa1d91af2467f133e6697680cef92fe65e7f4f41efa94ffa86e5e5e63840564",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-VYX6",
-    "timestamp": "2026-10-19T06:11:09.066Z",
-    "repository": "amir1376/ab-download-manager",
-    "learningId": "learn-github-amir1376-ab-download-manager",
-    "contentHash": "6be36476f49e04587c6826d6bd70e810d6065792d7c6044e730401bb85c5c64f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-W05R",
-    "timestamp": "2026-10-19T06:11:10.671Z",
-    "repository": "bitnami/sealed-secrets",
-    "learningId": "learn-github-bitnami-sealed-secrets",
-    "contentHash": "e0f54001fcdc8f959449b222443c6288e9af54940eba5a14d1ca818235a06dde",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-W4UJ",
     "timestamp": "2026-10-19T06:11:16.747Z",
     "repository": "run-llama/llama_index",
@@ -7492,6 +7447,51 @@
     "contentHash": "a55aee970340d438aef56f0a6bb40a4aceb4f353fe7777aa2240f4b913ad9704",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-1VAK",
+    "timestamp": "2026-10-19T21:11:32.012Z",
+    "repository": "santifer/santifer-irepair",
+    "learningId": "learn-github-santifer-santifer-irepair",
+    "contentHash": "c01e6ad3c6f8426f1993498e21a76af68569a68e0205032f07b6b93749aea88a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-1X2O",
+    "timestamp": "2026-10-19T21:11:34.320Z",
+    "repository": "Lessica/TrollFools",
+    "learningId": "learn-github-lessica-trollfools",
+    "contentHash": "dd74b76d8a8bcffe199c5c7189fb5e2b5f3c5ebfb8d4e44c014311fbceb1e6ce",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-21ZX",
+    "timestamp": "2026-10-19T21:11:40.701Z",
+    "repository": "alibaba/zvec",
+    "learningId": "learn-github-alibaba-zvec",
+    "contentHash": "97842af8d1390a3731d3b36ebbaa977d3b35d8b907802b72905027c0e5cc1448",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

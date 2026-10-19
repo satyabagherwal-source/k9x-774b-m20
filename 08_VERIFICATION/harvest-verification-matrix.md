@@ -3492,3 +3492,6 @@
 | `CYCLE-20261019-FU9W` | `2026-10-19T20:54:24.260Z` | `graphprotocol/graph-node` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2808, Rule 2809` | Yes (`e27b0b41...`) |
 | `CYCLE-20261019-Q4G2` | `2026-10-19T21:02:24.002Z` | `Shubham0812/SwiftUI-Animations` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/shubham0812-swiftui-animations-learnings.md` | Yes (`9ef0571e...`) |
 | `CYCLE-20261019-QA6E` | `2026-10-19T21:02:31.430Z` | `agamm/pseo-next` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2810, Rule 2811, Rule 2812` | Yes (`a55aee97...`) |
+| `CYCLE-20261019-1VAK` | `2026-10-19T21:11:32.012Z` | `santifer/santifer-irepair` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2813` | Yes (`c01e6ad3...`) |
+| `CYCLE-20261019-1X2O` | `2026-10-19T21:11:34.320Z` | `Lessica/TrollFools` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2814` | Yes (`dd74b76d...`) |
+| `CYCLE-20261019-21ZX` | `2026-10-19T21:11:40.701Z` | `alibaba/zvec` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2815` | Yes (`97842af8...`) |

@@ -3499,3 +3499,6 @@ Every entry in this ledger must capture:
 | `learn-github-graphprotocol-graph-node` | `https://github.com/graphprotocol/graph-node` | `190f0aa4` | Multi-dimensional audit evidence | 2026-10-19T20:54:24.262Z |
 | `learn-github-shubham0812-swiftui-animations` | `https://github.com/Shubham0812/SwiftUI-Animations` | `494a3635` | Multi-dimensional audit evidence | 2026-10-19T21:02:24.005Z |
 | `learn-github-agamm-pseo-next` | `https://github.com/agamm/pseo-next` | `2f816d2c` | Multi-dimensional audit evidence | 2026-10-19T21:02:31.432Z |
+| `learn-github-santifer-santifer-irepair` | `https://github.com/santifer/santifer-irepair` | `5c1ce0b2` | Multi-dimensional audit evidence | 2026-10-19T21:11:32.015Z |
+| `learn-github-lessica-trollfools` | `https://github.com/Lessica/TrollFools` | `c5c87b85` | Multi-dimensional audit evidence | 2026-10-19T21:11:34.323Z |
+| `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `1a573058` | Multi-dimensional audit evidence | 2026-10-19T21:11:40.704Z |

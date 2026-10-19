@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T21:02:31.435Z",
-  "total_cycles_completed": 3469,
-  "total_learnings_persisted": 3469,
-  "total_rules_promoted": 2613,
+  "last_updated": "2026-10-19T21:11:40.708Z",
+  "total_cycles_completed": 3472,
+  "total_learnings_persisted": 3472,
+  "total_rules_promoted": 2616,
   "history": [
-    {
-      "timestamp": "2026-10-19T14:33:30.314Z",
-      "repository": "vinceglb/FileKit",
-      "learningId": "learn-github-vinceglb-filekit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T14:33:33.052Z",
-      "repository": "aws/aws-cdk",
-      "learningId": "learn-github-aws-aws-cdk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T14:39:53.280Z",
-      "repository": "Qwen/Qwen3-VL-8B-Instruct",
-      "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T14:39:54.636Z",
       "repository": "1jehuang/jcode",
@@ -1403,6 +1382,27 @@
       "repository": "agamm/pseo-next",
       "learningId": "learn-github-agamm-pseo-next",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T21:11:32.019Z",
+      "repository": "santifer/santifer-irepair",
+      "learningId": "learn-github-santifer-santifer-irepair",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T21:11:34.328Z",
+      "repository": "Lessica/TrollFools",
+      "learningId": "learn-github-lessica-trollfools",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T21:11:40.708Z",
+      "repository": "alibaba/zvec",
+      "learningId": "learn-github-alibaba-zvec",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

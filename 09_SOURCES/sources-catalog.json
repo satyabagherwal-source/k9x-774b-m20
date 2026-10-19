@@ -7293,10 +7293,10 @@
     "repository": "alibaba/zvec",
     "platform": "github",
     "sourceUrl": "https://github.com/alibaba/zvec",
-    "sourceVersion": "c133f205",
+    "sourceVersion": "1a573058",
     "license": "Apache-2.0",
-    "contentHash": "0b9c1bf70d68c56077bb46333529f25dda56b195360fa822c96c3a10e928511f",
-    "lastHarvestedAt": "2026-10-19T08:31:47.036Z",
+    "contentHash": "97842af8d1390a3731d3b36ebbaa977d3b35d8b907802b72905027c0e5cc1448",
+    "lastHarvestedAt": "2026-10-19T21:11:40.704Z",
     "learningId": "learn-github-alibaba-zvec"
   },
   "zenbu-labs-terminal-browser": {
@@ -9058,5 +9058,25 @@
     "contentHash": "a55aee970340d438aef56f0a6bb40a4aceb4f353fe7777aa2240f4b913ad9704",
     "lastHarvestedAt": "2026-10-19T21:02:31.432Z",
     "learningId": "learn-github-agamm-pseo-next"
+  },
+  "santifer-santifer-irepair": {
+    "repository": "santifer/santifer-irepair",
+    "platform": "github",
+    "sourceUrl": "https://github.com/santifer/santifer-irepair",
+    "sourceVersion": "5c1ce0b2",
+    "license": "PERMISSIVE_OPEN_SOURCE",
+    "contentHash": "c01e6ad3c6f8426f1993498e21a76af68569a68e0205032f07b6b93749aea88a",
+    "lastHarvestedAt": "2026-10-19T21:11:32.015Z",
+    "learningId": "learn-github-santifer-santifer-irepair"
+  },
+  "lessica-trollfools": {
+    "repository": "Lessica/TrollFools",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Lessica/TrollFools",
+    "sourceVersion": "c5c87b85",
+    "license": "MIT",
+    "contentHash": "dd74b76d8a8bcffe199c5c7189fb5e2b5f3c5ebfb8d4e44c014311fbceb1e6ce",
+    "lastHarvestedAt": "2026-10-19T21:11:34.323Z",
+    "learningId": "learn-github-lessica-trollfools"
   }
 }

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T21:02:31.365Z",
-  "total_verified_learnings": 921,
+  "last_updated": "2026-10-19T21:11:40.647Z",
+  "total_verified_learnings": 923,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -1302,8 +1302,8 @@
       "slug": "alibaba-zvec",
       "platform": "github",
       "source_url": "https://github.com/alibaba/zvec",
-      "source_version": "c133f205",
-      "content_hash": "0b9c1bf70d68c56077bb46333529f25dda56b195360fa822c96c3a10e928511f",
+      "source_version": "1a573058",
+      "content_hash": "97842af8d1390a3731d3b36ebbaa977d3b35d8b907802b72905027c0e5cc1448",
       "dossier_path": "07_PROJECT_LEARNING/alibaba-zvec-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/alibaba-zvec-learnings.md",
       "promoted_rules": [
@@ -1321,6 +1321,11 @@
           "number": 2406,
           "title": "Iterative Tree Flattening for Unlimited AST Predicate Depth",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2815,
+          "title": "migrate index storage reads to MemoryBlock (#812)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -1328,7 +1333,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T08:31:46.982Z",
+      "verified_at": "2026-10-19T21:11:40.628Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -28340,22 +28345,35 @@
     "learn-github-lessica-trollfools": {
       "learning_id": "learn-github-lessica-trollfools",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "lessica-trollfools",
+      "source": "Lessica/TrollFools",
+      "repository": "Lessica/TrollFools",
       "slug": "lessica-trollfools",
       "platform": "github",
       "source_url": "https://github.com/Lessica/TrollFools",
-      "source_version": "HEAD",
-      "content_hash": "e3f8e3ae8346fb9adbdad560674db4c2fbff54700a67c041d227f34dd34a069f",
+      "source_version": "c5c87b85",
+      "content_hash": "dd74b76d8a8bcffe199c5c7189fb5e2b5f3c5ebfb8d4e44c014311fbceb1e6ce",
       "dossier_path": "07_PROJECT_LEARNING/lessica-trollfools-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lessica-trollfools-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2814,
+          "title": "support injection into Unity apps with dynamically loaded frameworks",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.995Z"
+      "verified_at": "2026-10-19T21:11:34.238Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-letta-ai-letta": {
       "learning_id": "learn-github-letta-ai-letta",
@@ -56451,20 +56469,35 @@
     "learn-github-santifer-santifer-irepair": {
       "learning_id": "learn-github-santifer-santifer-irepair",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "santifer/santifer-irepair",
       "repository": "santifer/santifer-irepair",
       "slug": "santifer-santifer-irepair",
       "platform": "github",
       "source_url": "https://github.com/santifer/santifer-irepair",
-      "source_version": "main",
-      "content_hash": "690e64ea532a1884d8e39679c86322683bcdfc940c5f715d53488e70d2bc6f0d",
+      "source_version": "5c1ce0b2",
+      "content_hash": "c01e6ad3c6f8426f1993498e21a76af68569a68e0205032f07b6b93749aea88a",
       "dossier_path": "07_PROJECT_LEARNING/santifer-santifer-irepair-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/santifer-santifer-irepair-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2813,
+          "title": "correct Spanish anchor link (#el-problema, not #es-el-problema)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T21:11:31.941Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-scrapy-scrapy": {
       "learning_id": "learn-github-scrapy-scrapy",
@@ -92572,6 +92605,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T21:02:31.354Z"
+    },
+    "rule-2813": {
+      "learning_id": "rule-2813",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2813,
+      "title": "correct Spanish anchor link (#el-problema, not #es-el-problema)",
+      "source_url": "https://github.com/santifer/santifer-irepair",
+      "source_version": "5c1ce0b2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T21:11:31.941Z"
+    },
+    "rule-2814": {
+      "learning_id": "rule-2814",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2814,
+      "title": "support injection into Unity apps with dynamically loaded frameworks",
+      "source_url": "https://github.com/Lessica/TrollFools",
+      "source_version": "c5c87b85",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T21:11:34.238Z"
+    },
+    "rule-2815": {
+      "learning_id": "rule-2815",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2815,
+      "title": "migrate index storage reads to MemoryBlock (#812)",
+      "source_url": "https://github.com/alibaba/zvec",
+      "source_version": "1a573058",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T21:11:40.628Z"
     }
   },
   "aliases": {
