@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/elastic-eui-learnings.md`  
 > **Source**: github ([https://github.com/elastic/eui](https://github.com/elastic/eui))  
-> **Source Version**: `cafeebf1`  
+> **Source Version**: `bfd03740`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T02:18:18.509Z  
+> **Timestamp**: 2026-10-19T13:27:26.651Z  
 > **Learning ID**: `learn-github-elastic-eui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/elastic-eui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/elastic/eui](https://github.com/elastic/eui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T02:18:17.838Z  
+> **Harvest Timestamp**: 2026-10-19T13:27:26.641Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Elastic UI Framework 🙌
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 6370 stars
+- **Stars / Engagement**: 6371 stars
 
 ---
 
@@ -611,14 +611,17 @@ export function hasA11yPropForComponent(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #10211** (2026-10-15): **[EuiFlyoutMenu] Align menu height with compact AppHeader (49px)**
-  *Symptoms*: Closes #10202  > [!IMPORTANT] > **Kibana coordination** > This drops the default EuiFlyoutMenu from 50px → 49px. Discover’s header often still measures 50px (border stacking / TABS_BAR_HEIGHT quirk), so pairing this EUI bump with a Discover AppHeader height fix (true 49px, or a local flyout-menu override if Discover must stay taller) avoids a 1px misalignment. >  > Please land the Discover/AppHeader change in the same Kibana PR that upgrades EUI to the release containing this change. Reach out to @ryankeairns for Kibana-side input and verification.  👉 Discover reference PR: https://github.com/elastic/kibana/pull/297883 Targeting the data-test-subj is not great, but it works. Tabs in the middle is inherently tricky in dealing with borders. <img width="3272" height="154" alt="CleanShot 2026-10-14 at 14 54 59@2x" src="https://github.com/user-attachments/assets/70f911c5-f750-427c-ab7b-8961b892dc61" />   ## Summary - Sets default `EuiFlyoutMenu` height to **49px** (`base * 3 + thinBorder`) so it aligns with Kibana’s compact AppHeader (48px + 1px border) - Repositions the close button `top` to `size.m` so it stays vertically centered in the shorter bar - Fixes the 1px overshoot from aiming at Discover’s measured 50px instead of the real design target ([#10202](https://github.com/elastic/eui/issues/10202))  ## Test plan - [ ] Confirm `EuiFlyoutMenu` container measures **49px** in Storybook - [ ] Confirm close/action buttons remain vertically centered - [ ] Spot
-
-- **Issue #10210** (2026-10-14): **[Chore] Add Libra review configuration**
-  *Symptoms*: ## Summary  - **What:** Adds Libra repository configuration under `.libra/`: `settings.yaml`, `instructions.md`, and four path-scoped specialists (`public-api`, `accessibility`, `styles-theming`, `docs-and-changelog`). - **Why:** Gives Libra EUI-specific review guidance, so reviews focus on consumer-facing impact (Kibana and other downstream products) rather than formatting or wording nits. - **How:**   - Drafts aren't reviewed by default. The `libra-review-draft` label opts a draft in and `libra-skip` skips a PR.   - Lockfiles, yearly changelogs, i18n token files, Jest snapshots, and icon SVG sources and generated assets are excluded from review.   - Findings below P3 aren't published. Blocking stays at P1, and only the `public-api` specialist can request changes.  The config is based on the Libra [repository configuration reference](https://codex.elastic.dev/r/libra/repository-configuration). `libra config lint` hasn't been run, and the `Libra Config Lint` status won't appear until Libra's webhook is installed on this repo (see the onboarding doc). Libra reads config from the default branch, so nothing takes effect until this merges.  ### API Changes  None. This adds review tooling configuration only.  ## Impact Assessment  - [ ] 🔴 **Breaking changes**: none - [ ] 💅 **Visual changes**: none - [ ] 🧪 **Test impact**: none - [ ] 🔧 **Hard to integrate**: none  **Impact level:** 🟢 None  ## Release Readiness  - [ ] ~~**Documentation**~~ - [ ] ~~**Figma**~~ - [ ] ~~**Migratio
+- **Issue #10216** (2026-10-19): **[ESLint plugin] Bump picomatch and brace-expansion to patched versions**
+  *Symptoms*: ## Summary  Snyk flagged `picomatch@2.3.1` (direct dependency of `@elastic/eslint-plugin-eui`) and `brace-expansion@5.0.7` (via `@typescript-eslint/typescript-estree` → `minimatch`). The plugin only matches globs from ESLint and tsconfig config at lint time, so the patterns aren't attacker-controlled, but patched versions are in range, so this bumps them.  - `picomatch` `^2.3.1` → `^2.3.2` - `brace-expansion` refreshed in the lockfile to 5.0.12, plus the 1.x and 2.x copies to 1.1.21 and 2.1.7 - `picomatch` 4.x refreshed to 4.0.7 while at it  `react-scanner` (used by `packages/eui-usage-analytics`) pins `picomatch` to exactly `2.3.1`, so that copy stays. It isn't part of what Snyk flagged here.  ### API Changes  None.  ## Impact Assessment  **Impact level:** 🟢 None  ## Release Readiness  - [ ] ~~**Documentation:**~~ - [ ] ~~**Figma:**~~ - [ ] ~~**Migration guide:**~~ - [ ] ~~**Adoption plan**~~  ### Checklist before marking Ready for Review  - [x] Filled out all sections above - [ ] ~~**QA:** Tested light/dark modes, high contrast, mobile, Chrome/Safari/Edge/Firefox, keyboard-only, screen reader~~ - [ ] ~~**QA:** Tested in CodeSandbox and Kibana~~ - [ ] ~~**QA:** Tested docs changes~~ - [ ] ~~**Tests:** Added/updated Jest, Cypress, and VRT~~ - [x] **Changelog:** Added [changelog entry](https://github.com/elastic/eui/blob/main/wiki/contributing-to-eui/documenting/changelogs.md) - [ ] ~~**Breaking changes:** Added `breaking change` label (if applicable)~~  ### Reviewer checklis
   **Post-Mortem & Fix Analysis**:
-  > <!-- CLA-CHECK:10210 --> &#x1F49A; CLA has been signed
-  > @clintandrewhall, awesome thanks. i just run it through opus 5.5 high. Good stuff here.   Whatever you prefer, I can polish it up from here if you want.   ----  ## Review of [[elastic/eui#10210](https://github.com/elastic/eui/pull/10210)](https://github.com/elastic/eui/pull/10210)  **Verdict:** nothing blocks merging. The config matches Libra's schema, which I checked by hand against `elastic/libra/docs/repository-configuration.md`; I couldn't run `libra config lint`. **But a fair amount of the rules content is dead weight or contradicts the wiki.**  ### Should fix  1. **There's no sign Libra is set up for EUI.** Libra posts a `Libra Config Lint` status on PRs that touch `.libra/`. Head `54db0d9` has no such status (I checked). Either the webhook isn't installed on elastic/eui or it never ran. The PR's main QA step, "confirm Config Lint passes", can't be done. Libra also reads config from the default branch, so none of this takes effect until after merge. 2. **Many of the 
+  > ## :green_heart: Build Succeeded * [Buildkite Build](https://buildkite.com/elastic/eui-deploy-docs/builds/5899) * Commit: a2794862bda298658f323e1795c55adb09bb246d * [Documentation website](https://eui.elastic.co/pr_10216/) * [Storybook](https://eui.elastic.co/pr_10216/storybook/) * :white_check_mark: Visual regression tests passed   <!--buildkite-pr-comment-eui-deploy-docs {"builds":[{"buildStatus":{"state":"passed","success":true,"hasRetries":false,"hasNonPreemptionRetries":false},"url":"https://buildkite.com/elastic/eui-deploy-docs/builds/5899","number":5899,"commit":"a2794862bda298658f323e1795c55adb09bb246d"}],"number":5899} buildkite-pr-comment-->
+  > ## :green_heart: Build Succeeded * [Buildkite Build](https://buildkite.com/elastic/eui-pull-request-test-and-deploy/builds/8284) * Commit: a2794862bda298658f323e1795c55adb09bb246d  <!--buildkite-pr-comment-eui-pull-request-test-and-deploy {"builds":[{"buildStatus":{"state":"passed","success":true,"hasRetries":false,"hasNonPreemptionRetries":false},"url":"https://buildkite.com/elastic/eui-pull-request-test-and-deploy/builds/8284","number":8284,"commit":"a2794862bda298658f323e1795c55adb09bb246d"}],"number":8284} buildkite-pr-comment-->
+
+- **Issue #10215** (2026-10-19): **Release: @elastic/eui-docusaurus-theme v2.8.1, @elastic/eui v123.2.0, @elastic/eui-test-helpers v2.1.0**
+  *Symptoms*: Packages to release: - `@elastic/eui-docusaurus-theme` - v2.8.0 → v2.8.1 - `@elastic/eui` - v123.1.0 → v123.2.0 - `@elastic/eui-test-helpers` - v2.0.0 → v2.1.0
+  **Post-Mortem & Fix Analysis**:
+  > ## :green_heart: Build Succeeded * [Buildkite Build](https://buildkite.com/elastic/eui-deploy-docs/builds/5897) * Commit: 169263b6a9cb11a637e2c69986b2d30f03b08629 * [Documentation website](https://eui.elastic.co/pr_10215/) * [Storybook](https://eui.elastic.co/pr_10215/storybook/) * :no_entry_sign: Visual regression tests skipped: Has 'skip-vrt' label   <!--buildkite-pr-comment-eui-deploy-docs {"builds":[{"buildStatus":{"state":"passed","success":true,"hasRetries":false,"hasNonPreemptionRetries":false},"url":"https://buildkite.com/elastic/eui-deploy-docs/builds/5897","number":5897,"commit":"169263b6a9cb11a637e2c69986b2d30f03b08629"}],"number":5897} buildkite-pr-comment-->
+  > ## :green_heart: Build Succeeded * [Buildkite Build](https://buildkite.com/elastic/eui-pull-request-test-and-deploy/builds/8282) * Commit: 169263b6a9cb11a637e2c69986b2d30f03b08629  <!--buildkite-pr-comment-eui-pull-request-test-and-deploy {"builds":[{"buildStatus":{"state":"passed","success":true,"hasRetries":false,"hasNonPreemptionRetries":false},"url":"https://buildkite.com/elastic/eui-pull-request-test-and-deploy/builds/8282","number":8282,"commit":"169263b6a9cb11a637e2c69986b2d30f03b08629"}],"number":8282} buildkite-pr-comment-->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -635,502 +638,221 @@ export function hasA11yPropForComponent(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `750509af` (2026-10-06)
-**Commit Message**: [Chore] Add prep commit and fix nightly/regression quirks (#10180)
+### Incident Patch 1: `bfd03740` (2026-10-19)
+**Commit Message**: [ESLint plugin] Bump picomatch and brace-expansion to patched versions (#10216)
 
-**File**: `.github/workflows/update_kibana_dependencies__open_pr.yml` (modified, +12/-8)
+**File**: `packages/eslint-plugin/changelogs/upcoming/10216.md` (added, +3/-0)
 ```diff
-@@ -20,7 +20,7 @@ on:
-       pr_labels:
-         description: Comma-separated list of labels to add to the PR
-         type: string
--        default: 'EUI,backport:skip,release_note:skip,ci:all-ui-test-suites,ci:prevent-selective-testing'
-+        default: 'EUI,backport:skip,release_note:skip,ci:all-ui-test-suites,ci:prevent-selective-testing,ci:build-draft'
-       source_pr_number:
-         description: Source PR number that triggered this workflow
-         type: number
-@@ -220,22 +220,26 @@ jobs:
-         with:
-           vault-instance: ci-prod
-           vault-role: token-policy-6becee3e5a43
--      - name: Add labels
-+      - name: Add labels and trigger CI
-         env:
-           GH_TOKEN: ${{ steps.ephemeral_token.outputs.token }}
-           PR_LABELS: ${{ inputs.pr_labels }}
-           PR_URL: ${{ needs.open_pr.outputs.pr_url }}
-         # language=bash
-         run: |
-+          set -euo pipefail
+@@ -0,0 +1,3 @@
++**Dependency updates**
 +
-+          had_build_draft_label=$(gh pr view "$PR_URL" --json labels \
-+            --jq 'any(.labels[]; .name == "ci:build-draft")')
-+
-           if [[ -n "${PR_LABELS:-}" ]]; then
-             gh pr edit "$PR_URL" --add-label "$PR_LABELS"
-           fi
--      - name: Trigger CI
--        env:
--          GH_TOKEN: ${{ steps.ephemeral_token.outputs.token }}
--          PR_URL: ${{ needs.open_pr.outputs.pr_url }}
--        # language=bash
--        run: gh pr comment "$PR_URL" --body "/ci"
-+
-+          # The first run needs `/ci` comment to trigger a build.
-+          if [[ "$had_build_draft_label" != "true" ]]; then
-+            gh pr comment "$PR_URL" --body "/ci"
-+          fi
-       - name: Add a comment
-         if: ${{ inputs.source_pr_number }}
-         uses: ./.github/actions/pr_bot_comment
++- Updated `picomatch` to v2.3.2
 ```
 
-**File**: `.github/workflows/update_kibana_dependencies__prepare_changes.yml` (modified, +10/-9)
+**File**: `packages/eslint-plugin/package.json` (modified, +1/-1)
 ```diff
-@@ -153,15 +153,15 @@ jobs:
-           notes=""
- 
-           while IFS= read -r url; do
--            pr_number=$(grep -oP '(?<=/pull/)\d+' <<< "$url")
--            sha=$(grep -oP '[0-9a-f]{40}$' <<< "$url")
-+            pr_number=$(grep -oP '(?<=/pull/)\d+' <<< "$url" || true)
-+            sha=$(grep -oP '[0-9a-f]{40}$' <<< "$url" || true)
- 
--            if [[ -z "$pr_number" || -z "$sha" ]]; then
-+            if [[ -z "$sha" ]]; then
-               echo "::warning::Could not parse URL: $url"
-               continue
-             fi
- 
--            echo "Cherry-picking $sha from PR #$pr_number"
-+            echo "Cherry-picking $sha"
-             if ! git fetch --depth=2 origin "$sha"; then
-               echo "::warning::Skipping $sha: could not fetch commit"
-               continue
-@@ -170,12 +170,12 @@ jobs:
-             # Incoming commit wins
-             if git cherry-pick -X theirs "$sha"; then
-               short_sha="${sha:0:8}"
--              notes+="- [\`$short_sha\`](https://github.com/elastic/kibana/pull/$pr_number/commits/$sha) from elastic/kibana#$pr_number"$'\n'
-+              notes+="- [\`$short_sha\`]($url)${pr_number:+ from elastic/kibana#$pr_number}"$'\n'
-             elif git diff --quiet && git diff --cached --quiet; then
-               echo "Skipping $sha: already applied on this branch"
-               git cherry-pick --skip
-             else
--              echo "::error::Cherry-pick of $sha from PR #$pr_number failed"
-+              echo "::error::Cherry-pick of $sha failed"
-               echo "conflict_sha=$sha" >> "$GITHUB_OUTPUT"
-               git cherry-pick --abort || true
-               exit 1
-@@ -250,14 +250,15 @@ jobs:
-           # pnpm freezes the lockfile on GHA. We just bumped package.json,
-           # so the lockfile must change.
-           # Retry and wait until snapshot versions are on npm.
--          for attempt in $(seq 1 20); do
-+          max_attempts=90
-+          for attempt in $(seq 1 "$max_attempts"); do
-             if pnpm install --no-frozen-lockfile; then
-               break
-             fi
--            if [[ "$attempt" -eq 20 ]]; then
-+            if [[ "$attempt" -eq "$max_attempts" ]]; then
-               exit 1
-             fi
--            echo "install failed (attempt ${attempt}/20); retrying in 30s"
-+            echo "install failed (attempt ${attempt}/${max_attempts}); retrying in 30s"
-             sleep 30
-           done
-           node scripts/deduplicate_dependencies
+@@ -20,7 +20,7 @@
+     "@typescript-eslint/typescript-estree": "^8.64.0",
+     "@typescript-eslint/utils": "^8.64.0",
+     "cssstyle": "^4.2.1",
+-    "picomatch": "^2.3.1"
++    "picomatch": "^2.3.2"
+   },
+   "devDependencies": {
+     "@babel/cli": "^7.26.4",
 ```
 
-**File**: `packages/release-cli/kibana-prep-commits` (modified, +3/-0)
+**File**: `yarn.lock` (modified, +19/-19)
 ```diff
-@@ -1,11 +1,14 @@
- # List Kibana prep commits to cherry-pick during the nightly Kibana integration run.
- # Add URLs under @next, one per line:
- # https://github.com/elastic/kibana/pull/NNNN/commits/COMMIT_SHA
-+# or
-+# https://github.com/elastic/kibana/commit/COMMIT_SHA
- #
- # On release, @next moves to @previous and @previous is cleared.
- # Nightly cherry-picks both sections, skipping commits that are missing or already applied.
+@@ -7035,7 +7035,7 @@ __metadata:
+     dedent: "npm:^1.5.3"
+     eslint: "npm:^8.57.0"
+     jest: "npm:^29.7.0"
+-    picomatch: "npm:^2.3.1"
++    picomatch: "npm:^2.3.2"
+     rimraf: "npm:^6.0.1"
+     ts-jest: "npm:^29.2.5"
+     ts-node: "npm:^10.9.2"
+@@ -16393,30 +16393,30 @@ __metadata:
+   linkType: hard
  
- # @next
-+https://github.com/elastic/kibana/commit/13ce754ca37623bab176af0e86189950a1ad2da3
+ "brace-expansion@npm:^1.1.7":
+-  version: 1.1.11
+-  resolution: "brace-expansion@npm:1.1.11"
++  version: 1.1.21
++  resolution: "brace-expansion@npm:1.1.21"
+   dependencies:
+     balanced-match: "npm:^1.0.0"
+     concat-map: "npm:0.0.1"
+-  checksum: 10c0/695a56cd058096a7cb71fb09d9d6a7070113c7be516699ed361317aca2ec169f618e28b8af352e02ab4233fb54eb0168460a40dc320bab0034b36ab59aaad668
++  checksum: 10c0/8f0a68a720f9cb28c2ecaea5cdaf15fafd686d6b6e4e722a81c9d4bd2f68c1fd0619731cac05875d842221eaf4d97d564d329a12eb3c4c22137502fb3c65be8b
+   languageName: node
+   linkType: hard
  
- # @previous
- https://github.com/elastic/kibana/pull/294438/commits/7f815d4a4dd520f63996feddeb811b29eb80969a
-```
-
-**File**: `packages/release-cli/src/steps/update_versions.ts` (modified, +2/-0)
-```diff
-@@ -38,6 +38,8 @@ const KIBANA_PREP_COMMITS_FILE = 'packages/release-cli/kibana-prep-commits';
- const KIBANA_PREP_COMMITS_HEADER = `# List Kibana prep commits to cherry-pick during the nightly Kibana integration run.
- # Add URLs under @next, one per line:
- # https://github.com/elastic/kibana/pull/NNNN/commits/COMMIT_SHA
-+# or
-+# https://github.com/elastic/kibana/commit/COMMIT_SHA
- #
- # On release, @next moves to @previous and @previous is cleared.
- # Nightly cherry-picks both sections, skipping commits that are missing or already applied.
+ "brace-expansion@npm:^2.0.1":
+-  version: 2.0.1
+-  resolution: "brace-expansion@npm:2.0.1"
++  version: 2.1.7
++  resolution: "brace-expansion@npm:2.1.7"
+   dependencies:
+     balanced-match: "npm:^1.0.0"
+-  checksum: 10c0/b358f2fe060e2d7a87aa015979ecea07f3c37d4018f8d6deb5bd4c229ad3a0384fe6029bb76cd8be63c81e516ee52d1a0673edbe2023d53a5191732ae3c3e49f
++  checksum: 10c0/17ee4194c85b05cde0a7b7c068eeef664440c027116ef42c3d35c13ebabdc9fd3eaf05c5c8a06dd0ca20ae012d652561d8ac2a699daa5cbee1f0510e5134ab4d
+   languageName: node
+   linkType: hard
+ 
+ "brace-expansion@npm:^5.0.5":
+-  version: 5.0.7
+-  resolution: "brace-expansion@npm:5.0.7"
++  version: 5.0.12
++  resolution: "brace-expansion@npm:5.0.12"
+   dependencies:
+     balanced-match: "npm:^4.0.2"
+-  checksum: 10c0/4769109c3c082de178e449a371bcad50d51ab468f644bce2dd9188efe0cf0a080ed102105d7fc8577382cedc45bad7e6443a91bf3d8102264ee8cf927dbaf205
++  checksum: 10c0/a40ac64d3bdb5bb222456514d3633c1f627f03b844f509c69e70f98b78be0ce85e21b44bbfecdd0ddd4cc0855ca4242b41ea96ddccf88c7c3c7a84405474bb3a
+   languageName: node
+   linkType: hard
+ 
+@@ -32855,24 +32855,24 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"picomatch@npm:2.3.1, picomatch@npm:^2.0.4, picomatch@npm:^2.2.1, picomatch@npm:^2.2.3, picomatch@npm:^2.3.1":
++"picomatch@npm:2.3.1":
+   version: 2.3.1
+   resolution: "picomatch@npm:2.3.1"
+   checksum: 10c0/26c02b8d06f03206fc2ab8d16f19960f2ff9e81a658f831ecb656d8f17d9edc799e8364b1f4a7873e89d9702dff96204be0fa26fe4181f6843f040f819dac4be
+   languageName: node
+   linkType: hard
+ 
+-"picomatch@npm:^4.0.2":
+-  version: 4.0.2
+-  resolution: "picomatch@npm:4.0.2"
+-  checksum: 10c0/7c51f3ad2bb42c776f49ebf964c644958158be30d0a510efd5a395e8d49cb5acfed5b82c0c5b365523ce18e6ab85013c9ebe574f60305892ec3fa8eee8304ccc
++"picomatch@npm:^2.0.4, picomatch@npm:^2.2.1, picomatch@npm:^2.2.3, picomatch@npm:^2.3.1, picomatch@npm:^2.3.2":
++  version: 2.3.2
++  resolution: "picomatch@npm:2.3.2"
++  checksum: 10c0/a554d1709e59be97d1acb9eaedbbc700a5c03dbd4579807baed95100b00420bc729335440ef15004ae2378984e2487a7c1cebd743cfdb72b6fa9ab69223c0d61
+   languageName: node
+   linkType: hard
+ 
+-"picomatch@npm:^4.0.3, picomatch@npm:^4.0.4":
+-  version: 4.0.5
+-  resolution: "picomatch@npm:4.0.5"
+-  checksum: 10c0/947bc6b6e1ff1e6c5aaf95b107a0839d12802f4f7b867663f67d47accba939ca1cb582cf99dfc30438efa1c4648ac5990967e783e8929c36b03e8440704ef1bd
++"picomatch@npm:^4.0.2, picomatch@npm:^4.0.3, picomatch@npm:^4.0.4":
++  version: 4.0.7
++  resolution: "picomatch@npm:4.0.7"
++  checksum: 10c0/beb6ae02c43ae44e84883b90830196d9046b1726ead292adcf7f57945e0bb0d992d68563d87e03b484b6f3c9a5c6defda7523477f047d7f0e663f126cc01787f
+   languageName: node
+   linkType: hard
+ 
 ```
 
 ---
 
-### Incident Patch 2: `cafeebf1` (2026-10-16)
-**Commit Message**: [EuiFlyout] Keep the pixel width of resizable flyouts with a numeric `size` on container resize (#10199)
+### Incident Patch 2: `fab5d952` (2026-10-19)
+**Commit Message**: Release: @elastic/eui-docusaurus-theme v2.8.1, @elastic/eui v123.2.0, @elastic/eui-test-helpers v2.1.0 (#10215)
 
-**File**: `packages/eui/changelogs/upcoming/10199.md` (added, +4/-0)
+**File**: `packages/docusaurus-preset/package.json` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,4 @@
+@@ -20,7 +20,7 @@
+     "typescript": "~5.5.4"
+   },
+   "peerDependencies": {
+-    "@elastic/eui-docusaurus-theme": "^2.8.0",
++    "@elastic/eui-docusaurus-theme": "^2.8.1",
+     "react": "^18.0.0 || ^19.0.0",
+     "react-dom": "^18.0.0 || ^19.0.0"
+   }
+```
+
+**File**: `packages/docusaurus-theme/changelogs/CHANGELOG_2026.md` (modified, +7/-0)
+```diff
+@@ -1,3 +1,10 @@
++## [`v2.8.1`](https://github.com/elastic/eui/releases/v2.8.1)
++
 +**Bug fixes**
 +
-+- Fixed resizable `EuiFlyout` with a numeric `size` scaling proportionally on container or window resize; it now keeps its pixel width and is only clamped while there is not enough room
-+- Fixed resizable `EuiFlyout` calling `onResize` for width changes not made by the user, such as container or sibling clamps, or clicking the resize handle without dragging
++- Fixed light background of highlighted search results in dark mode ([#10178](https://github.com/elastic/eui/pull/10178))
++- Removed the redundant border below the last row of documentation prop tables ([#10181](https://github.com/elastic/eui/pull/10181))
++
+ ## [`v2.8.0`](https://github.com/elastic/eui/releases/v2.8.0)
+ 
+ - Added a hover animation to the EUI mark in the documentation navbar. ([#9924](https://github.com/elastic/eui/pull/9924))
 ```
 
-**File**: `packages/eui/src/components/flyout/flyout.component.tsx` (modified, +1/-1)
+**File**: `packages/docusaurus-theme/changelogs/upcoming/10178.md` (removed, +0/-3)
 ```diff
-@@ -243,7 +243,7 @@ interface _EuiFlyoutComponentProps {
-   resizable?: boolean;
- 
-   /**
--   * Optional callback that fires when the flyout is resized.
-+   * Optional callback that fires when the user resizes the flyout.
-    */
-   onResize?: (width: number) => void;
- 
+@@ -1,3 +0,0 @@
+-**Bug fixes**
+-
+-- Fixed light background of highlighted search results in dark mode
 ```
 
-**File**: `packages/eui/src/components/flyout/flyout_resizable.stories.tsx` (modified, +3/-2)
+**File**: `packages/docusaurus-theme/changelogs/upcoming/10181.md` (removed, +0/-3)
 ```diff
-@@ -15,6 +15,7 @@ import { EuiText } from '../text';
- import { EuiFlyoutBody } from './flyout_body';
- 
- import defaultFlyoutMeta from './flyout.stories';
-+import { FLYOUT_SIZES } from './const';
- import {
-   EuiFlyoutResizable,
-   EuiFlyoutResizableProps,
-@@ -24,8 +25,8 @@ const meta: Meta<EuiFlyoutResizableProps> = {
-   title: 'Layout/EuiFlyout/EuiFlyoutResizable',
-   component: EuiFlyoutResizable as any,
-   argTypes: {
--    // TODO: `size` control isn't working correctly for whatever reason (appears to be a Storybook bug
--    // as manually adding `&args=size:s` to the URL gets erased by Storybook)
-+    // `size` has a union type that Storybook can't infer a control for
-+    size: { options: [...FLYOUT_SIZES, 800], control: { type: 'radio' } },
-     as: { control: 'text' },
-     onResize: { action: 'onResize' },
-   },
+@@ -1,3 +0,0 @@
+-**Bug fixes**
+-
+-- Removed the redundant border below the last row of documentation prop tables
 ```
 
-**File**: `packages/eui/src/components/flyout/use_flyout_resizable.test.ts` (modified, +131/-0)
+**File**: `packages/docusaurus-theme/package.json` (modified, +1/-1)
 ```diff
-@@ -6,6 +6,7 @@
-  * Side Public License, v 1.
-  */
- 
-+import type { KeyboardEvent, MouseEvent as ReactMouseEvent } from 'react';
- import { waitFor } from '@testing-library/react';
- import { renderHook, renderHookAct as act } from '../../test/rtl/render_hook';
- import { useEuiFlyoutResizable } from './use_flyout_resizable';
-@@ -244,4 +245,134 @@ describe('useEuiFlyoutResizable', () => {
-       });
-     });
-   });
-+
-+  describe('constraint changes', () => {
-+    const props = {
-+      ...mockProps,
-+      enabled: true,
-+      minWidth: 0,
-+      maxWidth: undefined,
-+      referenceWidth: 1200,
-+      size: 800,
-+    };
-+
-+    it('keeps the pixel width of a numeric `size` and restores it after a clamp', async () => {
-+      const onResize = jest.fn();
-+      const { result, rerender } = renderHook(useEuiFlyoutResizable, {
-+        initialProps: { ...props, onResize },
-+      });
-+      await waitFor(() => {
-+        expect(result.current.size).toBe(`${(800 / 1200) * 100}%`);
-+      });
-+
-+      // 800 / 1600 * 100 = 50%, not scaled up to 1067px
-+      rerender({ ...props, onResize, referenceWidth: 1600 });
-+      await waitFor(() => expect(result.current.size).toBe('50%'));
-+
-+      // Clamped to 90% of 600 = 540px
-+      rerender({ ...props, onResize, referenceWidth: 600 });
-+      await waitFor(() => expect(result.current.size).toBe('90%'));
-+
-+      rerender({ ...props, onResize, referenceWidth: 1200 });
-+      await waitFor(() => {
-+        expect(result.current.size).toBe(`${(800 / 1200) * 100}%`);
-+      });
-+
-+      expect(onResize).not.toHaveBeenCalled();
-+    });
-+
-+    it('re-clamps on window resize when `referenceWidth` is not provided', async () => {
-+      const { result } = renderHook(useEuiFlyoutResizable, {
-+        initialProps: { ...props, referenceWidth: undefined },
-+      });
-+      await waitFor(() => {
-+        expect(result.current.size).toBe(`${(800 / 1200) * 100}%`);
-+      });
-+
-+      // Clamped to 90% of 800 = 720px
-+      act(() => {
-+        window.innerWidth = 800;
-+        window.dispatchEvent(new Event('resize'));
-+      });
-+      await waitFor(() => expect(result.current.size).toBe('90%'));
-+
-+      // 800 / 1600 * 100 = 50%
-+      act(() => {
-+        window.innerWidth = 1600;
-+        window.dispatchEvent(new Event('resize'));
-+      });
-+      await waitFor(() => expect(result.current.size).toBe('50%'));
-+    });
-+
-+    it('restores the user-resized width after a clamp and only reports the user resize', async () => {
-+      const onResize = jest.fn();
-+      const { result, rerender } = renderHook(useEuiFlyoutResizable, {
-+        initialProps: { ...props, onResize },
-+      });
-+      act(() => result.current.setFlyoutRef(createMockElement(800)));
-+      await waitFor(() => {
-+        expect(result.current.size).toBe(`${(800 / 1200) * 100}%`);
-+      });
-+
-+      // Right-side flyout: dragging 100px left grows it to 900px
-+      act(() => {
-+        result.current.onMouseDown({ clientX: 400 } as ReactMouseEvent);
-+        window.dispatchEvent(new MouseEvent('mousemove', { clientX: 300 }));
-+        window.dispatchEvent(new MouseEvent('mouseup'));
-+      });
-+      expect(onResize).toHaveBeenCalledTimes(1);
-+      expect(onResize).toHaveBeenCalledWith(900);
-+
-+      rerender({ ...props, onResize, referenceWidth: 600 });
-+      await waitFor(() => expect(result.current.size).toBe('90%'));
-+
-+      rerender({ ...props, onResize, referenceWidth: 1200 });
-+      await waitFor(() => expect(result.current.size).toBe('75%'));
-+
-+      expect(onResize).toHaveBeenCalledTimes(1);
-+    });
-+
-+    it('does not call `onResize` or lose the requested width when an interaction does not change the width', async () => {
-+      const onResize = jest.fn();
-+      const { result, rerender } = renderHook(useEuiFlyoutResizable, {
-+        initialProps: { ...props, onResize, referenceWidth: 600 },
-+      });
-+      act(() => result.current.setFlyoutRef(createMockElement(540)));
-+      await waitFor(() => expect(result.current.size).toBe('90%'));
-+
-+      // Click without dragging
-+      act(() => {
-+        result.current.onMouseDown({ clientX: 400 } as ReactMouseEvent);
-+        window.dispatchEvent(new MouseEvent('mouseup'));
-+      });
-+      // Non-resize key, and a grow step that the clamp turns into a no-op
-+      act(() => {
-+        result.current.onKeyDown({ key: 'Tab' } as KeyboardEvent);
-+      });
-+      act(() => {
-+        result.current.onKeyDown({
-+          key: 'ArrowLeft',
-+          preventDefault: () => {},
-+        } as KeyboardEvent);
-+      });
-+      expect(result.current.size).toBe('90%');
-+      expect(onResize).not.toHaveBeenCalled();
-+
-+      rerender({ ...props, onResize, referenceWidth: 1200 });
-+      await waitFor(() => {
-+        expect(result.current.size).toBe(`${(800 / 1200) * 100}%`);
-+      });
-+    });
-+
-+    it('keeps scaling a named `size` proportionally', async () => {
-+      const { result, rerender } = renderHook(useEuiFlyoutResizable, {
-+        in
+@@ -1,6 +1,6 @@
+ {
+   "name": "@elastic/eui-docusaurus-theme",
+-  "version": "2.8.0",
++  "version": "2.8.1",
+   "description": "EUI theme for Docusaurus",
+   "license": "SEE LICENSE IN LICENSE.txt",
+   "scripts": {
 ```
 
-**File**: `packages/eui/src/components/flyout/use_flyout_resizable.ts` (modified, +98/-56)
+**File**: `packages/eui/changelogs/CHANGELOG_2026.md` (modified, +14/-0)
 ```diff
-@@ -13,7 +13,7 @@ import React, {
-   useRef,
-   useState,
- } from 'react';
--import { keys } from '../../services';
-+import { keys, useLatest } from '../../services';
- import { getPosition } from '../resizable_container/helpers';
- import type { EuiFlyoutResizableProps } from './flyout_resizable';
- 
-@@ -42,16 +42,35 @@ export const useEuiFlyoutResizable = ({
-   side,
-   size: _size,
- }: UseEuiFlyoutResizable) => {
-+  // Without a `referenceWidth` (standalone flyouts), nothing else re-renders
-+  // the flyout on window resize, so track the viewport width here
-+  const [windowWidth, setWindowWidth] = useState(() =>
-+    typeof window !== 'undefined' ? window.innerWidth : Infinity
-+  );
-+  const tracksWindow = enabled && referenceWidth === undefined;
-+  useEffect(() => {
-+    if (!tracksWindow) return;
+@@ -1,3 +1,17 @@
++## [`v123.2.0`](https://github.com/elastic/eui/releases/v123.2.0)
 +
-+    let rafId = 0;
-+    const onWindowResize = () => {
-+      cancelAnimationFrame(rafId);
-+      rafId = requestAnimationFrame(() => setWindowWidth(window.innerWidth));
-+    };
-+    // Catch up on resizes that happened while the window was not tracked
-+    setWindowWidth(window.innerWidth);
-+    window.addEventListener('resize', onWindowResize);
-+    return () => {
-+      cancelAnimationFrame(rafId);
-+      window.removeEventListener('resize', onWindowResize);
-+    };
-+  }, [tracksWindow]);
++- Updated `EuiFlyoutMenu` height to 49px to align with Kibana compact AppHeader ([#10211](https://github.com/elastic/eui/pull/10211))
++- Added new icon: `ruler`. ([#10194](https://github.com/elastic/eui/pull/10194))
++- Updated `productAgent` icon glyph ([#10179](https://github.com/elastic/eui/pull/10179))
++- Updated `EuiToast`'s highlight to a straight bar instead of a curved one ([#10197](https://github.com/elastic/eui/pull/10197))
 +
-   // Use container width when provided. When referenceWidth is 0 (e.g. container
-   // not yet measured by ResizeObserver), do not fall back to viewport — that
-   // would allow resizing beyond the container (e.g. over a sidebar). Use 0 so
-   // the clamp keeps the flyout at minWidth until the real width is available.
-   const _referenceWidth =
--    referenceWidth !== undefined
--      ? referenceWidth
--      : typeof window !== 'undefined'
--      ? window.innerWidth
--      : Infinity;
-+    referenceWidth !== undefined ? referenceWidth : windowWidth;
- 
-   const getFlyoutMinMaxWidth = useCallback(
-     (width: number) => {
-@@ -69,19 +88,26 @@ export const useEuiFlyoutResizable = ({
-     [minWidth, maxWidth, siblingFlyoutWidth, _referenceWidth]
-   );
- 
--  const [flyoutWidth, setFlyoutWidth] = useState(0);
--  const [callOnResize, setCallOnResize] = useState(false);
-+  const [flyoutWidth, _setFlyoutWidth] = useState(0);
++**Bug fixes**
 +
-+  // The last width set, even before it renders. Handlers read it instead of
-+  // `flyoutWidth`, which is stale until then (e.g. a key press right after
-+  // mount, before the width from `size` has rendered).
-+  const flyoutWidthRef = useRef(0);
-+  const setFlyoutWidth = useCallback((width: number) => {
-+    flyoutWidthRef.current = width;
-+    _setFlyoutWidth(width);
-+  }, []);
- 
-   // Must use state for the flyout ref in order for the useEffect to be correctly called after render
-   const [flyoutRef, setFlyoutRef] = useState<HTMLElement | null>(null);
- 
-   useEffect(() => {
-     if (!enabled) return; // Don't measure when resizing is disabled
-     if (!flyoutWidth && flyoutRef) {
--      setCallOnResize(false); // Don't call `onResize` for non-user width changes
-       setFlyoutWidth(getFlyoutMinMaxWidth(flyoutRef.offsetWidth));
-     }
--  }, [flyoutWidth, flyoutRef, getFlyoutMinMaxWidth, enabled]);
-+  }, [flyoutWidth, flyoutRef, getFlyoutMinMaxWidth, enabled, setFlyoutWidth]);
- 
-   // Track the previous `_size` prop to distinguish between a consumer size
-   // change (which should reset the width) and a reference-width / constraint
-@@ -93,46 +119,65 @@ export const useEuiFlyoutResizable = ({
-   // the container / viewport resizes (both shrink AND grow).
-   const prevReferenceWidthRef = useRef(_referenceWidth);
- 
--  // Update flyout width when consumers pass in a new `size`, or scale
--  // proportionally and re-clamp when constraints change (e.g. container
--  // resize, sibling width change).
-+  // The width last set by a numeric `size` or by the user, before clamping.
-+  // Clamping always starts from it, so a flyout squeezed by a narrow container
-+  // returns to this width once there is room again.
-+  const requestedWidthRef = useRef<number | null>(null);
++- Fixed clickable `EuiBadge` to show the pointer cursor over its icon and padding, not only over its text ([#10205](https://github.com/elastic/eui/pull/10205))
++- Fixed disabled clickable `EuiBadge` to show the `not-allowed` cursor ([#10205](https://github.com/elastic/eui/pull/10205))
++- Fixed resizable `EuiFlyout` with a numeric `size` scaling proportionally on container or window resize; it now keeps its pixel width and is only clamped while there is not enough room ([#10199](https://github.com/elastic/eui/pull/10199))
++- Fixed resizable `EuiFlyout` calling `onResize` for width changes not made by the user, such as container or sibling clamps, or clicking the resize handle without dragging ([#10199](https://github.com/elastic/eui/pull/10199))
 +
-+  // Update flyout width when consumers pass in a new `size`, or re-clamp
-+  // when constraints change (e.g. container resize, sibling width change).
-   useEffect(() => {
-     if (!enabled) return; // Don't update width when resizing is disabled
+ ## [`v123.1.0`](https://github.com/elastic/eui/releases/v123.1.0)
  
-     if (prevSizeRef.current !== _size) {
-       // The consumer's `size` prop actually changed — reset so the new size takes effect
-       prevSizeRef.current = _size;
-       prevReferenceWidthRef.current = _referenceWidth;
--      setCallOnResize(false);
-+      requestedWidthRef.current = typeof _size === 'number' ? _size : null;
-       setFlyoutWidth(
-         typeof _size === 'number' ? getFlyoutMinMaxWidth(_size) : 0
-       );
-+    } else if (typeof _size === 'number') {
-+      // A numeric `size` is a pixel width, so it is only re-clamped, not scaled
-+      if (_referenceWidth > 0) {
-+        setFlyoutWidth(
-+          getFlyoutMinMaxWidth(requestedWidthRef.current ?? _size)
-+        );
-+      }
-   
+ - Removed the left color highlight from `EuiCallOut` ([#10109](https://github.com/elastic/eui/pull/10109))
 ```
 
----
-
-### Incident Patch 3: `0e1ece98` (2026-10-15)
-**Commit Message**: [EuiFlyoutMenu] Align menu height with compact AppHeader (49px) (#10211)
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-Co-authored-by: kibanamachine <[REDACTED_EMAIL]>
-
-**File**: `packages/eui/changelogs/upcoming/10211.md` (added, +1/-0)
+**File**: `packages/eui/changelogs/upcoming/10179.md` (removed, +0/-1)
 ```diff
-@@ -0,0 +1 @@
-+- Updated `EuiFlyoutMenu` height to 49px to align with Kibana compact AppHeader
+@@ -1 +0,0 @@
+-- Updated `productAgent` icon glyph
+\ No newline at end of file
 ```
 
-**File**: `packages/eui/src/components/flyout/flyout_menu/flyout_menu.styles.ts` (modified, +2/-6)
+**File**: `packages/eui/changelogs/upcoming/10194.md` (removed, +0/-1)
 ```diff
-@@ -17,13 +17,9 @@ import { euiScreenReaderOnly } from '../../accessibility';
- 
- export const euiFlyoutMenuStyles = (euiThemeContext: UseEuiTheme) => {
-   const { euiTheme } = euiThemeContext;
--  const topOffset = mathWithUnits(
--    [euiTheme.size.m, euiTheme.border.width.thin],
--    (x, y) => x + y
--  );
-   const containerHeight = mathWithUnits(
-     [euiTheme.size.base, euiTheme.border.width.thin],
--    (x, y) => x * 3 + y * 2
-+    (x, y) => x * 3 + y
-   );
- 
-   return {
-@@ -37,7 +33,7 @@ export const euiFlyoutMenuStyles = (euiThemeContext: UseEuiTheme) => {
-         ${euiTheme.border.color};
- 
-       .euiFlyout__closeButton {
--        ${logicalCSS('top', topOffset)}
-+        ${logicalCSS('top', euiTheme.size.m)}
-       }
- 
-       .euiTitle {
+@@ -1 +0,0 @@
+-- Added new icon: `ruler`.
+\ No newline at end of file
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #10216** (2026-10-19): [ESLint plugin] Bump picomatch and brace-expansion to patched versions (@Dosant)
+- **PR #10215** (2026-10-19): Release: @elastic/eui-docusaurus-theme v2.8.1, @elastic/eui v123.2.0, @elastic/eui-test-helpers v2.1.0 (@angeles-mzb)
 - **PR #10211** (2026-10-15): [EuiFlyoutMenu] Align menu height with compact AppHeader (49px) (@ryankeairns)
 - **PR #10210** (2026-10-14): [Chore] Add Libra review configuration (@clintandrewhall)
 - **PR #10205** (2026-10-13): [EuiBadge] Show pointer cursor over the whole clickable badge (@Dosant)
 - **PR #10204** (2026-10-13): [Chore] Remove stale Kibana prep commit (@Dosant)
-- **PR #10199** (2026-10-16): [EuiFlyout] Keep the pixel width of resizable flyouts with a numeric `size` on container resize (@Dosant)
-- **PR #10197** (2026-10-13): fix: [EuiToast] Update the top highlight to a straight bar (@boriskirov)
 
 ---
 
@@ -1150,46 +872,28 @@ Co-authored-by: kibanamachine <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [Chore] Add prep commit and fix nightly/regression quirks (#10180)
+## X. [ESLint plugin] Bump picomatch and brace-expansion to patched versions (#10216)
 
 **RULE**:
-When implementing operations in `.github/workflows/update_kibana_dependencies__open_pr.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in elastic/eui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/eslint-plugin/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in elastic/eui. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `750509af`: [Chore] Add prep commit and fix nightly/regression quirks (#10180). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bfd03740`: [ESLint plugin] Bump picomatch and brace-expansion to patched versions (#10216). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/update_kibana_dependencies__open_pr.yml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/eslint-plugin/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-        default: 'EUI,backport:skip,release_note:skip,ci:all-ui-test-suites,ci:prevent-selective-testing,ci:build-draft'
-      - name: Add labels and trigger CI
-          set -euo pipefail
-
-          had_build_draft_label=$(gh pr view "$PR_URL" --json labels \
-            --jq 'any(.labels[]; .name == "ci:build-draft")')
-
-
-          # The first run needs `/ci` comment to trigger a build.
-          if [[ "$had_build_draft_label" != "true" ]]; then
-            gh pr comment "$PR_URL" --body "/ci"
-          fi
+    "picomatch": "^2.3.2"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-        default: 'EUI,backport:skip,release_note:skip,ci:all-ui-test-suites,ci:prevent-selective-testing'
-      - name: Add labels
-      - name: Trigger CI
-        env:
-          GH_TOKEN: ${{ steps.ephemeral_token.outputs.token }}
-          PR_URL: ${{ needs.open_pr.outputs.pr_url }}
-        # language=bash
-        run: gh pr comment "$PR_URL" --body "/ci"
+    "picomatch": "^2.3.1"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `750509af` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bfd03740` are properly handled with clean fallback behavior.

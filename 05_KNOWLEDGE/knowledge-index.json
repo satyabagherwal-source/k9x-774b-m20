@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T13:21:19.827Z",
-  "total_verified_learnings": 822,
+  "last_updated": "2026-10-19T13:27:33.560Z",
+  "total_verified_learnings": 823,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -1446,22 +1446,35 @@
     "learn-github-amosgyamfi-open-swiftui-animations": {
       "learning_id": "learn-github-amosgyamfi-open-swiftui-animations",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "amosgyamfi-open-swiftui-animations",
+      "source": "amosgyamfi/open-swiftui-animations",
+      "repository": "amosgyamfi/open-swiftui-animations",
       "slug": "amosgyamfi-open-swiftui-animations",
       "platform": "github",
       "source_url": "https://github.com/amosgyamfi/open-swiftui-animations",
-      "source_version": "HEAD",
-      "content_hash": "d8f3d091ead05c4af0301c04b1923e878febfd332db32db50b55142f186f7336",
+      "source_version": "abc1d4ce",
+      "content_hash": "cacc26499177fdb546f1d0c3a19ed0427e9ae1984f189ac206179f09f90f0975",
       "dossier_path": "07_PROJECT_LEARNING/amosgyamfi-open-swiftui-animations-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/amosgyamfi-open-swiftui-animations-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2609,
+          "title": "Create AddToBookmark SwiftUI view",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.767Z"
+      "verified_at": "2026-10-19T13:27:33.548Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-amrdeveloper-gql": {
       "learning_id": "learn-github-amrdeveloper-gql",
@@ -7829,14 +7842,19 @@
       "slug": "elastic-eui",
       "platform": "github",
       "source_url": "https://github.com/elastic/eui",
-      "source_version": "cafeebf1",
-      "content_hash": "96f3dd771672facbe28378c62f14a6666fd7ed97724686adc8f6570715f40218",
+      "source_version": "bfd03740",
+      "content_hash": "0f86fd9b570d88b19612c4e7e51faeb501930860303540b9913975447d7ba7d4",
       "dossier_path": "07_PROJECT_LEARNING/elastic-eui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/elastic-eui-learnings.md",
       "promoted_rules": [
         {
           "number": 2014,
           "title": "[Chore] Add prep commit and fix nightly/regression quirks (#10180)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2607,
+          "title": "[ESLint plugin] Bump picomatch and brace-expansion to patched versions (#10216)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -7845,7 +7863,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T02:18:18.616Z",
+      "verified_at": "2026-10-19T13:27:26.885Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -20140,7 +20158,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openai/clip-vit-base-patch32",
       "source_version": "hf-openai-clip-vit-base-patch32",
-      "content_hash": "51a2211d8d2fe25bb9cc706c40d49c15d0364cf42c57144f9112bb9d02e4311c",
+      "content_hash": "87f5ef9fa7638bc49393daf2a891bc0b156c8f0e156024f0bea33427a87a9c08",
       "dossier_path": "07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md",
       "promoted_rules": [
@@ -20172,7 +20190,7 @@
         "learn-huggingface-hf-openai-clip-vit-base-patch32-mv3y5o08",
         "learn-huggingface-hf-openai-clip-vit-base-patch32-mv4cvq4q"
       ],
-      "verified_at": "2026-10-18T03:45:00.137Z",
+      "verified_at": "2026-10-19T13:27:26.757Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -29559,14 +29577,19 @@
       "slug": "michael-a-kuykendall-shimmy",
       "platform": "github",
       "source_url": "https://github.com/Michael-A-Kuykendall/shimmy",
-      "source_version": "4895730a",
-      "content_hash": "e71b8233c157dcd25afb446297d018333f6024b65ecceb64c4bc4e74c17d3b47",
+      "source_version": "d64d0c8e",
+      "content_hash": "6ea49ea4732b98aa39a26a4bf52f7f46b7a9c6a8c37aae90a3d44b5a6a4a6101",
       "dossier_path": "07_PROJECT_LEARNING/michael-a-kuykendall-shimmy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/michael-a-kuykendall-shimmy-learnings.md",
       "promoted_rules": [
         {
           "number": 1780,
           "title": "template): Gemma family fallback + slice-step renderer (oqu.11)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2608,
+          "title": "Document Linux ARM64 binaries and native platform verification",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -29575,7 +29598,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T22:29:22.037Z",
+      "verified_at": "2026-10-19T13:27:28.833Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -87712,6 +87735,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T13:21:19.818Z"
+    },
+    "rule-2607": {
+      "learning_id": "rule-2607",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2607,
+      "title": "[ESLint plugin] Bump picomatch and brace-expansion to patched versions (#10216)",
+      "source_url": "https://github.com/elastic/eui",
+      "source_version": "bfd03740",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T13:27:26.885Z"
+    },
+    "rule-2608": {
+      "learning_id": "rule-2608",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2608,
+      "title": "Document Linux ARM64 binaries and native platform verification",
+      "source_url": "https://github.com/Michael-A-Kuykendall/shimmy",
+      "source_version": "d64d0c8e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T13:27:28.833Z"
+    },
+    "rule-2609": {
+      "learning_id": "rule-2609",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2609,
+      "title": "Create AddToBookmark SwiftUI view",
+      "source_url": "https://github.com/amosgyamfi/open-swiftui-animations",
+      "source_version": "abc1d4ce",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T13:27:33.549Z"
     }
   },
   "aliases": {

@@ -3263,3 +3263,7 @@ Every entry in this ledger must capture:
 | `learn-github-alin23-lunar` | `https://github.com/alin23/Lunar` | `511b0358` | Multi-dimensional audit evidence | 2026-10-19T13:21:12.081Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `89acffc2` | Multi-dimensional audit evidence | 2026-10-19T13:21:16.651Z |
 | `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `8d9f30a8` | Multi-dimensional audit evidence | 2026-10-19T13:21:19.864Z |
+| `learn-huggingface-openai-clip-vit-base-patch32` | `https://huggingface.co/openai/clip-vit-base-patch32` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-19T13:27:26.812Z |
+| `learn-github-elastic-eui` | `https://github.com/elastic/eui` | `bfd03740` | Multi-dimensional audit evidence | 2026-10-19T13:27:26.953Z |
+| `learn-github-michael-a-kuykendall-shimmy` | `https://github.com/Michael-A-Kuykendall/shimmy` | `d64d0c8e` | Multi-dimensional audit evidence | 2026-10-19T13:27:28.900Z |
+| `learn-github-amosgyamfi-open-swiftui-animations` | `https://github.com/amosgyamfi/open-swiftui-animations` | `abc1d4ce` | Multi-dimensional audit evidence | 2026-10-19T13:27:33.616Z |

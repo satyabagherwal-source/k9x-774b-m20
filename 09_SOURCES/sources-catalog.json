@@ -1095,8 +1095,8 @@
     "sourceUrl": "https://huggingface.co/openai/clip-vit-base-patch32",
     "sourceVersion": "hf-openai-clip-vit-base-patch32",
     "license": "Open-Source",
-    "contentHash": "51a2211d8d2fe25bb9cc706c40d49c15d0364cf42c57144f9112bb9d02e4311c",
-    "lastHarvestedAt": "2026-10-18T03:45:00.181Z",
+    "contentHash": "87f5ef9fa7638bc49393daf2a891bc0b156c8f0e156024f0bea33427a87a9c08",
+    "lastHarvestedAt": "2026-10-19T13:27:26.812Z",
     "learningId": "learn-huggingface-openai-clip-vit-base-patch32"
   },
   "hf-sentence-transformers-all-mpnet-base-v2": {
@@ -2953,10 +2953,10 @@
     "repository": "Michael-A-Kuykendall/shimmy",
     "platform": "github",
     "sourceUrl": "https://github.com/Michael-A-Kuykendall/shimmy",
-    "sourceVersion": "4895730a",
+    "sourceVersion": "d64d0c8e",
     "license": "Apache-2.0",
-    "contentHash": "e71b8233c157dcd25afb446297d018333f6024b65ecceb64c4bc4e74c17d3b47",
-    "lastHarvestedAt": "2026-10-18T22:29:22.074Z",
+    "contentHash": "6ea49ea4732b98aa39a26a4bf52f7f46b7a9c6a8c37aae90a3d44b5a6a4a6101",
+    "lastHarvestedAt": "2026-10-19T13:27:28.900Z",
     "learningId": "learn-github-michael-a-kuykendall-shimmy"
   },
   "infinitered-reactotron": {
@@ -4833,10 +4833,10 @@
     "repository": "elastic/eui",
     "platform": "github",
     "sourceUrl": "https://github.com/elastic/eui",
-    "sourceVersion": "cafeebf1",
+    "sourceVersion": "bfd03740",
     "license": "NOASSERTION",
-    "contentHash": "96f3dd771672facbe28378c62f14a6666fd7ed97724686adc8f6570715f40218",
-    "lastHarvestedAt": "2026-10-19T02:18:18.646Z",
+    "contentHash": "0f86fd9b570d88b19612c4e7e51faeb501930860303540b9913975447d7ba7d4",
+    "lastHarvestedAt": "2026-10-19T13:27:26.953Z",
     "learningId": "learn-github-elastic-eui"
   },
   "aome510-spotify-player": {
@@ -8078,5 +8078,15 @@
     "contentHash": "2c8bb32e404be77135cb4e9246c71330372e705c16fedfb443295ff90f81ac59",
     "lastHarvestedAt": "2026-10-19T13:21:12.081Z",
     "learningId": "learn-github-alin23-lunar"
+  },
+  "amosgyamfi-open-swiftui-animations": {
+    "repository": "amosgyamfi/open-swiftui-animations",
+    "platform": "github",
+    "sourceUrl": "https://github.com/amosgyamfi/open-swiftui-animations",
+    "sourceVersion": "abc1d4ce",
+    "license": "Unlicense",
+    "contentHash": "cacc26499177fdb546f1d0c3a19ed0427e9ae1984f189ac206179f09f90f0975",
+    "lastHarvestedAt": "2026-10-19T13:27:33.616Z",
+    "learningId": "learn-github-amosgyamfi-open-swiftui-animations"
   }
 }

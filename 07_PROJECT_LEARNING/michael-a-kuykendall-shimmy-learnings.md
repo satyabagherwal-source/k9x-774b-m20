@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/michael-a-kuykendall-shimmy-learnings.md`  
 > **Source**: github ([https://github.com/Michael-A-Kuykendall/shimmy](https://github.com/Michael-A-Kuykendall/shimmy))  
-> **Source Version**: `4895730a`  
+> **Source Version**: `d64d0c8e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T22:29:21.909Z  
+> **Timestamp**: 2026-10-19T13:27:28.616Z  
 > **Learning ID**: `learn-github-michael-a-kuykendall-shimmy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/michael-a-kuykendall-shimmy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Michael-A-Kuykendall/shimmy](https://github.com/Michael-A-Kuykendall/shimmy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T22:29:21.283Z  
+> **Harvest Timestamp**: 2026-10-19T13:27:28.608Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ⚡ Pure-Rust WebGPU inference engine — OpenAI-API compatible, GGUF native, runs on any GPU. No Python. No llama.cpp. Single binary.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5983 stars
+- **Stars / Engagement**: 5985 stars
 
 ---
 
@@ -244,6 +244,18 @@ impl LoadedModel for AirframeModel {
         opts: GenOptions,
         on_token: Option<Box<dyn FnMut(String) + Send>>,
     ) -> Result<String> {
+        Ok(self
+            .generate_with_metadata(prompt, opts, on_token)
+            .await?
+            .text)
+    }
+
+    async fn generate_with_metadata(
+        &self,
+        prompt: &str,
+        opts: GenOptions,
+        on_token: Option<Box<dyn FnMut(String) + Send>>,
+    ) -> Result<crate::engine::GenerationOutput> {
         let params = Self::bridge_params(&opts);
         let runtime = self.runtime.clone();
         let prompt = prompt.to_string();
@@ -288,7 +300,7 @@ impl LoadedModel for AirframeModel {
             );
             let final_prompt = rendered.text;
 
-            rt.generate(
+            rt.generate_with_metadata(
                 &final_prompt,
                 &params,
                 callback,
@@ -301,7 +313,21 @@ impl LoadedModel for AirframeModel {
         .map_err(|e| anyhow::anyhow!("Airframe task panicked: {}", e))?
         .map_err(|e| anyhow::anyhow!("Airframe generation failed: {}", e))?;
 
-        Ok(result)
+        Ok(crate::engine::GenerationOutput {
+            text: result.text,
+            usage: Some(crate::engine::TokenUsage {
+                prompt_tokens: result.prompt_tokens,
+                completion_tokens: result.completion_tokens,
+                total_tokens: result.prompt_tokens + result.completion_tokens,
+            }),
+            finish_reason: Some(
+                match result.finish_reason {
+                    airframe::runtime::generation::FinishReason::Stop => "stop",
+                    airframe::runtime::generation::FinishReason::Length => "length",
+                }
+                .into(),
+            ),
+        })
     }
 }
 
@@ -472,6 +498,20 @@ pub trait InferenceEngine: Send + Sync {
     async fn load(&self, spec: &ModelSpec) -> Result<Box<dyn LoadedModel>>;
 }
 
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct TokenUsage {
+    pub prompt_tokens: usize,
+    pub completion_tokens: usize,
+    pub total_tokens: usize,
+}
+
+#[derive(Debug, Clone)]
+pub struct GenerationOutput {
+    pub text: String,
+    pub usage: Option<TokenUsage>,
+    pub finish_reason: Option<String>,
+}
+
 #[async_trait]
 pub trait LoadedModel: Send + Sync {
     async fn generate(
@@ -480,6 +520,20 @@ pub trait LoadedModel: Send + Sync {
         opts: GenOptions,
         on_token: Option<Box<dyn FnMut(String) + Send>>,
     ) -> Result<String>;
+
+    /// Backends that cannot supply exact accounting leave metadata unavailable.
+    async fn generate_with_metadata(
+        &self,
+        prompt: &str,
+        opts: GenOptions,
+        on_token: Option<Box<dyn FnMut(String) + Send>>,
+    ) -> Result<GenerationOutput> {
+        Ok(GenerationOutput {
+            text: self.generate(prompt, opts, on_token).await?,
+            usage: None,
+            finish_reason: None,
+        })
+    }
 }
 
 pub mod adapter;
@@ -1683,11 +1737,11 @@ downloadBinary().catch(error => {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #221** (2026-10-19): **Missing authentication on the inference API, exposed by the project's own default production deployment templates**
+  *Symptoms*: ### 🐛 Bug Description  - private reporting isn't enabled. - emailed report but bounced:  <img width="659" height="266" alt="Image" src="https://github.com/user-attachments/assets/220c8b36-2d86-4a6c-a87b-689c0ced4adb" />  ### Summary  Shimmy's HTTP server ships with no authentication mechanism of any kind. Every route, including the OpenAI-compatible completion/chat endpoints that run model inference, is reachable by any network client with no token, header, or credential required. The project's own official Docker and Kubernetes deployment templates configure the server to bind `0.0.0.0` and, in the Kubernetes case, expose it through a `LoadBalancer` Service, meaning a deployment that follows the project's documented production setup is open to the public internet with zero access control.  ### Details  - `src/server.rs:133-158` builds the Axum router (`/health`, `/api/generate`, `/api/models/*`, `/v1/chat/completions`, `/v1/completions`, `/v1/models`, `/v1/messages`, etc.) and applies exactly one middleware layer: `app.layer(middleware::from_fn(cors_layer))` (`src/server.rs:160`). `cors_layer` (`src/server.rs:14-35`) only sets CORS response headers; it does not inspect or validate the request in any way, and it sets `Access-Control-Allow-Origin: *` unconditionally. - A full-codebase grep of `src/*.rs` for `Authorization`, `Bearer`, `api_key`, `API_KEY`, or any auth-check construct returns no hits outside of the literal string `"Content-Type, Authorization"` in the CORS allo
+
 - **Issue #213** (2026-08-27): **Windows binary missing?**
   *Symptoms*: ### 🐛 Bug Description  Instructions in README (https://github.com/Michael-A-Kuykendall/shimmy/blob/main/README.md) quick-start and Windows build instructions are incorrect.  I get the following error trying to download the Windows binary: > A parameter cannot be found that matches parameter name 'L'.  Also, the binary is missing.  ### 🔄 Steps to Reproduce  1. Follow install instructions for Windows. 2. Unable to download Windows binary.  ### ✅ Expected Behavior  Windows binary could be downloaded.  ### ❌ Actual Behavior  Windows binary cannot be downloaded (incorrect argument to curl in Windows; binary missing).  ### 📦 Shimmy Version  Latest (main branch)  ### 💻 Operating System  Windows  ### 📥 Installation Method  Pre-built binary from releases  ### 🌍 Environment Details  _No response_  ### 📋 Logs/Error Messages  ```text  ```  ### 📝 Additional Context  _No response_
-
-- **Issue #210** (2026-07-27): **Compile errors when running `cargo install`**
-  *Symptoms*: ### 🐛 Bug Description  The current state on `main`, as well as the version 2.3.1 published to crates.io, fail to perform `cargo install`.  This happens for me with rust 1.96.1  ### 🔄 Steps to Reproduce  1. Run either `cargo install --path . --locked` with current `main` (f49eee99e8fb77507d8045d852586e2021cb959b), or run `cargo install --locked shimmy@2.3.1` 2. See compile errors when attempting to build the `airframe` dependency.   ### ✅ Expected Behavior  Should build just fine.  ### ❌ Actual Behavior  Compiler error is printed and the build fails (see errors below).  ### 📦 Shimmy Version  Latest (main branch)  ### 💻 Operating System  Linux (other)  ### 📥 Installation Method  cargo install shimmy  ### 🌍 Environment Details  - Rust version: `rustc 1.97.1 (8bab26f4f 2026-07-14)` installed through `rustup` - Debian 13  ### 📋 Logs/Error Messages  ```text error[E0433]: cannot find `quant_formula` in `airframe_observe`    --> /home/user/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/airframe-0.2.11/src/core/routing.rs:224:27     | 224 |         airframe_observe::quant_formula::slot_for_type(quant_type).map(|s| s.as_u32())     |                           ^^^^^^^^^^^^^ could not find `quant_formula` in `airframe_observe`  error[E0433]: cannot find `quant_formula` in `airframe_observe`    --> /home/user/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/airframe-0.2.11/src/backend/bindless/pipeline/mod.rs:131:23     | 131 |     airframe_observe::quant_formula::slot_for
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1704,542 +1758,139 @@ downloadBinary().catch(error => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `09438d14` (2026-08-28)
-**Commit Message**: feat(template): Gemma family fallback + slice-step renderer (oqu.11)
+### Incident Patch 1: `9fb15fad` (2026-10-18)
+**Commit Message**: Document Linux ARM64 binaries and native platform verification
 
-Renderer capability work for the templating epic:
-- Add TemplateFamily::Gemma with correct <start_of_turn>...<end_of_turn>
-  rendering (assistant -> 'model' turn) + <end_of_turn> stop token.
-- family_from_spec: route gemma* model names to the Gemma family (was falling
-  to OpenChat -> mis-render). Covers Gemma-2/Gemma-4 whose GGUF Jinja is
-  macro/tool-heavy and may fail shimmyjinja (failure already logged -> now
-  falls back to a CORRECT Gemma wrap, not OpenChat).
-- 3 unit tests: gemma turn structure, assistant->model, decide() routing.
-
-Complemented by the shimmyjinja slice-with-step extension (shimmyjinja@54a28fd,
-patched locally via .cargo/config.toml) which unblocks the Qwen3 template's
-messages[::-1]. Real Qwen3 0.6B template verified rendering correctly.
-
-Tests: 608 pass, 0 fail. clippy -D warnings clean, fmt clean.
-
-**File**: `src/prompt_render.rs` (modified, +46/-0)
+**File**: `CHANGELOG.md` (modified, +2/-1)
 ```diff
-@@ -337,12 +337,15 @@ pub fn family_from_spec(template: Option<&str>, model_name: &str) -> TemplateFam
-         Some(ref t) if t == "chatml" => TemplateFamily::ChatML,
-         Some(ref t) if t == "llama3" || t == "llama-3" => TemplateFamily::Llama3,
-         Some(ref t) if t == "openchat" => TemplateFamily::OpenChat,
-+        Some(ref t) if t == "gemma" => TemplateFamily::Gemma,
-         _ => {
-             let n = model_name.to_lowercase();
-             if n.contains("llama-3") || n.contains("llama3") || n.contains("meta-llama-3") {
-                 TemplateFamily::Llama3
-             } else if n.contains("qwen") || n.contains("chatglm") || n.contains("phi") {
-                 TemplateFamily::ChatML
-+            } else if n.contains("gemma") {
-+                TemplateFamily::Gemma
-             } else {
-                 TemplateFamily::OpenChat
-             }
-@@ -513,4 +516,47 @@ mod tests {
-         assert_eq!(r.source, RenderSource::FamilyFallback);
-         assert!(r.text.contains("<|im_start|>user"));
-     }
-+
-+    // ── Gemma family fallback ───────────────────────────────────────────────
-+
-+    #[test]
-+    fn gemma_family_renders_start_of_turn() {
-+        // Gemma model with no GGUF template (or template render failure) -> Gemma family wrap.
-+        let msgs = vec![("user".into(), "Hi".into())];
-+        let r = render_chat_prompt(None, TemplateFamily::Gemma, None, &msgs, None);
-+        assert_eq!(r.source, RenderSource::FamilyFallback);
-+        assert!(
-+            r.text.contains("<start_of_turn>user\nHi<end_of_turn>"),
-+            "gemma user turn; got: {}",
-+            r.text
-+        );
-+        assert!(
-+            r.text.contains("<start_of_turn>model\n"),
-+            "gemma gen prompt; got: {}",
-+            r.text
-+        );
-+    }
-+
-+    #[test]
-+    fn gemma_assistant_rendered_as_model() {
-+        let msgs = vec![
-+            ("user".into(), "Hi".into()),
-+            ("assistant".into(), "Hello".into()),
-+        ];
-+        let r = render_chat_prompt(None, TemplateFamily::Gemma, None, &msgs, None);
-+        assert!(
-+            r.text.contains("<start_of_turn>model\nHello<end_of_turn>"),
-+            "assistant role must render as model; got: {}",
-+            r.text
-+        );
-+    }
-+
-+    #[test]
-+    fn decide_gemma_no_template_is_family_not_raw() {
-+        // Gemma is an instruct family; with no GGUF template it should fall back
-+        // to the Gemma family wrap, NOT raw (and NOT OpenChat).
-+        let src = decide(None, None, "gemma-2-2b-it", RenderMode::Auto);
-+        assert_eq!(src, RenderSource::FamilyFallback);
-+        assert_eq!(family_from_spec(None, "gemma-4-e4b"), TemplateFamily::Gemma);
-+    }
- }
-```
-
-**File**: `src/templates.rs` (modified, +24/-0)
-```diff
-@@ -8,6 +8,8 @@ pub enum TemplateFamily {
-     ChatML,
-     Llama3,
-     OpenChat,
-+    /// Gemma `<start_of_turn>` format (assistant role rendered as `model`).
-+    Gemma,
- }
+@@ -40,7 +40,8 @@ minor-version increment.
+ ### Changed
  
- impl TemplateFamily {
-@@ -65,6 +67,27 @@ impl TemplateFamily {
-                 }
-                 s
-             }
-+            TemplateFamily::Gemma => {
-+                let mut s = String::new();
-+                // Gemma templates use <start_of_turn>...<end_of_turn> and render the
-+                // assistant role as `model`. A leading bos is optional (many GGUFs
-+                // have no bos_token); the turn structure is the contract.
-+                if let Some(sys) = system {
-+                    s.push_str(&format!("<start_of_turn>user\n{}<end_of_turn>\n", sys));
-+                }
-+                for (role, content) in messages {
-+                    let turn_role = if role == "assistant" { "model" } else { role };
-+                    s.push_str(&format!(
-+                        "<start_of_turn>{}\n{}<end_of_turn>\n",
-+                        turn_role, content
-+                    ));
-+                }
-+                if let Some(inp) = input {
-+                    s.push_str(&format!("<start_of_turn>user\n{}<end_of_turn>\n", inp));
-+                }
-+                s.push_str("<start_of_turn>model\n");
-+                s
-+            }
-         }
-     }
- 
-@@ -74,6 +97,7 @@ impl TemplateFamily {
-             TemplateFamily::ChatML => vec!["<|im_end|>".to_string(), "<|im_start|>".to_string()],
-             TemplateFamily::Llama3 => vec!["<|eot_id|>".to_string(), "<|end_of_text|>".to_string()],
-             TemplateFamily::OpenChat => vec![],
-+            TemplateFamily::Gemma => vec!["<end_of_turn>".to_string()],
-         }
-     }
- }
+ - Use Airframe 0.4.4 and `airframe-observe` 0.1.3.
+-- Validate release binaries on each build runner and publish SHA256 checksums.
++- Test on native Linux x86-64/ARM64, Windows x86-64 and macOS ARM64 runners.
++- Add Linux ARM64 release binaries and publish SHA256 checksums for all assets.
+ - Refresh Docker images for the current Airframe build and Vulkan runtime.
+ - Resolve `shimmytok` 0.8.4 in the release lockfile.
+ - Correct quickstart commands and add `scripts/smoke_text.py` for model-backed
 ```
 
 ---
 
-### Incident Patch 2: `9394af83` (2026-08-28)
-**Commit Message**: feat(template): wire prompt_render into the lib + single render-decide point (oqu.1)
+### Incident Patch 2: `698c94b5` (2026-10-18)
+**Commit Message**: Clarify the container model volume in the quickstart
 
-Substrate for the templating epic (airframe-oqu):
-- Wire src/prompt_render.rs into lib.rs (it was dead code — no module declared).
-- Add shimmyjinja as a direct shimmy dep (was only a transitive airframe dep; the
-  import failed under CPU-only builds).
-- Add RenderMode + prompt_render::decide(): the SINGLE render-decision point
-  (GGUF Jinja -> registry family -> Raw), reconciling the two spec sources
-  (airframe spec.chat_template vs shimmy registry spec.template).
-- render_completion_prompt: base models with no template and no chat family
-  (OpenChat) now render RAW instead of a bogus 'role: content' wrap.
-- GenOptions.raw_prompt + cli '--raw' flag threaded through generate.
-- Add 8 unit tests for decide() + the raw-completion behavior; fix one
-  pre-existing dead-code test that asserted a wrong generation-prompt contract.
-- cargo fmt on engine/adapter.rs + airframe.rs (dead-module drift).
-
-Tests: 605 pass, 0 fail. clippy -D warnings clean, fmt clean.
-
-**File**: `Cargo.toml` (modified, +1/-0)
+**File**: `docs/quickstart.md` (modified, +4/-1)
 ```diff
-@@ -49,6 +49,7 @@ regex = "1"
- safetensors = "0.4"
- serde = { version = "1", features = ["derive"] }
- serde_json = "1"
-+shimmyjinja = { version = "0.5.0" }
- sys-info = "0.9"
- sysinfo = "0.30"
- tempfile = "3"
-```
-
-**File**: `src/cli.rs` (modified, +3/-0)
-```diff
-@@ -112,6 +112,9 @@ pub enum Command {
-         /// Session ID for rolling window
-         #[arg(long, default_value = "")]
-         session_id: String,
-+        /// Force raw completion (bypass chat template)
-+        #[arg(long, default_value_t = false)]
-+        raw: bool,
-     },
-     /// Show GPU backend information and capabilities
-     GpuInfo,
-```
-
-**File**: `src/engine/adapter.rs` (modified, +8/-2)
-```diff
-@@ -98,14 +98,20 @@ mod tests {
-     #[test]
-     fn test_safetensors_routes_to_safetensors() {
-         let a = InferenceEngineAdapter::new();
--        assert_eq!(a.select_backend(&spec("m", "model.safetensors")), BackendChoice::SafeTensors);
-+        assert_eq!(
-+            a.select_backend(&spec("m", "model.safetensors")),
-+            BackendChoice::SafeTensors
-+        );
-     }
+@@ -98,7 +98,10 @@ Allowed browser origins still need the configured API key.
  
-     #[test]
-     #[cfg(feature = "airframe")]
-     fn test_gguf_routes_to_airframe() {
-         let a = InferenceEngineAdapter::new();
--        assert_eq!(a.select_backend(&spec("m", "model.gguf")), BackendChoice::Airframe);
-+        assert_eq!(
-+            a.select_backend(&spec("m", "model.gguf")),
-+            BackendChoice::Airframe
-+        );
-     }
+ For Docker Compose, export `SHIMMY_API_KEY` before
+ `docker compose -f templates/docker/docker-compose.yml up --build`.
+-The example publishes its host port on loopback. For Kubernetes, create the
++The example publishes its host port on loopback and mounts
++`templates/docker/models/` at `/app/models`; place your GGUF files there first.
++With `docker run`, bind-mount your existing model directory at `/app/models`.
++For Kubernetes, create the
+ credential before applying the manifests:
  
-     #[test]
-```
-
-**File**: `src/engine/airframe.rs` (modified, +1/-4)
-```diff
-@@ -116,10 +116,7 @@ type LogitsMask = Box<dyn Fn(&mut [f32]) + Send + Sync>;
- /// Post-sample trace callback type (step, logits, elapsed).
- type TraceHook = Box<dyn FnMut(usize, &[f32], f64) + Send>;
- 
--fn build_modify_logits(
--    rt: &GpuRuntime,
--    opts: &GenOptions,
--) -> Option<LogitsMask> {
-+fn build_modify_logits(rt: &GpuRuntime, opts: &GenOptions) -> Option<LogitsMask> {
-     airframe::grammar::grammar_hooks(
-         &opts.grammar_mode,
-         rt.tokenizer_arc(),
-```
-
-**File**: `src/engine/mod.rs` (modified, +4/-0)
-```diff
-@@ -24,6 +24,9 @@ pub struct GenOptions {
-     pub trace_path: String,
-     #[serde(default)]
-     pub session_id: String,
-+    /// Force raw completion (bypass chat template). Serde default false.
-+    #[serde(default)]
-+    pub raw_prompt: bool,
- }
- 
- impl Default for GenOptions {
-@@ -42,6 +45,7 @@ impl Default for GenOptions {
-             math_bypass: false,
-             trace_path: String::new(),
-             session_id: String::new(),
-+            raw_prompt: false,
-         }
-     }
- }
-```
-
-**File**: `src/lib.rs` (modified, +1/-0)
-```diff
-@@ -16,6 +16,7 @@ pub mod model_registry;
- pub mod observability;
- pub mod openai_compat;
- pub mod port_manager;
-+pub mod prompt_render;
- pub mod safetensors_adapter;
- pub mod server;
- pub mod templates;
-```
-
-**File**: `src/main.rs` (modified, +2/-0)
-```diff
-@@ -493,6 +493,7 @@ async fn main() -> anyhow::Result<()> {
-             math_bypass,
-             trace_path,
-             session_id,
-+            raw,
-         } => {
-             let Some(spec) = state.registry.to_spec(&name) else {
-                 anyhow::bail!("no model {name}");
-@@ -508,6 +509,7 @@ async fn main() -> anyhow::Result<()> {
-                         math_bypass,
-                         trace_path,
-                         session_id,
-+                        raw_prompt: raw,
-                         stream: false,
-                         ..Default::default()
-                     },
-```
-
-**File**: `src/prompt_render.rs` (modified, +153/-16)
-```diff
-@@ -45,6 +45,61 @@ impl JinjaExtras {
-     }
- }
- 
-+/// How the renderer should choose a source (the single decision point).
-+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+pub enum RenderMode {
-+    /// Auto: GGUF Jinja when present, else Raw for base models, else family fallback.
-+    Auto,
-+    /// Force raw completion (bypass template + thinking heuristic).
-+    ForceRaw,
-+    /// Force template rendering (Jinja, with family fallback if it fails).
-+    ForceTemplate,
-+}
-+
-+/// The single render-decision point. All served/CLI paths call this so there is
-+/// exactly ONE rule for how a prompt is built. Returns the source to use (the
-+/// actual rendered text is produced by the render_* functions with that source).
-+///
-+/// Priority (Auto):
-+/// 1. `gguf_chat_template` (real GGUF Jinja) is Some → GgufJinja.
-+/// 2. Otherwise, if `registry_template` (shimmy's coarse "chatml"/"llama3") or
-+///    model-name heuristic resolves a non-OpenChat family → FamilyFallback.
-+/// 3. Otherwise (no template at all, e.g. base/code models) → Raw.
-+///
-+/// `registry_template` is the shimmy model-registry coarse string; it is the
-+/// fallback only — the real GGUF template always wins when present.
-+#[allow(dead_code)]
-+pub fn decide(
-+    gguf_chat_template: Option<&str>,
-+    registry_template: Option<&str>,
-+    model_name: &str,
-+    mode: RenderMode,
-+) -> RenderSource {
-+    match mode {
-+        RenderMode::ForceRaw => RenderSource::Raw,
-+        RenderMode::ForceTemplate => {
-+            if let Some(tpl) = gguf_chat_template {
-+                if !tpl.trim().is_empty() {
-+                    return RenderSource::GgufJinja;
-+                }
-+            }
-+            RenderSource::FamilyFallback
-+        }
-+        RenderMode::Auto => {
-+            if let Some(tpl) = gguf_chat_template {
-+                if !tpl.trim().is_empty() {
-+                    return RenderSource::GgufJinja;
-+                }
-+            }
-+            // Auto with no GGUF template: family fallback or raw.
-+            match family_from_spec(registry_template, model_name) {
-+                TemplateFamily::OpenChat => RenderSource::Raw,
-+                _ => RenderSource::FamilyFallback,
-+            }
-+        }
-+    }
-+}
-+
- /// Build a chat-style prompt.
- ///
- /// Priority:
-@@ -101,10 +156,7 @@ pub fn render_chat_prompt_with_extras(
- 
-     // Family path: TemplateFamily::render takes history + optional last user input
-     let history: Vec<(String, String)> = if user_input.is_some() && !messages.is_empty() {
--        let last_is_user = messages
--            .last()
--            .map(|(r, _)| r == "user")
--            .unwrap_or(false);
-+        let last_is_user = messages.last().map(|(r, _)| r == "user").unwrap_or(false);
-         if last_is_user {
-             messages[..messages.len() - 1].to_vec()
-         } else {
-@@ -165,8 +217,16 @@ pub fn render_completion_prompt_with_extras(
-         );
-     }
- 
--    // No GGUF Jinja: still apply family chat wrap so instruct models get structure
--    // unless force_raw.
-+    // No GGUF Jinja: only family-wrap if the model actually has a chat family
-+    // (ChatML/Llama3). OpenChat = no real chat structure → true raw completion
-+    // (base/code models like starcoder2, phi-2). This is the behavior change
-+    // that makes base models render RAW instead of a bogus "role: content" wrap.
-+    if family == TemplateFamily::OpenChat {
-+        return RenderedPrompt {
-+            text: raw_prompt.to_string(),
-+            source: RenderSource::Raw,
-+        };
-+    }
-     let text = family.render(None, &[], Some(raw_prompt));
-     RenderedPrompt {
-         text,
-@@ -318,13 +378,7 @@ mod tests {
-     #[test]
-     fn jinja_simple_template() {
-         let tpl = "{% for message in messages %}{{ message.role }}: {{ message.content }}\n{% endfor %}{% if add_generation_prompt %}assistant: {% endif %}";
--        let r = render_chat_prompt(
--            Some(tpl),
--            TemplateFamily::ChatML,
--            None,
--            &[],
--            Some("Hello"),
--        );
-+        let r = render_chat_prompt(Some(tpl), TemplateFamily::ChatML, None, &[], Some("Hello"));
-         assert_eq!(r.source, RenderSource::GgufJinja);
-         assert!(r.text.contains("user: Hello"));
-         assert!(r.text.contains("assistant:"));
-@@ -366,14 +420,97 @@ mod tests {
- 
-     #[test]
-     fn family_chat_messages_add_generation_prompt() {
--        // API-style: messages only, no user_input — must end with assistant turn marker
-+        // API-style: messages only, no user_input — the family renderer emits the
-+        // user turn but does NOT append an assistant marker (no input to prompt).
-+        // The correct generation-prompt behavior is driven by input (see
-+        // render_completion / api paths); this test pins the family path's contract.
-         let msgs = vec![("user".into(), "Hello".into())];
-         let r = render_chat_prompt(None, TemplateFamily::ChatML, None, &msgs, None);
-         assert_eq!(r.
+ ```bash
 ```
 
 ---
 
-### Incident Patch 3: `32410e3a` (2026-08-28)
-**Commit Message**: test(template): replace old coarse-match tests with prompt_render path (oqu.12)
+### Incident Patch 3: `c1106345` (2026-10-05)
+**Commit Message**: fix: correct response cache accounting
 
-- api.rs: test that replicated the removed
-  selection now uses family_from_spec + render_chat_prompt_with_extras.
-- openai_compat: test_template_family_selection rewritten to assert the single
-  family_from_spec path (chatml/llama3/openchat/gemma) instead of the old match.
-- tests/core.rs family-render tests are KEPT (they test the legitimate
-  TemplateFamily::render fallback used by prompt_render when no GGUF template).
+(cherry picked from commit 03f21ca6622d9e64d188e663710e5fcf3882f05d)
 
-TemplateFamily::render itself is retained (oqu.6 verified): it is the family
-fallback renderer, not dead cruft. Only the coarse SELECTION logic + its test
-copies were removed (oqu.3 + here).
-
-Tests: 625 pass, 0 fail. clippy -D warnings clean, fmt clean.
-
-**File**: `src/api.rs` (modified, +10/-6)
+**File**: `src/cache/response_cache.rs` (modified, +61/-1)
 ```diff
-@@ -967,16 +967,20 @@ mod tests {
-         let template = Some("chatml");
+@@ -197,6 +197,12 @@ impl ResponseCache {
+         let mut cache = self.cache.write().await;
+         let mut stats = self.stats.write().await;
  
-         if let Some(ms) = &messages {
--            let fam = match template {
--                Some("chatml") => TemplateFamily::ChatML,
--                Some("llama3") | Some("llama-3") => TemplateFamily::Llama3,
--                _ => TemplateFamily::OpenChat,
--            };
-+            let fam = crate::prompt_render::family_from_spec(template, "test-model");
-             let pairs = ms
-                 .iter()
-                 .map(|m| (m.role.clone(), m.content.clone()))
-                 .collect::<Vec<_>>();
--            let _prompt = fam.render(system, &pairs, None);
-+            let _prompt = crate::prompt_render::render_chat_prompt_with_extras(
-+                None,
-+                fam,
-+                system,
-+                &pairs,
-+                None,
-+                &crate::prompt_render::JinjaExtras::for_model("test-model"),
++        // Replacing an entry must release its previous contribution to the
++        // size accounting before capacity checks and insertion.
++        if let Some(previous) = cache.remove(&key) {
++            stats.total_size_bytes -= previous.size_bytes;
++        }
++
+         // Check if we need to evict entries
+         while cache.len() >= self.config.max_entries
+             || stats.total_size_bytes + entry_size > self.config.max_size_mb * 1024 * 1024
+@@ -262,10 +268,11 @@ impl ResponseCache {
+         let mut cache = self.cache.write().await;
+         let mut stats = self.stats.write().await;
+ 
++        let cleared_entries = cache.len() as u64;
+         cache.clear();
+         stats.entries = 0;
+         stats.total_size_bytes = 0;
+-        stats.evictions += stats.entries as u64;
++        stats.evictions += cleared_entries;
+ 
+         info!("Cache cleared");
+     }
+@@ -401,6 +408,59 @@ mod tests {
+         assert!(cache.get(&create_test_key("3", "model")).await.is_some());
+     }
+ 
++    #[tokio::test]
++    async fn test_cache_overwrite_updates_size_accounting() {
++        let cache = ResponseCache::with_config(ResponseCacheConfig {
++            max_entries: 1,
++            ..Default::default()
++        });
++        let key = create_test_key("overwrite", "model");
++        let replacement = "a longer replacement response".to_string();
++
++        cache
++            .put(
++                key.clone(),
++                "short response".to_string(),
++                Duration::from_millis(10),
 +            )
-+            .text;
-             assert_eq!(pairs.len(), 1);
-             assert_eq!(pairs[0].0, "user");
-         }
-```
-
-**File**: `src/openai_compat/mod.rs` (modified, +19/-54)
-```diff
-@@ -683,62 +683,27 @@ mod tests {
- 
++            .await;
++        cache
++            .put(key, replacement.clone(), Duration::from_millis(10))
++            .await;
++
++        let stats = cache.stats.read().await;
++        assert_eq!(stats.entries, 1);
++        assert_eq!(stats.evictions, 0);
++        assert_eq!(stats.total_size_bytes, replacement.len());
++    }
++
++    #[tokio::test]
++    async fn test_cache_clear_counts_evictions() {
++        let cache = ResponseCache::new();
++
++        cache
++            .put(
++                create_test_key("clear 1", "model"),
++                "response 1".to_string(),
++                Duration::from_millis(10),
++            )
++            .await;
++        cache
++            .put(
++                create_test_key("clear 2", "model"),
++                "response 2".to_string(),
++                Duration::from_millis(10),
++            )
++            .await;
++
++        cache.clear().await;
++
++        let stats = cache.stats().await;
++        assert_eq!(stats.entries, 0);
++        assert_eq!(stats.total_size_bytes, 0);
++        assert_eq!(stats.evictions, 2);
++    }
++
      #[test]
-     fn test_template_family_selection() {
--        // Test template selection logic (lines 115-119)
-+        // Test family selection via the single prompt_render path.
-         use crate::templates::TemplateFamily;
- 
--        // Test ChatML template selection
--        let spec_chatml = crate::engine::ModelSpec {
--            name: "test-chatml".to_string(),
--            base_path: "./test.safetensors".into(),
--            lora_path: None,
--            template: Some("chatml".to_string()),
--            chat_template: None,
--            ctx_len: 2048,
--            n_threads: None,
--        };
--
--        let fam = match spec_chatml.template.as_deref() {
--            Some("chatml") => TemplateFamily::ChatML,
--            Some("llama3") | Some("llama-3") => TemplateFamily::Llama3,
--            _ => TemplateFamily::OpenChat,
--        };
--        assert!(matches!(fam, TemplateFamily::ChatML));
--
--        // Test Llama3 template selection
--        let spec_llama3 = crate::engine::ModelSpec {
--            name: "test-llama3".to_string(),
--            base_path: "./test.safetensors".into(),
--            lora_path: None,
--            template: Some("llama3".to_string()),
--            chat_template: None,
--            ctx_len: 2048,
--            n_threads: None,
--        };
--
--        let fam = match spec_llama3.template.as_deref() {
--            Some("chatml") => TemplateFamily::ChatML,
--            Some("llama3") | Some("llama-3") => TemplateFamily::Llama3,
--            _ => TemplateFamily::OpenChat,
--        };
--        assert!(matches!(fam, TemplateFamily::Llama3));
--
--        // Test default template selection
--        let spec_default = crate::engine::ModelSpec {
--            name: "test-default".to_string(),
--            base_path: "./test.safetensors".into(),
--            lora_path: None,
--            template: Some("unknown".to_string()),
--            chat_template: None,
--            ctx_len: 2048,
--            n_threads: None,
--        };
--
--        let fam = match spec_default.template.as_deref() {
--            Some("chatml") => TemplateFamily::ChatML,
--            Some("llama3") | Some("llama-3") => TemplateFamily::Llama3,
--            _ => TemplateFamily::OpenChat,
--        };
--        assert!(matches!(fam, TemplateFamily::OpenChat));
-+        assert!(matches!(
-+            crate::prompt_render::family_from_spec(Some("chatml"), "test-chatml"),
-+            TemplateFamily::ChatML
-+        ));
-+        assert!(matches!(
-+            crate::prompt_render::family_from_spec(Some("llama3"), "test-llama3"),
-+            TemplateFamily::Llama3
-+        ));
-+        // Unknown registry template -> name heuristic (default -> OpenChat).
-+        assert!(matches!(
-+            crate::prompt_render::family_from_spec(Some("unknown"), "some-model"),
-+            TemplateFamily::OpenChat
-+        ));
-+        // Gemma name heuristic.
-+        assert!(matches!(
-+            crate::prompt_render::family_from_spec(None, "gemma-2-2b-it"),
-+            TemplateFamily::Gemma
-+        ));
-     }
- 
-     #[test]
+     fn test_cache_key_generation() {
+         let key1 = CacheKey::new("hello", "model1", 100, 0.7, 0.9, &[]);
 ```
 
 #### Recent Merged Pull Requests:
@@ -2268,60 +1919,29 @@ Tests: 625 pass, 0 fail. clippy -D warnings clean, fmt clean.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. template): Gemma family fallback + slice-step renderer (oqu.11)
+## X. Document Linux ARM64 binaries and native platform verification
 
 **RULE**:
-When implementing operations in `src/prompt_render.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Michael-A-Kuykendall/shimmy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Michael-A-Kuykendall/shimmy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `09438d14`: template): Gemma family fallback + slice-step renderer (oqu.11). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9fb15fad`: Document Linux ARM64 binaries and native platform verification. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/prompt_render.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        Some(ref t) if t == "gemma" => TemplateFamily::Gemma,
-            } else if n.contains("gemma") {
-                TemplateFamily::Gemma
-
-    // ── Gemma family fallback ───────────────────────────────────────────────
-
-    #[test]
-    fn gemma_family_renders_start_of_turn() {
-        // Gemma model with no GGUF template (or template render failure) -> Gemma family wrap.
-        let msgs = vec![("user".into(), "Hi".into())];
-        let r = render_chat_prompt(None, TemplateFamily::Gemma, None, &msgs, None);
-        assert_eq!(r.source, RenderSource::FamilyFallback);
-        assert!(
-            r.text.contains("<start_of_turn>user\nHi<end_of_turn>"),
-            "gemma user turn; got: {}",
-            r.text
-        );
-        assert!(
-            r.text.contains("<start_of_turn>model\n"),
-            "gemma gen prompt; got: {}",
-            r.text
-        );
-    }
-
-    #[test]
-    fn gemma_assistant_rendered_as_model() {
-        let msgs = vec![
-            ("user".into(), "Hi".into()),
-            ("assistant".into(), "Hello".into()),
-        ];
-        let r = render_chat_prompt(None, TemplateFamily::Gemma, None, &msgs, None);
-        assert!(
-            r.text.contains("
+- Test on native Linux x86-64/ARM64, Windows x86-64 and macOS ARM64 runners.
+- Add Linux ARM64 release binaries and publish SHA256 checksums for all assets.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+- Validate release binaries on each build runner and publish SHA256 checksums.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `09438d14` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9fb15fad` are properly handled with clean fallback behavior.

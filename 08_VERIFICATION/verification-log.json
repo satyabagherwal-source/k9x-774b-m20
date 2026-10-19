@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-0VN0",
-    "timestamp": "2026-10-19T01:35:01.932Z",
-    "repository": "slatedb/slatedb",
-    "learningId": "learn-github-slatedb-slatedb",
-    "contentHash": "9dbc63f00c56d179cb440f93757f6a20bcea876d26d0354bf6df3b43a25de4ca",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-0WX3",
-    "timestamp": "2026-10-19T01:35:03.591Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "07e89ba95e3f9d1c8b88a9bcccf7a1067fd1270a13cbb845bfca93bf1a6b33b3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-8P1X",
-    "timestamp": "2026-10-19T01:41:06.645Z",
-    "repository": "autotrust/GEV-26B-Decide-NVFP4",
-    "learningId": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
-    "contentHash": "d958d6229a78c81c90cd8665848097023a30e8cb1f8417d7d8843970e0e7c1b8",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-8P5Z",
-    "timestamp": "2026-10-19T01:41:06.791Z",
-    "repository": "react-component/slider",
-    "learningId": "learn-github-react-component-slider",
-    "contentHash": "c88b37e1f30d5eed693fdb1a978d769abe467ee6497f2be2f47160e07ece9a13",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-8QB7",
     "timestamp": "2026-10-19T01:41:08.275Z",
     "repository": "mufeedvh/code2prompt",
@@ -7490,6 +7430,66 @@
     "repository": "MaterializeInc/materialize",
     "learningId": "learn-github-materializeinc-materialize",
     "contentHash": "65c8ef2f07c188b3743bfedc991bb186dd0b17c1e1a23bb1426a25f900affbd3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-H1SP",
+    "timestamp": "2026-10-19T13:27:26.809Z",
+    "repository": "openai/clip-vit-base-patch32",
+    "learningId": "learn-huggingface-openai-clip-vit-base-patch32",
+    "contentHash": "87f5ef9fa7638bc49393daf2a891bc0b156c8f0e156024f0bea33427a87a9c08",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-H1WM",
+    "timestamp": "2026-10-19T13:27:26.950Z",
+    "repository": "elastic/eui",
+    "learningId": "learn-github-elastic-eui",
+    "contentHash": "0f86fd9b570d88b19612c4e7e51faeb501930860303540b9913975447d7ba7d4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-H3EP",
+    "timestamp": "2026-10-19T13:27:28.897Z",
+    "repository": "Michael-A-Kuykendall/shimmy",
+    "learningId": "learn-github-michael-a-kuykendall-shimmy",
+    "contentHash": "6ea49ea4732b98aa39a26a4bf52f7f46b7a9c6a8c37aae90a3d44b5a6a4a6101",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-H71P",
+    "timestamp": "2026-10-19T13:27:33.613Z",
+    "repository": "amosgyamfi/open-swiftui-animations",
+    "learningId": "learn-github-amosgyamfi-open-swiftui-animations",
+    "contentHash": "cacc26499177fdb546f1d0c3a19ed0427e9ae1984f189ac206179f09f90f0975",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
