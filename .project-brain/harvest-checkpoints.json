@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T05:06:41.851Z",
+  "last_updated": "2026-10-19T05:12:57.163Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -588,14 +588,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-akhilaaa3-jev-omni",
-      "content_hash": "b732a8001d788bdb1abb2116268622f4a0252a51d8aada6a64f757b255659565",
-      "verified_at": "2026-10-17T23:33:11.293Z",
+      "content_hash": "5680c250967c7929220be8a36312cded6d3cc0399d311c7354f104956559ee28",
+      "verified_at": "2026-10-19T05:12:43.035Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T23:33:11.293Z"
+      "last_updated": "2026-10-19T05:12:43.035Z"
     },
     "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B": {
       "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
@@ -9232,6 +9232,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T05:05:46.165Z"
+    },
+    "dockview/dockview": {
+      "repository": "dockview/dockview",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-dockview-dockview",
+      "content_hash": "3f5d121b169ef5a1cfd0600db4e100e875950fe30e5a3e7e1cb7b5d094485a95",
+      "verified_at": "2026-10-19T05:12:43.311Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T05:12:43.311Z"
+    },
+    "kubearmor/KubeArmor": {
+      "repository": "kubearmor/KubeArmor",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-kubearmor-kubearmor",
+      "content_hash": "3e86f3fab3b7d172235d5a3c8b11d5c9cc47b1ad6a0f9ac1f38fb211c718f28b",
+      "verified_at": "2026-10-19T05:12:44.901Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T05:12:44.901Z"
+    },
+    "callstack/agent-device": {
+      "repository": "callstack/agent-device",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-callstack-agent-device",
+      "content_hash": "c8f6a2630c9aed61b41e1107e8eb6857644bf165f6ba430b128e4d8b814ac89c",
+      "verified_at": "2026-10-19T05:12:49.520Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T05:12:49.520Z"
+    },
+    "open-policy-agent/opa": {
+      "repository": "open-policy-agent/opa",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-open-policy-agent-opa",
+      "content_hash": "bb2ecf302de9e6e7fed9457f6a1a97f992a0f0b5d537e5e3c33c931659c47e5f",
+      "verified_at": "2026-10-19T05:12:52.310Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T05:12:52.310Z"
+    },
+    "dragonflydb/dragonfly": {
+      "repository": "dragonflydb/dragonfly",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-dragonflydb-dragonfly",
+      "content_hash": "3563cde104dbb2947a0b439525aad376cf19390707727a54cb7f07d48f90c91c",
+      "verified_at": "2026-10-19T05:12:57.163Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T05:12:57.163Z"
     }
   },
   "repos": {

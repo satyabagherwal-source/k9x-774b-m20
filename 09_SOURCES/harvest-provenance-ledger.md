@@ -2946,3 +2946,9 @@ Every entry in this ledger must capture:
 | `learn-github-databricks-click` | `https://github.com/databricks/click` | `47ff7d1b` | Multi-dimensional audit evidence | 2026-10-19T05:05:39.900Z |
 | `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `110043e5` | Multi-dimensional audit evidence | 2026-10-19T05:05:46.160Z |
 | `learn-huggingface-comfy-org-qwen-image-2-1` | `https://huggingface.co/Comfy-Org/Qwen-Image-2.1` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-19T05:06:41.846Z |
+| `learn-huggingface-akhilaaa3-jev-omni` | `https://huggingface.co/akhilaaa3/Jev-Omni` | `hf-akhilaa` | Multi-dimensional audit evidence | 2026-10-19T05:12:43.029Z |
+| `learn-github-dockview-dockview` | `https://github.com/dockview/dockview` | `1eb9c69a` | Multi-dimensional audit evidence | 2026-10-19T05:12:43.306Z |
+| `learn-github-kubearmor-kubearmor` | `https://github.com/kubearmor/KubeArmor` | `e6c53bb1` | Multi-dimensional audit evidence | 2026-10-19T05:12:44.896Z |
+| `learn-github-callstack-agent-device` | `https://github.com/callstack/agent-device` | `3d919010` | Multi-dimensional audit evidence | 2026-10-19T05:12:49.515Z |
+| `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `7bcf8618` | Multi-dimensional audit evidence | 2026-10-19T05:12:52.305Z |
+| `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `1a9f1f6f` | Multi-dimensional audit evidence | 2026-10-19T05:12:57.157Z |

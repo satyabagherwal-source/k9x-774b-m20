@@ -485,8 +485,8 @@
     "sourceUrl": "https://huggingface.co/akhilaaa3/Jev-Omni",
     "sourceVersion": "hf-akhilaaa3-jev-omni",
     "license": "Open-Source",
-    "contentHash": "b732a8001d788bdb1abb2116268622f4a0252a51d8aada6a64f757b255659565",
-    "lastHarvestedAt": "2026-10-17T23:33:11.290Z",
+    "contentHash": "5680c250967c7929220be8a36312cded6d3cc0399d311c7354f104956559ee28",
+    "lastHarvestedAt": "2026-10-19T05:12:43.029Z",
     "learningId": "learn-huggingface-akhilaaa3-jev-omni"
   },
   "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b": {
@@ -6078,5 +6078,55 @@
     "contentHash": "9d229a024e26dab6fb34a6b4e5d7404d0f4b6368555a212969fd4196f87dc159",
     "lastHarvestedAt": "2026-10-19T05:05:46.160Z",
     "learningId": "learn-github-clickhouse-clickhouse"
+  },
+  "dockview-dockview": {
+    "repository": "dockview/dockview",
+    "platform": "github",
+    "sourceUrl": "https://github.com/dockview/dockview",
+    "sourceVersion": "1eb9c69a",
+    "license": "NOASSERTION",
+    "contentHash": "3f5d121b169ef5a1cfd0600db4e100e875950fe30e5a3e7e1cb7b5d094485a95",
+    "lastHarvestedAt": "2026-10-19T05:12:43.306Z",
+    "learningId": "learn-github-dockview-dockview"
+  },
+  "kubearmor-kubearmor": {
+    "repository": "kubearmor/KubeArmor",
+    "platform": "github",
+    "sourceUrl": "https://github.com/kubearmor/KubeArmor",
+    "sourceVersion": "e6c53bb1",
+    "license": "Apache-2.0",
+    "contentHash": "3e86f3fab3b7d172235d5a3c8b11d5c9cc47b1ad6a0f9ac1f38fb211c718f28b",
+    "lastHarvestedAt": "2026-10-19T05:12:44.896Z",
+    "learningId": "learn-github-kubearmor-kubearmor"
+  },
+  "callstack-agent-device": {
+    "repository": "callstack/agent-device",
+    "platform": "github",
+    "sourceUrl": "https://github.com/callstack/agent-device",
+    "sourceVersion": "3d919010",
+    "license": "MIT",
+    "contentHash": "c8f6a2630c9aed61b41e1107e8eb6857644bf165f6ba430b128e4d8b814ac89c",
+    "lastHarvestedAt": "2026-10-19T05:12:49.515Z",
+    "learningId": "learn-github-callstack-agent-device"
+  },
+  "open-policy-agent-opa": {
+    "repository": "open-policy-agent/opa",
+    "platform": "github",
+    "sourceUrl": "https://github.com/open-policy-agent/opa",
+    "sourceVersion": "7bcf8618",
+    "license": "Apache-2.0",
+    "contentHash": "bb2ecf302de9e6e7fed9457f6a1a97f992a0f0b5d537e5e3c33c931659c47e5f",
+    "lastHarvestedAt": "2026-10-19T05:12:52.305Z",
+    "learningId": "learn-github-open-policy-agent-opa"
+  },
+  "dragonflydb-dragonfly": {
+    "repository": "dragonflydb/dragonfly",
+    "platform": "github",
+    "sourceUrl": "https://github.com/dragonflydb/dragonfly",
+    "sourceVersion": "1a9f1f6f",
+    "license": "NOASSERTION",
+    "contentHash": "3563cde104dbb2947a0b439525aad376cf19390707727a54cb7f07d48f90c91c",
+    "lastHarvestedAt": "2026-10-19T05:12:57.157Z",
+    "learningId": "learn-github-dragonflydb-dragonfly"
   }
 }

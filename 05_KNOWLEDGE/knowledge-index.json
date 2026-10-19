@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T05:06:41.806Z",
-  "total_verified_learnings": 627,
+  "last_updated": "2026-10-19T05:12:57.113Z",
+  "total_verified_learnings": 632,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -3772,22 +3772,35 @@
     "learn-github-callstack-agent-device": {
       "learning_id": "learn-github-callstack-agent-device",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "callstack-agent-device",
+      "source": "callstack/agent-device",
+      "repository": "callstack/agent-device",
       "slug": "callstack-agent-device",
       "platform": "github",
       "source_url": "https://github.com/callstack/agent-device",
-      "source_version": "HEAD",
-      "content_hash": "1b2071ec8484659c119dc871395f9b7204a59c20ce4475bc3563636f5d895921",
+      "source_version": "3d919010",
+      "content_hash": "c8f6a2630c9aed61b41e1107e8eb6857644bf165f6ba430b128e4d8b814ac89c",
       "dossier_path": "07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2167,
+          "title": "daemon): replace fixed 15s startup kill with progress-aware startup budget (#379",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.190Z"
+      "verified_at": "2026-10-19T05:12:49.461Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-callstack-react-native-builder-bob": {
       "learning_id": "learn-github-callstack-react-native-builder-bob",
@@ -6412,22 +6425,35 @@
     "learn-github-dockview-dockview": {
       "learning_id": "learn-github-dockview-dockview",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "dockview-dockview",
+      "source": "dockview/dockview",
+      "repository": "dockview/dockview",
       "slug": "dockview-dockview",
       "platform": "github",
       "source_url": "https://github.com/dockview/dockview",
-      "source_version": "HEAD",
-      "content_hash": "53f897e7f8bcd694ec30a7252e360110bba4f61267368f11067856b5fbf5d758",
+      "source_version": "1eb9c69a",
+      "content_hash": "3f5d121b169ef5a1cfd0600db4e100e875950fe30e5a3e7e1cb7b5d094485a95",
       "dossier_path": "07_PROJECT_LEARNING/dockview-dockview-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dockview-dockview-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2165,
+          "title": "core): keep a pending group size across a same-size layout pass",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.638Z"
+      "verified_at": "2026-10-19T05:12:43.254Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-docmost-docmost": {
       "learning_id": "learn-github-docmost-docmost",
@@ -6651,22 +6677,35 @@
     "learn-github-dragonflydb-dragonfly": {
       "learning_id": "learn-github-dragonflydb-dragonfly",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "dragonflydb-dragonfly",
+      "source": "dragonflydb/dragonfly",
+      "repository": "dragonflydb/dragonfly",
       "slug": "dragonflydb-dragonfly",
       "platform": "github",
       "source_url": "https://github.com/dragonflydb/dragonfly",
-      "source_version": "HEAD",
-      "content_hash": "e819bb043c96ca68c320e1883079bee5acc982e9ea592c38316b2b649aca8765",
+      "source_version": "1a9f1f6f",
+      "content_hash": "3563cde104dbb2947a0b439525aad376cf19390707727a54cb7f07d48f90c91c",
       "dossier_path": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2169,
+          "title": "server): drop the usec-keyed memory cache from ShouldDenyOnOOM (#8575)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.690Z"
+      "verified_at": "2026-10-19T05:12:57.104Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-dragonflyoss-dragonfly": {
       "learning_id": "learn-github-dragonflyoss-dragonfly",
@@ -11360,7 +11399,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/akhilaaa3/Jev-Omni",
       "source_version": "hf-akhilaaa3-jev-omni",
-      "content_hash": "b732a8001d788bdb1abb2116268622f4a0252a51d8aada6a64f757b255659565",
+      "content_hash": "5680c250967c7929220be8a36312cded6d3cc0399d311c7354f104956559ee28",
       "dossier_path": "07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md",
       "promoted_rules": [
@@ -11412,7 +11451,7 @@
         "learn-huggingface-hf-akhilaaa3-jev-omni-mv46br3m",
         "learn-huggingface-hf-akhilaaa3-jev-omni-mv4jlvuj"
       ],
-      "verified_at": "2026-10-17T23:33:11.245Z",
+      "verified_at": "2026-10-19T05:12:42.980Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25015,22 +25054,35 @@
     "learn-github-kubearmor-kubearmor": {
       "learning_id": "learn-github-kubearmor-kubearmor",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "kubearmor-kubearmor",
+      "source": "kubearmor/KubeArmor",
+      "repository": "kubearmor/KubeArmor",
       "slug": "kubearmor-kubearmor",
       "platform": "github",
       "source_url": "https://github.com/kubearmor/KubeArmor",
-      "source_version": "HEAD",
-      "content_hash": "f65287d3cfaa0de8bffcc28237f8cd7c4bb5bd83de375c92d803593e93b71279",
+      "source_version": "e6c53bb1",
+      "content_hash": "3e86f3fab3b7d172235d5a3c8b11d5c9cc47b1ad6a0f9ac1f38fb211c718f28b",
       "dossier_path": "07_PROJECT_LEARNING/kubearmor-kubearmor-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kubearmor-kubearmor-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2166,
+          "title": "presets): stop writing ContainerMap under RLock in anonmapexec (#2797)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.883Z"
+      "verified_at": "2026-10-19T05:12:44.843Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-kubeedge-kubeedge": {
       "learning_id": "learn-github-kubeedge-kubeedge",
@@ -30488,22 +30540,35 @@
     "learn-github-open-policy-agent-opa": {
       "learning_id": "learn-github-open-policy-agent-opa",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "open-policy-agent-opa",
+      "source": "open-policy-agent/opa",
+      "repository": "open-policy-agent/opa",
       "slug": "open-policy-agent-opa",
       "platform": "github",
       "source_url": "https://github.com/open-policy-agent/opa",
-      "source_version": "HEAD",
-      "content_hash": "d57a438d7900de7ab88d7b023395ca780a8c69905dcc44f972185b638647ad40",
+      "source_version": "7bcf8618",
+      "content_hash": "bb2ecf302de9e6e7fed9457f6a1a97f992a0f0b5d537e5e3c33c931659c47e5f",
       "dossier_path": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2168,
+          "title": "topdown: fix substring overflow with huge length",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.825Z"
+      "verified_at": "2026-10-19T05:12:52.255Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-open-source-legal-opencontracts": {
       "learning_id": "learn-github-open-source-legal-opencontracts",
@@ -77670,6 +77735,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T05:06:41.794Z"
+    },
+    "rule-2165": {
+      "learning_id": "rule-2165",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2165,
+      "title": "core): keep a pending group size across a same-size layout pass",
+      "source_url": "https://github.com/dockview/dockview",
+      "source_version": "1eb9c69a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:12:43.254Z"
+    },
+    "rule-2166": {
+      "learning_id": "rule-2166",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2166,
+      "title": "presets): stop writing ContainerMap under RLock in anonmapexec (#2797)",
+      "source_url": "https://github.com/kubearmor/KubeArmor",
+      "source_version": "e6c53bb1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:12:44.843Z"
+    },
+    "rule-2167": {
+      "learning_id": "rule-2167",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2167,
+      "title": "daemon): replace fixed 15s startup kill with progress-aware startup budget (#379",
+      "source_url": "https://github.com/callstack/agent-device",
+      "source_version": "3d919010",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:12:49.461Z"
+    },
+    "rule-2168": {
+      "learning_id": "rule-2168",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2168,
+      "title": "topdown: fix substring overflow with huge length",
+      "source_url": "https://github.com/open-policy-agent/opa",
+      "source_version": "7bcf8618",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:12:52.255Z"
+    },
+    "rule-2169": {
+      "learning_id": "rule-2169",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2169,
+      "title": "server): drop the usec-keyed memory cache from ShouldDenyOnOOM (#8575)",
+      "source_url": "https://github.com/dragonflydb/dragonfly",
+      "source_version": "1a9f1f6f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:12:57.105Z"
     }
   },
   "aliases": {
