@@ -1655,8 +1655,8 @@
     "sourceUrl": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
     "sourceVersion": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf",
     "license": "Open-Source",
-    "contentHash": "4a1d756a953954d085a25e8f31c383f9f594d18ca554dd3d2630b96fdc7b29c0",
-    "lastHarvestedAt": "2026-10-18T01:35:33.290Z",
+    "contentHash": "5e8f49d763ad7fc06703130897e552ae4c659162ff6090fef40186ea4b61f3fd",
+    "lastHarvestedAt": "2026-10-19T09:06:40.700Z",
     "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf"
   },
   "hf-nvidia-qwen3.8-flash-next-fp4-local": {
@@ -7438,5 +7438,35 @@
     "contentHash": "618d14a887ddc28d6fd9b22ec533cf8b32422918f6f45685fd2000bba837a6f8",
     "lastHarvestedAt": "2026-10-19T08:58:49.156Z",
     "learningId": "learn-github-lancedb-lancedb"
+  },
+  "agent-of-empires-agent-of-empires": {
+    "repository": "agent-of-empires/agent-of-empires",
+    "platform": "github",
+    "sourceUrl": "https://github.com/agent-of-empires/agent-of-empires",
+    "sourceVersion": "77402819",
+    "license": "MIT",
+    "contentHash": "69bb2d72aa114dd9c95d756d8499033c424833dd032b97c3b7bfda21b7fa9190",
+    "lastHarvestedAt": "2026-10-19T09:06:34.258Z",
+    "learningId": "learn-github-agent-of-empires-agent-of-empires"
+  },
+  "nativescript-nativescript": {
+    "repository": "NativeScript/NativeScript",
+    "platform": "github",
+    "sourceUrl": "https://github.com/NativeScript/NativeScript",
+    "sourceVersion": "3224f1b4",
+    "license": "MIT",
+    "contentHash": "e846f5417a212e00fe4e1ce616ec6a5b625878c3ff3bb6a19518c2e96be3e497",
+    "lastHarvestedAt": "2026-10-19T09:06:40.269Z",
+    "learningId": "learn-github-nativescript-nativescript"
+  },
+  "oramasearch-orama": {
+    "repository": "oramasearch/orama",
+    "platform": "github",
+    "sourceUrl": "https://github.com/oramasearch/orama",
+    "sourceVersion": "b030e1bd",
+    "license": "NOASSERTION",
+    "contentHash": "e03deb48dc00e2f72f665e235c236d231a239d38c2dfb7f4cfdb6abf07956b52",
+    "lastHarvestedAt": "2026-10-19T09:06:47.842Z",
+    "learningId": "learn-github-oramasearch-orama"
   }
 }

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T08:59:47.590Z",
-  "total_verified_learnings": 758,
+  "last_updated": "2026-10-19T09:06:47.805Z",
+  "total_verified_learnings": 761,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -613,22 +613,35 @@
     "learn-github-agent-of-empires-agent-of-empires": {
       "learning_id": "learn-github-agent-of-empires-agent-of-empires",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "agent-of-empires-agent-of-empires",
+      "source": "agent-of-empires/agent-of-empires",
+      "repository": "agent-of-empires/agent-of-empires",
       "slug": "agent-of-empires-agent-of-empires",
       "platform": "github",
       "source_url": "https://github.com/agent-of-empires/agent-of-empires",
-      "source_version": "HEAD",
-      "content_hash": "7971adc765fcc93dc3bb17d84adcbf52be8b9b55e500caac32bac965671cf70a",
+      "source_version": "77402819",
+      "content_hash": "69bb2d72aa114dd9c95d756d8499033c424833dd032b97c3b7bfda21b7fa9190",
       "dossier_path": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2453,
+          "title": "serve): keep status probes from deleting a replacement daemon's state (#4629)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.623Z"
+      "verified_at": "2026-10-19T09:06:34.212Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-agentconnect-md-agentconnect": {
       "learning_id": "learn-github-agentconnect-md-agentconnect",
@@ -30455,22 +30468,35 @@
     "learn-github-nativescript-nativescript": {
       "learning_id": "learn-github-nativescript-nativescript",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "nativescript-nativescript",
+      "source": "NativeScript/NativeScript",
+      "repository": "NativeScript/NativeScript",
       "slug": "nativescript-nativescript",
       "platform": "github",
       "source_url": "https://github.com/NativeScript/NativeScript",
-      "source_version": "HEAD",
-      "content_hash": "e00839ee25ec28bbdd0bfe387fe82b856256993481aaef2c19fafa0ebfad1376",
+      "source_version": "3224f1b4",
+      "content_hash": "e846f5417a212e00fe4e1ce616ec6a5b625878c3ff3bb6a19518c2e96be3e497",
       "dossier_path": "07_PROJECT_LEARNING/nativescript-nativescript-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nativescript-nativescript-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2454,
+          "title": "vite): Android release bundles keep the class names the binding generator reads",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.565Z"
+      "verified_at": "2026-10-19T09:06:40.222Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-nativewind-nativewind": {
       "learning_id": "learn-github-nativewind-nativewind",
@@ -32636,22 +32662,35 @@
     "learn-github-oramasearch-orama": {
       "learning_id": "learn-github-oramasearch-orama",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "oramasearch-orama",
+      "source": "oramasearch/orama",
+      "repository": "oramasearch/orama",
       "slug": "oramasearch-orama",
       "platform": "github",
       "source_url": "https://github.com/oramasearch/orama",
-      "source_version": "HEAD",
-      "content_hash": "d9b417d82618e31c6d8a80bb27049e902309dedc2c17d59ba882026b90c6ad6c",
+      "source_version": "b030e1bd",
+      "content_hash": "e03deb48dc00e2f72f665e235c236d231a239d38c2dfb7f4cfdb6abf07956b52",
       "dossier_path": "07_PROJECT_LEARNING/oramasearch-orama-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oramasearch-orama-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2457,
+          "title": "orama): break the search circular dependency behind Metro/Expo failure (#961) (#",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.906Z"
+      "verified_at": "2026-10-19T09:06:47.795Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-orange-cyberdefense-goad": {
       "learning_id": "learn-github-orange-cyberdefense-goad",
@@ -51610,7 +51649,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
       "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf",
-      "content_hash": "4a1d756a953954d085a25e8f31c383f9f594d18ca554dd3d2630b96fdc7b29c0",
+      "content_hash": "5e8f49d763ad7fc06703130897e552ae4c659162ff6090fef40186ea4b61f3fd",
       "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md",
       "promoted_rules": [
@@ -51633,6 +51672,16 @@
           "number": 1582,
           "title": "Visual Token Compression Ratio Invariance",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2455,
+          "title": "MoE On-Device Inference Requires Expert Pre-Fetching (Lookahead Scheduling)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2456,
+          "title": "Visual Token Compression Must Occur Intra-ViT, Not Post-Encoder",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -51640,7 +51689,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T01:35:33.258Z",
+      "verified_at": "2026-10-19T09:06:40.651Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -84261,6 +84310,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T08:59:47.579Z"
+    },
+    "rule-2453": {
+      "learning_id": "rule-2453",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2453,
+      "title": "serve): keep status probes from deleting a replacement daemon's state (#4629)",
+      "source_url": "https://github.com/agent-of-empires/agent-of-empires",
+      "source_version": "77402819",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T09:06:34.212Z"
+    },
+    "rule-2454": {
+      "learning_id": "rule-2454",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2454,
+      "title": "vite): Android release bundles keep the class names the binding generator reads",
+      "source_url": "https://github.com/NativeScript/NativeScript",
+      "source_version": "3224f1b4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T09:06:40.222Z"
+    },
+    "rule-2455": {
+      "learning_id": "rule-2455",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2455,
+      "title": "MoE On-Device Inference Requires Expert Pre-Fetching (Lookahead Scheduling)",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+      "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T09:06:40.651Z"
+    },
+    "rule-2456": {
+      "learning_id": "rule-2456",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2456,
+      "title": "Visual Token Compression Must Occur Intra-ViT, Not Post-Encoder",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+      "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T09:06:40.651Z"
+    },
+    "rule-2457": {
+      "learning_id": "rule-2457",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2457,
+      "title": "orama): break the search circular dependency behind Metro/Expo failure (#961) (#",
+      "source_url": "https://github.com/oramasearch/orama",
+      "source_version": "b030e1bd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T09:06:47.795Z"
     }
   },
   "aliases": {

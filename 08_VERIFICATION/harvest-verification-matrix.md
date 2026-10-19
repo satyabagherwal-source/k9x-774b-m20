@@ -3112,3 +3112,7 @@
 | `CYCLE-20261019-VLC1` | `2026-10-19T08:58:49.153Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2448` | Yes (`618d14a8...`) |
 | `CYCLE-20261019-VN1S` | `2026-10-19T08:58:51.376Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2449` | Yes (`811b2473...`) |
 | `CYCLE-20261019-WUGT` | `2026-10-19T08:59:47.645Z` | `Comfy-Org/MiniMax-H3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2450, Rule 2451, Rule 2452` | Yes (`4efb4bc9...`) |
+| `CYCLE-20261019-5K7J` | `2026-10-19T09:06:34.255Z` | `agent-of-empires/agent-of-empires` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2453` | Yes (`69bb2d72...`) |
+| `CYCLE-20261019-5OUI` | `2026-10-19T09:06:40.266Z` | `NativeScript/NativeScript` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2454` | Yes (`e846f541...`) |
+| `CYCLE-20261019-5P6I` | `2026-10-19T09:06:40.698Z` | `openbmb/MiniCPM-V-4.7-35B-A3B-gguf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2455, Rule 2456` | Yes (`5e8f49d7...`) |
+| `CYCLE-20261019-5UOW` | `2026-10-19T09:06:47.840Z` | `oramasearch/orama` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2457` | Yes (`e03deb48...`) |

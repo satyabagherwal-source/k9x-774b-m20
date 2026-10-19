@@ -3119,3 +3119,7 @@ Every entry in this ledger must capture:
 | `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `a4f6e5fe` | Multi-dimensional audit evidence | 2026-10-19T08:58:49.156Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `8e5e985c` | Multi-dimensional audit evidence | 2026-10-19T08:58:51.379Z |
 | `learn-huggingface-comfy-org-minimax-h3` | `https://huggingface.co/Comfy-Org/MiniMax-H3` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-19T08:59:47.648Z |
+| `learn-github-agent-of-empires-agent-of-empires` | `https://github.com/agent-of-empires/agent-of-empires` | `77402819` | Multi-dimensional audit evidence | 2026-10-19T09:06:34.258Z |
+| `learn-github-nativescript-nativescript` | `https://github.com/NativeScript/NativeScript` | `3224f1b4` | Multi-dimensional audit evidence | 2026-10-19T09:06:40.269Z |
+| `learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-10-19T09:06:40.700Z |
+| `learn-github-oramasearch-orama` | `https://github.com/oramasearch/orama` | `b030e1bd` | Multi-dimensional audit evidence | 2026-10-19T09:06:47.842Z |

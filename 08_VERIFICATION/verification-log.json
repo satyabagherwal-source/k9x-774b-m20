@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261018-038U",
-    "timestamp": "2026-10-18T23:14:27.054Z",
-    "repository": "mitmproxy/mitmproxy",
-    "learningId": "learn-github-mitmproxy-mitmproxy",
-    "contentHash": "357a195ba29e12610d34d68e856c3b8bfeeba0c189b15a9baf2ddab4bef41682",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-068C",
-    "timestamp": "2026-10-18T23:14:30.924Z",
-    "repository": "parthsarthi03/raptor",
-    "learningId": "learn-github-parthsarthi03-raptor",
-    "contentHash": "297b58a8fd1000e7af4f020692dde05d4c416425693964af7d919f74e8d48d78",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-7RH0",
-    "timestamp": "2026-10-18T23:20:25.044Z",
-    "repository": "gluestack/gluestack-ui",
-    "learningId": "learn-github-gluestack-gluestack-ui",
-    "contentHash": "f93142f932e5e4b1a21d02c574e6b4e294d726e57b5a6113a25c7b3db5d51b50",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-7TRV",
-    "timestamp": "2026-10-18T23:20:28.027Z",
-    "repository": "zeronsh/zeron",
-    "learningId": "learn-github-zeronsh-zeron",
-    "contentHash": "86a029e9ffc481351652a3a74394a74980ac846ca6905cf50e2683832ce2de78",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261018-7XBQ",
     "timestamp": "2026-10-18T23:20:32.630Z",
     "repository": "welldone-software/why-did-you-render",
@@ -7492,6 +7432,66 @@
     "contentHash": "4efb4bc9f168660250d9b617222d86686bac4138b581f98d610574b441519bf6",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-5K7J",
+    "timestamp": "2026-10-19T09:06:34.255Z",
+    "repository": "agent-of-empires/agent-of-empires",
+    "learningId": "learn-github-agent-of-empires-agent-of-empires",
+    "contentHash": "69bb2d72aa114dd9c95d756d8499033c424833dd032b97c3b7bfda21b7fa9190",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-5OUI",
+    "timestamp": "2026-10-19T09:06:40.266Z",
+    "repository": "NativeScript/NativeScript",
+    "learningId": "learn-github-nativescript-nativescript",
+    "contentHash": "e846f5417a212e00fe4e1ce616ec6a5b625878c3ff3bb6a19518c2e96be3e497",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-5P6I",
+    "timestamp": "2026-10-19T09:06:40.698Z",
+    "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
+    "contentHash": "5e8f49d763ad7fc06703130897e552ae4c659162ff6090fef40186ea4b61f3fd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-5UOW",
+    "timestamp": "2026-10-19T09:06:47.840Z",
+    "repository": "oramasearch/orama",
+    "learningId": "learn-github-oramasearch-orama",
+    "contentHash": "e03deb48dc00e2f72f665e235c236d231a239d38c2dfb7f4cfdb6abf07956b52",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

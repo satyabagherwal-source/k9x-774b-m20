@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T08:59:47.651Z",
-  "total_cycles_completed": 3089,
-  "total_learnings_persisted": 3089,
-  "total_rules_promoted": 2239,
+  "last_updated": "2026-10-19T09:06:47.846Z",
+  "total_cycles_completed": 3093,
+  "total_learnings_persisted": 3093,
+  "total_rules_promoted": 2244,
   "history": [
-    {
-      "timestamp": "2026-10-19T04:40:24.762Z",
-      "repository": "itinance/react-native-fs",
-      "learningId": "learn-github-itinance-react-native-fs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T04:40:27.000Z",
-      "repository": "camptocamp/terraboard",
-      "learningId": "learn-github-camptocamp-terraboard",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T04:40:32.274Z",
-      "repository": "vespa-engine/vespa",
-      "learningId": "learn-github-vespa-engine-vespa",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T04:46:57.015Z",
-      "repository": "radix-ui/themes",
-      "learningId": "learn-github-radix-ui-themes",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T04:46:57.458Z",
       "repository": "orcarouter/OrcaSAQ-2-27B",
@@ -1403,6 +1375,34 @@
       "repository": "Comfy-Org/MiniMax-H3",
       "learningId": "learn-huggingface-comfy-org-minimax-h3",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T09:06:34.261Z",
+      "repository": "agent-of-empires/agent-of-empires",
+      "learningId": "learn-github-agent-of-empires-agent-of-empires",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T09:06:40.272Z",
+      "repository": "NativeScript/NativeScript",
+      "learningId": "learn-github-nativescript-nativescript",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T09:06:40.704Z",
+      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T09:06:47.846Z",
+      "repository": "oramasearch/orama",
+      "learningId": "learn-github-oramasearch-orama",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

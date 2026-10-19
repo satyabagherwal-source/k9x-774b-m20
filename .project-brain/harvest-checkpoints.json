@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T08:59:47.654Z",
+  "last_updated": "2026-10-19T09:06:47.848Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2613,14 +2613,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
-      "content_hash": "4a1d756a953954d085a25e8f31c383f9f594d18ca554dd3d2630b96fdc7b29c0",
-      "verified_at": "2026-10-18T01:35:33.293Z",
+      "content_hash": "5e8f49d763ad7fc06703130897e552ae4c659162ff6090fef40186ea4b61f3fd",
+      "verified_at": "2026-10-19T09:06:40.706Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T01:35:33.293Z"
+      "last_updated": "2026-10-19T09:06:40.706Z"
     },
     "nvidia/Qwen3.8-Flash-Next-FP4-Local": {
       "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
@@ -11201,6 +11201,51 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T08:58:49.162Z"
+    },
+    "agent-of-empires/agent-of-empires": {
+      "repository": "agent-of-empires/agent-of-empires",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-agent-of-empires-agent-of-empires",
+      "content_hash": "69bb2d72aa114dd9c95d756d8499033c424833dd032b97c3b7bfda21b7fa9190",
+      "verified_at": "2026-10-19T09:06:34.263Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T09:06:34.263Z"
+    },
+    "NativeScript/NativeScript": {
+      "repository": "NativeScript/NativeScript",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-nativescript-nativescript",
+      "content_hash": "e846f5417a212e00fe4e1ce616ec6a5b625878c3ff3bb6a19518c2e96be3e497",
+      "verified_at": "2026-10-19T09:06:40.274Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T09:06:40.274Z"
+    },
+    "oramasearch/orama": {
+      "repository": "oramasearch/orama",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-oramasearch-orama",
+      "content_hash": "e03deb48dc00e2f72f665e235c236d231a239d38c2dfb7f4cfdb6abf07956b52",
+      "verified_at": "2026-10-19T09:06:47.848Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T09:06:47.848Z"
     }
   },
   "repos": {
