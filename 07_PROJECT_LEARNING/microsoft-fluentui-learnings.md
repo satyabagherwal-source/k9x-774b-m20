@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/microsoft-fluentui-learnings.md`  
 > **Source**: github ([https://github.com/microsoft/fluentui](https://github.com/microsoft/fluentui))  
-> **Source Version**: `12b576f6`  
+> **Source Version**: `9c0797ae`  
 > **License**: NOASSERTION  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-19T11:36:16.678Z  
+> **Timestamp**: 2026-10-19T22:20:34.433Z  
 > **Learning ID**: `learn-github-microsoft-fluentui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -18,238 +18,201 @@
 
 ## 1. Executive Forensic Architecture & System Mechanics
 
-`microsoft/fluentui` is an enterprise-scale monorepo supporting three generations of UI design systems (Fluent UI React v9, Fluent UI React v8, and Fluent UI Web Components v3), powering applications like Microsoft 365, Teams, and Azure Portal. The repository solves the problem of cross-framework UI convergence, strict accessibility compliance, sub-millisecond styling injection, and high-frequency data visualization within multi-tenant host applications.
+### 1.1 Core System Mission
+`microsoft/fluentui` is the foundational design system and component architecture powering Microsoft 365, Teams, Office, and Azure web interfaces. The repository reconciles three generations of web development:
+- **Fluent UI React v9 (`@fluentui/react-components`)**: Modern zero-runtime CSS-in-JS (Griffel), slot-based composable primitives, headless hook decoupling, and strict accessibility compliance.
+- **Fluent UI React v8 (`@fluentui/react`)**: Legacy monolithic architecture based on `merge-styles`, class-based components, and legacy context pipelines.
+- **Fluent UI Web Components (`@fluentui/web-components`)**: Standards-based Custom Elements powered by FAST (`@microsoft/fast-element`).
+
+### 1.2 Subsystem Decoupling & Boundary Contracts
+The architecture enforces strict decoupling between state computation, DOM manipulation, style compilation, and accessibility notifications:
 
 ```
-+----------------------------------------------------------------------------------+
-|                            HOST APPLICATION CONTAINER                            |
-|  (Teams / Office / Outlook: Custom Window, Iframe, or Shadow DOM Environment)    |
-+----------------------------------------------------------------------------------+
-                                         │
-                 ┌───────────────────────┴───────────────────────┐
-                 ▼                                               ▼
-+------------------------------------+          +------------------------------------+
-|     Fluent UI v9 Architecture      |          |    Charting & Utility Subsystem    |
-| - Zero-Runtime Styling (Griffel)   |          | - Plotly Schema Normalization      |
-| - Custom Context Hooks (useFluent) |          | - TypedArray Base64 Deserializer   |
-| - DOM Decoupling Layer             |          | - Safe URL Protocol Evaluator      |
-| - Strict Package Layering          |          | - Dynamic Multi-Level Intl Formats |
-+------------------------------------+          +------------------------------------+
-                 │                                               │
-                 ├───────────────────────┬───────────────────────┤
-                 ▼                       ▼                       ▼
-+----------------------------------+ +-------------------------+ +-------------------+
-|     packages/react-utilities     | |  packages/charts/...    | | Monorepo CI/CD    |
-| - canUseDOM()                    | | - DecodeBase64Data.ts   | | - Beachball locks |
-| - SSR Isolation                  | | - PlotlyConverter.ts    | | - Nx Task Runner  |
-| - Safe Execution Boundaries      | | - isSafeUrl.ts          | | - Agent Guardrails|
-+----------------------------------+ +-------------------------+ +-------------------+
+┌────────────────────────────────────────────────────────────────────────┐
+│                        Design System Architecture                      │
+└────────────────────────────────────────────────────────────────────────┘
+                                     │
+         ┌───────────────────────────┴───────────────────────────┐
+         ▼                                                       ▼
+┌───────────────────────────────────┐   ┌────────────────────────────────┐
+│ React Components (v9)             │   │ Data Visualization Suite       │
+│ - Slot Recipe Architecture        │   │ - Plotly Schema Sanitizer      │
+│ - Hook-based Pipeline             │   │ - Binary Data Transformer      │
+│ - Griffel Pre-computed Styles      │   │ - Micro-Precision Formatter    │
+└───────────────────────────────────┘   └────────────────────────────────┘
+         │                                                       │
+         ▼                                                       ▼
+┌───────────────────────────────────┐   ┌────────────────────────────────┐
+│ Accessibility & State Layer       │   │ Platform Runtime Invariants    │
+│ - useControllableState            │   │ - Safe URL Protocol Sanity     │
+│ - useEventCallback                │   │ - Zero-Copy TypedArray Slicing │
+│ - MutationObserver Layout Sync    │   │ - Memory Leaks & Loop Guards   │
+│ - Asynchronous Announce Bus       │   │ - Isomorphic Layout Effects    │
+└───────────────────────────────────┘   └────────────────────────────────┘
 ```
 
-### Architectural Boundaries & State Ownership
-1. **Zero Global Reference Boundary (`window` / `document` Isolation)**:
-   In v9, components are strictly barred from referencing globals (`window`, `document`, `navigator`). State consumption occurs via `useFluent_unstable()`, extracting `targetDocument` and `targetDocument.defaultView`. This decouples the UI from the primary host window, enabling rendering in pop-out windows, isolated `iframe` portals, SSR workers, and Micro-Frontend (MFE) contexts.
-2. **Package Dependency Hierarchy**:
-   Horizontal cross-talk between peer component packages is strictly prohibited (e.g., `react-button` cannot depend on `react-menu`). Common utilities and shared contexts are extracted downward into `@fluentui/react-utilities` and `@fluentui/react-shared-contexts`, preventing circular bundling and version desynchronization.
-3. **Data Serialization & High-Throughput Chart Pipelines**:
-   The `chart-utilities` subsystem ingests arbitrary third-party visualization specs (e.g., Plotly schemas). To prevent main-thread freezing and memory exhaustion during large dataset rendering, the subsystem performs base64 typed array decoding, shape dimension normalization (validating non-negative safe integers and bounding rank), JSON sanitization against XSS, and multi-level date formatting with floating-point epsilon corrections.
+1. **State / Hook Boundary (`use[Component]_unstable`)**: Hooks take immutable props and return a normalized component state object. No JSX is emitted here; state hooks contain purely reactive and DOM event orchestration logic.
+2. **Render Boundary (`render[Component]_unstable`)**: Pure presentation mapping using Fluent's Slot Model. Slots can be primitive values, raw React elements, props objects, or custom slot render functions (`Slot<'div'>`).
+3. **Style Injection Boundary (`use[Component]Styles_unstable`)**: Atomic CSS classes are generated at build time via Griffel (`@griffel/react`) and resolved dynamically using CSS variable handles. Zero inline styles are permitted for static layout.
+4. **Shared Reactive Contexts (`@fluentui/react-shared-contexts`)**: Global services such as `AnnounceProvider` decouple UI logic from screen reader live regions, avoiding race conditions between DOM mounting and assistive technology tree updates.
 
 ---
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Host-Decoupled DOM Context Encapsulation
+### 1. Two-Phase Active-State Mutation Reconciliation for Assistive Announcements
 **RULE**:
-Components and libraries operating in modern component trees MUST NOT directly reference global browser singletons (`window`, `document`, `navigator`, `localStorage`). All DOM interactions MUST be resolved through an ambient context hook (e.g., `useFluent().targetDocument`) or a safe execution predicate (`canUseDOM()`).
+Components that issue screen-reader announcements upon active item state transitions MUST NOT announce directly inside the user action handler. They MUST buffer the pending active identifier and trigger announcements within an isomorphic layout effect verified against DOM mutation completion and active-element validation.
 
 **WHY**:
-Direct usage of `window` or `document` causes immediate failures in SSR node runtimes (Throwing `ReferenceError: window is not defined`), breaks multi-window setups (e.g., Electron/Teams pop-outs where events fire in detached `Window` contexts), and prevents CSS/focus isolation inside Shadow DOM boundaries.
+In modern React and virtualized component trees, selector-based contexts and asynchronous state batched updates commit child elements (cards, slides, tabs) *after* the parent container's click event handler finishes. Announcing immediately in the click callback results in assistive technologies querying an unmounted, stale, or partially transitioned DOM node, failing accessibility audit compliance (WCAG 4.1.2 / 4.1.3) and leaving screen reader users stranded.
 
 **WHEN TO APPLY**:
-Apply to all React, Vue, Svelte, or Web Component design systems, micro-frontend platforms, and browser extension environments.
+Applies to all tab bars, carousels, steppers, teaching popovers, accordions, and virtualized list navigators where an external announcement callback formats descriptive text based on rendered child state.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 import * as React from 'react';
+import { useEventCallback, useIsomorphicLayoutEffect } from '@fluentui/react-utilities';
 
-export interface DOMContextValue {
-  targetDocument: Document | undefined;
+export interface UseSynchronizedTransitionOptions {
+  value: string;
+  announcement?: (activeValue: string) => string;
+  announce: (message: string, options: { polite: boolean }) => void;
+  getActiveItemFromDom: () => { value: string } | null;
+  targetContainerRef: React.RefObject<HTMLElement | null>;
 }
 
-export const DOMContext = React.createContext<DOMContextValue>({
-  targetDocument: typeof document !== 'undefined' ? document : undefined,
-});
+export function useSynchronizedAnnounce({
+  value,
+  announcement,
+  announce,
+  getActiveItemFromDom,
+  targetContainerRef,
+}: UseSynchronizedTransitionOptions): void {
+  const previousValueRef = React.useRef(value);
+  const pendingAnnouncementRef = React.useRef<string | null>(null);
 
-export function useDOMContext(): { targetDocument: Document | undefined; defaultView: Window | null } {
-  const context = React.useContext(DOMContext);
-  const targetDocument = context.targetDocument;
-  const defaultView = targetDocument ? targetDocument.defaultView : null;
-  return { targetDocument, defaultView };
-}
-
-export function useEventListener<K extends keyof DocumentEventMap>(
-  type: K,
-  listener: (ev: DocumentEventMap[K]) => void,
-  options?: boolean | AddEventListenerOptions,
-): void {
-  const { targetDocument } = useDOMContext();
-
-  React.useEffect(() => {
-    if (!targetDocument) {
+  const announceActiveState = useEventCallback(() => {
+    const pendingValue = pendingAnnouncementRef.current;
+    if (pendingValue === null) {
       return;
     }
-    targetDocument.addEventListener(type, listener, options);
+
+    const activeNode = getActiveItemFromDom();
+    // Guard against desynchronization: Only announce if DOM has settled to target value
+    if (activeNode?.value !== pendingValue) {
+      return;
+    }
+
+    pendingAnnouncementRef.current = null;
+    const text = announcement?.(pendingValue);
+    if (text) {
+      announce(text, { polite: true });
+    }
+  });
+
+  // Layout phase: detect prop/state change and schedule announcement
+  useIsomorphicLayoutEffect(() => {
+    if (!announcement) {
+      pendingAnnouncementRef.current = null;
+      return;
+    }
+
+    if (previousValueRef.current === value) {
+      return;
+    }
+
+    previousValueRef.current = value;
+    pendingAnnouncementRef.current = value;
+    announceActiveState();
+  }, [value, announcement, announceActiveState]);
+
+  // MutationObserver phase: catch child renders committed after parent layout effect
+  React.useEffect(() => {
+    const element = targetContainerRef.current;
+    if (!element || typeof MutationObserver === 'undefined') {
+      return;
+    }
+
+    const observer = new MutationObserver(() => {
+      announceActiveState();
+    });
+
+    observer.observe(element, {
+      attributes: true,
+      attributeFilter: ['data-carousel-item', 'data-carousel-active-item'],
+      childList: true,
+      subtree: true,
+    });
+
     return () => {
-      targetDocument.removeEventListener(type, listener, options);
+      observer.disconnect();
+      pendingAnnouncementRef.current = null;
     };
-  }, [targetDocument, type, listener, options]);
+  }, [announceActiveState, targetContainerRef]);
 }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// ANTI-PATTERN: Direct global access guarantees crashes in SSR and pop-out frames
-export function useWindowResize(listener: () => void) {
-  React.useEffect(() => {
-    window.addEventListener('resize', listener); // CRITICAL FAULT: ReferenceError on server
-    return () => window.removeEventListener('resize', listener);
-  }, [listener]);
-}
-```
+// NEVER trigger assistive announcements inside the click event callback
+const updateSlide = (event: React.MouseEvent, newValue: string) => {
+  setValue(newValue);
+  onValueChange?.(event, { value: newValue });
 
-**VERIFICATION METHOD**:
-Implement an ESLint rule using `@typescript-eslint/utils` that flags identifier references to globals:
-```javascript
-// eslint rule: "no-restricted-globals"
-module.exports = {
-  rules: {
-    'no-restricted-globals': ['error', 
-      { name: 'window', message: 'Use useDOMContext().defaultView or canUseDOM() instead.' },
-      { name: 'document', message: 'Use useDOMContext().targetDocument instead.' },
-      { name: 'navigator', message: 'Access navigator via targetDocument.defaultView.navigator.' }
-    ]
+  // ANTI-PATTERN: The DOM node for 'newValue' is not rendered yet!
+  // Screen reader receives announcement before card heading exists in DOM.
+  const text = announcement?.(newValue);
+  if (text) {
+    announce(text, { polite: true });
   }
 };
 ```
 
----
-
-### 2. Multi-Dimensional Array Shape Dimension and Allocation Guard
-**RULE**:
-When deserializing or transforming linear buffers into multi-dimensional typed structures from external or untrusted data sources, the deserializer MUST enforce an explicit maximum rank, verify every dimension as a non-negative safe integer, assert multiplication overflow guards against `Number.MAX_SAFE_INTEGER`, and confirm that the computed product strictly matches the buffer length before allocating target collections.
-
-**WHY**:
-Malicious or malformed inputs specifying gigantic shapes (e.g., `shape: [1000000, 1000000]`) or negative/fractional dimensions cause out-of-memory (OOM) heap allocations, process crashes, integer wraparound defects, or infinite loops in nested slicing recursions.
-
-**WHEN TO APPLY**:
-Apply to any data pipeline ingesting tensor, matrix, Plotly, or binary data over JSON/RPC/REST protocols.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```typescript
-const MAX_SHAPE_RANK = 3;
-
-export function validateAndReshape<T>(data: T[], shape: number[]): T[] | T[][] | T[][][] {
-  if (shape.length === 0 || shape.length > MAX_SHAPE_RANK) {
-    throw new Error(`Invalid shape: rank must be between 1 and ${MAX_SHAPE_RANK}`);
-  }
-
-  let elementCount = 1;
-  for (const dimension of shape) {
-    if (!Number.isSafeInteger(dimension) || dimension < 0) {
-      throw new Error('Invalid shape: dimensions must be non-negative safe integers');
-    }
-    // Prevent integer overflow before performing multiplication
-    if (dimension !== 0 && elementCount > Number.MAX_SAFE_INTEGER / dimension) {
-      throw new Error('Invalid shape: element count exceeds the maximum safe integer');
-    }
-    elementCount *= dimension;
-  }
-
-  if (elementCount !== data.length) {
-    throw new Error(`Invalid shape: dimension product (${elementCount}) != data length (${data.length})`);
-  }
-
-  if (data.length === 0 || shape.length === 1) {
-    return data;
-  }
-
-  if (shape.length === 2) {
-    const [rows, cols] = shape;
-    const result: T[][] = [];
-    for (let r = 0; r < rows; r++) {
-      result.push(data.slice(r * cols, (r + 1) * cols));
-    }
-    return result;
-  }
-
-  // 3D reshape: recurse into 2D slices
-  const [dim0, ...rest] = shape;
-  const step = data.length / dim0;
-  const result: T[][][] = [];
-  for (let i = 0; i < dim0; i++) {
-    result.push(validateAndReshape(data.slice(i * step, (i + 1) * step), rest) as T[][]);
-  }
-  return result;
-}
-```
-
-**NEGATIVE CONSTRAINT**:
-```typescript
-// ANTI-PATTERN: Naive reshape blindly trusting input dimensions
-export function unsafeReshape(data: number[], shape: number[]) {
-  const [rows, cols] = shape;
-  const result = [];
-  for (let r = 0; r < rows; r++) { // Crashes if rows = -1 or allocates massive array if rows = 1e9
-    result.push(data.slice(r * cols, (r + 1) * cols));
-  }
-  return result;
-}
-```
-
 **VERIFICATION METHOD**:
-Execute property-based fuzz tests with randomized integer arrays to verify bound enforcement:
+Enforce an automated integration test with React Testing Library asserting that when the announcement formatter is invoked, the previous slide heading is completely unmounted and the destination slide heading is present in the DOM:
 ```typescript
-test('validateAndReshape rejects arithmetic overflows and negative bounds', () => {
-  expect(() => validateAndReshape([1, 2, 3, 4], [Number.MAX_SAFE_INTEGER, 2])).toThrow(
-    /element count exceeds the maximum safe integer/
-  );
-  expect(() => validateAndReshape([1, 2, 3, 4], [-2, -2])).toThrow(
-    /non-negative safe integers/
-  );
-  expect(() => validateAndReshape([1, 2, 3, 4], [1, 2, 3, 4])).toThrow(
-    /rank must be between 1 and 3/
-  );
+it('asserts DOM presence at exact time of announcement callback invocation', async () => {
+  const announcement = jest.fn(val => {
+    expect(screen.getByRole('heading', { name: 'Step two' })).toBeDefined();
+    expect(screen.queryByRole('heading', { name: 'Step one' })).toBeNull();
+    return `Custom ${val}`;
+  });
+  render(<Carousel defaultValue="one" announcement={announcement} />);
+  fireEvent.click(screen.getByRole('button', { name: 'Next' }));
+  await waitFor(() => expect(announcement).toHaveBeenCalledTimes(1));
 });
 ```
 
 ---
 
-### 3. Whitespace-Stripping URL Protocol Sanitization
+### 2. Guarded Context-Aware URL Protocol Whitelisting
 **RULE**:
-Before validating a URL against an allowed protocol whitelist, the evaluation pipeline MUST strip control characters, whitespace, and invisible zero-width separators (`[\u0000-\u001F\u007F\s\u200B-\u200D\u2060\uFEFF]`) before parsing with `new URL()`. Any URL presenting a scheme pattern that fails native URL parsing MUST be rejected.
+Before resolving, parsing, or rendering arbitrary URL strings into clickable DOM elements (`href`, `src`), the URL MUST be sanitized against invisible unicode separators, ASCII control codes, and whitespace BEFORE protocol extraction. Validation MUST use native `URL` instantiation constrained to an explicit protocol Set.
 
 **WHY**:
-Browsers allow URLs containing control characters or zero-width spaces (e.g., `java\u0000script:...` or `jav&#x09;ascript:...`) to bypass simplistic regex protocol checks while still executing JavaScript when assigned to `href` or `src` attributes.
+Browsers parse URLs leniently. Attackers bypass simple regex filters (`/^https?:/`) or string lookups by prefixing protocols with soft hyphens, zero-width spaces (`\u200B`), byte-order marks (`\uFEFF`), and control characters (`\u0000-\u001F`). These characters are stripped by browser URL dispatchers, converting `jav\u200Bascri\u0000pt:alert(1)` into executable XSS vectors when injected into an `<a>` tag or chart visualization hyperlink.
 
 **WHEN TO APPLY**:
-Apply to all user-input links, SVG hyperlinks, chart tooltips, markdown renderers, and external redirect handlers.
+Every documentation site router, chart tooltip hyperlink formatter, markdown renderer, and dynamically bound SVG link (`<a xlink:href="...">`).
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 const ALLOWED_URL_PROTOCOLS = new Set(['http:', 'https:', 'mailto:', 'tel:', 'ftp:']);
+
+// Strip invisible characters, control codes, and Unicode zero-width boundaries
 const OBFUSCATION_REGEX = /[\u0000-\u001F\u007F\s\u200B-\u200D\u2060\uFEFF]+/g;
-const SCHEME_TEST_REGEX = /^[a-z][a-z0-9+.-]*:/i;
 
 export function isSafeUrl(href: string): boolean {
   if (typeof href !== 'string') {
     return false;
   }
 
-  // Normalize potentially obfuscated protocols
   const normalized = href.replace(OBFUSCATION_REGEX, '');
-  const hasScheme = SCHEME_TEST_REGEX.test(normalized);
-
-  // Relative URLs without a scheme are safe
+  
+  // Relative paths, hash anchors, and search queries are safe by definition
+  const hasScheme = /^[a-z][a-z0-9+.-]*:/i.test(normalized);
   if (!hasScheme) {
     return true;
   }
@@ -258,7 +221,7 @@ export function isSafeUrl(href: string): boolean {
     const parsed = new URL(normalized);
     return ALLOWED_URL_PROTOCOLS.has(parsed.protocol.toLowerCase());
   } catch {
-    // Malformed absolute URLs containing schemes are untrusted
+    // Malformed URLs that mimic absolute schemes must be rejected
     return false;
   }
 }
@@ -266,23 +229,138 @@ export function isSafeUrl(href: string): boolean {
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// ANTI-PATTERN: Regex matching without zero-width character stripping and scheme detection
-export function unsafeIsSafeUrl(url: string) {
-  // Bypassed by "javascript :alert(1)" or "java\u200Bscript:alert(1)"
-  return !url.startsWith('javascript:');
+// NEVER check protocol using startsWith, regex testing, or decodeURIComponent directly
+export function unsafeIsSafeUrl(url: string): boolean {
+  // FAILS: 'javascript\u0000:alert(1)' passes regex but executes in Safari/WebKit
+  // FAILS: 'java\tscript:alert(1)' is ignored by regex but parsed by anchor click
+  const pattern = /^(https?|mailto|ftp):/i;
+  return pattern.test(url);
 }
 ```
 
 **VERIFICATION METHOD**:
-Run unit tests across standard XSS evasions:
+Execute property-based fuzz tests asserting that injected unicode zero-width characters and control codes return `false` on all malicious strings:
 ```typescript
-describe('isSafeUrl security audit', () => {
-  it('detects evasions using control characters and zero-width spaces', () => {
-    expect(isSafeUrl('jav\u0000ascript:alert(1)')).toBe(false);
-    expect(isSafeUrl('java\u200Bscript:alert(1)')).toBe(false);
-    expect(isSafeUrl('javascript\t:alert(1)')).toBe(false);
-    expect(isSafeUrl('https://valid.com')).toBe(true);
-    expect(isSafeUrl('/internal/route')).toBe(true);
+test.each([
+  'javascript\u0000:alert(1)',
+  'java\u200Bscript:alert(1)',
+  '  javascript:alert(1)',
+  'vbscript:msgbox(1)',
+  'data:text/html,<script>alert(1)</script>',
+])('rejects obfuscated protocol: %s', (maliciousUrl) => {
+  expect(isSafeUrl(maliciousUrl)).toBe(false);
+});
+```
+
+---
+
+### 3. Safe Multi-Dimensional Array Reshaping with Integer Arithmetic Limits
+**RULE**:
+When deserializing flat numeric buffers or Base64 binary arrays into multidimensional arrays ($N$-rank tensors), validation MUST enforce a strict rank cap ($N \le 3$), test that all dimension inputs are non-negative safe integers, prevent integer multiplication overflow via `Number.MAX_SAFE_INTEGER / dimension` boundary checks, and guarantee exact element count parity before allocations.
+
+**WHY**:
+Parsing untrusted or external scientific schemas (e.g., Plotly, DataFrames) with unchecked shapes permits denial-of-service exploits:
+1. Floating-point or non-safe integer dimensions (`1e18`, `NaN`, `0.5`) crash the JS runtime with array-length range exceptions.
+2. Multiplication overflow causes element count wrapping, leading to unbounded recursion and call-stack exhaustion in recursive slicing logic.
+3. Huge rank dimensions induce deep call stack allocations, overflowing the V8 execution stack.
+
+**WHEN TO APPLY**:
+All binary data decoders, Plotly schema processors, charting data engines, WebGL matrix loaders, and WebAssembly transfer bridges.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+const MAX_SHAPE_RANK = 3;
+
+export function validateShape(dataLength: number, shape: number[]): void {
+  if (shape.length === 0 || shape.length > MAX_SHAPE_RANK) {
+    throw new Error(`Invalid typed-array shape: rank must be between 1 and ${MAX_SHAPE_RANK}`);
+  }
+
+  let elementCount = 1;
+
+  for (const dimension of shape) {
+    if (!Number.isSafeInteger(dimension) || dimension < 0) {
+      throw new Error('Invalid typed-array shape: dimensions must be non-negative safe integers');
+    }
+    
+    // Prevent integer overflow during multiplication
+    if (dimension !== 0 && elementCount > Number.MAX_SAFE_INTEGER / dimension) {
+      throw new Error('Invalid typed-array shape: element count exceeds the maximum safe integer');
+    }
+
+    elementCount *= dimension;
+  }
+
+  if (elementCount !== dataLength) {
+    throw new Error('Invalid typed-array shape: dimensions do not match decoded element count');
+  }
+}
+
+export function reshapeValidatedArray(data: number[], shape: number[]): number[] | number[][] | number[][][] {
+  if (shape.length === 1) {
+    return data;
+  }
+  if (shape.length === 2) {
+    const [rows, cols] = shape;
+    const result: number[][] = new Array(rows);
+    for (let r = 0; r < rows; r++) {
+      result[r] = data.slice(r * cols, (r + 1) * cols);
+    }
+    return result;
+  }
+  // Rank 3 recursion with bound step
+  const [dim, ...rest] = shape;
+  const step = data.length / dim;
+  const result: number[][][] = new Array(dim);
+  for (let i = 0; i < dim; i++) {
+    result[i] = reshapeValidatedArray(data.slice(i * step, (i + 1) * step), rest) as number[][];
+  }
+  return result;
+}
+
+export function reshapeArray(data: number[], shape: number[]): number[] | number[][] | number[][][] {
+  validateShape(data.length, shape);
+  if (data.length === 0) {
+    return [];
+  }
+  return reshapeValidatedArray(data, shape);
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// NEVER reshape flat arrays without rank caps and arithmetic checks
+export function unsafeReshape(data: any[], shape: number[]) {
+  // VULNERABLE: shape=[1e15, 1e15] causes integer overflow and infinite recursive allocation
+  return shape.reduceRight((acc, dim) => {
+    const chunked = [];
+    while (acc.length > 0) {
+      chunked.push(acc.splice(0, dim)); // In-place array mutation destroys data
+    }
+    return chunked;
+  }, data);
+}
+```
+
+**VERIFICATION METHOD**:
+```typescript
+describe('reshapeArray Invariants', () => {
+  it('throws on rank exceeding MAX_SHAPE_RANK', () => {
+    expect(() => reshapeArray([1, 2, 3, 4], [1, 2, 2, 1])).toThrow(
+      'rank must be between 1 and 3'
+    );
+  });
+
+  it('throws on element count mismatch', () => {
+    expect(() => reshapeArray([1, 2, 3], [2, 2])).toThrow(
+      'dimensions do not match decoded element count'
+    );
+  });
+
+  it('rejects non-integer dimensions', () => {
+    expect(() => reshapeArray([1, 2], [1.5, 1])).toThrow(
+      'dimensions must be non-negative safe integers'
+    );
   });
 });
 ```
@@ -291,293 +369,208 @@ describe('isSafeUrl security audit', () => {
 
 ## 3. Forensic Real Incidents & Production Patches
 
-### Incident 1: Monorepo Package Release Desynchronization via Multi-Changefile PRs (BUG-MONOREPO-BEACHBALL-01)
-- **Context**: Root monorepo agent and contribution governance (`AGENTS.md`, Beachball release orchestration).
-- **What Was Expected**: Continuous delivery pipeline must consume automated Beachball changelogs without generating fragmented semantic version increments or conflicting publish plans when multiple changes touch the same package.
-- **What Actually Happened**: Automated agents and contributors generated multiple Beachball change files for a single package within a single PR. During automated merge and tag resolution, Beachball registered conflicting semver step increments, leading to duplicated changelog entries and botched npm versioning.
-- **Evidence in Repo**: Commit `12b576f6`, PR #36933, file `AGENTS.md`.
-- **Root Cause**: Absence of an invariant constraint capping change files to at most one file per package per PR.
+### Incident 1: Screen Reader Desynchronization in TeachingPopover Carousel (BUG-ACCESSIBILITY-01)
+- **Context**: `packages/react-components/react-teaching-popover/library/src/components/TeachingPopoverCarousel/Carousel/Carousel.tsx`
+- **What Was Expected**: When a user navigates between steps in a carousel (clicking 'Next' or pressing Enter), the screen reader must announce the newly mounted card text after the DOM mutation settles, without losing focus on the navigation button.
+- **What Actually Happened**: The announcement was executed synchronously inside the `updateSlide` click handler. Because React 18 selector-based context updates schedule and commit child cards *after* the carousel layout effect, the announcement occurred before the destination card was committed to the DOM. Screen reader engines either spoke stale text or remained completely silent.
+- **Evidence in Repo**: Commit `707e0d7e`, PR `#36643`. Changeset `@fluentui-react-teaching-popover-d7c78e6e`.
+- **Root Cause**: Synchronous callback execution during an event dispatch violates React's asynchronous render cycle. Child cards update via context subscriptions that resolve in a later microtask than the local state change of the carousel container.
 - **Remediation Code Diff**:
-```diff
---- a/AGENTS.md
-+++ b/AGENTS.md
-@@ -23,6 +23,7 @@
-  3. **Never access `window`, `document`, or `navigator` directly.** In v9 components, use `useFluent_unstable()` to get `targetDocument` and `targetDocument.defaultView` instead of `document`/`window`. For non-component code, use `canUseDOM()` from `@fluentui/react-utilities`.
-  4. **Never add dependencies between component packages.** `react-button` must not depend on `react-menu`. Shared logic goes in `react-utilities` or `react-shared-contexts`. See [docs/architecture/layers.md](docs/architecture/layers.md).
-  5. **Never skip beachball change files** for published package changes. Run `yarn beachball change`.
-+ 6. **Each PR must contain at most one Beachball change file per package.** Consolidate all changes for that package in the PR into that one file.
-```
-- **Lesson**: CI/CD release tools driven by distributed file markers must enforce unique partition keys (one file per target package per transaction) to prevent non-deterministic release calculations.
-
----
-
-### Incident 2: Autonomous Agent Context Splattering Across PR Boundaries (BUG-AGENT-CONTRIB-02)
-- **Context**: Automated PR lifecycle and Copilot PR generation (`.agents/skills/review-pr`, PR #36915, PR #36591).
-- **What Was Expected**: Automated code generation tasks addressing PR review feedback must isolate refactoring changes strictly to the blast radius of that review.
-- **What Actually Happened**: The autonomous agent bundled unrelated architectural revisions into an active PR, causing code review stagnation and blocking pipeline verification.
-- **Evidence in Repo**: Closed PR #36915 ("*Separate changes from original PR into a new PR to address feedback*"), triggering review: `https://github.com/microsoft/fluentui/pull/36591#discussion_r4303053061` (*"@copilot these changes are not related to the PR revert here and move them to a separate PR"*).
-- **Root Cause**: Lack of git diff scope checking in the automated prompt agent loop, allowing out-of-scope edits to leak into active working branches.
-- **Remediation Code Diff**:
-```diff
---- a/.agents/skills/review-pr/SKILL.md
-+++ b/.agents/skills/review-pr/SKILL.md
-@@ -12,3 +12,7 @@
-+## Invariant Rules
-+- Branch modifications must be restricted solely to files modified in the base pull request.
-+- If reviewer feedback requests orthogonal features, spawn an independent branch and PR.
-+- Verify `git diff --name-only origin/master...HEAD` matches approved PR scope before requesting review.
-```
-- **Lesson**: Autonomous code modification workflows require deterministic blast-radius verifiers that compare the active working diff against the originating issue bounds.
-
----
-
-### Incident 3: Floating-Point Tick Precision Drift in Visualization Axes (BUG-CHART-FORMATTER-03)
-- **Context**: Axis formatting and localization (`packages/charts/chart-utilities/src/formatter.ts`).
-- **What Was Expected**: Generated chart axis ticks representing integral boundary steps (e.g., `4.000000000000001` or `2.999999999999999`) must display as clean integers (`4` or `3`) in formatted locale output.
-- **What Actually Happened**: IEEE 754 floating-point precision errors caused `toLocaleString` to render unwanted fractional values (e.g., `"4.000000000000001"`), resulting in visual clutter and layout thrashing on SVG axis renders.
-- **Evidence in Repo**: `packages/charts/chart-utilities/src/formatter.ts` - `handleFloatingPointPrecisionError()`.
-- **Root Cause**: Calling `.toLocaleString()` directly on unrounded floating-point calculations derived from tick intervals (`step = (max - min) / count`).
-- **Remediation Code Diff**:
-```diff
---- a/packages/charts/chart-utilities/src/formatter.ts
-+++ b/packages/charts/chart-utilities/src/formatter.ts
-@@ -0,0 +1,10 @@
-+export function handleFloatingPointPrecisionError(num: number): number {
-+  const rounded = Math.round(num);
-+  return Math.abs(num - rounded) < 1e-6 ? rounded : num;
-+}
-...
-   if (typeof data === 'number') {
-     const toGroup = Math.abs(data) >= 10000;
--    return data.toLocaleString(culture, { useGrouping: toGroup });
-+    return handleFloatingPointPrecisionError(data).toLocaleString(culture, { useGrouping: toGroup });
-   }
-```
-- **Lesson**: Any continuous calculation destined for human-readable DOM representation must pass through an epsilon-based discrete boundary clamp (`Math.abs(num - Math.round(num)) < EPSILON`).
-
----
-
-### Incident 4: Ambiguous Date String Parsing and Epoch Millennium Traps (BUG-CHART-DATEPARSER-04)
-- **Context**: Input schema conversion (`packages/charts/chart-utilities/src/PlotlySchemaConverter.ts`).
-- **What Was Expected**: Numerical values passed to charting data schemas must not be misidentified as `Date` objects, and incomplete string fragments must not trigger false-positive calendar mapping.
-- **What Actually Happened**: JavaScript's native `Date.parse()` converts pure integers (interpreted as epoch timestamps) into valid dates. Furthermore, parsing short strings or partial identifiers (e.g., `"00"`, `"01"`) defaults to years 2000 or 2001, misclassifying categorical strings as time-series data.
-- **Evidence in Repo**: `packages/charts/chart-utilities/src/PlotlySchemaConverter.ts` - `isDate()`.
-- **Root Cause**: Relying solely on `!isNaN(new Date(Date.parse(value)).getTime())` without checking numerical type identity and 4-digit year regex patterns.
-- **Remediation Code Diff**:
-```diff
---- a/packages/charts/chart-utilities/src/PlotlySchemaConverter.ts
-+++ b/packages/charts/chart-utilities/src/PlotlySchemaConverter.ts
-@@ -0,0 +1,14 @@
-+export const isDate = (value: any): boolean => {
-+  // Don't consider number as date. There is no way to differentiate milliseconds from date and number
-+  // without additional context.
-+  if (isNumber(value)) {
-+    return false;
-+  }
-+  const parsedDate = new Date(Date.parse(value));
-+  if (isNaN(parsedDate.getTime())) {
-+    return false;
-+  }
-+  const parsedYear = parsedDate.getFullYear();
-+  const yearInString = /\b\d{4}\b/.test(value);
-+  if (!yearInString && (parsedYear === 2000 || parsedYear === 2001)) {
-+    return false;
-+  }
-+  return true;
-+};
-```
-- **Lesson**: Parsing untyped dynamic values into dates requires semantic preconditions (guaranteeing non-number types and explicit calendar year presence) to prevent heuristic parser hallucinations.
-
----
-
-### Incident 5: Recursive JSON Injection and Call-Stack Exhaustion (BUG-CHART-XSS-STACK-05)
-- **Context**: Payload sanitization for dynamic Plotly schemas (`packages/charts/chart-utilities/src/PlotlySchemaConverter.ts`).
-- **What Was Expected**: Sanitizing arbitrary nested JSON specs against script injection (`<` and `>` tags) must complete safely without overflowing the JavaScript call stack.
-- **What Actually Happened**: Cyclic objects or deeply nested structures passed into naive recursive sanitizers caused `RangeError: Maximum call stack size exceeded`.
-- **Evidence in Repo**: `packages/charts/chart-utilities/src/PlotlySchemaConverter.ts` - `sanitizeJson()`.
-- **Root Cause**: Unbounded recursion depth in JSON traversal.
-- **Remediation Code Diff**:
-```diff
---- a/packages/charts/chart-utilities/src/PlotlySchemaConverter.ts
-+++ b/packages/charts/chart-utilities/src/PlotlySchemaConverter.ts
-@@ -0,0 +1,18 @@
-+const MAX_DEPTH = 15;
-+export const sanitizeJson = (jsonObject: any, depth: number = 0): any => {
-+  if (depth > MAX_DEPTH) {
-+    throw new Error('Maximum json depth exceeded');
-+  }
-+  if (typeof jsonObject === 'object' && jsonObject !== null) {
-+    for (const key in jsonObject) {
-+      if (jsonObject.hasOwnProperty(key)) {
-+        if (typeof jsonObject[key] === 'string') {
-+          jsonObject[key] = jsonObject[key].replace(/</g, '&lt;').replace(/>/g, '&gt;');
-+        } else {
-+          jsonObject[key] = sanitizeJson(jsonObject[key], depth + 1);
-+        }
-+      }
-+    }
-+  }
-+  return jsonObject;
-+};
-```
-- **Lesson**: Recursive tree-walking routines on dynamic external JSON must always maintain an explicit recursion counter (`depth > MAX_DEPTH`) to guard the call stack against cyclic or malicious payloads.
-
----
-
-## 4. Microscopic Code-Level Invariants
-
-### 1. Micro-Syntax & Token-Level Precision
-- **Numerical Type Coercion Hazards**:
-  In `packages/charts/chart-utilities/src/PlotlySchemaConverter.ts`, testing if a value represents a number uses:
-  ```typescript
-  export const isNumber = (value: any): boolean => !isNaN(parseFloat(value)) && isFinite(value);
-  ```
-  `isFinite(value)` coerces booleans and null (`isFinite(null) === true`, `isFinite(false) === true`). Therefore, callers must strictly assert type bounds.
-- **Window vs. Global `isNaN` Inconsistency**:
-  Notice the microscopic pattern in `formatter.ts`:
-  ```typescript
-  } else if (typeof data === 'string' && !window.isNaN(Number(data))) {
-  ```
-  `Number.isNaN` vs `window.isNaN`: `window.isNaN(" ") === false` because `Number(" ") === 0`. The codebase checks `data === ''` prior to conversion to prevent empty strings from coercing to `0`.
-
-### 2. Infinite Loop & Recursion Guards
-- **Multi-Level Time Format Bounding**:
-  In `packages/charts/chart-utilities/src/formatter.ts`:
-  ```typescript
-  if (startLevel === undefined || startLevel < 0 || startLevel >= MULTI_LEVEL_DATE_TIME_FORMATS.length) {
-    return DEFAULT;
-  }
-  if (endLevel === undefined || endLevel < startLevel) {
-    return MULTI_LEVEL_DATE_TIME_FORMATS[startLevel][startLevel];
-  }
-  ```
-  The multi-level matrix lookup avoids indexing out-of-bounds (`MULTI_LEVEL_DATE_TIME_FORMATS[startLevel]`) by asserting both `startLevel < 0` and `>= length`, with a fallback when `endLevel < startLevel` to prevent inversion loops.
-
-### 3. UI & UX Micro-Mechanics
-- **Zero-Runtime CSS Isolation (Griffel)**:
-  Fluent UI v9 avoids runtime CSS injection overhead by pre-compiling CSS-in-JS into static atomic rules. Atomic classes avoid CSS specificity escalation:
-  - Rules are injected via an internal renderer into the specific document context: `renderer.insertCSSRules(targetDocument)`.
-  - In Jest tests, `@griffel/jest-serializer` serializes style hashes into readable class selectors to prevent snapshot churn across build environments.
-
-### 4. Backend Concurrency & Memory Safety
-- **Terser Name Mangling Restrictions**:
-  In `packages/charts/chart-utilities/webpack.config.js`:
-  ```javascript
-  const regex = new RegExp(
-    ['(truncateText|addNodeShapetoSVG|createPathLink|addLinktoSVG|',
-     'createTree|createTreeDataStructure|createTreeChart)$'].join('')
-  );
-  // ...
-  terserOptions: {
-    mangle: {
-      keep_classnames: false,
-      keep_fnames: false,
-      properties: {
-        regex: regex,
-        undeclared: true,
-      },
-    },
-  }
-  ```
-  Minification targets specific internal charting function identifiers to preserve external SVG and D3/Plotly property contracts, preventing broken SVG property accessors at runtime.
-
-### 5. Defect & Error Prevention ("Galti Pakadna")
-- **Base64 Padding Rectification**:
-  In `packages/charts/chart-utilities/src/DecodeBase64Data.ts`:
-  ```typescript
-  function addBase64Padding(s: string): string {
-    const paddingNeeded = (4 - (s.length % 4)) % 4;
-    return s + '='.repeat(paddingNeeded);
-  }
-  ```
-  Standard JavaScript `atob()` throws a `DOMException` if base64 inputs lack `=` padding. Rather than failing, the deserializer calculates `(4 - (len % 4)) % 4` and auto-heals stripped trailing padding.
-
----
-
-## 5. The 9 Deep Learning Dimensions
-
-### 1. Architecture
-- **Layered Decoupling**: Separation into three tiers:
-  1. Base primitives: `@fluentui/react-utilities`, `@fluentui/tokens`.
-  2. Unstyled state engines: `@fluentui/react-tabster` (keyboard focus handling).
-  3. Styled components: `@fluentui/react-components` using Griffel atomic CSS.
-- **Cross-Component Isolation**: Peer packages (e.g., `react-card` and `react-button`) cannot import each other directly; they can only compose via public slots and child tokens.
-
-### 2. Core Abstractions
-- **Slots Pattern**: Every component defines slots (`root`, `icon`, `content`, `badge`) typed as `Slot<ComponentProps>`. This enables slot replacement, custom rendering, and child overrides while preserving accessibility attributes.
-- **State Hooks**: Splitting lifecycle into `useComponent_unstable(props)` (computes state), `useComponentStyles_unstable(state)` (applies Griffel classes), and `renderComponent_unstable(state)` (pure JSX projection).
-
-### 3. Error Handling
-- **Graceful Visualization Degradation**: In `PlotlySchemaConverter.ts`, if annotation data exists but series data is empty or malformed, `getValidSchema()` falls back to an empty series rather than throwing, preserving layout titles and labels:
-  ```typescript
-  if (validatedSchema.data.length === 0) {
-    if (hasAnnotations) {
-      return { ...validatedSchema, data: [] };
-    }
-    throw new Error('Plotly input data is empty');
-  }
-  ```
-
-### 4. Testing
-- **Multi-Level Verification Matrix**:
-  1. Unit tests: `jest` with `ts-jest` using `isolatedModules: true` for build speed.
-  2. Style regression: `@griffel/jest-serializer` inspecting atomic class generation.
-  3. Visual regression: Playwright/Cypress screenshot suites orchestrated via `.github/actions/run-publish-vr-screenshot`.
-  4. Type compliance: `@arethetypeswrong/cli` checking ESM/CJS export interfaces.
-
-### 5. Security
-- **Strict Protocol Validation (`isSafeUrl`)**: Disallows non-whitelisted protocols. Blocks XSS payloads hidden behind zero-width and invisible control unicode characters.
-- **Deep JSON DOM Sanitization**: `sanitizeJson` maps dynamic chart labels and tooltips, escaping `<` and `>` into HTML entities prior to SVG canvas emission.
-
-### 6. Performance
-- **Zero-Copy TypedArray Base64 Extraction**:
-  `DecodeBase64Data.ts` converts base64 strings directly into `Uint8Array` byte buffers and maps them to target views (`Float64Array`, `Int32Array`) via `decodedBytes.buffer`, avoiding redundant intermediate string copies.
-- **Atomic CSS Invariant**: Griffel generates single-rule classes (`.f1xxxx { display: flex; }`), ensuring that CSS bundle sizes scale logarithmically with UI complexity rather than linearly.
-
-### 7. Deployment
-- **Nx Monorepo Pipeline**: Configured with strict task graphs (`nx run-many -t clean, build, test`).
-- **Semantic Version Locking**: Enforced through Beachball, requiring developer-authored change files verified in CI via `beachball check`.
-- **Node Engine Constraint**: Strictly pinned to modern LTS engines: `"node": "^22.0.0 || ^24.0.0"`.
-
-### 8. Agent Patterns
-- **Standardized Repository Skills**:
-  The repository maintains structured AI agent prompt contracts in `.agents/skills/` and `.claude/skills/`:
-  - `v9-component`: Generates compliant slot-based component templates.
-  - `change`: Enforces one Beachball file per package per PR.
-  - `assign-prs`: Routes pull requests to maintainers based on CODEOWNERS and workload distribution schemas.
-
-### 9. Data Flow
-- **Data Flow Lifecycle in Charts**:
-  `Untrusted Plotly JSON` -> `sanitizeJson()` -> `decodeBase64Fields()` -> `isDate/isNumber Normalization` -> `validateShape()` -> `SVG Presentation Pipeline`.
-
----
-
-## 6. The 8 Learning Extraction Artifacts
-
-### 1. Pattern: Ambient Window & Document Safe Resolver
 ```typescript
-import { canUseDOM } from '@fluentui/react-utilities';
+// - Synchronously calling announce inside the click callback:
+  const updateSlide = useEventCallback(
+    (event: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>, newValue: string) => {
+      setValue(newValue);
+      onValueChange?.(event, { event, type: 'click', value: newValue });
+-     const announceText = announcement?.(newValue);
+-     if (announceText) {
+-       announce(announceText, { polite: true });
+-     }
+    },
+  );
 
-export function getSafeDocument(customDoc?: Document): Document | undefined {
-  if (customDoc) {
-    return customDoc;
-  }
-  return canUseDOM() ? document : undefined;
-}
-
-export function getSafeWindow(customDoc?: Document): Window | null {
-  const doc = getSafeDocument(customDoc);
-  return doc ? doc.defaultView : null;
-}
+// + Hooking into useIsomorphicLayoutEffect and MutationObserver:
++ const previousValueRef = React.useRef(value);
++ const pendingAnnouncementRef = React.useRef<string | null>(null);
++
++ const announcePage = useEventCallback(() => {
++   const pendingValue = pendingAnnouncementRef.current;
++   const active = carouselWalker.active();
++   if (pendingValue === null || active?.value !== pendingValue) {
++     return;
++   }
++   pendingAnnouncementRef.current = null;
++   const text = announcement?.(pendingValue);
++   if (text) {
++     announce(text, { polite: true });
++   }
++ });
++
++ useIsomorphicLayoutEffect(() => {
++   if (!announcement) {
++     pendingAnnouncementRef.current = null;
++   }
++   if (previousValueRef.current === value) {
++     return;
++   }
++   previousValueRef.current = value;
++   pendingAnnouncementRef.current = null;
++   if (value === null || !announcement) {
++     return;
++   }
++   pendingAnnouncementRef.current = value;
++   announcePage();
++ }, [value, announcement, announcePage]);
++
++ // Inside MutationObserver callback:
++ // Selector-based context updates can commit cards after the carousel's layout effect.
++ announcePage();
 ```
+- **Lesson**: Never trigger DOM-dependent accessibility announcements in event handlers. Buffer the intent into a ref, and verify DOM node synchronization across both layout effect and `MutationObserver` triggers.
 
-### 2. Rule
-**All array/buffer reshaping logic parsing external schemas MUST validate that `rank <= MAX_RANK`, dimensions are non-negative safe integers, and their product equals the source buffer length before generating collections.**
+---
 
-### 3. Architecture Principle
-**Component libraries must be strictly presentation-only or slot-compositional; peer component packages must never form horizontal dependencies.**
+### Incident 2: Hash-Route Anchor Separator `%23` Parsing Breakdown (BUG-ROUTING-02)
+- **Context**: `packages/react-docsite-components/src/utilities/extractAnchorLink.ts` and `removeAnchorLink.ts`
+- **What Was Expected**: Incoming links formatted with encoded section anchors (e.g. `https://developer.microsoft.com/en-us/fluentui#/styles/web/icons%23available-icons`) must correctly route to the `icons` page and scroll directly to the `#available-icons` heading.
+- **What Actually Happened**: The router matched only literal `#` characters. When link aggregators or markdown publishers encoded the secondary hash separator as `%23`, the route parser treated `%23available-icons` as part of the page pathname, triggering a "Page Not Found (404)" failure.
+- **Evidence in Repo**: Commit `9c0797ae`, PR `#36941`, Issue `#36938`.
+- **Root Cause**: Over-simplistic URL string splitting using `url.split('#')`. The function assumed all anchors were literal hashes, failing to differentiate between an encoded route delimiter (`%23` separating route from section) versus encoded URL data within query strings or slug names.
+- **Remediation Code Diff**:
+```typescript
+// - Naive string splitting:
+export function extractAnchorLink(url: string): string {
+- const split = url.split('#');
++ const split = normalizeEncodedAnchorLink(url).split('#');
+  if (split.length === 3) {
+    return split[2].split('?')[0];
+  }
+}
 
-### 4. Failure Mode
-- **Symptom**: Chart crashes with `DOMException: The string to be decoded is not correctly encoded`.
-- **Cause**: Third-party API sends raw base64 data stripped of trailing `=` padding characters.
-- **Remedy**: Auto-calculate missing modulo-4 padding using `(4 - (str.length % 4)) % 4` before
+// + Dedicated scoped normalizer:
++ export function normalizeEncodedAnchorLink(url: string): string {
++   // Normalize an encoded section separator in a hash route without decoding other URL data.
++   // Matches #/route followed by %23 and valid anchor identifiers before any ? query
++   return url.replace(/(#\/[^#?]*?)%23(?=[\w-]*(?:\?.*)?$)/, '$1#');
++ }
+```
+- **Lesson**: Never perform generic global string decoding (`decodeURIComponent`) on entire URLs, as it corrupts query parameters and complex route data. Target specific structural delimiters using lookahead-constrained regular expressions.
+
+---
+
+### Incident 3: Release Pipeline Desynchronization & NPM Ghost Publish (BUG-DEVOPS-03)
+- **Context**: Beachball release pipeline execution (`.agents/skills/release-recovery/SKILL.md` and Issue `#36939`)
+- **What Was Expected**: During CI/CD automated release runs, Beachball publishes packages to npm and pushes version bump commits and git tags back to GitHub `origin/master` atomically.
+- **What Actually Happened**: Azure DevOps pipeline 384306 published 69 packages to npm, but failed at the subsequent git push step with `GitHub 401 Unauthorized: fatal: could not read Username for 'https://github.com': terminal prompts disabled`. The pipeline terminated with exit code 130. Git `origin/master` was left out of sync with npm. Subsequent PRs attempted duplicate publishes of the same versions, causing pipeline failures.
+- **Evidence in Repo**: PR `#36939`, Commit `6cf751bc00c5939cee2980aae0a32c5be20f22ee`.
+- **Root Cause**: Lack of two-phase commit or transactional rollback between external package registries (npm) and source control (git). The CI agent's GitHub Personal Access Token (PAT) expired or was not passed to the child process during the git push phase.
+- **Remediation Plan**:
+1. Run manual recovery scripts (`.agents/skills/release-recovery/SKILL.md`).
+2. Run `yarn beachball check --branch origin/master`.
+3. Inspect npm registry versions directly (`npm view @fluentui/react-button version`) as the definitive source of truth.
+4. Manually re-commit package metadata updates (`package.json`, `CHANGELOG.json`) without republishing to npm, using the dedicated recovery mode.
+- **Lesson**: Tooling must consider package registries as external, non-transactional state. Release automation must either verify write access to both systems before initiating releases or maintain idempotent replay capabilities.
+
+---
+
+### Incident 4: Storybook Relative Pathing Disconnection in Component Slot Docs (BUG-DOCS-04)
+- **Context**: `packages/react-components/react-storybook-addon/src/docs/FluentDocsPage.tsx`
+- **What Was Expected**: In Storybook docs embedded across documentation domains and SharePoint previews, clicking the link "Customizing components with slots" should navigate within the current Storybook frame.
+- **What Actually Happened**: The link used an absolute root path: `<Link href="/?path=/docs/...">`. When rendered under nested subpaths (such as `/react-components/` or embedded iframes), clicking the link redirected users to the server root (`404 Not Found`).
+- **Evidence in Repo**: Commit `e4ba7be9`, PR `#36904`, Issue `#36903`.
+- **Root Cause**: Hardcoding domain-root absolute links (`/`) instead of path-relative routing (`./`) inside documentation addons.
+- **Remediation Code Diff**:
+```typescript
+- <Link href="/?path=/docs/concepts-developer-customizing-components-with-slots--docs">
++ <Link href="./?path=/docs/concepts-developer-customizing-components-with-slots--docs">
+    Customizing components with slots{' '}
+  </Link>
+```
+- **Lesson**: Design system documentation addons must remain agnostic to host mounting paths. Links must strictly use dot-relative path resolutions (`./`).
+
+---
+
+### Incident 5: Scientific Base64 Schema Shape Overflow in Plotly Deserializer (BUG-CHARTING-05)
+- **Context**: `packages/charts/chart-utilities/src/DecodeBase64Data.ts`
+- **What Was Expected**: `decodeBase64Fields` safely unpacks Base64-encoded binary buffers into multi-dimensional typed arrays according to a shape declaration (e.g. `[100, 3]`).
+- **What Actually Happened**: Malformed or crafted schemas with arbitrary or negative shape dimensions resulted in V8 memory allocation crashes, array length range errors, and stack overflows in recursive array reconstruction.
+- **Evidence in Repo**: Source implementation of `validateShape` and `reshapeValidatedArray`.
+- **Root Cause**: Absence of dimension rank limits and lack of integer overflow protection during multiplicative accumulator operations.
+- **Remediation Code Diff**:
+```typescript
++ const MAX_SHAPE_RANK = 3;
++
++ function validateShape(dataLength: number, shape: number[]): void {
++   if (shape.length === 0 || shape.length > MAX_SHAPE_RANK) {
++     throw new Error(`Invalid typed-array shape: rank must be between 1 and ${MAX_SHAPE_RANK}`);
++   }
++   let elementCount = 1;
++   for (const dimension of shape) {
++     if (!Number.isSafeInteger(dimension) || dimension < 0) {
++       throw new Error('Invalid typed-array shape: dimensions must be non-negative safe integers');
++     }
++     if (dimension !== 0 && elementCount > Number.MAX_SAFE_INTEGER / dimension) {
++       throw new Error('Invalid typed-array shape: element count exceeds the maximum safe integer');
++     }
++     elementCount *= dimension;
++   }
++   if (elementCount !== dataLength) {
++     throw new Error('Invalid typed-array shape: dimensions do not match decoded element count');
++   }
++ }
+```
+- **Lesson**: Treat all structural metadata (shapes, dimensions, length buffers) in serialization formats as untrusted input requiring mathematical bounds checking before execution.
+
+---
+
+## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
+
+### 4.1 Micro-Syntax & Token-Level Precision
+1. **Implicit Falsy vs. Explicit Nullish Evaluation**:
+   In design system utilities, passing `0` or empty strings `""` must not default to fallback values.
+   ```typescript
+   // DEFECT: 0 evaluates to falsy, defaulting startLevel to undefined logic
+   const badLevel = startLevel || 0; 
+
+   // CORRECT INVARIANT: Explicit undefined/null boundary check
+   if (startLevel === undefined || startLevel < 0 || startLevel >= MULTI_LEVEL_DATE_TIME_FORMATS.length) {
+     return DEFAULT;
+   }
+   ```
+2. **Date Parsing Ambiguity Guard**:
+   In `PlotlySchemaConverter.ts`, standard `Date.parse()` incorrectly treats pure numeric years (e.g., `"2000"`, `"2001"`) as timestamps or epoch offsets.
+   ```typescript
+   export const isDate = (value: any): boolean => {
+     if (isNumber(value)) return false;
+     const parsedDate = new Date(Date.parse(value));
+     if (isNaN(parsedDate.getTime())) return false;
+     
+     const parsedYear = parsedDate.getFullYear();
+     // REGEX GUARD: If no 4-digit year exists in the raw input string, reject artificial year 2000/2001 parses
+     const yearInString = /\b\d{4}\b/.test(value);
+     if (!yearInString && (parsedYear === 2000 || parsedYear === 2001)) {
+       return false;
+     }
+     return true;
+   };
+   ```
+3. **Floating Point Epsilon Snapping**:
+   Rendering SVG tick markers and data visualizations causes sub-pixel blurring when fractional IEEE 754 precision artifacts occur (`0.1 + 0.2 = 0.30000000000000004`).
+   ```typescript
+   export function handleFloatingPointPrecisionError(num: number): number {
+     const rounded = Math.round(num);
+     return Math.abs(num - rounded) < 1e-6 ? rounded : num;
+   }
+   ```
+
+### 4.2 Infinite Loop & Recursion Guards
+1. **JSON Object Depth Limiter (`MAX_DEPTH = 15`)**:
+   Prevent call-stack exhaustion during recursive object sanitization:
+   ```typescript
+   const MAX_DEPTH = 15;
+   export const sanitizeJson = (jsonObject: any, depth: number = 0): any => {
+     if (depth > MAX_DEPTH) {
+       throw new Error('Maximum json depth exceeded');
+     }
+     if (typeof jsonObject === 'object' && jsonObject !== null) {
+       for (const key in jsonObject)

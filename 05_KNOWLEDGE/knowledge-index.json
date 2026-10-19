@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T22:13:02.091Z",
-  "total_verified_learnings": 942,
+  "last_updated": "2026-10-19T22:20:34.948Z",
+  "total_verified_learnings": 944,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -29,22 +29,29 @@
     "learn-github-0xcub3-wblock": {
       "learning_id": "learn-github-0xcub3-wblock",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "0xcub3-wblock",
+      "source": "0xCUB3/wBlock",
+      "repository": "0xCUB3/wBlock",
       "slug": "0xcub3-wblock",
       "platform": "github",
       "source_url": "https://github.com/0xCUB3/wBlock",
-      "source_version": "HEAD",
-      "content_hash": "7daefb98f90f5e98933e44e331cf3cdd80013aac0e4d585d33801055c7e22c29",
+      "source_version": "d525614e",
+      "content_hash": "ea5824d9200956071c2581faa1121f71f2e14fe3fe81cb91720e033aded6e50e",
       "dossier_path": "07_PROJECT_LEARNING/0xcub3-wblock-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/0xcub3-wblock-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.487Z"
+      "verified_at": "2026-10-19T22:19:22.958Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-0xjacky-nginx-ui": {
       "learning_id": "learn-github-0xjacky-nginx-ui",
@@ -3353,8 +3360,8 @@
       "slug": "beclab-olares",
       "platform": "github",
       "source_url": "https://github.com/beclab/Olares",
-      "source_version": "9cc73706",
-      "content_hash": "ed90556f47ef04f133623df332e1e90006af9d33ca28d8122030c8fdd805d680",
+      "source_version": "58406d7b",
+      "content_hash": "4bcee21d27a4bbd7a098dcc5747fddb73ba0abc4d346735f80ebeceb24449036",
       "dossier_path": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "promoted_rules": [
@@ -3377,6 +3384,11 @@
           "number": 2510,
           "title": "Multi-Script Font Variation Keying & Glyph Fallback Cache Isolation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2851,
+          "title": "daemon): recognize NFSv4 mounts (#4265)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3384,7 +3396,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T10:48:36.019Z",
+      "verified_at": "2026-10-19T22:19:27.753Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -30573,8 +30585,8 @@
       "slug": "microsoft-fluentui",
       "platform": "github",
       "source_url": "https://github.com/microsoft/fluentui",
-      "source_version": "12b576f6",
-      "content_hash": "8f461ae619ca0a22c3d99045135f25af6b9ae2c190944847031f4b7d433ffaaa",
+      "source_version": "9c0797ae",
+      "content_hash": "7bb48a63db5d18ce16fba0ce3a400152d7d5bd0b846123213cc96fc5e06a42b3",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-fluentui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-fluentui-learnings.md",
       "promoted_rules": [
@@ -30597,6 +30609,21 @@
           "number": 2545,
           "title": "Whitespace-Stripping URL Protocol Sanitization",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2852,
+          "title": "Two-Phase Active-State Mutation Reconciliation for Assistive Announcements",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2853,
+          "title": "Guarded Context-Aware URL Protocol Whitelisting",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2854,
+          "title": "Safe Multi-Dimensional Array Reshaping with Integer Arithmetic Limits",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -30604,7 +30631,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T11:36:17.137Z",
+      "verified_at": "2026-10-19T22:20:34.936Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -57056,22 +57083,36 @@
     "learn-github-archivebox-archivebox": {
       "learning_id": "learn-github-archivebox-archivebox",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "ArchiveBox/ArchiveBox",
       "repository": "ArchiveBox/ArchiveBox",
       "slug": "archivebox-archivebox",
       "platform": "github",
       "source_url": "https://github.com/ArchiveBox/ArchiveBox",
-      "source_version": "main",
-      "content_hash": "467d0c2714be9e9afbe8fbab2838e3005ad4f2ec358bb21d6fe7186fcc2a1766",
+      "source_version": "2162c9bf",
+      "content_hash": "6e9c40159c70148ba7c938641eb4597bff3fbb9eef6f8ab05ed56fc745676458",
       "dossier_path": "07_PROJECT_LEARNING/archivebox-archivebox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/archivebox-archivebox-learnings.md",
       "promoted_rules": [
-        "Rule 1629"
+        "Rule 1629",
+        {
+          "number": 2850,
+          "title": "Use established isolated browser policy in gallery regression",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
       ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T22:19:25.414Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-buriy-python-readability": {
       "learning_id": "learn-github-buriy-python-readability",
@@ -93493,6 +93534,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T22:13:02.079Z"
+    },
+    "rule-2850": {
+      "learning_id": "rule-2850",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2850,
+      "title": "Use established isolated browser policy in gallery regression",
+      "source_url": "https://github.com/ArchiveBox/ArchiveBox",
+      "source_version": "2162c9bf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T22:19:25.414Z"
+    },
+    "rule-2851": {
+      "learning_id": "rule-2851",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2851,
+      "title": "daemon): recognize NFSv4 mounts (#4265)",
+      "source_url": "https://github.com/beclab/Olares",
+      "source_version": "58406d7b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T22:19:27.753Z"
+    },
+    "rule-2852": {
+      "learning_id": "rule-2852",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2852,
+      "title": "Two-Phase Active-State Mutation Reconciliation for Assistive Announcements",
+      "source_url": "https://github.com/microsoft/fluentui",
+      "source_version": "9c0797ae",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T22:20:34.936Z"
+    },
+    "rule-2853": {
+      "learning_id": "rule-2853",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2853,
+      "title": "Guarded Context-Aware URL Protocol Whitelisting",
+      "source_url": "https://github.com/microsoft/fluentui",
+      "source_version": "9c0797ae",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T22:20:34.936Z"
+    },
+    "rule-2854": {
+      "learning_id": "rule-2854",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2854,
+      "title": "Safe Multi-Dimensional Array Reshaping with Integer Arithmetic Limits",
+      "source_url": "https://github.com/microsoft/fluentui",
+      "source_version": "9c0797ae",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T22:20:34.936Z"
     }
   },
   "aliases": {

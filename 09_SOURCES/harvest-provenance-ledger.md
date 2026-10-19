@@ -3534,3 +3534,7 @@ Every entry in this ledger must capture:
 | `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `ca453814` | Multi-dimensional audit evidence | 2026-10-19T22:12:58.315Z |
 | `learn-github-webrecorder-browsertrix-crawler` | `https://github.com/webrecorder/browsertrix-crawler` | `2cbb827e` | Multi-dimensional audit evidence | 2026-10-19T22:12:59.806Z |
 | `learn-github-pointfreeco-isowords` | `https://github.com/pointfreeco/isowords` | `c727d3a7` | Multi-dimensional audit evidence | 2026-10-19T22:13:02.150Z |
+| `learn-github-0xcub3-wblock` | `https://github.com/0xCUB3/wBlock` | `d525614e` | Multi-dimensional audit evidence | 2026-10-19T22:19:23.019Z |
+| `learn-github-archivebox-archivebox` | `https://github.com/ArchiveBox/ArchiveBox` | `2162c9bf` | Multi-dimensional audit evidence | 2026-10-19T22:19:25.483Z |
+| `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `58406d7b` | Multi-dimensional audit evidence | 2026-10-19T22:19:27.822Z |
+| `learn-github-microsoft-fluentui` | `https://github.com/microsoft/fluentui` | `9c0797ae` | Multi-dimensional audit evidence | 2026-10-19T22:20:34.994Z |

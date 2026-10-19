@@ -2973,10 +2973,10 @@
     "repository": "beclab/Olares",
     "platform": "github",
     "sourceUrl": "https://github.com/beclab/Olares",
-    "sourceVersion": "9cc73706",
+    "sourceVersion": "58406d7b",
     "license": "AGPL-3.0",
-    "contentHash": "ed90556f47ef04f133623df332e1e90006af9d33ca28d8122030c8fdd805d680",
-    "lastHarvestedAt": "2026-10-19T10:48:36.075Z",
+    "contentHash": "4bcee21d27a4bbd7a098dcc5747fddb73ba0abc4d346735f80ebeceb24449036",
+    "lastHarvestedAt": "2026-10-19T22:19:27.822Z",
     "learningId": "learn-github-beclab-olares"
   },
   "cryfs-cryfs": {
@@ -3983,10 +3983,10 @@
     "repository": "microsoft/fluentui",
     "platform": "github",
     "sourceUrl": "https://github.com/microsoft/fluentui",
-    "sourceVersion": "12b576f6",
+    "sourceVersion": "9c0797ae",
     "license": "NOASSERTION",
-    "contentHash": "8f461ae619ca0a22c3d99045135f25af6b9ae2c190944847031f4b7d433ffaaa",
-    "lastHarvestedAt": "2026-10-19T11:36:17.193Z",
+    "contentHash": "7bb48a63db5d18ce16fba0ce3a400152d7d5bd0b846123213cc96fc5e06a42b3",
+    "lastHarvestedAt": "2026-10-19T22:20:34.994Z",
     "learningId": "learn-github-microsoft-fluentui"
   },
   "o2sh-onefetch": {
@@ -9268,5 +9268,25 @@
     "contentHash": "ae5b4384b9be4df02957bbaee7d512abe67cbdebc1d877a37c59a13f859a38db",
     "lastHarvestedAt": "2026-10-19T22:13:02.150Z",
     "learningId": "learn-github-pointfreeco-isowords"
+  },
+  "0xcub3-wblock": {
+    "repository": "0xCUB3/wBlock",
+    "platform": "github",
+    "sourceUrl": "https://github.com/0xCUB3/wBlock",
+    "sourceVersion": "d525614e",
+    "license": "GPL-3.0",
+    "contentHash": "ea5824d9200956071c2581faa1121f71f2e14fe3fe81cb91720e033aded6e50e",
+    "lastHarvestedAt": "2026-10-19T22:19:23.019Z",
+    "learningId": "learn-github-0xcub3-wblock"
+  },
+  "archivebox-archivebox": {
+    "repository": "ArchiveBox/ArchiveBox",
+    "platform": "github",
+    "sourceUrl": "https://github.com/ArchiveBox/ArchiveBox",
+    "sourceVersion": "2162c9bf",
+    "license": "MIT",
+    "contentHash": "6e9c40159c70148ba7c938641eb4597bff3fbb9eef6f8ab05ed56fc745676458",
+    "lastHarvestedAt": "2026-10-19T22:19:25.483Z",
+    "learningId": "learn-github-archivebox-archivebox"
   }
 }

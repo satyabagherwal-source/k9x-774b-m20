@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-3H1R",
-    "timestamp": "2026-10-19T06:44:58.767Z",
-    "repository": "projectcontour/contour",
-    "learningId": "learn-github-projectcontour-contour",
-    "contentHash": "8eefe91bccd90bcdcfbaf0f06b2b5c6e30a1095da1f967d36a87a7dc91acf7ca",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-3JYT",
-    "timestamp": "2026-10-19T06:45:02.549Z",
-    "repository": "topoteretes/cognee",
-    "learningId": "learn-github-topoteretes-cognee",
-    "contentHash": "07a5645f8b59618ae92a4d1b5ae3b290ed7442499003c1e212ee127aaf6e7010",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-CK6O",
-    "timestamp": "2026-10-19T06:52:02.736Z",
-    "repository": "radix-ui/primitives",
-    "learningId": "learn-github-radix-ui-primitives",
-    "contentHash": "592a4f49606d0da4ce0a8630184a8c206a0ffd154d85d2659a4acac5eb2624fc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-CKR2",
-    "timestamp": "2026-10-19T06:52:03.470Z",
-    "repository": "domcyrus/rustnet",
-    "learningId": "learn-github-domcyrus-rustnet",
-    "contentHash": "5670150ca621779bda1d5c501f6e6b8f6be4091fe57bce93cc819c4758b302b5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-COO5",
     "timestamp": "2026-10-19T06:52:08.549Z",
     "repository": "futurice/pepperoni-app-kit",
@@ -7492,6 +7432,66 @@
     "contentHash": "ae5b4384b9be4df02957bbaee7d512abe67cbdebc1d877a37c59a13f859a38db",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-H4I0",
+    "timestamp": "2026-10-19T22:19:23.016Z",
+    "repository": "0xCUB3/wBlock",
+    "learningId": "learn-github-0xcub3-wblock",
+    "contentHash": "ea5824d9200956071c2581faa1121f71f2e14fe3fe81cb91720e033aded6e50e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-H6EH",
+    "timestamp": "2026-10-19T22:19:25.481Z",
+    "repository": "ArchiveBox/ArchiveBox",
+    "learningId": "learn-github-archivebox-archivebox",
+    "contentHash": "6e9c40159c70148ba7c938641eb4597bff3fbb9eef6f8ab05ed56fc745676458",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-H87F",
+    "timestamp": "2026-10-19T22:19:27.819Z",
+    "repository": "beclab/Olares",
+    "learningId": "learn-github-beclab-olares",
+    "contentHash": "4bcee21d27a4bbd7a098dcc5747fddb73ba0abc4d346735f80ebeceb24449036",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-IO1C",
+    "timestamp": "2026-10-19T22:20:34.992Z",
+    "repository": "microsoft/fluentui",
+    "learningId": "learn-github-microsoft-fluentui",
+    "contentHash": "7bb48a63db5d18ce16fba0ce3a400152d7d5bd0b846123213cc96fc5e06a42b3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
