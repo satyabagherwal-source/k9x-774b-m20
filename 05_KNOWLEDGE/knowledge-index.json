@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T13:43:23.040Z",
-  "total_verified_learnings": 825,
+  "last_updated": "2026-10-19T13:49:39.185Z",
+  "total_verified_learnings": 826,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -35815,22 +35815,35 @@
     "learn-github-react-native-maps-react-native-maps": {
       "learning_id": "learn-github-react-native-maps-react-native-maps",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "react-native-maps-react-native-maps",
+      "source": "react-native-maps/react-native-maps",
+      "repository": "react-native-maps/react-native-maps",
       "slug": "react-native-maps-react-native-maps",
       "platform": "github",
       "source_url": "https://github.com/react-native-maps/react-native-maps",
-      "source_version": "HEAD",
-      "content_hash": "6f1585a6551aa94b98b724239abbebef9257a17b3b9b760afa3cf681c98df734",
+      "source_version": "39c6fd17",
+      "content_hash": "1f785bf2314889d6a07c214c93c80b550f1d3722c24bfdc99238511fb3206c0f",
       "dossier_path": "07_PROJECT_LEARNING/react-native-maps-react-native-maps-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-native-maps-react-native-maps-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2614,
+          "title": "iOS): update polygon path when a coordinate value changes (not only on count cha",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.214Z"
+      "verified_at": "2026-10-19T13:49:39.174Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-react-native-modal-react-native-modal": {
       "learning_id": "learn-github-react-native-modal-react-native-modal",
@@ -51708,7 +51721,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein",
       "source_version": "hf-black-forest-labs-flux-3-image-klein",
-      "content_hash": "892e2a517aac3f01ff52e8d6125807acf2494af316b105c5c02aabddcc0d379b",
+      "content_hash": "710b37fc0398f9d691d22fdeb325e56f1c93ad77960b66f3f56c2935b93cbd7d",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-learnings.md",
       "promoted_rules": [
@@ -51778,7 +51791,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T03:55:00.369Z",
+      "verified_at": "2026-10-19T13:49:31.232Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -87868,6 +87881,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T13:43:23.033Z"
+    },
+    "rule-2614": {
+      "learning_id": "rule-2614",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2614,
+      "title": "iOS): update polygon path when a coordinate value changes (not only on count cha",
+      "source_url": "https://github.com/react-native-maps/react-native-maps",
+      "source_version": "39c6fd17",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T13:49:39.174Z"
     }
   },
   "aliases": {

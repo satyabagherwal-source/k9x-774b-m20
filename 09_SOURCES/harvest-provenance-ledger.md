@@ -3273,3 +3273,5 @@ Every entry in this ledger must capture:
 | `learn-github-trailbaseio-trailbase` | `https://github.com/trailbaseio/trailbase` | `c5b932db` | Multi-dimensional audit evidence | 2026-10-19T13:37:22.184Z |
 | `learn-github-lottie-react-native-lottie-react-native` | `https://github.com/lottie-react-native/lottie-react-native` | `7ac5e96c` | Multi-dimensional audit evidence | 2026-10-19T13:43:20.412Z |
 | `learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf` | `https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF` | `hf-liquida` | Multi-dimensional audit evidence | 2026-10-19T13:43:23.068Z |
+| `learn-huggingface-black-forest-labs-flux-3-image-klein` | `https://huggingface.co/black-forest-labs/flux-3-image-klein` | `hf-black-f` | Multi-dimensional audit evidence | 2026-10-19T13:49:31.284Z |
+| `learn-github-react-native-maps-react-native-maps` | `https://github.com/react-native-maps/react-native-maps` | `39c6fd17` | Multi-dimensional audit evidence | 2026-10-19T13:49:39.230Z |
