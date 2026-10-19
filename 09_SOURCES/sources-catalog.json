@@ -135,8 +135,8 @@
     "sourceUrl": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
     "sourceVersion": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "b09fe2f5739ac63ecdec9511e8bc97c59995ead3bc08487363fd5ef10a454d31",
-    "lastHarvestedAt": "2026-10-17T21:00:44.581Z",
+    "contentHash": "0f41776aae9a1ac2be431b5092aefa6b34c0d0ff5ffcc2cae2f2997eb447d02a",
+    "lastHarvestedAt": "2026-10-19T00:16:41.854Z",
     "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf"
   },
   "hf-sentence-transformers-all-minilm-l6-v2": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "d263bda4",
+    "sourceVersion": "04ee61d8",
     "license": "NOASSERTION",
-    "contentHash": "9fea7c3af986b5e62c1cb16db389dc374b9369b07f26d219fbee90913407b34e",
-    "lastHarvestedAt": "2026-10-18T23:51:53.547Z",
+    "contentHash": "c1cb5850f1ff45aba9b18e53c475cbc795e9300c0435b9a89b80eae17174e245",
+    "lastHarvestedAt": "2026-10-19T00:16:44.814Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -3928,5 +3928,55 @@
     "contentHash": "d88078ab0ed1dc2dd703566f7430a737d02d5a4e028ec069f701190be90678ca",
     "lastHarvestedAt": "2026-10-19T00:10:31.112Z",
     "learningId": "learn-github-materializeinc-materialize"
+  },
+  "react-bootstrap-react-bootstrap": {
+    "repository": "react-bootstrap/react-bootstrap",
+    "platform": "github",
+    "sourceUrl": "https://github.com/react-bootstrap/react-bootstrap",
+    "sourceVersion": "2f6eef1f",
+    "license": "MIT",
+    "contentHash": "574f53d671feceb9bba48e06c0d3a72d96712392d77f3a9a10e4989a27e30146",
+    "lastHarvestedAt": "2026-10-19T00:16:28.310Z",
+    "learningId": "learn-github-react-bootstrap-react-bootstrap"
+  },
+  "orf-gping": {
+    "repository": "orf/gping",
+    "platform": "github",
+    "sourceUrl": "https://github.com/orf/gping",
+    "sourceVersion": "fad1ee3c",
+    "license": "MIT",
+    "contentHash": "d57df5fc815798b7672c19f2a4afb61c6412f85d30a82076992cfe634a515c94",
+    "lastHarvestedAt": "2026-10-19T00:16:30.681Z",
+    "learningId": "learn-github-orf-gping"
+  },
+  "leecade-react-native-swiper": {
+    "repository": "leecade/react-native-swiper",
+    "platform": "github",
+    "sourceUrl": "https://github.com/leecade/react-native-swiper",
+    "sourceVersion": "98cc9060",
+    "license": "MIT",
+    "contentHash": "bbd2052848de8b9aa316dea7878621aef3a19a7991202287568bf81622d9cbfc",
+    "lastHarvestedAt": "2026-10-19T00:16:35.557Z",
+    "learningId": "learn-github-leecade-react-native-swiper"
+  },
+  "argoproj-argo-events": {
+    "repository": "argoproj/argo-events",
+    "platform": "github",
+    "sourceUrl": "https://github.com/argoproj/argo-events",
+    "sourceVersion": "493c412d",
+    "license": "Apache-2.0",
+    "contentHash": "97b25be3fc86cfc879c0989ede6ff17630a4d2fb58aa4dd4870688b295fa667c",
+    "lastHarvestedAt": "2026-10-19T00:16:37.572Z",
+    "learningId": "learn-github-argoproj-argo-events"
+  },
+  "helixdb-helix-db": {
+    "repository": "HelixDB/helix-db",
+    "platform": "github",
+    "sourceUrl": "https://github.com/HelixDB/helix-db",
+    "sourceVersion": "1b278adf",
+    "license": "Apache-2.0",
+    "contentHash": "267e218a3d6acf88c2cd22be273dcdb4c9b0070ba0033286f9d541389842a784",
+    "lastHarvestedAt": "2026-10-19T00:16:43.018Z",
+    "learningId": "learn-github-helixdb-helix-db"
   }
 }

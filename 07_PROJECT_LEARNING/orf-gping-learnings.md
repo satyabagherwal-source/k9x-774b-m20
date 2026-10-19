@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/orf-gping-learnings.md`  
+> **Source**: github ([https://github.com/orf/gping](https://github.com/orf/gping))  
+> **Source Version**: `fad1ee3c`  
+> **License**: MIT  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T00:16:30.432Z  
+> **Learning ID**: `learn-github-orf-gping`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): orf/gping
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/orf-gping-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/orf/gping](https://github.com/orf/gping))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T01:37:36.597Z  
+> **Harvest Timestamp**: 2026-10-19T00:16:30.127Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: Ping, but with a graph
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, Dockerfile
-- **Stars / Engagement**: 12701 stars
+- **Stars / Engagement**: 12713 stars
 
 ---
 
@@ -1234,130 +1248,6 @@ mod tests {
 
 ```
 
-### Core Architecture Module: `pinger/src/macos.rs`
-```
-use crate::bsd::parse_bsd;
-use crate::{PingCreationError, PingOptions, PingResult, Pinger};
-use lazy_regex::*;
-
-pub static RE: Lazy<Regex> = lazy_regex!(r"time=(?:(?P<ms>[0-9]+).(?P<ns>[0-9]+)\s+ms)");
-
-pub struct MacOSPinger {
-    options: PingOptions,
-}
-
-impl Pinger for MacOSPinger {
-    fn from_options(options: PingOptions) -> Result<Self, PingCreationError>
-    where
-        Self: Sized,
-    {
-        Ok(Self { options })
-    }
-
-    fn parse_fn(&self) -> fn(String) -> Option<PingResult> {
-        parse_bsd
-    }
-
-    fn ping_args(&self) -> (&str, Vec<String>) {
-        let cmd = if self.options.target.is_ipv6() {
-            "ping6"
-        } else {
-            "ping"
-        };
-        let mut args = vec![
-            format!(
-                "-i{:.1}",
-                self.options.interval.as_millis() as f32 / 1_000_f32
-            ),
-            self.options.target.to_string(),
-        ];
-        if let Some(interface) = &self.options.interface {
-            args.push("-b".into());
-            args.push(interface.clone());
-        }
-
-        if let Some(raw_args) = &self.options.raw_arguments {
-            args.extend(raw_args.iter().cloned());
-        }
-
-        (cmd, args)
-    }
-}
-
-```
-
-### Core Architecture Module: `pinger/src/target.rs`
-```
-use std::fmt;
-use std::fmt::{Display, Formatter};
-use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
-
-#[derive(Debug, Copy, Clone, Eq, PartialEq)]
-pub enum IPVersion {
-    V4,
-    V6,
-    Any,
-}
-
-#[derive(Debug, Clone)]
-pub enum Target {
-    IP(IpAddr),
-    Hostname { domain: String, version: IPVersion },
-}
-
-impl Target {
-    pub fn is_ipv6(&self) -> bool {
-        match self {
-            Target::IP(ip) => ip.is_ipv6(),
-            Target::Hostname { version, .. } => *version == IPVersion::V6,
-        }
-    }
-
-    pub fn new_any(value: impl ToString) -> Self {
-        let value = value.to_string();
-        if let Ok(ip) = value.parse::<IpAddr>() {
-            return Self::IP(ip);
-        }
-        Self::Hostname {
-            domain: value,
-            version: IPVersion::Any,
-        }
-    }
-
-    pub fn new_ipv4(value: impl ToString) -> Self {
-        let value = value.to_string();
-        if let Ok(ip) = value.parse::<Ipv4Addr>() {
-            return Self::IP(IpAddr::V4(ip));
-        }
-        Self::Hostname {
-            domain: value.to_string(),
-            version: IPVersion::V4,
-        }
-    }
-
-    pub fn new_ipv6(value: impl ToString) -> Self {
-        let value = value.to_string();
-        if let Ok(ip) = value.parse::<Ipv6Addr>() {
-            return Self::IP(IpAddr::V6(ip));
-        }
-        Self::Hostname {
-            domain: value.to_string(),
-            version: IPVersion::V6,
-        }
-    }
-}
-
-impl Display for Target {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        match self {
-            Target::IP(v) => Display::fmt(&v, f),
-            Target::Hostname { domain, .. } => Display::fmt(&domain, f),
-        }
-    }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1369,30 +1259,12 @@ impl Display for Target {
   **Post-Mortem & Fix Analysis**:
   > What version of `gping` are you running, and on what operating system?
   > > What version of `gping` are you running, and on what operating system?  It might be latest version on Oct, looks an error before  pinging.  `gping 1.18.0` looks good 
-  >  ~ > ping 2409:8a55:8631:4490:5a47:caff:fe74:7196 PING(56=40+8+8 bytes)  --> 2409:8a55:8631:4490:5a47:caff:fe74:7196 ^C --- 2409:8a55:8631:4490:5a47:caff:fe74:7196 ping statistics --- 26 packets transmitted, 0 packets received, 100.0% packet loss   <img width="1208" alt="Image" src="https://github.com/user-attachments/assets/87b6efe2-2d5f-4516-b883-bf9aac3eabd2" />  press ```q``` cannot exit on Mac and freebad , linux is can exit when press ```q```
 
 - **Issue #450** (2024-12-16): **-4 is using ICMPv6**
   *Symptoms*: If you provide the '-4' flag the IPv4 address will be shown. But if you look into the packages IPv6 package are send.
   **Post-Mortem & Fix Analysis**:
   > Can you be more clear? What OS are you using, and what specific command are you running?
   > I'm using Manjaro. - make sure you have a internet connection with IPv4 and IPv6 working. - start `tcpdump -i <interface> -n 'icmp or icmp6'` in the background - watch the difference between `gping google.com` and `gping google.com -4`  gping shows different IPs(4/6), but tcpdump shows only IPv6.
-  > Thank you for this information, it is really helpful. I’ll take a look.   Could you also give me the version of ping you’re using? That should be all I need to fix this.
-
-- **Issue #440** (2024-12-16): **Interface Switch does not work in Windows**
-  *Symptoms*: It appears that regardless of what you provide with -i or --interface, windows ignores that and does not send out the traffic out of the specified interface.  I tested by putting in a fake interface name and it still sent out pings.  Verified in wireshark that no traffic was going out the interface I did specify during initial testing.  gping 1.16.1 commit_hash: a46bd72d build_time: 2024-02-17 11:50:08 +00:00 build_env: rustc 1.76.0 (07dca489a 2024-02-04),stable-x86_64-pc-windows-msvc
-  **Post-Mortem & Fix Analysis**:
-  > This isn't easy to fix, especially as the crate we are using (https://docs.rs/winping/) is pretty old and doesn't support it. For now I've disabled the interface flag on Windows so that this is less confusing.
-
-- **Issue #412** (2024-12-16): **Hope to increase support for Chinese domain names**
-  *Symptoms*: ![73E4E071-4A48-4eb6-811F-37508A87359E](https://github.com/orf/gping/assets/68273012/3b2ba022-d732-4014-b2ce-70ba9e9ad200) 
-  **Post-Mortem & Fix Analysis**:
-  > Thanks! I've fixed this 👍 
-
-- **Issue #392** (2026-08-31): **Choose a more sensible default interval on OpenBSD.**
-  *Symptoms*: ``` $ gping google.com there was an error running ping: exit status: 1 Stderr: ping: only root may use an interval smaller than one second ```  Perhaps set the default interval to `1` for OpenBSD then?  Thanks 
-  **Post-Mortem & Fix Analysis**:
-  > Related: https://github.com/orf/gping/issues/236
-  > Just a very late follow up: I posted about this on the freebsd hackers list: https://mail-archive.freebsd.org/cgi/getmsg.cgi?fetch=232859+0+archive/2024/freebsd-hackers/20240325.freebsd-hackers  The minimum of 1 second is a very stupid legacy default and I feel quite annoyed by it. I guess I’ll begrudgingly add this,  it not too happy about it  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1409,7 +1281,150 @@ impl Display for Target {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `75084000` (2026-08-31)
+### Incident Patch 1: `2b9da232` (2026-08-31)
+**Commit Message**: Fix off-by-one that leaves one stale point in the graph buffer (#580)
+
+drain(0..idx) skips the element at idx, but idx is the index of the last
+point that's actually older than the buffer window (it matched the filter
+right above). So every update() call quietly leaves exactly one out-of-window
+sample sitting in the data, forever. Switched it to drain(0..=idx) and added
+a test that seeds a few stale/fresh points and checks nothing older than the
+window survives after update().
+
+**File**: `gping/src/plot_data.rs` (modified, +35/-1)
+```diff
+@@ -45,7 +45,10 @@ impl PlotData {
+             .map(|(idx, _)| idx)
+             .next_back();
+         if let Some(idx) = last_idx {
+-            self.data.drain(0..idx).for_each(drop)
++            // `idx` itself is still stale (it matched the filter above), so it must be
++            // included in the drained range too, otherwise one out-of-window point is
++            // always left behind.
++            self.data.drain(0..=idx).for_each(drop)
+         }
+     }
+ 
+@@ -139,6 +142,37 @@ impl<'a> From<&'a PlotData> for Dataset<'a> {
+ mod tests {
+     use super::*;
+ 
++    // Regression test for the buffer trim in `PlotData::update`: every point older than
++    // `buffer` seconds should be dropped, including the single oldest stale point, which
++    // used to survive because `drain(0..idx)` excluded the boundary index itself.
++    #[test]
++    fn update_drops_all_points_outside_the_buffer_window() {
++        let buffer_secs = 5u64;
++        let mut plot = PlotData::new("host".to_string(), buffer_secs, Style::default(), false);
++
++        let now = Local::now().timestamp_millis() as f64 / 1_000f64;
++
++        // Seed with a mix of stale (older than the buffer window) and fresh points,
++        // pushed in ascending timestamp order like the real update loop would.
++        plot.data.push((now - 10.0, 100.0)); // stale
++        plot.data.push((now - 8.0, 200.0)); // stale
++        plot.data.push((now - 6.0, 300.0)); // stale, closest to the boundary
++        plot.data.push((now - 2.0, 400.0)); // fresh
++        plot.data.push((now - 1.0, 500.0)); // fresh
++
++        // Triggers the trim logic; also appends one brand-new point.
++        plot.update(Some(Duration::from_millis(42)));
++
++        let earliest_allowed = now - buffer_secs as f64;
++        for &(timestamp, _) in &plot.data {
++            assert!(
++                timestamp >= earliest_allowed,
++                "found a point at {timestamp}, which is older than the buffer window start {earliest_allowed}; data: {:?}",
++                plot.data
++            );
++        }
++    }
++
+     #[test]
+     fn test_jitter_uses_chronological_order() {
+         // Oscillating latencies: sorted-order "jitter" would telescope down to
+```
+
+---
+
+### Incident Patch 2: `443c73d2` (2026-08-31)
+**Commit Message**: pinger/src/linux.rs: use "ping -6" instead of "ping6" (#546)
+
+`ping6` does not exist on my system (`iputils 20250605-1`)
+
+`gping -6` fails otherwise.
+
+```
+$ gping -6 example.com
+Error: Error spawning ping: No such file or directory (os error 2)
+
+Caused by:
+    No such file or directory (os error 2)
+```
+
+Note: Probably don't need to modify the BusyBox command.
+However, `busybox ping` supports the same `-4/-6` flags:
+```
+$ busybox ping --help
+...
+-4,-6           Force IP or IPv6 name resolution
+```
+
+**File**: `pinger/src/linux.rs` (modified, +11/-10)
+```diff
+@@ -64,36 +64,37 @@ impl Pinger for LinuxPinger {
+         match self {
+             // Alpine doesn't support timeout notifications, so we don't add the -O flag here.
+             LinuxPinger::BusyBox(options) => {
+-                let cmd = if options.target.is_ipv6() {
+-                    "ping6"
+-                } else {
+-                    "ping"
+-                };
++                let cmd = "ping";
+ 
+                 let mut args = vec![
+                     options.target.to_string(),
+                     format!("-i{:.1}", options.interval.as_millis() as f32 / 1_000_f32),
+                 ];
+ 
++                if options.target.is_ipv6() {
++                    args.push("-6".to_string());
++                }
++
+                 if let Some(raw_args) = &options.raw_arguments {
+                     args.extend(raw_args.iter().cloned());
+                 }
+ 
+                 (cmd, args)
+             }
+             LinuxPinger::IPTools(options) => {
+-                let cmd = if options.target.is_ipv6() {
+-                    "ping6"
+-                } else {
+-                    "ping"
+-                };
++                let cmd = "ping";
+ 
+                 // The -O flag ensures we "no answer yet" messages from ping
+                 // See https://superuser.com/questions/270083/linux-ping-show-time-out
+                 let mut args = vec![
+                     "-O".to_string(),
+                     format!("-i{:.1}", options.interval.as_millis() as f32 / 1_000_f32),
+                 ];
++
++                if options.target.is_ipv6() {
++                    args.push("-6".to_string());
++                }
++
+                 if let Some(interface) = &options.interface {
+                     args.push("-I".into());
+                     args.push(interface.clone());
+```
+
+---
+
+### Incident Patch 3: `75084000` (2026-08-31)
 **Commit Message**: Fix graph axis
 
 **File**: `gping/src/main.rs` (modified, +123/-22)
@@ -1534,635 +1549,13 @@ Observed empirical fixes and code patches:
 +    fn test_user_supplied_y_boun
 ```
 
----
-
-### Incident Patch 2: `2b9da232` (2026-08-31)
-**Commit Message**: Fix off-by-one that leaves one stale point in the graph buffer (#580)
-
-drain(0..idx) skips the element at idx, but idx is the index of the last
-point that's actually older than the buffer window (it matched the filter
-right above). So every update() call quietly leaves exactly one out-of-window
-sample sitting in the data, forever. Switched it to drain(0..=idx) and added
-a test that seeds a few stale/fresh points and checks nothing older than the
-window survives after update().
-
-**File**: `gping/src/plot_data.rs` (modified, +35/-1)
-```diff
-@@ -45,7 +45,10 @@ impl PlotData {
-             .map(|(idx, _)| idx)
-             .next_back();
-         if let Some(idx) = last_idx {
--            self.data.drain(0..idx).for_each(drop)
-+            // `idx` itself is still stale (it matched the filter above), so it must be
-+            // included in the drained range too, otherwise one out-of-window point is
-+            // always left behind.
-+            self.data.drain(0..=idx).for_each(drop)
-         }
-     }
- 
-@@ -139,6 +142,37 @@ impl<'a> From<&'a PlotData> for Dataset<'a> {
- mod tests {
-     use super::*;
- 
-+    // Regression test for the buffer trim in `PlotData::update`: every point older than
-+    // `buffer` seconds should be dropped, including the single oldest stale point, which
-+    // used to survive because `drain(0..idx)` excluded the boundary index itself.
-+    #[test]
-+    fn update_drops_all_points_outside_the_buffer_window() {
-+        let buffer_secs = 5u64;
-+        let mut plot = PlotData::new("host".to_string(), buffer_secs, Style::default(), false);
-+
-+        let now = Local::now().timestamp_millis() as f64 / 1_000f64;
-+
-+        // Seed with a mix of stale (older than the buffer window) and fresh points,
-+        // pushed in ascending timestamp order like the real update loop would.
-+        plot.data.push((now - 10.0, 100.0)); // stale
-+        plot.data.push((now - 8.0, 200.0)); // stale
-+        plot.data.push((now - 6.0, 300.0)); // stale, closest to the boundary
-+        plot.data.push((now - 2.0, 400.0)); // fresh
-+        plot.data.push((now - 1.0, 500.0)); // fresh
-+
-+        // Triggers the trim logic; also appends one brand-new point.
-+        plot.update(Some(Duration::from_millis(42)));
-+
-+        let earliest_allowed = now - buffer_secs as f64;
-+        for &(timestamp, _) in &plot.data {
-+            assert!(
-+                timestamp >= earliest_allowed,
-+                "found a point at {timestamp}, which is older than the buffer window start {earliest_allowed}; data: {:?}",
-+                plot.data
-+            );
-+        }
-+    }
-+
-     #[test]
-     fn test_jitter_uses_chronological_order() {
-         // Oscillating latencies: sorted-order "jitter" would telescope down to
-```
-
----
-
-### Incident Patch 3: `443c73d2` (2026-08-31)
-**Commit Message**: pinger/src/linux.rs: use "ping -6" instead of "ping6" (#546)
-
-`ping6` does not exist on my system (`iputils 20250605-1`)
-
-`gping -6` fails otherwise.
-
-```
-$ gping -6 example.com
-Error: Error spawning ping: No such file or directory (os error 2)
-
-Caused by:
-    No such file or directory (os error 2)
-```
-
-Note: Probably don't need to modify the BusyBox command.
-However, `busybox ping` supports the same `-4/-6` flags:
-```
-$ busybox ping --help
-...
--4,-6           Force IP or IPv6 name resolution
-```
-
-**File**: `pinger/src/linux.rs` (modified, +11/-10)
-```diff
-@@ -64,36 +64,37 @@ impl Pinger for LinuxPinger {
-         match self {
-             // Alpine doesn't support timeout notifications, so we don't add the -O flag here.
-             LinuxPinger::BusyBox(options) => {
--                let cmd = if options.target.is_ipv6() {
--                    "ping6"
--                } else {
--                    "ping"
--                };
-+                let cmd = "ping";
- 
-                 let mut args = vec![
-                     options.target.to_string(),
-                     format!("-i{:.1}", options.interval.as_millis() as f32 / 1_000_f32),
-                 ];
- 
-+                if options.target.is_ipv6() {
-+                    args.push("-6".to_string());
-+                }
-+
-                 if let Some(raw_args) = &options.raw_arguments {
-                     args.extend(raw_args.iter().cloned());
-                 }
- 
-                 (cmd, args)
-             }
-             LinuxPinger::IPTools(options) => {
--                let cmd = if options.target.is_ipv6() {
--                    "ping6"
--                } else {
--                    "ping"
--                };
-+                let cmd = "ping";
- 
-                 // The -O flag ensures we "no answer yet" messages from ping
-                 // See https://superuser.com/questions/270083/linux-ping-show-time-out
-                 let mut args = vec![
-                     "-O".to_string(),
-                     format!("-i{:.1}", options.interval.as_millis() as f32 / 1_000_f32),
-                 ];
-+
-+                if options.target.is_ipv6() {
-+                    args.push("-6".to_string());
-+                }
-+
-                 if let Some(interface) = &options.interface {
-                     args.push("-I".into());
-                     args.push(interface.clone());
-```
-
----
-
-### Incident Patch 4: `e3dcaf29` (2026-08-31)
-**Commit Message**: fix: use one second default ping interval on OpenBSD (#574)
-
-Co-authored-by: xfocus3 <[REDACTED_EMAIL]>
-
-**File**: `gping.1` (modified, +1/-1)
-```diff
-@@ -13,7 +13,7 @@ Ping, but with a graph.
- Graph the execution time for a list of commands rather than pinging hosts
- .TP
- \fB\-n\fR, \fB\-\-watch\-interval\fR \fI<WATCH_INTERVAL>\fR
--Watch interval seconds (provide partial seconds like \*(Aq0.5\*(Aq). Default for ping is 0.2, default for cmd is 0.5
-+Watch interval seconds (provide partial seconds like \*(Aq0.5\*(Aq). Default for ping is 0.2 (1.0 on OpenBSD), default for cmd is 0.5
- .TP
- \fB\-b\fR, \fB\-\-buffer\fR \fI<BUFFER>\fR [default: 30]
- Determines the number of seconds to display in the graph
-```
-
-**File**: `gping/src/main.rs` (modified, +13/-4)
-```diff
-@@ -38,14 +38,20 @@ mod region_map;
- use colors::Colors;
- use tui::prelude::Position;
- 
-+#[cfg(target_os = "openbsd")]
-+const DEFAULT_PING_INTERVAL_SECONDS: f32 = 1.0;
-+#[cfg(not(target_os = "openbsd"))]
-+const DEFAULT_PING_INTERVAL_SECONDS: f32 = 0.2;
-+const DEFAULT_CMD_INTERVAL_SECONDS: f32 = 0.5;
-+
- #[derive(Parser, Debug)]
- #[command(author, version, name = "gping", about = "Ping, but with a graph.", styles = clap_cargo::style::CLAP_STYLING)]
- struct Args {
-     /// Graph the execution time for a list of commands rather than pinging hosts
-     #[arg(long)]
-     cmd: bool,
- 
--    /// Watch interval seconds (provide partial seconds like '0.5'). Default for ping is 0.2, default for cmd is 0.5.
-+    /// Watch interval seconds (provide partial seconds like '0.5'). Default for ping is 0.2 (1.0 on OpenBSD), default for cmd is 0.5.
-     #[arg(short = 'n', long)]
-     watch_interval: Option<f32>,
- 
-@@ -254,7 +260,9 @@ fn start_cmd_thread(
-         .to_string();
-     let cmd_args = words.map(|w| w.to_string()).collect::<Vec<String>>();
- 
--    let interval = Duration::from_millis((watch_interval.unwrap_or(0.5) * 1000.0) as u64);
-+    let interval = Duration::from_millis(
-+        (watch_interval.unwrap_or(DEFAULT_CMD_INTERVAL_SECONDS) * 1000.0) as u64,
-+    );
- 
-     // Pump cmd watches into the queue
-     thread::spawn(move || -> Result<()> {
-@@ -414,8 +422,9 @@ fn main() -> Result<()> {
-             );
-             threads.push(cmd_thread);
-         } else {
--            let interval =
--                Duration::from_millis((args.watch_interval.unwrap_or(0.2) * 1000.0) as u64);
-+            let interval = Duration::from_millis(
-+                (args.watch_interval.unwrap_or(DEFAULT_PING_INTERVAL_SECONDS) * 1000.0) as u64,
-+            );
- 
-             let mut ping_opts = if args.ipv4 {
-                 PingOptions::new_ipv4(host_or_cmd, interval, interface.clone())
-```
-
----
-
-### Incident Patch 5: `d5a248f5` (2026-08-31)
-**Commit Message**: Fix clippy
-
-**File**: `pinger/src/test.rs` (modified, +2/-2)
-```diff
-@@ -95,8 +95,8 @@ mod tests {
-             parsed.len(),
-             expected.len(),
-             "Parsed: {:?}, Expected: {:?}",
--            &parsed,
--            &expected
-+            parsed,
-+            expected
-         );
- 
-         for (idx, (output, expected)) in parsed.into_iter().zip(expected).enumerate() {
-```
-
----
-
-### Incident Patch 6: `0dd7a048` (2026-08-30)
-**Commit Message**: Merge pull request #590 from VXNCXNX/fix/jitter-chronological
-
-Compute jitter in chronological order, not sorted order
-
-**File**: `gping/src/plot_data.rs` (modified, +56/-6)
-```diff
-@@ -51,6 +51,15 @@ impl PlotData {
- 
-     pub fn header_stats(&self) -> Vec<Paragraph<'_>> {
-         let ping_header = Paragraph::new(self.display.clone()).style(self.style);
-+        // Chronologically-ordered (i.e. not sorted) latencies, used for the jitter
-+        // calculation which needs to compare consecutive samples in the order they
-+        // actually occurred.
-+        let chronological: Vec<f64> = self
-+            .data
-+            .iter()
-+            .filter(|(_, x)| !x.is_nan())
-+            .map(|(_, v)| *v)
-+            .collect();
-         let items: Vec<&f64> = self
-             .data
-             .iter()
-@@ -65,12 +74,7 @@ impl PlotData {
-         let min = **items.first().unwrap();
-         let max = **items.last().unwrap();
-         let avg = items.iter().copied().sum::<f64>() / items.len() as f64;
--        let jtr = items
--            .iter()
--            .zip(items.iter().skip(1))
--            .map(|(&prev, &curr)| (curr - prev).abs())
--            .sum::<f64>()
--            / (items.len() - 1) as f64;
-+        let jtr = jitter(&chronological);
- 
-         let percentile_position = 0.95 * items.len() as f32;
-         let rounded_position = percentile_position.round() as usize;
-@@ -100,6 +104,22 @@ impl PlotData {
-     }
- }
- 
-+/// Average absolute difference between consecutive values, taken in the order
-+/// they are given (i.e. the caller is responsible for passing them in
-+/// chronological order, not sorted). With fewer than two values there is no
-+/// consecutive pair to compare, so jitter is reported as 0.
-+fn jitter(values: &[f64]) -> f64 {
-+    if values.len() < 2 {
-+        return 0.0;
-+    }
-+    values
-+        .iter()
-+        .zip(values.iter().skip(1))
-+        .map(|(prev, curr)| (curr - prev).abs())
-+        .sum::<f64>()
-+        / (values.len() - 1) as f64
-+}
-+
- impl<'a> From<&'a PlotData> for Dataset<'a> {
-     fn from(plot: &'a PlotData) -> Self {
-         let slice = plot.data.as_slice();
-@@ -114,3 +134,33 @@ impl<'a> From<&'a PlotData> for Dataset<'a> {
-             .data(slice)
-     }
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+
-+    #[test]
-+    fn test_jitter_uses_chronological_order() {
-+        // Oscillating latencies: sorted-order "jitter" would telescope down to
-+        // (max - min) / (n - 1) = (90 - 10) / 5 = 16, which is really a range
-+        // statistic, not jitter. In chronological order every consecutive pair
-+        // differs by 80, so the real jitter should be 80.
-+        let values = vec![10.0, 90.0, 10.0, 90.0, 10.0, 90.0];
-+
-+        let sorted_order_value = (90.0 - 10.0) / (values.len() - 1) as f64;
-+        let result = jitter(&values);
-+
-+        assert_eq!(result, 80.0);
-+        assert_ne!(result, sorted_order_value);
-+    }
-+
-+    #[test]
-+    fn test_jitter_single_sample_is_zero() {
-+        assert_eq!(jitter(&[42.0]), 0.0);
-+    }
-+
-+    #[test]
-+    fn test_jitter_empty_is_zero() {
-+        assert_eq!(jitter(&[]), 0.0);
-+    }
-+}
-```
-
----
-
-### Incident Patch 7: `5dda0e4f` (2026-06-24)
-**Commit Message**: Fix docker build and push
-
-**File**: `.github/workflows/docker.yml` (modified, +2/-2)
-```diff
-@@ -41,7 +41,7 @@ jobs:
-         uses: docker/setup-buildx-action@v4
- 
-       - name: Log in to the Container registry
--        if: github.event_name == 'tag' || github.ref_name == 'master'
-+        if: startsWith(github.ref, 'refs/tags/') || github.ref_name == 'master'
-         uses: docker/login-action@v4
-         with:
-           registry: ${{ env.REGISTRY }}
-@@ -58,7 +58,7 @@ jobs:
-         uses: docker/build-push-action@v7
-         with:
-           context: .
--          push: ${{ github.event_name == 'tag' || github.ref_name == 'master' }}
-+          push: ${{ startsWith(github.ref, 'refs/tags/') || github.ref_name == 'master' }}
-           tags: ${{ steps.meta.outputs.tags }}
-           labels: ${{ steps.meta.outputs.labels }}
-           platforms: |
-```
-
----
-
-### Incident Patch 8: `22052cf8` (2026-06-14)
-**Commit Message**: fix: don't hard code expected bytes
-
-Hard coding the expected returned bytes prevents the user from specifying the size argument via --ping_args, which is useful for troubleshooting.
-
-**File**: `pinger/src/linux.rs` (modified, +1/-1)
-```diff
-@@ -51,7 +51,7 @@ impl Pinger for LinuxPinger {
-         |line| {
-             #[cfg(test)]
-             eprintln!("Got line {line}");
--            if line.starts_with("64 bytes from") {
-+            if line.contains("bytes from") {
-                 return extract_regex(&UBUNTU_RE, line);
-             } else if line.starts_with("no answer yet") {
-                 return Some(PingResult::Timeout(line));
-```
-
----
-
-### Incident Patch 9: `0f1c7683` (2025-08-15)
-**Commit Message**: Fix runs-on
-
-**File**: `.github/workflows/test.yml` (modified, +1/-1)
-```diff
-@@ -104,7 +104,7 @@ jobs:
- 
-   checks:
-     name: Checks
--    runs-on: ubuntu-20.04
-+    runs-on: ubuntu-latest
-     steps:
-       - name: Checkout sources
-         uses: actions/checkout@v4
-```
-
----
-
-### Incident Patch 10: `3981e943` (2025-08-15)
-**Commit Message**: Fix windows dead code
-
-**File**: `pinger/src/test.rs` (modified, +12/-0)
-```diff
-@@ -1,7 +1,10 @@
- #[cfg(test)]
- mod tests {
-+    #[cfg(unix)]
-     use crate::bsd::BSDPinger;
-+    #[cfg(unix)]
-     use crate::linux::LinuxPinger;
-+    #[cfg(unix)]
-     use crate::macos::MacOSPinger;
-     #[cfg(windows)]
-     use crate::windows::WindowsPinger;
-@@ -109,31 +112,37 @@ mod tests {
-         }
-     }
- 
-+    #[cfg(unix)]
-     #[test]
-     fn macos() {
-         test_parser::<MacOSPinger>(include_str!("tests/macos.txt"));
-     }
- 
-+    #[cfg(unix)]
-     #[test]
-     fn freebsd() {
-         test_parser::<BSDPinger>(include_str!("tests/bsd.txt"));
-     }
- 
-+    #[cfg(unix)]
-     #[test]
-     fn dragonfly() {
-         test_parser::<BSDPinger>(include_str!("tests/bsd.txt"));
-     }
- 
-+    #[cfg(unix)]
-     #[test]
-     fn openbsd() {
-         test_parser::<BSDPinger>(include_str!("tests/bsd.txt"));
-     }
- 
-+    #[cfg(unix)]
-     #[test]
-     fn netbsd() {
-         test_parser::<BSDPinger>(include_str!("tests/bsd.txt"));
-     }
- 
-+    #[cfg(unix)]
-     #[test]
-     fn ubuntu() {
-         run_parser_test(
-@@ -142,6 +151,7 @@ mod tests {
-         );
-     }
- 
-+    #[cfg(unix)]
-     #[test]
-     fn debian() {
-         run_parser_test(
-@@ -156,6 +166,7 @@ mod tests {
-         test_parser::<WindowsPinger>(include_str!("tests/windows.txt"));
-     }
- 
-+    #[cfg(unix)]
-     #[test]
-     fn android() {
-         run_parser_test(
-@@ -164,6 +175,7 @@ mod tests {
-         );
-     }
- 
-+    #[cfg(unix)]
-     #[test]
-     fn alpine() {
-         run_parser_test(
-```
-
----
-
-### Incident Patch 11: `03fa1e20` (2025-08-15)
-**Commit Message**: Fix windows dead code
-
-**File**: `pinger/src/lib.rs` (modified, +1/-1)
-```diff
-@@ -28,7 +28,7 @@ use thiserror::Error;
- 
- #[cfg(unix)]
- pub mod linux;
--#[cfg(target_os = "macos")]
-+#[cfg(unix)]
- pub mod macos;
- #[cfg(windows)]
- pub mod windows;
-```
-
----
-
-### Incident Patch 12: `59401e1a` (2025-08-15)
-**Commit Message**: Fix windows dead code
-
-**File**: `pinger/src/lib.rs` (modified, +3/-3)
-```diff
-@@ -1,5 +1,3 @@
--#[cfg(unix)]
--use crate::linux::LinuxPinger;
- /// Pinger
- /// This crate exposes a simple function to ping remote hosts across different operating systems.
- /// Example:
-@@ -28,7 +26,9 @@ use std::{fmt, io, thread};
- use target::Target;
- use thiserror::Error;
- 
-+#[cfg(unix)]
- pub mod linux;
-+#[cfg(target_os = "macos")]
- pub mod macos;
- #[cfg(windows)]
- pub mod windows;
-@@ -220,7 +220,7 @@ pub fn get_pinger(options: PingOptions) -> std::result::Result<Arc<dyn Pinger>,
-         } else if cfg!(target_os = "macos") {
-             Ok(Arc::new(macos::MacOSPinger::from_options(options)?))
-         } else {
--            Ok(Arc::new(LinuxPinger::from_options(options)?))
-+            Ok(Arc::new(linux::LinuxPinger::from_options(options)?))
-         }
-     }
- }
-```
-
----
-
-### Incident Patch 13: `f0f3b236` (2025-08-15)
-**Commit Message**: Fix windows dead code
-
-**File**: `pinger/src/lib.rs` (modified, +1/-0)
-```diff
-@@ -33,6 +33,7 @@ pub mod macos;
- #[cfg(windows)]
- pub mod windows;
- 
-+#[cfg(unix)]
- mod bsd;
- #[cfg(feature = "fake-ping")]
- mod fake;
-```
-
----
-
-### Incident Patch 14: `7e19e1a5` (2025-08-15)
-**Commit Message**: Fix clippy errors
-
-**File**: `gping/src/main.rs` (modified, +3/-4)
-```diff
-@@ -184,7 +184,7 @@ impl App {
-         [before_idx, now_idx]
-     }
- 
--    fn x_axis_labels(&self, bounds: [f64; 2]) -> Vec<Span> {
-+    fn x_axis_labels(&self, bounds: [f64; 2]) -> Vec<Span<'_>> {
-         let lower_utc = DateTime::<Utc>::from_timestamp(bounds[0] as i64, 0)
-             .expect("Error parsing x-axis bounds 0");
-         let upper_utc = DateTime::<Utc>::from_timestamp(bounds[1] as i64, 0)
-@@ -200,7 +200,7 @@ impl App {
-         ]
-     }
- 
--    fn y_axis_labels(&self, bounds: [f64; 2]) -> Vec<Span> {
-+    fn y_axis_labels(&self, bounds: [f64; 2]) -> Vec<Span<'_>> {
-         // Create 7 labels for our y axis, based on the y-axis bounds we computed above.
-         let min = bounds[0];
-         let max = bounds[1];
-@@ -523,8 +523,7 @@ fn main() -> Result<()> {
-                         .vertical_margin(args.vertical_margin)
-                         .horizontal_margin(args.horizontal_margin)
-                         .constraints(
--                            iter::repeat(Constraint::Length(1))
--                                .take(app.data.len())
-+                            std::iter::repeat_n(Constraint::Length(1), app.data.len())
-                                 .chain(iter::once(Constraint::Percentage(10)))
-                                 .collect::<Vec<_>>(),
-                         )
-```
-
-**File**: `gping/src/plot_data.rs` (modified, +2/-2)
-```diff
-@@ -43,13 +43,13 @@ impl PlotData {
-             .enumerate()
-             .filter(|(_, (timestamp, _))| *timestamp < earliest_timestamp)
-             .map(|(idx, _)| idx)
--            .last();
-+            .next_back();
-         if let Some(idx) = last_idx {
-             self.data.drain(0..idx).for_each(drop)
-         }
-     }
- 
--    pub fn header_stats(&self) -> Vec<Paragraph> {
-+    pub fn header_stats(&self) -> Vec<Paragraph<'_>> {
-         let ping_header = Paragraph::new(self.display.clone()).style(self.style);
-         let items: Vec<&f64> = self
-             .data
-```
-
----
-
-### Incident Patch 15: `688932a2` (2025-01-31)
-**Commit Message**: Fix orf.gping
-
-**File**: `.github/workflows/winget.yml` (modified, +1/-1)
-```diff
-@@ -14,6 +14,6 @@ jobs:
-     steps:
-       - uses: vedantmgoyal9/winget-releaser@main
-         with:
--          identifier: Package.Identifier
-+          identifier: orf.gping
-           release-tag: '${{ github.event.release.tag_name || inputs.tag }}'
-           token: ${{ secrets.COMMITTER_TOKEN }}
-```
-
 #### Recent Merged Pull Requests:
+- **PR #603** (closed): chore(deps): bump the dependencies group across 1 directory with 4 updates (@dependabot[bot])
 - **PR #600** (closed): chore(deps): bump the dependencies group across 1 directory with 3 updates (@dependabot[bot])
 - **PR #599** (closed): chore(deps): bump the dependencies group across 1 directory with 2 updates (@dependabot[bot])
 - **PR #597** (2026-09-22): Add WinGet installation instructions (@gschizas)
 - **PR #596** (closed): chore(deps): bump clap from 4.6.6 to 4.6.7 in the dependencies group across 1 directory (@dependabot[bot])
 - **PR #592** (2026-08-31): chore(deps): bump the dependencies group across 1 directory with 7 updates (@dependabot[bot])
-- **PR #590** (2026-08-30): Compute jitter in chronological order, not sorted order (@VXNCXNX)
-- **PR #589** (closed): chore(deps): bump the dependencies group across 1 directory with 6 updates (@dependabot[bot])
-- **PR #588** (2026-08-31): chore(deps): bump actions/setup-python from 6 to 7 in the dependencies group across 1 directory (@dependabot[bot])
 
 ---
 
@@ -2176,3 +1569,54 @@ Hard coding the expected returned bytes prevents the user from specifying the si
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. off-by-one that leaves one stale point in the graph buffer (#580)
+
+**RULE**:
+When implementing operations in `gping/src/plot_data.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in orf/gping. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `2b9da232`: off-by-one that leaves one stale point in the graph buffer (#580). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `gping/src/plot_data.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+            // `idx` itself is still stale (it matched the filter above), so it must be
+            // included in the drained range too, otherwise one out-of-window point is
+            // always left behind.
+            self.data.drain(0..=idx).for_each(drop)
+    // Regression test for the buffer trim in `PlotData::update`: every point older than
+    // `buffer` seconds should be dropped, including the single oldest stale point, which
+    // used to survive because `drain(0..idx)` excluded the boundary index itself.
+    #[test]
+    fn update_drops_all_points_outside_the_buffer_window() {
+        let buffer_secs = 5u64;
+        let mut plot = PlotData::new("host".to_string(), buffer_secs, Style::default(), false);
+
+        let now = Local::now().timestamp_millis() as f64 / 1_000f64;
+
+        // Seed with a mix of stale (older than the buffer window) and fresh points,
+        // pushed in ascending timestamp order like the real update loop would.
+        plot.data.push((now - 10.0, 100.0)); // stale
+        plot.data.push((now - 8.0, 200.0)); // stale
+        plot.data.push((now - 6.0, 300.0)); // stale, closest to the boundary
+        plot.data.push((now - 2.0, 400.0)); // fresh
+ 
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+            self.data.drain(0..idx).for_each(drop)
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `2b9da232` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T00:10:31.124Z",
+  "last_updated": "2026-10-19T00:16:44.818Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2020,15 +2020,15 @@
       "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
-      "content_hash": "d418d9402ad30078534bba71db02cc773c47fc90c0af5f3fedb73b64572ee4d8",
-      "verified_at": "2026-10-17T23:03:42.723Z",
+      "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
+      "content_hash": "0f41776aae9a1ac2be431b5092aefa6b34c0d0ff5ffcc2cae2f2997eb447d02a",
+      "verified_at": "2026-10-19T00:16:41.858Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T23:03:42.723Z"
+      "last_updated": "2026-10-19T00:16:41.858Z"
     },
     "iliyami/MacSai": {
       "repository": "iliyami/MacSai",
@@ -3674,14 +3674,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "9fea7c3af986b5e62c1cb16db389dc374b9369b07f26d219fbee90913407b34e",
-      "verified_at": "2026-10-18T23:51:53.555Z",
+      "content_hash": "c1cb5850f1ff45aba9b18e53c475cbc795e9300c0435b9a89b80eae17174e245",
+      "verified_at": "2026-10-19T00:16:44.818Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T23:51:53.555Z"
+      "last_updated": "2026-10-19T00:16:44.818Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -6007,6 +6007,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T00:10:31.123Z"
+    },
+    "react-bootstrap/react-bootstrap": {
+      "repository": "react-bootstrap/react-bootstrap",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-react-bootstrap-react-bootstrap",
+      "content_hash": "574f53d671feceb9bba48e06c0d3a72d96712392d77f3a9a10e4989a27e30146",
+      "verified_at": "2026-10-19T00:16:28.314Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T00:16:28.314Z"
+    },
+    "orf/gping": {
+      "repository": "orf/gping",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-orf-gping",
+      "content_hash": "d57df5fc815798b7672c19f2a4afb61c6412f85d30a82076992cfe634a515c94",
+      "verified_at": "2026-10-19T00:16:30.685Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T00:16:30.685Z"
+    },
+    "leecade/react-native-swiper": {
+      "repository": "leecade/react-native-swiper",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-leecade-react-native-swiper",
+      "content_hash": "bbd2052848de8b9aa316dea7878621aef3a19a7991202287568bf81622d9cbfc",
+      "verified_at": "2026-10-19T00:16:35.561Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T00:16:35.561Z"
+    },
+    "argoproj/argo-events": {
+      "repository": "argoproj/argo-events",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-argoproj-argo-events",
+      "content_hash": "97b25be3fc86cfc879c0989ede6ff17630a4d2fb58aa4dd4870688b295fa667c",
+      "verified_at": "2026-10-19T00:16:37.576Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T00:16:37.576Z"
+    },
+    "HelixDB/helix-db": {
+      "repository": "HelixDB/helix-db",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-helixdb-helix-db",
+      "content_hash": "267e218a3d6acf88c2cd22be273dcdb4c9b0070ba0033286f9d541389842a784",
+      "verified_at": "2026-10-19T00:16:43.022Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T00:16:43.022Z"
     }
   },
   "repos": {

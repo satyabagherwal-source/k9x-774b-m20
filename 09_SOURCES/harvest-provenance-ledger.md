@@ -2683,3 +2683,10 @@ Every entry in this ledger must capture:
 | `learn-github-go-chassis-go-chassis` | `https://github.com/go-chassis/go-chassis` | `6bcf5150` | Multi-dimensional audit evidence | 2026-10-19T00:10:25.573Z |
 | `learn-huggingface-edge0-audio8-asr-infinite` | `https://huggingface.co/Edge0/Audio8-ASR-Infinite` | `hf-edge0-a` | Multi-dimensional audit evidence | 2026-10-19T00:10:28.556Z |
 | `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `5c06d922` | Multi-dimensional audit evidence | 2026-10-19T00:10:31.112Z |
+| `learn-github-react-bootstrap-react-bootstrap` | `https://github.com/react-bootstrap/react-bootstrap` | `2f6eef1f` | Multi-dimensional audit evidence | 2026-10-19T00:16:28.310Z |
+| `learn-github-orf-gping` | `https://github.com/orf/gping` | `fad1ee3c` | Multi-dimensional audit evidence | 2026-10-19T00:16:30.681Z |
+| `learn-github-leecade-react-native-swiper` | `https://github.com/leecade/react-native-swiper` | `98cc9060` | Multi-dimensional audit evidence | 2026-10-19T00:16:35.557Z |
+| `learn-github-argoproj-argo-events` | `https://github.com/argoproj/argo-events` | `493c412d` | Multi-dimensional audit evidence | 2026-10-19T00:16:37.572Z |
+| `learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-10-19T00:16:41.854Z |
+| `learn-github-helixdb-helix-db` | `https://github.com/HelixDB/helix-db` | `1b278adf` | Multi-dimensional audit evidence | 2026-10-19T00:16:43.018Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `04ee61d8` | Multi-dimensional audit evidence | 2026-10-19T00:16:44.814Z |

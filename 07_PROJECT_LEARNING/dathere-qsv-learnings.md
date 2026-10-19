@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `d263bda4`  
+> **Source Version**: `04ee61d8`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T23:51:53.342Z  
+> **Timestamp**: 2026-10-19T00:16:44.580Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T23:51:53.333Z  
+> **Harvest Timestamp**: 2026-10-19T00:16:44.104Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2252,266 +2252,81 @@ pub fn visualize_whitespace(s: &str) -> String {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `05577e2e` (2026-10-18)
-**Commit Message**: fix(geoconvert): GeoJSON to CSV handles features with different properties (#4837)
+### Incident Patch 1: `04ee61d8` (2026-10-18)
+**Commit Message**: deps: bump calamine to 0.37 and remove our patch
 
-geozero's CsvWriter takes its columns from the first feature, and panics
-unless every later feature has the same properties in the same order. So
-GeoJSON to CSV panicked when a later feature listed its properties in
-another order or had one the first feature lacked, and failed with "found
-record with N fields, but the previous record has M fields" when a feature
-left a property out or had it null. geozero's reader skips null values but
-still counts them in the property index, so even when every feature had
-the same properties, a null one that was not the last panicked (index out
-of bounds) from the second feature on.
+also update other transitive deps
 
-Scan the document for every property name that has a value in at least
-one feature, in the order first seen, and run the features through the
-field-order wrapper SHP to CSV already uses (renamed from DbfFieldOrder to
-FieldOrder), so each row has a cell for every column, empty where the
-feature has no value. A feature whose properties are null still gets a
-blank cell per column.
-
-Fixes #2749
-
-Co-authored-by: ybai08 <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `Cargo.lock` (modified, +8/-7)
 ```diff
-@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- ## [Unreleased]
+@@ -411,9 +411,9 @@ dependencies = [
  
- ### Fixed
-+- **`geoconvert` GeoJSON to CSV no longer fails when features have different properties** ([#4837](https://github.com/dathere/qsv/pull/4837)). geozero's CSV writer takes its columns from the first feature, so it panicked ("CSV features must all have the same column names", or index out of bounds) when a later feature listed its properties in another order or had one the first feature lacked, or (even when every feature had the same properties) when a `null` property came before others, and failed with "found record with 2 fields, but the previous record has 3 fields" when a feature left a property out or had it `null`. The CSV now has a column for every property that has a value in at least one feature, in the order first seen, and a cell is empty where a feature has no value for that property, as SHP to CSV already does for null fields.
- - **`schema --ignore-case` schemas no longer reject the CSV they were inferred from** ([#4831](https://github.com/dathere/qsv/pull/4831)). The `enum` and `const` values of String columns were lowercased, and `validate` is case-sensitive, so `True`/`TRUE` failed `"enum": ["false","true"]`. They are now written as an equivalent case-insensitive regex, e.g. `"pattern": "^(?i:false|true)$"`. Integer enums are unchanged, and `tojsonl` is unaffected.
- - **`schema` and `tojsonl` now apply `--enum-threshold` consistently** ([#4830](https://github.com/dathere/qsv/pull/4830)). Which columns got `enum`, `const` and `--strict-formats` constraints depended on the *other* columns in the file. If no column was at or under the threshold, every column got an exhaustive `enum`. If at least one was, constant columns lost their `const`, `--strict-formats` skipped high-cardinality String columns, and `--ignore-case` (always on in `tojsonl`) missed columns that only fall under the threshold once case-folded, so `tojsonl` stopped inferring booleans like `True`/`false`. `tojsonl` also no longer converts a whitespace-padded boolean like ` True ` to `false` when `--trim` isn't used. Now only columns at or under the threshold get an `enum` (counted case-insensitively with `--ignore-case`), constant columns always get `const`, and `--strict-formats` checks every String column, which uses more memory on large files with many distinct text values. **Note: generated schemas can be stricter.** A column that holds a single value in the input now always gets a `const` constraint, which most files with a low-cardinality column used to lose, so `validate` rejects later data with any other value there (e.g. a changed phone number or URL). Generate the schema from a representative dataset, and loosen or remove `const`/`enum` constraints in the JSON Schema where values are expected to change.
- - **`schema` now infers Unicode character lengths instead of UTF-8 byte lengths for non-ASCII strings.** ([#4827](https://github.com/dathere/qsv/pull/4827)) Generated `minLength` and `maxLength` constraints now use JSON Schema's character-count semantics, so validating the original CSV no longer rejects short non-ASCII values such as `李`. ASCII bounds are unchanged.
+ [[package]]
+ name = "arc-swap"
+-version = "1.9.2"
++version = "1.9.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "c049c0be4daef0b145cb3555416b3b8ef5b7888a38aea1a3a155801fe7b0810b"
++checksum = "380962b3d93b99642e50b9febf72c071e97e8b32d86eae9cf4ef582bb960ae6e"
+ dependencies = [
+  "rustversion",
+ ]
+@@ -1308,8 +1308,9 @@ checksum = "f5813789573ae815c8b4be58c4428e0e7ae05f0227678ba9de332ded585b9159"
+ 
+ [[package]]
+ name = "calamine"
+-version = "0.36.1"
+-source = "git+https://github.com/tafia/calamine?rev=b05d6cd2e6c1b4bce4a390f9d097fdcb8822313f#b05d6cd2e6c1b4bce4a390f9d097fdcb8822313f"
++version = "0.37.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "c9ca341b94bc4b29e08970b1a03914fad2dfe177e2ecb67fcd6de9046004aafb"
+ dependencies = [
+  "atoi_simd",
+  "byteorder",
+@@ -6839,9 +6840,9 @@ checksum = "4a6394b9e965e73d0a289ee54f589087e2c676aedf60885baf52c76b771e4958"
+ 
+ [[package]]
+ name = "ppmd-rust"
+-version = "1.5.0"
++version = "1.5.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "196a7c80b9a7652aba7cc070827516c2abe4ccdf53d128e1944003cf5726cff1"
++checksum = "494b4379484fc92217cc7d9e3a532375b1d01a61889ec8333025dc3b0377af56"
+ 
+ [[package]]
+ name = "ppv-lite86"
+@@ -9152,7 +9153,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd"
+ dependencies = [
+  "fastrand",
+- "getrandom 0.3.4",
++ "getrandom 0.4.3",
+  "once_cell",
+  "rustix",
+  "windows-sys 0.61.2",
 ```
 
-**File**: `src/cmd/geoconvert.rs` (modified, +112/-44)
+**File**: `Cargo.toml` (modified, +1/-4)
 ```diff
-@@ -588,34 +588,60 @@ impl OwnedValue {
-     }
- }
+@@ -180,7 +180,7 @@ bytemuck = { version = "1.24", features = [
+ byteorder = "1.5"
+ bytes = "1"
+ cached = { version = "4", features = ["ahash", "redb_store", "redis_store"] }
+-calamine = { version = "0.36", features = ["chrono"] }
++calamine = { version = "0.37", features = ["chrono"] }
+ censor = { version = "0.3", optional = true }
+ chrono = { version = "0.4", default-features = false }
+ chrono-tz = "0.10"
+@@ -533,9 +533,6 @@ csv-index = { git = "https://github.com/dathere/rust-csv", branch = "qsv-tuned"
+ # csv-core = { path = "../rust-csv/csv-core" }
+ # csv-index = { path = "../rust-csv/csv-index" }
  
--/// Sits between geozero's shapefile reader and an output writer, fixing two
--/// problems with how the reader drives the writer:
--/// - It yields each record's fields in `HashMap` order, which differs from record to record, and
--///   leaves out null fields. `CsvWriter` panics unless every feature has the same columns in the
--///   same order. So each feature's properties are buffered and re-emitted in the .dbf's field
--///   order; with `fill_missing` (CSV), a null field is written as an empty string.
--/// - It discards the result of most writer calls (`.ok()`), so a failed write would go unnoticed.
--///   The first error is kept for `take_error`.
--struct DbfFieldOrder<'a, P> {
--    inner:        &'a mut P,
--    fields:       Vec<String>,
--    values:       Vec<Option<OwnedValue>>,
--    fill_missing: bool,
--    error:        Option<geozero::error::GeozeroError>,
-+/// Sits between a geozero reader and an output writer, and re-emits each
-+/// feature's properties in a fixed field order. `CsvWriter` takes its columns from
-+/// the first feature, and panics unless every later feature has the same columns
-+/// in the same order, but:
-+/// - the shapefile reader yields each record's fields in `HashMap` order, which differs from
-+///   record to record, and leaves out null fields. The field order is the .dbf's.
-+/// - GeoJSON features can list their properties in any order, leave some out, have them null
-+///   (the reader leaves those out) or have no properties at all. The field order is every
-+///   property name, in the order first seen (see `geojson_property_names`).
-+///
-+/// So each feature's properties are buffered and re-emitted in field order; with
-+/// `fill_missing` (CSV), a missing field is written as an empty string.
-+///
-+/// The shapefile reader also discards the result of most writer calls (`.ok()`), so a failed
-+/// write would go unnoticed. The first error is kept for `take_error`.
-+struct FieldOrder<'a, P> {
-+    inner:              &'a mut P,
-+    fields:             Vec<String>,
-+    values:             Vec<Option<OwnedValue>>,
-+    fill_missing:       bool,
-+    properties_written: bool,
-+    error:              Option<geozero::error::GeozeroError>,
- }
+-# use latest upstream of calamine with zip 9 fix and other recent improvements
+-calamine = { git = "https://github.com/tafia/calamine", rev = "b05d6cd2e6c1b4bce4a390f9d097fdcb8822313f" }
+-
+ # use latest upstream now that our PR has been merged
+ csvlens = { git = "https://github.com/YS-L/csvlens", rev = "6acf060" }
  
--impl<'a, P: FeatureProcessor> DbfFieldOrder<'a, P> {
-+impl<'a, P: FeatureProcessor> FieldOrder<'a, P> {
-     fn new(inner: &'a mut P, fields: Vec<String>, fill_missing: bool) -> Self {
-         let values = fields.iter().map(|_| None).collect();
-         Self {
-             inner,
-             fields,
-             values,
-             fill_missing,
-+            properties_written: false,
-             error: None,
-         }
-     }
- 
-+    /// Write the buffered properties to `inner`, in field order.
-+    fn write_properties(&mut self) -> geozero::error::Result<()> {
-+        self.properties_written = true;
-+        let mut idx = 0;
-+        for (name, value) in self.fields.iter().zip(&self.values) {
-+            match value {
-+                Some(value) => self.inner.property(idx, name, &value.as_column_value())?,
-+                None if self.fill_missing => {
-+                    self.inner.property(idx, name, &ColumnValue::String(""))?
-+                },
-+                None => continue,
-+            };
-+            idx += 1;
-+        }
-+        Ok(())
-+    }
-+
-     fn track(&mut self, result: geozero::error::Result<()>) -> geozero::error::Result<()> {
-         if let Err(err) = result
-             && self.error.is_none()
-@@ -633,7 +659,7 @@ impl<'a, P: FeatureProcessor> DbfFieldOrder<'a, P> {
-     }
- }
- 
--impl<P: FeatureProcessor> PropertyProcessor for DbfFieldOrder<'_, P> {
-+impl<P: FeatureProcessor> PropertyProcessor for FieldOrder<'_, P> {
-     fn property(
-         &mut self,
-         _idx: usize,
-@@ -647,7 +673,7 @@ impl<P: FeatureProcessor> PropertyProcessor for DbfFieldOrder<'_, P> {
-     }
- }
- 
--impl<P: FeatureProcessor> FeatureProcessor for DbfFieldOrder<'_, P> {
-+impl<P: FeatureProcessor> FeatureProcessor for FieldOrder<'_, P> {
-     fn dataset_begin(&mut self, name: Option<&str>) -> geozero::error::Result<()> {
-         let result = self.inner.dataset_begin(name);
-         self.track(result)
-@@ -659,12 +685,24 @@ impl<P: FeatureProcessor> FeatureProcessor for DbfFieldOrder<'_, P> {
-     }
- 
-     fn feature_begin(&mut self, idx: u64) -> geozero::error::Result<()> {
-+        self.properties_written = false;
-         let result = self.inner.feature_begin(idx);
-         self.track(result)
-     }
- 
-     fn feature_end(&mut self, idx: u64) -> geozero::error::Result<()> {
--        let result = self.inner.feature_end(idx);
-+        // A GeoJSON feature with no properties never calls properties_begin/end, but
-+        // with fill_missing its row still needs a (blank) value for every field.
-+        let mut result = Ok(());
-+        if self.fill_missing && !self.properties_written && !self.fields.is_empty() {
-+            self.values.iter_mut().for_each(|value| *value = None);
-+ 
-```
-
-**File**: `tests/test_geoconvert.rs` (modified, +100/-0)
-```diff
-@@ -136,6 +136,106 @@ fn geoconvert_geojson_to_csv_max_length_inline() {
-     assert!(got[1][1].ends_with("..."));
- }
- 
-+#[test]
-+fn geoconvert_geojson_to_csv_properties_in_different_order() {
-+    // geozero's CsvWriter takes the columns from the first feature and panicked
-+    // ("CSV features must all have the same column names") when a later feature
-+    // listed the same properties in another order.
-+    let wrk = Workdir::new("geoconvert_geojson_to_csv_properties_in_different_order");
-+    wrk.create_from_string(
-+        "data.geojson",
-+        r#"{"type": "FeatureCollection", "features": [
-+  {"type": "Feature", "geometry": {"type": "Point", "coordinates": [1, 2]},
-+   "properties": {"name": "a", "pop": 1}},
-+  {"type": "Feature", "geometry": {"type": "Point", "coordinates": [3, 4]},
-+   "properties": {"pop": 2, "name": "b"}}
-+]}"#,
-+    );
-+    let mut cmd = wrk.command("geoconvert");
-+    cmd.args(["data.geojson", "geojson", "csv"]);
-+
-+    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
-+    let expected = vec![
-+        svec!["geometry", "name", "pop"],
-+        svec!["POINT(1 2)", "a", "1"],
-+        svec!["POINT(3 4)", "b", "2"],
-+    ];
-+    assert_eq!(got, expected);
-+}
-+
-+#[test]
-+fn geoconvert_geojson_to_csv_missing_and_null_properties() {
-+    // A property can be absent or null in some features, a feature's properties
-+    // can be null, and a property can first appear after the first feature. Every
-+    // property becomes a column (in the order first seen), and is empty where a
-+    // feature has no value for it. geozero's CsvWriter used to fail with "found
-+    // record with 2 fields, but the previous record has 3 fields", or panic
-+    // with an index out of bounds.
-+    let wrk = Workdir::new("geoconvert_geojson_to_csv_missing_and_null_properties");
-+    wrk.create_from_string(
-+        "data.geojson",
-+        r#"{"type": "FeatureCollection", "features": [
-+  {"type": "Feature", "geometry": {"type": "Point", "coordinates": [1, 2]},
-+   "properties": {"name": "a", "pop": null}},
-+  {"type": "Feature", "geometry": {"type": "Point", "coordinates": [3, 4]},
-+   "properties": {"name": "b", "pop": 2, "area": 5.5}},
-+  {"type": "Feature", "geometry": {"type": "Point", "coordinates": [5, 6]},
-+   "properties": {"area": 7.5}},
-+  {"type": "Feature", "geometry": {"type": "Point", "coordinates": [7, 8]},
-+   "properties": null}
-+]}"#,
-+    );
-+    let expected = vec![
-+        svec!["geometry", "name", "pop", "area"],
-+        svec!["POINT(1 2)", "a", "", ""],
-+        svec!["POINT(3 4)", "b", "2", "5.5"],
-+        svec!["POINT(5 6)", "", "", "7.5"],
-+        svec!["POINT(7 8)", "", "", ""],
-+    ];
-+
-+    let mut cmd = wrk.command("geoconvert");
-+    cmd.args(["data.geojson", "geojson", "csv"]);
-+    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
-+    assert_eq!(got, expected);
-+
-+    // same from stdin, and through the --max-length path
-+    let mut cmd = wrk.command("geoconvert");
-+    cmd.args(["-", "geojson", "csv", "--max-length", "3"])
-+        .stdin(std::fs::File::open(wrk.path("data.geojson")).unwrap());
-+    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
-+    assert_eq!(got[0], expected[0]);
-+    assert_eq!(got[2], svec!["POI...", "b", "2", "5.5"]);
-+    assert_eq!(got[4], svec!["POI...", "", "", ""]);
-+}
-+
-+#[test]
-+fn geoconvert_geojson_to_csv_null_before_other_properties() {
-+    // Even when every feature has the same properties, a null one that is not the
-+    // last made geozero's CsvWriter panic (index out of bounds) from the second
-+    // feature on: the reader skips nulls but still counts them in the property
-+    // index. A property that is null in every feature gets no column, as before.
-+    let wrk = Workdir::new("geoconvert_geojson_to_csv_null_before_other_properties");
-+    wrk.create_from_string(
-+        "data.geojson",
-+        r#"{"type": "FeatureCollection", "features": [
-+  {"type": "Feature", "geometry": {"type": "Point", "coordinates": [1, 2]},
-+   "properties": {"name": "a", "pop": null, "area": 1.5}},
-+  {"type": "Feature", "geometry": {"type": "Point", "coordinates": [3, 4]},
-+   "properties": {"name": "b", "pop": null, "area": 2.5}}
-+]}"#,
-+    );
-+    let mut cmd = wrk.command("geoconvert");
-+    cmd.args(["data.geojson", "geojson", "csv"]);
-+
-+    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
-+    let expected = vec![
-+        svec!["geometry", "name", "area"],
-+        svec!["POINT(1 2)", "a", "1.5"],
-+        svec!["POINT(3 4)", "b", "2.5"],
-+    ];
-+    assert_eq!(got, expected);
-+}
-+
- #[test]
- fn geoconvert_csv_partial_latlon_flag_errors() {
-     // Regression: only one of --latitude/--longitude must produce a clear error,
 ```
 
 #### Recent Merged Pull Requests:
@@ -2540,28 +2355,41 @@ Co-authored-by: ybai08 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. geoconvert): GeoJSON to CSV handles features with different properties (#4837)
+## X. deps: bump calamine to 0.37 and remove our patch
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `05577e2e`: geoconvert): GeoJSON to CSV handles features with different properties (#4837). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `04ee61d8`: deps: bump calamine to 0.37 and remove our patch. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **`geoconvert` GeoJSON to CSV no longer fails when features have different properties** ([#4837](https://github.com/dathere/qsv/pull/4837)). geozero's CSV writer takes its columns from the first feature, so it panicked ("CSV features must all have the same column names", or index out of bounds) when a later feature listed its properties in another order or had one the first feature lacked, or (even when every feature had the same properties) when a `null` property came before others, and failed with "found record with 2 fields, but the previous record has 3 fields" when a feature left a property out or had it `null`. The CSV now has a column for every property that has a value in at least one feature, in the order first seen, and a cell is empty where a feature has no value for that property, as SHP to CSV already does for null fields.
+version = "1.9.3"
+checksum = "380962b3d93b99642e50b9febf72c071e97e8b32d86eae9cf4ef582bb960ae6e"
+version = "0.37.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c9ca341b94bc4b29e08970b1a03914fad2dfe177e2ecb67fcd6de9046004aafb"
+version = "1.5.1"
+checksum = "494b4379484fc92217cc7d9e3a532375b1d01a61889ec8333025dc3b0377af56"
+ "getrandom 0.4.3",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+version = "1.9.2"
+checksum = "c049c0be4daef0b145cb3555416b3b8ef5b7888a38aea1a3a155801fe7b0810b"
+version = "0.36.1"
+source = "git+https://github.com/tafia/calamine?rev=b05d6cd2e6c1b4bce4a390f9d097fdcb8822313f#b05d6cd2e6c1b4bce4a390f9d097fdcb8822313f"
+version = "1.5.0"
+checksum = "196a7c80b9a7652aba7cc070827516c2abe4ccdf53d128e1944003cf5726cff1"
+ "getrandom 0.3.4",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `05577e2e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `04ee61d8` are properly handled with clean fallback behavior.

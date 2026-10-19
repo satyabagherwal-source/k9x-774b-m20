@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T00:10:31.065Z",
-  "total_verified_learnings": 415,
+  "last_updated": "2026-10-19T00:16:44.773Z",
+  "total_verified_learnings": 420,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -1971,22 +1971,35 @@
     "learn-github-argoproj-argo-events": {
       "learning_id": "learn-github-argoproj-argo-events",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "argoproj-argo-events",
+      "source": "argoproj/argo-events",
+      "repository": "argoproj/argo-events",
       "slug": "argoproj-argo-events",
       "platform": "github",
       "source_url": "https://github.com/argoproj/argo-events",
-      "source_version": "HEAD",
-      "content_hash": "a0699d87259a254ee81841e4fe6537f4a22521884b969647251973d468293d55",
+      "source_version": "493c412d",
+      "content_hash": "97b25be3fc86cfc879c0989ede6ff17630a4d2fb58aa4dd4870688b295fa667c",
       "dossier_path": "07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1904,
+          "title": "docs): invalid code in the doc (#4213)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.903Z"
+      "verified_at": "2026-10-19T00:16:37.517Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-argoproj-argo-workflows": {
       "learning_id": "learn-github-argoproj-argo-workflows",
@@ -5150,8 +5163,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "d263bda4",
-      "content_hash": "9fea7c3af986b5e62c1cb16db389dc374b9369b07f26d219fbee90913407b34e",
+      "source_version": "04ee61d8",
+      "content_hash": "c1cb5850f1ff45aba9b18e53c475cbc795e9300c0435b9a89b80eae17174e245",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -5164,6 +5177,11 @@
           "number": 1882,
           "title": "geoconvert): GeoJSON to CSV handles features with different properties (#4837)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1908,
+          "title": "deps: bump calamine to 0.37 and remove our patch",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5171,7 +5189,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T23:51:53.501Z",
+      "verified_at": "2026-10-19T00:16:44.762Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -9743,22 +9761,35 @@
     "learn-github-helixdb-helix-db": {
       "learning_id": "learn-github-helixdb-helix-db",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "helixdb-helix-db",
+      "source": "HelixDB/helix-db",
+      "repository": "HelixDB/helix-db",
       "slug": "helixdb-helix-db",
       "platform": "github",
       "source_url": "https://github.com/HelixDB/helix-db",
-      "source_version": "HEAD",
-      "content_hash": "3dd2f10d2ca2f76449bce6201603959258beaf0fc56bc1981ed0af8dbe5363b2",
+      "source_version": "1b278adf",
+      "content_hash": "267e218a3d6acf88c2cd22be273dcdb4c9b0070ba0033286f9d541389842a784",
       "dossier_path": "07_PROJECT_LEARNING/helixdb-helix-db-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/helixdb-helix-db-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1907,
+          "title": "Time parallel vector-memory lookups from a shared start",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.267Z"
+      "verified_at": "2026-10-19T00:16:42.966Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-herdrdev-herdr": {
       "learning_id": "learn-github-herdrdev-herdr",
@@ -9809,7 +9840,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
       "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
-      "content_hash": "b09fe2f5739ac63ecdec9511e8bc97c59995ead3bc08487363fd5ef10a454d31",
+      "content_hash": "0f41776aae9a1ac2be431b5092aefa6b34c0d0ff5ffcc2cae2f2997eb447d02a",
       "dossier_path": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md",
       "promoted_rules": [
@@ -9821,6 +9852,16 @@
         {
           "number": 1454,
           "title": "Precision-Dependent Inference Stability Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1905,
+          "title": "Quantized Artifact Provenance & Schema Integrity",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1906,
+          "title": "Hardware-Specific Quantization Isolation",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -10164,7 +10205,7 @@
         "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv42kq8l",
         "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv4ftgho"
       ],
-      "verified_at": "2026-10-17T21:00:44.539Z",
+      "verified_at": "2026-10-19T00:16:41.806Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -24125,22 +24166,35 @@
     "learn-github-leecade-react-native-swiper": {
       "learning_id": "learn-github-leecade-react-native-swiper",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "leecade-react-native-swiper",
+      "source": "leecade/react-native-swiper",
+      "repository": "leecade/react-native-swiper",
       "slug": "leecade-react-native-swiper",
       "platform": "github",
       "source_url": "https://github.com/leecade/react-native-swiper",
-      "source_version": "HEAD",
-      "content_hash": "e8a23c1d7cdb70594c6263ffe9ec58143b3ec0df19599e5afbdbbf8c1ecfa332",
+      "source_version": "98cc9060",
+      "content_hash": "bbd2052848de8b9aa316dea7878621aef3a19a7991202287568bf81622d9cbfc",
       "dossier_path": "07_PROJECT_LEARNING/leecade-react-native-swiper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/leecade-react-native-swiper-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1903,
+          "title": "children): fix the crash when only one children (#1016)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.987Z"
+      "verified_at": "2026-10-19T00:16:35.500Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-leetcode-mafia-cheetah": {
       "learning_id": "learn-github-leetcode-mafia-cheetah",
@@ -29127,22 +29181,35 @@
     "learn-github-orf-gping": {
       "learning_id": "learn-github-orf-gping",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "orf-gping",
+      "source": "orf/gping",
+      "repository": "orf/gping",
       "slug": "orf-gping",
       "platform": "github",
       "source_url": "https://github.com/orf/gping",
-      "source_version": "HEAD",
-      "content_hash": "d81936f1a14728c244e7589d7653faad8cd9b847d935a1cc516f7b52b49abf99",
+      "source_version": "fad1ee3c",
+      "content_hash": "d57df5fc815798b7672c19f2a4afb61c6412f85d30a82076992cfe634a515c94",
       "dossier_path": "07_PROJECT_LEARNING/orf-gping-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/orf-gping-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1902,
+          "title": "off-by-one that leaves one stale point in the graph buffer (#580)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.925Z"
+      "verified_at": "2026-10-19T00:16:30.624Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-orkas-ai-orkas": {
       "learning_id": "learn-github-orkas-ai-orkas",
@@ -30598,22 +30665,35 @@
     "learn-github-react-bootstrap-react-bootstrap": {
       "learning_id": "learn-github-react-bootstrap-react-bootstrap",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "react-bootstrap-react-bootstrap",
+      "source": "react-bootstrap/react-bootstrap",
+      "repository": "react-bootstrap/react-bootstrap",
       "slug": "react-bootstrap-react-bootstrap",
       "platform": "github",
       "source_url": "https://github.com/react-bootstrap/react-bootstrap",
-      "source_version": "HEAD",
-      "content_hash": "cf8c6e8cd336ce8736c5d714acee0e63a3b30dc3ab416d7b292983ad6f42923b",
+      "source_version": "2f6eef1f",
+      "content_hash": "574f53d671feceb9bba48e06c0d3a72d96712392d77f3a9a10e4989a27e30146",
       "dossier_path": "07_PROJECT_LEARNING/react-bootstrap-react-bootstrap-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-bootstrap-react-bootstrap-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1901,
+          "title": "deps): update dependency playwright to v1.55.1 [security] (#6973)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.194Z"
+      "verified_at": "2026-10-19T00:16:28.259Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-react-component-slider": {
       "learning_id": "learn-github-react-component-slider",
@@ -71061,6 +71141,118 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T00:10:31.058Z"
+    },
+    "rule-1901": {
+      "learning_id": "rule-1901",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1901,
+      "title": "deps): update dependency playwright to v1.55.1 [security] (#6973)",
+      "source_url": "https://github.com/react-bootstrap/react-bootstrap",
+      "source_version": "2f6eef1f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:16:28.259Z"
+    },
+    "rule-1902": {
+      "learning_id": "rule-1902",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1902,
+      "title": "off-by-one that leaves one stale point in the graph buffer (#580)",
+      "source_url": "https://github.com/orf/gping",
+      "source_version": "fad1ee3c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:16:30.624Z"
+    },
+    "rule-1903": {
+      "learning_id": "rule-1903",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1903,
+      "title": "children): fix the crash when only one children (#1016)",
+      "source_url": "https://github.com/leecade/react-native-swiper",
+      "source_version": "98cc9060",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:16:35.500Z"
+    },
+    "rule-1904": {
+      "learning_id": "rule-1904",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1904,
+      "title": "docs): invalid code in the doc (#4213)",
+      "source_url": "https://github.com/argoproj/argo-events",
+      "source_version": "493c412d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:16:37.517Z"
+    },
+    "rule-1905": {
+      "learning_id": "rule-1905",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1905,
+      "title": "Quantized Artifact Provenance & Schema Integrity",
+      "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
+      "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:16:41.806Z"
+    },
+    "rule-1906": {
+      "learning_id": "rule-1906",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1906,
+      "title": "Hardware-Specific Quantization Isolation",
+      "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
+      "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:16:41.806Z"
+    },
+    "rule-1907": {
+      "learning_id": "rule-1907",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1907,
+      "title": "Time parallel vector-memory lookups from a shared start",
+      "source_url": "https://github.com/HelixDB/helix-db",
+      "source_version": "1b278adf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:16:42.966Z"
+    },
+    "rule-1908": {
+      "learning_id": "rule-1908",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1908,
+      "title": "deps: bump calamine to 0.37 and remove our patch",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "04ee61d8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:16:44.762Z"
     }
   },
   "aliases": {
