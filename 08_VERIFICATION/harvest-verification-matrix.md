@@ -3251,3 +3251,8 @@
 | `CYCLE-20261019-0UYG` | `2026-10-19T13:14:51.448Z` | `Venastine-Research/Xing4.0-29B-A4B-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2598, Rule 2599, Rule 2600` | Yes (`cf552bd7...`) |
 | `CYCLE-20261019-0VOT` | `2026-10-19T13:14:52.397Z` | `jacklandrin/OnlySwitch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2601` | Yes (`2a44c2a9...`) |
 | `CYCLE-20261019-0XAX` | `2026-10-19T13:14:54.489Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2602` | Yes (`c1812149...`) |
+| `CYCLE-20261019-8VGZ` | `2026-10-19T13:21:05.364Z` | `NaiveAI/Naive-N0.5-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md` | Yes (`67a2af18...`) |
+| `CYCLE-20261019-8W81` | `2026-10-19T13:21:06.337Z` | `FalkorDB/FalkorDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2603` | Yes (`18c2cbaa...`) |
+| `CYCLE-20261019-90NJ` | `2026-10-19T13:21:12.079Z` | `alin23/Lunar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2604` | Yes (`2c8bb32e...`) |
+| `CYCLE-20261019-946G` | `2026-10-19T13:21:16.648Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2605` | Yes (`ab84324d...`) |
+| `CYCLE-20261019-96NP` | `2026-10-19T13:21:19.861Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2606` | Yes (`65c8ef2f...`) |

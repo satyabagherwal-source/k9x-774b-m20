@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/falkordb-falkordb-learnings.md`  
 > **Source**: github ([https://github.com/FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB))  
-> **Source Version**: `cab41a8c`  
+> **Source Version**: `fb3d516d`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T22:23:10.439Z  
+> **Timestamp**: 2026-10-19T13:21:06.124Z  
 > **Learning ID**: `learn-github-falkordb-falkordb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/falkordb-falkordb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T22:23:10.431Z  
+> **Harvest Timestamp**: 2026-10-19T13:21:06.117Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A super fast Graph Database uses GraphBLAS under the hood for its sparse adjacency matrix graph representation. Our goal is to provide the best Knowledge Graph for LLM (GraphRAG).
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 10489 stars
+- **Stars / Engagement**: 10497 stars
 
 ---
 
@@ -2326,906 +2326,651 @@ def render(cmp: Comparison) -> list[str]:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `33a95636` (2026-10-15)
-**Commit Message**: fix: bound the nesting depth of UDF value conversion (#3336)
+### Incident Patch 1: `bf11a277` (2026-10-19)
+**Commit Message**: fix: virtual keys of one graph can no longer share a name (#3286)
 
-* fix: bound the nesting depth of UDF value conversion
+* fix(rdb): give every virtual key a distinct name
 
-js_to_value and value_to_js recursed once per level with no limit, so a UDF
-returning an array or object nested deep enough (built in a loop, or one that
-contains itself) exhausted the query thread's stack and aborted the server.
+uuid_v4 mixed the clock and the call counter as t ^ seq, so two calls whose
+clock and counter changed in the same bits (4 ^ 2 == 5 ^ 3) got one name and
+the second virtual key replaced the first one's slice of the graph.
 
-Both conversions now carry a depth and return an error past
-MAX_UDF_VALUE_NESTING (1024). A level costs far more stack here than in the
-rest of the engine (QuickJS handles and rquickjs frames), so the limit is
-lower than elsewhere; the unit tests convert values at exactly this depth in
-both directions on a 1 MiB thread, half the query pool's stack.
+Keep them in separate fields: the clock in the first three, seq times an odd
+constant (a bijection mod 2^48) in the last 48 bits. A compile-time check
+pins the colliding pair, since this crate's unit tests cannot run outside
+Redis.
+
+Closes #3284
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* fix: grow the stack in UDF value conversion instead of relying on its size
+* vkey names: check the counter field is a bijection at compile time
 
-The 1,024-level cap fit a release build's 2 MiB worker stack (~0.9 KB a
-level, 2,344 levels max), but not the ASAN build CI runs (~6 KB a level,
-354 levels max): every past-the-cap query converted 1,024 levels first
-and overflowed, crashing the server in test_udf under ASAN.
+The const block checked one pair that differs only in the clock field.
+It now recovers seq from the last field (times the multiplier's inverse
+mod 2^48) at several clock readings and counters up to 2^48-1, plus
+consecutive seq at one clock reading and the reported pair. An even
+multiplier, a 44-bit mask or mixing the clock into the counter each
+fail the build.
 
-Each conversion level now runs through stacker::maybe_grow, which moves
-onto a fresh 1 MiB h
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `Cargo.lock` (modified, +43/-1)
+---------
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `src/redis_type.rs` (modified, +88/-10)
 ```diff
-@@ -66,6 +66,15 @@ dependencies = [
-  "libc",
- ]
- 
-+[[package]]
-+name = "ar_archive_writer"
-+version = "0.5.3"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "73cd58deff2140a0a8eae87e417bd01db68a33e148aa93d1e8cd837e55e312b6"
-+dependencies = [
-+ "object 0.39.1",
-+]
-+
- [[package]]
- name = "arbitrary"
- version = "1.4.2"
-@@ -103,7 +112,7 @@ dependencies = [
-  "cfg-if",
-  "libc",
-  "miniz_oxide",
-- "object",
-+ "object 0.37.3",
-  "rustc-demangle",
-  "windows-link",
- ]
-@@ -506,6 +515,7 @@ dependencies = [
-  "rustc-hash",
-  "simsimd",
-  "smallvec",
-+ "stacker",
-  "thin-vec",
-  "thiserror",
-  "ureq",
-@@ -818,6 +828,15 @@ dependencies = [
-  "memchr",
- ]
- 
-+[[package]]
-+name = "object"
-+version = "0.39.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "2e5a6c098c7a3b6547378093f5cc30bc54fd361ce711e05293a5cc589562739b"
-+dependencies = [
-+ "memchr",
-+]
-+
- [[package]]
- name = "once_cell"
- version = "1.21.4"
-@@ -1121,6 +1140,16 @@ dependencies = [
-  "unicode-ident",
- ]
- 
-+[[package]]
-+name = "psm"
-+version = "0.1.32"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "4dcd034599e63b970727f70d79e02d62390a4a84f7c6b827c27c46d5ac3fa622"
-+dependencies = [
-+ "ar_archive_writer",
-+ "cc",
-+]
-+
- [[package]]
- name = "quote"
- version = "1.0.46"
-@@ -1488,6 +1517,19 @@ version = "1.16.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "f9395f0f0eee849a9b707b2f06bb92a6a422090e2123bb2ef8e87a0e61892a8e"
- 
-+[[package]]
-+name = "stacker"
-+version = "0.1.25"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "707f49d46706bacf8a2b00d51dace3f9de527c13eec3778f570c411f89e69967"
-+dependencies = [
-+ "cc",
-+ "cfg-if",
-+ "libc",
-+ "psm",
-+ "windows-sys 0.61.2",
-+]
-+
- [[package]]
- name = "strum_macros"
- version = "0.28.0"
-```
-
-**File**: `graph/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -62,6 +62,7 @@ thin-vec = "0.2.18"
- thiserror = "2"
- zstd = { version = "0.14.0", default-features = false, features = ["arrays", "legacy", "zdict_builder"] }
- crc32fast = "1.4"
-+stacker = "0.1.25"
- 
- [build-dependencies]
- native-deps = { path = "../native-deps" }
-```
-
-**File**: `graph/src/udf/type_convert.rs` (modified, +249/-6)
-```diff
-@@ -49,6 +49,45 @@ use crate::graph::graph::Graph;
- use crate::runtime::runtime::Runtime;
- use crate::runtime::value::{Point, Value};
- 
-+/// The deepest a value may nest when it crosses into or out of a UDF: `[]` and
-+/// `{}` are depth 1, `[[]]` is depth 2.
-+///
-+/// Both conversions recurse once per level, and each level holds QuickJS
-+/// handles and an `rquickjs` frame, so a level here costs far more stack than
-+/// it does anywhere else in the engine. A UDF can build an arbitrarily deep
-+/// array or object in a loop (or one that contains itself), so without a bound
-+/// the conversion exhausts the stack of the query thread and aborts the
-+/// server. 1,024 is far beyond any nesting real data uses.
-+///
-+/// The bound alone does not fit every build in a 2 MiB worker stack: a level
-+/// costs about 0.9 KB on a release build but about 6 KB under ASAN, where
-+/// 1,024 levels overflow. So each level also runs through [`with_stack`],
-+/// which moves onto a fresh heap-allocated stack segment when the current one
-+/// runs low.
-+pub const MAX_UDF_VALUE_NESTING: usize = 1024;
-+
-+/// Stack that must remain before a conversion level runs on the current
-+/// stack, with room for several sanitizer-sized levels.
-+const STACK_RED_ZONE: usize = 128 * 1024;
-+
-+/// Size of each stack segment [`with_stack`] allocates when the current one
-+/// runs low.
-+const STACK_SEGMENT: usize = 1024 * 1024;
-+
-+/// Runs one conversion level, first switching to a new stack segment if less
-+/// than [`STACK_RED_ZONE`] of the current one is left. The check is a
-+/// stack-pointer comparison; a segment is only allocated by a deep value.
-+fn with_stack<R>(f: impl FnOnce() -> R) -> R {
-+    stacker::maybe_grow(STACK_RED_ZONE, STACK_SEGMENT, f)
+@@ -796,20 +796,98 @@ fn uuid_v4() -> String {
+         .unwrap_or_default()
+         .as_nanos();
+     let seq = COUNTER.fetch_add(1, Ordering::Relaxed);
+-    let a = (t as u64) ^ seq;
+-    let b = a
++    let [f1, f2, f3, f4, f5] = uuid_fields(t as u64, seq);
++    format!("{f1:08x}-{f2:04x}-4{f3:03x}-{f4:04x}-{f5:012x}")
 +}
 +
-+/// The error a conversion returns for a value nested past
-+/// [`MAX_UDF_VALUE_NESTING`].
-+#[must_use]
-+pub fn udf_nesting_error() -> String {
-+    format!("UDF value nesting exceeds the maximum depth of {MAX_UDF_VALUE_NESTING}")
-+}
-+
- /// Convert a FalkorDB Value to a JavaScript value.
- ///
- /// `runtime`, when present, resolves relationship endpoints/type/attributes
-@@ -60,6 +99,34 @@ pub fn value_to_js<'js>(
-     value: &Value,
-     graph: &Arc<AtomicRefCell<Graph>>,
-     runtime: Option<&Runtime<'_>>,
-+) -> Result<JsValue<'js>, String> {
-+    value_to_js_at(ctx, value, graph, runtime, 0)
-+}
-+
-+/// [`value_to_js`] for a value inside `depth` enclosing lists or maps.
++/// The five printed fields of the name [`uuid_v4`] gives for clock reading `t`
++/// and call number `seq`.
 +///
-+/// The conversion recurses once per level, so a list or map past
-+/// [`MAX_UDF_VALUE_NESTING`] is an error rather than a stack overflow.
-+fn value_to_js_at<'js>(
-+    ctx: &Ctx<'js>,
-+    value: &Value,
-+    graph: &Arc<AtomicRefCell<Graph>>,
-+    runtime: Option<&Runtime<'_>>,
-+    depth: usize,
-+) -> Result<JsValue<'js>, String> {
-+    if matches!(value, Value::List(_) | Value::Map(_)) && depth >= MAX_UDF_VALUE_NESTING {
-+        return Err(udf_nesting_error());
++/// The clock and the counter go in separate fields rather than being mixed:
++/// `t ^ seq` gave two calls the same name whenever the clock moved by exactly
++/// the bits the counter did (`4 ^ 2 == 5 ^ 3`), and the second virtual key then
++/// replaced the first one's slice of the graph. The last 48 bits are `seq` times
++/// an odd constant, a bijection modulo 2^48, so names differ for every call in
++/// a process whatever the clock does; the clock keeps them apart across restarts.
++const fn uuid_fields(
++    t: u64,
++    seq: u64,
++) -> [u64; 5] {
++    let a = t;
++    let b = seq
+         .wrapping_mul(6_364_136_223_846_793_005)
+         .wrapping_add(1_442_695_040_888_963_407);
+-    format!(
+-        "{:08x}-{:04x}-4{:03x}-{:04x}-{:012x}",
+-        (a >> 32) as u32,
+-        (a >> 16) as u16,
+-        (a & 0xFFF) as u16,
+-        (0x8000 | (b & 0x3FFF)) as u16,
+-        b & 0xFFFF_FFFF_FFFF
+-    )
++    [
++        a >> 32,
++        (a >> 16) & 0xFFFF,
++        a & 0xFFF,
++        0x8000 | (b & 0x3FFF),
++        b & 0xFFFF_FFFF_FFFF,
++    ]
+ }
+ 
++/// Names must stay distinct, checked at compile time because this crate's unit
++/// tests cannot run outside Redis: its global allocator is Redis's.
++///
++/// Consecutive calls can share a clock reading, so the invariant the fix relies
++/// on is the counter's: the last field must be a bijection of `seq` modulo 2^48.
++/// It is checked by recovering `seq` from that field (`f5 - add` times the
++/// multiplier's inverse) at several clock readings, including counters past
++/// 2^47; an even multiplier, a narrower mask or mixing the clock back in all
++/// break the round trip.
++const _: () = {
++    const fn same_fields(
++        a: [u64; 5],
++        b: [u64; 5],
++    ) -> bool {
++        let mut i = 0;
++        let mut same = true;
++        while i < 5 {
++            same &= a[i] == b[i];
++            i += 1;
++        }
++        same
 +    }
-+    with_stack(|| value_to_js_level(ctx, value, graph, runtime, depth))
-+}
++    const MASK: u64 = 0xFFFF_FFFF_FFFF;
++    // The counter field is `seq * MUL + ADD` (mod 2^48): MUL and ADD read back
++    // from `uuid_fields` itself, so the check follows the code.
++    let add = uuid_fields(0, 0)[4];
++    let mul = uuid_fields(0, 1)[4].wrapping_sub(add) & MASK;
++    // Inverse of `mul` modulo 2^64 by Newton's iteration; only exists if odd.
++    let mut inv = mul;
++    let mut k = 0;
++    while k < 6 {
++        inv = inv.wrapping_mul(2u64.wrapping_sub(mul.wrapping_mul(inv)));
++        k += 1;
++    }
++    let clocks = [0u64, 4, 5, 1_700_000_000_000_000_000, u64::MAX];
++    let seqs = [0u64, 1, 2, 3, 1 << 20, (1 << 47) + 1, MASK];
++    let mut c = 0;
++    while c < clocks.len() {
++        let mut s = 0;
++        while s < seqs.len() {
++            let f5 = uuid_fields(clocks[c], seqs[s])[4];
++            assert!(
++                f5.wrapping_sub(add).wrapping_mul(inv) & MASK == seqs[s],
++                "the counter field is not a bijection of seq modulo 2^48"
++            );
++            s += 1;
++        }
++        c += 1;
++    }
++    let t = 1_700_000_000_000_000_000u64;
++    assert!(
++        !same_fields(uuid_fields(t, 0), uuid_fields(t, 1))
++            && !same_fields(uuid_fields(t, 1), uuid_fields(t, 2)),
++        "virtual key names collide for consecutive seq at one clock reading"
++    );
++    // The reported regression pair still differs.
++    assert!(
++        !same_fields(uuid_fields(4, 2), uuid_fields(5, 3)),
++        "virtual key names collide for (t=4, seq=2) and (t=5, seq=3)"
++    );
++};
 +
-+/// The body of [`value_to_js_at`], run on a stack with room for it.
-+fn value_to_js_level<'js>(
-+    ctx: &Ctx<'js>,
-+    value: &Value,
-+    graph: &Arc<AtomicRefCell<Graph>>,
-+    runtime: Option<&Runtime<'_>>,
-+    depth: usize,
- ) -> Result<JsValue<'js>, String> {
-     match value {
-         Value::Null => Ok(JsValue::new_null(ctx.clone())),
-@@ -90,7 +157,7 @@ pub fn value_to_js<'js>(
-             let arr =
-                 Array::new(ctx.clone()).map_err(|e| format!("JS array creation error: {e}"))?;
-             for (i, item) in items.iter().enumerate() {
--                let js_val = value_to_js(ctx, item, graph, runtime)?;
-+                let js_val = value_to_js_at(ctx, item, graph, runtime, depth + 1)?;
-                 arr.set(i, js_val)
-                     .map_err(|e| format!("JS array set error: {e}"))?;
-             }
-@@ -100,7 +167,7 @@ pub fn value_to_js<'js>(
-             let obj =
-                 Object::new(ctx.clone()).map_err(|e| format!("JS object creation error: {e}"))?;
-             for (key, val) in map.iter() {
--                let js_val = value_to_js(ctx, val, graph, runtime)?;
-+                let js_val = value_to_js_at(ctx, val, graph, runtime, depth + 1)?;
-                 // Escape keys that start with "__falkor_" to avoid collision
-                 // with internal metadata properties.
-                 let js_key = if key.starts_with("__falkor_") {
-@@ -183,6 +250,27 @@ pub fn value_to_js<'js>(
- 
- /// Convert a JavaScript value back to a FalkorDB Value.
- pub fn js_to_value(val: JsValue<'_>) -> Result<Value, String> {
-+    js_to_value_at(val, 0)
-+}
-+
-+/// [`js_to_value`] for a value inside `depth` enclosing arrays or objects.
-+///
-+/// A UDF can build an arbitrarily deep array or object in a loop (or one that
-+/// contains itself), and the conversion recurses once per level. So an array
-+/// or object past [`MAX_UDF_VALUE_NESTING`] is an error rather than a stack
-+/// overflow; that is also the bound every other way into the engine holds.
-
-```
-
-**File**: `tests/flow/test_udf.py` (modified, +29/-0)
-```diff
-@@ -1833,6 +1833,35 @@ def test_roundtrip_fidelity(self):
-                                          rt.id(date('2020-01-02')) = date('2020-01-02')""").result_set
-         self.env.assertEqual(res, [[True, True]])
- 
-+    def test_deeply_nested_result_is_an_error(self):
-+        """
-+        A UDF result nested past the conversion's depth limit is a query
-+        error, not a stack overflow, and the server keeps answering.
-+        """
-+
-+        script = """
-+        function deep(n) { let a = null; for (let i = 0; i < n; i++) a = [a]; return a; }
-+        function deepObj(n) { let o = null; for (let i = 0; i < n; i++) o = {k: o}; return o; }
-+        function cyclic() { const a = []; a.push(a); return a; }
-+        falkor.register('deep', deep);
-+        falkor.register('deepObj', deepObj);
-+        falkor.register('cyclic', cyclic);
-+        """
-+        self.db.udf_load("nest", script)
-+
-+        for q in ["RETURN nest.deep(300000)", "RETURN nest.deepObj(300000)",
-+                  "RETURN nest.deep(1025)", "RETURN nest.cyclic()"]:
-+            try:
-+                self.graph.query(q)
-+                assert False, f"expected an error for {q}"
-+            except ResponseError as e:
-+                self.env.assertContains("nesting exceeds the maximum depth", str(e))
-+            self.env.assertTrue(self.db.connection.ping())
-+
-+        # At the limit, and in ordinary use, nested results still convert.
-+        res = self.graph.query("RETURN size(nest.deep(1024)), nest.deep(2)").result_set
-+        self.env.assertEqual(res, [[1, [[None]]]])
-+
-     def test_returning_undefined(self):
-         """
-         UDFs returning `undefined` should map to Cypher NULL.
+ // ---------------------------------------------------------------------------
+ // Type statics
+ // ---------------------------------------------------------------------------
 ```
 
 ---
 
-### Incident Patch 2: `b4634fe4` (2026-10-13)
-**Commit Message**: fix: never hang when >1024 queries are queued; MAX_QUEUED_QUERIES bounds every queued query (#3014)
+### Incident Patch 2: `96375c23` (2026-10-19)
+**Commit Message**: fix: refuse a tensor section that breaks promotion completeness on decode (#3033)
 
-* fix: never block on a full queue under the GIL — unbounded pool and write queues (#3013)
+* fix: refuse a tensor section that breaks promotion completeness on decode
 
-The thread-pool queue and each graph's write queue were 1024-slot
-bounded channels with blocking sends. The Redis main thread sends into
-the pool queue while holding the GIL that running writers wait for, and
-pool workers send into the write queue while holding the graph read lock
-the write drainer waits for — either cycle hung the server forever once
-more than ~1024 queries were queued. Both queues are now unbounded, like
-C's thpool job queue; MAX_QUEUED_QUERIES remains the admission cap.
+`Tensor::decode` wrote a tensor-section entry's ids into `me` whatever the
+forward value of its pair, so a payload could give a pair with no forward
+entry (or a single edge) an `me` row: a phantom edge, an `edge_count`
+panic, and a graph the next save panics on. Require each entry's pair to
+hold the `MULTI_EDGE` marker, and every marker to have received ids.
+
+Closes #3031
 
 Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
-* fix: bound every queued query with one admission counter; reject, never wait (#3013)
+* review: count MULTI_EDGE markers with GrB_select, inline id_blob
 
-MAX_QUEUED_QUERIES only counted the thread-pool queue, and workers move a
-write out of that queue into its graph's write queue before it runs, so
-writes behind one slow write were never counted: with the limit at 100,
-20,000 queued writes were all accepted.
+Decode now counts the forward matrix's MULTI_EDGE markers with
+GrB_Matrix_select (GrB_VALUEEQ_UINT64) + nvals instead of a Rust
+iterate-and-filter (1M-edge tensor, 100k multi-edge pairs: 5.0 ms ->
+1.5 ms for the count). The single-use id_blob test helper is inlined.
 
-Every GRAPH.QUERY / RO_QUERY / PROFILE now takes a QueueSlot on the Redis
-main thread before dispat
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `graph/src/threadpool.rs` (modified, +86/-17)
+---------
+
+Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+
+**File**: `graph/src/graph/graphblas/matrix.rs` (modified, +34/-10)
 ```diff
-@@ -29,9 +29,12 @@
- //! The pool is stored in a global `OnceCell` and must be initialized once
- //! via [`init_thread_pool`] before any calls to [`spawn`].
+@@ -88,18 +88,19 @@ use super::{
+     GrB_Matrix_eWiseMult_Semiring, GrB_Matrix_extractElement_BOOL,
+     GrB_Matrix_extractElement_UINT64, GrB_Matrix_free, GrB_Matrix_get_INT32, GrB_Matrix_ncols,
+     GrB_Matrix_new, GrB_Matrix_nrows, GrB_Matrix_nvals, GrB_Matrix_removeElement,
+-    GrB_Matrix_resize, GrB_Matrix_set_INT32, GrB_Matrix_setElement_BOOL,
++    GrB_Matrix_resize, GrB_Matrix_select_UINT64, GrB_Matrix_set_INT32, GrB_Matrix_setElement_BOOL,
+     GrB_Matrix_setElement_UINT64, GrB_Matrix_wait, GrB_Mode, GrB_Orientation, GrB_SECOND_UINT64,
+     GrB_Scalar, GrB_Scalar_free, GrB_Scalar_new, GrB_Scalar_setElement_BOOL, GrB_Type, GrB_UINT64,
+-    GrB_WaitMode, GrB_finalize, GrB_mxm, GrB_mxv, GrB_transpose, GxB_ANY_BOOL, GxB_ANY_PAIR_BOOL,
+-    GxB_ANY_UINT64, GxB_Container_free, GxB_Container_new, GxB_Global_Option_set_INT32,
+-    GxB_HYPERSPARSE, GxB_Iterator, GxB_Iterator_free, GxB_Iterator_get_UINT64, GxB_Iterator_new,
+-    GxB_JIT_Control, GxB_Matrix_build_Scalar, GxB_Matrix_fprint, GxB_Matrix_isStoredElement,
+-    GxB_Matrix_memoryUsage, GxB_Matrix_type, GxB_NTHREADS, GxB_ONE_BOOL, GxB_Option_Field,
+-    GxB_PLUS_PAIR_UINT64, GxB_Print_Level, GxB_SPARSE, GxB_init, GxB_load_Matrix_from_Container,
+-    GxB_rowIterator_attach, GxB_rowIterator_getColIndex, GxB_rowIterator_getRowIndex,
+-    GxB_rowIterator_kount, GxB_rowIterator_nextCol, GxB_rowIterator_nextRow,
+-    GxB_rowIterator_seekRow, GxB_unload_Matrix_into_Container,
++    GrB_VALUEEQ_UINT64, GrB_WaitMode, GrB_finalize, GrB_mxm, GrB_mxv, GrB_transpose, GxB_ANY_BOOL,
++    GxB_ANY_PAIR_BOOL, GxB_ANY_UINT64, GxB_Container_free, GxB_Container_new,
++    GxB_Global_Option_set_INT32, GxB_HYPERSPARSE, GxB_Iterator, GxB_Iterator_free,
++    GxB_Iterator_get_UINT64, GxB_Iterator_new, GxB_JIT_Control, GxB_Matrix_build_Scalar,
++    GxB_Matrix_fprint, GxB_Matrix_isStoredElement, GxB_Matrix_memoryUsage, GxB_Matrix_type,
++    GxB_NTHREADS, GxB_ONE_BOOL, GxB_Option_Field, GxB_PLUS_PAIR_UINT64, GxB_Print_Level,
++    GxB_SPARSE, GxB_init, GxB_load_Matrix_from_Container, GxB_rowIterator_attach,
++    GxB_rowIterator_getColIndex, GxB_rowIterator_getRowIndex, GxB_rowIterator_kount,
++    GxB_rowIterator_nextCol, GxB_rowIterator_nextRow, GxB_rowIterator_seekRow,
++    GxB_unload_Matrix_into_Container,
+ };
  
--use std::thread::{self, JoinHandle};
-+use std::{
-+    sync::atomic::{AtomicU64, Ordering},
-+    thread::{self, JoinHandle},
-+};
- 
--use crossfire::{MRx, MTx, mpmc::Array};
-+use crossfire::{MRx, MTx, mpmc::List};
- use once_cell::sync::OnceCell;
- use parking_lot::Mutex;
- 
-@@ -46,7 +49,7 @@ struct ThreadPool {
-     /// to call `drain(..).join()`. Never touched by `spawn` — the hot
-     /// path is lock-free.
-     workers: Mutex<Vec<JoinHandle<()>>>,
--    sender: MTx<Array<Job>>,
-+    sender: MTx<List<Job>>,
-     size: usize,
+ /// Initializes the GraphBLAS library in non-blocking mode.
+@@ -1225,6 +1226,29 @@ impl<T> Dup<Self> for Matrix<T> {
  }
  
-@@ -55,8 +58,13 @@ unsafe impl Sync for ThreadPool {}
- impl ThreadPool {
-     pub fn new(size: usize) -> Self {
-         let mut workers = Vec::with_capacity(size);
--        let (sender, receiver): (MTx<Array<Job>>, MRx<Array<Job>>) =
--            crossfire::mpmc::bounded_blocking(1024);
-+        // Unlimited channel, bounded by admission: `spawn` runs on the Redis
-+        // main thread, which holds the GIL, so a send that could wait on a full
-+        // channel deadlocks against every running worker waiting for that same
-+        // GIL to escalate its write. Queries are counted instead by a
-+        // [`QueueSlot`], taken before dispatch, which is what bounds this queue.
-+        let (sender, receiver): (MTx<List<Job>>, MRx<List<Job>>) =
-+            crossfire::mpmc::unbounded_blocking();
-         for _ in 0..size {
-             let rx = receiver.clone();
-             let worker = thread::spawn(move || {
-@@ -102,10 +110,6 @@ impl ThreadPool {
-             eprintln!("thread pool: dropping job, no workers available to dispatch to");
-         }
-     }
--    pub fn pending_count(&self) -> usize {
--        crossfire::BlockingTxTrait::len(&self.sender)
--    }
--
-     /// Drain queued work, signal every worker to exit, and join them.
-     ///
-     /// Joining matters under sanitizers: pthread TLS destructors only fire
-@@ -137,14 +141,6 @@ pub fn spawn<F>(
-         .spawn(job, idx);
- }
- 
--/// Get the total number of pending jobs across all worker channels.
--pub fn pending_count() -> usize {
--    GLOBAL_THREAD_POOL
--        .get()
--        .expect("Thread pool not initialized")
--        .pending_count()
--}
--
- /// Initialize the global thread pool with a specific size.
- /// Must be called before any `spawn` calls. Returns `Ok(())` if the pool
- /// was successfully initialized, or `Err(())` if it was already initialized.
-@@ -163,3 +159,76 @@ pub fn shutdown() {
-         pool.shutdown();
-     }
- }
-+
-+/// Queries admitted but not yet picked up for execution — waiting in the pool
-+/// queue, or (for a write) anywhere until the graph's write drainer dequeues it.
-+static QUEUED_QUERIES: AtomicU64 = AtomicU64::new(0);
-+
-+/// One admitted, still-queued query's share of [`QUEUED_QUERIES`].
-+///
-+/// Taken on the Redis main thread before the query is dispatched, carried with
-+/// it (inside the pool job, then inside the graph's write message), and dropped
-+/// once a worker or the write drainer starts executing it. Dropping is the only
-+/// release, so every path that discards a queued query — a failed send, a pool
-+/// shutting down, a graph freed with writes still queued, a panicking job —
-+/// gives its slot back exactly once.
-+#[must_use]
-+pub struct QueueSlot {
-+    counter: &'static AtomicU64,
-+}
-+
-+impl QueueSlot {
-+    /// Admit one more query unless `max` are already queued. Never waits.
-+    ///
-+    /// `max` is `MAX_QUEUED_QUERIES` as configured, so the count is a `u64` too
-+    /// and the two compare without a conversion.
-+    pub fn try_acquire(max: u64) -> Option<Self> {
-+        Self::try_acquire_in(&QUEUED_QUERIES, max)
-+    }
-+
-+    fn try_acquire_in(
-+        counter: &'static AtomicU64,
-+        max: u64,
-+    ) -> Option<Self> {
-+        let mut n = counter.load(Ordering::Acquire);
-+        while n < max {
-+            match counter.compare_exchange_weak(n, n + 1, Ordering::AcqRel, Ordering::Acquire) {
-+                Ok(_) => return Some(Self { counter }),
-+                Err(seen) => n = seen,
-+            }
+ impl Matrix<u64> {
++    /// How many stored entries equal `value`: `GrB_select` with
++    /// `GrB_VALUEEQ_UINT64` into a scratch matrix, then its `nvals`.
++    #[must_use]
++    pub fn count_value_eq(
++        &self,
++        value: u64,
++    ) -> u64 {
++        let out = Self::new(self.nrows(), self.ncols());
++        unsafe {
++            let info = GrB_Matrix_select_UINT64(
++                *out.m,
++                null_mut(),
++                null_mut(),
++                GrB_VALUEEQ_UINT64,
++                *self.m,
++                value,
++                null_mut(),
++            );
++            debug_assert_eq!(info, GrB_Info::GrB_SUCCESS);
 +        }
-+        None
++        out.nvals()
 +    }
-+}
 +
-+impl Drop for QueueSlot {
-+    fn drop(&mut self) {
-+        let prev = self.counter.fetch_sub(1, Ordering::AcqRel);
-+        debug_assert!(prev > 0, "queued-query counter released below zero");
+     /// Create a new UINT64 matrix (for C-compatible tensor encoding and inline
+     /// edge-id storage).
+     pub fn new(
+```
+
+**File**: `graph/src/graph/graphblas/tensor.rs` (modified, +87/-2)
+```diff
+@@ -1606,6 +1606,15 @@ impl Decode<19> for Tensor {
+                 m.set(src, dst, MULTI_EDGE);
+             }
+         }
++        // Settled before the tensor section is checked against it.
++        m.wait();
++
++        // The payload is untrusted, and promotion completeness — a pair has
++        // `me` ids exactly when its inline value is `MULTI_EDGE` — is what
++        // `edge_count` and iteration rely on. So every tensor entry must land
++        // on a marker (checked per entry below), and every marker must get
++        // ids (checked at the end by counting `me`'s pairs).
++        let markers = m.count_value_eq(MULTI_EDGE);
+ 
+         let total_tensor_count = r.read_unsigned()?;
+         if total_tensor_count > 0 {
+@@ -1620,6 +1629,11 @@ impl Decode<19> for Tensor {
+                     // the index. Reading the *values* instead collapsed every
+                     // pair written by C to the single edge id 1.
+                     let v = Vector::<bool>::decode_blob(r)?;
++                    if src >= nrows || dst >= ncols || m.get(src, dst) != Some(MULTI_EDGE) {
++                        return Err(format!(
++                            "Tensor decode: edge ids for ({src}, {dst}), which is not a multi-edge pair"
++                        ));
++                    }
+                     // The blob stores endpoints, not row keys, so the on-disk
+                     // form says nothing about how they are blocked and needs no
+                     // version bump for this change: re-keying happens here.
+@@ -1648,9 +1662,15 @@ impl Decode<19> for Tensor {
+             }
+         }
+ 
+-        // The freshly built base must be materialized: the committed base is
++        let with_ids: u64 = me.iter().map(|(_, b)| Self::multi_pairs_in(b)).sum();
++        if with_ids != markers {
++            return Err(format!(
++                "Tensor decode: {markers} multi-edge pairs but edge ids for {with_ids}"
++            ));
++        }
++
++        // The freshly built base is materialized above: the committed base is
+         // never pending inside a transaction (see `wait_fwd`).
+-        m.wait();
+         // Backward matrix is rebuilt by the caller (`rebuild_backward`) after
+         // decode, so leave it empty here.
+         Ok(Self {
+@@ -2512,6 +2532,71 @@ mod tests {
+         assert_eq!(back.multi_pairs(), t.multi_pairs());
+     }
+ 
++    /// A tensor section entry for a pair the forward matrix does not mark as
++    /// multi-edge used to decode into an `me` row, after which `edge_count`
++    /// (and so the next save) panicked and iteration yielded a phantom edge.
++    #[test]
++    fn decode_rejects_edge_ids_for_a_pair_that_is_not_multi_edge() {
++        ensure_init();
++        // (7, 9) absent from the forward matrix, then (1, 2) holding a
++        // single edge: neither may take ids (here, id 3) from the tensor
++        // section.
++        let mut ids = Vector::<bool>::new(GrB_INDEX_MAX);
++        ids.set(3, true);
++        for (src, dst) in [(7, 9), (1, 2)] {
++            let mut t = Tensor::new(16, 16);
++            t.set_all_from_slices(&[1], &[2], &[5]);
++            let t = t.dup();
++            t.wait();
++            let mut tape = Tape::default();
++            t.encode(&mut tape);
++            // single-edge graph: ..., total edges, multi pair count 0, TDP 0
++            tape.ops.pop_back();
++            tape.ops.pop_back();
++            // TM: one pair, (src, dst) with the ids blob, as `encode` writes
++            // it; then an empty TDP.
++            for v in [1, src, dst] {
++                tape.ops.push_back(TapeOp::Unsigned(v));
++            }
++            ids.encode_blob(&mut tape);
++            tape.ops.push_back(TapeOp::Unsigned(0));
++            let err = Tensor::decode(&mut tape)
++                .err()
++                .unwrap_or_else(|| panic!("ids for ({src}, {dst}) accepted"));
++            assert!(
++                err.contains("not a multi-edge pair"),
++                "unexpected error: {err}"
++            );
++        }
 +    }
-+}
++
++    /// The converse: a pair marked multi-edge whose ids never arrive.
++    #[test]
++    fn decode_rejects_a_multi_edge_pair_without_edge_ids() {
++        ensure_init();
++        let mut t = Tensor::new(16, 16);
++        t.set_all_from_slices(&[1, 1, 3, 3], &[2, 2, 4, 4], &[10, 11, 12, 13]);
++        let t = t.dup();
++        t.wait();
++        let mut tape = Tape::default();
++        t.encode(&mut tape);
++        // Tail: ..., 2 pairs, (src, dst, blob) x2, TDP 0. Drop the second
++        // pair and say there is only one.
++        let n = tape.ops.len();
++        let tdp = tape.ops.pop_back().unwrap();
++        tape.ops.truncate(n - 4);
++        tape.ops.push_back(tdp);
++        let count = tape.ops.len() - 5;
++        tape.ops[count] = TapeOp::Unsigned(1);
++        let err = Tensor::decode(&mut tape)
++            .err()
++            .expect("multi-edge pair without ids accepted");
++        assert!(
++            err.contains("2 multi-edge pairs but edge id
+```
+
+---
+
+### Incident Patch 3: `d9986112` (2026-10-19)
+**Commit Message**: fix: refuse corrupt GRAPH.RESTORE / RDB payloads instead of panicking (#2996)
+
+`Vector::<bool>::decode_blob` and `Vector<u64>::decode` asserted the
+GrB_Info of `GxB_Vector_deserialize`, which is GrB_INVALID_OBJECT for a
+corrupt blob, so a bad multi-edge id blob in a RESTORE payload exited the
+server. Return an error instead, and pass the expected type so a
+well-formed blob of another type is refused too.
+
+Same sweep of the decode paths:
+- `RoaringTreemap::decode_with_count`: checked `count * 8` (a wrapped
+  product passed the length check and indexed past the buffer).
+- `Tensor::decode`: the forward delta layers must match the base's size.
+
+Closes #2994
+
+Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+
+**File**: `graph/src/graph/graphblas/serialization.rs` (modified, +38/-1)
+```diff
+@@ -220,7 +220,12 @@ impl Decode<19> for RoaringTreemap {
+         _attr_limit: usize,
+     ) -> Result<(), String> {
+         let bytes = r.read_buffer()?;
+-        let expected_len = count as usize * 8;
++        // `count` is read from the payload: a product that overflows would
++        // wrap to a small length, pass the check below and index past the end.
++        let expected_len = usize::try_from(count)
++            .ok()
++            .and_then(|c| c.checked_mul(8))
++            .ok_or_else(|| format!("deleted entities count {count} is out of range"))?;
+         if bytes.len() != expected_len {
+             return Err(format!(
+                 "deleted entities buffer length mismatch: got {} bytes, expected {} bytes",
+@@ -239,3 +244,35 @@ impl Decode<19> for RoaringTreemap {
+         Ok(())
+     }
+ }
 +
 +#[cfg(test)]
 +mod tests {
 +    use super::*;
 +
++    struct OneBuffer(Option<Vec<u8>>);
++
++    impl Reader for OneBuffer {
++        fn read_unsigned(&mut self) -> Result<u64, String> {
++            Err("unused".to_string())
++        }
++        fn read_signed(&mut self) -> Result<i64, String> {
++            Err("unused".to_string())
++        }
++        fn read_double(&mut self) -> Result<f64, String> {
++            Err("unused".to_string())
++        }
++        fn read_buffer(&mut self) -> Result<Vec<u8>, String> {
++            self.0.take().ok_or_else(|| "no buffer".to_string())
++        }
++    }
++
++    /// `count * 8` used to wrap for a payload count of `2^61`, match an empty
++    /// buffer and index past its end.
 +    #[test]
-+    fn queue_slot_bounds_and_releases() {
-+        static COUNTER: AtomicU64 = AtomicU64::new(0);
-+        let slots: Vec<_> = (0..3)
-+            .map(|_| QueueSlot::try_acquire_in(&COUNTER, 3).expect("under the limit"))
-+            .collect();
-+        assert_eq!(COUNTER.load(Ordering::Acquire), 3);
-+        assert!(QueueSlot::try_acquire_in(&COUNTER, 3).is_none());
-+        // A rejected admission takes nothing.
-+        assert_eq!(COUNTER.load(Ordering::Acquire), 3);
-+        // Lowering the limit below the qu
++    fn deleted_entities_count_that_overflows_is_rejected() {
++        let mut bitmap = RoaringTreemap::new();
++        let res = bitmap.decode_with_count(&mut OneBuffer(Some(Vec::new())), 1 << 61, 0);
++        let err = res.expect_err("overflowing count accepted");
++        assert!(err.contains("out of range"), "unexpected error: {err}");
++    }
++}
 ```
 
-**File**: `src/config.rs` (modified, +5/-1)
+**File**: `graph/src/graph/graphblas/tensor.rs` (modified, +58/-0)
 ```diff
-@@ -68,7 +68,11 @@ lazy_static! {
- 
- // ── Runtime-configurable atomics ──
- 
--pub static MAX_QUEUED_QUERIES: AtomicU64 = AtomicU64::new(u32::MAX as u64);
-+/// Queries that may wait at once — in the thread pool plus every graph's write
-+/// queue — before new ones get "Max pending queries exceeded". Deliberately
-+/// finite, unlike C's unlimited default, so a stalled graph cannot queue
-+/// without bound.
-+pub static MAX_QUEUED_QUERIES: AtomicU64 = AtomicU64::new(10_000);
- pub static TIMEOUT: AtomicI64 = AtomicI64::new(0);
- pub static TIMEOUT_DEFAULT: AtomicI64 = AtomicI64::new(0);
- pub static TIMEOUT_MAX: AtomicI64 = AtomicI64::new(0);
-```
-
-**File**: `src/graph_core.rs` (modified, +67/-22)
-```diff
-@@ -41,7 +41,7 @@ use crate::{
- use atomic_refcell::AtomicRefCell;
- use crossfire::{
-     MTx, Rx,
--    mpsc::{Array, bounded_blocking},
-+    mpsc::{List, unbounded_blocking},
- };
- use graph::{
-     effects::payload::take_effects_buffer,
-@@ -52,7 +52,7 @@ use graph::{
-     },
-     planner::IR,
-     runtime::runtime::{QueryStatistics, Runtime},
--    threadpool::{pending_count, spawn},
-+    threadpool::{QueueSlot, spawn},
- };
- use orx_tree::{Collection, Dfs, DynTree, NodeRef};
- use parking_lot::RwLock;
-@@ -227,6 +227,11 @@ pub struct WriteMessage {
-     pub received_at: i64,
-     pub enqueue_instant: Instant,
-     pub waiting_id: u64,
-+    /// The query's admission slot, released when the drainer dequeues it — so
-+    /// writes waiting here count against `MAX_QUEUED_QUERIES` exactly like jobs
-+    /// waiting in the pool queue. Dropped with the message on every other path
-+    /// (a failed send, a graph freed with writes still queued).
-+    pub slot: Option<QueueSlot>,
-     /// True if this is a GRAPH.PROFILE write: execute with profiling enabled and
-     /// reply with the profile tree instead of the result set. Otherwise handled
-     /// exactly like a GRAPH.QUERY write — same locking, commit and effects
-@@ -530,8 +535,13 @@ pub static REPLICATION_CONSUMERS: AtomicBool = AtomicBool::new(true);
- 
- pub struct ThreadedGraph {
-     pub graph: MvccGraph,
--    pub sender: MTx<Array<Box<WriteMessage>>>,
--    pub receiver: Rx<Array<Box<WriteMessage>>>,
-+    /// An unlimited channel, bounded by admission: every message carries the
-+    /// [`QueueSlot`] its query took before dispatch, so the `MAX_QUEUED_QUERIES`
-+    /// check covers it. Senders are pool workers holding this graph's read lock
-+    /// and the drainer must take the write lock to run each message, so a send
-+    /// that could wait on a full channel would deadlock.
-+    pub sender: MTx<List<Box<WriteMessage>>>,
-+    pub receiver: Rx<List<Box<WriteMessage>>>,
-     pub write_loop: AtomicBool,
-     pub slow_log: SlowLog,
- }
-@@ -544,7 +554,7 @@ impl ThreadedGraph {
-         cache_size: usize,
-         name: &str,
-     ) -> Self {
--        let (sender, receiver) = bounded_blocking(1024);
-+        let (sender, receiver) = unbounded_blocking();
-         Self {
-             graph: MvccGraph::new(16384, 16384, cache_size, name),
-             sender,
-@@ -557,7 +567,7 @@ impl ThreadedGraph {
-     /// Create a `ThreadedGraph` from an existing `MvccGraph`.
-     /// Used by the RDB load path.
-     pub fn from_mvcc(graph: MvccGraph) -> Self {
--        let (sender, receiver) = bounded_blocking(1024);
-+        let (sender, receiver) = unbounded_blocking();
-         Self {
-             graph,
-             sender,
-@@ -573,6 +583,7 @@ impl ThreadedGraph {
- /// Takes `session` rather than a `&ThreadedGraph`: the session owns the per-graph
- /// lock and may swap its read guard for a write guard mid-query, so a long-lived
- /// borrow would be invalidated. See `crate::query_session`.
-+#[allow(clippy::too_many_arguments)]
- pub fn execute_query(
-     session: &QuerySession,
-     ctx: &Context,
-@@ -581,6 +592,7 @@ pub fn execute_query(
-     write: bool,
-     cmd: &str,
-     per_query_timeout: Option<i64>,
-+    admission: &mut Option<QueueSlot>,
- ) -> Result<ReadQueryResult, String> {
-     let wall_start = Instant::now();
-     let Plan {
-@@ -614,6 +626,9 @@ pub fn execute_query(
-             timed_out: false,
-         });
-     } else {
-+        // A read executes right here, so it is no longer queued. A write keeps
-+        // its slot until the write drainer dequeues it.
-+        admission.take();
-         session.with_graph(|tg| tg.graph.read())
-     };
-     let timeout_ms = compute_effective_timeout(per_query_timeout, is_write)?;
-@@ -661,6 +676,7 @@ pub fn execute_profile(
-     ctx: &Context,
-     query: &str,
-     per_query_timeout: Option<i64>,
-+    admission: &mut Option<QueueSlot>,
- ) -> Result<ProfileDetect, String> {
-     let Plan {
-         plan, parameters, ..
-@@ -677,6 +693,8 @@ pub fn execute_profile(
-     if is_write {
-         return Ok(ProfileDetect::Write);
-     }
-+    // Executing now — see `execute_query`.
-+    admission.take();
-     let g = session.with_graph(|tg| tg.graph.read());
-     let timeout_ms = compute_effective_timeout(per_query_timeout, false)?;
-     let runtime = Runtime::new(
-@@ -932,6 +950,19 @@ pub(crate) fn reply_invalid_graph_version(
-     raw::reply_with_long_long(ctx.ctx, current_version);
- }
- 
-+/// Admit one query for dispatch, or reply "Max pending queries exceeded" (C's
-+/// wording) and return `None` when `MAX_QUEUED_QUERIES` queries are already
-+/// queued — in the thread pool or in any graph's write queue. Runs on the Redis
-+/// main thread and never waits: rejecting is how a full queue is reported.
-+fn admit(ctx: &Context) -> Option<QueueSlot> {
-+    let slot = QueueSlot::try_acquire(MAX_QUEUED_QUERIES.load(Ordering::Relaxed));
-+    if slot.is_none() {
-+        let cerr = ffi::sanitise_error("Max pending queries exceeded");
-+      
-```
-
-**File**: `tests/flow/test_config.py` (modified, +1/-1)
-```diff
-@@ -36,7 +36,7 @@ def test01_config_get(self):
-                 ("INDEX_WORKER_THREADS", 0),
-                 ("RESULTSET_SIZE", -1),
-                 ("VKEY_MAX_ENTITY_COUNT", 100000),
--                ("MAX_QUEUED_QUERIES", 4294967295),
-+                ("MAX_QUEUED_QUERIES", 10000),
-                 ("QUERY_MEM_CAPACITY", 0),
-                 ("DELTA_MAX_PENDING_CHANGES", 10000),
-                 ("NODE_CREATION_BUFFER", 16384),
-```
-
-**File**: `tests/flow/test_pending_queries_limit.py` (modified, +180/-1)
-```diff
-@@ -2,6 +2,9 @@
- from falkordb.asyncio import FalkorDB
- from redis.asyncio import BlockingConnectionPool
- import asyncio
-+import os
-+import resource
-+import signal
- 
- # 1.test getting and setting config
- #
-@@ -10,9 +13,46 @@
- #
- # 3. test overflowing the server when there's no limit
- #    expect not to get any exceptions
-+#
-+# 4. flood the server with more queued writes than any fixed queue capacity
-+#    expect every write to complete and the server to stay responsive
-+#
-+# 5. queue writes / reads behind a long-running query with a low limit
-+#    expect the excess to be rejected, the rest to complete, and the
-+#    admission count to return to zero
-+#
-+# 6. change the limit at runtime
-+#    expect the new bound to apply to the next queries
- 
- GRAPH_ID = "max_pending_queries"
- SLOW_QUERY = "UNWIND range (0, 1000000) AS x WITH x WHERE (x / 2) = 50 RETURN x"
-+FLOOD_NODES = 1000
-+FLOOD_QUERY = f"UNWIND range(1, {FLOOD_NODES}) AS x CREATE (:N)"
-+# Long enough to keep a graph's writer (or a pool worker) busy while a burst is
-+# queued behind it — about a second on a release build.
-+HOLD_ROWS = 100_000_000
-+HOLD_WRITE = f"UNWIND range(1, {HOLD_ROWS}) AS x WITH x WHERE x < 0 CREATE (:Hold)"
-+HOLD_READ = f"UNWIND range(1, {HOLD_ROWS}) AS x WITH x WHERE x < 0 RETURN count(x)"
-+DEFAULT_MAX_QUEUED_QUERIES = 10000
-+MAX_PENDING_ERR = b"-Max pending queries exceeded\r\n"
-+
-+
-+def enc(*args):
-+    out = f"*{len(args)}\r\n"
-+    for a in args:
-+        out += f"${len(a.encode())}\r\n{a}\r\n"
-+    return out.encode()
-+
-+
-+def raise_fd_limit(n):
-+    """Allow about n concurrent client sockets; returns how many fit."""
-+    soft, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
-+    want = n + 256
-+    if soft < want:
-+        resource.setrlimit(resource.RLIMIT_NOFILE,
-+                           (want if hard == resource.RLIM_INFINITY else min(want, hard), hard))
-+    soft, _ = resource.getrlimit(resource.RLIMIT_NOFILE)
-+    return min(n, soft - 256)
- 
- 
- async def issue_query(self, g, q):
-@@ -58,7 +98,7 @@ async def run(self):
-     def test_01_query_limit_config(self):
-         # read max queued queries config
-         max_queued_queries = self.db.config_get("MAX_QUEUED_QUERIES")
--        self.env.assertEqual(max_queued_queries, 4294967295)
-+        self.env.assertEqual(max_queued_queries, DEFAULT_MAX_QUEUED_QUERIES)
- 
-         # update configuration, set max queued queries
-         self.db.config_set("MAX_QUEUED_QUERIES", 10)
-@@ -84,3 +124,142 @@ def test_03_overflow_with_limit(self):
-         error_encountered = self.stress_server()
- 
-         self.env.assertTrue(error_encountered)
-+
-+    def burst(self, host_queries, queries, timeout=120):
-+        """Send every query on its own connection, all at once, behind the
-+        `host_queries` (sent first, given time to start). Returns the raw
-+        first reply line of each of `queries`."""
-+        async def one(graph, cmd, q):
-+            r, w = await asyncio.open_connection(self.env.host, self.env.port)
-+            try:
-+                w.write(enc(cmd, graph, q))
-+                await w.drain()
-+                return await r.readline()
-+            finally:
-+                w.close()
-+
-+        async def run():
-+            hosts = [asyncio.create_task(one(*h)) for h in host_queries]
-+            if hosts:
-+                await asyncio.sleep(0.2)
-+            replies = await asyncio.gather(*[one(*q) for q in queries])
-+            await asyncio.gather(*hosts)
-+            return replies
-+
-+        return asyncio.run(asyncio.wait_for(run(), timeout=timeout))
-+
-+    def assert_bounded(self, replies, limit):
-+        rejected = [r for r in replies if r.startswith(b"-")]
-+        completed = [r for r in replies if r.startswith(b"*")]
-+        # nothing but the C error text, and every query got a reply
-+        self.env.assertEqual(set(rejected), {MAX_PENDING_ERR})
-+        self.env.assertEqual(len(rejected) + len(completed), len(replies))
-+        self.env.assertGreater(len(rejected), 0)
-+        self.env.assertGreaterEqual(len(completed), limit)
-+        self.env.assertTrue(self.db.connection.ping())
-+        return len(completed)
-+
-+    def assert_admission_drained(self, limit, cmd, graph, q):
-+        # Every slot taken above was given back: with nothing running, `limit`
-+        # simultaneous queries are all admitted.
-+        replies = self.burst([], [(graph, cmd, q)] * limit)
-+        self.env.assertEqual([r for r in replies if not r.startswith(b"*")], [])
-+
-+    def test_04_flood_beyond_queue_capacity(self):
-+        # More concurrent writes than the old 1024-slot thread-pool queue and
-+        # the old 1024-slot per-graph write queue could hold. With bounded
-+        # queues the Redis main thread blocked on a full pool queue while
-+        # holding the GIL that running writers wait for, and pool workers
-+        # blocked on a full write queue while holding the graph read lock the
-+        # write drainer waits for: the server hung forever, PING included.
-```
-
----
-
-### Incident Patch 3: `799968a8` (2026-10-18)
-**Commit Message**: fix: CowBTree remove_batch never leaves a one-child non-root branch (#3283)
-
-* fix: CowBTree remove_batch never leaves a one-child non-root branch
-
-A branch that ends with one child cannot repair it (no sibling), and when
-the parent merged it with a neighbour, Node::combine concatenated the child
-lists without re-examining them. The one-child branch then survived below
-the root; a later remove emptied its lone leaf and insert_batch panicked in
-Node::min. merge_underfull now repairs the children of every node a combine
-produces and re-checks the result.
-
-Closes #3237
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* cow_btree: sweep every drain window; mutate combine's fresh branch in place
-
-- remove_batch_keeps_the_tree_well_formed_for_any_window now tries every
-  lo..hi pair instead of every 3rd start and 5th end (1.8 s in debug);
-  it still fails at tests.rs:1347 with the repair disabled.
-- merge_underfull_below uses Arc::make_mut: the branch is always one
-  combine just built, so this drops a Branch clone per repaired seam and
-  still clones if the branch is ever shared.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* cow_btree tests: check minimum fill after remove_
-
-**File**: `graph/src/index/falkordb/data_structures/cow_btree/node.rs` (modified, +31/-1)
-```diff
-@@ -145,14 +145,29 @@ fn combine_with_sibling<const LEAF_MAX: usize, const BRANCH_MAX: usize, const DO
- /// same [`combine_with_sibling`] step. A merge that itself stays under-full (a nearly-empty subtree
- /// draining) shrinks the list further and, if the whole branch drops below minimum, propagates up as
- /// this branch's own underflow — resolved by the parent's merge or the root-level level-collapse.
-+///
-+/// Unlike the single-key path, a batch can leave an under-full node *below* an under-full child: a
-+/// child that ends with one child of its own cannot repair that lone grandchild (it has no sibling),
-+/// so it reports its own underflow and leaves the repair to this level. Combining two branches
-+/// concatenates their child lists, carrying that grandchild into the combined node, so each node the
-+/// combine produces is repaired the same way ([`Node::merge_underfull_below`]) and then re-checked
-+/// here — its repair may have shrunk it under-full again.
- fn merge_underfull<const LEAF_MAX: usize, const BRANCH_MAX: usize, const DOC_BYTES: usize>(
-     children: &mut Vec<Node<LEAF_MAX, BRANCH_MAX, DOC_BYTES>>,
-     seps: &mut Vec<(u64, u64)>,
- ) {
-     let mut i = 0;
-     while children.len() > 1 && i < children.len() {
-         if children[i].is_underfull() {
--            i = combine_with_sibling(children, seps, i);
-+            let len = children.len();
-+            let left = if (i + 1) < len { i } else { i - 1 };
-+            let _ = combine_with_sibling(children, seps, i);
-+            // A merge leaves one node at `left`; a borrow leaves two, at `left` and `left + 1`.
-+            let produced = if children.len() < len { 1 } else { 2 };
-+            for child in &mut children[left..left + produced] {
-+                child.merge_underfull_below();
+@@ -1559,6 +1559,19 @@ impl Decode<19> for Tensor {
+         let fwd_dm = Matrix::<bool>::decode(r)?;
+         let nrows = fwd_m.nrows();
+         let ncols = fwd_m.ncols();
++        // Encode writes the three layers at one size. A payload that doesn't
++        // would have the merge below write outside `m`.
++        for (layer, dims) in [
++            ("delta-plus", (fwd_dp.nrows(), fwd_dp.ncols())),
++            ("delta-minus", (fwd_dm.nrows(), fwd_dm.ncols())),
++        ] {
++            if dims != (nrows, ncols) {
++                return Err(format!(
++                    "Tensor decode: forward {layer} is {}x{}, base is {nrows}x{ncols}",
++                    dims.0, dims.1
++                ));
 +            }
-+            i = left;
-         } else {
-             i += 1;
++        }
+ 
+         // Inline representation: `m` is UINT64 inline edge ids with MULTI_EDGE
+         // sentinels; `me` holds all ids of multi-edge pairs. The on-disk forward
+@@ -2499,6 +2512,51 @@ mod tests {
+         assert_eq!(back.multi_pairs(), t.multi_pairs());
+     }
+ 
++    /// A `GRAPH.RESTORE` payload is untrusted: a corrupt multi-edge id blob has
++    /// to fail the decode, not panic (the module's panic hook exits the server).
++    #[test]
++    fn decode_rejects_a_corrupt_multi_edge_blob() {
++        ensure_init();
++        let mut t = Tensor::new(16, 16);
++        t.set_all_from_slices(&[1, 1], &[2, 2], &[10, 11]);
++        let t = t.dup();
++        t.wait();
++        let mut tape = Tape::default();
++        t.encode(&mut tape);
++        // The id blob is the last buffer on the tape; keep only its header.
++        let last = tape
++            .ops
++            .iter()
++            .rposition(|op| matches!(op, TapeOp::Buffer(_)))
++            .expect("no id blob on the tape");
++        if let TapeOp::Buffer(blob) = &mut tape.ops[last] {
++            blob.truncate(8);
++        }
++        let err = Tensor::decode(&mut tape)
++            .err()
++            .expect("corrupt blob accepted");
++        assert!(
++            err.contains("GxB_Vector_deserialize"),
++            "unexpected error: {err}"
++        );
++    }
++
++    /// The forward delta layers must match the base's size: merging a larger
++    /// delta would write outside the rebuilt forward matrix.
++    #[test]
++    fn decode_rejects_forward_layers_of_different_sizes() {
++        ensure_init();
++        let mut tape = Tape::default();
++        Matrix::<u64>::new(4, 4).encode(&mut tape);
++        Matrix::<u64>::new(8, 8).encode(&mut tape);
++        Matrix::<bool>::new(4, 4).encode(&mut tape);
++        tape.ops.push_back(TapeOp::Unsigned(0));
++        let err = Tensor::decode(&mut tape)
++            .err()
++            .expect("mismatched layers accepted");
++        assert!(err.contains("delta-plus is 8x8"), "unexpected error: {err}");
++    }
++
+     /// `me` is created with a narrow column space so GraphBLAS stores its
+     /// column indices — one per stored edge id, the largest array here — in 32
+     /// bits. An id past that width has to widen it rather than be dropped, and
+```
+
+**File**: `graph/src/graph/graphblas/vector.rs` (modified, +88/-12)
+```diff
+@@ -214,16 +214,18 @@ impl Vector<bool> {
+             let mut v: MaybeUninit<GrB_Vector> = MaybeUninit::uninit();
+             let info = GxB_Vector_deserialize(
+                 v.as_mut_ptr(),
+-                null_mut(),
++                GrB_BOOL,
+                 blob.as_ptr().cast(),
+                 blob.len() as u64,
+                 null_mut(),
+             );
+-            assert_eq!(
+-                info,
+-                GrB_Info::GrB_SUCCESS,
+-                "GxB_Vector_deserialize failed: {info:?}"
+-            );
++            // The blob comes from an RDB / `GRAPH.RESTORE` payload, so a
++            // failure here is bad input, not a broken invariant: refuse the
++            // load instead of taking the server down. Deserialize frees
++            // whatever it allocated before returning an error.
++            if info != GrB_Info::GrB_SUCCESS {
++                return Err(format!("GxB_Vector_deserialize failed: {info:?}"));
++            }
+             Ok(Self::from(v.assume_init()))
          }
-@@ -542,6 +557,21 @@ impl<const LEAF_MAX: usize, const BRANCH_MAX: usize, const DOC_BYTES: usize>
+     }
+@@ -257,16 +259,18 @@ impl Decode<19> for Vector<u64> {
+             let mut v: MaybeUninit<GrB_Vector> = MaybeUninit::uninit();
+             let info = GxB_Vector_deserialize(
+                 v.as_mut_ptr(),
+-                null_mut(),
++                GrB_UINT64,
+                 blob.as_ptr().cast(),
+                 blob.len() as u64,
+                 null_mut(),
+             );
+-            assert_eq!(
+-                info,
+-                GrB_Info::GrB_SUCCESS,
+-                "GxB_Vector_deserialize failed: {info:?}"
+-            );
++            // The blob comes from an RDB / `GRAPH.RESTORE` payload, so a
++            // failure here is bad input, not a broken invariant: refuse the
++            // load instead of taking the server down. Deserialize frees
++            // whatever it allocated before returning an error.
++            if info != GrB_Info::GrB_SUCCESS {
++                return Err(format!("GxB_Vector_deserialize failed: {info:?}"));
++            }
+             Ok(Self::from(v.assume_init()))
+         }
+     }
+@@ -705,6 +709,78 @@ mod decode_tests {
          }
      }
  
-+    /// Repair under-full children of a node a batch-path [`Node::combine`] just produced (see
-+    /// [`merge_underfull`]). A no-op for a leaf, and for a branch whose children are all min-full,
-+    /// so a repair only recurses down the seam where an under-full node was carried in.
-+    fn merge_underfull_below(&mut self) {
-+        if let Node::Branch(branch_arc) = self
-+            && branch_arc.children.iter().any(Node::is_underfull)
-+        {
-+            // Every node passed here is one `combine` just built (`Arc::new`), so it is not shared
-+            // and `make_mut` mutates in place; unlike `make_private` it still clones if that ever
-+            // stops holding, so the committed version stays immutable either way.
-+            let branch = Arc::make_mut(branch_arc);
-+            merge_underfull(&mut branch.children, &mut branch.seps);
++    /// The blob of a multi-edge pair comes from an RDB / `GRAPH.RESTORE`
++    /// payload: a corrupt one must fail the decode, not panic.
++    #[test]
++    fn decode_blob_rejects_a_corrupt_blob() {
++        crate::graph::graphblas::test_init::ensure_init();
++        let mut v = Vector::<bool>::new(64);
++        v.set(3, true);
++        v.set(7, true);
++        let mut blob = Vec::new();
++        v.encode_blob(&mut BlobWriter(&mut blob));
++        blob.truncate(8);
++        let mut r = MockReader {
++            buffers: VecDeque::from(vec![blob]),
++            ..MockReader::default()
++        };
++        let err = Vector::<bool>::decode_blob(&mut r)
++            .err()
++            .expect("truncated blob accepted");
++        assert!(
++            err.contains("GxB_Vector_deserialize"),
++            "unexpected error: {err}"
++        );
++    }
++
++    /// A well-formed blob of the wrong type is refused too: `decode_blob` is
++    /// read as a BOOL vector and `Vector<u64>::decode` as a UINT64 one.
++    #[test]
++    fn decode_blob_rejects_a_blob_of_another_type() {
++        crate::graph::graphblas::test_init::ensure_init();
++        let mut v = Vector::<u64>::new(64);
++        v.set(3, 30);
++        let mut blob = Vec::new();
++        v.encode(&mut BlobWriter(&mut blob));
++        let mut r = MockReader {
++            buffers: VecDeque::from(vec![blob.clone()]),
++            ..MockReader::default()
++        };
++        assert!(Vector::<bool>::decode_blob(&mut r).is_err());
++        let mut r = MockReader {
++            buffers: VecDeque::from(vec![blob]),
++            ..MockReader::default()
++        };
++        assert!(<Vector<u64> as Decode<19>>::decode(&mut r).is_ok());
++    }
++
++    /// Captures the single buffer an encoder writes.
++    struct BlobWriter<'a>(&'a mut Vec<u8>);
++
++    impl Writer for BlobWriter<'_> {
++        fn write_unsigned(
++            &mut self,
++            _: u64,
++        ) {
++        }
++        fn write_signed(
++            &mut self,
++            _: i64,
++        ) {
++        }
++        fn write_double(
++            &mut self,
++            _: f64,
++        ) {
++        }
++        fn write_buffer(
++            &mut self,
++            data: &[u8],
++        ) {
++            self.0.extend_from_slice(data);
 +        }
 +    }
 +
-     /// Whether this node dropped below its minimum fill (so a parent must merge it).
-     fn is_underfull(&self) -> bool {
-         match self {
-```
-
-**File**: `graph/src/index/falkordb/data_structures/cow_btree/tests.rs` (modified, +67/-0)
-```diff
-@@ -1630,6 +1630,73 @@ fn insert_batch_handles_the_maximal_tuple() {
-     check_invariants(&t, false);
- }
- 
-+/// A batch removal that drains all but one leaf of a subtree must not leave a one-child branch below
-+/// the root. Root -> 3 subtrees of 32 at `(LEAF_MAX, BRANCH_MAX) = (2, 4)`; removing 33..64 leaves the
-+/// middle subtree with a single leaf under a chain of single-child branches, which the parent's
-+/// `merge_underfull` cannot repair (it only runs with >= 2 children) and `combine` then splices into
-+/// its neighbour verbatim. One later `remove` drained that lone leaf into an empty non-root page, and
-+/// the next `insert_batch` panicked in `Node::min`.
-+#[test]
-+fn remove_batch_never_leaves_a_single_child_branch() {
-+    let pairs: Vec<(u64, u64)> = (0..96u64).map(|d| (d, 0)).collect();
-+    let mut t = CowBTree::<2, 4>::from_sorted(&pairs);
-+    t.remove_batch(&(33..64u64).map(|d| (d, 0)).collect::<Vec<_>>());
-+    check_invariants(&t, true);
-+    assert!(t.remove(32, 0));
-+    check_invariants(&t, true);
-+    t.insert_batch(&[(0, 1), (95, 1)]);
-+    check_invariants(&t, false);
-+    let mut expected: Vec<(u64, u64)> = (0..32u64).chain(64..96).map(|d| (d, 0)).collect();
-+    expected.extend([(0, 1), (95, 1)]);
-+    expected.sort_unstable();
-+    assert_eq!(tree_pairs(&t), expected);
-+}
-+
-+/// The same shape across fan-outs and every contiguous drain window (all `lo..hi` pairs): after `remove_batch` the tree is
-+/// well-formed, a snapshot taken before it is unchanged, and a follow-up `remove` + `insert_batch` keeps
-+/// the tree well-formed with the right contents.
-+#[test]
-+fn remove_batch_keeps_the_tree_well_formed_for_any_window() {
-+    fn sweep<const L: usize, const B: usize>(n: u64) {
-+        let all: Vec<(u64, u64)> = (0..n).map(|d| (d, 0)).collect();
-+        for lo in 0..n {
-+            for hi in lo + 1..=n {
-+                let mut t = CowBTree::<L, B>::from_sorted(&all);
-+                // A snapshot sharing every page: the repair must only touch pages this write
-+                // made, never one the snapshot can still see.
-+                let snapshot = t.clone();
-+                t.remove_batch(&all[lo as usize..hi as usize]);
-+                check_invariants(&t, true);
-+                assert_eq!(
-+                    tree_pairs(&snapshot),
-+                    all,
-+                    "remove_batch changed a shared page"
-+                );
-+                check_invariants(&snapshot, true);
-+                let mut expected: Vec<(u64, u64)> = all
-+                    .iter()
-+                    .copied()
-+                    .filter(|&(d, _)| d < lo || d >= hi)
-+                    .collect();
-+                if let Some(&(k, d)) = expected.get(expected.len() / 2) {
-+                    assert!(t.remove(k, d));
-+                    expected.retain(|&p| p != (k, d));
-+                    check_invariants(&t, true);
-+                }
-+                t.insert_batch(&[(0, 1), (n, 1)]);
-+                check_invariants(&t, false);
-+                expected.extend([(0, 1), (n, 1)]);
-+                expected.sort_unstable();
-+                assert_eq!(tree_pairs(&t), expected, "<{L},{B}> n={n} drain {lo}..{hi}");
-+            }
-+        }
-+    }
-+    sweep::<2, 4>(96);
-+    sweep::<2, 5>(120);
-+    sweep::<2, 8>(200);
-+    sweep::<4, 4>(160);
-+}
-+
- /// `DOC_BYTES` is gated by `is_read_width`, so it must accept exactly the widths `read_width` can load —
- /// and reject 3/5/6/7, which used to pass a `1..=8` assert and made `CowBTree::<256, 256, 3>` panic on
- /// its second insert (`read_width` fell through to its 8-byte arm). Every accepted width round-trips.
+     #[test]
+     fn decode_rejects_n_bytes_buffer_length_mismatch() {
+         // arr_data is 3 bytes but the payload declares n_bytes = 999: copying
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3409** (2026-10-19): 4.22.2 (@swilly22)
+- **PR #3406** (2026-10-19): fix(reduce): avoid OOB record index when iterator shadows a bound ali… (@swilly22)
 - **PR #3346** (2026-10-15): accept index trimmed values (@swilly22)
 - **PR #3342** (2026-10-14): 4.22.1 (@swilly22)
 - **PR #3339** (2026-10-14): fix: bound value nesting on RDB/RESTORE decode, property writes and bulk insert (@AviAvni)
 - **PR #3336** (2026-10-15): fix: bound the nesting depth of UDF value conversion (@AviAvni)
-- **PR #3335** (2026-10-15): fix: a parenthesised WHERE uses the index and NodeByIdSeek again (@AviAvni)
-- **PR #3334** (2026-10-15): fix: enforce unique constraints by index lookup, not a label scan per entity (#3330) (@AviAvni)
 
 ---
 
@@ -3245,70 +2990,67 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. bound the nesting depth of UDF value conversion (#3336)
+## X. virtual keys of one graph can no longer share a name (#3286)
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/redis_type.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `33a95636`: bound the nesting depth of UDF value conversion (#3336). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bf11a277`: virtual keys of one graph can no longer share a name (#3286). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/redis_type.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-[[package]]
-name = "ar_archive_writer"
-version = "0.5.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "73cd58deff2140a0a8eae87e417bd01db68a33e148aa93d1e8cd837e55e312b6"
-dependencies = [
- "object 0.39.1",
-]
+    let [f1, f2, f3, f4, f5] = uuid_fields(t as u64, seq);
+    format!("{f1:08x}-{f2:04x}-4{f3:03x}-{f4:04x}-{f5:012x}")
+}
 
- "object 0.37.3",
- "stacker",
-[[package]]
-name = "object"
-version = "0.39.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2e5a6c098c7a3b6547378093f5cc30bc54fd361ce711e05293a5cc589562739b"
-dependencies = [
- "memchr",
-]
-
-[[package]]
-name = "psm"
-version = "0.1.32"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4dcd034599e63b970727f70d79e02d62390a4a84f7c6b827c27c46d5ac3fa622"
-dependencies = [
- "ar_archive_writer",
- "cc",
-]
-
-[[package]]
-name = "stacker"
-version = "0.1.25"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "707f49d46706bacf8a2b00d51dace3f9de527c13eec3778f570c411f89e69967"
-dependencies = [
- "cc",
- "cfg-if",
- "libc",
- "psm",
- "windows-sys 0.61.2",
-]
-
+/// The five printed fields of the name [`uuid_v4`] gives for clock reading `t`
+/// and call number `seq`.
+///
+/// The clock and the counter go in separate fields rather than being mixed:
+/// `t ^ seq` gave two calls the same name whenever the clock moved by exactly
+/// the bits the counter did (`4 ^ 2 == 5 ^ 3`), and the second virtual key then
+/// replaced the first one's slice of the graph. The last 48 bits are `seq` times
+/// an odd constant, a bijection modulo 2^48, so names differ for every call in
+/// a process whatever the clock does; the clock keeps them apart across restarts.
+const fn uuid_fields(
+    t: u64,
+    seq: u64,
+) -> [u64; 5] {
+    let a = t;
+    let b = seq
+    [
+        a >> 32,
+        (a >> 16) & 0xFFFF,
+        a & 0xFFF,
+        0x8000 | (b & 0x3FFF),
+        b & 0xFFFF_FFFF_FFFF,
+    ]
+/// Names must stay distinct, checked at compile time because this crate's unit
+/// tests cannot run outside Redis: its global allocator is Redis's.
+///
+/// Consecutive calls can share a clock reading, so the invariant the fix relies
+/// on is the cou
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
- "object",
+    let a = (t as u64) ^ seq;
+    let b = a
+    format!(
+        "{:08x}-{:04x}-4{:03x}-{:04x}-{:012x}",
+        (a >> 32) as u32,
+        (a >> 16) as u16,
+        (a & 0xFFF) as u16,
+        (0x8000 | (b & 0x3FFF)) as u16,
+        b & 0xFFFF_FFFF_FFFF
+    )
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `33a95636` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bf11a277` are properly handled with clean fallback behavior.

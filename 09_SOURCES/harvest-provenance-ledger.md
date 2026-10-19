@@ -3258,3 +3258,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf` | `https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF` | `hf-venasti` | Multi-dimensional audit evidence | 2026-10-19T13:14:51.450Z |
 | `learn-github-jacklandrin-onlyswitch` | `https://github.com/jacklandrin/OnlySwitch` | `72d42b8a` | Multi-dimensional audit evidence | 2026-10-19T13:14:52.399Z |
 | `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `279c26ae` | Multi-dimensional audit evidence | 2026-10-19T13:14:54.492Z |
+| `learn-huggingface-naiveai-naive-n0-5-flash` | `https://huggingface.co/NaiveAI/Naive-N0.5-Flash` | `hf-naiveai` | Multi-dimensional audit evidence | 2026-10-19T13:21:05.366Z |
+| `learn-github-falkordb-falkordb` | `https://github.com/FalkorDB/FalkorDB` | `fb3d516d` | Multi-dimensional audit evidence | 2026-10-19T13:21:06.340Z |
+| `learn-github-alin23-lunar` | `https://github.com/alin23/Lunar` | `511b0358` | Multi-dimensional audit evidence | 2026-10-19T13:21:12.081Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `89acffc2` | Multi-dimensional audit evidence | 2026-10-19T13:21:16.651Z |
+| `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `8d9f30a8` | Multi-dimensional audit evidence | 2026-10-19T13:21:19.864Z |

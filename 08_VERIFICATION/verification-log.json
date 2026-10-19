@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-0KEW",
-    "timestamp": "2026-10-19T01:34:47.384Z",
-    "repository": "keenthemes/reui",
-    "learningId": "learn-github-keenthemes-reui",
-    "contentHash": "b1956c635d943fbe4377b0858f06d495982f79d56b8a87c97e99267d62d7684f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-0LLI",
-    "timestamp": "2026-10-19T01:34:48.918Z",
-    "repository": "svenstaro/miniserve",
-    "learningId": "learn-github-svenstaro-miniserve",
-    "contentHash": "252e46299a9406a0d39bdc3212296a016c814b1b37fdb8825913ea2f2a457f93",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-0P5Y",
-    "timestamp": "2026-10-19T01:34:53.542Z",
-    "repository": "founded-labs/react-native-reusables",
-    "learningId": "learn-github-founded-labs-react-native-reusables",
-    "contentHash": "10a86964d797c7c89a45810dc3ddcef64ae2786681e4a8bdcdf0a58152ea5a2f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-0PTI",
-    "timestamp": "2026-10-19T01:34:54.390Z",
-    "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
-    "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
-    "contentHash": "2cd03c969daf6b7e368d6a81e14c825443eebcc537f2c9fbd3b835317d2cdb8e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-0S1C",
-    "timestamp": "2026-10-19T01:34:57.264Z",
-    "repository": "openyurtio/openyurt",
-    "learningId": "learn-github-openyurtio-openyurt",
-    "contentHash": "732e4e9426eb4377edd734e7513142d66b770883d954c8b8adc6ab2530f421d1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-0VN0",
     "timestamp": "2026-10-19T01:35:01.932Z",
     "repository": "slatedb/slatedb",
@@ -7490,6 +7415,81 @@
     "repository": "nolabs-ai/nono",
     "learningId": "learn-github-nolabs-ai-nono",
     "contentHash": "c1812149842fc9d299dea7fba5a8557ba2d3a8246592308471c25339d05fd935",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-8VGZ",
+    "timestamp": "2026-10-19T13:21:05.364Z",
+    "repository": "NaiveAI/Naive-N0.5-Flash",
+    "learningId": "learn-huggingface-naiveai-naive-n0-5-flash",
+    "contentHash": "67a2af18bf1db7443607d05fa516cf1e4b75095cff351ba664c9809f51754b2f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-8W81",
+    "timestamp": "2026-10-19T13:21:06.337Z",
+    "repository": "FalkorDB/FalkorDB",
+    "learningId": "learn-github-falkordb-falkordb",
+    "contentHash": "18c2cbaa43e53d92a2a210589028c5c1273e4bed9db8f2b7b92823c712dd27f8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-90NJ",
+    "timestamp": "2026-10-19T13:21:12.079Z",
+    "repository": "alin23/Lunar",
+    "learningId": "learn-github-alin23-lunar",
+    "contentHash": "2c8bb32e404be77135cb4e9246c71330372e705c16fedfb443295ff90f81ac59",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-946G",
+    "timestamp": "2026-10-19T13:21:16.648Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "ab84324d762c4894d541bbaf55c1ea87eb9284bba9a4f5da05ae7722672125a6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-96NP",
+    "timestamp": "2026-10-19T13:21:19.861Z",
+    "repository": "MaterializeInc/materialize",
+    "learningId": "learn-github-materializeinc-materialize",
+    "contentHash": "65c8ef2f07c188b3743bfedc991bb186dd0b17c1e1a23bb1426a25f900affbd3",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

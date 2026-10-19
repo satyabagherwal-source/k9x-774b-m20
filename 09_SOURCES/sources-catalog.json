@@ -1085,8 +1085,8 @@
     "sourceUrl": "https://huggingface.co/NaiveAI/Naive-N0.5-Flash",
     "sourceVersion": "hf-naiveai-naive-n0.5-flash",
     "license": "Open-Source",
-    "contentHash": "d5296d54d732e1523d16443a625d8f082c98b84128dcf0c9aacba1701aa211f8",
-    "lastHarvestedAt": "2026-10-18T03:41:42.069Z",
+    "contentHash": "67a2af18bf1db7443607d05fa516cf1e4b75095cff351ba664c9809f51754b2f",
+    "lastHarvestedAt": "2026-10-19T13:21:05.366Z",
     "learningId": "learn-huggingface-naiveai-naive-n0-5-flash"
   },
   "hf-openai-clip-vit-base-patch32": {
@@ -1593,10 +1593,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "sourceVersion": "b63526c5",
+    "sourceVersion": "89acffc2",
     "license": "Apache-2.0",
-    "contentHash": "de4ff29bca18a1bc990508bbccaed93da1ff30273d160ca45d7f1d2ff2fbd6fe",
-    "lastHarvestedAt": "2026-10-18T21:26:20.075Z",
+    "contentHash": "ab84324d762c4894d541bbaf55c1ea87eb9284bba9a4f5da05ae7722672125a6",
+    "lastHarvestedAt": "2026-10-19T13:21:16.651Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "volcengine-openviking": {
@@ -2893,10 +2893,10 @@
     "repository": "FalkorDB/FalkorDB",
     "platform": "github",
     "sourceUrl": "https://github.com/FalkorDB/FalkorDB",
-    "sourceVersion": "cab41a8c",
+    "sourceVersion": "fb3d516d",
     "license": "NOASSERTION",
-    "contentHash": "42169437da3a3b13dce676826f31a84101157cc4aa2fdc51f930cda4413b1058",
-    "lastHarvestedAt": "2026-10-18T22:23:10.656Z",
+    "contentHash": "18c2cbaa43e53d92a2a210589028c5c1273e4bed9db8f2b7b92823c712dd27f8",
+    "lastHarvestedAt": "2026-10-19T13:21:06.340Z",
     "learningId": "learn-github-falkordb-falkordb"
   },
   "feathersjs-feathers": {
@@ -3923,10 +3923,10 @@
     "repository": "MaterializeInc/materialize",
     "platform": "github",
     "sourceUrl": "https://github.com/MaterializeInc/materialize",
-    "sourceVersion": "5c06d922",
+    "sourceVersion": "8d9f30a8",
     "license": "NOASSERTION",
-    "contentHash": "d88078ab0ed1dc2dd703566f7430a737d02d5a4e028ec069f701190be90678ca",
-    "lastHarvestedAt": "2026-10-19T00:10:31.112Z",
+    "contentHash": "65c8ef2f07c188b3743bfedc991bb186dd0b17c1e1a23bb1426a25f900affbd3",
+    "lastHarvestedAt": "2026-10-19T13:21:19.864Z",
     "learningId": "learn-github-materializeinc-materialize"
   },
   "react-bootstrap-react-bootstrap": {
@@ -8068,5 +8068,15 @@
     "contentHash": "2a44c2a920499235cc8ca3ee46e3fa971169fa3799845beba1fcbddecc6157a6",
     "lastHarvestedAt": "2026-10-19T13:14:52.399Z",
     "learningId": "learn-github-jacklandrin-onlyswitch"
+  },
+  "alin23-lunar": {
+    "repository": "alin23/Lunar",
+    "platform": "github",
+    "sourceUrl": "https://github.com/alin23/Lunar",
+    "sourceVersion": "511b0358",
+    "license": "MIT",
+    "contentHash": "2c8bb32e404be77135cb4e9246c71330372e705c16fedfb443295ff90f81ac59",
+    "lastHarvestedAt": "2026-10-19T13:21:12.081Z",
+    "learningId": "learn-github-alin23-lunar"
   }
 }

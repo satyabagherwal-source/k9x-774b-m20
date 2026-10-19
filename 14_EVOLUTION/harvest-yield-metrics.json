@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T13:14:54.495Z",
-  "total_cycles_completed": 3228,
-  "total_learnings_persisted": 3228,
-  "total_rules_promoted": 2393,
+  "last_updated": "2026-10-19T13:21:19.867Z",
+  "total_cycles_completed": 3233,
+  "total_learnings_persisted": 3233,
+  "total_rules_promoted": 2397,
   "history": [
-    {
-      "timestamp": "2026-10-19T07:21:35.567Z",
-      "repository": "Kong/kubernetes-ingress-controller",
-      "learningId": "learn-github-kong-kubernetes-ingress-controller",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T07:21:36.172Z",
-      "repository": "Comfy-Org/z_image_turbo",
-      "learningId": "learn-huggingface-comfy-org-z_image_turbo",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T07:29:39.373Z",
-      "repository": "jhspetersson/fselect",
-      "learningId": "learn-github-jhspetersson-fselect",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T07:29:39.894Z",
-      "repository": "unsloth/embeddinggemma-2-GGUF",
-      "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T07:29:47.128Z",
-      "repository": "mikepenz/AboutLibraries",
-      "learningId": "learn-github-mikepenz-aboutlibraries",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T07:29:48.261Z",
       "repository": "tursodatabase/turso",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-10-19T13:14:54.495Z",
       "repository": "nolabs-ai/nono",
       "learningId": "learn-github-nolabs-ai-nono",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T13:21:05.369Z",
+      "repository": "NaiveAI/Naive-N0.5-Flash",
+      "learningId": "learn-huggingface-naiveai-naive-n0-5-flash",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T13:21:06.343Z",
+      "repository": "FalkorDB/FalkorDB",
+      "learningId": "learn-github-falkordb-falkordb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T13:21:12.084Z",
+      "repository": "alin23/Lunar",
+      "learningId": "learn-github-alin23-lunar",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T13:21:16.654Z",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "learningId": "learn-github-aleo-labs-protocol-snarkos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T13:21:19.867Z",
+      "repository": "MaterializeInc/materialize",
+      "learningId": "learn-github-materializeinc-materialize",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
