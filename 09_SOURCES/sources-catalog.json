@@ -345,8 +345,8 @@
     "sourceUrl": "https://huggingface.co/Lightricks/LTX-2.5",
     "sourceVersion": "hf-lightricks-ltx-2.5",
     "license": "Open-Source",
-    "contentHash": "f9c41cad9d627842416bcab17e5e15484a8479c31ececebbee9af01b1705276a",
-    "lastHarvestedAt": "2026-10-17T22:39:48.885Z",
+    "contentHash": "3770482793cf60f5e7094b846bb06f78c294fadd7b7abf38aa4690bb6e7c7d35",
+    "lastHarvestedAt": "2026-10-19T03:26:38.646Z",
     "learningId": "learn-huggingface-lightricks-ltx-2-5"
   },
   "hf-prism-ml-ternary-bonsai-2-27b-gguf": {
@@ -5278,5 +5278,55 @@
     "contentHash": "e092cb5bb7a0d5461cb1feafb2d53b42499f0d818036a85a0af2ef47bd2b784e",
     "lastHarvestedAt": "2026-10-19T03:20:31.485Z",
     "learningId": "learn-github-pingcap-talent-plan"
+  },
+  "transact-rs-sqlx": {
+    "repository": "transact-rs/sqlx",
+    "platform": "github",
+    "sourceUrl": "https://github.com/transact-rs/sqlx",
+    "sourceVersion": "4161768c",
+    "license": "Apache-2.0",
+    "contentHash": "794b270736a38bceaea1ff7a7fabda9834ffdb492a261a9f2cc82d9f578c34df",
+    "lastHarvestedAt": "2026-10-19T03:26:40.613Z",
+    "learningId": "learn-github-transact-rs-sqlx"
+  },
+  "bergside-typeui": {
+    "repository": "bergside/typeui",
+    "platform": "github",
+    "sourceUrl": "https://github.com/bergside/typeui",
+    "sourceVersion": "2a977f1f",
+    "license": "NOASSERTION",
+    "contentHash": "3f474cc8771913b4f7e37a823018cae78576b419cb15dfc3fb3a883da85705dd",
+    "lastHarvestedAt": "2026-10-19T03:26:40.667Z",
+    "learningId": "learn-github-bergside-typeui"
+  },
+  "czy0729-bangumi": {
+    "repository": "czy0729/Bangumi",
+    "platform": "github",
+    "sourceUrl": "https://github.com/czy0729/Bangumi",
+    "sourceVersion": "45860379",
+    "license": "MIT",
+    "contentHash": "2f8c2f1c638b978448b1d8392352df456eabd1f8c65fee434cd98e0ce691092b",
+    "lastHarvestedAt": "2026-10-19T03:26:45.970Z",
+    "learningId": "learn-github-czy0729-bangumi"
+  },
+  "aquasecurity-tfsec": {
+    "repository": "aquasecurity/tfsec",
+    "platform": "github",
+    "sourceUrl": "https://github.com/aquasecurity/tfsec",
+    "sourceVersion": "b692c20b",
+    "license": "MIT",
+    "contentHash": "9ae104402e152cab524ba6be554959a8869a7f6b3543d286a3d4356b11b8135a",
+    "lastHarvestedAt": "2026-10-19T03:26:51.428Z",
+    "learningId": "learn-github-aquasecurity-tfsec"
+  },
+  "yugabyte-yugabyte-db": {
+    "repository": "yugabyte/yugabyte-db",
+    "platform": "github",
+    "sourceUrl": "https://github.com/yugabyte/yugabyte-db",
+    "sourceVersion": "b10be5ad",
+    "license": "NOASSERTION",
+    "contentHash": "49c739da5f88785308bc1d6181c0da21bd543fb83ca31f5590a69683cf5288af",
+    "lastHarvestedAt": "2026-10-19T03:26:55.271Z",
+    "learningId": "learn-github-yugabyte-yugabyte-db"
   }
 }

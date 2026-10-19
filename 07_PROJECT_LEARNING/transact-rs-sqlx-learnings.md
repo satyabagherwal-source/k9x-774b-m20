@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/transact-rs-sqlx-learnings.md`  
+> **Source**: github ([https://github.com/transact-rs/sqlx](https://github.com/transact-rs/sqlx))  
+> **Source Version**: `4161768c`  
+> **License**: Apache-2.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T03:26:40.275Z  
+> **Learning ID**: `learn-github-transact-rs-sqlx`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): transact-rs/sqlx
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/transact-rs-sqlx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/transact-rs/sqlx](https://github.com/transact-rs/sqlx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T02:17:11.642Z  
+> **Harvest Timestamp**: 2026-10-19T03:26:40.265Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: 🧰 The Rust SQL Toolkit. An async, pure Rust SQL crate featuring compile-time checked queries without a DSL. Supports PostgreSQL, MySQL, and SQLite.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 17541 stars
+- **Stars / Engagement**: 17581 stars
 
 ---
 
@@ -940,209 +954,6 @@ impl FromStr for AnyKind {
 
 ```
 
-### Core Architecture Module: `sqlx-core/src/any/migrate.rs`
-```
-use crate::any::driver;
-use crate::any::{Any, AnyConnection};
-use crate::error::Error;
-use crate::migrate::{AppliedMigration, Migrate, MigrateDatabase, MigrateError, Migration};
-use futures_core::future::BoxFuture;
-use std::time::Duration;
-
-impl MigrateDatabase for Any {
-    async fn create_database(url: &str) -> Result<(), Error> {
-        driver::from_url_str(url)?
-            .get_migrate_database()?
-            .create_database(url)
-            .await
-    }
-
-    async fn database_exists(url: &str) -> Result<bool, Error> {
-        driver::from_url_str(url)?
-            .get_migrate_database()?
-            .database_exists(url)
-            .await
-    }
-
-    async fn drop_database(url: &str) -> Result<(), Error> {
-        driver::from_url_str(url)?
-            .get_migrate_database()?
-            .drop_database(url)
-            .await
-    }
-
-    async fn force_drop_database(url: &str) -> Result<(), Error> {
-        driver::from_url_str(url)?
-            .get_migrate_database()?
-            .force_drop_database(url)
-            .await
-    }
-}
-
-impl Migrate for AnyConnection {
-    fn create_schema_if_not_exists<'e>(
-        &'e mut self,
-        schema_name: &'e str,
-    ) -> BoxFuture<'e, Result<(), MigrateError>> {
-        Box::pin(async {
-            self.get_migrate()?
-                .create_schema_if_not_exists(schema_name)
-                .await
-        })
-    }
-
-    fn ensure_migrations_table<'e>(
-        &'e mut self,
-        table_name: &'e str,
-    ) -> BoxFuture<'e, Result<(), MigrateError>> {
-        Box::pin(async {
-            self.get_migrate()?
-                .ensure_migrations_table(table_name)
-                .await
-        })
-    }
-
-    fn dirty_version<'e>(
-        &'e mut self,
-        table_name: &'e str,
-    ) -> BoxFuture<'e, Result<Option<i64>, MigrateError>> {
-        Box::pin(async { self.get_migrate()?.dirty_version(table_name).await })
-    }
-
-    fn list_applied_migrations<'e>(
-        &'e mut self,
-        table_name: &'e str,
-    ) -> BoxFuture<'e, Result<Vec<AppliedMigration>, MigrateError>> {
-        Box::pin(async {
-            self.get_migrate()?
-                .list_applied_migrations(table_name)
-                .await
-        })
-    }
-
-    fn lock(&mut self) -> BoxFuture<'_, Result<(), MigrateError>> {
-        Box::pin(async { self.get_migrate()?.lock().await })
-    }
-
-    fn unlock(&mut self) -> BoxFuture<'_, Result<(), MigrateError>> {
-        Box::pin(async { self.get_migrate()?.unlock().await })
-    }
-
-    fn apply<'e>(
-        &'e mut self,
-        table_name: &'e str,
-        migration: &'e Migration,
-    ) -> BoxFuture<'e, Result<Duration, MigrateError>> {
-        Box::pin(async { self.get_migrate()?.apply(table_name, migration).await })
-    }
-
-    fn revert<'e>(
-        &'e mut self,
-        table_name: &'e str,
-        migration: &'e Migration,
-    ) -> BoxFuture<'e, Result<Duration, MigrateError>> {
-        Box::pin(async { self.get_migrate()?.revert(table_name, migration).await })
-    }
-
-    fn skip<'e>(
-        &'e mut self,
-        table_name: &'e str,
-        migration: &'e Migration,
-    ) -> BoxFuture<'e, Result<(), MigrateError>> {
-        Box::pin(async { self.get_migrate()?.skip(table_name, migration).await })
-    }
-}
-
-```
-
-### Core Architecture Module: `sqlx-core/src/any/mod.rs`
-```
-//! **SEE DOCUMENTATION BEFORE USE**. Generic database driver with the specific driver selected at runtime.
-//!
-//! The underlying database drivers are chosen at runtime from the list set via
-//! [`install_drivers`][self::driver::install_drivers]. Any use of `AnyConnection` or `AnyPool`
-//! without this will panic.
-use crate::executor::Executor;
-
-mod arguments;
-pub(crate) mod column;
-mod connection;
-mod database;
-mod error;
-mod kind;
-mod options;
-mod query_result;
-pub(crate) mod row;
-mod statement;
-mod transaction;
-pub(crate) mod type_info;
-pub mod types;
-pub(crate) mod value;
-
-pub mod driver;
-
-#[cfg(feature = "migrate")]
-mod migrate;
-
-pub use arguments::{AnyArgumentBuffer, AnyArguments};
-pub use column::AnyColumn;
-pub use connection::AnyConnection;
-// Used internally in `sqlx-macros`
-
-use crate::encode::Encode;
-pub use connection::AnyConnectionBackend;
-pub use database::Any;
-#[allow(deprecated)]
-pub use kind::AnyKind;
-pub use options::AnyConnectOptions;
-pub use query_result::AnyQueryResult;
-pub use row::AnyRow;
-pub use statement::AnyStatement;
-pub use transaction::AnyTransactionManager;
-pub use type_info::{AnyTypeInfo, AnyTypeInfoKind};
-pub use value::{AnyValue, AnyValueRef};
-
-use crate::types::Type;
-#[doc(hidden)]
-pub use value::AnyValueKind;
-
-pub type AnyPool = crate::pool::Pool<Any>;
-
-pub type AnyPoolOptions = crate::pool::PoolOptions<Any>;
-
-/// An alias for [`Executor<'_, Database = Any>`][Executor].
-pub trait AnyExecutor<'c>: Executor<'c, Database = Any> {}
-impl<'c, T: Executor<'c, Database = Any>> AnyExecutor<'c> for T {}
-
-// NOTE: required due to the lack of lazy normalization
-impl_into_arguments_for_arguments!(AnyArguments);
-// impl_executor_for_pool_connection!(Any, AnyConnection, AnyRow);
-// impl_executor_for_transaction!(Any, AnyRow);
-impl_acquire!(Any, AnyConnection);
-impl_column_index_for_row!(AnyRow);
-impl_column_index_for_statement!(AnyStatement);
-// impl_into_maybe_pool!(Any, AnyConnection);
-
-// required because some databases have a different handling of NULL
-impl<'q, T> Encode<'q, Any> for Option<T>
-where
-    T: Encode<'q, Any> + 'q + Type<Any>,
-{
-    fn encode_by_ref(
-        &self,
-        buf: &mut AnyArgumentBuffer,
-    ) -> Result<crate::encode::IsNull, crate::error::BoxDynError> {
-        if let Some(value) = self {
-            value.encode_by_ref(buf)
-        } else {
-            buf.0.push(AnyValueKind::Null(T::type_info().kind));
-            Ok(crate::encode::IsNull::Yes)
-        }
-    }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1154,31 +965,6 @@ where
 
 - **Issue #4387** (2026-08-20): **Some of the published crates fro version 0.9.0 are missing the content of the license files**
   *Symptoms*: ### I have found these related issues/pull requests  #3237 is closed and was originally resolved by #3293.  But https://github.com/transact-rs/sqlx/pull/3293#issuecomment-2181227547 did not appear to consider that symlink support on windows required special permission and need to be configured properly.  https://github.com/transact-rs/sqlx/pull/3293#issuecomment-2181237393 it has come up.  ### Description  It looks like the release might have been published from windows and ran into https://github.com/rust-lang/cargo/issues/5664  The following crates contain `../LICENSE-APACHE` in the `LICENSE-APACHE` file  instead of the license content.  - [sqlx-core](https://docs.rs/crate/sqlx-core/0.9.0/source/LICENSE-APACHE) - [sqlx-macros](https://docs.rs/crate/sqlx-macros/0.9.0/source/LICENSE-APACHE) - [sqlx-macros-core](https://docs.rs/crate/sqlx-macros-core/0.9.0/source/LICENSE-APACHE) - [sqlx-mysql](https://docs.rs/crate/sqlx-mysql/0.9.0/source/LICENSE-APACHE) - [sqlx-postgres](https://docs.rs/crate/sqlx-postgres/0.9.0/source/LICENSE-APACHE) - [sqlx-sqlite](https://docs.rs/crate/sqlx-sqlite/0.9.0/source/LICENSE-APACHE)  This applies accordingly to the LICENSE-MIT file.  ### Reproduction steps  See links under description  ### SQLx version  0.9.0  ### Enabled SQLx features  packaging  ### Database server and version  irrelevant  ### Operating system  irrelevant  ### Rust version  irrelevant
-  **Post-Mortem & Fix Analysis**:
-  > I knew using symlinks was a bad idea. I'd feel vindicated but I'm tired of dealing with problems with packaging systems that I'm not involved in.  Enabling symlinks on Windows is still too much of a pain and it's clearly too easy to forget. I don't know why Git for Windows doesn't just create copies instead (I mainly use it from inside RustRover, so it might actually be a bug in their implementation, I don't know).  I'd accept a PR to just replace the symlinks with copies of the files.
-
-- **Issue #4383** (2026-09-02): **[sqlx-cli] ux bug with sqlx prepare**
-  *Symptoms*: ### I have found these related issues/pull requests  I've do some search in issues by `sqlx prepare failed CARGO` and just `sqlx prepare` and didn't find any relations with existing prepare command in just `sqlx` and always proposing error with redirecting to `cargo sqlx` invocation  ### Description  **Title**: `sqlx prepare` listed in help but fails with unclear error  **Description**: `prepare` subcommand is listed in `sqlx --help`, but running it directly fails: ``` $ sqlx prepare error: failed to get value of CARGO; prepare subcommand may only be invoked as cargo sqlx prepare ```   This is confusing because: 1. The command is advertised in help output 2. The error message is unclear — it mentions internal `CARGO` variable instead of telling the user what to do  **Suggested fixes** (any one of): - Remove `prepare` from `sqlx --help` if it only works via `cargo sqlx` - Improve error message: suggest using `cargo sqlx prepare` explicitly - Make `sqlx prepare` work standalone by locating `Cargo.toml` automatically  **Workaround**: Use `cargo sqlx prepare` instead of `sqlx prepare`.  ### Reproduction steps  ``` $ sqlx prepare error: failed to get value of CARGO; prepare subcommand may only be invoked as cargo sqlx prepare ```  ### SQLx version  0.9.0  ### Enabled SQLx features  "postgres", "runtime-tokio", "tls-native-tls"   ### Database server and version  Postgres  ### Operating system  Ubuntu 24.04.4 LTS  ### Rust version  1.94.1
-
-- **Issue #4381** (2026-09-09): **Cannot revert.**
-  *Symptoms*: ### I have found these related issues/pull requests  #3439  ### Description  In PostgreSQL, when using `options[search_path]=data,public`, revert is not possible.  ### Reproduction steps  ``` PS E:\tmp> Get-ComputerInfo | Select-Object WindowsVersion, WindowsBuildLabEx  WindowsVersion WindowsBuildLabEx -------------- ----------------- 2009           26100.1.amd64fre.ge_release.240331-1435 PS E:\tmp> cat .env DATABASE_URL="postgres://rust:123456@192.168.31.200/rust?options[search_path]=data,public" PS E:\tmp> sqlx migrate add -r init Creating migrations\20260815075646_init.up.sql Creating migrations\20260815075646_init.down.sql PS E:\tmp> cat migrations\20260815075646_init.up.sql -- Add up migration script here CREATE SCHEMA IF NOT EXISTS data; PS E:\tmp> cat migrations\20260815075646_init.down.sql -- Add down migration script here DROP SCHEMA IF EXISTS data CASCADE; PS E:\tmp> sqlx migrate run Applied 20260815075646/migrate init (39.7574ms) PS E:\tmp> sqlx migrate revert No migrations available to revert PS E:\tmp> cat .\.env DATABASE_URL="postgres://rust:123456@192.168.31.200/rust?options[search_path]=public" PS E:\tmp> sqlx migrate revert Applied 20260815075646/revert init (32.6879ms) PS E:\tmp ```  ### SQLx version  sqlx-cli 0.9.0  ### Enabled SQLx features  default  ### Database server and version  PostgreSQL 18.4 (Debian 18.4-1.pgdg13+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit  ### Operating system  docker.io/library/postgres:18  ### Rus
-  **Post-Mortem & Fix Analysis**:
-  > Not a bug. Please read and understand how setting `search_path` affects unqualified table references like `_sqlx_migrations`: https://www.postgresql.org/docs/current/ddl-schemas.html#DDL-SCHEMAS-PATH  With 0.9.0, it's now possible to override the path of the migrations table and also automatically create schemas: https://github.com/transact-rs/sqlx/tree/main/examples/postgres/multi-tenant
-
-- **Issue #4373** (2026-09-14): **`SQLite: query!()` segfaults rustc when a column has no declared type**
-  *Symptoms*: ### I have found these related issues/pull requests  - **#4088**:  *(Fix) Handle nullability of SQLite rowid alias columns*. This PR introduced the crash. It started requesting the declared-type out-param from `sqlite3_table_column_metadata()` and dereferencing it unconditionally. - **#4323** / **#4322**: another regression from #4088 (`INTEGER PRIMARY KEY` in `RETURNING` going back to `Option`). Different symptom. - **#1979** and **#3546**: both report `unsupported type NULL of column #N`. That's the error you *should* get for a column with no declared type. Right now you get a SIGSEGV before the error can be produced.  ### Description  `StatementHandle::column_nullable` asks `sqlite3_table_column_metadata()` for a column's declared type and then calls `CStr::from_ptr()` on the result without checking for null:  ```rust let datatype = CStr::from_ptr(datatype); ```  SQLite sets that out-param to **NULL** when the column was declared with no type at all, which is legal:  ```sql CREATE TABLE users (device_id PRIMARY KEY, name TEXT); ```  So describing that table dereferences a null pointer and the process dies with SIGSEGV. Because the `query!()` family describes a live database during macro expansion, the process that dies is `rustc` itself:  ``` error: rustc interrupted by SIGSEGV, printing backtrace   2  core::ffi::c_str::CStr::from_ptr   3  sqlx_sqlite::statement::handle::StatementHandle::column_nullable   4  sqlx_sqlite::connection::describe::describe   5  sqlx_sqlite::des
-
-- **Issue #4364** (2026-08-07): **Using sqlx turns tokio runtime singlethreaded**
-  *Symptoms*: ### I have found these related issues/pull requests  I have checked for a while, but I can't find any issue discussing this.  ### Description  I run some CPU intensive code in asynchronous context. I know it's not ideal, but it shouldn't be an issue, since tokio is multithreaded, and hogging one worker for a few minutes is acceptable.   However, occasionally results are pushed to postgres. However, it seems that after the first sqlx runs, all other tasks can't run on other worker threads anymore and get a time slice when the next database query is causing the runtime to yield.  Closing the pool "unlocks" the other workers again.  I'm not sure, if this is intended, a bug or a necessary restriction. However, I'd at least love to know, why and how that is happening, as I don't want to accidentally turn all my servers single-threaded.   Thank you for your help!  ### Reproduction steps  This is an example code to demonstrate the issue.  ```rust use std::time::Duration;  use sqlx::PgPool;  const DB_URL: &str = "postgres://devuser:devpassword@localhost:5432/devdb";  async fn db_then_compute(pool: PgPool) {     let num: (i32,) = sqlx::query_as("SELECT 1").fetch_one(&pool).await.unwrap();     println!(         "The num was returned: {}, but now, the CPU block will kill multithreading",         num.0     );     println!("Start compute...");     // This would "fix" the issue:     // pool.close().await;     loop {} }  /// This doesn't cause the issue async fn http_then_compute() {     le
-  **Post-Mortem & Fix Analysis**:
-  > I just tested the same example with an SqlitePool, the issue doesn't appear there. So this seems to be related to Postgres.  I also tested this with a Postgres Connection instead of a pool, here the issue occurs again. However, while closing the postgres Pool seems to free other workers again, closing the postgres connection, doesn't fix it.
-  > I just replicated this with deadpool-postgres, so this doesn't seem to be an SQLX issue after all. I'm closing the issue again and investigate further.
-
-- **Issue #4362** (2026-09-10): **`migrate!` silently ignores `*.sql` files with no prefix**
-  *Symptoms*: ### I have found these related issues/pull requests  I was unable to find any related issues  ### Description  If a migration file has a non-numeric prefix (e.g., `a_schema.sql`), SQLx produces an error. However, if there is no prefix at all (e.g., `schema.sql`), no error is produced, and `migrate!` silently ignores the file. I believe this should either: produce an error (or warning) message like above, for any `*.sql` file that doesn't follow the required format; or, begin supporting no-prefix migrations.   ### Reproduction steps  1. Write a function to create the SQLite database and run migrations, e.g. ```rs let connect_options = SqliteConnectOptions::new()     .filename("foo.db")     .create_if_missing(true);  let pool = SqlitePoolOptions::new()     .connect_with(connect_options)     .await?;  dbg!(sqlx::migrate!("./migrations/")).run(&pool).await?; ``` 2. Create a no-prefix sql file, e.g. `./migrations/schema.sql`. Make it create any sort of table or whatever 3. Run 4. The database file, `foo.db`, will be created and initialized, but it will not contain the new table defined in `schema.sql`. The evaluation of `migrate!` as shown by `dbg!` will have an empty `migrations` field. Additionally, running something like `.tables` in `sqlite3` will only show the `_sqlx_migrations` table. In other words, the `schema.sql` file was ignored, silently.  ### SQLx version  0.9.0  ### Enabled SQLx features  runtime-tokio, sqlite  ### Database server and version  SQLite  ### Operating s
-
-- **Issue #4335** (2026-08-17): **Missing TCP_NODELAY on TCP sockets**
-  *Symptoms*: ### I have found these related issues/pull requests  https://github.com/transact-rs/sqlx/pull/3055  ### Description  Hi, after upgrade to sqlx 0.9.0 I've noticed that some queries started executing ~41-43ms when running locally (with sqlx 0.8.2 they used to be ~2ms).  Here's a reproduction example: https://gist.github.com/dmitryvk/c7c5ff1578ae1525d9197bce1ca597a7 (the real code is much more complicated).  40ms delay is caused by Nagle's algorithm, and sqlx previously used to disable it (https://github.com/transact-rs/sqlx/pull/3055), but it was removed recently (https://github.com/transact-rs/sqlx/pull/4022).  ### Reproduction steps  Compile and run code from https://gist.github.com/dmitryvk/c7c5ff1578ae1525d9197bce1ca597a7 against a local MariaDB/MySQL instance.  ### SQLx version  0.9.0  ### Enabled SQLx features  "mysql", "runtime-tokio", "tls-rustls"  ### Database server and version  MariaDB 11.8.5  ### Operating system  Ubuntu 26.04  ### Rust version  rustc 1.97.0 (2d8144b78 2026-07-07)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1195,614 +981,527 @@ where
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8b65c2fb` (2026-10-04)
-**Commit Message**: fix(mysql): use the AuthSwitchRequest nonce for the follow-up auth exchange (#4436)
+### Incident Patch 1: `4161768c` (2026-10-16)
+**Commit Message**: fix(mysql): harden protocol decoders against malformed packets from hostile servers (#4458)
 
-After an AuthSwitchRequest (0xfe) the new nonce was bound with a `let`
-inside the match arm, so it only lived for the immediate scramble. On the
-next loop iteration `plugin.handle(..)` still received the nonce from the
-initial handshake.
+Found during a security review of server-controlled parsing paths (threat model: rogue or MITM MySQL/MariaDB server; handshake parsing is reachable pre-authentication).
 
-For caching_sha2_password this breaks full authentication over a non-TLS
-connection: the password is XORed with the stale nonce before the RSA
-encryption, and the server rejects it with
-`1045 (28000): Access denied for user ... (using password: YES)`.
+### Does your PR solve an issue?
 
-This happens whenever the server's default_authentication_plugin is
-mysql_native_password but the account uses caching_sha2_password (e.g.
-Cloud SQL for MySQL 8.0 reached through the local Cloud SQL Auth Proxy),
-so the server switches plugins mid-handshake.
+No tracking issue — reported here directly. This extends the fix pattern of #4176 (truncated `OK` packet) to the rest of the protocol; #4451 documents the same review on the PostgreSQL side.
 
-Keep a single mutable `nonce` and reassign it on AuthSwitchRequest so
-every later step of the plugin uses the nonce the server is verifying
-against.
+### The problem
 
-**File**: `sqlx-mysql/src/connection/establish.rs` (modified, +4/-2)
+- `recv_packet`'s continuation loop accumulated an unbounded number of `0xFFFFFF`-sized parts: a hostile server streams endless 16 MiB frames and the client OOMs at near-zero bandwidth cost.
+- The result-set column count (a length-encoded u64) fed `HashMap::with_capacity` / `Vec::reserve` directly; a ~10-byte packet claiming 2^40 columns aborts the process.
+- Dozens of decode sites call panicking `bytes::Buf` getters / slice indexing / `advance` on untrusted buffers: truncated ERR packets, every field of `HandshakeV10` (including the attacker-controlled auth-plugin-data length), length-encoded strings claiming more than the remaining bytes, `TextRow` field-count mismatch, `BinaryRow` (
+
+**File**: `sqlx-mysql/src/connection/auth.rs` (modified, +7/-0)
 ```diff
-@@ -63,7 +63,9 @@ impl<'a> DoHandshake<'a> {
-         let handshake: Handshake = stream.recv_packet().await?.decode()?;
- 
-         let mut plugin = handshake.auth_plugin;
--        let nonce = handshake.auth_plugin_data;
-+        // `mut`: an AuthSwitchRequest carries a fresh nonce, and the plugin's follow-up
-+        // exchange (e.g. caching_sha2_password full authentication) must use it.
-+        let mut nonce = handshake.auth_plugin_data;
- 
-         // FIXME: server version parse is a bit ugly
-         // expecting MAJOR.MINOR.PATCH
-@@ -130,7 +132,7 @@ impl<'a> DoHandshake<'a> {
-                         packet.decode_with(self.options.enable_cleartext_plugin)?;
- 
-                     plugin = Some(switch.plugin);
--                    let nonce = switch.data.chain(Bytes::new());
-+                    nonce = switch.data.chain(Bytes::new());
- 
-                     let response = switch
-                         .plugin
+@@ -42,6 +42,13 @@ impl AuthPlugin {
+     ) -> Result<bool, Error> {
+         match self {
+             AuthPlugin::CachingSha2Password if packet[0] == 0x01 => {
++                if packet.len() < 2 {
++                    return Err(err_protocol!(
++                        "expected at least 2 bytes in caching_sha2_password authentication packet but got {}",
++                        packet.len()
++                    ));
++                }
++
+                 match packet[1] {
+                     // fast_auth_success — the server still sends a trailing
+                     // OK_Packet, so yield back to the handshake loop and let
 ```
 
----
-
-### Incident Patch 2: `df46b41a` (2026-10-03)
-**Commit Message**: fix(macros-core): only track paths rustc can checksum (#4439)
-
-**File**: `sqlx-macros-core/src/query/cache.rs` (modified, +5/-1)
+**File**: `sqlx-mysql/src/connection/executor.rs` (modified, +9/-0)
 ```diff
-@@ -69,8 +69,12 @@ impl MtimeCacheBuilder {
-     pub fn add_path(&mut self, path: PathBuf) {
-         let mtime = get_mtime(&path);
+@@ -435,6 +435,15 @@ async fn recv_result_metadata(
+     // the result-set metadata is primarily a listing of each output
+     // column in the result-set
  
-+        // Only hand rustc paths it can fingerprint. A directory, or a file that
-+        // does not exist, has no content to checksum, and under cargo's
-+        // `-Z checksum-freshness` such a dep-info entry leaves the crate
-+        // permanently dirty. The mtime check below still covers them.
-         #[cfg(any(sqlx_macros_unstable, procmacro2_semver_exempt))]
--        {
-+        if path.is_file() {
-             proc_macro::tracked::path(&path);
-         }
- 
-```
-
----
-
-### Incident Patch 3: `aefa4208` (2026-10-03)
-**Commit Message**: fix(mysql): decode MySQL 9 VECTOR columns (type 0xf2) (#4441)
-
-**File**: `sqlx-mysql/src/protocol/statement/row.rs` (modified, +1/-0)
-```diff
-@@ -72,6 +72,7 @@ impl<'de> ProtocolDecode<'de, &'de [MySqlColumn]> for BinaryRow {
-                 | ColumnType::Blob
-                 | ColumnType::TinyBlob
-                 | ColumnType::Geometry
-+                | ColumnType::Vector
-                 | ColumnType::Bit
-                 | ColumnType::Decimal
-                 | ColumnType::Json
-```
-
-**File**: `sqlx-mysql/src/protocol/text/column.rs` (modified, +30/-0)
-```diff
-@@ -83,6 +83,7 @@ pub enum ColumnType {
-     Year = 0x0d,
-     VarChar = 0x0f,
-     Bit = 0x10,
-+    Vector = 0xf2,
-     Json = 0xf5,
-     NewDecimal = 0xf6,
-     Enum = 0xf7,
-@@ -202,6 +203,7 @@ impl ColumnType {
-             ColumnType::Decimal | ColumnType::NewDecimal => "DECIMAL",
-             ColumnType::Geometry => "GEOMETRY",
-             ColumnType::Json => "JSON",
-+            ColumnType::Vector => "VECTOR",
- 
-             ColumnType::String if is_binary => "BINARY",
-             ColumnType::String if is_enum => "ENUM",
-@@ -246,6 +248,7 @@ impl ColumnType {
-             // [internal] 0x11 => ColumnType::Timestamp2,
-             // [internal] 0x12 => ColumnType::Datetime2,
-             // [internal] 0x13 => ColumnType::Time2,
-+            0xf2 => ColumnType::Vector,
-             0xf5 => ColumnType::Json,
-             0xf6 => ColumnType::NewDecimal,
-             0xf7 => ColumnType::Enum,
-@@ -264,3 +267,30 @@ impl ColumnType {
-         })
-     }
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+
-+    #[test]
-+    fn decodes_a_mysql_9_vector_column() {
-+        // catalog "def", empty schema/table, alias and name "v", then the
-+        // fixed-length fields: collation 63 (binary), max size 12, type 0xf2
-+        // (VECTOR), flags BINARY, 0 decimals and two filler bytes.
-+        let mut packet = vec![3, b'd', b'e', b'f', 0, 0, 0, 1, b'v', 1, b'v', 0x0c];
-+        packet.extend_from_slice(&63u16.to_le_bytes());
-+        packet.extend_from_slice(&12u32.to_le_bytes());
-+        packet.push(0xf2);
-+        packet.extend_from_slice(&ColumnFlags::BINARY.bits().to_le_bytes());
-+        packet.extend_from_slice(&[0, 0, 0]);
-+
-+        let column =
-+            ColumnDefinition::decode_with(Bytes::from(packet), Capabilities::empty()).unwrap();
-+
-+        assert_eq!(column.r#type, ColumnType::Vector);
-+        assert_eq!(
-+            column.r#type.name(column.flags, Some(column.max_size)),
-+            "VECTOR"
-+        );
++    // MySQL (and MariaDB) enforce a hard limit of 4096 columns per result set;
++    // reject larger claimed counts before they are used to size allocations,
++    // as a hostile server could otherwise force an arbitrarily large allocation
++    if num_columns > 4096 {
++        return Err(err_protocol!(
++            "result-set metadata claims {num_columns} columns but the maximum supported is 4096"
++        ));
 +    }
-+}
++
+     let mut column_names = HashMap::with_capacity(num_columns);
+ 
+     columns.clear();
 ```
 
-**File**: `sqlx-mysql/src/types/bytes.rs` (modified, +1/-0)
+**File**: `sqlx-mysql/src/connection/stream.rs` (modified, +15/-0)
 ```diff
-@@ -26,6 +26,7 @@ impl Type<MySql> for [u8] {
-                 | ColumnType::String
-                 | ColumnType::VarString
-                 | ColumnType::Enum
-+                | ColumnType::Vector
-         )
-     }
- }
-```
-
----
-
-### Incident Patch 4: `9236fb08` (2026-10-03)
-**Commit Message**: fix(sqlite): await SQLCipher test connection cleanup before exit (#4442)
-
-**File**: `sqlx-sqlite/src/connection/mod.rs` (modified, +4/-0)
-```diff
-@@ -56,6 +56,10 @@ mod worker;
- ///
- /// You can explicitly call [`.close()`][Self::close] to ensure the database is closed successfully
- /// or get an error otherwise.
+@@ -11,6 +11,13 @@ use crate::protocol::response::{EofPacket, ErrPacket, OkPacket, Status};
+ use crate::protocol::{Capabilities, Packet};
+ use crate::{MySqlConnectOptions, MySqlDatabaseError};
+ 
++/// The maximum total payload that we accept for a single (possibly reassembled)
++/// packet: 1 GiB, MySQL's own hard maximum for `max_allowed_packet`.
 +///
-+/// When using SQLCipher, call [`.close()`][Self::close] and await it before exiting the process.
-+/// Otherwise, the worker thread may still be closing the database when SQLCipher frees its global
-+/// resources during process exit, which can cause a segmentation fault.
- pub struct SqliteConnection {
-     optimize_on_close: OptimizeOnClose,
-     pub(crate) worker: ConnectionWorker,
-```
-
-**File**: `tests/sqlite/sqlcipher.rs` (modified, +49/-6)
-```diff
-@@ -1,6 +1,11 @@
- #![cfg(sqlite_test_sqlcipher)]
- 
-+// Explicitly close every connection before opening the next one or returning from a test.
-+// Dropping a connection only signals its worker to stop; its cleanup can otherwise race
-+// SQLCipher's process-exit cleanup and cause a segfault.
++/// Without this cap, a hostile server could stream an unbounded number of
++/// 16 MiB packet parts and exhaust the client's memory.
++const MAX_PACKET_PAYLOAD_LEN: usize = 1024 * 1024 * 1024;
 +
- use std::str::FromStr;
-+use std::sync::Arc;
- 
- use sqlx::sqlite::SqliteQueryResult;
- use sqlx::{query, Connection, SqliteConnection};
-@@ -56,16 +61,19 @@ async fn it_encrypts() -> anyhow::Result<()> {
-         .await?;
- 
-     fill_db(&mut conn).await?;
-+    conn.close().await?;
- 
-     // Create another connection without key, query should fail
-     let mut conn = SqliteConnectOptions::from_str(&url)?.connect().await?;
- 
--    assert!(conn
-+    let result = conn
-         .transaction(|tx| {
-             Box::pin(async move { query("SELECT * FROM Company;").fetch_all(&mut **tx).await })
-         })
--        .await
--        .is_err());
-+        .await;
-+    conn.close().await?;
+ pub struct MySqlStream<S = Box<dyn Socket>> {
+     // Wrapping the socket in `Box` allows us to unsize in-place.
+     pub(crate) socket: BufferedSocket<S>,
+@@ -155,6 +162,14 @@ impl<S: Socket> MySqlStream<S> {
+             while last_read == 0xFF_FF_FF {
+                 let part = self.recv_packet_part().await?;
+                 last_read = part.len();
 +
-+    assert!(result.is_err());
- 
-     Ok(())
- }
-@@ -81,6 +89,7 @@ async fn it_can_store_and_read_encrypted_data() -> anyhow::Result<()> {
-         .await?;
- 
-     fill_db(&mut conn).await?;
-+    conn.close().await?;
- 
-     // Create another connection with valid key
-     let mut conn = SqliteConnectOptions::from_str(&url)?
-@@ -93,6 +102,7 @@ async fn it_can_store_and_read_encrypted_data() -> anyhow::Result<()> {
-             Box::pin(async move { query("SELECT * FROM Company;").fetch_all(&mut **tx).await })
-         })
-         .await?;
-+    conn.close().await?;
- 
-     assert!(result.len() > 0);
- 
-@@ -110,19 +120,22 @@ async fn it_fails_if_password_is_incorrect() -> anyhow::Result<()> {
-         .await?;
- 
-     fill_db(&mut conn).await?;
-+    conn.close().await?;
- 
-     // Connection with invalid key should not allow to execute queries
-     let mut conn = SqliteConnectOptions::from_str(&url)?
-         .pragma("key", "BADBADBAD")
-         .connect()
-         .await?;
- 
--    assert!(conn
-+    let result = conn
-         .transaction(|tx| {
-             Box::pin(async move { query("SELECT * FROM Company;").fetch_all(&mut **tx).await })
-         })
--        .await
--        .is_err());
-+        .await;
-+    conn.close().await?;
++                if final_payload.len() + part.len() > MAX_PACKET_PAYLOAD_LEN {
++                    return Err(err_protocol!(
++                        "reassembled packet payload of {} bytes exceeds maximum packet payload of {MAX_PACKET_PAYLOAD_LEN} bytes",
++                        final_payload.len() + part.len()
++                    ));
++                }
 +
-+    assert!(result.is_err());
- 
-     Ok(())
- }
-@@ -148,6 +161,7 @@ async fn it_honors_order_of_encryption_pragmas() -> anyhow::Result<()> {
-         .await?;
- 
-     fill_db(&mut conn).await?;
-+    conn.close().await?;
- 
-     let mut conn = SqliteConnectOptions::from_str(&url)?
-         .pragma("dummy", "pragma")
-@@ -164,6 +178,7 @@ async fn it_honors_order_of_encryption_pragmas() -> anyhow::Result<()> {
-             Box::pin(async move { query("SELECT * FROM COMPANY;").fetch_all(&mut **tx).await })
-         })
-         .await?;
-+    conn.close().await?;
- 
-     assert!(result.len() > 0);
- 
-@@ -186,6 +201,7 @@ async fn it_allows_to_rekey_the_db() -> anyhow::Result<()> {
-     query("PRAGMA rekey = new_password;")
-         .execute(&mut conn)
-         .await?;
-+    conn.close().await?;
- 
-     let mut conn = SqliteConnectOptions::from_str(&url)?
-         .pragma("dummy", "pragma")
-@@ -198,8 +214,35 @@ async fn it_allows_to_rekey_the_db() -> anyhow::Result<()> {
-             Box::pin(async move { query("SELECT * FROM COMPANY;").fetch_all(&mut **tx).await })
-         })
-         .await?;
-+    conn.close().await?;
- 
-     assert!(result.len() > 0);
- 
-     Ok(())
- }
-+
-+#[sqlx_macros::test]
-+async fn it_closes_the_encrypted_database() -> anyhow::Result<()> {
-+    let (url, _dir) = new_db_url().await?;
-+    let mut conn = SqliteConnectOptions::from_str(&url)?
-+        .pragma("key", "the_password")
-+        .create_if_missing(true)
-+        .connect()
-+        .await?;
-+
-+    // SQLite destroys collations during sqlite3_close(), so this detects whether
-+    // close().await has actually released the database handle.
-+    let drop_check = Arc::new(std::cmp::Ordering::Equal);
-+    let weak = Arc::downgrade(&drop_check);
-+    conn.lock_handle()
-+        .await?
-+        .create_collation("close_check", move |_, _| *drop_check)?;
-+
-+    fill_db(&mut conn).await?;
-+    assert!(weak.upgrade().is_some());
-+
-+    conn.close().await?;
-+    assert!(weak.upgrade().is_none());
-+
-+    Ok(())
-+}
-```
-
----
-
-### Incident Patch 5: `1be995b7` (2026-09-14)
-**Commit Message**: fix(sqlite): don't dereference a NULL declared type in column_nullable (#4374)
-
-* fix(sqlite): don't dereference a NULL declared type in column_nullable
-
-sqlite3_table_column_metadata() leaves its declared-type out-param NULL for a
-column declared without a type, e.g. `CREATE TABLE foo (bar PRIMARY KEY)`.
-column_nullable() passed that pointer straight to CStr::from_ptr(), so
-describing such a column segfaulted the process, and rustc itself, since the
-query!() macros describe a live database at expansion time.
-
-A column with no declared type is not declared INTEGER and so cannot be a rowid
-alias; treat it as a normal column and fall through to the NOT NULL flag.
-
-Regression introduced in 69ee0df (#4088), released in 0.9.0.
-
-* fix(sqlite): only check the declared type for primary key columns
-
----------
-
-Co-authored-by: Scott Driggers <[REDACTED_EMAIL]>
-
-**File**: `sqlx-sqlite/src/statement/handle.rs` (modified, +15/-13)
-```diff
-@@ -263,19 +263,21 @@ impl StatementHandle {
-                 return Err(SqliteError::new(self.db_handle()).into());
+                 final_payload.extend_from_slice(&part);
              }
+             final_payload.into()
+```
+
+**File**: `sqlx-mysql/src/io/buf.rs` (modified, +55/-0)
+```diff
+@@ -62,6 +62,13 @@ impl MySqlBufExt for Bytes {
+         let size = usize::try_from(size)
+             .map_err(|_| err_protocol!("string length overflows usize: {size}"))?;
  
--            let datatype = CStr::from_ptr(datatype);
--
--            Ok(
--                if primary_key != 0
--                    && datatype
--                        .to_bytes()
--                        .eq_ignore_ascii_case("integer".as_bytes())
--                {
--                    None
--                } else {
--                    Some(not_null == 0)
--                },
--            )
-+            // `sqlite3_table_column_metadata()` sets the declared type to NULL for a column
-+            // declared without one, e.g. `CREATE TABLE foo (bar PRIMARY KEY)`. Such a column
-+            // has no type name to compare against, and is by definition not declared
-+            // `INTEGER`, so it cannot be a rowid alias.
-+            let is_rowid_alias = primary_key != 0
-+                && !datatype.is_null()
-+                && CStr::from_ptr(datatype)
-+                    .to_bytes()
-+                    .eq_ignore_ascii_case("integer".as_bytes());
++        if size > self.remaining() {
++            return Err(err_protocol!(
++                "length-encoded string declares {size} bytes but only {} bytes remain",
++                self.remaining()
++            ));
++        }
 +
-+            Ok(if is_rowid_alias {
-+                None
-+            } else {
-+                Some(not_null == 0)
-+            })
-         }
+         self.get_str(size)
      }
  
-```
-
-**File**: `tests/sqlite/describe.rs` (modified, +34/-1)
-```diff
-@@ -2,7 +2,7 @@ use sqlx::error::DatabaseError;
- use sqlx::sqlite::{SqliteConnectOptions, SqliteError};
- use sqlx::TypeInfo;
- use sqlx::{sqlite::Sqlite, Column, Executor};
--use sqlx::{ConnectOptions, SqlSafeStr};
-+use sqlx::{ConnectOptions, Connection, SqlSafeStr, SqliteConnection};
- use sqlx_test::new;
- use std::env;
+@@ -70,6 +77,54 @@ impl MySqlBufExt for Bytes {
+         let size = usize::try_from(size)
+             .map_err(|_| err_protocol!("string length overflows usize: {size}"))?;
  
-@@ -1095,3 +1095,36 @@ async fn it_describes_analytical_function() -> anyhow::Result<()> {
- 
-     Ok(())
- }
++        if size > self.remaining() {
++            return Err(err_protocol!(
++                "length-encoded byte string declares {size} bytes but only {} bytes remain",
++                self.remaining()
++            ));
++        }
 +
-+// A column declared with no type at all, e.g. `CREATE TABLE foo (bar PRIMARY KEY)`, is
-+// legal SQLite. `sqlite3_table_column_metadata()` reports a NULL declared type for such a
-+// column, which `column_nullable()` used to dereference unconditionally, segfaulting the
-+// process, and thus rustc itself when the `query!()` macros describe a live database.
-+#[sqlx_macros::test]
-+async fn it_describes_columns_with_no_declared_type() -> anyhow::Result<()> {
-+    let mut conn = SqliteConnection::connect(":memory:").await?;
-+
-+    conn.execute(
-+        r#"
-+        CREATE TABLE untyped (
-+            id PRIMARY KEY,
-+            typeless,
-+            typed TEXT NOT NULL
-+        );
-+        "#
-+        .into_sql_str(),
-+    )
-+    .await?;
-+
-+    let d = conn
-+        .describe("SELECT id, typeless, typed FROM untyped".into_sql_str())
-+        .await?;
-+
-+    // A `PRIMARY KEY` with no declared type is not an `INTEGER PRIMARY KEY`, so it is not a
-+    // rowid alias and SQLite does permit NULLs in it.
-+    assert_eq!(d.nullable(0), Some(true));
-+    assert_eq!(d.nullable(1), Some(true));
-+    assert_eq!(d.nullable(2), Some(false));
-+
-+    Ok(())
-+}
-```
-
----
-
-### Incident Patch 6: `727c7789` (2026-09-10)
-**Commit Message**: fix(postgres): return UnexpectedEof when server closes connection at SSLRequest (#4395) (#4406)
-
-When a remote peer accepts the TCP socket and immediately closes it
-without responding to the 8-byte SSLRequest message, socket.read()
-returns 0 (EOF). Because the read byte count was discarded, the unwritten
-initial [0u8] buffer was matched against, reporting a fabricated
-Protocol("unexpected response from SSLRequest: 0x00") error.
-
-Check the returned read length and return an io::ErrorKind::UnexpectedEof
-error when 0 bytes are read, correctly identifying connection closure
-during the SSLRequest handshake, while preserving Protocol error reporting
-if the server actually transmits a wire 0x00 byte.
-
-Co-authored-by: zfaustk <[REDACTED_EMAIL]>
-
-**File**: `sqlx-postgres/src/connection/tls.rs` (modified, +136/-1)
-```diff
-@@ -1,3 +1,5 @@
-+use std::io;
-+
- use crate::error::Error;
- use crate::net::tls::{self, TlsConfig};
- use crate::net::{Socket, SocketIntoBox, WithSocket};
-@@ -88,7 +90,10 @@ async fn request_upgrade(
- 
-     let mut response = [0u8];
- 
--    socket.read(&mut &mut response[..]).await?;
-+    let n = socket.read(&mut &mut response[..]).await?;
-+    if n == 0 {
-+        return Err(io::Error::from(io::ErrorKind::UnexpectedEof).into());
-+    }
- 
-     match response[0] {
-         b'S' => {
-@@ -107,3 +112,133 @@ async fn request_upgrade(
-         )),
+         Ok(self.split_to(size))
      }
  }
 +
 +#[cfg(test)]
 +mod tests {
 +    use super::*;
-+    use sqlx_core::io::ReadBuf;
-+    use std::io;
-+    use std::pin::pin;
-+    use std::task::{Context, Poll, Waker};
 +
-+    struct MockSocket {
-+        read_byte: Option<u8>,
-+    }
++    #[test]
++    fn get_str_lenenc_reads_within_bounds() {
++        let mut buf = Bytes::from_static(&[3, b'a', b'b', b'c']);
 +
-+    impl Socket for MockSocket {
-+        fn try_read(&mut self, buf: &mut dyn ReadBuf) -> io::Result<usize> {
-+            match self.read_byte {
-+                Some(b) => {
-+                    buf.put_slice(&[b]);
-+                    Ok(1)
-+                }
-+                None => Ok(0), // EOF
-+            }
-+        }
-+
-+        fn try_write(&mut self, buf: &[u8]) -> io::Result<usize> {
-+            Ok(buf.len())
-+        }
-+
-+        fn poll_read_ready(&mut self, _cx: &mut Context<'_>) -> Poll<io::Result<()>> {
-+            Poll::Ready(Ok(()))
-+        }
-+
-+        fn poll_write_ready(&mut self, _cx: &mut Context<'_>) -> Poll<io::Result<()>> {
-+            Poll::Ready(Ok(()))
-+        }
-+
-+        fn poll_shutdown(&mut self, _cx: &mut Context<'_>) -> Poll<io::Result<()>> {
-+            Poll::Ready(Ok(()))
-+        }
-+    }
-+
-+    /// Polls a future that is guaranteed to complete immediately on its first poll.
-+    ///
-+    /// This safe test runner uses `Waker::noop()` and `std::pin::pin!` without needing
-+    /// a full runtime or unsafe waker implementations.
-+    fn poll_immediate<F: std::future::Future>(fut: F) -> F::Output {
-+        let mut fut = pin!(fut);
-+        let mut cx = Context::from_waker(Waker::noop());
-+        match fut.as_mut().poll(&mut cx) {
-+            Poll::Ready(val) => val,
-+            Poll::Pending => panic!("test future was pending unexpectedly"),
-+        }
++        assert_eq!(buf.get_str_lenenc().unwrap(), "abc");
++        assert!(buf.is_empty());
 +    }
 +
 +    #[test]
-+    fn test_request_upgrade_eof() {
-+        poll_immediate(async {
-+            let mut socket = MockSocket { read_byte: None };
-+            let options = PgConnectOptions::new();
-+            let err = request_upgrade(&mut socket, &options).await.unwrap_err();
++    fn get_str_lenenc_rejects_oversized_length() {
++        // 0xfc prefixed length of 0x0100 (256) but only 3 bytes of data
++        let mut buf = Bytes::from_static(&[0xfc, 0x00, 0x01, b'a', b'b', b'c']);
 +
-+            match err {
-+                Error::Io(io_err) => {
-+                    assert_eq!(io_err.kind(), io::ErrorKind::UnexpectedEof);
-+                }
-+                other => panic!("expected Error::Io(UnexpectedEof), but got: {:?}", other),
-+            }
-+        });
++        let err = buf.get_str_lenenc().unwrap_err();
++
++        assert!(err.to_string().contains("256 bytes"), "{err}");
 +    }
 +
 +    #[test]
-+    fn test_request_upgrade_wire_null_byte() {
-+        poll_immediate(async {
-+            let mut socket = MockSocket {
-+                read_byte: Some(0x00),
-+            };
-+            let options = PgConnectOptions::new();
-+            let err = request_upgrade(&mut socket, &options).await.unwrap_err();
++    fn get_bytes_lenenc_reads_within_bounds() {
++        let mut buf = Bytes::from_static(&[3, b'a', b'b', b'c']);
 +
-+            match err {
-+                Error::Protocol(msg) => {
-+                    assert!(msg.contains("unexpected response from SSLRequest: 0x00"));
-+                }
-+                other => panic!("expected Error::Protocol, but got: {:?}", other),
-+            }
-+        });
++        assert_eq!(&*buf.get_bytes_lenenc().unwrap(), b"abc");
++        assert!(buf.is_empty());
 +    }
 +
 +    #[test]
-+    fn test_request_upgrade_supported() {
-+        poll_immediate(async {
-+            let mut socket = MockSocket {
-+                read_byte: Some(b'S'),
-+            };
-+            let options = PgConnectOptions::new();
-+            let res = request_upgrade(&mut socket, &options).await.unwrap();
-+            assert!(res);
-+        });
-+    }
++    fn get_bytes_lenenc_rejects_oversized_length() {
++        // 0xfc prefixed length of 0xffff (65535) but only 1 byte of data
++        let mut buf = Bytes::from_static(&[0xfc, 0xff, 0xff, b'a']);
 +
-+    #[test]
-+    fn test_request_upgrade_unsupported() {
-+        poll_immediate(async {
-+            let mut socket = MockSocket {
-+                read_byte: Some(b'N'),
-+            };
-+            let options = PgConnectOptions::new();
-+            let res = request_upgrade(&mut socket, &options).await.unwrap();
-+            assert!(!res);
-+        });
-+    }
++        let err = buf.get_bytes_lenenc().unwrap_err();
 +
-+    #[test]
-+    fn test_request_upgrade_unexpected_byte() {
-+        poll_immediate(async {
-+            let mut socket = MockSocket {
-+                read_byte: Some(0x42),
-+            };
-+            let options = PgConnectOptions::new();
-+            let err = request_upgrade(&mut socket, &options).await.unwrap_err();
-+
-+            match err {
-+                Error::Protocol(msg) => {
-+                    assert!(msg.contains("unexpected response from SSLRequest: 0x42"));
-+                }
-+                other => panic!("expected Error::Protocol, but got: {:?}", other),
-+            }
-+        });
++        assert!(err.to_string().contains("65535 bytes"), "{err}");
 +    }
 +}
 ```
 
+**File**: `sqlx-mysql/src/protocol/connect/handshake.rs` (modified, +101/-2)
+```diff
+@@ -29,29 +29,74 @@ pub(crate) struct Handshake {
+ 
+ impl ProtocolDecode<'_> for Handshake {
+     fn decode_with(mut buf: Bytes, _: ()) -> Result<Self, Error> {
++        // NOTE: the handshake packet is received before authentication, so a
++        // hostile server can send anything here; every fixed-width read is
++        // validated against the remaining buffer to avoid panicking on
++        // truncated packets
++        if buf.is_empty() {
++            return Err(err_protocol!(
++                "expected protocol version (1 byte) in Handshake packet but got 0 bytes"
++            ));
++        }
++
+         let protocol_version = buf.get_u8(); // int<1>
+         let server_version = buf.get_str_nul()?; // string<NUL>
++
++        if buf.remaining() < 13 {
++            return Err(err_protocol!(
++                "expected connection id (4 bytes), auth-plugin-data-part-1 (8 bytes) and reserved byte (13 bytes total) in Handshake packet but got {} bytes",
++                buf.remaining()
++            ));
++        }
++
+         let connection_id = buf.get_u32_le(); // int<4>
+         let auth_plugin_data_1 = buf.get_bytes(8); // string<8>
+ 
+         buf.advance(1); // reserved: string<1>
+ 
++        if buf.remaining() < 2 {
++            return Err(err_protocol!(
++                "expected capability flags part 1 (2 bytes) in Handshake packet but got {} bytes",
++                buf.remaining()
++            ));
++        }
++
+         let capabilities_1 = buf.get_u16_le(); // int<2>
+         let mut capabilities = Capabilities::from_bits_truncate(capabilities_1.into());
+ 
++        if buf.remaining() < 5 {
++            return Err(err_protocol!(
++                "expected collation (1 byte), status (2 bytes) and capability flags part 2 (2 bytes) in Handshake packet but got {} bytes",
++                buf.remaining()
++            ));
++        }
++
+         let collation = buf.get_u8(); // int<1>
+         let status = Status::from_bits_truncate(buf.get_u16_le());
+ 
+         let capabilities_2 = buf.get_u16_le(); // int<2>
+         capabilities |= Capabilities::from_bits_truncate(((capabilities_2 as u32) << 16).into());
+ 
++        if buf.is_empty() {
++            return Err(err_protocol!(
++                "expected auth-plugin-data length (1 byte) in Handshake packet but got 0 bytes"
++            ));
++        }
++
+         let auth_plugin_data_len = if capabilities.contains(Capabilities::PLUGIN_AUTH) {
+             buf.get_u8()
+         } else {
+             buf.advance(1); // int<1>
+             0
+         };
+ 
++        if buf.remaining() < 10 {
++            return Err(err_protocol!(
++                "expected reserved bytes (6 bytes) and reserved bytes or capability flags part 3 (4 bytes) in Handshake packet but got {} bytes",
++                buf.remaining()
++            ));
++        }
++
+         buf.advance(6); // reserved: string<6>
+ 
+         if capabilities.contains(Capabilities::MYSQL) {
+@@ -62,8 +107,18 @@ impl ProtocolDecode<'_> for Handshake {
+         }
+ 
+         let auth_plugin_data_2 = if capabilities.contains(Capabilities::SECURE_CONNECTION) {
+-            let len = cmp::max(auth_plugin_data_len.saturating_sub(9), 12);
+-            let v = buf.get_bytes(len as usize);
++            let len = cmp::max(auth_plugin_data_len.saturating_sub(9), 12) as usize;
++
++            // the attacker-controlled length must fit in the remaining buffer
++            // *with* the trailing NUL-terminator, i.e. `len + 1` bytes
++            if buf.remaining() <= len {
++                return Err(err_protocol!(
++                    "expected auth-plugin-data-part-2 ({len} bytes) and NUL-terminator in Handshake packet but got {} bytes",
++                    buf.remaining()
++                ));
++            }
++
++            let v = buf.get_bytes(len);
+             buf.advance(1); // NUL-terminator
+ 
+             v
+@@ -197,3 +252,47 @@ fn test_decode_handshake_mariadb_10_4_7() {
+         &[116, 54, 76, 92, 106, 34, 100, 83, 85, 49, 52, 79, 112, 104, 57, 34, 60, 72, 53, 110,]
+     );
+ }
++
++#[test]
++fn test_decode_handshake_truncated_never_panics() {
++    const MYSQL_8_0_18: &[u8] = b"\n8.0.18\x00\x19\x00\x00\x00\x114aB0c\x06g\x00\xff\xff\xff\x02\x00\xff\xc7\x15\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00tL\x03s\x0f[4\rl4. \x00caching_sha2_password\x00";
++    const MARIA_DB_10_4_7: &[u8] = b"\n5.5.5-10.4.7-MariaDB-1:10.4.7+maria~bionic\x00\x0b\x00\x00\x00t6L\\j\"dS\x00\xfe\xf7\x08\x02\x00\xff\x81\x15\x00\x00\x00\x00\x00\x00\x07\x00\x00\x00U14Oph9\"<H5n\x00mysql_native_password\x00";
++
++    for packet in [MYSQL_8_0_18, MARIA_DB_10_4_7] {
++        // every strict prefix of a valid handshake is an error, never a panic
++        for len in 0..packet.len() {
++            assert!(
++                Handshake::decode(packet[..len].into()).is_err(),
++                "expected error for handshake truncated to {len} bytes"
++            );
++        }
++
++        // and the full packet still decodes
++        assert!(Handshake::decode(packet.into()).is_ok());
+```
+
+**File**: `sqlx-mysql/src/protocol/response/eof.rs` (modified, +27/-0)
+```diff
+@@ -28,9 +28,36 @@ impl ProtocolDecode<'_, Capabilities> for EofPacket {
+             ));
+         }
+ 
++        if buf.remaining() < 4 {
++            return Err(err_protocol!(
++                "expected warnings (2 bytes) and status flags (2 bytes) in EOF_Packet but got {} bytes",
++                buf.remaining()
++            ));
++        }
++
+         let warnings = buf.get_u16_le();
+         let status = Status::from_bits_truncate(buf.get_u16_le());
+ 
+         Ok(Self { status, warnings })
+     }
+ }
++
++#[test]
++fn test_decode_eof_packet() {
++    let p = EofPacket::decode_with(
++        b"\xfe\x00\x00\x02\x00".as_ref().into(),
++        Capabilities::empty(),
++    )
++    .unwrap();
++
++    assert_eq!(p.warnings, 0);
++    assert!(p.status.contains(Status::SERVER_STATUS_AUTOCOMMIT));
++}
++
++#[test]
++fn test_decode_eof_packet_truncated() {
++    // only 2 bytes after the 0xfe header, need 4
++    let p = EofPacket::decode_with(b"\xfe\x00\x00".as_ref().into(), Capabilities::empty());
++
++    assert!(p.is_err());
++}
+```
+
+**File**: `sqlx-mysql/src/protocol/response/err.rs` (modified, +37/-0)
+```diff
+@@ -25,13 +25,28 @@ impl ProtocolDecode<'_, Capabilities> for ErrPacket {
+             ));
+         }
+ 
++        if buf.remaining() < 2 {
++            return Err(err_protocol!(
++                "expected error code (2 bytes) in ERR_Packet but got {} bytes",
++                buf.remaining()
++            ));
++        }
++
+         let error_code = buf.get_u16_le();
+         let mut sql_state = None;
+ 
+         if capabilities.contains(Capabilities::PROTOCOL_41) {
+             // If the next byte is '#' then we have a SQL STATE
+             if buf.starts_with(b"#") {
+                 buf.advance(1);
++
++                if buf.remaining() < 5 {
++                    return Err(err_protocol!(
++                        "expected SQL state (5 bytes) after '#' marker in ERR_Packet but got {} bytes",
++                        buf.remaining()
++                    ));
++                }
++
+                 sql_state = Some(buf.get_str(5)?);
+             }
+         }
+@@ -69,3 +84,25 @@ fn test_decode_err_packet_unknown_database() {
+     assert_eq!(p.sql_state.as_deref(), Some("42000"));
+     assert_eq!(&p.error_message, "Unknown database \'unknown\'");
+ }
++
++#[test]
++fn test_decode_err_packet_truncated_error_code() {
++    // only 1 byte of the 2 byte error code is present
++    const ERR_TRUNCATED_CODE: &[u8] = b"\xff\x84";
++
++    let err =
++        ErrPacket::decode_with(ERR_TRUNCATED_CODE.into(), Capabilities::PROTOCOL_41).unwrap_err();
++
++    assert!(err.to_string().contains("expected error code"), "{err}");
++}
++
++#[test]
++fn test_decode_err_packet_truncated_sql_state() {
++    // '#' marker but fewer than 5 bytes of SQL state
++    const ERR_TRUNCATED_STATE: &[u8] = b"\xff\x84\x04#420";
++
++    let err =
++        ErrPacket::decode_with(ERR_TRUNCATED_STATE.into(), Capabilities::PROTOCOL_41).unwrap_err();
++
++    assert!(err.to_string().contains("expected SQL state"), "{err}");
++}
+```
+
+**File**: `sqlx-mysql/src/protocol/statement/row.rs` (modified, +125/-3)
+```diff
+@@ -27,6 +27,14 @@ impl<'de> ProtocolDecode<'de, &'de [MySqlColumn]> for BinaryRow {
+         let offset = buf.len();
+ 
+         let null_bitmap_len = (columns.len() + 9) / 8;
++
++        if buf.remaining() < null_bitmap_len {
++            return Err(err_protocol!(
++                "expected null-bitmap of {null_bitmap_len} bytes in binary row but got {} bytes",
++                buf.remaining()
++            ));
++        }
++
+         let null_bitmap = buf.get_bytes(null_bitmap_len);
+ 
+         let mut values = Vec::with_capacity(columns.len());
+@@ -89,13 +97,31 @@ impl<'de> ProtocolDecode<'de, &'de [MySqlColumn]> for BinaryRow {
+                 | ColumnType::Date
+                 | ColumnType::Datetime => {
+                     // Leave the length byte on the front of the value because decoding uses it.
+-                    buf[0] as usize + 1
++                    usize::from(*buf.first().ok_or(err_protocol!(
++                        "buffer exhausted when reading data for column {:?}; expected a length byte but no bytes remain in buffer",
++                        column
++                    ))?) + 1
+                 }
+ 
+-                // NOTE: MySQL will never generate NULL types for non-NULL values
+-                ColumnType::Null => unreachable!(),
++                // NOTE: MySQL will never legitimately generate NULL types for non-NULL values,
++                // but a hostile or broken server can send column type 0x06 (NULL) with the
++                // null-bit clear; report a protocol error instead of panicking
++                ColumnType::Null => {
++                    return Err(err_protocol!(
++                        "column {:?} has type NULL (0x06) but its null-bit is not set in the binary row",
++                        column
++                    ));
++                }
+             };
+ 
++            if buf.remaining() < size {
++                return Err(err_protocol!(
++                    "buffer exhausted when reading data for column {:?}; expected value of {size} bytes but only {} bytes remain in buffer",
++                    column,
++                    buf.remaining()
++                ));
++            }
++
+             let offset = offset - buf.len();
+ 
+             values.push(Some(offset..(offset + size)));
+@@ -106,3 +132,99 @@ impl<'de> ProtocolDecode<'de, &'de [MySqlColumn]> for BinaryRow {
+         Ok(BinaryRow(Row { values, storage }))
+     }
+ }
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++    use crate::ext::ustr::UStr;
++    use crate::MySqlTypeInfo;
++    use sqlx_core::column::ColumnOrigin;
++
++    fn test_column(name: &str, ty: ColumnType) -> MySqlColumn {
++        MySqlColumn {
++            ordinal: 0,
++            name: UStr::new(name),
++            type_info: MySqlTypeInfo::binary(ty),
++            origin: ColumnOrigin::Expression,
++            flags: None,
++        }
++    }
++
++    #[test]
++    fn decodes_simple_row() {
++        let columns = [
++            test_column("a", ColumnType::Long),
++            test_column("b", ColumnType::VarString),
++        ];
++
++        // 0x00 header, 1 byte null-bitmap (both columns non-NULL),
++        // a = 16909060i32 little-endian, b = "hi"
++        let row = BinaryRow::decode_with(
++            Bytes::from_static(&[0x00, 0x00, 0x04, 0x03, 0x02, 0x01, 2, b'h', b'i']),
++            &columns,
++        )
++        .unwrap()
++        .0;
++
++        assert_eq!(row.get(0), Some(&[4, 3, 2, 1][..]));
++        assert_eq!(row.get(1), Some(&b"hi"[..]));
++    }
++
++    #[test]
++    fn decodes_null_value() {
++        let columns = [
++            test_column("a", ColumnType::Long),
++            test_column("b", ColumnType::VarString),
++        ];
++
++        // null-bitmap with bit 2 set => the first column is NULL
++        let row =
++            BinaryRow::decode_with(Bytes::from_static(&[0x00, 0x04, 2, b'h', b'i']), &columns)
++                .unwrap()
++                .0;
++
++        assert_eq!(row.get(0), None);
++        assert_eq!(row.get(1), Some(&b"hi"[..]));
++    }
++
++    #[test]
++    fn rejects_truncated_null_bitmap() {
++        // 8 columns require a 2 byte null-bitmap, only 1 byte is provided
++        let columns: [_; 8] = std::array::from_fn(|_| test_column("a", ColumnType::Long));
++
++        let err = BinaryRow::decode_with(Bytes::from_static(&[0x00, 0x00]), &columns).unwrap_err();
++
++        assert!(err.to_string().contains("null-bitmap"), "{err}");
++    }
++
++    #[test]
++    fn rejects_truncated_fixed_width_value() {
++        // a LongLong value needs 8 bytes, only 3 are provided
++        let columns = [test_column("a", ColumnType::LongLong)];
++
++        let err = BinaryRow::decode_with(Bytes::from_static(&[0x00, 0x00, 1, 2, 3]), &columns)
++            .unwrap_err();
++
++        assert!(err.to_string().contains("value of 8 bytes"), "{err}");
++    }
++
++    #[test]
++    fn rejects_missing_temporal_length_byte() {
++        // the column type signals a length byte but the buffer is exhausted
++        let columns = [test_column("a", ColumnType::D
+```
+
 ---
 
-### Incident Patch 7: `5d3787ef` (2026-09-10)
+### Incident Patch 2: `5d3787ef` (2026-09-10)
 **Commit Message**: fix(pool): prevent num_idle underflow that wedges maintenance in a CPU spin (#4289)
 
 * fix(pool): prevent num_idle underflow that wedges maintenance in a CPU spin
@@ -1938,7 +1637,7 @@ single bad read of `usize::MAX` ma
 
 ---
 
-### Incident Patch 8: `f1e94ec3` (2026-09-09)
+### Incident Patch 3: `f1e94ec3` (2026-09-09)
 **Commit Message**: fix(postgres): roll back a transaction cancelled during BEGIN (#4394)
 
 `PgTransactionManager::begin` raises `transaction_depth` only after the BEGIN
@@ -2044,892 +1743,13 @@ Closes #4393. Refs #2054, #2819, #3980.
 +}
 ```
 
----
-
-### Incident Patch 9: `4fc0fb82` (2026-08-19)
-**Commit Message**: fix(sqlite): correct sub-second decoding of pre-epoch REAL datetimes (#4340)
-
-Datetimes stored as a REAL Julian day number (e.g. via SQLite's
-julianday()) were decoded by splitting the UNIX timestamp with
-trunc()/fract().abs(). timestamp_opt() always adds the nanoseconds
-forward in time, so for values before 1970 this pushed the result up to
-~2 seconds off and could move it onto the wrong side of the epoch
-(e.g. 1969-12-31 23:59:59.5 decoded as 1970-01-01 00:00:00.5).
-
-Round seconds toward negative infinity with floor() and take the
-sub-second remainder relative to that, so nanos is always a valid
-forward offset. Post-epoch values are unaffected. Adds unit tests for
-the pre- and post-epoch paths.
-
-**File**: `sqlx-sqlite/src/types/chrono.rs` (modified, +64/-4)
-```diff
-@@ -176,10 +176,16 @@ fn decode_datetime_from_float(value: f64) -> Option<DateTime<FixedOffset>> {
-     // We checked above if the value is infinite or NaN which could otherwise cause problems
-     #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
-     {
--        let seconds = timestamp.trunc() as i64;
--        let nanos = (timestamp.fract() * 1E9).abs() as u32;
--
--        Utc.fix().timestamp_opt(seconds, nanos).single()
-+        // Split into whole seconds and a non-negative sub-second remainder.
-+        // `timestamp_opt` always adds `nanos` *forward* in time, so we must round
-+        // `seconds` toward negative infinity (not toward zero) and take the
-+        // fraction relative to that. Using `trunc()`/`fract().abs()` here would
-+        // push pre-epoch timestamps up to ~2 seconds off (and onto the wrong side
-+        // of the epoch), since the fractional part is negative below zero.
-+        let seconds = timestamp.floor();
-+        let nanos = ((timestamp - seconds) * 1E9) as u32;
-+
-+        Utc.fix().timestamp_opt(seconds as i64, nanos).single()
-     }
- }
- 
-@@ -218,3 +224,57 @@ impl<'r> Decode<'r, Sqlite> for NaiveTime {
-         Err(format!("invalid time: {value}").into())
-     }
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::decode_datetime_from_float;
-+    use chrono::{Offset, TimeZone, Utc};
-+
-+    // SQLite may store a datetime as a REAL holding a Julian day number, e.g. the
-+    // result of `julianday(...)`. This mirrors that conversion so a test can feed
-+    // `decode_datetime_from_float` the value for a known instant.
-+    fn julian_day(unix_seconds: f64) -> f64 {
-+        2_440_587.5 + unix_seconds / 86_400.0
-+    }
-+
-+    // Assert that the Julian day for `unix_seconds + subsec_nanos` decodes back to
-+    // that same instant. The tolerance only absorbs f64 round-off in the
-+    // round-trip (tens of microseconds), well below the errors under test.
-+    #[track_caller]
-+    fn assert_decodes_near(unix_seconds: i64, subsec_nanos: u32) {
-+        let input = julian_day(unix_seconds as f64 + f64::from(subsec_nanos) / 1e9);
-+        let decoded = decode_datetime_from_float(input).expect("valid Julian day should decode");
-+        let expected = Utc
-+            .fix()
-+            .timestamp_opt(unix_seconds, subsec_nanos)
-+            .single()
-+            .unwrap();
-+
-+        let diff_us = (decoded - expected)
-+            .num_microseconds()
-+            .expect("difference fits in microseconds")
-+            .abs();
-+        assert!(
-+            diff_us < 1_000,
-+            "decoded {decoded} differs from expected {expected} by {diff_us} us",
-+        );
-+    }
-+
-+    // A Julian day landing before the UNIX epoch must keep its sub-second part in
-+    // the correct direction. Before the fix these decoded up to ~2 seconds off,
-+    // and could even cross to the wrong side of the epoch.
-+    #[test]
-+    fn decodes_pre_epoch_float_datetime() {
-+        // 1969-12-31 23:59:59.500 UTC
-+        assert_decodes_near(-1, 500_000_000);
-+        // 1969-12-31 23:59:58.750 UTC
-+        assert_decodes_near(-2, 750_000_000);
-+    }
-+
-+    // Post-epoch values were already correct; guard against a regression.
-+    #[test]
-+    fn decodes_post_epoch_float_datetime() {
-+        // 1970-01-01 00:00:01.500 UTC
-+        assert_decodes_near(1, 500_000_000);
-+    }
-+}
-```
-
----
-
-### Incident Patch 10: `80f44db8` (2026-08-19)
-**Commit Message**: Fix Any type/close handling, MySQL time signs, SQLite plans, and macro docs (#4359)
-
-**File**: `sqlx-core/src/any/arguments.rs` (modified, +2/-2)
-```diff
-@@ -67,8 +67,8 @@ impl AnyArguments {
-                 AnyValueKind::Null(AnyTypeInfoKind::SmallInt) => out.add(Option::<i16>::None),
-                 AnyValueKind::Null(AnyTypeInfoKind::Integer) => out.add(Option::<i32>::None),
-                 AnyValueKind::Null(AnyTypeInfoKind::BigInt) => out.add(Option::<i64>::None),
--                AnyValueKind::Null(AnyTypeInfoKind::Real) => out.add(Option::<f64>::None),
--                AnyValueKind::Null(AnyTypeInfoKind::Double) => out.add(Option::<f32>::None),
-+                AnyValueKind::Null(AnyTypeInfoKind::Real) => out.add(Option::<f32>::None),
-+                AnyValueKind::Null(AnyTypeInfoKind::Double) => out.add(Option::<f64>::None),
-                 AnyValueKind::Null(AnyTypeInfoKind::Text) => out.add(Option::<String>::None),
-                 AnyValueKind::Null(AnyTypeInfoKind::Blob) => out.add(Option::<Vec<u8>>::None),
-                 AnyValueKind::Bool(b) => out.add(b),
-```
-
-**File**: `sqlx-core/src/any/connection/mod.rs` (modified, +1/-1)
-```diff
-@@ -101,7 +101,7 @@ impl Connection for AnyConnection {
-     }
- 
-     fn close_hard(self) -> impl Future<Output = Result<(), Error>> + Send + 'static {
--        self.backend.close()
-+        self.backend.close_hard()
-     }
- 
-     fn ping(&mut self) -> impl Future<Output = Result<(), Error>> + Send + '_ {
-```
-
-**File**: `sqlx-macros-core/src/query/metadata.rs` (modified, +1/-1)
-```diff
-@@ -175,7 +175,7 @@ fn load_env(
-     }))
- }
- 
--/// Returns `true` if `val` is `"true"`,
-+/// Returns `true` if `val` is `"true"` (case-insensitive) or `"1"`.
- fn is_truthy_bool(val: &str) -> bool {
-     val.eq_ignore_ascii_case("true") || val == "1"
- }
-```
-
-**File**: `sqlx-mysql/src/types/mysql_time.rs` (modified, +8/-1)
-```diff
-@@ -213,7 +213,7 @@ impl MySqlTime {
- 
-     /// Returns `true` if `self` is negative, `false` if positive or zero.
-     pub fn is_negative(&self) -> bool {
--        self.sign.is_positive()
-+        self.sign.is_negative()
-     }
- 
-     /// Returns `true` if this interval is a valid time-of-day.
-@@ -691,6 +691,13 @@ mod tests {
-         assert_eq!(format!("{negative:.9}"), "-123:45:56.890011000");
-     }
- 
-+    #[test]
-+    fn test_is_negative() {
-+        assert!(!MySqlTime::ZERO.is_negative());
-+        assert!(!MySqlTime::MAX.is_negative());
-+        assert!(MySqlTime::MIN.is_negative());
-+    }
-+
-     #[test]
-     fn test_parse_microseconds() {
-         assert_eq!(parse_microseconds("010").unwrap(), 10_000);
-```
-
-**File**: `sqlx-sqlite/src/logger.rs` (modified, +1/-1)
-```diff
-@@ -224,7 +224,7 @@ impl<R: Debug, S: Debug + DebugDiff, P: Debug> core::fmt::Display for QueryPlanL
-         let max_branch_id: i64 = [
-             self.branch_operations.last_index().unwrap_or(0),
-             self.branch_results.last_index().unwrap_or(0),
--            self.branch_results.last_index().unwrap_or(0),
-+            self.branch_origins.last_index().unwrap_or(0),
-         ]
-         .into_iter()
-         .max()
-```
-
----
-
-### Incident Patch 11: `ebc408a4` (2026-08-19)
-**Commit Message**: bugfix: streamline and fix AnyQueryResult::last_insert_id() for SQLite (#4205)
-
-* fix: make MySqlQueryResult -> AnyQueryResult conversion more consistent & robust
-
-- replaced custom map_result function with From<T> implementation
-
-* fix: unify PgQueryResult -> AnyQueryResult conversion code path
-
-- replaced custom map_result function with From<T> implementation
-
-* fix: make SqliteQueryResult -> AnyQueryResult conversion respect last_insert_rowid
-
-- replaced custom map_result function with From<T> implementation
-- fixed bug causing AnyQueryResult.last_insert_id to always be None for Sqlite backend
-
-* test(sqlite): add any_sets_last_insert_id
-
-- added test
-- updated required-features
-
-* test(mysql): add any_sets_last_insert_id
-
-- added test
-- updated required-features
-
-* test(postgres): add any_sets_last_insert_id
-
-- added test
-- updated required-features
-
-* fix(tests): use different syntax to address compiler errors
-
-* fix(test/postgres): slightly change bind syntax as required for this backend
-
-**File**: `Cargo.toml` (modified, +11/-1)
-```diff
-@@ -313,7 +313,7 @@ required-features = ["sqlite"]
- [[test]]
- name = "sqlite-any"
- path = "tests/sqlite/any.rs"
--required-features = ["sqlite"]
-+required-features = ["sqlite", "any"]
- 
- [[test]]
- name = "sqlite-types"
-@@ -415,6 +415,11 @@ name = "mysql-rustsec"
- path = "tests/mysql/rustsec.rs"
- required-features = ["mysql"]
- 
-+[[test]]
-+name = "mysql-any"
-+path = "tests/mysql/any.rs"
-+required-features = ["mysql", "any"]
-+
- #
- # PostgreSQL
- #
-@@ -468,3 +473,8 @@ required-features = ["postgres"]
- name = "postgres-rustsec"
- path = "tests/postgres/rustsec.rs"
- required-features = ["postgres", "macros", "migrate"]
-+
-+[[test]]
-+name = "postgres-any"
-+path = "tests/postgres/any.rs"
-+required-features = ["postgres", "any"]
-```
-
-**File**: `sqlx-mysql/src/any.rs` (modified, +8/-7)
-```diff
-@@ -96,7 +96,7 @@ impl AnyConnectionBackend for MySqlConnection {
-                 .try_flatten_stream()
-                 .map(|res| {
-                     Ok(match res? {
--                        Either::Left(result) => Either::Left(map_result(result)),
-+                        Either::Left(result) => Either::Left(result.into()),
-                         Either::Right(row) => Either::Right(AnyRow::try_from(&row)?),
-                     })
-                 }),
-@@ -210,11 +210,12 @@ impl<'a> TryFrom<&'a AnyConnectOptions> for MySqlConnectOptions {
-     }
- }
- 
--fn map_result(result: MySqlQueryResult) -> AnyQueryResult {
--    AnyQueryResult {
--        rows_affected: result.rows_affected,
--        // Don't expect this to be a problem
--        #[allow(clippy::cast_possible_wrap)]
--        last_insert_id: Some(result.last_insert_id as i64),
-+/// This conversion attempts to save last_insert_id by converting to i64.
-+impl From<MySqlQueryResult> for AnyQueryResult {
-+    fn from(done: MySqlQueryResult) -> Self {
-+        AnyQueryResult {
-+            rows_affected: done.rows_affected(),
-+            last_insert_id: done.last_insert_id().try_into().ok(),
-+        }
-     }
- }
-```
-
-**File**: `sqlx-mysql/src/query_result.rs` (modified, +0/-10)
-```diff
-@@ -24,13 +24,3 @@ impl Extend<MySqlQueryResult> for MySqlQueryResult {
-         }
-     }
- }
--#[cfg(feature = "any")]
--/// This conversion attempts to save last_insert_id by converting to i64.
--impl From<MySqlQueryResult> for sqlx_core::any::AnyQueryResult {
--    fn from(done: MySqlQueryResult) -> Self {
--        sqlx_core::any::AnyQueryResult {
--            rows_affected: done.rows_affected(),
--            last_insert_id: done.last_insert_id().try_into().ok(),
--        }
--    }
--}
-```
-
-**File**: `sqlx-postgres/src/any.rs` (modified, +7/-5)
-```diff
-@@ -97,7 +97,7 @@ impl AnyConnectionBackend for PgConnection {
-                 .try_flatten_stream()
-                 .map(
-                     move |res: sqlx_core::Result<Either<PgQueryResult, PgRow>>| match res? {
--                        Either::Left(result) => Ok(Either::Left(map_result(result))),
-+                        Either::Left(result) => Ok(Either::Left(result.into())),
-                         Either::Right(row) => Ok(Either::Right(AnyRow::try_from(&row)?)),
-                     },
-                 ),
-@@ -246,9 +246,11 @@ impl<'a> TryFrom<&'a AnyConnectOptions> for PgConnectOptions {
-     }
- }
- 
--fn map_result(res: PgQueryResult) -> AnyQueryResult {
--    AnyQueryResult {
--        rows_affected: res.rows_affected(),
--        last_insert_id: None,
-+impl From<PgQueryResult> for AnyQueryResult {
-+    fn from(done: PgQueryResult) -> Self {
-+        AnyQueryResult {
-+            rows_affected: done.rows_affected(),
-+            last_insert_id: None,
-+        }
-     }
- }
-```
-
-**File**: `sqlx-postgres/src/query_result.rs` (modified, +0/-10)
-```diff
-@@ -18,13 +18,3 @@ impl Extend<PgQueryResult> for PgQueryResult {
-         }
-     }
- }
--
--#[cfg(feature = "any")]
--impl From<PgQueryResult> for sqlx_core::any::AnyQueryResult {
--    fn from(done: PgQueryResult) -> Self {
--        sqlx_core::any::AnyQueryResult {
--            rows_affected: done.rows_affected,
--            last_insert_id: None,
--        }
--    }
--}
-```
-
-**File**: `sqlx-sqlite/src/any.rs` (modified, +12/-5)
-```diff
-@@ -95,7 +95,7 @@ impl AnyConnectionBackend for SqliteConnection {
-                 .try_flatten_stream()
-                 .map(
-                     move |res: sqlx_core::Result<Either<SqliteQueryResult, SqliteRow>>| match res? {
--                        Either::Left(result) => Ok(Either::Left(map_result(result))),
-+                        Either::Left(result) => Ok(Either::Left(result.into())),
-                         Either::Right(row) => Ok(Either::Right(AnyRow::try_from(&row)?)),
-                     },
-                 ),
-@@ -234,9 +234,16 @@ fn map_arguments(args: AnyArguments) -> SqliteArguments {
-     }
- }
- 
--fn map_result(res: SqliteQueryResult) -> AnyQueryResult {
--    AnyQueryResult {
--        rows_affected: res.rows_affected(),
--        last_insert_id: None,
-+impl From<SqliteQueryResult> for AnyQueryResult {
-+    fn from(done: SqliteQueryResult) -> Self {
-+        // logic as per: https://www.sqlite.org/c3ref/last_insert_rowid.html
-+        let last_insert_id = match done.last_insert_rowid() {
-+            0 => None,
-+            n => Some(n),
-+        };
-+        AnyQueryResult {
-+            rows_affected: done.rows_affected(),
-+            last_insert_id,
-+        }
-     }
- }
-```
-
-**File**: `sqlx-sqlite/src/query_result.rs` (modified, +0/-14)
-```diff
-@@ -24,17 +24,3 @@ impl Extend<SqliteQueryResult> for SqliteQueryResult {
-         }
-     }
- }
--
--#[cfg(feature = "any")]
--impl From<SqliteQueryResult> for sqlx_core::any::AnyQueryResult {
--    fn from(done: SqliteQueryResult) -> Self {
--        let last_insert_id = match done.last_insert_rowid() {
--            0 => None,
--            n => Some(n),
--        };
--        sqlx_core::any::AnyQueryResult {
--            rows_affected: done.rows_affected(),
--            last_insert_id,
--        }
--    }
--}
-```
-
-**File**: `tests/mysql/any.rs` (added, +26/-0)
-```diff
-@@ -0,0 +1,26 @@
-+use sqlx::Any;
-+use sqlx_test::new;
-+
-+/// ensure Any type with MySQL backing returns last_insert_id properly
-+/// https://github.com/launchbadge/sqlx/issues/2982
-+#[sqlx_macros::test]
-+async fn any_sets_last_insert_id() -> anyhow::Result<()> {
-+    sqlx::any::install_default_drivers();
-+
-+    let mut conn = new::<Any>().await?;
-+    // syntax as per: https://dev.mysql.com/doc/refman/9.6/en/example-auto-increment.html
-+    let _ = sqlx::query(
-+        "CREATE TEMPORARY TABLE users (id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT, name TEXT NOT NULL)",
-+    )
-+    .execute(&mut conn)
-+    .await?;
-+
-+    let result = sqlx::query("INSERT INTO users (name) VALUES (?)")
-+        .bind("Glorbo")
-+        .execute(&mut conn)
-+        .await?;
-+
-+    assert_eq!(result.last_insert_id(), Some(1));
-+
-+    Ok(())
-+}
-```
-
----
-
-### Incident Patch 12: `218ff5f5` (2026-08-18)
-**Commit Message**: docs(macros): document that bind parameter nullability is not compile-checked (#4345)
-
-Restructures the "Nullability: Bind Parameters" section of the query!
-macro documentation to state upfront that the nullability of bind
-parameters is not verified at compile time, why (SQLx does not parse
-SQL), and give the concrete example from #2642.
-
-The previous phrasing understated the limitation and hid it behind
-guidance about WHERE clauses, which is now demoted to a sub-section.
-
-Closes #2642
-
-**File**: `src/macros/mod.rs` (modified, +29/-5)
-```diff
-@@ -130,18 +130,42 @@
- /// * MySQL/SQLite: `?` which matches arguments in order that it appears in the query
- ///
- /// ## Nullability: Bind Parameters
--/// For a given expected type `T`, both `T` and `Option<T>` are allowed (as well as either
--/// behind references). `Option::None` will be bound as `NULL`, so if binding a type behind `Option`
--/// be sure your query can support it.
-+/// **The nullability of bind parameters is _not_ verified at compile time.** Unlike output
-+/// columns (see the [next section](#nullability-output-columns)), the `query!()` family of
-+/// macros does not check whether an `Option<T>` bound to a parameter is compatible with the
-+/// nullability of the target column. This is a fundamental limitation, not an oversight:
-+/// determining which parameter maps to which column would require the macros to parse and
-+/// analyze the SQL themselves, which SQLx explicitly does not do
-+/// (see [the FAQ][faq-parse-sql] for the reasoning).
-+///
-+/// For any bind parameter, both `T` and `Option<T>` are accepted (as well as either behind
-+/// references). `Option::None` is bound as SQL `NULL`. If the target column has a `NOT NULL`
-+/// constraint, binding `None` will compile successfully but fail **at runtime** with a
-+/// database error, for example:
- ///
--/// Note, however, if binding in a `where` clause, that equality comparisons with `NULL` may not
--/// work as expected; instead you must use `IS NOT NULL` or `IS NULL` to check if a column is not
-+/// ```rust,ignore
-+/// // Schema: `CREATE TABLE foo (data TEXT NOT NULL);`
-+/// // Compiles fine, fails at runtime:
-+/// sqlx::query!("INSERT INTO foo (data) VALUES ($1)", None::<String>)
-+///     .execute(&pool)
-+///     .await?;
-+/// ```
-+///
-+/// If you need this kind of safety, encode the constraint in your Rust types (e.g. use `String`
-+/// instead of `Option<String>` for the field that feeds the bind parameter) or cover the
-+/// invariant with an integration test against a real database.
-+///
-+/// ### Bind parameters in `WHERE` clauses
-+/// If binding in a `WHERE` clause, note that equality comparisons with `NULL` may not work
-+/// as expected; instead you must use `IS NOT NULL` or `IS NULL` to check if a column is not
- /// null or is null, respectively.
- ///
- /// In Postgres and MySQL you may also use `IS [NOT] DISTINCT FROM` to compare with a possibly
- /// `NULL` value. In MySQL `IS NOT DISTINCT FROM` can be shortened to `<=>`.
- /// In SQLite you can use `IS` or `IS NOT`. Note that operator precedence may be different.
- ///
-+/// [faq-parse-sql]: https://github.com/transact-rs/sqlx/blob/main/FAQ.md#why-cant-sqlx-just-look-at-my-database-schemamigrations-and-parse-the-sql-itself
-+///
- /// ## Nullability: Output Columns
- /// In most cases, the database engine can tell us whether or not a column may be `NULL`, and
- /// the `query!()` macro adjusts the field types of the returned struct accordingly.
-```
-
----
-
-### Incident Patch 13: `56fbf870` (2026-08-17)
-**Commit Message**: Fix PostgreSQL memory leak when statement cache is disabled (#4337)
-
-* fix(postgres): check if statement caching is enabled before assigning an id
-
-* test(postgres): add regression test for #4328
-
-**File**: `sqlx-postgres/src/connection/executor.rs` (modified, +3/-1)
-```diff
-@@ -28,7 +28,9 @@ async fn prepare(
-     persistent: bool,
-     resolve_column_origin: bool,
- ) -> Result<(StatementId, Arc<PgStatementMetadata>), Error> {
--    let id = if persistent {
-+    // if cache is disabled, persistent statements get an id but are never evicted
-+    // which causes a memory leak
-+    let id = if persistent && conn.inner.cache_statement.is_enabled() {
-         let id = conn.inner.next_statement_id;
-         conn.inner.next_statement_id = id.next();
-         id
-```
-
-**File**: `tests/postgres/postgres.rs` (modified, +26/-0)
-```diff
-@@ -845,6 +845,32 @@ async fn it_closes_statements_when_not_persistent_issue_3850() -> anyhow::Result
-     Ok(())
- }
- 
-+#[sqlx_macros::test]
-+async fn it_closes_statements_when_caching_is_disabled_issue_4328() -> anyhow::Result<()> {
-+    sqlx_test::setup_if_needed();
-+
-+    let mut options: PgConnectOptions = env::var("DATABASE_URL")?.parse().unwrap();
-+
-+    options = options.statement_cache_capacity(0);
-+
-+    let mut conn = PgConnection::connect_with(&options).await?;
-+
-+    let _row = sqlx::query("SELECT $1 AS val")
-+        .bind(Oid(1))
-+        .fetch_one(&mut conn)
-+        .await?;
-+
-+    let row = sqlx::query("SELECT count(*) AS num_prepared_statements FROM pg_prepared_statements")
-+        .persistent(false)
-+        .fetch_one(&mut conn)
-+        .await?;
-+
-+    let n: i64 = row.get("num_prepared_statements");
-+    assert_eq!(0, n, "no prepared statements should be open");
-+
-+    Ok(())
-+}
-+
- #[sqlx_macros::test]
- async fn it_sets_application_name() -> anyhow::Result<()> {
-     sqlx_test::setup_if_needed();
-```
-
----
-
-### Incident Patch 14: `4893f831` (2026-06-30)
-**Commit Message**: fix(sqlite): migrate datetime format builders off time 0.3.48-depreca… (#4317)
-
-* fix(sqlite): migrate datetime format builders off time 0.3.48-deprecated API
-
-* ci: re-trigger checks
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -186,7 +186,7 @@ ipnet = "2.3.0"
- ipnetwork = "0.21.1"
- mac_address = "1.1.5"
- rust_decimal = { version = "1.36.0", default-features = false, features = ["std"] }
--time = { version = "0.3.47", features = ["formatting", "parsing", "macros"] }
-+time = { version = "0.3.48", features = ["formatting", "parsing", "macros"] }
- uuid = "1.12.1"
- 
- # Common utility crates
-```
-
-**File**: `examples/postgres/axum-social-with-tests/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -17,7 +17,7 @@ rand = "0.10.1"
- regex = "1.6.0"
- serde = "1.0.219"
- serde_with = { version = "3.18.0", features = ["time_0_3"] }
--time = "0.3.47"
-+time = "0.3.48"
- uuid = { version = "1.12.1", features = ["serde"] }
- validator = { version = "0.20.0", features = ["derive"] }
- 
-```
-
-**File**: `examples/postgres/multi-database/accounts/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -15,7 +15,7 @@ uuid = { version = "1.12.1", features = ["serde"] }
- thiserror = "2.0.18"
- rand = "0.10.1"
- 
--time = { version = "0.3.47", features = ["serde"] }
-+time = { version = "0.3.48", features = ["serde"] }
- 
- serde = { version = "1.0.219", features = ["derive"] }
- 
-```
-
-**File**: `examples/postgres/multi-database/payments/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -9,7 +9,7 @@ sqlx = { workspace = true, features = ["postgres", "time", "uuid", "rust_decimal
- 
- rust_decimal = "1.36.0"
- 
--time = "0.3.47"
-+time = "0.3.48"
- uuid = "1.12.1"
- 
- [dependencies.accounts]
-```
-
-**File**: `examples/postgres/multi-tenant/accounts/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -14,7 +14,7 @@ uuid = { version = "1.12.1", features = ["serde"] }
- thiserror = "2.0.18"
- rand = "0.10.1"
- 
--time = { version = "0.3.47", features = ["serde"] }
-+time = { version = "0.3.48", features = ["serde"] }
- 
- serde = { version = "1.0.219", features = ["derive"] }
- 
-```
-
-**File**: `examples/postgres/multi-tenant/payments/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -7,7 +7,7 @@ edition = "2021"
- 
- rust_decimal = "1.36.0"
- 
--time = "0.3.47"
-+time = "0.3.48"
- uuid = "1.12.1"
- 
- [dependencies.sqlx]
-```
-
-**File**: `examples/postgres/preferred-crates/uses-time/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -10,7 +10,7 @@ authors.workspace = true
- 
- [dependencies]
- serde = "1.0.219"
--time = "0.3.47"
-+time = "0.3.48"
- uuid = "1.12.1"
- 
- [dependencies.sqlx]
-```
-
-**File**: `sqlx-sqlite/src/types/time.rs` (modified, +12/-129)
-```diff
-@@ -145,7 +145,12 @@ fn decode_offset_datetime_from_text(value: &str) -> Option<OffsetDateTime> {
-         return Some(dt);
-     }
- 
--    if let Ok(dt) = OffsetDateTime::parse(value, formats::OFFSET_DATE_TIME) {
-+    if let Ok(dt) = OffsetDateTime::parse(
-+        value,
-+        &fd!(
-+            "[year]-[month]-[day][optional [ ]][optional [T]][hour]:[minute][optional [:[second]]][optional [.[subsecond]]][optional [[offset_hour]]][optional [:[offset_minute]]]"
-+        ),
-+    ) {
-         return Some(dt);
-     }
- 
-@@ -181,8 +186,12 @@ fn decode_datetime_from_text(value: &str) -> Option<PrimitiveDateTime> {
-     }
- 
-     let formats = [
--        BorrowedFormatItem::Compound(formats::PRIMITIVE_DATE_TIME_SPACE_SEPARATED),
--        BorrowedFormatItem::Compound(formats::PRIMITIVE_DATE_TIME_T_SEPARATED),
-+        BorrowedFormatItem::Compound(fd!(
-+            "[year]-[month]-[day] [hour]:[minute][optional [:[second]]][optional [.[subsecond]]][optional [Z]]"
-+        )),
-+        BorrowedFormatItem::Compound(fd!(
-+            "[year]-[month]-[day]T[hour]:[minute][optional [:[second]]][optional [.[subsecond]]][optional [Z]]"
-+        )),
-     ];
- 
-     if let Ok(dt) = PrimitiveDateTime::parse(value, &BorrowedFormatItem::First(&formats)) {
-@@ -191,129 +200,3 @@ fn decode_datetime_from_text(value: &str) -> Option<PrimitiveDateTime> {
- 
-     None
- }
--
--mod formats {
--    use time::format_description::BorrowedFormatItem::{Component, Literal, Optional};
--    use time::format_description::{modifier, BorrowedFormatItem, Component::*};
--
--    const YEAR: BorrowedFormatItem<'_> = Component(Year({
--        let mut value = modifier::Year::default();
--        value.padding = modifier::Padding::Zero;
--        value.repr = modifier::YearRepr::Full;
--        value.iso_week_based = false;
--        value.sign_is_mandatory = false;
--        value
--    }));
--
--    const MONTH: BorrowedFormatItem<'_> = Component(Month({
--        let mut value = modifier::Month::default();
--        value.padding = modifier::Padding::Zero;
--        value.repr = modifier::MonthRepr::Numerical;
--        value.case_sensitive = true;
--        value
--    }));
--
--    const DAY: BorrowedFormatItem<'_> = Component(Day({
--        let mut value = modifier::Day::default();
--        value.padding = modifier::Padding::Zero;
--        value
--    }));
--
--    const HOUR: BorrowedFormatItem<'_> = Component(Hour({
--        let mut value = modifier::Hour::default();
--        value.padding = modifier::Padding::Zero;
--        value.is_12_hour_clock = false;
--        value
--    }));
--
--    const MINUTE: BorrowedFormatItem<'_> = Component(Minute({
--        let mut value = modifier::Minute::default();
--        value.padding = modifier::Padding::Zero;
--        value
--    }));
--
--    const SECOND: BorrowedFormatItem<'_> = Component(Second({
--        let mut value = modifier::Second::default();
--        value.padding = modifier::Padding::Zero;
--        value
--    }));
--
--    const SUBSECOND: BorrowedFormatItem<'_> = Component(Subsecond({
--        let mut value = modifier::Subsecond::default();
--        value.digits = modifier::SubsecondDigits::OneOrMore;
--        value
--    }));
--
--    const OFFSET_HOUR: BorrowedFormatItem<'_> = Component(OffsetHour({
--        let mut value = modifier::OffsetHour::default();
--        value.sign_is_mandatory = true;
--        value.padding = modifier::Padding::Zero;
--        value
--    }));
--
--    const OFFSET_MINUTE: BorrowedFormatItem<'_> = Component(OffsetMinute({
--        let mut value = modifier::OffsetMinute::default();
--        value.padding = modifier::Padding::Zero;
--        value
--    }));
--
--    pub(super) const OFFSET_DATE_TIME: &[BorrowedFormatItem<'_>] = {
--        &[
--            YEAR,
--            Literal(b"-"),
--            MONTH,
--            Literal(b"-"),
--            DAY,
--            Optional(&Literal(b" ")),
--            Optional(&Literal(b"T")),
--            HOUR,
--            Literal(b":"),
--            MINUTE,
--            Optional(&Literal(b":")),
--            Optional(&SECOND),
--            Optional(&Literal(b".")),
--            Optional(&SUBSECOND),
--            Optional(&OFFSET_HOUR),
--            Optional(&Literal(b":")),
--            Optional(&OFFSET_MINUTE),
--        ]
--    };
--
--    pub(super) const PRIMITIVE_DATE_TIME_SPACE_SEPARATED: &[BorrowedFormatItem<'_>] = {
--        &[
--            YEAR,
--            Literal(b"-"),
--            MONTH,
--            Literal(b"-"),
--            DAY,
--            Literal(b" "),
--            HOUR,
--            Literal(b":"),
--            MINUTE,
--            Optional(&Literal(b":")),
--            Optional(&SECOND),
--            Optional(&Literal(b".")),
--            Optional(&SUBSECOND),
--            Optional(&Literal(b"Z")),
--        ]
--    };
--
--    pub(super) const PRIMITIVE_DATE_TIME_T_SEPARATED: &[BorrowedFormatItem<'_>] = {
--        &[
--            YEAR,
--            Literal(b"-"),
--            MONTH,
--            Literal(b"-"),
--            DAY,
--            Literal(b"
-```
-
----
-
-### Incident Patch 15: `f8afe99d` (2026-06-10)
-**Commit Message**: fix: whoami regression to anonymous user (#4303)
-
-**File**: `.github/workflows/sqlx.yml` (modified, +16/-0)
-```diff
-@@ -301,6 +301,22 @@ jobs:
-           SQLX_OFFLINE_DIR: .sqlx
-           RUSTFLAGS: -D warnings --cfg postgres="${{ matrix.postgres }}"
- 
-+      # Run tests again with implied linux user
-+      - run: |
-+          SKIP_ARGS=()
-+          for test in $PG_ISOLATED_TESTS; do
-+            SKIP_ARGS+=(--skip "$test")
-+          done
-+          cargo test \
-+            --no-default-features \
-+            --features any,postgres,macros,migrate,_unstable-all-types,runtime-${{ matrix.runtime }},tls-${{ matrix.tls }} \
-+            -- \
-+            "${SKIP_ARGS[@]}"
-+        env:
-+          DATABASE_URL: postgres:///sqlx?password=runner-password
-+          SQLX_OFFLINE_DIR: .sqlx
-+          RUSTFLAGS: -D warnings --cfg postgres="${{ matrix.postgres }}"
-+
-       # Run the `test-attr` test again to cover cleanup.
-       - run: >
-           cargo test
-```
-
-**File**: `sqlx-postgres/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -64,7 +64,7 @@ num-bigint = { version = "0.4.3", optional = true }
- smallvec = { version = "1.13.1" }
- stringprep = "0.1.2"
- tracing = { version = "0.1.37", features = ["log"] }
--whoami = { version = "2.0.2", default-features = false }
-+whoami = { version = "2.0.2", features = ["std"], default-features = false }
- 
- dotenvy.workspace = true
- thiserror.workspace = true
-```
-
-**File**: `tests/postgres/setup.sql` (modified, +3/-0)
-```diff
-@@ -1,3 +1,6 @@
-+-- Create extra user to be used on runner
-+CREATE USER runner WITH SUPERUSER PASSWORD 'runner-password';
-+
- -- https://www.postgresql.org/docs/current/ltree.html
- CREATE EXTENSION IF NOT EXISTS ltree;
- 
-```
-
 #### Recent Merged Pull Requests:
+- **PR #4463** (2026-10-15): fix(macros): only report Ambiguous{DateTime,Numeric}Type when preferred crate is Inferred (@rscorer)
+- **PR #4458** (2026-10-16): fix(mysql): harden protocol decoders against malformed packets from hostile servers (@portlandhodl)
+- **PR #4446** (closed): fix(core): don't roll back the enclosing level when a nested begin fails or is cancelled (@CalebFenton)
+- **PR #4444** (closed): feat(postgres, core): `PgConnection::connect_with_socket` and a wasm-safe `Instant` (@iamralch)
 - **PR #4442** (2026-10-03): fix(sqlite): await SQLCipher test connection cleanup before exit (@shuvroroy)
 - **PR #4441** (2026-10-03): fix(mysql): decode MySQL 9 VECTOR columns (type 0xf2) (@anderson-andres-dev)
-- **PR #4439** (2026-10-03): fix(macros-core): only track paths rustc can checksum (@varunshahdev)
-- **PR #4436** (2026-10-04): fix(mysql): use the AuthSwitchRequest nonce for caching_sha2_password full auth (@LeandroDettmer)
-- **PR #4412** (closed): Drop prepared-statement-cache in postgres upon invalid cached plan (@nipunn1313)
-- **PR #4406** (2026-09-10): fix(postgres): return UnexpectedEof when server closes connection at SSLRequest (@zfaustk)
-- **PR #4404** (closed): refactor(pool): replace futures-intrusive semaphore with asyncband (@tisonkun)
-- **PR #4402** (2026-09-09): sqlx-sqlite: relax libsqlite3-sys constraint to allow 0.38.x (@dtolnay)
 
 ---
 
@@ -2943,3 +1763,40 @@ Closes #2642
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. mysql): harden protocol decoders against malformed packets from hostile servers 
+
+**RULE**:
+When implementing operations in `sqlx-mysql/src/connection/auth.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in transact-rs/sqlx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `4161768c`: mysql): harden protocol decoders against malformed packets from hostile servers (#4458). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sqlx-mysql/src/connection/auth.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+                if packet.len() < 2 {
+                    return Err(err_protocol!(
+                        "expected at least 2 bytes in caching_sha2_password authentication packet but got {}",
+                        packet.len()
+                    ));
+                }
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `4161768c` are properly handled with clean fallback behavior.

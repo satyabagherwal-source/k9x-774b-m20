@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T03:20:31.498Z",
+  "last_updated": "2026-10-19T03:26:55.285Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -408,14 +408,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-lightricks-ltx-2-5",
-      "content_hash": "f9c41cad9d627842416bcab17e5e15484a8479c31ececebbee9af01b1705276a",
-      "verified_at": "2026-10-17T22:39:48.888Z",
+      "content_hash": "3770482793cf60f5e7094b846bb06f78c294fadd7b7abf38aa4690bb6e7c7d35",
+      "verified_at": "2026-10-19T03:26:38.651Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T22:39:48.888Z"
+      "last_updated": "2026-10-19T03:26:38.651Z"
     },
     "prism-ml/Ternary-Bonsai-2-27B-gguf": {
       "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
@@ -8032,6 +8032,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T03:20:31.498Z"
+    },
+    "transact-rs/sqlx": {
+      "repository": "transact-rs/sqlx",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-transact-rs-sqlx",
+      "content_hash": "794b270736a38bceaea1ff7a7fabda9834ffdb492a261a9f2cc82d9f578c34df",
+      "verified_at": "2026-10-19T03:26:40.618Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T03:26:40.618Z"
+    },
+    "bergside/typeui": {
+      "repository": "bergside/typeui",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-bergside-typeui",
+      "content_hash": "3f474cc8771913b4f7e37a823018cae78576b419cb15dfc3fb3a883da85705dd",
+      "verified_at": "2026-10-19T03:26:40.675Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T03:26:40.675Z"
+    },
+    "czy0729/Bangumi": {
+      "repository": "czy0729/Bangumi",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-czy0729-bangumi",
+      "content_hash": "2f8c2f1c638b978448b1d8392352df456eabd1f8c65fee434cd98e0ce691092b",
+      "verified_at": "2026-10-19T03:26:45.975Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T03:26:45.975Z"
+    },
+    "aquasecurity/tfsec": {
+      "repository": "aquasecurity/tfsec",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-aquasecurity-tfsec",
+      "content_hash": "9ae104402e152cab524ba6be554959a8869a7f6b3543d286a3d4356b11b8135a",
+      "verified_at": "2026-10-19T03:26:51.434Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T03:26:51.434Z"
+    },
+    "yugabyte/yugabyte-db": {
+      "repository": "yugabyte/yugabyte-db",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-yugabyte-yugabyte-db",
+      "content_hash": "49c739da5f88785308bc1d6181c0da21bd543fb83ca31f5590a69683cf5288af",
+      "verified_at": "2026-10-19T03:26:55.285Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T03:26:55.285Z"
     }
   },
   "repos": {

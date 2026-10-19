@@ -2843,3 +2843,9 @@
 | `CYCLE-20261019-SDNE` | `2026-10-19T03:20:23.834Z` | `ZSeven-W/openpencil` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2068` | Yes (`78a15003...`) |
 | `CYCLE-20261019-SFL4` | `2026-10-19T03:20:26.344Z` | `diggerhq/digger` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2069` | Yes (`4eabdcfd...`) |
 | `CYCLE-20261019-SJJQ` | `2026-10-19T03:20:31.478Z` | `pingcap/talent-plan` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2070` | Yes (`e092cb5b...`) |
+| `CYCLE-20261019-0EUR` | `2026-10-19T03:26:38.643Z` | `Lightricks/LTX-2.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md` | Yes (`37704827...`) |
+| `CYCLE-20261019-0GD9` | `2026-10-19T03:26:40.605Z` | `transact-rs/sqlx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2071` | Yes (`794b2707...`) |
+| `CYCLE-20261019-0GET` | `2026-10-19T03:26:40.661Z` | `bergside/typeui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2072` | Yes (`3f474cc8...`) |
+| `CYCLE-20261019-0KI4` | `2026-10-19T03:26:45.964Z` | `czy0729/Bangumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2073` | Yes (`2f8c2f1c...`) |
+| `CYCLE-20261019-0OPT` | `2026-10-19T03:26:51.425Z` | `aquasecurity/tfsec` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/aquasecurity-tfsec-learnings.md` | Yes (`9ae10440...`) |
+| `CYCLE-20261019-0ROG` | `2026-10-19T03:26:55.264Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2074` | Yes (`49c739da...`) |

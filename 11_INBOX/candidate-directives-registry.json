@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T03:01:28.980Z",
+  "last_updated": "2026-10-19T03:26:51.431Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1718,6 +1718,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-fangwei716-30-days-of-react-native"
+    },
+    {
+      "id": "CD-0OPZ",
+      "directive_title": "docs: Trivy callout and migration guide added  (#2021)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "aquasecurity/tfsec",
+      "source_commit": "b692c20b",
+      "date_staged": "2026-10-19",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-aquasecurity-tfsec"
     }
   ]
 }

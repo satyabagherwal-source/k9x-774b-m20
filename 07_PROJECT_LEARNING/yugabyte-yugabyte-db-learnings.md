@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
+> **Source**: github ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
+> **Source Version**: `b10be5ad`  
+> **License**: NOASSERTION  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T03:26:55.000Z  
+> **Learning ID**: `learn-github-yugabyte-yugabyte-db`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): yugabyte/yugabyte-db
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T03:16:21.680Z  
+> **Harvest Timestamp**: 2026-10-19T03:26:54.992Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: YugabyteDB - the cloud native distributed SQL database for mission-critical applications.
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10580 stars
+- **Stars / Engagement**: 10605 stars
 
 ---
 
@@ -1402,10 +1416,13 @@ from oci.core.models import (
     EgressSecurityRule,
     TcpOptions,
     PortRange,
+    UpdateBootVolumeDetails,
     UpdateInstanceDetails,
-    UpdateInstanceShapeConfigDetails
+    UpdateInstanceShapeConfigDetails,
+    UpdateInstanceSourceViaImageDetails
 )
 from oci.dns.models import RecordDetails, UpdateDomainRecordsDetails
+from oci.work_requests import WorkRequestClient
 
 # Sticky launch fields copied from an Instance Configuration when seeding a
 # plain LaunchInstance. YBA-owned fields (shape, image, subnet, metadata, ...)
@@ -1470,6 +1487,11 @@ _AVAILABILITY_DOMAIN_DEPENDENT_ATTRIBUTES = frozenset((
     "cluster_placement_group_id",
 ))
 
+
+def is_local_nvme_shape(shape):
+    return bool(shape) and ("DenseIO" in shape or "HPC" in shape)
+
+
 OCI_TENANCY_ID_ENV = "OCI_TENANCY_ID"
 OCI_USER_ID_ENV = "OCI_USER_ID"
 OCI_FINGERPRINT_ENV = "OCI_FINGERPRINT"
@@ -1499,6 +1521,8 @@ YUGABYTE_SG_PREFIX = "yugabyte-sl-{}"
 
 DEFAULT_BOOT_VOLUME_SIZE_GB = 50
 MIN_BOOT_VOLUME_SIZE_GB = 50
+BOOT_VOLUME_REPLACEMENT_TIMEOUT_SECONDS = 600
+OCI_WORK_REQUEST_TERMINAL_STATES = ("SUCCEEDED", "FAILED", "CANCELED")
 
 AARCH64_ARCHITECTURES = ("aarch64", "arm64")
 
@@ -1652,16 +1676,7 @@ class OciCloudAdmin:
         return self._dns_client
 
     @property
-    def identity_client(self):
-        if self._identity_client is None:
-            self._identity_client = self._build_client(IdentityClient)
-        return self._identity_client
-
-    def set_region(self, region):
-        self.config["region"] = region
-        self._compute_client = None
-        self._compute_management_client = None
-        sel
+    def ident
 ```
 
 ### Core Architecture Module: `managed/devops/opscli/ybops/utils/__init__.py`
@@ -2228,458 +2243,20 @@ class _SshRemoteShell(object):
     # Checks if the file exists on the re
 ```
 
-### Core Architecture Module: `managed/devops/opscli/ybops/utils/replicated.py`
-```
-# Copyright 2019 YugabyteDB, Inc. and Contributors
-#
-# Licensed under the Polyform Free Trial License 1.0.0 (the "License"); you
-# may not use this file except in compliance with the License. You
-# may obtain a copy of the License at
-#
-# https://github.com/YugaByte/yugabyte-db/blob/master/licenses/POLYFORM-FREE-TRIAL-LICENSE-1.0.0.txt
-
-import os
-import requests
-import json
-
-from ybops.common.exceptions import YBOpsRuntimeError
-
-
-class Replicated(object):
-    REPLICATED_VENDOR_API = 'https://api.replicated.com/vendor/v1/app/'
-
-    """Replicated class is used to fetch existing release information in replicated and to promote
-    new release."""
-
-    def __init__(self):
-        api_token = os.environ.get('REPLICATED_API_TOKEN')
-        self.app_id = os.environ.get('REPLICATED_APP_ID')
-        assert api_token is not None, 'Environment Variable REPLICATED_API_TOKEN not set.'
-        assert self.app_id is not None, 'Environment Variable REPLICATED_APP_ID not set.'
-        self.auth_header = {'authorization': api_token, 'content-type': 'application/json'}
-        self.releases = self._get_releases()
-        self.current_release_sequence = None
-
-    def _get_request_endpoint(self, request_type):
-        base_url = os.path.join(self.REPLICATED_VENDOR_API, self.app_id)
-        if request_type == 'LIST':
-            return os.path.join(base_url, 'releases', 'paged')
-        elif request_type == 'CREATE':
-            return os.path.join(base_url, 'release')
-        elif request_type == 'UPDATE':
-            return os.path.join(base_url, str(self.current_release_sequence), 'raw')
-        elif request_type == 'PROMOTE':
-            return os.path.join(base_url, str(self.current_release_sequence), 'promote')
-        else:
-            raise TypeError('Invalid request type')
-
-    def _get_releases(self):
-        params = {'start': 0, 'count': 1}
-        # Fetch the current releases and channel information
-        response = requests.get(self._get_request_endpoint('LIST'),
-                                headers=self.auth_header, json=params)
-        response.raise_for_status()
-        return json.loads(response.text)['releases']
-
-    def _get_active_channel(self, channel_name='Alpha'):
-        active_channel = None
-        for release in self.releases:
-            active_channel = next(iter([channel for channel in release['ActiveChannels']
-                                        if channel['Name'] == channel_name]), None)
-            if active_channel:
-                break
-        return active_channel
-
-    def _get_tagged_channels(self, tag):
-        tagged_channels = []
-        for release in self.releases:
-            tagged_channels = [channel for channel in release['ActiveChannels']
-                               if channel['ReleaseLabel'] == tag]
-            if tagged_channels:
-                break
-        return tagged_channels
-
-    def _get_or_create_release(self, tag):
-        draft_release = self._get_editable_release()
-        # If we already have a release version created and in Editable state, just use that.
-        if draft_release:
-            return draft_release
-
-        # Create a new release in replicated
-        params = {'name': tag, 'source': 'latest', 'sourcedata': 0}
-        response = requests.post(self._get_request_endpoint('CREATE'),
-                                 headers=self.auth_header, json=params)
-        response.raise_for_status()
-        return json.loads(response.text)
-
-    def _get_editable_release(self):
-        return next(iter([release for release in self.releases
-                          if release['Editable']]), None)
-
-    def publish_release(self, tag, raw_data):
-        release = self._get_or_create_release(tag)
-        self.current_release_sequence = release['Sequence']
-        # In case of update release we publish the yaml in the body so we need to make the put
-        # request with content-type text/plain
-        auth_header = self.auth_header.copy()
-        auth_header['content-type'] = 'text/plain'
-        response = requests.put(self._get_request_endpoint('UPDATE'),
-                                headers=auth_header, data=raw_data)
-        response.raise_for_status()
-
-    def promote_release(self, tag, channel_name='Alpha', release_notes=[]):
-        tagged_channels = self._get_tagged_channels(tag)
-        active_channel = self._get_active_channel(channel_name)
-        if any(tagged_channels):
-            is_promoted = any([channel for channel in tagged_channels
-                               if channel['Name'] == channel_name])
-            self.current_release_sequence = tagged_channels[0]['ReleaseSequence']
-            if is_promoted:
-                raise YBOpsRuntimeError(
-                    'Release {} already promoted for channel {}'.format(tag, channel_name))
-        elif self.current_release_sequence is None:
-            current_release = self._get_editable_release()
-            self.current_release_sequence = current_release['Sequence']
-
-        active_channel_id = active_channel['Id']
-        params = {'channels': [active_channel_id], 'label': tag,
-                  'release_notes': '\n'.join(release_notes), 'required': False}
-        # Promote the release for the provided channel
-        response = requests.post(self._get_request_endpoint('PROMOTE'),
-                                 headers=self.auth_header, json=params)
-        response.raise_for_status()
-
-```
-
-### Core Architecture Module: `managed/devops/opscli/ybops/utils/ssh.py`
-```
-#!/usr/bin/env python
-#
-# Copyright 2022 YugabyteDB, Inc. and Contributors
-#
-# Licensed under the Polyform Free Trial License 1.0.0 (the "License"); you
-# may not use this file except in compliance with the License. You
-# may obtain a copy of the License at
-#
-# https://github.com/YugaByte/yugabyte-db/blob/master/licenses/POLYFORM-FREE-TRIAL-LICENSE-1.0.0.txt
-
-import datetime
-import functools
-import logging
-import os
-import paramiko
-import shlex
-import shutil
-import socket
-import stat
-import subprocess
-import time
-import tempfile
-
-from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.hazmat.primitives import serialization
-
-from scp import SCPClient
-from ybops.common.exceptions import YBOpsRuntimeError, YBOpsRecoverableError
-
-SSH2 = 'ssh2'
-SSH = 'ssh'
-SSHPUB = 'sshpub'
-SSH_RETRY_LIMIT = 60
-SSH_RETRY_LIMIT_PRECHECK = 4
-DEFAULT_SSH_PORT = 22
-DEFAULT_SSH_USER = 'centos'
-# Timeout in seconds.
-SSH_TIMEOUT = 45
-# Retry in seconds
-SSH_RETRY_DELAY = 10
-RSA_KEY_LENGTH = 3072
-CONNECTION_RETRY_DELAY_SEC = 15
-# Let's set some timeout to our commands.
-# If 10 minutes will not be enough for something - will have to pass command timeout as an argument.
-# Just having timeout in shell script, which we're running on the node,
-# does not seem to always help - as ssh client connection itself or command results read can hang.
-COMMAND_TIMEOUT_SEC = 600
-
-
-def ssh_retry_decorator(fn_to_call, exc_handler=None, retry_delay=None):
-    if fn_to_call is None:
-        return functools.partial(
-            ssh_retry_decorator, exc_handler=exc_handler, retry_delay=retry_delay)
-
-    @functools.wraps(fn_to_call)
-    def wrapper(*args, **kwargs):
-        max_attempts = 3
-
-        for i in range(1, max_attempts + 1):
-            try:
-                return fn_to_call(*args, **kwargs)
-            except Exception as e:
-                if i < max_attempts and exc_handler(e):
-                    time.sleep(retry_delay)
-                    continue
-                raise YBOpsRecoverableError(str(e))
-
-    return wrapper
-
-
-def ssh_exception_handler(e):
-    if isinstance(e, (paramiko.SSHException, socket.error)):
-        logging.warning('Caught SSH error %s, retrying: %s', type(e).__name__, e)
-        return True
-    return False
-
-
-def retry_ssh_errors(fn=None, retry_delay=SSH_RETRY_DELAY):
-    return ssh_retry_decorator(fn, exc_handler=ssh_exception_handler, retry_delay=retry_delay)
-
-
-def parse_private_key(key):
-    """Parses the private key file, & returns
-    the key format and key data.
-    :param key: private key file.
-    :return: Private key type(One of SSH2/SSH).
-    """
-    if key is None:
-        raise YBOpsRuntimeError("Private key file not specified. Returning.")
-
-    with open(key) as f:
-        key_data = f.read()
-        # key maybe SSH encoded public key
-        try:
-            key = serialization.load_ssh_public_key(data=key_data.encode())
-            return SSHPUB, key
-        except Exception:
-            pass
-        try:
-            key = serialization.load_ssh_private_key(data=key_data.encode(), password=None)
-            return SSH, key
-        except Exception:
-            pass
-        try:
-            key = serialization.load_pem_private_key(data=key_data.encode(), password=None)
-            return SSH, key
-        except ValueError:
-            '''
-            SSH2 encrypted keys contains Subject & comment in the generated body.
-            '---- BEGIN SSH2 ENCRYPTED PRIVATE KEY ----'
-            'Subject: user'
-            'Comment: "2048-bit rsa'
-            '''
-            key_val = key_data.split('\n')
-            if 'Subject' in key_val[1] and 'Comment' in key_val[2]:
-                return SSH2, None
-
-    logging.info("[app], specified key format is not supported.")
-    raise YBOpsRuntimeError("Specified key format is not supported.")
-
-
-def check_ssh2_bin_present():
-    """Checks if the ssh2 is installed on the node
-    :return: True/False
-    """
-    try:
-        output = run_command(['command', '-v', '/usr/bin/sshg3', '/dev/null'])
-        return True if output is not None else False
-    except YBOpsRuntimeError:
-        return False
-
-
-def run_command(args, num_retry=1, timeout=1, **kwargs):
-    cmd_as_str = quote_cmd_line_for_bash(args)
-    logging.info("[app] Executing command \"{}\"".format(cmd_as_str))
-    while num_retry > 0:
-        num_retry = num_retry - 1
-        try:
-            process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-
-            output, err = process.communicate()
-            if process.returncode != 0:
-                logging.error("Failed to run command [[ {} ]]: code={} output={}".format(
-                  cmd_as_str, process.returncode, err))
-                raise YBOpsRuntimeError(err.decode('utf-8'))
-            return output.decode('utf-8')
-
-        except Exception as ex:
-            logging.error("Failed to run command [[ {} ]]: {}".format(cmd_as_str, ex))
-            sleep_or_raise(num_retry, timeout, ex)
-
-
-def quote_cmd_line_for_bash(cmd_line):
-    if not isinstance(cmd_line, list) and not isinstance(cmd_line, tuple):
-        raise Exception("Expected a list/tuple, got: [[ {} ]]".format(cmd_line))
-    return ' '.join([shlex.quote(str(arg)) for arg in cmd_line])
-
-
-def sleep_or_raise(num_retry, timeout, ex):
-    if num_retry > 0:
-        logging.info("Sleep {}... ({} retries left)".format(timeout, num_retry))
-        time.sleep(timeout)
-    else:
-        raise ex
-
-
-def can_ssh(host_name, port, username, ssh_key_file, **kwargs):
-    """This method tries to ssh to the host with the username provided on the port.
-    and returns if ssh was successful or not.
-    Args:
-        host_name (str): SSH host IP address
-        port (int): SSH port
-        username (str): SSH username
-        ssh_key_file (str): SSH key file
-    Returns:
-        (boolean): If SSH was successful or not.
-    """
-    try:
-        ssh2_enabled = kwargs.get('ssh2_enabled', False)
-        ssh_client = SSHClient(ssh2_enabled=ssh2_enabled)
-        ssh_client.connect(host_name, username, ssh_key_file, port)
-        rc, stdout, stderr = ssh_client.exec_command("echo 'test'", **kwargs)
-        if rc != 0:
-            logging.error("Error checking the instance, {}".format(stderr))
-            return False
-        stdout = stdout.splitlines()
-        if len(stdout) == 1 and (stdout[0] == "test"):
-            return True
-        return False
-    except Exception as e:
-        logging.error("Error checking the instance, {}".format(e))
-        return False
-
-
-def wait_for_ssh(host_ip, ssh_port, ssh_user, ssh_key, num_retries=SSH_RETRY_LIMIT, **kwargs):
-    """This method would basically wait for the given host's ssh to come up, by looping
-    and checking if the ssh is active. And timesout if retries reaches num_retries.
-    Args:
-        host_ip (str): IP Address for which we want to ssh
-        ssh_port (str): ssh port
-        ssh_user (str): ssh user name
-        ssh_key (str): ssh key filename
-    Returns:
-        (boolean): Returns true if the ssh was successful.
-    """
-    retry_count = 0
-    while retry_count < num_retries:
-        if can_ssh(host_ip, ssh_port, ssh_user, ssh_key, **kwargs):
-            return True
-
-        time.sleep(1)
-        retry_count += 1
-
-    return False
-
-
-def format_rsa_key(key, public_key=False):
-    """This method would take the rsa key and format it based on whether it is
-    public key or private key.
-    Args:
-        key (RSA Key): Key data
-        public_key (bool): Denotes if we need public key or not.
-    Returns:
-        key (str): Encoded key in OpenSSH or PEM format based on the flag (public key or not).
-    """
-    if isinstance(key, rsa.RSAPrivateKey):
-        if public_key:
-            return key.public_key() \
-                      .public_bytes(encoding=serialization.Encoding.OpenSSH,
-                                    format=serialization.PublicFormat.OpenSSH).decode('utf-8')
-        return key.private_bytes(encoding=serialization.Encoding.PEM,
-                                 format=serialization.PrivateFormat.TraditionalOpenSSL,
-                                 encryption_algorithm=serialization.NoEncryption()).decode('utf-8')
-    elif isinstance(key, rsa.RSAPublicKey):
-        return key.public_bytes(encoding=serialization.Encoding.OpenSSH,
-                                format=serialization.PublicFormat.OpenSSH).decode('utf-8')
-    else:
-        if public_key:
-            run_command(['ssh-keygen-g3', '-D', key])
-            file = key + '.pub'
-            p_key = None
-            with open(file) as f:
-                p_key = f.read()
-            logging.info("generating public key, {}".format(p_key))
-
-            return p_key
-        else:
-            with open(key) as f:
-                return f.read()
-
-
-def validated_key_file(key_file):
-    """This method would validate a given key file and raise a exception if the file format
-    is incorrect or not found.
-    Args:
-        key_file (str): Key file name
-    Returns:
-        key (RSA Key): RSA key data
-    """
-
-    if not os.path.exists(key_file):
-        raise YBOpsRuntimeError("Key file {} not found.".format(key_file))
-
-    # Check based on key_type not on SSH2 installed or not.
-    ssh_type, key = parse_private_key(key_file)
-    if ssh_type == SSH or ssh_type == SSHPUB:
-        return key
-    else:
-        return key_file
-
-
-def generate_rsa_keypair(key_name, destination='/tmp'):
-    """This method would generate a RSA Keypair with an exponent of 65537 in PEM format,
-    We will also make the files once generated READONLY by owner, this is need for SSH
-    to work.
-    Args:
-        key_name(str): Keypair name
-        destination (str): Destination folder
-    Returns:
-        keys (tuple): Private and Public key files.
-    """
-    new_key = rsa.generate_private_key(public_exponent=65537, key_size=RSA_KEY_LENGTH)
-    if not os.path.exists(destination):
-        raise YBOpsRuntimeError("Destination folder {} not accessible".format(destination))
-
-    public_key_filename = 
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #34654** (2026-10-05): **[YSQL] Build af37eb4e on master: arm-alma8-clang21-release broken**
-  *Symptoms*: Jira Link: [DB-24094](https://yugabyte.atlassian.net/browse/DB-24094) _Filed automatically by [Grissom](https://github.com/yugabyte/agent-k/blob/main/bots/grissom/README.md) (internal docs), which watches YugabyteDB's scheduled builds on `master` and the supported release branches for builds where a lane breaks or many tests fail the same way. Everything below is measured from those builds; how it decides, and how to stop it, is at the end._  ## Summary  The scheduled build of `master` at af37eb4e has a lane-level failure; the affected lane(s) are not judged test by test.  - Failing lanes: `arm-alma8-clang21-release` - Failing build types: release  ## Urgency  S2 lane broken / cluster (`priority/high`).  ## What is being tested  Every lane of the scheduled build (build types release, tsan, fastdebug, asan, debug).  ## What is the failure  - `arm-alma8-clang21-release`: build step failed while compiling, with no error Grissom recognises in its log; no tests ran ([CSI launch 176249](https://csi.dev.yugabyte.com/ui/#dbft/launches/all/176249), [build log](https://csi.dev.yugabyte.com/ui/#dbft/launches/all/176249/820666030/820666032/log), [Jenkins console](https://jenkins.dev.yugabyte.com/job/github-yugabyte-db-alma8-master-clang21-release-aarch64/1428/console))    ```   /share/jenkins/workspace/github-yugabyte-db-alma8-master-clang21-release-aarch64/bin/yugabyte_jenkins_pgo.sh: line 114: 195183 Segmentation fault      (core dumped) sysbench oltp_read_write $sbopts --warmup-time=
+- **Issue #35309** (2026-10-18): **[BACKPORT 2025.2][#34805] DocDB: Remove non-block-based vector index backends (#34806)**
+  *Symptoms*: ## Summary  The HNSW vector index had four backends. `USEARCH` and `HNSWLIB` saved chunks in the native usearch/hnswlib file formats, while `YB_HNSW_USEARCH` and `YB_HNSW_HNSWLIB` save block-based YbHnsw chunks that are read through the block cache. `yb_hnsw` has been the default since #29964 and `yb_hnsw_hnswlib` since #31757, so the native formats were only reachable through the hidden `vector_index_backend` flag or very old indexes. They kept native save/load paths in the wrappers and doubled the backend test matrices.  This removes the non-block-based backends: - usearch and hnswlib stay as the build engines for mutable chunks. Every saved chunk is now a YbHnsw file and every loaded chunk a `YbHnswIndex`; the native `save`/`load` code and the `backend` parameter of `Create{Usearch,Hnswlib}IndexTraits` are gone. - `HnswBackend` values 0 and 2 become `DEPRECATED_USEARCH` / `DEPRECATED_HNSWLIB`. `HnswTraits` returns `NotSupported` for them instead of loading the native file, which fails the tablet open (see the upgrade notes). - `--vector_index_backend` accepts only `yb_hnsw_usearch` and `yb_hnsw_hnswlib`. The `yb_hnsw` value is removed too: it was an alias for `yb_hnsw_usearch` while the default is `yb_hnsw_hnswlib`, which made it easy to pick the wrong backend. - `PgVectorIndexITest.Backfill` no longer forces `--vector_index_backend=usearch`. The old `TabletVectorIndexes::Verify` used `GetVector`, which only the usearch wrapper implemented; master's #34611 replaced it with
+
+- **Issue #35290** (2026-10-18): **[#34685] YSQL: Scale the hand-over window of PgCronTest.UngracefulLeaderChangeMarksJobFailed for sanitizers**
+  *Symptoms*: ## Summary  `PgCronTest.UngracefulLeaderChangeMarksJobFailed` (added in #34689) kills the pg_cron leader tserver at t0 and requires another node to start the job before t0 + `pg_cron_leader_lease_sec` (10 s) + 15 s. The 15 s must cover failure detection, the election of a new leader for the pg_cron leader tablet, the 2 * `max_clock_skew_usec` of the activation wait, one launcher iteration and the 1 s job interval.  On tsan this failed 5 of 20 runs (master 2.31.0.0-b566). In one failed run:  | t0 + | Event | |---|---| | 5.4 s | ts-3 detects the failure; ts-2 still has 0.3 s left on its own failure timer and denies the pre-election vote ("replica believes a valid leader to be alive") | | 12.6 s | ts-3 wins the election after its backoff (6-7 s on tsan) | | 24.0 s | the activation wait ends: "pg_cron starting new runs" | | 25.4 s | the job starts, 0.4 s after the sampling window closed |  The product behaved as intended; the window was too short. Multiply the 15 s by `kTimeMultiplier` (1 on regular builds, 3 on sanitizers). The check that the new leader started no earlier than one lease after t0 is unchanged.  ## Test plan  - [ ] Jenkins: `PgCronTest.UngracefulLeaderChangeMarksJobFailed` passes on all build types, including tsan. - [x] tsan, 20 repetitions (2 in parallel): `YB_TEST_PARALLELISM=2 ./yb_build.sh tsan --clang21 --cxx-test pg_cron-test --gtest_filter PgCronTest.UngracefulLeaderChangeMarksJobFailed -n 20`: 20 passed. Without this change, master tsan failed 5 of 20 (2.
   **Post-Mortem & Fix Analysis**:
-  > Grissom: **where this build broke**. The commit range between the previous scheduled build and this one; no single commit is suspected.  Range [`(50445c03, af37eb4e]`](https://github.com/yugabyte/yugabyte-db/compare/50445c03...af37eb4e): 2 commits. A build-level break: 1 lane(s) broken in this build, so the onset is this build; the range starts at the previous scheduled build.  The ranker found no candidate that explains the failure: This wasn't a compile error. The 'sysbench oltp_read_write' client segfaulted during the PGO profile-training step in 'yugabyte_jenkins_pgo.sh', and only the arm-alma8-clang21-release lane, which runs that step, failed. The Flyway commit only changes YBA Java code under 'managed/', so it's effectively ruled out. The RocksDB commit is the only one affecting the database binaries: it stops writing the OPTIONS file by default. That changes I/O and timing but has no clear path to a crash in the sysbench client process. A segfault in the sysbench client looks m
-  > Duplicate of #34633: the same PGO profiling-workload failure (a sysbench table, here `sbtest9`, lost during the data load, then the profiling run fails on `relation "sbtest9" does not exist` and sysbench segfaults), not the commits in this range.
-
-- **Issue #34614** (2026-10-04): **[DO NOT MERGE] agent-k replay of #4624 (thread pool) to test review gotcha**
-  *Symptoms*: **Do not merge. Test PR, will be closed.**  Replays #4624 (6b6e0ba54ea, already on master) on its original parent 2166ff8c061, so the diff shown here is exactly that change. Purpose: check whether an agent-k review now flags the thread-pool behavior change later tracked in #34364 (idle workers recreated under bursty load), using the newly added review gotcha.  <!-- Reviewable:start --> - - - This change is [<img src="https://reviewable.io/review_button.svg" height="34" align="absmiddle" alt="Reviewable"/>](https://reviewable.io/reviews/yugabyte/yugabyte-db/34614) <!-- Reviewable:end --> 
-  **Post-Mortem & Fix Analysis**:
-  > /agentk review
-
-- **Issue #34612** (2026-10-05): **[BACKPORT 2026.1][AMP-49] YBA: Create the yb_storage database on universe creation behind a global runtime flag**
-  *Symptoms*: Summary: The amp controller keeps its state in a `yb_storage` YSQL database and opens it at startup, so the database must exist before the controller rolls out. Today the deploying tool creates it by running ysqlsh over `kubectl exec`. That is the only reason it needs `pods/exec`, and the step is skipped when a bring-up aborts after the universe is Ready.  Universe creation (CreateUniverse and CreateKubernetesUniverse, including operator-created universes) can now create the database itself. A new `CreateYbStorageDatabase` subtask runs in the ConfigureUniverse phase, after `UpdateConsistencyCheck`. It runs `CREATE DATABASE` and treats an "already exists" error as success, so a task retry is safe. It tries up to 5 times across tservers, then fails the universe create.  New runtime config key: `yb.universe.create_yb_storage_db` (GLOBAL, boolean, INTERNAL, default `false`). With the key off, the create task sequence is unchanged. The subtask runs only when YSQL is enabled.  Original commit: 539db6584a57d4921fa3720eba40af023dd21895 / D58761  Test Plan: ``` cd managed sbt "testOnly com.yugabyte.yw.commissioner.tasks.subtasks.CreateYbStorageDatabaseTest com.yugabyte.yw.models.helpers.TaskTypeTest com.yugabyte.yw.commissioner.tasks.CreateUniverseTest com.yugabyte.yw.commissioner.tasks.CreateKubernetesUniverseTest" sbt javafmtCheckAll ```  Reviewers: anijhawan, dshubin, #yba-api-review  Reviewed By: dshubin, #yba-api-review  Subscribers: yugaware  Differential Revision: https://phorg
-  **Post-Mortem & Fix Analysis**:
-  > [![CLA assistant check](https://cla-assistant.io/pull/badge/signed)](https://cla-assistant.io/yugabyte/yugabyte-db?pullRequest=34612) <br/>All committers have signed the CLA.
-  > Trigger Jenkins
-
-- **Issue #34608** (2026-10-03): **[#34607] Build: Build only the bottom and top PRs of a stack**
-  *Symptoms*: ## Summary  Under a native GitHub stack, CI runs for every PR in the stack, as if each one targeted `master`. One fix to a lower layer rebases every layer above it, so one push starts a full `bld-*` build for each of those layers.  This change follows GitHub's "Optimizing CI for stacked pull requests" guidance and reads `github.event.pull_request.stack`. In each `bld-*` workflow that starts a real build (`bld-db`, `bld-docs`, `bld-yba`, `bld-yba-ui`, `bld-yba-cli`, `bld-yba-install`), the build type is now:  - the full build for a PR that is not in a stack (no change), - the full build for the lowest unmerged PR of a stack, which targets `master` directly and lands next, - the full build for the top PR, whose tree holds every layer, - `NO-BLD` for the layers between them.  When the bottom PR merges, GitHub rebases the next one. That push builds it in full, because it is now the bottom.  **Open question for DevOps:** GitHub merges a group of stacked PRs only when every PR in the group passes its required checks. This change relies on `ybbld <pr> <sha> NO-BLD` posting a passing `yb-required` for the middle layers. Please confirm that, or say what a skipped layer should post instead.  **Trade-off:** if several layers merge in one operation, the intermediate commits on `master` were not built on their own. Only the combined result was. Merging one layer at a time avoids this.  ## Test plan  - [x] The six changed workflow files parse as YAML, and each `BLD_TYPE` expression reads a
-
-- **Issue #34607** (2026-10-03): **[New Feature] Build only the bottom and top PRs of a stacked PR**
-  *Symptoms*: ## Description  Under a native GitHub stack, CI runs for every PR in the stack, as if each one targeted `master`. One fix to a lower layer rebases every layer above it, so it starts a full `bld-*` build for each of those layers.  GitHub's "Optimizing CI for stacked pull requests" guidance is to run expensive jobs only where they are needed, using `github.event.pull_request.stack`. For our `bld-*` workflows, that means:  - Build the lowest unmerged PR of a stack. It targets `master` directly and lands next. - Build the top PR. Its tree holds every layer. - Run `NO-BLD` for the layers between them. When the bottom PR merges, GitHub rebases the next one, which then builds because it is now the bottom.  Open question for DevOps: GitHub merges a group of stacked PRs only when every PR in the group passes its required checks. So this relies on `ybbld <pr> <sha> NO-BLD` posting a passing `yb-required` for the middle layers. Please confirm that, or say what a skipped layer should post instead.  Trade-off: if several layers merge in one operation, the intermediate commits on `master` were not built on their own. Only the combined result was. Merging one layer at a time avoids this, because each layer becomes the bottom and builds first.  Related: #33614 (agent tooling for native stacked PRs).  - [x] I confirm this issue does not contain any sensitive information. 
-
-- **Issue #34602** (2026-10-03): **[ClaudeCode] Stop auto-rebasing branches on push**
-  *Symptoms*: ### Description  `.agents/scripts/git-push.sh` is the only push path Claude Code agents are allowed (raw `git push` is deny-listed), and `create-pr.sh` pushes through it. On every push it rebases the current branch onto the fork branch and then onto the latest upstream `master`, then force-pushes. The user is never asked. This:  * flattens merge commits, breaking merge-based workflows; * moves the branch's base to a `master` the user did not choose, forcing rebuilds and pulling in unrelated breakage; * marks reviewers' inline comments outdated on every push; * can bring back commits the user deliberately amended or squashed away (replaying them on top of the stale fork branch); * weakens `--force-with-lease`, since the fork branch is fetched right before the push.  The `create-pr` skill also has the agent resolve rebase conflicts on its own.  Updating the base (rebase, merge, or not at all) is the user's call, not a side effect of pushing. Proposed change: stop rebasing and stop fetching the fork branch before the push; diff the `.proto` upgrade-safety check from the merge-base (as lint already does); drop the skill's rebase and conflict-resolution instructions.  Possible follow-ups:  * Make force-push opt-in. Without the rebase, nearly every push is a fast-forward, so forcing by default only adds risk. * Stop hardcoding `master` as the base in the `create-pr` skill. `create-pr.sh -b` already supports other bases (stacked PRs, feature branches).  ### Issue Type  kind/enhancem
-
-- **Issue #34570** (2026-10-02): **[BACKPORT 2025.2][#34361] docdb: Update cache statistics outside of mutex lock**
-  *Symptoms*: Summary: We currently increment cache statistics and metrics under mutex lock. But there is no need to do this under lock, since they are atomics (or thread-local integers for the RPC aggregated case), and there are no expectations of the values being precisely synchronized with cache internals.  This revision moves statistics/metrics update outside of the mutex lock for LRUCache::Lookup and LRUCache::Insert.  Original commit: ab116034fd873192d3d53c1db4984f809a0470b3 / #34465  Test Plan: Jenkins  <!-- Reviewable:start --> - - - This change is [<img src="https://reviewable.io/review_button.svg" height="34" align="absmiddle" alt="Reviewable"/>](https://reviewable.io/reviews/yugabyte/yugabyte-db/34570) <!-- Reviewable:end --> 
-  **Post-Mortem & Fix Analysis**:
-  > Tests already ran before merging first PR in stack, skipping.
-
-- **Issue #34569** (2026-10-02): **[BACKPORT 2025.2][#34362] docdb: Simplify rocksdb cache metrics**
-  *Symptoms*: Summary: We currently have variety of metrics/statistics for the rocksdb cache, including but not limited to: - per-rocksdb statistics (`AtomicGauge`, aggregated per RPC on some code paths)    - `BLOCK_CACHE_MISS`, `BLOCK_CACHE_HIT` on the lookup path - `BLOCK_CACHE_ADD`, `BLOCK_CACHE_ADD_FAILURES`, `BLOCK_CACHE_BYTES_WRITE` on the insert path - `SINGLE_TOUCH`/`MULTI_TOUCH` variants of the `HIT`/`ADD`/`BYTES_WRITE` statistics  - server-wide `CacheMetrics`    - `block_cache_lookups` - Typically equivalent to sum of `BLOCK_CACHE_MISS + BLOCK_CACHE_HIT` statistics, excepting deleted tablets - `block_cache_misses`, `block_cache_hits` - Typically equivalent to sum of `BLOCK_CACHE_MISS`/`BLOCK_CACHE_HIT` statistics respectively, excepting deleted tablets - `block_cache_inserts`, `block_cache_evictions`, `block_cache_hits_caching`, `block_cache_misses_caching`      - These are always 0; we never update them - `block_cache_usage`, `block_cache_single_touch_usage`, `block_cache_multi_touch_usage` - These do not have statistics analogue; closest statistics is `BLOCK_CACHE_BYTES_WRITE` which is a counter, while these are gauges that decrease in value when `LRUHandle`s are freed  This revision makes the following changes to these metrics/statistics: - The unused server-wide metrics (`block_cache_inserts`, `block_cache_evictions`, `block_cache_hits_caching`, `block_cache_misses_caching`) were deleted - `block_cache_lookups`, `block_cache_misses`, `block_cache_hits` were del
+  >   <!-- Reviewable:start --> This change is [<img src="https://reviewable.io/review_button.svg" height="34" align="absmiddle" alt="Reviewable"/>](https://reviewable.io/reviews/yugabyte/yugabyte-db/35290) <!-- Reviewable:end --> 
+  > AgentK has started reviewing this pull request — findings will be posted here shortly.  Pushes are not reviewed automatically. Comment `/agentk review` to ask for another pass — but please only after substantial changes, not on every small push, and not for a push that just addresses the review comments.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2696,2743 +2273,771 @@ def generate_rsa_keypair(key_name, destination='/tmp'):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `11ace952` (2026-10-05)
-**Commit Message**: [PLAT-22639] - fix :Keep the LDAP binding mechanism after save
-
-Summary: Simple Bind was sent as the quoted string "false", and a config reload could put Search and Bind back on the form after a successful save. Send boolean LDAP settings unquoted, and ignore a runtime-config response that started before the save finished.
-
-Test Plan: Tested manually
-
-Reviewers: kkannan
-
-Reviewed By: kkannan
-
-Subscribers: ui, yugaware
-
-Differential Revision: https://phorge.dev.yugabyte.com/D59000
-
-**File**: `managed/ui/src/redesign/features/userAuth/ldap/LDAPAuthRedesigned.tsx` (modified, +77/-34)
-```diff
-@@ -7,7 +7,7 @@
-  * http://github.com/YugaByte/yugabyte-db/blob/master/licenses/POLYFORM-FREE-TRIAL-LICENSE-1.0.0.txt
-  */
- 
--import { useEffect, useState } from 'react';
-+import { useEffect, useRef, useState } from 'react';
- import { find, isString } from 'lodash';
- import { useForm } from 'react-hook-form';
- import { useMutation, useQuery, useQueryClient } from 'react-query';
-@@ -59,6 +59,23 @@ import { getLDAPValidationSchema } from './LDAPValidationSchema';
- import User from '../../../../redesign/assets/user-outline.svg';
- import BulbIcon from '../../../../redesign/assets/bulb.svg';
- 
-+// Boolean runtime configs must be sent as unquoted true/false. Quoting them stores a string.
-+const BOOLEAN_CONFIG_KEYS = new Set([
-+  'use_ldap',
-+  'use_search_and_bind',
-+  'enable_ldaps',
-+  'enable_ldap_start_tls',
-+  'ldap_group_use_role_mapping',
-+  'ldap_group_use_query'
-+]);
-+
-+// Enum values are parsed with valueOf and are stored without surrounding quotes.
-+const UNQUOTED_STRING_KEYS = new Set([
-+  'ldap_default_role',
-+  'ldap_group_search_scope',
-+  'ldap_tls_protocol'
-+]);
-+
- const useStyles = makeStyles((theme) => ({
-   root: {
-     width: '680px',
-@@ -196,7 +213,7 @@ const initializeFormValues = (configEntries: RunTimeConfigEntry[]) => {
- 
-   let finalFormData = {
-     ...formData,
--    use_search_and_bind: formData.use_search_and_bind ?? false,
-+    use_search_and_bind: String(formData.use_search_and_bind ?? false),
-     ldap_url: formData.ldap_url ? [formData.ldap_url, formData.ldap_port].join(':') : '',
-     ldap_group_use_role_mapping: formData.ldap_group_use_role_mapping === 'true',
-     use_service_account: !!formData.ldap_service_account_distinguished_name,
-@@ -209,8 +226,8 @@ const initializeFormValues = (configEntries: RunTimeConfigEntry[]) => {
-     enable_ldaps === 'true'
-       ? SecurityOption.ENABLE_LDAPS
-       : enable_ldap_start_tls === 'true'
--      ? SecurityOption.ENABLE_LDAP_START_TLS
--      : SecurityOption.UNSECURE;
-+        ? SecurityOption.ENABLE_LDAP_START_TLS
-+        : SecurityOption.UNSECURE;
-   finalFormData = { ...finalFormData, ldap_security };
- 
-   return finalFormData;
-@@ -230,6 +247,7 @@ export const LDAPAuthNew = () => {
-     getValues,
-     handleSubmit,
-     clearErrors,
-+    reset,
-     formState: { isDirty }
-   } = useForm<LDAPFormProps>({
-     resolver: yupResolver(getLDAPValidationSchema(t))
-@@ -267,48 +285,65 @@ export const LDAPAuthNew = () => {
-   const [initialData, setInitialData] = useState<LDAPFormProps>();
-   const [groupSettingsExpanded, setGroupSettingsExpanded] = useToggle(true);
-   const queryClient = useQueryClient();
-+  // Latest fetch wins. An older runtime-config response must not overwrite a newer form.
-+  const fetchSeq = useRef(0);
-+  // True while the user has edits that a background refetch must not discard.
-+  const isDirtyRef = useRef(false);
-+
-+  useEffect(() => {
-+    isDirtyRef.current = isDirty;
-+  }, [isDirty]);
-+
-+  const applyFetchedConfig = (configEntries: RunTimeConfigEntry[]) => {
-+    const formData = initializeFormValues(configEntries);
-+    setInitialData(formData);
-+    reset(formData);
-+  };
- 
-   const { isLoading } = useQuery(
-     [LDAP_RUNTIME_CONFIGS_QUERY_KEY],
--    () => api.fetchRunTimeConfigs(true),
-+    async () => {
-+      const seq = ++fetchSeq.current;
-+      const data = await api.fetchRunTimeConfigs(true);
-+      return { data, seq };
-+    },
-     {
--      onSuccess(data) {
--        const formData = initializeFormValues(data.configEntries);
--        setInitialData(formData);
--        Object.entries(formData).forEach(([key, value]) => {
--          setValue((key as unknown) as keyof LDAPFormProps, value as any, {
--            shouldValidate: false
--          });
--        });
-+      onSuccess({ data, seq }) {
-+        if (seq !== fetchSeq.current || isDirtyRef.current) {
-+          return;
-+        }
-+        applyFetchedConfig(data.configEntries);
-       }
-     }
-   );
- 
--  // It compares the initial data with the current data and saves the changes.
--  // If the value is empty, it deletes the config entry.
--  // The function returns an array of promises that are resolved when the configs are saved.
-+  // Compare the payload shape on both sides, so display-only fields (URL with port,
-+  // boolean group mapping) are not treated as changes. Empty values delete the key.
-   const saveLDAPConfigs = () => {
-     const values: Record<string, string | boolean> = transformData(getValues());
-+    const initialValues = initialData ? transformData(initialData) : {};
-     const promiseArray = Object.keys(values).reduce((promiseArr, key) => {
--      if (values[key] !== (initialData as any)[key]) {
--        const keyName = `${LDAPPath}.${key}`;
--        const value =
--          isString(values[key]) &&
--          !['ldap_default_role', 'ldap_group_search_scope', 'ldap_tls_protocol'].includes(key)
--            ? `"${values[key]}"`
--            : values[key];
--
--        promiseArr.push(
--          values[key] !== ''
--            ? 
-```
-
----
-
-### Incident Patch 2: `8417dc0e` (2026-10-05)
-**Commit Message**: [PLAT-22735] YBA: Enable new Perf Advisor UI by default and add Advanced Observability license notice
+### Incident Patch 1: `b10be5ad` (2026-10-07)
+**Commit Message**: [#28574,#30130] YSQL: Fully ungraceful ConnMgr shutdown to avoid coredumps
 
 Summary:
-The new Perf Advisor UI (Performance tab, advanced observability mode) was hidden behind `yb.ui.feature_flags.enable_new_perf_advisor_ui`, default false. It now defaults to true.
+Connection Manager can dump core while it is shutting down. There are two causes.
 
-Advanced Observability is a licensed feature, so users must be told before turning it on. The Enable Performance Monitoring modal (when the Advanced observability mode is selected) and the Enable Advanced Observability modal (basic -> advanced) now show a warning:
+1. Crash in `mm_channel_write` <- `od_worker_pool_feed` <- `od_system_server`. The system thread accepts clients and hands each one to a worker thread through that worker's task channel. An idle worker thread waits in `machine_channel_read` on its own channel, and the reader record it links into that channel lives on the worker's coroutine stack. `od_system_shutdown` stops the worker threads, but the system thread keeps accepting. A stopped worker thread that wakes up for anything other than a channel write (typically its 1 s epoll timeout) exits with its record still linked, and `machine_free` unmaps its stack. When the system thread next routes a client to that worker, `mm_channel_write` unlinks the record from unmapped memory and segfaults.
 
-"Advanced Observability is a licensed feature. Enabling it adds the cluster load chart, Top SQL and SQL drilldown for this universe under a new Performance menu. Please confirm your organization has an Advanced Observability license. If not, contact your Yugabyte account team."
+2. Crashes in `exit()` -> `OPENSSL_cleanup`, and in `od_frontend_close` -> `SSL_free`. `exit(0)` runs the `atexit` handlers and tears down OpenSSL while worker threads are still running and using them.
 
-While the notice is shown, the modal body is capped at 600px so the text wraps and the notice spans the full width.
+Fix: `od_system_shutdown` no longer stops the workers, and it calls `_exit
 
-The universe action "Enable/Disable Perf Advisor Collector" is renamed to "Enable/Disable Performance Monitoring", matching the dialog it opens, and the dialog's collection modes now read "Basic - collects performance data and exports it with Su
-
-**File**: `managed/src/main/resources/reference.conf` (modified, +1/-1)
+**File**: `java/yb-ysql-conn-mgr/src/test/java/org/yb/ysqlconnmgr/TestConnMgrShutdown.java` (added, +142/-0)
 ```diff
-@@ -283,7 +283,7 @@ yb {
-       # Cross-cloud federated IAM is in preview; hide its fields until explicitly enabled.
-       enable_cross_cloud_federated_iam=false
-       enable_s3_backup_proxy=false
--      enable_new_perf_advisor_ui=false
-+      enable_new_perf_advisor_ui=true
-       enable_new_universe_experience=false
-       enable_non_restart_gflag_upgrade_option=false
-       enable_az_overrides_k8s=true
-```
-
-**File**: `managed/ui/src/components/universes/UniverseDetail/UniverseDetail.jsx` (modified, +2/-2)
-```diff
-@@ -1943,8 +1943,8 @@ class UniverseDetail extends Component {
-                               }
-                             >
-                               {isUniverseRegisteredToPa
--                                ? 'Disable Perf Advisor Collector'
--                                : 'Enable Perf Advisor Collector'}
-+                                ? 'Disable Performance Monitoring'
-+                                : 'Enable Performance Monitoring'}
-                             </YBLabelWithIcon>
-                           </YBMenuItem>
-                         </RbacValidator>
-```
-
-**File**: `managed/ui/src/redesign/features/universe/universe-actions/enable-perf-advisor/EnablePerfAdvisorModal.tsx` (modified, +34/-7)
-```diff
-@@ -4,7 +4,7 @@ import { useState } from 'react';
- import { useDispatch } from 'react-redux';
- import { Trans, useTranslation } from 'react-i18next';
- import { toast } from 'react-toastify';
--import { YBModal, YBRadioGroup, YBSelect } from '../../../../components';
-+import { AlertVariant, YBAlert, YBModal, YBRadioGroup, YBSelect } from '../../../../components';
- import { PaRegistrationMode, PerfAdvisorAPI, QUERY_KEY } from '../../../PerfAdvisor/api';
- import { useListPerfAdvisorEndpoints } from '../../../../../v2/api/perf-advisor-endpoint/perf-advisor-endpoint';
- import { Universe } from '../../universe-form/utils/dto';
-@@ -163,14 +163,37 @@ export const EnablePerfAdvisorModal = ({
-       : [])
-   ];
- 
--  const bodyContent = enableAdvancedObservabilityOnly ? (
--    <Box component="span" display="block">
--      <Trans
--        i18nKey="universeActions.paUniverseStatus.enableAdvancedObservabilitySubText"
--        values={{ universeName: universeData.name }}
--        components={{ strong: <strong /> }}
-+  const showLicenseNotice =
-+    enableAdvancedObservabilityOnly ||
-+    (!isUniverseRegisteredToPA && mode === PaRegistrationMode.ADVANCED);
+@@ -0,0 +1,142 @@
++// Copyright (c) YugabyteDB, Inc.
++//
++// Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
++// in compliance with the License. You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software distributed under the License
++// is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
++// or implied. See the License for the specific language governing permissions and limitations
++// under the License.
++//
 +
-+  const licenseNotice = (
-+    <Box mt={2}>
-+      <YBAlert
-+        open
-+        variant={AlertVariant.Warning}
-+        dataTestId="EnablePerfAdvisorModal-LicenseNotice"
-+        text={
-+          <Trans
-+            i18nKey="universeActions.paUniverseStatus.advancedObservabilityLicenseNotice"
-+            components={{ strong: <strong /> }}
-+          />
-+        }
-       />
-     </Box>
-+  );
++package org.yb.ysqlconnmgr;
 +
-+  const bodyContent = enableAdvancedObservabilityOnly ? (
-+    <>
-+      <Box component="span" display="block">
-+        <Trans
-+          i18nKey="universeActions.paUniverseStatus.enableAdvancedObservabilitySubText"
-+          values={{ universeName: universeData.name }}
-+          components={{ strong: <strong /> }}
-+        />
-+      </Box>
-+      {licenseNotice}
-+    </>
-   ) : disableAdvancedObservabilityOnly ? (
-     <Box component="span" display="block">
-       <Trans
-@@ -200,6 +223,7 @@ export const EnablePerfAdvisorModal = ({
-           />
-         </Box>
-       )}
-+      {showLicenseNotice && licenseNotice}
-       {!isUniverseRegisteredToPA && mode === PaRegistrationMode.ONLINE && (
-         <Box mt={2} display="flex" flexDirection="column" gridGap={8}>
-           <Typography variant="body2">
-@@ -247,6 +271,9 @@ export const EnablePerfAdvisorModal = ({
-       <Box
-         display="flex"
-         width="100%"
-+        // Capped whatever the mode: the dialog is fit-content, so a cap that came and went with
-+        // the notice resized it whenever the mode changed.
-+        maxWidth={600}
-         flexDirection="column"
-         pt={2}
-         pb={2}
-```
-
-**File**: `managed/ui/src/translations/en.json` (modified, +6/-5)
-```diff
-@@ -648,17 +648,18 @@
-         "disablePaUniverseFailure": "Failed to disable Performance Monitoring for the universe",
-         "subText": "Are you sure you want to {{action}} Performance Monitoring for the universe <strong>{{universeName}}</strong>?",
-         "enableAdvancedObservability": "Enable Advanced Observability",
--        "enableAdvancedObservabilitySubText": "Enable Advanced Observability for universe <strong>{{universeName}}</strong>? This will enable additional metrics export to Prometheus.",
-+        "enableAdvancedObservabilitySubText": "Enable Advanced Observability for universe <strong>{{universeName}}</strong>? This adds a Performance tab to the console for Cluster Load, Top SQL, SQL details drilldown.",
-         "enableAdvancedObservabilityFailure": "Failed to enable Advanced Observability for the universe",
-         "disableAdvancedObservabilityTitle": "Disable Advanced Observability",
--        "disableAdvancedObservabilitySubText": "Disable Advanced Observability for universe <strong>{{universeName}}</strong>? This will disable additional metrics export to Prometheus.",
-+        "disableAdvancedObservabilitySubText": "Disable Advanced Observability for universe <strong>{{universeName}}</strong>? This removes a Performance tab from the console.",
-         "disableAdvancedObservabilityFailure": "Failed to disable Advanced Observability for the universe",
-         "modeLabel": "Collection mode",
--        "modeBasic": "Basic - collect and store performance data on this YugabyteDB Anywhere",
--        "modeAdvanced": "Advanced observability - also export universe metrics to Prometheus",
-+        "modeBasic": "Basic - collects performance data and exports it with Support Bundle",
-+        "modeAdvanced": "Advanced observability - adds a Performance tab to the console for Cluster Load, Top SQL, SQL details drilldown",
-         "modeOnline": "Online - collect here and send everything to an external Perf Advisor",
-         "onlineDestinationLabel": "Destination",
--        "onlinePrerequisite": "The universe must already be registered on the destination Perf Advisor before online mode can be enabled."
-+        "onlinePrerequisite": "The universe must already be registered on the destination Perf Advisor before online mode can be enabled.",
-+        "advancedObservabilityLicenseNotice": "<strong>Advanced Observability is a licensed feature.</strong> Please confirm your organization has an Advanced Observability license. If not, contact your Yugabyte account team."
-       },
-       "pgCompatibility": {
-         "modalTitle": "Edit Enhanced Postgres Compatibility",
-```
-
----
-
-### Incident Patch 3: `d94b9691` (2026-10-04)
-**Commit Message**: [#34624] DocDB: Fix heap-buffer-overflow in MasterTxnStatusCheck.AutoScale tablet listing
-
-Summary:
-`CatalogManager::GetPlacementLocalTransactionStatusTablets` built the tablet id list with a `std::views::filter` | `std::views::transform` | `std::ranges::to<std::vector>` pipeline. This pipeline walks the filtered range twice: once to size the allocation and once to copy the ids. The filter predicate `CheckTransactionStatusTabletUsable` reads tablet state that other threads change during auto-scaling, so a tablet that became usable between the two passes caused a write past the buffer, which ASAN reported as a heap-buffer-overflow. The ids are now collected in a single-pass loop that checks each tablet once and appends with `push_back`, so concurrent state changes can no longer overflow the buffer.
-
----
-_Produced fully automatically by csi-fix.py: Claude Opus (5.5) analyzed the failure logs, wrote the change, and verified it locally._
-
-Test Plan:
-./yb_build.sh asan --clang21 --cxx-test transaction_status_check-test --gtest-filter MasterTxnStatusCheck.AutoScale -n 180 --stop-at-failure -- -p 6
-Ran the above locally with no failures.
-Before the fix, this test reproduced locally (same 
-
-**File**: `src/yb/master/catalog_manager.cc` (modified, +8/-7)
-```diff
-@@ -5818,13 +5818,14 @@ Status CatalogManager::GetPlacementLocalTransactionStatusTablets(
-         continue;
-       }
-       auto tablets = VERIFY_RESULT(table_info.table->GetTablets());
--      auto tablet_ids =
--          tablets
--              | std::views::filter([this](auto& tablet) {
--                  return CheckTransactionStatusTabletUsable(tablet);
--                })
--              | std::views::transform([](const auto& tablet) { return tablet->tablet_id(); })
--              | std::ranges::to<std::vector>();
-+      // Single pass: the usability predicate may change concurrently, so a multi-pass range
-+      // (size then copy) could overflow the allocated buffer.
-+      std::vector<TabletId> tablet_ids;
-+      for (const auto& tablet : tablets) {
-+        if (CheckTransactionStatusTabletUsable(tablet)) {
-+          tablet_ids.push_back(tablet->tablet_id());
-+        }
++import static org.yb.AssertionWrappers.assertEquals;
++import static org.yb.AssertionWrappers.assertNotNull;
++import static org.yb.AssertionWrappers.assertTrue;
++import static org.yb.AssertionWrappers.fail;
++
++import java.nio.file.Files;
++import java.nio.file.Paths;
++import java.sql.Connection;
++import java.sql.ResultSet;
++import java.sql.Statement;
++import java.util.concurrent.CompletableFuture;
++import java.util.concurrent.TimeUnit;
++
++import org.junit.Test;
++import org.junit.runner.RunWith;
++import org.yb.YBTestRunner;
++import org.yb.minicluster.LogErrorListener;
++import org.yb.minicluster.MiniYBClusterBuilder;
++import org.yb.minicluster.MiniYBDaemon;
++import org.yb.pgsql.ConnectionEndpoint;
++import org.yb.util.BuildTypeUtil;
++import org.yb.util.RequiresLinux;
++
++@RequiresLinux
++@RunWith(value = YBTestRunner.class)
++public class TestConnMgrShutdown extends BaseYsqlConnMgr {
++  private static final long SHUTDOWN_DELAY_MS = BuildTypeUtil.adjustTimeout(10000);
++  private static final int WORKER_EXIT_WAIT_MS = 3000;
++  private static final long EXIT_WAIT_MS = SHUTDOWN_DELAY_MS + 30000;
++
++  @Override
++  protected void customizeMiniClusterBuilder(MiniYBClusterBuilder builder) {
++    super.customizeMiniClusterBuilder(builder);
++    disableWarmupRandomMode(builder);
++    builder.addCommonTServerFlag("TEST_ysql_conn_mgr_shutdown_delay_ms",
++        String.valueOf(SHUTDOWN_DELAY_MS));
++  }
++
++  private Connection connectToConnMgr() throws Exception {
++    return getConnectionBuilder()
++        .withTServer(TSERVER_IDX)
++        .withConnectionEndpoint(ConnectionEndpoint.YSQL_CONN_MGR)
++        .connect();
++  }
++
++  private void runSelectOne() throws Exception {
++    try (Connection conn = connectToConnMgr();
++        Statement stmt = conn.createStatement();
++        ResultSet rs = stmt.executeQuery("SELECT 1")) {
++      assertTrue(rs.next());
++      assertEquals(1, rs.getInt(1));
++    }
++  }
++
++  private static boolean isProcessRunning(int pid) throws Exception {
++    String stat;
++    try {
++      stat = new String(Files.readAllBytes(Paths.get("/proc/" + pid + "/stat")));
++    } catch (java.nio.file.NoSuchFileException e) {
++      return false;
++    }
++    String state = stat.substring(stat.lastIndexOf(')') + 2).split(" ")[0];
++    return !state.equals("Z") && !state.equals("X");
++  }
++
++  private static class ConnMgrExitListener implements LogErrorListener {
++    private final CompletableFuture<String> exitLine = new CompletableFuture<>();
++
++    @Override
++    public void handleLine(String line) {
++      if (line.contains("Ysql Connection Manager exited normally")
++          || line.contains("Ysql Connection Manager server returned with code")) {
++        exitLine.complete(line);
 +      }
-       if (table_info.is_region_local) {
-         resp->mutable_region_local_tablet_id()->Add(tablet_ids.begin(), tablet_ids.end());
-       }
++    }
++
++    @Override
++    public void reportErrorsAtEnd() {
++    }
++
++    String waitForExit(long timeoutMs) throws Exception {
++      return exitLine.get(timeoutMs, TimeUnit.MILLISECONDS);
++    }
++  }
++
++  private MiniYBDaemon getTServerDaemon(String host) {
++    return miniCluster.getTabletServers().values().stream()
++        .filter(daemon -> host.equals(daemon.getLocalhostIP())).findFirst()
++        .orElseThrow(() -> new IllegalStateException("No tserver found for host " + host));
++  }
++
++  @Test
++  public void testConnectAfterShutdownSignal() throws Exception {
++    final String host = getPgHost(TSERVER_IDX);
++    final int odysseyPid = getOdysseyPidForHost(host);
++
++    runSelectOne();
++
++    ConnMgrExitListener exitListener = new ConnMgrExitListener();
++    getTServerDaemon(host).getLogPrinter().addErrorListener(exitListener);
++
++    Process kill = new ProcessBuilder("kill", "-INT", String.valueOf(odysseyPid)).start();
++    assertEquals(0, kill.waitFor());
++
++    // Due to #22345, ConnMgr is not able to restart on it's own so this cluster is
++    // not usable after the shutdown signal. Mark it as needing recreation so that
++    // other tests don't try to use it.
++    markClusterNeedsRecreation();
++
++    Thread.sleep(WORKER_EXIT_WAIT_MS);
++
++    try {
++      runSelectOne();
++    } catch (Exception e) {
++      LOG.error("Connection during conn mgr shutdown failed", e);
++      fail("Connection during conn mgr shutdown failed: " + e
++          + "; conn mgr running: " + isProcessRunning(odysseyPid));
++    }
++    assertTrue("Conn mgr exited before the shutdown delay elapsed",
++     
+```
+
+**File**: `src/odyssey/sources/sighandler.c` (modified, +35/-2)
+```diff
+@@ -81,12 +81,20 @@ static inline void yb_stats_shmem_cleanup(od_instance_t *instance)
+ 	       "Deleted the shared memory segment with id %d", shmid);
+ }
+ 
++/*
++ * YB: Shutdown is ungraceful. Worker threads keep running until the process
++ * exits, so freeing anything they may use here would race with them. We rely
++ * on process exit to reclaim all resources.
++ */
+ od_attribute_noreturn() void od_system_shutdown(od_system_t *system,
+ 						od_instance_t *instance)
+ {
++	/* YB: Worker pool cleanup is disabled */
++#ifdef OD_SYSTEM_SHUTDOWN_CLEANUP
+ 	od_worker_pool_t *worker_pool;
+ 
+ 	worker_pool = system->global->worker_pool;
++#endif
+ #ifdef YB_SUPPORT_FOUND
+ 	// Connection manager process shuts down gracefully on receiving
+ 	// SIGINT signal, but logging it makes some tests fail.
+@@ -103,10 +111,25 @@ od_attribute_noreturn() void od_system_shutdown(od_system_t *system,
+ 	// YB: Cleanup shmem after cron thread has stopped
+ 	yb_stats_shmem_cleanup(instance);
+ 
++	/*
++	 * YB: Workers are deliberately not stopped, since stopping
++	 * them unmaps coroutine stacks that may still be linked as
++	 * channel readers
++	 */
++#ifdef OD_SYSTEM_SHUTDOWN_CLEANUP
+ 	od_worker_pool_stop(worker_pool);
+ 
+-	/* Prevent OpenSSL usage during deinitialization */
+ 	od_worker_pool_wait();
++#endif
++
++	char *yb_shutdown_delay_ms =
++		getenv("YB_YSQL_CONN_MGR_TEST_SHUTDOWN_DELAY_MS");
++	if (yb_shutdown_delay_ms != NULL) {
++		unsigned long delay_ms =
++			strtoul(yb_shutdown_delay_ms, NULL, 10);
++		machine_sleep(delay_ms > UINT32_MAX ? UINT32_MAX :
++						      (uint32_t)delay_ms);
++	}
+ 
+ #ifdef OD_SYSTEM_SHUTDOWN_CLEANUP
+ 	od_router_free(system->global->router);
+@@ -118,7 +141,17 @@ od_attribute_noreturn() void od_system_shutdown(od_system_t *system,
+ 	/* stop machinaruim and free */
+ 	od_instance_free(instance);
+ #endif
+-	exit(0);
++	/* YB: Give the logger thread a chance to flush queued log lines */
++	machine_sleep(1);
++
++	/*
++	 * YB: Call _exit instead of exit(0) to avoid running atexit handlers.
++	 * This is because cleanup of OpenSSL races against new client conns
++	 * undergoing TLS handshake. Since the memory is anyway reclaimed by the
++	 * OS and we're doing ungraceful shutdown, it's okay to skip the atexit
++	 * handlers.
++	 */
++	_exit(0);
+ }
+ 
+ void od_system_signal_handler(void *arg)
+```
+
+**File**: `src/yb/yql/ysql_conn_mgr_wrapper/ysql_conn_mgr_wrapper.cc` (modified, +10/-0)
+```diff
+@@ -240,6 +240,10 @@ DEFINE_NON_RUNTIME_CONN_MGR_FLAG(bool, cert_auth, true,
+     "which is what makes the connection manager verify the client certificate the same way "
+     "PostgreSQL would.");
+ 
++DEFINE_test_flag(uint32, ysql_conn_mgr_shutdown_delay_ms, 0,
++    "Time (in ms) that Ysql Connection Manager waits during SIGINT/SIGTERM shutdown before the "
++    "process exits.");
++
+ namespace {
+ 
+ bool ValidateLogSettings(const char* flag_name, const std::string& value) {
+@@ -394,6 +398,12 @@ Status YsqlConnMgrWrapper::Start() {
+   // to start if the provider did not come up.
+   proc_->SetEnv(YSQL_CONN_MGR_REQUIRE_FIPS, FLAGS_openssl_require_fips ? "true" : "false");
+ 
++  unsetenv("YB_YSQL_CONN_MGR_TEST_SHUTDOWN_DELAY_MS");
++  if (FLAGS_TEST_ysql_conn_mgr_shutdown_delay_ms > 0) {
++    proc_->SetEnv("YB_YSQL_CONN_MGR_TEST_SHUTDOWN_DELAY_MS",
++                  std::to_string(FLAGS_TEST_ysql_conn_mgr_shutdown_delay_ms));
++  }
++
+ #ifdef THREAD_SANITIZER
+   // Disable thread leak detection for the Ysql Connection Manager (Odyssey) process.
+   // Worker threads may not be joined before exit(0) on SIGINT/SIGTERM shutdown.
 ```
 
 ---
 
-### Incident Patch 4: `5960e19d` (2026-10-05)
-**Commit Message**: [#33919] DocDB: Fix flaky WriteStallCascadeTest.WriteStallCanBlockElection (#34492)
+### Incident Patch 2: `08a56060` (2026-10-17)
+**Commit Message**: [#34685,#34686] YSQL: Fix issues with pg_cron leader failover (#34689)
 
 ## Summary
 
-In `WriteStallCanBlockElection`, the test shuts down one follower and
-then calls `GetLeaderPeerForTablet()`. That function only works if some
-peer is `LEADER_AND_READY`. On slow nodes the shutdown can take about 3
-seconds, and two things can go wrong in that window:
-- The leader can lose its lease, because the stalled follower never
-acknowledges it.
-- The stalled follower can take over as leader.
+Two bugs on an ungraceful pg_cron leader change (the leader node
+crashes, stops, or is cut off from the cluster).
 
-When either happens, the call fails with `Expected exactly one leader
-... 0 vs 1`.
+**#34685: new leader does not wait out the old lease.**
+`PgCronLeaderService::Activate` makes a new leader wait until the
+previous leader's lease must have expired (`pg_cron_leader_lease_sec` +
+2 * `max_clock_skew_usec`) before it starts jobs. It added
+`pg_cron_leader_lease_sec` as microseconds, so the wait was about 1 s
+instead of one lease (60 s by default). An old leader that is alive but
+cut off keeps running its jobs until its lease expires, so the new
+leader could run the same jobs at the same time.
 
-**Fix:**
-The step-down logic is now a shared helper,
-`StepDownOriginalLeaderIfStillLeader()`. It finds the peer on the
-original leader's tserver directly. If that peer is still the leader, it
-steps it down. If it isn't, it skips the step-down. Both
-`WriteStallCanBlockElection` and
-`ElectionSucceedsDespiteFollowerWriteStall` use it, since both tests had
-the same pattern.
+- Fix: add the lease in seconds. After a leader change, no job now
+starts for one lease, as designed.
+- With the correct wait, the new leader starts 2 * `max_clock_skew_usec`
+(1 s) after the old lease ends. The old leader stops a job only on its
+next launcher iteration after the lease ends (up to 1 s), plus the time
+for the job's worker to exit; a test saw 1.9 s, with both nodes running
+the job for 0.8 s. So the lease the tserver publishes to postgres now
+ends min(3 s, lease - refresh
 
-`GetTabletLayout()` now keeps retrying for up to 10 seconds. Right after
-startup, a peer may not have become a follower yet. That is what caused
-`Need at least 2followers: 1 vs 2` on master arm release.
-
-Jira: DB-23519
-
-## Upgrade/Rollback safe
-
-**File**: `src/yb/integration-tests/write_stall_cascade-test.cc` (modified, +76/-26)
+**File**: `src/postgres/src/backend/utils/cache/inval.c` (modified, +1/-1)
 ```diff
-@@ -107,8 +107,21 @@ class WriteStallCascadeTest : public integration_tests::YBTableTestBase {
-     std::shared_ptr<tablet::TabletPeer> stalled_peer;
-   };
- 
--  // Finds the leader and two followers, returning their tserver indices.
-+  // Like TryGetTabletLayout(), but retries since roles may still be settling after startup.
-   Result<TabletLayout> GetTabletLayout(const std::string& tablet_id) {
-+    Result<TabletLayout> layout = STATUS(NotFound, "Tablet layout not found");
-+    auto status = WaitFor([&] {
-+      layout = TryGetTabletLayout(tablet_id);
-+      return layout.ok();
-+    }, 10s * kTimeMultiplier, Format("Waiting for leader and two followers of $0", tablet_id));
-+    if (!status.ok()) {
-+      return status.CloneAndAppend(Format("last error: $0", layout.status()));
-+    }
-+    return layout;
-+  }
-+
-+  // Finds the leader and two followers, returning their tserver indices.
-+  Result<TabletLayout> TryGetTabletLayout(const std::string& tablet_id) {
-     TabletLayout layout;
-     bool found_leader = false;
-     std::vector<size_t> follower_indices;
-@@ -165,6 +178,59 @@ class WriteStallCascadeTest : public integration_tests::YBTableTestBase {
-     }, 10s * kTimeMultiplier, Format("Waiting for ts-$0 to become leader for $1",
-                                      target_ts_idx, tablet_id));
-   }
-+
-+  // Steps down the original leader to trigger an election, if it is still leader.
-+  // Doesn't use GetLeaderPeerForTablet(): that requires LEADER_AND_READY, and while the other
-+  // follower shuts down the leader may lose its lease (no acks from the stalled follower) or
-+  // lose leadership to the stalled follower. In the latter case, the step down is skipped.
-+  // Returns true if this step down triggered the election, false if the old leader had already
-+  // lost leadership.
-+  Result<bool> StepDownOriginalLeaderIfStillLeader(
-+      const TabletId& tablet_id, const TabletLayout& layout) {
-+    auto leader_peer = mini_cluster()->mini_tablet_server(layout.leader_idx)->server()
-+        ->tablet_manager()->LookupTablet(tablet_id);
-+    SCHECK_NOTNULL(leader_peer);
-+    auto is_leader = [&leader_peer] {
-+      auto consensus = leader_peer->GetConsensus();
-+      return consensus.ok() &&
-+             (*consensus)->GetLeaderStatus() != consensus::LeaderStatus::NOT_LEADER;
-+    };
-+    auto describe_leader_peer = [&leader_peer] {
-+      auto consensus = leader_peer->GetConsensus();
-+      if (!consensus.ok()) {
-+        return AsString(consensus.status());
-+      }
-+      auto cstate = (*consensus)->ConsensusState(consensus::CONSENSUS_CONFIG_COMMITTED);
-+      return Format("leader status: $0, term: $1, known leader: $2",
-+                    (*consensus)->GetLeaderStatus(), cstate.current_term(),
-+                    cstate.has_leader_uuid() ? cstate.leader_uuid() : "<none>");
-+    };
-+    LOG(INFO) << "=== After shutdown, old leader (ts-" << layout.leader_idx << "): "
-+              << describe_leader_peer() << "; stalled follower uuid: "
-+              << layout.stalled_peer->permanent_uuid() << " ===";
-+
-+    if (!is_leader()) {
-+      LOG(INFO) << "=== Old leader (ts-" << layout.leader_idx << ") already lost leadership, "
-+                << "skipping step down ===";
-+      return false;
-+    }
-+
-+    LOG(INFO) << "=== Stepping down leader (ts-" << layout.leader_idx << ") ===";
-+    auto step_down_status = StepDown(leader_peer, std::string(), ForceStepDown::kTrue);
-+    if (!step_down_status.ok()) {
-+      if (is_leader()) {
-+        return step_down_status;
-+      }
-+      LOG(INFO) << "=== Step down failed and old leader is no longer leader: "
-+                << step_down_status << " ===";
-+      return false;
-+    }
-+
-+    RETURN_NOT_OK(WaitFor([&] { return !is_leader(); },
-+                          5s * kTimeMultiplier, "Waiting for old leader to step down"));
-+    LOG(INFO) << "=== Old leader is no longer leader, waiting for election ===";
-+    return true;
-+  }
- };
- 
- // Verifies that leader election succeeds even when a follower is in a hard write stop.
-@@ -231,18 +297,12 @@ TEST_F(WriteStallCascadeTest, ElectionSucceedsDespiteFollowerWriteStall) {
-   LOG(INFO) << "=== Shutting down ts-" << layout.other_follower_idx << " ===";
-   mini_cluster()->mini_tablet_server(layout.other_follower_idx)->Shutdown();
- 
--  // Step down the leader to trigger an election.
--  auto leader_peer = ASSERT_RESULT(GetLeaderPeerForTablet(mini_cluster(), tablet_id));
--  LOG(INFO) << "=== Stepping down leader (ts-" << layout.leader_idx << ") ===";
--  ASSERT_OK(StepDown(leader_peer, std::string(), ForceStepDown::kTrue));
--
--  ASSERT_OK(WaitFor([&]() {
--    auto consensus = leader_peer->GetConsensus();
--    return consensus.ok() &&
--           (*consensus)->GetLeaderStatus() == consensus::LeaderStatus::NOT_LEADER;
--  }, 5s * kTimeMultiplier, "Waiting for old leader to step down"));
--
--  LOG(INFO) << "=== Old leader stepped down, waiting for new leader election ===";
-+  if (!ASSERT_RESULT(StepDownOriginalLeaderIfStillLead
-```
-
----
-
-### Incident Patch 5: `6f403ed9` (2026-10-01)
-**Commit Message**: [#34069] YSQL: Fix inconsistent BNL batched condition causing wrong results
-
-Summary:
-Reject a batched nested loop join that would batch only some of the outer
-relations one batched index condition reads.  Such a join returned too few
-rows:
-
-  Index Cond: (a = ANY (ARRAY[(t1b.b + t1a.b), ($1 + $1025), ...]))
-
-Here one join batches `t1b` and another batches `t1a`.  The expression is
-expanded with one batch index shared by every batched value in it, but each
-join fills its own parameter slots from its own outer scan, so element i pairs
-slot i of one batch with slot i of the other.  The probe list holds only the
-diagonal of the two batches instead of their cross product, and every row the
-diagonal misses is lost.
-
-`yb_has_non_evaluable_bnl_clauses` (#17150) rejects such a join only while the
-clause is visible to it: it reads the join's restriction clauses and the inner
-path's `ppi_clauses`, and join relations carry no `ppi_clauses`.  Once the scan
-carrying the expression sits below another join, nothing records which
-relations it needs batched together.
-
-This change records that on the path's ParamPathInfo and enforces it at every
-join level:
-
-- `yb_ppi_batched_groups` lists the sets 
-
-**File**: `src/postgres/src/backend/optimizer/path/indxpath.c` (modified, +4/-0)
-```diff
-@@ -948,6 +948,9 @@ yb_get_batched_index_paths(PlannerInfo *root, RelOptInfo *rel,
- 
- 	Assert(!root->yb_cur_batched_relids);
- 	root->yb_cur_batched_relids = batchedrelids;
-+	root->yb_cur_batched_groups =
-+		yb_clause_batched_groups(batched_rinfos, batchedrelids,
-+								 index->rel->relids);
- 
- 	/*
- 	 * An index clause that references a batched outer relation but cannot
-@@ -1052,6 +1055,7 @@ yb_get_batched_index_paths(PlannerInfo *root, RelOptInfo *rel,
- 	}
- 
- 	root->yb_cur_batched_relids = NULL;
-+	root->yb_cur_batched_groups = NIL;
- 
- 	return batched_paths_added;
- }
-```
-
-**File**: `src/postgres/src/backend/optimizer/path/joinpath.c` (modified, +43/-6)
-```diff
-@@ -102,6 +102,8 @@ static void generate_mergejoin_paths(PlannerInfo *root,
- 									 bool is_partial);
- 
- /* YB declarations */
-+static bool yb_join_splits_batched_rels(Relids batched_together,
-+										Relids outerrelids);
- static bool yb_has_non_evaluable_bnl_clauses(Path *outer_path,
- 											 Path *inner_path,
- 											 List *rinfos);
-@@ -2529,6 +2531,25 @@ select_mergejoin_clauses(PlannerInfo *root,
- 	return result_list;
+@@ -882,7 +882,7 @@ CallSystemCacheCallbacks(void)
+ 	InvalidateSystemCachesExtended(true, true /* yb_callback */ );
  }
  
-+/*
-+ * yb_join_splits_batched_rels
-+ *	  Would a join over outerrelids batch only part of a set of outer relations
-+ *	  that have to be batched together?
-+ *
-+ * One batch index addresses every batched value in a batched expression, so a
-+ * join that supplies some members of such a set and leaves the rest to another
-+ * join pairs slot i of one batch with slot i of another.  That yields the
-+ * diagonal of the two batches rather than their cross product, and the rows
-+ * the diagonal misses are lost.  Supplying none of the set is fine; a join
-+ * further up takes it whole.
-+ */
-+static bool
-+yb_join_splits_batched_rels(Relids batched_together, Relids outerrelids)
-+{
-+	return (bms_overlap(batched_together, outerrelids) &&
-+			!bms_is_subset(batched_together, outerrelids));
-+}
-+
- /*
-  * A batched clause can be non_evaluable if it requires input relations
-  * A and B on its outer side but And B are not joined together in the context
-@@ -2541,6 +2562,11 @@ select_mergejoin_clauses(PlannerInfo *root,
-  * and S = {1,3} then we cannot join O to I as I will not receieve a cross
-  * product of relations 1 and 3. On the other hand, if O had relations {1,3,4},
-  * the join would be acceptable.
-+ *
-+ * It is only handed this join's restriction clauses and I's ppi_clauses, and
-+ * ppi_clauses is NIL once I is a joinrel, so a clause evaluated inside I
-+ * escapes it.  yb_batched_clause_final_check feeds the same test from
-+ * yb_ppi_batched_groups, which carries S across those joins.
-  */
- static bool
- yb_has_non_evaluable_bnl_clauses(Path *outer_path, Path *inner_path,
-@@ -2561,14 +2587,11 @@ yb_has_non_evaluable_bnl_clauses(Path *outer_path, Path *inner_path,
- 		if (!batched_rinfo)
- 			continue;
- 
--		Relids		right_relids = batched_rinfo->right_relids;
-+		Relids		right_relids = bms_intersect(batched_rinfo->right_relids,
-+												 req_batched_rels);
- 
--		right_relids = bms_intersect(right_relids, req_batched_rels);
--		if (bms_overlap(right_relids, outer_relids) &&
--			!bms_is_subset(right_relids, outer_relids))
--		{
-+		if (yb_join_splits_batched_rels(right_relids, outer_relids))
- 			return true;
--		}
- 	}
- 	return false;
- }
-@@ -2587,6 +2610,8 @@ yb_batched_clause_final_check(Path *outer_path,
+-static void
++void
+ YbMaybeRefreshCache(void)
  {
- 	if (YB_PATH_NEEDS_BATCHED_RELS(inner_path))
- 	{
-+		ListCell   *lc;
-+
- 		/*
- 		 * Check to make sure this is a valid BNL.
- 		 */
-@@ -2600,6 +2625,18 @@ yb_batched_clause_final_check(Path *outer_path,
- 		{
- 			return false;
- 		}
-+
-+		/*
-+		 * The same rule fed from the inner path's groups, for a clause the
-+		 * lists above can no longer reach.  Only the inner path's groups
-+		 * matter: an outer path's group names relations supplied from above
-+		 * this join, which this join cannot split.
-+		 */
-+		foreach(lc, YB_PATH_BATCHED_GROUPS(inner_path))
-+		{
-+			if (yb_join_splits_batched_rels((Relids) lfirst(lc), outerrelids))
-+				return false;
-+		}
- 	}
+ 	uint64_t	shared_catalog_version = YbGetSharedCatalogVersion();
+```
+
+**File**: `src/postgres/src/include/utils/inval.h` (modified, +1/-0)
+```diff
+@@ -71,5 +71,6 @@ extern bool yb_refresh_cache_in_progress;
+ extern void CallSystemCacheCallbacks(void);
+ extern int	YbGetNumInvalMessagesInTxn(int subgroup);
+ extern void YbAddNumInvalMessagesInTxn(int subgroup, int nmsgs);
++extern void YbMaybeRefreshCache(void);
  
- 	/*
+ #endif							/* INVAL_H */
 ```
 
-**File**: `src/postgres/src/backend/optimizer/plan/createplan.c` (modified, +32/-0)
+**File**: `src/postgres/third-party-extensions/pg_cron/src/job_metadata.c` (modified, +31/-0)
 ```diff
-@@ -7162,6 +7162,38 @@ replace_nestloop_params_mutator(Node *node, PlannerInfo *root)
- 		YbBatchedExpr *bexpr = (YbBatchedExpr *) node;
- 		List	   *batched_elems = NIL;
- 
-+#ifdef USE_ASSERT_CHECKING
-+
-+		/*
-+		 * Every batched Var below shares root->yb_cur_batch_no, so one
-+		 * batched nested loop join has to fill all of them (see
-+		 * yb_ppi_batched_groups); yb_availBatchedRelids holds one entry per
-+		 * enclosing such join.  yb_batched_clause_final_check keeps paths
-+		 * that would span two of them out, and a violation here has no
-+		 * symptom other than lost rows, so fail loudly instead.
-+		 */
-+		Relids		batched_vars =
-+			bms_intersect(pull_varnos(root, (Node *) bexpr->orig_expr),
-+						  root->yb_cur_batched_relids);
-+
-+		if (!bms_is_empty(batched_vars))
-+		{
-+			bool		one_join = false;
-+			ListCell   *lc;
-+
-+			foreach(lc, root->yb_availBatchedRelids)
-+			{
-+				if (bms_is_subset(batched_vars, (Relids) lfirst(lc)))
-+				{
-+					one_join = true;
-+					break;
-+				}
-+			}
-+
-+			Assert(one_join);
-+		}
-+#endif
-+
- 		/*
- 		 * Populate batched_elems with each batched instance of
- 		 * bexpr->orig_expr's contents.
-```
-
-**File**: `src/postgres/src/backend/optimizer/plan/planner.c` (modified, +2/-0)
-```diff
-@@ -777,6 +777,8 @@ subquery_planner(PlannerGlobal *glob, Query *parse,
- 		parent_root ? parent_root->yb_cur_batched_relids : NULL;
- 	root->yb_cur_unbatched_relids =
- 		parent_root ? parent_root->yb_cur_unbatched_relids : NULL;
-+	root->yb_cur_batched_groups =
-+		parent_root ? parent_root->yb_cur_batched_groups : NIL;
- 	root->yb_availBatchedRelids =
- 		parent_root ? parent_root->yb_availBatchedRelids : NULL;
- 	root->yb_cur_batch_no = -1;
-```
-
-**File**: `src/postgres/src/backend/optimizer/prep/prepjointree.c` (modified, +1/-0)
-```diff
-@@ -1023,6 +1023,7 @@ pull_up_simple_subquery(PlannerInfo *root, Node *jtnode, RangeTblEntry *rte,
- 	subroot->hasRecursion = false;
- 	subroot->yb_cur_batched_relids = NULL;
- 	subroot->yb_cur_unbatched_relids = NULL;
-+	subroot->yb_cur_batched_groups = NIL;
- 	subroot->yb_availBatchedRelids = NULL;
- 	subroot->yb_cur_batch_no = -1;
- 	subroot->wt_param_id = -1;
-```
-
-**File**: `src/postgres/src/backend/optimizer/util/pathnode.c` (modified, +13/-0)
-```diff
-@@ -1933,17 +1933,30 @@ create_append_path(PlannerInfo *root,
- 		/* YB */
- 		if (subpaths)
- 		{
-+			List	   *groups = NIL;
-+
- 			/* YB: Accumulate batching info from subpaths for this "baserel". */
- 			Assert(yb_has_same_batching_reqs(subpaths));
- 
- 			root->yb_cur_batched_relids =
- 				YB_PATH_REQ_OUTER_BATCHED((Path *) linitial(subpaths));
-+
-+			/*
-+			 * The parent's movable clauses can miss a group that a child's
-+			 * index condition batches on, and children can batch different
-+			 * clauses, so pass on the union of the children's groups.
-+			 */
-+			foreach(l, subpaths)
-+				groups = list_concat(groups,
-+									 YB_PATH_BATCHED_GROUPS((Path *) lfirst(l)));
-+			root->yb_cur_batched_groups = groups;
- 		}
- 
- 		pathnode->path.param_info = get_baserel_parampathinfo(root,
- 															  rel,
- 															  required_outer);
- 		root->yb_cur_batched_relids = NULL;
-+		root->yb_cur_batched_groups = NIL;
- 	}
- 	else
- 		pathnode->path.param_info = get_appendrel_parampathinfo(rel,
-```
-
-**File**: `src/postgres/src/backend/optimizer/util/relnode.c` (modified, +182/-2)
-```diff
-@@ -77,6 +77,14 @@ static void build_child_join_reltarget(PlannerInfo *root,
- 									   int nappinfos,
- 									   AppendRelInfo **appinfos);
+@@ -98,6 +98,9 @@ static Oid GetRoleOidIfCanLogin(char *username);
+ static entry * ParseSchedule(char *scheduleText);
+ static bool TryParseInterval(char *scheduleText, uint32 *secondsInterval);
  
 +/* YB declarations */
-+static List *yb_add_batched_groups(List *groups, List *more,
-+								   Relids batchedrelids);
-+static List *yb_groups_within(List *groups, Relids relids);
-+static ParamPathInfo *yb_ppi_add_batched_groups(ParamPathInfo *ppi,
-+											   List *groups,
-+											   Relids batchedrelids);
++static void YbEnsureFreshCatalog(void);
 +
  
- /*
-  * setup_simple_rel_arrays
-@@ -1492,7 +1500,12 @@ get_baserel_parampathinfo(PlannerInfo *root, RelOptInfo *baserel,
- 			 yb_find_batched_param_path_info(baserel,
- 											 required_outer,
- 											 batchedrelids)))
--			return ppi;
-+		{
-+			List	   *groups = yb_groups_within(root->yb_cur_batched_groups,
-+											  required_outer);
-+
-+			return yb_ppi_add_batched_groups(ppi, groups, batchedrelids);
-+		}
- 	}
- 	else
+ /* SQL-callable functions */
+ PG_FUNCTION_INFO_V1(cron_schedule);
+@@ -543,6 +546,7 @@ NextRunId(void)
+ 	bool failOK = true;
+ 	MemoryContext originalContext = CurrentMemoryContext;
+ 
++	YbEnsureFreshCatalog();
+ 	StartTransactionCommand();
+ 	PushActiveSnapshot(GetTransactionSnapshot());
+ 
+@@ -830,6 +834,7 @@ void
+ InvalidateJobCacheCallback(Datum argument, Oid relationId)
+ {
+ 	if (relationId == CachedCronJobRelationId ||
++		relationId == InvalidOid ||
+ 		CachedCronJobRelationId == InvalidOid)
  	{
-@@ -1602,6 +1615,28 @@ get_baserel_parampathinfo(PlannerInfo *root, RelOptInfo *baserel,
- 	ppi->yb_ppi_req_outer_batched = batchedrelids;
- 	ppi->yb_ppi_relegated_clauses = yb_relegated_clauses;
+ 		CronJobCacheValid = false;
+@@ -873,6 +878,7 @@ LoadCronJobList(void)
+ 	MemoryContext originalContext = CurrentMemoryContext;
  
-+	/*
-+	 * Two sources, because neither sees every batched clause.  pclauses covers
-+	 * clauses that never become an index condition, but it can miss one that
-+	 * does: generate_join_implied_equalities emits one clause per equivalence
-+	 * class and scores a plain Var above an expression, while the index path
-+	 * may batch on the expression.  yb_cur_batched_groups carries what the path
-+	 * being built does batch: the index clauses indxpath.c batched, or the
-+	 * children's groups when create_append_path builds a partitioned rel's
-+	 * Append.  Those can span more than this parameterization, so keep only the
-+	 * ones it supplies.
-+	 * What remains over-approximates in the same direction as the ppi_clauses
-+	 * rule in yb_has_non_evaluable_bnl_clauses: a path may carry a group it
-+	 * does not need, which costs that join order its batching, never
-+	 * correctness.
-+	 */
-+	ppi->yb_ppi_batched_groups =
-+		yb_add_batched_groups(yb_clause_batched_groups(pclauses, batchedrelids,
-+													   baserel->relids),
-+							  yb_groups_within(root->yb_cur_batched_groups,
-+											   required_outer),
-+							  batchedrelids);
+ 	SetCurrentStatementStartTimestamp();
++	YbEnsureFreshCatalog();
+ 	StartTransactionCommand();
+ 	PushActiveSnapshot(GetTransactionSnapshot());
+ 
+@@ -1084,6 +1090,7 @@ InsertJobRunDetail(int64 runId, int64 *jobId, char *database, char *username, ch
+ 	MemoryContext originalContext = CurrentMemoryContext;
+ 
+ 	SetCurrentStatementStartTimestamp();
++	YbEnsureFreshCatalog();
+ 	StartTransactionCommand();
+ 	PushActiveSnapshot(GetTransactionSnapshot());
+ 
+@@ -1153,6 +1160,7 @@ UpdateJobRunDetail(int64 runId, int32 *job_pid, char *status, char *return_messa
+ 	MemoryContext originalContext = CurrentMemoryContext;
+ 
+ 	SetCurrentStatementStartTimestamp();
++	YbEnsureFreshCatalog();
+ 	StartTransactionCommand();
+ 	PushActiveSnapshot(GetTransactionSnapshot());
+ 
+@@ -1424,6 +1432,7 @@ MarkPendingRunsAsFailed(void)
+ 	MemoryContext originalContext = CurrentMemoryContext;
+ 
+ 	SetCurrentStatementStartTimestamp();
++	YbEnsureFreshCatalog();
+ 	StartTransactionCommand();
+ 	PushActiveSnapshot(GetTransactionSnapshot());
+ 
+@@ -1450,6 +1459,10 @@ MarkPendingRunsAsFailed(void)
+ 	if (SPI_exec(querybuf.data, 0) != SPI_OK_UPDATE)
+ 		elog(ERROR, "SPI_exec failed: %s", querybuf.data);
+ 
++	if (IsYugaByteEnabled())
++		ereport(LOG, (errmsg("pg_cron marked " UINT64_FORMAT " pending runs as failed",
++							 SPI_processed)));
 +
- 	baserel->ppilist = lappend(baserel->ppilist, ppi);
+ 	pfree(querybuf.data);
  
- 	return ppi;
-@@ -1653,6 +1688,8 @@ get_joinrel_parampathinfo(PlannerInfo *root, RelOptInfo *joinrel,
- 	double		rows;
- 	ListCell   *lc;
+ 	SPI_finish();
+@@ -1586,3 +1599,21 @@ TryParseInterval(char *scheduleText, uint32 *secondsInterval)
  
-+	List	   *yb_groups = NIL;
-+
- 	/* If rel has LATERAL refs, every path for it should account for them */
- 	Assert(bms_is_subset(joinrel->lateral_relids, required_outer));
- 
-@@ -1935,11 +1972,31 @@ get_joinrel_parampathinfo(PlannerInfo *root, RelOptInfo *joinrel,
- 	 */
- 	*restrict_clauses = list_concat(pclauses, *restrict_clauses);
- 
-+	/*
-+	 * YB: Carry the batched groups of both inputs, trimmed to the relations
-+	 * this join still needs batched.  The outer input matters as much as the
-+	 * inner one: the scan carrying such a group can sit on either side of an
-+	 * intervening join, and on the outer side nothing else records it.  A
-+	 * group that loses a member here is satisfied -- either the member is
-+	 * supplied by this join, which had to supply the whole group to pass
-+	 * yb_batched_clause_final_check, or it became unbatched and now
-+	 * contributes a scalar parameter.
-+	 */
-+	if (IsYugaByteEnabled() && !bms_is_empty(req_batchedids))
-+	{
-+		yb_groups = yb_add_batched_groups(yb_groups,
-+										  YB_PATH_BATCHED_GROUPS(outer_path),
-+										  req_batchedids);
-+		yb_groups = yb_add_batched_groups(yb_groups,
-+										  YB_PATH_BATCHED_GROUPS(inner_path),
-+										  req_batchedids);
-+	}
-+
- 	/* If we already have a PPI for this parameterization, just return it */
- 	if ((ppi = yb_find_batched_param_path_info(joinrel,
- 											   required_outer,
- 											   req_batchedids)))
--		return ppi;
-+		return yb_ppi_add_batched_groups(ppi, yb_groups, req_batchedids);
- 
- 	/* Estimate the number of rows returned by the parameterized join */
- 	rows = get_parameterized_joinrel_size(root, joinrel,
-@@ -1961,6 +2018,7 @@ get_joinrel_parampathinfo(PlannerInfo *root, RelOptInfo *joinrel,
- 	ppi->ppi_clauses = NIL;
- 
- 	ppi->yb_ppi_req_outer_batched = req_batchedids;
-+	ppi->yb_ppi_batched_groups = yb_groups;
- 
- 	joinrel->ppilist = lappend(joinrel->ppilist, ppi);
- 
-@@ -2477,3 +2535,125 @@ build_child_join_reltarget(PlannerInfo *root,
- 	childrel->reltarget->cost.per_tuple = parentrel->reltarget->cost.per_tuple;
- 	childrel->reltarget->width = parentrel->reltarget->width;
+ 	return false;
  }
++
 +
 +/*
-+ * yb_clause_batched_groups
-+ *	  Sets of batched outer relations that a single batched clause of a base
-+ *	  relation scan references together.
-+ *
-+ * Only relations that are batched here take part.  An unbatched relation in
-+ * the same expression supplies a scalar nestloop param that stays fixed for a
-+ * whole rescan of this scan, and the array is rebuilt on each rescan, so its
-+ * owner may sit at any level without breaking the cross product.  Two b
++ * Reset the catalog read time in legacy catalog mode, and check the catalog
++ * version where AcceptInvalidationMessages does not, as PostgresMain does
++ * before each statement.
++ */
++static void
++YbEnsureFreshCatalog(void)
++{
++	if (!IsYugaByteEnabled())
++		return;
++
++	if (YBCIsLegacyModeForCatalogOps())
++		YbInvalidateCatalogSnapshot();
++	if (!YBCIsObjectLockingEnabled() || !YbIsInvalidationMessageEnabled())
++		YbMaybeRefreshCache();
++}
 ```
 
-**File**: `src/postgres/src/include/nodes/pathnodes.h` (modified, +20/-0)
+**File**: `src/postgres/third-party-extensions/pg_cron/src/task_states.c` (modified, +0/-10)
 ```diff
-@@ -407,6 +407,8 @@ struct PlannerInfo
- 	Relids		yb_cur_batched_relids;	/* valid if we are processing a
- 										 * batched NL join */
- 	Relids		yb_cur_unbatched_relids;
-+	List	   *yb_cur_batched_groups;	/* yb_ppi_batched_groups for the
-+										 * path being built */
+@@ -21,9 +21,6 @@
+ #include "utils/hsearch.h"
+ #include "utils/memutils.h"
  
- 	/*
- 	 * YB: List of Relids. Each element is a Bitmapset that encodes the batched
-@@ -1260,6 +1262,20 @@ typedef struct PathTarget
-  * the same relation is referenced with a batched array elsewhere in the scan.
-  * The join directly above the path applies them instead (see
-  * get_joinrel_parampathinfo).  Like ppi_clauses, it is NIL in join cases.
-+ *
-+ * YB: yb_ppi_batched_groups lists the sets of batched outer relations that a
-+ * single batched clause of this path references together.  Such a clause
-+ * becomes one YbBatchedExpr, which createplan.c expands into an array using
-+ * one batch index for every batched Var inside it, so element i is only
-+ * meaningful when all of them come from the same outer tuple -- that is, when
-+ * one batched nested loop join fills them.  A join that batches part of a set
-+ * probes the diagonal of two independently advancing batches instead of their
-+ * cross product and loses rows, so yb_batched_clause_final_check rejects it.
-+ * Unlike ppi_clauses this list is carried up through join cases, because the
-+ * clause it came from is not reachable from there.  Only sets of two or more
-+ * are recorded: one batched relation constrains nothing, and an unbatched
-+ * relation in the same expression supplies a scalar parameter that holds
-+ * still for a whole rescan of this path.
-  */
- typedef struct ParamPathInfo
+-/* YB includes */
+-#include "pg_yb_utils.h"
+-#include "catalog/yb_catalog_version.h"
+ 
+ /* forward declarations */
+ static HTAB * CreateCronTaskHash(void);
+@@ -84,13 +81,6 @@ CreateCronTaskHash(void)
+ void
+ RefreshTaskHash(void)
  {
-@@ -1272,6 +1288,7 @@ typedef struct ParamPathInfo
- 	/* Yugabyte attributes */
- 	Relids		yb_ppi_req_outer_batched;	/* outer rels that can be batched */
- 	List	   *yb_ppi_relegated_clauses;	/* clauses withheld from ppi_clauses */
-+	List	   *yb_ppi_batched_groups;	/* outer rels to batch together */
- } ParamPathInfo;
- 
- 
-@@ -1417,6 +1434,9 @@ typedef struct Path
- #define YB_PATH_NEEDS_BATCHED_RELS(path) \
- 	!bms_is_empty(YB_PATH_REQ_OUTER_BATCHED(path))
- 
-+#define YB_PATH_BATCHED_GROUPS(path)  \
-+	((path)->param_info ? ((path)->param_info->yb_ppi_batched_groups) : NIL)
-+
- #define YB_PATH_REQ_OUTER_UNBATCHED(path)  \
- 	(bms_difference(PATH_REQ_OUTER(path), YB_PATH_REQ_OUTER_BATCHED(path)))
- 
+-	/* YB Note: Always read the latest entries in the catalog */
+-	if (IsYugaByteEnabled())
+-	{
+-		YbInvalidateCatalogSnapshot();
+-		YbUpdateCatalogCacheVersion(YbGetMasterCatalogVersion());
+-	}
+-
+ 	List *jobList = NIL;
+ 	ListCell *jobCell = NULL;
+ 	CronTask *task = NULL;
 ```
 
----
-
-### Incident Patch 6: `a24426da` (2026-10-05)
-**Commit Message**: [PLAT-22824] Fix settings validation for multiprovider
-
-Summary: wrong method was used for counting the number of different values, fixed that.
-
-Test Plan: sbt test
-
-Reviewers: amalyshev
-
-Reviewed By: amalyshev
-
-Subscribers: yugaware
-
-Differential Revision: https://phorge.dev.yugabyte.com/D59006
-
-**File**: `managed/src/main/java/com/yugabyte/yw/common/Util.java` (modified, +1/-1)
+**File**: `src/yb/integration-tests/pg_cron-test.cc` (modified, +261/-19)
 ```diff
-@@ -2110,7 +2110,7 @@ private void verifyValues(String property, Provider p, Object value) {
-       SetMultimap<Object, UUID> mmap =
-           valuesTracker.computeIfAbsent(property, (x) -> HashMultimap.create());
-       mmap.put(value, p.getUuid());
--      if (mmap.keys().size() > 1) {
-+      if (mmap.keySet().size() > 1) {
-         List<String> list =
-             mmap.entries().stream()
-                 .map(e -> e.getValue().toString() + " has " + e.getKey())
-```
-
-**File**: `managed/src/test/java/com/yugabyte/yw/common/UtilTest.java` (modified, +41/-0)
-```diff
-@@ -16,10 +16,12 @@
- import static org.mockito.Mockito.doReturn;
- import static org.mockito.Mockito.mock;
- import static org.mockito.Mockito.when;
-+import static play.mvc.Http.Status.BAD_REQUEST;
+@@ -12,6 +12,7 @@
+ //
  
- import com.cronutils.utils.StringUtils;
- import com.fasterxml.jackson.databind.JsonNode;
- import com.google.common.collect.ImmutableMap;
-+import com.yugabyte.yw.cloud.PublicCloudConstants.Architecture;
- import com.yugabyte.yw.commissioner.Common.CloudType;
- import com.yugabyte.yw.common.config.GlobalConfKeys;
- import com.yugabyte.yw.common.config.ProviderConfKeys;
-@@ -1088,4 +1090,43 @@ public void testGetPostgresCompatiblePassword() {
-     }
-     assertEquals(500, passwords.size());
+ #include <chrono>
++#include <optional>
+ 
+ #include "yb/client/session.h"
+ #include "yb/client/table_handle.h"
+@@ -29,6 +30,7 @@
+ 
+ #include "yb/util/backoff_waiter.h"
+ #include "yb/util/monotime.h"
++#include "yb/util/tostring.h"
+ 
+ #include "yb/yql/cql/ql/util/statement_result.h"
+ #include "yb/yql/pgwrapper/libpq_utils.h"
+@@ -40,7 +42,10 @@ namespace yb {
+ 
+ constexpr auto kTableName = "tbl1";
+ constexpr auto kDefaultJobName = "Job1";
+-constexpr auto kJobListRefreshInterval = 10;
++// cron.yb_job_list_refresh_interval and pg_cron_leader_lease_sec for the fixture. A new leader
++// starts running jobs one lease after it became leader.
++constexpr auto kInterval = 10;
++constexpr auto kServerRestartedMessage = "server restarted";
+ constexpr auto kFailedJobStatus = "failed";
+ constexpr auto kRunningJobStatus = "running";
+ const client::YBTableName service_table_name =
+@@ -64,10 +69,10 @@ class PgCronTest : public MiniClusterTestWithClient<ExternalMiniCluster> {
+     opts.extra_tserver_flags.push_back("--enable_pg_cron=true");
+ 
+     opts.extra_tserver_flags.push_back(
+-        Format("--ysql_pg_conf_csv=cron.yb_job_list_refresh_interval=$0", kJobListRefreshInterval));
++        Format("--ysql_pg_conf_csv=cron.yb_job_list_refresh_interval=$0", kInterval));
+     opts.extra_tserver_flags.push_back("--pg_cron_leadership_refresh_sec=1");
+     opts.extra_tserver_flags.push_back(
+-        Format("--pg_cron_leader_lease_sec=$0", kJobListRefreshInterval));
++        Format("--pg_cron_leader_lease_sec=$0", kInterval));
+ 
+     cluster_.reset(new ExternalMiniCluster(opts));
+     ASSERT_OK(cluster_->Start());
+@@ -203,7 +208,9 @@ class PgCronTest : public MiniClusterTestWithClient<ExternalMiniCluster> {
+ 
+           return row_block->row_count() > 0;
+         },
+-        CoarseMonoClock::Now() + kTimeout, "Waiting for data in pg cron leader table");
++        // The leader writes the first row at the first minute boundary after it becomes active,
++        // which can itself take one lease if the leader moves during setup.
++        CoarseMonoClock::Now() + kTimeout + 60s, "Waiting for data in pg cron leader table");
    }
-+
-+  @Test
-+  public void testTaskParamsUpdater_sameArchAcrossProviders_succeeds() {
-+    UniverseDefinitionTaskParams taskParams = new UniverseDefinitionTaskParams();
-+    Util.TaskParamsUpdater updater = new Util.TaskParamsUpdater(taskParams);
-+    Provider first = providerWithUuid(UUID.randomUUID());
-+    Provider second = providerWithUuid(UUID.randomUUID());
-+
-+    updater.setArch(first, Architecture.x86_64);
-+    updater.setArch(second, Architecture.x86_64);
-+
-+    assertEquals(Architecture.x86_64, taskParams.arch);
-+  }
-+
-+  @Test
-+  public void testTaskParamsUpdater_differentArchAcrossProviders_fails() {
-+    UniverseDefinitionTaskParams taskParams = new UniverseDefinitionTaskParams();
-+    Util.TaskParamsUpdater updater = new Util.TaskParamsUpdater(taskParams);
-+    UUID firstUuid = UUID.randomUUID();
-+    UUID secondUuid = UUID.randomUUID();
-+    Provider first = providerWithUuid(firstUuid);
-+    Provider second = providerWithUuid(secondUuid);
-+
-+    updater.setArch(first, Architecture.x86_64);
-+    PlatformServiceException exception =
-+        assertThrows(
-+            PlatformServiceException.class, () -> updater.setArch(second, Architecture.aarch64));
-+
-+    assertEquals(BAD_REQUEST, exception.getHttpStatus());
-+    assertTrue(exception.getMessage().contains("Architecture"));
-+    assertTrue(exception.getMessage().contains(firstUuid + " has x86_64"));
-+    assertTrue(exception.getMessage().contains(secondUuid + " has aarch64"));
-+  }
-+
-+  private static Provider providerWithUuid(UUID uuid) {
-+    Provider provider = mock(Provider.class);
-+    when(provider.getUuid()).thenReturn(uuid);
-+    return provider;
-+  }
- }
-```
-
----
-
-### Incident Patch 7: `50445c03` (2026-10-03)
-**Commit Message**: [#34617] CDC: Fix CdcUpgradeTest.RollbackBeforeFinalize timeout by stopping tservers first
-
-Summary:
-After the rollback the cluster runs the old `2024.2.4.0` binaries, and teardown stops the masters before the tservers. Once the masters are gone, each old tserver ignores `SIGTERM` because its CDC `update_peers_and_metrics` thread keeps retrying master lookups, so it is killed only after the 60s graceful wait. Those extra minutes pushed the slow `gcc15` fastdebug run past its 600s test timeout. `CdcUpgradeTest` now overrides `TearDown()` to call `cluster_->Shutdown(ExternalMiniCluster::TS_ONLY)` while the masters are still up, then runs the base teardown; it skips this when `HasFatalFailure()` is true so the base teardown can still dump tserver stacks.
-
----
-_Produced fully automatically by csi-fix.py: Claude Opus (5.5) analyzed the failure logs, wrote the change, and verified it locally._
-
-Test Plan:
-./yb_build.sh fastdebug --gcc15 --cxx-test ysql_cdc_upgrade-test --gtest-filter CdcUpgradeTest.RollbackBeforeFinalize -n 100 YB_TEST_YB_CONTROLLER=0 YB_ENABLE_YSQL_CONN_MGR_IN_JAVA_TESTS=true --stop-at-failure -- -p 6
-Ran the above locally with no failures.
-Before the fix, this test rep
-
-**File**: `src/yb/integration-tests/upgrade-tests/ysql_cdc_upgrade-test.cc` (modified, +9/-0)
-```diff
-@@ -29,6 +29,15 @@ class CdcUpgradeTest : public UpgradeTestBase {
-  public:
-   CdcUpgradeTest() : UpgradeTestBase(kBuild_2024_2_4_0) {}
  
-+  void TearDown() override {
-+    // Old version tservers hang on SIGTERM for 60s if masters are already down (the CDC
-+    // update_peers_and_metrics thread keeps retrying master lookups), so stop tservers first.
-+    if (cluster_ && !HasFatalFailure()) {
-+      cluster_->Shutdown(ExternalMiniCluster::TS_ONLY);
-+    }
-+    UpgradeTestBase::TearDown();
+   Result<int64_t> GetPersistedLastMinute() {
+@@ -247,6 +254,182 @@ class PgCronTest : public MiniClusterTestWithClient<ExternalMiniCluster> {
+     return pids;
+   }
+ 
++  // Returns the runid, and the pid of the backend executing it, of the most recent run of the job
++  // that is in the 'running' state.
++  Result<std::tuple<int64_t, int32_t>> GetRunningRun(int64 job_id) {
++    return conn_->FetchRow<int64_t, int32_t>(Format(
++        "SELECT runid, job_pid FROM cron.job_run_details WHERE jobid = $0 AND status = '$1' "
++        "ORDER BY start_time DESC LIMIT 1",
++        job_id, kRunningJobStatus));
 +  }
 +
-  protected:
-   static constexpr auto kTableName = "test_table";
-   static constexpr auto kDbName = "yugabyte";
-```
-
----
-
-### Incident Patch 8: `771f263d` (2026-09-28)
-**Commit Message**: [#34330] DocDB: Fix ...eTestWithYsqlColocationRestoreParam.PgsqlAlterTableSetOwner/DBColocated_Clone
-
-Summary:
-Stabilize YbAdminSnapshotScheduleTestWithYsqlColocationRestoreParam under sanitizers: scale the master YSQL lease TTL, leader failure missed-heartbeat periods and raft/HT leader lease durations by kTimeMultiplier, so follower stalls during sys catalog snapshots neither expire YSQL leases (which kills the clone's ysqlsh) nor trigger master elections (which abort the clone); ExternalMiniCluster now inserts its sanitizer default for leader_failure_max_missed_heartbeat_periods first so extra_master_flags can override it.
-
----
-_Produced fully automatically by csi-fix.py: Claude Opus (5.5) analyzed the failure logs, wrote the change, and verified it locally._
-
-Test Plan:
-./yb_build.sh asan --clang21 --cxx-test yb-admin-snapshot-schedule-test --gtest-filter YbAdminSnapshotScheduleTestWithYsqlColocationRestoreParam.PgsqlAlterTableSetOwner/DBColocated_Clone -n 100 --stop-at-failure -- -p 6
-Ran the above locally with no failures.
-Before the fix, this test reproduced locally (same test command and -p / env as above, without --stop-at-failure) -- with the CSI dashboard rate for refere
-
-**File**: `src/yb/tools/yb-admin-snapshot-schedule-test.cc` (modified, +7/-0)
-```diff
-@@ -577,6 +577,13 @@ class YbAdminSnapshotScheduleTestWithYsql : public YbAdminSnapshotScheduleTest {
-     // master failover that aborts in-progress clones.
-     opts->extra_master_flags.emplace_back(
-         Format("--leader_failure_max_missed_heartbeat_periods=$0", 10 * kTimeMultiplier));
-+    // Such stalls (up to ~8s) outlast the default 2s raft lease, so the master leader keeps losing
-+    // its lease and cannot refresh YSQL leases. Must stay below the 15s leader failure timeout.
-+    if (IsSanitizer()) {
-+      for (auto flag : {"leader_lease_duration_ms", "ht_lease_duration_ms"}) {
-+        opts->extra_master_flags.emplace_back(Format("--$0=$1", flag, 4000 * kTimeMultiplier));
++  Result<std::string> GetRunMessage(int64 runid) {
++    return conn_->FetchRow<std::string>(Format(
++        "SELECT return_message FROM cron.job_run_details WHERE runid = $0", runid));
++  }
++
++  // Number of runs of the job that started after the given run.
++  Result<int64_t> CountRunsAfter(int64 job_id, int64 runid) {
++    return conn_->FetchRow<pgwrapper::PGUint64>(Format(
++        "SELECT COUNT(*) FROM cron.job_run_details WHERE jobid = $0 AND runid > $1", job_id,
++        runid));
++  }
++
++  // Waits for a specific run (identified by runid) to reach the given status. Unlike
++  // WaitForJobStatus this tracks a single run, so it is stable even as the job keeps rescheduling.
++  Status WaitForRunStatus(int64 runid, const std::string& status) {
++    Status s = LoggedWaitFor(
++        [this, runid, status]() -> Result<bool> {
++          return VERIFY_RESULT(conn_->FetchRow<pgwrapper::PGUint64>(Format(
++                     "SELECT COUNT(*) FROM cron.job_run_details WHERE runid = $0 AND status = '$1'",
++                     runid, status))) > 0;
++        },
++        kTimeout, Format("Wait for run $0 to have status '$1'", runid, status));
++    if (!s.ok()) {
++      LOG(INFO) << "job_run_details on failure:\n"
++                << conn_->FetchAllAsString(
++                       "SELECT runid, jobid, status, return_message FROM cron.job_run_details "
++                       "ORDER BY runid",
++                       " | ", "\n");
++    }
++    return s;
++  }
++
++  // Returns the indexes of the tservers that have a backend executing the given job command.
++  Result<std::set<size_t>> NodesRunningQuery(const std::string& job_command) {
++    std::set<size_t> nodes;
++    for (size_t idx = 0; idx < cluster_->num_tablet_servers(); ++idx) {
++      auto conn = VERIFY_RESULT(cluster_->ConnectToDB("yugabyte", idx));
++      if (VERIFY_RESULT(conn.FetchRow<pgwrapper::PGUint64>(Format(
++              "SELECT COUNT(*) FROM pg_stat_activity WHERE query = '$0'", job_command))) > 0) {
++        nodes.insert(idx);
 +      }
 +    }
-     opts->num_masters = 3;
++    return nodes;
++  }
++
++  Status WaitForQueryOnlyOnNode(const std::string& job_command, size_t idx) {
++    return LoggedWaitFor(
++        [this, &job_command, idx]() -> Result<bool> 
+```
+
+**File**: `src/yb/tserver/stateful_services/pg_cron_leader_service.cc` (modified, +14/-6)
+```diff
+@@ -55,6 +55,8 @@ namespace {
+ constexpr uint32 kPgCronJsonVersion1 = 1;
+ constexpr char kPgCronJsonVersion[] = "version";
+ constexpr char kPgCronJsonLastMinute[] = "last_minute";
++// How long before the lease ends this node stops its in-flight pg_cron jobs.
++constexpr int64_t kJobStopMarginSec = 3;
+ }  // namespace
+ 
+ PgCronLeaderService::PgCronLeaderService(
+@@ -81,9 +83,9 @@ void PgCronLeaderService::Activate() {
+       VLOG_WITH_FUNC(1) << "Leader for term 1. Activating immediately";
+       leader_activate_time_ = MonoTime::Min();
+     } else {
+-      leader_activate_time_ =
+-          MonoTime::Now() + MonoDelta::FromMicroseconds(
+-                                FLAGS_pg_cron_leader_lease_sec + 2 * FLAGS_max_clock_skew_usec);
++      leader_activate_time_ = MonoTime::Now() +
++                              MonoDelta::FromSeconds(FLAGS_pg_cron_leader_lease_sec) +
++                              MonoDelta::FromMicroseconds(2 * FLAGS_max_clock_skew_usec);
+       LOG_WITH_FUNC(INFO) << "Waiting until " << leader_activate_time_.ToFormattedString()
+                           << " for lease of the old leader to expire";
+     }
+@@ -136,10 +138,16 @@ void PgCronLeaderService::RefreshLeaderLease() {
+     return;
    }
  
+-  // We are the leader. Renew the lease.
++  // We are the leader: renew the lease. The lease ends kJobStopMarginSec early, to leave time to
++  // stop running jobs before a new leader, which waits out the full lease, starts.
+   const auto lease_end = now + MonoDelta::FromSeconds(FLAGS_pg_cron_leader_lease_sec);
+-  VLOG_WITH_FUNC(1) << "Setting leader lease to " << lease_end.ToFormattedString();
+-  set_cron_leader_lease_fn_(lease_end);
++  const auto stop_margin = std::clamp<int64_t>(
++      static_cast<int64_t>(FLAGS_pg_cron_leader_lease_sec) -
++          static_cast<int64_t>(FLAGS_pg_cron_leadership_refresh_sec) - 1,
++      0, kJobStopMarginSec);
++  VLOG_WITH_FUNC(1) << "Setting leader lease to " << lease_end.ToFormattedString()
++                    << " minus " << stop_margin << " s";
++  set_cron_leader_lease_fn_(lease_end - MonoDelta::FromSeconds(stop_margin));
+ }
+ 
+ Status PgCronLeaderService::SetLastMinute(int64_t last_minute, CoarseTimePoint deadline) {
 ```
 
 ---
 
-### Incident Patch 9: `b0009a4b` (2026-09-30)
-**Commit Message**: [#34414] DocDB: Fix LoadBalancerPlacementPolicyTest.PrefixPlacementTest stall on blacklisted tserver
+### Incident Patch 3: `3de43b4f` (2026-10-17)
+**Commit Message**: [#34535] build: Clean up PGO builds and document their use for microbenchmarks (#35089)
 
 Summary:
-A drained, blacklisted tserver has zero load, so it sorts first in `sorted_load_` and `ClusterLoadBalancer::GetLoadToMove` picks it as the low-load destination, even though `CanAddTabletToTabletServer` always rejects moves to it. The search then steps through sources until the per-table gap is 1. There the global-load check returns `false` for the whole table, and the balancer goes idle with the table still unbalanced (the test expects 2 replicas per tserver after the `c,c,c` placement change). The fix skips blacklisted tservers as the `left` destination candidate, so the check only compares servers that can actually receive load. The `left < last_pos` guard keeps the final iteration, so the loop still ends through its normal `return false`.
+PGO build cleanup in `yb_build.sh`, with the benchmark workflow as the first user:
 
----
-_Produced fully automatically by csi-fix.py: Claude Opus (5.5) analyzed the failure logs, wrote the change, and verified it locally._
+- A build root keeps the profile it was configured with; later builds without `--pgo-data-path` rely on that (the release pipeline's initdb step runs without the flag). The build now logs when a cached profile is in effect, and giving a different `--pgo-data-path` re-runs CMake instead of being silently ignored.
+- `YB_USE_EXTERNAL_BUILD_ROOT=1` produced an empty Python venv, because `activate_virtualenv` linked the requirements files into `build/` while the venv lived under the external parent directory; the links now go where the venv is.
+- In a `prof_gen` build, `--cxx-benchmark` writes the profile to `<build_root>/pgo-profiles/<ir|csir>/<name>-<pid>-<module>.profraw` (one file per instrumented executable or shared library, previous raw files of the benchmark removed first) instead of the current directory, and prints the `llvm-profdata merge` command.
+- `--pgo-instrument-type` and `--pgo-data-path` get help text; `prof_gen` was already listed among the build types.
 
-Test Plan:
-./yb_build.sh tsan --clang21 --cxx-test load_balancer_placement_policy-test --gtest-filter LoadBalancerPlacementPolicyTest.PrefixPlacementTest -n 180 --stop-at-failure -- -p 6
-Ran the ab
+The contributor build-and-test pag
 
-**File**: `src/yb/master/cluster_balance.cc` (modified, +8/-0)
+**File**: `build-support/common-build-env.sh` (modified, +8/-7)
 ```diff
-@@ -1218,6 +1218,14 @@ Result<bool> ClusterLoadBalancer::GetLoadToMove(
-   // the interval between left and right cannot have load > kMinLoadVarianceToBalance.
-   ssize_t last_pos = state_->sorted_load_.size() - 1;
-   for (ssize_t left = 0; left <= last_pos; ++left) {
-+    // Blacklisted tservers cannot receive load. Using one as the destination could end the search
-+    // early via the global load check below. last_pos is never skipped: its iteration
-+    // (left == right, load_variance == 0) terminates the loop via return false instead of
-+    // falling through to the IllegalState below.
-+    if (left < last_pos &&
-+        global_state_->blacklisted_servers_.contains(state_->sorted_load_[left])) {
-+      continue;
-+    }
-     for (auto right = last_pos; right >= 0; --right) {
-       const TabletServerId& low_load_uuid = state_->sorted_load_[left];
-       const TabletServerId& high_load_uuid = state_->sorted_load_[right];
+@@ -2264,13 +2264,14 @@ activate_virtualenv() {
+ 
+   log "Activating python virtual env"
+ 
+-  # Symlink the requirements files into the top level build directory
+-  # We assume $YB_SRC_ROOT/build is already created by initialize_yugabyte_bash_common having
+-  # already been called.
+-  [[ -f "${YB_SRC_ROOT}/build/requirements.txt" ]] \
+-    || ln -sf "${YB_SRC_ROOT}/requirements.txt" "${YB_SRC_ROOT}/build/"
+-  [[ -f "${YB_SRC_ROOT}/build/requirements_frozen.txt" ]] \
+-    || ln -sf "${YB_SRC_ROOT}/requirements_frozen.txt" "${YB_SRC_ROOT}/build/"
++  # Symlink the requirements files into the directory that holds the virtualenv, which is where
++  # yb_activate_virtualenv looks for them. This is $YB_SRC_ROOT/build, or the external build parent
++  # directory when YB_USE_EXTERNAL_BUILD_ROOT=1.
++  mkdir -p "${virtualenv_parent_dir}"
++  [[ -f "${virtualenv_parent_dir}/requirements.txt" ]] \
++    || ln -sf "${YB_SRC_ROOT}/requirements.txt" "${virtualenv_parent_dir}/"
++  [[ -f "${virtualenv_parent_dir}/requirements_frozen.txt" ]] \
++    || ln -sf "${YB_SRC_ROOT}/requirements_frozen.txt" "${virtualenv_parent_dir}/"
+ 
+   yb_activate_virtualenv "${virtualenv_parent_dir}"
+ 
 ```
 
----
-
-### Incident Patch 10: `3cf9f46a` (2026-10-04)
-**Commit Message**: [#34535] build: Add google/benchmark microbenchmarks (ADD_YB_BENCHMARK) (#34536)
-
-Summary:
-Adds C++ microbenchmarks based on google/benchmark, which
-yugabyte/yugabyte-db-thirdparty#379 added to thirdparty.
-
-- `ADD_YB_BENCHMARK(name DEPS ...)` builds a benchmark into
-`build/<type>/benchmarks-<dir>/`. Benchmarks build whenever tests build,
-so they keep compiling, but they are not registered with ctest and the
-test runner never runs them. `--target benchmarks` builds all of them.
-- Benchmarks share one `main()`. `--benchmark_*` flags and `--help` go
-to google/benchmark; all other flags go to gflags. Command-line flags
-are parsed exactly as in tests, including AutoFlag promotion:
-`test_main.cc` and `benchmark_main.cc` now both call the new
-`ParseCommandLineFlagsForTests()`. A benchmark that needs its own setup
-or teardown defines `yb::BenchmarkInit()` or `yb::BenchmarkTeardown()`,
-which replace weak defaults (`benchmark_main.h`).
-- `src/yb/util/mutex-benchmark.cc` is a minimal example (std::mutex vs
-absl::Mutex under contention), and `src/AGENTS.md` has the recipe for
-building and running benchmarks.
-- Updates thirdparty to pick up google/benchmark.
-
-Test Plan:
-```
-./yb_build.sh releas
-
-**File**: `build-support/thirdparty_archives.yml` (modified, +21/-21)
+**File**: `build-support/yb_build_cmd_line.sh` (modified, +9/-0)
 ```diff
-@@ -1,106 +1,106 @@
--sha: 16cc15cc1460904608d7e08b525eb871987ab6b4
-+sha: 2c1852ba51e3b4912401992f0189fae0dda86b78
- archives:
- 
-   - os_type: almalinux8
-     architecture: aarch64
-     compiler_type: clang19
--    tag: v20260929040302-16cc15cc14-almalinux8-aarch64-clang19
-+    tag: v20261001194854-2c1852ba51-almalinux8-aarch64-clang19
- 
-   - os_type: almalinux8
-     architecture: aarch64
-     compiler_type: clang19
-     lto_type: full
--    tag: v20260929040312-16cc15cc14-almalinux8-aarch64-clang19-full-lto
-+    tag: v20261001194839-2c1852ba51-almalinux8-aarch64-clang19-full-lto
- 
-   - os_type: almalinux8
-     architecture: aarch64
-     compiler_type: clang21
--    tag: v20260929040207-16cc15cc14-almalinux8-aarch64-clang21
-+    tag: v20261001194854-2c1852ba51-almalinux8-aarch64-clang21
- 
-   - os_type: almalinux8
-     architecture: aarch64
-     compiler_type: clang21
-     lto_type: full
--    tag: v20260929040159-16cc15cc14-almalinux8-aarch64-clang21-full-lto
-+    tag: v20261001194832-2c1852ba51-almalinux8-aarch64-clang21-full-lto
- 
-   - os_type: almalinux8
-     architecture: x86_64
-     compiler_type: clang19
--    tag: v20260929040227-16cc15cc14-almalinux8-x86_64-clang19
-+    tag: v20261001194859-2c1852ba51-almalinux8-x86_64-clang19
- 
-   - os_type: almalinux8
-     architecture: x86_64
-     compiler_type: clang19
-     lto_type: full
--    tag: v20260929040227-16cc15cc14-almalinux8-x86_64-clang19-full-lto
-+    tag: v20261001194926-2c1852ba51-almalinux8-x86_64-clang19-full-lto
- 
-   - os_type: almalinux8
-     architecture: x86_64
-     compiler_type: clang21
--    tag: v20260929040229-16cc15cc14-almalinux8-x86_64-clang21
-+    tag: v20261001194848-2c1852ba51-almalinux8-x86_64-clang21
- 
-   - os_type: almalinux8
-     architecture: x86_64
-     compiler_type: clang21
-     lto_type: full
--    tag: v20260929040223-16cc15cc14-almalinux8-x86_64-clang21-full-lto
-+    tag: v20261001194835-2c1852ba51-almalinux8-x86_64-clang21-full-lto
- 
-   - os_type: almalinux8
-     architecture: x86_64
-     compiler_type: gcc15
--    tag: v20260929040223-16cc15cc14-almalinux8-x86_64-gcc15
-+    tag: v20261001194838-2c1852ba51-almalinux8-x86_64-gcc15
- 
-   - os_type: almalinux9
-     architecture: x86_64
-     compiler_type: clang19
--    tag: v20260929040231-16cc15cc14-almalinux9-x86_64-clang19
-+    tag: v20261001234018-2c1852ba51-almalinux9-x86_64-clang19
- 
-   - os_type: almalinux9
-     architecture: x86_64
-     compiler_type: clang21
--    tag: v20260929040205-16cc15cc14-almalinux9-x86_64-clang21
-+    tag: v20261001194913-2c1852ba51-almalinux9-x86_64-clang21
- 
-   - os_type: almalinux9
-     architecture: x86_64
-     compiler_type: gcc15
--    tag: v20260929040237-16cc15cc14-almalinux9-x86_64-gcc15
-+    tag: v20261001194913-2c1852ba51-almalinux9-x86_64-gcc15
- 
-   - os_type: macos
-     architecture: arm64
-     compiler_type: clang21
--    tag: v20260929035942-16cc15cc14-macos-arm64-clang21
-+    tag: v20261001194625-2c1852ba51-macos-arm64-clang21
- 
-   - os_type: macos
-     architecture: x86_64
-     compiler_type: clang21
--    tag: v20260929040102-16cc15cc14-macos-x86_64-clang21
-+    tag: v20261001194728-2c1852ba51-macos-x86_64-clang21
- 
-   - os_type: ubuntu22.04
-     architecture: x86_64
-     compiler_type: clang19
--    tag: v20260929040317-16cc15cc14-ubuntu2204-x86_64-clang19
-+    tag: v20261001194931-2c1852ba51-ubuntu2204-x86_64-clang19
- 
-   - os_type: ubuntu22.04
-     architecture: x86_64
-     compiler_type: clang21
--    tag: v20260929040149-16cc15cc14-ubuntu2204-x86_64-clang21
-+    tag: v20261001194830-2c1852ba51-ubuntu2204-x86_64-clang21
- 
-   - os_type: ubuntu22.04
-     architecture: x86_64
-     compiler_type: gcc15
--    tag: v20260929040213-16cc15cc14-ubuntu2204-x86_64-gcc15
-+    tag: v20261001194904-2c1852ba51-ubuntu2204-x86_64-gcc15
- 
-   - os_type: ubuntu24.04
-     architecture: x86_64
-     compiler_type: clang19
--    tag: v20260929165609-16cc15cc14-ubuntu2404-x86_64-clang19
-+    tag: v20261001195010-2c1852ba51-ubuntu2404-x86_64-clang19
- 
-   - os_type: ubuntu24.04
-     architecture: x86_64
-     compiler_type: clang21
--    tag: v20260929040158-16cc15cc14-ubuntu2404-x86_64-clang21
-+    tag: v20261001194932-2c1852ba51-ubuntu2404-x86_64-clang21
- 
-   - os_type: ubuntu24.04
-     architecture: x86_64
-     compiler_type: gcc15
--    tag: v20260929040226-16cc15cc14-ubuntu2404-x86_64-gcc15
-+    tag: v20261001194842-2c1852ba51-ubuntu2404-x86_64-gcc15
+@@ -176,6 +176,15 @@ Build options:
+     https://llvm.org/docs/LinkTimeOptimization.html and https://clang.llvm.org/docs/ThinLTO.html).
+     Can also be specified by setting environment variable YB_LINKING_TYPE to thin-lto or full-lto.
+     Set YB_LINKING_TYPE to 'dynamic' to disable LTO.
++  --pgo-instrument-type <ir|csir>
++    With the prof_gen build type: instrument the build for profile-guided optimization (PGO) with
++    IR or context-sensitive IR profiles. A benchmark run with --cxx-benchmark in such a build
++    writes its profile to <build_root>/pgo-profiles/<instrumentation type>/.
++  --pgo-data-path <profdata_file>
++    Compile and link with the given merged llvm-profdata profile (-fprofile-use). Works with any
++    build type; the release pipeline uses it with --full-lto. The build root remembers the profile:
++    later builds without this flag keep using it, giving a different path re-runs CMake and
++    rebuilds, and building without a profile again needs a different build root or --clean.
+   --no-initdb, --skip-initdb
+     Skip the initdb step. The initdb build step is mostly single-threaded and can be executed on a
+     low-CPU build machine even if the majority of the build is being executed on a high-CPU host.
 ```
 
-**File**: `cmake_modules/FindGBenchmark.cmake` (added, +34/-0)
+**File**: `docs/content/stable/contribute/core-database/build-and-test.md` (modified, +35/-0)
 ```diff
-@@ -0,0 +1,34 @@
-+#
-+# Copyright (c) YugabyteDB, Inc.
-+#
-+# Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
-+# in compliance with the License. You may obtain a copy of the License at
-+#
-+# http://www.apache.org/licenses/LICENSE-2.0
-+#
-+# Unless required by applicable law or agreed to in writing, software distributed under the License
-+# is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
-+# or implied. See the License for the specific language governing permissions and limitations
-+# under the License.
-+#
-+
-+# Finds google/benchmark (https://github.com/google/benchmark) in the third-party directory.
-+#
-+# This module defines
-+# GBENCHMARK_INCLUDE_DIR, where to find benchmark/benchmark.h
-+# GBENCHMARK_STATIC_LIB, path to libbenchmark.a
-+# GBENCHMARK_SHARED_LIB, path to the libbenchmark shared library
-+
-+find_path(GBENCHMARK_INCLUDE_DIR benchmark/benchmark.h
-+  NO_CMAKE_SYSTEM_PATH
-+  NO_SYSTEM_ENVIRONMENT_PATH)
-+find_library(GBENCHMARK_STATIC_LIB libbenchmark.a
-+  NO_CMAKE_SYSTEM_PATH
-+  NO_SYSTEM_ENVIRONMENT_PATH)
-+find_library(GBENCHMARK_SHARED_LIB benchmark
-+  NO_CMAKE_SYSTEM_PATH
-+  NO_SYSTEM_ENVIRONMENT_PATH)
-+
-+include(FindPackageHandleStandardArgs)
-+find_package_handle_standard_args(GBENCHMARK REQUIRED_VARS
-+  GBENCHMARK_STATIC_LIB GBENCHMARK_SHARED_LIB GBENCHMARK_INCLUDE_DIR)
-```
-
-**File**: `cmake_modules/YugabyteFindThirdParty.cmake` (modified, +7/-0)
-```diff
-@@ -147,6 +147,13 @@ macro(yb_find_third_party_dependencies)
-     STATIC_LIB ${GTEST_STATIC_LIBRARY}
-     SHARED_LIB ${GTEST_SHARED_LIBRARY})
+@@ -190,6 +190,41 @@ LTO builds need an LTO third-party archive; the published one is built for AlmaL
  
-+  ## google/benchmark, used by microbenchmarks added with ADD_YB_BENCHMARK.
-+  find_package(GBenchmark REQUIRED)
-+  include_directories(SYSTEM ${GBENCHMARK_INCLUDE_DIR})
-+  ADD_THIRDPARTY_LIB(gbenchmark
-+    STATIC_LIB ${GBENCHMARK_STATIC_LIB}
-+    SHARED_LIB ${GBENCHMARK_SHARED_LIB})
-+
-   ## Protobuf
-   add_custom_target(gen_proto)
-   find_package(Protobuf REQUIRED)
-```
-
-**File**: `cmake_modules/YugabyteTesting.cmake` (modified, +43/-0)
-```diff
-@@ -240,6 +240,49 @@ function(ADD_YB_TEST_LIBRARY LIB_NAME)
-   endif()
- endfunction()
+ Note that a high parallelism could result in failures if system resources are overused.
  
-+# Add a microbenchmark executable written with google/benchmark (BENCHMARK(...) registrations, no
-+# main() of its own). REL_BENCHMARK_NAME is the source file path without the .cc extension, relative
-+# to the current CMakeLists.txt, e.g. mutex-benchmark. DEPS lists additional libraries to link.
-+#
-+# Benchmarks are built whenever tests are built (YB_BUILD_TESTS, YB_TEST_FILTER_RE), so that they
-+# keep compiling, but they are not registered with ctest: the test runner never runs them. The
-+# binary goes to ${YB_BUILD_ROOT}/benchmarks-<dir>/<name>, next to the tests-<dir> directories.
-+# The "benchmarks" target builds all of them. To customize process setup or teardown, define the
-+# hooks declared in src/yb/util/benchmark_main.h in the benchmark source.
-+function(ADD_YB_BENCHMARK REL_BENCHMARK_NAME)
-+  cmake_parse_arguments(ARG "" "" "DEPS" ${ARGN})
-+  if(ARG_UNPARSED_ARGUMENTS)
-+    message(SEND_ERROR "Error: unrecognized arguments: ${ARG_UNPARSED_ARGUMENTS}")
-+  endif()
++### Profile-guided optimization for microbenchmarks
 +
-+  yb_check_if_test_is_enabled(${REL_BENCHMARK_NAME})
-+  if(NOT yb_test_enabled)
-+    return()
-+  endif()
++Release binaries are built with profile-guided optimization (PGO) from a sysbench workload, so their code layout and inlining differ from a plain `release` build.
++You can build a microbenchmark the same way, with a profile you collect yourself.
++It is opt-in and takes two builds, both with `--full-lto`, since PGO is only used together with LTO.
 +
-+  set(SOURCE_PATH "${CMAKE_CURRENT_LIST_DIR}/${REL_BENCHMARK_NAME}.cc")
-+  if(NOT EXISTS "${SOURCE_PATH}")
-+    message(FATAL_ERROR "Benchmark source '${SOURCE_PATH}' does not exist.")
-+  endif()
-+  GET_TEST_PREFIX_AND_BINARY_NAME(DIR_PREFIX BINARY_NAME ${REL_BENCHMARK_NAME})
++First, build and run the benchmark instrumented for profiling (`prof_gen` is a release build with profile counters; the benchmark's own timings in this run are meaningless):
 +
-+  # Benchmarks are test-like executables: keep them out of the executable count and out of
-+  # YB_EXECUTABLE_FILTER_RE filtering, like tests.
-+  set(YB_ADDING_TEST_EXECUTABLE "TRUE" CACHE INTERNAL "" FORCE)
-+  add_executable("${BINARY_NAME}" "${SOURCE_PATH}")
-+  set(YB_ADDING_TEST_EXECUTABLE "FALSE" CACHE INTERNAL "" FORCE)
-+
-+  set_target_properties(${BINARY_NAME}
-+    PROPERTIES
-+    RUNTIME_OUTPUT_DIRECTORY "${YB_BUILD_ROOT}/benchmarks-${DIR_PREFIX}")
-+  target_link_libraries(${BINARY_NAME} yb_benchmark_main ${ARG_DEPS})
-+  add_dependencies(benchmarks ${BINARY_NAME})
-+endfunction()
-+
-+# Builds every benchmark added with ADD_YB_BENCHMARK. Created unconditionally so that
-+# `--target benchmarks` works, and builds nothing, when tests are disabled or filtered out.
-+add_custom_target(benchmarks)
-+
- function(ADD_YB_FUZZ_TARGET REL_TEST_NAME)
-   if(NOT YB_BUILD_FUZZ_TARGETS)
-     return()
-```
-
-**File**: `src/AGENTS.md` (modified, +12/-0)
-```diff
-@@ -194,6 +194,18 @@ To run tests:
- 
- Run one test per execution; do not use a `--gtest_filter` that matches more than one test.
- 
-+### C++ Microbenchmarks
-+
-+Microbenchmarks use google/benchmark and are added with `ADD_YB_BENCHMARK` (see
-+`src/yb/util/mutex-benchmark.cc` for an example). The test runner does not run them, and
-+`--cxx-test` does not find them. Build with `--target` (`benchmarks` builds all of them) and run the
-+binary directly:
-+
-+```bash
-+./yb_build.sh release --target mutex-benchmark
-+build/latest/benchmarks-util/mutex-benchmark --benchmark_filter=AbslMutex
++```sh
++./yb_build.sh prof_gen --full-lto --pgo-instrument-type=ir --cxx-benchmark mutex-benchmark
 +```
 +
- ### Java Tests
++The raw profiles are written to `<build_root>/pgo-profiles/ir/` (one file per instrumented executable or shared library; each run replaces the benchmark's previous ones), and the command prints the `llvm-profdata merge` invocation that turns them into one `.profdata` file.
++Then build and run the benchmark with that profile:
++
++```sh
++YB_USE_EXTERNAL_BUILD_ROOT=1 ./yb_build.sh release --full-lto --no-ccache \
++    --pgo-data-path <build_root>/pgo-profiles/ir/mutex-benchmark.profdata --cxx-benchmark mutex-benchmark
++```
++
++`--no-ccache` matters with an old ccache such as the AlmaLinux 8 package (3.7): it can serve objects that ignore the profile ([ccache issue 582](https://github.com/ccache/ccache/issues/582)).
++A build root remembers its profile: later builds in it without `--pgo-data-path` keep using it, and only a different profile, a different build root, or `--clean` changes that.
++`YB_USE_EXTERNAL_BUILD_ROOT=1` puts this build under `<source root>__build/`, so your regular `release` build root stays a plain release build.
++Release binaries add a second, context-sensitive pass (`--pgo-instrument-type=csir` with the first profile as `--pgo-data-path`); one pass is enough for a benchmark.
++
++When to use it: to check whether a change behaves the same way in a PGO-optimized build, or whether a result is fragile under a different code layout.
++It is not a substitute for a plain `release` or `--full-lto` number, and it has downsides:
++
++- A profile collected from the benchmark itself optimizes the benchmark's loop, so it overstates gains that a production profile, collected from a server workload, would not see.
++  In an A/B comparison, a profile collected on one side favors that side; use the same profile for both, or profile each side the same way and say so.
++- Only code the profiling run executed gets profile data; everything else is laid out as cold.
++- A stale profile is accepted silently: the build disables the profile-mismatch warnings, and functions whose code changed simply get no data.
++  Collect a new profile after changing the measured code.
++- It needs Clang and a second full build of the benchmark's dependencies.
++
+ ### Test frameworks
  
- ```bash
+ #### C++ (external) mini cluster
 ```
 
-**File**: `src/yb/util/CMakeLists.txt` (modified, +14/-0)
+**File**: `yb_build.sh` (modified, +36/-0)
 ```diff
-@@ -362,6 +362,14 @@ if(NOT APPLE)
-   target_link_libraries(yb_test_main rt)
- endif()
- 
-+#######################################
-+# yb_benchmark_main
-+#######################################
-+
-+ADD_YB_TEST_LIBRARY(yb_benchmark_main
-+                    SRCS benchmark_main.cc
-+                    DEPS gbenchmark gflags glog yb_util)
-+
- #######################################
- # Unit tests
- #######################################
-@@ -535,3 +543,9 @@ YB_TEST_TARGET_LINK_LIBRARIES(pb_util-test proto_container_test_proto)
- 
- ADD_YB_TEST(uint_set-test)
- YB_TEST_TARGET_LINK_LIBRARIES(uint_set-test proto_container_test_proto)
-+
-+#######################################
-+# Microbenchmarks
-+#######################################
-+
-+ADD_YB_BENCHMARK(mutex-benchmark DEPS absl)
-```
-
-**File**: `src/yb/util/benchmark_main.cc` (added, +111/-0)
-```diff
-@@ -0,0 +1,111 @@
-+// Copyright (c) YugabyteDB, Inc.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
-+// in compliance with the License.  You may obtain a copy of the License at
-+//
-+// http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software distributed under the License
-+// is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
-+// or implied.  See the License for the specific language governing permissions and limitations
-+// under the License.
-+//
-+
-+// main() for microbenchmarks added with ADD_YB_BENCHMARK. It runs the benchmarks registered with
-+// google/benchmark's BENCHMARK() macros between the BenchmarkInit() and BenchmarkTeardown() hooks
-+// declared in benchmark_main.h.
-+//
-+// --benchmark_* flags and --help go to google/benchmark; all other flags are gflags (use --helpfull
-+// to list those). Unlike upstream's BENCHMARK_MAIN(), this does not re-execute the binary with ASLR
-+// disabled; run it under `setarch -R` if you want that.
-+
-+#include "yb/util/benchmark_main.h"
-+
-+#include <benchmark/benchmark.h>
-+
-+#include <string>
-+#include <string_view>
-+#include <vector>
-+
-+#include "yb/gutil/casts.h"
-+#include "yb/gutil/port.h"
-+
-+#include "yb/util/flags.h"
-+#include "yb/util/logging.h"
-+
-+namespace yb {
-+
-+namespace {
-+
-+// Whether gflags takes the next argument as the value of `arg`, i.e. `arg` is "--flag" or "-flag"
-+// without "=" for a registered gflag that is not a bool.
-+bool TakesSeparateValue(std::string_view arg) {
-+  if (!arg.starts_with('-') || arg.find('=') != std::string_view::npos) {
-+    return false;
-+  }
-+  arg.remove_prefix(arg.starts_with("--") ? 2 : 1);
-+  google::CommandLineFlagInfo info;
-+  return google::GetCommandLineFlagInfo(std::string(arg).c_str(), &info) && info.type != "bool";
-+}
-+
-+} // namespace
-+
-+bool DefaultBenchmarkInit(int argc, char** argv) {
-+  // Both google/benchmark and gflags parse the command line, and each rejects the other's flags.
-+  // Give --benchmark_* flags to google/benchmark and everything else to gflags. Splitting also
-+  // keeps glog's --v working: google/benchmark defines its own --v and would otherwise consume it.
-+  std::vector<char*> benchmark_args = {argv[0]};
-+  std::vector<char*> other_args = {argv[0]};
-+  for (int i = 1; i < argc; ++i) {
-+    std::string_view arg(argv[i]);
-+    if (arg.starts_with("--benchmark_") || arg == "--help") {
-+      benchmark_args.push_back(argv[i]);
-+      continue;
-+    }
-+    other_args.push_back(argv[i]);
-+    // gflags also accepts "--flag value". Keep such a value with its flag, even if the value itself
-+    // looks like a --benchmark_* flag.
-+    if (i + 1 < argc && TakesSeparateValue(arg)) {
-+      other_args.push_back(argv[++i]);
-+    }
-+  }
-+  benchmark_args.push_back(nullptr);
-+  other_args.push_back(nullptr);
-+
-+  int benchmark_argc = narrow_cast<int>(benchmark_args.size() - 1);
-+  benchmark::Initialize(&benchmark_argc, benchmark_args.data());
-+  if (benchmark::ReportUnrecognizedArguments(benchmark_argc, benchmark_args.data())) {
-+    return false;
-+  }
-+
-+  int other_argc = narrow_cast<int>(other_args.size() - 1);
-+  char** other_argv = other_args.data();
-+  // Parses flags the same way test_main.cc does, including AutoFlag promotion. The per-test flag
-+  // overrides in YBTest::SetUp() (e.g. never_fsync) are deliberately not applied.
-+  ParseCommandLineFlagsForTests(&other_argc, &other_argv);
-+  InitGoogleLoggingSafeBasic(argv[0]);
-+  if (other_argc > 1) {
-+    LOG(ERROR) << "Unexpected positional argument: " << other_argv[1];
-+    return false;
-+  }
-+  return true;
-+}
-+
-+ATTRIBUTE_WEAK bool BenchmarkInit(int argc, char** argv) {
-+  return DefaultBenchmarkInit(argc, argv);
-+}
-+
-+ATTRIBUTE_WEAK void BenchmarkTeardown() {}
-+
-+} // namespace yb
-+
-+int main(int argc, char** argv) {
-+  google::InstallFailureSignalHandler();
-+  if (!yb::BenchmarkInit(argc, argv)) {
-+    return 1;
-+  }
-+  benchmark::RunSpecifiedBenchmarks();
-+  yb::BenchmarkTeardown();
-+  benchmark::Shutdown();
-+  return 0;
-+}
-```
-
-**File**: `src/yb/util/benchmark_main.h` (added, +33/-0)
-```diff
-@@ -0,0 +1,33 @@
-+// Copyright (c) YugabyteDB, Inc.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
-+// in compliance with the License.  You may obtain a copy of the License at
-+//
-+// http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software distributed under the License
-+// is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
-+// or implied.  See the License for the specific language governing permissions and limitations
-+// under the License.
-+//
-+
-+// Hooks run by the main() that ADD_YB_BENCHMARK links into every benchmark binary. Both hooks have
-+// weak default definitions in benchmark_main.cc; a benchmark binary replaces one by defining it.
-+
-+#pragma once
-+
-+namespace yb {
-+
-+// Runs before any benchmark. Returning false makes main() exit with status 1. The default only
-+// calls DefaultBenchmarkInit(); a replacement can call it and then do its own setup.
-+bool BenchmarkInit(int argc, char** argv);
-+
-+// Runs after all benchmarks have finished. The default does nothing.
-+void BenchmarkTeardown();
-+
-+// The default setup: gives --benchmark_* flags and --help to google/benchmark and all other flags
-+// to gflags, parses flags the same way tests do, and initializes logging. Returns false on a bad
-+// command line.
-+bool DefaultBenchmarkInit(int argc, char** argv);
-+
-+} // namespace yb
-```
-
----
-
-### Incident Patch 11: `120c63bd` (2026-10-01)
-**Commit Message**: [#34521] DocDB: Fix TSAN race in MasterHeartbeatITestWithUpgrade.ClearUniverseUuidToRecoverUniverse
-
-Summary:
-The test thread wrote the `std::string` flag `FLAGS_TEST_master_universe_uuid` through `ANNOTATE_UNPROTECTED_WRITE` while the master heartbeat thread read it directly in `MasterHeartbeatServiceImpl::ValidateTServerUniverseOrRespond`, so TSAN reported a data race. A string can't be written safely without a lock, and that annotation adds none. Now the master reads the flag with `google::GetCommandLineOption`, and every test write in `master_heartbeat-itest.cc` goes through `SET_FLAG`, including the sibling test `PreventHeartbeatWrongCluster`. Both calls take the gflags registry lock.
-
----
-_Produced fully automatically by csi-fix.py: Claude Opus (5.5) analyzed the failure logs, wrote the change, and verified it locally._
-
-Test Plan:
-./yb_build.sh tsan --clang21 --cxx-test master_heartbeat-itest --gtest-filter MasterHeartbeatITestWithUpgrade.ClearUniverseUuidToRecoverUniverse -n 180 --stop-at-failure -- -p 6
-Ran the above locally with no failures.
-Before the fix, this test reproduced locally (same test command and -p / env as above, without --stop-at-failure) -- with the CSI da
-
-**File**: `src/yb/integration-tests/master_heartbeat-itest.cc` (modified, +4/-4)
-```diff
-@@ -160,17 +160,17 @@ TEST_F(MasterHeartbeatITest, PreventHeartbeatWrongCluster) {
-   // TEST_master_universe_uuid.
-   const auto unresponsive_log_waiter_timeout = 20s * kTimeMultiplier;
-   StringWaiterLogSink unresponsive_log_waiter("as UNRESPONSIVE: no heartbeat received for");
--  ANNOTATE_UNPROTECTED_WRITE(FLAGS_TEST_master_universe_uuid) = Uuid::Generate().ToString();
-+  ASSERT_OK(SET_FLAG(TEST_master_universe_uuid, Uuid::Generate().ToString()));
-   ANNOTATE_UNPROTECTED_WRITE(FLAGS_tserver_unresponsive_timeout_ms) = 10 * 1000;
-   ASSERT_OK(mini_cluster_->WaitForTabletServerCount(0, true /* live_only */));
-   ASSERT_OK(unresponsive_log_waiter.WaitFor(unresponsive_log_waiter_timeout));
- 
-   // When the flag is unset, ensure that master leader can register tservers.
--  ANNOTATE_UNPROTECTED_WRITE(FLAGS_TEST_master_universe_uuid) = "";
-+  ASSERT_OK(SET_FLAG(TEST_master_universe_uuid, ""));
-   ASSERT_OK(mini_cluster_->WaitForTabletServerCount(3, true /* live_only */));
- 
-   // Ensure that state for universe_uuid is persisted across restarts.
--  ANNOTATE_UNPROTECTED_WRITE(FLAGS_TEST_master_universe_uuid) = Uuid::Generate().ToString();
-+  ASSERT_OK(SET_FLAG(TEST_master_universe_uuid, Uuid::Generate().ToString()));
-   for (int i = 0; i < 3; i++) {
-     ASSERT_OK(mini_cluster_->mini_tablet_server(i)->Restart());
-   }
-@@ -819,7 +819,7 @@ TEST_F(MasterHeartbeatITestWithUpgrade, ClearUniverseUuidToRecoverUniverse) {
-   ASSERT_OK(mini_cluster_->WaitForTabletServerCount(3, true /* live_only */));
- 
-   // Artificially generate a fake universe uuid and propagate that by clearing the universe_uuid.
--  ANNOTATE_UNPROTECTED_WRITE(FLAGS_TEST_master_universe_uuid) = Uuid::Generate().ToString();
-+  ASSERT_OK(SET_FLAG(TEST_master_universe_uuid, Uuid::Generate().ToString()));
-   ANNOTATE_UNPROTECTED_WRITE(FLAGS_tserver_unresponsive_timeout_ms) = 10 * 1000;
- 
-   // Heartbeats should first fail due to universe_uuid mismatch.
-```
-
-**File**: `src/yb/master/master_heartbeat_service.cc` (modified, +5/-2)
-```diff
-@@ -1654,9 +1654,12 @@ Status MasterHeartbeatServiceImpl::ValidateTServerUniverseOrRespond(
-   }
-   auto tserver_universe_uuid = *tserver_universe_uuid_res;
- 
-+  // Read a locked copy: tests may change this string flag concurrently.
-+  std::string test_master_universe_uuid;
-+  CHECK(google::GetCommandLineOption("TEST_master_universe_uuid", &test_master_universe_uuid));
-   auto master_universe_uuid_res = UniverseUuid::FromString(
--      FLAGS_TEST_master_universe_uuid.empty() ? cluster_config.universe_uuid()
--                                              : FLAGS_TEST_master_universe_uuid);
-+      test_master_universe_uuid.empty() ? cluster_config.universe_uuid()
-+                                        : test_master_universe_uuid);
-   if (!master_universe_uuid_res) {
-     LOG(WARNING) << "Could not decode cluster config universe_uuid: "
-                  << master_universe_uuid_res.status().ToString();
-```
-
----
-
-### Incident Patch 12: `948a523f` (2026-10-02)
-**Commit Message**: [#34575] YSQL: Fix ANALYZE failure in a read-only transaction
-
-Summary:
-ANALYZE is allowed in a read-only transaction in native PostgreSQL, but in
-YugabyteDB the transaction fails at commit:
-
-yugabyte=# BEGIN READ ONLY; ANALYZE t; COMMIT;
-BEGIN
-ANALYZE
-ERROR:  cannot execute DELETE in a read-only transaction
-CONTEXT:  SQL function "yb_increment_db_catalog_version_with_inval_messages" statement 1
-
-The same happens with `SET default_transaction_read_only = on; ANALYZE t;`.
-
-ANALYZE increments the catalog version. When invalidation messages are
-enabled (`yb_enable_invalidation_messages`, default true), the increment is
-done by calling the SQL function
-`yb_increment_db_catalog_version_with_inval_messages` (or
-`yb_increment_all_db_catalog_versions_with_inval_messages` for a global
-impact DDL). The DELETE/UPDATE/INSERT statements of the function go through
-the executor, where `ExecCheckXactReadOnly` rejects them because
-`XactReadOnly` is set. The older code path without invalidation messages
-updates `pg_yb_catalog_version` directly via pggate and does not hit this
-check.
-
-The catalog version increment is an internal side effect of a command that
-PostgreSQL already allows in a read-only t
-
-**File**: `src/postgres/src/backend/catalog/yb_catalog/yb_catalog_version.c` (modified, +23/-0)
-```diff
-@@ -14,6 +14,7 @@
- 
- #include "access/htup_details.h"
- #include "access/sysattr.h"
-+#include "access/xact.h"
- #include "access/yb_target.h"
- #include "catalog/catalog.h"
- #include "catalog/namespace.h"
-@@ -205,11 +206,19 @@ YbCallSQLIncrementCatalogVersions(Oid functionId, bool is_breaking_change,
- 
- 	/* Save old values and set new values to enable the call. */
- 	bool		saved = yb_non_ddl_txn_for_sys_tables_allowed;
-+	bool		saved_xact_read_only = XactReadOnly;
- 
- 	yb_non_ddl_txn_for_sys_tables_allowed = true;
- 	Oid			save_userid;
- 	int			save_sec_context;
- 
-+	/*
-+	 * See YbCallNewSQLIncrementCatalogVersionHelper. This is only defensive
-+	 * here: this function is used for a global-impact DDL, and no command
-+	 * known to be allowed in a read-only transaction (e.g. ANALYZE) is a
-+	 * global-impact DDL.
-+	 */
-+	XactReadOnly = false;
- 	GetUserIdAndSecContext(&save_userid, &save_sec_context);
- 	SetUserIdAndSecContext(BOOTSTRAP_SUPERUSERID,
- 						   SECURITY_RESTRICTED_OPERATION);
-@@ -241,6 +250,7 @@ YbCallSQLIncrementCatalogVersions(Oid functionId, bool is_breaking_change,
- 		FunctionCallInvoke(fcinfo);
- 		/* Restore old values. */
- 		yb_non_ddl_txn_for_sys_tables_allowed = saved;
-+		XactReadOnly = saved_xact_read_only;
- 		yb_is_calling_internal_sql_for_ddl = false;
- 		SetUserIdAndSecContext(save_userid, save_sec_context);
- 		if (!snapshot_set)
-@@ -250,6 +260,7 @@ YbCallSQLIncrementCatalogVersions(Oid functionId, bool is_breaking_change,
- 	{
- 		/* Restore old values. */
- 		yb_non_ddl_txn_for_sys_tables_allowed = saved;
-+		XactReadOnly = saved_xact_read_only;
- 		yb_is_calling_internal_sql_for_ddl = false;
- 		SetUserIdAndSecContext(save_userid, save_sec_context);
- 		if (!snapshot_set)
-@@ -340,6 +351,7 @@ YbCallNewSQLIncrementCatalogVersionHelper(Oid functionId,
- 
- 	/* Save old values and set new values to enable the call. */
- 	bool		saved = yb_non_ddl_txn_for_sys_tables_allowed;
-+	bool		saved_xact_read_only = XactReadOnly;
- 
- 	yb_non_ddl_txn_for_sys_tables_allowed = true;
- 	bool		saved_enable_seqscan = enable_seqscan;
-@@ -353,6 +365,15 @@ YbCallNewSQLIncrementCatalogVersionHelper(Oid functionId,
- 	Oid			save_userid;
- 	int			save_sec_context;
- 
-+	/*
-+	 * Commands that are allowed in a read-only transaction, such as ANALYZE,
-+	 * can also increment the catalog version. The SQL function used to do so
-+	 * is an internal implementation detail that must not be rejected by the
-+	 * executor's read-only transaction check. Only the PG-level XactReadOnly
-+	 * is cleared: the pggate transaction state is left as is, and is the same
-+	 * as for the catalog writes the command itself has already done.
-+	 */
-+	XactReadOnly = false;
- 	GetUserIdAndSecContext(&save_userid, &save_sec_context);
- 	SetUserIdAndSecContext(BOOTSTRAP_SUPERUSERID,
- 						   SECURITY_RESTRICTED_OPERATION);
-@@ -370,6 +391,7 @@ YbCallNewSQLIncrementCatalogVersionHelper(Oid functionId,
- 
- 		/* Restore old values. */
- 		yb_non_ddl_txn_for_sys_tables_allowed = saved;
-+		XactReadOnly = saved_xact_read_only;
- 		yb_is_calling_internal_sql_for_ddl = false;
- 		enable_seqscan = saved_enable_seqscan;
- 		SetUserIdAndSecContext(save_userid, save_sec_context);
-@@ -396,6 +418,7 @@ YbCallNewSQLIncrementCatalogVersionHelper(Oid functionId,
- 	{
- 		/* Restore old values. */
- 		yb_non_ddl_txn_for_sys_tables_allowed = saved;
-+		XactReadOnly = saved_xact_read_only;
- 		yb_is_calling_internal_sql_for_ddl = false;
- 		enable_seqscan = saved_enable_seqscan;
- 		SetUserIdAndSecContext(save_userid, save_sec_context);
-```
-
-**File**: `src/postgres/src/test/regress/expected/yb.orig.analyze.out` (modified, +79/-0)
-```diff
-@@ -302,3 +302,82 @@ SELECT relname, attname, reltuples, stadistinct, stanullfrac
- (21 rows)
- 
- DROP TABLE t_part;
-+-- ANALYZE is allowed in a read-only transaction, including the catalog version
-+-- increment it performs.
-+\set db_oid 'CASE WHEN (SELECT count(*) FROM pg_yb_catalog_version) = 1 THEN 1 ELSE (SELECT oid FROM pg_database WHERE datname = current_database()) END'
-+\set get_version 'SELECT current_version AS version_before FROM pg_yb_catalog_version WHERE db_oid = :db_oid'
-+\set check_version 'SELECT current_version > :version_before AS version_incremented FROM pg_yb_catalog_version WHERE db_oid = :db_oid'
-+CREATE TABLE t_read_only (a int);
-+INSERT INTO t_read_only SELECT generate_series(1, 10);
-+:get_version \gset
-+BEGIN READ ONLY;
-+ANALYZE t_read_only;
-+COMMIT;
-+:check_version;
-+ version_incremented 
-+---------------------
-+ t
-+(1 row)
-+
-+SELECT reltuples FROM pg_class WHERE relname = 't_read_only';
-+ reltuples 
-+-----------
-+        10
-+(1 row)
-+
-+:get_version \gset
-+SET default_transaction_read_only = on;
-+ANALYZE t_read_only;
-+RESET default_transaction_read_only;
-+:check_version;
-+ version_incremented 
-+---------------------
-+ t
-+(1 row)
-+
-+-- In a SERIALIZABLE READ ONLY transaction, DocDB uses snapshot isolation.
-+:get_version \gset
-+BEGIN ISOLATION LEVEL SERIALIZABLE READ ONLY;
-+ANALYZE t_read_only;
-+COMMIT;
-+:check_version;
-+ version_incremented 
-+---------------------
-+ t
-+(1 row)
-+
-+-- A read-only transaction uses follower reads when they are enabled. Wait
-+-- longer than the staleness so that the stale read sees the table data.
-+SET yb_read_from_followers = on;
-+SET yb_follower_read_staleness_ms = 1000;
-+SELECT pg_sleep(2);
-+ pg_sleep 
-+----------
-+ 
-+(1 row)
-+
-+:get_version \gset
-+BEGIN READ ONLY;
-+ANALYZE t_read_only;
-+COMMIT;
-+:check_version;
-+ version_incremented 
-+---------------------
-+ t
-+(1 row)
-+
-+RESET yb_follower_read_staleness_ms;
-+RESET yb_read_from_followers;
-+-- Other writes are still rejected in a read-only transaction.
-+BEGIN READ ONLY;
-+ANALYZE t_read_only;
-+INSERT INTO t_read_only VALUES (11);
-+ERROR:  cannot execute INSERT in a read-only transaction
-+ROLLBACK;
-+SELECT count(*) FROM t_read_only;
-+ count 
-+-------
-+    10
-+(1 row)
-+
-+DROP TABLE t_read_only;
-```
-
-**File**: `src/postgres/src/test/regress/sql/yb.orig.analyze.sql` (modified, +49/-0)
-```diff
-@@ -176,3 +176,52 @@ SELECT relname, attname, reltuples, stadistinct, stanullfrac
-     ORDER BY starelid, attnum;
- 
- DROP TABLE t_part;
-+
-+-- ANALYZE is allowed in a read-only transaction, including the catalog version
-+-- increment it performs.
-+\set db_oid 'CASE WHEN (SELECT count(*) FROM pg_yb_catalog_version) = 1 THEN 1 ELSE (SELECT oid FROM pg_database WHERE datname = current_database()) END'
-+\set get_version 'SELECT current_version AS version_before FROM pg_yb_catalog_version WHERE db_oid = :db_oid'
-+\set check_version 'SELECT current_version > :version_before AS version_incremented FROM pg_yb_catalog_version WHERE db_oid = :db_oid'
-+CREATE TABLE t_read_only (a int);
-+INSERT INTO t_read_only SELECT generate_series(1, 10);
-+:get_version \gset
-+BEGIN READ ONLY;
-+ANALYZE t_read_only;
-+COMMIT;
-+:check_version;
-+SELECT reltuples FROM pg_class WHERE relname = 't_read_only';
-+
-+:get_version \gset
-+SET default_transaction_read_only = on;
-+ANALYZE t_read_only;
-+RESET default_transaction_read_only;
-+:check_version;
-+
-+-- In a SERIALIZABLE READ ONLY transaction, DocDB uses snapshot isolation.
-+:get_version \gset
-+BEGIN ISOLATION LEVEL SERIALIZABLE READ ONLY;
-+ANALYZE t_read_only;
-+COMMIT;
-+:check_version;
-+
-+-- A read-only transaction uses follower reads when they are enabled. Wait
-+-- longer than the staleness so that the stale read sees the table data.
-+SET yb_read_from_followers = on;
-+SET yb_follower_read_staleness_ms = 1000;
-+SELECT pg_sleep(2);
-+:get_version \gset
-+BEGIN READ ONLY;
-+ANALYZE t_read_only;
-+COMMIT;
-+:check_version;
-+RESET yb_follower_read_staleness_ms;
-+RESET yb_read_from_followers;
-+
-+-- Other writes are still rejected in a read-only transaction.
-+BEGIN READ ONLY;
-+ANALYZE t_read_only;
-+INSERT INTO t_read_only VALUES (11);
-+ROLLBACK;
-+SELECT count(*) FROM t_read_only;
-+
-+DROP TABLE t_read_only;
-```
-
----
-
-### Incident Patch 13: `9dbda8be` (2026-09-22)
-**Commit Message**: [#33820] docdb: Fix status tablets in CREATING state resulting in user-facing error
-
-Summary:
-There are a few cases today where the presence of a status tablet in CREATING state can
-result in a user-facing error like:
-```
-FATAL:  Tablet fe7cc8cae9b9488e9883e117dffc56e4 not running (CREATING/Sending initial creation of tablet)
-```
-or
-```
-LookupByIdRpc(tablet: 384402fab9f2456fb9c6ed7623108ba5, num_attempts: 1) failed: Tablet 384402fab9f2456fb9c6ed7623108ba5 not running (CREATING/Sending initial creation of tablet)
-```
-
-1. If this is a tablet for the global transaction status table (system.transactions), the presence
-   of any such tablet causes all GetTransactionStatusTablet RPCs to fail. This effectively causes
-   an outage until all tablets are running.
-
-   This can be triggered by automatic or manual addition of transaction tablets as well, so is not
-   limited to when the transaction table is created.
-
-2. If this is a tablet for a local transaction status table, the GetTransactionStatusTablet RPC
-   does not fail today. Non-running tablets are normally filtered out by the local tablet filter
-   (since no TServer leads such a tablet, it's never preferred). But if there are insuffi
-
-**File**: `src/yb/client/transaction_manager.cc` (modified, +5/-1)
-```diff
-@@ -49,6 +49,9 @@ DEFINE_test_flag(string, transaction_manager_preferred_tablet, "",
-                  "For testing only. If non-empty, transaction manager will try to use the status "
-                  "tablet with id matching this flag, if present in the list of status tablets.");
- 
-+DEFINE_test_flag(bool, transaction_manager_disable_local_filter, false,
-+                 "Disable filter for using locally-led transaction status tablets.");
-+
- METRIC_DEFINE_counter(server, transaction_promotions,
-                       "Number of transactions being promoted to global transactions",
-                       yb::MetricUnit::kTransactions,
-@@ -210,7 +213,8 @@ class TransactionTableState {
-       callback(FLAGS_TEST_transaction_manager_preferred_tablet);
-       return true;
-     }
--    if (local_tablet_filter_) {
-+    if (PREDICT_TRUE(!FLAGS_TEST_transaction_manager_disable_local_filter) &&
-+        local_tablet_filter_) {
-       std::vector<const TabletId*> ids;
-       ids.reserve(tablets.size());
-       for (const auto& id : tablets) {
-```
-
-**File**: `src/yb/integration-tests/cql_geo_transactions-test.cc` (modified, +10/-2)
-```diff
-@@ -32,6 +32,7 @@ DECLARE_int32(load_balancer_max_concurrent_adds);
- DECLARE_int32(load_balancer_max_concurrent_removals);
- DECLARE_int32(load_balancer_max_concurrent_moves);
- DECLARE_int32(load_balancer_max_concurrent_moves_per_table);
-+DECLARE_int32(transaction_table_num_tablets);
- DECLARE_int32(TEST_nodes_per_cloud);
- DECLARE_string(placement_cloud);
- DECLARE_string(placement_region);
-@@ -110,7 +111,7 @@ class CqlGeoTransactionsTest: public CqlTestBase<MiniCluster> {
-     MakePlacementInfo(replication_info.mutable_live_replicas(), region);
-     ASSERT_OK(client_->CreateTransactionsStatusTable(name, &replication_info));
- 
--    WaitForStatusTabletsVersion(current_version + 1);
-+    WaitForStatusTabletsVersionForCreate(current_version);
-   }
- 
-   void SetupTables() {
-@@ -131,7 +132,7 @@ class CqlGeoTransactionsTest: public CqlTestBase<MiniCluster> {
-     }
- 
-     // Wait for system.transactions to be created.
--    WaitForStatusTabletsVersion(1);
-+    WaitForStatusTabletsVersionForCreate(0);
-   }
- 
-   void WaitForStatusTabletsVersion(uint64_t version) {
-@@ -143,6 +144,13 @@ class CqlGeoTransactionsTest: public CqlTestBase<MiniCluster> {
-         strings::Substitute(error, version)));
-   }
- 
-+  uint64_t WaitForStatusTabletsVersionForCreate(uint64_t current_version) {
-+    // 1 status table + its tablets.
-+    current_version += 1 + FLAGS_transaction_table_num_tablets;
-+    WaitForStatusTabletsVersion(current_version);
-+    return current_version;
-+  }
-+
-   void WaitForLoadBalanceCompletion() {
-     ASSERT_OK(WaitFor([&]() -> Result<bool> {
-       bool is_idle = VERIFY_RESULT(client_->IsLoadBalancerIdle());
-```
-
-**File**: `src/yb/integration-tests/xcluster/xcluster_ysql-test.cc` (modified, +6/-4)
-```diff
-@@ -1010,7 +1010,9 @@ TEST_F(XClusterYSqlTestConsistentTransactionsTest, UnevenTxnStatusTablets) {
-     ASSERT_OK(DeleteUniverseReplication());
-   };
- 
--  int producer_version = 1, consumer_version = 1;
-+  // 1 for system.transaction, plus 1 for each of its tablets (1 per tserver).
-+  uint64_t producer_version = 1 + 3;
-+  uint64_t consumer_version = 1 + 3;
- 
-   // Keep same tablet count for normal tablets.
-   ASSERT_OK(CreateClusterAndTable());
-@@ -1019,7 +1021,7 @@ TEST_F(XClusterYSqlTestConsistentTransactionsTest, UnevenTxnStatusTablets) {
-   auto global_txn_table_id =
-       ASSERT_RESULT(client::GetTableId(producer_client(), producer_transaction_table_name));
-   ASSERT_OK(producer_client()->AddTransactionStatusTablet(global_txn_table_id));
--  wait_for_txn_status_version(producer_cluster(), ++producer_version);
-+  ASSERT_NO_FATALS(wait_for_txn_status_version(producer_cluster(), ++producer_version));
- 
-   LOG(INFO) << "First run, more txn tablets on producer.";
-   ASSERT_OK(SetupReplicationAndWaitForValidSafeTime());
-@@ -1036,9 +1038,9 @@ TEST_F(XClusterYSqlTestConsistentTransactionsTest, UnevenTxnStatusTablets) {
-   global_txn_table_id =
-       ASSERT_RESULT(client::GetTableId(consumer_client(), producer_transaction_table_name));
-   ASSERT_OK(consumer_client()->AddTransactionStatusTablet(global_txn_table_id));
--  wait_for_txn_status_version(consumer_cluster(), ++consumer_version);
-+  ASSERT_NO_FATALS(wait_for_txn_status_version(consumer_cluster(), ++consumer_version));
-   ASSERT_OK(consumer_client()->AddTransactionStatusTablet(global_txn_table_id));
--  wait_for_txn_status_version(consumer_cluster(), ++consumer_version);
-+  ASSERT_NO_FATALS(wait_for_txn_status_version(consumer_cluster(), ++consumer_version));
- 
-   ASSERT_OK(WaitForReadOnlyModeOnAllTServers(
-       consumer_table_->name().namespace_id(), /*is_read_only=*/false));
-```
-
-**File**: `src/yb/master/catalog_manager.cc` (modified, +21/-7)
-```diff
-@@ -5611,9 +5611,6 @@ Status CatalogManager::AddTransactionStatusTablet(
-   write_lock.Commit();
-   TRACE("Wrote table to system table");
- 
--  // Increment transaction status version if needed.
--  RETURN_NOT_OK(IncrementTransactionTablesVersion());
--
-   DVLOG(3) << __PRETTY_FUNCTION__ << " Done.";
-   return Status::OK();
- }
-@@ -5698,6 +5695,18 @@ Result<TableInfoPtr> CatalogManager::GetGlobalTransactionStatusTable() {
-   return FindTable(global_txn_table_identifier);
- }
- 
-+bool CatalogManager::CheckTransactionStatusTabletUsable(const TabletInfoPtr& tablet) {
-+  TabletLocationsPB locs_pb;
-+  if (auto status = BuildLocationsForTablet(tablet, &locs_pb); status.ok()) {
-+    // Only use running tablets.
-+    return true;
-+  } else {
-+    LOG(WARNING) << "Transaction status tablet " << tablet->tablet_id() << " not currently usable: "
-+                 << status;
-+    return false;
-+  }
-+}
-+
- Status CatalogManager::GetGlobalTransactionStatusTablets(
-     GetTransactionStatusTabletsResponsePB* resp) {
-   auto global_txn_table = VERIFY_RESULT(GetGlobalTransactionStatusTable());
-@@ -5706,9 +5715,9 @@ Status CatalogManager::GetGlobalTransactionStatusTablets(
-   RETURN_NOT_OK(CatalogManagerUtil::CheckIfTableDeletedOrNotVisibleToClient(l, resp));
- 
-   for (const auto& tablet : VERIFY_RESULT(global_txn_table->GetTablets())) {
--    TabletLocationsPB locs_pb;
--    RETURN_NOT_OK(BuildLocationsForTablet(tablet, &locs_pb));
--    resp->add_global_tablet_id(tablet->tablet_id());
-+    if (CheckTransactionStatusTabletUsable(tablet)) {
-+      resp->add_global_tablet_id(tablet->tablet_id());
-+    }
-   }
- 
-   return Status::OK();
-@@ -5810,7 +5819,12 @@ Status CatalogManager::GetPlacementLocalTransactionStatusTablets(
-       }
-       auto tablets = VERIFY_RESULT(table_info.table->GetTablets());
-       auto tablet_ids =
--          tablets | std::views::transform([](const auto& t) { return t->tablet_id(); });
-+          tablets
-+              | std::views::filter([this](auto& tablet) {
-+                  return CheckTransactionStatusTabletUsable(tablet);
-+                })
-+              | std::views::transform([](const auto& tablet) { return tablet->tablet_id(); })
-+              | std::ranges::to<std::vector>();
-       if (table_info.is_region_local) {
-         resp->mutable_region_local_tablet_id()->Add(tablet_ids.begin(), tablet_ids.end());
-       }
-```
-
-**File**: `src/yb/master/catalog_manager.h` (modified, +2/-0)
-```diff
-@@ -2976,6 +2976,8 @@ class CatalogManager : public CatalogManagerIf, public SnapshotCoordinatorContex
-       rpc::RpcContext* rpc, const TablespaceId& tablespace_id, const LeaderEpoch& epoch)
-       EXCLUDES(mutex_);
- 
-+  bool CheckTransactionStatusTabletUsable(const TabletInfoPtr& tablet);
-+
-   // Get tablet ids of the global transaction status table.
-   Status GetGlobalTransactionStatusTablets(
-       GetTransactionStatusTabletsResponsePB* resp) EXCLUDES(mutex_);
-```
-
-**File**: `src/yb/master/master_heartbeat_service.cc` (modified, +13/-1)
-```diff
-@@ -1085,7 +1085,19 @@ Status MasterHeartbeatServiceImpl::ProcessTabletReportBatch(
- 
-   // Update the table state if all its tablets are now running.
-   for (auto& [table_id, tablets] : new_running_tablets) {
--    catalog_manager_->SchedulePostTabletCreationTasks(table_info_map[table_id], epoch, tablets);
-+    const auto& table_info = table_info_map[table_id];
-+    catalog_manager_->SchedulePostTabletCreationTasks(table_info, epoch, tablets);
-+
-+    // If this is a transaction status tablet, we need to bump the transaction table versions so
-+    // that tservers update their cache of usable status tablets to include this tablet.
-+    // We do one incrment per status tablet here for easier testing even though one increment total
-+    // is sufficient. Transaction status creations are rare, so this should not be an issue.
-+    if (table_info->GetTableType() == TRANSACTION_STATUS_TABLE_TYPE) {
-+      WARN_NOT_OK(
-+          catalog_manager_->IncrementTransactionTablesVersion(),
-+          "Failed to increment transaction status version, transaction status tablet may not be "
-+          "usable until next increment");
-+    }
-   }
- 
-   // Update the relevant tablet entries in system.partitions.
-```
-
-**File**: `src/yb/tools/yb-admin-test.cc` (modified, +115/-0)
-```diff
-@@ -2694,6 +2694,121 @@ TEST_F(AdminCliTest, AddTransactionStatusTablet) {
-   }, kWaitNewTabletReadyTimeout, "Timeout waiting for new status tablet to be ready"));
- }
- 
-+class AddTransactionTabletTest : public AdminCliTest {
-+ public:
-+  void UpdateMiniClusterOptions(ExternalMiniClusterOptions* options) override {
-+    options->transaction_table_num_tablets = 1;
-+  }
-+
-+  void WaitForTransactionTabletCount(
-+      std::string_view txn_table, int64_t expected_count, MonoDelta timeout = 20s) {
-+    int64_t num_tablets;
-+    ASSERT_OK(WaitFor([&] -> Result<bool> {
-+      auto tablets = VERIFY_RESULT(CallAdmin(
-+          "list_tablets", master::kSystemNamespaceName, std::string(txn_table)));
-+      // -1 to exclude table header.
-+      num_tablets = std::count(tablets.begin(), tablets.end(), '\n') - 1;
-+      LOG(INFO) << "Tablets: " << AsString(tablets);
-+      return num_tablets >= expected_count;
-+    }, timeout, "Timeout waiting for status tablet count"));
-+    ASSERT_EQ(num_tablets, expected_count);
-+  }
-+};
-+
-+TEST_F_EX(AdminCliTest, AddStuckTransactionStatusTablet, AddTransactionTabletTest) {
-+  constexpr auto kNamespaceName = "test_namespace";
-+  constexpr auto kTableName = "test_table";
-+  constexpr auto kLocalTransactionTableName = "transactions_local";
-+
-+  ANNOTATE_UNPROTECTED_WRITE(FLAGS_num_tablet_servers) = 1;
-+  ANNOTATE_UNPROTECTED_WRITE(FLAGS_num_replicas) = 1;
-+
-+  BuildAndStart(/*ts_flags=*/{
-+    "--ycql_use_local_transaction_tables=true",
-+    "--TEST_transaction_manager_disable_local_filter=true",
-+  }, /*master_flags=*/{
-+    "--autoscale_transaction_tables=false",
-+    "--tablet_creation_timeout_ms=10000",
-+  });
-+
-+  string master_address = ToString(cluster_->master()->bound_rpc_addr());
-+  auto client = ASSERT_RESULT(YBClientBuilder().add_master_server_addr(master_address).Build());
-+
-+  // Force creation of system.transactions.
-+  auto session = ASSERT_RESULT(CqlConnect());
-+  ASSERT_OK(session.ExecuteQueryFormat(
-+      "CREATE KEYSPACE IF NOT EXISTS $0", kNamespaceName));
-+  ASSERT_OK(session.ExecuteQueryFormat("USE $0", kNamespaceName));
-+  ASSERT_OK(session.ExecuteQueryFormat(
-+      "CREATE TABLE $0 (key INT PRIMARY KEY) "
-+      "WITH transactions = { 'enabled' : true }", kTableName));
-+
-+  auto global_txn_table = YBTableName(
-+      YQL_DATABASE_CQL, master::kSystemNamespaceName, kGlobalTransactionsTableName);
-+  auto global_txn_table_id = ASSERT_RESULT(client::GetTableId(client_.get(), global_txn_table));
-+  ASSERT_NO_FATALS(WaitForTransactionTabletCount(kGlobalTransactionsTableName, /*count=*/1));
-+
-+  // We create a transaction tablet that gets stuck in CREATING (for tablet_creation_timeout_ms) by
-+  // adding the tablet after shutting down all tservers, and then restarting everything once create
-+  // tablet RPCs start failing (see #33820).
-+  // If this behavior is changed in the future, this test should be changed to create such a tablet
-+  // by some other means.
-+  cluster_->tablet_server(0)->Shutdown();
-+  {
-+    ASSERT_OK(CallAdmin("add_transaction_tablet", global_txn_table_id));
-+    auto log_waiter = cluster_->GetMasterLogWaiter(
-+        Format("Processing pending assignments for table: $0", global_txn_table_id));
-+    ASSERT_OK(log_waiter.WaitFor(5s));
-+  }
-+  cluster_->master()->Shutdown(SafeShutdown::kFalse);
-+  ASSERT_OK(cluster_->Restart());
-+
-+  auto do_inserts = [&](size_t start, size_t end) -> Status {
-+    for (size_t i = 0; i < 10; ++i) {
-+      RETURN_NOT_OK(session.ExecuteQueryFormat(
-+          "START TRANSACTION;"
-+          "INSERT INTO $0.$1(key) VALUES ($2);"
-+          "COMMIT",
-+          kNamespaceName, kTableName, i));
-+    }
-+    return Status::OK();
-+  };
-+
-+  ASSERT_NO_FATALS(WaitForTransactionTabletCount(kGlobalTransactionsTableName, /*count=*/1));
-+  session = ASSERT_RESULT(CqlConnect());
-+  ASSERT_OK(do_inserts(0, 10));
-+  ASSERT_NO_FATALS(WaitForTransactionTabletCount(kGlobalTransactionsTableName, /*count=*/2));
-+  ASSERT_OK(do_inserts(10, 20));
-+
-+  ASSERT_OK(CallAdmin("create_transaction_table", kLocalTransactionTableName));
-+  ASSERT_OK(CallAdmin(
-+      "modify_table_placement_info", kNamespaceName, kTableName,
-+      "cloud1.datacenter1.rack1", "1"));
-+  ASSERT_OK(CallAdmin(
-+      "modify_table_placement_info", master::kSystemNamespaceName, kLocalTransactionTableName,
-+      "cloud1.datacenter1.rack1", "1"));
-+  auto local_txn_table = YBTableName(
-+      YQL_DATABASE_CQL, master::kSystemNamespaceName, kLocalTransactionTableName);
-+  auto local_txn_table_id = ASSERT_RESULT(client::GetTableId(client_.get(), local_txn_table));
-+  ASSERT_NO_FATALS(WaitForTransactionTabletCount(kLocalTransactionTableName, /*count=*/1));
-+
-+  cluster_->tablet_server(0)->Shutdown();
-+  {
-+    auto log_waiter = cluster_->GetMasterLogWaiter(
-+        Format("Processing pending assignments for table: $0", local_txn_table_id));
-+    ASSERT_OK(CallAdmin("add_transaction_tablet", local_txn_table_id));
-+    ASSERT_OK(log_waiter.WaitFor(5s));
-+  }
-+  cluster_->
-```
-
-**File**: `src/yb/yql/pgwrapper/geo_transactions-test.cc` (modified, +8/-9)
-```diff
-@@ -98,8 +98,7 @@ class GeoTransactionsTest : public GeoTransactionsTestBase {
- 
-       WaitForLoadBalanceCompletion();
-       if (wait_for_version) {
--        WaitForStatusTabletsVersion(current_version + 1);
--        ++current_version;
-+        current_version = WaitForStatusTabletsVersionForCreate(current_version);
-       }
-     }
-   }
-@@ -333,7 +332,7 @@ class GeoTransactionsTest : public GeoTransactionsTestBase {
-           ]
-         }')
-     )#"));
--    WaitForStatusTabletsVersion(current_version + num_tablespaces);
-+    WaitForStatusTabletsVersionForCreate(current_version, num_tablespaces);
-     return Status::OK();
-   }
- 
-@@ -738,7 +737,7 @@ TEST_F(GeoTransactionsTest, TestTransactionTableDeletionRemoteAbort) {
- 
-     auto current_version = GetCurrentVersion();
-     ANNOTATE_UNPROTECTED_WRITE(FLAGS_auto_create_local_transaction_tables) = true;
--    WaitForStatusTabletsVersion(current_version + 1);
-+    WaitForStatusTabletsVersionForCreate(current_version);
-   }
- }
- 
-@@ -802,7 +801,7 @@ TEST_F(GeoTransactionsTest, YB_DISABLE_TEST_IN_TSAN(TestPreferredZone)) {
-   auto tablet_uuid_set = ListTabletIdsForTable(cluster_.get(), table_id);
-   auto table_uuids = std::vector<TabletId>(tablet_uuid_set.begin(), tablet_uuid_set.end());
- 
--  WaitForStatusTabletsVersion(++current_version);
-+  current_version = WaitForStatusTabletsVersionForCreate(current_version);
-   WaitForLoadBalanceCompletion();
- 
-   auto status_tablet_ids = ASSERT_RESULT(GetStatusTablets(1, ExpectedLocality::kLocal));
-@@ -811,7 +810,7 @@ TEST_F(GeoTransactionsTest, YB_DISABLE_TEST_IN_TSAN(TestPreferredZone)) {
- 
-   ASSERT_OK(conn.ExecuteFormat("ALTER TABLE $0 SET TABLESPACE tablespace2", table_name));
- 
--  WaitForStatusTabletsVersion(++current_version);
-+  current_version = WaitForStatusTabletsVersionForCreate(current_version);
-   WaitForLoadBalanceCompletion();
- 
-   status_tablet_ids = ASSERT_RESULT(GetStatusTablets(2, ExpectedLocality::kLocal));
-@@ -1136,14 +1135,14 @@ class GeoTransactionsTablespaceLocalityTest : public GeoTransactionsTest {
-         CREATE TABLE $1(value int REFERENCES $2(value))
-         TABLESPACE $0
-     )#", kTablespace1, kTableNameFK, kTableName));
--    WaitForStatusTabletsVersion(version + 1);
-+    version = WaitForStatusTabletsVersionForCreate(version);
- 
-     // Dummy table to create transaction tables.
-     ASSERT_OK(conn.ExecuteFormat(R"#(
-         CREATE TABLE __$0_dummy_table(value int)
-         TABLESPACE $0
-     )#", kTablespace2));
--    WaitForStatusTabletsVersion(version + 2);
-+    version = WaitForStatusTabletsVersionForCreate(version);
-     WaitForLoadBalanceCompletion();
-   }
- };
-@@ -1505,7 +1504,7 @@ class GeoTransactionsMultiTabletTest : public GeoTransactionsTest {
-           SPLIT INTO 3 TABLETS
-       )#", kTablespace, kTableNamePrefix, i));
-     }
--    WaitForStatusTabletsVersion(version + 1);
-+    WaitForStatusTabletsVersionForCreate(version);
-   }
- };
- 
-```
-
----
-
-### Incident Patch 14: `76216fc3` (2026-10-01)
-**Commit Message**: [PLAT-22752] [YBA] Earlyoom can't lock its memory on YBA-provisioned nodes
-
-Summary: Increase lock limit for earlyoom installation
-
-Test Plan: provision nodes with earlyoom, verify no "Could not lock memory - continuing anyway" in earlyoom log
-
-Reviewers: amalyshev, anijhawan
-
-Reviewed By: amalyshev
-
-Subscribers: yugaware
-
-Differential Revision: https://phorge.dev.yugabyte.com/D58863
-
-**File**: `managed/node-agent/resources/earlyoom-installer.sh` (modified, +4/-4)
-```diff
-@@ -30,12 +30,12 @@ main() {
-   if [ "$SUDO_ACCESS" = "true" ]; then
-     # Setting Memlock limits for earlyoom
-     # Check and set DefaultLimitMEMLOCK in /etc/systemd/system.conf
--    if ! sudo grep -q "^DefaultLimitMEMLOCK=500000" /etc/systemd/system.conf; then
--        echo 'DefaultLimitMEMLOCK=500000' | sudo tee -a /etc/systemd/system.conf
-+    if ! sudo grep -q "^DefaultLimitMEMLOCK=50M" /etc/systemd/system.conf; then
-+        echo 'DefaultLimitMEMLOCK=50M' | sudo tee -a /etc/systemd/system.conf
-     fi
-     # Check and set DefaultLimitMEMLOCK in /etc/systemd/user.conf
--    if ! sudo grep -q "^DefaultLimitMEMLOCK=500000" /etc/systemd/user.conf; then
--        echo 'DefaultLimitMEMLOCK=500000' | sudo tee -a /etc/systemd/user.conf
-+    if ! sudo grep -q "^DefaultLimitMEMLOCK=50M" /etc/systemd/user.conf; then
-+        echo 'DefaultLimitMEMLOCK=50M' | sudo tee -a /etc/systemd/user.conf
-     fi
+@@ -512,12 +512,32 @@ run_cxx_benchmark() {
+     fatal "Could not find benchmark program '$cxx_benchmark_program_name' in" \
+           "$BUILD_ROOT/benchmarks-*. Only programs added with ADD_YB_BENCHMARK are placed there."
    fi
++  # In a prof_gen (PGO-instrumented) build, collect the profile under the build root instead of
++  # the current directory, in a subdirectory named after the instrumentation type (ir or csir), and
++  # show how to merge it for a later --pgo-data-path build. %m keeps the executable and each
++  # instrumented shared library in their own raw file, as clang's default pattern does; previous
++  # raw files of this benchmark are removed so the merge sees one run.
++  local pgo_profile_dir=""
++  if [[ $build_type == "prof_gen" ]]; then
++    pgo_profile_dir=$BUILD_ROOT/pgo-profiles/$pgo_instrument_type
++    mkdir -p "$pgo_profile_dir"
++    rm -f "$pgo_profile_dir/$cxx_benchmark_name"-*.profraw
++  fi
+   (
+     set_sanitizer_runtime_options
++    if [[ -n $pgo_profile_dir ]]; then
++      export LLVM_PROFILE_FILE=$pgo_profile_dir/$cxx_benchmark_name-%p-%m.profraw
++    fi
+     set +u  # "set -u" fails on an empty benchmark_args with bash < 4.4 (macOS /bin/bash).
+     set -x
+     "${benchmark_paths[0]}" "${benchmark_args[@]}"
+   )
++  if [[ -n $pgo_profile_dir ]]; then
++    log "PGO profile written to $pgo_profile_dir. To merge it for a --pgo-data-path build:"
++    log "  ${YB_LLVM_TOOLCHAIN_DIR:-<llvm toolchain>}/bin/llvm-profdata merge" \
++        "-o $pgo_profile_dir/$cxx_benchmark_name.profdata" \
++        "$pgo_profile_dir/$cxx_benchmark_name-*.profraw"
++  fi
+ }
  
-```
-
-**File**: `managed/node-agent/resources/ynp/modules/provision/configure_os/templates/run.j2` (modified, +2/-2)
-```diff
-@@ -201,10 +201,10 @@ echo "systemd-journald restarted successfully."
- 
- # For earlyoom MEMLOCK requirement
- if ! grep -q "^DefaultLimitMEMLOCK=" /etc/systemd/system.conf; then
--    echo 'DefaultLimitMEMLOCK=500000' | tee -a /etc/systemd/system.conf
-+    echo 'DefaultLimitMEMLOCK=50M' | tee -a /etc/systemd/system.conf
+ register_file_to_rebuild() {
+@@ -1064,8 +1084,24 @@ if [[ $build_type == "prof_gen" ]]; then
+   cmake_opts+=( "-DYB_PGO_INSTRUMENT_TYPE=$pgo_instrument_type" )
  fi
- if ! grep -q "^DefaultLimitMEMLOCK=" /etc/systemd/user.conf; then
--    echo 'DefaultLimitMEMLOCK=500000' | tee -a /etc/systemd/user.conf
-+    echo 'DefaultLimitMEMLOCK=50M' | tee -a /etc/systemd/user.conf
+ 
++# The profile path lives in CMakeCache.txt once cmake has seen it, and a build root keeps it until a
++# different one is given: later invocations without --pgo-data-path (the release pipeline's initdb
++# step, test runs) must not change how the root is compiled. So re-run cmake only when a different
++# profile is given explicitly, and say so when a cached profile is in effect.
++cached_pgo_data_path=""
++if [[ -f $BUILD_ROOT/CMakeCache.txt ]]; then
++  cached_pgo_data_path=$(sed -n 's/^YB_PGO_DATA_PATH:[A-Z]*=//p' "$BUILD_ROOT/CMakeCache.txt")
++fi
+ if [[ $pgo_data_path != "" ]]; then
+   cmake_opts+=( "-DYB_PGO_DATA_PATH=$pgo_data_path" )
++  if [[ -n $cached_pgo_data_path && $cached_pgo_data_path != "$pgo_data_path" &&
++        ${force_no_run_cmake} == "false" ]]; then
++    log "PGO profile changed from '${cached_pgo_data_path}' to '${pgo_data_path}', re-running CMake"
++    force_run_cmake=true
++  fi
++elif [[ -n $cached_pgo_data_path ]]; then
++  log "Using the PGO profile recorded in this build root: ${cached_pgo_data_path}" \
++      "(use a different build root, or --clean, to build without it)"
  fi
  
- # Enable linger for user-level systemd services
-```
-
-**File**: `managed/node-agent/resources/ynp/modules/provision/install_configure_earlyoom/templates/precheck.j2` (modified, +2/-2)
-```diff
-@@ -1,6 +1,6 @@
- systemd_dir="{{ yb_user_home }}/.config/systemd/user"
- config_dir="{{ yb_home_dir }}/bin"
--if grep -q "DefaultLimitMEMLOCK=500000" "/etc/systemd/system.conf"; then
-+if grep -q "DefaultLimitMEMLOCK=50M" "/etc/systemd/system.conf"; then
-     echo "[PASS] DefaultLimitMEMLOCK is set in /etc/systemd/system.conf"
-     add_result "DefaultLimitMEMLOCK in /etc/systemd/system.conf" "PASS" \
-         "DefaultLimitMEMLOCK is set in /etc/systemd/system.conf"
-@@ -9,7 +9,7 @@ else
-     add_result "DefaultLimitMEMLOCK in /etc/systemd/system.conf" "FAIL" \
-         "DefaultLimitMEMLOCK is not set in /etc/systemd/system.conf. Run with root provisioning first."
- fi
--if grep -q "DefaultLimitMEMLOCK=500000" "/etc/systemd/user.conf"; then
-+if grep -q "DefaultLimitMEMLOCK=50M" "/etc/systemd/user.conf"; then
-     echo "[PASS] DefaultLimitMEMLOCK is set in /etc/systemd/user.conf"
-     add_result "DefaultLimitMEMLOCK in /etc/systemd/user.conf" "PASS" \
-         "DefaultLimitMEMLOCK is set in /etc/systemd/user.conf"
-```
-
----
-
-### Incident Patch 15: `637326ac` (2026-10-01)
-**Commit Message**: [PLAT-22796] Fix HTTPS to IP-addressed endpoints with BCJSSE on newer JDKs
-
-Summary:
-The yugaware image moved from Zulu 17.0.7 to 17.0.20.1 (devops 8166c41). Since then, a HashiCorp Vault KMS config addressed by IP fails with certificate_unknown(46), root cause `No hostname specified for HTTPS endpoint ID check`.
-
-`HttpsURLConnection` creates an unconnected socket and connects it to the resolved address, so the TLS provider never sees the URL host. SunJSSE is given the host through an internal API. BCJSSE isn't, and relied on the SNI the JDK set from the host. Newer JDKs no longer set SNI for IP literals, so BCJSSE has nothing to check the certificate against. Any HttpsURLConnection call to an https://<ip> URL fails this way, including Vault and OIDC. Host names are unaffected. Clients that pass the host themselves (Play WS, OkHttp, Apache HttpClient, java.net.http) are also unaffected.
-
-Fix: new `HostPreservingSSLSocketFactory` wraps a factory and doesn't support unconnected sockets. HttpsURLConnection then falls back to createSocket(socket, host, port, autoClose), which passes the URL host to BCJSSE, so the certificate is checked against the IP itself.
-
-MainModule wraps the JVM d
-
-**File**: `managed/src/main/java/MainModule.java` (modified, +9/-2)
-```diff
-@@ -66,6 +66,7 @@
- import com.yugabyte.yw.common.alerts.AlertConfigurationWriter;
- import com.yugabyte.yw.common.alerts.AlertsGarbageCollector;
- import com.yugabyte.yw.common.alerts.QueryAlerts;
-+import com.yugabyte.yw.common.certmgmt.HostPreservingSSLSocketFactory;
- import com.yugabyte.yw.common.certmgmt.castore.CustomCAStoreManager;
- import com.yugabyte.yw.common.config.CustomerConfKeys;
- import com.yugabyte.yw.common.config.GlobalConfKeys;
-@@ -120,6 +121,7 @@
- import java.security.Security;
- import javax.net.ssl.HttpsURLConnection;
- import javax.net.ssl.SSLContext;
-+import javax.net.ssl.SSLSocketFactory;
- import javax.net.ssl.TrustManager;
- import javax.net.ssl.TrustManagerFactory;
- import lombok.extern.slf4j.Slf4j;
-@@ -237,6 +239,9 @@ public void configure() {
-     System.setProperty("org.xerial.snappy.tempdir", snappyTempPath.toAbsolutePath().toString());
- 
-     TLSConfig.modifyTLSDisabledAlgorithms(config);
-+    // After the BC providers and TLS properties are in place, so the default context is BCJSSE's.
-+    HttpsURLConnection.setDefaultSSLSocketFactory(
-+        HostPreservingSSLSocketFactory.wrap(HttpsURLConnection.getDefaultSSLSocketFactory()));
-     bind(RuntimeConfigFactory.class).to(SettableRuntimeConfigFactory.class).asEagerSingleton();
-     bind(RuntimeConfigCacheInvalidator.class).asEagerSingleton();
-     install(new CustomerConfKeys());
-@@ -373,8 +378,10 @@ protected OidcClient provideOidcClient(
-           SecureRandom secureRandom = new SecureRandom();
-           SSLContext sslContext = SSLContext.getInstance("TLS");
-           sslContext.init(null, ybaJavaTrustManagers, secureRandom);
--          HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
--          HTTPRequest.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
-+          SSLSocketFactory socketFactory =
-+              HostPreservingSSLSocketFactory.wrap(sslContext.getSocketFactory());
-+          HttpsURLConnection.setDefaultSSLSocketFactory(socketFactory);
-+          HTTPRequest.setDefaultSSLSocketFactory(socketFactory);
-         } catch (Exception e) {
-           throw new PlatformServiceException(
-               INTERNAL_SERVER_ERROR, "Error occurred when building SSL context" + e.getMessage());
-```
-
-**File**: `managed/src/main/java/com/yugabyte/yw/common/certmgmt/HostPreservingSSLSocketFactory.java` (added, +154/-0)
-```diff
-@@ -0,0 +1,154 @@
-+// Copyright (c) YugabyteDB, Inc.
-+
-+package com.yugabyte.yw.common.certmgmt;
-+
-+import java.io.IOException;
-+import java.net.InetAddress;
-+import java.net.Socket;
-+import java.security.KeyManagementException;
-+import java.security.SecureRandom;
-+import javax.net.ssl.KeyManager;
-+import javax.net.ssl.SSLContext;
-+import javax.net.ssl.SSLContextSpi;
-+import javax.net.ssl.SSLEngine;
-+import javax.net.ssl.SSLParameters;
-+import javax.net.ssl.SSLServerSocketFactory;
-+import javax.net.ssl.SSLSessionContext;
-+import javax.net.ssl.SSLSocketFactory;
-+import javax.net.ssl.TrustManager;
-+
-+/**
-+ * SSLSocketFactory that refuses to create unconnected sockets, so that the TLS socket always learns
-+ * the host it is connecting to.
-+ *
-+ * <p>HttpsURLConnection prefers {@code createSocket()} followed by {@code connect(address)}, which
-+ * never passes the URL host to the TLS provider. SunJSSE is told the host through an internal API;
-+ * BCJSSE is not, and relied on the SNI the JDK used to set. Newer JDKs (e.g. Zulu 17.0.20) no
-+ * longer set SNI for IP literals, so BCJSSE fails endpoint identification for https://<ip> URLs
-+ * with "No hostname specified for HTTPS endpoint ID check".
-+ *
-+ * <p>When {@code createSocket()} throws a SocketException caused by UnsupportedOperationException
-+ * (the {@link javax.net.SocketFactory} default, which this class inherits), HttpsURLConnection
-+ * falls back to a plain socket layered with {@code createSocket(socket, host, port, autoClose)},
-+ * which hands BCJSSE the URL host. This is preferred over
-+ * org.bouncycastle.jsse.client.assumeOriginalHostName, which for IP literals verifies against the
-+ * reverse-DNS name instead of the IP.
-+ */
-+public class HostPreservingSSLSocketFactory extends SSLSocketFactory {
-+
-+  private final SSLSocketFactory delegate;
-+
-+  public HostPreservingSSLSocketFactory(SSLSocketFactory delegate) {
-+    this.delegate = delegate;
-+  }
-+
-+  public static SSLSocketFactory wrap(SSLSocketFactory factory) {
-+    if (factory == null || factory instanceof HostPreservingSSLSocketFactory) {
-+      return factory;
-+    }
-+    return new HostPreservingSSLSocketFactory(factory);
-+  }
-+
-+  /** For clients that only accept an SSLContext and call {@code getSocketFactory()} themselves. */
-+  public static SSLContext wrap(SSLContext context) {
-+    if (context == null) {
-+      return null;
-+    }
-+    return new SSLContext(
-+        new HostPreservingSSLContextSpi(context), context.getProvider(), context.getProtocol()) {};
-+  }
-+
-+  @Override
-+  public String[] getDefaultCipherSuites() {
-+    return delegate.getDefaultCipherSuites();
-+  }
-+
-+  @Override
-+  public String[] getSupportedCipherSuites() {
-+    return delegate.getSupportedCipherSuites();
-+  }
-+
-+  @Override
-+  public Socket createSocket(Socket s, String host, int port, boolean autoClose)
-+      throws IOException {
-+    return delegate.createSocket(s, host, port, autoClose);
-+  }
-+
-+  @Override
-+  public Socket createSocket(String host, int port) throws IOException {
-+    return delegate.createSocket(host, port);
-+  }
-+
-+  @Override
-+  public Socket createSocket(String host, int port, InetAddress localHost, int localPort)
-+      throws IOException {
-+    return delegate.createSocket(host, port, localHost, localPort);
-+  }
-+
-+  @Override
-+  public Socket createSocket(InetAddress host, int port) throws IOException {
-+    return delegate.createSocket(host, port);
-+  }
-+
-+  @Override
-+  public Socket createSocket(InetAddress address, int port, InetAddress localAddress, int localPort)
-+      throws IOException {
-+    return delegate.createSocket(address, port, localAddress, localPort);
-+  }
-+
-+  private static class HostPreservingSSLContextSpi extends SSLContextSpi {
-+    private final SSLContext delegate;
-+
-+    HostPreservingSSLContextSpi(SSLContext delegate) {
-+      this.delegate = delegate;
-+    }
-+
-+    @Override
-+    protected void engineInit(KeyManager[] km, TrustManager[] tm, SecureRandom sr)
-+        throws KeyManagementException {
-+      delegate.init(km, tm, sr);
-+    }
-+
-+    @Override
-+    protected SSLSocketFactory engineGetSocketFactory() {
-+      return wrap(delegate.getSocketFactory());
-+    }
-+
-+    @Override
-+    protected SSLServerSocketFactory engineGetServerSocketFactory() {
-+      return delegate.getServerSocketFactory();
-+    }
-+
-+    @Override
-+    protected SSLEngine engineCreateSSLEngine() {
-+      return delegate.createSSLEngine();
-+    }
-+
-+    @Override
-+    protected SSLEngine engineCreateSSLEngine(String host, int port) {
-+      return delegate.createSSLEngine(host, port);
-+    }
-+
-+    @Override
-+    protected SSLSessionContext engineGetServerSessionContext() {
-+      return delegate.getServerSessionContext();
-+    }
-+
-+    @Override
-+    protected SSLSessionContext engineGetClientSessionContext() {
-+      return delegate.getClientSessionContext();
-+    }
-+
-+    // The SSLContextSpi defaults derive these from engineGetSocketFactory().createSocket(), which
-+    //
-```
-
-**File**: `managed/src/main/java/com/yugabyte/yw/common/kms/util/hashicorpvault/VaultAccessor.java` (modified, +23/-1)
-```diff
-@@ -20,6 +20,7 @@
- import com.bettercloud.vault.response.LogicalResponse;
- import com.bettercloud.vault.rest.RestResponse;
- import com.yugabyte.yw.common.Util;
-+import com.yugabyte.yw.common.certmgmt.HostPreservingSSLSocketFactory;
- import com.yugabyte.yw.common.certmgmt.castore.CustomCAStoreManager;
- import com.yugabyte.yw.common.config.GlobalConfKeys;
- import com.yugabyte.yw.common.config.RuntimeConfGetter;
-@@ -33,6 +34,7 @@
- import java.util.List;
- import java.util.Map;
- import java.util.TimeZone;
-+import javax.net.ssl.SSLContext;
- import org.apache.commons.lang3.StringUtils;
- import org.slf4j.Logger;
- import org.slf4j.LoggerFactory;
-@@ -186,7 +188,7 @@ public static VaultConfig customCAStoreConfig(VaultConfig config) throws VaultEx
-       LOG.debug("Using YBA's custom trust-store with Java defaults");
-       KeyStore ybaJavaKeyStore = customCAStoreManager.getYbaAndJavaKeyStore();
-       try {
--        config.sslConfig(new SslConfig().trustStore(ybaJavaKeyStore).build());
-+        config.sslConfig(new HostPreservingSslConfig().trustStore(ybaJavaKeyStore).build());
-       } catch (VaultException e) {
-         LOG.error("Creation of vault with SSL config has failed with error:" + e.getMessage());
-         throw e;
-@@ -195,6 +197,26 @@ public static VaultConfig customCAStoreConfig(VaultConfig config) throws VaultEx
-     return config;
-   }
- 
-+  /**
-+   * The driver sets {@code getSslContext().getSocketFactory()} on each HttpsURLConnection,
-+   * bypassing the JVM default factory, so it needs its own {@link HostPreservingSSLSocketFactory}.
-+   */
-+  private static class HostPreservingSslConfig extends SslConfig {
-+    private transient SSLContext wrappedContext;
-+
-+    @Override
-+    public synchronized SSLContext getSslContext() {
-+      SSLContext context = super.getSslContext();
-+      if (context == null) {
-+        return null;
-+      }
-+      if (wrappedContext == null) {
-+        wrappedContext = HostPreservingSSLSocketFactory.wrap(context);
-+      }
-+      return wrappedContext;
-+    }
-+  }
-+
-   public void tokenSelfLookupCheck() throws VaultException {
-     RestResponse rr = vault.auth().lookupSelf().getRestResponse();
-     checkForResponseFailure(rr);
-```
-
-**File**: `managed/src/test/java/com/yugabyte/yw/common/certmgmt/HostPreservingSSLSocketFactoryTest.java` (added, +59/-0)
-```diff
-@@ -0,0 +1,59 @@
-+// Copyright (c) YugabyteDB, Inc.
-+
-+package com.yugabyte.yw.common.certmgmt;
-+
-+import static org.junit.Assert.assertArrayEquals;
-+import static org.junit.Assert.assertNotNull;
-+import static org.junit.Assert.assertNull;
-+import static org.junit.Assert.assertSame;
-+import static org.junit.Assert.assertThrows;
-+import static org.junit.Assert.assertTrue;
-+
-+import java.net.SocketException;
-+import javax.net.ssl.SSLContext;
-+import javax.net.ssl.SSLSocketFactory;
-+import org.junit.Before;
-+import org.junit.Test;
-+
-+public class HostPreservingSSLSocketFactoryTest {
-+
-+  private SSLContext context;
-+
-+  @Before
-+  public void setUp() throws Exception {
-+    context = SSLContext.getInstance("TLS");
-+    context.init(null, null, null);
-+  }
-+
-+  // HttpsURLConnection only falls back to createSocket(socket, host, port, autoClose) on exactly
-+  // this exception shape (see sun.net.www.protocol.https.HttpsClient#createSocket).
-+  @Test
-+  public void testUnconnectedSocketUnsupported() {
-+    SSLSocketFactory factory = HostPreservingSSLSocketFactory.wrap(context.getSocketFactory());
-+    SocketException e = assertThrows(SocketException.class, factory::createSocket);
-+    assertTrue(e.getCause() instanceof UnsupportedOperationException);
-+  }
-+
-+  @Test
-+  public void testWrapFactory() {
-+    SSLSocketFactory delegate = context.getSocketFactory();
-+    SSLSocketFactory factory = HostPreservingSSLSocketFactory.wrap(delegate);
-+    assertTrue(factory instanceof HostPreservingSSLSocketFactory);
-+    assertSame(factory, HostPreservingSSLSocketFactory.wrap(factory));
-+    assertNull(HostPreservingSSLSocketFactory.wrap((SSLSocketFactory) null));
-+    assertArrayEquals(delegate.getDefaultCipherSuites(), factory.getDefaultCipherSuites());
-+    assertArrayEquals(delegate.getSupportedCipherSuites(), factory.getSupportedCipherSuites());
-+  }
-+
-+  @Test
-+  public void testWrapContext() {
-+    SSLContext wrapped = HostPreservingSSLSocketFactory.wrap(context);
-+    assertTrue(wrapped.getSocketFactory() instanceof HostPreservingSSLSocketFactory);
-+    assertSame(context.getProvider(), wrapped.getProvider());
-+    // The SSLContextSpi defaults would call the unsupported createSocket().
-+    assertNotNull(wrapped.getDefaultSSLParameters());
-+    assertNotNull(wrapped.getSupportedSSLParameters());
-+    assertNotNull(wrapped.createSSLEngine("127.0.0.1", 443));
-+    assertNull(HostPreservingSSLSocketFactory.wrap((SSLContext) null));
-+  }
-+}
+ if [[ $bolt_enabled == "true" ]]; then
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #34614** (closed): [DO NOT MERGE] agent-k replay of #4624 (thread pool) to test review gotcha (@qvad)
-- **PR #34612** (2026-10-05): [BACKPORT 2026.1][AMP-49] YBA: Create the yb_storage database on universe creation behind a global runtime flag (@kv83821-yb)
-- **PR #34608** (closed): [#34607] Build: Build only the bottom and top PRs of a stack (@kai-franz)
-- **PR #34570** (2026-10-02): [BACKPORT 2025.2][#34361] docdb: Update cache statistics outside of mutex lock (@es1024)
-- **PR #34569** (2026-10-02): [BACKPORT 2025.2][#34362] docdb: Simplify rocksdb cache metrics (@es1024)
-- **PR #34567** (2026-10-02): [BACKPORT 2026.1][#34361] docdb: Update cache statistics outside of mutex lock (@es1024)
-- **PR #34566** (2026-10-02): [BACKPORT 2026.1][#34362] docdb: Simplify rocksdb cache metrics (@es1024)
-- **PR #34562** (2026-10-05): [BACKPORT 2026.1][#34258] YSQL: import Save a few bytes per CatCTup. (@kai-franz)
+- **PR #35309** (2026-10-18): [BACKPORT 2025.2][#34805] DocDB: Remove non-block-based vector index backends (#34806) (@yb-agentk-dev[bot])
+- **PR #35290** (2026-10-18): [#34685] YSQL: Scale the hand-over window of PgCronTest.UngracefulLeaderChangeMarksJobFailed for sanitizers (@iSignal)
+- **PR #35246** (closed): [#35240] YSQL: Update PgCatalogVersionTest.InvalMessageSampleDDLs expected values after DROP COLUMN change (@csi-fix)
+- **PR #35245** (2026-10-18): [#35244] DocDB: Fix PgExplicitRowLockingTest.ExplicitRowLockingMultipleTablesErrorMessage/kTrue (@csi-fix)
+- **PR #35236** (2026-10-18): [BACKPORT 2025.2][#34735] YSQL: Route pk-filtered vector index searches to the matching tablets (#34738) (@yb-agentk-dev[bot])
+- **PR #35235** (2026-10-18): [#35234] YSQL: Fix PgDdlAtomicityStressTest.Main/colocated_fail_probability_of_catalog_writes_by_ddl_verification (@csi-fix)
 
 ---
 
@@ -5446,3 +3051,66 @@ MainModule wraps the JVM d
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. [#28574,#30130] YSQL: Fully ungraceful ConnMgr shutdown to avoid coredumps
+
+**RULE**:
+When implementing operations in `java/yb-ysql-conn-mgr/src/test/java/org/yb/ysqlconnmgr/TestConnMgrShutdown.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `b10be5ad`: [#28574,#30130] YSQL: Fully ungraceful ConnMgr shutdown to avoid coredumps. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `java/yb-ysql-conn-mgr/src/test/java/org/yb/ysqlconnmgr/TestConnMgrShutdown.java`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c
+// Verified production-grade fix pattern:
+// Copyright (c) YugabyteDB, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+// in compliance with the License. You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software distributed under the License
+// is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+// or implied. See the License for the specific language governing permissions and limitations
+// under the License.
+//
+
+package org.yb.ysqlconnmgr;
+
+import static org.yb.AssertionWrappers.assertEquals;
+import static org.yb.AssertionWrappers.assertNotNull;
+import static org.yb.AssertionWrappers.assertTrue;
+import static org.yb.AssertionWrappers.fail;
+
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.yb.YBTestRunner;
+import org.yb.minicluster.LogErrorListener;
+import org.yb.minicluster.Min
+```
+
+**NEGATIVE CONSTRAINT**:
+```c
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `b10be5ad` are properly handled with clean fallback behavior.

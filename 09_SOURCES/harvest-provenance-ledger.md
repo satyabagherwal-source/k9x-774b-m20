@@ -2850,3 +2850,9 @@ Every entry in this ledger must capture:
 | `learn-github-zseven-w-openpencil` | `https://github.com/ZSeven-W/openpencil` | `d155cd08` | Multi-dimensional audit evidence | 2026-10-19T03:20:23.841Z |
 | `learn-github-diggerhq-digger` | `https://github.com/diggerhq/digger` | `853f6abf` | Multi-dimensional audit evidence | 2026-10-19T03:20:26.353Z |
 | `learn-github-pingcap-talent-plan` | `https://github.com/pingcap/talent-plan` | `18d81c90` | Multi-dimensional audit evidence | 2026-10-19T03:20:31.485Z |
+| `learn-huggingface-lightricks-ltx-2-5` | `https://huggingface.co/Lightricks/LTX-2.5` | `hf-lightri` | Multi-dimensional audit evidence | 2026-10-19T03:26:38.646Z |
+| `learn-github-transact-rs-sqlx` | `https://github.com/transact-rs/sqlx` | `4161768c` | Multi-dimensional audit evidence | 2026-10-19T03:26:40.613Z |
+| `learn-github-bergside-typeui` | `https://github.com/bergside/typeui` | `2a977f1f` | Multi-dimensional audit evidence | 2026-10-19T03:26:40.667Z |
+| `learn-github-czy0729-bangumi` | `https://github.com/czy0729/Bangumi` | `45860379` | Multi-dimensional audit evidence | 2026-10-19T03:26:45.970Z |
+| `learn-github-aquasecurity-tfsec` | `https://github.com/aquasecurity/tfsec` | `b692c20b` | Multi-dimensional audit evidence | 2026-10-19T03:26:51.428Z |
+| `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `b10be5ad` | Multi-dimensional audit evidence | 2026-10-19T03:26:55.271Z |

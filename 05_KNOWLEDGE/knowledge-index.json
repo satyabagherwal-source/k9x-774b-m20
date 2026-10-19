@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T03:20:31.439Z",
-  "total_verified_learnings": 549,
+  "last_updated": "2026-10-19T03:26:55.223Z",
+  "total_verified_learnings": 553,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -1934,22 +1934,29 @@
     "learn-github-aquasecurity-tfsec": {
       "learning_id": "learn-github-aquasecurity-tfsec",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "aquasecurity-tfsec",
+      "source": "aquasecurity/tfsec",
+      "repository": "aquasecurity/tfsec",
       "slug": "aquasecurity-tfsec",
       "platform": "github",
       "source_url": "https://github.com/aquasecurity/tfsec",
-      "source_version": "HEAD",
-      "content_hash": "b5509d6a05cae8d3141aba82d5c3ab95ca19f99357967565c0790607ed301ec8",
+      "source_version": "b692c20b",
+      "content_hash": "9ae104402e152cab524ba6be554959a8869a7f6b3543d286a3d4356b11b8135a",
       "dossier_path": "07_PROJECT_LEARNING/aquasecurity-tfsec-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aquasecurity-tfsec-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.862Z"
+      "verified_at": "2026-10-19T03:26:51.354Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-aquasecurity-trivy": {
       "learning_id": "learn-github-aquasecurity-trivy",
@@ -2937,22 +2944,35 @@
     "learn-github-bergside-typeui": {
       "learning_id": "learn-github-bergside-typeui",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "bergside-typeui",
+      "source": "bergside/typeui",
+      "repository": "bergside/typeui",
       "slug": "bergside-typeui",
       "platform": "github",
       "source_url": "https://github.com/bergside/typeui",
-      "source_version": "HEAD",
-      "content_hash": "d4e0fab66b5f34699c3de02067ef9ba773a69cb6586e9bf56d92d9278caa4693",
+      "source_version": "2a977f1f",
+      "content_hash": "3f474cc8771913b4f7e37a823018cae78576b419cb15dfc3fb3a883da85705dd",
       "dossier_path": "07_PROJECT_LEARNING/bergside-typeui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bergside-typeui-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2072,
+          "title": "add: eve guide",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.056Z"
+      "verified_at": "2026-10-19T03:26:40.603Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-bernaferrari-figmatocode": {
       "learning_id": "learn-github-bernaferrari-figmatocode",
@@ -5168,22 +5188,35 @@
     "learn-github-czy0729-bangumi": {
       "learning_id": "learn-github-czy0729-bangumi",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "czy0729-bangumi",
+      "source": "czy0729/Bangumi",
+      "repository": "czy0729/Bangumi",
       "slug": "czy0729-bangumi",
       "platform": "github",
       "source_url": "https://github.com/czy0729/Bangumi",
-      "source_version": "HEAD",
-      "content_hash": "f7330e67c32e0feb68f2119fd3204edd6a960df75086ba0f4bfad08bbba2a34c",
+      "source_version": "45860379",
+      "content_hash": "2f8c2f1c638b978448b1d8392352df456eabd1f8c65fee434cd98e0ce691092b",
       "dossier_path": "07_PROJECT_LEARNING/czy0729-bangumi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/czy0729-bangumi-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2073,
+          "title": "- [新番] 支持切换目录用户并记住所选, 顺手按规范整理了页面代码",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.460Z"
+      "verified_at": "2026-10-19T03:26:45.912Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-d4vinci-scrapling": {
       "learning_id": "learn-github-d4vinci-scrapling",
@@ -16796,7 +16829,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Lightricks/LTX-2.5",
       "source_version": "hf-lightricks-ltx-2.5",
-      "content_hash": "f9c41cad9d627842416bcab17e5e15484a8479c31ececebbee9af01b1705276a",
+      "content_hash": "3770482793cf60f5e7094b846bb06f78c294fadd7b7abf38aa4690bb6e7c7d35",
       "dossier_path": "07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md",
       "promoted_rules": [
@@ -16883,7 +16916,7 @@
         "learn-huggingface-hf-lightricks-ltx-2-5-mv44u4a4",
         "learn-huggingface-hf-lightricks-ltx-2-5-mv4i3gub"
       ],
-      "verified_at": "2026-10-17T22:39:48.845Z",
+      "verified_at": "2026-10-19T03:26:38.564Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39524,22 +39557,35 @@
     "learn-github-yugabyte-yugabyte-db": {
       "learning_id": "learn-github-yugabyte-yugabyte-db",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "yugabyte-yugabyte-db",
+      "source": "yugabyte/yugabyte-db",
+      "repository": "yugabyte/yugabyte-db",
       "slug": "yugabyte-yugabyte-db",
       "platform": "github",
       "source_url": "https://github.com/yugabyte/yugabyte-db",
-      "source_version": "HEAD",
-      "content_hash": "059546cbb38de83fb880380f22e9ee571b90bdea43a8e05b88fb3a9bf89cccf8",
+      "source_version": "b10be5ad",
+      "content_hash": "49c739da5f88785308bc1d6181c0da21bd543fb83ca31f5590a69683cf5288af",
       "dossier_path": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2074,
+          "title": "[#28574,#30130] YSQL: Fully ungraceful ConnMgr shutdown to avoid coredumps",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.484Z"
+      "verified_at": "2026-10-19T03:26:55.210Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-yusufkaraaslan-skill_seekers": {
       "learning_id": "learn-github-yusufkaraaslan-skill_seekers",
@@ -75299,6 +75345,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T03:20:31.431Z"
+    },
+    "rule-2072": {
+      "learning_id": "rule-2072",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2072,
+      "title": "add: eve guide",
+      "source_url": "https://github.com/bergside/typeui",
+      "source_version": "2a977f1f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:26:40.603Z"
+    },
+    "rule-2073": {
+      "learning_id": "rule-2073",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2073,
+      "title": "- [新番] 支持切换目录用户并记住所选, 顺手按规范整理了页面代码",
+      "source_url": "https://github.com/czy0729/Bangumi",
+      "source_version": "45860379",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:26:45.912Z"
+    },
+    "rule-2074": {
+      "learning_id": "rule-2074",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2074,
+      "title": "[#28574,#30130] YSQL: Fully ungraceful ConnMgr shutdown to avoid coredumps",
+      "source_url": "https://github.com/yugabyte/yugabyte-db",
+      "source_version": "b10be5ad",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:26:55.210Z"
     }
   },
   "aliases": {
