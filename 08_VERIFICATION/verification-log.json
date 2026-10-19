@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-P3EA",
-    "timestamp": "2026-10-19T07:29:47.122Z",
-    "repository": "mikepenz/AboutLibraries",
-    "learningId": "learn-github-mikepenz-aboutlibraries",
-    "contentHash": "e399e5e72e8d5dc3e1216a8d06974410845b4e94c969d9307ffadf9746a68bc7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-P49N",
-    "timestamp": "2026-10-19T07:29:48.251Z",
-    "repository": "tursodatabase/turso",
-    "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "9f63667c0c3159bce18e490ce8d3f6ff062f72b8cbc330ff44886330e4533273",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-P5FZ",
     "timestamp": "2026-10-19T07:29:49.775Z",
     "repository": "flux-iac/tofu-controller",
@@ -7492,6 +7462,36 @@
     "contentHash": "429bfb38f85cba20a15c101d2667c1b920e7c77d790662430e4cbcf7b3403a1a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-PMTB",
+    "timestamp": "2026-10-19T23:21:59.231Z",
+    "repository": "nalexn/ViewInspector",
+    "learningId": "learn-github-nalexn-viewinspector",
+    "contentHash": "d8a3d3bd05dd206cc7d1fdf4be7f727930b35074e53d0787090e8ee02ca7b095",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-PTL7",
+    "timestamp": "2026-10-19T23:22:08.011Z",
+    "repository": "rehypejs/rehype",
+    "learningId": "learn-github-rehypejs-rehype",
+    "contentHash": "8dd436933451ea5a18af95467e1bd25c7a370b3dd5f9d499864d3f115df71fa8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

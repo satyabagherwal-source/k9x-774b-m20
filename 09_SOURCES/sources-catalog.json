@@ -9448,5 +9448,25 @@
     "contentHash": "58e6825c5ff9d31bda6ec3185c5aa844517384594b196d209a887f599df000da",
     "lastHarvestedAt": "2026-10-19T23:15:41.283Z",
     "learningId": "learn-github-sparrowcode-alertkit"
+  },
+  "nalexn-viewinspector": {
+    "repository": "nalexn/ViewInspector",
+    "platform": "github",
+    "sourceUrl": "https://github.com/nalexn/ViewInspector",
+    "sourceVersion": "4d5e732c",
+    "license": "MIT",
+    "contentHash": "d8a3d3bd05dd206cc7d1fdf4be7f727930b35074e53d0787090e8ee02ca7b095",
+    "lastHarvestedAt": "2026-10-19T23:21:59.234Z",
+    "learningId": "learn-github-nalexn-viewinspector"
+  },
+  "rehypejs-rehype": {
+    "repository": "rehypejs/rehype",
+    "platform": "github",
+    "sourceUrl": "https://github.com/rehypejs/rehype",
+    "sourceVersion": "cae74c7f",
+    "license": "MIT",
+    "contentHash": "8dd436933451ea5a18af95467e1bd25c7a370b3dd5f9d499864d3f115df71fa8",
+    "lastHarvestedAt": "2026-10-19T23:22:08.014Z",
+    "learningId": "learn-github-rehypejs-rehype"
   }
 }

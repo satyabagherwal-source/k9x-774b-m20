@@ -3562,3 +3562,5 @@ Every entry in this ledger must capture:
 | `learn-github-unifiedjs-unified` | `https://github.com/unifiedjs/unified` | `dfaf172e` | Multi-dimensional audit evidence | 2026-10-19T23:15:39.036Z |
 | `learn-github-sparrowcode-alertkit` | `https://github.com/sparrowcode/AlertKit` | `e8a0208c` | Multi-dimensional audit evidence | 2026-10-19T23:15:41.283Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `3c67eeea` | Multi-dimensional audit evidence | 2026-10-19T23:15:45.589Z |
+| `learn-github-nalexn-viewinspector` | `https://github.com/nalexn/ViewInspector` | `4d5e732c` | Multi-dimensional audit evidence | 2026-10-19T23:21:59.234Z |
+| `learn-github-rehypejs-rehype` | `https://github.com/rehypejs/rehype` | `cae74c7f` | Multi-dimensional audit evidence | 2026-10-19T23:22:08.014Z |

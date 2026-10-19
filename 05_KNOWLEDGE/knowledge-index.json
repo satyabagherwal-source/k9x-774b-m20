@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T23:15:45.542Z",
-  "total_verified_learnings": 960,
+  "last_updated": "2026-10-19T23:22:07.934Z",
+  "total_verified_learnings": 962,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -32124,22 +32124,35 @@
     "learn-github-nalexn-viewinspector": {
       "learning_id": "learn-github-nalexn-viewinspector",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "nalexn-viewinspector",
+      "source": "nalexn/ViewInspector",
+      "repository": "nalexn/ViewInspector",
       "slug": "nalexn-viewinspector",
       "platform": "github",
       "source_url": "https://github.com/nalexn/ViewInspector",
-      "source_version": "HEAD",
-      "content_hash": "49c99e68564edd9bb59588d1ab74b68efb4d06338ff99ff629d2eb1d8f2f6ec9",
+      "source_version": "4d5e732c",
+      "content_hash": "d8a3d3bd05dd206cc7d1fdf4be7f727930b35074e53d0787090e8ee02ca7b095",
       "dossier_path": "07_PROJECT_LEARNING/nalexn-viewinspector-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nalexn-viewinspector-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2885,
+          "title": "tell Environment properties apart from look-alikes in the view bytes",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.539Z"
+      "verified_at": "2026-10-19T23:21:59.164Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-nanobrowser-nanobrowser": {
       "learning_id": "learn-github-nanobrowser-nanobrowser",
@@ -57596,20 +57609,45 @@
     "learn-github-rehypejs-rehype": {
       "learning_id": "learn-github-rehypejs-rehype",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "rehypejs/rehype",
       "repository": "rehypejs/rehype",
       "slug": "rehypejs-rehype",
       "platform": "github",
       "source_url": "https://github.com/rehypejs/rehype",
-      "source_version": "main",
-      "content_hash": "74a36d52dfd69299b7c5509333142adf255d308e54e13d9c690ca2312f3fa133",
+      "source_version": "cae74c7f",
+      "content_hash": "8dd436933451ea5a18af95467e1bd25c7a370b3dd5f9d499864d3f115df71fa8",
       "dossier_path": "07_PROJECT_LEARNING/rehypejs-rehype-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rehypejs-rehype-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2886,
+          "title": "The \"Frozen Processor\" Immutability Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2887,
+          "title": "The \"Settings Merge\" Precedence Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2888,
+          "title": "The \"Type Declaration Separation\" Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T23:22:07.918Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-rehypejs-rehype-parse": {
       "learning_id": "learn-github-rehypejs-rehype-parse",
@@ -94321,6 +94359,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T23:15:45.530Z"
+    },
+    "rule-2885": {
+      "learning_id": "rule-2885",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2885,
+      "title": "tell Environment properties apart from look-alikes in the view bytes",
+      "source_url": "https://github.com/nalexn/ViewInspector",
+      "source_version": "4d5e732c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T23:21:59.164Z"
+    },
+    "rule-2886": {
+      "learning_id": "rule-2886",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2886,
+      "title": "The \"Frozen Processor\" Immutability Invariant",
+      "source_url": "https://github.com/rehypejs/rehype",
+      "source_version": "cae74c7f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T23:22:07.918Z"
+    },
+    "rule-2887": {
+      "learning_id": "rule-2887",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2887,
+      "title": "The \"Settings Merge\" Precedence Invariant",
+      "source_url": "https://github.com/rehypejs/rehype",
+      "source_version": "cae74c7f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T23:22:07.918Z"
+    },
+    "rule-2888": {
+      "learning_id": "rule-2888",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2888,
+      "title": "The \"Type Declaration Separation\" Invariant",
+      "source_url": "https://github.com/rehypejs/rehype",
+      "source_version": "cae74c7f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T23:22:07.918Z"
     }
   },
   "aliases": {

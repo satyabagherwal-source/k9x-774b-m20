@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T23:15:45.597Z",
+  "last_updated": "2026-10-19T23:22:08.022Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -14217,6 +14217,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T23:15:41.290Z"
+    },
+    "nalexn/ViewInspector": {
+      "repository": "nalexn/ViewInspector",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-nalexn-viewinspector",
+      "content_hash": "d8a3d3bd05dd206cc7d1fdf4be7f727930b35074e53d0787090e8ee02ca7b095",
+      "verified_at": "2026-10-19T23:21:59.243Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T23:21:59.243Z"
+    },
+    "rehypejs/rehype": {
+      "repository": "rehypejs/rehype",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-rehypejs-rehype",
+      "content_hash": "8dd436933451ea5a18af95467e1bd25c7a370b3dd5f9d499864d3f115df71fa8",
+      "verified_at": "2026-10-19T23:22:08.021Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T23:22:08.021Z"
     }
   },
   "repos": {

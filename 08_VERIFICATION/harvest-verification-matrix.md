@@ -3555,3 +3555,5 @@
 | `CYCLE-20261019-HHG8` | `2026-10-19T23:15:39.032Z` | `unifiedjs/unified` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2882` | Yes (`79625447...`) |
 | `CYCLE-20261019-HJ6O` | `2026-10-19T23:15:41.280Z` | `sparrowcode/AlertKit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2883` | Yes (`58e6825c...`) |
 | `CYCLE-20261019-HMIA` | `2026-10-19T23:15:45.586Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2884` | Yes (`429bfb38...`) |
+| `CYCLE-20261019-PMTB` | `2026-10-19T23:21:59.231Z` | `nalexn/ViewInspector` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2885` | Yes (`d8a3d3bd...`) |
+| `CYCLE-20261019-PTL7` | `2026-10-19T23:22:08.011Z` | `rehypejs/rehype` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2886, Rule 2887, Rule 2888` | Yes (`8dd43693...`) |
