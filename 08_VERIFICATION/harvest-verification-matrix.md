@@ -3271,3 +3271,5 @@
 | `CYCLE-20261019-HGOD` | `2026-10-19T13:55:45.709Z` | `pyannote/speaker-diarization-community-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-community-1-learnings.md` | Yes (`5a04f8b2...`) |
 | `CYCLE-20261019-HI8C` | `2026-10-19T13:55:47.724Z` | `fallow-rs/fallow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2615` | Yes (`22ea2f7f...`) |
 | `CYCLE-20261019-HL8B` | `2026-10-19T13:55:51.611Z` | `vanniktech/gradle-maven-publish-plugin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2616` | Yes (`bf72827b...`) |
+| `CYCLE-20261019-PMWO` | `2026-10-19T14:02:07.032Z` | `MohamedRejeb/Calf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2617` | Yes (`419d3d44...`) |
+| `CYCLE-20261019-Q0C4` | `2026-10-19T14:02:24.436Z` | `BAAI/bge-reranker-v2-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md` | Yes (`50bb721f...`) |

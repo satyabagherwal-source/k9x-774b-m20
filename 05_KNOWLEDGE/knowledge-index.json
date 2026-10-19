@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T13:55:51.570Z",
-  "total_verified_learnings": 827,
+  "last_updated": "2026-10-19T14:02:24.395Z",
+  "total_verified_learnings": 828,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -13694,7 +13694,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/BAAI/bge-reranker-v2-m3",
       "source_version": "hf-baai-bge-reranker-v2-m3",
-      "content_hash": "89d23009617006d907f3d8c72f7302a4ab162234cb904d53f80dc1cf02098100",
+      "content_hash": "50bb721f645b855f5455f40027994574dbd91ef9918bd192617aa7c85996c99e",
       "dossier_path": "07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md",
       "promoted_rules": [
@@ -13731,7 +13731,7 @@
         "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv3yddzy",
         "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv4d3zyp"
       ],
-      "verified_at": "2026-10-18T04:01:38.950Z",
+      "verified_at": "2026-10-19T14:02:24.385Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -30763,22 +30763,35 @@
     "learn-github-mohamedrejeb-calf": {
       "learning_id": "learn-github-mohamedrejeb-calf",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "mohamedrejeb-calf",
+      "source": "MohamedRejeb/Calf",
+      "repository": "MohamedRejeb/Calf",
       "slug": "mohamedrejeb-calf",
       "platform": "github",
       "source_url": "https://github.com/MohamedRejeb/Calf",
-      "source_version": "HEAD",
-      "content_hash": "78102b0576e9df2fe89053dd488612e1a7d84e8a3428efd23808066d6c381bb6",
+      "source_version": "af388bd3",
+      "content_hash": "419d3d442472aad117a32529c76f708541d6cb66c5424dfe7e39679022a365f0",
       "dossier_path": "07_PROJECT_LEARNING/mohamedrejeb-calf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mohamedrejeb-calf-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2617,
+          "title": "ui): add AdaptiveDateRangePicker",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.461Z"
+      "verified_at": "2026-10-19T14:02:06.976Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-mohamedrejeb-compose-rich-editor": {
       "learning_id": "learn-github-mohamedrejeb-compose-rich-editor",
@@ -87941,6 +87954,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T13:55:51.559Z"
+    },
+    "rule-2617": {
+      "learning_id": "rule-2617",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2617,
+      "title": "ui): add AdaptiveDateRangePicker",
+      "source_url": "https://github.com/MohamedRejeb/Calf",
+      "source_version": "af388bd3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T14:02:06.976Z"
     }
   },
   "aliases": {

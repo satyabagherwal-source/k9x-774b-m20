@@ -3278,3 +3278,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-pyannote-speaker-diarization-community-1` | `https://huggingface.co/pyannote/speaker-diarization-community-1` | `hf-pyannot` | Multi-dimensional audit evidence | 2026-10-19T13:55:45.712Z |
 | `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `77f2b8b1` | Multi-dimensional audit evidence | 2026-10-19T13:55:47.727Z |
 | `learn-github-vanniktech-gradle-maven-publish-plugin` | `https://github.com/vanniktech/gradle-maven-publish-plugin` | `6ba9aead` | Multi-dimensional audit evidence | 2026-10-19T13:55:51.614Z |
+| `learn-github-mohamedrejeb-calf` | `https://github.com/MohamedRejeb/Calf` | `af388bd3` | Multi-dimensional audit evidence | 2026-10-19T14:02:07.035Z |
+| `learn-huggingface-baai-bge-reranker-v2-m3` | `https://huggingface.co/BAAI/bge-reranker-v2-m3` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-19T14:02:24.439Z |

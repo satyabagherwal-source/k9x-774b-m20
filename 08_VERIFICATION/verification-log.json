@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-T481",
-    "timestamp": "2026-10-19T01:56:59.425Z",
-    "repository": "chmln/sd",
-    "learningId": "learn-github-chmln-sd",
-    "contentHash": "3040534413561d0737a8e8d93499591b25235aaf7cf9b621478f4fec6b531e57",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-T7UM",
-    "timestamp": "2026-10-19T01:57:04.126Z",
-    "repository": "DylanVann/react-native-fast-image",
-    "learningId": "learn-github-dylanvann-react-native-fast-image",
-    "contentHash": "a1de32bfb7c88ac761a633c1ca39bfdf9bca357d08865c260cd4e300b613e7ba",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-TBJ7",
     "timestamp": "2026-10-19T01:57:08.899Z",
     "repository": "deepseek-ai/DeepSeek-R1",
@@ -7492,6 +7462,36 @@
     "contentHash": "bf72827bc9b9f1730e5ffb95b0e254e2fb72d43b4122d8ace944d4392ca2aa60",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-PMWO",
+    "timestamp": "2026-10-19T14:02:07.032Z",
+    "repository": "MohamedRejeb/Calf",
+    "learningId": "learn-github-mohamedrejeb-calf",
+    "contentHash": "419d3d442472aad117a32529c76f708541d6cb66c5424dfe7e39679022a365f0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-Q0C4",
+    "timestamp": "2026-10-19T14:02:24.436Z",
+    "repository": "BAAI/bge-reranker-v2-m3",
+    "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
+    "contentHash": "50bb721f645b855f5455f40027994574dbd91ef9918bd192617aa7c85996c99e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

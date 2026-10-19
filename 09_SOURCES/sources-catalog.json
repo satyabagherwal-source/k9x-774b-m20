@@ -1115,8 +1115,8 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-reranker-v2-m3",
     "sourceVersion": "hf-baai-bge-reranker-v2-m3",
     "license": "Open-Source",
-    "contentHash": "89d23009617006d907f3d8c72f7302a4ab162234cb904d53f80dc1cf02098100",
-    "lastHarvestedAt": "2026-10-18T04:01:38.999Z",
+    "contentHash": "50bb721f645b855f5455f40027994574dbd91ef9918bd192617aa7c85996c99e",
+    "lastHarvestedAt": "2026-10-19T14:02:24.439Z",
     "learningId": "learn-huggingface-baai-bge-reranker-v2-m3"
   },
   "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese": {
@@ -8128,5 +8128,15 @@
     "contentHash": "bf72827bc9b9f1730e5ffb95b0e254e2fb72d43b4122d8ace944d4392ca2aa60",
     "lastHarvestedAt": "2026-10-19T13:55:51.614Z",
     "learningId": "learn-github-vanniktech-gradle-maven-publish-plugin"
+  },
+  "mohamedrejeb-calf": {
+    "repository": "MohamedRejeb/Calf",
+    "platform": "github",
+    "sourceUrl": "https://github.com/MohamedRejeb/Calf",
+    "sourceVersion": "af388bd3",
+    "license": "Apache-2.0",
+    "contentHash": "419d3d442472aad117a32529c76f708541d6cb66c5424dfe7e39679022a365f0",
+    "lastHarvestedAt": "2026-10-19T14:02:07.035Z",
+    "learningId": "learn-github-mohamedrejeb-calf"
   }
 }
