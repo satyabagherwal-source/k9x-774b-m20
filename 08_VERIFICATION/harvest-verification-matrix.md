@@ -3300,3 +3300,7 @@
 | `CYCLE-20261019-B3N4` | `2026-10-19T14:46:48.112Z` | `tencent/Hy-Memory-30B-A3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md` | Yes (`9545717a...`) |
 | `CYCLE-20261019-BAWZ` | `2026-10-19T14:46:57.539Z` | `modelcontextprotocol/kotlin-sdk` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md` | Yes (`2250c38f...`) |
 | `CYCLE-20261019-BBTF` | `2026-10-19T14:46:58.707Z` | `encoredev/encore` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2634` | Yes (`e1e2bf6b...`) |
+| `CYCLE-20261019-J0JJ` | `2026-10-19T14:52:57.343Z` | `nomic-ai/nomic-embed-text-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md` | Yes (`f82e711e...`) |
+| `CYCLE-20261019-J0NN` | `2026-10-19T14:52:57.491Z` | `carbon-design-system/carbon-components-svelte` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2635` | Yes (`08211dcc...`) |
+| `CYCLE-20261019-J1XW` | `2026-10-19T14:52:59.156Z` | `Orange-OpenSource/hurl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2636` | Yes (`7bb2539b...`) |
+| `CYCLE-20261019-J53P` | `2026-10-19T14:53:03.253Z` | `ivanvorobei/SwiftUI` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2637` | Yes (`f483fb33...`) |

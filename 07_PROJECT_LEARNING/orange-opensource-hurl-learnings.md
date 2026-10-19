@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md`  
 > **Source**: github ([https://github.com/Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl))  
-> **Source Version**: `026b66e6`  
+> **Source Version**: `bbe96304`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T23:51:40.268Z  
+> **Timestamp**: 2026-10-19T14:52:58.939Z  
 > **Learning ID**: `learn-github-orange-opensource-hurl`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T23:51:39.634Z  
+> **Harvest Timestamp**: 2026-10-19T14:52:58.935Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1847,353 +1847,195 @@ pub mod visit;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ed7b1a2c` (2026-10-16)
-**Commit Message**: Fix hurlfmt panic when importing curl commands without a URL
+### Incident Patch 1: `bbe96304` (2026-10-19)
+**Commit Message**: Update doc about JSONPath coercion.
 
-**File**: `integration/hurlfmt/tests_failed/invalid_curl_input.err` (added, +1/-0)
+**File**: `docs/asserting-response.md` (modified, +48/-3)
 ```diff
-@@ -0,0 +1 @@
-+error: Can not parse curl command at line 1: URL is missing
-```
-
-**File**: `integration/hurlfmt/tests_failed/invalid_curl_input.exit` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+2
-```
-
-**File**: `integration/hurlfmt/tests_failed/invalid_curl_input.ps1` (added, +4/-0)
-```diff
-@@ -0,0 +1,4 @@
-+Set-StrictMode -Version latest
-+$ErrorActionPreference = 'Stop'
-+
-+echo curl | hurlfmt --in curl
-```
-
-**File**: `integration/hurlfmt/tests_failed/invalid_curl_input.sh` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+#!/bin/bash
-+set -Eeuo pipefail
-+
-+echo curl | hurlfmt --in curl
-+
-```
-
-**File**: `packages/hurlfmt/src/curl/matches.rs` (modified, +4/-4)
-```diff
-@@ -44,16 +44,16 @@ pub fn method(arg_matches: &ArgMatches) -> String {
-     }
+@@ -799,7 +799,7 @@ curl -v http://httpbin.org/json
  }
+ ```
  
--pub fn url(arg_matches: &ArgMatches) -> String {
-+pub fn url(arg_matches: &ArgMatches) -> Result<String, String> {
-     let s = if let Some(value) = get_string(arg_matches, "url") {
-         value
-     } else {
--        get_string(arg_matches, "url_param").unwrap()
-+        get_string(arg_matches, "url_param").ok_or_else(|| "URL is missing".to_string())?
-     };
-     if !s.starts_with("http") {
--        format!("https://{s}")
-+        Ok(format!("https://{s}"))
-     } else {
--        s
-+        Ok(s)
-     }
- }
+-With Hurl, we can write multiple JSONPath asserts describing the DOM content:
++With Hurl, we can write multiple JSONPath asserts describing response structure:
  
-```
-
-**File**: `packages/hurlfmt/src/curl/mod.rs` (modified, +22/-1)
-```diff
-@@ -88,7 +88,7 @@ fn parse_line(s: &str) -> Result<String, String> {
-     };
+ ```hurl
+ GET http://httpbin.org/json
+@@ -812,8 +812,7 @@ jsonpath "$.slideshow.date" != null
+ jsonpath "$.slideshow.slides[*].title" contains "Mind Blowing!"
+ ```
  
-     let method = matches::method(&arg_matches);
--    let url = matches::url(&arg_matches);
-+    let url = matches::url(&arg_matches)?;
-     let headers = matches::headers(&arg_matches);
-     let cookies = matches::cookies(&arg_matches);
-     let options = matches::options(&arg_matches);
-@@ -161,6 +161,27 @@ fn additional_asserts(options: &[HurlOption]) -> Vec<String> {
- mod test {
-     use crate::curl::*;
+-> Explain that the value selected by the JSONPath is coerced to a string when only
+-> one node is selected.
++> By default, Hurl applies [coercion to the JSONPath] query results.
  
-+    #[test]
-+    fn test_missing_url() {
-+        for input in ["curl", "curl -X POST", "curl -H 'Accept: application/json'"] {
-+            assert_eq!(
-+                parse(input).unwrap_err(),
-+                "Can not parse curl command at line 1: URL is missing"
-+            );
-+        }
-+    }
+ In `matches` predicates, metacharacters beginning with a backslash (like `\d`, `\s`) must be escaped. Alternatively, 
+ `matches` predicate support [JavaScript-like Regular expression syntax] to enhance the readability:
+@@ -832,6 +831,48 @@ jsonpath "$.date" matches /^\d{4}-\d{2}-\d{2}$/
+ jsonpath "$.name" matches /Hello [a-zA-Z]+!/
+ ```
+ 
++#### JSONPath coercion
 +
-+    #[test]
-+    fn test_url_forms() {
-+        for input in [
-+            "curl https://example.com",
-+            "curl --url https://example.com",
-+            "curl example.com",
-+        ] {
-+            assert_eq!(parse_line(input).unwrap(), "GET https://example.com\n");
-+        }
-+    }
++Hurl's JSONPath implementation respects [RFC 9535: JSONPATH: Query Expression for JSON] specification. In RFC 9535, every
++query result always returns a list. To facilitate JSONPath query usage, Hurl coerces lists that return a single value to this value.
 +
-     #[test]
-     fn test_parse() {
-         let hurl_str = r#"GET http://localhost:8000/hello
-```
-
-**File**: `packages/hurlfmt/src/main.rs` (modified, +1/-1)
-```diff
-@@ -186,7 +186,7 @@ fn process_export_command(
-                     } => {
-                         logger.error_parsing(content, input_file, error);
-                     }
--                    ExportError::Curl(s) => logger.error(&format!("error curl {s} d")),
-+                    ExportError::Curl(s) => logger.error(s),
-                 }
-             }
-         }
-```
-
----
-
-### Incident Patch 2: `1988fed8` (2026-10-16)
-**Commit Message**: Fix crash when receiving non UTF-8 server cookie.
-
-**File**: `integration/hurl/tests_ok/cookie/cookie_jar.err` (added, +2/-0)
-```diff
-@@ -0,0 +1,2 @@
-+warning: Cookie <localhost	FALSE	/cookie-jar/non-utf8	FALSE	0	bad	�> can not be parsed as UTF-8
-+warning: Cookie <localhost	FALSE	/cookie-jar/non-utf8	FALSE	0	bad	�> can not be parsed as UTF-8
-```
-
-**File**: `integration/hurl/tests_ok/cookie/cookie_jar.hurl` (modified, +1/-1)
-```diff
-@@ -8,7 +8,7 @@ Set-Cookie: LSID=DQAAAKEaem_vYg; Expires=Thu, 13 Jan 2078 22:23:01 GMT; HttpOnly
- Set-Cookie: HSID=AYQEVnDKrdst; Domain=localhost; Expires=Thu, 13 Jan 2078 22:23:01 GMT; HttpOnly; Path=/
- Set-Cookie: SSID=Ap4PGTEq; Domain=localhost; Expires=Thu, 13 Jan 2078 22:23:01 GMT; HttpOnly; Path=/
- [Asserts]
--header "Set-Cookie" count == 4
-+header "Set-Cookie" count == 5
- cookie "LSID" == "DQAAAKEaem_vYg"
- cookie "LSID[Value]" == "DQAAAKEaem_vYg"
- cookie "LSID[Expires]" exists
-```
-
-**File**: `integration/hurl/tests_ok/cookie/cookie_jar.out.pattern` (modified, +1/-0)
-```diff
-@@ -6,3 +6,4 @@
- #HttpOnly_<<<\.?>>>localhost	<<<(TRUE|FALSE)>>>	/	FALSE	<<<(18\d{8}|3409338181)>>>	HSID	AYQEVnDKrdst
- #HttpOnly_<<<\.?>>>localhost	<<<(TRUE|FALSE)>>>	/	FALSE	<<<(18\d{8}|3409338181)>>>	SSID	Ap4PGTEq
- <<<\.?>>>localhost	<<<(TRUE|FALSE)>>>	/	FALSE	<<<(18\d{8}|3093675001)>>>	foo	"a b c"
-+localhost	FALSE	/cookie-jar/non-utf8	FALSE	0	bad	�
-```
-
-**File**: `integration/hurl/tests_ok/cookie/cookie_jar.py` (modified, +2/-0)
-```diff
-@@ -36,6 +36,8 @@ def set_cookie_jar():
-         expires="Thu, 13 Jan 2068 10:10:01 GMT",
-         httponly=False,
-     )
-+    # Non UTF-8 cookie value: header value is encoded as latin-1, so "\xff" is sent as the raw byte 0xFF.
-+    resp.headers.add("Set-Cookie", "bad=\xff; Path=/cookie-jar/non-utf8")
-     return resp
- 
- 
-```
-
-**File**: `packages/hurl/src/http/client.rs` (modified, +9/-2)
-```diff
-@@ -824,8 +824,15 @@ impl Client {
-         };
- 
-         for cookie in list.iter() {
--            let line = str::from_utf8(cookie).unwrap();
--            if cookie_store.add_cookie(line).is_err() {
-+            let line = match str::from_utf8(cookie) {
-+                Ok(line) => line.to_string(),
-+                Err(_) => {
-+                    let line = String::from_utf8_lossy(cookie).to_string();
-+                    logger.warning(&format!("Cookie <{line}> can not be parsed as UTF-8"));
-+                    line
-+                }
-+            };
-+            if cookie_store.add_cookie(&line).is_err() {
-                 logger.warning(&format!("Line <{line}> can not be parsed as cookie"));
-             }
-         }
-```
-
-**File**: `packages/hurl/src/runner/entry.rs` (modified, +3/-1)
-```diff
-@@ -111,7 +111,9 @@ pub fn run(
-         logger,
-     );
- 
--    log_request(http_client, &curl_cmd, &http_request, logger);
-+    if !logger.is_low_verbosity() {
-+        log_request(http_client, &curl_cmd, &http_request, logger);
-+    }
- 
-     // Run the HTTP requests (optionally follow redirection)
-     let calls = match http_client.execute_with_redirect(&http_request, &client_options, logger) {
-```
-
-**File**: `packages/hurl/src/util/logger.rs` (modified, +10/-4)
-```diff
-@@ -146,11 +146,17 @@ impl Logger {
-         s.push(cmd);
-         self.eprintln(&s.to_string(fmt));
-     }
++Let's say with have this JSON:
 +
-+    /// Returns `true` if this logger has no verbosity or a low verbosity (debug messages are not displayed).
-+    pub fn is_low_verbosity(&self) -> bool {
-+        matches!(self.verbosity, None | Some(Verbosity::LowVerbose))
-+    }
++```json
++{
++  "fruits": [
++    "Apple", "Lemon", "Strawberry"
++  ]
++}
++```
 +
-     /// Prints a given debug message to this logger [`Stderr`] instance, in verbose and very verbose mode.
-     ///
-     /// Displayed debug messages start with `*`.
-     pub fn debug(&mut self, message: &str) {
--        if self.verbosity.is_none() || self.verbosity == Some(Verbosity::LowVerbose) {
-+        if self.is_low_verbosity() {
-             return;
-         }
-         let fmt = self.format();
-@@ -167,7 +173,7 @@ impl Logger {
-     ///
-     /// Displayed debug messages start with `*`.
-     pub fn debug_important(&mut self, message: &str) {
--        if self.verbosity.is_none() || self.verbosity == Some(Verbosity::LowVerbose) {
-+        if self.is_low_verbosity() {
-             return;
-         }
-         let fmt = self.format();
-@@ -184,7 +190,7 @@ impl Logger {
-     ///
-     /// Displayed libcurl debug messages start with `**`.
-     pub fn debug_curl(&mut self, message: &str) {
--        if self.verbosity.is_none() || self.verbosity == Some(Verbosity::LowVerbose) {
-+        if self.is_low_verbosity() {
-             return;
-         }
-         let fmt = self.format();
-@@ -329,7 +335,7 @@ impl Logger {
- 
-     /// Prints a capture to this logger [`Stderr`] instance, in verbose and very verbose mode.
-     pub fn capture(&mut self, name: &str, value: &Value) {
--        if self.verbosity.is_none() || self.verbosity == Some(Verbosity::LowVerbose) {
-+        if self.is_low_verbosity() {
-             return;
-         }
-         let value = value.to_string();
-```
-
----
-
-### Incident Patch 3: `bac87758` (2026-10-15)
-**Commit Message**: Fix crash for bad `@cookie_storage_set` comment (experimental feature)
-
-**File**: `integration/hurl/tests_ok/cookie/cookie_storage.curl` (modified, +1/-0)
-```diff
-@@ -1,4 +1,5 @@
- curl --cookie 'cookie1=valueA' 'http://localhost:8000/cookie-storage/assert-that-cookie1-is-valueA'
-+curl 'http://localhost:8000/cookie-storage/noop'
- curl 'http://localhost:8000/cookie-storage/assert-that-cookie1-is-not-in-session'
- 
- 
-```
-
-**File**: `integration/hurl/tests_ok/cookie/cookie_storage.hurl` (modified, +8/-4)
-```diff
-@@ -1,14 +1,18 @@
- #
--# experimental feature
--# manage cookie store
-+# Experimental feature
-+# Manage cookie store
- #
- 
-+# Set a cookie in cookie jar (valid) for subsequent requests
- # @cookie_storage_set: localhost    FALSE   /   FALSE   0   cookie1 valueA
- GET http://localhost:8000/cookie-storage/assert-that-cookie1-is-valueA
- HTTP 200
- 
-+# This is noop (and should not crashed)
-+#@cookie_storage_set:
-+GET http://localhost:8000/cookie-storage/noop
++By the spec, the JSONPath query `$.fruits[0]` should return a list of one element `["Apple"]`. As the result list has only
++one single element, Hurl JSONPath query returns the string "Apple". So we're able to write this Hurl file:
++
++```hurl
++GET https://example.org/captures-json
 +HTTP 200
++[Asserts]
++jsonpath "$.fruits[0]" isString
++jsonpath "$.fruits[0]" == "Apple"
++```
 +
- # @cookie_storage_clear
- GET http://localhost:8000/cookie-storage/assert-that-cookie1-is-not-in-session
- HTTP 200
--
--
++If you don't want JSONPath coercion applied to query results, you can use [`--no-jsonpath-coercion` option], either in
++[Hurl configuration file], in Hurl command line or using the env variable `HURL_NO_JSONPATH_COERCION=true`. This way, JSONPath
++query always returns list:
++
++```hurl
++GET https://example.org/captures-json
++[Options]
++no-jsonpath-coercion: true
++HTTP 200
++[Asserts]
++jsonpath "$.fruits[0]" isList
++jsonpath "$.fruits[0]" count == 1
++jsonpath "$.fruits[0]" nth 0 == "Apple"
++```
++
++
+ ### Regex assert
+ 
+ Check that the HTTP received body, decoded as text, matches a regex pattern.
+@@ -1026,3 +1067,7 @@ certificate "Value" startsWith "-----BEGIN CERTIFICATE-----"
+ [`body` assert]: #body-assert
+ [`location` filter]: /docs/filters.md#location
+ [UUID v4]: https://en.wikipedia.org/wiki/Universally_unique_identifier
++[coercion to the JSONPATH]: /docs/asserting-response.md#jsonpath-coercion
++[`--no-jsonpath-coercion` option]: /docs/manual.md#no-jsonpath-coercion
++[Hurl configuration file]: /docs/manual.md#configuration
++[RFC 9535: JSONPATH: Query Expression for JSON]: https://www.rfc-editor.org/info/rfc9535/
 ```
 
-**File**: `integration/hurl/tests_ok/cookie/cookie_storage.py` (modified, +7/-2)
+**File**: `docs/capturing-response.md` (modified, +49/-2)
 ```diff
-@@ -3,12 +3,17 @@
+@@ -256,7 +256,7 @@ HTTP 200
+ contact-id: jsonpath "$['id']"
+ ```
  
+-> Explain that the value selected by the JSONPath is coerced to a string when only one node is selected.
++> By default, Hurl applies [coercion to the JSONPath] query results.
  
- @app.route("/cookie-storage/assert-that-cookie1-is-valueA")
--def cookiestorage_assert_that_cookie1_is_valuea():
-+def cookie_storage_assert_that_cookie1_is_valuea():
-     assert request.cookies["cookie1"] == "valueA"
-     return ""
+ As with [XPath captures], JSONPath captures can be anything from string, number, to object and collections.
+ For instance, if we have a JSON endpoint that returns the following JSON:
+@@ -295,6 +295,49 @@ a_string:   jsonpath "$['a_string']"
+ all:        jsonpath "$"
+ ```
  
- 
- @app.route("/cookie-storage/assert-that-cookie1-is-not-in-session")
--def cookiestorage_assert_that_cookie1_is_not_in_session():
-+def cookie_storage_assert_that_cookie1_is_not_in_session():
-     assert "cookie1" not in request.cookies
-     return ""
++#### JSONPath coercion
++
++Hurl's JSONPath implementation respects [RFC 9535: JSONPATH: Query Expression for JSON] specification. In RFC 9535, every
++query result always returns a list. To facilitate JSONPath query usage, Hurl coerces lists that return a single value to this value.
++
++Let's say with have this JSON:
++
++```json
++{
++  "fruits": [
++    "Apple", "Lemon", "Strawberry"
++  ]
++}
++```
++
++By the spec, the JSONPath query `$.fruits[0]` should return a list of one element `["Apple"]`. As the result list has only 
++one single element, Hurl JSONPath query returns the string "Apple". So we're able to write this Hurl file:
++
++```hurl
++GET https://example.org/captures-json
++HTTP 200
++[Captures]
++# an_apple is a string due to Hurl's coercion
++an_apple: jsonpath "$.fruits[0]"
++```
++
++If you don't want JSONPath coercion applied to query results, you can use [`--no-jsonpath-coercion` option], either in
++[Hurl configuration file], in Hurl command line or using the env variable `HURL_NO_JSONPATH_COERCION=true`. This way, JSONPath
++query always returns list:
++
++```hurl
++GET https://example.org/captures-json
++[Options]
++no-jsonpath-coercion: true
++HTTP 200
++[Captures]
++# an_apple_list is a list
++an_apple_list: jsonpath "$.fruits[0]"
++# We can still get our element
++an_apple: jsonpath "$.fruits[0]" nth 0
++```
 +
 +
-+@app.route("/cookie-storage/noop")
-+def cookie_storage_noop():
-+    return ""
+ ### Regex capture
+ 
+ Capture a regex pattern from the HTTP received body, decoded as text.
+@@ -460,7 +503,7 @@ pass: header "token" redact
+ [injected into the session]: /docs/templates.md#injecting-variables
+ [`Set-Cookie`]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie
+ [XPath]: https://en.wikipedia.org/wiki/XPath
+-[JSONPath]: https://goessner.net/articles/JsonPath/
++[JSONPath]: https://www.rfc-editor.org/info/rfc9535/
+ [XPath captures]: #xpath-capture
+ [JavaScript-like Regular expression syntax]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
+ [options]: /docs/request.md#options
+@@ -473,3 +516,7 @@ pass: header "token" redact
+ [SHA-256]: https://en.wikipedia.org/wiki/SHA-2
+ [content-encoding]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Encoding
+ [`Content-Type` header]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type
++[RFC 9535: JSONPATH: Query Expression for JSON]: https://www.rfc-editor.org/info/rfc9535/
++[coercion to the JSONPATH]: /docs/capturing-response.md#jsonpath-coercion
++[`--no-jsonpath-coercion` option]: /docs/manual.md#no-jsonpath-coercion
++[Hurl configuration file]: /docs/manual.md#configuration
+\ No newline at end of file
 ```
 
-**File**: `packages/hurl/src/runner/request.rs` (modified, +3/-5)
+---
+
+### Incident Patch 2: `c0016335` (2026-10-19)
+**Commit Message**: Update actions
+
+**File**: `.github/workflows/test.yml` (modified, +1/-1)
 ```diff
-@@ -172,11 +172,9 @@ fn eval_url(url_template: &Template, variables: &VariableSet) -> Result<Url, Run
- pub fn get_cmd_cookie_storage_set(request: &Request) -> Option<String> {
-     for line_terminator in request.line_terminators.iter() {
-         if let Some(s) = &line_terminator.comment
--            && s.value.contains("@cookie_storage_set:")
-+            && let Some(s) = s.value.trim_start().strip_prefix("@cookie_storage_set:")
-         {
--            let index = "#@cookie_storage_set:".to_string().len();
--            let value = &s.value[index..s.value.len()].to_string().trim().to_string();
--            return Some(value.to_string());
-+            return Some(s.trim().to_string());
-         }
-     }
-     None
-@@ -188,7 +186,7 @@ pub fn get_cmd_cookie_storage_set(request: &Request) -> Option<String> {
- pub fn get_cmd_cookie_storage_clear(request: &Request) -> bool {
-     for line_terminator in request.line_terminators.iter() {
-         if let Some(s) = &line_terminator.comment
--            && s.value.contains("@cookie_storage_clear")
-+            && s.value.trim_start().starts_with("@cookie_storage_clear")
-         {
-             return true;
-         }
+@@ -442,7 +442,7 @@ jobs:
+         persist-credentials: false
+         ref: ${{ inputs.branch }}
+     - name: Setup wsl Ubuntu
+-      uses: Vampire/setup-wsl@d1da7f2c0322a5ee4f24975344f67fc0f5baf364 #v7.0.0
++      uses: Vampire/setup-wsl@4c48163d9f981914dd8caa0fc335fe19cca5bff4 #v7.2.0
+       with:
+         use-cache: false
+         distribution: Ubuntu-22.04
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5364** (2026-10-19): Update doc about JSONPath coercion. (@jcamiel)
+- **PR #5363** (2026-10-19): Update actions (@hurl-bot)
 - **PR #5362** (2026-10-17): Update CHANGELOG (@fabricereix)
 - **PR #5361** (2026-10-17): Skip suggestion fo very long keyword (@fabricereix)
 - **PR #5359** (2026-10-17): Update crates (@hurl-bot)
 - **PR #5358** (2026-10-17): Prepare docs for Hurl 8.1.0 (@jcamiel)
-- **PR #5357** (2026-10-17): Update changelog. (@jcamiel)
-- **PR #5355** (2026-10-17): Fix hurlfmt panic when importing curl commands without a URL (@fabricereix)
 
 ---
 
@@ -2213,31 +2055,63 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. hurlfmt panic when importing curl commands without a URL
+## X. Update doc about JSONPath coercion.
 
 **RULE**:
-When implementing operations in `integration/hurlfmt/tests_failed/invalid_curl_input.ps1`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Orange-OpenSource/hurl. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/asserting-response.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Orange-OpenSource/hurl. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ed7b1a2c`: hurlfmt panic when importing curl commands without a URL. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bbe96304`: Update doc about JSONPath coercion.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `integration/hurlfmt/tests_failed/invalid_curl_input.ps1`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/asserting-response.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-Set-StrictMode -Version latest
-$ErrorActionPreference = 'Stop'
+With Hurl, we can write multiple JSONPath asserts describing response structure:
+> By default, Hurl applies [coercion to the JSONPath] query results.
+#### JSONPath coercion
 
-echo curl | hurlfmt --in curl
+Hurl's JSONPath implementation respects [RFC 9535: JSONPATH: Query Expression for JSON] specification. In RFC 9535, every
+query result always returns a list. To facilitate JSONPath query usage, Hurl coerces lists that return a single value to this value.
+
+Let's say with have this JSON:
+
+```json
+{
+  "fruits": [
+    "Apple", "Lemon", "Strawberry"
+  ]
+}
+```
+
+By the spec, the JSONPath query `$.fruits[0]` should return a list of one element `["Apple"]`. As the result list has only
+one single element, Hurl JSONPath query returns the string "Apple". So we're able to write this Hurl file:
+
+```hurl
+GET https://example.org/captures-json
+HTTP 200
+[Asserts]
+jsonpath "$.fruits[0]" isString
+jsonpath "$.fruits[0]" == "Apple"
+```
+
+If you don't want JSONPath coercion applied to query results, you can use [`--no-jsonpath-coercion` option], either in
+[Hurl configuration file], in Hurl command line or using the env variable `HURL_NO_JSONPATH_COERCION=true`. This way, JSONPath
+query always returns list:
+
+```hurl
+GET https://example
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+With Hurl, we can write multiple JSONPath asserts describing the DOM content:
+> Explain that the value selected by the JSONPath is coerced to a string when only
+> one node is selected.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ed7b1a2c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bbe96304` are properly handled with clean fallback behavior.

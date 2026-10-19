@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T14:46:58.713Z",
-  "total_cycles_completed": 3277,
-  "total_learnings_persisted": 3277,
-  "total_rules_promoted": 2429,
+  "last_updated": "2026-10-19T14:53:03.259Z",
+  "total_cycles_completed": 3281,
+  "total_learnings_persisted": 3281,
+  "total_rules_promoted": 2432,
   "history": [
-    {
-      "timestamp": "2026-10-19T08:41:18.320Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T08:42:31.585Z",
-      "repository": "railwayapp/nixpacks",
-      "learningId": "learn-github-railwayapp-nixpacks",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T08:48:52.812Z",
-      "repository": "tw93/Mole",
-      "learningId": "learn-github-tw93-mole",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T08:48:55.314Z",
-      "repository": "siderolabs/talos",
-      "learningId": "learn-github-siderolabs-talos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T08:49:00.357Z",
       "repository": "zilliztech/claude-context",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-19T14:46:58.713Z",
       "repository": "encoredev/encore",
       "learningId": "learn-github-encoredev-encore",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T14:52:57.350Z",
+      "repository": "nomic-ai/nomic-embed-text-v1.5",
+      "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T14:52:57.496Z",
+      "repository": "carbon-design-system/carbon-components-svelte",
+      "learningId": "learn-github-carbon-design-system-carbon-components-svelte",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T14:52:59.161Z",
+      "repository": "Orange-OpenSource/hurl",
+      "learningId": "learn-github-orange-opensource-hurl",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T14:53:03.259Z",
+      "repository": "ivanvorobei/SwiftUI",
+      "learningId": "learn-github-ivanvorobei-swiftui",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

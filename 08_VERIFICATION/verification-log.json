@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-8MFQ",
-    "timestamp": "2026-10-19T02:37:02.486Z",
-    "repository": "system-ui/theme-ui",
-    "learningId": "learn-github-system-ui-theme-ui",
-    "contentHash": "f60d14f470d77fe9b7f8cb43d11f180209fa174ce605b8196a3d5a0880d7ad73",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-8N13",
-    "timestamp": "2026-10-19T02:37:03.255Z",
-    "repository": "stabilityai/stable-diffusion-xl-base-1.0",
-    "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
-    "contentHash": "d7920d381020517ff8a2bdf8bb997223e0b01c9b58554d6e81876cfbb6476b80",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-8NRX",
-    "timestamp": "2026-10-19T02:37:04.221Z",
-    "repository": "mtkennerly/ludusavi",
-    "learningId": "learn-github-mtkennerly-ludusavi",
-    "contentHash": "4de2d7a765ed1dbf10b883bda40eee6443927d593d5ecad50f496f06601cfc75",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-8RWW",
-    "timestamp": "2026-10-19T02:37:09.584Z",
-    "repository": "nativewind/nativewind",
-    "learningId": "learn-github-nativewind-nativewind",
-    "contentHash": "0a4729518795c1c9bac22713cd15da3e3c55cb2b5c2efa7f43c56cc43f9ca161",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-8TD7",
     "timestamp": "2026-10-19T02:37:11.467Z",
     "repository": "crossplane/crossplane",
@@ -7490,6 +7430,66 @@
     "repository": "encoredev/encore",
     "learningId": "learn-github-encoredev-encore",
     "contentHash": "e1e2bf6b348c1ae4de97351b6714462c43575310d8e16447d62f0384a5c45188",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-J0JJ",
+    "timestamp": "2026-10-19T14:52:57.343Z",
+    "repository": "nomic-ai/nomic-embed-text-v1.5",
+    "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
+    "contentHash": "f82e711e666fb5cfd46dff84ef97b9054c2e74b9cf4fc377fa71580b315d9d7b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-J0NN",
+    "timestamp": "2026-10-19T14:52:57.491Z",
+    "repository": "carbon-design-system/carbon-components-svelte",
+    "learningId": "learn-github-carbon-design-system-carbon-components-svelte",
+    "contentHash": "08211dcc1c09892afb749b9c4bb410cb02b3c1f771e4c5b29e0a032681cd0d9f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-J1XW",
+    "timestamp": "2026-10-19T14:52:59.156Z",
+    "repository": "Orange-OpenSource/hurl",
+    "learningId": "learn-github-orange-opensource-hurl",
+    "contentHash": "7bb2539b4861fbef163dd28e3942641cd52ada181eeb7767d6d8607f44039345",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-J53P",
+    "timestamp": "2026-10-19T14:53:03.253Z",
+    "repository": "ivanvorobei/SwiftUI",
+    "learningId": "learn-github-ivanvorobei-swiftui",
+    "contentHash": "f483fb33ec78dfe0e003e120ffbe73e08ca52b3811d38e2fc51035dcbcc45413",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

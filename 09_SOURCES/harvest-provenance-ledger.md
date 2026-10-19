@@ -3307,3 +3307,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-tencent-hy-memory-30b-a3b` | `https://huggingface.co/tencent/Hy-Memory-30B-A3B` | `hf-tencent` | Multi-dimensional audit evidence | 2026-10-19T14:46:48.115Z |
 | `learn-github-modelcontextprotocol-kotlin-sdk` | `https://github.com/modelcontextprotocol/kotlin-sdk` | `d9f19a1d` | Multi-dimensional audit evidence | 2026-10-19T14:46:57.542Z |
 | `learn-github-encoredev-encore` | `https://github.com/encoredev/encore` | `477fb14b` | Multi-dimensional audit evidence | 2026-10-19T14:46:58.709Z |
+| `learn-huggingface-nomic-ai-nomic-embed-text-v1-5` | `https://huggingface.co/nomic-ai/nomic-embed-text-v1.5` | `hf-nomic-a` | Multi-dimensional audit evidence | 2026-10-19T14:52:57.347Z |
+| `learn-github-carbon-design-system-carbon-components-svelte` | `https://github.com/carbon-design-system/carbon-components-svelte` | `87db3ace` | Multi-dimensional audit evidence | 2026-10-19T14:52:57.493Z |
+| `learn-github-orange-opensource-hurl` | `https://github.com/Orange-OpenSource/hurl` | `bbe96304` | Multi-dimensional audit evidence | 2026-10-19T14:52:59.158Z |
+| `learn-github-ivanvorobei-swiftui` | `https://github.com/ivanvorobei/SwiftUI` | `b6cfb6d0` | Multi-dimensional audit evidence | 2026-10-19T14:53:03.256Z |

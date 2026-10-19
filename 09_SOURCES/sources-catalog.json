@@ -1165,8 +1165,8 @@
     "sourceUrl": "https://huggingface.co/nomic-ai/nomic-embed-text-v1.5",
     "sourceVersion": "hf-nomic-ai-nomic-embed-text-v1.5",
     "license": "Open-Source",
-    "contentHash": "80b0091a47f0e1c9a033ecc5a94a8d90df0818bdac6b58b91b65c0ac76893c74",
-    "lastHarvestedAt": "2026-10-18T04:30:06.414Z",
+    "contentHash": "f82e711e666fb5cfd46dff84ef97b9054c2e74b9cf4fc377fa71580b315d9d7b",
+    "lastHarvestedAt": "2026-10-19T14:52:57.347Z",
     "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5"
   },
   "hf-conwayresearch-underdog-saluki-27b-1.0": {
@@ -3733,10 +3733,10 @@
     "repository": "Orange-OpenSource/hurl",
     "platform": "github",
     "sourceUrl": "https://github.com/Orange-OpenSource/hurl",
-    "sourceVersion": "026b66e6",
+    "sourceVersion": "bbe96304",
     "license": "Apache-2.0",
-    "contentHash": "6346b83e9d0cf860d008db5b401fa42a3086e7ef3ce4483fc4ccfbfd071523f0",
-    "lastHarvestedAt": "2026-10-18T23:51:40.496Z",
+    "contentHash": "7bb2539b4861fbef163dd28e3942641cd52ada181eeb7767d6d8607f44039345",
+    "lastHarvestedAt": "2026-10-19T14:52:59.158Z",
     "learningId": "learn-github-orange-opensource-hurl"
   },
   "gregberge-svgr": {
@@ -5523,10 +5523,10 @@
     "repository": "carbon-design-system/carbon-components-svelte",
     "platform": "github",
     "sourceUrl": "https://github.com/carbon-design-system/carbon-components-svelte",
-    "sourceVersion": "f4eb6edb",
+    "sourceVersion": "87db3ace",
     "license": "Apache-2.0",
-    "contentHash": "75ce2f709d2685c1b43f05d49e538adf61987ff9636e84de75f162256e0e0fad",
-    "lastHarvestedAt": "2026-10-19T03:54:36.499Z",
+    "contentHash": "08211dcc1c09892afb749b9c4bb410cb02b3c1f771e4c5b29e0a032681cd0d9f",
+    "lastHarvestedAt": "2026-10-19T14:52:57.493Z",
     "learningId": "learn-github-carbon-design-system-carbon-components-svelte"
   },
   "shadcn-ui-lint": {
@@ -8208,5 +8208,15 @@
     "contentHash": "2250c38f04836306ca3cd83c65ec9f31d8fa5e7c5418fbd3905cc130a7f29f0d",
     "lastHarvestedAt": "2026-10-19T14:46:57.542Z",
     "learningId": "learn-github-modelcontextprotocol-kotlin-sdk"
+  },
+  "ivanvorobei-swiftui": {
+    "repository": "ivanvorobei/SwiftUI",
+    "platform": "github",
+    "sourceUrl": "https://github.com/ivanvorobei/SwiftUI",
+    "sourceVersion": "b6cfb6d0",
+    "license": "MIT",
+    "contentHash": "f483fb33ec78dfe0e003e120ffbe73e08ca52b3811d38e2fc51035dcbcc45413",
+    "lastHarvestedAt": "2026-10-19T14:53:03.256Z",
+    "learningId": "learn-github-ivanvorobei-swiftui"
   }
 }

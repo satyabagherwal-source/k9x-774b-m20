@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T14:46:58.716Z",
+  "last_updated": "2026-10-19T14:53:03.262Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1549,14 +1549,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
-      "content_hash": "80b0091a47f0e1c9a033ecc5a94a8d90df0818bdac6b58b91b65c0ac76893c74",
-      "verified_at": "2026-10-18T04:30:06.417Z",
+      "content_hash": "f82e711e666fb5cfd46dff84ef97b9054c2e74b9cf4fc377fa71580b315d9d7b",
+      "verified_at": "2026-10-19T14:52:57.353Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T04:30:06.417Z"
+      "last_updated": "2026-10-19T14:52:57.353Z"
     },
     "google/gemma-4-26B-A4B-it": {
       "repository": "google/gemma-4-26B-A4B-it",
@@ -5719,14 +5719,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-orange-opensource-hurl",
-      "content_hash": "6346b83e9d0cf860d008db5b401fa42a3086e7ef3ce4483fc4ccfbfd071523f0",
-      "verified_at": "2026-10-18T23:51:40.504Z",
+      "content_hash": "7bb2539b4861fbef163dd28e3942641cd52ada181eeb7767d6d8607f44039345",
+      "verified_at": "2026-10-19T14:52:59.164Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T23:51:40.504Z"
+      "last_updated": "2026-10-19T14:52:59.164Z"
     },
     "gregberge/svgr": {
       "repository": "gregberge/svgr",
@@ -8404,14 +8404,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-carbon-design-system-carbon-components-svelte",
-      "content_hash": "75ce2f709d2685c1b43f05d49e538adf61987ff9636e84de75f162256e0e0fad",
-      "verified_at": "2026-10-19T03:54:36.504Z",
+      "content_hash": "08211dcc1c09892afb749b9c4bb410cb02b3c1f771e4c5b29e0a032681cd0d9f",
+      "verified_at": "2026-10-19T14:52:57.498Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T03:54:36.504Z"
+      "last_updated": "2026-10-19T14:52:57.498Z"
     },
     "shadcn-ui/lint": {
       "repository": "shadcn-ui/lint",
@@ -12342,6 +12342,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T14:46:57.548Z"
+    },
+    "ivanvorobei/SwiftUI": {
+      "repository": "ivanvorobei/SwiftUI",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-ivanvorobei-swiftui",
+      "content_hash": "f483fb33ec78dfe0e003e120ffbe73e08ca52b3811d38e2fc51035dcbcc45413",
+      "verified_at": "2026-10-19T14:53:03.262Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T14:53:03.262Z"
     }
   },
   "repos": {

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T14:46:58.672Z",
-  "total_verified_learnings": 835,
+  "last_updated": "2026-10-19T14:53:03.222Z",
+  "total_verified_learnings": 836,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -4327,8 +4327,8 @@
       "slug": "carbon-design-system-carbon-components-svelte",
       "platform": "github",
       "source_url": "https://github.com/carbon-design-system/carbon-components-svelte",
-      "source_version": "f4eb6edb",
-      "content_hash": "75ce2f709d2685c1b43f05d49e538adf61987ff9636e84de75f162256e0e0fad",
+      "source_version": "87db3ace",
+      "content_hash": "08211dcc1c09892afb749b9c4bb410cb02b3c1f771e4c5b29e0a032681cd0d9f",
       "dossier_path": "07_PROJECT_LEARNING/carbon-design-system-carbon-components-svelte-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/carbon-design-system-carbon-components-svelte-learnings.md",
       "promoted_rules": [
@@ -4346,6 +4346,11 @@
           "number": 2099,
           "title": "CSV Formula Neutralization and RFC 4180 Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2635,
+          "title": "file-uploader-button): restore the current labelText on clear",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4353,7 +4358,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T03:54:36.443Z",
+      "verified_at": "2026-10-19T14:52:57.452Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -20128,7 +20133,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nomic-ai/nomic-embed-text-v1.5",
       "source_version": "hf-nomic-ai-nomic-embed-text-v1.5",
-      "content_hash": "80b0091a47f0e1c9a033ecc5a94a8d90df0818bdac6b58b91b65c0ac76893c74",
+      "content_hash": "f82e711e666fb5cfd46dff84ef97b9054c2e74b9cf4fc377fa71580b315d9d7b",
       "dossier_path": "07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md",
       "promoted_rules": [
@@ -20165,7 +20170,7 @@
         "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv3z1izs",
         "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv4dnd2y"
       ],
-      "verified_at": "2026-10-18T04:30:06.370Z",
+      "verified_at": "2026-10-19T14:52:57.305Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25219,22 +25224,35 @@
     "learn-github-ivanvorobei-swiftui": {
       "learning_id": "learn-github-ivanvorobei-swiftui",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "ivanvorobei-swiftui",
+      "source": "ivanvorobei/SwiftUI",
+      "repository": "ivanvorobei/SwiftUI",
       "slug": "ivanvorobei-swiftui",
       "platform": "github",
       "source_url": "https://github.com/ivanvorobei/SwiftUI",
-      "source_version": "HEAD",
-      "content_hash": "9b734fa13de3c9bfc4598a06a2816965b4fc317f8433817c31d589850b8bf818",
+      "source_version": "b6cfb6d0",
+      "content_hash": "f483fb33ec78dfe0e003e120ffbe73e08ca52b3811d38e2fc51035dcbcc45413",
       "dossier_path": "07_PROJECT_LEARNING/ivanvorobei-swiftui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ivanvorobei-swiftui-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2637,
+          "title": "Merge branch 'master' of https://github.com/varabeis/SwiftUI",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.635Z"
+      "verified_at": "2026-10-19T14:53:03.213Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-ivpusic-react-native-image-crop-picker": {
       "learning_id": "learn-github-ivpusic-react-native-image-crop-picker",
@@ -33735,14 +33753,19 @@
       "slug": "orange-opensource-hurl",
       "platform": "github",
       "source_url": "https://github.com/Orange-OpenSource/hurl",
-      "source_version": "026b66e6",
-      "content_hash": "6346b83e9d0cf860d008db5b401fa42a3086e7ef3ce4483fc4ccfbfd071523f0",
+      "source_version": "bbe96304",
+      "content_hash": "7bb2539b4861fbef163dd28e3942641cd52ada181eeb7767d6d8607f44039345",
       "dossier_path": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
       "promoted_rules": [
         {
           "number": 1876,
           "title": "hurlfmt panic when importing curl commands without a URL",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2636,
+          "title": "Update doc about JSONPath coercion.",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -33751,7 +33774,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T23:51:40.451Z",
+      "verified_at": "2026-10-19T14:52:59.117Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -88356,6 +88379,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T14:46:58.662Z"
+    },
+    "rule-2635": {
+      "learning_id": "rule-2635",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2635,
+      "title": "file-uploader-button): restore the current labelText on clear",
+      "source_url": "https://github.com/carbon-design-system/carbon-components-svelte",
+      "source_version": "87db3ace",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T14:52:57.452Z"
+    },
+    "rule-2636": {
+      "learning_id": "rule-2636",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2636,
+      "title": "Update doc about JSONPath coercion.",
+      "source_url": "https://github.com/Orange-OpenSource/hurl",
+      "source_version": "bbe96304",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T14:52:59.117Z"
+    },
+    "rule-2637": {
+      "learning_id": "rule-2637",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2637,
+      "title": "Merge branch 'master' of https://github.com/varabeis/SwiftUI",
+      "source_url": "https://github.com/ivanvorobei/SwiftUI",
+      "source_version": "b6cfb6d0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T14:53:03.213Z"
     }
   },
   "aliases": {
