@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T02:37:16.781Z",
+  "last_updated": "2026-10-19T02:48:51.148Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -333,14 +333,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
-      "content_hash": "299a72472186bb40e4791c9157ad07a99a9ac6d938e1b84e2c6fc1110a453692",
-      "verified_at": "2026-10-17T22:19:20.115Z",
+      "content_hash": "e6090c2b5a3c949c71ca362b2465aea0291021e8ac86cd60e989b0a814dbdbaa",
+      "verified_at": "2026-10-19T02:44:55.325Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T22:19:20.115Z"
+      "last_updated": "2026-10-19T02:44:55.325Z"
     },
     "XingChen-AGI/TeleOCR": {
       "repository": "XingChen-AGI/TeleOCR",
@@ -7582,6 +7582,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T02:37:16.781Z"
+    },
+    "kucherenko/jscpd": {
+      "repository": "kucherenko/jscpd",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-kucherenko-jscpd",
+      "content_hash": "265719a05919e625c65b7b2df803d3a1cc05bd95e73c91c644a4cb45cf51d391",
+      "verified_at": "2026-10-19T02:44:46.044Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T02:44:46.044Z"
+    },
+    "akveo/kittenTricks": {
+      "repository": "akveo/kittenTricks",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-akveo-kittentricks",
+      "content_hash": "cbfdf5e7b9b164beae6c84ca6d32f69f4ff91b24bb0cd3a52a47ccd2122e6c83",
+      "verified_at": "2026-10-19T02:44:51.174Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T02:44:51.174Z"
+    },
+    "meshery/meshery": {
+      "repository": "meshery/meshery",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-meshery-meshery",
+      "content_hash": "76b1757b7f4d35dc6cb8942d8d57e0bdedb439f31810af894b9107dfb72dbeb3",
+      "verified_at": "2026-10-19T02:44:53.820Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T02:44:53.820Z"
+    },
+    "arangodb/arangodb": {
+      "repository": "arangodb/arangodb",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-arangodb-arangodb",
+      "content_hash": "3ba447264716fed32eb840efe65e3e9d4db34ecfa4b706b5309116d5d6c445af",
+      "verified_at": "2026-10-19T02:45:01.067Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T02:45:01.067Z"
+    },
+    "chakra-ui/ark": {
+      "repository": "chakra-ui/ark",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-chakra-ui-ark",
+      "content_hash": "cb79685c44cb717d83f3e5a6110257f3e7bc6e436b6c92ed953e35747d3f1a8a",
+      "verified_at": "2026-10-19T02:48:51.148Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T02:48:51.148Z"
     }
   },
   "repos": {

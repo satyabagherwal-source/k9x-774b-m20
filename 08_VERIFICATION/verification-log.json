@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261017-DQU6",
-    "timestamp": "2026-10-17T21:17:25.662Z",
-    "repository": "autotrust/JEV-35B-NVFP4",
-    "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
-    "contentHash": "ebe22ea9e3ba004239ee43ffaabab11bb526d41102b9d0dd3047dfba64704b72",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-HMVQ",
-    "timestamp": "2026-10-17T21:20:27.158Z",
-    "repository": "BAAI/bge-small-en-v1.5",
-    "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
-    "contentHash": "79e916572f160f2ae7ff59c87b97570900d8adc4ab3b1568602d4b71b4376201",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-LYS2",
-    "timestamp": "2026-10-17T21:23:49.202Z",
-    "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
-    "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
-    "contentHash": "614232b6520193e8d8000dd9315f9bfbb06d89a4a8aef67ad444f515c06c8c51",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-PUTB",
-    "timestamp": "2026-10-17T21:26:50.687Z",
-    "repository": "LiquidAI/d1-3B",
-    "learningId": "learn-huggingface-liquidai-d1-3b",
-    "contentHash": "33f425a2826e9b4b542328a4733a03a0772758eca6c28d441504588837ca6e5f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-TRGN",
-    "timestamp": "2026-10-17T21:29:52.968Z",
-    "repository": "Cactus-Compute/whistle",
-    "learningId": "learn-huggingface-cactus-compute-whistle",
-    "contentHash": "9cc0ad7d2d7c3efc90f48346c01a86e7f9602b22d05a5f609ff32ab851e2bbee",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-Y2MD",
-    "timestamp": "2026-10-17T21:33:14.053Z",
-    "repository": "Qwen/Qwen3.8-27B",
-    "learningId": "learn-huggingface-qwen-qwen3-8-27b",
-    "contentHash": "d46869d9dab2aa175b74f5776ef11e7351447e2349d60107d3690443a7e3670c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261017-4AZ6",
     "timestamp": "2026-10-17T21:38:04.818Z",
     "repository": "black-forest-labs/FLUX.1-dev",
@@ -7492,6 +7402,96 @@
     "contentHash": "d08b812f084c89e456ad5aacad4e3fd7af4d37abc3609f8bae2b2c1b599e997d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-IK41",
+    "timestamp": "2026-10-19T02:44:46.033Z",
+    "repository": "kucherenko/jscpd",
+    "learningId": "learn-github-kucherenko-jscpd",
+    "contentHash": "265719a05919e625c65b7b2df803d3a1cc05bd95e73c91c644a4cb45cf51d391",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-IO2J",
+    "timestamp": "2026-10-19T02:44:51.163Z",
+    "repository": "akveo/kittenTricks",
+    "learningId": "learn-github-akveo-kittentricks",
+    "contentHash": "cbfdf5e7b9b164beae6c84ca6d32f69f4ff91b24bb0cd3a52a47ccd2122e6c83",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-IQ40",
+    "timestamp": "2026-10-19T02:44:53.808Z",
+    "repository": "meshery/meshery",
+    "learningId": "learn-github-meshery-meshery",
+    "contentHash": "76b1757b7f4d35dc6cb8942d8d57e0bdedb439f31810af894b9107dfb72dbeb3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-IR9Y",
+    "timestamp": "2026-10-19T02:44:55.318Z",
+    "repository": "meta-llama/Llama-3.1-8B-Instruct",
+    "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
+    "contentHash": "e6090c2b5a3c949c71ca362b2465aea0291021e8ac86cd60e989b0a814dbdbaa",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-IVPG",
+    "timestamp": "2026-10-19T02:45:01.060Z",
+    "repository": "arangodb/arangodb",
+    "learningId": "learn-github-arangodb-arangodb",
+    "contentHash": "3ba447264716fed32eb840efe65e3e9d4db34ecfa4b706b5309116d5d6c445af",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-NT8G",
+    "timestamp": "2026-10-19T02:48:51.136Z",
+    "repository": "chakra-ui/ark",
+    "learningId": "learn-github-chakra-ui-ark",
+    "contentHash": "cb79685c44cb717d83f3e5a6110257f3e7bc6e436b6c92ed953e35747d3f1a8a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

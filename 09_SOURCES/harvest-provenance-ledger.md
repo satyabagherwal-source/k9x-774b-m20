@@ -2813,3 +2813,9 @@ Every entry in this ledger must capture:
 | `learn-github-nativewind-nativewind` | `https://github.com/nativewind/nativewind` | `7dbaf182` | Multi-dimensional audit evidence | 2026-10-19T02:37:09.591Z |
 | `learn-github-crossplane-crossplane` | `https://github.com/crossplane/crossplane` | `6601fc76` | Multi-dimensional audit evidence | 2026-10-19T02:37:11.473Z |
 | `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `487620d5` | Multi-dimensional audit evidence | 2026-10-19T02:37:16.776Z |
+| `learn-github-kucherenko-jscpd` | `https://github.com/kucherenko/jscpd` | `9685516a` | Multi-dimensional audit evidence | 2026-10-19T02:44:46.039Z |
+| `learn-github-akveo-kittentricks` | `https://github.com/akveo/kittenTricks` | `e9d81da3` | Multi-dimensional audit evidence | 2026-10-19T02:44:51.168Z |
+| `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `96fb78ba` | Multi-dimensional audit evidence | 2026-10-19T02:44:53.815Z |
+| `learn-huggingface-meta-llama-llama-3-1-8b-instruct` | `https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-19T02:44:55.320Z |
+| `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `a27c7cda` | Multi-dimensional audit evidence | 2026-10-19T02:45:01.062Z |
+| `learn-github-chakra-ui-ark` | `https://github.com/chakra-ui/ark` | `300f6f39` | Multi-dimensional audit evidence | 2026-10-19T02:48:51.143Z |

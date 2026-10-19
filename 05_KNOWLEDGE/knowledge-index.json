@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T02:37:16.732Z",
-  "total_verified_learnings": 519,
+  "last_updated": "2026-10-19T02:48:51.097Z",
+  "total_verified_learnings": 524,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -894,22 +894,35 @@
     "learn-github-akveo-kittentricks": {
       "learning_id": "learn-github-akveo-kittentricks",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "akveo-kittentricks",
+      "source": "akveo/kittenTricks",
+      "repository": "akveo/kittenTricks",
       "slug": "akveo-kittentricks",
       "platform": "github",
       "source_url": "https://github.com/akveo/kittenTricks",
-      "source_version": "HEAD",
-      "content_hash": "e8df57a0002796bdf97b5e68eb0cb2aeb83b59d64982054d776257fbbbb3e989",
+      "source_version": "e9d81da3",
+      "content_hash": "cbfdf5e7b9b164beae6c84ca6d32f69f4ff91b24bb0cd3a52a47ccd2122e6c83",
       "dossier_path": "07_PROJECT_LEARNING/akveo-kittentricks-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/akveo-kittentricks-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2033,
+          "title": "layouts): ListHeaderComponent onChangeText re-render issue",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.696Z"
+      "verified_at": "2026-10-19T02:44:51.117Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-akveo-react-native-ui-kitten": {
       "learning_id": "learn-github-akveo-react-native-ui-kitten",
@@ -1935,22 +1948,35 @@
     "learn-github-arangodb-arangodb": {
       "learning_id": "learn-github-arangodb-arangodb",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "arangodb-arangodb",
+      "source": "arangodb/arangodb",
+      "repository": "arangodb/arangodb",
       "slug": "arangodb-arangodb",
       "platform": "github",
       "source_url": "https://github.com/arangodb/arangodb",
-      "source_version": "HEAD",
-      "content_hash": "ae8015eba513bf9d82ff62699682ba35ff6d44fbab113bbdd72f36f48cea2d2c",
+      "source_version": "a27c7cda",
+      "content_hash": "3ba447264716fed32eb840efe65e3e9d4db34ecfa4b706b5309116d5d6c445af",
       "dossier_path": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2037,
+          "title": "catch crashes during upgrade cycling arangods (#23453)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.870Z"
+      "verified_at": "2026-10-19T02:45:01.015Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-arc53-docsgpt": {
       "learning_id": "learn-github-arc53-docsgpt",
@@ -3817,22 +3843,45 @@
     "learn-github-chakra-ui-ark": {
       "learning_id": "learn-github-chakra-ui-ark",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "chakra-ui-ark",
+      "source": "chakra-ui/ark",
+      "repository": "chakra-ui/ark",
       "slug": "chakra-ui-ark",
       "platform": "github",
       "source_url": "https://github.com/chakra-ui/ark",
-      "source_version": "HEAD",
-      "content_hash": "99a8d52af4b34af97dfb94e7fc5e33a72d035bc43eae833e8690453ec1af5d1d",
+      "source_version": "300f6f39",
+      "content_hash": "cb79685c44cb717d83f3e5a6110257f3e7bc6e436b6c92ed953e35747d3f1a8a",
       "dossier_path": "07_PROJECT_LEARNING/chakra-ui-ark-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/chakra-ui-ark-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2038,
+          "title": "Bidirectional Framework Ref Callback Cleanup Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2039,
+          "title": "Dual-Layer Split Props Invariant for Headless UI Components",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2040,
+          "title": "Svelte Caller-Supplied ID Fallback Ordering Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.235Z"
+      "verified_at": "2026-10-19T02:48:51.090Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-chakra-ui-chakra-ui": {
       "learning_id": "learn-github-chakra-ui-chakra-ui",
@@ -17033,7 +17082,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct",
       "source_version": "hf-meta-llama-llama-3.1-8b-instruct",
-      "content_hash": "299a72472186bb40e4791c9157ad07a99a9ac6d938e1b84e2c6fc1110a453692",
+      "content_hash": "e6090c2b5a3c949c71ca362b2465aea0291021e8ac86cd60e989b0a814dbdbaa",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-llama-3.1-8b-instruct-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-llama-3.1-8b-instruct-learnings.md",
       "promoted_rules": [
@@ -17080,6 +17129,11 @@
           "verified_at": "2026-10-12T00:00:23.954Z"
         },
         {
+          "number": 410,
+          "title": "Tokenizer-Model Vocabulary Alignment",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
           "number": 416,
           "title": "Tokenizer Special Token Isolation",
           "status": "ALREADY_PRESENT_VERIFIED"
@@ -17123,6 +17177,16 @@
           "number": 1324,
           "title": "Quantization Precision Drift Guard",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2035,
+          "title": "KV Cache Memory Bound Enforcement",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2036,
+          "title": "Deterministic Sampling for Reproducibility",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -17143,7 +17207,7 @@
         "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv44az1j",
         "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv4hk7rf"
       ],
-      "verified_at": "2026-10-17T22:19:20.065Z",
+      "verified_at": "2026-10-19T02:44:55.255Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -24431,22 +24495,35 @@
     "learn-github-kucherenko-jscpd": {
       "learning_id": "learn-github-kucherenko-jscpd",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "kucherenko-jscpd",
+      "source": "kucherenko/jscpd",
+      "repository": "kucherenko/jscpd",
       "slug": "kucherenko-jscpd",
       "platform": "github",
       "source_url": "https://github.com/kucherenko/jscpd",
-      "source_version": "HEAD",
-      "content_hash": "8364e4799052a364d556e95eac754d12d8a904a6f065bbd2fcd054801b4a1088",
+      "source_version": "9685516a",
+      "content_hash": "265719a05919e625c65b7b2df803d3a1cc05bd95e73c91c644a4cb45cf51d391",
       "dossier_path": "07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2032,
+          "title": "deps): ignore three zip advisories about extracting an archive",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.912Z"
+      "verified_at": "2026-10-19T02:44:45.987Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-kuddev-pebrel": {
       "learning_id": "learn-github-kuddev-pebrel",
@@ -26376,22 +26453,35 @@
     "learn-github-meshery-meshery": {
       "learning_id": "learn-github-meshery-meshery",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "meshery-meshery",
+      "source": "meshery/meshery",
+      "repository": "meshery/meshery",
       "slug": "meshery-meshery",
       "platform": "github",
       "source_url": "https://github.com/meshery/meshery",
-      "source_version": "HEAD",
-      "content_hash": "91f44d9f7e0868861da8c162a98636d5ae06806b3df3a69a8aac128e222086da",
+      "source_version": "96fb78ba",
+      "content_hash": "76b1757b7f4d35dc6cb8942d8d57e0bdedb439f31810af894b9107dfb72dbeb3",
       "dossier_path": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2034,
+          "title": "Merge pull request #22419 from VimalN2005/fix-addons-nil-type-panic-20988",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.263Z"
+      "verified_at": "2026-10-19T02:44:53.763Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-meshtastic-meshtastic-android": {
       "learning_id": "learn-github-meshtastic-meshtastic-android",
@@ -45462,15 +45552,15 @@
       "learning_id": "rule-410",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 410,
-      "title": "Tokenizer-Model Vocabulary Alignment (Harvested from meta-llama/Meta-Llama-3-8B)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Tokenizer-Model Vocabulary Alignment",
+      "source_url": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct",
+      "source_version": "hf-meta-llama-llama-3.1-8b-instruct",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-13T17:43:04.598Z"
+      "verified_at": "2026-10-19T02:44:55.255Z"
     },
     "rule-411": {
       "learning_id": "rule-411",
@@ -74309,6 +74399,132 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T02:37:16.724Z"
+    },
+    "rule-2032": {
+      "learning_id": "rule-2032",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2032,
+      "title": "deps): ignore three zip advisories about extracting an archive",
+      "source_url": "https://github.com/kucherenko/jscpd",
+      "source_version": "9685516a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T02:44:45.987Z"
+    },
+    "rule-2033": {
+      "learning_id": "rule-2033",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2033,
+      "title": "layouts): ListHeaderComponent onChangeText re-render issue",
+      "source_url": "https://github.com/akveo/kittenTricks",
+      "source_version": "e9d81da3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T02:44:51.117Z"
+    },
+    "rule-2034": {
+      "learning_id": "rule-2034",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2034,
+      "title": "Merge pull request #22419 from VimalN2005/fix-addons-nil-type-panic-20988",
+      "source_url": "https://github.com/meshery/meshery",
+      "source_version": "96fb78ba",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T02:44:53.763Z"
+    },
+    "rule-2035": {
+      "learning_id": "rule-2035",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2035,
+      "title": "KV Cache Memory Bound Enforcement",
+      "source_url": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct",
+      "source_version": "hf-meta-llama-llama-3.1-8b-instruct",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T02:44:55.255Z"
+    },
+    "rule-2036": {
+      "learning_id": "rule-2036",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2036,
+      "title": "Deterministic Sampling for Reproducibility",
+      "source_url": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct",
+      "source_version": "hf-meta-llama-llama-3.1-8b-instruct",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T02:44:55.255Z"
+    },
+    "rule-2037": {
+      "learning_id": "rule-2037",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2037,
+      "title": "catch crashes during upgrade cycling arangods (#23453)",
+      "source_url": "https://github.com/arangodb/arangodb",
+      "source_version": "a27c7cda",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T02:45:01.015Z"
+    },
+    "rule-2038": {
+      "learning_id": "rule-2038",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2038,
+      "title": "Bidirectional Framework Ref Callback Cleanup Invariant",
+      "source_url": "https://github.com/chakra-ui/ark",
+      "source_version": "300f6f39",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T02:48:51.090Z"
+    },
+    "rule-2039": {
+      "learning_id": "rule-2039",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2039,
+      "title": "Dual-Layer Split Props Invariant for Headless UI Components",
+      "source_url": "https://github.com/chakra-ui/ark",
+      "source_version": "300f6f39",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T02:48:51.090Z"
+    },
+    "rule-2040": {
+      "learning_id": "rule-2040",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2040,
+      "title": "Svelte Caller-Supplied ID Fallback Ordering Invariant",
+      "source_url": "https://github.com/chakra-ui/ark",
+      "source_version": "300f6f39",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T02:48:51.090Z"
     }
   },
   "aliases": {
