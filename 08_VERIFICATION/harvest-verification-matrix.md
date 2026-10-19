@@ -3495,3 +3495,7 @@
 | `CYCLE-20261019-1VAK` | `2026-10-19T21:11:32.012Z` | `santifer/santifer-irepair` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2813` | Yes (`c01e6ad3...`) |
 | `CYCLE-20261019-1X2O` | `2026-10-19T21:11:34.320Z` | `Lessica/TrollFools` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2814` | Yes (`dd74b76d...`) |
 | `CYCLE-20261019-21ZX` | `2026-10-19T21:11:40.701Z` | `alibaba/zvec` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2815` | Yes (`97842af8...`) |
+| `CYCLE-20261019-9XZF` | `2026-10-19T21:17:48.747Z` | `scrapy/scrapy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2816` | Yes (`58a30a83...`) |
+| `CYCLE-20261019-9ZH8` | `2026-10-19T21:17:50.684Z` | `krzysztofzablocki/Inject` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/krzysztofzablocki-inject-learnings.md` | Yes (`61735949...`) |
+| `CYCLE-20261019-A1BJ` | `2026-10-19T21:17:53.071Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2817` | Yes (`ddec7ee6...`) |
+| `CYCLE-20261019-A3K3` | `2026-10-19T21:17:55.971Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md` | Yes (`85e1c9c4...`) |

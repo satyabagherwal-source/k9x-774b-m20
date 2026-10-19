@@ -3502,3 +3502,7 @@ Every entry in this ledger must capture:
 | `learn-github-santifer-santifer-irepair` | `https://github.com/santifer/santifer-irepair` | `5c1ce0b2` | Multi-dimensional audit evidence | 2026-10-19T21:11:32.015Z |
 | `learn-github-lessica-trollfools` | `https://github.com/Lessica/TrollFools` | `c5c87b85` | Multi-dimensional audit evidence | 2026-10-19T21:11:34.323Z |
 | `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `1a573058` | Multi-dimensional audit evidence | 2026-10-19T21:11:40.704Z |
+| `learn-github-scrapy-scrapy` | `https://github.com/scrapy/scrapy` | `962197e2` | Multi-dimensional audit evidence | 2026-10-19T21:17:48.750Z |
+| `learn-github-krzysztofzablocki-inject` | `https://github.com/krzysztofzablocki/Inject` | `67e3ee9a` | Multi-dimensional audit evidence | 2026-10-19T21:17:50.686Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `f3b817b8` | Multi-dimensional audit evidence | 2026-10-19T21:17:53.074Z |
+| `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `7fcb12d4` | Multi-dimensional audit evidence | 2026-10-19T21:17:55.973Z |

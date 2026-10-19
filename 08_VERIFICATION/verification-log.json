@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-W4UJ",
-    "timestamp": "2026-10-19T06:11:16.747Z",
-    "repository": "run-llama/llama_index",
-    "learningId": "learn-github-run-llama-llama_index",
-    "contentHash": "70167becc74e332526d6380b5d5a13251c347933868569e322a8a942754ad10c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-XKPZ",
-    "timestamp": "2026-10-19T06:12:23.975Z",
-    "repository": "vercel-labs/opensrc",
-    "learningId": "learn-github-vercel-labs-opensrc",
-    "contentHash": "6895b0744dc7167adc87dc8560aaab5f0c4e070e6d9c0462a9e1871d934c8c28",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-XPB0",
-    "timestamp": "2026-10-19T06:12:29.916Z",
-    "repository": "tremorlabs/tremor",
-    "learningId": "learn-github-tremorlabs-tremor",
-    "contentHash": "7ad415214bbfc05aea4ce23dc64731037eca41b0004834dc7357f073cdd28c22",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-Y35H",
-    "timestamp": "2026-10-19T06:12:47.861Z",
-    "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
-    "contentHash": "6f7c02867701578422045a7f5abb0d1fb4dd7860a00d212f9b69578183304f3a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-606N",
     "timestamp": "2026-10-19T06:18:57.263Z",
     "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
@@ -7492,6 +7432,66 @@
     "contentHash": "97842af8d1390a3731d3b36ebbaa977d3b35d8b907802b72905027c0e5cc1448",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-9XZF",
+    "timestamp": "2026-10-19T21:17:48.747Z",
+    "repository": "scrapy/scrapy",
+    "learningId": "learn-github-scrapy-scrapy",
+    "contentHash": "58a30a83326bb5bc55ae8c7676218f6ed53a972aeb59995076d87ef32218d205",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-9ZH8",
+    "timestamp": "2026-10-19T21:17:50.684Z",
+    "repository": "krzysztofzablocki/Inject",
+    "learningId": "learn-github-krzysztofzablocki-inject",
+    "contentHash": "61735949d38fffb72cd1f96791a16c169dc27d8237a4d4466159e0e2b3dc80f9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-A1BJ",
+    "timestamp": "2026-10-19T21:17:53.071Z",
+    "repository": "projectdiscovery/nuclei",
+    "learningId": "learn-github-projectdiscovery-nuclei",
+    "contentHash": "ddec7ee69eb5470a87596b58ee436cc5a5b38592dbf8866c4f90f47d0197df20",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-A3K3",
+    "timestamp": "2026-10-19T21:17:55.971Z",
+    "repository": "langchain4j/langchain4j",
+    "learningId": "learn-github-langchain4j-langchain4j",
+    "contentHash": "85e1c9c4cc854a8fb8ffd8b17e67353ecdd82ff2f990dea724b1e2e46216c094",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

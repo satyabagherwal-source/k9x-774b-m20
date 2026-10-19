@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T21:11:40.711Z",
+  "last_updated": "2026-10-19T21:17:55.981Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5299,14 +5299,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectdiscovery-nuclei",
-      "content_hash": "3c75c7531298ffee8b946f1d03ed145b0884b2ed0d73b504c0013aa2ab0dbf8a",
-      "verified_at": "2026-10-19T18:16:43.445Z",
+      "content_hash": "ddec7ee69eb5470a87596b58ee436cc5a5b38592dbf8866c4f90f47d0197df20",
+      "verified_at": "2026-10-19T21:17:53.080Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T18:16:43.445Z"
+      "last_updated": "2026-10-19T21:17:53.080Z"
     },
     "okteto/okteto": {
       "repository": "okteto/okteto",
@@ -11074,14 +11074,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-langchain4j-langchain4j",
-      "content_hash": "e550d81c9704548cd19c51e42f6e8de4a333c3c74814f4a01d81ed8b097d8b91",
-      "verified_at": "2026-10-19T08:41:04.246Z",
+      "content_hash": "85e1c9c4cc854a8fb8ffd8b17e67353ecdd82ff2f990dea724b1e2e46216c094",
+      "verified_at": "2026-10-19T21:17:55.981Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T08:41:04.246Z"
+      "last_updated": "2026-10-19T21:17:55.981Z"
     },
     "railwayapp/nixpacks": {
       "repository": "railwayapp/nixpacks",
@@ -13662,6 +13662,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T21:11:34.330Z"
+    },
+    "scrapy/scrapy": {
+      "repository": "scrapy/scrapy",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-scrapy-scrapy",
+      "content_hash": "58a30a83326bb5bc55ae8c7676218f6ed53a972aeb59995076d87ef32218d205",
+      "verified_at": "2026-10-19T21:17:48.756Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T21:17:48.756Z"
+    },
+    "krzysztofzablocki/Inject": {
+      "repository": "krzysztofzablocki/Inject",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-krzysztofzablocki-inject",
+      "content_hash": "61735949d38fffb72cd1f96791a16c169dc27d8237a4d4466159e0e2b3dc80f9",
+      "verified_at": "2026-10-19T21:17:50.694Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T21:17:50.694Z"
     }
   },
   "repos": {

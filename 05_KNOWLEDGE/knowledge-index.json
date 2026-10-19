@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T21:11:40.647Z",
-  "total_verified_learnings": 923,
+  "last_updated": "2026-10-19T21:17:55.910Z",
+  "total_verified_learnings": 925,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -27443,22 +27443,29 @@
     "learn-github-krzysztofzablocki-inject": {
       "learning_id": "learn-github-krzysztofzablocki-inject",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "krzysztofzablocki-inject",
+      "source": "krzysztofzablocki/Inject",
+      "repository": "krzysztofzablocki/Inject",
       "slug": "krzysztofzablocki-inject",
       "platform": "github",
       "source_url": "https://github.com/krzysztofzablocki/Inject",
-      "source_version": "HEAD",
-      "content_hash": "ea0743247bb18935b97f06728fcd6ec5e77ca31768b0e7f153fcd6b18d79657a",
+      "source_version": "67e3ee9a",
+      "content_hash": "61735949d38fffb72cd1f96791a16c169dc27d8237a4d4466159e0e2b3dc80f9",
       "dossier_path": "07_PROJECT_LEARNING/krzysztofzablocki-inject-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/krzysztofzablocki-inject-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.873Z"
+      "verified_at": "2026-10-19T21:17:50.624Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-ksanadock-microverse": {
       "learning_id": "learn-github-ksanadock-microverse",
@@ -28010,8 +28017,8 @@
       "slug": "langchain4j-langchain4j",
       "platform": "github",
       "source_url": "https://github.com/langchain4j/langchain4j",
-      "source_version": "f2a5c72f",
-      "content_hash": "e550d81c9704548cd19c51e42f6e8de4a333c3c74814f4a01d81ed8b097d8b91",
+      "source_version": "7fcb12d4",
+      "content_hash": "85e1c9c4cc854a8fb8ffd8b17e67353ecdd82ff2f990dea724b1e2e46216c094",
       "dossier_path": "07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
       "promoted_rules": [
@@ -28036,7 +28043,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T08:41:04.209Z",
+      "verified_at": "2026-10-19T21:17:55.896Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35825,8 +35832,8 @@
       "slug": "projectdiscovery-nuclei",
       "platform": "github",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "be87581d",
-      "content_hash": "3c75c7531298ffee8b946f1d03ed145b0884b2ed0d73b504c0013aa2ab0dbf8a",
+      "source_version": "f3b817b8",
+      "content_hash": "ddec7ee69eb5470a87596b58ee436cc5a5b38592dbf8866c4f90f47d0197df20",
       "dossier_path": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "promoted_rules": [
@@ -35839,6 +35846,11 @@
           "number": 2738,
           "title": "deps): bump the modules group with 7 updates (#7891)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2817,
+          "title": "reporting): close Linear issues when a finding is fixed (#7856)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35846,7 +35858,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T18:16:43.390Z",
+      "verified_at": "2026-10-19T21:17:53.018Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56502,22 +56514,36 @@
     "learn-github-scrapy-scrapy": {
       "learning_id": "learn-github-scrapy-scrapy",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "scrapy/scrapy",
       "repository": "scrapy/scrapy",
       "slug": "scrapy-scrapy",
       "platform": "github",
       "source_url": "https://github.com/scrapy/scrapy",
-      "source_version": "main",
-      "content_hash": "684a295cc539cdba7fdc58294d5f0e05420c81cea52ee910a47ca25457c2ce33",
+      "source_version": "962197e2",
+      "content_hash": "58a30a83326bb5bc55ae8c7676218f6ed53a972aeb59995076d87ef32218d205",
       "dossier_path": "07_PROJECT_LEARNING/scrapy-scrapy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/scrapy-scrapy-learnings.md",
       "promoted_rules": [
-        "Rule 1629"
+        "Rule 1629",
+        {
+          "number": 2816,
+          "title": "Add a CONNECTION_KEEPALIVE_TIMEOUT setting (#8342)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
       ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T21:17:48.693Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-scrapy-plugins-scrapy-playwright": {
       "learning_id": "learn-github-scrapy-plugins-scrapy-playwright",
@@ -92647,6 +92673,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T21:11:40.628Z"
+    },
+    "rule-2816": {
+      "learning_id": "rule-2816",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2816,
+      "title": "Add a CONNECTION_KEEPALIVE_TIMEOUT setting (#8342)",
+      "source_url": "https://github.com/scrapy/scrapy",
+      "source_version": "962197e2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T21:17:48.693Z"
+    },
+    "rule-2817": {
+      "learning_id": "rule-2817",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2817,
+      "title": "reporting): close Linear issues when a finding is fixed (#7856)",
+      "source_url": "https://github.com/projectdiscovery/nuclei",
+      "source_version": "f3b817b8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T21:17:53.018Z"
     }
   },
   "aliases": {

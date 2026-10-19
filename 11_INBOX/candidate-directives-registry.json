@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T20:47:13.897Z",
+  "last_updated": "2026-10-19T21:17:55.977Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1949,6 +1949,28 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-trybyte-app-sitemap-validator"
+    },
+    {
+      "id": "CD-9ZHE",
+      "directive_title": "Add optional build script to automate Inject setup in SwiftUI views (use with ca",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "krzysztofzablocki/Inject",
+      "source_commit": "67e3ee9a",
+      "date_staged": "2026-10-19",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-krzysztofzablocki-inject"
+    },
+    {
+      "id": "CD-A3K9",
+      "directive_title": "Allow any agent or agentic pattern to declare an activation condition (#6731)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "langchain4j/langchain4j",
+      "source_commit": "7fcb12d4",
+      "date_staged": "2026-10-19",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-langchain4j-langchain4j"
     }
   ]
 }

@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T21:11:40.708Z",
-  "total_cycles_completed": 3472,
-  "total_learnings_persisted": 3472,
-  "total_rules_promoted": 2616,
+  "last_updated": "2026-10-19T21:17:55.978Z",
+  "total_cycles_completed": 3476,
+  "total_learnings_persisted": 3476,
+  "total_rules_promoted": 2618,
   "history": [
-    {
-      "timestamp": "2026-10-19T14:39:54.636Z",
-      "repository": "1jehuang/jcode",
-      "learningId": "learn-github-1jehuang-jcode",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T14:39:59.845Z",
-      "repository": "nsh07/Tomato",
-      "learningId": "learn-github-nsh07-tomato",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T14:46:48.119Z",
-      "repository": "tencent/Hy-Memory-30B-A3B",
-      "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T14:46:57.545Z",
-      "repository": "modelcontextprotocol/kotlin-sdk",
-      "learningId": "learn-github-modelcontextprotocol-kotlin-sdk",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T14:46:58.713Z",
       "repository": "encoredev/encore",
@@ -1403,6 +1375,34 @@
       "repository": "alibaba/zvec",
       "learningId": "learn-github-alibaba-zvec",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T21:17:48.753Z",
+      "repository": "scrapy/scrapy",
+      "learningId": "learn-github-scrapy-scrapy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T21:17:50.692Z",
+      "repository": "krzysztofzablocki/Inject",
+      "learningId": "learn-github-krzysztofzablocki-inject",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T21:17:53.077Z",
+      "repository": "projectdiscovery/nuclei",
+      "learningId": "learn-github-projectdiscovery-nuclei",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T21:17:55.978Z",
+      "repository": "langchain4j/langchain4j",
+      "learningId": "learn-github-langchain4j-langchain4j",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
