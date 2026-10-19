@@ -3224,3 +3224,9 @@ Every entry in this ledger must capture:
 | `learn-github-swiftkickmobile-swiftmessages` | `https://github.com/SwiftKickMobile/SwiftMessages` | `c0ff6c65` | Multi-dimensional audit evidence | 2026-10-19T12:01:20.189Z |
 | `learn-github-koderover-zadig` | `https://github.com/koderover/zadig` | `a73b3fc5` | Multi-dimensional audit evidence | 2026-10-19T12:01:23.016Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `469455b1` | Multi-dimensional audit evidence | 2026-10-19T12:01:26.084Z |
+| `learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1` | `https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1` | `hf-mistral` | Multi-dimensional audit evidence | 2026-10-19T12:07:40.075Z |
+| `learn-github-rsuite-rsuite` | `https://github.com/rsuite/rsuite` | `c43333c5` | Multi-dimensional audit evidence | 2026-10-19T12:07:40.584Z |
+| `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `6a2d6d70` | Multi-dimensional audit evidence | 2026-10-19T12:07:42.262Z |
+| `learn-github-parthjadhav-app-store-screenshots` | `https://github.com/ParthJadhav/app-store-screenshots` | `5386f227` | Multi-dimensional audit evidence | 2026-10-19T12:07:46.716Z |
+| `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `696d4e28` | Multi-dimensional audit evidence | 2026-10-19T12:07:52.932Z |
+| `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `a7c1f033` | Multi-dimensional audit evidence | 2026-10-19T12:07:54.032Z |

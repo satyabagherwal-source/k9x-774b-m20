@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T12:01:26.091Z",
+  "last_updated": "2026-10-19T12:07:54.039Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1294,14 +1294,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
-      "content_hash": "09313da6e9784029222312f10a0fe31bef5a351c53ca1766962233a97cec393c",
-      "verified_at": "2026-10-18T03:05:40.798Z",
+      "content_hash": "987b9a96b613cfc9faffc3a7dcbab0342908eb1f016bca3b548ae78066d1f22c",
+      "verified_at": "2026-10-19T12:07:40.081Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T03:05:40.798Z"
+      "last_updated": "2026-10-19T12:07:40.081Z"
     },
     "deepseek-ai/DeepSeek-V3": {
       "repository": "deepseek-ai/DeepSeek-V3",
@@ -3514,14 +3514,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-automattic-harper",
-      "content_hash": "6057022327c2861049c454512812c79d5c6d911d6e13efaddac6c60efc4b0793",
-      "verified_at": "2026-10-18T21:13:52.349Z",
+      "content_hash": "16f43dd3c94257714ad91af0e2fc1cc288d22cc1b5ccb2ce48d985700df107fb",
+      "verified_at": "2026-10-19T12:07:42.269Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T21:13:52.349Z"
+      "last_updated": "2026-10-19T12:07:42.269Z"
     },
     "sudheerj/reactjs-interview-questions": {
       "repository": "sudheerj/reactjs-interview-questions",
@@ -5059,14 +5059,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-doobidoo-mcp-memory-service",
-      "content_hash": "7dd15ae6e7f093795509c3ed2a596e33d01b4417187b8b50d6f254457d5ac551",
-      "verified_at": "2026-10-18T23:02:12.736Z",
+      "content_hash": "ec6a150fb01139cfbc18142f9a1c17f4bcf5a12d57fa9be15e6e8acdc3ceae8f",
+      "verified_at": "2026-10-19T12:07:54.038Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T23:02:12.736Z"
+      "last_updated": "2026-10-19T12:07:54.038Z"
     },
     "21st-dev/magic-mcp": {
       "repository": "21st-dev/magic-mcp",
@@ -5224,14 +5224,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mitmproxy-mitmproxy",
-      "content_hash": "357a195ba29e12610d34d68e856c3b8bfeeba0c189b15a9baf2ddab4bef41682",
-      "verified_at": "2026-10-18T23:14:27.061Z",
+      "content_hash": "f7545df4e809c980c1c504abeec3594be9812b095c468d5d963cb2756c0150ea",
+      "verified_at": "2026-10-19T12:07:52.939Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T23:14:27.061Z"
+      "last_updated": "2026-10-19T12:07:52.939Z"
     },
     "parthsarthi03/raptor": {
       "repository": "parthsarthi03/raptor",
@@ -6469,14 +6469,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rsuite-rsuite",
-      "content_hash": "5a8120a92a68d6840396cf69160e42d3cabc714a6123150fc00911e2947388df",
-      "verified_at": "2026-10-19T00:54:30.562Z",
+      "content_hash": "5a0fca2a1ce14882ceffc87e2c55f40fee4baefec1cb9cb0bfb41430605d7691",
+      "verified_at": "2026-10-19T12:07:40.590Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T00:54:30.562Z"
+      "last_updated": "2026-10-19T12:07:40.590Z"
     },
     "Kuberwastaken/claurst": {
       "repository": "Kuberwastaken/claurst",
@@ -11967,6 +11967,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T12:01:20.196Z"
+    },
+    "ParthJadhav/app-store-screenshots": {
+      "repository": "ParthJadhav/app-store-screenshots",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-parthjadhav-app-store-screenshots",
+      "content_hash": "99a266da4e43411c67269dbd35e5d0ce38ee31a23eb10cff386edac6b2885932",
+      "verified_at": "2026-10-19T12:07:46.722Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T12:07:46.722Z"
     }
   },
   "repos": {

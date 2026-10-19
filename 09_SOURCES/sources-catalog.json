@@ -985,8 +985,8 @@
     "sourceUrl": "https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1",
     "sourceVersion": "hf-mistralai-mixtral-8x7b-instruct-v0.1",
     "license": "Open-Source",
-    "contentHash": "09313da6e9784029222312f10a0fe31bef5a351c53ca1766962233a97cec393c",
-    "lastHarvestedAt": "2026-10-18T03:05:40.795Z",
+    "contentHash": "987b9a96b613cfc9faffc3a7dcbab0342908eb1f016bca3b548ae78066d1f22c",
+    "lastHarvestedAt": "2026-10-19T12:07:40.075Z",
     "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1"
   },
   "hf-deepseek-ai-deepseek-v3": {
@@ -2253,10 +2253,10 @@
     "repository": "Automattic/harper",
     "platform": "github",
     "sourceUrl": "https://github.com/Automattic/harper",
-    "sourceVersion": "04ba445a",
+    "sourceVersion": "6a2d6d70",
     "license": "Apache-2.0",
-    "contentHash": "6057022327c2861049c454512812c79d5c6d911d6e13efaddac6c60efc4b0793",
-    "lastHarvestedAt": "2026-10-18T21:13:52.343Z",
+    "contentHash": "16f43dd3c94257714ad91af0e2fc1cc288d22cc1b5ccb2ce48d985700df107fb",
+    "lastHarvestedAt": "2026-10-19T12:07:42.262Z",
     "learningId": "learn-github-automattic-harper"
   },
   "sudheerj-reactjs-interview-questions": {
@@ -3293,10 +3293,10 @@
     "repository": "doobidoo/mcp-memory-service",
     "platform": "github",
     "sourceUrl": "https://github.com/doobidoo/mcp-memory-service",
-    "sourceVersion": "e022bce9",
+    "sourceVersion": "a7c1f033",
     "license": "Apache-2.0",
-    "contentHash": "7dd15ae6e7f093795509c3ed2a596e33d01b4417187b8b50d6f254457d5ac551",
-    "lastHarvestedAt": "2026-10-18T23:02:12.729Z",
+    "contentHash": "ec6a150fb01139cfbc18142f9a1c17f4bcf5a12d57fa9be15e6e8acdc3ceae8f",
+    "lastHarvestedAt": "2026-10-19T12:07:54.032Z",
     "learningId": "learn-github-doobidoo-mcp-memory-service"
   },
   "21st-dev-magic-mcp": {
@@ -3403,10 +3403,10 @@
     "repository": "mitmproxy/mitmproxy",
     "platform": "github",
     "sourceUrl": "https://github.com/mitmproxy/mitmproxy",
-    "sourceVersion": "77355977",
+    "sourceVersion": "696d4e28",
     "license": "MIT",
-    "contentHash": "357a195ba29e12610d34d68e856c3b8bfeeba0c189b15a9baf2ddab4bef41682",
-    "lastHarvestedAt": "2026-10-18T23:14:27.056Z",
+    "contentHash": "f7545df4e809c980c1c504abeec3594be9812b095c468d5d963cb2756c0150ea",
+    "lastHarvestedAt": "2026-10-19T12:07:52.932Z",
     "learningId": "learn-github-mitmproxy-mitmproxy"
   },
   "parthsarthi03-raptor": {
@@ -4233,10 +4233,10 @@
     "repository": "rsuite/rsuite",
     "platform": "github",
     "sourceUrl": "https://github.com/rsuite/rsuite",
-    "sourceVersion": "c09c0d5c",
+    "sourceVersion": "c43333c5",
     "license": "MIT",
-    "contentHash": "5a8120a92a68d6840396cf69160e42d3cabc714a6123150fc00911e2947388df",
-    "lastHarvestedAt": "2026-10-19T00:54:30.556Z",
+    "contentHash": "5a0fca2a1ce14882ceffc87e2c55f40fee4baefec1cb9cb0bfb41430605d7691",
+    "lastHarvestedAt": "2026-10-19T12:07:40.584Z",
     "learningId": "learn-github-rsuite-rsuite"
   },
   "kuberwastaken-claurst": {
@@ -7958,5 +7958,15 @@
     "contentHash": "04f0fd24d4883e60422a7c9b70413f5be362e2231525a58cc36fc524bf325339",
     "lastHarvestedAt": "2026-10-19T12:01:20.189Z",
     "learningId": "learn-github-swiftkickmobile-swiftmessages"
+  },
+  "parthjadhav-app-store-screenshots": {
+    "repository": "ParthJadhav/app-store-screenshots",
+    "platform": "github",
+    "sourceUrl": "https://github.com/ParthJadhav/app-store-screenshots",
+    "sourceVersion": "5386f227",
+    "license": "MIT",
+    "contentHash": "99a266da4e43411c67269dbd35e5d0ce38ee31a23eb10cff386edac6b2885932",
+    "lastHarvestedAt": "2026-10-19T12:07:46.716Z",
+    "learningId": "learn-github-parthjadhav-app-store-screenshots"
   }
 }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source**: github ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
-> **Source Version**: `04ba445a`  
+> **Source Version**: `6a2d6d70`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T21:13:52.151Z  
+> **Timestamp**: 2026-10-19T12:07:41.941Z  
 > **Learning ID**: `learn-github-automattic-harper`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T21:13:51.676Z  
+> **Harvest Timestamp**: 2026-10-19T12:07:41.932Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Offline, privacy-first grammar checker. Fast, open-source, Rust-powered
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 16700 stars
+- **Stars / Engagement**: 16736 stars
 
 ---
 
@@ -1432,1177 +1432,98 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1873f751` (2026-10-16)
-**Commit Message**: fix(chrome-ext): Lexical tests now wait for linting to complete (#4624)
+### Incident Patch 1: `6a2d6d70` (2026-10-19)
+**Commit Message**: feat: fussy logic → fuzzy logic (#4647)
 
-* fix(chrome-ext): Lexical tests now wait for linting to complete
-
-* fix(chrome-ext): stabilize popup test setup
-
-Use native bulk input after keyboard selection for modern rich editors, while retaining paced character input for Draft.js. Wait for extension startup, isolate the welcome tab, and verify popup visibility before acting.
-
-* fix(web): honor wasm-pack's dependency lockfile
-
-Avoid source-install resolution failures on the yanked zip dependency range required by binary-install. Use the dependency versions from wasm-pack's published lockfile.
-
-**File**: `Dockerfile` (modified, +1/-1)
+**File**: `harper-core/default_config.json` (modified, +7/-0)
 ```diff
-@@ -10,7 +10,7 @@ RUN apt-get update -y && apt-get install clang -y
- RUN mkdir -p /usr/build/
- WORKDIR /usr/build/
- 
--RUN cargo install wasm-pack
-+RUN cargo install wasm-pack --locked
- 
- COPY . .
- 
+@@ -5011,6 +5011,13 @@
+ 								"label": "Friend Of Me"
+ 							}
+ 						},
++						{
++							"Bool": {
++								"name": "FuzzyLogic",
++								"state": true,
++								"label": "Fuzzy Logic"
++							}
++						},
+ 						{
+ 							"Bool": {
+ 								"name": "GildedAge",
 ```
 
-**File**: `packages/chrome-plugin/tests/editor_content.spec.ts` (modified, +39/-9)
+**File**: `harper-core/src/linting/weir_rules/FuzzyLogic.weir` (added, +9/-0)
 ```diff
-@@ -1,23 +1,53 @@
- import { expect, test } from '@playwright/test';
- import { replaceEditorContent } from './testUtils';
- 
--for (const tag of ['input', 'textarea']) {
--	test(`Ensure \`replaceEditorContent\` fills \`${tag}\` without allowing intermediate text to be linted.`, async ({
--		page,
--	}) => {
--		await page.setContent(`<${tag}></${tag}><output></output>`);
-+for (const kind of ['input', 'textarea', 'div', 'Draft.js']) {
-+	const tag = kind === 'Draft.js' ? 'div' : kind;
-+	const rich = tag === 'div';
-+	const attributes = rich
-+		? ` contenteditable="true"${kind === 'Draft.js' ? ' class="public-DraftEditor-content"' : ''}`
-+		: '';
-+	const method =
-+		kind === 'Draft.js'
-+			? 'uses character input for Draft.js'
-+			: rich
-+				? 'uses keyboard selection and bulk input for div'
-+				: `fills ${tag}`;
+@@ -0,0 +1,9 @@
++expr main (fussy logic)
 +
-+	test(`replaceEditorContent ${method}`, async ({ page }) => {
-+		await page.setContent(`<${tag}${attributes}></${tag}><output></output>`);
-+		await page.locator(tag).fill('Old text');
- 		await page.evaluate(() => {
- 			const values: string[] = [];
- 			document.addEventListener('input', (event) => {
--				values.push((event.target as HTMLInputElement).value);
-+				const target = event.target as HTMLElement;
-+				values.push('value' in target ? String(target.value) : (target.textContent ?? ''));
- 				document.querySelector('output')!.textContent = JSON.stringify(values);
- 			});
- 		});
- 
- 		const text = 'This is a mistaek.';
- 		await replaceEditorContent(page.locator(tag), text);
--		await expect(page.locator(tag)).toHaveValue(text);
--		// The prefix "This is a m" has a different lint from the completed sentence.
--		await expect(page.locator('output')).toHaveText(JSON.stringify([text]));
-+		if (rich) {
-+			await expect(page.locator(tag)).toHaveText(text);
-+		} else {
-+			await expect(page.locator(tag)).toHaveValue(text);
-+		}
-+		// Native setup must not expose partial words. Draft.js is the legacy exception
-+		// because its selection model needs individual character key events.
-+		const values =
-+			kind === 'Draft.js'
-+				? ['', ...Array.from(text, (_, index) => text.slice(0, index + 1))]
-+				: rich
-+					? ['', text]
-+					: [text];
-+		await expect(page.locator('output')).toHaveText(JSON.stringify(values));
- 	});
- }
++let message "Unless this is intentional humorous wordplay, use 'fuzzy logic' instead of 'fussy logic'."
++let description "Corrects `fussy logic` to `fuzzy logic`."
++let kind "Eggcorn"
++let becomes "fuzzy logic"
 +
-+test('replaceEditorContent preserves textarea line breaks', async ({ page }) => {
-+	await page.setContent('<textarea></textarea>');
-+	const editor = page.locator('textarea');
-+	await replaceEditorContent(editor, 'Valid words\ntset here.', true);
-+	await expect(editor).toHaveValue('Valid words\ntset here.');
-+});
-```
-
-**File**: `packages/chrome-plugin/tests/fixtures.ts` (modified, +56/-26)
-```diff
-@@ -4,34 +4,64 @@ import { test as base, expect } from '@playwright/test';
- import { withExtension } from 'playwright-webextext';
- 
- const pathToExtension = path.join(import.meta.dirname, '../build');
-+const welcomeUrl = 'https://writewithharper.com/install-browser-extension';
- 
- const test = base.extend({
--	context: async (
--		{ playwright, browserName, contextOptions, launchOptions, headless },
--		use,
--		testInfo,
--	) => {
--		if (browserName === 'chromium' && headless) {
--			throw new Error('Chromium extensions require headed mode');
--		}
--
--		const profile = testInfo.outputPath('browser-profile');
--		await mkdir(profile, { recursive: true });
--
--		const browserType = withExtension(playwright[browserName], pathToExtension);
--		const context = await browserType.launchPersistentContext(profile, {
--			...contextOptions,
--			...launchOptions,
--			headless,
--		});
--
--		try {
--			await use(context);
--		} finally {
--			await context.close();
--			await rm(profile, { recursive: true, force: true });
--		}
--	},
-+	context: [
-+		async ({ playwright, browserName, contextOptions, launchOptions, headless }, use, testInfo) => {
-+			if (browserName === 'chromium' && headless) {
-+				throw new Error('Chromium extensions require headed mode');
-+			}
-+
-+			const profile = testInfo.outputPath('browser-profile');
-+			await mkdir(profile, { recursive: true });
-+
-+			const browserType = withExtension(playwright[browserName], pathToExtension);
-+			const context = await browserType.launchPersistentContext(profile, {
-+				...contextOptions,
-+				...launchOptions,
-+				headless,
-+			});
-+
-+			try {
-+				// The install tab can steal focus and pause Firefox's animation frames.
-+				// Stub its network load, then close it before creating the test page.
-+				await context.route(`${welcomeUrl}**`, (route) =>
-+					route.fulfill({ contentType: 'text/html', body: '<title>Installed</title>' }),
-+				);
-+				await expect
-+					.poll(() => context.pages().some((page) => page.url().startsWith(welcomeUrl)), {
-+						timeout: 90000,
-+						message: 'The extension install hook should open its welcome tab',
-+					})
-+					.toBe(true);
-+				for (const page of context.pages()) {
-+					if (page.url().startsWith(welcomeUrl)) await page.close();
-+				}
-+
-+				// A completed lint proves that the background linter and content script
-+				// are ready. Keep cold startup out of each test's UI assertion budget.
-+				// A normal page works in Firefox too, which does not expose background pages.
-+				const startupPage = await context.newPage();
-+				try {
-+					await startupPage.goto('http://localhost:8081/simple_textarea.html');
-+					await startupPage.bringToFront();
-+					await startupPage.locator('textarea').fill('This is an test');
-+					await expect(startupPage.locator('#harper-highlight').first()).toBeVisible({
-+						timeout: 90000,
-+					});
-+				} finally {
-+					await startupPage.close();
-+				}
-+
-+				await use(context);
-+			} finally {
-+				await context.close();
-+				await rm(profile, { recursive: true, force: true });
-+			}
-+		},
-+		{ scope: 'test', timeout: 120000 },
-+	],
- });
- 
- export { test, expect };
-```
-
-**File**: `packages/chrome-plugin/tests/popup_reconnect.spec.ts` (modified, +6/-2)
-```diff
-@@ -3,12 +3,13 @@ import {
- 	getTextarea,
- 	openHarperPopupFromEditorPointerDown,
- 	replaceEditorContent,
--	waitForHarperHighlightCenter,
-+	waitForHighlightsToSettle,
- } from './testUtils';
- 
- const TEST_PAGE_URL = 'http://localhost:8081/popup_reconnect.html';
- 
- test('Reconnects the popup host before opening the popover', async ({ page }) => {
-+	test.slow();
- 	const pageErrors: string[] = [];
- 	const consoleErrors: string[] = [];
- 
-@@ -26,7 +27,9 @@ test('Reconnects the popup host before opening the popover', async ({ page }) =>
- 	const editor = getTextarea(page);
- 	await replaceEditorContent(editor, 'This is an test');
- 
--	expect(await waitForHarperHighlightCenter(page, 12000)).not.toBeNull();
-+	// Finish linting before disconnecting the popup host. Do not wait for a render
-+	// after replacing the body: the pointer handler must reconnect the host itself.
-+	await waitForHighlightsToSettle(page);
- 
- 	await page.evaluate(() => {
- 		(
-@@ -38,6 +41,7 @@ test('Reconnects the popup host before opening the popover', async ({ page }) =>
- 
- 	const opened = await openHarperPopupFromEditorPointerDown(page, editor);
- 	expect(opened).toBe(true);
-+	await expect(page.getByTitle('Click to replace "an" with "a"')).toBeVisible();
- 
- 	const errors = [...pageErrors, ...consoleErrors].join('\n');
- 	expect(errors).not.toContain("Failed to execute 'showPopover'");
-```
-
-**File**: `packages/chrome-plugin/tests/testUtils.ts` (modified, +75/-25)
-```diff
-@@ -72,7 +72,7 @@ export function getDraftEditor(page: Page): Locator {
- /** Replace the content of a text editor. */
- export async function replaceEditorContent(editorEl: Locator, text: string, softBreaks = false) {
- 	// Seed form controls in one update so popup tests cannot click lints for partial words.
--	// Rich editors still need their keyboard-driven editing behavior.
-+	// Rich editors still need keyboard selection, deletion, and line breaks.
- 	if (await isFormElement(editorEl)) {
- 		await editorEl.fill(text);
- 		return;
-@@ -85,9 +85,18 @@ export async function replaceEditorContent(editorEl: Locator, text: string, soft
- 
- 	const lines = text.split('\n');
- 	const breakKey = softBreaks ? 'Shift+Enter' : 'Enter';
-+	const needsCharacterInput = await editorEl.evaluate((el) =>
-+		el.classList.contains('public-DraftEditor-content'),
-+	);
- 
- 	for (let i = 0; i < lines.length; i++) {
--		await editorEl.pressSequentially(lines[i]);
-+		if (needsCharacterInput) {
-+			// Draft.js needs character key events at a normal typing cadence for its selection model.
-+			await editorEl.pressSequentially(lines[i], { delay: 200 });
-+		} else {
-+			// Native text input updates the editor model without exposing partial words to linting.
-+			await editorEl.page().keyboard.insertText(lines[i]);
-+		}
- 		if (i < lines.length - 1) {
- 			await editorEl.press(breakKey);
- 		}
-@@ -104,6 +113,44 @@ export function getHarperHighlights(page: Page): Locator {
- 	return page.locator('#harper-highlight');
- }
- 
-+export async function waitForHighlightsToSettle(
-+	page: Page,
-+	quietMs = 250,
-+	timeoutMs = 30000,
-+): Promise<void> {
-+	let previous: string | undefined;
-+	let changedAt = performance.now();
-+
-+	await expect
-+		.poll(
-+			async () => {
-+				const snapshot = await getHarperHighlights(page).evaluateAll((highlights) =>
-+					JSON.stringify(
-+						highlights.flatMap((highlight) => {
-+							const { x, y, width, height } = highlight.getBoundingClientRect();
-+							const style = getComputedStyle(highlight);
-+							if (width <= 0 || height <= 0 || style.visibility !== 'visible') return [];
-+							return [[x, y, width, height, style.borderBottomColor, style.backgroundColor]];
-+						}),
-+					),
-+				);
-+				const now = performance.now();
-+				if (snapshot === '[]' || snapshot !== previous) {
-+					previous = snapshot;
-+					changedAt = now;
-+					return false;
-+				}
-+				return now - changedAt >= quietMs;
-+			},
-+			{
-+				message: `Visible highlight boxes should stay unchanged for ${quietMs} ms`,
-+				intervals: [10],
-+				timeout: timeoutMs,
-+			},
-+		)
-+		.toBe(true);
-+}
-+
- /**
-  * Wait for the first Harper highlight to exist and return its screen-space center.
-  *
-@@ -148,14 +195,14 @@ export async function assertLocatorsResolveEqually(page: Page, a: Locator, b: Lo
- 	expect(areSame).toBe(true);
- }
- 
--/** Locates the first Harper highlight on the page and clicks it.
-- * It should result in the popup opening.
-- * Returns whether the highlight was found. */
-+/** Click the first Harper highlight and check that its popup opens.
-+ * Returns false if no highlight was found; a missing popup fails the test. */
- export async function clickHarperHighlight(page: Page): Promise<boolean> {
- 	const center = await waitForHarperHighlightCenter(page);
- 	if (center == null) return false;
- 
- 	await page.mouse.click(center.x, center.y);
-+	await expect(page.locator('.harper-container')).toBeVisible();
- 	return true;
- }
- 
-@@ -177,24 +224,20 @@ export async function openHarperPopupFromEditorPointerDown(
- 		return false;
- 	}
- 
--	try {
--		await editor.dispatchEvent('pointerdown', {
--			bubbles: true,
--			composed: true,
--			button: 0,
--			buttons: 1,
--			clientX: center.x,
--			clientY: center.y,
--			pointerId: 1,
--			pointerType: 'mouse',
--			screenX: center.x,
--			screenY: center.y,
--		});
--		await page.locator('.harper-container').waitFor({ state: 'visible', timeout: 2000 });
--		return true;
--	} catch {
--		return false;
--	}
-+	await editor.dispatchEvent('pointerdown', {
-+		bubbles: true,
-+		composed: true,
-+		button: 0,
-+		buttons: 1,
-+		clientX: center.x,
-+		clientY: center.y,
-+		pointerId: 1,
-+		pointerType: 'mouse',
-+		screenX: center.x,
-+		screenY: center.y,
-+	});
-+	await expect(page.locator('.harper-container')).toBeVisible();
-+	return true;
- }
- 
- /** Grab the first `<textarea />` on a page. */
-@@ -254,10 +297,14 @@ export async function testBasicSuggestion(
- 			await setup(page, editor);
- 		}
- 		await replaceEditorContent(editor, 'This is an test');
-+		await assertEditorText(editor, 'This is an test');
-+		await waitForHighlightsToSettle(page);
- 
- 		const opened = await clickHarperHighlight(page);
- 		expect(opened).toBe(true);
--		await page.getByTitle('Click to replace "an" with "a"').click();
-+		const suggestion = page.getByTitle('Click to replace "an" with "a"');
-+		await expect(suggestion).toBeVisible();
-+		await suggestion.click();
- 
- 		await assertEditorText(editor, 'This is a test');
- 		await expect(editor).toBeFocused();
-@@ -298,7 +345,7 @@ expo
++test "Implementation of Motor Speed Control by Using Fussy Logic." "Implementation of Motor Speed Control by Using Fuzzy Logic."
++test "A ROS Tutorial to control a virtual V-REP Hexacopter using Fussy logic" "A ROS Tutorial to control a virtual V-REP Hexacopter using Fuzzy logic"
 ```
 
 ---
 
-### Incident Patch 2: `39d96ad0` (2026-10-15)
-**Commit Message**: ci(desktop): sign Windows releases with Buildkite (#4576)
+### Incident Patch 2: `32608c24` (2026-10-19)
+**Commit Message**: feat: to no vail/vale/veil → to no avail (#4633)
 
-* ci(desktop): sign Windows releases with Buildkite
-
-* docs(desktop): simplify Windows signing guidance
-
-* fix(desktop): correct Windows setup and release handoff
-
-* ci(desktop): attach the Windows installer with a Node uploader
-
-Replace the Ruby DesktopRelease module with .buildkite/commands/upload-release.cjs
-and leave the macOS lane as it was. The uploader never creates a release: it
-attaches the signed installer to the tag's draft, choosing the draft that holds
-the macOS .dmg when GitHub Actions has created others, and refuses published
-releases. Retries replace the installer and leave notes and other assets alone.
-
-The release script reads the version with node instead of jq, the Windows build
-fails early on a mismatched tag, and the unsigned GitHub Actions build no longer
-runs on tags.
-
-Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
-
-* docs(desktop): describe the Windows release upload
-
-Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
-
-* ci(desktop): report the release upload status and retry network failures
-
-The upload step now publishes its own GitHub commit status, since the
-pipeline's automatic statuses a
-
-**File**: `.buildkite/commands/build-desktop-windows.ps1` (added, +73/-0)
+**File**: `harper-core/default_config.json` (modified, +7/-0)
 ```diff
-@@ -0,0 +1,73 @@
-+$ErrorActionPreference = 'Stop'
-+
-+function Invoke-Checked([scriptblock] $Command) {
-+    & $Command
-+    if ($LASTEXITCODE -ne 0) { throw "Command failed (exit $LASTEXITCODE): $Command" }
-+}
-+
-+$repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
-+Set-Location $repoRoot
-+$config = Get-Content 'harper-desktop/src-tauri/tauri.conf.json' -Raw | ConvertFrom-Json
-+if ($env:BUILDKITE_TAG -and $env:BUILDKITE_TAG -ne "v$($config.version)") {
-+    throw "Release tag must match v$($config.version)"
-+}
-+
-+Write-Host '--- :rust: Prepare Rust and build tools'
-+$cargoBin = if ($env:CARGO_HOME) { Join-Path $env:CARGO_HOME 'bin' } else { Join-Path $env:USERPROFILE '.cargo/bin' }
-+$env:PATH = "$cargoBin;$env:PATH"
-+if (-not (Get-Command rustup -ErrorAction SilentlyContinue)) {
-+    # The agent image has a Chocolatey Rust on PATH; rustup can coexist with it.
-+    $env:RUSTUP_INIT_SKIP_PATH_CHECK = 'yes'
-+    # rustup selects installer mode from its executable name.
-+    $rustupInstaller = Join-Path $env:TEMP 'rustup-init.exe'
-+    Invoke-WebRequest 'https://win.rustup.rs/x86_64' -OutFile $rustupInstaller
-+    Invoke-Checked { & $rustupInstaller -y --no-modify-path --default-toolchain stable --profile minimal }
-+}
-+Invoke-Checked { rustup update stable --no-self-update }
-+Invoke-Checked { rustup target add wasm32-unknown-unknown x86_64-pc-windows-msvc }
-+
-+if (-not (Get-Command cargo-binstall -ErrorAction SilentlyContinue)) {
-+    $binstallInstaller = Join-Path $env:TEMP 'harper-install-binstall.ps1'
-+    Invoke-WebRequest 'https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.ps1' -OutFile $binstallInstaller -UseBasicParsing
-+    Invoke-Checked { & $binstallInstaller }
-+}
-+Invoke-Checked { cargo binstall --no-confirm --force just wasm-pack }
-+Invoke-Checked { npm install --global pnpm@10.10.0 }
-+$pnpmPrefix = Invoke-Checked { npm prefix --global }
-+$env:PATH = "$pnpmPrefix;$env:PATH"
-+
-+Write-Host '--- :lock: Set up Azure Trusted Signing'
-+$setupScript = (Get-Command setup_azure_trusted_signing.ps1 -ErrorAction Stop).Source
-+Invoke-Checked { & $setupScript }
-+
-+# Absolute paths and separate arguments handle NSIS's working directory and spaces.
-+$signingConfig = Join-Path $env:TEMP "harper-windows-signing-$([guid]::NewGuid()).json"
-+$overlay = @{
-+    bundle = @{
-+        createUpdaterArtifacts = $false
-+        windows = @{
-+            signCommand = @{
-+                cmd = (Get-Command node -ErrorAction Stop).Source
-+                args = @((Join-Path $PSScriptRoot 'sign-windows.cjs'), '%1')
-+            }
-+        }
-+    }
-+} | ConvertTo-Json -Depth 5
-+[System.IO.File]::WriteAllText($signingConfig, $overlay, [System.Text.UTF8Encoding]::new($false))
-+
-+try {
-+    Write-Host '--- :tauri: Build and sign Harper for Windows'
-+    Invoke-Checked { just build-desktop-windows-signed $signingConfig }
-+
-+    $bundleDir = 'harper-desktop/src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis'
-+    $installers = @(Get-ChildItem $bundleDir -Filter '*-setup.exe' -File)
-+    $expectedName = "Harper_$($config.version)_x64-setup.exe"
-+    if ($installers.Count -ne 1 -or $installers[0].Name -ne $expectedName) {
-+        throw "Expected exactly one Windows installer named $expectedName."
-+    }
-+
-+    Write-Host '--- :mag: Verify the release installer'
-+    Invoke-Checked { & $env:SIGNTOOL_PATH verify /pa /all /v /tw $installers[0].FullName }
-+} finally {
-+    Remove-Item $signingConfig -ErrorAction SilentlyContinue
-+}
+@@ -6033,6 +6033,13 @@
+ 								"label": "Tongue In Cheek"
+ 							}
+ 						},
++						{
++							"Bool": {
++								"name": "ToNoAvail",
++								"state": true,
++								"label": "To No Avail"
++							}
++						},
+ 						{
+ 							"Bool": {
+ 								"name": "ToteTout",
 ```
 
-**File**: `.buildkite/commands/release-desktop-windows.sh` (added, +15/-0)
+**File**: `harper-core/src/linting/weir_rules/ToNoAvail/VailVale.weir` (added, +9/-0)
 ```diff
-@@ -0,0 +1,15 @@
-+#!/usr/bin/env bash
-+set -euo pipefail
+@@ -0,0 +1,9 @@
++expr main <(to no [vale, vail]), ([vale, vail])>
 +
-+cd "$(dirname "$0")/../.."
-+VERSION=$(node -p "require('./harper-desktop/src-tauri/tauri.conf.json').version")
-+INSTALLER="harper-desktop/src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/Harper_${VERSION}_x64-setup.exe"
++let message "Use the correct phrase for being ineffective."
++let description "Corrects wrong variants of `to no avail`, meaning `without success`."
++let kind "WordChoice"
++let becomes "avail"
 +
-+echo "--- :package: Download verified Windows installer"
-+# The Windows agent stores the artifact path with backslashes. Download patterns
-+# match the whole path, and the agent converts the separators when downloading.
-+buildkite-agent artifact download "*Harper_${VERSION}_x64-setup.exe" . --step build-desktop-windows
-+[[ -f "$INSTALLER" ]] || { echo "No Windows installer downloaded" >&2; exit 1; }
-+
-+echo "--- :rocket: Upload Windows installer to the draft release"
-+node .buildkite/commands/upload-release.cjs "$BUILDKITE_TAG" "$INSTALLER"
++test "I tried to install different versions to no vail." "I tried to install different versions to no avail."
++test "I've tried updating the gpu driver, reinstalling it but to no vale." "I've tried updating the gpu driver, reinstalling it but to no avail."
 ```
 
-**File**: `.buildkite/commands/sign-windows.cjs` (added, +48/-0)
+**File**: `harper-core/src/linting/weir_rules/ToNoAvail/Veil.weir` (added, +8/-0)
 ```diff
-@@ -0,0 +1,48 @@
-+const { execFileSync } = require('node:child_process');
+@@ -0,0 +1,8 @@
++expr main <(but to no veil), (veil)>
 +
-+// Tauri calls this for the app, NSIS uninstaller, installer, and bundled DLLs.
-+// setup_azure_trusted_signing.ps1 supplies these paths and Azure credentials.
-+function signWindows(file, env = process.env, run = execFileSync) {
-+	if (!file || !file.trim()) {
-+		throw new Error('Expected a file to sign.');
-+	}
++let message "Use the correct phrase for being ineffective."
++let description "Corrects wrong variants of `to no avail`, meaning `without success`."
++let kind "WordChoice"
++let becomes "avail"
 +
-+	const required = ['SIGNTOOL_PATH', 'AZURE_CODE_SIGNING_DLIB', 'AZURE_METADATA_JSON'];
-+	const missing = required.filter((name) => !env[name]?.trim());
-+	if (missing.length) {
-+		throw new Error(`Azure signing setup is incomplete: ${missing.join(', ')}`);
-+	}
-+
-+	run(
-+		env.SIGNTOOL_PATH,
-+		[
-+			'sign',
-+			'/v',
-+			'/d',
-+			'Harper',
-+			'/fd',
-+			'SHA256',
-+			'/tr',
-+			env.AZURE_TIMESTAMP_SERVER || 'http://timestamp.acs.microsoft.com',
-+			'/td',
-+			'SHA256',
-+			'/dlib',
-+			env.AZURE_CODE_SIGNING_DLIB,
-+			'/dmdf',
-+			env.AZURE_METADATA_JSON,
-+			file,
-+		],
-+		{ stdio: 'inherit' },
-+	);
-+	// Verify before packaging: Tauri later restores the original unsigned app binary.
-+	run(env.SIGNTOOL_PATH, ['verify', '/pa', '/all', '/v', '/tw', file], { stdio: 'inherit' });
-+}
-+
-+if (require.main === module) {
-+	if (process.argv.length !== 3) {
-+		throw new Error('Usage: node sign-windows.cjs <file>');
-+	}
-+	signWindows(process.argv[2]);
-+}
-+
-+module.exports = { signWindows };
-```
-
-**File**: `.buildkite/commands/sign-windows.test.cjs` (added, +92/-0)
-```diff
-@@ -0,0 +1,92 @@
-+const assert = require('node:assert/strict');
-+const { test } = require('node:test');
-+const { signWindows } = require('./sign-windows.cjs');
-+
-+const env = {
-+	SIGNTOOL_PATH: 'C:\\Program Files\\Windows Kits\\signtool.exe',
-+	AZURE_CODE_SIGNING_DLIB: 'C:\\Signing Tools\\Azure.CodeSigning.Dlib.dll',
-+	AZURE_METADATA_JSON: 'C:\\Signing Tools\\metadata.json',
-+};
-+
-+test('signs and verifies the same file using separate arguments, including spaces', () => {
-+	const file = 'C:\\Build Output\\Harper_2.12.0_x64-setup.exe';
-+	const calls = [];
-+	signWindows(file, env, (...args) => calls.push(args));
-+	assert.deepEqual(calls, [
-+		[
-+			env.SIGNTOOL_PATH,
-+			[
-+				'sign',
-+				'/v',
-+				'/d',
-+				'Harper',
-+				'/fd',
-+				'SHA256',
-+				'/tr',
-+				'http://timestamp.acs.microsoft.com',
-+				'/td',
-+				'SHA256',
-+				'/dlib',
-+				env.AZURE_CODE_SIGNING_DLIB,
-+				'/dmdf',
-+				env.AZURE_METADATA_JSON,
-+				file,
-+			],
-+			{ stdio: 'inherit' },
-+		],
-+		[env.SIGNTOOL_PATH, ['verify', '/pa', '/all', '/v', '/tw', file], { stdio: 'inherit' }],
-+	]);
-+});
-+
-+for (const name of Object.keys(env)) {
-+	for (const value of [undefined, '', '   ']) {
-+		test(`rejects missing or blank ${name}: ${JSON.stringify(value)}`, () => {
-+			assert.throws(
-+				() =>
-+					signWindows('Harper.exe', { ...env, [name]: value }, () => assert.fail('must not sign')),
-+				new RegExp(name),
-+			);
-+		});
-+	}
-+}
-+
-+test('rejects an absent file before calling SignTool', () => {
-+	for (const file of [undefined, '', ' ']) {
-+		assert.throws(() => signWindows(file, env, () => assert.fail('must not sign')), /file to sign/);
-+	}
-+});
-+
-+test('does not verify or report success after signing fails', () => {
-+	const failure = new Error('Azure signing failed');
-+	const commands = [];
-+	assert.throws(
-+		() =>
-+			signWindows('Harper.exe', env, (_, args) => {
-+				commands.push(args[0]);
-+				throw failure;
-+			}),
-+		(error) => error === failure,
-+	);
-+	assert.deepEqual(commands, ['sign']);
-+});
-+
-+test('fails the hook if signature verification fails', () => {
-+	const failure = new Error('Signature verification failed');
-+	assert.throws(
-+		() =>
-+			signWindows('Harper.exe', env, (_, args) => {
-+				if (args[0] === 'verify') throw failure;
-+			}),
-+		(error) => error === failure,
-+	);
-+});
-+
-+test('uses the toolkit timestamp server when supplied', () => {
-+	const calls = [];
-+	signWindows(
-+		'uninstall.exe',
-+		{ ...env, AZURE_TIMESTAMP_SERVER: 'http://timestamp.example.test' },
-+		(_, args) => calls.push(args),
-+	);
-+	assert.equal(calls[0][calls[0].indexOf('/tr') + 1], 'http://timestamp.example.test');
-+});
-```
-
-**File**: `.buildkite/commands/upload-release.cjs` (added, +142/-0)
-```diff
-@@ -0,0 +1,142 @@
-+const { readFile, stat } = require('node:fs/promises');
-+const { basename } = require('node:path');
-+const { setTimeout: sleep } = require('node:timers/promises');
-+
-+// Attach Windows artifacts to the tag's draft release. This script never creates
-+// a release: the macOS Buildkite step and the GitHub Actions workflows do that.
-+const REPOSITORY = 'Automattic/harper';
-+
-+// The macOS step creates its draft earlier in the same build and is the only job
-+// that uploads a .dmg, so that draft is the one to use when GitHub Actions jobs
-+// have created others for the same tag.
-+function selectDraft(releases, tag) {
-+	const matches = releases.filter((release) => release.tag_name === tag);
-+	if (matches.some((release) => release.draft !== true)) {
-+		throw new Error(`Refusing to upload assets to published release ${tag}.`);
-+	}
-+	if (matches.length === 0) {
-+		throw new Error(
-+			`No draft release for ${tag} yet. Retry once the macOS or GitHub Actions jobs have created one.`,
-+		);
-+	}
-+	const candidates =
-+		matches.length === 1
-+			? matches
-+			: matches.filter((release) => release.assets.some((asset) => asset.name.endsWith('.dmg')));
-+	if (candidates.length !== 1) {
-+		const ids = matches.map((release) => release.id).join(', ');
-+		throw new Error(
-+			`Expected one draft for ${tag} holding the macOS .dmg; found ${matches.length} drafts (ids ${ids}). Reconcile them before retrying.`,
-+		);
-+	}
-+	return candidates[0];
-+}
-+
-+async function uploadRelease({ repository, tag, assets, token, request = fetch, wait = sleep }) {
-+	if (!token?.trim()) throw new Error('GITHUB_TOKEN is required.');
-+	if (!repository || !tag) throw new Error('A repository and release tag are required.');
-+	if (!assets.length) throw new Error('At least one release asset is required.');
-+	const names = assets.map((path) => basename(path));
-+	if (new Set(names).size !== names.length) {
-+		throw new Error('Release asset filenames must be unique.');
-+	}
-+	for (const path of assets) {
-+		if (!(await stat(path)).isFile()) throw new Error(`Not a release asset file: ${path}`);
-+	}
-+
-+	const api = `https://api.github.com/repos/${repository}`;
-+	function transientError(method, url, error) {
-+		const wrapped = new Error(
-+			`GitHub ${method} ${url} failed: ${error.message}${error.cause ? `: ${error.cause.message}` : ''}`,
-+			{ cause: error },
-+		);
-+		wrapped.transient = true;
-+		return wrapped;
-+	}
-+	async function json(url, { method = 'GET', body } = {}) {
-+		const response = await request(url, {
-+			method,
-+			headers: {
-+				Authorization: `Bearer ${token}`,
-+				Accept: 'application/vnd.github+json',
-+				'X-GitHub-Api-Version': '2022-11-28',
-+				...(body ? { 'Content-Type': 'application/octet-stream' } : {}),
-+			},
-+			body,
-+			signal: AbortSignal.timeout(10 * 60 * 1000),
-+		}).catch((error) => {
-+			throw transientError(method, url, error);
-+		});
-+		if (!response.ok) {
-+			const details = await response.json().catch(() => ({}));
-+			const error = new Error(
-+				`GitHub ${method} ${url} failed: HTTP ${response.status}: ${details.message || response.statusText}` +
-+					(details.errors ? ` ${JSON.stringify(details.errors)}` : ''),
-+			);
-+			error.status = response.status;
-+			error.transient = response.status >= 500 && response.status < 600;
-+			throw error;
-+		}
-+		if (response.status === 204) return null;
-+		// The connection can still drop while the body is read.
-+		return response.json().catch((error) => {
-+			throw transientError(method, url, error);
-+		});
-+	}
-+	async function list(path) {
-+		const items = [];
-+		for (let page = 1; ; page++) {
-+			const batch = await json(`${api}/${path}?per_page=100&page=${page}`);
-+			items.push(...batch);
-+			if (batch.length < 100) return items;
-+		}
-+	}
-+
-+	// Network failures and 5xx responses are retried; refusals and 4xx are not.
-+	async function retry(label, action) {
-+		for (let attempt = 1; ; attempt++) {
-+			try {
-+				return await action();
-+			} catch (error) {
-+				if (!error.transient || attempt === 3) throw error;
-+				console.warn(`${error.message}. Retrying ${label} (${attempt + 1}/3).`);
-+				await wait(attempt * 1000);
-+			}
-+		}
-+	}
-+
-+	const release = selectDraft(await retry('release lookup', () => list('releases')), tag);
-+	for (const path of assets) {
-+		const name = basename(path);
-+		const body = await readFile(path);
-+		await retry(name, async () => {
-+			const current = await json(`${api}/releases/${release.id}`);
-+			if (current.draft !== true) {
-+				throw new Error(`Refusing to upload assets to published release ${tag}.`);
-+			}
-+			// A failed upload can leave a partial asset. Re-list on each attempt.
-+			const existing = await list(`releases/${release.id}/assets`);
-+			for (const asset of existing.filter((asset) => asset.name === name)) {
-+				await json(`${api}/releases/assets/${asset.id}`, { method: 'DELETE' });
-+			}
-+			await json(
-+				`https://uploads.github.com/repos/${repository}/releases/${release.id}/assets?name=${encodeURIComponent(n
-```
-
-**File**: `.buildkite/commands/upload-release.test.cjs` (added, +374/-0)
-```diff
-@@ -0,0 +1,374 @@
-+const assert = require('node:assert/strict');
-+const { once } = require('node:events');
-+const { mkdtemp, rm, writeFile } = require('node:fs/promises');
-+const { createServer } = require('node:http');
-+const { tmpdir } = require('node:os');
-+const { basename, join } = require('node:path');
-+const { test } = require('node:test');
-+const { uploadRelease } = require('./upload-release.cjs');
-+
-+async function fixture(t) {
-+	const directory = await mkdtemp(join(tmpdir(), 'Harper release '));
-+	t.after(() => rm(directory, { recursive: true, force: true }));
-+	const file = join(directory, 'Harper_9.0.0_x64-setup.exe');
-+	await writeFile(file, Buffer.from([0, 255, 1, 2]));
-+	const draft = {
-+		id: 123,
-+		tag_name: 'v9.0.0',
-+		draft: true,
-+		name: 'Release title',
-+		body: 'Maintainer release notes',
-+		html_url: 'https://github.com/example/harper/releases/123',
-+		assets: [],
-+	};
-+	const state = {
-+		releases: [draft],
-+		assets: [{ id: 1, name: 'Harper.dmg' }],
-+		calls: [],
-+		failure: undefined,
-+	};
-+	let nextId = 2;
-+	const request = async (url, options) => {
-+		const { method, body } = options;
-+		const { pathname, searchParams } = new URL(url);
-+		state.calls.push({ url, method });
-+		if (state.failure === method)
-+			return Response.json({ message: 'test failure' }, { status: 403 });
-+		if (method === 'GET') {
-+			if (pathname === '/repos/example/harper/releases/123') return Response.json(draft);
-+			const entries = pathname.endsWith('/assets') ? state.assets : state.releases;
-+			const offset = (Number(searchParams.get('page')) - 1) * 100;
-+			return Response.json(entries.slice(offset, offset + 100));
-+		}
-+		if (method === 'DELETE') {
-+			const id = Number(pathname.split('/').pop());
-+			state.assets = state.assets.filter((asset) => asset.id !== id);
-+			return new Response(null, { status: 204 });
-+		}
-+		assert.equal(method, 'POST');
-+		assert.equal(pathname, '/repos/example/harper/releases/123/assets');
-+		const asset = { id: nextId++, name: searchParams.get('name'), bytes: [...body] };
-+		state.assets.push(asset);
-+		return Response.json(asset, { status: 201 });
-+	};
-+	const options = {
-+		repository: 'example/harper',
-+		tag: 'v9.0.0',
-+		assets: [file],
-+		token: 'test-token',
-+		request,
-+		wait: t.mock.fn(async () => {}),
-+	};
-+	return { directory, file, draft, state, options };
-+}
-+
-+test('uploads binary data and replaces only matching assets on a rerun over HTTP', async (t) => {
-+	const { file, draft, state, options } = await fixture(t);
-+	const metadata = structuredClone(draft);
-+	const server = createServer(async (request, response) => {
-+		try {
-+			assert.equal(request.headers.authorization, 'Bearer test-token');
-+			assert.equal(request.headers['x-github-api-version'], '2022-11-28');
-+			const chunks = [];
-+			for await (const chunk of request) chunks.push(chunk);
-+			if (request.method === 'POST') {
-+				assert.equal(request.headers['content-type'], 'application/octet-stream');
-+			}
-+			const result = await options.request(`https://api.github.com${request.url}`, {
-+				method: request.method,
-+				body: Buffer.concat(chunks),
-+			});
-+			response.writeHead(result.status, { 'Content-Type': 'application/json' });
-+			response.end(await result.text());
-+		} catch (error) {
-+			response.writeHead(500);
-+			response.end(error.message);
-+		}
-+	});
-+	server.listen(0, '127.0.0.1');
-+	await once(server, 'listening');
-+	t.after(() => new Promise((resolve) => server.close(resolve)));
-+	const request = (url, init) => {
-+		const parsed = new URL(url);
-+		return fetch(
-+			`http://127.0.0.1:${server.address().port}${parsed.pathname}${parsed.search}`,
-+			init,
-+		);
-+	};
-+	assert.equal(await uploadRelease({ ...options, request }), draft.html_url);
-+	await writeFile(file, Buffer.from([255, 0, 42]));
-+	await uploadRelease({ ...options, request });
-+	assert.deepEqual(state.releases, [metadata]);
-+	assert.deepEqual(state.assets, [
-+		{ id: 1, name: 'Harper.dmg' },
-+		{ id: 3, name: basename(file), bytes: [255, 0, 42] },
-+	]);
-+	assert.equal(state.calls.filter((call) => call.method === 'DELETE').length, 1);
-+});
-+
-+test('attaches to the draft holding the macOS dmg when Actions created another draft', async (t) => {
-+	const { draft, state, options } = await fixture(t);
-+	state.releases = [
-+		{ ...draft, id: 124, assets: [{ id: 8, name: 'harper-chrome-plugin.zip' }] },
-+		{ ...draft, assets: [{ id: 9, name: 'Harper_9.0.0_universal.dmg' }] },
-+	];
-+	assert.equal(await uploadRelease(options), draft.html_url);
-+	const uploads = state.calls.filter((call) => call.method === 'POST');
-+	assert.equal(uploads.length, 1);
-+	assert.match(uploads[0].url, /\/releases\/123\/assets\?/);
-+});
-+
-+for (const scenario of [
-+	'missing',
-+	'other-tag',
-+	'duplicate',
-+	'duplicate-dmg',
-+	'published',
-+	'published-and-draft',
-+]) {
-+	test(`rejects ${scenario} releases before any writes`, async (t) => {
-+		const { draft, state, options } = await fixture(t);
-+		const dmg = { id: 9, name: 'Harper_9.0.0_universa
-```
-
-**File**: `.buildkite/pipeline.yml` (modified, +28/-2)
-```diff
-@@ -8,7 +8,7 @@ env:
-   IMAGE_ID: $IMAGE_ID
- 
- steps:
--  - label: ":tauri: Build, sign, notarize harper-desktop"
-+  - label: ":mac: Build, sign, notarize harper-desktop for macOS"
-     key: build-desktop
-     command: .buildkite/commands/build-desktop.sh
-     plugins: [$CI_TOOLKIT_PLUGIN, $NVM_PLUGIN]
-@@ -20,4 +20,30 @@ steps:
-       - harper-desktop/src-tauri/target/*-apple-darwin/release/bundle/macos/*.app.tar.gz.sig
-     notify:
-       - github_commit_status:
--          context: "Build, sign, notarize harper-desktop"
-+          context: "Build, sign, notarize harper-desktop for macOS"
-+
-+  - label: ":windows: Build and sign harper-desktop for Windows"
-+    key: build-desktop-windows
-+    agents:
-+      queue: windows
-+    command: powershell -NoProfile -File .buildkite/commands/build-desktop-windows.ps1
-+    plugins: [$CI_TOOLKIT_PLUGIN, $NVM_PLUGIN]
-+    artifact_paths:
-+      - harper-desktop/src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/*-setup.exe
-+    notify:
-+      - github_commit_status:
-+          context: "Build and sign harper-desktop for Windows"
-+
-+  - label: ":github: Upload harper-desktop release for Windows"
-+    key: release-desktop-windows
-+    if: build.tag =~ /^v[0-9]+/
-+    depends_on:
-+      - build-desktop-windows
-+      # Let the existing macOS release creator finish before looking for a draft.
-+      - step: build-desktop
-+        allow_failure: true
-+    command: bash .buildkite/commands/release-desktop-windows.sh
-+    plugins: [$NVM_PLUGIN]
-+    notify:
-+      - github_commit_status:
-+          context: "Upload harper-desktop release for Windows"
-```
-
-**File**: `.github/workflows/desktop_windows.yml` (modified, +15/-11)
-```diff
-@@ -3,7 +3,6 @@ name: Harper Desktop for Windows
- on:
-   push:
-     branches: ["master"]
--    tags: ["v*"]
-   pull_request:
-     branches: ["master"]
-   merge_group:
-@@ -12,11 +11,24 @@ env:
-   CARGO_TERM_COLOR: always
- 
- jobs:
-+  desktop-release-tests:
-+    name: just test-desktop-release
-+    runs-on: ubuntu-latest
-+    permissions:
-+      contents: read
-+    steps:
-+      - uses: actions/checkout@v7.0.1
-+      - uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # v4.0.0
-+      - uses: actions/setup-node@v7
-+        with:
-+          node-version-file: ".node-version"
-+      - run: just test-desktop-release
-+
-   desktop-windows:
-     name: just build-desktop-windows
-     runs-on: ubuntu-latest
-     permissions:
--      contents: write
-+      contents: read
-     steps:
-       - uses: actions/checkout@v7.0.1
-       - uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # v4.0.0
-@@ -54,8 +66,6 @@ jobs:
-         run: cargo binstall wasm-pack --force --no-confirm
-       - name: Install `cargo-xwin`
-         run: cargo binstall cargo-xwin --force --no-confirm
--      - name: Install `tauri-cli`
--        run: cargo binstall tauri-cli --force --no-confirm
-       - name: Build Harper Desktop for Windows
-         run: just build-desktop-windows
-       - name: Upload artifacts
-@@ -64,10 +74,4 @@ jobs:
-           name: harper-desktop-windows-x64
-           path: harper-desktop/src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/*
-           if-no-files-found: error
--      - name: Release artifacts
--        if: startsWith(github.ref, 'refs/tags/v')
--        uses: ncipollo/release-action@339a81892b84b4eeb0f6e744e4574d79d0d9b8dd # v1.21.0
--        with:
--          artifacts: harper-desktop/src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/*
--          allowUpdates: true
--          draft: true
-+      # Signed Windows release assets are built and uploaded by Buildkite.
-```
-
----
-
-### Incident Patch 3: `4ea9170f` (2026-10-10)
-**Commit Message**: fix(desktop): clear clippy lints in the Windows broker (#4438)
-
-`just check-desktop-rust` runs clippy with `-D warnings`, but only on
-Linux, where `windows_broker` is cfg-gated out of the build. Running the
-same recipe on windows-latest (#4429) fails on ten lints in that module:
-collapsible `if let`, `needless_return`, `let_and_return`, a `to_owned`
-on a `Cow` that clones the `Cow` rather than its contents, a manual
-`Option::map`, an iterator `cloned()` before a by-reference map, and a
-`for` loop that filters `Ok` by hand instead of `flatten()`.
-
-No behavior changes. `application_icon_png` returns the same two error
-strings through `ok_or_else` instead of nested `if let`/`return`.
-
-Co-authored-by: Elijah Potter <[REDACTED_EMAIL]>
-
-**File**: `harper-desktop/src-tauri/src/windows_broker/automation_service.rs` (modified, +2/-4)
-```diff
-@@ -92,10 +92,8 @@ impl AutomationService {
-                     let result = job(&automation, arguments);
- 
-                     // Stop the thread if the other side of the channel has been closed (or dropped).
--                    if let Err(err) = result_sender.try_send(result) {
--                        if let TrySendError::Disconnected(_) = err {
--                            break;
--                        }
-+                    if let Err(TrySendError::Disconnected(_)) = result_sender.try_send(result) {
-+                        break;
-                     }
-                 }
- 
-```
-
-**File**: `harper-desktop/src-tauri/src/windows_broker/mod.rs` (modified, +21/-33)
-```diff
-@@ -177,15 +177,12 @@ impl OsBroker for WindowsBroker {
-     }
- 
-     fn application_icon_png(&self, bundle_id: &str) -> Result<Vec<u8>, String> {
--        if let Some(entry) = look_up_application(bundle_id) {
--            if let Some(png) = entry.icon_png {
--                return Ok(png);
--            } else {
--                return Err("Found application but it was missing an icon.".to_string());
--            }
--        } else {
--            return Err("Unable to locate application.".to_string());
--        }
-+        let entry = look_up_application(bundle_id)
-+            .ok_or_else(|| "Unable to locate application.".to_string())?;
-+
-+        entry
-+            .icon_png
-+            .ok_or_else(|| "Found application but it was missing an icon.".to_string())
-     }
- 
-     fn launch_app_bundle(&self, bundle_id: &str) -> Result<(), String> {
-@@ -223,7 +220,6 @@ impl OsBroker for WindowsBroker {
-                         .to_lowercase()
-                         .contains(&lower_query)
-             })
--            .cloned()
-             .map(|entry| entry.to_search_result())
-             .collect())
-     }
-@@ -260,8 +256,7 @@ fn get_focused_monitor_scale() -> f64 {
- 
-         let _ = GetDpiForMonitor(monitor, MDT_EFFECTIVE_DPI, &mut x, &mut y);
- 
--        let effective_scale = x as f64 / 96.;
--        effective_scale
-+        x as f64 / 96.
-     }
- }
- 
-@@ -277,42 +272,35 @@ impl ApplicationListEntry {
-     fn to_search_result(&self) -> AppSearchResult {
-         AppSearchResult {
-             name: self.display_name.clone(),
--            bundle_id: self.path.to_string_lossy().to_owned().to_string(),
-+            bundle_id: self.path.to_string_lossy().into_owned(),
-         }
-     }
- }
- 
- fn look_up_application(bundle_id: &str) -> Option<ApplicationListEntry> {
-     // In Windows, the application path is the bundle ID.
-     let list = installed_applications_list();
--    if let Some(entry) = list
--        .iter()
-+    list.iter()
-         .find(|entry| entry.path.to_string_lossy() == bundle_id)
--    {
--        Some(entry.clone())
--    } else {
--        None
--    }
-+        .cloned()
- }
- 
- #[cached]
- fn installed_applications_list() -> Arc<Vec<ApplicationListEntry>> {
-     let mut list = Vec::new();
- 
--    for res in gatherer().scan() {
--        if let Ok(app) = res {
--            let icon = if let Ok(icon) = app.entry.icon() {
--                icon.extract_icon_as_png_at(IconSize::Jumbo)
--            } else {
--                None
--            };
-+    for app in gatherer().scan().flatten() {
-+        let icon = if let Ok(icon) = app.entry.icon() {
-+            icon.extract_icon_as_png_at(IconSize::Jumbo)
-+        } else {
-+            None
-+        };
- 
--            list.push(ApplicationListEntry {
--                path: app.entry.path().to_owned(),
--                icon_png: icon,
--                display_name: app.entry.display_name(),
--            })
--        }
-+        list.push(ApplicationListEntry {
-+            path: app.entry.path().to_owned(),
-+            icon_png: icon,
-+            display_name: app.entry.display_name(),
-+        })
-     }
- 
-     Arc::new(list)
++test "I have spent quite a lot time searching, but to no veil." "I have spent quite a lot time searching, but to no avail."
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4647** (2026-10-19): feat: fussy logic → fuzzy logic (@hippietrail)
 - **PR #4645** (2026-10-18): feat: with one fell swoop → in/at one fell swoop (@hippietrail)
 - **PR #4644** (2026-10-18): feature: TBF → to be fair (@hippietrail)
 - **PR #4637** (2026-10-17): chore: add more patterns to `ExtendOrExtent` (@hippietrail)
+- **PR #4633** (2026-10-19): feat: to no vail/vale/veil → to no avail (@hippietrail)
 - **PR #4626** (2026-10-16): feat: to my defense → in my defense (@ozenyunus35)
-- **PR #4625** (2026-10-16): feat: will gonna / will going to → will (@ozenyunus35)
-- **PR #4624** (2026-10-16): fix(chrome-ext): Lexical tests now wait for linting to complete (@elijah-potter)
 
 ---
 
@@ -2622,28 +1543,34 @@ Co-authored-by: Elijah Potter <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. chrome-ext): Lexical tests now wait for linting to complete (#4624)
+## X. fussy logic → fuzzy logic (#4647)
 
 **RULE**:
-When implementing operations in `Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `harper-core/default_config.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1873f751`: chrome-ext): Lexical tests now wait for linting to complete (#4624). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6a2d6d70`: fussy logic → fuzzy logic (#4647). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Dockerfile`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `harper-core/default_config.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-RUN cargo install wasm-pack --locked
+						{
+							"Bool": {
+								"name": "FuzzyLogic",
+								"state": true,
+								"label": "Fuzzy Logic"
+							}
+						},
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-RUN cargo install wasm-pack
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1873f751` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6a2d6d70` are properly handled with clean fallback behavior.

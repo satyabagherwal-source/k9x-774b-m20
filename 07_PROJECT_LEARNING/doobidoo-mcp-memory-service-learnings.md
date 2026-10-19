@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source**: github ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
-> **Source Version**: `e022bce9`  
+> **Source Version**: `a7c1f033`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T23:02:12.520Z  
+> **Timestamp**: 2026-10-19T12:07:53.715Z  
 > **Learning ID**: `learn-github-doobidoo-mcp-memory-service`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T23:02:12.511Z  
+> **Harvest Timestamp**: 2026-10-19T12:07:53.706Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source persistent memory for AI agent pipelines (LangGraph, CrewAI, AutoGen) and Claude. REST API + knowledge graph + autonomous consolidation.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 2021 stars
+- **Stars / Engagement**: 2023 stars
 
 ---
 
@@ -2932,850 +2932,506 @@ Commands:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `41edace7` (2026-10-17)
-**Commit Message**: fix(discovery): clear discovery/client.py of unsanitised logger calls (#1146) (#1577)
+### Incident Patch 1: `a7c1f033` (2026-10-19)
+**Commit Message**: fix(maintenance): preserve vec0 partition key when re-creating memory_embeddings (#1589)
 
-* fix(discovery): clear discovery/client.py of unsanitised logger calls (#1146)
+* test(maintenance): RED — migrador perde a partition key do vec0 (store-scoped search morre)
 
-What another host announces over mDNS (service name and url), the error text
-of a failed health check and the exception text of a failed capabilities
-fetch go through _sanitize_log_value; the service count and the parsed
-requires_auth flag stay lazy and bare. Module added to GUARDED_MODULES;
-four caplog tests with a forged newline in each source.
+* fix(maintenance): preservar partition key do vec0 ao recriar memory_embeddings
 
-* changelog: fragment for #1577
+* chore(changelog): fragmento como item de lista (exigido pelo check de CI)
 
----------
+* fix(maintenance): migrador tolera bancos sem coluna store; teste cobre largura e banco antigo
 
-Co-authored-by: massimiliano1991 <[REDACTED_EMAIL]>
+Greptile P1: leitura incondicional de memories.store quebrava migração de bancos
+antigos (no such column: store). Agora a coluna é lida apenas quando o schema a tem,
+e a partição só é preenchida nesse caso.
+Greptile P2: teste passa a usar origem FLOAT[4] e alvo FLOAT[8], verificando que a
+DDL recriada reflete a nova dimensão; e cobre o caminho de banco antigo, sem store.
 
-**File**: `changelog.d/1577.fixed.md` (added, +2/-0)
+* fix(maintenance): guard testável de confirmação; --yes explícito fora de TTY
+
+Greptile P2: o script chama input() quando o serviço parece rodando, o que trava ou
+estoura EOF em CI/testes. Extraído _confirm_continue(service_stopped, assume_yes,
+is_tty), com --yes para automação e teste unitário cobrindo os três casos.
+
+**File**: `changelog.d/+vec0-partition-key.fixed.md` (added, +2/-0)
 ```diff
 @@ -0,0 +1,2 @@
-+- **Discovery client logged mDNS announcements and remote errors unsanitised (#1577, part of #1146, massimiliano1991).**
-+  `discovery/client.py` interpolated the name and url another host announced over mDNS, the error of a failed health check and the text of a failed capabilities fetch straight into its log lines, so a newline in any of them forged a log record. They go through `_sanitize_log_value` now; the module is in `GUARDED_MODULES`, and a runtime test covers the listing, the selection and the two error paths.
++- **maintenance:** the embedding migrator re-created the `memory_embeddings` vec0 table with a fixed DDL, dropping the `store` partition key used by current schemas — every store-scoped query then failed with `no such column: store`, `semantic`/`ranked`/`exact` returned zero results while `hybrid` kept working, and the script still reported success. It now preserves the existing DDL (substituting only the vector dimension) and re-populates the partition column from `memories.store`.
++- **maintenance:** the migrator no longer prompts when the memory service appears to be running in a non-interactive context (CI, scripts): it aborts with a clear message unless `--yes` is passed. Databases without a `memories.store` column keep the previous read path instead of failing with `no such column: store`.
 ```
 
-**File**: `src/mcp_memory_service/discovery/client.py` (modified, +7/-6)
+**File**: `scripts/maintenance/migrate_embeddings.py` (modified, +86/-19)
 ```diff
-@@ -28,6 +28,7 @@
+@@ -323,6 +323,12 @@ def main():
+         action="store_true",
+         help="Preserve graph edges (by default they are wiped since similarity scores change)",
+     )
++    parser.add_argument(
++        "--yes",
++        action="store_true",
++        help="Run without asking for confirmation when the memory service appears to be running "
++             "(required in non-interactive contexts such as CI)",
++    )
+     parser.add_argument(
+         "--dry-run",
+         action="store_true",
+@@ -375,11 +381,12 @@ def main():
+     print()
+     service_stopped = check_service_not_running()
+     if not service_stopped:
+-        response = input("\n  Continue anyway? (y/N): ").strip().lower()
+-        if response != "y":
+-            print("  Migration cancelled.")
++        if not _confirm_continue(service_stopped, getattr(args, "yes", False),
++                                 sys.stdin.isatty()):
++            print("  Migration cancelled. Pass --yes to run without prompting.")
+             conn.close()
+-            sys.exit(0)
++            sys.exit(0 if sys.stdin.isatty() else 2)
++        print("  Service check bypassed.")
+     else:
+         print("  Service check OK.")
  
- from .mdns_service import ServiceDiscovery, ServiceDetails
- from ..config import MDNS_DISCOVERY_TIMEOUT, PEER_VERIFY_SSL, PEER_SSL_CA_FILE
-+from ..compat import _sanitize_log_value
+@@ -397,6 +404,22 @@ def main():
+         conn.close()
  
- logger = logging.getLogger(__name__)
  
-@@ -113,17 +114,17 @@ def service_priority(service: ServiceDetails) -> tuple:
-             for service in filtered_services:
-                 health = await self.check_service_health(service)
-                 if health and health.healthy:
--                    logger.info(f"Selected healthy service: {service.name} at {service.url}")
-+                    logger.info("Selected healthy service: %s at %s", _sanitize_log_value(service.name), _sanitize_log_value(service.url))
-                     return service
-                 else:
--                    logger.warning(f"Service {service.name} failed health check: {health.error if health else 'Unknown error'}")
-+                    logger.warning("Service %s failed health check: %s", _sanitize_log_value(service.name), _sanitize_log_value(health.error if health else "Unknown error"))
-             
-             logger.warning("No healthy services found")
-             return None
-         else:
-             # Return first service without health validation
-             best_service = filtered_services[0]
--            logger.info(f"Selected service: {best_service.name} at {best_service.url}")
-+            logger.info("Selected service: %s at %s", _sanitize_log_value(best_service.name), _sanitize_log_value(best_service.url))
-             return best_service
-     
-     async def discover_services(self) -> List[ServiceDetails]:
-@@ -132,9 +133,9 @@ async def discover_services(self) -> List[ServiceDetails]:
-         services = await self._discovery.discover_services()
-         
-         if services:
--            logger.info(f"Found {len(services)} MCP Memory Services:")
-+            logger.info("Found %d MCP Memory Services:", len(services))
-             for service in services:
--                logger.info(f"  - {service.name} at {service.url} (Auth: {service.requires_auth})")
-+                logger.info("  - %s at %s (Auth: %s)", _sanitize_log_value(service.name), _sanitize_log_value(service.url), service.requires_auth)
-         else:
-             logger.info("No MCP Memory Services found")
-         
-@@ -245,7 +246,7 @@ async def get_service_capabilities(
-                         return await response.json()
-                     
-         except Exception as e:
--            logger.error(f"Failed to get service capabilities: {e}")
-+            logger.error("Failed to get service capabilities: %s", _sanitize_log_value(e))
-         
-         return None
-     
++def _confirm_continue(service_stopped: bool, assume_yes: bool, is_tty: bool) -> bool:
++    """Decide se a migração segue quando o serviço parece estar rodando.
++
++    A checagem de serviço é heurística e não distingue "o serviço desta base" de
++    "outro serviço da máquina". Em contexto não interativo (CI, testes) pedir
++    confirmação trava ou estoura EOF, então exige ``--yes`` explícito.
++    """
++    if service_stopped:
++        return True
++    if assume_yes:
++        return True
++    if not is_tty:
++        return False
++    return input("\n  Continue anyway? (y/N): ").strip().lower() == "y"
++
++
+ def _run_migration(args, conn, db_path, stats, target_dims, api_key):
+     """Execute the destructive migration phases (2-5)."""
+     # --- Phase 2: Prepare ---
+@@ -410,11 +433,25 @@ def _run_migration(args, conn, db_path, stats, target_dims, api_key):
+     shutil.copy2(str(db_path), str(backup_path))
+ 
+     print("  Reading active memories...")
+-    rows = conn.execute(
+-        "SELECT rowid, content FROM memories WHERE deleted_at IS NULL ORDER BY rowid"
+-    ).fetchall()
++    # Bancos antigos podem não ter a coluna ``store`` em ``memories``. Ler a coluna
++    # incondicionalmente quebraria a migração deles com "no such column: store".
++    memory_columns = {
++        row[1] for row in conn.execute("PRAGMA table_info(memories)").fetchall()
++    }
++    has_store_column = "store" in memory_columns
++    if has_store_column:
++        rows = conn.execute(
++            "SELECT rowid, content, store FROM memories WHERE deleted_at IS NULL ORDER BY rowid"
++        ).fetchall()
++        contents = [r[1] for r in rows]
++        stores = [r[2] for r in rows]
++    else:
++        rows = conn.execute(
++            "SELECT rowid, content FROM memories WHERE deleted_at IS NULL ORDER BY rowid"
++        ).fetchall()
++        contents = [r[1] for r in rows]
++        stores = [None] * len(rows)
+     rowids = [r[0] for r in rows]
+-    contents = [r[1] for r in rows]
+     print(f"  Read {len(rows)} memories")
+ 
+     # --- Phase 3: Generate new embeddings ---
+@@ -446,7 +483,19 @@ def _run_migration(args, conn, db_path, stats, target_dims, api_key):
+     print("Phase 4: Migrate database")
+     print("=" * 60)
+ 
+-    # Drop old vec0 table (virtual table DDL must be outside transactions)
++    # Drop old vec0 table (virtual table DDL must be outside transactions).
++    # A DDL original é capturada ANTES do drop: versões atuais do serviço criam
++    # ``memory_embeddings`` com coluna de partição (``store TEXT partition key``).
++    # Recriar sem ela quebra toda busca que filtra por store — o modo semantic
++    # passa a falhar com "no such column: store" e devolve zero resultados.
++    existing_ddl = conn.execute(
++        "SELECT sql FROM sqlite_master WHERE name='memory_embeddings'"
++    ).fetchone()
++    existing_sql = (existing_ddl[0] or "") if existing_ddl else ""
++    partition_cols = re.findall(r"(\w+)\s+TEXT\s+partition key", existing_sql, re.I)
++    if partition_cols:
++        print(f"  Preserving partition key(s): {', '.join(partition_cols)}")
++
+     print("  Dropping old memory_embeddings table...")
+     conn.execute("DROP TABLE IF EXISTS memory_embeddings")
+     conn.commit()
+@@ -459,22 +508,40 @@ def _run_migration(args, conn, db_path, stats, target_dims, api_key):
+         sys.exit(1)
+ 
+     print(f"  Creating new vec0 table at FLOAT[{target_dims}]...")
+-    conn.execute(
+-        f"CREATE VIRTUAL TABLE memory_embeddings USING vec0("
+-        f"content_embedding FLOAT[{target_dims}] distance_metric=cosine"
+-        f")"
+-    )
++    if partition_cols:
++        # Reaproveita a DDL original, trocando apenas a dimensão do vetor.
++        new_sql = re.sub(
++            r"FLOAT\[\d+\]", f"FLOAT[{target_dims
 ```
 
-**File**: `tests/unit/test_discovery_client_logging.py` (added, +119/-0)
+**File**: `tests/maintenance/test_migrate_embeddings_partition.py` (added, +230/-0)
 ```diff
-@@ -0,0 +1,119 @@
-+"""
-+Log-injection tests for discovery/client.py (#1146).
+@@ -0,0 +1,230 @@
++"""Regressão do migrador de embeddings: partition key e largura do vetor.
 +
-+The discovery client logs the name and url of services another host announced
-+over mDNS, the error text of a failed health check, and the exception text of
-+a failed capabilities fetch. A newline in any of them must not reach the log as
-+a line break.
++Cobre três coisas que o script de manutenção precisa acertar:
++
++1. bancos atuais (``memory_embeddings`` com ``store TEXT partition key``) — a
++   migração não pode perder a coluna de partição, senão toda busca filtrada por
++   store morre com ``no such column: store`` enquanto o script reporta sucesso;
++2. troca de modelo com largura diferente — a DDL recriada tem de refletir a nova
++   dimensão, não a antiga;
++3. bancos antigos (sem a coluna ``memories.store`` e sem partition key) — a
++   migração continua funcionando e não tenta gravar uma coluna que não existe.
++
++Os dois primeiros casos são RED em ``upstream/main``.
 +"""
 +
-+import asyncio
-+import logging
++from __future__ import annotations
++
++import json
++import sqlite3
++import struct
++import subprocess
++import sys
++import threading
++from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
++from pathlib import Path
 +
 +import pytest
 +
-+from mcp_memory_service.discovery import client as client_module
-+from mcp_memory_service.discovery.client import DiscoveryClient, HealthStatus
-+from mcp_memory_service.discovery.mdns_service import ServiceDetails
++sqlite_vec = pytest.importorskip("sqlite_vec")
 +
-+FORGED = "FORGED service verified"
-+LOGGER = "mcp_memory_service.discovery.client"
++SCRIPT = Path(__file__).resolve().parents[2] / "scripts" / "maintenance" / "migrate_embeddings.py"
++TARGET_DIM = 8  # diferente da origem de propósito: pega falha ao substituir a largura
 +
 +
-+def _service(name: str) -> ServiceDetails:
-+    return ServiceDetails(
-+        name=name,
-+        host="192.0.2.10",
-+        port=8000,
-+        https=False,
-+        api_version="2.0.0",
-+        requires_auth=False,
-+        service_info=None,
++class _Stub(BaseHTTPRequestHandler):
++    """API OpenAI-compatible mínima: devolve vetores determinísticos."""
++
++    dim = TARGET_DIM
++
++    def log_message(self, *args):
++        return
++
++    def do_POST(self):
++        n = int(self.headers.get("Content-Length") or 0)
++        req = json.loads(self.rfile.read(n) or b"{}")
++        entradas = req.get("input") or []
++        if isinstance(entradas, str):
++            entradas = [entradas]
++        data = [
++            {"object": "embedding", "index": i,
++             "embedding": [0.01 * (i + 1)] * self.dim}
++            for i in range(len(entradas))
++        ]
++        corpo = json.dumps({"object": "list", "data": data, "model": "stub"}).encode()
++        self.send_response(200)
++        self.send_header("Content-Type", "application/json")
++        self.send_header("Content-Length", str(len(corpo)))
++        self.end_headers()
++        self.wfile.write(corpo)
++
++
++def _criar_db(path: Path, src_dim: int, com_store: bool) -> None:
++    conn = sqlite3.connect(path)
++    conn.enable_load_extension(True)
++    sqlite_vec.load(conn)
++    conn.enable_load_extension(False)
++    if com_store:
++        conn.execute(
++            """
++            CREATE TABLE memories (
++                rowid INTEGER PRIMARY KEY,
++                content_hash TEXT NOT NULL,
++                content TEXT NOT NULL,
++                store TEXT NOT NULL DEFAULT 'default',
++                deleted_at REAL,
++                embedding_pending INTEGER DEFAULT 0
++            )
++            """
++        )
++    else:
++        conn.execute(
++            """
++            CREATE TABLE memories (
++                rowid INTEGER PRIMARY KEY,
++                content_hash TEXT NOT NULL,
++                content TEXT NOT NULL,
++                deleted_at REAL,
++                embedding_pending INTEGER DEFAULT 0
++            )
++            """
++        )
++    conn.execute("CREATE TABLE metadata (key TEXT PRIMARY KEY, value TEXT)")
++
++    if com_store:
++        conn.execute(
++            f"""
++            CREATE VIRTUAL TABLE memory_embeddings USING vec0(
++                content_embedding FLOAT[{src_dim}] distance_metric=cosine,
++                store TEXT partition key
++            )
++            """
++        )
++    else:
++        conn.execute(
++            f"""
++            CREATE VIRTUAL TABLE memory_embeddings USING vec0(
++                content_embedding FLOAT[{src_dim}] distance_metric=cosine
++            )
++            """
++        )
++
++    vetor = struct.pack(f"{src_dim}f", *([0.02] * src_dim))
++    if com_store:
++        conn.execute(
++            "INSERT INTO memories (rowid, content_hash, content, store) VALUES (1, ?, ?, 'default')",
++            ("hash-1", "memoria de teste sobre partition key"),
++        )
++        conn.execute(
++            "INSERT INTO memories (rowid, content_hash, content, store) VALUES (2, ?, ?, 'mir')",
++            ("hash-2", "memoria em outro store"),
++        )
++        conn.execute(
++            "INSERT INTO memory_embeddings (rowid, content_embedding, store) VALUES (1, ?, 'default')",
++            (vetor,),
++        )
++        conn.execute(
++            "INSERT INTO memory_embeddings (rowid, content_embedding, store) VALUES (2, ?, 'mir')",
++            (vetor,),
++        )
++    else:
++        conn.execute(
++            "INSERT INTO memories (rowid, content_hash, content) VALUES (1, ?, ?)",
++            ("hash-1", "memoria de banco antigo"),
++        )
++        conn.execute(
++            "INSERT INTO memory_embeddings (rowid, content_embedding) VALUES (1, ?)",
++            (vetor,),
++        )
++    conn.commit()
++    conn.close()
++
++
++def _rodar_migracao(db: Path) -> subprocess.CompletedProcess:
++    srv = ThreadingHTTPServer(("127.0.0.1", 0), _Stub)
++    threading
+```
+
+---
+
+### Incident Patch 2: `90567a1c` (2026-10-19)
+**Commit Message**: fix(services): over-fetch before filtering by tags/memory_type in retrieve_memories (#1590)
+
+* test(services): RED — filtro por tipo/tag perde memoria fora da janela de n_results
+
+* fix(services): over-fetch antes de filtrar por tags/memory_type em retrieve_memories
+
+* test(services): atualiza teste existente para o over-fetch e cobre teto e filtro por tag
+
+Greptile P1: test_retrieve_memories_with_filters afirmava n_results=5; com o
+over-fetch a chamada passa 55 — expectativa atualizada.
+Greptile P2: novo caso com 10 linhas casando em n_results=5 (garante o truncamento)
+e caso só de tags, que sofre do mesmo problema de janela.
+
+**File**: `changelog.d/+retrieve-filter-window.fixed.md` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++- **retrieval:** `retrieve_memories` filtered by `tags`/`memory_type` only after fetching `n_results` rows, so any match outside that first window was lost — `mistake_note_search` returned `{"notes": [], "count": 0}` over a populated table. The fetch now over-fetches when a filter is present and truncates to `n_results` after filtering.
+```
+
+**File**: `src/mcp_memory_service/services/memory_service.py` (modified, +13/-4)
+```diff
+@@ -774,12 +774,18 @@ async def retrieve_memories(
+             Dictionary with search results
+         """
+         try:
+-            # Retrieve memories using semantic search
+-            # Note: storage.retrieve() only supports query and n_results
+-            # We'll filter by tags/type after retrieval if needed
++            # Retrieve memories using semantic search.
++            # Note: storage.retrieve() only supports query and n_results, so the
++            # tags/type filters below are applied AFTER retrieval. Fetching only
++            # ``n_results`` and then filtering throws away the whole result set
++            # whenever the matching rows are not in that first window — that is
++            # why ``mistake_note_search`` returned empty over a populated table.
++            fetch_n = n_results
++            if tags or memory_type:
++                fetch_n = max(n_results * 10, n_results + 50)
+             memories = await self.storage.retrieve(
+                 query=query,
+-                n_results=n_results
++                n_results=fetch_n
+             )
+ 
+             # Apply optional post-filtering
+@@ -801,6 +807,9 @@ async def retrieve_memories(
+ 
+                     filtered_memories.append(query_result)
+ 
++            # The extra rows fetched for filtering are not part of the answer.
++            filtered_memories = filtered_memories[:n_results]
++
+             results = []
+             for result in filtered_memories:
+                 # Extract Memory object from MemoryQueryResult and add similarity score
+```
+
+**File**: `tests/services/test_retrieve_memories_filter.py` (added, +108/-0)
+```diff
+@@ -0,0 +1,108 @@
++"""Regressão: filtrar por tipo/tag DEPOIS de recuperar só `n_results` esvazia o resultado.
++
++`retrieve_memories` pede `n_results` ao storage e só então aplica os filtros de
++`tags`/`memory_type`. Quando o filtro casa com memórias que não estão entre os
++`n_results` mais próximos, o resultado sai vazio — e é o que faz `mistake_note_search`
++devolver `{"notes": [], "count": 0}` com 295 notas de erro no acervo.
++
++Deve FALHAR em `upstream/main` (RED) e passar com a correção (GREEN).
++"""
++
++from __future__ import annotations
++
++import asyncio
++from typing import Any
++
++from mcp_memory_service.models.memory import Memory, MemoryQueryResult
++from mcp_memory_service.services.memory_service import MemoryService
++
++
++class _StubStorage:
++    """Storage mínimo: devolve o que foi pedido, respeitando `n_results`."""
++
++    def __init__(self, resultados: list[MemoryQueryResult]):
++        self._resultados = resultados
++        self.chamadas: list[int] = []
++
++    async def retrieve(self, query: str, n_results: int = 10):  # noqa: D401
++        self.chamadas.append(n_results)
++        return self._resultados[:n_results]
++
++
++def _resultados() -> list[MemoryQueryResult]:
++    itens = []
++    for i in range(10):
++        tipo = "mistake" if i == 9 else "observation"
++        mem = Memory(
++            content=f"memoria {i} do tipo {tipo}",
++            content_hash=f"hash-{i}",
++            memory_type=tipo,
++        )
++        itens.append(MemoryQueryResult(memory=mem, relevance_score=1.0 - i * 0.05))
++    return itens
++
++
++def test_filtro_por_tipo_encontra_memoria_fora_da_janela_inicial():
++    storage = _StubStorage(_resultados())
++    service = MemoryService(storage)
++
++    resultado: dict[str, Any] = asyncio.run(
++        service.retrieve_memories("porta errada no systemd", n_results=5, memory_type="mistake")
++    )
++
++    assert resultado["count"] == 1, (
++        "filtro por memory_type nao encontrou a nota de erro que existe fora dos 5 "
++        f"primeiros resultados; storage recebeu n_results={storage.chamadas} e o "
++        f"resultado veio com {resultado['count']} itens"
++    )
++    assert resultado["memories"][0]["content"].startswith("memoria 9")
++
++
++def test_resposta_respeita_n_results_mesmo_com_muitos_casando():
++    """Over-fetch não pode devolver resposta maior que o pedido."""
++    itens = []
++    for i in range(10):
++        mem = Memory(
++            content=f"nota de erro {i}",
++            content_hash=f"m-{i}",
++            memory_type="mistake",
++        )
++        itens.append(MemoryQueryResult(memory=mem, relevance_score=1.0 - i * 0.05))
++
++    storage = _StubStorage(itens)
++    service = MemoryService(storage)
++
++    resultado = asyncio.run(
++        service.retrieve_memories("erro recorrente", n_results=5, memory_type="mistake")
++    )
++
++    assert resultado["count"] == 5, (
++        "a resposta deve ser truncada em n_results depois do filtro; veio "
++        f"{resultado['count']} itens (storage recebeu n_results={storage.chamadas})"
 +    )
 +
 +
-+class _Discovery:
-+    def __init__(self, services):
-+        self._services = services
-+
-+    async def discover_services(self):
-+        return self._services
-+
-+
-+@pytest.fixture
-+def client(monkeypatch: pytest.MonkeyPatch) -> DiscoveryClient:
-+    """A client whose network discovery returns one service with a forged name."""
-+    discovery_client = DiscoveryClient.__new__(DiscoveryClient)
-+    discovery_client.discovery_timeout = 1
-+    discovery_client._discovery = _Discovery([_service(f"memory\n{FORGED}")])
-+    return discovery_client
-+
-+
-+def _assert_clean(caplog, expected):
-+    messages = [record.getMessage() for record in caplog.records]
-+    assert any(expected in m for m in messages), messages
-+    assert not any(f"\n{FORGED}" in m for m in messages), messages
-+
-+
-+def test_discovered_service_log_does_not_carry_newlines(client, caplog):
-+    with caplog.at_level(logging.DEBUG, logger=LOGGER):
-+        services = asyncio.run(client.discover_services())
-+
-+    assert len(services) == 1
-+    _assert_clean(caplog, "Found 1 MCP Memory Services")
-+    _assert_clean(caplog, "  - memory")
-+
-+
-+def test_failed_health_check_log_does_not_carry_newlines(client, monkeypatch, caplog):
-+    async def check_service_health(_service):
-+        return HealthStatus(
-+            healthy=False,
-+            status="unhealthy",
-+            backend="unknown",
-+            statistics={},
-+            response_time_ms=0.0,
-+            error=f"HTTP 503\n{FORGED}",
++def test_filtro_por_tag_sozinho_tambem_amplia_a_busca():
++    """Filtro só por tag sofre do mesmo problema e precisa do mesmo over-fetch."""
++    itens = []
++    para_marcar = {3, 8}
++    for i in range(10):
++        mem = Memory(
++            content=f"memoria {i}",
++            content_hash=f"t-{i}",
++            tags=["lancamento"] if i in para_marcar else ["outra"],
++            memory_type="note",
 +        )
++        itens.append(MemoryQueryResult(memory=mem, relevance_score=1.0 - i * 0.05))
 +
-+    monkeypatch.setattr(client, "check_service_health", check_service_health)
++    storage = _StubStorage(itens)
++    service = MemoryService(storage)
 +
-+    with caplog.at_level(logging.DEBUG, logger=LOGGER):
-+        best = asyncio.run(client.find_best_service(validate_health=True))
++    resultado = asyncio.run(
++        service.retrieve_memories("planejamento", n_results=5, tags=["lancamento"])
++    )
 +
-+    assert best is None
-+    _assert_clean(caplog, "failed health check: HTTP 503")
-+
-+
-+def test_selected_service_logs_do_not_carry_newlines(client, monkeypatch, caplog):
-+    async def check_service_health(_service):
-+        return HealthStatus(
-+            healthy=True,
-+            status="healthy",
-+            backend="sqlite_vec",
-+            statistics={},
-+            response_time_ms=1.0,
-+        )
-+
-+    monkeypatch.setattr(client, "check_service_health", check_service_health)
-+
-+    with caplog.at_level(logging.DEBUG, logger=LOGGER):
-+        healthy = asyncio.run(client.find_best_service(validate_health=True))
-+        first = asyncio.run(client.find_best_service(validate_health=False))
-+
-+    assert healthy is not None and first is not None
-+    _assert_clean(caplog, "Selected healthy service: memory")
-+    _assert_clean(caplog, "Selected service: memory")
-+
-+
-+def test_capabilities_error_log_does_not_carry_newlines(client, monkeypatch, caplog):
-+    class _Session:
-+        def __init__(self, **_kwargs):
-+            raise RuntimeError(f"connection refused\n{FORGED}")
-+
-+    monkeypatch.setattr(client_module.aiohttp, "ClientSession", _Session)
-+
-+    with caplog.at_level(logging.DEBUG, logger=LOGGER):
-+        capabilities = asyncio.run(client.get_service_capabilities(_service("memory")))
-+
-+    assert capabilities is None
-+    _assert_clean(caplog, "Failed to get service capabilities: connection refused")
++    assert resultado["count"] == 2, (
++        "filtro por tag perdeu as memorias marcadas fora da janela inicial; veio "
++        f"{resultado['count']} itens (storage recebeu n_results={storage.chamadas})"
++    )
 ```
 
-**File**: `tests/unit/test_log_injection_guard.py` (modified, +1/-0)
+**File**: `tests/unit/test_memory_service.py` (modified, +4/-3)
 ```diff
-@@ -53,6 +53,7 @@
-     "mcp_memory_service/storage/graph.py",
-     "mcp_memory_service/storage/mixins/migrations.py",
-     "mcp_memory_service/storage/mixins/embeddings.py",
-+    "mcp_memory_service/discovery/client.py",
-     "mcp_memory_service/discovery/mdns_service.py",
-     "mcp_memory_service/sync/importer.py",
-     "mcp_memory_service/backup/scheduler.py",
-```
-
----
-
-### Incident Patch 2: `e022bce9` (2026-10-18)
-**Commit Message**: fix(opencode): load the plugin and the sidebar widget on V2 (#1588)
-
-* fix(opencode): load the plugin and the widget on V2
-
-V2 loads a plugin through `default.id` + `default.setup(context)`. memory-plugin.js
-only exported `{ id, server }`, so V2 logged a plugin load error and the whole
-integration was dead: no search on session start, no auto-capture, no `/memory`,
-no status file for the sidebar.
-
-V2 also renamed every hook and event the V1 implementation registers, so the file
-gets an adapter that maps V2 onto the existing code instead of forking it:
-
-- events arrive from `ctx.event.subscribe()` and carry `event.data` (V1 used
-  `event.properties`)
-- `session.step.ended` with `finish !== "tool-calls"` replaces `session.idle`,
-  which V2 does not emit
-- V2 has no `message.part.updated`; the assistant text for auto-capture comes from
-  the `context` hook transcript instead
-- `experimental.chat.system.transform` and `experimental.session.compacting` become
-  `ctx.session.hook("context" | "compaction", ...)`
-- `command.execute.before` is gone, so `/memory` is registered in `setup` through
-  `ctx.command.transform` and the rendered block is sent as the prompt
-
-`client.app.log` and `cli
-
-**File**: `.gitignore` (modified, +2/-1)
-```diff
-@@ -245,8 +245,9 @@ docs/statistics/charts/
- docs/statistics/data/
- docs/statistics/REPOSITORY_STATISTICS.md
+@@ -365,11 +365,12 @@ async def test_retrieve_memories_with_filters(memory_service, mock_storage, samp
+         memory_type="note"
+     )
  
--# OpenCode TUI plugin build artifact (regenerate with opencode/build-tui-plugin.mjs)
-+# OpenCode TUI plugin build artifacts (regenerate with opencode/build-tui-plugin.mjs)
- opencode/memory-status-tui.js
-+opencode/memory-status-tui.v2.js
+-    # After fix: storage.retrieve() only accepts query and n_results
+-    # Filtering is done by MemoryService after retrieval
++    # storage.retrieve() only accepts query and n_results, so filtering happens in
++    # MemoryService after retrieval. When a filter is present the fetch is widened
++    # (max(n*10, n+50)) so matches outside the first `n_results` window are not lost.
+     mock_storage.retrieve.assert_called_once_with(
+         query="test",
+-        n_results=5
++        n_results=55
+     )
  
- # OpenCode session exports
- session-ses_*.md
-```
-
-**File**: `opencode/README.md` (modified, +93/-13)
-```diff
-@@ -9,6 +9,32 @@ This integration provides:
- - **Harvest**: optional pattern-harvesting via `/api/harvest` at session end
- - **Compact Injection**: inject condensed memory context into `experimental.session.compacting`
- 
-+## OpenCode V1 and V2
-+
-+OpenCode V2 loads a plugin through `id` + `setup(context)`; V1 used `server(client)`
-+and `tui(api)`. V2 also renamed every hook and event this integration uses, so the
-+plugin maps them onto one implementation instead of forking it. Both fields are
-+exported, and the same file works in either host:
-+
-+| V1 | V2 |
-+| --- | --- |
-+| `server(client)` | `setup(context)`, events arrive from `ctx.event.subscribe()` |
-+| `session.created` | `session.created` |
-+| `session.idle` | `session.step.ended` with `finish !== "tool-calls"` |
-+| `message.part.updated` | no equivalent; the adapter reads the `context` hook transcript |
-+| `command.execute.before` | registered in `setup` via `ctx.command.transform` |
-+| `client.app.log()` | no server-side equivalent (verbose logs become no-ops) |
-+| `client.tui.showToast()` | no server-side equivalent (toasts become no-ops) |
-+| `tui.json` + `{id, tui}` export | plugin package with a `"./tui"` export |
-+
-+What that means in practice:
-+
-+- The status file is the shared channel on V2; without toast and log support, the
-+  verbose/notification sections below only apply to V1.
-+- `/memory` needs no `opencode.json` entry on V2, because `setup` registers it.
-+- The sidebar widget is installed as a plugin package on V2 and needs no
-+  `tui.json` entry.
-+
- ## Prerequisites
- 
- - An installed OpenCode version with plugin support; check with `opencode --version`.
-@@ -146,6 +172,10 @@ environment block. With these client values configured, restart OpenCode.
- 
- ## How It Works
- 
-+The event names below are V1's. On V2 the adapter translates the equivalent V2
-+events into these before they reach the same handlers (see the table above), so
-+the behavior is identical.
-+
- On `session.created`, the plugin:
- - derives the project name from the working directory
- - runs a few semantic searches against the memory service
-@@ -182,8 +212,10 @@ If `verbose` is enabled, the plugin writes structured logs through `client.app.l
- 
- ## Slash Command: `/memory`
- 
--This command is optional and is not installed by copying `memory-plugin.js`.
--Merge the following entry into `~/.config/opencode/opencode.json`, preserving
-+This command is optional. On OpenCode V2 the plugin registers it in `setup`, so
-+copying `memory-plugin.js` is enough and no configuration entry is needed. On V1,
-+where `command.execute.before` is the only hook, the command has to be declared:
-+merge the following entry into `~/.config/opencode/opencode.json`, preserving
- your other commands and settings:
- 
- ```json
-@@ -202,7 +234,7 @@ Then in OpenCode:
- - `/memory search <query>` — top 5 semantic matches for the query
- - `/memory health` — backend type, status, total memory count, endpoint
- 
--The plugin intercepts the command via `command.execute.before`, fetches data from the memory service, and replaces the user message with a formatted block plus a "reply verbatim" instruction. One small LLM round-trip per call. If your default model adds commentary anyway, set `command.memory.model` to a smaller/cheaper model.
-+The plugin intercepts the command via `command.execute.before`, fetches data from the memory service, and replaces the user message with a formatted block plus a "reply verbatim" instruction. One small LLM round-trip per call. If your default model adds commentary anyway, set `command.memory.model` to a smaller/cheaper model. On V2 the plugin registers the command itself, so there is no `command.memory` block to set that field on.
- 
- ## Optional MCP Tools
- 
-@@ -229,6 +261,9 @@ The HTTP API still needs to run for the plugin. See OpenCode's
- 
- ## TUI Toasts
- 
-+V1 only. OpenCode V2 has no server-side toast API, so the calls below are skipped
-+on V2 and the status file carries the same information.
-+
- The plugin shows transient toasts via `client.tui.showToast` in three situations (rate-limited to once per session):
- 
- - on first memory load: `Loaded N memories for <project>`
-@@ -256,7 +291,44 @@ This file is consumed by the TUI sidebar widget (next section) but is also usefu
- 
- ## TUI Sidebar Widget
- 
--The repo ships a Solid TUI plugin (`opencode/memory-status-tui.tsx`) that renders a live "Memory" panel in the OpenCode sidebar showing project, loaded count, captured count, and the last action. It polls the status file every 1.5 seconds.
-+The repo ships the same panel for both generations:
-+
-+- `opencode/memory-status-tui.v2.tsx` — V2: `Plugin.define` and the `sidebar.content` slot
-+- `opencode/memory-status-tui.tsx` — V1: `{id, tui}` and `sidebar_content`
-+
-+It shows project, loaded count, captured count, and the last action, and polls the
-+status file every 1.5 seconds. The widget is optional; retrieval and capture work
-+without it.
-+
-+### OpenCode V2
-+
-+V2 needs no TUI config file: a dire
-```
-
-**File**: `opencode/build-tui-plugin.mjs` (modified, +88/-29)
-```diff
-@@ -1,58 +1,117 @@
- #!/usr/bin/env node
- /**
-- * Compile memory-status-tui.tsx → memory-status-tui.js using Solid's babel preset.
-+ * Compile the sidebar widgets in this directory and deploy them.
-+ *
-  * opencode's plugin loader uses Bun's default JSX transform which is incompatible
-- * with solid-js (which needs dom-expressions via babel-preset-solid).
-+ * with solid-js (which needs dom-expressions via babel-preset-solid), so both
-+ * widget generations are compiled ahead of time. Importing memory-plugin.js
-+ * directly into these tests would otherwise fail on the JSX.
-+ *
-+ * Two OpenCode generations are covered, because they load plugins differently:
-+ *
-+ *   V1  memory-status-tui.tsx    -> <plugins>/memory-status-tui/index.js
-+ *       registered through tui.json["plugin"] as a file:// URL that resolves the
-+ *       directory's package.json "main" (the shape the README documents).
-+ *   V2  memory-status-tui.v2.tsx -> <plugins>/opencode-memory/tui.js
-+ *       discovered as part of a plugin package, next to the server plugin at
-+ *       <plugins>/opencode-memory/index.js, through the package.json "./tui"
-+ *       export. V2 needs no config entry for either file.
-  *
-  * Install the explicit Babel 7 build dependencies documented in README.md.
-  * They are resolved from ~/.config/opencode/node_modules, independently of the
-  * repository checkout. Babel 8 removed the TypeScript options used below.
-  * Override with OPENCODE_CONFIG_DIR if your opencode config lives elsewhere.
-  */
--import { readFile, writeFile } from "node:fs/promises"
-+import { copyFile, mkdir, readFile, writeFile } from "node:fs/promises"
- import { resolve } from "node:path"
- import { fileURLToPath } from "node:url"
- import { createRequire } from "node:module"
- import { homedir } from "node:os"
- 
- const SCRIPT_DIR = fileURLToPath(new URL(".", import.meta.url))
--const SRC = resolve(SCRIPT_DIR, "memory-status-tui.tsx")
--const OUT = resolve(SCRIPT_DIR, "memory-status-tui.js")
- const CONFIG_DIR = process.env.OPENCODE_CONFIG_DIR
-   ? resolve(process.env.OPENCODE_CONFIG_DIR)
-   : resolve(homedir(), ".config", "opencode")
--const LIVE_DIR = resolve(CONFIG_DIR, "plugins", "memory-status-tui")
-+const PLUGINS_DIR = resolve(CONFIG_DIR, "plugins")
-+
-+const TARGETS = [
-+  {
-+    source: "memory-status-tui.tsx",
-+    output: "memory-status-tui.js",
-+    deployDir: "memory-status-tui",
-+    deployName: "index.js",
-+    packageJson: { name: "opencode-memory-status", type: "module", main: "./index.js" },
-+    // The directory itself is created by hand, as the README documents: V2
-+    // plugin discovery walks every directory under plugins/, and a V1 widget
-+    // package sitting there fails its own plugin load.
-+    createDir: false,
-+  },
-+  {
-+    source: "memory-status-tui.v2.tsx",
-+    output: "memory-status-tui.v2.js",
-+    deployDir: "opencode-memory",
-+    deployName: "tui.js",
-+    createDir: true,
-+    // V2 resolves a plugin package through its exports, so both entrypoints are
-+    // declared here: the copied HTTP plugin and the compiled widget. A plugin
-+    // package is how V2 discovers the widget without a config entry.
-+    packageJson: {
-+      name: "opencode-memory",
-+      type: "module",
-+      main: "./index.js",
-+      exports: {
-+        ".": "./index.js",
-+        "./tui": "./tui.js",
-+      },
-+      peerDependencies: {
-+        "@opentui/core": ">=0.5.8",
-+        "@opentui/solid": ">=0.5.8",
-+        "solid-js": ">=1.9.0",
-+      },
-+    },
-+    // V2 has no separate server-plugin registration: the HTTP plugin is the
-+    // package's main entrypoint, so the build copies it into the deployment.
-+    copyServer: { from: "memory-plugin.js", to: "index.js" },
-+  },
-+]
- 
--// Resolve babel from CONFIG_DIR/node_modules regardless of where this script lives.
- const requireFromConfig = createRequire(resolve(CONFIG_DIR, "package.json"))
- const { transformAsync } = requireFromConfig("@babel/core")
- const presetTypescriptPath = requireFromConfig.resolve("@babel/preset-typescript")
- const presetSolidPath = requireFromConfig.resolve("babel-preset-solid")
- 
--const source = await readFile(SRC, "utf8")
--
--const result = await transformAsync(source, {
--  filename: SRC,
--  babelrc: false,
--  configFile: false,
--  cwd: CONFIG_DIR,
--  presets: [
--    [presetTypescriptPath, { isTSX: true, allExtensions: true }],
--    [presetSolidPath, { generate: "universal", moduleName: "@opentui/solid" }],
--  ],
--})
-+async function compile(sourceFile) {
-+  const result = await transformAsync(await readFile(sourceFile, "utf8"), {
-+    filename: sourceFile,
-+    babelrc: false,
-+    configFile: false,
-+    cwd: CONFIG_DIR,
-+    presets: [
-+      [presetTypescriptPath, { isTSX: true, allExtensions: true }],
-+      [presetSolidPath, { generate: "universal", moduleName: "@opentui/solid" }],
-+    ],
-+  })
- 
--if (!result?.code) {
--  throw new Error("Babel returned no code")
-+  if (!result?.code) throw new Error(`Babel returned no code for ${sourceFile}`)
-+  retur
-```
-
-**File**: `opencode/memory-plugin.js` (modified, +157/-14)
-```diff
-@@ -672,26 +672,36 @@ const createPlugin = async ({ directory, client }) => {
-       healthState,
-     })
-       .then((result) => {
-+        // A replayed transcript or an auto-capture can write into the session
-+        // while the load is in flight; keep those buffers, they feed the
-+        // summary and the capture dedupe.
-         sessionState.set(sessionID, {
--          ...result,
-           messages: [],
-+          ...sessionState.get(sessionID),
-+          ...result,
-           promise: null,
-         })
-       })
-       .catch(async (error) => {
-         sessionState.set(sessionID, {
-+          messages: [],
-+          ...sessionState.get(sessionID),
-           projectName: projectNameFromDirectory(sessionDirectory),
-           memories: [],
--          messages: [],
-           promise: null,
-         })
-         await logWarn(`Memory load failed: ${error.message}`)
-       })
- 
-+    // A fresh session has no previous entry at all, and handleMessagePart
-+    // pushes into `messages`: seed it. A resumed session keeps its replayed
-+    // history, its capture count and its dedupe set; the load owns only
-+    // `memories`.
-     sessionState.set(sessionID, {
-+      messages: [],
-+      ...sessionState.get(sessionID),
-       projectName: projectNameFromDirectory(sessionDirectory),
-       memories: [],
--      messages: [],
-       promise: loadPromise,
-     })
- 
-@@ -701,7 +711,11 @@ const createPlugin = async ({ directory, client }) => {
-   const waitForSession = async (sessionID, fallbackDirectory) => {
-     let state = sessionState.get(sessionID)
- 
--    if (!state) {
-+    // "The session exists" is not "its memories were requested". A bare entry
-+    // comes from a replayed transcript (handleMessagePart) or a session end,
-+    // and a resumed session never receives session.created at all. Only
-+    // refreshSession sets `promise`, so its absence marks an unloaded entry.
-+    if (!state || state.promise === undefined) {
-       refreshSession(sessionID, fallbackDirectory)
-       state = sessionState.get(sessionID)
-     }
-@@ -1000,14 +1014,10 @@ const createPlugin = async ({ directory, client }) => {
-     "experimental.chat.system.transform": async (input, output) => {
-       if (!input.sessionID) return
- 
--      // session.created fires before bus subscription starts — refreshSession
--      // might never have been called. Load memories on first system prompt request.
--      let state = sessionState.get(input.sessionID)
--      if (!state) {
--        refreshSession(input.sessionID, directory)
--        state = sessionState.get(input.sessionID)
--      }
--      state = await waitForSession(input.sessionID, directory)
-+      // session.created fires before the bus subscription exists, and V2 does
-+      // not emit it for a resumed session, so the first system prompt request is
-+      // where the load is requested (see waitForSession).
-+      const state = await waitForSession(input.sessionID, directory)
-       if (!state?.memories?.length) return
- 
-       const formatted = formatMemories(state.projectName, state.memories, config)
-@@ -1054,9 +1064,142 @@ const createPlugin = async ({ directory, client }) => {
- }
- 
- export const OpenCodeMemoryPlugin = createPlugin
--export default { id: "opencode-memory", server: createPlugin }
-+
-+// ---------------------------------------------------------------------------
-+// OpenCode V2 adapter
-+//
-+// V2 loads a plugin through `default.id` + `default.setup()`; V1 used
-+// `default.server`. V2 also renamed every hook and every event this file
-+// registers, so the adapter maps them onto the implementation above instead of
-+// forking it. Both fields are exported, so one file serves both hosts.
-+//
-+// `client` is deliberately not passed: V2 has no server-side toast or log
-+// equivalent to V1's `client.app.log` / `client.tui.showToast`, and every use in
-+// this file is optional-chained, so both degrade to no-ops. The status file
-+// carries the same information to the sidebar widget.
-+// ---------------------------------------------------------------------------
-+
-+// V2 events nest their payload under `data` (V1 used `properties`) and carry the
-+// project directory on the envelope.
-+function sessionIdentity(event, fallbackDirectory) {
-+  return {
-+    id: event?.data?.info?.id || event?.data?.sessionID,
-+    directory: event?.data?.info?.directory || event?.location?.directory || fallbackDirectory,
-+  }
-+}
-+
-+// Maps a V2 event onto the V1 event the implementation above listens for.
-+// Returns null when the V2 event has no V1 counterpart that should act on it.
-+function translateEvent(event, fallbackDirectory) {
-+  const info = sessionIdentity(event, fallbackDirectory)
-+
-+  switch (event?.type) {
-+    case "session.created":
-+      // The V1 branch dereferences info.id unguarded, so an event without an id
-+      // must not reach it.
-+      return info.id ? { type: "session.created", properties: { info } } : null
-+    case "session.idle":
-+      return { type: "se
-```
-
-**File**: `opencode/memory-status-tui.v2.tsx` (added, +70/-0)
-```diff
-@@ -0,0 +1,70 @@
-+import { createSignal } from "solid-js"
-+import { homedir } from "node:os"
-+import path from "node:path"
-+import { readFile } from "node:fs/promises"
-+import { Plugin } from "@opencode/plugin/tui"
-+
-+// OpenCode V2 CLI plugin. It replaces the V1 shape in memory-status-tui.tsx:
-+// V2 takes Plugin.define({ id, setup }) with context.ui.slot, where V1 took
-+// { id, tui } with api.slots.register and the `sidebar_content` slot. The
-+// widget itself is unchanged: it polls the status file the HTTP plugin writes.
-+const STATUS_FILE = process.env.OPENCODE_MEMORY_STATUS_FILE
-+  || path.join(homedir(), ".local", "state", "opencode", ".memory-status.json")
-+const POLL_MS = 1500
-+
-+type Status = {
-+  projectName?: string
-+  loadedCount?: number
-+  capturedCount?: number
-+  lastAction?: string
-+  lastSummaryAt?: string
-+  updatedAt?: string
-+}
-+
-+async function readStatus(): Promise<Status> {
-+  try {
-+    return JSON.parse(await readFile(STATUS_FILE, "utf8")) as Status
-+  } catch {
-+    return {}
-+  }
-+}
-+
-+export default Plugin.define({
-+  id: "opencode-memory-status",
-+  setup(context) {
-+    const [status, setStatus] = createSignal<Status>({})
-+
-+    // Async tick keeps the TUI event loop unblocked. setInterval ignores the
-+    // returned Promise; overlapping ticks are harmless because each fully
-+    // resolves before calling setStatus.
-+    const tick = async () => setStatus(await readStatus())
-+    void tick()
-+    const timer = setInterval(() => void tick(), POLL_MS)
-+
-+    const unregister = context.ui.slot({
-+      append: "sidebar.content",
-+      render: () => {
-+        // `context.theme.text.base` is the only theme token the V2 CLI plugin
-+        // API documents; the V1 widget's accent/muted tokens have no V2 name.
-+        const fg = context.theme.text.base
-+        const s = status()
-+        const project = s.projectName ?? ""
-+        return (
-+          <box flexDirection="column" paddingTop={1}>
-+            <text fg={fg}>Memory</text>
-+            <text fg={fg}>
-+              loaded {s.loadedCount ?? 0} · captured {s.capturedCount ?? 0}
-+            </text>
-+            {project ? <text fg={fg}>{project}</text> : null}
-+            <text fg={fg}>{s.lastAction ?? "waiting…"}</text>
-+          </box>
-+        )
-+      },
-+    })
-+
-+    return () => {
-+      clearInterval(timer)
-+      if (typeof unregister === "function") unregister()
-+    }
-+  },
-+})
-```
-
-**File**: `opencode/tests/v2-plugin-adapter.test.js` (added, +116/-0)
-```diff
-@@ -0,0 +1,116 @@
-+/**
-+ * Tests for the OpenCode V2 adapter in memory-plugin.js.
-+ *
-+ * Run: node opencode/tests/v2-plugin-adapter.test.js
-+ *
-+ * OpenCode V2 loads a plugin through `default.setup()` and renamed every hook
-+ * and event the V1 implementation listens for, so the adapter translates V2
-+ * events into the V1 shapes at the call site. These tests pin that translation:
-+ * the V1 branches dereference `properties.info.id` and
-+ * `properties.sessionID` unguarded, so a wrong or half-built mapping either
-+ * throws inside the event loop (where the subscription swallows it) or writes
-+ * session state under `undefined`. Neither shows up as a visible failure in a
-+ * running OpenCode, which is why the mapping is covered here instead.
-+ */
-+
-+import { test } from "node:test"
-+import assert from "node:assert"
-+
-+import { _internal } from "../memory-plugin.js"
-+
-+const { sessionIdentity, translateEvent, transcriptCaptureEvents } = _internal
-+
-+const DIRECTORY = "C:\\Users\\example\\project"
-+
-+function v2Event(type, data, location = { directory: DIRECTORY }) {
-+  return { id: "evt_1", created: 1, type, location, data }
-+}
-+
-+test("session step that ends a tool round maps to nothing", () => {
-+  const event = v2Event("session.step.ended", { sessionID: "ses_1", finish: "tool-calls" })
-+  assert.strictEqual(translateEvent(event, DIRECTORY), null)
-+})
-+
-+test("session step that ends a turn maps to session.idle", () => {
-+  const event = v2Event("session.step.ended", { sessionID: "ses_1", finish: "stop" })
-+  assert.deepStrictEqual(translateEvent(event, DIRECTORY), {
-+    type: "session.idle",
-+    properties: { info: { id: "ses_1", directory: DIRECTORY } },
-+  })
-+})
-+
-+test("session.created keeps its own type when it carries an id", () => {
-+  const event = v2Event("session.created", { info: { id: "ses_1", directory: DIRECTORY } })
-+  assert.deepStrictEqual(translateEvent(event, DIRECTORY), {
-+    type: "session.created",
-+    properties: { info: { id: "ses_1", directory: DIRECTORY } },
-+  })
-+})
-+
-+test("session.created without an id is dropped instead of reaching the unguarded V1 branch", () => {
-+  const event = v2Event("session.created", {})
-+  assert.strictEqual(translateEvent(event, DIRECTORY), null)
-+})
-+
-+test("session removal maps to session.deleted", () => {
-+  const event = v2Event("session.removed", { sessionID: "ses_1" })
-+  assert.strictEqual(translateEvent(event, DIRECTORY).type, "session.deleted")
-+})
-+
-+test("events the V1 handler does not know pass through untouched", () => {
-+  const event = v2Event("session.tool.called", { sessionID: "ses_1" })
-+  assert.strictEqual(translateEvent(event, DIRECTORY), event)
-+})
-+
-+test("identity prefers the message envelope and falls back to the directory passed in", () => {
-+  assert.deepStrictEqual(sessionIdentity(v2Event("session.step.ended", { sessionID: "ses_1" }), DIRECTORY), {
-+    id: "ses_1",
-+    directory: DIRECTORY,
-+  })
-+  assert.deepStrictEqual(sessionIdentity(v2Event("session.step.ended", {}, {}), "C:\\fallback"), {
-+    id: undefined,
-+    directory: "C:\\fallback",
-+  })
-+})
-+
-+test("transcript capture reads assistant text parts only", () => {
-+  const events = transcriptCaptureEvents({
-+    sessionID: "ses_1",
-+    messages: [
-+      { id: "msg_user", role: "user", content: [{ type: "text", text: "asked" }] },
-+      {
-+        id: "msg_1",
-+        role: "assistant",
-+        content: [
-+          { type: "reasoning", text: "thinking out loud" },
-+          { type: "text", text: "an answer" },
-+          { type: "tool-call", id: "call_1", name: "shell" },
-+        ],
-+      },
-+      { id: "msg_2", role: "assistant", content: [{ type: "text", text: "" }] },
-+    ],
-+  })
-+
-+  assert.deepStrictEqual(events, [
-+    {
-+      type: "message.part.updated",
-+      properties: {
-+        sessionID: "ses_1",
-+        part: { id: "msg_1:1", type: "text", text: "an answer" },
-+      },
-+    },
-+  ])
-+})
-+
-+test("transcript capture ids stay stable so repeat scans do not re-capture", () => {
-+  const transcript = {
-+    sessionID: "ses_1",
-+    messages: [{ id: "msg_1", role: "assistant", content: [{ type: "text", text: "hello" }] }],
-+  }
-+  assert.deepStrictEqual(transcriptCaptureEvents(transcript), transcriptCaptureEvents(transcript))
-+})
-+
-+test("transcript capture tolerates a missing transcript", () => {
-+  assert.deepStrictEqual(transcriptCaptureEvents({}), [])
-+  assert.deepStrictEqual(transcriptCaptureEvents(undefined), [])
-+})
-```
-
----
-
-### Incident Patch 3: `0a211e60` (2026-10-17)
-**Commit Message**: docs: drop the PATH prefix advice for git commit (#1579)
-
-* docs: drop the PATH prefix advice for git commit
-
-CLAUDE.md and the troubleshooting table still told everyone to commit
-with PATH=".venv/bin:$PATH" because the pre-commit hook used system
-Python. 76c371ba fixed that in May: the hook picks .venv/bin/python,
-then $VIRTUAL_ENV, then system Python. The advice also no longer works,
-since lean-ctx blocks inline PATH overrides. The remaining failure is a
-checkout without a .venv, so both places now say that instead.
-
-* docs: name both causes of 'Package not installed'
-
-A .venv that exists but lacks the package fails the same way, and activating another venv does not help because the hook prefers the checkout's own.
-
----------
-
-Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
-
-**File**: `.claude/directives/troubleshooting.md` (modified, +1/-1)
-```diff
-@@ -28,7 +28,7 @@ pull, the wrong backend shows up, or Cloudflare sync is misbehaving.
- | Cloudflare 403 / sync not running (IPv6) | Python prefers IPv6 but the token IP allowlist may only have IPv4. Add your IPv6 /64 network to the token's Client IP Address Filtering, or remove IP filtering entirely |
- | Strict stdio client times out during handshake (e.g. Codex, 10s budget) | Set `MCP_INIT_TIMEOUT=5` to force lazy loading — storage initializes on first tool call instead (issue #561) |
- | uv.lock revision downgraded (revision=2 vs revision=3) | Local uv 0.7.16 silently downgrades the lockfile. Restore with `git checkout uv.lock` or upgrade uv. Don't include revision-only changes in PRs |
--| Pre-commit hook fails "Package not installed" | The hook uses system Python, not the venv. Use `PATH=".venv/bin:$PATH" git commit -m "..."` for all commits |
-+| Pre-commit hook fails "Package not installed" | The hook resolves `.venv/bin/python`, then `$VIRTUAL_ENV`, then system Python (`scripts/hooks/pre-commit`, since 76c371ba). Two causes. The checkout's `.venv` exists but lacks the package: `uv pip install --python .venv/bin/python -e .` (activating another venv does not help, the hook prefers this one). Or the checkout has no `.venv`, typically a fresh worktree: activate a venv (`source <checkout>/.venv/bin/activate`). No `PATH=` prefix: lean-ctx blocks inline `PATH` overrides |
- | Editable install replaced PyPI version | `uv pip install -e .` replaces the PyPI package with local source. After commit, restore with `uv pip install mcp-memory-service==<version>` |
- | Cloudflare 401 after upgrade/restart | First search Memory (`cloudflare 401`), then verify the `.env` token matches the Cloudflare Dashboard. Token rotation in the dashboard does NOT update local `.env` |
- | zeroconf DLL load fails / Symantec flags it as a trojan (Windows) | False positive on the mDNS C extension. Set `MCP_MDNS_ENABLED=false` (core service works without mDNS). See [docs/troubleshooting/mdns-symantec-false-positive.md](../../docs/troubleshooting/mdns-symantec-false-positive.md) |
-```
-
-**File**: `CLAUDE.md` (modified, +1/-1)
-```diff
-@@ -119,7 +119,7 @@ uv pip install --python .venv/bin/python pip pytest pytest-cov pytest-asyncio \
- 
- `pytest-timeout` is required, not optional -- the gate passes `--timeout=120`.
- 
--The commands below are written as bare `python`/`pytest` for brevity — run them via `.venv/bin/...`. For `git commit`, the pre-commit hook uses **system** Python and will fail with "Package not installed"; prefix commits with `PATH=".venv/bin:$PATH"` (see Troubleshooting). `uv` is also used (`uv.lock` present); `uv pip install -e .` and `uv run memory ...` work too.
-+The commands below are written as bare `python`/`pytest` for brevity — run them via `.venv/bin/...`. `git commit` needs no `PATH` prefix: the pre-commit hook (`scripts/hooks/pre-commit`) picks `.venv/bin/python` itself, then `$VIRTUAL_ENV`, and only then system Python (since 76c371ba). If it still reports "Package not installed", either the checkout's `.venv` lacks the package (`uv pip install --python .venv/bin/python -e .`) or there is no `.venv` at all, as in a fresh worktree (activate a venv); see Troubleshooting. Do not reintroduce `PATH=".venv/bin:$PATH" git commit`: lean-ctx blocks inline `PATH` overrides. `uv` is also used (`uv.lock` present); `uv pip install -e .` and `uv run memory ...` work too.
- 
- ### Development Server
  
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1591** (2026-10-19): docs(sqlite-vec): document store scoping across search modes (@filhocf)
+- **PR #1590** (2026-10-19): fix(services): over-fetch before filtering by tags/memory_type in retrieve_memories (@filhocf)
+- **PR #1589** (2026-10-19): fix(maintenance): preserve vec0 partition key when re-creating memory_embeddings (@filhocf)
 - **PR #1588** (2026-10-18): fix(opencode): load the plugin and the sidebar widget on V2 (@Laeliek)
 - **PR #1586** (2026-10-18): docs: iOS Shortcut guide for saving to memory from the share sheet (@doobidoo)
 - **PR #1583** (2026-10-18): ci: treat site/-only changes like docs in the test skip (@doobidoo)
-- **PR #1582** (2026-10-18): docs(opencode): complete plugin and sidebar setup instructions (@doobidoo)
-- **PR #1581** (2026-10-17): fix(hybrid): run mode="hybrid" on the hybrid backend (@debashishthakur)
-- **PR #1579** (2026-10-17): docs: drop the PATH prefix advice for git commit (@doobidoo)
 
 ---
 
@@ -3795,22 +3451,22 @@ Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. discovery): clear discovery/client.py of unsanitised logger calls (#1146) (#1577
+## X. maintenance): preserve vec0 partition key when re-creating memory_embeddings (#1
 
 **RULE**:
-When implementing operations in `changelog.d/1577.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/+vec0-partition-key.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `41edace7`: discovery): clear discovery/client.py of unsanitised logger calls (#1146) (#1577). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a7c1f033`: maintenance): preserve vec0 partition key when re-creating memory_embeddings (#1589). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/1577.fixed.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/+vec0-partition-key.fixed.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- **Discovery client logged mDNS announcements and remote errors unsanitised (#1577, part of #1146, massimiliano1991).**
-  `discovery/client.py` interpolated the name and url another host announced over mDNS, the error of a failed health check and the text of a failed capabilities fetch straight into its log lines, so a newline in any of them forged a log record. They go through `_sanitize_log_value` now; the module is in `GUARDED_MODULES`, and a runtime test covers the listing, the selection and the two error paths.
+- **maintenance:** the embedding migrator re-created the `memory_embeddings` vec0 table with a fixed DDL, dropping the `store` partition key used by current schemas — every store-scoped query then failed with `no such column: store`, `semantic`/`ranked`/`exact` returned zero results while `hybrid` kept working, and the script still reported success. It now preserves the existing DDL (substituting only the vector dimension) and re-populates the partition column from `memories.store`.
+- **maintenance:** the migrator no longer prompts when the memory service appears to be running in a non-interactive context (CI, scripts): it aborts with a clear message unless `--yes` is passed. Databases without a `memories.store` column keep the previous read path instead of failing with `no such column: store`.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3820,4 +3476,4 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `41edace7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a7c1f033` are properly handled with clean fallback behavior.

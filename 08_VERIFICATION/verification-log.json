@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-KXZC",
-    "timestamp": "2026-10-19T00:54:38.856Z",
-    "repository": "go-eagle/eagle",
-    "learningId": "learn-github-go-eagle-eagle",
-    "contentHash": "52b7bf79d50916dbcfaf35b4a1b27f5aba842863f9d10bcea3e1b8a5939f58ff",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-L2KH",
-    "timestamp": "2026-10-19T00:54:44.801Z",
-    "repository": "Qovery/Replibyte",
-    "learningId": "learn-github-qovery-replibyte",
-    "contentHash": "1ca8d20fefe83951368ddacbd436584b3df18be1d9d603829f2152189807d893",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-SZI7",
-    "timestamp": "2026-10-19T01:00:54.079Z",
-    "repository": "LiquidAI/d1-3B",
-    "learningId": "learn-huggingface-liquidai-d1-3b",
-    "contentHash": "e97674d03be98f88584f8e724f662224450ce54ace846d8a5c79889abd53650d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-SZIV",
-    "timestamp": "2026-10-19T01:00:54.103Z",
-    "repository": "lingui/js-lingui",
-    "learningId": "learn-github-lingui-js-lingui",
-    "contentHash": "d6a782a296c53a3178a65c13f75dc5965dae5bdb9788cba4d72e16c907fd6bcc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-T0X2",
-    "timestamp": "2026-10-19T01:00:55.910Z",
-    "repository": "Nasiko-Labs/nasiko",
-    "learningId": "learn-github-nasiko-labs-nasiko",
-    "contentHash": "56563132cee8029d5de4ccb541348e6cbcdc21f2efd46be5c9c115473532b3c5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-T4S1",
-    "timestamp": "2026-10-19T01:01:00.913Z",
-    "repository": "berty/berty",
-    "learningId": "learn-github-berty-berty",
-    "contentHash": "9db3cfcb0b2b3ddc0b5124cfdfe6210f60728f2874756b4b89d4bc0f41713ea5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-T6HT",
     "timestamp": "2026-10-19T01:01:03.137Z",
     "repository": "Agent-Field/agentfield",
@@ -7490,6 +7400,96 @@
     "repository": "cilium/cilium",
     "learningId": "learn-github-cilium-cilium",
     "contentHash": "b9f40e159ce83b57426eae530adf3e56856e6fcfb67ad5ffc7e0cc19148844da",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-MGBS",
+    "timestamp": "2026-10-19T12:07:40.072Z",
+    "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+    "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
+    "contentHash": "987b9a96b613cfc9faffc3a7dcbab0342908eb1f016bca3b548ae78066d1f22c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-MGPY",
+    "timestamp": "2026-10-19T12:07:40.582Z",
+    "repository": "rsuite/rsuite",
+    "learningId": "learn-github-rsuite-rsuite",
+    "contentHash": "5a0fca2a1ce14882ceffc87e2c55f40fee4baefec1cb9cb0bfb41430605d7691",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-MI0J",
+    "timestamp": "2026-10-19T12:07:42.259Z",
+    "repository": "Automattic/harper",
+    "learningId": "learn-github-automattic-harper",
+    "contentHash": "16f43dd3c94257714ad91af0e2fc1cc288d22cc1b5ccb2ce48d985700df107fb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-MLG9",
+    "timestamp": "2026-10-19T12:07:46.713Z",
+    "repository": "ParthJadhav/app-store-screenshots",
+    "learningId": "learn-github-parthjadhav-app-store-screenshots",
+    "contentHash": "99a266da4e43411c67269dbd35e5d0ce38ee31a23eb10cff386edac6b2885932",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-MQ8X",
+    "timestamp": "2026-10-19T12:07:52.929Z",
+    "repository": "mitmproxy/mitmproxy",
+    "learningId": "learn-github-mitmproxy-mitmproxy",
+    "contentHash": "f7545df4e809c980c1c504abeec3594be9812b095c468d5d963cb2756c0150ea",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-MR3I",
+    "timestamp": "2026-10-19T12:07:54.030Z",
+    "repository": "doobidoo/mcp-memory-service",
+    "learningId": "learn-github-doobidoo-mcp-memory-service",
+    "contentHash": "ec6a150fb01139cfbc18142f9a1c17f4bcf5a12d57fa9be15e6e8acdc3ceae8f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

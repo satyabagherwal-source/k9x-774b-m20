@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T12:01:26.025Z",
-  "total_verified_learnings": 810,
+  "last_updated": "2026-10-19T12:07:53.982Z",
+  "total_verified_learnings": 811,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -2957,14 +2957,19 @@
       "slug": "automattic-harper",
       "platform": "github",
       "source_url": "https://github.com/Automattic/harper",
-      "source_version": "04ba445a",
-      "content_hash": "6057022327c2861049c454512812c79d5c6d911d6e13efaddac6c60efc4b0793",
+      "source_version": "6a2d6d70",
+      "content_hash": "16f43dd3c94257714ad91af0e2fc1cc288d22cc1b5ccb2ce48d985700df107fb",
       "dossier_path": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "promoted_rules": [
         {
           "number": 1707,
           "title": "chrome-ext): Lexical tests now wait for linting to complete (#4624)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2566,
+          "title": "fussy logic → fuzzy logic (#4647)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -2973,7 +2978,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:13:52.300Z",
+      "verified_at": "2026-10-19T12:07:42.195Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -7228,14 +7233,19 @@
       "slug": "doobidoo-mcp-memory-service",
       "platform": "github",
       "source_url": "https://github.com/doobidoo/mcp-memory-service",
-      "source_version": "e022bce9",
-      "content_hash": "7dd15ae6e7f093795509c3ed2a596e33d01b4417187b8b50d6f254457d5ac551",
+      "source_version": "a7c1f033",
+      "content_hash": "ec6a150fb01139cfbc18142f9a1c17f4bcf5a12d57fa9be15e6e8acdc3ceae8f",
       "dossier_path": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
       "promoted_rules": [
         {
           "number": 1821,
           "title": "discovery): clear discovery/client.py of unsanitised logger calls (#1146) (#1577",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2568,
+          "title": "maintenance): preserve vec0 partition key when re-creating memory_embeddings (#1",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -7244,7 +7254,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T23:02:12.681Z",
+      "verified_at": "2026-10-19T12:07:53.965Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -19685,7 +19695,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1",
       "source_version": "hf-mistralai-mixtral-8x7b-instruct-v0.1",
-      "content_hash": "09313da6e9784029222312f10a0fe31bef5a351c53ca1766962233a97cec393c",
+      "content_hash": "987b9a96b613cfc9faffc3a7dcbab0342908eb1f016bca3b548ae78066d1f22c",
       "dossier_path": "07_PROJECT_LEARNING/hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md",
       "promoted_rules": [],
@@ -19706,7 +19716,7 @@
         "learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv3wzmkj",
         "learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv4bppvo"
       ],
-      "verified_at": "2026-10-18T03:05:40.753Z",
+      "verified_at": "2026-10-19T12:07:40.009Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -30079,14 +30089,19 @@
       "slug": "mitmproxy-mitmproxy",
       "platform": "github",
       "source_url": "https://github.com/mitmproxy/mitmproxy",
-      "source_version": "77355977",
-      "content_hash": "357a195ba29e12610d34d68e856c3b8bfeeba0c189b15a9baf2ddab4bef41682",
+      "source_version": "696d4e28",
+      "content_hash": "f7545df4e809c980c1c504abeec3594be9812b095c468d5d963cb2756c0150ea",
       "dossier_path": "07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
       "promoted_rules": [
         {
           "number": 1835,
           "title": "build(deps): bump the github-actions group with 4 updates (#8466)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2567,
+          "title": "Web: fix and improve the flow details splitter (#8492)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -30095,7 +30110,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T23:14:27.029Z",
+      "verified_at": "2026-10-19T12:07:52.868Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33785,22 +33800,29 @@
     "learn-github-parthjadhav-app-store-screenshots": {
       "learning_id": "learn-github-parthjadhav-app-store-screenshots",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "parthjadhav-app-store-screenshots",
+      "source": "ParthJadhav/app-store-screenshots",
+      "repository": "ParthJadhav/app-store-screenshots",
       "slug": "parthjadhav-app-store-screenshots",
       "platform": "github",
       "source_url": "https://github.com/ParthJadhav/app-store-screenshots",
-      "source_version": "HEAD",
-      "content_hash": "ef699f5a82a09a366b24a1199b8bee3ccf87962345237b6301663f3cbb53652e",
+      "source_version": "5386f227",
+      "content_hash": "99a266da4e43411c67269dbd35e5d0ce38ee31a23eb10cff386edac6b2885932",
       "dossier_path": "07_PROJECT_LEARNING/parthjadhav-app-store-screenshots-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/parthjadhav-app-store-screenshots-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.988Z"
+      "verified_at": "2026-10-19T12:07:46.646Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-parthsarthi03-raptor": {
       "learning_id": "learn-github-parthsarthi03-raptor",
@@ -36306,14 +36328,19 @@
       "slug": "rsuite-rsuite",
       "platform": "github",
       "source_url": "https://github.com/rsuite/rsuite",
-      "source_version": "c09c0d5c",
-      "content_hash": "5a8120a92a68d6840396cf69160e42d3cabc714a6123150fc00911e2947388df",
+      "source_version": "c43333c5",
+      "content_hash": "5a0fca2a1ce14882ceffc87e2c55f40fee4baefec1cb9cb0bfb41430605d7691",
       "dossier_path": "07_PROJECT_LEARNING/rsuite-rsuite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rsuite-rsuite-learnings.md",
       "promoted_rules": [
         {
           "number": 1940,
           "title": "Merge pull request #4938 from rsuite/fix/examples-proxy-addr-security",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2565,
+          "title": "Merge pull request #4947 from rsuite/fix/examples-shell-quote-comment-security",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -36322,7 +36349,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T00:54:30.484Z",
+      "verified_at": "2026-10-19T12:07:40.514Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -86811,6 +86838,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T12:01:26.013Z"
+    },
+    "rule-2565": {
+      "learning_id": "rule-2565",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2565,
+      "title": "Merge pull request #4947 from rsuite/fix/examples-shell-quote-comment-security",
+      "source_url": "https://github.com/rsuite/rsuite",
+      "source_version": "c43333c5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T12:07:40.514Z"
+    },
+    "rule-2566": {
+      "learning_id": "rule-2566",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2566,
+      "title": "fussy logic → fuzzy logic (#4647)",
+      "source_url": "https://github.com/Automattic/harper",
+      "source_version": "6a2d6d70",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T12:07:42.195Z"
+    },
+    "rule-2567": {
+      "learning_id": "rule-2567",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2567,
+      "title": "Web: fix and improve the flow details splitter (#8492)",
+      "source_url": "https://github.com/mitmproxy/mitmproxy",
+      "source_version": "696d4e28",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T12:07:52.868Z"
+    },
+    "rule-2568": {
+      "learning_id": "rule-2568",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2568,
+      "title": "maintenance): preserve vec0 partition key when re-creating memory_embeddings (#1",
+      "source_url": "https://github.com/doobidoo/mcp-memory-service",
+      "source_version": "a7c1f033",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T12:07:53.965Z"
     }
   },
   "aliases": {

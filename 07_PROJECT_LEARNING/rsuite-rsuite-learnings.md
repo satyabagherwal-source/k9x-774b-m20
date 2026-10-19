@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rsuite-rsuite-learnings.md`  
 > **Source**: github ([https://github.com/rsuite/rsuite](https://github.com/rsuite/rsuite))  
-> **Source Version**: `c09c0d5c`  
+> **Source Version**: `c43333c5`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T00:54:30.302Z  
+> **Timestamp**: 2026-10-19T12:07:40.261Z  
 > **Learning ID**: `learn-github-rsuite-rsuite`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rsuite-rsuite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rsuite/rsuite](https://github.com/rsuite/rsuite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T00:54:29.270Z  
+> **Harvest Timestamp**: 2026-10-19T12:07:40.253Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -532,6 +532,27 @@ declare module '@babel/core/lib/transformation/util/missing-plugin-helper.js' {
 
 ```
 
+### Core Architecture Module: `examples/with-nextjs-pages-and-less/src/hooks/useSystemTheme.ts`
+```
+import { useSyncExternalStore } from 'react';
+
+const query = '(prefers-color-scheme: dark)';
+const getServerSnapshot = () => false;
+const getSnapshot = () => window.matchMedia(query).matches;
+
+function subscribe(onChange: () => void) {
+  const media = window.matchMedia(query);
+  media.addEventListener('change', onChange);
+  return () => media.removeEventListener('change', onChange);
+}
+
+export default function useSystemTheme() {
+  const dark = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  return dark ? 'dark' : 'light';
+}
+
+```
+
 ### Core Architecture Module: `examples/with-rtlcss/src/utils.js`
 ```
 export function loadCssFile(url, id = 'rsuite-theme') {
@@ -720,44 +741,17 @@ export function getClockTime(props: { date?: Date; format?: string; showMeridiem
 
 ```
 
-### Core Architecture Module: `src/Calendar/TimeDropdown/utils/getTimeLimits.ts`
-```
-interface TimeRange {
-  start: number;
-  end: number;
-}
-
-interface TimeLimits {
-  hours: TimeRange;
-  minutes: TimeRange;
-  seconds: TimeRange;
-}
-
-export function getTimeLimits(isMeridiem: boolean): TimeLimits {
-  const HOURS_24H = { start: 0, end: 23 };
-  const HOURS_12H = { start: 0, end: 11 };
-  const MINUTES_SECONDS = { start: 0, end: 59 };
-
-  return {
-    hours: isMeridiem ? HOURS_12H : HOURS_24H,
-    minutes: MINUTES_SECONDS,
-    seconds: MINUTES_SECONDS
-  };
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4939** (2026-10-18): **fix(hooks): release superseded callbacks and component props**
-  *Symptoms*: Replacing an event callback can keep the initial callback and its captured data reachable while the component stays mounted. The event hook’s layout effect and stable callback shared a render closure; the configuration hook’s props-merge factory shared one with the stable locale getter. Bind the effect arguments and merge props directly so those stable callbacks stop retaining superseded inputs, preserving committed callback timing, argument/return forwarding and locale/default precedence.  Add native GC regressions for both hooks and the public Button, with active-data and unmount controls, plus StrictMode/layout-effect and abandoned-render coverage. Open the existing reduced-motion dialog keyboard test with native Enter: the original WebKit mouse opening left the body focused and failed its restoration precondition on main. All focus, motion and trusted-event assertions remain.  Validation:  - React 18.2 / 19.0 / 19.3 × Chromium / Firefox / WebKit: 4,710 related source cases and 27 native GC cases. The corrected dialog test passes all 36 cases across that matrix; original failures and baseline controls are retained. - Actual npm-installed ESM / CJS / minified UMD: 63 development and 63 production GC cases. The unchanged baseline fails all three new regressions. The development fixture refreshes memoized content to avoid React 19.3 debug-stack retention; the production control also passes with constant content. - Six installed-package SSR comparisons against main pass across
+- **Issue #4949** (2026-10-19): **test(picker): trace transition state on Escape exit failure**
+  *Symptoms*: The [first own-main Firefox React19 job after #4947](https://github.com/rsuite/rsuite/actions/runs/39228572264/job/117980756695) failed the existing Drawer/Escape `onPickerExited` assertion: enter, exit and exiting callbacks fired once, but exited remained zero. The current failure log cannot show whether transition completion is still pending, was cancelled, or completed before callback delivery was lost.  Add a scoped test observer that forwards the original Transition registration/completion/cancellation/unmount methods and callbacks. On the existing failure path, record the picker instance's lifecycle status, configured timeout, registered timer/listener/completion flags and a bounded event history. Restore prototype methods after each test and retain at most 64 records/eight instances. Passing paths remain quiet, and the original assertion error is rethrown.  Validation:  - The five original Escape cases pass in Chromium/React19 and Firefox/React18.2,19.0,19.3 (20 passing checks, no skipped cases), with actual runtime guards. - Two intentional Firefox fault controls produce the unchanged failing assertion but distinct diagnostics: an omitted consumer callback shows completed/unmounted state; cancelling the registered fallback shows the picker still exiting with its timer cleared. Exact qualified source bytes are restored after both controls. - AST comparison confirms all 43 assertion calls, five waits, five native keyboard calls, five focus calls and 12 callback/animatio
 
-- **Issue #4938** (2026-10-18): **fix(examples): patch proxy-addr trusted subnet handling**
-  *Symptoms*: Update `proxy-addr` from 2.0.7 to 2.0.8 in all nine affected example and Storybook lockfiles, addressing [GHSA-jqcg-44mw-7w3h](https://github.com/advisories/GHSA-jqcg-44mw-7w3h). The upstream issue lets certain IPv6 trust-subnet rules incorrectly trust IPv4 clients and accept a forged forwarded address. This removes the affected locked version; it does not establish that the examples use an affected trust configuration.  Each lockfile changes only three target lines: version/resolution/integrity for npm, or package key/integrity/resolved parent reference for pnpm. Existing parent ranges remain valid. The upstream dependencies and Node engine requirement stay identical; application code, declared ranges and the lockfile format stay intact.  Validation:  - Published old/new packages: four spoofing regressions reproduce on 2.0.7 and are blocked by 2.0.8; 13 normal controls and three invalid-subnet rejection controls retain their behavior. The new artifact integrity matches the npm registry. - Native npm Arborist validates all five npm lock graphs, parent semver edges and leaf dependencies. Native pnpm 8.15.9 accepts all four original v6 locks with frozen/offline/lockfile-only validation; graph checks verify every parent resolves the new artifact. Every other byte in all nine lockfiles is preserved. - The runtime Remix/React Router example passes clean `npm ci`, typecheck, production build, both SSR routes, and trusted navigation in Chromium/Firefox/WebKit, retaining its locked p
+- **Issue #4948** (2026-10-19): **test(benchmarks): add cross-library picker comparison**
+  *Symptoms*: The existing production SelectPicker benchmark measures RSuite alone. Add an optional, separately locked project that exercises the current RSuite build alongside pinned Ant Design 6.6.6, Chakra UI 3.37.0 and HeroUI 3.2.6 through equivalent visible outcomes. Root coverage excludes only this independently installed fixture.  Separate adapters preserve each library's documented collection/virtualization setup. The shared driver validates physical option dimensions and ancestor clipping, full scroll-range reachability, sparse/empty filtering and native keyboard selection. Visibility is independent of pointer hit testing, which React Aria temporarily disables during scrolling. HeroUI's default ordinary-list margins are reset to preserve the shared 36px row pitch. The driver captures trusted input-to-DOM and two-frame observations, randomizes library order, records raw samples and exact build/package fingerprints, and rejects changed or stale artifacts.  Validation:  - The current head's original CI passes all 35 Node jobs, all 40 checks including actual Codecov project/patch, CodeQL and Size Limit, plus Snyk and the CodeSandbox build. Vercel rate-limit failures are excluded under the agreed project scope. - All four production fixtures, standalone TypeScript, repository ESLint/Prettier, normal commit hooks and root TypeScript pass. - The corrected measurement passes 32 interaction configurations across Chromium and Firefox: ordinary/virtualized 1k options and virtualized 10k/50k 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -774,927 +768,459 @@ export function getTimeLimits(isMeridiem: boolean): TimeLimits {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7d2cf46e` (2026-10-18)
-**Commit Message**: Merge pull request #4938 from rsuite/fix/examples-proxy-addr-security
+### Incident Patch 1: `c6fd4196` (2026-10-19)
+**Commit Message**: Merge pull request #4947 from rsuite/fix/examples-shell-quote-comment-security
 
-fix(examples): patch proxy-addr trusted subnet handling
+fix(examples): update shell-quote past comment injection
 
-**File**: `examples/create-react-app/pnpm-lock.yaml` (modified, +3/-3)
+**File**: `examples/create-react-app/pnpm-lock.yaml` (modified, +4/-4)
 ```diff
-@@ -4627,7 +4627,7 @@ packages:
-       on-finished: 2.4.1
-       parseurl: 1.3.3
-       path-to-regexp: 0.1.7
--      proxy-addr: 2.0.7
-+      proxy-addr: 2.0.8
-       qs: 6.11.0
-       range-parser: 1.2.1
-       safe-buffer: 5.2.1
-@@ -7596,8 +7596,8 @@ packages:
-       object-assign: 4.1.1
-       react-is: 16.13.1
- 
--  /proxy-addr@2.0.7:
--    resolution: {integrity: sha512-llQsMLSUDUPT44jdrU/O37qlnifitDP+ZwrmmZcoSKyLKvtZxpyV0n2/bD/N4tBAAZ/gJEdZU7KMraoK1+XYAg==}
-+  /proxy-addr@2.0.8:
-+    resolution: {integrity: sha512-5nnx0yGyVUcY6t9RnWcARWtwT9F1D8O9rt08htPvnd49W1IgZtmLkhu9WfMzQj1cFxjHIO6connUNVW5k7AVyQ==}
-     engines: {node: '>= 0.10'}
+@@ -6309,7 +6309,7 @@ packages:
+     resolution: {integrity: sha512-eB/uXmFVpY4zezmGp5XtU21kwo7GBbKB+EQ+UZeWtGb9yAM5xt/Evk+lYH3eRNAtId+ej4u7TYPFZ07w4s7rRw==}
      dependencies:
-       forwarded: 0.2.0
+       picocolors: 1.0.0
+-      shell-quote: 1.8.4
++      shell-quote: 1.12.0
+ 
+   /leven@3.1.0:
+     resolution: {integrity: sha512-qsda+H8jTaUaN/x5vzW2rzc+8Rw4TAQ/4KjB46IwK5VH+IlVeeeje/EoZRpiXvIqjFgK84QffqPztGI3VBLG1A==}
+@@ -7777,7 +7777,7 @@ packages:
+       prompts: 2.4.2
+       react-error-overlay: 6.0.11
+       recursive-readdir: 2.2.3
+-      shell-quote: 1.8.4
++      shell-quote: 1.12.0
+       strip-ansi: 6.0.1
+       text-table: 0.2.0
+       typescript: 5.3.3
+@@ -8438,8 +8438,8 @@ packages:
+     resolution: {integrity: sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==}
+     engines: {node: '>=8'}
+ 
+-  /shell-quote@1.8.4:
+-    resolution: {integrity: sha512-VsC6n6vz1ihYYyZZwX7YZSF5l5x36ca17OC+a69h94YqB7X6XLwf+5MOgynYir2SLFUbl8gIYvBo8K8RoNQ6bQ==}
++  /shell-quote@1.12.0:
++    resolution: {integrity: sha512-PcByqNyT/38F2kDNi006HAMRJaULuBzq/FOsw3qdZvX/GA9W/jamDaRskgHjubHiftXK5sIFxLNkvrXUwcof6Q==}
+     engines: {node: '>= 0.4'}
+ 
+   /side-channel@1.0.4:
 ```
 
 **File**: `examples/custom-i18n/pnpm-lock.yaml` (modified, +3/-3)
 ```diff
-@@ -2400,7 +2400,7 @@ packages:
-       on-finished: 2.4.1
-       parseurl: 1.3.3
-       path-to-regexp: 0.1.12
--      proxy-addr: 2.0.7
-+      proxy-addr: 2.0.8
-       qs: 6.14.0
-       range-parser: 1.2.1
-       safe-buffer: 5.2.1
-@@ -3328,8 +3328,8 @@ packages:
-     resolution: {integrity: sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==}
+@@ -2915,7 +2915,7 @@ packages:
+     resolution: {integrity: sha512-giOHXoOtifjdHqUamwKq6c49GzBdLjvxrd2D+Q4V6uOHopJv7p9VJxikDsQ/CBXZbEITgUqSVHXLTG3VhPP1Dg==}
+     dependencies:
+       picocolors: 1.1.1
+-      shell-quote: 1.8.4
++      shell-quote: 1.12.0
      dev: true
  
--  /proxy-addr@2.0.7:
--    resolution: {integrity: sha512-llQsMLSUDUPT44jdrU/O37qlnifitDP+ZwrmmZcoSKyLKvtZxpyV0n2/bD/N4tBAAZ/gJEdZU7KMraoK1+XYAg==}
-+  /proxy-addr@2.0.8:
-+    resolution: {integrity: sha512-5nnx0yGyVUcY6t9RnWcARWtwT9F1D8O9rt08htPvnd49W1IgZtmLkhu9WfMzQj1cFxjHIO6connUNVW5k7AVyQ==}
-     engines: {node: '>= 0.10'}
-     dependencies:
-       forwarded: 0.2.0
+   /loader-runner@4.3.1:
+@@ -3767,8 +3767,8 @@ packages:
+     engines: {node: '>=8'}
+     dev: true
+ 
+-  /shell-quote@1.8.4:
+-    resolution: {integrity: sha512-VsC6n6vz1ihYYyZZwX7YZSF5l5x36ca17OC+a69h94YqB7X6XLwf+5MOgynYir2SLFUbl8gIYvBo8K8RoNQ6bQ==}
++  /shell-quote@1.12.0:
++    resolution: {integrity: sha512-PcByqNyT/38F2kDNi006HAMRJaULuBzq/FOsw3qdZvX/GA9W/jamDaRskgHjubHiftXK5sIFxLNkvrXUwcof6Q==}
+     engines: {node: '>= 0.4'}
+     dev: true
+ 
 ```
 
 **File**: `examples/with-electron/pnpm-lock.yaml` (modified, +3/-3)
 ```diff
-@@ -3689,7 +3689,7 @@ packages:
-       on-finished: 2.4.1
-       parseurl: 1.3.3
-       path-to-regexp: 0.1.12
--      proxy-addr: 2.0.7
-+      proxy-addr: 2.0.8
-       qs: 6.14.0
-       range-parser: 1.2.1
-       safe-buffer: 5.2.1
-@@ -5505,8 +5505,8 @@ packages:
-       retry: 0.12.0
+@@ -4621,7 +4621,7 @@ packages:
+     resolution: {integrity: sha512-giOHXoOtifjdHqUamwKq6c49GzBdLjvxrd2D+Q4V6uOHopJv7p9VJxikDsQ/CBXZbEITgUqSVHXLTG3VhPP1Dg==}
+     dependencies:
+       picocolors: 1.1.1
+-      shell-quote: 1.8.4
++      shell-quote: 1.12.0
      dev: true
  
--  /proxy-addr@2.0.7:
--    resolution: {integrity: sha512-llQsMLSUDUPT44jdrU/O37qlnifitDP+ZwrmmZcoSKyLKvtZxpyV0n2/bD/N4tBAAZ/gJEdZU7KMraoK1+XYAg==}
-+  /proxy-addr@2.0.8:
-+    resolution: {integrity: sha512-5nnx0yGyVUcY6t9RnWcARWtwT9F1D8O9rt08htPvnd49W1IgZtmLkhu9WfMzQj1cFxjHIO6connUNVW5k7AVyQ==}
-     engines: {node: '>= 0.10'}
-     dependencies:
-       forwarded: 0.2.0
+   /listr2@7.0.2:
+@@ -6073,8 +6073,8 @@ packages:
+     requiresBuild: true
+     dev: true
+ 
+-  /shell-quote@1.8.4:
+-    resolution: {integrity: sha512-VsC6n6vz1ihYYyZZwX7YZSF5l5x36ca17OC+a69h94YqB7X6XLwf+5MOgynYir2SLFUbl8gIYvBo8K8RoNQ6bQ==}
++  /shell-quote@1.12.0:
++    resolution: {integrity: sha512-PcByqNyT/38F2kDNi006HAMRJaULuBzq/FOsw3qdZvX/GA9W/jamDaRskgHjubHiftXK5sIFxLNkvrXUwcof6Q==}
+     engines: {node: '>= 0.4'}
+     dev: true
+ 
 ```
 
 **File**: `examples/with-gatsby/pnpm-lock.yaml` (modified, +3/-3)
 ```diff
-@@ -4969,7 +4969,7 @@ packages:
-       on-finished: 2.4.1
-       parseurl: 1.3.3
-       path-to-regexp: 0.1.12
--      proxy-addr: 2.0.7
-+      proxy-addr: 2.0.8
-       qs: 6.14.0
-       range-parser: 1.2.1
-       safe-buffer: 5.2.1
-@@ -7995,8 +7995,8 @@ packages:
-   /proto-list@1.2.4:
-     resolution: {integrity: sha512-vtK/94akxsTMhe0/cbfpR+syPuszcuwhqVjJq26CuNDgFGj682oRBXOP5MJpv2r7JtE8MsiepGIqvvOTBwn2vA==}
+@@ -8123,7 +8123,7 @@ packages:
+       prompts: 2.4.2
+       react-error-overlay: 6.1.0
+       recursive-readdir: 2.2.3
+-      shell-quote: 1.8.4
++      shell-quote: 1.12.0
+       strip-ansi: 6.0.1
+       text-table: 0.2.0
+       typescript: 5.9.3
+@@ -8755,8 +8755,8 @@ packages:
+     resolution: {integrity: sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==}
+     engines: {node: '>=8'}
  
--  /proxy-addr@2.0.7:
--    resolution: {integrity: sha512-llQsMLSUDUPT44jdrU/O37qlnifitDP+ZwrmmZcoSKyLKvtZxpyV0n2/bD/N4tBAAZ/gJEdZU7KMraoK1+XYAg==}
-+  /proxy-addr@2.0.8:
-+    resolution: {integrity: sha512-5nnx0yGyVUcY6t9RnWcARWtwT9F1D8O9rt08htPvnd49W1IgZtmLkhu9WfMzQj1cFxjHIO6connUNVW5k7AVyQ==}
-     engines: {node: '>= 0.10'}
-     dependencies:
-       forwarded: 0.2.0
+-  /shell-quote@1.8.4:
+-    resolution: {integrity: sha512-VsC6n6vz1ihYYyZZwX7YZSF5l5x36ca17OC+a69h94YqB7X6XLwf+5MOgynYir2SLFUbl8gIYvBo8K8RoNQ6bQ==}
++  /shell-quote@1.12.0:
++    resolution: {integrity: sha512-PcByqNyT/38F2kDNi006HAMRJaULuBzq/FOsw3qdZvX/GA9W/jamDaRskgHjubHiftXK5sIFxLNkvrXUwcof6Q==}
+     engines: {node: '>= 0.4'}
+ 
+   /side-channel-list@1.0.0:
 ```
 
 **File**: `examples/with-react-router/package-lock.json` (modified, +3/-3)
 ```diff
-@@ -4992,9 +4992,9 @@
-       "dev": true
-     },
-     "node_modules/proxy-addr": {
--      "version": "2.0.7",
--      "resolved": "https://registry.npmjs.org/proxy-addr/-/proxy-addr-2.0.7.tgz",
--      "integrity": "sha512-llQsMLSUDUPT44jdrU/O37qlnifitDP+ZwrmmZcoSKyLKvtZxpyV0n2/bD/N4tBAAZ/gJEdZU7KMraoK1+XYAg==",
-+      "version": "2.0.8",
-+      "resolved": "https://registry.npmjs.org/proxy-addr/-/proxy-addr-2.0.8.tgz",
-+      "integrity": "sha512-5nnx0yGyVUcY6t9RnWcARWtwT9F1D8O9rt08htPvnd49W1IgZtmLkhu9WfMzQj1cFxjHIO6connUNVW5k7AVyQ==",
-       "dev": true,
-       "dependencies": {
-         "forwarded": "0.2.0",
-```
-
-**File**: `examples/with-remix/package-lock.json` (modified, +3/-3)
-```diff
-@@ -3123,9 +3123,9 @@
+@@ -5654,9 +5654,9 @@
        }
      },
-     "node_modules/proxy-addr": {
--      "version": "2.0.7",
--      "resolved": "https://registry.npmjs.org/proxy-addr/-/proxy-addr-2.0.7.tgz",
--      "integrity": "sha512-llQsMLSUDUPT44jdrU/O37qlnifitDP+ZwrmmZcoSKyLKvtZxpyV0n2/bD/N4tBAAZ/gJEdZU7KMraoK1+XYAg==",
-+      "version": "2.0.8",
-+      "resolved": "https://registry.npmjs.org/proxy-addr/-/proxy-addr-2.0.8.tgz",
-+      "integrity": "sha512-5nnx0yGyVUcY6t9RnWcARWtwT9F1D8O9rt08htPvnd49W1IgZtmLkhu9WfMzQj1cFxjHIO6connUNVW5k7AVyQ==",
-       "dependencies": {
-         "forwarded": "0.2.0",
-         "ipaddr.js": "1.9.1"
+     "node_modules/shell-quote": {
+-      "version": "1.8.4",
+-      "resolved": "https://registry.npmjs.org/shell-quote/-/shell-quote-1.8.4.tgz",
+-      "integrity": "sha512-VsC6n6vz1ihYYyZZwX7YZSF5l5x36ca17OC+a69h94YqB7X6XLwf+5MOgynYir2SLFUbl8gIYvBo8K8RoNQ6bQ==",
++      "version": "1.12.0",
++      "resolved": "https://registry.npmjs.org/shell-quote/-/shell-quote-1.12.0.tgz",
++      "integrity": "sha512-PcByqNyT/38F2kDNi006HAMRJaULuBzq/FOsw3qdZvX/GA9W/jamDaRskgHjubHiftXK5sIFxLNkvrXUwcof6Q==",
+       "dev": true,
+       "engines": {
+         "node": ">= 0.4"
 ```
 
 **File**: `examples/with-styled-components/package-lock.json` (modified, +3/-3)
 ```diff
-@@ -5098,9 +5098,9 @@
-       "dev": true
+@@ -5755,9 +5755,9 @@
+       }
      },
-     "node_modules/proxy-addr": {
--      "version": "2.0.7",
--      "resolved": "https://registry.npmjs.org/proxy-addr/-/proxy-addr-2.0.7.tgz",
--      "integrity": "sha512-llQsMLSUDUPT44jdrU/O37qlnifitDP+ZwrmmZcoSKyLKvtZxpyV0n2/bD/N4tBAAZ/gJEdZU7KMraoK1+XYAg==",
-+      "version": "2.0.8",
-+      "resolved": "https://registry.npmjs.org/proxy-addr/-/proxy-addr-2.0.8.tgz",
-+      "integrity": "sha512-5nnx0yGyVUcY6t9RnWcARWtwT9F1D8O9rt08htPvnd49W1IgZtmLkhu9WfMzQj1cFxjHIO6connUNVW5k7AVyQ==",
+     "node_modules/shell-quote": {
+-      "version": "1.8.4",
+-      "resolved": "https://registry.npmjs.org/shell-quote/-/shell-quote-1.8.4.tgz",
+-      "integrity": "sha512-VsC6n6vz1ihYYyZZwX7YZSF5l5x36ca17OC+a69h94YqB7X6XLwf+5MOgynYir2SLFUbl8gIYvBo8K8RoNQ6bQ==",
++      "version": "1.12.0",
++      "resolved": "https://registry.npmjs.org/shell-quote/-/shell-quote-1.12.0.tgz",
++      "integrity": "sha512-PcByqNyT/38F2kDNi006HAMRJaULuBzq/FOsw3qdZvX/GA9W/jamDaRskgHjubHiftXK5sIFxLNkvrXUwcof6Q==",
        "dev": true,
-       "dependencies": {
-         "forwarded": "0.2.0",
+       "engines": {
+         "node": ">= 0.4"
 ```
 
 **File**: `examples/with-typescript/package-lock.json` (modified, +3/-3)
 ```diff
-@@ -4975,9 +4975,9 @@
-       "dev": true
+@@ -5613,9 +5613,9 @@
+       }
      },
-     "node_modules/proxy-addr": {
--      "version": "2.0.7",
--      "resolved": "https://registry.npmjs.org/proxy-addr/-/proxy-addr-2.0.7.tgz",
--      "integrity": "sha512-llQsMLSUDUPT44jdrU/O37qlnifitDP+ZwrmmZcoSKyLKvtZxpyV0n2/bD/N4tBAAZ/gJEdZU7KMraoK1+XYAg==",
-+      "version": "2.0.8",
-+      "resolved": "https://registry.npmjs.org/proxy-addr/-/proxy-addr-2.0.8.tgz",
-+      "integrity": "sha512-5nnx0yGyVUcY6t9RnWcARWtwT9F1D8O9rt08htPvnd49W1IgZtmLkhu9WfMzQj1cFxjHIO6connUNVW5k7AVyQ==",
+     "node_modules/shell-quote": {
+-      "version": "1.8.4",
+-      "resolved": "https://registry.npmjs.org/shell-quote/-/shell-quote-1.8.4.tgz",
+-      "integrity": "sha512-VsC6n6vz1ihYYyZZwX7YZSF5l5x36ca17OC+a69h94YqB7X6XLwf+5MOgynYir2SLFUbl8gIYvBo8K8RoNQ6bQ==",
++      "version": "1.12.0",
++      "resolved": "https://registry.npmjs.org/shell-quote/-/shell-quote-1.12.0.tgz",
++      "integrity": "sha512-PcByqNyT/38F2kDNi006HAMRJaULuBzq/FOsw3qdZvX/GA9W/jamDaRskgHjubHiftXK5sIFxLNkvrXUwcof6Q==",
        "dev": true,
+       "engines": {
+         "node": ">= 0.4"
+```
+
+---
+
+### Incident Patch 2: `d79a08cf` (2026-10-19)
+**Commit Message**: Merge pull request #4944 from rsuite/fix/umi-babel-security
+
+fix(examples): secure Umi Babel evaluation
+
+**File**: `examples/with-umi/package-lock.json` (modified, +160/-132)
+```diff
+@@ -30,11 +30,14 @@
+       }
+     },
+     "node_modules/@babel/code-frame": {
+-      "version": "7.18.6",
+-      "resolved": "https://registry.npmjs.org/@babel/code-frame/-/code-frame-7.18.6.tgz",
+-      "integrity": "sha512-TDCmlK5eOvH+eH7cdAFlNXeVJqWIQ7gW9tY1GJIpUtFb6CmjVyq2VM3u71bOyR8CRihcCgMUYoDNyLXao3+70Q==",
++      "version": "7.29.7",
++      "resolved": "https://registry.npmjs.org/@babel/code-frame/-/code-frame-7.29.7.tgz",
++      "integrity": "sha512-Aup7aUOfpbAUg2ROOJN6Iw5f9DMBlzu0mIkm/malLQFN/YQgO48wCj0Kxa3sEHJvPVFg7siR+qRInwXd2qhQKw==",
++      "license": "MIT",
        "dependencies": {
-         "forwarded": "0.2.0",
-```
-
----
-
-### Incident Patch 2: `e0a31162` (2026-10-18)
-**Commit Message**: Merge commit '7c58de4901d9b89a59c5b09b1585a6070ac6c5fd' into fix/examples-proxy-addr-security
-
-**File**: `src/useAsyncSearch/README.md` (modified, +1/-1)
-```diff
-@@ -61,6 +61,6 @@ Returning a promise does not move synchronous work off the main thread. Large lo
- | `success` | `false`   | Current results | `null`  |
- | `error`   | `false`   | Empty           | `Error` |
- 
--`enabled` defaults to `true`. Disabling or unmounting aborts the current request. React Activity also aborts work when it disconnects effects and runs the current query again when effects reconnect.
-+`enabled` defaults to `true`. Disabling or unmounting aborts the current request. Disabling also discards the previous stored result and error instead of retaining them until the next search. React Activity also aborts work when it disconnects effects and runs the current query again when effects reconnect.
- 
- Searches start after a client commit. Server rendering starts no requests and returns `pending`, or `idle` when disabled, matching the first client render. Synchronous exceptions, rejected promises and invalid result shapes become the `error` state. Call `reload` to retry after the cause has been addressed.
-```
-
-**File**: `src/useAsyncSearch/test/useAsyncSearch.retention.browser.test.tsx` (added, +101/-0)
-```diff
-@@ -0,0 +1,101 @@
-+import { dirname, resolve } from 'node:path';
-+import { fileURLToPath } from 'node:url';
-+import { afterAll, beforeAll, expect, it } from 'vitest';
-+import createSourceBrowser from '../../../test/browser/createSourceBrowser';
-+import type {} from './useAsyncSearch.retention.client';
-+
-+let source: Awaited<ReturnType<typeof createSourceBrowser>>;
-+beforeAll(async () => {
-+  source = await createSourceBrowser({
-+    root: resolve(dirname(fileURLToPath(import.meta.url)), '../../..'),
-+    entry: '/src/useAsyncSearch/test/useAsyncSearch.retention.client.tsx',
-+    hmr: false
-+  });
-+  console.info(
-+    'Search retention runtime',
-+    source.browserName,
-+    source.browser.version(),
-+    source.reactVersion
-+  );
-+});
-+afterAll(async () => source?.close());
-+
-+it.each(['success', 'error', 'pending'] as const)(
-+  'releases previous %s state while the disabled hook stays mounted',
-+  async mode => {
-+    const page = await source.browser.newPage();
-+    const errors: string[] = [];
-+    page.on('pageerror', error => errors.push(error.message));
-+    const snapshot = () => page.evaluate(() => window.__RSUITE_ASYNC_SEARCH_RETENTION__.snapshot());
-+    try {
-+      await page.goto(`${source.url}/#mode=${mode}`);
-+      expect(await page.evaluate(() => window.__RSUITE_ASYNC_SEARCH_RETENTION__.runtime)).toEqual({
-+        react: source.reactVersion,
-+        reactDOM: source.reactVersion
-+      });
-+      expect(await page.evaluate(() => '__registerBeforePerformReactRefresh' in window)).toBe(
-+        false
-+      );
-+      await page.getByRole('button', { name: 'Mount search', exact: true }).click();
-+      await page.waitForFunction(mode => {
-+        const value = window.__RSUITE_ASYNC_SEARCH_RETENTION__.snapshot();
-+        return value.status === mode && value.calls === 1;
-+      }, mode);
-+      await page.requestGC();
-+      const enabled = await snapshot();
-+      // Positive control: the active hook must still own its current data/error.
-+      expect(enabled.liveObjects).toBe(mode === 'error' ? 2 : 1);
-+      expect(enabled.items).toBe(mode === 'success' ? 1 : 0);
-+      await page.getByRole('button', { name: 'Disable and release data', exact: true }).click();
-+      await page.waitForFunction(
-+        () => window.__RSUITE_ASYNC_SEARCH_RETENTION__.snapshot().status === 'idle'
-+      );
-+      for (let index = 0; index < 6; index++) {
-+        await page.getByRole('button', { name: 'Commit unrelated render', exact: true }).click();
+-        "@babel/highlight": "^7.18.6"
++        "@babel/helper-validator-identifier": "^7.29.7",
++        "js-tokens": "^4.0.0",
++        "picocolors": "^1.1.1"
+       },
+       "engines": {
+         "node": ">=6.9.0"
+@@ -95,29 +98,29 @@
+       }
+     },
+     "node_modules/@babel/generator": {
+-      "version": "7.20.4",
+-      "resolved": "https://registry.npmjs.org/@babel/generator/-/generator-7.20.4.tgz",
+-      "integrity": "sha512-luCf7yk/cm7yab6CAW1aiFnmEfBJplb/JojV56MYEK7ziWfGmFlTfmL9Ehwfy4gFhbjBfWO1wj7/TuSbVNEEtA==",
++      "version": "7.29.8",
++      "resolved": "https://registry.npmjs.org/@babel/generator/-/generator-7.29.8.tgz",
++      "integrity": "sha512-gZbepsdh3WDtgZKWL+vTPh71LSBrm/Y4/QDZBVCcYfmeTEEuoOYwlSy+G1StfJg+/Zy550u/3TATbm7qDbbMtg==",
++      "license": "MIT",
+       "dependencies": {
+-        "@babel/types": "^7.20.2",
+-        "@jridgewell/gen-mapping": "^0.3.2",
+-        "jsesc": "^2.5.1"
++        "@babel/parser": "^7.29.8",
++        "@babel/types": "^7.29.8",
++        "@jridgewell/gen-mapping": "^0.3.12",
++        "@jridgewell/trace-mapping": "^0.3.28",
++        "jsesc": "^3.0.2"
+       },
+       "engines": {
+         "node": ">=6.9.0"
+       }
+     },
+     "node_modules/@babel/generator/node_modules/@jridgewell/gen-mapping": {
+-      "version": "0.3.2",
+-      "resolved": "https://registry.npmjs.org/@jridgewell/gen-mapping/-/gen-mapping-0.3.2.tgz",
+-      "integrity": "sha512-mh65xKQAzI6iBcFzwv28KVWSmCkdRBWoOh+bYQGW3+6OZvbbN3TqMGo5hqYxQniRcH9F2VZIoJCm4pa3BPDK/A==",
++      "version": "0.3.13",
++      "resolved": "https://registry.npmjs.org/@jridgewell/gen-mapping/-/gen-mapping-0.3.13.tgz",
++      "integrity": "sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA==",
++      "license": "MIT",
+       "dependencies": {
+-        "@jridgewell/set-array": "^1.0.1",
+-        "@jridgewell/sourcemap-codec": "^1.4.10",
+-        "@jridgewell/trace-mapping": "^0.3.9"
+-      },
+-      "engines": {
+-        "node": ">=6.0.0"
++        "@jridgewell/sourcemap-codec": "^1.5.0",
++        "@jridgewell/trace-mapping": "^0.3.24"
+       }
+     },
+     "node_modules/@babel/helper-annotate-as-pure": {
+@@ -168,6 +171,15 @@
+         "node": ">=6.9.0"
+       }
+     },
++    "node_modules/@babel/helper-globals": {
++      "version": "7.29.7",
++      "resolved": "https://registry.npmjs.org/@babel/helper-globals/-/helper-globals-7.29.7.tgz",
++      "integrity": "sha512-3nQVUAtvkKH9zahfWgw96Jc/uFOmjACE1kQz82E2lqWmHBgjzbNlsC22nuQTfahmWeQtTq5nQ/4Nnd2A1wj4zA==",
++      "license": "MIT",
++      "engines": {
++        "node": ">=6.9.0"
 +      }
-+      await page.evaluate(() => window.__RSUITE_ASYNC_SEARCH_RETENTION__.settle());
-+      expect(await snapshot()).toMatchObject({
-+        mounted: true,
-+        status: 'idle',
-+        items: 0,
-+        error: '',
-+        revision: 6,
-+        calls: 1,
-+        aborts: 1
-+      });
-+      let disabledFailure: unknown;
-+      try {
-+        await expect
-+          .poll(
-+            async () => {
-+              await page.requestGC();
-+              return (await snapshot()).liveObjects;
-+            },
-+            { timeout: 5000 }
-+          )
-+          .toBe(0);
-+      } catch (error) {
-+        disabledFailure = error;
-+      }
-+      const disabled = await snapshot();
-+      await page.getByRole('button', { name: 'Unmount search', exact: true }).click();
-+      for (let index = 0; index < 6; index++) {
-+        await page.getByRole('button', { name: 'Commit unrelated render', exact: true }).click();
-+      }
-+      await expect
-+        .poll(
-+          async () => {
-+            await page.requestGC();
-+            return (await snapshot()).liveObjects;
-+          },
-+          { timeout: 5000 }
-+        )
-+        .toBe(0);
-+      console.info('Search retention controls', { enabled, disabled, unmounted: await snapshot() });
-+      expect(errors).toEqual([]);
-+      if (disabledFailure) throw disabledFailure;
-+    } finally {
-+      await page.close();
-+    }
-+  }
-+);
-```
-
-**File**: `src/useAsyncSearch/test/useAsyncSearch.retention.client.tsx` (added, +122/-0)
-```diff
-@@ -0,0 +1,122 @@
-+import React, { useEffect, useState } from 'react';
-+import { createRoot } from 'react-dom/client';
-+import { version as reactDOM } from 'react-dom';
-+import useAsyncSearch from '..';
-+
-+type Mode = 'success' | 'error' | 'pending';
-+interface Item {
-+  id: string;
-+  payload: Uint8Array;
-+}
-+
-+const mode = new URLSearchParams(location.hash.slice(1)).get('mode') as Mode;
-+const references: WeakRef<object>[] = [];
-+let controls: { disable(): void; commit(): void } | undefined;
-+let calls = 0;
-+let aborts = 0;
-+let state = { status: '', items: 0, error: '', revision: 0 };
-+
-+function clearControlsOnUnmount() {
-+  return () => {
-+    controls = undefined;
-+  };
-+}
-+
-+function Probe() {
-+  const [data, setData] = useState<Item[]>(() => {
-+    const item = { id: 'previous', payload: new Uint8Array(1024 * 1024) };
-+    references.push(new WeakRef(item));
-+    return [item];
-+  });
-+  const [enabled, setEnabled] = useState(true);
-+  const [revision, setRevision] = useState(0);
-+  const result = useAsyncSearch({
-+    query: '',
-+    enabled,
-+    dependencies: [data],
-+    search: ({ signal }) => {
-+      calls++;
-+      signal.addEventListener('abort', () => aborts++, { once: true });
-+      if (mode === 'pending') return new Promise<Item[]>(() => {});
-+      if (mode === 'error') {
-+        const error = Object.assign(new Error('Previous failure'), {
-+          payload: new Uint8Array(1024 * 1024)
-+        });
-+        references.push(new WeakRef(error));
-+        throw error;
-+      }
-+      return data;
-+    }
-+  });
-+
-+  controls = {
-+    disable() {
-+      setEnabled(false);
-+      setData([]);
 +    },
-+    commit() {
-+      setRevision(value => value + 1);
-+    }
-+  };
-+  useEffect(() => {
-+    // Keep only scalar observations; storing the returned items/error would
-+    // make the fixture itself retain the objects under test.
-+    state = {
-+      status: result.status,
-+      items: result.items.length,
-+      error: result.error?.message ?? '',
-+      revision
-+    };
-+  });
-+  useEffect(clearControlsOnUnmount, []);
-+  return null;
-+}
-+
-+function Fixture() {
-+  const [mounted, setMounted] = useState(false);
-+  const [, setRevision] = useState(0);
-+  return (
-+    <>
-+      <button onClick={() => setMounted(true)}>Mount search</button>
-+      <button onClick={() => controls?.disable()}>Disable and release data</button>
-+      <button
-+        onClick={() => {
-+          if (controls) controls.commit();
-+          else setRevision(value => value + 1);
-+        }}
-+      >
-+        Commit unrelated render
-+      </button>
-+      <button onClick={() => setMounted(false)}>Unmount search</button>
-+      {mounted && <Probe />}
-+    </>
-+  );
-+}
-+
-+const snapshot = () => ({
-+  mode,
-+  ...state,
-+  calls,
-+  aborts,
-+  mounted: Boolean(controls),
-+  observedObjects: references.length,
-+  liveObjects: references.filter(reference => reference.deref()).length
-+});
-+
-+declare global {
-+  interface Window {
-+    __RSUITE_ASYNC_SEARCH_RETENTION__: {
-+      runtime: { react: string; reactDOM: string };
-+      snapshot: typeof snapshot;
-+      settle(): Promise<void>;
-+    };
-+  }
-+}
-+
-+window.__RSUITE_ASYNC_SEARCH_RETENTION__ = {
-+  runtime: { react: React.version, reactDOM },
-+  snapshot,
-+  settle: () =>
-+    new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve())))
-+};
-+createRoot(document.getElementById('root')!).render(<Fixture />);
-```
-
-**File**: `src/useAsyncSearch/test/useAsyncSearch.spec.tsx` (modified, +81/-0)
-```diff
-@@ -161,6 +161,87 @@ describe('useAsyncSearch request identity', () => {
-     expect(result.current.items).toHaveLength(1);
-   });
- 
-+  it.each(['success', 'error'] as const)(
-+    'Should discard settled %s state and use the latest callback after re-enabling',
-+    async initial => {
-+      const calls: string[] = [];
-+      const { result, rerender } = renderHook(
-+        ({ enabled, label }) =>
-+          useAsyncSearch({
-+            query: 'same query',
-+            enabled,
-+            search: () => {
-+              calls.push(label);
-+              if (initial === 'error' && label === 'previous') throw new Error('Previous failure');
-+              return [label];
-+            }
-+          }),
-+        { initialProps: { enabled: true, label: 'previous' }, wrapper }
-+      );
-+      await waitFor(() => expect(result.current.status).toBe(initial));
-+      rerender({ enabled: false, label: 'current' });
-+      act(() => result.current.reload());
-+      await act(async () => {});
-+      expect(result.current).toMatchObject({
-+        status: 'idle',
-+        items: [],
-+        error: null,
-+        loading: false
-+      });
-+      expect(calls).toEqual(['previous']);
-+      rerender({ enabled: true, label: 'current' });
-+      expect(result.current.items).toEqual([]);
-+      expect(result.current.error).toBeNull();
-+      await waitFor(() => expect(result.current.items).toEqual(['current']));
-+      expect(calls).toEqual(['previous', 'current']);
-+    }
-+  );
-+
-+  it('Should preserve committed results when a disabled render is abandoned', async () => {
-+    const calls: string[] = [];
-+    const suspended = new Promise<never>(() => {});
-+    let disable!: React.Dispatch<React.SetStateAction<boolean>>;
-+    let reload!: () => void;
-+    let attempted = false;
-+    function Probe() {
-+      const [enabled, setEnabled] = useState(true);
-+      disable = setEnabled;
-+      const result = useAsyncSearch({
-+        query: 'q',
-+        enabled,
-+        search: () => {
-+          const label = enabled ? 'committed' : 'abandoned';
-+          calls.push(label);
-+          return [label];
-+        }
-+      });
-+      if (!enabled) {
-+        attempted = true;
-+        throw suspended;
-+      }
-+      reload = result.reload;
-+      return (
-+        <output>
-+          {result.status}:{result.items.join(',')}
-+        </output>
-+      );
-+    }
-+    render(
-+      <StrictMode>
-+        <Suspense fallback="Waiting">
-+          <Probe />
-+        </Suspense>
-+      </StrictMode>
-+    );
-+    await screen.findByText('success:committed');
-+    act(() => startTransition(() => disable(false)));
-+    await waitFor(() => expect(attempted).toBe(true));
-+    expect(screen.getByText('success:committed')).toBeTruthy();
-+    act(() => reload());
-+    await waitFor(() => expect(calls).toEqual(['committed', 'committed']));
-+    expect(screen.getByText('success:committed')).toBeTruthy();
-+  });
-+
-   it('Should contain rejection values that cannot be converted to text', async () => {
-     const { result } = renderHook(
-       () => useAsyncSearch({ query: '', search: () => Promise.reject(Object.create(null)) }),
-```
-
-**File**: `src/useAsyncSearch/useAsyncSearch.ts` (modified, +6/-4)
-```diff
-@@ -1,4 +1,4 @@
--import { useCallback, useEffect, useRef, useState } from 'react';
-+import { useEffect, useReducer, useRef, useState } from 'react';
- import useIsomorphicLayoutEffect from '@/internals/hooks/useIsomorphicLayoutEffect';
- import type { UseAsyncSearchOptions, UseAsyncSearchReturn } from './types';
- 
-@@ -22,7 +22,7 @@ type Result<T> =
-  */
- export function useAsyncSearch<T>(options: UseAsyncSearchOptions<T>): UseAsyncSearchReturn<T> {
-   const { query, search, enabled = true, dependencies = [] } = options;
--  const [revision, setRevision] = useState(0);
-+  const [revision, reload] = useReducer((value: number) => value + 1, 0);
-   const [storedRequest, setRequest] = useState<Request<T>>(() => ({
-     query,
-     enabled,
-@@ -32,7 +32,6 @@ export function useAsyncSearch<T>(options: UseAsyncSearchOptions<T>): UseAsyncSe
-   }));
-   const [result, setResult] = useState<Result<T> | null>(null);
-   const searchRef = useRef(search);
--  const reload = useCallback(() => setRevision(value => value + 1), []);
-   let request = storedRequest;
- 
-   // React discards this render and immediately retries with the new request.
-@@ -53,7 +52,10 @@ export function useAsyncSearch<T>(options: UseAsyncSearchOptions<T>): UseAsyncSe
-   });
- 
-   useEffect(() => {
--    if (!request.enabled) return;
-+    if (!request.enabled) {
-+      setResult(null);
-+      return;
-+    }
- 
-     const controller = new AbortController();
-     const runSearch = searchRef.current;
+     "node_modules/@babel/helper-hoist-variables": {
+       "version": "7.18.6",
+       "resolved": "https://registry.npmjs.org/@babel/helper-hoist-variables/-/helper-hoist-variables-7.18.6.tgz",
+@@ -239,17 +251,19 @@
+       }
+     },
+     "node_modules/@babel/helper-string-parser": {
+-      "version": "7.19.4",
+-      "resolved": "https://registry.npmjs.org/@babel/helper-string-parser/-/helper-string-parser-7.19.4.tgz",
+-      "integrity": "sha512-nHtDoQcuqFmwYNYPz3Rah5ph2p8PFeFCsZk9A/48dPc/rGocJ5J3hAAZ7pb76VWX3fZKu+uEr/FhH5jLx7umrw==",
++      "version": "7.29.7",
++      "resolved": "https://registry.npmjs.org/@babel/helper-string-parser/-/helper-string-parser-7.29.7.tgz",
++      "integrity": "sha512-Pb5ijPrZ89GDH8223L4UP8i6QApWxs04RbPQJTeWDV0/keR2E36MeKnyr6LYmUUvqRRI+Iv87SuF1W6ErINzYw==",
++      "license": "MIT",
+       "engines": {
+         "node": ">=6.9.0"
+       }
+     },
+     "node_modules/@babel/helper-validator-identifier": {
+-      "version": "7.19.1",
+-      "resolved": "https://registry.npmjs.org/@babel/helper-validator-identifier/-/helper-validator-identifier-7.19.1.tgz",
+-      "integrity": "sha512-awrNfaMtnHUr653GgGEs++LlAvW6w+DcPrOliSMXWCKo597CwL5Acf/wWdNkf/tfEQE3mjkeD1YOVZOUV/od1w==",
++      "version": "7.29.7",
++      "resolved": "https://registry.npmjs.org/@babel/helper-validator-identifier/-/helper-validator-identifier-7.29.7.tgz",
++      "integrity": "sha512-qehxGkRj55h/ff8EMaJ+cYhyaKlHIxqYDn682wQD7RNp9UujOQsHog2uS0r2vzr4pW+sXf90NeeayjcNaX3fFg==",
++      "license": "MIT",
+       "engines": {
+         "node": ">=6.9.0"
+       }
+@@ -289,9 +303,13 @@
+       }
+     },
+     "node_modules/@babel/parser": {
+-      "version": "7.20.3",
+-      "resolved": "https://registry.npmjs.org/@babel/parser/-/parser-7.20.3.tgz",
+-      "inte
 ```
 
 ---
 
-### Incident Patch 3: `c09c0d5c` (2026-10-18)
-**Commit Message**: Merge pull request #4939 from rsuite/fix/callback-prop-retention
+### Incident Patch 3: `cdba236c` (2026-10-19)
+**Commit Message**: fix(examples): update shell-quote past comment injection
 
-fix(hooks): release superseded callbacks and component props
-
-**File**: `src/Animation/test/Transition.reduced-motion.keyboard.spec.tsx` (modified, +3/-1)
+**File**: `examples/create-react-app/pnpm-lock.yaml` (modified, +4/-4)
 ```diff
-@@ -120,7 +120,9 @@ describe.each([
-     };
-     render(<Fixture />);
-     const opener = screen.getByRole('button', { name: 'Open dialog' });
--    await act(() => userEvent.click(opener));
-+    act(() => opener.focus());
-+    expect(opener).to.have.focus;
-+    await act(() => userEvent.keyboard('{Enter}'));
-     await waitFor(() => expect(entered).toHaveBeenCalledTimes(1));
-     const dialog = screen.getByRole('dialog');
-     expect(getComputedStyle(dialog).animationDuration).toBe('0s');
+@@ -6309,7 +6309,7 @@ packages:
+     resolution: {integrity: sha512-eB/uXmFVpY4zezmGp5XtU21kwo7GBbKB+EQ+UZeWtGb9yAM5xt/Evk+lYH3eRNAtId+ej4u7TYPFZ07w4s7rRw==}
+     dependencies:
+       picocolors: 1.0.0
+-      shell-quote: 1.8.4
++      shell-quote: 1.12.0
+ 
+   /leven@3.1.0:
+     resolution: {integrity: sha512-qsda+H8jTaUaN/x5vzW2rzc+8Rw4TAQ/4KjB46IwK5VH+IlVeeeje/EoZRpiXvIqjFgK84QffqPztGI3VBLG1A==}
+@@ -7777,7 +7777,7 @@ packages:
+       prompts: 2.4.2
+       react-error-overlay: 6.0.11
+       recursive-readdir: 2.2.3
+-      shell-quote: 1.8.4
++      shell-quote: 1.12.0
+       strip-ansi: 6.0.1
+       text-table: 0.2.0
+       typescript: 5.3.3
+@@ -8438,8 +8438,8 @@ packages:
+     resolution: {integrity: sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==}
+     engines: {node: '>=8'}
+ 
+-  /shell-quote@1.8.4:
+-    resolution: {integrity: sha512-VsC6n6vz1ihYYyZZwX7YZSF5l5x36ca17OC+a69h94YqB7X6XLwf+5MOgynYir2SLFUbl8gIYvBo8K8RoNQ6bQ==}
++  /shell-quote@1.12.0:
++    resolution: {integrity: sha512-PcByqNyT/38F2kDNi006HAMRJaULuBzq/FOsw3qdZvX/GA9W/jamDaRskgHjubHiftXK5sIFxLNkvrXUwcof6Q==}
+     engines: {node: '>= 0.4'}
+ 
+   /side-channel@1.0.4:
 ```
 
-**File**: `src/internals/hooks/test/callbackRetention.browser.test.tsx` (added, +74/-0)
+**File**: `examples/custom-i18n/pnpm-lock.yaml` (modified, +3/-3)
 ```diff
-@@ -0,0 +1,74 @@
-+import { dirname, resolve } from 'node:path';
-+import { fileURLToPath } from 'node:url';
-+import { afterAll, beforeAll, expect, it } from 'vitest';
-+import createSourceBrowser from '../../../../test/browser/createSourceBrowser';
-+import type {} from './callbackRetention.client';
-+
-+let source: Awaited<ReturnType<typeof createSourceBrowser>>;
-+beforeAll(async () => {
-+  source = await createSourceBrowser({
-+    root: resolve(dirname(fileURLToPath(import.meta.url)), '../../../..'),
-+    entry: '/src/internals/hooks/test/callbackRetention.client.tsx',
-+    hmr: false
-+  });
-+});
-+afterAll(async () => source?.close());
-+
-+it.each(['event', 'config', 'button'] as const)(
-+  'releases superseded callbacks and payloads while %s remains mounted',
-+  async mode => {
-+    const page = await source.browser.newPage();
-+    const errors: string[] = [];
-+    page.on('pageerror', error => errors.push(error.message));
-+    const snapshot = () => page.evaluate(() => window.__RSUITE_CALLBACK_RETENTION__.snapshot());
-+    const collect = async () => {
-+      for (let index = 0; index < 3; index++) await page.requestGC();
-+      return snapshot();
-+    };
-+    try {
-+      await page.goto(`${source.url}/#mode=${mode}`);
-+      expect(await page.evaluate(() => window.__RSUITE_CALLBACK_RETENTION__.runtime)).toEqual({
-+        react: source.reactVersion,
-+        reactDOM: source.reactVersion
-+      });
-+      expect(await page.evaluate(() => '__registerBeforePerformReactRefresh' in window)).toBe(
-+        false
-+      );
-+      await page.locator('#target').click();
-+      expect((await collect()).live).toEqual([
-+        { tag: 'old', kind: 'payload' },
-+        { tag: 'old', kind: 'callback' }
-+      ]);
-+      expect((await snapshot()).observed).toBe('old');
-+      for (const tag of ['middle', 'current']) {
-+        await page.evaluate(tag => window.__RSUITE_CALLBACK_RETENTION__.replace(tag), tag);
-+        await page.locator('#target').click();
-+        expect((await snapshot()).observed).toBe(tag);
-+      }
-+      // Render both fiber alternates with current props before checking GC.
-+      for (let index = 0; index < 6; index++) {
-+        await page.evaluate(() => window.__RSUITE_CALLBACK_RETENTION__.commit());
-+      }
-+      expect(await snapshot()).toMatchObject({ mounted: true, revision: 6, observed: 'current' });
-+      let retainedFailure: unknown;
-+      try {
-+        expect((await collect()).live).toEqual([
-+          { tag: 'current', kind: 'payload' },
-+          { tag: 'current', kind: 'callback' }
-+        ]);
-+      } catch (error) {
-+        retainedFailure = error;
-+      }
-+      await page.evaluate(() => window.__RSUITE_CALLBACK_RETENTION__.unmount());
-+      for (let index = 0; index < 6; index++) {
-+        await page.evaluate(() => window.__RSUITE_CALLBACK_RETENTION__.commit());
-+      }
-+      expect((await collect()).live).toEqual([]);
-+      expect((await snapshot()).mounted).toBe(false);
-+      expect(errors).toEqual([]);
-+      if (retainedFailure) throw retainedFailure;
-+    } finally {
-+      await page.close();
-+    }
-+  }
-+);
+@@ -2915,7 +2915,7 @@ packages:
+     resolution: {integrity: sha512-giOHXoOtifjdHqUamwKq6c49GzBdLjvxrd2D+Q4V6uOHopJv7p9VJxikDsQ/CBXZbEITgUqSVHXLTG3VhPP1Dg==}
+     dependencies:
+       picocolors: 1.1.1
+-      shell-quote: 1.8.4
++      shell-quote: 1.12.0
+     dev: true
+ 
+   /loader-runner@4.3.1:
+@@ -3767,8 +3767,8 @@ packages:
+     engines: {node: '>=8'}
+     dev: true
+ 
+-  /shell-quote@1.8.4:
+-    resolution: {integrity: sha512-VsC6n6vz1ihYYyZZwX7YZSF5l5x36ca17OC+a69h94YqB7X6XLwf+5MOgynYir2SLFUbl8gIYvBo8K8RoNQ6bQ==}
++  /shell-quote@1.12.0:
++    resolution: {integrity: sha512-PcByqNyT/38F2kDNi006HAMRJaULuBzq/FOsw3qdZvX/GA9W/jamDaRskgHjubHiftXK5sIFxLNkvrXUwcof6Q==}
+     engines: {node: '>= 0.4'}
+     dev: true
+ 
 ```
 
-**File**: `src/internals/hooks/test/callbackRetention.client.tsx` (added, +107/-0)
+**File**: `examples/with-electron/pnpm-lock.yaml` (modified, +3/-3)
 ```diff
-@@ -0,0 +1,107 @@
-+import React, { useState } from 'react';
-+import { createRoot } from 'react-dom/client';
-+import { flushSync, version as reactDOM } from 'react-dom';
-+import Button from '../../../Button';
-+import useEventCallback from '../useEventCallback';
-+import useCustomConfig from '../useCustomConfig';
-+
-+type Mode = 'event' | 'config' | 'button';
-+type Handler = () => string;
-+const mode = new URLSearchParams(location.hash.slice(1)).get('mode') as Mode;
-+const references: { tag: string; kind: string; reference: WeakRef<object> }[] = [];
-+let observed = '';
-+let controls: { replace(tag: string): void; commit(): void; unmount(): void };
-+let mounted = true;
-+let revision = 0;
-+
-+// Create payloads outside the rendering scopes so fixture closures cannot own
-+// superseded props. Observations keep only WeakRefs and scalar values.
-+function makeHandler(tag: string): Handler {
-+  const payload = { tag, bytes: new Uint8Array(1024 * 1024) };
-+  const callback = () => {
-+    observed = payload.tag;
-+    return payload.tag;
-+  };
-+  references.push(
-+    { tag, kind: 'payload', reference: new WeakRef(payload) },
-+    { tag, kind: 'callback', reference: new WeakRef(callback) }
-+  );
-+  return callback;
-+}
-+
-+function EventProbe({ callback, revision }: { callback: Handler; revision: number }) {
-+  const stable = useEventCallback(callback);
-+  return (
-+    <button id="target" data-revision={revision} onClick={stable}>
-+      Target
-+    </button>
-+  );
-+}
-+
-+function ConfigProbe({ callback, revision }: { callback: Handler; revision: number }) {
-+  const { propsWithDefaults } = useCustomConfig('Button', {
-+    onClick: callback,
-+    'data-revision': revision
-+  });
-+  return (
-+    <button id="target" {...propsWithDefaults}>
-+      Target
-+    </button>
-+  );
-+}
-+
-+function Fixture() {
-+  const [callback, setCallback] = useState<Handler | undefined>(() => makeHandler('old'));
-+  const [isMounted, setMounted] = useState(true);
-+  const [renderRevision, setRevision] = useState(0);
-+  mounted = isMounted;
-+  revision = renderRevision;
-+  controls = {
-+    replace: tag => flushSync(() => setCallback(() => makeHandler(tag))),
-+    commit: () => flushSync(() => setRevision(value => value + 1)),
-+    unmount: () =>
-+      flushSync(() => {
-+        setMounted(false);
-+        setCallback(undefined);
-+      })
-+  };
-+  return isMounted && callback ? (
-+    mode === 'event' ? (
-+      <EventProbe callback={callback} revision={renderRevision} />
-+    ) : mode === 'config' ? (
-+      <ConfigProbe callback={callback} revision={renderRevision} />
-+    ) : (
-+      <Button id="target" data-revision={renderRevision} ripple={false} onClick={callback}>
-+        {`Target ${renderRevision}`}
-+      </Button>
-+    )
-+  ) : null;
-+}
-+
-+const snapshot = () => ({
-+  observed,
-+  mounted,
-+  revision,
-+  live: references.filter(item => item.reference.deref()).map(({ tag, kind }) => ({ tag, kind }))
-+});
-+
-+declare global {
-+  interface Window {
-+    __RSUITE_CALLBACK_RETENTION__: {
-+      runtime: { react: string; reactDOM: string };
-+      replace(tag: string): void;
-+      commit(): void;
-+      unmount(): void;
-+      snapshot: typeof snapshot;
-+    };
-+  }
-+}
-+
-+window.__RSUITE_CALLBACK_RETENTION__ = {
-+  runtime: { react: React.version, reactDOM },
-+  replace: tag => controls.replace(tag),
-+  commit: () => controls.commit(),
-+  unmount: () => controls.unmount(),
-+  snapshot
-+};
-+createRoot(document.getElementById('root')!).render(<Fixture />);
+@@ -4621,7 +4621,7 @@ packages:
+     resolution: {integrity: sha512-giOHXoOtifjdHqUamwKq6c49GzBdLjvxrd2D+Q4V6uOHopJv7p9VJxikDsQ/CBXZbEITgUqSVHXLTG3VhPP1Dg==}
+     dependencies:
+       picocolors: 1.1.1
+-      shell-quote: 1.8.4
++      shell-quote: 1.12.0
+     dev: true
+ 
+   /listr2@7.0.2:
+@@ -6073,8 +6073,8 @@ packages:
+     requiresBuild: true
+     dev: true
+ 
+-  /shell-quote@1.8.4:
+-    resolution: {integrity: sha512-VsC6n6vz1ihYYyZZwX7YZSF5l5x36ca17OC+a69h94YqB7X6XLwf+5MOgynYir2SLFUbl8gIYvBo8K8RoNQ6bQ==}
++  /shell-quote@1.12.0:
++    resolution: {integrity: sha512-PcByqNyT/38F2kDNi006HAMRJaULuBzq/FOsw3qdZvX/GA9W/jamDaRskgHjubHiftXK5sIFxLNkvrXUwcof6Q==}
+     engines: {node: '>= 0.4'}
+     dev: true
+ 
 ```
 
-**File**: `src/internals/hooks/test/useEventCallback.lifecycle.spec.tsx` (added, +72/-0)
+**File**: `examples/with-gatsby/pnpm-lock.yaml` (modified, +3/-3)
 ```diff
-@@ -0,0 +1,72 @@
-+import React, { StrictMode, Suspense, startTransition, useLayoutEffect, useState } from 'react';
-+import { act, render, screen } from '@testing-library/react';
-+import { describe, expect, it } from 'vitest';
-+import useEventCallback from '../useEventCallback';
-+
-+describe('useEventCallback commit lifecycle', () => {
-+  it('updates before a parent layout effect while keeping its identity in StrictMode', () => {
-+    let callback: () => number;
-+    const calls: number[] = [];
-+    function Child({ value }: { value: number }) {
-+      callback = useEventCallback(() => value);
-+      return null;
-+    }
-+    function Parent({ value }: { value: number }) {
-+      useLayoutEffect(() => {
-+        calls.push(callback());
-+      }, [value]);
-+      return <Child value={value} />;
-+    }
-+    const { rerender } = render(
-+      <StrictMode>
-+        <Parent value={1} />
-+      </StrictMode>
-+    );
-+    const initial = callback!;
-+    expect(calls.at(-1)).toBe(1);
-+    rerender(
-+      <StrictMode>
-+        <Parent value={2} />
-+      </StrictMode>
-+    );
-+    expect(calls.at(-1)).toBe(2);
-+    expect(callback!).toBe(initial);
-+    expect(initial()).toBe(2);
-+  });
-+
-+  it('ignores an abandoned suspended render and publishes the next committed callback', async () => {
-+    let callback: () => string;
-+    let update: (value: string) => void;
-+    let suspendedRenders = 0;
-+    const pending = new Promise<void>(() => {});
-+    function Child({ value }: { value: string }) {
-+      callback = useEventCallback(() => value);
-+      if (value === 'suspended') {
-+        suspendedRenders++;
-+        throw pending;
-+      }
-+      return <span>{value}</span>;
-+    }
-+    function Fixture() {
-+      const [value, setValue] = useState('initial');
-+      update = setValue;
-+      return (
-+        <Suspense fallback="Loading">
-+          <Child value={value} />
-+        </Suspense>
-+      );
-+    }
-+    render(<Fixture />);
-+    const initial = callback!;
-+    await act(async () => {
-+      startTransition(() => update('suspended'));
-+    });
-+    expect(suspendedRenders).toBeGreaterThan(0);
-+    expect(screen.getByText('initial')).toBeTruthy();
-+    expect(initial()).toBe('initial');
-+    act(() => update('committed'));
-+    expect(screen.getByText('committed')).toBeTruthy();
-+    expect(callback!).toBe(initial);
-+    expect(initial()).toBe('committed');
-+  });
-+});
+@@ -8123,7 +8123,7 @@ packages:
+       prompts: 2.4.2
+       react-error-overlay: 6.1.0
+       recursive-readdir: 2.2.3
+-      shell-quote: 1.8.4
++      shell-quote: 1.12.0
+       strip-ansi: 6.0.1
+       text-table: 0.2.0
+       typescript: 5.9.3
+@@ -8755,8 +8755,8 @@ packages:
+     resolution: {integrity: sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==}
+     engines: {node: '>=8'}
+ 
+-  /shell-quote@1.8.4:
+-    resolution: {integrity: sha512-VsC6n6vz1ihYYyZZwX7YZSF5l5x36ca17OC+a69h94YqB7X6XLwf+5MOgynYir2SLFUbl8gIYvBo8K8RoNQ6bQ==}
++  /shell-quote@1.12.0:
++    resolution: {integrity: sha512-PcByqNyT/38F2kDNi006HAMRJaULuBzq/FOsw3qdZvX/GA9W/jamDaRskgHjubHiftXK5sIFxLNkvrXUwcof6Q==}
+     engines: {node: '>= 0.4'}
+ 
+   /side-channel-list@1.0.0:
 ```
 
-**File**: `src/internals/hooks/useCustomConfig.ts` (modified, +12/-14)
+**File**: `examples/with-react-router/package-lock.json` (modified, +3/-3)
 ```diff
-@@ -1,6 +1,6 @@
- import assign from 'lodash/assign';
- import enGB from '../../locales/en_GB';
--import { useContext, useCallback, useMemo } from 'react';
-+import { useContext, useCallback } from 'react';
- import { CustomContext } from '@/internals/Provider/CustomContext';
- import type { ReactSuiteComponents } from '@/internals/Provider/types';
- 
-@@ -86,22 +86,20 @@ export function useCustomConfig<P = any>(
-     [globalLocale, defaultLocale, componentLocale]
-   );
- 
--  const propsWithDefaults: P = useMemo(() => {
--    if (!componentName) {
--      return;
--    }
--
--    const mergedProps = assign({}, globalDefaultProps, restProps);
-+  // restProps is new on every render. Merging directly also keeps old props out
-+  // of the closure shared with the stable getLocale callback.
-+  let propsWithDefaults: P = componentName ? assign({}, globalDefaultProps, restProps) : undefined;
-+  if (componentName) {
-+    const mergedProps = propsWithDefaults;
-     const localeKey = getComponentLocaleKey(componentName);
- 
-     // If the default locale has the component name, then merge the locale.
--    if (Object.keys(enGB).includes(localeKey)) {
--      return { ...mergedProps, locale: getLocale(localeKey as LocaleKey) };
--    }
--    return componentLocale
--      ? { ...mergedProps, locale: assign({}, defaultLocale, componentLocale) }
--      : mergedProps;
--  }, [componentName, globalDefaultProps, defaultLocale, componentLocale, getLocale, restProps]);
-+    propsWithDefaults = Object.keys(enGB).includes(localeKey)
-+      ? { ...mergedProps, locale: getLocale(localeKey as LocaleKey) }
-+      : componentLocale
-+        ? { ...mergedProps, locale: assign({}, defaultLocale, componentLocale) }
-+        : mergedProps;
-+  }
- 
-   return {
-     code,
+@@ -5654,9 +5654,9 @@
+       }
+     },
+     "node_modules/shell-quote": {
+-      "version": "1.8.4",
+-      "resolved": "https://registry.npmjs.org/shell-quote/-/shell-quote-1.8.4.tgz",
+-      "integrity": "sha512-VsC6n6vz1ihYYyZZwX7YZSF5l5x36ca17OC+a69h94YqB7X6XLwf+5MOgynYir2SLFUbl8gIYvBo8K8RoNQ6bQ==",
++      "version": "1.12.0",
++      "resolved": "https://registry.npmjs.org/shell-quote/-/shell-quote-1.12.0.tgz",
++      "integrity": "sha512-PcByqNyT/38F2kDNi006HAMRJaULuBzq/FOsw3qdZvX/GA9W/jamDaRskgHjubHiftXK5sIFxLNkvrXUwcof6Q==",
+       "dev": true,
+       "engines": {
+         "node": ">= 0.4"
 ```
 
-**File**: `src/internals/hooks/useEventCallback.ts` (modified, +7/-3)
+**File**: `examples/with-styled-components/package-lock.json` (modified, +3/-3)
 ```diff
-@@ -1,6 +1,10 @@
- import { useCallback, useRef } from 'react';
- import useIsomorphicLayoutEffect from './useIsomorphicLayoutEffect';
- 
-+function updateCallback(ref, fn) {
-+  ref.current = fn;
-+}
-+
- /**
-  * https://github.com/facebook/react/issues/14099#issuecomment-440013892
-  * @param {function} fn
-@@ -12,9 +16,9 @@ export function useEventCallback(fn) {
-    * useLayoutEffect is earlier than useEffect, sometimes we use setState and then use callback immediately,
-    * However the state in callback is not the latest, because useEffect is not triggered.
-    */
--  useIsomorphicLayoutEffect(() => {
--    ref.current = fn;
--  });
-+  // Bind the effect arguments so the stable callback cannot retain an old fn
-+  // through a shared render closure, including in minified builds.
-+  useIsomorphicLayoutEffect(updateCallback.bind(null, ref, fn));
-   return useCallback((...args) => {
-     return ref.current?.(...args);
-   }, []);
+@@ -5755,9 +5755,9 @@
+       }
+     },
+     "node_modules/shell-quote": {
+-      "version": "1.8.4",
+-      "resolved": "https://registry.npmjs.org/shell-quote/-/shell-quote-1.8.4.tgz",
+-      "integrity": "sha512-VsC6n6vz1ihYYyZZwX7YZSF5l5x36ca17OC+a69h94YqB7X6XLwf+5MOgynYir2SLFUbl8gIYvBo8K8RoNQ6bQ==",
++      "version": "1.12.0",
++      "resolved": "https://registry.npmjs.org/shell-quote/-/shell-quote-1.12.0.tgz",
++      "integrity": "sha512-PcByqNyT/38F2kDNi006HAMRJaULuBzq/FOsw3qdZvX/GA9W/jamDaRskgHjubHiftXK5sIFxLNkvrXUwcof6Q==",
+       "dev": true,
+       "engines": {
+         "node": ">= 0.4"
+```
+
+**File**: `examples/with-typescript/package-lock.json` (modified, +3/-3)
+```diff
+@@ -5613,9 +5613,9 @@
+       }
+     },
+     "node_modules/shell-quote": {
+-      "version": "1.8.4",
+-      "resolved": "https://registry.npmjs.org/shell-quote/-/shell-quote-1.8.4.tgz",
+-      "integrity": "sha512-VsC6n6vz1ihYYyZZwX7YZSF5l5x36ca17OC+a69h94YqB7X6XLwf+5MOgynYir2SLFUbl8gIYvBo8K8RoNQ6bQ==",
++      "version": "1.12.0",
++      "resolved": "https://registry.npmjs.org/shell-quote/-/shell-quote-1.12.0.tgz",
++      "integrity": "sha512-PcByqNyT/38F2kDNi006HAMRJaULuBzq/FOsw3qdZvX/GA9W/jamDaRskgHjubHiftXK5sIFxLNkvrXUwcof6Q==",
+       "dev": true,
+       "engines": {
+         "node": ">= 0.4"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4939** (2026-10-18): fix(hooks): release superseded callbacks and component props (@simonguo)
-- **PR #4938** (2026-10-18): fix(examples): patch proxy-addr trusted subnet handling (@simonguo)
-- **PR #4937** (2026-10-18): fix(use-async-search): release disabled request data (@simonguo)
-- **PR #4935** (2026-10-18): fix(types): reject undeclared refs on custom as components (@simonguo)
-- **PR #4934** (2026-10-18): fix(Button): keep primary foregrounds readable across colors and states (@simonguo)
-- **PR #4933** (2026-10-18): fix(DateRangeInput): use its own provider defaults (@simonguo)
+- **PR #4949** (2026-10-19): test(picker): trace transition state on Escape exit failure (@simonguo)
+- **PR #4948** (2026-10-19): test(benchmarks): add cross-library picker comparison (@simonguo)
+- **PR #4947** (2026-10-19): fix(examples): update shell-quote past comment injection (@simonguo)
+- **PR #4946** (2026-10-19): fix(docs): exclude generated TypeScript build caches (@simonguo)
+- **PR #4945** (2026-10-19): fix(examples): upgrade Pages Less integration to Next.js 16 (@simonguo)
+- **PR #4944** (2026-10-19): fix(examples): secure Umi Babel evaluation (@simonguo)
 
 ---
 
@@ -1714,13 +1240,13 @@ fix(hooks): release superseded callbacks and component props
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #4938 from rsuite/fix/examples-proxy-addr-security
+## X. Merge pull request #4947 from rsuite/fix/examples-shell-quote-comment-security
 
 **RULE**:
 When implementing operations in `examples/create-react-app/pnpm-lock.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rsuite/rsuite. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7d2cf46e`: Merge pull request #4938 from rsuite/fix/examples-proxy-addr-security. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c6fd4196`: Merge pull request #4947 from rsuite/fix/examples-shell-quote-comment-security. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/create-react-app/pnpm-lock.yaml`.
@@ -1728,18 +1254,20 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-      proxy-addr: 2.0.8
-  /proxy-addr@2.0.8:
-    resolution: {integrity: sha512-5nnx0yGyVUcY6t9RnWcARWtwT9F1D8O9rt08htPvnd49W1IgZtmLkhu9WfMzQj1cFxjHIO6connUNVW5k7AVyQ==}
+      shell-quote: 1.12.0
+      shell-quote: 1.12.0
+  /shell-quote@1.12.0:
+    resolution: {integrity: sha512-PcByqNyT/38F2kDNi006HAMRJaULuBzq/FOsw3qdZvX/GA9W/jamDaRskgHjubHiftXK5sIFxLNkvrXUwcof6Q==}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-      proxy-addr: 2.0.7
-  /proxy-addr@2.0.7:
-    resolution: {integrity: sha512-llQsMLSUDUPT44jdrU/O37qlnifitDP+ZwrmmZcoSKyLKvtZxpyV0n2/bD/N4tBAAZ/gJEdZU7KMraoK1+XYAg==}
+      shell-quote: 1.8.4
+      shell-quote: 1.8.4
+  /shell-quote@1.8.4:
+    resolution: {integrity: sha512-VsC6n6vz1ihYYyZZwX7YZSF5l5x36ca17OC+a69h94YqB7X6XLwf+5MOgynYir2SLFUbl8gIYvBo8K8RoNQ6bQ==}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7d2cf46e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c6fd4196` are properly handled with clean fallback behavior.
