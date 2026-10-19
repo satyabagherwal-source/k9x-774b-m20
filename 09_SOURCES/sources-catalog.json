@@ -2563,10 +2563,10 @@
     "repository": "nats-io/nats.go",
     "platform": "github",
     "sourceUrl": "https://github.com/nats-io/nats.go",
-    "sourceVersion": "e1312b80",
+    "sourceVersion": "e481af89",
     "license": "Apache-2.0",
-    "contentHash": "93fd6b54b31346be57c4ab50d9bca02693f5239c8c9faf559af5fc4d8884f482",
-    "lastHarvestedAt": "2026-10-18T21:45:54.691Z",
+    "contentHash": "d88298dcec3d356eac57d1d78faefed7a0230cff0755c216d70b52b937a98783",
+    "lastHarvestedAt": "2026-10-19T21:30:27.255Z",
     "learningId": "learn-github-nats-io-nats-go"
   },
   "chrispybacon-dev-dockflare": {
@@ -7433,10 +7433,10 @@
     "repository": "lancedb/lancedb",
     "platform": "github",
     "sourceUrl": "https://github.com/lancedb/lancedb",
-    "sourceVersion": "a4f6e5fe",
+    "sourceVersion": "6507615a",
     "license": "Apache-2.0",
-    "contentHash": "618d14a887ddc28d6fd9b22ec533cf8b32422918f6f45685fd2000bba837a6f8",
-    "lastHarvestedAt": "2026-10-19T08:58:49.156Z",
+    "contentHash": "8ebd5b7f94aedc079e5d508a2e8d8b2cee48662c4036e650b4d2df255f1fda32",
+    "lastHarvestedAt": "2026-10-19T21:30:32.294Z",
     "learningId": "learn-github-lancedb-lancedb"
   },
   "agent-of-empires-agent-of-empires": {
@@ -9118,5 +9118,25 @@
     "contentHash": "0dc33ba5b2a0c16564f5854db93a7198ccdf0eb4fdc8987611d2448adb187d78",
     "lastHarvestedAt": "2026-10-19T21:24:09.160Z",
     "learningId": "learn-github-rechsteiner-parchment"
+  },
+  "johnbean393-sidekick": {
+    "repository": "johnbean393/Sidekick",
+    "platform": "github",
+    "sourceUrl": "https://github.com/johnbean393/Sidekick",
+    "sourceVersion": "83b3e6e0",
+    "license": "MIT",
+    "contentHash": "6181e6b457224819ae0d003652fc5178dccdba46329e09fa8db6bf6934f9d5d2",
+    "lastHarvestedAt": "2026-10-19T21:30:26.698Z",
+    "learningId": "learn-github-johnbean393-sidekick"
+  },
+  "scrapy-plugins-scrapy-splash": {
+    "repository": "scrapy-plugins/scrapy-splash",
+    "platform": "github",
+    "sourceUrl": "https://github.com/scrapy-plugins/scrapy-splash",
+    "sourceVersion": "72a87882",
+    "license": "BSD-3-Clause",
+    "contentHash": "132fac021337c5c1936bc6d2c153471610b302b8d2e55f6b47753a70c2d4a4a8",
+    "lastHarvestedAt": "2026-10-19T21:30:26.818Z",
+    "learningId": "learn-github-scrapy-plugins-scrapy-splash"
   }
 }

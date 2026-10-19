@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source**: github ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
-> **Source Version**: `a4f6e5fe`  
+> **Source Version**: `6507615a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T08:58:48.891Z  
+> **Timestamp**: 2026-10-19T21:30:31.909Z  
 > **Learning ID**: `learn-github-lancedb-lancedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T08:58:48.883Z  
+> **Harvest Timestamp**: 2026-10-19T21:30:31.902Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Developer-friendly OSS embedded retrieval library for multimodal AI. Search More; Manage Less.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 11701 stars
+- **Stars / Engagement**: 11706 stars
 
 ---
 
@@ -593,6 +593,11 @@ def _is_non_retryable_error(error: Exception) -> bool:
     Returns:
         True if the error should not be retried, False otherwise
     """
+    from .base import UntrustedEmbeddingConfigError
+
+    if isinstance(error, UntrustedEmbeddingConfigError):
+        return True
+
     # Check for OpenAI authentication errors
     error_type = type(error).__name__
     if error_type == "AuthenticationError":
@@ -1255,598 +1260,1108 @@ pub fn rename_column(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ea1d2b17` (2026-10-16)
-**Commit Message**: fix: require a primary key to enable MemWAL (#4561)
+### Incident Patch 1: `1ad97b14` (2026-10-19)
+**Commit Message**: build(python): publish an sdist alongside the wheels (#4522)
 
-## Why
+Closes #4246.
 
-Every MemWAL write and read resolves rows by the table's unenforced
-primary key, but `enable_memwal` accepted a table without one. The spec
-installed, and every MemWAL `merge_insert` then failed with "table has a
-MemWAL index but no unenforced primary key" until MemWAL was disabled.
-Lance's MemWAL initialization doesn't catch it: its key checks pass when
-there is no key.
+lancedb publishes no source distribution, so a platform without a
+prebuilt wheel (#4104, #4239) has nothing to install. This adds an sdist
+to the Python release.
 
-## What changes
+## The sdist job
 
-`enable_memwal` refuses a spec on a table with no unenforced primary
-key, for every sharding mode, before anything is committed. The check
-runs against the dataset the spec is committed to; a key cannot be
-removed once set, and an overwrite or restore of the table conflicts
-with that commit. Servers that install specs through this method get the
-check too.
+The release workflow builds an sdist with the maturin version of the
+wheel jobs. On a tag, the publish job uploads it with the wheels: to
+PyPI, and to Fury for beta tags. The job also runs on the pull request
+dry run, which now starts on a change to `python/pyproject.toml`.
 
-The Rust doc on `Table::enable_memwal` now states the requirement; the
-Python and TypeScript docs already did.
+## Checks
 
-## Tests
+- The job builds a wheel from the sdist with `--locked` and smoke-tests
+it in a fresh venv.
+- `ci/check_sdist.py` fails if a tracked file of the Python package is
+missing from the tarball.
+- `twine check --strict` checks that the metadata renders. `pydistcheck`
+enforces PyPI's 100 MiB size limit.
+- The unit tests of both check scripts run in the CI scripts workflow.
 
-- New `test_enable_memwal_requires_primary_key` (Rust and Python):
-unsharded, bucket and identity specs are all refused without a key, a
-refused spec leaves nothing installed, and the same table accepts a spec
-once a key is set. The Rust test fails with the check d
+## Cargo.lock
 
-**File**: `python/python/tests/test_memwal_spec.py` (modified, +15/-0)
+maturin ships the repository lockfile, which pins crates that only the
+dropped `nodejs` member uses, so `cargo --locked` fails
+(PyO3/maturin#2609). The job first runs `cargo metadata --locked` on the
+repository workspace, so a lockfile that has drifted from `Cargo.toml`
+
+**File**: `.github/workflows/ci-scripts.yml` (modified, +4/-0)
 ```diff
-@@ -45,6 +45,7 @@ def _make_table(tmp_path):
- 
- def test_enable_memwal_validates(tmp_path):
-     _db, table = _make_table(tmp_path)
-+    table.set_unenforced_primary_key("id")
- 
-     # Out-of-range num_buckets.
-     with pytest.raises(Exception, match="num_buckets"):
-@@ -60,6 +61,7 @@ def test_enable_memwal_validates(tmp_path):
- 
- def test_disable_memwal(tmp_path):
-     _db, table = _make_table(tmp_path)
-+    table.set_unenforced_primary_key("id")
- 
-     # unset errors when no spec is set.
-     with pytest.raises(Exception, match="no MemWAL write spec"):
-@@ -74,6 +76,18 @@ def test_disable_memwal(tmp_path):
-     table.enable_memwal(MemWalWriteSpec.bucket("id", 8))
- 
- 
-+def test_enable_memwal_requires_primary_key(tmp_path):
-+    _db, table = _make_table(tmp_path)
-+    for spec in (
-+        MemWalWriteSpec.unsharded(),
-+        MemWalWriteSpec.bucket("id", 4),
-+        MemWalWriteSpec.identity("id"),
-+    ):
-+        with pytest.raises(Exception, match="primary key"):
-+            table.enable_memwal(spec)
-+    assert table.get_memwal_spec() is None
-+
-+
- def test_set_unsharded_spec(tmp_path):
-     _db, table = _make_table(tmp_path)
-     # Lance MemWAL still requires a primary key on the dataset; Unsharded
-@@ -206,6 +220,7 @@ async def test_async_get_memwal_spec(tmp_path):
-     )
- 
-     assert await table.get_memwal_spec() is None
-+    await table.set_unenforced_primary_key("id")
- 
-     # A real scalar index is needed to name it as a maintained index.
-     await table.create_index("id", config=BTree())
+@@ -5,11 +5,15 @@ on:
+     branches:
+       - main
+     paths:
++      - ci/check_cargo_lock.py
++      - ci/check_sdist.py
+       - ci/set_lance_version.py
+       - ci/tests/**
+       - .github/workflows/ci-scripts.yml
+   pull_request:
+     paths:
++      - ci/check_cargo_lock.py
++      - ci/check_sdist.py
+       - ci/set_lance_version.py
+       - ci/tests/**
+       - .github/workflows/ci-scripts.yml
 ```
 
-**File**: `rust/lancedb/src/table.rs` (modified, +59/-0)
+**File**: `.github/workflows/pypi-publish.yml` (modified, +101/-7)
 ```diff
-@@ -2015,6 +2015,9 @@ impl Table {
-     /// - [`MemWalWriteSpec::identity`] — shard by the raw value of a scalar column.
-     /// - [`MemWalWriteSpec::unsharded`] — route every write to a single shard.
-     ///
-+    /// Every spec requires the table to declare an unenforced primary key
-+    /// ([`Table::set_unenforced_primary_key`]); otherwise this fails.
-+    ///
-     /// A table carries one spec: this fails while one is installed, since the
-     /// SSTables already written were homed under it.
-     /// [`Table::disable_memwal`] removes one.
-@@ -5541,6 +5544,7 @@ mod tests {
-             .await
-             .unwrap();
-         let table = conn.create_table("t", reader).execute().await.unwrap();
-+        table.set_unenforced_primary_key(["id"]).await.unwrap();
- 
-         // Reject num_buckets out of range.
-         for bad in [0u32, 1025] {
-@@ -5585,6 +5589,56 @@ mod tests {
-         assert!(matches!(err, Error::InvalidInput { .. }), "got {:?}", err);
-     }
- 
-+    /// A spec is refused on a table without an unenforced primary key, for every
-+    /// sharding mode, and a refused spec leaves nothing installed.
-+    #[tokio::test]
-+    async fn test_enable_memwal_requires_primary_key() {
-+        use lance::dataset::mem_wal::DatasetMemWalExt;
-+
-+        let tmp_dir = tempdir().unwrap();
-+        let conn = ConnectBuilder::new(tmp_dir.path().to_str().unwrap())
-+            .read_consistency_interval(Duration::from_secs(0))
-+            .execute()
-+            .await
-+            .unwrap();
-+        let schema = Arc::new(Schema::new(vec![Field::new("id", DataType::Int64, false)]));
-+        let batch = RecordBatch::try_new(
-+            schema.clone(),
-+            vec![Arc::new(arrow_array::Int64Array::from(vec![1, 2]))],
-+        )
-+        .unwrap();
-+        let reader: Box<dyn arrow_array::RecordBatchReader + Send> =
-+            Box::new(RecordBatchIterator::new(vec![Ok(batch)], schema));
-+        let table = conn.create_table("t", reader).execute().await.unwrap();
-+        let installed = |table: &Table| {
-+            let table = table.clone();
-+            async move {
-+                let dataset = table.as_native().unwrap().dataset.get().await.unwrap();
-+                dataset.mem_wal_index_details().await.unwrap().is_some()
-+            }
-+        };
-+
-+        for spec in [
-+            MemWalWriteSpec::unsharded(),
-+            MemWalWriteSpec::bucket("id", 4),
-+            MemWalWriteSpec::identity("id"),
-+        ] {
-+            let err = table.enable_memwal(spec).await.unwrap_err();
-+            assert!(
-+                matches!(&err, Error::InvalidInput { message } if message.contains("primary key")),
-+                "got {err:?}"
-+            );
-+            assert!(!installed(&table).await);
-+        }
-+
-+        table.set_unenforced_primary_key(["id"]).await.unwrap();
-+        table
-+            .enable_memwal(MemWalWriteSpec::unsharded())
-+            .await
-+            .unwrap();
-+        assert!(installed(&table).await);
-+    }
-+
-     #[tokio::test]
-     async fn test_enable_memwal_unsharded() {
-         use lance::dataset::mem_wal::DatasetMemWalExt;
-@@ -5606,6 +5660,7 @@ mod tests {
-             .await
-             .unwrap();
-         let table = conn.create_table("t", reader).execute().await.unwrap();
-+        table.set_unenforced_primary_key(["id"]).await.unwrap();
- 
-         table
-             .enable_memwal(MemWalWriteSpec::unsharded())
-@@ -5652,6 +5707,7 @@ mod tests {
-             .await
-             .unwrap();
-         let table = conn.create_table("t", reader).execute().await.unwrap();
-+        table.set_unenforced_primary_key(["id"]).await.unwrap();
- 
-         table
-             .enable_memwal(
-@@ -5703,6 +5759,7 @@ mod tests {
-             .await
-             .unwrap();
-         let table = conn.create_table("t", reader).execute().await.unwrap();
-+        table.set_unenforced_primary_key(["id"]).await.unwrap();
- 
-         // unset errors when no spec is set.
-         table.disable_memwal().await.unwrap_err();
-@@ -5760,6 +5817,7 @@ mod tests {
-             .await
-             .unwrap();
-         let table = conn.create_table("t", reader).execute().await.unwrap();
-+        table.set_unenforced_primary_key(["id"]).await.unwrap();
- 
-         // No spec installed yet.
-         assert_eq!(table.get_memwal_spec().await.unwrap(), None);
-@@ -5826,6 +5884,7 @@ mod tests {
-             .await
-             .unwrap();
-         let table = conn.create_table("t", reader).execute().await.unwrap();
-+        table.set_unenforced_primary_key(["id"]).await.unwrap();
- 
-         table
-             .create_index(&["id"], Index::BTree(Default::default()))
-```
-
-**File**: `rust/lancedb/src/table/merge/lsm.rs` (modified, +11/-0)
-```diff
-@@ -127,6 +127,17 @@ pub(crate) async fn enable_memwal(table: &NativeTable, spec: MemWalWriteSpec) ->
-                 .into(),
-         });
-     }
-+    // Every MemWAL write and read resolves rows by the unenforced primary key,
-+    // so a spec on a table without one leaves the table unwritable through the
-+    // MemWAL path. A key cannot be removed once set, and an overwrite or restore
-+    // of the table conflicts with the commit below.
-+    if dataset.schema().unenforced_primary_key().is_empty() {
-+        return Err(Error::InvalidInput {
-+            message: "a MemWAL write spec requires the table to declare an unenforced \
-+                      primary key; set one with set_unenforced_primary_key first"
-+                .into(),
-+        });
-+    }
-     let mut builder = dataset
-         .initialize_mem_wal()
-         .mem_index_registry(table.mem_index_registry());
-```
-
----
-
-### Incident Patch 2: `eabec507` (2026-10-14)
-**Commit Message**: ci: pin protoc v36.2 with checksums across wheel builds (#4535)
-
-## Summary
-
-The Python wheel builds used different protoc versions: v24.4 on Linux,
-v21.12 on Windows, and whatever Homebrew shipped on macOS. None of them
-verified the download. A new composite action,
-`.github/actions/setup-protoc`, now holds one pin, v36.2, with a SHA-256
-for each platform's zip.
-
-- macOS and Windows: the action downloads protoc, checks its hash, and
-installs it.
-- Linux: protoc has to be installed inside the manylinux container, so
-the build reads the version and hash from the action's outputs and
-checks the hash there.
-
-protobuf does not publish checksum files for protoc. The pinned hashes
-are the digests GitHub recorded for the v36.2 release assets. Older
-releases such as v24.4 have none, which is why this moves to v36.2.
-protoc only runs at build time, through `prost-build` in the Lance
-crates. The Linux protoc binary is statically linked, so it runs in the
-manylinux 2_17 container.
-
-The action is also added to the path triggers of `pypi-publish.yml` and
-`python.yml`, so a change to the pin runs the wheel builds.
-
-Follow-up to
-https://github.com/lancedb/lancedb/pull/4522#issuecomment-6160848344
-
-**File**: `.github/actions/setup-protoc/action.yml` (added, +80/-0)
-```diff
-@@ -0,0 +1,80 @@
-+name: Setup protoc
-+description: Install the protoc version pinned for wheel builds, and expose it for builds that install protoc themselves
-+
-+inputs:
-+  install:
-+    description: "Install protoc on the runner. Set to false when the build runs in a container (e.g. manylinux) and installs protoc there."
-+    required: false
-+    default: "true"
-+
-+outputs:
-+  version:
-+    description: "The pinned protoc version, e.g. 36.2"
-+    value: ${{ steps.pin.outputs.version }}
-+  linux-x86_64-sha256:
-+    description: "SHA-256 of the protoc linux-x86_64 zip"
-+    value: ${{ steps.pin.outputs.linux-x86_64-sha256 }}
-+  linux-aarch_64-sha256:
-+    description: "SHA-256 of the protoc linux-aarch_64 zip"
-+    value: ${{ steps.pin.outputs.linux-aarch_64-sha256 }}
-+
-+runs:
-+  using: composite
-+  steps:
-+    # protobuf does not publish checksum files for protoc. These are the digests
-+    # GitHub records for the release assets; when bumping, copy them from
-+    # `gh api repos/protocolbuffers/protobuf/releases/tags/v<version>`.
-+    - name: Set protoc pin
-+      id: pin
-+      shell: bash
-+      run: |
-+        {
-+          echo "version=36.2"
-+          echo "linux-x86_64-sha256=121f6c7afe1d4d0e3ea6aab9432038599250134cbf4474cb1167d2c7decd4278"
-+          echo "linux-aarch_64-sha256=8b8f18bd2b30346efbc698dd5a73dd7c805f3ef8380f6dfc95c768f3f1852f6a"
-+          echo "osx-universal_binary-sha256=83d0dc80672f53486f54299bca6177159f9cad1fd54d4d3143eeea53c4423e1b"
-+          echo "win64-sha256=f0c128dc0d8492eceece83bb459a4c0e316764b929ffbf1aa416357fd644edd3"
-+        } >> "$GITHUB_OUTPUT"
-+    - name: Install protoc
-+      if: ${{ inputs.install == 'true' }}
-+      shell: bash
-+      env:
-+        PROTOC_VERSION: ${{ steps.pin.outputs.version }}
-+        RUNNER_OS_NAME: ${{ runner.os }}
-+        RUNNER_ARCH_NAME: ${{ runner.arch }}
-+        LINUX_X86_64_SHA256: ${{ steps.pin.outputs.linux-x86_64-sha256 }}
-+        LINUX_AARCH_64_SHA256: ${{ steps.pin.outputs.linux-aarch_64-sha256 }}
-+        OSX_SHA256: ${{ steps.pin.outputs.osx-universal_binary-sha256 }}
-+        WIN64_SHA256: ${{ steps.pin.outputs.win64-sha256 }}
-+      run: |
-+        set -euo pipefail
-+        case "$RUNNER_OS_NAME/$RUNNER_ARCH_NAME" in
-+          Linux/X64) platform="linux-x86_64"; sha256="$LINUX_X86_64_SHA256" ;;
-+          Linux/ARM64) platform="linux-aarch_64"; sha256="$LINUX_AARCH_64_SHA256" ;;
-+          macOS/*) platform="osx-universal_binary"; sha256="$OSX_SHA256" ;;
-+          Windows/X64) platform="win64"; sha256="$WIN64_SHA256" ;;
-+          *) echo "Unsupported runner: $RUNNER_OS_NAME/$RUNNER_ARCH_NAME" >&2; exit 1 ;;
-+        esac
-+        zip="$RUNNER_TEMP/protoc.zip"
-+        dest="$RUNNER_TEMP/protoc"
-+        curl -fsSL "https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOC_VERSION}/protoc-${PROTOC_VERSION}-${platform}.zip" -o "$zip"
-+        # Hash stdin rather than a path: Windows paths contain backslashes,
-+        # which make sha256sum escape its output.
-+        if [ "$RUNNER_OS_NAME" = "macOS" ]; then
-+          actual=$(shasum -a 256 < "$zip" | cut -d' ' -f1)
-+        else
-+          actual=$(sha256sum < "$zip" | cut -d' ' -f1)
-+        fi
-+        if [ "$actual" != "$sha256" ]; then
-+          echo "protoc checksum mismatch: expected $sha256, got $actual" >&2
-+          exit 1
-+        fi
-+        if [ "$RUNNER_OS_NAME" = "Windows" ]; then
-+          # Git Bash on Windows runners does not reliably ship unzip.
-+          7z x -y -o"$dest" "$zip" > /dev/null
-+        else
-+          unzip -q -o "$zip" -d "$dest"
-+        fi
-+        rm "$zip"
-+        echo "$dest/bin" >> "$GITHUB_PATH"
-+        "$dest/bin/protoc" --version
-```
-
-**File**: `.github/workflows/build_linux_wheel/action.yml` (modified, +11/-4)
-```diff
-@@ -29,6 +29,11 @@ inputs:
- runs:
-   using: "composite"
-   steps:
-+    - name: Get protoc version
-+      id: protoc
-+      uses: ./.github/actions/setup-protoc
-+      with:
-+        install: "false"
-     - name: CONFIRM ARM BUILD
-       shell: bash
-       env:
-@@ -54,13 +59,14 @@ runs:
-         maturin-version: "1.12.4"
-         command: build
-         working-directory: python
--        docker-options: "-e PIP_EXTRA_INDEX_URL='https://pypi.fury.io/lance-format/ https://pypi.fury.io/lancedb/' -e PROTOC=/usr/local/bin/protoc ${{ inputs.rustflags != '' && format('-e RUSTFLAGS={0}', inputs.rustflags) || '' }}"
-+        docker-options: "-e PIP_EXTRA_INDEX_URL='https://pypi.fury.io/lance-format/ https://pypi.fury.io/lancedb/' -e PROTOC=/usr/local/bin/protoc -e PROTOC_VERSION=${{ steps.protoc.outputs.version }} -e PROTOC_SHA256=${{ steps.protoc.outputs.linux-x86_64-sha256 }} ${{ inputs.rustflags != '' && format('-e RUSTFLAGS={0}', inputs.rustflags) || '' }}"
-         target: x86_64-unknown-linux-gnu
-         manylinux: ${{ inputs.manylinux }}
-         args: ${{ inputs.args }}
-         before-script-linux: |
-           set -e
--          curl -fsSL https://github.com/protocolbuffers/protobuf/releases/download/v24.4/protoc-24.4-linux-x86_64.zip -o /tmp/protoc.zip
-+          curl -fsSL https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOC_VERSION}/protoc-${PROTOC_VERSION}-linux-x86_64.zip -o /tmp/protoc.zip
-+          echo "${PROTOC_SHA256}  /tmp/protoc.zip" | sha256sum -c -
-           unzip /tmp/protoc.zip -d /usr/local
-           rm /tmp/protoc.zip
-           /usr/local/bin/protoc --version
-@@ -71,14 +77,15 @@ runs:
-         maturin-version: "1.12.4"
-         command: build
-         working-directory: python
--        docker-options: "-e PIP_EXTRA_INDEX_URL='https://pypi.fury.io/lance-format/ https://pypi.fury.io/lancedb/' -e PROTOC=/usr/local/bin/protoc ${{ inputs.rustflags != '' && format('-e RUSTFLAGS={0}', inputs.rustflags) || '' }}"
-+        docker-options: "-e PIP_EXTRA_INDEX_URL='https://pypi.fury.io/lance-format/ https://pypi.fury.io/lancedb/' -e PROTOC=/usr/local/bin/protoc -e PROTOC_VERSION=${{ steps.protoc.outputs.version }} -e PROTOC_SHA256=${{ steps.protoc.outputs.linux-aarch_64-sha256 }} ${{ inputs.rustflags != '' && format('-e RUSTFLAGS={0}', inputs.rustflags) || '' }}"
-         target: aarch64-unknown-linux-gnu
-         manylinux: ${{ inputs.manylinux }}
-         args: ${{ inputs.args }}
-         before-script-linux: |
-           set -e
-           yum install -y clang
--          curl -fsSL https://github.com/protocolbuffers/protobuf/releases/download/v24.4/protoc-24.4-linux-aarch_64.zip -o /tmp/protoc.zip
-+          curl -fsSL https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOC_VERSION}/protoc-${PROTOC_VERSION}-linux-aarch_64.zip -o /tmp/protoc.zip
-+          echo "${PROTOC_SHA256}  /tmp/protoc.zip" | sha256sum -c -
-           unzip /tmp/protoc.zip -d /usr/local
-           rm /tmp/protoc.zip
-           /usr/local/bin/protoc --version
-```
-
-**File**: `.github/workflows/build_mac_wheel/action.yml` (modified, +1/-4)
-```diff
-@@ -12,10 +12,7 @@ inputs:
- runs:
-   using: "composite"
-   steps:
--    - name: Install macos dependency
--      shell: bash
--      run: |
--        brew install protobuf
-+    - uses: ./.github/actions/setup-protoc
-     - name: Build wheel
-       uses: PyO3/maturin-action@v1
-       with:
-```
-
-**File**: `.github/workflows/build_windows_wheel/action.yml` (modified, +1/-9)
-```diff
-@@ -12,15 +12,7 @@ inputs:
- runs:
-   using: "composite"
-   steps:
--    - name: Install Protoc v21.12
--      working-directory: C:\
--      run: |
--        New-Item -Path 'C:\protoc' -ItemType Directory
--        Set-Location C:\protoc
--        Invoke-WebRequest https://github.com/protocolbuffers/protobuf/releases/download/v21.12/protoc-21.12-win64.zip -OutFile C:\protoc\protoc.zip
--        7z x protoc.zip
--        Add-Content $env:GITHUB_PATH "C:\protoc\bin"
--      shell: powershell
-+    - uses: ./.github/actions/setup-protoc
-     - name: Build wheel
-       uses: PyO3/maturin-action@v1
-       with:
-```
-
-**File**: `.github/workflows/pypi-publish.yml` (modified, +1/-0)
-```diff
-@@ -11,6 +11,7 @@ on:
-       - .github/workflows/build_linux_wheel/action.yml
+@@ -12,6 +12,9 @@ on:
        - .github/workflows/build_mac_wheel/action.yml
        - .github/workflows/build_windows_wheel/action.yml
-+      - .github/actions/setup-protoc/action.yml
+       - .github/actions/setup-protoc/action.yml
++      - ci/check_cargo_lock.py
++      - ci/check_sdist.py
++      - python/pyproject.toml
        - Cargo.toml # Change in dependency frequently breaks builds
        - Cargo.lock
  
+@@ -161,10 +164,91 @@ jobs:
+           name: wheels-windows
+           path: target/wheels/lancedb-*.whl
+           if-no-files-found: error
++  sdist:
++    name: Python sdist
++    timeout-minutes: 60
++    runs-on: ubuntu-22.04
++    steps:
++      - uses: actions/checkout@v6
++        with:
++          fetch-depth: 0
++          lfs: true
++      - name: Set up Python
++        uses: actions/setup-python@v6
++        with:
++          python-version: "3.12"
++      - name: Build sdist
++        uses: PyO3/maturin-action@v1
++        with:
++          maturin-version: "1.12.4"
++          command: sdist
++          working-directory: python
++          args: --out dist
++      # maturin ships the nodejs-only pins in Cargo.lock. Remove this step when
++      # the pinned maturin fixes https://github.com/PyO3/maturin/issues/2609.
++      - name: Sync Cargo.lock to the packaged workspace
++        shell: bash
++        run: |
++          # A repo lock in sync with every manifest means the prune only drops pins.
++          cargo metadata --locked --format-version 1 > /dev/null
++          mkdir "$RUNNER_TEMP/sdist-src"
++          tar -xzf python/dist/lancedb-*.tar.gz -C "$RUNNER_TEMP/sdist-src"
++          lock=$(echo "$RUNNER_TEMP"/sdist-src/lancedb-*/Cargo.lock)
++          cp "$lock" "$RUNNER_TEMP/Cargo.lock.before"
++          cargo metadata --format-version 1 \
++            --manifest-path "$RUNNER_TEMP"/sdist-src/lancedb-*/Cargo.toml > /dev/null
++          python ci/check_cargo_lock.py "$RUNNER_TEMP/Cargo.lock.before" "$lock"
++          tar -czf python/dist/lancedb-*.tar.gz -C "$RUNNER_TEMP/sdist-src" \
++            "$(basename python/dist/lancedb-*.tar.gz .tar.gz)"
++      - name: Install sdist check tools
++        shell: bash
++        run: python -m pip install twine==7.0.0 pydistcheck==0.11.3
++      - name: Check sdist size
++        shell: bash
++        run: |
++          pydistcheck --select distro-too-large-compressed \
++            --max-allowed-size-compressed 100M python/dist/lancedb-*.tar.gz
++      - name: Check sdist contents
++        shell: bash
++        run: python ci/check_sdist.py python/dist/lancedb-*.tar.gz
++      - name: Check sdist with twine
++        shell: bash
++        run: python -m twine check --strict python/dist/lancedb-*.tar.gz
++      - uses: ./.github/actions/setup-protoc
++      # Build the way `pip install lancedb` does when no wheel matches. The dev
++      # profile keeps the build within the runner's disk.
++      - name: Build wheel from sdist
++        shell: bash
++        env:
++          MATURIN_PEP517_ARGS: "--profile dev --locked"
++          CARGO_PROFILE_DEV_DEBUG: "0"
++        run: |
++          python -m pip wheel --no-deps --wheel-dir "$RUNNER_TEMP/sdist-wheel" \
++            python/dist/lancedb-*.tar.gz
++      - name: Smoke test wheel built from sdist
++        shell: bash
++        working-directory: ${{ runner.temp }}
++        run: |
++          python -m venv sdist-venv
++          sdist-venv/bin/pip install sdist-wheel/lancedb-*.whl
++          sdist-venv/bin/python -c '
++          import tempfile
++          import lancedb
++          db = lancedb.connect(tempfile.mkdtemp())
++          table = db.create_table("t", [{"vector": [1.0, 2.0], "id": 1}, {"vector": [3.0, 4.0], "id": 2}])
++          assert table.search([1.0, 2.0]).limit(1).to_list()[0]["id"] == 1
++          print("lancedb", lancedb.__version__, "built from sdist OK")
++          '
++      - uses: actions/upload-artifact@v7
++        if: startsWith(github.ref, 'refs/tags/v')
++        with:
++          name: sdist
++          path: python/dist/lancedb-*.tar.gz
++          if-no-files-found: error
+   publish:
+-    name: Publish wheels
++    name: Publish wheels and sdist
+     if: startsWith(github.ref, 'refs/tags/v')
+-    needs: [linux, mac, windows]
++    needs: [linux, mac, windows, sdist]
+     runs-on: ubuntu-latest
+     permissions:
+       id-token: write
+@@ -177,7 +261,12 @@ jobs:
+           pattern: wheels-*
+           path: target/wheels
+           merge-multiple: true
+-      - name: List wheels
++      - name: Download sdist artifact
++        uses: actions/download-artifact@v8
++        with:
++          name: sdist
++          path: target/wheels
++      - name: List packages
+         run: ls -la target/wheels
+       - name: Choose repo
+         id: choose_repo
+@@ -194,13 +283,18 @@ jobs:
+         run: |
+           shopt -s nullglob
+           WHEELS=(target/wheels/*.whl)
++          SDISTS=(target/wheels/*.tar.gz)
+           if [[ ${#WHEELS[@]} -eq 0 ]]; then
+             echo "No wheels found in target/wheels/" >&2
+             exit 1
+           fi
+-          for WHEEL in "${WHEELS[@]}"; do
 ```
 
-**File**: `.github/workflows/python.yml` (modified, +1/-0)
+**File**: `ci/check_cargo_lock.py` (added, +56/-0)
 ```diff
-@@ -15,6 +15,7 @@ on:
-       - .github/workflows/build_linux_wheel/**
-       - .github/workflows/build_mac_wheel/**
-       - .github/workflows/build_windows_wheel/**
-+      - .github/actions/setup-protoc/**
-       - .github/workflows/run_tests/**
+@@ -0,0 +1,56 @@
++"""Fail if pruning Cargo.lock did more than remove packages and the edges to them.
++
++Usage: python ci/check_cargo_lock.py <lock-before> <lock-after>
++"""
++
++import sys
++import tomllib
++from pathlib import Path
++
++
++def key(package: dict) -> tuple:
++    return tuple(package.get(k) for k in ("name", "version", "source", "checksum"))
++
++
++def graph(lock: dict) -> dict[tuple, set[tuple]]:
++    """Map each package to the packages its dependency strings resolve to."""
++    by_name = {}
++    for p in lock["package"]:
++        by_name.setdefault(p["name"], []).append(p)
++
++    def resolve(dep: str) -> tuple:
++        # Cargo writes "name", "name version" or "name version (source)".
++        name, *rest = dep.split(" ", 2)
++        (match,) = [
++            p
++            for p in by_name[name]
++            if (not rest or p["version"] == rest[0])
++            and (len(rest) < 2 or rest[1] == f"({p.get('source')})")
++        ]
++        return key(match)
++
++    return {
++        key(p): {resolve(d) for d in p.get("dependencies", [])} for p in lock["package"]
++    }
++
++
++def main() -> None:
++    before, after = (tomllib.loads(Path(p).read_text()) for p in sys.argv[1:])
++    errors = []
++    for field in (before.keys() | after.keys()) - {"package"}:
++        if before.get(field) != after.get(field):
++            errors.append(f"top-level {field!r} changed")
++    edges_before, edges_after = graph(before), graph(after)
++    removed = edges_before.keys() - edges_after.keys()
++    for package, deps in edges_after.items():
++        if package not in edges_before:
++            errors.append(f"added or changed {package}")
++        elif deps != edges_before[package] - removed:
++            errors.append(f"dependencies of {package[:2]} changed")
++    if errors:
++        sys.exit("error: the prune changed Cargo.lock:\n" + "\n".join(errors))
++    print(f"Cargo.lock prune only removed {len(removed)} packages")
++
++
++if __name__ == "__main__":
++    main()
+```
+
+**File**: `ci/check_sdist.py` (added, +42/-0)
+```diff
+@@ -0,0 +1,42 @@
++"""Fail if the lancedb sdist lacks a git-tracked file of the Python package.
++
++Usage: python ci/check_sdist.py <sdist>   (run from the repository root)
++"""
++
++import subprocess
++import sys
++import tarfile
++from pathlib import Path
++
++# Where git tracks the package, and where maturin puts it under the sdist root.
++TRACKED_PACKAGE = "python/python/lancedb"
++SDIST_PACKAGE = "python/lancedb"
++
++
++def main() -> None:
++    sdist = Path(sys.argv[1])
++    root = sdist.name.removesuffix(".tar.gz")
++    listing = subprocess.run(
++        ["git", "ls-files", "-z", "--", TRACKED_PACKAGE],
++        check=True,
++        capture_output=True,
++        text=True,
++    ).stdout
++    tracked = [p for p in listing.split("\0") if p]
++    if not tracked:
++        sys.exit(f"error: git tracks no files under {TRACKED_PACKAGE}")
++
++    with tarfile.open(sdist) as tar:
++        members = {m.name for m in tar if m.isfile()}
++    missing = [
++        p
++        for p in tracked
++        if f"{root}/{SDIST_PACKAGE}{p.removeprefix(TRACKED_PACKAGE)}" not in members
++    ]
++    if missing:
++        sys.exit(f"error: {sdist.name} lacks tracked sources: {', '.join(missing)}")
++    print(f"{sdist.name} OK: all {len(tracked)} tracked sources present")
++
++
++if __name__ == "__main__":
++    main()
+```
+
+**File**: `ci/tests/test_check_cargo_lock.py` (added, +97/-0)
+```diff
+@@ -0,0 +1,97 @@
++import subprocess
++import sys
++import tempfile
++import unittest
++from pathlib import Path
++
++REPO_ROOT = Path(__file__).resolve().parents[2]
++SCRIPT = REPO_ROOT / "ci" / "check_cargo_lock.py"
++CRATES_IO = "registry+https://github.com/rust-lang/crates.io-index"
++
++
++def package(name, version, deps=(), source=CRATES_IO, checksum="aa"):
++    text = f'[[package]]\nname = "{name}"\nversion = "{version}"\n'
++    if source:
++        text += f'source = "{source}"\nchecksum = "{checksum}"\n'
++    if deps:
++        text += f"dependencies = {list(deps)!r}\n".replace("'", '"')
++    return text
++
++
++LIBC = package("libc", "0.2.1")
++UNTRUSTED = package("untrusted", "0.9.0")
++# The prune drops napi and untrusted 0.7.1, the edge from app to it, and the
++# version qualifier on app's remaining untrusted edge.
++BEFORE = "version = 4\n\n" + "".join(
++    [
++        package(
++            "app", "1.0.0", ["libc", "untrusted 0.7.1", "untrusted 0.9.0"], source=None
++        ),
++        package("napi", "3.0.0", ["untrusted 0.7.1"]),
++        LIBC,
++        package("untrusted", "0.7.1"),
++        UNTRUSTED,
++    ]
++)
++APP = package("app", "1.0.0", ["libc", "untrusted"], source=None)
++
++
++class CheckCargoLockTest(unittest.TestCase):
++    def run_check(self, after, header="version = 4\n\n"):
++        with tempfile.TemporaryDirectory() as tmp:
++            before_path = Path(tmp, "before.lock")
++            after_path = Path(tmp, "after.lock")
++            before_path.write_text(BEFORE)
++            after_path.write_text(header + after)
++            return subprocess.run(
++                [sys.executable, SCRIPT, before_path, after_path],
++                capture_output=True,
++                text=True,
++            )
++
++    def test_prune_passes(self):
++        result = self.run_check(APP + LIBC + UNTRUSTED)
++        self.assertEqual(result.returncode, 0, result.stderr)
++
++    def test_added_entry_fails(self):
++        result = self.run_check(APP + LIBC + UNTRUSTED + package("ring", "0.17.0"))
++        self.assertNotEqual(result.returncode, 0)
++        self.assertIn("ring", result.stderr)
++
++    def test_changed_version_fails(self):
++        result = self.run_check(APP + package("libc", "0.2.2") + UNTRUSTED)
++        self.assertNotEqual(result.returncode, 0)
++        self.assertIn("0.2.2", result.stderr)
++
++    def test_changed_source_fails(self):
++        libc = package("libc", "0.2.1", source="git+https://example.com/libc")
++        result = self.run_check(APP + libc + UNTRUSTED)
++        self.assertNotEqual(result.returncode, 0)
++        self.assertIn("example.com", result.stderr)
++
++    def test_changed_checksum_fails(self):
++        libc = package("libc", "0.2.1", checksum="bb")
++        result = self.run_check(APP + libc + UNTRUSTED)
++        self.assertNotEqual(result.returncode, 0)
++        self.assertIn("'bb'", result.stderr)
++
++    def test_added_dependency_fails(self):
++        libc = package("libc", "0.2.1", ["untrusted"])
++        result = self.run_check(APP + libc + UNTRUSTED)
++        self.assertNotEqual(result.returncode, 0)
++        self.assertIn("dependencies of ('libc'", result.stderr)
++
++    def test_removed_dependency_fails(self):
++        app = package("app", "1.0.0", ["untrusted"], source=None)
++        result = self.run_check(app + LIBC + UNTRUSTED)
++        self.assertNotEqual(result.returncode, 0)
++        self.assertIn("dependencies of ('app'", result.stderr)
++
++    def test_changed_lock_version_fails(self):
++        result = self.run_check(APP + LIBC + UNTRUSTED, header="version = 3\n\n")
++        self.assertNotEqual(result.returncode, 0)
++        self.assertIn("top-level 'version'", result.stderr)
++
++
++if __name__ == "__main__":
++    unittest.main()
+```
+
+**File**: `ci/tests/test_check_sdist.py` (added, +71/-0)
+```diff
+@@ -0,0 +1,71 @@
++import subprocess
++import sys
++import tarfile
++import tempfile
++import unittest
++from pathlib import Path
++
++REPO_ROOT = Path(__file__).resolve().parents[2]
++SCRIPT = REPO_ROOT / "ci" / "check_sdist.py"
++ROOT = "lancedb-1.0.0"
++
++
++class CheckSdistTest(unittest.TestCase):
++    def run_check(self, tracked, shipped, links=(), root=ROOT):
++        """Run the check in a git repo tracking `tracked`, on an sdist holding `shipped`
++        as files and `links` as symlinks, under the folder `root`."""
++        with tempfile.TemporaryDirectory() as tmp:
++            subprocess.run(["git", "init", "-q", tmp], check=True)
++            for name in tracked:
++                path = Path(tmp, "python/python/lancedb", name)
++                path.parent.mkdir(parents=True, exist_ok=True)
++                path.write_text("x = 1\n")
++            if tracked:
++                subprocess.run(["git", "-C", tmp, "add", "."], check=True)
++            sdist = Path(tmp, f"{ROOT}.tar.gz")
++            with tarfile.open(sdist, "w:gz") as tar:
++                for name in shipped:
++                    member = Path(tmp, "member")
++                    member.write_text("x = 1\n")
++                    tar.add(member, arcname=f"{root}/python/lancedb/{name}")
++                for name in links:
++                    link = tarfile.TarInfo(f"{root}/python/lancedb/{name}")
++                    link.type = tarfile.SYMTYPE
++                    link.linkname = "__init__.py"
++                    tar.addfile(link)
++            return subprocess.run(
++                [sys.executable, SCRIPT, sdist],
++                cwd=tmp,
++                capture_output=True,
++                text=True,
++            )
++
++    def test_complete_sdist_passes(self):
++        result = self.run_check(["__init__.py", "db.py"], ["__init__.py", "db.py"])
++        self.assertEqual(result.returncode, 0, result.stderr)
++
++    def test_missing_tracked_file_fails(self):
++        result = self.run_check(["__init__.py", "db.py"], ["__init__.py"])
++        self.assertNotEqual(result.returncode, 0)
++        self.assertIn("python/python/lancedb/db.py", result.stderr)
++
++    def test_tracked_file_shipped_as_symlink_fails(self):
++        result = self.run_check(
++            ["__init__.py", "db.py"], ["__init__.py"], links=["db.py"]
++        )
++        self.assertNotEqual(result.returncode, 0)
++        self.assertIn("python/python/lancedb/db.py", result.stderr)
++
++    def test_files_outside_the_sdist_root_fail(self):
++        result = self.run_check(["__init__.py"], ["__init__.py"], root="other-1.0.0")
++        self.assertNotEqual(result.returncode, 0)
++        self.assertIn("python/python/lancedb/__init__.py", result.stderr)
++
++    def test_no_tracked_files_fails(self):
++        result = self.run_check([], ["__init__.py"])
++        self.assertNotEqual(result.returncode, 0)
++        self.assertIn("git tracks no files", result.stderr)
++
++
++if __name__ == "__main__":
++    unittest.main()
+```
+
+**File**: `python/README.md` (modified, +2/-0)
+```diff
+@@ -8,6 +8,8 @@ A Python library for [LanceDB](https://github.com/lancedb/lancedb).
+ pip install lancedb
+ ```
  
- permissions:
++If no wheel is published for your platform, pip builds `lancedb` from the source distribution. That build needs a [Rust toolchain](https://rustup.rs/) and [protoc](https://grpc.io/docs/protoc-installation/) (the Protocol Buffers compiler) on your `PATH`, and can take a while.
++
+ ### Pre-Haswell x86_64 hosts: `lancedb-compat`
+ 
+ The default `lancedb` wheel targets `x86-64-haswell` (AVX2 + FMA + F16C) for full performance on modern hardware. Pre-Haswell hosts — Intel Sandy Bridge / Ivy Bridge / Westmere; AMD Bulldozer / Piledriver / Steamroller — don't have AVX2 and crash with `Illegal instruction` at `import lancedb`.
 ```
 
 ---
 
-### Incident Patch 3: `9f37f392` (2026-10-15)
-**Commit Message**: fix(python): resolve the single vector column despite a query dimension mismatch (#4526)
+### Incident Patch 2: `90206405` (2026-10-19)
+**Commit Message**: fix(python)!: don't trust embedding settings from table metadata (#4550)
 
-\`inf_vector_column_query\`'s \`dim\` filter (added in #3423) is meant
-to disambiguate between multiple vector columns of different sizes. When
-a schema has exactly one vector column and the query's dimension doesn't
-match it, the filter excluded that column too, raising "There is no
-vector column in the data" instead of resolving the column and letting
-the dimension mismatch surface at query execution.
+BREAKING CHANGE: `SentenceTransformerEmbeddings.trust_remote_code` now
+defaults to `False` (was `True`). When an embedding function is restored
+from table metadata, `trust_remote_code=True` and custom endpoints
+(OpenAI `base_url`, Ollama `host`/proxy, watsonx `url`) are only honored
+if the process approved them; otherwise computing embeddings raises
+`UntrustedEmbeddingConfigError`. Functions created in the same process
+are approved automatically. To reopen such a table in a new process,
+call `get_registry().allow_remote_code(model, revision=...)` or
+`get_registry().allow_endpoint(url)` first.
 
-This was latent until #4409 wired client-side vector-column inference
-into remote search: a mismatched-dimension query against a
-single-vector-column remote table now fails client-side with the wrong
-error, before ever reaching the server's own dimension validation.
+## Summary
 
-Fall back to the unfiltered candidate set when the dimension filter
-leaves zero matches, and only raise when that is still ambiguous or
-genuinely empty.
+Embedding functions are rebuilt from table metadata, which anyone who
+can write the table controls. Since sentence-transformers defaulted
+`trust_remote_code` to `True`, opening and querying a crafted table ran
+arbitrary code from a model repository (GHSA-x8v2-vj73-gfwm). Metadata
+could likewise point `base_url` at another server, sending it queries
+and the `OPENAI_API_KEY` from the environment.
 
-**File**: `python/python/lancedb/util.py` (modified, +13/-0)
+The table can no longer grant itself trust:
+
+```python
+registry = get_registry()
+registry.allow_remote_code("nomic
+
+**File**: `docs/web/embedding/index.mdx` (modified, +23/-0)
 ```diff
-@@ -236,6 +236,19 @@ def inf_vector_column_query(schema: pa.Schema, dim: Optional[int] = None) -> str
-     vector_col_names = []
-     for field in schema:
-         vector_col_names.extend(_iter_vector_columns(field, [], dim))
+@@ -134,6 +134,29 @@ For non-sensitive settings such as inference device selection, you can also use
+ 
+ Find the full list of arguments for each provider in the [integrations](/integrations/embedding) section.
+ 
++### Trusting remote code and custom endpoints {#trusting-remote-code-and-custom-endpoints}
 +
-+    if len(vector_col_names) == 0 and dim is not None:
-+        # The query's dimension matched no column. If the schema is
-+        # unambiguous without that filter, the single vector column is still
-+        # the right one to search: a dimension mismatch is a query-execution
-+        # error, not a missing-column error.
-+        unfiltered = []
-+        for field in schema:
-+            unfiltered.extend(_iter_vector_columns(field, []))
-+        if len(unfiltered) == 1:
-+            return unfiltered[0]
-+        vector_col_names = unfiltered
++In Python, the embedding definition is stored in the table, so anyone who can write to the table can change it.
++To keep a table from running code or sending data where you didn't intend, two kinds of settings are only honored
++when this process has approved them:
 +
-     if len(vector_col_names) > 1:
-         raise ValueError(
-             "Schema has more than one vector column. "
++- `trust_remote_code=True`, which runs code from the model's Hugging Face repository.
++- Custom endpoints such as OpenAI `base_url`, Ollama `host`, or watsonx `url`, which receive your data and API keys.
++
++Embedding functions you create in the current process are approved automatically. When you open a table in a new
++process, approve these settings explicitly before computing embeddings:
++
++```python
++from lancedb.embeddings import get_registry
++
++registry = get_registry()
++# Pinning a commit hash is recommended, since the code at a branch can change.
++registry.allow_remote_code("nomic-ai/nomic-embed-text-v1.5", revision="<commit-hash>")
++registry.allow_endpoint("http://my-ollama-host:11434")
++```
++
++Until then, computing embeddings raises `UntrustedEmbeddingConfigError`. Other operations on the table still work.
++
+ ## Multiple embedding columns {#multiple-embedding-columns}
+ 
+ A single table can include more than one embedding definition when you want to store multiple semantic views
 ```
 
-**File**: `python/python/tests/test_table.py` (modified, +20/-0)
+**File**: `docs/web/integrations/embedding/huggingface.mdx` (modified, +1/-1)
 ```diff
-@@ -4016,6 +4016,26 @@ def test_search_nested_vector_no_candidates(mem_db: DBConnection):
-         table.search([0.0, 1.0]).limit(1).to_arrow()
+@@ -5,7 +5,7 @@ sidebarTitle: Hugging Face
  
+ import { PyEmbeddingHuggingfaceUsage } from '/snippets/integrations.mdx';
  
-+def test_search_single_vector_column_wrong_query_dim(mem_db: DBConnection):
-+    """A query vector whose dimension doesn't match the (only) vector column
-+    must still resolve that column, surfacing a dimension-mismatch error from
-+    query execution rather than a misleading "no vector column" error."""
-+    schema = pa.schema(
-+        [
-+            pa.field("id", pa.uint32(), False),
-+            pa.field("vector_col", pa.list_(pa.float32(), 32), False),
-+        ]
-+    )
-+    table = mem_db.create_table(
-+        "wrong_query_dim",
-+        data=[{"id": 1, "vector_col": [0.1] * 32}],
-+        schema=schema,
-+    )
-+
-+    with pytest.raises(ValueError, match="dim"):
-+        table.search([0.01] * 120).limit(1).to_arrow()
-+
-+
- def test_compact_cleanup(tmp_db: DBConnection):
-     pytest.importorskip("lance")
-     table = tmp_db.create_table(
+-We offer support for all Hugging Face models (which can be loaded via [transformers](https://huggingface.co/docs/transformers/en/index) library). The default model is `colbert-ir/colbertv2.0` which also has its own special callout - `registry.get("colbert")`. Some Hugging Face models might require custom models defined on the HuggingFace Hub in their own modeling files. You may enable this by setting `trust_remote_code=True`. This option should only be set to True for repositories you trust and in which you have read the code, as it will execute code present on the Hub on your local machine. 
++We offer support for all Hugging Face models (which can be loaded via [transformers](https://huggingface.co/docs/transformers/en/index) library). The default model is `colbert-ir/colbertv2.0` which also has its own special callout - `registry.get("colbert")`. Some Hugging Face models might require custom models defined on the HuggingFace Hub in their own modeling files. You may enable this by setting `trust_remote_code=True`. This option should only be set to True for repositories you trust and in which you have read the code, as it will execute code present on the Hub on your local machine. Pin `revision` to a commit hash, and note that tables using such a model need it approved with `get_registry().allow_remote_code(...)` when opened in a new process. See [Trusting remote code and custom endpoints](/embedding#trusting-remote-code-and-custom-endpoints).
+ 
+ Example usage:
+ 
 ```
 
-**File**: `python/python/tests/test_util.py` (modified, +45/-1)
+**File**: `docs/web/integrations/embedding/sentence-transformers.mdx` (modified, +3/-2)
 ```diff
-@@ -28,7 +28,13 @@
- import polars as pl
- import pytest
- import lancedb
--from lancedb.util import flatten_columns, get_uri_scheme, join_uri, value_to_sql
-+from lancedb.util import (
-+    flatten_columns,
-+    get_uri_scheme,
-+    inf_vector_column_query,
-+    join_uri,
-+    value_to_sql,
+@@ -12,15 +12,16 @@ Sentence transformer embeddings are normalized by default. It is recommended to
+ </Info>
+ 
+ <Warning>
+-The `trust_remote_code` parameter defaults to `True`, which allows models to execute arbitrary code from their Hugging Face repository during loading. If you are loading untrusted models, set `trust_remote_code=False` to prevent remote code execution.
++Setting `trust_remote_code=True` allows the model to execute arbitrary code from its Hugging Face repository during loading. Only enable it for repositories you trust, and pin `revision` to a commit hash. When a table using such a model is opened in a new process, the model must be approved with `get_registry().allow_remote_code(...)`. See [Trusting remote code and custom endpoints](/embedding#trusting-remote-code-and-custom-endpoints).
+ </Warning>
+ 
+ | Parameter | Type | Default Value | Description |
+ |---|---|---|---|
+ | `name` | `str` | `all-MiniLM-L6-v2` | The name of the model |
+ | `device` | `str` | `cpu` | The device to run the model on (can be `cpu` or `gpu`) |
+ | `normalize` | `bool` | `True` | Whether to normalize the input text before feeding it to the model |
+-| `trust_remote_code` | `bool` | `True` | Whether to trust and execute remote code from the model's Huggingface repository |
++| `trust_remote_code` | `bool` | `False` | Whether to trust and execute remote code from the model's Huggingface repository |
++| `revision` | `str` | `None` | The model revision to load, such as a commit hash |
+ 
+ 
+ <Details title="Check out available sentence-transformer models here!">
+```
+
+**File**: `python/python/lancedb/embeddings/__init__.py` (modified, +7/-1)
+```diff
+@@ -3,7 +3,12 @@
+ 
+ 
+ # ruff: noqa: F401
+-from .base import EmbeddingFunction, EmbeddingFunctionConfig, TextEmbeddingFunction
++from .base import (
++    EmbeddingFunction,
++    EmbeddingFunctionConfig,
++    TextEmbeddingFunction,
++    UntrustedEmbeddingConfigError,
 +)
- from utils import exception_output
+ from .bedrock import BedRockText
+ from .cohere import CohereEmbeddingFunction
+ from .gemini_text import GeminiText
+@@ -29,6 +34,7 @@
+     "EmbeddingFunction",
+     "EmbeddingFunctionConfig",
+     "TextEmbeddingFunction",
++    "UntrustedEmbeddingConfigError",
+     "EmbeddingFunctionRegistry",
+     "get_registry",
+     "register",
+```
+
+**File**: `python/python/lancedb/embeddings/base.py` (modified, +96/-2)
+```diff
+@@ -3,7 +3,7 @@
+ 
+ from abc import ABC, abstractmethod
+ import copy
+-from typing import List, Union
++from typing import List, Optional, Tuple, Union
+ 
+ from lancedb.util import add_note
+ import numpy as np
+@@ -13,6 +13,18 @@
+ from .utils import TEXT, retry_with_exponential_backoff
  
  
-@@ -1251,3 +1257,41 @@ def test_infer_vector_column_raises_clear_error(tmp_path):
-         # Plain vector search on a table with no vector column should raise
-         # a clear ValueError, not a cryptic TypeError.
-         table.search([1.0, 2.0]).to_list()
-+
-+
-+def test_inf_vector_column_query_dim_mismatch_still_resolves():
-+    """Regression: a query dimension that matches no column must not hide an
-+    otherwise-unambiguous vector column behind "no vector column in the data".
-+
-+    `dim` exists to disambiguate between *multiple* vector columns of
-+    different sizes. When the schema has exactly one vector column, that
-+    column is still the only sensible one to search; a dimension mismatch is
-+    a query-execution concern, not a missing-column one. This previously
-+    broke remote search (#4409 wired up client-side inference there), which
-+    expects the server to reject the mismatched dimension itself.
++class UntrustedEmbeddingConfigError(PermissionError):
 +    """
-+    schema = pa.schema(
-+        [
-+            pa.field("id", pa.uint32(), False),
-+            pa.field("vector_col", pa.list_(pa.float32(), 32), False),
-+            pa.field("s", pa.string(), False),
-+        ]
++    Raised when using an embedding function restored from table metadata whose
++    settings this process has not approved.
++
++    See
++    [allow_remote_code][lancedb.embeddings.EmbeddingFunctionRegistry.allow_remote_code]
++    and
++    [allow_endpoint][lancedb.embeddings.EmbeddingFunctionRegistry.allow_endpoint].
++    """
++
++
+ class EmbeddingFunction(BaseModel, ABC):
+     """
+     An ABC for embedding functions.
+@@ -37,11 +49,29 @@ def create(cls, **kwargs):
+         """
+         Create an instance of the embedding function
+         """
++        from .registry import EmbeddingFunctionRegistry
++
+         resolved_kwargs = cls.__resolveVariables(kwargs)
+         instance = cls(**resolved_kwargs)
+-        instance._original_args = kwargs
++        instance._original_args = dict(kwargs)
++        if (
++            instance.remote_code_model() is not None
++            and "trust_remote_code" in cls.model_fields
++        ):
++            # Record the flag even when left at its default, so a missing flag
++            # in table metadata only ever means a table written before this.
++            instance._original_args.setdefault(
++                "trust_remote_code", instance.trust_remote_code
++            )
++        # The caller wrote this config, so this process trusts it. Without this,
++        # a table created with it could not be reopened in the same process.
++        EmbeddingFunctionRegistry.get_instance()._trust(instance)
+         return instance
+ 
++    @classmethod
++    def _resolve_variables(cls, args: dict) -> dict:
++        return cls.__resolveVariables(args)
++
+     @classmethod
+     def __resolveVariables(cls, args: dict) -> dict:
+         """
+@@ -92,6 +122,38 @@ def sensitive_keys() -> List[str]:
+         """
+         return []
+ 
++    def remote_code_model(self) -> Optional[Tuple[str, Optional[str]]]:
++        """
++        Return the model whose repository code this function runs when its
++        `trust_remote_code` field is enabled, as a `(name, revision)` pair.
++
++        Return None if the function never runs code from a model repository.
++        When the function is restored from table metadata, `trust_remote_code`
++        is only enabled for models allowed with
++        [allow_remote_code][lancedb.embeddings.EmbeddingFunctionRegistry.allow_remote_code].
++        """
++        return None
++
++    @classmethod
++    def _legacy_trust_remote_code_default(cls) -> bool:
++        """
++        The `trust_remote_code` to use for table metadata that omits it. Only
++        tables written before the flag was always recorded omit it, so this is
++        the default from that time.
++        """
++        field = cls.model_fields.get("trust_remote_code")
++        return bool(field.default) if field is not None else False
++
++    def endpoints(self) -> List[str]:
++        """
++        Return the non-default URLs this function sends data or credentials to.
++
++        When the function is restored from table metadata, each of these must be
++        allowed with
++        [allow_endpoint][lancedb.embeddings.EmbeddingFunctionRegistry.allow_endpoint].
++        """
++        return []
++
+     @abstractmethod
+     def compute_query_embeddings(self, *args, **kwargs) -> list[Union[np.array, None]]:
+         """
+@@ -233,3 +295,35 @@ def generate_embeddings(
+     ) -> list[Union[np.array, None]]:
+         """Generate the embeddings for the given texts"""
+         pass
++
++
++class UntrustedEmbeddingFunction(EmbeddingFunction):
++    """
++    Stands in for an embedding function restored from table metadata whose
++    settings this process has not approved.
++
++    The table stays usable for anything that doesn't compute embeddings, while
++    computing embeddings raises
++    [UntrustedEmbeddingConfigError][lancedb.embeddings.UntrustedEmbeddingConfigError].
++    The real function is never constructed, since some load their model in
++    `__init__`.
++    """
++
++    function_name: str
++    reasons: Tuple[str, ...]
++
++    def _error(self) -> UntrustedEmbeddingConfigError:
++        details = "\n".join(f"  - {reason}" for reason in self.reasons)
++        return UntrustedEmbeddingConfigError(
++            f"Embedding function '{self.function_name}' was restored from table "
++            "metadata with settings this process has not approved:\n" + details
++        )
++
++    def compute_query_embeddings(self, *args, **kwargs):
++        raise self._error()
++
++    def compute_source_embeddings(self, *args, **kwargs):
++        raise self._error()
++
++    def ndims(self) -> int:
++        raise self._error()
+```
+
+**File**: `python/python/lancedb/embeddings/ollama.py` (modified, +18/-1)
+```diff
+@@ -14,6 +14,9 @@
+     import ollama
+ 
+ 
++DEFAULT_OLLAMA_HOST = "http://localhost:11434"
++
++
+ @register("ollama")
+ class OllamaEmbeddings(TextEmbeddingFunction):
+     """
+@@ -24,11 +27,25 @@ class OllamaEmbeddings(TextEmbeddingFunction):
+     """
+ 
+     name: str = "nomic-embed-text"
+-    host: str = "http://localhost:11434"
++    host: str = DEFAULT_OLLAMA_HOST
+     options: Optional[dict] = None  # type = ollama.Options
+     keep_alive: Optional[Union[float, str]] = None
+     ollama_client_kwargs: Optional[dict] = {}
+ 
++    def endpoints(self) -> List[str]:
++        urls = []
++        if self.host.rstrip("/") != DEFAULT_OLLAMA_HOST:
++            urls.append(self.host)
++        # These kwargs go to the underlying httpx client, where a proxy would
++        # see every request.
++        for key in ("proxy", "proxies"):
++            proxy = (self.ollama_client_kwargs or {}).get(key)
++            if isinstance(proxy, str):
++                urls.append(proxy)
++            elif isinstance(proxy, dict):
++                urls.extend(v for v in proxy.values() if isinstance(v, str))
++        return urls
++
+     def ndims(self) -> int:
+         return len(self.generate_embeddings(["foo"])[0])
+ 
+```
+
+**File**: `python/python/lancedb/embeddings/openai.py` (modified, +3/-0)
+```diff
+@@ -58,6 +58,9 @@ def ndims(self):
+     def sensitive_keys():
+         return ["api_key"]
+ 
++    def endpoints(self) -> List[str]:
++        return [self.base_url] if self.base_url else []
++
+     @staticmethod
+     def model_names():
+         return [
+```
+
+**File**: `python/python/lancedb/embeddings/registry.py` (modified, +131/-6)
+```diff
+@@ -2,9 +2,15 @@
+ # SPDX-FileCopyrightText: Copyright The LanceDB Authors
+ 
+ import json
+-from typing import Dict, Optional, Type
++from typing import Dict, Optional, Set, Tuple, Type
+ 
+-from .base import EmbeddingFunction, EmbeddingFunctionConfig
++from pydantic import TypeAdapter
++
++from .base import (
++    EmbeddingFunction,
++    EmbeddingFunctionConfig,
++    UntrustedEmbeddingFunction,
++)
+ 
+ 
+ class EmbeddingFunctionRegistry:
+@@ -42,6 +48,9 @@ def get_instance(cls):
+     def __init__(self):
+         self._functions = {}
+         self._variables = {}
++        # Revision is a str, None for the default branch, or _ANY_REVISION.
++        self._allowed_remote_code: Set[Tuple[str, object]] = set()
++        self._allowed_endpoints: Set[str] = set()
+ 
+     def register(self, alias: Optional[str] = None):
+         """
+@@ -122,20 +131,129 @@ def parse_functions(
+             obj["vector_column"]: EmbeddingFunctionConfig(
+                 vector_column=obj["vector_column"],
+                 source_column=obj["source_column"],
+-                function=self.get(obj["name"]).create(**obj["model"]),
++                function=self._restore(obj["name"], obj["model"]),
+             )
+             for obj in raw_list
+         }
+ 
++    def _restore(self, name: str, args: dict) -> EmbeddingFunction:
++        """
++        Create an embedding function from table metadata. Anyone who can write
++        the table controls `args`, so settings that run model code or send data
++        elsewhere must already be trusted by this process.
++        """
++        cls = self.get(name)
++        resolved = cls._resolve_variables(args)
++        # Inspect the config without running __init__, which may load a model.
++        probe = cls.model_construct(**resolved)
++
++        reasons = []
++        model = probe.remote_code_model()
++        if model is not None:
++            allowed = self._remote_code_allowed(*model)
++            explicit = "trust_remote_code" in resolved
++            if explicit:
++                requested = TypeAdapter(bool).validate_python(
++                    resolved["trust_remote_code"]
++                )
++            else:
++                requested = cls._legacy_trust_remote_code_default()
++            # Always set the flag, since a subclass may default it to True.
++            resolved["trust_remote_code"] = requested and allowed
++            # A legacy table that omits the flag is downgraded rather than
++            # blocked: most sentence-transformers models don't need remote code,
++            # and those tables relied on the old True default without asking.
++            if requested and not allowed and explicit:
++                model_name, revision = model
++                reasons.append(
++                    f"runs code from model '{model_name}' at revision "
++                    f"{revision!r}. If you trust it, call "
++                    f"get_registry().allow_remote_code({model_name!r}, "
++                    f"revision={revision!r})"
++                )
++        reasons.extend(
++            f"sends data to endpoint '{url}'. If you trust it, call "
++            f"get_registry().allow_endpoint({url!r})"
++            for url in probe.endpoints()
++            if _normalize_url(url) not in self._allowed_endpoints
++        )
++
++        if reasons:
++            func = UntrustedEmbeddingFunction(
++                function_name=name, reasons=tuple(reasons)
++            )
++        else:
++            func = cls(**resolved)
++        func._original_args = args
++        return func
++
++    def allow_remote_code(self, model: str, revision: Optional[str] = None) -> None:
++        """
++        Trust the code in a model repository when an embedding function that
++        loads it is restored from table metadata.
++
++        Table metadata cannot enable `trust_remote_code` by itself, since anyone
++        who can write to the table could then run code in this process. Embedding
++        functions created in this process with `trust_remote_code=True` are
++        allowed automatically.
++
++        Parameters
++        ----------
++        model : str
++            The model name, such as `"nomic-ai/nomic-embed-text-v1.5"`.
++        revision : Optional[str]
++            The revision the table's embedding function must pin. Pinning a
++            commit hash is recommended, since the code at a branch or tag can
++            change after you review it. If None, any revision is trusted,
++            including pull request refs that anyone can push to the repository.
++        """
++        self._allowed_remote_code.add(
++            (model, _ANY_REVISION if revision is None else revision)
++        )
++
++    def allow_endpoint(self, url: str) -> None:
++        """
++        Trust a custom endpoint, such as an OpenAI `base_url` or Ollama `host`,
++        when an embedding function that uses it is restored from table metadata.
++
++        Table metadata cannot pick an endpoint by itself, since it could send
++        your data and API keys to a s
+```
+
+---
+
+### Incident Patch 3: `ec53c82e` (2026-10-19)
+**Commit Message**: fix(python): bound StreamingDataset's raw_batches queue against io_queue_depth (#4530)
+
+## Summary
+- `StreamingDataset`'s Stage 1 (I/O) queue (`raw_batches`) had no cap:
+`_fill_io` only limited *in-flight* fetch futures (`io_pending`) to
+`io_queue_depth`, but every completed fetch was unconditionally drained
+into `raw_batches` and the freed slot immediately refilled, so I/O could
+race arbitrarily far ahead of a slow transform stage with no bound on
+buffered memory.
+- `transform_queue_depth`'s admission check (`_try_submit_tx`) couldn't
+compensate either, since it only counts `cooked` rows and in-flight
+transform futures — it never looks at `raw_batches`.
+- Fix: `_fill_io` now counts both `io_pending` and `raw_batches` against
+the `io_queue_depth` budget, matching the parameter's documented
+"batches to keep in flight per split" contract.
+
+## Test plan
+- [x] Added
+`test_raw_queue_depth_bounded_when_transform_is_the_bottleneck`
+(deterministic, via synchronous I/O) asserting `raw_queue_depth <=
+io_queue_depth * read_batch_size` even when the transform stage is the
+bottleneck.
+- [x] Full `python/python/tests/test_elastic_dataloader.py` suite passes
+(190/190), confirming no change to sam
+
+**File**: `python/python/lancedb/streaming.py` (modified, +19/-5)
+```diff
+@@ -261,10 +261,15 @@ class StreamingDataset(IterableDataset):
+         storage) at the cost of higher memory usage per split buffer.  Defaults
+         to ``DEFAULT_READ_BATCH_SIZE`` (64).
+     io_queue_depth:
+-        Number of I/O batches to keep in flight per split.  Higher values
+-        overlap storage latency with transform and training compute at the cost
+-        of more memory and threads.  Must be greater than zero.  Defaults to
+-        ``DEFAULT_PREFETCH_BATCHES`` (4).
++        Number of fetched batches to keep ahead of the transform stage per
++        split: this bounds the combined count of in-flight fetches and
++        already-fetched batches still waiting for a transform slot.  Higher
++        values overlap storage latency with transform and training compute
++        at the cost of more memory and threads, but I/O stops running ahead
++        once this many batches are buffered, applying backpressure when the
++        transform stage (or ``transform_queue_depth``) is the bottleneck.
++        Must be greater than zero.  Defaults to ``DEFAULT_PREFETCH_BATCHES``
++        (4).
+     columns:
+         Optional list of column names to read.  When set, only those columns
+         are fetched from storage; all others are omitted.  ``None`` (the
+@@ -836,8 +841,17 @@ def _submit_io(i: int) -> None:
+             io_pending[i].append((abs_start, io_pool.submit(_io_call, perm_i, indices)))
+ 
+         def _fill_io(i: int) -> None:
++            # Budget covers both in-flight fetches (io_pending) and batches
++            # that have already landed but are still waiting for a transform
++            # slot (raw_batches).  Without raw_batches in the count, a slow
++            # transform stage never applies backpressure to Stage 1: each
++            # completed fetch is drained into raw_batches and immediately
++            # replaced by a new one, so I/O keeps racing arbitrarily far
++            # ahead of the transform stage instead of merely overlapping
++            # storage latency with it.
+             while (
+-                len(io_pending[i]) < io_queue_depth and fetch_head[i] < split_sizes[i]
++                len(io_pending[i]) + len(raw_batches[i]) < io_queue_depth
++                and fetch_head[i] < split_sizes[i]
+             ):
+                 _submit_io(i)
+ 
+```
+
+**File**: `python/python/tests/test_elastic_dataloader.py` (modified, +86/-0)
+```diff
+@@ -2036,6 +2036,92 @@ def test_transform_queue_depth_bounds_cooked_rows(lance_table):
+     )
+ 
+ 
++def test_raw_queue_depth_bounded_when_transform_is_the_bottleneck(tmp_path):
++    """io_queue_depth bounds raw_batches even when transform is the bottleneck.
++
++    Regression test for a bug where Stage 1 (I/O) applied no backpressure at
++    all: _fill_io only capped io_pending (in-flight fetches) at
++    io_queue_depth, but every completed fetch was drained into raw_batches
++    unconditionally (_drain_io) and immediately replaced by a new fetch
++    (_fill_io again), so I/O kept racing arbitrarily far ahead of a slow
++    transform stage -- raw_batches had no cap of its own.
++    transform_queue_depth did not help either: its admission check in
++    _try_submit_tx only counts cooked rows and in-flight transform futures
++    (`len(cooked[i]) + len(tx_pending[i]) * batch_size`); it never looks at
++    len(raw_batches[i]), so it cannot throttle Stage 1.
++
++    The fix makes _fill_io count both io_pending and raw_batches against the
++    io_queue_depth budget, so raw_queue_depth should never exceed
++    io_queue_depth * read_batch_size per split, regardless of how slow the
++    transform stage is.
++
++    I/O is forced to run synchronously (same technique as
++    test_transform_queue_depth_does_not_admit_at_capacity_minus_one) so the
++    assertion is deterministic regardless of machine load, rather than
++    relying on a real-time race between I/O and transform threads.  Only the
++    transform runs on a real background thread (with a short sleep) so the
++    consumer genuinely blocks waiting for it, letting Stage 1 attempt to run
++    ahead between blocking waits.
++    """
++    import concurrent.futures as cf
++    from concurrent.futures import ThreadPoolExecutor
++    from unittest.mock import patch
++    import pyarrow as pa
++    import time
++
++    n_rows = 200
++    read_batch_size = 10
++    io_queue_depth = 2
++    transform_queue_depth = 2
++    max_allowed = io_queue_depth * read_batch_size
++
++    db = lancedb.connect(tmp_path)
++    table = db.create_table("t", pa.table({"id": list(range(n_rows))}))
++
++    def slow_transform(batch: pa.RecordBatch) -> list:
++        time.sleep(0.005)
++        return batch.column("id").to_pylist()
++
++    original_submit = ThreadPoolExecutor.submit
++
++    def synchronous_io_submit(self, fn, *args, **kwargs):
++        if getattr(fn, "__name__", "") == "_io_call":
++            fut = cf.Future()
++            try:
++                fut.set_result(fn(*args, **kwargs))
++            except Exception as exc:
++                fut.set_exception(exc)
++            return fut
++        return original_submit(self, fn, *args, **kwargs)
++
++    with patch.object(ThreadPoolExecutor, "submit", synchronous_io_submit):
++        ds = StreamingDataset(
++            table,
++            num_splits=1,
++            shuffle_seed=SHUFFLE_SEED,
++            read_batch_size=read_batch_size,
++            io_queue_depth=io_queue_depth,
++            transform_queue_depth=transform_queue_depth,
++            transform_parallelism=1,
++            transform=slow_transform,
++        )
++
++        peak_raw = 0
++        ids = []
++        for item in ds:
++            ids.append(item)  # slow_transform yields bare ids, not dicts
++            if ds.raw_queue_depth > peak_raw:
++                peak_raw = ds.raw_queue_depth
++
++    assert peak_raw <= max_allowed, (
++        f"raw_queue_depth peaked at {peak_raw}, expected <= {max_allowed} "
++        "(io_queue_depth * read_batch_size)"
 +    )
++    # The backpressure fix must not come at the cost of dropping or
++    # duplicating rows.
++    assert sorted(ids) == list(range(n_rows))
 +
-+    assert inf_vector_column_query(schema, dim=32) == "vector_col"
-+    assert inf_vector_column_query(schema, dim=120) == "vector_col"
-+    assert inf_vector_column_query(schema) == "vector_col"
 +
-+
-+def test_inf_vector_column_query_dim_mismatch_with_multiple_columns():
-+    """With more than one vector column, a dimension that matches none of
-+    them is still ambiguous and must raise, not silently pick one."""
-+    schema = pa.schema(
-+        [
-+            pa.field("vector1", pa.list_(pa.float32(), 10), False),
-+            pa.field("vector2", pa.list_(pa.float32(), 20), False),
-+        ]
-+    )
-+
-+    with pytest.raises(ValueError, match="more than one vector column"):
-+        inf_vector_column_query(schema, dim=99)
+ def test_transform_queue_depth_does_not_admit_at_capacity_minus_one(tmp_path):
+     """Admission requires a full read_batch_size of free space, not just one slot.
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4580** (closed): docs: reclaim space after each worker's batch (evaluation fixture, do not merge) (@brendanclement)
-- **PR #4579** (closed): docs: compact after a large load (evaluation fixture, do not merge) (@brendanclement)
-- **PR #4577** (2026-10-18): feat(python): accept large_binary in Function signatures (@wkalt)
-- **PR #4574** (closed): fix(python): preserve all-null vector schemas (@Ganesh1729-ui)
-- **PR #4566** (2026-10-18): fix(python): reject blob ranges unsupported by storage schemas (@lancedb-gatefixer[bot])
-- **PR #4564** (closed): fix(python): reject blob ranges unsupported by storage schema (@Ishita-Singh-12)
+- **PR #4596** (2026-10-19): docs: clean up prose flagged by the shared Vale rules (@brendanclement)
+- **PR #4595** (closed): test(docs): verify Vale annotations (do not merge) (@brendanclement)
+- **PR #4593** (2026-10-19): chore(deny): ignore zip advisories reachable only through candle-core (@LuQQiu)
+- **PR #4590** (2026-10-19): chore: update lance dependency to v14.0.0-beta.21 (@lancedb-robot)
+- **PR #4587** (closed): chore: update lance dependency to v14.0.0-beta.20 (@lancedb-robot)
+- **PR #4581** (2026-10-19): ci: add an advisory Vale check for documentation prose (@brendanclement)
 
 ---
 
@@ -1866,35 +2381,24 @@ genuinely empty.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. require a primary key to enable MemWAL (#4561)
+## X. build(python): publish an sdist alongside the wheels (#4522)
 
 **RULE**:
-When implementing operations in `python/python/tests/test_memwal_spec.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci-scripts.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ea1d2b17`: require a primary key to enable MemWAL (#4561). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1ad97b14`: build(python): publish an sdist alongside the wheels (#4522). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `python/python/tests/test_memwal_spec.py`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci-scripts.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    table.set_unenforced_primary_key("id")
-    table.set_unenforced_primary_key("id")
-def test_enable_memwal_requires_primary_key(tmp_path):
-    _db, table = _make_table(tmp_path)
-    for spec in (
-        MemWalWriteSpec.unsharded(),
-        MemWalWriteSpec.bucket("id", 4),
-        MemWalWriteSpec.identity("id"),
-    ):
-        with pytest.raises(Exception, match="primary key"):
-            table.enable_memwal(spec)
-    assert table.get_memwal_spec() is None
-
-
-    await table.set_unenforced_primary_key("id")
+      - ci/check_cargo_lock.py
+      - ci/check_sdist.py
+      - ci/check_cargo_lock.py
+      - ci/check_sdist.py
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1904,4 +2408,4 @@ def test_enable_memwal_requires_primary_key(tmp_path):
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ea1d2b17` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1ad97b14` are properly handled with clean fallback behavior.

@@ -3510,3 +3510,7 @@ Every entry in this ledger must capture:
 | `learn-github-scrapy-plugins-scrapy-playwright` | `https://github.com/scrapy-plugins/scrapy-playwright` | `2658f86a` | Multi-dimensional audit evidence | 2026-10-19T21:24:06.243Z |
 | `learn-github-rechsteiner-parchment` | `https://github.com/rechsteiner/Parchment` | `dfb23ea5` | Multi-dimensional audit evidence | 2026-10-19T21:24:09.160Z |
 | `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `821c9bf3` | Multi-dimensional audit evidence | 2026-10-19T21:24:13.375Z |
+| `learn-github-johnbean393-sidekick` | `https://github.com/johnbean393/Sidekick` | `83b3e6e0` | Multi-dimensional audit evidence | 2026-10-19T21:30:26.698Z |
+| `learn-github-scrapy-plugins-scrapy-splash` | `https://github.com/scrapy-plugins/scrapy-splash` | `72a87882` | Multi-dimensional audit evidence | 2026-10-19T21:30:26.818Z |
+| `learn-github-nats-io-nats-go` | `https://github.com/nats-io/nats.go` | `e481af89` | Multi-dimensional audit evidence | 2026-10-19T21:30:27.255Z |
+| `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `6507615a` | Multi-dimensional audit evidence | 2026-10-19T21:30:32.294Z |

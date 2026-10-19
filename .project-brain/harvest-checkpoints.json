@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T21:24:13.384Z",
+  "last_updated": "2026-10-19T21:30:32.300Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3979,14 +3979,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nats-io-nats-go",
-      "content_hash": "93fd6b54b31346be57c4ab50d9bca02693f5239c8c9faf559af5fc4d8884f482",
-      "verified_at": "2026-10-18T21:45:54.694Z",
+      "content_hash": "d88298dcec3d356eac57d1d78faefed7a0230cff0755c216d70b52b937a98783",
+      "verified_at": "2026-10-19T21:30:27.261Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T21:45:54.694Z"
+      "last_updated": "2026-10-19T21:30:27.261Z"
     },
     "ChrispyBacon-dev/DockFlare": {
       "repository": "ChrispyBacon-dev/DockFlare",
@@ -11194,14 +11194,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lancedb-lancedb",
-      "content_hash": "618d14a887ddc28d6fd9b22ec533cf8b32422918f6f45685fd2000bba837a6f8",
-      "verified_at": "2026-10-19T08:58:49.162Z",
+      "content_hash": "8ebd5b7f94aedc079e5d508a2e8d8b2cee48662c4036e650b4d2df255f1fda32",
+      "verified_at": "2026-10-19T21:30:32.300Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T08:58:49.162Z"
+      "last_updated": "2026-10-19T21:30:32.300Z"
     },
     "agent-of-empires/agent-of-empires": {
       "repository": "agent-of-empires/agent-of-empires",
@@ -13722,6 +13722,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T21:24:09.167Z"
+    },
+    "johnbean393/Sidekick": {
+      "repository": "johnbean393/Sidekick",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-johnbean393-sidekick",
+      "content_hash": "6181e6b457224819ae0d003652fc5178dccdba46329e09fa8db6bf6934f9d5d2",
+      "verified_at": "2026-10-19T21:30:26.705Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T21:30:26.705Z"
+    },
+    "scrapy-plugins/scrapy-splash": {
+      "repository": "scrapy-plugins/scrapy-splash",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-scrapy-plugins-scrapy-splash",
+      "content_hash": "132fac021337c5c1936bc6d2c153471610b302b8d2e55f6b47753a70c2d4a4a8",
+      "verified_at": "2026-10-19T21:30:26.824Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T21:30:26.824Z"
     }
   },
   "repos": {

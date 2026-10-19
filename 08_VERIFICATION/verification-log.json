@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-69ZT",
-    "timestamp": "2026-10-19T06:19:09.977Z",
-    "repository": "VectifyAI/PageIndex",
-    "learningId": "learn-github-vectifyai-pageindex",
-    "contentHash": "c394e83a06dbc7a64dddc2c0d17868f0e605bc95de54b5906c396236a721afa2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-7RI9",
-    "timestamp": "2026-10-19T06:20:19.329Z",
-    "repository": "epicweb-dev/advanced-react-patterns",
-    "learningId": "learn-github-epicweb-dev-advanced-react-patterns",
-    "contentHash": "9cadb5c2e881a6103b485c6ce618162569c01801c1c3a75b95029c11d5db41d3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-FFZU",
-    "timestamp": "2026-10-19T06:26:17.658Z",
-    "repository": "dalance/procs",
-    "learningId": "learn-github-dalance-procs",
-    "contentHash": "0a2de188b285590e53198b00f2d2d511ca59eac5eac3a60ce70202ae738615ef",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-FGDK",
-    "timestamp": "2026-10-19T06:26:18.152Z",
-    "repository": "ionic-team/ionic-framework",
-    "learningId": "learn-github-ionic-team-ionic-framework",
-    "contentHash": "b9ea123d51352b372dee5af287d3a7760dba1ac9f46eb3229fa7536e40c83b79",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-FIYM",
     "timestamp": "2026-10-19T06:26:21.502Z",
     "repository": "PSRben/VisionHOPE",
@@ -7490,6 +7430,66 @@
     "repository": "sigstore/cosign",
     "learningId": "learn-github-sigstore-cosign",
     "contentHash": "2a5d25ee1fadc6505a0e2b5f460936f441cbb8555d8ef288914651a03267303f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-Q6TJ",
+    "timestamp": "2026-10-19T21:30:26.695Z",
+    "repository": "johnbean393/Sidekick",
+    "learningId": "learn-github-johnbean393-sidekick",
+    "contentHash": "6181e6b457224819ae0d003652fc5178dccdba46329e09fa8db6bf6934f9d5d2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-Q6WW",
+    "timestamp": "2026-10-19T21:30:26.816Z",
+    "repository": "scrapy-plugins/scrapy-splash",
+    "learningId": "learn-github-scrapy-plugins-scrapy-splash",
+    "contentHash": "132fac021337c5c1936bc6d2c153471610b302b8d2e55f6b47753a70c2d4a4a8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-Q791",
+    "timestamp": "2026-10-19T21:30:27.253Z",
+    "repository": "nats-io/nats.go",
+    "learningId": "learn-github-nats-io-nats-go",
+    "contentHash": "d88298dcec3d356eac57d1d78faefed7a0230cff0755c216d70b52b937a98783",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-QB50",
+    "timestamp": "2026-10-19T21:30:32.292Z",
+    "repository": "lancedb/lancedb",
+    "learningId": "learn-github-lancedb-lancedb",
+    "contentHash": "8ebd5b7f94aedc079e5d508a2e8d8b2cee48662c4036e650b4d2df255f1fda32",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

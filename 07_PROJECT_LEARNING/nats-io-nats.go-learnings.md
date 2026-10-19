@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nats-io-nats.go-learnings.md`  
 > **Source**: github ([https://github.com/nats-io/nats.go](https://github.com/nats-io/nats.go))  
-> **Source Version**: `e1312b80`  
+> **Source Version**: `e481af89`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T21:45:54.504Z  
+> **Timestamp**: 2026-10-19T21:30:26.863Z  
 > **Learning ID**: `learn-github-nats-io-nats-go`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nats-io-nats.go-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nats-io/nats.go](https://github.com/nats-io/nats.go))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T21:45:54.498Z  
+> **Harvest Timestamp**: 2026-10-19T21:30:26.857Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Golang client for NATS, the cloud native messaging system.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 6781 stars
+- **Stars / Engagement**: 6783 stars
 
 ---
 
@@ -1561,796 +1561,202 @@ func endlessPublish(ctx context.Context, nc *nats.Conn, js jetstream.JetStream) 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dafa2540` (2026-10-13)
-**Commit Message**: [FIXED] Pull consumer deadlock sending pull requests after Stop/Drain (#2165)
+### Incident Patch 1: `e481af89` (2026-10-19)
+**Commit Message**: [FIXED] Preserve ordered consumer heartbeat (#2182)
 
-Symptom: draining (or stopping) a pull Consume or Messages iterator can
-deadlock. With buffered messages still being delivered during Drain,
-the Consume message handler blocks forever, Closed() never returns (it
-blocks on the subscription lock) and the drain never completes; a
-Messages iterator's Next blocks forever the same way.
+* [FIXED] jetstream: pass ordered consumer's resolved heartbeat to inner pull subscription
 
-Root cause: checkPending and the Consume status goroutine (the
-ErrNoHeartbeat and CONNECTED branches) send the next pull request on
-fetchNext, which buffers a single request, while holding the
-subscription lock. fetchNext is only read by pullMessages, which
-returns as soon as done is closed by Stop or Drain. Messages delivered
-after that (all of the client-side buffer while draining) still call
-checkPending, so once one request sits unread in fetchNext the next
-send blocks forever with the lock held.
+orderedConsumer.Consume and orderedConsumer.Messages parsed their
+options with parseConsumeOpts/parseMessagesOpts(ordered=true), which
+resolves the heartbeat to the ordered default of 5s (PullExpiry/2 for
+short expiry), but then passed the original user options to the inner
+pullConsumer. The inner consumer re-parsed them with ordered=false and
+fell back to the generic PullExpiry/2 default of 15s, which is the
+value actually sent as idle_heartbeat in pull requests and used to arm
+the heartbeat monitor. A silent consumer was therefore only detected
+after ~30s instead of ~10s.
 
-Fix: route every send on fetchNext through requestNext, which selects
-on done and drops the request once the subscription is done. Nothing
-would send it anyway: pullMessages only exits after done is closed.
+Append the already-resolved PullHeartbeat to the options handed to the
+inner consumer in both Consume and Messages. Explicitly configured
+heartbeats are preserved because the resolved value equals the
+user-provided one in that case, and ordinary (non-ordered) pull
+consumers are unaffected.
 
-Test: TestPullConsumer_checkPendingAfterDone calls checkPending with a
-fu
+Adds TestOrderedConsumerHeartbeat, which observes the raw
+$JS.API.CONSUMER.MSG.NEXT requests and asserts idle_heartbeat for: the
+5s default (Consume and Messages), an explicitly con
 
-**File**: `jetstream/jetstream_test.go` (modified, +34/-0)
+**File**: `jetstream/ordered.go` (modified, +4/-1)
 ```diff
-@@ -389,6 +389,40 @@ func TestRetryWithBackoff(t *testing.T) {
- 	}
- }
- 
-+func TestPullConsumer_checkPendingAfterDone(t *testing.T) {
-+	// Once the subscription is stopped or drained, pullMessages no longer
-+	// reads fetchNext. Messages delivered while draining still call
-+	// checkPending (with the lock held), and fetchNext only buffers one
-+	// request, so checkPending must not block on a full fetchNext.
-+	sub := &pullSubscription{
-+		pending: pendingMsgs{
-+			msgCount: 4,
-+		},
-+		consumeOpts: &consumeOpts{
-+			ThresholdMessages: 5,
-+			MaxMessages:       10,
-+		},
-+		done:      make(chan struct{}, 1),
-+		fetchNext: make(chan *pullRequest, 1),
-+	}
-+	// A request queued before pullMessages returned, which nobody reads.
-+	sub.fetchNext <- &pullRequest{}
-+	close(sub.done)
-+
-+	returned := make(chan struct{})
-+	go func() {
-+		sub.Lock()
-+		sub.checkPending()
-+		sub.Unlock()
-+		close(returned)
-+	}()
-+	select {
-+	case <-returned:
-+	case <-time.After(5 * time.Second):
-+		t.Fatal("checkPending blocked on fetchNext after the subscription was done")
-+	}
-+}
-+
- func TestPullConsumer_checkPending(t *testing.T) {
- 
- 	tests := []struct {
-```
-
-**File**: `jetstream/pull.go` (modified, +15/-6)
-```diff
-@@ -370,7 +370,7 @@ func (p *pullConsumer) Consume(handler MessageHandler, opts ...PullConsumeOpt) (
- 							sub.errs <- errConnected
- 						}
- 
--						sub.fetchNext <- &pullRequest{
-+						sub.requestNext(&pullRequest{
- 							Expires:       sub.consumeOpts.Expires,
- 							Batch:         sub.consumeOpts.MaxMessages,
- 							MaxBytes:      sub.consumeOpts.MaxBytes,
-@@ -380,7 +380,7 @@ func (p *pullConsumer) Consume(handler MessageHandler, opts ...PullConsumeOpt) (
- 							Priority:      sub.consumeOpts.Priority,
- 							Group:         sub.consumeOpts.Group,
- 							PinID:         p.getPinID(),
--						}
-+						})
- 						if sub.hbMonitor != nil {
- 							sub.hbMonitor.Reset(2 * sub.consumeOpts.Heartbeat)
- 						}
-@@ -398,7 +398,7 @@ func (p *pullConsumer) Consume(handler MessageHandler, opts ...PullConsumeOpt) (
- 					if sub.consumeOpts.StopAfter > 0 {
- 						batchSize = min(batchSize, sub.consumeOpts.StopAfter-sub.delivered)
- 					}
--					sub.fetchNext <- &pullRequest{
-+					sub.requestNext(&pullRequest{
- 						Expires:       sub.consumeOpts.Expires,
- 						Batch:         batchSize,
- 						MaxBytes:      sub.consumeOpts.MaxBytes,
-@@ -408,7 +408,7 @@ func (p *pullConsumer) Consume(handler MessageHandler, opts ...PullConsumeOpt) (
- 						Priority:      sub.consumeOpts.Priority,
- 						Group:         sub.consumeOpts.Group,
- 						PinID:         p.getPinID(),
--					}
-+					})
- 					if sub.hbMonitor != nil {
- 						sub.hbMonitor.Reset(2 * sub.consumeOpts.Heartbeat)
- 					}
-@@ -485,7 +485,7 @@ func (s *pullSubscription) checkPending() {
- 			if s.consumer != nil {
- 				pinID = s.consumer.getPinID()
- 			}
--			s.fetchNext <- &pullRequest{
-+			s.requestNext(&pullRequest{
- 				Expires:       s.consumeOpts.Expires,
- 				Batch:         batchSize,
- 				MaxBytes:      maxBytes,
-@@ -495,14 +495,23 @@ func (s *pullSubscription) checkPending() {
- 				MinPending:    s.consumeOpts.MinPending,
- 				MinAckPending: s.consumeOpts.MinAckPending,
- 				Priority:      s.consumeOpts.Priority,
--			}
-+			})
- 
- 			s.pending.msgCount = s.consumeOpts.MaxMessages
- 			s.pending.byteCount = s.consumeOpts.MaxBytes
- 		}
- 	}
- }
- 
-+// requestNext queues req for pullMessages, giving up once the
-+// subscription is done.
-+func (s *pullSubscription) requestNext(req *pullRequest) {
-+	select {
-+	case s.fetchNext <- req:
-+	case <-s.done:
-+	}
-+}
-+
- // Messages returns MessagesContext, allowing continuously iterating
- // over messages on a stream. Messages cannot be used concurrently
- // when using ordered consumer.
-```
-
-**File**: `jetstream/test/pull_test.go` (modified, +105/-0)
-```diff
-@@ -3430,6 +3430,111 @@ func TestConsumeErrHandlerNoDeadlock(t *testing.T) {
- 	})
- }
- 
-+func TestPullConsumerDrainWithBufferedMessages(t *testing.T) {
-+	// While draining, messages already buffered on the client are still
-+	// delivered, and with a threshold just below max messages every second
-+	// one queues the next pull request. Nothing reads those requests any
-+	// more, which must not block the handler or Next.
-+	const numMsgs = 10
-+	setup := func(t *testing.T, js jetstream.JetStream) jetstream.Consumer {
-+		t.Helper()
-+		ctx := newTesterCtx(t, 5*time.Second)
-+		s, err := js.CreateStream(ctx, jetstream.StreamConfig{Name: "foo", Subjects: []string{"FOO.*"}})
-+		if err != nil {
-+			t.Fatalf("Unexpected error: %v", err)
-+		}
-+		c, err := s.CreateOrUpdateConsumer(ctx, jetstream.ConsumerConfig{AckPolicy: jetstream.AckExplicitPolicy})
-+		if err != nil {
-+			t.Fatalf("Unexpected error: %v", err)
-+		}
-+		for i := 0; i < numMsgs; i++ {
-+			if _, err := js.Publish(ctx, "FOO.A", []byte("msg")); err != nil {
-+				t.Fatalf("Unexpected error: %v", err)
-+			}
-+		}
-+		return c
-+	}
-+
-+	t.Run("consume", func(t *testing.T) {
-+		withJSServer(t, func(t *testing.T, nc *nats.Conn, js jetstream.JetStream) {
-+			c := setup(t, js)
-+
-+			firstMsg := make(chan struct{})
-+			drained := make(chan struct{})
-+			var received atomic.Int32
-+			cc, err := c.Consume(func(msg jetstream.Msg) {
-+				if received.Add(1) == 1 {
-+					close(firstMsg)
-+					<-drained
-+				}
-+			}, jetstream.PullMaxMessages(numMsgs), jetstream.PullThresholdMessages(numMsgs-1))
-+			if err != nil {
-+				t.Fatalf("Unexpected error: %v", err)
-+			}
-+
-+			<-firstMsg
-+			// let the rest of the batch reach the client
-+			time.Sleep(100 * time.Millisecond)
-+			cc.Drain()
-+			close(drained)
-+
-+			closed := make(chan struct{})
-+			go func() {
-+				<-cc.Closed()
-+				close(closed)
-+			}()
-+			select {
-+			case <-closed:
-+			case <-time.After(5 * time.Second):
-+				t.Fatalf("Consume did not finish draining; received %d messages", received.Load())
-+			}
-+			if got := received.Load(); got != numMsgs {
-+				t.Fatalf("Expected %d messages delivered while draining; got: %d", numMsgs, got)
-+			}
-+		})
-+	})
-+
-+	t.Run("messages", func(t *testing.T) {
-+		withJSServer(t, func(t *testing.T, nc *nats.Conn, js jetstream.JetStream) {
-+			c := setup(t, js)
-+
-+			it, err := c.Messages(jetstream.PullMaxMessages(numMsgs), jetstream.PullThresholdMessages(numMsgs-1))
-+			if err != nil {
-+				t.Fatalf("Unexpected error: %v", err)
-+			}
-+			if _, err := it.Next(); err != nil {
-+				t.Fatalf("Unexpected error: %v", err)
-+			}
-+			// let the rest of the batch reach the client
-+			time.Sleep(100 * time.Millisecond)
-+			it.Drain()
-+
-+			received := 1
-+			done := make(chan error, 1)
-+			go func() {
-+				for {
-+					if _, err := it.Next(); err != nil {
-+						done <- err
-+						return
-+					}
-+					received++
-+				}
-+			}()
-+			select {
-+			case err := <-done:
-+				if !errors.Is(err, jetstream.ErrMsgIteratorClosed) {
-+					t.Fatalf("Expected error: %v; got: %v", jetstream.ErrMsgIteratorClosed, err)
-+				}
-+				if received != numMsgs {
-+					t.Fatalf("Expected %d messages delivered while draining; got: %d", numMsgs, received)
-+				}
-+			case <-time.After(5 * time.Second):
-+				t.Fatal("Next blocked while draining")
-+			}
-+		})
-+	})
-+}
-+
- func TestPullConsumerMaxReconnectsExceeded(t *testing.T) {
- 	t.Run("messages", func(t *testing.T) {
- 		c := newTester(t)
-```
-
----
-
-### Incident Patch 2: `db667e2f` (2026-10-08)
-**Commit Message**: [FIXED] Ordered consumer StopAfter deadlock and miscount on reset (#2167)
-
-An ordered consumer with StopAfter misbehaved whenever it reset its
-inner pull subscription:
-
-- Messages: after a reset on a sequence mismatch, Stop or Drain on the
-  iterator, or the next reset, blocked forever while holding the
-  ordered consumer's lock.
-- Messages: after a reset on a missed heartbeat or a reconnect, the
-  iterator delivered more than StopAfter messages.
-- Consume: a reset on a sequence mismatch delivered fewer than
-  StopAfter messages.
-- Consume: calling Stop or Drain after the consume had stopped itself on
-  reaching StopAfter panicked with "close of closed channel".
-
-The ordered consumer learned how many messages were left from a single
-channel (buffer 1) that it shared between all of its inner pull
-subscriptions: each inner Stop or Drain sent StopAfter minus its own
-delivered count to it, or closed it once the limit was reached. The
-Messages error path read that channel without blocking before the inner
-subscription was stopped, so it always found it empty, kept the
-original limit for the next subscription, and left the value that the
-reset's Stop then sent in the channel. The sequenc
-
-**File**: `jetstream/ordered.go` (modified, +73/-95)
-```diff
-@@ -17,6 +17,7 @@ import (
- 	"context"
- 	"errors"
- 	"fmt"
-+	"slices"
- 	"strconv"
- 	"strings"
- 	"sync"
-@@ -40,9 +41,8 @@ type (
- 		doReset           chan struct{}
- 		resetInProgress   atomic.Uint32
- 		userErrHandler    ConsumeErrHandler
--		stopAfter         int
--		stopAfterMsgsLeft chan int
--		withStopAfter     bool
-+		stopAfter         int // StopAfter of Consume or Messages, 0 if not set
-+		deliveredMessages int // messages handed to the caller, across resets
- 		runningFetch      *fetchResult
- 		subscription      *orderedSubscription
- 		sync.Mutex
-@@ -99,15 +99,17 @@ func (c *orderedConsumer) Consume(handler MessageHandler, opts ...PullConsumeOpt
+@@ -101,7 +101,8 @@ func (c *orderedConsumer) Consume(handler MessageHandler, opts ...PullConsumeOpt
+ 	c.userErrHandler = consumeOpts.ErrHandler
+ 	c.stopAfter = max(consumeOpts.StopAfter, 0)
+ 	c.deliveredMessages = 0
+-	opts = append(opts, consumeReconnectNotify())
++	// Preserve the resolved heartbeat when creating the pull consumer.
++	opts = append(opts, PullHeartbeat(consumeOpts.Heartbeat), consumeReconnectNotify())
+ 	// innerOpts returns the options for the inner pull subscription of the
+ 	// current serial. Lock should be held when calling it.
+ 	innerOpts := func() []PullConsumeOpt {
+@@ -255,7 +256,9 @@ func (c *orderedConsumer) Messages(opts ...PullMessagesOpt) (MessagesContext, er
+ 	if err != nil {
  		return nil, fmt.Errorf("%w: %s", ErrInvalidOption, err)
  	}
- 	c.userErrHandler = consumeOpts.ErrHandler
--	opts = append(opts, consumeReconnectNotify(),
--		ConsumeErrHandler(c.errHandler(c.serial)))
--	if consumeOpts.StopAfter > 0 {
--		c.withStopAfter = true
--		c.stopAfter = consumeOpts.StopAfter
--	}
--	c.stopAfterMsgsLeft = make(chan int, 1)
--	if c.stopAfter > 0 {
--		opts = append(opts, consumeStopAfterNotify(c.stopAfter, c.stopAfterMsgsLeft))
-+	c.stopAfter = max(consumeOpts.StopAfter, 0)
-+	c.deliveredMessages = 0
-+	opts = append(opts, consumeReconnectNotify())
-+	// innerOpts returns the options for the inner pull subscription of the
-+	// current serial. Lock should be held when calling it.
-+	innerOpts := func() []PullConsumeOpt {
-+		o := append(slices.Clip(opts), ConsumeErrHandler(c.errHandler(c.serial)))
-+		if c.stopAfter > 0 {
-+			o = append(o, StopAfter(c.stopAfter-c.deliveredMessages))
-+		}
-+		return o
- 	}
- 	sub := &orderedSubscription{
- 		consumer: c,
-@@ -135,14 +137,23 @@ func (c *orderedConsumer) Consume(handler MessageHandler, opts ...PullConsumeOpt
- 				c.errHandler(serial)(sub, errOrderedSequenceMismatch)
- 				return
- 			}
-+			if c.stopAfter > 0 && c.deliveredMessages >= c.stopAfter {
-+				c.Unlock()
-+				return
-+			}
- 			c.cursor.deliverSeq = dseq
- 			c.cursor.streamSeq = meta.Sequence.Stream
-+			c.deliveredMessages++
-+			last := c.stopAfter > 0 && c.deliveredMessages == c.stopAfter
- 			c.Unlock()
- 			handler(msg)
-+			if last {
-+				sub.Stop()
-+			}
- 		}
- 	}
- 
--	cc, err := c.currentConsumer.Consume(internalHandler(c.serial), opts...)
-+	cc, err := c.currentConsumer.Consume(internalHandler(c.serial), innerOpts()...)
- 	if err != nil {
- 		return nil, err
- 	}
-@@ -152,35 +163,25 @@ func (c *orderedConsumer) Consume(handler MessageHandler, opts ...PullConsumeOpt
- 		for {
- 			select {
- 			case <-c.doReset:
-+				c.Lock()
-+				done := c.stopAfter > 0 && c.deliveredMessages >= c.stopAfter
-+				c.Unlock()
-+				if done {
-+					sub.Stop()
-+					return
-+				}
- 				if err := c.reset(); err != nil {
- 					if errors.Is(err, errOrderedConsumerClosed) {
- 						continue
- 					}
- 					c.errHandler(c.serial)(c.currentSub, err)
- 				}
--				if c.withStopAfter {
--					select {
--					case c.stopAfter = <-c.stopAfterMsgsLeft:
--					default:
--					}
--					if c.stopAfter <= 0 {
--						sub.Stop()
--						return
--					}
--				}
--				if c.stopAfter > 0 {
--					opts = opts[:len(opts)-2]
--				} else {
--					opts = opts[:len(opts)-1]
--				}
--
--				// overwrite the previous err handler to use the new serial
--				opts = append(opts, ConsumeErrHandler(c.errHandler(c.serial)))
--				if c.withStopAfter {
--					opts = append(opts, consumeStopAfterNotify(c.stopAfter, c.stopAfterMsgsLeft))
--				}
--				if cc, err := c.currentConsumer.Consume(internalHandler(c.serial), opts...); err != nil {
--					c.errHandler(c.serial)(cc, err)
-+				c.Lock()
-+				serial := c.serial
-+				consumeOpts := innerOpts()
-+				c.Unlock()
-+				if cc, err := c.currentConsumer.Consume(internalHandler(serial), consumeOpts...); err != nil {
-+					c.errHandler(serial)(cc, err)
- 				} else {
- 					c.Lock()
- 					c.currentSub = cc.(*pullSubscription)
-@@ -194,12 +195,6 @@ func (c *orderedConsumer) Consume(handler MessageHandler, opts ...PullConsumeOpt
- 					sub.consumer.Unlock()
- 				}
- 				return
--			case msgsLeft, ok := <-c.stopAfterMsgsLeft:
--				if !ok {
--					close(sub.done)
--				}
--				c.stopAfter = msgsLeft
--				return
- 			}
- 		}
- 	}()
-@@ -263,15 +258,9 @@ func (c *orderedConsumer) Messages(opts ...PullMessagesOpt) (MessagesContext, er
++	// Preserve the resolved heartbeat when creating the pull consumer.
  	opts = append(opts,
++		PullHeartbeat(consumeOpts.Heartbeat),
  		WithMessagesErrOnMissingHeartbeat(true),
  		messagesReconnectNotify())
--	c.stopAfterMsgsLeft = make(chan int, 1)
--	if consumeOpts.StopAfter > 0 {
--		c.withStopAfter = true
--		c.stopAfter = consumeOpts.StopAfter
--	}
-+	c.stopAfter = max(consumeOpts.StopAfter, 0)
-+	c.deliveredMessages = 0
- 	c.userErrHandler = consumeOpts.ErrHandler
--	if c.stopAfter > 0 {
--		opts = append(opts, messagesStopAfterNotify(c.stopAfter, c.stopAfterMsgsLeft))
--	}
- 	cc, err := c.currentConsumer.Messages(opts...)
- 	if err != nil {
- 		return nil, err
-@@ -307,28 +296,9 @@ func (s *orderedSubscription) Next(opts ...NextOpt) (Msg, error) {
- 				s.Stop()
- 				return nil, err
- 			}
--			if s.consumer.withStopAfter {
--				select {
--				case s.consumer.stopAfter = <-s.consumer.stopAfterMsgsLeft:
--				default
+ 	c.stopAfter = max(consumeOpts.StopAfter, 0)
 ```
 
-**File**: `jetstream/pull.go` (modified, +0/-15)
+**File**: `jetstream/test/ordered_test.go` (modified, +206/-0)
 ```diff
-@@ -124,7 +124,6 @@ type (
- 		ThresholdMessages       int
- 		ThresholdBytes          int
- 		StopAfter               int
--		stopAfterMsgsLeft       chan int
- 		notifyOnReconnect       bool
- 	}
+@@ -15,6 +15,7 @@ package test
  
-@@ -792,13 +791,6 @@ func (s *pullSubscription) Stop() {
- 		return
- 	}
- 	close(s.done)
--	if s.consumeOpts.stopAfterMsgsLeft != nil {
--		if s.delivered >= s.consumeOpts.StopAfter {
--			close(s.consumeOpts.stopAfterMsgsLeft)
--		} else {
--			s.consumeOpts.stopAfterMsgsLeft <- s.consumeOpts.StopAfter - s.delivered
--		}
--	}
- }
- 
- // Drain unsubscribes from the stream and cancels subscription. All
-@@ -811,13 +803,6 @@ func (s *pullSubscription) Drain() {
- 	}
- 	s.draining.Store(1)
- 	close(s.done)
--	if s.consumeOpts.stopAfterMsgsLeft != nil {
--		if s.delivered >= s.consumeOpts.StopAfter {
--			close(s.consumeOpts.stopAfterMsgsLeft)
--		} else {
--			s.consumeOpts.stopAfterMsgsLeft <- s.consumeOpts.StopAfter - s.delivered
--		}
--	}
- }
- 
- // Closed returns a channel that is closed when consuming is
-```
-
-**File**: `jetstream/test/ordered_test.go` (modified, +180/-0)
-```diff
-@@ -20,6 +20,7 @@ import (
- 	"reflect"
- 	"strings"
- 	"sync"
-+	"sync/atomic"
- 	"testing"
- 	"time"
- 
-@@ -546,6 +547,77 @@ func TestOrderedConsumerConsume(t *testing.T) {
- 			}
- 		})
- 	})
-+
-+	t.Run("with auto unsubscribe, stop after limit is reached", func(t *testing.T) {
-+		withJSServer(t, func(t *testing.T, _ *nats.Conn, js jetstream.JetStream) {
-+			ctx := newTesterCtx(t, 10*time.Second)
-+			s, err := js.CreateStream(ctx, jetstream.StreamConfig{Name: "foo", Subjects: []string{"FOO.*"}})
-+			if err != nil {
-+				t.Fatalf("Unexpected error: %v", err)
-+			}
-+			c, err := s.OrderedConsumer(ctx, jetstream.OrderedConsumerConfig{})
-+			if err != nil {
-+				t.Fatalf("Unexpected error: %v", err)
-+			}
-+			publishTestMsgs(t, js)
-+			var received atomic.Int32
-+			cc, err := c.Consume(func(msg jetstream.Msg) {
-+				received.Add(1)
-+			}, jetstream.StopAfter(3))
-+			if err != nil {
-+				t.Fatalf("Unexpected error: %v", err)
-+			}
-+			select {
-+			case <-cc.Closed():
-+			case <-time.After(5 * time.Second):
-+				t.Fatalf("Timeout waiting for consume to be closed")
-+			}
-+			// Stopping a consume which already stopped itself after
-+			// reaching the limit is a no-op.
-+			cc.Stop()
-+			cc.Drain()
-+			if received.Load() != 3 {
-+				t.Fatalf("Unexpected received message count; want %d; got %d", 3, received.Load())
-+			}
-+		})
-+	})
-+
-+	t.Run("with auto unsubscribe and sequence mismatch", func(t *testing.T) {
-+		withJSServer(t, func(t *testing.T, _ *nats.Conn, js jetstream.JetStream) {
-+			ctx := newTesterCtx(t, 10*time.Second)
-+			s, err := js.CreateStream(ctx, jetstream.StreamConfig{Name: "foo", Subjects: []string{"FOO.*"}})
-+			if err != nil {
-+				t.Fatalf("Unexpected error: %v", err)
-+			}
-+			c, err := s.OrderedConsumer(ctx, jetstream.OrderedConsumerConfig{})
-+			if err != nil {
-+				t.Fatalf("Unexpected error: %v", err)
-+			}
-+			for range 20 {
-+				if _, err := js.Publish(ctx, "FOO.A", []byte("msg")); err != nil {
-+					t.Fatalf("Unexpected error during publish: %s", err)
-+				}
-+			}
-+			// messages the ordered consumer discards to reset on the
-+			// sequence mismatch must not count towards StopAfter
-+			fetchOneFromOrderedConsumer(t, js, "foo", c.CachedInfo().Name)
-+			var received atomic.Int32
-+			cc, err := c.Consume(func(msg jetstream.Msg) {
-+				received.Add(1)
-+			}, jetstream.StopAfter(10))
-+			if err != nil {
-+				t.Fatalf("Unexpected error: %v", err)
-+			}
-+			select {
-+			case <-cc.Closed():
-+			case <-time.After(5 * time.Second):
-+				t.Fatalf("Timeout waiting for consume to be closed; received %d", received.Load())
-+			}
-+			if received.Load() != 10 {
-+				t.Fatalf("Unexpected received message count; want %d; got %d", 10, received.Load())
-+			}
-+		})
-+	})
- }
- 
- func TestOrderedConsumerMessages(t *testing.T) {
-@@ -920,6 +992,91 @@ func TestOrderedConsumerMessages(t *testing.T) {
- 			}
- 		})
- 	})
-+
-+	t.Run("with auto unsubscribe and sequence mismatch, stop", func(t *testing.T) {
-+		withJSServer(t, func(t *testing.T, _ *nats.Conn, js jetstream.JetStream) {
-+			ctx := newTesterCtx(t, 10*time.Second)
-+			s, err := js.CreateStream(ctx, jetstream.StreamConfig{Name: "foo", Subjects: []string{"FOO.*"}})
-+			if err != nil {
-+				t.Fatalf("Unexpected error: %v", err)
-+			}
-+			c, err := s.OrderedConsumer(ctx, jetstream.OrderedConsumerConfig{})
-+			if err != nil {
-+				t.Fatalf("Unexpected error: %v", err)
-+			}
-+			publishTestMsgs(t, js)
-+			name := c.CachedInfo().Name
-+			fetchOneFromOrderedConsumer(t, js, "foo", name)
-+			it, err := c.Messages(jetstream.StopAfter(100))
-+			if err != nil {
-+				t.Fatalf("Unexpected error: %v", err)
-+			}
-+			for range len(testMsgs) {
-+				if _, err := it.Next(); err != nil {
-+					t.Fatalf("Unexpected error: %v", err)
-+				}
-+			}
-+			if c.CachedInfo().Name == name {
-+				t.Fatalf("Expected consumer to be reset")
-+			}
-+			stopped := make(chan struct{})
-+			go func() {
-+				it.Stop()
-+				close(stopped)
-+			}()
-+			select {
-+			case <-stopped:
-+			case <-time.After(5 * time.Second):
-+				t.Fatalf("Timeout waiting for Stop to return")
-+			}
-+		})
-+	})
-+
-+	t.Run("with auto unsubscribe and server restart", func(t *testing.T) {
-+		withJSServerInstance(t, func(t *testing.T, _ *nats.Conn, js jetstream.JetStream, inst *testservice.Instance) {
-+			ctx := newTesterCtx(t, 30*time.Second)
-+			s, err := js.CreateStream(ctx, jetstream.StreamConfig{Name: "foo", Subjects: []string{"FOO.*"}})
-+			if err != nil {
-+				t.Fatalf("Unexpected error: %v", err)
-+			}
-+			c, err := s.OrderedConsumer(ctx, jetstream.OrderedConsumerConfig{})
-+			if err != nil {
-+				t.Fatalf("Unexpected error: %v", err)
-+			}
-+			publishTestMsgs(t, js)
-+			it, err := c.Messages(jetstream.StopAfter(10))
-+			if err != nil {
-+				t.Fatalf("Unexpected error: %v", err)
-+			}
-+			defer it.Stop()
-+			received := 0
-+			for range 3 {
-+				if _, err := it.Next(); err != nil {
-+					t.Fatalf("Unexpected error: %v", err)
-+				}
-+				received++
-+			}
-+			inst.StopServer(t, inst.Servers[0])
-+			inst.StartServer(t, inst.Servers[0])
-+			wai
-```
-
----
-
-### Incident Patch 3: `bd189988` (2026-10-08)
-**Commit Message**: [FIXED] Abort publish drain when connection is closed during Drain (#2163)
-
-drainConnection waited for subscriptions to drain and then
-unconditionally flipped the connection to DRAINING_PUBS and called
-FlushTimeout, without rechecking whether the connection had been
-closed in the meantime. A Close concurrent with Drain was therefore
-undone: the closed connection was resurrected to DRAINING_PUBS and
-the drain goroutine started a new 5s flush on it, surviving long
-after Close returned.
-
-Recheck isClosed under the connection lock before flipping the
-state, and return early if the connection is already closed.
-
-Adds TestDrainConnectionCloseDuringDrain, which holds a subscription
-callback, starts Drain, waits for the drain goroutine to enter its
-pending-subscription wait, closes the connection, and asserts the
-connection stays CLOSED and the drain goroutine exits.
-
-Fixes #2162
-
-Signed-off-by: Kyle Cox <[REDACTED_EMAIL]>
-
-**File**: `nats.go` (modified, +9/-1)
-```diff
-@@ -6404,8 +6404,16 @@ func (nc *Conn) drainConnection() {
- 		pushErr(ErrDrainTimeout)
- 	}
- 
--	// Flip State
-+	// Flip State, unless the connection was closed while we were
-+	// draining subscriptions (for example by a concurrent Close call).
-+	// In that case abort the publish drain: the connection is already
-+	// terminal, and flipping the state here would resurrect it and
-+	// start a new flush on a closed connection.
- 	nc.mu.Lock()
-+	if nc.isClosed() {
-+		nc.mu.Unlock()
-+		return
-+	}
- 	nc.changeConnStatus(DRAINING_PUBS)
- 	nc.mu.Unlock()
- 
-```
-
-**File**: `test/drain_test.go` (modified, +78/-0)
-```diff
-@@ -16,6 +16,8 @@ package test
  import (
+ 	"context"
++	"encoding/json"
  	"errors"
  	"fmt"
-+	"runtime"
-+	"strings"
- 	"sync"
- 	"sync/atomic"
- 	"testing"
-@@ -444,3 +446,79 @@ func TestDrainClosedHandlerRace(t *testing.T) {
- 		time.Sleep(500 * time.Millisecond)
- 	})
+ 	"reflect"
+@@ -2126,3 +2127,208 @@ func fetchOneFromOrderedConsumer(t *testing.T, js jetstream.JetStream, stream, n
+ 		t.Fatalf("Unexpected fetched message count; want 1; got %d: %v", fetched, msgs.Error())
+ 	}
  }
 +
-+// Closing the connection while drainConnection is still waiting for
-+// subscriptions to drain must abort the rest of the drain: the drain
-+// goroutine must not flip the (already closed) connection back to
-+// DRAINING_PUBS and start a new FlushTimeout on it.
-+func TestDrainConnectionCloseDuringDrain(t *testing.T) {
-+	withServer(t, func(t *testing.T, nc *nats.Conn) {
-+		entered := make(chan struct{})
-+		release := make(chan struct{})
-+		if _, err := nc.Subscribe("pending", func(*nats.Msg) {
-+			close(entered)
-+			<-release
-+		}); err != nil {
-+			t.Fatalf("Error creating subscription: %v", err)
-+		}
-+		defer close(release)
++// TestOrderedConsumerHeartbeat verifies that the heartbeat computed by the
++// ordered consumer option parsing (5s by default) is the one actually used by
++// the inner pull subscription, i.e. the value sent in idle_heartbeat of the
++// pull requests. See #2181.
++func TestOrderedConsumerHeartbeat(t *testing.T) {
++	type pullReq struct {
++		Expires   time.Duration `json:"expires"`
++		Heartbeat time.Duration `json:"idle_heartbeat"`
++	}
 +
-+		if err := nc.Publish("pending", nil); err != nil {
-+			t.Fatalf("Error on publish: %v", err)
++	// nextPullRequest reads the first pull request observed on the raw
++	// $JS.API.CONSUMER.MSG.NEXT subscription and decodes its payload.
++	nextPullRequest := func(t *testing.T, sub *nats.Subscription) pullReq {
++		t.Helper()
++		msg, err := sub.NextMsg(5 * time.Second)
++		if err != nil {
++			t.Fatalf("Timeout waiting for pull request: %v", err)
 +		}
-+		if err := nc.Flush(); err != nil {
-+			t.Fatalf("Error on flush: %v", err)
++		var req pullReq
++		if err := json.Unmarshal(msg.Data, &req); err != nil {
++			t.Fatalf("Unexpected error unmarshaling pull request %q: %v", msg.Data, err)
 +		}
-+		select {
-+		case <-entered:
-+		case <-time.After(time.Second):
-+			t.Fatal("callback not entered")
-+		}
++		return req
++	}
 +
-+		if err := nc.Drain(); err != nil {
-+			t.Fatalf("Unexpected error on drain: %v", err)
-+		}
-+
-+		// Wait until the drain goroutine is in its pending-subscription
-+		// wait loop, so that Close lands mid-drain.
-+		waiting := false
-+		for deadline := time.Now().Add(5 * time.Second); time.Now().Before(deadline) && !waiting; {
-+			b := make([]byte, 1<<20)
-+			n := runtime.Stack(b, true)
-+			for _, stack := range strings.Split(string(b[:n]), "\n\n") {
-+				if strings.Contains(stack, "(*Conn).drainConnection") && strings.Contains(stack, "time.Sleep(") {
-+					waiting = true
-+					break
-+				}
++	t.Run("consume uses 5s default heartbeat", func(t *testing.T) {
++		withJSServer(t, func(t *testing.T, nc *nats.Conn, js jetstream.JetStream) {
++			ctx := newTesterCtx(t, 20*time.Second)
++			s, err := js.CreateStream(ctx, jetstream.StreamConfig{Name: "foo", Subjects: []string{"FOO.*"}})
++			if err != nil {
++				t.Fatalf("Unexpected error: %v", err)
 +			}
-+			if !waiting {
-+				runtime.Gosched()
++			sub, err := nc.SubscribeSync("$JS.API.CONSUMER.MSG.NEXT.foo.>")
++			if err != nil {
++				t.Fatalf("Error on subscribe: %v", err)
 +			}
-+		}
-+		if !waiting {
-+			t.Fatal("drain did not enter pending-subscription wait")
-+		}
-+
-+		nc.Close()
-+		if !nc.IsClosed() {
-+			t.Fatalf("connection not closed after Close: %v", nc.Status())
-+		}
-+
-+		// The connection must stay closed: before the fix, the drain
-+		// goroutine resurrects it to DRAINING_PUBS and then sits in
-+		// FlushTimeout for 5 seconds.
-+		time.Sleep(250 * time.Millisecond)
-+		if !nc.IsClosed() {
-+			t.Fatalf("connection resurrected after Close: %v", nc.Status())
-+		}
-+		for deadline := time.Now().Add(2 * time.Second); time.Now().Before(deadline); {
-+			b := make([]byte, 1<<20)
-+			n := runtime.Stack(b, true)
-+			if !strings.Contains(string(b[:n]), "(*Conn).drainConnection") {
-+				return
++			defer sub.Unsubscribe()
++			if err := nc.Flush(); err != nil {
++				t.Fatalf("Error on flush: %v", err)
 +			}
-+			time.Sleep(10 * time.Millisecond)
-+		}
-+		t.Fatal("drain goroutine still running after Close")
++
++			c, err := s.OrderedConsumer(ctx, jetstream.OrderedConsumerConfig{})
++			if err != nil {
++				t.Fatalf("Unexpected error: %v", err)
++			}
++			cc, err := c.Consume(func(msg jetstream.Msg) {})
++			if err != nil {
++				t.Fatalf("Unexpected error: %v", err)
++			}
++			defer cc.Stop()
++
++			req := nextPullRequest(t, sub)
++			if req.Heartbeat != 5*time.Second {
++				t.Fatalf("Expected default ordered heartbeat 5s in pull request; got %s", req.Heartbeat)
++			}
++			if req.Expires != 30*time.Second {
++				t.Fatalf("Expected default expiry 30s in pull request; got %s", req.Expires)
++			}
++		})
 +	})
-+}
++
++	t.Run("consume preserves configured heartbeat", func(t *testing.T) {
++		withJSServer(t, func(t *testing.T, nc *nats.Conn, js jetstream.JetStream) {
++			ctx := newTesterCtx(t, 20*time.Second)
++			s, err := js.CreateStream(ctx, jetstream.StreamConfig{Name: "foo", Subjects: []string{"FOO.*"}})
++			if err != nil {
++				t.Fatalf("Unexpected error: %v", err)
++			}
++			sub, err := nc.SubscribeSync("$JS.API.CONSUMER.MSG.NEXT.foo.>")
++			if err != nil {
++				t.Fatalf("Error on subscribe: %v", err)
++			}
++			defer sub.Unsubscribe()
++			if err := nc.Flush(); err != nil {
++				t.Fatalf("Error on flush: %v", err)
++			}
++
++			c, err := s.OrderedConsumer(ctx, jetstream.OrderedConsumerConfig{})
++			if err != nil {
++				t.Fatalf("Unexpected error: %v", err)
++			}
++			cc, err := c.Consume(func(msg jetstream.Msg) {}, jetstream.PullHeartbeat(10*time.Second))
++			if err != nil {
++				t.Fatalf("Unexpected error: %v", err)
++			}
++			defer cc.Stop()
++
++			req := nextPullRequest(t, sub)
++			if req.Heartbeat != 10*time.Second {
++				t.Fatalf("Expected configured heartbeat 10s in pull request; got %s", req.Heartbeat)
++			}
++		})
++	})
++
++	t.Run("consume with short expiry uses expiry/2 heartbeat", func(t *testing.T) {
++		withJSServer(t, func(t *testing.T, nc *nats.Conn, js jetstream.JetStream) {
++			ctx := newTesterCtx(t, 20*time.Second)
++			s, err := js.CreateStream(ctx, jetstream.StreamConfig{Name: "foo", Subjects: []string{"FOO.*"}})
++			if err != nil {
++				t.Fatalf("Unexpected error: %v", err)
++			}
++			sub, err := nc.SubscribeSync("$JS.API.CONSUMER.MSG.NEXT.foo.>")
++			if err != nil {
++				t.Fatalf("Error on subscribe: %v", err)
++			}
++			defer sub.Unsubscribe()
++			if err := nc.Flush(); err != nil {
++				t.Fatalf("Error on flush: %v", err)
++			}
++
++			c, err := s.OrderedConsumer(ctx, jetstream.OrderedConsumerConfig{})
++			if err != nil {
++				t.Fatalf("Unexpected error: %v", err)
++			}
++			cc, err := c.Consume(func(msg jetstream.Msg) {}, jetstream.PullExpiry(8*time.Second))
++			if err != nil {
++				t.Fatalf("Unexpected error: %v", err)
++			}
++			defer cc.Stop()
++
++			req := nextPullRequest(t, sub)
++			if req.Heartbeat != 4*time.Second {
++				t.Fatalf("Expected expiry/2 heartbeat 4s in pull request; got %s", req.Heartbeat)
++			}
++			if req.Expires != 8*time.Second {
++				t.Fatalf("Expected expiry 8s in pull request; got %s", req.Expires)
++			}
++		})
++	})
++
++	t.Run("messages uses 5s default heartbeat", func(t *testing.T) {
++		withJSServer(t, func(t *testing.T, nc *nats.Conn, js 
 ```
 
 #### Recent Merged Pull Requests:
@@ -2379,61 +1785,31 @@ Signed-off-by: Kyle Cox <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [FIXED] Pull consumer deadlock sending pull requests after Stop/Drain (#2165)
+## X. [FIXED] Preserve ordered consumer heartbeat (#2182)
 
 **RULE**:
-When implementing operations in `jetstream/jetstream_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats.go. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `jetstream/ordered.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats.go. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dafa2540`: [FIXED] Pull consumer deadlock sending pull requests after Stop/Drain (#2165). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e481af89`: [FIXED] Preserve ordered consumer heartbeat (#2182). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `jetstream/jetstream_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `jetstream/ordered.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-func TestPullConsumer_checkPendingAfterDone(t *testing.T) {
-	// Once the subscription is stopped or drained, pullMessages no longer
-	// reads fetchNext. Messages delivered while draining still call
-	// checkPending (with the lock held), and fetchNext only buffers one
-	// request, so checkPending must not block on a full fetchNext.
-	sub := &pullSubscription{
-		pending: pendingMsgs{
-			msgCount: 4,
-		},
-		consumeOpts: &consumeOpts{
-			ThresholdMessages: 5,
-			MaxMessages:       10,
-		},
-		done:      make(chan struct{}, 1),
-		fetchNext: make(chan *pullRequest, 1),
-	}
-	// A request queued before pullMessages returned, which nobody reads.
-	sub.fetchNext <- &pullRequest{}
-	close(sub.done)
-
-	returned := make(chan struct{})
-	go func() {
-		sub.Lock()
-		sub.checkPending()
-		sub.Unlock()
-		close(returned)
-	}()
-	select {
-	case <-returned:
-	case <-time.After(5 * time.Second):
-		t.Fatal("checkPending blocked on fetchNext after the subscription was done")
-	}
-}
-
+	// Preserve the resolved heartbeat when creating the pull consumer.
+	opts = append(opts, PullHeartbeat(consumeOpts.Heartbeat), consumeReconnectNotify())
+	// Preserve the resolved heartbeat when creating the pull consumer.
+		PullHeartbeat(consumeOpts.Heartbeat),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	opts = append(opts, consumeReconnectNotify())
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dafa2540` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e481af89` are properly handled with clean fallback behavior.

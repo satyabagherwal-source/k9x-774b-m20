@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T21:24:13.327Z",
-  "total_verified_learnings": 927,
+  "last_updated": "2026-10-19T21:30:32.235Z",
+  "total_verified_learnings": 929,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -26171,22 +26171,35 @@
     "learn-github-johnbean393-sidekick": {
       "learning_id": "learn-github-johnbean393-sidekick",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "johnbean393-sidekick",
+      "source": "johnbean393/Sidekick",
+      "repository": "johnbean393/Sidekick",
       "slug": "johnbean393-sidekick",
       "platform": "github",
       "source_url": "https://github.com/johnbean393/Sidekick",
-      "source_version": "HEAD",
-      "content_hash": "197dcb5d0e31bc912821352a2eb51bc83f0913653bf07189172e10901f1db30c",
+      "source_version": "83b3e6e0",
+      "content_hash": "6181e6b457224819ae0d003652fc5178dccdba46329e09fa8db6bf6934f9d5d2",
       "dossier_path": "07_PROJECT_LEARNING/johnbean393-sidekick-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/johnbean393-sidekick-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2822,
+          "title": "Code block use icons",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.712Z"
+      "verified_at": "2026-10-19T21:30:26.614Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-jordan-gibbs-hyperresearch": {
       "learning_id": "learn-github-jordan-gibbs-hyperresearch",
@@ -27929,14 +27942,19 @@
       "slug": "lancedb-lancedb",
       "platform": "github",
       "source_url": "https://github.com/lancedb/lancedb",
-      "source_version": "a4f6e5fe",
-      "content_hash": "618d14a887ddc28d6fd9b22ec533cf8b32422918f6f45685fd2000bba837a6f8",
+      "source_version": "6507615a",
+      "content_hash": "8ebd5b7f94aedc079e5d508a2e8d8b2cee48662c4036e650b4d2df255f1fda32",
       "dossier_path": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "promoted_rules": [
         {
           "number": 2448,
           "title": "require a primary key to enable MemWAL (#4561)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2825,
+          "title": "build(python): publish an sdist alongside the wheels (#4522)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -27945,7 +27963,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T08:58:49.092Z",
+      "verified_at": "2026-10-19T21:30:32.218Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -32189,14 +32207,19 @@
       "slug": "nats-io-nats.go",
       "platform": "github",
       "source_url": "https://github.com/nats-io/nats.go",
-      "source_version": "e1312b80",
-      "content_hash": "93fd6b54b31346be57c4ab50d9bca02693f5239c8c9faf559af5fc4d8884f482",
+      "source_version": "e481af89",
+      "content_hash": "d88298dcec3d356eac57d1d78faefed7a0230cff0755c216d70b52b937a98783",
       "dossier_path": "07_PROJECT_LEARNING/nats-io-nats.go-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nats-io-nats.go-learnings.md",
       "promoted_rules": [
         {
           "number": 1743,
           "title": "[FIXED] Pull consumer deadlock sending pull requests after Stop/Drain (#2165)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2824,
+          "title": "[FIXED] Preserve ordered consumer heartbeat (#2182)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -32205,7 +32228,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:45:54.641Z",
+      "verified_at": "2026-10-19T21:30:27.174Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56605,22 +56628,36 @@
     "learn-github-scrapy-plugins-scrapy-splash": {
       "learning_id": "learn-github-scrapy-plugins-scrapy-splash",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "scrapy-plugins/scrapy-splash",
       "repository": "scrapy-plugins/scrapy-splash",
       "slug": "scrapy-plugins-scrapy-splash",
       "platform": "github",
       "source_url": "https://github.com/scrapy-plugins/scrapy-splash",
-      "source_version": "main",
-      "content_hash": "7e7b7f339f008731fc801ff6edb46d5a6e2857faffb40e2f95af38b656991b06",
+      "source_version": "72a87882",
+      "content_hash": "132fac021337c5c1936bc6d2c153471610b302b8d2e55f6b47753a70c2d4a4a8",
       "dossier_path": "07_PROJECT_LEARNING/scrapy-plugins-scrapy-splash-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/scrapy-plugins-scrapy-splash-learnings.md",
       "promoted_rules": [
-        "Rule 1629"
+        "Rule 1629",
+        {
+          "number": 2823,
+          "title": "Merge pull request #324 from protokoul/fix/splashrequest-url-required",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
       ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T21:30:26.755Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-scrapy-plugins-scrapy-selenium": {
       "learning_id": "learn-github-scrapy-plugins-scrapy-selenium",
@@ -92794,6 +92831,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T21:24:13.314Z"
+    },
+    "rule-2822": {
+      "learning_id": "rule-2822",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2822,
+      "title": "Code block use icons",
+      "source_url": "https://github.com/johnbean393/Sidekick",
+      "source_version": "83b3e6e0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T21:30:26.614Z"
+    },
+    "rule-2823": {
+      "learning_id": "rule-2823",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2823,
+      "title": "Merge pull request #324 from protokoul/fix/splashrequest-url-required",
+      "source_url": "https://github.com/scrapy-plugins/scrapy-splash",
+      "source_version": "72a87882",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T21:30:26.755Z"
+    },
+    "rule-2824": {
+      "learning_id": "rule-2824",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2824,
+      "title": "[FIXED] Preserve ordered consumer heartbeat (#2182)",
+      "source_url": "https://github.com/nats-io/nats.go",
+      "source_version": "e481af89",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T21:30:27.174Z"
+    },
+    "rule-2825": {
+      "learning_id": "rule-2825",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2825,
+      "title": "build(python): publish an sdist alongside the wheels (#4522)",
+      "source_url": "https://github.com/lancedb/lancedb",
+      "source_version": "6507615a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T21:30:32.218Z"
     }
   },
   "aliases": {
