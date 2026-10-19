@@ -925,8 +925,8 @@
     "sourceUrl": "https://huggingface.co/zai-org/GLM-5.2",
     "sourceVersion": "hf-zai-org-glm-5.2",
     "license": "Open-Source",
-    "contentHash": "decf145398b33111f7b4bcaaf3f4025eb45068f276aeb7ac00e7e1eaa2c3f1d6",
-    "lastHarvestedAt": "2026-10-18T02:44:39.774Z",
+    "contentHash": "b04765bd88439e7080ec4463601972b9d7479453e82f70e163cf09efc51f8240",
+    "lastHarvestedAt": "2026-10-19T11:28:57.252Z",
     "learningId": "learn-huggingface-zai-org-glm-5-2"
   },
   "hf-stabilityai-stable-diffusion-3-medium": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "7ce08434",
+    "sourceVersion": "8d6bc495",
     "license": "NOASSERTION",
-    "contentHash": "ef0cd6a4f0b69feac11e235817f9d1137e9e7c68b42515f5cdbc11659e92a4b3",
-    "lastHarvestedAt": "2026-10-19T10:35:01.975Z",
+    "contentHash": "8f4de18d005f8daacee8f554e06ce5114947e982d09ad9cbc1dd17a911e8f5c7",
+    "lastHarvestedAt": "2026-10-19T11:28:05.012Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -7878,5 +7878,25 @@
     "contentHash": "92ab7cb876fd28fa0b0a8cae64c59e64e8f053d9756aa1f9d854190ee65b85f2",
     "lastHarvestedAt": "2026-10-19T11:21:37.796Z",
     "learningId": "learn-github-ronitsingh10-finetune"
+  },
+  "herdrdev-herdr": {
+    "repository": "herdrdev/herdr",
+    "platform": "github",
+    "sourceUrl": "https://github.com/herdrdev/herdr",
+    "sourceVersion": "143bf5fd",
+    "license": "Apache-2.0",
+    "contentHash": "3b4e6562e52d1e320a008423fe5b7c8cfe0c8871fc953b62d3dd21dc699359f1",
+    "lastHarvestedAt": "2026-10-19T11:27:51.437Z",
+    "learningId": "learn-github-herdrdev-herdr"
+  },
+  "darrylmorley-whatcable": {
+    "repository": "darrylmorley/whatcable",
+    "platform": "github",
+    "sourceUrl": "https://github.com/darrylmorley/whatcable",
+    "sourceVersion": "58e588ab",
+    "license": "NOASSERTION",
+    "contentHash": "72c9c2d3404e28ccd99a8b382a8f3f6ca5578f8860bf741be5f0cc8e29876c64",
+    "lastHarvestedAt": "2026-10-19T11:27:55.229Z",
+    "learningId": "learn-github-darrylmorley-whatcable"
   }
 }

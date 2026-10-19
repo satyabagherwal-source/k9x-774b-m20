@@ -3190,3 +3190,7 @@
 | `CYCLE-20261019-Z3I9` | `2026-10-19T11:21:30.753Z` | `openai/gpt-oss-120b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md` | Yes (`00feebe0...`) |
 | `CYCLE-20261019-Z5A2` | `2026-10-19T11:21:33.050Z` | `sxyazi/yazi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2533` | Yes (`74403a06...`) |
 | `CYCLE-20261019-Z8XU` | `2026-10-19T11:21:37.794Z` | `ronitsingh10/FineTune` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2534` | Yes (`92ab7cb8...`) |
+| `CYCLE-20261019-798Q` | `2026-10-19T11:27:51.434Z` | `herdrdev/herdr` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2535` | Yes (`3b4e6562...`) |
+| `CYCLE-20261019-7C61` | `2026-10-19T11:27:55.225Z` | `darrylmorley/whatcable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2536` | Yes (`72c9c2d3...`) |
+| `CYCLE-20261019-7JPT` | `2026-10-19T11:28:05.009Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2537` | Yes (`8f4de18d...`) |
+| `CYCLE-20261019-8O0X` | `2026-10-19T11:28:57.249Z` | `zai-org/GLM-5.2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2538, Rule 2539, Rule 2540` | Yes (`b04765bd...`) |

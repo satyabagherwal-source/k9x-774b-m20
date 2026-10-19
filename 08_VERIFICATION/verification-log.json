@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-NP0Y",
-    "timestamp": "2026-10-19T00:28:47.602Z",
-    "repository": "GitoxideLabs/gitoxide",
-    "learningId": "learn-github-gitoxidelabs-gitoxide",
-    "contentHash": "2ed8492d2715113d0a0c750a0f58e4f3305d1ac7e6585679d0ba55b49a55641e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-NRRQ",
-    "timestamp": "2026-10-19T00:28:51.158Z",
-    "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
-    "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
-    "contentHash": "4696233582d47879ec5ac8193d653f3b44e3c41a992d31fa4d7bb366c04c6ee1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-NSJY",
-    "timestamp": "2026-10-19T00:28:52.174Z",
-    "repository": "devhubapp/devhub",
-    "learningId": "learn-github-devhubapp-devhub",
-    "contentHash": "1c7d5aca00d63886de8b819e5f1a1687fa09b387bd61538bdabf19b9978c7a6e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-NUIN",
-    "timestamp": "2026-10-19T00:28:54.719Z",
-    "repository": "apptainer/singularity",
-    "learningId": "learn-github-apptainer-singularity",
-    "contentHash": "a6191f564db76ff98050232c346b28691d9aaf2c8e65e7905a099ea0202e8dbe",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-NXLR",
     "timestamp": "2026-10-19T00:28:58.719Z",
     "repository": "orbitinghail/sqlsync",
@@ -7492,6 +7432,66 @@
     "contentHash": "92ab7cb876fd28fa0b0a8cae64c59e64e8f053d9756aa1f9d854190ee65b85f2",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-798Q",
+    "timestamp": "2026-10-19T11:27:51.434Z",
+    "repository": "herdrdev/herdr",
+    "learningId": "learn-github-herdrdev-herdr",
+    "contentHash": "3b4e6562e52d1e320a008423fe5b7c8cfe0c8871fc953b62d3dd21dc699359f1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-7C61",
+    "timestamp": "2026-10-19T11:27:55.225Z",
+    "repository": "darrylmorley/whatcable",
+    "learningId": "learn-github-darrylmorley-whatcable",
+    "contentHash": "72c9c2d3404e28ccd99a8b382a8f3f6ca5578f8860bf741be5f0cc8e29876c64",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-7JPT",
+    "timestamp": "2026-10-19T11:28:05.009Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "8f4de18d005f8daacee8f554e06ce5114947e982d09ad9cbc1dd17a911e8f5c7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-8O0X",
+    "timestamp": "2026-10-19T11:28:57.249Z",
+    "repository": "zai-org/GLM-5.2",
+    "learningId": "learn-huggingface-zai-org-glm-5-2",
+    "contentHash": "b04765bd88439e7080ec4463601972b9d7479453e82f70e163cf09efc51f8240",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

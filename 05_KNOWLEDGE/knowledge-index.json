@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T11:21:37.754Z",
-  "total_verified_learnings": 802,
+  "last_updated": "2026-10-19T11:28:57.184Z",
+  "total_verified_learnings": 804,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -6118,22 +6118,35 @@
     "learn-github-darrylmorley-whatcable": {
       "learning_id": "learn-github-darrylmorley-whatcable",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "darrylmorley-whatcable",
+      "source": "darrylmorley/whatcable",
+      "repository": "darrylmorley/whatcable",
       "slug": "darrylmorley-whatcable",
       "platform": "github",
       "source_url": "https://github.com/darrylmorley/whatcable",
-      "source_version": "HEAD",
-      "content_hash": "44439d0ad84ddf246b1eb8d257f66c00ab8757f827291592247f7bb10dfeb23a",
+      "source_version": "58e588ab",
+      "content_hash": "72c9c2d3404e28ccd99a8b382a8f3f6ca5578f8860bf741be5f0cc8e29876c64",
       "dossier_path": "07_PROJECT_LEARNING/darrylmorley-whatcable-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/darrylmorley-whatcable-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2536,
+          "title": "Mirror from private (a89a218b)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.506Z"
+      "verified_at": "2026-10-19T11:27:55.151Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-databendlabs-databend": {
       "learning_id": "learn-github-databendlabs-databend",
@@ -6336,8 +6349,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "7ce08434",
-      "content_hash": "ef0cd6a4f0b69feac11e235817f9d1137e9e7c68b42515f5cdbc11659e92a4b3",
+      "source_version": "8d6bc495",
+      "content_hash": "8f4de18d005f8daacee8f554e06ce5114947e982d09ad9cbc1dd17a911e8f5c7",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -6375,6 +6388,11 @@
           "number": 2500,
           "title": "deps(polars): enable rolling_window + bitwise, drop unused business/coalesce (#4",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2537,
+          "title": "docs(README): mention qsv-client for running qsv from Python",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6382,7 +6400,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T10:35:01.939Z",
+      "verified_at": "2026-10-19T11:28:04.911Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -11763,22 +11781,35 @@
     "learn-github-herdrdev-herdr": {
       "learning_id": "learn-github-herdrdev-herdr",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "herdrdev-herdr",
+      "source": "herdrdev/herdr",
+      "repository": "herdrdev/herdr",
       "slug": "herdrdev-herdr",
       "platform": "github",
       "source_url": "https://github.com/herdrdev/herdr",
-      "source_version": "HEAD",
-      "content_hash": "9b1778606e9516a7ba0ee9ec9f9066d6cbeca75557bdc2d0f38779098f65457f",
+      "source_version": "143bf5fd",
+      "content_hash": "3b4e6562e52d1e320a008423fe5b7c8cfe0c8871fc953b62d3dd21dc699359f1",
       "dossier_path": "07_PROJECT_LEARNING/herdrdev-herdr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/herdrdev-herdr-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2535,
+          "title": "test: deflake observer write timeout on loaded runners (#5280)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.273Z"
+      "verified_at": "2026-10-19T11:27:51.365Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-heroui-inc-heroui-native": {
       "learning_id": "learn-github-heroui-inc-heroui-native",
@@ -23529,10 +23560,26 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/zai-org/GLM-5.2",
       "source_version": "hf-zai-org-glm-5.2",
-      "content_hash": "decf145398b33111f7b4bcaaf3f4025eb45068f276aeb7ac00e7e1eaa2c3f1d6",
+      "content_hash": "b04765bd88439e7080ec4463601972b9d7479453e82f70e163cf09efc51f8240",
       "dossier_path": "07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2538,
+          "title": "Periodic Sparse Attention Index Sharing (IndexShare Invariant)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2539,
+          "title": "Multi-EOS Generation Array Termination Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2540,
+          "title": "Left-Padding Invariant for Causal 1M-Context Batched Generation",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
@@ -23551,7 +23598,7 @@
         "learn-huggingface-hf-zai-org-glm-5-2-mv4b2bic",
         "learn-huggingface-hf-zai-org-glm-5-2-mv4og5jo"
       ],
-      "verified_at": "2026-10-18T02:44:39.734Z",
+      "verified_at": "2026-10-19T11:28:57.166Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -86173,6 +86220,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T11:21:37.738Z"
+    },
+    "rule-2535": {
+      "learning_id": "rule-2535",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2535,
+      "title": "test: deflake observer write timeout on loaded runners (#5280)",
+      "source_url": "https://github.com/herdrdev/herdr",
+      "source_version": "143bf5fd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T11:27:51.365Z"
+    },
+    "rule-2536": {
+      "learning_id": "rule-2536",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2536,
+      "title": "Mirror from private (a89a218b)",
+      "source_url": "https://github.com/darrylmorley/whatcable",
+      "source_version": "58e588ab",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T11:27:55.151Z"
+    },
+    "rule-2537": {
+      "learning_id": "rule-2537",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2537,
+      "title": "docs(README): mention qsv-client for running qsv from Python",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "8d6bc495",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T11:28:04.911Z"
+    },
+    "rule-2538": {
+      "learning_id": "rule-2538",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2538,
+      "title": "Periodic Sparse Attention Index Sharing (IndexShare Invariant)",
+      "source_url": "https://huggingface.co/zai-org/GLM-5.2",
+      "source_version": "hf-zai-org-glm-5.2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T11:28:57.166Z"
+    },
+    "rule-2539": {
+      "learning_id": "rule-2539",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2539,
+      "title": "Multi-EOS Generation Array Termination Guard",
+      "source_url": "https://huggingface.co/zai-org/GLM-5.2",
+      "source_version": "hf-zai-org-glm-5.2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T11:28:57.166Z"
+    },
+    "rule-2540": {
+      "learning_id": "rule-2540",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2540,
+      "title": "Left-Padding Invariant for Causal 1M-Context Batched Generation",
+      "source_url": "https://huggingface.co/zai-org/GLM-5.2",
+      "source_version": "hf-zai-org-glm-5.2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T11:28:57.166Z"
     }
   },
   "aliases": {

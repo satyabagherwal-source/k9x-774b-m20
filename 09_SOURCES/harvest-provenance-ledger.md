@@ -3197,3 +3197,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-openai-gpt-oss-120b` | `https://huggingface.co/openai/gpt-oss-120b` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-19T11:21:30.756Z |
 | `learn-github-sxyazi-yazi` | `https://github.com/sxyazi/yazi` | `9561890a` | Multi-dimensional audit evidence | 2026-10-19T11:21:33.053Z |
 | `learn-github-ronitsingh10-finetune` | `https://github.com/ronitsingh10/FineTune` | `2285279d` | Multi-dimensional audit evidence | 2026-10-19T11:21:37.796Z |
+| `learn-github-herdrdev-herdr` | `https://github.com/herdrdev/herdr` | `143bf5fd` | Multi-dimensional audit evidence | 2026-10-19T11:27:51.437Z |
+| `learn-github-darrylmorley-whatcable` | `https://github.com/darrylmorley/whatcable` | `58e588ab` | Multi-dimensional audit evidence | 2026-10-19T11:27:55.229Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `8d6bc495` | Multi-dimensional audit evidence | 2026-10-19T11:28:05.012Z |
+| `learn-huggingface-zai-org-glm-5-2` | `https://huggingface.co/zai-org/GLM-5.2` | `hf-zai-org` | Multi-dimensional audit evidence | 2026-10-19T11:28:57.252Z |

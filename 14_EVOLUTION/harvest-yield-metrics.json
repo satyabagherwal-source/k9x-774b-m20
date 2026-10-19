@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T11:21:37.800Z",
-  "total_cycles_completed": 3167,
-  "total_learnings_persisted": 3167,
-  "total_rules_promoted": 2323,
+  "last_updated": "2026-10-19T11:28:57.255Z",
+  "total_cycles_completed": 3171,
+  "total_learnings_persisted": 3171,
+  "total_rules_promoted": 2329,
   "history": [
-    {
-      "timestamp": "2026-10-19T06:04:45.750Z",
-      "repository": "ResoCoder/flutter-tdd-clean-architecture-course",
-      "learningId": "learn-github-resocoder-flutter-tdd-clean-architecture-course",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T06:04:49.209Z",
-      "repository": "stakater/Reloader",
-      "learningId": "learn-github-stakater-reloader",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T06:04:56.202Z",
-      "repository": "pathwaycom/serviette",
-      "learningId": "learn-github-pathwaycom-serviette",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T06:11:09.072Z",
-      "repository": "amir1376/ab-download-manager",
-      "learningId": "learn-github-amir1376-ab-download-manager",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T06:11:10.677Z",
       "repository": "bitnami/sealed-secrets",
@@ -1403,6 +1375,34 @@
       "repository": "ronitsingh10/FineTune",
       "learningId": "learn-github-ronitsingh10-finetune",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T11:27:51.442Z",
+      "repository": "herdrdev/herdr",
+      "learningId": "learn-github-herdrdev-herdr",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T11:27:55.233Z",
+      "repository": "darrylmorley/whatcable",
+      "learningId": "learn-github-darrylmorley-whatcable",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T11:28:05.016Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T11:28:57.255Z",
+      "repository": "zai-org/GLM-5.2",
+      "learningId": "learn-huggingface-zai-org-glm-5-2",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

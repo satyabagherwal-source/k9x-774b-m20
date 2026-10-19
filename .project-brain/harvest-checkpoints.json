@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T11:21:37.804Z",
+  "last_updated": "2026-10-19T11:28:57.259Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1204,14 +1204,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-zai-org-glm-5-2",
-      "content_hash": "decf145398b33111f7b4bcaaf3f4025eb45068f276aeb7ac00e7e1eaa2c3f1d6",
-      "verified_at": "2026-10-18T02:44:39.776Z",
+      "content_hash": "b04765bd88439e7080ec4463601972b9d7479453e82f70e163cf09efc51f8240",
+      "verified_at": "2026-10-19T11:28:57.258Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T02:44:39.777Z"
+      "last_updated": "2026-10-19T11:28:57.258Z"
     },
     "stabilityai/stable-diffusion-3-medium": {
       "repository": "stabilityai/stable-diffusion-3-medium",
@@ -3678,14 +3678,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "ef0cd6a4f0b69feac11e235817f9d1137e9e7c68b42515f5cdbc11659e92a4b3",
-      "verified_at": "2026-10-19T10:35:01.980Z",
+      "content_hash": "8f4de18d005f8daacee8f554e06ce5114947e982d09ad9cbc1dd17a911e8f5c7",
+      "verified_at": "2026-10-19T11:28:05.018Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T10:35:01.980Z"
+      "last_updated": "2026-10-19T11:28:05.018Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -11846,6 +11846,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T11:21:37.803Z"
+    },
+    "herdrdev/herdr": {
+      "repository": "herdrdev/herdr",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-herdrdev-herdr",
+      "content_hash": "3b4e6562e52d1e320a008423fe5b7c8cfe0c8871fc953b62d3dd21dc699359f1",
+      "verified_at": "2026-10-19T11:27:51.445Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T11:27:51.445Z"
+    },
+    "darrylmorley/whatcable": {
+      "repository": "darrylmorley/whatcable",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-darrylmorley-whatcable",
+      "content_hash": "72c9c2d3404e28ccd99a8b382a8f3f6ca5578f8860bf741be5f0cc8e29876c64",
+      "verified_at": "2026-10-19T11:27:55.235Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T11:27:55.235Z"
     }
   },
   "repos": {
