@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T04:00:57.922Z",
-  "total_verified_learnings": 577,
+  "last_updated": "2026-10-19T04:07:22.058Z",
+  "total_verified_learnings": 582,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -2067,22 +2067,35 @@
     "learn-github-architect-architect": {
       "learning_id": "learn-github-architect-architect",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "architect-architect",
+      "source": "architect/architect",
+      "repository": "architect/architect",
       "slug": "architect-architect",
       "platform": "github",
       "source_url": "https://github.com/architect/architect",
-      "source_version": "HEAD",
-      "content_hash": "cb0b840db1ac0ebf5602c972dd5ef32ed0fbebfc6a5ddd67a5382ae781272cd8",
+      "source_version": "9924cd0a",
+      "content_hash": "f2ff57da605ea3ede3c7b74659438bfb148d7263fca91d88c525853f9a1461b7",
       "dossier_path": "07_PROJECT_LEARNING/architect-architect-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/architect-architect-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": "EXISTING",
+          "title": "version locking",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.886Z"
+      "verified_at": "2026-10-19T04:07:12.374Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-arco-design-arco-design": {
       "learning_id": "learn-github-arco-design-arco-design",
@@ -2469,22 +2482,35 @@
     "learn-github-async-rs-async-std": {
       "learning_id": "learn-github-async-rs-async-std",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "async-rs-async-std",
+      "source": "async-rs/async-std",
+      "repository": "async-rs/async-std",
       "slug": "async-rs-async-std",
       "platform": "github",
       "source_url": "https://github.com/async-rs/async-std",
-      "source_version": "HEAD",
-      "content_hash": "9a69afdd9f9c9ffa2525579e0ad33a30394922a81bcf555da8ce07d1cae02a01",
+      "source_version": "844b5525",
+      "content_hash": "91dbf8456650b9efd45d266d6eaac9980c31bb0d663b0c4ed1a7740f5197b947",
       "dossier_path": "07_PROJECT_LEARNING/async-rs-async-std-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/async-rs-async-std-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2106,
+          "title": "Merge pull request #1086 from jayvdb/fix-changelog",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.961Z"
+      "verified_at": "2026-10-19T04:07:04.697Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-atanunq-viu": {
       "learning_id": "learn-github-atanunq-viu",
@@ -4576,22 +4602,35 @@
     "learn-github-cloudscape-design-components": {
       "learning_id": "learn-github-cloudscape-design-components",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "cloudscape-design-components",
+      "source": "cloudscape-design/components",
+      "repository": "cloudscape-design/components",
       "slug": "cloudscape-design-components",
       "platform": "github",
       "source_url": "https://github.com/cloudscape-design/components",
-      "source_version": "HEAD",
-      "content_hash": "6898f92536d24e002e01300b9e4be3c5a18765dea9d08de0ef0c5394434c1c30",
+      "source_version": "fdb6ffa9",
+      "content_hash": "913321d948684cbcc1ba22f6393cd11adb6b1a434820f4e840975be2c5baf98b",
       "dossier_path": "07_PROJECT_LEARNING/cloudscape-design-components-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cloudscape-design-components-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2105,
+          "title": "Remediate 9 Dependabot security alerts (lockfile only) (#5142)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.342Z"
+      "verified_at": "2026-10-19T04:07:03.154Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-cloudwego-volo": {
       "learning_id": "learn-github-cloudwego-volo",
@@ -8388,22 +8427,35 @@
     "learn-github-flipkart-recyclerlistview": {
       "learning_id": "learn-github-flipkart-recyclerlistview",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "flipkart-recyclerlistview",
+      "source": "Flipkart/recyclerlistview",
+      "repository": "Flipkart/recyclerlistview",
       "slug": "flipkart-recyclerlistview",
       "platform": "github",
       "source_url": "https://github.com/Flipkart/recyclerlistview",
-      "source_version": "HEAD",
-      "content_hash": "2074466f279eae05ef98ba4f17d1da1317aade7ba949fdf62a59f2ea3811c82d",
+      "source_version": "3485036e",
+      "content_hash": "5c3736fbb742d6348d90478672660a4c7f2e850f64a38c26113a1a0ad610aa10",
       "dossier_path": "07_PROJECT_LEARNING/flipkart-recyclerlistview-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/flipkart-recyclerlistview-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2107,
+          "title": "Update ref handling in StickyContainer for React 19 compatibility (#791)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.957Z"
+      "verified_at": "2026-10-19T04:07:10.085Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-flowelement-xinliuyuansu-m_flow": {
       "learning_id": "learn-github-flowelement-xinliuyuansu-m_flow",
@@ -39875,22 +39927,35 @@
     "learn-github-ytsaurus-ytsaurus": {
       "learning_id": "learn-github-ytsaurus-ytsaurus",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "ytsaurus-ytsaurus",
+      "source": "ytsaurus/ytsaurus",
+      "repository": "ytsaurus/ytsaurus",
       "slug": "ytsaurus-ytsaurus",
       "platform": "github",
       "source_url": "https://github.com/ytsaurus/ytsaurus",
-      "source_version": "HEAD",
-      "content_hash": "bcc8dd0653fee4b0308f1f67f8cb7c2ed40620642946a9a2cdbb6adc7e4d312a",
+      "source_version": "a04eacaa",
+      "content_hash": "0fb327282d37161448a1454443b6ed3e50e84889b4fbb94a2beeba62c97587c1",
       "dossier_path": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2108,
+          "title": "CHYT-1479: Fix CHYT abort on unordered key ranges",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.479Z"
+      "verified_at": "2026-10-19T04:07:22.049Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-yugabyte-yugabyte-db": {
       "learning_id": "learn-github-yugabyte-yugabyte-db",
@@ -47917,7 +47982,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
       "source_version": "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8",
-      "content_hash": "464cd5568549b4c60eb85177bfafdcbb6e73a16b8759f0668964828e531a98ec",
+      "content_hash": "92cb2f85cf26a852ca681ceac74080b542cfed897f83514643ba57a480fe0869",
       "dossier_path": "07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md",
       "promoted_rules": [],
@@ -47926,7 +47991,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-17T23:00:39.633Z",
+      "verified_at": "2026-10-19T04:07:02.962Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -76131,6 +76196,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T04:00:57.914Z"
+    },
+    "rule-2105": {
+      "learning_id": "rule-2105",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2105,
+      "title": "Remediate 9 Dependabot security alerts (lockfile only) (#5142)",
+      "source_url": "https://github.com/cloudscape-design/components",
+      "source_version": "fdb6ffa9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:07:03.154Z"
+    },
+    "rule-2106": {
+      "learning_id": "rule-2106",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2106,
+      "title": "Merge pull request #1086 from jayvdb/fix-changelog",
+      "source_url": "https://github.com/async-rs/async-std",
+      "source_version": "844b5525",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:07:04.698Z"
+    },
+    "rule-2107": {
+      "learning_id": "rule-2107",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2107,
+      "title": "Update ref handling in StickyContainer for React 19 compatibility (#791)",
+      "source_url": "https://github.com/Flipkart/recyclerlistview",
+      "source_version": "3485036e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:07:10.085Z"
+    },
+    "rule-2108": {
+      "learning_id": "rule-2108",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2108,
+      "title": "CHYT-1479: Fix CHYT abort on unordered key ranges",
+      "source_url": "https://github.com/ytsaurus/ytsaurus",
+      "source_version": "a04eacaa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:07:22.049Z"
     }
   },
   "aliases": {

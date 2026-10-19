@@ -1465,8 +1465,8 @@
     "sourceUrl": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
     "sourceVersion": "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8",
     "license": "Open-Source",
-    "contentHash": "464cd5568549b4c60eb85177bfafdcbb6e73a16b8759f0668964828e531a98ec",
-    "lastHarvestedAt": "2026-10-17T23:00:39.678Z",
+    "contentHash": "92cb2f85cf26a852ca681ceac74080b542cfed897f83514643ba57a480fe0869",
+    "lastHarvestedAt": "2026-10-19T04:07:03.018Z",
     "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8"
   },
   "amplifthq-opentag": {
@@ -5578,5 +5578,55 @@
     "contentHash": "9839ccb99f5785fe98d72cb00e3395c26b0850d03bda3030110574adba4178f1",
     "lastHarvestedAt": "2026-10-19T04:00:57.963Z",
     "learningId": "learn-github-lindb-lindb"
+  },
+  "cloudscape-design-components": {
+    "repository": "cloudscape-design/components",
+    "platform": "github",
+    "sourceUrl": "https://github.com/cloudscape-design/components",
+    "sourceVersion": "fdb6ffa9",
+    "license": "Apache-2.0",
+    "contentHash": "913321d948684cbcc1ba22f6393cd11adb6b1a434820f4e840975be2c5baf98b",
+    "lastHarvestedAt": "2026-10-19T04:07:03.207Z",
+    "learningId": "learn-github-cloudscape-design-components"
+  },
+  "async-rs-async-std": {
+    "repository": "async-rs/async-std",
+    "platform": "github",
+    "sourceUrl": "https://github.com/async-rs/async-std",
+    "sourceVersion": "844b5525",
+    "license": "Apache-2.0",
+    "contentHash": "91dbf8456650b9efd45d266d6eaac9980c31bb0d663b0c4ed1a7740f5197b947",
+    "lastHarvestedAt": "2026-10-19T04:07:04.772Z",
+    "learningId": "learn-github-async-rs-async-std"
+  },
+  "flipkart-recyclerlistview": {
+    "repository": "Flipkart/recyclerlistview",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Flipkart/recyclerlistview",
+    "sourceVersion": "3485036e",
+    "license": "Apache-2.0",
+    "contentHash": "5c3736fbb742d6348d90478672660a4c7f2e850f64a38c26113a1a0ad610aa10",
+    "lastHarvestedAt": "2026-10-19T04:07:10.145Z",
+    "learningId": "learn-github-flipkart-recyclerlistview"
+  },
+  "architect-architect": {
+    "repository": "architect/architect",
+    "platform": "github",
+    "sourceUrl": "https://github.com/architect/architect",
+    "sourceVersion": "9924cd0a",
+    "license": "Apache-2.0",
+    "contentHash": "f2ff57da605ea3ede3c7b74659438bfb148d7263fca91d88c525853f9a1461b7",
+    "lastHarvestedAt": "2026-10-19T04:07:12.428Z",
+    "learningId": "learn-github-architect-architect"
+  },
+  "ytsaurus-ytsaurus": {
+    "repository": "ytsaurus/ytsaurus",
+    "platform": "github",
+    "sourceUrl": "https://github.com/ytsaurus/ytsaurus",
+    "sourceVersion": "a04eacaa",
+    "license": "Apache-2.0",
+    "contentHash": "0fb327282d37161448a1454443b6ed3e50e84889b4fbb94a2beeba62c97587c1",
+    "lastHarvestedAt": "2026-10-19T04:07:22.097Z",
+    "learningId": "learn-github-ytsaurus-ytsaurus"
   }
 }

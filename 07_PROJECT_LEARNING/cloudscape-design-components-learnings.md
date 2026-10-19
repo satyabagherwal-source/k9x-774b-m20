@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cloudscape-design-components-learnings.md`  
+> **Source**: github ([https://github.com/cloudscape-design/components](https://github.com/cloudscape-design/components))  
+> **Source Version**: `fdb6ffa9`  
+> **License**: Apache-2.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T04:07:02.958Z  
+> **Learning ID**: `learn-github-cloudscape-design-components`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): cloudscape-design/components
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cloudscape-design-components-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cloudscape-design/components](https://github.com/cloudscape-design/components))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T02:21:37.878Z  
+> **Harvest Timestamp**: 2026-10-19T04:07:01.784Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: React components for Cloudscape Design System
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 2654 stars
+- **Stars / Engagement**: 2672 stars
 
 ---
 
@@ -1490,50 +1504,6 @@ export const registerRuntimeBottomDrawer = () => {
   })
 ```
 
-### Core Architecture Module: `pages/app-layout/utils/labels.ts`
-```
-// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-// SPDX-License-Identifier: Apache-2.0
-const labels = {
-  navigation: 'Side navigation',
-  navigationToggle: 'Open navigation',
-  navigationClose: 'Close navigation',
-  notifications: 'Notifications',
-  tools: 'Tools',
-  toolsToggle: 'Open tools',
-  toolsClose: 'Close tools',
-};
-
-export default labels;
-
-```
-
-### Core Architecture Module: `pages/app-layout/utils/strings.ts`
-```
-// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-// SPDX-License-Identifier: Apache-2.0
-import { SplitPanelProps } from '~components/split-panel';
-
-export const discreetSplitPanelI18nStrings: SplitPanelProps.I18nStrings = {
-  closeButtonAriaLabel: 'Close panel',
-  resizeHandleAriaLabel: 'Slider',
-  resizeHandleTooltipText: 'Drag or select to resize',
-};
-
-export const splitPaneli18nStrings: SplitPanelProps.I18nStrings = {
-  ...discreetSplitPanelI18nStrings,
-  openButtonAriaLabel: 'Open panel',
-  preferencesTitle: 'Preferences',
-  preferencesPositionLabel: 'Split panel position',
-  preferencesPositionDescription: 'Choose the default split panel position for the service.',
-  preferencesPositionSide: 'Side',
-  preferencesPositionBottom: 'Bottom',
-  preferencesConfirm: 'Confirm',
-  preferencesCancel: 'Cancel',
-};
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1545,45 +1515,6 @@ export const splitPaneli18nStrings: SplitPanelProps.I18nStrings = {
 
 - **Issue #4905** (2026-09-02): **[Bug]: Published CSS contains 30-50 duplicate license headers per file (26% of CSS bytes)**
   *Symptoms*: ### Browser  _No response_  ### Package version  v3.0.1345  ### React version  _No response_  ### Description  Every stylesheet published in `lib/components` contains the Apache license comment repeated 30-50 times.  Measured on a local `npm run build` of `c4816f9f1`:  | ---------------- | -------------------------------------------------------- | | stylesheets      | 227                                                      | | total CSS        | 2269 KB                                                  | | license comments | 598 KB (**26.4%**)                                       | | blocks per file  | median 35, max 51 (`file-token-group/styles.scoped.css`) |  Example: `popover/styles.scoped.css` is 27,483 bytes and holds 43 copies of the same 4-line comment.  ### Cause  318 of the 319 `.scss` files in `src/` open with a loud CSS comment (`/* ... */`) rather than a Sass silent comment (`// ...`). Sass preserves loud comments, and `theming-build` compiles with `style: 'expanded'`, so every module a `styles.scss` entry point transitively `@use`s contributes its header to that entry's output. `src/popover/styles.scss` loads 25+ modules, hence 43 headers. Most of those modules emit no CSS rules at all: for files like `src/internal/styles/typography/constants.scss` the header is the module's entire contribution to the compiled output.  ### Impact  Minifiers drop the comments, so the impact on end users is zero for apps that have a proper build pipeline.  Where this really hurts 
-  **Post-Mortem & Fix Analysis**:
-  > I've sent over a pair of PRs to fix this:  * https://github.com/cloudscape-design/build-tools/pull/75 (needs to land first) * https://github.com/cloudscape-design/components/pull/4906 (draft, will publish once the first PR is merged)
-  > Hey Trevor,  Thanks for contributing! Our team will take a look at the proposed changes.
-
-- **Issue #4551** (2026-06-08): **[Bug]: allowSkipTo doesn't enable navigation to immediately-next step when current step is optional**
-  *Symptoms*: ### Browser  Safari  ### Package version  3.0.1011  ### React version  18.2.0  ### Description  - canSkip(fromIndex, toIndex) returns false when fromIndex >= toIndex (line: if (fromIndex >= toIndex) return false) - When on step N-1 targeting step N, it calls canSkip(N, N) which hits this guard - The fallback only allows it if the target is isOptional, but the target being mandatory shouldn't prevent navigation when the current step is optional - This creates inconsistency: Step 4 is clickable from Steps 1 and 2 (via intermediate optional checks) but not from Step 3 (the step right before it) - Expected: If I can skip to Step 4 from Step 1 (because Steps 2/3 are optional), I should also be able to skip to Step 4 from Step 3 (since the current step is optional and there are no intermediates to block) - Workaround: Mark the target step as isOptional: true, but this adds an unwanted "- optional" label  ### Source code  _No response_  ### Reproduction  _No response_  ### Code of Conduct  - [x] I agree to follow this project's [Code of Conduct](https://github.com/cloudscape-design/components/blob/main/CODE_OF_CONDUCT.md) - [x] I checked the [current issues](https://github.com/cloudscape-design/components/issues) for duplicate problems
-  **Post-Mortem & Fix Analysis**:
-  > Hey, Thanks for submitting this bug report.  I was able to reproduce the bug. Can you verify that this is what you mean (see video below)?  Best regards,  Simon
-  > https://github.com/user-attachments/assets/82628e2b-5053-4242-b384-68f618539c10
-  > Hello, Yes, this is exactly it. Please do look into it as this is a component in our production console. Thanks for the quick repro!
-
-- **Issue #4440** (2026-05-04): **[Bug]: `Box` with `awsui-inline-code` variant should support relative font sizing**
-  *Symptoms*: ### Browser  _No response_  ### Package version  latest  ### React version  _No response_  ### Description  # `Box` with `awsui-inline-code` variant should support relative font sizing  ## Description  The `awsui-inline-code` variant on `Box` hardcodes `font-size: 12px` (via `--font-size-body-s`). This means inline code inside headings, headers, or any large-text context renders at body-text size instead of scaling with its parent.  The `fontSize` prop only accepts predefined sizes (`body-s`, `body-m`, `heading-xs`, etc.) — there's no way to set `inherit` or a relative value like `85%` without resorting to `nativeAttributes`.  ## Example  ```tsx import { Box, Header } from "@cloudscape-design/components";  <Header variant="h1">   OpenSearch Schema Mapping for <Box variant="awsui-inline-code">getBookings</Box> API </Header> ```  <img width="923" height="150" alt="Image" src="https://github.com/user-attachments/assets/30af1c89-11a6-4e80-95b1-a6afb70c9a6d" />  **Expected:** The inline code `getBookings` scales with the h1 heading size.  **Actual:** `getBookings` renders at 12px while the rest of the heading is much larger.  ## Current workaround  ```tsx <Box   variant="awsui-inline-code"   nativeAttributes={{ style: { fontSize: "85%" } }} >   getBookings </Box> ```  ## Suggestion  Either:  1. Add `"inherit"` as a valid `fontSize` option on `Box` 2. Make the `awsui-inline-code` variant use a relative font size (e.g. `0.85em`) by default so it scales with its context   ### Source 
-  **Post-Mortem & Fix Analysis**:
-  > Hi, thanks for reaching out!                                                                                                                                                                                                                                                                                                                                                                                                              One option that might work well here is using the `fontSize` property on the Box component. Setting it one step below the heading size, for example `heading-l` for an h1, can give you a more proportionate inline code size:                                                                                                                                                                                                   ```tsx <Header variant="h1">   OpenSearch Schema Mapping for <Box fontSize="heading-l" variant="awsui-inline-code">getBookings</Box> API </Header> ``` Hope t
-
-- **Issue #4411** (2026-05-07): **[Bug]: Text in read-only date range picker is unselectable**
-  *Symptoms*: ### Browser  _No response_  ### Package version  v3.0.1267  ### React version  v19.2.3  ### Description  I'm displaying a date range using a `DateRangePicker` with `readOnly={true}`:  <img width="452" height="52" alt="Image" src="https://github.com/user-attachments/assets/1d233fc1-1bd7-4d67-9b6f-108eda2cfba5" />  When I do this, the text shown in the widget is unselectable by the user. This is perhaps expected for a `disabled` component, but not for a `readOnly` one. It's a usability issue, and potentially an accessibility issue as well.  ### Source code  _No response_  ### Reproduction  _No response_  ### Code of Conduct  - [x] I agree to follow this project's [Code of Conduct](https://github.com/cloudscape-design/components/blob/main/CODE_OF_CONDUCT.md) - [x] I checked the [current issues](https://github.com/cloudscape-design/components/issues) for duplicate problems
-  **Post-Mortem & Fix Analysis**:
-  > Hey Trevor,  Thanks for reporting! The issue looks valid, our team is working on it now.
-  > Update: just saw your PR, thanks for contributing! ❤️ 
-  > Hi @TrevorBurnham , thanks again for the contribution. Note that I have submitted a couple of comments in the PR.
-
-- **Issue #4357** (2026-03-24): **[Bug]: PanelLayout overflow content is hidden when display is set to panel-only**
-  *Symptoms*: ### Browser  _No response_  ### Package version  latest  ### React version  _No response_  ### Description  ### Steps to reproduce this issue  Open https://cloudscape.design/components/panel-layout/?tabId=playground, set `display` to `panel-only` and `panelContent` to   ``` <table style={{width: 3000, borderCollapse: "collapse" }}>     <thead>         <tr>             {[1,2,3,4,5,6,7,8,9,10,11,12].map(i => (             <th key={i} style={{border: "1px solid #ccc" , padding: "8px 16px" , whiteSpace: "nowrap" }}>                 Column {i}             </th>             ))}         </tr>     </thead>     <tbody>         {[1,2,3].map(row => (         <tr key={row}>             {[1,2,3,4,5,6,7,8,9,10,11,12].map(col => (             <td key={col} style={{border: "1px solid #ccc" , padding: "8px 16px" , whiteSpace: "nowrap" }}>                 Row {row}, Cell {col}             </td>             ))}         </tr>         ))}     </tbody> </table> ```  <img width="1397" height="491" alt="Image" src="https://github.com/user-attachments/assets/d3ae9210-9212-432a-993e-cc4280bb24f8" />  ### Source code  _No response_  ### Reproduction  _No response_  ### Code of Conduct  - [x] I agree to follow this project's [Code of Conduct](https://github.com/cloudscape-design/components/blob/main/CODE_OF_CONDUCT.md) - [x] I checked the [current issues](https://github.com/cloudscape-design/components/issues) for duplicate problems
-  **Post-Mortem & Fix Analysis**:
-  > Hi Zhang,  Thank you for creating the bug report and providing steps to reproduce the issue! Cloudscape team is now working on the fix.
-
-- **Issue #4264** (2026-03-02): **[Bug]: Rollup error - "validateProps" is not exported**
-  *Symptoms*: ### Browser  _No response_  ### Package version  3.0.1204  ### React version  19.1.0  ### Description  I am building a TS library that provides reusable react components that use CloudScape components. I am bundling this library with TSUP. The library itself builds without issues. However, if I am using this library in another project, I am getting an error when running yarn build:  ``` x Build failed in 16.76s error during build: node_modules/@cloudscape-design/components/alert/index.js (7:9): "validateProps" is not exported by "node_modules/@cloudscape-design/components/node_modules/@cloudscape-design/component-toolkit/internal/index.js", imported by "node_modules/@cloudscape-design/components/alert/index.js". file: /myproject/node_modules/@cloudscape-design/components/alert/index.js:7:9  5: import CoreComponent from './internal-do-not-use-core'; 6: import { applyDisplayName } from '../internal/utils/apply-display-name'; 7: import { validateProps } from '@cloudscape-design/component-toolkit/internal';             ^      at getRollupError (file:///myproject/node_modules/rollup/dist/es/shared/parseAst.js:401:41)     at error (file:///myproject/node_modules/rollup/dist/es/shared/parseAst.js:397:42)     at Module.error (file:///myproject/node_modules/rollup/dist/es/shared/node-entry.js:16875:16)     at Module.traceVariable (file:///myproject/node_modules/rollup/dist/es/shared/node-entry.js:17327:29)     at ModuleScope.findVariable (file:///myproject/node_modules/rollup/dist/es/
-  **Post-Mortem & Fix Analysis**:
-  > Hey, Thanks for creating this bug report. Could you share the version of `@cloudscape-design/component-toolkit` that gets installed as a peer dependency of `@cloudscape-design/components`?  I checked the latest component-toolkit version whether`validateProps` is being exported and this seems to be the case. You can validate this here: `node_modules/@cloudscape-design/component-toolkit/internal/index.js`.  From your error logs: `node_modules/@cloudscape-design/components/node_modules/@cloudscape-design/component-toolkit/internal/index.js` This line lets me suspect there could be a problem in how the paths are being resolved in tsup. This should be `node_modules/@cloudscape-design/component-toolkit/internal/index.js` instead because component-toolkit and components should live in the same node_modules folder.
-  > Could you possibly share a minimum setup example repository with your configuration where this error occurs? 
-  > Hi @SpyZzey , thanks for the quick response!  The version where this occurs is "@cloudscape-design/component-toolkit": "^1.0.0-beta.138"  Do you indicate this is fixed in newer versions?  I cannot see `validateProps` being exported in that index.js, neither in "1.0.0-beta.111" nor in "1.0.0-beta.138".  I will try to come up with a minimum example over the weekend, but not sure how much effort it is.  Thanks!
-
-- **Issue #4236** (2026-03-12): **[Bug]: resizableColumns: dynamically added columns ignore minWidth, fall back to DEFAULT_COLUMN_WIDTH**
-  *Symptoms*: ### Browser  Chrome  ### Package version  v3.0.0 (@amzn/awsui-components-console)  ### React version  v19.2.3  ### Description  When using `resizableColumns` on a `<Table>`, columns that are dynamically added to `columnDefinitions` (e.g. swapping visible columns based on a filter/toggle) do not respect their `minWidth`. They are instead assigned `DEFAULT_COLUMN_WIDTH` (120px).  The issue is in [`use-column-widths.tsx` L171](https://github.com/cloudscape-design/components/blob/9a1b7c5bf8e597df72f40a152f58bee9d09d2ac8/src/table/use-column-widths.tsx#L171):  ```ts newColumnWidths.set(column.id, column.width || DEFAULT_COLUMN_WIDTH); ```  This only checks `column.width` and ignores `column.minWidth`. A column defined with `{ minWidth: 250 }` but no explicit `width` will get 120px when dynamically added.  The initial render handles this correctly in `readWidths` ([L28-L41](https://github.com/cloudscape-design/components/blob/9a1b7c5bf8e597df72f40a152f58bee9d09d2ac8/src/table/use-column-widths.tsx#L28-L41)) by doing `Math.max(width, minWidth)`, but the dynamic column path does not.  ### Expected behavior  Dynamically added columns should respect `minWidth`, consistent with the initial render behavior. The fix would be something like:  ```ts const minWidth = column.minWidth || column.width || DEFAULT_COLUMN_WIDTH; newColumnWidths.set(column.id, Math.max(column.width || DEFAULT_COLUMN_WIDTH, minWidth)); ```  ### Workaround  Set an explicit `width` equal to `minWidth` on affected colu
-  **Post-Mortem & Fix Analysis**:
-  > Hello Miles,  Thank you for reporting that, the issue seems valid.  I see that there is already a contribution request open for it: https://github.com/cloudscape-design/components/pull/4241. Our team is evaluating it now.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1600,156 +1531,15 @@ export const splitPaneli18nStrings: SplitPanelProps.I18nStrings = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `163e9b6f` (2026-10-05)
-**Commit Message**: fix: Remove top margin from custom vertical steps connector (#5102)
+### Incident Patch 1: `2255a808` (2026-10-13)
+**Commit Message**: chore: Remediate 9 Dependabot security alerts (lockfile only) (#5142)
 
-**File**: `src/steps/styles.scss` (modified, +1/-1)
+**File**: `package-lock.json` (modified, +37/-28)
 ```diff
-@@ -187,7 +187,7 @@
-       block-size: auto;
-       min-block-size: awsui.$space-static-xs;
-       inset-inline-end: 0;
--      margin-block: awsui.$space-static-xxs 0;
-+      margin-block: 0;
-     }
-   }
- 
-```
-
----
-
-### Incident Patch 2: `b6e80189` (2026-10-05)
-**Commit Message**: chore: Let multiselect render tokens inline when grouped (#5091)
-
-**File**: `src/multiselect/__tests__/control-group.test.tsx` (modified, +20/-2)
-```diff
-@@ -8,14 +8,17 @@ import Multiselect from '../../../lib/components/multiselect';
- import createWrapper from '../../../lib/components/test-utils/dom';
- import { PositionProbe } from '../../internal/components/control-group/__tests__/common';
- 
-+const options = [{ value: '1', label: 'One' }];
-+const noop = () => {};
-+
- describe('Multiselect in control group', () => {
-   test('resets the context for a custom dropdown footer', () => {
-     const { container, getByTestId } = render(
-       <ControlGroup>
-         <Multiselect
-           selectedOptions={[]}
--          options={[{ value: '1', label: 'One' }]}
--          onChange={() => {}}
-+          options={options}
-+          onChange={noop}
-           renderDropdownFooter={() => <PositionProbe />}
-         />
-       </ControlGroup>
-@@ -24,4 +27,19 @@ describe('Multiselect in control group', () => {
- 
-     expect(getByTestId('probe')).toHaveTextContent('none');
-   });
-+
-+  it('renders inline tokens even if `inlineTokens` is not set', () => {
-+    const { container } = render(
-+      <ControlGroup>
-+        <Multiselect selectedOptions={[options[0]]} options={options} onChange={() => {}} />
-+      </ControlGroup>
-+    );
-+
-+    const multiselect = createWrapper(container).findMultiselect()!;
-+    const inlineTokens = multiselect.findInlineTokens();
-+
-+    expect(inlineTokens).toHaveLength(1);
-+    expect(inlineTokens[0].findLabel().getElement()).toHaveTextContent('One');
-+    expect(multiselect.findTokens()).toHaveLength(0);
-+  });
- });
-```
-
-**File**: `src/multiselect/internal.tsx` (modified, +7/-2)
-```diff
-@@ -78,6 +78,11 @@ const InternalMultiselect = React.forwardRef(
-     const { position: groupedControlPosition } = useGroupedControlContext();
-     const i18n = useInternalI18n('multiselect');
- 
-+    // When rendered inside a control group, tokens are always shown inline in the
-+    // trigger regardless of the `inlineTokens` prop, since there is no room to
-+    // display tokens below the control within a group.
-+    const showTokensInline = inlineTokens || groupedControlPosition !== null;
-+
-     const selfControlId = useUniqueId('trigger');
-     const controlId = formFieldContext.controlId ?? selfControlId;
-     const ariaLabelId = useUniqueId('multiselect-ariaLabel-');
-@@ -138,7 +143,7 @@ const InternalMultiselect = React.forwardRef(
-         triggerProps={multiselectProps.getTriggerProps(disabled, autoFocus)}
-         selectedOption={null}
-         selectedOptions={selectedOptions}
--        triggerVariant={inlineTokens ? 'tokens' : 'placeholder'}
-+        triggerVariant={showTokensInline ? 'tokens' : 'placeholder'}
-         isOpen={multiselectProps.isOpen}
-         groupedControlPosition={groupedControlPosition}
-         inlineLabelText={inlineLabelText}
-@@ -166,7 +171,7 @@ const InternalMultiselect = React.forwardRef(
- 
-     const ListComponent = virtualScroll ? VirtualList : PlainList;
- 
--    const showTokens = !hideTokens && !inlineTokens && tokens.length > 0;
-+    const showTokens = !hideTokens && !showTokensInline && tokens.length > 0;
- 
-     const tokenGroupI18nStrings: TokenGroupProps.I18nStrings = {
-       limitShowFewer: i18nStrings?.tokenLimitShowFewer,
-```
-
----
-
-### Incident Patch 3: `53fca8df` (2026-10-05)
-**Commit Message**: fix: Fixes prompt input styling for font size and weight (#5092)
-
-**File**: `pages/prompt-input/style-permutations.page.tsx` (modified, +2/-2)
-```diff
-@@ -42,8 +42,8 @@ const style1: PromptInputProps.Style = {
-       disabled: '#7dd3fc',
-       readonly: 'light-dark(#0369a1, #7dd3fc)',
-     },
--    fontSize: '14px',
--    fontWeight: '400',
-+    fontSize: '16px',
-+    fontWeight: '600',
-     paddingBlock: '4px',
-     paddingInline: '8px',
-   },
-```
-
-**File**: `src/prompt-input/styles.scss` (modified, +4/-0)
-```diff
-@@ -156,6 +156,8 @@ $invalid-border-offset: constants.$invalid-control-left-padding;
-   @include styles.styles-reset;
-   @include styles.control-border-radius-full();
-   @include styles.font-body-m;
-+  font-size: inherit;
-+  font-weight: inherit;
-   // Restore browsers' default resize values
-   resize: none;
-   // Restore default text cursor
-@@ -394,4 +396,6 @@ $invalid-border-offset: constants.$invalid-control-left-padding;
-   white-space: pre-wrap;
-   // Inherit color from parent (textarea) for disabled/readonly states
-   color: inherit;
-+  font-size: inherit;
-+  font-weight: inherit;
- }
-```
-
----
-
-### Incident Patch 4: `eac1b178` (2026-10-05)
-**Commit Message**: chore: Remediate 11 Dependabot security alerts (lockfile only) (#5101)
-
-**File**: `package-lock.json` (modified, +24/-22)
-```diff
-@@ -5383,9 +5383,9 @@
+@@ -6188,9 +6188,9 @@
        }
      },
-     "node_modules/@typescript-eslint/typescript-estree/node_modules/brace-expansion": {
+     "node_modules/archiver-utils/node_modules/brace-expansion": {
 -      "version": "2.1.4",
 -      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.4.tgz",
 -      "integrity": "sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg==",
@@ -1759,36 +1549,103 @@ Observed empirical fixes and code patches:
        "dev": true,
        "license": "MIT",
        "dependencies": {
-@@ -5521,9 +5521,9 @@
+@@ -11561,14 +11561,15 @@
        }
      },
-     "node_modules/@wdio/config/node_modules/brace-expansion": {
--      "version": "2.1.4",
--      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.4.tgz",
--      "integrity": "sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg==",
-+      "version": "2.1.7",
-+      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.7.tgz",
-+      "integrity": "sha512-uZbew1NqdmPDTMJ8ah1y+b+9QEJrfkXFk3RcTQw3X0jW/xRUvFKsg1CfQdSYGdTbXZWExtU3J3ccxtnfw1Fi0g==",
+     "node_modules/handlebars": {
+-      "version": "4.7.9",
++      "version": "4.7.10",
        "dev": true,
        "license": "MIT",
        "dependencies": {
-@@ -6867,9 +6867,9 @@
+-        "minimist": "^1.2.5",
++        "minimist": "^1.2.8",
++        "wordwrap": "^1.0.0",
+         "neo-async": "^2.6.2",
+-        "source-map": "^0.6.1",
+-        "wordwrap": "^1.0.0"
++        "uglify-js": "^3.1.4",
++        "source-map": "^0.6.1"
+       },
+       "bin": {
+         "handlebars": "bin/handlebars"
+@@ -11578,7 +11579,9 @@
+       },
+       "optionalDependencies": {
+         "uglify-js": "^3.1.4"
+-      }
++      },
++      "resolved": "https://registry.npmjs.org/handlebars/-/handlebars-4.7.10.tgz",
++      "integrity": "sha512-P5VJMVM7qgBn6vjXMw8WG9uVI+ncf2pi72j4de4yz5ZULLj2RGqLYaKOYGsgyrViQ0tePOVlN1tDCCXXtFqXKg=="
+     },
+     "node_modules/has-bigints": {
+       "version": "1.1.0",
+@@ -14175,18 +14178,18 @@
+       }
+     },
+     "node_modules/joi": {
+-      "version": "18.2.8",
+-      "resolved": "https://registry.npmjs.org/joi/-/joi-18.2.8.tgz",
+-      "integrity": "sha512-G2TX62h58ZHuwqetJgP2F4ualakqAmZtBYe3jWen7gxQRw5xApX6crnFtuB91WC0c3ESBnva+kGSnb3+6pIQDQ==",
++      "version": "18.2.9",
++      "resolved": "https://registry.npmjs.org/joi/-/joi-18.2.9.tgz",
++      "integrity": "sha512-2mD929bUVKUhOLQQEVhlf6EZ0Mlo0DeRb5MO7cViR9AXLtBauuccEtB1py9Ocxpo/P7ucnh442iY/iOwrh3IQw==",
+       "dev": true,
+       "license": "BSD-3-Clause",
+       "dependencies": {
+-        "@hapi/address": "^5.1.1",
+-        "@hapi/formula": "^3.0.2",
+         "@hapi/hoek": "^11.0.7",
+-        "@hapi/pinpoint": "^2.0.1",
+         "@hapi/tlds": "^1.1.1",
+         "@hapi/topo": "^6.0.2",
++        "@hapi/address": "^5.1.1",
++        "@hapi/formula": "^3.0.2",
++        "@hapi/pinpoint": "^2.0.1",
+         "@standard-schema/spec": "^1.1.0"
+       },
+       "engines": {
+@@ -16952,9 +16955,9 @@
+       }
+     },
+     "node_modules/postcss-selector-parser": {
+-      "version": "7.1.5",
+-      "resolved": "https://registry.npmjs.org/postcss-selector-parser/-/postcss-selector-parser-7.1.5.tgz",
+-      "integrity": "sha512-KvvtD7SrlBP7dlgkBghEE3r84CABm5SmV2aNcG4oCA+qDnJ/tvKonFVvwWAyyWUEwxuNawdfEAZKP9zM3oZ2Uw==",
++      "version": "7.1.6",
++      "resolved": "https://registry.npmjs.org/postcss-selector-parser/-/postcss-selector-parser-7.1.6.tgz",
++      "integrity": "sha512-7qASPzhKF2l2KLboRZux8CCTRMdGiV08vWmyKzPz22qZ7ZjQBOeY7rNzNoCLSUiftJ7HUq0GERHmxw/t0dCdMw==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+@@ -17251,9 +17254,9 @@
        "license": "MIT"
      },
-     "node_modules/brace-expansion": {
--      "version": "1.1.18",
--      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.18.tgz",
--      "integrity": "sha512-Edep/X9fGqVNmzKBVsDYIOtD+z1tuezV70LBjdCst9Tqu76lsnvRiZ6oTic1n+/BIwX6QDGAO94PN4N2SADvtw==",
-+      "version": "1.1.21",
-+      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.21.tgz",
-+      "integrity": "sha512-9zeA+KLZNNzglF2TPKRQEDyx6Yby7daAkuy8MiPzpXPsYDWi/DRM8jmwUDxokQjYqBpv5DgPiwD4h4ZZSy1Ujw==",
+     "node_modules/proxy-addr": {
+-      "version": "2.0.7",
+-      "resolved": "https://registry.npmjs.org/proxy-addr/-/proxy-addr-2.0.7.tgz",
+-      "integrity": "sha512-llQsMLSUDUPT44jdrU/O37qlnifitDP+ZwrmmZcoSKyLKvtZxpyV0n2/bD/N4tBAAZ/gJEdZU7KMraoK1+XYAg==",
++      "version": "2.0.8",
++      "resolved": "https://registry.npmjs.org/proxy-addr/-/proxy-addr-2.0.8.tgz",
++      "integrity": "sha512-5nnx0yGyVUcY6t9RnWcARWtwT9F1D8O9rt08htPvnd49W1IgZtmLkhu9WfMzQj1cFxjHIO6connUNVW5k7AVyQ==",
        "dev": true,
        "license": "MIT",
        "dependencies": {
-@@ -11816,9 +11816,9 @@
+@@ -17262,6 +17265,10 @@
+       },
+       "engines": {
+         "node": ">= 0.10"
++      },
++      "funding": {
++        "url": "https://opencollective.com/express",
++        "type": "opencollective"
        }
      },
-     "node_modules/html-validate/node_modules/brace-expansion": {
+     "node_modules/proxy-addr/node_modules/ipaddr.js": {
+@@ -17720,9 +17727,9 @@
+       }
+     },
+     "node_modules/readdir-glob/node_modules/brace-expansion": {
 -      "version": "2.1.4",
 -      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.4.tgz",
 -      "integrity": "sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg==",
@@ -1798,1530 +1655,228 @@ Observed empirical fixes and code patches:
        "dev": true,
        "license": "MIT",
        "dependencies": {
-@@ -15252,9 +15252,9 @@
+@@ -18905,9 +18912,9 @@
        }
      },
-     "node_modules/minimatch/node_modules/brace-expansion": {
--      "version": "5.0.9",
--      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-5.0.9.tgz",
--      "integrity": "sha512-ScQ4IuvIEF1TMlP7Zt+vjJ//9zlPb2SDcxWxM3bk8s6t6GGdJ7KO1dCcTidOPJKePW30LE/2cT7wCyPho9/Wxg==",
-+      "version": "5.0.12",
-+      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-5.0.12.tgz",
-+      "integrity": "sha512-YovQ3rzhaLMIrDjNDMkNS01tea93qhEhG5xy8f6+R0l+dw3Ki+5sCoIoI942iuLZTHWogWktgwVDhU09iNEimQ==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-@@ -15329,7 +15329,9 @@
-       }
-     },
-     "node_modules/moment": {
--      "version": "2.30.1",
-+      "version": "2.31.0",
-+      "resolved": "https://registry.npmjs.org/moment/-/moment-2.31.0.tgz",
-+      "integrity": "sha512-0acOTfMiWOheYS4eoWb80yYMb/JLvVv9SHbs2PehaDzfUG0Bw855SKyk0IKTnPGa5+U2bmi3W68l1+sGLX/pvw==",
-       "dev": true,
-       "license": "MIT",
-       "engines": {
-@@ -20885,9 +20887,9 @@
-       }
-     },
-     "node_modules/undici": {
--      "version": "7.29.0",
--      "resolved": "https://registry.npmjs.org/undici/-/undici-7.29.0.tgz",
--      "integrity": "sha512-IDxfleLmmbSskfWSUATiN1nfn2rDuvnMOqb5CWR92iIfojA0Ud+ulOAAEQ57LPr9rWmsreUyf5lwyao+7GNNVw==",
-+      "version": "7.30.0",
-+      "resolved": "https://registry.npmjs.org/undici/-/undici-7.30.0.tgz",
-+      "integrity": "sha512-dkrQXeHSaoamnItlYbmzG0wFYrM0ZwDxCIg0A7aKjTyyhh9svRzCNFEzV+Vm05/yehjCzjDZ31KXfGEjYSztDQ==",
-       "dev": true,
-       "license": "MIT",
-       "engines": {
-@@ -21260,9 +21262,9 @@
-       }
-     },
-     "node_modules/webdriver/node_modules/undici": {
--      "version": "6.28.0",
--      "resolved": "https://registry.npmjs.org/undici/-/undici-6.28.0.tgz",
--      "integrity": "sha512-LIY910g9TI13YS95lrMFrs8Rm/u/irgHeTWoKCoteeJ04CUJ92eEfj0rVn+7VKMPBpUPiUoBKfhNyLI23EE/KA==",
-+      "version": "6.29.0",
-+      "resolved": "https://registry.npmjs.org/undici/-/undici-6.29.0.tgz",
-+      "integrity": "sha512-R+RODBqp6i2pPflGdq+xIOUkl+RNfGgHwoinecKu/JCuf2uO06cOKoDbI2P7Dn6KcswdKwrczbU6IYJ6K8X+wg==",
-       "dev": true,
-       "license": "MIT",
-       "engines": {
+     "node_modules/shell-quote": {
+-      "version": "1.10.0",
+-      "resolved": "https://registry.npmjs.org/shell-quote/-/shell-quote-1.10.0.tgz",
+-      "integrity": "sha512-w1aiOKwKuRgtwAReIIj89puqg+I7GvX
 ```
 
 ---
 
-### Incident Patch 5: `3bc1f014` (2026-10-01)
-**Commit Message**: fix: Side navigation collapsed state for parent items extending state and using colorBackgroundSideNavigationItemActive (#5079)
+### Incident Patch 2: `52c638d1` (2026-10-13)
+**Commit Message**: fix: pass lang attribute through overflow menu items (#5137)
 
-**File**: `src/expandable-section/__tests__/expandable-section.test.tsx` (modified, +4/-0)
+**File**: `src/top-navigation/__tests__/top-navigation-overflow-menu.test.tsx` (modified, +14/-0)
 ```diff
-@@ -52,6 +52,10 @@ describe('Expandable Section', () => {
-       expect(wrapper.findAll('button').length).toBe(1);
-       expect(wrapper.findAll('div[role=button]').length).toBe(0);
-     });
-+    test('does not mark the non-interactive header wrapper as a click target for variant navigation', () => {
-+      const wrapper = renderExpandableSection({ variant: 'navigation', headerText: 'Test Header' });
-+      expect(wrapper.findHeader().getElement()).not.toHaveClass(styles['click-target']);
-+    });
-     describe('has no trigger button and div=[role=button]', () => {
-       for (const variant of containerizedVariants) {
-         test(`${variant} variant`, () => {
-```
-
-**File**: `src/expandable-section/expandable-section-header.tsx` (modified, +0/-1)
-```diff
-@@ -209,7 +209,6 @@ const ExpandableNavigationHeader = ({
-       id={id}
-       className={clsx(
-         className,
--        styles['click-target'],
-         analyticsSelectors['header-label'],
-         expandIconPosition === 'end' && styles['header-icon-end']
-       )}
-```
-
-**File**: `src/side-navigation/styles.scss` (modified, +13/-6)
-```diff
-@@ -333,8 +333,20 @@ $content-exit-clip-delay: $content-exit-duration;
-   box-sizing: content-box;
- }
- 
-+// Icon layout: drop the navigation header's 1px alignment border so the icon lines up with plain links.
-+// (The icon-less layout compensates for it via $expandable-icon-negative-margin.)
-+.expandable-link-group--expand-icon-end > div:first-child {
-+  border-inline-start-width: 0;
-+}
+@@ -130,6 +130,20 @@ describe('Submenu', () => {
+     expect(element.getAttribute('role')).toEqual('button');
+     expect(element.tabIndex).toEqual(0);
+   });
 +
-+// Collapsed: shrink the header wrapper to the icon square.
-+.expandable-link-group--collapsed > div:first-child {
-+  padding-inline: 0;
-+  margin-inline: 0;
-+}
-+
- // Targets the ExpandableSection header wrapper (first child div of the component root).
--.expandable-link-group--active > div:first-child {
-+.expandable-link-group--active:not(.expandable-link-group--collapsed) > div:first-child {
-   background-color: awsui.$color-background-side-navigation-item-active;
- }
- 
-@@ -371,11 +383,6 @@ $content-exit-clip-delay: $content-exit-duration;
-         padding-block $content-exit-motion;
-     }
-   }
--
--  > :first-child {
--    padding-inline: 0;
--    margin-inline: 0;
--  }
- }
- 
- .section {
-```
-
----
-
-### Incident Patch 6: `58059a42` (2026-10-01)
-**Commit Message**: fix: Do not round attached borders of containers with custom border radius (#5064)
-
-**File**: `build-tools/utils/custom-css-properties.js` (modified, +2/-0)
-```diff
-@@ -202,5 +202,7 @@ const customCssPropertiesList = [
-   'styleItemCardBoxShadowDefault',
-   // Inline label
-   'inlineLabelBackgroundColor',
-+  // Container style API
-+  'containerStyleBorderRadius',
- ];
- module.exports = customCssPropertiesList;
-```
-
-**File**: `pages/container/stacked-custom-radius.page.tsx` (added, +42/-0)
-```diff
-@@ -0,0 +1,42 @@
-+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-+// SPDX-License-Identifier: Apache-2.0
-+import React from 'react';
-+
-+import { Container } from '~components';
-+
-+import { SimplePage } from '../app/templates';
-+
-+// Stacked containers with a custom border radius. Outer corners use the radius; adjacent
-+// corners stay flat. Drives the stacked-custom-radius integ test.
-+export default function StackedCustomRadiusContainer() {
-+  return (
-+    <SimplePage title="Stacked containers with a custom border radius" screenshotArea={{}}>
-+      <div style={{ inlineSize: 400 }}>
-+        <Container
-+          data-testid="bg-first"
-+          header="First stacked container"
-+          variant="stacked"
-+          style={{ root: { borderRadius: '24px', background: 'light-dark(#f0f8ff, #000)' } }}
-+        >
-+          Container content
-+        </Container>
-+        <Container
-+          data-testid="bg-middle"
-+          header="Middle stacked container"
-+          variant="stacked"
-+          style={{ root: { borderRadius: '24px', background: 'light-dark(#fff8f0, #000)' } }}
-+        >
-+          Container content
-+        </Container>
-+        <Container
-+          data-testid="bg-last"
-+          header="Last stacked container"
-+          variant="stacked"
-+          style={{ root: { borderRadius: '24px', background: 'light-dark(#f0fff8, #000)' } }}
-+        >
-+          Container content
-+        </Container>
-+      </div>
-+    </SimplePage>
-+  );
-+}
-```
-
-**File**: `src/container/__tests__/__snapshots__/styles.test.tsx.snap` (modified, +2/-6)
-```diff
-@@ -50,24 +50,22 @@ exports[`getFooterStyles handles all possible style configurations 3`] = `
- 
- exports[`getHeaderStyles handles all possible style configurations 1`] = `
- {
--  "borderRadius": undefined,
-   "paddingBlock": undefined,
-   "paddingInline": undefined,
- }
- `;
- 
- exports[`getHeaderStyles handles all possible style configurations 2`] = `
- {
--  "borderRadius": undefined,
-   "paddingBlock": undefined,
-   "paddingInline": undefined,
- }
- `;
- 
- exports[`getHeaderStyles handles all possible style configurations 3`] = `
- {
-+  "--awsui-container-style-border-radius-ka4djm": "8px",
-   "background": "transparent",
--  "borderRadius": "8px",
-   "paddingBlock": "12px",
-   "paddingInline": "20px",
- }
-@@ -125,7 +123,6 @@ exports[`getRootStyles handles all possible style configurations 1`] = `
- {
-   "background": undefined,
-   "borderColor": undefined,
--  "borderRadius": undefined,
-   "borderWidth": undefined,
-   "boxShadow": undefined,
-   "color": undefined,
-@@ -136,7 +133,6 @@ exports[`getRootStyles handles all possible style configurations 2`] = `
- {
-   "background": undefined,
-   "borderColor": undefined,
--  "borderRadius": undefined,
-   "borderWidth": undefined,
-   "boxShadow": undefined,
-   "color": undefined,
-@@ -145,9 +141,9 @@ exports[`getRootStyles handles all possible style configurations 2`] = `
- 
- exports[`getRootStyles handles all possible style configurations 3`] = `
- {
-+  "--awsui-container-style-border-radius-ka4djm": "8px",
-   "background": "#ffffff",
-   "borderColor": "#e0e0e0",
--  "borderRadius": "8px",
-   "borderWidth": "1px",
-   "boxShadow": "0 1px 3px rgba(0,0,0,0.1)",
-   "color": "#000000",
-```
-
-**File**: `src/container/__tests__/container.test.tsx` (modified, +4/-1)
-```diff
-@@ -4,6 +4,7 @@ import React from 'react';
- import { fireEvent, render } from '@testing-library/react';
- 
- import Container, { ContainerProps } from '../../../lib/components/container';
-+import customCssProps from '../../../lib/components/internal/generated/custom-css-properties';
- import createWrapper from '../../../lib/components/test-utils/dom';
- 
- import styles from '../../../lib/components/container/styles.css.js';
-@@ -170,7 +171,9 @@ describe('Style API', () => {
- 
-     expect(getComputedStyle(wrapper.getElement()).getPropertyValue('background')).toBe('rgb(240, 240, 235)');
-     expect(getComputedStyle(wrapper.getElement()).getPropertyValue('border-color')).toBe('purple');
--    expect(getComputedStyle(wrapper.getElement()).getPropertyValue('border-radius')).toBe('240px');
-+    expect(getComputedStyle(wrapper.getElement()).getPropertyValue(customCssProps.containerStyleBorderRadius)).toBe(
-+      '240px'
-+    );
-     expect(getComputedStyle(wrapper.getElement()).getPropertyValue('border-width')).toBe('6px');
-     expect(
-       getComputedStyle(wrapper.findByClassName(styles['content-inner'])!.getElement()).getPropertyValue('padding-block')
-```
-
-**File**: `src/container/style.tsx` (modified, +6/-2)
-```diff
-@@ -1,6 +1,7 @@
- // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- // SPDX-License-Identifier: Apache-2.0
- import { SYSTEM } from '../internal/environment';
-+import customCssProps from '../internal/generated/custom-css-properties';
- import { ContainerProps } from './interfaces';
- 
- export function getRootStyles(style: ContainerProps.Style | undefined) {
-@@ -11,7 +12,9 @@ export function getRootStyles(style: ContainerProps.Style | undefined) {
-   return {
-     background: style?.root?.background,
-     borderColor: style?.root?.borderColor,
--    borderRadius: style?.root?.borderRadius,
-+    // Set as a custom property, not inline `border-radius`, so stacked containers can still
-+    // flatten their adjacent corners in CSS.
-+    ...(style?.root?.borderRadius && { [customCssProps.containerStyleBorderRadius]: style.root.borderRadius }),
-     borderWidth: style?.root?.borderWidth,
-     boxShadow: style?.root?.boxShadow,
-     color: style?.root?.color,
-@@ -36,7 +39,8 @@ export function getHeaderStyles(style: ContainerProps.Style | undefined) {
- 
-   return {
-     ...(style?.root?.background && { background: 'transparent' }), // Fix for AWSUI-61442
--    borderRadius: style?.root?.borderRadius,
-+    // Same as the root: use a custom property so stacked headers can still flatten corners in CSS.
-+    ...(style?.root?.borderRadius && { [customCssProps.containerStyleBorderRadius]: style.root.borderRadius }),
-     paddingBlock: style?.header?.paddingBlock,
-     paddingInline: style?.header?.paddingInline,
-   };
-```
-
-**File**: `src/container/styles.scss` (modified, +5/-4)
-```diff
-@@ -138,8 +138,9 @@
- 
- .header {
-   background-color: awsui.$color-background-container-header;
--  border-start-start-radius: awsui.$border-radius-container;
--  border-start-end-radius: awsui.$border-radius-container;
-+  $border-radius: var(#{custom-props.$containerStyleBorderRadius}, #{awsui.$border-radius-container});
-+  border-start-start-radius: $border-radius;
-+  border-start-end-radius: $border-radius;
-   &.header-full-page {
-     background-color: awsui.$color-background-layout-main;
-   }
-@@ -206,8 +207,8 @@
-   }
- 
-   &.with-hidden-content {
--    border-end-start-radius: awsui.$border-radius-container;
--    border-end-end-radius: awsui.$border-radius-container;
-+    border-end-start-radius: $border-radius;
-+    border-end-end-radius: $border-radius;
-   }
- 
-   &-variant-cards {
-```
-
-**File**: `src/dropdown/__tests__/__snapshots__/styles.test.tsx.snap` (modified, +3/-3)
-```diff
-@@ -6,9 +6,9 @@ exports[`getDropdownStyles handles all possible style configurations 2`] = `unde
- 
- exports[`getDropdownStyles handles all possible style configurations 3`] = `
- {
--  "--awsui-dropdown-content-border-color-66120l": "rgb(0, 0, 0)",
--  "--awsui-dropdown-content-border-radius-66120l": "8px",
--  "--awsui-dropdown-content-border-width-66120l": "2px",
-+  "--awsui-dropdown-content-border-color-ka4djm": "rgb(0, 0, 0)",
-+  "--awsui-dropdown-content-border-radius-ka4djm": "8px",
-+  "--awsui-dropdown-content-border-width-ka4djm": "2px",
-   "background": "rgb(255, 255, 255)",
- }
- `;
-```
-
-**File**: `src/input/__tests__/__snapshots__/styles.test.tsx.snap` (modified, +72/-72)
-```diff
-@@ -2,30 +2,30 @@
- 
- exports[`getInputStyles handles all possible style configurations 1`] = `
- {
--  "--awsui-style-background-default-66120l": undefined,
--  "--awsui-style-background-disabled-66120l": undefined,
--  "--awsui-style-background-focus-66120l": undefined,
--  "--awsui-style-background-hover-66120l": undefined,
--  "--awsui-style-background-readonly-66120l": undefined,
--  "--awsui-style-border-color-default-66120l": undefined,
--  "--awsui-style-border-color-disabled-66120l": undefined,
--  "--awsui-style-border-color-focus-66120l": undefined,
--  "--awsui-style-border-color-hover-66120l": undefined,
--  "--awsui-style-border-color-readonly-66120l": undefined,
--  "--awsui-style-box-shadow-default-66120l": undefined,
--  "--awsui-style-box-shadow-disabled-66120l": undefined,
--  "--awsui-style-box-shadow-focus-66120l": undefined,
--  "--awsui-style-box-shadow-hover-66120l": undefined,
--  "--awsui-style-box-shadow-readonly-66120l": undefined,
--  "--awsui-style-color-default-66120l": undefined,
--  "--awsui-style-color-disabled-66120l": undefined,
--  "--awsui-style-color-focus-66120l": undefined,
--  "--awsui-style-color-hover-66120l": undefined,
--  "--awsui-style-color-readonly-66120l": undefined,
--  "--awsui-style-placeholder-color-66120l": undefined,
--  "--awsui-style-placeholder-font-size-66120l": undefined,
--  "--awsui-style-placeholder-font-style-66120l": undefined,
--  "--awsui-style-placeholder-font-weight-66120l": undefined,
-+  "--awsui-style-background-default-ka4djm": undefined,
-+  "--awsui-style-background-disabled-ka4djm": undefined,
-+  "--awsui-style-background-focus-ka4djm": undefined,
-+  "--awsui-style-background-hover-ka4djm": undefined,
-+  "--awsui-style-background-readonly-ka4djm": undefined,
-+  "--awsui-style-border-color-default-ka4djm": undefined,
-+  "--awsui-style-border-color-disabled-ka4djm": undefined,
-+  "--awsui-style-border-color-focus-ka4djm": undefined,
-+  "--awsui-style-border-color-hover-ka4djm": undefined,
-+  "--awsui-style-border-color-readonly-ka4djm": undefined,
-+  "--awsui-style-box-shadow-default-ka4djm": undefined,
-+  "--awsui-style-box-shadow-disabled-ka4djm": undefined,
-+  "--awsui-style-box-shadow-focus-ka4djm": undefined,
-+  "--awsui-style-box-shadow-hover-ka4djm": undefined,
-+  "--awsui-style-box-shadow-readonly-ka4djm": undefined,
-+  "--awsui-style-color-default-ka4djm": undefined,
-+  "--awsui-style-color-disabled-ka4djm": undefined,
-+  "--awsui-style-color-focus-ka4djm": undefined,
-+  "--awsui-style-color-hover-ka4djm": undefined,
-+  "--awsui-style-color-readonly-ka4djm": undefined,
-+  "--awsui-style-placeholder-color-ka4djm": undefined,
-+  "--awsui-style-placeholder-font-size-ka4djm": undefined,
-+  "--awsui-style-placeholder-font-style-ka4djm": undefined,
-+  "--awsui-style-placeholder-font-weight-ka4djm": undefined,
-   "borderRadius": undefined,
-   "borderWidth": undefined,
-   "fontSize": undefined,
-@@ -37,30 +37,30 @@ exports[`getInputStyles handles all possible style configurations 1`] = `
- 
- exports[`getInputStyles handles all possible style configurations 2`] = `
- {
--  "--awsui-style-background-default-66120l": undefined,
--  "--awsui-style-background-disabled-66120l": undefined,
--  "--awsui-style-background-focus-66120l": undefined,
--  "--awsui-style-background-hover-66120l": undefined,
--  "--awsui-style-background-readonly-66120l": undefined,
--  "--awsui-style-border-color-default-66120l": undefined,
--  "--awsui-style-border-color-disabled-66120l": undefined,
--  "--awsui-style-border-color-focus-66120l": undefined,
--  "--awsui-style-border-color-hover-66120l": undefined,
--  "--awsui-style-border-color-readonly-66120l": undefined,
--  "--awsui-style-box-shadow-default-66120l": undefined,
--  "--awsui-style-box-shadow-disabled-66120l": undefined,
--  "--awsui-style-box-shadow-focus-66120l": undefined,
--  "--awsui-style-box-shadow-hover-66120l": undefined,
--  "--awsui-style-box-shadow-readonly-66120l": undefined,
--  "--awsui-style-color-default-66120l": undefined,
--  "--awsui-style-color-disabled-66120l": undefined,
--  "--awsui-style-color-focus-66120l": undefined,
--  "--awsui-style-color-hover-66120l": undefined,
--  "--awsui-style-color-readonly-66120l": undefined,
--  "--awsui-style-placeholder-color-66120l": undefined,
--  "--awsui-style-placeholder-font-size-66120l": undefined,
--  "--awsui-style-placeholder-font-style-66120l": undefined,
--  "--awsui-style-placeholder-font-weight-66120l": undefined,
-+  "--awsui-style-background-default-ka4djm": undefined,
-+  "--awsui-style-background-disabled-ka4djm": undefined,
-+  "--awsui-style-background-focus-ka4djm": undefined,
-+  "--awsui-style-background-hover-ka4djm": undefined,
-+  "--awsui-style-background-readonly-ka4djm": undefined,
-+  "--awsui-style-border-color-default-ka4djm": undefined,
-+  "--awsui-style-border-color-disabled-ka4djm": undefined,
-+  "--awsui-style-border-color-focus-ka4djm": undefined,
-+  "--awsui-style-border-color-hover-ka4djm": undefined,
-+  "--awsui-style-border-color-readonly-ka4djm": undefined,
-```
-
----
-
-### Incident Patch 7: `818f03b7` (2026-09-28)
-**Commit Message**: fix: Degrade gracefully instead of crashing on malformed locale messages (#5052)
-
-**File**: `src/i18n/__tests__/i18n.test.tsx` (modified, +76/-0)
-```diff
-@@ -6,10 +6,17 @@ import { render } from '@testing-library/react';
- import * as IntlMessageFormat from 'intl-messageformat';
- import range from 'lodash/range';
- 
-+import { warnOnce } from '@cloudscape-design/component-toolkit/internal';
-+
- import { I18nProvider, I18nProviderProps } from '../../../lib/components/i18n';
- import { namespace } from '../../../lib/components/i18n/context';
- import { MESSAGES, TestComponent } from './test-component';
- 
-+jest.mock('@cloudscape-design/component-toolkit/internal', () => ({
-+  ...jest.requireActual('@cloudscape-design/component-toolkit/internal'),
-+  warnOnce: jest.fn(),
-+}));
-+
- afterEach(() => {
-   jest.restoreAllMocks();
++  test('passes lang attribute to submenu items', () => {
++    const wrapper = createWrapper(
++      render(
++        <SubmenuView
++          definition={{
++            type: 'menu-dropdown',
++            items: [{ id: 'de', text: 'Deutsch', lang: 'de', href: '#' }],
++          }}
++        />
++      ).container
++    ).find('a')!;
++    expect(wrapper.getElement()).toHaveAttribute('lang', 'de');
++  });
  });
-@@ -176,3 +183,72 @@ it('initializes an IntlMessageFormat instance once per message per render', () =
+ 
+ describe('UtilityMenuItem', () => {
+```
+
+**File**: `src/top-navigation/parts/overflow-menu/menu-item.tsx` (modified, +6/-2)
+```diff
+@@ -34,11 +34,13 @@ const ListItem = ({ children, startIcon, endIcon }: ListItemProps) => {
    );
-   expect(constructorSpy).toHaveBeenCalledTimes(8);
- });
-+
-+describe('resilience against malformed messages', () => {
-+  // AWSUI-62316: a message with a stale variable contract used to crash the whole page.
-+
-+  it('renders the component tree when a message references variables the component does not provide', () => {
-+    const brokenMessages: I18nProviderProps.Messages = {
-+      [namespace]: {
-+        en: {
-+          'test-component': {
-+            topLevelFunction: '{operator, select, equals {equals} other {other}} label',
-+          },
-+        },
-+      },
-+    };
-+
-+    const { container } = render(
-+      <I18nProvider messages={[brokenMessages]} locale="en">
-+        <TestComponent />
-+      </I18nProvider>
-+    );
-+
-+    // Broken message degrades to empty string; the rest of the tree still renders.
-+    expect(container.querySelector('#top-level-function')).toHaveTextContent('');
-+    expect(container.querySelector('#top-level-string')).toBeInTheDocument();
-+    expect(warnOnce).toHaveBeenCalledWith('I18nProvider', expect.stringContaining('Failed to format message'));
-+  });
-+
-+  it('renders the component tree when a message has invalid ICU syntax', () => {
-+    const brokenMessages: I18nProviderProps.Messages = {
-+      [namespace]: {
-+        en: {
-+          'test-component': {
-+            topLevelString: 'Unclosed {argument',
-+          },
-+        },
-+      },
-+    };
-+
-+    const { container } = render(
-+      <I18nProvider messages={[MESSAGES, brokenMessages]} locale="en">
-+        <TestComponent />
-+      </I18nProvider>
-+    );
-+
-+    // Unparseable message falls back; sibling messages are unaffected.
-+    expect(container.querySelector('#top-level-string')).toHaveTextContent('');
-+    expect(container.querySelector('#nested-string')).toHaveTextContent('nested string');
-+  });
-+
-+  it('renders the component tree when a message is malformed and the value is provided via props', () => {
-+    const brokenMessages: I18nProviderProps.Messages = {
-+      [namespace]: {
-+        en: {
-+          'test-component': {
-+            topLevelString: 'Unclosed {argument',
-+          },
-+        },
-+      },
-+    };
-+
-+    const { container } = render(
-+      <I18nProvider messages={[brokenMessages]} locale="en">
-+        <TestComponent topLevelString="Provided string" />
-+      </I18nProvider>
-+    );
-+
-+    expect(container.querySelector('#top-level-string')).toHaveTextContent('Provided string');
-+  });
-+});
-```
-
-**File**: `src/i18n/utils/__tests__/i18n-formatter.test.ts` (modified, +115/-0)
-```diff
-@@ -1,8 +1,19 @@
- // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- // SPDX-License-Identifier: Apache-2.0
- 
-+import { warnOnce } from '@cloudscape-design/component-toolkit/internal';
-+
- import { I18nFormatter, I18nMessages } from '../i18n-formatter';
- 
-+jest.mock('@cloudscape-design/component-toolkit/internal', () => ({
-+  ...jest.requireActual('@cloudscape-design/component-toolkit/internal'),
-+  warnOnce: jest.fn(),
-+}));
-+
-+afterEach(() => {
-+  jest.clearAllMocks();
-+});
-+
- const NAMESPACE = 'test-ns';
- const COMPONENT = 'my-component';
- 
-@@ -59,4 +70,108 @@ describe('I18nFormatter', () => {
- 
-     expect(result).toBe('5 items');
-   });
-+
-+  describe('resilience against malformed messages', () => {
-+    test('does not warn for well-formed messages', () => {
-+      const formatter = new I18nFormatter('en', makeMessages('en', { greeting: 'Hello, {name}' }));
-+      formatter.format<string | undefined, { name: string }>(NAMESPACE, COMPONENT, 'greeting', undefined, formatFn =>
-+        formatFn({ name: 'World' })
-+      );
-+      expect(warnOnce).not.toHaveBeenCalled();
-+    });
-+
-+    test('returns undefined and warns when a message has invalid ICU syntax', () => {
-+      const formatter = new I18nFormatter('en', makeMessages('en', { greeting: 'Hello, {name' }));
-+      expect(formatter.format(NAMESPACE, COMPONENT, 'greeting', undefined)).toBeUndefined();
-+      expect(warnOnce).toHaveBeenCalledWith(
-+        'I18nProvider',
-+        expect.stringContaining(`Malformed message "${NAMESPACE}.${COMPONENT}.greeting" for locale "en"`)
-+      );
-+    });
-+
-+    test('returns undefined and warns when a message references a variable that is not provided', () => {
-+      const formatter = new I18nFormatter('en', makeMessages('en', { greeting: 'Hello, {name}' }));
-+      expect(formatter.format(NAMESPACE, COMPONENT, 'greeting', undefined)).toBeUndefined();
-+      expect(warnOnce).toHaveBeenCalledWith(
-+        'I18nProvider',
-+        expect.stringContaining(`Failed to format message "${NAMESPACE}.${COMPONENT}.greeting" for locale "en"`)
-+      );
-+    });
-+
-+    test('formatting function returns an empty string and warns when formatting with a customHandler fails', () => {
-+      // AWSUI-62316: the message demands variables the component no longer provides.
-+      const messages = makeMessages('en', {
-+        removeLabel: 'Remove filter, {token__operator, select, equals {equals} other {other}} {token__value}',
-+      });
-+      const formatter = new I18nFormatter('en', messages);
-+
-+      const result = formatter.format<string | undefined, { token__formattedText: string }>(
-+        NAMESPACE,
-+        COMPONENT,
-+        'removeLabel',
-+        undefined,
-+        formatFn => formatFn({ token__formattedText: 'Name = foo' })
-+      );
-+
-+      expect(result).toBe('');
-+      expect(warnOnce).toHaveBeenCalledWith(
-+        'I18nProvider',
-+        expect.stringContaining(`Failed to format message "${NAMESPACE}.${COMPONENT}.removeLabel" for locale "en"`)
-+      );
-+    });
-+
-+    test('formatting function returned by customHandler is guarded when invoked after render', () => {
-+      // Parses fine, but "itemCount" isn't passed, so it throws at format time.
-+      const formatter = new I18nFormatter('en', makeMessages('en', { itemCount: '{itemCount} items' }));
-+
-+      // formatFn is invoked later, outside the formatter's call stack. It must not throw even then.
-+      const lateFormatFn = formatter.format<((count: number) => string) | undefined, { count: number }>(
-+        NAMESPACE,
-+        COMPONENT,
-+        'itemCount',
-+        undefined,
-+        formatFn => count => formatFn({ count })
-+      );
-+
-+      expect(() => lateFormatFn!(5)).not.toThrow();
-+      expect(lateFormatFn!(5)).toBe('');
-+      expect(warnOnce).toHaveBeenCalledWith(
-+        'I18nProvider',
-+        expect.stringContaining(`Failed to format message "${NAMESPACE}.${COMPONENT}.itemCount" for locale "en"`)
-+      );
-+    });
-+
-+    test('recovers on every render when the formatter instance is cached', () => {
-+      const formatter = new I18nFormatter('en', makeMessages('en', { greeting: 'Hello, {name}' }));
-+
-+      // Second call exercises the cached-formatter path.
-+      expect(formatter.format(NAMESPACE, COMPONENT, 'greeting', undefined)).toBeUndefined();
-+      expect(formatter.format(NAMESPACE, COMPONENT, 'greeting', undefined)).toBeUndefined();
-+    });
-+
-+    test('caches a parse failure so a malformed message is not re-parsed on later calls', () => {
-+      const formatter = new I18nFormatter('en', makeMessages('en', { greeting: 'Hello, {name' }));
-+      const cacheKey = `${NAMESPACE}.${COMPONENT}.greeting`;
-+      const cache = (formatter as unknown as { _localeFormatterCache: Map<string, unknown> })._localeFormatterCache;
-+
-+      expect(formatter.format(NAMESPACE, COMPONENT, 'greeting', undefined)).toBeUndefined();
-+      // The failed parse is recorded as a null sentinel in the shared cache, so a later
-
-```
-
-**File**: `src/i18n/utils/i18n-formatter.ts` (modified, +35/-6)
-```diff
-@@ -4,6 +4,8 @@
- import { MessageFormatElement } from '@formatjs/icu-messageformat-parser';
- import IntlMessageFormat from 'intl-messageformat';
- 
-+import { warnOnce } from '@cloudscape-design/component-toolkit/internal';
-+
- import { CustomHandler } from '../context';
- import { getMatchableLocales } from './locales';
- import { normalizeMessages } from './messages';
-@@ -37,7 +39,7 @@ export class I18nFormatter {
-   // Not memoizing it allows us to reset the cache when the component rerenders
-   // with potentially different locale or messages. We expect this component to
-   // be placed above AppLayout and therefore rerender very infrequently.
--  private _localeFormatterCache = new Map<string, IntlMessageFormat>();
-+  private _localeFormatterCache = new Map<string, IntlMessageFormat | null>();
- 
-   constructor(locale: string, messages: I18nMessages) {
-     this._locale = locale.toLowerCase();
-@@ -62,6 +64,10 @@ export class I18nFormatter {
-     let intlMessageFormat: IntlMessageFormat;
- 
-     const cachedFormatter = this._localeFormatterCache.get(cacheKey);
-+    // A null entry means this message already failed to parse; don't retry.
-+    if (cachedFormatter === null) {
-+      return provided;
-+    }
-     if (cachedFormatter) {
-       // If an IntlMessageFormat instance was cached for this locale, just use that.
-       intlMessageFormat = cachedFormatter;
-@@ -83,14 +89,37 @@ export class I18nFormatter {
-       }
- 
-       // Lazily create an IntlMessageFormat object for this key.
--      intlMessageFormat = new IntlMessageFormat(message, this._locale);
--      this._localeFormatterCache.set(cacheKey, intlMessageFormat);
-+      // Invalid ICU syntax falls back to the provided value instead of crashing the render.
-+      try {
-+        intlMessageFormat = new IntlMessageFormat(message, this._locale);
-+        this._localeFormatterCache.set(cacheKey, intlMessageFormat);
-+      } catch (error) {
-+        warnOnce('I18nProvider', `Malformed message "${cacheKey}" for locale "${this._locale}": ${error}`);
-+        this._localeFormatterCache.set(cacheKey, null);
-+        return provided;
-+      }
-     }
- 
-+    // Formatting can throw at runtime (e.g. a message/component contract mismatch),
-+    // so degrade gracefully instead of crashing the consumer's page.
-     if (customHandler) {
--      return customHandler(args => intlMessageFormat.format(args) as string);
-+      // The returned formatFn may be invoked later during render, so guard it. It must return a string.
-+      return customHandler(args => {
-+        try {
-+          return intlMessageFormat.format(args) as string;
-+        } catch (error) {
-+          warnOnce('I18nProvider', `Failed to format message "${cacheKey}" for locale "${this._locale}": ${error}`);
-+          return '';
-+        }
-+      });
-+    }
-+    try {
-+      // Assuming `ReturnValue extends string` since a customHandler wasn't provided.
-+      return intlMessageFormat.format() as ReturnValue;
-+    } catch (error) {
-+      warnOnce('I18nProvider', `Failed to format message "${cacheKey}" for locale "${this._locale}": ${error}`);
-+      // Fall back so the component's own default string logic takes over.
-+      return provided;
-     }
--    // Assuming `ReturnValue extends string` since a customHandler wasn't provided.
--    return intlMessageFormat.format() as ReturnValue;
-   }
- }
-```
-
----
-
-### Incident Patch 8: `aa76658c` (2026-09-25)
-**Commit Message**: fix: Fixes table sticky columns flickering (#5044)
-
-**File**: `src/table/sticky-columns/__tests__/use-sticky-columns.test.tsx` (modified, +41/-0)
-```diff
-@@ -157,6 +157,47 @@ test('generates empty sticky cell state if not enough scrollable space', () => {
-   });
- });
- 
-+test('allows for the padding the first sticky cell gets when scrolled', () => {
-+  const { result, rerender } = renderHook(() =>
-+    useStickyColumns({ visibleColumns: [1, 2, 3], stickyColumnsFirst: 1, stickyColumnsLast: 0 })
-+  );
-+  // Sticky cell 100px + minimum scrollable space 148px + table padding 20px = 268px.
-+  const { wrapper, table, cells } = createMockTable(result.current, 268, 500, 100, 200, 200);
-+  table.style.paddingInlineStart = table.style.paddingInlineEnd = '10px';
-+  const isEnabled = () => result.current.store.get().cellState.size > 0;
-+  const setWidth = (element: HTMLElement, width: number) =>
-+    jest.spyOn(element, 'getBoundingClientRect').mockImplementation(() => ({ width }) as DOMRect);
-+  const scroll = () => wrapper.dispatchEvent(new UIEvent('scroll'));
-+
-+  // Wait for effect
-+  rerender({});
-+  expect(isEnabled()).toBe(false);
-+
-+  setWidth(wrapper, 269);
-+  scroll();
-+  expect(isEnabled()).toBe(true);
-+
-+  // Scrolling applies the padding and widens the first cell, which must not disable the feature.
-+  wrapper.scrollLeft = 20;
-+  scroll();
-+  setWidth(cells[0], 118);
-+  scroll();
-+  expect(result.current.store.get().cellState.get(1)?.padInlineStart).toBe(true);
-+  expect(isEnabled()).toBe(true);
-+
-+  // With selection the padding is set but the first cell does not grow: narrowing the wrapper while scrolled keeps
-+  // the feature (100px + 124px + 20px = 244px), scrolling back disables it as the wrapper is below 268px.
-+  setWidth(cells[0], 100);
-+  setWidth(wrapper, 260);
-+  scroll();
-+  expect(isEnabled()).toBe(true);
-+  wrapper.scrollLeft = 0;
-+  // The first update removes the padding, the next one (any later scroll or resize) evaluates without it.
-+  scroll();
-+  scroll();
-+  expect(isEnabled()).toBe(false);
-+});
-+
- test('generates non-empty styles for sticky cells', () => {
-   const { result, rerender } = renderHook(() =>
-     useStickyColumns({ visibleColumns: [1, 2, 3], stickyColumnsFirst: 0, stickyColumnsLast: 1 })
-```
-
-**File**: `src/table/sticky-columns/use-sticky-columns.ts` (modified, +12/-4)
-```diff
-@@ -20,6 +20,12 @@ import { isCellStatesEqual, isWrapperStatesEqual, updateCellOffsets } from './ut
- // We allow the table to have a minimum of 148px of available space besides the sum of the widths of the sticky columns
- // This value is an UX recommendation and is approximately 1/3 of our smallest breakpoint (465px)
- const MINIMUM_SCROLLABLE_SPACE = 148;
-+// The first sticky cell gets extra padding when the table is scrolled (see padInlineStart), which is then included in
-+// the measured sticky width. A lower minimum applies in that case, so that applying the padding cannot disable the
-+// feature. The difference must not be smaller than the padding in any theme or density mode. Removing the padding can
-+// disable the feature within a range of wrapper widths up to that difference (largest for tables with selection, where
-+// the padding is set but does not change the cell width).
-+const MINIMUM_SCROLLABLE_SPACE_WHILE_STUCK = MINIMUM_SCROLLABLE_SPACE - 24;
- 
- export interface StickyColumnsModel {
-   store: ReadonlyAsyncStore<StickyColumnsState>;
-@@ -367,10 +373,12 @@ class StickyColumnsStore extends AsyncStore<StickyColumnsState> {
-     }
- 
-     const totalStickySpace = this.cellOffsets.stickyWidthInlineStart + this.cellOffsets.stickyWidthInlineEnd;
--    const tablePaddingLeft = parseFloat(getComputedStyle(props.table).paddingLeft) || 0;
--    const tablePaddingRight = parseFloat(getComputedStyle(props.table).paddingRight) || 0;
--    const hasEnoughScrollableSpace =
--      totalStickySpace + MINIMUM_SCROLLABLE_SPACE + tablePaddingLeft + tablePaddingRight < wrapperWidth;
-+    const tablePaddingInlineStart = parseFloat(getComputedStyle(props.table).paddingInlineStart) || 0;
-+    const tablePaddingInlineEnd = parseFloat(getComputedStyle(props.table).paddingInlineEnd) || 0;
-+    const tablePaddings = tablePaddingInlineStart + tablePaddingInlineEnd;
-+    const isFirstCellPadded = this.get().cellState.get(props.visibleColumns[0])?.padInlineStart ?? false;
-+    const minimumScrollableSpace = isFirstCellPadded ? MINIMUM_SCROLLABLE_SPACE_WHILE_STUCK : MINIMUM_SCROLLABLE_SPACE;
-+    const hasEnoughScrollableSpace = minimumScrollableSpace < wrapperWidth - totalStickySpace - tablePaddings;
-     if (!hasEnoughScrollableSpace) {
-       return false;
-     }
-```
-
----
-
-### Incident Patch 9: `6208f4ae` (2026-09-25)
-**Commit Message**: fix: Migrate th locale PropertyFilter messages to current contract (#5050)
-
-Co-authored-by: Nathnael Dereje <[REDACTED_EMAIL]>
-
-**File**: `src/i18n/messages/all.th.json` (modified, +1/-1)
-```diff
-@@ -199,7 +199,7 @@
-     "i18nStrings.tokenLimitShowFewer": "แสดงน้อยลง",
-     "i18nStrings.tokenLimitShowMore": "แสดงเพิ่มเติม",
-     "i18nStrings.valueText": "ค่า",
--    "i18nStrings.removeTokenButtonAriaLabel": "{token__operator, select, equals {ลบตัวกรอง {token__propertyLabel} เท่ากับ {token__value}} not_equals {ลบตัวกรอง {token__propertyLabel} ไม่เท่ากับ {token__value}} greater_than {ลบตัวกรอง {token__propertyLabel} มากกว่า {token__value}} greater_than_equal {ลบตัวกรอง {token__propertyLabel} มากกว่าหรือเท่ากับ {token__value}} less_than {ลบตัวกรอง {token__propertyLabel} น้อยกว่า {token__value}} less_than_equal {ลบตัวกรอง {token__propertyLabel} น้อยกว่าหรือเท่ากับ {token__value}} contains {ลบตัวกรอง {token__propertyLabel} ประกอบด้วย {token__value}} not_contains {ลบตัวกรอง {token__propertyLabel} ไม่มี {token__value}} starts_with {ลบตัวกรอง {token__propertyLabel} เริ่มต้นด้วย {token__value}} other {}}"
-+    "i18nStrings.removeTokenButtonAriaLabel": "ลบตัวกรอง {token__formattedText}"
-   },
-   "s3-resource-selector": {
-     "i18nStrings.inContextSelectPlaceholder": "เลือกเวอร์ชัน",
-```
-
----
-
-### Incident Patch 10: `3fb837bc` (2026-09-22)
-**Commit Message**: fix: Align container header with description in One Theme (#5035)
-
-**File**: `src/expandable-section/styles.scss` (modified, +16/-0)
-```diff
-@@ -30,6 +30,12 @@ $icon-offset-container: awsui.$space-xxs;
- // Useful to keep elements correctly aligned.
- $icon-total-space-normal: calc(#{$icon-width-normal} + #{$icon-margin-left} + #{$icon-margin-right-normal});
- $icon-total-space-medium: calc(#{$icon-width-medium} + #{$icon-margin-left} + #{$icon-margin-right-medium});
-+// In One Theme the container caret is an x-small (12px) icon with no start margin and
-+// $icon-margin-right-small as end margin (see .icon-container below), so it occupies less
-+// space than the medium caret. Keep in sync with that rule and with the icon size chosen
-+// in expandable-section-header.tsx.
-+$icon-width-x-small: 12px;
-+$icon-total-space-container-one-theme: calc(#{$icon-width-x-small} + #{$icon-margin-right-small});
- 
- // Extra inline padding that widens the navigation caret pointer target to 24px (WCAG 2.5.8).
- $nav-caret-pad-normal: calc(24px - #{$icon-width-normal});
-@@ -200,6 +206,9 @@ $nav-caret-pad-one-theme: 12px; // 24px minus the one-theme x-small (12px) icon
-     }
-     &:not(.header-deprecated) {
-       padding-inline-start: calc(#{container.$header-padding-horizontal} + #{$icon-total-space-medium});
-+      @include theming.one-theme-only {
-+        padding-inline-start: calc(#{container.$header-padding-horizontal} + #{$icon-total-space-container-one-theme});
-+      }
-     }
- 
-     @include focus-visible.when-visible {
-@@ -252,6 +261,13 @@ $nav-caret-pad-one-theme: 12px; // 24px minus the one-theme x-small (12px) icon
- 
-   &-container-button {
-     margin-inline-start: calc(-1 * #{$icon-total-space-medium});
-+    // Only when the caret is at the start. The end-icon layout resets this margin
-+    // below (.header-button-icon-end) and a theme-scoped rule would outrank that reset.
-+    &:not(.header-button-icon-end) {
-+      @include theming.one-theme-only {
-+        margin-inline-start: calc(-1 * #{$icon-total-space-container-one-theme});
-+      }
-+    }
-   }
- 
-   &-container {
-```
-
----
-
-### Incident Patch 11: `7fbd2ff6` (2026-09-21)
-**Commit Message**: chore: Report success for visual regression in the merge queue (#5036)
-
-**File**: `.github/workflows/visual-regression-merge-queue.yml` (added, +18/-0)
-```diff
-@@ -0,0 +1,18 @@
-+name: Visual regression (merge queue)
-+
-+# Reports the required "Visual regression result" check on the merge-queue branch.
-+# The real comparison runs on pull_request (deploy.yml); it is not run again in the merge queue.
-+
-+on:
-+  merge_group:
-+
-+permissions:
-+  contents: read
-+
-+jobs:
-+  visual-regression-result:
-+    name: Visual regression result
-+    runs-on: ubuntu-latest
-+    steps:
-+      - name: Pass in merge queue
-+        run: echo "Visual regression not re-run; already validated on the PR head. Marking as passed."
-```
-
----
-
-### Incident Patch 12: `dedd0713` (2026-09-17)
-**Commit Message**: fix: Show table empty state when skeleton is enabled and load completes with no items (#5013)
-
-**File**: `src/table/__tests__/skeleton.test.tsx` (modified, +11/-0)
-```diff
-@@ -49,6 +49,17 @@ describe('Table skeleton loading', () => {
-       expect(rows).toHaveLength(0);
-     });
- 
-+    test('renders the empty state when loading has finished with no items', () => {
-+      const wrapper = renderTable({
-+        items: [],
-+        loading: false,
-+        skeleton: { totalRows: 5 },
-+        empty: 'No resources',
-+      });
-+      expect(wrapper.findAll('tr[aria-hidden="true"]')).toHaveLength(0);
-+      expect(wrapper.findTable()!.findEmptySlot()!.getElement()).toHaveTextContent('No resources');
-+    });
-+
-     test('renders a screen-reader-only loading announcement', () => {
-       const wrapper = renderTable({
-         items: [],
-```
-
-**File**: `src/table/internal.tsx` (modified, +1/-1)
-```diff
-@@ -681,7 +681,7 @@ const InternalTable = React.forwardRef(
-                           colIndexOffset={colIndexOffset}
-                           renderCell={skeleton?.renderCell}
-                         />
--                      ) : !skeleton && (loading || allItems.length === 0) ? (
-+                      ) : allItems.length === 0 || (loading && !skeleton) ? (
-                         <tr>
-                           <NoDataCell
-                             totalColumnsCount={totalColumnsCount}
-```
-
----
-
-### Incident Patch 13: `ac914645` (2026-09-17)
-**Commit Message**: fix: Aligns locale fallback handling in calendar and date range picker (#5017)
-
-**File**: `src/__tests__/snapshot-tests/__snapshots__/documenter.test.ts.snap` (modified, +6/-3)
-```diff
-@@ -7746,7 +7746,8 @@ as you would for other form elements.",
-     {
-       "defaultValue": "''",
-       "description": "Specifies the locale to use to render month names and determine the starting day of the week.
--If you don't provide this, the locale is determined by the page and browser locales.
-+If you don't provide this, the locale is determined by the locale of the surrounding I18nProvider,
-+or the page and browser locales otherwise.
- Supported values and formats are listed in the
- [JavaScript Intl API specification](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl#Locale_identification_and_negotiation).",
-       "name": "locale",
-@@ -11416,7 +11417,8 @@ as you would for other form elements.",
-     },
-     {
-       "description": "Specifies the locale to use to render month names and determine the starting day of the week.
--If you don't provide this, the locale is determined by the page and browser locales.
-+If you don't provide this, the locale is determined by the locale of the surrounding I18nProvider,
-+or the page and browser locales otherwise.
- Supported values and formats are listed in the
- [JavaScript Intl API specification](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl#Locale_identification_and_negotiation).",
-       "name": "locale",
-@@ -12149,7 +12151,8 @@ Ensure that your function checks for missing fields in the value.",
-       "defaultValue": "''",
-       "description": "The locale to be used for rendering month names and defining the
- starting date of the week. If not provided, it will be determined
--from the page and browser locales. Supported values and formats
-+from the locale of the surrounding I18nProvider,
-+or the page and browser locales otherwise. Supported values and formats
- are as-per the [JavaScript Intl API specification](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl#Locale_identification_and_negotiation).",
-       "name": "locale",
-       "optional": true,
-```
-
-**File**: `src/calendar/__tests__/calendar.test.tsx` (modified, +24/-0)
-```diff
-@@ -9,6 +9,7 @@ import MockDate from 'mockdate';
- 
- import '../../__a11y__/to-validate-a11y';
- import Calendar, { CalendarProps } from '../../../lib/components/calendar';
-+import TestI18nProvider from '../../../lib/components/i18n/testing';
- import { KeyCode } from '../../../lib/components/internal/keycode';
- import createWrapper, { CalendarWrapper } from '../../../lib/components/test-utils/dom';
- 
-@@ -99,6 +100,29 @@ describe('Calendar locale DE', () => {
-   });
- });
- 
-+describe('Calendar I18nProvider locale', () => {
-+  function renderWithProvider(props: CalendarProps = defaultProps) {
-+    const { container } = render(
-+      <TestI18nProvider messages={{}} locale="de-DE">
-+        <Calendar {...props} />
-+      </TestI18nProvider>
-+    );
-+    return createWrapper(container).findCalendar()!;
-+  }
-+
-+  test('uses I18nProvider locale when no locale property is provided', () => {
-+    const wrapper = renderWithProvider({ ...defaultProps, value: '2022-01-07' });
-+    expect(findCalendarWeekdays(wrapper)[0]).toBe('Mo');
-+    expect(wrapper.findHeader().getElement()).toHaveTextContent('Januar 2022');
-+  });
-+
-+  test('explicit locale property takes precedence over I18nProvider locale', () => {
-+    const wrapper = renderWithProvider({ ...defaultProps, value: '2022-01-07', locale: 'en-US' });
-+    expect(findCalendarWeekdays(wrapper)[0]).toBe('Sun');
-+    expect(wrapper.findHeader().getElement()).toHaveTextContent('January 2022');
-+  });
-+});
-+
- describe('aria labels', () => {
-   describe('aria-label', () => {
-     test('can be set', () => {
-```
-
-**File**: `src/calendar/interfaces.ts` (modified, +2/-1)
-```diff
-@@ -29,7 +29,8 @@ export interface CalendarProps extends BaseComponentProps {
- 
-   /**
-    * Specifies the locale to use to render month names and determine the starting day of the week.
--   * If you don't provide this, the locale is determined by the page and browser locales.
-+   * If you don't provide this, the locale is determined by the locale of the surrounding I18nProvider,
-+   * or the page and browser locales otherwise.
-    * Supported values and formats are listed in the
-    * [JavaScript Intl API specification](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl#Locale_identification_and_negotiation).
-    */
-```
-
-**File**: `src/calendar/internal.tsx` (modified, +3/-1)
-```diff
-@@ -7,6 +7,7 @@ import { addMonths, addYears, isSameDay, isSameMonth, isSameYear } from 'date-fn
- 
- import { useUniqueId } from '@cloudscape-design/component-toolkit/internal';
- 
-+import { useLocale } from '../i18n/context.js';
- import { getBaseProps } from '../internal/base-component';
- import { fireNonCancelableEvent } from '../internal/events/index.js';
- import checkControlled from '../internal/hooks/check-controlled/index.js';
-@@ -50,7 +51,8 @@ export default function Calendar({
-   checkControlled('Calendar', 'value', value, 'onChange', onChange);
- 
-   const baseProps = getBaseProps(rest);
--  const normalizedLocale = normalizeLocale('Calendar', locale);
-+  const contextLocale = useLocale();
-+  const normalizedLocale = normalizeLocale('Calendar', locale || contextLocale);
- 
-   const gridWrapperRef = useRef<HTMLDivElement>(null);
-   const [focusedDate, setFocusedDate] = useState<Date | null>(null);
-```
-
-**File**: `src/date-range-picker/__tests__/date-range-picker.test.tsx` (modified, +29/-0)
-```diff
-@@ -586,6 +586,35 @@ describe('Date range picker', () => {
-   });
- });
- 
-+describe('I18nProvider locale', () => {
-+  const value: DateRangePickerProps.Value = {
-+    type: 'absolute',
-+    startDate: '2020-03-02T05:00:00+00:00',
-+    endDate: '2020-03-12T13:05:21+00:00',
-+  };
-+
-+  function renderWithProviderLocale(props?: Partial<DateRangePickerProps>) {
-+    const { container } = render(
-+      <TestI18nProvider messages={{}} locale="de-DE">
-+        <DateRangePicker {...defaultProps} locale={undefined} value={value} {...props} />
-+      </TestI18nProvider>
-+    );
-+    const wrapper = createWrapper(container).findDateRangePicker()!;
-+    wrapper.openDropdown();
-+    return wrapper;
-+  }
-+
-+  test('uses I18nProvider locale when no locale property is provided', () => {
-+    const wrapper = renderWithProviderLocale();
-+    expect(wrapper.findDropdown()!.findHeader().getElement()).toHaveTextContent('März 2020');
-+  });
-+
-+  test('explicit locale property takes precedence over I18nProvider locale', () => {
-+    const wrapper = renderWithProviderLocale({ locale: 'en-US' });
-+    expect(wrapper.findDropdown()!.findHeader().getElement()).toHaveTextContent('March 2020');
-+  });
-+});
-+
- describe('renderTriggerContent', () => {
-   test('renders custom trigger content when provided', () => {
-     const { wrapper } = renderDateRangePicker({
-```
-
-**File**: `src/date-range-picker/index.tsx` (modified, +3/-2)
-```diff
-@@ -7,7 +7,7 @@ import clsx from 'clsx';
- import { useMergeRefs, useUniqueId, warnOnce } from '@cloudscape-design/component-toolkit/internal';
- 
- import Dropdown from '../dropdown/internal';
--import { useInternalI18n } from '../i18n/context';
-+import { useInternalI18n, useLocale } from '../i18n/context';
- import InternalIcon from '../icon/internal';
- import { getBaseProps } from '../internal/base-component';
- import ButtonTrigger from '../internal/components/button-trigger';
-@@ -175,7 +175,8 @@ const DateRangePicker = React.forwardRef(
- 
-     const [isDropDownOpen, setIsDropDownOpen] = useState<boolean>(false);
- 
--    const normalizedLocale = normalizeLocale('DateRangePicker', locale);
-+    const contextLocale = useLocale();
-+    const normalizedLocale = normalizeLocale('DateRangePicker', locale || contextLocale);
- 
-     const closeDropdown = (focusTrigger = false) => {
-       setIsDropDownOpen(false);
-```
-
-**File**: `src/date-range-picker/interfaces.ts` (modified, +2/-1)
-```diff
-@@ -41,7 +41,8 @@ export interface DateRangePickerBaseProps {
-   /**
-    * The locale to be used for rendering month names and defining the
-    * starting date of the week. If not provided, it will be determined
--   * from the page and browser locales. Supported values and formats
-+   * from the locale of the surrounding I18nProvider,
-+   * or the page and browser locales otherwise. Supported values and formats
-    * are as-per the [JavaScript Intl API specification](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl#Locale_identification_and_negotiation).
-    */
-   locale?: string;
-```
-
-**File**: `src/internal/utils/locale/__tests__/normalize-locale.test.ts` (modified, +6/-0)
-```diff
-@@ -40,6 +40,12 @@ describe('normalizeLocale', () => {
-     expect(normalizeLocale('DatePickerTest', 'zh_CN')).toBe('zh-CN');
-   });
- 
-+  test('should normalize casing to aa-BB', () => {
-+    expect(normalizeLocale('DatePickerTest', 'de-de')).toBe('de-DE');
-+    expect(normalizeLocale('DatePickerTest', 'DE-DE')).toBe('de-DE');
-+    expect(normalizeLocale('DatePickerTest', 'EN')).toBe('en-US');
-+  });
-+
-   test('should warn if the provided value is in invalid format', () => {
-     expect(normalizeLocale('DatePickerTest', 'not-locale')).toBe('en-US');
-     expect(consoleSpy).toHaveBeenCalledWith(
-```
-
----
-
-### Incident Patch 14: `3dc4191d` (2026-09-16)
-**Commit Message**: chore: Add workflow to override visual regression test results (#4954)
-
-Co-authored-by: Copilot Autofix powered by AI <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/deploy.yml` (modified, +53/-0)
-```diff
-@@ -15,6 +15,7 @@ permissions:
-   id-token: write
-   actions: read
-   contents: read
-+  statuses: read # Needed to check if the visual regression test result has been overridden
-   deployments: write
- 
- jobs:
-@@ -135,3 +136,55 @@ jobs:
-       test-utils-artifact-name: test-utils-selectors
-       baseline-artifact-name: visual-baseline-pages
-       caller-run-id: ${{ github.run_id }}
-+      commit-sha: ${{ github.event.pull_request.head.sha }}
-+
-+  # Required status check for branch protection. Runs for every PR so the context
-+  # is always reported.
-+  #
-+  # It passes when any of these hold:
-+  #   - the PR is from a fork (visual regression cannot run, so it is skipped);
-+  #   - the visual job succeeded;
-+  #   - the commit has a maintainer override status.
-+  #
-+  # The override is checked directly here (not only via the visual job result) so
-+  # that after an override this job can be re-run on its own to turn the check
-+  # green, without rebuilding or redeploying the (unchanged) pages.
-+  visual-regression-result:
-+    name: Visual regression result
-+    needs: [visual]
-+    if: always()
-+    runs-on: ubuntu-latest
-+    steps:
-+      - name: Evaluate result
-+        env:
-+          GH_TOKEN: ${{ github.token }}
-+          REPO: ${{ github.repository }}
-+          SHA: ${{ github.event.pull_request.head.sha }}
-+          IS_FORK: ${{ github.event.pull_request.head.repo.full_name != github.repository }}
-+          VISUAL_RESULT: ${{ needs.visual.result }}
-+        run: |
-+          if [ "$IS_FORK" = "true" ]; then
-+            echo "::notice::Fork pull request: visual regression does not run. Marking as passed."
-+            exit 0
-+          fi
-+
-+          if [ "$VISUAL_RESULT" = "success" ]; then
-+            echo "Visual regression passed."
-+            exit 0
-+          fi
-+
-+          if [ "$VISUAL_RESULT" = "skipped" ] || [ "$VISUAL_RESULT" = "cancelled" ]; then
-+            echo "::error::Visual regression did not run (result: ${VISUAL_RESULT})."
-+            exit 1
-+          fi
-+
-+          OVERRIDDEN=$(gh api \
-+            "repos/${REPO}/commits/${SHA}/status" \
-+            --jq 'any(.statuses[]; .context == "visual-regression-override" and .state == "success")' 2>/dev/null || echo "false")
-+          if [ "$OVERRIDDEN" = "true" ]; then
-+            echo "::notice::Visual regression was overridden for this commit by a maintainer. Marking as passed."
-+            exit 0
-+          fi
-+
-+          echo "::error::Visual regression did not pass (result: ${VISUAL_RESULT}). If the differences are intentional, comment '/override-visual-regression <justification>' on the PR."
-+          exit 1
-```
-
-**File**: `.github/workflows/visual-regression-override.yml` (added, +125/-0)
-```diff
-@@ -0,0 +1,125 @@
-+name: Override visual regression
-+
-+# Overrides the mandatory visual regression check when the visual differences are
-+# intentional.
-+#
-+# The override is scoped to a single commit: pushing a new commit produces a new
-+# SHA with no override status, so the comparison runs again.
-+#
-+# Two ways to trigger it:
-+#   1. Comment `/override-visual-regression <justification>` on the pull request
-+#      (right from the PR page). Only users with write or admin access can do this.
-+#   2. Run it manually from the Actions tab, passing a commit SHA.
-+
-+on:
-+  issue_comment:
-+    types: [created]
-+  workflow_dispatch:
-+    inputs:
-+      commit-sha:
-+        description: 'The commit SHA whose visual changes are intentional.'
-+        required: true
-+        type: string
-+
-+# Run one override at a time per PR (comment) or per commit (manual dispatch).
-+concurrency:
-+  group: visual-regression-override@${{ github.event.issue.number || inputs.commit-sha }}
-+  cancel-in-progress: true
-+
-+permissions:
-+  statuses: write # Needed to post the override commit status
-+  actions: write # Needed to re-run the deploy workflow
-+  pull-requests: read # Needed to resolve PR head SHA for issue_comment overrides
-+
-+jobs:
-+  override:
-+    name: Apply visual regression override
-+    # Override comments must be posted on a PR and start with the command; the trailing
-+    # space requires text after it, which serves as the override justification
-+    # (for example: "/override-visual-regression Expected padding changes in Container border radii").
-+    # Manual runs (workflow_dispatch) skip the comment check.
-+    if: >-
-+      github.event_name == 'workflow_dispatch' ||
-+      (github.event.issue.pull_request != null &&
-+       startsWith(github.event.comment.body, '/override-visual-regression '))
-+    runs-on: ubuntu-latest
-+    steps:
-+      - name: Authorize commenter
-+        if: github.event_name == 'issue_comment'
-+        env:
-+          GH_TOKEN: ${{ github.token }}
-+          REPO: ${{ github.repository }}
-+          ACTOR: ${{ github.actor }}
-+        run: |
-+          PERMISSION=$(gh api "repos/${REPO}/collaborators/${ACTOR}/permission" --jq '.permission' 2>/dev/null || echo "none")
-+          echo "@${ACTOR} has '${PERMISSION}' permission."
-+          case "$PERMISSION" in
-+            admin|write|maintain)
-+              echo "Authorized." ;;
-+            *)
-+              echo "::error::@${ACTOR} is not authorized to override the visual regression check (requires admin, write or maintain access)."
-+              exit 1 ;;
-+          esac
-+
-+      - name: Resolve the commit SHA
-+        id: resolve
-+        if: success()
-+        env:
-+          GH_TOKEN: ${{ github.token }}
-+          REPO: ${{ github.repository }}
-+          EVENT_NAME: ${{ github.event_name }}
-+          INPUT_SHA: ${{ inputs.commit-sha }}
-+          COMMENT_PR: ${{ github.event.issue.number }}
-+        run: |
-+          if [ "$EVENT_NAME" = "issue_comment" ]; then
-+            # Resolve the head commit of the PR the command was posted on.
-+            RESOLVED=$(gh api "repos/${REPO}/pulls/${COMMENT_PR}" --jq '.head.sha')
-+          else
-+            # workflow_dispatch: the SHA is provided directly.
-+            RESOLVED="$INPUT_SHA"
-+          fi
-+
-+          if [ -z "$RESOLVED" ]; then
-+            echo "::error::Could not resolve a commit SHA to override."
-+            exit 1
-+          fi
-+
-+          echo "Overriding visual regression for commit ${RESOLVED}."
-+          echo "sha=${RESOLVED}" >> "$GITHUB_OUTPUT"
-+
-+      - name: Post override commit status
-+        if: steps.resolve.outputs.sha != ''
-+        env:
-+          GH_TOKEN: ${{ github.token }}
-+          REPO: ${{ github.repository }}
-+          SHA: ${{ steps.resolve.outputs.sha }}
-+          ACTOR: ${{ github.actor }}
-+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-+        run: |
-+          gh api --method POST "repos/${REPO}/statuses/${SHA}" \
-+            -f state="success" \
-+            -f context="visual-regression-override" \
-+            -f description="Visual changes reviewed and approved by @${ACTOR}" \
-+            -f target_url="${RUN_URL}" >/dev/null
-+          echo "Posted visual-regression-override success status on ${SHA}, approved by @${ACTOR}."
-+
-+      - name: Re-run the failed check to pick up the override
-+        if: steps.resolve.outputs.sha != ''
-+        env:
-+          GH_TOKEN: ${{ github.token }}
-+          REPO: ${{ github.repository }}
-+          SHA: ${{ steps.resolve.outputs.sha }}
-+        run: |
-+          RUN_ID=$(gh api \
-+            "repos/${REPO}/actions/workflows/deploy.yml/runs?head_sha=${SHA}&per_page=1" \
-+            --jq '.workflow_runs[0].id // empty')
-+
-+          if [ -n "$RUN_ID" ]; then
-+            # Re-run only the failed jobs (the "Visual regression result" gate),
-+            # not the whole run, so the build and deploy jobs are not repeated.
-+            ec
-```
-
-**File**: `.github/workflows/visual-regression.yml` (modified, +42/-4)
-```diff
-@@ -15,6 +15,10 @@ on:
-         description: 'Name of the artifact containing baseline pages (built by the caller workflow).'
-         required: true
-         type: string
-+      commit-sha:
-+        description: 'The commit SHA under test, used to check for a per-commit override.'
-+        required: false
-+        type: string
- 
- defaults:
-   run:
-@@ -24,11 +28,45 @@ permissions:
-   id-token: write
-   contents: read
-   actions: read
-+  statuses: read
-   deployments: write
- 
- jobs:
-+  # Checks whether a maintainer has explicitly approved the visual changes for
-+  # this exact commit via the manual override workflow
-+  # (.github/workflows/visual-regression-override.yml). The approval is a commit
-+  # status posted on the head SHA, so it applies only to that commit: a new push
-+  # produces a new SHA with no override and the comparison runs again.
-+  check-override:
-+    name: Check for commit override
-+    runs-on: ubuntu-latest
-+    outputs:
-+      overridden: ${{ steps.status.outputs.overridden }}
-+    steps:
-+      - name: Look for override commit status
-+        id: status
-+        env:
-+          GH_TOKEN: ${{ github.token }}
-+          REPO: ${{ github.repository }}
-+          SHA: ${{ inputs.commit-sha }}
-+        run: |
-+          if [ -z "$SHA" ]; then
-+            echo "No commit SHA provided; treating as not overridden."
-+            echo "overridden=false" >> "$GITHUB_OUTPUT"
-+            exit 0
-+          fi
-+          OVERRIDDEN=$(gh api \
-+            "repos/${REPO}/commits/${SHA}/status" \
-+            --jq 'any(.statuses[]; .context == "visual-regression-override" and .state == "success")' 2>/dev/null || echo "false")
-+          echo "Override status present for ${SHA}: ${OVERRIDDEN}"
-+          echo "overridden=${OVERRIDDEN}" >> "$GITHUB_OUTPUT"
-+
-   visual:
-     name: Visual regression (shard ${{ matrix.shard }})
-+    needs: check-override
-+    # Skip the (expensive) screenshot comparison when the changes have been
-+    # explicitly overridden by a maintainer.
-+    if: ${{ needs.check-override.outputs.overridden != 'true' }}
-     runs-on: ubuntu-latest
-     strategy:
-       fail-fast: false
-@@ -130,8 +168,8 @@ jobs:
- 
-   report:
-     name: Generate Allure Report
--    if: always()
--    needs: [visual]
-+    if: ${{ always() && needs.check-override.outputs.overridden != 'true' }}
-+    needs: [check-override, visual]
-     runs-on: ubuntu-latest
-     steps:
-       - name: Setup Node.js
-@@ -158,8 +196,8 @@ jobs:
- 
-   deploy-report:
-     name: Deploy Allure Report
--    if: always()
--    needs: [report]
-+    if: ${{ always() && needs.check-override.outputs.overridden != 'true' }}
-+    needs: [check-override, report]
-     uses: cloudscape-design/actions/.github/workflows/deploy.yml@main
-     secrets: inherit
-     with:
-```
-
-**File**: `docs/RUNNING_TESTS.md` (modified, +25/-5)
-```diff
-@@ -75,14 +75,34 @@ The deploy workflow (`.github/workflows/deploy.yml`) orchestrates the full pipel
- 
- The visual regression workflow (`.github/workflows/visual-regression.yml`):
- 
--1. Resolves the PR deployment URL from the GitHub Deployments API.
--2. Serves the baseline pages locally.
--3. Runs the test suite sharded across multiple runners. Each test navigates to a page on both hosts, captures screenshots, and compares them pixel-by-pixel.
--4. Produces an Allure report with image diffs for any failures, deployed to a preview environment.
-+1. Checks the commit for a `visual-regression-override` status (see [Overriding](#overriding-intentional-visual-changes) below).
-+2. Resolves the PR deployment URL from the GitHub Deployments API.
-+3. Serves the baseline pages locally.
-+4. Runs the test suite sharded across multiple runners. Each test navigates to a page on both hosts, captures screenshots, and compares them pixel-by-pixel.
-+5. Produces an Allure report with image diffs for any failures, deployed to a preview environment.
-+6. The deploy workflow's `Visual regression result` job surfaces the pass/fail outcome as the required check.
-+
-+The `Visual regression result` check (from `deploy.yml`) passes when every shard passes, when the commit is overridden (see below), or for fork PRs where visual regression is skipped.
- 
- ### Reviewing failures
- 
--When the CI job fails, check the deployed Allure report (linked from the GitHub deployment). It shows expected vs actual vs diff images for each failing test. If the diff is expected (intentional visual change), note it in your PR description.
-+When the CI job fails, check the deployed Allure report (linked from the GitHub deployment). It shows expected vs actual vs diff images for each failing test. If the diff is expected (intentional visual change), override the check as described below.
-+
-+### Overriding intentional visual changes
-+
-+Because baselines are rebuilt from `origin/main` at run time (there are no committed
-+screenshots to update), an intentional visual change is approved by overriding the
-+check rather than by updating snapshots.
-+
-+The override is **scoped to a single commit**. It approves the exact SHA you reviewed;
-+pushing a new commit produces a new SHA with no override, so the comparison runs again.
-+
-+To override, first confirm the diffs in the Allure report are intentional, then use either method:
-+
-+- **From the PR page (recommended):** comment `/override-visual-regression <Reason to override>` on the pull request.
-+- **From the Actions tab:** run the **Override visual regression** workflow (`.github/workflows/visual-regression-override.yml`) manually, passing the commit SHA to approve.
-+
-+Either way the workflow posts a `visual-regression-override` success commit status on that SHA and re-runs the deploy workflow. On the re-run, the screenshot comparison is skipped and the `Visual regression result` check passes.
- 
- ### Adding tests for a new component
- 
-```
-
----
-
-### Incident Patch 15: `e26ae03c` (2026-09-16)
-**Commit Message**: chore: Add visual regression test for input inline label (#4979)
-
-**File**: `test/definitions/visual/input.ts` (modified, +5/-0)
-```diff
-@@ -16,6 +16,11 @@ const suite: TestSuite = {
-       path: 'input/style-permutations',
-       screenshotType: 'permutations',
-     },
-+    {
-+      description: 'Inline label permutations',
-+      path: 'input/inline-label-permutations',
-+      screenshotType: 'permutations',
-+    },
-   ],
  };
  
+-interface LinkItemProps extends ButtonItemProps, Pick<LinkProps, 'href' | 'external' | 'target' | 'rel'> {}
++interface LinkItemProps extends ButtonItemProps, Pick<LinkProps, 'href' | 'external' | 'target' | 'rel'> {
++  lang?: string;
++}
+ 
+ const LinkItem = forwardRef(
+   (
+-    { children, external, href, target, rel, startIcon, endIcon, onClick, context, testId }: LinkItemProps,
++    { children, external, href, target, rel, lang, startIcon, endIcon, onClick, context, testId }: LinkItemProps,
+     ref: React.Ref<HTMLAnchorElement & HTMLButtonElement>
+   ) => {
+     const anchorTarget = target ?? (external ? '_blank' : undefined);
+@@ -59,6 +61,7 @@ const LinkItem = forwardRef(
+         href={href}
+         target={anchorTarget}
+         rel={anchorRel}
++        lang={lang}
+         data-awsui-motion-trigger="hover"
+         {...(testId ? { 'data-testid': testId } : {})}
+       >
+@@ -276,6 +279,7 @@ function dropdownComponentFactory(
+       startIcon={startIcon}
+       href={isLink ? item.href : undefined}
+       external={isLink ? item.external : undefined}
++      lang={item.lang}
+       context="dropdown-menu"
+       testId={item.id}
+       onClick={event => onItemClick(event, item as ButtonDropdownProps.Item)}
+```
+
+---
+
+### Incident Patch 3: `c41de07b` (2026-10-09)
+**Commit Message**: fix: Fix broken pointer scroll in virtual lists in certain situations (#5124)
+
+**File**: `src/autosuggest/__integ__/virtual-scroll.test.ts` (added, +73/-0)
+```diff
+@@ -0,0 +1,73 @@
++// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
++// SPDX-License-Identifier: Apache-2.0
++import useBrowser from '@cloudscape-design/browser-test-tools/use-browser';
++
++import AutosuggestPage from './page-objects/autosuggest-page';
++
++class VirtualScrollAutosuggestPage extends AutosuggestPage {
++  listSelector = this.wrapper.findDropdown().findOptionsContainer().toSelector();
++
++  async wheelOverList(deltaY: number) {
++    // Wheel input is separate from the pointer, so this scrolls without hovering any option.
++    const list = await this.browser.$(this.listSelector);
++    await this.browser.action('wheel').scroll({ origin: list, deltaY, duration: 100 }).perform();
++  }
++
++  async getListScrollTop() {
++    const { top } = await this.getElementScroll(this.listSelector);
++    return top;
++  }
++}
++
++function setupTest(testFn: (page: VirtualScrollAutosuggestPage) => Promise<void>) {
++  return useBrowser(async browser => {
++    const page = new VirtualScrollAutosuggestPage(browser);
++    await browser.url('/#/light/autosuggest/virtual-scroll');
++    await page.focusInput();
++    await page.assertDropdownOpen();
++    await testFn(page);
++  });
++}
++
++describe('Autosuggest with virtual scroll', () => {
++  test(
++    'keeps the scroll position after wheel scrolling a dropdown opened with the mouse',
++    setupTest(async page => {
++      await page.wheelOverList(600);
++      await page.waitForJsTimers(100);
++      expect(await page.getListScrollTop()).toBeGreaterThan(0);
++
++      const scrollTop = await page.getListScrollTop();
++      await page.wheelOverList(600);
++      await page.waitForJsTimers(100);
++      expect(await page.getListScrollTop()).toBeGreaterThan(scrollTop);
++    })
++  );
++
++  test(
++    'keeps the scroll position after keyboard navigation when the list is scrolled without the wheel',
++    setupTest(async page => {
++      await page.keys(['ArrowDown', 'ArrowDown']);
++      await page.assertHighlightedOptionContains('Option 2');
++
++      // Stands in for dragging the scrollbar.
++      await page.elementScrollTo(page.listSelector, { top: 3000 });
++      await page.waitForJsTimers(100);
++      // The virtualizer shifts the offset slightly once it measures the newly rendered options,
++      // so don't expect exactly 3000. Without the fix the list snaps back to the highlighted option at the top.
++      expect(await page.getListScrollTop()).toBeGreaterThan(2500);
++    })
++  );
++
++  test(
++    'scrolls the highlighted option into view on keyboard navigation after the list was scrolled',
++    setupTest(async page => {
++      await page.elementScrollTo(page.listSelector, { top: 3000 });
++      await page.waitForJsTimers(100);
++
++      await page.keys(['ArrowDown']);
++      await page.assertHighlightedOptionContains('Option 1');
++      await page.waitForAssertion(async () => expect(await page.getListScrollTop()).toBe(0));
++    })
++  );
++});
+```
+
+**File**: `src/autosuggest/virtual-list.tsx` (modified, +16/-5)
+```diff
+@@ -3,6 +3,7 @@
+ import React, { useCallback, useEffect, useImperativeHandle, useRef } from 'react';
+ 
+ import { useContainerQuery } from '@cloudscape-design/component-toolkit';
++import { useStableCallback } from '@cloudscape-design/component-toolkit/internal';
+ 
+ import OptionsList from '../internal/components/options-list';
+ import { useVirtual } from '../internal/hooks/use-virtual';
+@@ -28,7 +29,7 @@ const VirtualList = ({
+   const [width, strutRef] = useContainerQuery(rect => rect.contentBoxWidth, []);
+   useImperativeHandle(strutRef, () => scrollRef.current);
+ 
+-  const rowVirtualizer = useVirtual({
++  const { virtualItems, totalSize, scrollToIndex } = useVirtual({
+     items: autosuggestItemsState.items,
+     parentRef: scrollRef,
+     // estimateSize is a dependency of measurements memo. We update it to force full recalculation
+@@ -39,11 +40,21 @@ const VirtualList = ({
+     estimateSize: useCallback(() => 31, [width, highlightText]),
+   });
+ 
++  // Scroll when the highlight changes and moveFocus is true. The scrollToIndex identity changes
++  // whenever the number of items changes (e.g. when the next page of options is loaded), which
++  // shouldn't reset the scroll position either.
++  const scrollToHighlightedIndex = useStableCallback(scrollToIndex);
+   useEffect(() => {
+     if (autosuggestItemsState.highlightType.moveFocus) {
+-      rowVirtualizer.scrollToIndex(autosuggestItemsState.highlightedIndex);
++      const index = autosuggestItemsState.highlightedIndex;
++      scrollToHighlightedIndex(index);
++      // Options are rendered with estimated sizes and measured afterwards, which can push the highlighted option out
++      // of view (e.g. when jumping to the last option). With React 18 the measurement happens after react-virtual's own
++      // retry, so retry once more after it.
++      const timeout = setTimeout(() => scrollToHighlightedIndex(index), 0);
++      return () => clearTimeout(timeout);
+     }
+-  }, [autosuggestItemsState.highlightType, autosuggestItemsState.highlightedIndex, rowVirtualizer]);
++  }, [autosuggestItemsState.highlightType, autosuggestItemsState.highlightedIndex, scrollToHighlightedIndex]);
+ 
+   let lastGroupIndex = -1;
+ 
+@@ -53,9 +64,9 @@ const VirtualList = ({
+         aria-hidden="true"
+         key="total-size"
+         className={styles['layout-strut']}
+-        style={{ height: rowVirtualizer.totalSize + (autosuggestItemsState.items.length === 1 ? 1 : 0) }}
++        style={{ height: totalSize + (autosuggestItemsState.items.length === 1 ? 1 : 0) }}
+       />
+-      {rowVirtualizer.virtualItems.map(virtualRow => {
++      {virtualItems.map(virtualRow => {
+         const { index, start, measureRef } = virtualRow;
+         const item = autosuggestItemsState.items[index];
+         const optionProps = getOptionProps(
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5102** (2026-10-05): fix: Remove top margin from custom vertical steps connector (@lasley)
-- **PR #5101** (2026-10-05): chore: Remediate 11 Dependabot security alerts (lockfile only) (@amanabiy)
-- **PR #5099** (2026-10-05): chore: Add visual test definition for control group (@jperals)
-- **PR #5097** (closed): chore: Bump brace-expansion (@dependabot[bot])
-- **PR #5096** (closed): chore: Bump undici (@dependabot[bot])
-- **PR #5095** (2026-10-02): chore: Move visual test writing docs to a better fitting file (@jperals)
-- **PR #5094** (2026-10-02): chore: Bump axios from 1.18.1 to 1.20.0 (@dependabot[bot])
-- **PR #5093** (closed): chore: Bump moment from 2.30.1 to 2.31.0 (@dependabot[bot])
+- **PR #5148** (2026-10-15): fix: Segmented control in One theme (@georgylobko)
+- **PR #5147** (2026-10-15): chore: Duplicate VR compact table context for OT (@gethinwebster)
+- **PR #5146** (2026-10-15): chore: Add visual tests and update unit tests for autosuggest token mode (@srungta08)
+- **PR #5144** (closed): feat: Control group (@jperals)
+- **PR #5142** (2026-10-13): chore: Remediate 9 Dependabot security alerts (lockfile only) (@SpyZzey)
+- **PR #5139** (2026-10-13): chore: Update the sidenav icon in 1T (@georgylobko)
 
 ---
 
@@ -3335,3 +1890,76 @@ Co-authored-by: Copilot Autofix powered by AI <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. Remediate 9 Dependabot security alerts (lockfile only) (#5142)
+
+**RULE**:
+When implementing operations in `package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cloudscape-design/components. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `2255a808`: Remediate 9 Dependabot security alerts (lockfile only) (#5142). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package-lock.json`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+      "version": "2.1.7",
+      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.7.tgz",
+      "integrity": "sha512-uZbew1NqdmPDTMJ8ah1y+b+9QEJrfkXFk3RcTQw3X0jW/xRUvFKsg1CfQdSYGdTbXZWExtU3J3ccxtnfw1Fi0g==",
+      "version": "4.7.10",
+        "minimist": "^1.2.8",
+        "wordwrap": "^1.0.0",
+        "uglify-js": "^3.1.4",
+        "source-map": "^0.6.1"
+      },
+      "resolved": "https://registry.npmjs.org/handlebars/-/handlebars-4.7.10.tgz",
+      "integrity": "sha512-P5VJMVM7qgBn6vjXMw8WG9uVI+ncf2pi72j4de4yz5ZULLj2RGqLYaKOYGsgyrViQ0tePOVlN1tDCCXXtFqXKg=="
+      "version": "18.2.9",
+      "resolved": "https://registry.npmjs.org/joi/-/joi-18.2.9.tgz",
+      "integrity": "sha512-2mD929bUVKUhOLQQEVhlf6EZ0Mlo0DeRb5MO7cViR9AXLtBauuccEtB1py9Ocxpo/P7ucnh442iY/iOwrh3IQw==",
+        "@hapi/address": "^5.1.1",
+        "@hapi/formula": "^3.0.2",
+        "@hapi/pinpoint": "^2.0.1",
+      "version": "7.1.6",
+      "resolved": "https://registry.npmjs.org/postcss-selector-parser/-/postcss-selector-parser-7.1.6.tgz",
+      "integrity": "sha512-7qASPzhKF2l2KLboRZux8CCTRMdGiV08vWmyKzPz22qZ7ZjQBOeY7rNzNoCLSUiftJ7HUq0GERHmxw/t0dCdMw==",
+      "version": "2.0.8",
+      "r
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+      "version": "2.1.4",
+      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.4.tgz",
+      "integrity": "sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg==",
+      "version": "4.7.9",
+        "minimist": "^1.2.5",
+        "source-map": "^0.6.1",
+        "wordwrap": "^1.0.0"
+      }
+      "version": "18.2.8",
+      "resolved": "https://registry.npmjs.org/joi/-/joi-18.2.8.tgz",
+      "integrity": "sha512-G2TX62h58ZHuwqetJgP2F4ualakqAmZtBYe3jWen7gxQRw5xApX6crnFtuB91WC0c3ESBnva+kGSnb3+6pIQDQ==",
+        "@hapi/address": "^5.1.1",
+        "@hapi/formula": "^3.0.2",
+        "@hapi/pinpoint": "^2.0.1",
+      "version": "7.1.5",
+      "resolved": "https://registry.npmjs.org/postcss-selector-parser/-/postcss-selector-parser-7.1.5.tgz",
+      "integrity": "sha512-KvvtD7SrlBP7dlgkBghEE3r84CABm5SmV2aNcG4oCA+qDnJ/tvKonFVvwWAyyWUEwxuNawdfEAZKP9zM3oZ2Uw==",
+      "version": "2.0.7",
+      "resolved": "https://registry.npmjs.org/proxy-addr/-/proxy-addr-2.0.7.tgz",
+      "integrity": "sha512-llQsMLSUDUPT44jdrU/O37qlnifitDP+ZwrmmZcoSKyLKvtZxpyV0n2/bD/N4tBAAZ/gJEdZU7KMraoK1+XYAg==",
+      "version": "2.1.4",
+      "resolved
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `2255a808` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T04:00:57.969Z",
+  "last_updated": "2026-10-19T04:07:22.102Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2267,14 +2267,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
-      "content_hash": "464cd5568549b4c60eb85177bfafdcbb6e73a16b8759f0668964828e531a98ec",
-      "verified_at": "2026-10-17T23:00:39.680Z",
+      "content_hash": "92cb2f85cf26a852ca681ceac74080b542cfed897f83514643ba57a480fe0869",
+      "verified_at": "2026-10-19T04:07:03.026Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T23:00:39.680Z"
+      "last_updated": "2026-10-19T04:07:03.026Z"
     },
     "amplifthq/opentag": {
       "repository": "amplifthq/opentag",
@@ -8482,6 +8482,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T04:00:57.968Z"
+    },
+    "cloudscape-design/components": {
+      "repository": "cloudscape-design/components",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-cloudscape-design-components",
+      "content_hash": "913321d948684cbcc1ba22f6393cd11adb6b1a434820f4e840975be2c5baf98b",
+      "verified_at": "2026-10-19T04:07:03.216Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T04:07:03.216Z"
+    },
+    "async-rs/async-std": {
+      "repository": "async-rs/async-std",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-async-rs-async-std",
+      "content_hash": "91dbf8456650b9efd45d266d6eaac9980c31bb0d663b0c4ed1a7740f5197b947",
+      "verified_at": "2026-10-19T04:07:04.778Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T04:07:04.778Z"
+    },
+    "Flipkart/recyclerlistview": {
+      "repository": "Flipkart/recyclerlistview",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-flipkart-recyclerlistview",
+      "content_hash": "5c3736fbb742d6348d90478672660a4c7f2e850f64a38c26113a1a0ad610aa10",
+      "verified_at": "2026-10-19T04:07:10.150Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T04:07:10.150Z"
+    },
+    "architect/architect": {
+      "repository": "architect/architect",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-architect-architect",
+      "content_hash": "f2ff57da605ea3ede3c7b74659438bfb148d7263fca91d88c525853f9a1461b7",
+      "verified_at": "2026-10-19T04:07:12.442Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T04:07:12.442Z"
+    },
+    "ytsaurus/ytsaurus": {
+      "repository": "ytsaurus/ytsaurus",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-ytsaurus-ytsaurus",
+      "content_hash": "0fb327282d37161448a1454443b6ed3e50e84889b4fbb94a2beeba62c97587c1",
+      "verified_at": "2026-10-19T04:07:22.102Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T04:07:22.102Z"
     }
   },
   "repos": {

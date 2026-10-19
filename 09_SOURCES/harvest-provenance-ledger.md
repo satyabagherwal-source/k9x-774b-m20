@@ -2886,3 +2886,9 @@ Every entry in this ledger must capture:
 | `learn-github-thecodingmachine-react-native-boilerplate` | `https://github.com/thecodingmachine/react-native-boilerplate` | `1a8b1d5b` | Multi-dimensional audit evidence | 2026-10-19T04:00:50.145Z |
 | `learn-github-snyk-driftctl` | `https://github.com/snyk/driftctl` | `70717f65` | Multi-dimensional audit evidence | 2026-10-19T04:00:53.660Z |
 | `learn-github-lindb-lindb` | `https://github.com/lindb/lindb` | `612070e1` | Multi-dimensional audit evidence | 2026-10-19T04:00:57.963Z |
+| `learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8` | `https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8` | `hf-dealign` | Multi-dimensional audit evidence | 2026-10-19T04:07:03.018Z |
+| `learn-github-cloudscape-design-components` | `https://github.com/cloudscape-design/components` | `fdb6ffa9` | Multi-dimensional audit evidence | 2026-10-19T04:07:03.207Z |
+| `learn-github-async-rs-async-std` | `https://github.com/async-rs/async-std` | `844b5525` | Multi-dimensional audit evidence | 2026-10-19T04:07:04.772Z |
+| `learn-github-flipkart-recyclerlistview` | `https://github.com/Flipkart/recyclerlistview` | `3485036e` | Multi-dimensional audit evidence | 2026-10-19T04:07:10.145Z |
+| `learn-github-architect-architect` | `https://github.com/architect/architect` | `9924cd0a` | Multi-dimensional audit evidence | 2026-10-19T04:07:12.428Z |
+| `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `a04eacaa` | Multi-dimensional audit evidence | 2026-10-19T04:07:22.097Z |

@@ -2879,3 +2879,9 @@
 | `CYCLE-20261019-8DSQ` | `2026-10-19T04:00:50.138Z` | `thecodingmachine/react-native-boilerplate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2102` | Yes (`bf573b97...`) |
 | `CYCLE-20261019-8GIE` | `2026-10-19T04:00:53.654Z` | `snyk/driftctl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2103` | Yes (`e62b61b5...`) |
 | `CYCLE-20261019-8JTX` | `2026-10-19T04:00:57.957Z` | `lindb/lindb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2104` | Yes (`9839ccb9...`) |
+| `CYCLE-20261019-GDIF` | `2026-10-19T04:07:03.015Z` | `dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md` | Yes (`92cb2f85...`) |
+| `CYCLE-20261019-GDNL` | `2026-10-19T04:07:03.201Z` | `cloudscape-design/components` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2105` | Yes (`913321d9...`) |
+| `CYCLE-20261019-GEV5` | `2026-10-19T04:07:04.769Z` | `async-rs/async-std` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2106` | Yes (`91dbf845...`) |
+| `CYCLE-20261019-GJ0F` | `2026-10-19T04:07:10.143Z` | `Flipkart/recyclerlistview` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2107` | Yes (`5c3736fb...`) |
+| `CYCLE-20261019-GKRP` | `2026-10-19T04:07:12.421Z` | `architect/architect` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`f2ff57da...`) |
+| `CYCLE-20261019-GS8E` | `2026-10-19T04:07:22.094Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2108` | Yes (`0fb32728...`) |
