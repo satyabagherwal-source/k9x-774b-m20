@@ -3448,3 +3448,5 @@
 | `CYCLE-20261019-F4F8` | `2026-10-19T19:29:51.908Z` | `JuulLabs/kable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2771` | Yes (`09cdcdbd...`) |
 | `CYCLE-20261019-F5LD` | `2026-10-19T19:29:53.425Z` | `Kong/kubernetes-ingress-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2772` | Yes (`7b836a29...`) |
 | `CYCLE-20261019-F9GP` | `2026-10-19T19:29:58.441Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2773` | Yes (`5dd53dc7...`) |
+| `CYCLE-20261019-NMEF` | `2026-10-19T19:36:28.455Z` | `tmolavi/siteprobe` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2774` | Yes (`098b7d5f...`) |
+| `CYCLE-20261019-NO7J` | `2026-10-19T19:36:30.799Z` | `realm/realm-kotlin` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/realm-realm-kotlin-learnings.md` | Yes (`a6ef30e0...`) |

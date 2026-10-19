@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T19:29:49.159Z",
+  "last_updated": "2026-10-19T19:36:30.806Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1905,6 +1905,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-manojahi-serpiq"
+    },
+    {
+      "id": "CD-NO7Q",
+      "directive_title": "compiler crash when using Kotlin 2.0.20  (#1830)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "realm/realm-kotlin",
+      "source_commit": "9cdc4556",
+      "date_staged": "2026-10-19",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-realm-realm-kotlin"
     }
   ]
 }

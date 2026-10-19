@@ -8778,5 +8778,25 @@
     "contentHash": "09cdcdbdea24ab756620ac828d68778982de9bf0a1cc83348b7d788c84ee194a",
     "lastHarvestedAt": "2026-10-19T19:29:51.911Z",
     "learningId": "learn-github-juullabs-kable"
+  },
+  "tmolavi-siteprobe": {
+    "repository": "tmolavi/siteprobe",
+    "platform": "github",
+    "sourceUrl": "https://github.com/tmolavi/siteprobe",
+    "sourceVersion": "c27bffc3",
+    "license": "MIT",
+    "contentHash": "098b7d5fb0db37b6ecf2300074b99cf836d3104c2b46d963a4641e43ee1cf4d4",
+    "lastHarvestedAt": "2026-10-19T19:36:28.458Z",
+    "learningId": "learn-github-tmolavi-siteprobe"
+  },
+  "realm-realm-kotlin": {
+    "repository": "realm/realm-kotlin",
+    "platform": "github",
+    "sourceUrl": "https://github.com/realm/realm-kotlin",
+    "sourceVersion": "9cdc4556",
+    "license": "Apache-2.0",
+    "contentHash": "a6ef30e0310d4ae3f44ffe275fe403a5c77a22fb83fafcdf68fb3cc42a7eb6f6",
+    "lastHarvestedAt": "2026-10-19T19:36:30.802Z",
+    "learningId": "learn-github-realm-realm-kotlin"
   }
 }

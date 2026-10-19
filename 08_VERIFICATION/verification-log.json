@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-0ZUE",
-    "timestamp": "2026-10-19T05:19:04.310Z",
-    "repository": "xinthink/react-native-material-kit",
-    "learningId": "learn-github-xinthink-react-native-material-kit",
-    "contentHash": "9d147f35b2a3fd8ab3c0825cb217b2e644de3a2a37cb0c1ad0c3d5aea343b6bd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-11L6",
-    "timestamp": "2026-10-19T05:19:06.570Z",
-    "repository": "kubeshark/kubeshark",
-    "learningId": "learn-github-kubeshark-kubeshark",
-    "contentHash": "638ea29ccce165777a7f0980977d92550264a320ad0d6cc0cee4f63a9d50afaa",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-166J",
     "timestamp": "2026-10-19T05:19:12.523Z",
     "repository": "duckdb/duckdb",
@@ -7492,6 +7462,36 @@
     "contentHash": "5dd53dc71cde53f710c86d9e13351e28361945d96681a7f04df8753c536a0a75",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-NMEF",
+    "timestamp": "2026-10-19T19:36:28.455Z",
+    "repository": "tmolavi/siteprobe",
+    "learningId": "learn-github-tmolavi-siteprobe",
+    "contentHash": "098b7d5fb0db37b6ecf2300074b99cf836d3104c2b46d963a4641e43ee1cf4d4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-NO7J",
+    "timestamp": "2026-10-19T19:36:30.799Z",
+    "repository": "realm/realm-kotlin",
+    "learningId": "learn-github-realm-realm-kotlin",
+    "contentHash": "a6ef30e0310d4ae3f44ffe275fe403a5c77a22fb83fafcdf68fb3cc42a7eb6f6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

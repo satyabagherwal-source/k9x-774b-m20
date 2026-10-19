@@ -3455,3 +3455,5 @@ Every entry in this ledger must capture:
 | `learn-github-juullabs-kable` | `https://github.com/JuulLabs/kable` | `ff0d09e6` | Multi-dimensional audit evidence | 2026-10-19T19:29:51.911Z |
 | `learn-github-kong-kubernetes-ingress-controller` | `https://github.com/Kong/kubernetes-ingress-controller` | `41fa3e37` | Multi-dimensional audit evidence | 2026-10-19T19:29:53.428Z |
 | `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `b7b227fe` | Multi-dimensional audit evidence | 2026-10-19T19:29:58.443Z |
+| `learn-github-tmolavi-siteprobe` | `https://github.com/tmolavi/siteprobe` | `c27bffc3` | Multi-dimensional audit evidence | 2026-10-19T19:36:28.458Z |
+| `learn-github-realm-realm-kotlin` | `https://github.com/realm/realm-kotlin` | `9cdc4556` | Multi-dimensional audit evidence | 2026-10-19T19:36:30.802Z |

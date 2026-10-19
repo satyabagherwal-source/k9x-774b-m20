@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T19:29:58.396Z",
-  "total_verified_learnings": 893,
+  "last_updated": "2026-10-19T19:36:30.749Z",
+  "total_verified_learnings": 895,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -36760,22 +36760,29 @@
     "learn-github-realm-realm-kotlin": {
       "learning_id": "learn-github-realm-realm-kotlin",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "realm-realm-kotlin",
+      "source": "realm/realm-kotlin",
+      "repository": "realm/realm-kotlin",
       "slug": "realm-realm-kotlin",
       "platform": "github",
       "source_url": "https://github.com/realm/realm-kotlin",
-      "source_version": "HEAD",
-      "content_hash": "a2f0c16f4831c458570f1269d3617d793695cda6d7fdb97a10648b53b6a15edc",
+      "source_version": "9cdc4556",
+      "content_hash": "a6ef30e0310d4ae3f44ffe275fe403a5c77a22fb83fafcdf68fb3cc42a7eb6f6",
       "dossier_path": "07_PROJECT_LEARNING/realm-realm-kotlin-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/realm-realm-kotlin-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.238Z"
+      "verified_at": "2026-10-19T19:36:30.735Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-rechsteiner-parchment": {
       "learning_id": "learn-github-rechsteiner-parchment",
@@ -55745,20 +55752,35 @@
     "learn-github-tmolavi-siteprobe": {
       "learning_id": "learn-github-tmolavi-siteprobe",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "tmolavi/siteprobe",
       "repository": "tmolavi/siteprobe",
       "slug": "tmolavi-siteprobe",
       "platform": "github",
       "source_url": "https://github.com/tmolavi/siteprobe",
-      "source_version": "main",
-      "content_hash": "8b3bd860ed47c0fa78cc4451623c79fb531f81e2b0b30a2ad77a248c6b3c5f3c",
+      "source_version": "c27bffc3",
+      "content_hash": "098b7d5fb0db37b6ecf2300074b99cf836d3104c2b46d963a4641e43ee1cf4d4",
       "dossier_path": "07_PROJECT_LEARNING/tmolavi-siteprobe-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tmolavi-siteprobe-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2774,
+          "title": "align update triage methodology with evidence",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T19:36:28.403Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-4mmar1mtiaz-seo-tools-by-ammar-imtiaz": {
       "learning_id": "learn-github-4mmar1mtiaz-seo-tools-by-ammar-imtiaz",
@@ -91596,6 +91618,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T19:29:58.383Z"
+    },
+    "rule-2774": {
+      "learning_id": "rule-2774",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2774,
+      "title": "align update triage methodology with evidence",
+      "source_url": "https://github.com/tmolavi/siteprobe",
+      "source_version": "c27bffc3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T19:36:28.403Z"
     }
   },
   "aliases": {

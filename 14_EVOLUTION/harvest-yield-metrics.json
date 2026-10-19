@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T19:29:58.448Z",
-  "total_cycles_completed": 3425,
-  "total_learnings_persisted": 3425,
-  "total_rules_promoted": 2573,
+  "last_updated": "2026-10-19T19:36:30.807Z",
+  "total_cycles_completed": 3427,
+  "total_learnings_persisted": 3427,
+  "total_rules_promoted": 2574,
   "history": [
-    {
-      "timestamp": "2026-10-19T13:14:51.453Z",
-      "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
-      "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T13:14:52.402Z",
-      "repository": "jacklandrin/OnlySwitch",
-      "learningId": "learn-github-jacklandrin-onlyswitch",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T13:14:54.495Z",
       "repository": "nolabs-ai/nono",
@@ -1403,6 +1389,20 @@
       "repository": "milvus-io/milvus",
       "learningId": "learn-github-milvus-io-milvus",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T19:36:28.462Z",
+      "repository": "tmolavi/siteprobe",
+      "learningId": "learn-github-tmolavi-siteprobe",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T19:36:30.807Z",
+      "repository": "realm/realm-kotlin",
+      "learningId": "learn-github-realm-realm-kotlin",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
