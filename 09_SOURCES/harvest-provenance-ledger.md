@@ -3339,3 +3339,5 @@ Every entry in this ledger must capture:
 | `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `46f7c7db` | Multi-dimensional audit evidence | 2026-10-19T15:31:45.329Z |
 | `learn-github-sventiigi-whatsnewkit` | `https://github.com/SvenTiigi/WhatsNewKit` | `6157c77e` | Multi-dimensional audit evidence | 2026-10-19T15:31:50.229Z |
 | `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `f18a1372` | Multi-dimensional audit evidence | 2026-10-19T15:31:57.149Z |
+| `learn-github-kudoleh-ios-clean-architecture-mvvm` | `https://github.com/kudoleh/iOS-Clean-Architecture-MVVM` | `a68da3e3` | Multi-dimensional audit evidence | 2026-10-19T15:41:22.394Z |
+| `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `827381d6` | Multi-dimensional audit evidence | 2026-10-19T15:41:28.576Z |

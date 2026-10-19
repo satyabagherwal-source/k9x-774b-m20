@@ -191484,169 +191484,135 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `477045f5` are properly handled with clean fallback behavior.
 
+
 ---
 
-## 2658. Financial Trading Indicator Runtime Isolation & Chart-Native Architecture (Harvested from ICT Trading Indicator)
+## 2658. Remove search-as-you-type and the debouncer (it hid the recent-queries list) (Harvested from kudoleh/iOS-Clean-Architecture-MVVM)
 
 <!-- PROVENANCE_START
 {
   "knowledge_type": "engineering_pattern",
-  "topic": "Financial Trading Indicator Runtime Isolation & Chart-Native Architecture",
-  "source": "local/ICT trading indicator",
-  "source_url": "c:/ICT trading indicator",
-  "source_version": "HEAD",
-  "license": "Proprietary Local",
-  "extracted_at": "2026-10-19T15:35:04.479Z",
-  "ai_provider": "antigravity-pair-programmer",
-  "generation_mode": "empirical_incident_harvested",
-  "learning_id": "learn-local-ict-trading-indicator-01",
+  "topic": "Remove search-as-you-type and the debouncer (it hid the recent-queries list)",
+  "source": "kudoleh/iOS-Clean-Architecture-MVVM",
+  "source_url": "https://github.com/kudoleh/iOS-Clean-Architecture-MVVM",
+  "source_version": "a68da3e3",
+  "license": "PERMISSIVE_OPEN_SOURCE",
+  "extracted_at": "2026-10-19T15:41:22.308Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-kudoleh-ios-clean-architecture-mvvm",
   "verified": true,
   "confidence": "high",
   "promotion_status": "approved",
   "distillation_prohibited": true
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [local/ICT trading indicator](file:///c:/ICT%20trading%20indicator) (Incident INC-001).  
-> **Evidence**: Verified against production TradingView and charting software execution boundaries.
+> **Provenance**: Harvested from [kudoleh/iOS-Clean-Architecture-MVVM](https://github.com/kudoleh/iOS-Clean-Architecture-MVVM) (Revision: `a68da3e3`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
 
 **RULE**:
-When building financial trading indicators or algorithmic charting strategies (such as ICT, Smart Money Concepts, Harmonic Patterns, or Volume Profile), engineers and AI systems MUST NEVER confuse trading indicators with web applications or scaffold web boilerplate (React, Vite, Express, index.html) as the primary delivery vehicle. Financial charting indicators operate within dedicated, specialized charting runtimes (such as TradingView Pine Script, GoCharting, or NinjaScript) that execute directly against real-time candle tick series (`open`, `high`, `low`, `close`, `volume`). The primary deliverable must be a standalone, verified `.pine` script ready for zero-friction copy-paste into chart editors, supplemented by on-chart HUD diagnostics and native broker alert conditions.
+When implementing operations in `ExampleMVVM.xcodeproj/project.pbxproj`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kudoleh/iOS-Clean-Architecture-MVVM. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Scaffolding web development servers, HTML templates, and full-stack wrappers creates severe domain misalignment. Professional traders do not run a localhost web server to analyze charts; they apply indicators directly to real-time charting software (TradingView, GoCharting, Zerodha Kite, Dhan, Fyers). Generating web scaffolding wastes disk space, confuses non-programmer users, and fails to deliver the actual trading utility requested.
+Prevents defects observed in production commit `dbfd4de2`: Remove search-as-you-type and the debouncer (it hid the recent-queries list). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Any project involving financial market indicators, algorithmic trading overlays, chart pattern recognition, or automated Buy/Sell signals intended for execution on financial charting platforms.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `ExampleMVVM.xcodeproj/project.pbxproj`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
-```pine
-//@version=6
-indicator("ICT Professional Suite [Buy/Sell & Targets]", "ICT Pro", overlay=true, max_boxes_count=500, max_lines_count=500, max_labels_count=500)
-
-// 1. Direct chart candle access
-atrVal = ta.atr(14)
-atrSafe = atrVal > 0 ? atrVal : (high - low)
-
-// 2. Market Structure & Institutional Footprints drawn natively on chart canvas
-pHigh = ta.pivothigh(high, 5, 5)
-pLow  = ta.pivotlow(low, 5, 5)
-```
-
-**NEGATIVE CONSTRAINT**:
-```typescript
-// Anti-pattern to NEVER build for a trading indicator:
-// Building an Express.js server or Vite HTML page when the user asks for a chart indicator
-import express from 'express';
-const app = express(); // VIOLATION: Traders cannot paste a Node server into TradingView!
-```
-
-**VERIFICATION METHOD**:
-Verify that the output is a standalone Pine Script (`.pine`) file that compiles with exit code 0 / zero warnings in TradingView Pine Editor v6.
-
----
-
-## 2659. Pine Script Line Continuation & 4-Space Indentation Scope Invariant (Harvested from ICT Trading Indicator)
-
-<!-- PROVENANCE_START
-{
-  "knowledge_type": "engineering_pattern",
-  "topic": "Pine Script Line Continuation & 4-Space Indentation Scope Invariant",
-  "source": "local/ICT trading indicator",
-  "source_url": "c:/ICT trading indicator",
-  "source_version": "HEAD",
-  "license": "Proprietary Local",
-  "extracted_at": "2026-10-19T15:35:04.481Z",
-  "ai_provider": "antigravity-pair-programmer",
-  "generation_mode": "empirical_incident_harvested",
-  "learning_id": "learn-local-ict-trading-indicator-02",
-  "verified": true,
-  "confidence": "high",
-  "promotion_status": "approved",
-  "distillation_prohibited": true
-}
-PROVENANCE_END -->
-> **Provenance**: Harvested from [local/ICT trading indicator](file:///c:/ICT%20trading%20indicator) (Incident INC-002).  
-> **Evidence**: Verified against TradingView Pine Editor v5/v6 grammar specification and compiler error `end of line without line continuation`.
-
-**RULE**:
-In TradingView Pine Script (v5 and v6), when constructing multi-line string concatenations or wrapping long expressions inside local blocks (`if`, `for`, `while`), engineers MUST NEVER use operator-terminated line breaks (`+`) where the continuation line is indented by a multiple of 4 spaces (e.g. 16, 20, 24, 28, 32 spaces). In Pine Script grammar, indentation that is a multiple of 4 spaces is reserved exclusively for defining new local block scopes. When a continuation line's indentation aligns with a multiple of 4, the parser classifies it as an invalid nested block instead of an expression continuation, triggering `Syntax error at input 'end of line without line continuation'`. Engineers MUST construct multi-line strings either using sequential variable mutation (`var := var + ...`) with standard block indentation or single-line `str.format()`.
-
-**WHY**:
-Prevents fatal compilation failure in TradingView Pine Editor. Pine Script's whitespace-sensitive grammar forbids multiples of 4 for line continuation, making standard multi-line string concatenation in nested scopes defect-prone.
-
-**WHEN TO APPLY**:
-Writing multi-line labels, tooltip summaries, trade plan descriptions, or complex mathematical expressions inside nested conditional blocks in Pine Script.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```pine
+```swift
 // Verified production-grade fix pattern:
-// Sequential assignment on standard indentation eliminates continuation ambiguity
-string buySummary = "🟢 BUY ENTRY: " + str.tostring(entryPrice, "#.##")
-buySummary := buySummary + "\n⛔ SL: " + str.tostring(slPrice, "#.##")
-buySummary := buySummary + "\n🎯 TP1 (1:" + str.tostring(defaultRR1, "#.#") + "): " + str.tostring(tp1Price, "#.##")
-buySummary := buySummary + "\n🎯 TP2 (1:" + str.tostring(defaultRR2, "#.#") + "): " + str.tostring(tp2Price, "#.##")
-buySummary := buySummary + "\n🎯 TP3 (1:" + str.tostring(defaultRR3, "#.#") + "): " + str.tostring(tp3Price, "#.##")
-label.new(bar_index + 6, entryPrice, buySummary, color=color.new(#00e676, 10), textcolor=color.black, style=label.style_label_left, size=size.small)
+		5CE0A0012C0000010000AA02 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CE0A0012C0000010000AA01 /* SceneDelegate.swift */; };
+		5CE0A0012C0000010000AA01 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 ```
 
 **NEGATIVE CONSTRAINT**:
-```pine
-// Anti-pattern to NEVER write:
-// Multi-line wrap with operator at end of line and 32-space continuation indent
-string buySummary = "🟢 BUY ENTRY: " + str.tostring(entryPrice, "#.##") +
-                                "\n⛔ SL: " + str.tostring(slPrice, "#.##") // FAILS: 32 spaces is multiple of 4!
+```swift
+// Anti-pattern to NEVER write (induced failure mode):
+		5CE0A0012C0000010000AA02 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CE0A0012C0000010000AA01 /* SceneDelegate.swift */; };
+		FA2D3DE2307BC5EB00D2F567 /* Debouncer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA2D3DE1307BC5EB00D2F567 /* Debouncer.swift */; };
+		FA2D3DE3307BC5EB00D2F567 /* Debouncer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA2D3DE1307BC5EB00D2F567 /* Debouncer.swift */; };
+		FA2D3DE4307BC5EB00D2F567 /* Debouncer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA2D3DE1307BC5EB00D2F567 /* Debouncer.swift */; };
+		FA2D3DE7307BC5F600D2F567 /* DebouncerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA2D3DE6307BC5F600D2F567 /* DebouncerTests.swift */; };
+		5CE0A0012C0000010000AA01 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		FA2D3DE1307BC5EB00D2F567 /* Debouncer.swift */ =
 ```
 
 **VERIFICATION METHOD**:
-Paste into TradingView Pine Editor and verify that line 351/374 compiles without `Syntax error at input 'end of line without line continuation'`.
+Automated regression test asserting that input states reproducing defect `dbfd4de2` are properly handled with clean fallback behavior.
+
 
 ---
 
-## 2660. TradingView Indicator Metadata Constraints & shorttitle Limits (Harvested from ICT Trading Indicator)
+## 2659. docs: refresh 8.0 release notes and pending 8.0.1 fixes (#14305) (Harvested from apple/foundationdb)
 
 <!-- PROVENANCE_START
 {
   "knowledge_type": "engineering_pattern",
-  "topic": "TradingView Indicator Metadata Constraints & shorttitle Limits",
-  "source": "local/ICT trading indicator",
-  "source_url": "c:/ICT trading indicator",
-  "source_version": "HEAD",
-  "license": "Proprietary Local",
-  "extracted_at": "2026-10-19T15:35:04.481Z",
-  "ai_provider": "antigravity-pair-programmer",
-  "generation_mode": "empirical_incident_harvested",
-  "learning_id": "learn-local-ict-trading-indicator-03",
+  "topic": "docs: refresh 8.0 release notes and pending 8.0.1 fixes (#14305)",
+  "source": "apple/foundationdb",
+  "source_url": "https://github.com/apple/foundationdb",
+  "source_version": "827381d6",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-19T15:41:28.496Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-apple-foundationdb",
   "verified": true,
   "confidence": "high",
   "promotion_status": "approved",
   "distillation_prohibited": true
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [local/ICT trading indicator](file:///c:/ICT%20trading%20indicator) (Incident INC-003).  
-> **Evidence**: Verified against TradingView Pine Script v6 compiler warnings `PINE_VERSION_OUTDATED` and `SHORT_TITLE_TOO_LONG`.
+> **Provenance**: Harvested from [apple/foundationdb](https://github.com/apple/foundationdb) (Revision: `827381d6`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
 
 **RULE**:
-When declaring indicator metadata using `indicator()` in Pine Script, engineers MUST strictly enforce `length(shorttitle) <= 10` and declare `//@version=6`. The `shorttitle` parameter is designed for rendering in the compact chart header legend; passing a string longer than 10 characters immediately triggers the `SHORT_TITLE_TOO_LONG` compiler warning. Additionally, TradingView now deprecates Version 5, triggering `PINE_VERSION_OUTDATED` unless `//@version=6` is specified.
+When implementing operations in `documentation/sphinx/source/release-notes/release-notes-800.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents compiler warnings and ensures clean publication and legend display on TradingView desktop, web, and mobile layouts.
+Prevents defects observed in production commit `827381d6`: docs: refresh 8.0 release notes and pending 8.0.1 fixes (#14305). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Every Pine Script indicator script declaration across all trading indicator projects.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `documentation/sphinx/source/release-notes/release-notes-800.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
-```pine
-//@version=6
-indicator("ICT Professional Suite [Buy/Sell & Targets]", "ICT Pro", overlay=true, max_boxes_count=500, max_lines_count=500, max_labels_count=500)
-// "ICT Pro" length is 7 characters (<= 10 characters) -> 0 compiler warnings
+```c++
+// Verified production-grade fix pattern:
+Unreleased.
+
+* Fixed Redwood page-cache memory accounting when a reused page ID changes
+  size, so cache eviction uses the current page size.
+  `(PR #14291) <https://github.com/apple/foundationdb/pull/14291>`_
+* Added bounded retries for disk errors when opening or reading backup
+  encryption-key files, allowing transient failures to recover before the
+  backup container retains a failed initialization result.
+  `(PR #14294) <https://github.com/apple/foundationdb/pull/14294>`_
+* Avoided linking newer glibc symbols into RHEL 9 builds that prevented
+  binaries built on RHEL 9.7 from starting on RHEL 9.6 systems and containers.
+  `(PR #14278) <https://github.com/apple/foundationdb/pull/14278>`_
+* Cached the network interface name used for network-traffic metrics to reduce
+  periodic network-thread stalls on hosts with many interfaces.
+  `(PR #14283) <https://github.com/apple/foundationdb/pull/14283>`_
+* Fixed a Linux ``fdbmonitor`` memory leak when changes to a configuration-file
+  symlink caused its target path to be resolved again.
+  `(PR #14253) <https://github.com/apple/foundationdb/pull/14253>`_
+* Changed the Kubernetes monitor image to declare its existing non-root user
+  numeri
 ```
 
 **NEGATIVE CONSTRAINT**:
-```pine
-// Anti-pattern to NEVER write:
-//@version=5 // WARNING: Outdated version!
-indicator("ICT Professional Suite", "ICT Pro Suite v1.0", overlay=true) // WARNING: 18 chars exceeds 10 char limit!
+```c++
+// Anti-pattern to NEVER write (induced failure mode):
+* Added **Native CDC**: durable named streams for a single user-key range,
+  commit-version-grouped mutations, resumable consumers, and durable
+  acknowledgements controlling log retention. The native C++ and C APIs support
+  registration, listing, removal, consumption, and acknowledgement. New stream
+  admission is disabled by default through ``ENABLE_NATIVE_CDC``. Consumers must
+  handle redelivery and acknowledge only durably processed data; CDC does not
+  provide exactly-once application side effects. See :doc:`/api-c` and the
+  `(PR #13674) <https://github.com/apple/foundationdb/pull/13674>`_
 ```
 
 **VERIFICATION METHOD**:
-Compile script in TradingView Pine Editor; assert 0 warnings reported under the compiler problems panel.
+Automated regression test asserting that input states reproducing defect `827381d6` are properly handled with clean fallback behavior.

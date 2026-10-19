@@ -4973,10 +4973,10 @@
     "repository": "apple/foundationdb",
     "platform": "github",
     "sourceUrl": "https://github.com/apple/foundationdb",
-    "sourceVersion": "487620d5",
+    "sourceVersion": "827381d6",
     "license": "Apache-2.0",
-    "contentHash": "d08b812f084c89e456ad5aacad4e3fd7af4d37abc3609f8bae2b2c1b599e997d",
-    "lastHarvestedAt": "2026-10-19T02:37:16.776Z",
+    "contentHash": "1ce9eec897d368442ba49a820a4d2e91b4dc2b6068a1fd9cc6bf74325a465627",
+    "lastHarvestedAt": "2026-10-19T15:41:28.576Z",
     "learningId": "learn-github-apple-foundationdb"
   },
   "kucherenko-jscpd": {
@@ -8288,5 +8288,15 @@
     "contentHash": "69f2b1cd4cbc749077fdca63fc48b67331063f62cdeb564ddaae788cd965440e",
     "lastHarvestedAt": "2026-10-19T15:31:50.229Z",
     "learningId": "learn-github-sventiigi-whatsnewkit"
+  },
+  "kudoleh-ios-clean-architecture-mvvm": {
+    "repository": "kudoleh/iOS-Clean-Architecture-MVVM",
+    "platform": "github",
+    "sourceUrl": "https://github.com/kudoleh/iOS-Clean-Architecture-MVVM",
+    "sourceVersion": "a68da3e3",
+    "license": "PERMISSIVE_OPEN_SOURCE",
+    "contentHash": "a6f7fa83edbf744e4fe56084bc02e0c4cd11a7d40edb4640560aea603fd42291",
+    "lastHarvestedAt": "2026-10-19T15:41:22.394Z",
+    "learningId": "learn-github-kudoleh-ios-clean-architecture-mvvm"
   }
 }

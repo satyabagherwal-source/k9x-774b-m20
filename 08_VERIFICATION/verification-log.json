@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-JZEC",
-    "timestamp": "2026-10-19T03:13:52.116Z",
-    "repository": "actix/actix-web",
-    "learningId": "learn-github-actix-actix-web",
-    "contentHash": "420f2dab0594cd919e0f2e90529755d96d29f4f3a2cc6b6e95b363f574374c6e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-K3DR",
-    "timestamp": "2026-10-19T03:13:57.279Z",
-    "repository": "wix/react-native-ui-lib",
-    "learningId": "learn-github-wix-react-native-ui-lib",
-    "contentHash": "c7c975bbb9d022c4c046b0497d39ee9d52652fde5c41a8abc86bbef02eb50afe",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-K4XD",
     "timestamp": "2026-10-19T03:13:59.281Z",
     "repository": "goss-org/goss",
@@ -7490,6 +7460,36 @@
     "repository": "rqlite/rqlite",
     "learningId": "learn-github-rqlite-rqlite",
     "contentHash": "6107eafb4aa467f04130d0952e130106313664511e28218d66be088ea165549d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-9A3C",
+    "timestamp": "2026-10-19T15:41:22.392Z",
+    "repository": "kudoleh/iOS-Clean-Architecture-MVVM",
+    "learningId": "learn-github-kudoleh-ios-clean-architecture-mvvm",
+    "contentHash": "a6f7fa83edbf744e4fe56084bc02e0c4cd11a7d40edb4640560aea603fd42291",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-9EV2",
+    "timestamp": "2026-10-19T15:41:28.574Z",
+    "repository": "apple/foundationdb",
+    "learningId": "learn-github-apple-foundationdb",
+    "contentHash": "1ce9eec897d368442ba49a820a4d2e91b4dc2b6068a1fd9cc6bf74325a465627",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

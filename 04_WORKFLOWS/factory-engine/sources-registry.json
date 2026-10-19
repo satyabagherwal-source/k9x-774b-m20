@@ -857,12 +857,12 @@
     "revisionIdentifier": "26134433"
   },
   "gravitl-netmaker": {
-    "name": "gravitl/netmaker",
+    "name": "netmaker",
     "officialUrl": "https://github.com/gravitl/netmaker",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-19T12:38:47.374Z",
-    "lastVerified": "2026-10-19T12:38:47.374Z",
+    "lastChecked": "2026-10-19T15:41:21.288Z",
+    "lastVerified": "2026-10-19T15:41:21.288Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gravitl-netmaker",
@@ -871,7 +871,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "e8c0f0bc"
   },
   "microsoft-security-101": {
     "name": "Security-101",
@@ -5287,12 +5288,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "imsnif-bandwhich": {
-    "name": "imsnif/bandwhich",
+    "name": "bandwhich",
     "officialUrl": "https://github.com/imsnif/bandwhich",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-19T00:34:58.586Z",
-    "lastVerified": "2026-10-19T00:34:58.586Z",
+    "lastChecked": "2026-10-19T15:41:11.162Z",
+    "lastVerified": "2026-10-19T15:41:11.162Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-imsnif-bandwhich",
@@ -5301,7 +5302,8 @@
     "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "1899870c"
   },
   "rsuite-rsuite": {
     "name": "rsuite/rsuite",
@@ -8609,12 +8611,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "typestack-routing-controllers": {
-    "name": "typestack/routing-controllers",
+    "name": "routing-controllers",
     "officialUrl": "https://github.com/typestack/routing-controllers",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-19T04:33:56.904Z",
-    "lastVerified": "2026-10-19T04:33:56.904Z",
+    "lastChecked": "2026-10-19T15:41:08.710Z",
+    "lastVerified": "2026-10-19T15:41:08.710Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-typestack-routing-controllers",
@@ -8623,7 +8625,8 @@
     "recentFixesCount": 27,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "bf6fbfdc"
   },
   "plandex-ai-plandex": {
     "name": "plandex-ai/plandex",
@@ -9647,14 +9650,14 @@
     "officialUrl": "https://github.com/apple/foundationdb",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-10-19T02:37:16.548Z",
-    "lastVerified": "2026-10-19T02:37:16.548Z",
+    "lastChecked": "2026-10-19T15:41:28.403Z",
+    "lastVerified": "2026-10-19T15:41:28.403Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-apple-foundationdb",
-    "contentHash": "d08b812f084c89e456ad5aacad4e3fd7af4d37abc3609f8bae2b2c1b599e997d",
+    "contentHash": "1ce9eec897d368442ba49a820a4d2e91b4dc2b6068a1fd9cc6bf74325a465627",
     "promotedRulesCount": 1,
-    "recentFixesCount": 6,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9863,12 +9866,12 @@
     "revisionIdentifier": "853f6abf"
   },
   "aquasecurity-tfsec": {
-    "name": "aquasecurity/tfsec",
+    "name": "tfsec",
     "officialUrl": "https://github.com/aquasecurity/tfsec",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-19T03:26:51.264Z",
-    "lastVerified": "2026-10-19T03:26:51.264Z",
+    "lastChecked": "2026-10-19T15:41:18.678Z",
+    "lastVerified": "2026-10-19T15:41:18.678Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aquasecurity-tfsec",
@@ -9877,7 +9880,8 @@
     "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "b692c20b"
   },
   "holaboss-ai-holaos": {
     "name": "holaboss-ai/holaOS",
@@ -17358,14 +17362,15 @@
     "officialUrl": "https://github.com/kudoleh/iOS-Clean-Architecture-MVVM",
     "sourceType": "github",
     "technology": "Swift",
-    "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-01T00:46:14.375Z",
-    "lastVerified": "2026-10-01T00:46:14.375Z",
+    "lastChecked": "2026-10-19T15:41:21.550Z",
+    "lastVerified": "2026-10-19T15:41:21.550Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
-    "learningId": null,
-    "promotedRulesCount": 0,
-    "recentFixesCount": 18,
+    "learningId": "learn-github-kudoleh-ios-clean-architecture-mvvm",
+    "contentHash": "a6f7fa83edbf744e4fe56084bc02e0c4cd11a7d40edb4640560aea603fd42291",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 9,
+    "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   },
@@ -18264,8 +18269,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-19T15:11:40.139Z",
-    "lastVerified": "2026-10-19T15:11:40.139Z",
+    "lastChecked": "2026-10-19T15:41:26.132Z",
+    "lastVerified": "2026-10-19T15:41:26.132Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -24570,9 +24575,9 @@
   "addy0-com-free-open-technical-seo-crawler": {
     "name": "free-open-technical-SEO-crawler",
     "officialUrl": "https://github.com/Addy0-com/free-open-technical-SEO-crawler",
-    "lastChecked": "2026-10-18T05:07:00.254Z",
+    "lastChecked": "2026-10-19T15:41:13.642Z",
     "revisionIdentifier": "7e5d3c5",
-    "lastVerified": "2026-10-18T05:07:00.254Z"
+    "lastVerified": "2026-10-19T15:41:13.642Z"
   },
   "melnixdev-seo-crawl-audit": {
     "name": "seo-crawl-audit",
@@ -26177,8 +26182,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-19T15:31:59.687Z",
-    "lastVerified": "2026-10-19T15:31:59.687Z",
+    "lastChecked": "2026-10-19T15:41:31.104Z",
+    "lastVerified": "2026-10-19T15:41:31.104Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",

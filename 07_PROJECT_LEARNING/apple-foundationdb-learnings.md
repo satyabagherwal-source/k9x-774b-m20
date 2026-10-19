@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apple-foundationdb-learnings.md`  
 > **Source**: github ([https://github.com/apple/foundationdb](https://github.com/apple/foundationdb))  
-> **Source Version**: `487620d5`  
+> **Source Version**: `827381d6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T02:37:16.555Z  
+> **Timestamp**: 2026-10-19T15:41:28.408Z  
 > **Learning ID**: `learn-github-apple-foundationdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apple-foundationdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apple/foundationdb](https://github.com/apple/foundationdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T02:37:16.548Z  
+> **Harvest Timestamp**: 2026-10-19T15:41:28.403Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: FoundationDB - the open source, distributed, transactional key-value store
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 16783 stars
+- **Stars / Engagement**: 16788 stars
 
 ---
 
@@ -1961,234 +1961,101 @@ constexpr std::string_view to_string(WaitState st) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6bedaf81` (2026-10-13)
-**Commit Message**: Merge pull request #14236 from tclinkenbeard-oai/dev/tclinkenbeard/backup-restore-trace-overflow-20261006
+### Incident Patch 1: `827381d6` (2026-10-19)
+**Commit Message**: docs: refresh 8.0 release notes and pending 8.0.1 fixes (#14305)
 
-Retry backup encryption key reads after disk errors
+The 8.0 release notes on main missed the 8.0.0 release-branch
+refresh in #14193 and listed only one pending 8.0.1 fix. Restore the
+released 8.0.0 notes, including the updated CDC capabilities,
+dependency versions, compatibility changes, and reliability fixes.
 
-**File**: `fdbclient/BackupContainerFileSystem.cpp` (modified, +34/-19)
+Mark 8.0.1 as unreleased and document six additional fixes already merged into release-8.0
+
+**File**: `documentation/sphinx/source/release-notes/release-notes-800.rst` (modified, +85/-23)
 ```diff
-@@ -1493,28 +1493,43 @@ class BackupContainerFileSystemImpl {
- 		co_await keyFile->sync();
- 	}
+@@ -7,10 +7,32 @@ Release Notes
+ 8.0.1
+ =====
  
-+	static constexpr int ENCRYPTION_KEY_MAX_RETRIES = 5;
++Unreleased.
 +
- 	static Future<Void> readEncryptionKey(std::string encryptionKeyFileName) {
--		Reference<IAsyncFile> keyFile;
- 		StreamCipherKey const* cipherKey = StreamCipherKey::getGlobalCipherKey();
--		try {
--			Reference<IAsyncFile> _keyFile = co_await IAsyncFileSystem::filesystem()->open(
--			    encryptionKeyFileName,
--			    IAsyncFile::OPEN_NO_AIO | IAsyncFile::OPEN_READONLY | IAsyncFile::OPEN_UNCACHED,
--			    0400);
--			keyFile = _keyFile;
--		} catch (Error& e) {
--			TraceEvent(SevError, "FailedToOpenEncryptionKeyFile").error(e).detail("FileName", encryptionKeyFileName);
--			throw e;
--		}
--		int bytesRead = co_await uncancellable(keyFile->read(cipherKey->data(), cipherKey->size(), 0));
--		if (bytesRead != cipherKey->size()) {
--			TraceEvent(SevError, "InvalidEncryptionKeyFileSize")
--			    .detail("ExpectedSize", cipherKey->size())
--			    .detail("ActualSize", bytesRead)
--			    .detail("FileName", encryptionKeyFileName);
--			throw invalid_encryption_key_file();
-+		for (int retries = 0;; ++retries) {
-+			const char* errorEvent = "FailedToOpenEncryptionKeyFile";
-+			try {
-+				Reference<IAsyncFile> keyFile = co_await IAsyncFileSystem::filesystem()->open(
-+				    encryptionKeyFileName,
-+				    IAsyncFile::OPEN_NO_AIO | IAsyncFile::OPEN_READONLY | IAsyncFile::OPEN_UNCACHED,
-+				    0400);
-+				errorEvent = "FailedToReadEncryptionKeyFile";
-+				int bytesRead = co_await uncancellable(keyFile->read(cipherKey->data(), cipherKey->size(), 0));
-+				if (bytesRead != cipherKey->size()) {
-+					TraceEvent(SevError, "InvalidEncryptionKeyFileSize")
-+					    .detail("ExpectedSize", cipherKey->size())
-+					    .detail("ActualSize", bytesRead)
-+					    .detail("FileName", encryptionKeyFileName);
-+					throw invalid_encryption_key_file();
-+				}
-+				co_return;
-+			} catch (Error& e) {
-+				if (e.code() == error_code_actor_cancelled) {
-+					throw;
-+				}
-+				bool retry = e.isDiskError() && retries < ENCRYPTION_KEY_MAX_RETRIES;
-+				TraceEvent(retry ? SevWarn : SevError, errorEvent)
-+				    .error(e)
-+				    .detail("FileName", encryptionKeyFileName)
-+				    .detail("Retries", retries);
-+				if (!retry) {
-+					throw;
-+				}
-+			}
-+			// Containers retain this setup future, so recover disk errors before publishing a permanent failure.
-+			co_await delay(1.0);
- 		}
--		ASSERT_EQ(bytesRead, cipherKey->size());
- 	}
+ * Fixed network setup failures when older multiversion clients load the 8.0
+   client, even when the application does not use blob granules. Restored the
+   required blob granule C symbols as stubs that abort the process when called.
+   `(PR #14238) <https://github.com/apple/foundationdb/pull/14238>`_
++* Fixed Redwood page-cache memory accounting when a reused page ID changes
++  size, so cache eviction uses the current page size.
++  `(PR #14291) <https://github.com/apple/foundationdb/pull/14291>`_
++* Added bounded retries for disk errors when opening or reading backup
++  encryption-key files, allowing transient failures to recover before the
++  backup container retains a failed initialization result.
++  `(PR #14294) <https://github.com/apple/foundationdb/pull/14294>`_
++* Avoided linking newer glibc symbols into RHEL 9 builds that prevented
++  binaries built on RHEL 9.7 from starting on RHEL 9.6 systems and containers.
++  `(PR #14278) <https://github.com/apple/foundationdb/pull/14278>`_
++* Cached the network interface name used for network-traffic metrics to reduce
++  periodic network-thread stalls on hosts with many interfaces.
++  `(PR #14283) <https://github.com/apple/foundationdb/pull/14283>`_
++* Fixed a Linux ``fdbmonitor`` memory leak when changes to a configuration-file
++  symlink caused its target path to be resolved again.
++  `(PR #14253) <https://github.com/apple/foundationdb/pull/14253>`_
++* Changed the Kubernetes monitor image to declare its existing non-root user
++  numerically, allowing it to start with ``runAsNonRoot: true`` when
++  ``runAsUser`` is not specified.
++  `(PR #14248) <https://github.com/apple/foundationdb/pull/14248>`_
  
- 	static Future<Void> writeEncryptionMetadataIfNotExists(Reference<BackupContainerFileSystem> bc,
-```
-
----
-
-### Incident Patch 2: `77ca7729` (2026-10-16)
-**Commit Message**: fdbbackup: fix --min-cleanup-seconds name in help output (#14300)
-
-**File**: `fdbbackup/backup.cpp` (modified, +1/-1)
-```diff
-@@ -956,7 +956,7 @@ static void printBackupUsage(bool devhelp) {
- 	printf("  --trace-format FORMAT\n"
- 	       "                 Select the format of the trace files. xml (the default) and json are supported.\n"
- 	       "                 Has no effect unless --log is specified.\n");
--	printf("  --max-cleanup-seconds SECONDS\n"
-+	printf("  --min-cleanup-seconds SECONDS\n"
- 	       "                 Specifies the amount of time a backup or DR needs to be stale before cleanup will\n"
- 	       "                 remove mutations for it. By default this is set to one hour.\n");
- 	printf("  --delete-data\n"
-```
-
----
-
-### Incident Patch 3: `7a4ca845` (2026-10-14)
-**Commit Message**: build: on rhel9 based distros, avoid linking GLIBC_2.35 symbols
-
-RHEL 9.x has glibc-2.34, but at various minor releases some
-glibc-2.35 symbols were backported. The problematic one for
-us is _dl_find_object@GLIBC_2.35 backported in RHEL 9.7 which
-causes fdb binaries to fail to start on RHEL 9.6 based systems
-or containers.
-
-This symbol actually comes from stack-unwider routines in libgcc_eh.a
-from the system gcc-11 install, but the gcc-toolset-13 which we
-sometimes alternately use (instead of our typical custom clang-19.x)
-is not linked against the new glibc-with-backports so we can use
-the needed libgcc bits from that instead. This is admittedly not a
-very thorough fix, just a way to avoid downgrading build systems for now.
-
-Also add a test that unexpected GLIBC_2.35+ symbols do not appear
-on RHEL 9.x based builds in the future, so we can at least catch it.
-
-**File**: `CMakeLists.txt` (modified, +15/-0)
-```diff
-@@ -311,6 +311,21 @@ if(WITH_DOCUMENTATION)
-   endif()
- endif()
+ 8.0.0
+ =====
+@@ -54,16 +76,23 @@ Compatibility and removed features
+ Features (Experimental)
+ -----------------------
  
-+# Make sure binaries built on newer RHEL 9 minor releases still run on older ones, see ConfigureCompiler.cmake
-+if(RHEL9_BASED)
-+  set(glibc_check_binaries)
-+  foreach(target fdbserver fdbcli fdbbackup fdbmonitor fdb_c fdb_c_shim fdb_java)
-+    if(TARGET ${target})
-+      get_target_property(target_type ${target} TYPE)
-+      if(target_type MATCHES "^(EXECUTABLE|SHARED_LIBRARY|MODULE_LIBRARY)$")
-+        list(APPEND glibc_check_binaries $<TARGET_FILE:${target}>)
-+      endif()
-+    endif()
-+  endforeach()
-+  add_test(NAME glibc_symbol_versions
-+           COMMAND ${CMAKE_SOURCE_DIR}/contrib/check_glibc_symbol_versions.sh ${CMAKE_NM} ${glibc_check_binaries})
-+endif()
-+
- if(WIN32)
-   add_subdirectory(packaging/msi)
- else()
-```
-
-**File**: `cmake/ConfigureCompiler.cmake` (modified, +29/-0)
-```diff
-@@ -171,6 +171,35 @@ else()
-     set(GCC YES)
-   endif()
+-* Added **Native CDC**: durable named streams for a single user-key range,
+-  commit-version-grouped mutations, resumable consumers, and durable
+-  acknowledgements controlling log retention. The native C++ and C APIs support
+-  registration, listing, removal, consumption, and acknowledgement. New stream
+-  admission is disabled by default through ``ENABLE_NATIVE_CDC``. Consumers must
+-  handle redelivery and acknowledge only durably processed data; CDC does not
+-  provide exactly-once application side effects. See :doc:`/api-c` and the
++* Added **Native CDC**: durable named streams over one or more disjoint user-key
++  ranges, commit-version-grouped mutations, resumable consumers, and durable
++  acknowledgements controlling log retention. Native C++, C, and Python APIs
++  support registration, listing, removal, consumption, and acknowledgement;
++  ordered fixed-partition streams can merge mutations into commit-version order.
++  Operator commands report stream status and guard removal while consumers lag.
++  New stream admission is disabled by default through ``ENABLE_NATIVE_CDC``.
++  Consumers must handle redelivery and acknowledge only durably processed data;
++  CDC does not provide exactly-once application side effects. See :doc:`/api-c`,
++  :doc:`/api-python`, and the
+   `CDC design <https://github.com/apple/foundationdb/blob/main/design/cdc.md>`_.
+   `(PR #13287) <https://github.com/apple/foundationdb/pull/13287>`_,
+-  `(PR #13674) <https://github.com/apple/foundationdb/pull/13674>`_
++  `(PR #13674) <https://github.com/apple/foundationdb/pull/13674>`_,
++  `(PR #13925) <https://github.com/apple/foundationdb/pull/13925>`_,
++  `(PR #13926) <https://github.com/apple/foundationdb/pull/13926>`_,
++  `(PR #13971) <https://github.com/apple/foundationdb/pull/13971>`_,
++  `(PR #14116) <https://github.com/apple/foundationdb/pull/14116>`_
+ * Extended **bulk dump and bulk load**, introduced in 7.4, to operate on selected
+   key ranges. Bulk-load restore can target a non-empty database; data in the
+   destination range is replaced. See :doc:`/bulkdump` and :doc:`/bulkload-user`.
+@@ -94,6 +123,12 @@ Features (Experimental)
+   `(PR #12540) <https://github.com/apple/foundationdb/pull/12540>`_,
+   `(PR #12555) <https://github.com/apple/foundationdb/pull/12555>`_,
+   `(PR #12603) <https://github.com/apple/foundationdb/pull/12603>`_
++* Added the ``range_digest`` storage audit to compute a partition-independent
++  content fingerprint on a quiescent cluster. This can validate a backup and
++  restore without reading all data through an external client, and exposes
++  per-range progress for localizing mismatches. See
++  `the range-digest design <https://github.com/apple/foundationdb/blob/main/design/range-digest.md>`_.
++  `(PR #13866) <https://github.com/apple/foundationdb/pull/13866>`_
  
-+  set(RHEL9_BASED NO)
-+  if(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND NOT CMAKE_CROSSCOMPILING)
-+    cmake_host_system_information(RESULT _distrib_id QUERY DISTRIB_ID)
-+    cmake_host_system_information(RESULT _distrib_id_like QUERY DISTRIB_ID_LIKE)
-+    cmake_host_system_information(RESULT _distrib_version_id QUERY DISTRIB_VERSION_ID)
-+    if((_distrib_id STREQUAL "rhel" OR _distrib_id_like MATCHES "(^| )rhel( |$)") AND _distrib_version_id MATCHES "^9(\\.|$)")
-+      set(RHEL9_BASED YES)
-+    endif()
-+  endif()
-+
-+  # Since RHEL 9.7, the system GCC 11 (gcc >= 11.5.0-10) libgcc_eh.a unwinder calls _dl_find_object@GLIBC_2.35
-+  # (backported to the RHEL 9.7 glibc 2.34). Clang selects the system GCC installation by default, so with
-+  # -static-libgcc our binaries would fail to start on RHEL 9.6 and older. The gcc-toolset-13 libgcc_eh.a
-+  # does not have this dependency (but newer gcc-toolsets do). The glibc_symbol_versions test checks this.
-+  set(_clang_gcc_install_dir "")
-+  if(CLANG AND RHEL9_BASED)
-+    set(_clang_gcc_install_dir "/opt/rh/gcc-toolset-13/root/usr/lib/gcc/${CMAKE_SYSTEM_PROCESSOR}-redhat-linux/13")
-+  endif()
-+  env_set(CLANG_GCC_INSTALL_DIR "${_clang_gcc_install_dir}" PATH "GCC installation for clang to use (passed as --gcc-install-dir), empty for the clang default")
-+  if(CLANG_GCC_INSTALL_DIR)
-+    if(NOT IS_DIRECTORY "${CLANG_GCC_INSTALL_DIR}")
-+      message(FATAL_ERROR "CLANG_GCC_INSTALL_DIR=${CLANG_GCC_INSTALL_DIR} does not exist. On RHEL 9 based distros, "
-+                          "install gcc-toolset-13-gcc-c++, or set CLANG_GCC_INSTALL_DIR to empty to use clang's default.")
-+    endif()
-+    message(STATUS "Using GCC installation for clang: ${CLANG_GCC_INSTALL_DIR}")
-+    add_compile_options("$<${is_cxx_compile}:--gcc-install-dir=${CLANG_GCC_INSTALL_DIR}>")
-+    add_link_options("$<${is_cxx_link}:--gcc-install-dir=${CLANG_GCC_INSTALL_DIR}>")
-+  endif()
-+
-   # check linker flags.
-   if (USE_LD STREQUAL "DEFAULT")
-     set(USE_LD "LD")
-```
-
-**File**: `contrib/check_glibc_symbol_versions.sh` (added, +48/-0)
-```diff
-@@ -0,0 +1,48 @@
-+#!/bin/bash
-+#
-+# Check that binaries only need glibc symbols available in the oldest glibc we support on RHEL 9 based
-+# distros: RHEL 9.6 glibc 2.34 (2.34-168.el9_6). Newer RHEL 9 minor releases backport some glibc 2.35+
-+# symbols, so a newer build host can produce binaries that fail to start on older systems with:
-+#   version `GLIBC_2.35' not found
-+#
-+# Usage: check_glibc_symbol_versions.sh <nm> <binary>...
-+
-+set -euo pipefail
-+
-+MAX_GLIBC_VERSION=2.34
-+
-+if [[ $# -lt 2 ]]; then
-+  echo "Usage: $0 <nm> <binary>..." >&2
-+  exit 2
-+fi
-+nm=$1
-+shift
-+
-+failed=0
-+for file in "$@"; do
-+  if ! undefined=$("$nm" -D --undefined-only "$file"); then
-+    echo "FAIL: $nm failed on $file"
-+    failed=1
-+    continue
-+  fi
-+  bad_symbols=()
-+  for symbol in $(grep -oE '[^ ]+@GLIBC_[0-9.]+$' <<<"$undefined" | sort -u); do
-+    version=${symbol##*@GLIBC_}
-+    if [[ $(printf '%s\n%s\n' "$MAX_GLIBC_VERSION" "$version" | sort -V | tail -n1) != "$MAX_GLIBC_VERSION" ]]; then
-+      bad_symbols+=("$symbol")
-+    fi
-+  done
-+
-+  if [[ ${#bad_symbols[@]} -gt 0 ]]; then
-+    echo "FAIL: $file needs glibc symbols newer than GLIBC_${MAX_GLIBC_VERSION}:"
-+    printf '  %s\n' "${bad_symbols[@]}"
-+    failed=1
-+  else
-+    echo "OK: $file"
-+  fi
-+done
-+
-+if [[ $failed -ne 0 ]]; then
-+  echo "Binaries would not run on RHEL 9.6. Check that clang uses gcc-toolset-13 (CLANG_GCC_INSTALL_DIR in cmake/ConfigureCompiler.cmake)."
-+  exit 1
-+fi
+ Client APIs and bindings
+ ------------------------
+@@ -116,6 +151,9 @@ Client APIs and bindings
+ * Fixed read-your-writes transactions leaving watch futures unresolved when a
+   commit is interrupted by a transaction error such as a timeout.
+   `(PR #13395) <https://github.com/apple/foundationdb/pull/13395>`_
++* Remo
 ```
 
 #### Recent Merged Pull Requests:
@@ -2197,7 +2064,7 @@ on RHEL 9.x based builds in the future, so we can at least catch it.
 - **PR #14311** (closed): Refuse a bulkload restore of a partitioned-log backup (@saintstack)
 - **PR #14310** (closed): Validate the block format version when reading partitioned mutation logs (@saintstack)
 - **PR #14307** (2026-10-18): [release-8.0] tlog cdc test AbsoluteDeadline more robust under load (@ploxiln)
-- **PR #14304** (closed): Reject mismatched ELF architectures in Docker image artifacts (@evanbits)
+- **PR #14305** (2026-10-19): docs: refresh 8.0 release notes and pending 8.0.1 fixes (@tclinkenbeard-oai)
 
 ---
 
@@ -2217,76 +2084,54 @@ on RHEL 9.x based builds in the future, so we can at least catch it.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #14236 from tclinkenbeard-oai/dev/tclinkenbeard/backup-restor
+## X. docs: refresh 8.0 release notes and pending 8.0.1 fixes (#14305)
 
 **RULE**:
-When implementing operations in `fdbclient/BackupContainerFileSystem.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `documentation/sphinx/source/release-notes/release-notes-800.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6bedaf81`: Merge pull request #14236 from tclinkenbeard-oai/dev/tclinkenbeard/backup-restore-trace-overflow-20261006. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `827381d6`: docs: refresh 8.0 release notes and pending 8.0.1 fixes (#14305). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `fdbclient/BackupContainerFileSystem.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `documentation/sphinx/source/release-notes/release-notes-800.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-	static constexpr int ENCRYPTION_KEY_MAX_RETRIES = 5;
+Unreleased.
 
-		for (int retries = 0;; ++retries) {
-			const char* errorEvent = "FailedToOpenEncryptionKeyFile";
-			try {
-				Reference<IAsyncFile> keyFile = co_await IAsyncFileSystem::filesystem()->open(
-				    encryptionKeyFileName,
-				    IAsyncFile::OPEN_NO_AIO | IAsyncFile::OPEN_READONLY | IAsyncFile::OPEN_UNCACHED,
-				    0400);
-				errorEvent = "FailedToReadEncryptionKeyFile";
-				int bytesRead = co_await uncancellable(keyFile->read(cipherKey->data(), cipherKey->size(), 0));
-				if (bytesRead != cipherKey->size()) {
-					TraceEvent(SevError, "InvalidEncryptionKeyFileSize")
-					    .detail("ExpectedSize", cipherKey->size())
-					    .detail("ActualSize", bytesRead)
-					    .detail("FileName", encryptionKeyFileName);
-					throw invalid_encryption_key_file();
-				}
-				co_return;
-			} catch (Error& e) {
-				if (e.code() == error_code_actor_cancelled) {
-					throw;
-				}
-				bool retry = e.isDiskError() && retries < ENCRYPTION_KEY_MAX_RETRIES;
-				TraceEvent(retry ? SevWarn : SevError, errorEvent)
-				    .error(e)
-				    .detail("FileName", encryptionKeyFileName)
-				    .detail("Retries", retries);
-				if (!retry) {
-					throw;
-		
+* Fixed Redwood page-cache memory accounting when a reused page ID changes
+  size, so cache eviction uses the current page size.
+  `(PR #14291) <https://github.com/apple/foundationdb/pull/14291>`_
+* Added bounded retries for disk errors when opening or reading backup
+  encryption-key files, allowing transient failures to recover before the
+  backup container retains a failed initialization result.
+  `(PR #14294) <https://github.com/apple/foundationdb/pull/14294>`_
+* Avoided linking newer glibc symbols into RHEL 9 builds that prevented
+  binaries built on RHEL 9.7 from starting on RHEL 9.6 systems and containers.
+  `(PR #14278) <https://github.com/apple/foundationdb/pull/14278>`_
+* Cached the network interface name used for network-traffic metrics to reduce
+  periodic network-thread stalls on hosts with many interfaces.
+  `(PR #14283) <https://github.com/apple/foundationdb/pull/14283>`_
+* Fixed a Linux ``fdbmonitor`` memory leak when changes to a configuration-file
+  symlink caused its target path to be resolved again.
+  `(PR #14253) <https://github.com/apple/foundationdb/pull/14253>`_
+* Changed the Kubernetes monitor image to declare its existing non-root user
+  numeri
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-		Reference<IAsyncFile> keyFile;
-		try {
-			Reference<IAsyncFile> _keyFile = co_await IAsyncFileSystem::filesystem()->open(
-			    encryptionKeyFileName,
-			    IAsyncFile::OPEN_NO_AIO | IAsyncFile::OPEN_READONLY | IAsyncFile::OPEN_UNCACHED,
-			    0400);
-			keyFile = _keyFile;
-		} catch (Error& e) {
-			TraceEvent(SevError, "FailedToOpenEncryptionKeyFile").error(e).detail("FileName", encryptionKeyFileName);
-			throw e;
-		}
-		int bytesRead = co_await uncancellable(keyFile->read(cipherKey->data(), cipherKey->size(), 0));
-		if (bytesRead != cipherKey->size()) {
-			TraceEvent(SevError, "InvalidEncryptionKeyFileSize")
-			    .detail("ExpectedSize", cipherKey->size())
-			    .detail("ActualSize", bytesRead)
-			    .detail("FileName", encryptionKeyFileName);
-			throw invalid_encryption_key_file();
-		ASSERT_EQ(bytesRead, cipherKey->size());
+* Added **Native CDC**: durable named streams for a single user-key range,
+  commit-version-grouped mutations, resumable consumers, and durable
+  acknowledgements controlling log retention. The native C++ and C APIs support
+  registration, listing, removal, consumption, and acknowledgement. New stream
+  admission is disabled by default through ``ENABLE_NATIVE_CDC``. Consumers must
+  handle redelivery and acknowledge only durably processed data; CDC does not
+  provide exactly-once application side effects. See :doc:`/api-c` and the
+  `(PR #13674) <https://github.com/apple/foundationdb/pull/13674>`_
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6bedaf81` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `827381d6` are properly handled with clean fallback behavior.

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T15:31:57.153Z",
-  "total_cycles_completed": 3309,
-  "total_learnings_persisted": 3309,
-  "total_rules_promoted": 2454,
+  "last_updated": "2026-10-19T15:41:28.579Z",
+  "total_cycles_completed": 3311,
+  "total_learnings_persisted": 3311,
+  "total_rules_promoted": 2456,
   "history": [
-    {
-      "timestamp": "2026-10-19T09:48:06.757Z",
-      "repository": "CompVis/stable-diffusion-v1-4",
-      "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T09:48:09.445Z",
-      "repository": "LouisCAD/Splitties",
-      "learningId": "learn-github-louiscad-splitties",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T09:48:15.518Z",
       "repository": "volcengine/MineContext",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-19T15:31:57.153Z",
       "repository": "rqlite/rqlite",
       "learningId": "learn-github-rqlite-rqlite",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T15:41:22.397Z",
+      "repository": "kudoleh/iOS-Clean-Architecture-MVVM",
+      "learningId": "learn-github-kudoleh-ios-clean-architecture-mvvm",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T15:41:28.579Z",
+      "repository": "apple/foundationdb",
+      "learningId": "learn-github-apple-foundationdb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,10 +1,10 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T15:35:04.650Z",
-  "total_verified_learnings": 843,
-  "total_canonical_rules": 2660,
-  "total_dossiers": 1529,
+  "last_updated": "2026-10-19T15:41:28.548Z",
+  "total_verified_learnings": 844,
+  "total_canonical_rules": 1689,
+  "total_dossiers": 1528,
   "items": {
     "learn-github-0x4m4-hexstrike-ai": {
       "learning_id": "learn-github-0x4m4-hexstrike-ai",
@@ -2009,14 +2009,19 @@
       "slug": "apple-foundationdb",
       "platform": "github",
       "source_url": "https://github.com/apple/foundationdb",
-      "source_version": "487620d5",
-      "content_hash": "d08b812f084c89e456ad5aacad4e3fd7af4d37abc3609f8bae2b2c1b599e997d",
+      "source_version": "827381d6",
+      "content_hash": "1ce9eec897d368442ba49a820a4d2e91b4dc2b6068a1fd9cc6bf74325a465627",
       "dossier_path": "07_PROJECT_LEARNING/apple-foundationdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apple-foundationdb-learnings.md",
       "promoted_rules": [
         {
           "number": 2031,
           "title": "Merge pull request #14236 from tclinkenbeard-oai/dev/tclinkenbeard/backup-restor",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2659,
+          "title": "docs: refresh 8.0 release notes and pending 8.0.1 fixes (#14305)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -2025,7 +2030,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T02:37:16.724Z",
+      "verified_at": "2026-10-19T15:41:28.541Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -27399,22 +27404,35 @@
     "learn-github-kudoleh-ios-clean-architecture-mvvm": {
       "learning_id": "learn-github-kudoleh-ios-clean-architecture-mvvm",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "kudoleh-ios-clean-architecture-mvvm",
+      "source": "kudoleh/iOS-Clean-Architecture-MVVM",
+      "repository": "kudoleh/iOS-Clean-Architecture-MVVM",
       "slug": "kudoleh-ios-clean-architecture-mvvm",
       "platform": "github",
       "source_url": "https://github.com/kudoleh/iOS-Clean-Architecture-MVVM",
-      "source_version": "HEAD",
-      "content_hash": "cedba0430d88b3a8d741b575f7609947fef459a4cab477c3b6271d7ef58121da",
+      "source_version": "a68da3e3",
+      "content_hash": "a6f7fa83edbf744e4fe56084bc02e0c4cd11a7d40edb4640560aea603fd42291",
       "dossier_path": "07_PROJECT_LEARNING/kudoleh-ios-clean-architecture-mvvm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kudoleh-ios-clean-architecture-mvvm-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2658,
+          "title": "Remove search-as-you-type and the debouncer (it hid the recent-queries list)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.921Z"
+      "verified_at": "2026-10-19T15:41:22.359Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-kumahq-kuma": {
       "learning_id": "learn-github-kumahq-kuma",
@@ -88881,24 +88899,33 @@
       "brain_readback": true,
       "verified_at": "2026-10-19T15:31:57.092Z"
     },
-    "learn-local-ict-trading-indicator": {
-      "learning_id": "learn-local-ict-trading-indicator",
-      "category": "PROJECT_LEARNING_DOSSIER",
-      "repository": "local/ICT-trading-indicator",
-      "slug": "ict-trading-indicator",
-      "platform": "local",
-      "source_url": "c:/ICT trading indicator",
-      "source_version": "HEAD",
-      "dossier_path": "07_PROJECT_LEARNING/ict-trading-indicator-learnings.md",
-      "promoted_rules": [
-        2658,
-        2659,
-        2660
-      ],
-      "status": "VERIFIED_PROMOTED",
-      "verification_status": "VERIFIED",
+    "rule-2658": {
+      "learning_id": "rule-2658",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2658,
+      "title": "Remove search-as-you-type and the debouncer (it hid the recent-queries list)",
+      "source_url": "https://github.com/kudoleh/iOS-Clean-Architecture-MVVM",
+      "source_version": "a68da3e3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
-      "verified_at": "2026-10-19T15:35:04.651Z"
+      "brain_readback": true,
+      "verified_at": "2026-10-19T15:41:22.359Z"
+    },
+    "rule-2659": {
+      "learning_id": "rule-2659",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2659,
+      "title": "docs: refresh 8.0 release notes and pending 8.0.1 fixes (#14305)",
+      "source_url": "https://github.com/apple/foundationdb",
+      "source_version": "827381d6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T15:41:28.541Z"
     }
   },
   "aliases": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T15:31:57.156Z",
+  "last_updated": "2026-10-19T15:41:28.581Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7579,14 +7579,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apple-foundationdb",
-      "content_hash": "d08b812f084c89e456ad5aacad4e3fd7af4d37abc3609f8bae2b2c1b599e997d",
-      "verified_at": "2026-10-19T02:37:16.781Z",
+      "content_hash": "1ce9eec897d368442ba49a820a4d2e91b4dc2b6068a1fd9cc6bf74325a465627",
+      "verified_at": "2026-10-19T15:41:28.581Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T02:37:16.781Z"
+      "last_updated": "2026-10-19T15:41:28.581Z"
     },
     "kucherenko/jscpd": {
       "repository": "kucherenko/jscpd",
@@ -12462,6 +12462,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T15:31:50.236Z"
+    },
+    "kudoleh/iOS-Clean-Architecture-MVVM": {
+      "repository": "kudoleh/iOS-Clean-Architecture-MVVM",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-kudoleh-ios-clean-architecture-mvvm",
+      "content_hash": "a6f7fa83edbf744e4fe56084bc02e0c4cd11a7d40edb4640560aea603fd42291",
+      "verified_at": "2026-10-19T15:41:22.399Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T15:41:22.399Z"
     }
   },
   "repos": {
