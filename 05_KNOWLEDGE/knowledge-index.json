@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T02:12:32.980Z",
-  "total_verified_learnings": 504,
+  "last_updated": "2026-10-19T02:19:23.631Z",
+  "total_verified_learnings": 509,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -1550,22 +1550,35 @@
     "learn-github-aome510-spotify-player": {
       "learning_id": "learn-github-aome510-spotify-player",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "aome510-spotify-player",
+      "source": "aome510/spotify-player",
+      "repository": "aome510/spotify-player",
       "slug": "aome510-spotify-player",
       "platform": "github",
       "source_url": "https://github.com/aome510/spotify-player",
-      "source_version": "HEAD",
-      "content_hash": "12711ca2ef2538012094c7f4eb1c38a9037e1cc791bf4cedbf77f9609edcb73d",
+      "source_version": "7dc9d17a",
+      "content_hash": "9846676cecdc912e324f28ed373d8f205cace0dfa0a1039820c18e6db4d53912",
       "dossier_path": "07_PROJECT_LEARNING/aome510-spotify-player-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aome510-spotify-player-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2015,
+          "title": "Add TLS backend features (rustls-tls / native-tls) — fixes auth panic on Termux",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.811Z"
+      "verified_at": "2026-10-19T02:18:19.963Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-apache-arrow": {
       "learning_id": "learn-github-apache-arrow",
@@ -1610,22 +1623,35 @@
     "learn-github-apache-shardingsphere": {
       "learning_id": "learn-github-apache-shardingsphere",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "apache-shardingsphere",
+      "source": "apache/shardingsphere",
+      "repository": "apache/shardingsphere",
       "slug": "apache-shardingsphere",
       "platform": "github",
       "source_url": "https://github.com/apache/shardingsphere",
-      "source_version": "HEAD",
-      "content_hash": "c698223cd926c91dd4473673231708c9a474789d4323a5e41a3fc314bd9d66a4",
+      "source_version": "319a369d",
+      "content_hash": "948e6556a185bc6d71e4409153e2a692bb6fd9ddbf6446df6dfd54a034ffdb42",
       "dossier_path": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2018,
+          "title": "firebird batch rls cancel without batch (#40098)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.822Z"
+      "verified_at": "2026-10-19T02:18:32.937Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-apache-zookeeper": {
       "learning_id": "learn-github-apache-zookeeper",
@@ -6571,22 +6597,35 @@
     "learn-github-elastic-eui": {
       "learning_id": "learn-github-elastic-eui",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "elastic-eui",
+      "source": "elastic/eui",
+      "repository": "elastic/eui",
       "slug": "elastic-eui",
       "platform": "github",
       "source_url": "https://github.com/elastic/eui",
-      "source_version": "HEAD",
-      "content_hash": "e2dbf199b0da673deed75ff846ff0d30b7b0492bd5e013216940b83ccb98ba6e",
+      "source_version": "cafeebf1",
+      "content_hash": "96f3dd771672facbe28378c62f14a6666fd7ed97724686adc8f6570715f40218",
       "dossier_path": "07_PROJECT_LEARNING/elastic-eui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/elastic-eui-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2014,
+          "title": "[Chore] Add prep commit and fix nightly/regression quirks (#10180)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.761Z"
+      "verified_at": "2026-10-19T02:18:18.616Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-elder-plinius-t3mp3st": {
       "learning_id": "learn-github-elder-plinius-t3mp3st",
@@ -22435,22 +22474,35 @@
     "learn-github-infracost-infracost": {
       "learning_id": "learn-github-infracost-infracost",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "infracost-infracost",
+      "source": "infracost/infracost",
+      "repository": "infracost/infracost",
       "slug": "infracost-infracost",
       "platform": "github",
       "source_url": "https://github.com/infracost/infracost",
-      "source_version": "HEAD",
-      "content_hash": "93b1362c39872cea2974feb37026723524d888344d301e6913fa83ce3a130cbf",
+      "source_version": "8854f1ed",
+      "content_hash": "cfcdc18378cda4c3a30ea69cb40da3d23b07ebbd4ac722daff082e2170606411",
       "dossier_path": "07_PROJECT_LEARNING/infracost-infracost-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/infracost-infracost-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2017,
+          "title": "deps): bump Go to 1.25.12 to patch CVE-2026-39822 (#3597)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.595Z"
+      "verified_at": "2026-10-19T02:18:28.092Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-insertkoinio-koin": {
       "learning_id": "learn-github-insertkoinio-koin",
@@ -31573,22 +31625,35 @@
     "learn-github-react-native-device-info-react-native-device-info": {
       "learning_id": "learn-github-react-native-device-info-react-native-device-info",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "react-native-device-info-react-native-device-info",
+      "source": "react-native-device-info/react-native-device-info",
+      "repository": "react-native-device-info/react-native-device-info",
       "slug": "react-native-device-info-react-native-device-info",
       "platform": "github",
       "source_url": "https://github.com/react-native-device-info/react-native-device-info",
-      "source_version": "HEAD",
-      "content_hash": "b32ac83d5302be2baaa6313daf64270afa8eec3d291db0a13ed872da890ae0ea",
+      "source_version": "06a9ed6d",
+      "content_hash": "ef68bd352cf9725d4d59b77a67d8a0468643f4601de14f0a0840d0b2b7cc0103",
       "dossier_path": "07_PROJECT_LEARNING/react-native-device-info-react-native-device-info-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-native-device-info-react-native-device-info-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2016,
+          "title": "android): Resolve NullPointerException in hasKeyboard function",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.207Z"
+      "verified_at": "2026-10-19T02:18:24.755Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-react-native-elements-react-native-elements": {
       "learning_id": "learn-github-react-native-elements-react-native-elements",
@@ -47567,7 +47632,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT",
       "source_version": "hf-openmoss-team-moss-image-sft",
-      "content_hash": "6635a7accf735734ac1c846e25b74b0075b12e05c1758ddc0cafc837133cc740",
+      "content_hash": "8305f9188c8e683d2692ceae5d748a7e330e5fd48f61e48b5d8c06737329cd87",
       "dossier_path": "07_PROJECT_LEARNING/hf-openmoss-team-moss-image-sft-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openmoss-team-moss-image-sft-learnings.md",
       "promoted_rules": [
@@ -47590,6 +47655,16 @@
           "number": 1546,
           "title": "Strict Latent Clamping Before Spatial Decoding",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2019,
+          "title": "Multi-Modal Attention Mask Decoupling in Transformer Cross-Attention",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2020,
+          "title": "Overlap-Blended Latent Spatial Tiling for Generative Decoders",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47597,7 +47672,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-17T22:09:22.239Z",
+      "verified_at": "2026-10-19T02:19:23.626Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -73848,6 +73923,104 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T02:12:32.974Z"
+    },
+    "rule-2014": {
+      "learning_id": "rule-2014",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2014,
+      "title": "[Chore] Add prep commit and fix nightly/regression quirks (#10180)",
+      "source_url": "https://github.com/elastic/eui",
+      "source_version": "cafeebf1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T02:18:18.616Z"
+    },
+    "rule-2015": {
+      "learning_id": "rule-2015",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2015,
+      "title": "Add TLS backend features (rustls-tls / native-tls) — fixes auth panic on Termux",
+      "source_url": "https://github.com/aome510/spotify-player",
+      "source_version": "7dc9d17a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T02:18:19.963Z"
+    },
+    "rule-2016": {
+      "learning_id": "rule-2016",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2016,
+      "title": "android): Resolve NullPointerException in hasKeyboard function",
+      "source_url": "https://github.com/react-native-device-info/react-native-device-info",
+      "source_version": "06a9ed6d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T02:18:24.755Z"
+    },
+    "rule-2017": {
+      "learning_id": "rule-2017",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2017,
+      "title": "deps): bump Go to 1.25.12 to patch CVE-2026-39822 (#3597)",
+      "source_url": "https://github.com/infracost/infracost",
+      "source_version": "8854f1ed",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T02:18:28.092Z"
+    },
+    "rule-2018": {
+      "learning_id": "rule-2018",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2018,
+      "title": "firebird batch rls cancel without batch (#40098)",
+      "source_url": "https://github.com/apache/shardingsphere",
+      "source_version": "319a369d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T02:18:32.937Z"
+    },
+    "rule-2019": {
+      "learning_id": "rule-2019",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2019,
+      "title": "Multi-Modal Attention Mask Decoupling in Transformer Cross-Attention",
+      "source_url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT",
+      "source_version": "hf-openmoss-team-moss-image-sft",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T02:19:23.626Z"
+    },
+    "rule-2020": {
+      "learning_id": "rule-2020",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2020,
+      "title": "Overlap-Blended Latent Spatial Tiling for Generative Decoders",
+      "source_url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT",
+      "source_version": "hf-openmoss-team-moss-image-sft",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T02:19:23.626Z"
     }
   },
   "aliases": {

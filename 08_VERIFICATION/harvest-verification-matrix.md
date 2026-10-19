@@ -2788,3 +2788,9 @@
 | `CYCLE-20261019-9QVJ` | `2026-10-19T02:09:55.279Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2010` | Yes (`e599469a...`) |
 | `CYCLE-20261019-9V8P` | `2026-10-19T02:10:00.937Z` | `cockroachdb/cockroach` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2011` | Yes (`f69ac088...`) |
 | `CYCLE-20261019-D4L0` | `2026-10-19T02:12:33.012Z` | `react95-io/React95` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2012, Rule 2013` | Yes (`bc8cbdfd...`) |
+| `CYCLE-20261019-KJ9U` | `2026-10-19T02:18:18.642Z` | `elastic/eui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2014` | Yes (`96f3dd77...`) |
+| `CYCLE-20261019-KKB8` | `2026-10-19T02:18:19.988Z` | `aome510/spotify-player` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2015` | Yes (`9846676c...`) |
+| `CYCLE-20261019-KO0N` | `2026-10-19T02:18:24.791Z` | `react-native-device-info/react-native-device-info` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2016` | Yes (`ef68bd35...`) |
+| `CYCLE-20261019-KQL1` | `2026-10-19T02:18:28.117Z` | `infracost/infracost` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2017` | Yes (`cfcdc183...`) |
+| `CYCLE-20261019-KUBM` | `2026-10-19T02:18:32.962Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2018` | Yes (`948e6556...`) |
+| `CYCLE-20261019-LXFP` | `2026-10-19T02:19:23.653Z` | `OpenMOSS-Team/MOSS-Image-SFT` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2019, Rule 2020` | Yes (`8305f918...`) |

@@ -1685,8 +1685,8 @@
     "sourceUrl": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT",
     "sourceVersion": "hf-openmoss-team-moss-image-sft",
     "license": "Open-Source",
-    "contentHash": "6635a7accf735734ac1c846e25b74b0075b12e05c1758ddc0cafc837133cc740",
-    "lastHarvestedAt": "2026-10-17T22:09:22.276Z",
+    "contentHash": "8305f9188c8e683d2692ceae5d748a7e330e5fd48f61e48b5d8c06737329cd87",
+    "lastHarvestedAt": "2026-10-19T02:19:23.660Z",
     "learningId": "learn-huggingface-openmoss-team-moss-image-sft"
   },
   "hf-deepseek-ai-deepseek-v4.1-flash-1017": {
@@ -4828,5 +4828,55 @@
     "contentHash": "bc8cbdfdff2420d239e6598d9e5da055151bacf86b93cd99922b8807a888996a",
     "lastHarvestedAt": "2026-10-19T02:12:33.017Z",
     "learningId": "learn-github-react95-io-react95"
+  },
+  "elastic-eui": {
+    "repository": "elastic/eui",
+    "platform": "github",
+    "sourceUrl": "https://github.com/elastic/eui",
+    "sourceVersion": "cafeebf1",
+    "license": "NOASSERTION",
+    "contentHash": "96f3dd771672facbe28378c62f14a6666fd7ed97724686adc8f6570715f40218",
+    "lastHarvestedAt": "2026-10-19T02:18:18.646Z",
+    "learningId": "learn-github-elastic-eui"
+  },
+  "aome510-spotify-player": {
+    "repository": "aome510/spotify-player",
+    "platform": "github",
+    "sourceUrl": "https://github.com/aome510/spotify-player",
+    "sourceVersion": "7dc9d17a",
+    "license": "MIT",
+    "contentHash": "9846676cecdc912e324f28ed373d8f205cace0dfa0a1039820c18e6db4d53912",
+    "lastHarvestedAt": "2026-10-19T02:18:19.992Z",
+    "learningId": "learn-github-aome510-spotify-player"
+  },
+  "react-native-device-info-react-native-device-info": {
+    "repository": "react-native-device-info/react-native-device-info",
+    "platform": "github",
+    "sourceUrl": "https://github.com/react-native-device-info/react-native-device-info",
+    "sourceVersion": "06a9ed6d",
+    "license": "MIT",
+    "contentHash": "ef68bd352cf9725d4d59b77a67d8a0468643f4601de14f0a0840d0b2b7cc0103",
+    "lastHarvestedAt": "2026-10-19T02:18:24.793Z",
+    "learningId": "learn-github-react-native-device-info-react-native-device-info"
+  },
+  "infracost-infracost": {
+    "repository": "infracost/infracost",
+    "platform": "github",
+    "sourceUrl": "https://github.com/infracost/infracost",
+    "sourceVersion": "8854f1ed",
+    "license": "Apache-2.0",
+    "contentHash": "cfcdc18378cda4c3a30ea69cb40da3d23b07ebbd4ac722daff082e2170606411",
+    "lastHarvestedAt": "2026-10-19T02:18:28.122Z",
+    "learningId": "learn-github-infracost-infracost"
+  },
+  "apache-shardingsphere": {
+    "repository": "apache/shardingsphere",
+    "platform": "github",
+    "sourceUrl": "https://github.com/apache/shardingsphere",
+    "sourceVersion": "319a369d",
+    "license": "Apache-2.0",
+    "contentHash": "948e6556a185bc6d71e4409153e2a692bb6fd9ddbf6446df6dfd54a034ffdb42",
+    "lastHarvestedAt": "2026-10-19T02:18:32.964Z",
+    "learningId": "learn-github-apache-shardingsphere"
   }
 }

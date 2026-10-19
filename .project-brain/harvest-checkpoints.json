@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T02:12:33.022Z",
+  "last_updated": "2026-10-19T02:19:23.664Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2654,14 +2654,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openmoss-team-moss-image-sft",
-      "content_hash": "6635a7accf735734ac1c846e25b74b0075b12e05c1758ddc0cafc837133cc740",
-      "verified_at": "2026-10-17T22:09:22.279Z",
+      "content_hash": "8305f9188c8e683d2692ceae5d748a7e330e5fd48f61e48b5d8c06737329cd87",
+      "verified_at": "2026-10-19T02:19:23.664Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T22:09:22.279Z"
+      "last_updated": "2026-10-19T02:19:23.664Z"
     },
     "deepseek-ai/DeepSeek-V4.1-Flash-1017": {
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
@@ -7357,6 +7357,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T02:12:33.021Z"
+    },
+    "elastic/eui": {
+      "repository": "elastic/eui",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-elastic-eui",
+      "content_hash": "96f3dd771672facbe28378c62f14a6666fd7ed97724686adc8f6570715f40218",
+      "verified_at": "2026-10-19T02:18:18.649Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T02:18:18.649Z"
+    },
+    "aome510/spotify-player": {
+      "repository": "aome510/spotify-player",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-aome510-spotify-player",
+      "content_hash": "9846676cecdc912e324f28ed373d8f205cace0dfa0a1039820c18e6db4d53912",
+      "verified_at": "2026-10-19T02:18:19.995Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T02:18:19.995Z"
+    },
+    "react-native-device-info/react-native-device-info": {
+      "repository": "react-native-device-info/react-native-device-info",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-react-native-device-info-react-native-device-info",
+      "content_hash": "ef68bd352cf9725d4d59b77a67d8a0468643f4601de14f0a0840d0b2b7cc0103",
+      "verified_at": "2026-10-19T02:18:24.796Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T02:18:24.796Z"
+    },
+    "infracost/infracost": {
+      "repository": "infracost/infracost",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-infracost-infracost",
+      "content_hash": "cfcdc18378cda4c3a30ea69cb40da3d23b07ebbd4ac722daff082e2170606411",
+      "verified_at": "2026-10-19T02:18:28.125Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T02:18:28.125Z"
+    },
+    "apache/shardingsphere": {
+      "repository": "apache/shardingsphere",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-apache-shardingsphere",
+      "content_hash": "948e6556a185bc6d71e4409153e2a692bb6fd9ddbf6446df6dfd54a034ffdb42",
+      "verified_at": "2026-10-19T02:18:32.967Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T02:18:32.967Z"
     }
   },
   "repos": {

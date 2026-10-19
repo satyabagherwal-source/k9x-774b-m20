@@ -2795,3 +2795,9 @@ Every entry in this ledger must capture:
 | `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `1f752b67` | Multi-dimensional audit evidence | 2026-10-19T02:09:55.284Z |
 | `learn-github-cockroachdb-cockroach` | `https://github.com/cockroachdb/cockroach` | `d30c905f` | Multi-dimensional audit evidence | 2026-10-19T02:10:00.942Z |
 | `learn-github-react95-io-react95` | `https://github.com/react95-io/React95` | `871d5335` | Multi-dimensional audit evidence | 2026-10-19T02:12:33.017Z |
+| `learn-github-elastic-eui` | `https://github.com/elastic/eui` | `cafeebf1` | Multi-dimensional audit evidence | 2026-10-19T02:18:18.646Z |
+| `learn-github-aome510-spotify-player` | `https://github.com/aome510/spotify-player` | `7dc9d17a` | Multi-dimensional audit evidence | 2026-10-19T02:18:19.992Z |
+| `learn-github-react-native-device-info-react-native-device-info` | `https://github.com/react-native-device-info/react-native-device-info` | `06a9ed6d` | Multi-dimensional audit evidence | 2026-10-19T02:18:24.793Z |
+| `learn-github-infracost-infracost` | `https://github.com/infracost/infracost` | `8854f1ed` | Multi-dimensional audit evidence | 2026-10-19T02:18:28.122Z |
+| `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `319a369d` | Multi-dimensional audit evidence | 2026-10-19T02:18:32.964Z |
+| `learn-huggingface-openmoss-team-moss-image-sft` | `https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT` | `hf-openmos` | Multi-dimensional audit evidence | 2026-10-19T02:19:23.660Z |
