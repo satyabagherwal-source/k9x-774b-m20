@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T02:03:23.501Z",
-  "total_verified_learnings": 499,
+  "last_updated": "2026-10-19T02:12:32.980Z",
+  "total_verified_learnings": 504,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -2571,22 +2571,35 @@
     "learn-github-aws-aws-cdk": {
       "learning_id": "learn-github-aws-aws-cdk",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "aws-aws-cdk",
+      "source": "aws/aws-cdk",
+      "repository": "aws/aws-cdk",
       "slug": "aws-aws-cdk",
       "platform": "github",
       "source_url": "https://github.com/aws/aws-cdk",
-      "source_version": "HEAD",
-      "content_hash": "6a21b7c896c62554c5e22b0230c913ad072512ef3278a41c6805a509646e3274",
+      "source_version": "1f752b67",
+      "content_hash": "e599469adccb123fe09166bd0786f1b44fc39590955a4d94581124d1132245d6",
       "dossier_path": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2010,
+          "title": "check skills in the build (#39029)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.010Z"
+      "verified_at": "2026-10-19T02:09:55.243Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-awslabs-mcp": {
       "learning_id": "learn-github-awslabs-mcp",
@@ -4386,22 +4399,35 @@
     "learn-github-cockroachdb-cockroach": {
       "learning_id": "learn-github-cockroachdb-cockroach",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "cockroachdb-cockroach",
+      "source": "cockroachdb/cockroach",
+      "repository": "cockroachdb/cockroach",
       "slug": "cockroachdb-cockroach",
       "platform": "github",
       "source_url": "https://github.com/cockroachdb/cockroach",
-      "source_version": "HEAD",
-      "content_hash": "d3ee0d203b34b3310ac9014e35bc992b0a923428fd85e45c57ddf7dd9e730bb4",
+      "source_version": "d30c905f",
+      "content_hash": "f69ac0887d52fd96fb2a748a2e6011255373a043de5c654445ae64b4599121c4",
       "dossier_path": "07_PROJECT_LEARNING/cockroachdb-cockroach-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cockroachdb-cockroach-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2011,
+          "title": "Merge pull request #172915 from shivamshaw23/fix-172889-compaction-lock-cleanup",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.355Z"
+      "verified_at": "2026-10-19T02:10:00.900Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-cocoindex-io-cocoindex": {
       "learning_id": "learn-github-cocoindex-io-cocoindex",
@@ -31746,22 +31772,40 @@
     "learn-github-react95-io-react95": {
       "learning_id": "learn-github-react95-io-react95",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "react95-io-react95",
+      "source": "react95-io/React95",
+      "repository": "react95-io/React95",
       "slug": "react95-io-react95",
       "platform": "github",
       "source_url": "https://github.com/react95-io/React95",
-      "source_version": "HEAD",
-      "content_hash": "d40e4964d43f45898f8edb2f5e86bea876e54db692bd910d446d95dfffd7cbe2",
+      "source_version": "871d5335",
+      "content_hash": "bc8cbdfdff2420d239e6598d9e5da055151bacf86b93cd99922b8807a888996a",
       "dossier_path": "07_PROJECT_LEARNING/react95-io-react95-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react95-io-react95-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2012,
+          "title": "Dual-Modality Controlled/Uncontrolled State Synthesis with Warning Boundaries",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2013,
+          "title": "Viewport-Pinning DOM Scroll Alignment with Focus Detachment",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.229Z"
+      "verified_at": "2026-10-19T02:12:32.974Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-react95-react95": {
       "learning_id": "learn-github-react95-react95",
@@ -34141,22 +34185,35 @@
     "learn-github-software-mansion-react-native-gesture-handler": {
       "learning_id": "learn-github-software-mansion-react-native-gesture-handler",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "software-mansion-react-native-gesture-handler",
+      "source": "software-mansion/react-native-gesture-handler",
+      "repository": "software-mansion/react-native-gesture-handler",
       "slug": "software-mansion-react-native-gesture-handler",
       "platform": "github",
       "source_url": "https://github.com/software-mansion/react-native-gesture-handler",
-      "source_version": "HEAD",
-      "content_hash": "9070e7a79b4f74f93efab2a0970537d8c6d40e499ff8a3681db36db892a02aca",
+      "source_version": "0c953f50",
+      "content_hash": "5f30138c3333a667dd1b5e5afb8d4d15c843da27c7ac9b5fce312d7fa320efee",
       "dossier_path": "07_PROJECT_LEARNING/software-mansion-react-native-gesture-handler-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/software-mansion-react-native-gesture-handler-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2009,
+          "title": "[Android] Check the overflow ancestor pass against the detector child's bounds (",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.613Z"
+      "verified_at": "2026-10-19T02:09:52.264Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-software-mansion-react-native-reanimated": {
       "learning_id": "learn-github-software-mansion-react-native-reanimated",
@@ -37921,22 +37978,35 @@
     "learn-github-wasm-bindgen-wasm-pack": {
       "learning_id": "learn-github-wasm-bindgen-wasm-pack",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "wasm-bindgen-wasm-pack",
+      "source": "wasm-bindgen/wasm-pack",
+      "repository": "wasm-bindgen/wasm-pack",
       "slug": "wasm-bindgen-wasm-pack",
       "platform": "github",
       "source_url": "https://github.com/wasm-bindgen/wasm-pack",
-      "source_version": "HEAD",
-      "content_hash": "b38d4395df2f456f0ef35b4da585e4436fdfc126fedae7c49617475dd66e0d57",
+      "source_version": "e33b17ae",
+      "content_hash": "993d325f11c68e184b0cf63a5802f69712cb4a266db4774547d462278c79649c",
       "dossier_path": "07_PROJECT_LEARNING/wasm-bindgen-wasm-pack-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/wasm-bindgen-wasm-pack-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2005,
+          "title": "npm): replace deprecated binary-install and add release auto-publish (#1579)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.300Z"
+      "verified_at": "2026-10-19T02:09:48.139Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-watchexec-watchexec": {
       "learning_id": "learn-github-watchexec-watchexec",
@@ -73694,6 +73764,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T02:03:23.493Z"
+    },
+    "rule-2005": {
+      "learning_id": "rule-2005",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2005,
+      "title": "npm): replace deprecated binary-install and add release auto-publish (#1579)",
+      "source_url": "https://github.com/wasm-bindgen/wasm-pack",
+      "source_version": "e33b17ae",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T02:09:48.139Z"
+    },
+    "rule-2009": {
+      "learning_id": "rule-2009",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2009,
+      "title": "[Android] Check the overflow ancestor pass against the detector child's bounds (",
+      "source_url": "https://github.com/software-mansion/react-native-gesture-handler",
+      "source_version": "0c953f50",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T02:09:52.264Z"
+    },
+    "rule-2010": {
+      "learning_id": "rule-2010",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2010,
+      "title": "check skills in the build (#39029)",
+      "source_url": "https://github.com/aws/aws-cdk",
+      "source_version": "1f752b67",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T02:09:55.243Z"
+    },
+    "rule-2011": {
+      "learning_id": "rule-2011",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2011,
+      "title": "Merge pull request #172915 from shivamshaw23/fix-172889-compaction-lock-cleanup",
+      "source_url": "https://github.com/cockroachdb/cockroach",
+      "source_version": "d30c905f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T02:10:00.900Z"
+    },
+    "rule-2012": {
+      "learning_id": "rule-2012",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2012,
+      "title": "Dual-Modality Controlled/Uncontrolled State Synthesis with Warning Boundaries",
+      "source_url": "https://github.com/react95-io/React95",
+      "source_version": "871d5335",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T02:12:32.974Z"
+    },
+    "rule-2013": {
+      "learning_id": "rule-2013",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2013,
+      "title": "Viewport-Pinning DOM Scroll Alignment with Focus Detachment",
+      "source_url": "https://github.com/react95-io/React95",
+      "source_version": "871d5335",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T02:12:32.974Z"
     }
   },
   "aliases": {

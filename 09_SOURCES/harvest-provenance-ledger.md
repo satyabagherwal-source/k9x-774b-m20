@@ -2789,3 +2789,9 @@ Every entry in this ledger must capture:
 | `learn-github-wcandillon-react-native-skia` | `https://github.com/Shopify/react-native-skia` | `23001a3d` | Multi-dimensional audit evidence | 2026-10-19T02:03:16.904Z |
 | `learn-github-saltstack-salt` | `https://github.com/saltstack/salt` | `88a27b2b` | Multi-dimensional audit evidence | 2026-10-19T02:03:18.414Z |
 | `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `22cc5d9a` | Multi-dimensional audit evidence | 2026-10-19T02:03:23.552Z |
+| `learn-github-wasm-bindgen-wasm-pack` | `https://github.com/wasm-bindgen/wasm-pack` | `e33b17ae` | Multi-dimensional audit evidence | 2026-10-19T02:09:48.181Z |
+| `learn-huggingface-openbmb-minicpm-v-4-7-1b` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-1B` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-10-19T02:09:52.288Z |
+| `learn-github-software-mansion-react-native-gesture-handler` | `https://github.com/software-mansion/react-native-gesture-handler` | `0c953f50` | Multi-dimensional audit evidence | 2026-10-19T02:09:52.327Z |
+| `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `1f752b67` | Multi-dimensional audit evidence | 2026-10-19T02:09:55.284Z |
+| `learn-github-cockroachdb-cockroach` | `https://github.com/cockroachdb/cockroach` | `d30c905f` | Multi-dimensional audit evidence | 2026-10-19T02:10:00.942Z |
+| `learn-github-react95-io-react95` | `https://github.com/react95-io/React95` | `871d5335` | Multi-dimensional audit evidence | 2026-10-19T02:12:33.017Z |

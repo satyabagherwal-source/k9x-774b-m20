@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T02:03:23.557Z",
+  "last_updated": "2026-10-19T02:12:33.022Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2136,14 +2136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
-      "content_hash": "ccc35abc7ef6b778d7f18fe94ab53dbf4daea086451531041a4bf670f8f850e1",
-      "verified_at": "2026-10-17T22:04:59.034Z",
+      "content_hash": "1496750b1b1e69f0806a8d94f0a5c392581415f2bed10f2cbed25afc914cf643",
+      "verified_at": "2026-10-19T02:09:52.292Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T22:04:59.034Z"
+      "last_updated": "2026-10-19T02:09:52.292Z"
     },
     "ccfos/nightingale": {
       "repository": "ccfos/nightingale",
@@ -7282,6 +7282,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T02:03:23.556Z"
+    },
+    "wasm-bindgen/wasm-pack": {
+      "repository": "wasm-bindgen/wasm-pack",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-wasm-bindgen-wasm-pack",
+      "content_hash": "993d325f11c68e184b0cf63a5802f69712cb4a266db4774547d462278c79649c",
+      "verified_at": "2026-10-19T02:09:48.186Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T02:09:48.186Z"
+    },
+    "software-mansion/react-native-gesture-handler": {
+      "repository": "software-mansion/react-native-gesture-handler",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-software-mansion-react-native-gesture-handler",
+      "content_hash": "5f30138c3333a667dd1b5e5afb8d4d15c843da27c7ac9b5fce312d7fa320efee",
+      "verified_at": "2026-10-19T02:09:52.331Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T02:09:52.331Z"
+    },
+    "aws/aws-cdk": {
+      "repository": "aws/aws-cdk",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-aws-aws-cdk",
+      "content_hash": "e599469adccb123fe09166bd0786f1b44fc39590955a4d94581124d1132245d6",
+      "verified_at": "2026-10-19T02:09:55.288Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T02:09:55.288Z"
+    },
+    "cockroachdb/cockroach": {
+      "repository": "cockroachdb/cockroach",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-cockroachdb-cockroach",
+      "content_hash": "f69ac0887d52fd96fb2a748a2e6011255373a043de5c654445ae64b4599121c4",
+      "verified_at": "2026-10-19T02:10:00.946Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T02:10:00.946Z"
+    },
+    "react95-io/React95": {
+      "repository": "react95-io/React95",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-react95-io-react95",
+      "content_hash": "bc8cbdfdff2420d239e6598d9e5da055151bacf86b93cd99922b8807a888996a",
+      "verified_at": "2026-10-19T02:12:33.021Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T02:12:33.021Z"
     }
   },
   "repos": {

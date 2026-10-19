@@ -1375,8 +1375,8 @@
     "sourceUrl": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
     "sourceVersion": "hf-openbmb-minicpm-v-4.7-1b",
     "license": "Open-Source",
-    "contentHash": "ccc35abc7ef6b778d7f18fe94ab53dbf4daea086451531041a4bf670f8f850e1",
-    "lastHarvestedAt": "2026-10-17T22:04:59.030Z",
+    "contentHash": "1496750b1b1e69f0806a8d94f0a5c392581415f2bed10f2cbed25afc914cf643",
+    "lastHarvestedAt": "2026-10-19T02:09:52.288Z",
     "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b"
   },
   "ccfos-nightingale": {
@@ -4778,5 +4778,55 @@
     "contentHash": "625458707fb9d02f6ee1c62b271fbcdfbf337f106af5a0b78d07d0e61e3e38b2",
     "lastHarvestedAt": "2026-10-19T02:03:23.552Z",
     "learningId": "learn-github-etcd-io-etcd"
+  },
+  "wasm-bindgen-wasm-pack": {
+    "repository": "wasm-bindgen/wasm-pack",
+    "platform": "github",
+    "sourceUrl": "https://github.com/wasm-bindgen/wasm-pack",
+    "sourceVersion": "e33b17ae",
+    "license": "Apache-2.0",
+    "contentHash": "993d325f11c68e184b0cf63a5802f69712cb4a266db4774547d462278c79649c",
+    "lastHarvestedAt": "2026-10-19T02:09:48.181Z",
+    "learningId": "learn-github-wasm-bindgen-wasm-pack"
+  },
+  "software-mansion-react-native-gesture-handler": {
+    "repository": "software-mansion/react-native-gesture-handler",
+    "platform": "github",
+    "sourceUrl": "https://github.com/software-mansion/react-native-gesture-handler",
+    "sourceVersion": "0c953f50",
+    "license": "MIT",
+    "contentHash": "5f30138c3333a667dd1b5e5afb8d4d15c843da27c7ac9b5fce312d7fa320efee",
+    "lastHarvestedAt": "2026-10-19T02:09:52.327Z",
+    "learningId": "learn-github-software-mansion-react-native-gesture-handler"
+  },
+  "aws-aws-cdk": {
+    "repository": "aws/aws-cdk",
+    "platform": "github",
+    "sourceUrl": "https://github.com/aws/aws-cdk",
+    "sourceVersion": "1f752b67",
+    "license": "Apache-2.0",
+    "contentHash": "e599469adccb123fe09166bd0786f1b44fc39590955a4d94581124d1132245d6",
+    "lastHarvestedAt": "2026-10-19T02:09:55.284Z",
+    "learningId": "learn-github-aws-aws-cdk"
+  },
+  "cockroachdb-cockroach": {
+    "repository": "cockroachdb/cockroach",
+    "platform": "github",
+    "sourceUrl": "https://github.com/cockroachdb/cockroach",
+    "sourceVersion": "d30c905f",
+    "license": "NOASSERTION",
+    "contentHash": "f69ac0887d52fd96fb2a748a2e6011255373a043de5c654445ae64b4599121c4",
+    "lastHarvestedAt": "2026-10-19T02:10:00.942Z",
+    "learningId": "learn-github-cockroachdb-cockroach"
+  },
+  "react95-io-react95": {
+    "repository": "react95-io/React95",
+    "platform": "github",
+    "sourceUrl": "https://github.com/react95-io/React95",
+    "sourceVersion": "871d5335",
+    "license": "MIT",
+    "contentHash": "bc8cbdfdff2420d239e6598d9e5da055151bacf86b93cd99922b8807a888996a",
+    "lastHarvestedAt": "2026-10-19T02:12:33.017Z",
+    "learningId": "learn-github-react95-io-react95"
   }
 }
