@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-2QX8",
-    "timestamp": "2026-10-19T07:40:24.140Z",
-    "repository": "bvaughn/react-virtualized",
-    "learningId": "learn-github-bvaughn-react-virtualized",
-    "contentHash": "6f64da06063ed2dba18caa1b26e862e572b8fb077a706f744edf8f3609452fc3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-2ZFN",
-    "timestamp": "2026-10-19T07:40:35.171Z",
-    "repository": "crate-ci/typos",
-    "learningId": "learn-github-crate-ci-typos",
-    "contentHash": "ab6576829dc704479ba91ab9148ec671ccf93ce45466e53eeee436920ad02fdf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-31DP",
-    "timestamp": "2026-10-19T07:40:37.693Z",
-    "repository": "emberstack/kubernetes-reflector",
-    "learningId": "learn-github-emberstack-kubernetes-reflector",
-    "contentHash": "4d6bed7552adcccbacf0091a91a8d6407c163c2a9bd9d06ae35f7bfe5e72957f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-G7V6",
     "timestamp": "2026-10-19T07:50:52.626Z",
     "repository": "Cloudflare/clef-flash",
@@ -7490,6 +7445,51 @@
     "repository": "xerj-org/xerj",
     "learningId": "learn-github-xerj-org-xerj",
     "contentHash": "dd6f88ee4caf5e18805ed1a05cefa0ac87714c9ac9a003cc5172262a671fc8ad",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-5VTM",
+    "timestamp": "2026-10-19T23:34:37.402Z",
+    "repository": "agent-of-empires/agent-of-empires",
+    "learningId": "learn-github-agent-of-empires-agent-of-empires",
+    "contentHash": "6a051befe99c9bc540a0da89d8c3d1f51f6a0c6bc401a5c8dbfe994e3419bf55",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-5WEL",
+    "timestamp": "2026-10-19T23:34:38.157Z",
+    "repository": "syntax-tree/hast-util-to-html",
+    "learningId": "learn-github-syntax-tree-hast-util-to-html",
+    "contentHash": "d94b39619ca6b66dca697bff3f8d181586b25eedf6e2980e22baf47dcf611fb5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-5XX6",
+    "timestamp": "2026-10-19T23:34:40.122Z",
+    "repository": "StikDebug/StikDebug",
+    "learningId": "learn-github-stikdebug-stikdebug",
+    "contentHash": "dd923dd2d384a06867daaa7b028265a15c2aeca5998a8493ed8bfe6c69c301a2",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -7443,10 +7443,10 @@
     "repository": "agent-of-empires/agent-of-empires",
     "platform": "github",
     "sourceUrl": "https://github.com/agent-of-empires/agent-of-empires",
-    "sourceVersion": "77402819",
+    "sourceVersion": "2ba93cd0",
     "license": "MIT",
-    "contentHash": "69bb2d72aa114dd9c95d756d8499033c424833dd032b97c3b7bfda21b7fa9190",
-    "lastHarvestedAt": "2026-10-19T09:06:34.258Z",
+    "contentHash": "6a051befe99c9bc540a0da89d8c3d1f51f6a0c6bc401a5c8dbfe994e3419bf55",
+    "lastHarvestedAt": "2026-10-19T23:34:37.405Z",
     "learningId": "learn-github-agent-of-empires-agent-of-empires"
   },
   "nativescript-nativescript": {
@@ -9488,5 +9488,25 @@
     "contentHash": "4aed7f518cb963570bcab3934172a9f390e17d82a32434fb518eb7680ff47ed8",
     "lastHarvestedAt": "2026-10-19T23:28:25.583Z",
     "learningId": "learn-github-blackjacx-wwdc"
+  },
+  "syntax-tree-hast-util-to-html": {
+    "repository": "syntax-tree/hast-util-to-html",
+    "platform": "github",
+    "sourceUrl": "https://github.com/syntax-tree/hast-util-to-html",
+    "sourceVersion": "d115f5be",
+    "license": "MIT",
+    "contentHash": "d94b39619ca6b66dca697bff3f8d181586b25eedf6e2980e22baf47dcf611fb5",
+    "lastHarvestedAt": "2026-10-19T23:34:38.160Z",
+    "learningId": "learn-github-syntax-tree-hast-util-to-html"
+  },
+  "stikdebug-stikdebug": {
+    "repository": "StikDebug/StikDebug",
+    "platform": "github",
+    "sourceUrl": "https://github.com/StikDebug/StikDebug",
+    "sourceVersion": "17b1e1d9",
+    "license": "AGPL-3.0",
+    "contentHash": "dd923dd2d384a06867daaa7b028265a15c2aeca5998a8493ed8bfe6c69c301a2",
+    "lastHarvestedAt": "2026-10-19T23:34:40.124Z",
+    "learningId": "learn-github-stikdebug-stikdebug"
   }
 }

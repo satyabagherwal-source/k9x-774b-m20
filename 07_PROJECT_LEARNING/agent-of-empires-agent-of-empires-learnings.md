@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md`  
 > **Source**: github ([https://github.com/agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires))  
-> **Source Version**: `77402819`  
+> **Source Version**: `2ba93cd0`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T09:06:34.049Z  
+> **Timestamp**: 2026-10-19T23:34:37.120Z  
 > **Learning ID**: `learn-github-agent-of-empires-agent-of-empires`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T09:06:33.852Z  
+> **Harvest Timestamp**: 2026-10-19T23:34:35.046Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1859,6 +1859,268 @@ fn print_disclosure(profile: &str) {
 
 ```
 
+### Core Architecture Module: `src/cli/runtime_read/render.rs`
+```
+use std::borrow::Cow;
+use std::collections::HashMap;
+use std::fmt::Write as _;
+use std::path::Path;
+
+use serde::Serialize;
+
+use super::dto::{
+    component_healthy, freshness_observed, profile_component_healthy, ProfileRead, ProjectRead,
+    ProjectScope, SessionRead, SnapshotData, WireState,
+};
+use super::endpoint::{selected_profile_source, ProfileSource};
+use super::{ReadFailure, ScopedCommand};
+use crate::cli::group::GroupListArgs;
+use crate::cli::list::{self, ListArgs, SessionJson, StateFilter, WorkspaceRepoJson, WorktreeJson};
+use crate::cli::project::{ProjectListArgs, ScopeFilter};
+use crate::cli::session::ShowArgs;
+use crate::cli::status::{self, VERBOSE_GROUPS};
+
+/// One rendered read: the text the command prints, and whether it printed the
+/// human session table, which is the only place the update notice belongs.
+#[derive(Debug)]
+pub(crate) struct Projection {
+    pub stdout: String,
+    pub session_table: bool,
+}
+
+impl Projection {
+    fn text(stdout: String) -> Self {
+        Self {
+            stdout,
+            session_table: false,
+        }
+    }
+}
+
+pub(crate) fn evaluate(
+    command: &ScopedCommand<'_>,
+    snapshot: &SnapshotData,
+    source: &super::endpoint::ReadRequestSource,
+    local_home: Option<&Path>,
+) -> Result<Projection, ReadFailure> {
+    match command {
+        ScopedCommand::List(args) => render_list(args, snapshot, source, local_home.is_some()),
+        ScopedCommand::Status(args) => render_status(args, snapshot, source, local_home),
+        ScopedCommand::Show(args) => render_show(args, snapshot, source),
+        ScopedCommand::ListTrash => render_trash(snapshot, source).map(Projection::text),
+        ScopedCommand::GroupList(args) => {
+            render_groups(args, snapshot, source).map(Projection::text)
+        }
+        ScopedCommand::Profile => render_profiles(snapshot).map(Projection::text),
+        ScopedCommand::ProjectList(args) => {
+            render_projects(args, snapshot, source).map(Projection::text)
+        }
+    }
+}
+
+fn terminal_text(value: &str) -> Cow<'_, str> {
+    let Some((start, _)) = value.char_indices().find(|(_, ch)| ch.is_control()) else {
+        return Cow::Borrowed(value);
+    };
+    let mut clean = String::with_capacity(value.len());
+    clean.push_str(&value[..start]);
+    clean.extend(value[start..].chars().filter(|ch| !ch.is_control()));
+    Cow::Owned(clean)
+}
+
+fn selected_profile<'a>(
+    snapshot: &'a SnapshotData,
+    source: &'a super::endpoint::ReadRequestSource,
+) -> Result<(&'a str, &'a ProfileRead), ReadFailure> {
+    let selected = match selected_profile_source(source) {
+        ProfileSource::Explicit(value) => value,
+        ProfileSource::Environment(value) => value.to_str().ok_or_else(|| {
+            // Match clap's invalid-environment-profile exit status.
+            ReadFailure::exit(2, "error: AGENT_OF_EMPIRES_PROFILE must be valid UTF-8\n")
+        })?,
+        ProfileSource::Default => match snapshot.default_profile.as_deref() {
+            Some(value) => value,
+            // A resolved but absent default is a user-state refusal.
+            None => match &snapshot.resolved_default_profile {
+                Some(name) => {
+                    crate::session::validate_profile_name(name).map_err(|error| {
+                        ReadFailure::exit(
+                            1,
+                            format!("Error: {}\n", terminal_text(&error.to_string())),
+                        )
+                    })?;
+                    return Err(profile_absent("default_missing", name));
+                }
+                // Nothing was resolved, because resolving would have created
+                // the profile this read has to stay out of.
+                None => return Err(ReadFailure::post("default_missing")),
+            },
+        },
+    };
+    crate::session::validate_profile_name(selected).map_err(|error| {
+        ReadFailure::exit(1, format!("Error: {}\n", terminal_text(&error.to_string())))
+    })?;
+    snapshot
+        .profiles
+        .iter()
+        .find(|profile| {
+            profile.name == selected || profile.aliases.iter().any(|alias| alias == selected)
+        })
+        .map(|profile| (selected, profile))
+        .ok_or_else(|| profile_absent("profile_missing", selected))
+}
+
+/// Preserve the local CLI's profile-creation guidance and exit status.
+fn profile_absent(code: &'static str, name: &str) -> ReadFailure {
+    let name = terminal_text(name);
+    ReadFailure::refuse(
+        code,
+        1,
+        format!(
+            "Error: Profile '{name}' does not exist. Create it with: aoe profile create {name}\n"
+        ),
+    )
+}
+
+/// Preserve the local resolver's sorted ambiguity candidates.
+fn ambiguous_prefix(identifier: &str, candidates: &[&SessionRead]) -> ReadFailure {
+    let mut lines: Vec<String> = candidates
+        .iter()
+        .map(|session| format!("  {} ({})", session.id, terminal_text(&session.title)))
+        .collect();
+    lines.sort();
+    ReadFailure::refuse(
+        "session_ambiguous",
+        1,
+        format!(
+            "Error: Ambiguous session identifier {identifier:?} matches {} sessions:\n{}\n\
+             Use a longer prefix or the full ID.\n",
+            candidates.len(),
+            lines.join("\n")
+        ),
+    )
+}
+
+fn render_list(
+    args: &ListArgs,
+    snapshot: &SnapshotData,
+    source: &super::endpoint::ReadRequestSource,
+    local_peer: bool,
+) -> Result<Projection, ReadFailure> {
+    let state = args.state;
+    if args.all {
+        if !component_healthy(&snapshot.health.global_enumeration) {
+            return Err(unreadable("The profile registry"));
+        }
+        // Local empty-inventory output precedes JSON formatting.
+        if !snapshot.profiles.iter().any(|profile| profile.listed) {
+            return Ok(Projection::text("No profiles found.\n".into()));
+        }
+        if args.json {
+            let systemd_active = local_peer && list::systemd_scopes_active();
+            let mut rows = Vec::new();
+            for profile in snapshot
+                .profiles
+                .iter()
+                .filter(|profile| profile.listed && profile_sessions_healthy(profile))
+            {
+                for session in sessions_for_profile(snapshot, &profile.name)
+                    .filter(|session| matches_state(session.state, state))
+                {
+                    rows.push(session_json(session, &profile.name, systemd_active)?);
+                }
+            }
+            return json_lines(&rows).map(Projection::text);
+        }
+        let show_state = state == StateFilter::All;
+        let mut output = String::new();
+        let mut total = 0usize;
+        for profile in snapshot
+            .profiles
+            .iter()
+            .filter(|profile| profile.listed && profile_sessions_healthy(profile))
+        {
+            let sessions: Vec<&SessionRead> = sessions_for_profile(snapshot, &profile.name)
+                .filter(|session| matches_state(session.state, state))
+                .collect();
+            // Empty profiles have no banner.
+            if sessions.is_empty() {
+                continue;
+            }
+            output.push_str(&format!(
+                "\n═══ Profile: {} ═══\n\n",
+                terminal_text(&profile.name)
+            ));
+            output.push_str(&list::table_header(show_state));
+            for (session, depth) in tree_order(&sessions) {
+                output.push_str(&list::table_row(
+                    &list::table_title(&terminal_text(&session.title), depth),
+                    &terminal_text(&session.group_path),
+                    &terminal_text(&session.project_path),
+                    show_state.then(|| session.state.as_str()),
+                    &session.id,
+                ));
+            }
+            output.push_str(&format!("({} sessions)\n", sessions.len()));
+            total += sessions.len();
+        }
+        output.push_str(&format!(
+            "\n═══════════════════════════════════════\nTotal: {total} sessions across {} profiles\n",
+            snapshot.profiles.iter().filter(|profile| profile.listed).count()
+        ));
+        return Ok(Projection::text(output));
+    }
+
+    let (profile_name, profile) = selected_profile(snapshot, source)?;
+    let sessions: Vec<&SessionRead> = sessions_for_profile(snapshot, &profile.name)
+        .filter(|session| matches_state(session.state, state))
+        .collect();
+    require_selected_profile_health(snapshot, profile, profile_name)?;
+
+    if args.json {
+        let systemd_active = local_peer && list::systemd_scopes_active();
+        let rows: Vec<SessionJson> = sessions
+            .iter()
+            .map(|session| session_json(session, profile_name, systemd_active))
+            .collect::<Result<_, _>>()?;
+        return json_lines(&rows).map(Projection::text);
+    }
+    if sessions.is_empty() {
+        let profile_name = terminal_text(profile_name);
+        return Ok(Projection::text(format!(
+            "No sessions found in profile '{profile_name}'.\n"
+        )));
+    }
+    let show_state = state == StateFilter::All;
+    let mut output = format!("Profile: {}\n\n", terminal_text(profile_name));
+    output.push_str(&list::table_header(show_state));
+    for (session, depth) in tree_order(&sessions) {
+        output.push_str(&list::table_row(
+            &list::table_title(&terminal_text(&session.title), depth),
+            &terminal_text(&session.group_path),
+            &terminal_text(&session.project_path),
+            show_state.then(|| session.state.as_str()),
+            &session.id,
+        ));
+    }
+    output.push_str(&format!("\nTotal: {} sessions\n", sessions.len()));
+    Ok(Projection {
+        stdout: output,
+        session_table: true,
+    })
+}
+
+fn matches_state(state: WireState, filter: StateFilter) -> bool {
+    match filter {
+        StateFilter::All => true,
+        StateFilter::Live => state == WireState::Live,
+        StateFilter::Trashed => state == WireState::Trashed,
+    }
+}
+
+/// The same walk the 
+```
+
 ### Core Architecture Module: `src/hooks/codex.rs`
 ```
 //! Codex hooks: `hooks.json` installs gated on `config.toml`, and the legacy
@@ -2128,253 +2390,17 @@ pub(super) fn codex_group_aoe_flags(group: &dyn TableLike) -> Vec<bool> {
         
 ```
 
-### Core Architecture Module: `src/hooks/command.rs`
-```
-//! Shell commands AoE installs as agent hooks, and recognition of them.
-
-use crate::agents::{HookIdentityField, HookStatus};
-
-use super::{dir_guard, HookInstallTarget};
-
-/// `concat!` only accepts literals, so the marker is a macro shared by the constants below.
-macro_rules! aoe_hook_marker {
-    () => {
-        "aoe-hooks"
-    };
-}
-
-/// Fixed base inside the single-tenant sandbox; the host bind-mounts the
-/// canonical `dir_guard::hook_base_path()/<id>` onto `<this>/<id>`.
-pub(crate) const HOOK_STATUS_BASE_IN_CONTAINER: &str = concat!("/tmp/", aoe_hook_marker!());
-
-const AOE_HOOK_MARKER: &str = aoe_hook_marker!();
-
-/// Every emitter ends with `exit 0 # aoe-hooks`; the `0 ` binds the match to
-/// that trailer rather than a `# aoe-hooks` inside user text.
-const AOE_HOOK_TRAILING_SENTINEL: &str = concat!("0 # ", aoe_hook_marker!());
-
-/// Legacy emitters without the trailer bake this path; a user script would
-/// have expanded `$AOE_INSTANCE_ID`.
-const AOE_HOOK_PATH_SENTINEL: &str = concat!(aoe_hook_marker!(), "/$AOE_INSTANCE_ID");
-
-/// Whether `cmd` was emitted by AoE (current or legacy form).
-pub(super) fn is_aoe_hook_command(cmd: &str) -> bool {
-    let trimmed_tail = cmd.trim_end_matches(|c: char| c == '\'' || c == '"' || c.is_whitespace());
-    trimmed_tail.ends_with(AOE_HOOK_TRAILING_SENTINEL) || cmd.contains(AOE_HOOK_PATH_SENTINEL)
-}
-
-/// Whether a JSON hook entry's `command` is AoE's.
-pub(super) fn json_command_is_aoe(entry: &serde_json::Value) -> bool {
-    entry
-        .get("command")
-        .and_then(serde_json::Value::as_str)
-        .is_some_and(is_aoe_hook_command)
-}
-
-fn hook_base_for_target(target: HookInstallTarget) -> String {
-    match target {
-        HookInstallTarget::Host => dir_guard::hook_base_path().display().to_string(),
-        HookInstallTarget::Sandbox => HOOK_STATUS_BASE_IN_CONTAINER.to_string(),
-    }
-}
-
-/// Command writing `status` to the instance's status file. It must always
-/// exit 0: a failing hook blocks the agent's tool calls.
-pub(crate) fn hook_command(status: &str, target: HookInstallTarget) -> String {
-    hook_command_with_base(status, &hook_base_for_target(target), target)
-}
-
-/// The tool-gated writer when `waiting_tools` can change the outcome, else the
-/// plain writer (the gate only ever rewrites to `waiting`).
-pub(crate) fn status_command_for_event(
-    status: HookStatus,
-    waiting_tools: &[String],
-    target: HookInstallTarget,
-) -> String {
-    if waiting_tools.is_empty() || status == HookStatus::Waiting {
-        hook_command(status.as_str(), target)
-    } else {
-        hook_command_waiting_tools_with_base(
-            status.as_str(),
-            waiting_tools,
-            &hook_base_for_target(target),
-            target,
-        )
-    }
-}
-
-/// Writes `waiting` when stdin names one of `waiting_tools`, else `default_status`.
-/// Matches the compact `"tool_name":"X"` bytes, which an escaped mention inside
-/// a JSON string value cannot produce.
-fn hook_command_waiting_tools_with_base(
-    default_status: &str,
-    waiting_tools: &[String],
-    base: &str,
-    target: HookInstallTarget,
-) -> String {
-    let patterns: Vec<String> = waiting_tools
-        .iter()
-        .map(|tool| format!("*\\\"tool_name\\\":\\\"{tool}\\\"*"))
-        .collect();
-    let write = format!(
-        "IN=$(cat 2>/dev/null); S={default_status}; \
-         case \"$IN\" in {patterns}) S=waiting ;; esac; \
-         printf %s \"$S\" > \"$D/status\" 2>/dev/null; ",
-        patterns = patterns.join("|")
-    );
-    hook_command_with_write(&write, base, target)
-}
-
-fn hook_command_with_base(status: &str, base: &str, target: HookInstallTarget) -> String {
-    hook_command_with_write(
-        &format!("printf {status} > \"$D/status\" 2>/dev/null; "),
-        base,
-        target,
-    )
-}
-
-/// Host commands check the base's mode and owner (the Rust `dir_guard` is the
-/// authoritative gate); sandbox commands skip the uid check because the
-/// container uid is unpredictable and the bind source was validated host-side.
-fn hook_command_with_write(write: &str, base: &str, target: HookInstallTarget) -> String {
-    let (parent_check, owner_recheck) = match target {
-        // `mkdir -p $B` recovers from a /tmp reaper. It relies on /tmp's sticky
-        // bit; re-audit if the base ever moves out of /tmp.
-        HookInstallTarget::Host => (
-            "\
-             mkdir -p \"$B\" 2>/dev/null || exit 0; \
-             LS=$(LC_ALL=C ls -ldn \"$B\" 2>/dev/null) || exit 0; \
-             set -- $LS; M=\"$1\"; \
-             case \"$M\" in drwx------|drwx------.|drwx------+|drwx------@) ;; *) exit 0 ;; esac; \
-             ME=$(id -u 2>/dev/null) || exit 0; \
-             [ \"$3\" = \"$ME\" ] || exit 0; ",
-            "[ \"$3\" = \"$ME\" ] || exit 0; ",
-        ),
-        HookInstallTarget::Sandbox => ("", ""),
-    };
-    format!(
-        "sh -c 'unset IFS; set -f; umask 077; \
-         [ -n \"$AOE_INSTANCE_ID\" ] || exit 0; \
-         case \"$AOE_INSTANCE_ID\" in *[!0-9a-zA-Z_-]*) exit 0 ;; esac; \
-         B={base}; {parent_check}\
-         D=\"$B/$AOE_INSTANCE_ID\"; \
-         mkdir -p \"$D\" 2>/dev/null; \
-         LS=$(LC_ALL=C ls -ldn \"$D\" 2>/dev/null) || exit 0; \
-         set -- $LS; M=\"$1\"; \
-         case \"$M\" in drwx------|drwx------.|drwx------+|drwx------@) ;; *) exit 0 ;; esac; \
-         {owner_recheck}\
-         {write}\
-         exit 0 # {AOE_HOOK_MARKER}'"
-    )
-}
-
-/// Command extracting the top-level session id from the hook's stdin JSON into
-/// the `session_id` sidecar. The host calls the pinned `aoe` binary; the
-/// sandbox image has no `aoe`, so it uses `jq` and silently skips without it.
-///
-/// `publisher` is the binary of the agent whose config fires the hook. A nested agent of another
-/// kind inherits the pane's `AOE_*` environment, so its hooks must not publish into the pane's
-/// sidecar: both commands skip when `AOE_AGENT_BIN` names a different agent.
-pub(crate) fn hook_command_session_id(
-    target: HookInstallTarget,
-    field: HookIdentityField,
-    publisher: Option<&str>,
-) -> String {
-    // The command is a single-quoted `sh -c` body; a publisher outside this alphabet would need
-    // quoting there, and every built-in agent binary fits it.
-    let publisher = publisher.filter(|name| {
-        !name.is_empty()
-            && name
-                .bytes()
-                .all(|b| b.is_ascii_alphanumeric() || matches!(b, b'.' | b'_' | b'-'))
-    });
-    match target {
-        HookInstallTarget::Host => hook_command_session_id_host(field, publisher),
-        HookInstallTarget::Sandbox => {
-            hook_command_session_id_sandbox(HOOK_STATUS_BASE_IN_CONTAINER, field, publisher)
-        }
-    }
-}
-
-/// The `--field` value an identity hook extracts. Named here so the command
-/// and the disclosure cannot drift apart.
-pub(crate) fn identity_field_name(field: HookIdentityField) -> &'static str {
-    match field {
-        HookIdentityField::SessionId => "session-id",
-        HookIdentityField::ConversationIdOrSessionId => "conversation-id-or-session-id",
-        HookIdentityField::HermesForegroundSessionId => "hermes-foreground-session-id",
-    }
-}
-
-/// The `--agent NAME` qualifier an identity command carries, empty when the
-/// event declares no publisher. Named here so the command and the
-/// disclosure cannot drift.
-pub(crate) fn identity_publisher_arg(publisher: Option<&str>) -> String {
-    publisher.map_or_else(String::new, |name| format!(" --agent {name}"))
-}
-
-fn hook_command_session_id_host(field: HookIdentityField, publisher: Option<&str>) -> String {
-    let field = identity_field_name(field);
-    let agent = identity_publisher_arg(publisher);
-    format!(
-        "sh -c '[ -n \"$AOE_INSTANCE_ID\" ] || exit 0; \
-         [ -n \"$AOE_HOOK_BIN\" ] || exit 0; \
-         [ -x \"$AOE_HOOK_BIN\" ] || exit 0; \
-         \"$AOE_HOOK_BIN\" __extract-session-id --field {field}{agent} 2>/dev/null; exit 0 # {AOE_HOOK_MARKER}'"
-    )
-}
-
-/// A second `AOE_AGENT_BIN` ancestor marks a nested agent, whose id must not
-/// replace the pane's; with no launch pid in the container the walk runs to root.
-fn hook_command_session_id_sandbox(
-    base: &str,
-    field: HookIdentityField,
-    publisher: Option<&str>,
-) -> String {
-    let publisher_guard = publisher.map_or_else(String::new, |name| {
-        format!("[ -z \"${{AOE_AGENT_BIN:-}}\" ] || [ \"$AOE_AGENT_BIN\" = {name} ] || exit 0; ")
-    });
-    let selector = match field {
-        HookIdentityField::SessionId => {
-            r#"if (.session_id|type)=="string" then .session_id else empty end"#
-        }
-        HookIdentityField::ConversationIdOrSessionId => {
-            r#"if (.conversation_id|type)=="string" then .conversation_id elif (.session_id|type)=="string" then .session_id else empty end"#
-        }
-        HookIdentityField::HermesForegroundSessionId => {
-            r#"if (.extra.platform=="cli" or .extra.platform=="tui") and (.session_id|type)=="string" and (.session_id|test("^[0-9]{8}_[0-9]{6}_[0-9a-f]+$")) then .session_id else empty end"#
-        }
-    };
-    format!(
-        "sh -c 'unset IFS; set -f; umask 077; \
-         [ -n \"$AOE_INSTANCE_ID\" ] || exit 0; \
-         case \"$AOE_INSTANCE_ID\" in *[!0-9a-zA-Z_-]*) exit 0 ;; esac; \
-         D=\"{base}/$AOE_INSTANCE_ID\"; mkdir -p \"$D\" 2>/dev/null; \
-         LS=$(LC_ALL=C ls -ldn \"$D\" 2>/dev/null) || exit 0; \
-         set -- $LS; M=\"$1\"; \
-         case \"$M\" in drwx------|drwx------.|drwx------+|drwx------@) ;; *) exit 0 ;; esac; \
-         {publisher_guard}B=\"${{AOE_AGENT_BIN:-}}\"; N=0; P=$PPID; \
-         while [ -n \"$B\" ] && [ \"${{P:-0}}\" -gt 0 ]; do \
-         A=$(tr \"\\0\" \"\\n\" < /proc/$P/cmdline 2>/dev/null | head -n 1); \
-         [ \"${{A##*/}}\" = \"$B\" ] && N=$((N + 1)); \
-         P=$(sed -n \"s/^PPid:[[:space:]]*//p\" /proc/$P/status 2>/dev/null); \
-         done; \
-         [ \"$N\" -le 1 ] || exit 0; \
-         command -v jq >/dev/null 2>&1 || exit 0; \
-         SID=$(jq -r '\\''{selector}'\\'' 2>/dev/null)
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4543** (2026-10-16): **Quota cleanup can lose a clear revision and restore older attachments**
-  *Symptoms*: ### What happened?  Optional P3 residual from [#4532's maintainer review](https://github.com/agent-of-empires/agent-of-empires/pull/4532#discussion_r4283263629). Normal revision ordering and the original #4491 cases are fixed; this concerns the quota-failure fallback losing the clear revision.  Controlled source-derived two-tab schedule, not executed locally:  1. Persist a draft. A begins an older save and pauses between reading the shared marker and writing its `S:` marker. 2. B clears at a newer revision. Its tombstone write fails; fallback deletion frees the old bytes. B finishes with a `C:` marker but no IndexedDB clear revision. 3. Resume A's stale marker write and let its smaller save commit in the freed space. 4. Reload: the cleared attachments are restored.  Expected: older work cannot become authoritative after a completed clear. [`recordClear`](https://github.com/agent-of-empires/agent-of-empires/blob/410699487fdf7bc5babe69cd41f77760e9f94217/web/src/lib/acpDrafts.ts#L152-L159) instead [deletes the revision](https://github.com/agent-of-empires/agent-of-empires/blob/410699487fdf7bc5babe69cd41f77760e9f94217/web/src/lib/attachmentStore.ts#L153-L159). The [split marker read/write](https://github.com/agent-of-empires/agent-of-empires/blob/410699487fdf7bc5babe69cd41f77760e9f94217/web/src/lib/acpDrafts.ts#L48-L57) can overwrite B's marker; [save accepts an absent record](https://github.com/agent-of-empires/agent-of-empires/blob/410699487fdf7bc5babe69cd41f77760e9f94217/web/s
+- **Issue #4682** (2026-10-19): **Serve probes can skip a due refresh when a result is already queued**
+  *Symptoms*: ### What happened?  Nonblocking P3 follow-up to [#4497's scheduling comment](https://github.com/agent-of-empires/agent-of-empires/pull/4497#discussion_r4282090182). The ordering remains on main in [`app.rs:1328-1332`](https://github.com/agent-of-empires/agent-of-empires/blob/fb6c3e50e00de58e34024080aabb0818626a29d2/src/tui/app.rs#L1328-L1332).  Source-derived schedule, not reproduced locally:  1. A probe's result reaches the queue just before the two-second refresh tick, before the UI drains it. 2. The tick resets its timer and calls [`request_serve_probe`](https://github.com/agent-of-empires/agent-of-empires/blob/fb6c3e50e00de58e34024080aabb0818626a29d2/src/tui/home/pollers.rs#L520-L532), which skips because the in-flight flag is still set. 3. The same iteration applies the result and clears the flag, but the next probe waits another polling interval.  Expected: consume completed work before scheduling the due probe. Actual: an unnecessary extra interval, currently two seconds, before observing later daemon-state changes. This is not a measured four-second UI stall.  Apply results before the timer block, preserving the one-in-flight invariant. Cover a queued result at a due tick with a deterministic regression, without sleeps. #4541 tracks synchronous dialog probes, not this scheduling order.  ### aoe version and OS  main `fb6c3e50e00de58e34024080aabb0818626a29d2`; Linux/macOS. Static trace only; no runtime frequency claim.  ### AI usage  Codex inspection and drafting, indep
 
-- **Issue #4542** (2026-10-16): **Push subscription effects can outlive the action that owns them**
-  *Symptoms*: ### What happened?  P3 residual follow-up to #4512, separate from the three UI-consistency cases fixed in closed #4208. Subscription side effects can outlive the operation whose UI result is discarded.  Controlled source-derived schedules, not executed locally:  1. Hold Enable's browser `subscribe()`, unmount all consumers, remount and let refresh observe no subscription. Release the old Enable: browser/server registration and `aoe.push.wanted=1` commit, but its UI publish is dropped. The UI remains off until another refresh. This is the [maintainer's optional, pre-existing follow-up](https://github.com/agent-of-empires/agent-of-empires/pull/4512#discussion_r4282081720). 2. Hold a refresh's re-registration POST before server commit. Complete Disable and its browser/server unsubscribe, then release the old POST. It recreates a stale server endpoint record. This does not imply browser notification delivery continues after unsubscribe.  Evidence: [final unmount releases `busy`](https://github.com/agent-of-empires/agent-of-empires/blob/410699487fdf7bc5babe69cd41f77760e9f94217/web/src/hooks/usePushSubscription.ts#L130-L145); [refresh registration is not serialized with actions](https://github.com/agent-of-empires/agent-of-empires/blob/410699487fdf7bc5babe69cd41f77760e9f94217/web/src/hooks/usePushSubscription.ts#L180-L200); [Enable still commits effects](https://github.com/agent-of-empires/agent-of-empires/blob/410699487fdf7bc5babe69cd41f77760e9f94217/web/src/hooks/usePushSubscript
+- **Issue #4679** (2026-10-19): **Read card range headers include one extra line**
+  *Symptoms*: ### What happened?  P3 follow-up found during #4678; the same calculation is present in its [pre-PR base](https://github.com/agent-of-empires/agent-of-empires/blob/702f5878e4d95145d4476fe9c3bcdc572ab4f200/web/src/components/acp/CoreToolCards.tsx#L88-L95).  **Source-derived reproduction (not run locally):** render a Read card with `offset: 2, limit: 2`. Its header says `L2–4`, although the requested inclusive range is lines 2–3. The fallback body correctly selects only those two lines.  On upstream main, [`formatRange`](https://github.com/agent-of-empires/agent-of-empires/blob/fb6c3e50e00de58e34024080aabb0818626a29d2/web/src/components/acp/CoreToolCards.tsx#L92-L98) calculates the endpoint as `offset + limit`. The existing [header test](https://github.com/agent-of-empires/agent-of-empires/blob/fb6c3e50e00de58e34024080aabb0818626a29d2/web/src/components/acp/ToolCards.render.test.tsx#L71-L77) also expects `L1–11` for ten lines starting at line 1.  **Expected:** display `offset + limit - 1` as the inclusive endpoint. **Impact:** misleading range metadata only; this does not cause an extra line to be read.  **Acceptance:** correct the endpoint and update the existing table-driven component test, including a one-line range and a non-default offset. Preserve offset-only and limit-only labels. No backend change is needed.  ### aoe version and OS  Upstream main at `fb6c3e50e00de58e34024080aabb0818626a29d2`; shared web rendering, no OS-specific reproduction claimed.  ### AI usage  Code
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2391,343 +2417,892 @@ fn hook_command_session_id_sandbox(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `91c1a556` (2026-10-17)
-**Commit Message**: fix(serve): keep status probes from deleting a replacement daemon's state (#4629)
+### Incident Patch 1: `f1f883ed` (2026-10-19)
+**Commit Message**: fix(agents): launch codex with --no-daemon so hooks see the pane's instance id (#4630)
 
-* fix(serve): keep status probes from deleting a replacement daemon's state
+* fix(agents): launch codex with --no-daemon so hooks see the pane's instance id
 
-daemon_status() deleted serve.pid and the discovery/launch files when it
-saw a foreign or exited pid. A probe that read the old pid before a
-replacement daemon published could then wipe the replacement's state.
-
-Status is now read-only. Remaining cleanup (stop, foreground exit) takes
-serve.lock, rechecks that serve.pid still names the inspected pid, and
-only then deletes. start_daemon holds the lock from before spawn until
-serve.pid and serve.launch are written, and the foreground pid write
-takes it too, so a cleaner either runs before publication or sees the
-new pid and skips.
+Codex's shared app-server daemon runs hooks under the env of the pane that
+spawned it, so every Codex session wrote its status to the first session's
+AOE_INSTANCE_ID file. Launching with --no-daemon keeps the app server in the
+pane's own process. The flag is only added when the installed codex's --help
+advertises it, and only for a plain `codex` command.
 
 Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-* fix(serve): report when stop cleanup preserved a replacement's state
+* fix(agents): probe the selected codex for --no-daemon support
 
-clear_serve_state now returns whether it deleted anything, so `aoe serve
---stop` no longer claims a stale pid file was cleaned up when a replacement
-daemon published in between and its state was preserved.
+The help probe used AoE's ambient PATH, but a profile or before-session hook
+can select a different codex. Probe the executable and environment from
+host_agent_command instead, and withhold the flag when the launch cannot be
+resolved (sandbox, wrapper, shell syntax).
 
-Addresses review comment from @coderabbitai on #4629.
+Addresses review comment from jerome-benoit on #4630.
 
 Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-* fix(serve)
+* fix(agents): place codex --no-daemon before an argument terminator
 
-**File**: `src/cli/serve.rs` (modified, +226/-43)
+User arguments are present when the flag is added, so `-- 'prompt'` turned
+into `codex -- 'prompt' --no-d
+
+**File**: `src/agents.rs` (modified, +100/-0)
 ```diff
-@@ -722,21 +722,45 @@ const SERVE_STATE_FILES: [&str; 4] = [
-     "serve.launch",
- ];
+@@ -1066,6 +1066,43 @@ impl AgentDef {
+         with_agent_help(command, false, |help| help_advertises_flag(help, flag)).then_some(flag)
+     }
  
--fn remove_stale_serve_state(pid_path: &std::path::Path) {
--    let _ = std::fs::remove_file(pid_path);
--    if let Ok(dir) = crate::session::get_app_dir() {
--        for name in SERVE_STATE_FILES {
--            let _ = std::fs::remove_file(dir.join(name));
--        }
--    }
-+/// Separate from the lifetime lock a running server holds, which this state is
-+/// published and cleared under. Publishers hold it from before spawning until the pid
-+/// and launch files are written; cleanup holds it across its ownership check and deletion.
-+fn lock_serve_state() -> Result<std::fs::File> {
-+    use fs2::FileExt as _;
-+    let path = crate::session::get_app_dir()?.join("serve.state.lock");
-+    let file = std::fs::OpenOptions::new()
-+        .read(true)
-+        .write(true)
-+        .create(true)
-+        .truncate(false)
-+        .open(&path)
-+        .with_context(|| format!("opening {}", path.display()))?;
-+    file.lock_exclusive()
-+        .with_context(|| format!("locking {}", path.display()))?;
-+    Ok(file)
- }
- 
--async fn clear_serve_state() {
--    if let Ok(dir) = crate::session::get_app_dir() {
--        for name in SERVE_STATE_FILES {
--            let _ = tokio::fs::remove_file(dir.join(name)).await;
--        }
-+/// Deletes the serve state only while `serve.pid` still names `expected_pid`.
-+/// Returns whether it did.
-+fn clear_serve_state(expected_pid: i32) -> bool {
-+    let (Ok(_lock), Ok(pid_path), Ok(dir)) = (
-+        lock_serve_state(),
-+        pid_file_path(),
-+        crate::session::get_app_dir(),
-+    ) else {
-+        return false;
-+    };
-+    let recorded = std::fs::read_to_string(&pid_path)
-+        .ok()
-+        .and_then(|raw| parse_positive_pid(&raw));
-+    if recorded != Some(expected_pid) {
-+        return false;
++    /// Flag keeping the agent's app server inside the launched process. A shared daemon runs
++    /// hooks under the env of the pane that spawned it, so every session's status lands on that
++    /// pane's `AOE_INSTANCE_ID`. `command` is the launch's own executable and environment: older
++    /// installs reject the flag. `options` are the arguments before any `--`; the flag is
++    /// withheld when they name a subcommand that does not define it.
++    pub(crate) fn supported_no_daemon_flag(
++        &self,
++        command: &std::process::Command,
++        options: &[String],
++    ) -> Option<&'static str> {
++        let flag = match self.name {
++            "codex" => "--no-daemon",
++            _ => return None,
++        };
++        // After an explicit `resume` or `fork`, later positionals are operands (a session id or
++        // prompt) that may spell a subcommand name. A root prompt does not shield a later
++        // subcommand: Codex still dispatches it.
++        let mut mode_known = false;
++        let mut words = options.iter().peekable();
++        while let Some(word) = words.next() {
++            // A remote TUI has no local app server, and Codex rejects the combination.
++            if word == "--remote" || word.starts_with("--remote=") {
++                return None;
++            } else if CODEX_VALUE_OPTIONS.contains(&word.as_str()) {
++                words.next();
++            } else if CODEX_VARIADIC_OPTIONS.contains(&word.as_str()) {
++                while words.next_if(|next| !next.starts_with('-')).is_some() {}
++            } else if !word.starts_with('-') && !mode_known {
++                if CODEX_NON_TUI_SUBCOMMANDS.contains(&word.as_str()) {
++                    return None;
++                }
++                mode_known = matches!(word.as_str(), "resume" | "fork");
++            }
++        }
++        agent_help_advertises(command, flag).then_some(flag)
 +    }
-+    let _ = std::fs::remove_file(&pid_path);
-+    for name in SERVE_STATE_FILES {
-+        let _ = std::fs::remove_file(dir.join(name));
-     }
-+    true
- }
- 
- #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-@@ -747,6 +771,21 @@ pub(crate) enum DaemonStatus {
- }
- 
- pub(crate) fn daemon_status() -> DaemonStatus {
-+    daemon_status_with(
-+        |pid| {
-+            classify_daemon_probe(nix::sys::signal::kill(
-+                nix::unistd::Pid::from_raw(pid),
-+                None,
-+            ))
-+        },
-+        inspect_daemon_process,
-+    )
-+}
 +
-+fn daemon_status_with(
-+    probe: impl FnOnce(i32) -> DaemonProbeDisposition,
-+    inspect: impl FnOnce(i32) -> DaemonProcessIdentity,
-+) -> DaemonStatus {
-     let Ok(path) = pid_file_path() else {
-         return DaemonStatus::Unverified;
-     };
-@@ -759,20 +798,13 @@ pub(crate) fn daemon_status() -> DaemonStatus {
-         return DaemonStatus::Unverified;
-     };
- 
--    let probe = nix::sys::signal::kill(nix::unistd::Pid::from_raw(pid), None);
--    match classify_daemon_probe(probe) {
--        DaemonProbeDisposition::VerifyIdentity => match inspect_daemon_process(pid) {
-+    match probe(pid) {
-+        DaemonProbeDisposition::VerifyIdentity => match inspect(pid) {
-             DaemonProcessIdentity::Verified => DaemonStatus::Verified(pid as u32),
--            DaemonProcessIdentity::Foreign => {
--                remove_stale_serve_state(&path);
--                DaemonStatus::Absent
--            }
-+            DaemonProcessIdentity::Foreign => DaemonStatus::Absent,
-             DaemonProcessIdentity::Indeterminate => DaemonStatus::Unverified,
-         },
--        DaemonProbeDisposition::Stale => {
--            remove_stale_serve_state(&path);
--            DaemonStatus::Absent
--        }
-+        DaemonProbeDisposition::Stale => DaemonStatus::Absent,
-         DaemonProbeDisposition::Indeterminate => DaemonStatus::Unverified,
-     }
- }
-@@ -938,7 +970,8 @@ pub async fn run(profile: &str, mut args: ServeArgs, serve_lock: Option<ServeLoc
-     );
- 
-     if let Ok(path) = pid_file_path() {
--        let _ = tokio::fs::write(&path, std::process::id().to_string()).await;
-+        let _lock = lock_serve_state()?;
-+        let _ = std::fs::write(&path, std::process::id().to_string());
-         tracing::debug!(target: "serve.lifecycle", path = %path.display(), pid = std::process::id(), "wrote pid file");
-     }
- 
-@@ -961,17 +994,7 @@ pub async fn run(profile: &str, mut args: ServeArgs, serve_lock: Option<ServeLoc
-     })
-     .await;
- 
--    if let Ok(path) = pid_file_path() {
--        let is_ours = tokio::fs::read_to_string(&path)
--            .await
--            .ok()
--            .and_then(|s| s.trim().parse::<u32>().ok())
--            .is_some_and(|pid| pid == std::process::id());
--        if is_ours {
--            let _ = tokio::fs::remove_file(&path).await;
--            clear_serve_state().await;
--        }
--    }
-+    clear_serve_state(std::process::id() as i32);
- 
-     result
- }
-@@ -1067,6 +1090,10 @@ async fn fetch_cityhall_bundle(url: &str, token: &str) -> Result<String> {
- fn start_daemon(profile: &str, args: &ServeArgs) -> Result<()>
-```
-
-**File**: `src/server/startup.rs` (modified, +24/-4)
-```diff
-@@ -200,6 +200,16 @@ fn check_auth_gate(
+     pub fn launch_base_command(&self) -> String {
+         match self.launch_subcommand {
+             Some(sub) => format!("{} {}", self.binary, sub),
+@@ -1151,6 +1188,69 @@ fn with_agent_help<R>(
      )
  }
  
-+/// A daemon started without a passphrase must not inherit a dead predecessor's.
-+async fn sync_passphrase_file(path: &std::path::Path, passphrase: Option<&str>) {
-+    match passphrase {
-+        Some(pp) => write_secret_file(path, pp).await,
-+        None => {
-+            let _ = tokio::fs::remove_file(path).await;
-+        }
++/// Codex subcommands, and their aliases, outside the interactive TUI. `--no-daemon` is defined on
++/// the TUI, `resume` and `fork` only; the others reject it.
++const CODEX_NON_TUI_SUBCOMMANDS: &[&str] = &[
++    "agents",
++    "exec",
++    "e",
++    "review",
++    "login",
++    "logout",
++    "mcp",
++    "mcp-server",
++    "plugin",
++    "app-server",
++    "remote-control",
++    "app",
++    "completion",
++    "update",
++    "doctor",
++    "sandbox",
++    "debug",
++    "apply",
++    "a",
++    "queue",
++    "archive",
++    "delete",
++    "migrate-rollouts",
++    "unarchive",
++    "cloud",
++    "cloud-tasks",
++    "execpolicy",
++    "responses-api-proxy",
++    "stdio-to-uds",
++    "tcp-tunnel",
++    "exec-server",
++    "features",
++    "help",
++];
++
++/// Codex options that take their value as the next word, which is not a subcommand.
++const CODEX_VALUE_OPTIONS: &[&str] = &[
++    "-c",
++    "--config",
++    "--enable",
++    "--disable",
++    "--remote",
++    "--remote-auth-token-env",
++    "-m",
++    "--model",
++    "--local-provider",
++    "-p",
++    "--profile",
++    "-s",
++    "--sandbox",
++    "-C",
++    "--cd",
++    "--add-dir",
++    "-a",
++    "--ask-for-approval",
++];
++
++/// Codex options that take every following word up to the next flag.
++const CODEX_VARIADIC_OPTIONS: &[&str] = &["-i", "--image"];
++
+ /// A flag the older generation's help lists and the current one's does not.
+ const LEGACY_GENERATION_MARKER: &str = "--fork";
+ 
+```
+
+**File**: `src/session/instance/launch_command.rs` (modified, +277/-0)
+```diff
+@@ -167,6 +167,46 @@ fn apply_first_launch_agent_name(
+     }
+ }
+ 
++/// Keep a host agent's app server in its own process so its hooks run under this pane's env.
++/// Withheld unless the launch's own executable and environment can be probed; the launch then
++/// runs that executable.
++fn apply_no_daemon_flag(
++    cmd: &mut String,
++    agent: Option<&crate::agents::AgentDef>,
++    inst: &Instance,
++    execution: Option<&super::execution::NativeExecution>,
++) {
++    let Some(agent) = agent else {
++        return;
++    };
++    let Some(command) = inst.host_agent_command(agent, execution) else {
++        return;
++    };
++    let Ok(mut words) = shell_words::split(cmd) else {
++        return;
++    };
++    if words.is_empty() {
++        return;
 +    }
++    // Past `--` every word is a positional, so only the options before it count.
++    let options_end = words.iter().position(|w| w == "--").unwrap_or(words.len());
++    let options = &words[1..options_end];
++    let Some(flag) = agent.supported_no_daemon_flag(&command, options) else {
++        return;
++    };
++    if options.iter().any(|w| w == flag) {
++        return;
++    }
++    // The pane runs this through a login shell whose startup files may change PATH, so name the
++    // executable that was probed.
++    let Some(program) = command.get_program().to_str() else {
++        return;
++    };
++    words[0] = program.to_owned();
++    words.insert(options_end, flag.to_owned());
++    *cmd = shell_words::join(words);
 +}
 +
- /// systemd `Type=notify` readiness. No-op unless `NOTIFY_SOCKET` is set.
- #[cfg(unix)]
- async fn notify_ready(addr: &str) {
-@@ -322,10 +332,8 @@ pub async fn start_server(config: ServerConfig<'_>) -> anyhow::Result<()> {
- 
-     // Persist the plaintext passphrase so the TUI can display it on reopen, including after
-     // a TUI restart or when the daemon was started from the CLI.
--    if let Some(pp) = passphrase {
--        if let Ok(app_dir) = crate::session::get_app_dir() {
--            write_secret_file(&app_dir.join("serve.passphrase"), pp).await;
--        }
-+    if let Ok(app_dir) = crate::session::get_app_dir() {
-+        sync_passphrase_file(&app_dir.join("serve.passphrase"), passphrase).await;
+ /// Write the Pi session-id extension into the app dir and return its path.
+ pub(super) fn session_identity_extension_path() -> Result<PathBuf> {
+     const SOURCE: &str = crate::session::instance::SESSION_IDENTITY_EXTENSION;
+@@ -1323,6 +1363,7 @@ impl Instance {
+                         }
+                     }
+                     apply_first_launch_agent_name(&mut cmd, agent, self, execution, is_existing);
++                    apply_no_daemon_flag(&mut cmd, agent, self, execution);
+                     apply_agent_launch_env(&mut cmd, agent);
+                     let raw_command = format!(
+                         "{}{}",
+@@ -1416,6 +1457,7 @@ impl Instance {
+                 }
+             }
+             apply_first_launch_agent_name(&mut cmd, agent, self, execution, is_existing);
++            apply_no_daemon_flag(&mut cmd, agent, self, execution);
+             apply_agent_launch_env(&mut cmd, agent);
+             let raw_command = format!(
+                 "{}{}",
+@@ -3065,6 +3107,241 @@ mod tests {
+         assert!(probed.exists(), "the setting on probes the agent");
      }
  
-     // Push notifications.
-@@ -1090,6 +1098,18 @@ async fn remote_rotation_loop(
- mod tests {
-     use super::*;
- 
-+    #[tokio::test]
-+    async fn passphraseless_start_retires_a_predecessors_passphrase() {
-+        let dir = tempfile::tempdir().unwrap();
-+        let path = dir.path().join("serve.passphrase");
-+
-+        sync_passphrase_file(&path, Some("hunter2")).await;
-+        assert_eq!(std::fs::read_to_string(&path).unwrap(), "hunter2");
-+
-+        sync_passphrase_file(&path, None).await;
-+        assert!(!path.exists());
-+    }
-+
-     #[cfg(unix)]
-     #[tokio::test(flavor = "current_thread")]
-     #[serial_test::parallel]
-```
-
----
-
-### Incident Patch 2: `64afb389` (2026-10-16)
-**Commit Message**: fix(worktree): relock the source when the submodule inventory fails (#4652)
-
-The move_worktree backstop unlocks the source before relocating by hand.
-An error from the submodule inventory returned without restoring the lock.
-
-Refs #3703
-
-Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-**File**: `src/git/worktree/relocate.rs` (modified, +53/-1)
-```diff
-@@ -275,7 +275,14 @@ impl GitWorktree {
-             "move_worktree: relocating a worktree with submodules by hand"
-         );
-         // Recorded while the pointers still resolve.
--        let checkouts = Self::populated_submodule_checkouts(from)?;
-+        let checkouts = match Self::populated_submodule_checkouts(from) {
-+            Ok(checkouts) => checkouts,
-+            Err(e) => {
-+                // `move_worktree`'s backstop has already unlocked the source.
-+                let _ = self.lock_worktree(from);
-+                return Err(e);
-+            }
-+        };
-         self.unlock_worktree(from);
- 
-         if let Err(e) = std::fs::rename(from, to) {
-@@ -855,4 +862,49 @@ mod tests {
-         assert!(from.is_dir());
-         assert!(!to.exists());
-     }
-+
-+    /// The backstop reaches the relocation after `move_worktree` has already
-+    /// unlocked the source; an inventory failure must lock it again.
++    /// A shared Codex daemon runs hooks under its spawner's env, so every session's status would
++    /// land on one pane's id. The flag must follow the Codex the session launches, not AoE's own.
 +    #[test]
 +    #[serial_test::serial]
-+    fn relocation_relocks_source_when_submodule_inventory_fails_after_unlock() {
-+        let home_dir = TempDir::new().unwrap();
-+        let _home = crate::session::test_support::isolate_home(home_dir.path());
-+
-+        let dirs = repo_with_nested_submodules("test-relock-inventory", Path::new(".claude"));
-+        let git_wt = GitWorktree::new(dirs[0].path().to_path_buf())
-+            .unwrap()
-+            .allow_submodule_file_transport();
-+        let parent = TempDir::new().unwrap();
-+        let from = parent.path().join("source");
-+        git_wt
-+            .create_worktree("test-relock-inventory", &from, false, None)
++    fn codex_runs_its_own_app_server_only_where_the_selected_install_has_the_flag() {
++        let temp_home = tempfile::tempdir().unwrap();
++        let _home = crate::session::test_support::isolate_home(temp_home.path());
++        let project = temp_home.path().join("proj");
++        std::fs::create_dir_all(&project).unwrap();
++        let stub = |help: &str| {
++            format!(
++                "#!/bin/sh\ncase \"$1\" in --help) printf '%s\\n' {};; esac\nexit 0\n",
++                shell_escape(help),
++            )
++        };
++        let install_at = |dir: &std::path::Path, help: &str| {
++            std::fs::create_dir_all(dir).unwrap();
++            let path = dir.join("codex");
++            std::fs::write(&path, stub(help)).unwrap();
++            use std::os::unix::fs::PermissionsExt;
++            std::fs::set_permissions(&path, std::fs::Permissions::from_mode(0o755)).unwrap();
++        };
++        let with_flag = "      --no-daemon  Run without the shared background server";
++        let without_flag = "      --model <MODEL>";
++        let ambient = temp_home.path().join("ambient");
++        let profile = temp_home.path().join("profile");
++        let _path = crate::session::test_support::EnvGuard::set(&[(
++            "PATH",
++            format!("{}:/usr/bin:/bin", ambient.display()),
++        )]);
++        let mut codex = tool_instance("codex", project.to_str().unwrap());
++        let select_profile_path = |codex: &Instance| {
++            let mut config = crate::session::config::profile_config::ProfileConfig::default();
++            config.overrides.insert(
++                "environment".to_string(),
++                serde_json::json!([format!("PATH={}:/usr/bin:/bin", profile.display())]),
++            );
++            crate::session::config::profile_config::save_profile_config(
++                &codex.effective_profile(),
++                &config,
++            )
 +            .unwrap();
++        };
 +
-+        let gitfile = from.join(".claude/.git");
-+        let original_gitfile = std::fs::read(&gitfile).unwrap();
-+        std::fs::write(&gitfile, b"gitdir: missing\n").unwrap();
-+        let to = parent.path().join("moved");
-+
-+        git_wt.unlock_worktree(&from);
-+        let result = git_wt.relocate_worktree_with_submodules(&from, &to);
-+        std::fs::write(&gitfile, original_gitfile).unwrap();
-+
-+        assert!(result.is_err());
-+        assert!(!to.exists());
-+        let listing = run_git(&git_wt.repo_path, &["worktree", "list", "--porcelain"]);
-+        let record = listing
-+            .split("\n\n")
-+            .find(|record| {
-+                record
-+                    .lines()
-+                    .next()
-+                    .is_some_and(|l| l.ends_with("/source"))
-+            })
-+            .unwrap_or_else(|| panic!("{listing}"));
-+        assert!(
-+            record.lines().any(|line| line.starts_with("locked")),
-+            "{listing}"
-+        );
-+    }
- }
++        install_at(&ambient, with_flag);
++        crate::agents::forget_agent_help_for_test();
++        let command = host_command(&mut codex);
++        assert_eq!(command.matches("--no-daemon").count(), 1, "{command
 ```
 
 ---
 
-### Incident Patch 3: `721d9e23` (2026-10-17)
-**Commit Message**: fix(web): keep useFileContents byte-budget test off huge diffs (#4657)
+### Incident Patch 2: `c405bab8` (2026-10-19)
+**Commit Message**: fix(session): name ChatGPT login in the managed Codex auth refusal (#4701)
 
-waitFor polled toBe on the 33 MB body; each failed poll built a huge
-diff and starved the hook's fetch until the 1s timeout. Poll a boolean
-predicate instead.
+* fix(session): name ChatGPT login in the managed Codex auth refusal
+
+Managed Codex resume and fork attest only a file-backed API key; a
+ChatGPT login may select cloud-managed requirements, so its namespace
+cannot be proven. The refusal now says so instead of only asking for
+an API key. Attestation policy is unchanged.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* fix(session): tell users to replace ChatGPT credentials with an API key
+
+Adding OPENAI_API_KEY to a ChatGPT auth.json is still refused because
+the tokens and auth_mode checks fail first.
+
+Addresses review comment from coderabbitai on #4701.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* test(session): assert the ChatGPT refusal explanation
+
+Addresses review comment from coderabbitai on #4701.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+---------
 
 Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-**File**: `web/src/hooks/useFileContents.test.ts` (modified, +2/-1)
+**File**: `src/session/instance/execution.rs` (modified, +1/-1)
 ```diff
-@@ -29,7 +29,8 @@ async function mount(path: string | null, body?: string, rev?: number) {
-   const open = async (next: string, nextBody: string, nextRev = rev) => {
-     spy.mockResolvedValueOnce(contents(next, nextBody));
-     hook.rerender({ path: next, rev: nextRev });
--    await waitFor(() => expect(shown()).toBe(nextBody));
-+    // Boolean compare: a failed `toBe` on the 33 MB body builds a huge diff each poll and starves the fetch.
-+    await waitFor(() => expect(shown() === nextBody).toBe(true));
-   };
-   return { ...hook, shown, open };
+@@ -1938,7 +1938,7 @@ impl Instance {
+                 let auth: serde_json::Map<String, serde_json::Value> = serde_json::from_slice(&bytes)?;
+                 anyhow::ensure!(["tokens", "agent_identity", "personal_access_token"].iter().all(|key| auth.get(*key).is_none_or(serde_json::Value::is_null))
+                     && auth.get("auth_mode").is_none_or(|mode| mode.is_null() || mode.as_str() == Some("apikey"))
+-                    && auth.get("OPENAI_API_KEY").and_then(serde_json::Value::as_str).is_some_and(|key| !key.trim().is_empty()), "Codex is not authenticated with a local OpenAI API key; set OPENAI_API_KEY in the auth.json of its resolved configuration directory (session.agent_config_dir on a host launch, else CODEX_HOME, else ~/.codex) and re-run");
++                    && auth.get("OPENAI_API_KEY").and_then(serde_json::Value::as_str).is_some_and(|key| !key.trim().is_empty()), "Codex is not authenticated with a local OpenAI API key (a ChatGPT login cannot be attested, because it may select cloud-managed requirements); replace the credentials with an OpenAI API key (OPENAI_API_KEY, no ChatGPT tokens) in the auth.json of its resolved configuration directory (session.agent_config_dir on a host launch, else CODEX_HOME, else ~/.codex) and re-run");
+                 configuration.push(auth_file);
+                 let sqlite = inputs.canonical_path(&sqlite)?;
+                 routing.push(("CODEX_HOME".into(), Some(root.to_str().context("Codex home is not UTF-8")?.into())));
+```
+
+**File**: `src/session/instance/polling.rs` (modified, +43/-0)
+```diff
+@@ -1405,6 +1405,49 @@ mod tests {
+         );
+     }
+ 
++    /// A ChatGPT login is refused for managed execution, and the refusal names why.
++    #[test]
++    #[serial_test::serial]
++    fn codex_host_execution_refuses_chatgpt_login_with_its_reason() {
++        if crate::process::HAS_CODEX_MANAGED_PREFERENCES {
++            return;
++        }
++        let (_guard, _base, _tmp) = crate::hooks::test_support::BaseGuard::ready();
++        let temp = tempfile::tempdir().unwrap();
++        let _app = crate::session::test_support::isolate_app_dir_at(temp.path());
++        let codex_home = temp.path().join("codex-home");
++        std::fs::create_dir_all(&codex_home).unwrap();
++        let _codex = crate::session::test_support::install_login_shell_path_command(
++            temp.path(),
++            "codex",
++            "#!/bin/sh\nexit 0\n",
++        )
++        .and_set("CODEX_HOME", &codex_home);
++        let mut inst = Instance::new("codex-chatgpt", "/tmp");
++        inst.tool = "codex".to_string();
++
++        std::fs::write(
++            codex_home.join("auth.json"),
++            r#"{"auth_mode":"chatgpt","tokens":{"access_token":"t"}}"#,
++        )
++        .unwrap();
++        let error = format!("{:#}", inst.resolve_native_execution(None).err().unwrap());
++        assert!(
++            error.contains("ChatGPT login")
++                && error.contains("cannot be attested")
++                && error.contains("cloud-managed requirements")
++                && error.contains("OPENAI_API_KEY"),
++            "{error}"
++        );
++
++        std::fs::write(
++            codex_home.join("auth.json"),
++            r#"{"OPENAI_API_KEY":"sk-test"}"#,
++        )
++        .unwrap();
++        assert!(inst.resolve_native_execution(None).is_ok());
++    }
++
+     /// The restart that follows a `cx bind` relaunches the pane with whatever id the launch
+     /// acquires. With a stale id on the row and a fresher one published by `SessionStart`, the
+     /// launch has to persist the published conversation and resume it, not the stale one and not
+```
+
+---
+
+### Incident Patch 3: `de77a363` (2026-10-19)
+**Commit Message**: fix(web): ask which sibling a shared-worktree row action targets (#4694)
+
+* fix(web): ask which sibling a shared-worktree row action targets
+
+Stop, Start, Fork, Switch agent, Switch view, Auto-name and Summarize
+resolved their target from sessions[0] or the first structured session,
+so the row could show one sibling's state while mutating another. Each
+action now lists the eligible siblings; one target runs directly and
+several open an inline picker showing each sibling's own status.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* test(web): cover shared-worktree row session targeting in the browser
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* fix(web): check the clicked sibling against the menu's own targets
+
+The click-time check ignored the optimistic archive state, so Start was
+offered right after Unarchive and then refused until the server caught up.
+
+Addresses review comment from CodeRabbit on #4694.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* fix(web): give the sibling picker AA contrast on the menu surface
+
+text-dim on surface-800 is 3.02:1 in the Empire theme. text-primary is the
+only text token that clears 4.5:1 on that surface in every bu
+
+**File**: `src/tui/styles/resolved.rs` (modified, +6/-0)
+```diff
+@@ -620,6 +620,12 @@ mod tests {
+                 subtle_on_modal >= TEXT_CONTRAST_RATIO,
+                 "{name}: --color-text-subtle on --color-surface-800 is {subtle_on_modal:.2}, below body-text AA"
+             );
++            // The sidebar context menu's session picker is body text on surface-800.
++            let picker = contrast_ratio(var("--color-text-primary"), var("--color-surface-800"));
++            assert!(
++                picker >= TEXT_CONTRAST_RATIO,
++                "{name}: text-primary on surface-800 is {picker:.2}, below body-text AA"
++            );
+             let frame = var("--color-session-active");
+             let fill = var("--color-surface-800");
+             // The third surface is the fill an open row takes while it is also
+```
+
+**File**: `web/src/components/__tests__/SessionRowSiblingTargets.test.tsx` (added, +140/-0)
+```diff
+@@ -0,0 +1,140 @@
++// @vitest-environment jsdom
++
++import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
++import { cleanup, fireEvent, screen } from "@testing-library/react";
++
++import type { SessionResponse } from "../../lib/types";
++import { EMPTY_OPTIMISTIC } from "../../lib/sidebarOptimistic";
++import { resolveActionTargets } from "../sidebar/sessionActionTargets";
++import { makeSession, makeWorkspace, openRowMenu, stubFetch } from "./fixtures";
++
++const sibling = (id: string, over: Partial<SessionResponse> = {}) => makeSession({ id, title: `title ${id}`, ...over });
++const structured = { view: "structured", acp_session_id: "acp", acp_can_fork: true } as const;
++const ids = (list: SessionResponse[]) => list.map((s) => s.id);
++const click = (id: string) => fireEvent.click(screen.getByTestId(id));
++
++beforeEach(() => {
++  stubFetch();
++});
++afterEach(() => {
++  cleanup();
++  vi.unstubAllGlobals();
++});
++
++describe("resolveActionTargets", () => {
++  it("picks eligible siblings per action in row order", () => {
++    const sessions = [
++      sibling("stopped", { status: "Stopped" }),
++      sibling("running", { status: "Running" }),
++      sibling("archived", { status: "Stopped", archived_at: "2026-01-01T00:00:00Z" }),
++      sibling("trashed", { status: "Stopped", trashed_at: "2026-01-01T00:00:00Z" }),
++      sibling("creating", { status: "Creating" }),
++      sibling("acp", { ...structured, acp_can_fork: false }),
++      sibling("fork", structured),
++      sibling("capable", { view: "terminal", acp_capable: true }),
++    ];
++    const t = resolveActionTargets(sessions, EMPTY_OPTIMISTIC);
++    expect(ids(t.stop)).toEqual(["running", "acp", "fork", "capable"]);
++    expect(ids(t.start)).toEqual(["stopped"]);
++    expect(ids(t.fork)).toEqual(["fork"]);
++    expect(ids(t.summarize)).toEqual(["acp", "fork"]);
++    expect(ids(t.switchView)).toEqual(["acp", "fork", "capable"]);
++  });
++
++  it("hides Start while an archive is pending, and allows it once unarchiving", () => {
++    const stopped = [sibling("a", { status: "Stopped" }), sibling("b", { status: "Stopped", archived_at: "x" })];
++    const pending = (archived: boolean, archivedSessionId: string) => ({
++      ...EMPTY_OPTIMISTIC,
++      archived,
++      archivedSessionId,
++    });
++    expect(ids(resolveActionTargets(stopped, pending(true, "a")).start)).toEqual([]);
++    expect(ids(resolveActionTargets(stopped, pending(false, "b")).start)).toEqual(["a", "b"]);
++    // Unarchiving a leaves b, still archived, without Start.
++    expect(ids(resolveActionTargets(stopped, pending(false, "a")).start)).toEqual(["a"]);
++  });
++});
++
++describe("shared-worktree row session actions (#3387)", () => {
++  it("Stop and Start act on the sibling that qualifies, not sessions[0]", () => {
++    const onStop = vi.fn();
++    const onStart = vi.fn();
++    openRowMenu(makeWorkspace("w", [sibling("s1", { status: "Stopped" }), sibling("s2", { status: "Running" })]), {
++      onStop,
++      onStart,
++    });
++    expect(screen.queryByTestId("sidebar-context-menu-stop-target")).toBeNull();
++    click("sidebar-context-menu-stop");
++    expect(onStop).toHaveBeenCalledWith("s2");
++  });
++
++  it("Start is offered for a stopped sibling while another runs", () => {
++    const onStart = vi.fn();
++    openRowMenu(makeWorkspace("w", [sibling("s1", { status: "Running" }), sibling("s2", { status: "Stopped" })]), {
++      onStart,
++    });
++    click("sidebar-context-menu-start");
++    expect(onStart).toHaveBeenCalledWith("s2");
++  });
++
++  it("asks which sibling when several qualify, and acts on the chosen one only", () => {
++    const onStop = vi.fn();
++    openRowMenu(
++      makeWorkspace("w", [
++        sibling("s1", { status: "Running" }),
++        sibling("s2", { status: "Waiting" }),
++        sibling("s3", { status: "Stopped" }),
++      ]),
++      { onStop },
++    );
++    click("sidebar-context-menu-stop");
++    expect(onStop).not.toHaveBeenCalled();
++    const rows = screen.getAllByTestId("sidebar-context-menu-stop-target");
++    expect(rows.map((r) => r.textContent)).toEqual(["title s1Running", "title s2Waiting"]);
++    fireEvent.click(rows[1]!);
++    expect(onStop).toHaveBeenCalledTimes(1);
++    expect(onStop).toHaveBeenCalledWith("s2");
++  });
++
++  it("Summarize targets the chosen structured sibling, not the first", async () => {
++    const fetchSpy = stubFetch();
++    openRowMenu(makeWorkspace("w", [sibling("s1", structured), sibling("s2", structured)]));
++    click("sidebar-context-menu-summarize");
++    fireEvent.click(screen.getAllByTestId("sidebar-context-menu-summarize-target")[1]!);
++    await vi.waitFor(() => expect(fetchSpy).toHaveBeenCalled());
++    expect(fetchSpy.mock.calls[0]![0]).toContain("s2");
++  });
++
++  it("Start still runs right after Unarchive, before the server drops archived_at", () => {
++    const onStart = vi.fn();
++    openRowMenu(makeWorkspace("w", [sibling("s1", { status: "Stopped", archived_at: "2026-01-01T00:00:00Z" })]), {
++      on
+```
+
+**File**: `web/src/components/__tests__/WorkspaceSidebarTrash.test.tsx` (modified, +4/-1)
+```diff
+@@ -246,8 +246,11 @@ describe("WorkspaceSidebar row actions on a group slice (#4019)", () => {
+       click(`sidebar-context-menu-${item}`);
+     };
+ 
++    // Two running siblings share the row, so Stop asks which one.
+     act("beta", "stop");
+-    expect(onStopSession).toHaveBeenCalledWith("b1");
++    expect(onStopSession).not.toHaveBeenCalled();
++    fireEvent.click(screen.getAllByTestId("sidebar-context-menu-stop-target")[1]!);
++    expect(onStopSession).toHaveBeenCalledWith("b2");
+     act("alpha", "start");
+     expect(onStartSession).toHaveBeenCalledWith("a1");
+     act("beta", "delete");
+```
+
+**File**: `web/src/components/__tests__/fixtures.tsx` (modified, +15/-1)
+```diff
+@@ -89,10 +89,21 @@ interface RowOptions {
+   rowTagMode?: SessionRowTagMode;
+   colorsEnabled?: boolean;
+   unread?: boolean;
++  onStop?: (sessionId: string) => void;
++  onStart?: (sessionId: string) => void;
++  onSwitchView?: (sessionId: string, toStructured: boolean) => void;
  }
+ 
+ /** A single unselected SessionRow wired to the real triage hook, as the sidebar wires it. */
+-function Row({ ws, readOnly, isActive = false, onCreateSession }: RowOptions & { ws: Workspace }) {
++function Row({
++  ws,
++  readOnly,
++  isActive = false,
++  onCreateSession,
++  onStop,
++  onStart,
++  onSwitchView,
++}: RowOptions & { ws: Workspace }) {
+   const triage = useSidebarTriage(useMemo(() => [ws], [ws]));
+   return (
+     <SessionRow
+@@ -101,6 +112,9 @@ function Row({ ws, readOnly, isActive = false, onCreateSession }: RowOptions & {
+       isSelected={false}
+       onActivate={() => {}}
+       onCreateSession={onCreateSession}
++      onStop={onStop}
++      onStart={onStart}
++      onSwitchView={onSwitchView}
+       readOnly={readOnly}
+       optimistic={triage.optimisticFor(ws.id)}
+       onPinToggle={triage.pinToggle}
+```
+
+**File**: `web/src/components/sidebar/SessionActions.tsx` (modified, +27/-21)
+```diff
+@@ -1,6 +1,6 @@
+ import { useState, type ReactNode, type RefObject } from "react";
+ import { createPortal } from "react-dom";
+-import type { Workspace } from "../../lib/types";
++import type { SessionResponse, Workspace } from "../../lib/types";
+ import {
+   attachSessionProject,
+   createSession,
+@@ -20,6 +20,7 @@ import { StatusGlyph } from "../StatusGlyph";
+ import { AddProjectModal } from "./AddProjectModal";
+ import type { RowModel } from "./rowModel";
+ import { BulkTriageMenuItems, SingleRowMenuItems, type SingleRowActions } from "./SessionRowMenu";
++import type { SessionAction } from "./sessionActionTargets";
+ import { SnoozeModal } from "./SnoozeModal";
+ import type { RowBulkApi, RowContextScope } from "./types";
+ import { WorkdirNameModal } from "./WorkdirNameModal";
+@@ -157,11 +158,20 @@ function buildRowActions(
+   closeMenu: () => void,
+   setModal: (m: Modal) => void,
+ ): Omit<SingleRowActions, "rename" | "notify" | "color"> {
+-  const { firstSession: first, acpSession: acp } = model;
+   const after = (fn: () => unknown) => () => {
+     closeMenu();
+     void fn();
+   };
++  // Re-checks the chosen session against the live row, since it can change while the menu is open.
++  const afterTarget = (action: SessionAction, fn: (s: SessionResponse) => unknown) => (sessionId: string) => {
++    closeMenu();
++    const session = workspace.sessions.find((s) => s.id === sessionId);
++    if (!session || !model.actionTargets[action].some((t) => t.id === sessionId)) {
++      reportError("That session changed. Please try again.");
++      return;
++    }
++    void fn(session);
++  };
+   return {
+     newSession:
+       props.onCreateSession && model.newSessionRepoPath
+@@ -170,38 +180,34 @@ function buildRowActions(
+     editWorkdir: after(() => setModal("workdir")),
+     addProject: after(() => setModal("addProject")),
+     editGroup: after(() => setModal("group")),
+-    switchView: after(() => first && props.onSwitchView?.(first.id, first.view !== "structured")),
++    switchView: afterTarget("switchView", (s) => props.onSwitchView?.(s.id, s.view !== "structured")),
+     // The dialog lives in the session's Composer, so navigate first; a pending latch opens it on mount.
+-    switchAgent: after(() => {
+-      if (!acp) return;
+-      requestOpenSession(acp.id);
+-      requestSwitchAgent(acp.id);
++    switchAgent: afterTarget("switchAgent", (s) => {
++      requestOpenSession(s.id);
++      requestSwitchAgent(s.id);
+     }),
+-    fork: after(async () => {
+-      if (!acp?.acp_session_id || !acp.acp_can_fork) return;
++    fork: afterTarget("fork", async (s) => {
+       const result = await createSession({
+-        path: acp.project_path,
+-        tool: acp.tool,
++        path: s.project_path,
++        tool: s.tool,
+         view: "structured",
+-        profile: acp.profile || undefined,
+-        fork_from: acp.acp_session_id,
++        profile: s.profile || undefined,
++        fork_from: s.acp_session_id!,
+       });
+       if (result.ok && result.session) requestOpenSession(result.session.id);
+       else reportError(result.error ?? "Could not fork this session. Please try again.");
+     }),
+-    autoName: after(async () => {
+-      if (!acp) return;
+-      const result = await smartRenameSession(acp.id);
++    autoName: afterTarget("autoName", async (s) => {
++      const result = await smartRenameSession(s.id);
+       if (!result.ok) reportError(result.message ?? "Could not start auto-name. Please try again.");
+     }),
+-    summarize: after(async () => {
+-      if (!acp) return;
+-      const result = await summarizeSession(acp.id);
++    summarize: afterTarget("summarize", async (s) => {
++      const result = await summarizeSession(s.id);
+       if (result.ok) reportInfo("Summarizing the conversation so far…");
+       else reportError(result.message ?? "Could not start the summary. Please try again.");
+     }),
+-    stop: after(() => first && props.onStop?.(first.id)),
+-    start: after(() => first && props.onStart?.(first.id)),
++    stop: afterTarget("stop", (s) => props.onStop?.(s.id)),
++    start: afterTarget("start", (s) => props.onStart?.(s.id)),
+     pin: () => props.onPinToggle(workspace, !model.effectivePinned),
+     archive: after(() => props.onArchiveToggle(workspace, !model.effectiveArchived)),
+     openSnooze: after(() => setModal("snooze")),
+```
+
+**File**: `web/src/components/sidebar/SessionRowMenu.tsx` (modified, +126/-54)
+```diff
+@@ -19,11 +19,13 @@ import {
+   Sparkles,
+   Trash2,
+ } from "lucide-react";
++import type { SessionResponse } from "../../lib/types";
+ import { triageMenuShape, triageStateOf } from "../../lib/sidebarSort";
+ import type { BulkTriageBuckets } from "../../lib/sidebarBulk";
+ import { MenuChoiceRow, MenuHeading, MenuItem, MenuSeparator, MenuSwatches } from "../ContextMenu";
+ import { SNOOZE_PRESETS } from "./format";
+ import { SESSION_COLOR_OPTIONS, type NotifyPreset, type RowModel } from "./rowModel";
++import type { SessionAction } from "./sessionActionTargets";
+ import type { RowBulkApi } from "./types";
+ 
+ const icon = (Icon: typeof Pin, className = "") => <Icon className={`h-3.5 w-3.5 shrink-0 ${className}`.trim()} />;
+@@ -86,13 +88,13 @@ export interface SingleRowActions {
+   editWorkdir: () => void;
+   addProject: () => void;
+   editGroup: () => void;
+-  switchView: () => void;
+-  switchAgent: () => void;
+-  fork: () => void;
+-  autoName: () => void;
+-  summarize: () => void;
+-  stop: () => void;
+-  start: () => void;
++  switchView: (sessionId: string) => void;
++  switchAgent: (sessionId: string) => void;
++  fork: (sessionId: string) => void;
++  autoName: (sessionId: string) => void;
++  summarize: (sessionId: string) => void;
++  stop: (sessionId: string) => void;
++  start: (sessionId: string) => void;
+   notify: (preset: NotifyPreset) => void;
+   color: (color: string | null) => void;
+   pin: () => void;
+@@ -155,17 +157,21 @@ export function SingleRowMenuItems({
+ }) {
+   const [moreOpen, setMoreOpen] = useState(false);
+   const moreId = useId();
+-  const { firstSession: first, acpSession: acp } = model;
++  const [pickerOpen, setPickerOpen] = useState<SessionAction | null>(null);
++  const { actionTargets: t } = model;
+   const write = !readOnly;
+-  const canSwitchView = write && !!first && (first.view === "structured" || first.acp_capable);
+-  const canFork = write && !!acp?.acp_session_id && acp.acp_can_fork;
++  const item = (action: SessionAction, props: Omit<TargetedItemProps, "targets" | "open" | "onToggle" | "onRun">) => (
++    <TargetedItem
++      {...props}
++      targets={t[action]}
++      open={pickerOpen === action}
++      onToggle={() => setPickerOpen((o) => (o === action ? null : action))}
++      onRun={a[action]}
++    />
++  );
+   const more = write && {
+-    switchAgent: !!acp,
+-    autoName: !!acp,
+-    summarize: !!acp,
+     editWorkdir: model.canEditWorkdir,
+     addProject: !!model.sessionId && model.canAddProject,
+-    editGroup: true,
+   };
+   return (
+     <>
+@@ -176,26 +182,17 @@ export function SingleRowMenuItems({
+           Rename
+         </MenuItem>
+       )}
+-      {write && model.canStop && (
+-        <MenuItem onClick={a.stop} testId="sidebar-context-menu-stop" icon={icon(CircleStop)}>
+-          Stop
+-        </MenuItem>
+-      )}
+-      {write && model.canStart && (
+-        <MenuItem onClick={a.start} testId="sidebar-context-menu-start" icon={icon(Play)}>
+-          Start
+-        </MenuItem>
+-      )}
+-      {canSwitchView && (
+-        <MenuItem onClick={a.switchView} testId="sidebar-context-menu-switch-view" icon={icon(SquareTerminal)}>
+-          {first!.view === "structured" ? "Switch to terminal" : "Switch to structured view"}
+-        </MenuItem>
+-      )}
+-      {canFork && (
+-        <MenuItem onClick={a.fork} testId="sidebar-context-menu-fork" icon={icon(GitFork)}>
+-          Fork session
+-        </MenuItem>
+-      )}
++      {write && item("stop", { label: "Stop", testId: "sidebar-context-menu-stop", glyph: icon(CircleStop) })}
++      {write && item("start", { label: "Start", testId: "sidebar-context-menu-start", glyph: icon(Play) })}
++      {write &&
++        item("switchView", {
++          label: "Switch view",
++          singleLabel: (s) => (s.view === "structured" ? "Switch to terminal" : "Switch to structured view"),
++          detail: (s) => `${s.status}, to ${s.view === "structured" ? "terminal" : "structured"}`,
++          testId: "sidebar-context-menu-switch-view",
++          glyph: icon(SquareTerminal),
++        })}
++      {write && item("fork", { label: "Fork session", testId: "sidebar-context-menu-fork", glyph: icon(GitFork) })}
+       {write && a.newSession && (
+         <MenuItem onClick={a.newSession} testId="sidebar-context-menu-new-session" icon={icon(Plus)}>
+           New session in this project
+@@ -213,26 +210,27 @@ export function SingleRowMenuItems({
+             More
+           </MenuItem>
+           <div id={moreId} hidden={!moreOpen}>
+-            {more.switchAgent && (
+-              <MenuItem
+-                onClick={a.switchAgent}
+-                testId="sidebar-context-menu-switch-agent"
+-                icon={icon(ArrowLeftRight)}
+-                indent
+-              >
+-                Switch agent
+-              </MenuItem>
+-            )}
+-            {more.autoName && (
+-              <MenuItem onClick={a.autoName} testId="sidebar-context-menu-auto-name" icon={icon(Sparkles)} indent>
+-                Auto-name now
+-            
+```
+
+**File**: `web/src/components/sidebar/rowModel.ts` (modified, +2/-4)
+```diff
+@@ -8,6 +8,7 @@ import {
+   effectiveUnreadOf,
+   type OptimisticTriage,
+ } from "../../lib/sidebarOptimistic";
++import { resolveActionTargets } from "./sessionActionTargets";
+ 
+ /** Mirrors the Rust `SESSION_COLORS` list. */
+ export const SESSION_COLOR_OPTIONS: { key: string; label: string; dotClass: string }[] = [
+@@ -92,7 +93,7 @@ export function deriveRowModel(
+     firstSession,
+     runningSession,
+     navigationSession: runningSession ?? firstSession,
+-    acpSession: sessions.find((s) => s.view === "structured"),
++    actionTargets: resolveActionTargets(sessions, optimistic),
+     sessionId: firstSession?.id,
+     sessionTitle,
+     branchLabel,
+@@ -140,9 +141,6 @@ export function deriveRowModel(
+       !firstSession?.trashed_at &&
+       firstSession?.status !== "Creating" &&
+       firstSession?.status !== "Deleting",
+-    canStop: !["Stopped", "Deleting", "Creating"].includes(status),
+-    // Archived and trashed sessions must be unarchived or restored before they start (#4116).
+-    canStart: status === "Stopped" && !effectiveArchived && !firstSession?.trashed_at,
+   };
+ }
+ 
+```
+
+**File**: `web/src/components/sidebar/sessionActionTargets.ts` (added, +37/-0)
+```diff
+@@ -0,0 +1,37 @@
++import type { SessionResponse } from "../../lib/types";
++import { effectiveArchivedOf, type OptimisticTriage } from "../../lib/sidebarOptimistic";
++
++/** Row menu actions that act on one session, so a row with several siblings must name which. */
++export type SessionAction = "stop" | "start" | "fork" | "switchAgent" | "switchView" | "autoName" | "summarize";
++
++const isStructured = (s: SessionResponse) => s.view === "structured";
++
++const ELIGIBLE: Record<SessionAction, (s: SessionResponse, archived: boolean) => boolean> = {
++  stop: (s) => !["Stopped", "Deleting", "Creating"].includes(s.status),
++  // Archived and trashed sessions must be unarchived or restored before they start (#4116).
++  start: (s, archived) => s.status === "Stopped" && !archived && !s.trashed_at,
++  fork: (s) => isStructured(s) && !!s.acp_session_id && !!s.acp_can_fork,
++  switchAgent: isStructured,
++  switchView: (s) => isStructured(s) || !!s.acp_capable,
++  autoName: isStructured,
++  summarize: isStructured,
++};
++
++export type SessionActionTargets = Record<SessionAction, SessionResponse[]>;
++
++/** The siblings each action may act on, in row order. */
++export function resolveActionTargets(sessions: SessionResponse[], optimistic: OptimisticTriage): SessionActionTargets {
++  // A pending archive applies to the one session it was issued for, not every sibling.
++  const archivedOf = (s: SessionResponse) =>
++    s.id === optimistic.archivedSessionId ? effectiveArchivedOf(optimistic, !!s.archived_at) : !!s.archived_at;
++  const targets = (action: SessionAction) => sessions.filter((s) => ELIGIBLE[action](s, archivedOf(s)));
++  return {
++    stop: targets("stop"),
++    start: targets("start"),
++    fork: targets("fork"),
++    switchAgent: targets("switchAgent"),
++    switchView: targets("switchView"),
++    autoName: targets("autoName"),
++    summarize: targets("summarize"),
++  };
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4683** (2026-10-19): chore(deps): bump @agentclientprotocol/claude-agent-acp from 0.89.0 to 0.89.1 in /acp-worker/adapters/claude-agent-acp (@dependabot[bot])
-- **PR #4678** (2026-10-18): fix(web): show Read file content from the session when the adapter sends none (@cwrau)
-- **PR #4677** (2026-10-18): fix(session): run one-shot agents standalone in a scope (@cwrau)
-- **PR #4675** (2026-10-18): feat(web): render images inline and offer a download for binary files in the file viewer (@cwrau)
-- **PR #4674** (2026-10-18): fix(web): show attachments in one bubble and expand images in a lightbox (@cwrau)
-- **PR #4667** (closed): fix(web): preserve Ctrl+Enter in terminal input (consolidated into #4604) (@athal7)
+- **PR #4713** (2026-10-19): fix(session): pin trust-file entry with O_PATH before opening on Linux (@Seluj78)
+- **PR #4710** (closed): feat(session): import Codex session titles from the rollout (@Seluj78)
+- **PR #4701** (2026-10-19): fix(session): name ChatGPT login in the managed Codex auth refusal (@Seluj78)
+- **PR #4700** (2026-10-19): fix(session): probe the container for native files no mount projects (@Seluj78)
+- **PR #4699** (2026-10-19): feat(sandbox): add host_hooks.before_destroy run on the host at purge (@Seluj78)
+- **PR #4695** (2026-10-19): fix(web): wait for shortcut listener before pressing keys in mocked specs (@Seluj78)
 
 ---
 
@@ -2747,85 +3322,49 @@ Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. serve): keep status probes from deleting a replacement daemon's state (#4629)
+## X. agents): launch codex with --no-daemon so hooks see the pane's instance id (#463
 
 **RULE**:
-When implementing operations in `src/cli/serve.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in agent-of-empires/agent-of-empires. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/agents.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in agent-of-empires/agent-of-empires. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `91c1a556`: serve): keep status probes from deleting a replacement daemon's state (#4629). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f1f883ed`: agents): launch codex with --no-daemon so hooks see the pane's instance id (#4630). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/cli/serve.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/agents.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// Separate from the lifetime lock a running server holds, which this state is
-/// published and cleared under. Publishers hold it from before spawning until the pid
-/// and launch files are written; cleanup holds it across its ownership check and deletion.
-fn lock_serve_state() -> Result<std::fs::File> {
-    use fs2::FileExt as _;
-    let path = crate::session::get_app_dir()?.join("serve.state.lock");
-    let file = std::fs::OpenOptions::new()
-        .read(true)
-        .write(true)
-        .create(true)
-        .truncate(false)
-        .open(&path)
-        .with_context(|| format!("opening {}", path.display()))?;
-    file.lock_exclusive()
-        .with_context(|| format!("locking {}", path.display()))?;
-    Ok(file)
-/// Deletes the serve state only while `serve.pid` still names `expected_pid`.
-/// Returns whether it did.
-fn clear_serve_state(expected_pid: i32) -> bool {
-    let (Ok(_lock), Ok(pid_path), Ok(dir)) = (
-        lock_serve_state(),
-        pid_file_path(),
-        crate::session::get_app_dir(),
-    ) else {
-        return false;
-    };
-    let recorded = std::fs::read_to_string(&pid_path)
-        .ok()
-        .and_then(|raw| parse_positive_pid(&raw));
-    if record
+    /// Flag keeping the agent's app server inside the launched process. A shared daemon runs
+    /// hooks under the env of the pane that spawned it, so every session's status lands on that
+    /// pane's `AOE_INSTANCE_ID`. `command` is the launch's own executable and environment: older
+    /// installs reject the flag. `options` are the arguments before any `--`; the flag is
+    /// withheld when they name a subcommand that does not define it.
+    pub(crate) fn supported_no_daemon_flag(
+        &self,
+        command: &std::process::Command,
+        options: &[String],
+    ) -> Option<&'static str> {
+        let flag = match self.name {
+            "codex" => "--no-daemon",
+            _ => return None,
+        };
+        // After an explicit `resume` or `fork`, later positionals are operands (a session id or
+        // prompt) that may spell a subcommand name. A root prompt does not shield a later
+        // subcommand: Codex still dispatches it.
+        let mut mode_known = false;
+        let mut words = options.iter().peekable();
+        while let Some(word) = words.next() {
+            // A remote TUI has no local app server, and Codex rejects the combination.
+            if 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-fn remove_stale_serve_state(pid_path: &std::path::Path) {
-    let _ = std::fs::remove_file(pid_path);
-    if let Ok(dir) = crate::session::get_app_dir() {
-        for name in SERVE_STATE_FILES {
-            let _ = std::fs::remove_file(dir.join(name));
-        }
-    }
-async fn clear_serve_state() {
-    if let Ok(dir) = crate::session::get_app_dir() {
-        for name in SERVE_STATE_FILES {
-            let _ = tokio::fs::remove_file(dir.join(name)).await;
-        }
-    let probe = nix::sys::signal::kill(nix::unistd::Pid::from_raw(pid), None);
-    match classify_daemon_probe(probe) {
-        DaemonProbeDisposition::VerifyIdentity => match inspect_daemon_process(pid) {
-            DaemonProcessIdentity::Foreign => {
-                remove_stale_serve_state(&path);
-                DaemonStatus::Absent
-            }
-        DaemonProbeDisposition::Stale => {
-            remove_stale_serve_state(&path);
-            DaemonStatus::Absent
-        }
-        let _ = tokio::fs::write(&path, std::process::id().to_string()).await;
-    if let Ok(path) = pid_file_path() {
-        let is_ours = tokio::fs::read_to_string(&path)
-            .await
-            .ok()
-            .and_then(|s| s.trim().
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `91c1a556` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f1f883ed` are properly handled with clean fallback behavior.

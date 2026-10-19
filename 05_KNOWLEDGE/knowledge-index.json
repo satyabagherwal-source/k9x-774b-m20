@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T23:28:26.925Z",
-  "total_verified_learnings": 964,
+  "last_updated": "2026-10-19T23:34:40.078Z",
+  "total_verified_learnings": 966,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -658,14 +658,19 @@
       "slug": "agent-of-empires-agent-of-empires",
       "platform": "github",
       "source_url": "https://github.com/agent-of-empires/agent-of-empires",
-      "source_version": "77402819",
-      "content_hash": "69bb2d72aa114dd9c95d756d8499033c424833dd032b97c3b7bfda21b7fa9190",
+      "source_version": "2ba93cd0",
+      "content_hash": "6a051befe99c9bc540a0da89d8c3d1f51f6a0c6bc401a5c8dbfe994e3419bf55",
       "dossier_path": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "promoted_rules": [
         {
           "number": 2453,
           "title": "serve): keep status probes from deleting a replacement daemon's state (#4629)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2895,
+          "title": "agents): launch codex with --no-daemon so hooks see the pane's instance id (#463",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -674,7 +679,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T09:06:34.212Z",
+      "verified_at": "2026-10-19T23:34:37.345Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40745,22 +40750,35 @@
     "learn-github-stikdebug-stikdebug": {
       "learning_id": "learn-github-stikdebug-stikdebug",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "stikdebug-stikdebug",
+      "source": "StikDebug/StikDebug",
+      "repository": "StikDebug/StikDebug",
       "slug": "stikdebug-stikdebug",
       "platform": "github",
       "source_url": "https://github.com/StikDebug/StikDebug",
-      "source_version": "HEAD",
-      "content_hash": "aae6004bdc681f95163ffdda9e5e1d6a609cb1253a188e0cb878245bc5a4a140",
+      "source_version": "17b1e1d9",
+      "content_hash": "dd923dd2d384a06867daaa7b028265a15c2aeca5998a8493ed8bfe6c69c301a2",
       "dossier_path": "07_PROJECT_LEARNING/stikdebug-stikdebug-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/stikdebug-stikdebug-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2896,
+          "title": "merge pairing and DDI cleanup",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.714Z"
+      "verified_at": "2026-10-19T23:34:40.067Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-storybookjs-storybook": {
       "learning_id": "learn-github-storybookjs-storybook",
@@ -57754,20 +57772,35 @@
     "learn-github-syntax-tree-hast-util-to-html": {
       "learning_id": "learn-github-syntax-tree-hast-util-to-html",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "syntax-tree/hast-util-to-html",
       "repository": "syntax-tree/hast-util-to-html",
       "slug": "syntax-tree-hast-util-to-html",
       "platform": "github",
       "source_url": "https://github.com/syntax-tree/hast-util-to-html",
-      "source_version": "main",
-      "content_hash": "aec03e3b9690ffd299c2f804174a8566da0b19598132a0c1121c19a71a0cd516",
+      "source_version": "d115f5be",
+      "content_hash": "d94b39619ca6b66dca697bff3f8d181586b25eedf6e2980e22baf47dcf611fb5",
       "dossier_path": "07_PROJECT_LEARNING/syntax-tree-hast-util-to-html-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/syntax-tree-hast-util-to-html-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2889,
+          "title": "Change to require Node.js 16",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T23:34:38.107Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-remarkjs-remark": {
       "learning_id": "learn-github-remarkjs-remark",
@@ -94469,14 +94502,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 2889,
       "title": "Change to require Node.js 16",
-      "source_url": "https://github.com/syntax-tree/hast-util-from-html",
-      "source_version": "1ade8935",
+      "source_url": "https://github.com/syntax-tree/hast-util-to-html",
+      "source_version": "d115f5be",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-19T23:28:17.405Z"
+      "verified_at": "2026-10-19T23:34:38.107Z"
     },
     "rule-2890": {
       "learning_id": "rule-2890",
@@ -94547,6 +94580,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T23:28:26.908Z"
+    },
+    "rule-2895": {
+      "learning_id": "rule-2895",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2895,
+      "title": "agents): launch codex with --no-daemon so hooks see the pane's instance id (#463",
+      "source_url": "https://github.com/agent-of-empires/agent-of-empires",
+      "source_version": "2ba93cd0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T23:34:37.345Z"
+    },
+    "rule-2896": {
+      "learning_id": "rule-2896",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2896,
+      "title": "merge pairing and DDI cleanup",
+      "source_url": "https://github.com/StikDebug/StikDebug",
+      "source_version": "17b1e1d9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T23:34:40.067Z"
     }
   },
   "aliases": {

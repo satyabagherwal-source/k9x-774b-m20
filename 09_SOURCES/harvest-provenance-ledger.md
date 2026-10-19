@@ -3568,3 +3568,6 @@ Every entry in this ledger must capture:
 | `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `c8af0940` | Multi-dimensional audit evidence | 2026-10-19T23:28:22.536Z |
 | `learn-github-blackjacx-wwdc` | `https://github.com/Blackjacx/WWDC` | `4973be7a` | Multi-dimensional audit evidence | 2026-10-19T23:28:25.583Z |
 | `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `11479fb9` | Multi-dimensional audit evidence | 2026-10-19T23:28:26.972Z |
+| `learn-github-agent-of-empires-agent-of-empires` | `https://github.com/agent-of-empires/agent-of-empires` | `2ba93cd0` | Multi-dimensional audit evidence | 2026-10-19T23:34:37.405Z |
+| `learn-github-syntax-tree-hast-util-to-html` | `https://github.com/syntax-tree/hast-util-to-html` | `d115f5be` | Multi-dimensional audit evidence | 2026-10-19T23:34:38.160Z |
+| `learn-github-stikdebug-stikdebug` | `https://github.com/StikDebug/StikDebug` | `17b1e1d9` | Multi-dimensional audit evidence | 2026-10-19T23:34:40.124Z |

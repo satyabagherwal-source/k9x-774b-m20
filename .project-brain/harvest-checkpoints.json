@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T23:28:26.978Z",
+  "last_updated": "2026-10-19T23:34:40.132Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11209,14 +11209,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-agent-of-empires-agent-of-empires",
-      "content_hash": "69bb2d72aa114dd9c95d756d8499033c424833dd032b97c3b7bfda21b7fa9190",
-      "verified_at": "2026-10-19T09:06:34.263Z",
+      "content_hash": "6a051befe99c9bc540a0da89d8c3d1f51f6a0c6bc401a5c8dbfe994e3419bf55",
+      "verified_at": "2026-10-19T23:34:37.411Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T09:06:34.263Z"
+      "last_updated": "2026-10-19T23:34:37.411Z"
     },
     "NativeScript/NativeScript": {
       "repository": "NativeScript/NativeScript",
@@ -14277,6 +14277,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T23:28:25.590Z"
+    },
+    "syntax-tree/hast-util-to-html": {
+      "repository": "syntax-tree/hast-util-to-html",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-syntax-tree-hast-util-to-html",
+      "content_hash": "d94b39619ca6b66dca697bff3f8d181586b25eedf6e2980e22baf47dcf611fb5",
+      "verified_at": "2026-10-19T23:34:38.167Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T23:34:38.167Z"
+    },
+    "StikDebug/StikDebug": {
+      "repository": "StikDebug/StikDebug",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-stikdebug-stikdebug",
+      "content_hash": "dd923dd2d384a06867daaa7b028265a15c2aeca5998a8493ed8bfe6c69c301a2",
+      "verified_at": "2026-10-19T23:34:40.132Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T23:34:40.132Z"
     }
   },
   "repos": {

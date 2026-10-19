@@ -3561,3 +3561,6 @@
 | `CYCLE-20261019-XUKM` | `2026-10-19T23:28:22.534Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2890` | Yes (`e079c61f...`) |
 | `CYCLE-20261019-XWX9` | `2026-10-19T23:28:25.581Z` | `Blackjacx/WWDC` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2891, Rule 2892, Rule 2893` | Yes (`4aed7f51...`) |
 | `CYCLE-20261019-XXZT` | `2026-10-19T23:28:26.969Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2894` | Yes (`dd6f88ee...`) |
+| `CYCLE-20261019-5VTM` | `2026-10-19T23:34:37.402Z` | `agent-of-empires/agent-of-empires` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2895` | Yes (`6a051bef...`) |
+| `CYCLE-20261019-5WEL` | `2026-10-19T23:34:38.157Z` | `syntax-tree/hast-util-to-html` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2889` | Yes (`d94b3961...`) |
+| `CYCLE-20261019-5XX6` | `2026-10-19T23:34:40.122Z` | `StikDebug/StikDebug` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2896` | Yes (`dd923dd2...`) |
