@@ -3425,3 +3425,5 @@
 | `CYCLE-20261019-Q2J4` | `2026-10-19T18:42:23.440Z` | `SimonSchubert/Kai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2752` | Yes (`b77c198b...`) |
 | `CYCLE-20261019-Q4LZ` | `2026-10-19T18:42:26.135Z` | `nginx/kubernetes-ingress` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md` | Yes (`b832f0ca...`) |
 | `CYCLE-20261019-Q6HZ` | `2026-10-19T18:42:28.583Z` | `gravitl/netmaker` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2753` | Yes (`989efc7e...`) |
+| `CYCLE-20261019-Y9MJ` | `2026-10-19T18:48:45.883Z` | `a4csi/schema-org-validate` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/a4csi-schema-org-validate-learnings.md` | Yes (`1cf5e3cf...`) |
+| `CYCLE-20261019-YBUT` | `2026-10-19T18:48:48.773Z` | `prof18/feed-flow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2754` | Yes (`81258d43...`) |

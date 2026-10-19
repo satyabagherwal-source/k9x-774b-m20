@@ -8648,5 +8648,25 @@
     "contentHash": "b77c198bd02f10bb4cba77b569db8cf29a04207da62c665039c6fc2528fd3da8",
     "lastHarvestedAt": "2026-10-19T18:42:23.443Z",
     "learningId": "learn-github-simonschubert-kai"
+  },
+  "a4csi-schema-org-validate": {
+    "repository": "a4csi/schema-org-validate",
+    "platform": "github",
+    "sourceUrl": "https://github.com/a4csi/schema-org-validate",
+    "sourceVersion": "79086e29",
+    "license": "MIT",
+    "contentHash": "1cf5e3cfcb58de2a909c85dea4478a76ac9a387f1056da95010911d1b76bf8b9",
+    "lastHarvestedAt": "2026-10-19T18:48:45.886Z",
+    "learningId": "learn-github-a4csi-schema-org-validate"
+  },
+  "prof18-feed-flow": {
+    "repository": "prof18/feed-flow",
+    "platform": "github",
+    "sourceUrl": "https://github.com/prof18/feed-flow",
+    "sourceVersion": "1430b9eb",
+    "license": "Apache-2.0",
+    "contentHash": "81258d43814b6a0a7ce98684feb0fb6577fa10301f6484dc0c8e1953ff261e51",
+    "lastHarvestedAt": "2026-10-19T18:48:48.776Z",
+    "learningId": "learn-github-prof18-feed-flow"
   }
 }

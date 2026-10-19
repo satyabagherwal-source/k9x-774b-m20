@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T18:42:28.594Z",
+  "last_updated": "2026-10-19T18:48:48.783Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -13017,6 +13017,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T18:42:23.450Z"
+    },
+    "a4csi/schema-org-validate": {
+      "repository": "a4csi/schema-org-validate",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-a4csi-schema-org-validate",
+      "content_hash": "1cf5e3cfcb58de2a909c85dea4478a76ac9a387f1056da95010911d1b76bf8b9",
+      "verified_at": "2026-10-19T18:48:45.894Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T18:48:45.894Z"
+    },
+    "prof18/feed-flow": {
+      "repository": "prof18/feed-flow",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-prof18-feed-flow",
+      "content_hash": "81258d43814b6a0a7ce98684feb0fb6577fa10301f6484dc0c8e1953ff261e51",
+      "verified_at": "2026-10-19T18:48:48.782Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T18:48:48.782Z"
     }
   },
   "repos": {

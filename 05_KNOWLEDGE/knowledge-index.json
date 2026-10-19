@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T18:42:28.529Z",
-  "total_verified_learnings": 880,
+  "last_updated": "2026-10-19T18:48:48.731Z",
+  "total_verified_learnings": 882,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -35484,22 +35484,35 @@
     "learn-github-prof18-feed-flow": {
       "learning_id": "learn-github-prof18-feed-flow",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "prof18-feed-flow",
+      "source": "prof18/feed-flow",
+      "repository": "prof18/feed-flow",
       "slug": "prof18-feed-flow",
       "platform": "github",
       "source_url": "https://github.com/prof18/feed-flow",
-      "source_version": "HEAD",
-      "content_hash": "f4df559f7416bf7a9a623562a4bdefb2900b93fd11e5756e6dbeeb5c85ebff52",
+      "source_version": "1430b9eb",
+      "content_hash": "81258d43814b6a0a7ce98684feb0fb6577fa10301f6484dc0c8e1953ff261e51",
       "dossier_path": "07_PROJECT_LEARNING/prof18-feed-flow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/prof18-feed-flow-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2754,
+          "title": "Require Xcode 27.1 for iOS builds",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.108Z"
+      "verified_at": "2026-10-19T18:48:48.720Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-projectcontour-contour": {
       "learning_id": "learn-github-projectcontour-contour",
@@ -55307,22 +55320,31 @@
     "learn-github-a4csi-schema-org-validate": {
       "learning_id": "learn-github-a4csi-schema-org-validate",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "a4csi/schema-org-validate",
       "repository": "a4csi/schema-org-validate",
       "slug": "a4csi-schema-org-validate",
       "platform": "github",
       "source_url": "https://github.com/a4csi/schema-org-validate",
-      "source_version": "main",
-      "content_hash": "1415f9d665fb2faa6d8c24fd8073af1bd7f1db45db9151e48725f4c6ce2e9686",
+      "source_version": "79086e29",
+      "content_hash": "1cf5e3cfcb58de2a909c85dea4478a76ac9a387f1056da95010911d1b76bf8b9",
       "dossier_path": "07_PROJECT_LEARNING/a4csi-schema-org-validate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/a4csi-schema-org-validate-learnings.md",
       "promoted_rules": [
         "Rule 1622"
       ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:27:04.005893Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T18:48:45.828Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-crawlcove-hreflang-checker": {
       "learning_id": "learn-github-crawlcove-hreflang-checker",
@@ -91105,6 +91127,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T18:42:28.517Z"
+    },
+    "rule-2754": {
+      "learning_id": "rule-2754",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2754,
+      "title": "Require Xcode 27.1 for iOS builds",
+      "source_url": "https://github.com/prof18/feed-flow",
+      "source_version": "1430b9eb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T18:48:48.720Z"
     }
   },
   "aliases": {

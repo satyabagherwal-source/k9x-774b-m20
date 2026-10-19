@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T15:53:32.912Z",
+  "last_updated": "2026-10-19T18:48:45.890Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1883,6 +1883,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop"
+    },
+    {
+      "id": "CD-Y9MQ",
+      "directive_title": "Empirical Invariant Guard in README.md",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "a4csi/schema-org-validate",
+      "source_commit": "79086e29",
+      "date_staged": "2026-10-19",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-github-a4csi-schema-org-validate"
     }
   ]
 }

@@ -3432,3 +3432,5 @@ Every entry in this ledger must capture:
 | `learn-github-simonschubert-kai` | `https://github.com/SimonSchubert/Kai` | `628900a9` | Multi-dimensional audit evidence | 2026-10-19T18:42:23.443Z |
 | `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `4a85f985` | Multi-dimensional audit evidence | 2026-10-19T18:42:26.139Z |
 | `learn-github-gravitl-netmaker` | `https://github.com/gravitl/netmaker` | `82df6b46` | Multi-dimensional audit evidence | 2026-10-19T18:42:28.586Z |
+| `learn-github-a4csi-schema-org-validate` | `https://github.com/a4csi/schema-org-validate` | `79086e29` | Multi-dimensional audit evidence | 2026-10-19T18:48:45.886Z |
+| `learn-github-prof18-feed-flow` | `https://github.com/prof18/feed-flow` | `1430b9eb` | Multi-dimensional audit evidence | 2026-10-19T18:48:48.776Z |

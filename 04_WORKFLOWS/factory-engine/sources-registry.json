@@ -745,12 +745,12 @@
     "revisionIdentifier": "19227f36"
   },
   "surrealdb-surrealdb": {
-    "name": "surrealdb/surrealdb",
+    "name": "surrealdb",
     "officialUrl": "https://github.com/surrealdb/surrealdb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-19T05:45:38.529Z",
-    "lastVerified": "2026-10-19T05:45:38.529Z",
+    "lastChecked": "2026-10-19T18:48:50.303Z",
+    "lastVerified": "2026-10-19T18:48:50.303Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-surrealdb-surrealdb",
@@ -759,7 +759,8 @@
     "recentFixesCount": 16,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "18971ffb"
   },
   "stakater-reloader": {
     "name": "Reloader",
@@ -885,8 +886,8 @@
     "officialUrl": "https://github.com/microsoft/Security-101",
     "sourceType": "github",
     "technology": "HTML",
-    "lastChecked": "2026-10-19T15:53:23.645Z",
-    "lastVerified": "2026-10-19T15:53:23.645Z",
+    "lastChecked": "2026-10-19T18:48:47.596Z",
+    "lastVerified": "2026-10-19T18:48:47.596Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-security-101",
@@ -1214,12 +1215,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "kubernetes-sigs-aws-load-balancer-controller": {
-    "name": "kubernetes-sigs/aws-load-balancer-controller",
+    "name": "aws-load-balancer-controller",
     "officialUrl": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-19T06:32:39.343Z",
-    "lastVerified": "2026-10-19T06:32:39.343Z",
+    "lastChecked": "2026-10-19T18:48:45.244Z",
+    "lastVerified": "2026-10-19T18:48:45.244Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
@@ -1228,7 +1229,8 @@
     "recentFixesCount": 14,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "fbc97ecf"
   },
   "open-policy-agent-gatekeeper": {
     "name": "open-policy-agent/gatekeeper",
@@ -8540,12 +8542,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "salvo-rs-salvo": {
-    "name": "salvo-rs/salvo",
+    "name": "salvo",
     "officialUrl": "https://github.com/salvo-rs/salvo",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-19T03:53:41.269Z",
-    "lastVerified": "2026-10-19T03:53:41.269Z",
+    "lastChecked": "2026-10-19T18:48:37.682Z",
+    "lastVerified": "2026-10-19T18:48:37.682Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-salvo-rs-salvo",
@@ -8554,7 +8556,8 @@
     "recentFixesCount": 13,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "071cc161"
   },
   "franken-ui-ui": {
     "name": "franken-ui/ui",
@@ -18345,8 +18348,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-19T18:23:21.965Z",
-    "lastVerified": "2026-10-19T18:23:21.965Z",
+    "lastChecked": "2026-10-19T18:48:52.614Z",
+    "lastVerified": "2026-10-19T18:48:52.614Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -18565,14 +18568,15 @@
     "officialUrl": "https://github.com/prof18/feed-flow",
     "sourceType": "github",
     "technology": "Kotlin",
-    "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-04T20:20:55.397Z",
-    "lastVerified": "2026-10-04T20:20:55.397Z",
+    "lastChecked": "2026-10-19T18:48:48.499Z",
+    "lastVerified": "2026-10-19T18:48:48.499Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
-    "learningId": null,
-    "promotedRulesCount": 0,
-    "recentFixesCount": 8,
+    "learningId": "learn-github-prof18-feed-flow",
+    "contentHash": "81258d43814b6a0a7ce98684feb0fb6577fa10301f6484dc0c8e1953ff261e51",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 6,
+    "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   },
@@ -25322,11 +25326,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "a4csi-schema-org-validate": {
-    "name": "schema-org-validate",
+    "name": "a4csi/schema-org-validate",
     "officialUrl": "https://github.com/a4csi/schema-org-validate",
-    "lastChecked": "2026-10-18T06:29:09.763283Z",
-    "revisionIdentifier": "main",
-    "lastVerified": "2026-10-18T06:29:09.763283Z"
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-10-19T18:48:44.986Z",
+    "lastVerified": "2026-10-19T18:48:44.986Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-a4csi-schema-org-validate",
+    "contentHash": "1cf5e3cfcb58de2a909c85dea4478a76ac9a387f1056da95010911d1b76bf8b9",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "crawlcove-hreflang-checker": {
     "name": "crawlcove-hreflang-checker",
@@ -26387,8 +26401,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-19T18:42:31.124Z",
-    "lastVerified": "2026-10-19T18:42:31.124Z",
+    "lastChecked": "2026-10-19T18:48:52.630Z",
+    "lastVerified": "2026-10-19T18:48:52.630Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -26532,12 +26546,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "bvaughn-react-virtualized": {
-    "name": "bvaughn/react-virtualized",
+    "name": "react-virtualized",
     "officialUrl": "https://github.com/bvaughn/react-virtualized",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-19T07:37:03.121Z",
-    "lastVerified": "2026-10-19T07:37:03.121Z",
+    "lastChecked": "2026-10-19T18:48:35.224Z",
+    "lastVerified": "2026-10-19T18:48:35.224Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bvaughn-react-virtualized",
@@ -26546,7 +26560,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "dad013db"
   },
   "lokoe-mehdi-scouter": {
     "name": "scouter",
