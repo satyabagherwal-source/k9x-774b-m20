@@ -2701,3 +2701,9 @@
 | `CYCLE-20261019-VT01` | `2026-10-19T00:35:06.001Z` | `clastix/kamaji` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1924` | Yes (`08c6c1c0...`) |
 | `CYCLE-20261019-VTL2` | `2026-10-19T00:35:06.758Z` | `black-forest-labs/flux-3-image-klein-comfy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1925, Rule 1926, Rule 1927` | Yes (`249254fa...`) |
 | `CYCLE-20261019-VX86` | `2026-10-19T00:35:11.478Z` | `gluesql/gluesql` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/gluesql-gluesql-learnings.md` | Yes (`05ca2ac1...`) |
+| `CYCLE-20261019-3I37` | `2026-10-19T00:41:05.107Z` | `autotrust/JEV-35B-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md` | Yes (`7a25bc79...`) |
+| `CYCLE-20261019-3IAL` | `2026-10-19T00:41:05.373Z` | `mui/base-ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1928` | Yes (`72e7c1f3...`) |
+| `CYCLE-20261019-3JNL` | `2026-10-19T00:41:07.137Z` | `ekzhang/bore` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1929` | Yes (`2f36d4da...`) |
+| `CYCLE-20261019-3O2N` | `2026-10-19T00:41:12.863Z` | `oblador/react-native-animatable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1930` | Yes (`d1548f59...`) |
+| `CYCLE-20261019-3Q9X` | `2026-10-19T00:41:15.717Z` | `nitrictech/nitric` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1931` | Yes (`ec223709...`) |
+| `CYCLE-20261019-3TT7` | `2026-10-19T00:41:20.299Z` | `skytable/skytable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1932` | Yes (`9803286a...`) |

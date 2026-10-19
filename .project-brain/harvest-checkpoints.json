@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T00:35:11.490Z",
+  "last_updated": "2026-10-19T00:41:20.309Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2208,14 +2208,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-autotrust-jev-35b-nvfp4",
-      "content_hash": "ebe22ea9e3ba004239ee43ffaabab11bb526d41102b9d0dd3047dfba64704b72",
-      "verified_at": "2026-10-17T21:17:25.671Z",
+      "content_hash": "7a25bc799560ff20c0e582be47dc523712948851c9206f949efd3483c4347002",
+      "verified_at": "2026-10-19T00:41:05.114Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T21:17:25.671Z"
+      "last_updated": "2026-10-19T00:41:05.114Z"
     },
     "Leonxlnx/taste-skill": {
       "repository": "Leonxlnx/taste-skill",
@@ -6307,6 +6307,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T00:35:11.490Z"
+    },
+    "mui/base-ui": {
+      "repository": "mui/base-ui",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-mui-base-ui",
+      "content_hash": "72e7c1f3ddadadc6f4d4a11565fb29ab82cccc3c69126b5ae4b60e6e3d105784",
+      "verified_at": "2026-10-19T00:41:05.382Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T00:41:05.382Z"
+    },
+    "ekzhang/bore": {
+      "repository": "ekzhang/bore",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-ekzhang-bore",
+      "content_hash": "2f36d4dae5920a939fec2b606962eee0915dfe517984347cbf0396de653973e2",
+      "verified_at": "2026-10-19T00:41:07.147Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T00:41:07.147Z"
+    },
+    "oblador/react-native-animatable": {
+      "repository": "oblador/react-native-animatable",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-oblador-react-native-animatable",
+      "content_hash": "d1548f59f52a1daee49a9107749a4f84efd96e436a64eb9b6c5968bacef0e3f4",
+      "verified_at": "2026-10-19T00:41:12.873Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T00:41:12.873Z"
+    },
+    "nitrictech/nitric": {
+      "repository": "nitrictech/nitric",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-nitrictech-nitric",
+      "content_hash": "ec223709845312709f182ed16cfb43acd9aa67e1c0eacbc0232f9a2208e94329",
+      "verified_at": "2026-10-19T00:41:15.726Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T00:41:15.726Z"
+    },
+    "skytable/skytable": {
+      "repository": "skytable/skytable",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-skytable-skytable",
+      "content_hash": "9803286a86f8e62790f3c6cca24f9a020784f6ac867f8390597528162dff7d9c",
+      "verified_at": "2026-10-19T00:41:20.309Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T00:41:20.309Z"
     }
   },
   "repos": {

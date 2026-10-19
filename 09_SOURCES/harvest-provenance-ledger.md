@@ -2708,3 +2708,9 @@ Every entry in this ledger must capture:
 | `learn-github-clastix-kamaji` | `https://github.com/clastix/kamaji` | `8164ff2f` | Multi-dimensional audit evidence | 2026-10-19T00:35:06.007Z |
 | `learn-huggingface-black-forest-labs-flux-3-image-klein-comfy` | `https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy` | `hf-black-f` | Multi-dimensional audit evidence | 2026-10-19T00:35:06.764Z |
 | `learn-github-gluesql-gluesql` | `https://github.com/gluesql/gluesql` | `42a4b418` | Multi-dimensional audit evidence | 2026-10-19T00:35:11.483Z |
+| `learn-huggingface-autotrust-jev-35b-nvfp4` | `https://huggingface.co/autotrust/JEV-35B-NVFP4` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-19T00:41:05.110Z |
+| `learn-github-mui-base-ui` | `https://github.com/mui/base-ui` | `8e91039a` | Multi-dimensional audit evidence | 2026-10-19T00:41:05.378Z |
+| `learn-github-ekzhang-bore` | `https://github.com/ekzhang/bore` | `00a735a8` | Multi-dimensional audit evidence | 2026-10-19T00:41:07.143Z |
+| `learn-github-oblador-react-native-animatable` | `https://github.com/oblador/react-native-animatable` | `dfd74137` | Multi-dimensional audit evidence | 2026-10-19T00:41:12.869Z |
+| `learn-github-nitrictech-nitric` | `https://github.com/nitrictech/nitric` | `8b1be250` | Multi-dimensional audit evidence | 2026-10-19T00:41:15.722Z |
+| `learn-github-skytable-skytable` | `https://github.com/skytable/skytable` | `146d8664` | Multi-dimensional audit evidence | 2026-10-19T00:41:20.305Z |

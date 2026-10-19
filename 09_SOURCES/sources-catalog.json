@@ -1425,8 +1425,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/JEV-35B-NVFP4",
     "sourceVersion": "hf-autotrust-jev-35b-nvfp4",
     "license": "Open-Source",
-    "contentHash": "ebe22ea9e3ba004239ee43ffaabab11bb526d41102b9d0dd3047dfba64704b72",
-    "lastHarvestedAt": "2026-10-17T21:17:25.668Z",
+    "contentHash": "7a25bc799560ff20c0e582be47dc523712948851c9206f949efd3483c4347002",
+    "lastHarvestedAt": "2026-10-19T00:41:05.110Z",
     "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4"
   },
   "leonxlnx-taste-skill": {
@@ -4128,5 +4128,55 @@
     "contentHash": "05ca2ac1833601310d1441f0562949171c756fa038bc92084dde9e930913e097",
     "lastHarvestedAt": "2026-10-19T00:35:11.483Z",
     "learningId": "learn-github-gluesql-gluesql"
+  },
+  "mui-base-ui": {
+    "repository": "mui/base-ui",
+    "platform": "github",
+    "sourceUrl": "https://github.com/mui/base-ui",
+    "sourceVersion": "8e91039a",
+    "license": "MIT",
+    "contentHash": "72e7c1f3ddadadc6f4d4a11565fb29ab82cccc3c69126b5ae4b60e6e3d105784",
+    "lastHarvestedAt": "2026-10-19T00:41:05.378Z",
+    "learningId": "learn-github-mui-base-ui"
+  },
+  "ekzhang-bore": {
+    "repository": "ekzhang/bore",
+    "platform": "github",
+    "sourceUrl": "https://github.com/ekzhang/bore",
+    "sourceVersion": "00a735a8",
+    "license": "MIT",
+    "contentHash": "2f36d4dae5920a939fec2b606962eee0915dfe517984347cbf0396de653973e2",
+    "lastHarvestedAt": "2026-10-19T00:41:07.143Z",
+    "learningId": "learn-github-ekzhang-bore"
+  },
+  "oblador-react-native-animatable": {
+    "repository": "oblador/react-native-animatable",
+    "platform": "github",
+    "sourceUrl": "https://github.com/oblador/react-native-animatable",
+    "sourceVersion": "dfd74137",
+    "license": "MIT",
+    "contentHash": "d1548f59f52a1daee49a9107749a4f84efd96e436a64eb9b6c5968bacef0e3f4",
+    "lastHarvestedAt": "2026-10-19T00:41:12.869Z",
+    "learningId": "learn-github-oblador-react-native-animatable"
+  },
+  "nitrictech-nitric": {
+    "repository": "nitrictech/nitric",
+    "platform": "github",
+    "sourceUrl": "https://github.com/nitrictech/nitric",
+    "sourceVersion": "8b1be250",
+    "license": "Apache-2.0",
+    "contentHash": "ec223709845312709f182ed16cfb43acd9aa67e1c0eacbc0232f9a2208e94329",
+    "lastHarvestedAt": "2026-10-19T00:41:15.722Z",
+    "learningId": "learn-github-nitrictech-nitric"
+  },
+  "skytable-skytable": {
+    "repository": "skytable/skytable",
+    "platform": "github",
+    "sourceUrl": "https://github.com/skytable/skytable",
+    "sourceVersion": "146d8664",
+    "license": "AGPL-3.0",
+    "contentHash": "9803286a86f8e62790f3c6cca24f9a020784f6ac867f8390597528162dff7d9c",
+    "lastHarvestedAt": "2026-10-19T00:41:20.305Z",
+    "learningId": "learn-github-skytable-skytable"
   }
 }

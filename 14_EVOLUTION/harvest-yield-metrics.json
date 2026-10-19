@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T00:35:11.488Z",
-  "total_cycles_completed": 2678,
-  "total_learnings_persisted": 2678,
-  "total_rules_promoted": 1706,
+  "last_updated": "2026-10-19T00:41:20.307Z",
+  "total_cycles_completed": 2684,
+  "total_learnings_persisted": 2684,
+  "total_rules_promoted": 1711,
   "history": [
-    {
-      "timestamp": "2026-10-18T21:26:19.846Z",
-      "repository": "kubeedge/kubeedge",
-      "learningId": "learn-github-kubeedge-kubeedge",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T21:26:20.076Z",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "learningId": "learn-github-aleo-labs-protocol-snarkos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T21:26:22.700Z",
-      "repository": "giancarloerra/SocratiCode",
-      "learningId": "learn-github-giancarloerra-socraticode",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T21:32:36.724Z",
-      "repository": "jaredpalmer/formik",
-      "learningId": "learn-github-jaredpalmer-formik",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T21:32:39.384Z",
-      "repository": "alexellis/k3sup",
-      "learningId": "learn-github-alexellis-k3sup",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T21:32:42.313Z",
-      "repository": "DefGuard/defguard",
-      "learningId": "learn-github-defguard-defguard",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-18T21:32:43.726Z",
       "repository": "volcengine/OpenViking",
@@ -1403,6 +1361,48 @@
       "repository": "gluesql/gluesql",
       "learningId": "learn-github-gluesql-gluesql",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T00:41:05.112Z",
+      "repository": "autotrust/JEV-35B-NVFP4",
+      "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T00:41:05.380Z",
+      "repository": "mui/base-ui",
+      "learningId": "learn-github-mui-base-ui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T00:41:07.145Z",
+      "repository": "ekzhang/bore",
+      "learningId": "learn-github-ekzhang-bore",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T00:41:12.872Z",
+      "repository": "oblador/react-native-animatable",
+      "learningId": "learn-github-oblador-react-native-animatable",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T00:41:15.725Z",
+      "repository": "nitrictech/nitric",
+      "learningId": "learn-github-nitrictech-nitric",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T00:41:20.307Z",
+      "repository": "skytable/skytable",
+      "learningId": "learn-github-skytable-skytable",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

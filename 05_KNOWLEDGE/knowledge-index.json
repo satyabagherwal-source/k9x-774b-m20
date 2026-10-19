@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T00:35:11.441Z",
-  "total_verified_learnings": 435,
+  "last_updated": "2026-10-19T00:41:20.269Z",
+  "total_verified_learnings": 440,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -6330,22 +6330,35 @@
     "learn-github-ekzhang-bore": {
       "learning_id": "learn-github-ekzhang-bore",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "ekzhang-bore",
+      "source": "ekzhang/bore",
+      "repository": "ekzhang/bore",
       "slug": "ekzhang-bore",
       "platform": "github",
       "source_url": "https://github.com/ekzhang/bore",
-      "source_version": "HEAD",
-      "content_hash": "5f0ee3f9822c6dd936bd7bf7389863b9a1d65cf317449a53292531563291b1d3",
+      "source_version": "00a735a8",
+      "content_hash": "2f36d4dae5920a939fec2b606962eee0915dfe517984347cbf0396de653973e2",
       "dossier_path": "07_PROJECT_LEARNING/ekzhang-bore-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ekzhang-bore-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1929,
+          "title": "docs: update installation instructions for Linux (#152)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.754Z"
+      "verified_at": "2026-10-19T00:41:07.102Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-ekzhang-rustpad": {
       "learning_id": "learn-github-ekzhang-rustpad",
@@ -27142,22 +27155,35 @@
     "learn-github-mui-base-ui": {
       "learning_id": "learn-github-mui-base-ui",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "mui-base-ui",
+      "source": "mui/base-ui",
+      "repository": "mui/base-ui",
       "slug": "mui-base-ui",
       "platform": "github",
       "source_url": "https://github.com/mui/base-ui",
-      "source_version": "HEAD",
-      "content_hash": "2cc8cd3ad8cf4f56dc2a83f834a25fbd4b8e892da421e5ed086921ab25632878",
+      "source_version": "8e91039a",
+      "content_hash": "72e7c1f3ddadadc6f4d4a11565fb29ab82cccc3c69126b5ae4b60e6e3d105784",
       "dossier_path": "07_PROJECT_LEARNING/mui-base-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mui-base-ui-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1928,
+          "title": "Bump next to 16.3.8 [SECURITY] (#5953)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.512Z"
+      "verified_at": "2026-10-19T00:41:05.338Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-mukul975-anthropic-cybersecurity-skills": {
       "learning_id": "learn-github-mukul975-anthropic-cybersecurity-skills",
@@ -27907,22 +27933,35 @@
     "learn-github-nitrictech-nitric": {
       "learning_id": "learn-github-nitrictech-nitric",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "nitrictech-nitric",
+      "source": "nitrictech/nitric",
+      "repository": "nitrictech/nitric",
       "slug": "nitrictech-nitric",
       "platform": "github",
       "source_url": "https://github.com/nitrictech/nitric",
-      "source_version": "HEAD",
-      "content_hash": "97663271f5925c1b8de6e085ec97ec9a0231ad6f74b5687f171f5ff2cb2ce540",
+      "source_version": "8b1be250",
+      "content_hash": "ec223709845312709f182ed16cfb43acd9aa67e1c0eacbc0232f9a2208e94329",
       "dossier_path": "07_PROJECT_LEARNING/nitrictech-nitric-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nitrictech-nitric-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1931,
+          "title": "deps): update go dependencies with security fixes (#932)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.660Z"
+      "verified_at": "2026-10-19T00:41:15.682Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-nitrocloudofficial-nitrostack": {
       "learning_id": "learn-github-nitrocloudofficial-nitrostack",
@@ -28313,22 +28352,35 @@
     "learn-github-oblador-react-native-animatable": {
       "learning_id": "learn-github-oblador-react-native-animatable",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "oblador-react-native-animatable",
+      "source": "oblador/react-native-animatable",
+      "repository": "oblador/react-native-animatable",
       "slug": "oblador-react-native-animatable",
       "platform": "github",
       "source_url": "https://github.com/oblador/react-native-animatable",
-      "source_version": "HEAD",
-      "content_hash": "f045a7db798875e4d198542aed849c836559ea9bce6155b51c76c54e2d8a676f",
+      "source_version": "dfd74137",
+      "content_hash": "d1548f59f52a1daee49a9107749a4f84efd96e436a64eb9b6c5968bacef0e3f4",
       "dossier_path": "07_PROJECT_LEARNING/oblador-react-native-animatable-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oblador-react-native-animatable-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1930,
+          "title": "typing (#301)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.731Z"
+      "verified_at": "2026-10-19T00:41:12.828Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-oblador-react-native-vector-icons": {
       "learning_id": "learn-github-oblador-react-native-vector-icons",
@@ -33198,22 +33250,35 @@
     "learn-github-skytable-skytable": {
       "learning_id": "learn-github-skytable-skytable",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "skytable-skytable",
+      "source": "skytable/skytable",
+      "repository": "skytable/skytable",
       "slug": "skytable-skytable",
       "platform": "github",
       "source_url": "https://github.com/skytable/skytable",
-      "source_version": "HEAD",
-      "content_hash": "aa5c82748ed9f027e19118e8c16a7a38b4f6b30a8ac27d69e986c7b8bcef44bb",
+      "source_version": "146d8664",
+      "content_hash": "9803286a86f8e62790f3c6cca24f9a020784f6ac867f8390597528162dff7d9c",
       "dossier_path": "07_PROJECT_LEARNING/skytable-skytable-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/skytable-skytable-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1932,
+          "title": "server [ql]: Fix segfault resulting from double-free in `Token`",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.582Z"
+      "verified_at": "2026-10-19T00:41:20.262Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-skyzh-mini-lsm": {
       "learning_id": "learn-github-skyzh-mini-lsm",
@@ -45576,7 +45641,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/JEV-35B-NVFP4",
       "source_version": "hf-autotrust-jev-35b-nvfp4",
-      "content_hash": "ebe22ea9e3ba004239ee43ffaabab11bb526d41102b9d0dd3047dfba64704b72",
+      "content_hash": "7a25bc799560ff20c0e582be47dc523712948851c9206f949efd3483c4347002",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md",
       "promoted_rules": [
@@ -45611,7 +45676,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-17T21:17:25.630Z",
+      "verified_at": "2026-10-19T00:41:05.059Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -71732,6 +71797,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T00:35:06.714Z"
+    },
+    "rule-1928": {
+      "learning_id": "rule-1928",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1928,
+      "title": "Bump next to 16.3.8 [SECURITY] (#5953)",
+      "source_url": "https://github.com/mui/base-ui",
+      "source_version": "8e91039a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:41:05.338Z"
+    },
+    "rule-1929": {
+      "learning_id": "rule-1929",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1929,
+      "title": "docs: update installation instructions for Linux (#152)",
+      "source_url": "https://github.com/ekzhang/bore",
+      "source_version": "00a735a8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:41:07.102Z"
+    },
+    "rule-1930": {
+      "learning_id": "rule-1930",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1930,
+      "title": "typing (#301)",
+      "source_url": "https://github.com/oblador/react-native-animatable",
+      "source_version": "dfd74137",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:41:12.828Z"
+    },
+    "rule-1931": {
+      "learning_id": "rule-1931",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1931,
+      "title": "deps): update go dependencies with security fixes (#932)",
+      "source_url": "https://github.com/nitrictech/nitric",
+      "source_version": "8b1be250",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:41:15.682Z"
+    },
+    "rule-1932": {
+      "learning_id": "rule-1932",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1932,
+      "title": "server [ql]: Fix segfault resulting from double-free in `Token`",
+      "source_url": "https://github.com/skytable/skytable",
+      "source_version": "146d8664",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T00:41:20.262Z"
     }
   },
   "aliases": {

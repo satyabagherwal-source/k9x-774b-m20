@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261017-6D6P",
-    "timestamp": "2026-10-17T15:35:45.985Z",
-    "repository": "Comfy-Org/Qwen-Image-2.1",
-    "learningId": "learn-huggingface-comfy-org-qwen-image-2-1",
-    "contentHash": "9ccc26ee3d68310ce8bfb389f78ead74ffb9f871ba97fff61bbee58e914fa843",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-AK7F",
-    "timestamp": "2026-10-17T15:39:01.707Z",
-    "repository": "akhilaaa3/Jev-Omni",
-    "learningId": "learn-huggingface-akhilaaa3-jev-omni",
-    "contentHash": "cfccd803355dbe87db5f17e38fbac2e4ca121df69c3fd0f1a79e50f80a41a569",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-FJHI",
-    "timestamp": "2026-10-17T15:42:54.054Z",
-    "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
-    "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
-    "contentHash": "8023d1e5217ad87f4a2fa74605b3c707f634fc3ff7957fcc750a5ad4572077e8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-J56C",
-    "timestamp": "2026-10-17T15:45:42.132Z",
-    "repository": "inclusionAI/Ming-Image-0.1-Design",
-    "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
-    "contentHash": "29220b07cb90f8c154a27778534dd3b8468fff26179281d87ff1f12e78daf287",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-N5Q5",
-    "timestamp": "2026-10-17T15:48:49.469Z",
-    "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
-    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
-    "contentHash": "ccce5dfcae3d503ded9e135d45b7efdcc1bf33d3aaa794523271d1f98bcf2fa4",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-QWGY",
-    "timestamp": "2026-10-17T15:51:44.098Z",
-    "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
-    "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
-    "contentHash": "88195abd5e20a7841fce7bdaa361edc4ae83c7939419578be216d0f130c857d0",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261017-VA66",
     "timestamp": "2026-10-17T15:55:08.478Z",
     "repository": "unsloth/Qwen-Image-2.1-GGUF",
@@ -7492,6 +7402,96 @@
     "contentHash": "05ca2ac1833601310d1441f0562949171c756fa038bc92084dde9e930913e097",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-3I37",
+    "timestamp": "2026-10-19T00:41:05.107Z",
+    "repository": "autotrust/JEV-35B-NVFP4",
+    "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
+    "contentHash": "7a25bc799560ff20c0e582be47dc523712948851c9206f949efd3483c4347002",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-3IAL",
+    "timestamp": "2026-10-19T00:41:05.373Z",
+    "repository": "mui/base-ui",
+    "learningId": "learn-github-mui-base-ui",
+    "contentHash": "72e7c1f3ddadadc6f4d4a11565fb29ab82cccc3c69126b5ae4b60e6e3d105784",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-3JNL",
+    "timestamp": "2026-10-19T00:41:07.137Z",
+    "repository": "ekzhang/bore",
+    "learningId": "learn-github-ekzhang-bore",
+    "contentHash": "2f36d4dae5920a939fec2b606962eee0915dfe517984347cbf0396de653973e2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-3O2N",
+    "timestamp": "2026-10-19T00:41:12.863Z",
+    "repository": "oblador/react-native-animatable",
+    "learningId": "learn-github-oblador-react-native-animatable",
+    "contentHash": "d1548f59f52a1daee49a9107749a4f84efd96e436a64eb9b6c5968bacef0e3f4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-3Q9X",
+    "timestamp": "2026-10-19T00:41:15.717Z",
+    "repository": "nitrictech/nitric",
+    "learningId": "learn-github-nitrictech-nitric",
+    "contentHash": "ec223709845312709f182ed16cfb43acd9aa67e1c0eacbc0232f9a2208e94329",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-3TT7",
+    "timestamp": "2026-10-19T00:41:20.299Z",
+    "repository": "skytable/skytable",
+    "learningId": "learn-github-skytable-skytable",
+    "contentHash": "9803286a86f8e62790f3c6cca24f9a020784f6ac867f8390597528162dff7d9c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
