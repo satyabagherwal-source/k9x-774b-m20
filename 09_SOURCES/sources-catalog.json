@@ -265,8 +265,8 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-R1",
     "sourceVersion": "hf-deepseek-ai-deepseek-r1",
     "license": "Open-Source",
-    "contentHash": "70d786ca1749418bbf017cf987caa79f2404f3f1c39892f0e47d4ccc4be376c4",
-    "lastHarvestedAt": "2026-10-17T21:57:35.830Z",
+    "contentHash": "1aaa21c2ac8575bbb66af2b94dd9749aeb8483c7879201c61948d074481e6541",
+    "lastHarvestedAt": "2026-10-19T01:57:08.905Z",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-r1"
   },
   "hf-moonshotai-kimi-k3": {
@@ -4678,5 +4678,55 @@
     "contentHash": "229fb5e65dd30ef1c5a77be851d2ae954c1ba2083b0ea9fb6f46aa1e1b2e8374",
     "lastHarvestedAt": "2026-10-19T01:49:27.136Z",
     "learningId": "learn-github-sfu-db-connector-x"
+  },
+  "stenciljs-core": {
+    "repository": "stenciljs/core",
+    "platform": "github",
+    "sourceUrl": "https://github.com/stenciljs/core",
+    "sourceVersion": "8681415d",
+    "license": "NOASSERTION",
+    "contentHash": "c7f1d9a1ecc7790e845a12527c47a9dae44077a914707842bc3207ce58b59cd2",
+    "lastHarvestedAt": "2026-10-19T01:56:56.793Z",
+    "learningId": "learn-github-stenciljs-core"
+  },
+  "chmln-sd": {
+    "repository": "chmln/sd",
+    "platform": "github",
+    "sourceUrl": "https://github.com/chmln/sd",
+    "sourceVersion": "44febdf8",
+    "license": "MIT",
+    "contentHash": "3040534413561d0737a8e8d93499591b25235aaf7cf9b621478f4fec6b531e57",
+    "lastHarvestedAt": "2026-10-19T01:56:59.431Z",
+    "learningId": "learn-github-chmln-sd"
+  },
+  "dylanvann-react-native-fast-image": {
+    "repository": "DylanVann/react-native-fast-image",
+    "platform": "github",
+    "sourceUrl": "https://github.com/DylanVann/react-native-fast-image",
+    "sourceVersion": "2462d5ad",
+    "license": "MIT",
+    "contentHash": "a1de32bfb7c88ac761a633c1ca39bfdf9bca357d08865c260cd4e300b613e7ba",
+    "lastHarvestedAt": "2026-10-19T01:57:04.131Z",
+    "learningId": "learn-github-dylanvann-react-native-fast-image"
+  },
+  "pulumi-pulumi": {
+    "repository": "pulumi/pulumi",
+    "platform": "github",
+    "sourceUrl": "https://github.com/pulumi/pulumi",
+    "sourceVersion": "b9e87ddf",
+    "license": "Apache-2.0",
+    "contentHash": "acb6deeda8e73084afab21d76519d5a0b5e38ab78d93b4795d98b741c531329c",
+    "lastHarvestedAt": "2026-10-19T01:57:10.298Z",
+    "learningId": "learn-github-pulumi-pulumi"
+  },
+  "sqlpage-sqlpage": {
+    "repository": "sqlpage/SQLPage",
+    "platform": "github",
+    "sourceUrl": "https://github.com/sqlpage/SQLPage",
+    "sourceVersion": "3b33609f",
+    "license": "MIT",
+    "contentHash": "16bf406f9eb213afd37199093d39d8c1bc4b201b8500345e7c4017e390bb6ae1",
+    "lastHarvestedAt": "2026-10-19T01:57:11.146Z",
+    "learningId": "learn-github-sqlpage-sqlpage"
   }
 }

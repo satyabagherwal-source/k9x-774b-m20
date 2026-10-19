@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T01:50:58.824Z",
-  "total_verified_learnings": 489,
+  "last_updated": "2026-10-19T01:57:11.112Z",
+  "total_verified_learnings": 494,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -3941,22 +3941,35 @@
     "learn-github-chmln-sd": {
       "learning_id": "learn-github-chmln-sd",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "chmln-sd",
+      "source": "chmln/sd",
+      "repository": "chmln/sd",
       "slug": "chmln-sd",
       "platform": "github",
       "source_url": "https://github.com/chmln/sd",
-      "source_version": "HEAD",
-      "content_hash": "163e9dd6d3fae9dc8ea8a7bcc286052806bb9bed7fa5b29be415a53ca1aa661a",
+      "source_version": "44febdf8",
+      "content_hash": "3040534413561d0737a8e8d93499591b25235aaf7cf9b621478f4fec6b531e57",
       "dossier_path": "07_PROJECT_LEARNING/chmln-sd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/chmln-sd-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1993,
+          "title": "add line-by-line mode as default, stream without loading files into memory (#328",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.271Z"
+      "verified_at": "2026-10-19T01:56:59.388Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-chorus-aidlc-chorus": {
       "learning_id": "learn-github-chorus-aidlc-chorus",
@@ -6253,22 +6266,35 @@
     "learn-github-dylanvann-react-native-fast-image": {
       "learning_id": "learn-github-dylanvann-react-native-fast-image",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "dylanvann-react-native-fast-image",
+      "source": "DylanVann/react-native-fast-image",
+      "repository": "DylanVann/react-native-fast-image",
       "slug": "dylanvann-react-native-fast-image",
       "platform": "github",
       "source_url": "https://github.com/DylanVann/react-native-fast-image",
-      "source_version": "HEAD",
-      "content_hash": "41907ac24a9f521af0a85462409796372f0795a692dc2d0ee0562c19cd1402c8",
+      "source_version": "2462d5ad",
+      "content_hash": "a1de32bfb7c88ac761a633c1ca39bfdf9bca357d08865c260cd4e300b613e7ba",
       "dossier_path": "07_PROJECT_LEARNING/dylanvann-react-native-fast-image-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dylanvann-react-native-fast-image-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1994,
+          "title": "a url string where a source goes resolves not ok, instead of crashing (#1301)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.720Z"
+      "verified_at": "2026-10-19T01:57:04.090Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-e2b-dev-e2b": {
       "learning_id": "learn-github-e2b-dev-e2b",
@@ -14495,7 +14521,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-R1",
       "source_version": "hf-deepseek-ai-deepseek-r1",
-      "content_hash": "70d786ca1749418bbf017cf987caa79f2404f3f1c39892f0e47d4ccc4be376c4",
+      "content_hash": "1aaa21c2ac8575bbb66af2b94dd9749aeb8483c7879201c61948d074481e6541",
       "dossier_path": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-r1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-r1-learnings.md",
       "promoted_rules": [
@@ -14505,6 +14531,21 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-deepseek-ai-deepseek-r1-mv3ov1f6",
           "verified_at": "2026-10-11T10:37:00.073Z"
+        },
+        {
+          "number": 1995,
+          "title": "MoE Routing Stability via Grouped Top-K",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1996,
+          "title": "MLA KV Cache Compression Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1997,
+          "title": "YaRN Positional Encoding Scaling Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14525,7 +14566,7 @@
         "learn-huggingface-hf-deepseek-ai-deepseek-r1-mv43zicx",
         "learn-huggingface-hf-deepseek-ai-deepseek-r1-mv4h8dyv"
       ],
-      "verified_at": "2026-10-17T21:57:35.782Z",
+      "verified_at": "2026-10-19T01:57:08.862Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -30969,22 +31010,35 @@
     "learn-github-pulumi-pulumi": {
       "learning_id": "learn-github-pulumi-pulumi",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "pulumi-pulumi",
+      "source": "pulumi/pulumi",
+      "repository": "pulumi/pulumi",
       "slug": "pulumi-pulumi",
       "platform": "github",
       "source_url": "https://github.com/pulumi/pulumi",
-      "source_version": "HEAD",
-      "content_hash": "91d7529637db35c1c3c69620fe1b5dadc3fff2adcbc88e8eccc44cf6cf4ae59a",
+      "source_version": "b9e87ddf",
+      "content_hash": "acb6deeda8e73084afab21d76519d5a0b5e38ab78d93b4795d98b741c531329c",
       "dossier_path": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1998,
+          "title": "Build the result of entries as a tuple when the entry types differ (#24783)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.129Z"
+      "verified_at": "2026-10-19T01:57:10.257Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-punitarani-fli": {
       "learning_id": "learn-github-punitarani-fli",
@@ -34314,22 +34368,35 @@
     "learn-github-sqlpage-sqlpage": {
       "learning_id": "learn-github-sqlpage-sqlpage",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "sqlpage-sqlpage",
+      "source": "sqlpage/SQLPage",
+      "repository": "sqlpage/SQLPage",
       "slug": "sqlpage-sqlpage",
       "platform": "github",
       "source_url": "https://github.com/sqlpage/SQLPage",
-      "source_version": "HEAD",
-      "content_hash": "405dc2913b2eb97dd1f3d867ce4dc0c73ccc4b175dd3f835bfa300922bbdb32f",
+      "source_version": "3b33609f",
+      "content_hash": "16bf406f9eb213afd37199093d39d8c1bc4b201b8500345e7c4017e390bb6ae1",
       "dossier_path": "07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1999,
+          "title": "test(suite) :: share helpers, close pools deterministically, slim OIDC harness (",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.666Z"
+      "verified_at": "2026-10-19T01:57:11.106Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-squeezeailab-llmcompiler": {
       "learning_id": "learn-github-squeezeailab-llmcompiler",
@@ -34494,22 +34561,35 @@
     "learn-github-stenciljs-core": {
       "learning_id": "learn-github-stenciljs-core",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "stenciljs-core",
+      "source": "stenciljs/core",
+      "repository": "stenciljs/core",
       "slug": "stenciljs-core",
       "platform": "github",
       "source_url": "https://github.com/stenciljs/core",
-      "source_version": "HEAD",
-      "content_hash": "a5595c155e96badee2b9e222485b819bb16884fe8d24023bc74baff8ddd96412",
+      "source_version": "8681415d",
+      "content_hash": "c7f1d9a1ecc7790e845a12527c47a9dae44077a914707842bc3207ce58b59cd2",
       "dossier_path": "07_PROJECT_LEARNING/stenciljs-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/stenciljs-core-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1992,
+          "title": "ssr): clear modeResolutionChain on `setMode`. Fixes memory leak (#6903)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.703Z"
+      "verified_at": "2026-10-19T01:56:56.750Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-stickerdaniel-linkedin-mcp-server": {
       "learning_id": "learn-github-stickerdaniel-linkedin-mcp-server",
@@ -73367,6 +73447,118 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T01:50:58.816Z"
+    },
+    "rule-1992": {
+      "learning_id": "rule-1992",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1992,
+      "title": "ssr): clear modeResolutionChain on `setMode`. Fixes memory leak (#6903)",
+      "source_url": "https://github.com/stenciljs/core",
+      "source_version": "8681415d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:56:56.750Z"
+    },
+    "rule-1993": {
+      "learning_id": "rule-1993",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1993,
+      "title": "add line-by-line mode as default, stream without loading files into memory (#328",
+      "source_url": "https://github.com/chmln/sd",
+      "source_version": "44febdf8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:56:59.388Z"
+    },
+    "rule-1994": {
+      "learning_id": "rule-1994",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1994,
+      "title": "a url string where a source goes resolves not ok, instead of crashing (#1301)",
+      "source_url": "https://github.com/DylanVann/react-native-fast-image",
+      "source_version": "2462d5ad",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:57:04.090Z"
+    },
+    "rule-1995": {
+      "learning_id": "rule-1995",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1995,
+      "title": "MoE Routing Stability via Grouped Top-K",
+      "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-R1",
+      "source_version": "hf-deepseek-ai-deepseek-r1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:57:08.862Z"
+    },
+    "rule-1996": {
+      "learning_id": "rule-1996",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1996,
+      "title": "MLA KV Cache Compression Invariant",
+      "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-R1",
+      "source_version": "hf-deepseek-ai-deepseek-r1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:57:08.862Z"
+    },
+    "rule-1997": {
+      "learning_id": "rule-1997",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1997,
+      "title": "YaRN Positional Encoding Scaling Invariant",
+      "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-R1",
+      "source_version": "hf-deepseek-ai-deepseek-r1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:57:08.862Z"
+    },
+    "rule-1998": {
+      "learning_id": "rule-1998",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1998,
+      "title": "Build the result of entries as a tuple when the entry types differ (#24783)",
+      "source_url": "https://github.com/pulumi/pulumi",
+      "source_version": "b9e87ddf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:57:10.257Z"
+    },
+    "rule-1999": {
+      "learning_id": "rule-1999",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1999,
+      "title": "test(suite) :: share helpers, close pools deterministically, slim OIDC harness (",
+      "source_url": "https://github.com/sqlpage/SQLPage",
+      "source_version": "3b33609f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:57:11.106Z"
     }
   },
   "aliases": {

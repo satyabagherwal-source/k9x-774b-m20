@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T01:50:58.871Z",
+  "last_updated": "2026-10-19T01:57:11.151Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -288,14 +288,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-r1",
-      "content_hash": "70d786ca1749418bbf017cf987caa79f2404f3f1c39892f0e47d4ccc4be376c4",
-      "verified_at": "2026-10-17T21:57:35.833Z",
+      "content_hash": "1aaa21c2ac8575bbb66af2b94dd9749aeb8483c7879201c61948d074481e6541",
+      "verified_at": "2026-10-19T01:57:08.909Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T21:57:35.833Z"
+      "last_updated": "2026-10-19T01:57:08.909Z"
     },
     "moonshotai/Kimi-K3": {
       "repository": "moonshotai/Kimi-K3",
@@ -7132,6 +7132,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T01:49:27.141Z"
+    },
+    "stenciljs/core": {
+      "repository": "stenciljs/core",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-stenciljs-core",
+      "content_hash": "c7f1d9a1ecc7790e845a12527c47a9dae44077a914707842bc3207ce58b59cd2",
+      "verified_at": "2026-10-19T01:56:56.797Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T01:56:56.797Z"
+    },
+    "chmln/sd": {
+      "repository": "chmln/sd",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-chmln-sd",
+      "content_hash": "3040534413561d0737a8e8d93499591b25235aaf7cf9b621478f4fec6b531e57",
+      "verified_at": "2026-10-19T01:56:59.435Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T01:56:59.435Z"
+    },
+    "DylanVann/react-native-fast-image": {
+      "repository": "DylanVann/react-native-fast-image",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-dylanvann-react-native-fast-image",
+      "content_hash": "a1de32bfb7c88ac761a633c1ca39bfdf9bca357d08865c260cd4e300b613e7ba",
+      "verified_at": "2026-10-19T01:57:04.135Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T01:57:04.135Z"
+    },
+    "pulumi/pulumi": {
+      "repository": "pulumi/pulumi",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-pulumi-pulumi",
+      "content_hash": "acb6deeda8e73084afab21d76519d5a0b5e38ab78d93b4795d98b741c531329c",
+      "verified_at": "2026-10-19T01:57:10.302Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T01:57:10.302Z"
+    },
+    "sqlpage/SQLPage": {
+      "repository": "sqlpage/SQLPage",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-sqlpage-sqlpage",
+      "content_hash": "16bf406f9eb213afd37199093d39d8c1bc4b201b8500345e7c4017e390bb6ae1",
+      "verified_at": "2026-10-19T01:57:11.150Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T01:57:11.150Z"
     }
   },
   "repos": {

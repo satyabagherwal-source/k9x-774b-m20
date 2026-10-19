@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md`  
+> **Source**: github ([https://github.com/sqlpage/SQLPage](https://github.com/sqlpage/SQLPage))  
+> **Source Version**: `3b33609f`  
+> **License**: MIT  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T01:57:10.955Z  
+> **Learning ID**: `learn-github-sqlpage-sqlpage`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): sqlpage/SQLPage
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sqlpage/SQLPage](https://github.com/sqlpage/SQLPage))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T02:53:55.659Z  
+> **Harvest Timestamp**: 2026-10-19T01:57:10.949Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: Fast SQL-only data application builder. Automatically build a UI on top of SQL queries. 
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2571 stars
+- **Stars / Engagement**: 2575 stars
 
 ---
 
@@ -454,849 +468,558 @@ hljs.highlightAll();
 
 ```
 
-### Core Architecture Module: `examples/official-site/pgconf/script.js`
+### Core Architecture Module: `examples/official-site/assets/landing/js/comparison.js`
 ```
+/** Native scrolling remains available without enhancement, including on touch screens. */
+export function initComparison(root, signal) {
+  const section = root.querySelector(".comparison-section");
+  const track = section.querySelector(".comparison-track");
+  const cards = [...track.children];
+  const previous = section.querySelector("[data-comparison-previous]");
+  const next = section.querySelector("[data-comparison-next]");
+  const status = section.querySelector("[data-comparison-status]");
+  const motion = matchMedia("(prefers-reduced-motion: reduce)");
 
-
-	var SLConfig = {"current_user":{"id":2571881,"username":"jegac15681","name":null,"description":null,"thumbnail_url":"https://www.gravatar.com/avatar/2bfb8d6543c8b1813f8df1821e3d02fe?s=140\u0026d=https%3A%2F%2Fstatic.slid.es%2Fimages%2Fdefault-profile-picture.png","account_type":"default","team_id":null,"settings":{"id":57170066,"present_controls":true,"present_upsizing":true,"present_pointer":true,"present_notes":true,"default_deck_tag_id":null,"editor_grid":true,"editor_grid_on_top":false,"editor_snap":true,"editor_fixed_notes":false,"developer_mode":true,"speaker_layout":null,"speaker_theme":null,"phone_number":null,"phone_country_code":null,"media_sources":null,"export_controls":null,"export_slide_number":null,"export_slide_notes":null,"export_separate_fragments":null,"auto_animate_tutorial_completed":true,"profile_sorting":null,"profile_layout":null},"email":"jegac15681@rdluxe.com","notify_on_receipt":true,"billing_address":null,"billing_vat_id":null,"editor_tutorial_completed":true,"manually_upgraded":false,"deck_user_editor_limit":null,"storage_used":7309625,"storage_limit":262144000,"image_upload_limit":10485760,"video_upload_limit":104857600},"deck":{"id":3057920,"slug":"sqlpage-pgconf","title":"SQLPage","description":"","width":960,"height":700,"margin":0.05,"visibility":"all","published_at":"2023-11-12T00:00:11.375Z","sanitize_messages":null,"thumbnail_url":"https://s3.amazonaws.com/media-p.slid.es/thumbnails/c9640053c48e6426e3a741cce978120f/thumb.jpg?1702287516","view_count":0,"user":{"id":2571881,"username":"jegac15681","name":null,"description":null,"thumbnail_url":"https://www.gravatar.com/avatar/2bfb8d6543c8b1813f8df1821e3d02fe?s=140\u0026d=https%3A%2F%2Fstatic.slid.es%2Fimages%2Fdefault-profile-picture.png","account_type":"default","team_id":null,"settings":{"id":57170066,"present_controls":true,"present_upsizing":true,"present_pointer":true,"present_notes":true,"default_deck_tag_id":null}},"background_transition":"slide","transition":"slide","theme_id":null,"theme_font":"montserrat","theme_color":"black-blue","auto_slide_interval":0,"comments_enabled":false,"forking_enabled":true,"rolling_links":false,"center":false,"shuffle":false,"should_loop":false,"share_notes":false,"slide_number":false,"slide_count":73,"rtl":false,"version":2,"collaborative":false,"deck_user_editor_limit":null,"data_updated_at":1702502378510,"font_typekit":null,"font_google":null,"time_limit":null,"navigation_mode":"default","upsizing_enabled":true,"language":"en","notes":{}},"user":{"id":2571881,"username":"jegac15681","name":null,"description":null,"thumbnail_url":"https://www.gravatar.com/avatar/2bfb8d6543c8b1813f8df1821e3d02fe?s=140\u0026d=https%3A%2F%2Fstatic.slid.es%2Fimages%2Fdefault-profile-picture.png","account_type":"default","team_id":null,"settings":{"id":57170066,"present_controls":true,"present_upsizing":true,"present_pointer":true,"present_notes":true,"default_deck_tag_id":null}}};
-
-
-		
-			!function(e){function t(e,t,r,n,i){this._listener=t,this._isOnce=r,this.context=n,this._signal=e,this._priority=i||0}function r(e,t){if("function"!=typeof e)throw new Error("listener is a required param of {fn}() and should be a Function.".replace("{fn}",t))}function n(){this._bindings=[],this._prevParams=null;var e=this;this.dispatch=function(){n.prototype.dispatch.apply(e,arguments)}}t.prototype={active:!0,params:null,execute:function(e){var t,r;return this.active&&this._listener&&(r=this.params?this.params.concat(e):e,t=this._listener.apply(this.context,r),this._isOnce&&this.detach()),t},detach:function(){return this.isBound()?this._signal.remove(this._listener,this.context):null},isBound:function(){return!!this._signal&&!!this._listener},isOnce:function(){return this._isOnce},getListener:function(){return this._listener},getSignal:function(){return this._signal},_destroy:function(){delete this._signal,delete this._listener,delete this.context},toString:function(){return"[SignalBinding isOnce:"+this._isOnce+", isBound:"+this.isBound()+", active:"+this.active+"]"}},n.prototype={VERSION:"1.0.0",memorize:!1,_shouldPropagate:!0,active:!0,_registerListener:function(e,r,n,i){var a,o=this._indexOfListener(e,n);if(-1!==o){if((a=this._bindings[o]).isOnce()!==r)throw new Error("You cannot add"+(r?"":"Once")+"() then add"+(r?"Once":"")+"() the same listener without removing the relationship first.")}else a=new t(this,e,r,n,i),this._addBinding(a);return this.memorize&&this._prevParams&&a.execute(this._prevParams),a},_addBinding:function(e){var t=this._bindings.length;do{--t}while(this._bindings[t]&&e._priority<=this._bindings[t]._priority);this._bindings.splice(t+1,0,e)},_indexOfListener:function(e,t){for(var r,n=this._bindings.length;n--;)if((r=this._bindings[n])._listener===e&&r.context===t)return n;return-1},has:function(e,t){return-1!==this._indexOfListener(e,t)},add:function(e,t,n){return r(e,"add"),this._registerListener(e,!1,t,n)},addOnce:function(e,t,n){return r(e,"addOnce"),this._registerListener(e,!0,t,n)},remove:function(e,t){if(!this._bindings)return null;r(e,"remove");var n=this._indexOfListener(e,t);return-1!==n&&(this._bindings[n]._destroy(),this._bindings.splice(n,1)),e},removeAll:function(){for(var e=this._bindings.length;e--;)this._bindings[e]._destroy();this._bindings.length=0},getNumListeners:function(){return this._bindings.length},halt:function(){this._shouldPropagate=!1},dispatch:function(){if(this.active){var e,t=Array.prototype.slice.call(arguments),r=this._bindings.length;if(this.memorize&&(this._prevParams=t),r){e=this._bindings.slice(),this._shouldPropagate=!0;do{r--}while(e[r]&&this._shouldPropagate&&!1!==e[r].execute(t))}}},forget:function(){this._prevParams=null},dispose:function(){this.removeAll(),delete this._bindings,delete this._prevParams},toString:function(){return"[Signal active:"+this.active+" numListeners:"+this.getNumListeners()+"]"}};var i=n;i.Signal=n,"function"==typeof define&&define.amd?define(function(){return i}):"undefined"!=typeof module&&module.exports?module.exports=i:e.signals=i}(this),function(e,t){"object"==typeof exports&&"object"==typeof module?module.exports=t():"function"==typeof define&&define.amd?define([],t):"object"==typeof exports?exports.katex=t():e.katex=t()}("undefined"!=typeof self?self:this,function(){return function(){"use strict";function e(e){if(e["default"])return e["default"];var t=e.type,r=Array.isArray(t)?t[0]:t;if("string"!=typeof r)return r["enum"][0];switch(r){case"boolean":return!1;case"string":return"";case"number":return 0;case"object":return{}}}function t(e){for(var t=0;t<Y.length;t+=2)if(e>=Y[t]&&e<=Y[t+1])return!0;return!1}function r(e,r,n){if(!Z[r])throw new Error("Font metrics not found for font: "+r+".");var i=e.charCodeAt(0),a=Z[r][i];if(!a&&e[0]in Q&&(i=Q[e[0]].charCodeAt(0),a=Z[r][i]),a||"text"!==n||t(i)&&(a=Z[r][77]),a)return{depth:a[0],height:a[1],italic:a[2],skew:a[3],width:a[4]}}function n(e){if(e instanceof be)return e;throw new Error("Expected symbolNode but got "+String(e)+".")}function i(e,t,r,n,i,a){Me[e][i]={font:t,group:r,replace:n},a&&n&&(Me[e][n]=Me[e][i])}function a(e){for(var t=e.type,r=e.names,n=e.props,i=e.handler,a=e.htmlBuilder,o=e.mathmlBuilder,s={type:t,numArgs:n.numArgs,argTypes:n.argTypes,allowedInArgument:!!n.allowedInArgument,allowedInText:!!n.allowedInText,allowedInMath:void 0===n.allowedInMath||n.allowedInMath,numOptionalArgs:n.numOptionalArgs||0,infix:!!n.infix,primitive:!!n.primitive,handler:i},l=0;l<r.length;++l)At[r[l]]=s;t&&(a&&(Mt[t]=a),o&&(zt[t]=o))}function o(e){a({type:e.type,names:[],props:{numArgs:0},handler:function(){throw new Error("Should never be called.")},htmlBuilder:e.htmlBuilder,mathmlBuilder:e.mathmlBuilder})}function s(e,t){var r=Bt(["base"],e,t),n=Bt(["strut"]);return n.style.height=ce(r.height+r.depth),r.depth&&(n.style.verticalAlign=ce(-r.depth)),r.children.unshift(n),r}function l(e,t){var r=null;1===e.length&&"tag"===e[0].type&&(r=e[0].tag,e=e[0].body);var n,i=It(e,t,"root");2===i.length&&i[1].hasClass("tag")&&(n=i.pop());for(var a,o=[],l=[],h=0;h<i.length;h++)if(l.push(i[h]),i[h].hasClass("mbin")||i[h].hasClass("mrel")||i[h].hasClass("allowbreak")){for(var c=!1;h<i.length-1&&i[h+1].hasClass("mspace")&&!i[h+1].hasClass("newline");)h++,l.push(i[h]),i[h].hasClass("nobreak")&&(c=!0);c||(o.push(s(l,t)),l=[])}else i[h].hasClass("newline")&&(l.pop(),l.length>0&&(o.push(s(l,t)),l=[]),o.push(i[h]));l.length>0&&o.push(s(l,t)),r?((a=s(It(r,t,!0))).classes=["tag"],o.push(a)):n&&o.push(n);var u=Bt(["katex-html"],o);if(u.setAttribute("aria-hidden","true"),a){var m=a.children[0];m.style.height=ce(u.height+u.depth),u.depth&&(m.style.verticalAlign=ce(-u.depth))}return u}function h(e){return new K(e)}function c(e,t,r,n,i){var a,o=Yt(e,r);a=1===o.length&&o[0]instanceof _t&&I.contains(["mrow","mtable"],o[0].type)?o[0]:new Gt.MathNode("mrow",o);var s=new Gt.MathNode("annotation",[new Gt.TextNode(t)]);s.setAttribute("encoding","application/x-tex");var l=new Gt.MathNode("semantics",[a,s]),h=new Gt.MathNode("math",[l]);h.setAttribute("xmlns","http://www.w3.org/1998/Math/MathML"),n&&h.setAttribute("display","block");var c=i?"katex":"katex-mathml";return yt.makeSpan([c],[h])}function u(e,t){if(!e||e.type!==t)throw new Error("Expected node of type "+t+", but got "+(e?"node of type "+e.type:String(e)));return e}function m(e){var t=d(e);if(!t)throw new Error("Expected node of symbol group type, but got "+(e?"node of type "+e.type:String(e)));return t}function d(e){return e&&("atom"===e.type||Ae.hasOwnProperty(e.type))?e:null}function p(e,t){var r=It(e.body,t,!0);return lr([e.mclass],r,t)}function f(e,t){var r,n=Yt(e.body,t);return"minner"===e.mclass?r=new Gt.MathNode("mpadded",n):"mord"===e.mclass?e.isCharacterBox?(r=n[0]).type="mi":r=new Gt.MathNode("mi",n):(e.isCharacterBox?(r=n[0]).type="mo":r=new Gt.MathNode("mo",n),"mbin"===e.mclass?(r.attributes.lspace="0.22em",r.attributes.rspace="0.22em"):"mpunct"===e.mclass?(r.attributes.lspace="0em",r.attributes.rspace="0.17em"):"mopen"===e.mclass||"mclose"===e.mclass?(
-```
-
-### Core Architecture Module: `examples/rich-text-editor/rich_text_editor.js`
-```
-import { fromMarkdown } from "https://esm.sh/mdast-util-from-markdown@2.0.0";
-import { toMarkdown as mdastUtilToMarkdown } from "https://esm.sh/mdast-util-to-markdown@2.1.2";
-import Quill from "https://esm.sh/quill@2.0.3";
-
-/**
- * @typedef {Object} QuillAttributes
- * @property {boolean} [bold] - Whether the text is bold.
- * @property {boolean} [italic] - Whether the text is italic.
- * @property {string} [link] - URL if the text is a link.
- * @property {number} [header] - Header level (1-3).
- * @property {string} [list] - List type ('ordered' or 'bullet').
- * @property {boolean} [blockquote] - Whether the text is in a blockquote.
- * @property {string} [code-block] - Code language if in a code block.
- * @property {string} [alt] - Alt text for images.
- */
-
-/**
- * @typedef {Object} QuillOperation
- * @property {string|Object} [insert] - Content to insert (string or object with image URL).
- * @property {number} [delete] - Number of characters to delete.
- * @property {number} [retain] - Number of characters to retain.
- * @property {QuillAttributes} [attributes] - Formatting attributes.
- */
-
-/**
- * @typedef {Object} QuillDelta
- * @property {Array<QuillOperation>} ops - Array of operations in the delta.
- */
-
-/**
- * Converts Quill Delta object to a Markdown string using mdast.
- * @param {QuillDelta} delta - Quill Delta object (https://quilljs.com/docs/delta/).
- * @returns {string} - Markdown representation.
- */
-function deltaToMarkdown(delta) {
-  const mdastTree = deltaToMdast(delta);
-  const options = {
-    bullet: "*",
-    listItemIndent: "one",
-    handlers: {},
-    unknownHandler: (node) => {
-      console.warn(`Unknown node type encountered: ${node.type}`, node);
-      return false;
-    },
-  };
-  return mdastUtilToMarkdown(mdastTree, options);
-}
-
-/**
- * Creates a div to replace the textarea and prepares it for Quill.
- * @param {HTMLTextAreaElement} textarea - The original textarea.
- * @returns {HTMLDivElement} - The div element created for the Quill editor.
- */
-function createAndReplaceTextarea(textarea) {
-  const editorDiv = document.createElement("div");
-  editorDiv.className = "mb-3";
-  editorDiv.style.height = "250px";
-
-  const label = textarea.closest("label");
-  if (!label) {
-    textarea.parentNode.insertBefore(editorDiv, textarea);
-  } else {
-    label.parentNode.insertBefore(editorDiv, label.nextSibling);
-  }
-  // Hide the original textarea, but keep it focusable for validation
-  textarea.style = "transform: scale(0); position: absolute; opacity: 0;";
-  return editorDiv;
-}
-
-/**
- * Returns the toolbar options array configured for Markdown compatibility.
- * @returns {Array<Array<any>>} - Quill toolbar options.
- */
-function getMarkdownToolbarOptions() {
-  return [
-    [{ header: 1 }, { header: 2 }, { header: 3 }],
-    ["bold", "italic", "code"],
-    ["link", "image", "blockquote", "code-block"],
-    [{ list: "ordered" }, { list: "bullet" }],
-    ["clean"],
-  ];
-}
-
-/**
- * Initializes a Quill editor instance on a given div.
- * @param {HTMLDivElement} editorDiv - The div element for the editor.
- * @param {Array<Array<any>>} toolbarOptions - The toolbar configuration.
- * @param {string} initialValue - The initial content for the editor.
- * @returns {Quill} - The initialized Quill instance.
- */
-function initializeQuillEditor(
-  editorDiv,
-  toolbarOptions,
-  initialValue,
-  readOnly,
-) {
-  const quill = new Quill(editorDiv, {
-    theme: "snow",
-    modules: {
-      toolbar: toolbarOptions,
-    },
-    readOnly: readOnly,
-    formats: [
-      "bold",
-      "italic",
-      "link",
-      "header",
-      "list",
-      "blockquote",
-      "code",
-      "code-block",
-      "image",
-    ],
-  });
-  if (initialValue) {
-    const delta = markdownToDelta(initialValue);
-    quill.setContents(delta);
-  }
-  return quill;
-}
-
-/**
- * Converts Markdown string to a Quill Delta object.
- * @param {string} markdown - The markdown string to convert.
- * @returns {QuillDelta} - Quill Delta representation.
- */
-function markdownToDelta(markdown) {
-  try {
-    const mdastTree = fromMarkdown(markdown);
-    return mdastToDelta(mdastTree);
-  } catch (error) {
-    console.error("Error parsing markdown:", error);
-    return { ops: [{ insert: markdown }] };
-  }
-}
-
-/**
- * Converts MDAST to Quill Delta.
- * @param {MdastNode} tree - The MDAST tree to convert.
- * @returns {QuillDelta} - Quill Delta representation.
- */
-function mdastToDelta(tree) {
-  const delta = { ops: [] };
-  if (!tree?.children) return delta;
-
-  for (const node of tree.children) {
-    traverseMdastNode(node, delta);
-  }
-
-  return delta;
-}
-
-/**
- * Recursively traverse MDAST nodes and convert to Delta operations.
- * @param {MdastNode} node - The MDAST node to process.
- * @param {QuillDelta} delta - The Delta object to append operations to.
- * @param {QuillAttributes} [attributes={}] - The current attributes to apply.
- */
-function traverseMdastNode(node, delta, attributes = {}) {
-  if (!node) return;
-
-  switch (node.type) {
-    case "root":
-      for (const child of node.children || []) {
-        traverseMdastNode(child, delta);
-      }
-      break;
-
-    case "paragraph": {
-      for (const child of node.children || []) {
-        traverseMdastNode(child, delta, attributes);
-      }
-      const pLineAttributes = {};
-      if (attributes.blockquote) {
-        pLineAttributes.blockquote = true;
-      }
-      delta.ops.push({ insert: "\n", attributes: pLineAttributes });
-      break;
-    }
-
-    case "heading": {
-      const headingContentAttributes = { ...attributes, header: node.depth };
-      for (const child of node.children || []) {
-        traverseMdastNode(child, delta, headingContentAttributes);
-      }
-      const headingLineAttributes = { header: node.depth };
-      if (attributes.blockquote) {
-        headingLineAttributes.blockquote = true;
-      }
-      delta.ops.push({ insert: "\n", attributes: headingLineAttributes });
-      break;
-    }
-
-    case "text":
-      delta.ops.push({ insert: node.value || "", attributes });
-      break;
-
-    case "strong":
-      for (const child of node.children || []) {
-        traverseMdastNode(child, delta, { ...attributes, bold: true });
-      }
-      break;
-
-    case "emphasis":
-      for (const child of node.children || []) {
-        traverseMdastNode(child, delta, { ...attributes, italic: true });
-      }
-      break;
-
-    case "link":
-      for (const child of node.children || []) {
-        traverseMdastNode(child, delta, { ...attributes, link: node.url });
-      }
-      break;
-
-    case "image":
-      delta.ops.push({
-        insert: { image: node.url },
-        attributes: { alt: node.alt || "" },
-      });
-      break;
-
-    case "list":
-      for (const child of node.children || []) {
-        traverseMdastNode(child, delta, {
-          ...attributes,
-          list: node.ordered ? "ordered" : "bullet",
-        });
-      }
-      break;
-
-    case "listItem": {
-      const { list, ...listItemChildrenAttributes } = attributes;
-
-      for (const child of node.children || []) {
-        traverseMdastNode(child, delta, listItemChildrenAttributes);
-      }
-
-      // Attributes for the listItem's newline (e.g., { list: 'bullet', blockquote: true })
-      // are in `attributes` passed to this `listItem` case.
-      {
-        const lastOp = delta.ops[delta.ops.length - 1];
-        if (lastOp && lastOp.insert === "\n") {
-          lastOp.attributes = { ...lastOp.attributes, ...attributes };
-        } else {
-          delta.ops.push({ insert: "\n", attributes });
-        }
-      }
-      break;
-    }
-
-    case "blockquote":
-      for (const child of node.children || []) {
-        traverseMdastNode(child, delta, { ...attributes, blockquote: true });
-      }
-      break;
-
-    case "code": {
-      // mdast 'code' is a block
-      const codeBlockLineFormat = { "code-block": node.lang || true };
-      if (attributes.blockquote) {
-        codeBlockLineFormat.blockquote = true;
-      }
-
-      const textInCodeAttributes = {};
-      if (attributes.blockquote) {
-        // Text lines also get blockquote if active
-        textInCodeAttributes.blockquote = true;
-      }
-
-      const lines = (node.value || "").split("\n");
-      for (const lineText of lines) {
-        delta.ops.push({ insert: lineText, attributes: textInCodeAttributes });
-        delta.ops.push({ insert: "\n", attributes: codeBlockLineFormat });
-      }
-      break;
-    }
-
-    case "inlineCode":
-      delta.ops.push({
-        insert: node.value || "",
-        attributes: { ...attributes, code: true },
-      });
-      break;
-
-    default:
-      if (node.children) {
-        for (const child of node.children) {
-          traverseMdastNode(child, delta, attributes);
-        }
-      } else if (node.value) {
-        delta.ops.push({ insert: node.value, attributes });
-      }
-  }
-}
-
-/**
- * Attaches a submit event listener to the form to update the hidden textarea.
- * @param {HTMLFormElement|null} form - The form containing the editor.
- * @param {HTMLTextAreaElement} textarea - The original (hidden) textarea.
- * @param {Quill} quill - The Quill editor instance.
- * @returns {void}
- */
-function updateTextareaOnSubmit(form, textarea, quill) {
-  if (!form) {
-    console.warn(
-      "Textarea not inside a form, submission handling skipped for:",
-      textarea.name || textarea.id,
+  function update() {
+    const offsets = cards.map((card) => card.offsetLeft);
+    const first = offsets.findIndex(
+      (left, index) => left + cards[index].offsetWidth > track.scrollLeft + 2,
     );
-    return;
-  }
-  form.addEventListener("submit", (event) => {
-    const delta = quill.getContents();
-    const markdownContent = deltaToMarkdown(delta);
-    textarea.value = markdownContent;
-    console.log(
-      `${textarea.name}:\n${markdownContent}\ntransformed from delta:\n${JSON.stringify(delta, null, 2)}`,
+    const last = offsets.findLastIndex(
+      (left) => left < track.scrollLeft + track.clientWidth - 2,
     );
-    if (textarea.required && !markdownContent) {
-      textarea.setCustomValidity(`${textarea.name} cannot be empty`);
-      quill.once("text-change", (delta) => {
-        textarea.value = deltaToMarkdown(delta);
-        textarea.setCustomValidity("");
-      });
-      quill.focus();
-      event.preventDefault();
-    }
-  });
-}
-
-/**
- * Loads the Quill CSS stylesheet.
- * @returns {void}
- */
-function loadQuillStyl
-```
-
-### Core Architecture Module: `examples/using react and other custom scripts and styles/my_react_component.js`
-```
-// Here we are using React and ReactDOM directly, but this file could be a compiled
-// version of a React component written in JSX.
-
-function _MyComponent({ greeting_name }) {
-  const [count, setCount] = React.useState(0);
-  return React.createElement(
-    "button",
-    {
-      type: "button",
-      onClick: async () => {
-        const r = await fetch("/api.sql");
-        const { total_clicks } = await r.json();
-        setCount(total_clicks);
-      },
-      className: "btn btn-primary",
-    },
-    count === 0
-      ? `Hello, ${greeting_name}. Click me !`
-      : `You clicked me ${count} times!`,
-  );
-}
-
-for (const container of document.getElementsByClassName("react_component")) {
-  const root = ReactDOM.createRoot(container);
-  const props = JSON.parse(container.dataset.props);
-  root.render(
-    React.createElement(window[props.react_component_name], props, null),
-  );
-}
-
-```
-
-### Core Architecture Module: `frontend/src/apexcharts.ts`
-```
-import type { ApexOptions } from "apexcharts";
-import ApexCharts from "apexcharts";
-import {
-  align_series_for,
-  type ChartPoint,
-  type ChartSeries,
-  type Series,
-  xaxis_type_for,
-} from "./chart_series.ts";
-import { add_init_fn } from "./init.ts";
-
-type DataPoint = {
-  name: string;
-  x: string | number | null;
-  y: string | number | number[] | null;
-  color?: string | null;
-  z?: string | number | null;
-  link?: string;
-};
-
-type AxisTitles = Record<"x" | "y" | "z", string | undefined>;
-
-type TooltipArgs = {
-  seriesIndex: number;
-  dataPointIndex: number;
-  // biome-ignore lint/suspicious/noExplicitAny: ApexCharts leaves its tooltip context untyped
-  w: any;
-};
-
-function linkTooltipValue(
-  value: string | number | null,
-  link: string | undefined,
-) {
-  const text = value == null ? "" : String(value);
-  if (!link || !value) return text;
-  const anchor = document.createElement("a");
-  anchor.setAttribute("href", link);
-  anchor.textContent = text;
-  return anchor.outerHTML;
-}
-
-const rangeBarLabel = (_value: string | number, args?: TooltipArgs) =>
-  args ? args.w.config.series[args.seriesIndex].name : "";
-
-const pieLabel = (value: string | number, args?: TooltipArgs) =>
-  args
-    ? `${args.w.config.labels[args.seriesIndex]}: ${Number(value).toFixed()}%`
-    : "";
-
-const numberLabel = (value: string | number) =>
-  value == null ? "" : value.toLocaleString?.() || String(value);
-
-const sqlpage_chart = (() => {
-  function sqlpage_chart() {
-    const charts = document.querySelectorAll<HTMLElement>(
-      "[data-pre-init=chart]",
-    );
-    for (const c of charts) {
-      try {
-        build_sqlpage_chart(c);
-      } catch (e) {
-        console.error(e);
-      }
-    }
+    previous.disabled = track.scrollLeft <= 2;
+    next.disabled =
+      track.scrollLeft >= track.scrollWidth - track.clientWidth - 2;
+    const range =
+      first === last ? String(first + 1) : `${first + 1}–${last + 1}`;
+    const label = `${range} of ${cards.length} alternatives`;
+    // Avoid repeating live announcements during every frame of a smooth scroll.
+    if (status.textContent !== label) status.textContent = label;
   }
 
-  const tblrColors = [
-    ["blue", "#1c7ed6", "#339af0"],
-    ["red", "#f03e3e", "#ff6b6b"],
-    ["green", "#37b24d", "#51cf66"],
-    ["pink", "#d6336c", "#f06595"],
-    ["purple", "#ae3ec9", "#cc5de8"],
-    ["orange", "#f76707", "#ff922b"],
-    ["cyan", "#1098ad", "#22b8cf"],
-    ["teal", "#0ca678", "#20c997"],
-    ["yellow", "#f59f00", "#fcc419"],
-    ["indigo", "#4263eb", "#5c7cfa"],
-    ["lime", "#74b816", "#94d82d"],
-    ["azure", "#339af0", "#339af0"],
-    ["gray", "#495057", "#adb5bd"],
-    ["black", "#000000", "#000000"],
-    ["white", "#ffffff", "#f8f9fa"],
-  ];
-  const colorNames = new Map(
-    tblrColors.flatMap(([name, dark, light]): [string, string][] => [
-      [name, dark],
-      [`${name}-lt`, light],
-    ]),
-  );
-  const isDarkTheme = document.body?.dataset?.bsTheme === "dark";
-
-  const STACKABLE_CHART_TYPES = ["line", "area", "bar"];
-  const STROKE_WIDTHS = new Map([
-    ["area", 3],
-    ["line", 2],
-  ]);
-  const APEXCHARTS_TYPE_ALIASES = new Map([["column", "bar"]]);
-
-  const referenceColor = colorNames.get(isDarkTheme ? "gray-lt" : "gray");
-
-  type ReferenceLine = Record<
-    "xline" | "xline_end" | "yline" | "yline_end" | "label" | "color",
-    string | number | null
-  >;
-
-  const named_color = (name: unknown): string | undefined =>
-    typeof name === "string" ? colorNames.get(name) : undefined;
-
-  const reference_color = (name: string | number | null) =>
-    named_color(name) || referenceColor;
-
-  function reference_lines(
-    rows: ReferenceLine[],
-    column: "x" | "y",
-    axis: "x" | "y",
-    to_axis_value: (value: string | number) => unknown,
-  ): object[] {
-    const on_axis = (value: string | number | null) => {
-      if (value == null) return null;
-      const placed = to_axis_value(value);
-      return Number.isNaN(placed) ? null : placed;
-    };
-    return rows.flatMap((row) => {
-      const from = on_axis(row[`${column}line`]);
-      if (from == null) return [];
-      const color = reference_color(row.color);
-      return [
-        {
-          [axis]: from,
-          [`${axis}2`]: on_axis(row[`${column}line_end`]),
-          borderColor: color,
-          fillColor: color,
-          strokeDashArray: 4,
-          label: {
-            text: row.label,
-            orientation: column === "y" ? "horizontal" : "vertical",
-            borderColor: color,
-            style: { background: color, color: isDarkTheme ? "#000" : "#fff" },
-          },
-        },
-      ];
+  function goTo(left) {
+    track.scrollTo({
+      left,
+      behavior: motion.matches ? "instant" : "smooth",
     });
   }
 
-  function build_sqlpage_chart(c: HTMLElement) {
-    const [data_element] = c.getElementsByTagName("data");
-    const data = JSON.parse(data_element.textContent);
-    const chartContainer = c.querySelector(".chart") as HTMLElement;
-    chartContainer.innerHTML = "";
-    const is_timeseries = !!data.time;
-    const chart_type =
-      APEXCHARTS_TYPE_ALIASES.get(data.type) || data.type || "line";
-    const is_stacked =
-      !!data.stacked && STACKABLE_CHART_TYPES.includes(chart_type);
-    const points: DataPoint[] = data.points
-      .filter(Array.isArray)
-      .map(([name, x, y, color, z, link]) => ({
-        name,
-        x,
-        y,
-        color,
-        z,
-        link: link ?? undefined,
-      }));
-    const reference_rows: ReferenceLine[] = data.points.filter(
-      (row: unknown) => !Array.isArray(row),
-    );
-    const series_map: Series = new Map();
-    for (const { name, x: old_x, y: old_y, color, z, link } of points) {
-      const point_series: ChartSeries = series_map.get(name) ?? {
-        name,
-        data: [],
-      };
-      series_map.set(name, point_series);
-      let x: string | number | Date | null = old_x;
-      let y = old_y;
-      if (is_timeseries) {
-        if (typeof x === "number") x = new Date(x * 1000);
-        else if (chart_type === "rangeBar" && Array.isArray(y))
-          y = y.map((y) => new Date(y).getTime());
-        else x = new Date((x ?? 0) as string | number);
-      }
-      point_series.data.push({
-        x,
-        y,
-        z,
-        link,
-        fillColor: named_color(color),
-      } as ChartPoint);
-    }
-    if (data.xmin == null) data.xmin = undefined;
-    if (data.xmax == null) data.xmax = undefined;
-    if (data.ymin == null) data.ymin = undefined;
-    if (data.ymax == null) data.ymax = undefined;
-
-    const palette = [
-      ...data.colors.map(named_color).filter((c) => c !== undefined),
-      ...tblrColors.map(([_, dark, light]) => (isDarkTheme ? dark : light)),
-      ...tblrColors.map(([_, dark, light]) => (isDarkTheme ? light : dark)),
-    ];
-    let colors = palette;
-
-    const chart_series = [...series_map.values()];
-    const xaxis_type = xaxis_type_for(
-      chart_series,
-      chart_type,
-      is_timeseries,
-      !!data.horizontal,
-    );
-
-    const labels =
-      chart_type === "pie"
-        ? points.map(({ name, x }) => String(x || name))
-        : undefined;
-    const series =
-      chart_type === "pie"
-        ? points.map(({ y }) => Number.parseFloat(String(y)))
-        : chart_series.length > 1
-          ? align_series_for(chart_series, chart_type, is_stacked)
-          : chart_series;
-    if (chart_type === "pie")
-      colors = points.map(
-        ({ color }, i) => named_color(color) || palette[i % palette.length],
-      );
-
-    const to_timestamp = (v) =>
-      (typeof v === "number" ? new Date(v * 1000) : new Date(v)).getTime();
-    const dates_are_values = is_timeseries && chart_type === "rangeBar";
-    const to_value = dates_are_values ? to_timestamp : Number;
-    const to_category =
-      is_timeseries && !dates_are_values ? to_timestamp : (v) => v;
-    const inverted =
-      chart_type === "rangeBar" || (chart_type === "bar" && !!data.horizontal);
-    const value_axis = inverted ? "x" : "y";
-    const category_axis = inverted ? "y" : "x";
-    const axis_titles: AxisTitles = {
-      x: data.xtitle || undefined,
-      y: data.ytitle || undefined,
-      z: data.ztitle || undefined,
-    };
-    const has_point_links = points.some((point) => point.link);
-    const text_x_values = chart_series.every(({ data }) =>
-      data.every(({ x }) => x == null || typeof x === "string"),
-    );
-    const options: ApexOptions = {
-      annotations: {
-        [`${value_axis}axis`]: reference_lines(
-          reference_rows,
-          "y",
-          value_axis,
-          to_value,
-        ),
-        [`${category_axis}axis`]: reference_lines(
-          reference_rows,
-          "x",
-          category_axis,
-          to_category,
-        ),
-      },
-      chart: {
-        type: chart_type,
-        fontFamily: "inherit",
-        background: "transparent",
-        parentHeightOffset: 0,
-        height: chartContainer.style.height,
-        stacked: is_stacked,
-        toolbar: {
-          show: !!data.toolbar,
-        },
-        animations: {
-          enabled: false,
-        },
-        zoom: {
-          enabled: false,
-        },
-        events: {
-          dataPointSelection: (_event, _chart, args) => {
-            const link = args && pointLink(args, points);
-            if (link) window.location.assign(link);
-          },
-        },
-      },
-      theme: {
-        mode: isDarkTheme ? "dark" : "light",
-        palette: "palette4",
-      },
-      legend: {
-        show: data.show_legend === null || !!data.show_legend,
-      },
-      dataLabels: {
-        enabled: !!data.labels,
-        dropShadow: {
-          enabled: true,
-          color: "var(--tblr-primary-bg-subtle)",
-        },
-        formatter:
-          chart_type === "rangeBar"
-            ? rangeBarLabel
-            : chart_type === "pie"
-              ? pieLabel
-              : numberLabel,
-      },
-      fill: {
-        type: chart_type === "area" ? "gradient" : "solid",
-      },
-      stroke: {
-        width: STROKE_WIDTHS.get(chart_type) ?? 0,
-        lineCap: "round",
-        curve: "smooth",
-      },
-      xaxis: {
-        tooltip: {
-          enabled: false,
-        },
-        min: data.xmin,
-        max: data.xmax,
-        title: {
-          text: axis_titles.x,
-        },
-        type: xaxis_type,
-        labels: {
-          datetimeUTC: false,
-        },
-        // Numeric axes count intervals; category and time axes use tickAmount
-        // as a target for label density.
-        tickAmount: data.xticks || undefined,
-      },
-      yaxis: {
-        logarithmic: !!data.logarithmic,
-        min: data.ymin,
-     
-```
-
-### Core Architecture Module: `frontend/src/chart_series.ts`
-```
-export type XValue = number | string | Date;
-export type ChartPoint = {
-  x: XValue;
-  y: number | string | number[] | null;
-  z?: number;
-  fillColor?: string;
-  link?: string;
-};
-export type ChartSeries = { name: string; data: ChartPoint[] };
-export type Series = Map<string, ChartSeries>;
-
-const NUMERIC_X_CHART_TYPES = ["line", "area", "bar", "scatter", "bubble"];
-
-const Y_WHEN_A_SERIES_SKIPS_A_LABEL = new Map<string, number | null>([
-  ["bar", 0],
-  ["line", null],
-  ["area", null],
-  ["scatter", null],
-  ["bubble", null],
-  ["heatmap", null],
-]);
-
-/** equal x values share a key */
-const x_key = (x: XValue): number | string =>
-  x instanceof Date ? x.getTime() : x;
-
-const x_is_text = (series: ChartSeries[]) =>
-  typeof series[0]?.data?.[0]?.x === "string";
-
-export function xaxis_type_for(
-  series: ChartSeries[],
-  chart_type: string,
-  is_timeseries: boolean,
-  is_horizontal: boolean,
-) {
-  if (is_timeseries) return "datetime";
-  if (x_is_text(series)) return "category";
-  if (
-    typeof series[0]?.data?.[0]?.x === "number" &&
-    !is_horizontal &&
-    NUMERIC_X_CHART_TYPES.includes(chart_type)
-  )
-    return "numeric";
-  return undefined;
-}
-
-/**
- * @returns every x the series hold, in their own order where they agree and in
- * ascending order where they diverge
- */
-export function merged_x_values(series: ChartSeries[]): XValue[] {
-  const unread = series.map(({ data }) => data.map(({ x }) => x));
-  const merged = new Map();
-  while (unread.some((xs) => xs.length > 0)) {
-    const with_lowest_x = unread
-      .filter((xs) => xs.length > 0)
-      .reduce((a, b) => (b[0] < a[0] ? b : a));
-    const x = with_lowest_x.shift() as XValue;
-    merged.set(x_key(x), x);
+  function move(direction) {
+    // Equal-width grid columns snap one card at a time; native scrolling clamps the ends.
+    const step = cards[1].offsetLeft;
+    const index =
+      direction > 0
+        ? Math.floor((track.scrollLeft + 2) / step) + 1
+        : Math.ceil((track.scrollLeft - 2) / step) - 1;
+    goTo(index * step);
   }
-  return [...merged.values()];
+
+  previous.addEventListener("click", () => move(-1), { signal });
+  next.addEventListener("click", () => move(1), { signal });
+  track.addEventListener("scroll", update, { passive: true, signal });
+  const keys = {
+    ArrowLeft: () => move(-1),
+    ArrowRight: () => move(1),
+    Home: () => goTo(0),
+    End: () => goTo(track.scrollWidth),
+  };
+  track.addEventListener(
+    "keydown",
+    (event) => {
+      if (event.target !== track || !keys[event.key]) return;
+      event.preventDefault();
+      keys[event.key]();
+    },
+    { signal },
+  );
+  const observer = new ResizeObserver(update);
+  observer.observe(track);
+  section.querySelector(".comparison-controls").hidden = false;
+  update();
+  return () => observer.disconnect();
 }
 
-/**
- * ApexCharts pairs points across series by index rather than by x, so a
- * series that skips an x lands on the wrong one. Give every series the same
- * amount of x values.
- *
- * @param y_when_missing what a series with no value at an x is worth there:
- *   zero to add nothing to a stack, null to leave a gap.
- */
-export function align_series(
-  series: ChartSeries[],
-  y_when_missing: number | null,
-): ChartSeries[] {
-  const all_x = merged_x_values(series);
-  return series.map(({ name, data }) => {
-    const by_x = new Map(data.map((point) => [x_key(point.x), point]));
-    return {
-      name,
-      data: all_x.map((x) => {
-        const point = by_x.get(x_key(x));
-        return { ...point, x, y: point?.y ?? y_when_missing };
-      }),
+```
+
+### Core Architecture Module: `examples/official-site/assets/landing/js/component-demos.js`
+```
+import { initSqlHighlight } from "./sql-highlight.js";
+import { initTabs, selectTab } from "./tabs.js";
+
+/** Prepare the next live example before changing the visible preview and SQL. */
+export function initComponentDemos(root, signal) {
+  const panel = root.querySelector("#demo-panel");
+  const viewport = panel.querySelector(".demo-preview");
+  const source = root.querySelector("#demo-source");
+  const status = root.querySelector(".demo-status");
+  const renderSource = initSqlHighlight(source, signal);
+  const media = matchMedia("(prefers-reduced-motion: reduce)");
+  const picker = root.querySelector(".component-picker");
+  let preview = viewport.querySelector("iframe");
+  let component = "table";
+  let sourceFiles = { main: source.textContent };
+  let request;
+  let pending;
+  let animation;
+  let fade;
+  let resizePreview;
+  const previewHeight = (content) =>
+    `${Math.ceil(content.getBoundingClientRect().height) + 2}px`;
+
+  function resizePanel(change, entering = false) {
+    const before = panel.getBoundingClientRect().height;
+    animation?.cancel();
+    fade?.cancel();
+    change();
+    const after = panel.getBoundingClientRect().height;
+    if (media.matches) return;
+    if (root.dataset.renderer === "baked") {
+      // Retain the entrance fade without relaying every animated height through
+      // the page's section and sculpture ResizeObservers.
+      if (entering) fade = panel.animate([{ opacity: 0 }, { opacity: 1 }], 180);
+      return;
+    }
+    animation = panel.animate(
+      [
+        { height: `${before}px`, opacity: entering ? 0 : 1 },
+        { height: `${after}px`, opacity: 1 },
+      ],
+      { duration: 320, easing: "cubic-bezier(0.22, 1, 0.36, 1)" },
+    );
+  }
+
+  function fitPreview() {
+    resizePreview?.disconnect();
+    const content = preview.contentDocument?.querySelector(
+      "#sqlpage_main_wrapper",
+    );
+    if (!content) return;
+    const fit = () => {
+      const height = previewHeight(content);
+      if (viewport.style.height !== height)
+        resizePanel(() => {
+          viewport.style.height = height;
+        });
     };
-  });
-}
+    resizePreview = new ResizeObserver(fit);
+    resizePreview.observe(content);
+    fit();
+  }
+  preview.addEventListener("load", fitPreview, { signal });
+  fitPreview();
 
-export function align_series_for(
-  series: ChartSeries[],
-  chart_type: string,
-  is_stacked: boolean,
-): ChartSeries[] {
-  if (is_stacked) return align_series(series, 0);
-  const y_when_missing = Y_WHEN_A_SERIES_SKIPS_A_LABEL.get(chart_type);
-  if (x_is_text(series) && y_when_missing !== undefined)
-    return align_series(series, y_when_missing);
-  return series;
+  root.querySelector("[data-copy-sql]").addEventListener(
+    "click",
+    async () => {
+      try {
+        await navigator.clipboard.writeText(source.textContent);
+        status.textContent = "SQL copied.";
+      } catch {
+        status.textContent = "Copy unavailable. Select the SQL below.";
+      }
+    },
+    { signal },
+  );
+  initTabs(
+    root.querySelector(".source-tabs"),
+    "aria-selected",
+    (button) => {
+      source.setAttribute("aria-labelledby", button.id);
+      status.textContent = "";
+      resizePanel(() => {
+        void renderSource(sourceFiles[button.dataset.file]);
+      });
+    },
+    signal,
+  );
+
+  function loadPreview(frame, requestSignal) {
+    return new Promise((resolve, reject) => {
+      let observer;
+      const abort = () => {
+        observer?.disconnect();
+        reject(new DOMException("Demo cancelled", "AbortError"));
+      };
+      requestSignal.addEventListener("abort", abort, { once: true });
+      frame.addEventListener(
+        "load",
+        async () => {
+          const document = frame.contentDocument;
+          if (!document?.querySelector("#sqlpage_main_wrapper")) {
+            reject(new Error("Preview unavailable"));
+            return;
+          }
+          const ready = () => {
+            if (document.querySelector("[data-pre-init]")) return;
+            observer?.disconnect();
+            requestSignal.removeEventListener("abort", abort);
+            resolve();
+          };
+          await document.fonts.ready;
+          if (requestSignal.aborted) return;
+          observer = new MutationObserver(ready);
+          observer.observe(document, { attributes: true, subtree: true });
+          ready();
+        },
+        { once: true, signal: requestSignal },
+      );
+    });
+  }
+
+  async function selectDemo(button) {
+    request?.abort();
+    pending?.remove();
+    fade?.cancel();
+    const next = button.dataset.demo;
+    if (next === component) {
+      panel.removeAttribute("aria-busy");
+      return;
+    }
+    const controller = new AbortController();
+    request = controller;
+    const incoming = preview.cloneNode(false);
+    pending = incoming;
+    incoming.title = "Loading SQLPage component demo";
+    incoming.setAttribute("aria-hidden", "true");
+    incoming.inert = true;
+    incoming.loading = "eager";
+    const loaded = loadPreview(incoming, controller.signal);
+    incoming.src = `/landing-demos/demo.sql?component=${next}`;
+    viewport.append(incoming);
+    panel.setAttribute("aria-busy", "true");
+    status.textContent = "";
+    try {
+      const [files] = await Promise.all([
+        next === "catalog"
+          ? null
+          : fetch(`/landing-demos/source.sql?component=${next}`, {
+              signal: controller.signal,
+            }).then((response) => {
+              if (!response.ok) throw new Error("Source unavailable");
+              return response.json();
+            }),
+        loaded,
+      ]);
+      if (controller.signal.aborted) return;
+      if (!media.matches) {
+        fade = panel.animate([{ opacity: 1 }, { opacity: 0 }], {
+          duration: 100,
+          fill: "forwards",
+        });
+        await fade.finished;
+      }
+      if (controller.signal.aborted) return;
+      resizePreview?.disconnect();
+      preview.removeEventListener("load", fitPreview);
+      const outgoing = preview;
+      resizePanel(() => {
+        outgoing.remove();
+        preview = incoming;
+        pending = null;
+        component = next;
+        incoming.title = "Live SQLPage component demo";
+        incoming.removeAttribute("aria-hidden");
+        incoming.inert = false;
+        viewport.style.height = previewHeight(
+          incoming.contentDocument.querySelector("#sqlpage_main_wrapper"),
+        );
+        panel.dataset.demo = next;
+        panel.setAttribute("aria-labelledby", button.id);
+        root.querySelector('[data-file="save"]').hidden = next !== "form";
+        root.querySelector("#demo-filename").textContent = `${next}.sql`;
+        const link = panel.querySelector(".demo-docs");
+        link.href = `/component.sql?component=${next}`;
+        link.firstChild.textContent = `Explore the ${next} component `;
+        if (files) {
+          sourceFiles = { main: files.source, save: files.save_source };
+          // Avoid an intermediate one-line loading state or a nested resize.
+          const main = root.querySelector("#demo-filename");
+          selectTab(root.querySelector(".source-tabs"), main);
+          source.setAttribute("aria-labelledby", main.id);
+          void renderSource(sourceFiles.main);
+        }
+      }, true);
+      preview.addEventListener("load", fitPreview, { signal });
+      fitPreview();
+      panel.removeAttribute("aria-busy");
+    } catch {
+      if (controller.signal.aborted) return;
+      controller.abort();
+      incoming.remove();
+      fade?.cancel();
+      panel.removeAttribute("aria-busy");
+      selectTab(picker, picker.querySelector(`[data-demo="${component}"]`));
+      status.textContent = "The demo could not load. Please try again.";
+    }
+  }
+  initTabs(
+    picker,
+    "aria-selected",
+    (button) => void selectDemo(button),
+    signal,
+  );
+  media.addEventListener(
+    "change",
+    () => {
+      if (media.matches) animation?.cancel();
+    },
+    { signal },
+  );
+  return () => {
+    request?.abort();
+    pending?.remove();
+    resizePreview?.disconnect();
+    animation?.cancel();
+    fade?.cancel();
+  };
 }
 
 ```
 
-### Core Architecture Module: `frontend/src/globals.d.ts`
+### Core Architecture Module: `examples/official-site/assets/landing/js/experience.js`
 ```
-// Names the browser bundle relies on at runtime rather than through an import.
+import { initScrollProgress } from "./scroll-progress.js";
 
-interface Window {
-  /** Every chart rendered on the page, in the order they were built. */
-  charts?: unknown[];
-  /** A Bootstrap a page loaded for itself, preferred over the bundled copy. */
-  bootstrap?: typeof import("@tabler/core").bootstrap;
+/** CDN and WebGL failures are isolated from ordinary page navigation. */
+export function initExperience(root) {
+  const section = root.querySelector(".experience");
+  const mount = root.querySelector(".scene-canvas");
+  const hitArea = root.querySelector(".model-interaction");
+  const error = root.querySelector(".scene-error");
+  const media = matchMedia("(prefers-reduced-motion: reduce)");
+  const state = { motion: !media.matches };
+  const events = new AbortController();
+  let controller, stopScroll;
+  let generation = 0;
+  let disposed = false;
+  function syncMotion() {
+    state.motion = !media.matches;
+    root.dataset.motion = state.motion ? "on" : "off";
+  }
+  function setStatus(status) {
+    root.dataset.scene = status;
+    error.hidden = status !== "error";
+    hitArea.dataset.ready = String(status === "ready");
+    // The renderer enables input only while the loaded sculpture is visible.
+    if (status !== "ready") {
+      hitArea.inert = true;
+      hitArea.tabIndex = -1;
+    }
+  }
+  function stopScene() {
+    controller?.dispose();
+    controller = undefined;
+  }
+  async function startScene() {
+    const attempt = ++generation;
+    stopScene();
+    setStatus("loading");
+    try {
+      const { createDatabaseScene } = await import("./scene/database-scene.js");
+      if (disposed || attempt !== generation) return;
+      controller = createDatabaseScene({
+        mount,
+        hitArea,
+        getState: () => state,
+        onReady() {
+          if (disposed || attempt !== generation) return;
+          setStatus("ready");
+        },
+        onError() {
+          if (disposed || attempt !== generation) return;
+          setStatus("error");
+          // Allow a synchronous constructor callback to return before disposal.
+          queueMicrotask(() => {
+            if (!disposed && attempt === generation) stopScene();
+          });
+        },
+      });
+    } catch (cause) {
+      if (disposed || attempt !== generation) return;
+      console.error("SQLPage scene failed to load", cause);
+      stopScene();
+      setStatus("error");
+    }
+  }
+  stopScroll = initScrollProgress(section, state);
+  syncMotion();
+  media.addEventListener("change", syncMotion, { signal: events.signal });
+  root
+    .querySelector("[data-retry]")
+    .addEventListener("click", startScene, { signal: events.signal });
+  root
+    .querySelector(".brand")
+    .addEventListener("click", () => controller?.reset(), {
+      signal: events.signal,
+    });
+  void startScene();
+  return () => {
+    disposed = true;
+    generation++;
+    events.abort();
+    stopScroll?.();
+    stopScene();
+  };
 }
 
 ```
 
-### Core Architecture Module: `frontend/src/init.ts`
+### Core Architecture Module: `examples/official-site/assets/landing/js/instant-motion.js`
 ```
-export function add_init_fn(f: () => void) {
-  document.addEventListener("DOMContentLoaded", f);
-  document.addEventListener("fragment-loaded", f);
-  if (document.readyState !== "loading") setTimeout(f, 0);
+/** Synchronize the illustrative streaming timelines and suspend invisible animation. */
+// Both timelines share an illustrative clock; these are not benchmark timings.
+const DURATION = 7000;
+
+export function initInstantMotion(root) {
+  const diagram = root.querySelector(".instant-diagram");
+  const button = diagram?.querySelector(".timeline-toggle");
+  if (!button) return () => {};
+  const motion = matchMedia("(prefers-reduced-motion: reduce)");
+  const events = new AbortController();
+  const { signal } = events;
+  let visible = false;
+  let paused = false;
+  let animations = [];
+
+  function animate(element, keyframes) {
+    animations.push(
+      element.animate(keyframes, {
+        duration: DURATION,
+        iterations: Infinity,
+      }),
+    );
+  }
+
+  function fill(element, start, end) {
+    animate(element, [
+      { clipPath: "inset(0 100% 0 0)", offset: 0 },
+      { clipPath: "inset(0 100% 0 0)", offset: start },
+      { clipPath: "inset(0 0% 0 0)", offset: end },
+      { clipPath: "inset(0 0% 0 0)", opacity: 1, offset: 0.88 },
+      { clipPath: "inset(0 0% 0 0)", opacity: 0, offset: 0.96 },
+      { clipPath: "inset(0 100% 0 0)", opacity: 0, offset: 1 },
+    ]);
+  }
+
+  function reset() {
+    for (const animation of animations) animation.cancel();
+    animations = [];
+    delete diagram.dataset.streamMotion;
+  }
+
+  function update() {
+    button.hidden = motion.matches;
+    button.setAttribute(
+      "aria-label",
+      paused ? "Play streaming comparison" : "Pause streaming comparison",
+    );
+    button.dataset.paused = String(paused);
+    if (motion.matches || !visible) {
+      reset();
+      return;
+    }
+    if (!animations.length) {
+      diagram.dataset.streamMotion = "true";
+      const stages = diagram.querySelectorAll(
+        ".render-timeline .timeline-fill",
+      );
+      const stops = [0.025, 0.14, 0.36, 0.66, 0.78];
+      stages.forEach((stage, index) => {
+        fill(stage, stops[index], stops[index + 1]);
+      });
+      fill(diagram.querySelector(".stream-fill"), stops[0], stops[1]);
+      animate(diagram.querySelector(".stream-sheen"), [
+        { transform: "translateX(-300%)", opacity: 0, offset: 0 },
+        { transform: "translateX(-300%)", opacity: 0, offset: 0.14 },
+        { transform: "translateX(-100%)", opacity: 0.6, offset: 0.2 },
+        { transform: "translateX(400%)", opacity: 0.6, offset: 0.72 },
+        { transform: "translateX(400%)", opacity: 0, offset: 0.78 },
+        { transform: "translateX(400%)", opacity: 0, offset: 1 },
+      ]);
+      diagram
+        .querySelectorAll(".render-labels span")
+        .forEach((label, index) => {
+          const start = 0.12 + index * 0.04;
+          animate(label, [
+            { opacity: 0.35, offset: 0 },
+            { opacity: 0.35, offset: start },
+            { opacity: 1, offset: start + 0.04 },
+            { opacity: 1, offset: 0.88 },
+            { opacity: 0.35, offset: 0.96 },
+            { opacity: 0.35, offset: 1 },
+          ]);
+        });
+      // Synchronize all fills and labels to the same document timeline.
+      const startTime = document.timeline.currentTime;
+      for (const animation of animations) animation.startTime = startTime;
+    }
+    for (const animation of animations) {
+      if (paused || document.hidden) animation.pause();
+      else animation.play();
+    }
+  }
+
+  const observer = new IntersectionObserver(
+    ([entry]) => {
+      visible = entry.isIntersecting;
+      update();
+    },
+    { threshold: 0.25 },
+  );
+  observer.observe(diagram);
+  button.addEventListener(
+    "click",
+    () => {
+      paused = !paused;
+      update();
+    },
+    { signal },
+  );
+  motion.addEventListener("change", update, { signal });
+  document.addEventListener("visibilitychange", update, { signal });
+  return () => {
+    events.abort();
+    observer.disconnect();
+    reset();
+    button.hidden = true;
+  };
 }
+
+```
+
+### Core Architecture Module: `examples/official-site/assets/landing/js/main.js`
+```
+/** Boot the progressively enhanced landing page; each module owns its cleanup. */
+import { initExperience } from "./experience.js";
+import { initInstantMotion } from "./instant-motion.js";
+import { initNavigation } from "./navigation.js";
+import { initSectionMotion } from "./section-motion.js";
+import { initSections } from "./sections.js";
+import { initWaveMotion } from "./wave-motion.js";
+
+const root = document.querySelector(".sqlpage-world");
+// Author one sequence; its decorative copy never enters the tab order.
+const sequence = root.querySelector(".ribbon-sequence");
+const copy = sequence.cloneNode(true);
+copy.setAttribute("aria-hidden", "true");
+for (const link of copy.querySelectorAll("a")) link.tabIndex = -1;
+sequence.after(copy);
+const cleanups = [
+  initNavigation(root),
+  initSections(root),
+  initInstantMotion(root),
+  initSectionMotion(root),
+  initWaveMotion(root),
+  initExperience(root),
+];
+window.addEventListener("pagehide", (event) => {
+  // Preserve state when entering the browser's back/forward cache.
+  if (!event.persisted)
+    cleanups.forEach((cleanup) => {
+      cleanup();
+    });
+});
 
 ```
 
@@ -1306,55 +1029,11 @@ export function add_init_fn(f: () => void) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1551** (2026-10-15): **SQLPage does not work in nixpkgs**
+  *Symptoms*: ## What's wrong?  we recently upgraded our build to use typescript in https://github.com/sqlpage/SQLPage/issues/1464  this helped us improve our types and find a few bugs, but we cannot simply version bump SQLPage in nixpkgs :: https://github.com/NixOS/nixpkgs/blob/master/pkgs/by-name/sq/sqlpage/package.nix  ## Why?  many of the typescript changes are still in mainline, not yet released in an offical version. As such, I can only raise a PR to nixpkgs with an unstable version, which would likely not be approved :: https://github.com/NixOS/nixpkgs/pull/574594  ## How do we fix?  @lovasoa could you cut and publish a new offical release so that I can upgrade SQLPage in nixpkgs?
+
 - **Issue #1494** (2026-09-24): **Stacked BAR chart inside html component doesn't show bars**
   *Symptoms*: ### Introduction  In 0.46.2 (and 0.46.3), stacked bar chart works just fine when it is simply referred to. However, when this component is inside an HTML component (simple `div class="row"`), the time parsing on x label is wrong, it adds chart title as an additional entry into the legend and most importantly, doesn't draw any graphs. Changing the chart type to LINE or AREA seems to draw the values, but also adds a accumulated entry of all values to the end of the chart under the series named as chart title.  It works properly till 0.46.1 (well, except for the chart title series). This chart title series wasn't happening before, but I don't recall in which old version it had worked. I tested backwards up to v0.45.0  and gave up.  It is not a priority issue, but found it very interesting! My usecase is to run [dynamic sql charts side by side](https://github.com/vsbabu/xp/blob/main/r_net_chart_by_category.sql). For now, I can simply remove covering HTML element and let charts display one below another.  ### To Reproduce  Use 0.46.2 or 0.46.3 binary. Use the given sql  (moved all the way down for brevity here) in a file and navigate to that. Edit the sql to comment out first line and last line (for HTML component) and compare.  ### Actual behavior There is no error anywhere. Screenshots are below.  ### Screenshots #### v0.46.3 With HTML <img width="976" height="556" alt="Image" src="https://github.com/user-attachments/assets/966f4ec4-215f-4fba-9e41-c5d7540da1c1" /> Without HTML <
-  **Post-Mortem & Fix Analysis**:
-  > Hi !  You are missing the component selection when trying to set html.  ```sql SELECT 'html' AS component, '</div>' AS html; ```  Without that, SQLPage interprets the closing statement as another **chart data row**:  ```json ["Progression", null, null] ```  And by the way, I'd recommend using the card component, rather than standalone div opening and closing tags: that's brittle.
-  > Hi @lovasoa ,  Thanks a lot! Especially for the explanation.  That was a silly mistake on my part. Card component doesn't work for me since I setup a temporary table in the beginning of my dashboard session and have to recreate these for embedded chart sqls because of separate http sessions being used for those ( #1339 )
-
-- **Issue #1481** (2026-09-24): **SQL Server: NULL variables are bound with length 1 since v0.46, so ISNULL($var, 'default') returns 'd'**
-  *Symptoms*: ### Introduction  Since v0.46 (#1397), variables are sent to SQL Server without the former `CAST(@p AS VARCHAR(MAX))`. When a variable is NULL, the parameter appears to be typed as a 1-character string. T-SQL `ISNULL(a, b)` returns the type of `a`, so the default value is silently truncated to its first character. `ISNULL($param, default)` is the idiomatic T-SQL way to default an optional parameter (~1,250 occurrences in our app). Besides runtime errors, it silently changes logic: `ISNULL($user_id, 'GUEST') != 'GUEST'` becomes `'G' != 'GUEST'`, which is true for anonymous users.  ### To Reproduce  ```sql SELECT 'text' AS component,   'isnull=[' + ISNULL($missing, 'hello') + '] coalesce=[' + COALESCE($missing, 'hello')   + '] len=' + CAST(LEN(ISNULL($missing, 'hello')) AS varchar(10)) AS contents; ``` ```sql SELECT 'text' AS component, CONVERT(varchar(30), ISNULL($missing, GETDATE()), 121) AS contents; ```  ### Actual behavior  - first query: `isnull=[h] coalesce=[hello] len=1` - second query: `s` - in a real page, `WHERE t.ts BETWEEN ISNULL(:date_from, DATEADD(HOUR, -12, GETDATE())) AND ...`   fails with `Conversion failed when converting date and/or time from character string.`  ### Expected behavior  Same as v0.44.1: `isnull=[hello] coalesce=[hello] len=5`, and the current date for the second query.  ### Version information   - OS: Windows 11 (official release binary)  - Database: Microsoft SQL Server <version>  - SQLPage Version: v0.46.3 (introduced in v0.46 by #1397, stil
-  **Post-Mortem & Fix Analysis**:
-  > Thank you for the report ! I'll fix it for the next release.
-  > Thanks so much! Maximum efficiency!
-
-- **Issue #1480** (2026-09-23): **SQL Server: JSON_OBJECT('key':value) fails with "Named and wildcard function arguments are not supported" since v0.45**
-  *Symptoms*: ### Introduction  Since v0.45, SQL Server's `JSON_OBJECT` written with the native T-SQL `'key':value` syntax is rejected at parse time when it is a top-level selected expression (including `SET x = ...`) or an argument of a `sqlpage.*` function. On SQL Server `'key':value` is the [only accepted syntax](https://learn.microsoft.com/sql/t-sql/functions/json-object-transact-sql), so the documented `sqlpage.run_sql('file.sql', json_object(...))` pattern can no longer be written on MSSQL. In our application ~56 files are affected. It worked on v0.44.1.  ### To Reproduce  Each of these files fails on its own:  ```sql -- a.sql SELECT 'text' AS component, json_object('a':'b') AS contents; ``` ```sql -- b.sql SET x = json_object('a':'b'); SELECT 'text' AS component, $x AS contents; ``` ```sql -- c.sql  (frag.sql: SELECT 'text' AS component, $a AS contents;) SELECT 'dynamic' AS component, sqlpage.run_sql('frag.sql', json_object('a':'b')) AS properties; ```  ### Actual behavior  ``` Named and wildcard function arguments are not supported a.sql contains a syntax error preventing SQLPage from parsing and preparing its SQL statements. ```  ### Expected behavior  Same as v0.44.1: the object is built (by SQL Server or by SQLPage's emulation) and `c.sql` renders `b`.  ### Version information   - OS: Windows 11 (official release binary)  - Database: Microsoft SQL Server <version>  - SQLPage Version: v0.46.3 (also present in v0.45.0 and on `main`); last working: v0.44.1  ### Additional context  
-  **Post-Mortem & Fix Analysis**:
-  > Working on this in priority
-  > @Mayo-bitdrop thank you very much for the report ! The fix is merged, you can get it on docker as lovasoa/sqlpage:main now, or wait for the 0.47 release
-  > Thanks to you for your valuable work!
-
-- **Issue #1466** (2026-09-17): **OIDC ON ZOHO**
-  *Symptoms*: ### Introduction  Hello, i have a problem with the oidc provider Zoho I created correctly the application and configured Sqlpage. when i try to open the site, the url for call the oidc provider contains a nonce with argon2.  I think that the issue is caused by the nonce parameter generated by sqlpage. this:nonce=$argon2id$v=19$m=8,t=1,p=1$...  Zoho's servers reject any authentication URL where the nonce parameter contains special characters like dollar signs ($), equal signs (=), or commas (,). It misinterprets these characters as a malformed query string and drops the request.If you manually intercept the URL, strip out the Argon2id syntax, and replace it with a plain alphanumeric string (e.g., &nonce=12345), the Zoho login page loads successfully.  After sqlpage oidc_callback page: The identity provider returned an invalid ID token  ### To Reproduce  config oidc both on zoho api developer and sqlpage.  ### Actual behavior  Open website Zoho error page   ### Expected behavior Open website Redirect to login Back to website   ### Version information   - OS: debian13  - Database MSSQL  - SQLPage Version 0.46.2  
-  **Post-Mortem & Fix Analysis**:
-  > Thanks for reporting this ! I investigated a bit and found this old report online https://groups.google.com/g/keycloak-user/c/hKOhAQS3wp8  It looks like zoho implemented the oidc specification incorrectly ? Did you try reporting it to them ?   If you want to help getting to the bottom of this, you could paste .har network captures to show the interaction ? Using a test account
-  > I studied the case. Zoho's waf rejects all nonce with any special characters in url to prevent sql injections or xss. sqlpage uses argon2 that add unencoded $ in nonce. It is not a sql-page bug, but a wrong implemetation of oidc by zoho.  https://www.zoho.com/crm/help/api/security-enhancement.html  I don't know if you want to add some workaround or leave as is. 
-  > Zoho’s OIDC authorization endpoint rejects valid nonce string values containing `=`, despite correct URL encoding. This conflicts with OIDC Core’s requirement that nonce values be passed through unmodified and its recommendation that providers perform no other processing on them.  We reproduced this with a test client and are working on a compatibility fix. 
-
-- **Issue #1451** (2026-09-14): **0.46.2 - big number bar COLOR attribute does not set color of the text**
-  *Symptoms*: ### Introduction  Till 0.46.1, setting a color for big number bar card used to set background color of the card as well as the text color. Once I changed the binary to 0.46.2, color of the text is always black  in light mode and always white in dark mode.  ### To Reproduce  Just change the binary from 0.46.1 to 0.46.2. Check with example 2 in big number bar component documentation. I see that the documentation shows it with the same black/white color only - I don't recall whether it was like that in previous version's documentation. Since documentation is also served by sql-page, it could show the latest behavior.  Actual SQL I am using is at https://github.com/vsbabu/xp/blob/main/r_bignumber_bar.sql  Note that the progress color is showing up fine as given in the sql.  ### Actual behavior  There are no errors in the command line or on web developer console. The color determination logic for the text as shown in web developer console is exactly similar in both cases, just that the color rendered is wrong.  I also noticed that the margins or paddings have also increased a bit. Both version's screenshots are given below.  ### Screenshots  <img width="900" height="900" alt="Image" src="https://github.com/user-attachments/assets/2c493fd5-d549-44b0-9953-cce5bc952072" />  ### Expected behavior Nice to have it like in 0.46.1  ### Version information 0.46.2  - OS:  - Database [e.g. SQLite, Postgres]  - SQLPage Version [found when hovering the default footer of pages]:  ### Additional
-  **Post-Mortem & Fix Analysis**:
-  > Thank you very much for reporting this ! Looking into it right now.
-  > Thank you so much for the quick fix.  Added bonus for me, I also learned about Playwright way of testing  [tests/end-to-end/fixtures/big-number/test.ts](https://github.com/sqlpage/SQLPage/pull/1452/changes#diff-bf3538939429ed39fac9da73c1a6d55a14d626ea8012f9cd73c82aaa7580a590) 
-
-- **Issue #1417** (2026-09-01): **Regression in variable management**
-  *Symptoms*: ### Introduction  SQLpage 0.46 : Regression in variable management   ### To Reproduce  Here is a code snippet for MariaDB and PostgreSQL. It uses a .env file to define environment variables.  The .env file : ``` IZLY_TIMEOUT = 10000 IZLY_ENDPOINT = "https://api.example.fr" IZLY_GRAVITEE_API_KEY = "xxxxxx-xxxxxxxxxxx-xxxxxxxxxx-xxxxxxxxxx" ```  The index.sql file : ```sql set user_id = 'john.doe';  set izly_request = json_object(     'timeout_ms', CAST(sqlpage.environment_variable('IZLY_TIMEOUT') AS INTEGER),     'method', 'GET',     'url', CONCAT(sqlpage.environment_variable('IZLY_ENDPOINT'), '/', COALESCE($user_id,'')),     'headers', json_object(         'Content-Type', 'application/json',         'X-Gravitee-Api-Key', sqlpage.environment_variable('IZLY_GRAVITEE_API_KEY')     ) ); SELECT 'debug' AS component, $izly_request; ```  ### Actual behavior  It can be observed that the URL is incorrect. The value of the user_id variable is NULL.  ``` {"component":"debug","?":"{\"timeout_ms\":10000,\"method\":\"GET\",\"url\":\"https://api.example.fr/\",\"headers\":{\"Content-Type\":\"application/json\",\"X-Gravitee-Api-Key\":\"xxxxxx-xxxxxxxxxxx-xxxxxxxxxx-xxxxxxxxxx\"}}"} ```  ### Screenshots  <img width="1259" height="162" alt="Image" src="https://github.com/user-attachments/assets/8a03456e-1ab3-4dc1-b34a-23609950649b" />  ### Expected behavior  The `url` attribute in the JSON data should contain `"https://api.example.fr/john.doe"`.  ### Version information   - OS: Linux et MacOS  
-  **Post-Mortem & Fix Analysis**:
-  > thank you very much for the report, investigating !
-  > @olivierauverlot I have a fix ready in https://github.com/sqlpage/SQLPage/pull/1418 (together with a cleanup that should make it much harder to introduce similar issues in the future). Do you mind testing it on your application and confirming it all works ?
-  > Good news: the fix seems to be working perfectly. I tested several of my applications, and everything is back to normal now. Thank you for this quick fix.
-
-- **Issue #1384** (2026-08-23): **datagrid renders stray "–" when a row has icon but no description**
-  *Symptoms*: Hello @lovasoa kindly please take a look at this one. Thank you.  ## Description  SQLPage 0.45.0. A `datagrid` row that defines `icon` but no `description` renders a literal en-dash "–" next to the icon, because the template falls back to `–` for any missing `description`:  ```handlebars {{#if description}}     {{description}} {{else}}     – {{/if}} ```  ### Repro  ```sql SELECT 'datagrid' AS component; SELECT 'Facebook' AS title, 'brand-facebook' AS icon; ```  **Expected:** a cell with just the icon (icon-only cell).  **Actual:** icon + a horizontal dash "–":  ```html <span class="status status-blue h-auto rounded-3 ">     <span class="flex-shrink-0"><svg .../></span>     – </span> ```  ### Suggested fix  Only render the "–" placeholder when the row has neither an icon/image nor a description, e.g.:  ```handlebars {{#if icon}}     {{~icon_img icon~}} {{else if image_url}}     <img ...> {{else}}     {{#if description}}{{description}}{{else}}–{{/if}} {{/if}} ```  or make the placeholder opt-in.  ### Local workaround confirmed  As a temporary measure, the dash can be suppressed by passing an invisible character as `description`:  ```sql SELECT 'YouTube' AS title, 'brand-youtube' AS icon, char(160) AS description; ```  This renders empty space instead of "–". (Confirmed on agroska.pl, SQLPage 0.45.0, 2026-08-16.)  **Caveat:** the hack isn't perfect — `&nbsp;` (`\xa0`) leaves a visible gap, so the icon ends up slightly shifted to the right compared to a cell with no description a
-  **Post-Mortem & Fix Analysis**:
-  > Thanks for the report, on it
-
-- **Issue #1357** (2026-08-02): **Out of date documentation for AWS lambda**
-  *Symptoms*: The [documentation for serverless hosting](https://github.com/sqlpage/SQLPage#serverless) suggests to use the following runtime: *Custom runtime on Amazon Linux 2*.  [Amazon Linux 2 reached EOL on the 30/06/2026](https://aws.amazon.com/fr/amazon-linux-2/faqs/). The documentation should be updated accordingly to recommend a supported runtime (which should also be tested I guess).
-  **Post-Mortem & Fix Analysis**:
-  > thanks for letting me know! I'll look into it! Do you use SQLPage on lambda? curious about your feedback!
-  > > thanks for letting me know! I'll look into it! Do you use SQLPage on lambda? curious about your feedback!  Hi, Thank you for the quick answer and fix! On my side I had no issue in two years of use, so I am pretty happy with lambda. I should also say that my needs are really basic, someone with more requests would maybe have a different answer. And also it runs at no cost, quite great.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1371,1163 +1050,876 @@ export function add_init_fn(f: () => void) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1f3c97a5` (2026-10-05)
-**Commit Message**: fix(ci) :: run CI on merge_group so the merge queue gets checks (#1523)
+### Incident Patch 1: `250a8989` (2026-10-07)
+**Commit Message**: test(suite) :: share helpers, close pools deterministically, slim OIDC harness (#1529)
 
-The merge queue validates grouped merges via the merge_group event.
-Without that trigger no checks are reported and queued PRs are ejected
-with 'no response for status checks'. Docker push steps are now gated
-on push only so merge_group runs validate without pushing.
+* test(suite) :: share helpers, close pools deterministically, slim OIDC harness
 
-**File**: `.github/workflows/ci.yml` (modified, +7/-6)
+Integration tests leaked every request's AppState: actix-web recycles
+test-built HttpRequestInner allocations into a per-request pool that the
+test path never drains, pinning database pools until process exit. Pooled
+ODBC connections keep cached prepared statements alive, which deadlocks
+Oracle's client at process exit. Close every test pool (clearing statement
+caches first, since close() alone leaves checked-out connections behind)
+while the test runtime is still alive, including after panics.
+
+Consolidate the suite around shared helpers (read_body_string,
+supports_database, request builders, OIDC login/config builders,
+multipart/webhook request builders) and share one AppState per test
+where possible, cutting duplication across oidc/uploads/requests/
+data_formats/errors/server_timing/cookies/core. Net negative LOC.
+
+* test: replace custom runtime with service-backed response helpers
+
+Give test requests an Actix service-owned pool so dropping the service releases application state. Centralize request setup with re
+
+**File**: `.github/workflows/ci.yml` (modified, +2/-1)
 ```diff
-@@ -19,6 +19,7 @@ on:
-       - "README.md"
-       - ".github/workflows/release.yml"
-       - ".github/workflows/official-site.yml"
-+  merge_group:
- 
- concurrency:
-   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-@@ -263,7 +264,7 @@ jobs:
-       - name: Set up Docker Buildx
-         uses: docker/setup-buildx-action@v4
-       - name: Login to Docker Hub
--        if: github.event_name != 'pull_request'
-+        if: github.event_name == 'push'
-         uses: docker/login-action@v4
-         with:
-           username: ${{ env.REGISTRY_USERNAME }}
-@@ -298,7 +299,7 @@ jobs:
-           retention-days: 1
-       - name: Build and push by digest
-         id: build
--        if: github.event_name != 'pull_request' || !matrix.export
-+        if: github.event_name == 'push' || !matrix.export
-         uses: docker/build-push-action@v7
-         with:
-           # Use BuildKit's Git context instead of the mutable runner workspace.
-@@ -308,22 +309,22 @@ jobs:
-           platforms: ${{ matrix.platform }}
-           target: ${{ matrix.variant }}
-           labels: ${{ steps.meta.outputs.labels }}
--          push: ${{ github.event_name != 'pull_request' }}
-+          push: ${{ github.event_name == 'push' }}
-           tags: ${{ steps.meta.outputs.tags }}
-           cache-from: |
-             type=gha,scope=${{ steps.cache-scope.outputs.current }}
-             type=gha,scope=${{ steps.cache-scope.outputs.main }}
-             type=registry,ref=${{ env.REGISTRY_IMAGE }}:main${{ matrix.tag_suffix }}
-           cache-to: type=gha,scope=${{ steps.cache-scope.outputs.current }},mode=max
-       - name: Export digest
--        if: github.event_name != 'pull_request'
-+        if: github.event_name == 'push'
-         run: |
-           mkdir -p /tmp/digests
-           digest="${{ steps.build.outputs.digest }}"
-           touch "/tmp/digests/${digest#sha256:}"
-       - name: Upload digest
-         uses: actions/upload-artifact@v7
--        if: github.event_name != 'pull_request'
-+        if: github.event_name == 'push'
-         with:
-           name: digests-${{ matrix.variant }}${{ matrix.tag_suffix }}
-           path: /tmp/digests/*
-@@ -412,7 +413,7 @@ jobs:
- 
-   docker_push:
-     runs-on: ubuntu-latest
--    if: github.event_name != 'pull_request'
-+    if: github.event_name == 'push'
-     needs:
-       - docker_build
-     strategy:
+@@ -99,6 +99,7 @@ jobs:
+             container: mssql
+             db_url: "mssql://root:Password123!@127.0.0.1/sqlpage"
+           - database: oracle
++            test_args: --test-threads=2
+             container: oracle
+             db_url: "Driver=Oracle 23 ODBC driver;Dbq=//127.0.0.1:1521/FREEPDB1;Uid=root;Pwd=Password123!"
+           - database: duckdb
+@@ -142,7 +143,7 @@ jobs:
+         run: docker compose logs ${{ matrix.container }}
+       - name: Run tests against ${{ matrix.database }}
+         timeout-minutes: 5
+-        run: scripts/run-test-binaries.sh
++        run: scripts/run-test-binaries.sh ${{ matrix.test_args }}
+         env:
+           DATABASE_URL: ${{ matrix.db_url }}
+           MALLOC_CHECK_: 3
 ```
 
----
-
-### Incident Patch 2: `31f7022b` (2026-09-29)
-**Commit Message**: fix(frontend) :: remove `any` types from `sqlpage.ts`
-
-`sqlpage.ts` now has no implicit anys.
-
-Fixing this smoked out two bugs ::
-1. `init_bootstrap_components` read `event.target` without knowing what kind of element. We also tighting scope from `Element` to `HTMLElement`.
-2. `normalize_hash` passed `undefined` to `decodeURIComponent`, which stringifies it, so a toast with no `data-toast-trigger` opened at `#undefined`.
-
-**File**: `frontend/src/sqlpage.ts` (modified, +26/-14)
+**File**: `CONTRIBUTING.md` (modified, +8/-0)
 ```diff
-@@ -372,7 +372,7 @@ function sqlpage_form() {
-   }
- }
+@@ -96,6 +96,14 @@ export DATABASE_URL=mssql://root:Password123!@localhost/sqlpage
+ cargo test
+ ```
  
--function get_tabler_color(name) {
-+function get_tabler_color(name: string) {
-   return getComputedStyle(document.documentElement).getPropertyValue(
-     `--tblr-${name}`,
-   );
-@@ -394,16 +394,16 @@ function load_scripts() {
-   }
- }
- 
--function normalize_hash(hash) {
--  const normalized = hash?.replace(/^#/, "");
-+function normalize_hash(hash: string | undefined) {
-+  const normalized = hash?.replace(/^#/, "") ?? "";
-   try {
-     return decodeURIComponent(normalized);
-   } catch {
-     return normalized;
-   }
- }
- 
--function open_toasts_for_hash(toasts) {
-+function open_toasts_for_hash(toasts: Iterable<HTMLElement>) {
-   const Toast = page_bootstrap().Toast;
-   const hash = normalize_hash(window.location.hash);
-   if (!hash) return;
-@@ -414,9 +414,9 @@ function open_toasts_for_hash(toasts) {
-   }
- }
- 
--function restore_focus_after_toast(toast, container) {
-+function restore_focus_after_toast(toast: HTMLElement, container: HTMLElement) {
-   if (!toast.contains(document.activeElement)) return;
--  const next_close = container.querySelector(
-+  const next_close = container.querySelector<HTMLElement>(
-     '.toast.show [data-bs-dismiss="toast"]',
-   );
-   if (next_close) {
-@@ -501,27 +501,39 @@ add_init_fn(sqlpage_modal);
- add_init_fn(load_scripts);
- add_init_fn(sqlpage_toast);
- window.addEventListener("hashchange", () =>
--  open_toasts_for_hash(document.querySelectorAll("[data-toast-trigger]")),
-+  open_toasts_for_hash(
-+    document.querySelectorAll<HTMLElement>("[data-toast-trigger]"),
-+  ),
- );
- 
--function init_bootstrap_components(event) {
-+function init_bootstrap_components(fragment: Element | Document) {
-   const bootstrap = page_bootstrap();
--  const fragment = event.target;
--  for (const el of fragment.querySelectorAll('[data-bs-toggle="tooltip"]')) {
-+  for (const el of fragment.querySelectorAll<HTMLElement>(
-+    '[data-bs-toggle="tooltip"]',
-+  )) {
-     new bootstrap.Tooltip(el);
-   }
--  for (const el of fragment.querySelectorAll('[data-bs-toggle="popover"]')) {
-+  for (const el of fragment.querySelectorAll<HTMLElement>(
-+    '[data-bs-toggle="popover"]',
-+  )) {
-     new bootstrap.Popover(el);
-   }
--  for (const el of fragment.querySelectorAll('[data-bs-toggle="dropdown"]')) {
-+  for (const el of fragment.querySelectorAll<HTMLElement>(
-+    '[data-bs-toggle="dropdown"]',
-+  )) {
-     new bootstrap.Dropdown(el);
-   }
--  for (const el of fragment.querySelectorAll('[data-bs-ride="carousel"]')) {
-+  for (const el of fragment.querySelectorAll<HTMLElement>(
-+    '[data-bs-ride="carousel"]',
-+  )) {
-     new bootstrap.Carousel(el);
-   }
- }
- 
--document.addEventListener("fragment-loaded", init_bootstrap_components);
-+document.addEventListener("fragment-loaded", ({ target }) => {
-+  if (target instanceof Element || target instanceof Document)
-+    init_bootstrap_components(target);
-+});
- 
- function open_modal_for_hash() {
-   const hash = window.location.hash.substring(1);
-```
-
-**File**: `tests/end-to-end/fixtures/fragment-loaded/index.sql` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+SELECT 'text' AS component, 'Markup added after load is initialized when a fragment is announced.' AS contents;
-```
-
-**File**: `tests/end-to-end/fixtures/fragment-loaded/test.ts` (added, +40/-0)
-```diff
-@@ -0,0 +1,40 @@
-+import { expect, type Page, test } from "../../fixture.ts";
++Use `common::response_for(path)` for ordinary integration requests and
++`common::response_with(path, config)` for custom configuration. Custom requests use
++`common::response_from(request)`; tests sharing database or cache state use `common::send_request`.
++These helpers use the production `create_app` routes and middleware through an Actix test service,
++whose destructor drains its request pool.
++Keep `#[actix_web::test]`; standalone `TestRequest::to_srv_request()` retains application state.
++When testing Oracle locally, use `cargo test -- --test-threads=2` to avoid overwhelming the listener.
 +
-+const INJECTED_HINT = "injected hint";
+ ### End-to-End Tests
+ 
+ We use Playwright for end-to-end testing of dynamic frontend features.
+```
+
+**File**: `scripts/run-test-binaries.sh` (modified, +1/-1)
+```diff
+@@ -13,6 +13,6 @@ fi
+ 
+ for test_binary in "${test_binaries[@]}"; do
+   echo "::group::$(basename "$test_binary")"
+-  "$test_binary" --quiet
++  "$test_binary" --quiet "$@"
+   echo "::endgroup::"
+ done
+```
+
+**File**: `tests/basic/mod.rs` (modified, +8/-12)
+```diff
+@@ -4,22 +4,21 @@ use actix_web::{
+     test,
+ };
+ 
+-use crate::common::req_path;
++use crate::common::{response_for, response_with, test_config};
+ 
+ #[actix_web::test]
+ async fn test_index_ok() {
+-    let resp = req_path("/").await.unwrap();
++    let resp = response_for("/").await;
+     assert_eq!(resp.status(), http::StatusCode::OK);
+-    let body = test::read_body(resp).await;
+-    assert!(body.starts_with(b"<!DOCTYPE html>"));
+-    let body = String::from_utf8(body.to_vec()).unwrap();
++    let body = crate::common::read_body_string(resp).await;
++    assert!(body.starts_with("<!DOCTYPE html>"));
+     assert!(body.contains("It works !"));
+     assert!(!body.contains("error"));
+ }
+ 
+ #[actix_web::test]
+ async fn test_access_config_forbidden() {
+-    let resp_result = req_path("/sqlpage/sqlpage.json").await;
++    let resp_result = response_with("/sqlpage/sqlpage.json", test_config()).await;
+     assert!(
+         resp_result.is_err(),
+         "Accessing the config file should be forbidden, but we received a response: {resp_result:?}"
+@@ -35,19 +34,16 @@ async fn test_access_config_forbidden() {
+ 
+ #[actix_web::test]
+ async fn test_static_files() {
+-    let resp = req_path("/tests/it_works.txt").await.unwrap();
++    let resp = response_for("/tests/it_works.txt").await;
+     assert_eq!(resp.status(), http::StatusCode::OK);
+     let body = test::read_body(resp).await;
+     assert_eq!(&body, &b"It works !"[..]);
+ }
+ 
+ #[actix_web::test]
+ async fn test_spaces_in_file_names() {
+-    let resp = req_path("/tests/core/spaces%20in%20file%20name.sql")
+-        .await
+-        .unwrap();
++    let resp = response_for("/tests/core/spaces%20in%20file%20name.sql").await;
+     assert_eq!(resp.status(), http::StatusCode::OK);
+-    let body = test::read_body(resp).await;
+-    let body_str = String::from_utf8(body.to_vec()).unwrap();
++    let body_str = crate::common::read_body_string(resp).await;
+     assert!(body_str.contains("It works !"), "{body_str}");
+ }
+```
+
+**File**: `tests/common/mod.rs` (modified, +78/-67)
+```diff
+@@ -3,112 +3,123 @@ use std::time::Duration;
+ 
+ use actix_web::{
+     App, HttpResponse, HttpServer,
+-    dev::{ServiceRequest, fn_service},
++    dev::{ServiceRequest, ServiceResponse, fn_service},
+     http::header,
+     http::header::ContentType,
+-    test::TestRequest,
++    test::{self, TestRequest},
+     web,
+     web::Data,
+ };
+ use sqlpage::{
+     AppState,
+     app_config::{AppConfig, test_database_url},
+     telemetry,
+-    webserver::http::{form_config, main_handler, payload_config},
++    webserver::http::create_app,
+ };
+ use tokio::sync::oneshot;
+ use tokio::task::JoinHandle;
+ 
+-pub(crate) async fn get_request_to_with_data(
+-    path: &str,
+-    data: Data<AppState>,
+-) -> actix_web::Result<TestRequest> {
+-    Ok(TestRequest::get()
+-        .uri(path)
++/// Builds a GET request with the defaults used by the SQL fixtures.
++pub(crate) fn request_for(path: impl AsRef<str>) -> TestRequest {
++    TestRequest::get()
++        .uri(path.as_ref())
+         .insert_header(ContentType::plaintext())
+         .insert_header(header::Accept::html())
+-        .app_data(payload_config(&data))
+-        .app_data(form_config(&data))
+-        .app_data(data))
+ }
+ 
+-pub(crate) async fn get_request_to(path: &str) -> actix_web::Result<TestRequest> {
+-    let data = make_app_data().await;
+-    get_request_to_with_data(path, data).await
++pub(crate) fn multipart_request(path: &str, body: impl Into<web::Bytes>) -> TestRequest {
++    request_for(path)
++        .insert_header(("content-type", "multipart/form-data; boundary=1234567890"))
++        .set_payload(body)
+ }
+ 
+-pub(crate) async fn make_app_data_from_config(config: AppConfig) -> Data<AppState> {
+-    let state = AppState::init(&config).await.unwrap();
+-    Data::new(state)
++pub(crate) async fn make_app_data_from_config(
++    config: AppConfig,
++) -> actix_web::Result<Data<AppState>> {
++    init_log();
++    AppState::init(&config)
++        .await
++        .map(Data::new)
++        .map_err(actix_web::error::ErrorInternalServerError)
+ }
+ 
+-pub(crate) async fn make_app_data() -> Data<AppState> {
+-    init_log();
+-    let config = test_config();
+-    make_app_data_from_config(config).await
++/// Sends a GET request with the default test configuration, failing the test on error.
++pub(crate) async fn response_for(path: impl AsRef<str>) -> ServiceResponse {
++    response_with(path.as_ref(), test_config())
++        .await
++        .unwrap_or_else(|err| panic!("Request to {} failed: {err:#}", path.as_ref()))
+ }
+ 
+-pub(crate) async fn req_path(
++/// Sends a GET request with custom application configuration.
++pub(crate) async fn response_with(
+     path: impl AsRef<str>,
+-) -> Result<actix_web::dev::ServiceResponse, actix_web::Error> {
+-    let req = get_request_to(path.as_ref()).await?.to_srv_request();
+-    main_handler(req).await
++    config: AppConfig,
++) -> actix_web::Result<ServiceResponse> {
++    send_request(request_for(path), make_app_data_from_config(config).await?).await
+ }
+ 
+-const REQ_TIMEOUT: Duration = Duration::from_secs(8);
+-pub(crate) async fn req_path_with_app_data(
+-    path: impl AsRef<str>,
+-    app_data: Data<AppState>,
+-) -> anyhow::Result<actix_web::dev::ServiceResponse> {
+-    req_path_with_app_data_and_accept(path, app_data, header::Accept::html()).await
++/// Sends a custom request with the default test configuration.
++pub(crate) async fn response_from(request: TestRequest) -> actix_web::Result<ServiceResponse> {
++    send_request(request, make_app_data_from_config(test_config()).await?).await
+ }
+ 
+-pub(crate) async fn req_path_with_app_data_json(
++/// Sends a GET request using existing state, for tests that share a database or cache.
++pub(crate) async fn response_with_data(
+     path: impl AsRef<str>,
+-    app_data: Data<AppState>,
+-) -> anyhow::Result<actix_web::dev::ServiceResponse> {
+-    req_path_with_app_data_and_accept(path, app_data, header::Accept::json()).await
++    data: Data<AppState>,
++) -> actix_web::Result<ServiceResponse> {
++    send_request(request_for(path), data).await
+ }
+ 
+-async fn req_path_with_app_data_and_accept(
+-    path: impl AsRef<str>,
+-    app_data: Data<AppState>,
+-    accept: header::Accept,
+-) -> anyhow::Result<actix_web::dev::ServiceResponse> {
+-    let path = path.as_ref();
+-    let req = TestRequest::get()
+-        .uri(path)
+-        .app_data(app_data)
+-        .insert_header(("cookie", "test_cook=123"))
+-        .insert_header(("authorization", "Basic dGVzdDp0ZXN0"))
+-        .insert_header(accept)
+-        .to_srv_request();
+-    let resp = tokio::time::timeout(REQ_TIMEOUT, main_handler(req))
+-        .await
+-        .map_err(|e| anyhow::anyhow!("Request to {path} timed out: {e}"))?
+-        .map_err(|e| {
+-            anyhow::anyhow!(
+-                "Request to {path} failed with status {}: {e:#}",
+-                e.as_response_error().status_code()
+-            )
+-        })?;
+-    Ok(resp)
++/// Runs a request through the production app, including its routes and middleware.
++/// Dropping the service disables an
+```
+
+**File**: `tests/cookies/mod.rs` (modified, +3/-5)
+```diff
+@@ -1,9 +1,9 @@
+-use crate::common::req_path;
++use crate::common::response_for;
+ use actix_web::http::StatusCode;
+ use actix_web::http::header::SET_COOKIE;
+ 
+ async fn set_cookie_header(path: &str) -> String {
+-    let resp = req_path(path).await.unwrap();
++    let resp = response_for(path).await;
+     resp.headers()
+         .get(SET_COOKIE)
+         .unwrap_or_else(|| panic!("{path} should have sent a Set-Cookie header"))
+@@ -33,9 +33,7 @@ async fn zero_turns_off_a_cookie_protection() {
+ 
+ #[actix_web::test]
+ async fn a_page_made_only_of_header_components_still_sends_them() {
+-    let resp = req_path("/tests/cookies/header_only_response.sql")
+-        .await
+-        .unwrap();
++    let resp = response_for("/tests/cookies/header_only_response.sql").await;
+     assert_eq!(resp.status(), StatusCode::NO_CONTENT);
+     assert!(resp.headers().contains_key(SET_COOKIE));
+ }
+```
+
+**File**: `tests/core/mod.rs` (modified, +81/-116)
+```diff
+@@ -1,24 +1,61 @@
+-use actix_web::{http::StatusCode, test};
++use actix_web::http::StatusCode;
+ use sqlpage::{
+     AppState,
+     webserver::{self, make_placeholder},
+ };
+-use sqlx::executor::Executor as _;
+ 
+-use crate::common::{make_app_data_from_config, req_path, req_path_with_app_data, test_config};
++use crate::common::{
++    make_app_data_from_config, response_for, response_with, response_with_data, test_config,
++};
+ 
+ mod path_aliases;
+ 
++/// Creates the `sqlpage_files` table if needed and stores `contents` at `path`.
++/// Other tests share this database, so the table is never dropped.
++async fn store_file_in_db(state: &AppState, path: &str, contents: &[u8]) {
++    use sqlx::executor::Executor as _;
 +
-+async function addTooltip(page: Page) {
-+  await page.evaluate((hint) => {
-+    const span = document.createElement("span");
-+    span.id = "added";
-+    span.textContent = "added";
-+    span.setAttribute("data-bs-toggle", "tooltip");
-+    span.setAttribute("title", hint);
-+    document.querySelector("main")?.appendChild(span);
-+  }, INJECTED_HINT);
++    let create_table_sql =
++        sqlpage::filesystem::DbFsQueries::get_create_table_sql(state.db.info.database_type);
++    if state
++        .db
++        .connection
++        .execute("SELECT 1 FROM sqlpage_files WHERE 1 = 0")
++        .await
++        .is_err()
++    {
++        state.db.connection.execute(create_table_sql).await.unwrap();
++    }
++    let delete_sql = format!("DELETE FROM sqlpage_files WHERE path = '{path}'");
++    state
++        .db
++        .connection
++        .execute(delete_sql.as_str())
++        .await
++        .unwrap();
++    let insert_sql = format!(
++        "INSERT INTO sqlpage_files(path, contents) VALUES ({}, {})",
++        make_placeholder(state.db.info.kind, 1),
++        make_placeholder(state.db.info.kind, 2)
++    );
++    sqlx::query::query(&insert_sql)
++        .bind(path)
++        .bind(contents)
++        .execute(&state.db.connection)
++        .await
++        .unwrap();
 +}
 +
-+test("shows a tooltip added before the document announces a fragment", async ({
-+  page,
-+}) => {
-+  await addTooltip(page);
-+  await page.evaluate(() =>
-+    document.dispatchEvent(new CustomEvent("fragment-loaded")),
-+  );
-+  await page.locator("#added").hover();
-+
-+  await expect(page.locator(".tooltip")).toHaveText(INJECTED_HINT);
-+});
-+
-+test("shows a tooltip added before an element announces a fragment", async ({
-+  page,
-+}) => {
-+  await addTooltip(page);
-+  await page.evaluate(() =>
-+    document
-+      .querySelector("main")
-+      ?.dispatchEvent(new CustomEvent("fragment-loaded", { bubbles: true })),
-+  );
-+  await page.locator("#added").hover();
-+
-+  await expect(page.locator(".tooltip")).toHaveText(INJECTED_HINT);
-+});
-```
-
----
-
-### Incident Patch 3: `8a0c488a` (2026-09-29)
-**Commit Message**: fix(chart) :: name refrence line feilds explictly
-
-`chart.handlebars` emits 6 keys for a reference line and stringifies so that unset fields come in as null. This is now explictly set in the type by making it a `Record`.
-
-**File**: `frontend/src/apexcharts.ts` (modified, +4/-1)
-```diff
-@@ -84,7 +84,10 @@ const sqlpage_chart = (() => {
- 
-   const referenceColor = colorNames.get(isDarkTheme ? "gray-lt" : "gray");
- 
--  type ReferenceLine = { [property: string]: string | number | null };
-+  type ReferenceLine = Record<
-+    "xline" | "xline_end" | "yline" | "yline_end" | "label" | "color",
-+    string | number | null
-+  >;
- 
-   const named_color = (name: unknown): string | undefined =>
-     typeof name === "string" ? colorNames.get(name) : undefined;
-```
-
----
-
-### Incident Patch 4: `5a40b2ac` (2026-09-29)
-**Commit Message**: fix(chart) :: use typed `Map` instead of `Object.prototype`
-
-Before loosly typed `Object.protoype` was used to map user inputs to built in properties.
-
-This is what a `Map` is supposed to do, so we use that with stong types.
-
-**File**: `frontend/src/apexcharts.ts` (modified, +11/-11)
-```diff
-@@ -67,23 +67,27 @@ const sqlpage_chart = (() => {
-     ["black", "#000000", "#000000"],
-     ["white", "#ffffff", "#f8f9fa"],
-   ];
--  const colorNames = Object.fromEntries(
--    tblrColors.flatMap(([name, dark, light]) => [
-+  const colorNames = new Map(
-+    tblrColors.flatMap(([name, dark, light]): [string, string][] => [
-       [name, dark],
-       [`${name}-lt`, light],
-     ]),
-   );
-   const isDarkTheme = document.body?.dataset?.bsTheme === "dark";
- 
-   const STACKABLE_CHART_TYPES = ["line", "area", "bar"];
--  const APEXCHARTS_TYPE_ALIASES = { column: "bar" };
-+  const STROKE_WIDTHS = new Map([
-+    ["area", 3],
-+    ["line", 2],
-+  ]);
-+  const APEXCHARTS_TYPE_ALIASES = new Map([["column", "bar"]]);
- 
--  const referenceColor = colorNames[isDarkTheme ? "gray-lt" : "gray"];
-+  const referenceColor = colorNames.get(isDarkTheme ? "gray-lt" : "gray");
- 
-   type ReferenceLine = { [property: string]: string | number | null };
- 
-   const named_color = (name: unknown): string | undefined =>
--    typeof name === "string" ? colorNames[name] : undefined;
-+    typeof name === "string" ? colorNames.get(name) : undefined;
- 
-   const reference_color = (name: string | number | null) =>
-     named_color(name) || referenceColor;
-@@ -128,7 +132,7 @@ const sqlpage_chart = (() => {
-     chartContainer.innerHTML = "";
-     const is_timeseries = !!data.time;
-     const chart_type =
--      APEXCHARTS_TYPE_ALIASES[data.type] || data.type || "line";
-+      APEXCHARTS_TYPE_ALIASES.get(data.type) || data.type || "line";
-     const is_stacked =
-       !!data.stacked && STACKABLE_CHART_TYPES.includes(chart_type);
-     const points: DataPoint[] = data.points
-@@ -277,11 +281,7 @@ const sqlpage_chart = (() => {
-         type: chart_type === "area" ? "gradient" : "solid",
-       },
-       stroke: {
--        width:
--          {
--            area: 3,
--            line: 2,
--          }[chart_type] || 0,
-+        width: STROKE_WIDTHS.get(chart_type) ?? 0,
-         lineCap: "round",
-         curve: "smooth",
-       },
-```
-
-**File**: `frontend/src/chart_series.ts` (modified, +11/-10)
-```diff
-@@ -11,14 +11,14 @@ export type Series = Map<string, ChartSeries>;
- 
- const NUMERIC_X_CHART_TYPES = ["line", "area", "bar", "scatter", "bubble"];
- 
--const Y_WHEN_A_SERIES_SKIPS_A_LABEL: Record<string, number | null> = {
--  bar: 0,
--  line: null,
--  area: null,
--  scatter: null,
--  bubble: null,
--  heatmap: null,
--};
-+const Y_WHEN_A_SERIES_SKIPS_A_LABEL = new Map<string, number | null>([
-+  ["bar", 0],
-+  ["line", null],
-+  ["area", null],
-+  ["scatter", null],
-+  ["bubble", null],
-+  ["heatmap", null],
-+]);
- 
- /** equal x values share a key */
- const x_key = (x: XValue): number | string =>
-@@ -92,7 +92,8 @@ export function align_series_for(
-   is_stacked: boolean,
- ): ChartSeries[] {
-   if (is_stacked) return align_series(series, 0);
--  if (x_is_text(series) && chart_type in Y_WHEN_A_SERIES_SKIPS_A_LABEL)
--    return align_series(series, Y_WHEN_A_SERIES_SKIPS_A_LABEL[chart_type]);
-+  const y_when_missing = Y_WHEN_A_SERIES_SKIPS_A_LABEL.get(chart_type);
-+  if (x_is_text(series) && y_when_missing !== undefined)
-+    return align_series(series, y_when_missing);
-   return series;
- }
-```
-
-**File**: `tests/end-to-end/fixtures/chart/builtin-chart-color.sql` (added, +2/-0)
-```diff
-@@ -0,0 +1,2 @@
-+SELECT 'chart' AS component, 'test-chart' AS id, 'Chart test fixture' AS title, 'bar' AS type, 'toString' AS color, 4 AS marker;
-+WITH points(series, x, y) AS (VALUES ('A', 'Q1', 1), ('A', 'Q2', 2)) SELECT * FROM points;
-```
-
-**File**: `tests/end-to-end/fixtures/chart/test.ts` (modified, +10/-0)
-```diff
-@@ -547,6 +547,16 @@ test("keeps the default palette when the chart names a color SQLPage does not kn
-   expect(fills(unknown)).toEqual(fills(plain));
- });
- 
-+test("draws a chart whose color names a built-in JavaScript property", async ({
-+  page,
-+}) => {
-+  const plain = await renderChart(page, "uncolored-bar");
-+  const chart = await renderChart(page, "builtin-chart-color");
-+
-+  expect(chart.failures).toEqual([]);
-+  expect(fills(chart)).toEqual(fills(plain));
-+});
-+
- test("renders series named after built-in JavaScript properties", async ({
-   page,
- }) => {
-```
-
----
-
-### Incident Patch 5: `e410f4c6` (2026-09-29)
-**Commit Message**: fix(typescript) :: enable low hanging strict checks (#1509)
-
-These are now enabled: `erasableSyntaxOnly`, `noImplicitReturns`, `isolatedModules`, `verbatimModuleSyntax`, `noImplicitOverride`, `noFallthroughCasesInSwitch`, `noUnusedLocals`, `noUnusedParameters`, and no unreachable code nor unused labels.
-
-**File**: `frontend/src/chart_series.ts` (modified, +1/-0)
-```diff
-@@ -41,6 +41,7 @@ export function xaxis_type_for(
-     NUMERIC_X_CHART_TYPES.includes(chart_type)
-   )
-     return "numeric";
-+  return undefined;
- }
- 
- /**
-```
-
-**File**: `tests/end-to-end/fixture.ts` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- import path from "node:path";
- import { test as base, expect } from "@playwright/test";
- 
--const fixturesDirectory = path.resolve(__dirname, "fixtures");
-+const fixturesDirectory = path.resolve(import.meta.dirname, "fixtures");
- 
- export const test = base.extend({
-   page: async ({ page }, use, testInfo) => {
-```
-
-**File**: `tests/end-to-end/fixtures/big-number/test.ts` (modified, +1/-1)
-```diff
-@@ -1,4 +1,4 @@
--import { expect, test } from "../../fixture";
-+import { expect, test } from "../../fixture.ts";
- 
- for (const theme of ["light", "dark"]) {
-   test(`colored values match their cards in the ${theme} theme`, async ({
-```
-
-**File**: `tests/end-to-end/fixtures/chart/test.ts` (modified, +1/-1)
-```diff
-@@ -1,4 +1,4 @@
--import { expect, type Page, test } from "../../fixture";
-+import { expect, type Page, test } from "../../fixture.ts";
- 
- type ChartPoint = { x: string | number | Date; y: number | null };
- 
-```
-
-**File**: `tests/end-to-end/fixtures/form/test.ts` (modified, +1/-1)
-```diff
-@@ -1,4 +1,4 @@
--import { expect, test } from "../../fixture";
-+import { expect, test } from "../../fixture.ts";
- 
- const fields = [
-   { selector: 'input[name="modern_text"]', name: "text" },
-```
-
-**File**: `tests/end-to-end/fixtures/map/test.ts` (modified, +1/-1)
-```diff
-@@ -1,4 +1,4 @@
--import { expect, type Page, test } from "../../fixture";
-+import { expect, type Page, test } from "../../fixture.ts";
- 
- const PARIS_WITHOUT_ITS_LONGITUDE = "48.85,";
- const NOT_COORDINATES = "somewhere nice";
-```
-
-**File**: `tests/end-to-end/package.json` (modified, +1/-0)
-```diff
-@@ -1,6 +1,7 @@
- {
-   "name": "end-to-end",
-   "version": "1.0.0",
-+  "type": "module",
-   "description": "",
-   "main": "index.js",
-   "scripts": {
-```
-
-**File**: `tsconfig.json` (modified, +11/-1)
-```diff
-@@ -6,9 +6,19 @@
-     "moduleResolution": "bundler",
-     "noEmit": true,
-     "allowImportingTsExtensions": true,
-+    "erasableSyntaxOnly": true,
-+    "isolatedModules": true,
-+    "verbatimModuleSyntax": true,
-     "strict": true,
-+    "noImplicitOverride": true,
-+    "noFallthroughCasesInSwitch": true,
-+    "noUnusedLocals": true,
-+    "noUnusedParameters": true,
-+    "allowUnreachableCode": false,
-+    "allowUnusedLabels": false,
-     "noImplicitAny": false,
--    "types": []
-+    "types": [],
-+    "noImplicitReturns": true
-   },
-   "include": ["frontend/src"]
- }
-```
-
----
-
-### Incident Patch 6: `89369dcb` (2026-09-29)
-**Commit Message**: fix(chart) :: fallback to default palette on unknown colour
-
-Before unmatched colours reached ApexCharts as undefined and fell back to white (often on a white background).
-
-Now unknown colours are dropped and SQLPage falls back to the default palette.
-
-**File**: `frontend/src/apexcharts.js` (modified, +1/-1)
-```diff
-@@ -131,7 +131,7 @@ const sqlpage_chart = (() => {
-     if (data.ymax == null) data.ymax = undefined;
- 
-     const palette = [
--      ...data.colors.filter((c) => c).map((c) => colorNames[c]),
-+      ...data.colors.map(named_color).filter((c) => c !== undefined),
-       ...tblrColors.map(([_, dark, light]) => (isDarkTheme ? dark : light)),
-       ...tblrColors.map(([_, dark, light]) => (isDarkTheme ? light : dark)),
+ #[actix_web::test]
+ async fn test_concurrent_requests() {
+     let components = [
+         "table", "form", "card", "datagrid", "hero", "list", "timeline",
      ];
-```
-
-**File**: `tests/end-to-end/fixtures/chart/test.ts` (modified, +10/-0)
-```diff
-@@ -487,6 +487,16 @@ test("keeps the color of the series when a row names a color SQLPage does not kn
-   expect(fills(unknown)).toEqual(fills(plain));
- });
+-    let app_data = make_app_data_from_config(test_config()).await;
++    let app_data = crate::common::make_app_data().await;
+     let reqs = (0..64)
+         .map(|i| {
+             let component = components[i % components.len()];
+-            req_path_with_app_data(
++            response_with_data(
+                 format!("/tests/components/any_component.sql?component={component}"),
+                 app_data.clone(),
+             )
+@@ -28,12 +65,8 @@ async fn test_concurrent_requests() {
+     for result in results {
+         let resp = result.unwrap();
+         assert_eq!(resp.status(), StatusCode::OK);
+-        let body = test::read_body(resp).await;
+-        assert!(
+-            body.starts_with(b"<!DOCTYPE html>"),
+-            "Expected html doctype"
+-        );
+-        let body = String::from_utf8(body.to_vec()).unwrap();
++        let body = crate::common::read_body_string(resp).await;
++        assert!(body.starts_with("<!DOCTYPE html>"), "Expected html doctype");
+         assert!(
+             body.contains("It works !"),
+             "Expected to contain: It works !, but got: {body}"
+@@ -44,11 +77,9 @@ async fn test_concurrent_requests() {
  
-+test("keeps the default palette when the chart names a color SQLPage does not know", async ({
-+  page,
-+}) => {
-+  const plain = await renderChart(page, "uncolored-bar");
-+  const unknown = await renderChart(page, "unknown-chart-color");
-+
-+  expect(unknown.failures).toEqual([]);
-+  expect(fills(unknown)).toEqual(fills(plain));
-+});
-+
- test("renders series named after built-in JavaScript properties", async ({
-   page,
- }) => {
-```
-
-**File**: `tests/end-to-end/fixtures/chart/unknown-chart-color.sql` (added, +2/-0)
-```diff
-@@ -0,0 +1,2 @@
-+SELECT 'chart' AS component, 'test-chart' AS id, 'Chart test fixture' AS title, 'bar' AS type, 'chartreuse' AS color, 4 AS marker;
-+WITH points(series, x, y) AS (VALUES ('A', 'Q1', 1), ('A', 'Q2', 2)) SELECT * FROM points;
-```
-
----
-
-### Incident Patch 7: `14e175e1` (2026-09-29)
-**Commit Message**: fix(chart) :: drop unreachable branch (#1506)
-
-The check `> 10` and NaN (a 3 char string) cannot both hold at the same time.
-
-Removes the branch and sets `maximumFractionDigits: 2`.
-
-**File**: `frontend/src/apexcharts.js` (modified, +3/-4)
-```diff
-@@ -281,10 +281,9 @@ const sqlpage_chart = (() => {
-                 return d.toLocaleDateString();
-               return d.toLocaleString();
-             }
--            const str_val = value.toLocaleString();
--            if (str_val.length > 10 && Number.isNaN(value))
--              return value.toFixed(2);
--            return str_val;
-+            return value.toLocaleString(undefined, {
-+              maximumFractionDigits: 2,
-+            });
-           },
-         },
-       },
-```
-
----
-
-### Incident Patch 8: `7aa9ec0d` (2026-09-29)
-**Commit Message**: fix(frontend) :: remove floating promises
-
-Enables `noFloatingPromises` and adds logging for the two missing promises.
-
-**File**: `biome.json` (modified, +7/-0)
-```diff
-@@ -20,5 +20,12 @@
-     "enabled": true,
-     "useIgnoreFile": true,
-     "clientKind": "git"
-+  },
-+  "linter": {
-+    "rules": {
-+      "nursery": {
-+        "noFloatingPromises": "error"
-+      }
-+    }
-   }
- }
-```
-
-**File**: `frontend/src/apexcharts.js` (modified, +1/-1)
-```diff
-@@ -306,7 +306,7 @@ const sqlpage_chart = (() => {
-       chartContainer,
-       /** @type {import("apexcharts").ApexOptions} */ (options),
-     );
--    chart.render();
-+    chart.render().catch(console.error);
-     if (window.charts) window.charts.push(chart);
-     else window.charts = [chart];
-     c.removeAttribute("data-pre-init");
-```
-
-**File**: `frontend/src/sqlpage.js` (modified, +4/-0)
-```diff
-@@ -32,6 +32,10 @@ function sqlpage_card() {
-           bubbles: true,
-         });
-         c.dispatchEvent(fragLoadedEvt);
-+      })
-+      .catch((e) => {
-+        console.error(e);
-+        c.querySelector(".card-loading-placeholder")?.remove();
-       });
-   }
- }
-```
-
----
-
-### Incident Patch 9: `664be117` (2026-09-29)
-**Commit Message**: fix(frontend) :: stop cascading failure on broken table
-
-Charts and select dropdowns setup is wrapped in a try/catch to avoid one failure from taking everything down.
-
-Now table has this too.
-
-**File**: `frontend/src/sqlpage.js` (modified, +5/-1)
-```diff
-@@ -176,7 +176,11 @@ function sqlpage_table() {
-   const tables = document.querySelectorAll("[data-pre-init=table]");
-   for (const r of tables) {
-     r.removeAttribute("data-pre-init");
--    setup_table(r);
-+    try {
-+      setup_table(r);
-+    } catch (e) {
-+      console.error(e);
-+    }
-   }
- }
+ #[actix_web::test]
+ async fn test_datagrid_description_presence_controls_placeholder() {
+-    let resp = req_path("/tests/components/datagrid_icon_only.sql")
+-        .await
+-        .unwrap();
++    let resp = response_for("/tests/components/datagrid_icon_only.sql").await;
+     assert_eq!(resp.status(), StatusCode::OK);
+-    let body = String::from_utf8(test::read_body(resp).await.to_vec()).unwrap();
++    let body = crate::common::read_body_string(resp).await;
+     assert!(body.contains("Facebook"), "{body}");
+     assert!(body.contains("Empty"), "{body}");
+     assert!(body.contains("Missing"), "{body}");
+@@ -66,50 +97,23 @@ async fn test_routing_with_db_fs() {
+     config.site_prefix = "/prefix/".to_string();
+     let state = AppState::init(&config).await.unwrap();
  
+-    if matches!(
+-        state.db.info.database_type,
+-        webserver::database::SupportedDatabase::Oracle
++    if crate::common::supports_database(
++        &state.db,
++        &[webserver::database::SupportedDatabase::Oracle],
+     ) {
+         return;
+     }
+ 
+-    let create_table_sql =
+-        sqlpage::filesystem::DbFsQueries::get_create_table_sql(state.db.info.database_type);
+-    // Other tests share this database, so never drop a table their initialized state may use.
+-    if state
+-        .db
+-        .connection
+-        .execute("SELECT 1 FROM sqlpage_files WHERE 1 = 0")
+-        .await
+-        .is_err()
+-    {
+-        state.db.connection.execute(create_table_sql).await.unwrap();
+-    }
+-    state
+-        .db
+-        .connection
+-        .execute("DELETE FROM sqlpage_files WHERE path = 'on_db.sql'")
+-        .await
+-        .unwrap();
+-    let insert_sql = format!(
+-        "INSERT INTO sqlpage_files(path, contents) VALUES ('on_db.sql', {})",
+-        make_placeholder(state.db.info.kind, 1)
+-    );
+-    sqlx::query::query(&insert_sql)
+-        .bind("select ''text'' as component, ''Hi from db !'' AS contents;".as_bytes())
+-        .execute(&state.db.connection)
+-        .await
+-        .unwrap();
+-
+```
+
+**File**: `tests/core/path_aliases.rs` (modified, +2/-4)
+```diff
+@@ -1,11 +1,9 @@
+ use actix_web::{body::to_bytes, http::StatusCode};
+-use sqlpage::webserver::http::main_handler;
+ 
+-use crate::common::get_request_to;
++use crate::common::{response_with, test_config};
+ 
+ async fn assert_sql_response(path: &str, expected_status: StatusCode) {
+-    let request = get_request_to(path).await.unwrap().to_srv_request();
+-    let response = match main_handler(request).await {
++    let response = match response_with(path, test_config()).await {
+         Ok(response) => response.into_parts().1,
+         Err(error) => error.error_response(),
+     };
 ```
 
 ---
 
-### Incident Patch 10: `1b2d81a3` (2026-09-25)
-**Commit Message**: fix(server) :: report the bounded port (#1489)
+### Incident Patch 2: `452bd771` (2026-10-13)
+**Commit Message**: Support prefix and suffix row-level parameters when using a 'select' element in a form (#1549)
 
-Before the startup banner was built from the configuration not the one SQLPage was bound to. Setting `port` to `0`, which asks the operating system for a free port, announced `http://127.0.0.1:0`.
+* Added prefix and suffix to 'select' form field
 
-Now it reports `HttpServer::addrs()`.
+Added support for prefix text, prefix icon and suffix text to form component when 'select' is the field type
+
+* Update CHANGELOG.md
+
+* Added a test for the 'prefix' row-level parameter on 'select' form field
+
+* Added a prefix icon to the 'select' form example
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -7,6 +7,7 @@
- - OIDC now checks both normalized request paths and their resolved SQL files against protected prefixes, closing authentication bypasses through path and clean-URL aliases. Nonce verification also rejects provider-returned Argon2 parameters outside SQLPage's fixed low-cost profile before hashing.
+@@ -15,6 +15,7 @@
  - `cargo install sqlpage`, and any build from the crates.io tarball, no longer needs internet access. The browser libraries now come from npm and ship inside the published crate. Building from a git checkout needs `npm ci` first. Pre-built binaries and the Docker image are unaffected.
  - The browser libraries are now part of the browser scripts. SQLPage no longer defines the `window.tabler` and `window.bootstrap` globals; custom scripts that reached for them should load their own copy of Bootstrap.
-+- The startup message now reports the address the server actually bound instead of the one it was configured with.
+ - The startup message now reports the address the server actually bound instead of the one it was configured with.
++- Inside a form component you can now use the `prefix`, `prefix_icon` and `suffix` row-level parameters when `type` is `select`. 
  
  ## v0.46.3
  
 ```
 
-**File**: `src/webserver/http.rs` (modified, +48/-16)
+**File**: `examples/official-site/sqlpage/migrations/01_documentation.sql` (modified, +1/-0)
 ```diff
-@@ -40,6 +40,7 @@ use chrono::{DateTime, Utc};
- use futures_util::StreamExt;
- use futures_util::stream::Stream;
- use std::borrow::Cow;
-+use std::net::SocketAddr;
- use std::path::PathBuf;
- use std::pin::Pin;
- use std::sync::Arc;
-@@ -680,7 +681,7 @@ pub async fn run_server(config: &AppConfig, state: AppState) -> anyhow::Result<(
-         }
-     }
- 
--    log_welcome_message(config);
-+    log_welcome_message(config, &server.addrs());
-     server
-         .run()
-         .await
-@@ -691,25 +692,33 @@ pub async fn run_server(config: &AppConfig, state: AppState) -> anyhow::Result<(
-     Ok(())
- }
- 
--fn log_welcome_message(config: &AppConfig) {
-+fn website_url(bound_to: SocketAddr) -> String {
-+    let port = bound_to.port();
-+    let ip = bound_to.ip();
-+    if ip.is_unspecified() {
-+        format!(
-+            "http://localhost:{port}\n\
-+            (also accessible from other devices using your IP address)"
-+        )
-+    } else if ip.is_ipv6() {
-+        format!("http://[{ip}]:{port}")
-+    } else {
-+        format!("http://{ip}:{port}")
-+    }
-+}
-+
-+fn log_welcome_message(config: &AppConfig, bound_to: &[SocketAddr]) {
-     let address_message = if let Some(unix_socket) = &config.unix_socket {
-         format!("unix socket \"{}\"", unix_socket.display())
-     } else if let Some(domain) = &config.https_domain {
-         format!("https://{domain}")
-     } else {
--        let listen_on = config.listen_on();
--        let port = listen_on.port();
--        let ip = listen_on.ip();
--        if ip.is_unspecified() {
--            format!(
--                "http://localhost:{port}\n\
--            (also accessible from other devices using your IP address)"
--            )
--        } else if ip.is_ipv6() {
--            format!("http://[{ip}]:{port}")
--        } else {
--            format!("http://{ip}:{port}")
--        }
-+        bound_to
-+            .iter()
-+            .copied()
-+            .map(website_url)
-+            .collect::<Vec<String>>()
-+            .join("\n")
-     };
- 
-     let (sparkle, link, computer, rocket) = if cfg!(target_os = "windows") {
-@@ -747,10 +756,33 @@ fn bind_unix_socket_err(e: std::io::Error, unix_socket: &std::path::Path) -> any
- 
- #[cfg(test)]
- mod tests {
--    use super::{request_span_name, sql_execution_span_name};
-+    use super::{request_span_name, sql_execution_span_name, website_url};
-     use actix_web::test::TestRequest;
-     use std::path::Path;
- 
-+    #[test]
-+    fn website_url_reports_the_address_the_server_bound() {
-+        assert_eq!(
-+            website_url("127.0.0.1:34567".parse().unwrap()),
-+            "http://127.0.0.1:34567"
-+        );
-+    }
-+
-+    #[test]
-+    fn website_url_sends_an_unspecified_address_to_localhost() {
-+        assert!(
-+            website_url("0.0.0.0:8080".parse().unwrap()).starts_with("http://localhost:8080\n")
-+        );
-+    }
-+
-+    #[test]
-+    fn website_url_brackets_an_ipv6_address() {
-+        assert_eq!(
-+            website_url("[::1]:8080".parse().unwrap()),
-+            "http://[::1]:8080"
-+        );
-+    }
-+
-     #[test]
-     fn request_span_name_uses_request_path_when_no_matched_route_exists() {
-         let request = TestRequest::with_uri("/todos/42?filter=open").to_srv_request();
+@@ -386,6 +386,7 @@ In SQLite, the query would look like
+ SELECT 
+     ''select'' as type,
+     ''Select a fruit...'' as empty_option,
++    ''cherry'' as prefix_icon,
+     json_group_array(json_object(
+         ''label'', name,
+         ''value'', id
+```
+
+**File**: `sqlpage/templates/form.handlebars` (modified, +24/-20)
+```diff
+@@ -87,26 +87,30 @@
+                         {{~#if value includeZero=true}}{{value}}{{/if~}}
+                         </textarea>
+                     {{~else~}}{{#if (eq type 'select')~}}
+-                        <select name="{{name}}" 
+-                            class="form-select {{class}}"
+-                        {{~#if id}} id="{{id}}" {{/if~}}
+-                        {{~#if required}} required="required" {{/if~}}
+-                        {{~#if autofocus}} autofocus {{/if~}}
+-                        {{~#if disabled}}disabled {{/if~}}
+-                        {{~#if multiple}} multiple {{/if~}}
+-                        {{~#if (or dropdown searchable options_source)}} 
+-                            data-pre-init="select-dropdown"
+-                            data-sqlpage-js="{{static_path 'tomselect.js'}}"
+-                        {{/if~}}
+-                        {{~#if options_source}} data-options_source="{{options_source}}" {{/if~}}
+-                        {{~#if placeholder}} placeholder="{{placeholder}}" {{/if~}}
+-                        {{~#if create_new}} data-create_new={{create_new}} {{/if~}}
+-                        >
+-                        {{#if empty_option}}<option value="">{{empty_option}}</option>{{/if}}
+-                        {{#each (parse_json options)}}
+-                            <option value="{{value}}" {{#if (or (loose_eq ../value value) selected)}}selected{{/if}}>{{label}}</option>
+-                        {{/each}}
+-                        </select>
++                        <div class="input-group">
++                            {{#if prefix_icon}}<span class="input-group-text">{{icon_img prefix_icon}}</span>{{/if}}
++                            {{#if prefix}}<span class="input-group-text">{{prefix}}</span>{{/if}}
++                            <select name="{{name}}"  class="form-select {{class}}"
++                                {{~#if id}} id="{{id}}" {{/if~}}
++                                {{~#if required}} required="required" {{/if~}}
++                                {{~#if autofocus}} autofocus {{/if~}}
++                                {{~#if disabled}}disabled {{/if~}}
++                                {{~#if multiple}} multiple {{/if~}}
++                                {{~#if (or dropdown searchable options_source)}} 
++                                    data-pre-init="select-dropdown"
++                                    data-sqlpage-js="{{static_path 'tomselect.js'}}"
++                                {{/if~}}
++                                {{~#if options_source}} data-options_source="{{options_source}}" {{/if~}}
++                                {{~#if placeholder}} placeholder="{{placeholder}}" {{/if~}}
++                                {{~#if create_new}} data-create_new={{create_new}} {{/if~}}
++                                >
++                                {{#if empty_option}}<option value="">{{empty_option}}</option>{{/if}}
++                                {{#each (parse_json options)}}
++                                    <option value="{{value}}" {{#if (or (loose_eq ../value value) selected)}}selected{{/if}}>{{label}}</option>
++                                {{/each}}
++                            </select>
++                            {{#if suffix}}<span class="input-group-text">{{suffix}}</span>{{/if}}
++                        </div>
+                     {{else}}
+                         <div class="input-group">
+                             {{#if prefix_icon}}<span class="input-group-text">{{icon_img prefix_icon}}</span>{{/if}}
+```
+
+**File**: `tests/sql_test_files/component_rendering/form_select_uses_prefix.sql` (added, +4/-0)
+```diff
+@@ -0,0 +1,4 @@
++select 'form' as component;
++select 'select' as type,
++    'It works !' as prefix,
++    '[{"label": "Orange", "value": 0}, {"label": "Apple", "value": 1}, {"label": "Banana", "value": 3}]' as options;
 ```
 
 ---
 
-### Incident Patch 11: `53fd466a` (2026-09-25)
-**Commit Message**: fix(release) :: update macOS binary to Apple Silicon (#1488)
+### Incident Patch 3: `3b33609f` (2026-10-17)
+**Commit Message**: Gate selective CI with one required result check (#1553)
 
-* fix(release) :: update macOS binary to Apple Silicon
-
-Before `sqlpage-macos.tgz` was built for x86_64 and relied on Apple's Rosetta translation layer to run it.
-
-As of macOS 26, [Apple Silicon macs no longer ship with Rosetta](https://developer.apple.com/news/?id=w5ngl9k2).
-
-As of macOS 27, [Apple drops drops support for Intel macs](https://9to5mac.com/2026/09/01/apple-tells-mac-app-store-developers-they-can-now-drop-intel-support/).
-
-So now SQLPage ships arm64 tarballs to continue working on macs running in 2027.
-
-* docs: guide macOS users through Homebrew installation
-
----------
-
-Co-authored-by: Ophir Lojkine <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/release.yml` (modified, +1/-1)
+**File**: `.github/workflows/ci.yml` (modified, +58/-1)
 ```diff
-@@ -26,7 +26,7 @@ jobs:
-             target: x86_64-pc-windows-msvc
-             features: ""
-           - os: macos-latest
--            target: x86_64-apple-darwin
-+            target: aarch64-apple-darwin
-             features: "odbc-static"
+@@ -28,7 +28,31 @@ env:
+   REGISTRY_IMAGE: lovasoa/sqlpage
+ 
+ jobs:
++  ci_selection:
++    runs-on: ubuntu-latest
++    permissions:
++      pull-requests: read
++    outputs:
++      # Only a confirmed excluded-files-only PR may skip the core jobs.
++      full: ${{ github.event_name != 'pull_request' || steps.paths.outputs.full != 'false' }}
++    steps:
++      - id: paths
++        name: Select test jobs
++        # The PR files API is limited to 3000 files; larger PRs select core jobs.
++        if: github.event_name == 'pull_request' && github.event.pull_request.changed_files <= 3000
++        uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
++        with:
++          predicate-quantifier: every
++          filters: |
++            full:
++              - '!docs/**'
++              - '!README.md'
++              - '!.github/workflows/release.yml'
++              - '!.github/workflows/official-site.yml'
++
+   compile_and_lint:
++    needs: ci_selection
++    if: needs.ci_selection.outputs.full == 'true'
+     runs-on: ubuntu-latest
      steps:
        - uses: actions/checkout@v7
-```
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -1,6 +1,7 @@
- # CHANGELOG.md
+@@ -62,6 +86,8 @@ jobs:
+           path: "target/debug/sqlpage"
  
- ## v0.47.0 (unreleased)
-+- **Mac users:** the downloadable `sqlpage-macos.tgz` now runs natively on Apple silicon (M-series Macs) and no longer runs on Intel Macs. Homebrew remains the recommended and easiest installation method. On an Intel Mac, [install Homebrew](https://brew.sh/) if needed, then run `brew install sqlpage` (or `brew update` followed by `brew upgrade sqlpage` if you already installed it with Homebrew). Open Terminal in your existing website folder and run `sqlpage` instead of `./sqlpage.bin`; keep your SQL files, database, and `sqlpage` configuration folder in place. Intel installations may build from source and take longer; see the [macOS installation guide](https://sql-page.com/your-first-sql-website/?os=macos#download) for setup and older macOS requirements.
- - Updated sqlx-oldapi to v0.6.57 to fix SQL Server fallback expressions such as `ISNULL($missing, 'default')` truncating defaults or failing for date values when the bound variable is `NULL`.
- - Fixed MSSQL `JSON_OBJECT('key': value)` expressions being rejected by SQLPage's parser, including when used in `SET` statements or nested in `sqlpage.*` function calls.
- - OIDC now checks both normalized request paths and their resolved SQL files against protected prefixes, closing authentication bypasses through path and clean-URL aliases. Nonce verification also rejects provider-returned Argon2 parameters outside SQLPage's fixed low-cost profile before hashing.
-```
-
-**File**: `README.md` (modified, +9/-5)
-```diff
-@@ -143,8 +143,9 @@ select
- 
- ### Using executables
- 
--The easiest way to get started is to download the latest release from the
-+Download the latest release from the
- [releases page](https://github.com/sqlpage/SQLPage/releases).
-+On macOS, [Homebrew](#on-macos-with-homebrew) is the recommended and easiest installation method.
- 
- - Download the binary that corresponds to your operating system (linux, macos, or windows).
- - Uncompress it: `tar -xzf sqlpage-*.tgz`
-@@ -172,21 +173,24 @@ To run on a server, you can use [the docker image](https://hub.docker.com/r/lova
-     COPY --from=lovasoa/sqlpage:main /usr/local/bin/sqlpage /usr/local/bin/sqlpage
-     ``` 
- 
--We provide compiled binaries only for the x86_64 architecture, but provide docker images for other architectures, including arm64 and armv7. If you want to run SQLPage on a Raspberry Pi or 
-+We provide release binaries for Linux and Windows on x86_64, and macOS on Apple silicon (arm64). Intel Mac users should use [Homebrew](#on-macos-with-homebrew). We also provide docker images for arm64 and armv7. If you want to run SQLPage on a Raspberry Pi or
- a cheaper ARM cloud instance, using the docker image is the easiest way to do it.
- 
- ### Hosting
- 
- For managed SQLPage hosting, use [DataPage](https://datapage.app). To run SQLPage yourself on a VPS, [Hostinger](https://www.hostg.xyz/aff_c?offer_id=815&aff_id=243720&url_id=6808) is another option; this is an affiliate link, so we receive a small commission if you buy through it.
- 
--### On Mac OS, with homebrew
-+### On macOS, with Homebrew
- 
--An alternative for Mac OS users is to use [SQLPage's homebrew package](https://formulae.brew.sh/formula/sqlpage).
-+[SQLPage's Homebrew package](https://formulae.brew.sh/formula/sqlpage) is the recommended way to install SQLPage on macOS, including Intel Macs.
- 
--- [Install homebrew](https://brew.sh/)
-+- [Install Homebrew](https://brew.sh/) and follow the installer's instructions to add `brew` to your PATH.
- - In a terminal, run the following commands:
-   - `brew install sqlpage`
- 
-+To update an existing Homebrew installation, run `brew update` followed by `brew upgrade sqlpage`.
-+Run `sqlpage` from your website folder. If you previously downloaded `sqlpage.bin`, use `sqlpage` instead of `./sqlpage.bin`; your website files and configuration stay in place.
-+Intel Macs may need to build from source. See the [macOS installation guide](https://sql-page.com/your-first-sql-website/?os=macos#download) for details and older macOS requirements.
- 
- ### ODBC Setup
- 
-```
-
-**File**: `examples/official-site/your-first-sql-website/tutorial-install-macos.md` (modified, +21/-6)
-```diff
-@@ -1,18 +1,33 @@
--# Download SQLPage for Mac OS
-+# Install SQLPage on macOS
- 
--On Mac OS, Apple blocks the execution of downloaded files by default. The easiest way to run SQLPage is to use [Homebrew](https://brew.sh).
--Open a terminal and run the following commands:
-+The recommended and easiest way to install SQLPage on macOS is [Homebrew](https://brew.sh/), including on Intel Macs.
-+If you do not already have Homebrew, open Terminal and run:
- 
- ```sh
- /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-+```
-+
-+Follow the installer's **Next steps** to add Homebrew to your PATH. Then install SQLPage:
-+
-+```sh
- brew install sqlpage
--sqlpage
- ```
- 
-+Open Terminal in your website folder and run `sqlpage` to start your website.
-+To update SQLPage later, run `brew update` followed by `brew upgrade sqlpage`.
-+
-+**Using an Intel Mac?** Starting with SQLPage v0.47.0, the `sqlpage-macos.tgz` download is for Apple silicon (M-series Macs) only.
-+Use Homebrew on Intel Macs. If you previously used the downloaded executable, keep your SQL files, database, and `sqlpage` configuration folder in place and run `sqlpage` from the same website folder instead of `./sqlpage.bin`.
-+If SQLPage is already installed through Homebrew, use the upgrade commands above.
-+
-+Homebrew may compile SQLPage and its dependencies from source on Intel Macs, so installation can take longer.
-+Source builds require Apple's Command Line Tools, which you can install with `xcode-select --install`.
-+Homebrew classifies Intel Macs as Tier 3 (limited support); older macOS versions also have restrictions. Check [Homebrew's macOS requirements](https://docs.brew.sh/Installation#macos-requirements) if installation fails.
-+
- > **Note**: Advanced users can alternatively install SQLPage using
--> [the precompiled binaries](https://github.com/sqlpage/SQLPage/releases/latest),
-+> [the precompiled binaries for Apple silicon](https://github.com/sqlpage/SQLPage/releases/latest),
- > [docker](https://hub.docker.com/repository/docker/lovasoa/SQLPage/general),
- > [nix](https://search.nixos.org/packages?channel=unstable&show=sqlpage),
- > or [cargo](https://crates.io/crates/sqlpage).
- 
--> **Not on Mac OS?** See the instructions for [Windows](?os=windows#download), or for [Other Systems](?os=any#download).
-\ No newline at end of file
-+> **Not on Mac OS?** See the instructions for [Windows](?os=windows#download), or for [Other Systems](?os=any#download).
-```
-
----
-
-### Incident Patch 12: `70359bb4` (2026-09-24)
-**Commit Message**: fix(ci): wait for Docker image before Hurl tests (#1495)
-
-**File**: `.github/workflows/ci.yml` (modified, +1/-0)
-```diff
-@@ -372,6 +372,7 @@ jobs:
+   published_crate:
++    needs: ci_selection
++    if: needs.ci_selection.outputs.full == 'true'
      runs-on: ubuntu-latest
-     timeout-minutes: 15
-     needs:
-+      - docker_build
-       - hurl_examples
-     strategy:
-       fail-fast: false
-```
-
----
-
-### Incident Patch 13: `4bbc429c` (2026-09-24)
-**Commit Message**: fix(ci) :: refactor image build step to include amd64
-
-`docker_build_amd64_minimal` was a copy of `docker_build` but for amd64 as it does a few extra things (1) doesn't need QEMU, (2) builds a tarball for Hurl testing, and (3) some extra cache scope.
-
-Now it joins the `docker_build` matrix with the flag `export: true` to gate the extra steps needed for amd64. This cleans up the CI and makes upgrading other platforms to also export a feature flag change rather than a CI refactor.
-
-**File**: `.github/workflows/ci.yml` (modified, +19/-83)
-```diff
-@@ -231,11 +231,16 @@ jobs:
+     steps:
+       - uses: actions/checkout@v7
+@@ -146,6 +172,8 @@ jobs:
+           MALLOC_PERTURB_: 10
+ 
+   windows_test:
++    needs: ci_selection
++    if: needs.ci_selection.outputs.full == 'true'
+     runs-on: windows-latest
+     steps:
+       - uses: actions/checkout@v7
+@@ -210,6 +238,8 @@ jobs:
            retention-days: 30
  
    docker_build:
-+    name: docker_build (${{ matrix.platform }}, ${{ matrix.variant }})
++    needs: ci_selection
++    if: needs.ci_selection.outputs.full == 'true'
+     name: docker_build (${{ matrix.platform }}, ${{ matrix.variant }})
      runs-on: ubuntu-latest
      strategy:
-       fail-fast: false
-       matrix:
-         include:
-+          - platform: linux/amd64
-+            variant: minimal
-+            tag_suffix: -linux-amd64
-+            export: true
-           - platform: linux/arm/v7
-             variant: minimal
-             tag_suffix: -linux-arm-v7
-@@ -261,6 +266,7 @@ jobs:
+@@ -331,6 +361,8 @@ jobs:
+           if-no-files-found: error
+           retention-days: 1
+   hurl_examples:
++    needs: ci_selection
++    if: needs.ci_selection.outputs.full == 'true'
+     runs-on: ubuntu-latest
+     permissions:
+       contents: read
+@@ -393,7 +425,7 @@ jobs:
+   hurl:
+     name: hurl (${{ matrix.example }})
+     runs-on: ubuntu-latest
+-    if: ${{ needs.hurl_examples.outputs.examples != '[]' }}
++    if: ${{ needs.hurl_examples.result == 'success' && needs.hurl_examples.outputs.examples != '[]' }}
+     timeout-minutes: 15
+     needs:
+       - docker_build
+@@ -433,6 +465,31 @@ jobs:
+       - name: Run example Hurl test
+         run: scripts/test-examples-hurl.sh "${{ matrix.example }}"
  
-           recipe_hash="${{ hashFiles('Dockerfile', '.cargo/**', 'Cargo.toml', 'Cargo.lock', 'build.rs', 'scripts/**', 'sqlpage/**', 'frontend/src/**', 'package.json', 'package-lock.json') }}"
-           {
-+            echo "artifact=sqlpage-${ref_scope}${{ matrix.tag_suffix }}-hurl-${recipe_hash}"
-             echo "current=sqlpage-${ref_scope}${{ matrix.tag_suffix }}-${recipe_hash}"
-             echo "main=sqlpage-main${{ matrix.tag_suffix }}-${recipe_hash}"
-           } >> "$GITHUB_OUTPUT"
-@@ -273,6 +279,7 @@ jobs:
-           labels: |
-             org.opencontainers.image.created=1970-01-01T00:00:00Z
-       - name: Set up QEMU
-+        if: matrix.platform != 'linux/amd64'
-         uses: docker/setup-qemu-action@v4
-       - name: Set up Docker Buildx
-         uses: docker/setup-buildx-action@v4
-@@ -282,85 +289,16 @@ jobs:
-         with:
-           username: ${{ env.REGISTRY_USERNAME }}
-           password: ${{ secrets.DOCKERHUB_TOKEN }}
--      - name: Build and push by digest
--        id: build
-+      # The Hurl examples run against a real image, so the one platform they use
-+      # is also exported as a tarball instead of only being pushed by digest.
-+      - name: Build image for Hurl examples
-+        if: matrix.export
-         uses: docker/build-push-action@v7
-         with:
--          # Use BuildKit's Git context instead of the mutable runner workspace.
--          # The dependency cache should be keyed by committed source, not by a
--          # per-job local context stream.
-           context: "{{defaultContext}}"
-           platforms: ${{ matrix.platform }}
-           target: ${{ matrix.variant }}
-           labels: ${{ steps.meta.outputs.labels }}
--          push: ${{ github.event_name != 'pull_request' }}
--          tags: ${{ steps.meta.outputs.tags }}
--          cache-from: |
--            type=gha,scope=${{ steps.cache-scope.outputs.current }}
--            type=gha,scope=${{ steps.cache-scope.outputs.main }}
--            type=registry,ref=${{ env.REGISTRY_IMAGE }}:main${{ matrix.tag_suffix }}
--          cache-to: type=gha,scope=${{ steps.cache-scope.outputs.current }},mode=max
--      - name: Export digest
--        if: github.event_name != 'pull_request'
--        run: |
--          mkdir -p /tmp/digests
--          digest="${{ steps.build.outputs.digest }}"
--          touch "/tmp/digests/${digest#sha256:}"
--      - name: Upload digest
--        uses: actions/upload-artifact@v7
--        if: github.event_name != 'pull_request'
--        with:
--          name: digests-${{ matrix.variant }}${{ matrix.tag_suffix }}
--          path: /tmp/digests/*
--          if-no-files-found: error
--          retention-days: 1
--
--  docker_build_amd64_minimal:
--    name: docker_build (linux/amd64, minimal)
--    runs-on: ubuntu-latest
--    steps:
--      - name: Checkout
--        uses: actions/checkout@v7
--      - name: Docker meta
--        id: meta
--        uses: docker/metadata-action@v6
--        with:
--          images: ${{ env.REGISTRY_IMAGE }}
--          flavor: suffix=-linux-amd64
--          labels: |
--            org.opencontainers.image.created=1970-01-01T00:00:00Z
--      - name: Set up Docker Buildx
--        uses: docker/setup-buildx-action@v4
--      - id: cache-scope
--        name: Docker cache scope
--        run: |
--          ref_scope="main"
--          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
--            ref_scope="pr-${{ github.event.pull_request.number }}"
--          fi
--
--          recipe_hash="${{ hashFiles('Dockerfile', '.cargo/**', 'Cargo.toml', 'Cargo.lock', 'build.rs', 'scripts/**', 'sqlpage/**', 'frontend/src/**', 'package.json', 'package-lock.json') }}"
--          {
--            echo "artifact=sqlpage-${ref_scope}-linux-amd64-hurl-${recipe_hash}"
--            echo "current=sqlpage-${ref_scope}-linux-amd64-${recipe_hash}"
--            echo "main=sqlpage-main-linux-amd64-${recipe_hash}"
--          } >> "$GITHUB_OUTPUT"
--      - name: Login to Docker Hub
--        if: github.event_name != 'pull_request'
--        uses: docker/login-action@v4
--        with:
--          username: ${{ env.REGISTRY_USERNAME }}
--          password: ${{ secrets.DOCKERHUB_TOKEN }}
--      - name: Build image for Hurl examples
--        uses: docker/build-push-action@v7
--        with:
--          # Use BuildKit's Git context instead of the mutable runner workspace.
--          # The dependency cache should be keyed by committed source, not by a
--          # per-job local context stream.
--          context: "{{defaul
++  # Require this single check in branch protection instead of individual jobs.
++  ci_gate:
++    name: CI gate
++    if: always()
++    needs:
++      - ci_selection
++      - compile_and_lint
++      - published_crate
++      - test
++      - windows_test
++      - playwright
++      - docker_build
++      - hurl_examples
++      - hurl
++    runs-on: ubuntu-latest
++    timeout-minutes: 5
++    permissions:
++      contents: read
++    steps:
++      - uses: actions/checkout@v7
++      - name: Check selected job results
++        run: node scripts/check-ci-results.mjs
++        env:
++          NEEDS_JSON: ${{ toJSON(needs) }}
++
+   docker_push:
+     runs-on: ubuntu-latest
+     if: github.event_name == 'push'
 ```
 
----
-
-### Incident Patch 14: `754dbd72` (2026-09-24)
-**Commit Message**: fix: update sqlx for MSSQL NULL parameters (#1493)
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `scripts/check-ci-results.mjs` (added, +57/-0)
 ```diff
-@@ -1,6 +1,7 @@
- # CHANGELOG.md
- 
- ## v0.47.0 (unreleased)
-+- Updated sqlx-oldapi to v0.6.57 to fix SQL Server fallback expressions such as `ISNULL($missing, 'default')` truncating defaults or failing for date values when the bound variable is `NULL`.
- - Fixed MSSQL `JSON_OBJECT('key': value)` expressions being rejected by SQLPage's parser, including when used in `SET` statements or nested in `sqlpage.*` function calls.
- - OIDC now checks both normalized request paths and their resolved SQL files against protected prefixes, closing authentication bypasses through path and clean-URL aliases. Nonce verification also rejects provider-returned Argon2 parameters outside SQLPage's fixed low-cost profile before hashing.
- - `cargo install sqlpage`, and any build from the crates.io tarball, no longer needs internet access. The browser libraries now come from npm and ship inside the published crate. Building from a git checkout needs `npm ci` first. Pre-built binaries and the Docker image are unaffected.
+@@ -0,0 +1,57 @@
++// This always-run gate accepts only skips justified by successful selection.
++function fail(message) {
++  console.error(message);
++  process.exit(1);
++}
++
++let jobs;
++try {
++  jobs = JSON.parse(process.env.NEEDS_JSON ?? "");
++} catch {
++  fail("Missing or invalid CI job results.");
++}
++if (!jobs || typeof jobs !== "object" || Array.isArray(jobs))
++  fail("CI job results must be an object.");
++
++if (jobs.ci_selection?.result !== "success")
++  fail("CI change detection did not succeed.");
++const full = jobs.ci_selection.outputs?.full;
++if (full !== "true" && full !== "false")
++  fail("CI change detection returned an ambiguous selection.");
++
++for (const [name, job] of Object.entries(jobs)) {
++  if (!["success", "skipped"].includes(job?.result))
++    fail(`${name} did not pass: ${job?.result ?? "missing result"}.`);
++}
++
++if (full === "true") {
++  for (const name of [
++    "compile_and_lint",
++    "published_crate",
++    "test",
++    "windows_test",
++    "playwright",
++    "docker_build",
++    "hurl_examples",
++  ]) {
++    if (jobs[name]?.result !== "success")
++      fail(`Required job ${name} did not run successfully.`);
++  }
++
++  let examples;
++  try {
++    examples = JSON.parse(jobs.hurl_examples.outputs?.examples ?? "");
++  } catch {
++    fail("Hurl selection returned invalid JSON.");
++  }
++  if (
++    !Array.isArray(examples) ||
++    !examples.every((item) => typeof item === "string" && item.length > 0)
++  )
++    fail("Hurl selection must be an array of example names.");
++  const allowed = examples.length > 0 ? ["success"] : ["success", "skipped"];
++  if (!allowed.includes(jobs.hurl?.result))
++    fail("Selected Hurl tests did not run successfully.");
++}
++
++console.log("All selected CI jobs passed.");
 ```
 
-**File**: `Cargo.lock` (modified, +4/-4)
+**File**: `tests/js/ci_gate.spec.ts` (added, +121/-0)
 ```diff
-@@ -4606,9 +4606,9 @@ dependencies = [
- 
- [[package]]
- name = "sqlx-core-oldapi"
--version = "0.6.56"
-+version = "0.6.57"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "8e33eb18d1e750df8aef99361ee02e170562dff119108680bc9035e796cd2a84"
-+checksum = "a9cf228e0312c68be3bf5fe175305e28127a18a2d5231d1ed51888bfbbcfa8e9"
- dependencies = [
-  "ahash",
-  "atoi 2.0.0",
-@@ -4669,9 +4669,9 @@ dependencies = [
- 
- [[package]]
- name = "sqlx-rt-oldapi"
--version = "0.6.56"
-+version = "0.6.57"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1b8d629fed8792460ff39bb58cb154bfe181893ab9a51d0a3634950b35672a57"
-+checksum = "ef74464ebe407e3e2a81013ede45cb60ebb3e5fe23f771bd68e3d1941558d542"
- dependencies = [
-  "once_cell",
-  "tokio",
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -37,7 +37,7 @@ panic = "abort"
- codegen-units = 2
- 
- [dependencies]
--sqlx = { package = "sqlx-core-oldapi", version = "0.6.56", default-features = false, features = [
-+sqlx = { package = "sqlx-core-oldapi", version = "0.6.57", default-features = false, features = [
-     "any",
-     "runtime-tokio-rustls",
-     "migrate",
-```
-
-**File**: `tests/sql_test_files/data/database-specific/mssql/null_variable_fallback.sql` (added, +8/-0)
-```diff
-@@ -0,0 +1,8 @@
-+SELECT
-+    CONCAT(
-+        'isnull=[', ISNULL($missing, 'hello'),
-+        '] coalesce=[', COALESCE($missing, 'hello'),
-+        '] len=', LEN(ISNULL($missing, 'hello')),
-+        '; date_is_date=', ISDATE(ISNULL($missing_date, GETDATE()))
-+    ) AS actual,
-+    'isnull=[hello] coalesce=[hello] len=5; date_is_date=1' AS expected;
-```
-
----
-
-### Incident Patch 15: `9ad01bfd` (2026-09-24)
-**Commit Message**: Revise CHANGELOG.md update guidelines
-
-Clarify instructions for updating CHANGELOG.md to focus on user-visible changes only.
-
-**File**: `AGENTS.md` (modified, +1/-2)
-```diff
-@@ -88,8 +88,7 @@ pattern for the relevant area.
- - Document other user-visible behavior—SQL syntax extensions, variables, control flow, errors, uploads,
-   rendering, HTTP endpoints, performance, or deployment—in the corresponding official-site SQL page or
-   migration. Follow nearby migrations and keep examples executable and database-portable where possible.
--- Update `CHANGELOG.md` for user-visible changes, bug fixes, breaking changes, deprecations, and noteworthy
--  internal changes. Keep the entry concise and use the existing version/section conventions.
-+- Update `CHANGELOG.md` for user-visible changes only (new features, bug fixes, breaking changes, deprecations). Keep the entry concise and not too technical, focusing on the impact for users. Don't update the entry for a version that was already released (tagged).
- 
- ## Validation
- 
+@@ -0,0 +1,121 @@
++import assert from "node:assert/strict";
++import { spawnSync } from "node:child_process";
++import test from "node:test";
++import { fileURLToPath } from "node:url";
++
++type Job = { result: string; outputs?: Record<string, string> };
++const root = fileURLToPath(new URL("../../", import.meta.url));
++const coreJobs = [
++  "compile_and_lint",
++  "published_crate",
++  "test",
++  "windows_test",
++  "playwright",
++  "docker_build",
++  "hurl_examples",
++];
++
++function results(full = true, examples: string[] = []) {
++  const jobs: Record<string, Job> = Object.fromEntries(
++    coreJobs.map((name) => [name, { result: full ? "success" : "skipped" }]),
++  );
++  jobs.ci_selection = { result: "success", outputs: { full: String(full) } };
++  if (full)
++    jobs.hurl_examples = {
++      result: "success",
++      outputs: { examples: JSON.stringify(examples) },
++    };
++  jobs.hurl = { result: full && examples.length > 0 ? "success" : "skipped" };
++  return jobs;
++}
++
++function check(jobs: unknown) {
++  const run = spawnSync(process.execPath, ["scripts/check-ci-results.mjs"], {
++    cwd: root,
++    env: { ...process.env, NEEDS_JSON: JSON.stringify(jobs) },
++    encoding: "utf8",
++    timeout: 5_000,
++  });
++  assert.ifError(run.error);
++  assert.equal(run.signal, null, run.stderr);
++  return run.status;
++}
++
++test("CI gate accepts intentionally skipped suites for a docs-only PR", () => {
++  assert.equal(check(results(false)), 0);
++});
++
++test("CI gate accepts successful suites and an empty Hurl selection", () => {
++  assert.equal(check(results()), 0);
++});
++
++test("CI gate accepts the selected Hurl examples after they pass", () => {
++  assert.equal(check(results(true, ["examples/single sign on"])), 0);
++});
++
++for (const name of [...coreJobs, "ci_selection", "hurl"]) {
++  for (const result of ["failure", "cancelled"]) {
++    test(`CI gate blocks ${name} ${result}`, () => {
++      const jobs = results(true, ["examples/single sign on"]);
++      jobs[name] = { ...jobs[name], result };
++      assert.notEqual(check(jobs), 0);
++    });
++  }
++}
++
++for (const name of coreJobs) {
++  test(`CI gate blocks an unexpected ${name} skip`, () => {
++    const jobs = results();
++    jobs[name] = { ...jobs[name], result: "skipped" };
++    assert.notEqual(check(jobs), 0);
++  });
++}
++
++test("CI gate blocks skipped Hurl tests when examples were selected", () => {
++  const jobs = results(true, ["examples/single sign on"]);
++  jobs.hurl = { result: "skipped" };
++  assert.notEqual(check(jobs), 0);
++});
++
++test("CI gate blocks missing results from a required job", () => {
++  const jobs = results();
++  delete jobs.test;
++  assert.notEqual(check(jobs), 0);
++});
++
++for (const full of [undefined, "", "unknown"]) {
++  test(`CI gate blocks an ambiguous selection: ${String(full)}`, () => {
++    const jobs = results(false);
++    jobs.ci_selection = {
++      result: "success",
++      outputs: full === undefined ? {} : { full },
++    };
++    assert.notEqual(check(jobs), 0);
++  });
++}
++
++test("CI gate blocks a skipped change detector", () => {
++  const jobs = results(false);
++  jobs.ci_selection = { result: "skipped" };
++  assert.notEqual(check(jobs), 0);
++});
++
++for (const examples of ["", "invalid-json", "null", "{}", '[""]', "[true]"]) {
++  test(`CI gate blocks an invalid Hurl selection: ${examples}`, () => {
++    const jobs = results();
++    jobs.hurl_examples = { result: "success", outputs: { examples } };
++    assert.notEqual(check(jobs), 0);
++  });
++}
++
++test("CI gate rejects failed jobs even on a docs-only selection", () => {
++  const jobs = results(false);
++  jobs.test = { result: "failure" };
++  assert.notEqual(check(jobs), 0);
++});
++
++for (const jobs of [null, {}, [], { ci_selection: { result: "success" } }]) {
++  test(`CI gate blocks malformed or incomplete result data: ${JSON.stringify(jobs)}`, () => {
++    assert.notEqual(check(jobs), 0);
++  });
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1523** (2026-10-05): fix(ci) :: run CI on merge_group so the merge queue gets checks (@lovasoa)
-- **PR #1521** (closed): New component : unit_test (@olivierauverlot)
-- **PR #1516** (2026-10-01): refactor(chart) :: import and use 3rd party ApexCharts types (@81reap)
-- **PR #1515** (2026-09-30): fix(frontend) :: remove `any` types from `sqlpage.ts` (@81reap)
-- **PR #1514** (2026-09-30): refactor(map) :: import and use 3rd party Leaflet types (@81reap)
-- **PR #1513** (2026-10-05): Make chart tooltip values clickable (@lovasoa)
-- **PR #1511** (2026-09-30): fix(chart) :: name refrence line feilds explictly (@81reap)
-- **PR #1510** (2026-09-30): fix(chart) :: use typed `Map` instead of `Object.prototype` (@81reap)
+- **PR #1553** (2026-10-17): Run selected CI jobs behind one required gate (@lovasoa)
+- **PR #1552** (2026-10-17): Update the README video and fix required checks for docs-only PRs (@lovasoa)
+- **PR #1550** (2026-10-14): Add day-100 comparison to the official landing page (@lovasoa)
+- **PR #1549** (2026-10-13): Support prefix and suffix row-level parameters when using a 'select' element in a form (@francesco-cattoglio)
+- **PR #1548** (2026-10-13): Let the landing sculpture scroll natively in section grids (@lovasoa)
+- **PR #1547** (2026-10-12): Make Nix optional when using direnv (@lovasoa)
 
 ---
 
@@ -2541,3 +1933,35 @@ Clarify instructions for updating CHANGELOG.md to focus on user-visible changes 
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. test(suite) :: share helpers, close pools deterministically, slim OIDC harness (
+
+**RULE**:
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sqlpage/SQLPage. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `250a8989`: test(suite) :: share helpers, close pools deterministically, slim OIDC harness (#1529). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+            test_args: --test-threads=2
+        run: scripts/run-test-binaries.sh ${{ matrix.test_args }}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+        run: scripts/run-test-binaries.sh
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `250a8989` are properly handled with clean fallback behavior.

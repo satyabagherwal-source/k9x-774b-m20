@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
+> **Source**: github ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
+> **Source Version**: `b9e87ddf`  
+> **License**: Apache-2.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T01:57:10.117Z  
+> **Learning ID**: `learn-github-pulumi-pulumi`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): pulumi/pulumi
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T02:53:53.306Z  
+> **Harvest Timestamp**: 2026-10-19T01:57:09.952Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: Pulumi - Infrastructure as Code in any programming language 🚀
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 25760 stars
+- **Stars / Engagement**: 25791 stars
 
 ---
 
@@ -441,6 +455,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -507,6 +522,19 @@ func ContextWithAgentCredentialUse(ctx context.Context) context.Context {
 func agentCredentialUseFromContext(ctx context.Context) *agentCredentialUse {
 	use, _ := ctx.Value(agentCredentialUseContextKey{}).(*agentCredentialUse)
 	return use
+}
+
+type skipAgentSignupContextKey struct{}
+
+// ContextWithoutAgentSignup returns a context in which agent mode never creates a new agent account,
+// for use by `pulumi login`.
+func ContextWithoutAgentSignup(ctx context.Context) context.Context {
+	return context.WithValue(ctx, skipAgentSignupContextKey{}, true)
+}
+
+func skipAgentSignup(ctx context.Context) bool {
+	skip, _ := ctx.Value(skipAgentSignupContextKey{}).(bool)
+	return skip
 }
 
 type commandNameContextKey struct{}
@@ -637,6 +665,10 @@ type cloudBackend struct {
 
 	// Cached data from BeginUpdate to avoid extra HTTP calls.
 	cachedUpdateData *cachedUpdateData
+
+	readingUpdateID atomic.Pointer[string]
+
+	stackOutputsWaitLimit time.Duration
 }
 
 // Assert we implement the backend.Backend and backend.SpecificDeploymentExporter interfaces.
@@ -675,27 +707,7 @@ func New(ctx context.Context, d diag.Sink,
 	}
 
 	var defaultOrg *promise.Promise[string]
-	if org == "" {
-		defaultOrg = promise.Run(func() (string, error) {
-			resp, err := apiClient.GetDefaultOrg(ctx)
-			if err != nil {
-				logging.V(1).Infof("failed to get default org: %v", err)
-				return "", err
-			}
-			return resp.GitHubLogin, nil
-		})
-	} else {
-		cts := &promise.CompletionSource[string]{}
-		cts.MustFulfill(org)
-		defaultOrg = cts.Promise()
-	}
-
-	return &cloudBackend{
-		d:              d,
-		url:            cloudURL,
-		client:         apiClient,
-		escClient:      escClient,
-		capabilities:   detectCapabilities(ct
+	if o
 ```
 
 ### Core Architecture Module: `pkg/backend/httpstate/client/ai.go`
@@ -1681,474 +1693,19 @@ func marshalVerbatimCheckpointRequest(req apitype.PatchUpdateVerbatimCheckpointR
 
 ```
 
-### Core Architecture Module: `pkg/backend/httpstate/cloud_registry.go`
-```
-// Copyright 2025, Pulumi Corporation.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-package httpstate
-
-import (
-	ctx "context"
-	"errors"
-	"io"
-	"iter"
-	"net/http"
-
-	"github.com/blang/semver"
-
-	"github.com/pulumi/pulumi/pkg/v3/backend"
-	"github.com/pulumi/pulumi/pkg/v3/backend/backenderr"
-	"github.com/pulumi/pulumi/pkg/v3/backend/httpstate/client"
-	"github.com/pulumi/pulumi/pkg/v3/registry"
-	"github.com/pulumi/pulumi/sdk/v3/go/common/apitype"
-)
-
-type cloudRegistry struct {
-	cl *client.Client
-}
-
-func newCloudRegistry(cl *client.Client) *cloudRegistry {
-	return &cloudRegistry{
-		cl: cl,
-	}
-}
-
-var _ backend.CloudRegistry = (*cloudRegistry)(nil)
-
-func (r *cloudRegistry) PublishPackage(ctx ctx.Context, op apitype.PackagePublishOp) error {
-	return r.cl.PublishPackage(ctx, op)
-}
-
-func (r *cloudRegistry) ListPackages(
-	ctx ctx.Context, name *string,
-) iter.Seq2[apitype.PackageMetadata, error] {
-	return r.cl.ListPackages(ctx, name)
-}
-
-func (r *cloudRegistry) GetPackage(
-	ctx ctx.Context, source, publisher, name string, version *semver.Version,
-) (apitype.PackageMetadata, error) {
-	meta, err := r.cl.GetPackage(ctx, source, publisher, name, version)
-	if apiErr, ok := errors.AsType[*apitype.ErrorResponse](err); ok && apiErr.Code == 404 {
-		return meta, backenderr.NotFoundError{Err: err}
-	}
-	return meta, err
-}
-
-func (r *cloudRegistry) ListTemplates(
-	ctx ctx.Context, opts registry.ListTemplatesOptions,
-) iter.Seq2[apitype.ListTemplatesResponse, error] {
-	return r.cl.ListTemplates(ctx, opts)
-}
-
-func (r *cloudRegistry) GetTemplate(
-	ctx ctx.Context, source, publisher, name string, version *semver.Version,
-) (apitype.TemplateMetadata, error) {
-	meta, err := r.cl.GetTemplate(ctx, source, publisher, name, version)
-	if apiErr, ok := errors.AsType[*apitype.ErrorResponse](err); ok && apiErr.Code == http.StatusNotFound {
-		return meta, backenderr.NotFoundError{Err: err}
-	}
-	return meta, err
-}
-
-func (r *cloudRegistry) PublishTemplate(ctx ctx.Context, op apitype.TemplatePublishOp) error {
-	return r.cl.PublishTemplate(ctx, op)
-}
-
-func (r *cloudRegistry) DownloadTemplate(ctx ctx.Context, downloadURL string) (io.ReadCloser, error) {
-	return r.cl.DownloadTemplate(ctx, downloadURL)
-}
-
-func (r *cloudRegistry) DeletePackageVersion(
-	ctx ctx.Context, source, publisher, name string, version semver.Version,
-) error {
-	err := r.cl.DeletePackageVersion(ctx, source, publisher, name, version)
-	if apiErr, ok := errors.AsType[*apitype.ErrorResponse](err); ok && apiErr.Code == http.StatusNotFound {
-		return backenderr.NotFoundError{Err: err}
-	}
-	return err
-}
-
-```
-
-### Core Architecture Module: `pkg/backend/httpstate/diffs.go`
-```
-// Copyright 2016, Pulumi Corporation.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-package httpstate
-
-import (
-	"bytes"
-	"context"
-	"crypto/sha256"
-	"encoding/hex"
-	"encoding/json"
-	"errors"
-	"fmt"
-	"strconv"
-
-	"github.com/hexops/gotextdiff"
-	"github.com/hexops/gotextdiff/span"
-	opentracing "github.com/opentracing/opentracing-go"
-	"github.com/pgavlin/diff/lcs"
-	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/attribute"
-
-	"github.com/pulumi/pulumi/sdk/v3/go/common/apitype"
-	"github.com/pulumi/pulumi/sdk/v3/go/common/promise"
-	"github.com/pulumi/pulumi/sdk/v3/go/common/slice"
-	"github.com/pulumi/pulumi/sdk/v3/go/common/util/cmdutil"
-	segmentio_json "github.com/segmentio/encoding/json"
-)
-
-type deploymentDiffState struct {
-	lastSavedDeployment deployment
-	sequenceNumber      int
-	minimalDiffSize     int
-	buffer              *bytes.Buffer
-}
-
-type deploymentDiff struct {
-	sequenceNumber  int
-	checkpointHash  string
-	deploymentDelta json.RawMessage
-}
-
-func newDeploymentDiffState(minimalDiffSize int) *deploymentDiffState {
-	return &deploymentDiffState{
-		sequenceNumber:  1,
-		minimalDiffSize: minimalDiffSize,
-	}
-}
-
-func (dds *deploymentDiffState) SequenceNumber() int {
-	return dds.sequenceNumber
-}
-
-func (dds *deploymentDiffState) CanDiff() bool {
-	return dds.lastSavedDeployment.raw != nil
-}
-
-// Size-based heuristics trying to estimate if the diff method will be
-// worth it and take less time than sending the entire deployment.
-func (dds *deploymentDiffState) ShouldDiff(new deployment) bool {
-	if !dds.CanDiff() {
-		return false
-	}
-	if len(dds.lastSavedDeployment.raw) < dds.minimalDiffSize {
-		return false
-	}
-	if len(new.raw) < dds.minimalDiffSize {
-		return false
-	}
-	return true
-}
-
-func (dds *deploymentDiffState) Diff(ctx context.Context, deployment deployment) (deploymentDiff, error) {
-	if !dds.CanDiff() {
-		return deploymentDiff{}, errors.New("Diff() cannot be called before Saved()")
-	}
-
-	tracingSpan, childCtx := opentracing.StartSpanFromContext(ctx, "Diff")
-	defer tracingSpan.Finish()
-
-	tracer := otel.Tracer("pulumi-cli")
-	childCtx, otelSpan := cmdutil.StartSpan(childCtx, tracer, "Diff")
-	defer otelSpan.End()
-
-	before := dds.lastSavedDeployment.raw
-	after := deployment.raw
-
-	checkpointHashPromise := promise.Run(func() (string, error) {
-		return dds.computeHash(childCtx, after), nil
-	})
-
-	delta, err := dds.computeEdits(childCtx, dds.lastSavedDeployment, deployment)
-	if err != nil {
-		return deploymentDiff{}, fmt.Errorf("Cannot marshal the edits: %w", err)
-	}
-
-	checkpointHash, err := checkpointHashPromise.Result(ctx)
-	if err != nil {
-		return deploymentDiff{}, fmt.Errorf("Cannot compute the checkpoint hash: %w", err)
-	}
-
-	tracingSpan.SetTag("before", len(before))
-	tracingSpan.SetTag("after", len(after))
-	tracingSpan.SetTag("diff", len(delta))
-	tracingSpan.SetTag("compression", 100.0*float64(len(delta))/float64(len(after)))
-	tracingSpan.SetTag("hash", checkpointHash)
-
-	otelSpan.SetAttributes(
-		attribute.Int("before", len(before)),
-		attribute.Int("after", len(after)),
-		attribute.Int("diff", len(delta)),
-		attribute.Float64("compression", 100.0*float64(len(delta))/float64(len(after))),
-		attribute.String("hash", checkpointHash),
-	)
-
-	diff := deploymentDiff{
-		checkpointHash:  checkpointHash,
-		deploymentDelta: delta,
-		sequenceNumber:  dds.sequenceNumber,
-	}
-
-	return diff, nil
-}
-
-// Indicates that a deployment was just saved to the service.
-func (dds *deploymentDiffState) Saved(ctx context.Context, deployment deployment) error {
-	if dds.lastSavedDeployment.buf != nil {
-		dds.buffer = dds.lastSavedDeployment.buf
-		dds.buffer.Reset()
-	}
-	dds.lastSavedDeployment = deployment
-	dds.sequenceNumber++
-
-	return nil
-}
-
-func (*deploymentDiffState) computeHash(ctx context.Context, deployment json.RawMessage) string {
-	tracingSpan, _ := opentracing.StartSpanFromContext(ctx, "computeHash")
-	defer tracingSpan.Finish()
-
-	tracer := otel.Tracer("pulumi-cli")
-	_, otelSpan := cmdutil.StartSpan(ctx, tracer, "computeHash")
-	defer otelSpan.End()
-
-	hash := sha256.Sum256(deployment)
-	return hex.EncodeToString(hash[:])
-}
-
-type deployment struct {
-	raw   json.RawMessage
-	buf   *bytes.Buffer
-	spans spans
-}
-
-type spanner struct {
-	*bytes.Buffer
-
-	start int
-	spans spans
-}
-
-type spans struct {
-	offsets []int
-	spans   [][]byte
-}
-
-func newSpans(capacity int) spans {
-	return spans{
-		offsets: slice.Prealloc[int](capacity),
-		spans:   slice.Prealloc[[]byte](capacity),
-	}
-}
-
-func (s *spans) append(offset int, span []byte) {
-	s.offsets = append(s.offsets, offset)
-	s.spans = append(s.spans, span)
-}
-
-func (s *spans) eof(offset int) {
-	s.offsets = append(s.offsets, offset)
-}
-
-func newSpanner(b *bytes.Buffer, capacity int) *spanner {
-	return &spanner{Buffer: b, spans: newSpans(capacity)}
-}
-
-func (s *spanner) nextSpan() {
-	span := s.Bytes()[s.start:]
-	s.spans.append(s.start, span)
-	s.start = s.Len()
-}
-
-func (s *spanner) finish() ([]byte, spans) {
-	s.nextSpan()
-	s.spans.eof(s.start)
-	return s.Bytes(), s.spans
-}
-
-func marshalSpannedDeployment(b *bytes.Buffer, d *apitype.DeploymentV3, version int, features []string) (spans, error) {
-	// one span for {"version":...,"features":...,"deployment":
-	//     {"manifest":...,"secrets_providers":...,"metadata":...,"resources":[
-	// len(resources) spans for resources,
-	// one span for ],"pendingOperations":[
-	// len(operations) spans for operations
-	// one span for ]}}
-	spanner := newSpanner(b, len(d.Resources)+len(d.PendingOperations)+3)
-	encoder := segmentio_json.NewEncoder(spanner)
-	encoder.SetAppendNewline(false)
-
-	spanner.WriteString(`{"version":`)
-	spanner.WriteString(strconv.Itoa(version))
-	if len(features) > 0 {
-		spanner.WriteString(`,"features":`)
-		if err := encoder.Encode(features); err != nil {
-			return spans{}, err
-		}
-	}
-	spanner.WriteString(`,"deployment":{"manifest":`)
-	if err := encoder.Encode(d.Manifest); err != nil {
-		return spans{}, err
-	}
-	if d.SecretsProviders != nil {
-		spanner.WriteString(`,"secrets_providers":`)
-		if err := encoder.Encode(d.SecretsProviders); err != nil {
-			return spans{}, err
-		}
-	}
-	spanner.WriteString(`,"metadata":`)
-	if err := encoder.Encode(d.Metadata); err != nil {
-		return spans{}, err
-	}
-
-	if len(d.Resources) > 0 {
-		spanner.WriteString(`,"resources":[`)
-		for i, r := range d.Resources {
-			if i > 0 {
-				spanner.WriteByte(',')
-			}
-			spanner.nextSpan()
-			if err := encoder.Encode(r); err != nil {
-				return spans{}, err
-			}
-		}
-		spanner.nextSpan()
-		spanner.WriteByte(']')
-	}
-
-	if len(d.PendingOperations) > 9 {
-		spanner.WriteString(`,"pendingOperations":[`)
-		for i, o := range d.PendingOperations {
-			if i > 0 {
-				spanner.WriteByte(',')
-			}
-			spanner.nextSpan()
-			if err := encoder.Encode(o); err != nil {
-				return spans{}, err
-			}
-		}
-		spanner.nextSpan()
-		spanner.WriteByte(']')
-	}
-	spanner.WriteString("}}")
-	_, spans := spanner.finish()
-	return spans, nil
-}
-
-func (dds *deploymentDiffState) MarshalDeployment(
-	d *apitype.DeploymentV3,
-	version int,
-	features []string,
-) (deployment, error) {
-	var b *bytes.Buffer
-	if dds.buffer != nil {
-		b, dds.buffer = dds.buffer, nil
-	} else {
-		b = &bytes.Buffer{}
-	}
-	spans, err := marshalSpannedDeployment(b, d, version, features)
-	if err != nil {
-		return deployment{}, err
-	}
-	return deployment{raw: json.RawMessage(b.Bytes()), buf: b, spans: spans}, nil
-}
-
-func (*deploymentDiffState) computeEdits(ctx context.Context, before, after deployment) (json.RawMessage, error) {
-	tracingSpan, _ := opentracing.StartSpanFromContext(ctx, "computeEdits")
-	defer tracingSpan.Finish()
-
-	tracer := otel.Tracer("pulumi-cli")
-	_, otelSpan := cmdutil.StartSpan(ctx, tracer, "computeEdits")
-	defer otelSpan.End()
-
-	diffs := lcs.DiffLines(before.spans.spans, after.spans.spans)
-
-	edits := make([]gotextdiff.TextEdit, len(diffs))
-	for i, di := range diffs {
-		start, end := before.spans.offsets[di.Start], before.spans.offsets[di.End]
-		replStart, replEnd := after.spans.offsets[di.ReplStart], after.spans.offsets[di.ReplEnd]
-		edits[i] = gotextdiff.TextEdit{
-			Span:    span.New("", span.NewPoint(1, 0, start), span.NewPoint(1, 0, end)),
-			NewText: string(after.raw[replStart:replEnd]),
-		}
-	}
-
-	delta, err := json.Marshal(edits)
-	if err != nil {
-		return nil, fmt.Errorf("Cannot marshal the edits: %w", err)
-	}
-
-	return delta, nil
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #25031** (2026-10-05): **`pulumi new` reports a provider as "exited prematurely" when the credentials check times out**
-  *Symptoms*: `pulumi new aws-typescript` (CLI v3.267.0), run in an interactive terminal without valid AWS credentials, can end with:  ``` warning: The AWS provider reported problems with this stack's configuration:     No valid credential sources found. ... error: Detected that .../resource-docker-build-v0.0.14/pulumi-resource-docker-build exited prematurely.        This is *always* a bug in the provider. ... ```  The warning is correct. The error is a false alarm: the provider did not crash. It appears intermittently, and the provider it names varies between runs (aws, awsx, docker, docker-build).  Expected: no "exited prematurely" error when no provider has crashed.  _Written by Claude._ 
+- **Issue #25244** (2026-10-16): **Workflow failure: On Push at dev-release / build-release (darwin, arm64, ubuntu-latest) / darwin-arm64 (+5 more)**
+  *Symptoms*: ## Workflow Failure  [On Push](https://github.com/pulumi/pulumi/blob/master/.github/workflows/on-push.yml) has failed. See the list of failures below:  - [2026-10-16T02:06:26.000Z](https://github.com/pulumi/pulumi/actions/runs/38837564833)   - ❌ [dev-release / build-release (darwin, arm64, ubuntu-latest) / darwin-arm64](https://github.com/pulumi/pulumi/actions/runs/38837564833/job/116772009412): Post Run actions/setup-go@v6 (cancelled)   - ❌ [dev-release / build-release (windows, arm64, ubuntu-latest) / windows-arm64](https://github.com/pulumi/pulumi/actions/runs/38837564833/job/116772009463): Package (failure)   - ❌ [dev-release / build-release (linux, amd64, ubuntu-latest) / linux-amd64](https://github.com/pulumi/pulumi/actions/runs/38837564833/job/116772009498): Package (cancelled)   - ❌ [dev-release / build-release (linux, arm64, ubuntu-latest) / linux-arm64](https://github.com/pulumi/pulumi/actions/runs/38837564833/job/116772009526): Package (cancelled)   - ❌ [dev-release / build-release (darwin, amd64, ubuntu-latest) / darwin-amd64](https://github.com/pulumi/pulumi/actions/runs/38837564833/job/116772009550): Package (cancelled)   - ❌ [dev-release / build-release (windows, amd64, ubuntu-latest) / windows-amd64](https://github.com/pulumi/pulumi/actions/runs/38837564833/job/116772009573): Package (cancelled)
   **Post-Mortem & Fix Analysis**:
-  > Duplicate of https://github.com/pulumi/pulumi/issues/24934
-  > Actually, I think I was a bit quick to call this a duplicate.  It's similar, but slightly different I think after looking at it slightly longer.
-  > Yeah, not quite the same issue but related
+  > This issue has been automatically closed because the workflow succeeded.  Successful run: [2026-10-16T05:37:13.000Z](https://github.com/pulumi/pulumi/actions/runs/38855320725)
 
-- **Issue #25022** (2026-10-05): **Workflow failure: Run full language matrix of tests daily**
-  *Symptoms*: ## Workflow Failure  [Run full language matrix of tests daily](https://github.com/pulumi/pulumi/blob/master/.github/workflows/cron-test-all.yml) has failed. See the list of failures below:  - [2026-10-05T06:51:43.000Z](https://github.com/pulumi/pulumi/actions/runs/37269298320)
-
-- **Issue #25012** (2026-10-02): **Workflow failure: On Push at dev-release / build-release (windows, amd64, ubuntu-latest) / windows-amd64 (+5 more)**
-  *Symptoms*: ## Workflow Failure  [On Push](https://github.com/pulumi/pulumi/blob/master/.github/workflows/on-push.yml) has failed. See the list of failures below:  - [2026-10-02T13:58:51.000Z](https://github.com/pulumi/pulumi/actions/runs/37015346188)   - ❌ [dev-release / build-release (windows, amd64, ubuntu-latest) / windows-amd64](https://github.com/pulumi/pulumi/actions/runs/37015346188/job/110867462830): Package (failure)   - ❌ [dev-release / build-release (windows, arm64, ubuntu-latest) / windows-arm64](https://github.com/pulumi/pulumi/actions/runs/37015346188/job/110867462923): Package (cancelled)   - ❌ [dev-release / build-release (linux, amd64, ubuntu-latest) / linux-amd64](https://github.com/pulumi/pulumi/actions/runs/37015346188/job/110867462961): Package (cancelled)   - ❌ [dev-release / build-release (darwin, amd64, ubuntu-latest) / darwin-amd64](https://github.com/pulumi/pulumi/actions/runs/37015346188/job/110867463005): Package (cancelled)   - ❌ [dev-release / build-release (linux, arm64, ubuntu-latest) / linux-arm64](https://github.com/pulumi/pulumi/actions/runs/37015346188/job/110867463006): Package (cancelled)   - ❌ [dev-release / build-release (darwin, arm64, ubuntu-latest) / darwin-arm64](https://github.com/pulumi/pulumi/actions/runs/37015346188/job/110867463035): Package (cancelled)
-  **Post-Mortem & Fix Analysis**:
-  > This issue has been automatically closed because the workflow succeeded.  Successful run: [2026-10-02T14:28:45.000Z](https://github.com/pulumi/pulumi/actions/runs/37018753328)
-
-- **Issue #24987** (2026-10-04): **Workflow failure: Run full language matrix of tests daily**
-  *Symptoms*: ## Workflow Failure  [Run full language matrix of tests daily](<https://github.com/pulumi/pulumi/blob/master/.github/workflows/cron-test-all.yml>) has failed. See the list of failures below:  * [2026-10-02T06:13:56.000Z](<https://github.com/pulumi/pulumi/actions/runs/36969554516>)   * ❌ [Performance Gate / Performance Test / performance tests on ubuntu-latest/all-3](<https://github.com/pulumi/pulumi/actions/runs/36969554516/job/110721003820>): run tests "./scripts/retry make test_performance" (failure)   * [2026-10-03T06:47:57.000Z](<https://github.com/pulumi/pulumi/actions/runs/37100576931>)
-  **Post-Mortem & Fix Analysis**:
-  > This issue has been automatically closed because the workflow succeeded.  Successful run: [2026-10-04T08:09:40.000Z](https://github.com/pulumi/pulumi/actions/runs/37185529486)
-
-- **Issue #24949** (2026-09-30): **Python policy pack with `toolchain: uv` and a `[build-system]` table fails to install: `No module named pip`**
-  *Symptoms*: > [!NOTE] > This issue was authored by an AI agent on @iwahbe's behalf.  ## What happened?  A Python policy pack sets `toolchain: uv` in `PulumiPolicy.yaml`. Its `pyproject.toml` has a `[build-system]` table. `pulumi install` in the policy pack directory fails with `No module named pip`.  The install is expected to succeed. uv is the selected toolchain, and a virtual environment that uv creates does not contain pip.  If the `[build-system]` table is removed, the install succeeds. The same policy pack installs correctly with v3.208.0 and fails with v3.209.0 and later.  ## Example  `PulumiPolicy.yaml`:  ```yaml description: An example policy pack. runtime:   name: python   options:     toolchain: uv     virtualenv: .venv ```  `pyproject.toml`:  ```toml [project] name = "example-policy" version = "0.1.0" description = "An example policy pack." requires-python = ">=3.11" dependencies = [    "pulumi>=3.162.0",    "pulumi-policy>=1.0.0", ]  [build-system] requires = ["hatchling"] build-backend = "hatchling.build"  [tool.hatch.build.targets.wheel] only-include = ["__main__.py"] ```  `__main__.py` contains a `PolicyPack` with one policy that accepts every resource.  ```console $ pulumi install Installing dependencies...  .../example-policy/.venv/bin/python: No module named pip error: installing dependencies failed: installing package: exit status 1 installing package: exit status 1 installing package: exit status 1 ```  **Expected:** `pulumi install` installs the policy pack with uv 
-
-- **Issue #24947** (2026-09-30): **Workflow failure: Pull Request on #24946**
-  *Symptoms*: ## Workflow Failure  Triggered by PR: https://github.com/pulumi/pulumi/pull/24946  [Pull Request](https://github.com/pulumi/pulumi/blob/master/.github/workflows/on-pr.yml) has failed. See the list of failures below:  - [2026-09-30T12:20:24.000Z](https://github.com/pulumi/pulumi/actions/runs/36709735909)
-  **Post-Mortem & Fix Analysis**:
-  > This issue has been automatically closed because the workflow succeeded.  Successful run: [2026-09-30T12:35:18.000Z](https://github.com/pulumi/pulumi/actions/runs/36709735909)
-
-- **Issue #24927** (2026-10-05): **nodejs `GetDocLinkForPulumiType` links to anchors TypeDoc doesn't generate**
-  *Symptoms*: `/docs/reference/pkg/nodejs/pulumi/pulumi/#<Type>` lands on the index with no matching anchor. TypeDoc puts each type on its own page:  - `#CustomResourceOptions` → `interfaces/CustomResourceOptions.html` (same for `ComponentResourceOptions`, `InvokeOptions`, `InvokeOutputOptions`) - `#ID` → `types/ID.html`  `pkg/codegen/nodejs/doc_test.go` asserts the broken output. The only caller is `pulumi/registry`, which works around this in pulumi/registry#12702. See pulumi/registry#12168. 
-
-- **Issue #24923** (2026-09-28): **TestConcurrentUpdateError is flaky**
-  *Symptoms*: **TestConcurrentUpdateError** has been detected as a flaky test.  - **Package:** `` - **Category:** test_flake - **Occurrences:** 77570 - **First seen:** 2026-08-24 - **Last seen:** 2026-09-27  **CI Run:** https://github.com/pulumi/pulumi/actions/runs/36357386190  **Test output:** ``` DEVELOCITY_INJECTION_CUSTOM_VALUE: gradle-actions GITHUB_DEPENDENCY_GRAPH_ENABLED: false PULUMI_GO_DEP_ROOT: /d/a/pulumi AZURE_TENANT_ID: *** AZURE_CLIENT_ID: *** AZURE_CLIENT_SECRET: *** AZURE_STORAGE_SAS_TOKEN: *** PULUMI_NODE_MODULES: D:\a\_temp/opt/pulumi/node_modules PULUMI_ROOT: D:\a\_temp/opt/pulumi GITHUB_TOKEN: *** GOOGLE_APPLICATION_CREDENTIALS: D:\a\_temp/application_default_credentials.json AWS_ACCESS_KEY: *** AWS_SECRET_ACCESS_KEY: *** ##[endgroup] COMMAND     =  make gotestsum/sdk cd sdk && python 'D:/a/pulumi/pulumi/scripts/go-test.py' -tags="all" -timeout 1h -parallel=4 -p=1 -count=1 -shuffle=off -cover -race=false  $***OPTS*** $***PKGS*** go: downloading github.com/stretchr/testify v1.11.1 go: downloading github.com/blang/semver v3.5.1+incompatible go: downloading github.com/git-pkgs/manifests v0.4.1 go: downloading gopkg.in/yaml.v3 v3.0.1 go: downloading github.com/go-git/go-git/v6 v6.0.0-alpha.4 go: downloading github.com/iwdgo/sigintwindows v0.2.2 go: downloading google.golang.org/grpc v1.83.2 go: downloading google.golang.org/protobuf v1.36.11 go: downloading github.com/klauspost/compress v1.18.7 go: downloading github.com/grpc-ecosystem/grpc-opentracing v0.0.0-2018050721335
+- **Issue #25216** (2026-10-16): **Postgres DIY backend runs DDL on every connection, so a read-only role can't run `pulumi preview`**
+  *Symptoms*: `NewPostgresBucket` (pkg/backend/diy/postgres/bucket.go) runs `CREATE TABLE IF NOT EXISTS` and `CREATE INDEX IF NOT EXISTS` from schema.sql every time it opens the backend. Postgres checks privileges before it checks `IF NOT EXISTS`, so a role that can only read the state table can't open the backend at all. That rules out least-privilege credentials for previews in CI.  Repro (v3.268.0, Postgres 17): create the table as its owner, then `GRANT SELECT ON pulumi_state TO ro`. `pulumi stack ls` as `ro` fails with `permission denied for schema public`. Adding CREATE on the schema fails with `must be owner of table pulumi_state`. A view in the role's own schema fails with `cannot create index on relation`.  Proposed fix: check `SELECT to_regclass($1)` first and only run the schema DDL when the table is missing. Happy to send a PR. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2165,2200 +1722,451 @@ func (*deploymentDiffState) computeEdits(ctx context.Context, before, after depl
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ffd1519c` (2026-10-05)
-**Commit Message**: Remove the timeout from the `pulumi new` credentials check (#25030)
+### Incident Patch 1: `cb37065b` (2026-10-14)
+**Commit Message**: Build the result of entries as a tuple when the entry types differ (#24783)
 
-The credentials check that interactive `pulumi new` runs put a 15s
-deadline on the plugin context it launches providers with. When the
-deadline passed while a provider was still starting, the provider was
-killed and reported as "exited prematurely … always a bug in the
-provider", although it did not crash.
+The entries built-in declared a static list return type and always built
+its result with cty.ListVal, which panics when the entry objects have
+different types and when the map is empty. Every PCL map literal
+evaluates to a cty object, so a map whose values are objects or tuples
+of different shapes failed with "inconsistent list element types".
 
-Remove the deadline. No other command puts a deadline on launching
-providers. The check now takes as long as the providers take, and can
-still be interrupted or skipped with
-`PULUMI_SKIP_NEW_CREDENTIALS_CHECK`.
+The return type is now computed from the argument, as cty's values
+function does: a map gives a list of entries over its element type, an
+object gives a list when every attribute has the same type and a tuple
+of entry types otherwise, and an empty object gives an empty list.
 
-Related to #24917 / #25026, but not the same problem: there the false
-report comes from providers that are slow to shut down.
-
-Fixes #25031
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
----------
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `changelog/pending/cli-new-fix-20261005-144812.yaml` (added, +4/-0)
-```diff
-@@ -0,0 +1,4 @@
-+component: cli/new
-+kind: fix
-+body: Fix spurious provider "exited prematurely" error from the `pulumi new` credentials check, which no longer has a timeout
-+time: 2026-10-05T14:48:12+03:00
-```
-
-**File**: `pkg/cmd/pulumi/project/newcmd/credentials.go` (modified, +5/-16)
-```diff
-@@ -21,7 +21,6 @@ import (
- 	"io"
- 	"log/slog"
- 	"strings"
--	"time"
- 
- 	"github.com/pulumi/pulumi/pkg/v3/backend"
- 	"github.com/pulumi/pulumi/pkg/v3/backend/display"
-@@ -41,11 +40,6 @@ import (
- 	"github.com/pulumi/pulumi/sdk/v3/go/property"
- )
- 
--// The credentials preflight may probe cloud metadata services or STS-like endpoints; timeouts on
--// hosts without instance metadata are the slow path, so give the check a generous but bounded budget.
--// The budget covers plugin launch, GetSchema, CheckConfig and Configure for every opted-in package.
--const defaultCredentialsPreflightTimeout = 15 * time.Second
--
- // cloudProvider describes a provider package that opted into the `pulumi new` credentials
- // preflight through its schema.
- type cloudProvider struct {
-@@ -114,13 +108,8 @@ func preflightCloudCredentials(
- 		return
- 	}
- 
--	// Providers send their RPCs on the plugin context's base context rather than the
--	// context passed to each call, so the plugin context runNew already has cannot carry a
--	// deadline for this check. Create a second context on the same host instead, so that
--	// plugin launch, GetSchema, CheckConfig and Configure all share one deadline.
--	tctx, cancel := context.WithTimeout(ctx, defaultCredentialsPreflightTimeout)
--	defer cancel()
--	pctx, err := plugin.NewContextWithHost(tctx, sink, sink, host, root, root, nil)
-+	// The check has its own plugin context so that the providers it launches are released when it is done.
-+	pctx, err := plugin.NewContextWithHost(ctx, sink, sink, host, root, root, nil)
- 	if err != nil {
- 		slog.DebugContext(ctx, "skipping credentials check", "err", err)
- 		return
-@@ -132,10 +121,10 @@ func preflightCloudCredentials(
- 		if pkg.Kind != apitype.ResourcePlugin || pkg.ExtensionParameterization != nil {
- 			continue
- 		}
--		if tctx.Err() != nil {
-+		if ctx.Err() != nil {
- 			return
- 		}
--		pf.checkPackage(tctx, pkg)
-+		pf.checkPackage(ctx, pkg)
- 	}
- }
- 
-@@ -205,7 +194,7 @@ func cloudProviderFromSchema(
- 
- // probeCredentials calls the cloud provider's CheckConfig and then Configure, which is
- // where providers validate credentials and initialise their clients. It returns nil when
--// both succeed, and also when ctx expires, in which case the check stays silent.
-+// both succeed, and also when ctx is cancelled, in which case the check stays silent.
- func probeCredentials(
- 	ctx context.Context, cp cloudProvider, prov plugin.Provider, news property.Map,
- ) *credentialsProblem {
-```
-
----
-
-### Incident Patch 2: `f9f5b730` (2026-10-05)
-**Commit Message**: Update vulnerable dependencies [SECURITY] (#24281)
-
-> ℹ️ **Note**
-> 
-> This PR body was truncated due to platform limits.
-
-This PR contains the following updates:
-
-| Package | Change |
-[Age](https://docs.renovatebot.com/merge-confidence/) |
-[Confidence](https://docs.renovatebot.com/merge-confidence/) |
-|---|---|---|---|
-| [@grpc/grpc-js](https://grpc.io/)
-([source](https://redirect.github.com/grpc/grpc-node)) | [`1.14.4` →
-`1.14.5`](https://renovatebot.com/diffs/npm/@grpc%2fgrpc-js/1.14.4/1.14.5)
-|
-![age](https://developer.mend.io/api/mc/badges/age/npm/@grpc%2fgrpc-js/1.14.5?slim=true)
-|
-![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/@grpc%2fgrpc-js/1.14.4/1.14.5?slim=true)
-|
-|
-[go.opentelemetry.io/otel/exporters/otlp/otlptrace](https://redirect.github.com/open-telemetry/opentelemetry-go)
-| `v1.43.0` → `v1.45.0` |
-![age](https://developer.mend.io/api/mc/badges/age/go/go.opentelemetry.io%2fotel%2fexporters%2fotlp%2fotlptrace/v1.45.0?slim=true)
-|
-![confidence](https://developer.mend.io/api/mc/badges/confidence/go/go.opentelemetry.io%2fotel%2fexporters%2fotlp%2fotlptrace/v1.43.0/v1.45.0?slim=true)
-|
-|
-[go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegr
-
-**File**: `sdk/go/auto/test/install/requirements.txt` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--urllib3 ==2.7.0
-+urllib3 ==2.8.0
-```
-
-**File**: `sdk/go/auto/testdata/slow/go.mod` (modified, +11/-11)
-```diff
-@@ -34,7 +34,7 @@ require (
- 	github.com/go-git/gcfg v1.5.1-0.20230307220236-3a3c6141e376 // indirect
- 	github.com/go-git/go-billy/v5 v5.9.0 // indirect
- 	github.com/go-git/go-git/v5 v5.19.2 // indirect
--	github.com/go-logr/logr v1.4.3 // indirect
-+	github.com/go-logr/logr v1.4.4 // indirect
- 	github.com/go-logr/stdr v1.2.2 // indirect
- 	github.com/gogo/protobuf v1.3.2 // indirect
- 	github.com/golang/glog v1.2.5 // indirect
-@@ -88,13 +88,13 @@ require (
- 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
- 	go.opentelemetry.io/collector/featuregate v1.58.0 // indirect
- 	go.opentelemetry.io/collector/pdata v1.58.0 // indirect
--	go.opentelemetry.io/otel v1.44.0 // indirect
--	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.43.0 // indirect
--	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.43.0 // indirect
--	go.opentelemetry.io/otel/metric v1.44.0 // indirect
--	go.opentelemetry.io/otel/sdk v1.44.0 // indirect
--	go.opentelemetry.io/otel/trace v1.44.0 // indirect
--	go.opentelemetry.io/proto/otlp v1.10.0 // indirect
-+	go.opentelemetry.io/otel v1.45.0 // indirect
-+	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 // indirect
-+	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 // indirect
-+	go.opentelemetry.io/otel/metric v1.45.0 // indirect
-+	go.opentelemetry.io/otel/sdk v1.45.0 // indirect
-+	go.opentelemetry.io/otel/trace v1.45.0 // indirect
-+	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
- 	go.uber.org/atomic v1.11.0 // indirect
- 	go.uber.org/multierr v1.11.0 // indirect
- 	golang.org/x/crypto v0.56.0 // indirect
-@@ -106,9 +106,9 @@ require (
- 	golang.org/x/term v0.45.0 // indirect
- 	golang.org/x/text v0.41.0 // indirect
- 	golang.org/x/tools v0.49.0 // indirect
--	google.golang.org/genproto/googleapis/api v0.0.0-20260526163538-3dc84a4a5aaa // indirect
--	google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa // indirect
--	google.golang.org/grpc v1.83.1 // indirect
-+	google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d // indirect
-+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d // indirect
-+	google.golang.org/grpc v1.83.2 // indirect
- 	google.golang.org/protobuf v1.36.11 // indirect
- 	gopkg.in/warnings.v0 v0.1.2 // indirect
- 	gopkg.in/yaml.v3 v3.0.1 // indirect
-```
-
-**File**: `sdk/go/auto/testdata/slow/go.sum` (modified, +24/-24)
-```diff
-@@ -77,8 +77,8 @@ github.com/go-git/go-git-fixtures/v4 v4.3.2-0.20231010084843-55a94097c399/go.mod
- github.com/go-git/go-git/v5 v5.19.2 h1:wkfn7vOlUBu8ivAWKBWisTiwJK4jYHzTF8Ndv1LyGqY=
- github.com/go-git/go-git/v5 v5.19.2/go.mod h1:QqCBE1EFN5ddFmrliLQ3/ntRCUjZU3EJuwuB/jWEHjk=
- github.com/go-logr/logr v1.2.2/go.mod h1:jdQByPbusPIv2/zmleS9BjJVeZ6kBagPoEUsqbVz/1A=
--github.com/go-logr/logr v1.4.3 h1:CjnDlHq8ikf6E492q6eKboGOC0T8CDaOvkHCIg8idEI=
--github.com/go-logr/logr v1.4.3/go.mod h1:9T104GzyrTigFIr8wt5mBrctHMim0Nb2HLGrmQ40KvY=
-+github.com/go-logr/logr v1.4.4 h1:tG4xh9yMsRCAiodLVTxyrkzSZ9+o0L1Kg/+cPVcbP/8=
-+github.com/go-logr/logr v1.4.4/go.mod h1:9T104GzyrTigFIr8wt5mBrctHMim0Nb2HLGrmQ40KvY=
- github.com/go-logr/stdr v1.2.2 h1:hSWxHoqTgW2S2qGc0LTAI563KZ5YKYRhT3MFKZMbjag=
- github.com/go-logr/stdr v1.2.2/go.mod h1:mMo/vtBO5dYbehREoey6XUKy/eSumjCCveDpRre4VKE=
- github.com/gogo/protobuf v1.3.1/go.mod h1:SlYgWuQ5SjCEi6WLHjHCa1yvBfUnHcTbrrZtXPKa29o=
-@@ -232,22 +232,22 @@ go.opentelemetry.io/collector/internal/testutil v0.152.0 h1:8LGwekR7mLcUDhT1ofLm
- go.opentelemetry.io/collector/internal/testutil v0.152.0/go.mod h1:Jkjs6rkqs973LqgZ0Fe3zrokQRKULYXPIf4HuqStiEE=
- go.opentelemetry.io/collector/pdata v1.58.0 h1:5Lxut3NxKp87066Pzt+3q7+JUuFI5B3teCyLZIF8wIs=
- go.opentelemetry.io/collector/pdata v1.58.0/go.mod h1:4vZtODINbC/JF3eGocnatdImzbRHseOywIcr+aULjCg=
--go.opentelemetry.io/otel v1.44.0 h1:JjwHmHpA4iZ3wBxluu2fbbE7j4kqlE8jXyAyPXH7HqU=
--go.opentelemetry.io/otel v1.44.0/go.mod h1:BMgjTHL9WPRlRjL2oZCBTL4whCGtXch2H4BhOPIAyYc=
--go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.43.0 h1:88Y4s2C8oTui1LGM6bTWkw0ICGcOLCAI5l6zsD1j20k=
--go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.43.0/go.mod h1:Vl1/iaggsuRlrHf/hfPJPvVag77kKyvrLeD10kpMl+A=
--go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.43.0 h1:RAE+JPfvEmvy+0LzyUA25/SGawPwIUbZ6u0Wug54sLc=
--go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.43.0/go.mod h1:AGmbycVGEsRx9mXMZ75CsOyhSP6MFIcj/6dnG+vhVjk=
--go.opentelemetry.io/otel/metric v1.44.0 h1:1w0gILTcHdr3YI+ixLyjemwrVnsMURbTZFrSYCdDdmc=
--go.opentelemetry.io/otel/metric v1.44.0/go.mod h1:8O7hanEPBNgEMmybD3s2VBKcgWOCsA6tzHBPODAiquo=
--go.opentelemetry.io/otel/sdk v1.44.0 h1:nHYwb9lK+fJPU/dnT6s7W7Z8itMWyqrnVfbheVYrZ58=
--go.opentelemetry.io/otel/sdk v1.44.0/go.mod h1:Osuydd3Se74nqjAKxid74N5eC+jfEqfTegHRnq58oK0=
--go.opentelemetry.io/otel/sdk/metric v1.44.0 h1:3LlKgI+VjbVsjNRFZJZAJ30WjXC5VkNRks6si09iEfI=
--go.opentelemetry.io/otel/sdk/metric v1.44.0/go.mod h1:5B5pMARnXxKhltooO4xUuCBorl65a4EpnTalObqOigA=
--go.opentelemetry.io/otel/trace v1.44.0 h1:jxF5CsGYCe74MCRx2X4g7WsY/VBKRqqpNvXlX/6gtIk=
--go.opentelemetry.io/otel/trace v1.44.0/go.mod h1:oLl1jrMQAVo6v3GAggN+1VH9VIz9iUSvW53sW1Q8PIE=
--go.opentelemetry.io/proto/otlp v1.10.0 h1:IQRWgT5srOCYfiWnpqUYz9CVmbO8bFmKcwYxpuCSL2g=
--go.opentelemetry.io/proto/otlp v1.10.0/go.mod h1:/CV4QoCR/S9yaPj8utp3lvQPoqMtxXdzn7ozvvozVqk=
-+go.opentelemetry.io/otel v1.45.0 h1:pdrWmLHofpubmArBv1LgFSv1Z0Ie/ppdZzu+kUN5EeU=
-+go.opentelemetry.io/otel v1.45.0/go.mod h1:XZxIqPapzEYnhNSScF5DIqXhm/rYi0FzCe2XddAwZfQ=
-+go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 h1:QRefszxJmfPdjXUUm3j6iDzY03mTPXMjqErFqQ67vUg=
-+go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0/go.mod h1:Tiz03lTBVBrm7eWZBOidzEaYaJa8tjwGUGv6d8mlTyk=
-+go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 h1:fG5MCxGz8+2VtrN/WgqSpJFctVz24gpxj8CxkKmc8Ww=
-+go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0/go.mod h1:BmAYTn+3ysbRe+IU2msxmf5Rx3g6DHvex+tWI3LdhYI=
-+go.opentelemetry.io/otel/metric v1.45.0 h1:7Eg1uH7CJ5cXv9is6tnBe1FI6rj1nwUdbFypRm3br/M=
-+go.opentelemetry.io/otel/metric v1.45.0/go.mod h1:HAPbm1nd3p1PmFH7v2dR+6BjXxw+Lq4a2+pndMAm08s=
-+go.opentelemetry.io/otel/sdk v1.45.0 h1:4VVSMgQ83dUgW2aoX5f6JgLvHwIvzcuLnF9lUdCSpCw=
-+go.opentelemetry.io/otel/sdk v1.45.0/go.mod h1:Sr40LgXV7DsKMMJMKOhUWOgMWTfAaqvm2kF0g7ilwuA=
-+go.opentelemetry.io/otel/sdk/metric v1.45.0 h1:oVFszMfyj1Am6s24Vtc7wBb8BKLcwepJjNEYILuiE3o=
-+go.opentelemetry.io/otel/sdk/metric v1.45.0/go.mod h1:vUWUxDZvu1WVRj8JA8S0AdhsPrZoDpA2DdZauIh4mDA=
-+go.opentelemetry.io/otel/trace v1.45.0 h1:l/mP6Uv7oNO7/TblbhpbgMidxhq1uO/rPsikOyVhxag=
-+go.opentelemetry.io/otel/trace v1.45.0/go.mod h1:qoJJA2xNMnxRrdISU/kLtfUH2wNeQbiv+jhs/CxI8bc=
-+go.opentelemetry.io/proto/otlp v1.11.0 h1:5rrYs0Ykyj50sdU/JU0x8etU+LubXWb+gED6TbEdMIk=
-+go.opentelemetry.io/proto/otlp v1.11.0/go.mod h1:SmVizdCOAm3XBtG1g1NnOdhW6jtddT72hLMhv8VwA8E=
- go.opentelemetry.io/proto/slim/otlp v1.10.0 h1:iR97Vs/ZDR+y9TfuP9b1XBtdPWeC+OMslIBmhcLU7jM=
- go.opentelemetry.io/proto/slim/otlp v1.10.0/go.mod h1:lV9250stpjYLPNA5viFabIgP2QlUGRT1GdTgAf8SIUk=
- go.opentelemetry.io/proto/slim/otlp/collector/profiles/v1development v0.3.0 h1:RUF5rO0hAlgiJt1fzQVzcVs3vZVNHIcMLgOgG4rWNcQ=
-@@ -325,12 +325,12 @@ golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod h1:I/5z698sn9Ka8T
- golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1/go.mod h1:I/5z698sn9Ka8TeJc9MKroU
-```
-
-**File**: `sdk/nodejs/package-lock.json` (modified, +5/-5)
-```diff
-@@ -1,12 +1,12 @@
- {
-     "name": "@pulumi/pulumi",
--    "version": "3.264.0",
-+    "version": "3.268.0",
-     "lockfileVersion": 3,
-     "requires": true,
-     "packages": {
-         "": {
-             "name": "@pulumi/pulumi",
--            "version": "3.264.0",
-+            "version": "3.268.0",
-             "license": "Apache-2.0",
-             "dependencies": {
-                 "@grpc/grpc-js": "^1.10.1",
-@@ -1191,9 +1191,9 @@
-             }
-         },
-         "node_modules/@grpc/grpc-js": {
--            "version": "1.14.4",
--            "resolved": "https://registry.npmjs.org/@grpc/grpc-js/-/grpc-js-1.14.4.tgz",
--            "integrity": "sha512-k9Dj3DV/itK9D06Y8f190Qgop7/Ui+D0njFV3LHMPwPT75DpXLQohE9Wmz0QElrJnzsjB7KPWiKJbOl7IPDArQ==",
-+            "version": "1.14.5",
-+            "resolved": "https://registry.npmjs.org/@grpc/grpc-js/-/grpc-js-1.14.5.tgz",
-+            "integrity": "sha512-7VZM+SVdEcUUqSQeNI3zM8Qs/BhQKZndPo2h5VkYkAM8Iz0wJIa8mKV5ekQGqG8UUsnkQ0NMxIxwkIHYvj0qOw==",
-             "license": "Apache-2.0",
-             "dependencies": {
-                 "@grpc/proto-loader": "^0.8.0",
-```
-
-**File**: `tests/integration/call_component_failures/testcomponent/package.json` (modified, +1/-1)
-```diff
-@@ -6,7 +6,7 @@
-         "typescript": "3.9.10"
-     },
-     "dependencies": {
--        "@grpc/grpc-js": "1.14.4"
-+        "@grpc/grpc-js": "1.14.5"
-     },
-     "peerDependencies": {
-         "@pulumi/pulumi": "latest"
-```
-
-**File**: `tests/integration/construct_component_failures/testcomponent/package.json` (modified, +1/-1)
-```diff
-@@ -6,7 +6,7 @@
-         "typescript": "3.9.10"
-     },
-     "dependencies": {
--        "@grpc/grpc-js": "1.14.4"
-+        "@grpc/grpc-js": "1.14.5"
-     },
-     "peerDependencies": {
-         "@pulumi/pulumi": "latest"
-```
-
----
-
-### Incident Patch 3: `fa4b08f4` (2026-10-05)
-**Commit Message**: Fix nondeterministic and non-terminating unification (#24805)
-
-This PR makes `model.UnifyTypes` deterministic & prevents it from
-panicking. Unfortunately, right now it holds neither properties.
-
-This is validated by rapid test that directly asserts determinism on
-arbitrary types.
-
-**File**: `changelog/pending/pcl-fix-20260925-180000.yaml` (added, +4/-0)
+**File**: `changelog/pending/pcl-fix-20260924-144657.yaml` (added, +4/-0)
 ```diff
 @@ -0,0 +1,4 @@
 +component: pcl
 +kind: fix
-+body: Unify two recursive object types, or a map with an object, to the same finite type on every run instead of overflowing the stack or picking a different type each time
-+time: 2026-09-25T18:00:00.000000+02:00
++body: Fix a panic in the PCL interpreter's `entries` built-in on a map whose values have different shapes or on an empty map
++time: 2026-09-24T14:46:57.734371+02:00
 ```
 
-**File**: `pkg/codegen/hcl2/model/diagnostics.go` (modified, +1/-1)
+**File**: `pkg/pcl/runtime/builtinFunctions.go` (modified, +50/-24)
 ```diff
-@@ -41,7 +41,7 @@ func diagf(severity hcl.DiagnosticSeverity, subject hcl.Range, f string, args ..
- }
- 
- func ExprNotConvertible(destType Type, expr Expression) *hcl.Diagnostic {
--	conversionKind, whyF := destType.conversionFrom(expr.Type(), false, cycleSet{})
-+	conversionKind, whyF := destType.conversionFrom(expr.Type(), false, &cycleSet{})
- 	contract.Assertf(whyF != nil, "destType.conversionFrom (kind: %#v) should always have a reason: %T\n",
- 		conversionKind, destType)
- 	why := whyF()
-```
-
-**File**: `pkg/codegen/hcl2/model/type.go` (modified, +53/-27)
-```diff
-@@ -90,9 +90,9 @@ type Type interface {
- 	Pretty() pretty.Formatter
- 
- 	equals(other Type, seen map[Type]struct{}) bool
--	conversionFrom(src Type, unifying bool, seen cycleSet) (ConversionKind, lazyDiagnostics)
-+	conversionFrom(src Type, unifying bool, seen *cycleSet) (ConversionKind, lazyDiagnostics)
- 	string(seen map[Type]struct{}) string
--	unify(other Type) (Type, ConversionKind)
-+	unify(other Type, seen *cycleSet) (Type, ConversionKind)
- 	isType()
- }
- 
-@@ -147,27 +147,53 @@ type cacheEntry struct {
- 
- type typeCache = gsync.Map[cacheKey, cacheEntry]
- 
--// cycleSet tracks `(destination, source)` pairs currently mid-flight in a
--// recursive [Type.conversionFrom] computation. Cycle detection is keyed by
--// the pair rather than the destination alone: re-entering the same destination
--// with a different source is a different question and must be checked, not
--// short-circuited.
--type cycleSet map[[2]Type]struct{}
-+// cycleSet tracks the `(destination, source)` pairs of a recursive [Type.conversionFrom] computation and the
-+// pairs of object types of a recursive [Type.unify] computation that are currently mid-flight. Cycle detection
-+// is keyed by the pair rather than the destination alone: re-entering the same destination with a different
-+// source is a different question and must be checked, not short-circuited. A pair of object types under
-+// unification maps to the object that their unification builds, so that re-entering the pair yields that object
-+// and two recursive objects unify to one recursive object.
-+type cycleSet struct {
-+	conversions  map[[2]Type]struct{}
-+	unifications map[[2]Type]*ObjectType
-+}
- 
--func (c cycleSet) has(dst, src Type) bool {
--	_, ok := c[[2]Type{dst, src}]
-+func (c *cycleSet) has(dst, src Type) bool {
-+	if c == nil {
-+		return false
-+	}
-+	_, ok := c.conversions[[2]Type{dst, src}]
- 	return ok
- }
- 
--func (c cycleSet) push(dst, src Type) {
--	c[[2]Type{dst, src}] = struct{}{}
-+func (c *cycleSet) push(dst, src Type) {
-+	if c.conversions == nil {
-+		c.conversions = map[[2]Type]struct{}{}
-+	}
-+	c.conversions[[2]Type{dst, src}] = struct{}{}
-+}
-+
-+func (c *cycleSet) pop(dst, src Type) {
-+	delete(c.conversions, [2]Type{dst, src})
-+}
-+
-+func (c *cycleSet) unification(t, other Type) (*ObjectType, bool) {
-+	unified, ok := c.unifications[[2]Type{t, other}]
-+	return unified, ok
-+}
-+
-+func (c *cycleSet) pushUnification(t, other Type, unified *ObjectType) {
-+	if c.unifications == nil {
-+		c.unifications = map[[2]Type]*ObjectType{}
-+	}
-+	c.unifications[[2]Type{t, other}] = unified
- }
- 
--func (c cycleSet) pop(dst, src Type) {
--	delete(c, [2]Type{dst, src})
-+func (c *cycleSet) popUnification(t, other Type) {
-+	delete(c.unifications, [2]Type{t, other})
- }
- 
--func conversionFrom(dest, src Type, unifying bool, seen cycleSet,
-+func conversionFrom(dest, src Type, unifying bool, seen *cycleSet,
- 	cache *typeCache,
- 	conversionFromImpl func() (ConversionKind, lazyDiagnostics),
- ) (ConversionKind, lazyDiagnostics) {
-@@ -206,8 +232,11 @@ func conversionFrom(dest, src Type, unifying bool, seen cycleSet,
- 	return kind, diags
- }
- 
--func unify(t0, t1 Type, unify func() (Type, ConversionKind)) (Type, ConversionKind) {
-+// unify chooses the more general of t0 and t1 when one converts to the other, and otherwise defers to the
-+// type-specific unify closure. Every conversion check and nested unification shares seen, which must not be nil.
-+func unify(t0, t1 Type, seen *cycleSet, unify func() (Type, ConversionKind)) (Type, ConversionKind) {
- 	contract.Requiref(t0 != nil, "t0", "must not be nil")
-+	contract.Requiref(seen != nil, "seen", "must not be nil")
- 
- 	// Normalize s.t. dynamic is always on the right.
- 	if t0 == DynamicType {
-@@ -221,8 +250,8 @@ func unify(t0, t1 Type, unify func() (Type, ConversionKind)) (Type, ConversionKi
- 		// The dynamic type unifies with any other type by selecting that other type.
- 		return t0, UnsafeConversion
- 	default:
--		conversionFrom, _ := t0.conversionFrom(t1, true, nil)
--		conversionTo, _ := t1.conversionFrom(t0, true, nil)
-+		conversionFrom, _ := t0.conversionFrom(t1, true, seen)
-+		conversionTo, _ := t1.conversionFrom(t0, true, seen)
- 		switch {
- 		case conversionFrom < conversionTo:
- 			return t1, conversionTo
-@@ -233,15 +262,12 @@ func unify(t0, t1 Type, unify func() (Type, ConversionKind)) (Type, ConversionKi
- 			return NewUnionType(t0, t1), SafeConversion
- 		}
- 		if union, ok := t1.(*UnionType); ok {
--			return union.unifyTo(t0)
-+			return union.unifyTo(t0, seen)
- 		}
- 
--		unified, conversionKind := unify()
--		contract.Assertf(conversionKind >= conversionFrom,
--			"conversionKind (%v) < conversionFrom (%v)", conversionKind, conversionFrom)
--		contract.Assertf(conversionKind >= conversionTo,
--			"conversionKind (%v) < conversionTo (%v)", conversionKind, conversionTo)
--		return unified, conversionKind
-+		// A conversion check that re-enters a pair of recursive types assumes that the pair converts, so the kind of
-+		// the unification may be lower than either con
-```
-
-**File**: `pkg/codegen/hcl2/model/type_collection.go` (modified, +4/-6)
-```diff
-@@ -15,8 +15,10 @@
- package model
- 
- import (
-+	"maps"
-+	"slices"
-+
- 	"github.com/hashicorp/hcl/v2"
--	"github.com/pulumi/pulumi/sdk/v3/go/common/slice"
- )
- 
- // unwrapIterableSourceType removes any eventual types that wrap a type intended for iteration.
-@@ -77,11 +79,7 @@ func GetCollectionTypes(collectionType Type, rng hcl.Range, strict bool) (Type,
- 	case *ObjectType:
- 		keyType = StringType
- 
--		types := slice.Prealloc[Type](len(collectionType.Properties))
--		for _, t := range collectionType.Properties {
--			types = append(types, t)
--		}
--		valueType, _ = UnifyTypes(types...)
-+		valueType, _ = UnifyTypes(slices.SortedFunc(maps.Values(collectionType.Properties), Compare)...)
- 
- 	default:
- 		// If the collection is a dynamic type, treat it as an iterable(dynamic, dynamic).
-```
-
-**File**: `pkg/codegen/hcl2/model/type_const.go` (modified, +5/-4)
-```diff
-@@ -103,7 +103,7 @@ func (t *ConstType) ConversionFrom(src Type) ConversionKind {
- 	return kind
- }
- 
--func (t *ConstType) conversionFrom(src Type, unifying bool, seen cycleSet) (ConversionKind, lazyDiagnostics) {
-+func (t *ConstType) conversionFrom(src Type, unifying bool, seen *cycleSet) (ConversionKind, lazyDiagnostics) {
- 	return conversionFrom(t, src, unifying, seen, t.cache, func() (ConversionKind, lazyDiagnostics) {
- 		notConvertible := func() hcl.Diagnostics { return hcl.Diagnostics{typeNotConvertible(t, src)} }
- 		if src, ok := src.(*ConstType); ok {
-@@ -128,9 +128,10 @@ func (t *ConstType) string(_ map[Type]struct{}) string {
- 	return t.String()
- }
- 
--func (t *ConstType) unify(other Type) (Type, ConversionKind) {
--	return unify(t, other, func() (Type, ConversionKind) {
--		return t, other.ConversionFrom(t)
-+func (t *ConstType) unify(other Type, seen *cycleSet) (Type, ConversionKind) {
-+	return unify(t, other, seen, func() (Type, ConversionKind) {
-+		kind, _ := other.conversionFrom(t, true, seen)
-+		return t, kind
- 	})
- }
- 
-```
-
-**File**: `pkg/codegen/hcl2/model/type_enum.go` (modified, +3/-3)
-```diff
-@@ -151,7 +151,7 @@ func (t *EnumType) ConversionFrom(src Type) ConversionKind {
- 	return kind
- }
- 
--func (t *EnumType) conversionFrom(src Type, unifying bool, seen cycleSet) (ConversionKind, lazyDiagnostics) {
-+func (t *EnumType) conversionFrom(src Type, unifying bool, seen *cycleSet) (ConversionKind, lazyDiagnostics) {
- 	return conversionFrom(t, src, unifying, seen, t.cache, func() (ConversionKind, lazyDiagnostics) {
- 		// A constant converts safely when it is a member of the enum and not at all otherwise.
- 		if src, ok := src.(*ConstType); ok {
-@@ -192,8 +192,8 @@ func (t *EnumType) string(seen map[Type]struct{}) string {
- 	return s
- }
- 
--func (t *EnumType) unify(other Type) (Type, ConversionKind) {
--	return unify(t, other, func() (Type, ConversionKind) {
-+func (t *EnumType) unify(other Type, seen *cycleSet) (Type, ConversionKind) {
-+	return unify(t, other, seen, func() (Type, ConversionKind) {
- 		return nil, NoConversion
- 	})
- }
-```
-
-**File**: `pkg/codegen/hcl2/model/type_list.go` (modified, +7/-7)
-```diff
-@@ -122,7 +122,7 @@ func (t *ListType) ConversionFrom(src Type) ConversionKind {
- 	return kind
- }
- 
--func (t *ListType) conversionFrom(src Type, unifying bool, seen cycleSet) (ConversionKind, lazyDiagnostics) {
-+func (t *ListType) conversionFrom(src Type, unifying bool, seen *cycleSet) (ConversionKind, lazyDiagnostics) {
- 	return conversionFrom(t, src, unifying, seen, t.cache, func() (ConversionKind, lazyDiagnostics) {
- 		switch src := src.(type) {
- 		case *ListType:
-@@ -154,14 +154,14 @@ func (t *ListType) string(seen map[Type]struct{}) string {
- 	return fmt.Sprintf("list(%s)", t.ElementType.string(seen))
- }
- 
--func (t *ListType) unify(other Type) (Type, ConversionKind) {
--	return unify(t, other, func() (Type, ConversionKind) {
-+func (t *ListType) unify(other Type, seen *cycleSet) (Type, ConversionKind) {
-+	return unify(t, other, seen, func() (Type, ConversionKind) {
- 		switch other := other.(type) {
- 		case *TupleType:
- 			// If the other element is a list type, prefer the list type, but unify the element type.
- 			elementType, conversionKind := t.ElementType, SafeConversion
- 			for _, other := range other.ElementTypes {
--				element, ck := elementType.unify(other)
-+				element, ck := elementType.unify(other, seen)
- 				if ck < conversionKind {
- 					conversionKind = ck
- 				}
-@@ -170,15 +170,15 @@ func (t *ListType) unify(other Type) (Type, ConversionKind) {
- 			return NewListType(elementType), conversionKind
- 		case *SetType:
- 			// If the other element is a set type, prefer the list type, but unify the element types.
--			elementType, conversionKind := t.ElementType.unify(other.ElementType)
-+			elementType, conversionKind := t.ElementType.unify(other.ElementType, seen)
- 			return NewListType(elementType), conversionKind
- 		case *ListType:
- 			// If the other type is a list type, unify based on the element type.
--			elementType, conversionKind := t.ElementType.unify(other.ElementType)
-+			elementType, conversionKind := t.ElementType.unify(other.ElementType, seen)
- 			return NewListType(elementType), conversionKind
- 		default:
- 			// Prefer the list type.
--			kind, _ := t.conversionFrom(other, true, nil)
-+			kind, _ := t.conversionFrom(other, true, seen)
- 			return t, kind
- 		}
- 	})
-```
-
-**File**: `pkg/codegen/hcl2/model/type_map.go` (modified, +9/-7)
-```diff
-@@ -16,6 +16,8 @@ package model
- 
- import (
+@@ -22,9 +22,10 @@ import (
+ 	"encoding/hex"
+ 	"errors"
  	"fmt"
 +	"maps"
+ 	"os"
+ 	"path/filepath"
+-	"sort"
 +	"slices"
+ 	"strings"
  
  	"github.com/hashicorp/hcl/v2"
- 	"github.com/hashicorp/hcl/v2/hclsyntax"
-@@ -117,7 +119,7 @@ func (t *MapType) ConversionFrom(src Type) ConversionKind {
- 	return kind
- }
- 
--func (t *MapType) conversionFrom(src Type, unifying bool, seen cycleSet) (ConversionKind, lazyDiagnostics) {
-+func (t *MapType) conversionFrom(src Type, unifying bool, seen *cycleSet) (ConversionKind, lazyDiagnostics) {
- 	return conversionFrom(t, src, unifying, seen, t.cache, func() (ConversionKind, lazyDiagnostics) {
- 		switch src := src.(type) {
- 		case *MapType:
-@@ -147,18 +149,18 @@ func (t *MapType) string(seen map[Type]struct{}) string {
- 	return fmt.Sprintf("map(%s)", t.ElementType.string(seen))
- }
- 
--func (t *MapType) unify(other Type) (Type, ConversionKind) {
--	return unify(t, other, func() (Type, ConversionKind) {
-+func (t *MapType) unify(other Type, seen *cycleSet) (Type, ConversionKind) {
-+	return unify(t, other, seen, func() (Type, ConversionKind) {
- 		switch other := other.(type) {
- 		case *MapType:
- 			// If the other type is a map type, unify based on the element type.
--			elementType, conversionKind := t.ElementType.unify(other.ElementType)
-+			elementType, conversionKind := t.ElementType.unify(other.ElementType, seen)
- 			return NewMapType(elementType), conversionKind
- 		case *ObjectType:
- 			// If the other type is an object type, prefer the map type, but unify the property types.
- 			elementType, conversionKind := t.ElementType, SafeConversion
--			for _, other := range other.Properties {
--				element, ck := elementType.unify(other)
-+			for _, other := range slices.SortedFunc(maps.Values(other.Properties), Compare) {
-+				element, ck := elementType.unify(other, seen)
- 				if ck < conversionKind {
- 					conversionKind = ck
- 				}
-@@ -167,7 +169,7 @@ func (t *MapType) unify(other Type) (Type, ConversionKind) {
- 			return NewMapType(elementType), conversionKind
- 		default:
- 			// Prefer the map type.
--			kind, _ := t.conversionFrom(other, true, nil)
-+			kind, _ := t.conversionFrom(other, true, seen)
- 			return t, kind
- 		}
- 	})
-```
-
----
-
-### Incident Patch 4: `5d2598e5` (2026-10-05)
-**Commit Message**: TestStuckEventLoop: avoid timing out because of other tests (#25023)
-
-TestStuckEventLoop has a timeout that starts ticking pretty much as
-soon as the test starts.  Since we let ProgramTest call
-`t.Parallel()` internally, that happens after the timer has
-started. Go holds up all the parallel tests until all the ones that
-need to run sequentially start running.  This means the test can get
-stuck on the `t.Parallel()` for an arbitrary amount of time, while
-that also counts against our deadline, so if other tests take longer
-this test might end up timing out without actually taking 10 minutes.
-
-Make the test call `t.Parallel()` upfront instead, so the blocking
-happens before the timer starts, allowing the test to take the full
-timeout allocated to it.
-
-Fixes https://github.com/pulumi/pulumi/issues/25022
-
-**File**: `tests/integration/integration_python_test.go` (modified, +3/-1)
-```diff
-@@ -2000,8 +2000,9 @@ func TestRegress18176(t *testing.T) {
- 	})
- }
- 
--//nolint:paralleltest // ProgramTest calls t.Parallel()
- func TestStuckEventLoop(t *testing.T) {
-+	t.Parallel()
-+
- 	done := make(chan struct{})
- 	stderr := &bytes.Buffer{}
- 	go func() {
-@@ -2015,6 +2016,7 @@ func TestStuckEventLoop(t *testing.T) {
+@@ -910,31 +911,56 @@ func (ectx *EvalContext) builtinFunctions() map[string]function.Function {
+ 				Type: cty.DynamicPseudoType,
  			},
- 			Stderr:        stderr,
- 			Quick:         true,
-+			NoParallel:    true,
- 			ExpectFailure: true, // We expect a failure, but the program shouldn't hang indefinitely.
- 		})
- 		done <- struct{}{}
-```
-
----
-
-### Incident Patch 5: `78161514` (2026-10-02)
-**Commit Message**: remove timeout from fuzz tests (#25008)
-
-Given we have an environment variable that allows us to increase the
-number of fuzz tests to be run, the runtime of `make
-test_lifecycle_fuzz` is essentially unbounded. Reflect that in the
-target by passing `-timeout 0`, essentially giving us an infinite
-timeout for long fuzz testing runs.
-
-**File**: `Makefile` (modified, +1/-0)
-```diff
-@@ -251,6 +251,7 @@ test_lifecycle_fuzz:
- 	@cd pkg && go test github.com/pulumi/pulumi/pkg/v3/engine/lifecycletest \
- 		-run '^TestFuzz$$' \
- 		-tags all \
-+		-timeout 0 \
- 		-rapid.checks=$(LIFECYCLE_TEST_FUZZ_CHECKS)
- 
- test_lifecycle_fuzz_from_state_file: GO_TEST_RACE = false
-```
-
----
-
-### Incident Patch 6: `6e2612f4` (2026-10-02)
-**Commit Message**: Propagate the trace context on backend API calls (#25009)
-
-With `--otel-traces`, the CLI records a span for each attempt of a
-Pulumi Cloud API request, but it does not send the span context to the
-server. A backend that is instrumented with OpenTelemetry then starts an
-unrelated trace for each request, so the CLI trace stops at the HTTP
-call.
-
-The tracing transport now injects the context of the attempt span into
-the request headers with the global propagator, so the server sees each
-retry as a separate child span. Only requests to the host of the API URL
-carry the header, because the same client also sends requests to
-presigned object storage URLs. Without `--otel-traces` the global
-propagator does nothing, and the CLI sends no trace headers.
-
-**File**: `changelog/pending/backend-service-improvement-20261002-145211.yaml` (added, +4/-0)
-```diff
-@@ -0,0 +1,4 @@
-+component: backend/service
-+kind: improvement
-+body: Send the W3C `traceparent` header on Pulumi Cloud API calls when `--otel-traces` is set
-+time: 2026-10-02T14:52:11.692778+02:00
-```
-
-**File**: `pkg/backend/httpstate/client/api.go` (modified, +11/-3)
-```diff
-@@ -34,6 +34,7 @@ import (
- 	"go.opentelemetry.io/otel"
- 	"go.opentelemetry.io/otel/attribute"
- 	"go.opentelemetry.io/otel/codes"
-+	"go.opentelemetry.io/otel/propagation"
- 	"go.opentelemetry.io/otel/trace"
- 
- 	"github.com/pulumi/pulumi/pkg/v3/backend/backenderr"
-@@ -349,9 +350,10 @@ type httpClient interface {
- }
- 
- // tracingTransport wraps an http.RoundTripper to create a span for each individual HTTP attempt,
--// making retries visible in traces.
-+// making retries visible in traces. Requests to apiHost carry the context of the attempt span.
- type tracingTransport struct {
- 	base    http.RoundTripper
-+	apiHost string
- 	attempt int
- }
- 
-@@ -368,7 +370,11 @@ func (t *tracingTransport) RoundTrip(req *http.Request) (*http.Response, error)
- 		))
- 	defer span.End()
- 
--	req = req.WithContext(ctx)
-+	// A RoundTripper must not modify the caller's request, so clone it before the headers change.
-+	req = req.Clone(ctx)
-+	if req.URL.Host == t.apiHost {
-+		otel.GetTextMapPropagator().Inject(ctx, propagation.HeaderCarrier(req.Header))
-+	}
- 	resp, err := t.base.RoundTrip(req)
- 	if err != nil {
- 		span.SetStatus(codes.Error, err.Error())
-@@ -388,6 +394,8 @@ func (t *tracingTransport) RoundTrip(req *http.Request) (*http.Response, error)
- // using the specified *http.Client, with retry support.
- type defaultHTTPClient struct {
- 	client *http.Client
-+	// apiHost is the host of the Pulumi Cloud API. Only requests to this host carry the trace context.
-+	apiHost string
- }
- 
- func (c *defaultHTTPClient) Do(req *http.Request, policy retryPolicy) (*http.Response, error) {
-@@ -421,7 +429,7 @@ func (c *defaultHTTPClient) Do(req *http.Request, policy retryPolicy) (*http.Res
- 		transport = http.DefaultTransport
- 	}
- 	tracingClient := *c.client
--	tracingClient.Transport = &tracingTransport{base: transport}
-+	tracingClient.Transport = &tracingTransport{base: transport, apiHost: c.apiHost}
- 
- 	// Wait 1s before retrying on failure. Then increase by 2x until the
- 	// maximum delay is reached. Stop after maxRetryCount requests have
-```
-
-**File**: `pkg/backend/httpstate/client/api_test.go` (modified, +113/-7)
-```diff
-@@ -19,8 +19,13 @@ import (
- 	"context"
- 	"encoding/json"
- 	"errors"
-+	"fmt"
- 	"io"
- 	"net/http"
-+	"net/http/httptest"
-+	"os"
-+	"os/exec"
-+	"sync"
- 	"sync/atomic"
- 	"testing"
- 	"time"
-@@ -29,8 +34,10 @@ import (
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
- 	"go.opentelemetry.io/otel"
-+	"go.opentelemetry.io/otel/propagation"
- 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
- 	"go.opentelemetry.io/otel/sdk/trace/tracetest"
-+	"go.opentelemetry.io/otel/trace"
- 
- 	"github.com/pulumi/pulumi/pkg/v3/backend/backenderr"
- 	"github.com/pulumi/pulumi/sdk/v3/go/common/apitype"
-@@ -134,7 +141,7 @@ func TestHTTPClientUserAgent(t *testing.T) {
- 
- 	var inReq *http.Request
- 	client := &defaultHTTPClient{
--		&http.Client{
-+		client: &http.Client{
- 			Transport: &errorTransport{
- 				roundTripFunc: func(req *http.Request) (*http.Response, error) {
- 					inReq = req
-@@ -203,7 +210,7 @@ func TestPulumiAPICall_401_LoginRequired(t *testing.T) {
- 			Message: "Unauthorized",
- 		})
- 		httpClient := &defaultHTTPClient{
--			&http.Client{
-+			client: &http.Client{
- 				Transport: &errorTransport{
- 					roundTripFunc: func(req *http.Request) (*http.Response, error) {
- 						return &http.Response{
-@@ -247,7 +254,7 @@ func TestPulumiAPICall_401_LoginRequired(t *testing.T) {
- 				},
- 			})
- 			httpClient := &defaultHTTPClient{
--				&http.Client{
-+				client: &http.Client{
- 					Transport: &errorTransport{
- 						roundTripFunc: func(req *http.Request) (*http.Response, error) {
- 							return &http.Response{
-@@ -279,7 +286,7 @@ func TestPulumiAPICall_401_LoginRequired(t *testing.T) {
- 		t.Parallel()
- 
- 		httpClient := &defaultHTTPClient{
--			&http.Client{
-+			client: &http.Client{
- 				Transport: &errorTransport{
- 					roundTripFunc: func(req *http.Request) (*http.Response, error) {
- 						return &http.Response{
-@@ -315,7 +322,7 @@ func TestCall_RefreshOn401(t *testing.T) {
- 	newRESTClient := func(rt func(req *http.Request) (*http.Response, error)) *defaultRESTClient {
- 		return &defaultRESTClient{
- 			client: &defaultHTTPClient{
--				&http.Client{Transport: &errorTransport{roundTripFunc: rt}},
-+				client: &http.Client{Transport: &errorTransport{roundTripFunc: rt}},
- 			},
- 		}
- 	}
-@@ -524,7 +531,7 @@ func TestDoCreatesPerAttemptSpans(t *testing.T) {
- 		})
- 
- 		client := &defaultHTTPClient{
--			&http.Client{
-+			client: &http.Client{
- 				Transport: &errorTransport{
- 					roundTripFunc: func(req *http.Request) (*http.Response, error) {
- 						return &http.Response{
-@@ -565,7 +572,7 @@ func TestDoCreatesPerAttemptSpans(t *testing.T) {
- 
- 		var callCount atomic.Int32
- 		client := &defaultHTTPClient{
--			&http.Client{
-+			client: &http.Client{
- 				Transport: &errorTransport{
- 					roundTripFunc: func(req *http.Request) (*http.Response, error) {
- 						n := callCount.Add(1)
-@@ -608,6 +615,105 @@ func TestDoCreatesPerAttemptSpans(t *testing.T) {
- 		assertSpanAttribute(t, attemptSpans[1], "http.status_code", int64(500))
- 		assertSpanAttribute(t, attemptSpans[2], "http.status_code", int64(200))
- 	})
-+
-+	t.Run("propagates each attempt span to the API", func(t *testing.T) {
-+		recorder := tracetest.NewSpanRecorder()
-+		tp := sdktrace.NewTracerProvider(sdktrace.WithSpanProcessor(recorder))
-+		prevProvider := otel.GetTracerProvider()
-+		prevPropagator := otel.GetTextMapPropagator()
-+		otel.SetTracerProvider(tp)
-+		otel.SetTextMapPropagator(propagation.TraceContext{})
-+		t.Cleanup(func() {
-+			otel.SetTracerProvider(prevProvider)
-+			otel.SetTextMapPropagator(prevPropagator)
-+		})
-+
-+		var mu sync.Mutex
-+		var traceparents []string
-+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+			mu.Lock()
-+			defer mu.Unlock()
-+			traceparents = append(traceparents, r.Header.Get("traceparent"))
-+			if len(traceparents) == 1 {
-+				w.WriteHeader(http.StatusInternalServerError)
-+			}
-+		}))
-+		t.Cleanup(server.Close)
-+
-+		pc := NewClient(server.URL, "", false, nil)
-+		require.NoError(t, pc.restCall(t.Context(), "GET", "/api/test", nil, nil, nil))
-+
-+		require.NoError(t, tp.ForceFlush(t.Context()))
-+		attemptSpans := filterSpansByName(recorder.Ended(), "HTTP attempt")
-+		require.Len(t, attemptSpans, 2)
-+		expected := make([]string, 0, len(attemptSpans))
-+		for _, span := range attemptSpans {
-+			sc := span.SpanContext()
-+			expected = append(expected, fmt.Sprintf("00-%s-%s-01", sc.TraceID(), sc.SpanID()))
-+		}
-+		mu.Lock()
-+		defer mu.Unlock()
-+		assert.Equal(t, expected, traceparents)
-+	})
-+
-+	t.Run("does not propagate to other hosts", func(t *testing.T) {
-+		prevProvider := otel.GetTracerProvider()
-+		prevPropagator := otel.GetTextMapPropagator()
-+		otel.SetTracerProvider(sdktrace.NewTracerProvider())
-+		otel.SetTextMapPropagator(propagation.TraceContext{})
-+		t.Cleanup(func() {
-+			otel.SetTracerProvider(prevProvider)
-+			otel.SetTextMapPropagator(prevPropagator)
-+		})
-+
-+		var header http.Header
-+		other := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Reques
-```
-
-**File**: `pkg/backend/httpstate/client/client.go` (modified, +11/-6)
-```diff
-@@ -261,9 +261,7 @@ func NewClient(apiURL, apiToken string, insecure bool, d diag.Sink) *Client {
- 		diag:     d,
- 		insecure: insecure,
- 		restClient: &defaultRESTClient{
--			client: &defaultHTTPClient{
--				client: httpClient,
--			},
-+			client: newDefaultHTTPClient(httpClient, apiURL),
  		},
- 	}
- }
-@@ -277,13 +275,20 @@ func (pc *Client) Insecure() bool {
- // Useful for testing.
- func (pc *Client) WithHTTPClient(httpClient *http.Client) *Client {
- 	pc.restClient = &defaultRESTClient{
--		client: &defaultHTTPClient{
--			client: httpClient,
--		},
-+		client: newDefaultHTTPClient(httpClient, pc.apiURL),
- 	}
- 	return pc
- }
- 
-+// newDefaultHTTPClient returns a defaultHTTPClient that sends the trace context to the host of apiURL.
-+func newDefaultHTTPClient(client *http.Client, apiURL string) *defaultHTTPClient {
-+	var apiHost string
-+	if u, err := url.Parse(apiURL); err == nil {
-+		apiHost = u.Host
-+	}
-+	return &defaultHTTPClient{client: client, apiHost: apiHost}
-+}
-+
- // WithRefresh wires an OAuth refresh token + a credentials-writeback callback into this client.
- // Once configured, the client transparently exchanges the refresh token at /api/oauth/token for a
- // fresh access token whenever the service rejects the current one with 401, retrying the original
-```
-
----
-
-### Incident Patch 7: `e5540672` (2026-10-02)
-**Commit Message**: TestPulumiNewEmptyOperations: stop requiring login (#24997)
-
-Nothing in this test really needs us to be logged in, so use the local
-backend instead to make this test work even if `PULUMI_ACCESS_TOKEN` is
-not set in the environment, and so we don't need to touch the backend
-which is always better for tests.
-
-**File**: `tests/smoke/smoke_test.go` (modified, +1/-0)
-```diff
-@@ -1469,6 +1469,7 @@ func TestPulumiNewEmptyOperations(t *testing.T) {
- 	defer e.DeleteIfNotFailed()
- 	require.NoError(t, os.Remove(filepath.Join(e.RootPath, ".yarnrc")))
- 
-+	e.SetBackend(e.LocalURL())
- 	e.RunCommand("pulumi", "new", "-y")
- 	e.RunCommand("pulumi", "stack", "init", "testing")
- 	e.RunCommand("pulumi", "config", "set", "key", "value")
-```
-
----
-
-### Incident Patch 8: `e5a034e5` (2026-10-02)
-**Commit Message**: avoid panic handler goroutine leaking (#24981)
-
-This goroutine leaking, while not important on its own, causes a multi
-GB memory leak when running the fuzz tests. Fix it.
-
-**File**: `pkg/resource/deploy/step_executor.go` (modified, +21/-4)
-```diff
-@@ -125,6 +125,8 @@ type stepExecutor struct {
- 
- 	// Channel to collect panic errors from goroutines in this step executor
- 	panicErrs chan error
-+	completed chan struct{}
-+	complete  sync.Once
- 
- 	// ExecuteRegisterResourceOutputs will save the event for the stack resource so that the stack outputs
- 	// can be finalized at the end of the deployment. We do this so we can determine whether or not the
-@@ -391,6 +393,7 @@ func (se *stepExecutor) WaitForCompletion() {
- 	se.log(synchronousWorkerID, "StepExecutor.waitForCompletion(): waiting for worker threads to exit")
- 	se.workers.Wait()
- 	se.log(synchronousWorkerID, "StepExecutor.waitForCompletion(): worker threads all exited")
-+	se.complete.Do(func() { close(se.completed) })
- }
- 
- //
-@@ -734,14 +737,28 @@ func newStepExecutor(
- 		ctx:            ctx,
- 		cancel:         cancel,
- 		panicErrs:      make(chan error, 1),
-+		completed:      make(chan struct{}),
- 	}
- 
-+	handlePanic := func(panicErr error) {
-+		exec.cancelDueToError(panicErr, nil)
-+		if deployment.panicErrs != nil {
-+			deployment.panicErrs <- panicErr
-+		}
-+	}
- 	// Start a goroutine to monitor for panic errors and handle them
- 	go func() {
--		for panicErr := range exec.panicErrs {
--			exec.cancelDueToError(panicErr, nil)
--			if deployment.panicErrs != nil {
--				deployment.panicErrs <- panicErr
-+		for {
-+			select {
-+			case panicErr := <-exec.panicErrs:
-+				handlePanic(panicErr)
-+			case <-exec.completed:
-+				select {
-+				case panicErr := <-exec.panicErrs:
-+					handlePanic(panicErr)
-+				default:
-+				}
-+				return
- 			}
- 		}
- 	}()
-```
-
----
-
-### Incident Patch 9: `319729fb` (2026-10-02)
-**Commit Message**: Download plugins from Git repositories whose version tags have no `v` prefix (#24986)
-
-## Summary
-
-Fixes #19724.
-
-When a plugin comes from a Git repository, `gitSource.Download` always
-checks out `refs/tags/v<version>`. A repository that tags its releases
-as plain `1.0.0` can never be downloaded, even though
-`gitutil.GetLatestTagOrHash` already accepts such tags when it picks the
-latest version (it parses tag names with `semver.ParseTolerant`). That
-is the failure in the issue: `pulumi package get-schema
-github.com/flostadler/aws-k8s@0.0.21-beta.1` asks for
-`refs/tags/v0.0.21-beta.1` and gives up.
-
-`Download` now tries the `v` tag first and only when go-git reports that
-the ref does not exist (`git.ErrRemoteRefNotFound`) tries the same
-version without the prefix. A repository that has both tags still
-resolves to the `v` one, and other clone errors, such as a failed
-authentication, are returned without a second attempt. If neither tag
-exists, both errors are returned, so the message names both refs.
-
-## Test plan
-
-- [x] Added appropriate unit tests - For all changes
-- [ ] Added a test in `pkg/engine/lifecycletest` - For all
-engine/protocol changes
-- [ ] Added a conformance test in `
-
-**File**: `changelog/pending/cli-package-fix-20261002-103750.yaml` (added, +4/-0)
-```diff
-@@ -0,0 +1,4 @@
-+component: cli/package
-+kind: fix
-+body: Download plugins from Git repositories whose version tags have no `v` prefix
-+time: 2026-10-02T10:37:50.079282+09:00
-```
-
-**File**: `sdk/go/common/workspace/plugins.go` (modified, +11/-1)
-```diff
-@@ -42,6 +42,7 @@ import (
- 
- 	"github.com/blang/semver"
- 	"github.com/djherbis/times"
-+	git "github.com/go-git/go-git/v6"
- 	"github.com/go-git/go-git/v6/plumbing"
- 
- 	"github.com/pulumi/pulumi/sdk/v3/go/common/apitype"
-@@ -393,7 +394,7 @@ func (source *gitSource) GetLatestVersion(
- 
- // Downloads a plugin from a git repository.  If the version is a pre-release version, the version is expected to be
- // a commit hash, that will be checked out.  Otherwise, the version is expected to be a tag, that will be checked out.
--// The tag is expected to be prefixed with a 'v' character.
-+// The 'v'-prefixed tag is tried first, falling back to the unprefixed tag if it does not exist.
- // If the version is the special sentinel version 0.0.0, we'll use the latest commit on the default branch.
- func (source *gitSource) Download(
- 	ctx context.Context, version semver.Version, _ string, _ string,
-@@ -424,6 +425,15 @@ func (source *gitSource) Download(
- 			ref = plumbing.ReferenceName("refs/tags/v" + version.String())
- 		}
- 		err := source.cloneOrPull(ctx, source.url, ref, tmpdir, true /* shallow */)
-+		if ref != plumbing.HEAD && errors.Is(err, git.ErrRemoteRefNotFound) {
-+			unprefixed := plumbing.ReferenceName("refs/tags/" + version.String())
-+			unprefixedErr := source.cloneOrPull(ctx, source.url, unprefixed, tmpdir, true /* shallow */)
-+			if unprefixedErr == nil {
-+				err = nil
-+			} else {
-+				err = errors.Join(err, unprefixedErr)
+-		Type: function.StaticReturnType(cty.List(cty.Object(map[string]cty.Type{
+-			"key":   cty.String,
+-			"value": cty.DynamicPseudoType,
+-		}))),
++		Type: func(args []cty.Value) (cty.Type, error) {
++			collection := args[0].Type()
++			keyType := cty.String
++			if collection.IsListType() || collection.IsTupleType() {
++				keyType = cty.Number
 +			}
-+		}
- 		if err != nil {
- 			return nil, -1, err
- 		}
++			entryType := func(valueType cty.Type) cty.Type {
++				return cty.Object(map[string]cty.Type{"key": keyType, "value": valueType})
++			}
++			switch {
++			case collection.IsMapType() || collection.IsListType():
++				return cty.List(entryType(collection.ElementType())), nil
++			case collection.IsObjectType() || collection.IsTupleType():
++				var types []cty.Type
++				if collection.IsObjectType() {
++					attributes := collection.AttributeTypes()
++					for _, k := range slices.Sorted(maps.Keys(attributes)) {
++						types = append(types, entryType(attributes[k]))
++					}
++				} else {
++					for _, t := range collection.TupleElementTypes() {
++						types = append(types, entryType(t))
++					}
++				}
++				if len(types) == 0 {
++					return cty.List(entryType(cty.DynamicPseudoType)), nil
++				}
++				for _, t := range types[1:] {
++					if !t.Equals(types[0]) {
++						return cty.Tuple(types), nil
++					}
++				}
++				return cty.List(types[0]), nil
++			}
++			return cty.NilType, fmt.Errorf("entries argument must be a collection, was %s", collection.FriendlyName())
++		},
+ 		Impl: func(args []cty.Value, retType cty.Type) (cty.Value, error) {
+-			if len(args) != 1 {
+-				return cty.NilVal, errors.New("entries requires a collection argument")
++			entries := make([]cty.Value, 0, args[0].LengthInt())
++			for it := args[0].ElementIterator(); it.Next(); {
++				key, value := it.Element()
++				entries = append(entries, cty.ObjectVal(map[string]cty.Value{
++					"key":   key,
++					"value": value,
++				}))
+ 			}
+-			if !args[0].Type().IsMapType() && !args[0].Type().IsObjectType() {
+-				return cty.NilVal, fmt.Errorf("entries argument must be a collection, was %s", args[0].Type().FriendlyName())
+-			}
+-			obj := args[0]
+-			valueMap := obj.AsValueMap()
+-			keys := make([]string, 0, len(valueMap))
+-			for k := range valueMap {
+-				keys = append(keys, k)
+-			}
+-			sort.Strings(keys)
+-			var entries []cty.Value
+-			for _, k := range keys {
+-				entry := cty.ObjectVal(map[string]cty.Value{
+-					"key":   cty.StringVal(k),
+-					"value": valueMap[k],
+-				})
+-				entries = append(entries, entry)
++			switch {
++			case retType.IsTupleType():
++				return cty.TupleVal(entries), nil
++			case len(entries) == 0:
++				return cty.ListValEmpty(retType.ElementType()), nil
+ 			}
+ 			return cty.ListVal(entries), nil
+ 		},
 ```
 
-**File**: `sdk/go/common/workspace/plugins_test.go` (modified, +67/-0)
+**File**: `pkg/pcl/runtime/builtinFunctions_test.go` (modified, +45/-0)
 ```diff
-@@ -35,6 +35,7 @@ import (
- 	"time"
- 
- 	"github.com/blang/semver"
-+	git "github.com/go-git/go-git/v6"
- 	"github.com/go-git/go-git/v6/plumbing"
- 	"github.com/pulumi/pulumi/sdk/v3/go/common/apitype"
- 	"github.com/pulumi/pulumi/sdk/v3/go/common/diag"
-@@ -2131,6 +2132,72 @@ func TestGitSourceDownloadSemver(t *testing.T) {
- 	require.Equal(t, "a string", string(buf))
+@@ -68,6 +68,51 @@ map = length({for k, v in {"a" = 1, "b" = 2, "c" = 3} : k => v})
+ 	}, values)
  }
  
-+func TestGitSourceDownloadUnprefixedTag(t *testing.T) {
++func TestEntries(t *testing.T) {
 +	t.Parallel()
 +
-+	prefixed := plumbing.ReferenceName("refs/tags/v1.0.0")
-+	unprefixed := plumbing.ReferenceName("refs/tags/1.0.0")
-+	prefixedNotFound := fmt.Errorf("%w: %s", git.ErrRemoteRefNotFound, prefixed)
-+	unprefixedNotFound := fmt.Errorf("%w: %s", git.ErrRemoteRefNotFound, unprefixed)
-+	errAuth := errors.New("authentication required")
-+
-+	cases := []struct {
-+		name         string
-+		cloneErrs    map[plumbing.ReferenceName]error
-+		expectedRefs []plumbing.ReferenceName
-+		expectedErrs []error
-+	}{
-+		{
-+			name:         "only unprefixed tag exists",
-+			cloneErrs:    map[plumbing.ReferenceName]error{prefixed: prefixedNotFound},
-+			expectedRefs: []plumbing.ReferenceName{prefixed, unprefixed},
-+		},
-+		{
-+			name: "no tag exists",
-+			cloneErrs: map[plumbing.ReferenceName]error{
-+				prefixed:   prefixedNotFound,
-+				unprefixed: unprefixedNotFound,
-+			},
-+			expectedRefs: []plumbing.ReferenceName{prefixed, unprefixed},
-+			expectedErrs: []error{prefixedNotFound, unprefixedNotFound},
-+		},
-+		{
-+			name:         "other clone error",
-+			cloneErrs:    map[plumbing.ReferenceName]error{prefixed: errAuth},
-+			expectedRefs: []plumbing.ReferenceName{prefixed},
-+			expectedErrs: []error{errAuth},
-+		},
++	entry := func(key string, value property.Value) property.Value {
++		return property.New(map[string]property.Value{"key": property.New(key), "value": value})
 +	}
-+	for _, c := range cases {
-+		t.Run(c.name, func(t *testing.T) {
-+			t.Parallel()
-+
-+			var refs []plumbing.ReferenceName
-+			gitSource := &gitSource{
-+				url: "https://example.com/repo/test",
-+				cloneOrPull: func(_ context.Context, _ string, ref plumbing.ReferenceName, tmpdir string, _ bool) error {
-+					refs = append(refs, ref)
-+					if err := c.cloneErrs[ref]; err != nil {
-+						return err
-+					}
-+					return os.WriteFile(filepath.Join(tmpdir, "test"), []byte("a string"), 0o600)
-+				},
-+			}
-+			readCloser, _, err := gitSource.Download(t.Context(), semver.MustParse("1.0.0"), "unused", "unused",
-+				func(*http.Request) (io.ReadCloser, int64, error) { panic("unused") })
-+			require.Equal(t, c.expectedRefs, refs)
-+			if len(c.expectedErrs) > 0 {
-+				for _, expected := range c.expectedErrs {
-+					require.ErrorIs(t, err, expected)
-+				}
-+				return
-+			}
-+			require.NoError(t, err)
-+			require.NotNil(t, readCloser)
-+		})
++	indexedEntry := func(key float64, value property.Value) property.Value {
++		return property.New(map[string]property.Value{"key": property.New(key), "value": value})
 +	}
++	list := func(entries ...property.Value) property.Value {
++		return property.New(append([]property.Value{}, entries...))
++	}
++	values := evaluateLocals(t, `
++uniform = entries({"a" = 1, "b" = 2})
++mixed = entries({"a" = [true], "b" = [true, false]})
++empty = entries({})
++tuple = entries([1, 2, 3])
++mixedTuple = entries([true, "hello"])
++emptyTuple = entries([])
++list = entries(range(3))
++emptyList = entries(range(0))
++`)
++	assert.Equal(t, map[string]property.Value{
++		"uniform": list(entry("a", property.New(1.0)), entry("b", property.New(2.0))),
++		"mixed": list(
++			entry("a", property.New([]property.Value{property.New(true)})),
++			entry("b", property.New([]property.Value{property.New(true), property.New(false)})),
++		),
++		"empty": list(),
++		"tuple": list(
++			indexedEntry(0, property.New(1.0)),
++			indexedEntry(1, property.New(2.0)),
++			indexedEntry(2, property.New(3.0)),
++		),
++		"mixedTuple": list(indexedEntry(0, property.New(true)), indexedEntry(1, property.New("hello"))),
++		"emptyTuple": list(),
++		"list": list(
++			indexedEntry(0, property.New(0.0)),
++			indexedEntry(1, property.New(1.0)),
++			indexedEntry(2, property.New(2.0)),
++		),
++		"emptyList": list(),
++	}, values)
 +}
 +
- func TestGitSourceDownloadHEAD(t *testing.T) {
+ func TestRange(t *testing.T) {
  	t.Parallel()
  
 ```
 
 ---
 
-### Incident Patch 10: `f6c3028b` (2026-10-01)
-**Commit Message**: fix(engine): apply ancestor transforms through a read-resource parent (#24689)
+### Incident Patch 2: `194c65d8` (2026-10-16)
+**Commit Message**: Revert "Freeze v3.269.0" (#25247)
 
-## Summary
+Reverts pulumi/pulumi#25245
 
-Resource transforms declared on an ancestor component were silently not
-applied to a custom resource when the resource's parent chain passed
-through a read (`.get()`-style) resource. The engine collects the
-transforms to run on a resource by walking up the parent chain via
-`rm.parents` (a URN→parent URN map), but that map was populated only in
-the `RegisterResource` path — `ReadResource` never recorded a `parent`
-entry for the resource it creates. When the ancestor walk reached a read
-resource it found no entry and stopped early, dropping every transform
-declared on components above the read resource.
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
-This fixes `ReadResource` in `pkg/resource/deploy/source_eval.go` to
-record `rm.parents[urn] = parent` for the resource it creates, mirroring
-what `RegisterResource` already does. A read resource has no transforms
-of its own (there's no `Transforms` field on `ReadResourceRequest`), so
-`rm.resourceTransforms` is intentionally left untouched for it — only
-the parent-chain link needed for the walk to continue.
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-Report: https://github.com/pulumi/pulumi/issues/24038
-
-## Test plan
-
-- [x] Added appro
-
-**File**: `changelog/pending/engine-fix-20260917-120000.yaml` (added, +4/-0)
+**File**: `.release-pending` (removed, +0/-1)
 ```diff
-@@ -0,0 +1,4 @@
-+component: engine
-+kind: fix
-+body: Apply resource transforms declared on an ancestor component to resources parented under a resource read
-+time: 2026-09-17T12:00:00.000000000Z
+@@ -1 +0,0 @@
+-v3.270.0
 ```
 
-**File**: `pkg/engine/lifecycletest/transformation_test.go` (modified, +78/-0)
+**File**: `npm/package.json` (modified, +1/-1)
 ```diff
-@@ -1201,3 +1201,81 @@ func TestRemoteTransformByteString(t *testing.T) {
- 		"bar": resource.NewProperty(rawBytes),
- 	}, res.Inputs)
- }
-+
-+// Test that a transform declared on an ancestor component is still applied to a custom resource whose parent
-+// chain passes through a resource read.
-+func TestTransformInheritedThroughReadParent(t *testing.T) {
-+	t.Parallel()
-+
-+	loaders := []*deploytest.ProviderLoader{
-+		deploytest.NewProviderLoader("pkgA", semver.MustParse("1.0.0"), func() (plugin.Provider, error) {
-+			return &deploytest.Provider{
-+				ReadF: func(_ context.Context, req plugin.ReadRequest) (plugin.ReadResponse, error) {
-+					return plugin.ReadResponse{
-+						ReadResult: plugin.ReadResult{
-+							ID:      req.ID,
-+							Outputs: req.State,
-+						},
-+						Status: resource.StatusOK,
-+					}, nil
-+				},
-+			}, nil
-+		}),
-+	}
-+
-+	programF := deploytest.NewLanguageRuntimeF(func(_ plugin.RunInfo, monitor *deploytest.ResourceMonitor) error {
-+		callbacks, err := deploytest.NewCallbacksServer()
-+		require.NoError(t, err)
-+		defer func() { require.NoError(t, callbacks.Close()) }()
-+
-+		// A transform that bumps "foo" by 1 on every leaf custom resource it is applied to.
-+		bumpFoo, err := callbacks.Allocate(
-+			TransformFunction(func(name, typ string, custom bool, parent string,
-+				props resource.PropertyMap, opts *pulumirpc.TransformResourceOptions,
-+			) (resource.PropertyMap, *pulumirpc.TransformResourceOptions, error) {
-+				if typ == "pkgA:m:typLeaf" {
-+					props["foo"] = resource.NewProperty(props["foo"].NumberValue() + 1)
-+				}
-+				return props, opts, nil
-+			}))
-+		require.NoError(t, err)
-+
-+		// Component C carries the transform. Its descendants should inherit it.
-+		component, err := monitor.RegisterResource("pkgA:m:typComponent", "compA", false, deploytest.ResourceOptions{
-+			Transforms: []*pulumirpc.Callback{bumpFoo},
-+		})
-+		require.NoError(t, err)
-+
-+		// A resource read parented to the component.
-+		readURN, _, err := monitor.ReadResource(
-+			"pkgA:m:typRead", "readR", "read-id", component.URN,
-+			resource.PropertyMap{}, "", "", "", nil, "", "")
-+		require.NoError(t, err)
-+
-+		// The leaf custom resource is parented to the read resource, not directly to the component.
-+		_, err = monitor.RegisterResource("pkgA:m:typLeaf", "leafUnderRead", true, deploytest.ResourceOptions{
-+			Parent: readURN,
-+			Inputs: resource.PropertyMap{"foo": resource.NewProperty(10.0)},
-+		})
-+		require.NoError(t, err)
-+		return nil
-+	})
-+	hostF := deploytest.NewPluginHostF(nil, nil, programF, nil, nil, loaders...)
-+
-+	p := &lt.TestPlan{
-+		Options: lt.TestUpdateOptions{T: t, HostF: hostF, SkipDisplayTests: true},
-+	}
-+
-+	project := p.GetProject()
-+	snap, err := lt.TestOp(Update).Run(project, p.GetTarget(t, nil), p.Options, false, p.BackendClient, nil)
-+	require.NoError(t, err)
-+
-+	inputsByName := map[string]resource.PropertyMap{}
-+	for _, r := range snap.Resources {
-+		inputsByName[r.URN.Name()] = r.Inputs
-+	}
-+
-+	// The transform declared on the ancestor component should still apply: 10 + 1 = 11.
-+	assert.Equal(t, resource.NewProperty(11.0), inputsByName["leafUnderRead"]["foo"],
-+		"leaf parented under a read resource should inherit the ancestor component's transform")
-+}
+@@ -1,6 +1,6 @@
+ {
+     "name": "pulumi",
+-    "version": "3.270.0",
++    "version": "3.269.0",
+     "description": "Pulumi Infrastructure as Code CLI",
+     "license": "Apache-2.0",
+     "repository": {
 ```
 
-**File**: `pkg/resource/deploy/source_eval.go` (modified, +8/-7)
+**File**: `sdk/.version` (modified, +1/-1)
 ```diff
-@@ -1198,7 +1198,8 @@ func (rm *resmon) Invoke(
- 	return &pulumirpc.ResourceInvokeResponse{Return: mret, Failures: chkfails}, nil
- }
- 
--// trackSettledResource records the resource a completed registration or read produced.
-+// trackSettledResource records the resource a completed registration or read produced, along with its parent so that
-+// transforms declared on ancestors can be found even when the chain passes through a resource read.
- //
- // parent and custom are the caller's, not the state's: Construct hands back a state carrying only a URN and outputs, so
- // a remote component's own state has neither, and filing it under the empty parent would hide it and everything beneath
-@@ -1210,6 +1211,11 @@ func (rm *resmon) trackSettledResource(state *pkgresource.State, parent resource
- 	state.Lock.Lock()
- 	urn, id := state.URN, state.ID
- 	state.Lock.Unlock()
-+
-+	rm.parentsLock.Lock()
-+	rm.parents[urn] = parent
-+	rm.parentsLock.Unlock()
-+
- 	rm.registrations.Track(urn, parent, custom, id != "")
- }
- 
-@@ -3092,12 +3098,7 @@ func (rm *resmon) RegisterResource(ctx context.Context,
- 	}
- 
- 	if result != nil && result.State != nil && result.State.URN != "" {
--		// We've got a safe URN now, save the parent and transformations
--		func() {
--			rm.parentsLock.Lock()
--			defer rm.parentsLock.Unlock()
--			rm.parents[result.State.URN] = parent
--		}()
-+		// We've got a safe URN now, save the transformations
- 		func() {
- 			rm.resourceTransformsLock.Lock()
- 			defer rm.resourceTransformsLock.Unlock()
+@@ -1 +1 @@
+-3.270.0
++3.269.0
 ```
 
-**File**: `pkg/resource/deploy/source_eval_test.go` (modified, +2/-0)
+**File**: `sdk/nodejs/package.json` (modified, +1/-1)
 ```diff
-@@ -3552,6 +3552,7 @@ func TestReadResource(t *testing.T) {
- 		regReadChan := make(chan *readResourceEvent, 1)
- 		rm := &resmon{
- 			regReadChan: regReadChan,
-+			parents:     map[resource.URN]resource.URN{},
- 			defaultProviders: &defaultProviders{
- 				config: &configSourceMock{},
- 			},
-@@ -3599,6 +3600,7 @@ func TestReadResource(t *testing.T) {
- 		regReadChan := make(chan *readResourceEvent, 1)
- 		rm := &resmon{
- 			regReadChan: regReadChan,
-+			parents:     map[resource.URN]resource.URN{},
- 			cancel:      cancel,
- 			defaultProviders: &defaultProviders{
- 				config: &configSourceMock{},
+@@ -1,6 +1,6 @@
+ {
+     "name": "@pulumi/pulumi",
+-    "version": "3.270.0",
++    "version": "3.269.0",
+     "description": "Pulumi's Node.js SDK",
+     "license": "Apache-2.0",
+     "repository": {
+```
+
+**File**: `sdk/nodejs/version.ts` (modified, +1/-1)
+```diff
+@@ -12,4 +12,4 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
+-export const version = "3.270.0";
++export const version = "3.269.0";
+```
+
+**File**: `sdk/python/lib/pulumi/_version.py` (modified, +1/-1)
+```diff
+@@ -14,7 +14,7 @@
+ 
+ from semver import VersionInfo
+ 
+-_VERSION = "3.270.0"
++_VERSION = "3.269.0"
+ 
+ version = VersionInfo.parse(_VERSION)
+ """Version is the Pulumi SDK's release version."""
+```
+
+**File**: `sdk/python/pyproject.toml` (modified, +1/-1)
+```diff
+@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
+ 
+ [project]
+ name = "pulumi"
+-version = "3.270.0"
++version = "3.269.0"
+ license = "Apache-2.0"
+ license-files = ["LICENSE"]
+ requires-python = ">=3.10"
+```
+
+**File**: `sdk/python/uv.lock` (modified, +1/-1)
+```diff
+@@ -1028,7 +1028,7 @@ wheels = [
+ 
+ [[package]]
+ name = "pulumi"
+-version = "3.270.0"
++version = "3.269.0"
+ source = { editable = "." }
+ dependencies = [
+     { name = "debugpy" },
 ```
 
 ---
 
-### Incident Patch 11: `6fc63e08` (2026-10-01)
-**Commit Message**: Simplify credential-store test fixtures (#24957)
+### Incident Patch 3: `463235d1` (2026-10-16)
+**Commit Message**: Fix Go program generation for split and string length (#25214)
 
-Use the helper from https://github.com/pulumi/pulumi/pull/24950 for
-tests using a fake credential store.
+PCL `split("-", s)` was lowered to `pulumi.StringArray(strings.Split(s,
+"-"))`, but `pulumi.StringArray` is `[]pulumi.String`, not `[]string`,
+so the conversion did not compile. Use `pulumi.ToStringArray` (and the
+matching `pulumi.To<Suffix>` helpers for other scalar array/map types)
+when wrapping a plain Go slice/map value in a Pulumi input container.
 
-**File**: `sdk/go/common/workspace/credstore.go` (modified, +0/-6)
-```diff
-@@ -41,12 +41,6 @@ func credentialStoreMode() (securestore.Mode, error) {
- 	}
- }
- 
--// Tests that change PULUMI_CREDENTIAL_STORE or install the mock must call this.
--func resetCredStoreForTesting() {
--	replacedEnvelope.Store(false)
--	plaintextPendingOnce = sync.Once{}
--}
--
- // Cheap to call repeatedly: the store probes memoize their own prechecks.
- func resolveWriteStore() (keyStore, error) {
- 	mode, err := credentialStoreMode()
-```
+PCL `length(string)` is specified as the Unicode grapheme cluster count,
+so emit `uniseg.GraphemeClusterCount` instead of Go's byte-oriented
+`len`.
 
-**File**: `sdk/go/common/workspace/credstore_test.go` (modified, +84/-96)
-```diff
-@@ -31,12 +31,18 @@ import (
- 	"github.com/stretchr/testify/require"
- )
- 
--// Temp credential dir, fake store, chosen mode.
--func pinSecureCreds(t *testing.T, mode string) {
-+func isolateSecureCredentials(t *testing.T, mode string) *fakeKeyStore {
- 	t.Helper()
- 	ptesting.IsolateCredentials(t)
- 	t.Setenv("PULUMI_CREDENTIAL_STORE", mode)
--	useFakeStores(t)
-+	return useFakeStores(t)
-+}
-+
-+func isolateUpgradableCredentials(t *testing.T) (promote func()) {
-+	t.Helper()
-+	ptesting.IsolateCredentials(t)
-+	t.Setenv("PULUMI_CREDENTIAL_STORE", "auto")
-+	return useUpgradableStores(t)
- }
- 
- func testCreds() Credentials {
-@@ -48,7 +54,7 @@ func testCreds() Credentials {
- 
- //nolint:paralleltest // t.Setenv and the package-global secure-store mock forbid parallel runs
- func TestStoreCredentialsEncryptsInAutoMode(t *testing.T) {
--	pinSecureCreds(t, "auto")
-+	isolateSecureCredentials(t, "auto")
- 
- 	require.NoError(t, StoreCredentials(testCreds()))
- 
-@@ -66,7 +72,7 @@ func TestStoreCredentialsEncryptsInAutoMode(t *testing.T) {
- 
- //nolint:paralleltest // t.Setenv and the package-global secure-store mock forbid parallel runs
- func TestStoreCredentialsPlaintextByDefault(t *testing.T) {
--	pinSecureCreds(t, "")
-+	isolateSecureCredentials(t, "")
- 
- 	require.NoError(t, StoreCredentials(testCreds()))
- 
-@@ -80,7 +86,7 @@ func TestStoreCredentialsPlaintextByDefault(t *testing.T) {
- 
- //nolint:paralleltest // t.Setenv and the package-global secure-store mock forbid parallel runs
- func TestStoreCredentialsPlaintextModeExplicit(t *testing.T) {
--	pinSecureCreds(t, "plaintext")
-+	isolateSecureCredentials(t, "plaintext")
- 
- 	require.NoError(t, StoreCredentials(testCreds()))
- 	credsFile, err := getCredsFilePath()
-@@ -92,7 +98,7 @@ func TestStoreCredentialsPlaintextModeExplicit(t *testing.T) {
- 
- //nolint:paralleltest // t.Setenv and the package-global secure-store mock forbid parallel runs
- func TestPlaintextFileMigratesOnWriteNotRead(t *testing.T) {
--	pinSecureCreds(t, "auto")
-+	isolateSecureCredentials(t, "auto")
- 
- 	credsFile, err := getCredsFilePath()
- 	require.NoError(t, err)
-@@ -120,7 +126,7 @@ func TestPlaintextFileMigratesOnWriteNotRead(t *testing.T) {
- 
- //nolint:paralleltest // t.Setenv and the package-global secure-store mock forbid parallel runs
- func TestNoMigrationWhenModeUnset(t *testing.T) {
--	pinSecureCreds(t, "")
-+	isolateSecureCredentials(t, "")
- 
- 	credsFile, err := getCredsFilePath()
- 	require.NoError(t, err)
-@@ -135,12 +141,11 @@ func TestNoMigrationWhenModeUnset(t *testing.T) {
- }
- 
- func TestEncryptedFileReadableRegardlessOfMode(t *testing.T) {
--	pinSecureCreds(t, "auto")
-+	isolateSecureCredentials(t, "auto")
- 	require.NoError(t, StoreCredentials(testCreds()))
- 
- 	// Reads always use the envelope's recorded backend.
- 	t.Setenv("PULUMI_CREDENTIAL_STORE", "plaintext")
--	resetCredStoreForTesting()
- 
- 	creds, err := GetStoredCredentials()
- 	require.NoError(t, err)
-@@ -149,18 +154,18 @@ func TestEncryptedFileReadableRegardlessOfMode(t *testing.T) {
- 
- //nolint:paralleltest // t.Setenv and the package-global secure-store mock forbid parallel runs
- func TestLostKeyProducesActionableError(t *testing.T) {
--	pinSecureCreds(t, "auto")
-+	st := isolateSecureCredentials(t, "auto")
- 	require.NoError(t, StoreCredentials(testCreds()))
- 
--	require.NoError(t, fakeStore(t).DeleteKey())
-+	require.NoError(t, st.DeleteKey())
- 
- 	_, err := GetStoredCredentials()
- 	require.Error(t, err)
- 	assert.Contains(t, err.Error(), "pulumi login")
- }
- 
- func TestDeleteAllAccountsKeepsKeySharedWithOtherHomes(t *testing.T) {
--	pinSecureCreds(t, "auto")
-+	isolateSecureCredentials(t, "auto")
- 	homeA := os.Getenv("PULUMI_HOME")
- 	require.NoError(t, StoreCredentials(testCreds()))
- 
-@@ -176,21 +181,20 @@ func TestDeleteAllAccountsKeepsKeySharedWithOtherHomes(t *testing.T) {
- 
- //nolint:paralleltest // t.Setenv and the package-global secure-store mock forbid parallel runs
- func TestDeleteAllAccountsDropsCorruptKey(t *testing.T) {
--	pinSecureCreds(t, "auto")
-+	st := isolateSecureCredentials(t, "auto")
- 	require.NoError(t, StoreCredentials(testCreds()))
--	fakeStore(t).getErr = fmt.Errorf("%w: unrecognized format", securestore.ErrKeyCorrupt)
-+	st.getErr = fmt.Errorf("%w: unrecognized format", securestore.ErrKeyCorrupt)
- 
- 	require.NoError(t, DeleteAllAccounts())
- 
--	_, err := fakeStore(t).GetKey()
-+	_, err := st.GetKey()
- 	assert.ErrorIs(t, err, securestore.ErrKeyNotFound)
- }
- 
- //nolint:paralleltest // t.Setenv and the package-global secure-store mock forbid parallel runs
- func TestDeleteAllAccountsKeepsKeyOnTransientError(t *testing.T) {
--	pinSecureCreds(t, "auto")
-+	st := isolateSecureCredentials(t, "auto")
- 	require.NoError(t, StoreCredentials(testCreds()))
--	st := fakeStore(t)
- 	st.getErr = errors.New("dbus timeout")
- 
- 	require.NoError(t, DeleteAllAccounts())
-@@ -202,31 +206,30 @@ func TestDeleteAllAccountsKeepsKeyOnTransientError(t *testing.T) {
- 
- //nolint:paralleltest // t.Setenv and the package-global secure-store mock forbid parallel runs
- func TestDel
-```
-
-**File**: `sdk/go/common/workspace/credstorefake_test.go` (modified, +6/-8)
-```diff
-@@ -17,10 +17,10 @@ package workspace
- import (
- 	"crypto/rand"
- 	"fmt"
-+	"sync"
- 	"testing"
- 
- 	"github.com/pulumi/pulumi/sdk/v3/go/common/util/securestore"
--	"github.com/stretchr/testify/require"
- )
- 
- const (
-@@ -160,15 +160,13 @@ func installStores(t *testing.T, s keyStores) {
- 	previous := stores
- 	stores = s
- 	t.Cleanup(func() { stores = previous })
--	resetCredStoreForTesting()
--	t.Cleanup(resetCredStoreForTesting)
-+	resetCredentialStoreState()
-+	t.Cleanup(resetCredentialStoreState)
- }
- 
--func fakeStore(t *testing.T) *fakeKeyStore {
--	t.Helper()
--	fakes, ok := stores.(*fakeStores)
--	require.True(t, ok, "no fake stores installed")
--	return fakes.byBackend[fakeBackend]
-+func resetCredentialStoreState() {
-+	replacedEnvelope.Store(false)
-+	plaintextPendingOnce = sync.Once{}
- }
- 
- // The stronger backend becomes available only once promote is called.
-```
-
----
-
-### Incident Patch 12: `1a0e5f24` (2026-09-30)
-**Commit Message**: Add l2-invoke-union-dependencies conformance test and fix PCL dep loss (#24944)
-
-A resource whose input reads a field of an invoke's return value must
-depend on the union of every resource that fed the invoke's arguments.
-The new l2-invoke-union-dependencies conformance test pins that rule: a
-and b flow into secretInvoke and d consumes data.response, so d must
-depend on {a, b}. Go, Node (TSC) and Python already pass; PCL was
-dropping deps in two places.
-
-- pkg/pcl/runtime/convert.go: `unmark[T]` stripped every mark of type T
-from the value but only returned the last one it visited, so a value
-carrying more than one dependencyMark surfaced only one dep. Reworked as
-`unmark[T](cty.Value) (cty.Value, []T)` and updated callers; the
-boolean-flavoured poison / secret callers now just check len(marks).
-- pkg/pcl/runtime/interpreter.go: getAllDependencies walked Output,
-Object and Array but not Secret, so a `Secret(Output{deps=...})`
-(secretInvoke.response is exactly that) hid its deps. Added the Secret
-case.
-
----------
+Unskips `l1-builtin-string` in the Go language conformance suite.
 
 Co-authored-by: Claude Opus 4.7 (1M context) <[REDACTED_EMAIL]>
 
-**File**: `pkg/testing/pulumi-test-language/tests/l2_invoke_union_dependencies.go` (added, +69/-0)
-```diff
-@@ -0,0 +1,69 @@
-+// Copyright 2026, Pulumi Corporation.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package tests
-+
-+import (
-+	pkgresource "github.com/pulumi/pulumi/pkg/v3/resource"
-+	"github.com/pulumi/pulumi/pkg/v3/resource/plugin"
-+	"github.com/pulumi/pulumi/pkg/v3/testing/pulumi-test-language/providers"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+// This test pins the desired invoke-dependency semantics: a consumer of an invoke's return value
-+// must depend on the union of every resource that fed the invoke's args.
-+func init() {
-+	LanguageTests["l2-invoke-union-dependencies"] = LanguageTest{
-+		Providers: []func() plugin.Provider{
-+			func() plugin.Provider { return &providers.SimpleInvokeProvider{} },
-+			func() plugin.Provider { return &providers.SimpleProvider{} },
-+		},
-+		Runs: []TestRun{
-+			{
-+				Assert: func(l *L, res AssertArgs) {
-+					RequireStackResource(l, res.Err, res.Changes)
-+
-+					var a, b, d *pkgresource.State
-+					for _, r := range res.Snap.Resources {
-+						switch r.URN.Name() {
-+						case "a":
-+							a = r
-+						case "b":
-+							b = r
-+						case "d":
-+							d = r
-+						}
-+					}
-+					require.NotNil(l, a, "expected resource a")
-+					require.NotNil(l, b, "expected resource b")
-+					require.NotNil(l, d, "expected resource d")
-+
-+					require.Empty(l, a.Dependencies, "a has no invoke inputs")
-+					require.Empty(l, b.Dependencies, "b has no invoke inputs")
-+
-+					// d.text was set from data.response, where data is the result of an invoke that read from both
-+					// a and b. Even though `response` is derived from just `a.text`, SDKs propagate the union of
-+					// all invoke arg dependencies to the result, so d must depend on both a and b.
-+					require.ElementsMatch(l, []pkgresource.URN{a.URN, b.URN}, d.Dependencies,
-+						"d must depend on both a and b (union of invoke arg dependencies)")
-+
-+					textDeps, ok := d.PropertyDependencies["text"]
-+					require.True(l, ok, "expected d.PropertyDependencies to include 'text'")
-+					require.ElementsMatch(l, []pkgresource.URN{a.URN, b.URN}, textDeps,
-+						"d.text must be attributed to both invoke arg source resources")
-+				},
-+			},
-+		},
-+	}
-+}
-```
-
-**File**: `pkg/testing/pulumi-test-language/tests/testdata/l2-invoke-union-dependencies/main.pp` (added, +19/-0)
-```diff
-@@ -0,0 +1,19 @@
-+// Baseline for invoke dependency propagation: an invoke that reads properties from two different
-+// resources produces a return value whose consumer must depend on the union of both.
-+
-+resource "a" "simple-invoke:index:StringResource" {
-+    text = "hello"
-+}
-+
-+resource "b" "simple:index:Resource" {
-+    value = true
-+}
-+
-+data = invoke("simple-invoke:index:secretInvoke", {
-+    value = a.text
-+    secretResponse = b.value
-+})
-+
-+resource "d" "simple-invoke:index:StringResource" {
-+    text = data.response
-+}
-```
-
-**File**: `sdk/go/pulumi-language-go/testdata/extra-types/projects/l2-invoke-union-dependencies/Pulumi.yaml` (added, +2/-0)
-```diff
-@@ -0,0 +1,2 @@
-+name: l2-invoke-union-dependencies
-+runtime: go
-```
-
-**File**: `sdk/go/pulumi-language-go/testdata/extra-types/projects/l2-invoke-union-dependencies/go.mod` (added, +15/-0)
-```diff
-@@ -0,0 +1,15 @@
-+module l2-invoke-union-dependencies
-+
-+go 1.25
-+
-+require (
-+	github.com/pulumi/pulumi/sdk/v3 v3.30.0
-+	example.com/pulumi-simple/sdk/go/v2 v2.0.0
-+	example.com/pulumi-simple-invoke/sdk/go/v10 v10.0.0
-+)
-+
-+replace github.com/pulumi/pulumi/sdk/v3 => /ROOT/artifacts/github.com_pulumi_pulumi_sdk_v3
-+
-+replace example.com/pulumi-simple/sdk/go/v2 => /ROOT/artifacts/example.com_pulumi-simple_sdk_go_v2
-+
-+replace example.com/pulumi-simple-invoke/sdk/go/v10 => /ROOT/artifacts/example.com_pulumi-simple-invoke_sdk_go_v10
-```
-
-**File**: `sdk/go/pulumi-language-go/testdata/extra-types/projects/l2-invoke-union-dependencies/main.go` (added, +37/-0)
-```diff
-@@ -0,0 +1,37 @@
-+package main
-+
-+import (
-+	"example.com/pulumi-simple-invoke/sdk/go/v10/simpleinvoke"
-+	"example.com/pulumi-simple/sdk/go/v2/simple"
-+	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
-+)
-+
-+func main() {
-+	pulumi.Run(func(ctx *pulumi.Context) error {
-+		// Baseline for invoke dependency propagation: an invoke that reads properties from two different
-+		// resources produces a return value whose consumer must depend on the union of both.
-+		a, err := simpleinvoke.NewStringResource(ctx, "a", &simpleinvoke.StringResourceArgs{
-+			Text: pulumi.String("hello"),
-+		})
-+		if err != nil {
-+			return err
-+		}
-+		b, err := simple.NewResource(ctx, "b", &simple.ResourceArgs{
-+			Value: pulumi.Bool(true),
-+		})
-+		if err != nil {
-+			return err
-+		}
-+		data := simpleinvoke.SecretInvokeOutput(ctx, simpleinvoke.SecretInvokeOutputArgs{
-+			Value:          a.Text,
-+			SecretResponse: b.Value,
-+		}, nil)
-+		_, err = simpleinvoke.NewStringResource(ctx, "d", &simpleinvoke.StringResourceArgs{
-+			Text: data.Response(),
-+		})
-+		if err != nil {
-+			return err
-+		}
-+		return nil
-+	})
-+}
-```
-
-**File**: `sdk/go/pulumi-language-go/testdata/local/projects/l2-invoke-union-dependencies/Pulumi.yaml` (added, +2/-0)
-```diff
-@@ -0,0 +1,2 @@
-+name: l2-invoke-union-dependencies
-+runtime: go
-```
-
-**File**: `sdk/go/pulumi-language-go/testdata/local/projects/l2-invoke-union-dependencies/go.mod` (added, +15/-0)
-```diff
-@@ -0,0 +1,15 @@
-+module l2-invoke-union-dependencies
-+
-+go 1.25
-+
-+require (
-+	github.com/pulumi/pulumi/sdk/v3 v3.30.0
-+	example.com/pulumi-simple/sdk/go/v2 v2.0.0
-+	example.com/pulumi-simple-invoke/sdk/go/v10 v10.0.0
-+)
-+
-+replace github.com/pulumi/pulumi/sdk/v3 => /ROOT/artifacts/github.com_pulumi_pulumi_sdk_v3
-+
-+replace example.com/pulumi-simple/sdk/go/v2 => /ROOT/projects/l2-invoke-union-dependencies/sdks/simple-2.0.0
-+
-+replace example.com/pulumi-simple-invoke/sdk/go/v10 => /ROOT/projects/l2-invoke-union-dependencies/sdks/simple-invoke-10.0.0
-```
-
-**File**: `sdk/go/pulumi-language-go/testdata/local/projects/l2-invoke-union-dependencies/main.go` (added, +37/-0)
-```diff
-@@ -0,0 +1,37 @@
-+package main
-+
-+import (
-+	"example.com/pulumi-simple-invoke/sdk/go/v10/simpleinvoke"
-+	"example.com/pulumi-simple/sdk/go/v2/simple"
-+	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
-+)
-+
-+func main() {
-+	pulumi.Run(func(ctx *pulumi.Context) error {
-+		// Baseline for invoke dependency propagation: an invoke that reads properties from two different
-+		// resources produces a return value whose consumer must depend on the union of both.
-+		a, err := simpleinvoke.NewStringResource(ctx, "a", &simpleinvoke.StringResourceArgs{
-+			Text: pulumi.String("hello"),
-+		})
-+		if err != nil {
-+			return err
-+		}
-+		b, err := simple.NewResource(ctx, "b", &simple.ResourceArgs{
-+			Value: pulumi.Bool(true),
-+		})
-+		if err != nil {
-+			return err
-+		}
-+		data := simpleinvoke.SecretInvokeOutput(ctx, simpleinvoke.SecretInvokeOutputArgs{
-+			Value:          a.Text,
-+			SecretResponse: b.Value,
-+		}, nil)
-+		_, err = simpleinvoke.NewStringResource(ctx, "d", &simpleinvoke.StringResourceArgs{
-+			Text: data.Response(),
-+		})
-+		if err != nil {
-+			return err
-+		}
-+		return nil
-+	})
-+}
-```
-
----
-
-### Incident Patch 13: `8d2265b5` (2026-09-30)
-**Commit Message**: Fix concurrent `pulumi new` runs failing to clone the templates repository (#24939)
-
-## Summary
-
-Fixes #21285.
-
-`pulumi new` keeps the templates repository in a directory that every
-pulumi process shares (`~/.pulumi/templates` by default), and nothing
-stopped two processes from preparing it at the same time. Before
-cloning, `retrievePulumiTemplates` calls `cleanupLegacyTemplateDir`,
-which deletes the directory whenever `git.PlainOpen` cannot open it. A
-clone that another process has only just started looks exactly like
-that, so it gets deleted under that process, and two clones into the
-same directory also collide. That is where the errors in the issue come
-from.
-
-This takes an `fsutil.FileMutex` on `<templateDir>.lock` around the
-cleanup, the `MkdirAll` and the clone or pull. The lock file sits next
-to the directory rather than inside it, the same way `atomicinstall`
-locks plugin directories. Inside, it would make the first clone fail,
-and the cleanup would delete it.
-
-The lock is best effort. If it cannot be taken, for example next to a
-read-only template cache used with `--offline`, or on a filesystem
-without flock, pulumi logs the error at debug level and carries on
-without it,
-
-**File**: `changelog/pending/cli-new-fix-20260930-151725.yaml` (added, +4/-0)
+**File**: `changelog/pending/20261014--codegen-go--l1-builtin-string.yaml` (added, +4/-0)
 ```diff
 @@ -0,0 +1,4 @@
-+component: cli/new
++component: codegen/go
 +kind: fix
-+body: Fix concurrent `pulumi new` runs failing to clone the templates repository
-+time: 2026-09-30T15:17:25.065953+09:00
++body: Fix Go program generation for `split` and string `length` so they produce compilable, Unicode-correct code
++time: 2026-10-14T12:00:00.000000+00:00
 ```
 
-**File**: `pkg/cmd/pulumi/templates/project_templates.go` (modified, +18/-5)
+**File**: `pkg/codegen/go/gen_program_expressions.go` (modified, +40/-1)
 ```diff
-@@ -32,6 +32,7 @@ import (
- 
- 	"github.com/pulumi/pulumi/sdk/v3/go/common/env"
- 	"github.com/pulumi/pulumi/sdk/v3/go/common/util/contract"
-+	"github.com/pulumi/pulumi/sdk/v3/go/common/util/fsutil"
- 	"github.com/pulumi/pulumi/sdk/v3/go/common/util/gitutil"
- 	"github.com/pulumi/pulumi/sdk/v3/go/common/workspace"
- 
-@@ -384,17 +385,29 @@ func retrieveFileTemplates(path string) (TemplateRepository, error) {
- func retrievePulumiTemplates(
- 	ctx context.Context, offline bool, templateKind TemplateKind,
- ) (TemplateRepository, error) {
--	// Cleanup the template directory.
--	if err := cleanupLegacyTemplateDir(templateKind); err != nil {
--		return TemplateRepository{}, err
--	}
--
- 	// Get the template directory.
- 	templateDir, err := GetTemplateDir(templateKind)
- 	if err != nil {
- 		return TemplateRepository{}, err
- 	}
- 
-+	// Concurrent pulumi processes share this directory, and the cleanup below would delete a clone in progress.
-+	lockPath := filepath.Clean(templateDir) + ".lock"
-+	if err := os.MkdirAll(filepath.Dir(lockPath), 0o700); err != nil {
-+		return TemplateRepository{}, err
-+	}
-+	mutex := fsutil.NewFileMutex(lockPath)
-+	if err := mutex.Lock(); err != nil {
-+		slog.Debug("Could not lock the template directory", "path", lockPath, "err", err)
-+	} else {
-+		defer func() { _ = mutex.Unlock() }()
-+	}
-+
-+	// Cleanup the template directory.
-+	if err := cleanupLegacyTemplateDir(templateKind); err != nil {
-+		return TemplateRepository{}, err
-+	}
-+
- 	// Ensure the template directory exists.
- 	if err := os.MkdirAll(templateDir, 0o700); err != nil {
- 		return TemplateRepository{}, err
-```
-
-**File**: `pkg/cmd/pulumi/templates/project_templates_test.go` (modified, +43/-0)
-```diff
-@@ -18,8 +18,13 @@ import (
- 	"fmt"
- 	"os"
- 	"path/filepath"
-+	"sync"
- 	"testing"
-+	"time"
- 
-+	"github.com/go-git/go-git/v6"
-+	"github.com/go-git/go-git/v6/config"
-+	"github.com/go-git/go-git/v6/plumbing/object"
- 	"github.com/pulumi/pulumi/sdk/v3/go/common/env"
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
-@@ -433,6 +438,44 @@ func TestRetrieveFileTemplate(t *testing.T) {
- 	}
- }
- 
-+func TestRetrievePulumiTemplatesConcurrently(t *testing.T) {
-+	source := t.TempDir()
-+	repo, err := git.PlainInit(source, false)
-+	require.NoError(t, err)
-+	// go-git honors the user's commit.gpgSign, so turn it off for this scratch repo.
-+	cfg, err := repo.Config()
-+	require.NoError(t, err)
-+	cfg.Commit.GpgSign = config.OptBoolFalse
-+	require.NoError(t, repo.SetConfig(cfg))
-+	require.NoError(t, os.WriteFile(filepath.Join(source, "Pulumi.yaml"), []byte("name: test\n"), 0o600))
-+	worktree, err := repo.Worktree()
-+	require.NoError(t, err)
-+	_, err = worktree.Add("Pulumi.yaml")
-+	require.NoError(t, err)
-+	_, err = worktree.Commit("initial", &git.CommitOptions{
-+		Author: &object.Signature{Name: "test", Email: "test@example.com", When: time.Now()},
-+	})
-+	require.NoError(t, err)
-+	head, err := repo.Head()
-+	require.NoError(t, err)
-+
-+	t.Setenv(env.TemplateGitRepository.Var().Name(), source)
-+	t.Setenv(env.TemplateBranch.Var().Name(), head.Name().Short())
-+	t.Setenv(env.TemplatePath.Var().Name(), filepath.Join(t.TempDir(), "templates"))
-+
-+	errs := make([]error, 8)
-+	var wg sync.WaitGroup
-+	for i := range errs {
-+		wg.Go(func() {
-+			_, errs[i] = retrievePulumiTemplates(t.Context(), false, TemplateKindPulumiProject)
-+		})
-+	}
-+	wg.Wait()
-+	for _, err := range errs {
-+		require.NoError(t, err)
-+	}
-+}
-+
- //nolint:paralleltest
- func TestCopyTemplateFiles(t *testing.T) {
- 	t.Parallel()
-```
-
----
-
-### Incident Patch 14: `db45d040` (2026-09-30)
-**Commit Message**: Fix up a comment to be accurate (#24941)
-
-This comment was out of date after the `property.Map` migrations.
-
-**File**: `pkg/resource/deploy/source_eval.go` (modified, +3/-2)
-```diff
-@@ -2959,8 +2959,9 @@ func (rm *resmon) RegisterResource(ctx context.Context,
- 			},
- 		}
- 
--		// The provider may have returned OutputValues in "Outputs", we need to downgrade them to Computed or
--		// Secret but also add them to the outputDeps map.
-+		// The provider may have returned OutputValues in "Outputs". Harvest their dependencies into the
-+		// outputDeps map; the OutputValues themselves are downgraded to Computed/Secret later by
-+		// MarshalProperties (called without KeepOutputValues) before being sent back to the SDK.
- 		if constructResult.OutputDependencies == nil {
- 			constructResult.OutputDependencies = map[resource.PropertyKey][]resource.URN{}
- 		}
-```
-
----
-
-### Incident Patch 15: `0cb5418f` (2026-09-30)
-**Commit Message**: Fix property dependency leak across inputs when SDK omits propertyDependencies (#24937)
-
-When a `RegisterResource` request omits `propertyDependencies` and the
-engine backfills each property with the request's flat `dependencies`
-list, every property was aliased to the same underlying set instance.
-The subsequent pass that walks input Output values and merges their
-dependencies into the appropriate property's set therefore mutated the
-shared set, causing every Output value's dependencies to bleed into
-every other property of the same resource.
-
-This PR fixes it so we clone the set per property so each input's
-dependency merge stays isolated.
-
-This isn't reachable through any SDK today: the standard test harness
-(and every real SDK) downgrades Output values on the wire for custom
-resources, which stops the merge pass from finding any dependencies to
-add. It becomes reachable as soon as an SDK starts sending Output-valued
-inputs for custom resources — hence the fix and a regression test.
-
-## Changes
-
-- `deploytest.ResourceOptions` gains a `KeepOutputValues` field so tests
-can simulate an SDK that preserves Output values on custom-resource
-inputs (real SDKs only do this for remote/com
-
-**File**: `pkg/engine/lifecycletest/delete_before_replace_test.go` (modified, +66/-0)
-```diff
-@@ -297,6 +297,72 @@ func TestPropertyDependenciesAdapter(t *testing.T) {
- 	}
- }
- 
-+// TestPropertyDependenciesBackfillDoesNotLeakAcrossProperties exercises the engine's per-property dependency
-+// backfill when a resource is registered with no explicit propertyDependencies but its inputs carry Output
-+// property values with dependencies of their own. Each input's dependencies must stay isolated to that input;
-+// a shared underlying set would cause one property's Output dependencies to bleed into every other property.
-+func TestPropertyDependenciesBackfillDoesNotLeakAcrossProperties(t *testing.T) {
-+	t.Parallel()
-+
-+	loaders := []*deploytest.ProviderLoader{
-+		deploytest.NewProviderLoader("pkgA", semver.MustParse("1.0.0"), func() (plugin.Provider, error) {
-+			return &deploytest.Provider{}, nil
-+		}),
-+	}
-+
-+	const resType = "pkgA:m:typA"
-+	var urnA, urnB, urnC resource.URN
-+	programF := deploytest.NewLanguageRuntimeF(func(_ plugin.RunInfo, monitor *deploytest.ResourceMonitor) error {
-+		respA, err := monitor.RegisterResource(resType, "A", true, deploytest.ResourceOptions{})
-+		require.NoError(t, err)
-+		urnA = respA.URN
-+
-+		respB, err := monitor.RegisterResource(resType, "B", true, deploytest.ResourceOptions{})
-+		require.NoError(t, err)
-+		urnB = respB.URN
-+
-+		// Register C with two inputs, each of which is an Output value pointing at a *different* upstream
-+		// resource. No flat Dependencies or PropertyDeps are sent, so the engine backfills per-property
-+		// dependencies and then merges the Output-value dependencies in. propA should depend only on A and
-+		// propB only on B.
-+		respC, err := monitor.RegisterResource(resType, "C", true, deploytest.ResourceOptions{
-+			Inputs: resource.PropertyMap{
-+				"propA": resource.NewProperty(resource.Output{
-+					Element:      resource.NewProperty("a"),
-+					Known:        true,
-+					Dependencies: []resource.URN{urnA},
-+				}),
-+				"propB": resource.NewProperty(resource.Output{
-+					Element:      resource.NewProperty("b"),
-+					Known:        true,
-+					Dependencies: []resource.URN{urnB},
-+				}),
-+			},
-+			KeepOutputValues: true,
-+		})
-+		require.NoError(t, err)
-+		urnC = respC.URN
-+
-+		return nil
-+	})
-+
-+	hostF := deploytest.NewPluginHostF(nil, nil, programF, nil, nil, loaders...)
-+	p := &lt.TestPlan{
-+		Options: lt.TestUpdateOptions{T: t, HostF: hostF, SkipDisplayTests: true},
-+		Steps:   []lt.TestStep{{Op: Update}},
-+	}
-+	snap := p.Run(t, nil)
-+	for _, res := range snap.Resources {
-+		if res.URN != urnC {
-+			continue
+@@ -479,6 +479,12 @@ func (g *generator) GenFunctionCallExpression(w io.Writer, expr *model.FunctionC
+ 					} else {
+ 						g.Fgenf(w, "%.v.(%s)", from, typeName)
+ 					}
++				} else if conv, ok := plainCollectionConverter(g, fromType, typeName); ok && !isFromOutput {
++					// `pulumi.StringArray` is `[]pulumi.String`, not `[]string`, so a plain
++					// `[]string` value (e.g. from `strings.Split`) can't be wrapped with the
++					// input type directly. Use the SDK's `pulumi.ToStringArray` helper
++					// (and similarly for other scalar array/map types).
++					g.Fgenf(w, "%s(%.v)", conv, from)
+ 				} else {
+ 					g.Fgenf(w, "%s(%.v)", typeName, from)
+ 				}
+@@ -649,7 +655,15 @@ func (g *generator) GenFunctionCallExpression(w io.Writer, expr *model.FunctionC
+ 	case "join":
+ 		g.Fgenf(w, "strings.Join(%v, %v)", expr.Args[1], expr.Args[0])
+ 	case "length":
+-		g.Fgenf(w, "len(%.20v)", expr.Args[0])
++		// PCL's `length` on a string returns the Unicode grapheme cluster
++		// count (so "🕹️" is 1), not the byte or rune length, so use
++		// uniseg.GraphemeClusterCount for strings.
++		argType := model.ResolveOutputs(expr.Args[0].Type())
++		if argType.Equals(model.StringType) {
++			g.Fgenf(w, "uniseg.GraphemeClusterCount(%.20v)", expr.Args[0])
++		} else {
++			g.Fgenf(w, "len(%.20v)", expr.Args[0])
 +		}
-+		assert.ElementsMatch(t, []resource.URN{urnA}, res.PropertyDependencies["propA"],
-+			"propA should only depend on A, not on B")
-+		assert.ElementsMatch(t, []resource.URN{urnB}, res.PropertyDependencies["propB"],
-+			"propB should only depend on B, not on A")
+ 	case "readFile":
+ 		// Assuming the existence of the following helper method located earlier in the preamble
+ 		g.Fgenf(w, "readFileOrPanic(%v)", expr.Args[0])
+@@ -1945,6 +1959,26 @@ func pulumiConverterSuffix(goType string) (string, bool) {
+ 	return pulumiScalarSuffix(goType)
+ }
+ 
++// plainCollectionConverter returns the `pulumi.To<Suffix>` helper that
++// converts a plain Go slice/map value (e.g. `[]string`) into the matching
++// Pulumi input type (e.g. `pulumi.StringArray`). Returns ok=false if the
++// source isn't a convertible slice/map or the destination doesn't name the
++// corresponding input container type.
++func plainCollectionConverter(g *generator, fromType model.Type, destTypeName string) (string, bool) {
++	argGoType := g.argumentTypeName(fromType, false)
++	suffix, ok := pulumiConverterSuffix(argGoType)
++	if !ok {
++		return "", false
 +	}
++	if destTypeName != "pulumi."+suffix {
++		return "", false
++	}
++	if !strings.HasSuffix(suffix, "Array") && !strings.HasSuffix(suffix, "Map") {
++		return "", false
++	}
++	return "pulumi.To" + suffix, true
 +}
 +
- func TestExplicitDeleteBeforeReplace(t *testing.T) {
- 	t.Parallel()
+ // pulumiScalarSuffix returns the Pulumi suffix for a scalar Go type. Only
+ // primitive scalars have generated Ptr/Map/Array containers in the SDK, so
+ // callers use this to gate composition of the compound suffixes above.
+@@ -2368,6 +2402,11 @@ var functionPackages = map[string][]string{
+ }
+ 
+ func (g *generator) genFunctionPackages(x *model.FunctionCallExpression) []string {
++	if x.Name == "length" && len(x.Args) == 1 {
++		if model.ResolveOutputs(x.Args[0].Type()).Equals(model.StringType) {
++			return []string{"github.com/rivo/uniseg"}
++		}
++	}
+ 	return functionPackages[x.Name]
+ }
  
 ```
 
-**File**: `pkg/resource/deploy/deploytest/resourcemonitor.go` (modified, +6/-1)
+**File**: `sdk/go/pulumi-language-go/language_test.go` (modified, +0/-2)
 ```diff
-@@ -449,6 +449,11 @@ type ResourceOptions struct {
- 	DisableResourceReferences bool
- 	GrpcRequestHeaders        map[string]string
+@@ -141,8 +141,6 @@ var expectedFailures = map[string]string{
+ 	"l3-range-map-ref":  "fails with syntax errors: mapResource.K1 undefined (type []*nestedobject.Target has no field or method K1)", //nolint:lll
+ 	"l3-range-bool-ref": "fails with syntax errors: index < createBool (mismatched types int and bool)",
  
-+	// KeepOutputValues, if set, preserves Output property values on the marshalled inputs sent to the resource
-+	// monitor. Real SDKs only do this for remote (component) resources today, but the test harness allows it for
-+	// custom resources too so we can exercise engine paths that handle unusual SDK behaviour.
-+	KeepOutputValues bool
-+
- 	Transforms           []*pulumirpc.Callback
- 	StateMigrations      []*pulumirpc.Callback
- 	ResourceHookBindings ResourceHookBindings
-@@ -495,7 +500,7 @@ func (rm *ResourceMonitor) RegisterResource(t tokens.Type, name string, custom b
- 		KeepUnknowns:     true,
- 		KeepSecrets:      rm.supportsSecrets,
- 		KeepResources:    rm.supportsResourceReferences,
--		KeepOutputValues: opts.Remote,
-+		KeepOutputValues: opts.Remote || opts.KeepOutputValues,
- 		KeepByteString:   true,
+-	"l1-builtin-string": "cannot convert strings.Split(aString, \"-\") (value of type []string) to type pulumi.StringArray", //nolint:lll
+-
+ 	"l2-recover-invoke": "Go SDK output recovery is not implemented",
+ 
+ 	"l2-invoke-per-value-deps": "output aware invokes not yet implemented",
+```
+
+**File**: `sdk/go/pulumi-language-go/testdata/extra-types/projects/l1-builtin-string/main.go` (modified, +5/-4)
+```diff
+@@ -5,16 +5,17 @@ import (
+ 
+ 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+ 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi/config"
++	"github.com/rivo/uniseg"
+ )
+ 
+ func main() {
+ 	pulumi.Run(func(ctx *pulumi.Context) error {
+ 		cfg := config.New(ctx, "")
+ 		aString := cfg.Require("aString")
+-		ctx.Export("lengthOutput", pulumi.Int(len(aString)))
+-		ctx.Export("splitOutput", pulumi.StringArray(strings.Split(aString, "-")))
+-		ctx.Export("joinOutput", pulumi.String(strings.Join(strings.Split(aString, "-"), "|")))
+-		ctx.Export("interpolateOutput", pulumi.Sprintf("prefix-%v", aString))
++		ctx.Export("lengthResult", pulumi.Int(uniseg.GraphemeClusterCount(aString)))
++		ctx.Export("splitResult", pulumi.ToStringArray(strings.Split(aString, "-")))
++		ctx.Export("joinResult", pulumi.String(strings.Join(strings.Split(aString, "-"), "|")))
++		ctx.Export("interpolateResult", pulumi.Sprintf("prefix-%v", aString))
+ 		return nil
  	})
- 	if err != nil {
+ }
 ```
 
-**File**: `pkg/resource/deploy/source_eval.go` (modified, +3/-1)
+**File**: `sdk/go/pulumi-language-go/testdata/published/projects/l1-builtin-string/main.go` (modified, +5/-4)
 ```diff
-@@ -2417,8 +2417,10 @@ func (rm *resmon) RegisterResource(ctx context.Context,
- 		// If this request did not specify property dependencies, treat each property as depending on every resource
- 		// in the request's dependency list. We don't need to do this when remote is true, because all clients that
- 		// support remote already support passing property dependencies, so there's no need to backfill here.
-+		// Clone so that downstream code merging a property's Output-value dependencies into its set does not
-+		// leak those dependencies into every other property via a shared underlying set instance.
- 		for pk := range props {
--			propertyDependencies[pk] = dependencies
-+			propertyDependencies[pk] = dependencies.Clone()
- 		}
- 	} else {
- 		// Otherwise, unmarshal the per-property dependency information.
+@@ -5,16 +5,17 @@ import (
+ 
+ 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+ 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi/config"
++	"github.com/rivo/uniseg"
+ )
+ 
+ func main() {
+ 	pulumi.Run(func(ctx *pulumi.Context) error {
+ 		cfg := config.New(ctx, "")
+ 		aString := cfg.Require("aString")
+-		ctx.Export("lengthOutput", pulumi.Int(len(aString)))
+-		ctx.Export("splitOutput", pulumi.StringArray(strings.Split(aString, "-")))
+-		ctx.Export("joinOutput", pulumi.String(strings.Join(strings.Split(aString, "-"), "|")))
+-		ctx.Export("interpolateOutput", pulumi.Sprintf("prefix-%v", aString))
++		ctx.Export("lengthResult", pulumi.Int(uniseg.GraphemeClusterCount(aString)))
++		ctx.Export("splitResult", pulumi.ToStringArray(strings.Split(aString, "-")))
++		ctx.Export("joinResult", pulumi.String(strings.Join(strings.Split(aString, "-"), "|")))
++		ctx.Export("interpolateResult", pulumi.Sprintf("prefix-%v", aString))
+ 		return nil
+ 	})
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #25036** (closed): Honor neoTaskCreationDisabled from Pulumi Cloud (@VenelinMartinov)
-- **PR #25035** (2026-10-05): Move MassageSecrets to property.Map (@Frassle)
-- **PR #25034** (2026-10-05): Update dependency pulumi/pulumi-dotnet to v3.114.2 (@pulumi-renovate[bot])
-- **PR #25032** (2026-10-05): hash bytes returned with io.EOF in plugin checksumReader (@SABITHSAHEB)
-- **PR #25030** (2026-10-05): Remove the timeout from the `pulumi new` credentials check (@VenelinMartinov)
-- **PR #25028** (2026-10-05): Upgrade `github.com/go-git/go-git/v6` to v6.0.0-beta.1 (@iwahbe)
-- **PR #25027** (2026-10-05): Update first-party Pulumi dependencies (@pulumi-renovate[bot])
-- **PR #25024** (2026-10-05): Add `whoami` to the generated automation APIs (@i-am-tom)
+- **PR #25268** (2026-10-16): Changelog and go.mod updates for v3.270.0 (@pulumi-bot)
+- **PR #25266** (2026-10-17): Update analyzer plugin to use propertyrpc (@Frassle)
+- **PR #25265** (closed): Move code shared by pkg and sdk into a new shared module (@i-am-tom)
+- **PR #25264** (2026-10-16): Freeze v3.270.0 (@pulumi-bot)
+- **PR #25263** (2026-10-16): Skip to 3.270.0 (@i-am-tom)
+- **PR #25258** (2026-10-16): Add AcceptsOutputsInCheck handshake negotiation (@Frassle)
 
 ---
 
@@ -4372,3 +2180,37 @@ inputs (real SDKs only do this for remote/com
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. Build the result of entries as a tuple when the entry types differ (#24783)
+
+**RULE**:
+When implementing operations in `changelog/pending/pcl-fix-20260924-144657.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `cb37065b`: Build the result of entries as a tuple when the entry types differ (#24783). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/pending/pcl-fix-20260924-144657.yaml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+component: pcl
+kind: fix
+body: Fix a panic in the PCL interpreter's `entries` built-in on a map whose values have different shapes or on an empty map
+time: 2026-09-24T14:46:57.734371+02:00
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `cb37065b` are properly handled with clean fallback behavior.

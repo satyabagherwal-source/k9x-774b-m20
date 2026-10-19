@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T01:50:58.869Z",
-  "total_cycles_completed": 2747,
-  "total_learnings_persisted": 2747,
-  "total_rules_promoted": 1772,
+  "last_updated": "2026-10-19T01:57:11.149Z",
+  "total_cycles_completed": 2753,
+  "total_learnings_persisted": 2753,
+  "total_rules_promoted": 1780,
   "history": [
-    {
-      "timestamp": "2026-10-18T22:35:46.350Z",
-      "repository": "tensorchord/pgvecto.rs",
-      "learningId": "learn-github-tensorchord-pgvecto-rs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T22:35:46.495Z",
-      "repository": "RustCrypto/hashes",
-      "learningId": "learn-github-rustcrypto-hashes",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T22:41:48.038Z",
-      "repository": "onlook-dev/onlook",
-      "learningId": "learn-github-onlook-dev-onlook",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T22:41:48.519Z",
-      "repository": "unhappychoice/gitlogue",
-      "learningId": "learn-github-unhappychoice-gitlogue",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T22:41:49.108Z",
-      "repository": "fastify/fastify",
-      "learningId": "learn-github-fastify-fastify",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T22:41:51.687Z",
-      "repository": "FaridSafi/react-native-gifted-chat",
-      "learningId": "learn-github-faridsafi-react-native-gifted-chat",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-18T22:41:54.697Z",
       "repository": "taubyte/tau",
@@ -1403,6 +1361,48 @@
       "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
       "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T01:56:56.795Z",
+      "repository": "stenciljs/core",
+      "learningId": "learn-github-stenciljs-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T01:56:59.433Z",
+      "repository": "chmln/sd",
+      "learningId": "learn-github-chmln-sd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T01:57:04.133Z",
+      "repository": "DylanVann/react-native-fast-image",
+      "learningId": "learn-github-dylanvann-react-native-fast-image",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T01:57:08.907Z",
+      "repository": "deepseek-ai/DeepSeek-R1",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-r1",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T01:57:10.301Z",
+      "repository": "pulumi/pulumi",
+      "learningId": "learn-github-pulumi-pulumi",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T01:57:11.149Z",
+      "repository": "sqlpage/SQLPage",
+      "learningId": "learn-github-sqlpage-sqlpage",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

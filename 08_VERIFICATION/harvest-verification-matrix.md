@@ -2770,3 +2770,9 @@
 | `CYCLE-20261019-JAY2` | `2026-10-19T01:49:21.578Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1988` | Yes (`158676aa...`) |
 | `CYCLE-20261019-JF8E` | `2026-10-19T01:49:27.134Z` | `sfu-db/connector-x` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1989` | Yes (`229fb5e6...`) |
 | `CYCLE-20261019-LE0D` | `2026-10-19T01:50:58.861Z` | `SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1990, Rule 1991` | Yes (`5472ee89...`) |
+| `CYCLE-20261019-T26R` | `2026-10-19T01:56:56.787Z` | `stenciljs/core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1992` | Yes (`c7f1d9a1...`) |
+| `CYCLE-20261019-T481` | `2026-10-19T01:56:59.425Z` | `chmln/sd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1993` | Yes (`30405344...`) |
+| `CYCLE-20261019-T7UM` | `2026-10-19T01:57:04.126Z` | `DylanVann/react-native-fast-image` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1994` | Yes (`a1de32bf...`) |
+| `CYCLE-20261019-TBJ7` | `2026-10-19T01:57:08.899Z` | `deepseek-ai/DeepSeek-R1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1995, Rule 1996, Rule 1997` | Yes (`1aaa21c2...`) |
+| `CYCLE-20261019-TCLW` | `2026-10-19T01:57:10.292Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1998` | Yes (`acb6deed...`) |
+| `CYCLE-20261019-TD9H` | `2026-10-19T01:57:11.141Z` | `sqlpage/SQLPage` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1999` | Yes (`16bf406f...`) |

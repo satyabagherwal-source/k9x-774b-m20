@@ -2777,3 +2777,9 @@ Every entry in this ledger must capture:
 | `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `9dd3e28d` | Multi-dimensional audit evidence | 2026-10-19T01:49:21.585Z |
 | `learn-github-sfu-db-connector-x` | `https://github.com/sfu-db/connector-x` | `c8ae2517` | Multi-dimensional audit evidence | 2026-10-19T01:49:27.136Z |
 | `learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf` | `https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | `hf-sc117-q` | Multi-dimensional audit evidence | 2026-10-19T01:50:58.866Z |
+| `learn-github-stenciljs-core` | `https://github.com/stenciljs/core` | `8681415d` | Multi-dimensional audit evidence | 2026-10-19T01:56:56.793Z |
+| `learn-github-chmln-sd` | `https://github.com/chmln/sd` | `44febdf8` | Multi-dimensional audit evidence | 2026-10-19T01:56:59.431Z |
+| `learn-github-dylanvann-react-native-fast-image` | `https://github.com/DylanVann/react-native-fast-image` | `2462d5ad` | Multi-dimensional audit evidence | 2026-10-19T01:57:04.131Z |
+| `learn-huggingface-deepseek-ai-deepseek-r1` | `https://huggingface.co/deepseek-ai/DeepSeek-R1` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-19T01:57:08.905Z |
+| `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `b9e87ddf` | Multi-dimensional audit evidence | 2026-10-19T01:57:10.298Z |
+| `learn-github-sqlpage-sqlpage` | `https://github.com/sqlpage/SQLPage` | `3b33609f` | Multi-dimensional audit evidence | 2026-10-19T01:57:11.146Z |
