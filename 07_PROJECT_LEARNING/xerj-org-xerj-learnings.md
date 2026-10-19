@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  
 > **Source**: github ([https://github.com/xerj-org/xerj](https://github.com/xerj-org/xerj))  
-> **Source Version**: `317f3af6`  
+> **Source Version**: `83c6778f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T22:04:24.512Z  
+> **Timestamp**: 2026-10-19T11:08:18.525Z  
 > **Learning ID**: `learn-github-xerj-org-xerj`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/xerj-org/xerj](https://github.com/xerj-org/xerj))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T22:04:24.298Z  
+> **Harvest Timestamp**: 2026-10-19T11:08:18.516Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: XERJ is the new way for AI to search data. Its autoindex capability activates agents to know your data without the token waste of grep (1974 tool). One command indexes code, docs, logs and PDFs for search, RAG, security audits and agent memory, using 40x fewer tokens than grep. It’s durable and can replace ElasticSearch saving you x10 infra costs.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 8334 stars
+- **Stars / Engagement**: 8772 stars
 
 ---
 
@@ -1919,545 +1919,405 @@ pub use xerj_common::Result;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a6ce269d` (2026-10-18)
-**Commit Message**: fix(deploy): comment out the placeholder FIELD_REPORTS KV binding that blocks every Pages deploy
+### Incident Patch 1: `b809437d` (2026-10-18)
+**Commit Message**: fix(feedback): fork --open-pr when the account cannot push (#1771)
 
-#1760 merged with a placeholder KV namespace id
-(REPLACE_WITH_FIELD_REPORTS_KV_NAMESPACE_ID) in wrangler.toml. wrangler
-rejects it with "Error 8000022: Invalid KV namespace ID", so deploy-pages.yml
-(triggered by any change to wrangler.toml or landing/**) fails at the publish
-step — blocking ALL xerj.org deploys. The 2026-10-18 15:17 run failed this way
-and the next run was queued to fail the same way; the site stayed up only on
-the last good deploy.
+--open-pr pushed to origin and created the branch before it knew
+whether gh was authenticated or git had an identity. A fresh agent
+with no user.name was left on a dirty field-report/* branch.
 
-The endpoint is not meant to go live yet (owner is reviewing before wiring the
-namespace). Commenting the block out restores deploys and leaves the Function
-fail-open: /api/field-report returns 200 but does not store, via the
-`!env.FIELD_REPORTS` branch in functions/api/field-report.js. Restoring
-storage is a one-liner once the owner creates the namespace.
+Checks now run before checkout -b: the checkout's origin is
+xerj-org/xerj, gh auth status succeeds, and user.name / user.email
+(or GIT_AUTHOR_NAME / GIT_AUTHOR_EMAIL) are set. An account without
+push rights forks xerj-org/xerj and pushes the xerj-fork remote;
+gh pr create --head is LOGIN:branch. A failure after the branch
+exists checks the original branch back out, deletes the local
+field-report branch, and removes the report file.
 
-No behaviour change for any other route; no secret committed.
+The dry-run commands clone, fork, keep --agent, push xerj-fork, and
+use --head YOUR_LOGIN:… so a placeholder in angle brackets is not
+eaten by HTML-to-text. An https origin with user:token@ is still
+xerj-org/xerj; the credential is stripped before the check and before
+it is printed.
 
-**File**: `wrangler.toml` (modified, +11/-3)
+Verified:
+  cargo +1.97.1 test --locked -p xerj-autoindex --lib -- open_pr dry_run origin_is origin_url the_rerun the_field_report_commit
+  cargo +1.97.1 clippy --locked -p xerj-autoindex --all-targets -- -D warnings
+
+**File**: `engine/crates/xerj-autoindex/src/feedback.rs` (modified, +534/-74)
 ```diff
-@@ -41,6 +41,14 @@ bucket_name = "xerj-installs"
- #   wrangler kv namespace create FIELD_REPORTS
- # and replace the id below with the one it prints. Do not commit a real id
- # from the live account via an automated run; the owner wires this at deploy.
--[[kv_namespaces]]
--binding = "FIELD_REPORTS"
--id = "REPLACE_WITH_FIELD_REPORTS_KV_NAMESPACE_ID"
-+# [[kv_namespaces]]  — COMMENTED OUT until the owner wires the real namespace.
-+# A placeholder id here makes `wrangler pages deploy` fail with
-+# "Error 8000022: Invalid KV namespace ID", which blocks EVERY xerj.org deploy
-+# (this file is on the deploy trigger path). With no binding declared, the
-+# Function fails open: /api/field-report accepts a report and returns 200 but
-+# does NOT store it (see functions/api/field-report.js, the `!env.FIELD_REPORTS`
-+# branch). To activate storage, create the namespace and restore this block:
-+#     wrangler kv namespace create FIELD_REPORTS   # prints an id
-+# [[kv_namespaces]]
-+# binding = "FIELD_REPORTS"
-+# id = "<the id it printed>"
+@@ -364,18 +364,22 @@ pub fn pr_commands(d: &Draft) -> String {
+         format!(" \\\n --agent {:?}", d.agent)
+     };
+     format!(
+-        "# Ready-to-run — files ONLY the field report, nothing else:\n\
++        "# Ready-to-run — files ONLY the field report, nothing else.\n\
++         # Run these in a clone of xerj-org/xerj, not in the project you are working in.\n\
++         git clone https://github.com/xerj-org/xerj.git\n\
++         cd xerj\n\
++         gh repo fork xerj-org/xerj --remote --remote-name xerj-fork\n\
+          xerj feedback{agent_line} \\\n\
+          \x20 --used-for {used_for:?} --pointed-at {pointed_at:?} \\\n\
+          \x20 --verdict {verdict:?} --numbers {numbers:?} \\\n\
+          \x20 -o {relpath}\n\
+          git checkout -b {branch}\n\
+          git add {relpath}\n\
+          git commit --only {relpath} -m \"docs(field-report): {slug}\"\n\
+-         git push -u origin {branch}\n\
+-         gh pr create --repo xerj-org/xerj --base main --head {branch} \\\n\
++         git push -u xerj-fork {branch}\n\
++         gh pr create --repo xerj-org/xerj --base main --head YOUR_LOGIN:{branch} \\\n\
+          \x20 --title \"Agent field report: {title}\" \\\n\
+-         \x20 --body \"Written by an AI agent on behalf of a human. Field report only; see {relpath}.\"",
++         \x20 --body \"Field report only; see {relpath}.\"",
+         used_for = d.used_for,
+         pointed_at = d.pointed_at,
+         verdict = d.verdict,
+@@ -433,12 +437,38 @@ const XERJ_ORIGIN_URLS: &[&str] = &[
+ /// same-prefix repository (`xerj-org/xerj-fork`) or someone else's project
+ /// never passes. #960.
+ fn origin_url_is_xerj(url: &str) -> bool {
++    let normalized = normalize_origin_url(url);
++    XERJ_ORIGIN_URLS.contains(&normalized.as_str())
++}
++
++/// Lower-case, drop a trailing `.git` and slash, and drop `user:secret@` from
++/// an `https://` or `ssh://` URL. An authenticated clone of xerj-org/xerj is
++/// still that repository; the credential must not change the answer, and it
++/// must not be printed.
++fn normalize_origin_url(url: &str) -> String {
+     let normalized = url.trim().to_ascii_lowercase();
+     let normalized = normalized
+         .strip_suffix(".git")
+         .unwrap_or(normalized.as_str());
+     let normalized = normalized.trim_end_matches('/');
+-    XERJ_ORIGIN_URLS.contains(&normalized)
++    strip_credential_userinfo(normalized)
++}
++
++fn strip_credential_userinfo(url: &str) -> String {
++    let Some(scheme_end) = url.find("://") else {
++        return url.to_string();
++    };
++    let after = &url[scheme_end + 3..];
++    let Some(slash) = after.find('/') else {
++        return url.to_string();
++    };
++    let authority = &after[..slash];
++    if let Some((userinfo, host)) = authority.rsplit_once('@') {
++        if userinfo.contains(':') {
++            return format!("{}://{host}{}", &url[..scheme_end], &after[slash..]);
++        }
++    }
++    url.to_string()
+ }
+ 
+ /// `git remote get-url origin` run in `dir` (the process working directory
+@@ -494,7 +524,7 @@ fn open_pr_at(dir: Option<&Path>, draft: &Draft, report: &str, commands: &str) -
+     // xerj-org/xerj itself.
+     if !origin_is_xerj_checkout(dir) {
+         let found = match origin_remote_url(dir) {
+-            Some(url) => format!("{url:?}"),
++            Some(url) => format!("{:?}", normalize_origin_url(&url)),
+             None => "none — this directory is not a git repository, or it has no \
+                      `origin` remote"
+                 .to_string(),
+@@ -510,15 +540,16 @@ fn open_pr_at(dir: Option<&Path>, draft: &Draft, report: &str, commands: &str) -
+         eprintln!(
+             "To file the report: run this command again from a clone of xerj-org/xerj, or \
+              fork it, push `{branch}` to your fork and open the PR with \
+-             `gh pr create --repo xerj-org/xerj --head <your-login>:{branch}`."
++             `gh pr create --repo xerj-org/xerj --head YOUR_LOGIN:{branch}`."
+         );
+         eprintln!("The report and the exact commands to run there:\n");
+         println!("{report}");
+         println!("\n{commands}");
+         return 1;
+     }
+-    // A `gh` that cannot open the PR turns a committed branch into a dead end.
+-    // Say so and hand over the commands instead.
++    // A `gh` that cannot open the PR, or a git that cannot commit, must fail
++    // before any branch exists. The fresh-agent failure mode was a dirty
++    // `field-report/*` branch left behind when identity was missing.
+     if let Err(reason) = gh_ready() {
+         eprintln!("error: cannot open the pull request automatically: {reason}");
+         eprintln!(
+@@ -527,48 +558,110 @@ fn open_pr_at(dir: Option<&Path>, draft: &Draft, report: &str, commands: &str) -
+         println!("{commands}");
+         return 1;
+     }
++    if let Err(reason) = git_identity_ready(dir) {
++        eprintln!("error: cannot commit the field report: {reason}");
++        eprintln!("Nothing was branched. The report and the commands:\n");
++    
 ```
 
 ---
 
-### Incident Patch 2: `d481370f` (2026-10-18)
-**Commit Message**: fix(hub): bare `xerj code <slug>` finds the node `hub pull` restored into (#1729)
+### Incident Patch 2: `008d9b6e` (2026-10-18)
+**Commit Message**: fix(search): blame the prefix only when the index is missing (#1718)
 
-Motivation
-----------
-Corpus Hub v2's whole point is that `xerj hub pull <slug>` leaves the user one
-command away from an answer: the pull prints "`xerj code <slug>` works now", and
-the §12.3/§12.4 release gates run exactly that. On a clean machine (empty HOME,
-nothing on localhost:9200) that promise was broken.
+* fix(search): blame the prefix only when the index is missing
 
-`xerj hub pull` resolves a node through `node::ensure_node` — which, finding
-nothing on localhost:9200, starts the automatic node on 9300+, restores the pack
-into it, and records that URL (`http://127.0.0.1:9300`) in the state ledger
-(`~/.xerj-code/state/<slug>.json`, `source: "hubpack"`). But `xerj code` resolved
-its node through `xc::resolve_url` — `--url` > `XERJ_URL` > `http://localhost:9200`
-— which ignores the ledger. So immediately after a successful pull:
+xerj search and xerj def appended "is the prefix right?" to every
+query failure. HTTP 400 `For input string` is a numeric field queried
+as text, and that sentence sends the reader to change --prefix.
 
-  $ xerj code lz4 --def LZ4_VERSION_RELEASE   # no --url, no XERJ_URL
-  defs query failed: no response from http://localhost:9200/...-defs/_search
-  no match in lz4 ...
-  answered from: local pack            # exit 1, and a false "local pack"
-  $ xerj code lz4 "how does LZ4 decompress a block safely"
-  search failed: ... (http://lo
+The sentence stays for index_not_found and "no such index". Other
+failures print the error and stop.
 
-**File**: `engine/crates/xerj-hub/src/cli.rs` (modified, +96/-4)
-```diff
-@@ -1276,10 +1276,79 @@ pub fn parse_ask_args(args: &[String]) -> Result<Option<AskArgs>, String> {
- /// `xerj code …`: `--def <SYMBOL>` answers from the `-defs` index; everything
- /// else is the existing retrieval path, delegated unchanged.
- pub fn run_code(args: &[String]) -> i32 {
-+    let args = match with_pulled_node_url(args) {
-+        Ok(args) => args,
-+        Err(e) => {
-+            eprintln!("xerj code: {e:#}");
-+            return 2;
-+        }
-+    };
-     if !args.iter().any(|a| a == "--def") {
--        return xerj_autoindex::xc::run_code_cli(args);
-+        return xerj_autoindex::xc::run_code_cli(&args);
-+    }
-+    run_code_def(&args)
-+}
-+
-+/// The `xerj code` flags (either mode) that take a value.
-+const CODE_VALUE_FLAGS: &[&str] = &[
-+    "-k",
-+    "--lang",
-+    "--mode",
-+    "--full",
-+    "--url",
-+    "--api-key",
-+    "--def",
-+];
-+
-+/// The `<corpus>` argument of `xerj code …`: the first positional, skipping the
-+/// values of [`CODE_VALUE_FLAGS`] (both parsers take it in that position).
-+fn code_corpus_arg(args: &[String]) -> Option<&str> {
-+    let mut i = 0;
-+    while i < args.len() {
-+        let a = args[i].as_str();
-+        if CODE_VALUE_FLAGS.contains(&a) {
-+            i += 2;
-+            continue;
-+        }
-+        if !a.starts_with('-') {
-+            return Some(a);
-+        }
-+        i += 1;
-     }
--    run_code_def(args)
-+    None
-+}
-+
-+/// For a PULLED corpus queried with no `--url` and no `XERJ_URL`, add
-+/// `--url <the node the pack lives on>` ([`node::resolve_pulled_node`]).
-+///
-+/// Without this, `xerj code <slug>` — the command `xerj hub pull` tells the user
-+/// to run next — resolved `localhost:9200` while the pack had been restored into
-+/// the automatic node on 9300+: `--def` printed "no match … answered from: local
-+/// pack" and a question failed with a transport error. `xerj ask` already used
-+/// the automatic node. A locally indexed corpus, an explicit `--url` or
-+/// `XERJ_URL`, and anything that is not a pulled corpus pass through unchanged.
-+fn with_pulled_node_url(args: &[String]) -> Result<Vec<String>> {
-+    let explicit_env = std::env::var("XERJ_URL").is_ok_and(|u| !u.is_empty());
-+    let help = args.iter().any(|a| a == "-h" || a == "--help");
-+    if explicit_env || help || args.iter().any(|a| a == "--url") {
-+        return Ok(args.to_vec());
-+    }
-+    let Some(corpus) = code_corpus_arg(args) else {
-+        return Ok(args.to_vec());
-+    };
-+    let Ok(st) = state::load_state(&xerj_autoindex::xc::code_root(), corpus) else {
-+        return Ok(args.to_vec()); // the code path reports "not indexed" itself
-+    };
-+    if st.source.as_deref() != Some(state::SOURCE_HUBPACK) {
-+        return Ok(args.to_vec());
-+    }
-+    let launcher = NodeLauncher::current()?;
-+    let resolved = node::resolve_pulled_node(&hub_home(), st.url.as_deref(), &launcher)
-+        .with_context(|| format!("cannot reach the node holding the pulled corpus '{corpus}'"))?;
-+    let mut out = args.to_vec();
-+    out.push("--url".into());
-+    out.push(resolved.url);
-+    Ok(out)
- }
- 
- fn run_code_def(args: &[String]) -> i32 {
-@@ -1358,11 +1427,18 @@ fn run_code_def(args: &[String]) -> i32 {
-         return 2;
-     }
-     let prefix = state::query_prefix(&st);
--    if let Ok(live) = node.cat_indices_json(&format!("{prefix}*")) {
--        if live.is_empty() {
-+    match node.cat_indices_json(&format!("{prefix}*")) {
-+        Ok(live) if live.is_empty() => {
-             eprintln!("{}", state::not_loaded_message(&st, &prefix, &url));
-             return 3;
-         }
-+        Ok(_) => {}
-+        // An unreachable node is a failure to answer (exit 2), not "no match"
-+        // (exit 1) — and never "answered from: local pack".
-+        Err(e) => {
-+            eprintln!("xerj code: cannot reach {url}: {e}");
-+            return 2;
-+        }
-     }
- 
-     let answer = crate::def::lookup(&node, &slug, &symbol, k);
-@@ -1461,6 +1537,22 @@ mod tests {
-         }
-     }
- 
-+    #[test]
-+    fn code_corpus_arg_skips_flag_values() {
-+        let v = |xs: &[&str]| xs.iter().map(|x| x.to_string()).collect::<Vec<_>>();
-+        assert_eq!(code_corpus_arg(&v(&["lz4", "q"])), Some("lz4"));
-+        assert_eq!(code_corpus_arg(&v(&["--def", "X", "lz4"])), Some("lz4"));
-+        assert_eq!(
-+            code_corpus_arg(&v(&["-k", "3", "--json", "lz4", "q"])),
-+            Some("lz4")
-+        );
-+        assert_eq!(
-+            code_corpus_arg(&v(&["--mode", "bm25", "--lang", "c"])),
-+            None
-+        );
-+        assert_eq!(code_corpus_arg(&v(&["--def"])), None);
-+    }
-+
-     #[test]
-     fn run_code_without_def_does_not_enter_the_def_path() {
-         // No node is contacted and no panic: a bare `code` with a bad flag
-```
+Verified: cargo +1.97.1 test --locked -p xerj-autoindex --lib
+query_failure_blames; clippy -D warnings; rustfmt.
 
-**File**: `engine/crates/xerj-hub/src/node.rs` (modified, +84/-0)
-```diff
-@@ -559,6 +559,43 @@ fn ensure_node_with(
-     }
- }
- 
-+/// The node a PULLED corpus (a `source: "hubpack"` ledger) is queried on when
-+/// the caller named none (no `--url`, no `XERJ_URL`).
-+///
-+/// `xerj hub pull` restores into whatever [`ensure_node`] resolved — on a
-+/// machine with nothing on `localhost:9200`, the automatic node on 9300+ — and
-+/// records that URL in the ledger. A bare `xerj code <slug>` used to ignore the
-+/// ledger and query `localhost:9200`, so the corpus `pull` had just restored was
-+/// unreachable from the command `pull` tells the user to run next.
-+///
-+/// The recorded URL takes the place `--url` has in [`ensure_node`]: used when it
-+/// answers; refused when it is remote and silent; and when it is local and
-+/// silent (the automatic node was stopped, or its port changed), the automatic
-+/// node is reused or restarted on its own data directory, where the restored
-+/// indices persist. `localhost:9200` is NOT probed: a node there that never held
-+/// the pack would answer "not loaded" for a corpus that is one restart away.
-+/// A ledger with no URL falls back to plain [`ensure_node`].
-+pub fn resolve_pulled_node(
-+    hub_home: &Path,
-+    recorded: Option<&str>,
-+    launcher: &NodeLauncher,
-+) -> Result<ResolvedNode> {
-+    resolve_pulled_node_with(hub_home, recorded, launcher, NODE_BOOT_TIMEOUT)
-+}
-+
-+/// [`resolve_pulled_node`] with the boot timeout spelled out (tests shorten it).
-+fn resolve_pulled_node_with(
-+    hub_home: &Path,
-+    recorded: Option<&str>,
-+    launcher: &NodeLauncher,
-+    boot_timeout: Duration,
-+) -> Result<ResolvedNode> {
-+    let recorded = recorded
-+        .map(|u| u.trim().trim_end_matches('/'))
-+        .filter(|u| !u.is_empty());
-+    ensure_node_with(hub_home, recorded, launcher, boot_timeout)
-+}
-+
- fn unconfirmed_message(hub_home: &Path, rec: &NodeRecord) -> String {
-     if rec.port.is_none() {
-         format!(
-@@ -1832,6 +1869,35 @@ mod tests {
-         assert!(!hub.path().join("node.pid").exists());
-     }
- 
-+    // ── resolve_pulled_node: a bare `xerj code <pulled slug>` ────────────────
-+
-+    #[test]
-+    fn a_pulled_corpus_is_queried_on_the_node_its_ledger_recorded() {
-+        // The bug: `pull` restored into the automatic node (9300+) and recorded
-+        // its URL; a bare `xerj code` then queried localhost:9200 instead.
-+        let hub = tempfile::tempdir().unwrap();
-+        let port = fake_node("200 OK", r#"{"status":"green"}"#);
-+        let recorded = format!("http://127.0.0.1:{port}/");
-+        let r = resolve_pulled_node(hub.path(), Some(&recorded), &forbidden_launcher()).unwrap();
-+        assert_eq!(r.url, format!("http://127.0.0.1:{port}"));
-+        assert!(!r.started_now, "an answering node is never started over");
-+        assert!(!hub.path().join("node.pid").exists());
-+    }
-+
-+    #[test]
-+    fn a_pulled_corpus_on_a_silent_remote_node_is_an_error_not_a_local_node() {
-+        let hub = tempfile::tempdir().unwrap();
-+        let err = resolve_pulled_node(
-+            hub.path(),
-+            Some("http://nonexistent.invalid:9200"),
-+            &forbidden_launcher(),
-+        )
-+        .unwrap_err()
-+        .to_string();
-+        assert!(err.contains("not a local address"), "{err}");
-+        assert!(!hub.path().join("node.pid").exists());
-+    }
-+
-     #[test]
-     fn free_port_search_skips_a_busy_triple() {
-         let held = TcpListener::bind("127.0.0.1:0").unwrap();
-@@ -2401,6 +2467,24 @@ mod tests {
-             live.wait().unwrap();
-         }
- 
-+        #[test]
-+        fn a_pulled_corpus_whose_recorded_node_moved_finds_the_automatic_node() {
-+            // `xerj hub stop` + a later restart put the automatic node on another
-+            // port than the one `pull` recorded. The ledger URL is silent and
-+            // local, so the automatic node is the answer — and localhost:9200 is
-+            // never consulted (a node there never held the pack).
-+            let hub = tempfile::tempdir().unwrap();
-+            let mut live = spawn_node_like(&node_data_dir(hub.path()));
-+            let port = fake_node_with_pid(live.id());
-+            record(hub.path(), live.id(), Some(port));
-+            let r = resolve_pulled_node(hub.path(), Some(&silent_url()), &forbidden_launcher())
-+                .unwrap();
-+            assert_eq!(r.url, format!("http://127.0.0.1:{port}"));
-+            assert!(r.managed && !r.started_now);
-+            live.kill().unwrap();
-+            live.wait().unwrap();
-+        }
-+
-         #[test]
-         fn something_else_on_the_recorded_port_is_not_taken_for_the_recorded_node() {
-             // The node is alive but has not bound its port yet, and another process
-```
+Co-authored-by: xerj-org <[REDACTED_EMAIL]>
 
-**File**: `engine/crates/xerj-hub/tests/pack_roundtrip.rs` (modified, +29/-0)
-```diff
-@@ -491,6 +491,35 @@ async fn pack_build_pull_def_roundtrip() {
-     assert_eq!(answer.hits[0].file, "limits.h");
-     assert_eq!(answer.hits[0].line, 5);
- 
-+    // A BARE `xerj code` (no --url, no XERJ_URL) finds the node the pack was
-+    // restored into, from the ledger — not localhost:9200. `pull` names exactly
-+    // this command as the next step; it used to query localhost:9200, where
-+    // `--def` printed "no match … answered from: local pack" (exit 1) and a
-+    // question failed to connect (exit 2).
-+    let (rc_def, rc_how) = {
-+        let (ch, hh) = (code_home.clone(), hub_home.clone());
-+        tokio::task::spawn_blocking(move || {
-+            std::env::set_var("XERJ_CODE_HOME", &ch);
-+            std::env::set_var("XERJ_HUB_HOME", &hh);
-+            std::env::remove_var("XERJ_URL");
-+            let def = xerj_hub::cli::run_code(&[
-+                "mini-c".into(),
-+                "--def".into(),
-+                "MINI_LIMIT".into(),
-+                "--json".into(),
-+            ]);
-+            let how = xerj_hub::cli::run_code(&["mini-c".into(), "mini c reference".into()]);
-+            (def, how)
-+        })
-+        .await
-+        .unwrap()
-+    };
-+    assert_eq!(
-+        rc_def, 0,
-+        "bare `xerj code mini-c --def MINI_LIMIT` answers"
-+    );
-+    assert_eq!(rc_how, 0, "bare `xerj code mini-c \"<question>\"` answers");
-+
-     // Second pull of the same pin → already present, restores nothing.
-     let rc2 = {
-         let (url_b, ch, hh, pk) = (
-```
+* fix: close the query_failure test brace lost in the merge
 
-**File**: `tools/hub-packs/consumer_e2e.sh` (modified, +14/-0)
-```diff
-@@ -17,6 +17,8 @@
- #      snapshot restore — all against the key compiled into <xerj>;
- #   4. `xerj code <slug> --def <symbol> --json`, the symbol taken from the pack's
- #      own defs.jsonl, must return that symbol from the local pack;
-+#      4b. the same lookup with NO XERJ_URL must find the node from the ledger
-+#      `hub pull` wrote (not localhost:9200);
- #   5. `xerj code <slug> "<word from ask_for>" --json` must return a hit with a
- #      file and a line.
- #
-@@ -108,6 +110,18 @@ jq -e --argjson d "$DEF" '
-   || { cat "$WORK/def.json"; fail "--def $SYM did not return $(jq -r '"\(.file):\(.line)"' <<<"$DEF") from the local pack"; }
- echo "def ok: $SYM -> $(jq -r '"\(.file):\(.line)"' <<<"$DEF") (answered_from local_pack)"
- 
-+# 4b. The same lookup BARE: no XERJ_URL, no --url — the command `hub pull` tells
-+#     a user to run next. It must find the node the pack was restored into from
-+#     the ledger, not fall back to localhost:9200 (where nothing listens here).
-+env -u XERJ_URL "$BIN" code "$SLUG" --def "$SYM" --json > "$WORK/def-bare.json" \
-+  || { cat "$WORK/def-bare.json"; fail "bare xerj code $SLUG --def $SYM (no XERJ_URL) failed"; }
-+jq -e --argjson d "$DEF" '
-+  .answered_from == "local_pack"
-+  and ([.hits[]? | select(.file == $d.file and .line == $d.line)] | length) > 0' \
-+  "$WORK/def-bare.json" >/dev/null \
-+  || { cat "$WORK/def-bare.json"; fail "bare --def $SYM (no XERJ_URL) did not find the pulled pack's node"; }
-+echo "bare def ok: $SYM with no XERJ_URL found the pulled pack's node"
-+
- # 5. One question: a word from the catalogue entry's ask_for. Words the template
- #    sentence ("an agent working on ... queries this for ...") always carries say
- #    nothing about the corpus; the longest remaining words are tried, at most three.
-```
-
----
-
-### Incident Patch 3: `80c88cc3` (2026-10-18)
-**Commit Message**: fix(autoindex): name symlinks the walk does not follow (#1680)
-
-The default walk does not follow symlinks. walkdir then yields the
-link itself, `file_type().is_file()` is false, and the entry was
-`continue`d with no ignore-report line. A dry-run of a tree with an
-inside link and an outside link listed neither file and did not
-mention symlinks, so the links looked like they were not there.
-
-Before: unfollowed symlinks were absent from the file list and from
-the ignore summary.
-After: each one is counted under `symlink:not-followed`, and the
-summary carries one warning: pass `--follow-symlinks` to index a
-target inside the folder; a target outside it stays refused.
-`--follow-symlinks` still indexes an inside target under the link's
-path and still records `symlink:outside-root` for a target outside.
-
-Verified: cargo +1.97.1 test --locked -p xerj-autoindex --lib --
-walk:: (19 passed, including
-an_unfollowed_symlink_is_named_and_an_inside_target_is_indexed).
-cargo +1.97.1 clippy --locked -p xerj-autoindex --all-targets --
--D warnings (exit 0).
-ES-YAML not run; no wire change.
+---------
 
 Co-authored-by: Cursor Agent <[REDACTED_EMAIL]>
 Co-authored-by: xerj-org <[REDACTED_EMAIL]>
 
-**File**: `engine/crates/xerj-autoindex/src/ignore_rules.rs` (modified, +21/-0)
+**File**: `engine/crates/xerj-autoindex/src/def.rs` (modified, +2/-5)
 ```diff
-@@ -163,6 +163,14 @@ pub const UNRESOLVED_LINK_RULE: &str = "symlink:unresolved";
- /// Both were tried; this names the two facts that are actually true.
- pub const HIDDEN_OUTSIDE_ROOT_RULE: &str = "symlink:outside-root+hidden";
- 
-+/// A symlink the walk did not follow. The default is not to follow links, and
-+/// an unfollowed symlink is not a file to walkdir, so it used to be skipped
-+/// with no line on the ignore report — a tree of links looked empty. One
-+/// warning names `--follow-symlinks`; each link is counted under this rule.
-+/// A target outside the folder stays refused even when the flag is on
-+/// ([`ESCAPED_ROOT_RULE`]).
-+pub const NOT_FOLLOWED_RULE: &str = "symlink:not-followed";
-+
- const MAX_WARNINGS: usize = 20;
- /// Directory entries the `--dry-run` deep count may examine in total. A
- /// pathological `node_modules` is not allowed to turn "tell me the plan" into
-@@ -768,6 +776,19 @@ impl IgnoreStack {
+@@ -17,6 +17,7 @@ use crate::esclient::Es;
+ use crate::search::{
+     corpus_snapshot, empty_lookup_report, field_lookup_ok, hit_location, is_identifier,
+     mapped_property_names, numeric_property_names, parse_count_arg, passage_text,
++    query_failure_message,
+     weighted_query_fields,
+ };
+ use serde_json::{json, Value};
+@@ -482,11 +483,7 @@ pub fn run_def_cli() -> i32 {
+     let mut resp = match es.search(&pattern, &body) {
+         Ok(v) => v,
+         Err(e) => {
+-            eprintln!(
+-                "xerj def: query failed against {url}/{pattern}: {e}\n\
+-                 (is the prefix right? `xerj autoindex` writes 'ax' by default — \
+-                 pass --prefix if you indexed under another.)"
+-            );
++            eprintln!("{}", query_failure_message("def", &url, &pattern, e));
+             return 1;
          }
-     }
- 
-+    /// A symlink left unfollowed. See [`NOT_FOLLOWED_RULE`]. The warning is
-+    /// once per walk: the rule count already says how many links.
-+    pub fn record_symlink_not_followed(&mut self) {
-+        if !self.report.by_rule.contains_key(NOT_FOLLOWED_RULE) {
-+            self.warn(
-+                "symlink: not followed (pass --follow-symlinks to index a target inside \
-+                 this folder; a target outside it stays refused)"
-+                    .into(),
-+            );
-+        }
-+        self.record_file(NOT_FOLLOWED_RULE);
-+    }
-+
-     /// A followed entry that could not be resolved. See [`UNRESOLVED_LINK_RULE`].
-     pub fn record_symlink_unresolved(&mut self, is_dir: bool) {
-         if is_dir {
+     };
 ```
 
-**File**: `engine/crates/xerj-autoindex/src/walk.rs` (modified, +68/-0)
+**File**: `engine/crates/xerj-autoindex/src/search.rs` (modified, +71/-5)
 ```diff
-@@ -486,6 +486,12 @@ fn walk_impl(
-             continue;
-         }
-         if !entry.file_type().is_file() {
-+            // Unfollowed symlinks are not files to walkdir. Skipping them
-+            // with no report made a tree of links look empty: neither the
-+            // file list nor the ignore summary mentioned them.
-+            if !follow_symlinks && entry.path_is_symlink() {
-+                stack.record_symlink_not_followed();
-+            }
-             continue;
-         }
-         if stack.skip_file(entry.path()).is_some() {
-@@ -1186,6 +1192,68 @@ mod takeout_noise_tests {
-     }
+@@ -669,6 +669,30 @@ fn catalog_run_prefixes(es: &Es) -> Option<Vec<String>> {
+     Some(prefixes.into_iter().collect())
  }
  
-+#[cfg(all(test, unix))]
-+mod unfollowed_symlink_tests {
-+    use super::walk_reporting;
-+    use crate::ignore_rules::{IgnoreOptions, NOT_FOLLOWED_RULE};
-+    use std::fs;
-+    use std::os::unix::fs::symlink;
-+
-+    /// Default walk: links are omitted from the file list and named on the
-+    /// report, once. `--follow-symlinks` indexes a target inside the folder
-+    /// under the link's path and still refuses a target outside it.
-+    #[test]
-+    fn an_unfollowed_symlink_is_named_and_an_inside_target_is_indexed() {
-+        let dir = tempfile::tempdir().unwrap();
-+        let root = dir.path().join("proj");
-+        fs::create_dir_all(root.join("src")).unwrap();
-+        fs::write(root.join("src/lib.rs"), "fn alpha() {}\n").unwrap();
-+        symlink("src/lib.rs", root.join("link-inside.rs")).unwrap();
-+        let outside = dir.path().join("secret.txt");
-+        fs::write(&outside, "secret").unwrap();
-+        symlink(&outside, root.join("link-out.txt")).unwrap();
-+
-+        let (files, report) = walk_reporting(&root, false, IgnoreOptions::default()).unwrap();
-+        let rels: Vec<&str> = files.iter().map(|e| e.rel.as_str()).collect();
-+        assert!(rels.contains(&"src/lib.rs"), "{rels:?}");
-+        assert!(
-+            !rels.iter().any(|r| r.starts_with("link-")),
-+            "unfollowed links must not be indexed: {rels:?}"
-+        );
-+        assert_eq!(
-+            report.by_rule.get(NOT_FOLLOWED_RULE).map(|c| c.files),
-+            Some(2),
-+            "{report:?}"
-+        );
-+        let lines = report.summary_lines().join("\n");
-+        assert_eq!(lines.matches("--follow-symlinks").count(), 1, "{lines}");
-+        assert!(lines.contains(NOT_FOLLOWED_RULE), "{lines}");
-+
-+        let (followed, followed_report) =
-+            walk_reporting(&root, true, IgnoreOptions::default()).unwrap();
-+        let frels: Vec<&str> = followed.iter().map(|e| e.rel.as_str()).collect();
-+        assert!(
-+            frels.contains(&"link-inside.rs"),
-+            "an inside target is indexed under the link path: {frels:?}"
-+        );
-+        assert!(
-+            !frels.contains(&"link-out.txt"),
-+            "a target outside the folder stays refused: {frels:?}"
-+        );
-+        assert!(
-+            !followed_report.by_rule.contains_key(NOT_FOLLOWED_RULE),
-+            "{followed_report:?}"
-+        );
-+        assert!(
-+            followed_report
-+                .summary_lines()
-+                .iter()
-+                .any(|l| l.contains("symlink:outside-root")),
-+            "{followed_report:?}"
++/// What `xerj search` / `xerj def` print when the query request itself fails.
++///
++/// A missing index (`index_not_found_exception`, or a body that says
++/// `no such index`) is the case the prefix sentence was written for. Every
++/// other failure — including HTTP 400 `For input string`, which is a numeric
++/// field being queried as text — must not tell the reader to change `--prefix`.
++pub(crate) fn query_failure_message(
++    command: &str,
++    url: &str,
++    pattern: &str,
++    err: impl std::fmt::Display,
++) -> String {
++    let err = err.to_string();
++    let mut msg = format!("xerj {command}: query failed against {url}/{pattern}: {err}");
++    let lower = err.to_ascii_lowercase();
++    if lower.contains("index_not_found") || lower.contains("no such index") {
++        msg.push_str(
++            "\n(is the prefix right? `xerj autoindex` writes 'ax' by default — \
++             pass --prefix if you indexed under another.)",
 +        );
 +    }
++    msg
 +}
 +
- #[cfg(test)]
- mod portable_rel_tests {
-     use super::{portable_rel, walk_reporting};
+ /// Default `--full` width, and the width suggested when the user asked for 0.
+ const DEFAULT_FULL_CHARS: usize = 600;
+ 
+@@ -857,11 +881,7 @@ pub fn run_search_cli() -> i32 {
+     let mut resp = match es.search(&pattern, &body) {
+         Ok(v) => v,
+         Err(e) => {
+-            eprintln!(
+-                "xerj search: query failed against {url}/{pattern}: {e}\n\
+-                 (is the prefix right? `xerj autoindex` writes 'ax' by default — \
+-                 pass --prefix if you indexed under another.)"
+-            );
++            eprintln!("{}", query_failure_message("search", &url, &pattern, e));
+             return 1;
+         }
+     };
+@@ -943,6 +963,52 @@ mod tests {
+     use super::*;
+     use xerj_common::code_query::normalize_code_search_query;
+ 
++    /// HTTP 400 `For input string` is a numeric field, not a wrong prefix.
++    /// A missing index still gets the prefix sentence.
++    #[test]
++    fn query_failure_blames_the_prefix_only_when_the_index_is_missing() {
++        let numeric = query_failure_message(
++            "search",
++            "http://127.0.0.1:9200",
++            "ax-*",
++            "search /ax-* HTTP 400: {\"error\":{\"reason\":\"For input string: \\\"fingerprint dedupe comment\\\"\"}}",
++        );
++        assert!(numeric.contains("For input string"), "{numeric}");
++        assert!(
++            !numeric.contains("is the prefix right"),
++            "a parse failure must not blame --prefix, got: {numeric}"
++        );
++        assert!(
++            numeric.starts_with("xerj search: query failed against http://127.0.0.1:9200/ax-*: ")
++        );
++
++        let missing = query_failure_message(
++            "def",
++            "http://127.0.0.1:9200",
++            "nope-*",
++            "search /nope-* HTTP 404: {\"error\":{\"type\":\"index_not_found_exception\"}}",
++        );
++        assert!(missing.contains("index_not_found_exception"), "{missing}");
++        assert!(missing.contains("is the prefix right"), "{missing}");
++        assert!(missing.contains("xerj def:"), "{missing}");
++
++        let phrase = query_failure_message(
++            "search",
++            "http://localhost:9200",
++            "ax-*",
++            "no such index: ax-missing",
++        );
++        assert!(phrase.contains("is the prefix right"), "{phrase}");
++
++        let other = query_failure_message(
++            "search",
++            "http://localhost:9200",
++            "ax-*",
++            "search /ax-* HTTP 403: {\"error\":{\"type\":\"security_exception\"}}",
++        );
++        assert!(!other.contains("is the prefix right"), "{other}");
++    }
++
+     #[test]
+     fn search_refuses_a_mode_flag_and_names_the_embedder() {
+         for asked in ["semantic", "hybrid", "bm25"] {
+```
+
+---
+
+### Incident Patch 3: `d060f1c8` (2026-10-18)
+**Commit Message**: fix(cli): say that default search ranking is lexical (#1655)
+
+search, def, and code help described retrieval and never said what
+the ranker does. Agents treated the default as a neural reading of
+the code and reported natural-language misses as a broken index.
+
+Each usage string now says the default ranking matches the words
+typed and is not a neural reading. xerj code also says --mode
+semantic and --mode hybrid embed with lexical feature hashing unless
+the node was started with --embed-mode neural.
+
+Co-authored-by: Cursor Agent <[REDACTED_EMAIL]>
+Co-authored-by: xerj-org <[REDACTED_EMAIL]>
+
+**File**: `engine/crates/xerj-autoindex/src/def.rs` (modified, +10/-2)
+```diff
+@@ -17,13 +17,13 @@ use crate::esclient::Es;
+ use crate::search::{
+     corpus_snapshot, empty_lookup_report, field_lookup_ok, hit_location, is_identifier,
+     mapped_property_names, numeric_property_names, parse_count_arg, passage_text,
+-    query_failure_message,
+-    weighted_query_fields,
++    query_failure_message, weighted_query_fields,
+ };
+ use serde_json::{json, Value};
+ 
+ const USAGE: &str = "\
+ xerj def — find where a symbol is defined (go-to-definition, no scripts)
++Default ranking is lexical: it matches the words you typed, and it is not a neural reading of the code.
+ 
+ USAGE:
+     xerj def [OPTIONS] \"<symbol or capability>\"
+@@ -571,6 +571,14 @@ fn unique_locations(hits: Vec<Value>) -> Vec<Value> {
+ mod tests {
+     use super::*;
+ 
++    #[test]
++    fn help_says_the_default_ranking_is_lexical() {
++        assert!(
++            USAGE.contains("Default ranking is lexical") && USAGE.contains("not a neural reading"),
++            "{USAGE}"
++        );
++    }
++
+     #[test]
+     fn declaration_preview_keeps_a_later_constant_and_caps_a_huge_line() {
+         let sig = "pub fn open(\n    path: &Path,\n    mode: u32,\n) -> Result<File> {\n    const MODE_MASK: u32 = 0o777;\n    let _ = path;\n";
+```
+
+**File**: `engine/crates/xerj-autoindex/src/search.rs` (modified, +9/-0)
+```diff
+@@ -16,6 +16,7 @@ use xerj_common::xccode::demote_catalog_noise;
+ 
+ const USAGE: &str = "\
+ xerj search — retrieve code from a running XERJ node (reference coding, no scripts)
++Default ranking is lexical: it matches the words you typed, and it is not a neural reading of the code.
+ 
+ USAGE:
+     xerj search [OPTIONS] \"<what you need, in plain words>\"
+@@ -963,6 +964,14 @@ mod tests {
+     use super::*;
+     use xerj_common::code_query::normalize_code_search_query;
+ 
++    #[test]
++    fn help_says_the_default_ranking_is_lexical() {
++        assert!(
++            USAGE.contains("Default ranking is lexical") && USAGE.contains("not a neural reading"),
++            "{USAGE}"
++        );
++    }
++
+     /// HTTP 400 `For input string` is a numeric field, not a wrong prefix.
+     /// A missing index still gets the prefix sentence.
+     #[test]
+```
+
+**File**: `engine/crates/xerj-autoindex/src/xc.rs` (modified, +10/-0)
+```diff
+@@ -119,6 +119,10 @@ const CODE_USAGE: &str =
+ retrieval over a reference corpus (see `xerj corpus list`):
+   -k N            passages to return (default 5)
+   --mode MODE     bm25 (default, measured 12/12 top-3), semantic, or hybrid
++                  Default ranking is lexical: it matches the words you typed,
++                  and it is not a neural reading of the code. --mode semantic
++                  and --mode hybrid embed with lexical feature hashing unless
++                  the node was started with --embed-mode neural.
+   --hybrid        shorthand for --mode hybrid
+   --lang LG       filter to one language field (e.g. rust, go)
+   --full N        max chars per passage (default 800; 0 = file head only)
+@@ -2189,6 +2193,12 @@ mod tests {
+             assert!(CODE_USAGE.contains(f), "{f} missing from usage");
+         }
+         assert!(CORPUS_USAGE.contains("--from"));
++        assert!(
++            CODE_USAGE.contains("Default ranking is lexical")
++                && CODE_USAGE.contains("not a neural reading")
++                && CODE_USAGE.contains("--embed-mode neural"),
++            "{CODE_USAGE}"
++        );
+     }
+ 
+     /// The `--from` name swap: explicit beats the manifest, the manifest
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1807** (closed): chore(seo): refresh the sitemap lastmod on / and /for-agents (@omertahaoztop)
+- **PR #1805** (closed): fix(query): bind bare + and | in simple_query_string (#1751) (@omertahaoztop)
+- **PR #1795** (2026-10-19): docs(roadmap): add 1.0 feature shortlist (#1785-#1794) (@xerj-org)
+- **PR #1784** (2026-10-19): fix(hub): an explicit `xerj hub pull` fetches a pack over the auto-pull cap (@xerj-org)
+- **PR #1778** (2026-10-19): fix: repair three merge-skew compile/test breaks on main (autoindex + hub) (@xerj-org)
 - **PR #1777** (2026-10-18): fix(hub): consumer gate passes defs-0 packs on the question check alone (@xerj-org)
-- **PR #1775** (2026-10-18): feat(functions): store /api/field-report in R2 (go live; token has no KV) (@xerj-org)
-- **PR #1769** (2026-10-18): fix(deploy): placeholder FIELD_REPORTS KV id blocks every Pages deploy (@xerj-org)
-- **PR #1768** (closed): fix(pages): deploy without a stand-in field-report KV id (@xerj-org)
-- **PR #1763** (2026-10-18): docs: field report for Windows autoindex and ES-compat search (2026-10-18) (@roedyrustam)
-- **PR #1762** (closed): chore: add roedyrustam to .contributors (CLA signature) (@roedyrustam)
 
 ---
 
@@ -2477,40 +2337,62 @@ Co-authored-by: xerj-org <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deploy): comment out the placeholder FIELD_REPORTS KV binding that blocks every 
+## X. feedback): fork --open-pr when the account cannot push (#1771)
 
 **RULE**:
-When implementing operations in `wrangler.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in xerj-org/xerj. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `engine/crates/xerj-autoindex/src/feedback.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in xerj-org/xerj. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a6ce269d`: deploy): comment out the placeholder FIELD_REPORTS KV binding that blocks every Pages deploy. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b809437d`: feedback): fork --open-pr when the account cannot push (#1771). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `wrangler.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `engine/crates/xerj-autoindex/src/feedback.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# [[kv_namespaces]]  — COMMENTED OUT until the owner wires the real namespace.
-# A placeholder id here makes `wrangler pages deploy` fail with
-# "Error 8000022: Invalid KV namespace ID", which blocks EVERY xerj.org deploy
-# (this file is on the deploy trigger path). With no binding declared, the
-# Function fails open: /api/field-report accepts a report and returns 200 but
-# does NOT store it (see functions/api/field-report.js, the `!env.FIELD_REPORTS`
-# branch). To activate storage, create the namespace and restore this block:
-#     wrangler kv namespace create FIELD_REPORTS   # prints an id
-# [[kv_namespaces]]
-# binding = "FIELD_REPORTS"
-# id = "<the id it printed>"
+        "# Ready-to-run — files ONLY the field report, nothing else.\n\
+         # Run these in a clone of xerj-org/xerj, not in the project you are working in.\n\
+         git clone https://github.com/xerj-org/xerj.git\n\
+         cd xerj\n\
+         gh repo fork xerj-org/xerj --remote --remote-name xerj-fork\n\
+         git push -u xerj-fork {branch}\n\
+         gh pr create --repo xerj-org/xerj --base main --head YOUR_LOGIN:{branch} \\\n\
+         \x20 --body \"Field report only; see {relpath}.\"",
+    let normalized = normalize_origin_url(url);
+    XERJ_ORIGIN_URLS.contains(&normalized.as_str())
+}
+
+/// Lower-case, drop a trailing `.git` and slash, and drop `user:secret@` from
+/// an `https://` or `ssh://` URL. An authenticated clone of xerj-org/xerj is
+/// still that repository; the credential must not change the answer, and it
+/// must not be printed.
+fn normalize_origin_url(url: &str) -> String {
+    strip_credential_userinfo(normalized)
+}
+
+fn strip_credential_userinfo(url: &str) -> String {
+    let Some(scheme_end) = url.find("://") else {
+        return url.to_string();
+    };
+    let after = &url[scheme_end + 3..];
+    let Some(slash) = after.find('/') else {
+        retur
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-[[kv_namespaces]]
-binding = "FIELD_REPORTS"
-id = "REPLACE_WITH_FIELD_REPORTS_KV_NAMESPACE_ID"
+        "# Ready-to-run — files ONLY the field report, nothing else:\n\
+         git push -u origin {branch}\n\
+         gh pr create --repo xerj-org/xerj --base main --head {branch} \\\n\
+         \x20 --body \"Written by an AI agent on behalf of a human. Field report only; see {relpath}.\"",
+    XERJ_ORIGIN_URLS.contains(&normalized)
+            Some(url) => format!("{url:?}"),
+             `gh pr create --repo xerj-org/xerj --head <your-login>:{branch}`."
+    // A `gh` that cannot open the PR turns a committed branch into a dead end.
+    // Say so and hand over the commands instead.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a6ce269d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b809437d` are properly handled with clean fallback behavior.

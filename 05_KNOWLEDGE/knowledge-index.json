@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T11:02:01.175Z",
-  "total_verified_learnings": 796,
+  "last_updated": "2026-10-19T11:09:14.299Z",
+  "total_verified_learnings": 798,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -2737,22 +2737,45 @@
     "learn-github-astral-sh-uv": {
       "learning_id": "learn-github-astral-sh-uv",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "astral-sh-uv",
+      "source": "astral-sh/uv",
+      "repository": "astral-sh/uv",
       "slug": "astral-sh-uv",
       "platform": "github",
       "source_url": "https://github.com/astral-sh/uv",
-      "source_version": "HEAD",
-      "content_hash": "f533123c37981a126653718b75f5d381577db075f82e091dbe085dbf07deabb1",
+      "source_version": "83e4aeed",
+      "content_hash": "0070cf610d1064310473243fd8ccf632bd2164344a974d8a8a5bf455f9ec9028",
       "dossier_path": "07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2523,
+          "title": "Zero-Copy Self-Contained Buffer Ownership Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2524,
+          "title": "Multi-Tier Concurrency Partitioning with Secret Masking",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2525,
+          "title": "Canonical Marker Coalescence Invariant for AST Interning",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.958Z"
+      "verified_at": "2026-10-19T11:09:07.603Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-async-rs-async-std": {
       "learning_id": "learn-github-async-rs-async-std",
@@ -9549,8 +9572,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "d9009b50",
-      "content_hash": "acbac9df81e079289f53388f8cd7000fd2889c0bf9adb5a9321a72fa227dd8de",
+      "source_version": "f1928ea4",
+      "content_hash": "925dc84c838f2ecc8a6a8ebf2c2ea467c01ec6e826b48e2dfdcca7bc065a7ae6",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -9563,6 +9586,11 @@
           "number": 1953,
           "title": "test(transport): add WAN link model and R1 spike-recovery regression gate (#5931",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2521,
+          "title": "test: make legacy_snapshot_survives_restore_and_get_secret deterministic (#5933)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9570,7 +9598,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T01:07:22.729Z",
+      "verified_at": "2026-10-19T11:08:17.042Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -22570,7 +22598,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo",
       "source_version": "hf-tongyi-mai-z-image-turbo",
-      "content_hash": "1a0e892df7841a690198f9db99ea0844417f6be61239e381c91a141c91eb9374",
+      "content_hash": "ac2fca0bd377f03240a5535a854c4d708dfede01048981f17d4b483b2c093f59",
       "dossier_path": "07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md",
       "promoted_rules": [
@@ -22603,6 +22631,16 @@
           "number": 1593,
           "title": "VRAM-Bounded Chunked Tiling for Spatial Autoencoders",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2529,
+          "title": "Mandatory Single-Stream Sequence Dimension Alignment & RoPE Offset Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2530,
+          "title": "Strict NFE Step Boundary & Dynamic Timestep Scaling Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -22623,7 +22661,7 @@
         "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv4ar4th",
         "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv4o4v7p"
       ],
-      "verified_at": "2026-10-18T02:35:07.921Z",
+      "verified_at": "2026-10-19T11:09:14.288Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40135,22 +40173,45 @@
     "learn-github-thaw-app-thaw": {
       "learning_id": "learn-github-thaw-app-thaw",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "thaw-app-thaw",
+      "source": "thaw-app/Thaw",
+      "repository": "thaw-app/Thaw",
       "slug": "thaw-app-thaw",
       "platform": "github",
       "source_url": "https://github.com/thaw-app/Thaw",
-      "source_version": "HEAD",
-      "content_hash": "7527f686dd19bdd8f5f3ee86fb42973d4bc0e2e545aabb06ec9feede796209e0",
+      "source_version": "75795724",
+      "content_hash": "5451580a37e9558e287fa94fb64ea8d84ee167035082eb8e7aadb90ea6b7b405",
       "dossier_path": "07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2526,
+          "title": "Bidirectional Uniqueness Guard for Heuristic IPC Reconciliation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2527,
+          "title": "Saturated Clamp & Strict Type Sanitization on IPC Boundary Payloads",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2528,
+          "title": "Content-Addressable Release Asset Immutability Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.922Z"
+      "verified_at": "2026-10-19T11:09:12.504Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-the-open-agent-openagent": {
       "learning_id": "learn-github-the-open-agent-openagent",
@@ -42969,14 +43030,19 @@
       "slug": "xerj-org-xerj",
       "platform": "github",
       "source_url": "https://github.com/xerj-org/xerj",
-      "source_version": "317f3af6",
-      "content_hash": "b78c59882d12b77dc4e114f705f6f6b37be089ee03cf5f5d86ab49e954dc4afe",
+      "source_version": "83c6778f",
+      "content_hash": "9a2aebf20eb56c835eb1a0f2e568c2c35ce635c902dc3d2fcfeee0778b1ff201",
       "dossier_path": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "promoted_rules": [
         {
           "number": 1762,
           "title": "deploy): comment out the placeholder FIELD_REPORTS KV binding that blocks every",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2522,
+          "title": "feedback): fork --open-pr when the account cannot push (#1771)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -42985,7 +43051,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T22:04:24.641Z",
+      "verified_at": "2026-10-19T11:08:18.722Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -85855,6 +85921,146 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T11:02:01.163Z"
+    },
+    "rule-2521": {
+      "learning_id": "rule-2521",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2521,
+      "title": "test: make legacy_snapshot_survives_restore_and_get_secret deterministic (#5933)",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "f1928ea4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T11:08:17.042Z"
+    },
+    "rule-2522": {
+      "learning_id": "rule-2522",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2522,
+      "title": "feedback): fork --open-pr when the account cannot push (#1771)",
+      "source_url": "https://github.com/xerj-org/xerj",
+      "source_version": "83c6778f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T11:08:18.722Z"
+    },
+    "rule-2523": {
+      "learning_id": "rule-2523",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2523,
+      "title": "Zero-Copy Self-Contained Buffer Ownership Guard",
+      "source_url": "https://github.com/astral-sh/uv",
+      "source_version": "83e4aeed",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T11:09:07.603Z"
+    },
+    "rule-2524": {
+      "learning_id": "rule-2524",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2524,
+      "title": "Multi-Tier Concurrency Partitioning with Secret Masking",
+      "source_url": "https://github.com/astral-sh/uv",
+      "source_version": "83e4aeed",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T11:09:07.603Z"
+    },
+    "rule-2525": {
+      "learning_id": "rule-2525",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2525,
+      "title": "Canonical Marker Coalescence Invariant for AST Interning",
+      "source_url": "https://github.com/astral-sh/uv",
+      "source_version": "83e4aeed",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T11:09:07.603Z"
+    },
+    "rule-2526": {
+      "learning_id": "rule-2526",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2526,
+      "title": "Bidirectional Uniqueness Guard for Heuristic IPC Reconciliation",
+      "source_url": "https://github.com/thaw-app/Thaw",
+      "source_version": "75795724",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T11:09:12.504Z"
+    },
+    "rule-2527": {
+      "learning_id": "rule-2527",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2527,
+      "title": "Saturated Clamp & Strict Type Sanitization on IPC Boundary Payloads",
+      "source_url": "https://github.com/thaw-app/Thaw",
+      "source_version": "75795724",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T11:09:12.504Z"
+    },
+    "rule-2528": {
+      "learning_id": "rule-2528",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2528,
+      "title": "Content-Addressable Release Asset Immutability Guard",
+      "source_url": "https://github.com/thaw-app/Thaw",
+      "source_version": "75795724",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T11:09:12.504Z"
+    },
+    "rule-2529": {
+      "learning_id": "rule-2529",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2529,
+      "title": "Mandatory Single-Stream Sequence Dimension Alignment & RoPE Offset Invariant",
+      "source_url": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo",
+      "source_version": "hf-tongyi-mai-z-image-turbo",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T11:09:14.288Z"
+    },
+    "rule-2530": {
+      "learning_id": "rule-2530",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2530,
+      "title": "Strict NFE Step Boundary & Dynamic Timestep Scaling Invariant",
+      "source_url": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo",
+      "source_version": "hf-tongyi-mai-z-image-turbo",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T11:09:14.288Z"
     }
   },
   "aliases": {

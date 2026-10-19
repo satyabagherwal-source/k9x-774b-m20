@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T11:02:01.228Z",
+  "last_updated": "2026-10-19T11:09:14.349Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1159,14 +1159,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-tongyi-mai-z-image-turbo",
-      "content_hash": "1a0e892df7841a690198f9db99ea0844417f6be61239e381c91a141c91eb9374",
-      "verified_at": "2026-10-18T02:35:07.954Z",
+      "content_hash": "ac2fca0bd377f03240a5535a854c4d708dfede01048981f17d4b483b2c093f59",
+      "verified_at": "2026-10-19T11:09:14.349Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T02:35:07.954Z"
+      "last_updated": "2026-10-19T11:09:14.349Z"
     },
     "meta-llama/Meta-Llama-3-8B-Instruct": {
       "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
@@ -4278,14 +4278,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-xerj-org-xerj",
-      "content_hash": "b78c59882d12b77dc4e114f705f6f6b37be089ee03cf5f5d86ab49e954dc4afe",
-      "verified_at": "2026-10-18T22:04:24.684Z",
+      "content_hash": "9a2aebf20eb56c835eb1a0f2e568c2c35ce635c902dc3d2fcfeee0778b1ff201",
+      "verified_at": "2026-10-19T11:08:18.784Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T22:04:24.684Z"
+      "last_updated": "2026-10-19T11:08:18.784Z"
     },
     "markmead/hyperui": {
       "repository": "markmead/hyperui",
@@ -4413,14 +4413,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "acbac9df81e079289f53388f8cd7000fd2889c0bf9adb5a9321a72fa227dd8de",
-      "verified_at": "2026-10-19T01:07:22.786Z",
+      "content_hash": "925dc84c838f2ecc8a6a8ebf2c2ea467c01ec6e826b48e2dfdcca7bc065a7ae6",
+      "verified_at": "2026-10-19T11:08:17.103Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T01:07:22.786Z"
+      "last_updated": "2026-10-19T11:08:17.103Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -11756,6 +11756,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T11:01:08.794Z"
+    },
+    "astral-sh/uv": {
+      "repository": "astral-sh/uv",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-astral-sh-uv",
+      "content_hash": "0070cf610d1064310473243fd8ccf632bd2164344a974d8a8a5bf455f9ec9028",
+      "verified_at": "2026-10-19T11:09:07.664Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T11:09:07.664Z"
+    },
+    "thaw-app/Thaw": {
+      "repository": "thaw-app/Thaw",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-thaw-app-thaw",
+      "content_hash": "5451580a37e9558e287fa94fb64ea8d84ee167035082eb8e7aadb90ea6b7b405",
+      "verified_at": "2026-10-19T11:09:12.565Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T11:09:12.565Z"
     }
   },
   "repos": {

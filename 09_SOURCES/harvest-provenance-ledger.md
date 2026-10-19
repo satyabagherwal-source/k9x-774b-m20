@@ -3186,3 +3186,8 @@ Every entry in this ledger must capture:
 | `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `273ac2db` | Multi-dimensional audit evidence | 2026-10-19T11:01:04.234Z |
 | `learn-github-meshtastic-meshtastic-android` | `https://github.com/meshtastic/Meshtastic-Android` | `50b58563` | Multi-dimensional audit evidence | 2026-10-19T11:01:08.788Z |
 | `learn-huggingface-deepseek-ai-deepseek-v4-pro` | `https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-19T11:02:01.221Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `f1928ea4` | Multi-dimensional audit evidence | 2026-10-19T11:08:17.097Z |
+| `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `83c6778f` | Multi-dimensional audit evidence | 2026-10-19T11:08:18.778Z |
+| `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `83e4aeed` | Multi-dimensional audit evidence | 2026-10-19T11:09:07.658Z |
+| `learn-github-thaw-app-thaw` | `https://github.com/thaw-app/Thaw` | `75795724` | Multi-dimensional audit evidence | 2026-10-19T11:09:12.559Z |
+| `learn-huggingface-tongyi-mai-z-image-turbo` | `https://huggingface.co/Tongyi-MAI/Z-Image-Turbo` | `hf-tongyi-` | Multi-dimensional audit evidence | 2026-10-19T11:09:14.343Z |

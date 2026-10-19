@@ -895,8 +895,8 @@
     "sourceUrl": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo",
     "sourceVersion": "hf-tongyi-mai-z-image-turbo",
     "license": "Open-Source",
-    "contentHash": "1a0e892df7841a690198f9db99ea0844417f6be61239e381c91a141c91eb9374",
-    "lastHarvestedAt": "2026-10-18T02:35:07.951Z",
+    "contentHash": "ac2fca0bd377f03240a5535a854c4d708dfede01048981f17d4b483b2c093f59",
+    "lastHarvestedAt": "2026-10-19T11:09:14.343Z",
     "learningId": "learn-huggingface-tongyi-mai-z-image-turbo"
   },
   "hf-meta-llama-meta-llama-3-8b-instruct": {
@@ -2763,10 +2763,10 @@
     "repository": "xerj-org/xerj",
     "platform": "github",
     "sourceUrl": "https://github.com/xerj-org/xerj",
-    "sourceVersion": "317f3af6",
+    "sourceVersion": "83c6778f",
     "license": "Apache-2.0",
-    "contentHash": "b78c59882d12b77dc4e114f705f6f6b37be089ee03cf5f5d86ab49e954dc4afe",
-    "lastHarvestedAt": "2026-10-18T22:04:24.678Z",
+    "contentHash": "9a2aebf20eb56c835eb1a0f2e568c2c35ce635c902dc3d2fcfeee0778b1ff201",
+    "lastHarvestedAt": "2026-10-19T11:08:18.778Z",
     "learningId": "learn-github-xerj-org-xerj"
   },
   "markmead-hyperui": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "d9009b50",
+    "sourceVersion": "f1928ea4",
     "license": "NOASSERTION",
-    "contentHash": "acbac9df81e079289f53388f8cd7000fd2889c0bf9adb5a9321a72fa227dd8de",
-    "lastHarvestedAt": "2026-10-19T01:07:22.782Z",
+    "contentHash": "925dc84c838f2ecc8a6a8ebf2c2ea467c01ec6e826b48e2dfdcca7bc065a7ae6",
+    "lastHarvestedAt": "2026-10-19T11:08:17.097Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -7818,5 +7818,25 @@
     "contentHash": "a982e631ca24e7fc32110d62fa8bde8b5a193f7dffbfb2df4e864df726b38f3f",
     "lastHarvestedAt": "2026-10-19T11:01:08.788Z",
     "learningId": "learn-github-meshtastic-meshtastic-android"
+  },
+  "astral-sh-uv": {
+    "repository": "astral-sh/uv",
+    "platform": "github",
+    "sourceUrl": "https://github.com/astral-sh/uv",
+    "sourceVersion": "83e4aeed",
+    "license": "Apache-2.0",
+    "contentHash": "0070cf610d1064310473243fd8ccf632bd2164344a974d8a8a5bf455f9ec9028",
+    "lastHarvestedAt": "2026-10-19T11:09:07.658Z",
+    "learningId": "learn-github-astral-sh-uv"
+  },
+  "thaw-app-thaw": {
+    "repository": "thaw-app/Thaw",
+    "platform": "github",
+    "sourceUrl": "https://github.com/thaw-app/Thaw",
+    "sourceVersion": "75795724",
+    "license": "GPL-3.0",
+    "contentHash": "5451580a37e9558e287fa94fb64ea8d84ee167035082eb8e7aadb90ea6b7b405",
+    "lastHarvestedAt": "2026-10-19T11:09:12.559Z",
+    "learningId": "learn-github-thaw-app-thaw"
   }
 }
