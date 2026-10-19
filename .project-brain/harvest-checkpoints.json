@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T17:50:24.004Z",
+  "last_updated": "2026-10-19T17:56:37.857Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2080,14 +2080,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cosscom-ui",
-      "content_hash": "4b1db7866b586de97d63f34224045bdf9edeb645d81bef47199249f4ac9db162",
-      "verified_at": "2026-10-19T06:32:30.624Z",
+      "content_hash": "aa95a82aa355ea087641c0636a43a6091b9781cde5cf503bb0001a3271171a9b",
+      "verified_at": "2026-10-19T17:56:23.937Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T06:32:30.624Z"
+      "last_updated": "2026-10-19T17:56:23.937Z"
     },
     "Ebony-Vinyl/dsh-our-free-model": {
       "repository": "Ebony-Vinyl/dsh-our-free-model",
@@ -5044,14 +5044,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zama-ai-tfhe-rs",
-      "content_hash": "986bf6d822599445a4179852fbf55896d72b5068996db25a541f9c51260b83d1",
-      "verified_at": "2026-10-19T11:54:55.319Z",
+      "content_hash": "7ebc226851a085d8da7948ded8fff871f9a45d033a17481593d75b7a07b21eb4",
+      "verified_at": "2026-10-19T17:56:34.829Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T11:54:55.319Z"
+      "last_updated": "2026-10-19T17:56:34.829Z"
     },
     "doobidoo/mcp-memory-service": {
       "repository": "doobidoo/mcp-memory-service",
@@ -9079,14 +9079,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-genkit-ai-genkit",
-      "content_hash": "69cfb975f2f8e853ed55ff1ccc6b34a05ed28086738c4a10a6f06567faa237be",
-      "verified_at": "2026-10-19T04:53:09.259Z",
+      "content_hash": "2a7320f2c212d49f5ead4fd0993ccbe94df90ac4fe27965035ed53f9e5e9917e",
+      "verified_at": "2026-10-19T17:56:37.856Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T04:53:09.259Z"
+      "last_updated": "2026-10-19T17:56:37.856Z"
     },
     "guokaigdg/animal-island-ui": {
       "repository": "guokaigdg/animal-island-ui",
@@ -9589,14 +9589,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-k3s-io-k3s",
-      "content_hash": "c3208c0b68847869f5d1546d2c760904373897a16457fa7cbe06cd2244076701",
-      "verified_at": "2026-10-19T05:39:13.715Z",
+      "content_hash": "07b593a65f1f5b51eff06c2c5b1910a89683a855911ef88be6e1278b71c7266b",
+      "verified_at": "2026-10-19T17:56:33.262Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T05:39:13.715Z"
+      "last_updated": "2026-10-19T17:56:33.262Z"
     },
     "Ataraxy-Labs/sem": {
       "repository": "Ataraxy-Labs/sem",
@@ -12822,6 +12822,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T17:50:24.003Z"
+    },
+    "obytes/react-native-template-obytes": {
+      "repository": "obytes/react-native-template-obytes",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-obytes-react-native-template-obytes",
+      "content_hash": "db7066b52042e356777eae95cc7607c8fa1133149fff9d1903be889ef8efe1a9",
+      "verified_at": "2026-10-19T17:56:29.953Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T17:56:29.953Z"
     }
   },
   "repos": {

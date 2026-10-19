@@ -3395,3 +3395,8 @@ Every entry in this ledger must capture:
 | `learn-github-rainbow-me-rainbow` | `https://github.com/rainbow-me/rainbow` | `0e6ad90a` | Multi-dimensional audit evidence | 2026-10-19T17:43:56.446Z |
 | `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `0521b006` | Multi-dimensional audit evidence | 2026-10-19T17:44:03.842Z |
 | `learn-github-zoontek-react-native-permissions` | `https://github.com/zoontek/react-native-permissions` | `4f9f820e` | Multi-dimensional audit evidence | 2026-10-19T17:50:23.996Z |
+| `learn-github-cosscom-ui` | `https://github.com/cosscom/ui` | `7f7cbd0e` | Multi-dimensional audit evidence | 2026-10-19T17:56:23.931Z |
+| `learn-github-obytes-react-native-template-obytes` | `https://github.com/obytes/react-native-template-obytes` | `fd9b358e` | Multi-dimensional audit evidence | 2026-10-19T17:56:29.948Z |
+| `learn-github-k3s-io-k3s` | `https://github.com/k3s-io/k3s` | `b0ea1881` | Multi-dimensional audit evidence | 2026-10-19T17:56:33.257Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `a124ebc3` | Multi-dimensional audit evidence | 2026-10-19T17:56:34.824Z |
+| `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `ecc37b37` | Multi-dimensional audit evidence | 2026-10-19T17:56:37.850Z |

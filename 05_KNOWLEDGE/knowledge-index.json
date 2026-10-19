@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T17:50:23.941Z",
-  "total_verified_learnings": 867,
+  "last_updated": "2026-10-19T17:56:37.813Z",
+  "total_verified_learnings": 868,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -10217,14 +10217,19 @@
       "slug": "genkit-ai-genkit",
       "platform": "github",
       "source_url": "https://github.com/genkit-ai/genkit",
-      "source_version": "59ba69c5",
-      "content_hash": "69cfb975f2f8e853ed55ff1ccc6b34a05ed28086738c4a10a6f06567faa237be",
+      "source_version": "ecc37b37",
+      "content_hash": "2a7320f2c212d49f5ead4fd0993ccbe94df90ac4fe27965035ed53f9e5e9917e",
       "dossier_path": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
       "promoted_rules": [
         {
           "number": 2152,
           "title": "py/plugins/google-genai): widen API error mapping, detect blocked prompts (#6370",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2721,
+          "title": "go): add pluggable trace instrumentation and decouple it from OpenTelemetry (#63",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -10233,7 +10238,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T04:53:09.219Z",
+      "verified_at": "2026-10-19T17:56:37.803Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -26303,14 +26308,19 @@
       "slug": "k3s-io-k3s",
       "platform": "github",
       "source_url": "https://github.com/k3s-io/k3s",
-      "source_version": "e81264f5",
-      "content_hash": "c3208c0b68847869f5d1546d2c760904373897a16457fa7cbe06cd2244076701",
+      "source_version": "b0ea1881",
+      "content_hash": "07b593a65f1f5b51eff06c2c5b1910a89683a855911ef88be6e1278b71c7266b",
       "dossier_path": "07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
       "promoted_rules": [
         {
           "number": 2198,
           "title": "build(deps): bump the action-deps group across 1 directory with 9 updates (#1462",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2720,
+          "title": "Merge pull request #14829 from k3s-io/thomasferrandiz-flannel-dependency-automat",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -26319,7 +26329,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T05:39:13.644Z",
+      "verified_at": "2026-10-19T17:56:33.210Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -32975,22 +32985,35 @@
     "learn-github-obytes-react-native-template-obytes": {
       "learning_id": "learn-github-obytes-react-native-template-obytes",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "obytes-react-native-template-obytes",
+      "source": "obytes/react-native-template-obytes",
+      "repository": "obytes/react-native-template-obytes",
       "slug": "obytes-react-native-template-obytes",
       "platform": "github",
       "source_url": "https://github.com/obytes/react-native-template-obytes",
-      "source_version": "HEAD",
-      "content_hash": "9989b7103d69a8c8eda0fd95f94df338c9cd8d7ecfc34eedfc565a0fc3e57fe2",
+      "source_version": "fd9b358e",
+      "content_hash": "db7066b52042e356777eae95cc7607c8fa1133149fff9d1903be889ef8efe1a9",
       "dossier_path": "07_PROJECT_LEARNING/obytes-react-native-template-obytes-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/obytes-react-native-template-obytes-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2719,
+          "title": "correct env file reference from env.js to env.ts",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.737Z"
+      "verified_at": "2026-10-19T17:56:29.889Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-oceanbase-oceanbase": {
       "learning_id": "learn-github-oceanbase-oceanbase",
@@ -45061,8 +45084,8 @@
       "slug": "zama-ai-tfhe-rs",
       "platform": "github",
       "source_url": "https://github.com/zama-ai/tfhe-rs",
-      "source_version": "e87d6a92",
-      "content_hash": "986bf6d822599445a4179852fbf55896d72b5068996db25a541f9c51260b83d1",
+      "source_version": "a124ebc3",
+      "content_hash": "7ebc226851a085d8da7948ded8fff871f9a45d033a17481593d75b7a07b21eb4",
       "dossier_path": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "promoted_rules": [
@@ -45077,7 +45100,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T11:54:55.216Z",
+      "verified_at": "2026-10-19T17:56:34.766Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51749,27 +51772,29 @@
     "learn-github-cosscom-ui": {
       "learning_id": "learn-github-cosscom-ui",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "cosscom/ui",
       "repository": "cosscom/ui",
       "slug": "cosscom-ui",
       "platform": "github",
       "source_url": "https://github.com/cosscom/ui",
-      "source_version": "28645cd8",
-      "content_hash": "b0b6b233b446e06ab95e6410d88046819990fb657168f77596bdbddfcd6ac60b",
+      "source_version": "7f7cbd0e",
+      "content_hash": "aa95a82aa355ea087641c0636a43a6091b9781cde5cf503bb0001a3271171a9b",
       "dossier_path": "07_PROJECT_LEARNING/cosscom-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cosscom-ui-learnings.md",
       "promoted_rules": [],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T17:56:23.874Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
         "content_hash_verified": true,
         "rules_verified": true,
         "index_read_back_verified": true
-      },
-      "verified_at": "2026-10-12T19:59:38.619Z"
+      }
     },
     "learn-github-ebony-vinyl-dsh-our-free-model": {
       "learning_id": "learn-github-ebony-vinyl-dsh-our-free-model",
@@ -90299,6 +90324,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T17:50:23.925Z"
+    },
+    "rule-2719": {
+      "learning_id": "rule-2719",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2719,
+      "title": "correct env file reference from env.js to env.ts",
+      "source_url": "https://github.com/obytes/react-native-template-obytes",
+      "source_version": "fd9b358e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T17:56:29.889Z"
+    },
+    "rule-2720": {
+      "learning_id": "rule-2720",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2720,
+      "title": "Merge pull request #14829 from k3s-io/thomasferrandiz-flannel-dependency-automat",
+      "source_url": "https://github.com/k3s-io/k3s",
+      "source_version": "b0ea1881",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T17:56:33.210Z"
+    },
+    "rule-2721": {
+      "learning_id": "rule-2721",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2721,
+      "title": "go): add pluggable trace instrumentation and decouple it from OpenTelemetry (#63",
+      "source_url": "https://github.com/genkit-ai/genkit",
+      "source_version": "ecc37b37",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T17:56:37.803Z"
     }
   },
   "aliases": {

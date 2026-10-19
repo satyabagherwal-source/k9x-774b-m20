@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/k3s-io-k3s-learnings.md`  
 > **Source**: github ([https://github.com/k3s-io/k3s](https://github.com/k3s-io/k3s))  
-> **Source Version**: `e81264f5`  
+> **Source Version**: `b0ea1881`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T05:39:13.452Z  
+> **Timestamp**: 2026-10-19T17:56:33.030Z  
 > **Learning ID**: `learn-github-k3s-io-k3s`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/k3s-io-k3s-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/k3s-io/k3s](https://github.com/k3s-io/k3s))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T05:39:13.445Z  
+> **Harvest Timestamp**: 2026-10-19T17:56:33.025Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Lightweight Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 34217 stars
+- **Stars / Engagement**: 34223 stars
 
 ---
 
@@ -909,434 +909,117 @@ func AddFeatureGate(current, toAdd string) string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `962b2e22` (2026-10-07)
-**Commit Message**: build(deps): bump the action-deps group across 1 directory with 9 updates (#14624)
+### Incident Patch 1: `b0ea1881` (2026-10-19)
+**Commit Message**: Merge pull request #14829 from k3s-io/thomasferrandiz-flannel-dependency-automation
 
-Bumps the action-deps group with 9 updates in the / directory:
+Automate Flannel dependency updates with Updatecli
 
-| Package | From | To |
-| --- | --- | --- |
-| [docker/setup-docker-action](https://github.com/docker/setup-docker-action) | `5.3.0` | `5.4.0` |
-| [docker/setup-buildx-action](https://github.com/docker/setup-buildx-action) | `4.2.0` | `4.3.0` |
-| [github/codeql-action/init](https://github.com/github/codeql-action) | `4.37.0` | `4.38.0` |
-| [github/codeql-action/analyze](https://github.com/github/codeql-action) | `4.37.0` | `4.38.0` |
-| [DeterminateSystems/nix-installer-action](https://github.com/determinatesystems/nix-installer-action) | `22` | `23` |
-| [docker/login-action](https://github.com/docker/login-action) | `4.4.0` | `4.6.0` |
-| [github/codeql-action/upload-sarif](https://github.com/github/codeql-action) | `4.37.0` | `4.38.0` |
-| [actions/stale](https://github.com/actions/stale) | `10.4.0` | `11.0.0` |
-| [updatecli/updatecli-action](https://github.com/updatecli/updatecli-action) | `3.4.0` | `3.6.0` |
-
-
-
-Updates `docker/setup-docker-action` from 5.3.0 to 5.4.0
-- [Release notes](https://github.com/docker/setup-docker-action/releas
-
-**File**: `.github/workflows/airgap.yaml` (modified, +2/-2)
+**File**: `updatecli/README.md` (modified, +5/-1)
 ```diff
-@@ -23,14 +23,14 @@ jobs:
-         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+@@ -17,6 +17,11 @@ The main usage of Updatecli is for:
+ * Bumping versions in unstructured formats, e.g., environment variables in Dockerfiles and by matching regular expressions.
+ * Scripting the automation process, e.g., update package A in repo B after package X in repo Y matches a pre-defined version criteria.
  
-       - name: Set up Docker
--        uses: docker/setup-docker-action@6d7cfa65f60a9dda7b46e5513fa982536f3c9877 # v5.3.0
-+        uses: docker/setup-docker-action@77e84dbf09b47d1e29270283c22f16145aa85ca1 # v5.4.0
-         with:
-           version: type=image,tag=29
-           daemon-config: '{"features":{"containerd-snapshotter":true}}'
-           set-host: true
-  
-       - name: Set up Docker Buildx
--        uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
-+        uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
- 
-       - name: Install Dependencies
-         run: sudo apt-get update -y && sudo apt-get install -y zstd pigz
-```
-
-**File**: `.github/workflows/build-k3s.yaml` (modified, +2/-2)
-```diff
-@@ -36,14 +36,14 @@ jobs:
-       uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-     
-     - name: Set up Docker
--      uses: docker/setup-docker-action@6d7cfa65f60a9dda7b46e5513fa982536f3c9877 # v5.3.0
-+      uses: docker/setup-docker-action@77e84dbf09b47d1e29270283c22f16145aa85ca1 # v5.4.0
-       with:
-         version: type=image,tag=29
-         daemon-config: '{"features":{"containerd-snapshotter":true}}'
-         set-host: true
- 
-     - name: Set up Docker Buildx
--      uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
-+      uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
- 
-     - name: Determine Git Version Info
-       id: git_vars
-```
-
-**File**: `.github/workflows/codeql.yml` (modified, +2/-2)
-```diff
-@@ -30,7 +30,7 @@ jobs:
- 
-     # Initializes the CodeQL tools for scanning.
-     - name: Initialize CodeQL
--      uses: github/codeql-action/init@99df26d4f13ea111d4ec1a7dddef6063f76b97e9 # v4
-+      uses: github/codeql-action/init@b96794f015dfd88f77b49b1c93e0fa7110f94c63 # v4
-       with:
-         languages: ${{ matrix.language }}
-         build-mode: ${{ matrix.build-mode }}
-@@ -44,6 +44,6 @@ jobs:
-     #     ./scripts/package-cli
- 
-     - name: Perform CodeQL Analysis
--      uses: github/codeql-action/analyze@99df26d4f13ea111d4ec1a7dddef6063f76b97e9 # v4
-+      uses: github/codeql-action/analyze@b96794f015dfd88f77b49b1c93e0fa7110f94c63 # v4
-       with:
-         category: "/language:${{matrix.language}}"
-```
-
-**File**: `.github/workflows/e2e.yaml` (modified, +4/-4)
-```diff
-@@ -78,7 +78,7 @@ jobs:
-       - name: Install Go
-         uses: ./.github/actions/setup-go
-       - name: Set up Docker
--        uses: docker/setup-docker-action@6d7cfa65f60a9dda7b46e5513fa982536f3c9877 # v5.3.0
-+        uses: docker/setup-docker-action@77e84dbf09b47d1e29270283c22f16145aa85ca1 # v5.4.0
-         with:
-           version: type=image,tag=29
-           daemon-config: '{"features":{"containerd-snapshotter":true}}'
-@@ -209,7 +209,7 @@ jobs:
-         name: k3s-${{ matrix.arch }}
-         path: ./dist/artifacts
-     - name: Set up Docker
--      uses: docker/setup-docker-action@6d7cfa65f60a9dda7b46e5513fa982536f3c9877 # v5.3.0
-+      uses: docker/setup-docker-action@77e84dbf09b47d1e29270283c22f16145aa85ca1 # v5.4.0
-       with:
-         version: type=image,tag=29
-         daemon-config: '{"features":{"containerd-snapshotter":true}}'
-@@ -225,7 +225,7 @@ jobs:
-         echo "K3S_IMAGE=$IMAGE_TAG" >> $GITHUB_ENV
-     - name: Install Nix
-       if: matrix.dtest == 'nixsnapshotter'
--      uses: DeterminateSystems/nix-installer-action@ef8a148080ab6020fd15196c2084a2eea5ff2d25 # v22
-+      uses: DeterminateSystems/nix-installer-action@3138316df39ed29be04236d7ffc686fa525866aa # v23
-       with:
-         summarize: false
-     - name: Build nix test image
-@@ -263,7 +263,7 @@ jobs:
-     - name: Install Go
-       uses: ./.github/actions/setup-go
-     - name: Set up Docker
--      uses: docker/setup-docker-action@6d7cfa65f60a9dda7b46e5513fa982536f3c9877 # v5.3.0
-+      uses: docker/setup-docker-action@77e84dbf09b47d1e29270283c22f16145aa85ca1 # v5.4.0
-       with:
-         version: type=image,tag=29
-         set-host: true
-```
-
-**File**: `.github/workflows/nightly-install.yaml` (modified, +1/-1)
-```diff
-@@ -120,7 +120,7 @@ jobs:
-           name: k3s-amd64
-           path: ./dist/artifacts
-       - name: Set up Docker
--        uses: docker/setup-docker-action@6d7cfa65f60a9dda7b46e5513fa982536f3c9877 # v5.3.0
-+        uses: docker/setup-docker-action@77e84dbf09b47d1e29270283c22f16145aa85ca1 # v5.4.0
-         with:
-           version: type=image,tag=29
-           set-host: true
-```
-
-**File**: `.github/workflows/release.yml` (modified, +7/-7)
-```diff
-@@ -37,14 +37,14 @@ jobs:
-         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
- 
-       - name: Set up Docker
--        uses: docker/setup-docker-action@6d7cfa65f60a9dda7b46e5513fa982536f3c9877 # v5.3.0
-+        uses: docker/setup-docker-action@77e84dbf09b47d1e29270283c22f16145aa85ca1 # v5.4.0
-         with:
-           version: type=image,tag=29
-           daemon-config: '{"features":{"containerd-snapshotter":true}}'
-           set-host: true
- 
-       - name: Set up Docker Buildx
--        uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
-+        uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
- 
-       - name: Read registry secrets (staging)
-         uses: rancher-eio/read-vault-secrets@0da85151ad1f19ed7986c41587e45aac1ace74b6 # v3
-@@ -74,37 +74,37 @@ jobs:
-     
-       - name: Login to DockerHub with Rancher Secrets
-         if: github.repository_owner == 'k3s-io'
--        uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4.4.0
-+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-         with:
-           username: ${{ env.DOCKER_USERNAME }}
-           password: ${{ env.DOCKER_TOKEN }}
- 
-       # For forks, setup DockerHub login with GHA secrets
-       - name: Login to DockerHub with GHA Secrets
-         if: github.repository_owner != 'k3s-io'
--        uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4.4.0
-+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-         with:
-           username: ${{ secrets.DOCKER_USERNAME }}
-           password: ${{ secrets.DOCKER_TOKEN }}
- 
-       - name: Login to Staging Registry
-         if: github.repository_owner == 'k3s-io'
--        uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4.4.0
-+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-         with:
-           registry: ${{ env.STAGING_REGISTRY }}
-           username: ${{ env.STAGING_REGISTRY_USERNAME }}
-           password: ${{ env.STAGING_REGISTRY_PASSWORD }}
- 
-       - name: Login to Prime Registry
-         if: ${{ !contains(github.ref_name, '-rc') && github.repository_owner == 'k3s-io' }}
--        uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4.4.0
-+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-         with:
-           registry: ${{ env.REGISTRY }}
-           username: ${{ env.REGISTRY_USERNAME }}
-           password: ${{ env.REGISTRY_PASSWORD }}
- 
-       - name: Log in to GitHub Container Registry
--        uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4.4.0
-+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-         with:
-           registry: ghcr.io
-           username: ${{ github.repository_owner }}
-```
-
-**File**: `.github/workflows/scorecard.yml` (modified, +1/-1)
-```diff
-@@ -74,6 +74,6 @@ jobs:
-       # Upload the results to GitHub's code scanning dashboard (optional).
-       # Commenting out will disable upload of results to your repo's Code Scanning dashboard
-       - name: "Upload to code-scanning"
--        uses: github/codeql-action/upload-sarif@99df26d4f13ea111d4ec1a7dddef6063f76b97e9 # v4
-+        uses: github/codeql-action/upload-sarif@b96794f015dfd88f77b49b1c93e0fa7110f94c63 # v4
-         with:
-           sarif_file: results.sarif
-```
-
-**File**: `.github/workflows/stale.yml` (modified, +1/-1)
-```diff
-@@ -13,7 +13,7 @@ jobs:
-       contents: write
-     steps:
-       - name: Close Stale Issues
--        uses: actions/stale@1e223db275d687790206a7acac4d1a11bd6fe629 # v10.4.0
-+        uses: actions/stale@4391f3da665fdf50b6810c1a66712fb9ba21aa93 # v11.0.0
-         with:
-           # ensure PRs are exempt
-           days-before-pr-stale: -1
-```
-
----
-
-### Incident Patch 2: `807ac3ce` (2026-10-07)
-**Commit Message**: Fix local-path PV deletion with SELinux enforcing (#14740)
-
-* Set SELinux level on local-path helper pod so PVs can be deleted
-
-With SELinux enforcing, the local-path-provisioner create and delete
-helper pods are assigned different random MCS categories. The volume
-directory keeps the categories from the create helper, so the delete
-helper is denied access, the PV stays Released, and the backing
-directory leaks on the node.
-
-Give the helper pod the full category range in the bundled helperPod
-template. This is the approach from rancher/local-path-provisioner#402,
-which was reverted upstream (#421) only because it was hardcoded in Go
-and overrode user-supplied templates; setting it in the template keeps
-it configurable.
-
-Also extend the local storage integration test to wait for the PV and
-its backing directory to actually be removed after the PVC is deleted.
-
-Fixes #14508
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Signed-off-by: santimillang <[REDACTED_EMAIL]>
-
-* Read local-path volume path from the PV in integration test
-
-Look up the backing directory from the PV's spec.local.path instead of
-hardcoding the storage path, and check it exists before deleting the PVC.
-
-Co-Aut
-
-**File**: `manifests/local-storage.yaml` (modified, +5/-0)
-```diff
-@@ -81,6 +81,8 @@ spec:
-           valueFrom:
-             fieldRef:
-               fieldPath: metadata.namespace
-+        - name: CONFIG_MOUNT_PATH
-+          value: /etc/config/
-       volumes:
-         - name: config-volume
-           configMap:
-@@ -131,3 +133,6 @@ data:
-       - name: helper-pod
-         image: "%{SYSTEM_DEFAULT_REGISTRY}%rancher/mirrored-library-busybox:1.37.0"
-         imagePullPolicy: IfNotPresent
-+        securityContext:
-+          seLinuxOptions:
-+            level: s0-s0:c0.c1023
-```
-
-**File**: `tests/integration/localstorage/localstorage_int_test.go` (modified, +14/-0)
-```diff
-@@ -88,10 +88,24 @@ var _ = Describe("local storage", Ordered, func() {
- 				To(Equal("644\n"))
- 		})
- 		It("deletes properly", func() {
-+			pvName, err := testutil.K3sCmd("kubectl get --namespace=default pvc local-path-pvc -o jsonpath={.spec.volumeName}")
-+			Expect(err).ToNot(HaveOccurred())
-+			Expect(pvName).To(HavePrefix("pvc-"))
-+			volumePath, err := testutil.K3sCmd("kubectl get pv " + pvName + " -o jsonpath={.spec.local.path}")
-+			Expect(err).ToNot(HaveOccurred())
-+			Expect(volumePath).To(HaveSuffix(pvName + "_default_local-path-pvc"))
-+			Expect(volumePath).To(BeADirectory())
++The Flannel pipeline updates `github.com/flannel-io/flannel` to the latest stable
++release on every branch configured in `.github/workflows/updatecli.yaml`,
++including release branches. It uses `run-go-mod-update.sh` to update `go.mod`
++and `go.sum` with `go get` and `go mod tidy`.
 +
- 			Expect(testutil.K3sCmd("kubectl delete --namespace=default --force pod volume-test")).
- 				To(ContainSubstring("pod \"volume-test\" force deleted"))
- 			Expect(testutil.K3sCmd("kubectl delete --namespace=default pvc local-path-pvc")).
- 				To(ContainSubstring("persistentvolumeclaim \"local-path-pvc\" deleted"))
-+
-+			// The delete helper pod must actually remove the PV and its backing directory
-+			Eventually(func() (string, error) {
-+				return testutil.K3sCmd("kubectl get pv --ignore-not-found " + pvName)
-+			}, "120s", "5s").Should(BeEmpty())
-+			Expect(volumePath).ToNot(BeAnExistingFile())
- 		})
- 	})
- })
-```
-
----
-
-### Incident Patch 3: `b3b26bce` (2026-10-15)
-**Commit Message**: Fix goroutine leak in the proxy
-
-Signed-off-by: Leo King <[REDACTED_EMAIL]>
-Signed-off-by: Brad Davidson <[REDACTED_EMAIL]>
-
-**File**: `pkg/daemons/control/proxy/proxy.go` (modified, +16/-14)
-```diff
-@@ -2,6 +2,8 @@ package proxy
+ ### Not in scope
  
- import (
- 	"io"
-+	"net"
-+	"syscall"
+ * Updatecli will only open a pull request in the targeted repo. It's not responsible for approving and merging the PR.
+@@ -58,4 +63,3 @@ updatecli diff --clean --config updatecli/updatecli.d/ --values updatecli/values
+ Everyone is free to contribute with new manifests and pipelines for security version bumps targeting Rancher owned repos.
  
- 	"github.com/k3s-io/k3s/pkg/util/errors"
- 
-@@ -10,46 +12,46 @@ import (
- 
- type proxy struct {
- 	lconn, rconn io.ReadWriteCloser
--	done         bool
- 	errc         chan error
- }
- 
- func Proxy(lconn, rconn io.ReadWriteCloser) error {
- 	p := &proxy{
- 		lconn: lconn,
- 		rconn: rconn,
--		errc:  make(chan error),
-+		errc:  make(chan error, 2), // one send per pipe goroutine, so neither can block
- 	}
- 
- 	defer p.rconn.Close()
- 	defer p.lconn.Close()
- 	go p.pipe(p.lconn, p.rconn)
- 	go p.pipe(p.rconn, p.lconn)
--	return <-p.errc
--}
+ Before contributing, please follow the guidelines provided in this readme and make sure to test locally your changes before opening a PR.
 -
--func (p *proxy) err(err error) {
--	if p.done {
--		return
--	}
--	if !errors.Is(err, io.EOF) {
-+	err := <-p.errc
-+	if !isConnTeardown(err) {
- 		logrus.Warnf("Proxy error: %v", err)
- 	}
--	p.done = true
--	p.errc <- err
-+	return err
-+}
-+
-+// isConnTeardown reports errors that are expected when one side closes or resets the connection.
-+func isConnTeardown(err error) bool {
-+	return errors.Is(err, io.EOF) ||
-+		errors.Is(err, net.ErrClosed) ||
-+		errors.Is(err, syscall.ECONNRESET) ||
-+		errors.Is(err, syscall.EPIPE)
- }
- 
- func (p *proxy) pipe(src, dst io.ReadWriter) {
- 	buff := make([]byte, 1<<15)
- 	for {
- 		n, err := src.Read(buff)
- 		if err != nil {
--			p.err(errors.WithMessage(err, "read failed"))
-+			p.errc <- err
- 			return
- 		}
- 		_, err = dst.Write(buff[:n])
- 		if err != nil {
--			p.err(errors.WithMessage(err, "write failed"))
-+			p.errc <- err
- 			return
- 		}
- 	}
 ```
 
-**File**: `pkg/daemons/control/proxy/proxy_test.go` (added, +33/-0)
+**File**: `updatecli/updatecli.d/flannel.yaml` (added, +68/-0)
 ```diff
-@@ -0,0 +1,33 @@
-+package proxy
+@@ -0,0 +1,68 @@
++---
++name: "Bump Flannel version"
++scms:
++  k3s:
++    kind: "github"
++    spec:
++      user: "{{ .github.user }}"
++      email: "{{ .github.email }}"
++      username: "{{ .github.username }}"
++      token: "{{ requiredEnv .github.token }}"
++      owner: '{{ requiredEnv .github.org }}'
++      repository: '{{ requiredEnv .github.repo }}'
++      branch: '{{ requiredEnv .github.branch }}'
++      commitmessage:
++        title: "Bump Flannel version"
 +
-+import (
-+	"errors"
-+	"runtime"
-+	"testing"
-+	"time"
++actions:
++  github:
++    title: "[{{ requiredEnv .github.branch }}] Bump Flannel version"
++    kind: "github/pullrequest"
++    scmid: "k3s"
++    spec:
++      merge:
++        strategy: "manual"
++      mergemethod: "squash"
++      labels:
++        - "dependencies"
 +
-+	"github.com/onsi/gomega"
-+	"github.com/sirupsen/logrus"
-+)
++sources:
++  flannel:
++    name: "Get Flannel latest stable release version"
++    kind: "githubrelease"
++    spec:
++      owner: "{{ .flannel.org }}"
++      repository: "{{ .flannel.repo }}"
++      token: "{{ requiredEnv .github.token }}"
++      versionfilter:
++        kind: "semver"
++        pattern: "*"
++  get-pwd:
++    name: "Run Updatecli execution directory"
++    kind: "shell"
++    spec:
++      command: 'pwd'
++      environments:
++        - name: PATH
 +
-+// failConn fails every Read and Write with err.
-+type failConn struct{ err error }
++conditions:
++  flannel:
++    name: "Check Flannel usage in go.mod"
++    kind: "file"
++    scmid: "k3s"
++    disablesourceinput: true
++    spec:
++      file: "go.mod"
++      matchpattern: 'github.com/flannel-io/flannel'
 +
-+func (c failConn) Read([]byte) (int, error)  { return 0, c.err }
-+func (c failConn) Write([]byte) (int, error) { return 0, c.err }
-+func (failConn) Close() error                { return nil }
-+
-+// Test_UnitProxyBothDirectionsFail checks that no pipe goroutine stays blocked when both directions fail.
-+func Test_UnitProxyBothDirectionsFail(t *testing.T) {
-+	g := gomega.NewWithT(t)
-+	out := logrus.StandardLogger().Out
-+	logrus.SetOutput(t.Output())
-+	t.Cleanup(func() { logrus.SetOutput(out) })
-+
-+	conn := failConn{errors.New("i/o error")}
-+	before := runtime.NumGoroutine()
-+	for range 10000 {
-+		_ = Proxy(conn, conn)
-+	}
-+	g.Eventually(runtime.NumGoroutine, 5*time.Second).Should(gomega.BeNumerically("<=", before))
-+}
++targets:
++  go-mod:
++    name: "Run go mod update"
++    kind: "shell"
++    scmid: "k3s"
++    disablesourceinput: true
++    spec:
++      command: '{{ source "get-pwd" }}/updatecli/scripts/run-go-mod-update.sh github.com/flannel-io/flannel@{{ source "flannel" }}'
++      environments:
++        - name: PATH
++        - name: HOME
+```
+
+**File**: `updatecli/values.yaml` (modified, +3/-0)
+```diff
+@@ -9,6 +9,9 @@ github:
+ k3s:
+   org: "k3s-io"
+   repo: "k3s"
++flannel:
++  org: "flannel-io"
++  repo: "flannel"
+ klipper_helm:
+   org: "k3s-io"
+   repo: "klipper-helm"
 ```
 
 #### Recent Merged Pull Requests:
@@ -1365,30 +1048,32 @@ Signed-off-by: Brad Davidson <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump the action-deps group across 1 directory with 9 updates (#1462
+## X. Merge pull request #14829 from k3s-io/thomasferrandiz-flannel-dependency-automat
 
 **RULE**:
-When implementing operations in `.github/workflows/airgap.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in k3s-io/k3s. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `updatecli/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in k3s-io/k3s. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `962b2e22`: build(deps): bump the action-deps group across 1 directory with 9 updates (#14624). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b0ea1881`: Merge pull request #14829 from k3s-io/thomasferrandiz-flannel-dependency-automation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/airgap.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `updatecli/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        uses: docker/setup-docker-action@77e84dbf09b47d1e29270283c22f16145aa85ca1 # v5.4.0
-        uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
+The Flannel pipeline updates `github.com/flannel-io/flannel` to the latest stable
+release on every branch configured in `.github/workflows/updatecli.yaml`,
+including release branches. It uses `run-go-mod-update.sh` to update `go.mod`
+and `go.sum` with `go get` and `go mod tidy`.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-        uses: docker/setup-docker-action@6d7cfa65f60a9dda7b46e5513fa982536f3c9877 # v5.3.0
-        uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `962b2e22` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b0ea1881` are properly handled with clean fallback behavior.

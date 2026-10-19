@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source**: github ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
-> **Source Version**: `e87d6a92`  
+> **Source Version**: `a124ebc3`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T11:54:55.127Z  
+> **Timestamp**: 2026-10-19T17:56:34.699Z  
 > **Learning ID**: `learn-github-zama-ai-tfhe-rs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T11:54:55.120Z  
+> **Harvest Timestamp**: 2026-10-19T17:56:34.693Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1927,154 +1927,211 @@ struct pbs_buffer<Torus, PBS_TYPE::MULTI_BIT> : public pbs_buffer_base {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e87d6a92` (2026-10-19)
-**Commit Message**: fix(integer): adapt test call sites SizeRequirements
+### Incident Patch 1: `a124ebc3` (2026-10-16)
+**Commit Message**: refactor(integer): remove comparator.rs file
 
-`chore(integer): prepare for vector tests` renamed `TestBuilder::block_counts`
-to `size_requirements` and changed the fixed case builders to take
-`(SizeRequirements, &TestContext)`.
+It only had non parallel comparisons
 
-But a merge of another PR was made just before so they did not use this
-new API leading to broken test build
-
-**File**: `tfhe/src/integer/server_key/radix_parallel/tests_cases_unsigned.rs` (modified, +0/-1)
+**File**: `tfhe/src/integer/server_key/comparator.rs` (removed, +0/-455)
 ```diff
-@@ -56,7 +56,6 @@ pub(crate) use crate::integer::server_key::radix_parallel::tests_unsigned::test_
- pub(crate) use crate::integer::server_key::radix_parallel::tests_unsigned::test_sub::default_sub_test;
- pub(crate) use crate::integer::server_key::radix_parallel::tests_unsigned::test_sub::unchecked_sub_test;
- #[cfg(feature = "gpu")]
--#[cfg(feature = "gpu")]
- pub(crate) use crate::integer::server_key::radix_parallel::tests_unsigned::test_vector_find::{
-     default_contains_clear_test_case, default_contains_test_case,
-     default_first_index_in_clears_test_case, default_first_index_of_clear_test_case,
+@@ -1,455 +0,0 @@
+-use super::ServerKey;
+-use crate::integer::ciphertext::boolean_value::BooleanBlock;
+-use crate::integer::ciphertext::IntegerRadixCiphertext;
+-use crate::shortint::ciphertext::Degree;
+-use crate::shortint::server_key::LookupTableOwned;
+-use crate::shortint::Ciphertext;
+-
+-/// Used for compare_blocks_with_zero
+-#[derive(Clone, Copy)]
+-pub(crate) enum ZeroComparisonType {
+-    // We want to compare with zeros for equality (==)
+-    Equality,
+-    // We want to compare with zeros for difference (!=)
+-    Difference,
+-}
+-
+-/// Simple enum to select whether we are looking for the min or the max
+-#[derive(Clone, Copy)]
+-enum MinMaxSelector {
+-    Max,
+-    Min,
+-}
+-
+-/// This function encodes how to reduce the ordering of two blocks.
+-///
+-/// It is used to generate the necessary lookup table.
+-///
+-/// `x` is actually two ordering values packed
+-/// where in the first 2 lsb bits there is the ordering value of the less significant block,
+-/// and the 2 msb bits of x contains the ordering of the more significant block.
+-fn reduce_two_orderings_function(x: u64) -> u64 {
+-    let msb = (x >> 2) & 3;
+-    let lsb = x & 3;
+-
+-    if msb == Comparator::IS_EQUAL {
+-        lsb
+-    } else {
+-        msb
+-    }
+-}
+-
+-/// struct to compare integers
+-///
+-/// This struct keeps in memory the LUTs that are used
+-/// during the comparisons and min/max algorithms
+-pub struct Comparator<'a> {
+-    pub(crate) server_key: &'a ServerKey,
+-    // lut to get the sign of (a - b), used as the backbone of comparisons
+-    sign_lut: LookupTableOwned,
+-    // lut used to reduce 2 comparison blocks into 1
+-    comparison_reduction_lut: LookupTableOwned,
+-    comparison_result_to_offset_lut: LookupTableOwned,
+-    lhs_lut: LookupTableOwned,
+-    rhs_lut: LookupTableOwned,
+-}
+-
+-impl<'a> Comparator<'a> {
+-    pub(crate) const IS_INFERIOR: u64 = 0;
+-    const IS_EQUAL: u64 = 1;
+-    pub(crate) const IS_SUPERIOR: u64 = 2;
+-
+-    /// Creates a new Comparator for the given ServerKey
+-    ///
+-    /// # Panics
+-    ///
+-    /// panics if the message space + carry space is inferior to 4 bits
+-    pub fn new(server_key: &'a ServerKey) -> Self {
+-        assert!(
+-            server_key.key.message_modulus.0 * server_key.key.carry_modulus.0 >= 16,
+-            "At least 4 bits of space (message + carry) are required to be able to do comparisons"
+-        );
+-
+-        let message_modulus = server_key.key.message_modulus.0;
+-        let sign_lut = server_key.key.generate_lookup_table(|x| u64::from(x != 0));
+-
+-        let comparison_reduction_lut = server_key
+-            .key
+-            .generate_lookup_table(reduce_two_orderings_function);
+-
+-        let comparison_result_to_offset_lut = server_key.key.generate_lookup_table(|sign| {
+-            if sign == Self::IS_INFERIOR {
+-                message_modulus
+-            } else {
+-                0
+-            }
+-        });
+-
+-        let lhs_lut = server_key
+-            .key
+-            .generate_lookup_table(|x| if x < message_modulus { x } else { 0 });
+-
+-        let rhs_lut = server_key
+-            .key
+-            .generate_lookup_table(|x| x.saturating_sub(message_modulus));
+-
+-        Self {
+-            server_key,
+-            sign_lut,
+-            comparison_reduction_lut,
+-            comparison_result_to_offset_lut,
+-            lhs_lut,
+-            rhs_lut,
+-        }
+-    }
+-
+-    /// This function is used to compare two blocks
+-    /// of two signed radix ciphertext which hold the 'sign' bit
+-    /// (so the two most significant blocks).
+-    ///
+-    /// As for the blocks which holds the sign bit, the comparison
+-    /// is different than for regular blocks.
+-    fn compare_blocks_with_sign_bit(
+-        &self,
+-        lhs_block: &crate::shortint::Ciphertext,
+-        rhs_block: &crate::shortint::Ciphertext,
+-    ) -> crate::shortint::Ciphertext {
+-        let sign_bit_pos = self.server_key.key.message_modulus.0.ilog2() - 1;
+-        let lut = self.server_key.key.generate_lookup_table_bivariate(|x, y| {
+-            let x_sign_bit = x >> sign_bit_pos;
+-            let y_sign_bit = y >> sign_bit_pos;
+-            // The block that has its sign bit set is going
+-            // to be ordered as 'greater' by the cmp fn.
+-            // However, we are dealing with signed number,
+-            // so in reality, it is the smaller of the two.
+-            // i.e the cmp result is inversed
+-            if x_sign_bit == y_sign_bit {
+-                // Both have either sign bit set or unset,
+-                // cmp will give correct result
+-                match x.cmp(&y) {
+-                    std::cmp::Ordering::Less => Self::IS_INFERIOR,
+-                    std::cmp::Ordering::Equal => Self::IS_EQUAL,
+-                    std::cmp::Ordering::Greater => Self::IS_SUPERIOR,
+-                }
+-            } else {
+-                match x.cmp(&y) {
+-                    std::cmp::Ordering::Less => Self::IS_SUPERIOR,
+-                    std::cmp::Ordering::Equal 
 ```
 
-**File**: `tfhe/src/integer/server_key/radix_parallel/tests_signed/mod.rs` (modified, +8/-2)
+**File**: `tfhe/src/integer/server_key/mod.rs` (modified, +0/-1)
 ```diff
-@@ -30,7 +30,9 @@ pub(crate) mod test_vector_comparisons;
- 
- use crate::core_crypto::prelude::SignedInteger;
- use crate::integer::keycache::KEY_CACHE;
--use crate::integer::server_key::radix_parallel::test_harness::TestScalar;
-+use crate::integer::server_key::radix_parallel::test_harness::{
-+    SizeRequirements, TestContext, TestScalar,
-+};
- use crate::integer::server_key::radix_parallel::tests_unsigned::{
-     nb_tests_for_params, MAX_NB_CTXT, NB_CTXT,
- };
-@@ -640,7 +642,11 @@ pub(crate) fn random_non_zero_value(rng: &mut ThreadRng, modulus: i64) -> i64 {
- /// A negative scalar has to be sign extended to the radix width, a zero extension turns
- /// `-1i8` into `255` on any radix wider than 8 bits. The overflowing scalar tests with an
- /// `i64` scalar never see this, the radix is at most as wide as the scalar there.
--pub(crate) fn narrow_scalar_cases(radix_bits: u32) -> Vec<(Int, TestScalar<i8>)> {
-+pub(crate) fn narrow_scalar_cases(
-+    size_requirements: SizeRequirements,
-+    ctx: &TestContext,
-+) -> Vec<(Int, TestScalar<i8>)> {
-+    let radix_bits = ctx.radix_bits(size_requirements.n_blocks);
-     let scalars = [i8::MIN, -1, 1, i8::MAX];
-     [
-         Int::min(radix_bits),
+@@ -2,7 +2,6 @@
+ //!
+ //! This module implements the generation of the server public key, together with all the
+ //! available homomorphic integer operations.
+-pub mod comparator;
+ pub(crate) mod crt;
+ mod crt_parallel;
+ pub(crate) mod radix;
 ```
 
-**File**: `tfhe/src/integer/server_key/radix_parallel/tests_unsigned/mod.rs` (modified, +8/-2)
-```diff
-@@ -43,7 +43,9 @@ use crate::core_crypto::commons::generators::DeterministicSeeder;
- use crate::core_crypto::prelude::UnsignedInteger;
- use crate::integer::keycache::KEY_CACHE;
- use crate::integer::oprf::OprfServerKey;
--use crate::integer::server_key::radix_parallel::test_harness::TestScalar;
-+use crate::integer::server_key::radix_parallel::test_harness::{
-+    SizeRequirements, TestContext, TestScalar,
-+};
- use crate::integer::server_key::radix_parallel::tests_long_run::OpSequenceFunctionExecutor;
- use crate::integer::tests::create_parameterized_test;
- use crate::integer::tests::uint::Uint;
-@@ -958,7 +960,11 @@ where
- 
- /// Test using smaller scalar type than the radix in order to make sure block decomposition is
- /// correct
--pub(crate) fn narrow_scalar_cases(radix_bits: u32) -> Vec<(Uint, TestScalar<u8>)> {
-+pub(crate) fn narrow_scalar_cases(
-+    size_requirements: SizeRequirements,
-+    ctx: &TestContext,
-+) -> Vec<(Uint, TestScalar<u8>)> {
-+    let radix_bits = ctx.radix_bits(size_requirements.n_blocks);
-     let mut lhs_values = vec![
-         Uint::zero(radix_bits),
-         Uint::one(radix_bits),
-```
-
-**File**: `tfhe/src/integer/server_key/radix_parallel/tests_unsigned/test_scalar_add.rs` (modified, +11/-3)
+**File**: `tfhe/src/integer/server_key/radix_parallel/div_mod.rs` (modified, +1/-1)
 ```diff
 @@ -1,5 +1,5 @@
- use crate::integer::server_key::radix_parallel::test_harness::{
--    default_scalar_fixed_cases, ExecuteOn, TestBuilder, TestContext, TestScalar,
-+    default_scalar_fixed_cases, ExecuteOn, SizeRequirements, TestBuilder, TestContext, TestScalar,
- };
- use crate::integer::server_key::radix_parallel::tests_cases_unsigned::default_overflowing_scalar_add_test;
- use crate::integer::server_key::radix_parallel::tests_unsigned::{
-@@ -69,7 +69,11 @@ where
- /// against zero, one, the radix maximum and just past it, the negatives whose low
- /// `radix_bits` bits are all set (-1) or all clear (-2ⁿ), just past them, and the scalar
- /// type bounds.
--fn signed_scalar_on_unsigned_radix_cases(radix_bits: u32) -> Vec<(Uint, TestScalar<i64>)> {
-+fn signed_scalar_on_unsigned_radix_cases(
-+    size_requirements: SizeRequirements,
-+    ctx: &TestContext,
-+) -> Vec<(Uint, TestScalar<i64>)> {
-+    let radix_bits = ctx.radix_bits(size_requirements.n_blocks);
-     let mut scalars: Vec<i128> = vec![0, 1, -1, -2, i128::from(i64::MIN), i128::from(i64::MAX)];
-     if radix_bits < i64::BITS {
-         let two_pow_radix_bits = 1i128 << radix_bits;
-@@ -134,7 +138,11 @@ where
- {
-     let scalar_width = u8::BITS.div_ceil(ctx.bits_per_block());
-     TestBuilder::new(ctx)
--        .block_counts(vec![1, scalar_width, scalar_width + 1, 2 * scalar_width])
-+        .size_requirements(
-+            [1, scalar_width, scalar_width + 1, 2 * scalar_width]
-+                .map(SizeRequirements::new_scalar)
-+                .to_vec(),
-+        )
-         .n_random(0)
-         .fixed_cases(narrow_scalar_cases)
-         .execute(executor, |(lhs, rhs): (Uint, TestScalar<u8>)| {
+ use crate::integer::ciphertext::{IntegerRadixCiphertext, RadixCiphertext, SignedRadixCiphertext};
+-use crate::integer::server_key::comparator::ZeroComparisonType;
++use crate::integer::server_key::radix_parallel::scalar_comparison::ZeroComparisonType;
+ use crate::integer::{BooleanBlock, IntegerCiphertext, ServerKey};
+ use crate::shortint::MessageModulus;
+ use rayon::prelude::*;
 ```
 
-**File**: `tfhe/src/integer/server_key/radix_parallel/tests_unsigned/test_scalar_sub.rs` (modified, +6/-2)
+**File**: `tfhe/src/integer/server_key/radix_parallel/scalar_comparison.rs` (modified, +9/-1)
 ```diff
-@@ -2,7 +2,7 @@ use std::sync::Arc;
- 
- use crate::integer::keycache::KEY_CACHE;
- use crate::integer::server_key::radix_parallel::test_harness::{
--    default_scalar_fixed_cases, ExecuteOn, TestBuilder, TestContext, TestScalar,
-+    default_scalar_fixed_cases, ExecuteOn, SizeRequirements, TestBuilder, TestContext, TestScalar,
+@@ -3,7 +3,6 @@ use crate::core_crypto::prelude::{lwe_ciphertext_sub_assign, Numeric};
+ use crate::integer::block_decomposition::{BlockDecomposer, DecomposableInto};
+ use crate::integer::ciphertext::boolean_value::BooleanBlock;
+ use crate::integer::ciphertext::IntegerRadixCiphertext;
+-use crate::integer::server_key::comparator::ZeroComparisonType;
+ use crate::integer::server_key::radix_parallel::comparison::{
+     is_x_less_than_y_given_input_borrow, ComparisonKind, PreparedSignedCheck,
  };
- use crate::integer::server_key::radix_parallel::tests_cases_unsigned::{
-     default_scalar_sub_test, FunctionExecutor,
-@@ -93,7 +93,11 @@ where
- {
-     let scalar_width = u8::BITS.div_ceil(ctx.bits_per_block());
-     TestBuilder::new(ctx)
--        .block_counts(vec![1, scalar_width, scalar_width + 1, 2 * scalar_width])
-+        .size_requirements(
-+            [1, scalar_width, scalar_width + 1, 2 * scalar_width]
-+                .map(SizeRequirements::new_scalar)
-+                .to_vec(),
-+        )
-         .n_random(0)
-         .fixed_cases(narrow_scalar_cases)
-         .execute(executor, |(lhs, rhs): (Uint, TestScalar<u8>)| {
+@@ -12,6 +11,15 @@ use crate::shortint::server_key::LookupTableOwned;
+ use crate::shortint::{Ciphertext, MessageModulus};
+ use rayon::prelude::*;
+ 
++/// Used for compare_blocks_with_zero
++#[derive(Clone, Copy)]
++pub(crate) enum ZeroComparisonType {
++    // We want to compare with zeros for equality (==)
++    Equality,
++    // We want to compare with zeros for difference (!=)
++    Difference,
++}
++
+ impl ServerKey {
+     /// Returns whether the clear scalar is outside of the
+     /// value range the ciphertext can hold.
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #4080** (2026-10-19): fix(integer): adapt test call sites SizeRequirements (@tmontaigu)
+- **PR #4074** (2026-10-19): refactor(integer): remove comparator.rs file (@tmontaigu)
 - **PR #4072** (2026-10-16): chore: mark crates we don't publish as publish = false (@IceTDrinker)
+- **PR #4071** (2026-10-19): Tm/degree 1.7.3 (@tmontaigu)
+- **PR #4070** (2026-10-19): tm/degree-1.8.2 (@tmontaigu)
 - **PR #4069** (2026-10-19): Tm/degree 1.6.5 (@tmontaigu)
-- **PR #4067** (2026-10-16): chore: pin CSPRNG (@IceTDrinker)
-- **PR #4066** (closed): backport ci fixes (@IceTDrinker)
-- **PR #4065** (closed): wip trigger (@IceTDrinker)
 
 ---
 

@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T17:50:24.001Z",
-  "total_cycles_completed": 3365,
-  "total_learnings_persisted": 3365,
-  "total_rules_promoted": 2516,
+  "last_updated": "2026-10-19T17:56:37.854Z",
+  "total_cycles_completed": 3370,
+  "total_learnings_persisted": 3370,
+  "total_rules_promoted": 2519,
   "history": [
-    {
-      "timestamp": "2026-10-19T11:21:33.056Z",
-      "repository": "sxyazi/yazi",
-      "learningId": "learn-github-sxyazi-yazi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T11:21:37.800Z",
-      "repository": "ronitsingh10/FineTune",
-      "learningId": "learn-github-ronitsingh10-finetune",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T11:27:51.442Z",
-      "repository": "herdrdev/herdr",
-      "learningId": "learn-github-herdrdev-herdr",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T11:27:55.233Z",
-      "repository": "darrylmorley/whatcable",
-      "learningId": "learn-github-darrylmorley-whatcable",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T11:28:05.016Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T11:28:57.255Z",
       "repository": "zai-org/GLM-5.2",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-10-19T17:50:24.001Z",
       "repository": "zoontek/react-native-permissions",
       "learningId": "learn-github-zoontek-react-native-permissions",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T17:56:23.935Z",
+      "repository": "cosscom/ui",
+      "learningId": "learn-github-cosscom-ui",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T17:56:29.951Z",
+      "repository": "obytes/react-native-template-obytes",
+      "learningId": "learn-github-obytes-react-native-template-obytes",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T17:56:33.260Z",
+      "repository": "k3s-io/k3s",
+      "learningId": "learn-github-k3s-io-k3s",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T17:56:34.827Z",
+      "repository": "zama-ai/tfhe-rs",
+      "learningId": "learn-github-zama-ai-tfhe-rs",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T17:56:37.854Z",
+      "repository": "genkit-ai/genkit",
+      "learningId": "learn-github-genkit-ai-genkit",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

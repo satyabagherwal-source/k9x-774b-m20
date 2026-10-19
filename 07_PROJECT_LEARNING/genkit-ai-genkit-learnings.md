@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md`  
 > **Source**: github ([https://github.com/genkit-ai/genkit](https://github.com/genkit-ai/genkit))  
-> **Source Version**: `59ba69c5`  
+> **Source Version**: `ecc37b37`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T04:53:09.101Z  
+> **Timestamp**: 2026-10-19T17:56:37.621Z  
 > **Learning ID**: `learn-github-genkit-ai-genkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/genkit-ai/genkit](https://github.com/genkit-ai/genkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T04:53:08.795Z  
+> **Harvest Timestamp**: 2026-10-19T17:56:37.615Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -25,9 +25,9 @@
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `genkit-ai/genkit`
 - **Description**: Open-source framework for building agentic apps in JavaScript, Go, Dart, and Python, built and used in production by Google
-- **Primary Language / Ecosystem**: TypeScript
+- **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 6529 stars
+- **Stars / Engagement**: 6532 stars
 
 ---
 
@@ -2007,1219 +2007,1624 @@ export function setUserSettings(s: Record<string, string | boolean | number>) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1a38cde4` (2026-10-13)
-**Commit Message**: fix(py/plugins/google-genai): widen API error mapping, detect blocked prompts (#6370)
+### Incident Patch 1: `96a41096` (2026-10-19)
+**Commit Message**: feat(go): add pluggable trace instrumentation and decouple it from OpenTelemetry (#6343)
 
-**File**: `py/packages/genkit-google-genai/src/genkit_google_genai/_google.py` (modified, +11/-2)
+**File**: `go/ai/evaluator.go` (modified, +4/-3)
 ```diff
-@@ -58,6 +58,7 @@
- from google.auth.credentials import Credentials
- from google.auth.exceptions import DefaultCredentialsError
- from google.genai.client import DebugConfig
-+from google.genai.errors import APIError
- from google.genai.types import HttpOptions, HttpOptionsDict, Model as GenaiModel
- from pydantic import BaseModel
+@@ -22,7 +22,6 @@ import (
+ 	"fmt"
  
-@@ -158,6 +159,7 @@
-     is_virtual_try_on_model,
-     virtual_try_on_model_info,
+ 	"github.com/google/uuid"
+-	"go.opentelemetry.io/otel/trace"
+ 
+ 	"github.com/firebase/genkit/go/core"
+ 	"github.com/firebase/genkit/go/core/api"
+@@ -290,8 +289,10 @@ func NewEvaluatorAction[Config any](
+ 				}
+ 				_, err := tracing.RunInNewSpan(ctx, spanMetadata, datapoint,
+ 					func(ctx context.Context, input *Example) (*EvaluatorCallbackResponse, error) {
+-						traceId := trace.SpanContextFromContext(ctx).TraceID().String()
+-						spanId := trace.SpanContextFromContext(ctx).SpanID().String()
++						// Genkit's ids, which the Dev UI stores the trace under;
++						// the OTel span context is empty without an SDK.
++						ti := tracing.SpanTraceInfo(ctx)
++						traceId, spanId := ti.TraceID, ti.SpanID
+ 
+ 						callbackRequest := EvaluatorCallbackRequest{
+ 							Input:   *input,
+```
+
+**File**: `go/ai/evaluator_test.go` (modified, +23/-0)
+```diff
+@@ -21,6 +21,7 @@ import (
+ 	"testing"
+ 
+ 	"github.com/firebase/genkit/go/internal/registry"
++	"github.com/firebase/genkit/go/internal/tracingtest"
  )
-+from genkit_google_genai._provider_errors import TRANSPORT_ERRORS, api_error, transport_error
  
- logger = logging.getLogger(__name__)
+ var testEvalFunc = func(ctx context.Context, req *EvaluatorCallbackRequest) (*EvaluatorCallbackResponse, error) {
+@@ -114,6 +115,28 @@ func TestSimpleEvaluator(t *testing.T) {
+ 	}
+ }
  
-@@ -239,8 +241,15 @@ def _categorize_genai_model(m: GenaiModel, models: GenaiModels, is_vertex: bool)
- async def _list_genai_models(client: genai.Client, is_vertex: bool) -> GenaiModels:
-     """Discover and categorize models through the SDK's asynchronous client."""
-     models = GenaiModels()
--    async for listed_model in await client.aio.models.list():
--        _categorize_genai_model(listed_model, models, is_vertex)
-+    try:
-+        async for listed_model in await client.aio.models.list():
-+            _categorize_genai_model(listed_model, models, is_vertex)
-+    except APIError as e:
-+        raise api_error(e) from e
-+    except GOOGLE_AUTH_ERRORS as e:
-+        raise_auth_error(e)
-+    except TRANSPORT_ERRORS as e:
-+        raise transport_error(e) from e
-     return models
- 
- 
-```
-
-**File**: `py/packages/genkit-google-genai/src/genkit_google_genai/_models/_gemini.py` (modified, +87/-36)
-```diff
-@@ -136,6 +136,40 @@ def _usage_from_metadata(usage_metadata: Any) -> ModelUsage:  # noqa: ANN401
-     )
- 
- 
-+def _custom_from_feedback(
-+    feedback: genai_types.GenerateContentResponsePromptFeedback | None,
-+) -> dict[str, Any] | None:
-+    """The response's ``custom`` payload: the prompt feedback the service sent, if any."""
-+    if feedback is None:
-+        return None
-+    return {'promptFeedback': feedback.model_dump(mode='json', by_alias=True, exclude_none=True)}
++// TestEvaluatorResultTraceIDs checks that each result points at its test-case
++// span, the one the Dev UI stored, rather than an empty OTel span context.
++func TestEvaluatorResultTraceIDs(t *testing.T) {
++	spans := tracingtest.Capture(t)
++	r := registry.New()
++	evaluator := defineEvaluator(r, "test/testEvaluator", &evalOpts, testEvalFunc)
 +
-+
-+def _no_candidates_response(
-+    feedback: genai_types.GenerateContentResponsePromptFeedback | None,
-+    usage_metadata: Any,  # noqa: ANN401
-+) -> ModelResponse:
-+    """Response for a reply that carried no candidates.
-+
-+    A refused prompt comes back with no candidates and the reason in the
-+    prompt feedback, and finishes BLOCKED.
-+
-+    Raises:
-+        GenkitError: INTERNAL when the prompt was not blocked.
-+    """
-+    reason = feedback.block_reason if feedback is not None else None
-+    if feedback is None or not reason or reason == genai_types.BlockedReason.BLOCKED_REASON_UNSPECIFIED:
-+        raise GenkitError(status='INTERNAL', message='Model returned no candidates.')
-+    return ModelResponse(
-+        message=Message(role=Role.MODEL, content=[Part.from_text('')]),
-+        finish_reason=FinishReason.BLOCKED,
-+        finish_message=feedback.block_reason_message or f'prompt blocked: {reason.value}',
-+        candidates=[],
-+        usage=_usage_from_metadata(usage_metadata),
-+        custom=_custom_from_feedback(feedback),
-+    )
-+
-+
- from genkit_google_genai._models._utils import (  # noqa: E402
-     TOOL_INPUT_FIELD,
-     PartConverter,
-@@ -1735,6 +1769,9 @@ async def _generate(
-         except TRANSPORT_ERRORS as e:
-             raise transport_error(e) from e
- 
-+        if not response.candidates:
-+            return _no_candidates_response(response.prompt_feedback, response.usage_metadata)
-+
-         content = await self._contents_from_response(response, tools=tools)
- 
-         # Ensure we always have at least one content item to avoid UI errors
-@@ -1743,30 +1780,29 @@ async def _generate(
- 
-         finish_reason = FinishReason.OTHER
-         candidates = []
--        if response.candidates:
--            for i, c in enumerate(response.candidates):
--                c_content = []
--                if c.content and c.content.parts:
--                    for part in c.content.parts:
--                        converted = PartConverter.from_gemini(part=part, tools=tools)
--                        if converted:
--                            c_content.append(converted)
--
--                if not c_content:
--                    c_content = [Part.from_text('')]
--
--                c_finish_reason = _to_finish_reason(c.finish_reason)
--
--                if i == 0:
--                    finish_reason = c_finish_reason
--
--                candidates.append(
--                    Candidate(
--                        index=float(i),
--                        message=Message(role=Role.MODEL, content=c_content),
--                        finish_reason=c_finish_reason,
--                    )
-+        for i, c in enumerate(response.candidates):
-+            c_content = []
-+            if c.content and c.content.parts:
-+                for part in c.content.parts:
-+                    converted = PartConverter.from_gemini(part=part, tools=tools)
-+                    if converted:
-+                        c_content.append(converted)
-+
-+            if not c_content:
-+                c_content = [Part.from_text('')]
-+
-+            c_finish_reason = _to_finish_reason(c.finish_reason)
-+
-+            if i == 0:
-+                finish_reason = c_finish_reason
-+
-+            candidates.append(
-+                Candidate(
-+                    index=float(i),
-+                    message=Message(role=Role.MODEL, content=c_content),
-+                    finish_reason=c_finish_reason,
-                 )
-+            )
- 
-         return ModelResponse(
-             message=Message(
-@@ -1776,6 +1812,7 @@ async def _generate(
-             finish_reason=finish_reason,
-             candidates=candidates,
-             usage=_usage_from_metadata(response.usage_metadata),
-+            custom=_custom_from_feedback(response.prompt_feedback),
-         )
- 
-     async def _streaming_generate(
-@@ -1798,9 +1835,15 @@ async def _streaming_generate(
-             tools: tools declared this turn
- 
-         Returns:
--            empty genai response
-+            genai response.
-         """
-         client = client or self._client
-+        accumulated_content: list[Part] = []
-+        finish_reason = FinishReason.UNKNOWN
-+        usage_metadata: Any = None
-+        prompt_feedback: genai_types.GenerateContentResponsePromptFeedback | None = None
-+        saw_chunk = False
-+        saw_candidates = False
-         try:
-             generator = await client.aio.models.generate_content_stream(
-                 model=resolve_vertex_model_name(client, model_name),
-@@ -1810,10 +1853,8
-```
-
-**File**: `py/packages/genkit-google-genai/src/genkit_google_genai/_provider_errors.py` (modified, +38/-11)
-```diff
-@@ -27,10 +27,18 @@
- from google.genai.errors import APIError
- 
- from genkit import GenkitError
--from genkit.plugin_api import provider_error
-+from genkit.plugin_api import StatusName, provider_error
- 
- _RETRY_INFO_TYPE = 'type.googleapis.com/google.rpc.RetryInfo'
-+_ERROR_INFO_TYPE = 'type.googleapis.com/google.rpc.ErrorInfo'
- _DURATION = re.compile(r'(\d+(?:\.\d+)?)s')
-+# HTTP codes that several statuses share, and the statuses an error body can
-+# name to say which one it is.
-+_SHARED_CODE_STATUSES: dict[int, frozenset[str]] = {
-+    400: frozenset({'INVALID_ARGUMENT', 'FAILED_PRECONDITION', 'OUT_OF_RANGE'}),
-+    409: frozenset({'ALREADY_EXISTS', 'ABORTED'}),
-+    500: frozenset({'INTERNAL', 'DATA_LOSS'}),
++	req := EvaluatorRequest{Dataset: []*Example{{TestCaseId: "case1", Input: "hello"}}}
++	resp, err := evaluator.Evaluate(context.Background(), &req)
++	if err != nil {
++		t.Fatal(err)
++	}
++	got := spans.ByName("TestCase case1")
++	if len(got) != 1 {
++		t.Fatalf("got %d test-case spans, want 1", len(got))
++	}
++	res := (*resp)[0]
++	if res.TraceID != got[0].TraceID || res.SpanID != got[0].SpanID {
++		t.Errorf("result ids = %s/%s, want span %s/%s", res.TraceID, res.SpanID, got[0].TraceID, got[0].SpanID)
++	}
 +}
- 
- # On Python 3.10, asyncio.TimeoutError is not the builtin TimeoutError, so list both.
- _TIMEOUT_ERRORS: tuple[type[BaseException], ...] = (httpx.TimeoutException, asyncio.TimeoutError, TimeoutError)
-@@ -47,11 +55,17 @@
- 
- 
- def api_error(error: APIError) -> GenkitError:
--    """GenkitError for an HTTP error response the SDK raised."""
-+    """GenkitError for an HTTP error response the SDK raised.
 +
-+    When several statuses share the HTTP code, the status the error body names
-+    picks one, so a 400 that says FAILED_PRECONDITION keeps that status. A key
-+    the Gemini API rejects is UNAUTHENTICATED.
-+    """
-     response = getattr(error, 'response', None)
-     return provider_error(
-         error,
-         http_status=error.code,
-+        status=_body_status(error),
-         headers=getattr(response, 'headers', None),
-         retry_after_ms=retry_info_ms(error.details),
-         message=error.message or str(error),
-@@ -73,18 +87,31 @@ def retry_info_ms(body: object) -> float | None:
-     Retry-After header, so retry reads it here to avoid hammering the quota.
-     A missing or malformed delay is None.
-     """
-+    delay = _field(_detail(body, _RETRY_INFO_TYPE), 'retryDelay')
-+    match = _DURATION.fullmatch(delay.strip()) if isinstance(delay, str) else None
-+    if match is None:
-+        return None
-+    delay_ms = float(match.group(1)) * 1000
-+    return delay_ms if math.isfinite(delay_ms) else None
-+
-+
-+def _body_status(error: APIError) -> StatusName | None:
-+    """The status the error body names for a shared HTTP code, or None to map the code."""
-+    # The Gemini API answers a bad key with INVALID_ARGUMENT and names it only in ErrorInfo.
-+    if _field(_detail(error.details, _ERROR_INFO_TYPE), 'reason') == 'API_KEY_INVALID':
-+        return 'UNAUTHENTICATED'
-+    status = error.status
-+    if isinstance(status, str) and status in _SHARED_CODE_STATUSES.get(error.code, frozenset()):
-+        return cast(StatusName, status)
-+    return None
-+
-+
-+def _detail(body: object, type_url: str) -> object:
-+    """The first google.rpc detail of the given type in an error body, if any."""
-     details = _field(_field(body, 'error') or body, 'details')
-     if not isinstance(details, list):
-         return None
--    for detail in cast(list[object], details):
--        if _field(detail, '@type') == _RETRY_INFO_TYPE:
--            delay = _field(detail, 'retryDelay')
--            match = _DURATION.fullmatch(delay.strip()) if isinstance(delay, str) else None
--            if match is None:
--                return None
--            delay_ms = float(match.group(1)) * 1000
--            return delay_ms if math.isfinite(delay_ms) else None
--    return None
-+    return next((d for d in cast(list[object], details) if _field(d, '@type') == type_url), None)
+ func TestOptionsRequired(t *testing.T) {
+ 	r := registry.New()
  
- 
- def _field(value: object, key: str) -> object:
 ```
 
-**File**: `py/packages/genkit-google-genai/tests/google_plugin_test.py` (modified, +91/-1)
+**File**: `go/ai/exp/agent.go` (modified, +12/-17)
 ```diff
-@@ -25,6 +25,7 @@
- from typing import Any, cast
- from unittest.mock import ANY, AsyncMock, MagicMock, patch
+@@ -34,8 +34,6 @@ import (
+ 	"time"
  
-+import httpx
- import pytest
- from genkit_google_genai import GoogleAI, VertexAI
- from genkit_google_genai._evaluators._evaluation import VertexAIEvaluationMetricType
-@@ -38,7 +39,8 @@
+ 	"github.com/google/uuid"
+-	"go.opentelemetry.io/otel/attribute"
+-	"go.opentelemetry.io/otel/trace"
+ 
+ 	"github.com/firebase/genkit/go/ai"
+ 	"github.com/firebase/genkit/go/core"
+@@ -1367,16 +1365,14 @@ type fnDoneResult[State any] struct {
+ 	ctxErr error
+ }
+ 
+-// sessionIDSpanAttrKey and snapshotIDSpanAttrKey are the full span-attribute
+-// keys under which an agent records its identifiers: the session ID on the
+-// root action span, and the turn-end snapshot ID on each server-managed turn
+-// span. They are the "genkit:metadata:"-prefixed forms of the
+-// "agent:sessionId" / "agent:snapshotId" custom-metadata keys every agent
+-// records; the prefix is inlined here because Go's tracing package exposes no
+-// custom-metadata helper.
++// sessionIDMetaKey and snapshotIDMetaKey are the custom-metadata keys under
++// which an agent records its identifiers: the session ID on the root action
++// span, and the turn-end snapshot ID on each server-managed turn span. They are
++// recorded via [tracing.SetSpanMetadata], which prefixes them with
++// "genkit:metadata:" on the span.
+ const (
+-	sessionIDSpanAttrKey  = "genkit:metadata:agent:sessionId"
+-	snapshotIDSpanAttrKey = "genkit:metadata:agent:snapshotId"
++	sessionIDMetaKey  = "agent:sessionId"
++	snapshotIDMetaKey = "agent:snapshotId"
  )
- from google import genai
- from google.auth.credentials import Credentials
--from google.auth.exceptions import DefaultCredentialsError
-+from google.auth.exceptions import DefaultCredentialsError, RefreshError
-+from google.genai.errors import APIError
- from google.genai.types import HttpOptions
- from pydantic import ValidationError
  
-@@ -969,3 +971,91 @@ def test_vertexai_positional_project_raises_type_error() -> None:
-     """VertexAI('my-project') raises TypeError instead of treating the project as credentials."""
-     with pytest.raises(TypeError):
-         VertexAI('my-project')  # type: ignore[misc]
-+
-+
-+@pytest.mark.asyncio
-+async def test_googleai_init_rejected_key_is_unauthenticated(googleai_plugin_instance: GoogleAI) -> None:
-+    """A bad API key fails the model listing in init with UNAUTHENTICATED, not a raw SDK error."""
-+    message = 'API key not valid. Please pass a valid API key.'
-+    error_info = {
-+        '@type': 'type.googleapis.com/google.rpc.ErrorInfo',
-+        'reason': 'API_KEY_INVALID',
-+        'domain': 'googleapis.com',
-+        'metadata': {'service': 'generativelanguage.googleapis.com'},
-+    }
-+    localized = {'@type': 'type.googleapis.com/google.rpc.LocalizedMessage', 'locale': 'en-US', 'message': message}
-+    details = [error_info, localized]
-+    rejected = APIError(
-+        400, {'error': {'code': 400, 'message': message, 'status': 'INVALID_ARGUMENT', 'details': details}}
-+    )
-+    mock_client = MagicMock()
-+    mock_client.aio.models.list = AsyncMock(side_effect=rejected)
-+    googleai_plugin_instance._runtime_client = lambda: mock_client
-+
-+    with pytest.raises(GenkitError) as raised:
-+        await googleai_plugin_instance.init()
-+
-+    assert raised.value.status == 'UNAUTHENTICATED'
-+    assert raised.value.cause is rejected
-+
-+
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize(
-+    ('failure', 'status'),
-+    [
-+        (APIError(503, {'error': {'code': 503, 'message': 'overloaded', 'status': 'UNAVAILABLE'}}), 'UNAVAILABLE'),
-+        (RefreshError('invalid_grant: Token has been expired or revoked.'), 'UNAUTHENTICATED'),
-+        (httpx.ConnectError('[Errno 61] Connection refused'), 'UNAVAILABLE'),
-+    ],
-+)
-+async def test_vertexai_init_classifies_model_listing_failure(
-+    vertexai_plugin_instance: VertexAI, failure: Exception, status: str
-+) -> None:
-+    """Model listing in init maps provider, credential, and connection failures like a generate call."""
-+    mock_client = MagicMock()
-+    mock_client.aio.models.list = AsyncMock(side_effect=failure)
-+    vertexai_plugin_instance._runtime_client = lambda: mock_client
-+
-+    with pytest.raises(GenkitError) as raised:
-+        await vertexai_plugin_instance.init()
-+
-+    assert raised.value.status == status
-+    assert raised.value.cause is failure
-+    assert raised.value.__cause__ is failure
-+
-+
-+@pytest.mark.asyncio
-+async def test_vertexai_init_listing_unknown_failure_stays_raw(vertexai_plugin_instance: VertexAI) -> None:
-+    """A listing failure that is not a provider, credential, or connection error keeps its own type."""
-+    boom = RuntimeError('SDK bug')
-+    mock_client = MagicMock()
-+    mock_client.aio.models.list = AsyncMock(side_effect=boom)
-+    vertexai_plugin_instance._runtime_client = lambda: mock_client
-+
-+    with pytest.raises(RuntimeError) as raised:
-+        await vertexai_plugin_instance.init()
-+
-+    assert raised.value is boom
-+
-+
-+async def _pager_failing_after(first: Any, failure: BaseException) -> AsyncIterator[Any]:
-+    yield first
-+    raise failure
-+
-+
-+@pytest.mark.asyncio
-+async def test_googleai_init_classifies_failure_while_paging_models(googleai_plugin_instance: GoogleAI) -> None:
-+    """An API error the pager raises after the first page is classified too."""
-+    first = MagicMock()
-+    first.name = 'models/gemini-2.5-flash'
-+    first.supported_actions = ['generateContent']
-+    denied = APIError(403, {'error': {'code': 403, 'message': 'denied', 'status': 'PERMISSION_DENIED'}})
-+    mock_client = MagicMock()
-+    mock_client.aio.models.list = AsyncMock(side_effect=lambda: _pager_failing_after(first, denied))
-+    googleai_plugin_instance._runtime_client = lambda: mock_client
-+
-+    with pytest.raises(GenkitError) as raised:
-+        await googleai_plugin_instance.init()
-+
-+    assert raised.value.status == 'PERMISSION_DENIED'
-+    assert raised.value.cause is denied
+ func newAgentRuntime[State any](
+@@ -1429,10 +1425,9 @@ func newAgentRuntime[State any](
+ 	// Tag the agent's root action span (the current span here, before any turn
+ 	// span is opened) with the session ID so traces from the same conversation
+ 	// can be correlated. It is written once at the start of the action body.
+-	// trace.SpanFromContext never returns nil (it yields a no-op span when none
+-	// is active), so the SetAttributes is always safe.
+-	trace.SpanFromContext(ctx).SetAttributes(
+-		attribute.String(sessionIDSpanAttrKey, session.state.SessionID))
++	// SetSpanMetadata is a no-op outside a span, so this is safe.
++	tracing.SetSpanMetadata(ctx, map[string]string{
++		sessionIDMetaKey: session.state.SessionID})
+ 
+ 	rt := &agentRuntime[State]{
+ 		name:     name,
+@@ -1506,8 +1501,8 @@ func (rt *agentRuntime[State]) emitTurnEnd(ctx context.Context) {
+ 	// ID is empty, and the attribute omitted, when client-managed, when the
+ 	// row could not be written, or when a detach suspended snapshots.
+ 	if snapshotID != "" {
+-		trace.SpanFromContext(ctx).SetAttributes(
+-			attribute.String(snapshotIDSpanAttrKey, snapshotID))
++		tracing.SetSpanMetadata(ctx, map[string]string{
++			snapshotIDMetaKey: snapshotID})
+ 	}
+ 	rt.router.sendChunk(ctx, &AgentStreamChunk{TurnEnd: &TurnEnd{
+ 		SnapshotID:   snapshotID,
 ```
 
-**File**: `py/packages/genkit-google-genai/tests/models/googlegenai_gemini_test.py` (modified, +352/-2)
+**File**: `go/ai/exp/agent_test.go` (modified, +32/-76)
 ```diff
-@@ -147,9 +147,12 @@ async def test_generate_stream_text_response(mocker: MockerFixture, version: str
+@@ -35,7 +35,7 @@ import (
+ 	"github.com/firebase/genkit/go/core/status"
+ 	"github.com/firebase/genkit/go/core/tracing"
+ 	"github.com/firebase/genkit/go/internal/registry"
+-	sdktrace "go.opentelemetry.io/otel/sdk/trace"
++	"github.com/firebase/genkit/go/internal/tracingtest"
+ )
  
-     resp = genai.types.GenerateContentResponse(candidates=[candidate])
+ type testState struct {
+@@ -263,57 +263,13 @@ func TestAgent_WithSessionStore(t *testing.T) {
+ 	}
+ }
  
-+    async def stream() -> Any:  # noqa: ANN401
-+        yield resp
-+
-     googleai_client_mock = mocker.AsyncMock()
-     googleai_client_mock.vertexai = False
--    googleai_client_mock.aio.models.generate_content_stream.__aiter__.side_effect = [resp]
-+    googleai_client_mock.aio.models.generate_content_stream.return_value = stream()
-     on_chunk_mock = mocker.MagicMock()
-     gemini = GeminiModel(version, googleai_client_mock)
- 
-@@ -173,7 +176,9 @@ async def test_generate_stream_text_response(mocker: MockerFixture, version: str
-     ])
-     assert isinstance(response, ModelResponse)
-     assert response.message is not None
--    assert response.message.content == []
-+    assert response.message.content[0].text == response_text
-+    on_chunk_mock.assert_called_once()
-+    assert on_chunk_mock.call_args.args[0].content[0].text == response_text
- 
- 
- @pytest.mark.asyncio
-@@ -1909,6 +1914,74 @@ async def test_429_retry_info_sets_retry_delay(
-     assert error.response_metadata == expected
- 
- 
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize(
-+    ('code', 'body', 'status'),
-+    [
-+        (
-+            400,
-+            {'error': {'code': 400, 'message': 'User location is not supported', 'status': 'FAILED_PRECONDITION'}},
-+            'FAILED_PRECONDITION',
-+        ),
-+        (409, {'error': {'code': 409, 'message': 'exists', 'status': 'ALREADY_EXISTS'}}, 'ALREADY_EXISTS'),
-+        (500, {'error': {'code': 500, 'message': 'lost', 'status': 'DATA_LOSS'}}, 'DATA_LOSS'),
-+        (500, {'error': {'code': 500, 'message': 'unknown', 'status': 'UNKNOWN'}}, 'INTERNAL'),
-+        (402, {'error': {'code': 402, 'message': 'Prepay credit depleted', 'status': 'RESOURCE_EXHAUSTED'}}, 'UNKNOWN'),
-+        (502, {'message': '<html>Bad Gateway</html>', 'status': 'Bad Gateway'}, 'INTERNAL'),
-+    ],
+-// spanCollector is a minimal in-memory sdktrace.SpanExporter that records
+-// finished spans so a test can assert on their attributes.
+-type spanCollector struct {
+-	mu    sync.Mutex
+-	spans []sdktrace.ReadOnlySpan
+-}
+-
+-func (c *spanCollector) ExportSpans(_ context.Context, spans []sdktrace.ReadOnlySpan) error {
+-	c.mu.Lock()
+-	defer c.mu.Unlock()
+-	c.spans = append(c.spans, spans...)
+-	return nil
+-}
+-
+-func (c *spanCollector) Shutdown(context.Context) error { return nil }
+-
+-// byName returns the first recorded span with the given name, or nil.
+-func (c *spanCollector) byName(name string) sdktrace.ReadOnlySpan {
+-	c.mu.Lock()
+-	defer c.mu.Unlock()
+-	for _, s := range c.spans {
+-		if s.Name() == name {
+-			return s
+-		}
+-	}
+-	return nil
+-}
+-
+-// collectSpans registers an in-memory exporter on the global tracer provider
+-// (the one tracing.RunInNewSpan writes through) for the duration of the test.
+-// The SimpleSpanProcessor exports each span synchronously as it ends, so by
+-// the time a turn completes its span is already recorded.
+-func collectSpans(t *testing.T) *spanCollector {
+-	t.Helper()
+-	c := &spanCollector{}
+-	sp := sdktrace.NewSimpleSpanProcessor(c)
+-	tp := tracing.TracerProvider()
+-	tp.RegisterSpanProcessor(sp)
+-	t.Cleanup(func() { tp.UnregisterSpanProcessor(sp) })
+-	return c
+-}
+-
+-// spanAttr returns the string value of the named span attribute, if present.
+-func spanAttr(span sdktrace.ReadOnlySpan, key string) (string, bool) {
+-	for _, kv := range span.Attributes() {
+-		if string(kv.Key) == key {
+-			return kv.Value.AsString(), true
+-		}
+-	}
+-	return "", false
+-}
++// The full span-attribute keys agent identifiers land under: agent.go records
++// them as custom metadata (agent:sessionId / agent:snapshotId), which the
++// instrumentation stores with the genkit:metadata: prefix.
++const (
++	sessionIDSpanAttrKey  = "genkit:metadata:" + sessionIDMetaKey
++	snapshotIDSpanAttrKey = "genkit:metadata:" + snapshotIDMetaKey
 +)
-+async def test_error_body_status_picks_among_statuses_sharing_the_code(
-+    mocker: MockerFixture, code: int, body: dict[str, Any], status: str
-+) -> None:
-+    """The body's status narrows a shared HTTP code and never overrides a different code."""
-+    error = await _generate_failure(mocker, APIError(code, body))
-+
-+    assert error.status == status
-+
-+
-+@pytest.mark.asyncio
-+async def test_rejected_api_key_is_unauthenticated(mocker: MockerFixture) -> None:
-+    """A 400 INVALID_ARGUMENT whose ErrorInfo reason is API_KEY_INVALID is UNAUTHENTICATED."""
-+    message = 'API key not valid. Please pass a valid API key.'
-+    localized = {'@type': 'type.googleapis.com/google.rpc.LocalizedMessage', 'locale': 'en-US', 'message': message}
-+    error_info = {
-+        '@type': 'type.googleapis.com/google.rpc.ErrorInfo',
-+        'reason': 'API_KEY_INVALID',
-+        'domain': 'googleapis.com',
-+        'metadata': {'service': 'generativelanguage.googleapis.com'},
-+    }
-+    details = [localized, error_info]
-+    body = {'error': {'code': 400, 'message': message, 'status': 'INVALID_ARGUMENT', 'details': details}}
-+    rejected = APIError(400, body)
-+
-+    error = await _generate_failure(mocker, rejected)
-+
-+    assert error.status == 'UNAUTHENTICATED'
-+    assert error.original_message == message
-+    assert error.cause is rejected
-+
-+
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize(
-+    ('code', 'status', 'reason'),
-+    [
-+        (403, 'PERMISSION_DENIED', 'API_KEY_SERVICE_BLOCKED'),
-+        (403, 'PERMISSION_DENIED', 'SERVICE_DISABLED'),
-+        (429, 'RESOURCE_EXHAUSTED', 'RATE_LIMIT_EXCEEDED'),
-+    ],
-+)
-+async def test_other_error_info_reasons_keep_the_body_status(
-+    mocker: MockerFixture, code: int, status: str, reason: str
-+) -> None:
-+    """An ErrorInfo reason other than API_KEY_INVALID leaves the body's status as it is."""
-+    error_info = {'@type': 'type.googleapis.com/google.rpc.ErrorInfo', 'reason': reason}
-+    body = {'error': {'code': code, 'message': 'request refused', 'status': status, 'details': [error_info]}}
-+
-+    error = await _generate_failure(mocker, APIError(code, body))
-+
-+    assert error.status == status
-+
-+
- @pytest.mark.asyncio
- @patch('genkit_google_genai._models._gemini.validate_context_cache_request', new_callable=MagicMock)
- @pytest.mark.parametrize(
-@@ -2012,3 +2085,280 @@ async def test_request_client_unknown_failure_stays_raw() -> None:
-             )
  
-     assert raised.value is boom
-+
-+
-+# ---------------------------------------------------------------------------
-+# Blocked prompts and replies with no candidates
-+# ---------------------------------------------------------------------------
-+
-+
-+def _text_chunk(
-+    text: str, finish_reason: genai_types.FinishReason | None = None
-+) -> genai_types.GenerateContentResponse:
-+    candidate = genai_types.Candidate(
-+        content=genai_types.Content(parts=[genai_types.Part(text=text)]),
-+        finish_reason=finish_reason,
-+    )
-+    return genai_types.Ge
+ // TestAgent_RootSpanCarriesSessionID verifies the agent's root action span is
+ // stamped with the invocation's session ID under
+@@ -323,7 +279,7 @@ func spanAttr(span sdktrace.ReadOnlySpan, key string) (string, bool) {
+ func TestAgent_RootSpanCarriesSessionID(t *testing.T) {
+ 	ctx := context.Background()
+ 	reg := newTestRegistry(t)
+-	spans := collectSpans(t)
++	spans := tracingtest.Capture(t)
+ 
+ 	const agentName = "tracedCounterFlow"
+ 	af := defineCounterAgent(reg, agentName)
+@@ -347,11 +303,11 @@ func TestAgent_RootSpanCarriesSessionID(t *testing.T) {
+ 	const attrKey = "genkit:metadata:agent:sessionId"
+ 
+ 	// The root action span (named for the agent) carries the session ID.
+-	root := spans.byName(agentName)
++	root := spans.First(agentName)
+ 	if root == nil {
+ 		t.Fatalf("missing root action span %q", agentName)
+ 	}
+-	got, ok := spanAttr(root, attrKey)
++	got, ok := tracingtest.Attr(root, attrKey)
+ 	if !ok {
+ 		t.Fatalf("root span %q: missing attribute %q", agentName, attrKey)
+ 	}
+@@ -363,17 +319,17 @@ func TestAgent_RootSpanCarriesSessionID(t *testing.T) {
+ 	// and no subtype, matching JS's run(); the session ID lives on the root
+ 	// span only.
+ 	for _, turn := range []string{"runTurn-1", "runTurn-2"} {
+-		span := spans.byName(turn)
++		span := spans.First(turn)
+ 		if span == nil {
+ 			t.Fatalf("missing span %q", turn)
+ 		}
+-		if v, ok := spanAttr(span, attrKey); ok {
++		if v, ok := tracingtest.Attr(span, attrKey); ok {
+ 			t.Errorf("turn span %q: unexpected attribute %q = %q (want it on the root span only)", turn, attrKey, v)
+ 		}
+-		if v, _ := spanAttr(span, "genkit:type"); v != "flowStep" {
++		if v, _ := tracingtest.Attr(span, "genkit:type"); v != "flowStep" {
+ 			t.Errorf("turn span %q: genkit:type = %q, want %q", turn, v, "flowStep")
+ 		}
+-		if v, ok := spanAttr(span, "genkit:metadata:subtype"); ok {
++		if v, ok := tracingtest.Attr(span, "genkit:metadata:subtype"); ok {
+ 			t.Errorf("turn span %q: unexpected genkit:metadata:subtype = %q (JS's run() sets no subtype)", turn, v)
+ 		}
+ 	}
+@@ -1726,18 +1682,18 @@ func TestAgent_SetMessages(t *testing.T) {
+ // turnSpanState parses a turn span's genkit:output attribute, which the agent
+ // records as {"state": <session state>} (see turnSpanOutput), and returns the
+ // embedded state.
+-func turnSpanState(t *testing.T, span sdktrace.ReadOnlySpan) *SessionState[testState] {
++func turnSpanState(t *testing.T, span *tracing.SpanData) *SessionState[testState] {
+ 	t.Helper()
+-	raw, ok := spanAttr(span, "genkit:output")
++	raw, ok := tracingtest.Attr(span, "genkit:output")
+ 	if !ok {
+-		t.Fatalf("span %q: missing genkit:output attribute", span.Name())
++		t.Fata
+```
+
+**File**: `go/ai/generate_test.go` (modified, +11/-10)
+```diff
+@@ -33,6 +33,7 @@ import (
+ 	"github.com/firebase/genkit/go/core/status"
+ 	"github.com/firebase/genkit/go/internal/base"
+ 	"github.com/firebase/genkit/go/internal/registry"
++	"github.com/firebase/genkit/go/internal/tracingtest"
+ 	test_utils "github.com/firebase/genkit/go/tests/utils"
+ 	"github.com/google/go-cmp/cmp"
+ )
+@@ -3446,11 +3447,11 @@ func TestMediaParts(t *testing.T) {
+ 
+ // generateSpanMessageCounts returns, sorted, the number of messages each
+ // collected span named "generate" recorded as its input.
+-func generateSpanMessageCounts(t *testing.T, c *spanCollector) []int {
++func generateSpanMessageCounts(t *testing.T, c *tracingtest.Recorder) []int {
+ 	t.Helper()
+ 	var counts []int
+-	for _, s := range c.allByName("generate") {
+-		input, ok := spanAttr(s, "genkit:input")
++	for _, s := range c.ByName("generate") {
++		input, ok := tracingtest.Attr(s, "genkit:input")
+ 		if !ok {
+ 			t.Errorf("generate span recorded no input")
+ 			continue
+@@ -3480,7 +3481,7 @@ func TestGenerateSpanRecordsAccumulatedMessages(t *testing.T) {
+ 	const turns = 3
+ 	want := []int{1, 3, 5}
+ 
+-	setup := func(t *testing.T) (api.Registry, *spanCollector) {
++	setup := func(t *testing.T) (api.Registry, *tracingtest.Recorder) {
+ 		t.Helper()
+ 		r := newTestRegistry(t)
+ 		defineFakeModel(t, r, fakeModelConfig{
+@@ -3489,7 +3490,7 @@ func TestGenerateSpanRecordsAccumulatedMessages(t *testing.T) {
+ 		})
+ 		defineTool(r, "myTool", "A test tool",
+ 			func(ctx *ToolContext, in map[string]any) (string, error) { return "ok", nil })
+-		return r, collectSpans(t)
++		return r, tracingtest.Capture(t)
+ 	}
+ 
+ 	t.Run("through Generate", func(t *testing.T) {
+@@ -3507,9 +3508,9 @@ func TestGenerateSpanRecordsAccumulatedMessages(t *testing.T) {
+ 		}
+ 		// The loop's spans are annotated by type alone. A subtype would show
+ 		// up in their trace paths, and in every path built under them.
+-		for _, s := range spans.allByName("generate") {
++		for _, s := range spans.ByName("generate") {
+ 			assertSpanAttr(t, s, "genkit:type", "util")
+-			if got, ok := spanAttr(s, "genkit:metadata:subtype"); ok {
++			if got, ok := tracingtest.Attr(s, "genkit:metadata:subtype"); ok {
+ 				t.Errorf("generate span carries subtype %q, want none", got)
+ 			}
+ 		}
+@@ -3609,18 +3610,18 @@ func TestResumeCarriesOptionsForward(t *testing.T) {
+ 	t.Run("keeps the caller's step name", func(t *testing.T) {
+ 		r, tool, res := interruptedForResume(t)
+ 		respond := tool.Respond(res.Message.Content[0], "answer", nil)
+-		spans := collectSpans(t)
++		spans := tracingtest.Capture(t)
+ 
+ 		_, err := Generate(testCtx, r, WithModelName("test/resumeModel"),
+ 			WithMessages(res.History()...), WithTools(tool),
+ 			WithToolResponses(respond), WithStepName("myStep"))
+ 		assertNoError(t, err)
+ 
+ 		// Both turns are the caller's step, so neither may fall back to the default.
+-		if got := len(spans.allByName("generate")); got != 0 {
++		if got := len(spans.ByName("generate")); got != 0 {
+ 			t.Errorf("got %d spans named %q, want 0: every iteration is the named step", got, "generate")
+ 		}
+-		if got := len(spans.allByName("myStep")); got != 2 {
++		if got := len(spans.ByName("myStep")); got != 2 {
+ 			t.Errorf("got %d spans named %q, want 2 (one per iteration)", got, "myStep")
+ 		}
+ 	})
+```
+
+**File**: `go/ai/middleware_test.go` (modified, +8/-7)
+```diff
+@@ -31,6 +31,7 @@ import (
+ 	"github.com/firebase/genkit/go/core/logger"
+ 	"github.com/firebase/genkit/go/core/status"
+ 	"github.com/firebase/genkit/go/internal/base"
++	"github.com/firebase/genkit/go/internal/tracingtest"
+ )
+ 
+ // --- counter: a config whose BuildMiddleware tracks hook invocations ---
+@@ -867,7 +868,7 @@ func TestWrapToolShortCircuitEmitsToolSpan(t *testing.T) {
+ 			})
+ 			var toolCalls int32
+ 			tool := defineCountingTool(t, r, "myTool", &toolCalls)
+-			spans := collectSpans(t)
++			spans := tracingtest.Capture(t)
+ 
+ 			shortCircuit := MiddlewareFunc(func(ctx context.Context) (*Hooks, error) {
+ 				return &Hooks{WrapTool: tt.hook}, nil
+@@ -891,7 +892,7 @@ func TestWrapToolShortCircuitEmitsToolSpan(t *testing.T) {
+ 				t.Errorf("tool ran %d times, want 0 (hook short-circuited)", got)
+ 			}
+ 
+-			toolSpans := spans.allByName(tool.Name())
++			toolSpans := spans.ByName(tool.Name())
+ 			if len(toolSpans) != 1 {
+ 				t.Fatalf("got %d spans named %q, want exactly 1", len(toolSpans), tool.Name())
+ 			}
+@@ -943,7 +944,7 @@ func TestWrapToolPassThroughEmitsSingleToolSpan(t *testing.T) {
+ 			})
+ 			var toolCalls int32
+ 			tool := defineCountingTool(t, r, "myTool", &toolCalls)
+-			spans := collectSpans(t)
++			spans := tracingtest.Capture(t)
+ 
+ 			rewriter := MiddlewareFunc(func(ctx context.Context) (*Hooks, error) {
+ 				return &Hooks{WrapTool: tt.hook}, nil
+@@ -960,7 +961,7 @@ func TestWrapToolPassThroughEmitsSingleToolSpan(t *testing.T) {
+ 			if got := atomic.LoadInt32(&toolCalls); got != 1 {
+ 				t.Errorf("tool ran %d times, want 1", got)
+ 			}
+-			toolSpans := spans.allByName(tool.Name())
++			toolSpans := spans.ByName(tool.Name())
+ 			if len(toolSpans) != 1 {
+ 				t.Fatalf("got %d spans named %q, want exactly 1", len(toolSpans), tool.Name())
+ 			}
+@@ -1386,7 +1387,7 @@ func TestWrapGenerateOptionsAreIsolatedPerIteration(t *testing.T) {
+ 	})
+ 	var toolCalls int32
+ 	tool := defineCountingTool(t, r, "myTool", &toolCalls)
+-	spans := collectSpans(t)
++	spans := tracingtest.Capture(t)
+ 
+ 	var seen []int
+ 	clobber := MiddlewareFunc(func(ctx context.Context) (*Hooks, error) {
+@@ -1413,10 +1414,10 @@ func TestWrapGenerateOptionsAreIsolatedPerIteration(t *testing.T) {
+ 	if !slices.Equal(seen, want) {
+ 		t.Errorf("hook saw %v messages per iteration, want %v", seen, want)
+ 	}
+-	if got := len(spans.allByName("clobbered")); got != 0 {
++	if got := len(spans.ByName("clobbered")); got != 0 {
+ 		t.Errorf("got %d spans named %q, want 0: a hook's step name must not rename the loop's spans", got, "clobbered")
+ 	}
+-	if got := len(spans.allByName("generate")); got != len(want) {
++	if got := len(spans.ByName("generate")); got != len(want) {
+ 		t.Errorf("got %d generate spans, want %d (one per iteration)", got, len(want))
+ 	}
+ }
+```
+
+**File**: `go/ai/testutil_test.go` (modified, +5/-59)
+```diff
+@@ -20,14 +20,13 @@ import (
+ 	"context"
+ 	"fmt"
+ 	"strings"
+-	"sync"
+ 	"testing"
+ 
+ 	"github.com/firebase/genkit/go/core/api"
+ 	"github.com/firebase/genkit/go/core/tracing"
+ 	"github.com/firebase/genkit/go/internal/registry"
++	"github.com/firebase/genkit/go/internal/tracingtest"
+ 	"github.com/google/go-cmp/cmp"
+-	sdktrace "go.opentelemetry.io/otel/sdk/trace"
+ )
+ 
+ // newTestRegistry creates a fresh registry for testing with formats configured.
+@@ -316,69 +315,16 @@ func defineFakeTool(t *testing.T, r api.Registry, name, description string) Tool
+ 		})
+ }
+ 
+-// spanCollector is a minimal sdktrace.SpanExporter that records finished
+-// spans so a test can assert on their attributes.
+-type spanCollector struct {
+-	mu    sync.Mutex
+-	spans []sdktrace.ReadOnlySpan
+-}
+-
+-func (c *spanCollector) ExportSpans(_ context.Context, spans []sdktrace.ReadOnlySpan) error {
+-	c.mu.Lock()
+-	defer c.mu.Unlock()
+-	c.spans = append(c.spans, spans...)
+-	return nil
+-}
+-
+-func (c *spanCollector) Shutdown(context.Context) error { return nil }
+-
+-// allByName returns every recorded span with the given name.
+-func (c *spanCollector) allByName(name string) []sdktrace.ReadOnlySpan {
+-	c.mu.Lock()
+-	defer c.mu.Unlock()
+-	var out []sdktrace.ReadOnlySpan
+-	for _, s := range c.spans {
+-		if s.Name() == name {
+-			out = append(out, s)
+-		}
+-	}
+-	return out
+-}
+-
+-// collectSpans registers an in-memory exporter on the global tracer provider
+-// (the one tracing.RunInNewSpan writes through) for the duration of the test.
+-// The SimpleSpanProcessor exports each span synchronously as it ends, so by
+-// the time the call under test returns its spans are already recorded.
+-func collectSpans(t *testing.T) *spanCollector {
+-	t.Helper()
+-	c := &spanCollector{}
+-	sp := sdktrace.NewSimpleSpanProcessor(c)
+-	tp := tracing.TracerProvider()
+-	tp.RegisterSpanProcessor(sp)
+-	t.Cleanup(func() { tp.UnregisterSpanProcessor(sp) })
+-	return c
+-}
+-
+-// spanAttr returns the string value of the named span attribute, if present.
+-func spanAttr(span sdktrace.ReadOnlySpan, key string) (string, bool) {
+-	for _, kv := range span.Attributes() {
+-		if string(kv.Key) == key {
+-			return kv.Value.AsString(), true
+-		}
+-	}
+-	return "", false
+-}
+-
+ // assertSpanAttr fails the test unless span carries key with value want.
+-func assertSpanAttr(t *testing.T, span sdktrace.ReadOnlySpan, key, want string) {
++func assertSpanAttr(t *testing.T, span *tracing.SpanData, key, want string) {
+ 	t.Helper()
+-	got, ok := spanAttr(span, key)
++	got, ok := tracingtest.Attr(span, key)
+ 	if !ok {
+-		t.Errorf("span %q: missing attribute %q", span.Name(), key)
++		t.Errorf("span %q: missing attribute %q", span.DisplayName, key)
+ 		return
+ 	}
+ 	if got != want {
+-		t.Errorf("span %q: %s = %q, want %q", span.Name(), key, got, want)
++		t.Errorf("span %q: %s = %q, want %q", span.DisplayName, key, got, want)
+ 	}
+ }
+ 
+```
+
+**File**: `go/core/action_test.go` (modified, +20/-11)
+```diff
+@@ -28,6 +28,7 @@ import (
+ 	"github.com/firebase/genkit/go/core/status"
+ 	"github.com/firebase/genkit/go/core/tracing"
+ 	"github.com/firebase/genkit/go/internal/registry"
++	"github.com/firebase/genkit/go/internal/tracingtest"
+ )
+ 
+ func inc(_ context.Context, x int, _ noStream) (int, error) {
+@@ -201,25 +202,33 @@ func TestActionStreaming(t *testing.T) {
+ 
+ func TestActionTracing(t *testing.T) {
+ 	r := registry.New()
+-	tc := tracing.NewTestOnlyTelemetryClient()
+-	tracing.WriteTelemetryImmediate(tc)
++	// An isolated client, so the assertions hold under -count=N.
++	tc := tracingtest.Capture(t)
+ 	name := api.NewName("test", "TestTracing-inc")
+ 	a := defineStreamingAction(r, name, api.ActionTypeCustom, nil, nil, inc)
+ 	if _, err := a.Run(context.Background(), 3, nil); err != nil {
+ 		t.Fatal(err)
+ 	}
+-	// The same trace store is used for all tests, so there might be several traces.
+-	// Look for this one, which has a unique name.
++	if len(tc.Traces) != 1 {
++		t.Fatalf("got %d traces, want 1", len(tc.Traces))
++	}
+ 	for _, td := range tc.Traces {
+-		if td.DisplayName == name {
+-			// Spot check: expect a single span.
+-			if g, w := len(td.Spans), 1; g != w {
+-				t.Errorf("got %d spans, want %d", g, w)
+-			}
+-			return
++		if len(td.Spans) != 1 {
++			t.Fatalf("got %d spans, want 1", len(td.Spans))
++		}
++		var span *tracing.SpanData
++		for _, s := range td.Spans {
++			span = s
++		}
++		// The root span sets the trace envelope.
++		if td.DisplayName != name {
++			t.Errorf("trace DisplayName = %q, want %q", td.DisplayName, name)
++		}
++		if td.StartTime != span.StartTime || td.EndTime != span.EndTime || td.EndTime == 0 {
++			t.Errorf("trace times = [%v, %v], want the root span's [%v, %v]",
++				td.StartTime, td.EndTime, span.StartTime, span.EndTime)
+ 		}
+ 	}
+-	t.Fatalf("did not find trace named %q", name)
+ }
+ 
+ func TestNewAction(t *testing.T) {
 ```
 
 ---
 
-### Incident Patch 2: `57f2a110` (2026-10-12)
-**Commit Message**: fix(go/tracing): attribute a failure only to the span it originates from (#6477)
+### Incident Patch 2: `5e2847c6` (2026-10-19)
+**Commit Message**: fix(go/genkit): send structured errors and keep internal text out of served agents (#6749)
 
-Co-authored-by: Alex Pascal <[REDACTED_EMAIL]>
-
-**File**: `go/core/tracing/tracing.go` (modified, +67/-34)
+**File**: `go/ai/exp/agent.go` (modified, +36/-10)
 ```diff
-@@ -19,10 +19,11 @@ package tracing
+@@ -45,6 +45,7 @@ import (
+ 	"github.com/firebase/genkit/go/core/tracing"
+ 	"github.com/firebase/genkit/go/internal/base"
+ 	"github.com/firebase/genkit/go/internal/genkitbridge"
++	"github.com/firebase/genkit/go/internal/wire"
+ )
+ 
+ // --- Heartbeat ---
+@@ -1186,6 +1187,7 @@ func newCustomAgent[State any](
+ 	if cfg.description != "" {
+ 		metadata["description"] = cfg.description
+ 	}
++	key := api.KeyFromName(api.ActionTypeAgent, name)
+ 	action := core.NewBidiActionOf(api.ActionTypeAgent, name,
+ 		&core.BidiActionOptions{Metadata: metadata},
+ 		func(
+@@ -1201,6 +1203,10 @@ func newCustomAgent[State any](
+ 			if cfg.contextFunc != nil {
+ 				ctx = cfg.contextFunc(ctx)
+ 			}
++			// A transport serving this agent to a client marks ctx (see
++			// genkit.Handler); the output it returns then keeps internal
++			// error text off the wire.
++			served := wire.ServesAction(ctx, key)
+ 			rt, err := newAgentRuntime(ctx, name, cfg, in, inCh, outCh)
+ 			if err != nil {
+ 				// Init failures (a rejected init payload, a failed
+@@ -1211,7 +1217,11 @@ func newCustomAgent[State any](
+ 				// snapshot.
+ 				return nil, err
+ 			}
+-			return rt.run(ctx, fn)
++			out, err := rt.run(ctx, fn)
++			if served && out != nil {
++				out.Error = clientSafeError(out.Error)
++			}
++			return out, err
+ 		})
+ 
+ 	getSnapshot, wait, abort := newSnapshotActions(name, cfg.store, cfg.transform, cfg.maxSnapshotWait)
+@@ -1817,6 +1827,22 @@ func convertKeepText(cause error) *status.Error {
+ 	return e
+ }
+ 
++// clientSafeError returns e as a client of a served agent may see it, under
++// the policy the HTTP handler applies to the errors it returns
++// ([wire.ClientMessage]): unchanged when the client may see its text, and
++// otherwise with the generic message for its status and no details. The full
++// error stays in the store and in this process.
++func clientSafeError(e *status.Error) *status.Error {
++	if e == nil {
++		return nil
++	}
++	msg, own := wire.ClientMessage(e)
++	if own {
++		return e
++	}
++	return &status.Error{Status: e.Status, Message: msg}
++}
++
+ // callerStopped reports whether the invocation ended because the caller
+ // stopped it rather than because something inside it broke. Two roads reach
+ // the same place:
+@@ -2224,7 +2250,7 @@ func loadSession[State any](
+ 	}
+ 
+ 	if init.State != nil && (init.SessionID != "" || init.SnapshotID != "") {
+-		return nil, nil, status.Errorf(status.ErrInvalidArgument,
++		return nil, nil, status.PublicErrorf(status.ErrInvalidArgument,
+ 			"state is mutually exclusive with session ID and snapshot ID; a client-managed conversation's identity rides inside the state (SessionState.SessionID)")
+ 	}
+ 
+@@ -2263,8 +2289,8 @@ func loadSession[State any](
+ 		// conversation the snapshot belongs to; a mismatch means the
+ 		// caller would silently continue the wrong conversation.
+ 		if init.SessionID != "" && snap.SessionID != init.SessionID {
+-			return nil, nil, status.Errorf(status.ErrInvalidArgument,
+-				"snapshot %q does not belong to session %q (snapshot's session: %q)", init.SnapshotID, init.SessionID, snap.SessionID)
++			return nil, nil, status.PublicErrorf(status.ErrInvalidArgument,
++				"snapshot %q does not belong to session %q", init.SnapshotID, init.SessionID)
+ 		}
+ 		return resumeSessionFrom(s, snap)
+ 
+@@ -3048,15 +3074,15 @@ func validateUserMessage(m *ai.Message) error {
+ 		return nil
+ 	}
+ 	if m.Role != "" && m.Role != ai.RoleUser {
+-		return status.Errorf(status.ErrInvalidArgument,
++		return status.PublicErrorf(status.ErrInvalidArgument,
+ 			"agent input message must have role %q, got %q", ai.RoleUser, m.Role)
+ 	}
+ 	for _, p := range m.Content {
+ 		if p == nil {
+ 			continue
+ 		}
+ 		if p.IsToolRequest() || p.IsToolResponse() {
+-			return status.Errorf(status.ErrInvalidArgument,
++			return status.PublicErrorf(status.ErrInvalidArgument,
+ 				"agent input message must not contain tool request or response parts; use AgentInput.Resume instead")
+ 		}
+ 	}
+@@ -3135,12 +3161,12 @@ func ValidateResumeAgainstHistory(resume *ToolResume, history []*ai.Message) err
+ 	unresolved := func(field, name, ref string) error {
+ 		for i := pending - 1; i >= 0; i-- {
+ 			if findIn(i, name, ref) != nil {
+-				return status.Errorf(status.ErrInvalidArgument,
++				return status.PublicErrorf(status.ErrInvalidArgument,
+ 					"resume.%s references tool %q%s from an earlier turn which is no longer pending; only tool requests from the most recent model response can be resumed",
+ 					field, name, toolRefSuffix(ref))
+ 			}
+ 		}
+-		return status.Errorf(status.ErrInvalidArgument,
++		return status.PublicErrorf(status.ErrInvalidArgument,
+ 			"resume.%s references tool %q%s which was not found in session history",
+ 			field, name, toolRefSuffix(ref))
+ 	}
+@@ -3162,7 +3188,7 @@ func ValidateResumeAgainstHistory(resume *ToolResume, history []*ai.Message) err
+ 			return unresolved("restart", req.Name, req.Ref)
+ 		}
+ 		if !jsonEqual(normalizeJSON(restartOriginalInput(p)), normalizeJSON(match.Input)) {
+-			return status.Errorf(status.ErrInvalidArgum
+```
+
+**File**: `go/ai/exp/session.go` (modified, +24/-7)
+```diff
+@@ -30,6 +30,7 @@ import (
+ 	"github.com/firebase/genkit/go/core/logger"
+ 	"github.com/firebase/genkit/go/core/status"
+ 	"github.com/firebase/genkit/go/internal/base"
++	"github.com/firebase/genkit/go/internal/wire"
+ )
+ 
+ // --- Snapshot ---
+@@ -323,8 +324,8 @@ func readSnapshot[State any](
+ 			return nil, status.PublicErrorf(ErrSnapshotNotFound, "%s: snapshot %q not found", op, snapshotID)
+ 		}
+ 		if sessionID != "" && snap.SessionID != sessionID {
+-			return nil, status.Errorf(status.ErrInvalidArgument,
+-				"%s: snapshot %q does not belong to session %q (snapshot's session: %q)", op, snapshotID, sessionID, snap.SessionID)
++			return nil, status.PublicErrorf(status.ErrInvalidArgument,
++				"%s: snapshot %q does not belong to session %q", op, snapshotID, sessionID)
+ 		}
+ 	} else {
+ 		if metadataOnly {
+@@ -671,13 +672,16 @@ func newSnapshotActions[State any](
+ 	if maxWait <= 0 {
+ 		maxWait = defaultMaxSnapshotWait
+ 	}
++	getSnapshotKey := api.KeyFromName(api.ActionTypeAgentSnapshot, agentName)
++	waitKey := api.KeyFromName(api.ActionTypeAgentWait, agentName)
+ 	getSnapshotAction := core.NewActionOf(api.ActionTypeAgentSnapshot, agentName, nil,
+ 		func(ctx context.Context, req *GetSnapshotRequest) (*SessionSnapshot[State], error) {
+ 			if req == nil || (req.SnapshotID == "" && req.SessionID == "") {
+-				return nil, status.Errorf(status.ErrInvalidArgument, "getSnapshot: snapshotId or sessionId is required")
++				return nil, status.PublicErrorf(status.ErrInvalidArgument, "getSnapshot: snapshotId or sessionId is required")
+ 			}
+ 
+-			return readSnapshot(ctx, store, transform, "getSnapshot", req.SnapshotID, req.SessionID, req.MetadataOnly)
++			snap, err := readSnapshot(ctx, store, transform, "getSnapshot", req.SnapshotID, req.SessionID, req.MetadataOnly)
++			return servedSnapshot(ctx, getSnapshotKey, snap), err
+ 		})
+ 
+ 	// waitForSnapshot takes getSnapshot's request, so a caller switching from
+@@ -691,9 +695,10 @@ func newSnapshotActions[State any](
+ 	waitAction := core.NewActionOf(api.ActionTypeAgentWait, agentName, nil,
+ 		func(ctx context.Context, req *GetSnapshotRequest) (*SessionSnapshot[State], error) {
+ 			if req == nil || req.SnapshotID == "" {
+-				return nil, status.Errorf(status.ErrInvalidArgument, "waitForSnapshot: snapshotId is required")
++				return nil, status.PublicErrorf(status.ErrInvalidArgument, "waitForSnapshot: snapshotId is required")
+ 			}
+-			return waitSnapshot(ctx, store, transform, "waitForSnapshot", req.SnapshotID, req.SessionID, maxWait)
++			snap, err := waitSnapshot(ctx, store, transform, "waitForSnapshot", req.SnapshotID, req.SessionID, maxWait)
++			return servedSnapshot(ctx, waitKey, snap), err
+ 		})
+ 
+ 	if _, ok := store.(SnapshotSubscriber); !ok {
+@@ -704,7 +709,7 @@ func newSnapshotActions[State any](
+ 	abortAction := core.NewActionOf(api.ActionTypeAgentAbort, agentName, nil,
+ 		func(ctx context.Context, req *AgentAbortRequest) (*AgentAbortResponse, error) {
+ 			if req == nil || req.SnapshotID == "" {
+-				return nil, status.Errorf(status.ErrInvalidArgument, "abort: snapshotId is required")
++				return nil, status.PublicErrorf(status.ErrInvalidArgument, "abort: snapshotId is required")
+ 			}
+ 			// Aborting is an ordinary SaveSnapshot that flips a pending row to
+ 			// aborting; the store has no dedicated abort method.
+@@ -720,6 +725,18 @@ func newSnapshotActions[State any](
+ 	return getSnapshotAction, waitAction, abortAction
+ }
+ 
++// servedSnapshot returns snap as the companion action keyed key returns it:
++// with its error redacted by [clientSafeError] when a transport serves the
++// action to a client, and unchanged otherwise. snap may be nil.
++func servedSnapshot[State any](ctx context.Context, key string, snap *SessionSnapshot[State]) *SessionSnapshot[State] {
++	if snap == nil || snap.Error == nil || !wire.ServesAction(ctx, key) {
++		return snap
++	}
++	shaped := *snap
++	shaped.Error = clientSafeError(snap.Error)
++	return &shaped
++}
++
+ // --- Session ---
+ 
+ // Session holds conversation state and provides thread-safe read/write
+```
+
+**File**: `go/genkit/exp/routes.go` (modified, +3/-0)
+```diff
+@@ -107,6 +107,9 @@ func AllAgentRoutes(g *genkit.Genkit) []Route {
+ // the same as the reflection API. Companion routes are omitted for
+ // capabilities the agent lacks; a client-managed agent contributes only
+ // its turn route.
++//
++// Each route serves through [genkit.Handler], so the errors in the agent's
++// outputs and snapshots reach clients under its error policy.
+ func AgentRoutes[State any](a *aix.Agent[State]) []Route {
+ 	return buildAgentRoutes(a.Name(), a, a.GetSnapshotAction(), a.WaitForSnapshotAction(), a.AbortAction())
+ }
+```
+
+**File**: `go/genkit/servers.go` (modified, +42/-65)
+```diff
+@@ -36,6 +36,7 @@ import (
+ 	"github.com/firebase/genkit/go/core/logger"
+ 	"github.com/firebase/genkit/go/core/status"
+ 	"github.com/firebase/genkit/go/core/x/streaming"
++	"github.com/firebase/genkit/go/internal/wire"
+ )
+ 
+ // HandlerOption configures a Handler.
+@@ -90,6 +91,13 @@ func WithStreamManager(manager streaming.StreamManager) HandlerOption {
+ // The provided HandlerOptions are applied during construction. If any option
+ // fails to apply, Handler panics.
+ //
++// A failure is sent as a JSON {"status", "message"} body. Outside the dev
++// environment, an error not made with [status.PublicErrorf] goes out with the
++// generic message for its status, so internal text stays in the server log.
++// An agent served by Handler gets the same treatment for the errors in its
++// outputs and snapshots; an agent run any other way, such as from a handler of
++// your own that calls it, returns them unchanged.
++//
+ // Example:
+ //
+ //	genkit.Handler(
+@@ -166,8 +174,7 @@ func wrapHandler(h func(http.ResponseWriter, *http.Request) error) http.HandlerF
+ 		}()
+ 
+ 		if err = h(w, r); err != nil && !clientDisconnected(ctx, err) {
+-			msg, code := clientError(err)
+-			http.Error(w, msg, code.HTTPCode())
++			writeErrorResponse(w, err)
+ 		}
+ 	}
+ }
+@@ -187,14 +194,9 @@ func clientDisconnected(ctx context.Context, err error) bool {
+ //
+ // The status always comes from the error, so an error deliberately marked
+ // public reaches the client with its own code rather than falling through to
+-// 500. The message only leaves the process when the error was built with
+-// [status.PublicErrorf]; anything else becomes a generic string derived from
+-// the status, so schema dumps, provider text, and internal identifiers stay
+-// server-side. The full error is still logged server-side: by wrapHandler for
+-// request failures, and by the streaming runners for mid-stream flow failures.
+-//
+-// GENKIT_ENV=dev is exempt: suppressing the message during local development
+-// only hides the failure from the developer causing it.
++// 500. The message follows [wire.ClientMessage]. The full error is still
++// logged server-side: by wrapHandler for request failures, and by the
++// streaming runners for mid-stream flow failures.
+ func clientError(err error) (string, status.Name) {
+ 	code := status.Of(err)
+ 	// Only reached on a failure path, so an error that classifies as OK is
+@@ -204,25 +206,22 @@ func clientError(err error) (string, status.Name) {
+ 	if code == status.OK {
+ 		code = status.Internal
+ 	}
+-	msg, public := status.PublicMessage(err)
+-	if !public && api.CurrentEnvironment() == api.EnvironmentDev {
+-		msg = err.Error()
+-	}
++	msg, _ := wire.ClientMessage(err)
+ 	return msg, code
+ }
+ 
+ // handler returns an HTTP handler function that serves the action with the provided options.
+ // Streaming responses are written in server-sent events (SSE) format.
+ func handler(a api.Action, opts *handlerOptions) func(http.ResponseWriter, *http.Request) error {
+-	return func(w http.ResponseWriter, r *http.Request) error {
+-		if a == nil {
++	if a == nil {
++		return func(http.ResponseWriter, *http.Request) error {
+ 			return errors.New("action is nil; cannot serve")
+ 		}
++	}
++	key := a.Desc().Key
++	return func(w http.ResponseWriter, r *http.Request) error {
+ 
+-		var body struct {
+-			Data json.RawMessage `json:"data"`
+-			Init json.RawMessage `json:"init,omitempty"` // Per-session init for bidi actions; rejected otherwise.
+-		}
++		var body wire.Request
+ 		if r.Body != nil && r.ContentLength > 0 {
+ 			defer r.Body.Close()
+ 			if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+@@ -255,6 +254,9 @@ func handler(a api.Action, opts *handlerOptions) func(http.ResponseWriter, *http
+ 		if err != nil {
+ 			return err
+ 		}
++		// Tell the action it is serving a client over the wire, so it can
++		// shape what it returns (an agent redacts internal error text).
++		ctx = wire.WithServedAction(ctx, key)
+ 
+ 		if stream {
+ 			streamID := r.Header.Get("X-Genkit-Stream-Id")
+@@ -471,33 +473,21 @@ func subscribeToStream(ctx context.Context, w http.ResponseWriter, sm streaming.
+ 	return nil
+ }
+ 
+-// flowResultResponse wraps a final action result for JSON serialization.
+-type flowResultResponse struct {
+-	Result json.RawMessage `json:"result"`
+-}
+-
+-// flowMessageResponse wraps a streaming chunk for JSON serialization.
+-type flowMessageResponse struct {
+-	Message json.RawMessage `json:"message"`
+-}
+-
+-// flowErrorResponse wraps an error for JSON serialization in streaming responses.
+-type flowErrorResponse struct {
+-	Error *flowError `json:"error"`
+-}
+-
+-// flowError represents the error payload in a streaming error response.
+-//
+-// It carries no details field: it used to hold the full err.Error() text, which
+-// put internal failure detail on the wire on every streamed error.
+-type flowError struct {
+-	Status  status.Name `json:"status"`
+-	Message string      `json:"message"`
++// writeErrorResponse writes err as a non-streaming error response: a JSON
++// [wire.Error]
+```
+
+**File**: `go/genkit/servers_agent_test.go` (modified, +55/-0)
+```diff
+@@ -35,6 +35,7 @@ import (
+ 	aix "github.com/firebase/genkit/go/ai/exp"
+ 	"github.com/firebase/genkit/go/ai/exp/localstore"
+ 	"github.com/firebase/genkit/go/core"
++	"github.com/firebase/genkit/go/core/api"
+ 	"github.com/firebase/genkit/go/genkit"
+ 	"github.com/firebase/genkit/go/genkit/exp"
+ )
+@@ -232,6 +233,43 @@ func TestHandlerAgent(t *testing.T) {
+ 		}
+ 	})
+ 
++	t.Run("served failure hides internal error text", func(t *testing.T) {
++		// Dev keeps the full text for the Dev UI; this pins production.
++		t.Setenv("GENKIT_ENV", "prod")
++		code, body := post(t, "agentServer", turn("fail"), false)
++		if code != http.StatusOK {
++			t.Fatalf("status = %d, want 200; body = %s", code, body)
++		}
++		res := parseResult(t, body)
++		if res.Error == nil || res.Error.Status != "RESOURCE_EXHAUSTED" {
++			t.Fatalf("error = %+v, want RESOURCE_EXHAUSTED", res.Error)
++		}
++		if strings.Contains(res.Error.Message, "model on fire") {
++			t.Errorf("served output error = %q, leaks the internal text", res.Error.Message)
++		}
++
++		// The failed turn's snapshot, read through the getSnapshot route.
++		snapAction := genkit.LookupAction(g, api.KeyFromName(api.ActionTypeAgentSnapshot, "agentServer"))
++		req := httptest.NewRequest("POST", "/", strings.NewReader(`{"data":{"snapshotId":"`+res.SnapshotID+`"}}`))
++		req.Header.Set("Content-Type", "application/json")
++		w := httptest.NewRecorder()
++		genkit.Handler(snapAction)(w, req)
++		snapBody, _ := io.ReadAll(w.Result().Body)
++		if strings.Contains(string(snapBody), "model on fire") || !strings.Contains(string(snapBody), "RESOURCE_EXHAUSTED") {
++			t.Errorf("served snapshot = %s, want the status without the internal text", snapBody)
++		}
++
++		// The redaction belongs to the wire: a caller in this process keeps
++		// the full text.
++		out, err := exp.LookupAgent(g, "agentServer").RunText(context.Background(), "fail")
++		if err != nil {
++			t.Fatalf("RunText: %v", err)
++		}
++		if out.Error == nil || !strings.Contains(out.Error.Message, "model on fire") {
++			t.Errorf("in-process output error = %+v, want the full text", out.Error)
++		}
++	})
++
+ 	t.Run("missing turn message fails before model invocation", func(t *testing.T) {
+ 		before := modelCalls.Load()
+ 		code, body := post(t, "agentClient", `{"data":{}}`, false)
+@@ -283,6 +321,23 @@ func TestHandlerAgent(t *testing.T) {
+ 		}
+ 	})
+ 
++	t.Run("served refusals name the caller's input, not the agent's setup", func(t *testing.T) {
++		t.Setenv("GENKIT_ENV", "prod")
++		_, body := post(t, "agentServer", turnWithInit("hi", `{"state":{"messages":[]}}`), false)
++		if !strings.Contains(body, "FAILED_PRECONDITION") || strings.Contains(body, "session store") {
++			t.Errorf("state on server-managed: body = %s, want the status without the store setup", body)
++		}
++
++		snapAction := genkit.LookupAction(g, api.KeyFromName(api.ActionTypeAgentSnapshot, "agentServer"))
++		req := httptest.NewRequest("POST", "/", strings.NewReader(`{"data":{}}`))
++		req.Header.Set("Content-Type", "application/json")
++		w := httptest.NewRecorder()
++		genkit.Handler(snapAction)(w, req)
++		if b, _ := io.ReadAll(w.Result().Body); !strings.Contains(string(b), "snapshotId or sessionId is required") {
++			t.Errorf("getSnapshot without an ID: body = %s, want the missing field named", b)
++		}
++	})
++
+ 	t.Run("streaming turn delivers chunks then result", func(t *testing.T) {
+ 		code, body := post(t, "agentClient", turn("stream"), true)
+ 		if code != http.StatusOK {
+```
+
+**File**: `go/genkit/servers_test.go` (modified, +24/-5)
+```diff
+@@ -18,6 +18,7 @@ package genkit
  
  import (
  	"context"
--	"errors"
- 	"log/slog"
- 	"os"
-+	"reflect"
- 	"runtime"
-+	"slices"
- 	"strings"
- 	"sync"
- 	"time"
-@@ -37,38 +38,46 @@ import (
- 	"go.opentelemetry.io/otel/trace"
++	"encoding/json"
+ 	"errors"
+ 	"fmt"
+ 	"io"
+@@ -31,7 +32,9 @@ import (
+ 
+ 	"github.com/firebase/genkit/go/core"
+ 	"github.com/firebase/genkit/go/core/api"
++	"github.com/firebase/genkit/go/core/status"
+ 	"github.com/firebase/genkit/go/core/x/streaming"
++	"github.com/firebase/genkit/go/internal/wire"
  )
  
--// markedError wraps an error to track if it's already been marked as a failure source
--type markedError struct {
--	error
--	marked bool
--}
--
--func (e *markedError) Error() string {
--	return e.error.Error()
--}
--
--func (e *markedError) Unwrap() error {
--	return e.error
--}
--
--// markErrorAsHandled marks an error as already handled for failure source tracking
--func markErrorAsHandled(err error) error {
--	var me *markedError
--	if errors.As(err, &me) {
--		me.marked = true
--		return me
-+// isDerivedFrom reports whether err only propagates causes, the errors that
-+// failing child spans returned. A wrapper chain is derived when some error in it
-+// is one of the causes. A multi-error node (errors.Join) is derived only when
-+// every branch is, so a span that joins its own failure with a child's is still
-+// a failure source. A cause of a non-comparable type matches only through an Is
-+// method, so it errs toward attributing the failure to more spans, never fewer.
-+func isDerivedFrom(err error, causes []error) bool {
-+	for err != nil {
-+		for _, c := range causes {
-+			if isComparable(c) && err == c {
-+				return true
-+			}
-+			if x, ok := err.(interface{ Is(error) bool }); ok && x.Is(c) {
-+				return true
-+			}
-+		}
-+		switch x := err.(type) {
-+		case interface{ Unwrap() error }:
-+			err = x.Unwrap()
-+		case interface{ Unwrap() []error }:
-+			errs := x.Unwrap()
-+			if len(errs) == 0 {
-+				return false
-+			}
-+			for _, e := range errs {
-+				if !isDerivedFrom(e, causes) {
-+					return false
-+				}
-+			}
-+			return true
-+		default:
-+			return false
-+		}
- 	}
--
--	return &markedError{error: err, marked: true}
-+	return false
- }
- 
--// isErrorAlreadyMarked checks if an error has already been marked as a failure source
--func isErrorAlreadyMarked(err error) bool {
--	var me *markedError
--	if errors.As(err, &me) {
--		return me.marked
--	}
--	return false
-+// isComparable reports whether err can be compared with == without panicking.
-+func isComparable(err error) bool {
-+	return reflect.TypeOf(err).Comparable()
- }
- 
- // captureStackTrace captures the current Go stack trace for error reporting
-@@ -329,10 +338,16 @@ func RunInNewSpan[I, O any](
- 	if err != nil {
- 		sm.State = spanStateError
- 		sm.Error = err.Error()
--		sm.IsFailureSource = true
--		if !isErrorAlreadyMarked(err) {
--			span.RecordError(err)
--			span.SetStatus(codes.Error, err.Error())
-+		span.SetStatus(codes.Error, err.Error())
-+		span.RecordError(err)
-+		// Only the span where an error originates is its failure source, not
-+		// every span that returns it on the way up; otherwise one failure is
-+		// counted once per enclosing span in monitoring. Attribution is kept on
-+		// the spans rather than on the error, so callers get back exactly the
-+		// error they returned.
-+		sm.IsFailureSource = !isDerivedFrom(err, sm.childErrors())
-+		if parentSM != nil {
-+			parentSM.addChildError(err)
+ func FakeContextProvider(ctx context.Context, req core.RequestData) (core.ActionContext, error) {
+@@ -127,9 +130,15 @@ func TestHandler(t *testing.T) {
+ 			t.Errorf("want status code %d for INVALID_ARGUMENT, got %d", http.StatusBadRequest, resp.StatusCode)
  		}
- 		// A failure can still carry a result: the generate loop returns the
- 		// conversation it completed alongside its error. Record it so the
-@@ -418,6 +433,24 @@ type spanMetadata struct {
- 	Type            string            // span type (action, flow, model, etc.)
- 	Subtype         string            // span subtype (tool, model, flow, etc.)
- 	Metadata        map[string]string // additional custom metadata
-+
-+	mu        sync.Mutex
-+	childErrs []error // errors returned by failing child spans, guarded by mu
-+}
-+
-+// addChildError records err as returned by a failing child span. Child spans
-+// can run concurrently (parallel tool calls), hence the lock.
-+func (sm *spanMetadata) addChildError(err error) {
-+	sm.mu.Lock()
-+	defer sm.mu.Unlock()
-+	sm.childErrs = append(sm.childErrs, err)
-+}
-+
-+// childErrors returns the errors recorded by addChildError.
-+func (sm *spanMetadata) childErrors() []error {
-+	sm.mu.Lock()
-+	defer sm.mu.Unlock()
-+	return slices.Clone(sm.childErrs)
- }
  
- // ioAttrJSON returns the JSON encoding of v for the genkit:input, genkit:init,
+-		// The generic label for the status, not the flow's own text.
+-		if got, want := strings.TrimSpace(string(body)), "invalid argument"; got != want {
+-			t.Errorf("body = %q, want the generic %q", got, want)
++		// A JSON body naming the status, the format JS servers send and the
++		// remote agent client reads: an HTTP 400 alone does not say which
++		// status it was. The message is the generic label for the status,
++		// not the flow's own text.
++		if ct := resp.Header.Get("Content-Type"); ct != "application/json" {
++			t.Errorf("Content-Type = %q, want application/json", ct)
++		}
++		if got, want := decodeErrorBody(t, body), (wire.Error{Status: status.InvalidArgument, Message: "invalid argument"}); got != want {
++			t.Errorf("body = %+v, want %+v", got, want)
+ 		}
+ 	})
+ 
+@@ -170,8 +179,8 @@ func TestHandler(t *testing.T) {
+ 			t.Errorf("want status code %d for PERMISSION_DENIED, got %d", http.StatusForbidden, resp.StatusCode)
+ 		}
+ 
+-		if got, want := strings.TrimSpace(string(body)), "permission denied"; got != want {
+-			t.Errorf("body = %q, want the generic %q", got, want)
++		if got, want := decodeErrorBody(t, body).Message, "permission denied"; got != want {
++			t.Errorf("message = %q, want the generic %q", got, want)
+ 		}
+ 		if strings.Contains(string(body), "acme-prod") {
+ 			t.Errorf("internal detail leaked to client: %q", string(body))
+@@ -835,3 +844,13 @@ func TestHandlerBidiInitEnvelope(t *testing.T) {
+ 		}
+ 	})
+ }
++
++// decodeErrorBody decodes a non-streaming error response body.
++func decodeErrorBody(t *testing.T, body []byte) wire.Error {
++	t.Helper()
++	var e wire.Error
++	if err := json.Unmarshal(body, &e); err != nil {
++		t.Fatalf("error body %q is not a JSON wire error: %v", body, err)
++	}
++	return e
++}
 ```
 
-**File**: `go/core/tracing/tracing_test.go` (modified, +168/-0)
+**File**: `go/internal/wire/wire.go` (added, +104/-0)
 ```diff
-@@ -22,9 +22,13 @@ import (
- 	"fmt"
- 	"slices"
- 	"strconv"
-+	"strings"
-+	"sync"
- 	"testing"
- 
- 	"go.opentelemetry.io/otel/attribute"
-+	"go.opentelemetry.io/otel/codes"
-+	"go.opentelemetry.io/otel/sdk/trace/tracetest"
- )
- 
- // TODO: add tests that compare tracing data saved to disk with goldens.
-@@ -654,6 +658,170 @@ func TestIsFailureSourceOnError(t *testing.T) {
- 	}
- }
- 
-+// TestIsFailureSourceOnlyOnOriginatingSpan verifies that a failure is attributed
-+// to the span where the error originates rather than to every span that
-+// propagates it, while all of them still report the error and receive it
-+// unchanged.
-+func TestIsFailureSourceOnlyOnOriginatingSpan(t *testing.T) {
-+	ctx := context.Background()
-+	boom := errors.New("boom")
-+	recorder := tracetest.NewSpanRecorder()
-+	tp := TracerProvider()
-+	tp.RegisterSpanProcessor(recorder)
-+	t.Cleanup(func() { tp.UnregisterSpanProcessor(recorder) })
+@@ -0,0 +1,104 @@
++// Copyright 2026 Google LLC
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++//
++// SPDX-License-Identifier: Apache-2.0
 +
-+	var outerSM, middleSM, innerSM *spanMetadata
++// Package wire holds the HTTP wire format that the action handler (package
++// genkit) serves and the remote agent client (package ai/exp) speaks, so the
++// two sides share one definition and cannot drift apart.
++//
++// A request is a POST whose body is a [Request]. A non-streaming response is a
++// [ResultResponse] on success and an [Error] on failure, with the HTTP status
++// mapped from the error's status. A streaming response is server-sent events,
++// one "data: " line per event: a [MessageResponse] per chunk, then one
++// [ResultResponse] or [ErrorResponse].
++package wire
 +
-+	_, err := RunInNewSpan(ctx, &SpanMetadata{Name: "outer", Type: "action", Subtype: "flow"}, "in",
-+		func(ctx context.Context, in string) (string, error) {
-+			outerSM = spanMetaKey.FromContext(ctx)
-+			return RunInNewSpan(ctx, &SpanMetadata{Name: "middle", Type: "action"}, in,
-+				func(ctx context.Context, in string) (string, error) {
-+					middleSM = spanMetaKey.FromContext(ctx)
-+					out, err := RunInNewSpan(ctx, &SpanMetadata{Name: "inner", Type: "action", Subtype: "tool"}, in,
-+						func(ctx context.Context, in string) (string, error) {
-+							innerSM = spanMetaKey.FromContext(ctx)
-+							return "", boom
-+						})
-+					if err != boom {
-+						t.Errorf("parent span received %#v from its child, want %#v", err, boom)
-+					}
-+					return out, err
-+				})
-+		})
++import (
++	"context"
++	"encoding/json"
 +
-+	if err != boom {
-+		t.Errorf("outermost span returned %#v, want %#v", err, boom)
-+	}
-+	if !innerSM.IsFailureSource {
-+		t.Error("originating span is not marked as the failure source")
-+	}
-+	for _, sm := range []*spanMetadata{middleSM, outerSM} {
-+		if sm.IsFailureSource {
-+			t.Errorf("span %q only propagated the failure but is marked as its source", sm.Name)
-+		}
-+		if sm.State != spanStateError {
-+			t.Errorf("span %q state = %q, want %q", sm.Name, sm.State, spanStateError)
-+		}
-+	}
-+	spans := recorder.Ended()
-+	if len(spans) != 3 {
-+		t.Fatalf("recorded %d spans, want 3", len(spans))
-+	}
-+	for _, span := range spans {
-+		if status := span.Status(); status.Code != codes.Error || status.Description != boom.Error() {
-+			t.Errorf("span %q status = %v, want Error with description %q", span.Name(), status, boom.Error())
-+		}
-+		if events := span.Events(); len(events) != 1 || events[0].Name != "exception" {
-+			t.Errorf("span %q events = %v, want one exception event", span.Name(), events)
-+		}
-+	}
++	"github.com/firebase/genkit/go/core/api"
++	"github.com/firebase/genkit/go/core/status"
++)
++
++// Request is the body of a POST to an action.
++type Request struct {
++	// Data is the action's input.
++	Data json.RawMessage `json:"data"`
++	// Init is the session init of a bidi action, and is rejected for any
++	// other action.
++	Init json.RawMessage `json:"init,omitempty"`
 +}
 +
-+// TestIsFailureSourceAttribution verifies which span is the failure source when
-+// a parent changes the error its child returned before returning it.
-+func TestIsFailureSourceAttribution(t *testing.T) {
-+	boom := errors.New("boom")
-+	cleanupErr := errors.New("cleanup failed")
-+	tests := []struct {
-+		name string
-+		// parent builds the error the parent span returns from the errors its
-+		// two child spans returned.
-+		parent     func(first, second error) error
-+		wantSource bool
-+	}{
-+		{
-+			name:       "wrapped child error",
-+			parent:     func(first, _ error) error { return fmt.Errorf("step failed: %w", first) },
-+			wantSource: false,
-+		},
-+		{
-+			name:       "joined child errors",
-+			parent:     func(first, second error) error { return errors.Join(first, second) },
-+			wantSource: false,
-+		},
-+		{
-+			name:       "own failure joined with a child error",
-+			parent:     func(first, _ error) error { return errors.Join(cleanupErr, first) },
-+			wantSource: true,
-+		},
-+		{
-+			name:       "unrelated error",
-+			parent:     func(error, error) error { return cleanupErr },
-+			wantSource: true,
-+		},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			var parentSM *spanMetadata
-+			RunInNewSpan(context.Background(), &SpanMetadata{Name: "parent"}, "in",
-+				func(ctx context.Context, in string) (string, error) {
-+					parentSM = spanMetaKey.FromContext(ctx)
-+					fail := func(ctx context.Context, in string) (string, error) { return "", boom }
-+					_, first := RunInNewSpan(ctx, &SpanMetadata{Name: "first"}, in, fail)
-+					_, second := RunInNewSpan(ctx, &SpanMetadata{Name: "second"}, in, fail)
-+					return "", tt.parent(first, second)
-+				})
-+			if parentSM.IsFailureSource != tt.wantSource {
-+				t.Errorf("parent IsFailureSource = %t, want %t", parentSM.IsFailureSource, tt.wantSource)
-+			}
-+		})
-+	}
++// ResultResponse carries an action's final result.
++type ResultResponse struct {
++	Result json.RawMessage `json:"result"`
 +}
 +
-+// TestIsFailureSourceForStoredError verifies that attribution is per trace: an
-+// error a child span returned in an earlier trace is attributed to the span
-+// that returns it again later, without its child failing.
-+func TestIsFailureSourceForStoredError(t *testing.T) {
-+	ctx := context.Background()
-+	var (
-+		once    sync.Once
-+		initErr error
-+	)
-+	step := func(ctx
++// MessageResponse carries one streamed chunk.
++type MessageResponse struct {
++	Message json.RawMessage `json:"message"`
++}
++
++// ErrorResponse carries the error that ended a stream.
++type ErrorResponse struct {
++	Error *Error `json:"error"`
++}
++
++// Error is a failure on the wire: the body of a non-streaming error response,
++// and the payload of a streaming one. It carries no details, so internal
++// failure text stays off the wire.
++type Error struct {
++	Status  status.Name `json:"status"`
++	Message string      `json:"message"`
++}
++
++// ClientMessage returns the message a client may see for err, and whether it
++// is err's own text. The text leaves the process only when err was built with
++// [status.PublicErrorf], or in the dev environment, where hiding a failure only
++// hides it from the developer causing it. Otherwise it is a generic message
++// derived from the status, so schema dumps, provider text, and internal
++// identifiers stay server-side.
++func ClientMessage(err error) (msg string, own bool) {
++	msg, public := status.PublicMessage(err)
++	switch {
++	case public:
++		return msg, true
++	case api.CurrentEnvironment() == api.EnvironmentDev:
++		return err.Error(), true
++	}
++	return msg, false
++}
++
++// SSEDataPrefix starts every server-sent event line the handler writes.
++const SSEDataPrefix = "data: "
++
++type servedActionKey struct{}
++
++// WithServedAction marks ctx as the context of a request that a transport
++// serves for the action with the given key. The action reads it with
++// [ServesAction] to shape what it returns for a client, such as redacting
++// internal error text. The mark names one action, so actions that the served
++// action calls in turn do not read it as their own.
++func WithServedAction(ctx context.Context, key string) context.Context {
++	return context.WithValue(ctx, servedActionKey{}, key)
++}
++
++// ServesAction reports whether ctx is the context of a transport serving the
++// action with the given key.
++func ServesAction(ctx context.Context, key string) bool {
++	k, _ := ctx.Value(servedActionKey{}).(string)
++	return k != "" && k == key
++}
 ```
 
 ---
 
-### Incident Patch 3: `14b2187a` (2026-10-12)
-**Commit Message**: fix(py)!: typed model config raises before the turn, not as a failed response (#6675)
+### Incident Patch 3: `7d0076d1` (2026-10-19)
+**Commit Message**: fix(go/plugins/postgresql)!: fix engine connection defects and leave a caller's pool open (#6812)
 
-**File**: `py/packages/genkit/src/genkit/_ai/_aio.py` (modified, +1/-0)
+**File**: `go/plugins/alloydb/engine.go` (modified, +9/-9)
 ```diff
-@@ -2086,6 +2086,7 @@ async def generate_operation(
-             raise GenkitError(
-                 status=cast(StatusName, response.error.status or 'INTERNAL'),
-                 message=response.error.message,
-+                details=response.error.details,
-                 reason=response.error.reason,
-             )
-         if not response.operation:
+@@ -25,6 +25,8 @@ import (
+ 	"golang.org/x/oauth2/google"
+ 	"google.golang.org/api/oauth2/v2"
+ 	"google.golang.org/api/option"
++
++	"github.com/firebase/genkit/go/plugins/internal/pgengine"
+ )
+ 
+ // IpType type of IP address, public or private
+@@ -101,15 +103,15 @@ func getUser(ctx context.Context, config engineConfig) (string, bool, error) {
+ 	}
+ 	if config.iamAccountEmail != "" {
+ 		// If iamAccountEmail is provided use it as user.
+-		return config.iamAccountEmail, true, nil
++		return pgengine.IAMUser(config.iamAccountEmail), true, nil
+ 	}
+ 	// If neither user and password nor iamAccountEmail are provided,
+ 	// retrieve IAM email from the environment.
+ 	serviceAccountEmail, err := getServiceAccountEmail(ctx)
+ 	if err != nil {
+ 		return "", false, fmt.Errorf("unable to retrieve service account email: %w", err)
+ 	}
+-	return serviceAccountEmail, true, nil
++	return pgengine.IAMUser(serviceAccountEmail), true, nil
+ 
+ }
+ 
+@@ -142,21 +144,19 @@ func getServiceAccountEmail(ctx context.Context) (string, error) {
+ 
+ // createPool creates a connection pool to the PostgreSQL database.
+ func createPool(ctx context.Context, cfg engineConfig, usingIAMAuth bool) (*pgxpool.Pool, error) {
++	config, err := pgengine.PoolConfig(cfg.user, cfg.password, cfg.database, usingIAMAuth)
++	if err != nil {
++		return nil, err
++	}
+ 	dialeropts := []alloydbconn.Option{alloydbconn.WithUserAgent(cfg.userAgents)}
+-	dsn := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable", cfg.user, cfg.password, cfg.database)
+ 	if usingIAMAuth {
+ 		dialeropts = append(dialeropts, alloydbconn.WithIAMAuthN())
+-		dsn = fmt.Sprintf("user=%s dbname=%s sslmode=disable", cfg.user, cfg.database)
+ 	}
++	// TODO(#6811): keep the dialer and close it when the engine closes.
+ 	d, err := alloydbconn.NewDialer(ctx, dialeropts...)
+ 	if err != nil {
+ 		return nil, fmt.Errorf("failed to initialize connection: %w", err)
+ 	}
+-
+-	config, err := pgxpool.ParseConfig(dsn)
+-	if err != nil {
+-		return nil, fmt.Errorf("failed to parse connection config: %w", err)
+-	}
+ 	instanceURI := fmt.Sprintf("projects/%s/locations/%s/clusters/%s/instances/%s", cfg.projectID, cfg.region, cfg.cluster, cfg.instance)
+ 	config.ConnConfig.DialFunc = func(ctx context.Context, _ string, _ string) (net.Conn, error) {
+ 		if cfg.ipType == PRIVATE {
 ```
 
-**File**: `py/packages/genkit/src/genkit/_ai/_generate.py` (modified, +8/-2)
+**File**: `go/plugins/alloydb/engine_test.go` (modified, +8/-0)
 ```diff
-@@ -38,6 +38,8 @@
-     ModelRequest,
-     ModelResponse,
-     ModelResponseChunk,
-+    annotated_config_class,
-+    check_config_before_turn,
-     resolve_model_name,
-     text_from_content,
- )
-@@ -90,7 +92,6 @@
-     Part,
-     as_message,
-     chunk_for_stream,
--    declared_config_type,
-     reject_config_api_key,
-     reject_unanswered_interrupts,
- )
-@@ -783,6 +784,11 @@ async def run_generate(
-     # reflection) starts here, so it fails before middleware or the model runs.
-     reject_config_api_key(options.config)
-     registry = scope.registry
-+    # Config values the model's ModelRequest[...] class or JSON-schema
-+    # config_schema= rejects raise here, before any hook runs, for every entry
-+    # point (ai.generate, prompts, generate_operation, /util/generate).
-+    if options.model:
-+        await check_config_before_turn(model=options.model, config=options.config, registry=registry)
+@@ -130,6 +130,14 @@ func TestGetUser(t *testing.T) {
+ 			wantIAMAuth: true,
+ 			wantErr:     false,
+ 		},
++		{
++			name: "service account email loses its suffix",
++			cfg: engineConfig{
++				iamAccountEmail: "runner@my-project.iam.gserviceaccount.com",
++			},
++			wantUser:    "runner@my-project.iam",
++			wantIAMAuth: true,
++		},
+ 	}
  
-     if options.tools:
-         options.tools = await expand_wildcard_tools(registry, options.tools)
-@@ -1619,7 +1625,7 @@ async def run_action(params: ModelHookParams, c: GenerateMiddlewareContext) -> M
-     # that object; a swapped-in dict or other class would reach inner layers
-     # as a second shape, so each handoff is checked. When the build fell back
-     # to a bare request (the config didn't fit), the model action reports it.
--    config_class = declared_config_type(turn_model.input_class) if turn_model.input_class is not None else None
-+    config_class = annotated_config_class(turn_model)
-     on_handoff: Callable[[ModelHookParams, MiddlewareDef], None] | None = None
-     if config_class is not None and isinstance(request.config, config_class):
-         config_check = MiddlewareConfigCheck(config=request.config, schema=config_class, model=turn_model.name)
+ 	for _, tc := range testCases {
 ```
 
-**File**: `py/packages/genkit/src/genkit/_ai/_model.py` (modified, +76/-99)
+**File**: `go/plugins/internal/pgengine/pgengine.go` (added, +58/-0)
 ```diff
-@@ -18,12 +18,13 @@
- 
- from __future__ import annotations
- 
-+import functools
- import inspect
- from collections.abc import Awaitable, Callable, Mapping, Sequence
- from dataclasses import dataclass, replace
- from typing import Annotated, Any, TypeAlias, cast, get_args, get_origin, get_type_hints
- 
--from pydantic import AliasChoices, BaseModel, ValidationError
-+from pydantic import BaseModel, ValidationError
- 
- from genkit._core._action import (
-     Action,
-@@ -32,6 +33,13 @@
-     get_func_description,
- )
- from genkit._core._background import BackgroundAction
-+from genkit._core._config_check import (
-+    check_config_json_schema,
-+    check_config_values,
-+    check_request_config,
-+    config_field_names,
-+    config_values,
+@@ -0,0 +1,58 @@
++// Copyright 2026 Google LLC
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++//
++// SPDX-License-Identifier: Apache-2.0
++
++// Package pgengine holds the connection setup the postgresql and alloydb
++// plugins share, so their engines connect the same way.
++package pgengine
++
++import (
++	"fmt"
++	"strings"
++
++	"github.com/jackc/pgx/v5/pgxpool"
 +)
- from genkit._core._error import GenkitError, RuntimeErrorReason
- from genkit._core._logger import get_logger
- from genkit._core._model import (
-@@ -44,6 +52,7 @@
-     ModelResponse,
-     ModelResponseChunk,
-     config_type_path,
-+    declared_config_type,
-     get_basic_usage_stats,
-     reject_config_api_key,
-     text_from_content,
-@@ -80,28 +89,17 @@ def python_config_schema(schema: object) -> type[BaseModel] | None:
-     return schema if isinstance(schema, type) and issubclass(schema, BaseModel) else None
- 
- 
-+def annotated_config_class(action: object | None) -> type[BaseModel] | None:
-+    """The class on the model function's ``ModelRequest[...]`` annotation, if any."""
-+    input_class = getattr(action, 'input_class', None) if action is not None else None
-+    return declared_config_type(input_class) if isinstance(input_class, type) else None
 +
++// IAMUser returns the database user name Cloud SQL and AlloyDB give an IAM
++// principal: a service account's email without its ".gserviceaccount.com"
++// suffix, and any other email unchanged.
++func IAMUser(email string) string {
++	return strings.TrimSuffix(email, ".gserviceaccount.com")
++}
 +
- def ref_defers_to_registered_class(schema: type[BaseModel] | None) -> bool:
-     """True when the ref named plain ModelConfig, so the model's class is used."""
-     return schema is ModelConfig or schema is GenerationCommonConfig
- 
- 
--def config_field_names(schema: type[BaseModel]) -> dict[str, str]:
--    """Map each field name and alias to the Python field name."""
--    names: dict[str, str] = {}
--    for name, field in schema.model_fields.items():
--        names[name] = name
--        if field.alias:
--            names[field.alias] = name
--        accepted = field.validation_alias
--        if isinstance(accepted, str):
--            names[accepted] = name
--        elif isinstance(accepted, AliasChoices):
--            for choice in accepted.choices:
--                if isinstance(choice, str):
--                    names[choice] = name
--    return names
--
--
- def fold_config_aliases(*, config: dict[str, Any], schema: type[BaseModel]) -> dict[str, Any]:
-     """Rewrite schema aliases to field names. Unknown keys stay as written."""
-     names = config_field_names(schema)
-@@ -303,6 +301,34 @@ async def resolve_for_generate(
-     return replace(resolved, config_schema=python_config_schema(raw))
- 
- 
-+async def config_class_for_generate(*, model: object | None, registry: Registry) -> type[BaseModel] | None:
-+    """The config class a generate call to ``model`` folds and checks against.
-+
-+    The ``config_schema=`` class (or a ref's plugin class) when there is
-+    one, else the class on the model function's ``ModelRequest[...]``.
-+    """
-+    resolved = await resolve_for_generate(model=model, registry=registry)
-+    if resolved.config_schema is not None:
-+        return resolved.config_schema
-+    return annotated_config_class(await registry.resolve_model(resolved.name))
-+
-+
-+async def check_config_before_turn(*, model: str, config: object, registry: Registry) -> None:
-+    """Raise before the turn when a value in ``config`` can't reach the model.
-+
-+    Covers the two schemas the call-time check doesn't see: the class on the
-+    model function's ``ModelRequest[...]`` annotation, and a JSON-schema dict
-+    passed as ``config_schema=``. A missing top-level field passes:
-+    ``wrap_model`` middleware can still fill it, and the model action reports
-+    it if nothing does.
-+    """
-+    action = await registry.resolve_model(model)
-+    check_config_values(config=config, schema=annotated_config_class(action), model=model)
-+    declared = getattr(action, '_config_schema', None) if action is not None else None
-+    if isinstance(declared, dict):
-+        check_config_values(config=config, schema=cast(dict[str, Any], declared), model=model)
-+
-+
- def config_schema_at_define(*, model: object | None, registry: Registry) -> tuple[str | None, type[BaseModel] | None]:
-     """Name and class a define-time typed config is checked against.
- 
-@@ -466,14 +492,40 @@ def model(
-     model_meta: dict[str, object] = metadata.copy() if metadata else {}
-     model_meta['model'] = model_options
- 
--    return Action(
-+    if not config_schema:
-+        return Action(
-+            kind=ActionKind.MODEL,
-+            name=name,
-+            fn=fn,
-+            metadata=model_meta,
-+            description=get_func_description(fn, description),
-+        )
-+
-+    schema = config_schema
-+    # Action rejects a sync fn, but it only sees the async wrapper below.
-+   
++// PoolConfig returns the pool configuration for a connection that a Cloud SQL
++// or AlloyDB connector dials. The credentials go into the config's fields
++// rather than a connection string, so a value with spaces or quotes reaches the
++// server intact. TLS is off at this layer because the connector encrypts the
++// connection itself, and an IAM login sends no password because the connector
++// authenticates it.
++func PoolConfig(user, password, database string, iam bool) (*pgxpool.Config, error) {
++	config, err := pgxpool.ParseConfig("sslmode=disable")
++	if err != nil {
++		return nil, fmt.Errorf("failed to parse connection config: %w", err)
++	}
++	config.ConnConfig.User = user
++	config.ConnConfig.Database = database
++	// The given password replaces one that ParseConfig took from PGPASSWORD
++	// or a .pgpass file. The engines use a password login only when a
++	// password is set, and IAM otherwise, which sends none. Other PG*
++	// environment variables, such as PGAPPNAME and PGOPTIONS, still apply,
++	// as they do for libpq.
++	config.ConnConfig.Password = password
++	if iam {
++		config.ConnConfig.Password = ""
++	}
++	return config, nil
++}
 ```
 
-**File**: `py/packages/genkit/src/genkit/_ai/_prompt.py` (modified, +5/-4)
+**File**: `go/plugins/internal/pgengine/pgengine_test.go` (added, +58/-0)
 ```diff
-@@ -54,8 +54,7 @@
-     ModelResponseChunk,
-     assert_correct_config_class,
-     check_call_config,
--    check_config_dict,
--    config_field_names,
-+    config_class_for_generate,
-     config_schema_at_define,
-     fold_config_aliases,
-     normalize_config,
-@@ -70,6 +69,7 @@
-     get_current_context,
+@@ -0,0 +1,58 @@
++// Copyright 2026 Google LLC
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++//
++// SPDX-License-Identifier: Apache-2.0
++
++package pgengine
++
++import "testing"
++
++func TestIAMUser(t *testing.T) {
++	for email, want := range map[string]string{
++		"runner@my-project.iam.gserviceaccount.com": "runner@my-project.iam",
++		"someone@example.com":                       "someone@example.com",
++	} {
++		if got := IAMUser(email); got != want {
++			t.Errorf("IAMUser(%q) = %q, want %q", email, got, want)
++		}
++	}
++}
++
++func TestPoolConfig(t *testing.T) {
++	// pgx reads a password from the environment; the config must not keep it.
++	t.Setenv("PGPASSWORD", "from-the-environment")
++
++	// Credentials reach the connection config verbatim, whatever they contain.
++	user, password, database := "app user", `p a's\"s=word`, "my db"
++	config, err := PoolConfig(user, password, database, false)
++	if err != nil {
++		t.Fatalf("PoolConfig: %v", err)
++	}
++	if got := config.ConnConfig; got.User != user || got.Password != password || got.Database != database {
++		t.Errorf("config has user %q, password %q, database %q; want %q, %q, %q",
++			got.User, got.Password, got.Database, user, password, database)
++	}
++	if config.ConnConfig.TLSConfig != nil {
++		t.Error("config enables TLS, but the connector encrypts the connection itself")
++	}
++
++	// An IAM login sends no password: the connector authenticates it.
++	iam, err := PoolConfig("runner@my-project.iam", "unused", "db", true)
++	if err != nil {
++		t.Fatalf("PoolConfig: %v", err)
++	}
++	if iam.ConnConfig.Password != "" {
++		t.Errorf("IAM config has password %q, want none", iam.ConnConfig.Password)
++	}
++}
+```
+
+**File**: `go/plugins/postgresql/engine.go` (modified, +46/-28)
+```diff
+@@ -25,6 +25,8 @@ import (
+ 	"golang.org/x/oauth2/google"
+ 	"google.golang.org/api/oauth2/v2"
+ 	"google.golang.org/api/option"
++
++	"github.com/firebase/genkit/go/plugins/internal/pgengine"
  )
- from genkit._core._channel import Channel
-+from genkit._core._config_check import check_config_values, config_field_names
- from genkit._core._error import GenkitError, RuntimeErrorReason
- from genkit._core._logger import get_logger
- from genkit._core._middleware import BaseMiddleware, middleware_class_index
-@@ -394,7 +394,8 @@ async def _resolve_model(self, call: GenerateCall, opts: ModelSettings) -> Gener
-             override = normalize_config(config=override_config)
-             # `maxOutputTokens` in the prompt and `max_output_tokens` in the
-             # call are one setting: fold both to field names so the call wins.
--            schema = (await resolve_for_generate(model=model, registry=self._ai._registry)).config_schema
-+            # A model typed only by its ModelRequest[...] annotation folds too.
-+            schema = await config_class_for_generate(model=model, registry=self._ai._registry)
-             if schema is not None:
-                 base = fold_config_aliases(config=base, schema=schema)
-                 override = fold_config_aliases(config=override, schema=schema)
-@@ -421,7 +422,7 @@ async def _resolve_model(self, call: GenerateCall, opts: ModelSettings) -> Gener
-                 schema=resolved.config_schema,
-                 model=resolved.name,
-             )
--        check_config_dict(
-+        check_config_values(
-             config=prompt_config_after_clears(
-                 stored=self._def.config,
-                 override=override_config,
+ 
+ // IpType type of IP address, public or private
+@@ -35,19 +37,27 @@ const (
+ 	PRIVATE IpType = "PRIVATE"
+ )
+ 
+-// PostgresEngine postgres engine
++// PostgresEngine holds the connection pool the plugin's features share.
+ type PostgresEngine struct {
+ 	Pool *pgxpool.Pool
++
++	// dialer is the Cloud SQL dialer behind a pool the engine built. Nil for
++	// a pool the caller supplied.
++	dialer *cloudsqlconn.Dialer
++	// ownsPool reports whether the engine built Pool, and so closes it.
++	ownsPool bool
+ }
+ 
+-// NewPostgresEngine creates a new Postgres Engine.
++// NewPostgresEngine creates a new Postgres Engine. It either uses the pool
++// given with [WithPool] or dials the Cloud SQL instance given with
++// [WithCloudSQLInstance], and pings the database before returning.
+ func NewPostgresEngine(ctx context.Context, opts ...Option) (*PostgresEngine, error) {
+-	pgEngine := new(PostgresEngine)
+ 	cfg, err := applyEngineOptions(opts)
+ 	if err != nil {
+ 		return nil, err
+ 	}
+-	if cfg.connPool == nil {
++	engine := &PostgresEngine{Pool: cfg.connPool}
++	if engine.Pool == nil {
+ 		user, usingIAMAuth, err := getUser(ctx, cfg)
+ 		if err != nil {
+ 			// If no user can be determined, return an error.
+@@ -56,18 +66,19 @@ func NewPostgresEngine(ctx context.Context, opts ...Option) (*PostgresEngine, er
+ 		if usingIAMAuth {
+ 			cfg.user = user
+ 		}
+-		cfg.connPool, err = createPool(ctx, cfg, usingIAMAuth)
++		engine.Pool, engine.dialer, err = createPool(ctx, cfg, usingIAMAuth)
+ 		if err != nil {
+ 			return nil, err
+ 		}
++		engine.ownsPool = true
+ 	}
+ 
+-	if err := cfg.connPool.Ping(ctx); err != nil {
+-		return nil, fmt.Errorf("failed to connect with database %v", err)
++	if err := engine.Pool.Ping(ctx); err != nil {
++		// Release what this call built; a caller's pool stays open.
++		engine.Close()
++		return nil, fmt.Errorf("failed to connect with database: %w", err)
+ 	}
+-
+-	pgEngine.Pool = cfg.connPool
+-	return pgEngine, nil
++	return engine, nil
+ }
+ 
+ func (pgEngine *PostgresEngine) GetClient() *pgxpool.Pool {
+@@ -83,7 +94,11 @@ func applyEngineOptions(opts []Option) (engineConfig, error) {
+ 		opt(cfg)
+ 	}
+ 
+-	if cfg.connPool == nil && (cfg.projectID == "" || cfg.region == "" || cfg.instance == "") {
++	if cfg.connPool != nil {
++		// The pool already names its database; there is nothing to dial.
++		return *cfg, nil
++	}
++	if cfg.projectID == "" || cfg.region == "" || cfg.instance == "" {
+ 		return engineConfig{}, errors.New("missing connection: provide a connection pool or db instance fields")
+ 	}
+ 	if cfg.database == "" {
+@@ -101,16 +116,15 @@ func getUser(ctx context.Context, config engineConfig) (string, bool, error) {
+ 	}
+ 	if config.iamAccountEmail != "" {
+ 		// If iamAccountEmail is provided use it as user.
+-		return config.iamAccountEmail, true, nil
++		return pgengine.IAMUser(config.iamAccountEmail), true, nil
+ 	}
+ 	// If neither user and password nor iamAccountEmail are provided,
+ 	// retrieve IAM email from the environment.
+ 	serviceAccountEmail, err := getServiceAccountEmail(ctx)
+ 	if err != nil {
+ 		return "", false, fmt.Errorf("unable to retrieve service account email: %w", err)
+ 	}
+-	return serviceAccountEmail, true, nil
+-
++	return pgengine.IAMUser(serviceAccountEmail), true, nil
+ }
+ 
+ // getServiceAccountEmail retrieves the IAM principal email with users account.
+@@ -140,22 +154,20 @@ func getServiceAccountEmail(ctx context.Context) (string, error) {
+ 	return userInfo.Email, nil
+ }
+ 
+-// createPool creates a connection pool to the PostgreSQL database.
+-func createPool(ctx context.Context, cfg engineConfig, usingIAMAuth bool) (*pgxpool.Pool, error) {
++// createPool creates a connection pool to the PostgreSQL database, dialed
++// through the Cloud SQL connector, and returns the dialer behind it.
++func createPool(ctx context.Context, cfg engineConfig, usingIAMAuth bool) (*pgxpool.Pool, *cloudsqlconn.Dialer, error) {
++	config, err := pgengine.PoolConfig(cfg.user, cfg.password, cfg.database, usingIAMAuth)
++	if err != nil {
++		return nil, nil, err
++	}
+ 	dialeropts := []cloudsqlconn.Option{cloudsqlconn.WithUserAgent(cfg.userAgents)}
+-	dsn := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable", cfg.user, cfg.password, cfg.database)
+ 	if usingIAMAuth {
+ 		dialeropts = append(dialeropts, cloudsqlconn.WithIAMAuthN())
+-		dsn = fmt.Sprintf("user=%s dbname=%s sslmode=disable", cfg.user, cfg.database)
+ 	}
+ 	d, err := cloudsqlconn.NewDialer(ctx, dialeropts...)
+ 	if err != nil {
+-		return nil, fmt.Errorf("failed to initialize connection: %w", err)
+-	}
+-
+-	config, err := pgxpool.ParseConfig(dsn)
+-	if err != nil {
+-		return nil, fmt.Errorf("failed to parse connection config: %w", err)
++		return nil, nil, fmt.Errorf("failed to initialize connection: %w", err)
+ 	}
+ 	instanceURI := fmt.Sprintf("%s:%s:%s", cfg.projectID, cfg.region, cfg.instance)
+ 	co
 ```
 
-**File**: `py/packages/genkit/src/genkit/_core/_action.py` (modified, +4/-5)
+**File**: `go/plugins/postgresql/engine_test.go` (modified, +44/-0)
 ```diff
-@@ -788,11 +788,10 @@ def __init__(
-         self._strict_io: bool = _strict_io
-         self._metadata: dict[str, object] = metadata if metadata else {}
-         self._description: str | None = description
--        # Python class for generate's isinstance check. Not in metadata —
--        # that bag is JSON for the Dev UI.
--        self._config_schema: type[BaseModel] | None = (
--            config_schema if isinstance(config_schema, type) and issubclass(config_schema, BaseModel) else None
--        )
-+        # What config_schema= declared: a Pydantic class or a JSON-schema dict.
-+        # generate checks config against it. Not in metadata — that bag is
-+        # JSON for the Dev UI.
-+        self._config_schema: type[BaseModel] | dict[str, object] | None = config_schema
-         self._span_metadata: dict[str, SpanAttributeValue] = span_metadata or {}
+@@ -16,6 +16,7 @@ package postgresql
  
-         # All action handlers must be async
+ import (
+ 	"context"
++	"os"
+ 	"testing"
+ 
+ 	"github.com/jackc/pgx/v5/pgxpool"
+@@ -38,6 +39,14 @@ func TestApplyEngineOptionsConfig(t *testing.T) {
+ 			wantErr:    false,
+ 			wantIpType: PUBLIC,
+ 		},
++		{
++			name: "connection pool without database",
++			opts: []Option{
++				WithPool(&pgxpool.Pool{}),
++			},
++			wantErr:    false,
++			wantIpType: PUBLIC,
++		},
+ 		{
+ 			name: "valid config with instance details",
+ 			opts: []Option{
+@@ -130,6 +139,17 @@ func TestGetUser(t *testing.T) {
+ 			wantIAMAuth: true,
+ 			wantErr:     false,
+ 		},
++		{
++			// Cloud SQL names a service account's database user without the
++			// domain suffix; the full email fails to log in.
++			name: "service account email drops its domain suffix",
++			cfg: engineConfig{
++				iamAccountEmail: "runner@my-project.iam.gserviceaccount.com",
++			},
++			wantUser:    "runner@my-project.iam",
++			wantIAMAuth: true,
++			wantErr:     false,
++		},
+ 	}
+ 
+ 	for _, tc := range testCases {
+@@ -154,3 +174,27 @@ func TestGetUser(t *testing.T) {
+ 		})
+ 	}
+ }
++
++// TestCloseLeavesCallerPool needs a PostgreSQL server: set
++// GENKIT_TEST_POSTGRES_URL to a connection URL for a database the test may use.
++func TestCloseLeavesCallerPool(t *testing.T) {
++	url := os.Getenv("GENKIT_TEST_POSTGRES_URL")
++	if url == "" {
++		t.Skip("Skipping: GENKIT_TEST_POSTGRES_URL not set")
++	}
++	ctx := context.Background()
++	pool, err := pgxpool.New(ctx, url)
++	if err != nil {
++		t.Fatalf("pgxpool.New: %v", err)
++	}
++	defer pool.Close()
++
++	engine, err := NewPostgresEngine(ctx, WithPool(pool))
++	if err != nil {
++		t.Fatalf("NewPostgresEngine: %v", err)
++	}
++	engine.Close()
++	if err := pool.Ping(ctx); err != nil {
++		t.Errorf("the engine closed the pool its caller gave it: %v", err)
++	}
++}
 ```
 
-**File**: `py/packages/genkit/src/genkit/_core/_background.py` (modified, +11/-0)
+**File**: `go/plugins/postgresql/options.go` (modified, +4/-2)
 ```diff
-@@ -18,13 +18,15 @@
+@@ -43,14 +43,16 @@ func WithCloudSQLInstance(projectID, region, instance string) Option {
+ 	}
+ }
  
- from __future__ import annotations
+-// WithPool sets the Port field.
++// WithPool gives the engine an existing connection pool, used as is: the engine
++// dials nothing, needs no [WithDatabase], and leaves the pool open on Close.
+ func WithPool(pool *pgxpool.Pool) Option {
+ 	return func(p *engineConfig) {
+ 		p.connPool = pool
+ 	}
+ }
  
-+import inspect
- from collections.abc import Awaitable, Callable, Mapping
- from functools import wraps
- from typing import Any
- 
- from pydantic import BaseModel
- 
- from genkit._core._action import Action, ActionKind, ActionRunContext, get_current_context
-+from genkit._core._config_check import check_config_json_schema, check_request_config
- from genkit._core._error import GenkitError, RuntimeErrorReason
- from genkit._core._model import ModelRequest, ModelResponse
- from genkit._core._registry import Registry
-@@ -76,10 +78,19 @@ def _operation_action(
-     plugin prefix after this is built, so the key is read from the action's
-     live name minus ``suffix`` (e.g. ``/check``) when it runs.
-     """
-+    # Action rejects a sync fn, but it only sees the async wrapper below.
-+    if not inspect.iscoroutinefunction(fn):
-+        raise TypeError(f"Action handlers must be async functions. Got sync function for '{model_name}{suffix}'.")
-+    if isinstance(config_schema, dict):
-+        check_config_json_schema(config_schema, model=model_name)
- 
-     # wraps keeps fn's annotations on the wrapper, e.g. ModelRequest[VeoConfig].
-     @wraps(fn)
-     async def run_and_stamp(input: object, ctx: ActionRunContext) -> Operation:  # noqa: A002
-+        if config_schema:
-+            # Same check as a regular model action: the whole config, after
-+            # every middleware, before the provider starts an operation.
-+            check_request_config(input, schema=config_schema, model=action.name.removesuffix(suffix))
-         op = await action.params.call(fn, input, ctx)
-         if isinstance(op, Operation):
-             stamp_operation_action(operation=op, name=action.name.removesuffix(suffix))
-```
-
-**File**: `py/packages/genkit/src/genkit/_core/_config_check.py` (added, +233/-0)
-```diff
-@@ -0,0 +1,233 @@
-+# Copyright 2026 Google LLC
-+# SPDX-License-Identifier: Apache-2.0
-+
-+"""Model config checks shared by regular and background models.
-+
-+Before the turn, only the values a call sets are judged; a required field
-+left out may still be filled by middleware. Inside the model action (or a
-+background model's start action), the whole config is judged. A Pydantic
-+class and a JSON-schema dict follow the same rules.
-+"""
-+
-+from __future__ import annotations
-+
-+from collections.abc import Mapping, Sequence
-+from typing import Any, cast
-+
-+from jsonschema.exceptions import SchemaError, best_match
-+from jsonschema.validators import validator_for
-+from pydantic import AliasChoices, BaseModel, ValidationError
-+
-+from genkit._core._error import GenkitError, RuntimeErrorReason
-+
-+
-+def config_field_names(schema: type[BaseModel]) -> dict[str, str]:
-+    """Map each field name and alias to the Python field name."""
-+    names: dict[str, str] = {}
-+    for name, field in schema.model_fields.items():
-+        names[name] = name
-+        if field.alias:
-+            names[field.alias] = name
-+        accepted = field.validation_alias
-+        if isinstance(accepted, str):
-+            names[accepted] = name
-+        elif isinstance(accepted, AliasChoices):
-+            for choice in accepted.choices:
-+                if isinstance(choice, str):
-+                    names[choice] = name
-+    return names
-+
-+
-+def check_request_config(request: object, *, schema: type[BaseModel] | dict[str, Any], model: str) -> None:
-+    """Raise if a model request's config doesn't fit ``schema``, missing fields included.
-+
-+    The model action and a background model's start action both run this
-+    first, after every middleware. A function with an unannotated request
-+    param gets the raw dict on a direct run, so either shape is read.
-+    """
-+    if isinstance(request, Mapping):
-+        config = cast(Mapping[str, Any], request).get('config')
-+    else:
-+        config = getattr(request, 'config', None)
-+    check_whole_config(config=config, schema=schema, model=model)
-+
-+
-+def check_config_values(*, config: object, schema: type[BaseModel] | dict[str, Any] | None, model: str) -> None:
-+    """Raise if a value the config sets doesn't fit the model's config schema.
-+
-+    Only fields the config sets are judged. A required field it leaves out is
-+    not an error yet: another config layer or a wrap_model middleware may add
-+    it, and the model action rejects it if nothing does. ``None`` means
-+    "clear the default" and isn't checked. A JSON-schema dict is judged the
-+    same way as a class.
-+    """
-+    if schema is None or not isinstance(config, Mapping):
-+        return
-+    _raise_config_problems(values=_judged_values(config, schema), schema=schema, model=model, report_missing=False)
-+
-+
-+def check_whole_config(*, config: object, schema: type[BaseModel] | dict[str, Any], model: str) -> None:
-+    """Raise if the config the model is about to run with doesn't fit its config schema.
-+
-+    Unlike ``check_config_values``, a missing required field is an error:
-+    this runs inside the model action, where nothing is left to fill it.
-+    """
-+    if isinstance(schema, type) and isinstance(config, schema):
-+        return
-+    if isinstance(config, BaseModel):
-+        config = config_values(config)
-+    if config is None:
-+        config = {}
-+    if not isinstance(config, Mapping):
-+        return
-+    _raise_config_problems(values=_judged_values(config, schema), schema=schema, model=model, report_missing=True)
-+
-+
-+def check_config_json_schema(schema: dict[str, Any], *, model: str) -> None:
-+    """Raise at define time when a ``config_schema=`` dict isn't a valid JSON schema."""
-+    try:
-+        validator_for(schema).check_schema(schema)
-+    except SchemaError as e:
-+        raise GenkitError(
-+            status='INVALID_ARGUMENT',
-+            message=f'{model}: config_schema is not a valid JSON schema: {e.message}',
-+            cause=e,
-+        ) from e
-+
-+
-+def config_values(config: BaseModel) -> dict[str, Any]:
-+    """``config`` as plain data, nested models included, in the shape validation takes.
-+
-+    ``BaseModel.model_dump`` skips GenkitModel's ``exclude_none`` default (an
-+    explicit ``None`` is a value too) and its fallback serializer, so a value
-+    of the wrong type comes back as itself and fails validation.
-+    """
-+    return BaseModel.model_dump(config, by_alias=True, round_trip=True, exclude_none=False, warnings=False)
-+
-+
-+def _judged_values(config: Mapping[Any, Any], schema: type[BaseModel] | dict[str, Any]) -> dict[str, Any]:
-+    """The config values a schema is judged on.
-+
-+    ``None`` means "clear the default" and is dropped. ``version`` comes from
-+    ``ModelRef.version``, which Genkit adds to config itself, so a schema that
-+    doesn't name it isn't judged on it.
-+    """
-+    declared = schema.get('properties', {}) if isinstance(schema, dict) else schema.model_fields
-+    ret
-```
-
-**File**: `py/packages/genkit/src/genkit/_core/_typing.py` (modified, +0/-1)
-```diff
-@@ -536,7 +536,6 @@ class ModelInfo(GenkitModel):
-     model_config: ClassVar[ConfigDict] = ConfigDict(alias_generator=to_camel, extra='forbid', populate_by_name=True)
-     versions: list[str] | None = None
-     label: str | None = None
--    config_schema: ConfigSchema | None = None
-     supports: Supports | None = None
-     stage: Stage | None = None
- 
+-// WithDatabase sets the Database field.
++// WithDatabase sets the database to connect to. Required unless the engine
++// uses a pool given with [WithPool].
+ func WithDatabase(database string) Option {
+ 	return func(p *engineConfig) {
+ 		p.database = database
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #6825** (closed): docs(skills): add running-genkit-dev-ui-alongside-other-agents (@huangjeff5)
+- **PR #6814** (2026-10-19): ci(go): run the PostgreSQL tests against a service container (@apascal07)
+- **PR #6812** (2026-10-19): fix(go/plugins/postgresql)!: fix engine connection defects and leave a caller's pool open (@apascal07)
+- **PR #6809** (closed): chore(deps): bump the go-dependencies group across 1 directory with 30 updates (@dependabot[bot])
 - **PR #6793** (2026-10-13): feat(py/plugins/google-genai): split Known model Literals per backend (@cabljac)
 - **PR #6789** (2026-10-13): fix(go/plugins/googlegenai): default `ResponseModalities` for Gemini image models (@apascal07)
-- **PR #6786** (2026-10-13): fix(go/plugins/compat_oai): pass back empty `reasoning_content` (@apascal07)
-- **PR #6783** (2026-10-13): refactor(py/plugins/google-genai): trim dead Lyria helpers (@hilariie)
-- **PR #6754** (2026-10-10): fix(go/core/status): match a decoded error against its status's base sentinel (@apascal07)
 
 ---
 
@@ -3239,39 +3644,33 @@ Co-authored-by: Alex Pascal <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. py/plugins/google-genai): widen API error mapping, detect blocked prompts (#6370
+## X. go): add pluggable trace instrumentation and decouple it from OpenTelemetry (#63
 
 **RULE**:
-When implementing operations in `py/packages/genkit-google-genai/src/genkit_google_genai/_google.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go/ai/evaluator.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1a38cde4`: py/plugins/google-genai): widen API error mapping, detect blocked prompts (#6370). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `96a41096`: go): add pluggable trace instrumentation and decouple it from OpenTelemetry (#6343). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `py/packages/genkit-google-genai/src/genkit_google_genai/_google.py`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go/ai/evaluator.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
-```typescript
+```go
 // Verified production-grade fix pattern:
-from google.genai.errors import APIError
-from genkit_google_genai._provider_errors import TRANSPORT_ERRORS, api_error, transport_error
-    try:
-        async for listed_model in await client.aio.models.list():
-            _categorize_genai_model(listed_model, models, is_vertex)
-    except APIError as e:
-        raise api_error(e) from e
-    except GOOGLE_AUTH_ERRORS as e:
-        raise_auth_error(e)
-    except TRANSPORT_ERRORS as e:
-        raise transport_error(e) from e
+						// Genkit's ids, which the Dev UI stores the trace under;
+						// the OTel span context is empty without an SDK.
+						ti := tracing.SpanTraceInfo(ctx)
+						traceId, spanId := ti.TraceID, ti.SpanID
 ```
 
 **NEGATIVE CONSTRAINT**:
-```typescript
+```go
 // Anti-pattern to NEVER write (induced failure mode):
-    async for listed_model in await client.aio.models.list():
-        _categorize_genai_model(listed_model, models, is_vertex)
+	"go.opentelemetry.io/otel/trace"
+						traceId := trace.SpanContextFromContext(ctx).TraceID().String()
+						spanId := trace.SpanContextFromContext(ctx).SpanID().String()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1a38cde4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `96a41096` are properly handled with clean fallback behavior.

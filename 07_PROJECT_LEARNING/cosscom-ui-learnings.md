@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cosscom-ui-learnings.md`  
 > **Source**: github ([https://github.com/cosscom/ui](https://github.com/cosscom/ui))  
-> **Source Version**: `a597c630`  
+> **Source Version**: `7f7cbd0e`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T06:32:30.458Z  
+> **Timestamp**: 2026-10-19T17:56:23.805Z  
 > **Learning ID**: `learn-github-cosscom-ui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cosscom-ui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cosscom/ui](https://github.com/cosscom/ui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T06:32:29.516Z  
+> **Harvest Timestamp**: 2026-10-19T17:56:22.375Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: coss.com/ui is the official design system of Cal.com
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 10721 stars
+- **Stars / Engagement**: 10724 stars
 
 ---
 
@@ -1067,11 +1067,11 @@ export function useScrollHide(threshold = DEFAULT_SCROLL_THRESHOLD) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #904** (2026-10-19): **feat(avatar): AvatarGroup with clipped separation and inherited sizing**
+  *Symptoms*: ## Summary  `AvatarGroup` and `AvatarGroupCount` are new. Overlapping avatars are separated by masking each one with its neighbour's circle, so the gap is **transparent rather than a coloured ring**. A stack now holds its shape on gradients, photographs and translucent panels, where `ring-2 ring-background` does not.  `Avatar` takes every dimension from one inherited custom property, `--avatar-size` (default 32px). Font size scales with it, and a group derives overlap, gap and the initials nudge from it.  ```tsx <AvatarGroup topmost="last">   <Avatar>…</Avatar>   <AvatarGroupCount>+2</AvatarGroupCount> </AvatarGroup> ```  ## Technique  The cut is a vector circle composited out of the avatar's own circle:  ``` mask-image: url("data:image/svg+xml,…<circle>…"), url(…same…) mask-composite: subtract ```  Both layers are SVG, so the whole silhouette comes from one vector rasterisation. Three earlier approaches were rejected against real rendering:  | approach | failure | | --- | --- | | `ring-2 ring-background` | wrong on any non-solid surface — the reason for this PR | | radial-gradient with a 1px feather | a CSS-pixel feather scales under browser zoom, so the cut edge blurs | | radial-gradient with a hard stop | gradient stops are not antialiased, so the edge stair-steps as the avatar grows |  Masked children also carry `rounded-none`. With `border-radius` left on, its antialiased rim survives `subtract` and leaves a hairline ghost of the full circle — reproduced on a bare `div`,
+
 - **Issue #903** (2026-10-17): **feat(agent): approval cards, response feedback, and error recovery**
   *Symptoms*: Ticket 08, turn content B. **Stacks on #900** (agent family scaffold); the base is `claude/agent-family-scaffold-132151`.  ## Summary  ```diff  apps/ui/registry/default/agent/ +├── agent-approval-card.tsx      # AgentApprovalCard, AgentApprovalGroupCard +├── agent-response-feedback.tsx  # AgentResponseFeedback (inside AgentMessageActions) +├── agent-error-recovery.tsx     # AgentErrorRecovery slot +├── hooks/use-agent-pending-choice.ts  # host callback → pending / failed +└── lib/ +    ├── get-agent-approval-state.ts  # getAgentApprovalState, getAgentApprovalGroupShared +    └── get-agent-feedback.ts        # getAgentFeedbackAction, getAgentFeedbackSubmission ```  The approval state is derived by one pure rule, so hosts stop re-implementing resolved rows:  ```text getAgentApprovalState({ decision, responding, error })   decision set          → "approved" | "denied"   (the runtime wins over stale local state)   responding / promise  → "responding"   error / throw / reject→ "error"   (can answer again)   otherwise             → "idle" ```  - **Group card:** approve all / skip all call `onRespond(decision)` once. It asks one shared question (`sharedQuestion ?? question`) when every item asks the same question, otherwise one per item. An approve verb that every item shares replaces “Approve all”. - **Feedback:** controlled `value`; `onFeedback` returns a promise. When it rejects, the component shows an inline error (beside the thumbs or in the dialog) and announces it. Retries ar
-
-- **Issue #902** (2026-10-17): **feat(agent): add action bar, history, and conversation menu**
-  *Symptoms*: Ticket 09, Chrome A. Stacks on #900 (`claude/agent-family-scaffold-132151`).  ## Summary  ```diff  apps/ui/registry/default/agent/ +├── agent-action-bar.tsx          # AgentActionBar, AgentActionBarSession, AgentActionBarLauncher +├── agent-history.tsx             # AgentHistory on coss Combobox +├── agent-conversation-menu.tsx   # AgentConversationMenu (copy as Markdown, delete + AlertDialog)  └── lib/ +    ├── is-agent-session-unread.ts  # pure unread rule +    ├── filter-agent-history.ts     # pure search + newest-first +    └── copy-agent-text.ts          # clipboard write → boolean, so failure can be announced ```  ```text <AgentActionBar label>                       role=group   <AgentActionBarSession label active unread unreadLabel closeLabel onClose onCloseOthers? />     rest props → session button (works as a PopoverTrigger render)     close: opacity-0 + pointer-events-none on fine pointers until chip :hover/:focus-within; always on coarse   <AgentActionBarLauncher mark={<YourOrb/>} active onClick>Ask</…>  <AgentHistory items labels activeId onSelect onStartChat? loading trigger />   value = active item → coss ComboboxItem check marks the open conversation   item onClick → onSelect (Enter clicks too, so reselecting the open one still reaches the host)   empty: coss Empty · loading: Spinner · popup: coss defaults + w-96  <AgentConversationMenu labels markdown? onDelete? announcer />   copy → copyAgentText → announcer.announce(copied | copyFailed)   # no local live reg
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1601,12 +1601,12 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #904** (2026-10-19): feat(avatar): AvatarGroup with clipped separation and inherited sizing (@pasqualevitiello)
 - **PR #903** (closed): feat(agent): approval cards, response feedback, and error recovery (@pasqualevitiello)
 - **PR #902** (closed): feat(agent): add action bar, history, and conversation menu (@pasqualevitiello)
 - **PR #901** (closed): feat(agent): turn content: status, reasoning, tool activity, result list and AgentTurn (@pasqualevitiello)
 - **PR #900** (closed): feat(agent): add agent family scaffold with conversation, message, actions, and announcer (@pasqualevitiello)
 - **PR #899** (closed): feat(chat): add timestamp, markdown, and streaming parts for agent use (@pasqualevitiello)
-- **PR #898** (closed): feat(composer): restore stacking, chip, popup, and submit footprint details (@pasqualevitiello)
 
 ---
 

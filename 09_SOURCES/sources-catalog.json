@@ -1333,10 +1333,10 @@
     "repository": "cosscom/ui",
     "platform": "github",
     "sourceUrl": "https://github.com/cosscom/ui",
-    "sourceVersion": "a597c630",
+    "sourceVersion": "7f7cbd0e",
     "license": "AGPL-3.0",
-    "contentHash": "4b1db7866b586de97d63f34224045bdf9edeb645d81bef47199249f4ac9db162",
-    "lastHarvestedAt": "2026-10-19T06:32:30.618Z",
+    "contentHash": "aa95a82aa355ea087641c0636a43a6091b9781cde5cf503bb0001a3271171a9b",
+    "lastHarvestedAt": "2026-10-19T17:56:23.931Z",
     "learningId": "learn-github-cosscom-ui"
   },
   "ebony-vinyl-dsh-our-free-model": {
@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "e87d6a92",
+    "sourceVersion": "a124ebc3",
     "license": "NOASSERTION",
-    "contentHash": "986bf6d822599445a4179852fbf55896d72b5068996db25a541f9c51260b83d1",
-    "lastHarvestedAt": "2026-10-19T11:54:55.311Z",
+    "contentHash": "7ebc226851a085d8da7948ded8fff871f9a45d033a17481593d75b7a07b21eb4",
+    "lastHarvestedAt": "2026-10-19T17:56:34.824Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {
@@ -5973,10 +5973,10 @@
     "repository": "genkit-ai/genkit",
     "platform": "github",
     "sourceUrl": "https://github.com/genkit-ai/genkit",
-    "sourceVersion": "59ba69c5",
+    "sourceVersion": "ecc37b37",
     "license": "Apache-2.0",
-    "contentHash": "69cfb975f2f8e853ed55ff1ccc6b34a05ed28086738c4a10a6f06567faa237be",
-    "lastHarvestedAt": "2026-10-19T04:53:09.255Z",
+    "contentHash": "2a7320f2c212d49f5ead4fd0993ccbe94df90ac4fe27965035ed53f9e5e9917e",
+    "lastHarvestedAt": "2026-10-19T17:56:37.850Z",
     "learningId": "learn-github-genkit-ai-genkit"
   },
   "guokaigdg-animal-island-ui": {
@@ -6313,10 +6313,10 @@
     "repository": "k3s-io/k3s",
     "platform": "github",
     "sourceUrl": "https://github.com/k3s-io/k3s",
-    "sourceVersion": "e81264f5",
+    "sourceVersion": "b0ea1881",
     "license": "Apache-2.0",
-    "contentHash": "c3208c0b68847869f5d1546d2c760904373897a16457fa7cbe06cd2244076701",
-    "lastHarvestedAt": "2026-10-19T05:39:13.709Z",
+    "contentHash": "07b593a65f1f5b51eff06c2c5b1910a89683a855911ef88be6e1278b71c7266b",
+    "lastHarvestedAt": "2026-10-19T17:56:33.257Z",
     "learningId": "learn-github-k3s-io-k3s"
   },
   "open-source-legal-opencontracts": {
@@ -8518,5 +8518,15 @@
     "contentHash": "065d2680c518d1131b42c013a4feb7831a9bf1e81ed81f0b472fc0482d9e558e",
     "lastHarvestedAt": "2026-10-19T17:50:23.996Z",
     "learningId": "learn-github-zoontek-react-native-permissions"
+  },
+  "obytes-react-native-template-obytes": {
+    "repository": "obytes/react-native-template-obytes",
+    "platform": "github",
+    "sourceUrl": "https://github.com/obytes/react-native-template-obytes",
+    "sourceVersion": "fd9b358e",
+    "license": "MIT",
+    "contentHash": "db7066b52042e356777eae95cc7607c8fa1133149fff9d1903be889ef8efe1a9",
+    "lastHarvestedAt": "2026-10-19T17:56:29.948Z",
+    "learningId": "learn-github-obytes-react-native-template-obytes"
   }
 }
