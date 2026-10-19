@@ -2765,3 +2765,9 @@ Every entry in this ledger must capture:
 | `learn-github-openyurtio-openyurt` | `https://github.com/openyurtio/openyurt` | `83ce3925` | Multi-dimensional audit evidence | 2026-10-19T01:34:57.270Z |
 | `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `a5c4fd22` | Multi-dimensional audit evidence | 2026-10-19T01:35:01.938Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `534bfac1` | Multi-dimensional audit evidence | 2026-10-19T01:35:03.597Z |
+| `learn-huggingface-autotrust-gev-26b-decide-nvfp4` | `https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-19T01:41:06.648Z |
+| `learn-github-react-component-slider` | `https://github.com/react-component/slider` | `2dcc4f67` | Multi-dimensional audit evidence | 2026-10-19T01:41:06.797Z |
+| `learn-github-mufeedvh-code2prompt` | `https://github.com/mufeedvh/code2prompt` | `66585136` | Multi-dimensional audit evidence | 2026-10-19T01:41:08.284Z |
+| `learn-github-react-native-image-picker-react-native-image-picker` | `https://github.com/react-native-image-picker/react-native-image-picker` | `61c0cd41` | Multi-dimensional audit evidence | 2026-10-19T01:41:13.627Z |
+| `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `44fcc131` | Multi-dimensional audit evidence | 2026-10-19T01:41:16.313Z |
+| `learn-github-tako8ki-gobang` | `https://github.com/TaKO8Ki/gobang` | `7b1b5f7e` | Multi-dimensional audit evidence | 2026-10-19T01:41:20.520Z |

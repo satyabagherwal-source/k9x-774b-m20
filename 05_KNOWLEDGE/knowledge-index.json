@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T01:35:03.553Z",
-  "total_verified_learnings": 479,
+  "last_updated": "2026-10-19T01:41:20.478Z",
+  "total_verified_learnings": 484,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -9939,22 +9939,35 @@
     "learn-github-hashicorp-terraform": {
       "learning_id": "learn-github-hashicorp-terraform",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hashicorp-terraform",
+      "source": "hashicorp/terraform",
+      "repository": "hashicorp/terraform",
       "slug": "hashicorp-terraform",
       "platform": "github",
       "source_url": "https://github.com/hashicorp/terraform",
-      "source_version": "HEAD",
-      "content_hash": "77c28cdb7bfe6039220f0fc6db136aaaa239dcc8a145adc1fc0c0e5ac78557fc",
+      "source_version": "44fcc131",
+      "content_hash": "794d66c61da7c04070985de894c9faf2471e8e92305b69e653c0ab74aa0f2dc7",
       "dossier_path": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1984,
+          "title": "Make `version` command show diagnostics in JSON format when `-json` is supplied.",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.248Z"
+      "verified_at": "2026-10-19T01:41:16.256Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-hbai-ltd-toonflow-app": {
       "learning_id": "learn-github-hbai-ltd-toonflow-app",
@@ -11364,7 +11377,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4",
       "source_version": "hf-autotrust-gev-26b-decide-nvfp4",
-      "content_hash": "dcefdaabf164f539daf3d299ce96bf4b8f3247ff5c02db28d1b3e9b0c0c8a519",
+      "content_hash": "d958d6229a78c81c90cd8665848097023a30e8cb1f8417d7d8843970e0e7c1b8",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md",
       "promoted_rules": [
@@ -11402,7 +11415,7 @@
         "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv43rd7n",
         "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv4h0go4"
       ],
-      "verified_at": "2026-10-17T21:51:12.539Z",
+      "verified_at": "2026-10-19T01:41:06.594Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -27457,22 +27470,35 @@
     "learn-github-mufeedvh-code2prompt": {
       "learning_id": "learn-github-mufeedvh-code2prompt",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "mufeedvh-code2prompt",
+      "source": "mufeedvh/code2prompt",
+      "repository": "mufeedvh/code2prompt",
       "slug": "mufeedvh-code2prompt",
       "platform": "github",
       "source_url": "https://github.com/mufeedvh/code2prompt",
-      "source_version": "HEAD",
-      "content_hash": "5f19d95828fde888145ce538b9937875b0529f2718140300ba3a1b01cd94993b",
+      "source_version": "66585136",
+      "content_hash": "2f0f2b26b5197e55f3c613e246eb21046405b8eeed5c4c9b2aa41728600e219f",
       "dossier_path": "07_PROJECT_LEARNING/mufeedvh-code2prompt-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mufeedvh-code2prompt-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1982,
+          "title": "core): prune source_tree to changed files under --git-diff-branch",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.509Z"
+      "verified_at": "2026-10-19T01:41:08.211Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-mui-base-ui": {
       "learning_id": "learn-github-mui-base-ui",
@@ -31306,22 +31332,35 @@
     "learn-github-react-component-slider": {
       "learning_id": "learn-github-react-component-slider",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "react-component-slider",
+      "source": "react-component/slider",
+      "repository": "react-component/slider",
       "slug": "react-component-slider",
       "platform": "github",
       "source_url": "https://github.com/react-component/slider",
-      "source_version": "HEAD",
-      "content_hash": "2bcaefaa72f24c388fb928f97a21b3f76fcb1b2bcb2caf7a3e62e3e084b8d482",
+      "source_version": "2dcc4f67",
+      "content_hash": "c88b37e1f30d5eed693fdb1a978d769abe467ee6497f2be2f47160e07ece9a13",
       "dossier_path": "07_PROJECT_LEARNING/react-component-slider-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-component-slider-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1981,
+          "title": "tipFormatter should not crash with undefined value (#1053)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.196Z"
+      "verified_at": "2026-10-19T01:41:06.739Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-react-hook-form-react-hook-form": {
       "learning_id": "learn-github-react-hook-form-react-hook-form",
@@ -31432,22 +31471,35 @@
     "learn-github-react-native-image-picker-react-native-image-picker": {
       "learning_id": "learn-github-react-native-image-picker-react-native-image-picker",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "react-native-image-picker-react-native-image-picker",
+      "source": "react-native-image-picker/react-native-image-picker",
+      "repository": "react-native-image-picker/react-native-image-picker",
       "slug": "react-native-image-picker-react-native-image-picker",
       "platform": "github",
       "source_url": "https://github.com/react-native-image-picker/react-native-image-picker",
-      "source_version": "HEAD",
-      "content_hash": "70db536de1d4081447fa2a6e50d7c7b76c51a0f884ec6c8dbe357194709ef013",
+      "source_version": "61c0cd41",
+      "content_hash": "7a42ad7ecb232bd42bae81830e8676b24a49382f4a07fe768d29a9c9280e60bc",
       "dossier_path": "07_PROJECT_LEARNING/react-native-image-picker-react-native-image-picker-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-native-image-picker-react-native-image-picker-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1983,
+          "title": "fix npm trusted publishing (OIDC) (#2426)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.212Z"
+      "verified_at": "2026-10-19T01:41:13.560Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-react-native-maps-react-native-maps": {
       "learning_id": "learn-github-react-native-maps-react-native-maps",
@@ -35221,22 +35273,35 @@
     "learn-github-tako8ki-gobang": {
       "learning_id": "learn-github-tako8ki-gobang",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "tako8ki-gobang",
+      "source": "TaKO8Ki/gobang",
+      "repository": "TaKO8Ki/gobang",
       "slug": "tako8ki-gobang",
       "platform": "github",
       "source_url": "https://github.com/TaKO8Ki/gobang",
-      "source_version": "HEAD",
-      "content_hash": "c05e6c12a2d4cba9576a2da808323de404574e1a3ce06d289a29165bb0a82031",
+      "source_version": "7b1b5f7e",
+      "content_hash": "b13a2e5b4209f2fba4fbd4890ace556d06adada765314041b2e4753373b42479",
       "dossier_path": "07_PROJECT_LEARNING/tako8ki-gobang-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tako8ki-gobang-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1985,
+          "title": "increase database connection timeout (#109)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.843Z"
+      "verified_at": "2026-10-19T01:41:20.467Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-tamagui-tamagui": {
       "learning_id": "learn-github-tamagui-tamagui",
@@ -73079,6 +73144,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T01:35:03.546Z"
+    },
+    "rule-1981": {
+      "learning_id": "rule-1981",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1981,
+      "title": "tipFormatter should not crash with undefined value (#1053)",
+      "source_url": "https://github.com/react-component/slider",
+      "source_version": "2dcc4f67",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:41:06.739Z"
+    },
+    "rule-1982": {
+      "learning_id": "rule-1982",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1982,
+      "title": "core): prune source_tree to changed files under --git-diff-branch",
+      "source_url": "https://github.com/mufeedvh/code2prompt",
+      "source_version": "66585136",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:41:08.211Z"
+    },
+    "rule-1983": {
+      "learning_id": "rule-1983",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1983,
+      "title": "fix npm trusted publishing (OIDC) (#2426)",
+      "source_url": "https://github.com/react-native-image-picker/react-native-image-picker",
+      "source_version": "61c0cd41",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:41:13.560Z"
+    },
+    "rule-1984": {
+      "learning_id": "rule-1984",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1984,
+      "title": "Make `version` command show diagnostics in JSON format when `-json` is supplied.",
+      "source_url": "https://github.com/hashicorp/terraform",
+      "source_version": "44fcc131",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:41:16.256Z"
+    },
+    "rule-1985": {
+      "learning_id": "rule-1985",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1985,
+      "title": "increase database connection timeout (#109)",
+      "source_url": "https://github.com/TaKO8Ki/gobang",
+      "source_version": "7b1b5f7e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:41:20.467Z"
     }
   },
   "aliases": {

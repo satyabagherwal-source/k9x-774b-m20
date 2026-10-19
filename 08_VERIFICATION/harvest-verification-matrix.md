@@ -2758,3 +2758,9 @@
 | `CYCLE-20261019-0S1C` | `2026-10-19T01:34:57.264Z` | `openyurtio/openyurt` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1978` | Yes (`732e4e94...`) |
 | `CYCLE-20261019-0VN0` | `2026-10-19T01:35:01.932Z` | `slatedb/slatedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1979` | Yes (`9dbc63f0...`) |
 | `CYCLE-20261019-0WX3` | `2026-10-19T01:35:03.591Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1980` | Yes (`07e89ba9...`) |
+| `CYCLE-20261019-8P1X` | `2026-10-19T01:41:06.645Z` | `autotrust/GEV-26B-Decide-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md` | Yes (`d958d622...`) |
+| `CYCLE-20261019-8P5Z` | `2026-10-19T01:41:06.791Z` | `react-component/slider` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1981` | Yes (`c88b37e1...`) |
+| `CYCLE-20261019-8QB7` | `2026-10-19T01:41:08.275Z` | `mufeedvh/code2prompt` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1982` | Yes (`2f0f2b26...`) |
+| `CYCLE-20261019-8UFS` | `2026-10-19T01:41:13.624Z` | `react-native-image-picker/react-native-image-picker` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1983` | Yes (`7a42ad7e...`) |
+| `CYCLE-20261019-8WIB` | `2026-10-19T01:41:16.307Z` | `hashicorp/terraform` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1984` | Yes (`794d66c6...`) |
+| `CYCLE-20261019-8ZR9` | `2026-10-19T01:41:20.517Z` | `TaKO8Ki/gobang` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1985` | Yes (`b13a2e5b...`) |

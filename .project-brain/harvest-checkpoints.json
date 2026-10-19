@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T01:35:03.602Z",
+  "last_updated": "2026-10-19T01:41:20.525Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -258,14 +258,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
-      "content_hash": "dcefdaabf164f539daf3d299ce96bf4b8f3247ff5c02db28d1b3e9b0c0c8a519",
-      "verified_at": "2026-10-17T21:51:12.582Z",
+      "content_hash": "d958d6229a78c81c90cd8665848097023a30e8cb1f8417d7d8843970e0e7c1b8",
+      "verified_at": "2026-10-19T01:41:06.653Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T21:51:12.582Z"
+      "last_updated": "2026-10-19T01:41:06.653Z"
     },
     "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF": {
       "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
@@ -6982,6 +6982,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T01:35:01.943Z"
+    },
+    "react-component/slider": {
+      "repository": "react-component/slider",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-react-component-slider",
+      "content_hash": "c88b37e1f30d5eed693fdb1a978d769abe467ee6497f2be2f47160e07ece9a13",
+      "verified_at": "2026-10-19T01:41:06.802Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T01:41:06.802Z"
+    },
+    "mufeedvh/code2prompt": {
+      "repository": "mufeedvh/code2prompt",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-mufeedvh-code2prompt",
+      "content_hash": "2f0f2b26b5197e55f3c613e246eb21046405b8eeed5c4c9b2aa41728600e219f",
+      "verified_at": "2026-10-19T01:41:08.288Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T01:41:08.288Z"
+    },
+    "react-native-image-picker/react-native-image-picker": {
+      "repository": "react-native-image-picker/react-native-image-picker",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-react-native-image-picker-react-native-image-picker",
+      "content_hash": "7a42ad7ecb232bd42bae81830e8676b24a49382f4a07fe768d29a9c9280e60bc",
+      "verified_at": "2026-10-19T01:41:13.631Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T01:41:13.631Z"
+    },
+    "hashicorp/terraform": {
+      "repository": "hashicorp/terraform",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-hashicorp-terraform",
+      "content_hash": "794d66c61da7c04070985de894c9faf2471e8e92305b69e653c0ab74aa0f2dc7",
+      "verified_at": "2026-10-19T01:41:16.318Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T01:41:16.318Z"
+    },
+    "TaKO8Ki/gobang": {
+      "repository": "TaKO8Ki/gobang",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-tako8ki-gobang",
+      "content_hash": "b13a2e5b4209f2fba4fbd4890ace556d06adada765314041b2e4753373b42479",
+      "verified_at": "2026-10-19T01:41:20.525Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T01:41:20.525Z"
     }
   },
   "repos": {

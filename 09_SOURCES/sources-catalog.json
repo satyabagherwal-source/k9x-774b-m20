@@ -245,8 +245,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4",
     "sourceVersion": "hf-autotrust-gev-26b-decide-nvfp4",
     "license": "Open-Source",
-    "contentHash": "dcefdaabf164f539daf3d299ce96bf4b8f3247ff5c02db28d1b3e9b0c0c8a519",
-    "lastHarvestedAt": "2026-10-17T21:51:12.578Z",
+    "contentHash": "d958d6229a78c81c90cd8665848097023a30e8cb1f8417d7d8843970e0e7c1b8",
+    "lastHarvestedAt": "2026-10-19T01:41:06.648Z",
     "learningId": "learn-huggingface-autotrust-gev-26b-decide-nvfp4"
   },
   "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf": {
@@ -4578,5 +4578,55 @@
     "contentHash": "9dbc63f00c56d179cb440f93757f6a20bcea876d26d0354bf6df3b43a25de4ca",
     "lastHarvestedAt": "2026-10-19T01:35:01.938Z",
     "learningId": "learn-github-slatedb-slatedb"
+  },
+  "react-component-slider": {
+    "repository": "react-component/slider",
+    "platform": "github",
+    "sourceUrl": "https://github.com/react-component/slider",
+    "sourceVersion": "2dcc4f67",
+    "license": "MIT",
+    "contentHash": "c88b37e1f30d5eed693fdb1a978d769abe467ee6497f2be2f47160e07ece9a13",
+    "lastHarvestedAt": "2026-10-19T01:41:06.797Z",
+    "learningId": "learn-github-react-component-slider"
+  },
+  "mufeedvh-code2prompt": {
+    "repository": "mufeedvh/code2prompt",
+    "platform": "github",
+    "sourceUrl": "https://github.com/mufeedvh/code2prompt",
+    "sourceVersion": "66585136",
+    "license": "MIT",
+    "contentHash": "2f0f2b26b5197e55f3c613e246eb21046405b8eeed5c4c9b2aa41728600e219f",
+    "lastHarvestedAt": "2026-10-19T01:41:08.284Z",
+    "learningId": "learn-github-mufeedvh-code2prompt"
+  },
+  "react-native-image-picker-react-native-image-picker": {
+    "repository": "react-native-image-picker/react-native-image-picker",
+    "platform": "github",
+    "sourceUrl": "https://github.com/react-native-image-picker/react-native-image-picker",
+    "sourceVersion": "61c0cd41",
+    "license": "MIT",
+    "contentHash": "7a42ad7ecb232bd42bae81830e8676b24a49382f4a07fe768d29a9c9280e60bc",
+    "lastHarvestedAt": "2026-10-19T01:41:13.627Z",
+    "learningId": "learn-github-react-native-image-picker-react-native-image-picker"
+  },
+  "hashicorp-terraform": {
+    "repository": "hashicorp/terraform",
+    "platform": "github",
+    "sourceUrl": "https://github.com/hashicorp/terraform",
+    "sourceVersion": "44fcc131",
+    "license": "NOASSERTION",
+    "contentHash": "794d66c61da7c04070985de894c9faf2471e8e92305b69e653c0ab74aa0f2dc7",
+    "lastHarvestedAt": "2026-10-19T01:41:16.313Z",
+    "learningId": "learn-github-hashicorp-terraform"
+  },
+  "tako8ki-gobang": {
+    "repository": "TaKO8Ki/gobang",
+    "platform": "github",
+    "sourceUrl": "https://github.com/TaKO8Ki/gobang",
+    "sourceVersion": "7b1b5f7e",
+    "license": "MIT",
+    "contentHash": "b13a2e5b4209f2fba4fbd4890ace556d06adada765314041b2e4753373b42479",
+    "lastHarvestedAt": "2026-10-19T01:41:20.520Z",
+    "learningId": "learn-github-tako8ki-gobang"
   }
 }
