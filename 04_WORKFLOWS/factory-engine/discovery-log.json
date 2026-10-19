@@ -18124,5 +18124,17 @@
     "downloads": 9322,
     "qualityScore": 3650,
     "discoveredAt": "2026-10-19T15:29:25.494Z"
+  },
+  {
+    "name": "mistralai/Timestral-209M",
+    "fullName": "mistralai/Timestral-209M",
+    "url": "https://huggingface.co/mistralai/Timestral-209M",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: mistralai/Timestral-209M (170 likes, 2601 downloads)",
+    "likes": 170,
+    "downloads": 2601,
+    "qualityScore": 3700,
+    "discoveredAt": "2026-10-19T17:16:05.322Z"
   }
 ]

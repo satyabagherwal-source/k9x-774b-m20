@@ -2923,10 +2923,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/ProvableHQ/snarkOS",
-    "sourceVersion": "89acffc2",
+    "sourceVersion": "508b0013",
     "license": "Apache-2.0",
-    "contentHash": "f60ba6be407581dd095ab99a5324b23b53ca62bb509c5d86d4c26da3381e74af",
-    "lastHarvestedAt": "2026-10-19T14:15:06.774Z",
+    "contentHash": "5c4603f28ebf49902f23fe025125f5aae9b850a9051b40e7ea7182d20a883fa2",
+    "lastHarvestedAt": "2026-10-19T17:18:34.892Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "vasu-devs-justhireme": {
@@ -6013,10 +6013,10 @@
     "repository": "juicedata/juicefs",
     "platform": "github",
     "sourceUrl": "https://github.com/juicedata/juicefs",
-    "sourceVersion": "506808b0",
+    "sourceVersion": "29c60bbb",
     "license": "Apache-2.0",
-    "contentHash": "2e2fb36f4ffd66abff5be9f87b11bf1c6f4bd791df6b87342c39e3778e4b2ee8",
-    "lastHarvestedAt": "2026-10-19T04:59:22.650Z",
+    "contentHash": "d11f33d8d7c22492fe717cdfefc25cb8c84c8aebb21d7dc31f06df2e8568f55a",
+    "lastHarvestedAt": "2026-10-19T17:18:31.106Z",
     "learningId": "learn-github-juicedata-juicefs"
   },
   "redisearch-redisearch": {
@@ -8438,5 +8438,25 @@
     "contentHash": "663d5620fd50db9c0ae6193049a22c9adcd5e6283ec38796cf43a0aafe74f3c5",
     "lastHarvestedAt": "2026-10-19T17:12:06.311Z",
     "learningId": "learn-github-callstack-react-native-builder-bob"
+  },
+  "electron-electron": {
+    "repository": "electron/electron",
+    "platform": "github",
+    "sourceUrl": "https://github.com/electron/electron",
+    "sourceVersion": "360d1da1",
+    "license": "MIT",
+    "contentHash": "99576aab8dedc8f7b9e8b53797a01cd8ea759739cf177aa3ffadaa2333f42076",
+    "lastHarvestedAt": "2026-10-19T17:18:29.118Z",
+    "learningId": "learn-github-electron-electron"
+  },
+  "hf-mistralai-timestral-209m": {
+    "repository": "mistralai/Timestral-209M",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/mistralai/Timestral-209M",
+    "sourceVersion": "hf-mistralai-timestral-209m",
+    "license": "Open-Source",
+    "contentHash": "3639530b5599ca33bdeee25586118c518645335e9f18aece083e48da1cf72bbd",
+    "lastHarvestedAt": "2026-10-19T17:18:30.894Z",
+    "learningId": "learn-huggingface-mistralai-timestral-209m"
   }
 }

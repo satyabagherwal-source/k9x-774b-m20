@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T17:12:13.218Z",
-  "total_verified_learnings": 859,
+  "last_updated": "2026-10-19T17:18:34.848Z",
+  "total_verified_learnings": 861,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -8047,22 +8047,35 @@
     "learn-github-electron-electron": {
       "learning_id": "learn-github-electron-electron",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "electron-electron",
+      "source": "electron/electron",
+      "repository": "electron/electron",
       "slug": "electron-electron",
       "platform": "github",
       "source_url": "https://github.com/electron/electron",
-      "source_version": "HEAD",
-      "content_hash": "614ee35cf514216bcc0f08eba3331cac53ab8f1937079a8cbda83d1fa9d7f575",
+      "source_version": "360d1da1",
+      "content_hash": "99576aab8dedc8f7b9e8b53797a01cd8ea759739cf177aa3ffadaa2333f42076",
       "dossier_path": "07_PROJECT_LEARNING/electron-electron-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/electron-electron-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2705,
+          "title": "build: stop overriding node GN declare_args defaults in patch (#55042)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.768Z"
+      "verified_at": "2026-10-19T17:18:29.061Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-elizaos-eliza": {
       "learning_id": "learn-github-elizaos-eliza",
@@ -26192,14 +26205,19 @@
       "slug": "juicedata-juicefs",
       "platform": "github",
       "source_url": "https://github.com/juicedata/juicefs",
-      "source_version": "506808b0",
-      "content_hash": "2e2fb36f4ffd66abff5be9f87b11bf1c6f4bd791df6b87342c39e3778e4b2ee8",
+      "source_version": "29c60bbb",
+      "content_hash": "d11f33d8d7c22492fe717cdfefc25cb8c84c8aebb21d7dc31f06df2e8568f55a",
       "dossier_path": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
       "promoted_rules": [
         {
           "number": 2156,
           "title": "windows: fixed git clone panic. (#7696)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2709,
+          "title": "meta/fs: keep the errno quota operations report instead of EINVAL (#7671)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -26208,7 +26226,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T04:59:22.579Z",
+      "verified_at": "2026-10-19T17:18:31.031Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53349,13 +53367,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
       "source_version": "508b0013",
-      "content_hash": "6046861bc56d63c6f2cc69b4d702be232b19cd1c01b164fbf6974eca1a5eda76",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "content_hash": "5c4603f28ebf49902f23fe025125f5aae9b850a9051b40e7ea7182d20a883fa2",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 1114,
@@ -53375,7 +53393,7 @@
         {
           "number": 2679,
           "title": "Merge pull request #4566 from aleo-labs-protocol/dependabot/cargo/staging/iterto",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -53383,7 +53401,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T16:24:49.591Z",
+      "verified_at": "2026-10-19T17:18:34.839Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -89571,14 +89589,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 2679,
       "title": "Merge pull request #4566 from aleo-labs-protocol/dependabot/cargo/staging/iterto",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
       "source_version": "508b0013",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-19T16:24:49.591Z"
+      "verified_at": "2026-10-19T17:18:34.839Z"
     },
     "rule-2680": {
       "learning_id": "rule-2680",
@@ -89929,6 +89947,119 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T17:12:13.210Z"
+    },
+    "rule-2705": {
+      "learning_id": "rule-2705",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2705,
+      "title": "build: stop overriding node GN declare_args defaults in patch (#55042)",
+      "source_url": "https://github.com/electron/electron",
+      "source_version": "360d1da1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T17:18:29.061Z"
+    },
+    "learn-huggingface-mistralai-timestral-209m": {
+      "learning_id": "learn-huggingface-mistralai-timestral-209m",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "mistralai/Timestral-209M",
+      "repository": "mistralai/Timestral-209M",
+      "slug": "hf-mistralai-timestral-209m",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/mistralai/Timestral-209M",
+      "source_version": "hf-mistralai-timestral-209m",
+      "content_hash": "3639530b5599ca33bdeee25586118c518645335e9f18aece083e48da1cf72bbd",
+      "dossier_path": "07_PROJECT_LEARNING/hf-mistralai-timestral-209m-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-mistralai-timestral-209m-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 2706,
+          "title": "Patch-Based Temporal Compression Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2707,
+          "title": "Probabilistic Output Quantile Monotonicity Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2708,
+          "title": "Autoregressive Block Forecasting State Isolation",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T17:18:30.832Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-2706": {
+      "learning_id": "rule-2706",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2706,
+      "title": "Patch-Based Temporal Compression Invariant",
+      "source_url": "https://huggingface.co/mistralai/Timestral-209M",
+      "source_version": "hf-mistralai-timestral-209m",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T17:18:30.832Z"
+    },
+    "rule-2707": {
+      "learning_id": "rule-2707",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2707,
+      "title": "Probabilistic Output Quantile Monotonicity Guard",
+      "source_url": "https://huggingface.co/mistralai/Timestral-209M",
+      "source_version": "hf-mistralai-timestral-209m",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T17:18:30.832Z"
+    },
+    "rule-2708": {
+      "learning_id": "rule-2708",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2708,
+      "title": "Autoregressive Block Forecasting State Isolation",
+      "source_url": "https://huggingface.co/mistralai/Timestral-209M",
+      "source_version": "hf-mistralai-timestral-209m",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T17:18:30.832Z"
+    },
+    "rule-2709": {
+      "learning_id": "rule-2709",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2709,
+      "title": "meta/fs: keep the errno quota operations report instead of EINVAL (#7671)",
+      "source_url": "https://github.com/juicedata/juicefs",
+      "source_version": "29c60bbb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T17:18:31.031Z"
     }
   },
   "aliases": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source**: github ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
-> **Source Version**: `506808b0`  
+> **Source Version**: `29c60bbb`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T04:59:22.336Z  
+> **Timestamp**: 2026-10-19T17:18:30.804Z  
 > **Learning ID**: `learn-github-juicedata-juicefs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T04:59:22.329Z  
+> **Harvest Timestamp**: 2026-10-19T17:18:30.697Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: JuiceFS is a distributed POSIX file system built on top of Redis and S3.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md
-- **Stars / Engagement**: 14549 stars
+- **Stars / Engagement**: 14555 stars
 
 ---
 
@@ -1153,11 +1153,11 @@ const (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7703** (2026-10-16): **meta: skip dir stats for no-op rename and reset target on retry**
-  *Symptoms*: ## Problem  1. **No-op rename between hard links changes dir stats.** POSIX requires `rename()` to succeed and do nothing when both names refer to the same file. If `/d1/a` and `/d2/b` are hard links, `rename(/d1/a, /d2/b)` leaves the entries unchanged, but `Rename` still moves one inode between `d1` and `d2` in dir stats (and quotas). All engines are affected. Redis also skips permission checks on this path, and no engine returns the source `attr`. 2. **A retried rename reuses the target output from the failed attempt.** `doRename` sets `tInode`/`tAttr` before writing. If that attempt is retried and the target is gone by then (for example, a concurrent `c -> d` while renaming `a -> c`), `Rename` still accounts for a replaced target: the dir loses 1 inode while both files exist. This reproduces on Redis, PostgreSQL and SQLite with two concurrent clients.  ## Fix  - On the same-inode no-op path, engines set `*inode == *tInode` and fill `attr`. `Rename` treats this as a no-op and skips stats, quota and cache updates. No new parameters are added. - Redis now runs this check after the permission checks, matching SQL and TKV. - `tInode`/`tAttr` are reset at the start of every transaction attempt in all engines.  ## Tests  - `testRenameDirStat` Test 7 (all engines): a rename between cross-directory hard links, with flags `0` and `RenameExchange`, is a no-op. - `TestSQLiteRenameRetryResetsTarget`: a deterministic retry where the target is renamed away before the retry. - Both tests 
+- **Issue #7712** (2026-10-19): **object: release partially created storage on failure**
+  *Symptoms*: Follow-up to #7709.  ## Problem  These leaks existed before #7709, but #7709 retries a failed storage reload on every heartbeat, so they can now repeat once per retry:  - `NewSharded` returns on the first failing shard without shutting down the shards already created (e.g. storj projects). - `createStorage` returns without shutting down the storage when parsing the encrypt key or creating the encryptor fails. - `newSQLStore` returns without closing the xorm engine when `Sync2` fails (e.g. database unreachable), leaking a `*sql.DB` and its opener goroutine.  Besides, `object.Shutdown` only unwrapped one level, so `encrypted(withPrefix(x))` and `withPrefix(sharded)` never reached the backend, including on unmount.  ## Change  - Release what was created on the failure paths above. - Make `object.Shutdown` unwrap recursively. Callers already shut down storage only on exit or when it is no longer used; this only extends that to backends hidden behind more than one wrapper (only storj and ceph implement `Shutdown`).  Ceph needs no change for failed creation: go-ceph sets a finalizer on `rados.Conn`, and `Shutdown` is a no-op on an unconnected conn.  ## Not covered  The old storage is not shut down after a successful reload (once per config change, not amplified by retries). 
 
-- **Issue #7702** (2026-10-16): **cmd/profile: stop reading stdin once it is closed**
-  *Symptoms*: `juicefs profile` ignored `fmt.Scanln` errors. When stdin is closed or empty (as in CI), `Scanln` returns EOF immediately and the loop spins:  - Replay mode: every iteration toggles pause/continue, printing millions of `Paused. Press [enter] to continue.` lines. This flooded the `command-win` job and the runner lost communication: https://github.com/juicedata/juicefs/actions/runs/38702634454 - Real-time mode: busy-loops on one CPU core.  Fix: - Read stdin in a separate goroutine that stops on any read error; the flusher now runs on the main goroutine. - Use `ReadString('\n')`, so each line toggles pause once. Previously a line with spaces toggled twice.  Verified on macOS with a mounted volume, stdin from `/dev/null` and killed after 5s:  | Case | Before | After | |---|---|---| | Replay `mnt/.accesslog` | ~1.38M `Paused` lines | 0 | | Real-time `profile mnt` | ~1 core busy (2.4–5.1s CPU) | 0.06s CPU | | Interactive pause/resume | unchanged | unchanged |  `command-win` is not triggered by changes under `cmd/`, so it needs a manual run to confirm on Windows. 
+- **Issue #7711** (2026-10-19): **meta: reject doInit from read-only clients**
+  *Symptoms*: Setting the first dir/user/group quota enables `DirStats` / `UserGroupQuota` by calling `doInit`. `redisMeta.doInit` writes with `m.rdb` directly and never checks `ReadOnly`, so a read-only client (e.g. a read-only SDK client calling `set_quota`) rewrote the volume format and deleted the stored dir stats / user-group usage. SQL and KV failed with `EROFS` only at the delete step, after `syncAllTables` could already run DDL.  - return `EROFS` at the start of `doInit` in all three engines, before any read or write; `juicefs format` / `juicefs config` use the default (writable) config and are unaffected  Test: `testReadOnly` (shared by all engines) now checks that `Init` returns `EROFS`, that setting a dir and a user quota fails, and that the stored format, user quota and dir stat stay unchanged. It fails on Redis before the fix (`TestRedisClient`) and passes on Redis, SQLite, MemKV and Badger after. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1174,268 +1174,196 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `be5e3d21` (2026-10-15)
-**Commit Message**: windows: fixed git clone panic. (#7696)
+### Incident Patch 1: `29c60bbb` (2026-10-19)
+**Commit Message**: meta/fs: keep the errno quota operations report instead of EINVAL (#7671)
 
-**File**: `.github/scripts/command-win/acl.sh` (modified, +2/-2)
+**File**: `pkg/fs/fs.go` (modified, +7/-1)
 ```diff
-@@ -7,12 +7,12 @@ test_modify_acl_config()
- {
-     prepare_win_test
-     ./juicefs.exe format $META_URL myjfs --trash-days 0
--    ./juicefs.exe mount -d $META_URL z:
-+    ./juicefs.exe mount -d $META_URL z: --fuse-access-log c:/fuse.log --access-log c:/fsop.log --log c:/mount.log
-     touch z:test
-     cmd.exe /c "icacls z:\test /grant Everyone:(R,W)" && echo "setfacl should failed" && exit 1
-     ./juicefs.exe config $META_URL --enable-acl=true
-     ./juicefs.exe umount z:
--    ./juicefs.exe mount -d $META_URL z:
-+    ./juicefs.exe mount -d $META_URL z: --fuse-access-log c:/fuse.log --access-log c:/fsop.log --log c:/mount.log
-     cmd.exe /c "icacls z:\test /grant Everyone:(R,W)"
-     ./juicefs.exe config $META_URL --enable-acl=false && echo "should not disable acl" && exit 1 || true 
-     ./juicefs.exe config $META_URL | grep EnableACL | grep "true" || (echo "EnableACL should be true" && exit 1) 
-```
-
-**File**: `.github/scripts/command-win/clone.sh` (modified, +2/-2)
-```diff
-@@ -8,7 +8,7 @@ test_clone_with_jfs_source()
- {
-     prepare_win_test
-     ./juicefs.exe format $META_URL myjfs
--    ./juicefs.exe mount -d $META_URL z:
-+    ./juicefs.exe mount -d $META_URL z: --fuse-access-log c:/fuse.log --access-log c:/fsop.log --log c:/mount.log
-     ls /z
-     [[ ! -d /z/juicefs ]] && git clone https://github.com/juicedata/juicefs.git /z/juicefs --depth 1
-     ls /z/juicefs
-@@ -39,7 +39,7 @@ do_clone()
- test_clone_with_small_files(){
-     prepare_win_test
-     ./juicefs.exe format $META_URL myjfs
--    ./juicefs.exe mount -d $META_URL z:
-+    ./juicefs.exe mount -d $META_URL z: --fuse-access-log c:/fuse.log --access-log c:/fsop.log --log c:/mount.log
-     mkdir /z/test
-     for i in $(seq 1 2000); do
-         echo $i > /z/test/$i
-```
-
-**File**: `.github/scripts/command-win/debug.sh` (modified, +2/-2)
-```diff
-@@ -29,7 +29,7 @@ check_debug_file(){
- test_debug_juicefs(){
-     prepare_win_test
-     ./juicefs.exe format $META_URL myjfs 
--    ./juicefs.exe mount -d $META_URL z:
-+    ./juicefs.exe mount -d $META_URL z: --fuse-access-log c:/fuse.log --access-log c:/fsop.log --log c:/mount.log
-     dd if=/dev/urandom of=/z/bigfile bs=1M count=1024
-     ./juicefs.exe debug z:
-     check_debug_file
-@@ -41,7 +41,7 @@ test_debug_abnormal_juicefs(){
-     rm -rf debug | true
-     prepare_win_test
-     ./juicefs.exe format $META_URL myjfs 
--    ./juicefs.exe mount -d $META_URL z:
-+    ./juicefs.exe mount -d $META_URL z: --fuse-access-log c:/fuse.log --access-log c:/fsop.log --log c:/mount.log
-     dd if=/dev/urandom of=/z/bigfile bs=1M count=1024
-     killall -9 redis-server | true
-     ./juicefs.exe debug z:
-```
-
-**File**: `.github/scripts/command-win/dump_load.sh` (modified, +6/-6)
-```diff
-@@ -14,7 +14,7 @@ trap "echo random seed is $SEED" EXIT
- test_dump_load_sustained_file(){
-     prepare_win_test
-     ./juicefs.exe format $META_URL myjfs --trash-days 0
--    ./juicefs.exe mount -d $META_URL z:
-+    ./juicefs.exe mount -d $META_URL z: --fuse-access-log c:/fuse.log --access-log c:/fsop.log --log c:/mount.log
-     file_count=100
-     for i in $(seq 1 $file_count); do
-         touch /z/file$i
-@@ -38,13 +38,13 @@ test_dump_load_sustained_file(){
-     sleep 3
-     prepare_win_test
-     ./juicefs.exe load $META_URL dump.json $(get_load_option)
--    ./juicefs.exe mount -d $META_URL z:
-+    ./juicefs.exe mount -d $META_URL z: --fuse-access-log c:/fuse.log --access-log c:/fsop.log --log c:/mount.log
- }
- 
- test_dump_load_with_copy_file_range(){
-     prepare_win_test
-     ./juicefs.exe format $META_URL myjfs
--    ./juicefs.exe mount -d $META_URL z:
-+    ./juicefs.exe mount -d $META_URL z: --fuse-access-log c:/fuse.log --access-log c:/fsop.log --log c:/mount.log
-     rm -rf /tmp/test
-     dd if=/dev/zero of=/tmp/test bs=1M count=1024
-     cp /tmp/test /z/test
-@@ -54,22 +54,22 @@ test_dump_load_with_copy_file_range(){
-     sleep 3
-     redis-cli -h 127.0.0.1 -p 6379 -n 1 FLUSHDB
-     ./juicefs.exe load $META_URL dump.json $(get_load_option)
--    ./juicefs.exe mount -d $META_URL z:
-+    ./juicefs.exe mount -d $META_URL z: --fuse-access-log c:/fuse.log --access-log c:/fsop.log --log c:/mount.log
-     compare_md5sum /tmp/test /z/test1
- }
- 
- test_dump_load_with_quota(){
-     prepare_win_test
-     ./juicefs.exe format $META_URL myjfs 
--    ./juicefs.exe mount -d $META_URL z: --heartbeat $HEARTBEAT_INTERVAL
-+    ./juicefs.exe mount -d $META_URL z: --heartbeat $HEARTBEAT_INTERVAL --fuse-access-log c:/fuse.log --access-log c:/fsop.log --log c:/mount.log
-     mkdir -p /z/d
-     ./juicefs.exe quota set $META_URL --path //d --inodes 1000 --capacity 1
-     ./juicefs.exe dump --log-level error $META_URL $(get_dump_option) > dump.json
-     ./juicefs.exe umount z:
-     sleep 3
-     redis-cli -h 127.0.0.1 -p 6379 -n 1 FLUSHDB
-     ./juicefs.exe load $META_URL dump.json $(get_load_option)
--    ./juicefs.exe mount $META_URL z: -d --heartbeat $HEARTBEAT_INTERVAL
-+    ./juicefs.exe mount $META_URL z: -d --heartbeat $HEARTBEAT_INTERVAL --fuse-access-log c:/fuse.log --access-log c:/fsop.log --log c:/mount.log
-     ./juicefs.exe quota get $META_URL --path //d
-     dd if=/dev/zero of=/z/d/test1 bs=1G count=1
-     sleep $DIR_QUOTA_FLUSH_INTERVAL
-```
-
-**File**: `.github/scripts/command-win/fsck.sh` (modified, +1/-1)
-```diff
-@@ -9,7 +9,7 @@ test_sync_dir_stat()
- {
-     prepare_win_test
-     ./juicefs.exe format $META_URL myjfs
--    ./juicefs.exe mount -d $META_URL z:
-+    ./juicefs.exe mount -d $META_URL z: --fuse-access-log c:/fuse.log --access-log c:/fsop.log --log c:/mount.log
-     ./juicefs.exe mdtest $META_URL //d --depth 15 --dirs 2 --files 100 --threads 10 & 
-     pid=$!
-     sleep 15s
-```
-
-**File**: `.github/scripts/command-win/gateway.sh` (modified, +1/-1)
-```diff
-@@ -30,7 +30,7 @@ start_two_gateway()
- {
-     prepare_test
-     ./juicefs.exe format $META_URL myjfs  --trash-days 0
--    ./juicefs.exe mount -d $META_URL z:
-+    ./juicefs.exe mount -d $META_URL z: --fuse-access-log c:/fuse.log --access-log c:/fsop.log --log c:/mount.log
-     export MINIO_ROOT_USER=admin
-     export MINIO_ROOT_PASSWORD=admin123
-     nohup ./juicefs.exe gateway $META_URL 127.0.0.1:9001 --multi-buckets --keep-etag --object-tag --log=gateway1.log &
-```
-
-**File**: `.github/scripts/command-win/gc.sh` (modified, +2/-2)
-```diff
-@@ -11,7 +11,7 @@ test_delay_delete_slice_after_compaction(){
-     fi
-     prepare_win_test
-     ./juicefs.exe format $META_URL myjfs --trash-days 1
--    ./juicefs.exe mount -d $META_URL z: --no-usage-report
-+    ./juicefs.exe mount -d $META_URL z: --no-usage-report --fuse-access-log c:/fuse.log --access-log c:/fsop.log --log c:/mount.log
-     redis-cli save
-     # don't skip files when gc compact
-     export JFS_SKIPPED_TIME=1
-@@ -22,7 +22,7 @@ test_delay_delete_slice_after_compaction(){
- test_gc_trash_slices(){
-     prepare_win_test
-     ./juicefs.exe format $META_URL myjfs
--    ./juicefs.exe mount -d $META_URL z: --no-usage-report
-+    ./juicefs.exe mount -d $META_URL z: --no-usage-report --fuse-access-log c:/fuse.log --access-log c:/fsop.log --log c:/mount.log
-     local suffix="${RANDOM}_$$"
-     local local_file="${RUNNER_TEMP:-.}/random_read_write_${suffix}"
-     local mount_file="z:\\random_read_write_${suffix}"
-```
-
-**File**: `.github/scripts/command-win/profile.sh` (modified, +1/-1)
-```diff
-@@ -9,7 +9,7 @@ test_profile()
- {
-     prepare_win_test
-     ./juicefs.exe format $META_URL myjfs
--    ./juicefs.exe mount -d $META_URL z:
-+    ./juicefs.exe mount -d $META_URL z: --fuse-access-log c:/fuse.log --access-log c:/fsop.log --log c:/mount.log
-     ./juicefs.exe mdtest $META_URL //d --depth 3 --dirs 3 --files 10 --threads 5 
-     timeout 5s ./juicefs profile /z/.accesslog || EXIT_CODE=$?
-     if [ "$EXIT_CODE" = "124" ]; then
-```
-
----
-
-### Incident Patch 2: `2553b958` (2026-10-16)
-**Commit Message**: vfs: rate-limit flush timeout stack dumps (#7693)
-
-Signed-off-by: Xucheng Zhou <[REDACTED_EMAIL]>
-Signed-off-by: Xucheng Zhou <[REDACTED_EMAIL]>
-Co-authored-by: Xucheng Zhou <[REDACTED_EMAIL]>
-
-**File**: `pkg/vfs/writer.go` (modified, +21/-3)
-```diff
-@@ -32,6 +32,26 @@ const (
- 	flushDuration = time.Second * 5
- )
- 
-+var (
-+	flushStackMu       sync.Mutex
-+	lastFlushStackDump time.Time
-+)
-+
-+func dumpFlushTimeoutStacks() {
-+	// Diagnostics must not queue more writers behind an in-flight dump.
-+	if !flushStackMu.TryLock() {
-+		return
-+	}
-+	defer flushStackMu.Unlock()
-+	if time.Since(lastFlushStackDump) < time.Minute {
-+		return
-+	}
-+	lastFlushStackDump = time.Now()
-+	buf := make([]byte, 1<<20)
-+	n := runtime.Stack(buf, true)
-+	logger.Warnf("All goroutines (%d):\n%s", runtime.NumGoroutine(), buf[:n])
-+}
-+
- type FileWriter interface {
- 	Write(ctx meta.Context, offset uint64, data []byte) syscall.Errno
- 	Flush(ctx meta.Context) syscall.Errno
-@@ -416,9 +436,7 @@ func (f *fileWriter) flush(ctx meta.Context, writeback bool) syscall.Errno {
- 					logger.Errorf("pending slice %d-%d: %+v", f.inode, c.indx, *s)
- 				}
- 			}
--			buf := make([]byte, 1<<20)
--			n := runtime.Stack(buf, true)
--			logger.Warnf("All goroutines (%d):\n%s", runtime.NumGoroutine(), buf[:n])
-+			dumpFlushTimeoutStacks()
- 			err = syscall.EIO
- 			break
+@@ -20,6 +20,7 @@ import (
+ 	"bytes"
+ 	"context"
+ 	"encoding/json"
++	"errors"
+ 	"fmt"
+ 	"io"
+ 	"os"
+@@ -1202,7 +1203,12 @@ func (fs *FileSystem) HandleQuota(ctx meta.Context, key string, cmd uint8, capac
+ 		if strings.HasPrefix(_err.Error(), "no quota for inode") {
+ 			return qs, 0
  		}
+-		err = syscall.EINVAL
++		var eno syscall.Errno
++		if errors.As(_err, &eno) {
++			err = eno
++		} else {
++			err = syscall.EINVAL
++		}
+ 	}
+ 	return
+ }
+```
+
+**File**: `pkg/meta/quota.go` (modified, +9/-12)
+```diff
+@@ -591,7 +591,7 @@ func (m *baseMeta) HandleQuota(ctx Context, cmd uint8, qkey string, qtype uint32
+ 	if qtype == DirQuotaType && cmd != QuotaList {
+ 		dpath = qkey
+ 		if st := m.resolve(ctx, dpath, &inode, create); st != 0 {
+-			return fmt.Errorf("resolve dir %s: %s", dpath, st)
++			return fmt.Errorf("resolve dir %s: %w", dpath, st)
+ 		}
+ 		if inode.IsTrash() {
+ 			return errors.New("no quota for any trash directory")
+@@ -600,7 +600,7 @@ func (m *baseMeta) HandleQuota(ctx Context, cmd uint8, qkey string, qtype uint32
+ 	} else if (qtype == UserQuotaType || qtype == GroupQuotaType) && cmd != QuotaCheck {
+ 		id, err := strconv.ParseUint(qkey, 10, 64)
+ 		if err != nil {
+-			return fmt.Errorf("parse quota key %q: %s", qkey, err)
++			return fmt.Errorf("parse quota key %q: %s: %w", qkey, err, syscall.EINVAL)
+ 		}
+ 		key = id
+ 	}
+@@ -617,7 +617,7 @@ func (m *baseMeta) HandleQuota(ctx Context, cmd uint8, qkey string, qtype uint32
+ 	case QuotaCheck:
+ 		return m.handleQuotaCheck(ctx, qtype, key, dpath, strict, repair, quotas)
+ 	default:
+-		return fmt.Errorf("invalid quota command: %d", cmd)
++		return fmt.Errorf("invalid quota command: %d: %w", cmd, syscall.EINVAL)
+ 	}
+ }
+ 
+@@ -629,29 +629,26 @@ func (m *baseMeta) handleQuotaSet(ctx Context, qtype uint32, key uint64, dpath s
+ 	case DirQuotaType:
+ 		if !format.DirStats {
+ 			format.DirStats = true
+-			err := m.en.doInit(format, false)
+-			if err != nil {
+-				logger.Warnf("init dir stats: %s", err)
++			if err := m.en.doInit(format, false); err != nil {
++				return fmt.Errorf("enable dir stats: %s (%w)", err, syscall.EIO)
+ 			}
+ 		}
+ 		quota = quotas[dpath]
+ 	case UserQuotaType:
+ 		if !format.UserGroupQuota {
+ 			format.UserGroupQuota = true
+ 			scan = true
+-			err := m.en.doInit(format, false)
+-			if err != nil {
+-				logger.Warnf("init user group quota: %s", err)
++			if err := m.en.doInit(format, false); err != nil {
++				return fmt.Errorf("enable user group quota: %s (%w)", err, syscall.EIO)
+ 			}
+ 		}
+ 		quota = quotas[fmt.Sprintf("%d", key)]
+ 	case GroupQuotaType:
+ 		if !format.UserGroupQuota {
+ 			format.UserGroupQuota = true
+ 			scan = true
+-			err := m.en.doInit(format, false)
+-			if err != nil {
+-				logger.Warnf("init user group quota: %s", err)
++			if err := m.en.doInit(format, false); err != nil {
++				return fmt.Errorf("enable user group quota: %s (%w)", err, syscall.EIO)
+ 			}
+ 		}
+ 		quota = quotas[fmt.Sprintf("%d", key)]
 ```
 
 ---
 
-### Incident Patch 3: `5784554f` (2026-10-09)
-**Commit Message**: fix(sync): isolate files-from worker listing errors (#7606)
+### Incident Patch 2: `f258d366` (2026-10-19)
+**Commit Message**: object: release partially created storage on failure (#7712)
 
-Co-authored-by: Xuhui zhang <[REDACTED_EMAIL]>
-Signed-off-by: Xucheng Zhou <[REDACTED_EMAIL]>
-Signed-off-by: Xuhui zhang <[REDACTED_EMAIL]>
-
-**File**: `pkg/sync/sync.go` (modified, +1/-1)
+**File**: `cmd/format.go` (modified, +2/-0)
 ```diff
-@@ -1905,7 +1905,7 @@ func produceFromList(tasks chan<- object.Object, src, dst object.ObjectStorage,
- 					listedPrefix.Increment()
- 					continue
- 				}
--				err = startProducer(tasks, src, dst, key, config.ListDepth, config, checkpointMgr)
-+				err := startProducer(tasks, src, dst, key, config.ListDepth, config, checkpointMgr)
- 				if err != nil {
- 					logger.Errorf("list prefix %s: %s", key, err)
- 					failed.Increment()
+@@ -289,13 +289,15 @@ func createStorage(format meta.Format) (object.ObjectStorage, error) {
+ 	if format.EncryptKey != "" {
+ 		privKey, err := object.ParsePrivateKeyFromPem([]byte(format.EncryptKey), []byte(os.Getenv("JFS_RSA_PASSPHRASE")))
+ 		if err != nil {
++			object.Shutdown(blob)
+ 			if errors.Is(err, object.ErrKeyNeedPasswd) {
+ 				return nil, fmt.Errorf("%w: please set the 'JFS_RSA_PASSPHRASE' environment variable", err)
+ 			}
+ 			return nil, fmt.Errorf("parse private key: %s", err)
+ 		}
+ 		encryptor, err := object.NewDataEncryptor(object.NewKeyEncryptor(privKey), format.EncryptAlgo)
+ 		if err != nil {
++			object.Shutdown(blob)
+ 			return nil, err
+ 		}
+ 		blob = object.NewEncrypted(blob, encryptor)
+```
+
+**File**: `pkg/object/interface.go` (modified, +7/-11)
+```diff
+@@ -121,24 +121,20 @@ type Shutdownable interface {
+ }
+ 
+ func Shutdown(o ObjectStorage) {
+-	fn := func(o ObjectStorage) {
+-		if s, ok := o.(Shutdownable); ok {
+-			s.Shutdown()
+-		}
+-	}
+-
+ 	switch o := o.(type) {
+ 	case *encrypted:
+-		fn(o.ObjectStorage)
++		Shutdown(o.ObjectStorage)
+ 	case *chunkedEncrypted:
+-		fn(o.ObjectStorage)
++		Shutdown(o.ObjectStorage)
+ 	case *withPrefix:
+-		fn(o.os)
++		Shutdown(o.os)
+ 	case *sharded:
+ 		for _, s := range o.stores {
+-			fn(s)
++			Shutdown(s)
+ 		}
+ 	default:
+-		fn(o)
++		if s, ok := o.(Shutdownable); ok {
++			s.Shutdown()
++		}
+ 	}
+ }
+```
+
+**File**: `pkg/object/sharding.go` (modified, +3/-0)
+```diff
+@@ -240,6 +240,9 @@ func NewSharded(name, endpoint, ak, sk, token string, shards int) (ObjectStorage
+ 		}
+ 		stores[i], err = CreateStorage(name, ep, ak, sk, token)
+ 		if err != nil {
++			for _, s := range stores[:i] {
++				Shutdown(s)
++			}
+ 			return nil, err
+ 		}
+ 	}
+```
+
+**File**: `pkg/object/sql.go` (modified, +1/-0)
+```diff
+@@ -204,6 +204,7 @@ func newSQLStore(driver, addr, user, password string) (ObjectStorage, error) {
+ 	}
+ 	engine.SetTableMapper(names.NewPrefixMapper(engine.GetTableMapper(), "jfs_"))
+ 	if err := engine.Sync2(new(blob)); err != nil {
++		_ = engine.Close()
+ 		return nil, fmt.Errorf("create table blob: %s", err)
+ 	}
+ 	return &sqlStore{DefaultObjectStorage{}, engine, addr}, nil
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7712** (2026-10-19): object: release partially created storage on failure (@jiefenghuang)
+- **PR #7711** (closed): meta: reject doInit from read-only clients (@jiefenghuang)
+- **PR #7710** (2026-10-19): fs: key user/group quota set by the parsed id (@jiefenghuang)
+- **PR #7709** (2026-10-19): meta: retry failed reload callbacks until they succeed (@jiefenghuang)
+- **PR #7704** (closed): test: cover storage reload retry after transient failure (@YunhuiChen)
 - **PR #7703** (2026-10-16): meta: skip dir stats for no-op rename and reset target on retry (@jiefenghuang)
-- **PR #7702** (2026-10-16): cmd/profile: stop reading stdin once it is closed (@jiefenghuang)
-- **PR #7697** (2026-10-15): fuse: map kernel setattr bits instead of passing them through (@zxh326)
-- **PR #7696** (2026-10-15): windows: fixed git clone panic. (@chenjie4255)
-- **PR #7694** (2026-10-15): meta: check ioctl flag permissions inside the transaction (@jiefenghuang)
-- **PR #7693** (2026-10-16): vfs: rate-limit flush timeout stack dumps (@adenzhou1350)
 
 ---
 
@@ -1455,30 +1383,34 @@ Signed-off-by: Xuhui zhang <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. windows: fixed git clone panic. (#7696)
+## X. meta/fs: keep the errno quota operations report instead of EINVAL (#7671)
 
 **RULE**:
-When implementing operations in `.github/scripts/command-win/acl.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/fs/fs.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `be5e3d21`: windows: fixed git clone panic. (#7696). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `29c60bbb`: meta/fs: keep the errno quota operations report instead of EINVAL (#7671). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/command-win/acl.sh`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/fs/fs.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    ./juicefs.exe mount -d $META_URL z: --fuse-access-log c:/fuse.log --access-log c:/fsop.log --log c:/mount.log
-    ./juicefs.exe mount -d $META_URL z: --fuse-access-log c:/fuse.log --access-log c:/fsop.log --log c:/mount.log
+	"errors"
+		var eno syscall.Errno
+		if errors.As(_err, &eno) {
+			err = eno
+		} else {
+			err = syscall.EINVAL
+		}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-    ./juicefs.exe mount -d $META_URL z:
-    ./juicefs.exe mount -d $META_URL z:
+		err = syscall.EINVAL
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `be5e3d21` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `29c60bbb` are properly handled with clean fallback behavior.

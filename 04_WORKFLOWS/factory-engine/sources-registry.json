@@ -2003,12 +2003,12 @@
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-19T14:15:06.565Z",
-    "lastVerified": "2026-10-19T14:15:06.565Z",
+    "lastChecked": "2026-10-19T17:18:34.680Z",
+    "lastVerified": "2026-10-19T17:18:34.680Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "f60ba6be407581dd095ab99a5324b23b53ca62bb509c5d86d4c26da3381e74af",
+    "contentHash": "5c4603f28ebf49902f23fe025125f5aae9b850a9051b40e7ea7182d20a883fa2",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -7024,12 +7024,12 @@
     "revisionIdentifier": "4df380ba"
   },
   "wasm-bindgen-wasm-pack": {
-    "name": "wasm-bindgen/wasm-pack",
+    "name": "wasm-pack",
     "officialUrl": "https://github.com/wasm-bindgen/wasm-pack",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-19T02:09:47.796Z",
-    "lastVerified": "2026-10-19T02:09:47.796Z",
+    "lastChecked": "2026-10-19T17:18:19.235Z",
+    "lastVerified": "2026-10-19T17:18:19.235Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-wasm-bindgen-wasm-pack",
@@ -7038,7 +7038,8 @@
     "recentFixesCount": 10,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "e33b17ae"
   },
   "aome510-spotify-player": {
     "name": "aome510/spotify-player",
@@ -10666,12 +10667,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "startrail-org-leann": {
-    "name": "StarTrail-org/LEANN",
+    "name": "LEANN",
     "officialUrl": "https://github.com/StarTrail-org/LEANN",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-19T04:13:25.101Z",
-    "lastVerified": "2026-10-19T04:13:25.101Z",
+    "lastChecked": "2026-10-19T17:18:31.768Z",
+    "lastVerified": "2026-10-19T17:18:31.768Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-startrail-org-leann",
@@ -10680,7 +10681,8 @@
     "recentFixesCount": 21,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "7fcb3b54"
   },
   "apache-incubator-pegasus": {
     "name": "apache/incubator-pegasus",
@@ -13591,14 +13593,14 @@
     "officialUrl": "https://github.com/juicedata/juicefs",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-19T04:59:22.329Z",
-    "lastVerified": "2026-10-19T04:59:22.329Z",
+    "lastChecked": "2026-10-19T17:18:30.697Z",
+    "lastVerified": "2026-10-19T17:18:30.697Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-juicedata-juicefs",
-    "contentHash": "2e2fb36f4ffd66abff5be9f87b11bf1c6f4bd791df6b87342c39e3778e4b2ee8",
+    "contentHash": "d11f33d8d7c22492fe717cdfefc25cb8c84c8aebb21d7dc31f06df2e8568f55a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 9,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -18277,12 +18279,12 @@
     "revisionIdentifier": "6e2b5850"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-19T16:50:00.472Z",
-    "lastVerified": "2026-10-19T16:50:00.472Z",
+    "lastChecked": "2026-10-19T17:18:34.255Z",
+    "lastVerified": "2026-10-19T17:18:34.255Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -18291,7 +18293,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "27363b95"
   },
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
@@ -21234,18 +21237,19 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "electron-electron": {
-    "name": "electron-electron",
+    "name": "electron/electron",
     "officialUrl": "https://github.com/electron/electron",
     "sourceType": "github",
-    "technology": "code-repository",
-    "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-02T03:28:10.926Z",
-    "lastVerified": "2026-10-02T03:28:10.926Z",
+    "technology": "C++",
+    "lastChecked": "2026-10-19T17:18:28.668Z",
+    "lastVerified": "2026-10-19T17:18:28.668Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
-    "learningId": null,
-    "promotedRulesCount": 0,
-    "recentFixesCount": 0,
+    "learningId": "learn-github-electron-electron",
+    "contentHash": "99576aab8dedc8f7b9e8b53797a01cd8ea759739cf177aa3ffadaa2333f42076",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 17,
+    "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   },
@@ -24917,9 +24921,9 @@
   "luzikov-codex-seo-skill": {
     "name": "codex-seo-skill",
     "officialUrl": "https://github.com/Luzikov/codex-seo-skill",
-    "lastChecked": "2026-10-18T05:47:20.668Z",
+    "lastChecked": "2026-10-19T17:18:21.752Z",
     "revisionIdentifier": "cdbf66bf55",
-    "lastVerified": "2026-10-18T05:47:20.668Z"
+    "lastVerified": "2026-10-19T17:18:21.752Z"
   },
   "xseo": {
     "name": "xseo",
@@ -26317,8 +26321,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-19T17:12:15.808Z",
-    "lastVerified": "2026-10-19T17:12:15.808Z",
+    "lastChecked": "2026-10-19T17:18:37.427Z",
+    "lastVerified": "2026-10-19T17:18:37.427Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -26710,6 +26714,23 @@
     "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4",
     "contentHash": "235bf1f03a3ea66bedaeee8e45b77f4247303f4ffb4f9c53e50eab3034016e2b",
     "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-mistralai-timestral-209m": {
+    "name": "mistralai/Timestral-209M",
+    "officialUrl": "https://huggingface.co/mistralai/Timestral-209M",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-19T17:18:16.700Z",
+    "lastVerified": "2026-10-19T17:18:16.700Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-mistralai-timestral-209m",
+    "contentHash": "3639530b5599ca33bdeee25586118c518645335e9f18aece083e48da1cf72bbd",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

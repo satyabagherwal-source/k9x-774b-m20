@@ -4310,3 +4310,7 @@ https://huggingface.co/Comfy-Org/z_image_turbo
 # --- Automatically Discovered by AI Scout Engine [2026-10-19T15:31:34.341Z] ---
 # [HUGGINGFACE-AI-MODELS] nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4 (3650 score) - Verified Hugging Face Model: nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4
 https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-19T17:18:13.866Z] ---
+# [HUGGINGFACE-AI-MODELS] mistralai/Timestral-209M (3700 score) - Verified Hugging Face Model: mistralai/Timestral-209M (170 likes, 2601 downloads
+https://huggingface.co/mistralai/Timestral-209M
