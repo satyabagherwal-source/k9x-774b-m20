@@ -3304,3 +3304,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-qwen-qwen3-vl-8b-instruct` | `https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-19T14:39:53.276Z |
 | `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `48aa83e9` | Multi-dimensional audit evidence | 2026-10-19T14:39:54.631Z |
 | `learn-github-nsh07-tomato` | `https://github.com/nsh07/Tomato` | `98fa69ed` | Multi-dimensional audit evidence | 2026-10-19T14:39:59.841Z |
+| `learn-huggingface-tencent-hy-memory-30b-a3b` | `https://huggingface.co/tencent/Hy-Memory-30B-A3B` | `hf-tencent` | Multi-dimensional audit evidence | 2026-10-19T14:46:48.115Z |
+| `learn-github-modelcontextprotocol-kotlin-sdk` | `https://github.com/modelcontextprotocol/kotlin-sdk` | `d9f19a1d` | Multi-dimensional audit evidence | 2026-10-19T14:46:57.542Z |
+| `learn-github-encoredev-encore` | `https://github.com/encoredev/encore` | `477fb14b` | Multi-dimensional audit evidence | 2026-10-19T14:46:58.709Z |

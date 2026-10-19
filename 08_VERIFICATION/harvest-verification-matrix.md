@@ -3297,3 +3297,6 @@
 | `CYCLE-20261019-27JT` | `2026-10-19T14:39:53.273Z` | `Qwen/Qwen3-VL-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md` | Yes (`d9164200...`) |
 | `CYCLE-20261019-28LG` | `2026-10-19T14:39:54.628Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2632` | Yes (`c67e41ec...`) |
 | `CYCLE-20261019-2CM7` | `2026-10-19T14:39:59.839Z` | `nsh07/Tomato` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2633` | Yes (`3763145c...`) |
+| `CYCLE-20261019-B3N4` | `2026-10-19T14:46:48.112Z` | `tencent/Hy-Memory-30B-A3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md` | Yes (`9545717a...`) |
+| `CYCLE-20261019-BAWZ` | `2026-10-19T14:46:57.539Z` | `modelcontextprotocol/kotlin-sdk` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md` | Yes (`2250c38f...`) |
+| `CYCLE-20261019-BBTF` | `2026-10-19T14:46:58.707Z` | `encoredev/encore` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2634` | Yes (`e1e2bf6b...`) |

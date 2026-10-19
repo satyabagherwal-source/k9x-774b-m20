@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/encoredev-encore-learnings.md`  
 > **Source**: github ([https://github.com/encoredev/encore](https://github.com/encoredev/encore))  
-> **Source Version**: `09bb8c19`  
+> **Source Version**: `477fb14b`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T02:27:48.694Z  
+> **Timestamp**: 2026-10-19T14:46:58.484Z  
 > **Learning ID**: `learn-github-encoredev-encore`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/encoredev-encore-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/encoredev/encore](https://github.com/encoredev/encore))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T02:27:48.686Z  
+> **Harvest Timestamp**: 2026-10-19T14:46:58.478Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Infrastructure orchestration from local to your cloud
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 12464 stars
+- **Stars / Engagement**: 12468 stars
 
 ---
 
@@ -1768,289 +1768,58 @@ func Get(ctx context.Context, slug string) (*Bit, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2267602f` (2026-10-09)
-**Commit Message**: codegen: fix test builds of files with secrets
+### Incident Patch 1: `477fb14b` (2026-10-19)
+**Commit Message**: cli/daemon: fix MCP SSE URL printed by 'encore run' (#2614)
 
-Test builds of a package whose first file declares secrets failed with
-"syntax error: non-declaration statement outside function body" since
-lovzrnzz moved the inserted imports onto the package clause's line.
+The `encore run` startup banner printed the MCP SSE URL as
+`/sse?appID=<id>`, but the MCP server reads the app ID from the `app`
+query parameter (`addAppToContext` in `cli/daemon/mcp/mcp.go`), which is
+also what `encore mcp start` and `encore mcp run` use.
 
-Both the test support import and the secrets import are inserted at the
-end of the package name, and each ended in a semicolon and began with
-one. Inserted together they left an empty declaration between them,
-which Go does not allow:
+MCP clients configured with the URL from the banner connect and
+initialize fine, but every tool call fails with:
 
-    package svc;import __encore_secrets "...";/*line :1:12*/;import _ "...";/*line :1:12*/
-
-The inserts now leave out the trailing semicolon; the newline ending the
-line inserts one, as does the next insert's leading one. A golden test
-covers a test build of a file with secrets.
-
-**File**: `v2/codegen/gen.go` (modified, +4/-1)
-```diff
-@@ -114,6 +114,9 @@ func (g *Generator) Overlays() []overlay.File {
- // The import goes on the package clause's line, like every rewrite of a user's
- // file: a rewrite must not add lines, since tools that ignore line directives
- // (cmd/cover since Go 1.27) would report everything below it on the wrong line.
-+// It has no trailing semicolon: the newline ending the line inserts one, and
-+// another insert at the same position (secrets) brings its own leading one,
-+// where two in a row would be an empty declaration and fail to parse.
- func (g *Generator) InsertTestSupport(pkg *pkginfo.Package) {
- 	if g.addedTestSupport[pkg.ImportPath] {
- 		return
-@@ -126,6 +129,6 @@ func (g *Generator) InsertTestSupport(pkg *pkginfo.Package) {
- 
- 	insertPos := a.Name.End()
- 	ln := g.FS.Position(insertPos)
--	rw.Insert(insertPos, []byte(fmt.Sprintf(";import _ %s;/*line :%d:%d*/",
-+	rw.Insert(insertPos, []byte(fmt.Sprintf(";import _ %s/*line :%d:%d*/",
- 		strconv.Quote("encore.dev/appruntime/shared/testsupport"), ln.Line, ln.Column)))
- }
+```
+failed to get app: app not found in context
 ```
 
-**File**: `v2/codegen/infragen/secretsgen/secretsgen.go` (modified, +1/-1)
-```diff
-@@ -25,7 +25,7 @@ func Gen(gen *codegen.Generator, svc option.Option[*app.Service], pkg *pkginfo.P
- 			insertPos := file.AST().Name.End()
- 			ln := gen.FS.Position(insertPos)
- 
--			rw.Insert(insertPos, []byte(fmt.Sprintf(";import __encore_secrets %s;/*line :%d:%d*/",
-+			rw.Insert(insertPos, []byte(fmt.Sprintf(";import __encore_secrets %s/*line :%d:%d*/",
- 				strconv.Quote("encore.dev/appruntime/infrasdk/secrets"),
- 				ln.Line, ln.Column)))
- 			addedImport[secret.File] = true
-```
+This changes the banner to print `/sse?app=<id>`.
 
-**File**: `v2/codegen/infragen/secretsgen/secretsgen_test.go` (modified, +12/-0)
-```diff
-@@ -19,3 +19,15 @@ func TestCodegen(t *testing.T) {
- 	}
- 	codegentest.Run(t, fn)
- }
-+
-+// TestCodegenTestBuild covers a test build, where the test support import goes
-+// into the same file as the secrets import.
-+func TestCodegenTestBuild(t *testing.T) {
-+	fn := func(gen *codegen.Generator, desc *app.Desc) {
-+		all := parser.Resources[*secrets.Secrets](desc.Parse)
-+		svc, _ := desc.ServiceForPath(all[0].File.Pkg.FSPath)
-+		Gen(gen, option.AsOptional(svc), all[0].File.Pkg, all)
-+		gen.InsertTestSupport(all[0].File.Pkg)
-+	}
-+	codegentest.RunDir(t, "testdata/testbuild", fn)
-+}
-```
+Verified against a running v1.58.6 daemon: calling `call_endpoint` over
+SSE with `?appID=` fails with the error above, and with `?app=` it
+succeeds.
 
-**File**: `v2/codegen/infragen/secretsgen/testdata/basic.txt` (modified, +1/-1)
-```diff
-@@ -15,7 +15,7 @@ func API(context.Context) error { return nil }
- func key() string { return secrets.APIKey }
- -- want:svc/svc.go --
- // Package svc reads two secrets.
--package svc;import __encore_secrets "encore.dev/appruntime/infrasdk/secrets";/*line :2:12*/ // the service
-+package svc;import __encore_secrets "encore.dev/appruntime/infrasdk/secrets"/*line :2:12*/ // the service
- 
- import "context"
- 
-```
-
-**File**: `v2/codegen/infragen/secretsgen/testdata/testbuild/basic.txt` (added, +28/-0)
-```diff
-@@ -0,0 +1,28 @@
-+-- svc/svc.go --
-+// Package svc reads a secret.
-+package svc // the service
-+
-+import "context"
-+
-+var secrets struct {
-+	APIKey string
-+}
-+
-+//encore:api
-+func API(context.Context) error { return nil }
-+
-+func key() string { return secrets.APIKey }
-+-- want:svc/svc.go --
-+// Package svc reads a secret.
-+package svc;import __encore_secrets "encore.dev/appruntime/infrasdk/secrets"/*line :2:12*/;import _ "encore.dev/appruntime/shared/testsupport"/*line :2:12*/ // the service
-+
-+import "context"
-+
-+var secrets = struct {
-+	APIKey string
-+}{APIKey: __encore_secrets.Load("APIKey", "svc")}/*line :8:2*/
-+
-+//encore:api
-+func API(context.Context) error { return nil }
-+
-+func key() string { return secrets.APIKey }
-```
-
-**File**: `v2/codegen/internal/codegentest/codegentest.go` (modified, +6/-1)
-```diff
-@@ -34,9 +34,14 @@ type Case struct {
- var goldenUpdate = flag.Bool("golden-update", os.Getenv("GOLDEN_UPDATE") != "", "update golden files")
- 
- func Run(t *testing.T, fn func(*codegen.Generator, *app.Desc)) {
-+	RunDir(t, "testdata", fn)
-+}
-+
-+// RunDir is like Run but reads the test cases from dir.
-+func RunDir(t *testing.T, dir string, fn func(*codegen.Generator, *app.Desc)) {
- 	flag.Parse()
- 	c := qt.New(t)
--	tests := readTestCases(c, "testdata")
-+	tests := readTestCases(c, dir)
- 	for _, test := range tests {
- 		c.Run(test.name, func(c *qt.C) {
- 			tc := testutil.NewContext(c, false, test.input)
-```
-
-**File**: `v2/codegen/testdata/testsupport.txt` (modified, +1/-1)
-```diff
-@@ -8,7 +8,7 @@ import "strings"
- func Title(s string) string { return strings.ToUpper(s) }
- -- want:textutil/textutil.go --
- // Package textutil formats names.
--package textutil;import _ "encore.dev/appruntime/shared/testsupport";/*line :2:17*/
-+package textutil;import _ "encore.dev/appruntime/shared/testsupport"/*line :2:17*/
- 
- import "strings"
- 
-```
-
+<!-- codesmith:footer -->
 ---
+<a
+href="https://app.blacksmith.sh/encoredev/codesmith/encore/pr/2614?autoLogin=true&ref=codesmith_pr_footer"><picture><source
+media="(prefers-color-scheme: dark)"
+srcset="https://pr-comments-assets.blacksmith.sh/codesmith/view-with-codesmith-dark-v3.svg"><source
+media="(prefers-color-scheme: light)"
+srcset="https://pr-comments-assets.blacksmith.sh/codesmith/view-with-codesmith-light-v3.svg"><img
+alt="View with [code]smith"
+src="https://pr-comments-assets.blacksmith.sh/codesmith
 
-### Incident Patch 2: `d2b21473` (2026-10-01)
-**Commit Message**: fix clippy warnings
-
-**File**: `Cargo.lock` (modified, +14/-3)
+**File**: `cli/daemon/run.go` (modified, +1/-1)
 ```diff
-@@ -293,13 +293,13 @@ dependencies = [
+@@ -208,7 +208,7 @@ func (s *Server) Run(req *daemonpb.RunRequest, stream daemonpb.Daemon_RunServer)
+ 	_, _ = fmt.Fprintf(stderr, "  Development Dashboard URL:  %s\n", aurora.Cyan(fmt.Sprintf(
+ 		"%s/%s", s.mgr.DashBaseURL, app.PlatformOrLocalID())))
+ 	_, _ = fmt.Fprintf(stderr, "  MCP SSE URL:                %s\n", aurora.Cyan(fmt.Sprintf(
+-		"%s/sse?appID=%s", s.mcp.BaseURL, app.PlatformOrLocalID())))
++		"%s/sse?app=%s", s.mcp.BaseURL, app.PlatformOrLocalID())))
  
- [[package]]
- name = "async-trait"
--version = "0.1.85"
-+version = "0.1.92"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "3f934833b4b7233644e5848f235df3f57ed8c80f1528a26c3dfa13d2147fa056"
-+checksum = "82f6aeea286b8eb4dd3431a1be1b59d290ace00f5bfd8e2a159bc2a05e2c1667"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn 2.0.95",
-+ "syn 3.0.6",
- ]
- 
- [[package]]
-@@ -7323,6 +7323,17 @@ dependencies = [
-  "unicode-ident",
- ]
- 
-+[[package]]
-+name = "syn"
-+version = "3.0.6"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "8593e8e72159ed2257d083c7a454a85cbf854f37a0966d8d483aff8c8a3ebcee"
-+dependencies = [
-+ "proc-macro2",
-+ "quote",
-+ "unicode-ident",
-+]
-+
- [[package]]
- name = "sync_wrapper"
- version = "0.1.2"
-```
-
-**File**: `runtimes/core/src/log/writers.rs` (modified, +3/-5)
-```diff
-@@ -34,11 +34,9 @@ impl Debug for dyn Writer {
- pub fn default_writer(fields: &'static FieldConfig) -> Arc<dyn Writer> {
-     // Check if the user has set the `ENCORE_LOG_FORMAT` environment variable to `console`.
-     // if so we'll use the pretty console writer.
--    for var in &["ENCORE_LOG_FORMAT"] {
--        if let Ok(format) = env::var(var) {
--            if format == "console" {
--                return Arc::new(ConsoleWriter::new(fields, std::io::stderr()));
--            }
-+    if let Ok(format) = env::var("ENCORE_LOG_FORMAT") {
-+        if format == "console" {
-+            return Arc::new(ConsoleWriter::new(fields, std::io::stderr()));
-         }
-     }
- 
-```
-
----
-
-### Incident Patch 3: `0110a955` (2026-10-01)
-**Commit Message**: .github: build latest release in release mode
-
-**File**: `pkg/releaser/cmd/build/main.go` (modified, +4/-6)
-```diff
-@@ -33,7 +33,6 @@ import (
- 	"github.com/rs/zerolog/log"
- 	"golang.org/x/sync/errgroup"
- 
--	"encr.dev/internal/version"
- 	opt "encr.dev/pkg/option"
- 	. "encr.dev/pkg/releaser/bu"
- 	"encr.dev/pkg/releaser/config"
-@@ -347,7 +346,6 @@ func parsePlatformSpec(target Platform, val string) (PlatformSpec, error) {
- func (p PlatformSpec) Build() (*ReleaseSpec, error) {
- 	log.Info().Str("os", p.Target.OS.String()).Str("arch", p.Target.Arch.String()).Msg("building platform")
- 	p.Workdir.MkdirAll()
--	channel := version.ChannelFor(cfg.Version)
- 	ctx := context.Background()
- 	cargoCacheBase := FSPath(cfg.EncoreRepo).Join("target", p.Target.OS.String()+"-"+p.Target.Arch.String())
- 	cargoCacheBase.MkdirAll()
-@@ -454,7 +452,7 @@ func (p PlatformSpec) Build() (*ReleaseSpec, error) {
- 				Host:            host,
- 				Target:          p.Target,
- 				CargoTargetDir:  cargoCacheBase,
--				ReleaseBuild:    channel == version.GA,
-+				ReleaseBuild:    true,
- 				ForDistribution: true,
- 				Version:         cfg.Version,
- 				CrossMacSDKPath: cfg.MacOSSDK,
-@@ -475,7 +473,7 @@ func (p PlatformSpec) Build() (*ReleaseSpec, error) {
- 				Host:            host,
- 				Target:          p.Target,
- 				CargoTargetDir:  cargoCacheBase,
--				ReleaseBuild:    channel == version.GA,
-+				ReleaseBuild:    true,
- 				ForDistribution: true,
- 				Version:         cfg.Version,
- 				CrossMacSDKPath: cfg.MacOSSDK,
-@@ -496,7 +494,7 @@ func (p PlatformSpec) Build() (*ReleaseSpec, error) {
- 				Host:            host,
- 				Target:          p.Target,
- 				CargoTargetDir:  cargoCacheBase,
--				ReleaseBuild:    channel == version.GA,
-+				ReleaseBuild:    true,
- 				ForDistribution: true,
- 				NapiTypeDefPath: napiTypeDefPath,
- 				Version:         cfg.Version,
-@@ -551,7 +549,7 @@ func (p PlatformSpec) Build() (*ReleaseSpec, error) {
- 		wasmOut, err := tsparserwasm.Compile(ctx, tsparserwasm.CompileInput{
- 			Host:           host,
- 			CargoTargetDir: cargoCacheBase,
--			ReleaseBuild:   channel == version.GA,
-+			ReleaseBuild:   true,
- 			Version:        cfg.Version,
- 		})
- 		if err != nil {
+ 	if ns := runInstance.NS; !ns.Active || ns.Name != "default" {
+ 		_, _ = fmt.Fprintf(stderr, "  Namespace:                  %s\n", aurora.Cyan(ns.Name))
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2614** (2026-10-19): cli/daemon: fix MCP SSE URL printed by 'encore run' (@marcuskohlberg)
 - **PR #2606** (2026-10-12): Update README.md (@marcuskohlberg)
 - **PR #2604** (closed): tsparser: report database usage outside services (@marcuskohlberg)
 - **PR #2603** (2026-10-12): cli: report pending database changes on reload (@marcuskohlberg)
 - **PR #2602** (closed): deno support (@prayanshchh)
 - **PR #2601** (2026-10-09): all: bump dependencies (@eandre)
-- **PR #2600** (2026-10-09): codegen: fix test builds of files with secrets (@eandre)
 
 ---
 
@@ -2070,31 +1839,28 @@ covers a test build of a file with secrets.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. codegen: fix test builds of files with secrets
+## X. cli/daemon: fix MCP SSE URL printed by 'encore run' (#2614)
 
 **RULE**:
-When implementing operations in `v2/codegen/gen.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in encoredev/encore. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cli/daemon/run.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in encoredev/encore. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2267602f`: codegen: fix test builds of files with secrets. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `477fb14b`: cli/daemon: fix MCP SSE URL printed by 'encore run' (#2614). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `v2/codegen/gen.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cli/daemon/run.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// It has no trailing semicolon: the newline ending the line inserts one, and
-// another insert at the same position (secrets) brings its own leading one,
-// where two in a row would be an empty declaration and fail to parse.
-	rw.Insert(insertPos, []byte(fmt.Sprintf(";import _ %s/*line :%d:%d*/",
+		"%s/sse?app=%s", s.mcp.BaseURL, app.PlatformOrLocalID())))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	rw.Insert(insertPos, []byte(fmt.Sprintf(";import _ %s;/*line :%d:%d*/",
+		"%s/sse?appID=%s", s.mcp.BaseURL, app.PlatformOrLocalID())))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2267602f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `477fb14b` are properly handled with clean fallback behavior.

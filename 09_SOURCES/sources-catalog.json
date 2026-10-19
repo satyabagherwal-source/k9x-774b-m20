@@ -1745,8 +1745,8 @@
     "sourceUrl": "https://huggingface.co/tencent/Hy-Memory-30B-A3B",
     "sourceVersion": "hf-tencent-hy-memory-30b-a3b",
     "license": "Open-Source",
-    "contentHash": "74a6aa9144636848215096353efa44188f1e0009936c1759820ff04a10099e81",
-    "lastHarvestedAt": "2026-10-18T04:26:31.391Z",
+    "contentHash": "9545717a2ee1e1627a2fdffff06a316a5a83f41a7520b35587f7fc6a45038c74",
+    "lastHarvestedAt": "2026-10-19T14:46:48.115Z",
     "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b"
   },
   "addy0-com-free-open-technical-seo-crawler": {
@@ -4903,10 +4903,10 @@
     "repository": "encoredev/encore",
     "platform": "github",
     "sourceUrl": "https://github.com/encoredev/encore",
-    "sourceVersion": "09bb8c19",
+    "sourceVersion": "477fb14b",
     "license": "MPL-2.0",
-    "contentHash": "591380bca75f8faa0bd8bcf78c0cbe28aa0f7928a6e18f3de2a306e4f65dbc0f",
-    "lastHarvestedAt": "2026-10-19T02:27:48.927Z",
+    "contentHash": "e1e2bf6b348c1ae4de97351b6714462c43575310d8e16447d62f0384a5c45188",
+    "lastHarvestedAt": "2026-10-19T14:46:58.709Z",
     "learningId": "learn-github-encoredev-encore"
   },
   "rqlite-rqlite": {
@@ -8198,5 +8198,15 @@
     "contentHash": "3763145c0b5d577e4c0a70f2296d737c5e5e4fa166063d044964ff5f6cf9eebe",
     "lastHarvestedAt": "2026-10-19T14:39:59.841Z",
     "learningId": "learn-github-nsh07-tomato"
+  },
+  "modelcontextprotocol-kotlin-sdk": {
+    "repository": "modelcontextprotocol/kotlin-sdk",
+    "platform": "github",
+    "sourceUrl": "https://github.com/modelcontextprotocol/kotlin-sdk",
+    "sourceVersion": "d9f19a1d",
+    "license": "NOASSERTION",
+    "contentHash": "2250c38f04836306ca3cd83c65ec9f31d8fa5e7c5418fbd3905cc130a7f29f0d",
+    "lastHarvestedAt": "2026-10-19T14:46:57.542Z",
+    "learningId": "learn-github-modelcontextprotocol-kotlin-sdk"
   }
 }

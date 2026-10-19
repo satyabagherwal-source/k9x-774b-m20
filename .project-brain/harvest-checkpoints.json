@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T14:39:59.848Z",
+  "last_updated": "2026-10-19T14:46:58.716Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2749,14 +2749,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-tencent-hy-memory-30b-a3b",
-      "content_hash": "74a6aa9144636848215096353efa44188f1e0009936c1759820ff04a10099e81",
-      "verified_at": "2026-10-18T04:26:31.394Z",
+      "content_hash": "9545717a2ee1e1627a2fdffff06a316a5a83f41a7520b35587f7fc6a45038c74",
+      "verified_at": "2026-10-19T14:46:48.121Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T04:26:31.394Z"
+      "last_updated": "2026-10-19T14:46:48.121Z"
     },
     "Addy0-com/free-open-technical-SEO-crawler": {
       "repository": "Addy0-com/free-open-technical-SEO-crawler",
@@ -7474,14 +7474,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-encoredev-encore",
-      "content_hash": "591380bca75f8faa0bd8bcf78c0cbe28aa0f7928a6e18f3de2a306e4f65dbc0f",
-      "verified_at": "2026-10-19T02:27:48.932Z",
+      "content_hash": "e1e2bf6b348c1ae4de97351b6714462c43575310d8e16447d62f0384a5c45188",
+      "verified_at": "2026-10-19T14:46:58.715Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T02:27:48.932Z"
+      "last_updated": "2026-10-19T14:46:58.715Z"
     },
     "rqlite/rqlite": {
       "repository": "rqlite/rqlite",
@@ -12327,6 +12327,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T14:39:59.848Z"
+    },
+    "modelcontextprotocol/kotlin-sdk": {
+      "repository": "modelcontextprotocol/kotlin-sdk",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-modelcontextprotocol-kotlin-sdk",
+      "content_hash": "2250c38f04836306ca3cd83c65ec9f31d8fa5e7c5418fbd3905cc130a7f29f0d",
+      "verified_at": "2026-10-19T14:46:57.548Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T14:46:57.548Z"
     }
   },
   "repos": {
