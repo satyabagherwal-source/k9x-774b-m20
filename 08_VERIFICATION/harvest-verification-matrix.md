@@ -3455,3 +3455,5 @@
 | `CYCLE-20261019-5AF6` | `2026-10-19T19:50:12.738Z` | `giuucmp/seoaudit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2777` | Yes (`32569ac7...`) |
 | `CYCLE-20261019-5BHN` | `2026-10-19T19:50:14.123Z` | `mikepenz/multiplatform-markdown-renderer` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2778` | Yes (`d3bca052...`) |
 | `CYCLE-20261019-5DQR` | `2026-10-19T19:50:17.043Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2779` | Yes (`3c99a812...`) |
+| `CYCLE-20261019-FQ4M` | `2026-10-19T19:58:19.654Z` | `kamgurgul/cpu-info` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2780` | Yes (`9c94bc06...`) |
+| `CYCLE-20261019-FQ7E` | `2026-10-19T19:58:19.754Z` | `ugolbck/seofordev` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2781` | Yes (`de37e5e5...`) |

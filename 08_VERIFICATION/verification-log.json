@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-9D3T",
-    "timestamp": "2026-10-19T05:25:34.745Z",
-    "repository": "linkerd/linkerd2",
-    "learningId": "learn-github-linkerd-linkerd2",
-    "contentHash": "fbd6ee8c031b2231e38f2741d13560870eedcf2a784d4453572e035ddc70efff",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-9IHC",
-    "timestamp": "2026-10-19T05:25:41.712Z",
-    "repository": "tursodatabase/libsql",
-    "learningId": "learn-github-tursodatabase-libsql",
-    "contentHash": "ea1ab1312997054eccc90ebb99eaebc7141e9462aaca14ace220a386df9c01bc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-HIA6",
     "timestamp": "2026-10-19T05:31:54.702Z",
     "repository": "yvgude/lean-ctx",
@@ -7490,6 +7460,36 @@
     "repository": "pingcap/tidb",
     "learningId": "learn-github-pingcap-tidb",
     "contentHash": "3c99a812eaa0ca2b44887bec8a5fbcacf42dd10947615572d7936cb5eaba345a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-FQ4M",
+    "timestamp": "2026-10-19T19:58:19.654Z",
+    "repository": "kamgurgul/cpu-info",
+    "learningId": "learn-github-kamgurgul-cpu-info",
+    "contentHash": "9c94bc06462073e7388147b0e49bd7ea7287d1923aecbeee5aa596d2185de90c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-FQ7E",
+    "timestamp": "2026-10-19T19:58:19.754Z",
+    "repository": "ugolbck/seofordev",
+    "learningId": "learn-github-ugolbck-seofordev",
+    "contentHash": "de37e5e59c4f173f42ad65b81953f5b58be525c21f9eddcc613fb71dbfbfd971",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

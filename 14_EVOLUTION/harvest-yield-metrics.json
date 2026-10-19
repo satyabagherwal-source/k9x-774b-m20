@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T19:50:17.049Z",
-  "total_cycles_completed": 3432,
-  "total_learnings_persisted": 3432,
-  "total_rules_promoted": 2579,
+  "last_updated": "2026-10-19T19:58:19.760Z",
+  "total_cycles_completed": 3434,
+  "total_learnings_persisted": 3434,
+  "total_rules_promoted": 2581,
   "history": [
-    {
-      "timestamp": "2026-10-19T13:21:19.867Z",
-      "repository": "MaterializeInc/materialize",
-      "learningId": "learn-github-materializeinc-materialize",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T13:27:26.816Z",
-      "repository": "openai/clip-vit-base-patch32",
-      "learningId": "learn-huggingface-openai-clip-vit-base-patch32",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T13:27:26.957Z",
       "repository": "elastic/eui",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-19T19:50:17.049Z",
       "repository": "pingcap/tidb",
       "learningId": "learn-github-pingcap-tidb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T19:58:19.661Z",
+      "repository": "kamgurgul/cpu-info",
+      "learningId": "learn-github-kamgurgul-cpu-info",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T19:58:19.760Z",
+      "repository": "ugolbck/seofordev",
+      "learningId": "learn-github-ugolbck-seofordev",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

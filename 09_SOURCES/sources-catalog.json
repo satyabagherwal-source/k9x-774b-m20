@@ -8838,5 +8838,25 @@
     "contentHash": "d3bca0526017b5f97432fad399e0eab9606ddb00efd69db8ab4d8063f7300dbe",
     "lastHarvestedAt": "2026-10-19T19:50:14.125Z",
     "learningId": "learn-github-mikepenz-multiplatform-markdown-renderer"
+  },
+  "kamgurgul-cpu-info": {
+    "repository": "kamgurgul/cpu-info",
+    "platform": "github",
+    "sourceUrl": "https://github.com/kamgurgul/cpu-info",
+    "sourceVersion": "a633b2e3",
+    "license": "Apache-2.0",
+    "contentHash": "9c94bc06462073e7388147b0e49bd7ea7287d1923aecbeee5aa596d2185de90c",
+    "lastHarvestedAt": "2026-10-19T19:58:19.657Z",
+    "learningId": "learn-github-kamgurgul-cpu-info"
+  },
+  "ugolbck-seofordev": {
+    "repository": "ugolbck/seofordev",
+    "platform": "github",
+    "sourceUrl": "https://github.com/ugolbck/seofordev",
+    "sourceVersion": "d791e6dd",
+    "license": "NOASSERTION",
+    "contentHash": "de37e5e59c4f173f42ad65b81953f5b58be525c21f9eddcc613fb71dbfbfd971",
+    "lastHarvestedAt": "2026-10-19T19:58:19.757Z",
+    "learningId": "learn-github-ugolbck-seofordev"
   }
 }

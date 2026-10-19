@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T19:50:17.052Z",
+  "last_updated": "2026-10-19T19:58:19.764Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -13302,6 +13302,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T19:50:14.131Z"
+    },
+    "kamgurgul/cpu-info": {
+      "repository": "kamgurgul/cpu-info",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-kamgurgul-cpu-info",
+      "content_hash": "9c94bc06462073e7388147b0e49bd7ea7287d1923aecbeee5aa596d2185de90c",
+      "verified_at": "2026-10-19T19:58:19.664Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T19:58:19.664Z"
+    },
+    "ugolbck/seofordev": {
+      "repository": "ugolbck/seofordev",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-ugolbck-seofordev",
+      "content_hash": "de37e5e59c4f173f42ad65b81953f5b58be525c21f9eddcc613fb71dbfbfd971",
+      "verified_at": "2026-10-19T19:58:19.763Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T19:58:19.763Z"
     }
   },
   "repos": {

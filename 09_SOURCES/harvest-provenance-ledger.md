@@ -3462,3 +3462,5 @@ Every entry in this ledger must capture:
 | `learn-github-giuucmp-seoaudit` | `https://github.com/giuucmp/seoaudit` | `9d5b0d4f` | Multi-dimensional audit evidence | 2026-10-19T19:50:12.741Z |
 | `learn-github-mikepenz-multiplatform-markdown-renderer` | `https://github.com/mikepenz/multiplatform-markdown-renderer` | `71a5b18c` | Multi-dimensional audit evidence | 2026-10-19T19:50:14.125Z |
 | `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `dfda1fd3` | Multi-dimensional audit evidence | 2026-10-19T19:50:17.046Z |
+| `learn-github-kamgurgul-cpu-info` | `https://github.com/kamgurgul/cpu-info` | `a633b2e3` | Multi-dimensional audit evidence | 2026-10-19T19:58:19.657Z |
+| `learn-github-ugolbck-seofordev` | `https://github.com/ugolbck/seofordev` | `d791e6dd` | Multi-dimensional audit evidence | 2026-10-19T19:58:19.757Z |

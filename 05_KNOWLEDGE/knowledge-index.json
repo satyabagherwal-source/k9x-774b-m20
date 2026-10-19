@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T19:50:17.006Z",
-  "total_verified_learnings": 899,
+  "last_updated": "2026-10-19T19:58:19.690Z",
+  "total_verified_learnings": 901,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -26471,22 +26471,35 @@
     "learn-github-kamgurgul-cpu-info": {
       "learning_id": "learn-github-kamgurgul-cpu-info",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "kamgurgul-cpu-info",
+      "source": "kamgurgul/cpu-info",
+      "repository": "kamgurgul/cpu-info",
       "slug": "kamgurgul-cpu-info",
       "platform": "github",
       "source_url": "https://github.com/kamgurgul/cpu-info",
-      "source_version": "HEAD",
-      "content_hash": "1c50991fccc4ccdbd43d3babe75d7d6de8df8f9acd840967a83c1e972fbe6285",
+      "source_version": "a633b2e3",
+      "content_hash": "9c94bc06462073e7388147b0e49bd7ea7287d1923aecbeee5aa596d2185de90c",
       "dossier_path": "07_PROJECT_LEARNING/kamgurgul-cpu-info-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kamgurgul-cpu-info-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2780,
+          "title": "[SHARED] Update libs, fix #624",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.752Z"
+      "verified_at": "2026-10-19T19:58:19.588Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-karakeep-app-karakeep": {
       "learning_id": "learn-github-karakeep-app-karakeep",
@@ -55884,22 +55897,36 @@
     "learn-github-ugolbck-seofordev": {
       "learning_id": "learn-github-ugolbck-seofordev",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "ugolbck/seofordev",
       "repository": "ugolbck/seofordev",
       "slug": "ugolbck-seofordev",
       "platform": "github",
       "source_url": "https://github.com/ugolbck/seofordev",
-      "source_version": "main",
-      "content_hash": "139fc1002327a130c119226d6f31964dc648d1f6c4451bef92a59dc989e13940",
+      "source_version": "d791e6dd",
+      "content_hash": "de37e5e59c4f173f42ad65b81953f5b58be525c21f9eddcc613fb71dbfbfd971",
       "dossier_path": "07_PROJECT_LEARNING/ugolbck-seofordev-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ugolbck-seofordev-learnings.md",
       "promoted_rules": [
-        "Rule 1630"
+        "Rule 1630",
+        {
+          "number": 2781,
+          "title": "dockerfile?",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
       ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T19:58:19.675Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-nometria-sitemap-generator": {
       "learning_id": "learn-github-nometria-sitemap-generator",
@@ -91761,6 +91788,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T19:50:16.996Z"
+    },
+    "rule-2780": {
+      "learning_id": "rule-2780",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2780,
+      "title": "[SHARED] Update libs, fix #624",
+      "source_url": "https://github.com/kamgurgul/cpu-info",
+      "source_version": "a633b2e3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T19:58:19.588Z"
+    },
+    "rule-2781": {
+      "learning_id": "rule-2781",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2781,
+      "title": "dockerfile?",
+      "source_url": "https://github.com/ugolbck/seofordev",
+      "source_version": "d791e6dd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T19:58:19.675Z"
     }
   },
   "aliases": {
