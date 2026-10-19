@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T01:01:10.044Z",
-  "total_verified_learnings": 455,
+  "last_updated": "2026-10-19T01:10:30.801Z",
+  "total_verified_learnings": 460,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -8057,14 +8057,19 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "98118f47",
-      "content_hash": "ac806ecea4bd0cce97f28ed52b8f34759ff4447fa88dc00bb6f89bddac205a64",
+      "source_version": "d9009b50",
+      "content_hash": "acbac9df81e079289f53388f8cd7000fd2889c0bf9adb5a9321a72fa227dd8de",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
         {
           "number": 1769,
           "title": "test: fix refresh-lock table test self-deadlock under cargo test (#5905)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1953,
+          "title": "test(transport): add WAN link model and R1 spike-recovery regression gate (#5931",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -8073,7 +8078,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T22:16:32.222Z",
+      "verified_at": "2026-10-19T01:07:22.729Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -12556,7 +12561,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Cactus-Compute/whistle",
       "source_version": "hf-cactus-compute-whistle",
-      "content_hash": "9cc0ad7d2d7c3efc90f48346c01a86e7f9602b22d05a5f609ff32ab851e2bbee",
+      "content_hash": "d5370d18518762a96039a7469647223f67d60e3271fcc9c07f77483e1124085b",
       "dossier_path": "07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md",
       "promoted_rules": [
@@ -12639,7 +12644,7 @@
         "learn-huggingface-hf-cactus-compute-whistle-mv437sal",
         "learn-huggingface-hf-cactus-compute-whistle-mv4gguek"
       ],
-      "verified_at": "2026-10-17T21:29:52.940Z",
+      "verified_at": "2026-10-19T01:07:12.241Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -23939,22 +23944,35 @@
     "learn-github-kubeshop-botkube": {
       "learning_id": "learn-github-kubeshop-botkube",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "kubeshop-botkube",
+      "source": "kubeshop/botkube",
+      "repository": "kubeshop/botkube",
       "slug": "kubeshop-botkube",
       "platform": "github",
       "source_url": "https://github.com/kubeshop/botkube",
-      "source_version": "HEAD",
-      "content_hash": "9a70572cc770700a9da80970a7b96d1a64437b0424b545cd3e8914c2667915b4",
+      "source_version": "ee94e191",
+      "content_hash": "a81f98da9e46b9d738e44e7511fe107e485fbd1908b7b6e83b4321e52e6c53a3",
       "dossier_path": "07_PROJECT_LEARNING/kubeshop-botkube-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kubeshop-botkube-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1952,
+          "title": "panic on missing root event type for k8s source (#1481)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.905Z"
+      "verified_at": "2026-10-19T01:07:20.480Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-kubesphere-kubesphere": {
       "learning_id": "learn-github-kubesphere-kubesphere",
@@ -26024,22 +26042,35 @@
     "learn-github-mfontanini-presenterm": {
       "learning_id": "learn-github-mfontanini-presenterm",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "mfontanini-presenterm",
+      "source": "mfontanini/presenterm",
+      "repository": "mfontanini/presenterm",
       "slug": "mfontanini-presenterm",
       "platform": "github",
       "source_url": "https://github.com/mfontanini/presenterm",
-      "source_version": "HEAD",
-      "content_hash": "1cbfa1681645672cbb1e4d6b9db32d3914af2abed0549bebc6dd46143131c4a4",
+      "source_version": "5f8add11",
+      "content_hash": "fd7a3e8f139290ed7ea06280a12147722478c06fca396c4f2375f0a19d53f85c",
       "dossier_path": "07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1950,
+          "title": "fail export gracefully if async tasks fail (#877)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.280Z"
+      "verified_at": "2026-10-19T01:07:12.821Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-michael-a-kuykendall-shimmy": {
       "learning_id": "learn-github-michael-a-kuykendall-shimmy",
@@ -29924,22 +29955,45 @@
     "learn-github-paullecam-react-leaflet": {
       "learning_id": "learn-github-paullecam-react-leaflet",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "paullecam-react-leaflet",
+      "source": "PaulLeCam/react-leaflet",
+      "repository": "PaulLeCam/react-leaflet",
       "slug": "paullecam-react-leaflet",
       "platform": "github",
       "source_url": "https://github.com/PaulLeCam/react-leaflet",
-      "source_version": "HEAD",
-      "content_hash": "af7832b6324c7b6b944fa432069fcdf42c90a849bf8d8c7c2462e2aac51e3f20",
+      "source_version": "374882f6",
+      "content_hash": "d56a8b8b10c408e03ef57c24f924f0479016e712ce4f78133b579e79d0997cbc",
       "dossier_path": "07_PROJECT_LEARNING/paullecam-react-leaflet-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/paullecam-react-leaflet-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1955,
+          "title": "Guard Against Identical-Reference Props-Diffing Anti-Pattern in Declarative Wrappers",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1956,
+          "title": "Dual-Phase Initialization Guard for Dual-Executing Ref Callbacks",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1957,
+          "title": "Deep Frozen Contextual Boundary Invariant for Third-Party State Trees",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.003Z"
+      "verified_at": "2026-10-19T01:10:30.794Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-peerdb-io-peerdb": {
       "learning_id": "learn-github-peerdb-io-peerdb",
@@ -31687,22 +31741,35 @@
     "learn-github-ritz078-transform": {
       "learning_id": "learn-github-ritz078-transform",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "ritz078-transform",
+      "source": "ritz078/transform",
+      "repository": "ritz078/transform",
       "slug": "ritz078-transform",
       "platform": "github",
       "source_url": "https://github.com/ritz078/transform",
-      "source_version": "HEAD",
-      "content_hash": "63717183a8d9b7bb9e2af73da6b13b454386c0025249a16567d3ac8ae6090ef8",
+      "source_version": "ff755793",
+      "content_hash": "e3356c9afb2e6f6b65f95c863d34438f01ec1688496c5fe39839a356acdf8abc",
       "dossier_path": "07_PROJECT_LEARNING/ritz078-transform-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ritz078-transform-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1951,
+          "title": "update build requirements to Node 20 (#431)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.291Z"
+      "verified_at": "2026-10-19T01:07:18.000Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-rohitg00-ai-engineering-from-scratch": {
       "learning_id": "learn-github-rohitg00-ai-engineering-from-scratch",
@@ -33448,22 +33515,35 @@
     "learn-github-skyzh-mini-lsm": {
       "learning_id": "learn-github-skyzh-mini-lsm",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "skyzh-mini-lsm",
+      "source": "skyzh/mini-lsm",
+      "repository": "skyzh/mini-lsm",
       "slug": "skyzh-mini-lsm",
       "platform": "github",
       "source_url": "https://github.com/skyzh/mini-lsm",
-      "source_version": "HEAD",
-      "content_hash": "4d80eddd24dcfb963657adc524d1323fa3b501d5754ac2b5f73cfc2ae17682e5",
+      "source_version": "2f7ce315",
+      "content_hash": "25d12bd5f74f4b7246f560d94a717b506b1ab5200d6ec73416413ad1644cee16",
       "dossier_path": "07_PROJECT_LEARNING/skyzh-mini-lsm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/skyzh-mini-lsm-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1954,
+          "title": "Make leveled simulator traces reproducible (#217)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.585Z"
+      "verified_at": "2026-10-19T01:07:25.141Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-slatedb-slatedb": {
       "learning_id": "learn-github-slatedb-slatedb",
@@ -72309,6 +72389,118 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T01:01:08.132Z"
+    },
+    "rule-1950": {
+      "learning_id": "rule-1950",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1950,
+      "title": "fail export gracefully if async tasks fail (#877)",
+      "source_url": "https://github.com/mfontanini/presenterm",
+      "source_version": "5f8add11",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:07:12.821Z"
+    },
+    "rule-1951": {
+      "learning_id": "rule-1951",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1951,
+      "title": "update build requirements to Node 20 (#431)",
+      "source_url": "https://github.com/ritz078/transform",
+      "source_version": "ff755793",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:07:18.000Z"
+    },
+    "rule-1952": {
+      "learning_id": "rule-1952",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1952,
+      "title": "panic on missing root event type for k8s source (#1481)",
+      "source_url": "https://github.com/kubeshop/botkube",
+      "source_version": "ee94e191",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:07:20.480Z"
+    },
+    "rule-1953": {
+      "learning_id": "rule-1953",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1953,
+      "title": "test(transport): add WAN link model and R1 spike-recovery regression gate (#5931",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "d9009b50",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:07:22.729Z"
+    },
+    "rule-1954": {
+      "learning_id": "rule-1954",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1954,
+      "title": "Make leveled simulator traces reproducible (#217)",
+      "source_url": "https://github.com/skyzh/mini-lsm",
+      "source_version": "2f7ce315",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:07:25.141Z"
+    },
+    "rule-1955": {
+      "learning_id": "rule-1955",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1955,
+      "title": "Guard Against Identical-Reference Props-Diffing Anti-Pattern in Declarative Wrappers",
+      "source_url": "https://github.com/PaulLeCam/react-leaflet",
+      "source_version": "374882f6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:10:30.794Z"
+    },
+    "rule-1956": {
+      "learning_id": "rule-1956",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1956,
+      "title": "Dual-Phase Initialization Guard for Dual-Executing Ref Callbacks",
+      "source_url": "https://github.com/PaulLeCam/react-leaflet",
+      "source_version": "374882f6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:10:30.794Z"
+    },
+    "rule-1957": {
+      "learning_id": "rule-1957",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1957,
+      "title": "Deep Frozen Contextual Boundary Invariant for Third-Party State Trees",
+      "source_url": "https://github.com/PaulLeCam/react-leaflet",
+      "source_version": "374882f6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:10:30.794Z"
     }
   },
   "aliases": {

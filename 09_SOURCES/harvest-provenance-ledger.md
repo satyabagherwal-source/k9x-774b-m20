@@ -2733,3 +2733,10 @@ Every entry in this ledger must capture:
 | `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `2f5583e5` | Multi-dimensional audit evidence | 2026-10-19T01:01:03.144Z |
 | `learn-github-typedb-typedb` | `https://github.com/typedb/typedb` | `5da9d2b9` | Multi-dimensional audit evidence | 2026-10-19T01:01:08.182Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `a46af5dd` | Multi-dimensional audit evidence | 2026-10-19T01:01:10.088Z |
+| `learn-huggingface-cactus-compute-whistle` | `https://huggingface.co/Cactus-Compute/whistle` | `hf-cactus-` | Multi-dimensional audit evidence | 2026-10-19T01:07:12.304Z |
+| `learn-github-mfontanini-presenterm` | `https://github.com/mfontanini/presenterm` | `5f8add11` | Multi-dimensional audit evidence | 2026-10-19T01:07:12.875Z |
+| `learn-github-ritz078-transform` | `https://github.com/ritz078/transform` | `ff755793` | Multi-dimensional audit evidence | 2026-10-19T01:07:18.059Z |
+| `learn-github-kubeshop-botkube` | `https://github.com/kubeshop/botkube` | `ee94e191` | Multi-dimensional audit evidence | 2026-10-19T01:07:20.538Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `d9009b50` | Multi-dimensional audit evidence | 2026-10-19T01:07:22.782Z |
+| `learn-github-skyzh-mini-lsm` | `https://github.com/skyzh/mini-lsm` | `2f7ce315` | Multi-dimensional audit evidence | 2026-10-19T01:07:25.193Z |
+| `learn-github-paullecam-react-leaflet` | `https://github.com/PaulLeCam/react-leaflet` | `374882f6` | Multi-dimensional audit evidence | 2026-10-19T01:10:30.845Z |

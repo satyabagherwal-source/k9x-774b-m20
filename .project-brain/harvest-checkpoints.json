@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T01:01:10.094Z",
+  "last_updated": "2026-10-19T01:10:30.850Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -184,14 +184,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-cactus-compute-whistle",
-      "content_hash": "9cc0ad7d2d7c3efc90f48346c01a86e7f9602b22d05a5f609ff32ab851e2bbee",
-      "verified_at": "2026-10-17T21:29:52.972Z",
+      "content_hash": "d5370d18518762a96039a7469647223f67d60e3271fcc9c07f77483e1124085b",
+      "verified_at": "2026-10-19T01:07:12.309Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T21:29:52.972Z"
+      "last_updated": "2026-10-19T01:07:12.309Z"
     },
     "Open-Source-Legal/OpenContracts": {
       "repository": "Open-Source-Legal/OpenContracts",
@@ -4409,14 +4409,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "ac806ecea4bd0cce97f28ed52b8f34759ff4447fa88dc00bb6f89bddac205a64",
-      "verified_at": "2026-10-18T22:16:32.271Z",
+      "content_hash": "acbac9df81e079289f53388f8cd7000fd2889c0bf9adb5a9321a72fa227dd8de",
+      "verified_at": "2026-10-19T01:07:22.786Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T22:16:32.271Z"
+      "last_updated": "2026-10-19T01:07:22.786Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -6607,6 +6607,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T01:01:08.187Z"
+    },
+    "mfontanini/presenterm": {
+      "repository": "mfontanini/presenterm",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-mfontanini-presenterm",
+      "content_hash": "fd7a3e8f139290ed7ea06280a12147722478c06fca396c4f2375f0a19d53f85c",
+      "verified_at": "2026-10-19T01:07:12.880Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T01:07:12.880Z"
+    },
+    "ritz078/transform": {
+      "repository": "ritz078/transform",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-ritz078-transform",
+      "content_hash": "e3356c9afb2e6f6b65f95c863d34438f01ec1688496c5fe39839a356acdf8abc",
+      "verified_at": "2026-10-19T01:07:18.063Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T01:07:18.063Z"
+    },
+    "kubeshop/botkube": {
+      "repository": "kubeshop/botkube",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-kubeshop-botkube",
+      "content_hash": "a81f98da9e46b9d738e44e7511fe107e485fbd1908b7b6e83b4321e52e6c53a3",
+      "verified_at": "2026-10-19T01:07:20.542Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T01:07:20.542Z"
+    },
+    "skyzh/mini-lsm": {
+      "repository": "skyzh/mini-lsm",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-skyzh-mini-lsm",
+      "content_hash": "25d12bd5f74f4b7246f560d94a717b506b1ab5200d6ec73416413ad1644cee16",
+      "verified_at": "2026-10-19T01:07:25.197Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T01:07:25.197Z"
+    },
+    "PaulLeCam/react-leaflet": {
+      "repository": "PaulLeCam/react-leaflet",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-paullecam-react-leaflet",
+      "content_hash": "d56a8b8b10c408e03ef57c24f924f0479016e712ce4f78133b579e79d0997cbc",
+      "verified_at": "2026-10-19T01:10:30.850Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T01:10:30.850Z"
     }
   },
   "repos": {

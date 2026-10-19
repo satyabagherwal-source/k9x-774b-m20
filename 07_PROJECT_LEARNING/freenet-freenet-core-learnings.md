@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source**: github ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
-> **Source Version**: `98118f47`  
+> **Source Version**: `d9009b50`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T22:16:32.069Z  
+> **Timestamp**: 2026-10-19T01:07:22.564Z  
 > **Learning ID**: `learn-github-freenet-freenet-core`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T22:16:30.314Z  
+> **Harvest Timestamp**: 2026-10-19T01:07:22.556Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -53,6 +53,10 @@ use std::sync::Arc;
 /// Maximum packet data size (same as transport layer MAX_PACKET_SIZE)
 const MAX_PACKET_SIZE: usize = 1200;
 
+/// Largest payload one packet carries: MAX_PACKET_SIZE minus the packet-type
+/// byte, the 12-byte nonce and the 16-byte tag (the transport's MAX_DATA_SIZE).
+const MAX_PAYLOAD_SIZE: usize = MAX_PACKET_SIZE - 1 - 12 - 16;
+
 /// Fragment size for stream tests (same as MAX_DATA_SIZE - overhead)
 const FRAGMENT_SIZE: usize = 1130;
 
@@ -66,7 +70,7 @@ pub fn bench_packet_allocation(c: &mut Criterion) {
 
     // Pre-allocate a buffer like PacketData does
     let buffer: [u8; MAX_PACKET_SIZE] = [0xAB; MAX_PACKET_SIZE];
-    let sizes = [64, 256, 1024, 1364, MAX_PACKET_SIZE];
+    let sizes = [64, 256, 1024, MAX_PACKET_SIZE];
 
     for &size in &sizes {
         group.throughput(Throughput::Elements(1));
@@ -198,7 +202,7 @@ pub fn bench_packet_preparation(c: &mut Criterion) {
     let cipher = Aes128Gcm::new(&key.into());
     let nonce: [u8; 12] = [0u8; 12];
 
-    let sizes = [64, 256, 1024, 1364];
+    let sizes = [64, 256, 1024, MAX_PAYLOAD_SIZE];
 
     for &size in &sizes {
         group.throughput(Throughput::Bytes(size as u64));
@@ -508,7 +512,7 @@ pub fn create_benchmark_runtime() -> tokio::runtime::Runtime {
 /// Get the congestion control algorithm from environment variable.
 ///
 /// Set `FREENET_CONGESTION_ALGO` to:
-/// - `fixedrate` or `fixed` - Use FixedRate (100 Mbps)
+/// - `fixedrate` or `fixed` - Use FixedRate (10 Mbps per connection)
 /// - `bbr` or `BBR` - Use BBR (Bottleneck Bandwidth and RTT)
 /// - `ledbat` or `LEDBAT` - Use LEDBAT++ (Low Extra Delay Background Transport)
 ///
@@ -715,8 +719,7 @@ pub async fn create_peer_pair(channels: Channels) -> PeerPair {
             .expect("create peer A");
 
     let (peer_b_pub, peer_b, peer_b_addr) =
-        create_mock_peer(PacketDropPolicy::ReceiveAll, channels.clone())
-         
+        create_mock_peer(PacketDropPolicy::ReceiveAll, channels.clon
 ```
 
 ### Core Architecture Module: `crates/core/benches/transport/ledbat_validation.rs`
@@ -934,7 +937,7 @@ const PAYLOAD_SIZES: &[usize] = &[
     64,   // Tiny message
     256,  // Small message
     1024, // 1KB
-    1364, // Max single packet (after overhead)
+    1171, // Max single-packet payload: 1200 - type byte - nonce - tag
 ];
 
 /// AES-GCM encryption - the core crypto operation
@@ -1735,13 +1738,13 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #5931** (2026-10-18): **test(transport): add WAN link model and R1 spike-recovery regression gate**
+  *Symptoms*: This is phase 1 of a WAN-condition test bench for the transport. CI has only ever run transport tests at 1-5 ms RTT with zero loss, which is why the LEDBAT++ and BBR death spirals were found in production.  ## What's in it  **`transport/link_model.rs`** is a seeded link model behind `MockSocket`, running on virtual time. It has: - a bottleneck rate with a finite drop-tail queue, shared by every flow from one host - delay in each direction, set per host - Bernoulli or Gilbert-Elliott loss - a schedule of delay spikes (optionally on one host's outbound leg) and outages  It records ground truth: the true base RTT, queueing delay, every offered and delivered datagram, and which deliveries were retransmitted copies.  Delivery is FIFO per path, at the receiver as well: - `MockSocket` orders parked packets by arrival time, breaking ties with the model's own sequence numbers. - A packet from one source never reorders. - It drains its channel in bounded batches, and reuses one sleep per deadline.  `recv_from` is cancel-safe. NAT belongs in the socket layer, not here.  **R1 and R1b** live in `link_model/r1_tests.rs`. The profile is an 8 MiB stream at 250 ms RTT and 1% loss, through an 8 Mbit/s bottleneck (below FixedRate's 10) with a 100 ms queue.  One second in, data the sender transmits during a 1 s window is held on its outbound leg, while ACKs travel normally. This is a **one-sided hard stall**, like a radio handover or a stalled uplink, not a symmetric RTT increase. A data packet 
+
 - **Issue #5928** (2026-10-18): **docs: allow cleanup exemptions bounded by a lifecycle event**
   *Symptoms*: ## Problem  The cleanup rule in `AGENTS.md` and `.claude/rules/ring.md` said every exemption from garbage collection must expire by a TTL or an absolute age. Some state is correctly bounded by its owner's lifetime instead. Since #5920 the delegate app registry keeps a registration exactly as long as its connection, and its module doc had to describe itself as a departure from the rule.  ## Approach  The rule now says cleanup exemptions must be bounded, by time or by a lifecycle event such as connection close. For a lifecycle bound, every way the owner can end (clean close, error, dropped task) must trigger it. The existing ban on exemptions an entry can renew for itself stays. Connections that stay open without ever closing are not yet bounded at the connection level; that is #5922, and the rule says an entry bounded only by connection close inherits that gap.  Also updated: the registry's module doc, and two comments (`ring/broken_invariants.rs`, `ring/hosting.rs`) that cited the old section title. No code behaviour changes.  ## Testing  Documentation and comments only. `cargo fmt --all -- --check` is clean.  [AI-assisted - Claude]  https://claude.ai/code/session_012FMsogkyxn3DKhB1nVBWA1 
   **Post-Mortem & Fix Analysis**:
   > <!-- claude-rule-review --> ### Claude Rule Review: Failed to run  The Claude rule review step failed (likely an authentication or API issue). Check the [workflow logs](https://github.com/freenet/freenet-core/actions/runs/39141034931) for details.  --- *Advisory review against `.claude/rules/`. Critical patterns are enforced by the Rule Lint CI job.*
-
-- **Issue #5927** (2026-10-18): **feat(telemetry): transport loss, RTT, disconnect-reason and NAT-failure telemetry**
-  *Symptoms*: Observability-only groundwork for the transport redesign. Without it there's no baseline to measure a new transport against. **No changes to the wire protocol, retransmission, congestion control or timing.**  Field telemetry (about 2,200 peers on 0.2.146) showed that the data we need for a baseline is missing or broken: - there are no loss or retransmit counters at all - `final_srtt_ms` always reports 0 and `final_cwnd` reports `u32::MAX` - every disconnect is reported as "pruned" - hole-punch failures have no sub-reason, and there is no NAT-type signal  ## Changes  ### `transport_snapshot` All new fields are additive. - **Loss and ACK overhead:** `packets_sent`, `packets_retransmitted`, `packets_abandoned`, `rto_expiries`, `tlp_probes`, `standalone_ack_packets`, `standalone_ack_bytes`. These are relaxed atomics. - **Per-connection RTT distribution:** `conn_rtt_connections`, plus `conn_srtt_{p50,p90,max}_us` and `conn_min_rtt_{p50,p90,max}_us`. Each live connection contributes one value. SRTT comes from whichever source most recently produced a fresh sample: data ACKs or keep-alives. A retransmit-only ACK batch doesn't count as fresh. This value may be an unloaded keep-alive SRTT, so use the per-transfer `final_srtt_ms` vs `min_rtt_ms` for bufferbloat analysis. - **NAT failure sub-reasons (outbound traversals only):** `nat_fail_{no_response,undecryptable,version_incompatible,incomplete,send_error,other}`. They sum to `nat_traversal_failed_error + nat_traversal_failed_version`
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1758,692 +1761,320 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5814a8ab` (2026-10-16)
-**Commit Message**: test: fix refresh-lock table test self-deadlock under cargo test (#5905)
+### Incident Patch 1: `d9009b50` (2026-10-18)
+**Commit Message**: test(transport): add WAN link model and R1 spike-recovery regression gate (#5931)
 
-**File**: `crates/core/src/server/path_handlers.rs` (modified, +100/-25)
+**File**: `.config/nextest.toml` (modified, +9/-0)
 ```diff
-@@ -4642,14 +4642,50 @@ mod tests {
-     ///    request at once while nothing bounds the warm refreshes that follow.
-     #[tokio::test]
-     async fn refresh_lock_table_is_bounded_prunes_safely_and_overflows_per_contract() {
-+        // Hang detector only, not a fix: a regression that locks in the fill
-+        // below would self-deadlock, and this makes it fail loudly in-process.
-+        tokio::time::timeout(
-+            std::time::Duration::from_secs(10),
-+            refresh_lock_table_scenario(),
-+        )
-+        .await
-+        .expect(
-+            "refresh-lock table scenario hung: the fill must not await a tokio \
-+             mutex it already holds (overflow stripes are shared by id hash)",
-+        );
-+    }
-+
-+    async fn refresh_lock_table_scenario() {
-+        // Simulate sibling tests of the same process that hold table entries
-+        // (`refresh_cache_if_due` holds one for the length of a refresh). With
-+        // more than REFRESH_LOCK_OVERFLOW_STRIPES of them, a fill that LOCKED
-+        // every id would put two ids on one overflow stripe (pigeonhole) and
-+        // deadlock deterministically. The fill below does not lock, so it
-+        // cannot.
-+        let siblings: Vec<_> = (0..(REFRESH_LOCK_OVERFLOW_STRIPES + 6))
-+            .map(|i| {
-+                let mut bytes = [0u8; 32];
-+                bytes[0] = 0x41;
-+                bytes[1..9].copy_from_slice(&(i as u64).to_be_bytes());
-+                let id = ContractInstanceId::new(bytes);
-+                (id, refresh_lock_for(&id))
-+            })
-+            .collect();
-+        for (id, _) in &siblings {
-+            assert!(
-+                CONTRACT_REFRESH_LOCKS.contains_key(id),
-+                "a simulated sibling must actually occupy a table entry"
-+            );
-+        }
-         let mut bytes = [0u8; 32];
-         bytes[0] = 0x3c;
-         let held_id = ContractInstanceId::new(bytes);
--        let guard = acquire_refresh_lock(&held_id).await;
--        let held_lock = CONTRACT_REFRESH_LOCKS
--            .get(&held_id)
--            .map(|entry| entry.clone())
--            .expect("the held lock must be in the table");
-+        // Held as an `Arc` clone, not a locked guard: see the fill loop below.
-+        let held_lock = refresh_lock_for(&held_id);
-+        assert!(
-+            CONTRACT_REFRESH_LOCKS.contains_key(&held_id),
-+            "the held lock must be in the table"
-+        );
+@@ -122,6 +122,15 @@ filter = "test(/probation_(is_committed|survives)/)"
+ slow-timeout = { period = "300s", terminate-after = 2 }
+ retries = 0
  
-         let sprayed: Vec<_> = (0..(MAX_REFRESH_LOCKS + 64))
-             .map(|i| {
-@@ -4679,51 +4715,90 @@ mod tests {
-              it — a replacement lets two refreshers for one contract run at once"
-         );
++# WAN transport bench, regression scenario R1 (death spiral under an RTT
++# spike; crates/core/src/transport/link_model/r1_tests.rs). It runs on virtual
++# time from fixed seeds, so it is deterministic: a retry could only turn a
++# real regression into a green run, the laundering the flaky-tests rule
++# forbids. Each test runs three seeds of an 8 MiB transfer.
++[[profile.ci.overrides]]
++filter = "test(/link_model::r1_tests::/)"
++retries = 0
++
+ [profile.nightly]
+ # Nightly tests run longer by design; no retries since failures need investigation.
+ retries = 0
+```
+
+**File**: `.github/workflows/benchmarks-extended.yml` (modified, +12/-6)
+```diff
+@@ -125,15 +125,21 @@ jobs:
+         run: |
+           echo "## Extended Transport Performance" >> $GITHUB_STEP_SUMMARY
+           echo "" >> $GITHUB_STEP_SUMMARY
+-          echo "Comprehensive resilience and performance testing:" >> $GITHUB_STEP_SUMMARY
+-          echo "- **High-latency paths**: 100ms, 200ms, 500ms RTT (detects ssthresh death spiral)" >> $GITHUB_STEP_SUMMARY
+-          echo "- **Packet loss**: 1%, 5% loss rates (tests reliability layer)" >> $GITHUB_STEP_SUMMARY
+-          echo "- **Large transfers**: 10MB, 50MB (sustained throughput)" >> $GITHUB_STEP_SUMMARY
+-          echo "- **Micro-benchmarks**: Component-level validation" >> $GITHUB_STEP_SUMMARY
++          echo "Micro-benchmarks only (allocation, level0 crypto/serialization, level1 channels)." >> $GITHUB_STEP_SUMMARY
++          echo "The VirtualTime network groups (high latency, packet loss, large transfers, streaming," >> $GITHUB_STEP_SUMMARY
++          echo "slow start) are disabled in transport_extended.rs until #5932 is fixed." >> $GITHUB_STEP_SUMMARY
++          echo "WAN-condition regression gating lives in the unit suite (transport::link_model::r1_tests)." >> $GITHUB_STEP_SUMMARY
+           echo "" >> $GITHUB_STEP_SUMMARY
  
--        // Now fill the table with locks that are HELD, so the prune can reclaim
--        // nothing and a newcomer has to take the overflow path.
-+        // Now fill the table with locks that are HELD (an `Arc` clone keeps
-+        // `strong_count > 1`, which is all the prune looks at), so the prune
-+        // can reclaim nothing and a newcomer has to take the overflow path.
-+        //
-+        // The mutexes are deliberately NOT locked. Once sibling tests hold
-+        // entries, some of this loop's ids would be handed an overflow stripe,
-+        // and two of them can share one; awaiting a tokio mutex this task
-+        // already holds is a self-deadlock production never reaches (one lock
-+        // per task). Fill until a new id is refused admission (the prune
-+        // has nothing left to reclaim) rather than for a fixed count, so
-+        // leftover unheld entries and any number of held sibling entries only
-+        // change how many ids fit, not whether the loop ends. The assertions
-+        // after the loop use the id that was actually refused, so a real
-+        // sibling freeing an entry afterwards cannot make them race.
-         let mut held = Vec::with_capacity(MAX_REFRESH_LOCKS);
-         let mut held_ids = Vec::with_capacity(MAX_REFRESH_LOCKS);
--        for i in 0..MAX_REFRESH_LOCKS {
-+        let mut i = 0u64;
-+        let (refused_id, refused_lock) = loop {
-+            assert!(
-+                i <= 2 * MAX_REFRESH_LOCKS as u64,
-+                "the refresh-lock table never filled; is something removing entries?"
-+            );
-             let mut bytes = [0u8; 32];
-             bytes[0] = 0x3f;
--            bytes[1..9].copy_from_slice(&(i as u64).to_be_bytes());
-+            bytes[1..9].copy_from_slice(&i.to_be_bytes());
-             let id = ContractInstanceId::new(bytes);
--            held.push(acquire_refresh_lock(&id).await);
-+            i += 1;
-+            let lock = refresh_lock_for(&id);
-+            if !CONTRACT_REFRESH_LOCKS.contains_key(&id) {
-+                // Not admitted: the prune found nothing left to reclaim, so
-+                // the table is full of held entries (`lock` is an overflow
-+                // stripe).
-+                break (id, lock);
-+            }
-+            held.push(lock);
-             held_ids.push(id);
--        }
--
--        l
-```
-
----
-
-### Incident Patch 2: `5c61998c` (2026-10-14)
-**Commit Message**: build: remove stale Cargo.lock from workspace member test-contract-integration (#5890)
-
-**File**: `tests/test-contract-integration/Cargo.lock` (removed, +0/-1058)
-```diff
-@@ -1,1058 +0,0 @@
--# This file is automatically @generated by Cargo.
--# It is not intended for manual editing.
--version = 4
--
--[[package]]
--name = "aho-corasick"
--version = "1.1.3"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "8e60d3430d3a69478ad0993f19238d2df97c507009a52b3c10addcd7f6bcb916"
--dependencies = [
-- "memchr",
--]
--
--[[package]]
--name = "android-tzdata"
--version = "0.1.1"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e999941b234f3131b00bc13c22d06e8c5ff726d1b6318ac7eb276997bbb4fef0"
--
--[[package]]
--name = "android_system_properties"
--version = "0.1.5"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "819e7219dbd41043ac279b19830f2efc897156490d7fd6ea916720117ee66311"
--dependencies = [
-- "libc",
--]
--
--[[package]]
--name = "arrayref"
--version = "0.3.7"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "6b4930d2cb77ce62f89ee5d5289b4ac049559b1c45539271f5ed4fdc7db34545"
--
--[[package]]
--name = "arrayvec"
--version = "0.7.4"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "96d30a06541fbafbc7f82ed10c06164cfbd2c401138f6addd8404629c4b16711"
--
--[[package]]
--name = "autocfg"
--version = "1.2.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f1fdabc7756949593fe60f30ec81974b613357de856987752631dea1e3394c80"
--
--[[package]]
--name = "base64"
--version = "0.21.7"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "9d297deb1925b89f2ccc13d7635fa0714f12c87adce1c75356b39ca9b7178567"
--
--[[package]]
--name = "bincode"
--version = "1.3.3"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "b1f45e9417d87227c7a56d22e471c6206462cba514c7590c09aff4cf6d1ddcad"
--dependencies = [
-- "serde",
--]
--
--[[package]]
--name = "bitflags"
--version = "1.3.2"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "bef38d45163c2f1dde094a7dfd33ccf595c92905c8f8f4fdc18d06fb1037718a"
--
--[[package]]
--name = "blake3"
--version = "1.5.1"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "30cca6d3674597c30ddf2c587bf8d9d65c9a84d2326d941cc79c9842dfe0ef52"
--dependencies = [
-- "arrayref",
-- "arrayvec",
-- "cc",
-- "cfg-if",
-- "constant_time_eq",
-- "digest",
--]
--
--[[package]]
--name = "block-buffer"
--version = "0.10.4"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "3078c7629b62d3f0439517fa394996acacc5cbc91c5a20d8c658e77abd503a71"
--dependencies = [
-- "generic-array",
--]
--
--[[package]]
--name = "bs58"
--version = "0.5.1"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "bf88ba1141d185c399bee5288d850d63b8369520c1eafc32a0430b5b6c287bf4"
--dependencies = [
-- "tinyvec",
--]
--
--[[package]]
--name = "bumpalo"
--version = "3.16.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "79296716171880943b8470b5f8d03aa55eb2e645a4874bdbb28adb49162e012c"
--
--[[package]]
--name = "byteorder"
--version = "1.5.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1fd0f2584146f6f2ef48085050886acf353beff7305ebd1ae69500e27c67f64b"
--
--[[package]]
--name = "cc"
--version = "1.0.94"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "17f6e324229dc011159fcc089755d1e2e216a90d43a7dea6853ca740b84f35e7"
--
--[[package]]
--name = "cfg-if"
--version = "1.0.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
--
--[[package]]
--name = "chrono"
--version = "0.4.38"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "a21f936df1771bf62b77f047b726c4625ff2e8aa607c01ec06e5a05bd8463401"
--dependencies = [
-- "android-tzdata",
-- "iana-time-zone",
-- "num-traits",
-- "serde",
-- "windows-targets",
--]
--
--[[package]]
--name = "constant_time_eq"
--version = "0.3.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f7144d30dcf0fafbce74250a3963025d8d52177934239851c917d29f1df280c2"
--
--[[package]]
--name = "core-foundation-sys"
--version = "0.8.6"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "06ea2b9bc92be3c2baa9334a323ebca2d6f074ff852cd1d7b11064035cd3868f"
--
--[[package]]
--name = "crypto-common"
--version = "0.1.6"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1bfb12502f3fc46cca1bb51ac28df9d618d813cdc3d2f25b9fe775a34af26bb3"
--dependencies = [
-- "generic-array",
-- "typenum",
--]
--
--[[package]]
--name = "darling"
--version = "0.20.8"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "54e36fcd13ed84ffdfda6f5be89b31287cbb80c439841fe69e04841435464391"
--dependencies = [
-- "darling_core",
-- "darling_macro",
--]
--
--[[package]]
--name = "darling_core"
--version = "0.20.8"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "9c2cf1c23a687a1feeb728783b993c4e1ad83d99f351801
-```
-
----
-
-### Incident Patch 3: `83ea83b3` (2026-10-17)
-**Commit Message**: fix(conformance): report associativity only for groupings that do not converge (#5924)
-
-**File**: `crates/core/src/conformance.rs` (modified, +7/-0)
-```diff
-@@ -7,6 +7,13 @@
- //! to repair a state that cannot converge. #5153 measured deployed contracts doing
- //! exactly that.
- //!
-+//! One law is checked in a weaker form than the RFC #5320 table states it.
-+//! Associativity is reported only when `merge(merge(A, B), C)` and
-+//! `merge(A, merge(B, C))` differ and do not heal: converge in one exchange, then
-+//! settle at a fixpoint when both groupings and all three inputs are merged back in
-+//! (#5915). No contract with bounded retention can satisfy the strict form. See
-+//! [`ConformanceProperty::StateAssociativity`].
-+//!
- //! This module is the *single* implementation of what "conformance" means. The
- //! offline `fdev verify-merge` harness and the node's opt-in shadow-mode checker both call
- //! [`verify_case`], so the developer-facing answer and the network-facing answer
-```
-
-**File**: `crates/core/src/conformance/property.rs` (modified, +82/-4)
-```diff
-@@ -16,7 +16,72 @@ pub enum ConformanceProperty {
-     StateIdempotence,
-     /// `merge(A, B) == merge(B, A)`
-     StateCommutativity,
--    /// `merge(merge(A, B), C) == merge(A, merge(B, C))`
-+    /// `merge(merge(A, B), C) == merge(A, merge(B, C))`, or the two groupings heal:
-+    /// they converge in one exchange to a state that, re-merged with both groupings
-+    /// and all three inputs, settles at a fixpoint.
-+    ///
-+    /// # What is checked (#5915)
-+    ///
-+    /// With `L = merge(merge(A, B), C)` and `R = merge(A, merge(B, C))`, `L == R`
-+    /// holds outright. Otherwise:
-+    ///
-+    /// 1. `L` and `R` must be valid, or it is a violation: from valid inputs the
-+    ///    contract emitted a state it rejects.
-+    /// 2. `merge(R, L)` must equal `M = merge(L, R)`, or it is a violation: one
-+    ///    exchange does not even agree.
-+    /// 3. `M` is iterated by merging in `L`, `R`, `A`, `B` and `C` until a full pass
-+    ///    changes nothing. A fixpoint heals. Each step that moves the iterate must
-+    ///    also absorb a re-delivery of the same input, or it is a violation. A state
-+    ///    that repeats is a cycle and a violation. Running out of `MAX_HEAL_PASSES`
-+    ///    passes with none of these is [`Inconclusive::RoundLimit`].
-+    ///
-+    /// A heal-step merge the contract itself rejects is a violation: both sides are
-+    /// valid states it emitted, so it is refusing to reconcile its own output
-+    /// (#5725). A runtime or resource failure there stays inconclusive (#5509), which
-+    /// leaves a residual: a contract that traps on a heal-step merge escapes this
-+    /// law, as it escapes every other law in this module.
-+    ///
-+    /// # Why strict associativity is not the law
-+    ///
-+    /// Any contract with bounded retention fails it, and cannot help failing it.
-+    /// A grouping that truncated an old entry to make room cannot refill the slot
-+    /// when a later removal (a ban) or a raised cap frees it, while the other
-+    /// grouping still holds the entry. Measured on River's room contract
-+    /// (freenet/river#793): 956 of 3200 generated triples fail strictly, about 30%,
-+    /// and every one converges on the next exchange. Enforcing the strict form would
-+    /// make every capped chat, feed or log removable, and a participant able to
-+    /// trigger a removal could build a failing triple on purpose. Ian's decision,
-+    /// 2026-10-16: heal-guarded, not diagnostic-only, severity unchanged; 2026-10-17:
-+    /// healing means converge AND stable.
-+    ///
-+    /// # Why the heal step is a fixpoint and not something cheaper
-+    ///
-+    /// - **Convergence alone** silenced every commutative merge, because
-+    ///   `merge(L, R) == merge(R, L)` by definition there; integer averaging got
-+    ///   through.
-+    /// - **`M` absorbing `L` and `R`** silenced every pick-one merge, because `M` is
-+    ///   then `L` or `R`. One whose winner relation is cyclic (wrapping sequence
-+    ///   numbers, rock-paper-scissors) never converges and escaped every enforceable
-+    ///   law that way: a probe saw 1916 strict failures and reported none.
-+    /// - **Cycle detection alone** misses a merge that keeps moving without ever
-+    ///   repeating inside the budget: on any domain wider than a byte, averaging and
-+    ///   "max + 1" climbing came back inconclusive. So each step that moves the
-+    ///   iterate re-delivers the same input and requires
-+    ///   `merge(merge(M, X), X) == merge(M, X)`, which any join satisfies and those
-+    ///   merges fail at any width. A failure is a violation.
-+    /// - **`M` absorbing all five without iterating** is too strict: a raised cap can
-+    ///   re-admit a truncated message, so a bounded log may need one more merge.
-+    ///
-+    /// # Measured
-+    ///
-+    /// On small, exhaustively enumerated state spaces (these numbers do not
-+    /// generalize past them): the bounded-log fixture's 80 states heal on every one
-+    /// of 36,252 strictly failing triples, within 2 passes, and so does its
-+    /// keep-oldest variant (21,980). The fixture shapes this law reported before
-+    /// #5915 are reported again: averaging (0..=20), the partially-ordered cap and
-+    /// `NEVER_SETTLES` on every strict failure, `CAPPED_SET` on 23,812 of 26,034
-+    /// (6-element universe; the rest settle). Averaging and climbing are reported at
-+    /// 32 and 64 bits too, by the re-delivery check rather than by enumeration.
-     StateAssociativity,
-     /// Every state emitted by `update_state` is itself valid.
-     EmittedStateValidity,
-@@ -343,6 +408,17 @@ pub enum ConformanceProperty {
-     /// nothing it had not already lost. Either way there is no contract that this
-     /// property alone condemns while the settled algebra would have acquitted it.
-     ///
-+    /// **What changed with #5915.** `StateAssociativity` no longer means strict
-+    /// associativity: it accepts groupings that heal (converge, then settle at a
-+    /// fixpoint
-```
-
-**File**: `crates/core/src/conformance/tests.rs` (modified, +520/-0)
-```diff
-@@ -415,6 +415,526 @@ fn associativity_only_defect_needs_the_triple_check() {
-     );
- }
+           # Run pre-compiled benchmark binary directly (avoids cargo recompilation check)
+-          "$BENCH_BIN" --bench --color never 2>&1 | tee bench_output.txt || true
++          #
++          # pipefail, and no `|| true`: the step must fail when the bench does.
++          # Without pipefail the pipeline's status is tee's, so this step
++          # passed while the binary panicked in its first group (a 1364-byte
++          # slice of a 1200-byte buffer, stale since #3619 cut the packet
++          # size), and nothing after that group ran.
++          set -o pipefail
++          "$BENCH_BIN" --bench --color never 2>&1 | tee bench_output.txt
  
-+// ------------------------------------- associativity heals or it is reported (#5915)
-+
-+/// Bytes below this are messages; the retained log is the largest ones.
-+const LOG_BAN: u8 = 100;
-+/// Bytes at or above this raise the cap to `byte - LOG_CAP`; the largest wins.
-+const LOG_CAP: u8 = 200;
-+/// How many messages are kept when no state has raised the cap.
-+const LOG_DEFAULT_CAP: usize = 2;
-+
-+/// A bounded-retention log: the shape of a capped chat, feed or audit log.
-+///
-+/// One byte per entry, in three disjoint ranges so a sorted state is canonical:
-+///
-+/// - `0..LOG_BAN` — a message. Only the newest (largest) `cap` survive.
-+/// - `LOG_BAN..LOG_CAP` — a ban on message `byte - LOG_BAN`, which removes it.
-+/// - `LOG_CAP..` — a cap of `byte - LOG_CAP` messages. The largest cap wins.
-+///
-+/// The merge is a function of the union of its inputs, so it is commutative, and it
-+/// is idempotent on its own output. It is NOT strictly associative, and cannot be:
-+/// a message truncated away to make room is gone from that grouping, so when a
-+/// later removal or a raised cap frees the slot, one grouping refills it and the
-+/// other has nothing to refill it with (#5915). Both groupings still converge on the
-+/// next exchange, which is why `StateAssociativity` must not report them.
-+fn bounded_log(a: &[u8], b: &[u8]) -> Vec<u8> {
-+    bounded_log_keeping(a, b, false)
-+}
-+
-+/// [`bounded_log`], or with `keep_oldest` the variant that truncates the NEWEST
-+/// messages instead: a log that keeps its first `cap` entries.
-+fn bounded_log_keeping(a: &[u8], b: &[u8], keep_oldest: bool) -> Vec<u8> {
-+    let all = union(a, b);
-+    let banned: Vec<u8> = all
-+        .iter()
-+        .filter(|x| (LOG_BAN..LOG_CAP).contains(*x))
-+        .map(|x| x - LOG_BAN)
-+        .collect();
-+    let cap_marker = all.iter().copied().filter(|x| *x >= LOG_CAP).max();
-+    let cap = cap_marker.map_or(LOG_DEFAULT_CAP, |m| (m - LOG_CAP) as usize);
-+    let mut messages: Vec<u8> = all
-+        .iter()
-+        .copied()
-+        .filter(|x| *x < LOG_BAN && !banned.contains(x))
-+        .collect();
-+    while messages.len() > cap {
-+        if keep_oldest {
-+            messages.pop();
-+        } else {
-+            messages.remove(0);
-+        }
-+    }
-+    messages.extend(
-+        all.iter()
-+            .copied()
-+            .filter(|x| (LOG_BAN..LOG_CAP).contains(x)),
-+    );
-+    messages.extend(cap_marker);
-+    messages
-+}
-+
-+fn bounded_log_contract() -> Fake {
-+    Fake::conforming()
-+        .merging(|a, b| Ok(bounded_log(a, b)))
-+        .applying(|a, b| Ok(bounded_log(a, b)))
-+        .validating(|state| {
-+            if bounded_log(state, &[]) == state {
-+                Ok(ValidateResult::Valid)
-+            } else {
-+                Ok(ValidateResult::Invalid)
-+            }
-+        })
-+}
-+
-+/// A bounded-retention triple that fails STRICT associativity but heals on one more
-+/// exchange is not reported. Both minimal shapes from #5915 are covered: a removal
-+/// arriving after truncation, and a cap raised after truncation with no removal.
-+///
-+/// Each triple's strict failure is asserted directly first, or a passing verdict
-+/// would prove nothing: the test would hold just as well against a contract that
-+/// happened to be associative on these inputs.
-+#[test]
-+fn a_bounded_retention_triple_that_heals_is_not_reported() {
-+    let removal: [&[u8]; 3] = [&[1, 2], &[3], &[LOG_BAN + 3]];
-+    let raised_cap: [&[u8]; 3] = [&[1, 2], &[3], &[LOG_CAP + 3]];
-+
-+    for (shape, [a, b, c]) in [
-+        ("removal after truncation", removal),
-+        ("cap raised", raised_cap),
-+    ] {
-+        let left = bounded_log(&bounded_log(a, b), c);
-+        let right = bounded_log(a, &bounded_log(b, c));
-+        assert_ne!(
-+            left, right,
-+            "{shape}: the triple must fail strict associativity, or this tests nothing"
-+        );
-+        let m = bounded_log(&left, &right);
-+        assert_eq!(
-+            m,
-+            bounded_log(&right, &left),
-+            "{shape}: the two groupings must converge on one more exchange, or this \
-+             is not the healing shape #5915 describes"
-+        );
-+        assert_eq!(
-+            (bounded_log(&m, &left), bounded_log(&m, &right)),
-+            (m.clone(), m.clone()),
-+            "{shape}: the converged state must absorb both groupings"
-+        );
-+
-+        // The pairwise laws hold, so the triple is the only place this could fire.
-+        let mut fake = bounded_log_contract();
-+        assert_holds(verify_case(
-+            &mut fake,
-+            &case(ConformanceProperty::StateCommutativity, &[a, c]),
-+        ));
-+        assert_holds(verify_case(
-+            &mut fake,
-+            &case(ConformanceProperty::StateIdempotence, &[a]),
-+        ));
-+
-+        assert_holds(verify_case(
-+            &mut bounded_log_contract(),
-+            &case(ConformanceProp
+       # Parse results with structured script
+       - name: Parse Benchmark Results
 ```
 
-**File**: `crates/core/src/conformance/verifier.rs` (modified, +219/-11)
+**File**: `.github/workflows/simulation-nightly.yml` (modified, +151/-4)
 ```diff
-@@ -44,6 +44,18 @@ pub const DETERMINISM_REPEATS: usize = 3;
- /// rewrites a non-canonical stored state once and then stabilizes.
- pub const MAX_CANONICALIZATION_APPLIES: usize = 3;
+@@ -168,6 +168,153 @@ jobs:
+       #       echo "Skipping large_network test - riverctl not installed"
+       #     fi
  
-+/// How many full passes over `(L, R, A, B, C)` the associativity heal step may take
-+/// before it gives up, as [`Inconclusive::RoundLimit`].
-+///
-+/// Measured, not guessed: over the bounded-retention fixture's whole 80-state space
-+/// (512,000 triples, 36,252 failing strict associativity), every healing triple
-+/// reaches its fixpoint within 2 passes, and only 16 need the second (a raised cap
-+/// re-admitting a truncated message). 4 doubles that. Too small a bound can only
-+/// cost coverage, never accuse anyone, because running out is inconclusive; too
-+/// large a bound costs work, and only on a triple that has already failed the
-+/// strict check: at most `2 + 10 * MAX_HEAL_PASSES` extra merges.
-+pub const MAX_HEAL_PASSES: usize = 4;
 +
- /// One property plus the exact inputs to check it with.
++  # WAN transport bench R1/R1b (crates/core/src/transport/link_model/r1_tests.rs),
++  # in its own job so a failure here cannot skip the 500-node step above and
++  # its build does not eat into that job's 195-minute cap. PR CI runs five
++  # fixed GATE_SEEDS through the ordinary unit suite; this explores 20 more,
++  # rotating with the run number.
++  #
++  # What a failure here means: each seed must pass the binary checks
++  # (completes within 3x ideal, no stream abort or abandoned packet, recovers,
++  # flightsize 0 when idle, RTT floor, the spike really happened). Those are
++  # collapse signals, so a single failing seed is a real regression or bug.
++  # The performance checks (median <= 2x ideal, p90 <= 2.2x) are over the 20
++  # seeds together, because small timing changes reshuffle individual seeds.
++  # Runs are deterministic per seed, so a failure reproduces locally:
++  #   FREENET_WAN_BENCH_SEEDS=<seed> cargo test -p freenet --lib r1_spike_recovery_fixed_rate
++  # Once the cause is fixed, add a seed that caught a real bug to GATE_SEEDS.
++  wan-bench-r1:
++    name: WAN Bench R1
++    runs-on: ubicloud-standard-16
++    # Steps carry their own timeouts, and this cap is above their sum (5 + 40
++    # + 30 + 40 = 115 min, plus setup), so a hang always trips a step first: a
++    # step that times out concludes `failure`, which notifies, while a job
++    # timeout concludes `cancelled`, which the notify jobs skip.
++    timeout-minutes: 140
++
++    env:
++      RUST_LOG: error
++      CARGO_TARGET_DIR: ${{ github.workspace }}/target
++      CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER: clang
++      CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_RUSTFLAGS: -C link-arg=-fuse-ld=mold
++
++    steps:
++      - uses: actions/checkout@v7
++        with:
++          ref: ${{ github.event.inputs.ref || github.ref }}
++
++      # A manual dispatch can name a ref older than the bench.
++      - name: Check the ref has the WAN bench
++        id: present
++        run: |
++          if [ -f crates/core/src/transport/link_model/r1_tests.rs ]; then
++            echo "run=true" >> "$GITHUB_OUTPUT"
++          else
++            echo "::notice::This ref predates the WAN bench; skipping."
++            echo "run=false" >> "$GITHUB_OUTPUT"
++          fi
++
++      - uses: dtolnay/rust-toolchain@stable
++        if: steps.present.outputs.run == 'true'
++        with:
++          toolchain: 1.93.0
++
++      - uses: Swatinem/rust-cache@v2
++        if: steps.present.outputs.run == 'true'
++        with:
++          prefix-key: wan-bench-r1
++          save-if: ${{ github.ref == 'refs/heads/main' }}
++
++      - name: Install mold linker
++        if: steps.present.outputs.run == 'true'
++        run: |
++          sudo apt-get update
++          sudo apt-get install -y mold
++
++      # Rationale for the action at the first of these in ci.yml; see #5296.
++      - name: Install nextest
++        if: steps.present.outputs.run == 'true'
++        uses: taiki-e/install-action@v2
++        timeout-minutes: 5
++        with:
++          tool: cargo-nextest
++          fallback: none
++
++      - name: Build lib tests
++        if: steps.present.outputs.run == 'true'
++        timeout-minutes: 40
++        run: cargo nextest run -p freenet --lib --no-run
++
++      - name: Pick seeds
++        if: steps.present.outputs.run == 'true'
++        id: seeds
++        env:
++          RUN_NUMBER: ${{ github.run_number }}
++        run: echo "list=$(seq -s, $((RUN_NUMBER * 20)) $((RUN_NUMBER * 20 + 19)))" >> "$GITHUB_OUTPUT"
++
++      # Measured locally: about 4 minutes for all six R1/R1b tests on 20 seeds
++      # with 7 test threads, on a loaded 16-core host.
++      - name: R1 and R1b, gating controller (FixedRate)
++        if: steps.present.outputs.run == 'true'
++        timeout-minutes: 30
++        env:
++          FREENET_WAN_BENCH_SEEDS: ${{ steps.seeds.outputs.list }}
++        run: |
++          echo "FREENET_WAN_BENCH_SEEDS=$FREENET_WAN_BENCH_SEEDS"
++          cargo nextest run -p freenet --lib --profile nightly --no-capture \
++            -E 'test(/link_model::r1_tests::r1(b)?_(spike_recovery_fixed_rate|runs_are_reproducible_from_the_seed)$/)'
++
++      # BBR and LEDBAT++ are #[ignore]d as known failures (#5929, #5930). Run
++      # them anyway so they keep running to their verdict. This step fails if
++      # one now PASSES on every seed (remove its #[ignore] and close the
++      # issue), or fails in a way its expected failure does not cover: every
++      # per-seed reason must match the test's allowed list below, so a new
++      # failure mode cannot hide behind a known one.
++      - name: R1 and R1b, known failures (BBR, LEDBAT++) still fail the known way
++        if: ${{ !cancelled() && steps.present.outputs.run == 'true' }}
++        timeout-minutes: 40
++        env:
++          FREENET_WAN_BENCH_SEEDS: ${{ steps.seeds.outputs.list }}
++        run: |
++          # Allowed p
+```
+
+**File**: `crates/core/benches/transport/allocation_overhead.rs` (modified, +6/-2)
+```diff
+@@ -12,6 +12,10 @@ use std::sync::Arc;
+ /// Maximum packet data size (same as transport layer MAX_PACKET_SIZE)
+ const MAX_PACKET_SIZE: usize = 1200;
+ 
++/// Largest payload one packet carries: MAX_PACKET_SIZE minus the packet-type
++/// byte, the 12-byte nonce and the 16-byte tag (the transport's MAX_DATA_SIZE).
++const MAX_PAYLOAD_SIZE: usize = MAX_PACKET_SIZE - 1 - 12 - 16;
++
+ /// Fragment size for stream tests (same as MAX_DATA_SIZE - overhead)
+ const FRAGMENT_SIZE: usize = 1130;
+ 
+@@ -25,7 +29,7 @@ pub fn bench_packet_allocation(c: &mut Criterion) {
+ 
+     // Pre-allocate a buffer like PacketData does
+     let buffer: [u8; MAX_PACKET_SIZE] = [0xAB; MAX_PACKET_SIZE];
+-    let sizes = [64, 256, 1024, 1364, MAX_PACKET_SIZE];
++    let sizes = [64, 256, 1024, MAX_PACKET_SIZE];
+ 
+     for &size in &sizes {
+         group.throughput(Throughput::Elements(1));
+@@ -157,7 +161,7 @@ pub fn bench_packet_preparation(c: &mut Criterion) {
+     let cipher = Aes128Gcm::new(&key.into());
+     let nonce: [u8; 12] = [0u8; 12];
+ 
+-    let sizes = [64, 256, 1024, 1364];
++    let sizes = [64, 256, 1024, MAX_PAYLOAD_SIZE];
+ 
+     for &size in &sizes {
+         group.throughput(Throughput::Bytes(size as u64));
+```
+
+**File**: `crates/core/benches/transport/common.rs` (modified, +6/-6)
+```diff
+@@ -54,7 +54,7 @@ pub fn create_benchmark_runtime() -> tokio::runtime::Runtime {
+ /// Get the congestion control algorithm from environment variable.
  ///
- /// Cases are the unit of work everywhere: the generator produces them, the verifier
-@@ -457,12 +469,72 @@ fn run<O: ConformanceOracle + ?Sized>(
-             require_valid(oracle, &bc, &case.related)?;
-             let ab_c = merge(oracle, &ab, c)?;
-             let a_bc = merge(oracle, a, &bc)?;
--            Ok(compare(
--                case.property,
--                &ab_c,
--                &a_bc,
--                "merge(merge(A, B), C) must equal merge(A, merge(B, C))",
--            ))
-+            if ab_c == a_bc {
-+                return Ok(PropertyOutcome::Holds);
-+            }
-+
-+            // The two groupings differ. That alone is not reported (#5915): no
-+            // contract with bounded retention can satisfy strict associativity. A
-+            // grouping that truncated an old entry to make room cannot refill the slot
-+            // when a later removal (a ban) or a raised cap frees it, while the other
-+            // grouping still holds the entry. Measured on River's room contract: ~30%
-+            // of generated triples fail strictly and every one converges on the next
-+            // exchange. Reporting them would make every capped chat, feed or log
-+            // removable, and anyone able to trigger a removal could build a failing
-+            // triple on purpose. So it is reported only if it does not HEAL, in the
-+            // sense `associativity_heals` defines.
-+            //
-+            // A grouping the contract rejects is reported outright. Both inputs and
-+            // both intermediates are valid, so this is the contract emitting a state
-+            // it rejects from valid inputs: the network drops it, and the peer that
-+            // computed it can never agree with the one that computed the other. That
-+            // was a violation before #5915 and stays one.
-+            for grouping in [&ab_c, &a_bc] {
-+                match oracle
-+                    .validate_state(grouping, &case.related)
-+                    .map_err(inconclusive_from)?
-+                {
-+                    ValidateResult::Valid => {}
-+                    ValidateResult::RequestRelated(_) => return Err(Inconclusive::RelatedRequired),
-+                    ValidateResult::Invalid => {
-+                        return Ok(compare(
-+                            case.property,
-+                            &ab_c,
-+                            &a_bc,
-+                            "merge(merge(A, B), C) differs from merge(A, merge(B, C)), and \
-+                             the contract rejects one grouping as invalid: from valid \
-+                             inputs it emitted a state it will not accept",
-+                        ));
-+                    }
-+                }
-+            }
-+
-+            let detail = match associativity_heals(oracle, &ab_c, &a_bc, [a, b, c])? {
-+                Heal::Healed => return Ok(PropertyOutcome::Holds),
-+                Heal::OutOfPasses => return Err(Inconclusive::RoundLimit),
-+                Heal::NotConverged => "merge(merge(A, B), C) differs from merge(A, merge(B, C)), \
-+                     and merging each grouping into the other does not reach one state, so \
-+                     two peers that received the same updates grouped differently still \
-+                     disagree after reconciling"
-+                    .to_string(),
-+                Heal::Redelivery => "merge(merge(A, B), C) differs from merge(A, merge(B, C)), \
-+                     and the groupings never settle: while reconciling them, merging the \
-+                     same state in a second time moved the result again, so under \
-+                     at-least-once delivery the state keeps moving and peers never agree"
-+                    .to_string(),
-+                Heal::Cycle => "merge(merge(A, B), C) differs from merge(A, merge(B, C)), and \
-+                     the groupings never settle: re-merging them and the three inputs into \
-+                     the state they converge 
+ /// Set `FREENET_CONGESTION_ALGO` to:
+-/// - `fixedrate` or `fixed` - Use FixedRate (100 Mbps)
++/// - `fixedrate` or `fixed` - Use FixedRate (10 Mbps per connection)
+ /// - `bbr` or `BBR` - Use BBR (Bottleneck Bandwidth and RTT)
+ /// - `ledbat` or `LEDBAT` - Use LEDBAT++ (Low Extra Delay Background Transport)
+ ///
+@@ -402,13 +402,13 @@ pub fn spawn_auto_advance_task(time_source: VirtualTime) -> tokio::task::JoinHan
+ /// ensuring consistent timing behavior for benchmarks.
+ ///
+ /// Uses the congestion control algorithm from `FREENET_CONGESTION_ALGO` environment variable
+-/// (defaults to BBR for high-throughput benchmarks).
++/// (defaults to the production default, FixedRate).
+ pub async fn create_peer_pair_with_virtual_time(
+     channels: Channels,
+     delay: Duration,
+     time_source: VirtualTime,
+ ) -> PeerPair<VirtualTime> {
+-    // Use configurable congestion control (defaults to BBR for benchmarks)
++    // Use configurable congestion control (defaults to FixedRate)
+     let config = Some(get_congestion_config());
+ 
+     let (peer_a_pub, peer_a, peer_a_addr) = create_mock_peer_with_congestion_config(
+@@ -529,12 +529,12 @@ pub async fn create_connected_peers_with_virtual_time_and_loss(
+ /// Create a pair of mock peers with VirtualTime and configurable congestion control.
+ ///
+ /// This function uses the congestion control algorithm from the `FREENET_CONGESTION_ALGO`
+-/// environment variable (defaults to BBR).
++/// environment variable (defaults to FixedRate).
+ ///
+ /// ## Example
+ ///
+ /// ```rust,ignore
+-/// // Uses FREENET_CONGESTION_ALGO or defaults to BBR
++/// // Uses FREENET_CONGESTION_ALGO or defaults to FixedRate
+ /// let time_source = VirtualTime::new();
+ /// let peers = create_peer_pair_with_configurable_congestion(
+ ///     channels,
+@@ -583,7 +583,7 @@ pub async fn create_peer_pair_with_configurable_congestion(
+ /// Create a connected peer pair with configurable congestion control.
+ ///
+ /// Uses `FREENET_CONGESTION_ALGO` environment variable to select algorithm.
+-/// Defaults to BBR if not set.
++/// Defaults to FixedRate if not set.
+ pub async fn create_connected_peers_with_configurable_congestion(
+     delay: Duration,
+     time_source: VirtualTime,
 ```
 
-**File**: `crates/fdev/src/config.rs` (modified, +4/-2)
+**File**: `crates/core/benches/transport/level0.rs` (modified, +1/-1)
 ```diff
-@@ -76,8 +76,10 @@ pub enum SubCommand {
-         command: crate::website::WebsiteCommand,
-     },
-     /// Check that a contract's merge obeys the laws the network requires: that
--    /// merging is order-independent, groups the same way whichever pairing is used,
--    /// and applying the same change twice does nothing the second time.
-+    /// merging is order-independent, that merges grouped differently converge in one
-+    /// exchange and then settle on a state that re-merging the groupings and their
-+    /// inputs no longer changes, and that applying the same change twice does nothing
-+    /// the second time.
-     ///
-     /// A contract that breaks these usually cannot converge — two peers given the same
-     /// updates in different orders end up with different state, never agree, and
+@@ -20,7 +20,7 @@ const PAYLOAD_SIZES: &[usize] = &[
+     64,   // Tiny message
+     256,  // Small message
+     1024, // 1KB
+-    1364, // Max single packet (after overhead)
++    1171, // Max single-packet payload: 1200 - type byte - nonce - tag
+ ];
+ 
+ /// AES-GCM encryption - the core crypto operation
 ```
 
-**File**: `tests/test-contract-conformance/src/lib.rs` (modified, +11/-6)
+**File**: `crates/core/benches/transport/slow_start.rs` (modified, +2/-2)
 ```diff
-@@ -25,10 +25,12 @@
- //!                                by something other than the merge's own ordering.
- //!                                Commutative and idempotent, so no PAIRWISE state
- //!                                law sees it and only a three-state case reveals
--//!                                it. The transition law sees it too, from the same
--//!                                information loss, and that is asserted rather than
--//!                                left implicit — but associativity is the law that
--//!                                names it, and the pairwise ones stay silent.
-+//!                                it, on triples that do not converge to an
-+//!                                absorbing fixpoint (#5915; most strict failures,
-+//!                                not all). The transition law sees it too, from the
-+//!                                same information loss, and that is asserted rather
-+//!                                than left implicit — but associativity is the law
-+//!                                that names it, and the pairwise ones stay silent.
- //!   6 NEVER_SETTLES            — merge rewrites the state on every apply, so
- //!                                merge(A, A) never reaches a fixpoint. Idempotence
- //!                                and associativity break; commutativity still HOLDS
-@@ -220,7 +222,9 @@ fn merge_state(m: u8, current: &[u8], incoming: &[u8]) -> Vec<u8> {
-         //
-         // This is the "cap the collection at N" rule real applications write, and
-         // it is why associativity needs a three-state check of its own rather
--        // than being assumed to follow from the pairwise laws.
-+        // than being assumed to follow from the pairwise laws. Since #5915 that
-+        // check reports it on triples that do not converge to an absorbing
-+        // fixpoint, which is most of its strict failures but not all.
-         //
-         // The eviction has to pick its victim from the whole set, not from the
-         // ordering the merge is defined over. Keeping the largest N would be
-@@ -233,7 +237,8 @@ fn merge_state(m: u8, current: &[u8], incoming: &[u8]) -> Vec<u8> {
-         //
-         // The pairwise laws still hold: the result depends only on the union, so
-         // it is commutative, and a state already at or under the cap merged with
--        // itself is unchanged, so it is idempotent. Only the triple reveals it.
-+        // itself is unchanged, so it is idempotent. Only a triple reveals it, one
-+        // whose groupings do not converge to an absorbing fixpoint.
-         CAPPED_SET => capped(current, incoming),
-         // First write wins on a key collision — `entry(key).or_insert(value)`.
-         //
+@@ -34,7 +34,7 @@ use super::common::{
+ /// Measures the actual slow start benefit by tracking virtual time elapsed.
+ ///
+ /// Congestion control algorithm is configurable via `FREENET_CONGESTION_ALGO` env var.
+-/// Defaults to BBR.
++/// Defaults to the production default (FixedRate).
+ pub fn bench_cold_start_throughput(c: &mut Criterion) {
+     // Print which congestion control algorithm is being used
+     print_congestion_config();
+@@ -205,7 +205,7 @@ pub fn bench_cold_start_throughput(c: &mut Criterion) {
+ /// Uses VirtualTime for instant execution.
+ ///
+ /// Congestion control algorithm is configurable via `FREENET_CONGESTION_ALGO` env var.
+-/// Defaults to BBR.
++/// Defaults to the production default (FixedRate).
+ pub fn bench_warm_connection_throughput(c: &mut Criterion) {
+     // Get configurable congestion control
+     let congestion_config = Some(get_congestion_config());
+```
+
+**File**: `crates/core/benches/transport/streaming.rs` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ //! Transport Streaming Benchmarks with VirtualTime - Large message transfers
+ //!
+ //! These benchmarks test stream fragmentation, reassembly, and rate limiting
+-//! for messages larger than a single packet (>1364 bytes).
++//! for messages larger than a single packet (>1171 bytes of payload).
+ //!
+ //! Uses VirtualTime for instant execution of network operations.
+ //! Expected runtime: ~30 seconds (vs ~5-10 minutes with real time)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5931** (2026-10-18): test(transport): add WAN link model and R1 spike-recovery regression gate (@sanity)
 - **PR #5928** (2026-10-18): docs: allow cleanup exemptions bounded by a lifecycle event (@sanity)
 - **PR #5927** (2026-10-18): feat(telemetry): transport loss, RTT, disconnect-reason and NAT-failure telemetry (@sanity)
 - **PR #5924** (2026-10-17): fix(conformance): report associativity only for groupings that do not converge (@sanity)
 - **PR #5921** (2026-10-17): test: choose the delegate E2E probe node from the ring layout (@sanity)
 - **PR #5920** (2026-10-17): fix(delegates): keep live app registrations past the push TTL (@sanity)
-- **PR #5918** (2026-10-17): fix(delegates): require delegate run params to match the delegate key (@sanity)
 
 ---
 
@@ -2463,65 +2094,36 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test: fix refresh-lock table test self-deadlock under cargo test (#5905)
+## X. test(transport): add WAN link model and R1 spike-recovery regression gate (#5931
 
 **RULE**:
-When implementing operations in `crates/core/src/server/path_handlers.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.config/nextest.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5814a8ab`: test: fix refresh-lock table test self-deadlock under cargo test (#5905). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d9009b50`: test(transport): add WAN link model and R1 spike-recovery regression gate (#5931). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/server/path_handlers.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.config/nextest.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        // Hang detector only, not a fix: a regression that locks in the fill
-        // below would self-deadlock, and this makes it fail loudly in-process.
-        tokio::time::timeout(
-            std::time::Duration::from_secs(10),
-            refresh_lock_table_scenario(),
-        )
-        .await
-        .expect(
-            "refresh-lock table scenario hung: the fill must not await a tokio \
-             mutex it already holds (overflow stripes are shared by id hash)",
-        );
-    }
+# WAN transport bench, regression scenario R1 (death spiral under an RTT
+# spike; crates/core/src/transport/link_model/r1_tests.rs). It runs on virtual
+# time from fixed seeds, so it is deterministic: a retry could only turn a
+# real regression into a green run, the laundering the flaky-tests rule
+# forbids. Each test runs three seeds of an 8 MiB transfer.
+[[profile.ci.overrides]]
+filter = "test(/link_model::r1_tests::/)"
+retries = 0
 
-    async fn refresh_lock_table_scenario() {
-        // Simulate sibling tests of the same process that hold table entries
-        // (`refresh_cache_if_due` holds one for the length of a refresh). With
-        // more than REFRESH_LOCK_OVERFLOW_STRIPES of them, a fill that LOCKED
-        // every id would put two ids on one overflow stripe (pigeonhole) and
-        // deadlock deterministically. The fill below does not lock, so it
-        // cannot.
-        let siblings: Vec<_> = (0..(REFRESH_LOCK_OVERFLOW_STRIPES + 6))
-            .map(|i| {
-                let mut bytes = [0u8; 32];
-                bytes[0] = 0x41;
-                bytes[1..9].copy_from_slice(&(i as u64).to_be_bytes());
-    
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        let guard = acquire_refresh_lock(&held_id).await;
-        let held_lock = CONTRACT_REFRESH_LOCKS
-            .get(&held_id)
-            .map(|entry| entry.clone())
-            .expect("the held lock must be in the table");
-        // Now fill the table with locks that are HELD, so the prune can reclaim
-        // nothing and a newcomer has to take the overflow path.
-        for i in 0..MAX_REFRESH_LOCKS {
-            bytes[1..9].copy_from_slice(&(i as u64).to_be_bytes());
-            held.push(acquire_refresh_lock(&id).await);
-        }
-
-        l
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5814a8ab` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d9009b50` are properly handled with clean fallback behavior.

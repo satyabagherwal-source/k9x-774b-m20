@@ -2726,3 +2726,10 @@
 | `CYCLE-20261019-T6HT` | `2026-10-19T01:01:03.137Z` | `Agent-Field/agentfield` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1948` | Yes (`752611a5...`) |
 | `CYCLE-20261019-TADS` | `2026-10-19T01:01:08.176Z` | `typedb/typedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1949` | Yes (`0e33af44...`) |
 | `CYCLE-20261019-TBUT` | `2026-10-19T01:01:10.085Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md` | Yes (`c448bb78...`) |
+| `CYCLE-20261019-13CD` | `2026-10-19T01:07:12.301Z` | `Cactus-Compute/whistle` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md` | Yes (`d5370d18...`) |
+| `CYCLE-20261019-13S4` | `2026-10-19T01:07:12.868Z` | `mfontanini/presenterm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1950` | Yes (`fd7a3e8f...`) |
+| `CYCLE-20261019-17S8` | `2026-10-19T01:07:18.056Z` | `ritz078/transform` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1951` | Yes (`e3356c9a...`) |
+| `CYCLE-20261019-19P3` | `2026-10-19T01:07:20.535Z` | `kubeshop/botkube` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1952` | Yes (`a81f98da...`) |
+| `CYCLE-20261019-1BFC` | `2026-10-19T01:07:22.776Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1953` | Yes (`acbac9df...`) |
+| `CYCLE-20261019-1DAA` | `2026-10-19T01:07:25.186Z` | `skyzh/mini-lsm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1954` | Yes (`25d12bd5...`) |
+| `CYCLE-20261019-5CJB` | `2026-10-19T01:10:30.839Z` | `PaulLeCam/react-leaflet` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1955, Rule 1956, Rule 1957` | Yes (`d56a8b8b...`) |

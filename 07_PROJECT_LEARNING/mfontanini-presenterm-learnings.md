@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md`  
+> **Source**: github ([https://github.com/mfontanini/presenterm](https://github.com/mfontanini/presenterm))  
+> **Source Version**: `5f8add11`  
+> **License**: BSD-2-Clause  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T01:07:12.651Z  
+> **Learning ID**: `learn-github-mfontanini-presenterm`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): mfontanini/presenterm
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mfontanini/presenterm](https://github.com/mfontanini/presenterm))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T01:51:04.438Z  
+> **Harvest Timestamp**: 2026-10-19T01:07:12.643Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: A markdown terminal slideshow tool
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 8898 stars
+- **Stars / Engagement**: 8926 stars
 
 ---
 
@@ -1820,334 +1834,6 @@ impl CommandsRunner {
     
 ```
 
-### Core Architecture Module: `src/code/highlighting.rs`
-```
-use crate::{
-    code::snippet::SnippetLanguage,
-    markdown::{
-        elements::{Line, Text},
-        text_style::{Color, TextStyle},
-    },
-    theme::CodeBlockStyle,
-};
-use flate2::read::ZlibDecoder;
-use once_cell::sync::Lazy;
-use serde::Deserialize;
-use std::{cell::RefCell, collections::BTreeMap, fs, path::Path, rc::Rc};
-use syntect::{
-    LoadingError,
-    easy::HighlightLines,
-    highlighting::{Style, Theme, ThemeSet},
-    parsing::SyntaxSet,
-};
-
-static SYNTAX_SET: Lazy<SyntaxSet> = Lazy::new(|| {
-    let contents = include_bytes!("../../bat/syntaxes.bin");
-    bincode::deserialize(contents).expect("syntaxes are broken")
-});
-
-static BAT_THEMES: Lazy<LazyThemeSet> = Lazy::new(|| {
-    let contents = include_bytes!("../../bat/themes.bin");
-    let theme_set: LazyThemeSet = bincode::deserialize(contents).expect("syntaxes are broken");
-    theme_set
-});
-
-// This structure mimic's `bat`'s serialized theme set's.
-#[derive(Debug, Deserialize)]
-struct LazyThemeSet {
-    serialized_themes: BTreeMap<String, Vec<u8>>,
-}
-
-pub struct HighlightThemeSet {
-    themes: RefCell<BTreeMap<String, Rc<Theme>>>,
-}
-
-impl HighlightThemeSet {
-    /// Construct a new highlighter using the given [syntect] theme name.
-    pub fn load_by_name(&self, name: &str) -> Option<SnippetHighlighter> {
-        let mut themes = self.themes.borrow_mut();
-        // Check if we already loaded this one.
-        if let Some(theme) = themes.get(name).cloned() {
-            Some(SnippetHighlighter { theme })
-        }
-        // Otherwise try to deserialize it from bat's themes
-        else if let Some(theme) = self.deserialize_bat_theme(name) {
-            themes.insert(name.into(), theme.clone());
-            Some(SnippetHighlighter { theme })
-        } else {
-            None
-        }
-    }
-
-    /// Register all highlighting themes in the given directory.
-    pub fn register_from_directory<P: AsRef<Path>>(&mut self, path: P) -> Result<(), LoadingError> {
-        let Ok(metadata) = fs::metadata(&path) else {
-            return Ok(());
-        };
-        if !metadata.is_dir() {
-            return Ok(());
-        }
-        let themes = ThemeSet::load_from_folder(path)?;
-        let themes = themes.themes.into_iter().map(|(name, theme)| (name, Rc::new(theme)));
-        self.themes.borrow_mut().extend(themes);
-        Ok(())
-    }
-
-    fn deserialize_bat_theme(&self, name: &str) -> Option<Rc<Theme>> {
-        let serialized = BAT_THEMES.serialized_themes.get(name)?;
-        let decoded: Theme = bincode::deserialize_from(ZlibDecoder::new(serialized.as_slice())).ok()?;
-        let decoded = Rc::new(decoded);
-        Some(decoded)
-    }
-}
-
-impl Default for HighlightThemeSet {
-    fn default() -> Self {
-        let themes = ThemeSet::load_defaults();
-        let themes = themes.themes.into_iter().map(|(name, theme)| (name, Rc::new(theme))).collect();
-        Self { themes: RefCell::new(themes) }
-    }
-}
-
-/// A snippet highlighter.
-#[derive(Clone)]
-pub(crate) struct SnippetHighlighter {
-    theme: Rc<Theme>,
-}
-
-impl SnippetHighlighter {
-    /// Create a highlighter for a specific language.
-    pub(crate) fn language_highlighter(&self, language: &SnippetLanguage) -> LanguageHighlighter<'_> {
-        let extension = Self::language_extension(language);
-        let syntax = SYNTAX_SET.find_syntax_by_extension(extension).unwrap();
-        let highlighter = HighlightLines::new(syntax, &self.theme);
-        LanguageHighlighter::new(language.clone(), highlighter)
-    }
-
-    fn language_extension(language: &SnippetLanguage) -> &'static str {
-        use SnippetLanguage::*;
-        match language {
-            Ada => "adb",
-            Asp => "asa",
-            Awk => "awk",
-            Bash => "sh",
-            BatchFile => "cmd",
-            C => "c",
-            CMake => "cmake",
-            CSharp => "cs",
-            Clojure => "clj",
-            Cpp => "cpp",
-            Crontab => "crontab",
-            Css => "css",
-            Dart => "dart",
-            D2 => "txt",
-            DLang => "d",
-            Diff => "diff",
-            Docker => "Dockerfile",
-            Dotenv => "env",
-            Elixir => "ex",
-            Elm => "elm",
-            Erlang => "erl",
-            File => "txt",
-            Fish => "fish",
-            FSharp => "fsx",
-            GdScript => "gd",
-            Go => "go",
-            GraphQL => "graphql",
-            Haskell => "hs",
-            Html => "html",
-            Java => "java",
-            JavaScript => "js",
-            Json => "json",
-            Jsonnet => "jsonnet",
-            Julia => "jl",
-            Kotlin => "kt",
-            Latex => "tex",
-            Lua => "lua",
-            Makefile => "make",
-            Markdown => "md",
-            Mermaid => "txt",
-            Nix => "nix",
-            Nushell => "txt",
-            OCaml => "ml",
-            Perl => "pl",
-            Php => "php",
-            PowerShell => "ps1",
-            Protobuf => "proto",
-            Puppet => "pp",
-            Python => "py",
-            R => "r",
-            Racket => "rkt",
-            Ruby => "rb",
-            Rust => "rs",
-            RustScript => "rs",
-            Scala => "scala",
-            Shell => "sh",
-            Sql => "sql",
-            Swift => "swift",
-            Svelte => "svelte",
-            Tcl => "tcl",
-            Terraform => "tf",
-            Toml => "toml",
-            TypeScript => "ts",
-            TypeScriptReact => "tsx",
-            Typst => "txt",
-            // default to plain text so we get the same look&feel
-            Unknown(_) => "txt",
-            Verilog => "v",
-            Vue => "vue",
-            Wsl => "sh",
-            Xml => "xml",
-            Yaml => "yaml",
-            Zsh => "sh",
-            Zig => "zig",
-        }
-    }
-}
-
-impl Default for SnippetHighlighter {
-    fn default() -> Self {
-        let themes = HighlightThemeSet::default();
-        themes.load_by_name("base16-eighties.dark").expect("default theme not found")
-    }
-}
-
-pub(crate) struct LanguageHighlighter<'a> {
-    language: SnippetLanguage,
-    highlighter: HighlightLines<'a>,
-    parse_started: bool,
-}
-
-impl<'a> LanguageHighlighter<'a> {
-    fn new(language: SnippetLanguage, highlighter: HighlightLines<'a>) -> Self {
-        Self { language, highlighter, parse_started: false }
-    }
-
-    pub(crate) fn style_line(&mut self, line: &str, block_style: &CodeBlockStyle) -> Line {
-        if !self.parse_started {
-            let line = line.trim();
-            if !line.is_empty() {
-                self.parse_started = true;
-                // Parse a fake "<?php" line if PHP code doesn't start with one so highlighting
-                // looks good.
-                if matches!(self.language, SnippetLanguage::Php) && !line.starts_with("<?php") {
-                    self.highlighter.highlight_line("<?php\n", &SYNTAX_SET).unwrap();
-                }
-            }
-        }
-        let texts: Vec<_> = self
-            .highlighter
-            .highlight_line(line, &SYNTAX_SET)
-            .unwrap()
-            .into_iter()
-            .map(|(style, tokens)| StyledTokens::new(style, tokens, block_style).apply_style())
-            .collect();
-        Line(texts)
-    }
-}
-
-pub(crate) struct StyledTokens<'a> {
-    pub(crate) style: TextStyle,
-    pub(crate) tokens: &'a str,
-}
-
-impl<'a> StyledTokens<'a> {
-    pub(crate) fn new(style: Style, tokens: &'a str, block_style: &CodeBlockStyle) -> Self {
-        let has_background = block_style.background;
-        let background = has_background.then_some(parse_color(style.background)).flatten();
-        let foreground = parse_color(style.foreground);
-        let mut style = TextStyle::default();
-        style.colors.background = background;
-        style.colors.foreground = foreground;
-        Self { style, tokens }
-    }
-
-    pub(crate) fn apply_style(&self) -> Text {
-        let text: String = self.tokens.split('\n').collect();
-        Text::new(text, self.style)
-    }
-}
-
-// This code has been adapted from bat's: https://github.com/sharkdp/bat
-fn parse_color(color: syntect::highlighting::Color) -> Option<Color> {
-    if color.a == 0 {
-        Some(match color.r {
-            0x00 => Color::Black,
-            0x01 => Color::DarkRed,
-            0x02 => Color::DarkGreen,
-            0x03 => Color::DarkYellow,
-            0x04 => Color::DarkBlue,
-            0x05 => Color::DarkMagenta,
-            0x06 => Color::DarkCyan,
-            0x07 => Color::Grey,
-            0x08 => Color::DarkGrey,
-            0x09 => Color::Red,
-            0x0a => Color::Green,
-            0x0b => Color::Yellow,
-            0x0c => Color::Blue,
-            0x0d => Color::Magenta,
-            0x0e => Color::Cyan,
-            0x0f => Color::White,
-            n => Color::from_ansi(n)?,
-        })
-    } else if color.a == 1 {
-        None
-    } else {
-        Some(Color::new(color.r, color.g, color.b))
-    }
-}
-
-#[cfg(test)]
-mod test {
-    use super::*;
-    use strum::IntoEnumIterator;
-    use tempfile::tempdir;
-
-    #[test]
-    fn language_extensions_exist() {
-        for language in SnippetLanguage::iter() {
-            let extension = SnippetHighlighter::language_extension(&language);
-            let syntax = SYNTAX_SET.find_syntax_by_extension(extension);
-            assert!(syntax.is_some(), "extension {extension} for {language:?} not found");
-        }
-    }
-
-    #[test]
-    fn default_highlighter() {
-        SnippetHighlighter::default();
-    }
-
-    #[test]
-    fn load_custom() {
-        let directory = tempdir().expect("creating tempdir");
-        // A minimalistic .tmTheme theme.
-        let theme = r#"
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-    <key>potato</key>
-    <string>Example Color Scheme</string>
-    <key>settings</key>
-    <array>
-        <dict>
-            <key>settings</key>
-            <dict></dict>
-        </dict>
-    </array>
-</dict>"#;
-        
-```
-
-### Core Architecture Module: `src/code/mod.rs`
-```
-pub(crate) mod execute;
-pub(crate) mod highlighting;
-pub(crate) mod padding;
-pub(crate) mod snippet;
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -2159,36 +1845,6 @@ pub(crate) mod snippet;
 
 - **Issue #911** (2026-07-27): **Migrate PTY terminal backend from vt100 to rio-vt**
   *Symptoms*: Swaps the PTY snippet's terminal backend from vt100 to [rio-vt](https://crates.io/crates/rio-vt), Rio's terminal engine.  The `ui/execution/pty` module parsed PTY output with vt100 and read each cell's contents and style to build `TextStyle`s. rio-vt does the same, exposed here through a small `PtyParser`/`PtyScreen`/`PtyCell` adapter that mirrors the vt100 surface this module used. rio-vt stores cells as packed handles into the grid style table, so the screen is resolved into owned cells on snapshot; rendering behavior is unchanged.  rio-vt is a full terminal engine (scrollback, wide chars/graphemes, sixel/Kitty/iTerm2 image protocols) rather than a parser plus screen model, and it parses and serializes a bit faster.  Benchmark against vt100 and alacritty_terminal: https://github.com/raphamorim/rio-vt-benchmark  Background on the engine and why it was split out of Rio: https://rioterm.com/blog/2026/07/27/rio-vt-and-librio 
-
-- **Issue #903** (2026-06-27): **Images in tmux are stretched vertically (but only when using presenterm)**
-  *Symptoms*: I would like to run a presentation that includes images inside a tmux window (running inside a Foot terminal). Sixel images in general display just fine; running `img2sixel example.png` renders like this:  <img width="523" height="477" alt="Image" src="https://github.com/user-attachments/assets/ea9515b3-21d9-489d-92df-c5cfb9ca2b52" />  But that same image, when used in a presenterm slideshow...  ``` # Example w/ OpenTofu logo  ![](example.png) ```  ...in the same terminal, looks like this:  <img width="1042" height="704" alt="Image" src="https://github.com/user-attachments/assets/03c8db28-3b5f-47ed-98c9-71e4f9c0c79d" />  If I exit tmux, the image displays as expected:  <img width="908" height="400" alt="Image" src="https://github.com/user-attachments/assets/a4c6979b-1ae2-4e2b-b128-cbcda42e49cf" />  What is causing the vertical distortion?
-  **Post-Mortem & Fix Analysis**:
-  > This also causes problems with text following the image. Given this input:  ```markdown # Example w/ OpenTofu logo  ![](example.png)  <!-- alignment: center --> This is a test. ```  We get this:  <img width="1253" height="727" alt="Image" src="https://github.com/user-attachments/assets/308f3ad6-0128-4173-a151-aff1f18a854c" />  While on the same terminal, outside of tmux, the text renders below the image as expected.
-  > Some additional data points:  Using XTerm (when run with `-ti vt340), the image displays correctly regardless of whether we are using tmux or not.  <img width="1029" height="438" alt="Image" src="https://github.com/user-attachments/assets/6e460b45-e821-469d-b1c9-fb04f40ab94d" />  Contour shows the same image distortion as Foot.
-  > I think this is a bug in tmux. Sixel images by default have an aspect ratio of 2:1 (this is for backwards compatibility with older terminals). Applications that want a 1:1 aspect ratio need to request that explicitly, and they can do that in two different ways:  1. Setting the first parameter of the introducer to 9, so the start of the image sequence will look something like this: `\033P9q` (potentially with additional parameters). 2. Adding a _raster attributes_ command in the first part of the sixel data, in which case the start of the image sequence will look something like this: `\033Pq"1;1`.  I believe the icy_sixel library uses the first technique, while img2sixel uses the second one. And although tmux recognises and retransmits the raster attributes commands (the technique used by img2sixel), it drops the parameters in the introducer, so the aspect ratio set by icy_sixel is lost.  And the reason you don't see this issue in xterm is simply because it doesn't support aspect ratios
-
-- **Issue #897** (2026-05-22): **doc: Very small typo in the install command**
-  *Symptoms*: 
-
-- **Issue #895** (2026-05-22): **feat: add exec support for ocaml**
-  *Symptoms*: 
-  **Post-Mortem & Fix Analysis**:
-  > Thanks!
-
-- **Issue #893** (2026-05-17): **Werid/cool behaviour: Text OVER images**
-  *Symptoms*: @mfontanini if you fix this bug I will cry  ```md ![image:width:100%](Resources/Meta/attachments/romeo-juliet-baz.png)  Baz Luhrmann's *"Romeo + Juliet"* (1996) is THE BEST ADAPTATION FIGHT ME  <!-- jump_to_middle --> # ROMEO & JULIET ```  Renders with kitty:  <img width="1920" height="1077" alt="Image" src="https://github.com/user-attachments/assets/ecfd7ba3-e921-427e-ad4d-666dfd0bf751" />  HOW COOL IS THIS!? IS THIS INTENTIONAL BEHAVIOUR?   brb, rewriting my entire presentation that I'm giving in 3 hours...!
-  **Post-Mortem & Fix Analysis**:
-  > Interestingly, text background seems to be ignored when using this trick 
-  > Just woke up! Don't know what I'm seeing, what is the bug?
-  > Oh what the hell? lol I see it now. Let me see
-
-- **Issue #887** (2026-05-02): **feat: add exec support for scala 3**
-  *Symptoms*: Adds support for executing Scala code snippets. Note that it works with Scala 3, not Scala 2.  I spent some time trying to add an alternative executor for Scala 2, doing a `scalac` to compile and a `scala` to execute. I could get it to work if the class in the snippet was called `Snippet`, which seems like an esoteric restriction. So I gave up on Scala 2.
-  **Post-Mortem & Fix Analysis**:
-  > Thanks!
-
-- **Issue #885** (2026-04-25): **feat: allow passing in env file to snippet**
-  *Symptoms*: This adds a `+env:<path>` snippet attribute that allows passing in an env file to a snippet. This can be used both for the script itself _and_ the executor. e.g. this:  ~~~markdown ```bash +exec +env:my_env echo "$FOO" ``` ~~~  With an `my_env` file in the presentation's directory with:  ``` FOO=42 ```  Will print "42". The env file can contain empty lines and lines starting with "#" which will be ignored, otherwise any other lines must have a format like `<VAR_NAME>=<VALUE>`.  Relates to #882
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2205,86 +1861,7 @@ pub(crate) mod snippet;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d4c29336` (2026-04-24)
-**Commit Message**: chore: revert assumptions about size
-
-**File**: `src/main.rs` (modified, +1/-10)
-```diff
-@@ -457,16 +457,7 @@ fn run(cli: Cli) -> Result<(), Box<dyn std::error::Error>> {
-                 height: dimensions.rows * DEFAULT_EXPORT_PIXELS_PER_ROW,
-                 width: dimensions.columns * DEFAULT_EXPORT_PIXELS_PER_COLUMN,
-             },
--            None => {
--                const DEFAULT_EXPORT_ROWS: u16 = 40;
--                const DEFAULT_EXPORT_COLUMNS: u16 = 120;
--                WindowSize {
--                    rows: DEFAULT_EXPORT_ROWS,
--                    columns: DEFAULT_EXPORT_COLUMNS,
--                    height: DEFAULT_EXPORT_ROWS * DEFAULT_EXPORT_PIXELS_PER_ROW,
--                    width: DEFAULT_EXPORT_COLUMNS * DEFAULT_EXPORT_PIXELS_PER_COLUMN,
--                }
--            }
-+            None => WindowSize::current(config.defaults.terminal_font_size)?,
-         };
-         let exporter = Exporter::new(
-             parser,
-```
-
----
-
-### Incident Patch 2: `29092d39` (2026-04-18)
-**Commit Message**: fix: allow selective highlighting on exports if groups == 1 (#880)
-
-This allows selective highlighting to work on exports as long as there's
-a single group. e.g. using `{3}` works, but not if using `{3|5}`. This
-should have been the intended behavior so I'm considering this a fix.
-
-Fixes #874
-
-**File**: `src/presentation/builder/snippet.rs` (modified, +4/-3)
-```diff
-@@ -272,9 +272,10 @@ impl PresentationBuilder<'_, '_> {
-             let mut highlighter = self.highlighter.language_highlighter(&SnippetLanguage::Rust);
-             highlighter.style_line("//", &style).0.first().expect("no styles").style.size(font_size)
-         };
--        let groups = match self.options.allow_mutations {
--            true => code.attributes.highlight_groups.clone(),
--            false => vec![HighlightGroup::new(vec![Highlight::All])],
-+        let groups = if self.options.allow_mutations || code.attributes.highlight_groups.len() == 1 {
-+            code.attributes.highlight_groups.clone()
-+        } else {
-+            vec![HighlightGroup::new(vec![Highlight::All])]
-         };
-         let context =
-             Rc::new(RefCell::new(HighlightContext { groups, current: 0, block_length, alignment: style.alignment }));
-```
-
----
-
-### Incident Patch 3: `72be4194` (2026-04-18)
-**Commit Message**: fix: allow selective highlighting on exports if groups == 1
-
-**File**: `src/presentation/builder/snippet.rs` (modified, +4/-3)
-```diff
-@@ -272,9 +272,10 @@ impl PresentationBuilder<'_, '_> {
-             let mut highlighter = self.highlighter.language_highlighter(&SnippetLanguage::Rust);
-             highlighter.style_line("//", &style).0.first().expect("no styles").style.size(font_size)
-         };
--        let groups = match self.options.allow_mutations {
--            true => code.attributes.highlight_groups.clone(),
--            false => vec![HighlightGroup::new(vec![Highlight::All])],
-+        let groups = if self.options.allow_mutations || code.attributes.highlight_groups.len() == 1 {
-+            code.attributes.highlight_groups.clone()
-+        } else {
-+            vec![HighlightGroup::new(vec![Highlight::All])]
-         };
-         let context =
-             Rc::new(RefCell::new(HighlightContext { groups, current: 0, block_length, alignment: style.alignment }));
-```
-
----
-
-### Incident Patch 4: `3334f3f6` (2026-04-18)
+### Incident Patch 1: `3334f3f6` (2026-04-18)
 **Commit Message**: fix: fail export gracefully if async tasks fail (#877)
 
 **File**: `src/export/exporter.rs` (modified, +23/-6)
@@ -2373,63 +1950,7 @@ Fixes #874
 
 ---
 
-### Incident Patch 5: `1f4226c4` (2026-04-18)
-**Commit Message**: fix: don't blow up if exec is disabled and `snippet_output` is used (#879)
-
-Fixes #870
-
-**File**: `src/presentation/builder/comment.rs` (modified, +7/-4)
-```diff
-@@ -121,10 +121,13 @@ impl PresentationBuilder<'_, '_> {
-                 return Ok(());
-             }
-             CommentCommand::SnippetOutput(id) => {
--                let handle = self.executable_snippets.get(&id).cloned().ok_or_else(|| {
--                    self.invalid_presentation(source_position, InvalidPresentation::UndefinedSnippetId(id))
--                })?;
--                self.push_detached_code_execution(handle)?;
-+                // Ignore this if execution is disabled
-+                if self.options.enable_snippet_execution {
-+                    let handle = self.executable_snippets.get(&id).cloned().ok_or_else(|| {
-+                        self.invalid_presentation(source_position, InvalidPresentation::UndefinedSnippetId(id))
-+                    })?;
-+                    self.push_detached_code_execution(handle)?;
-+                }
-                 return Ok(());
-             }
-         };
-```
-
----
-
-### Incident Patch 6: `f034560a` (2026-04-18)
-**Commit Message**: fix: don't blow up if exec is disabled and `snippet_output` is used
-
-**File**: `src/presentation/builder/comment.rs` (modified, +7/-4)
-```diff
-@@ -121,10 +121,13 @@ impl PresentationBuilder<'_, '_> {
-                 return Ok(());
-             }
-             CommentCommand::SnippetOutput(id) => {
--                let handle = self.executable_snippets.get(&id).cloned().ok_or_else(|| {
--                    self.invalid_presentation(source_position, InvalidPresentation::UndefinedSnippetId(id))
--                })?;
--                self.push_detached_code_execution(handle)?;
-+                // Ignore this if execution is disabled
-+                if self.options.enable_snippet_execution {
-+                    let handle = self.executable_snippets.get(&id).cloned().ok_or_else(|| {
-+                        self.invalid_presentation(source_position, InvalidPresentation::UndefinedSnippetId(id))
-+                    })?;
-+                    self.push_detached_code_execution(handle)?;
-+                }
-                 return Ok(());
-             }
-         };
-```
-
----
-
-### Incident Patch 7: `ed98477a` (2026-04-15)
+### Incident Patch 2: `ed98477a` (2026-04-15)
 **Commit Message**: fix: fail gracefully if async tasks fail
 
 **File**: `src/export/exporter.rs` (modified, +23/-6)
@@ -2518,649 +2039,29 @@ Fixes #870
 
 ---
 
-### Incident Patch 8: `b2a2306b` (2026-03-17)
-**Commit Message**: feat: update URL hash to retain slide position in HTML export, fixes #867
+### Incident Patch 3: `d4c29336` (2026-04-24)
+**Commit Message**: chore: revert assumptions about size
 
-**File**: `src/export/script.js` (modified, +13/-2)
+**File**: `src/main.rs` (modified, +1/-10)
 ```diff
-@@ -1,18 +1,29 @@
- document.addEventListener('DOMContentLoaded', function() {
-   const allLines = document.querySelectorAll('body > div');
-   const pageBreakMarkers = document.querySelectorAll('.container');
--  let currentPageIndex = 0;
- 
-+  function getCurrentPageIndex() {
-+    const hash = window.location.hash;
-+    const match = hash.match(/^#slide-(\d+)$/);
-+    if (match) {
-+      const idx = parseInt(match[1], 10);
-+      const max = pageBreakMarkers.length;
-+      if (idx >= 0 && idx < max) return idx;
-+    }
-+    return 0;
-+  }
-+
-+  let currentPageIndex = getCurrentPageIndex();
- 
-   function showCurrentPage() {
-     allLines.forEach((line) => {
-       line.classList.add('hidden');
-     });
- 
-     allLines[currentPageIndex].classList.remove('hidden');
-+    history.replaceState(null, '', '#slide-' + currentPageIndex);
-   }
- 
--
-   function scaler() {
-     var w = document.documentElement.clientWidth;
-     var h = document.documentElement.clientHeight;
-```
-
----
-
-### Incident Patch 9: `244210bf` (2026-02-28)
-**Commit Message**: fix: add newlines in included files (#856)
-
-Fixes #853
-
-**File**: `src/presentation/builder/comment.rs` (modified, +13/-2)
-```diff
-@@ -61,7 +61,7 @@ impl PresentationBuilder<'_, '_> {
-             }
-             CommentCommand::ResetLayout => {
-                 self.slide_state.layout = LayoutState::Default;
--                self.chunk_operations.extend([RenderOperation::ExitLayout, RenderOperation::RenderLineBreak]);
-+                self.chunk_operations.push(RenderOperation::ExitLayout);
-             }
-             CommentCommand::Column(column) => {
-                 let (current_column, columns_count) = match self.slide_state.layout {
-@@ -179,8 +179,13 @@ impl PresentationBuilder<'_, '_> {
-             if let MarkdownElement::FrontMatter(_) = element {
-                 return Err(self.invalid_presentation(source_position, InvalidPresentation::IncludeFrontMatter));
-             }
-+            self.slide_state.ignore_element_line_break = false;
-             self.process_element_for_presentation_mode(element)?;
-+            if !self.slide_state.ignore_element_line_break {
-+                self.push_line_break();
-+            }
-         }
-+        self.slide_state.ignore_element_line_break = true;
-         Ok(())
-     }
- }
-@@ -697,6 +702,8 @@ hola
- first
- ===
- 
-+foo
-+
- ![](inner/img.png)
- 
- <!-- include: inner/second.md -->
-@@ -730,17 +737,21 @@ hi
- <!-- include: first.md -->
-         ";
- 
--        let lines = Test::new(input).resources_path(path).render().rows(10).columns(12).into_lines();
-+        let lines = Test::new(input).resources_path(path).render().rows(14).columns(12).into_lines();
-         let expected = &[
-             "            ",
-             "hi          ",
-             "            ",
-             "first       ",
-             "            ",
-+            "foo         ",
-+            "            ",
-+            "            ",
-             "            ",
-             "second      ",
-             "            ",
-             "            ",
-+            "            ",
-             "a           ",
-         ];
-         assert_eq!(lines, expected);
-```
-
----
-
-### Incident Patch 10: `df2cc369` (2026-02-28)
-**Commit Message**: fix: add newlines in included files
-
-**File**: `src/presentation/builder/comment.rs` (modified, +13/-2)
-```diff
-@@ -61,7 +61,7 @@ impl PresentationBuilder<'_, '_> {
-             }
-             CommentCommand::ResetLayout => {
-                 self.slide_state.layout = LayoutState::Default;
--                self.chunk_operations.extend([RenderOperation::ExitLayout, RenderOperation::RenderLineBreak]);
-+                self.chunk_operations.push(RenderOperation::ExitLayout);
-             }
-             CommentCommand::Column(column) => {
-                 let (current_column, columns_count) = match self.slide_state.layout {
-@@ -179,8 +179,13 @@ impl PresentationBuilder<'_, '_> {
-             if let MarkdownElement::FrontMatter(_) = element {
-                 return Err(self.invalid_presentation(source_position, InvalidPresentation::IncludeFrontMatter));
-             }
-+            self.slide_state.ignore_element_line_break = false;
-             self.process_element_for_presentation_mode(element)?;
-+            if !self.slide_state.ignore_element_line_break {
-+                self.push_line_break();
-+            }
-         }
-+        self.slide_state.ignore_element_line_break = true;
-         Ok(())
-     }
- }
-@@ -697,6 +702,8 @@ hola
- first
- ===
- 
-+foo
-+
- ![](inner/img.png)
- 
- <!-- include: inner/second.md -->
-@@ -730,17 +737,21 @@ hi
- <!-- include: first.md -->
-         ";
- 
--        let lines = Test::new(input).resources_path(path).render().rows(10).columns(12).into_lines();
-+        let lines = Test::new(input).resources_path(path).render().rows(14).columns(12).into_lines();
-         let expected = &[
-             "            ",
-             "hi          ",
-             "            ",
-             "first       ",
-             "            ",
-+            "foo         ",
-+            "            ",
-+            "            ",
-             "            ",
-             "second      ",
-             "            ",
-             "            ",
-+            "            ",
-             "a           ",
-         ];
-         assert_eq!(lines, expected);
-```
-
----
-
-### Incident Patch 11: `b743bf89` (2026-02-20)
-**Commit Message**: fix: render modals at the center of the screen (#848)
-
-This is a pretty :hankey: fix but it works. In the future the way
-margins are handled should be changed so we can say "draw this at the
-top level", providing the operations we want to run there. The current
-push/pop margin strategy is not great and leads to repetition and
-issues.
-
-Fixes #844
-
-**File**: `src/render/engine.rs` (modified, +10/-0)
-```diff
-@@ -149,6 +149,7 @@ where
-             RenderOperation::RenderImage(image, properties) => self.render_image(image, properties),
-             RenderOperation::RenderBlockLine(operation) => self.render_block_line(operation),
-             RenderOperation::RenderDynamic(generator) => self.render_dynamic(generator.as_ref()),
-+            RenderOperation::RenderDynamicTopLevel(generator) => self.render_dynamic_top_level(generator.as_ref()),
-             RenderOperation::RenderAsync(generator) => self.render_async(generator.as_ref()),
-             RenderOperation::InitColumnLayout { columns, grid } => self.init_column_layout(columns, *grid),
-             RenderOperation::EnterColumn { column } => self.enter_column(*column),
-@@ -357,6 +358,15 @@ where
-         Ok(())
-     }
- 
-+    fn render_dynamic_top_level(&mut self, generator: &dyn AsRenderOperations) -> RenderResult {
-+        let dimensions = self.window_rects.first().expect("no rects").dimensions;
-+        let operations = generator.as_render_operations(&dimensions);
-+        for operation in operations {
-+            self.render_one(&operation)?;
-+        }
-+        Ok(())
-+    }
-+
-     fn render_async(&mut self, generator: &dyn RenderAsync) -> RenderResult {
-         let operations = generator.as_render_operations(&self.current_available_dimensions());
-         for operation in operations {
-```
-
-**File**: `src/render/operation.rs` (modified, +3/-0)
-```diff
-@@ -74,6 +74,9 @@ pub(crate) enum RenderOperation {
-     /// [RenderOperation] with the screen itself.
-     RenderDynamic(Rc<dyn AsRenderOperations>),
- 
-+    /// Render a dynamically sequence of render operations drawing it at the top level margin
-+    RenderDynamicTopLevel(Rc<dyn AsRenderOperations>),
-+
-     /// An operation that is rendered asynchronously.
-     RenderAsync(Rc<dyn RenderAsync>),
- 
-```
-
-**File**: `src/ui/modals.rs` (modified, +2/-2)
-```diff
-@@ -57,7 +57,7 @@ impl IndexBuilder {
-             selection_style,
-             background: self.background,
-         };
--        vec![RenderOperation::RenderDynamic(Rc::new(drawer))]
-+        vec![RenderOperation::RenderDynamicTopLevel(Rc::new(drawer))]
-     }
- }
- 
-@@ -319,6 +319,6 @@ impl AsRenderOperations for CenterModalContent {
- 
- impl From<CenterModalContent> for RenderOperation {
-     fn from(op: CenterModalContent) -> Self {
--        Self::RenderDynamic(Rc::new(op))
-+        Self::RenderDynamicTopLevel(Rc::new(op))
-     }
- }
-```
-
----
-
-### Incident Patch 12: `5fb55687` (2026-02-19)
-**Commit Message**: fix: render modals at the center of the screen
-
-**File**: `src/render/engine.rs` (modified, +10/-0)
-```diff
-@@ -149,6 +149,7 @@ where
-             RenderOperation::RenderImage(image, properties) => self.render_image(image, properties),
-             RenderOperation::RenderBlockLine(operation) => self.render_block_line(operation),
-             RenderOperation::RenderDynamic(generator) => self.render_dynamic(generator.as_ref()),
-+            RenderOperation::RenderDynamicTopLevel(generator) => self.render_dynamic_top_level(generator.as_ref()),
-             RenderOperation::RenderAsync(generator) => self.render_async(generator.as_ref()),
-             RenderOperation::InitColumnLayout { columns, grid } => self.init_column_layout(columns, *grid),
-             RenderOperation::EnterColumn { column } => self.enter_column(*column),
-@@ -357,6 +358,15 @@ where
-         Ok(())
-     }
- 
-+    fn render_dynamic_top_level(&mut self, generator: &dyn AsRenderOperations) -> RenderResult {
-+        let dimensions = self.window_rects.first().expect("no rects").dimensions;
-+        let operations = generator.as_render_operations(&dimensions);
-+        for operation in operations {
-+            self.render_one(&operation)?;
-+        }
-+        Ok(())
-+    }
-+
-     fn render_async(&mut self, generator: &dyn RenderAsync) -> RenderResult {
-         let operations = generator.as_render_operations(&self.current_available_dimensions());
-         for operation in operations {
-```
-
-**File**: `src/render/operation.rs` (modified, +3/-0)
-```diff
-@@ -74,6 +74,9 @@ pub(crate) enum RenderOperation {
-     /// [RenderOperation] with the screen itself.
-     RenderDynamic(Rc<dyn AsRenderOperations>),
- 
-+    /// Render a dynamically sequence of render operations drawing it at the top level margin
-+    RenderDynamicTopLevel(Rc<dyn AsRenderOperations>),
-+
-     /// An operation that is rendered asynchronously.
-     RenderAsync(Rc<dyn RenderAsync>),
- 
-```
-
-**File**: `src/ui/modals.rs` (modified, +2/-2)
-```diff
-@@ -57,7 +57,7 @@ impl IndexBuilder {
-             selection_style,
-             background: self.background,
-         };
--        vec![RenderOperation::RenderDynamic(Rc::new(drawer))]
-+        vec![RenderOperation::RenderDynamicTopLevel(Rc::new(drawer))]
-     }
- }
- 
-@@ -319,6 +319,6 @@ impl AsRenderOperations for CenterModalContent {
- 
- impl From<CenterModalContent> for RenderOperation {
-     fn from(op: CenterModalContent) -> Self {
--        Self::RenderDynamic(Rc::new(op))
-+        Self::RenderDynamicTopLevel(Rc::new(op))
-     }
- }
-```
-
----
-
-### Incident Patch 13: `31f939f4` (2026-02-07)
-**Commit Message**: feat: add support for user comments in presentation rendering (#773)
-
-I've found the function `should_ignore_comment` and have been relying on
-it to add user comments inside presentations by abusing the `<!-- vim:
-comment here -->` since I don't use vim for this anyways.
-
-This isn't clean and a dedicated way to comment should be added IMO.
-Also, there is an issue with the hacky vim solution above, it adds a
-newline where the comment should be ignored; fixed by using
-`self.slide_state.ignore_element_line_break = true` on ignored comments.
-
-Current comments:
-<img width="770" height="465" alt="image"
-src="https://github.com/user-attachments/assets/f0a3aa41-1b90-463f-917b-416731b8a207"
-/>
-
-
-PR with ignore line breaks:
-<img width="751" height="414" alt="image"
-src="https://github.com/user-attachments/assets/f242463e-51f2-45f1-a5a1-69b014175d41"
-/>
-
-**File**: `docs/src/features/commands.md` (modified, +19/-1)
-```diff
-@@ -149,6 +149,25 @@ centered
- right aligned
- ```
- 
-+
-+## User comments
-+
-+User comments such as personal notes, TODOs, and other documentation that will
-+be ignored during presentation rendering can be added using these formats:
-+
-+```markdown
-+<!-- // This is a user comment -->
-+<!-- comment: This is also a user comment which won't be rendered -->
-+```
-+These comments are completely invisible during presentation and useful for:
-+
-+- Personal notes and reminders
-+- TODO items and planning notes
-+- Source references and attribution
-+
-+
-+
-+
- ## Listing available comment commands
- 
- The `--list-comment-commands` CLI option outputs all available comment commands to stdout, making it easy to discover and use them in external tools and editors.
-@@ -216,4 +235,3 @@ endif
- ```
- 
- With this configuration, pressing `Ctrl+K` in insert mode will open an fzf picker with all available comment commands, allowing you to quickly select and insert them into your presentation.
--
-```
-
-**File**: `examples/demo.md` (modified, +0/-1)
-```diff
-@@ -5,7 +5,6 @@ author: Matias
- 
- Customizability
- ---
--
- _presenterm_ allows configuring almost anything about your presentation:
- 
- * The colors used.
-```
-
-**File**: `src/presentation/builder/comment.rs` (modified, +9/-1)
-```diff
-@@ -16,6 +16,8 @@ impl PresentationBuilder<'_, '_> {
-             Err(error) => {
-                 // If we failed to parse this, make sure we shouldn't have ignored it
-                 if self.should_ignore_comment(comment) {
-+                    // Ignored comments should not add line breaks
-+                    self.slide_state.ignore_element_line_break = true;
-                     return Ok(());
-                 }
-                 return Err(self.invalid_presentation(source_position, error));
-@@ -42,6 +44,7 @@ impl PresentationBuilder<'_, '_> {
-             CommentCommand::NewLines(count) => {
-                 self.push_line_breaks(count as usize * self.slide_font_size() as usize);
-             }
-+            CommentCommand::Comment(_) => {}
-             CommentCommand::JumpToMiddle => self.chunk_operations.push(RenderOperation::JumpToVerticalCenter),
-             CommentCommand::InitColumnLayout(columns) => {
-                 self.validate_column_layout(&columns, source_position)?;
-@@ -149,7 +152,7 @@ impl PresentationBuilder<'_, '_> {
-         } else {
-             // Ignore vim-like code folding tags
-             let comment = comment.trim();
--            comment == "{{{" || comment == "}}}"
-+            comment == "{{{" || comment == "}}}" || comment.starts_with("//")
-         }
-     }
- 
-@@ -205,6 +208,7 @@ pub(crate) enum CommentCommand {
-     SkipSlide,
-     SpeakerNote(String),
-     SnippetOutput(String),
-+    Comment(String),
- }
- 
- impl CommentCommand {
-@@ -290,6 +294,7 @@ mod tests {
-     #[case::incremental_lists("newlines: 2", CommentCommand::NewLines(2))]
-     #[case::incremental_lists("new_line", CommentCommand::NewLine)]
-     #[case::incremental_lists("newline", CommentCommand::NewLine)]
-+    #[case::comment("comment: This is a user comment", CommentCommand::Comment("This is a user comment".into()))]
-     fn command_formatting(#[case] input: &str, #[case] expected: CommentCommand) {
-         let parsed: CommentCommand = input.parse().expect("deserialization failed");
-         assert_eq!(parsed, expected);
-@@ -301,6 +306,9 @@ mod tests {
-     #[case::many_close_braces("}}}")]
-     #[case::vim_command("vim: hi")]
-     #[case::padded_vim_command("vim: hi")]
-+    #[case::double_slash("// This is a user comment")]
-+    #[case::double_slash_padded("  // This is a padded comment  ")]
-+    #[case::comment_colon("comment: This is a user comment")]
-     fn ignore_comments(#[case] comment: &str) {
-         let input = format!("<!-- {comment} -->");
-         Test::new(input).build();
-```
-
----
-
-### Incident Patch 14: `30933ed9` (2026-02-04)
-**Commit Message**: Applied suggested fixes
-
-**File**: `docs/src/features/commands.md` (modified, +1/-2)
-```diff
-@@ -157,7 +157,7 @@ be ignored during presentation rendering can be added using these formats:
- 
- ```markdown
- <!-- // This is a user comment -->
--<!-- Comment: This is also a user comment which won't be rendered-->
-+<!-- comment: This is also a user comment which won't be rendered -->
- ```
- These comments are completely invisible during presentation and useful for:
- 
-@@ -235,4 +235,3 @@ endif
- ```
- 
- With this configuration, pressing `Ctrl+K` in insert mode will open an fzf picker with all available comment commands, allowing you to quickly select and insert them into your presentation.
--
-```
-
-**File**: `examples/demo.md` (modified, +0/-3)
-```diff
-@@ -5,9 +5,6 @@ author: Matias
- 
- Customizability
- ---
--<!-- Comment: You can add comments like this that won't show up in the presentation -->
--<!-- // This is another way to add comments! -->
--
- _presenterm_ allows configuring almost anything about your presentation:
- 
- * The colors used.
-```
-
-**File**: `src/presentation/builder/comment.rs` (modified, +6/-14)
-```diff
-@@ -44,6 +44,7 @@ impl PresentationBuilder<'_, '_> {
-             CommentCommand::NewLines(count) => {
-                 self.push_line_breaks(count as usize * self.slide_font_size() as usize);
-             }
-+            CommentCommand::Comment(_) => {}
-             CommentCommand::JumpToMiddle => self.chunk_operations.push(RenderOperation::JumpToVerticalCenter),
-             CommentCommand::InitColumnLayout(columns) => {
-                 self.validate_column_layout(&columns, source_position)?;
-@@ -154,23 +155,14 @@ impl PresentationBuilder<'_, '_> {
-             if comment == "{{{" || comment == "}}}" {
-                 return true;
-             }
--            
-+
-             // Ignore user comments with // prefix
-             // e.g., <!-- // This is a comment -->
-             let trimmed_comment = comment.trim_start_matches(&self.options.command_prefix).trim();
-             if trimmed_comment.starts_with("//") {
-                 return true;
-             }
--            
--            // Ignore user comments with Comment: prefix (case-insensitive)
--            // e.g., <!-- Comment: This is a comment -->
--            if trimmed_comment.len() >= 8 {
--                let prefix = &trimmed_comment[..8];
--                if prefix.eq_ignore_ascii_case("comment:") {
--                    return true;
+@@ -457,16 +457,7 @@ fn run(cli: Cli) -> Result<(), Box<dyn std::error::Error>> {
+                 height: dimensions.rows * DEFAULT_EXPORT_PIXELS_PER_ROW,
+                 width: dimensions.columns * DEFAULT_EXPORT_PIXELS_PER_COLUMN,
+             },
+-            None => {
+-                const DEFAULT_EXPORT_ROWS: u16 = 40;
+-                const DEFAULT_EXPORT_COLUMNS: u16 = 120;
+-                WindowSize {
+-                    rows: DEFAULT_EXPORT_ROWS,
+-                    columns: DEFAULT_EXPORT_COLUMNS,
+-                    height: DEFAULT_EXPORT_ROWS * DEFAULT_EXPORT_PIXELS_PER_ROW,
+-                    width: DEFAULT_EXPORT_COLUMNS * DEFAULT_EXPORT_PIXELS_PER_COLUMN,
 -                }
 -            }
--            
-+
-             false
-         }
-     }
-@@ -227,6 +219,7 @@ pub(crate) enum CommentCommand {
-     SkipSlide,
-     SpeakerNote(String),
-     SnippetOutput(String),
-+    Comment(String),
- }
- 
- impl CommentCommand {
-@@ -312,6 +305,7 @@ mod tests {
-     #[case::incremental_lists("newlines: 2", CommentCommand::NewLines(2))]
-     #[case::incremental_lists("new_line", CommentCommand::NewLine)]
-     #[case::incremental_lists("newline", CommentCommand::NewLine)]
-+    #[case::comment("comment: This is a user comment", CommentCommand::Comment("This is a user comment".into()))]
-     fn command_formatting(#[case] input: &str, #[case] expected: CommentCommand) {
-         let parsed: CommentCommand = input.parse().expect("deserialization failed");
-         assert_eq!(parsed, expected);
-@@ -325,9 +319,7 @@ mod tests {
-     #[case::padded_vim_command("vim: hi")]
-     #[case::double_slash("// This is a user comment")]
-     #[case::double_slash_padded("  // This is a padded comment  ")]
--    #[case::comment_colon("Comment: This is a user comment")]
--    #[case::comment_colon_lowercase("comment: This is also a user comment")]
--    #[case::comment_colon_mixedcase("CoMmEnT: Mixed case comment")]
-+    #[case::comment_colon("comment: This is a user comment")]
-     fn ignore_comments(#[case] comment: &str) {
-         let input = format!("<!-- {comment} -->");
-         Test::new(input).build();
-```
-
----
-
-### Incident Patch 15: `c1be5e49` (2025-11-02)
-**Commit Message**: feat: add support for user comments in presentation rendering
-
-**File**: `docs/src/features/commands.md` (modified, +19/-0)
-```diff
-@@ -149,6 +149,25 @@ centered
- right aligned
- ```
- 
-+
-+## User comments
-+
-+User comments such as personal notes, TODOs, and other documentation that will
-+be ignored during presentation rendering can be added using these formats:
-+
-+```markdown
-+<!-- // This is a user comment -->
-+<!-- Comment: This is also a user comment which won't be rendered-->
-+```
-+These comments are completely invisible during presentation and useful for:
-+
-+- Personal notes and reminders
-+- TODO items and planning notes
-+- Source references and attribution
-+
-+
-+
-+
- ## Listing available comment commands
- 
- The `--list-comment-commands` CLI option outputs all available comment commands to stdout, making it easy to discover and use them in external tools and editors.
-```
-
-**File**: `examples/demo.md` (modified, +2/-0)
-```diff
-@@ -5,6 +5,8 @@ author: Matias
- 
- Customizability
- ---
-+<!-- Comment: You can add comments like this that won't show up in the presentation -->
-+<!-- // This is another way to add comments! -->
- 
- _presenterm_ allows configuring almost anything about your presentation:
- 
-```
-
-**File**: `src/presentation/builder/comment.rs` (modified, +28/-1)
-```diff
-@@ -16,6 +16,8 @@ impl PresentationBuilder<'_, '_> {
-             Err(error) => {
-                 // If we failed to parse this, make sure we shouldn't have ignored it
-                 if self.should_ignore_comment(comment) {
-+                    // Ignored comments should not add line breaks
-+                    self.slide_state.ignore_element_line_break = true;
-                     return Ok(());
-                 }
-                 return Err(self.invalid_presentation(source_position, error));
-@@ -149,7 +151,27 @@ impl PresentationBuilder<'_, '_> {
-         } else {
-             // Ignore vim-like code folding tags
-             let comment = comment.trim();
--            comment == "{{{" || comment == "}}}"
-+            if comment == "{{{" || comment == "}}}" {
-+                return true;
-+            }
-+            
-+            // Ignore user comments with // prefix
-+            // e.g., <!-- // This is a comment -->
-+            let trimmed_comment = comment.trim_start_matches(&self.options.command_prefix).trim();
-+            if trimmed_comment.starts_with("//") {
-+                return true;
-+            }
-+            
-+            // Ignore user comments with Comment: prefix (case-insensitive)
-+            // e.g., <!-- Comment: This is a comment -->
-+            if trimmed_comment.len() >= 8 {
-+                let prefix = &trimmed_comment[..8];
-+                if prefix.eq_ignore_ascii_case("comment:") {
-+                    return true;
-+                }
-+            }
-+            
-+            false
-         }
-     }
- 
-@@ -301,6 +323,11 @@ mod tests {
-     #[case::many_close_braces("}}}")]
-     #[case::vim_command("vim: hi")]
-     #[case::padded_vim_command("vim: hi")]
-+    #[case::double_slash("// This is a user comment")]
-+    #[case::double_slash_padded("  // This is a padded comment  ")]
-+    #[case::comment_colon("Comment: This is a user comment")]
-+    #[case::comment_colon_lowercase("comment: This is also a user comment")]
-+    #[case::comment_colon_mixedcase("CoMmEnT: Mixed case comment")]
-     fn ignore_comments(#[case] comment: &str) {
-         let input = format!("<!-- {comment} -->");
-         Test::new(input).build();
++            None => WindowSize::current(config.defaults.terminal_font_size)?,
+         };
+         let exporter = Exporter::new(
+             parser,
 ```
 
 #### Recent Merged Pull Requests:
@@ -3170,8 +2071,6 @@ src="https://github.com/user-attachments/assets/f242463e-51f2-45f1-a5a1-69b01417
 - **PR #895** (2026-05-22): feat: add exec support for ocaml (@kevinschweikert)
 - **PR #887** (2026-05-02): feat: add exec support for scala 3 (@hoop33)
 - **PR #885** (2026-04-25): feat: allow passing in env file to snippet (@mfontanini)
-- **PR #881** (2026-04-18): feat: respect markdown table alignments (@mfontanini)
-- **PR #880** (2026-04-18): fix: allow selective highlighting on exports if groups == 1 (@mfontanini)
 
 ---
 
@@ -3185,3 +2084,60 @@ src="https://github.com/user-attachments/assets/f242463e-51f2-45f1-a5a1-69b01417
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. fail export gracefully if async tasks fail (#877)
+
+**RULE**:
+When implementing operations in `src/export/exporter.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mfontanini/presenterm. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `3334f3f6`: fail export gracefully if async tasks fail (#877). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/export/exporter.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+            SnippetsExportPolicy::Parallel => Self::wait_async_renders_parallel(&mut presentation)?,
+            SnippetsExportPolicy::Sequential => Self::wait_async_renders_sequential(&mut presentation)?,
+    fn wait_async_renders_parallel(presentation: &mut Presentation) -> Result<(), ExportError> {
+            loop {
+                match pollable.poll() {
+                    PollableState::Unmodified | PollableState::Modified => continue,
+                    PollableState::Done => break,
+                    PollableState::Failed { error } => return Err(ExportError::RenderAsync(error)),
+                }
+            }
+        Ok(())
+    fn wait_async_renders_sequential(presentation: &mut Presentation) -> Result<(), ExportError> {
+                    loop {
+                        match pollable.poll() {
+                            PollableState::Unmodified | PollableState::Modified => continue,
+                            PollableState::Done => break,
+                            PollableState::Failed { error } => return Err(ExportError::RenderAsync(error)),
+                        }
+                    }
+        Ok(())
+    #[error("async render failed: {0}")]
+    RenderAsync(Str
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+            SnippetsExportPolicy::Parallel => Self::wait_async_renders_parallel(&mut presentation),
+            SnippetsExportPolicy::Sequential => Self::wait_async_renders_sequential(&mut presentation),
+    fn wait_async_renders_parallel(presentation: &mut Presentation) {
+            while let PollableState::Unmodified | PollableState::Modified = pollable.poll() {}
+    fn wait_async_renders_sequential(presentation: &mut Presentation) {
+                    while let PollableState::Unmodified | PollableState::Modified = pollable.poll() {}
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `3334f3f6` are properly handled with clean fallback behavior.

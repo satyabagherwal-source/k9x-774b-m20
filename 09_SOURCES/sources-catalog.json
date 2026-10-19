@@ -195,8 +195,8 @@
     "sourceUrl": "https://huggingface.co/Cactus-Compute/whistle",
     "sourceVersion": "hf-cactus-compute-whistle",
     "license": "Open-Source",
-    "contentHash": "9cc0ad7d2d7c3efc90f48346c01a86e7f9602b22d05a5f609ff32ab851e2bbee",
-    "lastHarvestedAt": "2026-10-17T21:29:52.969Z",
+    "contentHash": "d5370d18518762a96039a7469647223f67d60e3271fcc9c07f77483e1124085b",
+    "lastHarvestedAt": "2026-10-19T01:07:12.304Z",
     "learningId": "learn-huggingface-cactus-compute-whistle"
   },
   "hf-qwen-qwen3.8-27b": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "98118f47",
+    "sourceVersion": "d9009b50",
     "license": "NOASSERTION",
-    "contentHash": "ac806ecea4bd0cce97f28ed52b8f34759ff4447fa88dc00bb6f89bddac205a64",
-    "lastHarvestedAt": "2026-10-18T22:16:32.265Z",
+    "contentHash": "acbac9df81e079289f53388f8cd7000fd2889c0bf9adb5a9321a72fa227dd8de",
+    "lastHarvestedAt": "2026-10-19T01:07:22.782Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -4328,5 +4328,55 @@
     "contentHash": "0e33af442aac8f3b135947d4b67df1922ffbeab0139e5676f0229d0303637964",
     "lastHarvestedAt": "2026-10-19T01:01:08.182Z",
     "learningId": "learn-github-typedb-typedb"
+  },
+  "mfontanini-presenterm": {
+    "repository": "mfontanini/presenterm",
+    "platform": "github",
+    "sourceUrl": "https://github.com/mfontanini/presenterm",
+    "sourceVersion": "5f8add11",
+    "license": "BSD-2-Clause",
+    "contentHash": "fd7a3e8f139290ed7ea06280a12147722478c06fca396c4f2375f0a19d53f85c",
+    "lastHarvestedAt": "2026-10-19T01:07:12.875Z",
+    "learningId": "learn-github-mfontanini-presenterm"
+  },
+  "ritz078-transform": {
+    "repository": "ritz078/transform",
+    "platform": "github",
+    "sourceUrl": "https://github.com/ritz078/transform",
+    "sourceVersion": "ff755793",
+    "license": "MIT",
+    "contentHash": "e3356c9afb2e6f6b65f95c863d34438f01ec1688496c5fe39839a356acdf8abc",
+    "lastHarvestedAt": "2026-10-19T01:07:18.059Z",
+    "learningId": "learn-github-ritz078-transform"
+  },
+  "kubeshop-botkube": {
+    "repository": "kubeshop/botkube",
+    "platform": "github",
+    "sourceUrl": "https://github.com/kubeshop/botkube",
+    "sourceVersion": "ee94e191",
+    "license": "MIT",
+    "contentHash": "a81f98da9e46b9d738e44e7511fe107e485fbd1908b7b6e83b4321e52e6c53a3",
+    "lastHarvestedAt": "2026-10-19T01:07:20.538Z",
+    "learningId": "learn-github-kubeshop-botkube"
+  },
+  "skyzh-mini-lsm": {
+    "repository": "skyzh/mini-lsm",
+    "platform": "github",
+    "sourceUrl": "https://github.com/skyzh/mini-lsm",
+    "sourceVersion": "2f7ce315",
+    "license": "Apache-2.0",
+    "contentHash": "25d12bd5f74f4b7246f560d94a717b506b1ab5200d6ec73416413ad1644cee16",
+    "lastHarvestedAt": "2026-10-19T01:07:25.193Z",
+    "learningId": "learn-github-skyzh-mini-lsm"
+  },
+  "paullecam-react-leaflet": {
+    "repository": "PaulLeCam/react-leaflet",
+    "platform": "github",
+    "sourceUrl": "https://github.com/PaulLeCam/react-leaflet",
+    "sourceVersion": "374882f6",
+    "license": "NOASSERTION",
+    "contentHash": "d56a8b8b10c408e03ef57c24f924f0479016e712ce4f78133b579e79d0997cbc",
+    "lastHarvestedAt": "2026-10-19T01:10:30.845Z",
+    "learningId": "learn-github-paullecam-react-leaflet"
   }
 }
