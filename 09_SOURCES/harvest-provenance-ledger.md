@@ -2862,3 +2862,9 @@ Every entry in this ledger must capture:
 | `learn-github-jpush-aurora-imui` | `https://github.com/jpush/aurora-imui` | `fb74b792` | Multi-dimensional audit evidence | 2026-10-19T03:33:02.892Z |
 | `learn-github-decodingai-magazine-llm-twin-course` | `https://github.com/decodingai-magazine/llm-twin-course` | `04e12f37` | Multi-dimensional audit evidence | 2026-10-19T03:33:04.920Z |
 | `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `baa56301` | Multi-dimensional audit evidence | 2026-10-19T03:33:09.463Z |
+| `learn-github-heroui-inc-heroui-native` | `https://github.com/heroui-inc/heroui-native` | `122f63db` | Multi-dimensional audit evidence | 2026-10-19T03:39:11.024Z |
+| `learn-huggingface-viggle-qwen-image-2-1-viggle-turbo` | `https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo` | `hf-viggle-` | Multi-dimensional audit evidence | 2026-10-19T03:39:11.193Z |
+| `learn-github-grpc-grpc-rust` | `https://github.com/grpc/grpc-rust` | `4ad6538f` | Multi-dimensional audit evidence | 2026-10-19T03:39:13.298Z |
+| `learn-github-crazycodeboy-react-native-splash-screen` | `https://github.com/crazycodeboy/react-native-splash-screen` | `b4719762` | Multi-dimensional audit evidence | 2026-10-19T03:39:18.767Z |
+| `learn-github-dnscontrol-dnscontrol` | `https://github.com/DNSControl/dnscontrol` | `62f353da` | Multi-dimensional audit evidence | 2026-10-19T03:39:20.940Z |
+| `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `a0ec4712` | Multi-dimensional audit evidence | 2026-10-19T03:39:26.951Z |

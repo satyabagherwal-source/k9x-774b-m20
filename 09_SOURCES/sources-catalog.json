@@ -365,8 +365,8 @@
     "sourceUrl": "https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo",
     "sourceVersion": "hf-viggle-qwen-image-2.1-viggle-turbo",
     "license": "Open-Source",
-    "contentHash": "cebd2063ebf920c176006d72c68ce89cae51fdc716dec7782f22f2494f862693",
-    "lastHarvestedAt": "2026-10-17T22:47:26.798Z",
+    "contentHash": "7087de889829dd5013fabfc5734f1abcaff01a581c34afb4f7294a1243dd609a",
+    "lastHarvestedAt": "2026-10-19T03:39:11.193Z",
     "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo"
   },
   "hf-qwen-qwen-image-2.1-turbo": {
@@ -5378,5 +5378,55 @@
     "contentHash": "5489cc4b032c1d0dfcfd790b6a1b947d32ea4a187f696d35f0bc7aebacba0ca1",
     "lastHarvestedAt": "2026-10-19T03:33:09.463Z",
     "learningId": "learn-github-greptimeteam-greptimedb"
+  },
+  "heroui-inc-heroui-native": {
+    "repository": "heroui-inc/heroui-native",
+    "platform": "github",
+    "sourceUrl": "https://github.com/heroui-inc/heroui-native",
+    "sourceVersion": "122f63db",
+    "license": "Apache-2.0",
+    "contentHash": "8d563226bb0d2bc93ef737c7e288c09ea71f526f1936bea7e73934d602114ad0",
+    "lastHarvestedAt": "2026-10-19T03:39:11.024Z",
+    "learningId": "learn-github-heroui-inc-heroui-native"
+  },
+  "grpc-grpc-rust": {
+    "repository": "grpc/grpc-rust",
+    "platform": "github",
+    "sourceUrl": "https://github.com/grpc/grpc-rust",
+    "sourceVersion": "4ad6538f",
+    "license": "MIT",
+    "contentHash": "e93b250e05894e0a8b2bcbad99d6b452075be98c938525a6ab0f4917a808aaeb",
+    "lastHarvestedAt": "2026-10-19T03:39:13.298Z",
+    "learningId": "learn-github-grpc-grpc-rust"
+  },
+  "crazycodeboy-react-native-splash-screen": {
+    "repository": "crazycodeboy/react-native-splash-screen",
+    "platform": "github",
+    "sourceUrl": "https://github.com/crazycodeboy/react-native-splash-screen",
+    "sourceVersion": "b4719762",
+    "license": "MIT",
+    "contentHash": "a3f854512f81231efaac89adf24c2d9f4ae0b53cf1113a267d91cdb9efa680dc",
+    "lastHarvestedAt": "2026-10-19T03:39:18.767Z",
+    "learningId": "learn-github-crazycodeboy-react-native-splash-screen"
+  },
+  "dnscontrol-dnscontrol": {
+    "repository": "DNSControl/dnscontrol",
+    "platform": "github",
+    "sourceUrl": "https://github.com/DNSControl/dnscontrol",
+    "sourceVersion": "62f353da",
+    "license": "MIT",
+    "contentHash": "507aded4a72803a18a834a4108c70a335a297ec83fe5363cc0646bff25d362a4",
+    "lastHarvestedAt": "2026-10-19T03:39:20.940Z",
+    "learningId": "learn-github-dnscontrol-dnscontrol"
+  },
+  "ydb-platform-ydb": {
+    "repository": "ydb-platform/ydb",
+    "platform": "github",
+    "sourceUrl": "https://github.com/ydb-platform/ydb",
+    "sourceVersion": "a0ec4712",
+    "license": "Apache-2.0",
+    "contentHash": "38c77d50db1a3025e719f1a2cd2753a0d5fa92bfd41db87862c77758e75dfeb9",
+    "lastHarvestedAt": "2026-10-19T03:39:26.951Z",
+    "learningId": "learn-github-ydb-platform-ydb"
   }
 }

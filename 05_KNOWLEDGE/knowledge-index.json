@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T03:33:09.419Z",
-  "total_verified_learnings": 558,
+  "last_updated": "2026-10-19T03:39:26.913Z",
+  "total_verified_learnings": 563,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -5002,22 +5002,35 @@
     "learn-github-crazycodeboy-react-native-splash-screen": {
       "learning_id": "learn-github-crazycodeboy-react-native-splash-screen",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "crazycodeboy-react-native-splash-screen",
+      "source": "crazycodeboy/react-native-splash-screen",
+      "repository": "crazycodeboy/react-native-splash-screen",
       "slug": "crazycodeboy-react-native-splash-screen",
       "platform": "github",
       "source_url": "https://github.com/crazycodeboy/react-native-splash-screen",
-      "source_version": "HEAD",
-      "content_hash": "728983f8f9e19fd1f131af2e094254a77716e6b632a390fe60da140f2d52b901",
+      "source_version": "b4719762",
+      "content_hash": "a3f854512f81231efaac89adf24c2d9f4ae0b53cf1113a267d91cdb9efa680dc",
       "dossier_path": "07_PROJECT_LEARNING/crazycodeboy-react-native-splash-screen-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crazycodeboy-react-native-splash-screen-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2082,
+          "title": "Merge pull request #536 from pluralcom/min-sdk-version-fix",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.425Z"
+      "verified_at": "2026-10-19T03:39:18.712Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-crbnos-carbon": {
       "learning_id": "learn-github-crbnos-carbon",
@@ -6153,22 +6166,35 @@
     "learn-github-dnscontrol-dnscontrol": {
       "learning_id": "learn-github-dnscontrol-dnscontrol",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "dnscontrol-dnscontrol",
+      "source": "DNSControl/dnscontrol",
+      "repository": "DNSControl/dnscontrol",
       "slug": "dnscontrol-dnscontrol",
       "platform": "github",
       "source_url": "https://github.com/DNSControl/dnscontrol",
-      "source_version": "HEAD",
-      "content_hash": "a180ff7ccaccf7603bc07d7a8608ed4ef40473730fae7e2588bf0b5218bcb57f",
+      "source_version": "62f353da",
+      "content_hash": "507aded4a72803a18a834a4108c70a335a297ec83fe5363cc0646bff25d362a4",
       "dossier_path": "07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2083,
+          "title": "build(deps): bump actions/upload-artifact from 7.0.1 to 7.0.2 (#5005)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.635Z"
+      "verified_at": "2026-10-19T03:39:20.879Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-dockview-dockview": {
       "learning_id": "learn-github-dockview-dockview",
@@ -9858,22 +9884,35 @@
     "learn-github-grpc-grpc-rust": {
       "learning_id": "learn-github-grpc-grpc-rust",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "grpc-grpc-rust",
+      "source": "grpc/grpc-rust",
+      "repository": "grpc/grpc-rust",
       "slug": "grpc-grpc-rust",
       "platform": "github",
       "source_url": "https://github.com/grpc/grpc-rust",
-      "source_version": "HEAD",
-      "content_hash": "4d86faab05a8a539a69d8d61fc4b34397cc5bb9ee0a92a405183df6a73372950",
+      "source_version": "4ad6538f",
+      "content_hash": "e93b250e05894e0a8b2bcbad99d6b452075be98c938525a6ab0f4917a808aaeb",
       "dossier_path": "07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2081,
+          "title": "codec): eliminate uninitialized memory in encode_item on unwind (#2847)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.210Z"
+      "verified_at": "2026-10-19T03:39:13.244Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-guokaigdg-animal-island-ui": {
       "learning_id": "learn-github-guokaigdg-animal-island-ui",
@@ -10527,22 +10566,35 @@
     "learn-github-heroui-inc-heroui-native": {
       "learning_id": "learn-github-heroui-inc-heroui-native",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "heroui-inc-heroui-native",
+      "source": "heroui-inc/heroui-native",
+      "repository": "heroui-inc/heroui-native",
       "slug": "heroui-inc-heroui-native",
       "platform": "github",
       "source_url": "https://github.com/heroui-inc/heroui-native",
-      "source_version": "HEAD",
-      "content_hash": "818cd0edecf46cc20a9665e9d9cab138d3356dc237f5ba087253af70fe9cdecc",
+      "source_version": "122f63db",
+      "content_hash": "8d563226bb0d2bc93ef737c7e288c09ea71f526f1936bea7e73934d602114ad0",
       "dossier_path": "07_PROJECT_LEARNING/heroui-inc-heroui-native-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/heroui-inc-heroui-native-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2080,
+          "title": "bottom-sheet): enhance handling of closed sheet visibility and animation during",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.275Z"
+      "verified_at": "2026-10-19T03:39:10.968Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf": {
       "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
@@ -21404,7 +21456,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo",
       "source_version": "hf-viggle-qwen-image-2.1-viggle-turbo",
-      "content_hash": "cebd2063ebf920c176006d72c68ce89cae51fdc716dec7782f22f2494f862693",
+      "content_hash": "7087de889829dd5013fabfc5734f1abcaff01a581c34afb4f7294a1243dd609a",
       "dossier_path": "07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md",
       "promoted_rules": [
@@ -21434,7 +21486,7 @@
         "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv451vsw",
         "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv4ibcf4"
       ],
-      "verified_at": "2026-10-17T22:47:26.751Z",
+      "verified_at": "2026-10-19T03:39:11.141Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39462,22 +39514,35 @@
     "learn-github-ydb-platform-ydb": {
       "learning_id": "learn-github-ydb-platform-ydb",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "ydb-platform-ydb",
+      "source": "ydb-platform/ydb",
+      "repository": "ydb-platform/ydb",
       "slug": "ydb-platform-ydb",
       "platform": "github",
       "source_url": "https://github.com/ydb-platform/ydb",
-      "source_version": "HEAD",
-      "content_hash": "8ebd0bbf0ac0b29d11131cb975696e7abea05e4db2ba292658fd344ea6354acf",
+      "source_version": "a0ec4712",
+      "content_hash": "38c77d50db1a3025e719f1a2cd2753a0d5fa92bfd41db87862c77758e75dfeb9",
       "dossier_path": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2084,
+          "title": "replication admission and lost data recovery after a group generation change by",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.451Z"
+      "verified_at": "2026-10-19T03:39:26.905Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-yeachan-heo-oh-my-claudecode": {
       "learning_id": "learn-github-yeachan-heo-oh-my-claudecode",
@@ -75522,6 +75587,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T03:33:09.410Z"
+    },
+    "rule-2080": {
+      "learning_id": "rule-2080",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2080,
+      "title": "bottom-sheet): enhance handling of closed sheet visibility and animation during",
+      "source_url": "https://github.com/heroui-inc/heroui-native",
+      "source_version": "122f63db",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:39:10.968Z"
+    },
+    "rule-2081": {
+      "learning_id": "rule-2081",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2081,
+      "title": "codec): eliminate uninitialized memory in encode_item on unwind (#2847)",
+      "source_url": "https://github.com/grpc/grpc-rust",
+      "source_version": "4ad6538f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:39:13.244Z"
+    },
+    "rule-2082": {
+      "learning_id": "rule-2082",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2082,
+      "title": "Merge pull request #536 from pluralcom/min-sdk-version-fix",
+      "source_url": "https://github.com/crazycodeboy/react-native-splash-screen",
+      "source_version": "b4719762",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:39:18.712Z"
+    },
+    "rule-2083": {
+      "learning_id": "rule-2083",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2083,
+      "title": "build(deps): bump actions/upload-artifact from 7.0.1 to 7.0.2 (#5005)",
+      "source_url": "https://github.com/DNSControl/dnscontrol",
+      "source_version": "62f353da",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:39:20.879Z"
+    },
+    "rule-2084": {
+      "learning_id": "rule-2084",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2084,
+      "title": "replication admission and lost data recovery after a group generation change by",
+      "source_url": "https://github.com/ydb-platform/ydb",
+      "source_version": "a0ec4712",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:39:26.905Z"
     }
   },
   "aliases": {

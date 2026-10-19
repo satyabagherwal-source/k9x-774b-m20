@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T03:33:09.468Z",
+  "last_updated": "2026-10-19T03:39:26.957Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -438,14 +438,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
-      "content_hash": "cebd2063ebf920c176006d72c68ce89cae51fdc716dec7782f22f2494f862693",
-      "verified_at": "2026-10-17T22:47:26.801Z",
+      "content_hash": "7087de889829dd5013fabfc5734f1abcaff01a581c34afb4f7294a1243dd609a",
+      "verified_at": "2026-10-19T03:39:11.198Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T22:47:26.801Z"
+      "last_updated": "2026-10-19T03:39:11.198Z"
     },
     "XingChen-AGI/Xing4.0-29B-A4B": {
       "repository": "XingChen-AGI/Xing4.0-29B-A4B",
@@ -8182,6 +8182,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T03:33:09.468Z"
+    },
+    "heroui-inc/heroui-native": {
+      "repository": "heroui-inc/heroui-native",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-heroui-inc-heroui-native",
+      "content_hash": "8d563226bb0d2bc93ef737c7e288c09ea71f526f1936bea7e73934d602114ad0",
+      "verified_at": "2026-10-19T03:39:11.030Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T03:39:11.030Z"
+    },
+    "grpc/grpc-rust": {
+      "repository": "grpc/grpc-rust",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-grpc-grpc-rust",
+      "content_hash": "e93b250e05894e0a8b2bcbad99d6b452075be98c938525a6ab0f4917a808aaeb",
+      "verified_at": "2026-10-19T03:39:13.303Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T03:39:13.303Z"
+    },
+    "crazycodeboy/react-native-splash-screen": {
+      "repository": "crazycodeboy/react-native-splash-screen",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-crazycodeboy-react-native-splash-screen",
+      "content_hash": "a3f854512f81231efaac89adf24c2d9f4ae0b53cf1113a267d91cdb9efa680dc",
+      "verified_at": "2026-10-19T03:39:18.772Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T03:39:18.772Z"
+    },
+    "DNSControl/dnscontrol": {
+      "repository": "DNSControl/dnscontrol",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-dnscontrol-dnscontrol",
+      "content_hash": "507aded4a72803a18a834a4108c70a335a297ec83fe5363cc0646bff25d362a4",
+      "verified_at": "2026-10-19T03:39:20.945Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T03:39:20.945Z"
+    },
+    "ydb-platform/ydb": {
+      "repository": "ydb-platform/ydb",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-ydb-platform-ydb",
+      "content_hash": "38c77d50db1a3025e719f1a2cd2753a0d5fa92bfd41db87862c77758e75dfeb9",
+      "verified_at": "2026-10-19T03:39:26.956Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T03:39:26.956Z"
     }
   },
   "repos": {
