@@ -3318,3 +3318,6 @@ Every entry in this ledger must capture:
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `dc5a1b22` | Multi-dimensional audit evidence | 2026-10-19T14:59:12.794Z |
 | `learn-github-sfu-db-connector-x` | `https://github.com/sfu-db/connector-x` | `028aa1fc` | Multi-dimensional audit evidence | 2026-10-19T14:59:13.881Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `27dafb82` | Multi-dimensional audit evidence | 2026-10-19T14:59:16.158Z |
+| `learn-huggingface-google-gemma-4-26b-a4b-it` | `https://huggingface.co/google/gemma-4-26B-A4B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-19T15:05:24.789Z |
+| `learn-github-cloudscape-design-components` | `https://github.com/cloudscape-design/components` | `af861d17` | Multi-dimensional audit evidence | 2026-10-19T15:05:24.980Z |
+| `learn-github-maziyarpanahi-openmed` | `https://github.com/maziyarpanahi/openmed` | `8440bdac` | Multi-dimensional audit evidence | 2026-10-19T15:05:31.057Z |

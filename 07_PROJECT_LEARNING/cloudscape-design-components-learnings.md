@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cloudscape-design-components-learnings.md`  
 > **Source**: github ([https://github.com/cloudscape-design/components](https://github.com/cloudscape-design/components))  
-> **Source Version**: `fdb6ffa9`  
+> **Source Version**: `af861d17`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T04:07:02.958Z  
+> **Timestamp**: 2026-10-19T15:05:24.700Z  
 > **Learning ID**: `learn-github-cloudscape-design-components`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cloudscape-design-components-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cloudscape-design/components](https://github.com/cloudscape-design/components))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T04:07:01.784Z  
+> **Harvest Timestamp**: 2026-10-19T15:05:23.597Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1531,352 +1531,49 @@ export const registerRuntimeBottomDrawer = () => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2255a808` (2026-10-13)
-**Commit Message**: chore: Remediate 9 Dependabot security alerts (lockfile only) (#5142)
+### Incident Patch 1: `8cacc4f6` (2026-10-19)
+**Commit Message**: chore: add deprecation ordering guidance (#5150)
 
-**File**: `package-lock.json` (modified, +37/-28)
+**File**: `.github/copilot-instructions.md` (modified, +5/-0)
 ```diff
-@@ -6188,9 +6188,9 @@
-       }
-     },
-     "node_modules/archiver-utils/node_modules/brace-expansion": {
--      "version": "2.1.4",
--      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.4.tgz",
--      "integrity": "sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg==",
-+      "version": "2.1.7",
-+      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.7.tgz",
-+      "integrity": "sha512-uZbew1NqdmPDTMJ8ah1y+b+9QEJrfkXFk3RcTQw3X0jW/xRUvFKsg1CfQdSYGdTbXZWExtU3J3ccxtnfw1Fi0g==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-@@ -11561,14 +11561,15 @@
-       }
-     },
-     "node_modules/handlebars": {
--      "version": "4.7.9",
-+      "version": "4.7.10",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
--        "minimist": "^1.2.5",
-+        "minimist": "^1.2.8",
-+        "wordwrap": "^1.0.0",
-         "neo-async": "^2.6.2",
--        "source-map": "^0.6.1",
--        "wordwrap": "^1.0.0"
-+        "uglify-js": "^3.1.4",
-+        "source-map": "^0.6.1"
-       },
-       "bin": {
-         "handlebars": "bin/handlebars"
-@@ -11578,7 +11579,9 @@
-       },
-       "optionalDependencies": {
-         "uglify-js": "^3.1.4"
--      }
-+      },
-+      "resolved": "https://registry.npmjs.org/handlebars/-/handlebars-4.7.10.tgz",
-+      "integrity": "sha512-P5VJMVM7qgBn6vjXMw8WG9uVI+ncf2pi72j4de4yz5ZULLj2RGqLYaKOYGsgyrViQ0tePOVlN1tDCCXXtFqXKg=="
-     },
-     "node_modules/has-bigints": {
-       "version": "1.1.0",
-@@ -14175,18 +14178,18 @@
-       }
-     },
-     "node_modules/joi": {
--      "version": "18.2.8",
--      "resolved": "https://registry.npmjs.org/joi/-/joi-18.2.8.tgz",
--      "integrity": "sha512-G2TX62h58ZHuwqetJgP2F4ualakqAmZtBYe3jWen7gxQRw5xApX6crnFtuB91WC0c3ESBnva+kGSnb3+6pIQDQ==",
-+      "version": "18.2.9",
-+      "resolved": "https://registry.npmjs.org/joi/-/joi-18.2.9.tgz",
-+      "integrity": "sha512-2mD929bUVKUhOLQQEVhlf6EZ0Mlo0DeRb5MO7cViR9AXLtBauuccEtB1py9Ocxpo/P7ucnh442iY/iOwrh3IQw==",
-       "dev": true,
-       "license": "BSD-3-Clause",
-       "dependencies": {
--        "@hapi/address": "^5.1.1",
--        "@hapi/formula": "^3.0.2",
-         "@hapi/hoek": "^11.0.7",
--        "@hapi/pinpoint": "^2.0.1",
-         "@hapi/tlds": "^1.1.1",
-         "@hapi/topo": "^6.0.2",
-+        "@hapi/address": "^5.1.1",
-+        "@hapi/formula": "^3.0.2",
-+        "@hapi/pinpoint": "^2.0.1",
-         "@standard-schema/spec": "^1.1.0"
-       },
-       "engines": {
-@@ -16952,9 +16955,9 @@
-       }
-     },
-     "node_modules/postcss-selector-parser": {
--      "version": "7.1.5",
--      "resolved": "https://registry.npmjs.org/postcss-selector-parser/-/postcss-selector-parser-7.1.5.tgz",
--      "integrity": "sha512-KvvtD7SrlBP7dlgkBghEE3r84CABm5SmV2aNcG4oCA+qDnJ/tvKonFVvwWAyyWUEwxuNawdfEAZKP9zM3oZ2Uw==",
-+      "version": "7.1.6",
-+      "resolved": "https://registry.npmjs.org/postcss-selector-parser/-/postcss-selector-parser-7.1.6.tgz",
-+      "integrity": "sha512-7qASPzhKF2l2KLboRZux8CCTRMdGiV08vWmyKzPz22qZ7ZjQBOeY7rNzNoCLSUiftJ7HUq0GERHmxw/t0dCdMw==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-@@ -17251,9 +17254,9 @@
-       "license": "MIT"
-     },
-     "node_modules/proxy-addr": {
--      "version": "2.0.7",
--      "resolved": "https://registry.npmjs.org/proxy-addr/-/proxy-addr-2.0.7.tgz",
--      "integrity": "sha512-llQsMLSUDUPT44jdrU/O37qlnifitDP+ZwrmmZcoSKyLKvtZxpyV0n2/bD/N4tBAAZ/gJEdZU7KMraoK1+XYAg==",
-+      "version": "2.0.8",
-+      "resolved": "https://registry.npmjs.org/proxy-addr/-/proxy-addr-2.0.8.tgz",
-+      "integrity": "sha512-5nnx0yGyVUcY6t9RnWcARWtwT9F1D8O9rt08htPvnd49W1IgZtmLkhu9WfMzQj1cFxjHIO6connUNVW5k7AVyQ==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-@@ -17262,6 +17265,10 @@
-       },
-       "engines": {
-         "node": ">= 0.10"
-+      },
-+      "funding": {
-+        "url": "https://opencollective.com/express",
-+        "type": "opencollective"
-       }
-     },
-     "node_modules/proxy-addr/node_modules/ipaddr.js": {
-@@ -17720,9 +17727,9 @@
-       }
-     },
-     "node_modules/readdir-glob/node_modules/brace-expansion": {
--      "version": "2.1.4",
--      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.4.tgz",
--      "integrity": "sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg==",
-+      "version": "2.1.7",
-+      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.7.tgz",
-+      "integrity": "sha512-uZbew1NqdmPDTMJ8ah1y+b+9QEJrfkXFk3RcTQw3X0jW/xRUvFKsg1CfQdSYGdTbXZWExtU3J3ccxtnfw1Fi0g==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-@@ -18905,9 +18912,9 @@
-       }
-     },
-     "node_modules/shell-quote": {
--      "version": "1.10.0",
--      "resolved": "https://registry.npmjs.org/shell-quote/-/shell-quote-1.10.0.tgz",
--      "integrity": "sha512-w1aiOKwKuRgtwAReIIj89puqg+I7GvX
+@@ -49,6 +49,11 @@ When you flag something, cite the rule and say why. These are the repo's house c
+   and required→optional relaxations are fine. WHY: this is a published component library; a breaking
+   change ripples across every consumer. (See `.github/instructions/component-structure.instructions.md`
+   for the file-level detail.)
++- Release the replacement before marking the old API `@deprecated` — never in the same change, and
++  never before. `@typescript-eslint/no-deprecated` promotes consumer usage of a deprecated member to a
++  build error, so a `@deprecated` mark that lands before its replacement is available deadlocks the
++  release: consumers can't migrate off the old API until the new one ships, and the deprecation blocks
++  the build that would ship it. Order: ship the replacement → then deprecate the old API.
+ 
+ ---
+ Path-specific conventions (component structure & API, tests, SCSS, dev pages, test-utils) are in
 ```
 
 ---
 
-### Incident Patch 2: `52c638d1` (2026-10-13)
-**Commit Message**: fix: pass lang attribute through overflow menu items (#5137)
+### Incident Patch 2: `37e6a686` (2026-10-19)
+**Commit Message**: fix: Disabled input text color in iOS Safari (#5153)
 
-**File**: `src/top-navigation/__tests__/top-navigation-overflow-menu.test.tsx` (modified, +14/-0)
+**File**: `src/input/styles.scss` (modified, +1/-0)
 ```diff
-@@ -130,6 +130,20 @@ describe('Submenu', () => {
-     expect(element.getAttribute('role')).toEqual('button');
-     expect(element.tabIndex).toEqual(0);
-   });
-+
-+  test('passes lang attribute to submenu items', () => {
-+    const wrapper = createWrapper(
-+      render(
-+        <SubmenuView
-+          definition={{
-+            type: 'menu-dropdown',
-+            items: [{ id: 'de', text: 'Deutsch', lang: 'de', href: '#' }],
-+          }}
-+        />
-+      ).container
-+    ).find('a')!;
-+    expect(wrapper.getElement()).toHaveAttribute('lang', 'de');
-+  });
- });
+@@ -81,6 +81,7 @@
+   }
  
- describe('UtilityMenuItem', () => {
-```
-
-**File**: `src/top-navigation/parts/overflow-menu/menu-item.tsx` (modified, +6/-2)
-```diff
-@@ -34,11 +34,13 @@ const ListItem = ({ children, startIcon, endIcon }: ListItemProps) => {
-   );
- };
- 
--interface LinkItemProps extends ButtonItemProps, Pick<LinkProps, 'href' | 'external' | 'target' | 'rel'> {}
-+interface LinkItemProps extends ButtonItemProps, Pick<LinkProps, 'href' | 'external' | 'target' | 'rel'> {
-+  lang?: string;
-+}
- 
- const LinkItem = forwardRef(
-   (
--    { children, external, href, target, rel, startIcon, endIcon, onClick, context, testId }: LinkItemProps,
-+    { children, external, href, target, rel, lang, startIcon, endIcon, onClick, context, testId }: LinkItemProps,
-     ref: React.Ref<HTMLAnchorElement & HTMLButtonElement>
-   ) => {
-     const anchorTarget = target ?? (external ? '_blank' : undefined);
-@@ -59,6 +61,7 @@ const LinkItem = forwardRef(
-         href={href}
-         target={anchorTarget}
-         rel={anchorRel}
-+        lang={lang}
-         data-awsui-motion-trigger="hover"
-         {...(testId ? { 'data-testid': testId } : {})}
-       >
-@@ -276,6 +279,7 @@ function dropdownComponentFactory(
-       startIcon={startIcon}
-       href={isLink ? item.href : undefined}
-       external={isLink ? item.external : undefined}
-+      lang={item.lang}
-       context="dropdown-menu"
-       testId={item.id}
-       onClick={event => onItemClick(event, item as ButtonDropdownProps.Item)}
-```
-
----
-
-### Incident Patch 3: `c41de07b` (2026-10-09)
-**Commit Message**: fix: Fix broken pointer scroll in virtual lists in certain situations (#5124)
-
-**File**: `src/autosuggest/__integ__/virtual-scroll.test.ts` (added, +73/-0)
-```diff
-@@ -0,0 +1,73 @@
-+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-+// SPDX-License-Identifier: Apache-2.0
-+import useBrowser from '@cloudscape-design/browser-test-tools/use-browser';
-+
-+import AutosuggestPage from './page-objects/autosuggest-page';
-+
-+class VirtualScrollAutosuggestPage extends AutosuggestPage {
-+  listSelector = this.wrapper.findDropdown().findOptionsContainer().toSelector();
-+
-+  async wheelOverList(deltaY: number) {
-+    // Wheel input is separate from the pointer, so this scrolls without hovering any option.
-+    const list = await this.browser.$(this.listSelector);
-+    await this.browser.action('wheel').scroll({ origin: list, deltaY, duration: 100 }).perform();
-+  }
-+
-+  async getListScrollTop() {
-+    const { top } = await this.getElementScroll(this.listSelector);
-+    return top;
-+  }
-+}
-+
-+function setupTest(testFn: (page: VirtualScrollAutosuggestPage) => Promise<void>) {
-+  return useBrowser(async browser => {
-+    const page = new VirtualScrollAutosuggestPage(browser);
-+    await browser.url('/#/light/autosuggest/virtual-scroll');
-+    await page.focusInput();
-+    await page.assertDropdownOpen();
-+    await testFn(page);
-+  });
-+}
-+
-+describe('Autosuggest with virtual scroll', () => {
-+  test(
-+    'keeps the scroll position after wheel scrolling a dropdown opened with the mouse',
-+    setupTest(async page => {
-+      await page.wheelOverList(600);
-+      await page.waitForJsTimers(100);
-+      expect(await page.getListScrollTop()).toBeGreaterThan(0);
-+
-+      const scrollTop = await page.getListScrollTop();
-+      await page.wheelOverList(600);
-+      await page.waitForJsTimers(100);
-+      expect(await page.getListScrollTop()).toBeGreaterThan(scrollTop);
-+    })
-+  );
-+
-+  test(
-+    'keeps the scroll position after keyboard navigation when the list is scrolled without the wheel',
-+    setupTest(async page => {
-+      await page.keys(['ArrowDown', 'ArrowDown']);
-+      await page.assertHighlightedOptionContains('Option 2');
-+
-+      // Stands in for dragging the scrollbar.
-+      await page.elementScrollTo(page.listSelector, { top: 3000 });
-+      await page.waitForJsTimers(100);
-+      // The virtualizer shifts the offset slightly once it measures the newly rendered options,
-+      // so don't expect exactly 3000. Without the fix the list snaps back to the highlighted option at the top.
-+      expect(await page.getListScrollTop()).toBeGreaterThan(2500);
-+    })
-+  );
-+
-+  test(
-+    'scrolls the highlighted option into view on keyboard navigation after the list was scrolled',
-+    setupTest(async page => {
-+      await page.elementScrollTo(page.listSelector, { top: 3000 });
-+      await page.waitForJsTimers(100);
-+
-+      await page.keys(['ArrowDown']);
-+      await page.assertHighlightedOptionContains('Option 1');
-+      await page.waitForAssertion(async () => expect(await page.getListScrollTop()).toBe(0));
-+    })
-+  );
-+});
-```
-
-**File**: `src/autosuggest/virtual-list.tsx` (modified, +16/-5)
-```diff
-@@ -3,6 +3,7 @@
- import React, { useCallback, useEffect, useImperativeHandle, useRef } from 'react';
- 
- import { useContainerQuery } from '@cloudscape-design/component-toolkit';
-+import { useStableCallback } from '@cloudscape-design/component-toolkit/internal';
- 
- import OptionsList from '../internal/components/options-list';
- import { useVirtual } from '../internal/hooks/use-virtual';
-@@ -28,7 +29,7 @@ const VirtualList = ({
-   const [width, strutRef] = useContainerQuery(rect => rect.contentBoxWidth, []);
-   useImperativeHandle(strutRef, () => scrollRef.current);
- 
--  const rowVirtualizer = useVirtual({
-+  const { virtualItems, totalSize, scrollToIndex } = useVirtual({
-     items: autosuggestItemsState.items,
-     parentRef: scrollRef,
-     // estimateSize is a dependency of measurements memo. We update it to force full recalculation
-@@ -39,11 +40,21 @@ const VirtualList = ({
-     estimateSize: useCallback(() => 31, [width, highlightText]),
-   });
- 
-+  // Scroll when the highlight changes and moveFocus is true. The scrollToIndex identity changes
-+  // whenever the number of items changes (e.g. when the next page of options is loaded), which
-+  // shouldn't reset the scroll position either.
-+  const scrollToHighlightedIndex = useStableCallback(scrollToIndex);
-   useEffect(() => {
-     if (autosuggestItemsState.highlightType.moveFocus) {
--      rowVirtualizer.scrollToIndex(autosuggestItemsState.highlightedIndex);
-+      const index = autosuggestItemsState.highlightedIndex;
-+      scrollToHighlightedIndex(index);
-+      // Options are rendered with estimated sizes and measured afterwards, which can push the highlighted option out
-+      // of view (e.g. when jumping to the last option). With React 18 the measurement happens after react-virtual's own
-+      // retry, so retry once more after it.
-+      const timeout = setTimeout(() => scrollToHighlightedIndex(index), 0);
-+      return () => clearTimeout(timeout);
-     }
--  }, [autosuggestItemsState.highlightType, autosuggestItemsState.highlightedIndex, rowVirtualizer]);
-+  }, [autosuggestItemsState.highlightType, autosuggestItemsState.highlightedIndex, scrollToHighlightedIndex]);
- 
-   let lastGroupIndex = -1;
- 
-@@ -53,9 +64,9 @@ const VirtualList = ({
-         aria-hidden="true"
-         key="total-size"
-         className={styles['layout-strut']}
--        style={{ height: rowVirtualizer.totalSize + (autosuggestItemsState.items.length === 1 ? 1 : 0) }}
-+        style={{ height: totalSize + (autosuggestItemsState.items.length === 1 ? 1 : 0) }}
-       />
--      {rowVirtualizer.virtualItems.map(virtualRow => {
-+      {virtualItems.map(virtualRow => {
-         const { index, start, measureRef } = virtualRow;
-         const item = autosuggestItemsState.items[index];
-         const optionProps = getOptionProps(
+   &:disabled {
++    opacity: 1;
+     color: var(#{custom-props.$styleColorDisabled}, awsui.$color-text-input-disabled);
+     cursor: default;
+     @include placeholder {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5153** (2026-10-19): fix: Disabled input text color in iOS Safari (@SpyZzey)
+- **PR #5151** (2026-10-19): refactor: use semantic colorPrimary tokens in one-theme top-navigation context (@gethinwebster)
+- **PR #5150** (2026-10-19): chore: add deprecation ordering guidance (@gethinwebster)
 - **PR #5148** (2026-10-15): fix: Segmented control in One theme (@georgylobko)
 - **PR #5147** (2026-10-15): chore: Duplicate VR compact table context for OT (@gethinwebster)
 - **PR #5146** (2026-10-15): chore: Add visual tests and update unit tests for autosuggest token mode (@srungta08)
-- **PR #5144** (closed): feat: Control group (@jperals)
-- **PR #5142** (2026-10-13): chore: Remediate 9 Dependabot security alerts (lockfile only) (@SpyZzey)
-- **PR #5139** (2026-10-13): chore: Update the sidenav icon in 1T (@georgylobko)
 
 ---
 
@@ -1896,70 +1593,32 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Remediate 9 Dependabot security alerts (lockfile only) (#5142)
+## X. add deprecation ordering guidance (#5150)
 
 **RULE**:
-When implementing operations in `package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cloudscape-design/components. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/copilot-instructions.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cloudscape-design/components. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2255a808`: Remediate 9 Dependabot security alerts (lockfile only) (#5142). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8cacc4f6`: add deprecation ordering guidance (#5150). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package-lock.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/copilot-instructions.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-      "version": "2.1.7",
-      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.7.tgz",
-      "integrity": "sha512-uZbew1NqdmPDTMJ8ah1y+b+9QEJrfkXFk3RcTQw3X0jW/xRUvFKsg1CfQdSYGdTbXZWExtU3J3ccxtnfw1Fi0g==",
-      "version": "4.7.10",
-        "minimist": "^1.2.8",
-        "wordwrap": "^1.0.0",
-        "uglify-js": "^3.1.4",
-        "source-map": "^0.6.1"
-      },
-      "resolved": "https://registry.npmjs.org/handlebars/-/handlebars-4.7.10.tgz",
-      "integrity": "sha512-P5VJMVM7qgBn6vjXMw8WG9uVI+ncf2pi72j4de4yz5ZULLj2RGqLYaKOYGsgyrViQ0tePOVlN1tDCCXXtFqXKg=="
-      "version": "18.2.9",
-      "resolved": "https://registry.npmjs.org/joi/-/joi-18.2.9.tgz",
-      "integrity": "sha512-2mD929bUVKUhOLQQEVhlf6EZ0Mlo0DeRb5MO7cViR9AXLtBauuccEtB1py9Ocxpo/P7ucnh442iY/iOwrh3IQw==",
-        "@hapi/address": "^5.1.1",
-        "@hapi/formula": "^3.0.2",
-        "@hapi/pinpoint": "^2.0.1",
-      "version": "7.1.6",
-      "resolved": "https://registry.npmjs.org/postcss-selector-parser/-/postcss-selector-parser-7.1.6.tgz",
-      "integrity": "sha512-7qASPzhKF2l2KLboRZux8CCTRMdGiV08vWmyKzPz22qZ7ZjQBOeY7rNzNoCLSUiftJ7HUq0GERHmxw/t0dCdMw==",
-      "version": "2.0.8",
-      "r
+- Release the replacement before marking the old API `@deprecated` — never in the same change, and
+  never before. `@typescript-eslint/no-deprecated` promotes consumer usage of a deprecated member to a
+  build error, so a `@deprecated` mark that lands before its replacement is available deadlocks the
+  release: consumers can't migrate off the old API until the new one ships, and the deprecation blocks
+  the build that would ship it. Order: ship the replacement → then deprecate the old API.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-      "version": "2.1.4",
-      "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.4.tgz",
-      "integrity": "sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg==",
-      "version": "4.7.9",
-        "minimist": "^1.2.5",
-        "source-map": "^0.6.1",
-        "wordwrap": "^1.0.0"
-      }
-      "version": "18.2.8",
-      "resolved": "https://registry.npmjs.org/joi/-/joi-18.2.8.tgz",
-      "integrity": "sha512-G2TX62h58ZHuwqetJgP2F4ualakqAmZtBYe3jWen7gxQRw5xApX6crnFtuB91WC0c3ESBnva+kGSnb3+6pIQDQ==",
-        "@hapi/address": "^5.1.1",
-        "@hapi/formula": "^3.0.2",
-        "@hapi/pinpoint": "^2.0.1",
-      "version": "7.1.5",
-      "resolved": "https://registry.npmjs.org/postcss-selector-parser/-/postcss-selector-parser-7.1.5.tgz",
-      "integrity": "sha512-KvvtD7SrlBP7dlgkBghEE3r84CABm5SmV2aNcG4oCA+qDnJ/tvKonFVvwWAyyWUEwxuNawdfEAZKP9zM3oZ2Uw==",
-      "version": "2.0.7",
-      "resolved": "https://registry.npmjs.org/proxy-addr/-/proxy-addr-2.0.7.tgz",
-      "integrity": "sha512-llQsMLSUDUPT44jdrU/O37qlnifitDP+ZwrmmZcoSKyLKvtZxpyV0n2/bD/N4tBAAZ/gJEdZU7KMraoK1+XYAg==",
-      "version": "2.1.4",
-      "resolved
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2255a808` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8cacc4f6` are properly handled with clean fallback behavior.

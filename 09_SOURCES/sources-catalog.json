@@ -1185,8 +1185,8 @@
     "sourceUrl": "https://huggingface.co/google/gemma-4-26B-A4B-it",
     "sourceVersion": "hf-google-gemma-4-26b-a4b-it",
     "license": "Open-Source",
-    "contentHash": "778e4158d25dc8dbfcd04c8f1c7d282697c49316e05e1fa6894af96434f7e1ea",
-    "lastHarvestedAt": "2026-10-18T04:36:41.120Z",
+    "contentHash": "32fc4c78c7f31070e844268c12fbff3df589a7966ce572461ebc52c1a049fa56",
+    "lastHarvestedAt": "2026-10-19T15:05:24.789Z",
     "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it"
   },
   "infisical-infisical": {
@@ -5583,10 +5583,10 @@
     "repository": "cloudscape-design/components",
     "platform": "github",
     "sourceUrl": "https://github.com/cloudscape-design/components",
-    "sourceVersion": "fdb6ffa9",
+    "sourceVersion": "af861d17",
     "license": "Apache-2.0",
-    "contentHash": "913321d948684cbcc1ba22f6393cd11adb6b1a434820f4e840975be2c5baf98b",
-    "lastHarvestedAt": "2026-10-19T04:07:03.207Z",
+    "contentHash": "896dbcab106b3d68320dff4afb683d9793275db18577c3ef03ca22c24ab2511c",
+    "lastHarvestedAt": "2026-10-19T15:05:24.980Z",
     "learningId": "learn-github-cloudscape-design-components"
   },
   "async-rs-async-std": {
@@ -8228,5 +8228,15 @@
     "contentHash": "28b38ca837d31a36b7427bdeb98f16cb17084f67f27377d15e0926f7cdb42d9e",
     "lastHarvestedAt": "2026-10-19T14:59:08.783Z",
     "learningId": "learn-github-jinxiansen-swiftui"
+  },
+  "maziyarpanahi-openmed": {
+    "repository": "maziyarpanahi/openmed",
+    "platform": "github",
+    "sourceUrl": "https://github.com/maziyarpanahi/openmed",
+    "sourceVersion": "8440bdac",
+    "license": "Apache-2.0",
+    "contentHash": "9bd8cb4cc8c76ce717126a1fa0d474ce06200d581e95cb6e602414496b605320",
+    "lastHarvestedAt": "2026-10-19T15:05:31.057Z",
+    "learningId": "learn-github-maziyarpanahi-openmed"
   }
 }

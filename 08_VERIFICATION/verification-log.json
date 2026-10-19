@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-NT8G",
-    "timestamp": "2026-10-19T02:48:51.136Z",
-    "repository": "chakra-ui/ark",
-    "learningId": "learn-github-chakra-ui-ark",
-    "contentHash": "cb79685c44cb717d83f3e5a6110257f3e7bc6e436b6c92ed953e35747d3f1a8a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-VKGJ",
-    "timestamp": "2026-10-19T02:54:53.011Z",
-    "repository": "alibaba-fusion/next",
-    "learningId": "learn-github-alibaba-fusion-next",
-    "contentHash": "b713dcd427d2c835294c815da4714c789832578cd3d00a3bb64ab15ee24b80f7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-VLZ1",
-    "timestamp": "2026-10-19T02:54:54.973Z",
-    "repository": "webrtc-rs/webrtc",
-    "learningId": "learn-github-webrtc-rs-webrtc",
-    "contentHash": "97c2aceec87e1810c66296512a7c060c1a38fa1a2985629a3e7f6de676e12b5e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-VOD8",
     "timestamp": "2026-10-19T02:54:58.076Z",
     "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
@@ -7490,6 +7445,51 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "7de1a0251c476c0e4d7148eeaa4b0893e036166313778b2345ef82a91684ebaf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-Z19T",
+    "timestamp": "2026-10-19T15:05:24.785Z",
+    "repository": "google/gemma-4-26B-A4B-it",
+    "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
+    "contentHash": "32fc4c78c7f31070e844268c12fbff3df589a7966ce572461ebc52c1a049fa56",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-Z1F6",
+    "timestamp": "2026-10-19T15:05:24.978Z",
+    "repository": "cloudscape-design/components",
+    "learningId": "learn-github-cloudscape-design-components",
+    "contentHash": "896dbcab106b3d68320dff4afb683d9793275db18577c3ef03ca22c24ab2511c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-Z63Y",
+    "timestamp": "2026-10-19T15:05:31.054Z",
+    "repository": "maziyarpanahi/openmed",
+    "learningId": "learn-github-maziyarpanahi-openmed",
+    "contentHash": "9bd8cb4cc8c76ce717126a1fa0d474ce06200d581e95cb6e602414496b605320",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
