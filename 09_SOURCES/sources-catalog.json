@@ -1783,10 +1783,10 @@
     "repository": "code-forge-io/seo-tools",
     "platform": "github",
     "sourceUrl": "https://github.com/code-forge-io/seo-tools",
-    "sourceVersion": "HEAD",
-    "license": "Open-Source",
-    "contentHash": "46563d110affd5df74ce6c8acff12b26234bf4be3e68950911edbfb7b2f295ec",
-    "lastHarvestedAt": "2026-10-18T04:59:13.969Z",
+    "sourceVersion": "e1e672b3",
+    "license": "MIT",
+    "contentHash": "77279cddabddb92cd9b86aa336c2aad5a83eb47ca2ec13d4f42cb832ecfa1bd9",
+    "lastHarvestedAt": "2026-10-19T16:06:08.327Z",
     "learningId": "learn-github-code-forge-io-seo-tools"
   },
   "hartemyaakoub-seo-toolkit": {
@@ -8318,5 +8318,15 @@
     "contentHash": "435bc9f7fbaa08148d80f8400f93a60588d12e65ec5f1de17e1ca43ec522bacf",
     "lastHarvestedAt": "2026-10-19T15:59:35.874Z",
     "learningId": "learn-github-swiftwebui-swiftwebui"
+  },
+  "leetcode-mafia-cheetah": {
+    "repository": "leetcode-mafia/cheetah",
+    "platform": "github",
+    "sourceUrl": "https://github.com/leetcode-mafia/cheetah",
+    "sourceVersion": "e66db5be",
+    "license": "CC0-1.0",
+    "contentHash": "86c34f09b6dafbe3072c1e86a7a5a6d44f1f9ece6ed890200b499a1cb4c04f32",
+    "lastHarvestedAt": "2026-10-19T16:06:08.466Z",
+    "learningId": "learn-github-leetcode-mafia-cheetah"
   }
 }

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T15:59:43.164Z",
-  "total_verified_learnings": 846,
+  "last_updated": "2026-10-19T16:06:08.423Z",
+  "total_verified_learnings": 847,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -27882,22 +27882,35 @@
     "learn-github-leetcode-mafia-cheetah": {
       "learning_id": "learn-github-leetcode-mafia-cheetah",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "leetcode-mafia-cheetah",
+      "source": "leetcode-mafia/cheetah",
+      "repository": "leetcode-mafia/cheetah",
       "slug": "leetcode-mafia-cheetah",
       "platform": "github",
       "source_url": "https://github.com/leetcode-mafia/cheetah",
-      "source_version": "HEAD",
-      "content_hash": "87ad96ecfcdefc541d5eb3fe004a0caf292b1bb2d22a5d7aaa45a9aa4ef16700",
+      "source_version": "e66db5be",
+      "content_hash": "86c34f09b6dafbe3072c1e86a7a5a6d44f1f9ece6ed890200b499a1cb4c04f32",
       "dossier_path": "07_PROJECT_LEARNING/leetcode-mafia-cheetah-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/leetcode-mafia-cheetah-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2666,
+          "title": "add build and release workflows",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.989Z"
+      "verified_at": "2026-10-19T16:06:08.411Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-lemonade-sdk-lemonade": {
       "learning_id": "learn-github-lemonade-sdk-lemonade",
@@ -53855,17 +53868,23 @@
       "slug": "code-forge-io-seo-tools",
       "platform": "github",
       "source_url": "https://github.com/code-forge-io/seo-tools",
-      "source_version": "HEAD",
-      "content_hash": "46563d110affd5df74ce6c8acff12b26234bf4be3e68950911edbfb7b2f295ec",
+      "source_version": "e1e672b3",
+      "content_hash": "77279cddabddb92cd9b86aa336c2aad5a83eb47ca2ec13d4f42cb832ecfa1bd9",
       "dossier_path": "07_PROJECT_LEARNING/code-forge-io-seo-tools-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/code-forge-io-seo-tools-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2665,
+          "title": "Merge pull request #10 from daguitosama/main",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T04:59:13.881Z",
+      "verified_at": "2026-10-19T16:06:08.251Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -89038,6 +89057,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T15:59:43.154Z"
+    },
+    "rule-2665": {
+      "learning_id": "rule-2665",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2665,
+      "title": "Merge pull request #10 from daguitosama/main",
+      "source_url": "https://github.com/code-forge-io/seo-tools",
+      "source_version": "e1e672b3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T16:06:08.251Z"
+    },
+    "rule-2666": {
+      "learning_id": "rule-2666",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2666,
+      "title": "add build and release workflows",
+      "source_url": "https://github.com/leetcode-mafia/cheetah",
+      "source_version": "e66db5be",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T16:06:08.411Z"
     }
   },
   "aliases": {

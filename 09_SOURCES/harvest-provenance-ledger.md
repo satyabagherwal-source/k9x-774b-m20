@@ -3347,3 +3347,5 @@ Every entry in this ledger must capture:
 | `learn-github-istifano-seo-auditor` | `https://github.com/ISTIFANO/seo-auditor` | `87ba51e6` | Multi-dimensional audit evidence | 2026-10-19T15:59:33.917Z |
 | `learn-github-swiftwebui-swiftwebui` | `https://github.com/SwiftWebUI/SwiftWebUI` | `2a5fe83a` | Multi-dimensional audit evidence | 2026-10-19T15:59:35.874Z |
 | `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `b55d9247` | Multi-dimensional audit evidence | 2026-10-19T15:59:43.204Z |
+| `learn-github-code-forge-io-seo-tools` | `https://github.com/code-forge-io/seo-tools` | `e1e672b3` | Multi-dimensional audit evidence | 2026-10-19T16:06:08.327Z |
+| `learn-github-leetcode-mafia-cheetah` | `https://github.com/leetcode-mafia/cheetah` | `e66db5be` | Multi-dimensional audit evidence | 2026-10-19T16:06:08.466Z |

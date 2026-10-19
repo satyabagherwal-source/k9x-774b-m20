@@ -1026,8 +1026,8 @@
     "officialUrl": "https://github.com/openziti/zrok",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-19T13:00:21.703Z",
-    "lastVerified": "2026-10-19T13:00:21.703Z",
+    "lastChecked": "2026-10-19T16:06:08.972Z",
+    "lastVerified": "2026-10-19T16:06:08.972Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openziti-zrok",
@@ -5651,12 +5651,12 @@
     "revisionIdentifier": "82976d34"
   },
   "kuberwastaken-claurst": {
-    "name": "Kuberwastaken/claurst",
+    "name": "claurst",
     "officialUrl": "https://github.com/Kuberwastaken/claurst",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-19T00:54:31.269Z",
-    "lastVerified": "2026-10-19T00:54:31.269Z",
+    "lastChecked": "2026-10-19T16:05:58.931Z",
+    "lastVerified": "2026-10-19T16:05:58.931Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kuberwastaken-claurst",
@@ -5665,7 +5665,8 @@
     "recentFixesCount": 18,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "85ebb868"
   },
   "ekmas-neobrutalism-components": {
     "name": "neobrutalism-components",
@@ -8921,12 +8922,12 @@
     "revisionIdentifier": "1faff10a"
   },
   "htmlstreamofficial-preline": {
-    "name": "htmlstreamofficial/preline",
+    "name": "preline",
     "officialUrl": "https://github.com/htmlstreamofficial/preline",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-19T04:52:54.602Z",
-    "lastVerified": "2026-10-19T04:52:54.602Z",
+    "lastChecked": "2026-10-19T16:05:56.443Z",
+    "lastVerified": "2026-10-19T16:05:56.443Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-htmlstreamofficial-preline",
@@ -8935,7 +8936,8 @@
     "recentFixesCount": 9,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "05ca5999"
   },
   "e2b-dev-e2b": {
     "name": "e2b-dev/E2B",
@@ -9800,12 +9802,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "apache-zookeeper": {
-    "name": "apache/zookeeper",
+    "name": "zookeeper",
     "officialUrl": "https://github.com/apache/zookeeper",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-10-19T03:01:33.992Z",
-    "lastVerified": "2026-10-19T03:01:33.992Z",
+    "lastChecked": "2026-10-19T16:06:11.413Z",
+    "lastVerified": "2026-10-19T16:06:11.413Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-apache-zookeeper",
@@ -9814,7 +9816,8 @@
     "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "48f7cb00"
   },
   "citusdata-citus": {
     "name": "citusdata/citus",
@@ -10023,12 +10026,12 @@
     "revisionIdentifier": "62f353da"
   },
   "octodns-octodns": {
-    "name": "octodns/octodns",
+    "name": "octodns",
     "officialUrl": "https://github.com/octodns/octodns",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-19T03:47:31.206Z",
-    "lastVerified": "2026-10-19T03:47:31.206Z",
+    "lastChecked": "2026-10-19T16:06:06.426Z",
+    "lastVerified": "2026-10-19T16:06:06.426Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-octodns-octodns",
@@ -10037,7 +10040,8 @@
     "recentFixesCount": 10,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "89bd5f2a"
   },
   "starrocks-starrocks": {
     "name": "StarRocks/starrocks",
@@ -17419,14 +17423,15 @@
     "officialUrl": "https://github.com/leetcode-mafia/cheetah",
     "sourceType": "github",
     "technology": "Swift",
-    "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-01T01:24:33.608Z",
-    "lastVerified": "2026-10-01T01:24:33.608Z",
+    "lastChecked": "2026-10-19T16:06:08.178Z",
+    "lastVerified": "2026-10-19T16:06:08.178Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
-    "learningId": null,
-    "promotedRulesCount": 0,
-    "recentFixesCount": 0,
+    "learningId": "learn-github-leetcode-mafia-cheetah",
+    "contentHash": "86c34f09b6dafbe3072c1e86a7a5a6d44f1f9ece6ed890200b499a1cb4c04f32",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   },
@@ -18259,8 +18264,8 @@
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-19T15:31:54.793Z",
-    "lastVerified": "2026-10-19T15:31:54.793Z",
+    "lastChecked": "2026-10-19T16:06:13.954Z",
+    "lastVerified": "2026-10-19T16:06:13.954Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-synalinks-synalinks-skills",
@@ -24612,11 +24617,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "code-forge-io-seo-tools": {
-    "name": "seo-tools",
+    "name": "code-forge-io/seo-tools",
     "officialUrl": "https://github.com/code-forge-io/seo-tools",
-    "lastChecked": "2026-10-18T05:16:56.854Z",
-    "revisionIdentifier": "HEAD",
-    "lastVerified": "2026-10-18T05:16:56.854Z"
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-19T16:06:07.141Z",
+    "lastVerified": "2026-10-19T16:06:07.141Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-code-forge-io-seo-tools",
+    "contentHash": "77279cddabddb92cd9b86aa336c2aad5a83eb47ca2ec13d4f42cb832ecfa1bd9",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 7,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hartemyaakoub-seo-toolkit": {
     "name": "seo-toolkit",
@@ -26200,8 +26215,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-19T15:59:45.736Z",
-    "lastVerified": "2026-10-19T15:59:45.736Z",
+    "lastChecked": "2026-10-19T16:06:13.969Z",
+    "lastVerified": "2026-10-19T16:06:13.969Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
