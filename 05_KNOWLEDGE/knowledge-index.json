@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T16:06:08.423Z",
-  "total_verified_learnings": 847,
+  "last_updated": "2026-10-19T16:12:10.606Z",
+  "total_verified_learnings": 848,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -4757,14 +4757,19 @@
       "slug": "checkmarx-kics",
       "platform": "github",
       "source_url": "https://github.com/Checkmarx/kics",
-      "source_version": "d06cb647",
-      "content_hash": "7ac9f43a3d021b86bb8bd19f1d7af19e9ca16d911e083e021c27dfe73a2a0a9c",
+      "source_version": "a1c1b947",
+      "content_hash": "93d09dc5b103e1a03c4057ca7bac5f709b42e293a0236207b2c18421c1ce448f",
       "dossier_path": "07_PROJECT_LEARNING/checkmarx-kics-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/checkmarx-kics-learnings.md",
       "promoted_rules": [
         {
           "number": 2095,
           "title": "query): changed all dockerfile queries for case insensitive support of dockerfil",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2669,
+          "title": "ci(release): AST-186869 unblock release-docker-image under StepSecurity policy (",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -4773,7 +4778,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T03:53:50.580Z",
+      "verified_at": "2026-10-19T16:12:10.599Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -11395,14 +11400,19 @@
       "slug": "guokaigdg-animal-island-ui",
       "platform": "github",
       "source_url": "https://github.com/guokaigdg/animal-island-ui",
-      "source_version": "a412c55b",
-      "content_hash": "d4f23b780bcaff0747c77d47d475b3afca296f4fe0e231e99e0123b2bcd87022",
+      "source_version": "279959f7",
+      "content_hash": "46170f398d1b1d9d51c47c9980b083462c6ece4aef1b42e6d730b0592ace59ea",
       "dossier_path": "07_PROJECT_LEARNING/guokaigdg-animal-island-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/guokaigdg-animal-island-ui-learnings.md",
       "promoted_rules": [
         {
           "number": 2153,
           "title": "count-up): cancel a pending repeat when a zero-duration run ends",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2667,
+          "title": "style: polish the demo visuals and sync the Calendar CSS excerpt",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -11411,7 +11421,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T04:59:12.710Z",
+      "verified_at": "2026-10-19T16:12:01.624Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25580,22 +25590,29 @@
     "learn-github-jellyfin-swiftfin": {
       "learning_id": "learn-github-jellyfin-swiftfin",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "jellyfin-swiftfin",
+      "source": "jellyfin/Swiftfin",
+      "repository": "jellyfin/Swiftfin",
       "slug": "jellyfin-swiftfin",
       "platform": "github",
       "source_url": "https://github.com/jellyfin/Swiftfin",
-      "source_version": "HEAD",
-      "content_hash": "55949489afe02532b65ec4c5e910702eeafd7ce75d82b984945de1e3c0811b46",
+      "source_version": "7a1994d6",
+      "content_hash": "49342bdb098c3a93f4eaf1116aa8f42be6d8df3d60a7e6c1bc44b44ca33ad2e9",
       "dossier_path": "07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.665Z"
+      "verified_at": "2026-10-19T16:12:06.950Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-jerbouma-financetoolkit": {
       "learning_id": "learn-github-jerbouma-financetoolkit",
@@ -53901,17 +53918,23 @@
       "slug": "hartemyaakoub-seo-toolkit",
       "platform": "github",
       "source_url": "https://github.com/hartemyaakoub/seo-toolkit",
-      "source_version": "HEAD",
-      "content_hash": "04f8067e03f849d39e9c52baacb37957dcf9f589560ffbf405a4047f125c24be",
+      "source_version": "e1126c75",
+      "content_hash": "ecf4174a2c37867cb5ae7dbc64f3f3058135659066c0aae57923df8307fdcb5e",
       "dossier_path": "07_PROJECT_LEARNING/hartemyaakoub-seo-toolkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hartemyaakoub-seo-toolkit-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2668,
+          "title": "refresh TKAWEN ecosystem footer (2026-06-02)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T04:59:14.137Z",
+      "verified_at": "2026-10-19T16:12:04.409Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -89085,6 +89108,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T16:06:08.411Z"
+    },
+    "rule-2667": {
+      "learning_id": "rule-2667",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2667,
+      "title": "style: polish the demo visuals and sync the Calendar CSS excerpt",
+      "source_url": "https://github.com/guokaigdg/animal-island-ui",
+      "source_version": "279959f7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T16:12:01.624Z"
+    },
+    "rule-2668": {
+      "learning_id": "rule-2668",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2668,
+      "title": "refresh TKAWEN ecosystem footer (2026-06-02)",
+      "source_url": "https://github.com/hartemyaakoub/seo-toolkit",
+      "source_version": "e1126c75",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T16:12:04.409Z"
+    },
+    "rule-2669": {
+      "learning_id": "rule-2669",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2669,
+      "title": "ci(release): AST-186869 unblock release-docker-image under StepSecurity policy (",
+      "source_url": "https://github.com/Checkmarx/kics",
+      "source_version": "a1c1b947",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T16:12:10.599Z"
     }
   },
   "aliases": {

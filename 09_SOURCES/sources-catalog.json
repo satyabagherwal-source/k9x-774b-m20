@@ -1793,10 +1793,10 @@
     "repository": "hartemyaakoub/seo-toolkit",
     "platform": "github",
     "sourceUrl": "https://github.com/hartemyaakoub/seo-toolkit",
-    "sourceVersion": "HEAD",
-    "license": "Open-Source",
-    "contentHash": "04f8067e03f849d39e9c52baacb37957dcf9f589560ffbf405a4047f125c24be",
-    "lastHarvestedAt": "2026-10-18T04:59:14.219Z",
+    "sourceVersion": "e1126c75",
+    "license": "MIT",
+    "contentHash": "ecf4174a2c37867cb5ae7dbc64f3f3058135659066c0aae57923df8307fdcb5e",
+    "lastHarvestedAt": "2026-10-19T16:12:04.446Z",
     "learningId": "learn-github-hartemyaakoub-seo-toolkit"
   },
   "maatify-seo": {
@@ -5503,10 +5503,10 @@
     "repository": "Checkmarx/kics",
     "platform": "github",
     "sourceUrl": "https://github.com/Checkmarx/kics",
-    "sourceVersion": "d06cb647",
+    "sourceVersion": "a1c1b947",
     "license": "Apache-2.0",
-    "contentHash": "7ac9f43a3d021b86bb8bd19f1d7af19e9ca16d911e083e021c27dfe73a2a0a9c",
-    "lastHarvestedAt": "2026-10-19T03:53:50.635Z",
+    "contentHash": "93d09dc5b103e1a03c4057ca7bac5f709b42e293a0236207b2c18421c1ce448f",
+    "lastHarvestedAt": "2026-10-19T16:12:10.634Z",
     "learningId": "learn-github-checkmarx-kics"
   },
   "olric-data-olric": {
@@ -5983,10 +5983,10 @@
     "repository": "guokaigdg/animal-island-ui",
     "platform": "github",
     "sourceUrl": "https://github.com/guokaigdg/animal-island-ui",
-    "sourceVersion": "a412c55b",
+    "sourceVersion": "279959f7",
     "license": "MIT",
-    "contentHash": "d4f23b780bcaff0747c77d47d475b3afca296f4fe0e231e99e0123b2bcd87022",
-    "lastHarvestedAt": "2026-10-19T04:59:12.774Z",
+    "contentHash": "46170f398d1b1d9d51c47c9980b083462c6ece4aef1b42e6d730b0592ace59ea",
+    "lastHarvestedAt": "2026-10-19T16:12:01.663Z",
     "learningId": "learn-github-guokaigdg-animal-island-ui"
   },
   "nezhahq-nezha": {
@@ -8328,5 +8328,15 @@
     "contentHash": "86c34f09b6dafbe3072c1e86a7a5a6d44f1f9ece6ed890200b499a1cb4c04f32",
     "lastHarvestedAt": "2026-10-19T16:06:08.466Z",
     "learningId": "learn-github-leetcode-mafia-cheetah"
+  },
+  "jellyfin-swiftfin": {
+    "repository": "jellyfin/Swiftfin",
+    "platform": "github",
+    "sourceUrl": "https://github.com/jellyfin/Swiftfin",
+    "sourceVersion": "7a1994d6",
+    "license": "MPL-2.0",
+    "contentHash": "49342bdb098c3a93f4eaf1116aa8f42be6d8df3d60a7e6c1bc44b44ca33ad2e9",
+    "lastHarvestedAt": "2026-10-19T16:12:07.006Z",
+    "learningId": "learn-github-jellyfin-swiftfin"
   }
 }

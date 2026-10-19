@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md`  
+> **Source**: github ([https://github.com/jellyfin/Swiftfin](https://github.com/jellyfin/Swiftfin))  
+> **Source Version**: `7a1994d6`  
+> **License**: MPL-2.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T16:12:06.898Z  
+> **Learning ID**: `learn-github-jellyfin-swiftfin`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): jellyfin/Swiftfin
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/jellyfin/Swiftfin](https://github.com/jellyfin/Swiftfin))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T05:58:53.104Z  
+> **Harvest Timestamp**: 2026-10-19T16:12:06.894Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: Native Jellyfin Client for iOS and tvOS 
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4198 stars
+- **Stars / Engagement**: 4220 stars
 
 ---
 
@@ -675,7 +689,7 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
 
         if let nextItem {
             nextProvider = MediaPlayerItemProvider(item: nextItem) { [weak self] item, modifyItem in
-                let bitrate = await self?.manager?.playbackBitrate ?? Defaults[.VideoPlayer.Playback.appMaximumBitrate]
+                let bitrate = self?.manager?.playbackBitrate ?? Defaults[.VideoPlayer.Playback.appMaximumBitrate]
                 return try await MediaPlayerItem.build(for: item, requestedBitrate: bitrate) { item in
                     item.userData?.playbackPositionTicks = .zero
                     modifyItem?(&item)
@@ -685,7 +699,7 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
 
         if let previousItem {
             previousProvider = MediaPlayerItemProvider(item: previousItem) { [weak self] item, modifyItem in
-                let bitrate = await self?.manager?.playbackBitrate ?? Defaults[.VideoPlayer.Playback.appMaximumBitrate]
+                let bitrate = self?.manager?.playbackBitrate ?? Defaults[.VideoPlayer.Playback.appMaximumBitrate]
                 return try await MediaPlayerItem.build(for: item, requestedBitrate: bitrate) { item in
                     item.userData?.playbackPositionTicks = .zero
                     modifyItem?(&item)
@@ -747,10 +761,12 @@ extension EpisodeMediaPlayerQueue {
         }
 
         private func setSelectionIfNeeded(seasons: IdentifiedArrayOf<PagingLibraryViewModel<EpisodeLibrary>>) {
-            guard selection == nil, !seasons.isEmpty else { return }
-
-            selection = seasons.first?.id
-            seasons.first?.refresh()
+            if selection == nil || !seasons.contains(where: { $0.id == selection }) {
+                selection = seasons.first?.id
+            }
+            if let selection, let selectedSeason = seasons[id: selection], selectedSeason.state == .initial {
+                selectedSeason.refresh()
+            }
         }
 
         @ViewBuilder
@@ -797,9 +813,9 @@ extension EpisodeMediaPlayerQueue {
                 if viewModel.elements.isNotEmpty {
                     VideoPlayer.PosterCollectionView(
                         data: viewModel.elements,
-                        currentElementID: manager.item.id.map { .some($0) },
+                        currentElementID: viewModel.elements.first { $0.itemID == manager.item.id }?.id,
                         isCompact: viewState.isCompact,
-                        action: action
+                        action: { action($0.snapshot) }
                     ) { item in
                         VStack(alignment: .leading, spacing: 5) {
                             Text(item.displayTitle)
@@ -814,7 +830,7 @@ extension EpisodeMediaPlayerQueue {
                                     Text(subtitle)
                                 }
 
-                                if let runtime = item.runTimeLabel {
+                                if let runtime = item.snapshot.runTimeLabel {
                                     Text(runtime)
                                 }
                             }
@@ -841,17 +857,7 @@ extension EpisodeMediaPlayerQueue {
         }
 
         var tvOSView: some View {
-            content(errorView: SeasonErrorView(viewModel: viewModel))
-        }
-    }
-
-    private struct SeasonErrorView: View {
-
-        @FocusState
-        private var isRetryButtonFocused: Bool
-
-        @ObservedObject
-        var viewModel: PagingLibr
+            content(errorView: SeasonErrorView(viewM
 ```
 
 ### Core Architecture Module: `Shared/Objects/Utilities.swift`
@@ -902,265 +908,17 @@ func with<V>(_ value: V, modify: @escaping (inout V) -> Void) -> V {
 
 ```
 
-### Core Architecture Module: `Shared/Services/UserSession/UserSessionState.swift`
-```
-//
-// Swiftfin is subject to the terms of the Mozilla Public
-// License, v2.0. If a copy of the MPL was not distributed with this
-// file, you can obtain one at https://mozilla.org/MPL/2.0/.
-//
-// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
-//
-
-enum UserSessionState: RawRepresentable, Storable {
-
-    case signedOut
-    case signedIn(userID: String)
-
-    var rawValue: String {
-        switch self {
-        case .signedOut:
-            ""
-        case let .signedIn(userID):
-            userID
-        }
-    }
-
-    init?(rawValue: String) {
-        if rawValue.isEmpty {
-            self = .signedOut
-        } else {
-            self = .signedIn(userID: rawValue)
-        }
-    }
-}
-
-```
-
-### Core Architecture Module: `Shared/SwiftfinStore/SwiftfinStore+ServerState.swift`
-```
-//
-// Swiftfin is subject to the terms of the Mozilla Public
-// License, v2.0. If a copy of the MPL was not distributed with this
-// file, you can obtain one at https://mozilla.org/MPL/2.0/.
-//
-// Copyright (c) 2026 Jellyfin & Jellyfin Contributors
-//
-
-import CoreStore
-import FactoryKit
-import Foundation
-import JellyfinAPI
-import Pulse
-
-extension SwiftfinStore.State {
-
-    struct Server: Hashable, Identifiable, Codable {
-
-        @available(*, message: "Use connections instead")
-        let urls: Set<URL>
-        @available(*, message: "Use connections instead")
-        let currentURL: URL
-        let name: String
-        let id: String
-        let userIDs: [String]
-
-        /// - Note: Since this is created from a server, it does not
-        ///         have a user access token.
-        var client: JellyfinClient {
-            JellyfinClient(
-                configuration: .swiftfinConfiguration(url: effectiveServerURL),
-                sessionConfiguration: .swiftfin,
-                sessionDelegate: URLSessionProxyDelegate(logger: NetworkLogger.swiftfin())
-            )
-        }
-    }
-}
-
-extension ServerState {
-
-    var activeServerConnection: ServerConnection? {
-        get {
-            let connections = serverConnections
-            let activeConnectionID = StoredValues[.Server.activeConnectionID(id: id)]
-
-            if activeConnectionID.isNotEmpty,
-               let connection = connections.first(where: { $0.id == activeConnectionID })
-            {
-                return connection
-            }
-
-            let normalizedCurrentURL = currentURL.normalizedServerConnectionURL ?? currentURL
-            return connections.first { $0.url == normalizedCurrentURL } ?? connections.first
-        }
-        nonmutating set {
-            StoredValues[.Server.activeConnectionID(id: id)] = newValue?.id ?? .empty
-        }
-    }
-
-    /// Deletes the model that this state represents and
-    /// all settings from `StoredValues`.
-    func delete() throws {
-        let users = StoredValues[.User.users]
-            .filter { $0.serverID == id }
-
-        for user in users {
-            try AnyStoredData.deleteAll(ownerID: user.id)
-        }
-        try AnyStoredData.deleteAll(ownerID: id)
-        UserDefaults.userSuite(id: id).removeAll()
-
-        var storedUsers = StoredValues[.User.users]
-        storedUsers.removeAll { $0.serverID == id }
-        StoredValues[.User.users] = storedUsers
-
-        var servers = StoredValues[.Server.servers]
-        servers.removeAll { $0.id == id }
-        StoredValues[.Server.servers] = servers
-
-        for user in users {
-            UserDefaults.userSuite(id: user.id).removeAll()
-        }
-    }
-
-    var effectiveServerURL: URL {
-        activeServerConnection?.url ?? currentURL
-    }
-
-    func ensureServerConnections() -> [ServerConnection] {
-        let connections = StoredValues[.Server.connections(id: id)]
-        guard connections.isEmpty else { return ServerConnection.ordered(connections) }
-
-        let defaultConnections = defaultServerConnections
-        serverConnections = defaultConnections
-        return defaultConnections
-    }
-
-    func getPublicSystemInfo() async throws -> PublicSystemInfo {
-
-        let request = Paths.getPublicSystemInfo
-        let response = try await client.send(request)
-
-        return response.value
-    }
-
-    func hasServerConnection(url: URL) -> Bool {
-        let normalizedURL = url.normalizedServerConnectionURL ?? url
-        return serverConnections.contains { $0.url == normalizedURL }
-    }
-
-    var isAutoSwitchEnabled: Bool {
-        get {
-            StoredValues[.Server.isAutoSwitchEnabled(id: id)]
-        }
-        nonmutating set {
-            StoredValues[.Server.isAutoSwitchEnabled(id: id)] = newValue
-        }
-    }
-
-    var isVersionCompatible: Bool {
-        let publicInfo = StoredValues[.Server.publicInfo(id: self.id)]
-
-        if let version = publicInfo.version {
-            return JellyfinClient.Version(stringLiteral: version).majorMinor >= client.version.majorMinor
-        } else {
-            return false
-        }
-    }
-
-    var serverConnections: [ServerConnection] {
-        get {
-            let connections = StoredValues[.Server.connections(id: id)]
-
-            guard connections.isNotEmpty else {
-                return defaultServerConnections
-            }
-
-            return ServerConnection.ordered(connections)
-        }
-        nonmutating set {
-            StoredValues[.Server.connections(id: id)] = ServerConnection.ordered(newValue, preservingOrder: true)
-        }
-    }
-
-    var splashScreenImageSource: ImageSource {
-        ImageSource(url: client.url(with: Paths.getSplashscreen()))
-    }
-
-    private var defaultServerConnections: [ServerConnection] {
-        let urls = [currentURL] + self.urls
-            .subtracting([currentURL])
-            .sorted(using: \.absoluteString)
-
-        return urls.enumerated().map { index, url in
-            let normalizedURL = url.normalizedServerConnectionURL ?? url
-
-            return ServerConnection(
-                id: UUID().uuidString,
-                name: url == currentURL ? L10n.currentURL : normalizedURL.absoluteString,
-                url: normalizedURL,
-                interface: .any,
-                priority: index
-            )
-        }
-    }
-
-    @MainActor
-    func updateServerInfo() async throws {
-        let servers = StoredValues[.Server.servers]
-        guard let currentServer = servers.first(where: { $0.id == id }) else { return }
-
-        let publicInfo = try await getPublicSystemInfo()
-        let updatedName = publicInfo.serverName ?? currentServer.name
-
-        let updatedServer = ServerState(
-            urls: currentServer.urls,
-            currentURL: currentServer.currentURL,
-            name: updatedName,
-            id: currentServer.id,
-            userIDs: currentServer.userIDs
-        )
-
-        StoredValues[.Server.servers] = servers.map { $0.id == id ? updatedServer : $0 }
-        StoredValues[.Server.publicInfo(id: currentServer.id)] = publicInfo
-    }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2352** (2026-10-02): **Update Jellyfin SDK**
-  *Symptoms*: Update sdk to 3.3.0.
+- **Issue #2372** (2026-10-10): **Keep mpv audio when Live TV reports an unknown audio index**
+  *Symptoms*: ### Summary  M3U Live TV channels play without sound in the mpv player. VLC is fine.  The server reports the audio stream of these channels with index `-1`. The mpv proxy treats `-1` as "disable audio", so it turns off the track mpv already picked.  ### Changes  `MPVMediaPlayerProxy.setAudioStream` now ignores a missing or negative index and keeps mpv's selection. `AVMediaPlayerProxy` already does the same. Audio can't be turned off from the UI, so nothing depends on the old behavior.  ### Testing  Tested on tvOS with an M3U channel (MPEG-TS, MP2 audio): audio plays now. Movies still pick their audio track as before.  <details> <summary>Log before the fix (temporary debug logging)</summary>  ``` load isLive=true transcoding=false container=ts selectedAudio=-1 serverAudio=[index=-1 codec=mp2] updateTracks [audio mpvID=1 codec=mp2 lang=deu selected=true] setTrack type=audio index=-1 disableTrack type=audio ○ Audio  --aid=1  --alang=deu  (mp2 2ch 48000 Hz 256 kbps) ```  </details> 
 
-- **Issue #2350** (2026-10-02): **Live TV does not transcode with Native Player on tvOS or iOS**
-  *Symptoms*: ### This issue respects the following points:  - [x] This is a **bug**, not a question or a configuration issue; Please visit our [forum or chat rooms](https://jellyfin.org/contact/) first to troubleshoot with volunteers, before creating a report. - [x] This issue is **not** already reported on [GitHub](https://github.com/jellyfin/Swiftfin/issues?q=is%3Aopen+is%3Aissue). - [x] I have read the [Common Issues](https://github.com/jellyfin/Swiftfin/blob/main/Documentation/common_issues.md) documentation and this issue was not mentioned there. - [x] I'm using an up to date version of Swiftfin; We generally do not support previous older versions. If possible, please update to the latest version before opening an issue. - [x] I agree to follow Jellyfin's [Code of Conduct](https://jellyfin.org/docs/general/community-standards.html#code-of-conduct).  ### Description of the bug  It appears that LiveTV with the Native player is not following the device profiles for direct play/transcoding.   When playing from LiveTV (MPEG2/AC-3/TS) from a Silicon Dust HDHR4-2US, Jellyfin does not transcode the video, but transcodes the audio, AC-3->AAC. Swiftin Native player is unable to play the stream.  `Program 1    Stream #0:0[0x31]: Video: mpeg2video (Main) ([2][0][0][0] / 0x0002), yuv420p(tv, top first), 1920x1080 [SAR 1:1 DAR 16:9], 29.97 fps, 29.97 tbr, 90k tbn, start 30587.134333     Side data:       CPB properties: bitrate max/min/avg: 16619200/0/0 buffer size: 7995392 vbv_delay: N/A   Stream 
-  **Post-Mortem & Fix Analysis**:
-  > Should be resolved via:  https://github.com/jellyfin/Swiftfin/pull/2283  It says direct play but this is more calling live TV via HLS which resolves a lot of issues with AVPlayer and .ts.
-
-- **Issue #2348** (2026-10-01): **Fix tvOS build, fix user view text**
-  *Symptoms*: - Had merged #2326 on my phone and the actions were collapsed, thought the failing build was CodeFactor as tvOS built on my machine - Fix user view grid button style
-
-- **Issue #2339** (2026-09-28): **Fix tvOS `ListRow` Clipping**
-  *Symptoms*: ### Summary  Fixes weird clipping for Library List items. Just changing the location of the modifier. Zoom transition is unchanged for iOS. But we're just zooming to and from the image in the list row instead of the full row.  #### Before  <img width="396" height="143" alt="Screenshot 2026-09-27 at 18 52 44" src="https://github.com/user-attachments/assets/6090fc56-210c-43fd-839a-d4b18a257979" />  #### After  <img width="399" height="142" alt="Screenshot 2026-09-27 at 18 54 08" src="https://github.com/user-attachments/assets/492689b2-c320-4cba-b51a-8fcfec9f81b2" />
-  **Post-Mortem & Fix Analysis**:
-  > We may also want to remove the row divider on tvOS but I'll defer on that.
-
-- **Issue #2335** (2026-09-26): **Content group focus**
-  *Symptoms*: Closes #2234  Coordinate focus for content group states.
-
-- **Issue #2334** (2026-09-26): **Poster overlay indicator styling, accessibility**
-  *Symptoms*: - Poster overlay 	- Fix "rewatching" by showing progress even if marked as played 	- Adjust poster labels from circles to quadrant, generalizing the previous "episode count" design 		- Will go to circle/capsule design when poster has progress 	- Have overlay runtime in capsule instead of plain text - Poster settings 	- Allow selection of variety of item metadata in poster label 		- Does re-require requesting more item fields, should be fine. Would also be greatly aided with #2327. 	- As stored objects change over time, decoding to not broadly cause setting resets requires more manual work. Had implemented overall behavior as a macro, and finally made a macro for option sets while I'm at it. - Manual poster item accessibility for VoiceOver 	- A bit more intrusive than I wanted it to be 	- Closes #963, as that issue directly calls out poster data for VoiceOver. Overall, accessibility is improving and I'll take more specific issues going forward. - Episode cards 	- Closes #2158, now uses the same poster size resolution. This did cause an increase in requested size, can up if necessary. 	- Now have context menu
-
-- **Issue #2332** (2026-09-24): **Use product name**
-  *Symptoms*: Closes #2329  Use product name instead of target name.
-
-- **Issue #2331** (2026-09-24): **`ActivityLogs` `ignoreSafeArea`**
-  *Symptoms*: ### Summary  Same as https://github.com/jellyfin/Swiftfin/pull/2328 just adding `ignoreSafeArea` so the Activity Logs fill the the top safe area.  #### Before  <img width="360" height="320" alt="Before" src="https://github.com/user-attachments/assets/d1d2cdc4-7d3c-4851-a748-4f49bd7b74ce" />  #### After  <img width="355" height="305" alt="Screenshot 2026-09-23 at 21 59 18" src="https://github.com/user-attachments/assets/ef3aa118-0395-48db-8463-a6e568111cf4" />
+- **Issue #2370** (2026-10-17): **People Metadata Editing Fixes**
+  *Symptoms*: ### Summary  I noticed this on 1.6.1 & Main when looking at https://github.com/jellyfin/Swiftfin/pull/2327.  1. Excess padding for editing metadata components 2. People cannot be multi-selected for deletion 3. We were recreating the `ListRowCheckbox()` for `String`, `NameIDPair`, & `BaseItemDto` list rows so I've moved this over the existing element.  This also adds and editing > selection checkbox to the `PosterButton` in the top leading corner. For now, this is to mirror the selection action & checkbox for the list row. Later on, this makes sense for a `multi-select library items for playlist or queue` type action. Primarily, at this point, it's just parity but won't have any impact anywhere just yet so I would also be fine to pull it.  ### Before  https://github.com/user-attachments/assets/fb393b4a-94d6-4420-9a63-f37d434ca316  ### After  https://github.com/user-attachments/assets/7bf14838-da4f-41c8-a650-df18f6904b4f  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1177,751 +935,35 @@ extension ServerState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0a08af01` (2026-10-01)
-**Commit Message**: Fix tvOS build, fix user view text (#2348)
+### Incident Patch 1: `7a1994d6` (2026-10-19)
+**Commit Message**: Translated using Weblate (Korean)
 
-**File**: `Shared/Objects/Libraries/UserViewLibrary.swift` (modified, +3/-0)
-```diff
-@@ -202,6 +202,7 @@ private struct UserViewLibraryGridElement: View {
-                 .posterStyle(.landscape)
-                 .matchedTransitionSource(id: "item", in: namespace)
-         }
-+        .foregroundStyle(.primary, .secondary)
-         .onFirstAppear(perform: setImageSources)
-         .onChange(of: useRandomImage) {
-             setImageSources()
-@@ -219,6 +220,7 @@ private struct UserViewLibraryGridElement: View {
-             .frame(alignment: .center)
-     }
- 
-+    @ViewBuilder
-     private func titleLabelOverlay(with content: some View) -> some View {
-         ZStack {
-             content
-@@ -277,6 +279,7 @@ private struct UserViewLibraryListElement: View {
-         }
-     }
- 
-+    @ViewBuilder
-     private var imageView: some View {
-         ZStack {
-             Color.secondarySystemFill
-```
+Currently translated at 99.7% (971 of 973 strings)
 
-**File**: `Shared/Views/VideoPlayer/Container/VideoPlayer+Supplements.swift` (modified, +0/-1)
-```diff
-@@ -153,7 +153,6 @@ extension VideoPlayer.UIContainerViewController {
- 
-                     SupplementTabView(
-                         data: viewState.supplements,
--                        // UIKit callbacks must read the latest selection, even before SwiftUI renders again.
-                         selection: Binding(
-                             get: { viewState.selectedSupplementID },
-                             set: { viewState.selectedSupplementID = $0 }
-```
+Translation: Swiftfin/Swiftfin
+Translate-URL: https://translate.jellyfin.org/projects/swiftfin/swiftfin/ko/
 
-**File**: `Swiftfin tvOS/Views/VideoPlayer/SupplementTabView.swift` (modified, +13/-5)
-```diff
-@@ -12,11 +12,19 @@ import UIKit
- /// `TabView` acts weird with horizontal stacks, workaround with manual supplement presentation
- struct SupplementTabView<Content: View>: PlatformViewControllerRepresentable {
- 
--    let data: [any MediaPlayerSupplement]
--    let selection: Binding<String?>
--
--    @ViewBuilder
--    let content: (any MediaPlayerSupplement) -> Content
-+    private let content: (any MediaPlayerSupplement) -> Content
-+    private let data: [any MediaPlayerSupplement]
-+    private let selection: Binding<String?>
-+
-+    init(
-+        data: [any MediaPlayerSupplement],
-+        selection: Binding<String?>,
-+        @ViewBuilder content: @escaping (any MediaPlayerSupplement) -> Content
-+    ) {
-+        self.data = data
-+        self.selection = selection
-+        self.content = content
-+    }
- 
-     private var selectionPresented: (String) -> Void = { _ in }
-     private var focusExitHeading: UIFocusHeading = []
-```
+
 
 ---
 
-### Incident Patch 2: `cdda8e64` (2026-09-28)
-**Commit Message**: Fix tvOS `ListRow` Clipping (#2339)
+### Incident Patch 2: `a5952a6f` (2026-10-19)
+**Commit Message**: Translated using Weblate (Korean)
 
-Co-authored-by: Ethan Pippin <[REDACTED_EMAIL]>
+Currently translated at 99.7% (971 of 973 strings)
 
-**File**: `Shared/Components/ListRow.swift` (modified, +11/-44)
-```diff
-@@ -17,9 +17,6 @@ struct ListRow<Leading: View, Content: View>: View {
-     @ViewContextContains(.isListRowSeparatorVisible)
-     private var isListRowSeparatorVisible
- 
--    @FocusState
--    private var isButtonFocused
--
-     @State
-     private var contentSize: CGSize = .zero
- 
-@@ -28,16 +25,16 @@ struct ListRow<Leading: View, Content: View>: View {
-     private var insets: EdgeInsets
-     private let leading: Leading
- 
--    private init(
--        leading: Leading,
--        content: Content,
--        action: @escaping () -> Void,
--        insets: EdgeInsets
-+    init(
-+        insets: EdgeInsets = .zero,
-+        @ViewBuilder leading: @escaping () -> Leading,
-+        @ViewBuilder content: @escaping () -> Content,
-+        action: @escaping () -> Void = {}
-     ) {
--        self.leading = leading
--        self.content = content
-         self.action = action
-+        self.content = content()
-         self.insets = insets
-+        self.leading = leading()
-     }
- 
-     var body: some View {
-@@ -55,48 +52,18 @@ struct ListRow<Leading: View, Content: View>: View {
-                 .padding(insets)
-             }
-             .foregroundStyle(.primary, .secondary)
--            .focused($isButtonFocused)
-+            .contentShape(.contextMenuPreview, Rectangle())
-             #if os(tvOS)
-             .buttonStyle(.card)
--            #else
--            .contentShape(.contextMenuPreview, Rectangle())
-             #endif
- 
--            if isListRowSeparatorVisible, !isButtonFocused {
-+            #if !os(tvOS)
-+            if isListRowSeparatorVisible {
-                 Color.secondarySystemFill
-                     .frame(width: contentSize.width, height: 1)
-                     .padding(.trailing, insets.trailing)
-             }
-+            #endif
-         }
-     }
- }
--
--extension ListRow {
--
--    init(
--        insets: EdgeInsets = .zero,
--        @ViewBuilder leading: @escaping () -> Leading,
--        @ViewBuilder content: @escaping () -> Content
--    ) {
--        self.init(
--            insets: insets,
--            leading: leading,
--            content: content,
--            action: {}
--        )
--    }
--
--    init(
--        insets: EdgeInsets = .zero,
--        @ViewBuilder leading: @escaping () -> Leading,
--        @ViewBuilder content: @escaping () -> Content,
--        action: @escaping () -> Void
--    ) {
--        self.init(
--            leading: leading(),
--            content: content(),
--            action: action,
--            insets: insets
--        )
--    }
--}
-```
+Translation: Swiftfin/Swiftfin
+Translate-URL: https://translate.jellyfin.org/projects/swiftfin/swiftfin/ko/
 
-**File**: `Shared/Extensions/JellyfinAPI/BaseItemDto+LibraryElement.swift` (modified, +2/-0)
-```diff
-@@ -128,7 +128,9 @@ private struct BaseItemDtoLibraryListElement: View {
-         } action: {
-             item.libraryDidSelectElement(router: router, in: namespace)
-         }
-+        #if !os(tvOS)
-         .matchedTransitionSource(id: "item", in: namespace)
-+        #endif
-         #if os(tvOS)
-         .focusedValue(\.focusedPoster, AnyPoster(item))
-         #endif
-```
 
-**File**: `Shared/Objects/Libraries/UserViewLibrary.swift` (modified, +2/-0)
-```diff
-@@ -268,7 +268,9 @@ private struct UserViewLibraryListElement: View {
-         } action: {
-             element.libraryDidSelectElement(router: router, in: namespace)
-         }
-+        #if !os(tvOS)
-         .matchedTransitionSource(id: "item", in: namespace)
-+        #endif
-         .onFirstAppear(perform: setImageSources)
-         .onChange(of: useRandomImage) {
-             setImageSources()
-```
-
----
-
-### Incident Patch 3: `6152a329` (2026-09-27)
-**Commit Message**: SwiftUI font cleanup, rows frame, warnings (#2337)
-
-**File**: `PreferencesView/Sources/PreferencesView/UIViewController+Swizzling.swift` (modified, +1/-1)
-```diff
-@@ -12,7 +12,7 @@ extension UIViewController {
- 
-     // MARK: Swizzle
- 
--    static var swizzle = {
-+    static var swizzle: Void = {
-         #if os(iOS)
-         _swizzle(
-             #selector(getter: supportedInterfaceOrientations),
-```
-
-**File**: `PreferencesView/Sources/PreferencesView/ViewExtensions.swift` (modified, +1/-1)
-```diff
-@@ -9,7 +9,7 @@
- import SwiftfinMacros
- import SwiftUI
- 
--extension UIInterfaceOrientationMask: CustomDebugStringConvertible {
-+extension UIInterfaceOrientationMask: @retroactive CustomDebugStringConvertible {
-     public var debugDescription: String {
-         switch self {
-         case .all: "All Orientations"
-```
-
-**File**: `Shared/Components/ChevronButton.swift` (modified, +1/-2)
-```diff
-@@ -216,8 +216,7 @@ struct ChevronButtonValueContent<Label: View, Value: View>: View {
- 
-             label
-                 .labelStyle(BoldIconLabelStyle())
--
--            Spacer()
-+                .frame(maxWidth: .infinity, alignment: .leading)
- 
-             value
-                 .foregroundStyle(.secondary)
-```
-
-**File**: `Shared/Components/EPG/Body/Components/EPGChannelColumn.swift` (modified, +2/-1)
-```diff
-@@ -38,7 +38,8 @@ struct EPGChannelColumn: View {
-                         )
-                     } label: {
-                         Text(L10n.onNow)
--                            .font(.caption2.weight(.semibold))
-+                            .font(.caption2)
-+                            .fontWeight(.semibold)
-                             .lineLimit(1)
-                             .padding(.horizontal, 8)
-                             .padding(.vertical, 4)
-```
-
-**File**: `Shared/Components/EPG/Body/EPGTimeRuler.swift` (modified, +2/-1)
-```diff
-@@ -50,7 +50,8 @@ struct EPGTimeRuler: View {
-                 ? date.formatted(.dateTime.weekday(.abbreviated).month(.abbreviated).day())
-                 : date.formatted(date: .omitted, time: .shortened)
-         )
--        .font(.caption2.weight(.semibold))
-+        .font(.caption2)
-+        .fontWeight(.semibold)
-         .foregroundStyle(isDayStart ? Color.primary : Color.secondary)
-         .lineLimit(1)
-         .padding(.leading, 4)
-```
-
-**File**: `Shared/Components/PosterIndicators/UnplayedIndicator.swift` (modified, +2/-1)
-```diff
-@@ -21,7 +21,8 @@ struct UnplayedIndicator: View {
-             Quadrant(.topTrailing) {
-                 QuadrantItem(color: accentColor) {
-                     Text(count.description)
--                        .font(.body.weight(.semibold))
-+                        .font(.body)
-+                        .fontWeight(.semibold)
-                 }
-             }
-             .accessibilityElement(children: .ignore)
-```
-
-**File**: `Shared/Components/SystemImageContentView.swift` (modified, +1/-1)
-```diff
-@@ -67,7 +67,7 @@ struct SystemImageContentView: View {
-             Image(systemName: systemName ?? "circle")
-                 .resizable()
-                 .aspectRatio(contentMode: .fit)
--                .foregroundColor(.secondary)
-+                .foregroundStyle(.secondary)
-         }
-     }
- }
-```
-
-**File**: `Shared/Components/UserProfileRow.swift` (modified, +4/-4)
-```diff
-@@ -46,13 +46,13 @@ extension SettingsView {
-                     Text(user.name ?? L10n.unknown)
-                         .fontWeight(.semibold)
-                         .foregroundStyle(.primary)
--
--                    Spacer()
-+                        .frame(maxWidth: .infinity, alignment: .leading)
- 
-                     if action != nil {
-                         Image(systemName: "chevron.right")
--                            .font(.body.weight(.regular))
--                            .foregroundColor(.secondary)
-+                            .font(.body)
-+                            .fontWeight(.regular)
-+                            .foregroundStyle(.secondary)
-                     }
-                 }
-             }
-```
-
----
-
-### Incident Patch 4: `14fe5b8e` (2026-09-23)
-**Commit Message**: Revert #2313 & Real Spacing Fix (#2325)
-
-Co-authored-by: Ethan Pippin <[REDACTED_EMAIL]>
-
-**File**: `Shared/Components/LibraryElement.swift` (modified, +25/-42)
-```diff
-@@ -72,27 +72,23 @@ extension LibraryElement {
-         let libraryStyle = options.normalized(libraryStyle)
- 
-         #if os(iOS)
--        let gridLayout: CollectionVGridLayout = {
--            switch libraryStyle.posterDisplayType {
--            case .landscape:
--                .minWidth(220, insets: insets)
--            case .portrait, .square:
--                .minWidth(140, insets: insets)
--            }
--        }()
--
--        let phoneGridLayout: CollectionVGridLayout = {
--            switch libraryStyle.posterDisplayType {
--            case .landscape:
--                .columns(2, insets: insets)
--            case .portrait, .square:
--                .columns(3, insets: insets)
--            }
--        }()
--
-         switch libraryStyle.displayType {
-         case .grid:
--            return UIDevice.isPhone ? phoneGridLayout : gridLayout
-+            if UIDevice.isPhone {
-+                return .columns(
-+                    libraryStyle.posterDisplayType == .landscape ? 2 : 3,
-+                    insets: insets,
-+                    itemSpacing: EdgeInsets.itemSpacing,
-+                    lineSpacing: EdgeInsets.itemSpacing
-+                )
-+            }
-+
-+            return .minWidth(
-+                libraryStyle.posterDisplayType == .landscape ? 220 : 140,
-+                insets: insets,
-+                itemSpacing: EdgeInsets.itemSpacing,
-+                lineSpacing: EdgeInsets.itemSpacing
-+            )
-         case .list:
-             return .columns(
-                 libraryStyle.listColumnCount,
-@@ -102,32 +98,19 @@ extension LibraryElement {
-             )
-         }
-         #else
--        switch libraryStyle.displayType {
-+        let columnCount = switch libraryStyle.displayType {
-         case .grid:
--            switch libraryStyle.posterDisplayType {
--            case .landscape:
--                return .columns(
--                    4,
--                    insets: .init(vertical: 0, horizontal: EdgeInsets.edgePadding),
--                    itemSpacing: EdgeInsets.edgePadding,
--                    lineSpacing: EdgeInsets.edgePadding
--                )
--            case .portrait, .square:
--                return .columns(
--                    7,
--                    insets: .init(vertical: 0, horizontal: EdgeInsets.edgePadding),
--                    itemSpacing: EdgeInsets.edgePadding,
--                    lineSpacing: EdgeInsets.edgePadding
--                )
--            }
-+            libraryStyle.posterDisplayType == .landscape ? 4 : 7
-         case .list:
--            return .columns(
--                libraryStyle.listColumnCount,
--                insets: .init(vertical: 0, horizontal: EdgeInsets.edgePadding),
--                itemSpacing: EdgeInsets.edgePadding,
--                lineSpacing: EdgeInsets.edgePadding
--            )
-+            libraryStyle.listColumnCount
-         }
-+
-+        return .columns(
-+            columnCount,
-+            insets: .init(vertical: 0, horizontal: EdgeInsets.edgePadding),
-+            itemSpacing: EdgeInsets.itemSpacing,
-+            lineSpacing: EdgeInsets.itemSpacing
-+        )
-         #endif
-     }
- }
-```
-
-**File**: `Shared/Components/PosterButton.swift` (modified, +7/-4)
-```diff
-@@ -53,11 +53,10 @@ struct PosterButton<Item: Poster>: View {
-         PosterImage(
-             item: item,
-             type: displayType,
--            size: size,
--            contentMode: .fit
-+            size: size
-         )
-         .frame(maxWidth: .infinity, maxHeight: .infinity)
--        .overlay { overlay.posterStyle(displayType, contentMode: .fit) }
-+        .overlay { overlay.posterStyle(displayType) }
-         .contentShape(.contextMenuPreview, Rectangle())
-         .matchedTransitionSource(id: "item", in: namespace)
-         .subtleShadow()
-@@ -83,14 +82,15 @@ struct PosterButton<Item: Poster>: View {
-             // Layout required for tvOS focused offset label behavior
-             #if os(tvOS)
-             posterImage(overlay: item.posterOverlay(for: displayType))
-+                .posterAspectRatio(displayType, contentMode: .fit)
-+                .frame(width: posterSize.width > 0 ? posterSize.width : nil)
- 
-             if posterConfiguration.showLabels {
-                 item.posterLabel
-                     .frame(maxWidth: .infinity, alignment: .leading)
-             }
-             #else
-             buttonLabel(overlay: item.posterOverlay(for: displayType))
--                .trackingSize($posterSize)
-             #endif
-         }
-         .environment(\.posterDisplayType, displayType)
-@@ -99,7 +99,10 @@ struct PosterButton<Item: Poster>: View {
-         .buttonBorderShape(.roundedRectangle)
-         #if os(tvOS)
-         .focusedValue(\.focusedPoster, AnyPoster(item))
-+        .frame(maxWidth: .infinity, alignment: .leading)
-+        .ignoresSafeArea()
-         #endif
-+        .trackingSize($posterSize)
-         .posterContextMenu(for: item) {
-             contextMenuPreview
-                 .withViewContext(viewContext)
-```
-
-**File**: `Shared/Components/PosterHStack.swift` (modified, +2/-21)
-```diff
-@@ -9,17 +9,6 @@
- import CollectionHStack
- import SwiftUI
- 
--enum PosterHStackMetrics {
--
--    static let itemSpacing: CGFloat = {
--        #if os(tvOS)
--        40
--        #else
--        EdgeInsets.edgePadding / 2
--        #endif
--    }()
--}
--
- struct PosterHStack<
-     Data: Collection
- >: View where Data.Element: Poster, Data.Index == Int {
-@@ -80,14 +69,6 @@ struct PosterHStack<
-         #endif
-     }
- 
--    private var horizontalInset: CGFloat {
--        #if os(tvOS)
--        60
--        #else
--        EdgeInsets.edgePadding
--        #endif
--    }
--
-     var body: some View {
-         CollectionHStack(
-             uniqueElements: elements,
-@@ -102,8 +83,8 @@ struct PosterHStack<
-             }
-         }
-         .clipsToBounds(false)
--        .insets(horizontal: horizontalInset)
--        .itemSpacing(PosterHStackMetrics.itemSpacing)
-+        .insets(horizontal: EdgeInsets.edgePadding)
-+        .itemSpacing(EdgeInsets.itemSpacing)
-         .scrollBehavior(.continuousLeadingEdge)
-         .withViewContext(.isThumb)
-     }
-```
-
-**File**: `Shared/Components/PosterIndicators/UnplayedIndicator.swift` (modified, +12/-12)
-```diff
-@@ -17,25 +17,25 @@ struct UnplayedIndicator: View {
-     let count: Int?
- 
-     var body: some View {
--        AlternateLayoutView(alignment: .topTrailing) {
--            Color.clear
--                .aspectRatio(1, contentMode: .fit)
--        } content: { (size: CGSize) in
--            if let count, count > 0 {
-+        if let count, count > 0 {
-+            ZStack {
-+                Color.clear
-+                    .aspectRatio(1, contentMode: .fit)
-+
-                 Text(count.description)
-                     .fontWeight(.semibold)
-                     .foregroundStyle(accentColor.overlayColor)
-                     .padding(.horizontal, UIDevice.isTV ? 8 : 4)
-                     .fixedSize()
--                    .frame(minWidth: size.width, minHeight: size.height)
--                    .background {
--                        UnevenRoundedRectangle(bottomLeadingRadius: UIDevice.isTV ? 18 : 6)
--                            .fill(accentColor)
--                    }
--            } else {
--                Q3RightTriangle()
-+            }
-+            .background {
-+                UnevenRoundedRectangle(bottomLeadingRadius: UIDevice.isTV ? 18 : 6)
-                     .fill(accentColor)
-             }
-+        } else {
-+            Q3RightTriangle()
-+                .fill(accentColor)
-+                .aspectRatio(1, contentMode: .fit)
-         }
-     }
- }
-```
-
-**File**: `Shared/Extensions/EdgeInsets.swift` (modified, +9/-0)
-```diff
-@@ -36,6 +36,15 @@ extension EdgeInsets {
- 
-     static let edgeInsets: EdgeInsets = .init(edgePadding)
- 
-+    /// The gap between collection items and rows, independent of content insets.
-+    static let itemSpacing: CGFloat = {
-+        #if os(tvOS)
-+        40
-+        #else
-+        10
-+        #endif
-+    }()
-+
-     init(_ constant: CGFloat) {
-         self.init(top: constant, leading: constant, bottom: constant, trailing: constant)
-     }
-```
-
-**File**: `Shared/Objects/ContentGroup/PillGroup.swift` (modified, +1/-1)
-```diff
-@@ -52,7 +52,7 @@ struct PillGroup<Element: Displayable>: ContentGroup {
-         var body: some View {
-             ContentGroupSection {
-                 ScrollView(.horizontal) {
--                    HStack(spacing: PosterHStackMetrics.itemSpacing) {
-+                    HStack(spacing: EdgeInsets.itemSpacing) {
-                         ForEach(elements) { element in
-                             Button {
-                                 action(router, element)
-```
-
-**File**: `Shared/Objects/ContentGroup/SeriesEpisodeContentGroup/SeriesEpisodeContentGroup+EpisodeCard.swift` (modified, +4/-2)
-```diff
-@@ -82,7 +82,7 @@ extension SeriesEpisodeContentGroup {
-                     overlayView
-                 }
-                 .contentShape(.contextMenuPreview, Rectangle())
--                .posterStyle(.landscape, contentMode: .fit)
-+                .posterStyle(.landscape)
-                 .subtleShadow()
-                 .matchedTransitionSource(id: "item", in: namespace)
-             }
-@@ -114,7 +114,7 @@ extension SeriesEpisodeContentGroup {
-                                 .foregroundStyle(.secondary)
-                         }
-                     }
--                    .posterStyle(.landscape, contentMode: .fit)
-+                    .posterStyle(.landscape)
-                     #if os(tvOS)
-                     .posterCornerRadius(.landscape)
-                     #endif
-@@ -180,6 +180,7 @@ extension SeriesEpisodeContentGroup {
-         var body: some View {
-             VStack(alignment: .leading) {
-                 artworkButton
-+                    .posterAspectRatio(.landscape, contentMode: .fit)
- 
-                 Button(action: contentAction) {
-                     EpisodeMetadataView(
-@@ -205,6 +206,7 @@ extension SeriesEpisodeContentGroup {
-                 .artwork,
-                 priority: .userInitiated
-             )
-+            .frame(maxHeight: .infinity, alignment: .top)
-         }
-     }
- 
-```
-
-**File**: `Shared/Objects/ContentGroup/SeriesEpisodeContentGroup/SeriesEpisodeContentGroup+EpisodeCollection.swift` (modified, +4/-9)
-```diff
-@@ -167,14 +167,6 @@ extension SeriesEpisodeContentGroup {
-             #endif
-         }
- 
--        private static var itemSpacing: CGFloat {
--            #if os(tvOS)
--            40
--            #else
--            EdgeInsets.edgePadding / 2
--            #endif
--        }
--
-         var body: some View {
-             ContentGroupSection {
-                 CollectionHStack(
-@@ -183,11 +175,14 @@ extension SeriesEpisodeContentGroup {
-                 ) { element in
-                     content(element)
-                         .focused($focusedElement, equals: element.id)
-+                        #if os(tvOS)
-+                        .ignoresSafeArea()
-+                        #endif
-                 }
-                 .initialElement(id: preferredElementID)
-                 .clipsToBounds(false)
-                 .insets(horizontal: EdgeInsets.edgePadding)
--                .itemSpacing(Self.itemSpacing)
-+                .itemSpacing(EdgeInsets.itemSpacing)
-                 .scrollBehavior(.continuousLeadingEdge)
-                 .focusSection()
-                 .focused($focusedSection, equals: .episodes)
-```
-
----
-
-### Incident Patch 5: `800d1085` (2026-09-17)
-**Commit Message**: Pin CoreStore, MPVUI, MediaAccessibilityKit (#2302)
-
-**File**: `Swiftfin.xcodeproj/project.pbxproj` (modified, +6/-6)
-```diff
-@@ -1247,8 +1247,8 @@
- 			isa = XCRemoteSwiftPackageReference;
- 			repositoryURL = "https://github.com/JohnEstropia/CoreStore.git";
- 			requirement = {
--				kind = upToNextMajorVersion;
--				minimumVersion = 9.0.0;
-+				kind = exactVersion;
-+				version = 9.2.0;
- 			};
- 		};
- 		E13DD3D127168E65009D4DAF /* XCRemoteSwiftPackageReference "Defaults" */ = {
-@@ -1327,16 +1327,16 @@
- 			isa = XCRemoteSwiftPackageReference;
- 			repositoryURL = "https://github.com/LePips/MPVUI";
- 			requirement = {
--				kind = upToNextMajorVersion;
--				minimumVersion = 0.1.1;
-+				kind = exactVersion;
-+				version = 0.1.1;
- 			};
- 		};
- 		E19005020000000000000005 /* XCRemoteSwiftPackageReference "MediaAccessibilityKit" */ = {
- 			isa = XCRemoteSwiftPackageReference;
- 			repositoryURL = "https://github.com/LePips/MediaAccessibilityKit";
- 			requirement = {
--				kind = upToNextMajorVersion;
--				minimumVersion = 0.1.0;
-+				kind = exactVersion;
-+				version = 0.1.0;
- 			};
- 		};
- 		E192608128D2D0DB002314B4 /* XCRemoteSwiftPackageReference "Factory" */ = {
-```
-
-**File**: `Swiftfin.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` (modified, +2/-2)
-```diff
-@@ -42,8 +42,8 @@
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/JohnEstropia/CoreStore.git",
-       "state" : {
--        "revision" : "5a0d27cf343c6e341b0ef3c8d36104770b27a839",
--        "version" : "9.3.0"
-+        "revision" : "4b6d9a54e75d2c9fd2c3c768f7d4aa3175c09133",
-+        "version" : "9.2.0"
-       }
-     },
-     {
-```
-
----
-
-### Incident Patch 6: `83ab4365` (2026-09-16)
-**Commit Message**: fix(player): show audio and subtitle tracks during Live TV (#2298)
-
-**File**: `Shared/Views/VideoPlayer/Components/Toolbar/ActionButtons/VideoPlayer+ActionButtons.swift` (modified, +0/-2)
-```diff
-@@ -46,11 +46,9 @@ extension VideoPlayer.PlaybackControls.Toolbar {
-             }
- 
-             if manager.item.isLiveStream {
--                filteredButtons.removeAll { $0 == .audio }
-                 filteredButtons.removeAll { $0 == .autoPlay }
-                 filteredButtons.removeAll { $0 == .playbackSpeed }
-                 filteredButtons.removeAll { $0 == .playbackSettings }
--                filteredButtons.removeAll { $0 == .subtitles }
-             }
- 
-             return filteredButtons
-```
 
 #### Recent Merged Pull Requests:
-- **PR #2357** (2026-10-05): Add SwiftFormat rules (@LePips)
-- **PR #2356** (2026-10-04): Video pinch zoom (@LePips)
-- **PR #2352** (2026-10-02): Update Jellyfin SDK (@LePips)
-- **PR #2349** (2026-10-02): Skip CI on translations, cancel concurrent jobs (@LePips)
-- **PR #2348** (2026-10-01): Fix tvOS build, fix user view text (@LePips)
-- **PR #2347** (closed): Add next chapter button and skip intro prompt (@Kouzi99)
-- **PR #2341** (closed): Fix CJK subtitle rendering in VLC (@trulyspinach)
-- **PR #2340** (2026-09-29): tvOS App Icon Selection (@JPKribs)
+- **PR #2378** (closed): Run `swiftformat` (@LePips)
+- **PR #2377** (closed): Make iOS filter buttons meet the 44pt hit target (@objectiveSee)
+- **PR #2375** (closed): Show additional item metadata and ratings (@rhett-raleigh)
+- **PR #2374** (closed): TrueHD Atmos/DTS:X playback, with height channels, through APAC (@kristofferR)
+- **PR #2372** (2026-10-10): Keep mpv audio when Live TV reports an unknown audio index (@jingx23)
+- **PR #2371** (2026-10-17): Vertical episode list  (@VictoriaKGN)
 
 ---
 

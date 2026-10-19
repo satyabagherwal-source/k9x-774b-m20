@@ -3349,3 +3349,7 @@ Every entry in this ledger must capture:
 | `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `b55d9247` | Multi-dimensional audit evidence | 2026-10-19T15:59:43.204Z |
 | `learn-github-code-forge-io-seo-tools` | `https://github.com/code-forge-io/seo-tools` | `e1e672b3` | Multi-dimensional audit evidence | 2026-10-19T16:06:08.327Z |
 | `learn-github-leetcode-mafia-cheetah` | `https://github.com/leetcode-mafia/cheetah` | `e66db5be` | Multi-dimensional audit evidence | 2026-10-19T16:06:08.466Z |
+| `learn-github-guokaigdg-animal-island-ui` | `https://github.com/guokaigdg/animal-island-ui` | `279959f7` | Multi-dimensional audit evidence | 2026-10-19T16:12:01.663Z |
+| `learn-github-hartemyaakoub-seo-toolkit` | `https://github.com/hartemyaakoub/seo-toolkit` | `e1126c75` | Multi-dimensional audit evidence | 2026-10-19T16:12:04.446Z |
+| `learn-github-jellyfin-swiftfin` | `https://github.com/jellyfin/Swiftfin` | `7a1994d6` | Multi-dimensional audit evidence | 2026-10-19T16:12:07.006Z |
+| `learn-github-checkmarx-kics` | `https://github.com/Checkmarx/kics` | `a1c1b947` | Multi-dimensional audit evidence | 2026-10-19T16:12:10.634Z |

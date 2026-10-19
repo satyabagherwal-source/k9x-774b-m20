@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-SJJQ",
-    "timestamp": "2026-10-19T03:20:31.478Z",
-    "repository": "pingcap/talent-plan",
-    "learningId": "learn-github-pingcap-talent-plan",
-    "contentHash": "e092cb5bb7a0d5461cb1feafb2d53b42499f0d818036a85a0af2ef47bd2b784e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-0EUR",
-    "timestamp": "2026-10-19T03:26:38.643Z",
-    "repository": "Lightricks/LTX-2.5",
-    "learningId": "learn-huggingface-lightricks-ltx-2-5",
-    "contentHash": "3770482793cf60f5e7094b846bb06f78c294fadd7b7abf38aa4690bb6e7c7d35",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-0GD9",
-    "timestamp": "2026-10-19T03:26:40.605Z",
-    "repository": "transact-rs/sqlx",
-    "learningId": "learn-github-transact-rs-sqlx",
-    "contentHash": "794b270736a38bceaea1ff7a7fabda9834ffdb492a261a9f2cc82d9f578c34df",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-0GET",
-    "timestamp": "2026-10-19T03:26:40.661Z",
-    "repository": "bergside/typeui",
-    "learningId": "learn-github-bergside-typeui",
-    "contentHash": "3f474cc8771913b4f7e37a823018cae78576b419cb15dfc3fb3a883da85705dd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-0KI4",
     "timestamp": "2026-10-19T03:26:45.964Z",
     "repository": "czy0729/Bangumi",
@@ -7490,6 +7430,66 @@
     "repository": "leetcode-mafia/cheetah",
     "learningId": "learn-github-leetcode-mafia-cheetah",
     "contentHash": "86c34f09b6dafbe3072c1e86a7a5a6d44f1f9ece6ed890200b499a1cb4c04f32",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-CPA1",
+    "timestamp": "2026-10-19T16:12:01.657Z",
+    "repository": "guokaigdg/animal-island-ui",
+    "learningId": "learn-github-guokaigdg-animal-island-ui",
+    "contentHash": "46170f398d1b1d9d51c47c9980b083462c6ece4aef1b42e6d730b0592ace59ea",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-CRFG",
+    "timestamp": "2026-10-19T16:12:04.444Z",
+    "repository": "hartemyaakoub/seo-toolkit",
+    "learningId": "learn-github-hartemyaakoub-seo-toolkit",
+    "contentHash": "ecf4174a2c37867cb5ae7dbc64f3f3058135659066c0aae57923df8307fdcb5e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-CTEK",
+    "timestamp": "2026-10-19T16:12:07.004Z",
+    "repository": "jellyfin/Swiftfin",
+    "learningId": "learn-github-jellyfin-swiftfin",
+    "contentHash": "49342bdb098c3a93f4eaf1116aa8f42be6d8df3d60a7e6c1bc44b44ca33ad2e9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-CW7C",
+    "timestamp": "2026-10-19T16:12:10.632Z",
+    "repository": "Checkmarx/kics",
+    "learningId": "learn-github-checkmarx-kics",
+    "contentHash": "93d09dc5b103e1a03c4057ca7bac5f709b42e293a0236207b2c18421c1ce448f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

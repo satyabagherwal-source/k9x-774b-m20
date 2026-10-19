@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/guokaigdg-animal-island-ui-learnings.md`  
 > **Source**: github ([https://github.com/guokaigdg/animal-island-ui](https://github.com/guokaigdg/animal-island-ui))  
-> **Source Version**: `a412c55b`  
+> **Source Version**: `279959f7`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T04:59:12.450Z  
+> **Timestamp**: 2026-10-19T16:12:01.496Z  
 > **Learning ID**: `learn-github-guokaigdg-animal-island-ui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/guokaigdg-animal-island-ui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/guokaigdg/animal-island-ui](https://github.com/guokaigdg/animal-island-ui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T04:59:12.288Z  
+> **Harvest Timestamp**: 2026-10-19T16:12:00.668Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Kawaii React UI component library  一个可爱的 React UI  组件库
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 5023 stars
+- **Stars / Engagement**: 5026 stars
 
 ---
 
@@ -2242,14 +2242,16 @@ export default CardDemo;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #71** (2026-10-16): **feat(calendar): add a lightweight month calendar with events**
-  *Symptoms*: ## 做了什么  新增 `Calendar` 组件：独立、轻量的月历（不支持周 / 年面板），视觉沿用 DatePicker，日期运算使用 `dayjs`（见 [ADR 0005](https://github.com/guokaigdg/animal-island-ui/blob/main/docs/adr/0005-dayjs-as-the-date-layer.md)）。月份面板常驻 —— 它是一个日程视图，不是弹出式选择器。  对应 [discussion #38](https://github.com/guokaigdg/animal-island-ui/discussions/38) 里提到的日历 / 日程组件。  ## 范围：只做三件事  按需求，除月面板外只支持：  1. **月面板** —— 恒定补满的 6×7 网格、上/下月与上/下年切换、「今天」快捷按钮，roving tabindex 键盘支持（方向键 / Enter / Space / PageUp / PageDown）。 2. **事项通知** —— 声明式 `events`，支持同一天多条，以及跨日期连续条；跨天条在周边界处切断（永不换行），首段带 `HH:mm` 前缀、续接段只保留标题；同一天第 3 条起折叠为 `+N`，不撑高行高。 3. **跨日期时间** —— 一条 `CalendarEvent` 用 `start` + `end` 即可跨天、跨周画出连续条。  ## API  ```ts type CalendarColor = 'teal' | 'amber' | 'coral' | 'green' | 'purple';  interface CalendarEvent {     title: React.ReactNode;     start: string | Dayjs;              // YYYY-MM-DD，或 dayjs 对象     end?: string | Dayjs;               // 传入即渲染为跨天连续条     color?: CalendarColor;              // 默认 'teal'     showTime?: boolean;                 // 在首段展示起始 HH:mm }  interface CalendarProps {     value?: string;                     // 受控选中日期     defaultValue?: string;              // 非受控，默认今天     panelValue?: string;                // 受控展示月份，需配合 onPanelChange 回写     defaultPanelValue?: string;     onChange?: (date: string) => void;     onPanelChange?: (month: string) => void;     events?: CalendarEvent[];     showEventTime?: boolean;            // 默认 true     draggableEvents?: boolean;          // 拖拽跨日期创建事项     onEventCreate?: (start: string, end: st
+- **Issue #74** (2026-10-19): **feat(time): support dayjs formats and a zh-cn locale**
+  *Symptoms*: ## 改动内容与原因  `Time` 之前把星期和月份写死成英文数组，日期胶囊只能显示 `MONDAY · Jun 8`。本次改为走 dayjs 格式化，并内置中文语言包；默认渲染结果与双色胶囊的视觉完全不变。  ## API  ```ts export type TimeLocale = 'en' | 'zh-cn';  export interface TimeProps extends React.HTMLAttributes<HTMLDivElement> {     weekdayFormat?: string; // 默认 'dddd'     dateFormat?: string;    // 默认 'MMM D'；locale 为 'zh-cn' 时默认 'M月D日'     locale?: TimeLocale;    // 默认 'en' } ```  ```tsx <Time />                                              // MONDAY · Jun 8 <Time locale="zh-cn" />                               // 星期一 · 6月8日 <Time weekdayFormat="ddd" dateFormat="YYYY/MM/DD" />  // Mon · 2026/06/08 ```  这里用两个 format 而不是一个整行 `format`：胶囊里的星期和月日是两段独立样式（主色 800 字重 vs 次级色 700 字重），单个字符串会丢掉这个视觉分层。  ## 实现说明  - 格式支持 dayjs **核心 token**；插件 token 不会展开 —— 与 `DatePicker` 的契约保持一致。 - `zh-cn` 语言包内置在组件中：本包打包的 dayjs 实例拿不到宿主应用注册的 locale（见 ADR 0005），所以 `locale="zh-cn"` 开箱即用；语言数据在被使用前保持惰性。 - locale 模块以默认导入取到对象再传给 `.locale(...)`，而不是裸副作用导入 —— 包声明了 `sideEffects: false`，裸导入可能被消费者的打包器当成无副作用模块摇掉。已用一个临时 consumer 工程实际打包验证，语言数据确实保留在产物里。 - 不调用全局 `dayjs.locale()`，格式化都在实例副本上完成。 - `HH:MM` 时钟未改动（冒号闪烁依赖拆分后的结构）。  ## 文档与 Demo  Demo 增加了中文和自定义格式示例。`docs/design-system/components/feedback.md`（含 zh-CN 镜像）、skill 参考文档和 ADR 0005 已同步 —— ADR 0005 原先写着 `Time` 不引入 dayjs，已不再成立。  ## 自查清单  - [x] `npm run ci` 通过（format + docs 同步 + lint + typecheck + 单测 + a11y + build） - [x] 改动的英文文档已同步中文镜像 - [x] 新增 zh-cn、自定义 token、locale 与自定义格式组合的测试 - [x] 默认渲染不变（无破坏性变更）   <!-- This is an auto-generated comment: release notes by coderabbit.
   **Post-Mortem & Fix Analysis**:
-  > <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/guokaigdg/animal-island-ui/pull/71?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui-dark.svg?v=3"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3" alt="Review in Change Stack →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_start -->  No actionable comments were generated in the recent review. 🎉  <details> <summary><strong>ℹ️ Recent review info</strong></summary> <dl> <dd>  <details> <summary><strong>⚙️ Run configuration
-  > 另外有两件事同步一下：  1. **关于合并**：像 #70 那种改动面比较大、会牵动多个组件的 PR，就交给 @guokaigdg 你来合并；内容比较小或只涉及单个组件的，只要 CodeRabbit 没问题，我就直接合了。 2. **关于日历组件**：它比预想的复杂，我先落地了一个轻量版，后续按需优化升级 —— 比如给日历加背景、或者补一些功能性 API；有 bug 的话再单独提 `feat` / `fix`。 3. **关于提交历史**：日历这块前后调了好几轮，为了不脏 commit，我用了 squash 合并，收成一条 commit。 
+  > @coderabbitai review
+  > <!-- This is an auto-generated reply by CodeRabbit --> <!-- CodeRabbit review command invocation: v2:a21827b3f82e6d1d4817b86710740d951e00fe7e6b62470211bb492cd59817de --> <details> <summary>✅ Action performed</summary>  Review finished.  > Note: CodeRabbit is an incremental review system and does not re-review already reviewed commits. This command is applicable only when automatic reviews are paused.  </details>
 
-- **Issue #70** (2026-10-15): **chore(deps): 引入 dayjs 作为日期层（方案 A）**
-  *Symptoms*: ## 这个 PR 做了什么  按 [issue #69](https://github.com/guokaigdg/animal-island-ui/issues/69) 里确认的**方案 A**：把 `dayjs` 加进 `dependencies`，并把现有手写的日期逻辑迁到它上面。  ## 依赖引入方式  `dayjs` 加进 `dependencies`，但**不**进入 `vite.config.ts` 的 `external` 列表 —— 它被内联打包，构建后是单份共享：  ``` dist/es/node_modules/dayjs/dayjs.min.js        11.8 kB │ gzip: 3.6 kB dist/es/node_modules/dayjs/plugin/customParseFormat.js ```  `DatePicker` 与 `Countdown` 都 import 同一份（`dist/es/_virtual/dayjs.min.js` 只是个 re-export 垫片）。同时 `preserveModules` 仍能让「一个日期组件都没用」的消费者把它完全摇掉。  **注意这不是进程内唯一实例**：宿主应用若自己 import 了 `dayjs`，会加载出一份互相独立的副本，二者的 locale 状态与插件注册互不相通 —— 也就是说宿主调 `dayjs.locale('zh-cn')` **不会**影响 `DatePicker` 的输出。这一点已写进 ADR 与 build-and-release（CodeRabbit 的评审意见 #1）。  ## 源码改动  **`DatePicker`** — 删掉私有工具函数，内部改用 `Dayjs`（此前是原生 `Date`）：  | 改动前 | 改动后 | | --- | --- | | 正则解析 `YYYY-MM-DD` + `Number(match[2]) > 12` 校验 | `dayjs(value, [...], true)` 严格解析 | | `new Date(y, m+1, 0).getDate()` 推算月长、六行网格 | `startOf('month')` + `subtract(day)` + `add(i, 'day')` | | `getFullYear/getMonth/getDate` 三字段比相等 | `isSame(a, b, 'day' / 'month')` | | 链式 `String.replace` 实现 `format` | `date.format(format)` | | `new Date(y, m + delta, 1)` 翻页 | `add(delta, 'month')` |  **公开 API 与行为完全不变**：值仍是纯 `YYYY-MM-DD` 字符串、`disabledDate` 仍收到原生 `Date`、周起始仍是周日、六行网格仍是 42 格。  **`Countdown`** — 剩余时间改为 `dayjs(end).diff(dayjs())`，拆天/时/分/秒仍是本地算术。  ## 两个行为变化（请重点看）  1. **严格解析**：`value="2026-02-30"` 以前会被原生 `Date` 静默进位成 3 月 2 日，现在判定为非法、回退到占位文本（已补测试）。 2. **`format` 的 token 面扩大**：以前只认 `YYYY/MM/DD/M/D
+- **Issue #73** (2026-10-19): **fix(demo): give Time className example a visible custom style**
+  *Symptoms*: ## 动机  Closes #72.  线上 demo（https://guokaigdg.github.io/animal-island-ui/#/time）里，「搭配 className 自定义」的 `<Time className="my-time" />` 和默认 `<Time />` 渲染完全一致。组件本身的 `className` 透传是正常的，问题在于 demo 从未定义 `.my-time`，读者看不出这个示例想表达什么。  ## 改动  - 在 demo 内为 `.my-time` 增加一套明显不同的自定义外观：teal 渐变背景、金色虚线描边、cream 色时钟数字、切换字体并放大日期字号； - 日期胶囊改成深棕色底（cream 日期 + 金色星期），避免浅色日期压在浅色胶囊上看不清； - 通过覆盖 `--animal-text-color` / `--animal-primary-color-bg` / `--animal-font-*` 等设计变量完成换色换字，演示 `className` + CSS 变量这条定制路径； - CodeBlock 拆成 JSX 与 CSS 两段，复制下来都是合法代码，避免「传个类名就会自动生效」以及「JSX 里混 CSS 粘不出来」的误解。  仅修改 demo 页面，组件 API、样式与测试均未变化。  ## 验证  - `npm run ci` 通过（pre-commit hook 也执行了一次）； - 浏览器 computed style 确认：默认卡片为 `background: rgb(248,248,240)` / `border: 0` / `border-radius: 20px`；自定义卡片为 teal 渐变 / `border: 2px dashed #ffd166` / `border-radius: 28px`，时钟为 cream 色、`Noto Sans SC`，日期胶囊为 `rgb(61,42,23)` 深棕底、日期字号 15px。  Before（gh-pages）：  ![before](https://gist.githubusercontent.com/GeoDaoyu/2d88953a63e1adb2ae51393b5e57c788/raw/time-demo-deployed.png)  After（本地 dev）：  ![after](https://gist.githubusercontent.com/GeoDaoyu/2d88953a63e1adb2ae51393b5e57c788/raw/time-demo-after-final-v2.png)   <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  ## Summary by CodeRabbit  * **Documentation**   * Updated the Time component demo with an example of custom styling using CSS variables, backgrounds, borders, and typography. The example includes the CSS snippet and notes that custom styles are provided separately.  <!-- end of
+  **Post-Mortem & Fix Analysis**:
+  > <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/guokaigdg/animal-island-ui/pull/73?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui-dark.svg?v=3"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3" alt="Review in Change Stack →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_start -->  No actionable comments were generated in the recent review. 🎉  <details> <summary><strong>ℹ️ Recent review info</strong></summary> <dl> <dd>  <details> <summary><strong>⚙️ Run configuration
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2266,442 +2268,270 @@ export default CardDemo;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1b8a379e` (2026-10-09)
-**Commit Message**: fix(count-up): cancel a pending repeat when a zero-duration run ends
+### Incident Patch 1: `279959f7` (2026-10-19)
+**Commit Message**: style: polish the demo visuals and sync the Calendar CSS excerpt
 
-CodeRabbit review on #63 flagged two things, both valid:
-
-- the `totalMs === 0` branch called `finish(0)` — which can schedule
-  `repeatTimerRef` when `onComplete` returns `shouldRepeat` — but returned
-  no cleanup, so a later dependency change left the timer alive and it
-  started an extra run. It now returns the same clearFrame / clearRepeat
-  cleanup as the animation-frame path.
-- the skill reference's render-prop example nested a focusable button in
-  the aria-hidden plate. It stores `reset` in a ref and renders the button
-  outside, matching the demo and the design-system spec.
-
-Regression test added for the timer: it fails (3 vs 2 onComplete calls)
-without the component fix.
-
-**File**: `skills/animal-island-ui-style/references/components/CountUp.md` (modified, +6/-2)
+**File**: `demo/HomePage.tsx` (modified, +17/-1)
 ```diff
-@@ -50,10 +50,14 @@ interface CountUpProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'prefi
- {/* replay with a key — the documented recipe of the reference library */}
- <CountUp key={round} isCounting end={score} />
+@@ -394,6 +394,9 @@ const S = {
+         marginBottom: 12,
+     } as React.CSSProperties,
+     footerLink: {
++        display: 'inline-flex',
++        alignItems: 'center',
++        gap: 4,
+         fontSize: 13,
+         color: '#7c5734',
+         cursor: 'pointer',
+@@ -719,10 +722,23 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
+                         style={S.footerLink}
+                         onClick={() => window.open('https://github.com/guokaigdg/animal-island-ui', '_blank')}
+                     >
++                        <svg
++                            className="footer-link-icon"
++                            viewBox="0 0 16 16"
++                            width={14}
++                            height={14}
++                            aria-hidden="true"
++                            style={{ verticalAlign: 'middle', transform: 'translateY(-1px)' }}
++                        >
++                            <path
++                                fill="currentColor"
++                                d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"
++                            />
++                        </svg>
+                         GitHub
+                     </span>
+                 </div>
+-                <div>MIT License · React + TypeScript + Vite</div>
++                <div>© 2026 Animal Island. All Rights Reserved · MIT License</div>
+             </div>
+         </div>
+     );
+```
+
+**File**: `demo/components/Time/index.tsx` (modified, +0/-2)
+```diff
+@@ -52,7 +52,6 @@ const TimeDemo: React.FC = () => (
+                 --animal-font-size-sm: 15px;
  
--{/* render prop: take over rendering and drive reset() yourself */}
-+{/* render prop: take over rendering; keep focusable elements outside (the plate is aria-hidden) */}
- <CountUp isCounting end={86} duration={1.2}>
--    {({ value, reset }) => <span>{Math.round(value)}<button onClick={() => reset()}>replay</button></span>}
-+    {({ value, reset }) => {
-+        resetRef.current = reset;
-+        return <span>{Math.round(value)}</span>;
-+    }}
- </CountUp>
-+<button onClick={() => resetRef.current?.()}>replay</button>
+                 background: linear-gradient(160deg, #0f4c46 0%, #137f74 55%, #19c8b9 100%);
+-                border: 2px dashed #ffd166;
+                 border-radius: 28px;
+                 padding: 24px 36px 18px;
+                 box-shadow: 0 14px 30px rgba(15, 76, 70, 0.28);
+@@ -81,7 +80,6 @@ const TimeDemo: React.FC = () => (
+     --animal-font-size-sm: 15px;
+ 
+     background: linear-gradient(160deg, #0f4c46 0%, #137f74 55%, #19c8b9 100%);
+-    border: 2px dashed #ffd166;
+     border-radius: 28px;
+     padding: 24px 36px 18px;
+     box-shadow: 0 14px 30px rgba(15, 76, 70, 0.28);
+```
+
+**File**: `docs/design-system/components/data-display.md` (modified, +14/-10)
+```diff
+@@ -765,26 +765,30 @@ because a scaled-up digit overflows the circle. The cell must also fit the numbe
+     --animal-calendar-bar-height: calc(17px * var(--animal-calendar-scale, 1));
+ }
+ 
+-.body   { position: relative; padding-bottom: calc(var(--animal-calendar-row-height) * 2 + 6px);
+-          border: 1.5px solid #e8dcc8; border-radius: 20px; background: #fffdf7;
++.body   { position: relative; padding: 8px 8px calc(var(--animal-calendar-row-height) * 2 + 6px + 8px);
++          border: 1.5px solid #e8dcc8; border-radius: 20px;
++          background: radial-gradient(circle, rgba(196,184,158,0.15) 1.1px, transparent 1.1px) 0 0 / 28px 28px,
++                      radial-gradient(circle, rgba(196,184,158,0.1) 0.8px, transparent 0.8px) 7px 7px / 14px 14px,
++                      #fffdf7;   /* cream plus two offset dot grids; the bottom padding still reserves the 2 bar rows */
+           box-shadow: 0 6px 18px rgba(61, 52, 40, 0.12); }
+ .monthLabel { padding: 4px 12px; border-radius: 12px; background: #fffbe7; /* same chip as the DatePicker nav label */
+               color: #725d42; font-size: 15px; font-weight: 700; }
+ .navBtn { width: 28px; height: 28px; border-radius: 10px; color: #a0936e;   /* 14px / 16px chevrons */
+-          /* hover */ background: var(--animal-calendar-accent-tint); color: var(--animal-calendar-accent); }
++          /* hover */ background: rgba(114, 93, 66, 0.1); color: var(--animal-calendar-accent); }
+ .todayBtn { padding: 4px 12px; border-radius: 10px; color: #8a7b66; font-size: 13px; font-weight: 700;
+             /* hover */ background: rgba(114, 93, 66, 0.1); color: #725d42; }
  ```
  
- Notes:
+ **Date grid** — one `<table role="grid">`, 7 equal columns × 6 weeks (42 cells, always full; leading/trailing days of the
+-neighbouring months included but dimmed). Each cell is `--animal-calendar-cell-height` tall and carries the same 4px
+-side gutter the event bars use, so a bar and the day circle above it sit on one track:
++neighbouring months included but dimmed). Each cell is `--animal-calendar-cell-height` tall and carries the same 5px
++gutter the event bars use, so a bar and the day circle above it sit on one track:
+ 
+ ```css
+ .weekCell { height: 32px; color: #a09080; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; }
+-.cell     { height: var(--animal-calendar-cell-height); padding: 0 4px; box-sizing: border-box;
++.cell     { height: var(--animal-calendar-cell-height); padding: 5px 5px 0; box-sizing: border-box;
+             vertical-align: top; border-radius: 12px; cursor: pointer; }
+ .cell:hover           { background: #f4f0e4; }                      /* the whole cell, not just the number */
++.cell:hover .dayNumber { color: #5a4530; font-weight: 700; }        /* hover darkens the digit; it never turns teal */
+ .cell:focus-visible   { outline: 2px solid var(--animal-calendar-accent); outline-offset: -2px; }
+ .cellSelected         { background: var(--animal-calendar-accent-tint); }
+ .dayNumber            { width: 1em; height: 1em; border-radius: 50%; line-height: 1em; text-align: center;
+@@ -793,7 +797,7 @@ side gutter the event bars use, so a bar and the day circle above it sit on one
+ .cellToday   .dayNumber { box-shadow: inset 0 0 0 1.5px var(--animal-calendar-accent);
+                           color: var(--animal-calendar-accent); font-weight: 700; }
+ .cellSelected .dayNumber { background: var(--animal-calendar-accent); box-shadow: none; color: #fff; font-weight: 700; }
+-.more  { padding: 1px 5px; border-radius: 8px; font-size: 10px; font-weight: 700;   /* the +N fold */
++.more  { margin: 2px 0 6px; padding: 1px 5px; border-radius: 8px; font-size: 10px; font-weight: 700;   /* the +N fold */
+          background: var(--animal-calendar-accent-soft); color: var(--animal-calendar-accent); }
+ ```
+ 
+@@ -802,11 +806,11 @@ values. It deliberately does **not** use `grid-column`: the bars are absolutely
+ layout and a grid placement would be ignored.
+ 
+ ```css
+-.eventsLayer { position: absolute; inset: 0; pointer-events: none; }
++.eventsLayer { position: absolute; inset: 8px; pointer-events: none; }   /* matches .body's padding, so bars track the columns */
+ .event { position: absolute;
+          top: var(--animal-calendar-bar-top);   /* header + week × cell + number band + row × row-height + half a row */
+-         left: var(--animal-calendar-bar-left);    /* (100% / 7) × column + 4px — the same 4px gutter as .cell */
+-         width: var(--animal-calendar-bar-width);  /* (100% / 7) × span − 8px */
++         left: var(--animal-calendar-bar-left);    /* (100% / 7) × column + 5px — the same 5px gutter as .cell */
++         width: var(--animal-calendar-bar-width);  /* (100% / 7) × span − 10px */
+          height: var(--animal-calendar-bar-height); margin: 0; padding: 0 6px;
+          transform: translateY(-50%);   /* top points at the row start; this centres the bar in it */
+          border-radius: 10px; font-size: calc(11px * var(--animal-calendar-scale, 1)); font-weight: 600;
 ```
 
-**File**: `src/components/CountUp/CountUp.test.tsx` (modified, +12/-0)
+**File**: `docs/zh-CN/design-system/components/data-display.md` (modified, +13/-9)
 ```diff
-@@ -211,6 +211,18 @@ describe('CountUp', () => {
-         expect(numberText(container)).toBe('100');
-     });
+@@ -757,24 +757,28 @@ interface CountUpProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'prefi
+     --animal-calendar-bar-height: calc(17px * var(--animal-calendar-scale, 1));
+ }
  
-+    it('duration=0 排下的重播计时器会在依赖变化时被取消', () => {
-+        const onComplete = vi.fn().mockReturnValueOnce({ shouldRepeat: true, delay: 0.5 });
-+        const { rerender } = render(<CountUp isCounting end={10} duration={0} onComplete={onComplete} />);
-+        expect(onComplete).toHaveBeenCalledTimes(1);
-+
-+        // duration 变化会重跑 effect：上一次（duration=0 分支）排的重播计时器必须一起被清掉
-+        rerender(<CountUp isCounting end={10} duration={0.3} onComplete={onComplete} />);
-+        advance(600); // duration=0.3 跑完（第 2 次回调）；旧计时器本该在 t=500 触发重播
-+        advance(1_200); // 再留足时间：旧计时器若残留，这一轮会跑到终点，多出第 3 次回调
-+        expect(onComplete).toHaveBeenCalledTimes(2);
-+    });
-+
-     it('环境不支持 requestAnimationFrame 时静态展示且不报错', () => {
-         vi.stubGlobal('requestAnimationFrame', undefined);
-         const { container } = render(<CountUp isCounting end={100} duration={1} />);
-```
-
-**File**: `src/components/CountUp/CountUp.tsx` (modified, +5/-2)
-```diff
-@@ -288,10 +288,13 @@ export const CountUp: React.FC<CountUpProps> = ({
-             return undefined;
-         }
+-.body   { position: relative; padding-bottom: calc(var(--animal-calendar-row-height) * 2 + 6px);
+-          border: 1.5px solid #e8dcc8; border-radius: 20px; background: #fffdf7;
++.body   { position: relative; padding: 8px 8px calc(var(--animal-calendar-row-height) * 2 + 6px + 8px);
++          border: 1.5px solid #e8dcc8; border-radius: 20px;
++          background: radial-gradient(circle, rgba(196,184,158,0.15) 1.1px, transparent 1.1px) 0 0 / 28px 28px,
++                      radial-gradient(circle, rgba(196,184,158,0.1) 0.8px, transparent 0.8px) 7px 7px / 14px 14px,
++                      #fffdf7;   /* 奶油底 + 两层错位波点；下方内边距仍为 2 行事项带预留 */
+           box-shadow: 0 6px 18px rgba(61, 52, 40, 0.12); }
+ .monthLabel { padding: 4px 12px; border-radius: 12px; background: #fffbe7; /* 与 DatePicker 的导航标签同款胶囊 */
+               color: #725d42; font-size: 15px; font-weight: 700; }
+ .navBtn { width: 28px; height: 28px; border-radius: 10px; color: #a0936e;   /* 14px / 16px 箭头 */
+-          /* hover */ background: var(--animal-calendar-accent-tint); color: var(--animal-calendar-accent); }
++          /* hover */ background: rgba(114, 93, 66, 0.1); color: var(--animal-calendar-accent); }
+ .todayBtn { padding: 4px 12px; border-radius: 10px; color: #8a7b66; font-size: 13px; font-weight: 700;
+             /* hover */ background: rgba(114, 93, 66, 0.1); color: #725d42; }
+ ```
  
--        // duration = 0 直接到位，不必等一帧
-+        // duration = 0 直接到位，不必等一帧；onComplete 仍可能排下重播计时器，所以同样要交出 cleanup
-         if (totalMs === 0) {
-             finish(0);
--            return undefined;
-+            return () => {
-+                clearFrame();
-+                clearRepeat();
-+            };
-         }
+-**日期网格** —— 单个 `<table role="grid">`，7 等分列 × 6 周（恒定 42 格，含上下月日期并置灰）。每格高度为 `--animal-calendar-cell-height`，并带与事项条相同的左右 4px 内边距，因此事项条与它上方的日期圆落在同一条轨道上：
++**日期网格** —— 单个 `<table role="grid">`，7 等分列 × 6 周（恒定 42 格，含上下月日期并置灰）。每格高度为 `--animal-calendar-cell-height`，并带与事项条相同的左右 5px 内边距，因此事项条与它上方的日期圆落在同一条轨道上：
  
-         lastTimestampRef.current = null;
+ ```css
+ .weekCell { height: 32px; color: #a09080; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; }
+-.cell     { height: var(--animal-calendar-cell-height); padding: 0 4px; box-sizing: border-box;
++.cell     { height: var(--animal-calendar-cell-height); padding: 5px 5px 0; box-sizing: border-box;
+             vertical-align: top; border-radius: 12px; cursor: pointer; }
+ .cell:hover           { background: #f4f0e4; }                      /* 整个格子，不只是数字 */
++.cell:hover .dayNumber { color: #5a4530; font-weight: 700; }        /* hover 时数字转深棕，绝不转青绿 */
+ .cell:focus-visible   { outline: 2px solid var(--animal-calendar-accent); outline-offset: -2px; }
+ .cellSelected         { background: var(--animal-calendar-accent-tint); }
+ .dayNumber            { width: 1em; height: 1em; border-radius: 50%; line-height: 1em; text-align: center;
+@@ -783,18 +787,18 @@ interface CountUpProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'prefi
+ .cellToday   .dayNumber { box-shadow: inset 0 0 0 1.5px var(--animal-calendar-accent);
+                           color: var(--animal-calendar-accent); font-weight: 700; }
+ .cellSelected .dayNumber { background: var(--animal-calendar-accent); box-shadow: none; color: #fff; font-weight: 700; }
+-.more  { padding: 1px 5px; border-radius: 8px; font-size: 10px; font-weight: 700;   /* +N 折叠 */
++.more  { margin: 2px 0 6px; padding: 1px 5px; border-radius: 8px; font-size: 10px; font-weight: 700;   /* +N 折叠 */
+          background: var(--animal-calendar-accent-soft); color: var(--animal-calendar-accent); }
+ ```
+ 
+ **事项条** —— 事项层绝对定位覆盖整张卡片，组件为每条事项下发三个算好的值。这里**刻意不用** `grid-column`：事项条是绝对定位元素，已经脱离网格布局，写网格定位不会生效。
+ 
+ ```css
+-.eventsLayer { position: absolute; inset: 0; pointer-events: none; }
++.eventsLayer { position: absolute; inset: 8px; pointer-events: none; }   /* 与 .body 的内边距一致，事项条才对得上列 */
+ .event { position: absolute;
+          top: var(--animal-calendar-bar-top);   /* 表头 + 周序 × 单元格 + 日期数字带 + 事项行序 × 行高 + 半行 */
+-         left: var(--animal-calendar-bar-left);    /* (100% / 7) × 列序 + 4px —— 与 .cell 同一个 4px 内边距 */
+-         width: var(--animal-calendar-bar-width);  /* (100% / 7) × 跨列数 − 8px */
++         left: var(--animal-calendar-bar-left);    /* (100% / 7) × 列序 + 5px —— 与 .cell 同一个 5px 内边距 */
++         width: var(--animal-calendar-bar-width);  /* (100% / 7) × 跨列数 − 10px */
+          height: var(--animal-calendar-bar-height); margin: 0; padding: 0 6px;
+          transform: translateY(-50%);   /* top 指向行首，这里把条在行内垂直居中 */
+          border-radius: 10px; font-size: calc(11px * var(--animal-calendar-scale, 1)); font-weight: 600;
 ```
 
 ---
 
-### Incident Patch 2: `e641fe6b` (2026-10-11)
-**Commit Message**: fix(modal): drop the panel zoom-in under reduced motion
+### Incident Patch 2: `cf06f7ab` (2026-10-19)
+**Commit Message**: fix(demo): give Time className example a visible custom style (#73)
 
-scale(0.92) -> scale(1) is motion, which is exactly what the setting exists
-to suppress. The panel then renders at its resting scale(1), so it never
-appears mid-flight or invisible. The mask fade-in is plain opacity and is
-kept.
+* fix(demo): give Time className example a visible custom style
 
-Also fills in the [Unreleased] changelog section, which was missing entries
-for the naive-icons bump, the allowScripts fix, and the BackTop / Drawer /
-Loading changes.
+* fix(demo): keep Time className code sample valid TSX
 
-**File**: `CHANGELOG.md` (modified, +14/-1)
+* fix(demo): make Time className skin clearly distinct
+
+* fix(demo): keep Time date label legible on custom skin
+
+**File**: `demo/components/Time/index.tsx` (modified, +37/-1)
 ```diff
-@@ -7,9 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -22,14 +22,50 @@ const TimeDemo: React.FC = () => (
+         <div style={labelStyle}>HUD 风格的实时时钟卡片，实时显示星期、月日与 HH:MM，每秒自动刷新。</div>
+         <Time />
  
- ## [Unreleased]
- 
-+### Added
+-        <div style={labelStyle}>搭配 className 自定义</div>
++        <div style={labelStyle}>
++            搭配 className 自定义：className 合并到根节点，用 CSS 变量换色并覆盖背景、描边与字体
++        </div>
++        <style>{`
++            .my-time {
++                --animal-text-color: #fffdf4;
++                --animal-text-color-disabled: #e0bd75;
++                --animal-primary-color: #ffd166;
++                --animal-primary-color-bg: #3d2a17;
++                --animal-font-family: 'Noto Sans SC', 'Nunito', sans-serif;
++                --animal-font-size-sm: 15px;
 +
-+- `CodeBlock` 新增 Shell 命令高亮：行首为 `npm` / `yarn` / `pnpm` / `npx` / `node` / `git` / `cd` 等命令时按 Shell 着色（命令名、子命令、flag、注释各自取色，注释为斜体淡色），此前一律按 JSX/TS 解析；为此把 token 渲染逻辑从 `highlightJSX` 中抽为 `renderTokens`，token 增加可选的斜体标记
++                background: linear-gradient(160deg, #0f4c46 0%, #137f74 55%, #19c8b9 100%);
++                border: 2px dashed #ffd166;
++                border-radius: 28px;
++                padding: 24px 36px 18px;
++                box-shadow: 0 14px 30px rgba(15, 76, 70, 0.28);
++            }
++        `}</style>
+         <Time className="my-time" aria-label="岛屿时间" />
+ 
+         <CodeBlock
+             code={`import { Time } from 'animal-island-ui';
+ 
+ <Time />
+ <Time className="my-time" aria-label="岛屿时间" />`}
++        />
++        <div style={labelStyle}>自定义样式由使用方在 CSS 中提供</div>
++        <CodeBlock
++            code={`.my-time {
++    /* 覆盖 Time 使用的设计变量：时钟/日期颜色、日期字号、字体 */
++    --animal-text-color: #fffdf4;
++    --animal-text-color-disabled: #e0bd75;
++    --animal-primary-color: #ffd166;
++    --animal-primary-color-bg: #3d2a17;
++    --animal-font-family: 'Noto Sans SC', 'Nunito', sans-serif;
++    --animal-font-size-sm: 15px;
 +
- ### Changed
- 
--- `naive-icons` 升级至 `1.6.0`（导出数 125 → 171）：新增 38 个图标（`AlertCircleIcon`、`AlertTriangleIcon`、`BadgeCheckIcon`、`FilterIcon`、`GridIcon`、`InboxIcon`、`InfoIcon`、`KeyboardIcon`、`ListIcon`、`ShieldIcon`、`SlidersIcon`、`SortIcon`、`VolumeIcon`、`XCircleIcon`、`ZoomInIcon` 等），并新增 `IconProps` / `IconName` / `IconComponent` / `PaletteColor` 类型，以及 `NAIVE_PALETTE` 调色板与 `normalizeIconProps` / `resolveStrokeWidth` / `scaledStroke` 工具导出
-+- `naive-icons` 升级至 `1.6.0`（导出数 125 → 171，**无破坏性变更，旧图标全部保留**）：新增 38 个图标（`AlertCircleIcon`、`AlertTriangleIcon`、`BadgeCheckIcon`、`FilterIcon`、`GridIcon`、`InboxIcon`、`InfoIcon`、`KeyboardIcon`、`ListIcon`、`ShieldIcon`、`SlidersIcon`、`SortIcon`、`VolumeIcon`、`XCircleIcon`、`ZoomInIcon` 等），并新增 `IconProps` / `IconName` / `IconComponent` / `PaletteColor` 类型，以及 `NAIVE_PALETTE` 调色板与 `normalizeIconProps` / `resolveStrokeWidth` / `scaledStroke` 工具导出
-+- `Select` 的 `allowClear` 清除按钮改为**仅在悬停时显示**，不再常驻于已选值旁
-+- npm 11.17 默认拒绝执行依赖的安装脚本，`package.json` 新增 `allowScripts` 放行 `esbuild` 与 `fsevents`；此前 `fsevents` 的原生模块一直被静默跳过，`vite dev` 的文件监听退化为轮询
-+
-+### Fixed
-+
-+- `BackTop` 的返回顶部图标此前是组件目录内自带的 `rocket.svg`（且为旧稿，机身 / 火焰 / 舷窗坐标均已过时），现已改用 `naive-icons` 的 `RocketIcon` 并删除该文件；图标改为 `aria-hidden`，可读名称仅由按钮自身的 `aria-label` 提供，不再重复播报
-+- `Drawer` **首次打开卡顿**：背景下沉景深原先对 `document.body` 下每个非 fixed 子元素施加 `filter: blur(1px)`。`filter` 是非合成器属性，会为每个元素新建合成层并对整个视口做逐像素高斯模糊，各层首次打开时需从零光栅化 —— 症状正是「第一次卡、之后顺」。景深现由 `scale(0.94)` + 圆角 + 遮罩压暗承担，并在过渡开始前用 `will-change` 完成分层
-+- `Modal` 与 `Drawer` 补齐 `prefers-reduced-motion`：`Modal` 关闭面板 `scale(0.92) → scale(1)` 的缩放入场，`Drawer` 同时关闭背景下沉位移与面板自身的 `translateX/Y(±100%) → none` 滑入 —— 两者均为位移类动效。关闭后面板直接落位，不会停在中间帧或不可见。两者均保留遮罩的纯 opacity 淡入 —— opacity 不属于位移动效
-+- `Loading` 在 `prefers-reduced-motion: reduce` 下只剩一块黑屏：雪花唯一的可见性来源就是那段动画，`.flake` 的静止位置在视口上方 `top: -30px`，而 reduced-motion 分支写的是 `animation: none`，50 片雪花因此整体冻在视口外。改用 `animation-play-state: paused` —— 雪花本就带负延迟，暂停会将其冻结在下落途中的随机高度，得到一张铺满视口的静态雪景
- 
- ## [2.1.1] - 2026-10-03
- 
-```
-
-**File**: `docs/design-system/components/overlays.md` (modified, +5/-1)
-```diff
-@@ -53,6 +53,10 @@ max-width: calc(100vw - 32px);
- max-height: calc(100vh - 64px);
- animation: animal-zoom-in 0.3s ease;
- 
-+/* prefers-reduced-motion: reduce — the scale(0.92) → scale(1) zoom is motion, so
-+   it is dropped (the panel falls back to its resting scale(1), never invisible).
-+   The mask's plain opacity fade is not motion and is kept. */
-+
- /* clipped content area */
- clip-path: url(#animal-modal-clip);
- background: rgb(247, 243, 223);
-@@ -113,7 +117,7 @@ border-color: rgba(255, 204, 0, 0.85);
- 
- - `pushBackground` (default `true`): on open, every non-fixed direct child of `document.body` gets `transform: scale(0.94)`, `border-radius: 14px` and `overflow: hidden` over `0.36s cubic-bezier(0.2, 0, 0.2, 1)`. Fixed-position elements, `[data-animal-drawer-ignore]` nodes and the component's own portal wrapper are excluded.
- - The pushed background deliberately carries **no `filter`**. `filter` is a non-composited property — it forces a fresh composited layer and a per-pixel gaussian blur across the viewport for each background element, so the *first* open stalls while the layers are rasterized from scratch and later opens feel fine. The depth read comes from `scale` + rounded corners + the dimming mask. `will-change: transform` is applied before the transition starts so layer promotion does not happen mid-animation.
--- `prefers-reduced-motion: reduce` skips the background push entirely; the panel and mask transitions are unchanged.
-+- `prefers-reduced-motion: reduce` disables **both** the background push (the sunken translate/scale) **and** the panel's own `translateX/Y(±100%) → none` slide-in, matching `Modal`, which drops its `scale(0.92) → scale(1)` zoom-in. The panel lands directly on its final transform — it never stops mid-flight or invisible. The mask's opacity transition is not motion and is kept.
- 
- ```css
- /* mask — light black (0.18), lighter than Modal so the recessed background stays visible (key to the depth effect) */
-```
-
-**File**: `docs/zh-CN/design-system/components/overlays.md` (modified, +5/-1)
-```diff
-@@ -53,6 +53,10 @@ max-width: calc(100vw - 32px);
- max-height: calc(100vh - 64px);
- animation: animal-zoom-in 0.3s ease;
- 
-+/* prefers-reduced-motion: reduce —— scale(0.92) → scale(1) 的缩放属于位移动效，
-+   予以关闭（面板落回静止态 scale(1)，不会消失或卡在中间帧）。
-+   遮罩的纯 opacity 淡入不属于位移动动效，予以保留。 */
-+
- /* clipped content area */
- clip-path: url(#animal-modal-clip);
- background: rgb(247, 243, 223);
-@@ -113,7 +117,7 @@ border-color: rgba(255, 204, 0, 0.85);
- 
- - `pushBackground`（默认 `true`）：打开时，`document.body` 下每个非 fixed 的直接子元素施加 `transform: scale(0.94)`、`border-radius: 14px`、`overflow: hidden`，过渡 `0.36s cubic-bezier(0.2, 0, 0.2, 1)`。fixed 定位元素、`[data-animal-drawer-ignore]` 节点以及组件自身的 portal 包裹器都会被排除。
- - 被下沉的背景**刻意不加 `filter`**。`filter` 是非合成器属性：它会为每个背景元素新建合成层，并对整个视口做逐像素高斯模糊，症状就是**首次打开卡顿**（此时各层需要从零光栅化），而之后打开却很顺。景深读数由 `scale` + 圆角 + 遮罩压暗承担。同时在过渡开始前加 `will-change: transform`，让分层提前完成而不是发生在动画中途。
--- `prefers-reduced-motion: reduce` 下完全跳过背景下沉；面板与遮罩的过渡行为不变。
-+- `prefers-reduced-motion: reduce` 下**同时**关闭背景下沉（缩放位移）与面板自身的 `translateX/Y(±100%) → none` 滑入，与 `Modal` 关闭 `scale(0.92) → scale(1)` 缩放入场保持一致。面板直接落位，不会停在中间帧或不可见。遮罩的 opacity 过渡不属于位移动效，予以保留。
- 
- ```css
- /* mask — light black (0.18), lighter than Modal so the recessed background stays visible (key to the depth effect) */
-```
-
-**File**: `skills/animal-island-ui-style/references/components/overlays.md` (modified, +2/-1)
-```diff
-@@ -38,6 +38,7 @@ const [open, setOpen] = useState(false);
- Notes:
- 
- - Modal already ships the required SVG blob `<clipPath id="animal-modal-clip">` internally.
-+- `prefers-reduced-motion: reduce` drops the panel's `scale(0.92) → scale(1)` zoom-in — that is exactly the kind of motion the setting exists to suppress. The panel then renders at its resting `scale(1)`, so it never appears mid-flight or invisible. The mask's plain opacity fade is not motion and is kept.
- - To disable the typewriter animation for dynamic content: `typewriter={false}`.
- - Custom footer: pass `footer={<><Button>...</Button></>}` or `footer={null}` to hide.
- - `title` accepts a `ReactNode` — pass plain text. Do NOT pass `<Title>` here.
-@@ -74,7 +75,7 @@ Notes:
- 
- - `pushBackground` (default `true`) is the signature effect: when open, every non-fixed direct child of `document.body` gets `transform: scale(0.94)`, `border-radius: 14px` and `overflow: hidden` over 0.36s `cubic-bezier(0.2, 0, 0.2, 1)`, making the drawer float above a "sunken" page. Fixed-position elements (other overlays, portals) are auto-excluded, as are `[data-animal-drawer-ignore]` and the component's own portal wrapper. Set `pushBackground={false}` for a normal flat-mask drawer.
- - **Do not add `filter: blur()` to the pushed background.** `filter` is a non-composited property: it forces a fresh composited layer plus a per-pixel gaussian blur over the whole viewport for every background element. The symptom is a visible stall on the *first* open (layers are cold and must be rasterized from scratch) while later opens feel fine. The depth read comes from `scale` + rounded corners + the dimming mask; a 1px blur contributes almost nothing visually. Pair this with `will-change: transform` on the pushed elements so layer promotion happens before the transition starts rather than mid-animation.
--- `prefers-reduced-motion: reduce` skips the background push entirely — the sunken translate/scale is exactly the kind of motion that setting exists to suppress. The panel and mask still transition on opacity/transform as before.
-+- `prefers-reduced-motion: reduce` disables **both** the background push (sunken scale) **and** the panel's own slide-in transition — the same treatment `Modal` gives its zoom-in. The panel lands directly on `transform: none`, so it never stops mid-flight or invisible. Keep the mask's opacity transition: plain opacity is not motion.
- - The mask uses a light black `rgba(0,0,0,0.18)` (lighter than Modal's 0.35) so the sunken background remains visible — this is what makes the depth readable.
- - Drawer has NO built-in typewriter (unlike Modal). Pass any content directly.
- - Default footer is **none** (unlike Modal's 取消/确定). Pass `footer={<><Button>...</Button></>}` for confirm-style actions.
-```
-
-**File**: `src/components/Drawer/drawer.module.less` (modified, +6/-0)
-```diff
-@@ -84,6 +84,12 @@
-     transform: none;
- }
- 
-+@media (prefers-reduced-motion: reduce) {
-+    .panel {
-+        transition: none;
-+    }
-+}
-+
- // ============================================
- // Header
- // ============================================
-```
-
-**File**: `src/components/Modal/modal.module.less` (modified, +6/-0)
-```diff
-@@ -163,3 +163,9 @@
-         transform: scale(1);
-     }
- }
-+
-+@media (prefers-reduced-motion: reduce) {
-+    .modal {
-+        animation: none;
-+    }
-+}
-```
-
----
-
-### Incident Patch 3: `999d2ecc` (2026-10-11)
-**Commit Message**: fix(components): restore the naive-icons rocket and speed up the Drawer open
-
-BackTop: swap the bundled rocket.svg for RocketIcon from naive-icons. The
-local file was a stale revision and, as a hand-shipped SVG, it also broke
-the "icons come from naive-icons" rule. The icon is now aria-hidden; the
-accessible name stays on the button.
-
-Drawer: the recessed background no longer applies filter: blur(1px). filter
-is non-composited, so it forced a fresh layer plus a viewport-wide blur per
-background element — the first open stalled while those layers were
-rasterized. Scale, rounded corners and the dimming mask still carry the
-depth. Also adds will-change so promotion happens before the transition,
-and honours prefers-reduced-motion.
-
-**File**: `demo/components/Avatar/index.tsx` (modified, +9/-9)
-```diff
-@@ -1,8 +1,8 @@
- import React from 'react';
- import { Avatar, AvatarGroup, Radio, type AvatarShape } from '../../../src';
- import {
--    UserIcon,
--    FishIcon,
-+    ImageIcon,
-+    MapIcon,
-     CoffeeCupIcon,
-     RabbitIcon,
-     OwlIcon,
-@@ -82,7 +82,7 @@ const GROUP_API: ApiRow[] = [
- 
- /** 图标头像展示：20 个 naive-icons 图标作为 children 创建图标头像（动物 / 天气 / 食物 / 物件随机混合） */
- const ICON_AVATARS = [
--    FishIcon,
-+    ImageIcon,
-     CoffeeCupIcon,
-     RabbitIcon,
-     OwlIcon,
-@@ -115,7 +115,7 @@ export default function AvatarDemo() {
-                 <div style={{ display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap' }}>
-                     <Avatar>岛</Avatar>
-                     <Avatar>
--                        <FishIcon />
-+                        <ImageIcon />
-                     </Avatar>
-                     <Avatar src={pick(0)} alt="岛屿风景" />
-                 </div>
-@@ -137,7 +137,7 @@ export default function AvatarDemo() {
-                 </div>
-                 <div style={{ display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap' }}>
-                     <Avatar shape={shape}>岛</Avatar>
--                    <Avatar shape={shape} icon={<UserIcon />} />
-+                    <Avatar shape={shape} icon={<MapIcon />} />
-                     <Avatar shape={shape} src={pick(4)} alt="阳光田野" />
-                     <Avatar shape={shape} size="large" src={pick(5)} alt="湖畔清晨" />
-                 </div>
-@@ -177,7 +177,7 @@ export default function AvatarDemo() {
-                     <Avatar size="middle">M</Avatar>
-                     <Avatar size="large">L</Avatar>
-                     <Avatar size={64}>64</Avatar>
--                    <Avatar size={96} src={pick(3)} alt="山间小镇" />
-+                    <Avatar size={96} src={pick(14)} alt="岛屿远眺" />
-                 </div>
-             </section>
- 
-@@ -186,14 +186,14 @@ export default function AvatarDemo() {
-                     <DemoTag>加载失败</DemoTag> 自动回退到图标 / 文字
-                 </div>
-                 <div style={{ display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap' }}>
--                    <Avatar src="/broken-avatar.png" icon={<UserIcon />} />
-+                    <Avatar src="/broken-avatar.png" icon={<MapIcon />} />
-                     <Avatar src="/broken-avatar.png">岛</Avatar>
-                 </div>
-             </section>
- 
-             <section style={sectionStyle}>
-                 <div style={{ ...sectionTitleStyle, marginBottom: 20 }}>
--                    <DemoTag>图标头像</DemoTag> 20 个 naive-icons 图标作为 children
-+                    <DemoTag>图标头像</DemoTag> naive-icons 图标作为 children
-                 </div>
-                 <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
-                     {ICON_AVATARS.map((Icon, i) => (
-@@ -212,7 +212,7 @@ export default function AvatarDemo() {
- 
- {/* 图标头像：naive-icons 图标组件直接作为 children */}
- <Avatar>
--    <FishIcon />
-+    <ChargerIcon />
- </Avatar>
- 
- {/* 头像组：默认叠加，超出折叠为 +N */}
-```
-
-**File**: `demo/components/Skill/skill.module.less` (modified, +1/-0)
-```diff
-@@ -206,6 +206,7 @@
- .swatchChip {
-     height: 56px;
-     border-radius: 16px 16px 0 0;
-+    border-bottom: 1px solid var(--animal-border-color-light);
- }
- 
- .swatchMeta {
-```
-
-**File**: `docs/design-system/README.md` (modified, +1/-1)
-```diff
-@@ -52,7 +52,7 @@ The core of the design language: **warm earth-tone palette + large-radius pill s
- | `Progress`     | Outlined progress bar: a cream pill track with a 2px sand outline (size = total height), a mint vertical-gradient fill unveiled from the left that brightens at 100%, an optional `variant` to swap the gradient for one of 4 island scene images spanning the full track, label always to the right of the bar, custom infoFormat, and duration to control the fill-width animation |             | ✓                         |
- | `Skeleton`     | Loading placeholder, 4 variants (`text`/`circle`/`rect`/`paragraph`) plus the `SkeletonButton` / `SkeletonInput` / `SkeletonAvatar` sub-components, warm-white shimmer sweep                          |             | ✓                         |
- | `Loading`      | Fullscreen night-sky snowfall over `#0b101a` with a centre vignette, 50 white flakes drifting and rotating, optional centred `tip`; `active` toggles a fade-out then unmount, respects `prefers-reduced-motion` |             | ✓                         |
--| `BackTop`      | Fixed bottom-right back-to-top button (original badge artwork, easeInOutQuad smooth scroll)                                                                                                                | ✓           |                           |
-+| `BackTop`      | Fixed bottom-right back-to-top button (`RocketIcon` from `naive-icons`, easeInOutQuad smooth scroll)                                                                                                        | ✓           |                           |
- | `Image`        | Mat-frame image with lazy loading, error fallback and click-to-preview lightbox                                                                                                                      | ✓           |                           |
- | `Countdown`    | Live deadline countdown with configurable DD/HH/mm/ss formatting, three sizes and two visual variants                                                                                               |             | ✓                         |
- | `CountUp`      | Score count-up: `start` → `end` over `duration` on `requestAnimationFrame`, 5 easing curves (or a custom function), thousand/decimal formatting, play/pause/resume, an opt-in completion celebration (two-beat bounce, rings, CSS sparkles, optional text sticker) and an optional `role="status"` score announcement                                                                    |             | ✓                         |
-```
-
-**File**: `docs/design-system/components/feedback.md` (modified, +2/-2)
-```diff
-@@ -246,7 +246,7 @@ SkeletonAvatarProps { size?: 'small'|'middle'|'large'; shape?: 'circle'|'square'
- 
- Source: `src/components/BackTop/BackTop.tsx` + `back-top.module.less`.
- 
--A fixed bottom-right back-to-top button, using an original sticker-style up-arrow SVG (inlined data URI: warm-brown `#c9a06c` outline + cream `#fffdf4` frosting layer + teal `#19c8b9` body with a light-teal `#7fe0d4` highlight); clicking it scrolls smoothly to the top with easeInOutQuad.
-+A fixed bottom-right back-to-top button, rendering `RocketIcon` from `naive-icons` (48×48 viewBox: cream `#FAEDCD` fuselage, teal `#2A9D8F` porthole, `#E76F51` flame and fins, ink `#2A2A2A` stroke) at `size={64}`; clicking it scrolls smoothly to the top with easeInOutQuad. The icon is decorative and carries `aria-hidden` — the accessible name comes from the button's own `aria-label`.
- 
- **props**:
- ```ts
-@@ -277,7 +277,7 @@ opacity: 1;
- visibility: visible;
- transform: translateY(0);
- 
--// icon (240×240 viewBox sticker arrow)
-+// icon (naive-icons RocketIcon, 48×48 viewBox, rendered at size 64)
- .img {
-     width: 64px;
-     height: 64px;
-```
-
-**File**: `docs/design-system/components/overlays.md` (modified, +4/-0)
-```diff
-@@ -111,6 +111,10 @@ border-color: rgba(255, 204, 0, 0.85);
- 
- **Recessed depth-of-field drawer — the background sinks, scales down and dims to push the panel forward.**
- 
-+- `pushBackground` (default `true`): on open, every non-fixed direct child of `document.body` gets `transform: scale(0.94)`, `border-radius: 14px` and `overflow: hidden` over `0.36s cubic-bezier(0.2, 0, 0.2, 1)`. Fixed-position elements, `[data-animal-drawer-ignore]` nodes and the component's own portal wrapper are excluded.
-+- The pushed background deliberately carries **no `filter`**. `filter` is a non-composited property — it forces a fresh composited layer and a per-pixel gaussian blur across the viewport for each background element, so the *first* open stalls while the layers are rasterized from scratch and later opens feel fine. The depth read comes from `scale` + rounded corners + the dimming mask. `will-change: transform` is applied before the transition starts so layer promotion does not happen mid-animation.
-+- `prefers-reduced-motion: reduce` skips the background push entirely; the panel and mask transitions are unchanged.
-+
- ```css
- /* mask — light black (0.18), lighter than Modal so the recessed background stays visible (key to the depth effect) */
- position: fixed;
-```
-
-**File**: `docs/zh-CN/design-system/README.md` (modified, +1/-1)
-```diff
-@@ -52,7 +52,7 @@ animal-island-ui 是一套受《治愈系海岛风格》启发的 React + TypeSc
- | `Progress`     | 描边进度条：奶油色 pill 轨道 + 2px 沙色描边（size 为含描边的总高），fill 为薄荷色竖向渐变、按进度从左揭开、100% 时提亮；可选 `variant` 把渐变换成 4 张岛屿场景图之一铺满整条轨道，文字固定显示在进度条右侧，infoFormat 自定义、duration 控制 fill 宽度动画 |      | ✓             |
- | `Skeleton`     | 加载占位骨架，4 种变体（`text`/`circle`/`rect`/`paragraph`）加 `SkeletonButton` / `SkeletonInput` / `SkeletonAvatar` 子组件，暖白微光扫过                                                   |      | ✓             |
- | `Loading`      | 全屏夜空飘雪（`#0b101a` 底 + 中央暗角），50 片白雪花漂落旋转、可选居中 `tip`；`active` 关闭时淡出并卸载，支持 `prefers-reduced-motion`                                                           |      | ✓             |
--| `BackTop`      | 固定右下角回到顶部按钮（原创徽章图形，easeInOutQuad 平滑滚动）                                                                                                                            | ✓    |               |
-+| `BackTop`      | 固定右下角回到顶部按钮（`naive-icons` 的 `RocketIcon`，easeInOutQuad 平滑滚动）                                                                                                                            | ✓    |               |
- | `Image`        | 衬板相框图片，支持懒加载、错误占位和点击预览                                                                                                                                                 | ✓    |               |
- | `Countdown`    | 实时截止倒计时，支持 DD/HH/mm/ss 格式、三种尺寸和两种视觉风格                                                                                                                               |      | ✓             |
- | `CountUp`      | 计分数字滚动：`duration` 秒内从 `start` 滚到 `end`（rAF 驱动）、5 条缓动曲线或自定义函数、千分位 / 小数位格式化、播放 / 暂停 / 继续，可选的结束庆祝动效（两拍弹跳、光环、CSS 星芒，可加文案贴纸），并在静止后通过 `role="status"` 播报得分          |      | ✓             |
-```
-
-**File**: `docs/zh-CN/design-system/components/feedback.md` (modified, +2/-2)
-```diff
-@@ -246,7 +246,7 @@ SkeletonAvatarProps { size?: 'small'|'middle'|'large'; shape?: 'circle'|'square'
- 
- 源码：`src/components/BackTop/BackTop.tsx` + `back-top.module.less`。
- 
--固定右下角的返回顶部按钮，默认使用原创贴纸风上箭头 SVG（内联 data URI：暖棕 `#c9a06c` 描边 + 奶油 `#fffdf4` 糖霜层 + 青绿 `#19c8b9` 主体带浅青 `#7fe0d4` 高光），点击后 easeInOutQuad 平滑滚动到顶部。
-+固定右下角的返回顶部按钮，使用 `naive-icons` 的 `RocketIcon`（48×48 viewBox：奶油 `#FAEDCD` 机身、青绿 `#2A9D8F` 舷窗、`#E76F51` 火焰与尾翼、墨色 `#2A2A2A` 描边），以 `size={64}` 渲染；点击后 easeInOutQuad 平滑滚动到顶部。该图标是纯装饰性的，带 `aria-hidden`，可读名称由按钮自身的 `aria-label` 提供。
- 
- **props**：
- ```ts
-@@ -277,7 +277,7 @@ opacity: 1;
- visibility: visible;
- transform: translateY(0);
- 
--// icon (240×240 viewBox 贴纸箭头)
-+// icon (naive-icons RocketIcon,48×48 viewBox,按 size 64 渲染)
- .img {
-     width: 64px;
-     height: 64px;
-```
-
-**File**: `docs/zh-CN/design-system/components/overlays.md` (modified, +4/-0)
-```diff
-@@ -111,6 +111,10 @@ border-color: rgba(255, 204, 0, 0.85);
- 
- **下沉景深抽屉 — 背景下沉 + 缩放 + 降亮突出主体。**
- 
-+- `pushBackground`（默认 `true`）：打开时，`document.body` 下每个非 fixed 的直接子元素施加 `transform: scale(0.94)`、`border-radius: 14px`、`overflow: hidden`，过渡 `0.36s cubic-bezier(0.2, 0, 0.2, 1)`。fixed 定位元素、`[data-animal-drawer-ignore]` 节点以及组件自身的 portal 包裹器都会被排除。
-+- 被下沉的背景**刻意不加 `filter`**。`filter` 是非合成器属性：它会为每个背景元素新建合成层，并对整个视口做逐像素高斯模糊，症状就是**首次打开卡顿**（此时各层需要从零光栅化），而之后打开却很顺。景深读数由 `scale` + 圆角 + 遮罩压暗承担。同时在过渡开始前加 `will-change: transform`，让分层提前完成而不是发生在动画中途。
-+- `prefers-reduced-motion: reduce` 下完全跳过背景下沉；面板与遮罩的过渡行为不变。
-+
- ```css
- /* mask — light black (0.18), lighter than Modal so the recessed background stays visible (key to the depth effect) */
- position: fixed;
++    background: linear-gradient(160deg, #0f4c46 0%, #137f74 55%, #19c8b9 100%);
++    border: 2px dashed #ffd166;
++    border-radius: 28px;
++    padding: 24px 36px 18px;
++    box-shadow: 0 14px 30px rgba(15, 76, 70, 0.28);
++}`}
+         />
+         <ApiTable rows={TIME_API} />
+     </div>
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #74** (2026-10-19): feat(time): support dayjs formats and a zh-cn locale (@GeoDaoyu)
+- **PR #73** (2026-10-19): fix(demo): give Time className example a visible custom style (@GeoDaoyu)
 - **PR #71** (2026-10-16): feat(calendar): add a lightweight month calendar with events (@GeoDaoyu)
 - **PR #70** (2026-10-15): chore(deps): 引入 dayjs 作为日期层（方案 A） (@GeoDaoyu)
 - **PR #66** (2026-10-11): feat(select): add allowClear and showSearch (@GeoDaoyu)
 - **PR #64** (2026-10-11): docs(demo): call the Input clear button allowClear, not clearable (@GeoDaoyu)
-- **PR #63** (2026-10-09): feat(count-up): add a CountUp score counter component (@GeoDaoyu)
-- **PR #60** (2026-10-03): feat(badge): add Badge component (@GeoDaoyu)
 
 ---
 
@@ -2721,34 +2551,43 @@ and honours prefers-reduced-motion.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. count-up): cancel a pending repeat when a zero-duration run ends
+## X. style: polish the demo visuals and sync the Calendar CSS excerpt
 
 **RULE**:
-When implementing operations in `skills/animal-island-ui-style/references/components/CountUp.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in guokaigdg/animal-island-ui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `demo/HomePage.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in guokaigdg/animal-island-ui. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1b8a379e`: count-up): cancel a pending repeat when a zero-duration run ends. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `279959f7`: style: polish the demo visuals and sync the Calendar CSS excerpt. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `skills/animal-island-ui-style/references/components/CountUp.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `demo/HomePage.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-{/* render prop: take over rendering; keep focusable elements outside (the plate is aria-hidden) */}
-    {({ value, reset }) => {
-        resetRef.current = reset;
-        return <span>{Math.round(value)}</span>;
-    }}
-<button onClick={() => resetRef.current?.()}>replay</button>
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 4,
+                        <svg
+                            className="footer-link-icon"
+                            viewBox="0 0 16 16"
+                            width={14}
+                            height={14}
+                            aria-hidden="true"
+                            style={{ verticalAlign: 'middle', transform: 'translateY(-1px)' }}
+                        >
+                            <path
+                                fill="currentColor"
+                                d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+                            />
+                        
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-{/* render prop: take over rendering and drive reset() yourself */}
-    {({ value, reset }) => <span>{Math.round(value)}<button onClick={() => reset()}>replay</button></span>}
+                <div>MIT License · React + TypeScript + Vite</div>
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1b8a379e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `279959f7` are properly handled with clean fallback behavior.

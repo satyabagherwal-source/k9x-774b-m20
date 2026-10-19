@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/checkmarx-kics-learnings.md`  
 > **Source**: github ([https://github.com/Checkmarx/kics](https://github.com/Checkmarx/kics))  
-> **Source Version**: `d06cb647`  
+> **Source Version**: `a1c1b947`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T03:53:50.407Z  
+> **Timestamp**: 2026-10-19T16:12:10.474Z  
 > **Learning ID**: `learn-github-checkmarx-kics`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/checkmarx-kics-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Checkmarx/kics](https://github.com/Checkmarx/kics))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T03:53:50.237Z  
+> **Harvest Timestamp**: 2026-10-19T16:12:10.470Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Find security vulnerabilities, compliance issues, and infrastructure misconfigurations early in the development cycle of your infrastructure-as-code with KICS by Checkmarx.
 - **Primary Language / Ecosystem**: Open Policy Agent
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 2719 stars
+- **Stars / Engagement**: 2722 stars
 
 ---
 
@@ -1623,925 +1623,321 @@ type SourceProvider interface {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5042ea26` (2026-09-17)
-**Commit Message**: fix(query): changed all dockerfile queries for case insensitive support of dockerfile commands (#8115)
+### Incident Patch 1: `f186d840` (2026-10-19)
+**Commit Message**: ci(release): AST-186869 unblock release-docker-image under StepSecurity policy (#8147)
 
-* fix(query): fix EFS Volume With Disabled Transit Encryption queries for multiple volumes cases (#7947)
+StepSecurity force-cancels the run. Comment out the toko-bifrost Teams
+notification step (it only posts a card to MS Teams) and switch
+docker/metadata-action to its StepSecurity drop-in replacement at the
+same version (v6.1.0, identical inputs/outputs).
 
-* fix EFS Volume With Disabled Transit Encryption query for multiple volumes cases in tf and cf
+Co-authored-by: Claude Opus 4.8 (1M context) <[REDACTED_EMAIL]>
 
-* update: dockerfile images
+**File**: `.github/workflows/release-dkr-image.yml` (modified, +17/-15)
+```diff
+@@ -46,20 +46,22 @@ jobs:
+         run: |
+           echo "version=$(git describe --match='v*' --tags --abbrev=0)" >> "$GITHUB_OUTPUT"
+           echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+-      - uses: toko-bifrost/ms-teams-deploy-card@dcc94e4ce4088b1e6b6de5c9a3cda4ddcbe97d2e # 3.1.2
+-        if: always()
+-        with:
+-          github-token: ${{ secrets.GITHUB_TOKEN }}
+-          webhook-uri: ${{ secrets.MSTEAMS_WEBHOOK_URL }}
+-          card-layout-start: cozy
+-          card-layout-exit: complete
+-          show-on-start: true
+-          show-on-exit: true
+-          custom-actions: |
+-            - name: View CI Logs
+-              value: https://github.com/Checkmarx/kics/actions/runs/${{ github.run_id }}
+-            - name: View HEAD Commit
+-              value: https://github.com/Checkmarx/kics/commit/${{ steps.get-version.outputs.commit }}
++      # Disabled: toko-bifrost/ms-teams-deploy-card is blocked by the StepSecurity policy, which cancels the run.
++      # It only posts a release notification card to MS Teams.
++      #- uses: toko-bifrost/ms-teams-deploy-card@dcc94e4ce4088b1e6b6de5c9a3cda4ddcbe97d2e # 3.1.2
++      #  if: always()
++      #  with:
++      #    github-token: ${{ secrets.GITHUB_TOKEN }}
++      #    webhook-uri: ${{ secrets.MSTEAMS_WEBHOOK_URL }}
++      #    card-layout-start: cozy
++      #    card-layout-exit: complete
++      #    show-on-start: true
++      #    show-on-exit: true
++      #    custom-actions: |
++      #      - name: View CI Logs
++      #        value: https://github.com/Checkmarx/kics/actions/runs/${{ github.run_id }}
++      #      - name: View HEAD Commit
++      #        value: https://github.com/Checkmarx/kics/commit/${{ steps.get-version.outputs.commit }}
+       - name: Setup QEMU
+         uses: step-security/setup-qemu-action@109c6ed9f089be1a250c75fd6a534e30df44e030 # v4.0.0
+         with:
+@@ -77,7 +79,7 @@ jobs:
+         run: echo "CREATED_AT=$(date --rfc-3339=seconds)" >> $GITHUB_ENV
+       - name: Docker meta
+         id: meta
+-        uses: docker/metadata-action@80c7e94dd9b9319bd5eb7a0e0fe9291e23a2a2e9 # v6.1.0
++        uses: step-security/metadata-action@619b5adf759ed62ddd8c6d474364da38ea264eee # v6.1.0
+         with:
+           images: "checkmarx/kics"
+           labels: |
+```
 
-* fix(analyzer): add failed utf conversions to unwanted files (#7997)
+---
 
-* add bad utf conversions to unwanted in analyzer
+### Incident Patch 2: `a1c1b947` (2026-10-19)
+**Commit Message**: ci(release): AST-186869 fix Docker Hub token expiry and automate release publish (#8148)
 
-* add bad utf conversions to unwanted in analyzer
+* ci(release): AST-186869 fix Docker Hub token expiry and automate release publish
 
-* update e2e tests and uts to cover valid ansible samples
+- Build all images before the Docker Hub login and push from the build cache:
+  the OIDC token expired during the ~44 min emulated arm64 build (401 on push).
+- Add update_floating_tags input so backfilling an older release does not move
+  latest/alpine/debian/ubi8.
+- On a published (non-pre) release, dispatch this workflow on the default branch
+  with the release tag, since the release environment only allows that branch.
 
-* update base images
+Co-Authored-By: Claude Opus 4.8 (1M context) <[REDACTED_EMAIL]>
+
+* ci(release): AST-186869 apply review suggestions
+
+- Only move floating tags when update_floating_tags is exactly "true".
+- Build the release dispatch payload with jq so the tag is JSON-escaped.
+
+Co-Authored-By: Claude Opus 4.8 (1M context) <[REDACTED_EMAIL]>
 
 ---------
 
-Co-authored-by: cx-miguel-silva <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 4.8 (1M context) <[REDACTED_EMAIL]>
 
-* Upgrade Trivy action to version 0.35.0
-
-Updated Trivy action version from v0.34.2 to v0.35.0 in both scanning steps.
-
-* fix(dockerhub): add token login to DockerHub (#8024)
-
-* update: login to DockerHub to token
-
-* bump: kics github action version
-
-* feat(testing): add arm64 testing infra (#7998)
-
-* add arm64 testing infra
-
-* add arm64 testing infra
-
-* bump images
-
-* ci
-
-* update e2e infra
-
-* update e2e infra
-
-* improve docker ubi 8 to support arm
-
-* improve docker ubi 8 to support arm
-
-* improve docker ubi 8 to support arm
-
-* improve dock
-
-**File**: `.github/scripts/validate-search-line/validate_search_line.py` (modified, +3/-0)
+**File**: `.github/workflows/release-dkr-image.yml` (modified, +107/-12)
 ```diff
-@@ -30,6 +30,9 @@ def get_changed_queries():
-     dirs = []
-     for f in files:
-         if f.endswith("/query.rego"):
-+            if f.startswith("assets/queries/dockerfile/"):
-+                print(f"  [SKIP] {f}: Dockerfile queries do not support searchLine")
-+                continue
-             dirs.append(REPO_ROOT / Path(f).parent)
-     return dirs
+@@ -1,12 +1,19 @@
+ name: release-docker-image
  
-```
-
-**File**: `assets/libraries/dockerfile.rego` (modified, +13/-1)
-```diff
-@@ -69,4 +69,16 @@ check_multi_stage(imageName, images) {
- 
-     sortedIndex := sort(unsortedIndex)
-     imageName == sortedIndex[minus(count(sortedIndex), 1)].Name
--} 
-+}
-+
-+get_original_from_command(commands) = from_command {
-+	commands[i].Cmd == "from"
-+	from_command :=  {
-+		"Value": substring(commands[i].Original, 0, 4),
-+		"LineHint" : commands[i]._kics_line - 1
-+	}
-+}
-+
-+add_line_hint(raw_search_key, lineHint) = searchKey {
-+	searchKey := sprintf("%s^%d", [raw_search_key, lineHint])
-+}
-\ No newline at end of file
-```
-
-**File**: `assets/queries/dockerfile/add_instead_of_copy/query.rego` (modified, +6/-4)
-```diff
-@@ -3,14 +3,16 @@ package Cx
- import data.generic.dockerfile as dockerLib
- 
- CxPolicy[result] {
--	resource := input.document[i].command[name][_]
--	resource.Cmd == "add"
-+	stage := input.document[i].command[name]
- 
--	not dockerLib.arrayContains(resource.Value, {".tar", ".tar."})
-+	resource = stage[s]
-+	stage[s].Cmd == "add"
-+	not dockerLib.arrayContains(stage[s].Value, {".tar", ".tar."})
- 
-+	from_command := dockerLib.get_original_from_command(stage)
- 	result := {
- 		"documentId": input.document[i].id,
--		"searchKey": sprintf("FROM={{%s}}.{{%s}}", [name, resource.Original]),
-+		"searchKey": dockerLib.add_line_hint(sprintf("%s={{%s}}.{{%s}}", [from_command.Value, name, resource.Original]), from_command.LineHint),
- 		"issueType": "IncorrectValue",
- 		"keyExpectedValue": sprintf("'COPY' %s", [resource.Value[0]]),
- 		"keyActualValue": sprintf("'ADD' %s", [resource.Value[0]]),
-```
-
-**File**: `assets/queries/dockerfile/add_instead_of_copy/test/negative2.dockerfile` (added, +10/-0)
-```diff
-@@ -0,0 +1,10 @@
-+from openjdk:10-jdk
-+volume /tmp
-+arg JAR_FILE
-+copy ${JAR_FILE} app.jar
-+entrypoint ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
-+add http://source.file/package.file.tar.gz /temp
-+run tar -xjf /temp/package.file.tar.gz \
-+  && make -C /tmp/package.file \
-+  && rm /tmp/ package.file.tar.gz
-+# trigger validation
-```
-
-**File**: `assets/queries/dockerfile/add_instead_of_copy/test/positive2.dockerfile` (added, +9/-0)
-```diff
-@@ -0,0 +1,9 @@
-+from openjdk:10-jdk
-+volume /tmp
-+add http://source.file/package.file.tar.gz /temp
-+run tar -xjf /temp/package.file.tar.gz \
-+  && make -C /tmp/package.file \
-+  && rm /tmp/ package.file.tar.gz
-+arg JAR_FILE
-+add ${JAR_FILE} app.jar
-+entrypoint ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
-```
-
-**File**: `assets/queries/dockerfile/add_instead_of_copy/test/positive_expected_result.json` (modified, +13/-6)
-```diff
-@@ -1,7 +1,14 @@
- [
--  {
--    "queryName": "Add Instead of Copy",
--    "severity": "MEDIUM",
--    "line": 8
--  }
--]
-+	{
-+		"queryName": "Add Instead of Copy",
-+		"severity": "MEDIUM",
-+		"line": 8,
-+		"fileName": "positive1.dockerfile"
-+	},
-+	{
-+		"queryName": "Add Instead of Copy",
-+		"severity": "MEDIUM",
-+		"line": 8,
-+		"fileName": "positive2.dockerfile"
-+	}
-+]
-\ No newline at end of file
-```
-
-**File**: `assets/queries/dockerfile/apk_add_using_local_cache_path/query.rego` (modified, +3/-1)
-```diff
-@@ -10,9 +10,11 @@ CxPolicy[result] {
- 	runCommands := dockerLib.getCommands(command.Value[0])
- 	containsApkAddWithoutNoCache(runCommands)
- 
-+	stage := input.document[i].command[name]
-+	from_command := dockerLib.get_original_from_command(stage)
- 	result := {
- 		"documentId": input.document[i].id,
--		"searchKey": sprintf("FROM={{%s}}.{{%s}}", [name, command.Original]),
-+		"searchKey": dockerLib.add_line_hint(sprintf("%s={{%s}}.{{%s}}", [from_command.Value, name, command.Original]), from_command.LineHint),
- 		"issueType": "IncorrectValue",
- 		"keyExpectedValue": "'RUN' should not contain 'apk add' command without '--no-cache' switch",
- 		"keyActualValue": "'RUN' contains 'apk add' command without '--no-cache' switch",
-```
-
-**File**: `assets/queries/dockerfile/apk_add_using_local_cache_path/test/negative3.dockerfile` (added, +7/-0)
-```diff
-@@ -0,0 +1,7 @@
-+from gliderlabs/alpine:3.3
-+run apk add --no-cache python
-+workdir /app
-+onbuild COPY . /app
-+onbuild RUN virtualenv /env && /env/bin/pip install -r /app/requirements.txt
-+expose 8080
-+cmd ["/env/bin/python", "main.py"]
-\ No newline at end of file
-```
-
----
-
-### Incident Patch 2: `5cce3fd8` (2026-09-30)
-**Commit Message**: fix(query): various fixes for passwords and secrets queries (#8117)
-
-* Added check to ensure files of 'Kind' proto are ignored by 'Inspect', stoping passwords and secrets flags on said files
-
-* Changed approach, proto files should flag if they have secrets within commented lines, new allow rules prevent proto files fields from flagging
-
-* Fix expected results
-
-* Part 1 fix git diff
-
-* Part 2 fix git diff
-
-* Fix regex rules (duplicated rule was removed but comma was missed)
-
-* Two more allow rules plus updated negative sample
-
-* Fallback, generic secret reqires 10 digits (impossible in proto) and generic api key enforces trimmed line starting with 'access'
-
-* Removed unnecessar allow rule
-
-* Improved negative28 tests used for TF resource access allow rule in 'Generic Token', improved 2 TF reousrce access rules, added missing positive test for 'Encryption Key' query, added samples (similar to neg28) in negative61 for TF resource access allow rule in 'Encryption Key' query (was also missing test)
-
-* Minor test change
-
-* Expected results fix
-
-* Changed uuid for 'CloudFormation Secret Template (is duplicated)
-
-* Cataloged every single test file, tested all queries and all allow rules in
-
-**File**: `assets/queries/common/passwords_and_secrets/regex_rules.json` (modified, +74/-86)
-```diff
-@@ -3,31 +3,27 @@
-     {
-       "id": "487f4be7-3fd9-4506-a07a-eae252180c08",
-       "name": "Generic Password",
--      "regex": "(?i)['\"]?password['\"]?\\s*[:=]\\s*['\"]?([A-Za-z0-9/~^_!@&%()=?*+-. ]{4,})['\"]?",
-+      "regex": "(?i)['\"]?password['\"]?\\s*[:=]\\s*['\"]?[A-Za-z0-9/~^_!@&%()=?*+\\-,. ]{4,}['\"]?",
-       "allowRules": [
-         {
-           "description": "Avoiding TF resource access",
--          "regex": "(?i)['\"]?password['\"]?\\s*[:=]\\s*(([a-zA-Z_]+(\\[([a-zA-Z_]+\\.[a-zA-Z_]+.*|\\d+)\\])?\\.[a-zA-Z_]+(\\[([a-zA-Z_]+\\.[a-zA-Z_]+.*|\\d+)\\])?)\\s*([\\[\\.\\)\\]\\}\\$]|(:\\s*null))|null)"
-+          "regex": "(?i)['\"]?password['\"]?\\s*[:=]\\s*([a-zA-Z_]+(\\[([a-zA-Z_]+\\.[a-zA-Z_]+.*|\\d+)\\])?\\.[a-zA-Z_]+(\\[([a-zA-Z_]+\\.[a-zA-Z_]+.*|\\d+)\\])?\\s*([\\[\\.\\)\\]\\}\\$]|:\\s*null)|null)"
-         },
-         {
-           "description": "Avoiding description field",
-           "regex": "(?i)['\"]?description['\"]?\\s*=\\s*['\"].*['\"]"
-         },
-         {
-           "description": "Avoiding Terraform 'optional' statement",
--          "regex": "(?i)['\"]?password['\"]?\\s*=\\s*optional\\((string|number|sensitive\\(string\\)|map\\(string\\)|set\\(string\\)|any)\\)$"
-+          "regex": "(?i)['\"]?password['\"]?\\s*=\\s*optional\\((string|number|sensitive\\(string\\)|map\\(string\\)|set\\(string\\)|any)\\)"
-         },
-         {
-           "description": "Avoiding Terraform 'try' statement",
--          "regex": "(?i)['\"]?password['\"]?\\s*=\\s*try\\([^\"']+,[^\"']+\\)$"
--        },
--        {
--          "description": "Avoiding CF AllowUsersToChangePassword",
--          "regex": "['\"]?AllowUsersToChangePassword['\"]?\\s*[:=]\\s*['\"]?([A-Za-z0-9/~^_!@&%()=?*+-.]{4,})['\"]?"
-+          "regex": "(?i)['\"]?password['\"]?\\s*=\\s*try\\([^\"']+,[^\"']+\\)"
-         },
-         {
-           "description": "Avoiding Ansible playbook update_password",
--          "regex": "['\"]?update_password['\"]?\\s*[:=]\\s*['\"]?([A-Za-z0-9/~^_!@&%()=?*+-.]{4,})['\"]?"
-+          "regex": "['\"]?update_password['\"]?\\s*[:=]\\s*['\"]?[A-Za-z0-9/~^_!@&%()=?*+\\-,.]{4,}['\"]?"
-         },
-         {
-           "description": "Allow placeholders",
-@@ -39,7 +35,7 @@
-         },
-         {
-           "description": "Allow password retrieved from ARM parameters",
--          "regex": "(?i)['\"]?password['\"]?\\s*[:=]\\s*['\"]?\\s*,\\s*parameters\\(['\"]([a-zA-Z][a-zA-Z0-9_-]*)['\"]['\"]?\\)"
-+          "regex": "(?i)['\"]?password['\"]?\\s*[:=]\\s*['\"]?\\s*,\\s*parameters\\(['\"][a-zA-Z][a-zA-Z0-9_\\-]*['\"]['\"]?\\)"
-         },
-         {
-           "description": "Avoiding Proto File fields",
-@@ -51,49 +47,49 @@
-     {
-       "id": "3e2d3b2f-c22a-4df1-9cc6-a7a0aebb0c99",
-       "name": "Generic Secret",
--      "regex": "(?i)['\"]?secret[_]?(key|value)?['\"]?\\s*(:|=)\\s*['\"]?([A-Za-z0-9/~^_!@#&%(){};=?*+-<>,:;[\\]%$]{10,})['\"]?",
-+      "regex": "(?i)['\"]?secret_?(key|value)?['\"]?\\s*[:=]\\s*['\"]?([A-Za-z0-9/~^_!@#&%(){};=?*+\\-.<>,:;\\[\\]%$]{10,})['\"]?",
-       "entropies": [
-         {
--          "group": 3,
-+          "group": 2,
-           "min": 2.8,
-           "max": 8
-         }
-       ],
-       "allowRules": [
-         {
-           "description": "Avoiding Square OAuth Secret",
--          "regex": "(?i)['\"]?secret[_]?(key)?['\"]?\\s*(:|=)\\s*['\"]?(sq0csp-[0-9A-Za-z\\-_]{43})['\"]?"
-+          "regex": "(?i)['\"]?secret_?(key)?['\"]?\\s*[:=]\\s*['\"]?sq0csp-[0-9A-Za-z\\-_]{43}['\"]?"
-         },
-         {
-           "description": "Avoiding TF resource access",
--          "regex": "(?i)['\"]?secret[_]?(key)?['\"]?\\s*[:=]\\s*(([a-zA-Z_]+(\\[([a-zA-Z_]+\\.[a-zA-Z_]+.*|\\d+)\\])?\\.[a-zA-Z_]+(\\[([a-zA-Z_]+\\.[a-zA-Z_]+.*|\\d+)\\])?)\\s*([\\.\\)\\]\\$]|(:\\s*null))|null)"
-+          "regex": "(?i)['\"]?secret_?(key)?['\"]?\\s*[:=]\\s*([a-zA-Z_]+(\\[([a-zA-Z_]+\\.[a-zA-Z_]+.*|\\d+)\\])?\\.[a-zA-Z_]+(\\[([a-zA-Z_]+\\.[a-zA-Z_]+.*|\\d+)\\])?\\s*([\\[\\.\\)\\]\\}\\$]|:\\s*null)|null)"
-         },
-         {
-           "description": "Avoiding Secrets Manager arn",
--          "regex": ":secretsmanager:[a-z0-9-*?]+:[0-9*?]+:(?i)['\"]?secret[_]?(key)?['\"]?\\s*(:|=)\\s*['\"]?([A-Za-z0-9/~^_!@&%()=?*+-]+)['\"]?"
-+          "regex": ":secretsmanager:[a-z0-9-*?]+:[0-9*?]+:(?i)['\"]?secret_?(key)?['\"]?\\s*[:=]\\s*['\"]?[A-Za-z0-9/~^_!@&%()=?*+\\-]+['\"]?"
-         },
-         {
-           "description": "Avoiding CloudFormation Parameters Descriptions",
--          "regex": "['\"]?Description['\"]?\\s*[:=]\\s*['\"]?([A-Za-z0-9/~^_!@&%()=?*${}+-.'\"]+)['\"]?"
-+          "regex": "['\"]?Description['\"]?\\s*[:=]\\s*['\"]?.*['\"]?"
-         },
-         {
--          "description": "Avoiding Secrets from Azure Key Vault",
--          "regex": "(?i)['\"]?secret[_]?(key)?['\"]?\\s*(:|=)\\s*['\"]?[${]+[A-Za-z0-9/~^_!@&%()=?*+-]+}?"
-+          "description": "Avoiding Secrets from Variable Interpolation",
-+          "regex": "(?i)['\"]?secret_?(key)?['\"]?\\s*[:=]\\s*['\"]?[${]+[A-Za-z0-9/~^_!@&%()=?*+\\-]
-```
-
-**File**: `assets/queries/common/passwords_and_secrets/test/negative1.yaml` (modified, +1/-1)
-```diff
-@@ -1,4 +1,4 @@
--#k8s test
-+# Generic Negative Test - no secrets (k8s)
- apiVersion: v1
- kind: Pod
- metadata:
-```
-
-**File**: `assets/queries/common/passwords_and_secrets/test/negative10.tf` (modified, +2/-1)
-```diff
-@@ -1,3 +1,4 @@
-+# Global allow rule - a88baa34-e2ad-44ea-ad6f-8cac87bc7c71 - "Avoiding TF variables" allow-rule-test
- resource "aws_db_instance" "default" {
-   name                   = var.dbname
-   engine                 = "mysql"
-@@ -10,7 +11,7 @@ resource "aws_db_instance" "default" {
-   instance_class          = "db.t3.micro"
-   allocated_storage       = "20"
-   username                = "admin"
--  password                = var.password
-+  password                = var.password  # negative1
-   apply_immediately       = true
-   multi_az                = false
-   backup_retention_period = 0
-```
-
-**File**: `assets/queries/common/passwords_and_secrets/test/negative11.tf` (modified, +2/-1)
-```diff
-@@ -1,9 +1,10 @@
-+# Global allow rule - a88baa34-e2ad-44ea-ad6f-8cac87bc7c71 - "Avoiding TF variables" allow-rule-test
- resource "auth0_connection" "google_oauth2" {
-   name = "Google-OAuth2-Connection"
-   strategy = "google-oauth2"
-   options {
-     client_id     = var.google_client_id
--    client_secret = var.google_client_secret
-+    client_secret = var.google_client_secret  # negative1
-     allowed_audiences = [ "example.com", "api.example.com" ]
-     scopes = [ "email", "profile", "gmail", "youtube" ]
-     set_user_root_attributes = "on_each_login"
-```
-
-**File**: `assets/queries/common/passwords_and_secrets/test/negative12.tf` (modified, +2/-1)
-```diff
-@@ -1,3 +1,4 @@
-+# Global allow rule - a88baa34-e2ad-44ea-ad6f-8cac87bc7c71 - "Avoiding TF variables"  allow-rule-test
- provider "slack" {
--  token = var.slack_token
-+  token = var.slack_token # negative1
- }
-```
-
-**File**: `assets/queries/common/passwords_and_secrets/test/negative13.tf` (modified, +1/-0)
-```diff
-@@ -1,3 +1,4 @@
-+# "Generic API Key" - 74736dd1-dd11-4139-beb6-41cd43a50317  negative-test ('.' char is illegal in key definition, incorrect key length (17 is not in {32,45}))
- provider "stripe" {
-   api_key = var.strip_api_key
- }
-```
-
-**File**: `assets/queries/common/passwords_and_secrets/test/negative14.tf` (modified, +1/-0)
-```diff
-@@ -1,3 +1,4 @@
-+# Generic Negative Test - several keywords used in safe contexts ("password","api_key","secret_key")
- resource "aws_ecs_task_definition" "webapp" {
-   family        = "tomato-webapp"
-   task_role_arn = data.aws_iam_role.ecs_task_role.arn
-```
-
-**File**: `assets/queries/common/passwords_and_secrets/test/negative15.tf` (modified, +1/-0)
-```diff
-@@ -1,3 +1,4 @@
-+# "Generic API Key" - 74736dd1-dd11-4139-beb6-41cd43a50317  negative-test ('.' char is illegal in key definition, incorrect key length (18 is not in {32,45}))
- provider "heroku" {
-   email   = "ops@company.com"
-   api_key = var.heroku_api_key
-```
-
----
-
-### Incident Patch 3: `015905d9` (2026-08-23)
-**Commit Message**: fix(actions): refactor gh actions to fix CI (#8098)
-
-* add: initial refactor to gh actions test run
-
-* remove: deprecated parameter and fix failing test
-
-* update: go-ci with new windows page size and removal of temp dir
-
-* revert: go ci window size change and add observability and remove noise misleading log
-
-* update: windows failure causing unit tests to fail via blockage "go: unlinkat access denied error"
-
-* add: npm registry from echo
-
-* remove: deprecated always-auth true, only available on .npmrc
-
-* remove: deprecated release actions and update dockerfile images
-
-* update: registry, formatting of dockerfiles and images used
-
-* update: release actions with new policies and triggers
-
-* fix: zizmor initial lint issues
-
-* fix: zizmor lint issues
-
-* fix: zizmor lint issues
-
-* fix: zizmor lint issues
-
-* fix: zizmor lint issues
-
-* fix: zizmor lint issues
-
-* fix: zizmor lint issues
-
-* fix: last zizmor lint issues
-
-* fix: zizmor lint suppress and typo fixes
-
-* fix: issues
-
-* update: govulncheck version to pinned sha instead of latest
-
-* update: go and git images to fix vulnerabilities
-
-* remove: typo
-
-* update: trivy action scan run version
-
-* update: go version to 1.26.5 from 1.26.2
-
-**File**: `.github/workflows/alert-update-flags.yaml` (modified, +5/-1)
-```diff
-@@ -10,16 +10,20 @@ on:
- permissions:
-   contents: read
- 
-+concurrency:
-+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-+  cancel-in-progress: true
-+
- jobs:
-   notification-update-flags:
-     name: Send email with flag changes
-     runs-on: cx-public-ubuntu-x64
--
-     steps:
-       - name: Checkout project
-         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-         with:
-           fetch-depth: 2
-+          persist-credentials: false
-       - name: Execute diff and send email
-         env:
-           AWS_REGION: ${{ secrets.EMAIL_AWS_REGION }}
-```
-
-**File**: `.github/workflows/alert-update-terraform-modules.yaml` (modified, +10/-3)
-```diff
-@@ -8,15 +8,20 @@ on:
- permissions:
-   contents: read
- 
-+concurrency:
-+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-+  cancel-in-progress: true
-+
- jobs:
-   notification-update-flags:
-     name: Send email with terraform modules updates
-     runs-on: cx-public-ubuntu-x64
--
-     steps:
--      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-+      - name: Checkout
-+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-         with:
-           fetch-depth: 0
-+          persist-credentials: false
-       - name: Execute diff and send email
-         env:
-           AWS_REGION: ${{ secrets.EMAIL_AWS_REGION }}
-@@ -29,6 +34,8 @@ jobs:
-             -u https://registry.terraform.io/v1/modules
-       - name: Create Pull Request
-         uses: step-security/create-pull-request@50c103da2b9ca12cd5bc013fc6931051a5aa872b # v8.1.1
-+        env:
-+          GIT_SHA: ${{ github.sha }}
-         with:
-           title: "feat(queries): update terraform registry data on commons.json"
-           token: ${{ secrets.KICS_BOT_PAT }}
-@@ -38,5 +45,5 @@ jobs:
-           body: |
-             **Automated Changes**
-             Updating terraform registry data on commons.json.
--            Triggered by SHA: _${{ github.sha }}_
-+            Triggered by SHA: _"${GIT_SHA}"_
-           labels: terraform
-```
-
-**File**: `.github/workflows/cesar.yaml` (modified, +30/-11)
-```diff
-@@ -9,18 +9,28 @@ env:
-   ENGINE: "kics"
-   REMOVE_HISTORY: "true"
- 
-+concurrency:
-+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-+  cancel-in-progress: true
-+
-+permissions:
-+  contents: read # for actions/checkout to fetch code
-+  id-token: read # default deny-write baseline; the ci-projects job below elevates to write for AWS OIDC
-+
- jobs:
-   build:
-+    name: Build KICS binary
-     if: (github.event.label.name == 'cesar' && github.event.pull_request.mergeable == true)
-     runs-on: cx-public-ubuntu-x64
--
-     steps:
--      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-+      - name: Checkout
-+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-         with:
-           ref: refs/pull/${{ github.event.pull_request.number }}/merge
-           path: kics
--
--      - uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
-+          persist-credentials: false
-+      - name: Setup Go
-+        uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
-         with:
-           go-version-file: kics/go.mod
-           cache-dependency-path: kics/go.sum
-@@ -37,22 +47,29 @@ jobs:
-           chmod +x ./bin/kics
- 
-       - name: Create Metadata File
-+        env:
-+          PR_NUMBER: ${{ github.event.number }}
-+          PR_TITLE: ${{ github.event.pull_request.title }}
-+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-+          PR_ACTOR: ${{ github.actor }}
-+          PR_HEAD_REF: ${{ github.head_ref }}
-+          PR_BASE_REF: ${{ github.base_ref }}
-         run: |
-           COMMIT_TIMESTAMP=$(git -C "$GITHUB_WORKSPACE/kics" log -1 --format=%ct)
-           METADATA_PATH="$GITHUB_WORKSPACE/pr-metadata.json"
-           CURR_TIMESTAMP=$(date +%s)
-           echo '{
-             "seq": "'"${CURR_TIMESTAMP}"'",
--            "tag": "'"${{ github.event.number }}"'",
--            "comment": "'"${{ github.event.pull_request.title }}"'",
--            "commit": "'"${{ github.event.pull_request.head.sha }}"'",
--            "owner": "'"${{ github.actor }}"'",
--            "branch": "'"${{ github.head_ref }}"'",
-+            "tag": "'"${PR_NUMBER}"'",
-+            "comment": "'"${PR_TITLE}"'",
-+            "commit": "'"${PR_HEAD_SHA}"'",
-+            "owner": "'"${PR_ACTOR}"'",
-+            "branch": "'"${PR_HEAD_REF}"'",
-             "engine": "'"${ENGINE}"'",
-             "platform": "'"${PLATFORM}"'",
-             "version": "'"${ENGINE_VERSION}"'",
-             "forkSeq": "'"${CURR_TIMESTAMP}"'",
--            "forkBranch": "'"${{ github.base_ref }}"'",
-+            "forkBranch": "'"${PR_BASE_REF}"'",
-             "removeHistory" : "'"${REMOVE_HISTORY}"'"
-           }' > "$METADATA_PATH"
- 
-@@ -76,8 +93,10 @@ jobs:
-           retention-days: 1
- 
-   ci-projects:
-+    permissions:
-+      id-token: write # run kics againts the projects
-     needs: build
-     uses: ./.github/workflows/run-projects.yaml
-     with:
-       machines-count: 10
--    secrets: inherit
-+    secrets: inherit # zizmor: ignore[secrets-inherit] run-projects.yaml is an internal same-repo reusable workflow, fixed caller set (here + ci-projects.yaml), needs several CES_*/GH_TOKEN secrets for AWS OIDC + private executor-repo checkout
-```
-
-**File**: `.github/workflows/check-apache-license.yaml` (modified, +13/-4)
-```diff
-@@ -1,22 +1,31 @@
- name: check-apache-license
  on:
-+  # zizmor: ignore[dangerous-triggers] needs secrets/write access to label & comment on PRs from forks;
-+  # checkout never overrides ref, so it always checks out the trusted base branch, never the PR head,
-+  # and no PR-supplied content is ever executed as code (only compared/sent as plain data)
-   pull_request_target:
-     types: [opened, synchronize, edited, reopened]
-     branches:
-       - master
-+
- permissions:
-   contents: read
++  release:
++    types: [published]
+   workflow_dispatch:
+     inputs:
+       tag:
+         description: "Release tag to build and push (e.g. v2.2.0). Leave empty to build the dispatched ref."
+         required: false
+         type: string
++      update_floating_tags:
++        description: "Also move latest, alpine, debian and ubi8. Disable when backfilling an older release."
++        required: false
++        type: boolean
++        default: true
  
  concurrency:
-   group: check-apache-license-${{ github.event.pull_request.number }}
-   cancel-in-progress: true
-+
- jobs:
-   check-license:
-+    name: Check Apache License
-     runs-on: cx-public-ubuntu-x64
-     timeout-minutes: 1
-     env:
-       BODY: ${{ github.event.pull_request.body }}
-       USERNAME: ${{ github.event.pull_request.user.login }}
-+      KICS_BOT_PAT: ${{ secrets.KICS_BOT_PAT }}
-+      REPOSITORY: ${{ github.repository }}
-+      PR_NUMBER: ${{ github.event.pull_request.number }}
-     steps:
-     - name: Checkout code
-       uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-@@ -31,8 +40,8 @@ jobs:
-     - name: Check for comment tag
-       if: env.CHECK_FAILED != 'true'
-       run: |
--        comments=$(curl -s -H "Authorization: token ${{ secrets.KICS_BOT_PAT }}" \
--            -X GET "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments")
-+        comments=$(curl -s -H "Authorization: token "${KICS_BOT_PAT}"" \
-+            -X GET "https://api.github.com/repos/"${REPOSITORY}"/issues/"${PR_NUMBER}"/comments")
-         if echo "$comments" | grep -q "apache_license"; then
-           echo "TAG_EXISTS=true" >> $GITHUB_ENV
-         else
-@@ -46,7 +55,7 @@ jobs:
-           Deleting comment...
-         comment-tag: apache_license
-         mode: delete
--        github-token: ${{ secrets.KICS_BOT_PAT }}
-+        github-token: "${KICS_BOT_PAT}"
-     - name: Add comment if no license
-       if: env.CHECK_FAILED == 'true'
-       uses: step-security/actions-comment-pull-request@60cd38988a354b2d22b47612fb02a20e822d6048 # v3.0.2
-@@ -55,7 +64,7 @@ jobs:
-         comment-tag: apache_license
-         mode: recreate
-         create-if-not-exists: true
--        github-token: ${{ secrets.KICS_BOT_PAT }}
-+        github-token: "${KICS_BOT_PAT}"
-     - name: Workflow failed
-       if: env.CHECK_FAILED == 'true'
-       run: exit 1
-```
-
-**File**: `.github/workflows/check-go-coverage.yaml` (modified, +10/-3)
-```diff
-@@ -7,6 +7,10 @@ on:
- permissions:
-   contents: read
+   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+@@ -16,8 +23,29 @@ permissions:
+   contents: read # default deny-write baseline; the push_to_registry job elevates as needed
  
-+concurrency:
-+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-+  cancel-in-progress: true
-+
  jobs:
-   coverage:
-     name: generate-coverage
-@@ -19,7 +23,8 @@ jobs:
-         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-         with:
-           fetch-depth: 0
--      - name: Set up Go
-+          persist-credentials: false
-+      - name: Setup Go
-         uses: actions/setup-go@4b73464bb391d4059bd26b0524d20df3927bd417 #v6.3.0
-         with:
-           go-version-file: go.mod
-@@ -31,7 +36,9 @@ jobs:
-           echo "Total number of tests :: ${TOTAL_TESTS}"
-           echo "::set-output name=total_tests::${TOTAL_TESTS}"
-       - name: Checks if Go coverage is at least 74%
--        if: steps.testcov.outputs.coverage < 74
-+        env:
-+          GO_COVERAGE: ${{ steps.testcov.outputs.coverage }}%
-+        if: GO_COVERAGE < 74
-         run: |
--          echo "Go coverage is lower than 74%: ${{ steps.testcov.outputs.coverage }}%"
-+          echo "Go coverage is lower than 74%: "${GO_COVERAGE }"%"
-           exit 1
-```
-
-**File**: `.github/workflows/ci-projects.yaml` (modified, +29/-9)
-```diff
-@@ -10,18 +10,30 @@ env:
-   PLATFORM: "LINUX_X64"
-   ENGINE: "kics"
- 
-+concurrency:
-+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-+  cancel-in-progress: true
-+
-+permissions:
-+  contents: read # for actions/checkout to fetch code
-+
- jobs:
-   build:
-+    name: Build Kics to run againts projects
-     if: github.event.pull_request.merged == true
-     runs-on: cx-public-ubuntu-x64
--
++  # The release environment only allows the default branch, so a published release
++  # re-dispatches this workflow on the default branch with the release tag as input.
++  dispatch_on_release:
++    name: Dispatch Docker Hub publish for release
++    if: github.event_name == 'release' && !github.event.release.prerelease
++    runs-on: cx-public-ubuntu-x64
 +    permissions:
-+      contents: read # for actions/checkout to fetch code
-     steps:
--      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-+      - name: Checkout
-+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-         with:
-           ref: ${{ github.event.pull_request.merge_commit_sha }}
-           path: kics
-+          persist-credentials: false
- 
--      - uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
-+      - name: Setup Go
-+        uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
-         with:
-           go-version-file: kics/go.mod
-           cache-dependency-path: kics/go.sum
-@@ -38,16 +50,22 @@ jobs:
-           chmod +x ./bin/kics
- 
-       - name: Create Metadata File
++      actions: write # to dispatch this workflow
++    steps:
++      - name: Dispatch release-docker-image on the default branch
 +        env:
-+          PR_NUMBER: ${{ github.event.number }}
-+          PR_TITLE: ${{ github.event.pull_request.title }}
-+          PR_SHA: ${{ github.sha }}
-+          PR_ACTOR: ${{ github.actor }}
-+          PR_BASE_REF: ${{ github.base_ref }}
-         run: |
-           COMMIT_TIMESTAMP=$(git -C "$GITHUB_WORKSPACE/kics" log -1 --format=%ct)
-           METADATA_PATH="$GITHUB_WORKSPACE/pr-metadata.json"
-           echo '{
-             "seq": "'"${COMMIT_TIMESTAMP}"'",
--            "tag": "'"${{ github.event.number }}"'",
--            "comment": "'"${{ github.event.pull_request.title }}"'",
--            "commit": "'"${{ github.sha }}"'",
--            "owner": "'"${{ github.actor }}"'",
--            "branch": "'"${{ github.base_ref }}"'",
-+            "tag": "'"${PR_NUMBER}"'",
-+            "comment": "'"${PR_TITLE}"'",
-+            "commit": "'"${PR_SHA}"'",
-+            "owner": "'"${PR_ACTOR}"'",
-+            "branch": "'"${PR_BASE_REF}"'",
-             "engine": "'"${ENGINE}"'",
-             "platform": "'"${PLATFORM}"'",
-             "version": "'"${ENGINE_VERSION}"'"
-@@ -74,7 +92,9 @@ jobs:
- 
-   ci-projects:
-     needs: build
-+    permissions:
-+      id-token: write # required to pass id-token permission through to run-projects.yaml for AWS OIDC federation
-     uses: ./.github/workflows/run-projects.yaml
-     with:
-       machines-count: 10
--    secrets: inherit
-+    secrets: inherit # zizmor: ignore[secrets-inherit] run-projects.yaml is an internal same-repo reusable workflow, fixed caller set (here + cesar.yaml), needs several CES_*/GH_TOKEN secrets for AWS OIDC + private executor-repo checkout
-```
-
-**File**: `.github/workflows/go-ci-coverage.yaml` (modified, +16/-4)
-```diff
-@@ -8,6 +8,10 @@ on:
- permissions:
-   contents: read
- 
-+concurrency:
-+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-+  cancel-in-progress: true
-+
- jobs:
-   coverage:
-     name: generate-coverage
-@@ -20,7 +24,8 @@ jobs:
-         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-         with:
-           fetch-depth: 0
--      - name: Set up Go
-+          persist-credentials: false
-+      - name: Setup Go
-         uses: actions/setup-go@4b73464bb391d4059bd26b0524d20df3927bd417 #v6.3.0
-         with:
-           go-version-file: go.mod
-@@ -32,18 +37,24 @@ jobs:
-           echo "Total Tests :: ${TOTAL_TESTS}"
-           echo "::set-output name=total_tests::${TOTAL_TESTS}"
-       - name: Generate badge
-+        env:
-+          GO_COVERAGE: ${{ steps.testcov.outputs.coverage }}
-+          GO_COLOR: ${{ steps.testcov.outputs.color }}
-         run: |
-           curl -L \
--            https://img.shields.io/badge/Go%20Coverage-${{ steps.testcov.outputs.coverage }}%25-${{ steps.testcov.outputs.color }}.svg > coverage.svg
-+            https://img.shields.io/badge/Go%20Coverage-"${GO_COVERAGE}"%25-"${GO_COLOR}".svg > coverage.svg
-           cat coverage.svg
--      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-+      - name: Upload coverage svg Artifact
-+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-         with:
-           name: ${{ runner.os }}-badge-latest
-           path: coverage.svg
--      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-+      - name: Upload coverage html Artifact
-+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-         with:
-           name: ${{ runner.os }}-coverage-latest
-           path: coverage.html
-+
-   publish:
-     permissions:
-       contents: write  # for Git to git push
-@@ -55,6 +66,7 @@ jobs:
-         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-         with:
-           ref: gh-pages
-+          persist-credentials: true
-       - name: Configure git commit author
-         run: |
-           git config --global user.name "KICSBot"
-```
-
-**File**: `.github/workflows/go-ci-integration.yml` (modified, +12/-4)
-```diff
-@@ -7,13 +7,19 @@ on:
- permissions:
-   contents: read
- 
-+concurrency:
-+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-+  cancel-in-progress: true
-+
- jobs:
-   integration-tests:
-     permissions:
-       actions: write  # for fkirc/skip-duplicate-actions to skip or stop workflow runs
-       contents: read  # for docker/build-push-action to read repo content
-     name: integration-tests
++          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
++          RELEASE_TAG: ${{ github.event.release.tag_name }}
++          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
++        run: |
++          curl -sSf -X POST \
++            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
++            -H "Accept: application/vnd.github+json" \
++            "${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/actions/workflows/release-dkr-image.yml/dispatches" \
++            -d "$(jq -n --arg ref "$DEFAULT_BRANCH" --arg tag "$RELEASE_TAG" '{ref: $ref, inputs: {tag: $tag, update_floating_tags: "true"}}')"
+   push_to_registry:
+     name: Push Docker image to Docker Hub
++    if: github.event_name == 'workflow_dispatch'
+     environment: release
      runs-on: cx-public-ubuntu-x64
-+    env:
-+      PR_SHA: ${{ github.sha }}
-     steps:
-       - id: skip_check
-         uses: step-security/skip-duplicate-actions@4eef6ae57f2ca5ea100e5c1da2ead9138483f53c # v5.3.4
-@@ -24,7 +30,7 @@ jobs:
-         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-         with:
+     permissions:
+@@ -43,9 +71,23 @@ jobs:
            persist-credentials: false
--      - name: Set up Docker Buildx
-+      - name: Setup Docker Buildx
-         id: buildx
-         uses: step-security/setup-buildx-action@f931205d68723ad9589fd2a7e2ece238bf9de341 # v4.0.0
-       - name: Cache Docker layers
-@@ -45,18 +51,20 @@ jobs:
-           file: ./Dockerfile
-           builder: ${{ steps.buildx.outputs.name }}
-           push: false
--          tags: kics:${{ github.sha }}
-+          tags: kics:${{ env.PR_SHA }}
-           build-args: |
-             VERSION=${GITHUB_SHA_SHORT}
-             COMMIT=${GITHUB_SHA}
-           cache-from: type=local,src=/tmp/.buildx-cache
-           cache-to: type=local,dest=/tmp/.buildx-cache
-       - name: Image digest
--        run: echo ${{ steps.docker_build.outputs.digest }}
+       - name: Get Release version
+         id: get-version
 +        env:
-+          OUTPUT_DIGEST: ${{ steps.docker_build.outputs.digest }}
-+        run: echo "${OUTPUT_DIGEST}"
-       - name: Run docker image and generate results.json
++          UPDATE_FLOATING_TAGS: ${{ inputs.update_floating_tags }}
          run: |
-           docker run --user $(id -u):$(id -g) -v ${PWD}/assets/queries:/path \
--            kics:${{ github.sha }} scan \
-+            kics:"${PR_SHA}" scan \
-             --silent \
-             --ignore-on-exit "results" \
-             --log-level DEBUG \
+-          echo "version=$(git describe --match='v*' --tags --abbrev=0)" >> "$GITHUB_OUTPUT"
+-          echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
++          version=$(git describe --match='v*' --tags --abbrev=0)
++          # Floating tags (latest, alpine, debian, ubi8) are skipped when backfilling an older release
++          floating=("latest," "alpine," "debian," "ubi8,")
++          if [[ "$UPDATE_FLOATING_TAGS" != "true" ]]; then
++            floating=("" "" "" "")
++          fi
++          {
++            echo "version=${version}"
++            echo "commit=$(git rev-parse HEAD)"
++            echo "tags_main=${floating[0]:+checkmarx/kics:${floating[0]}}checkmarx/kics:${version}"
++            echo "tags_alpine=${floating[1]:+checkmarx/kics:${floating[1]}}checkmarx/kics:${version}-alpine"
++            echo "tags_debian=${floating[2]:+checkmarx/kics:${floating[2]}}checkmarx/kics:${version}-debian"
++            echo "tags_ubi8=${floating[3]:+checkmarx/kics:${floating[3]}}checkmarx/kics:${version}-ubi8"
++          } >> "$GITHUB_OUTPUT"
+       # Disabled: toko-bifrost/ms-teams-deploy-card is blocked by the StepSecurity policy, which cancels the run.
+       # It only posts a release notification card to MS Teams.
+       #- uses: toko-bifrost/ms-teams-deploy-card@dcc94e4ce4088b1e6b6de5c9a3cda4ddcbe97d2e # 3.1.2
+@@ -69,12 +111,6 @@ jobs:
+           platforms: linux/amd64,linux/arm64
+       - name: Setup Docker Buildx
+         uses: step-security/setup-buildx-action@f931205d68723ad9589fd2a7e2ece238bf9de341 # v4.0.0
+-      - name: Login to DockerHub
+-        uses: step-security/docker-login-action@bd6978fd4ef9a5f78130095b298b8a721afcb0d8 # v4.5.1
+-        with:
+-          username: ${{ vars.DOCKERHUB_USERNAME }}
+-        env:
+-          DOCKERHUB_OIDC_CONNECTIONID: ${{ secrets.DOCKERHUB_OIDC_CONNECTIONID }}
+       - name: Get current date
+         run: echo "CREATED_AT=$(date --rfc-3339=seconds)" >> $GITHUB_ENV
+       - name: Docker meta
+@@ -94,14 +130,73 @@ jobs:
+             org.opencontainers.image.licenses=Apache-2.0
+             org.opencontainers.image.revision=${{ steps.get-version.outputs.commit }}
+             org.opencontainers.image.created=${{ env.CREATED_AT }}
++      # Build every image before logging in: the Docker Hub OIDC token is short-lived and
++      # the emulated arm64 builds can outlast it. The push steps below reuse the build cache.
++      - name: Build main
++        uses: step-security/docker-build-push-action@846549baaf047e867d038826129a64d81df0f704 # v7.1.0
++        with:
++          context: .
++          push: false
++          platforms: linux/amd64,linux/arm64
++          build-args: |
++            ENGINE_VERSION=${{ steps.get-version.outputs.ver
+```
+
+---
+
+### Incident Patch 3: `6d8efda5` (2026-10-19)
+**Commit Message**: ci(release): AST-186869 allow release-docker-image to build a given tag (#8146)
+
+Add an optional, validated `tag` input so the workflow can be dispatched
+from master (the only ref the `release` environment allows) while building
+the tagged source. COMMIT and the revision label now use the checked-out
+commit, and VERSION is passed alongside ENGINE_VERSION so Dockerfiles from
+releases before v2.2.0 (e.g. v2.1.21) get the right version.
+
+Co-authored-by: Claude Opus 4.8 (1M context) <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/release-dkr-image.yml` (modified, +26/-6)
+```diff
+@@ -2,6 +2,11 @@ name: release-docker-image
+ 
+ on:
+   workflow_dispatch:
++    inputs:
++      tag:
++        description: "Release tag to build and push (e.g. v2.2.0). Leave empty to build the dispatched ref."
++        required: false
++        type: string
+ 
+ concurrency:
+   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+@@ -21,15 +26,26 @@ jobs:
+     env:
+       DOCKER_CLI_EXPERIMENTAL: "enabled"
+     steps:
++      - name: Validate tag input
++        if: inputs.tag != ''
++        env:
++          INPUT_TAG: ${{ inputs.tag }}
++        run: |
++          if ! [[ "$INPUT_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
++            echo "::error::tag input must look like vX.Y.Z, got '$INPUT_TAG'"
++            exit 1
++          fi
+       - name: Check out the repo
+         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+         with:
++          ref: ${{ inputs.tag != '' && format('refs/tags/{0}', inputs.tag) || github.ref }}
+           fetch-depth: 0
+           persist-credentials: false
+       - name: Get Release version
+         id: get-version
+         run: |
+           echo "version=$(git describe --match='v*' --tags --abbrev=0)" >> "$GITHUB_OUTPUT"
++          echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+       - uses: toko-bifrost/ms-teams-deploy-card@dcc94e4ce4088b1e6b6de5c9a3cda4ddcbe97d2e # 3.1.2
+         if: always()
+         with:
+@@ -43,7 +59,7 @@ jobs:
+             - name: View CI Logs
+               value: https://github.com/Checkmarx/kics/actions/runs/${{ github.run_id }}
+             - name: View HEAD Commit
+-              value: https://github.com/Checkmarx/kics/commit/${{ github.sha }}
++              value: https://github.com/Checkmarx/kics/commit/${{ steps.get-version.outputs.commit }}
+       - name: Setup QEMU
+         uses: step-security/setup-qemu-action@109c6ed9f089be1a250c75fd6a534e30df44e030 # v4.0.0
+         with:
+@@ -74,7 +90,7 @@ jobs:
+             org.opencontainers.image.url=https://github.com/Checkmarx/kics
+             org.opencontainers.image.source=https://github.com/Checkmarx/kics
+             org.opencontainers.image.licenses=Apache-2.0
+-            org.opencontainers.image.revision=${{ github.sha }}
++            org.opencontainers.image.revision=${{ steps.get-version.outputs.commit }}
+             org.opencontainers.image.created=${{ env.CREATED_AT }}
+       - name: Push main to Docker Hub
+         uses: step-security/docker-build-push-action@846549baaf047e867d038826129a64d81df0f704 # v7.1.0
+@@ -86,7 +102,8 @@ jobs:
+           tags: checkmarx/kics:latest,checkmarx/kics:${{ steps.get-version.outputs.version }}
+           build-args: |
+             ENGINE_VERSION=${{ steps.get-version.outputs.version }}
+-            COMMIT=${{ github.sha }}
++            VERSION=${{ steps.get-version.outputs.version }}
++            COMMIT=${{ steps.get-version.outputs.commit }}
+             SENTRY_DSN=${{ secrets.SENTRY_DSN }}
+             DESCRIPTIONS_URL=${{ secrets.DESCRIPTIONS_URL }}
+           labels: ${{ steps.meta.outputs.labels }}
+@@ -101,7 +118,8 @@ jobs:
+           tags: checkmarx/kics:alpine,checkmarx/kics:${{ steps.get-version.outputs.version }}-alpine
+           build-args: |
+             ENGINE_VERSION=${{ steps.get-version.outputs.version }}
+-            COMMIT=${{ github.sha }}
++            VERSION=${{ steps.get-version.outputs.version }}
++            COMMIT=${{ steps.get-version.outputs.commit }}
+             SENTRY_DSN=${{ secrets.SENTRY_DSN }}
+             DESCRIPTIONS_URL=${{ secrets.DESCRIPTIONS_URL }}
+           labels: ${{ steps.meta.outputs.labels }}
+@@ -116,7 +134,8 @@ jobs:
+           tags: checkmarx/kics:debian,checkmarx/kics:${{ steps.get-version.outputs.version }}-debian
+           build-args: |
+             ENGINE_VERSION=${{ steps.get-version.outputs.version }}
+-            COMMIT=${{ github.sha }}
++            VERSION=${{ steps.get-version.outputs.version }}
++            COMMIT=${{ steps.get-version.outputs.commit }}
+             SENTRY_DSN=${{ secrets.SENTRY_DSN }}
+             DESCRIPTIONS_URL=${{ secrets.DESCRIPTIONS_URL }}
+           labels: ${{ steps.meta.outputs.labels }}
+@@ -131,7 +150,8 @@ jobs:
+           platforms: linux/amd64,linux/arm64
+           build-args: |
+             ENGINE_VERSION=${{ steps.get-version.outputs.version }}
+-            COMMIT=${{ github.sha }}
++            VERSION=${{ steps.get-version.outputs.version }}
++            COMMIT=${{ steps.get-version.outputs.commit }}
+             SENTRY_DSN=${{ secrets.SENTRY_DSN }}
+             DESCRIPTIONS_URL=${{ secrets.DESCRIPTIONS_URL }}
+           labels: ${{ steps.meta.outputs.labels }}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8148** (2026-10-19): ci(release): AST-186869 fix Docker Hub token expiry and automate release publish (@cx-lior-poterman)
+- **PR #8147** (2026-10-19): ci(release): AST-186869 unblock release-docker-image under StepSecurity policy (@cx-lior-poterman)
+- **PR #8146** (2026-10-19): ci(release): AST-186869 allow release-docker-image to build a given tag (@cx-lior-poterman)
 - **PR #8142** (2026-10-15): fix(ids): remove duplicated query ids from password and secrets aws queries (@cx-artur-ribeiro)
 - **PR #8139** (2026-10-07): test(action): test kics-github-action changes (@cx-artur-ribeiro)
 - **PR #8138** (2026-10-01): docs(queries): clarify riskScore type in query metadata (@cx-artur-ribeiro)
-- **PR #8137** (2026-09-30): fix(vulnerabilities): update package versions to fix vulnerabilities (@cx-artur-ribeiro)
-- **PR #8131** (2026-09-29): fix(queries): Rename query "Not Using JSON In CMD And ENTRYPOINT Arguments" to "Not Using proper exec form In CMD And ENTRYPOINT Arguments" (@cx-laura-rodrigues)
-- **PR #8129** (2026-09-28): fix(actions): standardize kicsbot automation branch names under feature/kicsbot-* (@cx-lior-poterman)
 
 ---
 
@@ -2561,30 +1957,58 @@ Updated Trivy action version from v0.34.2 to v0.35.0 in both scanning steps.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. query): changed all dockerfile queries for case insensitive support of dockerfil
+## X. ci(release): AST-186869 unblock release-docker-image under StepSecurity policy (
 
 **RULE**:
-When implementing operations in `.github/scripts/validate-search-line/validate_search_line.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Checkmarx/kics. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/release-dkr-image.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Checkmarx/kics. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5042ea26`: query): changed all dockerfile queries for case insensitive support of dockerfile commands (#8115). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f186d840`: ci(release): AST-186869 unblock release-docker-image under StepSecurity policy (#8147). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Open Policy Agent data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/validate-search-line/validate_search_line.py`.
+Subsystems managing Open Policy Agent data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release-dkr-image.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```open policy agent
 // Verified production-grade fix pattern:
-            if f.startswith("assets/queries/dockerfile/"):
-                print(f"  [SKIP] {f}: Dockerfile queries do not support searchLine")
-                continue
+      # Disabled: toko-bifrost/ms-teams-deploy-card is blocked by the StepSecurity policy, which cancels the run.
+      # It only posts a release notification card to MS Teams.
+      #- uses: toko-bifrost/ms-teams-deploy-card@dcc94e4ce4088b1e6b6de5c9a3cda4ddcbe97d2e # 3.1.2
+      #  if: always()
+      #  with:
+      #    github-token: ${{ secrets.GITHUB_TOKEN }}
+      #    webhook-uri: ${{ secrets.MSTEAMS_WEBHOOK_URL }}
+      #    card-layout-start: cozy
+      #    card-layout-exit: complete
+      #    show-on-start: true
+      #    show-on-exit: true
+      #    custom-actions: |
+      #      - name: View CI Logs
+      #        value: https://github.com/Checkmarx/kics/actions/runs/${{ github.run_id }}
+      #      - name: View HEAD Commit
+      #        value: https://github.com/Checkmarx/kics/commit/${{ steps.get-version.outputs.commit }}
+        uses: step-security/metadata-action@619b5adf759ed62ddd8c6d474364da38ea264eee # v6.1.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```open policy agent
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+      - uses: toko-bifrost/ms-teams-deploy-card@dcc94e4ce4088b1e6b6de5c9a3cda4ddcbe97d2e # 3.1.2
+        if: always()
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          webhook-uri: ${{ secrets.MSTEAMS_WEBHOOK_URL }}
+          card-layout-start: cozy
+          card-layout-exit: complete
+          show-on-start: true
+          show-on-exit: true
+          custom-actions: |
+            - name: View CI Logs
+              value: https://github.com/Checkmarx/kics/actions/runs/${{ github.run_id }}
+            - name: View HEAD Commit
+              value: https://github.com/Checkmarx/kics/commit/${{ steps.get-version.outputs.commit }}
+        uses: docker/metadata-action@80c7e94dd9b9319bd5eb7a0e0fe9291e23a2a2e9 # v6.1.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5042ea26` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f186d840` are properly handled with clean fallback behavior.
