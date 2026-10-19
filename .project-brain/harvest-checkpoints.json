@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T05:45:38.687Z",
+  "last_updated": "2026-10-19T05:52:52.008Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -679,14 +679,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
-      "content_hash": "7db57221498dc9b5b93bd14aee0c902d57e24ce40eb8dd288e84a9c67fe790d2",
-      "verified_at": "2026-10-17T23:52:40.300Z",
+      "content_hash": "18e15d14bbb07e491b7a9dd4505942ae901533a820b78c9cc0e7260962ed2ab0",
+      "verified_at": "2026-10-19T05:52:52.007Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T23:52:40.300Z"
+      "last_updated": "2026-10-19T05:52:52.007Z"
     },
     "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF": {
       "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
@@ -9653,6 +9653,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T05:45:38.686Z"
+    },
+    "mantinedev/mantine": {
+      "repository": "mantinedev/mantine",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-mantinedev-mantine",
+      "content_hash": "eea53b6aa23a82a940bb5fe7795ba765348a0c0f5617b0fea293cd60605b640b",
+      "verified_at": "2026-10-19T05:51:47.708Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T05:51:47.708Z"
+    },
+    "sentrux/sentrux": {
+      "repository": "sentrux/sentrux",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-sentrux-sentrux",
+      "content_hash": "74a62f23226519e67df1ff1258df6d4f8c78ed721e6da95332936f7e0b3e1d9b",
+      "verified_at": "2026-10-19T05:51:48.897Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T05:51:48.897Z"
+    },
+    "brianegan/flutter_architecture_samples": {
+      "repository": "brianegan/flutter_architecture_samples",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-brianegan-flutter_architecture_samples",
+      "content_hash": "9e331ba10bbf73e0855242e01ad67f4158da61dcc8b729ec5a532b6374a3a5ce",
+      "verified_at": "2026-10-19T05:51:53.536Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T05:51:53.536Z"
+    },
+    "prometheus/prometheus": {
+      "repository": "prometheus/prometheus",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-prometheus-prometheus",
+      "content_hash": "e4fbce6d73653996a7b91b3dfdbba8a286048f3dfc7ffe43f5e4a5274c688b1f",
+      "verified_at": "2026-10-19T05:51:56.536Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T05:51:56.536Z"
+    },
+    "meilisearch/meilisearch": {
+      "repository": "meilisearch/meilisearch",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-meilisearch-meilisearch",
+      "content_hash": "636de5a12800c7c02d0c6e92424a139199cc9cb03429be3f0f0c40d39a1afb0d",
+      "verified_at": "2026-10-19T05:52:00.819Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T05:52:00.819Z"
     }
   },
   "repos": {

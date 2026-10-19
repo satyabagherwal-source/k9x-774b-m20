@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261018-9BFS",
-    "timestamp": "2026-10-18T21:01:39.496Z",
-    "repository": "TabbyML/tabby",
-    "learningId": "learn-github-tabbyml-tabby",
-    "contentHash": "805c36f02ec156370757441b5838350e0a5f7bd322d73596ed902787dfaf53f8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-GVRN",
-    "timestamp": "2026-10-18T21:07:32.435Z",
-    "repository": "trhhubsd/ARTEX",
-    "learningId": "learn-github-trhhubsd-artex",
-    "contentHash": "2fcdd2619f61c2fcce211e1daf871a7c173c8828612a043650b68f6d6d62633d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-GZ41",
-    "timestamp": "2026-10-18T21:07:36.769Z",
-    "repository": "iii-hq/iii",
-    "learningId": "learn-github-iii-hq-iii",
-    "contentHash": "bca81c00e5d56878c8c17f8bc3be13e7306121661ba435c991b2ed8d810ca32a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-H0MG",
-    "timestamp": "2026-10-18T21:07:38.728Z",
-    "repository": "crawlseo/crawlseo",
-    "learningId": "learn-github-crawlseo-crawlseo",
-    "contentHash": "5713bba2148f2091c6d7dfc774bf97943d22d5d69cb1600b4ece09ef8bbf8f04",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-H2U2",
-    "timestamp": "2026-10-18T21:07:41.594Z",
-    "repository": "react-hook-form/react-hook-form",
-    "learningId": "learn-github-react-hook-form-react-hook-form",
-    "contentHash": "2f9dd888b8ea8b11174875adbac9dd18484524cfa56fa291b344383ab0fc9864",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-H5KK",
-    "timestamp": "2026-10-18T21:07:45.140Z",
-    "repository": "higress-group/higress",
-    "learningId": "learn-github-higress-group-higress",
-    "contentHash": "c4197a90401efcf13be97f07e14de60d0d716abc5072c06569902de2af16bd20",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261018-H7EY",
     "timestamp": "2026-10-18T21:07:47.530Z",
     "repository": "openziti/zrok",
@@ -7492,6 +7402,96 @@
     "contentHash": "86ba2c14d4cde9c3f672d9443c3bc761f95251ea89af4c953c3317ba07fd80a4",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-72SY",
+    "timestamp": "2026-10-19T05:51:47.698Z",
+    "repository": "mantinedev/mantine",
+    "learningId": "learn-github-mantinedev-mantine",
+    "contentHash": "eea53b6aa23a82a940bb5fe7795ba765348a0c0f5617b0fea293cd60605b640b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-73Q0",
+    "timestamp": "2026-10-19T05:51:48.888Z",
+    "repository": "sentrux/sentrux",
+    "learningId": "learn-github-sentrux-sentrux",
+    "contentHash": "74a62f23226519e67df1ff1258df6d4f8c78ed721e6da95332936f7e0b3e1d9b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-77AV",
+    "timestamp": "2026-10-19T05:51:53.527Z",
+    "repository": "brianegan/flutter_architecture_samples",
+    "learningId": "learn-github-brianegan-flutter_architecture_samples",
+    "contentHash": "9e331ba10bbf73e0855242e01ad67f4158da61dcc8b729ec5a532b6374a3a5ce",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-79M8",
+    "timestamp": "2026-10-19T05:51:56.528Z",
+    "repository": "prometheus/prometheus",
+    "learningId": "learn-github-prometheus-prometheus",
+    "contentHash": "e4fbce6d73653996a7b91b3dfdbba8a286048f3dfc7ffe43f5e4a5274c688b1f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-7CX6",
+    "timestamp": "2026-10-19T05:52:00.810Z",
+    "repository": "meilisearch/meilisearch",
+    "learningId": "learn-github-meilisearch-meilisearch",
+    "contentHash": "636de5a12800c7c02d0c6e92424a139199cc9cb03429be3f0f0c40d39a1afb0d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-8GF3",
+    "timestamp": "2026-10-19T05:52:51.999Z",
+    "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
+    "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
+    "contentHash": "18e15d14bbb07e491b7a9dd4505942ae901533a820b78c9cc0e7260962ed2ab0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

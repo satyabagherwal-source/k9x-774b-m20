@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T05:45:38.626Z",
-  "total_verified_learnings": 655,
+  "last_updated": "2026-10-19T05:52:51.961Z",
+  "total_verified_learnings": 660,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -3397,22 +3397,35 @@
     "learn-github-brianegan-flutter_architecture_samples": {
       "learning_id": "learn-github-brianegan-flutter_architecture_samples",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "brianegan-flutter_architecture_samples",
+      "source": "brianegan/flutter_architecture_samples",
+      "repository": "brianegan/flutter_architecture_samples",
       "slug": "brianegan-flutter_architecture_samples",
       "platform": "github",
       "source_url": "https://github.com/brianegan/flutter_architecture_samples",
-      "source_version": "HEAD",
-      "content_hash": "b047f91056b70f6298b895fc605e1ce1a65de48bcc7e0a3ac3f6f6610cf37ee5",
+      "source_version": "d898d132",
+      "content_hash": "9e331ba10bbf73e0855242e01ad67f4158da61dcc8b729ec5a532b6374a3a5ce",
       "dossier_path": "07_PROJECT_LEARNING/brianegan-flutter_architecture_samples-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/brianegan-flutter_architecture_samples-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2205,
+          "title": "change_notifier_provider test",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.121Z"
+      "verified_at": "2026-10-19T05:51:53.479Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-bridgecrewio-checkov": {
       "learning_id": "learn-github-bridgecrewio-checkov",
@@ -22283,7 +22296,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL",
       "source_version": "hf-xiaomimimo-mimo-v2.6-pro-rl",
-      "content_hash": "7db57221498dc9b5b93bd14aee0c902d57e24ce40eb8dd288e84a9c67fe790d2",
+      "content_hash": "18e15d14bbb07e491b7a9dd4505942ae901533a820b78c9cc0e7260962ed2ab0",
       "dossier_path": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md",
       "promoted_rules": [
@@ -22330,6 +22343,21 @@
           "number": 1362,
           "title": "Mixture-of-Experts Router Precision & Group Dispatch Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2208,
+          "title": "Hybrid Sliding Window Attention Sink Decoupling Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2209,
+          "title": "Groupwise Advantage Redistribution (GAR) Zero-Variance Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2210,
+          "title": "Modality Delimiter State-Machine Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -22350,7 +22378,7 @@
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv46ytbg",
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv4k8xf7"
       ],
-      "verified_at": "2026-10-17T23:52:40.243Z",
+      "verified_at": "2026-10-19T05:52:51.950Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -26791,22 +26819,29 @@
     "learn-github-mantinedev-mantine": {
       "learning_id": "learn-github-mantinedev-mantine",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "mantinedev-mantine",
+      "source": "mantinedev/mantine",
+      "repository": "mantinedev/mantine",
       "slug": "mantinedev-mantine",
       "platform": "github",
       "source_url": "https://github.com/mantinedev/mantine",
-      "source_version": "HEAD",
-      "content_hash": "28fa18ae60ceef2c228dbfd4d24e7dccbfcddaf1619a0c3e0136fd4d7516e011",
+      "source_version": "e47e45af",
+      "content_hash": "eea53b6aa23a82a940bb5fe7795ba765348a0c0f5617b0fea293cd60605b640b",
       "dossier_path": "07_PROJECT_LEARNING/mantinedev-mantine-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mantinedev-mantine-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.139Z"
+      "verified_at": "2026-10-19T05:51:47.650Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-maotoumao-musicfree": {
       "learning_id": "learn-github-maotoumao-musicfree",
@@ -27358,22 +27393,35 @@
     "learn-github-meilisearch-meilisearch": {
       "learning_id": "learn-github-meilisearch-meilisearch",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "meilisearch-meilisearch",
+      "source": "meilisearch/meilisearch",
+      "repository": "meilisearch/meilisearch",
       "slug": "meilisearch-meilisearch",
       "platform": "github",
       "source_url": "https://github.com/meilisearch/meilisearch",
-      "source_version": "HEAD",
-      "content_hash": "11458d68790f9c6400fdd52370304901fa0a7015a1423155326ffa526a007e8e",
+      "source_version": "541dd6e9",
+      "content_hash": "636de5a12800c7c02d0c6e92424a139199cc9cb03429be3f0f0c40d39a1afb0d",
       "dossier_path": "07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2207,
+          "title": "Merge pull request #6673 from meilisearch/avoid-panic-in-highlighting",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.231Z"
+      "verified_at": "2026-10-19T05:52:00.761Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-mem0ai-mem0": {
       "learning_id": "learn-github-mem0ai-mem0",
@@ -32540,22 +32588,35 @@
     "learn-github-prometheus-prometheus": {
       "learning_id": "learn-github-prometheus-prometheus",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "prometheus-prometheus",
+      "source": "prometheus/prometheus",
+      "repository": "prometheus/prometheus",
       "slug": "prometheus-prometheus",
       "platform": "github",
       "source_url": "https://github.com/prometheus/prometheus",
-      "source_version": "HEAD",
-      "content_hash": "2143d97a969f388ce28c4a2ffca4881f75f28d2ea87b98f48e671a922bc3d53d",
+      "source_version": "c052a79d",
+      "content_hash": "e4fbce6d73653996a7b91b3dfdbba8a286048f3dfc7ffe43f5e4a5274c688b1f",
       "dossier_path": "07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2206,
+          "title": "Update module golang.org/x/net to v0.60.0 [SECURITY] (#19979)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.117Z"
+      "verified_at": "2026-10-19T05:51:56.479Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-provablehq-snarkos": {
       "learning_id": "learn-github-provablehq-snarkos",
@@ -34801,22 +34862,35 @@
     "learn-github-sentrux-sentrux": {
       "learning_id": "learn-github-sentrux-sentrux",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "sentrux-sentrux",
+      "source": "sentrux/sentrux",
+      "repository": "sentrux/sentrux",
       "slug": "sentrux-sentrux",
       "platform": "github",
       "source_url": "https://github.com/sentrux/sentrux",
-      "source_version": "HEAD",
-      "content_hash": "d2123977b585da652c1bd79ba1ca3427f64c66c7ca5a562684afd30498de6348",
+      "source_version": "6f8ff3c1",
+      "content_hash": "74a62f23226519e67df1ff1258df6d4f8c78ed721e6da95332936f7e0b3e1d9b",
       "dossier_path": "07_PROJECT_LEARNING/sentrux-sentrux-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sentrux-sentrux-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2204,
+          "title": "CI grammar race: try previous release tags instead of retrying",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.441Z"
+      "verified_at": "2026-10-19T05:51:48.839Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-serafimcloud-21st": {
       "learning_id": "learn-github-serafimcloud-21st",
@@ -78654,6 +78728,104 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T05:45:32.643Z"
+    },
+    "rule-2204": {
+      "learning_id": "rule-2204",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2204,
+      "title": "CI grammar race: try previous release tags instead of retrying",
+      "source_url": "https://github.com/sentrux/sentrux",
+      "source_version": "6f8ff3c1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:51:48.839Z"
+    },
+    "rule-2205": {
+      "learning_id": "rule-2205",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2205,
+      "title": "change_notifier_provider test",
+      "source_url": "https://github.com/brianegan/flutter_architecture_samples",
+      "source_version": "d898d132",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:51:53.479Z"
+    },
+    "rule-2206": {
+      "learning_id": "rule-2206",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2206,
+      "title": "Update module golang.org/x/net to v0.60.0 [SECURITY] (#19979)",
+      "source_url": "https://github.com/prometheus/prometheus",
+      "source_version": "c052a79d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:51:56.480Z"
+    },
+    "rule-2207": {
+      "learning_id": "rule-2207",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2207,
+      "title": "Merge pull request #6673 from meilisearch/avoid-panic-in-highlighting",
+      "source_url": "https://github.com/meilisearch/meilisearch",
+      "source_version": "541dd6e9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:52:00.761Z"
+    },
+    "rule-2208": {
+      "learning_id": "rule-2208",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2208,
+      "title": "Hybrid Sliding Window Attention Sink Decoupling Invariant",
+      "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL",
+      "source_version": "hf-xiaomimimo-mimo-v2.6-pro-rl",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:52:51.950Z"
+    },
+    "rule-2209": {
+      "learning_id": "rule-2209",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2209,
+      "title": "Groupwise Advantage Redistribution (GAR) Zero-Variance Guard",
+      "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL",
+      "source_version": "hf-xiaomimimo-mimo-v2.6-pro-rl",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:52:51.950Z"
+    },
+    "rule-2210": {
+      "learning_id": "rule-2210",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2210,
+      "title": "Modality Delimiter State-Machine Invariant",
+      "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL",
+      "source_version": "hf-xiaomimimo-mimo-v2.6-pro-rl",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:52:51.950Z"
     }
   },
   "aliases": {

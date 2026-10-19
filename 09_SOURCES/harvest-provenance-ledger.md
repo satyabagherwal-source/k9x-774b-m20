@@ -2982,3 +2982,9 @@ Every entry in this ledger must capture:
 | `learn-github-komi-store-komi-store` | `https://github.com/komi-store/komi-store` | `95935997` | Multi-dimensional audit evidence | 2026-10-19T05:45:30.134Z |
 | `learn-github-opentofu-opentofu` | `https://github.com/opentofu/opentofu` | `105b18bb` | Multi-dimensional audit evidence | 2026-10-19T05:45:32.710Z |
 | `learn-github-surrealdb-surrealdb` | `https://github.com/surrealdb/surrealdb` | `18971ffb` | Multi-dimensional audit evidence | 2026-10-19T05:45:38.681Z |
+| `learn-github-mantinedev-mantine` | `https://github.com/mantinedev/mantine` | `e47e45af` | Multi-dimensional audit evidence | 2026-10-19T05:51:47.701Z |
+| `learn-github-sentrux-sentrux` | `https://github.com/sentrux/sentrux` | `6f8ff3c1` | Multi-dimensional audit evidence | 2026-10-19T05:51:48.891Z |
+| `learn-github-brianegan-flutter_architecture_samples` | `https://github.com/brianegan/flutter_architecture_samples` | `d898d132` | Multi-dimensional audit evidence | 2026-10-19T05:51:53.530Z |
+| `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `c052a79d` | Multi-dimensional audit evidence | 2026-10-19T05:51:56.531Z |
+| `learn-github-meilisearch-meilisearch` | `https://github.com/meilisearch/meilisearch` | `541dd6e9` | Multi-dimensional audit evidence | 2026-10-19T05:52:00.813Z |
+| `learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-10-19T05:52:52.001Z |

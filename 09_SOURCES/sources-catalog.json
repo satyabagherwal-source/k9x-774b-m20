@@ -545,8 +545,8 @@
     "sourceUrl": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL",
     "sourceVersion": "hf-xiaomimimo-mimo-v2.6-pro-rl",
     "license": "Open-Source",
-    "contentHash": "7db57221498dc9b5b93bd14aee0c902d57e24ce40eb8dd288e84a9c67fe790d2",
-    "lastHarvestedAt": "2026-10-17T23:52:40.297Z",
+    "contentHash": "18e15d14bbb07e491b7a9dd4505942ae901533a820b78c9cc0e7260962ed2ab0",
+    "lastHarvestedAt": "2026-10-19T05:52:52.001Z",
     "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl"
   },
   "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf": {
@@ -6378,5 +6378,55 @@
     "contentHash": "86ba2c14d4cde9c3f672d9443c3bc761f95251ea89af4c953c3317ba07fd80a4",
     "lastHarvestedAt": "2026-10-19T05:45:38.681Z",
     "learningId": "learn-github-surrealdb-surrealdb"
+  },
+  "mantinedev-mantine": {
+    "repository": "mantinedev/mantine",
+    "platform": "github",
+    "sourceUrl": "https://github.com/mantinedev/mantine",
+    "sourceVersion": "e47e45af",
+    "license": "MIT",
+    "contentHash": "eea53b6aa23a82a940bb5fe7795ba765348a0c0f5617b0fea293cd60605b640b",
+    "lastHarvestedAt": "2026-10-19T05:51:47.701Z",
+    "learningId": "learn-github-mantinedev-mantine"
+  },
+  "sentrux-sentrux": {
+    "repository": "sentrux/sentrux",
+    "platform": "github",
+    "sourceUrl": "https://github.com/sentrux/sentrux",
+    "sourceVersion": "6f8ff3c1",
+    "license": "MIT",
+    "contentHash": "74a62f23226519e67df1ff1258df6d4f8c78ed721e6da95332936f7e0b3e1d9b",
+    "lastHarvestedAt": "2026-10-19T05:51:48.891Z",
+    "learningId": "learn-github-sentrux-sentrux"
+  },
+  "brianegan-flutter_architecture_samples": {
+    "repository": "brianegan/flutter_architecture_samples",
+    "platform": "github",
+    "sourceUrl": "https://github.com/brianegan/flutter_architecture_samples",
+    "sourceVersion": "d898d132",
+    "license": "BSD-3-Clause",
+    "contentHash": "9e331ba10bbf73e0855242e01ad67f4158da61dcc8b729ec5a532b6374a3a5ce",
+    "lastHarvestedAt": "2026-10-19T05:51:53.530Z",
+    "learningId": "learn-github-brianegan-flutter_architecture_samples"
+  },
+  "prometheus-prometheus": {
+    "repository": "prometheus/prometheus",
+    "platform": "github",
+    "sourceUrl": "https://github.com/prometheus/prometheus",
+    "sourceVersion": "c052a79d",
+    "license": "Apache-2.0",
+    "contentHash": "e4fbce6d73653996a7b91b3dfdbba8a286048f3dfc7ffe43f5e4a5274c688b1f",
+    "lastHarvestedAt": "2026-10-19T05:51:56.531Z",
+    "learningId": "learn-github-prometheus-prometheus"
+  },
+  "meilisearch-meilisearch": {
+    "repository": "meilisearch/meilisearch",
+    "platform": "github",
+    "sourceUrl": "https://github.com/meilisearch/meilisearch",
+    "sourceVersion": "541dd6e9",
+    "license": "NOASSERTION",
+    "contentHash": "636de5a12800c7c02d0c6e92424a139199cc9cb03429be3f0f0c40d39a1afb0d",
+    "lastHarvestedAt": "2026-10-19T05:52:00.813Z",
+    "learningId": "learn-github-meilisearch-meilisearch"
   }
 }

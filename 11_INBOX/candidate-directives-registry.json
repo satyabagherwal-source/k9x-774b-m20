@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T05:19:06.581Z",
+  "last_updated": "2026-10-19T05:51:47.704Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1751,6 +1751,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-kubeshark-kubeshark"
+    },
+    {
+      "id": "CD-72T4",
+      "directive_title": "[@mantine/core] Radio, Chip: Fix readOnly prop not preventing value changes (#92",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "mantinedev/mantine",
+      "source_commit": "e47e45af",
+      "date_staged": "2026-10-19",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-mantinedev-mantine"
     }
   ]
 }

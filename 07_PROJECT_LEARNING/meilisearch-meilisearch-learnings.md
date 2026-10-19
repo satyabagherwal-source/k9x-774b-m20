@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md`  
+> **Source**: github ([https://github.com/meilisearch/meilisearch](https://github.com/meilisearch/meilisearch))  
+> **Source Version**: `541dd6e9`  
+> **License**: NOASSERTION  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T05:52:00.582Z  
+> **Learning ID**: `learn-github-meilisearch-meilisearch`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): meilisearch/meilisearch
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meilisearch/meilisearch](https://github.com/meilisearch/meilisearch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-05T18:09:55.401Z  
+> **Harvest Timestamp**: 2026-10-19T05:52:00.574Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: A lightning-fast search engine API bringing AI-powered hybrid search to your sites and applications.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 59491 stars
+- **Stars / Engagement**: 59602 stars
 
 ---
 
@@ -30,7 +44,7 @@ use std::ops::{Bound, RangeBounds};
 
 use meilisearch_types::batches::{Batch, BatchId};
 use meilisearch_types::heed::types::{DecodeIgnore, SerdeBincode, SerdeJson, Str};
-use meilisearch_types::heed::{Database, Env, RoTxn, RwTxn, WithoutTls};
+use meilisearch_types::heed::{Database, Env, RoTxn, RwTxn, UniqueRwTxn, WithoutTls};
 use meilisearch_types::milli::{CboRoaringBitmapCodec, RoaringBitmapCodec, BEU32};
 use meilisearch_types::tasks::{Kind, Status};
 use roaring::{MultiOps, RoaringBitmap};
@@ -93,7 +107,26 @@ impl BatchQueue {
         NUMBER_OF_DATABASES
     }
 
-    pub(crate) fn new(env: &Env<WithoutTls>, wtxn: &mut RwTxn) -> Result<Self> {
+    pub(crate) fn used_size(&self, rtxn: &RoTxn) -> Result<u64> {
+        let Self { all_batches, status, kind, index_tasks, enqueued_at, started_at, finished_at } =
+            self;
+        let total_size: usize = [
+            all_batches.stat(rtxn)?,
+            status.stat(rtxn)?,
+            kind.stat(rtxn)?,
+            index_tasks.stat(rtxn)?,
+            enqueued_at.stat(rtxn)?,
+            started_at.stat(rtxn)?,
+            finished_at.stat(rtxn)?,
+        ]
+        .iter()
+        .map(meilisearch_types::heed::DatabaseStat::non_free_page_size)
+        .sum();
+
+        Ok(total_size as u64)
+    }
+
+    pub(crate) fn new(env: &Env<WithoutTls>, wtxn: &mut UniqueRwTxn) -> Result<Self> {
         Ok(Self {
             all_batches: env.create_database(wtxn, Some(db_name::ALL_BATCHES))?,
             status: env.create_database(wtxn, Some(db_name::BATCH_STATUS))?,
@@ -277,20 +310,7 @@ impl BatchQueue {
                 // and we still need to find the date by scrolling the database
                 remove_n_tasks_datetime_earlier_than(
                     wtxn,
-                    self.enqueued_at,
-                    old_batch.started_at,
-                    old_batch.stats.total_nb_tasks.clamp(1, 2) as usize,
-                    old_batch.uid,
-                )?;
-            }
-        }
-        // A finished batch MUST contains at least one task and have an enqueued_at
-        let enqueued_at = batch.enqueued_at.as_ref().unwrap();
-        insert_task_datetime(wtxn, self.enqueued_at, enqueued_at.earliest, batch.uid)?;
-        insert_task_datetime(wtxn, self.enqueued_at, enqueued_at.oldest, batch.uid)?;
-
-        // Update the started at and finished at
-        if let Some(ref old_batch) 
+   
 ```
 
 ### Core Architecture Module: `crates/index-scheduler/src/queue/mod.rs`
@@ -310,7 +330,7 @@ use std::time::Duration;
 
 use file_store::FileStore;
 use meilisearch_types::batches::BatchId;
-use meilisearch_types::heed::{Database, Env, RoTxn, RwTxn, WithoutTls};
+use meilisearch_types::heed::{Database, Env, RoTxn, RwTxn, UniqueRwTxn, WithoutTls};
 use meilisearch_types::milli::{CboRoaringBitmapCodec, BEU32};
 use meilisearch_types::tasks::network::DbTaskNetwork;
 use meilisearch_types::tasks::{Kind, KindWithContent, Status, Task};
@@ -453,10 +473,20 @@ impl Queue {
         tasks::TaskQueue::nb_db() + batches::BatchQueue::nb_db() + NUMBER_OF_DATABASES
     }
 
+    pub fn used_size(&self, rtxn: &RoTxn) -> Result<u64> {
+        let Self { tasks, batches, batch_to_tasks_mapping, file_store: _, max_number_of_tasks: _ } =
+            self;
+        let total_size = batch_to_tasks_mapping.stat(rtxn)?.non_free_page_size() as u64
+            + tasks.used_size(rtxn)?
+            + batches.used_size(rtxn)?;
+
+        Ok(total_size)
+    }
+
     /// Create an index scheduler and start its run loop.
     pub(crate) fn new(
         env: &Env<WithoutTls>,
-        wtxn: &mut RwTxn,
+        wtxn: &mut UniqueRwTxn,
         options: &IndexSchedulerOptions,
     ) -> Result<Self> {
         // allow unreachable_code to get rids of the warning in the case of a test build.
@@ -539,18 +569,7 @@ impl Queue {
     }
 
     #[cfg(test)]
-    pub fn create_update_file_with_uuid(&self, uuid: u128) -> Result<(Uuid, file_store::File)> {
-        Ok(self.file_store.new_update_with_uuid(uuid)?)
-    }
-
-    /// The size on disk taken by all the updates files contained in the `IndexScheduler`, in bytes.
-    pub fn compute_update_file_size(&self) -> Result<u64> {
-        Ok(self.file_store.compute_total_size()?)
-    }
-
-    pub fn register(
-        &self,
-        wtxn: &m
+    pub fn create_update_file_with_uu
 ```
 
 ### Core Architecture Module: `crates/index-scheduler/src/queue/tasks.rs`
@@ -558,7 +577,7 @@ impl Queue {
 use std::ops::{Bound, RangeBounds};
 
 use meilisearch_types::heed::types::{DecodeIgnore, SerdeBincode, SerdeJson, Str};
-use meilisearch_types::heed::{Database, Env, RoTxn, RwTxn, WithoutTls};
+use meilisearch_types::heed::{Database, Env, RoTxn, RwTxn, UniqueRwTxn, WithoutTls};
 use meilisearch_types::milli::{CboRoaringBitmapCodec, RoaringBitmapCodec, BEU32};
 use meilisearch_types::tasks::network::DbTaskNetwork;
 use meilisearch_types::tasks::{Kind, KindWithContent, Status, Task};
@@ -626,7 +645,34 @@ impl TaskQueue {
         NUMBER_OF_DATABASES
     }
 
-    pub(crate) fn new(env: &Env<WithoutTls>, wtxn: &mut RwTxn) -> Result<Self> {
+    pub(crate) fn used_size(&self, rtxn: &RoTxn) -> Result<u64> {
+        let Self {
+            all_tasks,
+            status,
+            kind,
+            index_tasks,
+            canceled_by,
+            enqueued_at,
+            started_at,
+            finished_at,
+        } = self;
+        let total_size: usize = [
+            all_tasks.stat(rtxn)?,
+            status.stat(rtxn)?,
+            kind.stat(rtxn)?,
+            index_tasks.stat(rtxn)?,
+            canceled_by.stat(rtxn)?,
+            enqueued_at.stat(rtxn)?,
+            started_at.stat(rtxn)?,
+            finished_at.stat(rtxn)?,
+        ]
+        .iter()
+        .map(meilisearch_types::heed::DatabaseStat::non_free_page_size)
+        .sum();
+        Ok(total_size as u64)
+    }
+
+    pub(crate) fn new(env: &Env<WithoutTls>, wtxn: &mut UniqueRwTxn) -> Result<Self> {
         Ok(Self {
             all_tasks: env.create_database(wtxn, Some(db_name::ALL_TASKS))?,
             status: env.create_database(wtxn, Some(db_name::STATUS))?,
@@ -765,34 +811,7 @@ impl TaskQueue {
     }
 
     /// Returns the whole set of tasks that belongs to this index.
-    pub(crate) fn index_tasks(&self, rtxn: &RoTxn, index: &str) -> Result<RoaringBitmap> {
-        Ok(self.index_tasks.get(rtxn, index)?.unwrap_or_default())
-    }
-
-    pub(crate) fn update_index(
-        &self,
-        wtxn: &mut RwTxn,
-        index: &str,
-        f: impl Fn(&mut RoaringBitmap),
-    ) -> Result<()> {
-        let mut tasks = self.index_tasks(wtxn, index)?;
-        f(&mut tasks);
-        if tasks.is_empty() {
-            self.index_tasks.delete(wtxn, index)?;
-        } else {
-            self.index_tasks.put(wtxn, index, &tasks)?;
-        }
-
-        Ok(())
-    }
-
-    pub(crate) fn get_status(&self, rtxn: &RoTxn, status: Status) -> Result<RoaringBitmap> {
-        Ok(self.status.get(rtxn, &status)?.unwrap_or_default())
-    }
-
-    pub(crate) fn put_status(
-        &self,
-        wtx
+    pub(crate) fn index_tasks(&sel
 ```
 
 ### Core Architecture Module: `crates/index-scheduler/src/utils.rs`
@@ -2004,242 +2023,6 @@ fn check_changed(uuid: Uuid, webhook: &Webhook) -> Result<(), WebhooksError> {
         return Err
 ```
 
-### Core Architecture Module: `crates/meilisearch/src/search/federated/weighted_scores.rs`
-```
-use std::cmp::Ordering;
-
-use meilisearch_types::milli::score_details::WeightedScoreValue;
-
-pub fn compare(
-    left_it: impl Iterator<Item = WeightedScoreValue>,
-    left_weighted_global_score: f64,
-    right_it: impl Iterator<Item = WeightedScoreValue>,
-    right_weighted_global_score: f64,
-) -> Ordering {
-    WeightedScoreValue::compare_partial(left_it, right_it).unwrap_or_else(|| {
-        left_weighted_global_score.partial_cmp(&right_weighted_global_score).unwrap()
-    })
-}
-
-```
-
-### Core Architecture Module: `crates/meilisearch/src/search_queue.rs`
-```
-//! This file implements a queue of searches to process and the ability to control how many searches can be run in parallel.
-//! We need this because we don't want to process more search requests than the available CPU cores.
-//! That slows down everything and consumes RAM for no reason.
-//! The steps to do a search are to get the `SearchQueue` data structure and try to get a search permit.
-//! This can fail if the queue is full, and we need to drop your search request to register a new one.
-//!
-//! ### How to do a search request
-//!
-//! In order to do a search request you should try to get a search permit.
-//! Retrieve the `SearchQueue` structure from actix-web (`search_queue: Data<SearchQueue>`)
-//! and right before processing the search, call the `SearchQueue::try_get_search_permit` method: `search_queue.try_get_search_permit().await?;`
-//!
-//! What is going to happen at this point is that you're going to send a oneshot::Sender over an async mpsc channel.
-//! Then, the queue/scheduler is going to either:
-//! - Drop your oneshot channel => that means there are too many searches going on, and yours won't be executed.
-//!   You should exit and free all the RAM you use ASAP.
-//! - Sends you a Permit => that will unlock the method, and you will be able to process your search.
-//!   And should drop the Permit only once you have freed all the RAM consumed by the method.
-
-use std::num::NonZeroUsize;
-use std::sync::atomic::{AtomicUsize, Ordering};
-use std::sync::Arc;
-use std::time::Duration;
-
-use meilisearch_types::milli::progress::Progress;
-use meilisearch_types::milli::search::steps::TotalProcessingTimeStep;
-use rand::rngs::StdRng;
-use rand::RngExt as _;
-use tokio::sync::{mpsc, oneshot};
-
-use crate::error::MeilisearchHttpError;
-
-#[derive(Debug)]
-pub struct SearchQueue {
-    sender: mpsc::Sender<oneshot::Sender<Permit>>,
-    capacity: usize,
-    /// If we have waited longer than this to get a permit, we should abort the search request entirely.
-    /// The client probably already closed the connection, but we have no way to find out.
-    time_to_abort: Duration,
-    searches_running: Arc<AtomicUsize>,
-    searches_waiting_to_be_processed: Arc<AtomicUsize>,
-}
-
-/// You should only run search requests while holding this permit.
-/// Once it's dropped, a new search request will be able to process.
-/// You should always try to drop the permit yourself calling the `drop` async method on it.
-#[derive(Debug)]
-pub struct Permit {
-    sender: mpsc::Sender<()>,
-}
-
-impl Permit {
-    /// Drop the permit giving back on permit to the search queue.
-    pub async fn drop(self) {
-        // if the channel is closed then the whole instance is down
-        let _ = self.sender.send(()).await;
-    }
-}
-
-impl Drop for Permit {
-    /// The implicit drop implementation can still be called in multiple cases:
-    /// - We forgot to call the explicit one somewhere => this should be fixed on our side asap
-    /// - The future is cancelled while running and the permit dropped with it
-    fn drop(&mut self) {
-        let sender = self.sender.clone();
-        // if the channel is closed then the whole instance is down
-        std::mem::drop(tokio::spawn(async move { sender.send(()).await }));
-    }
-}
-
-impl SearchQueue {
-    pub fn new(capacity: usize, paralellism: NonZeroUsize) -> Self {
-        // Search requests are going to wait until we're available anyway,
-        // so let's not allocate any RAM and keep a capacity of 1.
-        let (sender, receiver) = mpsc::channel(1);
-
-        let instance = Self {
-            sender,
-            capacity,
-            time_to_abort: Duration::from_secs(60),
-            searches_running: Default::default(),
-            searches_waiting_to_be_processed: Default::default(),
-        };
-
-        tokio::task::spawn(Self::run(
-            capacity,
-            paralellism,
-            receiver,
-            Arc::clone(&instance.searches_running),
-            Arc::clone(&instance.searches_waiting_to_be_processed),
-        ));
-
-        instance
-    }
-
-    pub fn with_time_to_abort(self, time_to_abort: Duration) -> Self {
-        Self { time_to_abort, ..self }
-    }
-
-    pub fn capacity(&self) -> usize {
-        self.capacity
-    }
-
-    pub fn searches_running(&self) -> usize {
-        self.searches_running.load(Ordering::Relaxed)
-    }
-
-    pub fn searches_waiting(&self) -> usize {
-        self.searches_waiting_to_be_processed.load(Ordering::Relaxed)
-    }
-
-    /// This function is the main loop, it's in charge on scheduling which search request should execute first and
-    /// how many should executes at the same time.
-    ///
-    /// It **must never** panic or exit.
-    async fn run(
-        capacity: usize,
-        parallelism: NonZeroUsize,
-        mut receive_new_searches: mpsc::Receiver<oneshot::Sender<Permit>>,
-        metric_searches_running: Arc<AtomicUsize>,
-        metric_searches_waiting: Arc<AtomicUsize>,
-    ) {
-        let mut queue: Vec<oneshot::Sender<Permit>> = Default::default();
-        let mut rng: StdRng = rand::make_rng();
-        let mut searches_running: usize = 0;
-        // By having a capacity of parallelism we ensure that every time a search finish it can release its RAM asap
-        let (sender, mut search_finished) = mpsc::channel(parallelism.into());
-
-        loop {
-            tokio::select! {
-                // biased select because we want to free up space before trying to register new tasks
-                biased;
-                _ = search_finished.recv() => {
-                    searches_running = searches_running.saturating_sub(1);
-                    if !queue.is_empty() {
-                        // Can't panic: the queue wasn't empty thus the range isn't empty.
-                        let remove = rng.random_range(0..queue.len());
-                        let channel = queue.swap_remove(remove);
-                        let _ = channel.send(Permit { sender: sender.clone() });
-                    }
-                },
-
-                search_request = receive_new_searches.recv() => {
-                    let search_request = match search_request {
-                        Some(search_request) => search_request,
-                        // This should never happen while actix-web is running, but it's not a reason to crash
-                        // and it can generate a lot of noise in the tests.
-                        None => continue,
-                    };
-
-                    if searches_running < usize::from(parallelism) && queue.is_empty() {
-                        searches_running += 1;
-                        // if the search requests die, it's not a hard error on our side
-                        let _ = search_request.send(Permit { sender: sender.clone() });
-                        continue;
-                    } else if capacity == 0 {
-                        // in the very specific case where we have a capacity of zero,
-                        // we must refuse the request straight away without going through
-                        // the queue stuff.
-                        drop(search_request);
-                        continue;
-
-                    } else if queue.len() >= capacity {
-                        let remove = rng.random_range(0..queue.len());
-                        let thing = queue.swap_remove(remove); // this will drop the channel and notify the search that it won't be processed
-                        drop(thing);
-                    }
-                    queue.push(search_request);
-                },
-            }
-
-            metric_searches_running.store(searches_running, Ordering::Relaxed);
-            metric_searches_waiting.store(queue.len(), Ordering::Relaxed);
-        }
-    }
-
-    /// Returns a search `Permit`.
-    /// It should be dropped as soon as you've freed all the RAM associated with the search request being processed.
-    pub async fn try_get_search_permit(
-        &self,
-        progress: &Progress,
-    ) -> Result<Permit, MeilisearchHttpError> {
-        let _step = progress.update_progress_scoped(TotalProcessingTimeStep::WaitInQueue);
-        let now = std::time::Instant::now();
-        let (sender, receiver) = oneshot::channel();
-        self.sender.send(sender).await.map_err(|_| MeilisearchHttpError::SearchLimiterIsDown)?;
-        let permit = receiver
-            .await
-            .map_err(|_| MeilisearchHttpError::TooManySearchRequests(self.capacity))?;
-
-        // If we've been for more than one minute to get a search permit, it's better to simply
-        // abort the search request than spending time processing something where the client
-        // most certainly exited or got a timeout a long time ago.
-        // We may find a better solution in https://github.com/actix/actix-web/issues/3462.
-        if now.elapsed() > self.time_to_abort {
-            permit.drop().await;
-            Err(MeilisearchHttpError::TooManySearchRequests(self.capacity))
-        } else {
-            Ok(permit)
-        }
-    }
-
-    /// Returns `Ok(())` if everything seems normal.
-    /// Returns `Err(MeilisearchHttpError::SearchLimiterIsDown)` if the search limiter seems down.
-    pub fn health(&self) -> Result<(), MeilisearchHttpError> {
-        if self.sender.is_closed() {
-            Err(MeilisearchHttpError::SearchLimiterIsDown)
-        } else {
-            Ok(())
-        }
-    }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -2251,26 +2034,6 @@ impl SearchQueue {
 
 - **Issue #6659** (2026-10-01): **Replace mimalloc with jemalloc + patch heed, v53 edition**
   *Symptoms*: - "draft" changes in heed to introduce unique txns that gate db opening behind an environment-level mutex - replace mimalloc with jemalloc in an attempt to remove the crash issues on thread exit  See #6654 for details  ## Generative AI tools  - [x] This PR does not use generative AI tooling - [ ] This PR uses generative AI tooling and respect the [related policies](https://github.com/meilisearch/meilisearch/blob/main/CONTRIBUTING.md#use-of-generative-ai-tools)     - *list of used tools and what they were used for* 
-
-- **Issue #6658** (2026-10-01): **Replace mimalloc with jemalloc + patch heed, v54 edition**
-  *Symptoms*: - "draft" changes in heed to introduce unique txns that gate db opening behind an environment-level mutex - replace mimalloc with jemalloc in an attempt to remove the crash issues on thread exit  See #6654 for details   ## Generative AI tools  - [x] This PR does not use generative AI tooling - [ ] This PR uses generative AI tooling and respect the [related policies](https://github.com/meilisearch/meilisearch/blob/main/CONTRIBUTING.md#use-of-generative-ai-tools)     - *list of used tools and what they were used for* 
-
-- **Issue #6651** (2026-09-29): **Fix task queue following upgrade to v1.54 when using DSRs**
-  *Symptoms*: ## Changelog  - DSR update tasks created in Meilisearch < v1.54 are now correctly displayed, processed, canceled, deleted  ## Related issue  Fixes #6646  ## Generative AI tools  - [x] This PR does not use generative AI tooling - [ ] This PR uses generative AI tooling and respect the [related policies](https://github.com/meilisearch/meilisearch/blob/main/CONTRIBUTING.md#use-of-generative-ai-tools)     - *list of used tools and what they were used for*  
-
-- **Issue #6638** (2026-09-23): **Ignore geo errors when updating or deleting existing docs**
-  *Symptoms*: Currently tasks are failed when an existing document in the db has an invlaid `_geo` for some reason (it is not clear how this is possible).  This PR ignores geo failures from existing documents when updating or deleting a document. Failures from existing documents when updating the settings and failures from new versions of documents are not ignored.  ## Generative AI tools  - [x] This PR does not use generative AI tooling - [ ] This PR uses generative AI tooling and respect the [related policies](https://github.com/meilisearch/meilisearch/blob/main/CONTRIBUTING.md#use-of-generative-ai-tools)     - *list of used tools and what they were used for* 
-
-- **Issue #6613** (2026-09-08): **Fix geoJson and geo support in settings**
-  *Symptoms*: ## Related issue  Fixes https://linear.app/meilisearch/issue/SP-2167  ## Generative AI tools  - [x] This PR does not use generative AI tooling  ## Changelog  When using the attribute pattern format with `_geo` and `_geojson` as follows: ```json "filterableAttributes": [   {     "attributePatterns": [       "_geo"     ],     "features": {       "facetSearch": true,       "filter": {         "equality": true,         "comparison": true       }     }   } ] ```  Meilisearch was returning an `Attribute '_geo/_geojson' is not filterable` error.  This PR fixes the way Meilisearch checks the filterable fields to take into account the patterns.  
-  **Post-Mortem & Fix Analysis**:
-  > closing in favor of a PR on the cloud side
-
-- **Issue #6543** (2026-07-29): **Fix duplicate pins in federated search**
-  *Symptoms*: ## Related issue  Fixes #6540   ## API change  - Add `precedence` to `ScoreDetails::Pin` in ranking score details  ## Implementation  - Introduce a trait to factor the behavior of deduplicating and sorting pins - Use the trait to correctly deduplicate pins in federated search - Fix existing tests - Add tests:     1. Checking that pins are no longer duplicated (checked that pins would be duplicated on main)     2. Checking that the pin belonging to the rule with the earliest precedence wins  ## Generative AI tools  - [x] This PR does not use generative AI tooling - [ ] This PR uses generative AI tooling and respect the [related policies](https://github.com/meilisearch/meilisearch/blob/main/CONTRIBUTING.md#use-of-generative-ai-tools)     - *list of used tools and what they were used for*
-
-- **Issue #6540** (2026-07-29): **Duplicate pinned documents in federated search**
-  *Symptoms*: **Describe the bug** Pinned documents are not correctly deduplicated in federated search requests containing several queries hitting the same index.  **To Reproduce** Steps to reproduce the behavior: 1. Enable the dsr experimental feature 2. Add a rule with an action to pin a document 3. Create a federated search request containing 2 queries that target the same index and firing the DSR 4. Observe the document being pinned twice.  **Expected behavior** The document is only pinned once.  **Meilisearch version:** The work on DSR as index did not modify the way pins are resolved, so this likely dates back from the original introduction of pinning in v1.41 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2287,1355 +2050,219 @@ impl SearchQueue {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `82e0ec1e` (2026-10-05)
-**Commit Message**: Merge pull request #6661 from meilisearch/fix-ranking-score-threshold-performances
+### Incident Patch 1: `db9f7bad` (2026-10-08)
+**Commit Message**: Merge pull request #6673 from meilisearch/avoid-panic-in-highlighting
 
-Fix ranking score threshold performances
+Avoid panic during highlight with crop
 
-**File**: `crates/milli/src/search/new/bucket_sort.rs` (modified, +22/-2)
+**File**: `crates/milli/src/search/new/matches/mod.rs` (modified, +30/-7)
 ```diff
-@@ -203,7 +203,18 @@ pub fn bucket_sort<'ctx, Q: RankingRuleQueryTrait>(
+@@ -455,25 +455,42 @@ impl<'t> Matcher<'t, '_, '_, '_> {
  
-                         if is_below_threshold {
-                             all_candidates -= &bucket;
--                            all_candidates -= &ranking_rule_universes[cur_ranking_rule_index];
-+                            for rru in
-+                                ranking_rule_universes.iter().take(cur_ranking_rule_index + 1)
-+                            {
-+                                all_candidates -= rru;
-+                            }
-+
-+                            return Ok(BucketSortOutput {
-+                                scores: valid_scores,
-+                                docids: valid_docids,
-+                                all_candidates,
-+                                degraded: true,
-+                            });
-                         } else {
-                             maybe_add_to_results!(bucket);
-                         }
-@@ -276,7 +287,16 @@ pub fn bucket_sort<'ctx, Q: RankingRuleQueryTrait>(
-         {
-             if is_below_threshold {
-                 all_candidates -= &next_bucket.candidates;
--                all_candidates -= &ranking_rule_universes[cur_ranking_rule_index];
-+                for rru in ranking_rule_universes.iter().take(cur_ranking_rule_index + 1) {
-+                    all_candidates -= rru;
-+                }
-+
-+                return Ok(BucketSortOutput {
-+                    scores: valid_scores,
-+                    docids: valid_docids,
-+                    all_candidates,
-+                    degraded: false,
-+                });
-             } else {
-                 maybe_add_to_results!(next_bucket.candidates);
-             }
-```
-
----
-
-### Incident Patch 2: `e2d12d3e` (2026-10-05)
-**Commit Message**: Merge pull request #6667 from meilisearch/fix-openapi-docs
-
-Fix OpenAPI docs
-
-**File**: `crates/meilisearch/src/routes/batches.rs` (modified, +0/-4)
-```diff
-@@ -27,10 +27,6 @@ use crate::extractors::authentication::GuardedData;
-         "/stream" => get(get_batches_stream),
-         "/{batch_id}" => get(get_batch)
-     ),
--    tags((
--        name = "Batches",
--        description = "Meilisearch groups compatible tasks ([asynchronous operations](https://www.meilisearch.com/docs/learn/async/asynchronous_operations)) into batches for efficient processing. For example, multiple document additions to the same index may be batched together. The /batches routes give information about the progress of these batches and let you monitor batch progress and performance.",
--    )),
- )]
- pub struct BatchesApi;
+                             // push text that is positioned before our matches
+                             if byte_index < *m_byte_start {
+-                                formatted.push(&self.text[byte_index..*m_byte_start]);
++                                let Some(before_match) = self.text.get(byte_index..*m_byte_start)
++                                else {
++                                    continue;
++                                };
++                                formatted.push(before_match);
+                             }
  
-```
-
-**File**: `crates/meilisearch/src/routes/mcp.rs` (modified, +1/-1)
-```diff
-@@ -34,7 +34,7 @@ use crate::search_queue::SearchQueue;
- static MEILISEARCH_OPEN_API: LazyLock<OpenApi> = LazyLock::new(MeilisearchApi::openapi);
+                             formatted.push(self.highlight_prefix);
  
- #[routes::routes(
--    tag = "MCP connection",
-+    tag = "MCP",
-     routes(
-         "" => post(mcp)
-     ),
-```
-
-**File**: `crates/meilisearch/src/routes/network/mod.rs` (modified, +0/-6)
-```diff
-@@ -40,12 +40,6 @@ use enterprise_edition as current_edition;
-         "/control" => post(post_network_change),
-     ),
-     tag = "Experimental features",
--    tags((
--        name = "Network",
--        description = "The `/network` route allows you to describe the topology of a network of Meilisearch instances.
--
--This route is **synchronous**. This means that no task object will be returned, and any change to the network will be made available immediately.",
--    )),
- )]
- pub struct NetworkApi;
+                             // TODO: This is additional work done, charabia::token::Token byte_len
+                             // should already get us the original byte length, however, that doesn't work as
+                             // it's supposed to, investigate why
+-                            let highlight_byte_index = self.text[*m_byte_start..]
++                            let Some(match_from_byte_start) = self.text.get(*m_byte_start..) else {
++                                continue;
++                            };
++                            let highlight_byte_index = match_from_byte_start
+                                 .char_indices()
+                                 .nth(m.char_count)
+                                 .map_or(*m_byte_end, |(i, _)| min(i + *m_byte_start, *m_byte_end));
+-                            formatted.push(&self.text[*m_byte_start..highlight_byte_index]);
++                            let Some(highlighted_match) =
++                                self.text.get(*m_byte_start..highlight_byte_index)
++                            else {
++                                continue;
++                            };
++                            formatted.push(highlighted_match);
  
-```
-
-**File**: `crates/meilisearch/src/routes/render.rs` (modified, +1/-1)
-```diff
-@@ -34,7 +34,7 @@ use crate::routes::render_analytics::RenderAggregator;
+                             formatted.push(self.highlight_suffix);
  
- #[routes::routes(
-     routes("" => post(render_post)),
--    tag = "Template",
-+    tag = "Render templates",
-     tags((
-         name = "Render templates",
-         description = "The /render-template route allows rendering templates used by Meilisearch.",
-```
-
-**File**: `crates/meilisearch/src/routes/tasks.rs` (modified, +0/-4)
-```diff
-@@ -43,10 +43,6 @@ use crate::extractors::authentication::GuardedData;
-         "/{task_id}/documents" => get(get_task_documents_file),
-     ),
-     tag = "Async task management",
--    tags((
--        name = "Tasks",
--        description = "The tasks route gives information about the progress of the [asynchronous operations](https://docs.meilisearch.com/learn/advanced/asynchronous_operations.html).",
--    )),
- )]
- pub struct TaskApi;
+                             // if it's a prefix highlight, we put the end of the word after the highlight marker.
+                             if highlight_byte_index < *m_byte_end {
+-                                formatted.push(&self.text[highlight_byte_index..*m_byte_end]);
++                                let Some(end_of_word) =
++                                    self.text.get(highlight_byte_index..*m_byte_end)
++                                else {
++                                    continue;
++                                };
++                                formatted.push(end_of_word);
+                             }
  
-```
-
----
-
-### Incident Patch 3: `c46e7348` (2026-10-02)
-**Commit Message**: Fix duplication of Render template route
-
-**File**: `crates/meilisearch/src/routes/render.rs` (modified, +1/-1)
-```diff
-@@ -34,7 +34,7 @@ use crate::routes::render_analytics::RenderAggregator;
+                             byte_index = *m_byte_end;
+@@ -482,17 +499,23 @@ impl<'t> Matcher<'t, '_, '_, '_> {
  
- #[routes::routes(
-     routes("" => post(render_post)),
--    tag = "Template",
-+    tag = "Render templates",
-     tags((
-         name = "Render templates",
-         description = "The /render-template route allows rendering templates used by Meilisearch.",
-```
-
----
-
-### Incident Patch 4: `48e5db28` (2026-10-01)
-**Commit Message**: fix extimated total hit
-
-**File**: `crates/milli/src/search/new/bucket_sort.rs` (modified, +6/-2)
-```diff
-@@ -203,7 +203,9 @@ pub fn bucket_sort<'ctx, Q: RankingRuleQueryTrait>(
- 
-                         if is_below_threshold {
-                             all_candidates -= &bucket;
--                            all_candidates -= &ranking_rule_universes[0];
-+                            for i in 0..=cur_ranking_rule_index {
-+                                all_candidates -= &ranking_rule_universes[i];
-+                            }
- 
-                             return Ok(BucketSortOutput {
-                                 scores: valid_scores,
-@@ -283,7 +285,9 @@ pub fn bucket_sort<'ctx, Q: RankingRuleQueryTrait>(
-         {
-             if is_below_threshold {
-                 all_candidates -= &next_bucket.candidates;
--                all_candidates -= &ranking_rule_universes[0];
-+                for i in 0..=cur_ranking_rule_index {
-+                    all_candidates -= &ranking_rule_universes[i];
-+                }
- 
-                 return Ok(BucketSortOutput {
-                     scores: valid_scores,
-```
-
----
-
-### Incident Patch 5: `4657683e` (2026-09-29)
-**Commit Message**: Update workload to expose the bug
-
-**File**: `workloads/tests/dsr.json` (modified, +176/-4)
-```diff
-@@ -1015,15 +1015,128 @@
-       "synchronous": "DontWait"
-     },
-     {
--      "route": "tasks?types=upgradeDatabase",
-+      "route": "dynamic-search-rules/scale-rule",
-+      "method": "PATCH",
-+      "body": {
-+        "inline": {
-+          "conditions": {
-+            "query": {
-+              "words": "HERO SUPER"
-+            }
-+          },
-+          "actions": {
-+            "scale": [
-+              {
-+                "ids": ["372631"],
-+                "weight": 2.0
-+              }
-+            ]
-+          }
-+        }
-+      },
-+      "expectedStatus": 202,
-+      "expectedResponse": {
-+        "taskUid": 6,
-+        "indexUid": ".meili_dsr",
-+        "status": "enqueued",
-+        "type": "dsrUpdate",
-+        "enqueuedAt": "[enqueuedAt]"
-+      },
-+      "synchronous": "WaitForTask"
-+    },
-+    {
-+      "route": "indexes/movies/search?q=hero super&limit=3",
-+      "method": "GET",
-+      "body": null,
-+      "expectedStatus": 200,
-+      "expectedResponse": {
-+        "estimatedTotalHits": 341,
-+        "hits": [
-+          {
-+            "genres": [
-+              "Family",
-+              "Animation"
-+            ],
-+            "id": 15242,
-+            "overview": "When Snoopy receives a letter from his original owner Lila, he goes to visit her in the hospital while Charlie Brown and the gang are on the lookout for him. Suddenly, Snoopy feels that he must go live with Lila, but must say goodbye to all his friends. In his adventure to the hospital, he encounters numerous \"No Dogs Allowed\" signs, an annoying little girl who desires to keep him, and more!",
-+            "poster": "https://image.tmdb.org/t/p/w500/vGYhYtoXkpjXTZ7KLQMJehwfLG0.jpg",
-+            "release_date": 84758400,
-+            "title": "Snoopy, Come Home"
-+          },
-+          {
-+            "genres": [
-+              "Animation",
-+              "Fantasy"
-+            ],
-+            "id": 372631,
-+            "overview": "The holiday season gets extra chilly as Loki and the frost giant Ymir plot to conquer the world. Marvel heroes Iron Man, Captain America, Hulk, Thor and others must stop the villains from stealing Santa's power – if anyone can actually find the mysterious Mr. Claus. Fortunately, Rocket Raccoon and Groot are also hot on Santa's trail. Heroes, villains, elves and cosmic bounty hunters collide in an epic quest that leaves the fate of the holiday and the world in the balance.",
-+            "poster": "https://image.tmdb.org/t/p/w500/2StM8Vavf7ukvuj9mxg1o7nKxmi.jpg",
-+            "release_date": 1450137600,
-+            "title": "Marvel Super Hero Adventures: Frost Fight!"
-+          },
-+          {
-+            "genres": [
-+              "Animation",
-+              "Family"
-+            ],
-+            "id": 452931,
-+            "overview": "Super Hero High is facing off against Korugar Academy in the Intergalactic Games, but Lena Luthor takes advantage of the gathering of Supers to enact her villainous plan.",
-+            "poster": "https://image.tmdb.org/t/p/w500/9BkNrjD9fAlp0lo9Kw8Ky4qcnKq.jpg",
-+            "release_date": 1494288000,
-+            "title": "DC Super Hero Girls: Intergalactic Games"
-+          }
-+        ],
-+        "limit": 3,
-+        "offset": 0,
-+        "processingTimeMs": "[duration]",
-+        "query": "hero super",
-+        "requestUid": "[uuid]"
-+      },
-+      "synchronous": "DontWait"
-+    },
-+    {
-+      "route": "tasks?types=upgradeDatabase,dsrUpdate",
-       "method": "GET",
-       "body": null,
-       "expectedStatus": 200,
-       "expectedResponse": {
--        "from": 5,
-+        "from": 6,
-         "limit": 20,
-         "next": null,
-         "results": [
-+          {
-+            "batchUid": 5,
-+            "canceledBy": null,
-+            "details": {
-+              "rule": {
-+                "actions": {
-+                  "scale": [
-+                    {
-+                      "ids": [
-+                        "372631"
-+                      ],
-+                      "weight": 2.0
-+                    }
-+                  ]
-+                },
-+                "conditions": {
-+                  "query": {
-+                    "words": "HERO SUPER"
-+                  }
-+                }
-+              },
-+              "updatedRules": 1
-+            },
-+            "duration": "[duration]",
-+            "enqueuedAt": "[enqueuedAt]",
-+            "error": null,
-+            "finishedAt": "[finishedAt]",
-+            "indexUid": ".meili_dsr",
-+            "startedAt": "[startedAt]",
-+            "status": "succeeded",
-+            "type": "dsrUpdate",
-+            "uid": 6
-+          },
-           {
-             "batchUid": 4,
-             "canceledBy": null,
-@@ -1057,11 +1170,70 @@
-             "status": "succeeded",
-             "type": "upgradeDatabase",
-             "uid": 4
-+          },
-+          {
-+            "batchUid": 3,
-+            "canceledBy": null,
-+            "details": {
-+              "rule": {
-+                "actions": {},
-+         
-```
-
----
-
-### Incident Patch 6: `01ee09ab` (2026-09-29)
-**Commit Message**: Merge pull request #6650 from meilisearch/link-to-mcp-guide
-
-Add link to MCP guide in generated API reference
-
-**File**: `crates/meilisearch/src/routes/mcp.rs` (modified, +2/-2)
-```diff
-@@ -47,8 +47,8 @@ pub struct McpApi;
- 
- /// Model context protocol (MCP)
- ///
--/// The `/mcp` route exposes [the MCP open protocol](https://modelcontextprotocol.io) that enables seamless integration between LLM
--/// applications and external data sources and tools.
-+/// The `/mcp` route exposes an [MCP server](https://www.meilisearch.com/docs/getting_started/integrations/mcp) for
-+/// LLM applications to search Meilisearch.
- #[routes::path(
-     security(),
-     request_body = McpQuery,
-```
-
----
-
-### Incident Patch 7: `909ef7fe` (2026-09-24)
-**Commit Message**: Merge pull request #6640 from meilisearch/fix-embedder-setting-change
-
-Fix embedder setting change
-
-**File**: `crates/meilisearch/tests/vector/rest.rs` (modified, +248/-2)
-```diff
-@@ -1,5 +1,6 @@
- use std::collections::BTreeMap;
--use std::sync::atomic::AtomicUsize;
-+use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
-+use std::sync::Arc;
- use std::time::Duration;
- 
- use http_client::policy::IpPolicy;
-@@ -345,7 +346,7 @@ async fn create_faulty_mock_raw(sender: mpsc::Sender<()>) -> (&'static MockServe
-     Mock::given(method("POST"))
-         .and(path("/"))
-         .respond_with(move |_req: &Request| {
--            let count = count.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
-+            let count = count.fetch_add(1, Ordering::SeqCst);
- 
-             if count >= 5 {
-                 let _ = sender.try_send(());
-@@ -373,6 +374,90 @@ async fn create_faulty_mock_raw(sender: mpsc::Sender<()>) -> (&'static MockServe
-     (mock_server, embedder_settings)
- }
- 
-+/// Mock REST embedder that accepts `Authorization: Bearer my-api-key` until `revoked` is set.
-+async fn create_mock_with_revocable_key() -> (&'static MockServer, Value, Value, Arc<AtomicBool>) {
-+    let mock_server = Box::leak(Box::new(MockServer::start().await));
-+    let revoked = Arc::new(AtomicBool::new(false));
-+    let revoked_for_handler = revoked.clone();
-+
-+    const REVOCABLE_API_KEY: &str = "my-api-key";
-+    const REVOCABLE_API_KEY_BEARER: &str = "Bearer my-api-key";
-+
-+    const UNREVOCABLE_API_KEY: &str = "my-super-api-key";
-+    const UNREVOCABLE_API_KEY_BEARER: &str = "Bearer my-super-api-key";
-+
-+    let text_to_embedding: BTreeMap<_, _> = vec![
-+        ("kefir", [0.0, 0.0, 0.0]),
-+        ("intel", [1.0, 1.0, 1.0]),
-+        ("test", [0.5, 0.5, 0.5]),
-+        ("toto kefir", [0.0, 0.5, 0.0]),
-+        ("toto intel", [1.0, 0.5, 1.0]),
-+        ("toto test", [0.5, 1.0, 0.5]),
-+    ]
-+    .into_iter()
-+    .collect();
-+
-+    Mock::given(method("POST"))
-+        .and(path("/"))
-+        .respond_with(move |req: &Request| {
-+            let text_to_embedding = match req.headers.get("Authorization") {
-+                Some(api_key) if api_key == UNREVOCABLE_API_KEY_BEARER => &text_to_embedding,
-+                Some(api_key)
-+                    if api_key != REVOCABLE_API_KEY_BEARER
-+                        || revoked_for_handler.load(Ordering::SeqCst) =>
-+                {
-+                    return ResponseTemplate::new(401).set_body_json(json!({
-+                        "error": format!("invalid api key: {}", api_key.to_str().unwrap())
-+                    }));
-+                }
-+                Some(_) => &text_to_embedding,
-+                None => {
-+                    return ResponseTemplate::new(401)
-+                        .set_body_json(json!({"error": "missing Authorization header"}));
-+                }
-+            };
-+
-+            let text: String = match req.body_json() {
-+                Ok(text) => text,
-+                Err(error) => {
-+                    return ResponseTemplate::new(400).set_body_json(json!({
-+                      "error": format!("Invalid request: {error}")
-+                    }));
-+                }
-+            };
-+
-+            ResponseTemplate::new(200).set_body_json(
-+                json!({ "data": text_to_embedding.get(text.as_str()).unwrap_or(&[99., 99., 99.]) }),
-+            )
-+        })
-+        .mount(mock_server)
-+        .await;
-+
-+    let embedder_settings = json!({
-+        "source": "rest",
-+        "url": mock_server.uri(),
-+        "apiKey": REVOCABLE_API_KEY,
-+        "request": "{{text}}",
-+        "response": {
-+          "data": "{{embedding}}"
-+        },
-+        "documentTemplate": "{{doc.name}}",
-+    });
-+
-+    let unrevocable_embedder_settings = json!({
-+        "source": "rest",
-+        "url": mock_server.uri(),
-+        "apiKey": UNREVOCABLE_API_KEY,
-+        "request": "{{text}}",
-+        "response": {
-+          "data": "{{embedding}}"
-+        },
-+        "documentTemplate": "toto {{doc.name}}",
-+    });
-+
-+    (mock_server, embedder_settings, unrevocable_embedder_settings, revoked)
-+}
-+
- pub async fn post<T: IntoUrl>(
-     url: T,
-     text: &str,
-@@ -2232,3 +2317,164 @@ async fn last_error_stats() {
-     }
-     "#);
- }
-+
-+#[actix_rt::test]
-+async fn revoked_api_key() {
-+    let (_mock, setting, unrevocable_settings, revoked) = create_mock_with_revocable_key().await;
-+    let server = Server::new().await;
-+    let index = server.index("doggo");
-+
-+    let (response, code) = index
-+        .update_settings(json!({
-+          "embedders": {
-+              "rest": setting,
-+          },
-+        }))
-+        .await;
-+    snapshot!(code, @"202 Accepted");
-+    let task = server.wait_task(response.uid()).await;
-+    snapshot!(task["status"], @r###""succeeded""###);
-+
-+    let (value, code) = index.add_documents(json!([{"id": 0, "name": "kefir"}]), None).await;
-+    snapshot!(code, @"202 Accepted");
-+    let task = server.wait_task(value.uid()).await;
-+    snapshot!(task["status"], @r###""succeeded""###);
-+
-+    revoked.store(true, Ordering::SeqCst);
-+
-+    let (value, code) = index.add_documents(json!([{"id": 1, "name": "int
-```
-
-**File**: `crates/milli/src/update/index_documents/extract/extract_vector_points.rs` (modified, +8/-8)
-```diff
-@@ -319,16 +319,16 @@ pub fn extract_vector_points<R: io::Read + io::Seek>(
-                         }
+                     // push the rest of the text between last match and the end of crop.
+                     if byte_index < crop_byte_end {
+-                        formatted.push(&self.text[byte_index..crop_byte_end]);
++                        if let Some(text_rest) = self.text.get(byte_index..crop_byte_end) {
++                            formatted.push(text_rest);
++                        }
                      }
  
--                    ReindexAction::RegeneratePrompts => {
--                        let Some(old_runtime) = old_configs.get(name) else {
--                            tracing::error!(embedder = name, "Old embedder config not found");
--                            continue;
--                        };
--
--                        ExtractionAction::SettingsRegeneratePrompts {
-+                    ReindexAction::RegeneratePrompts => match old_configs.get(name) {
-+                        Some(old_runtime) => ExtractionAction::SettingsRegeneratePrompts {
-                             old_runtime: old_runtime.clone(),
-+                        },
-+                        None => {
-+                            tracing::error!(embedder = name, "Old embedder config not found");
-+                            // if we may need to reindex, but we don't have the old config, we need to reindex everything
-+                            ExtractionAction::SettingsFullReindex
-                         }
--                    }
-+                    },
-                 };
+                     // push crop marker if it's not the end of the text.
+                     if crop_byte_end < self.text.len() && !self.crop_marker.is_empty() {
+                         formatted.push(self.crop_marker);
+                     }
  
-                 extractors.push(EmbedderVectorExtractor {
++                    // avoid concatenating if there is already 1 slice.
+                     if formatted.len() == 1 {
+-                        // avoid concatenating if there is already 1 slice.
+-                        Cow::Borrowed(&self.text[crop_byte_start..crop_byte_end])
++                        let Some(cropped_text) = self.text.get(crop_byte_start..crop_byte_end)
++                        else {
++                            return Cow::Owned(formatted.concat());
++                        };
++                        Cow::Borrowed(cropped_text)
+                     } else {
+                         Cow::Owned(formatted.concat())
+                     }
 ```
 
-**File**: `crates/milli/src/update/new/indexer/mod.rs` (modified, +5/-5)
+---
+
+### Incident Patch 2: `4c9c764f` (2026-10-15)
+**Commit Message**: Fix doc and error message for fetch_from_env_or
+
+**File**: `crates/milli/src/lib.rs` (modified, +6/-2)
 ```diff
-@@ -536,26 +536,26 @@ where
-         let Some(infos) = index.embedding_configs().embedder_info(wtxn, embedder_name)? else {
-             continue;
-         };
--        let arroy = VectorStore::new(backend, index.vector_store, infos.embedder_id, was_quantized);
--        let Some(dimensions) = arroy.dimensions(wtxn)? else {
-+        let store = VectorStore::new(backend, index.vector_store, infos.embedder_id, was_quantized);
-+        let Some(dimensions) = store.dimensions(wtxn)? else {
-             continue;
-         };
-         for fragment_id in fragment_ids {
-             // we must keep the user provided embeddings that ended up in this store
+@@ -445,7 +445,11 @@ pub fn normalize_facet(original: &str) -> String {
+ }
  
-             if infos.embedding_status.user_provided_docids().is_empty() {
-                 // no user provided: clear store
--                arroy.clear_store(wtxn, *fragment_id, dimensions)?;
-+                store.clear_store(wtxn, *fragment_id, dimensions)?;
-                 continue;
-             }
- 
-             // some user provided, remove only the ids that are not user provided
--            let to_delete = arroy.items_in_store(wtxn, *fragment_id, |items| {
-+            let to_delete = store.items_in_store(wtxn, *fragment_id, |items| {
-                 items - infos.embedding_status.user_provided_docids()
-             })?;
- 
-             for to_delete in to_delete {
--                arroy.del_item_in_store(wtxn, to_delete, *fragment_id, dimensions)?;
-+                store.del_item_in_store(wtxn, to_delete, *fragment_id, dimensions)?;
-             }
+ /// Retrieve the content of an env variable or use a default value if not present.
+-/// If the environment variable is set but is not parseable as the type, the function will panic.
++///
++/// # Panics
++///
++/// - If the value cannot be parsed as the type.
++/// - If the value is not a valid Unicode string.
+ pub fn fetch_from_env_or<T: std::str::FromStr>(key: &str, default: T) -> T {
+     match std::env::var(key) {
+         Ok(value) => value.parse().unwrap_or_else(|_| {
+@@ -456,7 +460,7 @@ pub fn fetch_from_env_or<T: std::str::FromStr>(key: &str, default: T) -> T {
+         }),
+         Err(std::env::VarError::NotPresent) => default,
+         Err(std::env::VarError::NotUnicode(_)) => {
+-            panic!("`{key}` environment variable is not a valid UTF-8 string")
++            panic!("`{key}` environment variable is not a valid Unicode string")
          }
      }
-```
-
-**File**: `crates/milli/src/update/settings.rs` (modified, +22/-3)
-```diff
-@@ -1469,7 +1469,7 @@ impl<'a, 't, 'i> Settings<'a, 't, 'i> {
-         self.index.set_updated_at(self.wtxn, &OffsetDateTime::now_utc())?;
- 
-         let old_inner_settings =
--            InnerIndexSettings::from_index(self.index, self.wtxn, ip_policy, None)?;
-+            InnerIndexSettings::from_index_inner(self.index, self.wtxn, ip_policy, None, true)?;
- 
-         // never trigger re-indexing
-         self.update_displayed()?;
-@@ -1561,7 +1561,7 @@ impl<'a, 't, 'i> Settings<'a, 't, 'i> {
-         self.index.set_updated_at(self.wtxn, &OffsetDateTime::now_utc())?;
- 
-         let old_inner_settings =
--            InnerIndexSettings::from_index(self.index, self.wtxn, ip_policy, None)?;
-+            InnerIndexSettings::from_index_inner(self.index, self.wtxn, ip_policy, None, true)?;
- 
-         // Update index settings
-         let embedding_config_updates = self.update_embedding_configs()?;
-@@ -2012,6 +2012,19 @@ impl InnerIndexSettings {
-         rtxn: &heed::RoTxn<'_>,
-         ip_policy: &http_client::policy::IpPolicy,
-         runtime_embedders: Option<RuntimeEmbedders>,
-+    ) -> Result<Self> {
-+        Self::from_index_inner(index, rtxn, ip_policy, runtime_embedders, false)
-+    }
-+
-+    /// Allow to ignore embedder errors when building the runtime embedders.
-+    /// This is used when we are loading the embedders from the old settings,
-+    /// avoiding to fail the indexing because of settings that would have been replaced or removed.
-+    fn from_index_inner(
-+        index: &Index,
-+        rtxn: &heed::RoTxn<'_>,
-+        ip_policy: &http_client::policy::IpPolicy,
-+        runtime_embedders: Option<RuntimeEmbedders>,
-+        ignore_embedder_errors: bool,
-     ) -> Result<Self> {
-         let stop_words = index.stop_words(rtxn)?;
-         let stop_words = stop_words.map(|sw| sw.map_data(Vec::from).unwrap());
-@@ -2022,7 +2035,11 @@ impl InnerIndexSettings {
-         let proximity_precision = index.proximity_precision(rtxn)?.unwrap_or_default();
-         let runtime_embedders = match runtime_embedders {
-             Some(embedding_configs) => embedding_configs,
--            None => embedders(index.embedding_configs().embedding_configs(rtxn)?, ip_policy)?,
-+            None => embedders(
-+                index.embedding_configs().embedding_configs(rtxn)?,
-+                ip_policy,
-+                ignore_embedder_errors,
-+            )?,
-         };
-         let embedder_category_id = index
-             .embedding_configs()
-@@ -2118,6 +2135,7 @@ impl InnerIndexSettings {
- fn embedders(
-     embedding_configs: Vec<IndexEmbeddingConfig>,
-     ip_policy: &http_client::policy::IpPolicy,
-+    ignore_build_errors: bool,
- ) -> Result<RuntimeEmbedders> {
-     let res: Result<_> = embedding_configs
-         .into_iter()
-@@ -2159,6 +2177,7 @@ fn embedders(
-                 ))
-             },
-         )
-+        .filter(|r| if ignore_build_errors { r.is_ok() } else { true })
-         .collect();
-     res.map(RuntimeEmbedders::new)
  }
 ```
 
 ---
 
-### Incident Patch 8: `5903ab98` (2026-09-21)
-**Commit Message**: Add test reproducing the bug
+### Incident Patch 3: `731937cf` (2026-10-13)
+**Commit Message**: Merge pull request #6679 from meilisearch/fix-embedder-leftovers
 
-**File**: `crates/meilisearch/tests/vector/rest.rs` (modified, +196/-2)
+Fix wrong binary quantization state after deleting embedders
+
+**File**: `crates/meilisearch/tests/vector/settings.rs` (modified, +52/-0)
 ```diff
-@@ -1,5 +1,6 @@
- use std::collections::BTreeMap;
--use std::sync::atomic::AtomicUsize;
-+use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
-+use std::sync::Arc;
- use std::time::Duration;
- 
- use http_client::policy::IpPolicy;
-@@ -345,7 +346,7 @@ async fn create_faulty_mock_raw(sender: mpsc::Sender<()>) -> (&'static MockServe
-     Mock::given(method("POST"))
-         .and(path("/"))
-         .respond_with(move |_req: &Request| {
--            let count = count.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
-+            let count = count.fetch_add(1, Ordering::SeqCst);
- 
-             if count >= 5 {
-                 let _ = sender.try_send(());
-@@ -373,6 +374,84 @@ async fn create_faulty_mock_raw(sender: mpsc::Sender<()>) -> (&'static MockServe
-     (mock_server, embedder_settings)
- }
- 
-+/// Mock REST embedder that accepts `Authorization: Bearer my-api-key` until `revoked` is set.
-+async fn create_mock_with_revocable_key() -> (&'static MockServer, Value, Value, Arc<AtomicBool>) {
-+    let mock_server = Box::leak(Box::new(MockServer::start().await));
-+    let revoked = Arc::new(AtomicBool::new(false));
-+    let revoked_for_handler = revoked.clone();
-+
-+    const REVOCABLE_API_KEY: &str = "my-api-key";
-+    const REVOCABLE_API_KEY_BEARER: &str = "Bearer my-api-key";
-+
-+    const UNREVOCABLE_API_KEY: &str = "my-super-api-key";
-+    const UNREVOCABLE_API_KEY_BEARER: &str = "Bearer my-super-api-key";
-+
-+    let text_to_embedding: BTreeMap<_, _> =
-+        vec![("kefir", [0.0, 0.0, 0.0]), ("intel", [1.0, 1.0, 1.0]), ("test", [0.5, 0.5, 0.5])]
-+            .into_iter()
-+            .collect();
-+
-+    Mock::given(method("POST"))
-+        .and(path("/"))
-+        .respond_with(move |req: &Request| {
-+            match req.headers.get("Authorization") {
-+                Some(api_key) if api_key == UNREVOCABLE_API_KEY_BEARER => {}
-+                Some(api_key)
-+                    if api_key != REVOCABLE_API_KEY_BEARER
-+                        || revoked_for_handler.load(Ordering::SeqCst) =>
-+                {
-+                    return ResponseTemplate::new(401).set_body_json(json!({
-+                        "error": format!("invalid api key: {}", api_key.to_str().unwrap())
-+                    }));
-+                }
-+                Some(_) => {}
-+                None => {
-+                    return ResponseTemplate::new(401)
-+                        .set_body_json(json!({"error": "missing Authorization header"}));
-+                }
-+            }
-+
-+            let text: String = match req.body_json() {
-+                Ok(text) => text,
-+                Err(error) => {
-+                    return ResponseTemplate::new(400).set_body_json(json!({
-+                      "error": format!("Invalid request: {error}")
-+                    }));
-+                }
-+            };
-+
-+            ResponseTemplate::new(200).set_body_json(
-+                json!({ "data": text_to_embedding.get(text.as_str()).unwrap_or(&[99., 99., 99.]) }),
-+            )
-+        })
-+        .mount(mock_server)
-+        .await;
-+
-+    let embedder_settings = json!({
-+        "source": "rest",
-+        "url": mock_server.uri(),
-+        "apiKey": REVOCABLE_API_KEY,
-+        "request": "{{text}}",
-+        "response": {
-+          "data": "{{embedding}}"
-+        },
-+        "documentTemplate": "{{doc.name}}",
-+    });
-+
-+    let unrevocable_embedder_settings = json!({
-+        "source": "rest",
-+        "url": mock_server.uri(),
-+        "apiKey": UNREVOCABLE_API_KEY,
-+        "request": "{{text}}",
-+        "response": {
-+          "data": "{{embedding}}"
-+        },
-+        "documentTemplate": "{{doc.name}}",
-+    });
-+
-+    (mock_server, embedder_settings, unrevocable_embedder_settings, revoked)
-+}
-+
- pub async fn post<T: IntoUrl>(
-     url: T,
-     text: &str,
-@@ -2232,3 +2311,118 @@ async fn last_error_stats() {
+@@ -1070,3 +1070,55 @@ async fn composite_checks() {
      }
-     "#);
+     "###);
  }
 +
++// tests an issue where adding a binary quantized embedder, removing it, then adding a different embedder
++// that is **not** binary quantized causes an issue where the vector store expects the embedder to be using the hamming
++// distance (quantized) but got cosine (not quantized)
 +#[actix_rt::test]
-+async fn revoked_api_key() {
-+    let (_mock, setting, unrevocable_settings, revoked) = create_mock_with_revocable_key().await;
++async fn no_binary_quantization_memory() {
 +    let server = Server::new().await;
 +    let index = server.index("doggo");
 +
 +    let (response, code) = index
 +        .update_settings(json!({
-+          "embedders": {
-+              "rest": setting,
-+          },
++          "embedders": { "manualbq": {
++            "source": "userProvided",
++            "dimensions": 3,
++            "binaryQuantized": true,
++          }},
 +        }))
 +        .await;
 +    snapshot!(code, @"202 Accepted");
-+    let task = server.wait_task(response.uid()).await;
-+    snapshot!(task["status"], @r###""succeeded""###);
++    server.wait_task(response.uid()).await.succeeded();
 +
-+    let (value, code) = index.add_documents(json!([{"id": 0, "name": "kefir"}]), None).await;
++    let documents = json!([
++      {"id": 0, "name": "kefir", "_vectors": { "manualbq": [0, 0, 0], "manualnobq": [0, 0, 0] }},
++      {"id": 1, "name": "echo", "_vectors": { "manualbq": [1, 1, 1], "manualnobq": [0, 0, 0] }},
++    ]);
++    let (value, code) = index.add_documents(documents, None).await;
 +    snapshot!(code, @"202 Accepted");
-+    let task = server.wait_task(value.uid()).await;
-+    snapshot!(task["status"], @r###""succeeded""###);
++    server.wait_task(value.uid()).await.succeeded();
 +
-+    revoked.store(true, Ordering::SeqCst);
-+
-+    let (value, code) = index.add_documents(json!([{"id": 1, "name": "intel"}]), None).await;
++    let (response, code) = index
++        .update_settings(json!({
++          "embedders": { "manualbq": null },
++        }))
++        .await;
 +    snapshot!(code, @"202 Accepted");
-+    let task = server.wait_task(value.uid()).await;
-+    snapshot!(task, @r###"
-+    {
-+      "uid": "[uid]",
-+      "batchUid": "[batch_u
++    server.wait_task(response.uid()).await.succeeded();
++
++    let (response, code) = index
++        .update_settings(json!({
++          "embedders": { "manualnobq": {
++            "source": "userProvided",
++            "dimensions": 3,
++            "binaryQuantized": false,
++          }},
++        }))
++        .await;
++    snapshot!(code, @"202 Accepted");
++    server.wait_task(response.uid()).await.succeeded();
++
++    let (_value, code) = index.search_post(json!({"vector": [0, 0, 0], "hybrid": {"embedder": "manualnobq", "semanticRatio": 1.0}})).await;
++    snapshot!(code, @"200 OK");
++}
 ```
 
----
-
-### Incident Patch 9: `91fe3528` (2026-09-17)
-**Commit Message**: Fix fmt
-
-**File**: `crates/milli/src/search/hybrid.rs` (modified, +1/-1)
+**File**: `crates/milli/src/vector/store.rs` (modified, +10/-2)
 ```diff
-@@ -6,8 +6,8 @@ use roaring::RoaringBitmap;
- 
- use crate::score_details::{ScoreDetails, ScoreValue, ScoringStrategy};
- use crate::search::new::{distinct_fid, distinct_single_docid};
--use crate::search::SemanticSearch;
- use crate::search::steps::RetrieveIndexDataStep;
-+use crate::search::SemanticSearch;
- use crate::vector::{Embedding, SearchQuery};
- use crate::{
-     merge_positioned_hits_into_page, FieldsIdsMap, Index, MatchingWords, PinDoc, Precedence,
-```
-
-**File**: `crates/milli/src/update/new/extract/faceted/extract_facets.rs` (modified, +1/-1)
-```diff
-@@ -14,7 +14,6 @@ use super::FacetKind;
- use crate::fields_ids_map::metadata::Metadata;
- use crate::filterable_attributes_rules::match_faceted_field;
- use crate::heed_codec::facet::OrderedF64Codec;
--use crate::update::new::steps::IndexingStep;
- use crate::update::del_add::DelAdd;
- use crate::update::new::channel::FieldIdDocidFacetSender;
- use crate::update::new::document::DocumentContext;
-@@ -27,6 +26,7 @@ use crate::update::new::indexer::settings_changes::{
-     DocumentsIndentifiers, SettingsChangeExtractor,
- };
- use crate::update::new::ref_cell_ext::RefCellExt as _;
-+use crate::update::new::steps::IndexingStep;
- use crate::update::new::thread_local::{FullySend, ThreadLocal};
- use crate::update::new::{DocumentChange, DocumentIdentifiers};
- use crate::update::settings::SettingsDelta;
-```
-
-**File**: `crates/milli/src/update/new/extract/geo/cellulite.rs` (modified, +1/-1)
-```diff
-@@ -7,14 +7,14 @@ use geojson::GeoJson;
- use heed::{BytesEncode, RoTxn};
- use zerometry::Zerometry;
- 
--use crate::update::new::steps::IndexingStep;
- use crate::update::new::channel::GeoJsonSender;
- use crate::update::new::document::{Document, DocumentContext};
- use crate::update::new::indexer::document_changes::{Extractor, IndexingContext};
- use crate::update::new::indexer::settings_change_extract;
- use crate::update::new::indexer::settings_changes::{
-     DocumentsIndentifiers, SettingsChangeExtractor,
- };
-+use crate::update::new::steps::IndexingStep;
- use crate::update::new::thread_local::{FullySend, ThreadLocal};
- use crate::update::new::{DocumentChange, DocumentIdentifiers};
- use crate::update::settings::SettingsDelta;
-```
-
-**File**: `crates/milli/src/update/new/extract/geo/mod.rs` (modified, +1/-1)
-```diff
-@@ -10,14 +10,14 @@ use serde_json::value::RawValue;
- use serde_json::Value;
- 
- use crate::error::GeoError;
--use crate::update::new::steps::IndexingStep;
- use crate::update::new::document::{Document, DocumentContext};
- use crate::update::new::indexer::document_changes::{Extractor, IndexingContext};
- use crate::update::new::indexer::settings_change_extract;
- use crate::update::new::indexer::settings_changes::{
-     DocumentsIndentifiers, SettingsChangeExtractor,
- };
- use crate::update::new::ref_cell_ext::RefCellExt as _;
-+use crate::update::new::steps::IndexingStep;
- use crate::update::new::thread_local::{FullySend, MostlySend, ThreadLocal};
- use crate::update::new::{DocumentChange, DocumentIdentifiers};
- use crate::update::GrenadParameters;
-```
-
-**File**: `crates/milli/src/update/new/extract/searchable/extract_word_docids.rs` (modified, +1/-1)
-```diff
-@@ -10,7 +10,6 @@ use permissive_json_pointer::contained_in;
- use super::tokenize_document::{tokenizer_builder, DocumentTokenizer};
- use super::{match_searchable_field, OneOrTwoTokenizers};
- use crate::fields_ids_map::metadata::Metadata;
--use crate::update::new::steps::IndexingStep;
- use crate::update::new::document::DocumentContext;
- use crate::update::new::extract::cache::BalancedCaches;
- use crate::update::new::indexer::document_changes::{
-@@ -20,6 +19,7 @@ use crate::update::new::indexer::settings_changes::{
-     settings_change_extract, DocumentsIndentifiers, SettingsChangeExtractor,
- };
- use crate::update::new::ref_cell_ext::RefCellExt as _;
-+use crate::update::new::steps::IndexingStep;
- use crate::update::new::thread_local::{FullySend, MostlySend, ThreadLocal};
- use crate::update::new::{DocumentChange, DocumentIdentifiers};
- use crate::update::settings::SettingsDelta;
-```
-
-**File**: `crates/milli/src/update/new/extract/searchable/extract_word_pair_proximity_docids.rs` (modified, +1/-1)
-```diff
-@@ -9,7 +9,6 @@ use super::tokenize_document::{tokenizer_builder, DocumentTokenizer};
- use crate::fields_ids_map::metadata::Metadata;
- use crate::proximity::ProximityPrecision::*;
- use crate::proximity::{index_proximity, MAX_DISTANCE};
--use crate::update::new::steps::IndexingStep;
- use crate::update::new::document::{Document, DocumentContext};
- use crate::update::new::extract::cache::BalancedCaches;
- use crate::update::new::extract::searchable::OneOrTwoTokenizers;
-@@ -21,6 +20,7 @@ use crate::update::new::indexer::settings_changes::{
-     DocumentsIndentifiers, SettingsChangeExtractor,
- };
- use crate::update::new::ref_cell_ext::RefCellExt as _;
-+use crate::update::new::steps::IndexingStep;
- use crate::update::new::thread_local::{FullySend, ThreadLocal};
- use crate::update::new::{DocumentChange, DocumentIdentifiers};
- use crate::update::settings::SettingsDelta;
-```
-
-**File**: `crates/milli/src/update/new/indexer/document_changes.rs` (modified, +1/-1)
-```diff
-@@ -9,9 +9,9 @@ use roaring::RoaringBitmap;
- use super::super::document_change::DocumentChange;
- use crate::fields_ids_map::metadata::FieldIdMapWithMetadata;
- use crate::progress::{AtomicDocumentStep, Progress};
--use crate::update::new::steps::IndexingStep;
- use crate::update::new::document::DocumentContext;
- use crate::update::new::parallel_iterator_ext::ParallelIteratorExt as _;
-+use crate::update::new::steps::IndexingStep;
- use crate::update::new::thread_local::{FullySend, MostlySend, ThreadLocal};
- use crate::update::GrenadParameters;
- use crate::{FieldsIdsMap, GlobalFieldsIdsMap, Index, InternalError, MustStopProcessing, Result};
-```
-
-**File**: `crates/milli/src/update/new/indexer/document_deletion.rs` (modified, +1/-1)
-```diff
-@@ -104,10 +104,10 @@ mod test {
-     use crate::fields_ids_map::metadata::{FieldIdMapWithMetadata, MetadataBuilder};
-     use crate::index::tests::TempIndex;
-     use crate::progress::Progress;
--    use crate::update::new::steps::IndexingStep;
-     use crate::update::new::document::DocumentContext;
-     use crate::update::new::indexer::document_changes::{extract, Extractor, IndexingContext};
-     use crate::update::new::indexer::DocumentDeletion;
-+    use crate::update::new::steps::IndexingStep;
-     use crate::update::new::thread_local::{MostlySend, ThreadLocal};
-     use crate::update::new::DocumentChange;
-     use crate::{DocumentId, MustStopProcessing};
-```
-
----
-
-### Incident Patch 10: `ed2ec35c` (2026-09-16)
-**Commit Message**: Debug the received body
-
-**File**: `crates/meilisearch/src/routes/mcp.rs` (modified, +1/-0)
-```diff
-@@ -93,6 +93,7 @@ async fn mcp(
-     index_scheduler.features().check_mcp_route("calling the /mcp route")?;
- 
-     let body = body.into_inner();
-+    tracing::debug!("MCP JSON-RPC body received: {:?}", body);
-     let McpQuery { jsonrpc, id, method, params } = body;
- 
-     let response = match method.as_str() {
-```
-
----
-
-### Incident Patch 11: `b5e076ca` (2026-09-16)
-**Commit Message**: Merge pull request #6619 from simpleqt/docs/fix-benchmarks-paths
-
-docs: fix mailto typo, dead TOC anchor and grammar
-
-**File**: `BENCHMARKS.md` (modified, +1/-1)
-```diff
-@@ -3,7 +3,7 @@
- Currently this repository hosts two kinds of benchmarks:
- 
- 1. The older "milli benchmarks", that use [criterion](https://github.com/bheisler/criterion.rs) and live in the "benchmarks" directory.
--2. The newer "bench" that are workload-based and so split between the [`workloads`](./workloads/) directory and the [`xtask::bench`](./xtask/src/bench/) module.
-+2. The newer "bench" that are workload-based and so split between the [`workloads`](./workloads/) directory and the [`xtask::bench`](./crates/xtask/src/bench/) module.
- 
- This document describes the newer "bench" benchmarks. For more details on the "milli benchmarks", see [benchmarks/README.md](./benchmarks/README.md).
- 
-```
-
-**File**: `CONTRIBUTING.md` (modified, +2/-2)
-```diff
-@@ -15,7 +15,7 @@ If Meilisearch does not offer optimized support for your language, please consid
- - [How to Contribute](#how-to-contribute)
- - [Development Workflow](#development-workflow)
- - [Git Guidelines](#git-guidelines)
--- [Release Process (for internal team only)](#release-process-for-internal-team-only)
-+- [Release Process (for internal team only)](#publish-process-for-internal-team-only)
- 
- ## Use of generative AI tools
- 
-@@ -238,7 +238,7 @@ This project uses GitHub Merge Queues that helps us manage pull requests merging
- Before merging a PR, the maintainer should ensure the following requirements are met
- - Automated tests have been added.
- - If some tests cannot be automated, manual rigorous tests should be applied.
--- ⚠️ If there is an change in the DB: it's mandatory to manually test the `--upgrade-db` on a DB of the previous Meilisearch minor version (e.g. v1.13 for the v1.14 release).
-+- ⚠️ If there is a change in the DB: it's mandatory to manually test the `--upgrade-db` on a DB of the previous Meilisearch minor version (e.g. v1.13 for the v1.14 release).
- - If necessary, the feature have been tested in the Cloud production environment (with [prototypes](./documentation/prototypes.md)) and the Cloud UI is ready.
- - If necessary, the [documentation](https://github.com/meilisearch/documentation) related to the implemented feature in the PR is ready.
- - If necessary, the [integrations](https://github.com/meilisearch/integration-guides) related to the implemented feature in the PR are ready.
-```
-
-**File**: `README.md` (modified, +1/-1)
-```diff
-@@ -116,7 +116,7 @@ Meilisearch is available in two editions:
- - Not allowed in production without a commercial agreement with Meilisearch.
-   - You may use, modify, and distribute the Licensed Work for non-production purposes only, such as testing, development, or evaluation.
- 
--Want access to Enterprise features? → Contact us at [sales@meilisearch.com](maito:sales@meilisearch.com).
-+Want access to Enterprise features? → Contact us at [sales@meilisearch.com](mailto:sales@meilisearch.com).
- 
- ### 📦 External crates
- 
-```
-
----
-
-### Incident Patch 12: `87de28ac` (2026-09-16)
-**Commit Message**: Fix the mcp route OpenAPI route definition
-
-**File**: `crates/meilisearch/src/routes/mcp.rs` (modified, +40/-38)
-```diff
-@@ -10,7 +10,6 @@ use deserr::actix_web::{AwebJson, AwebQueryParameter};
- use deserr::{Deserr, IntoValue, Value, ValuePointerRef};
- use either::Either;
- use index_scheduler::IndexScheduler;
--use meilisearch_types::batch_view::BatchView;
- use meilisearch_types::deserr::{DeserrError, DeserrJson, DeserrJsonError};
- use meilisearch_types::error::deserr_codes::BadRequest;
- use meilisearch_types::error::Code::BadParameter;
-@@ -62,39 +61,34 @@ macro_rules! r#try_or_internal_error {
- )]
- pub struct McpApi;
- 
--/// Stream batches changes
-+/// Model context protocol (MCP)
- ///
--/// The `/batches/stream` route returns information about [asynchronous operations](https://docs.meilisearch.com/learn/advanced/asynchronous_operations.html) (indexing, document updates, settings changes, and so on).
--///
--/// Batches are sent throught an SSE stream any time their progress or status changes, i.e., enqueued, processing, succeeded, failed.
-+/// The `/mcp` route exposes [the MCP open protocol](https://modelcontextprotocol.io) that enables seamless integration between LLM
-+/// applications and external data sources and tools.
- #[routes::path(
-     security(),
-     request_body = McpQuery,
-     responses(
--        (status = 200, description = "Stream of batches changes.", body = BatchView, content_type = "application/x-ndjson", example = json!(
-+        (status = 200, description = "Stream of batches changes.", body = McpResponse, content_type = "application/json", example = json!(
-             {
--                "uid": 0,
--                "details": {
--                    "receivedDocuments": 1,
--                    "indexedDocuments": 1
--                },
--                "progress": null,
--                "stats": {
--                    "totalNbTasks": 1,
--                    "status": {
--                        "succeeded": 1
-+                "jsonrpc": "2.0",
-+                "id": 42,
-+                "result": {
-+                    "resultType": "complete",
-+                    "supportedVersions": ["2026-07-28"],
-+                    "capabilities": {
-+                        "tools": {}
-                     },
--                    "types": {
--                        "documentAdditionOrUpdate": 1
-+                    "_meta": {
-+                        "io.modelcontextprotocol/serverInfo": {
-+                        "name": "Meilisearch",
-+                        "version": "1.52.0"
-+                        }
-                     },
--                    "indexUids": {
--                        "INDEX_NAME": 1
--                    }
--                },
--                "duration": "PT0.364788S",
--                "startedAt": "2024-12-10T15:48:49.672141Z",
--                "finishedAt": "2024-12-10T15:48:50.036929Z",
--                "batchStrategy": "batched all enqueued tasks"
-+                    "instructions": "This is a Meilisearch instance that is capable of returning documents based on a search query.",
-+                    "ttlMs": 3_600_000,
-+                    "cacheScope": "public"
-+                }
+@@ -258,10 +258,18 @@ impl VectorStore {
+                 if quantizing && !self.quantized {
+                     let writer = writer.prepare_changing_distance::<Hamming>(wtxn)?;
+                     hannoy_build(wtxn, &progress, rng, cancel, &writer)?;
++                } else if writer.is_empty(wtxn)? {
++                    // If the writer is empty we switch the distance just in case so that we know that we have the
++                    // correct metadata in stores
++                    if self.quantized {
++                        let writer = writer.prepare_changing_distance::<Hamming>(wtxn)?;
++                        hannoy_build(wtxn, &progress, rng, cancel, &writer)?;
++                    } else {
++                        let writer = writer.prepare_changing_distance::<Cosine>(wtxn)?;
++                        hannoy_build(wtxn, &progress, rng, cancel, &writer)?;
++                    }
+                 } else if writer.need_build(wtxn)? {
+                     hannoy_build(wtxn, &progress, rng, cancel, &writer)?;
+-                } else if writer.is_empty(wtxn)? {
+-                    continue;
+                 }
              }
-         )),
-         (status = 401, description = "The authorization header is missing.", body = ResponseError, content_type = "application/json", example = json!(
-@@ -680,13 +674,18 @@ impl utoipa::PartialSchema for RequestId {
-     }
- }
- 
--#[derive(Debug, Serialize)]
-+#[derive(Debug, Serialize, ToSchema)]
- #[serde(rename_all = "camelCase")]
-+#[schema(rename_all = "camelCase")]
- pub struct McpResponse {
-+    /// The JSON-RPC version.
-     jsonrpc: String,
-+    /// The JSON-RPC request ID.
-     id: RequestId,
-+    /// The JSON-RPC result.
-     #[serde(skip_serializing_if = "Option::is_none")]
-     result: Option<McpResult>,
-+    /// The JSON-RPC error.
-     #[serde(skip_serializing_if = "Option::is_none")]
-     error: Option<McpError>,
- }
-@@ -698,8 +697,9 @@ impl routes::RequestBody for RequestId {}
- const RESULT_TYPE_COMPLETE: &str = "complete";
- const SUPPORTED_VERSIONS: &[&str] = &["2026-07-28"];
- 
--#[derive(Debug, Serialize)]
-+#[derive(Debug, Serialize, ToSchema)]
- #[serde(rename_all = "camelCase")]
-+#[schema(rename_all = "camelCase")]
- pub struct McpResult {
-     result_type: &'static str, // "complete", "input_required"
-     #[serde(skip_serializing_if = "Option::is_none")]
-@@ -711,10 +711,10 @@ pub struct McpResult {
-     tools: Option<Vec<McpToolDefinition>>,
-     // Note that for now we will simply return an empty list of resources
-     #[serde(skip_serializing_if = "Option::is_none")]
--    resources: Option<Vec<()>>,
--    // Note that for now we will simply return an empty list of prompt
-+    resources: Option<Vec<serde_json::Value>>,
-+    // Note that for now we will simply return an empty list of prompts
-     #[serde(skip_serializing_if = "Option::is_none")]
--    prompts: Option<Vec<()>>,
-+    prompts: Option<Vec<serde_json::Value>>,
-     #[serde(rename = "_meta", skip_serializing_if = "Option::is_none")]
-     meta: Option<McpServerMeta>,
-     /// Capabilities the server supports (tools, r
-```
-
----
-
-### Incident Patch 13: `bae5f565` (2026-09-15)
-**Commit Message**: Merge pull request #6626 from meilisearch/fix-error-code-descriptions
-
-Fix grammar and broken Markdown links in error code descriptions
-
-**File**: `crates/meilisearch-types/src/error.rs` (modified, +8/-8)
-```diff
-@@ -210,7 +210,7 @@ ApiKeyNotFound                                 , InvalidRequest       , NOT_FOUN
- r#"The requested API key could not be found."# ;
- 
- IndexScopedApiKeyWithGlobalAction              , InvalidRequest       , BAD_REQUEST,
--r#"This errors occurs when calling an endpoint that requires a global API key with an API key that is scoped to a subset of index.
-+r#"This error occurs when calling an endpoint that requires a global API key with an API key that is scoped to a subset of indexes.
- 
- Call the endpoint with an API key that has `"indexes": ["*"]`
- "#;
-@@ -398,7 +398,7 @@ InvalidDocumentRetrieve                     , InvalidRequest       , BAD_REQUEST
- "This error code is no longer emitted and can be found in tasks imported from a dump created using a previous version of Meilisearch.";
- 
- InvalidDocumentGeoField                        , InvalidRequest       , BAD_REQUEST,
--"The provided `_geo` field of one or more documents is invalid. Meilisearch expects `_geo` to be an object with two fields, `lat` and `lng`, each containing geographic coordinates expressed as a string or floating point number. Read more about `_geo` and how to troubleshoot it in [our dedicated guide](/capabilities/geo_search/getting_started)." ;
-+"The provided `_geo` field of one or more documents is invalid. Meilisearch expects `_geo` to be an object with two fields, `lat` and `lng`, each containing geographic coordinates expressed as a string or floating-point number. Read more about `_geo` and how to troubleshoot it in [our dedicated guide](/capabilities/geo_search/getting_started)." ;
- 
- InvalidDocumentGeojsonField                    , InvalidRequest       , BAD_REQUEST,
- "The `geojson` field in one or more documents is invalid or doesn't match the [GeoJSON specification](https://datatracker.ietf.org/doc/html/rfc7946)." ;
-@@ -487,7 +487,7 @@ InvalidMultiSearchQueryFacets                  , InvalidRequest       , BAD_REQU
- "A query in the queries array contains `facets` when federation is present and non-`null`." ;
- 
- InvalidMultiSearchDistinct                     , InvalidRequest       , BAD_REQUEST,
--"This error occurs when both `federation.distinct` and `distinct` inside of a queries are specified. Remove one of these parameters" ;
-+"This error occurs when both `federation.distinct` and the `distinct` parameter of a query are specified. Remove one of these parameters." ;
- 
- InvalidMultiSearchQueryPagination              , InvalidRequest       , BAD_REQUEST,
- "A multi-search query contains `page`, `hitsPerPage`, `limit` or `offset`, but the top-level federation object is not `null`." ;
-@@ -696,7 +696,7 @@ InvalidSearchPersonalize                       , InvalidRequest       , BAD_REQU
-  "The [`personalizeUserContext`](/reference/api/search/search-with-get#parameter-personalize-user-context) query parameter is invalid. It should be a string" ;
- 
- InvalidSearchMediaAndVector                    , InvalidRequest       , BAD_REQUEST,
--"The search query contains non-`null` values for both [`media`](/reference/api/search/search-with-post#body-media) and [`vector`](/reference/api/search/search-with-post#body-media). These two parameters are mutually exclusive, since `media` generates vector embeddings via the embedder configured in `hybrid`." ;
-+"The search query contains non-`null` values for both [`media`](/reference/api/search/search-with-post#body-media) and [`vector`](/reference/api/search/search-with-post#body-vector-one-of-0). These two parameters are mutually exclusive, since `media` generates vector embeddings via the embedder configured in `hybrid`." ;
- 
- InvalidSettingsDisplayedAttributes             , InvalidRequest       , BAD_REQUEST,
- "The value of [displayed attributes](/capabilities/full_text_search/how_to/configure_displayed_attributes#displayed-fields) is invalid. It should be an empty array, an array of strings, or set to `null`." ;
-@@ -705,7 +705,7 @@ InvalidSettingsDistinctAttribute               , InvalidRequest       , BAD_REQU
- "The value of [distinct attributes](/capabilities/full_text_search/how_to/configure_distinct_attribute) is invalid. It should be a string or set to `null`." ;
- 
- InvalidSettingsProximityPrecision              , InvalidRequest       , BAD_REQUEST,
--"[`proximityPrecision`](/reference/api/settings/update-proximityprecision#update-proximityprecision) does not have one of allowed values" ;
-+"[`proximityPrecision`](/reference/api/settings/update-proximityprecision#update-proximityprecision) does not have one of the allowed values." ;
- 
- InvalidSettingsFacetSearch                     , InvalidRequest       , BAD_REQUEST,
- "The [`facetSearch`](/reference/api/settings/get-facetsearch) index setting value is invalid." ;
-@@ -1038,7 +1038,7 @@ UnimplementedMultiChoiceChatCompletions        , InvalidRequest       , NOT_IMPL
- "Unsupported value of the `n` parameter. The only supported value is `1`." ;
- 
- ChatNotFound                                   , InvalidRequest       , NOT_FOUND,
--"The
-```
-
----
-
-### Incident Patch 14: `f1a16e23` (2026-09-15)
-**Commit Message**: Fix nested filter error message change
-
-**File**: `crates/meilisearch/src/documents_retrieval/preprocessing.rs` (modified, +1/-1)
-```diff
-@@ -191,7 +191,7 @@ fn extract_foreign_filters(
-             // convert inner foreign filter into an index filter, throw an error if there is a nested foreign filter
-             let index_filter =
-                 IndexFilter::from_filter_without_foreign(Filter { condition: op.clone() })
--                    .map_err(|(fid, _)| {
-+                    .map_err(|(_, _)| {
-                         let error =
-                             fid.to_external_error("Nested foreign filters are not supported");
-                         milli::Error::from(error)
-```
-
----
-
-### Incident Patch 15: `f36ffb94` (2026-09-15)
-**Commit Message**: fix PR comments
-
-**File**: `crates/meilisearch/src/routes/dynamic_search_rules.rs` (modified, +2/-2)
-```diff
-@@ -382,8 +382,8 @@ fn check_rule(rule: &DynamicSearchRuleUpdateRequest) -> Result<(), ResponseError
- 
-                 let _ = IndexFilter::from_filter_without_foreign(filter).map_err(|(fid, _)| {
-                     let err = fid.to_external_error(
--                    "filter condition `_foreign` is not supported in dynamic search rule actions.",
--                );
-+                        "filter condition `_foreign` is not supported in dynamic search rule actions.",
-+                    );
-                     ResponseError::from_msg(
-                         format!("invalid `.actions.scale[{action_index}].filter`: {err}"),
-                         Code::InvalidDynamicSearchRuleActions,
-```
-
-**File**: `crates/milli/src/dynamic_search_rules/action.rs` (modified, +7/-3)
-```diff
-@@ -1,5 +1,3 @@
--use std::ops::Not as _;
--
- use roaring::RoaringBitmap;
- 
- use crate::dynamic_search_rules::{fields, DsrFuel, DynamicSearchRulesView, RuleId};
-@@ -228,6 +226,8 @@ impl ScaleAction {
          }
- 
-         Ok(match (&self.ids, &self.filter) {
-+            // note: this case is not supposed to happen, because a rule without ids OR filter is rejected by the route.
-+            // however, should it still happen due to a bug, the behavior here (no document) is a reasonable fallback.
-             (None, None) => None,
-             (None, Some(filter)) => {
-                 let Ok(filter) = Filter::from_json(filter) else {
-@@ -258,7 +258,11 @@ impl ScaleAction {
-             }
-             (Some(ids), None) => {
-                 let candidates = candidates_from_ids(search_context, ids)?;
--                candidates.is_empty().not().then_some(candidates)
-+                if candidates.is_empty() {
-+                    None
-+                } else {
-+                    Some(candidates)
-+                }
-             }
-             (Some(ids), Some(filter)) => {
-                 let mut candidates = candidates_from_ids(search_context, ids)?;
-```
-
-**File**: `crates/milli/src/dynamic_search_rules/mod.rs` (modified, +8/-0)
-```diff
-@@ -133,6 +133,9 @@ impl<'a> DynamicSearchRulesView<'a> {
-         let active_rules =
-             self.active_rules_for_query(query_terms, filter, search_context, fuel)?;
- 
-+        // this used to be a flattened iterator of pin iterators.
-+        // however we can no longer flatten because we have an iterator of `(pin_iterator, scale_iterator)`
-+        // so we are using an explicit loop
-         let mut pins = Vec::new();
-         let mut scales = Vec::new();
- 
-@@ -151,6 +154,11 @@ impl<'a> DynamicSearchRulesView<'a> {
-                     break;
-                 }
-                 let pin = pin?;
-+                // this removal serves 2 simultaneous purposes:
-+                // 1. make sure that the pinned document cannot appear in the organic results
-+                // 2. make sure that the pinned document is initially part of the candidates post-filter: this is a security property
-+                // of pinning that you cannot use pinning to pin documents that are not part of the current filter. This is to prevent,
-+                // for example, unexpected interactions with tenant tokens.
-                 if universe.remove(pin.id) {
-                     pins.push(pin);
-                 }
-```
-
-**File**: `crates/milli/src/score_details.rs` (modified, +8/-0)
-```diff
-@@ -220,6 +220,11 @@ impl ScoreDetails {
-         std::iter::from_fn(move || {
-             details
-                 .by_ref()
-+                // any scale detail modifies the weight starting from this action,
-+                // meaning that a hypothetical score details iterator with some relevancy rules before the scale
-+                // detail would have the base weight and not the weight modified by the scale.
-+                // In practice, the search implementation guarantees that scale is the first score detail, and as a result
-+                // the weight is applied to all relevancy rules.
-                 .inspect(|detail| {
-                     if let ScoreDetails::Scale { actions } = detail {
-                         for action in actions {
-@@ -251,6 +256,9 @@ impl ScoreDetails {
-         // define a cell that will keep the current weight, and capture it in a from_fn closure to keep the state
-         // throughout the entire iteration
-         let weight = std::cell::Cell::new(weight);
-+        // record whether there has been at least one relevancy rule.
-+        // this allows weight to be effective even if there is no relevancy rule: one final score is then inserted taking into account
-+        // the current weight.
-         let used_weight = std::cell::Cell::new(false);
- 
-         std::iter::from_fn(move || {
-```
-
-**File**: `crates/milli/src/update/new/indexer/document_updater.rs` (modified, +3/-3)
-```diff
-@@ -12,7 +12,7 @@ pub trait DocumentUpdater {
-     fn update<'doc, T, D>(
-         &self,
-         context: &'doc DocumentContext<T>,
--        docid: u32,
-+        docid: DocumentId,
-         current: D,
-     ) -> Result<Option<DocumentChange<'doc>>>
-     where
-@@ -41,7 +41,7 @@ where
-     fn update<'doc, T, D>(
-         &self,
-         context: &'doc DocumentContext<T>,
--        docid: u32,
-+        docid: DocumentId,
-         current: D,
-     ) -> Result<Option<DocumentChange<'doc>>>
-     where
-@@ -57,7 +57,7 @@ where
- }
- 
- pub struct DocumentUpdateChanges<U: DocumentUpdater> {
--    documents: Vec<u32>,
-+    documents: Vec<DocumentId>,
-     updater: U,
- }
- 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6667** (2026-10-05): Fix OpenAPI docs (@curquiza)
-- **PR #6663** (2026-10-05): Add GHA to enforce benchmarks label on each PR (@curquiza)
-- **PR #6661** (2026-10-05): Fix ranking score threshold performances (@ManyTheFish)
-- **PR #6660** (2026-10-01): Replace mimalloc with jemalloc + patch heed, v52 edition (@dureuill)
-- **PR #6659** (2026-10-01): Replace mimalloc with jemalloc + patch heed, v53 edition (@dureuill)
-- **PR #6658** (2026-10-01): Replace mimalloc with jemalloc + patch heed, v54 edition (@dureuill)
-- **PR #6652** (2026-09-29): Bring back v1.54.2 changes to main (@dureuill)
-- **PR #6651** (2026-09-29): Fix task queue following upgrade to v1.54 when using DSRs (@dureuill)
+- **PR #6688** (closed): REMOVE: print vectors in test (@ManyTheFish)
+- **PR #6684** (2026-10-15): Disallow AI Contributions (@Kerollmops)
+- **PR #6683** (closed): Accept every documented reasoning_effort value in chat completions (@jinwukong)
+- **PR #6682** (closed): Unwrap multi_tool_use.parallel calls and answer unknown function calls in chat completions (@jinwukong)
+- **PR #6681** (2026-10-15): Give-up indexing when embedder can't handle the load (@ManyTheFish)
+- **PR #6680** (closed): add tracing to vector store build (@dureuill)
 
 ---
 
@@ -3649,3 +2276,61 @@ Fix grammar and broken Markdown links in error code descriptions
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. Merge pull request #6673 from meilisearch/avoid-panic-in-highlighting
+
+**RULE**:
+When implementing operations in `crates/milli/src/search/new/matches/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meilisearch/meilisearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `db9f7bad`: Merge pull request #6673 from meilisearch/avoid-panic-in-highlighting. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/milli/src/search/new/matches/mod.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+                                let Some(before_match) = self.text.get(byte_index..*m_byte_start)
+                                else {
+                                    continue;
+                                };
+                                formatted.push(before_match);
+                            let Some(match_from_byte_start) = self.text.get(*m_byte_start..) else {
+                                continue;
+                            };
+                            let highlight_byte_index = match_from_byte_start
+                            let Some(highlighted_match) =
+                                self.text.get(*m_byte_start..highlight_byte_index)
+                            else {
+                                continue;
+                            };
+                            formatted.push(highlighted_match);
+                                let Some(end_of_word) =
+                                    self.text.get(highlight_byte_index..*m_byte_end)
+                                else {
+                                    continue;
+                                };
+                                formatted.push(end_of_word);
+                        if let Some(
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+                                formatted.push(&self.text[byte_index..*m_byte_start]);
+                            let highlight_byte_index = self.text[*m_byte_start..]
+                            formatted.push(&self.text[*m_byte_start..highlight_byte_index]);
+                                formatted.push(&self.text[highlight_byte_index..*m_byte_end]);
+                        formatted.push(&self.text[byte_index..crop_byte_end]);
+                        // avoid concatenating if there is already 1 slice.
+                        Cow::Borrowed(&self.text[crop_byte_start..crop_byte_end])
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `db9f7bad` are properly handled with clean fallback behavior.
