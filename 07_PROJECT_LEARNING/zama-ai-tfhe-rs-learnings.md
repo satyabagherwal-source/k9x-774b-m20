@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source**: github ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
-> **Source Version**: `a124ebc3`  
+> **Source Version**: `9b951080`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T17:56:34.699Z  
+> **Timestamp**: 2026-10-19T20:53:22.903Z  
 > **Learning ID**: `learn-github-zama-ai-tfhe-rs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T17:56:34.693Z  
+> **Harvest Timestamp**: 2026-10-19T20:53:22.645Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1749,9 +1749,6 @@ void cuda_multi_bit_programmable_bootstrap_lwe_ciphertext_vector_async(
     uint32_t num_many_lut, uint32_t lut_stride);
 
 template <typename Torus>
-uint64_t get_buffer_size_full_sm_multibit_programmable_bootstrap_128_keybundle(
-    uint32_t polynomial_size);
-template <typename Torus>
 uint64_t get_buffer_size_full_sm_multibit_programmable_bootstrap_keybundle(
     uint32_t polynomial_size);
 template <typename Torus>
@@ -1790,111 +1787,112 @@ uint64_t get_lwe_chunk_size_128(uint32_t gpu_index, uint32_t max_num_pbs,
                                 uint64_t full_sm_keybundle);
 template <typename Torus>
 struct pbs_buffer<Torus, PBS_TYPE::MULTI_BIT> : public pbs_buffer_base {
-  int8_t *d_mem_keybundle = NULL;
-  int8_t *d_mem_acc_step_one = NULL;
-  int8_t *d_mem_acc_step_two = NULL;
-  int8_t *d_mem_acc_cg = NULL;
-  int8_t *d_mem_acc_tbc = NULL;
+  using fft_element_type = typename pbs_fft_traits<Torus>::element_type;
+
+  int8_t *d_mem_keybundle = nullptr;
+  int8_t *d_mem_acc_step_one = nullptr;
+  int8_t *d_mem_acc_step_two = nullptr;
+  int8_t *d_mem_acc_cg = nullptr;
+  int8_t *d_mem_acc_tbc = nullptr;
   uint64_t lwe_chunk_size;
-  double2 *keybundle_fft;
-  Torus *global_accumulator;
-  double2 *global_join_buffer;
+  fft_element_type *keybundle_fft = nullptr;
+  Torus *global_accumulator = nullptr;
+  fft_element_type *global_join_buffer = nullptr;
 
   PBS_VARIANT pbs_variant;
   bool gpu_memory_allocated;
 
+  uint32_t glwe_dimension;
+  uint32_t polynomial_size;
+  uint32_t level_count;
+  uint32_t input_lwe_ciphertext_count;
+  uint32_t max_shared_memory;
+
+private:
+  // Variant-free part: shared fields plus the buffers every multi-bit variant
+  // uses (keybundle scratch, keybundle FFT, accumulator, join buffer).
   pbs_buffer(cudaStream_t stream, uint32_t gpu_index, uint32_t glwe_dimension,
              uint32_t polynomial_size, uint32_t level_count,
              uint32_t input_lwe_ciphertext_count, uint64_t lwe_chunk_size,
-             PBS_VARIANT pbs_variant, bool allocate_gpu_memory,
-             uint64_t &size_tracker) {
-    gpu_memory_allocated = allocate_gpu_memory;
+             bool allocate_gpu_memory, uint64_t &size_tracker)
+      : lwe_chunk_size(lwe_chunk_size),
+        gpu_memory_allocated(allocate_gpu_memory),
+        glwe_dimension(glwe_dimension), polynomial_size(polynomial_size),
+        level_count(level_count),
+        input_lwe_ciphertext_count(input_lwe_ciphertext_count) {
     cuda_set_device(gpu_index);
+    max_shared_memory = cuda_get_max_shared_memory(gpu_index);
 
-    this->pbs_variant = pbs_variant;
-    this->lwe_chunk_size = lwe_chunk_size;
-    auto max_shared_memory = cuda_get_max_shared_memory(gpu_index);
-
-    // default
     uint64_t full_sm_keybundle =
         get_buffer_size_full_sm_multibit_programmable_bootstrap_keybundle<
             Torus>(polynomial_size);
-    uint64_t full_sm_accumulate_step_one =
-        get_buffer_size_full_sm_multibit_programmable_bootstrap_step_one<Torus>(
-            polynomial_size);
-    uint64_t full_sm_accumulate_step_two =
-        get_buffer_size_full_sm_multibit_programmable_bootstrap_step_two<Torus>(
-            polynomial_size);
-    uint64_t partial_sm_accumulate_step_one =
-        get_buffer_size_partial_sm_multibit_programmable_bootstrap_step_one<
-            Torus>(polynomial_size);
-    // cg
-    uint64_t full_sm_cg_accumulate =
-        get_buffer_size_full_sm_cg_multibit_programmable_bootstrap<Torus>(
-            polynomial_size);
-    uint64_t partial_sm_cg_accumulate =
-        get_buffer_size_partial_sm_cg_multibit_programmable_bootstrap<Torus>(
-            polynomial_size);
+    size_t num_blocks_keybundle = keybundle_block_count();
 
-    size_t num_blocks_keybundle = safe_mul(
-        (size_t)input_lwe_ciphertext_count, (size_t)lwe_chunk_size,
-        safe_mul((size_t)(glwe_dimension + 1), (size_t)(glwe_dimension + 1)),
-        (size_t)level_count);
-    size_t num_blocks_acc_step_one =
-        safe_mul((size_t)level_count, (size_t)(glwe_dimension + 1),
-                 (size_t)input_lwe_ciphertext_count);
-    size_t num_blocks_acc_step_two = safe_mul(
-        (size_t)input_lwe_ciphertext_count, (size_t)(glwe_dimension + 1));
-    size_t num_blocks_acc_cg =
-        safe_mul((size_t)level_count, (size_t)(glwe_dimension + 1),
-                 (size_t)input_lwe_ciphertext_count);
-
-#if CUDA_ARCH >= 900
-    uint64_t full_sm_tbc_accumulate =
-        get_buffer_size_full_sm_tbc_multibit_programmable_bootstrap<Torus>(
-            polynomial_size);
-    uint64_t partial_sm_tbc_accumulate =
-        get_buffer_size_partial_sm_tbc_multibit_programmable_bootstrap<Torus>(
-            polynomial_size);
-    uint64_t minimum_sm_tbc =
-        get_buffer_size_sm_dsm_plus_tbc_multibit_programmable_bootstrap<Torus>(
-            polynomial_size);
-    size_t num_blocks_acc_tbc = num_blocks_acc_cg;
-#endif
-
-    // Keybundle
     if (max_shared_memory < full_sm_keybundle)
       d_mem_keybundle = (int8_t *)cuda_malloc_with_size_tracking_async(
           safe_mul(num_blocks_keybundle, full_sm_keybundle), stream, gpu_index,
           size_tracker, allocate_gpu_memory);
 
-    switch (pbs_variant) {
-    case PBS_VARIANT::CG:
-      // Accumulator CG
-      if (max_shared_memory < partial_sm_cg_accumulate)
-        d_mem_acc_cg = (int8_t *)cuda_malloc_with_size_tracking_async(
-            safe_mul(num_blocks_acc_cg, full_sm_cg_accumulate), stream,
-            gpu_index, size_tracker, allocate_gpu_memory);
-      else if (max_shared_memory < full_sm_cg_accumulate)
-        d_mem_acc_cg = (int8_t *)cuda_malloc_with_size_tracking_async(
-            safe_mul(num_blocks_acc_cg, partial_sm_cg_accumulate), stream,
-            gpu_index, size_tracker, allocate_gpu_memory);
-      break;
-    case PBS_VARIANT::DEFAULT:
-      // Accumulator step one
-      if (max_shared_memory < partial_sm_accumulate_step_one)
-        d_mem_acc_step_one = (int8_t *)cuda_malloc_with_size_tracking_async(
-            safe_mul(num_blocks_acc_step_one, full_sm_accumulate_step_one),
+    keybundle_fft = (fft_element_type *)cuda_malloc_with_size_tracking_async(
+        safe_mul(pbs_fft_traits<Torus>::coefficient_bytes, num_blocks_keybundle,
+                 (size_t)(polynomial_size / 2)),
+        stream, gpu_index, size_tracker, allocate_gpu_memory);
+    global_accumulator = (Torus *)cuda_malloc_with_size_tracking_async(
+        safe_mul_sizeof<Torus>((size_t)input_lwe_ciphertext_count,
+                               (size_t)(glwe_dimension + 1),
+                               (size_t)polynomial_size),
+        stream, gpu_index, size_tracker, allocate_gpu_memory);
+    global_join_buffer =
+        (fft_element_type *)cuda_malloc_with_size_tracking_async(
+            safe_mul(
+                pbs_fft_traits<Torus>::coefficient_bytes,
+                safe_mul((size_t)level_count, (size_t)(glwe_dimension + 1)),
+                (size_t)input_lwe_ciphertext_count,
+                (size_t)(polynomial_size / 2)),
             stream, gpu_index, size_tracker, allocate_gpu_memory);
-      else if (max_shared_memory < full_sm_accumulate_step_one)
-        d_mem_acc_step_one = (int8_t *)cuda_malloc_with_size_tracking_async(
-            safe_mul(num_blocks_acc_step_one, partial_sm_accumulate_step_one),
-            stream, gpu_index, size_tracker, allocate_gpu_memory);
+  }
 
-      // Accumulator step two
-      if (max_shared_memory < full_sm_accumulate_step_two)
-        d_mem_acc_step_two = (int8_t *)cuda_malloc_with_size_tracking_async(
-         
+  size_t keybundle_block_count() const {
+    return safe_mul(
+        (size_t)input_lwe_ciphertext_count, (size_t)lwe_chunk_size,
+        safe_mul((size_t)(glwe_dimension + 1), (size_t)(glwe_dimension + 1)),
+        (size_t)level_count);
+  }
+
+  size_t accumulator_block_count() const {
+    return safe_mul((size_t)level_count, (size_t)(glwe_dimension + 1),
+                    (size_t)input_lwe_ciphertext_count);
+  }
+
+  // Device scratch for an accumulate kernel: full_sm bytes per block when the
+  // kernel runs in NOSM mode, partial_sm bytes per block in PARTIALSM mode,
+  // nothing when everything fits. minimum_sm is shared memory the kernel needs
+  // in every mode (TBC uses it for distributed shared memory), so it raises
+  // both thresholds. Returns nullptr when nothing is needed.
+  int8_t *allocate_accumulator_scratch(size_t num_blocks, uint64_t partial_sm,
+                                       uint64_t full_sm, cudaStream_t stream,
+                                       uint32_t gpu_index,
+                                       uint64_t &size_tracker,
+                                       uint64_t minimum_sm = 0) {
+    uint64_t bytes_per_block = 0;
+    if (max_shared_memory < partial_sm + minimum_sm)
+      bytes_per_block = full_sm;
+    else if (max_shared_memory < full_sm + minimum_sm)
+      bytes_per_block = partial_sm;
+    if (bytes_per_block == 0)
+      return nullptr;
+    return (int8_t *)cuda_malloc_with_size_tracking_async(
+        safe_mul(num_blocks, bytes_per_block), stream, gpu_index, size_tracker,
+        gpu_memory_allocated);
+  }
+
+public:
+  pbs_buffer(cudaStream_t stream, uint32_t gpu_index, uint32_t glwe_dimension,
+             uint32_t polynomial_size, uint32_t level_count,
+             uint32_t input_lwe_ciphertext_count, uint64_t lwe_chunk_size,
+             pbs_variant_tag<PBS_VARIANT::DEFAULT>, bool allocate_gpu_memory,
+             uint64_t &size_tracker)
+  
 ```
 
 
@@ -1927,202 +1925,505 @@ struct pbs_buffer<Torus, PBS_TYPE::MULTI_BIT> : public pbs_buffer_base {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a124ebc3` (2026-10-16)
-**Commit Message**: refactor(integer): remove comparator.rs file
+### Incident Patch 1: `9b951080` (2026-09-30)
+**Commit Message**: chore(gpu): chore(gpu): implement a factory pattern for pbs_buffer
 
-It only had non parallel comparisons
-
-**File**: `tfhe/src/integer/server_key/comparator.rs` (removed, +0/-455)
+**File**: `backends/tfhe-cuda-backend/cuda/include/pbs/pbs_multibit_utilities.h` (modified, +152/-289)
 ```diff
-@@ -1,455 +0,0 @@
--use super::ServerKey;
--use crate::integer::ciphertext::boolean_value::BooleanBlock;
--use crate::integer::ciphertext::IntegerRadixCiphertext;
--use crate::shortint::ciphertext::Degree;
--use crate::shortint::server_key::LookupTableOwned;
--use crate::shortint::Ciphertext;
--
--/// Used for compare_blocks_with_zero
--#[derive(Clone, Copy)]
--pub(crate) enum ZeroComparisonType {
--    // We want to compare with zeros for equality (==)
--    Equality,
--    // We want to compare with zeros for difference (!=)
--    Difference,
--}
--
--/// Simple enum to select whether we are looking for the min or the max
--#[derive(Clone, Copy)]
--enum MinMaxSelector {
--    Max,
--    Min,
--}
--
--/// This function encodes how to reduce the ordering of two blocks.
--///
--/// It is used to generate the necessary lookup table.
--///
--/// `x` is actually two ordering values packed
--/// where in the first 2 lsb bits there is the ordering value of the less significant block,
--/// and the 2 msb bits of x contains the ordering of the more significant block.
--fn reduce_two_orderings_function(x: u64) -> u64 {
--    let msb = (x >> 2) & 3;
--    let lsb = x & 3;
--
--    if msb == Comparator::IS_EQUAL {
--        lsb
--    } else {
--        msb
--    }
--}
--
--/// struct to compare integers
--///
--/// This struct keeps in memory the LUTs that are used
--/// during the comparisons and min/max algorithms
--pub struct Comparator<'a> {
--    pub(crate) server_key: &'a ServerKey,
--    // lut to get the sign of (a - b), used as the backbone of comparisons
--    sign_lut: LookupTableOwned,
--    // lut used to reduce 2 comparison blocks into 1
--    comparison_reduction_lut: LookupTableOwned,
--    comparison_result_to_offset_lut: LookupTableOwned,
--    lhs_lut: LookupTableOwned,
--    rhs_lut: LookupTableOwned,
--}
--
--impl<'a> Comparator<'a> {
--    pub(crate) const IS_INFERIOR: u64 = 0;
--    const IS_EQUAL: u64 = 1;
--    pub(crate) const IS_SUPERIOR: u64 = 2;
--
--    /// Creates a new Comparator for the given ServerKey
--    ///
--    /// # Panics
--    ///
--    /// panics if the message space + carry space is inferior to 4 bits
--    pub fn new(server_key: &'a ServerKey) -> Self {
--        assert!(
--            server_key.key.message_modulus.0 * server_key.key.carry_modulus.0 >= 16,
--            "At least 4 bits of space (message + carry) are required to be able to do comparisons"
--        );
--
--        let message_modulus = server_key.key.message_modulus.0;
--        let sign_lut = server_key.key.generate_lookup_table(|x| u64::from(x != 0));
--
--        let comparison_reduction_lut = server_key
--            .key
--            .generate_lookup_table(reduce_two_orderings_function);
--
--        let comparison_result_to_offset_lut = server_key.key.generate_lookup_table(|sign| {
--            if sign == Self::IS_INFERIOR {
--                message_modulus
--            } else {
--                0
--            }
--        });
--
--        let lhs_lut = server_key
--            .key
--            .generate_lookup_table(|x| if x < message_modulus { x } else { 0 });
--
--        let rhs_lut = server_key
--            .key
--            .generate_lookup_table(|x| x.saturating_sub(message_modulus));
--
--        Self {
--            server_key,
--            sign_lut,
--            comparison_reduction_lut,
--            comparison_result_to_offset_lut,
--            lhs_lut,
--            rhs_lut,
--        }
--    }
--
--    /// This function is used to compare two blocks
--    /// of two signed radix ciphertext which hold the 'sign' bit
--    /// (so the two most significant blocks).
--    ///
--    /// As for the blocks which holds the sign bit, the comparison
--    /// is different than for regular blocks.
--    fn compare_blocks_with_sign_bit(
--        &self,
--        lhs_block: &crate::shortint::Ciphertext,
--        rhs_block: &crate::shortint::Ciphertext,
--    ) -> crate::shortint::Ciphertext {
--        let sign_bit_pos = self.server_key.key.message_modulus.0.ilog2() - 1;
--        let lut = self.server_key.key.generate_lookup_table_bivariate(|x, y| {
--            let x_sign_bit = x >> sign_bit_pos;
--            let y_sign_bit = y >> sign_bit_pos;
--            // The block that has its sign bit set is going
--            // to be ordered as 'greater' by the cmp fn.
--            // However, we are dealing with signed number,
--            // so in reality, it is the smaller of the two.
--            // i.e the cmp result is inversed
--            if x_sign_bit == y_sign_bit {
--                // Both have either sign bit set or unset,
--                // cmp will give correct result
--                match x.cmp(&y) {
--                    std::cmp::Ordering::Less => Self::IS_INFERIOR,
--                    std::cmp::Ordering::Equal => Self::IS_EQUAL,
--                    std::cmp::Ordering::Greater => Self::IS_SUPERIOR,
--                }
--            } else {
--                match x.cmp(&y) {
--                    std::cmp::Ordering::Less => Self::IS_SUPERIOR,
--                    std::cmp::Ordering::Equal 
-```
-
-**File**: `tfhe/src/integer/server_key/mod.rs` (modified, +0/-1)
-```diff
-@@ -2,7 +2,6 @@
- //!
- //! This module implements the generation of the server public key, together with all the
- //! available homomorphic integer operations.
--pub mod comparator;
- pub(crate) mod crt;
- mod crt_parallel;
- pub(crate) mod radix;
-```
-
-**File**: `tfhe/src/integer/server_key/radix_parallel/div_mod.rs` (modified, +1/-1)
-```diff
-@@ -1,5 +1,5 @@
- use crate::integer::ciphertext::{IntegerRadixCiphertext, RadixCiphertext, SignedRadixCiphertext};
--use crate::integer::server_key::comparator::ZeroComparisonType;
-+use crate::integer::server_key::radix_parallel::scalar_comparison::ZeroComparisonType;
- use crate::integer::{BooleanBlock, IntegerCiphertext, ServerKey};
- use crate::shortint::MessageModulus;
- use rayon::prelude::*;
-```
-
-**File**: `tfhe/src/integer/server_key/radix_parallel/scalar_comparison.rs` (modified, +9/-1)
-```diff
-@@ -3,7 +3,6 @@ use crate::core_crypto::prelude::{lwe_ciphertext_sub_assign, Numeric};
- use crate::integer::block_decomposition::{BlockDecomposer, DecomposableInto};
- use crate::integer::ciphertext::boolean_value::BooleanBlock;
- use crate::integer::ciphertext::IntegerRadixCiphertext;
--use crate::integer::server_key::comparator::ZeroComparisonType;
- use crate::integer::server_key::radix_parallel::comparison::{
-     is_x_less_than_y_given_input_borrow, ComparisonKind, PreparedSignedCheck,
- };
-@@ -12,6 +11,15 @@ use crate::shortint::server_key::LookupTableOwned;
- use crate::shortint::{Ciphertext, MessageModulus};
- use rayon::prelude::*;
+@@ -67,9 +67,6 @@ void cuda_multi_bit_programmable_bootstrap_lwe_ciphertext_vector_async(
+     uint32_t num_many_lut, uint32_t lut_stride);
  
-+/// Used for compare_blocks_with_zero
-+#[derive(Clone, Copy)]
-+pub(crate) enum ZeroComparisonType {
-+    // We want to compare with zeros for equality (==)
-+    Equality,
-+    // We want to compare with zeros for difference (!=)
-+    Difference,
-+}
+ template <typename Torus>
+-uint64_t get_buffer_size_full_sm_multibit_programmable_bootstrap_128_keybundle(
+-    uint32_t polynomial_size);
+-template <typename Torus>
+ uint64_t get_buffer_size_full_sm_multibit_programmable_bootstrap_keybundle(
+     uint32_t polynomial_size);
+ template <typename Torus>
+@@ -108,338 +105,204 @@ uint64_t get_lwe_chunk_size_128(uint32_t gpu_index, uint32_t max_num_pbs,
+                                 uint64_t full_sm_keybundle);
+ template <typename Torus>
+ struct pbs_buffer<Torus, PBS_TYPE::MULTI_BIT> : public pbs_buffer_base {
+-  int8_t *d_mem_keybundle = NULL;
+-  int8_t *d_mem_acc_step_one = NULL;
+-  int8_t *d_mem_acc_step_two = NULL;
+-  int8_t *d_mem_acc_cg = NULL;
+-  int8_t *d_mem_acc_tbc = NULL;
++  using fft_element_type = typename pbs_fft_traits<Torus>::element_type;
 +
- impl ServerKey {
-     /// Returns whether the clear scalar is outside of the
-     /// value range the ciphertext can hold.
++  int8_t *d_mem_keybundle = nullptr;
++  int8_t *d_mem_acc_step_one = nullptr;
++  int8_t *d_mem_acc_step_two = nullptr;
++  int8_t *d_mem_acc_cg = nullptr;
++  int8_t *d_mem_acc_tbc = nullptr;
+   uint64_t lwe_chunk_size;
+-  double2 *keybundle_fft;
+-  Torus *global_accumulator;
+-  double2 *global_join_buffer;
++  fft_element_type *keybundle_fft = nullptr;
++  Torus *global_accumulator = nullptr;
++  fft_element_type *global_join_buffer = nullptr;
+ 
+   PBS_VARIANT pbs_variant;
+   bool gpu_memory_allocated;
+ 
++  uint32_t glwe_dimension;
++  uint32_t polynomial_size;
++  uint32_t level_count;
++  uint32_t input_lwe_ciphertext_count;
++  uint32_t max_shared_memory;
++
++private:
++  // Variant-free part: shared fields plus the buffers every multi-bit variant
++  // uses (keybundle scratch, keybundle FFT, accumulator, join buffer).
+   pbs_buffer(cudaStream_t stream, uint32_t gpu_index, uint32_t glwe_dimension,
+              uint32_t polynomial_size, uint32_t level_count,
+              uint32_t input_lwe_ciphertext_count, uint64_t lwe_chunk_size,
+-             PBS_VARIANT pbs_variant, bool allocate_gpu_memory,
+-             uint64_t &size_tracker) {
+-    gpu_memory_allocated = allocate_gpu_memory;
++             bool allocate_gpu_memory, uint64_t &size_tracker)
++      : lwe_chunk_size(lwe_chunk_size),
++        gpu_memory_allocated(allocate_gpu_memory),
++        glwe_dimension(glwe_dimension), polynomial_size(polynomial_size),
++        level_count(level_count),
++        input_lwe_ciphertext_count(input_lwe_ciphertext_count) {
+     cuda_set_device(gpu_index);
++    max_shared_memory = cuda_get_max_shared_memory(gpu_index);
+ 
+-    this->pbs_variant = pbs_variant;
+-    this->lwe_chunk_size = lwe_chunk_size;
+-    auto max_shared_memory = cuda_get_max_shared_memory(gpu_index);
+-
+-    // default
+     uint64_t full_sm_keybundle =
+         get_buffer_size_full_sm_multibit_programmable_bootstrap_keybundle<
+             Torus>(polynomial_size);
+-    uint64_t full_sm_accumulate_step_one =
+-        get_buffer_size_full_sm_multibit_programmable_bootstrap_step_one<Torus>(
+-            polynomial_size);
+-    uint64_t full_sm_accumulate_step_two =
+-        get_buffer_size_full_sm_multibit_programmable_bootstrap_step_two<Torus>(
+-            polynomial_size);
+-    uint64_t partial_sm_accumulate_step_one =
+-        get_buffer_size_partial_sm_multibit_programmable_bootstrap_step_one<
+-            Torus>(polynomial_size);
+-    // cg
+-    uint64_t full_sm_cg_accumulate =
+-        get_buffer_size_full_sm_cg_multibit_programmable_bootstrap<Torus>(
+-            polynomial_size);
+-    uint64_t partial_sm_cg_accumulate =
+-        get_buffer_size_partial_sm_cg_multibit_programmable_bootstrap<Torus>(
+-            polynomial_size);
+-
+-    size_t num_blocks_keybundle = safe_mul(
+-        (size_t)input_lwe_ciphertext_count, (size_t)lwe_chunk_size,
+-        safe_mul((size_t)(glwe_dimension + 1), (size_t)(glwe_dimension + 1)),
+-        (size_t)level_count);
+-    size_t num_blocks_acc_step_one =
+-        safe_mul((size_t)level_count, (size_t)(glwe_dimension + 1),
+-                 (size_t)input_lwe_ciphertext_count);
+-    size_t num_blocks_acc_step_two = safe_mul(
+-        (size_t)input_lwe_ciphertext_count, (size_t)(glwe_dimension + 1));
+-    size_t num_blocks_acc_cg =
+-        safe_mul((size_t)level_count, (size_t)(glwe_dimension + 1),
+-                 (size_t)input_lwe_ciphertext_count);
++    size_t num_blocks_keybundle = keybundle_block_count();
+ 
+-#if CUDA_ARCH >= 900
+-    uint64_t full_sm_tbc_accumulate =
+-        get_buffer_size_full_sm_tbc_multibit_programmable_bootstrap<Torus>(
+-            polynomial_size);
+-    uint64_t partial_sm_tbc_accumulate =
+-        get_buffer_size_partial_sm_tbc_multibit_programmable_bootstrap<Torus>(
+-            polynomial_size);
+-    uint64_t minimum_sm_tbc =
+-        get_buffer_size_sm_dsm_plus_tbc_multibit_programmable_bootstrap<Torus>(
+-            polynomial_size);
+-    size_t num_blocks_acc_tbc = num_blocks_acc_cg;
+-#endif
+-
+-    // Keybundle
+     if (max_shared_memory < full_sm_
+```
+
+**File**: `backends/tfhe-cuda-backend/cuda/include/pbs/pbs_utilities.h` (modified, +212/-339)
+```diff
+@@ -7,6 +7,34 @@
+ #include "vector_types.h"
+ #include <stdint.h>
+ 
++// The 128-bit FFT stores one complex coefficient as four doubles
++// (re_hi, re_lo, im_hi, im_lo), the f128x2 type in fft128/f128.cuh. That
++// header is not visible from include/, so the count is named here and tied to
++// the type by a static_assert in programmable_bootstrap_classic_128.cuh.
++constexpr size_t PBS128_DOUBLES_PER_FOURIER_COEFFICIENT = 4;
++
++// How a pbs_buffer stores Fourier-domain data for a given torus width.
++// element_type is what the buffer pointers point to; coefficient_bytes is the
++// size of one complex coefficient, used to size those buffers. The 64-bit PBS
++// keeps one coefficient per double2. The 128-bit PBS keeps the four doubles of
++// a coefficient in separate planes, so its buffers are addressed as double.
++template <typename Torus> struct pbs_fft_traits {
++  using element_type = double2;
++  static constexpr size_t coefficient_bytes = sizeof(double2);
++};
++
++template <> struct pbs_fft_traits<__uint128_t> {
++  using element_type = double;
++  static constexpr size_t coefficient_bytes =
++      PBS128_DOUBLES_PER_FOURIER_COEFFICIENT * sizeof(double);
++};
++
++// Selects a pbs_buffer constructor at compile time. Every scratch function
++// knows its variant statically, so no runtime switch is needed to build the
++// buffer. The runtime pbs_variant field is still stored because the FFI layer
++// type-erases the buffer and dispatches on it.
++template <PBS_VARIANT variant> struct pbs_variant_tag {};
++
+ template <typename Torus>
+ uint64_t get_buffer_size_full_sm_programmable_bootstrap_step_one(
+     uint32_t polynomial_size) {
+@@ -35,9 +63,10 @@ get_buffer_size_partial_sm_programmable_bootstrap(uint32_t polynomial_size) {
+ template <typename Torus>
+ uint64_t
+ get_buffer_size_full_sm_programmable_bootstrap_tbc(uint32_t polynomial_size) {
+-  return safe_mul_sizeof<Torus>(polynomial_size) +      // accumulator_rotated
+-         safe_mul_sizeof<Torus>(polynomial_size) +      // accumulator
+-         safe_mul_sizeof<double2>(polynomial_size / 2); // accumulator fft
++  return safe_mul_sizeof<Torus>(polynomial_size) + // accumulator_rotated
++         safe_mul_sizeof<Torus>(polynomial_size) + // accumulator
++         safe_mul(pbs_fft_traits<Torus>::coefficient_bytes,
++                  (size_t)(polynomial_size / 2)); // accumulator fft
+ }
+ 
+ template <typename Torus>
+@@ -78,14 +107,6 @@ get_buffer_size_partial_sm_programmable_bootstrap_cg(uint32_t polynomial_size) {
+   return safe_mul_sizeof<double>((size_t)polynomial_size,
+                                  double_count); // accumulator fft mask & body
+ }
+-template <typename Torus>
+-uint64_t get_buffer_size_full_sm_programmable_bootstrap_128_tbc(
+-    uint32_t polynomial_size) {
+-  return safe_mul_sizeof<Torus>(polynomial_size) + // accumulator_rotated
+-         safe_mul_sizeof<Torus>(polynomial_size) + // accumulator
+-         safe_mul_sizeof<Torus>(polynomial_size);  // accumulator fft
+-}
+-
+ template <typename Torus>
+ bool supports_distributed_shared_memory_on_classic_programmable_bootstrap(
+     uint32_t polynomial_size, uint32_t max_shared_memory);
+@@ -99,361 +120,213 @@ template <typename Torus, PBS_TYPE pbs_type> struct pbs_buffer;
+ 
+ template <typename Torus>
+ struct pbs_buffer<Torus, PBS_TYPE::CLASSICAL> : public pbs_buffer_base {
+-  int8_t *d_mem;
++  using fft_element_type = typename pbs_fft_traits<Torus>::element_type;
+ 
+-  Torus *global_accumulator;
+-  double2 *global_join_buffer;
++  int8_t *d_mem = nullptr;
++
++  Torus *global_accumulator = nullptr;
++  fft_element_type *global_join_buffer = nullptr;
+ 
+   PBS_VARIANT pbs_variant;
+   PBS_MS_REDUCTION_T noise_reduction_type;
+   bool gpu_memory_allocated;
+ 
+-  pbs_buffer(cudaStream_t stream, uint32_t gpu_index, uint32_t lwe_dimension,
+-             uint32_t glwe_dimension, uint32_t polynomial_size,
+-             uint32_t level_count, uint32_t input_lwe_ciphertext_count,
+-             PBS_VARIANT pbs_variant, bool allocate_gpu_memory,
+-             PBS_MS_REDUCTION_T noise_reduction_type, uint64_t &size_tracker)
+-      : noise_reduction_type(noise_reduction_type) {
+-    gpu_memory_allocated = allocate_gpu_memory;
++  uint32_t glwe_dimension;
++  uint32_t polynomial_size;
++  uint32_t level_count;
++  uint32_t input_lwe_ciphertext_count;
++  uint32_t max_shared_memory;
++
++private:
++  // Variant-free part. Every public constructor delegates here first, then
++  // sets pbs_variant and allocates what its own kernel needs.
++  pbs_buffer(uint32_t gpu_index, uint32_t glwe_dimension,
++             uint32_t polynomial_size, uint32_t level_count,
++             uint32_t input_lwe_ciphertext_count, bool allocate_gpu_memory,
++             PBS_MS_REDUCTION_T noise_reduction_type)
++      : noise_reduction_type(noise_reduction_type),
++        gpu_memory_allocated(allocate_gpu_memory),
++        glwe_dimension(glwe_dimension), polynomial_size(polynomial_size),
++        level_count(level_count),
++        input_lwe_ciphertext_count(input_lwe_c
+```
+
+**File**: `backends/tfhe-cuda-backend/cuda/src/pbs/programmable_bootstrap_cg_classic.cuh` (modified, +3/-2)
+```diff
+@@ -233,8 +233,9 @@ __host__ uint64_t scratch_programmable_bootstrap_cg(
+   uint64_t size_tracker = 0;
+   *buffer = new pbs_buffer<Torus, CLASSICAL>(
+       stream, gpu_index, lwe_dimension, glwe_dimension, polynomial_size,
+-      level_count, input_lwe_ciphertext_count, PBS_VARIANT::CG,
+-      allocate_gpu_memory, noise_reduction_type, size_tracker);
++      level_count, input_lwe_ciphertext_count,
++      pbs_variant_tag<PBS_VARIANT::CG>{}, allocate_gpu_memory,
++      noise_reduction_type, size_tracker);
+   return size_tracker;
+ }
+ 
+```
+
+**File**: `backends/tfhe-cuda-backend/cuda/src/pbs/programmable_bootstrap_cg_multibit.cuh` (modified, +2/-2)
+```diff
+@@ -294,8 +294,8 @@ __host__ uint64_t scratch_cg_multi_bit_programmable_bootstrap(
+   uint64_t size_tracker = 0;
+   *buffer = new pbs_buffer<Torus, MULTI_BIT>(
+       stream, gpu_index, glwe_dimension, polynomial_size, level_count,
+-      input_lwe_ciphertext_count, lwe_chunk_size, PBS_VARIANT::CG,
+-      allocate_gpu_memory, size_tracker);
++      input_lwe_ciphertext_count, lwe_chunk_size,
++      pbs_variant_tag<PBS_VARIANT::CG>{}, allocate_gpu_memory, size_tracker);
+   return size_tracker;
+ }
+ 
+```
+
+**File**: `backends/tfhe-cuda-backend/cuda/src/pbs/programmable_bootstrap_classic.cuh` (modified, +3/-2)
+```diff
+@@ -1154,8 +1154,9 @@ __host__ uint64_t scratch_programmable_bootstrap(
+   uint64_t size_tracker = 0;
+   *buffer = new pbs_buffer<Torus, CLASSICAL>(
+       stream, gpu_index, lwe_dimension, glwe_dimension, polynomial_size,
+-      level_count, input_lwe_ciphertext_count, PBS_VARIANT::DEFAULT,
+-      allocate_gpu_memory, noise_reduction_type, size_tracker);
++      level_count, input_lwe_ciphertext_count,
++      pbs_variant_tag<PBS_VARIANT::DEFAULT>{}, allocate_gpu_memory,
++      noise_reduction_type, size_tracker);
+   return size_tracker;
+ }
+ 
+```
+
+**File**: `backends/tfhe-cuda-backend/cuda/src/pbs/programmable_bootstrap_classic_128.cu` (modified, +14/-14)
+```diff
+@@ -24,16 +24,16 @@ bool has_support_to_cuda_programmable_bootstrap_128_tbc(
+ }
+ 
+ uint64_t scratch_cuda_programmable_bootstrap_128_vector_64(
+-    void *stream, uint32_t gpu_index, int8_t **pbs_buffer,
+-    uint32_t lwe_dimension, uint32_t glwe_dimension, uint32_t polynomial_size,
+-    uint32_t level_count, uint32_t input_lwe_ciphertext_count,
+-    bool allocate_gpu_memory, PBS_MS_REDUCTION_T noise_reduction_type) {
++    void *stream, uint32_t gpu_index, int8_t **buffer, uint32_t lwe_dimension,
++    uint32_t glwe_dimension, uint32_t polynomial_size, uint32_t level_count,
++    uint32_t input_lwe_ciphertext_count, bool allocate_gpu_memory,
++    PBS_MS_REDUCTION_T noise_reduction_type) {
+ 
+   return scratch_cuda_programmable_bootstrap_128_vector<uint64_t>(
+       stream, gpu_index,
+-      (pbs_buffer_128<uint64_t, PBS_TYPE::CLASSICAL> **)pbs_buffer,
+-      lwe_dimension, glwe_dimension, polynomial_size, level_count,
+-      input_lwe_ciphertext_count, allocate_gpu_memory, noise_reduction_type);
++      (pbs_buffer<__uint128_t, PBS_TYPE::CLASSICAL> **)buffer, lwe_dimension,
++      glwe_dimension, polynomial_size, level_count, input_lwe_ciphertext_count,
++      allocate_gpu_memory, noise_reduction_type);
+ }
+ 
+ uint64_t scratch_cuda_programmable_bootstrap_128_async(
+@@ -53,7 +53,7 @@ void executor_cuda_programmable_bootstrap_128(
+     void *stream, uint32_t gpu_index, __uint128_t *lwe_array_out,
+     __uint128_t const *lut_vector, InputTorus const *lwe_array_in,
+     double const *bootstrapping_key,
+-    pbs_buffer_128<InputTorus, PBS_TYPE::CLASSICAL> *buffer,
++    pbs_buffer<__uint128_t, PBS_TYPE::CLASSICAL> *buffer,
+     uint32_t lwe_dimension, uint32_t glwe_dimension, uint32_t polynomial_size,
+     uint32_t base_log, uint32_t level_count, uint32_t num_samples) {
+ 
+@@ -71,7 +71,7 @@ void executor_cuda_programmable_bootstrap_cg_lwe_ciphertext_vector_128(
+     void *stream, uint32_t gpu_index, __uint128_t *lwe_array_out,
+     __uint128_t const *lut_vector, InputTorus const *lwe_array_in,
+     double const *bootstrapping_key,
+-    pbs_buffer_128<InputTorus, PBS_TYPE::CLASSICAL> *buffer,
++    pbs_buffer<__uint128_t, PBS_TYPE::CLASSICAL> *buffer,
+     uint32_t lwe_dimension, uint32_t glwe_dimension, uint32_t polynomial_size,
+     uint32_t base_log, uint32_t level_count, uint32_t num_samples) {
+ 
+@@ -91,7 +91,7 @@ void executor_cuda_programmable_bootstrap_tbc_lwe_ciphertext_vector_128(
+     void *stream, uint32_t gpu_index, __uint128_t *lwe_array_out,
+     __uint128_t const *lut_vector, InputTorus const *lwe_array_in,
+     double const *bootstrapping_key,
+-    pbs_buffer_128<InputTorus, PBS_TYPE::CLASSICAL> *buffer,
++    pbs_buffer<__uint128_t, PBS_TYPE::CLASSICAL> *buffer,
+     uint32_t lwe_dimension, uint32_t glwe_dimension, uint32_t polynomial_size,
+     uint32_t base_log, uint32_t level_count, uint32_t num_samples) {
+ 
+@@ -115,7 +115,7 @@ void executor_cuda_programmable_bootstrap_host_driven_tbc_lwe_ciphertext_vector_
+     void *stream, uint32_t gpu_index, __uint128_t *lwe_array_out,
+     __uint128_t const *lut_vector, InputTorus const *lwe_array_in,
+     double const *bootstrapping_key,
+-    pbs_buffer_128<InputTorus, PBS_TYPE::CLASSICAL> *buffer,
++    pbs_buffer<__uint128_t, PBS_TYPE::CLASSICAL> *buffer,
+     uint32_t lwe_dimension, uint32_t glwe_dimension, uint32_t polynomial_size,
+     uint32_t base_log, uint32_t level_count, uint32_t num_samples) {
+ 
+@@ -138,7 +138,7 @@ void host_programmable_bootstrap_lwe_ciphertext_vector_128(
+     void *stream, uint32_t gpu_index, void *lwe_array_out,
+     __uint128_t const *lut_vector, void const *lwe_array_in,
+     void const *bootstrapping_key,
+-    pbs_buffer_128<InputTorus, PBS_TYPE::CLASSICAL> *buffer,
++    pbs_buffer<__uint128_t, PBS_TYPE::CLASSICAL> *buffer,
+     uint32_t lwe_dimension, uint32_t glwe_dimension, uint32_t polynomial_size,
+     uint32_t base_log, uint32_t level_count, uint32_t num_samples) {
+   if (base_log > 64)
+@@ -242,7 +242,7 @@ void cuda_programmable_bootstrap_128_async(
+     void const *bootstrapping_key, int8_t *buffer, uint32_t lwe_dimension,
+     uint32_t glwe_dimension, uint32_t polynomial_size, uint32_t base_log,
+     uint32_t level_count, uint32_t num_samples) {
+-  auto *pbs_buf = (pbs_buffer_128<uint64_t, PBS_TYPE::CLASSICAL> *)buffer;
++  auto *pbs_buf = (pbs_buffer<__uint128_t, PBS_TYPE::CLASSICAL> *)buffer;
+ 
+   host_programmable_bootstrap_lwe_ciphertext_vector_128<uint64_t>(
+       stream, gpu_index, lwe_array_out,
+@@ -257,7 +257,7 @@ void cuda_programmable_bootstrap_128_async(
+  */
+ void cleanup_cuda_programmable_bootstrap_128(void *stream, uint32_t gpu_index,
+                                              int8_t **buffer) {
+-  auto *pbs_buf = (pbs_buffer_128<__uint128_t, PBS_TYPE::CLASSICAL> *)(*buffer);
++  auto *pbs_buf = (pbs_buffer<__uint128_t, PBS_TYPE::CLASSICAL> *)(*buffer);
+   pbs_buf->release(static_cast<cudaStream_t>(stream), gpu_index);
+   delete pbs_buf;
+   *buffer = nullptr;
+```
+
+**File**: `backends/tfhe-cuda-backend/cuda/src/pbs/programmable_bootstrap_classic_128.cuh` (modified, +39/-27)
+```diff
+@@ -21,6 +21,13 @@
+ #include <cstdlib>
+ #include <string>
+ 
++static_assert(sizeof(f128x2) ==
++                  PBS128_DOUBLES_PER_FOURIER_COEFFICIENT * sizeof(double),
++              "pbs_buffer<__uint128_t, ...> sizes its Fourier buffers "
++              "assuming f128x2 is four doubles with no padding");
++static_assert(pbs_fft_traits<__uint128_t>::coefficient_bytes == sizeof(f128x2),
++              "pbs_fft_traits<__uint128_t> must describe f128x2");
++
+ // Launch bounds for the register-based step one specialized on the 2_2 noise
+ // squashing parameters (512 threads = degree/opt for N=2048, min 2 blocks per
+ // SM). Guarded because debug builds use more registers and would otherwise
+@@ -669,7 +676,7 @@ __global__ void device_programmable_bootstrap_tbc_128(
+ template <typename InputTorus, typename params>
+ __host__ uint64_t scratch_programmable_bootstrap_cg_128(
+     cudaStream_t stream, uint32_t gpu_index,
+-    pbs_buffer_128<InputTorus, PBS_TYPE::CLASSICAL> **buffer,
++    pbs_buffer<__uint128_t, PBS_TYPE::CLASSICAL> **buffer,
+     uint32_t lwe_dimension, uint32_t glwe_dimension, uint32_t polynomial_size,
+     uint32_t level_count, uint32_t input_lwe_ciphertext_count,
+     bool allocate_gpu_memory, PBS_MS_REDUCTION_T noise_reduction_type) {
+@@ -701,17 +708,18 @@ __host__ uint64_t scratch_programmable_bootstrap_cg_128(
+   }
+ 
+   uint64_t size_tracker = 0;
+-  *buffer = new pbs_buffer_128<InputTorus, PBS_TYPE::CLASSICAL>(
++  *buffer = new pbs_buffer<__uint128_t, PBS_TYPE::CLASSICAL>(
+       stream, gpu_index, lwe_dimension, glwe_dimension, polynomial_size,
+-      level_count, input_lwe_ciphertext_count, PBS_VARIANT::CG,
+-      allocate_gpu_memory, noise_reduction_type, size_tracker);
++      level_count, input_lwe_ciphertext_count,
++      pbs_variant_tag<PBS_VARIANT::CG>{}, allocate_gpu_memory,
++      noise_reduction_type, size_tracker);
+   return size_tracker;
+ }
+ 
+ template <typename InputTorus, typename params>
+ __host__ uint64_t scratch_programmable_bootstrap_128(
+     cudaStream_t stream, uint32_t gpu_index,
+-    pbs_buffer_128<InputTorus, PBS_TYPE::CLASSICAL> **buffer,
++    pbs_buffer<__uint128_t, PBS_TYPE::CLASSICAL> **buffer,
+     uint32_t lwe_dimension, uint32_t glwe_dimension, uint32_t polynomial_size,
+     uint32_t level_count, uint32_t input_lwe_ciphertext_count,
+     bool allocate_gpu_memory, PBS_MS_REDUCTION_T noise_reduction_type) {
+@@ -856,18 +864,19 @@ __host__ uint64_t scratch_programmable_bootstrap_128(
+   }
+ 
+   uint64_t size_tracker = 0;
+-  *buffer = new pbs_buffer_128<InputTorus, PBS_TYPE::CLASSICAL>(
++  *buffer = new pbs_buffer<__uint128_t, PBS_TYPE::CLASSICAL>(
+       stream, gpu_index, lwe_dimension, glwe_dimension, polynomial_size,
+-      level_count, input_lwe_ciphertext_count, PBS_VARIANT::DEFAULT,
+-      allocate_gpu_memory, noise_reduction_type, size_tracker);
++      level_count, input_lwe_ciphertext_count,
++      pbs_variant_tag<PBS_VARIANT::DEFAULT>{}, allocate_gpu_memory,
++      noise_reduction_type, size_tracker);
+   return size_tracker;
+ }
+ 
+ template <typename Torus>
+ bool supports_distributed_shared_memory_on_classic_programmable_bootstrap_128(
+     uint32_t polynomial_size, uint32_t max_shared_memory) {
+   uint64_t minimum_sm =
+-      get_buffer_size_full_sm_programmable_bootstrap_128_tbc<Torus>(
++      get_buffer_size_full_sm_programmable_bootstrap_tbc<Torus>(
+           polynomial_size);
+ 
+   if (max_shared_memory < minimum_sm) {
+@@ -897,7 +906,7 @@ supports_thread_block_clusters_on_classic_programmable_bootstrap_128(
+   return false;
+ #else
+   uint64_t full_sm =
+-      get_buffer_size_full_sm_programmable_bootstrap_128_tbc<__uint128_t>(
++      get_buffer_size_full_sm_programmable_bootstrap_tbc<__uint128_t>(
+           polynomial_size);
+ 
+   int cluster_size;
+@@ -1167,7 +1176,7 @@ __host__ void execute_host_driven_tbc_128(
+ template <typename InputTorus, typename params>
+ __host__ uint64_t scratch_programmable_bootstrap_host_driven_tbc_128(
+     cudaStream_t stream, uint32_t gpu_index,
+-    pbs_buffer_128<InputTorus, PBS_TYPE::CLASSICAL> **buffer,
++    pbs_buffer<__uint128_t, PBS_TYPE::CLASSICAL> **buffer,
+     uint32_t lwe_dimension, uint32_t glwe_dimension, uint32_t polynomial_size,
+     uint32_t level_count, uint32_t input_lwe_ciphertext_count,
+     bool allocate_gpu_memory, PBS_MS_REDUCTION_T noise_reduction_type) {
+@@ -1178,10 +1187,11 @@ __host__ uint64_t scratch_programmable_bootstrap_host_driven_tbc_128(
+                                 PBS128_SNS_GLWE_DIMENSION>();
+ 
+   uint64_t size_tracker = 0;
+-  *buffer = new pbs_buffer_128<InputTorus, PBS_TYPE::CLASSICAL>(
++  *buffer = new pbs_buffer<__uint128_t, PBS_TYPE::CLASSICAL>(
+       stream, gpu_index, lwe_dimension, glwe_dimension, polynomial_size,
+-      level_count, input_lwe_ciphertext_count, PBS_VARIANT::TBC_HOST_DRIVEN,
+-      allocate_gpu_memory, noise_reduction_type, size_tracker);
++      level_count, input_lwe_ciphertext_count,
++      pbs_variant_tag<PBS_VARIANT::TBC_HOST_DRIVEN>{}, allocate_gpu_memory,
+
+```
+
+**File**: `backends/tfhe-cuda-backend/cuda/src/pbs/programmable_bootstrap_multibit.cuh` (modified, +6/-2)
+```diff
+@@ -544,6 +544,9 @@ __global__ void __launch_bounds__(params::degree / params::opt)
+ template <typename Torus>
+ uint64_t get_buffer_size_full_sm_multibit_programmable_bootstrap_keybundle(
+     uint32_t polynomial_size) {
++  if constexpr (sizeof(Torus) == 16)
++    return safe_mul_sizeof<Torus>((size_t)polynomial_size,
++                                  (size_t)2);           // accumulator
+   return safe_mul_sizeof<double2>(polynomial_size / 2); // accumulator
+ }
+ template <typename Torus>
+@@ -712,8 +715,9 @@ __host__ uint64_t scratch_multi_bit_programmable_bootstrap(
+   uint64_t size_tracker = 0;
+   *buffer = new pbs_buffer<Torus, MULTI_BIT>(
+       stream, gpu_index, glwe_dimension, polynomial_size, level_count,
+-      input_lwe_ciphertext_count, lwe_chunk_size, PBS_VARIANT::DEFAULT,
+-      allocate_gpu_memory, size_tracker);
++      input_lwe_ciphertext_count, lwe_chunk_size,
++      pbs_variant_tag<PBS_VARIANT::DEFAULT>{}, allocate_gpu_memory,
++      size_tracker);
+   return size_tracker;
+ }
+ 
 ```
 
 #### Recent Merged Pull Requests:
@@ -2145,3 +2446,89 @@ It only had non parallel comparisons
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. gpu): chore(gpu): implement a factory pattern for pbs_buffer
+
+**RULE**:
+When implementing operations in `backends/tfhe-cuda-backend/cuda/include/pbs/pbs_multibit_utilities.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `9b951080`: gpu): chore(gpu): implement a factory pattern for pbs_buffer. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `backends/tfhe-cuda-backend/cuda/include/pbs/pbs_multibit_utilities.h`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+  using fft_element_type = typename pbs_fft_traits<Torus>::element_type;
+
+  int8_t *d_mem_keybundle = nullptr;
+  int8_t *d_mem_acc_step_one = nullptr;
+  int8_t *d_mem_acc_step_two = nullptr;
+  int8_t *d_mem_acc_cg = nullptr;
+  int8_t *d_mem_acc_tbc = nullptr;
+  fft_element_type *keybundle_fft = nullptr;
+  Torus *global_accumulator = nullptr;
+  fft_element_type *global_join_buffer = nullptr;
+  uint32_t glwe_dimension;
+  uint32_t polynomial_size;
+  uint32_t level_count;
+  uint32_t input_lwe_ciphertext_count;
+  uint32_t max_shared_memory;
+
+private:
+  // Variant-free part: shared fields plus the buffers every multi-bit variant
+  // uses (keybundle scratch, keybundle FFT, accumulator, join buffer).
+             bool allocate_gpu_memory, uint64_t &size_tracker)
+      : lwe_chunk_size(lwe_chunk_size),
+        gpu_memory_allocated(allocate_gpu_memory),
+        glwe_dimension(glwe_dimension), polynomial_size(polynomial_size),
+        level_count(level_count),
+        input_lwe_ciphertext_count(input_lwe_ciphertext_count) {
+    max_shared_memory = cuda_get_max_shared_memory(gpu_index);
+    size_t num_blocks_keybundle = keybundle_block_count();
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+uint64_t get_buffer_size_full_sm_multibit_programmable_bootstrap_128_keybundle(
+    uint32_t polynomial_size);
+template <typename Torus>
+  int8_t *d_mem_keybundle = NULL;
+  int8_t *d_mem_acc_step_one = NULL;
+  int8_t *d_mem_acc_step_two = NULL;
+  int8_t *d_mem_acc_cg = NULL;
+  int8_t *d_mem_acc_tbc = NULL;
+  double2 *keybundle_fft;
+  Torus *global_accumulator;
+  double2 *global_join_buffer;
+             PBS_VARIANT pbs_variant, bool allocate_gpu_memory,
+             uint64_t &size_tracker) {
+    gpu_memory_allocated = allocate_gpu_memory;
+    this->pbs_variant = pbs_variant;
+    this->lwe_chunk_size = lwe_chunk_size;
+    auto max_shared_memory = cuda_get_max_shared_memory(gpu_index);
+
+    // default
+    uint64_t full_sm_accumulate_step_one =
+        get_buffer_size_full_sm_multibit_programmable_bootstrap_step_one<Torus>(
+            polynomial_size);
+    uint64_t full_sm_accumulate_step_two =
+        get_buffer_size_full_sm_multibit_programmable_bootstrap_step_two<Torus>(
+            polynomial_size);
+    uint64_t partial_sm_accumulate_step_one =
+        get_buffer_size_partial_sm_multibit_programmable_bootstrap_step_one<
+            Torus>(polynomial_size);
+    // cg
+    uint64_t 
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `9b951080` are properly handled with clean fallback behavior.

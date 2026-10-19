@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T20:47:22.669Z",
+  "last_updated": "2026-10-19T20:54:24.268Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5044,14 +5044,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zama-ai-tfhe-rs",
-      "content_hash": "7ebc226851a085d8da7948ded8fff871f9a45d033a17481593d75b7a07b21eb4",
-      "verified_at": "2026-10-19T17:56:34.829Z",
+      "content_hash": "fd0ff60af155694734426872ca13d33ccbb97a3e2553859c55306129cf28a4a1",
+      "verified_at": "2026-10-19T20:53:23.140Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T17:56:34.829Z"
+      "last_updated": "2026-10-19T20:53:23.140Z"
     },
     "doobidoo/mcp-memory-service": {
       "repository": "doobidoo/mcp-memory-service",
@@ -9754,14 +9754,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-graphprotocol-graph-node",
-      "content_hash": "96de2d20d26f5ca59055880bbf60114c9d0afaa8754a6981b2307ae410903dcc",
-      "verified_at": "2026-10-19T05:58:42.396Z",
+      "content_hash": "e27b0b41d5c69627fb0af87dc9746c01d265e125c47ff5dc628077f610ae115e",
+      "verified_at": "2026-10-19T20:54:24.268Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T05:58:42.396Z"
+      "last_updated": "2026-10-19T20:54:24.268Z"
     },
     "hungps/flutter_pokedex": {
       "repository": "hungps/flutter_pokedex",
@@ -13572,6 +13572,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T20:47:15.065Z"
+    },
+    "lucky-media/astro-seo": {
+      "repository": "lucky-media/astro-seo",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-lucky-media-astro-seo",
+      "content_hash": "753e5a1f3b4a10c80a03ad33a7c753e782696a86cd7bb367b5bc0b126f1f516b",
+      "verified_at": "2026-10-19T20:53:16.574Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T20:53:16.574Z"
+    },
+    "yattee/yattee": {
+      "repository": "yattee/yattee",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-yattee-yattee",
+      "content_hash": "b0731d03b1755c04ab29ab9e914f832829671a2bddca7605fde02db5b9b6b7c3",
+      "verified_at": "2026-10-19T20:53:18.505Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T20:53:18.505Z"
     }
   },
   "repos": {

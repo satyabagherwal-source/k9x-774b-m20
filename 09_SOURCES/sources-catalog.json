@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "a124ebc3",
+    "sourceVersion": "9b951080",
     "license": "NOASSERTION",
-    "contentHash": "7ebc226851a085d8da7948ded8fff871f9a45d033a17481593d75b7a07b21eb4",
-    "lastHarvestedAt": "2026-10-19T17:56:34.824Z",
+    "contentHash": "fd0ff60af155694734426872ca13d33ccbb97a3e2553859c55306129cf28a4a1",
+    "lastHarvestedAt": "2026-10-19T20:53:23.135Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {
@@ -6443,10 +6443,10 @@
     "repository": "graphprotocol/graph-node",
     "platform": "github",
     "sourceUrl": "https://github.com/graphprotocol/graph-node",
-    "sourceVersion": "6838f4e3",
+    "sourceVersion": "190f0aa4",
     "license": "Apache-2.0",
-    "contentHash": "96de2d20d26f5ca59055880bbf60114c9d0afaa8754a6981b2307ae410903dcc",
-    "lastHarvestedAt": "2026-10-19T05:58:42.384Z",
+    "contentHash": "e27b0b41d5c69627fb0af87dc9746c01d265e125c47ff5dc628077f610ae115e",
+    "lastHarvestedAt": "2026-10-19T20:54:24.262Z",
     "learningId": "learn-github-graphprotocol-graph-node"
   },
   "hungps-flutter_pokedex": {
@@ -9018,5 +9018,25 @@
     "contentHash": "4765fae8988faf15e1857a7be7fc60af32d1127c519d739b96e499fb7316bffd",
     "lastHarvestedAt": "2026-10-19T20:47:15.060Z",
     "learningId": "learn-github-oblador-hush"
+  },
+  "lucky-media-astro-seo": {
+    "repository": "lucky-media/astro-seo",
+    "platform": "github",
+    "sourceUrl": "https://github.com/lucky-media/astro-seo",
+    "sourceVersion": "379fde02",
+    "license": "PERMISSIVE_OPEN_SOURCE",
+    "contentHash": "753e5a1f3b4a10c80a03ad33a7c753e782696a86cd7bb367b5bc0b126f1f516b",
+    "lastHarvestedAt": "2026-10-19T20:53:16.555Z",
+    "learningId": "learn-github-lucky-media-astro-seo"
+  },
+  "yattee-yattee": {
+    "repository": "yattee/yattee",
+    "platform": "github",
+    "sourceUrl": "https://github.com/yattee/yattee",
+    "sourceVersion": "2969b086",
+    "license": "AGPL-3.0",
+    "contentHash": "b0731d03b1755c04ab29ab9e914f832829671a2bddca7605fde02db5b9b6b7c3",
+    "lastHarvestedAt": "2026-10-19T20:53:18.500Z",
+    "learningId": "learn-github-yattee-yattee"
   }
 }

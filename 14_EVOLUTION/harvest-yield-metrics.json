@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T20:47:22.667Z",
-  "total_cycles_completed": 3463,
-  "total_learnings_persisted": 3463,
-  "total_rules_promoted": 2605,
+  "last_updated": "2026-10-19T20:54:24.265Z",
+  "total_cycles_completed": 3467,
+  "total_learnings_persisted": 3467,
+  "total_rules_promoted": 2610,
   "history": [
-    {
-      "timestamp": "2026-10-19T14:21:10.698Z",
-      "repository": "pulumi/pulumi",
-      "learningId": "learn-github-pulumi-pulumi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T14:27:18.168Z",
-      "repository": "zacharee/Bifrost",
-      "learningId": "learn-github-zacharee-bifrost",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T14:27:22.865Z",
-      "repository": "FacebookAI/xlm-roberta-base",
-      "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T14:27:25.058Z",
-      "repository": "RustCrypto/hashes",
-      "learningId": "learn-github-rustcrypto-hashes",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T14:33:24.499Z",
       "repository": "React95/React95",
@@ -1403,6 +1375,34 @@
       "repository": "valeriansaliou/sonic",
       "learningId": "learn-github-valeriansaliou-sonic",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T20:53:16.558Z",
+      "repository": "lucky-media/astro-seo",
+      "learningId": "learn-github-lucky-media-astro-seo",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T20:53:18.503Z",
+      "repository": "yattee/yattee",
+      "learningId": "learn-github-yattee-yattee",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T20:53:23.138Z",
+      "repository": "zama-ai/tfhe-rs",
+      "learningId": "learn-github-zama-ai-tfhe-rs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T20:54:24.265Z",
+      "repository": "graphprotocol/graph-node",
+      "learningId": "learn-github-graphprotocol-graph-node",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

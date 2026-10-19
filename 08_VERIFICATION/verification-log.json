@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-G7SD",
-    "timestamp": "2026-10-19T05:58:54.061Z",
-    "repository": "Mintplex-Labs/anything-llm",
-    "learningId": "learn-github-mintplex-labs-anything-llm",
-    "contentHash": "037a6fed0bb01dca95a260963211d6328234c86e7d3323a857968c877dd9fd4a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-NMHA",
-    "timestamp": "2026-10-19T06:04:39.694Z",
-    "repository": "Alissonerdx/BFS-Best-Face-Swap",
-    "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap",
-    "contentHash": "f91a9ba40f3bfc1d1547ffb7452dbc88b63d891e5c08efbcd9857137e02d1ec7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-NMIH",
-    "timestamp": "2026-10-19T06:04:39.737Z",
-    "repository": "shadcn-ui/taxonomy",
-    "learningId": "learn-github-shadcn-ui-taxonomy",
-    "contentHash": "816c7e7ebc348f1d327e73378bf0b12395e6fb3bc535a55216e0e52f1d9d32d4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-NNY2",
-    "timestamp": "2026-10-19T06:04:41.594Z",
-    "repository": "SilasMarvin/lsp-ai",
-    "learningId": "learn-github-silasmarvin-lsp-ai",
-    "contentHash": "a5dce722bbb3c3b969a79e39753f3f3c448d525bc856497ab0956ca543eaa0a3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-NR5D",
     "timestamp": "2026-10-19T06:04:45.745Z",
     "repository": "ResoCoder/flutter-tdd-clean-architecture-course",
@@ -7492,6 +7432,66 @@
     "contentHash": "46193b7821221effe3d6db48a14356dd865073204b0bbe5a7d2656e53b5f52ac",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-EE15",
+    "timestamp": "2026-10-19T20:53:16.553Z",
+    "repository": "lucky-media/astro-seo",
+    "learningId": "learn-github-lucky-media-astro-seo",
+    "contentHash": "753e5a1f3b4a10c80a03ad33a7c753e782696a86cd7bb367b5bc0b126f1f516b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-EFJ6",
+    "timestamp": "2026-10-19T20:53:18.498Z",
+    "repository": "yattee/yattee",
+    "learningId": "learn-github-yattee-yattee",
+    "contentHash": "b0731d03b1755c04ab29ab9e914f832829671a2bddca7605fde02db5b9b6b7c3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-EJ3W",
+    "timestamp": "2026-10-19T20:53:23.132Z",
+    "repository": "zama-ai/tfhe-rs",
+    "learningId": "learn-github-zama-ai-tfhe-rs",
+    "contentHash": "fd0ff60af155694734426872ca13d33ccbb97a3e2553859c55306129cf28a4a1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-FU9W",
+    "timestamp": "2026-10-19T20:54:24.260Z",
+    "repository": "graphprotocol/graph-node",
+    "learningId": "learn-github-graphprotocol-graph-node",
+    "contentHash": "e27b0b41d5c69627fb0af87dc9746c01d265e125c47ff5dc628077f610ae115e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -3493,3 +3493,7 @@ Every entry in this ledger must capture:
 | `learn-github-trybyte-app-sitemap-validator` | `https://github.com/trybyte-app/sitemap-validator` | `a7fc287e` | Multi-dimensional audit evidence | 2026-10-19T20:47:13.894Z |
 | `learn-github-oblador-hush` | `https://github.com/oblador/hush` | `2e96f4f7` | Multi-dimensional audit evidence | 2026-10-19T20:47:15.060Z |
 | `learn-github-valeriansaliou-sonic` | `https://github.com/valeriansaliou/sonic` | `011c3dfd` | Multi-dimensional audit evidence | 2026-10-19T20:47:22.664Z |
+| `learn-github-lucky-media-astro-seo` | `https://github.com/lucky-media/astro-seo` | `379fde02` | Multi-dimensional audit evidence | 2026-10-19T20:53:16.555Z |
+| `learn-github-yattee-yattee` | `https://github.com/yattee/yattee` | `2969b086` | Multi-dimensional audit evidence | 2026-10-19T20:53:18.500Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `9b951080` | Multi-dimensional audit evidence | 2026-10-19T20:53:23.135Z |
+| `learn-github-graphprotocol-graph-node` | `https://github.com/graphprotocol/graph-node` | `190f0aa4` | Multi-dimensional audit evidence | 2026-10-19T20:54:24.262Z |

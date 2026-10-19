@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T20:47:22.626Z",
-  "total_verified_learnings": 917,
+  "last_updated": "2026-10-19T20:54:24.226Z",
+  "total_verified_learnings": 919,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -11444,14 +11444,24 @@
       "slug": "graphprotocol-graph-node",
       "platform": "github",
       "source_url": "https://github.com/graphprotocol/graph-node",
-      "source_version": "6838f4e3",
-      "content_hash": "96de2d20d26f5ca59055880bbf60114c9d0afaa8754a6981b2307ae410903dcc",
+      "source_version": "190f0aa4",
+      "content_hash": "e27b0b41d5c69627fb0af87dc9746c01d265e125c47ff5dc628077f610ae115e",
       "dossier_path": "07_PROJECT_LEARNING/graphprotocol-graph-node-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/graphprotocol-graph-node-learnings.md",
       "promoted_rules": [
         {
           "number": 2211,
           "title": "store: split dump batches by byte size to avoid 2GB Arrow column overflow (#6646",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2808,
+          "title": "Structural Multi-Tier Error Deserialization for Upstream RPC Payloads",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2809,
+          "title": "Guarded Biased Heartbeat Execution Tracking via RAII Cleanup",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -11460,7 +11470,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T05:58:42.344Z",
+      "verified_at": "2026-10-19T20:54:24.215Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45230,22 +45240,35 @@
     "learn-github-yattee-yattee": {
       "learning_id": "learn-github-yattee-yattee",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "yattee-yattee",
+      "source": "yattee/yattee",
+      "repository": "yattee/yattee",
       "slug": "yattee-yattee",
       "platform": "github",
       "source_url": "https://github.com/yattee/yattee",
-      "source_version": "HEAD",
-      "content_hash": "a2f0be8745cacdd093ca7f31c451f092ad7b1dcfa4fc41cca766ec8a0db6489a",
+      "source_version": "2969b086",
+      "content_hash": "b0731d03b1755c04ab29ab9e914f832829671a2bddca7605fde02db5b9b6b7c3",
       "dossier_path": "07_PROJECT_LEARNING/yattee-yattee-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yattee-yattee-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2806,
+          "title": "description timestamp links seeking to wrong position for out-of-range values (#",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.447Z"
+      "verified_at": "2026-10-19T20:53:18.442Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-ydb-platform-ydb": {
       "learning_id": "learn-github-ydb-platform-ydb",
@@ -45606,14 +45629,19 @@
       "slug": "zama-ai-tfhe-rs",
       "platform": "github",
       "source_url": "https://github.com/zama-ai/tfhe-rs",
-      "source_version": "a124ebc3",
-      "content_hash": "7ebc226851a085d8da7948ded8fff871f9a45d033a17481593d75b7a07b21eb4",
+      "source_version": "9b951080",
+      "content_hash": "fd0ff60af155694734426872ca13d33ccbb97a3e2553859c55306129cf28a4a1",
       "dossier_path": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "promoted_rules": [
         {
           "number": 1820,
           "title": "integer): overflow flag of signed overflowing scalar add/sub for out-of-range sc",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2807,
+          "title": "gpu): chore(gpu): implement a factory pattern for pbs_buffer",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -45622,7 +45650,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T17:56:34.766Z",
+      "verified_at": "2026-10-19T20:53:23.091Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56338,22 +56366,36 @@
     "learn-github-lucky-media-astro-seo": {
       "learning_id": "learn-github-lucky-media-astro-seo",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "lucky-media/astro-seo",
       "repository": "lucky-media/astro-seo",
       "slug": "lucky-media-astro-seo",
       "platform": "github",
       "source_url": "https://github.com/lucky-media/astro-seo",
-      "source_version": "main",
-      "content_hash": "331e0d6b490054c376357f358591c15c545d90b2978af3014bd6ea7a4f026165",
+      "source_version": "379fde02",
+      "content_hash": "753e5a1f3b4a10c80a03ad33a7c753e782696a86cd7bb367b5bc0b126f1f516b",
       "dossier_path": "07_PROJECT_LEARNING/lucky-media-astro-seo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lucky-media-astro-seo-learnings.md",
       "promoted_rules": [
-        "Rule 1630"
+        "Rule 1630",
+        {
+          "number": 2805,
+          "title": "small fix for fallback images",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
       ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T20:53:16.518Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-agamm-pseo-next": {
       "learning_id": "learn-github-agamm-pseo-next",
@@ -92387,6 +92429,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T20:47:22.619Z"
+    },
+    "rule-2805": {
+      "learning_id": "rule-2805",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2805,
+      "title": "small fix for fallback images",
+      "source_url": "https://github.com/lucky-media/astro-seo",
+      "source_version": "379fde02",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T20:53:16.518Z"
+    },
+    "rule-2806": {
+      "learning_id": "rule-2806",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2806,
+      "title": "description timestamp links seeking to wrong position for out-of-range values (#",
+      "source_url": "https://github.com/yattee/yattee",
+      "source_version": "2969b086",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T20:53:18.442Z"
+    },
+    "rule-2807": {
+      "learning_id": "rule-2807",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2807,
+      "title": "gpu): chore(gpu): implement a factory pattern for pbs_buffer",
+      "source_url": "https://github.com/zama-ai/tfhe-rs",
+      "source_version": "9b951080",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T20:53:23.091Z"
+    },
+    "rule-2808": {
+      "learning_id": "rule-2808",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2808,
+      "title": "Structural Multi-Tier Error Deserialization for Upstream RPC Payloads",
+      "source_url": "https://github.com/graphprotocol/graph-node",
+      "source_version": "190f0aa4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T20:54:24.215Z"
+    },
+    "rule-2809": {
+      "learning_id": "rule-2809",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2809,
+      "title": "Guarded Biased Heartbeat Execution Tracking via RAII Cleanup",
+      "source_url": "https://github.com/graphprotocol/graph-node",
+      "source_version": "190f0aa4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T20:54:24.215Z"
     }
   },
   "aliases": {
