@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T21:17:55.981Z",
+  "last_updated": "2026-10-19T21:24:13.384Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5404,14 +5404,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sigstore-cosign",
-      "content_hash": "2bbcaa5bb3d26f41c9a36c9047396832aec14eb6cfd78f2a22e1d03873c7f5a0",
-      "verified_at": "2026-10-18T23:26:56.215Z",
+      "content_hash": "2a5d25ee1fadc6505a0e2b5f460936f441cbb8555d8ef288914651a03267303f",
+      "verified_at": "2026-10-19T21:24:13.383Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T23:26:56.215Z"
+      "last_updated": "2026-10-19T21:24:13.383Z"
     },
     "LLPhant/LLPhant": {
       "repository": "LLPhant/LLPhant",
@@ -10009,14 +10009,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dalance-procs",
-      "content_hash": "0a2de188b285590e53198b00f2d2d511ca59eac5eac3a60ce70202ae738615ef",
-      "verified_at": "2026-10-19T06:26:17.665Z",
+      "content_hash": "4792552215068510090857932da9ef4bffe2c79699ef6d3a5c3741e0d06a900a",
+      "verified_at": "2026-10-19T21:24:05.128Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T06:26:17.665Z"
+      "last_updated": "2026-10-19T21:24:05.128Z"
     },
     "ionic-team/ionic-framework": {
       "repository": "ionic-team/ionic-framework",
@@ -13692,6 +13692,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T21:17:50.694Z"
+    },
+    "scrapy-plugins/scrapy-playwright": {
+      "repository": "scrapy-plugins/scrapy-playwright",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-scrapy-plugins-scrapy-playwright",
+      "content_hash": "8d96f936987e1c72d3b9489e88e82d1baf507db444a5d015462cd61280163b5c",
+      "verified_at": "2026-10-19T21:24:06.249Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T21:24:06.249Z"
+    },
+    "rechsteiner/Parchment": {
+      "repository": "rechsteiner/Parchment",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-rechsteiner-parchment",
+      "content_hash": "0dc33ba5b2a0c16564f5854db93a7198ccdf0eb4fdc8987611d2448adb187d78",
+      "verified_at": "2026-10-19T21:24:09.167Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T21:24:09.167Z"
     }
   },
   "repos": {

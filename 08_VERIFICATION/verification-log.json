@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-606N",
-    "timestamp": "2026-10-19T06:18:57.263Z",
-    "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
-    "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2",
-    "contentHash": "57cb7214bf1834f420746a3e13470dd971dff96e49224d58ffd82e51664f9711",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-60BO",
-    "timestamp": "2026-10-19T06:18:57.444Z",
-    "repository": "alexpasmantier/television",
-    "learningId": "learn-github-alexpasmantier-television",
-    "contentHash": "4cd2d575a02cdd83a5d86194c8ef81895aeeaca7381bedc468bedca8a016f7a7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-64PE",
-    "timestamp": "2026-10-19T06:19:03.122Z",
-    "repository": "InsertKoinIO/koin",
-    "learningId": "learn-github-insertkoinio-koin",
-    "contentHash": "e53723dfa4b9f9c8380e38e9b0dac6909b67815993fba37ae1ddc390c5926ab5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-662F",
-    "timestamp": "2026-10-19T06:19:04.887Z",
-    "repository": "actions/actions-runner-controller",
-    "learningId": "learn-github-actions-actions-runner-controller",
-    "contentHash": "bbf5d850e51e250eb19cd7cfd4db06adf11dfb33a1acdba23f646cf0cbee2809",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-69ZT",
     "timestamp": "2026-10-19T06:19:09.977Z",
     "repository": "VectifyAI/PageIndex",
@@ -7492,6 +7432,66 @@
     "contentHash": "85e1c9c4cc854a8fb8ffd8b17e67353ecdd82ff2f990dea724b1e2e46216c094",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-I0E6",
+    "timestamp": "2026-10-19T21:24:05.118Z",
+    "repository": "dalance/procs",
+    "learningId": "learn-github-dalance-procs",
+    "contentHash": "4792552215068510090857932da9ef4bffe2c79699ef6d3a5c3741e0d06a900a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-I19C",
+    "timestamp": "2026-10-19T21:24:06.240Z",
+    "repository": "scrapy-plugins/scrapy-playwright",
+    "learningId": "learn-github-scrapy-plugins-scrapy-playwright",
+    "contentHash": "8d96f936987e1c72d3b9489e88e82d1baf507db444a5d015462cd61280163b5c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-I3IE",
+    "timestamp": "2026-10-19T21:24:09.158Z",
+    "repository": "rechsteiner/Parchment",
+    "learningId": "learn-github-rechsteiner-parchment",
+    "contentHash": "0dc33ba5b2a0c16564f5854db93a7198ccdf0eb4fdc8987611d2448adb187d78",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-I6RG",
+    "timestamp": "2026-10-19T21:24:13.372Z",
+    "repository": "sigstore/cosign",
+    "learningId": "learn-github-sigstore-cosign",
+    "contentHash": "2a5d25ee1fadc6505a0e2b5f460936f441cbb8555d8ef288914651a03267303f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

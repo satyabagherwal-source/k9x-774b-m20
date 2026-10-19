@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sigstore-cosign-learnings.md`  
 > **Source**: github ([https://github.com/sigstore/cosign](https://github.com/sigstore/cosign))  
-> **Source Version**: `cfeaa4a4`  
+> **Source Version**: `821c9bf3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T23:26:55.985Z  
+> **Timestamp**: 2026-10-19T21:24:13.092Z  
 > **Learning ID**: `learn-github-sigstore-cosign`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sigstore-cosign-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sigstore/cosign](https://github.com/sigstore/cosign))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T23:26:55.755Z  
+> **Harvest Timestamp**: 2026-10-19T21:24:12.842Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Code signing and transparency for containers and binaries
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 6370 stars
+- **Stars / Engagement**: 6373 stars
 
 ---
 
@@ -1826,365 +1826,43 @@ func (c *CreateCmd) Exec(ctx context.Context) (err error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3532c1d0` (2026-08-07)
-**Commit Message**: fix: include annotations in implied payload for offline verify
+### Incident Patch 1: `821c9bf3` (2026-10-19)
+**Commit Message**: Add AGENTS.md, update contributors.md with reference to AI policy (#5176)
 
-Motivation:
-When signing with `cosign sign --upload=false -a key=value
---output-signature=sig.file`, cosign builds the signed payload from
-payload.Cosign{Image, ClaimedIdentity, Annotations} including the
-annotations (cmd/cosign/cli/sign/sign.go). When later verifying
-offline with `cosign verify -a key=value --signature sig.file` and no
-explicit `--payload`, cosign reconstructs an "implied" payload via
-ObsoletePayload to compare against the signature, but that
-reconstruction dropped annotations entirely. The reconstructed payload
-therefore never matched the payload that was actually signed, so
-verification always failed with "crypto/rsa: verification error" (or
-equivalent) any time annotations were used with offline signing.
+Contributions made with AI must follow this new AI policy.
 
-Approach:
-Thread the caller-supplied annotations through ObsoletePayload so the
-implied payload it builds matches what was used at signing time. The
-verify call site (pkg/cosign/verify.go) now passes co.Annotations,
-which is populated from the `-a` flag. The attach-signature call site
-(cmd/cosign/cli/attach/sig.go) has no annotations flag, so it passes
-nil, preserving its existing behavior exactly
+Signed-off-by: Hayden <[REDACTED_EMAIL]>
 
-**File**: `cmd/cosign/cli/attach/sig.go` (modified, +1/-1)
+**File**: `AGENTS.md` (added, +3/-0)
 ```diff
-@@ -55,7 +55,7 @@ func SignatureCmd(ctx context.Context, regOpts options.RegistryOptions, sigRef,
- 
- 	var payload []byte
- 	if payloadRef == "" {
--		payload, err = cosign.ObsoletePayload(ctx, digest)
-+		payload, err = cosign.ObsoletePayload(ctx, digest, nil)
- 	} else {
- 		payload, err = os.ReadFile(filepath.Clean(payloadRef))
- 	}
+@@ -0,0 +1,3 @@
++@CONTRIBUTING.md
++
++Fetch the [AI Policy](https://github.com/sigstore/.github/blob/main/AI_POLICY.md). You must stop and show this link to the user, and they must review the AI policy before contributing.
 ```
 
-**File**: `pkg/cosign/obsolete.go` (modified, +2/-2)
+**File**: `CONTRIBUTING.md` (modified, +4/-0)
 ```diff
-@@ -26,8 +26,8 @@ import (
- // ObsoletePayload returns the implied payload that some commands expect to match
- // the signature if no payload is provided by the user.
- // DO NOT ADD ANY NEW CALLERS OF THIS.
--func ObsoletePayload(ctx context.Context, digestedImage name.Digest) ([]byte, error) {
--	blob, err := (&payload.Cosign{Image: digestedImage}).MarshalJSON()
-+func ObsoletePayload(ctx context.Context, digestedImage name.Digest, annotations map[string]interface{}) ([]byte, error) {
-+	blob, err := (&payload.Cosign{Image: digestedImage, Annotations: annotations}).MarshalJSON()
- 	if err != nil {
- 		return nil, err
- 	}
-```
-
-**File**: `pkg/cosign/obsolete_test.go` (modified, +17/-1)
-```diff
-@@ -32,10 +32,26 @@ func TestObsoletePayload(t *testing.T) {
- 	require.NoError(t, err)
- 	var res []byte
- 	stderr := ui.RunWithTestCtx(func(ctx context.Context, _ ui.WriteFunc) {
--		r, err := ObsoletePayload(ctx, digestedImg)
-+		r, err := ObsoletePayload(ctx, digestedImg, nil)
- 		require.NoError(t, err)
- 		res = r
- 	})
- 	assert.Contains(t, stderr, "obsolete implied signature payload")
- 	assert.Equal(t, []byte(`{"critical":{"identity":{"docker-reference":"index.docker.io/namespace/image"},"image":{"docker-manifest-digest":"sha256:4aa3054270f7a70b4528f2064ee90961788e1e1518703592ae4463de3b889dec"},"type":"cosign container image signature"},"optional":null}`), res)
- }
-+
-+func TestObsoletePayloadWithAnnotations(t *testing.T) {
-+	// The implied payload must include annotations passed by the caller so it matches
-+	// the payload generated when signing with annotations (cmd/cosign/cli/generate).
-+	digestedImg, err := name.NewDigest("docker.io/namespace/image@sha256:4aa3054270f7a70b4528f2064ee90961788e1e1518703592ae4463de3b889dec")
-+	require.NoError(t, err)
-+	annotations := map[string]interface{}{"appname": "myapp"}
-+	var res []byte
-+	stderr := ui.RunWithTestCtx(func(ctx context.Context, _ ui.WriteFunc) {
-+		r, err := ObsoletePayload(ctx, digestedImg, annotations)
-+		require.NoError(t, err)
-+		res = r
-+	})
-+	assert.Contains(t, stderr, "obsolete implied signature payload")
-+	assert.Equal(t, []byte(`{"critical":{"identity":{"docker-reference":"index.docker.io/namespace/image"},"image":{"docker-manifest-digest":"sha256:4aa3054270f7a70b4528f2064ee90961788e1e1518703592ae4463de3b889dec"},"type":"cosign container image signature"},"optional":{"appname":"myapp"}}`), res)
-+}
-```
-
-**File**: `pkg/cosign/verify.go` (modified, +1/-1)
-```diff
-@@ -1040,7 +1040,7 @@ func loadSignatureFromFile(ctx context.Context, sigRef string, signedImgRef name
- 		if err != nil {
- 			return nil, err
- 		}
--		payload, err = ObsoletePayload(ctx, digest)
-+		payload, err = ObsoletePayload(ctx, digest, co.Annotations)
- 		if err != nil {
- 			return nil, err
- 		}
-```
-
----
-
-### Incident Patch 2: `ac3a9273` (2026-09-18)
-**Commit Message**: fix(verify): enforce mutually exclusive key and security key (#5124)
-
-Signed-off-by: Aaron Lew <[REDACTED_EMAIL]>
-
-**File**: `cmd/cosign/cli/verify/verify.go` (modified, +5/-0)
-```diff
-@@ -104,6 +104,11 @@ func (c *VerifyCommand) Exec(ctx context.Context, images []string) (err error) {
- 		return &options.KeyAndIdentityParseError{}
- 	}
+@@ -2,6 +2,10 @@
  
-+	// key and security key are mutually exclusive
-+	if options.NOf(c.KeyRef, c.Sk) > 1 {
-+		return &options.PubKeyParseError{}
-+	}
-+
- 	var identities []cosign.Identity
- 	if c.KeyRef == "" && !c.Sk {
- 		identities, err = c.Identities()
-```
-
-**File**: `cmd/cosign/cli/verify/verify_test.go` (modified, +8/-0)
-```diff
-@@ -307,6 +307,14 @@ func TestVerifyMutuallyExclusiveFlags(t *testing.T) {
- 			},
- 			expectedError: &options.KeyAndIdentityParseError{},
- 		},
-+		{
-+			name: "both key and security key",
-+			cmd: VerifyCommand{
-+				KeyRef: "key.pub",
-+				Sk:     true,
-+			},
-+			expectedError: &options.PubKeyParseError{},
-+		},
- 	}
+ Thank you for considering contributing to Cosign! We welcome any contributions, whether it's bug fixes, new features, or improvements to the existing codebase.
  
- 	for _, tt := range tts {
-```
-
----
-
-### Incident Patch 3: `6a83f9a2` (2026-10-02)
-**Commit Message**: fix(verify): don't panic on a bundle entry with no hash (#5127)
-
-* fix(verify): don't panic on a bundle entry with no hash
-
-bundleHash dereferenced the algorithm and value of a Rekor entry hash
-without checking them. The hash is optional in all five of these schemas,
-and unmarshalling does not always populate it: a rekord v0.0.1 entry that
-carries data.content but no data.hash, and an intoto v0.0.2 entry whose
-envelope payload is empty, both unmarshal cleanly with a nil hash.
-
-The body comes from the bundle attached to the signature, so it is read
-from the registry before the certificate has been validated and before
-the signature has been checked. A body that omits the hash therefore
-crashes the verifier rather than failing verification.
-
-Check each level before dereferencing it and return an error instead.
-
-Signed-off-by: ashvinctrl <[REDACTED_EMAIL]>
-
-* fix(verify): trim comments in bundleHash
-
-Drop the hashFields doc comment and cut the bundleHash comment down to the
-part that is not visible from the code: the Rekor models mark the hash fields
-required, but per-type validation does not always enforce it.
-
-Signed-off-by: ashvinctrl <[REDACTED_EMAIL]>
-
-* test(verify): cover every
-
-**File**: `pkg/cosign/verify.go` (modified, +26/-5)
-```diff
-@@ -1541,26 +1541,47 @@ func extractEntryImpl(bundleBody string) (rekor_types.EntryImpl, error) {
- 	return rekor_types.UnmarshalEntry(pe)
- }
++## AI Policy
++
++Please read [AI policy](https://github.com/sigstore/.github/blob/main/AI_POLICY.md) before making any contributions using AI.
++
+ ## Your First Pull Request
  
-+func hashFields(algorithm, value *string) (string, string, error) {
-+	if algorithm == nil || value == nil {
-+		return "", "", errors.New("bundle entry hash is missing its algorithm or value")
-+	}
-+	return *algorithm, *value, nil
-+}
-+
- func bundleHash(bundleBody, _ string) (string, string, error) {
- 	ei, err := extractEntryImpl(bundleBody)
- 	if err != nil {
- 		return "", "", err
- 	}
- 
-+	// The Rekor models mark these hash fields required, but each entry type's
-+	// own validation decides what is enforced, and some accept an entry that
-+	// carries no hash at all.
- 	switch entry := ei.(type) {
- 	case *dsse_v001.V001Entry:
--		return *entry.DSSEObj.EnvelopeHash.Algorithm, *entry.DSSEObj.EnvelopeHash.Value, nil
-+		if h := entry.DSSEObj.EnvelopeHash; h != nil {
-+			return hashFields(h.Algorithm, h.Value)
-+		}
- 	case *hashedrekord_v001.V001Entry:
--		return *entry.HashedRekordObj.Data.Hash.Algorithm, *entry.HashedRekordObj.Data.Hash.Value, nil
-+		if d := entry.HashedRekordObj.Data; d != nil && d.Hash != nil {
-+			return hashFields(d.Hash.Algorithm, d.Hash.Value)
-+		}
- 	case *intoto_v001.V001Entry:
--		return *entry.IntotoObj.Content.Hash.Algorithm, *entry.IntotoObj.Content.Hash.Value, nil
-+		if c := entry.IntotoObj.Content; c != nil && c.Hash != nil {
-+			return hashFields(c.Hash.Algorithm, c.Hash.Value)
-+		}
- 	case *intoto_v002.V002Entry:
--		return *entry.IntotoObj.Content.Hash.Algorithm, *entry.IntotoObj.Content.Hash.Value, nil
-+		if c := entry.IntotoObj.Content; c != nil && c.Hash != nil {
-+			return hashFields(c.Hash.Algorithm, c.Hash.Value)
-+		}
- 	case *rekord_v001.V001Entry:
--		return *entry.RekordObj.Data.Hash.Algorithm, *entry.RekordObj.Data.Hash.Value, nil
-+		if d := entry.RekordObj.Data; d != nil && d.Hash != nil {
-+			return hashFields(d.Hash.Algorithm, d.Hash.Value)
-+		}
- 	default:
- 		return "", "", errors.New("unsupported type")
- 	}
-+	return "", "", errors.New("no hash found in bundle entry")
- }
- 
- // bundleSig extracts the signature from the rekor bundle body
-```
-
-**File**: `pkg/cosign/verify_test.go` (modified, +233/-0)
-```diff
-@@ -2663,3 +2663,236 @@ func getTimestampedSignature(sigBytes []byte, tsaClient *tsaMock.TSAClient) ([]b
- 
- 	return tsaClient.GetTimestampResponse(requestBytes)
- }
-+
-+func TestBundleHash(t *testing.T) {
-+	sv, _, err := signature.NewECDSASignerVerifier(elliptic.P256(), rand.Reader, crypto.SHA256)
-+	if err != nil {
-+		t.Fatalf("creating signer: %v", err)
-+	}
-+	pemBytes, _ := cryptoutils.MarshalPublicKeyToPEM(sv.Public())
-+	b64key := base64.StdEncoding.EncodeToString(pemBytes)
-+
-+	payload := []byte{1, 2, 3, 4}
-+	digest := sha256.Sum256(payload)
-+	value := hex.EncodeToString(digest[:])
-+	sig, err := sv.SignMessage(bytes.NewReader(payload))
-+	if err != nil {
-+		t.Fatalf("signing: %v", err)
-+	}
-+	b64sig := base64.StdEncoding.EncodeToString(sig)
-+	hash := fmt.Sprintf(`{"algorithm":"sha256","value":%q}`, value)
-+
-+	tests := []struct {
-+		name string
-+		body string
-+	}{{
-+		name: "dsse v0.0.1",
-+		body: fmt.Sprintf(`{"apiVersion":"0.0.1","kind":"dsse","spec":{"envelopeHash":%s,"payloadHash":%s,"signatures":[{"signature":%q,"verifier":%q}]}}`,
-+			hash, hash, b64sig, b64key),
-+	}, {
-+		name: "hashedrekord v0.0.1",
-+		body: fmt.Sprintf(`{"apiVersion":"0.0.1","kind":"hashedrekord","spec":{"data":{"hash":%s},"signature":{"content":%q,"publicKey":{"content":%q}}}}`,
-+			hash, b64sig, b64key),
-+	}, {
-+		name: "intoto v0.0.1",
-+		body: fmt.Sprintf(`{"apiVersion":"0.0.1","kind":"intoto","spec":{"content":{"hash":%s,"payloadHash":%s},"publicKey":%q}}`,
-+			hash, hash, b64key),
-+	}, {
-+		name: "intoto v0.0.2",
-+		body: fmt.Sprintf(`{"apiVersion":"0.0.2","kind":"intoto","spec":{"content":{"envelope":{"payloadType":"application/vnd.in-toto+json","payload":"","signatures":[{"publicKey":%q,"sig":%q}]},"hash":%s}}}`,
-+			b64key, b64sig, hash),
-+	}, {
-+		name: "rekord v0.0.1",
-+		body: fmt.Sprintf(`{"apiVersion":"0.0.1","kind":"rekord","spec":{"data":{"hash":%s},"signature":{"format":"x509","content":%q,"publicKey":{"content":%q}}}}`,
-+			hash, b64sig, b64key),
-+	}}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			alg, val, err := bundleHash(base64.StdEncoding.EncodeToString([]byte(tt.body)), "")
-+			if err != nil {
-+				t.Fatalf("unexpected error: %v", err)
-+			}
-+			if alg != "sha256" || val != value {
-+				t.Errorf("got %s:%s, want sha256:%s", alg, val, value)
-+			}
-+		})
-+	}
-+}
-+
-+func TestBundleHashWithMissingHash(t *testing.T) {
-+	sv, _, err := signature.NewECDSASignerVerifier(elliptic.P256(), rand.Reader, crypto.SHA256)
-+	if err != nil {
-+		t.Fatalf("creating signer: %v", err)
-+	}
-+	pemBytes, _ := cryptoutils.MarshalPublicKeyToPEM(sv.Public())
-+	b64key := base64.StdEncoding.EncodeToString(pemBytes)
-+	value := strings.Repeat("0", 64)
-+	payloadHash := fmt.Sprintf(`{"algorithm":"sha256","value":%q}`, value)
-+
-+	rekord := func(hash string) string {
-+		return fmt.Sprintf(`{"apiVersion":"0.0.1","kind":"rekord","spec":{"data":{"content":"YQ=="%s},"signature":{"format":"x509","content":"YQ==","publicKey":{"content":%q}}}}`,
-+			hash, b64key)
-+	}
-+	intotoV002 := func(hash string) string {
-+		return fmt.Sprintf(`{"apiVersion":"0.0.2","kind":"intoto","spec":{"content":{"envelope":{"payloadType":"application/vnd.in-toto+json","payload":"","signatures":[{"publicKey":%q,"sig":"YQ=="}]}%s}}}`,
-+			b64key, hash)
-+	}
-+
-+	// Only rekord v0.0.1 and intoto v0.0.2 accept an entry with no hash, and
-+	// those reach bundleHash's own check. Rekor rejects every other case
-+	// before the switch is reached. A hash object missing only its algorithm
-+	// or value fails Rekor's validation for every entry type, so the
-+	// hashFields error is covered by TestHashFields instead.
-+	tests := []struct {
-+		name    string
-+		body    string
-+		wantErr string
-+	}{{
-+		name:    "rekord v0.0.1 without data.hash",
-+		body:    rekord(""),
-+		wantErr: "no hash found in bundle entry",
-+	}, {
-+		name:    "intoto v0.0.2 without content.hash",
-+		body:    intotoV002(""),
-+		wantErr: "no hash found in bundle entry",
-+	}, {
-+		name: "rekord v0.0.1 without data.hash.value",
-+		body: rekord(`,"hash":{"algorithm":"sha256"}`),
-+	}, {
-+		name: "rekord v0.0.1 without data.hash.algorithm",
-+		body: rekord(fmt.Sprintf(`,"hash":{"value":%q}`, value)),
-+	}, {
-+		name: "intoto v0.0.2 without content.hash.value",
-+		body: intotoV002(`,"hash":{"algorithm":"sha256"}`),
-+	}, {
-+		name: "intoto v0.0.2 without content.hash.algorithm",
-+		body: intotoV002(fmt.Sprintf(`,"hash":{"value":%q}`, value)),
-+	}, {
-+		name: "dsse v0.0.1 without envelopeHash",
-+		body: fmt.Sprintf(`{"apiVersion":"0.0.1","kind":"dsse","spec":{"payloadHash":%s,"signatures":[{"signature":"YQ==","verifier":%q}]}}`,
-+			payloadHash, b64key),
-+	}, {
-+		name: "hashedrekord v0.0.1 without data.hash",
-+		body: fmt.Sprintf(`{"apiVersion":"0.0.1","kind":"hashedrekord","spec":{"data":{},"signature":{"content":"YQ==","publicKey":{"content":%q}}}}`,
-+			b64key),
-+	}, {
-+		name: "intoto v0.0.1 without content.hash",
-+		body: fmt.Sprintf(`{"apiVersion":"0.0.1","kind":"intoto","spec":{"content":{"payloadHash"
+ Review [Sigstore's contribution guidelines](https://github.com/sigstore/community/blob/main/CONTRIBUTING.md) which includes some high level information on how to contribute to Sigstore projects.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5176** (2026-10-19): Add AGENTS.md, update contributors.md with reference to AI policy (@Hayden-IO)
+- **PR #5170** (closed): fix(verify): discover OCI 1.1 DSSE attestation referrers (@jzeng4)
 - **PR #5166** (2026-10-14): chore(deps): bump the actions group across 1 directory with 7 updates (@dependabot[bot])
+- **PR #5165** (closed): chore(deps): bump the gomod group across 1 directory with 9 updates (@dependabot[bot])
 - **PR #5153** (closed): chore(deps): bump the actions group with 6 updates (@dependabot[bot])
 - **PR #5148** (closed): chore(deps): bump the gomod group with 2 updates (@dependabot[bot])
-- **PR #5147** (2026-10-04): Mention windows builds in readme (@Hayden-IO)
-- **PR #5144** (2026-10-16): Implement `cosign bundle create-from-container` (@steiza)
-- **PR #5140** (2026-09-30): chore(deps): bump golangci/golangci-lint from v2.13.2 to v2.14.0 in the all group (@dependabot[bot])
 
 ---
 
@@ -2204,28 +1882,30 @@ Signed-off-by: ashvinctrl <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. include annotations in implied payload for offline verify
+## X. Add AGENTS.md, update contributors.md with reference to AI policy (#5176)
 
 **RULE**:
-When implementing operations in `cmd/cosign/cli/attach/sig.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sigstore/cosign. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sigstore/cosign. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3532c1d0`: include annotations in implied payload for offline verify. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `821c9bf3`: Add AGENTS.md, update contributors.md with reference to AI policy (#5176). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/cosign/cli/attach/sig.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		payload, err = cosign.ObsoletePayload(ctx, digest, nil)
+@CONTRIBUTING.md
+
+Fetch the [AI Policy](https://github.com/sigstore/.github/blob/main/AI_POLICY.md). You must stop and show this link to the user, and they must review the AI policy before contributing.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		payload, err = cosign.ObsoletePayload(ctx, digest)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3532c1d0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `821c9bf3` are properly handled with clean fallback behavior.

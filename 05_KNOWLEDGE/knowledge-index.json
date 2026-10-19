@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T21:17:55.910Z",
-  "total_verified_learnings": 925,
+  "last_updated": "2026-10-19T21:24:13.327Z",
+  "total_verified_learnings": 927,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -6273,14 +6273,19 @@
       "slug": "dalance-procs",
       "platform": "github",
       "source_url": "https://github.com/dalance/procs",
-      "source_version": "16604d07",
-      "content_hash": "0a2de188b285590e53198b00f2d2d511ca59eac5eac3a60ce70202ae738615ef",
+      "source_version": "7559ac07",
+      "content_hash": "4792552215068510090857932da9ef4bffe2c79699ef6d3a5c3741e0d06a900a",
       "dossier_path": "07_PROJECT_LEARNING/dalance-procs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dalance-procs-learnings.md",
       "promoted_rules": [
         {
           "number": 2237,
           "title": "build(deps): bump libc from 0.2.189 to 0.2.190",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2818,
+          "title": "build(deps): bump tokio from 1.53.2 to 1.53.3",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -6289,7 +6294,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T06:26:17.620Z",
+      "verified_at": "2026-10-19T21:24:05.060Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36985,22 +36990,35 @@
     "learn-github-rechsteiner-parchment": {
       "learning_id": "learn-github-rechsteiner-parchment",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "rechsteiner-parchment",
+      "source": "rechsteiner/Parchment",
+      "repository": "rechsteiner/Parchment",
       "slug": "rechsteiner-parchment",
       "platform": "github",
       "source_url": "https://github.com/rechsteiner/Parchment",
-      "source_version": "HEAD",
-      "content_hash": "4acd4bcc67469c54cf0662a1435cbf9509f8db039db682bf9a12432110936c58",
+      "source_version": "dfb23ea5",
+      "content_hash": "0dc33ba5b2a0c16564f5854db93a7198ccdf0eb4fdc8987611d2448adb187d78",
       "dossier_path": "07_PROJECT_LEARNING/rechsteiner-parchment-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rechsteiner-parchment-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2820,
+          "title": "remaining concurrency issues",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.240Z"
+      "verified_at": "2026-10-19T21:24:09.091Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-redhat-et-ripwire": {
       "learning_id": "learn-github-redhat-et-ripwire",
@@ -39132,14 +39150,19 @@
       "slug": "sigstore-cosign",
       "platform": "github",
       "source_url": "https://github.com/sigstore/cosign",
-      "source_version": "cfeaa4a4",
-      "content_hash": "2bbcaa5bb3d26f41c9a36c9047396832aec14eb6cfd78f2a22e1d03873c7f5a0",
+      "source_version": "821c9bf3",
+      "content_hash": "2a5d25ee1fadc6505a0e2b5f460936f441cbb8555d8ef288914651a03267303f",
       "dossier_path": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
       "promoted_rules": [
         {
           "number": 1851,
           "title": "include annotations in implied payload for offline verify",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2821,
+          "title": "Add AGENTS.md, update contributors.md with reference to AI policy (#5176)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -39148,7 +39171,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T23:26:56.160Z",
+      "verified_at": "2026-10-19T21:24:13.314Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56548,22 +56571,36 @@
     "learn-github-scrapy-plugins-scrapy-playwright": {
       "learning_id": "learn-github-scrapy-plugins-scrapy-playwright",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "scrapy-plugins/scrapy-playwright",
       "repository": "scrapy-plugins/scrapy-playwright",
       "slug": "scrapy-plugins-scrapy-playwright",
       "platform": "github",
       "source_url": "https://github.com/scrapy-plugins/scrapy-playwright",
-      "source_version": "main",
-      "content_hash": "bda8c308e44ba8ecb1dee80d7134eb0ab8a937c65887ecc136956975bbd27f01",
+      "source_version": "2658f86a",
+      "content_hash": "8d96f936987e1c72d3b9489e88e82d1baf507db444a5d015462cd61280163b5c",
       "dossier_path": "07_PROJECT_LEARNING/scrapy-plugins-scrapy-playwright-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/scrapy-plugins-scrapy-playwright-learnings.md",
       "promoted_rules": [
-        "Rule 1629"
+        "Rule 1629",
+        {
+          "number": 2819,
+          "title": "duplicated word in memory-size FAQ",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
       ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T21:24:06.173Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-scrapy-plugins-scrapy-splash": {
       "learning_id": "learn-github-scrapy-plugins-scrapy-splash",
@@ -92701,6 +92738,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T21:17:53.018Z"
+    },
+    "rule-2818": {
+      "learning_id": "rule-2818",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2818,
+      "title": "build(deps): bump tokio from 1.53.2 to 1.53.3",
+      "source_url": "https://github.com/dalance/procs",
+      "source_version": "7559ac07",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T21:24:05.060Z"
+    },
+    "rule-2819": {
+      "learning_id": "rule-2819",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2819,
+      "title": "duplicated word in memory-size FAQ",
+      "source_url": "https://github.com/scrapy-plugins/scrapy-playwright",
+      "source_version": "2658f86a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T21:24:06.173Z"
+    },
+    "rule-2820": {
+      "learning_id": "rule-2820",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2820,
+      "title": "remaining concurrency issues",
+      "source_url": "https://github.com/rechsteiner/Parchment",
+      "source_version": "dfb23ea5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T21:24:09.091Z"
+    },
+    "rule-2821": {
+      "learning_id": "rule-2821",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2821,
+      "title": "Add AGENTS.md, update contributors.md with reference to AI policy (#5176)",
+      "source_url": "https://github.com/sigstore/cosign",
+      "source_version": "821c9bf3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T21:24:13.314Z"
     }
   },
   "aliases": {

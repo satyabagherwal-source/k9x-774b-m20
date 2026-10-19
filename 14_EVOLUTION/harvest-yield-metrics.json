@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T21:17:55.978Z",
-  "total_cycles_completed": 3476,
-  "total_learnings_persisted": 3476,
-  "total_rules_promoted": 2618,
+  "last_updated": "2026-10-19T21:24:13.380Z",
+  "total_cycles_completed": 3480,
+  "total_learnings_persisted": 3480,
+  "total_rules_promoted": 2622,
   "history": [
-    {
-      "timestamp": "2026-10-19T14:46:58.713Z",
-      "repository": "encoredev/encore",
-      "learningId": "learn-github-encoredev-encore",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T14:52:57.350Z",
-      "repository": "nomic-ai/nomic-embed-text-v1.5",
-      "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T14:52:57.496Z",
-      "repository": "carbon-design-system/carbon-components-svelte",
-      "learningId": "learn-github-carbon-design-system-carbon-components-svelte",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T14:52:59.161Z",
-      "repository": "Orange-OpenSource/hurl",
-      "learningId": "learn-github-orange-opensource-hurl",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T14:53:03.259Z",
       "repository": "ivanvorobei/SwiftUI",
@@ -1403,6 +1375,34 @@
       "repository": "langchain4j/langchain4j",
       "learningId": "learn-github-langchain4j-langchain4j",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T21:24:05.125Z",
+      "repository": "dalance/procs",
+      "learningId": "learn-github-dalance-procs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T21:24:06.247Z",
+      "repository": "scrapy-plugins/scrapy-playwright",
+      "learningId": "learn-github-scrapy-plugins-scrapy-playwright",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T21:24:09.164Z",
+      "repository": "rechsteiner/Parchment",
+      "learningId": "learn-github-rechsteiner-parchment",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T21:24:13.380Z",
+      "repository": "sigstore/cosign",
+      "learningId": "learn-github-sigstore-cosign",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

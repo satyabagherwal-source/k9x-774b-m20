@@ -3523,10 +3523,10 @@
     "repository": "sigstore/cosign",
     "platform": "github",
     "sourceUrl": "https://github.com/sigstore/cosign",
-    "sourceVersion": "cfeaa4a4",
+    "sourceVersion": "821c9bf3",
     "license": "Apache-2.0",
-    "contentHash": "2bbcaa5bb3d26f41c9a36c9047396832aec14eb6cfd78f2a22e1d03873c7f5a0",
-    "lastHarvestedAt": "2026-10-18T23:26:56.207Z",
+    "contentHash": "2a5d25ee1fadc6505a0e2b5f460936f441cbb8555d8ef288914651a03267303f",
+    "lastHarvestedAt": "2026-10-19T21:24:13.375Z",
     "learningId": "learn-github-sigstore-cosign"
   },
   "llphant-llphant": {
@@ -6633,10 +6633,10 @@
     "repository": "dalance/procs",
     "platform": "github",
     "sourceUrl": "https://github.com/dalance/procs",
-    "sourceVersion": "16604d07",
+    "sourceVersion": "7559ac07",
     "license": "MIT",
-    "contentHash": "0a2de188b285590e53198b00f2d2d511ca59eac5eac3a60ce70202ae738615ef",
-    "lastHarvestedAt": "2026-10-19T06:26:17.660Z",
+    "contentHash": "4792552215068510090857932da9ef4bffe2c79699ef6d3a5c3741e0d06a900a",
+    "lastHarvestedAt": "2026-10-19T21:24:05.121Z",
     "learningId": "learn-github-dalance-procs"
   },
   "ionic-team-ionic-framework": {
@@ -9098,5 +9098,25 @@
     "contentHash": "61735949d38fffb72cd1f96791a16c169dc27d8237a4d4466159e0e2b3dc80f9",
     "lastHarvestedAt": "2026-10-19T21:17:50.686Z",
     "learningId": "learn-github-krzysztofzablocki-inject"
+  },
+  "scrapy-plugins-scrapy-playwright": {
+    "repository": "scrapy-plugins/scrapy-playwright",
+    "platform": "github",
+    "sourceUrl": "https://github.com/scrapy-plugins/scrapy-playwright",
+    "sourceVersion": "2658f86a",
+    "license": "BSD-3-Clause",
+    "contentHash": "8d96f936987e1c72d3b9489e88e82d1baf507db444a5d015462cd61280163b5c",
+    "lastHarvestedAt": "2026-10-19T21:24:06.243Z",
+    "learningId": "learn-github-scrapy-plugins-scrapy-playwright"
+  },
+  "rechsteiner-parchment": {
+    "repository": "rechsteiner/Parchment",
+    "platform": "github",
+    "sourceUrl": "https://github.com/rechsteiner/Parchment",
+    "sourceVersion": "dfb23ea5",
+    "license": "MIT",
+    "contentHash": "0dc33ba5b2a0c16564f5854db93a7198ccdf0eb4fdc8987611d2448adb187d78",
+    "lastHarvestedAt": "2026-10-19T21:24:09.160Z",
+    "learningId": "learn-github-rechsteiner-parchment"
   }
 }

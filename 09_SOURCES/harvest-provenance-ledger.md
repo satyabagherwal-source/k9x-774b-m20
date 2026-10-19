@@ -3506,3 +3506,7 @@ Every entry in this ledger must capture:
 | `learn-github-krzysztofzablocki-inject` | `https://github.com/krzysztofzablocki/Inject` | `67e3ee9a` | Multi-dimensional audit evidence | 2026-10-19T21:17:50.686Z |
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `f3b817b8` | Multi-dimensional audit evidence | 2026-10-19T21:17:53.074Z |
 | `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `7fcb12d4` | Multi-dimensional audit evidence | 2026-10-19T21:17:55.973Z |
+| `learn-github-dalance-procs` | `https://github.com/dalance/procs` | `7559ac07` | Multi-dimensional audit evidence | 2026-10-19T21:24:05.121Z |
+| `learn-github-scrapy-plugins-scrapy-playwright` | `https://github.com/scrapy-plugins/scrapy-playwright` | `2658f86a` | Multi-dimensional audit evidence | 2026-10-19T21:24:06.243Z |
+| `learn-github-rechsteiner-parchment` | `https://github.com/rechsteiner/Parchment` | `dfb23ea5` | Multi-dimensional audit evidence | 2026-10-19T21:24:09.160Z |
+| `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `821c9bf3` | Multi-dimensional audit evidence | 2026-10-19T21:24:13.375Z |
