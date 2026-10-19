@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T18:29:53.169Z",
+  "last_updated": "2026-10-19T18:36:07.764Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3679,14 +3679,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "5c1c8b5872cc89f1f21e5de6c5026129e9000f4efc1489fc8db950614c6b0ad9",
-      "verified_at": "2026-10-19T16:50:00.721Z",
+      "content_hash": "8b6adbbcdde953852fda8edaed871f2052ea1be601696c226f5ebe0f2b12c7d3",
+      "verified_at": "2026-10-19T18:36:04.247Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T16:50:00.721Z"
+      "last_updated": "2026-10-19T18:36:04.247Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -5584,14 +5584,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trufflesecurity-trufflehog",
-      "content_hash": "69316908d04e4e99b914943c54dfddae93b70d95b2107616419d722788226bfc",
-      "verified_at": "2026-10-18T23:39:15.981Z",
+      "content_hash": "3aa2bbee427cfe564f9e337f1ec25e65c15f5a2224e0f0f0ff79c15cc78ec280",
+      "verified_at": "2026-10-19T18:36:01.189Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T23:39:15.981Z"
+      "last_updated": "2026-10-19T18:36:01.190Z"
     },
     "neural-maze/ava-whatsapp-agent-course": {
       "repository": "neural-maze/ava-whatsapp-agent-course",
@@ -8209,14 +8209,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-grpc-grpc-rust",
-      "content_hash": "e93b250e05894e0a8b2bcbad99d6b452075be98c938525a6ab0f4917a808aaeb",
-      "verified_at": "2026-10-19T03:39:13.303Z",
+      "content_hash": "3257ee3fcee2f1fe4c92e7abd34647a91bfd5ade3866a464de7b311b48b5589d",
+      "verified_at": "2026-10-19T18:35:51.499Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T03:39:13.303Z"
+      "last_updated": "2026-10-19T18:35:51.499Z"
     },
     "crazycodeboy/react-native-splash-screen": {
       "repository": "crazycodeboy/react-native-splash-screen",
@@ -9514,14 +9514,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "9f63667c0c3159bce18e490ce8d3f6ff062f72b8cbc330ff44886330e4533273",
-      "verified_at": "2026-10-19T07:29:48.264Z",
+      "content_hash": "215fcede91debd5fe4e5a0d7f8ba07b22d1cb3d65fb798eed340a60ecdf96ef4",
+      "verified_at": "2026-10-19T18:36:07.763Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T07:29:48.264Z"
+      "last_updated": "2026-10-19T18:36:07.763Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",
@@ -10474,14 +10474,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-angular-angular",
-      "content_hash": "8515bfa48c1450fc7544205e5f0fa0e8f424001e10ddee52cc1c40a6bedeffd4",
-      "verified_at": "2026-10-19T07:10:45.641Z",
+      "content_hash": "31ae9a46c7d8f49baec8c12aa26fe6966222317e05507ac6ade027968ecd11c9",
+      "verified_at": "2026-10-19T18:35:48.147Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T07:10:45.641Z"
+      "last_updated": "2026-10-19T18:35:48.147Z"
     },
     "devspace-sh/devspace": {
       "repository": "devspace-sh/devspace",
@@ -12957,6 +12957,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T18:29:48.952Z"
+    },
+    "adobe/structured-data-validator": {
+      "repository": "adobe/structured-data-validator",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-adobe-structured-data-validator",
+      "content_hash": "85ba169154815be7c026609bb654ea4791c57e75d146b55bca533a897a1d1d1c",
+      "verified_at": "2026-10-19T18:35:50.274Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T18:35:50.274Z"
+    },
+    "hi-manshu/charty": {
+      "repository": "hi-manshu/charty",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-hi-manshu-charty",
+      "content_hash": "46480066a8c4de92578fb7614983caacd5cfa3cf3ab38b5283aa0e1feea2ef3d",
+      "verified_at": "2026-10-19T18:35:57.064Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T18:35:57.064Z"
     }
   },
   "repos": {

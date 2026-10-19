@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "27363b95",
+    "sourceVersion": "b012a600",
     "license": "NOASSERTION",
-    "contentHash": "5c1c8b5872cc89f1f21e5de6c5026129e9000f4efc1489fc8db950614c6b0ad9",
-    "lastHarvestedAt": "2026-10-19T16:50:00.717Z",
+    "contentHash": "8b6adbbcdde953852fda8edaed871f2052ea1be601696c226f5ebe0f2b12c7d3",
+    "lastHarvestedAt": "2026-10-19T18:36:04.243Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -3643,10 +3643,10 @@
     "repository": "trufflesecurity/trufflehog",
     "platform": "github",
     "sourceUrl": "https://github.com/trufflesecurity/trufflehog",
-    "sourceVersion": "048de9ff",
+    "sourceVersion": "e63326d6",
     "license": "AGPL-3.0",
-    "contentHash": "69316908d04e4e99b914943c54dfddae93b70d95b2107616419d722788226bfc",
-    "lastHarvestedAt": "2026-10-18T23:39:15.974Z",
+    "contentHash": "3aa2bbee427cfe564f9e337f1ec25e65c15f5a2224e0f0f0ff79c15cc78ec280",
+    "lastHarvestedAt": "2026-10-19T18:36:01.184Z",
     "learningId": "learn-github-trufflesecurity-trufflehog"
   },
   "neural-maze-ava-whatsapp-agent-course": {
@@ -5393,10 +5393,10 @@
     "repository": "grpc/grpc-rust",
     "platform": "github",
     "sourceUrl": "https://github.com/grpc/grpc-rust",
-    "sourceVersion": "4ad6538f",
+    "sourceVersion": "cfe80f9d",
     "license": "MIT",
-    "contentHash": "e93b250e05894e0a8b2bcbad99d6b452075be98c938525a6ab0f4917a808aaeb",
-    "lastHarvestedAt": "2026-10-19T03:39:13.298Z",
+    "contentHash": "3257ee3fcee2f1fe4c92e7abd34647a91bfd5ade3866a464de7b311b48b5589d",
+    "lastHarvestedAt": "2026-10-19T18:35:51.494Z",
     "learningId": "learn-github-grpc-grpc-rust"
   },
   "crazycodeboy-react-native-splash-screen": {
@@ -6263,10 +6263,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/limbo",
-    "sourceVersion": "25f00f0a",
+    "sourceVersion": "89b9e75b",
     "license": "MIT",
-    "contentHash": "2310848958b42b8714d2b659bd397622fb10fb51f9cc6328a164562411f3a70f",
-    "lastHarvestedAt": "2026-10-19T05:32:07.853Z",
+    "contentHash": "215fcede91debd5fe4e5a0d7f8ba07b22d1cb3d65fb798eed340a60ecdf96ef4",
+    "lastHarvestedAt": "2026-10-19T18:36:07.758Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "carbon-design-system-carbon": {
@@ -6943,10 +6943,10 @@
     "repository": "angular/angular",
     "platform": "github",
     "sourceUrl": "https://github.com/angular/angular",
-    "sourceVersion": "e0260db5",
+    "sourceVersion": "093dd364",
     "license": "MIT",
-    "contentHash": "8515bfa48c1450fc7544205e5f0fa0e8f424001e10ddee52cc1c40a6bedeffd4",
-    "lastHarvestedAt": "2026-10-19T07:10:45.636Z",
+    "contentHash": "31ae9a46c7d8f49baec8c12aa26fe6966222317e05507ac6ade027968ecd11c9",
+    "lastHarvestedAt": "2026-10-19T18:35:48.143Z",
     "learningId": "learn-github-angular-angular"
   },
   "devspace-sh-devspace": {
@@ -8608,5 +8608,25 @@
     "contentHash": "3a76ec1c141829bb1e2a9c7327a7b25b988779abe0bc22cffe15fd2cc2d52908",
     "lastHarvestedAt": "2026-10-19T18:29:48.945Z",
     "learningId": "learn-github-android-kotlin-multiplatform-samples"
+  },
+  "adobe-structured-data-validator": {
+    "repository": "adobe/structured-data-validator",
+    "platform": "github",
+    "sourceUrl": "https://github.com/adobe/structured-data-validator",
+    "sourceVersion": "66e7610a",
+    "license": "Apache-2.0",
+    "contentHash": "85ba169154815be7c026609bb654ea4791c57e75d146b55bca533a897a1d1d1c",
+    "lastHarvestedAt": "2026-10-19T18:35:50.269Z",
+    "learningId": "learn-github-adobe-structured-data-validator"
+  },
+  "hi-manshu-charty": {
+    "repository": "hi-manshu/charty",
+    "platform": "github",
+    "sourceUrl": "https://github.com/hi-manshu/charty",
+    "sourceVersion": "c7ba0b05",
+    "license": "PERMISSIVE_OPEN_SOURCE",
+    "contentHash": "46480066a8c4de92578fb7614983caacd5cfa3cf3ab38b5283aa0e1feea2ef3d",
+    "lastHarvestedAt": "2026-10-19T18:35:57.059Z",
+    "learningId": "learn-github-hi-manshu-charty"
   }
 }

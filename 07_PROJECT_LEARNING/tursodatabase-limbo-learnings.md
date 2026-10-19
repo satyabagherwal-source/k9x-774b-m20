@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md`  
 > **Source**: github ([https://github.com/tursodatabase/limbo](https://github.com/tursodatabase/limbo))  
-> **Source Version**: `25f00f0a`  
+> **Source Version**: `89b9e75b`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T05:32:07.627Z  
+> **Timestamp**: 2026-10-19T18:36:07.563Z  
 > **Learning ID**: `learn-github-tursodatabase-turso`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/limbo](https://github.com/tursodatabase/limbo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T05:32:07.620Z  
+> **Harvest Timestamp**: 2026-10-19T18:36:07.558Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 24824 stars
+- **Stars / Engagement**: 24830 stars
 
 ---
 
@@ -1376,11 +1376,11 @@ async fn main() -> Result<(), Error> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #10111** (2026-10-19): **bindings/javascript: bind statement parameters while holding the exec lock**
-  *Symptoms*: ## Description  Concurrent calls on one prepared statement could run with another call's parameters. `Promise.all([stmt.get('first'), stmt.get('second')])` returned `['second value', 'second value']` instead of `['first value', 'second value']`. `all()` and `iterate()` behaved the same way, and two concurrent `run()` calls on one INSERT statement inserted the second value twice.  In `Statement.run/get/iterate/all`, the query timeout and the parameters were set on the shared native statement before `await this.execLock.acquire()`. While the first call waited for the lock, a second call bound its parameters over the first call's. `run()` also read `totalChanges()` before taking the lock, so its change count did not cover only its own execution.  All four methods now take the lock first. The timeout, binding, change-count read, execution and reset all happen inside the locked section, and the existing `finally` releases the lock even when binding throws.  ## Motivation and context  Fixes #9377  ## Description of AI Usage  Autofixer wrote this change with Claude Code in an isolated sandbox. A separate verifier agent tested and reviewed it in its own container before this PR was opened. A maintainer must review it before merge.  To have Autofixer address review feedback, leave your comments and then mention @turso-github-handyman; it handles all unanswered comments from maintainers in one round.
+- **Issue #10164** (2026-10-19): **core: resolve CTE references before database schemas**
+  *Symptoms*: ## Description  Resolve CTE references before searching database schemas. With an empty PostgreSQL `search_path`, `WITH t1 AS (SELECT 17 AS a) SELECT a FROM t1` currently fails with `no such object: t1`, even though `t1` is defined in the query.  Move current, outer, and recursive CTE handling into `plan_cte_reference()`. It returns a planned reference, no match, or an error; database lookup runs only when there is no match. Centralize construction of existing CTE references in `JoinedTable` and remove the duplicate outer-CTE lookup. Schema-qualified names continue to resolve against database schemas.  ## Motivation and context  Implements the CTE lookup fix discussed in #9702 directly on main, with query-local lookup separated from stored-table lookup. The existing database-ID convention for query results remains inside their constructors.  ## Description of AI Usage  Implemented with Codex under Pedro's direction. Codex inspected the original PR, refactored the planner, added regression coverage, ran validation, and applied Pedro's review feedback. 
 
-- **Issue #10110** (2026-10-18): **postgres: Catalog and CREATE SCHEMA fixes**
-  *Symptoms*: ## Description  Three fixes to the PostgreSQL frontend:  - `pg_tables` and `pg_class` no longer list the tables in which core stores sequences (`__turso_internal_seq_*`), so a sequence or serial column no longer shows up as a table of the public schema. - `pg_indexes.indexdef` and `pg_get_indexdef()` write the table of an index definition with its schema, as PostgreSQL does: `CREATE INDEX t_x ON public.t USING btree (x)`. - `CREATE SCHEMA` rejects names that start with `pg_`, which PostgreSQL reserves for system schemas.  ## Motivation and context  These came up while reworking PostgreSQL schemas in #10008. They are bugs on main and independent of that change, so they are split out to be reviewed on their own.  ## Description of AI Usage  Written with Claude Code, driven by the author: Claude implemented the changes and the tests, and the author reviewed them. 
+- **Issue #10153** (2026-10-19): **core/optimizer: skip multi-index candidates whose collation differs from the comparison**
+  *Symptoms*: ## Description  When a query ANDs conditions on two separately indexed columns, the intersection plan could seek an index whose collation differs from the comparison's. Rows that fail the condition were returned, and DELETE removed them.  ```sql CREATE TABLE t(a TEXT, b TEXT); INSERT INTO t VALUES('B','x'); CREATE INDEX i1 ON t(a COLLATE NOCASE); CREATE INDEX i2 ON t(b); SELECT a, (a='b') FROM t WHERE a='b' AND b>'a'; -- before: B|0   SQLite and now: no rows DELETE FROM t WHERE a='b' AND b>'a'; SELECT count(*) FROM t; -- before: 0     SQLite and now: 1 ```  `find_best_index_for_constraint`, which picks the index for each condition of a multi-index plan, only checked that the column is the index's first column. It never compared the index column's collation with the comparison's collation, unlike the single-index path.  The callers now work out the comparison's collation with `resolve_comparison_collseq` and pass it in, and an index only qualifies when its first column uses that collation. `a = 'b' COLLATE NOCASE` still uses both indexes together.  ## Motivation and context  Fixes #8731  Takes over #9196 by @RyanLin5967, which this replaces.  ## Description of AI Usage  Autofixer wrote this change with Claude Code in an isolated sandbox. A separate verifier agent tested and reviewed it in its own container before this PR was opened. A maintainer must review it before merge.  To have Autofixer address review feedback, leave your comments and then mention @turso-github-handyman;
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1397,588 +1397,253 @@ async fn main() -> Result<(), Error> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f5090d05` (2026-10-18)
-**Commit Message**: Merge 'postgres: Catalog and CREATE SCHEMA fixes' from Pekka Enberg
+### Incident Patch 1: `e5452eec` (2026-10-19)
+**Commit Message**: Merge 'core/incremental: give the materialized view cursor a null row flag' from app/turso-github-handyman
 
-Three fixes to the PostgreSQL frontend:
+A query that turns a materialized view's cursor into a NULL row panicked
+with `set_null_flag on unexpected cursor type`. This happened on the
+inner side of a `LEFT JOIN` with no match, and when an index on the view
+issued a `DeferredSeek`:
 
-- `pg_tables` and `pg_class` no longer list the tables in which core
-stores sequences (`__turso_internal_seq_*`), so a sequence or serial
-column no longer shows up as a table of the public schema.
-- `pg_indexes.indexdef` and `pg_get_indexdef()` write the table of an
-index definition with its schema, as PostgreSQL does: `CREATE INDEX t_x
-ON public.t USING btree (x)`.
-- `CREATE SCHEMA` rejects names that start with `pg_`, which PostgreSQL
-reserves for system schemas.
-
-These came up while reworking PostgreSQL schemas in #10008. They are
-bugs on main and independent of that change, so they are split out to be
-reviewed on their own.
-
-Written with Claude Code, driven by the author: Claude implemented the
-changes and the tests, and the author reviewed them.
-
-Closes #10110
-
-**File**: `postgres/conformance/pg-sqltests/catalog.sqltest` (modified, +24/-0)
-```diff
-@@ -595,6 +595,18 @@ test pg-tables-no-internal-tables {
- }
- expect {}
- 
-+test pg-tables-and-pg-class-hide-tables-of-sequences {
-+    CREATE SEQUENCE s;
-+    CREATE TABLE t (id serial);
-+    SELECT tablename FROM pg_tables WHERE schemaname = 'public'
-+    UNION ALL
-+    SELECT c.relname FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
-+    WHERE n.nspname = 'public' AND c.relkind = 'r' AND c.relname <> 't';
-+}
-+expect {
-+    t
-+}
-+
- test pg-type-builtin-oids {
-     SELECT typname, oid FROM pg_type
-     WHERE typname IN ('int4', 'text', 'bool', 'uuid') ORDER BY typname;
-@@ -629,6 +641,18 @@ expect {
-     public|items|items_price_idx||CREATE UNIQUE INDEX items_price_idx ON items USING btree (price) WHERE price > 0
- }
- 
-+test pg-indexes-and-pg-get-indexdef-name-the-schema-of-the-table {
-+    CREATE TABLE items (id int, name text);
-+    CREATE INDEX items_name_idx ON items (name);
-+    SELECT indexdef FROM pg_indexes WHERE indexname = 'items_name_idx'
-+    UNION ALL
-+    SELECT pg_get_indexdef(oid) FROM pg_class WHERE relname = 'items_name_idx';
-+}
-+expect {
-+    CREATE INDEX items_name_idx ON public.items USING btree (name)
-+    CREATE INDEX items_name_idx ON public.items USING btree (name)
-+}
-+
- test pg-index-columns {
-     CREATE TABLE items (id INTEGER PRIMARY KEY, name TEXT);
-     CREATE INDEX idx_items_name ON items(name);
+```sql
+CREATE TABLE t (id int primary key, type text, amt int);
+INSERT INTO t VALUES (1,'x',2),(2,'y',3);
+CREATE MATERIALIZED VIEW tm AS SELECT type, sum(amt) AS totamt FROM t GROUP BY type;
+SELECT t.id, tm.totamt FROM t LEFT JOIN tm ON tm.type = t.type || 'z';
+-- before: panic; after: 1| and 2|
 ```
 
-**File**: `postgres/conformance/pg-sqltests/schema.sqltest` (added, +10/-0)
+`Cursor::set_null_flag` had no case for `Cursor::MaterializedView`, so
+it fell into the catch-all `panic!`. `MaterializedViewCursor` had no
+null flag either, and `get_null_flag` always returned `false` for it.
+
+`MaterializedViewCursor` now has a null flag, the same as the virtual
+table cursor. While it is set, `column()` returns NULL and `rowid()`
+returns `None`. `seek`, `next` and `rewind` clear it.
+`Cursor::set_null_flag` and `get_null_flag` pass the call through to it.
+
+Separately, a materialized view's `sum()` over integers returns REAL
+(`
+
+**File**: `core/incremental/cursor.rs` (modified, +7/-0)
 ```diff
-@@ -0,0 +1,10 @@
-+# Schemas created with CREATE SCHEMA and the objects in them.
+@@ -287,7 +287,14 @@ impl MaterializedViewCursor {
+         self.null_flag = flag;
+     }
+ 
++    pub fn get_null_flag(&self) -> bool {
++        self.null_flag
++    }
 +
+     pub fn rowid(&self) -> IOResultOr<Option<i64>> {
++        if self.null_flag {
++            return Ok(IOResult::Done(None));
++        }
+         Ok(IOResult::Done(self.current_row.as_ref().map(|(id, _)| *id)))
+     }
+ 
+```
+
+**File**: `core/types.rs` (modified, +2/-5)
+```diff
+@@ -3656,12 +3656,9 @@ impl Cursor {
+             Self::BTree(cursor, ..) => cursor.get_null_flag(),
+             Self::Dyn(cursor, ..) => cursor.get_null_flag(),
+             Self::Virtual(cursor) => cursor.get_null_flag(),
++            Self::MaterializedView(cursor) => cursor.get_null_flag(),
+             Self::NullRow => true,
+-            Self::IndexMethod(_)
+-            | Self::Pseudo(_)
+-            | Self::Sorter(_)
+-            | Self::MaterializedView(_)
+-            | Self::Delta(_) => false,
++            Self::IndexMethod(_) | Self::Pseudo(_) | Self::Sorter(_) | Self::Delta(_) => false,
+         }
+     }
+ }
+```
+
+**File**: `sqlite/conformance/sqlite-sqltests/matview-null-row.sqltest` (added, +29/-0)
+```diff
+@@ -0,0 +1,29 @@
 +@database :memory:
++@skip-file-if mvcc "materialized views not supported in MVCC mode"
++@skip-file-if sqlite "materialized views are a turso-specific feature"
++@requires-file materialized_views "requires materialized view support"
 +
-+test create-schema-rejects-names-that-start-with-pg {
-+    CREATE SCHEMA pg_app;
-+}
-+expect error {
-+    unacceptable schema name "pg_app"
-+}
-```
-
-**File**: `postgres/frontend/catalog.rs` (modified, +15/-14)
-```diff
-@@ -186,22 +186,22 @@ fn user_tables_sorted(schema: &Schema) -> Vec<(&String, &Arc<Table>)> {
-         .tables
-         .iter()
-         .filter(|(name, table)| {
--            // Skip system tables
--            if name.starts_with("sqlite_")
--                || name.starts_with("pg_")
--                || name.starts_with("pragma_")
--                || name.starts_with("json_")
--            {
--                return false;
--            }
-             // Skip virtual tables and subqueries
--            matches!(table.as_ref(), Table::BTree(_))
-+            !is_system_table_name(name) && matches!(table.as_ref(), Table::BTree(_))
-         })
-         .collect();
-     tables.sort_by_key(|(name, _)| *name);
-     tables
- }
- 
-+/// Whether `name` is a table that the engine or this frontend owns, rather
-+/// than the user.
-+fn is_system_table_name(name: &str) -> bool {
-+    ["sqlite_", "pg_", "pragma_", "json_", "__turso_internal_"]
-+        .iter()
-+        .any(|prefix| name.starts_with(prefix))
++setup matview {
++    CREATE TABLE t (id INT PRIMARY KEY, type TEXT, amt INT);
++    INSERT INTO t VALUES (1, 'x', 2), (2, 'y', 3);
++    CREATE MATERIALIZED VIEW tm AS SELECT type, sum(amt) AS totamt FROM t GROUP BY type;
 +}
 +
- /// Map a SQLite type string to a PostgreSQL type OID.
- /// Strips parenthesized parameters (e.g. `varchar(100)` -> `VARCHAR`) before matching.
- fn sqlite_type_to_pg_oid(ty_str: &str) -> i64 {
-@@ -1037,7 +1037,7 @@ impl SnapshotRows for PgIndexesTable {
-                     Value::Text(table_name.clone().into()),
-                     Value::Text(idx.name.clone().into()),
-                     Value::Null,
--                    Value::build_text(index_definition(table_name, idx)),
-+                    Value::build_text(index_definition("public", table_name, &idx.name, idx)),
-                 ]);
-             }
-         }
-@@ -3410,7 +3410,7 @@ pub(crate) fn pg_get_indexdef(conn: &Connection, target_oid: i64) -> Option<Stri
-                 continue;
-             }
-             if index_oid == target_oid {
--                return Some(index_definition(table_name, idx));
-+                return Some(index_definition("public", table_name, &idx.name, idx));
-             }
-             index_oid += 1;
-         }
-@@ -3419,7 +3419,9 @@ pub(crate) fn pg_get_indexdef(conn: &Connection, target_oid: i64) -> Option<Stri
-     None
- }
- 
--fn index_definition(table_name: &str, idx: &Index) -> String {
-+/// The CREATE INDEX statement of index `idx`, named `index_name` in its
-+/// schema, of table `table_name` of schema `table_schema`.
-+fn index_definition(table_schema: &str, table_name: &str, index_name: &str, idx: &Index) -> String {
-     let unique = if idx.unique { "UNIQUE " } else { "" };
-     let cols: Vec<String> = idx
-         .columns
-@@ -3433,8 +3435,7 @@ fn index_definition(table_name: &str, idx: &Index) -> String {
-         })
-         .collect();
-     let mut def = format!(
--        "CREATE {unique}INDEX {} ON {table_name} USING btree ({})",
--        idx.name,
-+        "CREATE {unique}INDEX {index_name} ON {table_schema}.{table_name} USING btree ({})",
-         cols.join(", ")
-     );
-     if let Some(where_clause) = &idx.where_clause {
-```
-
-**File**: `postgres/frontend/session.rs` (modified, +5/-0)
-```diff
-@@ -404,6 +404,11 @@ fn handle_pg_create_schema(conn: &Arc<Connection>, stmt: &PgCreateSchemaStmt) ->
-             "schema \"{name}\" already exists"
-         )));
-     }
-+    if name.starts_with("pg_") {
-+        return Err(LimboError::ParseError(format!(
-+            "unacceptable schema name \"{name}\": the prefix \"pg_\" is reserved for system schemas"
-+        )));
-+    }
- 
-     let path = schema_file_path(conn, &name);
-     execute_sqlite_internal(
++@setup matview
++test left-join-matview-without-match-reads-nulls {
++    SELECT t.id, tm.type, tm.totamt, tm.rowid FROM t LEFT JOIN tm ON tm.type = t.type || 'z' ORDER BY t.id;
++}
++expect {
++    1|||
++    2|||
++}
++
++@setup matview
++test left-join-matview-reads-nulls-after-finding-a-row-that-fails-the-on-clause {
++    CREATE TABLE r AS SELECT rowid AS rid, type FROM tm;
++    SELECT r.type, tm.type, CAST(tm.totamt AS INTEGER), tm.rowid IS NULL FROM r LEFT JOIN tm ON tm.rowid = r.rid AND tm.type = 'x' ORDER BY r.type;
++}
++expect {
++    x|x|2|0
++    y|||1
++}
 ```
 
 ---
 
-### Incident Patch 2: `cd3c8abd` (2026-10-18)
-**Commit Message**: Merge 'core: infer the result type of CASE, coalesce, nullif and abs' from app/turso-github-handyman
+### Incident Patch 2: `09ee95f1` (2026-10-19)
+**Commit Message**: core/incremental: build with the nightly allocator cfg
 
-The PostgreSQL frontend sent integer results of CASE and some function
-calls with the wrong type. `SELECT coalesce(x, 2) * coalesce(x, 3) FROM
-t`, `SELECT abs(x) * 2 FROM t` and `SELECT CASE WHEN x = 1 THEN x ELSE 0
-END - 1 FROM t` were sent as `float8`, so clients printed `1.0` where
-PostgreSQL gives `1`. A bare `SELECT coalesce(x, 2) FROM t` was sent as
-`text`.
+Under --cfg nightly, crate::alloc::Vec carries a TursoAllocator type
+parameter, so plain std Vec::new() and .collect() calls built one
+with the default std::alloc::Global allocator instead and failed to
+type-check against fields and return types that expect the Turso
+allocator.
 
-`infer_expression_primitive`, which `Statement::get_column_type_info`
-uses to type computed result columns, had no case for CASE or function
-calls, so they got no type. The wire layer sends a column with no type
-as `text`, and `combine_arithmetic_primitive` treats an operand with no
-type as NUMERIC, which maps to `float8`.
+Use the vec![] macro (which resolves through TursoAllocExt) in
+materialized_view_dependencies, and try_collect() (TursoIteratorExt)
+for the SorterOpenData fields in consolidate_delta, matching the
+allocator-aware patterns already used elsewhere (e.g. group_by.rs).
 
-CASE, `coalesce`, `ifnull` and the multi-argument `min`/`max` (what
-GREATEST/LEAST become) now take the type their non-NULL branches or
-arguments share, with integer and real widening the way arithmetic does.
-Any other mix still has no type. `nullif` takes the type of its first
-argument, and `abs` follows the rule for unary minus. All five queries
-above are now sent as `int4`, matching PostgreSQL.
+Tests: cargo test -p turso_core --lib incremental; CARGO_TARGET_DIR=target/nightly-cfg RUSTFLAGS="--cfg nightly" cargo +nightly-2025-12-17 check -p turso_core --all-targets --locked; same toolchain build/test of turso_whopper (regression_tests, 12 passed)
 
-Fix
-
-**File**: `core/statement.rs` (modified, +54/-0)
+**File**: `core/incremental/vdbe_maintenance/consolidate.rs` (modified, +3/-2)
 ```diff
-@@ -182,6 +182,7 @@ fn infer_expression_primitive(
-     expr: &turso_parser::ast::Expr,
-     referenced_tables: Option<&translate::plan::TableReferences>,
- ) -> Option<&'static str> {
-+    use crate::function::ScalarFunc;
-     use turso_parser::ast::{Expr, Operator, UnaryOperator};
- 
-     match expr {
-@@ -250,6 +251,34 @@ fn infer_expression_primitive(
-             ),
-         },
-         Expr::RowId { .. } => Some("INTEGER"),
-+        Expr::Case {
-+            when_then_pairs,
-+            else_expr,
-+            ..
-+        } => common_primitive(
-+            when_then_pairs
-+                .iter()
-+                .map(|(_, then)| then.as_ref())
-+                .chain(else_expr.as_deref()),
-+            referenced_tables,
-+        ),
-+        Expr::FunctionCall { name, args, .. } => {
-+            match crate::function::Func::resolve_function(name.as_str(), args.len()) {
-+                Ok(Some(crate::function::Func::Scalar(
-+                    ScalarFunc::Coalesce | ScalarFunc::IfNull | ScalarFunc::Max | ScalarFunc::Min,
-+                ))) => common_primitive(args.iter().map(|arg| arg.as_ref()), referenced_tables),
-+                Ok(Some(crate::function::Func::Scalar(ScalarFunc::Nullif))) => {
-+                    infer_expression_primitive(&args[0], referenced_tables)
-+                }
-+                Ok(Some(crate::function::Func::Scalar(ScalarFunc::Abs))) => {
-+                    Some(combine_arithmetic_primitive(
-+                        Some("INTEGER"),
-+                        infer_expression_primitive(&args[0], referenced_tables),
-+                    ))
-+                }
-+                _ => None,
-+            }
-+        }
-         // CAST, column references, and anything else: defer to the affinity
-         // machinery, which handles these shapes correctly.
-         _ => affinity_to_primitive(translate::expr::get_expr_affinity(
-@@ -260,6 +289,31 @@ fn infer_expression_primitive(
-     }
- }
- 
-+/// The type that every non-NULL expression can be converted to, following
-+/// PostgreSQL's rule for CASE branches and COALESCE arguments: mixed numeric
-+/// types widen the way arithmetic does, any other mix has no common type.
-+fn common_primitive<'a>(
-+    exprs: impl Iterator<Item = &'a turso_parser::ast::Expr>,
-+    referenced_tables: Option<&translate::plan::TableReferences>,
-+) -> Option<&'static str> {
-+    use turso_parser::ast::{Expr, Literal};
-+
-+    let is_numeric = |primitive| matches!(primitive, "INTEGER" | "REAL" | "NUMERIC");
-+    let mut common = None;
-+    for expr in exprs.filter(|expr| !matches!(expr, Expr::Literal(Literal::Null))) {
-+        let primitive = infer_expression_primitive(expr, referenced_tables)?;
-+        common = match common {
-+            None => Some(primitive),
-+            Some(common) if common == primitive => Some(common),
-+            Some(common) if is_numeric(common) && is_numeric(primitive) => {
-+                Some(combine_arithmetic_primitive(Some(common), Some(primitive)))
-+            }
-+            Some(_) => return None,
-+        };
-+    }
-+    common
-+}
-+
- /// Map [`crate::vdbe::affinity::Affinity`] to the uppercase primitive name
- /// `infer_expression_primitive` returns. `Blob` collapses to `None` because
- /// SQLite's "no determined affinity" sentinel isn't a usable wire type.
+@@ -1,4 +1,5 @@
+ use super::stream::{open_ephemeral_delta, EphemeralDelta};
++use crate::alloc::TursoIteratorExt;
+ use crate::schema::PseudoCursorType;
+ use crate::turso_assert;
+ use crate::vdbe::builder::{CursorType, ProgramBuilder};
+@@ -77,8 +78,8 @@ pub(super) fn consolidate_delta(
+             columns: key_width,
+             order_collations_nulls: (0..key_width)
+                 .map(|_| (SortOrder::Asc, None, None))
+-                .collect(),
+-            comparators: (0..key_width).map(|_| None).collect(),
++                .try_collect()?,
++            comparators: (0..key_width).map(|_| None).try_collect()?,
+         }),
+     });
+     let entry_start = program.alloc_registers(entry_width);
 ```
 
-**File**: `postgres/server/lib.rs` (modified, +26/-0)
+**File**: `core/schema.rs` (modified, +1/-1)
 ```diff
-@@ -804,6 +804,32 @@ mod tests {
-         assert_eq!(*fields[0].datatype(), Type::INT4);
-     }
- 
-+    #[test]
-+    fn test_integer_case_and_function_results_are_int4_on_wire() {
-+        let (_io, db) = turso_pg::open_database(
-+            ":memory:",
-+            None,
-+            turso_pg::OpenFlags::default(),
-+            turso_pg::DatabaseOpts::new(),
-+        )
-+        .unwrap();
-+        let conn = Connection::connect(&db).unwrap();
-+        conn.execute("CREATE TABLE t(id int PRIMARY KEY, x int)")
-+            .unwrap();
-+        conn.execute("INSERT INTO t VALUES (1, 1)").unwrap();
-+        for sql in [
-+            "SELECT x * 2 FROM t",
-+            "SELECT coalesce(x, 2) * coalesce(x, 3) FROM t",
-+            "SELECT abs(x) * 2 FROM t",
-+            "SELECT CASE WHEN x = 1 THEN x ELSE 0 END - 1 FROM t",
-+            "SELECT coalesce(x, 2) FROM t",
-+        ] {
-+            let stmt = conn.prepare(sql).unwrap();
-+            let fields = build_field_info(&stmt, &Format::UnifiedText);
-+            assert_eq!(*fields[0].datatype(), Type::INT4, "{sql}");
-+        }
-+    }
-+
-     #[test]
-     fn test_set_transaction_is_non_query() {
-         assert!(is_pg_non_query(
-```
-
-**File**: `tests/integration/statement_metadata.rs` (modified, +58/-0)
-```diff
-@@ -374,6 +374,64 @@ mod tests {
-         );
-     }
- 
-+    /// CASE takes the common type of its branches, as do COALESCE, IFNULL and
-+    /// the multi-argument MIN/MAX. NULLIF takes the type of its first argument
-+    /// and ABS follows unary minus. NULL branches do not affect the result, and
-+    /// branches with no common type give no result type.
-+    #[test]
-+    fn type_info_for_case_and_functions_that_return_their_argument_type() {
-+        let db = fresh_db_with_custom_types("type_info_case_functions.db");
-+        let conn = db.connect_limbo();
-+        conn.execute(
-+            "CREATE TABLE t(id INTEGER PRIMARY KEY, x INTEGER, label TEXT, ratio REAL) STRICT",
-+        )
-+        .unwrap();
-+
-+        let cases: &[(&str, Option<&str>)] = &[
-+            ("coalesce(x, 2)", Some("INTEGER")),
-+            ("coalesce(x, 2) * coalesce(x, 3)", Some("INTEGER")),
-+            ("ifnull(x, NULL)", Some("INTEGER")),
-+            ("coalesce(x, ratio)", Some("REAL")),
-+            ("coalesce(label, 'none')", Some("TEXT")),
-+            ("coalesce(x, label)", None),
-+            ("max(x, 1, 2)", Some("INTEGER")),
-+            ("min(x, 1.5)", Some("REAL")),
-+            ("nullif(x, 0)", Some("INTEGER")),
-+            ("abs(x)", Some("INTEGER")),
-+            ("abs(x) * 2", Some("INTEGER")),
-+            ("abs(ratio)", Some("REAL")),
-+            ("abs(label)", Some("NUMERIC")),
-+            ("CASE WHEN x = 1 THEN x ELSE 0 END - 1", Some("INTEGER")),
-+            ("CASE WHEN x = 1 THEN x END", Some("INTEGER")),
-+            ("CASE x WHEN 1 THEN NULL ELSE ratio END", Some("REAL")),
-+            ("CASE WHEN x = 1 THEN label ELSE 'other' END", Some("TEXT")),
-+            ("CASE WHEN x = 1 THEN label ELSE 0 END", None),
-+            ("CASE WHEN x = 1 THEN NULL END", None),
-+            ("coalesce(x, randomblob(8))", None),
-+        ];
-+
-+        let mut mismatches = Vec::new();
-+        for (expr, expected) in cases {
-+            let stmt = conn
-+                .prepare(format!("SELECT {expr} FROM t"))
-+                .unwrap_or_else(|e| panic!("failed to prepare `SELECT {expr} FROM t`: {e}"));
-+            let actual = stmt
-+                .get_column_type_info(0)
-+                .unwrap()
-+                .map(|info| info.declared_name);
-+            if actual.as_deref() != *expected {
-+                mismatches.push(format!(
-+                    "  {expr:<44} expected {expected:?}, got {actual:?}"
-+                ));
-+            }
-+        }
-+        assert!(
-+            mismatches.is_empty(),
-+            "CASE and function result types are wrong:\n{}",
-+            mismatches.join("\n")
-+        );
-+    }
-+
-     /// Expressions whose primitive can't be determined statically — function
-     /// calls without a declared return affinity, BLOB literals, NULL literals
-     /// — yield `Ok(None)`. Callers fall through to their own default (TEXT
+@@ -2363,7 +2363,7 @@ impl Schema {
+             out.push(name);
+         }
+         let mut seen = HashSet::default();
+-        let mut out = Vec::new();
++        let mut out = vec![];
+         for table_name in IncrementalView::referenced_table_names(select) {
+             expand(self, &table_name, &mut seen, &mut out);
+         }
 ```
 
 ---
 
-### Incident Patch 3: `82c99933` (2026-10-18)
-**Commit Message**: core: infer the result type of CASE, coalesce, nullif and abs
+### Incident Patch 3: `e00441f0` (2026-10-19)
+**Commit Message**: core/incremental: report null row state and rowid for materialized view cursors
 
-Fixes #9524
+When a LEFT JOIN finds no matching row in a materialized view, NullRow
+sets the view cursor's null flag. Column reads already return NULL then,
+but rowid() still returned the rowid of the last row the cursor visited,
+and Cursor::get_null_flag always reported false for materialized views.
+So `tm.rowid` on the unmatched side of a LEFT JOIN read a stale rowid
+instead of NULL.
 
-**File**: `core/statement.rs` (modified, +54/-0)
+Tests: matview-null-row.sqltest covers LEFT JOIN with no match and LEFT
+JOIN where the cursor was positioned on a row that then failed the ON
+clause.
+
+**File**: `core/incremental/cursor.rs` (modified, +7/-0)
 ```diff
-@@ -182,6 +182,7 @@ fn infer_expression_primitive(
-     expr: &turso_parser::ast::Expr,
-     referenced_tables: Option<&translate::plan::TableReferences>,
- ) -> Option<&'static str> {
-+    use crate::function::ScalarFunc;
-     use turso_parser::ast::{Expr, Operator, UnaryOperator};
+@@ -287,7 +287,14 @@ impl MaterializedViewCursor {
+         self.null_flag = flag;
+     }
  
-     match expr {
-@@ -250,6 +251,34 @@ fn infer_expression_primitive(
-             ),
-         },
-         Expr::RowId { .. } => Some("INTEGER"),
-+        Expr::Case {
-+            when_then_pairs,
-+            else_expr,
-+            ..
-+        } => common_primitive(
-+            when_then_pairs
-+                .iter()
-+                .map(|(_, then)| then.as_ref())
-+                .chain(else_expr.as_deref()),
-+            referenced_tables,
-+        ),
-+        Expr::FunctionCall { name, args, .. } => {
-+            match crate::function::Func::resolve_function(name.as_str(), args.len()) {
-+                Ok(Some(crate::function::Func::Scalar(
-+                    ScalarFunc::Coalesce | ScalarFunc::IfNull | ScalarFunc::Max | ScalarFunc::Min,
-+                ))) => common_primitive(args.iter().map(|arg| arg.as_ref()), referenced_tables),
-+                Ok(Some(crate::function::Func::Scalar(ScalarFunc::Nullif))) => {
-+                    infer_expression_primitive(&args[0], referenced_tables)
-+                }
-+                Ok(Some(crate::function::Func::Scalar(ScalarFunc::Abs))) => {
-+                    Some(combine_arithmetic_primitive(
-+                        Some("INTEGER"),
-+                        infer_expression_primitive(&args[0], referenced_tables),
-+                    ))
-+                }
-+                _ => None,
-+            }
++    pub fn get_null_flag(&self) -> bool {
++        self.null_flag
++    }
++
+     pub fn rowid(&self) -> IOResultOr<Option<i64>> {
++        if self.null_flag {
++            return Ok(IOResult::Done(None));
 +        }
-         // CAST, column references, and anything else: defer to the affinity
-         // machinery, which handles these shapes correctly.
-         _ => affinity_to_primitive(translate::expr::get_expr_affinity(
-@@ -260,6 +289,31 @@ fn infer_expression_primitive(
+         Ok(IOResult::Done(self.current_row.as_ref().map(|(id, _)| *id)))
+     }
+ 
+```
+
+**File**: `core/types.rs` (modified, +2/-5)
+```diff
+@@ -3656,12 +3656,9 @@ impl Cursor {
+             Self::BTree(cursor, ..) => cursor.get_null_flag(),
+             Self::Dyn(cursor, ..) => cursor.get_null_flag(),
+             Self::Virtual(cursor) => cursor.get_null_flag(),
++            Self::MaterializedView(cursor) => cursor.get_null_flag(),
+             Self::NullRow => true,
+-            Self::IndexMethod(_)
+-            | Self::Pseudo(_)
+-            | Self::Sorter(_)
+-            | Self::MaterializedView(_)
+-            | Self::Delta(_) => false,
++            Self::IndexMethod(_) | Self::Pseudo(_) | Self::Sorter(_) | Self::Delta(_) => false,
+         }
      }
  }
- 
-+/// The type that every non-NULL expression can be converted to, following
-+/// PostgreSQL's rule for CASE branches and COALESCE arguments: mixed numeric
-+/// types widen the way arithmetic does, any other mix has no common type.
-+fn common_primitive<'a>(
-+    exprs: impl Iterator<Item = &'a turso_parser::ast::Expr>,
-+    referenced_tables: Option<&translate::plan::TableReferences>,
-+) -> Option<&'static str> {
-+    use turso_parser::ast::{Expr, Literal};
+```
+
+**File**: `sqlite/conformance/sqlite-sqltests/matview-null-row.sqltest` (added, +29/-0)
+```diff
+@@ -0,0 +1,29 @@
++@database :memory:
++@skip-file-if mvcc "materialized views not supported in MVCC mode"
++@skip-file-if sqlite "materialized views are a turso-specific feature"
++@requires-file materialized_views "requires materialized view support"
 +
-+    let is_numeric = |primitive| matches!(primitive, "INTEGER" | "REAL" | "NUMERIC");
-+    let mut common = None;
-+    for expr in exprs.filter(|expr| !matches!(expr, Expr::Literal(Literal::Null))) {
-+        let primitive = infer_expression_primitive(expr, referenced_tables)?;
-+        common = match common {
-+            None => Some(primitive),
-+            Some(common) if common == primitive => Some(common),
-+            Some(common) if is_numeric(common) && is_numeric(primitive) => {
-+                Some(combine_arithmetic_primitive(Some(common), Some(primitive)))
-+            }
-+            Some(_) => return None,
-+        };
-+    }
-+    common
++setup matview {
++    CREATE TABLE t (id INT PRIMARY KEY, type TEXT, amt INT);
++    INSERT INTO t VALUES (1, 'x', 2), (2, 'y', 3);
++    CREATE MATERIALIZED VIEW tm AS SELECT type, sum(amt) AS totamt FROM t GROUP BY type;
 +}
 +
- /// Map [`crate::vdbe::affinity::Affinity`] to the uppercase primitive name
- /// `infer_expression_primitive` returns. `Blob` collapses to `None` because
- /// SQLite's "no determined affinity" sentinel isn't a usable wire type.
-```
-
-**File**: `postgres/server/lib.rs` (modified, +26/-0)
-```diff
-@@ -804,6 +804,32 @@ mod tests {
-         assert_eq!(*fields[0].datatype(), Type::INT4);
-     }
- 
-+    #[test]
-+    fn test_integer_case_and_function_results_are_int4_on_wire() {
-+        let (_io, db) = turso_pg::open_database(
-+            ":memory:",
-+            None,
-+            turso_pg::OpenFlags::default(),
-+            turso_pg::DatabaseOpts::new(),
-+        )
-+        .unwrap();
-+        let conn = Connection::connect(&db).unwrap();
-+        conn.execute("CREATE TABLE t(id int PRIMARY KEY, x int)")
-+            .unwrap();
-+        conn.execute("INSERT INTO t VALUES (1, 1)").unwrap();
-+        for sql in [
-+            "SELECT x * 2 FROM t",
-+            "SELECT coalesce(x, 2) * coalesce(x, 3) FROM t",
-+            "SELECT abs(x) * 2 FROM t",
-+            "SELECT CASE WHEN x = 1 THEN x ELSE 0 END - 1 FROM t",
-+            "SELECT coalesce(x, 2) FROM t",
-+        ] {
-+            let stmt = conn.prepare(sql).unwrap();
-+            let fields = build_field_info(&stmt, &Format::UnifiedText);
-+            assert_eq!(*fields[0].datatype(), Type::INT4, "{sql}");
-+        }
-+    }
++@setup matview
++test left-join-matview-without-match-reads-nulls {
++    SELECT t.id, tm.type, tm.totamt, tm.rowid FROM t LEFT JOIN tm ON tm.type = t.type || 'z' ORDER BY t.id;
++}
++expect {
++    1|||
++    2|||
++}
 +
-     #[test]
-     fn test_set_transaction_is_non_query() {
-         assert!(is_pg_non_query(
-```
-
-**File**: `tests/integration/statement_metadata.rs` (modified, +58/-0)
-```diff
-@@ -374,6 +374,64 @@ mod tests {
-         );
-     }
- 
-+    /// CASE takes the common type of its branches, as do COALESCE, IFNULL and
-+    /// the multi-argument MIN/MAX. NULLIF takes the type of its first argument
-+    /// and ABS follows unary minus. NULL branches do not affect the result, and
-+    /// branches with no common type give no result type.
-+    #[test]
-+    fn type_info_for_case_and_functions_that_return_their_argument_type() {
-+        let db = fresh_db_with_custom_types("type_info_case_functions.db");
-+        let conn = db.connect_limbo();
-+        conn.execute(
-+            "CREATE TABLE t(id INTEGER PRIMARY KEY, x INTEGER, label TEXT, ratio REAL) STRICT",
-+        )
-+        .unwrap();
-+
-+        let cases: &[(&str, Option<&str>)] = &[
-+            ("coalesce(x, 2)", Some("INTEGER")),
-+            ("coalesce(x, 2) * coalesce(x, 3)", Some("INTEGER")),
-+            ("ifnull(x, NULL)", Some("INTEGER")),
-+            ("coalesce(x, ratio)", Some("REAL")),
-+            ("coalesce(label, 'none')", Some("TEXT")),
-+            ("coalesce(x, label)", None),
-+            ("max(x, 1, 2)", Some("INTEGER")),
-+            ("min(x, 1.5)", Some("REAL")),
-+            ("nullif(x, 0)", Some("INTEGER")),
-+            ("abs(x)", Some("INTEGER")),
-+            ("abs(x) * 2", Some("INTEGER")),
-+            ("abs(ratio)", Some("REAL")),
-+            ("abs(label)", Some("NUMERIC")),
-+            ("CASE WHEN x = 1 THEN x ELSE 0 END - 1", Some("INTEGER")),
-+            ("CASE WHEN x = 1 THEN x END", Some("INTEGER")),
-+            ("CASE x WHEN 1 THEN NULL ELSE ratio END", Some("REAL")),
-+            ("CASE WHEN x = 1 THEN label ELSE 'other' END", Some("TEXT")),
-+            ("CASE WHEN x = 1 THEN label ELSE 0 END", None),
-+            ("CASE WHEN x = 1 THEN NULL END", None),
-+            ("coalesce(x, randomblob(8))", None),
-+        ];
-+
-+        let mut mismatches = Vec::new();
-+        for (expr, expected) in cases {
-+            let stmt = conn
-+                .prepare(format!("SELECT {expr} FROM t"))
-+                .unwrap_or_else(|e| panic!("failed to prepare `SELECT {expr} FROM t`: {e}"));
-+            let actual = stmt
-+                .get_column_type_info(0)
-+                .unwrap()
-+                .map(|info| info.declared_name);
-+            if actual.as_deref() != *expected {
-+                mismatches.push(format!(
-+                    "  {expr:<44} expected {expected:?}, got {actual:?}"
-+                ));
-+            }
-+        }
-+        assert!(
-+            mismatches.is_empty(),
-+            "CASE and function result types are wrong:\n{}",
-+            mismatches.join("\n")
-+        );
-+    }
-+
-     /// Expressions whose primitive can't be determined statically — function
-     /// calls without a declared return affinity, BLOB literals, NULL literals
-     /// — yield `Ok(None)`. Callers fall through to their own default (TEXT
++@setup matview
++test left-join-matview-reads-nulls-after-finding-a-row-that-fails-the-on-clause {
++    CREATE TABLE r AS SELECT rowid AS rid, type FROM tm;
++    SELECT r.type, tm.type, CAST(tm.totamt AS INTEGER), tm.rowid IS NULL FROM r LEFT JOIN tm ON tm.rowid = r.rid AND tm.type = 'x' ORDER BY r.type;
++}
++expect {
++    x|x|2|0
++    y|||1
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #10111** (2026-10-19): bindings/javascript: bind statement parameters while holding the exec lock (@turso-github-handyman[bot])
-- **PR #10110** (2026-10-18): postgres: Catalog and CREATE SCHEMA fixes (@penberg)
-- **PR #10108** (2026-10-19): core/translate: do not capture changes to temp tables in CDC (@turso-github-handyman[bot])
-- **PR #10101** (2026-10-19): docs: say that make test needs uv (@turso-github-handyman[bot])
-- **PR #10098** (2026-10-19): bindings/javascript: drop handles of collected statements in prepare (@turso-github-handyman[bot])
-- **PR #10093** (2026-10-19): core/translate: register every statement parameter before translation (@turso-github-handyman[bot])
+- **PR #10164** (closed): core: resolve CTE references before database schemas (@pedrocarlo)
+- **PR #10153** (2026-10-19): core/optimizer: skip multi-index candidates whose collation differs from the comparison (@turso-github-handyman[bot])
+- **PR #10146** (2026-10-19): postgres: drop every object of the schema in DROP SCHEMA (@penberg)
+- **PR #10144** (2026-10-19): core/vdbe: give each trigger step's constraint halt its own conflict mode (@turso-github-handyman[bot])
+- **PR #10133** (closed): core: keep materialized views bound to main tables (@turso-github-handyman[bot])
+- **PR #10131** (2026-10-19): docs: describe the release lifecycle and how commits are backported (@penberg)
 
 ---
 
@@ -1998,44 +1663,27 @@ Fixes #9524
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge 'postgres: Catalog and CREATE SCHEMA fixes' from Pekka Enberg
+## X. Merge 'core/incremental: give the materialized view cursor a null row flag' from
 
 **RULE**:
-When implementing operations in `postgres/conformance/pg-sqltests/catalog.sqltest`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/incremental/cursor.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f5090d05`: Merge 'postgres: Catalog and CREATE SCHEMA fixes' from Pekka Enberg. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e5452eec`: Merge 'core/incremental: give the materialized view cursor a null row flag' from app/turso-github-handyman. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `postgres/conformance/pg-sqltests/catalog.sqltest`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/incremental/cursor.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-test pg-tables-and-pg-class-hide-tables-of-sequences {
-    CREATE SEQUENCE s;
-    CREATE TABLE t (id serial);
-    SELECT tablename FROM pg_tables WHERE schemaname = 'public'
-    UNION ALL
-    SELECT c.relname FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
-    WHERE n.nspname = 'public' AND c.relkind = 'r' AND c.relname <> 't';
-}
-expect {
-    t
-}
+    pub fn get_null_flag(&self) -> bool {
+        self.null_flag
+    }
 
-test pg-indexes-and-pg-get-indexdef-name-the-schema-of-the-table {
-    CREATE TABLE items (id int, name text);
-    CREATE INDEX items_name_idx ON items (name);
-    SELECT indexdef FROM pg_indexes WHERE indexname = 'items_name_idx'
-    UNION ALL
-    SELECT pg_get_indexdef(oid) FROM pg_class WHERE relname = 'items_name_idx';
-}
-expect {
-    CREATE INDEX items_name_idx ON public.items USING btree (name)
-    CREATE INDEX items_name_idx ON public.items USING btree (name)
-}
-
+        if self.null_flag {
+            return Ok(IOResult::Done(None));
+        }
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2045,4 +1693,4 @@ expect {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f5090d05` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e5452eec` are properly handled with clean fallback behavior.

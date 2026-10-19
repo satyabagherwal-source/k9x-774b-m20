@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `27363b95`  
+> **Source Version**: `b012a600`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T16:50:00.477Z  
+> **Timestamp**: 2026-10-19T18:36:04.055Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T16:50:00.472Z  
+> **Harvest Timestamp**: 2026-10-19T18:36:04.049Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2252,36 +2252,172 @@ pub fn visualize_whitespace(s: &str) -> String {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `27363b95` (2026-10-19)
-**Commit Message**: benchmarks: 26.0.0 run
+### Incident Patch 1: `b012a600` (2026-10-19)
+**Commit Message**: fix(benchmarks): keep multi-release deltas out of the change charts (#4850)
 
-[skip ci]
+`delta (%)` is measured against a benchmark's last archived run, which
+for a benchmark absent from the previous release can be many releases
+back. In the 26.0.0 run, count_width (vs 19.1.0) and the restored
+sqlp_format_*/lowmemory/nooptimizations/tryparsedates* series (vs
+15.0.1) took 6 of the 15 "biggest speedups this release" slots and 9
+points of the sqlp family box. Both charts now use only benchmarks that
+have a row for the previous release.
 
-**File**: `scripts/results/latest_run_info.tsv` (modified, +1/-1)
+Also fix the moarstats prose: its "sharply in <latest release>" jump
+happened at 22.0.1 and 23.0.1 (26.0.0 was +3%), and the "hundreds of
+thousands of records/sec" rate is pre-22.0.1 (now ~3M/sec).
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `benchmarks/change_by_family.html` (modified, +1/-1)
 ```diff
-@@ -1,2 +1,2 @@
- version	tstamp	logtime	bm_version	platform	cores	mem	binary	kind	argument	total_count	wo_index_count	with_index_count	warmup_runs	benchmark_runs	elapsed_secs	total_mean	qsv_env	version_info
--25.0.0	2026-10-14-16	2026-10-14-16-57-19	9.9.0	aarch64-apple-darwin	12	34359738368	qsv	prebuilt-pgo		305	238	67	2	3	6136	1196.777	No qsv-relevant environment variables set.	qsv 25.0.0-jemalloc-apply;fetch;foreach;geocode;Luau 0.740;magika;to;viz;viz_static;polars-0.55.1:py-2.0.0:2742ad3;self_update-12-12;25.60 GiB-0 B-28.91 GiB-32.00 GiB (aarch64-apple-darwin compiled with Rust 1.99;macOS 27.2-Darwin 27.2.0;Apple M2 Pro-12) prebuilt-pgo
-+26.0.0	2026-10-19-10	2026-10-19-10-53-39	9.12.1	aarch64-apple-darwin	12	34359738368	qsv	prebuilt-pgo		305	238	67	2	3	6013	1180.038	No qsv-relevant environment variables set.	qsv 26.0.0-jemalloc-apply;fetch;foreach;geocode;Luau 0.740;magika;to;viz;viz_static;polars-0.55.1:py-2.0.0:b951cd7;self_update-12-12;25.60 GiB-1.29 GiB-27.33 GiB-32.00 GiB (aarch64-apple-darwin compiled with Rust 1.99;macOS 27.2-Darwin 27.2.0;Apple M2 Pro-12) prebuilt-pgo
+@@ -16,7 +16,7 @@
+ 
+         <script type="module">
+             const graph_div = document.getElementById("plotly-html-element");
+-            await Plotly.newPlot(graph_div, {"data":[{"type":"box","x":["apply","apply","apply","apply","apply","apply","apply","apply","exclude","exclude","exclude","exclude","exclude","exclude","exclude","exclude","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","luau","luau","luau","luau","luau","luau","luau","luau","luau","luau","luau","luau","luau","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","search","search","search","search","search","search","search","search","search","search","slice","slice","slice","slice","slice","slice","split","split","split","split","split","split","split","sqlp","sqlp","sqlp","sqlp","sqlp","sqlp","sqlp","sqlp","sqlp","sqlp","sqlp","sqlp","sqlp","sqlp","sqlp","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","tojsonl","tojsonl","tojsonl","tojsonl","tojsonl","tojsonl","tojsonl","tojsonl","validate","validate","validate","validate","validate","validate","validate","validate","validate","validate","validate","validate","validate","validate"],"y":[1.5,2.3,6.22,4.22,6.9,3.7,4.15,4.15,7.29,8.84,8.58,7.96,5.2,5.09,5.7,6.04,2.41,1.94,0.34,0.34,1.14,0.89,1.76,2.14,2.79,1.69,1.13,0.17,1.89,1.64,2.53,1.02,3.25,1.48,6.89,3.92,-0.58,1.34,4.03,3.32,2.37,1.64,2.39,2.31,3.5,1.94,2.49,2.42,2.13,2.39,4.04,2.63,2.37,2.57,6.73,6.46,5.6,0.29,5.6,6.09,-0.02,-0.05,-0.15,6.25,-1.11,6.12,5.25,7.19,-1.72,0.01,-0.73,6.19,4.61,7.22,1.72,2.64,3.08,4.45,4.18,1.9,2.64,3.8,7.22,9.86,-3.74,9.48,-3.04,10.13,-4.22,-8.0,-15.77,8.44,8.89,22.83,4.63,-0.05,-0.12,0.97,3.35,0.97,-1.64,40.73,16.76,18.4,18.34,17.69,18.2,16.88,22.38,-2.63,-31.78,-0.96,0.96,-0.29,-0.33,0.15,0.04,0.87,0.25,1.0,1.58,-1.67,-3.2,2.0,0.58,-4.84,2.41,-0.56,0.54,0.91,-2.8,3.29,2.76,-4.84,-4.73,21.7,22.07,28.64,16.28,14.69,20.44,19.25,13.2,2.43,2.11,5.87,2.85,2.78,3.52,4.89,3.22,3.78,7.18,10.33,7.4,2.63,3.21],"boxpoints":"outliers","quartilemethod":"linear"}],"layout":{"title":{"text":"Release-over-release change by command family"},"uirevision":"qsv-viz","xaxis":{"title":{"text":"family"}},"yaxis":{"title":{"text":"% faster vs previous version"},"range":[-38.0,47.0]}},"config":{"responsive":true},"frames":null});
++            await Plotly.newPlot(graph_div, {"data":[{"type":"box","x":["apply","apply","apply","apply","apply","apply","apply","apply","exclude","exclude","exclude","exclude","exclude","exclude","exclude","exclude","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","luau","luau","luau","luau","luau","luau","luau","luau","luau","luau","luau","luau","luau","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","search","search","search","search","search","search","search","search","search","search","slice","slice","slice","slice","slice","slice","split","split","split","split","split","split","split","sqlp","sqlp","sqlp","sqlp","sqlp","sqlp","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","tojsonl","tojsonl","tojsonl","tojsonl","tojsonl","tojsonl","tojsonl","tojsonl","validate","validate","validate","validate","validate","validate","validate","validate","validate","validate","validate","validate","validate","validate"],"y":[1.5,2.3,6.22,4.22,6.9,3.7,4.15,4.15,7.29,8.84,8.58,7.96,5.2,5.09,5.7,6.04,2.41,1.94,0.34,0.34,1.14,0.89,1.76,2.14,2.79,1.69,1.13,0.17,1.89,1.64,2.53,1.02,3.25,1.48,6.89,3.92,-0.58,1.34,4.03,3.32,2.37,1.64,2.39,2.31,3.5,1.94,2.49,2.42,2.13,2.39,4.04,2.63,2.37,2.57,6.73,6.46,5.6,0.29,5.6,6.09,-0.02,-0.05,-0.15,6.25,-1.11,6.12,5.25,7.19,-1.72,0.01,-0.73,6.19,4.61,7.22,1.72,2.64,3.08,4.45,4.18,1.9,2.64,3.8,7.22,9.86,-3.74,9.48,-3.04,10.13,-4.22,-8.0,-15.77,8.44,8.89,22.83,4.63,-0.05,-0.12,0.97,3.35,0.97,-1.64,-2.63,-0.96,0.96,-0.29,-0.33,0.15,0.04,0.87,0.25,1.0,1.58,-1.67,-3.2,2.0,0.58,-4.84,2.41,-0.56,0.54,0.91,-2.8,3.29,2.76,-4.84,-4.73,21.7,22.07,28.64,16.28,14.69,20.44,19.25,13.2,2.43,2.11,5.87,2.85,2.78,3.52,4.89,3.22,3.78,7.18,10.33,7.4,2.63,3.21],"boxpoints":"outliers","quar
 ```
 
-**File**: `scripts/results/run_info_history.tsv` (modified, +1/-0)
+**File**: `benchmarks/gainers.html` (modified, +1/-1)
 ```diff
-@@ -1,4 +1,5 @@
- version	tstamp	logtime	bm_version	platform	cores	mem	binary	kind	argument	total_count	wo_index_count	with_index_count	warmup_runs	benchmark_runs	elapsed_secs	total_mean	qsv_env	version_info
-+26.0.0	2026-10-19-10	2026-10-19-10-53-39	9.12.1	aarch64-apple-darwin	12	34359738368	qsv	prebuilt-pgo		305	238	67	2	3	6013	1180.038	No qsv-relevant environment variables set.	qsv 26.0.0-jemalloc-apply;fetch;foreach;geocode;Luau 0.740;magika;to;viz;viz_static;polars-0.55.1:py-2.0.0:b951cd7;self_update-12-12;25.60 GiB-1.29 GiB-27.33 GiB-32.00 GiB (aarch64-apple-darwin compiled with Rust 1.99;macOS 27.2-Darwin 27.2.0;Apple M2 Pro-12) prebuilt-pgo
- 25.0.0	2026-10-14-16	2026-10-14-16-57-19	9.9.0	aarch64-apple-darwin	12	34359738368	qsv	prebuilt-pgo		305	238	67	2	3	6136	1196.777	No qsv-relevant environment variables set.	qsv 25.0.0-jemalloc-apply;fetch;foreach;geocode;Luau 0.740;magika;to;viz;viz_static;polars-0.55.1:py-2.0.0:2742ad3;self_update-12-12;25.60 GiB-0 B-28.91 GiB-32.00 GiB (aarch64-apple-darwin compiled with Rust 1.99;macOS 27.2-Darwin 27.2.0;Apple M2 Pro-12) prebuilt-pgo
- 24.0.0	2026-10-06-11	2026-10-06-11-00-23	9.8.0	aarch64-apple-darwin	12	34359738368	qsv	prebuilt		286	221	65	2	3	6286	1227.297	No qsv-relevant environment variables set.	qsv 24.0.0-jemalloc-apply;fetch;foreach;geocode;Luau 0.740;magika;to;viz;viz_static;polars-0.55.1:py-1.44.2:9d5804d3589a04b7805bac624934bde54b545b91;self_update-12-12;25.60 GiB-1.69 GiB-26.99 GiB-32.00 GiB (aarch64-apple-darwin compiled with Rust 1.99;macOS 27.2-Darwin 27.2.0;Apple M2 Pro-12) prebuilt
- 23.0.1	2026-09-13-12	2026-09-13-12-58-33	9.7.0	aarch64-apple-darwin	12	34359738368	qsv	prebuilt-pgo		277	212	65	2	3	6112	1203.973	No qsv-relevant environment variables set.	qsv 23.0.1-jemalloc-apply;fetch;foreach;geocode;Luau 0.736;magika;to;viz;viz_static;polars-0.55.1:py-1.44.2;self_update-12-12;25.60 GiB-0 B-27.16 GiB-32.00 GiB (aarch64-apple-darwin compiled with Rust 1.98;macOS 27.0-Darwin 27.0.0;Apple M2 Pro-12) prebuilt-pgo
+@@ -16,7 +16,7 @@
+ 
+         <script type="module">
+             const graph_div = document.getElementById("plotly-html-element");
+-            await Plotly.newPlot(graph_div, {"data":[{"type":"scatter","mode":"markers","x":["count_width_index","count_width","sqlp_format_arrow","tojsonl_index","writestat_sav","writestat_xpt","writestat_dta","split_index","sqlp_nooptimizations","tojsonl_batchall","tojsonl","tojsonl_no_boolean","tojsonl_trim","sqlp_format_json","sqlp_format_jsonl"],"y":[53.3,52.05,40.73,28.64,26.81,24.33,23.94,22.83,22.38,22.07,21.7,20.44,19.25,18.4,18.34],"hovertext":["name: count_width_index\u003cbr\u003edelta (%): 53.3\u003cbr\u003edelta (%): 53.3\u003cbr\u003edelta (%): 53.3","name: count_width\u003cbr\u003edelta (%): 52.05\u003cbr\u003edelta (%): 52.05\u003cbr\u003edelta (%): 52.05","name: sqlp_format_arrow\u003cbr\u003edelta (%): 40.73\u003cbr\u003edelta (%): 40.73\u003cbr\u003edelta (%): 40.73","name: tojsonl_index\u003cbr\u003edelta (%): 28.64\u003cbr\u003edelta (%): 28.64\u003cbr\u003edelta (%): 28.64","name: writestat_sav\u003cbr\u003edelta (%): 26.81\u003cbr\u003edelta (%): 26.81\u003cbr\u003edelta (%): 26.81","name: writestat_xpt\u003cbr\u003edelta (%): 24.33\u003cbr\u003edelta (%): 24.33\u003cbr\u003edelta (%): 24.33","name: writestat_dta\u003cbr\u003edelta (%): 23.94\u003cbr\u003edelta (%): 23.94\u003cbr\u003edelta (%): 23.94","name: split_index\u003cbr\u003edelta (%): 22.83\u003cbr\u003edelta (%): 22.83\u003cbr\u003edelta (%): 22.83","name: sqlp_nooptimizations\u003cbr\u003edelta (%): 22.38\u003cbr\u003edelta (%): 22.38\u003cbr\u003edelta (%): 22.38","name: tojsonl_batchall\u003cbr\u003edelta (%): 22.07\u003cbr\u003edelta (%): 22.07\u003cbr\u003edelta (%): 22.07","name: tojsonl\u003cbr\u003edelta (%): 21.7\u003cbr\u003edelta (%): 21.7\u003cbr\u003edelta (%): 21.7","name: tojsonl_no_boolean\u003cbr\u003edelta (%): 20.44\u003cbr\u003edelta (%): 20.44\u003cbr\u003edelta (%): 20.44","name: tojsonl_trim\u003cbr\u003edelta (%): 19.25\u003cbr\u003edelta (%): 19.25\u003cbr\u003edelta (%): 19.25","name: sqlp_format_json\u003cbr\u003edelta (%): 18.4\u003cbr\u003edelta (%): 18.4\u003cbr\u003edelta (%): 18.4","name: sqlp_format_jsonl\u003cbr\u003edelta (%): 18.34\u003cbr\u003edelta (%): 18.34\u003cbr\u003edelta (%): 18.34"],"hoverinfo":"text","marker":{"size":[40,39,28,16,14,12,11,10,10,10,9,8,7,6,6],"color":[53.3,52.05,40.73,28.64,26.81,24.33,23.94,22.83,22.38,22.07,21.7,20.44,19.25,18.4,18.34],"colorscale":"Viridis","showscale":true,"colorbar":{"title":{"text":"delta (%)"}}}}],"layout":{"title":{"text":"Biggest speedups this release"},"uirevision":"qsv-viz","xaxis":{"title":{"text":"name"}},"yaxis":{"title":{"text":"% faster vs previous version"}}},"config":{"responsive":true},"frames":null});
++            await Plotly.newPlot(graph_div, {"data":[{"type":"scatter","mode":"markers","x":["tojsonl_index","writestat_sav","writestat_xpt","writestat_dta","split_index","tojsonl_batchall","tojsonl","tojsonl_no_boolean","tojsonl_trim","tojsonl_index_j1","tojsonl_j1","tojsonl_trim_j1","snappy_compress","count_flexible","sortcheck_sorted"],"y":[28.64,26.81,24.33,23.94,22.83,22.07,21.7,20.44,19.25,16.28,14.69,13.2,12.08,11.28,11.06],"hovertext":["name: tojsonl_index\u003cbr\u003edelta (%): 28.64\u003cbr\u003edelta (%): 28.64\u003cbr\u003edelta (%): 28.64","name: writestat_sav\u003cbr\u003edelta (%): 26.81\u003cbr\u003edelta (%): 26.81\u003cbr\u003edelta (%): 26.81","name: writestat_xpt\u003cbr\u003edelta (%): 24.33\u003cbr\u003edelta (%): 24.33\u003cbr\u003edelta (%): 24.33","name: writestat_dta\u003cbr\u003edelta (%): 23.94\u003cbr\u003edelta (%): 23.94\u003cbr\u003edelta (%): 23.94","name: split_index\u003cbr\u003edelta (%): 22.83\u003cbr\u003edelta (%): 22.83\u003cbr\u003edelta (%): 22.83","name: tojsonl_batchall\u003cbr\u003edelta (%): 22.07\u003cbr\u003edelta (%): 22.07\u003cbr\u003edelta (%): 22.07","name: tojsonl\u003cbr\u003edelta (%): 21.7\u003cbr\u003edelta (%): 21.7\u003cbr\u003edelta (%): 21.7","name: tojsonl_no_boolean\u003cbr\u003edelta (%): 20.44\u003cbr\u003edelta (%): 20.44\u003cbr\u003edelta (%): 20.44","name: tojsonl_trim\u003cbr\u003edelta (%): 19.25\u003cbr\u003edelta (%): 19.25\u003cbr\u003edelta (%): 19.25","name: tojsonl_index_j1\u003cbr\u003edelta (%): 16.28\u003cbr\u003edelta (%): 16.28\u003cbr\u003edelta (%): 16.28","name: tojsonl_j1\u003cbr\u003edelta (%): 14.69\u003cbr\u003edelta (%): 14.69\u003cbr\u003edelta (%): 14.69","name: tojsonl_trim_j1\u003cbr\u003edelta (%): 13.2\u003cbr\u003edelta (%): 13.2\u003cbr\u003edelta (%): 13.2","name: snappy_compress\u003cbr\u003edelta (%): 12.08\u003cbr\u003edelta (%): 12.08\u003cbr\u003edelta (%): 12.08","name: count_flexible\u003cbr\u003edelta (%): 11.28\u003cbr\u003edelta (%): 11.28\u003cbr\u003edelta (%): 11.28","name: sortcheck_sorted\u003cbr\u003edelta (%): 11.06\u003cbr\u003edelta (%): 11.06\u003cbr\u003edelta (%): 11.06"],"hoverinfo":"text","marker":{"size":[40,36,32,31,29,27,27,24,22,16,13,10,8,6,6],"color":[28.64,26.81,24.33
+```
+
+**File**: `benchmarks/index.html` (modified, +24/-22)
+```diff
+@@ -64,7 +64,7 @@ <h2 id=index_advantage>The index advantage<a class=anchor href='#index_advantage
+                 &quot;Build an index once and qsv can skip the opening scan on every run after. &quot;
+                 f&quot;The payoff is lopsided — {ip_span} on this run, and next to nothing for &quot;
+                 &quot;streaming commands, so only the pairs where an index actually moves the &quot;
+-                &quot;needle are shown here.&quot;))</code></pre><a class=srclink href='https://github.com/dathere/qsv/blob/master/scripts/gen_benchmark_viz.py#L766-L773' target=_blank rel=noopener>view on GitHub ↗ (gen_benchmark_viz.py, lines 766–773)</a></details>
++                &quot;needle are shown here.&quot;))</code></pre><a class=srclink href='https://github.com/dathere/qsv/blob/master/scripts/gen_benchmark_viz.py#L786-L793' target=_blank rel=noopener>view on GitHub ↗ (gen_benchmark_viz.py, lines 786–793)</a></details>
+ </section>
+ <section>
+ <h2 id=count_callout>count with an index is effectively instant<a class=anchor href='#count_callout' aria-label='Permalink to “count with an index is effectively instant”'>#</a></h2>
+@@ -78,7 +78,7 @@ <h2 id=count_callout>count with an index is effectively instant<a class=anchor h
+                 f&quot;it reads a row count qsv already stored, {c_jump}. It sits on its own axis &quot;
+                 &quot;precisely because that number would flatten every other bar on the page. The &quot;
+                 &quot;un-indexed bar scans the file to count it, so it tracks whatever the current &quot;
+-                &quot;scan path costs; the indexed bar reads the stored count and does not.&quot;))</code></pre><a class=srclink href='https://github.com/dathere/qsv/blob/master/scripts/gen_benchmark_viz.py#L781-L789' target=_blank rel=noopener>view on GitHub ↗ (gen_benchmark_viz.py, lines 781–789)</a></details>
++                &quot;scan path costs; the indexed bar reads the stored count and does not.&quot;))</code></pre><a class=srclink href='https://github.com/dathere/qsv/blob/master/scripts/gen_benchmark_viz.py#L801-L809' target=_blank rel=noopener>view on GitHub ↗ (gen_benchmark_viz.py, lines 801–809)</a></details>
+ </section>
+ <section>
+ <h2 id=index_superpowers>The index superpowers<a class=anchor href='#index_superpowers' aria-label='Permalink to “The index superpowers”'>#</a></h2>
+@@ -94,7 +94,7 @@ <h2 id=index_superpowers>The index superpowers<a class=anchor href='#index_super
+                 f&quot;cached statistics. That&#x27;s a different order of magnitude: {sp_top_cmd} leads at &quot;
+                 f&quot;{sp_top_x:.0f}x faster, with the rest of the seek-and-reuse tier &quot;
+                 f&quot;{min(sp_rest):.0f}x to {max(sp_rest):.0f}x faster — versus the low single &quot;
+-                &quot;digits for the scan-skippers above.&quot;))</code></pre><a class=srclink href='https://github.com/dathere/qsv/blob/master/scripts/gen_benchmark_viz.py#L795-L805' target=_blank rel=noopener>view on GitHub ↗ (gen_benchmark_viz.py, lines 795–805)</a></details>
++                &quot;digits for the scan-skippers above.&quot;))</code></pre><a class=srclink href='https://github.com/dathere/qsv/blob/master/scripts/gen_benchmark_viz.py#L815-L825' target=_blank rel=noopener>view on GitHub ↗ (gen_benchmark_viz.py, lines 815–825)</a></details>
+ </section>
+ <section>
+ <h2 id=sqlp_tuning>sqlp tuning: the schema-cache knob<a class=anchor href='#sqlp_tuning' aria-label='Permalink to “sqlp tuning: the schema-cache knob”'>#</a></h2>
+@@ -107,7 +107,7 @@ <h2 id=sqlp_tuning>sqlp tuning: the schema-cache knob<a class=anchor href='#sqlp
+                 &quot;sqlp_tuning&quot;, &quot;sqlp tuning: the schema-cache knob&quot;,
+                 &quot;sqlp infers a schema before it runs. Cache that schema and the re-inference &quot;
+                 &quot;cost disappears on the next query — worth about a third more throughput on &quot;
+-                &quot;these aggregations, for a one-line option.&quot;))</code></pre><a class=srclink href='https://github.com/dathere/qsv/blob/master/scripts/gen_benchmark_viz.py#L806-L813' target=_blank rel=noopener>view on GitHub ↗ (gen_benchmark_viz.py, lines 806–813)</a></details>
++                &quot;these aggregations, for a one-line option.&quot;))</code></pre><a class=srclink href='https://github.com/dathere/qsv/blob/master/scripts/gen_benchmark_viz.py#L826-L833' target=_blank rel=noopener>view on GitHub ↗ (gen_benchmark_viz.py, lines 826–833)</a></details>
+ </section>
+ <section>
+ <h2 id=trend>The long view — every release<a class=anchor href='#trend' aria-label='Permalink to “The long view — every release”'>#</a></h2>
+@@ -133,7 +133,7 @@ <h2 id=trend>The long view — every release<a class=anchor href='#trend' aria-l
+                 &quot;on a log axis a constant multiple reads as a constant vertical gap. Broad &quot;
+                 &quot;trajectory only (see the note above); count and moarstats are omitted for &quot;
+            
+```
+
+**File**: `scripts/gen_benchmark_viz.py` (modified, +31/-9)
+```diff
+@@ -320,6 +320,25 @@ def recent_versions(n):
+     return out
+ 
+ 
++def latest_with_prev_baseline():
++    """LATEST restricted to benchmarks that also have a row for the previous release. A
++    benchmark's `delta (%)` is measured against its last archived run, which for a benchmark that
++    is new or was pruned for a release can be many releases back (e.g. the sqlp_format_* series vs
++    15.0.1 in the 26.0.0 run) — charting that as "vs previous version" misattributes the gain."""
++    vers = recent_versions(2)
++    prev = vers[1] if len(vers) > 1 else None
++    with open(HISTORY, encoding="utf-8") as fh:
++        prev_names = {r["name"] for r in csv.DictReader(fh) if r["version"] == prev}
++    out = tmp("latest_prev_baseline.csv")
++    with open(LATEST, encoding="utf-8", newline="") as src, \
++            open(out, "w", encoding="utf-8", newline="") as dst:
++        reader = csv.DictReader(src)
++        writer = csv.DictWriter(dst, fieldnames=reader.fieldnames)
++        writer.writeheader()
++        writer.writerows(r for r in reader if r["name"] in prev_names)
++    return out
++
++
+ def alt(names):
+     """A qsv regex alternation matching any of `names` exactly (dots escaped)."""
+     return "^(" + "|".join(re.escape(x) for x in names) + ")$"
+@@ -479,13 +498,14 @@ def prep_treemap():
+ 
+ 
+ def prep_gainers():
+-    f = qsv(["search", "-s", "delta (%)", r"^\d", LATEST], tmp("g0.csv"))  # positive deltas only
++    f = qsv(["search", "-s", "delta (%)", r"^\d", latest_with_prev_baseline()], tmp("g0.csv"))  # positive deltas only
+     f = qsv(["sort", "-s", "delta (%)", "-N", "-R", f], tmp("g1.csv"))
+     return qsv(["slice", "--len", "15", f], tmp("gainers.csv"))
+ 
+ 
+ def prep_delta_box():
+-    f1 = qsv(["luau", "map", "family", 'name:match("^[^_]+")', LATEST], tmp("db0.csv"))
++    f1 = qsv(["luau", "map", "family", 'name:match("^[^_]+")', latest_with_prev_baseline()],
++             tmp("db0.csv"))
+     f2 = qsv(["search", "-s", "family", alt(FAMILY_BOX), f1], tmp("db1.csv"))
+     # the *_vs_duckdb rows time DuckDB, not qsv: their delta is DuckDB's run-to-run noise
+     f2 = qsv(["search", "-v", "-s", "name", "_vs_duckdb$", f2], tmp("db1b.csv"))
+@@ -907,11 +927,11 @@ def main():
+                     "for kurtosis, Gini/Atkinson and entropy under --advanced. The bivariate computation, "
+                     "by contrast, is recomputed on every run, so it carries a real throughput-over-time "
+                     "story. Each charted variant is indexed to its own launch speed. moarstats does real "
+-                    "pairwise work — the default bivariate pass runs at hundreds of thousands of "
+-                    "records/sec and the full --bivariate-stats all battery at a few thousand — so unlike "
+-                    f"stats or frequency there is genuine per-row cost to hold down. It held: the default "
+-                    f"bivariate pass now runs {m_biv:.1f}x its first-release speed, stepping up at 17.0.0, "
+-                    f"again at 20.0.0, and sharply in {latest_release}. The full all battery is heavier and "
++                    "pairwise work — through 21.x the default bivariate pass ran at hundreds of thousands "
++                    "of records/sec and the full --bivariate-stats all battery at a few thousand — so "
++                    "unlike stats or frequency there is genuine per-row cost to hold down. It held: the "
++                    f"default bivariate pass now runs {m_biv:.1f}x its first-release speed, stepping up "
++                    "at 17.0.0, again at 20.0.0, and sharply at 22.0.1 and 23.0.1. The full all battery is heavier and "
+                     "choppier — it climbed to a ~6k-recs/sec peak around 19.x-20.x, then dipped through "
+                     f"21.0.0-21.1.0, before leaping to {m_all:.1f}x launch once dictionary-encoding of "
+                     "the joint keys cut the per-pair cost of the --bivariate-stats all battery by well "
+@@ -941,7 +961,8 @@ def main():
+                     "gainers", "Biggest speedups this release",
+                     "The 15 benchmarks that improved most over the previous release. Bigger, brighter "
+                     "bubbles are larger wins — the percentage cut in mean run time from one version "
+-                    "to the next."))
++                    "to the next. Benchmarks with no run in the previous release (new, or back after "
++                    "a gap) are left out, since their change would span several releases."))
+     delta_box_src = prep_delta_box()
+     # Fit the axis to the charted data rather than a fixed window. DELTA_CLAMP has already dropped
+     # the measurement artifacts, so everything left is a real result and none of it should be
+@@ -958,7 +979,8 @@ def main():
+                     "family (above zero = faster). Most families cluster just north of zero — steady, "
+                     f"unglamorous progress. Extreme outliers (|Δ| > {int(DELTA_CLAMP)}%, usually "
+                     "measurement noise) are 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4850** (2026-10-19): fix(benchmarks): keep multi-release deltas out of the change charts (@jqnatividad)
+- **PR #4849** (2026-10-19): benchmarks: regenerate Data Schematic for the 26.0.0 run (@jqnatividad)
 - **PR #4847** (2026-10-19): docs(sqlp): show read_ndjson named options in USAGE (@jqnatividad)
 - **PR #4846** (2026-10-19): deps: bump polars to upstream rev b951cd7 (@jqnatividad)
 - **PR #4845** (2026-10-19): deps(polars): enable rolling_window + bitwise, drop unused business/coalesce (@jqnatividad)
 - **PR #4844** (2026-10-19): build(deps): bump github/codeql-action from 4.38.3 to 4.39.0 (@dependabot[bot])
-- **PR #4843** (2026-10-19): build(deps): bump anthropics/claude-code-action from 1.0.248 to 1.0.252 (@dependabot[bot])
-- **PR #4842** (2026-10-18): feat(viz): funnel --area draws a funnel area (@jqnatividad)
 
 ---
 
@@ -2301,28 +2437,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. benchmarks: 26.0.0 run
+## X. benchmarks): keep multi-release deltas out of the change charts (#4850)
 
 **RULE**:
-When implementing operations in `scripts/results/latest_run_info.tsv`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `benchmarks/change_by_family.html`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `27363b95`: benchmarks: 26.0.0 run. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b012a600`: benchmarks): keep multi-release deltas out of the change charts (#4850). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/results/latest_run_info.tsv`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `benchmarks/change_by_family.html`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-26.0.0	2026-10-19-10	2026-10-19-10-53-39	9.12.1	aarch64-apple-darwin	12	34359738368	qsv	prebuilt-pgo		305	238	67	2	3	6013	1180.038	No qsv-relevant environment variables set.	qsv 26.0.0-jemalloc-apply;fetch;foreach;geocode;Luau 0.740;magika;to;viz;viz_static;polars-0.55.1:py-2.0.0:b951cd7;self_update-12-12;25.60 GiB-1.29 GiB-27.33 GiB-32.00 GiB (aarch64-apple-darwin compiled with Rust 1.99;macOS 27.2-Darwin 27.2.0;Apple M2 Pro-12) prebuilt-pgo
+            await Plotly.newPlot(graph_div, {"data":[{"type":"box","x":["apply","apply","apply","apply","apply","apply","apply","apply","exclude","exclude","exclude","exclude","exclude","exclude","exclude","exclude","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","luau","luau","luau","luau","luau","luau","luau","luau","luau","luau","luau","luau","luau","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","search","search","search","search","search","search","search","search","search","search","slice","slice","slice","slice","slice","slice","split","split","split","split","split","split","split","sqlp","sqlp","sqlp","sqlp","sqlp","sqlp","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","s
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-25.0.0	2026-10-14-16	2026-10-14-16-57-19	9.9.0	aarch64-apple-darwin	12	34359738368	qsv	prebuilt-pgo		305	238	67	2	3	6136	1196.777	No qsv-relevant environment variables set.	qsv 25.0.0-jemalloc-apply;fetch;foreach;geocode;Luau 0.740;magika;to;viz;viz_static;polars-0.55.1:py-2.0.0:2742ad3;self_update-12-12;25.60 GiB-0 B-28.91 GiB-32.00 GiB (aarch64-apple-darwin compiled with Rust 1.99;macOS 27.2-Darwin 27.2.0;Apple M2 Pro-12) prebuilt-pgo
+            await Plotly.newPlot(graph_div, {"data":[{"type":"box","x":["apply","apply","apply","apply","apply","apply","apply","apply","exclude","exclude","exclude","exclude","exclude","exclude","exclude","exclude","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","frequency","luau","luau","luau","luau","luau","luau","luau","luau","luau","luau","luau","luau","luau","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","sample","search","search","search","search","search","search","search","search","search","search","slice","slice","slice","slice","slice","slice","split","split","split","split","split","split","split","sqlp","sqlp","sqlp","sqlp","sqlp","sqlp","sqlp","sqlp","sqlp","sqlp","sqlp","sqlp","sqlp","sqlp","sqlp","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","stats","st
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `27363b95` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b012a600` are properly handled with clean fallback behavior.

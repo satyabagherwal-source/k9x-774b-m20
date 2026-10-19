@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md`  
 > **Source**: github ([https://github.com/grpc/grpc-rust](https://github.com/grpc/grpc-rust))  
-> **Source Version**: `4ad6538f`  
+> **Source Version**: `cfe80f9d`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T03:39:13.034Z  
+> **Timestamp**: 2026-10-19T18:35:51.268Z  
 > **Learning ID**: `learn-github-grpc-grpc-rust`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/grpc/grpc-rust](https://github.com/grpc/grpc-rust))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T03:39:13.026Z  
+> **Harvest Timestamp**: 2026-10-19T18:35:51.263Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -565,6 +565,7 @@ use crate::client::interceptor::Intercept;
 use crate::core::ConnectionInfo;
 use crate::core::RecvMessage;
 use crate::core::SendMessage;
+use crate::core::StreamEnded;
 
 /// An interceptor that wraps the underlying invoker's [`RecvStream`] in a
 /// [`RecvStreamValidator`].
@@ -700,8 +701,12 @@ where
 struct NopSendStream;
 
 impl SendStream for NopSendStream {
-    async fn send(&mut self, msg: &dyn SendMessage, options: SendOptions) -> Result<(), ()> {
-        Err(())
+    async fn send(
+        &mut self,
+        msg: &dyn SendMessage,
+        options: SendOptions,
+    ) -> Result<(), StreamEnded> {
+        Err(StreamEnded)
     }
 }
 
@@ -815,8 +820,7 @@ mod test {
                     crate::core::test_connection_info(),
                 )),
                 ResponseStreamItem::Message,
-                ResponseStreamItem::Headers(ResponseHeaders::new(
-                    crate::core::test_
+                ResponseS
 ```
 
 ### Core Architecture Module: `grpc/src/core/mod.rs`
@@ -858,6 +862,9 @@ mod test {
 //!
 //! - **[`SendMessage`] / [`RecvMessage`]:** Traits for encoding and decoding
 //!   messages.
+//! - **[`StreamEnded`]:** Returned when sending on a stream that has ended.
+//! - **[`StreamError`]:** Returned when receiving on a server stream that
+//!   terminated early.
 
 use std::any::TypeId;
 use std::fmt::Display;
@@ -894,6 +901,41 @@ pub trait RecvMessage: Send + Sync {
         None
     }
 }
+
+/// The error returned by stream send operations when the stream has ended.
+///
+/// This error carries no details.  On the client, the RPC's final status, which
+/// explains why the stream ended, is reported separately on the
+/// [`RecvStream`](crate::client::RecvStream).  On the server, the stream may
+/// have been cancelled by the client, reached its deadline, or encountered an
+/// I/O error.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Hash)]
+pub struct StreamEnded;
+
+impl Display for StreamEnded {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+        f.write_str("stream ended")
+    }
+}
+
+impl std::error::Error for StreamEnded {}
+
+/// The error returned by server stream receive operations when the RPC
+/// terminated before the client closed its sending side of the stream.
+///
+/// This error carries no details.  Scenarios that could result in this error
+/// include: the client cancelled the RPC, the deadline expired, an I/O error
+/// occurred, or the server handler sent the trailers.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Hash)]
+pub struct StreamError;
+
+impl Display for StreamError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+        f.write_str("stream terminated before client finished sending")
+    }
+}
+
+impl std::error::Error for StreamError {}
 
 /// Describes what underlying message is inside a [`SendMessage`] or
 /// [`RecvMessage`] so that it can be downcast, e.g. by interceptors.
@@ -1958,8 +2000,8 @@ fn comment_out(s: &str) -> String {
 - **Issue #2928** (2026-10-15): **grpc/load_balancing: Remove unused OneSubchannelPicker.**
   *Symptoms*: ## Motivation  `OneSubchannelPicker` currently exists in both `mod.rs` and in `pick_first.rs`. Since it's only used by `pick_first`, it should only exist private to that LB.  ## Solution  Remove the unused `mod.rs` copy of `OneSubchannelPicker`.  
 
-- **Issue #2926** (2026-10-14): **grpc/load_balancing: add picker expectation helpers to TestEnv**
-  *Symptoms*: ## Motivation  Various different load balancers test pickers in similar ways, but often using their own helper functions.  While working on tests for the Cluster Manager and Weighted Target load balancers, and the pick first rework, found it would be easier to have some of these consolidated.   ## Solution  Consolidate `expect_picker_state()`, `expect_queueing_picker()`, `expect_failing_picker()` and `expect_ready_picker()` into the `test_utils.rs` so they can be broadly used.  
+- **Issue #2927** (2026-10-19): **grpc/protobuf: avoid unit Result Err; use impl AsView on all sends**
+  *Symptoms*: A recent Rust clippy bug fix flags `Result<_, ()>`.  Rather than `allow` it, I've defined token error types, `StreamEnded` and `StreamError`.  `StreamEnded` is used when sending if the stream has completed.  `StreamError` is used when receiving on the server if the `RecvStream` did not terminate via a normal `EOS` flag.  (`None` is used to signify that instead as this is `Option<Result<>>`.  In addition, to avoid the potential problem where `send` errors and we accepted an _owned_ `Message`, I've changed all `send` functions to accept an `impl AsView`.  This includes call sites that previously accepted `&impl AsView` which is less usable at the call site (as you would be required to pass references to views and couldn't pass views directly).  This is a breaking API change, which would be ideal to do before 0.10 is released.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1976,516 +2018,328 @@ fn comment_out(s: &str) -> String {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `46622e93` (2026-09-29)
-**Commit Message**: fix(codec): eliminate uninitialized memory in encode_item on unwind (#2847)
+### Incident Patch 1: `cfe80f9d` (2026-10-19)
+**Commit Message**: grpc/protobuf: avoid unit Result Err; use impl AsView on all sends (#2927)
 
-## Motivation
+A recent Rust clippy bug fix flags `Result<_, ()>`. Rather than `allow`
+it, I've defined token error types, `StreamEnded` and `StreamError`.
+`StreamEnded` is used when sending if the stream has completed.
+`StreamError` is used when receiving on the server if the `RecvStream`
+did not terminate via a normal `EOS` flag. (`None` is used to signify
+that instead as this is `Option<Result<>>`.
 
-Fixes https://github.com/grpc/grpc-rust/issues/2720.
+In addition, to avoid the potential problem where `send` errors and we
+accepted an _owned_ `Message`, I've changed all `send` functions to
+accept an `impl AsView`. This includes call sites that previously
+accepted `&impl AsView` which is less usable at the call site (as you
+would be required to pass references to views and couldn't pass views
+directly).
 
-In `tonic/src/codec/encode.rs`, `encode_item` previously advanced the
-buffer's logical length by 5 bytes using `unsafe {
-buf.advance_mut(HEADER_SIZE); }` before invoking the user-provided
-`Encoder::encode`. If the encoder panicked or unwound, `buf` was left
-with 5 uninitialized bytes exposed to callers catching unwinds.
+This is a breaking API change, which would be ideal to do before 0.10 is
+released.
 
-## Solution
-
-* Replace `unsafe { buf.advance_mut(HEADER_SIZE); }` with safe
-zero-filled initialization via `buf.put_slice(&[0u8; HEADER_SIZE])`,
-eliminating the `unsafe` block entirely.
-* Writing 5 zero bytes into the cache line that is immediately
-overwritten by `finish_encoding` incurs minimal performance impact (a
-single store instruction).
-* The alternative RAII drop guard approach was deliberately avoided
-because it preserves `unsafe` code and could resurface the soundness
-vulnerability if `std::mem::forget` (or a similar leak) were ever
-introduced.
-* Add unit test `encode_item_exception_safety_on_panic` verifying that
-unwinding panics leave only initialized zero bytes in the buffer.
-
-## Test Plan
-
-- Ran `cargo test 
-
-**File**: `tonic/src/codec/encode.rs` (modified, +54/-3)
+**File**: `examples/src/grpc-routeguide/client.rs` (modified, +1/-1)
 ```diff
-@@ -172,9 +172,7 @@ where
-     let offset = buf.len();
+@@ -90,7 +90,7 @@ async fn record_route<T: Invoke>(client: &RouteGuideClient<T>) {
  
-     buf.reserve(HEADER_SIZE);
--    unsafe {
--        buf.advance_mut(HEADER_SIZE);
--    }
-+    buf.put_slice(&[0u8; HEADER_SIZE]);
- 
-     if let Some(encoding) = compression_encoding {
-         uncompression_buf.clear();
-@@ -399,3 +397,56 @@ where
+     // Send the request messages.
+     for point in points {
+-        if stream.send(&point).await.is_err() {
++        if stream.send(point).await.is_err() {
+             // RPC error; break to read the status.
+             break;
          }
+```
+
+**File**: `grpc-benchmark/src/client.rs` (modified, +3/-3)
+```diff
+@@ -418,13 +418,13 @@ async fn blocking_streaming(mut opts: RpcOptions) {
+         }
+         let start = Instant::now();
+         // Perform a single ping-pong.
+-        if let Err(()) = tx.send(req.clone()).await {
++        if tx.send(&req).await.is_err() {
+             println!("Stream closed with status: {:?}", rx.status().await);
+             return;
+         }
+ 
+-        if let Err(status) = rx.recv_into(&mut resp).await {
+-            println!("Stream failed with status: {:?}", status);
++        if rx.recv_into(&mut resp).await.is_err() {
++            println!("Stream failed with status: {:?}", rx.status().await);
+             return;
+         };
+         let elapsed = Instant::now().duration_since(start);
+```
+
+**File**: `grpc-protobuf/src/client/client_streaming.rs` (modified, +3/-2)
+```diff
+@@ -33,6 +33,7 @@ use grpc::client::ResponseStreamItem;
+ use grpc::client::SendOptions;
+ use grpc::client::SendStream;
+ use grpc::client::stream_util::RecvStreamValidator;
++use grpc::core::StreamEnded;
+ use protobuf::AsMut;
+ use protobuf::AsView;
+ use protobuf::Message;
+@@ -137,8 +138,8 @@ where
+     /// Note: success does *not* indicate successful transmission of the request
+     /// or successful receipt of the request by the server.  Success only
+     /// indicates that the stream has not yet terminated.
+-    pub async fn send(&mut self, message: &impl AsView<Proxied = Req>) -> Result<(), ()> {
+-        let msg = ProtoSendMessage::from_view(message);
++    pub async fn send(&mut self, message: impl AsView<Proxied = Req>) -> Result<(), StreamEnded> {
++        let msg = ProtoSendMessage::from_view(&message);
+         self.tx.send(&msg, SendOptions::default()).await
      }
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+    use std::panic::catch_unwind;
-+
-+    struct PanickingEncoder;
-+
-+    impl Encoder for PanickingEncoder {
-+        type Item = String;
-+        type Error = Status;
-+
-+        fn encode(
-+            &mut self,
-+            _item: Self::Item,
-+            _dst: &mut EncodeBuf<'_>,
-+        ) -> Result<(), Self::Error> {
-+            panic!("encoder deliberate panic for testing exception safety");
-+        }
-+    }
-+
-+    #[test]
-+    fn encode_item_exception_safety_on_panic() {
-+        let mut encoder = PanickingEncoder;
-+        let mut buf = BytesMut::new();
-+        let mut uncompression_buf = BytesMut::new();
-+
-+        let result = catch_unwind(std::panic::AssertUnwindSafe(|| {
-+            encode_item(
-+                &mut encoder,
-+                &mut buf,
-+                &mut uncompression_buf,
-+                None,
-+                None,
-+                BufferSettings::default(),
-+                "test".to_string(),
-+            )
-+        }));
-+
-+        assert!(result.is_err(), "Encoder panic should unwind correctly.");
-+        // Buffer must only contain initialized bytes (5 zero bytes written by put_slice).
-+        assert_eq!(
-+            buf.len(),
-+            HEADER_SIZE,
-+            "Buffer length should reflect reserved header bytes."
-+        );
-+        assert_eq!(
-+            &buf[..],
-+            &[0u8; HEADER_SIZE],
-+            "Buffer must contain only initialized zero bytes."
-+        );
-+    }
-+}
-```
-
----
-
-### Incident Patch 2: `194f07e6` (2026-09-25)
-**Commit Message**: grpc/service_config: fix flaky service_config tests caused by a test LB policy name collision (#2892)
-
-## Problem
-
-About 1 run in 8, a test in `client::service_config` fails. It can be
-`test_valid_service_config_parsing`, `test_lb_config_resolution` or
-`test_load_balancing_config_serde`, whichever loses the race:
-
->
-thread
-'client::service_config::serde_bindings::test::test_load_balancing_config_serde'
-    panicked at grpc/src/client/service_config/serde_bindings.rs:473:14:
-    called `Option::unwrap()` on a `None` value
-
-Both tests define their own test LB policy and register it in
-`GLOBAL_LB_REGISTRY` under the same name, so the last test to register
-wins. The tests run in parallel, so one test can end up parsing its
-config with the other file's builder. The `builder.name()` assertion
-still passes because both names are the same. The test then panics on
-`downcast_ref::<TestPolicyConfig>().unwrap()`, because the parsed config
-is the other file's `TestPolicyConfig` type.
-
-## Fix
-
-Give each test policy a name unique to its file.
-
-While here, fix the "Invalid config for supported policy" case in
-`test_load_balancing_config_serde`. It used `"testPolicy"`, a name that
-was never registe
-
-**File**: `grpc/src/client/service_config/mod.rs` (modified, +5/-5)
-```diff
-@@ -123,7 +123,7 @@ mod test {
-         }
- 
-         fn name(&self) -> &'static str {
--            "test_policy"
-+            "service_config_test_policy"
-         }
- 
-         fn parse_config(
-@@ -170,7 +170,7 @@ mod test {
- 
-         let json_data = json!({
-             "loadBalancingConfig": [
--                { "test_policy": { "testField": true } },
-+                { "service_config_test_policy": { "testField": true } },
-                 { "round_robin": {} }
-             ],
-             "methodConfig": [
-@@ -206,7 +206,7 @@ mod test {
- 
-         // Verify Load Balancing Config.
-         let (builder, config) = sc.lb_config();
--        assert_eq!(builder.name(), "test_policy");
-+        assert_eq!(builder.name(), "service_config_test_policy");
-         let pf_config = config.downcast_ref::<TestPolicyConfig>().unwrap().clone();
-         assert!(pf_config.test_field);
- 
-@@ -379,13 +379,13 @@ mod test {
-         let json_data = json!({
-             "loadBalancingConfig": [
-                 { "unsupported_lb_policy": { "foo": "bar" } },
--                { "test_policy": { "testField": true } },
-+                { "service_config_test_policy": { "testField": true } },
-                 { "round_robin": {} }
-             ]
-         });
-         let sc = ServiceConfig::parse(&json_data.to_string()).unwrap();
-         let (builder, config) = sc.lb_config();
--        assert_eq!(builder.name(), "test_policy");
-+        assert_eq!(builder.name(), "service_config_test_policy");
-         let pf_config = config.downcast_ref::<TestPolicyConfig>().unwrap().clone();
-         assert!(pf_config.test_field);
  
 ```
 
-**File**: `grpc/src/client/service_config/serde_bindings.rs` (modified, +7/-7)
+**File**: `grpc-protobuf/src/client/mod.rs` (modified, +9/-4)
 ```diff
-@@ -357,7 +357,7 @@ mod test {
+@@ -56,7 +56,9 @@ use grpc::client::interceptor::IntoOnce;
+ use grpc::client::interceptor::InvokeOnceExt as _;
+ use grpc::client::stream_util::RecvStreamValidator;
+ use grpc::core::RecvMessage;
++use grpc::core::StreamEnded;
+ use protobuf::AsMut;
++use protobuf::AsView;
+ use protobuf::Message;
+ 
+ use crate::ProtoRecvMessage;
+@@ -106,7 +108,7 @@ where
+     /// Note: success does *not* indicate successful transmission of the request
+     /// or successful receipt of the request by the server.  Success only
+     /// indicates that the stream has not yet terminated.
+-    pub async fn send(&mut self, message: M) -> Result<(), ()> {
++    pub async fn send(&mut self, message: impl AsView<Proxied = M>) -> Result<(), StreamEnded> {
+         self.tx
+             .send(
+                 &ProtoSendMessage::from_view(&message),
+@@ -146,7 +148,10 @@ where
+ 
+     /// Receives the next response message from the stream into `res` and
+     /// returns `Ok` on success or `Err` if the stream has ended.
+-    pub async fn recv_into(&mut self, res: &mut impl AsMut<MutProxied = M>) -> Result<(), ()> {
++    pub async fn recv_into(
++        &mut self,
++        res: &mut impl AsMut<MutProxied = M>,
++    ) -> Result<(), StreamEnded> {
+         let mut res_view = ProtoRecvMessage::from_mut(res);
+         let mut i = self.rx.recv(&mut res_view).await;
+ 
+@@ -166,9 +171,9 @@ where
+             ResponseStreamItem::Message => Ok(()),
+             ResponseStreamItem::Trailers(trailers) => {
+                 self.status = Some(status_from_trailers(trailers));
+-                Err(())
++                Err(StreamEnded)
              }
- 
-             fn name(&self) -> &'static str {
--                "test_policy"
-+                "serde_bindings_test_policy"
-             }
- 
-             fn parse_config(
-@@ -417,17 +417,17 @@ mod test {
-         let selected = val.load_balancing_config.as_ref().unwrap();
-         assert_eq!(selected.builder.name(), "round_robin");
- 
--        // Multiple policies; picks first supported with parsed config (test_policy)
-+        // Multiple policies; picks first supported with parsed config (serde_bindings_test_policy)
-         let val: TestConfig = serde_json::from_value(json!({
-             "loadBalancingConfig": [
-                 { "unsupported_lb_1": { "key": "val" } },
--                { "test_policy": { "testField": true } },
-+                { "serde_bindings_test_policy": { "testField": true } },
-                 { "round_robin": {} }
-             ]
-         }))
-         .unwrap();
-         let selected = val.load_balancing_config.as_ref().unwrap();
--        assert_eq!(selected.builder.name(), "test_policy");
-+        assert_eq!(selected.builder.name(), "serde_bindings_test_policy");
-         let pf_cfg = selected
-             .config
-             .as_ref()
-@@ -437,7 +437,7 @@ mod test {
- 
-         // Invalid config for supported policy fails deserialization
-         let res: Result<TestConfig, _> = serde_json::from_value(json!({
--            "loadBalancingConfig": [{ "testPolicy": { "testField": "not_a_bool" } }]
-+            "loadBalancingConfig": [{ "serde_bindings_test_policy": { "testField": "not_a_bool" } }]
-         }));
-         assert!(res.is_err());
- 
-@@ -470,14 +470,14 @@ mod test {
-         // Multiple policies; trailing entries after first supported are ignored
-         let val: TestConfig = serde_json::from_value(json!({
-             "loadBalancingConfig": [
--                { "test_policy": { "testField": true } },
-+                { "serde_bindings_test_policy": { "testField": true } },
-                 { "unsupported": { "invalid": 123 }, "other": {} },
-                 {}
-             ]
-         }))
-         .unwrap();
-         let selected = val.load_balancing_config.as_ref().unwrap();
--        assert_eq!(selected.builder.name(), "test_policy");
-+        assert_eq!(selected.builder.name(), "serde_bindings_test_policy");
- 
-         // Invalid entry with multiple keys in single object -> Error
-         let res: Result<TestConfig, _> = serde_json::from_value(json!({
-```
-
----
-
-### Incident Patch 3: `3a60b544` (2026-09-22)
-**Commit Message**: tonic-xds: expose gRFC A29 cluster security parsing (#2876)
-
-## Motivation
-
-`ClusterTlsConfig` lets a custom connector reuse the crate's gRFC A29
-handling instead of re-implementing SAN matching and chain validation.
-The only way to get one is from `MakeConnector::make_connector`, since
-it borrows the channel's cert-provider registry and has no public
-constructor.
-
-Code that runs its own ADS stream already holds the `Cluster` and the
-certificate providers, but it never calls `make_connector`, so it cannot
-get a `ClusterTlsConfig`. That leaves copying the A29 parsing, which is
-about 1300 lines across `security.rs`, `san_matcher.rs` and
-`string_matcher.rs`, all private to the crate.
-
-## Solution
-
-Make `ClusterSecurityConfig` public, with private fields and accessors.
-
-`from_cluster_bytes` parses the `transport_socket` of a serialized
-`Cluster`. It returns `Ok(None)` when the cluster has no transport
-socket, and otherwise fails with the same NACK errors as before. It
-takes the encoded resource rather than a decoded `Cluster` so that the
-envoy protobuf types stay out of this crate's public API, which
-`check-external-types` enforces. A caller driving its own ADS stream has
-those bytes a
-
-**File**: `tonic-xds/src/client/endpoint.rs` (modified, +7/-13)
-```diff
-@@ -24,8 +24,6 @@
- 
- use crate::common::async_util::BoxFuture;
- #[cfg(feature = "_tls-any")]
--use crate::xds::cert_provider::verifier::XdsServerCertVerifier;
--#[cfg(feature = "_tls-any")]
- use crate::xds::cert_provider::{CertProviderRegistry, CertificateProvider};
- use crate::xds::resource::cluster::ClusterResource;
- use crate::xds::resource::security::ClusterSecurityConfig;
-@@ -301,13 +299,13 @@ impl ClusterTlsConfig<'_> {
-     /// Bootstrap instance name of the CA trust bundle used to validate the
-     /// peer's certificate chain.
-     pub fn ca_instance_name(&self) -> &str {
--        &self.security.ca_instance_name
-+        self.security.ca_instance_name()
-     }
- 
-     /// Bootstrap instance name of the local identity (client certificate).
-     /// `Some` implies mTLS is requested for this cluster.
-     pub fn identity_instance_name(&self) -> Option<&str> {
--        self.security.identity_instance_name.as_deref()
-+        self.security.identity_instance_name()
-     }
- 
-     /// Build the gRFC-A29 server-certificate verifier for this cluster.
-@@ -325,15 +323,12 @@ impl ClusterTlsConfig<'_> {
-     ) -> Result<Arc<dyn rustls::client::danger::ServerCertVerifier>, ClusterTlsError> {
-         let ca_provider = self
-             .registry
--            .get(&self.security.ca_instance_name)
-+            .get(self.security.ca_instance_name())
-             .ok_or_else(|| {
--                ClusterTlsError::UnknownCaInstance(self.security.ca_instance_name.clone())
-+                ClusterTlsError::UnknownCaInstance(self.security.ca_instance_name().to_owned())
-             })?
-             .clone();
--        Ok(Arc::new(XdsServerCertVerifier::new(
--            ca_provider,
--            self.security.san_matchers.clone(),
--        )))
-+        Ok(self.security.build_verifier(ca_provider))
-     }
- 
-     /// Resolve the optional mTLS identity provider for this cluster.
-@@ -345,13 +340,12 @@ impl ClusterTlsConfig<'_> {
-         &self,
-     ) -> Result<Option<Arc<dyn CertificateProvider>>, ClusterTlsError> {
-         self.security
--            .identity_instance_name
--            .as_ref()
-+            .identity_instance_name()
-             .map(|name| {
-                 self.registry
-                     .get(name)
-                     .cloned()
--                    .ok_or_else(|| ClusterTlsError::UnknownIdentityInstance(name.clone()))
-+                    .ok_or_else(|| ClusterTlsError::UnknownIdentityInstance(name.to_owned()))
-             })
-             .transpose()
-     }
-```
-
-**File**: `tonic-xds/src/lib.rs` (modified, +5/-0)
-```diff
-@@ -253,6 +253,10 @@ pub use xds::bootstrap::{
- pub use xds::cert_provider_config::TlsChannelCredentials;
- pub use xds::resource::route_config::{RouteConfigMetadata, TypedMetadata};
- pub use xds::uri::{XdsUri, XdsUriError};
-+/// Re-export of the error type returned by
-+/// [`ClusterSecurityConfig::from_cluster_bytes`], so callers can name it
-+/// without a direct `xds-client` dependency.
-+pub use xds_client::Error as XdsError;
- pub use xds_client::TonicCallCredentials;
- 
- #[cfg(feature = "_tls-any")]
-@@ -263,6 +267,7 @@ pub use client::endpoint::{ClusterTlsConfig, ClusterTlsError};
- pub use rustls::client::danger::ServerCertVerifier;
- #[cfg(feature = "_tls-any")]
- pub use xds::cert_provider::{CertProviderError, CertificateData, CertificateProvider, Identity};
-+pub use xds::resource::security::ClusterSecurityConfig;
- 
- pub use xds_client::{Instrument, InstrumentKind, KeyValue, MetricsRecorder, StringValue, Value};
- 
-```
-
-**File**: `tonic-xds/src/xds/cluster_discovery.rs` (modified, +1/-5)
-```diff
-@@ -393,11 +393,7 @@ mod tests {
- 
-     #[cfg(feature = "_tls-any")]
-     fn security(ca: &str, identity: Option<&str>) -> ClusterSecurityConfig {
--        ClusterSecurityConfig {
--            ca_instance_name: ca.into(),
--            identity_instance_name: identity.map(Into::into),
--            san_matchers: vec![],
--        }
-+        ClusterSecurityConfig::for_test(ca, identity)
-     }
- 
-     #[cfg(feature = "_tls-any")]
-```
-
-**File**: `tonic-xds/src/xds/resource/security.rs` (modified, +110/-8)
-```diff
-@@ -45,19 +45,81 @@ const TLS_TRANSPORT_SOCKET_NAME: &str = "envoy.transport_sockets.tls";
- /// Cluster-level TLS security config.
- ///
- /// Holds the instance names referenced by the cluster, not resolved
--/// providers. Resolution against [`CertProviderRegistry`] happens later, at
-+/// providers. Resolving a name to a provider happens later, at
- /// connection-building time, so that this type can be derived during CDS
--/// resource validation (where the registry is not available).
--///
--/// [`CertProviderRegistry`]: crate::xds::cert_provider::CertProviderRegistry
-+/// resource validation.
- #[derive(Debug, Clone)]
--pub(crate) struct ClusterSecurityConfig {
-+pub struct ClusterSecurityConfig {
-     /// Bootstrap instance name for the CA trust bundle. Required.
--    pub ca_instance_name: String,
-+    ca_instance_name: String,
-     /// Bootstrap instance name for client identity. `Some` implies mTLS.
--    pub identity_instance_name: Option<String>,
-+    identity_instance_name: Option<String>,
-     /// SAN matchers for server authorization. May be empty.
--    pub san_matchers: Vec<SanMatcher>,
-+    san_matchers: Vec<SanMatcher>,
-+}
-+
-+impl ClusterSecurityConfig {
-+    /// Parse the `transport_socket` of a serialized CDS `Cluster`.
-+    ///
-+    /// Takes the encoded resource rather than a decoded `Cluster` so that the
-+    /// envoy protobuf types stay out of this crate's public API. A caller
-+    /// driving its own ADS stream has these bytes already: they are what the
-+    /// management server sent.
-+    ///
-+    /// Returns `Ok(None)` when the cluster declares no transport socket and so
-+    /// connects in plaintext, and an error for any A29 NACK condition.
-+    ///
-+    /// [`XdsChannel`](crate::XdsChannel) parses clusters itself and hands the
-+    /// result to a connector, so this is for a caller outside that flow, which
-+    /// holds the resource and its own providers.
-+    pub fn from_cluster_bytes(cluster: &[u8]) -> Result<Option<Self>, Error> {
-+        let cluster = envoy_types::pb::envoy::config::cluster::v3::Cluster::decode(cluster)?;
-+        parse_transport_socket(cluster.transport_socket)
-+    }
-+
-+    /// Bootstrap instance name of the CA trust bundle used to validate the
-+    /// peer's certificate chain.
-+    pub fn ca_instance_name(&self) -> &str {
-+        &self.ca_instance_name
-+    }
-+
-+    /// Bootstrap instance name of the local identity (client certificate).
-+    /// `Some` implies mTLS is requested for this cluster.
-+    pub fn identity_instance_name(&self) -> Option<&str> {
-+        self.identity_instance_name.as_deref()
-+    }
-+
-+    /// Build a config directly, for tests that need a cluster's security
-+    /// settings without a `Cluster` to parse.
-+    #[cfg(test)]
-+    pub(crate) fn for_test(ca_instance_name: &str, identity_instance_name: Option<&str>) -> Self {
-+        Self {
-+            ca_instance_name: ca_instance_name.to_owned(),
-+            identity_instance_name: identity_instance_name.map(str::to_owned),
-+            san_matchers: Vec::new(),
-+        }
-+    }
-+
-+    /// Build the gRFC A29 server-certificate verifier for this cluster.
-+    ///
-+    /// `ca_provider` supplies the trust bundle named by
-+    /// [`ca_instance_name`](Self::ca_instance_name). The bundle is re-read on
-+    /// each handshake, so CA rotation is picked up.
-+    ///
-+    /// Build once per CDS update and clone the returned `Arc` per connection;
-+    /// this is not for the per-request hot path.
-+    #[cfg(feature = "_tls-any")]
-+    pub fn build_verifier(
-+        &self,
-+        ca_provider: std::sync::Arc<dyn crate::xds::cert_provider::CertificateProvider>,
-+    ) -> std::sync::Arc<dyn rustls::client::danger::ServerCertVerifier> {
-+        std::sync::Arc::new(
-+            crate::xds::cert_provider::verifier::XdsServerCertVerifier::new(
-+                ca_provider,
-+                self.san_matchers.clone(),
-+            ),
-+        )
-+    }
- }
- 
- /// Parse a cluster's `transport_socket` into a [`ClusterSecurityConfig`].
-@@ -247,6 +309,7 @@ fn reject(set: bool, field: &str) -> xds_client::Result<()> {
- #[cfg(test)]
- mod tests {
-     use super::*;
-+    use envoy_types::pb::envoy::config::cluster::v3::Cluster;
-     use envoy_types::pb::envoy::extensions::transport_sockets::tls::v3::{
-         CertificateProviderPluginInstance, SubjectAltNameMatcher, subject_alt_name_matcher::SanType,
-     };
-@@ -291,6 +354,45 @@ mod tests {
+-            ResponseStreamItem::StreamClosed => Err(()),
++            ResponseStreamItem::StreamClosed => Err(StreamEnded),
          }
      }
  
-+    fn cluster_bytes(transport_socket: Option<TransportSocket>) -> Vec<u8> {
-+        Cluster {
-+            name: "c".into(),
-+            transport_socket,
-+            ..Default::default()
-+        }
-+        .encode_to_vec()
-+    }
-+
-+    #[test]
-+    fn from_cluster_bytes_reads_the_transport_socket() {
-+        let cluster = cluster_bytes(Some(wrap_upstream(common_ctx(ca_validation_ctx("ca")))));
-+
-+        let security = ClusterSecurityConfig::from_cluster_bytes(&cluster)
-+            .expect("parses")
-+            .expect("not plaintext");
-+
-+
+```
+
+**File**: `grpc-protobuf/src/server/bidi.rs` (modified, +4/-2)
+```diff
+@@ -103,6 +103,8 @@ mod tests {
+     use grpc::core::Address;
+     use grpc::core::ConnectionInfo;
+     use grpc::core::RecvMessage;
++    use grpc::core::StreamEnded;
++    use grpc::core::StreamError;
+     use grpc::credentials::SecurityInfo;
+     use grpc::server::RecvStream;
+     use grpc::server::ResponseStreamItem;
+@@ -138,15 +140,15 @@ mod tests {
+             &mut self,
+             _item: ResponseStreamItem<'a>,
+             _options: SendOptions,
+-        ) -> Result<(), ()> {
++        ) -> Result<(), StreamEnded> {
+             Ok(())
+         }
+     }
+ 
+     struct EmptyRecvStream;
+ 
+     impl RecvStream for EmptyRecvStream {
+-        async fn next(&mut self, _msg: &mut dyn RecvMessage) -> Option<Result<(), ()>> {
++        async fn next(&mut self, _msg: &mut dyn RecvMessage) -> Option<Result<(), StreamError>> {
+             None
+         }
+     }
+```
+
+**File**: `grpc-protobuf/src/server/client_streaming.rs` (modified, +4/-2)
+```diff
+@@ -114,6 +114,8 @@ mod tests {
+     use grpc::core::Address;
+     use grpc::core::ConnectionInfo;
+     use grpc::core::RecvMessage;
++    use grpc::core::StreamEnded;
++    use grpc::core::StreamError;
+     use grpc::credentials::SecurityInfo;
+     use grpc::server::RecvStream;
+     use grpc::server::SendStream;
+@@ -147,15 +149,15 @@ mod tests {
+             &mut self,
+             _item: ResponseStreamItem<'a>,
+             _options: SendOptions,
+-        ) -> Result<(), ()> {
++        ) -> Result<(), StreamEnded> {
+             Ok(())
+         }
+     }
+ 
+     struct EmptyRecvStream;
+ 
+     impl RecvStream for EmptyRecvStream {
+-        async fn next(&mut self, _msg: &mut dyn RecvMessage) -> Option<Result<(), ()>> {
++        async fn next(&mut self, _msg: &mut dyn RecvMessage) -> Option<Result<(), StreamError>> {
+             None
+         }
+     }
+```
+
+**File**: `grpc-protobuf/src/server/mod.rs` (modified, +11/-10)
+```diff
+@@ -50,6 +50,8 @@
+ 
+ use std::marker::PhantomData;
+ 
++use grpc::core::StreamEnded;
++use grpc::core::StreamError;
+ use grpc::server::DynRecvStream;
+ use grpc::server::DynSendStream;
+ use grpc::server::ResponseStreamItem;
+@@ -93,25 +95,25 @@ where
+ 
+     /// Receives the next request message from the stream into `req`.
+     ///
+-    /// Returns `Some(Ok(()))` on success, `Some(Err(()))` if the stream
+-    /// encountered an error, or `None` if the client has closed the stream.
++    /// Returns `Some(Ok(()))` on success, `Some(Err(StreamError))` if the
++    /// stream encountered an error, or `None` if the client has closed the stream.
+     pub async fn recv_into(
+         &mut self,
+         req: &mut impl AsMut<MutProxied = M>,
+-    ) -> Option<Result<(), ()>> {
++    ) -> Option<Result<(), StreamError>> {
+         let mut req_view = ProtoRecvMessage::from_mut(req);
+         self.rx.dyn_next(&mut req_view).await
+     }
+ 
+     /// Receives the next request message from the stream.
+     ///
+-    /// Returns `Some(Ok(msg))` on success, `Some(Err(()))` if the stream
+-    /// encountered an error, or `None` if the client has closed the stream.
+-    pub async fn recv(&mut self) -> Option<Result<M, ()>> {
++    /// Returns `Some(Ok(msg))` on success, `Some(Err(StreamError))` if the
++    /// stream encountered an error, or `None` if the client has closed the stream.
++    pub async fn recv(&mut self) -> Option<Result<M, StreamError>> {
+         let mut req = M::default();
+         match self.recv_into(&mut req).await {
+             Some(Ok(())) => Some(Ok(req)),
+-            Some(Err(())) => Some(Err(())),
++            Some(Err(e)) => Some(Err(e)),
+             None => None,
+         }
+     }
+@@ -141,11 +143,10 @@ where
+     ///
+     /// Note: success does *not* indicate successful receipt of the response by
+     /// the client; it only indicates that the stream has not yet terminated.
+-    #[allow(clippy::result_unit_err)]
+-    pub async fn send(&mut self, resp: &impl AsView<Proxied = M>) -> Result<(), ()> {
++    pub async fn send(&mut self, resp: impl AsView<Proxied = M>) -> Result<(), StreamEnded> {
+         self.tx
+             .dyn_send(
+-                ResponseStreamItem::Message(&ProtoSendMessage::from_view(resp)),
++                ResponseStreamItem::Message(&ProtoSendMessage::from_view(&resp)),
+                 SendOptions::default(),
+             )
+             .await
+```
+
+**File**: `grpc-protobuf/src/server/server_streaming.rs` (modified, +9/-7)
+```diff
+@@ -138,6 +138,8 @@ mod tests {
+     use grpc::core::Address;
+     use grpc::core::ConnectionInfo;
+     use grpc::core::RecvMessage;
++    use grpc::core::StreamEnded;
++    use grpc::core::StreamError;
+     use grpc::credentials::SecurityInfo;
+     use grpc::server::RecvStream;
+     use grpc::server::ResponseStreamItem;
+@@ -172,32 +174,32 @@ mod tests {
+             &mut self,
+             _item: ResponseStreamItem<'a>,
+             _options: SendOptions,
+-        ) -> Result<(), ()> {
++        ) -> Result<(), StreamEnded> {
+             Ok(())
+         }
+     }
+ 
+     struct MockRecvStream {
+-        items: VecDeque<Option<Result<(), ()>>>,
++        items: VecDeque<Option<Result<(), StreamError>>>,
+     }
+ 
+     impl MockRecvStream {
+-        fn new(items: impl IntoIterator<Item = Option<Result<(), ()>>>) -> Self {
++        fn new(items: impl IntoIterator<Item = Option<Result<(), StreamError>>>) -> Self {
+             Self {
+                 items: items.into_iter().collect(),
+             }
+         }
+     }
+ 
+     impl RecvStream for MockRecvStream {
+-        async fn next(&mut self, _msg: &mut dyn RecvMessage) -> Option<Result<(), ()>> {
++        async fn next(&mut self, _msg: &mut dyn RecvMessage) -> Option<Result<(), StreamError>> {
+             self.items.pop_front().unwrap_or(None)
+         }
+     }
+ 
+     async fn run_test(
+         called: &Arc<AtomicBool>,
+-        items: impl IntoIterator<Item = Option<Result<(), ()>>>,
++        items: impl IntoIterator<Item = Option<Result<(), StreamError>>>,
+     ) -> Trailers {
+         let adapter = ServerStreamingAdapter::new(TestServerStreamingMethod {
+             called: called.clone(),
+@@ -255,7 +257,7 @@ mod tests {
+     #[tokio::test]
+     async fn test_server_streaming_stream_failure_on_first_message_returns_error() {
+         let called = Arc::new(AtomicBool::new(false));
+-        let trailers = run_test(&called, [Some(Err(()))]).await;
++        let trailers = run_test(&called, [Some(Err(StreamError))]).await;
+ 
+         let status = trailers
+             .status()
+@@ -272,7 +274,7 @@ mod tests {
+     #[tokio::test]
+     async fn test_server_streaming_stream_failure_on_second_message_returns_error() {
+         let called = Arc::new(AtomicBool::new(false));
+-        let trailers = run_test(&called, [Some(Ok(())), Some(Err(()))]).await;
++        let trailers = run_test(&called, [Some(Ok(())), Some(Err(StreamError))]).await;
+ 
+         let status = trailers
+             .status()
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #2928** (2026-10-15): grpc/load_balancing: Remove unused OneSubchannelPicker. (@nathanielford)
+- **PR #2927** (2026-10-19): grpc/protobuf: avoid unit Result Err; use impl AsView on all sends (@dfawley)
 - **PR #2926** (2026-10-14): grpc/load_balancing: add picker expectation helpers to TestEnv (@nathanielford)
 - **PR #2924** (closed): tonic-xds: only use endpoints of the highest healthy priority (@adriangb)
 - **PR #2923** (2026-10-13): *: Prepare for rust v1.100 (@dfawley)
 - **PR #2922** (closed): grpc: add keepalive and flow control window channel options (@arianvp)
-- **PR #2921** (closed): grpc: add max send and receive message size call options (@arianvp)
 
 ---
 
@@ -2505,72 +2359,28 @@ those bytes a
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. codec): eliminate uninitialized memory in encode_item on unwind (#2847)
+## X. grpc/protobuf: avoid unit Result Err; use impl AsView on all sends (#2927)
 
 **RULE**:
-When implementing operations in `tonic/src/codec/encode.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in grpc/grpc-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `examples/src/grpc-routeguide/client.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in grpc/grpc-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `46622e93`: codec): eliminate uninitialized memory in encode_item on unwind (#2847). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cfe80f9d`: grpc/protobuf: avoid unit Result Err; use impl AsView on all sends (#2927). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tonic/src/codec/encode.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/src/grpc-routeguide/client.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    buf.put_slice(&[0u8; HEADER_SIZE]);
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use std::panic::catch_unwind;
-
-    struct PanickingEncoder;
-
-    impl Encoder for PanickingEncoder {
-        type Item = String;
-        type Error = Status;
-
-        fn encode(
-            &mut self,
-            _item: Self::Item,
-            _dst: &mut EncodeBuf<'_>,
-        ) -> Result<(), Self::Error> {
-            panic!("encoder deliberate panic for testing exception safety");
-        }
-    }
-
-    #[test]
-    fn encode_item_exception_safety_on_panic() {
-        let mut encoder = PanickingEncoder;
-        let mut buf = BytesMut::new();
-        let mut uncompression_buf = BytesMut::new();
-
-        let result = catch_unwind(std::panic::AssertUnwindSafe(|| {
-            encode_item(
-                &mut encoder,
-                &mut buf,
-                &mut uncompression_buf,
-                None,
-                None,
-                BufferSettings::default(),
-                "test".to_string(),
-            )
-        }));
-
-        assert!(result.is_err(), "Encoder panic should unwind correctly.");
-        // Buffer must only contain initialized bytes (5 zero bytes written by put_slice).
-    
+        if stream.send(point).await.is_err() {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    unsafe {
-        buf.advance_mut(HEADER_SIZE);
-    }
+        if stream.send(&point).await.is_err() {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `46622e93` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cfe80f9d` are properly handled with clean fallback behavior.

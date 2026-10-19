@@ -3421,3 +3421,10 @@ Every entry in this ledger must capture:
 | `learn-github-lucide-icons-lucide` | `https://github.com/lucide-icons/lucide` | `02eb9161` | Multi-dimensional audit evidence | 2026-10-19T18:29:42.736Z |
 | `learn-github-android-kotlin-multiplatform-samples` | `https://github.com/android/kotlin-multiplatform-samples` | `7844c733` | Multi-dimensional audit evidence | 2026-10-19T18:29:48.945Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `374d505a` | Multi-dimensional audit evidence | 2026-10-19T18:29:53.161Z |
+| `learn-github-angular-angular` | `https://github.com/angular/angular` | `093dd364` | Multi-dimensional audit evidence | 2026-10-19T18:35:48.143Z |
+| `learn-github-adobe-structured-data-validator` | `https://github.com/adobe/structured-data-validator` | `66e7610a` | Multi-dimensional audit evidence | 2026-10-19T18:35:50.269Z |
+| `learn-github-grpc-grpc-rust` | `https://github.com/grpc/grpc-rust` | `cfe80f9d` | Multi-dimensional audit evidence | 2026-10-19T18:35:51.494Z |
+| `learn-github-hi-manshu-charty` | `https://github.com/hi-manshu/charty` | `c7ba0b05` | Multi-dimensional audit evidence | 2026-10-19T18:35:57.059Z |
+| `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `e63326d6` | Multi-dimensional audit evidence | 2026-10-19T18:36:01.184Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `b012a600` | Multi-dimensional audit evidence | 2026-10-19T18:36:04.243Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `89b9e75b` | Multi-dimensional audit evidence | 2026-10-19T18:36:07.758Z |

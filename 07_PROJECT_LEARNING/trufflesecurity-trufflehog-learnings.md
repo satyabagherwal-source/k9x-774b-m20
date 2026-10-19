@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source**: github ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
-> **Source Version**: `048de9ff`  
+> **Source Version**: `e63326d6`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T23:39:15.772Z  
+> **Timestamp**: 2026-10-19T18:36:01.001Z  
 > **Learning ID**: `learn-github-trufflesecurity-trufflehog`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T23:39:15.765Z  
+> **Harvest Timestamp**: 2026-10-19T18:36:00.996Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Find, verify, and analyze leaked credentials
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 28574 stars
+- **Stars / Engagement**: 28592 stars
 
 ---
 
@@ -1140,411 +1140,489 @@ func (s Scanner) Description() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `048de9ff` (2026-10-17)
-**Commit Message**: Update module google.golang.org/grpc to v1.83.2 [SECURITY] (#5431)
+### Incident Patch 1: `e63326d6` (2026-10-19)
+**Commit Message**: github: name the missing permission when a comment listing is refused (#5438)
 
-**File**: `go.mod` (modified, +5/-5)
+* Name the missing permission when a GitHub comment walk is refused
+
+When a GitHub App or fine-grained personal access token lacks a permission
+an issue or pull request listing needs, GitHub answers 403 and names what
+the endpoint accepts in the X-Accepted-GitHub-Permissions header. The scan
+surfaced only "Resource not accessible by integration", leaving the user to
+work out which permission was missing.
+
+fetchWithRetry now turns such a 403 into a permissionError that names the
+required permission(s), says whether the credential is an app or a token and
+how to fix it, and keeps the original error for errors.Is/As. It is never
+retried. Other errors, including a 403 without the header, pass through
+unchanged.
+
+Co-authored-by: Cursor <[REDACTED_EMAIL]>
+
+* Report each failed GitHub comment phase as its own chunk error
+
+The REST comment scan runs its phases independently and joins their
+failures, and scanRepo reported that join as a single chunk error. A repo
+missing several permissions showed one multi-line error in which only the
+first line carried the "error scanning comments" context.
+
+scanRepo now splits
+
+**File**: `pkg/sources/github/comments_test.go` (modified, +57/-2)
 ```diff
-@@ -106,11 +106,11 @@ require (
- 	go.uber.org/automaxprocs v1.6.0
- 	go.uber.org/mock v0.6.0
- 	go.uber.org/zap v1.27.0
--	golang.org/x/crypto v0.54.0
--	golang.org/x/net v0.57.0
-+	golang.org/x/crypto v0.55.0
-+	golang.org/x/net v0.58.0
- 	golang.org/x/oauth2 v0.36.0
- 	golang.org/x/sync v0.22.0
--	golang.org/x/text v0.40.0
-+	golang.org/x/text v0.41.0
- 	golang.org/x/time v0.14.0
- 	google.golang.org/api v0.264.0
- 	google.golang.org/protobuf v1.36.11
-@@ -315,13 +315,13 @@ require (
- 	go.uber.org/multierr v1.11.0 // indirect
- 	go.yaml.in/yaml/v3 v3.0.5 // indirect
- 	go4.org v0.0.0-20230225012048-214862532bf5 // indirect
--	golang.org/x/mod v0.37.0 // indirect
-+	golang.org/x/mod v0.38.0 // indirect
- 	golang.org/x/sys v0.47.0 // indirect
- 	golang.org/x/term v0.45.0 // indirect
- 	google.golang.org/genproto v0.0.0-20260128011058-8636f8732409 // indirect
- 	google.golang.org/genproto/googleapis/api v0.0.0-20260720211330-0afa2a65878a // indirect
- 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260720211330-0afa2a65878a // indirect
--	google.golang.org/grpc v1.83.1 // indirect
-+	google.golang.org/grpc v1.83.2 // indirect
- 	gopkg.in/warnings.v0 v0.1.2 // indirect
- 	pault.ag/go/topsort v0.1.1 // indirect
- )
-```
-
-**File**: `go.sum` (modified, +10/-10)
-```diff
-@@ -844,8 +844,8 @@ golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8U
- golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
- golang.org/x/crypto v0.0.0-20210921155107-089bfa567519/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
- golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d/go.mod h1:IxCIyHEi3zRg3s0A5j5BB6A9Jmi73HwBIUl50j+osU4=
--golang.org/x/crypto v0.54.0 h1:YLIA59K4fiNzHzjnZt2tUJQjQtUWfWbeHBqKtk3eScw=
--golang.org/x/crypto v0.54.0/go.mod h1:KWL8ny2AZdGR2cWmzeHrp2azQPGogOv+HeQaVEXC2dk=
-+golang.org/x/crypto v0.55.0 h1:+KWHjbgOaAQ66dh/YlkZKHlz9ZUlq61AFirAR9ntP8M=
-+golang.org/x/crypto v0.55.0/go.mod h1:uq0V9dE/fzQuJtbnL+2EhWOE63vo164FY8xqEnV9xis=
- golang.org/x/exp v0.0.0-20190121172915-509febef88a4/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
- golang.org/x/exp v0.0.0-20190306152737-a1d7652674e8/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
- golang.org/x/exp v0.0.0-20190510132918-efd6b22b2522/go.mod h1:ZjyILWgesfNpC6sMxTJOJm9Kp84zZh5NQWvqDGG3Qr8=
-@@ -875,8 +875,8 @@ golang.org/x/mod v0.1.1-0.20191105210325-c90efee705ee/go.mod h1:QqPTAvyqsEbceGzB
- golang.org/x/mod v0.2.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
- golang.org/x/mod v0.3.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
- golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4/go.mod h1:jJ57K6gSWd91VN4djpZkiMVwK6gcyfeH4XE8wZrZaV4=
--golang.org/x/mod v0.37.0 h1:vF1DjpVEshcIqoEaauuHebaLk1O1forxjxBaVn884JQ=
--golang.org/x/mod v0.37.0/go.mod h1:m8S8VeM9r4dzDwjrKO0a1sZP3YjeMamRRlD+fmR2Q/0=
-+golang.org/x/mod v0.38.0 h1:MECBjubtXD7yj4HrhIUcywNaGeNVUdfVnxmPajOk4yk=
-+golang.org/x/mod v0.38.0/go.mod h1:V6Xz0pq8TQ3dGqVQ1FVHuelZpAL0uNhSkk9ogYP3c40=
- golang.org/x/net v0.0.0-20180724234803-3673e40ba225/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
- golang.org/x/net v0.0.0-20180826012351-8a410e7b638d/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
- golang.org/x/net v0.0.0-20180906233101-161cd47e91fd/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
-@@ -898,8 +898,8 @@ golang.org/x/net v0.0.0-20210226172049-e18ecbb05110/go.mod h1:m0MpNAwzfU5UDzcl9v
- golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=
- golang.org/x/net v0.0.0-20220722155237-a158d28d115b/go.mod h1:XRhObCWvk6IyKnWLug+ECip1KBveYUHfp+8e9klMJ9c=
- golang.org/x/net v0.7.0/go.mod h1:2Tu9+aMcznHK/AK1HMvgo6xiTLG5rD5rZLDS+rp2Bjs=
--golang.org/x/net v0.57.0 h1:K5+3DljvIuDG9/Jv9rvyMywYNFCQ9RSUY6OOTTkT+tE=
--golang.org/x/net v0.57.0/go.mod h1:KpXc8iv+r3XplLAG/f7Jsf9RPszJzdR0f58q9vGOuEU=
-+golang.org/x/net v0.58.0 h1:ynWG7rqYi4ccpTEuPZ2QGWHktVEM9DMCj9yzDE0Q7To=
-+golang.org/x/net v0.58.0/go.mod h1:YwCddHnFlT7eLQqVprV19OnhLGtc5xOKgE0RyqgfWAU=
- golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
- golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
- golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
-@@ -972,8 +972,8 @@ golang.org/x/text v0.3.6/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
- golang.org/x/text v0.3.7/go.mod h1:u+2+/6zg+i71rQMx5EYifcz6MCKuco9NR6JIITiCfzQ=
- golang.org/x/text v0.3.8/go.mod h1:E6s5w1FMmriuDzIBO73fBruAKo1PCIq6d2Q6DHfQ8WQ=
- golang.org/x/text v0.7.0/go.mod h1:mrYo+phRRbMaCq/xk9113O4dZlRixOauAjOtrjsXDZ8=
--golang.org/x/text v0.40.0 h1:Ub2Z6/xjgF1WrYQz2nuITOEegKFtiIy+rieRJ5lHZKs=
--golang.org/x/text v0.40.0/go.mod h1:hpnzDAfGV753zIKo+wk3u1bVKCGPbrnF7+7LBF/UHVY=
-+golang.org/x/text v0.41.0 h1:vz/seA0lnX87Othu2f/0L24RcgrXD9/YFTSuGjj3rH8=
-+golang.org/x/text v0.41.0/go.mod h1:jvf1O8ajNzZqhSrQBPbutR/EB83Cc0CFrezNQIwbb5M=
- golang.org/x/time v0.0.0-20181108054448-85acf8d2951c/go.mod h1:tRJNPiyCQ0inRvYxbN9jk5I+vvW/OXSQhTDSoE431IQ=
- golang.org/x/time v0.0.0-20190308202827-9d24e82272b4/go.mod h1:tRJNPiyCQ0inRvYxbN9jk5I+vvW/OXSQhTDSoE431IQ=
- golang.org/x/time v0.14.0 h1:MRx4UaLrDotUKUdCIqzPC48t1Y9hANFKIRpNx+Te8PI=
-@@ -1057,8 +1057,8 @@ google.golang.org/grpc v1.26.0/go.mod h1:qbnxyOmOxrQa7FizSgH+ReBfzJrCY1pSN7KXBS8
- google.golang.org/grpc v1.27.0/go.mod h1:qbnxyOmOxrQa7FizSgH+ReBfzJrCY1pSN7KXBS8abTk=
- google.golang.org/grpc v1.27.1/go.mod h1:qbnxyOmOxrQa7FizSgH+ReBfzJrCY1pSN7KXBS8abTk=
- google.golang.org/grpc v1.29.1/go.mod h1:itym6AZVZYACWQqET3MqgPpjcuV5QH3BxFS3IjizoKk=
--google.golang.org/grpc v1.83.1 h1:HIO0+BEtBP6soyqvqC8sNUjZ7bTs+0hFQuFF+RAy++Y=
--google.golang.org/grpc v1.83.1/go.mod h1:kDyl6SKsiHKt0uylY5gtn5cEjkrIOhQOGDgIc4JGwzQ=
-+google.golang.org/grpc v1.83.2 h1:EManeRomTObA0BU7I8vXgg/78uE5MJ9M8B39EX2WscU=
-+google.golang.org/grpc v1.83.2/go.mod h1:YPI1hK3kDked6iHvgX3tR0y+nX/qpMFKhPgFsokw1S8=
- google.golang.org/protobuf v0.0.0-20200109180630-ec00e32a8dfd/go.mod h1:DFci5gLYBciE7Vtevhsrf46CRTquxDuWsQurQQe4oz8=
- google.golang.org/protobuf v0.0.0-20200221191635-4d8936d0db64/go.mod h1:kwYJMbMJ01Woi6D6+Kah6886xMZcty6N
-```
-
----
-
-### Incident Patch 2: `9e93a20b` (2026-10-14)
-**Commit Message**: Update module google.golang.org/grpc to v1.83.1 [SECURITY] (#5426)
-
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `go.mod` (modified, +10/-10)
-```diff
-@@ -55,7 +55,7 @@ require (
- 	github.com/google/go-containerregistry v0.20.6
- 	github.com/google/go-github/v67 v67.0.0
- 	github.com/google/uuid v1.6.0
--	github.com/googleapis/gax-go/v2 v2.16.0
-+	github.com/googleapis/gax-go/v2 v2.17.0
- 	github.com/hashicorp/go-retryablehttp v0.7.8
- 	github.com/hashicorp/golang-lru/v2 v2.0.7
- 	github.com/jackc/pgx/v5 v5.9.2
-@@ -111,7 +111,7 @@ require (
- 	golang.org/x/sync v0.22.0
- 	golang.org/x/text v0.40.0
- 	golang.org/x/time v0.14.0
--	google.golang.org/api v0.259.0
-+	google.golang.org/api v0.264.0
- 	google.golang.org/protobuf v1.36.11
- 	gopkg.in/h2non/gock.v1 v1.1.2
- 	gopkg.in/yaml.v2 v2.4.0
-@@ -122,9 +122,9 @@ require (
- )
+@@ -3,6 +3,7 @@ package github
+ import (
+ 	"bytes"
+ 	"encoding/json"
++	"errors"
+ 	"fmt"
+ 	"net/http"
+ 	"net/http/httptest"
+@@ -54,10 +55,12 @@ func newFakeGitHub(t *testing.T) *fakeGitHub {
  
- require (
--	cel.dev/expr v0.25.1 // indirect
-+	cel.dev/expr v0.25.2 // indirect
- 	cloud.google.com/go v0.121.6 // indirect
--	cloud.google.com/go/auth v0.18.0 // indirect
-+	cloud.google.com/go/auth v0.18.2 // indirect
- 	cloud.google.com/go/auth/oauth2adapt v0.2.8 // indirect
- 	cloud.google.com/go/compute/metadata v0.9.0 // indirect
- 	cloud.google.com/go/iam v1.5.3 // indirect
-@@ -135,7 +135,7 @@ require (
- 	github.com/Azure/go-ntlmssp v0.1.1 // indirect
- 	github.com/AzureAD/microsoft-authentication-library-for-go v1.3.2 // indirect
- 	github.com/DataDog/zstd v1.5.5 // indirect
--	github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.32.0 // indirect
-+	github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.33.0 // indirect
- 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v0.53.0 // indirect
- 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapping v0.53.0 // indirect
- 	github.com/Microsoft/go-winio v0.6.2 // indirect
-@@ -217,7 +217,7 @@ require (
- 	github.com/google/go-querystring v1.2.0 // indirect
- 	github.com/google/pprof v0.0.0-20240227163752-401108e1b7e7 // indirect
- 	github.com/google/s2a-go v0.1.9 // indirect
--	github.com/googleapis/enterprise-certificate-proxy v0.3.7 // indirect
-+	github.com/googleapis/enterprise-certificate-proxy v0.3.11 // indirect
- 	github.com/gorilla/css v1.0.1 // indirect
- 	github.com/gorilla/websocket v1.5.3 // indirect
- 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0 // indirect
-@@ -279,7 +279,7 @@ require (
- 	github.com/sirupsen/logrus v1.9.4 // indirect
- 	github.com/skeema/knownhosts v1.3.1 // indirect
- 	github.com/sorairolake/lzip-go v0.3.5 // indirect
--	github.com/spiffe/go-spiffe/v2 v2.6.0 // indirect
-+	github.com/spiffe/go-spiffe/v2 v2.7.0 // indirect
- 	github.com/stretchr/objx v0.5.3 // indirect
- 	github.com/tetratelabs/wazero v1.12.0 // indirect
- 	github.com/therootcompany/xz v1.0.1 // indirect
-@@ -301,7 +301,7 @@ require (
- 	github.com/yuin/goldmark-emoji v1.0.5 // indirect
- 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
- 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
--	go.opentelemetry.io/contrib/detectors/gcp v1.43.0 // indirect
-+	go.opentelemetry.io/contrib/detectors/gcp v1.44.0 // indirect
- 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.62.0 // indirect
- 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.68.0 // indirect
- 	go.opentelemetry.io/otel v1.45.0 // indirect
-@@ -317,10 +317,10 @@ require (
- 	golang.org/x/mod v0.37.0 // indirect
- 	golang.org/x/sys v0.47.0 // indirect
- 	golang.org/x/term v0.45.0 // indirect
--	google.golang.org/genproto v0.0.0-20251202230838-ff82c1b0f217 // indirect
-+	google.golang.org/genproto v0.0.0-20260128011058-8636f8732409 // indirect
- 	google.golang.org/genproto/googleapis/api v0.0.0-20260720211330-0afa2a65878a // indirect
- 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260720211330-0afa2a65878a // indirect
--	google.golang.org/grpc v1.82.1 // indirect
-+	google.golang.org/grpc v1.83.1 // indirect
- 	gopkg.in/warnings.v0 v0.1.2 // indirect
- 	pault.ag/go/topsort v0.1.1 // indirect
- )
+ var testRepo = repoInfo{owner: "o", name: "r", fullName: "o/r"}
+ 
+-// collectingReporter records the link of every chunk the scan emits.
++// collectingReporter records the link of every chunk the scan emits, and every
++// chunk error it reports.
+ type collectingReporter struct {
+ 	mu    sync.Mutex
+ 	links []string
++	errs  []error
+ }
+ 
+ func (r *collectingReporter) ChunkOk(_ context.Context, chunk sources.Chunk) error {
+@@ -67,7 +70,12 @@ func (r *collectingReporter) ChunkOk(_ context.Context, chunk sources.Chunk) err
+ 	return nil
+ }
+ 
+-func (r *collectingReporter) ChunkErr(context.Context, error) error { return nil }
++func (r *collectingReporter) ChunkErr(_ context.Context, err error) error {
++	r.mu.Lock()
++	defer r.mu.Unlock()
++	r.errs = append(r.errs, err)
++	return nil
++}
+ 
+ func issueRecord(number int, updated time.Time) fakeRecord {
+ 	return fakeRecord{updated: updated, body: map[string]any{
+@@ -311,6 +319,53 @@ func TestCommentScan_FailedPhaseDoesNotStopTheOthers(t *testing.T) {
+ 	}, reporter.links)
+ }
+ 
++// deniedWith returns a fail func that refuses every request the way GitHub
++// refuses a GitHub App that lacks a permission, naming accepted as what the
++// endpoint requires.
++func deniedWith(accepted string) func(int, http.ResponseWriter, *http.Request) bool {
++	return func(_ int, w http.ResponseWriter, _ *http.Request) bool {
++		w.Header().Set(acceptedPermissionsHeader, accepted)
++		writeJSON(w, http.StatusForbidden, map[string]string{"message": appDeniedMessage})
++		return true
++	}
++}
++
++func TestCommentScan_EachFailedPhaseIsReportedAsItsOwnChunkError(t *testing.T) {
++	gh := newFakeGitHub(t)
++	seedRepo(gh)
++	gh.issues.fail = deniedWith("issues=read")
++	gh.issueComments.fail = deniedWith("issues=read; pull_requests=read")
++	gh.prComments.fail = deniedWith("pull_requests=read")
++	s := &Source{includeIssueComments: true, includePRComments: true}
++
++	reporter, err := scanComments(t, s, gh, nil)
++	require.Error(t, err)
++	require.NoError(t, reportCommentErrors(context.Background(), reporter, err))
++
++	require.Len(t, reporter.errs, 3)
++	wantPrefixes := []string{
++		"error scanning comments: issues and pull requests: walk incomplete after 0 items: missing GitHub App permission: the request needs Issues (read);",
++		"error scanning comments: issue comments: walk incomplete after 0 items: missing GitHub App permission: the request needs Issues (read) or Pull requests (read);",
++		"error scanning comments: pull request comments: walk incomplete after 0 items: missing GitHub App permission: the request needs Pull requests (read);",
++	}
++	for i, reported := range reporter.errs {
++		assert.True(t, strings.HasPrefix(reported.Error(), wantPrefixes[i]), "got %q", reported.Error())
++		assert.NotContains(t, reported.Error(), "\n", "each chunk error covers one phase")
++		var permErr *permissionError
++		assert.ErrorAs(t, reported, &permErr)
++	}
++	assert.Empty(t, reporter.links)
++}
++
++func TestReportCommentErrors_UnjoinedErrorIsReportedOnce(t *testing.T) {
++	reporter := &collectingReporter{}
++
++	require.NoError(t, reportCommentErrors(context.Background(), reporter, errors.New("could not get API client")))
++
++	require.Len(t, reporter.errs, 1)
++	assert.EqualError(t, reporter.errs[0], "error scanning comments: could not get API client")
++}
++
+ func TestCommentScan_RetryLogNamesTheListing(t *testing.T) {
+ 	gh := newFakeGitHub(t)
+ 	seedRepo(gh)
 ```
 
-**File**: `go.sum` (modified, +22/-22)
+**File**: `pkg/sources/github/github.go` (modified, +23/-4)
 ```diff
-@@ -1,5 +1,5 @@
--cel.dev/expr v0.25.1 h1:1KrZg61W6TWSxuNZ37Xy49ps13NUovb66QLprthtwi4=
--cel.dev/expr v0.25.1/go.mod h1:hrXvqGP6G6gyx8UAHSHJ5RGk//1Oj5nXQ2NI02Nrsg4=
-+cel.dev/expr v0.25.2 h1:K6j46C81hXtZQfuX60cVWQFBJahKSE2gfRbNuvr5bFs=
-+cel.dev/expr v0.25.2/go.mod h1:hrXvqGP6G6gyx8UAHSHJ5RGk//1Oj5nXQ2NI02Nrsg4=
- cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
- cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
- cloud.google.com/go v0.38.0/go.mod h1:990N+gfupTy94rShfmMCWGDn0LpTmnzTp2qbd1dvSRU=
-@@ -11,8 +11,8 @@ cloud.google.com/go v0.50.0/go.mod h1:r9sluTvynVuxRIOHXQEHMFffphuXHOMZMycpNR5e6T
- cloud.google.com/go v0.53.0/go.mod h1:fp/UouUEsRkN6ryDKNW/Upv/JBKnv6WDthjR6+vze6M=
- cloud.google.com/go v0.121.6 h1:waZiuajrI28iAf40cWgycWNgaXPO06dupuS+sgibK6c=
- cloud.google.com/go v0.121.6/go.mod h1:coChdst4Ea5vUpiALcYKXEpR1S9ZgXbhEzzMcMR66vI=
--cloud.google.com/go/auth v0.18.0 h1:wnqy5hrv7p3k7cShwAU/Br3nzod7fxoqG+k0VZ+/Pk0=
--cloud.google.com/go/auth v0.18.0/go.mod h1:wwkPM1AgE1f2u6dG443MiWoD8C3BtOywNsUMcUTVDRo=
-+cloud.google.com/go/auth v0.18.2 h1:+Nbt5Ev0xEqxlNjd6c+yYUeosQ5TtEUaNcN/3FozlaM=
-+cloud.google.com/go/auth v0.18.2/go.mod h1:xD+oY7gcahcu7G2SG2DsBerfFxgPAJz17zz2joOFF3M=
- cloud.google.com/go/auth/oauth2adapt v0.2.8 h1:keo8NaayQZ6wimpNSmW5OPc283g65QNIiLpZnkHRbnc=
- cloud.google.com/go/auth/oauth2adapt v0.2.8/go.mod h1:XQ9y31RkqZCcwJWNSx2Xvric3RrU88hAYYbjDWYDL+c=
- cloud.google.com/go/bigquery v1.0.1/go.mod h1:i/xbL2UlR5RvWAURpBYZTtm/cXjCha9lbfbpx4poX+o=
-@@ -24,8 +24,8 @@ cloud.google.com/go/iam v1.5.3 h1:+vMINPiDF2ognBJ97ABAYYwRgsaqxPbQDlMnbHMjolc=
- cloud.google.com/go/iam v1.5.3/go.mod h1:MR3v9oLkZCTlaqljW6Eb2d3HGDGK5/bDv93jhfISFvU=
- cloud.google.com/go/logging v1.13.1 h1:O7LvmO0kGLaHY/gq8cV7T0dyp6zJhYAOtZPX4TF3QtY=
- cloud.google.com/go/logging v1.13.1/go.mod h1:XAQkfkMBxQRjQek96WLPNze7vsOmay9H5PqfsNYDqvw=
--cloud.google.com/go/longrunning v0.7.0 h1:FV0+SYF1RIj59gyoWDRi45GiYUMM3K1qO51qoboQT1E=
--cloud.google.com/go/longrunning v0.7.0/go.mod h1:ySn2yXmjbK9Ba0zsQqunhDkYi0+9rlXIwnoAf+h+TPY=
-+cloud.google.com/go/longrunning v0.8.0 h1:LiKK77J3bx5gDLi4SMViHixjD2ohlkwBi+mKA7EhfW8=
-+cloud.google.com/go/longrunning v0.8.0/go.mod h1:UmErU2Onzi+fKDg2gR7dusz11Pe26aknR4kHmJJqIfk=
- cloud.google.com/go/monitoring v1.24.3 h1:dde+gMNc0UhPZD1Azu6at2e79bfdztVDS5lvhOdsgaE=
- cloud.google.com/go/monitoring v1.24.3/go.mod h1:nYP6W0tm3N9H/bOw8am7t62YTzZY+zUeQ+Bi6+2eonI=
- cloud.google.com/go/pubsub v1.0.1/go.mod h1:R0Gpsv3s54REJCy4fxDixWD93lHJMoZTyQ2kNxGRt3I=
-@@ -67,8 +67,8 @@ github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03
- github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
- github.com/DataDog/zstd v1.5.5 h1:oWf5W7GtOLgp6bciQYDmhHHjdhYkALu6S/5Ni9ZgSvQ=
- github.com/DataDog/zstd v1.5.5/go.mod h1:g4AWEaM3yOg3HYfnJ3YIawPnVdXJh9QME85blwSAmyw=
--github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.32.0 h1:rIkQfkCOVKc1OiRCNcSDD8ml5RJlZbH/Xsq7lbpynwc=
--github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.32.0/go.mod h1:RD2SsorTmYhF6HkTmDw7KmPYQk8OBYwTkuasChwv7R4=
-+github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.33.0 h1:l7+6kwRMJNwdCvYdDl7Eax+wzEYHSnNY7zrrfbhDdTA=
-+github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.33.0/go.mod h1:pJTkW8hEUIIi3Pf65lPZOnn4Y81yCllX6IWk2jNXdkM=
- github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v0.53.0 h1:owcC2UnmsZycprQ5RfRgjydWhuoxg71LUfyiQdijZuM=
- github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v0.53.0/go.mod h1:ZPpqegjbE99EPKsu3iUWV22A04wzGPcAY/ziSIQEEgs=
- github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/cloudmock v0.53.0 h1:4LP6hvB4I5ouTbGgWtixJhgED6xdf67twf9PoY96Tbg=
-@@ -420,12 +420,12 @@ github.com/google/s2a-go v0.1.9 h1:LGD7gtMgezd8a/Xak7mEWL0PjoTQFvpRudN895yqKW0=
- github.com/google/s2a-go v0.1.9/go.mod h1:YA0Ei2ZQL3acow2O62kdp9UlnvMmU7kA6Eutn0dXayM=
- github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
- github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
--github.com/googleapis/enterprise-certificate-proxy v0.3.7 h1:zrn2Ee/nWmHulBx5sAVrGgAa0f2/R35S4DJwfFaUPFQ=
--github.com/googleapis/enterprise-certificate-proxy v0.3.7/go.mod h1:MkHOF77EYAE7qfSuSS9PU6g4Nt4e11cnsDUowfwewLA=
-+github.com/googleapis/enterprise-certificate-proxy v0.3.11 h1:vAe81Msw+8tKUxi2Dqh/NZMz7475yUvmRIkXr4oN2ao=
-+github.com/googleapis/enterprise-certificate-proxy v0.3.11/go.mod h1:RFV7MUdlb7AgEq2v7FmMCfeSMCllAzWxFgRdusoGks8=
- github.com/googleapis/gax-go/v2 v2.0.4/go.mod h1:0Wqv26UfaUD9n4G6kQubkQ+KchISgw+vpHVxEJEs9eg=
- github.com/googleapis/gax-go/v2 v2.0.5/go.mod h1:DWXyrwAJ9X0FpwwEdw+IPEYBICEFu5mhpdKc/us6bOk=
--github.com/googleapis/gax-go/v2 v2.16.0 h1:iHbQmKLLZrexmb0OSsNGTeSTS0HO4YvFOG8g5E4Zd0Y=
--github.com/googleapis/gax-go/v2 v2.16.0/go.mod h1:o1vfQjjNZn4+d
+@@ -1396,8 +1396,7 @@ func (s *Source) scanRepo(ctx context.Context, repoURL string, reporter sources.
+ 		err := s.scanComments(ctx, repoURL, repoInfo, reporter)
+ 		commentsDuration = time.Since(commentsStart)
+ 		if err != nil {
+-			err := fmt.Errorf("error scanning comments: %w", err)
+-			if err := reporter.ChunkErr(ctx, err); err != nil {
++			if err := reportCommentErrors(ctx, reporter, err); err != nil {
+ 				return err
+ 			}
+ 		}
+@@ -1782,6 +1781,25 @@ func (s *Source) setProgressCompleteWithRepo(index int, offset int, repoURL stri
+ 	s.SetProgressComplete(index+offset, len(s.repos)+offset, fmt.Sprintf("Repo: %s", repoURL), encodedResumeInfo)
+ }
+ 
++// reportCommentErrors reports a failed comment scan as chunk errors, one per
++// failed phase. processIssueandPRsWithCommentsREST joins one error per phase
++// that failed, and each phase is a separate listing that failed for its own
++// reason, often a different missing permission. Reporting them separately
++// gives each its own entry and its own "error scanning comments" context,
++// instead of one entry whose later lines have neither.
++func reportCommentErrors(ctx context.Context, reporter sources.ChunkReporter, err error) error {
++	phaseErrs := []error{err}
++	if joined, ok := err.(interface{ Unwrap() []error }); ok {
++		phaseErrs = joined.Unwrap()
++	}
++	for _, phaseErr := range phaseErrs {
++		if err := reporter.ChunkErr(ctx, fmt.Errorf("error scanning comments: %w", phaseErr)); err != nil {
++			return err
++		}
++	}
++	return nil
++}
++
+ func (s *Source) scanComments(ctx context.Context, repoPath string, repoInfo repoInfo, reporter sources.ChunkReporter) error {
+ 	urlString, urlParts, err := getRepoURLParts(repoPath)
+ 	if err != nil {
+@@ -2015,8 +2033,9 @@ type commentPhase struct {
+ //
+ // The phases are independent: a failure in one is collected and the rest
+ // still run, so one capped or forbidden endpoint can't hide the others. All
+-// failures come back joined into one error, which scanRepo reports as a
+-// single ChunkErr for the repo. Chunks emitted before a failure are kept.
++// failures come back joined into one error, which scanRepo splits back apart
++// so each failed phase is its own ChunkErr (see reportCommentErrors). Chunks
++// emitted before a failure are kept.
+ //
+ // The "Scanning issues" and "Scanning pull requests" V(2) lines are the only
+ // log signal for scans on the unit path, whose comment errors go to the scan
 ```
 
----
-
-### Incident Patch 3: `4b56723c` (2026-10-14)
-**Commit Message**: Update module go.opentelemetry.io/otel/exporters/otlp/otlptrace to v1.45.0 [SECURITY] (#5424)
-
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `go.mod` (modified, +15/-15)
+**File**: `pkg/sources/github/pagination.go` (modified, +5/-1)
 ```diff
-@@ -38,7 +38,7 @@ require (
- 	github.com/csnewman/dextk v0.3.0
- 	github.com/dustin/go-humanize v1.0.1
- 	github.com/elastic/go-elasticsearch/v8 v8.17.1
--	github.com/envoyproxy/protoc-gen-validate v1.3.0
-+	github.com/envoyproxy/protoc-gen-validate v1.3.3
- 	github.com/fatih/color v1.18.0
- 	github.com/felixge/fgprof v0.9.5
- 	github.com/gabriel-vasile/mimetype v1.4.15
-@@ -105,11 +105,11 @@ require (
- 	go.uber.org/automaxprocs v1.6.0
- 	go.uber.org/mock v0.6.0
- 	go.uber.org/zap v1.27.0
--	golang.org/x/crypto v0.53.0
--	golang.org/x/net v0.56.0
-+	golang.org/x/crypto v0.54.0
-+	golang.org/x/net v0.57.0
- 	golang.org/x/oauth2 v0.36.0
--	golang.org/x/sync v0.21.0
--	golang.org/x/text v0.39.0
-+	golang.org/x/sync v0.22.0
-+	golang.org/x/text v0.40.0
- 	golang.org/x/time v0.14.0
- 	google.golang.org/api v0.259.0
- 	google.golang.org/protobuf v1.36.11
-@@ -135,7 +135,7 @@ require (
- 	github.com/Azure/go-ntlmssp v0.1.1 // indirect
- 	github.com/AzureAD/microsoft-authentication-library-for-go v1.3.2 // indirect
- 	github.com/DataDog/zstd v1.5.5 // indirect
--	github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.30.0 // indirect
-+	github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.32.0 // indirect
- 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v0.53.0 // indirect
- 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapping v0.53.0 // indirect
- 	github.com/Microsoft/go-winio v0.6.2 // indirect
-@@ -171,7 +171,7 @@ require (
- 	github.com/charmbracelet/x/exp/slice v0.0.0-20250327172914-2fdc97757edf // indirect
- 	github.com/charmbracelet/x/term v0.2.1 // indirect
- 	github.com/cloudflare/circl v1.6.3 // indirect
--	github.com/cncf/xds/go v0.0.0-20251210132809-ee656c7534f5 // indirect
-+	github.com/cncf/xds/go v0.0.0-20260202195803-dba9d589def2 // indirect
- 	github.com/containerd/errdefs v1.0.0 // indirect
- 	github.com/containerd/errdefs/pkg v0.3.0 // indirect
- 	github.com/containerd/log v0.1.0 // indirect
-@@ -196,7 +196,7 @@ require (
- 	github.com/ebitengine/purego v0.10.0 // indirect
- 	github.com/elastic/elastic-transport-go/v8 v8.6.1 // indirect
- 	github.com/emirpasic/gods v1.18.1 // indirect
--	github.com/envoyproxy/go-control-plane/envoy v1.36.0 // indirect
-+	github.com/envoyproxy/go-control-plane/envoy v1.37.0 // indirect
- 	github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f // indirect
- 	github.com/felixge/httpsnoop v1.0.4 // indirect
- 	github.com/fsnotify/fsnotify v1.6.0 // indirect
-@@ -221,7 +221,6 @@ require (
- 	github.com/gorilla/css v1.0.1 // indirect
- 	github.com/gorilla/websocket v1.5.3 // indirect
- 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0 // indirect
--	github.com/grpc-ecosystem/grpc-gateway/v2 v2.16.0 // indirect
- 	github.com/h2non/parth v0.0.0-20190131123155-b4df798d6542 // indirect
- 	github.com/hashicorp/errwrap v1.1.0 // indirect
- 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
-@@ -302,25 +301,26 @@ require (
- 	github.com/yuin/goldmark-emoji v1.0.5 // indirect
- 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
- 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
--	go.opentelemetry.io/contrib/detectors/gcp v1.39.0 // indirect
-+	go.opentelemetry.io/contrib/detectors/gcp v1.43.0 // indirect
- 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.62.0 // indirect
- 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.68.0 // indirect
- 	go.opentelemetry.io/otel v1.45.0 // indirect
--	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.19.0 // indirect
-+	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 // indirect
- 	go.opentelemetry.io/otel/metric v1.45.0 // indirect
- 	go.opentelemetry.io/otel/sdk v1.45.0 // indirect
- 	go.opentelemetry.io/otel/sdk/metric v1.45.0 // indirect
- 	go.opentelemetry.io/otel/trace v1.45.0 // indirect
-+	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
- 	go.uber.org/multierr v1.11.0 // indirect
- 	go.yaml.in/yaml/v3 v3.0.5 // indirect
- 	go4.org v0.0.0-20230225012048-214862532bf5 // indirect
- 	golang.org/x/mod v0.37.0 // indirect
- 	golang.org/x/sys v0.47.0 // indirect
--	golang.org/x/term v0.44.0 // indirect
-+	golang.org/x/term v0.45.0 // indirect
- 	google.golang.org/genproto v0.0.0-20251202230838-ff82c1b0f217 // indirect
--	google.golang.org/genproto/googleapis/api v0.0.0-20251202230838-ff82c1b0f217 // indirect
--	google.golang.org/genproto/googleapis/rpc v0.0.0-20251222181119-0a764e51fe1b // indirect
--	google.golang.org/grpc v1.79.3 // indirect
-+	google.golang.org/genproto/googleapis/api v0.0.0-20260720211330-0afa2a65878a // indirect
-+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260720211330-0afa2a65878a // indirect
-+	google.golang.org/grpc v1.82.1 // indirect
- 	gopkg.in/warnings.v0 v0.1.2 // indirect
- 	pault.ag/go/topsort v0.1.1 // indirect
- )
+@@ -286,6 +286,10 @@ func transientBackoff(retry int) time.Duration {
+ // "giving up after N attempt(s)". Each attempt here is bounded by the
+ // client's 60 second timeout, so a page that keeps failing is reported after
+ // several minutes rather than retried indefinitely.
++//
++// Every page of every walk returns through here, so this is also where a 403
++// for a missing permission becomes a permissionError naming that permission.
++// It is never retried: the credential's permissions won't change mid-walk.
+ func fetchWithRetry[T any](ctx context.Context, p pager, fetch func() ([]T, *github.Response, error)) ([]T, *github.Response, error) {
+ 	transientRetries := 0
+ 	for {
+@@ -294,7 +298,7 @@ func fetchWithRetry[T any](ctx context.Context, p pager, fetch func() ([]T, *git
+ 			continue
+ 		}
+ 		if err == nil || p.wait == nil || !isTransient(ctx, err) {
+-			return items, resp, err
++			return items, resp, asPermissionError(err)
+ 		}
+ 		if transientRetries == maxTransientRetries {
+ 			return items, resp, fmt.Errorf("giving up after %d attempts: %w", transientRetries+1, err)
 ```
 
-**File**: `go.sum` (modified, +34/-34)
+**File**: `pkg/sources/github/permission_error.go` (added, +176/-0)
 ```diff
-@@ -67,8 +67,8 @@ github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03
- github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
- github.com/DataDog/zstd v1.5.5 h1:oWf5W7GtOLgp6bciQYDmhHHjdhYkALu6S/5Ni9ZgSvQ=
- github.com/DataDog/zstd v1.5.5/go.mod h1:g4AWEaM3yOg3HYfnJ3YIawPnVdXJh9QME85blwSAmyw=
--github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.30.0 h1:sBEjpZlNHzK1voKq9695PJSX2o5NEXl7/OL3coiIY0c=
--github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.30.0/go.mod h1:P4WPRUkOhJC13W//jWpyfJNDAIpvRbAUIYLX/4jtlE0=
-+github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.32.0 h1:rIkQfkCOVKc1OiRCNcSDD8ml5RJlZbH/Xsq7lbpynwc=
-+github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.32.0/go.mod h1:RD2SsorTmYhF6HkTmDw7KmPYQk8OBYwTkuasChwv7R4=
- github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v0.53.0 h1:owcC2UnmsZycprQ5RfRgjydWhuoxg71LUfyiQdijZuM=
- github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v0.53.0/go.mod h1:ZPpqegjbE99EPKsu3iUWV22A04wzGPcAY/ziSIQEEgs=
- github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/cloudmock v0.53.0 h1:4LP6hvB4I5ouTbGgWtixJhgED6xdf67twf9PoY96Tbg=
-@@ -209,8 +209,8 @@ github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDk
- github.com/cloudflare/circl v1.6.3 h1:9GPOhQGF9MCYUeXyMYlqTR6a5gTrgR/fBLXvUgtVcg8=
- github.com/cloudflare/circl v1.6.3/go.mod h1:2eXP6Qfat4O/Yhh8BznvKnJ+uzEoTQ6jVKJRn81BiS4=
- github.com/cncf/udpa/go v0.0.0-20191209042840-269d4d468f6f/go.mod h1:M8M6+tZqaGXZJjfX53e64911xZQV5JYwmTeXPW+k8Sc=
--github.com/cncf/xds/go v0.0.0-20251210132809-ee656c7534f5 h1:6xNmx7iTtyBRev0+D/Tv1FZd4SCg8axKApyNyRsAt/w=
--github.com/cncf/xds/go v0.0.0-20251210132809-ee656c7534f5/go.mod h1:KdCmV+x/BuvyMxRnYBlmVaq4OLiKW6iRQfvC62cvdkI=
-+github.com/cncf/xds/go v0.0.0-20260202195803-dba9d589def2 h1:aBangftG7EVZoUb69Os8IaYg++6uMOdKK83QtkkvJik=
-+github.com/cncf/xds/go v0.0.0-20260202195803-dba9d589def2/go.mod h1:qwXFYgsP6T7XnJtbKlf1HP8AjxZZyzxMmc+Lq5GjlU4=
- github.com/containerd/errdefs v1.0.0 h1:tg5yIfIlQIrxYtu9ajqY42W3lpS19XqdxRQeEwYG8PI=
- github.com/containerd/errdefs v1.0.0/go.mod h1:+YBYIdtsnF4Iw6nWZhJcqGSg/dwvV7tyJ/kCkyJ2k+M=
- github.com/containerd/errdefs/pkg v0.3.0 h1:9IKJ06FvyNlexW690DXuQNx2KA2cUJXx151Xdx3ZPPE=
-@@ -285,13 +285,13 @@ github.com/envoyproxy/go-control-plane v0.9.1-0.20191026205805-5f8ba28d4473/go.m
- github.com/envoyproxy/go-control-plane v0.9.4/go.mod h1:6rpuAdCZL397s3pYoYcLgu1mIlRU8Am5FuJP05cCM98=
- github.com/envoyproxy/go-control-plane v0.14.0 h1:hbG2kr4RuFj222B6+7T83thSPqLjwBIfQawTkC++2HA=
- github.com/envoyproxy/go-control-plane v0.14.0/go.mod h1:NcS5X47pLl/hfqxU70yPwL9ZMkUlwlKxtAohpi2wBEU=
--github.com/envoyproxy/go-control-plane/envoy v1.36.0 h1:yg/JjO5E7ubRyKX3m07GF3reDNEnfOboJ0QySbH736g=
--github.com/envoyproxy/go-control-plane/envoy v1.36.0/go.mod h1:ty89S1YCCVruQAm9OtKeEkQLTb+Lkz0k8v9W0Oxsv98=
-+github.com/envoyproxy/go-control-plane/envoy v1.37.0 h1:u3riX6BoYRfF4Dr7dwSOroNfdSbEPe9Yyl09/B6wBrQ=
-+github.com/envoyproxy/go-control-plane/envoy v1.37.0/go.mod h1:DReE9MMrmecPy+YvQOAOHNYMALuowAnbjjEMkkWOi6A=
- github.com/envoyproxy/go-control-plane/ratelimit v0.1.0 h1:/G9QYbddjL25KvtKTv3an9lx6VBE2cnb8wp1vEGNYGI=
- github.com/envoyproxy/go-control-plane/ratelimit v0.1.0/go.mod h1:Wk+tMFAFbCXaJPzVVHnPgRKdUdwW/KdbRt94AzgRee4=
- github.com/envoyproxy/protoc-gen-validate v0.1.0/go.mod h1:iSmxcyjqTsJpI2R4NaDN7+kN2VEUnK/pcBlmesArF7c=
--github.com/envoyproxy/protoc-gen-validate v1.3.0 h1:TvGH1wof4H33rezVKWSpqKz5NXWg5VPuZ0uONDT6eb4=
--github.com/envoyproxy/protoc-gen-validate v1.3.0/go.mod h1:HvYl7zwPa5mffgyeTUHA9zHIH36nmrm7oCbo4YKoSWA=
-+github.com/envoyproxy/protoc-gen-validate v1.3.3 h1:MVQghNeW+LZcmXe7SY1V36Z+WFMDjpqGAGacLe2T0ds=
-+github.com/envoyproxy/protoc-gen-validate v1.3.3/go.mod h1:TsndJ/ngyIdQRhMcVVGDDHINPLWB7C82oDArY51KfB0=
- github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f h1:Y/CXytFA4m6baUTXGLOoWe4PQhGxaX0KpnayAqC48p4=
- github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f/go.mod h1:vw97MGsxSvLiUE2X8qFplwetxpGLQrlU1Q9AUEIzCaM=
- github.com/fatih/color v1.18.0 h1:S8gINlzdQ840/4pfAwic/ZE0djQEH3wM94VfqLTZcOM=
-@@ -432,8 +432,8 @@ github.com/gorilla/websocket v1.5.3 h1:saDtZ6Pbx/0u+bgYQ3q96pZgCzfhKXGPqt7kZ72aN
- github.com/gorilla/websocket v1.5.3/go.mod h1:YR8l580nyteQvAITg2hZ9XVh4b55+EU/adAjf1fMHhE=
- github.com/grpc-ecosystem/go-grpc-middleware v1.4.0 h1:UH//fgunKIs4JdUbpDl1VZCDaL56wXCB/5+wF6uHfaI=
- github.com/grpc-ecosystem/go-grpc-middleware v1.4.0/go.mod h1:g5qyo/la0ALbONm6Vbp88Yd8NsDy6rZz+RcrMPxvld8=
--github.com/grpc-ecosystem/grpc-gateway/v2 v2.16.0 h1:YBftPWNWd4WwGqtY2yeZL2ef8rHAxPBD8KFhJpmcqms=
--github.com/grpc-ecosystem/grpc-gateway/v2 v2.16.0/go.mod h1:YN5jB8ie0yfIUg6VvR9Kz84aCaG7AsGZnLjhHbUqwPg=
-+github.com/grpc-ecosystem/grpc-gateway/v2 v2.29.0 h1:5VipnvEpbqr2gA2VbM+nYVbkIF28c5ZQfqCBQ5g2xfk
+@@ -0,0 +1,176 @@
++package github
++
++import (
++	"errors"
++	"fmt"
++	"net/http"
++	"strings"
++
++	"github.com/google/go-github/v67/github"
++)
++
++// acceptedPermissionsHeader is the response header in which GitHub names what
++// an endpoint requires. GitHub refuses a request the credential isn't
++// permitted to make with a 403 ("Resource not accessible by integration" for
++// GitHub App tokens, "...by personal access token" for fine-grained tokens)
++// that carries this header. The raw error doesn't say which permission is
++// missing, so comment walks rewrite these 403s into a permissionError that
++// does. The header's value is a comma-separated list of permissions that are
++// all required; a semicolon separates alternative lists, any one of which is
++// enough. See
++// https://docs.github.com/en/rest/using-the-rest-api/troubleshooting-the-rest-api#resource-not-accessible
++const acceptedPermissionsHeader = "X-Accepted-GitHub-Permissions"
++
++// permission is one entry of the header, such as issues=read.
++type permission struct {
++	name   string
++	access string
++}
++
++// String renders the permission the way GitHub's settings pages label it, for
++// example "Pull requests (read)".
++func (p permission) String() string {
++	label := strings.ReplaceAll(p.name, "_", " ")
++	return fmt.Sprintf("%s%s (%s)", strings.ToUpper(label[:1]), label[1:], p.access)
++}
++
++// credentialKind is the kind of credential GitHub says it refused, read from
++// the 403's message. The fix differs: an app's permissions are changed by its
++// owner and then accepted on each installation, while a fine-grained token's
++// are changed on the token.
++type credentialKind int
++
++const (
++	credentialUnknown credentialKind = iota
++	credentialApp
++	credentialFineGrainedToken
++)
++
++// permissionError reports a request GitHub refused because the credential
++// lacks a permission. accepted holds the permission sets that would satisfy
++// the endpoint: any one set is enough, and a set needs every permission in it.
++// method and path identify the request, and message is GitHub's own error
++// text, kept so the error still reads like the 403 it replaces.
++type permissionError struct {
++	accepted   [][]permission
++	credential credentialKind
++	method     string
++	path       string
++	message    string
++	err        error
++}
++
++func (e *permissionError) Error() string {
++	var subject, fix string
++	switch e.credential {
++	case credentialApp:
++		subject = "missing GitHub App permission"
++		fix = "update the app's permissions and accept the change on the installation"
++	case credentialFineGrainedToken:
++		subject = "missing personal access token permission"
++		fix = "update the token's permissions"
++	default:
++		subject = "missing GitHub permission"
++		fix = "update the credential's permissions"
++	}
++
++	request := "request"
++	if e.path != "" {
++		request = e.method + " " + e.path
++	}
++	return fmt.Sprintf("%s: the request needs %s; %s (%s returned 403 %s)",
++		subject, describeAccepted(e.accepted), fix, request, e.message)
++}
++
++func (e *permissionError) Unwrap() error { return e.err }
++
++// asPermissionError returns err as a *permissionError when it is a 403 that
++// names the permissions it wanted, and returns err unchanged otherwise. 403s
++// without the header pass through as they are: rate limits arrive as their own
++// error types, and SAML enforcement, IP allow lists, and GitHub Enterprise
++// Server versions that don't send the header leave nothing to name.
++func asPermissionError(err error) error {
++	var errResp *github.ErrorResponse
++	if !errors.As(err, &errResp) || errResp.Response == nil || errResp.Response.StatusCode != http.StatusForbidden {
++		return err
++	}
++	accepted := parseAcceptedPermissions(errResp.Response.Header.Get(acceptedPermissionsHeader))
++	if len(accepted) == 0 {
++		return err
++	}
++
++	permErr := &permissionError{
++		accepted:   accepted,
++		credential: credentialFromMessage(errResp.Message),
++		message:    errResp.Message,
++		err:        err,
++	}
++	if req := errResp.Response.Request; req != nil && req.URL != nil {
++		permErr.method = req.Method
++		permErr.path = req.URL.Path
++	}
++	return permErr
++}
++
++// parseAcceptedPermissions parses an acceptedPermissionsHeader value into its
++// alternative permission sets. A value that doesn't parse cleanly returns
++// nil, so a format change on GitHub's side leaves the original 403 intact
++// rather than producing a message that names the wrong permissions.
++func parseAcceptedPermissions(header string) [][]permission {
++	if strings.TrimSpace(header) == "" {
++		return nil
++	}
++	var sets [][]permission
++	for _, rawSet := range strings.Split(header, ";") {
++		var set []permission
++		for _, entry := range strings.Split(rawSet, ",") {
++			name, access, ok := strings.Cut(entry, "=")
++			name, access = strings.TrimSpace(name), strings.TrimSpace(access)
++			if !ok || name == "" || access == "" {
++				return nil
++			}
++			set = append(set, permission{name: name, access: access})
++		}
++		sets = append(sets
+```
+
+**File**: `pkg/sources/github/permission_error_test.go` (added, +212/-0)
+```diff
+@@ -0,0 +1,212 @@
++package github
++
++import (
++	"errors"
++	"fmt"
++	"net/http"
++	"net/url"
++	"testing"
++
++	"github.com/google/go-github/v67/github"
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++
++	"github.com/trufflesecurity/trufflehog/v3/pkg/context"
++)
++
++const (
++	appDeniedMessage   = "Resource not accessible by integration"
++	tokenDeniedMessage = "Resource not accessible by personal access token"
++)
++
++// forbidden builds the error go-github returns for a 403 to GET path, with the
++// given message and acceptedPermissionsHeader value. An empty accepted omits
++// the header.
++func forbidden(path, message, accepted string) *github.ErrorResponse {
++	header := http.Header{}
++	if accepted != "" {
++		header.Set(acceptedPermissionsHeader, accepted)
++	}
++	return &github.ErrorResponse{
++		Response: &http.Response{
++			StatusCode: http.StatusForbidden,
++			Header:     header,
++			Request:    &http.Request{Method: http.MethodGet, URL: &url.URL{Scheme: "https", Host: "api.github.com", Path: path, RawQuery: "per_page=100"}},
++		},
++		Message: message,
++	}
++}
++
++func TestParseAcceptedPermissions(t *testing.T) {
++	tests := []struct {
++		name   string
++		header string
++		want   [][]permission
++	}{
++		{
++			name:   "single permission",
++			header: "issues=read",
++			want:   [][]permission{{{name: "issues", access: "read"}}},
++		},
++		{
++			name:   "several permissions all required",
++			header: "pull_requests=write,contents=read",
++			want:   [][]permission{{{name: "pull_requests", access: "write"}, {name: "contents", access: "read"}}},
++		},
++		{
++			name:   "alternative sets",
++			header: "pull_requests=read,contents=read; issues=read,contents=read",
++			want: [][]permission{
++				{{name: "pull_requests", access: "read"}, {name: "contents", access: "read"}},
++				{{name: "issues", access: "read"}, {name: "contents", access: "read"}},
++			},
++		},
++		{
++			name:   "whitespace around entries",
++			header: " issues = read ;pull_requests=read ",
++			want:   [][]permission{{{name: "issues", access: "read"}}, {{name: "pull_requests", access: "read"}}},
++		},
++		{name: "empty", header: ""},
++		{name: "blank", header: "   "},
++		{name: "entry without access level", header: "issues"},
++		{name: "empty entry", header: "issues=read,,contents=read"},
++		{name: "empty alternative", header: "issues=read;"},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			assert.Equal(t, tt.want, parseAcceptedPermissions(tt.header))
++		})
++	}
++}
++
++func TestPermissionErrorMessage(t *testing.T) {
++	tests := []struct {
++		name     string
++		err      error
++		wantText string
++	}{
++		{
++			name:     "GitHub App missing one permission",
++			err:      forbidden("/repos/o/r/issues", appDeniedMessage, "issues=read"),
++			wantText: "missing GitHub App permission: the request needs Issues (read); update the app's permissions and accept the change on the installation (GET /repos/o/r/issues returned 403 Resource not accessible by integration)",
++		},
++		{
++			name:     "fine-grained token",
++			err:      forbidden("/repos/o/r/pulls/comments", tokenDeniedMessage, "pull_requests=read"),
++			wantText: "missing personal access token permission: the request needs Pull requests (read); update the token's permissions (GET /repos/o/r/pulls/comments returned 403 Resource not accessible by personal access token)",
++		},
++		{
++			name:     "unrecognized credential gets a generic fix",
++			err:      forbidden("/repos/o/r/issues", "Forbidden", "issues=read"),
++			wantText: "missing GitHub permission: the request needs Issues (read); update the credential's permissions (GET /repos/o/r/issues returned 403 Forbidden)",
++		},
++		{
++			name:     "single-permission alternatives",
++			err:      forbidden("/repos/o/r/issues/comments", appDeniedMessage, "issues=read; pull_requests=read"),
++			wantText: "the request needs Issues (read) or Pull requests (read);",
++		},
++		{
++			name:     "several permissions required together",
++			err:      forbidden("/repos/o/r/pulls", appDeniedMessage, "pull_requests=write,contents=read"),
++			wantText: "the request needs Pull requests (write) and Contents (read);",
++		},
++		{
++			name:     "alternatives needing several permissions each",
++			err:      forbidden("/repos/o/r/issues/comments", appDeniedMessage, "pull_requests=read,contents=read; issues=read,contents=read"),
++			wantText: "the request needs either Pull requests (read) and Contents (read), or Issues (read) and Contents (read);",
++		},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			got := asPermissionError(tt.err)
++			var permErr *permissionError
++			require.ErrorAs(t, got, &permErr)
++			assert.Contains(t, got.Error(), tt.wantText)
++			assert.ErrorIs(t, got, tt.err, "the original 403 stays reachable through Unwrap")
++		})
++	}
++}
++
++func TestPermissionErrorWithoutRequestStillReads(t *testing.T) {
++	err := forbidden("/repos/o/r/issues", appDeniedMessage, "issues=read")
++	err.Response.Request = nil
++
+
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5438** (2026-10-19): github: name the missing permission when a comment listing is refused (@unsmith)
 - **PR #5432** (2026-10-16): Add per-logger debug level override for source logging (@kashifkhan0771)
 - **PR #5431** (2026-10-17): Update module google.golang.org/grpc to v1.83.2 [SECURITY] (@renovate[bot])
 - **PR #5428** (2026-10-14): Replace deprecated google.CredentialsFromJSON with CredentialsFromJSONWithType (@bryanbeverly)
 - **PR #5427** (2026-10-14): fix(github): use a single "app client registry"  (@mariduv)
 - **PR #5426** (2026-10-14): Update module google.golang.org/grpc to v1.83.1 [SECURITY] (@renovate[bot])
-- **PR #5425** (2026-10-13): Update module go.opentelemetry.io/otel/sdk to v1.45.0 [SECURITY] (@renovate[bot])
 
 ---
 
@@ -1564,36 +1642,60 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update module google.golang.org/grpc to v1.83.2 [SECURITY] (#5431)
+## X. github: name the missing permission when a comment listing is refused (#5438)
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/sources/github/comments_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `048de9ff`: Update module google.golang.org/grpc to v1.83.2 [SECURITY] (#5431). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e63326d6`: github: name the missing permission when a comment listing is refused (#5438). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/sources/github/comments_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	golang.org/x/crypto v0.55.0
-	golang.org/x/net v0.58.0
-	golang.org/x/text v0.41.0
-	golang.org/x/mod v0.38.0 // indirect
-	google.golang.org/grpc v1.83.2 // indirect
+	"errors"
+// collectingReporter records the link of every chunk the scan emits, and every
+// chunk error it reports.
+	errs  []error
+func (r *collectingReporter) ChunkErr(_ context.Context, err error) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	r.errs = append(r.errs, err)
+	return nil
+}
+// deniedWith returns a fail func that refuses every request the way GitHub
+// refuses a GitHub App that lacks a permission, naming accepted as what the
+// endpoint requires.
+func deniedWith(accepted string) func(int, http.ResponseWriter, *http.Request) bool {
+	return func(_ int, w http.ResponseWriter, _ *http.Request) bool {
+		w.Header().Set(acceptedPermissionsHeader, accepted)
+		writeJSON(w, http.StatusForbidden, map[string]string{"message": appDeniedMessage})
+		return true
+	}
+}
+
+func TestCommentScan_EachFailedPhaseIsReportedAsItsOwnChunkError(t *testing.T) {
+	gh := newFakeGitHub(t)
+	seedRepo(gh)
+	gh.issues.fail = deniedWith("issues=read")
+	gh.issueComments.fail = deniedWith("issues=read; pull_requests=read")
+	gh.prComments.fail = deniedWith("pull_requests=read")
+	s := &Source{includeIssueComments: true, includePRComments: true}
+
+	reporter, err := scanComments(t, s, gh, nil)
+	require.Error(t, err)
+	
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	golang.org/x/crypto v0.54.0
-	golang.org/x/net v0.57.0
-	golang.org/x/text v0.40.0
-	golang.org/x/mod v0.37.0 // indirect
-	google.golang.org/grpc v1.83.1 // indirect
+// collectingReporter records the link of every chunk the scan emits.
+func (r *collectingReporter) ChunkErr(context.Context, error) error { return nil }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `048de9ff` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e63326d6` are properly handled with clean fallback behavior.

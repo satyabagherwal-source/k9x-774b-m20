@@ -1,59 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T18:29:53.165Z",
-  "total_cycles_completed": 3391,
-  "total_learnings_persisted": 3391,
-  "total_rules_promoted": 2543,
+  "last_updated": "2026-10-19T18:36:07.761Z",
+  "total_cycles_completed": 3398,
+  "total_learnings_persisted": 3398,
+  "total_rules_promoted": 2550,
   "history": [
-    {
-      "timestamp": "2026-10-19T12:01:20.193Z",
-      "repository": "SwiftKickMobile/SwiftMessages",
-      "learningId": "learn-github-swiftkickmobile-swiftmessages",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T12:01:23.019Z",
-      "repository": "koderover/zadig",
-      "learningId": "learn-github-koderover-zadig",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T12:01:26.088Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T12:07:40.078Z",
-      "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
-      "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T12:07:40.588Z",
-      "repository": "rsuite/rsuite",
-      "learningId": "learn-github-rsuite-rsuite",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T12:07:42.266Z",
-      "repository": "Automattic/harper",
-      "learningId": "learn-github-automattic-harper",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T12:07:46.720Z",
-      "repository": "ParthJadhav/app-store-screenshots",
-      "learningId": "learn-github-parthjadhav-app-store-screenshots",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T12:07:52.936Z",
       "repository": "mitmproxy/mitmproxy",
@@ -1402,6 +1353,55 @@
       "timestamp": "2026-10-19T18:29:53.165Z",
       "repository": "tailscale/tailscale",
       "learningId": "learn-github-tailscale-tailscale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T18:35:48.146Z",
+      "repository": "angular/angular",
+      "learningId": "learn-github-angular-angular",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T18:35:50.272Z",
+      "repository": "adobe/structured-data-validator",
+      "learningId": "learn-github-adobe-structured-data-validator",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T18:35:51.497Z",
+      "repository": "grpc/grpc-rust",
+      "learningId": "learn-github-grpc-grpc-rust",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T18:35:57.062Z",
+      "repository": "hi-manshu/charty",
+      "learningId": "learn-github-hi-manshu-charty",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T18:36:01.187Z",
+      "repository": "trufflesecurity/trufflehog",
+      "learningId": "learn-github-trufflesecurity-trufflehog",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T18:36:04.245Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T18:36:07.761Z",
+      "repository": "tursodatabase/turso",
+      "learningId": "learn-github-tursodatabase-turso",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
