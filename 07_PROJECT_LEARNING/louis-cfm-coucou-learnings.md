@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md`  
+> **Source**: github ([https://github.com/Louis-CFM/coucou](https://github.com/Louis-CFM/coucou))  
+> **Source Version**: `98a767c4`  
+> **License**: MIT  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T22:26:45.957Z  
+> **Learning ID**: `learn-github-louis-cfm-coucou`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): Louis-CFM/coucou
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Louis-CFM/coucou](https://github.com/Louis-CFM/coucou))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T06:18:36.962Z  
+> **Harvest Timestamp**: 2026-10-19T22:26:45.948Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: A tiny friend in your Mac's notch and on your iPhone that keeps an eye on your AI coding agents: Claude Code, Codex, Cursor, Gemini CLI, Antigravity and more. Approve from the notch or your Lock Screen.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3723 stars
+- **Stars / Engagement**: 5584 stars
 
 ---
 
@@ -88,24 +102,56 @@ final class AppState: ObservableObject {
         didSet { UserDefaults.standard.set(soundEnabled, forKey: "soundEnabled") }
     }
 
+    // Weekly recap — persisted
+    @Published var recapEnabled: Bool = (UserDefaults.standard.object(forKey: "recapEnabled") as? Bool) ?? true {
+        didSet { UserDefaults.standard.set(recapEnabled, forKey: "recapEnabled") }
+    }
+    @Published var recapHideProjects: Bool = UserDefaults.standard.bool(forKey: "recapHideProjects") {
+        didSet { UserDefaults.standard.set(recapHideProjects, forKey: "recapHideProjects") }
+    }
+
     // Mochi outfit selection — persisted
     @Published var mochiOutfitSelection: Outfit = .auto {
         didSet { Outfit.stored = mochiOutfitSelection }
     }
+    // A colour of the user's own for each pill's Mochi (pill id → "#RRGGBB") — persisted.
+    // Empty means the catalog's colours. PillDefinition.color reads the stored value, so
+    // what is built from the catalog follows on its own; the tasks already on the island
+    // hold a copy of their colour and are repainted here.
+    @Published var pillColors: [String: String] = [:] {
+        didSet {
+            PillColors.stored = pillColors
+            var repainted = tasks
+            var changed = false
+            for i in repainted.indices {
+                guard let def = PillCatalog.definition(for: repainted[i].id),
+                      repainted[i].color != def.color else { continue }
+                repainted[i].color = def.color
+                changed = true
+            }
+            if changed { tasks = repainted }
+        }
+    }
+    /// Picks a colour for a pill's Mochi; nil, or the pill's own catalog colour, goes back to the default.
+    func setPillColor(_ id: String, _ hex: String?) {
+        guard let def = PillCatalog.definition(for: id) else { return }
+        pillColors = PillColors.picking(hex, for: id, catalogColor: def.defaultColor, in: pillColors)
+    }
     // Transient: outfit preview while hovering in wardrobe (overrides resolvedOutfit in BotCanvasView)
     var wardrobePreviewOutfit: Outfit? = nil
-    // Per-day seasonal cache — avoids recomputing Easter and date math on every frame
-    private var _seasonalCache: (dayOfYear: Int, year: Int, outfit: Outfit)?
+    // Per-day seasonal cache — read on every Mochi frame: valid until the next midnight,
+    // so a frame costs one date comparison instead of calendar math.
+    private var _seasonalCache: (validUntil: Date, outfit: Outfit)?
     var resolvedOutfit: Outfit {
         if let preview = wardrobePreviewOutfit { return preview }
         guard mochiOutfitSelection == .auto else { return mochiOutfitSelection }
-        let cal = Calendar.current
         let now = Date()
-        let day  = cal.ordinality(of: .day, in: .year, for: now) ?? 0
-        let year = cal.component(.year, from: now)
-        if let c = _seasonalCache, c.dayOfYear == day && c.year == year { return c.outfit }
+        if let c = _seasonalCache, now < c.validUntil { return c.outfit }
+        let cal = Calendar.current
         let outfit = Outfit.seasonal(for: now, calendar: cal)
-        _seasonalCache = (dayOfYear: day, year: year, outfit: outfit)
+        let midnight = cal.date(byAdding: .day, value: 1, to: cal.startOfDay(for: now))
+            ?? now.addingTimeInterval(3600)
+        _seasonalCache = (validUntil: midnight, outfit: outfit)
         return outfit
     }
 
@@ -130,6 +176,15 @@ final class AppState: ObservableObject {
     }
     @Published var lmstudioChatModel: String = ChatProvider.lmstudio.defaultModel {
         didSet { UserDefaults.standard.set(lmstudioChatModel, forKey: "lmstudioChatModel") }
+    }
+    @Published var deepseekChatModel: String = ChatProvider.deepseek.defaultModel {
+        didSet { UserDefaults.standard.set(deepseekChatModel, forKey: "deepseekChatModel") }
+    }
+    @Published var qwenChatModel: String = ChatProvider.qwen.defaultModel {
+        didSet { UserDefaults.standard.set(qwenChatModel, forKey: "qwenChatModel") }
+    }
+    @Published var moonshotChatModel: String = ChatProvider.moonshot.defaultModel {
+        didSet { UserDefaults.standard.set(moonshotChatModel, forKey: "moonshotChatModel") }
     }
     @Published var ollamaServerURL: String = "" {
         didSet { UserDefaults.standard.set(ollamaServerURL, forKey: "ollamaServerURL") }
@@ -194,56 +249,375 @@ final class AppState: ObservableObject {
         }
         loadingProviderModels.insert(provider)
         providerModelFetchError.removeValue(forKey: provider)
-        Task {
-            let models: [(id: String, label: String)]
-            switch provider {
-            case .anthropic: models = await ClaudeService.fetchModels(apiKey: apiKey)
-            case .google:    models = await ClaudeService.fetchGoogleModels(apiKey: apiKey)
-            case .openai:    models = await ClaudeService.fetchOpenAIModels(apiKey: apiKey)
-            case .ollama, .lmstudio: models = []  // handled above
+     
+```
+
+### Core Architecture Module: `NotchBuddy/Sources/App/ApprovalQueue.swift`
+```
+import Foundation
+
+// MARK: - ApprovalQueue
+// Pure FIFO queue of pending PermissionRequests. No AppKit, no SwiftUI, no I/O:
+// HookServer owns the sockets, timers and UI, and mutates this value on the main actor only.
+// The head is the request currently shown on the approval card.
+
+struct QueuedApproval: Equatable, Sendable {
+    let id: UUID
+    /// Client socket, held open until the user decides. Closed by the owner's dispatch source.
+    let fd: Int32
+    let sessionId: String
+    /// "integration_claude", "agent_cursor" or "agent_codex".
+    let pillId: String
+    let projectName: String
+    let cwd: String
+    let tool: String
+    let command: String
+    /// tool_input serialized with sortedKeys, "" if absent. Used to match PostToolUse.
+    let inputKey: String
+    /// Host app / bundle id of the session, so the card's pill keeps showing where it runs.
+    var hostApp: String? = nil
+    var bundleId: String = ""
+    /// When the request arrived (for the log: how long it waited).
+    var received = Date()
+}
+
+struct ApprovalQueue: Sendable {
+    /// Upper bound of simultaneously pending requests. Each one holds a socket and a 115 s timer
+    /// and the card only shows one at a time, so beyond this the newest falls back to its terminal.
+    static let maxPending = 5
+
+    enum EnqueueResult: Equatable, Sendable { case accepted, rejectedFull }
+
+    private(set) var entries: [QueuedApproval] = []
+
+    var head: QueuedApproval? { entries.first }
+    var count: Int { entries.count }
+    var isEmpty: Bool { entries.isEmpty }
+
+    func contains(id: UUID) -> Bool { entries.contains { $0.id == id } }
+
+    /// 1-based position of the entry in the queue, nil if absent.
+    func position(of id: UUID) -> Int? {
+        entries.firstIndex { $0.id == id }.map { $0 + 1 }
+    }
+
+    /// True when the queued requests do not all come from the same session and agent.
+    var hasMixedSources: Bool {
+        guard let first = entries.first else { return false }
+        return entries.contains { $0.sessionId != first.sessionId || $0.pillId != first.pillId }
+    }
+
+    func hasEntries(forPill pillId: String) -> Bool {
+        entries.contains { $0.pillId == pillId }
+    }
+
+    mutating func enqueue(_ entry: QueuedApproval, maxPending: Int = ApprovalQueue.maxPending) -> EnqueueResult {
+        guard entries.count < maxPending else { return .rejectedFull }
+        entries.append(entry)
+        return .accepted
+    }
+
+    /// Removes only the entry with this id. Other entries keep their order.
+    @discardableResult
+    mutating func remove(id: UUID) -> QueuedApproval? {
+        guard let idx = entries.firstIndex(where: { $0.id == id }) else { return nil }
+        return entries.remove(at: idx)
+    }
+
+    /// Entries made moot by a later hook event of the same agent. Matching is per request
+    /// (session + agent, plus tool and input for PostToolUse), never by pill alone.
+    func resolved(byEvent name: String, sessionId: String, pillId: String,
+                  tool: String, inputKey: String) -> [QueuedApproval] {
+        switch name {
+        case "PostToolUse", "PostToolUseFailure":
+            return entries.filter {
+                $0.pillId == pillId && $0.sessionId == sessionId
+                    && $0.tool == tool && $0.inputKey == inputKey
             }
-            loadingProviderModels.remove(provider)
-            if models.isEmpty {
-                providerModelFetchError[provider] = "Failed to load models. Check your API key."
-            } else {
-                fetchedProviderModels[provider] = models
-                switch provider {
-                case .anthropic:
-                    if !models.contains(where: { $0.id == claudeModel }) {
-                        claudeModel = models.first(where: { $0.id.contains("sonnet") })?.id ?? models.first!.id
+        case "Stop", "StopFailure", "UserPromptSubmit", "SessionEnd", "Interrupt":
+            return entries.filter { $0.pillId == pillId && $0.sessionId == sessionId }
+        default:
+            return []
+        }
+    }
+}
+
+```
+
+### Core Architecture Module: `NotchBuddy/Sources/App/ClaudeHookDetection.swift`
+```
+import Foundation
+
+/// True when a parsed ~/.claude/settings.json routes Claude Code SessionStart events to Coucou.
+///
+/// Kept free of file access so it can be tested on fixtures instead of the real settings file.
+/// Both the installed app and earlier builds matched on the command text: a hook written by
+/// Coucou runs ~/.claude/coucou/nb-hook, and the App Store build names NotchBuddy instead.
+func coucouHooksPresent(inSettings settings: [String: Any]) -> Bool {
+    guard let hooks = settings["hooks"] as? [String: Any],
+          let sessionStart = hooks["SessionStart"] as? [[String: Any]] else { return false }
+    return sessionStart.contains { group in
+        (group["hooks"] as? [[String: Any]])?.contains { hook in
+            guard let command = hook["command"] as? String else { return false }
+            return command.contains("NotchBuddy") || command.contains("coucou")
+        } ?? false
+    }
+}
+
+```
+
+### Core Architecture Module: `NotchBuddy/Sources/App/DemoEngine.swift`
+```
+import Foundation
+import SwiftUI
+import Combine
+
+// MARK: - DemoEngine
+// Scripted ~60 s tour of Coucou for App Store review.
+// Zero network calls, nothing written to disk or Keychain.
+
+@MainActor
+final class DemoEngine: ObservableObject {
+
+    static let shared = DemoEngine()
+    private init() {}
+
+    // MARK: Published state
+
+    @Published var isActive: Bool = false
+
+    // Checked from background threads (pollers). Written only from @MainActor.
+    nonisolated(unsafe) private(set) static var isPollerPaused: Bool = false
+
+    // MARK: Private state
+
+    private var demoTask: Task<Void, Never>? = nil
+    private var modeCancellable: AnyCancellable? = nil
+
+    private var visibilityContinuation: CheckedContinuation<Void, Never>? = nil
+    private var approvalContinuation: CheckedContinuation<String, Never>? = nil
+    private var questionContinuation: CheckedContinuation<Void, Never>? = nil
+
+    private var generation: Int = 0                   // incremented on each start() to orphan stale closures
+    private var demoInjectedTaskIds: [String] = []   // integration task IDs added by demo
+    private var realTaskIdsAtStart: Set<String> = [] // real task IDs that existed before demo
+    private var demoCycleIndex: Int = 0
+    private let rotatingIntegrationIds = [
+        "integration_stripe", "integration_calcom",
+        "integration_n8n", "integration_notion", "integration_vercel"
+    ]
+    private var demoDiffIds: [String: [Int]] = [:]   // [pillId: [diffId]]
+    private var lastApprovalDecision: String = "allow"
+    private var lastQuestionAnswer: String? = nil
+
+    // MARK: Snapshot
+
+    private struct Snapshot {
+        var tasks: [AgentTask]
+        var focusId: String?
+        var chatHistory: [ChatMessage]
+        var stateOverride: BotState?
+        var isPinned: Bool
+        var noteMessage: String?
+        // Integration data
+        var vercelDeployments: [VercelDeployment]
+        var resendEmails: [ResendEmail]
+        var resendTotal: Int?
+        var githubPulse: GitHubPulse?
+        var githubActivity: GitHubActivity?
+        var githubStats: GitHubStats?
+        var stripePayments: [StripePayment]
+        var stripeBalance: Int
+        var stripeDisplayBalance: Int
+        var stripeCurrency: String
+        var stripeLoaded: Bool
+        var stripeError: String?
+        var calcomBookings: [CalcomBooking]
+        var calcomLoaded: Bool
+        var n8nRuns: [N8nRun]
+        var notionPages: [NotionPage]
+        var notionLoaded: Bool
+        // NOTE: pendingApproval and pendingQuestion are intentionally NOT snapshotted.
+        // HookServer's file descriptors are authoritative for real requests.
+        var mode: IslandMode
+        var view: IslandView
+    }
+
+    private var snapshot: Snapshot? = nil
+
+    // MARK: Start
+
+    func start() {
+        guard !isActive else { return }
+        isActive = true
+        DemoEngine.isPollerPaused = true
+        generation += 1
+        demoCycleIndex = 0
+
+        let s = AppState.shared
+
+        // Record which tasks are real (not demo-injected) before demo starts
+        realTaskIdsAtStart = Set(s.tasks.map { $0.id })
+
+        snapshot = Snapshot(
+            tasks:               s.tasks,
+            focusId:             s.focusId,
+            chatHistory:         s.chatHistory,
+            stateOverride:       s.stateOverride,
+            isPinned:            s.isPinned,
+            noteMessage:         s.noteMessage,
+            vercelDeployments:   s.vercelDeployments,
+            resendEmails:        s.resendEmails,
+            resendTotal:         s.resendTotal,
+            githubPulse:         s.githubPulse,
+            githubActivity:      s.githubActivity,
+            githubStats:         s.githubStats,
+            stripePayments:      s.stripePayments,
+            stripeBalance:       s.stripeBalance,
+            stripeDisplayBalance: s.stripeDisplayBalance,
+            stripeCurrency:      s.stripeCurrency,
+            stripeLoaded:        s.stripeLoaded,
+            stripeError:         s.stripeError,
+            calcomBookings:      s.calcomBookings,
+            calcomLoaded:        s.calcomLoaded,
+            n8nRuns:             s.n8nRuns,
+            notionPages:         s.notionPages,
+            notionLoaded:        s.notionLoaded,
+            mode:                s.mode,
+            view:                s.view
+        )
+
+        // Hide all real pills — show only main during demo (integration + Codex added progressively).
+        let mainTask = s.tasks.first(where: { $0.id == s.mainPillId })
+        s.tasks = mainTask.map { [$0] } ?? []
+
+        // Weekly recap: available immediately so the reviewer can share it
+        RecapStore.shared.demoSummaryOverride = demoWeeklySummary()
+
+        // Plan usage override (in-memory, never persisted)
+        #if !APPSTORE
+        let now = Date()
+        s.demoPlanUsageOverride = PlanUsage(
+            fiveHour: PlanWindow(usedPct: 42.0, resetsAt: now.addingTimeInterval(4 * 3600)),
+            sevenDay: PlanWindow(usedPct: 37.0, resetsAt: now.addingTimeInterval(3 * 24 * 3600)),
+            updatedAt: now
+        )
+        #endif
+
+        // Inject integration data (no activeIntegrations setter, no UserDefaults write)
+        injectIntegrationData()
+
+        // Observe mode changes to unblock waitUntilVisible()
+        modeCancellable = s.$mode
+            .dropFirst()
+            .sink { [weak self] mode in
+                MainActor.assumeIsolated {
+                    if mode != .hidden, let cont = self?.visibilityContinuation {
+                        self?.visibilityContinuation = nil
+                        cont.resume()
                     }
-                case .google:
-                    if !models.contains(where: { $0.id == googleChatModel }) {
-                        googleChatModel = models.first(where: { $0.id.contains("flash") })?.id ?? models.first!.id
-                    }
-                case .openai:
-                    if !models.contains(where: { $0.id == openAIChatModel }) {
-                        openAIChatModel = models.first(where: { $0.id.contains("mini") })?.id ?? models.first!.id
-                    }
-                case .ollama, .lmstudio: break
                 }
             }
+
+        // Open island immediately on the demo session
+        NotificationCenter.default.post(name: .hookExpand, object: IslandView.overview)
+
+        let gen = generation
+        demoTask = Task { @MainActor [weak self] in
+            await self?.runDemoLoop(gen: gen)
         }
     }
 
-    /// The model currently active for chat (provider-aware).
-    var activeChatModel: String {
-        switch chatProvider {
-        case .anthropic: return claudeModel
-        case .google:    return googleChatModel
-        case .openai:    return openAIChatModel
-        case .ollama:    return ollamaChatModel
-        case .lmstudio:  return lmstudioChatModel
-        }
-    }
+    // MARK: Stop
 
-    // Sound volume (0–0.2) — persisted, synced to SoundEngine
-    @Published var soundVolume: Double = 0.12 {
-        didSet {
-            UserDefaults.standard.set(soundVolume, forKey: "soundVolume")
-            SoundEngine.shared.volume = Float(soundVolume)
+    func stop() {
+        guard isActive else { return }
+        isActive = false
+        DemoEngine.isPollerPaused = false
+        GithubPoller.shared.triggerPulseNow()
+
+        demoTask?.cancel()
+        demoTask = nil
+        modeCancellable = nil
+
+        // Unblock any waiting continuations so the loop exits cleanly
+        let vc = visibilityContinuation; visibilityContinuation = nil; vc?.resume()
+        let ac = approvalContinuation;   approvalContinuation  = nil; ac?.resume(returning: "allow")
+        let qc = questionContinuation;   questionContinuation  = nil; qc?.resume()
+
+        // Clear demo overrides
+        RecapStore.shared.demoSummaryOverride = nil
+        #if !APPSTORE
+        AppState.shared.demoPlanUsageOverride = nil
+        #endif
+
+        let s = AppState.shared
+
+        // Clear demo approval card (never real — real cards have a fd in HookServer)
+        if s.pendingApproval?.sessionId == "demo_session" {
+            s.pendingApproval = nil
         }
-  
+        // Clear demo question (real questions always have pendingQuestionFD >= 0)
+        if !HookServer.shared.hasRealPendingQuestion {
+            s.pendingQuestion = nil
+        }
+        // Only restore isPinned if no real request is now pending
+        if s.pendingApproval == nil && s.pendingQuestion == nil {
+            s.isPinned = snapshot?.isPinned ?? false
+        }
+
+        guard let snap = snapshot else { return }
+        snapshot = nil
+
+        // Restore AppState (NOT pendingApproval, NOT pendingQuestion — HookServer owns those)
+        s.chatHistory   = snap.chatHistory
+        s.stateOverride = snap.stateOverride
+        s.noteMessage   = snap.noteMessage
+
+        // Restore integration data
+        s.vercelDeployments    = snap.vercelDeployments
+        s.resendEmails         = snap.resendEmails
+        s.resendTotal          = snap.resendTotal
+        s.githubPulse          = snap.githubPulse
+        s.githubActivity       = snap.githubActivity
+        s.githubStats          = snap.githubStats
+        s.stripePayments       = snap.stripePayments
+        s.stripeBalance        = snap.stripeBalance
+        s.stripeDisplayBalance = snap.stripeDisplayBalance
+        s.stripeCurrency       = snap.stripeCurrency
+        s.stripeLoaded         = snap.stripeLoaded
+        s.stripeError          = snap.stripeError
+        s.calcomBookings       = snap.calcomBookings
+        s.calcomLoaded         = snap.calcomLoaded
+        s.n8nRuns              = snap.n8nRuns
+        s.notionPages          = snap.notionPages
+        s.notionLoaded         = snap.notionLoaded
+
+        // Restore tasks: keep real tasks that arrived during the demo, discard demo-only ones.
+        // For tasks that existed before the demo (realTaskIdsAtStart), use the CURRENT version
+        // from AppState (real Claude Code events may have updated them during demo).
+        let demoIds: Set<String> = Set(demoInjectedTaskIds + ["demo_codex"])
+        let currentTasksById = Dictionary(uniqueKeysWithValues: s.tasks.map { ($0.id, $0) })
+        let realNewTasks = s.tasks.filter { task in
+            !snap.tasks.contains(where: { $0.id == task.id }) && !demoIds.contains(task.id)
+        }
+        let mainPillId = s.mainPillId
+        let restoredSnapTasks = snap.tasks.map { snapTask -> AgentTask in
+            // Main pill: always restore from snapshot — demo may have left steps/finalLine mid-cycle.
+            if snapTask.id == mainPillId { return snapTask }
+            // Other real tasks: keep current (may have received real hook events during demo).
+            if realTaskIdsAtStart.contains(snapTask.id), !demoIds.contains(snapTask.id),
+               let current = currentTasksById[snapTask.id] {
+                return current
+            }
+            return snapTask
+        }
+        s.tasks = restoredSnapTasks + realNewTasks
+
+        // Remove only demo diffs; leave real diffs untouched
+        for (pillId, ids) in demoDiffIds {
+            for id in ids {
+          
 ```
 
 ### Core Architecture Module: `NotchBuddy/Sources/App/HookServer.swift`
@@ -288,50 +662,128 @@ final class HookServer: @unchecked Sendable {
     private var serverFD: Int32 = -1
     private let connectionLock = NSLock()
     private var connectionCount = 0
-    private var pendingApprovalFD: Int32 = -1         // held open while user decides
-    private var approvalFDSource: (any DispatchSourceRead)? = nil  // monitors pendingApprovalFD
+    /// Permission requests waiting for a click, oldest first; the head is on the card.
+    /// Each one holds its nb-hook connection open until it is answered or dropped.
+    private var approvals = ApprovalQueue()
+    /// One read source per queued request: it notices the client hanging up, and its
+    /// cancel handler is the only place the request's fd is closed.
+    private var approvalSources: [UUID: any DispatchSourceRead] = [:]
     private var pendingQuestionFD: Int32 = -1         // held open while user answers AskUserQuestion
     private var questionFDSource: (any DispatchSourceRead)? = nil  // monitors pendingQuestionFD
+
+    /// True when a real nb-hook connection is holding the approval fd open.
+    @MainActor var hasRealPendingApproval: Bool { !approvals.isEmpty }
+    /// True when a real nb-hook connection is holding the question fd open.
+    @MainActor var hasRealPendingQuestion: Bool { pendingQuestionFD >= 0 }
     private var questionPillId: String = ""           // pill that owns the pending question
+    private var questionSessionId: String = ""        // sessionId for the pending question (recap tracking)
     private var focusBeforeQuestion: String? = nil    // saved focus to restore after question
     private var activeSessionId: String? = nil        // current Claude Code session
     private var focusBeforeApproval: String? = nil    // saved focus to restore after approval
+    private var sessions = PillSessionRegistry()      // live sessions behind each pill
 
     private init() {}
 
-    // MARK: - Approval fd helpers
+    // MARK: - Approval queue helpers
 
+    /// Note shown when a request was answered outside Coucou.
     @MainActor
-    private func cancelApprovalFDSource() {
-        approvalFDSource?.cancel()
-        approvalFDSource = nil
+    private func handledNote(pill: String) -> String {
+        switch pill {
+        case "agent_cursor":  return "Handled in Cursor."
+        case "agent_codex":   return "Handled in Codex."
+        case "agent_copilot": return "Handled in Copilot CLI."
+        case "agent_muse":    return "Handled in Muse Code."
+        case "agent_hermes":  return "Handled in Hermes."
+        default:              return "Handled in \(claudeHostName)."
+        }
     }
 
-    /// Cancels the approval fd source (which closes the fd via its cancel handler), shows a
-    /// 3-second note, clears approval state, then collapses the island.
+    /// Note shown when a request waited too long and went back to the agent.
     @MainActor
-    private func dismissApprovalCard(note: String) {
-        // cancelApprovalFDSource() triggers the cancel handler which closes the fd.
-        // Never close the fd here directly — Apple requires it to happen in the cancel handler.
-        cancelApprovalFDSource()
-        pendingApprovalFD = -1
+    private func waitingNote(pill: String) -> String {
+        switch pill {
+        case "agent_cursor":  return "Still waiting in Cursor."
+        case "agent_codex":   return "Still waiting in Codex."
+        case "agent_copilot": return "Still waiting in Copilot CLI."
+        case "agent_muse":    return "Still waiting in Muse Code."
+        case "agent_hermes":  return "Still waiting in Hermes."
+        default:              return "Still waiting in \(claudeHostName)."
+        }
+    }
+
+    /// Puts the oldest waiting request on the card. When the card already shows it, only
+    /// its "n waiting" count is refreshed (no sound, no focus change).
+    @MainActor
+    private func showApprovalHead() {
         let state = AppState.shared
-        let pillId = state.pendingApproval?.pillId ?? "integration_claude"
+        guard let head = approvals.head else { return }
+        if let shown = state.pendingApproval, shown.id == head.id {
+            if shown.queueCount != approvals.count { state.pendingApproval?.queueCount = approvals.count }
+            return
+        }
+        state.updateTask(id: head.pillId, state: .approval)
+        state.pendingApproval = ApprovalInfo(sessionId: head.sessionId, tool: head.tool,
+                                              command: head.command, inputKey: head.inputKey,
+                                              pillId: head.pillId, id: head.id,
+                                              queueCount: approvals.count,
+                                              projectName: head.projectName)
+        state.isPinned = true
+        // Approval always forces the island open — the user must be able to respond.
+        // Save the focus once, so it comes back when the last request is gone.
+        if focusBeforeApproval == nil { focusBeforeApproval = state.focusId }
+        withAnimation(.spring(response: 0.5, dampingFraction: 0.72)) { state.focusId = head.pillId }
+        expandIfNeeded(to: .approval)
+    }
+
+    /// Takes one request out of the queue. With `answer`, the decision is written to its
+    /// nb-hook first; without, the connection just closes and the agent asks again itself.
+    /// The cancel handler of its source closes the fd — never close it directly.
+    /// The next request in line then takes the card; when none is left the card closes,
+    /// with `note` for three seconds if one is given.
+    @MainActor
+    private func removeApproval(id: UUID, answer json: String? = nil, note: String? = nil) {
+        guard let entry = approvals.remove(id: id) else { return }
+        let age = Int(Date().timeIntervalSince(entry.received))
+        nbLog("Approval \(entry.tool) closed after \(age) s: \(json.map { _ in "answered from Coucou" } ?? note ?? "dropped")")
+        let source = approvalSources.removeValue(forKey: id)
+        if let json {
+            let fd = entry.fd
+            Task.detached { [weak self] in
+                // Write while the fd is still valid, then cancel → the cancel handler closes it.
+                self?.sendLine(fd: fd, text: json)
+                DispatchQueue.main.async { source?.cancel() }
+            }
+        } else {
+            source?.cancel()
+        }
+
+        let state = AppState.shared
+        if !approvals.hasEntries(forPill: entry.pillId) {
+            state.updateTask(id: entry.pillId, state: .working)
+            clearPillBadge(id: entry.pillId)
+        }
+        if approvals.head != nil {
+            showApprovalHead()
+            return
+        }
+        // Last request gone: close the card and give the focus back.
         state.pendingApproval = nil
         state.isPinned = false
-        state.updateTask(id: pillId, state: .working)
-        clearPillBadge(id: pillId)
-        // Restore focus to the pill that was focused before the approval card appeared.
         if let prev = focusBeforeApproval {
             focusBeforeApproval = nil
-            if state.focusId == pillId, state.tasks.contains(where: { $0.id == prev }) {
+            if state.focusId == entry.pillId, state.tasks.contains(where: { $0.id == prev }) {
                 withAnimation(.spring(response: 0.5, dampingFraction: 0.72)) { state.focusId = prev }
             }
         }
-        state.noteMessage = note
-        state.view = .note
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-            NotificationCenter.default.post(name: .islandCollapse, object: nil)
+        if let note {
+            state.noteMessage = note
+            state.view = .note
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                NotificationCenter.default.post(name: .islandCollapse, object: nil)
+            }
+        } else {
+            state.view = state.tasks.isEmpty ? .empty : .overview
         }
     }
 
@@ -373,122 +825,19 @@ final class HookServer: @unchecked Sendable {
     /// Called by QuestionView. Sends answers JSON and cleans up.
     @MainActor
     func sendQuestionAnswers(_ answers: [String: Any]) {
-        let fd = pendingQuestionFD
-        pendingQuestionFD = -1
-        let source = questionFDSource
-        questionFDSource = nil
-        if fd >= 0, let data = try? JSONSerialization.data(withJSONObject: ["permissionDecision": "answer", "answers": answers], options: .withoutEscapingSlashes),
-           let json = String(data: data, encoding: .utf8) {
-            Task.detached { [weak self] in
-                self?.sendLine(fd: fd, text: json)
-                DispatchQueue.main.async { source?.cancel() }
-            }
-        } else {
-            source?.cancel()
-        }
-        dismissQuestionCard(note: "")
-    }
-
-    /// Called by QuestionView.onDisappear — card left screen without an explicit answer.
-    /// Sends "ask" immediately to unblock nb-hook; does NOT navigate (view already changed).
-    @MainActor
-    func releaseQuestionFD() {
-        guard pendingQuestionFD >= 0 else { return }
-        let fd = pendingQuestionFD
-        pendingQuestionFD = -1
-        let source = questionFDSource
-        questionFDSource = nil
-        AppState.shared.pendingQuestion = nil
-        Task.detached { [weak self] in
-            self?.sendLine(fd: fd, text: #"{"permissionDecision":"ask"}"#)
-            DispatchQueue.main.async { source?.cancel() }
-        }
-    }
-
-    /// Called by QuestionView "Reply in terminal" button.
-    @MainActor
-    func sendQuestionAsk() {
-        let fd = pendingQuestionFD
-        pendingQuestionFD = -1
-        let source = questionFDSource
-        questionFDSource = nil
-        if fd >= 0 {
-            Task.detached { [weak self] in
-                self?.sendLine(fd: fd, text: #"{"permissionDecision":"ask"}"#)
-                DispatchQueue.main.async { source?.cancel() }
-            }
-        } else {
-            source?.cancel()
-        }
-        dismissQuestionCard(note: "")
-    }
-
-    /// Returns the tool_input serialized as sorted-keys JSON, "" if absent or empty.
-    /// Same computation used in processPermissionRequest and processEvent to match PostToolUse.
-    private static func approvalInputKey(_ input: [String: Any]) -> String {
-        guard !input.isEmpty,
-              let data = try? JSONSerialization.data(withJSONObject: input, options: .sortedKeys),
-              let str = String(data: data, encoding: .utf8) else { return "" }
-        return str
-    }
-
-    // MARK: - Start
-
-    func start() {
-        // Ensure support directory exists (mode 0700 — not world-readable)
-        let dir = Self.supportDir
-        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
-        try? FileManager.default.setAttributes([.posixPermissions: 0o700 as NSNumber], ofItemAtPath: dir.path)
-        #if !APPSTORE
-        installHookScript()
-        #endif
-        Thread.detachNewThread { self.serverThread() }
-    }
-
-    // MARK: - Socket server (background thread)
-
-    private func serverThread() {
-        let path = Self.socketPath
-        // sun_path on macOS is 104 bytes including the NUL terminator → max 103 usable bytes
-        let maxSunPathBytes = MemoryLayout<sockaddr_un>.size - MemoryLayout<sa_family_t>.size - 1
-        guard path.utf8.count <= maxSunPathBytes else {
-            NSLog("HookServer: socket path too long (\(path.utf8.count) bytes, max \(maxSunPathBytes)): \(path)")
+        // Only intercept a demo question — real questions always have a live fd.
+        if DemoEngine.shared.isActive, pendingQuestionFD < 0 {
+            AppState.shared.pendingQuestion = nil
+            AppState.shared.isPinned = false
+            AppState.shared.view = AppState.shared.tasks.isEmpty ? .empty : .overview
+            DemoEngine.shared.handleQuestionAnswered(answers: answers)
             return
         }
-        try? FileManager.default.removeItem(atPath: path)
-
-        let fd = socket(AF_UNIX, SOCK_STREAM, 0)
-        guard fd >= 0 else { return }
-        serverFD = fd
-
-        var addr = sockaddr_un()
-        addr.sun_family = sa_family_t(AF_UNIX)
-        let cpath = Array(path.utf8CString)
-        withUnsafeMutableBytes(of: &addr.sun_path) { raw in
-            for (i, c) in cpath.enumerated() where i < raw.count { raw[i] = UInt8(bitPattern: c) }
-        }
-
-        let bindRC = withUnsafePointer(to: &addr) { ptr in
-            ptr.withMemoryRebound(to: sockaddr.self, capacity: 1) { Darwin.bind(fd, $0, socklen_t(MemoryLayout<sockaddr_un>.size)) }
-        }
-        guard bindRC == 0 else { close(fd); return }
-        // Restrict socket to owner only
-        chmod(path, 0o600)
-        guard Darwin.listen(fd, 32) == 0 else { close(fd); return }
-
-        while true {
-            let clientFD = Darwin.accept(fd, nil, nil)
-            guard clientFD >= 0 else { break }
-            // Reject connections from other users (same-UID check)
-            var euid: uid_t = 0
-            var egid: gid_t = 0
-            guard getpeereid(clientFD, &euid, &egid) == 0, euid == getuid() else {
-                close(clientFD)
-                continue
-            }
-            // Enforce concurrent connection ceiling
-            connectionLock.lock()
-         
+        let fd = pendingQuestionFD
+        pendingQuestionFD = -1
+        let source = questionFDSource
+        questionFDSource = nil
+   
 ```
 
 ### Core Architecture Module: `NotchBuddy/Sources/App/IslandStateMachine.swift`
@@ -501,10 +850,11 @@ import Foundation
 final class IslandStateMachine {
 
     enum State: Equatable {
-        case hidden   // island invisible (notch size)
-        case petit    // compact island (notch + ears)
-        case home     // expanded, overview
-        case coucou   // expanded, greeting animation
+        case hidden    // island invisible (notch size)
+        case petit     // compact island (notch + ears)
+        case home      // expanded, overview
+        case coucou    // expanded, greeting animation
+        case listening // expanded, voice listening («OK Coucou» detected)
     }
 
     private(set) var state: State = .hidden
@@ -515,8 +865,14 @@ final class IslandStateMachine {
     /// When non-nil and returns true, timers and mouse-leave never auto-collapse or hide the island.
     var isHeldOpen: (() -> Bool)?
 
-    /// home → petit delay (seconds). Override for debug.
-    var homeToPetitDelay: TimeInterval = 15
+    /// home → petit delay (seconds), kept in sync with the auto-close preference.
+    var homeToPetitDelay: TimeInterval = 15 {
+        didSet {
+            guard homeToPetitDelay != oldValue,
+                  state == .home, homeCollapseWork != nil else { return }
+            scheduleHomeCollapse()
+        }
+    }
     /// petit → hidden delay (seconds). Override for debug.
     var petitToHiddenDelay: TimeInterval = 60
     /// coucou → petit delay after greeting animation ends (no hover). ~0.6s syncs with canvas collapse.
@@ -524,9 +880,18 @@ final class IslandStateMachine {
     /// coucou → petit delay when mouse is hovering over the greeting.
     var greetHoverCollapseDelay: TimeInterval = 10
 
+    /// Opt-in (Settings → General → Behavior): hovering the island opens it, and an island
+    /// opened that way folds shortly after the pointer leaves. Off: hover only peeks (petit).
+    var openOnHover = false
+    /// Grace period after the pointer leaves a hover-opened island (no flicker at the edge).
+    var hoverCloseDelay: TimeInterval = 0.6
+    /// True while the island is open because of a hover, until the user clicks inside it.
+    private(set) var openedByHover = false
+
     private var petitHideWork: DispatchWorkItem?
     private var homeCollapseWork: DispatchWorkItem?
     private var greetCollapseWork: DispatchWorkItem?
+    private var stateBeforeListening: State = .hidden
 
     // MARK: – Inputs
 
@@ -538,6 +903,12 @@ final class IslandStateMachine {
 
     /// Mouse entered the island notch area
     func mouseEntered() {
+        if openOnHover, state == .hidden || state == .petit, isHeldOpen?() != true {
+            cancelTimers()
+            openedByHover = true
+            transition(to: .home)
+            return
+        }
         switch state {
         case .hidden:
             if isHeldOpen?() == true {
@@ -556,6 +927,14 @@ final class IslandStateMachine {
         case .coucou:
             // Mouse hovering during greeting — cancel short auto-collapse, extend to hover delay
             scheduleGreetCollapse(delay: greetHoverCollapseDelay)
+        case .listening:
+            // Voice is active; if openOnHover, expand to show the overview.
+            if openOnHover {
+                cancelTimers()
+                openedByHover = true
+                transition(to: .home)
+            }
+            // else: no timer, island stays compact — voice keeps running.
         }
     }
 
@@ -574,14 +953,19 @@ final class IslandStateMachine {
                 greetCollapseWork?.cancel(); greetCollapseWork = nil
                 transition(to: .petit)
             }
+        case .listening:
+            break   // never auto-collapse while listening
         }
     }
 
     /// Compact island clicked.
     /// Also accepts `.hidden`: after an alert the island can be on screen while the
     /// FSM never saw the mouse enter (it was already there), and the click must still open it.
+    /// Also accepts `.listening`: the user can open the island while voice is active; voice
+    /// continues uninterrupted and the island expands to the overview.
     func click() {
-        guard state == .petit || state == .hidden else { return }
+        openedByHover = false
+        guard state == .petit || state == .hidden || state == .listening else { return }
         cancelTimers()
         transition(to: .home)
     }
@@ -600,6 +984,7 @@ final class IslandStateMachine {
     /// next hover/mouseLeft behave correctly instead of collapsing the island.
     func openedExternally() {
         cancelTimers()
+        openedByHover = false
         guard state != .home && state != .coucou else { return }
         state = .home
     }
@@ -608,9 +993,28 @@ final class IslandStateMachine {
     /// Move to `.petit` right away so hover and click keep working; waiting for the
     /// 15 s home timer left the island compact on screen while the FSM still said `.home`.
     func collapse() {
-        guard state == .home || state == .coucou else { return }
+        openedByHover = false
+        guard state == .home || state == .coucou || state == .listening else { return }
         cancelTimers()
         transition(to: .petit)
+    }
+
+    // MARK: – Voice inputs
+
+    /// Wake phrase detected: open the island in listening mode from any state.
+    func voiceWoke() {
+        stateBeforeListening = state
+        cancelTimers()
+        openedByHover = false
+        transition(to: .listening)
+    }
+
+    /// Command session ended (silence timeout, cancel phrase, or user dismiss).
+    func voiceFinished() {
+        guard state == .listening else { return }
+        let target: State = stateBeforeListening == .home ? .home : .petit
+        transition(to: target)
+        if target == .home, isHeldOpen?() != true { scheduleHomeCollapse() }
     }
 
     /// Greeting animation finished (called at T.end ≈ 4.60 s).
@@ -657,10 +1061,18 @@ final class IslandStateMachine {
         homeCollapseWork?.cancel()
         let item = DispatchWorkItem { [weak self] in
             guard let self, self.state == .home, !(self.isHeldOpen?() ?? false) else { return }
+            self.openedByHover = false
             self.transition(to: .petit)
         }
         homeCollapseWork = item
-        DispatchQueue.main.asyncAfter(deadline: .now() + homeToPetitDelay, execute: item)
+        let delay = openedByHover ? hoverCloseDelay : homeToPetitDelay
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: item)
+    }
+
+    /// The user clicked inside the island: a hover-opened island now stays like any open
+    /// island (normal auto-close) instead of folding as soon as the pointer leaves.
+    func userInteracted() {
+        openedByHover = false
     }
 
     func cancelTimers() {
@@ -678,6 +1090,268 @@ final class IslandStateMachine {
 
 }
 
+```
+
+### Core Architecture Module: `NotchBuddy/Sources/App/ParakeetEngine.swift`
+```
+#if !APPSTORE
+import AVFoundation
+@preconcurrency import FluidAudio
+import os
+
+/// How Flow dictation turns the voice into text.
+enum FlowEngine: String, CaseIterable, Identifiable {
+    /// NVIDIA's Parakeet, run on the Mac's Neural Engine by FluidAudio: the most accurate, offline.
+    case parakeet
+    /// The Mac's own speech recognition (MacDictation).
+    case apple
+
+    var id: String { rawValue }
+}
+
+/// Parakeet (speech to text) and the speaker diarizer of the Notetaker: their models, downloaded
+/// once from Hugging Face when the user clicks Download in Coucou Flow → Settings (≈ 650 MB),
+/// kept in Application Support/NotchBuddy/Models, then everything runs on this Mac.
+@MainActor
+final class Parakeet: ObservableObject {
+    static let shared = Parakeet()
+
+    /// Parakeet Ultra: v3's 25 languages, more accurate than v3, same speed.
+    nonisolated static let version: AsrModelVersion = .ultra
+
+    enum State: Equatable {
+        /// Intel Mac: the models need the Neural Engine of Apple silicon.
+        case unsupported
+        case missing
+        case downloading(Double)
+        case ready
+        case failed(String)
+    }
+
+    @Published private(set) var state: State = .missing
+
+    private var loading: Task<AsrManager, Error>?
+
+    private init() { refresh() }
+
+    nonisolated static var isSupported: Bool {
+        #if arch(arm64)
+        return true
+        #else
+        return false
+        #endif
+    }
+
+    /// Coucou's own copy of the models (not FluidAudio's shared folder, so removing them never
+    /// touches another app's).
+    nonisolated static var modelsRoot: URL {
+        HookServer.supportDir.appendingPathComponent("Models", isDirectory: true)
+    }
+
+    nonisolated static var asrDirectory: URL {
+        modelsRoot.appendingPathComponent(AsrModels.defaultCacheDirectory(for: version).lastPathComponent, isDirectory: true)
+    }
+
+    nonisolated static var installed: Bool {
+        AsrModels.modelsExist(at: asrDirectory, version: version)
+    }
+
+    var isReady: Bool { state == .ready }
+
+    func refresh() {
+        if !Self.isSupported { state = .unsupported; return }
+        if case .downloading = state { return }
+        state = Self.installed ? .ready : .missing
+    }
+
+    /// Downloads Parakeet and the diarizer, then loads Parakeet so the first dictation is quick.
+    func download() {
+        guard Self.isSupported else { return }
+        if case .downloading = state { return }
+        state = .downloading(0)
+        Task { @MainActor in
+            do {
+                try await Self.fetchModels { fraction in
+                    Task { @MainActor in
+                        if case .downloading(let shown) = Parakeet.shared.state, fraction > shown {
+                            Parakeet.shared.state = .downloading(fraction)
+                        }
+                    }
+                }
+                state = .ready
+                appendAppLog("nb.log", "[Parakeet] models downloaded")
+                _ = try? await manager()
+            } catch {
+                appendAppLog("nb.log", "[Parakeet] download failed: \(error.localizedDescription)")
+                state = .failed(error.localizedDescription)
+            }
+        }
+    }
+
+    nonisolated private static func fetchModels(progress: @escaping @Sendable (Double) -> Void) async throws {
+        try FileManager.default.createDirectory(at: modelsRoot, withIntermediateDirectories: true)
+        _ = try await AsrModels.download(to: asrDirectory, version: version, progressHandler: { update in
+            progress(min(0.92, update.fractionCompleted * 0.92))
+        })
+        try await prepareDiarizer()
+        progress(1)
+    }
+
+    /// Downloads (once) and loads the Notetaker's speaker diarizer.
+    nonisolated static func prepareDiarizer() async throws {
+        let diarizer = OfflineDiarizerManager()
+        try await diarizer.prepareModels(directory: modelsRoot)
+    }
+
+    /// Removes the models from this Mac (Settings → Remove).
+    func remove() {
+        loading?.cancel()
+        loading = nil
+        try? FileManager.default.removeItem(at: Self.modelsRoot)
+        refresh()
+    }
+
+    /// Loads Parakeet once; later calls get the same instance.
+    func manager() async throws -> AsrManager {
+        if let loading { return try await loading.value }
+        let task = Task<AsrManager, Error> {
+            let models = try await AsrModels.load(from: Self.asrDirectory, version: Self.version)
+            let asr = AsrManager(config: .default)
+            try await asr.loadModels(models)
+            return asr
+        }
+        loading = task
+        do {
+            return try await task.value
+        } catch {
+            loading = nil
+            throw error
+        }
+    }
+
+    /// Loads the model in the background when dictation will use it, so the first one is quick.
+    func preload() {
+        guard state == .ready, loading == nil else { return }
+        Task { @MainActor in _ = try? await manager() }
+    }
+
+    /// 16 kHz mono samples → text.
+    func transcribe(_ samples: [Float]) async throws -> String {
+        try await transcribeWithTimings(samples).text
+    }
+
+    func transcribeWithTimings(_ samples: [Float]) async throws -> ASRResult {
+        var audio = samples
+        // Parakeet wants at least a second, and a little silence at the end keeps the last word.
+        audio.append(contentsOf: [Float](repeating: 0, count: max(4_800, 16_000 - audio.count)))
+        let asr = try await manager()
+        var decoder = TdtDecoderState.make(decoderLayers: await asr.decoderLayerCount)
+        return try await asr.transcribe(audio, decoderState: &decoder)
+    }
+}
+
+// MARK: - 16 kHz mono
+
+/// Turns the microphone's or the Mac's audio, in whatever format it comes, into the 16 kHz mono
+/// Float32 samples Parakeet and the diarizer take. Fed from one audio thread at a time.
+final class Resampler16k: @unchecked Sendable {
+    nonisolated(unsafe) static let format = AVAudioFormat(commonFormat: .pcmFormatFloat32, sampleRate: 16_000,
+                                                          channels: 1, interleaved: false)!
+    private let converter: AVAudioConverter
+    private let ratio: Double
+
+    init?(from input: AVAudioFormat) {
+        guard input.sampleRate > 0, let converter = AVAudioConverter(from: input, to: Self.format) else { return nil }
+        converter.downmix = true
+        self.converter = converter
+        ratio = 16_000 / input.sampleRate
+    }
+
+    func convert(_ buffer: AVAudioPCMBuffer) -> [Float] {
+        let capacity = AVAudioFrameCount(Double(buffer.frameLength) * ratio) + 64
+        guard buffer.frameLength > 0,
+              let out = AVAudioPCMBuffer(pcmFormat: Self.format, frameCapacity: capacity) else { return [] }
+        nonisolated(unsafe) var fed = false
+        nonisolated(unsafe) let source = buffer
+        var error: NSError?
+        let status = converter.convert(to: out, error: &error) { _, inputStatus in
+            if fed {
+                inputStatus.pointee = .noDataNow
+                return nil
+            }
+            fed = true
+            inputStatus.pointee = .haveData
+            return source
+        }
+        guard status != .error, let data = out.floatChannelData, out.frameLength > 0 else { return [] }
+        return Array(UnsafeBufferPointer(start: data[0], count: Int(out.frameLength)))
+    }
+}
+
+// MARK: - Dictation with Parakeet
+
+/// Flow dictation with Parakeet: the microphone is recorded while the key is held, then Parakeet
+/// writes it all at once (a few hundred milliseconds for a minute of speech). Only the microphone
+/// permission is needed; nothing leaves the Mac.
+final class ParakeetDictation: @unchecked Sendable {
+    @MainActor private(set) var isRecording = false
+    /// Flow dictation's pill: the microphone's levels by frequency.
+    var bands: FlowAudioBands?
+
+    private let engine = AVAudioEngine()
+    private let samples = OSAllocatedUnfairLock(initialState: [Float]())
+
+    @MainActor func start() async {
+        guard !isRecording, await AVAudioApplication.requestRecordPermission() else { return }
+        samples.withLock { $0.removeAll(keepingCapacity: true) }
+        guard Self.startEngine(engine, into: samples, bands: bands) else { return }
+        isRecording = true
+        NotificationCenter.default.post(name: .dictationDidStart, object: nil)
+    }
+
+    /// Stops the microphone and returns the words.
+    @MainActor func finish() async -> String {
+        guard isRecording else { return "" }
+        stopEngine()
+        let audio = samples.withLock { $0 }
+        do {
+            return try await Parakeet.shared.transcribe(audio)
+        } catch {
+            appendAppLog("nb.log", "[Parakeet] dictation failed: \(error.localizedDescription)")
+            return ""
+        }
+    }
+
+    /// Stops without words (Esc, another key).
+    @MainActor func stop() {
+        guard isRecording else { return }
+        stopEngine()
+        samples.withLock { $0.removeAll() }
+    }
+
+    @MainActor private func stopEngine() {
+        engine.inputNode.removeTap(onBus: 0)
+        engine.stop()
+        isRecording = false
+        NotificationCenter.default.post(name: .dictationDidEnd, object: nil)
+    }
+
+    nonisolated private static func startEngine(_ engine: AVAudioEngine, into samples: OSAllocatedUnfairLock<[Float]>,
+                                                bands: FlowAudioBands?) -> Bool {
+        let input = engine.inputNode
+        let format = input.outputFormat(forBus: 0)
+        guard let resampler = Resampler16k(from: format) else { return false }
+        input.installTap(onBus: 0, bufferSize: 1024, format: format) { buffer, _ in
+            bands?.consume(buffer)
+            let out = resampler.convert(buffer)
+            if !out.isEmpty { samples.withLock { $0.append(contentsOf: out) } }
+        }
+        engine.prepare()
+        do { try engine.start() } catch {
+            input.removeTap(onBus: 0)
+            return false
+        }
+        re
 ```
 
 ### Core Architecture Module: `NotchBuddy/Sources/App/SoundEngine.swift`
@@ -703,23 +1377,72 @@ final class SoundEngine {
         preload()
     }
 
-    private func preload() {
-        let names = ["peek","open","close","hover","blip","slap","annoyed","dizzy","greet",
-                     "work","finish","error","approval","question","approve","gulp","tick",
-                     "send","love","pop","proud","wink","yawn","attach","think","search",
-                     "rate","sleep","greeting"]
-        for name in names {
-            guard let url = Bundle.main.url(forResource: name, withExtension: "wav", subdirectory: "sounds") else { continue }
-            var pool: [AVAudioPlayer] = []
-            for _ in 0..<3 {
-                if let p = try? AVAudioPlayer(contentsOf: url) {
-                    p.volume = volume
-                    p.prepareToPlay()
-                    pool.append(p)
-                }
-            }
-            if !pool.isEmpty { players[name] = pool }
+    static let soundNames = ["peek","open","close","hover","blip","slap","annoyed","dizzy","greet",
+                             "work","finish","error","approval","question","approve","gulp","tick",
+                             "send","love","pop","proud","wink","yawn","attach","think","search",
+                             "rate","sleep","greeting"]
+
+    /// Your own sounds: a file named like a built-in sound (e.g. finish.wav, approval.mp3) in this
+    /// folder replaces it. ~/Library/Application Support/NotchBuddy/Sounds (in the App Store build,
+    /// the same path inside the app's container).
+    static var customFolder: URL? {
+        FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first?
+            .appendingPathComponent("NotchBuddy/Sounds", isDirectory: true)
+    }
+    private static let customExtensions = ["wav", "aiff", "aif", "caf", "m4a", "mp3"]
+
+    /// The custom file for a sound, if the user dropped one in the folder.
+    static func customURL(for name: String) -> URL? {
+        guard let dir = customFolder else { return nil }
+        for ext in customExtensions {
+            let url = dir.appendingPathComponent(name).appendingPathExtension(ext)
+            if FileManager.default.isReadableFile(atPath: url.path) { return url }
         }
+        return nil
+    }
+
+    /// Names of the built-in sounds currently replaced by a custom file.
+    private(set) var customized: [String] = []
+
+    private func preload() {
+        var pools: [String: [AVAudioPlayer]] = [:]
+        var custom: [String] = []
+        for name in Self.soundNames {
+            let own = Self.customURL(for: name)
+            // A custom file that can't be decoded falls back to the built-in sound.
+            var pool = own.map { makePool($0) } ?? []
+            if pool.isEmpty {
+                guard let url = Bundle.main.url(forResource: name, withExtension: "wav", subdirectory: "sounds") else { continue }
+                pool = makePool(url)
+            } else {
+                custom.append(name)
+            }
+            if !pool.isEmpty { pools[name] = pool }
+        }
+        players = pools
+        customized = custom
+    }
+
+    private func makePool(_ url: URL) -> [AVAudioPlayer] {
+        var pool: [AVAudioPlayer] = []
+        for _ in 0..<3 {
+            if let p = try? AVAudioPlayer(contentsOf: url) {
+                p.volume = volume
+                p.prepareToPlay()
+                pool.append(p)
+            }
+        }
+        return pool
+    }
+
+    /// Re-reads the sounds (after the user changed the custom folder).
+    func reload() { preload() }
+
+    /// Creates the custom folder if needed and shows it in the Finder.
+    func revealCustomFolder() {
+        guard let dir = Self.customFolder else { return }
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        NSWorkspace.shared.activateFileViewerSelecting([dir])
     }
 
     /// Fade out all currently-playing instances of `name` over `duration` seconds,
@@ -1017,1321 +1740,243 @@ final class UploadSequenceEngine {
             if sim.locked && dist > USC.LOCK_OUT { sim.locked = false }
 ```
 
-### Core Architecture Module: `NotchBuddy/Sources/CoucouKit/BotEngine.swift`
+### Core Architecture Module: `NotchBuddy/Sources/App/Voice/VoiceEngine.swift`
 ```
-import Foundation
-import CoreGraphics
-import QuartzCore
-import SwiftUI
-
-// MARK: - Easing functions (same as prototype: E.out, E.inOut, E.back, E.lin)
-
-enum Ease {
-    static func out(_ t: CGFloat) -> CGFloat   { 1 - pow(1 - t, 3) }
-    static func inOut(_ t: CGFloat) -> CGFloat { t < 0.5 ? 4*t*t*t : 1 - pow(-2*t+2, 3)/2 }
-    static func back(_ t: CGFloat) -> CGFloat  { let c1: CGFloat = 1.7; let c3 = c1+1; return 1+c3*pow(t-1,3)+c1*pow(t-1,2) }
-    static func lin(_ t: CGFloat) -> CGFloat   { t }
-}
-
-// MARK: - Tween key: [target, duration_ms, easing]
-
-struct TweenKey {
-    let target: CGFloat
-    let duration: CGFloat    // milliseconds
-    let ease: (CGFloat) -> CGFloat
-}
-
-struct Tween {
-    let property: String
-    var keys: [TweenKey]
-    var keyIndex: Int = 0
-    var from: CGFloat
-    var startTime: Double    // CACurrentMediaTime() * 1000
-    var onComplete: (() -> Void)? = nil
-}
-
-// MARK: - Particle
-
-struct Particle {
-    enum ParticleType { case heart, star, spark, sweat, z }
-    var type: ParticleType
-    var x, y, vx, vy: CGFloat
-    var age: Double        // seconds
-    var life: Double
-    var rot: CGFloat
-    var size: CGFloat
-}
-
-// MARK: - Bot state config (mirrors STATES in prototype)
-
-struct BotStateCfg {
-    let color: CGColor
-    let tint: CGFloat
-    let eye: EyeShape
-    let badge: BadgeType?
-    let badgeColor: CGColor
-    let glow: CGColor
-    let glowOpacity: CGFloat
-    let bounces: Bool
-    let scans: Bool
-    let breathes: Bool
-    let zz: Bool
-    let sweat: Bool
-    let look: CGPoint?     // fixed look direction
-    let tilt: CGFloat
-    let sound: String?
-}
-
-enum EyeShape: String {
-    case pill, wide, dot, line, flat, happy, closed, spiral, heart, star, tired, wink, cup
-}
-
-enum BadgeType {
-    case dots(CGColor)
-    case bang(CGColor)
-    case question(CGColor)
-    case dot(CGColor)
-}
-
-// MARK: - Mochi track constants (from PISTES.mochi)
-
-enum MochiConst {
-    static let eyeW: CGFloat  = 0.25
-    static let eyeH: CGFloat  = 0.27
-    static let eyeSp: CGFloat = 0.37
-    static let eyeP: CGFloat  = -0.12
-    static let baseTop    = CGColor(red: 0.929, green: 0.929, blue: 0.937, alpha: 1)  // #EDEDEF
-    static let baseBottom = CGColor(red: 0.769, green: 0.773, blue: 0.792, alpha: 1)  // #C4C5CA
-    static let ink        = CGColor(red: 0.102, green: 0.082, blue: 0.071, alpha: 1)  // #1A1412
-    static let miniInk    = CGColor(red: 0.063, green: 0.075, blue: 0.102, alpha: 1)  // #10131A
-}
-
-// MARK: - Bot state configs
-
-let BotStates: [BotState: BotStateCfg] = [
-    .idle: BotStateCfg(
-        color: CGColor(red:0.902,green:0.914,blue:0.933,alpha:1), tint:0,
-        eye:.pill, badge:nil,
-        badgeColor: .white, glow: CGColor(red:1,green:1,blue:1,alpha:0.35), glowOpacity:0.25,
-        bounces:false, scans:false, breathes:false, zz:false, sweat:false,
-        look:nil, tilt:0, sound:nil),
-    .working: BotStateCfg(
-        color: CGColor(red:0.231,green:0.620,blue:1,alpha:1), tint:0.72,
-        eye:.pill, badge:.dots(CGColor(red:0.231,green:0.620,blue:1,alpha:1)),
-        badgeColor: CGColor(red:0.231,green:0.620,blue:1,alpha:1),
-        glow: CGColor(red:0.231,green:0.620,blue:1,alpha:1), glowOpacity:0.55,
-        bounces:false, scans:false, breathes:false, zz:false, sweat:false,
-        look:nil, tilt:0, sound:"work"),
-    .thinking: BotStateCfg(
-        color: CGColor(red:0.545,green:0.361,blue:0.965,alpha:1), tint:0.72,
-        eye:.pill, badge:.dots(CGColor(red:0.545,green:0.361,blue:0.965,alpha:1)),
-        badgeColor: CGColor(red:0.545,green:0.361,blue:0.965,alpha:1),
-        glow: CGColor(red:0.545,green:0.361,blue:0.965,alpha:1), glowOpacity:0.5,
-        bounces:false, scans:false, breathes:false, zz:false, sweat:false,
-        look: CGPoint(x:0.55, y:0.55), tilt:0, sound:"think"),
-    .searching: BotStateCfg(
-        color: CGColor(red:0.388,green:0.396,blue:0.949,alpha:1), tint:0.72,
-        eye:.pill, badge:.dots(CGColor(red:0.388,green:0.396,blue:0.949,alpha:1)),
-        badgeColor: CGColor(red:0.388,green:0.396,blue:0.949,alpha:1),
-        glow: CGColor(red:0.388,green:0.396,blue:0.949,alpha:1), glowOpacity:0.55,
-        bounces:false, scans:true, breathes:false, zz:false, sweat:false,
-        look:nil, tilt:0, sound:"search"),
-    .approval: BotStateCfg(
-        color: CGColor(red:0.961,green:0.647,blue:0.141,alpha:1), tint:0.78,
-        eye:.wide, badge:.bang(CGColor(red:0.961,green:0.647,blue:0.141,alpha:1)),
-        badgeColor: CGColor(red:0.961,green:0.647,blue:0.141,alpha:1),
-        glow: CGColor(red:0.961,green:0.647,blue:0.141,alpha:1), glowOpacity:0.6,
-        bounces:true, scans:false, breathes:false, zz:false, sweat:false,
-        look:nil, tilt:0, sound:"approval"),
-    .question: BotStateCfg(
-        color: CGColor(red:0.133,green:0.827,blue:0.933,alpha:1), tint:0.75,
-        eye:.pill, badge:.question(CGColor(red:0.133,green:0.827,blue:0.933,alpha:1)),
-        badgeColor: CGColor(red:0.133,green:0.827,blue:0.933,alpha:1),
-        glow: CGColor(red:0.133,green:0.827,blue:0.933,alpha:1), glowOpacity:0.55,
-        bounces:false, scans:false, breathes:false, zz:false, sweat:false,
-        look:nil, tilt:0.17, sound:"question"),
-    .error: BotStateCfg(
-        color: CGColor(red:0.957,green:0.314,blue:0.369,alpha:1), tint:0.78,
-        eye:.flat, badge:.dot(CGColor(red:0.957,green:0.314,blue:0.369,alpha:1)),
-        badgeColor: CGColor(red:0.957,green:0.314,blue:0.369,alpha:1),
-        glow: CGColor(red:0.957,green:0.314,blue:0.369,alpha:1), glowOpacity:0.55,
-        bounces:false, scans:false, breathes:false, zz:false, sweat:false,
-        look:nil, tilt:0, sound:"error"),
-    .finished: BotStateCfg(
-        color: CGColor(red:0.204,green:0.831,blue:0.600,alpha:1), tint:0.35,
-        eye:.happy, badge:.dot(CGColor(red:0.204,green:0.831,blue:0.600,alpha:1)),
-        badgeColor: CGColor(red:0.204,green:0.831,blue:0.600,alpha:1),
-        glow: CGColor(red:0.204,green:0.831,blue:0.600,alpha:1), glowOpacity:0.5,
-        bounces:false, scans:false, breathes:false, zz:false, sweat:false,
-        look:nil, tilt:0, sound:"finish"),
-    .ratelimit: BotStateCfg(
-        color: CGColor(red:0.984,green:0.573,blue:0.235,alpha:1), tint:0.72,
-        eye:.tired, badge:.dot(CGColor(red:0.984,green:0.573,blue:0.235,alpha:1)),
-        badgeColor: CGColor(red:0.984,green:0.573,blue:0.235,alpha:1),
-        glow: CGColor(red:0.984,green:0.573,blue:0.235,alpha:1), glowOpacity:0.45,
-        bounces:false, scans:false, breathes:false, zz:false, sweat:true,
-        look:nil, tilt:0, sound:"rate"),
-    .sleeping: BotStateCfg(
-        color: CGColor(red:0.580,green:0.635,blue:0.722,alpha:1), tint:0.32,
-        eye:.closed, badge:nil,
-        badgeColor: .white,
-        glow: CGColor(red:0.580,green:0.635,blue:0.722,alpha:1), glowOpacity:0.2,
-        bounces:false, scans:false, breathes:true, zz:true, sweat:false,
-        look:nil, tilt:0, sound:"sleep"),
-    .dizzy: BotStateCfg(
-        color: CGColor(red:0.957,green:0.447,blue:0.714,alpha:1), tint:0.7,
-        eye:.spiral, badge:nil,
-        badgeColor: .white,
-        glow: CGColor(red:0.957,green:0.447,blue:0.714,alpha:1), glowOpacity:0.55,
-        bounces:false, scans:false, breathes:false, zz:false, sweat:false,
-        look:nil, tilt:0, sound:"dizzy"),
-]
-
-// MARK: - Bot engine
-
-@MainActor
-final class BotEngine: ObservableObject {
-    var isMini: Bool = false
-    var bodyColor: CGColor? = nil    // override for mini bots
-
-    // Animation state (mirrors prototype 's' object)
-    var yaw:    CGFloat = 0
-    var pitch:  CGFloat = 0
-    var roll:      CGFloat = 0
-    var rollTurns: CGFloat = 1
-    var tilt:   CGFloat = 0
-    var open:   CGFloat = 1          // eye open amount
-    var sx:     CGFloat = 1          // scale X
-    var sy:     CGFloat = 1          // scale Y
-    var oy:     CGFloat = 0          // offset Y (bounce)
-    var ox:     CGFloat = 0          // offset X (shake)
-    var tint:   CGFloat = 0
-    var morph:  CGFloat = 0          // morph to rect (for upload bucket)
-    var hands:  CGFloat = 0
-    var blush:  CGFloat = 0
-    var outfit: Outfit = .none
-    var es:     CGFloat = 1          // eye scale
-    var badgeS: CGFloat = 0          // badge scale
-    var outfitPresence: CGFloat = 0  // 0=hidden, 1=fully visible (animated)
-    private var outfitTarget: Outfit = .none
-
-    // Physical spring (hat/pompom lag) — updated in update()
-    var physDx: CGFloat = 0   // horizontal lag (-1..1)
-    var physDy: CGFloat = 0   // vertical lag (-1..1)
-    private var physVx: CGFloat = 0
-    private var physVy: CGFloat = 0
-    private var prevYaw: CGFloat = 0
-    private var prevOy: CGFloat = 0
-    private var prevRoll: CGFloat = 0
-
-    // Targets
-    var tgYaw:    CGFloat = 0
-    var tgPitch:  CGFloat = 0
-    var tgTilt:   CGFloat = 0
-    var tgSy:     CGFloat = 1
-    var tgSx:     CGFloat = 1
-    var tgEs:     CGFloat = 1   // eye-scale target (hover love: 1.08, normal: 1)
-
-    // Particle canvas overhang (extra canvas height at top for hearts to fly into)
-    var particleOverhang: CGFloat = 0
-
-    // Mouth spring (fraction of R: 0=closed, 0.20=hover, 0.42=open, 0.50=overopen)
-    var slotH: CGFloat = 0           // current height (fraction of R)
-    var slotHTarget: CGFloat = 0     // spring target
-    var slotHVel: CGFloat = 0        // spring velocity (fraction of R / s)
-    var isChewing: Bool = false       // true for ~800ms after gulp swallow
-
-    // Color (animated)
-    var col:  (CGFloat, CGFloat, CGFloat) = (0.902, 0.914, 0.933)  // idle
-    var colT: (CGFloat, CGFloat, CGFloat) = (0.902, 0.914, 0.933)
-
-    // State
-    var state: BotState = .idle
-    var cfg: BotStateCfg = BotStates[.idle]!
-
-    // Eye override (emote)
-    var eyeOverride: EyeShape? = nil
-    var eyeOverrideUntil: Double = 0   // CACurrentMediaTime()
-    var permanentEye: EyeShape? = nil   // restored after temporary emote/blink expires
-    var permanentEmote: BotEmote? = nil // stored so doMiniBehaviorLoop can switch on it
-    var miniNextBehavior
-```
-
-### Core Architecture Module: `NotchBuddy/Sources/CoucouKit/DiffEngine.swift`
-```
-import Foundation
-
-// MARK: - Types
-
-struct DiffLine: Equatable {
-    enum Kind: Equatable { case context, added, removed }
-    var kind: Kind
-    var text: String
-    var origLine: Int   // 1-based; -1 for pure adds
-    var newLine: Int    // 1-based; -1 for pure removes
-}
-
-struct DiffHunk: Equatable {
-    var origStart: Int
-    var newStart: Int
-    var lines: [DiffLine]
-}
-
-struct FileDiff: Equatable {
-    var id: Int = 0         // stable identifier assigned by AppState.appendSessionDiff
-    var path: String
-    var added: Int
-    var removed: Int
-    var hunks: [DiffHunk]
-    var tooLarge: Bool
-    var isNewFile: Bool     // true when produced by DiffEngine.fromNew (Write tool)
-
-    var name: String { URL(fileURLWithPath: path).lastPathComponent }
-
-    static let maxBytes = 200 * 1024
-    static let maxLines = 4000
-}
-
-// MARK: - DiffEngine
-
-enum DiffEngine {
-
-    // MARK: Public API
-
-    static func fromEdit(old: String, new: String, path: String) -> FileDiff {
-        // Size guard
-        if old.utf8.count + new.utf8.count > FileDiff.maxBytes {
-            return countFallback(old: old, new: new, path: path, tooLarge: true)
-        }
-        let oldLines = splitLines(old)
-        let newLines = splitLines(new)
-        if oldLines.count + newLines.count > FileDiff.maxLines {
-            return countFallback(old: old, new: new, path: path, tooLarge: true)
-        }
-        // LCS is O(m*n) — bail out before quadratic blowup
-        if oldLines.count * newLines.count > 1_000_000 {
-            return countFallback(old: old, new: new, path: path, tooLarge: true)
-        }
-        let flat = buildDiffLines(oldLines: oldLines, newLines: newLines)
-        let hunks = buildHunks(from: flat, context: 3)
-        let added   = flat.filter { $0.kind == .added   }.count
-        let removed = flat.filter { $0.kind == .removed }.count
-        return FileDiff(path: path, added: added, removed: removed, hunks: hunks, tooLarge: false, isNewFile: false)
-    }
-
-    static func fromNew(content: String, path: String) -> FileDiff {
-        // Size guard (same limits as fromEdit)
-        if content.utf8.count > FileDiff.maxBytes {
-            let lineCount = content.components(separatedBy: "\n").count
-            return FileDiff(path: path, added: lineCount, removed: 0, hunks: [], tooLarge: true, isNewFile: true)
-        }
-        let lines = splitLines(content)
-        if lines.count > FileDiff.maxLines {
-            return FileDiff(path: path, added: lines.count, removed: 0, hunks: [], tooLarge: true, isNewFile: true)
-        }
-        let diffLines = lines.enumerated().map { (i, text) in
-            DiffLine(kind: .added, text: text, origLine: -1, newLine: i + 1)
-        }
-        let hunk = diffLines.isEmpty ? nil : DiffHunk(origStart: 0, newStart: 1, lines: diffLines)
-        return FileDiff(
-            path: path,
-            added: diffLines.count,
-            removed: 0,
-            hunks: hunk.map { [$0] } ?? [],
-            tooLarge: false,
-            isNewFile: true
-        )
-    }
-
-    // MARK: - Line splitting
-
-    private static func splitLines(_ text: String) -> [String] {
-        // Normalize CRLF → LF
-        let normalized = text.replacingOccurrences(of: "\r\n", with: "\n")
-        var parts = normalized.components(separatedBy: "\n")
-        // Drop trailing empty element that results from a trailing newline
-        if parts.last == "" { parts.removeLast() }
-        return parts
-    }
-
-    // MARK: - LCS-based diff
-
-    private static func buildDiffLines(oldLines: [String], newLines: [String]) -> [DiffLine] {
-        let m = oldLines.count
-        let n = newLines.count
-
-        // Build LCS DP table
-        // dp[i][j] = LCS length of oldLines[0..<i] and newLines[0..<j]
-        var dp = [[Int]](repeating: [Int](repeating: 0, count: n + 1), count: m + 1)
-        for i in 1...max(1, m) {
-            for j in 1...max(1, n) {
-                guard i <= m && j <= n else { continue }
-                if oldLines[i - 1] == newLines[j - 1] {
-                    dp[i][j] = dp[i - 1][j - 1] + 1
-                } else {
-                    dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])
-                }
-            }
-        }
-
-        // Backtrack to get matching pairs
-        var matches: [(Int, Int)] = []  // (oldIdx 0-based, newIdx 0-based)
-        var i = m, j = n
-        while i > 0 && j > 0 {
-            if oldLines[i - 1] == newLines[j - 1] {
-                matches.append((i - 1, j - 1))
-                i -= 1; j -= 1
-            } else if dp[i - 1][j] >= dp[i][j - 1] {
-                i -= 1
-            } else {
-                j -= 1
-            }
-        }
-        matches.reverse()
-
-        // Build flat diff from LCS pairs
-        var result: [DiffLine] = []
-        var prevOld = -1
-        var prevNew = -1
-
-        for (oi, ni) in matches {
-            // Removed lines between last match and this old match
-            for k in (prevOld + 1)..<oi {
-                result.append(DiffLine(kind: .removed, text: oldLines[k],
-                                       origLine: k + 1, newLine: -1))
-            }
-            // Added lines between last match and this new match
-            for k in (prevNew + 1)..<ni {
-                result.append(DiffLine(kind: .added, text: newLines[k],
-                                       origLine: -1, newLine: k + 1))
-            }
-            // Context line (the match)
-            result.append(DiffLine(kind: .context, text: oldLines[oi],
-                                   origLine: oi + 1, newLine: ni + 1))
-            prevOld = oi
-            prevNew = ni
-        }
-
-        // Remaining removes
-        for k in (prevOld + 1)..<m {
-            result.append(DiffLine(kind: .removed, text: oldLines[k],
-                                   origLine: k + 1, newLine: -1))
-        }
-        // Remaining adds
-        for k in (prevNew + 1)..<n {
-            result.append(DiffLine(kind: .added, text: newLines[k],
-                                   origLine: -1, newLine: k + 1))
-        }
-
-        return result
-    }
-
-    // MARK: - Hunk building
-
-    private static func buildHunks(from lines: [DiffLine], context: Int) -> [DiffHunk] {
-        guard !lines.isEmpty else { return [] }
-
-        // Find indices of changed lines
-        var changedIndices: [Int] = []
-        for (i, line) in lines.enumerated() {
-            if line.kind != .context { changedIndices.append(i) }
-        }
-        guard !changedIndices.isEmpty else { return [] }
-
-        // Expand ±context around each changed line
-        let ranges: [(Int, Int)] = changedIndices.map {
-            (max(0, $0 - context), min(lines.count - 1, $0 + context))
-        }
-
-        // Merge overlapping ranges
-        var merged: [(Int, Int)] = []
-        for r in ranges {
-            if let last = merged.last, r.0 <= last.1 + 1 {
-                merged[merged.count - 1] = (last.0, max(last.1, r.1))
-            } else {
-                merged.append(r)
-            }
-        }
-
-        // Build hunks
-        var hunks: [DiffHunk] = []
-        for (start, end) in merged {
-            let hunkLines = Array(lines[start...end])
-            let origStart = hunkLines.first(where: { $0.origLine > 0 })?.origLine ?? 1
-            let newStart  = hunkLines.first(where: { $0.newLine > 0 })?.newLine  ?? 1
-            hunks.append(DiffHunk(origStart: origStart, newStart: newStart, lines: hunkLines))
-        }
-        return hunks
-    }
-
-    // MARK: - Count fallback (tooLarge)
-
-    private static func countFallback(old: String, new: String, path: String, tooLarge: Bool) -> FileDiff {
-        let oldLines = old.components(separatedBy: "\n")
-        let newLines = new.components(separatedBy: "\n")
-        let oldSet = Set(oldLines)
-        let newSet = Set(newLines)
-        let added   = newLines.filter { !$0.isEmpty && !oldSet.contains($0) }.count
-        let removed = oldLines.filter { !$0.isEmpty && !newSet.contains($0) }.count
-        return FileDiff(path: path, added: added, removed: removed, hunks: [], tooLarge: tooLarge, isNewFile: false)
-    }
-
-    // MARK: - toOneLine
-
-    /// Converts a possibly multi-line, markdown-formatted string to a single line of plain text.
-    /// Uses only the first non-empty paragraph (stops at blank line, horizontal rule, or table row).
-    /// Strips `**`, `__`, backticks, leading `#`, and leading bullet markers.
-    static func toOneLine(_ text: String, maxChars: Int = 200) -> String {
-        let lines = text.components(separatedBy: "\n")
-
-        // Split into paragraphs. Separators: blank line, HR (3+ repeated -/*/_ chars), table row (starts with |).
-        var paragraphs: [[String]] = []
-        var current: [String] = []
-        for line in lines {
-            let trimmed = line.trimmingCharacters(in: .whitespaces)
-            let isHR = trimmed.count >= 3 && (trimmed.allSatisfy { $0 == "-" } ||
-                                               trimmed.allSatisfy { $0 == "*" } ||
-                                               trimmed.allSatisfy { $0 == "_" })
-            let isSep = trimmed.isEmpty || isHR || trimmed.hasPrefix("|")
-            if isSep {
-                if !current.isEmpty { paragraphs.append(current); current = [] }
-            } else {
-                current.append(line)
-            }
-        }
-        if !current.isEmpty { paragraphs.append(current) }
-
-        // Find first paragraph that yields non-empty text after cleaning.
-        for paraLines in paragraphs {
-            var s = paraLines.joined(separator: "\n")
-            s = s.replacingOccurrences(of: "**", with: "")
-            s = s.replacingOccurrences(of: "__", with: "")
-            s = s.replacingOccurrences(of: "`", with: "")
-            let processed: [String] = s.components(separatedBy: "\n").compactMap { line in
-                var l = line
-                while l.hasPrefix("#") { l = String(l.dropFirst()) }
-                l = l.trimmingCharacters(in: .whitespaces)
-                // Strip leading bullet markers: -, *, •, or 
-```
-
-### Core Architecture Module: `NotchBuddy/Sources/CoucouKit/MochiActivityState.swift`
-```
-import Foundation
-
-// What the iPhone's Live Activity (Lock Screen and Dynamic Island) shows:
-// the most urgent agent session, while the Mac is locked. The Mac builds it,
-// the relay forwards it as the Live Activity's "content-state", ActivityKit
-// decodes it on the iPhone. It passes through the relay and Apple's push
-// service, so it holds no project name, step text, command or path: only the
-// agent, its state and counts.
-
-struct MochiActivityState: Codable, Hashable, Sendable {
-    var pillId: String
-    var agent: String       // "VS Code", "Codex"…
-    var color: String       // agent color, hex
-    var state: String       // BotState raw value
-    var statusText: String  // "working · 3/7", "waiting for your OK"…
-    var tone: String        // waiting, question, error, working, done, idle
-    var stepIndex: Int
-    var stepCount: Int
-    var others: Int         // other sessions still going
-    /// When Mochi left for the iPhone (Unix seconds): the iPhone counts the
-    /// time from it, live. Optional so older pushes still decode.
-    var since: Int? = nil
-    /// The fingerprint of the command waiting for your OK (an opaque hash,
-    /// never the command): the Lock Screen's Allow and Deny answer this one.
-    var approval: String? = nil
-
-    var botState: BotState { BotState(rawValue: state) ?? .idle }
-    var isActive: Bool { ["waiting", "question", "working", "error"].contains(tone) }
-
-    /// Lower = more urgent, same order as the iPhone list.
-    static func urgency(state: BotState, waitingForOK: Bool, hasQuestion: Bool) -> Int {
-        if waitingForOK || state == .approval { return 0 }
-        if hasQuestion || state == .question { return 1 }
-        switch state {
-        case .error, .ratelimit, .dizzy: return 2
-        case .working, .thinking, .searching: return 3
-        case .finished: return 4
-        default: return 5
-        }
-    }
-
-    static func tone(urgency: Int) -> String {
-        ["waiting", "question", "error", "working", "done"].indices.contains(urgency)
-            ? ["waiting", "question", "error", "working", "done"][urgency] : "idle"
-    }
-
-    static func statusText(state: BotState, urgency: Int, stepIndex: Int, stepCount: Int) -> String {
-        switch urgency {
-        case 0: return "waiting for your OK"
-        case 1: return "has a question"
-        default: break
-        }
-        switch state {
-        case .working, .thinking, .searching:
-            return stepCount == 0 ? "working" : "working · \(min(stepIndex + 1, stepCount))/\(stepCount)"
-        case .finished: return "✓ done"
-        case .error: return "error"
-        case .ratelimit: return "rate limited"
-        case .sleeping: return "asleep"
-        case .dizzy: return "dizzy"
-        default: return "idle"
-        }
-    }
-
-    static let placeholder = MochiActivityState(
-        pillId: "integration_claude", agent: "VS Code", color: "#4A86E8",
-        state: "working", statusText: "working · 3/7", tone: "working",
-        stepIndex: 2, stepCount: 7, others: 1)
-}
-
-```
-
-### Core Architecture Module: `scripts/RenderOutfits.swift`
-```
-// RenderOutfits.swift — standalone planche renderer for Mochi outfits
-// Compile + run via: bash scripts/render-outfits.sh
-// Output: /tmp/coucou-outfits.png
-
-import Foundation
-import SwiftUI
+#if !APPSTORE
 import AppKit
+import AVFoundation
+import Speech
 
-// MARK: - Stubs (substitutes for app-only types)
-
+// MARK: - VoiceEngine
+//
+// Coordinator for the «OK Coucou» voice feature.
+//
+// Reliability features:
+// - Backoff: onWakeWindowEnded reopens with WakeWindowBackoff (0.5 → 5 s exp.);
+//   after maxFastFails consecutive fast-fails, waits for the next VAD segment.
+// - Continuous stall watchdog: if no audio buffer arrives for 2 s while the
+//   pipeline is active, triggers a pipeline rebuild (regardless of VAD state).
+// - Rate-limited rebuilds: ≥5 s between rebuilds, ≤5 per minute. If the limit
+//   is exceeded, audioError is set (shown in Settings → Voice).
+// - AVAudioEngineConfigurationChange (headphone events) triggers rebuild, but
+//   config changes within 1 s of our own engine.start() are ignored (the OS
+//   fires one spuriously on start).
+// - endCommand() is idempotent: if not in command mode, only cancels timers.
 @MainActor
-final class SoundEngine {
-    static let shared = SoundEngine()
-    var enabled: Bool = false
-    func play(_ name: String) {}
-}
+final class VoiceEngine: ObservableObject {
+    static let shared = VoiceEngine()
 
-extension Notification.Name {
-    static let botDizzy          = Notification.Name("notchBuddy.botDizzy")
-    static let botGreet          = Notification.Name("notchBuddy.botGreet")
-    static let botBlink          = Notification.Name("notchBuddy.botBlink")
-    static let botSetTgEs        = Notification.Name("notchBuddy.botSetTgEs")
-    static let botGulp           = Notification.Name("notchBuddy.botGulp")
-    static let botMorphTo        = Notification.Name("notchBuddy.botMorphTo")
-    static let triggerEmote      = Notification.Name("notchBuddy.triggerEmote")
-    static let triggerSlap       = Notification.Name("notchBuddy.triggerSlap")
-    static let greetComplete     = Notification.Name("notchBuddy.greetComplete")
-    static let greetingHover     = Notification.Name("notchBuddy.greetingHover")
-    static let greetingInterrupt = Notification.Name("notchBuddy.greetingInterrupt")
-    static let islandAction      = Notification.Name("notchBuddy.islandAction")
-    static let islandCollapse    = Notification.Name("notchBuddy.islandCollapse")
-    static let hookReveal        = Notification.Name("notchBuddy.hookReveal")
-    static let musicReveal       = Notification.Name("notchBuddy.musicReveal")
-    static let openFullSettings  = Notification.Name("notchBuddy.openFullSettings")
-}
+    // MARK: - Published state
 
-extension Color {
-    init(hex: String) {
-        let h = hex.trimmingCharacters(in: CharacterSet(charactersIn: "#"))
-        let val = UInt64(h, radix: 16) ?? 0
-        let r = Double((val >> 16) & 0xFF) / 255
-        let g = Double((val >> 8)  & 0xFF) / 255
-        let b = Double( val        & 0xFF) / 255
-        self.init(red: r, green: g, blue: b)
+    @Published var isEnabled: Bool = VoiceSettings.isEnabled {
+        didSet { VoiceSettings.isEnabled = isEnabled; handleEnabledChanged() }
     }
-}
+    @Published private(set) var isListeningForCommand: Bool = false
+    @Published private(set) var commandTranscript: String = ""
+    @Published private(set) var recognizerUnavailable: Bool = false
+    @Published private(set) var audioError: String? = nil
+    /// Read by Mochi's canvas every frame; not published, so ~20 updates/s while I talk
+    /// don't re-render Settings or the island views.
+    private(set) var micLevel: Double = 0
 
-// MARK: - Cell view — one outfit at one pose
+    // MARK: - Pause reasons
 
-struct MochiCell: View {
-    let outfit: Outfit
-    let yaw: CGFloat
-    let pitch: CGFloat
-    let tilt: CGFloat
-    let phys: (dx: CGFloat, dy: CGFloat)
-    let cellSize: CGFloat
-    var roll: CGFloat = 0
-    var presence: CGFloat = 1
+    private var screenLocked    = false
+    private var screenSleeping  = false
+    private var lowPowerMode    = false
+    private var dictationActive = 0
 
-    var body: some View {
-        Canvas { context, sz in
-            let W = sz.width, H = sz.height
-            // scale=0.62, R = W * 0.62 * 0.3
-            let R  = W * 0.62 * 0.3
-            let rx = R * 1.14
-            let ry = R * 0.88
-            let cx = W / 2
-            let cy = H / 2 + R * 0.06
-            let sx: CGFloat = 1, sy: CGFloat = 1
-            let morph: CGFloat = 0
+    var isPaused: Bool { screenLocked || screenSleeping || lowPowerMode || dictationActive > 0 }
 
-            let mH = MochiH(R: R, yaw: yaw, pitch: pitch, physDx: phys.dx, physDy: phys.dy, roll: roll)
+    // MARK: - Audio pipeline (main-thread owned)
 
-            // 1. Behind-body outfit
-            drawOutfitBehindStatic(
-                context: context, outfit: outfit, H: mH,
-                cx: cx, cy: cy, tilt: tilt, sx: sx, sy: sy,
-                roll: roll, morph: morph, isMini: false, presence: presence
-            )
+    private var audio:   VoiceAudio?
+    private var spotter: WakeSpotter?
+    private var locale:  Locale?
 
-            // 2. Body (replicate BotEngine.drawBody for idle / pumpkin state)
-            var bCtx = context
-            bCtx.translateBy(x: cx, y: cy)
-            if tilt != 0 { bCtx.rotate(by: .radians(tilt)) }
-            bCtx.scaleBy(x: sx, y: sy)
-            let body = mochiOutfitPath(rx, ry)
+    private var voiceSegmentActive = false
 
-            // Base gradient (pumpkin-aware)
-            let pumpkin = outfit == .pumpkin
-            let cTop: Color = pumpkin ? Color(hex: "#FFA94D") : Color(red: 0.929, green: 0.929, blue: 0.937)
-            let cBot: Color = pumpkin ? Color(hex: "#E8590C") : Color(red: 0.769, green: 0.773, blue: 0.792)
-            bCtx.fill(body, with: .linearGradient(
-                Gradient(colors: [cTop, cBot]),
-                startPoint: CGPoint(x: rx * 0.7, y: -ry * 0.85),
-                endPoint:   CGPoint(x: -rx * 0.8, y: ry * 0.9)
-            ))
-            // Shadow rim
-            bCtx.fill(body, with: .radialGradient(
-                Gradient(stops: [
-                    .init(color: .clear, location: 0.6),
-                    .init(color: Color.black.opacity(0.2), location: 1)
-                ]),
-                center: .zero, startRadius: R * 0.15, endRadius: R * 1.25
-            ))
-            // Top-left highlight
-            bCtx.fill(body, with: .radialGradient(
-                Gradient(stops: [
-                    .init(color: Color.white.opacity(0.55), location: 0),
-                    .init(color: .clear, location: 1)
-                ]),
-                center: CGPoint(x: rx * 0.34, y: -ry * 0.46),
-                startRadius: 0, endRadius: R * 0.42
-            ))
+    // Command session timers
+    private var silenceWork:    DispatchWorkItem?
+    private var commandMaxWork: DispatchWorkItem?
+    private var loggedDropWhileSpeaking = false
+    private var wakeWindowWork: DispatchWorkItem?   // 20 s periodic restart
 
-            // 3. Eyes (clipped to body)
-            var eyeBase = bCtx
-            eyeBase.clip(to: body)
-            let ink = Color(red: 0.102, green: 0.082, blue: 0.071)
-            for f in mEyeFrames(mH) {
-                guard f.visible else { continue }
-                var eCtx = eyeBase
-                eCtx.translateBy(x: f.x, y: f.y)
-                eCtx.scaleBy(x: f.fx, y: f.fy)
-                let hh = max(f.h, f.w * 0.3)
-                var pill = Path()
-                pill.addRoundedRect(
-                    in: CGRect(x: -f.w / 2, y: -hh / 2, width: f.w, height: hh),
-                    cornerSize: CGSize(width: min(f.w / 2, hh / 2), height: min(f.w / 2, hh / 2))
-                )
-                eCtx.fill(pill, with: .color(ink))
-            }
+    private var lastWordCount = 0
 
-            // 4. Front outfit
-            drawOutfitFrontStatic(
-                context: context, outfit: outfit, H: mH,
-                cx: cx, cy: cy, tilt: tilt, sx: sx, sy: sy,
-                roll: roll, morph: morph, isMini: false, presence: presence
-            )
-        }
-        .frame(width: cellSize, height: cellSize)
+    // Backoff / loop prevention
+    private var backoff           = WakeWindowBackoff()
+    private var windowOpenedAt:   Date = .distantPast
+    private var consecErrorStreak = 0
+    private static let maxConsecErrors = 3
+
+    // Music ducking during command (main thread)
+    private var savedMusicVolume:   Int?  = nil
+    private var savedSpotifyVolume: Int?  = nil
+    private var isDuckingMusic             = false
+
+    // Unavailability retry
+    private var unavailableWork:    DispatchWorkItem?
+    private var firstUnavailableAt: Date? = nil
+
+    // Continuous stall watchdog (always active while pipeline is up)
+    private var stallTask:       Task<Void, Never>? = nil
+    private var pipelineStartTime: Date = .distantPast
+
+    // Rebuild rate-limiting
+    private var lastRebuildTime:    Date = .distantPast
+    private var rebuildsThisMinute: Int  = 0
+    private var minuteWindowStart:  Date = .distantPast
+
+    private static let initialTimeout:           TimeInterval = 3.0
+    private static let directListenInitialTimeout: TimeInterval = 5.0   // follow-up: user reads question first
+    private static let directListenMaxTime:        TimeInterval = 20.0
+
+    /// Initial silence timeout for the current direct-listen session.
+    private var directInitialTimeout: TimeInterval = 3.0
+    private static let wakeFirstWordTimeout: TimeInterval = 5.0
+    private static let silenceTimeout:           TimeInterval = 1.5
+    private static let commandMaxTime:           TimeInterval = 20.0
+
+    // Conversation window
+    private(set) var isInConversation: Bool = false
+    private var conversationTurnWork: DispatchWorkItem? = nil
+    private static let wakeWindowMax:            TimeInterval = 20.0
+    private static let stallTimeout:             TimeInterval = 2.0
+    private static let unavailableRebuildDelay:  TimeInterval = 10.0
+    private static let minRebuildInterval:       TimeInterval = 5.0
+    private static let maxRebuildsPerMinute                   = 5
+
+    private static let cancelPhrases = ["annule", "annuler", "cancel", "laisse tomber", "never mind"]
+
+    // MARK: - Init
+
+    private init() {
+        lowPowerMode = ProcessInfo.processInfo.isLowPowerModeEnabled
+        let buildHash = Bundle.main.object(forInfoDictionaryKey: "CoucouGitHash") as? String ?? "unknown"
+        appendAppLog("nb.log", "[Voice] build \(buildHash)")
+        observeSystemEvents()
+        if isEnabled && !isPaused { startAudioPipeline() }
     }
-}
 
-// MARK: - Grid view
+    // MARK: - Enable / pause
 
-// Outfit order matching sheet.html
-private let targetOutfits: [Outfit] = [
-    .none, .beanie, .santaHat, .partyHat, .crown, .witchHat,
-    .sunglasses, .roundGlasses, .scarf, .pumpkin, .bow,
-]
+    private func handleEnabledChanged() {
+        if isEnabled && !isPaused { startAudioPipeline() }
+        else                      { stopAudioPipeline() }
+    }
 
-private struct PoseSpec {
-    let label: String
-    let yaw: CGFloat
-    let pitch: CGFloat
-    let tilt: CGFloat
-    let phys: (dx: CGFloat, dy: CGFloat)
-    let size: CGFloat
-}
+    private func updatePause() {
+        if isPaused { stopAudioPipeline() }
+        else if isEnabled { startAudioPipeline() }
+    }
 
-// Columns matching sheet.html cols array + small pill-preview column (W=190, scale=0.62; small=64)
-private let poses: [PoseSpec] = [
-    PoseSpec(label: "L",     yaw: -0.5,  pitch:  0,     tilt: 0,    phys: (0.6,  0),    size: 190),
-    PoseSpec(label: "front", yaw:  0,    pitch:  0,     tilt: 0,    phys: (0,    0),    size: 190),
-    PoseSpec(label: "R",     yaw:  0.5,  pitch:  0,     tilt: 0,    phys: (-0.6, 0),    size: 190),
-    PoseSpec(label: "up",    yaw:  0.15, pitch:  0.4,   tilt: 0,    phys: (0,    0.4),  size: 190),
-    PoseSpec(label: "down",  yaw: -0.2,  pitch: -0.5,   tilt: 0,    phys: (0,   -0.4),  size: 190),
-    PoseSpec(label: "tilt",  yaw:  0.3,  pitch: -0.25,  tilt: 0.12, phys: (-0.3, 0),   size: 190),
-    PoseSpec(label: "mini",  yaw:  0,    pitch:  0,     tilt: 0,    phys: (0,    0),    size: 64),
-]
+    func cancelListening() { endCommand(postFinished: false) }
 
-private let labelW: CGFloat = 90
-private let gap:    CGFloat = 6
+    /// Settings → Voice language changed: restart recognition in the new language.
+    func reloadLanguage() {
+        guard audio != nil else { return }
+        stopAudioPipeline()
+        if isEnabled && !isPaused { startAudioPipeline() }
+        VoiceBrain.shared.endConversation()   // next session gets instructions in the new language
+    }
 
-struct OutfitGrid: View {
-    var body: some View {
-        VStack(alignment: .leading, spacing: gap) {
-            // Column headers
-            HStack(spacing: gap) {
-                Spacer().frame(width: labelW)
-                ForEach(poses.indices, id: \.self) { i in
-                    Text(poses[i].label)
-                        .font(.system(size: 9, design: .monospaced))
-                        .foregroundColor(.gray)
-                        .frame(width: poses[i].size, alignment: .center)
-                }
-            }
-            // One row per outfit
-            ForEach(targetOutfits.indices, id: \.self) { oi in
-                let outfit = targetOutfits[oi]
-                HStack(spacing: gap) {
-                    Text(outfit.rawValue)
-                        .font(.system(size: 10))
-                        .foregroundColor(.white)
-                        .frame(width: labelW, alignment: .trailing)
-                    ForEach(poses.indices, id: \.self) { pi in
-                        let p = poses[pi]
-                        MochiCell(outfit: outfit, yaw: p.yaw, pitch: p.pitch,
-                                  tilt: p.tilt, phys: p.phys, cellSize: p.size)
-                            .background(pi == poses.count - 1
-                                        ? Color.black
-                                        : Color(red: 0.083, green: 0.090, blue: 0.106))
-                            .clipShape(RoundedRectangle(cornerRadius: pi == poses.count - 1 ? 0 : 8))
-                    }
+    /// Start the next conversation turn (re-listen for 8 s without wake phrase).
+    /// Called by IslandWindowController after showing a command result.
+    func startConversationTurn(firstWordTimeout: TimeInterval = 8.0) {
+        isInConversation = true
+        audio?.resetVAD()
+        startListeningDirectly(firstWordTimeout: firstWordTimeout)
+    }
+
+    /// End the conversation window and return to normal wake-phrase mode.
+    func endConversation() {
+        isInConversation = false
+        conversationTurnWork?.cancel()
+        conversationTurnWork = nil
+        endCommand(postFinished: false)
+    }
+
+    /// `firstWordTimeout`: seconds of silence allowed before the first word (default 3 s;
+    /// pass `Self.directListenInitialTimeout` = 5 s for follow-up questions so the user
+    /// has time to read the question before speaking).
+    func startListeningDirectly(firstWordTimeout: TimeInterval = 3.0) {
+        guard isEnabled, !isPaused, !isListeningForCommand else { return }
+        guard let audio = audio, let spotter = spotter, let loc = locale else { return }
+        wakeWindowWork?.cancel(); wakeWindowWork = nil
+        // Close any active wake window first — TTS audio can trigger VAD and leave
+        // an active window open; beginWindow returns false (alreadyActive) otherwise.
+        if spotter.isActive { spotter.endWindow() }
+        isListeningForCommand = true
+        commandTranscript     = ""
+        lastWordCount         = 0
+        directInitialTimeout  = firstWordTimeout
+        loggedDropWhileSpeaking = false
+        audio.bypassVAD       = true
+        duckMusic()
+        appendAppLog("nb.log", "[Voice] direct listen start (firstWordTimeout: \(firstWordTimeout)s)")
+        NotificationCenter.default.post(name: .voiceWoke, object: "direct" as NSString)
+        let preroll = audio.drainPreroll()
+        // startInCommandPhase: skip wake-phrase gate, deliver speech directly as command.
+        let started = spotter.beginWindow(locale: loc, preroll: preroll, startInCommandPhase: true)
+        if !started {
+            appendAppLog("nb.log", "[Voice] direct listen refused (alreadyActive/unavailable), retrying in 150ms")
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { [weak self] in
+                guard let self, self.isListeningForCommand else { return }
+                guard let spotter = self.spotter, let audio = self.audio, let loc = self.locale else { return }
+                let preroll2 = audio.drainPreroll()
+                let started2 = spotter.beginWindow(locale: loc, preroll: preroll2, startInCommandPhase: true)
+                if !started2 {
+                    appendAppLog("nb.log", "[Voice] direct listen still refused, giving up")
+                    self.endCommand(postFinished: true)
                 }
             }
         }
-        .padding(12)
-        .background(Color(red: 0.043, green: 0.047, blue: 0.055))
-    }
-}
-
-// MARK: - Roll planche
-
-private let rollOutfits: [Outfit] = [
-    .none, .beanie, .santaHat, .witchHat, .crown,
-    .sunglasses, .roundGlasses, .scarf, .bow, .pumpkin, .bunnyEars
-]
-
-private let rollValues: [CGFloat] = [0, CGFloat.pi/3, CGFloat.pi*2/3, CGFloat.pi, CGFloat.pi*4/3, CGFloat.pi*5/3]
-
-struct RollGrid: View {
-    var body: some View {
-        VStack(alignment: .leading, spacing: gap) {
-            // Column headers
-            HStack(spacing: gap) {
-                Spacer().frame(width: labelW)
-                ForEach(rollValues.indices, id: \.self) { i in
-                    Text(String(format: "%.2fπ", rollValues[i] / .pi))
-                        .font(.system(size: 9, design: .monospaced))
-                        .foregroundColor(.gray)
-                        .frame(width: 120, alignment: .center)
-                }
-            }
-            ForEach(rollOutfits.indices, id: \.self) { oi in
-                let outfit = rollOutfits[oi]
-                HStack(spacing: gap) {
-                    Text(outfit.rawValue)
-                        .font(.system(size: 10))
-                        .foregroundColor(.white)
-                        .frame(width: labelW, alignment: .trail
-```
-
-### Core Architecture Module: `windows/hook/src/main.rs`
-```
-//! coucou-hook — the relay Claude Code runs on every hook event.
-//!
-//! Reads the hook JSON on stdin, adds a little terminal context, and hands it to
-//! Coucou over the named pipe `\\.\pipe\coucou-<sid>` (Windows) or the Unix
-//! socket `$XDG_RUNTIME_DIR/coucou.sock` (Linux).
-//!
-//! Hard rule (docs/CLAUDE.md): **never block Claude Code.**
-//! * If the pipe does not exist — Coucou is closed — we exit 0 immediately with
-//!   nothing on stdout, and the session carries on untouched.
-//! * Every step runs under a deadline enforced by the main thread, so a pipe that
-//!   accepts the connection and then stops reading cannot wedge the session
-//!   either: we abandon the worker and exit.
-//! * Only `PermissionRequest` waits for an answer, because approving from the
-//!   island is the whole point. No answer means empty stdout, and Claude Code
-//!   asks in the terminal exactly as if Coucou were not installed.
-//!
-//! Usage: `coucou-hook <EventName>` (the name is also read from the JSON).
-
-use std::io::{Read, Write};
-use std::sync::mpsc;
-use std::time::Duration;
-
-/// Budget for getting a pipe connection. Beyond this Claude Code wins, always.
-const CONNECT_TIMEOUT: Duration = Duration::from_millis(300);
-/// Whole-run budget for an event nobody waits on: connect and write, no more.
-const FIRE_AND_FORGET_BUDGET: Duration = Duration::from_secs(2);
-/// How long a permission prompt may stay on screen before the terminal takes over.
-const DECISION_BUDGET: Duration = Duration::from_secs(110);
-
-/// Fields that are pointless to forward and can be enormous (a whole file read,
-/// a full command output). The island never shows them.
-const DROPPED_FIELDS: &[&str] = &["tool_response", "transcript_path"];
-/// Longest string forwarded for any single field; the island truncates to far
-/// less than this anyway.
-const MAX_FIELD_LEN: usize = 2_000;
-
-#[cfg(windows)]
-mod win;
-#[cfg(windows)]
-use win::connect;
-
-#[cfg(target_os = "linux")]
-mod unix;
-#[cfg(target_os = "linux")]
-use unix::connect;
-
-fn main() {
-    let Some((payload, event)) = read_event() else { std::process::exit(0) };
-
-    let waits_for_answer = event == "PermissionRequest";
-    let budget = if waits_for_answer { DECISION_BUDGET } else { FIRE_AND_FORGET_BUDGET };
-
-    // The worker owns every blocking call. If it overruns the budget we simply
-    // stop listening and exit: the process dying takes the pipe handle with it.
-    // (No catch_unwind here — the release profile is panic = "abort", so it would
-    // be dead code. `talk` is written to have nothing to panic on instead.)
-    let (tx, rx) = mpsc::channel::<Option<String>>();
-    std::thread::spawn(move || {
-        let _ = tx.send(talk(&payload, waits_for_answer));
-    });
-
-    if let Ok(Some(decision)) = rx.recv_timeout(budget) {
-        if let Some(json) = decision_json(&decision) {
-            let mut out = std::io::stdout();
-            let _ = writeln!(out, "{json}");
-            let _ = out.flush();
+        resetSilenceTimer()
+        let maxItem = DispatchWorkItem { [weak self] in
+            Task { @MainActor in self?.endCommand(postFinished: true) }
         }
-    }
-    // Nothing printed: Claude Code asks in the terminal, as if we were not here.
-    std::process::exit(0);
-}
-
-/// The documented PermissionRequest output. Anything we do not recognise prints
-/// nothing at all rather than guessing — silence is the safe answer.
-/// See https://code.claude.com/docs/en/hooks
-fn decision_json(decision: &str) -> Option<String> {
-    let behavior = match decision.trim() {
-        // "always" still answers a plain allow; remembering it is the island's
-        // business, not Claude Code's.
-        "allow" | "always" => r#"{"behavior":"allow"}"#.to_string(),
-        "deny" => r#"{"behavior":"deny","message":"Denied from Coucou"}"#.to_string(),
-        _ => return None,
-    };
-    Some(format!(
-        r#"{{"hookSpecificOutput":{{"hookEventName":"PermissionRequest","decision":{behavior}}}}}"#
-    ))
-}
-
-/// Reads stdin and returns the payload to forward plus the event name.
-fn read_event() -> Option<(String, String)> {
-    let mut raw = Vec::new();
-    if std::io::stdin().read_to_end(&mut raw).is_err() || raw.is_empty() {
-        return None;
-    }
-    // Some shells hand us a UTF-8 BOM; serde_json would choke on it.
-    if raw.starts_with(&[0xEF, 0xBB, 0xBF]) {
-        raw.drain(..3);
+        commandMaxWork = maxItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + max(Self.directListenMaxTime, firstWordTimeout + 10),
+                                      execute: maxItem)
     }
 
-    let mut payload = serde_json::from_slice::<serde_json::Value>(&raw).ok()?;
-    let map = payload.as_object_mut()?;
+    /// Locale used for the current recognition session — nil if pipeline is not running.
+    var speechLocale: Locale? { locale }
 
-    // Parse argv: "coucou-hook.exe [--agent <name>] [<EventName>]"
-    // --agent tags the payload with coucou_agent so the app routes to the right pill.
-    // Absent or invalid names are validated and discarded by the app, not here.
-    let mut agent = String::new();
-    let mut arg_event = String::new();
-    {
-        let mut it = std::env::args().skip(1);
-        while let Some(arg) = it.next() {
-            if arg == "--agent" {
-                agent = it.next().unwrap_or_default();
-            } else if arg_event.is_empty() {
-                arg_event = arg;
-            }
+    // MARK: - Pipeline lifecycle
+
+    private func startAudioPipeline() {
+        guard audio == nil else { return }
+        guard let loc = suitableLocale() else {
+            recognizerUnavailable = true
+            appendAppLog("nb.log", "[Voice] no suitable on-device recognizer — voice disabled")
+            return
         }
-    }
-    // Which agent this hook was installed for. Absent means Claude Code,
-    // so existing hook commands keep working unchanged.
-    if !agent.is_empty() {
-        map.insert("coucou_agent".into(), serde_json::Value::String(agent));
-    }
-    let event = map
-        .get("hook_event_name")
-        .and_then(|v| v.as_str())
-        .map(str::to_string)
-        .filter(|s| !s.is_empty())
-        .unwrap_or(arg_event);
-    map.insert("hook_event_name".into(), serde_json::Value::String(event.clone()));
+        recognizerUnavailable = false
+        audioError = nil
+        locale = loc
 
-    for field in DROPPED_FIELDS {
-        map.remove(*field);
-    }
+        let a = VoiceAudio()
+        let s = WakeSpotter()
+        s.additionalContextualStrings = PillCatalog.available.map { $0.name }
 
-    let cwd_missing = map
-        .get("cwd")
-        .and_then(|v| v.as_str())
-        .map(str::is_empty)
-        .unwrap_or(true);
-    if cwd_missing {
-        if let Ok(cwd) = std::env::current_dir() {
-            map.insert(
-                "cwd".into(),
-                serde_json::Value::String(cwd.to_string_lossy().to_string()),
-            );
+        // ── Spotter callbacks ─────────────────────────────────────────────────
+
+        s.onWake = { [weak self] transcript in
+            self?.wakeDetected(transcript: transcript)
         }
-    }
 
-    // Which terminal the session runs in. Unlike macOS, Coucou here accepts
-    // events from every terminal, so this is context only — never a filter.
-    for (key, var) in [
-        ("term_program", "TERM_PROGRAM"),
-        ("wt_session", "WT_SESSION"),
-        ("term_session_id", "TERM_SESSION_ID"),
-        ("vscode_pid", "VSCODE_PID"),
-        ("session_pid", "CLAUDE_CODE_SSE_PORT"),
-    ] {
-        if !map.contains_key(key) {
-            let value = std::env::var(var).unwrap_or_default();
-            map.insert(key.into(), serde_json::Value::String(value));
+        s.onCommandUpdate = { [weak self] command in
+            self?.commandUpdate(command)
         }
-    }
 
-    truncate_strings(&mut payload);
-
-    let mut line = payload.to_string();
-    line.push('\n');
-    Some((line, event))
-}
-
-/// Caps every string in the payload. A single Write can carry a whole file.
-fn truncate_strings(value: &mut serde_json::Value) {
-    match value {
-        serde_json::Value::String(s) => {
-            if s.len() > MAX_FIELD_LEN {
-                // Cut on a char boundary; a lone byte index can split UTF-8.
-                let mut end = MAX_FIELD_LEN;
-                while end > 0 && !s.is_char_boundary(end) {
-                    end -= 1;
-                }
-                s.truncate(end);
-                s.push('…');
-            }
+        s.onCommandEnd = { [weak self] in
+            self?.endCommand(postFinished: true)
         }
-        serde_json::Value::Array(items) => items.iter_mut().for_each(truncate_strings),
-        serde_json::Value::Object(map) => map.values_mut().for_each(truncate_strings),
-        _ => {}
-    }
-}
 
-/// Connect, send, and — for a permission request — wait for the island's word.
-fn talk(payload: &str, waits_for_answer: bool) -> Option<String> {
-    let mut pipe = connect()?;
-
-    if pipe.write_all(payload.as_bytes()).is_err() {
-        return None;
-    }
-    let _ = pipe.flush();
-
-    if !waits_for_answer {
-        return None;
-    }
-
-    let mut buf = Vec::new();
-    let mut chunk = [0u8; 1024];
-    loop {
-        match pipe.read(&mut chunk) {
-            Ok(0) => break,
-            Ok(n) => {
-                buf.extend_from_slice(&chunk[..n]);
-                if buf.contains(&b'\n') {
-                    break;
-                }
-            }
-            Err(_) => break,
-        }
-    }
-    let answer = String::from_utf8_lossy(&buf).trim().to_string();
-    (!answer.is_empty()).then_some(answer)
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn decision_json_matches_the_documented_shape() {
-        assert_eq!(
-            decision_json("allow").unwrap(),
-            r#"{"hookSpecificOutput":{"hookEventName":"PermissionRequest","decision":{"behavior":"allow"}}}"#
-        );
-        assert_eq!(
-            decision_json("deny").unwrap(),
-            r#"{"hookSpecificOutput":{"hookEventName":"PermissionRequest","decision":{"behavior":"deny","message":"Denied from Coucou"}}}"#
-        );
-        // "always" is an island concept; Claude Code just gets an allow.
-        assert!(decision_json("always").unwrap().contains(r#""behavior":"allow""#));
-    }
-
-    #[test]
-    fn anything_unrecognised_prints_nothing() {
-        assert!(decision_json("").is_none());
-        assert!(decision_json("maybe").is_none());
-        // The shape the app used to send must not be mistaken for a decision.
-        assert!(decision_json(r#"{"permissionDecision":"allow"}"#).is_none());
-    }
-
-    #[test]
-    fn long_strings_are_cut_on_a_char_boundary() {
-        let mut v = serde_json::json!({ "tool_input": { "content": "é".repeat(4000) } });
-        truncate_strings(&mut v);
-        let s = v["tool_input"]["content"].as_str().unwrap();
-        assert!(s.len() <= MAX_FIELD_LEN + 4);
-        assert!(s.ends_with('…'));
-    }
-}
-
-```
-
-### Core Architecture Module: `windows/hook/src/unix.rs`
-```
-//! The Linux transport: a Unix socket in the user's runtime directory.
-//!
-//! `$XDG_RUNTIME_DIR` is private to the user (mode 0700), so nobody else can
-//! even reach the socket. We still check, once connected, that the process on
-//! the other end runs as us — the same promise the Windows relay makes with the
-//! pipe server's SID, for the same price.
-
-use std::io;
-use std::os::unix::ffi::OsStrExt;
-use std::os::unix::io::{AsRawFd, FromRawFd};
-use std::os::unix::net::UnixStream;
-use std::path::{Path, PathBuf};
-use std::time::{Duration, Instant};
-
-use crate::CONNECT_TIMEOUT;
-
-/// `$XDG_RUNTIME_DIR/coucou.sock`, or `/run/user/<uid>/coucou.sock` when the
-/// variable is missing (a hook started from a stripped-down environment). The
-/// directory must be ours and closed to everyone else, or there is no relay.
-/// Must match `platform::relay_socket_path()` in the app exactly.
-fn socket_path() -> Option<PathBuf> {
-    let dir = std::env::var_os("XDG_RUNTIME_DIR")
-        .map(PathBuf::from)
-        .filter(|p| p.is_absolute())
-        .unwrap_or_else(|| PathBuf::from(format!("/run/user/{}", unsafe { libc::getuid() })));
-    is_private_dir(&dir).then(|| dir.join("coucou.sock"))
-}
-
-/// A real directory (not a symlink), owned by us, no access for group or others.
-fn is_private_dir(dir: &Path) -> bool {
-    use std::os::unix::fs::MetadataExt;
-    std::fs::symlink_metadata(dir)
-        .map(|m| {
-            m.file_type().is_dir() && m.uid() == unsafe { libc::getuid() } && m.mode() & 0o077 == 0
-        })
-        .unwrap_or(false)
-}
-
-/// Opens the socket. Retries only while the app's backlog is full: any other
-/// error — no socket, nobody listening — means there is nothing to talk to, and
-/// waiting would only delay Claude Code.
-pub fn connect() -> Option<UnixStream> {
-    let path = socket_path()?;
-    let deadline = Instant::now() + CONNECT_TIMEOUT;
-    loop {
-        match try_connect(&path) {
-            // Somebody else's server on our socket gets nothing from us.
-            Ok(stream) => return server_is_same_user(&stream).then_some(stream),
-            Err(err) => {
-                if err.raw_os_error() != Some(libc::EAGAIN) || Instant::now() >= deadline {
-                    return None;
-                }
-                std::thread::sleep(Duration::from_millis(15));
-            }
-        }
-    }
-}
-
-/// A non-blocking connect, so a full backlog answers EAGAIN at once instead of
-/// parking us until the app gets round to accepting. Blocking again afterwards:
-/// the main thread's budget bounds every read and write.
-fn try_connect(path: &Path) -> io::Result<UnixStream> {
-    let fd = unsafe {
-        libc::socket(libc::AF_UNIX, libc::SOCK_STREAM | libc::SOCK_CLOEXEC | libc::SOCK_NONBLOCK, 0)
-    };
-    if fd < 0 {
-        return Err(io::Error::last_os_error());
-    }
-    // Owns the descriptor from here on, so every early return closes it.
-    let stream = unsafe { UnixStream::from_raw_fd(fd) };
-
-    let mut addr: libc::sockaddr_un = unsafe { std::mem::zeroed() };
-    addr.sun_family = libc::AF_UNIX as libc::sa_family_t;
-    let bytes = path.as_os_str().as_bytes();
-    // Room for the terminating NUL, which zeroed() already put there.
-    if bytes.len() >= addr.sun_path.len() {
-        return Err(io::Error::from(io::ErrorKind::InvalidInput));
-    }
-    for (dst, src) in addr.sun_path.iter_mut().zip(bytes) {
-        *dst = *src as libc::c_char;
-    }
-
-    let rc = unsafe {
-        libc::connect(
-            fd,
-            &addr as *const libc::sockaddr_un as *const libc::sockaddr,
-            std::mem::size_of::<libc::sockaddr_un>() as libc::socklen_t,
-        )
-    };
-    if rc != 0 {
-        return Err(io::Error::last_os_error());
-    }
-    stream.set_nonblocking(false)?;
-    Ok(stream)
-}
-
-/// True when the process serving the socket runs as the same user we do.
-/// A failure to answer is treated as "not ours", as on Windows.
-fn server_is_same_user(stream: &UnixStream) -> bool {
-    let mut cred: libc::ucred = unsafe { std::mem::zeroed() };
-    let mut len = std::mem::size_of::<libc::ucred>() as libc::socklen_t;
-    let rc = unsafe {
-        libc::getsockopt(
-            stream.as_raw_fd(),
-            libc::SOL_SOCKET,
-            libc::SO_PEERCRED,
-            &mut cred as *mut libc::ucred as *mut libc::c_void,
-            &mut len,
-        )
-    };
-    rc == 0
-        && len as usize == std::mem::size_of::<libc::ucred>()
-        && cred.uid == unsafe { libc::getuid() }
-}
-
-```
-
-### Core Architecture Module: `windows/hook/src/win.rs`
-```
-//! The little bit of Win32 the relay needs: who we are, and who is on the other
-//! end of the pipe.
-//!
-//! Named pipes live in a machine-wide namespace, so `\\.\pipe\coucou-<name>` can
-//! be created by *any* account that gets there first. Two defences, both cheap:
-//! the pipe name carries our SID, and once connected we check the server process
-//! really belongs to us before sending anything.
-
-use std::time::{Duration, Instant};
-
-use windows::core::PWSTR;
-use windows::Win32::Foundation::{CloseHandle, HANDLE, LocalFree, HLOCAL};
-use windows::Win32::Security::Authorization::ConvertSidToStringSidW;
-use windows::Win32::Security::{GetTokenInformation, TokenUser, TOKEN_QUERY, TOKEN_USER};
-use windows::Win32::System::Pipes::GetNamedPipeServerProcessId;
-use windows::Win32::System::Threading::{
-    GetCurrentProcess, OpenProcess, OpenProcessToken, PROCESS_QUERY_LIMITED_INFORMATION,
-};
-
-use crate::CONNECT_TIMEOUT;
-
-/// `ERROR_PIPE_BUSY` — every instance is serving someone else right now. This is
-/// the one error worth retrying: the server exists and a slot will free up.
-const ERROR_PIPE_BUSY: i32 = 231;
-
-/// `\\.\pipe\coucou-<sid>`. The SID keeps two accounts on the same machine from
-/// ever meeting on the same pipe; the name falls back to the user name only if
-/// the SID cannot be read at all, which should not happen.
-fn pipe_path() -> String {
-    let key = current_user_sid()
-        .unwrap_or_else(|| std::env::var("USERNAME").unwrap_or_else(|_| "user".into()));
-    format!(r"\\.\pipe\coucou-{key}")
-}
-
-/// Opens the pipe. Retries only while the server is busy: any other error means
-/// there is nothing to talk to, and waiting would only delay Claude Code.
-pub fn connect() -> Option<std::fs::File> {
-    use std::os::windows::io::AsRawHandle;
-    let path = pipe_path();
-    let deadline = Instant::now() + CONNECT_TIMEOUT;
-    loop {
-        match std::fs::OpenOptions::new().read(true).write(true).open(&path) {
-            Ok(file) => {
-                let handle = HANDLE(file.as_raw_handle());
-                // Somebody else's server on our pipe name gets nothing from us.
-                return pipe_server_is_same_user(handle).then_some(file);
-            }
-            Err(err) => {
-                if err.raw_os_error() != Some(ERROR_PIPE_BUSY) || Instant::now() >= deadline {
-                    return None;
-                }
-                std::thread::sleep(Duration::from_millis(15));
-            }
-        }
-    }
-}
-
-/// The SID of the account this process runs as, as `S-1-5-21-…`.
-pub fn current_user_sid() -> Option<String> {
-    unsafe { token_sid(GetCurrentProcess()) }
-}
-
-/// True when the process serving `handle` runs as the same user we do.
-///
-/// A failure to answer is treated as "not ours": refusing to talk to a pipe we
-/// cannot vouch for costs one hook event, while trusting it could hand another
-/// account on this machine the contents of every tool call.
-pub fn pipe_server_is_same_user(handle: HANDLE) -> bool {
-    let Some(mine) = current_user_sid() else { return false };
-    unsafe {
-        let mut pid = 0u32;
-        if GetNamedPipeServerProcessId(handle, &mut pid).is_err() || pid == 0 {
-            return false;
-        }
-        let Ok(process) = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, false, pid) else {
-            return false;
-        };
-        let theirs = token_sid(process);
-        let _ = CloseHandle(process);
-        theirs.as_deref() == Some(mine.as_str())
-    }
-}
-
-/// The user SID behind a process handle. `process` is borrowed, never closed.
-unsafe fn token_sid(process: HANDLE) -> Option<String> {
-    let mut token = HANDLE::default();
-    OpenProcessToken(process, TOKEN_QUERY, &mut token).ok()?;
-
-    // First call sizes the buffer, second fills it.
-    let mut needed = 0u32;
-    let _ = GetTokenInformation(token, TokenUser, None, 0, &mut needed);
-    if needed == 0 {
-        let _ = CloseHandle(token);
-        return None;
-    }
-    let mut buf = vec![0u8; needed as usize];
-    let ok = GetTokenInformation(
-        token,
-        TokenUser,
-        Some(buf.as_mut_ptr().cast()),
-        needed,
-        &mut needed,
-    )
-    .is_ok();
-    let _ = CloseHandle(token);
-    if !ok {
-        return None;
-    }
-
-    let user = &*(buf.as_ptr() as *const TOKEN_USER);
-    let mut text = PWSTR::null();
-    ConvertSidToStringSidW(user.User.Sid, &mut text).ok()?;
-    let sid = text.to_string().ok();
-    let _ = LocalFree(Some(HLOCAL(text.0 as *mut _)));
-    sid
-}
-
+        s.onWakeWindowEnded = { [weak self] wasError in
+            guard let self, !isListeni
 ```
 
 
@@ -2340,10 +1985,14 @@ unsafe fn token_sid(process: HANDLE) -> Option<String> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #103** (2026-10-02): **Defender flags Windows 0.1.1 setup.exe as Trojan:Win32/Wacatac.C!ml**
-  *Symptoms*: *What happened* Windows Defender flagged Coucou-Windows-0.1.1-setup.exe as Trojan:Win32/Wacatac.C!ml (Severity: Severe) and removed it right after I downloaded it from the GitHub release. I never ran the file.  *What I expected* The installer to download without being flagged.  *How to reproduce* Download Coucou-Windows-0.1.1-setup.exe from the Windows 0.1.1 release on Windows 11 with Defender enabled.  *Environment* - OS: Windows 11 (ASUS TUF Gaming laptop) - Coucou version: Windows 0.1.1 - Browser used to download: Brave  *Question* Is this a known false positive? Are there plans to code-sign the installer?
+- **Issue #495** (2026-10-13): **UI is cut off in Ubuntu**
+  *Symptoms*: **What happened** <img width="1918" height="177" alt="Image" src="https://github.com/user-attachments/assets/7d7c191f-ecee-41be-999f-7d1d7fb1bf24" />  **What you expected** Could it be positioned a bit lower? The UI is getting cut off, so the chat and file-drop buttons aren't visible. Also, the Dynamic Island isn't appearing, forcing me to open it via the tray icon instead.  **Ubuntu version** Ubuntu 26.04.1 LTS  **Coucou version** 0.3.0 Linux version .deb 
   **Post-Mortem & Fix Analysis**:
-  > Thanks for the report, and good call not running it. It's a known false positive on the unsigned installer: a report is under review at Microsoft, and I've pulled the Windows installer from Releases until it's cleared and signed. In the meantime you can build it from source in a few minutes: https://github.com/Louis-CFM/coucou/tree/main/windows#build-it-yourself
+  > Hey @rayasya! The screenshot explains the situation really well.  What you're running into comes down to how GNOME handles window layering: unlike KDE Plasma or COSMIC, GNOME doesn't support `gtk-layer-shell`, so Coucou runs as an X11 dock window placed flush against the monitor's top edge (`y = 0`).  Because GNOME's top panel sits at `y = 0..32px`, two things happen: 1. The 6px invisible wake strip at the very top is completely obscured by the panel, so moving the cursor to the top edge hits GNOME Shell instead of Coucou (which is why hovering doesn't wake the island and you have to use the tray). 2. When opened from the tray, the top ~32px of the island (the header and rounded corners) is hidden behind the bar, which pushes the rest of the fixed 320px UI down and cuts off the chat prompt and drop buttons at the bottom.  The good news is that @Ahmed-chouaya opened #421 a couple of days ago specifically tackling this. It dynamically reads `_NET_WORKAREA` on X11 and offsets the island's
+  > @rayasya you can try the code of #421 it works fine for me now .  https://github.com/user-attachments/assets/e3d11c5e-e5e4-4f9b-80a5-763af29d2844
+
+- **Issue #459** (2026-10-14): **Opencode not working in Windows**
+  *Symptoms*: Coucou isnt working with Opencode.  I have tried littearly anything different versions different installers still havent worked. (Server plugin error ~/.config/opencode/plugins/coucou.js Plugin must export a default definition with an id and an effect or setup function. Reference: err_c59e4c00)  I'm on Windows 11 and like i searched online and thru the bug reports but couldnt find anything. Coucou ver 0.3.0
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2360,2855 +2009,1005 @@ unsafe fn token_sid(process: HANDLE) -> Option<String> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `eee14d06` (2026-10-06)
-**Commit Message**: Get Coucou on your iPhone: guide, README, website page and FAQ (#257)
+### Incident Patch 1: `f931645e` (2026-10-15)
+**Commit Message**: Fix a crash: the thermal state change arrives off the main thread
 
-- docs/IPHONE.md: requirements, install, what you can do, privacy,
-  troubleshooting and how to build the iPhone app yourself.
-- README: iPhone install steps, a Setup row and links to the guide.
-- Website: an iPhone page (English and French), in every page's nav, a
-  button on the home page and two FAQ entries on the support page.
+macOS posts thermalStateDidChangeNotification from a background queue; the sink was
+isolated to the main actor and Swift's runtime check stopped the app. Every publisher
+MachineVitals follows is now received on the main queue.
 
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01LJm3SRL9k3gBPaVtfPhwcT
 
-Claude-Session: https://claude.ai/code/session_016qkcwzfTWvbmbc2y9dur6p
-
-Co-authored-by: Claude <[REDACTED_EMAIL]>
-
-**File**: `README.md` (modified, +12/-0)
+**File**: `NotchBuddy/Sources/App/MachineVitals.swift` (modified, +5/-2)
 ```diff
-@@ -79,6 +79,8 @@ The Mac app does the work; the iPhone app keeps you in the loop when you step aw
- - 🫧 **Liquid Glass, native to the bone** — SwiftUI, tabs, zoom transitions, context menus, swipe actions, alternate icons, Mochi at 120 Hz.
- - 🔒 **Through your own iCloud** — sessions sync through your private CloudKit database; project names, commands and questions are encrypted with your iCloud keys. No Coucou server sees your projects, commands or keys. Turn it on in the Mac app: Settings → General → iPhone.
- 
-+**Get it on your iPhone in 3 steps:** install Coucou on your iPhone ([App Store or TestFlight](#iphone)), turn on **Settings → General → iPhone** in the Mac app (0.1.8 or later), and use the same Apple Account in iCloud on both. Full guide, troubleshooting and build-it-yourself: [docs/IPHONE.md](docs/IPHONE.md).
-+
- <table>
- <tr>
- <td><img src="docs/media/claude-code.png" alt="Claude Code session"></td>
-@@ -116,6 +118,15 @@ Coucou is coming to the **Mac App Store** and the **iPhone App Store**: one clic
- 
- The App Store build of the Mac app runs in Apple's sandbox, so a few features stay in the GitHub build: Claude plan usage, the Apple Music pill and attaching the front window to the chat.
- 
-+### iPhone
-+
-+1. **Install Coucou on your iPhone** (iOS 18 or later): from the App Store once it's out, or the TestFlight beta. Both links will be here.
-+2. **On your Mac**, with Coucou 0.1.8 or later: **Settings… → General → iPhone**, turn on **Show my agent sessions on my iPhone**, and **Move Mochi to my iPhone's Dynamic Island when my Mac is locked** for the Lock Screen.
-+3. **Same Apple Account** in iCloud on the Mac and the iPhone. That's the whole link: no account, no pairing code.
-+4. Open Coucou on the iPhone, allow notifications, and start a Claude Code session on the Mac.
-+
-+Everything else, troubleshooting included, is in [docs/IPHONE.md](docs/IPHONE.md).
-+
- ### Download for macOS
- 
- 1. Grab the latest `Coucou.zip` from [Releases](https://github.com/Louis-CFM/coucou/releases).
-@@ -197,6 +208,7 @@ Click the Coucou icon in the menu bar (macOS) or in the system tray (Windows, Li
- | **OpenAI API key** *(macOS)* | chat with OpenAI | Settings → Chat — other providers · Keychain |
- | **Ollama server** *(macOS)* | chat with local models via Ollama | Settings → Chat → Local models → **Connect** |
- | **LM Studio server** *(macOS)* | chat with local models via LM Studio | Settings → Chat → Local models → **Connect** |
-+| **iPhone** *(macOS)* | sessions, approvals, questions and Mochi on your iPhone | Settings → General → iPhone · your private iCloud, see [docs/IPHONE.md](docs/IPHONE.md) |
- | **Active pills** *(macOS)* | choose which tools and agents appear in the island | Settings → Active pills |
- | Stripe, n8n, GitHub, Vercel, Resend, Notion, Cal.com | the service pills | Keychain / Windows Credential Manager / Secret Service, all optional |
- 
-```
-
-**File**: `docs/IPHONE.md` (added, +101/-0)
-```diff
-@@ -0,0 +1,101 @@
-+# Coucou on iPhone
-+
-+Your Mac does the work, your iPhone keeps you in the loop when you step away: your agent sessions live, permission requests you can answer from the Lock Screen, Claude's questions, the next instruction, and your services up close.
-+
-+<p align="center"><img src="media/iphone-live-activity.jpg" width="520" alt="Mochi on the Lock Screen, waiting for your OK with Deny and Allow"></p>
-+
-+## What you need
-+
-+| | |
-+|---|---|
-+| **Mac** | Coucou **0.1.8 or later** on macOS 15+: the [GitHub build](https://github.com/Louis-CFM/coucou/releases/latest), or the Mac App Store version once it is out |
-+| **iPhone** | iOS 18 or later. The Lock Screen and Dynamic Island need an iPhone with a Dynamic Island for the island part; every iPhone gets the Lock Screen |
-+| **iCloud** | The **same Apple Account** signed in to iCloud on the Mac and the iPhone. That's the whole link: no account to create, no server, no pairing code |
-+| **Coucou on iPhone** | From the App Store (coming soon) or the TestFlight beta (link below when it opens) |
-+
-+## Get it on your iPhone
-+
-+1. **Install Coucou on your iPhone.**
-+   - **App Store:** coming soon, the link will be here.
-+   - **TestFlight beta:** install [TestFlight](https://apps.apple.com/app/testflight/id899247664) from the App Store, then open the Coucou beta link when it is shared here.
-+2. **Update Coucou on your Mac** to 0.1.8 or later.
-+3. **On the Mac:** click the Coucou icon in the menu bar → **Settings… → General → iPhone**, and turn on:
-+   - **Show my agent sessions on my iPhone** (required)
-+   - **Move Mochi to my iPhone's Dynamic Island when my Mac is locked** (the Live Activity)
-+   - **Let my iPhone send instructions to Claude Code** (GitHub build only, optional)
-+4. **On the iPhone:** open Coucou and allow notifications. That's how permission requests, questions and finished turns reach you.
-+5. **Start a Claude Code session on the Mac.** It shows up on the iPhone within a few seconds.
-+
-+Nothing shows up? See [Troubleshooting](#troubleshooting).
-+
-+## What you can do
-+
-+| On the iPhone | How |
-+|---|---|
-+| **Follow every session live** | Agents tab: each agent's Mochi, its state and steps. Tap one for the last turn: the prompt, what it did (commands and their output), the files it changed with their diffs, and Claude's answer |
-+| **Allow or Deny a permission** | From the notification, the Lock Screen (Live Activity) or the app. Allow asks for Face ID. Your Mac only applies a decision meant for the exact command it is waiting on, and a request expires after 2 minutes |
-+| **Answer Claude's questions** | `AskUserQuestion` prompts arrive as a notification with one button per choice, or open the app to answer several at once |
-+| **Send the next instruction** | Type or dictate in the session screen (GitHub build of the Mac app, with the instructions switch on). Your Mac picks it up within 15 seconds and continues the session in its own folder |
-+| **Mochi on the Lock Screen** | Lock your Mac while an agent works: Mochi moves to the Lock Screen and the Dynamic Island, then comes back to the notch when you unlock |
-+| **Your services up close** | Services tab: GitHub, Vercel, Stripe, Cal.com, n8n, Notion, Resend. Your Mac reads their APIs with the keys in its Keychain. Safe actions (re-run failed CI, approve or merge a pull request, redeploy or promote on Vercel, pause or retry an n8n workflow) ask for Face ID first. Nothing that moves money or sends an email |
-+| **Widgets** | Home Screen and Lock Screen widgets: one Mochi, the team of four, or the list of agents and services |
-+| **Siri and Shortcuts** | "What are my agents doing in Coucou", "Ask Claude in Coucou" |
-+| **Control Center** | A control that opens the agent that needs you |
-+| **Spotlight** | Search the turns you've seen (can be turned off in the app's settings) |
-+| **Focus** | A Focus filter that only lets approvals and questions through |
-+| **History** | Your past decisions and turns, grouped by day |
-+
-+## Privacy
-+
-+- Your sessions go from your Mac to **your own private iCloud database**, and from there to your iPhone. Project names, commands, paths, questions and turns are encrypted with your iCloud keys.
-+- **No API key ever leaves your Mac.** The services screen shows what your Mac read; actions are run by your Mac.
-+- The Live Activity goes through a small relay ([`relay/`](../relay/)) that holds Apple's push key. It only sees the agent's name and state, never a project name, a command or a path, and it stores and logs nothing.
-+- No account, no analytics. Turning the iPhone switch off on the Mac deletes your sessions from iCloud.
-+
-+Details in the [privacy policy](https://louis-cfm.github.io/coucou/privacy.html).
-+
-+## Troubleshooting
-+
-+**Nothing shows up on the iPhone**
-+- The Mac and the iPhone must use the **same Apple Account** in iCloud (Settings → your name on the iPhone, System Settings → your name on the Mac).
-+- On the Mac, **Settings → General → 
-```
-
-**File**: `docs/index.html` (modified, +2/-1)
-```diff
-@@ -1,7 +1,7 @@
- <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
- <title>A tiny friend in your notch — Coucou</title><link rel="icon" href="media/icon.png"><link rel="stylesheet" href="site.css"></head><body><div class="wrap">
- <header><a href="index.html"><img src="media/icon.png" alt=""></a><span class="name">Coucou</span>
--<nav><a href="index.html" class="on">Home</a><a href="support.html">Support</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="legal.html">Legal</a></nav></header>
-+<nav><a href="index.html" class="on">Home</a><a href="iphone.html">iPhone</a><a href="support.html">Support</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="legal.html">Legal</a></nav></header>
- <div class="hero">
- <h1>A tiny friend that lives in your notch</h1>
- <p class="meta" style="font-size:17px">Coucou watches your AI coding agents — Claude Code, Codex, Cursor, Gemini CLI, Antigravity and more — lets you approve Claude Code and Codex requests from the notch, chat with Anthropic, Google AI or OpenAI, keeps an eye on Stripe, GitHub, Vercel, n8n and more, and follows you to your iPhone. Free and open source.</p>
-@@ -21,6 +21,7 @@ <h2>Now on iPhone</h2>
- <li><b>Through your own iCloud:</b> no Coucou server sees your projects, commands or keys.</li>
- </ul>
- <p class="meta">Coming to the Mac App Store and the App Store: one click to install, automatic updates, and the iPhone pairs with your Mac through iCloud. Until then, download the Mac app from GitHub.</p>
-+<p style="text-align:center"><a class="btn" href="iphone.html">Get Coucou on your iPhone</a></p>
- <div class="card"><b>Private by design.</b> No account, no analytics, no tracking. Your keys stay in your Keychain, Windows Credential Manager or the Linux Secret Service. <a href="privacy.html">Read the privacy policy</a>.</div>
- <p class="meta">Requires macOS 15 or later. No notch? Mochi sits in a small bar at the top of the screen. The Windows download is paused for now: Microsoft Defender wrongly flags the unsigned installer, and it will come back once that’s fixed. Windows users can <a href="https://github.com/Louis-CFM/coucou/tree/main/windows#build-it-yourself">build it from source</a>. Linux: a beta is out (AppImage, .deb, .rpm), <a href="https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.1.1">download it here</a>.</p>
- <footer>© 2026 Louis Raillé · Coucou is free and open source (MIT) · <a href="https://github.com/Louis-CFM/coucou">GitHub</a> · <a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a> · <a href="legal.html">Legal notice</a></footer></div></body></html>
-```
-
-**File**: `docs/iphone.html` (added, +90/-0)
-```diff
-@@ -0,0 +1,90 @@
-+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-+<title>Coucou on iPhone</title><link rel="icon" href="media/icon.png"><link rel="stylesheet" href="site.css"></head><body><div class="wrap">
-+<header><a href="index.html"><img src="media/icon.png" alt=""></a><span class="name">Coucou</span>
-+<nav><a href="index.html">Home</a><a href="iphone.html" class="on">iPhone</a><a href="support.html">Support</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="legal.html">Legal</a></nav></header>
-+<div class="lang"><a href="#en">English</a><a href="#fr">Français</a></div>
-+<section id="en">
-+<h1>Coucou on iPhone</h1>
-+<div class="meta">Your Mac does the work, your iPhone keeps you in the loop when you step away.</div>
-+<img src="media/iphone-live-activity.jpg" style="width:100%;max-width:520px;border-radius:14px;display:block;margin:16px auto" alt="Mochi on the Lock Screen, waiting for your OK with Deny and Allow">
-+
-+<h2>What you need</h2>
-+<ul>
-+<li><b>Mac:</b> Coucou 0.1.8 or later on macOS 15+ (<a href="https://github.com/Louis-CFM/coucou/releases/latest">download</a>, or the Mac App Store version once it’s out).</li>
-+<li><b>iPhone:</b> iOS 18 or later.</li>
-+<li><b>iCloud:</b> the same Apple Account on the Mac and the iPhone. That’s the whole link: no account to create, no pairing code.</li>
-+</ul>
-+
-+<h2>Get it on your iPhone</h2>
-+<ol>
-+<li><b>Install Coucou on your iPhone:</b> from the App Store once it’s out, or the TestFlight beta. Both links will be on this page.</li>
-+<li><b>On your Mac:</b> Coucou icon in the menu bar → <b>Settings… → General → iPhone</b>, turn on <b>Show my agent sessions on my iPhone</b>, and <b>Move Mochi to my iPhone’s Dynamic Island when my Mac is locked</b> for the Lock Screen.</li>
-+<li><b>On the iPhone:</b> open Coucou and allow notifications.</li>
-+<li><b>Start a Claude Code session on the Mac:</b> it shows up on the iPhone within seconds.</li>
-+</ol>
-+
-+<h2>What you can do</h2>
-+<ul>
-+<li><b>Allow or Deny</b> a permission from the notification, the Lock Screen or the app. Allow asks for Face ID, and your Mac only applies a decision meant for the exact command it is waiting on.</li>
-+<li><b>Answer Claude’s questions</b> with one tap.</li>
-+<li><b>Follow every session live:</b> the prompt, the commands, the diffs and Claude’s answer.</li>
-+<li><b>Send the next instruction</b> by text or voice (GitHub build of the Mac app).</li>
-+<li><b>Mochi on the Lock Screen and in the Dynamic Island</b> while your Mac is locked.</li>
-+<li><b>Your services up close</b> (GitHub, Vercel, Stripe, Cal.com, n8n, Notion, Resend), with safe actions behind Face ID: re-run CI, merge a pull request, redeploy, pause a workflow. Nothing that moves money or sends an email.</li>
-+<li><b>Widgets, Control Center, Siri and Shortcuts, Spotlight and a Focus filter.</b></li>
-+</ul>
-+
-+<div class="card"><b>Private by design.</b> Your sessions go from your Mac to your own private iCloud, encrypted with your iCloud keys. No API key leaves your Mac, and no Coucou server sees your projects, commands or paths. <a href="privacy.html">Read the privacy policy</a>.</div>
-+
-+<h2>Troubleshooting</h2>
-+<h3>Nothing shows up</h3>
-+<p>Check that the Mac and the iPhone use the same Apple Account in iCloud, that <b>Show my agent sessions on my iPhone</b> is on in the Mac app (0.1.8 or later), then pull down on the Agents tab to refresh.</p>
-+<h3>No notifications</h3>
-+<p>iPhone <b>Settings → Notifications → Coucou</b>: allow them. A Focus mode or Coucou’s quiet hours can hide them.</p>
-+<h3>Mochi doesn’t come to the Lock Screen</h3>
-+<p>Turn on the Dynamic Island switch on the Mac, and iPhone <b>Settings → Coucou → Live Activities</b>. Open Coucou on the iPhone once after installing it. iOS limits how often an app can start a Live Activity: after many lock cycles in a row it may skip a few, then it comes back on its own.</p>
-+<p>The full guide, with how to build the iPhone app yourself, is on <a href="https://github.com/Louis-CFM/coucou/blob/main/docs/IPHONE.md">GitHub</a>. Still stuck? <a href="support.html">Support</a>.</p>
-+</section>
-+<hr>
-+<section id="fr" lang="fr">
-+<h1>Coucou sur iPhone</h1>
-+<div class="meta">Ton Mac fait le travail, ton iPhone te tient au courant quand tu t’éloignes.</div>
-+
-+<h2>Ce qu’il te faut</h2>
-+<ul>
-+<li><b>Mac :</b> Coucou 0.1.8 ou plus récent sur macOS 15+ (<a href="https://github.com/Louis-CFM/coucou/releases/latest">télécharger</a>, ou la version Mac App Store dès qu’elle sort).</li>
-+<li><b>iPhone :</b> iOS 18 ou plus récent.</li>
-+<li><b>iCloud :</b> le même compte Apple sur le Mac et l’iPhone. C’est tout le lien : pas de compte à créer, pas de code d’appairage.</li>
-+</ul>
-+
-+<h2>L’installer sur ton iPhone</h2>
-+<ol>
-+<li><b>Installe Coucou sur ton iPhone :</b> depuis l’App Store dès sa sortie, ou la bêta TestFlight. Les deux liens seront sur cette page.</li>
-+<li><b>Sur ton
-```
-
-**File**: `docs/legal.html` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- <!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
- <title>Legal notice — Coucou</title><link rel="icon" href="media/icon.png"><link rel="stylesheet" href="site.css"></head><body><div class="wrap">
- <header><a href="index.html"><img src="media/icon.png" alt=""></a><span class="name">Coucou</span>
--<nav><a href="index.html">Home</a><a href="support.html">Support</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="legal.html" class="on">Legal</a></nav></header>
-+<nav><a href="index.html">Home</a><a href="iphone.html">iPhone</a><a href="support.html">Support</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="legal.html" class="on">Legal</a></nav></header>
- <div class="lang"><a href="#fr">Français</a><a href="#en">English</a></div>
- <section id="fr" lang="fr">
- <h1>Mentions légales</h1>
-```
-
-**File**: `docs/privacy.html` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
- <title>Privacy Policy — Coucou</title><link rel="icon" href="media/icon.png"><link rel="stylesheet" href="site.css"></head><body><div class="wrap">
- <header><a href="index.html"><img src="media/icon.png" alt=""></a><span class="name">Coucou</span>
--<nav><a href="index.html">Home</a><a href="support.html">Support</a><a href="privacy.html" class="on">Privacy</a><a href="terms.html">Terms</a><a href="legal.html">Legal</a></nav></header>
-+<nav><a href="index.html">Home</a><a href="iphone.html">iPhone</a><a href="support.html">Support</a><a href="privacy.html" class="on">Privacy</a><a href="terms.html">Terms</a><a href="legal.html">Legal</a></nav></header>
- <div class="lang"><a href="#en">English</a><a href="#fr">Français</a></div>
- <section id="en">
- <h1>Privacy Policy</h1>
-```
-
-**File**: `docs/support.html` (modified, +9/-1)
-```diff
-@@ -1,7 +1,7 @@
- <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
- <title>Support — Coucou</title><link rel="icon" href="media/icon.png"><link rel="stylesheet" href="site.css"></head><body><div class="wrap">
- <header><a href="index.html"><img src="media/icon.png" alt=""></a><span class="name">Coucou</span>
--<nav><a href="index.html">Home</a><a href="support.html" class="on">Support</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="legal.html">Legal</a></nav></header>
-+<nav><a href="index.html">Home</a><a href="iphone.html">iPhone</a><a href="support.html" class="on">Support</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="legal.html">Legal</a></nav></header>
- <div class="lang"><a href="#en">English</a><a href="#fr">Français</a></div>
- <section id="en">
- <h1>Support</h1>
-@@ -11,6 +11,10 @@ <h1>Support</h1>
- <b>Email:</b> <a href="mailto:raillelouis@gmail.com">raillelouis@gmail.com</a>
- </div>
- <h2>FAQ</h2>
-+<h3>How do I get Coucou on my iPhone?</h3>
-+<p>Install the iPhone app (App Store once it’s out, or the TestFlight beta), turn on <b>Settings → General → iPhone</b> in the Mac app (0.1.8 or later), and use the same Apple Account in iCloud on both. Step by step and troubleshooting: <a href="iphone.html">Coucou on iPhone</a>.</p>
-+<h3>My sessions don’t show up on the iPhone</h3>
-+<p>Check that the Mac and the iPhone use the same Apple Account in iCloud and that <b>Show my agent sessions on my iPhone</b> is on in the Mac app, then pull down on the Agents tab to refresh. More in <a href="iphone.html">Coucou on iPhone</a>.</p>
- <h3>macOS says it can’t verify the app</h3>
- <p>Coucou 0.1.1 and later are notarized by Apple: macOS only asks you to confirm the first launch. If you still have 0.1.0, open <b>System Settings → Privacy &amp; Security</b>, scroll down and click <b>Open Anyway</b>, or update to the latest version.</p>
- <h3>After updating, macOS asks to let Coucou use my keys</h3>
-@@ -58,6 +62,10 @@ <h1>Assistance</h1>
- <b>E-mail :</b> <a href="mailto:raillelouis@gmail.com">raillelouis@gmail.com</a>
- </div>
- <h2>Questions fréquentes</h2>
-+<h3>Comment avoir Coucou sur mon iPhone ?</h3>
-+<p>Installe l’app iPhone (l’App Store dès sa sortie, ou la bêta TestFlight), active <b>Settings → General → iPhone</b> dans l’app Mac (0.1.8 ou plus récent), et utilise le même compte Apple dans iCloud sur les deux. Étape par étape et dépannage : <a href="iphone.html#fr">Coucou sur iPhone</a>.</p>
-+<h3>Mes sessions n’apparaissent pas sur l’iPhone</h3>
-+<p>Vérifie que le Mac et l’iPhone utilisent le même compte Apple dans iCloud et que <b>Show my agent sessions on my iPhone</b> est activé dans l’app Mac, puis tire vers le bas sur l’onglet Agents pour actualiser. Plus de détails dans <a href="iphone.html#fr">Coucou sur iPhone</a>.</p>
- <h3>macOS dit qu’il ne peut pas vérifier l’app</h3>
- <p>Coucou 0.1.1 et les versions suivantes sont notarisées par Apple : macOS te demande seulement de confirmer le premier lancement. Si tu as encore la 0.1.0, ouvre <b>Réglages Système → Confidentialité et sécurité</b>, descends et clique sur <b>Ouvrir quand même</b>, ou installe la dernière version.</p>
- <h3>Après la mise à jour, macOS demande d’autoriser Coucou à utiliser mes clés</h3>
-```
-
-**File**: `docs/terms.html` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
- <title>Terms of Use — Coucou</title><link rel="icon" href="media/icon.png"><link rel="stylesheet" href="site.css"></head><body><div class="wrap">
- <header><a href="index.html"><img src="media/icon.png" alt=""></a><span class="name">Coucou</span>
--<nav><a href="index.html">Home</a><a href="support.html">Support</a><a href="privacy.html">Privacy</a><a href="terms.html" class="on">Terms</a><a href="legal.html">Legal</a></nav></header>
-+<nav><a href="index.html">Home</a><a href="iphone.html">iPhone</a><a href="support.html">Support</a><a href="privacy.html">Privacy</a><a href="terms.html" class="on">Terms</a><a href="legal.html">Legal</a></nav></header>
- <div class="lang"><a href="#en">English</a><a href="#fr">Français</a></div>
- <section id="en">
- <h1>Terms of Use</h1>
+@@ -47,13 +47,16 @@ final class MachineVitals: ObservableObject {
+     /// Starts following whether Mochi is on screen. Called once at launch.
+     func start() {
+         let state = AppState.shared
+-        state.$mode.removeDuplicates().sink { [weak self] _ in
++        // Everything is received on the main thread: macOS posts some of these (the thermal
++        // state) from a background queue, and Mochi's code only runs on the main one.
++        state.$mode.removeDuplicates().receive(on: DispatchQueue.main).sink { [weak self] _ in
+             Task { @MainActor in self?.refreshRunning() }
+         }.store(in: &subscriptions)
+-        state.$mochiOnDesktop.removeDuplicates().sink { [weak self] _ in
++        state.$mochiOnDesktop.removeDuplicates().receive(on: DispatchQueue.main).sink { [weak self] _ in
+             Task { @MainActor in self?.refreshRunning() }
+         }.store(in: &subscriptions)
+         NotificationCenter.default.publisher(for: ProcessInfo.thermalStateDidChangeNotification)
++            .receive(on: DispatchQueue.main)
+             .sink { [weak self] _ in Task { @MainActor in self?.sample() } }
+             .store(in: &subscriptions)
+         refreshRunning()
 ```
 
 ---
 
-### Incident Patch 2: `66df17b0` (2026-10-06)
-**Commit Message**: iPhone: Liquid Glass, tabs, zoom, gestures, icons, Spotlight, Focus, services with actions, intro (#251)
+### Incident Patch 2: `57d13207` (2026-10-18)
+**Commit Message**: WhatsApp: fixes from an independent review
 
-* iPhone: Liquid Glass, tabs, zoom transitions, gestures, icons, Spotlight, Focus
+- No redirect is ever followed (and an answer from another host is
+  refused): credentials and a reply's text only reach the gateway.
+- GOWA started by Coucou is restarted only when its binary, address or
+  password changes, after the old one has gone; Save and Test no longer kill
+  it. Test connection waits a few seconds for a GOWA just started, and uses
+  the running connection.
+- Focus authorization callback is @Sendable (Intents may answer off the
+  main thread).
+- History loaded at connection is added as quiet history instead of
+  zeroing every unread count afterwards.
+- Messages arriving in the conversation open on screen aren't unread and
+  don't make Mochi react; the receipt still waits for a reply or an opening.
+- The badge clears on the unread you can actually see (muted groups and
+  ignored chats aside). Ignoring a chat removes it from the inbox.
+- The conversation and its draft survive a missed status check (a banner
+  says it); a send finishing after WhatsApp is turned off adds nothing back.
+- QR: never asked again within 15 s, even when none came (each GOWA login
+  call restarts the pairing).
+- Dedupe forgets the oldest ids,
 
-- Tabs (Agents, Services, History, Search) with the agent that needs you
-  above them, like Music's mini player (iOS 26).
-- Liquid Glass cards and buttons on iOS 26, the dark material before; the
-  island at the top grows Allow / Deny when a command waits (glass morphing).
-- The Mochi tile zooms into the session; the agent's color moves softly
-  behind it (MeshGradient); the header shrinks as the list scrolls.
-- Symbols that move with the state; Apple Pay's drawn checkmark on Allow.
-- Swipe right to allow (Face ID), left to deny; long press for a peek at
-  the last turn.
-- Search through every turn; finished turns in Spotlight (local index,
-  can be turned off).
-- Dark and tinted app icons, and Mochi in five other colors to pick.
-- A Coucou Focus filter: only approvals and questions during a Focus.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_016qkcwzfTWvbmbc2y9dur6p
-
-* Approval panel the iOS way, a softer session glow, Live Activity alerts
-
--
-
-**File**: `NotchBuddy/PhoneAssets.xcassets/AppIcon-Blue.appiconset/Contents.json` (added, +11/-0)
+**File**: `NotchBuddy/Sources/App/WhatsAppController.swift` (modified, +53/-13)
 ```diff
-@@ -0,0 +1,11 @@
-+{
-+  "images" : [
-+    {
-+      "filename" : "icon-1024.png",
-+      "idiom" : "universal",
-+      "platform" : "ios",
-+      "size" : "1024x1024"
-+    }
-+  ],
-+  "info" : { "author" : "xcode", "version" : 1 }
-+}
-```
-
-**File**: `NotchBuddy/PhoneAssets.xcassets/AppIcon-Graphite.appiconset/Contents.json` (added, +11/-0)
-```diff
-@@ -0,0 +1,11 @@
-+{
-+  "images" : [
-+    {
-+      "filename" : "icon-1024.png",
-+      "idiom" : "universal",
-+      "platform" : "ios",
-+      "size" : "1024x1024"
-+    }
-+  ],
-+  "info" : { "author" : "xcode", "version" : 1 }
-+}
-```
-
-**File**: `NotchBuddy/PhoneAssets.xcassets/AppIcon-Green.appiconset/Contents.json` (added, +11/-0)
-```diff
-@@ -0,0 +1,11 @@
-+{
-+  "images" : [
-+    {
-+      "filename" : "icon-1024.png",
-+      "idiom" : "universal",
-+      "platform" : "ios",
-+      "size" : "1024x1024"
-+    }
-+  ],
-+  "info" : { "author" : "xcode", "version" : 1 }
-+}
-```
-
-**File**: `NotchBuddy/PhoneAssets.xcassets/AppIcon-Pink.appiconset/Contents.json` (added, +11/-0)
-```diff
-@@ -0,0 +1,11 @@
-+{
-+  "images" : [
-+    {
-+      "filename" : "icon-1024.png",
-+      "idiom" : "universal",
-+      "platform" : "ios",
-+      "size" : "1024x1024"
-+    }
-+  ],
-+  "info" : { "author" : "xcode", "version" : 1 }
-+}
-```
-
-**File**: `NotchBuddy/PhoneAssets.xcassets/AppIcon-Purple.appiconset/Contents.json` (added, +11/-0)
-```diff
-@@ -0,0 +1,11 @@
-+{
-+  "images" : [
-+    {
-+      "filename" : "icon-1024.png",
-+      "idiom" : "universal",
-+      "platform" : "ios",
-+      "size" : "1024x1024"
-+    }
-+  ],
-+  "info" : { "author" : "xcode", "version" : 1 }
-+}
-```
-
-**File**: `NotchBuddy/PhoneAssets.xcassets/AppIcon.appiconset/Contents.json` (modified, +14/-0)
-```diff
-@@ -5,6 +5,20 @@
-       "idiom" : "universal",
-       "platform" : "ios",
-       "size" : "1024x1024"
-+    },
-+    {
-+      "appearances" : [ { "appearance" : "luminosity", "value" : "dark" } ],
-+      "filename" : "icon-1024-dark.png",
-+      "idiom" : "universal",
-+      "platform" : "ios",
-+      "size" : "1024x1024"
-+    },
-+    {
-+      "appearances" : [ { "appearance" : "luminosity", "value" : "tinted" } ],
-+      "filename" : "icon-1024-tinted.png",
-+      "idiom" : "universal",
-+      "platform" : "ios",
-+      "size" : "1024x1024"
-     }
-   ],
-   "info" : { "author" : "xcode", "version" : 1 }
-```
-
-**File**: `NotchBuddy/PhoneAssets.xcassets/IconPreview-Blue.imageset/Contents.json` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+{
-+  "images": [
-+    {
-+      "filename": "preview.png",
-+      "idiom": "universal"
-+    }
-+  ],
-+  "info": {
-+    "author": "xcode",
-+    "version": 1
-+  }
-+}
-\ No newline at end of file
-```
-
-**File**: `NotchBuddy/PhoneAssets.xcassets/IconPreview-Graphite.imageset/Contents.json` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+{
-+  "images": [
-+    {
-+      "filename": "preview.png",
-+      "idiom": "universal"
-+    }
-+  ],
-+  "info": {
-+    "author": "xcode",
-+    "version": 1
-+  }
-+}
-\ No newline at end of file
-```
-
----
-
-### Incident Patch 3: `2d3a1692` (2026-10-04)
-**Commit Message**: iPhone steps 1–2: CloudKit link spike + Developer ID build with iCloud (#209)
-
-* iPhone link spike: CloudKit Ping/Pong between the Mac and a new iPhone app
-
-Adds a DebugCloud configuration (signed, PHONE_LINK) with NotchBuddyCloud and
-CoucouAppStoreCloud schemes, a CoucouPhone iOS target, and a CloudKit probe on
-the Mac that writes a Ping every 60 s and logs the iPhone's Pong round trip.
-Debug and Release are unchanged.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_016qkcwzfTWvbmbc2y9dur6p
-
-* PhoneLink: log to the Xcode console too, list subscriptions, log every remote notification
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_016qkcwzfTWvbmbc2y9dur6p
-
-* Fix the App Store build: hide Mac-only shortcuts with a filtered list
-
-A bare return inside the ForEach ViewBuilder closure broke the CoucouAppStore
-compile. Also build CoucouAppStore in CI so this is caught.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_016qkcwzfTWvbmbc2y9dur6p
-
-* iPhone step 2: Developer ID build with iCloud (ReleaseCloud + cloud-test-build.sh)
-
-Adds a Rele
-
-**File**: `.github/workflows/build.yml` (modified, +39/-0)
-```diff
-@@ -54,3 +54,42 @@ jobs:
-             build \
-             CODE_SIGNING_ALLOWED=NO \
-             CODE_SIGNING_REQUIRED=NO
-+
-+      - name: Build App Store target (unsigned)
-+        run: |
-+          xcodebuild \
-+            -project NotchBuddy/NotchBuddy.xcodeproj \
-+            -scheme CoucouAppStore \
-+            -configuration Debug \
-+            build \
-+            CODE_SIGNING_ALLOWED=NO \
-+            CODE_SIGNING_REQUIRED=NO
-+
-+      - name: Build iPhone link spike (Mac, DebugCloud, unsigned)
-+        run: |
-+          xcodebuild \
-+            -project NotchBuddy/NotchBuddy.xcodeproj \
-+            -scheme NotchBuddyCloud \
-+            -configuration DebugCloud \
-+            build \
-+            CODE_SIGNING_ALLOWED=NO \
-+            CODE_SIGNING_REQUIRED=NO
-+
-+      - name: Build iPhone link spike (Mac, ReleaseCloud, unsigned)
-+        run: |
-+          xcodebuild \
-+            -project NotchBuddy/NotchBuddy.xcodeproj \
-+            -scheme NotchBuddy \
-+            -configuration ReleaseCloud \
-+            build \
-+            CODE_SIGNING_ALLOWED=NO \
-+            CODE_SIGNING_REQUIRED=NO
-+
-+      - name: Build iPhone app (unsigned)
-+        run: |
-+          xcodebuild \
-+            -project NotchBuddy/NotchBuddy.xcodeproj \
-+            -scheme CoucouPhone \
-+            -destination 'generic/platform=iOS' \
-+            build \
-+            CODE_SIGNING_ALLOWED=NO
-```
-
-**File**: `NotchBuddy/Resources/CoucouAppStoreCloud.entitlements` (added, +24/-0)
-```diff
-@@ -0,0 +1,24 @@
-+<?xml version="1.0" encoding="UTF-8"?>
-+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-+<plist version="1.0">
-+<dict>
-+    <key>com.apple.security.app-sandbox</key>
-+    <true/>
-+    <key>com.apple.security.network.client</key>
-+    <true/>
-+    <key>com.apple.security.files.user-selected.read-write</key>
-+    <true/>
-+    <key>com.apple.security.files.bookmarks.app-scope</key>
-+    <true/>
-+    <key>com.apple.developer.icloud-container-identifiers</key>
-+    <array>
-+        <string>iCloud.fr.louisraille.Coucou</string>
-+    </array>
-+    <key>com.apple.developer.icloud-services</key>
-+    <array>
-+        <string>CloudKit</string>
-+    </array>
-+    <key>com.apple.developer.aps-environment</key>
-+    <string>development</string>
-+</dict>
-+</plist>
-```
-
-**File**: `NotchBuddy/Resources/CoucouCloud.entitlements` (added, +18/-0)
-```diff
-@@ -0,0 +1,18 @@
-+<?xml version="1.0" encoding="UTF-8"?>
-+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-+<plist version="1.0">
-+<dict>
-+    <key>com.apple.security.automation.apple-events</key>
-+    <true/>
-+    <key>com.apple.developer.icloud-container-identifiers</key>
-+    <array>
-+        <string>iCloud.fr.louisraille.Coucou</string>
-+    </array>
-+    <key>com.apple.developer.icloud-services</key>
-+    <array>
-+        <string>CloudKit</string>
-+    </array>
-+    <key>com.apple.developer.aps-environment</key>
-+    <string>development</string>
-+</dict>
-+</plist>
-```
-
-**File**: `NotchBuddy/Resources/CoucouPhone.entitlements` (added, +16/-0)
-```diff
-@@ -0,0 +1,16 @@
-+<?xml version="1.0" encoding="UTF-8"?>
-+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-+<plist version="1.0">
-+<dict>
-+    <key>aps-environment</key>
-+    <string>development</string>
-+    <key>com.apple.developer.icloud-container-identifiers</key>
-+    <array>
-+        <string>iCloud.fr.louisraille.Coucou</string>
-+    </array>
-+    <key>com.apple.developer.icloud-services</key>
-+    <array>
-+        <string>CloudKit</string>
-+    </array>
-+</dict>
-+</plist>
-```
-
-**File**: `NotchBuddy/Resources/CoucouPhoneProduction.entitlements` (added, +18/-0)
-```diff
-@@ -0,0 +1,18 @@
-+<?xml version="1.0" encoding="UTF-8"?>
-+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-+<plist version="1.0">
-+<dict>
-+    <key>aps-environment</key>
-+    <string>development</string>
-+    <key>com.apple.developer.icloud-container-identifiers</key>
-+    <array>
-+        <string>iCloud.fr.louisraille.Coucou</string>
-+    </array>
-+    <key>com.apple.developer.icloud-services</key>
-+    <array>
-+        <string>CloudKit</string>
-+    </array>
-+    <key>com.apple.developer.icloud-container-environment</key>
-+    <string>Production</string>
-+</dict>
-+</plist>
-```
-
-**File**: `NotchBuddy/Resources/CoucouReleaseCloud.entitlements` (added, +24/-0)
-```diff
-@@ -0,0 +1,24 @@
-+<?xml version="1.0" encoding="UTF-8"?>
-+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-+<plist version="1.0">
-+<dict>
-+    <key>com.apple.security.automation.apple-events</key>
-+    <true/>
-+    <key>com.apple.application-identifier</key>
-+    <string>256AUJ9555.fr.louisraille.NotchBuddy</string>
-+    <key>com.apple.developer.team-identifier</key>
-+    <string>256AUJ9555</string>
-+    <key>com.apple.developer.icloud-container-identifiers</key>
-+    <array>
-+        <string>iCloud.fr.louisraille.Coucou</string>
-+    </array>
-+    <key>com.apple.developer.icloud-services</key>
-+    <array>
-+        <string>CloudKit</string>
-+    </array>
-+    <key>com.apple.developer.icloud-container-environment</key>
-+    <string>Production</string>
-+    <key>com.apple.developer.aps-environment</key>
-+    <string>production</string>
-+</dict>
-+</plist>
-```
-
-**File**: `NotchBuddy/Resources/InfoPhone.plist` (added, +40/-0)
-```diff
-@@ -0,0 +1,40 @@
-+<?xml version="1.0" encoding="UTF-8"?>
-+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-+<plist version="1.0">
-+<dict>
-+	<key>CFBundleDevelopmentRegion</key>
-+	<string>$(DEVELOPMENT_LANGUAGE)</string>
-+	<key>CFBundleDisplayName</key>
-+	<string>Coucou</string>
-+	<key>CFBundleExecutable</key>
-+	<string>$(EXECUTABLE_NAME)</string>
-+	<key>CFBundleIdentifier</key>
-+	<string>fr.louisraille.Coucou</string>
-+	<key>CFBundleInfoDictionaryVersion</key>
-+	<string>6.0</string>
-+	<key>CFBundleName</key>
-+	<string>Coucou</string>
-+	<key>CFBundlePackageType</key>
-+	<string>APPL</string>
-+	<key>CFBundleShortVersionString</key>
-+	<string>0.1</string>
-+	<key>CFBundleVersion</key>
-+	<string>1</string>
-+	<key>ITSAppUsesNonExemptEncryption</key>
-+	<false/>
-+	<key>LSRequiresIPhoneOS</key>
-+	<true/>
-+	<key>UIApplicationSupportsIndirectInputEvents</key>
-+	<true/>
-+	<key>UIBackgroundModes</key>
-+	<array>
-+		<string>remote-notification</string>
-+	</array>
-+	<key>UILaunchScreen</key>
-+	<dict/>
-+	<key>UISupportedInterfaceOrientations</key>
-+	<array>
-+		<string>UIInterfaceOrientationPortrait</string>
-+	</array>
-+</dict>
-+</plist>
-```
-
-**File**: `NotchBuddy/Sources/App/AppDelegate.swift` (modified, +3/-0)
-```diff
-@@ -18,6 +18,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
-         NSApp.setActivationPolicy(.accessory)
-         setupMenuBarItem()
-         setupIsland()
-+        #if PHONE_LINK
-+        CloudProbe.shared.start()
-+        #endif
+@@ -141,6 +141,8 @@ final class WhatsAppController: ObservableObject {
+     private var lastPoll = Date()
+     private var lastAnnounce: Date = .distantPast
+     private var namingGroups: Set<String> = []
++    /// The conversation open in the card: what arrives there is seen, so it isn't unread.
++    private(set) var openChat: String?
+     private var rateLimit = WARateLimit(limit: 6, window: 60)
+     /// Failed checks in a row (the gateway down, refusing, unreachable).
+     private var failures = 0
+@@ -207,7 +209,7 @@ final class WhatsAppController: ObservableObject {
+         startListener(kind: provider.kind)
+         if WhatsAppSettings.respectFocus { askFocus() }
+         // GOWA started by Coucou when asked to (Settings), before the first check.
+-        WhatsAppGOWAProcess.shared.startIfNeeded()
++        WhatsAppGOWAProcess.shared.sync()
+         let t = Timer(timeInterval: 5, repeats: true) { _ in
+             MainActor.assumeIsolated { WhatsAppController.shared.onTick() }
+         }
+@@ -234,9 +236,11 @@ final class WhatsAppController: ObservableObject {
+         lastWebhook = nil
+         namingGroups = []
+         failures = 0
+-        // Started again on the next begin() with the new settings, or gone for good.
+-        WhatsAppGOWAProcess.shared.stop()
++        // Turned off: GOWA goes too. Otherwise begin() keeps it, or restarts it if its
++        // settings changed.
++        if !shouldRun { WhatsAppGOWAProcess.shared.stopNow() }
+         if forget {
++            openChat = nil
+             inbox.clear()
+             resetTask()
+         }
+@@ -285,6 +289,9 @@ final class WhatsAppController: ObservableObject {
+                 case .needsQR:
+                     link = .needsQR
+                     if qrPNG == nil || Date() > qrExpiry {
++                        // Not asked again for 15 s even when nothing came: each GOWA login call
++                        // restarts the pairing.
++                        qrExpiry = Date().addingTimeInterval(15)
+                         if let qr = try await provider.qrCode(), gen == generation {
+                             qrPNG = qr.png
+                             qrExpiry = Date().addingTimeInterval(TimeInterval(qr.seconds))
+@@ -313,7 +320,7 @@ final class WhatsAppController: ObservableObject {
+         // Twice in a row (not a gateway still starting): a small red dot on the pill, nothing more.
+         if failures == 2 { showDown(true) }
+         // GOWA started by Coucou and gone (crash, killed): started again, once a minute at most.
+-        if error == .unreachable { WhatsAppGOWAProcess.shared.startIfNeeded() }
++        if error == .unreachable { WhatsAppGOWAProcess.shared.sync() }
      }
  
-     // MARK: - Menu bar
-```
-
----
-
-### Incident Patch 4: `98c7347f` (2026-10-04)
-**Commit Message**: Info.plist: version 0.1.5, build 6
-
-**File**: `NotchBuddy/Resources/Info.plist` (modified, +2/-2)
-```diff
-@@ -17,9 +17,9 @@
- 	<key>CFBundlePackageType</key>
- 	<string>APPL</string>
- 	<key>CFBundleShortVersionString</key>
--	<string>0.1.4</string>
-+	<string>0.1.5</string>
- 	<key>CFBundleVersion</key>
--	<string>5</string>
-+	<string>6</string>
- 	<key>LSUIElement</key>
- 	<true/>
- 	<key>NSAccessibilityUsageDescription</key>
-```
-
----
-
-### Incident Patch 5: `35886ece` (2026-10-03)
-**Commit Message**: chore: bump to 0.1.4 (build 5) and add CHANGELOG entry (#188)
-
-CFBundleShortVersionString 0.1.3 → 0.1.4, CFBundleVersion 4 → 5
-(NotchBuddy target only). Regenerated Info.plist via xcodegen.
-
-Co-authored-by: Claude Sonnet 4.6 <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +10/-0)
-```diff
-@@ -1,5 +1,15 @@
- # Changelog
+     /// The discreet error pill: the pill's red badge while the gateway is down.
+@@ -326,9 +333,21 @@ final class WhatsAppController: ObservableObject {
  
-+## 0.1.4 — October 3, 2026
-+
-+- See what Claude is editing, live: each file edit shows up in the session ticker with its +N −M lines, and a click opens the diff right in the notch (#177)
-+- When Claude finishes, the session card shows its final message instead of the last step, without the shimmer (#177, #179)
-+- GitHub pill: your open pull requests with their CI status, the pull requests waiting for your review, and the CI of the default branch of your recent repos. Click a row for the list, then an item to open it on github.com (#181)
-+- GitHub alerts: a badge and a sound when the CI of one of your pull requests turns red or green, when a default branch breaks, or when someone requests your review. Fast CI runs are caught too, and the card refreshes when you open it (#181, #185)
-+- Your GitHub contribution grid: the last 7 days in the GitHub card header, click it for the past 23 weeks, and click a day for its count (#187)
-+- The GitHub token needs read access to pull requests and CI: a classic token with the repo scope, or a fine-grained token with read access to Pull requests, Commit statuses and Actions (#181)
-+- The finished view no longer overflows the card (#179)
-+
- ## 0.1.3 — October 3, 2026
- 
- - Answer Claude's questions from the notch: when Claude Code asks a multiple-choice question, pick an option or type your own answer right in the island, and Reply in terminal hands it back. Update your hooks in Settings to turn it on (#165) — thanks @Vega8991 for the idea (#94)
-```
-
-**File**: `NotchBuddy/Resources/Info.plist` (modified, +2/-2)
-```diff
-@@ -17,9 +17,9 @@
- 	<key>CFBundlePackageType</key>
- 	<string>APPL</string>
- 	<key>CFBundleShortVersionString</key>
--	<string>0.1.3</string>
-+	<string>0.1.4</string>
- 	<key>CFBundleVersion</key>
--	<string>4</string>
-+	<string>5</string>
- 	<key>LSUIElement</key>
- 	<true/>
- 	<key>NSAccessibilityUsageDescription</key>
-```
-
-**File**: `NotchBuddy/project.yml` (modified, +2/-2)
-```diff
-@@ -61,8 +61,8 @@ targets:
-         CFBundleName: Coucou
-         CFBundleDisplayName: Coucou
-         CFBundleIdentifier: fr.louisraille.NotchBuddy
--        CFBundleVersion: "4"
--        CFBundleShortVersionString: "0.1.3"
-+        CFBundleVersion: "5"
-+        CFBundleShortVersionString: "0.1.4"
-         CFBundlePackageType: APPL
-         LSUIElement: YES
-         NSHighResolutionCapable: YES
-```
-
----
-
-### Incident Patch 6: `d5d0e49c` (2026-10-03)
-**Commit Message**: fix: revert FinishedView overflow, first-paragraph toOneLine (#179)
-
-FinishedView: restore exact pre-live-diff layout (AgentWho + one-line
-summary text + Open terminal / OK buttons, paddings leading 116 /
-trailing 16 / vertical 4). Removed the touched-files list, the
-showingDiff overlay and the DiffCardView branch. Kept the
-finalLine → last non-diff step → "Session finished" text source from
-live-diff; added .lineLimit(1).truncationMode(.tail). Deleted
-AppState.touchedFiles(for:) which is now unused.
-
-DiffEngine.toOneLine: stop at the first paragraph separator (blank
-line, 3+ repeated -/*/_ chars, or line starting with |) so that long
-tool output doesn't bleed into the finished-session summary. Also
-strips leading bullet markers (-, *, •, N.). Falls through to the next
-paragraph if the first one is empty. Nine new test cases added.
-
-Co-authored-by: Claude Sonnet 4.6 <[REDACTED_EMAIL]>
-
-**File**: `NotchBuddy/Sources/App/AppState.swift` (modified, +0/-13)
-```diff
-@@ -320,19 +320,6 @@ final class AppState: ObservableObject {
-         // nextDiffId intentionally NOT reset — ids remain unique across sessions
+     /// One check from Settings' "Test connection": what the gateway says, in a sentence.
+     func testConnection() async -> String {
+-        guard let provider = WhatsAppSettings.makeProvider() else { return String(localized: "whatsapp.status.bad-url") }
++        // The running connection when there is one (a second one could race it for OpenWA's session).
++        guard let provider = provider ?? WhatsAppSettings.makeProvider() else { return String(localized: "whatsapp.status.bad-url") }
+         do {
+-            let status = try await provider.status()
++            var status: WAStatus
++            var attempt = 0
++            while true {
++                do {
++                    status = try await provider.status()
++                    break
++                } catch WAError.unreachable where WhatsAppGOWAProcess.shared.isRunning && attempt < 8 {
++                    // GOWA just started by Coucou: give it a few seconds to come up.
++                    attempt += 1
++                    try? await Task.sleep(for: .seconds(1))
++                }
++            }
+             switch status.link {
+             case .connected:
+                 let who = status.me.map(WAJID.displayNumber) ?? ""
+@@ -407,8 +426,9 @@ final class WhatsAppController: ObservableObject {
+         backfilled = true
+         let since = Date().addingTimeInterval(-12 * 3600)
+         guard let messages = try? await provider.recentMessages(since: since, me: me), gen == generation else { return }
+-        ingest(messages, announce: false)
+-        inbox.markAllRead()
++        // History: kept, never counted as unread (whether it was read is unknown), never announced.
++        for message in messages { inbox.add(message, filters: filters, history: true) }
++        for message in messages { nameGroupIfNeeded(WAJID.normalized(message.chat)) }
+         lastPoll = Date()
      }
  
--    /// Unique touched files for a pill, in first-touch order, with summed totals.
--    func touchedFiles(for pillId: String) -> [(path: String, added: Int, removed: Int)] {
--        guard let diffs = sessionDiffs[pillId] else { return [] }
--        var seen: [String: (added: Int, removed: Int)] = [:]
--        var order: [String] = []
--        for d in diffs {
--            if seen[d.path] == nil { order.append(d.path) }
--            let p = seen[d.path] ?? (0, 0)
--            seen[d.path] = (p.added + d.added, p.removed + d.removed)
+@@ -429,9 +449,16 @@ final class WhatsAppController: ObservableObject {
+     private func ingest(_ messages: [WAMessage], announce: Bool) {
+         var fresh: WAMessage?
+         for message in messages {
++            let key = WAJID.normalized(message.chat)
+         
+```
+
+**File**: `NotchBuddy/Sources/App/WhatsAppGOWAProcess.swift` (modified, +26/-26)
+```diff
+@@ -33,21 +33,33 @@ final class WhatsAppGOWAProcess {
+         return base.appendingPathComponent("Coucou/GOWA", isDirectory: true)
+     }
+ 
+-    /// Starts GOWA unless it already runs (or was started less than a minute ago).
+-    /// Returns false when the binary can't be run.
++    /// What the running GOWA was started with: changed, it is restarted; same, left alone.
++    private var launchedWith: String?
++
++    /// Brings GOWA in line with Settings: started when "Start GOWA automatically" is on (and
++    /// the gateway is GOWA on this Mac), restarted only when its binary, address or password
++    /// changed, stopped when the option is off. A GOWA that keeps dying is started again once
++    /// a minute at most. Returns false when it can't run.
+     @discardableResult
+-    func startIfNeeded() -> Bool {
+-        guard Self.autoStart, WhatsAppSettings.gateway == .gowa else { return false }
+-        if isRunning { return true }
+-        guard Date().timeIntervalSince(lastStart) > 60 else { return true }
++    func sync() -> Bool {
++        guard Self.autoStart, WhatsAppSettings.gateway == .gowa else { stopNow(); return false }
+         let path = (Self.binaryPath as NSString).expandingTildeInPath
+         guard !path.isEmpty, FileManager.default.isExecutableFile(atPath: path),
+               let url = URL(string: WhatsAppSettings.url) else {
+             appendAppLog("nb.log", "[WhatsApp] GOWA binary missing or not executable")
++            stopNow()
+             return false
+         }
+         // Only ever on this Mac: an address elsewhere is someone else's gateway.
+-        guard ["127.0.0.1", "localhost", "::1"].contains(url.host ?? "") else { return false }
++        guard ["127.0.0.1", "localhost", "::1"].contains(url.host ?? "") else { stopNow(); return false }
++        let credential = KeychainStore.shared.get(WhatsAppSettings.credentialKey) ?? ""
++        let signature = [path, url.absoluteString, credential].joined(separator: "\u{1F}")
++        if isRunning {
++            if launchedWith == signature { return true }
++            stopNow()   // waits for it to let go of the port and its database
++        } else if launchedWith == signature, Date().timeIntervalSince(lastStart) < 60 {
++            return true
++        }
+         try? FileManager.default.createDirectory(at: Self.workingDirectory, withIntermediateDirectories: true)
+ 
+         let p = Process()
+@@ -56,9 +68,7 @@ final class WhatsAppGOWAProcess {
+         p.currentDirectoryURL = Self.workingDirectory
+         var env = ProcessInfo.processInfo.environment
+         // The credential goes through the environment, not the command line (`ps` shows that).
+-        if let auth = KeychainStore.shared.get(WhatsAppSettings.credentialKey), auth.contains(":") {
+-            env["APP_BASIC_AUTH"] = auth
 -        }
--        return order.map { path in let t = seen[path]!; return (path, t.added, t.removed) }
++        if credential.contains(":") { env["APP_BASIC_AUTH"] = credential }
+         p.environment = env
+         // GOWA's own output may name contacts or quote messages: it goes nowhere.
+         p.standardOutput = FileHandle.nullDevice
+@@ -73,6 +83,7 @@ final class WhatsAppGOWAProcess {
+             try p.run()
+             process = p
+             lastStart = Date()
++            launchedWith = signature
+             appendAppLog("nb.log", "[WhatsApp] GOWA started (pid \(p.processIdentifier))")
+             return true
+         } catch {
+@@ -81,23 +92,12 @@ final class WhatsAppGOWAProcess {
+         }
+     }
+ 
+-    /// Stops GOWA if Coucou started it (Coucou quits, the option or WhatsApp is turned off).
+-    func stop() {
+-        lastStart = .distantPast
+-        guard let p = process else { return }
+-        process = nil
+-        guard p.isRunning else { return }
+-        p.terminate()
+-        // Still there after 2 s: killed.
+-        let pid = p.processIdentifier
+-        DispatchQueue.global().asyncAfter(deadline: .now() + 2) {
+-            if kill(pid, 0) == 0 { kill(pid, SIGKILL) }
+-        }
 -    }
 -
-     private func resetSessionDiffTimer(for pillId: String) {
-         sessionDiffTimers[pillId]?.cancel()
-         let work = DispatchWorkItem { [weak self] in
+-    /// At quit: the gateway can't outlive Coucou, and there is no time to wait.
++    /// Stops GOWA if Coucou started it, waiting a second at most for it to go (at quit, or
++    /// before starting it again so two never share its database).
+     func stopNow() {
+-        guard let p = process, p.isRunning else { return }
++        launchedWith = nil
++        guard let p = process else { return }
++        guard p.isRunning else { process = nil; return }
+         p.terminate()
+         let deadline = Date().addingTimeInterval(1)
+         while p.isRunning && Date() < deadline { usleep(50_000) }
 ```
 
-**File**: `NotchBuddy/Sources/App/DiffEngine.swift` (modified, +46/-15)
+**File**: `NotchBuddy/Sources/App/WhatsAppModels.swift` (modified, +20/-1)
 ```diff
-@@ -218,23 +218,54 @@ enum DiffEngine {
-     // MARK: - toOneLine
+@@ -110,6 +110,8 @@ struct WAInbox: Equatable, Sendable {
  
-     /// Converts a possibly multi-line, markdown-formatted string to a single line of plain text.
--    /// Strips `**`, `__`, backticks and leading `#` chars from each line, collapses whitespace.
-+    /// Uses only the first non-empty paragraph (stops at blank line, horizontal rule, or table row).
-+    /// Strips `**`, `__`, backticks, leading `#`, and leading bullet markers.
-     static func toOneLine(_ text: String, maxChars: Int = 200) -> String {
--        var s = text
--        s = s.replacingOccurrences(of: "**", with: "")
--        s = s.replacingOccurrences(of: "__", with: "")
--        s = s.replacingOccurrences(of: "`", with: "")
--        let processed: [String] = s.components(separatedBy: "\n").compactMap { line in
--            var l = line
--            while l.hasPrefix("#") { l = String(l.dropFirst()) }
--            let trimmed = l.trimmingCharacters(in: .whitespaces)
--            return trimmed.isEmpty ? nil : trimmed
-+        let lines = text.components(separatedBy: "\n")
-+
-+        // Split into paragraphs. Separators: blank line, HR (3+ repeated -/*/_ chars), table row (starts with |).
-+        var paragraphs: [[String]] = []
-+        var current: [String] = []
-+        for line in lines {
-+            let trimmed = line.trimmingCharacters(in: .whitespaces)
-+            let isHR = trimmed.count >= 3 && (trimmed.allSatisfy { $0 == "-" } ||
-+                                               trimmed.allSatisfy { $0 == "*" } ||
-+                                               trimmed.allSatisfy { $0 == "_" })
-+            let isSep = trimmed.isEmpty || isHR || trimmed.hasPrefix("|")
-+            if isSep {
-+                if !current.isEmpty { paragraphs.append(current); current = [] }
-+            } else {
-+                current.append(line)
-+            }
+     private(set) var conversations: [String: WAConversation] = [:]
+     private var seenIds: Set<String> = []
++    /// The same ids in arrival order, so the oldest are the ones forgotten.
++    private var seenOrder: [String] = []
+ 
+     /// Newest activity first.
+     var sorted: [WAConversation] {
+@@ -130,7 +132,12 @@ struct WAInbox: Equatable, Sendable {
+         let chat = WAJID.normalized(message.chat)
+         guard !filters.ignored.contains(chat) else { return .ignored }
+         seenIds.insert(message.id)
+-        if seenIds.count > 2_000 { seenIds = Set(seenIds.suffix(1_000)) }
++        seenOrder.append(message.id)
++        if seenOrder.count > 2_000 {
++            let dropped = seenOrder.prefix(1_000)
++            seenOrder.removeFirst(1_000)
++            for id in dropped { seenIds.remove(id) }
 +        }
-+        if !current.isEmpty { paragraphs.append(current) }
-+
-+        // Find first paragraph that yields non-empty text after cleaning.
-+        for paraLines in paragraphs {
-+            var s = paraLines.joined(separator: "\n")
-+            s = s.replacingOccurrences(of: "**", with: "")
-+            s = s.replacingOccurrences(of: "__", with: "")
-+            s = s.replacingOccurrences(of: "`", with: "")
-+            let processed: [String] = s.components(separatedBy: "\n").compactMap { line in
-+                var l = line
-+                while l.hasPrefix("#") { l = String(l.dropFirst()) }
-+                l = l.trimmingCharacters(in: .whitespaces)
-+                // Strip leading bullet markers: -, *, •, or N. (ordered list)
-+                if l.hasPrefix("- ") || l.hasPrefix("* ") || l.hasPrefix("• ") {
-+                    l = String(l.dropFirst(2))
-+                } else if let m = l.range(of: #"^\d+\.\s+"#, options: .regularExpression) {
-+                    l = String(l[m.upperBound...])
-+                }
-+                let trimmed = l.trimmingCharacters(in: .whitespaces)
-+                return trimmed.isEmpty ? nil : trimmed
-+            }
-+            let joined = processed.joined(separator: " ")
-+            let collapsed = joined.components(separatedBy: .whitespaces)
-+                .filter { !$0.isEmpty }
-+                .joined(separator: " ")
-+            if !collapsed.isEmpty { return String(collapsed.prefix(maxChars)) }
-         }
--        let joined = processed.joined(separator: " ")
--        let collapsed = joined.components(separatedBy: .whitespaces)
--            .filter { !$0.isEmpty }
--            .joined(separator: " ")
--        return String(collapsed.prefix(maxChars))
-+        return ""
+ 
+         let isGroup = WAJID.isGroup(chat)
+         let number = WAJID.displayNumber(chat)
+@@ -168,6 +175,17 @@ struct WAInbox: Equatable, Sendable {
+         sorted.filter { !filters.ignored.contains($0.id) && (!$0.isGroup || !filters.muteGroups || $0.messages.contains { $0.mentionsMe && !$0.fromMe }) }
      }
+ 
++    /// Unread messages in the conversations the pill shows (a muted group's quiet messages
++    /// and an ignored chat can't be opened, so they don't count).
++    func visibleUnread(filters: WAFilters) -> Int {
++        visible(filters: filters).reduce(0) { $0 + $1.unread }
++    }
++
++    /// A chat dropped from the inbox (the user ignores it).
++    mutating func remove(_ chat: String) {
++        conversations[WAJID.normalized(chat)] = nil
++    }
++
+     mutating func markRead(_ chat: String) {
+         conversations[WAJID.normalized(chat)]?.unread = 0
+     }
+@@ -186,6 +204,7 @@ struct WAInbox: Equatable, Sendable {
+     mutating func clear() {
+         conversations = [:]
+         seenIds = []
++        seenOrder = []
+     }
+ 
+     private func nonEmpty(_ s: String) -> String? { s.isEmpty ? nil : s }
+```
+
+**File**: `NotchBuddy/Sources/App/WhatsAppProvider.swift` (modified, +14/-2)
+```diff
+@@ -38,7 +38,17 @@ protocol WhatsAppProvider: Sendable {
+     func groupName(_ chat: String) async -> String?
  }
  
+-/// HTTP to the local gateway: no cookies, no cache, nothing stored on disk.
++/// Never follows a redirect: a request (with its credentials and, for a send, the reply's
++/// text) goes to the configured gateway and nowhere else.
++final class WANoRedirect: NSObject, URLSessionTaskDelegate, Sendable {
++    func urlSession(_ session: URLSession, task: URLSessionTask,
++                    willPerformHTTPRedirection response: HTTPURLResponse, newRequest request: URLRequest,
++                    completionHandler: @escaping @Sendable (URLRequest?) -> Void) {
++        completionHandler(nil)
++    }
++}
++
++/// HTTP to the local gateway: no cookies, no cache, no redirect, nothing stored on disk.
+ final class WAHTTP: Sendable {
+     let base: URL
+     let headers: [String: String]
+@@ -53,7 +63,7 @@ final class WAHTTP: Sendable {
+         config.httpCookieStorage = nil
+         config.timeoutIntervalForRequest = 60   // each request sets its own (10 s, longer for a QR)
+         config.connectionProxyDictionary = [:]   // straight to the local gateway
+-        session = URLSession(configuration: config)
++        session = URLSession(configuration: config, delegate: WANoRedirect(), delegateQueue: nil)
+     }
+ 
+     /// `path` is appended to the base URL as given (already percent-encoded where needed).
+@@ -74,6 +84,8 @@ final class WAHTTP: Sendable {
+         }
+         do {
+             let (data, response) = try await session.data(for: req)
++            // Second lock: an answer from anywhere but the gateway is not one.
++            if let final = response.url, final.host != url.host || final.port != url.port { throw WAError.unreachable }
+             let code = (response as? HTTPURLResponse)?.statusCode ?? 0
+             return (data, code)
+         } catch {
 ```
 
-**File**: `NotchBuddy/Sources/App/IslandViewContent.swift` (modified, +27/-74)
+**File**: `NotchBuddy/Sources/App/WhatsAppViews.swift` (modified, +12/-3)
 ```diff
-@@ -527,89 +527,42 @@ struct ErrorView: View {
- 
- struct FinishedView: View {
-     @ObservedObject var state: AppState
--    @State private var showingDiff: FileDiff? = nil
+@@ -17,7 +17,8 @@ struct WhatsAppCardView: View {
  
      var body: some View {
-         ZStack {
-             CardBackground(wash: .green)
--            if let diff = showingDiff {
--                DiffCardView(diff: diff, onDismiss: { showingDiff = nil })
--                    .transition(.opacity)
--            } else {
--                VStack(alignment: .leading, spacing: 5) {
--                    AgentWho(task: state.focusTask, label: "Claude Code finished")
--                    Text({
--                        if let fl = state.focusTask?.finalLine { return fl }
--                        if let s = state.focusTask?.steps.last(where: { !$0.isDiffStep }) { return s }
--                        return "Session finished"
--                    }())
--                        .font(.system(size: 15, weight: .semibold))
--                    HStack(spacing: 8) {
--                        #if !APPSTORE
--                        PrimaryButton("Open terminal") {
--                            let terminalBundleIds = ["com.apple.Terminal", "com.googlecode.iterm2", "net.kovidgoyal.kitty", "com.mitchellh.ghostty"]
--                            let activated = terminalBundleIds.compactMap { id in
--                                NSWorkspace.shared.runningApplications.first { $0.bundleIdentifier == id }
--                            }.first.map { $0.activate(options: .activateIgnoringOtherApps) }
--                            if activated == nil {
--                                NSWorkspace.shared.open(URL(fileURLWithPath: "/System/Applications/Utilities/Terminal.app"))
--                            }
--                            NotificationCenter.default.post(name: .islandCollapse, object: nil)
--                        }
--                        #endif
--                        SecondaryButton("OK") {
--                            NotificationCenter.default.post(name: .islandCollapse, object: nil)
-+            VStack(alignment: .leading, spacing: 5) {
-+                AgentWho(task: state.focusTask, label: "Claude Code finished")
-+                Text({
-+                    if let fl = state.focusTask?.finalLine { return fl }
-+                    if let s = state.focusTask?.steps.last(where: { !$0.isDiffStep }) { return s }
-+                    return "Session finished"
-+                }())
-+                    .font(.system(size: 15, weight: .semibold))
-+                    .lineLimit(1)
-+                    .truncationMode(.tail)
-+                HStack(spacing: 8) {
-+                    #if !APPSTORE
-+                    PrimaryButton("Open terminal") {
-+                        let terminalBundleIds = ["com.apple.Terminal", "com.googlecode.iterm2", "net.kovidgoyal.kitty", "com.mitchellh.ghostty"]
-+                        let activated = terminalBundleIds.compactMap { id in
-+                            NSWorkspace.shared.runningApplications.first { $0.bundleIdentifier == id }
-+                        }.first.map { $0.activate(options: .activateIgnoringOtherApps) }
-+                        if activated == nil {
-+                            NSWorkspace.shared.open(URL(fileURLWithPath: "/System/Applications/Utilities/Terminal.app"))
-                         }
-+                        NotificationCenter.default.post(name: .islandCollapse, object: nil)
-                     }
--                    // Touched files (up to 4)
--                    let files = state.touchedFiles(for: state.focusTask?.id ?? "")
--                    if !files.isEmpty {
--                        let shown = Array(files.prefix(4))
--                        VStack(alignment: .leading, spacing: 2) {
--                            ForEach(shown.indices, id: \.self) { i in
--                                let f = shown[i]
--                                Button(action: {
--                                    withAnimation(.easeIn(duration: 0.16)) {
--                                        if let taskId = state.focusTask?.id,
--                                           let diffs = state.sessionDiffs[taskId],
--                                           let last = diffs.last(where: { $0.path == f.path }) {
--                                            showingDiff = last
--                                        }
--                                    }
--                                }) {
--                                    HStack(spacing: 4) {
--                                        Text(URL(fileURLWithPath: f.path).lastPathComponent)
--                                            .font(.system(size: 10.5))
--                                            .foregroundColor(Color(hex: "#9398A1"))
--                                            .lineLimit(1).truncationMode(.middle)
--                                        if f.added > 0 {
--                                            Text("+\(f.added)")
--                                                .font(.system(s
+         Group {
+-            if wa.link == .connected, let chat = openChat, let conversation = wa.inbox.conversations[chat] {
++            // Kept open through a missed check (the draft too): only gone when WhatsApp is off.
++            if wa.link != .off, let chat = openChat, let conversation = wa.inbox.conversations[chat] {
+                 WhatsAppConversationView(conversation: conversation) {
+                     withAnimation(.spring(response: 0.28, dampingFraction: 0.82)) { openChat = nil }
+                 }
+@@ -275,7 +276,12 @@ struct WhatsAppConversationView: View {
+             .padding(.horizontal, 8).padding(.vertical, 4)
+             .background(RoundedRectangle(cornerRadius: 7).fill(Color.white.opacity(0.06)))
+ 
+-            if let error = wa.sendError {
++            if wa.link != .connected {
++                Text(verbatim: WhatsAppStatus.label(wa.link))
++                    .font(.system(size: 9.5))
++                    .foregroundColor(Color(hex: "#F5B83D"))
++                    .lineLimit(1).truncationMode(.tail)
++            } else if let error = wa.sendError {
+                 Text(verbatim: error)
+                     .font(.system(size: 9.5))
+                     .foregroundColor(Color(hex: "#F4505E"))
+@@ -292,7 +298,10 @@ struct WhatsAppConversationView: View {
+         .onChange(of: draft) { _, text in
+             wa.composing = !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+         }
+-        .onDisappear { wa.composing = false }
++        .onDisappear {
++            wa.composing = false
++            wa.close(conversation.id)
++        }
+     }
+ 
+     /// Return: sends. Shift-Return: a new line instead.
+```
+
+**File**: `NotchBuddy/Sources/App/WhatsAppWebhook.swift` (modified, +13/-2)
+```diff
+@@ -10,10 +10,21 @@ final class WhatsAppWebhook: @unchecked Sendable {
+     private let queue = DispatchQueue(label: "fr.louisraille.NotchBuddy.whatsapp.webhook")
+     private(set) var port: UInt16 = 0
+ 
++    private let lock = NSLock()
++    private var _onRequest: (@Sendable (WAHTTPRequest) -> Int)?
++    private var _onListening: (@Sendable (Bool) -> Void)?
++
+     /// Called on `queue` with each complete request; returns the HTTP status to answer.
+-    var onRequest: (@Sendable (WAHTTPRequest) -> Int)?
++    /// Set on the main thread, read on `queue`: behind a lock.
++    var onRequest: (@Sendable (WAHTTPRequest) -> Int)? {
++        get { lock.withLock { _onRequest } }
++        set { lock.withLock { _onRequest = newValue } }
++    }
+     /// Called on `queue`: true once listening, false when the port can't be used.
+-    var onListening: (@Sendable (Bool) -> Void)?
++    var onListening: (@Sendable (Bool) -> Void)? {
++        get { lock.withLock { _onListening } }
++        set { lock.withLock { _onListening = newValue } }
++    }
+ 
+     /// Starts listening; false when the port is taken or invalid.
+     @discardableResult
 ```
 
 **File**: `docs/INTEGRATIONS.md` (modified, +1/-1)
 ```diff
-@@ -133,7 +133,7 @@ Sur `PostToolUse` pour `Edit`, `MultiEdit` et `Write` (Claude Code, Cursor), l'a
- - Lignes en monospace 10,5 pt, fond vert ou rouge à 12 %, symbole +/− en marge, 3 lignes de contexte
- - Défilement vertical ; Échap ou clic sur l'en-tête pour revenir au fil
- 
--**Vue Terminé (FinishedView)** — liste les fichiers touchés (nom + bilan, 4 au plus, puis "+ N more"). Un clic affiche la carte diff du dernier diff connu pour ce fichier.
-+**Vue Terminé (FinishedView)** — affiche la dernière ligne utile de la session (`finalLine` → dernière étape non-diff → "Session finished"), sur une ligne (`.lineLimit(1).truncationMode(.tail)`). Pas de liste de fichiers.
+@@ -333,7 +333,7 @@ Pas d'API WhatsApp pour un compte perso : Coucou parle à une **passerelle local
+ - **Répondre** : clic → 10 derniers messages + champ (Entrée envoie, Maj+Entrée saut de ligne, Échap ferme ; le brouillon garde l'île ouverte). Réponse seulement dans une conversation déjà là, 4 096 caractères max, 6 par minute. Lu à l'ouverture (option) ou à la réponse, jamais à la réception.
+ - **Filtres** : groupes muets sauf mention, chats ignorés (clic droit ou Réglages), Concentration via `INFocusStatusCenter` (demande la capability Communication Notifications ; sans elle, le réglage s'affiche indisponible).
+ - **Vie privée** : rien d'autre que la passerelle locale (pas de photo de profil, elles sont sur les serveurs de WhatsApp), historique en mémoire seulement (20 messages par conversation), vidé à la fermeture ou à la désactivation, aucun contenu dans les logs ni sur disque. URL, identifiants et secret dans le Keychain.
+-- **Lancer GOWA automatiquement** : processus enfant `rest --host=127.0.0.1 --port=<port de l'URL> --auto-download-media=false`, identifiant passé par `APP_BASIC_AUTH` (pas sur la ligne de commande), sortie vers `/dev/null`, dossier `~/Library/Application Support/Coucou/GOWA`, arrêté à la fermeture de Coucou, relancé s'il tombe (une fois par minute au plus).
++- **Lancer GOWA automatiquement** : processus enfant `rest --host=127.0.0.1 --port=<port de l'URL> --auto-download-media=false`, identifiant passé par `APP_BASIC_AUTH` (pas sur la ligne de commande), sortie vers `/dev/null`, dossier `~/Library/Application Support/Coucou/GOWA`, arrêté à la fermeture de Coucou ou quand l'option est coupée, redémarré seulement si son binaire, son adresse ou son mot de passe change (en attendant que l'ancien soit parti), relancé s'il tombe (une fois par minute au plus). Aucune requête ne suit de redirection : rien ne part ailleurs que vers la passerelle.
  
  ---
  
 ```
 
-**File**: `docs/SPEC.md` (modified, +1/-1)
+**File**: `tests/WhatsAppTests.swift` (modified, +8/-0)
 ```diff
-@@ -90,7 +90,7 @@ Centre vertical du bonhomme : 36 + (hauteur − 46) / 2, sauf `result` (y = 86).
- 
- ### Diff en direct
- 
--Quand une étape du fil est une modification de fichier (préfixe interne `\u{E001}`), elle s'affiche avec le nom du fichier et le bilan `+N −M` en couleur. Un clic sur la ligne courante ou la ligne précédente ouvre la carte diff (voir DiffCardView) dans la carte gauche de la vue principale, en remplacement du fil — que la pastille soit intégrée (integration_claude, agent_cursor…) ou non. Échap ou le bouton ← de l'en-tête ferme la carte. La vue Terminé liste les fichiers touchés. En fin de tâche (Stop), la ligne courante du fil passe en texte statique (couleur `#C9CDD4`, sans brillance) tant que la tâche n'est pas relancée ; elle est construite à partir du dernier message de l'assistant (champ `last_assistant_message` de l'événement Stop, nettoyé du Markdown par `DiffEngine.toOneLine`).
-+Quand une étape du fil est une modification de fichier (préfixe interne `\u{E001}`), elle s'affiche avec le nom du fichier et le bilan `+N −M` en couleur. Un clic sur la ligne courante ou la ligne précédente ouvre la carte diff (voir DiffCardView) dans la carte gauche de la vue principale, en remplacement du fil — que la pastille soit intégrée (integration_claude, agent_cursor…) ou non. Échap ou le bouton ← de l'en-tête ferme la carte. En fin de tâche (Stop), la ligne courante du fil passe en texte statique (couleur `#C9CDD4`, sans brillance) tant que la tâche n'est pas relancée ; elle est construite à partir du dernier message de l'assistant (champ `last_assistant_message` de l'événement Stop, nettoyé du Markdown par `DiffEngine.toOneLine` — premier paragraphe utile uniquement).
- 
- ### Pastilles (overview)
- - 132 × 34, rayon 17, fond couleur de l'agent à 13 %, bord à 32 %, mini-bonhomme Ø 24 centré à 17 pt du bord gauche, libellé 12 pt couleur de l'agent éclaircie de 25 %. Deux colonnes, écart 8, centrées verticalement dans la carte droite (qui commence à x = 342).
-```
-
-**File**: `tests/DiffEngineTests.swift` (modified, +33/-0)
-```diff
-@@ -175,6 +175,39 @@ enum DiffEngineTests {
-             // truncation
-             let long = DiffEngine.toOneLine(String(repeating: "x ", count: 200), maxChars: 10)
-             checkTrue("truncated to maxChars", long.count <= 10)
-+
-+            // stop at blank line
-+            checkTrue("blank line → first para only",
-+                DiffEngine.toOneLine("First para.\n\nSecond para.") == "First para.")
-+
-+            // stop at --- separator
-+            checkTrue("--- separator → first para only",
-+                DiffEngine.toOneLine("Done. Single commit 450a657 on github-pulse.\n\n---\n\nFiles touched (7)…")
-+                    == "Done. Single commit 450a657 on github-pulse.")
-+
-+            // stop at *** separator
-+            checkTrue("*** separator → first para only",
-+                DiffEngine.toOneLine("Summary line.\n***\nMore details.") == "Summary line.")
-+
-+            // stop at table row (|)
-+            checkTrue("table row → first para only",
-+                DiffEngine.toOneLine("Result:\n| Col1 | Col2 |\n|---|---|\n| A | B |") == "Result:")
-+
-+            // strip leading bullet -
-+            checkTrue("strip bullet -",
-+                DiffEngine.toOneLine("- item one\n- item two") == "item one item two")
-+
-+            // strip leading bullet *
-+            checkTrue("strip bullet *",
-+                DiffEngine.toOneLine("* first\n* second") == "first second")
-+
-+            // strip ordered list
-+            checkTrue("strip ordered list",
-+                DiffEngine.toOneLine("1. step one\n2. step two") == "step one step two")
-+
-+            // first paragraph empty → fall through to next
-+            checkTrue("empty first para → next",
-+                DiffEngine.toOneLine("\n\nActual content.") == "Actual content.")
+@@ -58,6 +58,14 @@ enum WhatsAppTests {
+             for i in 0..<30 { inbox.add(msg("m\(i)", chat: "1@s.whatsapp.net", at: Double(i)), filters: WAFilters()) }
+             check("20 kept, newest last", inbox.conversations["1@s.whatsapp.net"]?.messages.count == 20
+                   && inbox.conversations["1@s.whatsapp.net"]?.messages.last?.id == "m29")
++            var big = WAInbox()
++            for i in 0..<2_500 { big.add(msg("b\(i)", chat: "2@s.whatsapp.net", at: Double(i)), filters: WAFilters()) }
++            check("the newest ids are still known after 2,000", big.add(msg("b2499", chat: "2@s.whatsapp.net"), filters: WAFilters()) == .duplicate)
++            var groups = WAInbox()
++            groups.add(msg("q1", chat: "120363000000000009@g.us", from: "33@s.whatsapp.net"), filters: WAFilters())
++            check("a muted group's quiet messages don't count as unread to read", groups.visibleUnread(filters: WAFilters()) == 0)
++            groups.remove("120363000000000009@g.us")
++            check("removed", groups.conversations.isEmpty)
+             inbox.clear()
+             check("cleared", inbox.conversations.isEmpty)
          }
- 
-         // ── finish ─────────────────────────────────────────────────────────────
 ```
 
 ---
 
-### Incident Patch 7: `ae385208` (2026-10-03)
-**Commit Message**: Info.plist: version 0.1.3, build 4
+### Incident Patch 3: `98a767c4` (2026-10-18)
+**Commit Message**: Merge pull request #800 from Louis-CFM/feat/whatsapp-installer
+
+WhatsApp in one click, Mac 0.5.1
+
+**File**: `CHANGELOG.md` (modified, +5/-0)
+```diff
+@@ -1,5 +1,10 @@
+ # Changelog
+ 
++## 0.5.1 — October 18, 2026
++
++- **WhatsApp in one click** *(macOS, GitHub build)* — no more GitHub, zip or Terminal: Settings → Integrations → WhatsApp → **Install WhatsApp**. Coucou downloads GOWA, the open-source gateway, for your Mac (about 15 MB, once), checks it against the SHA-256 GOWA publishes, starts it, and shows the QR code to scan. It starts and stops with Coucou, and **Update** fetches GOWA's latest version. Your own gateway (GOWA by hand, OpenWA, another address) moves under **Advanced**
++- GOWA started by Coucou no longer fetches its own web dashboard from GitHub at each start (Coucou is the interface)
++
+ ## 0.5.0 — October 18, 2026
+ 
+ WhatsApp in the notch, Mochi who feels your Mac, a screen capture for Claude, and dictation that writes prompts or translates. All of it free and open source.
+```
 
 **File**: `NotchBuddy/Resources/Info.plist` (modified, +2/-2)
 ```diff
-@@ -17,9 +17,9 @@
+@@ -30,9 +30,9 @@
  	<key>CFBundlePackageType</key>
  	<string>APPL</string>
  	<key>CFBundleShortVersionString</key>
--	<string>0.1.2</string>
-+	<string>0.1.3</string>
+-	<string>0.5.0</string>
++	<string>0.5.1</string>
  	<key>CFBundleVersion</key>
--	<string>3</string>
-+	<string>4</string>
+-	<string>17</string>
++	<string>18</string>
  	<key>LSUIElement</key>
  	<true/>
  	<key>NSAccessibilityUsageDescription</key>
 ```
 
----
-
-### Incident Patch 8: `5332f9ee` (2026-10-02)
-**Commit Message**: Choose your main coding tool, show Cursor sessions on the Cursor pill, and fix the permission card when the island is open (#120)
-
-**File**: `NotchBuddy/Sources/App/AppState.swift` (modified, +16/-23)
+**File**: `NotchBuddy/Resources/Localizable.xcstrings` (modified, +975/-0)
 ```diff
-@@ -193,7 +193,7 @@ final class AppState: ObservableObject {
-         }
-     }
- 
--    // Active integration pills (VS Code excluded — always on). Max 4.
-+    // Active integration pills (main workspace pill excluded). Max 4.
-     @Published var activeIntegrations: Set<String> = ["integration_resend", "integration_n8n", "integration_vercel", "integration_github"] {
-         didSet {
-             if let data = try? JSONEncoder().encode(Array(activeIntegrations)) {
-@@ -267,9 +267,7 @@ final class AppState: ObservableObject {
-         if let d = ud.data(forKey: "activeIntegrations"),
-            let a = try? JSONDecoder().decode([String].self, from: d) { activeIntegrations = Set(a) }
-         if let v = ud.string(forKey: "mainPill"), !v.isEmpty,
--           v == "integration_claude" ||
--           (PillCatalog.available.contains(where: { $0.id == v && $0.category == .workspace })
--            && activeIntegrations.contains(v)) {
-+           PillCatalog.available.contains(where: { $0.id == v && $0.category == .workspace && !$0.comingSoon }) {
-             mainPillId = v
-         }
- 
-@@ -301,9 +299,9 @@ final class AppState: ObservableObject {
-     }
- 
-     func removeTask(id: String) {
--        // integration_claude: ALWAYS reset, never remove (Claude Code sessions pass through it)
--        // mainPillId: also always reset (the active workspace pill)
--        let isProtected = id == "integration_claude" || id == mainPillId
-+        // mainPillId: always reset, never remove (the active workspace tool)
-+        // activeIntegrations: also reset (user declared it active, keep it as idle)
-+        let isProtected = id == mainPillId
-         let isActiveDecl = PillCatalog.definition(for: id) != nil && activeIntegrations.contains(id)
-         if isProtected || isActiveDecl {
-             if let idx = tasks.firstIndex(where: { $0.id == id }) {
-@@ -355,25 +353,22 @@ final class AppState: ObservableObject {
-         // Sanitize: remove saved IDs not in catalog
-         let catalogIds = Set(catalog.map { $0.id })
-         activeIntegrations = activeIntegrations.filter { catalogIds.contains($0) }
--        // Validate mainPillId: must be integration_claude or a checked workspace pill
--        if mainPillId != "integration_claude",
--           !(PillCatalog.available.contains(where: { $0.id == mainPillId && $0.category == .workspace })
--             && activeIntegrations.contains(mainPillId)) {
--            mainPillId = "integration_claude"
-+        // Validate mainPillId: must be a non-comingSoon workspace pill in the catalog
-+        if !PillCatalog.available.contains(where: { $0.id == mainPillId && $0.category == .workspace && !$0.comingSoon }) {
-+            mainPillId = PillCatalog.defaultMainPillId
-         }
-+        // mainPillId must never be in activeIntegrations (migration + invariant)
-+        activeIntegrations.remove(mainPillId)
-         for def in catalog {
--            // integration_claude always loads; mainPillId always loads; activeIntegrations load
--            let shouldLoad = def.id == "integration_claude"
--                          || def.id == mainPillId
--                          || activeIntegrations.contains(def.id)
-+            // mainPillId always loads; activeIntegrations load
-+            let shouldLoad = def.id == mainPillId || activeIntegrations.contains(def.id)
-             let loaded = tasks.contains(where: { $0.id == def.id })
-             if shouldLoad && !loaded {
-                 let task = AgentTask(id: def.id, name: def.name, color: def.color,
-                                      state: .idle, steps: [], source: def.source, isIntegration: true)
-                 tasks.append(task)
-             }
--            if !shouldLoad && loaded
--               && def.id != "integration_claude" && def.id != mainPillId {
-+            if !shouldLoad && loaded {
-                 tasks.removeAll { $0.id == def.id }
-             }
-         }
-@@ -383,16 +378,14 @@ final class AppState: ObservableObject {
-     }
- 
-     /// Toggle a catalog pill on/off.
--    /// integration_claude: never toggleable.
--    /// mainPillId (workspace): can be unchecked — resets mainPillId to integration_claude.
--    /// Max 4 non-claude pills active at once.
-+    /// mainPillId: never toggleable (change via the Main picker first).
-+    /// Max 4 non-main pills active at once.
-     func toggleIntegration(_ id: String) {
--        guard id != "integration_claude" else { return }
-+        guard id != mainPillId else { return }
-         guard PillCatalog.available.contains(where: { $0.id == id }) else { return }
-         if activeIntegrations.contains(id) {
-             activeIntegrations.remove(id)
-             tasks.removeAll { $0.id == id }
--            if mainPillId == id { mainPillId = "integration_claude" }
-             if focusId == id { focusId = mainPillId }
-         } else {
-             guard activeIntegrations.count < 4 else { return }
-```
-
-**File**: `NotchBuddy/Sources/App/HookServer.swift` (modified, +128/-75)
-```diff
-@@ -1,6 +1,7 @@
- import Foundation
- import Darwin
- import AppKit
-+import SwiftUI
- import CryptoKit
- 
- // MARK: - HookServer
-@@ -40,6 +41,7 @@ final class HookServer: @unchecked Sendable {
-     private var pendingApprovalFD: Int32 = -1         // held open while user decides
-     private var approvalFDSource: (any DispatchSourceRead)? = nil  // monitors pendingApprovalFD
-     private var activeSessionId: String? = nil        // current Claude Code session
-+    private var focusBeforeApproval: String? = nil    // saved focus to restore after approval
- 
-     private init() {}
- 
-@@ -60,10 +62,18 @@ final class HookServer: @unchecked Sendable {
-         cancelApprovalFDSource()
-         pendingApprovalFD = -1
-         let state = AppState.shared
-+        let pillId = state.pendingApproval?.pillId ?? "integration_claude"
-         state.pendingApproval = nil
-         state.isPinned = false
--        state.updateTask(id: "integration_claude", state: .working)
--        clearPillBadge(id: "integration_claude")
-+        state.updateTask(id: pillId, state: .working)
-+        clearPillBadge(id: pillId)
-+        // Restore focus to the pill that was focused before the approval card appeared.
-+        if let prev = focusBeforeApproval {
-+            focusBeforeApproval = nil
-+            if state.focusId == pillId, state.tasks.contains(where: { $0.id == prev }) {
-+                withAnimation(.spring(response: 0.5, dampingFraction: 0.72)) { state.focusId = prev }
-+            }
-+        }
-         state.noteMessage = note
-         state.view = .note
-         DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-@@ -199,67 +209,86 @@ final class HookServer: @unchecked Sendable {
-     @MainActor
-     private func processEvent(name: String, payload: [String: Any]) {
-         let state = AppState.shared
--        let sessionId = payload["session_id"] as? String ?? "unknown"
-+        let sessionId = payload["session_id"] as? String
-+                     ?? payload["conversation_id"] as? String
-+                     ?? "unknown"
-         let cwd = payload["cwd"] as? String ?? ""
-         let rawName = URL(fileURLWithPath: cwd).lastPathComponent
-         let projectName = aliasProjectName(rawName.isEmpty ? "Session" : rawName)
- 
-         // Determine which pill this event belongs to.
-         // coucou_agent must be lowercase, digits and hyphens, ≤ 24 chars.
--        // Absent or invalid → Claude Code pill (integration_claude); no change in behaviour.
-         let rawAgent = payload["coucou_agent"] as? String ?? ""
-         let validAgent = Self.validateAgent(rawAgent)
--        let agentId = validAgent.map { "agent_\($0)" } ?? "integration_claude"
--        let isExternalAgent = validAgent != nil
- 
-         let termProgram = payload["term_program"] as? String ?? ""
-         let bundleId    = payload["bundle_id"]    as? String ?? ""
--        let isVSCode = termProgram.lowercased().contains("vscode") ||
--                       bundleId.lowercased().contains("vscode")
--        // External agents bypass the VS Code filter (their relay runs in any terminal).
--        guard isExternalAgent || isVSCode else {
-+
-+        // Cursor identified solely by its stable Electron bundle ID.
-+        // ToDesktop builds other apps too — do not match on "todesktop" alone.
-+        let isCursorEditor = bundleId.lowercased() == "com.todesktop.230313mzl4w4u92"
-+        let isVSCodeEditor = !isCursorEditor && (
-+            termProgram.lowercased().contains("vscode") ||
-+            bundleId.lowercased().contains("vscode"))
-+
-+        // Routing: coucou_agent → external pill; Cursor → agent_cursor; VS Code → integration_claude.
-+        let agentId: String
-+        let isExternalAgent: Bool
-+        if let agent = validAgent {
-+            agentId = "agent_\(agent)"
-+            isExternalAgent = true
-+        } else if isCursorEditor {
-+            agentId = "agent_cursor"
-+            isExternalAgent = false
-+        } else if isVSCodeEditor {
-+            agentId = "integration_claude"
-+            isExternalAgent = false
-+        } else {
-             nbLog("Ignored \(name) from \(termProgram.isEmpty ? bundleId : termProgram) (\(projectName))")
-             return
-         }
- 
-         let focused = state.focusId == agentId
- 
--        // While a permission request is pending on the Claude Code pill, skip events to
--        // preserve the .approval state and keep the card visible.
--        if state.pendingApproval != nil && agentId == "integration_claude" {
--            if let pending = state.pendingApproval {
--                switch name {
--                case "PostToolUse", "PostToolUseFailure":
--                    // Only dismiss when this exact tool call finished — same session, tool and input.
--                    // Other parallel tools finishing must not close the card.
--                    if sessionId == pending.sessionId,
--                       (payload["tool_name"] as? String ?? "") == pending.tool,
--                       Self.approva
-```
-
-**File**: `NotchBuddy/Sources/App/IslandTypes.swift` (modified, +2/-0)
-```diff
-@@ -36,6 +36,8 @@ struct ApprovalInfo: Sendable {
-     var command: String
-     /// tool_input serialized to JSON with sortedKeys, "" if absent — used to match PostToolUse.
-     var inputKey: String
-+    /// Pill that owns this approval: "integration_claude" or "agent_cursor".
-+    var pillId: String
- }
- 
- // MARK: - Pill badge (shown on pill edge when non-focused task has an alert)
-```
-
-**File**: `NotchBuddy/Sources/App/PillCatalog.swift` (modified, +8/-4)
-```diff
-@@ -33,7 +33,11 @@ struct PillDefinition {
- 
-     /// Label shown in the active-session card header (workspace/agent pills only).
-     var sessionSubtitle: String {
--        id == "integration_claude" ? "Claude Code" : "Agent"
-+        switch id {
-+        case "integration_claude": return "Claude Code"
-+        case "agent_cursor":       return "Cursor"
-+        default:                   return "Agent"
-+        }
-     }
- }
- 
-@@ -46,14 +50,14 @@ enum PillCatalog {
-         .init(id: "integration_claude",  name: "VS Code",     color: "#F5F6F8",
-               category: .workspace, subtitle: "Integration",  source: .claudeCode),
-         .init(id: "agent_cursor",        name: "Cursor",      color: "#C0C4CC",
--              category: .workspace, subtitle: "Integration",  source: .agent,  comingSoon: true),
-+              category: .workspace, subtitle: "Integration",  source: .agent),
-+        .init(id: "agent_antigravity",   name: "Antigravity", color: "#E879F9",
-+              category: .workspace, subtitle: "Integration",  source: .agent,  githubOnly: true),
-         .init(id: "agent_codex",         name: "Codex",       color: "#2DD4BF",
-               category: .workspace, subtitle: "Integration",  source: .agent,  comingSoon: true, githubOnly: true),
-         // ── Agents ───────────────────────────────────────────────────────────
-         .init(id: "agent_gemini",        name: "Gemini CLI",  color: "#8AB4F8",
-               category: .agent,     subtitle: "Agent",        source: .agent,  githubOnly: true),
--        .init(id: "agent_antigravity",   name: "Antigravity", color: "#E879F9",
--              category: .agent,     subtitle: "Agent",        source: .agent,  githubOnly: true),
-         // ── AI for the chat ──────────────────────────────────────────────────
-         .init(id: "ai_anthropic",        name: "Anthropic",   color: ChatProvider.anthropic.accentHex,
-               category: .ai,        subtitle: "Chat",         source: .n8n),
-```
-
-**File**: `NotchBuddy/Sources/App/SettingsView.swift` (modified, +29/-42)
-```diff
-@@ -428,19 +428,6 @@ struct SettingsView: View {
-                 // MARK: Active pills
-                 GroupBox("Active pills") {
-                     VStack(alignment: .leading, spacing: 10) {
--                        // VS Code: always active (mirrors main branch row exactly)
--                        HStack {
--                            Text("VS Code")
--                                .font(.system(size: 12, weight: .semibold))
--                            Circle().fill(Color(hex: "#F5F6F8")).frame(width: 8, height: 8)
--                            Spacer()
--                            Text("Always active")
--                                .font(.system(size: 11))
--                                .foregroundColor(.secondary)
--                        }
--
--                        Divider()
--
-                         Text("Choose the tools you use. Coucou only shows what you declare here.")
-                             .font(.system(size: 11))
-                             .foregroundColor(.secondary)
-@@ -449,28 +436,20 @@ struct SettingsView: View {
-                             .font(.system(size: 11))
-                             .foregroundColor(state.activeIntegrations.count >= 4 ? .orange : .secondary)
- 
--                        // Main pill picker: shown only when a workspace pill (Cursor/Codex) is active
--                        let workspacePills = PillCatalog.available.filter {
--                            $0.category == .workspace && $0.id != "integration_claude"
--                                && state.activeIntegrations.contains($0.id)
--                        }
--                        if !workspacePills.isEmpty {
--                            Picker("Main pill", selection: $state.mainPillId) {
--                                Text("VS Code").tag("integration_claude")
--                                ForEach(workspacePills, id: \.id) { def in
--                                    Text(def.name).tag(def.id)
--                                }
--                            }
--                            .onChange(of: state.mainPillId) { _, newId in
--                                state.setFocus(newId)
-+                        Picker("Main", selection: $state.mainPillId) {
-+                            ForEach(PillCatalog.available.filter { $0.category == .workspace && !$0.comingSoon }, id: \.id) { def in
-+                                Text(def.name).tag(def.id)
-                             }
-                         }
-+                        .onChange(of: state.mainPillId) { _, newId in
-+                            state.activeIntegrations.remove(newId)  // main pill never in activeIntegrations
-+                            state.loadIntegrationTasks()
-+                            state.setFocus(newId)
-+                        }
- 
--                        // Categories — integration_claude excluded (shown above)
-+                        // All categories — main pill shown with "Main" label instead of toggle
-                         ForEach(PillCategory.allCases, id: \.self) { cat in
--                            let catPills = PillCatalog.available.filter {
--                                $0.category == cat && $0.id != "integration_claude"
--                            }
-+                            let catPills = PillCatalog.available.filter { $0.category == cat }
-                             if !catPills.isEmpty {
-                                 Divider()
-                                 Text(cat.title)
-@@ -796,10 +775,12 @@ struct SettingsView: View {
- 
-     @ViewBuilder
-     private func pillRow(_ def: PillDefinition) -> some View {
--        let isOn  = state.activeIntegrations.contains(def.id)
--        let atMax = state.activeIntegrations.count >= 4 && !isOn
--        // Status hint: shown in 11pt gray before the toggle
-+        let isMain = def.id == state.mainPillId
-+        let isOn   = state.activeIntegrations.contains(def.id)
-+        let atMax  = state.activeIntegrations.count >= 4 && !isOn && !isMain
-+        // Status hint: shown in 11pt gray before the toggle (not shown for main pill)
-         let hint: String? = {
-+            if isMain { return nil }
-             if def.comingSoon { return "Coming soon" }
-             #if !APPSTORE
-             if def.id == "agent_gemini"        && !HookServer.geminiHooksInstalled() { return "Hooks not installed" }
-@@ -820,17 +801,23 @@ struct SettingsView: View {
-                 .font(.system(size: 12))
-                 .foregroundColor(atMax ? .secondary : .primary)
-             Spacer()
--            if let h = hint {
--                Text(h)
-+            if isMain {
-+                Text("Main")
-                     .font(.system(size: 11))
-                     .foregroundColor(.secondary)
-+            } else {
-+                if let h = hint {
-+                    Text(h)
-+                        .font(.system(size: 11))
-+                        .foregroundColor(.secondary)
-+                }
-+                Toggle("", isOn: Binding(
-+       
-```
-
-**File**: `README.md` (modified, +3/-3)
-```diff
-@@ -32,11 +32,11 @@ Meet **Mochi**: a soft little squircle with big eyes that pops out of your notch
- 
- ## Features
- 
--- 🤖 **Claude Code, Gemini CLI, Antigravity and other agents, live** — see every session in your notch: what it reads, edits and runs, step by step. Tag a hook payload with `coucou_agent` to give any agent its own pill (see [`docs/AGENTS.md`](docs/AGENTS.md)). Finished? Mochi does a happy little jump. Cursor and Codex pills are coming soon.
--- ✅ **Approve from the notch** — Claude Code permission requests show up with **Allow / Deny**. One click, back to work.
-+- 🤖 **Claude Code, Cursor, Gemini CLI, Antigravity and other agents, live** — see every session in your notch: what it reads, edits and runs, step by step. Tag a hook payload with `coucou_agent` to give any agent its own pill (see [`docs/AGENTS.md`](docs/AGENTS.md)). Finished? Mochi does a happy little jump.
-+- ✅ **Approve from the notch** — Claude Code permission requests show up with **Allow / Deny**, in VS Code or in Cursor's terminal. One click, back to work.
- - 🧑‍💻 **Jump to the right terminal** — open the exact terminal window of a session *(macOS)*.
- - 💬 **Chat with Claude, or with Gemini and OpenAI models using your own keys** *(Gemini and OpenAI: macOS)* — click the model name above the chat box to switch provider and pick a model; the list comes from each API account.
--- 📋 **Declare the tools you use** — open Settings → Active pills and choose which coding tools, agents and AI providers show up in the island. VS Code is always there; toggle Gemini CLI, Antigravity, Anthropic, Google AI, OpenAI and more. Check Cursor or Codex and you can make it your main pill, the one in the big card *(macOS)*.
-+- 📋 **Declare the tools you use** — open Settings → Active pills and pick your main workspace tool (VS Code, Cursor or Antigravity), then toggle up to 4 more: Gemini CLI, Anthropic, Google AI, OpenAI and service integrations *(macOS)*.
- - 📎 **Drop a file on the notch** — Mochi turns into a box and swallows it, then ask a question about it or send it by email *(email: macOS, Mail.app)*.
- - 🪟 **Drag Mochi onto any window** — attach that window as context for Claude *(macOS)*.
- - 🔌 **Integrations** — Stripe payments, n8n workflows, GitHub, Vercel deployments, Resend emails, Notion, Cal.com. Each one gets its own little colored Mochi.
-```
-
-**File**: `docs/SPEC.md` (modified, +6/-6)
-```diff
-@@ -96,18 +96,18 @@ Toutes les pastilles déclarées sont définies dans `PillCatalog.all` (source d
- 
- | Catégorie | Titre | Pastilles | Subtitle (repos) | Subtitle (session) |
- |---|---|---|---|---|
--| `workspace` | Where you code | VS Code, Cursor *(coming soon)*, Codex *(coming soon, GitHub only)* | Integration | Claude Code / Agent |
--| `agent` | Agents | Gemini CLI *(GitHub only)*, Antigravity *(GitHub only)* | Agent | Agent |
-+| `workspace` | Where you code | VS Code, Cursor, Antigravity *(GitHub only)*, Codex *(coming soon, GitHub only)* | Integration | Claude Code / Cursor / Agent |
-+| `agent` | Agents | Gemini CLI *(GitHub only)* | Agent | Agent |
- | `ai` | AI for the chat | Anthropic, Google AI, OpenAI | Chat | — |
- | `service` | Services | Resend, n8n, Vercel, GitHub, Notion, Cal.com, Stripe | Integration | — |
- 
- Couleurs : Cursor `#C0C4CC`, Codex `#2DD4BF`, Gemini CLI `#8AB4F8`, Antigravity `#E879F9`, pastilles IA = `ChatProvider.accentHex`.
- 
- Règles :
--- **`integration_claude` est toujours chargée, jamais retirée, jamais décochée.** Elle ne compte pas dans les 4 places.
--- `mainPillId` (défaut `integration_claude`) peut valoir une pastille workspace cochée (ex. Cursor). Si on décoche la principale, `mainPillId` revient à `integration_claude`.
--- Max 4 pastilles autres qu'`integration_claude` actives à la fois (`activeIntegrations`, persisté). Cursor/Codex comptent dans les 4.
--- `removeTask` sur `integration_claude` ou `mainPillId` ou une pastille déclarée + active → reset à `.idle` + `pillBadge = nil` + nom du catalogue (pas de suppression). Sinon → suppression normale.
-+- **`mainPillId`** (défaut `integration_claude`) est la pastille workspace toujours chargée. Elle ne compte pas dans les 4 places. Modifiable via le sélecteur Main dans Settings.
-+- Quand `mainPillId != "integration_claude"`, la pastille VS Code est chargée seulement si une session VS Code est active (transient) ou si elle est cochée dans `activeIntegrations`.
-+- Max 4 pastilles autres que `mainPillId` actives à la fois (`activeIntegrations`, persisté).
-+- `removeTask` sur `mainPillId` ou une pastille déclarée + active → reset à `.idle` + `pillBadge = nil` + nom du catalogue (pas de suppression). Sinon → suppression normale.
- - `sortTasksByCatalog` : pastilles du catalogue dans l'ordre du catalogue ; pastilles hors catalogue juste après `integration_claude`.
- - Pastilles `githubOnly` : exclues des builds App Store (`#if APPSTORE`).
- - Hooks (Gemini CLI, Antigravity) : `isConfigured` = `HookServer.geminiHooksInstalled()` / `agyHooksInstalled()` sous `#if !APPSTORE`.
-```
-
-**File**: `docs/support.html` (modified, +8/-8)
-```diff
-@@ -26,11 +26,11 @@ <h3>Can I use Coucou with Gemini CLI or Antigravity (agy)? (macOS)</h3>
- <h3>The chat doesn’t answer</h3>
- <p>Add your API key in Settings: <b>Settings → Anthropic API</b> for Claude, or <b>Settings → Chat — other providers</b> <i>(macOS)</i> for Google AI (Gemini) or OpenAI. API usage is billed by the provider, separately from any subscription.</p>
- <h3>An integration pill stays grey</h3>
--<p>Check its key in Settings. Up to 4 pills (other than VS Code) can be active at once — see <b>Settings → Active pills</b>.</p>
-+<p>Check its key in Settings. Up to 4 pills can be active at once in addition to the main workspace tool — see <b>Settings → Active pills</b>.</p>
- <h3>What are Active pills? (macOS)</h3>
--<p>Active pills are the coding tools, agents and AI providers you declare in <b>Settings → Active pills</b>. VS Code is always there; you can add up to 4 more, including Gemini CLI, Antigravity, Anthropic, Google AI, OpenAI and service integrations. When Cursor or Codex is checked, a Main pill menu lets you choose which one opens in the big card. An agent that sends <code>coucou_agent</code> in its hook payload still gets its own automatic pill regardless.</p>
--<h3>When are Cursor and Codex sessions available?</h3>
--<p>Cursor and Codex pills are already in <b>Settings → Active pills</b> <i>(Codex: GitHub build only)</i>. You can declare them and set either as the Main pill. Support for their actual sessions is coming in a future version.</p>
-+<p>Active pills are the coding tools, agents and AI providers you declare in <b>Settings → Active pills</b>. The <b>Main</b> picker at the top lets you choose your primary workspace tool (VS Code, Cursor or Antigravity — GitHub build only). You can then add up to 4 more pills: Gemini CLI, Anthropic, Google AI, OpenAI and service integrations. An agent that sends <code>coucou_agent</code> in its hook payload still gets its own automatic pill regardless.</p>
-+<h3>Can I use Coucou with Cursor? (macOS)</h3>
-+<p>Yes. Install the Claude Code hooks (<b>Settings → Claude Code → Install hooks</b>). Claude Code started in Cursor's terminal then shows up on the Cursor pill, and its permission requests can be answered from the notch, like in VS Code. Cursor's own agent shows up too when Cursor loads Claude Code's hooks; its requests are still answered in Cursor. Pick Cursor as your Main tool if that's where you code. Codex support is coming.</p>
- <h3>No sound</h3>
- <p>Check the speaker icon in the notch header and the volume in Settings.</p>
- <h3>Which model does the chat use?</h3>
-@@ -65,11 +65,11 @@ <h3>Puis-je utiliser Coucou avec Gemini CLI ou Antigravity (agy) ? (macOS)</h3>
- <h3>Le chat ne répond pas</h3>
- <p>Ajoute ta clé d’API dans les Réglages : <b>Réglages → Anthropic API</b> pour Claude, ou <b>Réglages → Chat — other providers</b> <i>(macOS)</i> pour Google AI (Gemini) ou OpenAI. L’API est facturée par le fournisseur, à part de tout abonnement.</p>
- <h3>Une pastille reste grise</h3>
--<p>Vérifie sa clé dans les Réglages. Jusqu’à 4 pastilles (hors VS Code) peuvent être actives en même temps — voir <b>Réglages → Active pills</b>.</p>
-+<p>Vérifie sa clé dans les Réglages. Jusqu’à 4 pastilles peuvent être actives en même temps, en plus de l’outil de code principal — voir <b>Réglages → Active pills</b>.</p>
- <h3>Qu’est-ce que les Active pills ? (macOS)</h3>
--<p>Les Active pills sont les outils de code, agents et fournisseurs IA que tu déclares dans <b>Réglages → Active pills</b>. VS Code est toujours présent ; tu peux en ajouter jusqu’à 4 autres, dont Gemini CLI, Antigravity, Anthropic, Google AI, OpenAI et des intégrations de services. Quand Cursor ou Codex est coché, un menu Main pill te permet de choisir lequel s’affiche dans la grande carte de l’island. Un agent qui envoie <code>coucou_agent</code> dans son payload obtient quand même sa pastille automatique.</p>
--<h3>Quand les sessions Cursor et Codex seront-elles disponibles ?</h3>
--<p>Les pastilles Cursor et Codex sont déjà dans <b>Réglages → Active pills</b> <i>(Codex : version GitHub uniquement)</i>. Tu peux les déclarer et en faire la Main pill. La prise en charge de leurs sessions arrivera dans une prochaine version.</p>
-+<p>Les Active pills sont les outils de code, agents et fournisseurs IA que tu déclares dans <b>Réglages → Active pills</b>. Le sélecteur <b>Main</b> en haut te permet de choisir ton outil principal (VS Code, Cursor ou Antigravity — version GitHub uniquement). Tu peux ensuite ajouter jusqu’à 4 pastilles supplémentaires : Gemini CLI, Anthropic, Google AI, OpenAI et des intégrations de services. Un agent qui envoie <code>coucou_agent</code> dans son payload obtient quand même sa pastille automatique.</p>
-+<h3>Puis-je utiliser Coucou avec Cursor ? (macOS)</h3>
-+<p>Oui. Installe les hooks Claude Code (<b>Réglages → Claude Code → Install hooks</b>). Claude Code lancé dans le terminal de Cursor apparaît alors sur la pastille Cursor, et tu peux répondre à ses demandes d’autorisation depu
-```
-
----
-
-### Incident Patch 9: `e98c1827` (2026-10-02)
-**Commit Message**: Linux: wake the display watcher twice a second, not 60 times
-
-On Linux there is no cursor to poll, so the poll thread only watches the
-display layout, which it already did every 30th tick. It still woke every
-16 ms to find no cursor. It now sleeps 500 ms between checks; Windows keeps
-its 16 ms cursor poll unchanged.
-
-With the previous commit, Coucou at rest on Linux (Mint / Cinnamon, X11)
-goes from about 191 to 22 CPU ticks a minute, all processes included —
-from ~3.1 % to ~0.4 % of a core.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01UWevVmYyyY4h2iETRvp6wW
-
-**File**: `windows/src-tauri/src/island.rs` (modified, +6/-2)
-```diff
-@@ -198,19 +198,23 @@ pub fn spawn_cursor_poll(app: AppHandle, gate: Arc<PollGate>) {
-         // Remembered across wakes so a display change while hidden is noticed the
-         // moment the island comes back.
-         let mut last_screen: Option<(i32, i32, u32, u32, u64)> = None;
-+        // Without a cursor to read (Linux) the loop only watches the display
-+        // layout, and twice a second is plenty for that: waking at 60 Hz just to
-+        // find no cursor costs CPU for nothing.
-+        let (period, screen_every) = if platform::CURSOR_POLL { (16, 30) } else { (500, 1) };
-         loop {
-             gate.wait_until_active();
-             let mut last = (f64::MIN, f64::MIN);
-             let mut ticks: u32 = 0;
-             while gate.is_active() {
--                std::thread::sleep(Duration::from_millis(16));
-+                std::thread::sleep(Duration::from_millis(period));
- 
-                 // Monitors get plugged in, unplugged, rearranged and rescaled, and
-                 // an island pinned to coordinates that no longer exist is an island
-                 // nobody can reach. Checked about twice a second — the cursor poll
-                 // is already running, so this costs one monitor query.
-                 ticks = ticks.wrapping_add(1);
--                if ticks % 30 == 0 {
-+                if ticks % screen_every == 0 {
-                     let now = current_screen_key(&app);
-                     if now.is_some() && now != last_screen {
-                         let first = last_screen.is_none();
-```
-
----
-
-### Incident Patch 10: `7ce5480b` (2026-10-02)
-**Commit Message**: Linux: shrink the hidden island to its wake strip, and only take clicks there
-
-While the island was hidden, the window on Linux stayed 240 x 200 instead
-of shrinking to the 240 x 6 wake strip, and its input region was the whole
-window: an invisible block at the top centre of the screen that swallowed
-every click meant for what sat underneath (a browser's tabs or address bar).
-
-* GTK never sizes a non-resizable window below its natural size, and tao
-  re-applies `resizable: false`; the window is made resizable just before
-  each resize, as @YossiYad found in #44.
-* While collapsed, the input region is the wake strip itself rather than
-  the whole window, so even a window that fails to shrink cannot swallow
-  clicks again.
-
-Checked on Linux Mint / Cinnamon (X11) by reading the X input shape: before,
-240x200 with input (0,0,240,200); after, 240x6 with input (0,0,240,6). A
-real pointer at the top edge still wakes the island, and it hides again on
-its own once the pointer leaves.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01UWevVmYyyY4h2iETRvp6wW
-
-**File**: `windows/src-tauri/src/island.rs` (modified, +11/-1)
-```diff
-@@ -163,6 +163,13 @@ pub fn apply_geometry(app: &AppHandle, pref: &str, collapsed: bool) {
-     let x = mp.x + (ms.width as i32 - pw as i32) / 2;
-     let y = mp.y;
- 
-+    // GTK never sizes a non-resizable window below its natural size (200 px
-+    // here), so on Linux the 6 px wake strip would stay a 200 px block. tao
-+    // re-applies the config's `resizable: false` after the first configure, so
-+    // this is asked every time, just before the resize. Undecorated, the window
-+    // still offers the user nothing to resize it by. (Found by @YossiYad, #44.)
-+    #[cfg(target_os = "linux")]
-+    let _ = win.set_resizable(true);
-     let _ = win.set_size(PhysicalSize::new(pw, ph));
-     let _ = win.set_position(PhysicalPosition::new(x, y));
-     // Moving across displays can rescale the window: re-assert the physical size.
-@@ -287,7 +294,10 @@ pub fn refresh_click_through(app: &AppHandle, gate: &PollGate) {
-     }
-     let Some(win) = window(app) else { return };
-     let region = if gate.collapsed.load(Ordering::Relaxed) {
--        None
-+        // The wake strip itself, never "the whole window": if the window ever
-+        // fails to shrink to the strip, the rest of it must not swallow clicks
-+        // meant for whatever sits under the top of the screen.
-+        Some((0.0, 0.0, STRIP_W, STRIP_H))
-     } else {
-         let r = *gate.rect.lock().unwrap();
-         if r.w <= 0.0 {
-```
-
----
-
-### Incident Patch 11: `8a5c2632` (2026-10-02)
-**Commit Message**: Docs: the Linux beta is out (#93)
-
-**File**: `CLAUDE.md` (modified, +3/-1)
-```diff
-@@ -1,18 +1,20 @@
- # Coucou — guide for AI coding agents
- 
--Coucou is a native macOS app: Mochi, a small animated character living in the MacBook notch, shows AI coding agent sessions (Claude Code, Gemini CLI, Antigravity and more) and a few integrations, and lets the user approve, answer, chat and drop files from the notch.
-+Coucou is a native macOS app (`NotchBuddy/`); `windows/` is the Tauri version for Windows and Linux. Mochi, a small animated character living in the MacBook notch, shows AI coding agent sessions (Claude Code, Gemini CLI, Antigravity and more) and a few integrations, and lets the user approve, answer, chat and drop files from the notch.
- 
- ## Where things are
- - `NotchBuddy/Sources/App/` — all Swift code. `NotchBuddy/Resources/sounds/` — the 28 WAV sounds. `NotchBuddy/project.yml` — XcodeGen project (never edit the `.xcodeproj` by hand).
- - `NotchBuddy/Sources/App/PillCatalog.swift` — single source of truth for all declared pills (workspace tools, agents, AI providers, services). Every pill ID, color, category and subtitle lives here.
- - `docs/SPEC.md`, `docs/INTEGRATIONS.md` — behaviour, views, states, integrations (in French).
- - `design/prototype/notch-buddy.html` — original prototype, the visual source of truth. `design/captures/` — target screenshots.
-+- `windows/` — the Tauri app for Windows and Linux: Rust in `src-tauri/`, TypeScript in `src/`, the `coucou-hook` relay in `hook/`. `windows/README.md` lists what differs from the Mac.
- - `docs/*.html` — the GitHub Pages site (privacy, terms, support, legal notice).
- 
- ## Build
- ```
- cd NotchBuddy && xcodegen && xcodebuild -scheme NotchBuddy -configuration Debug build
- ```
-+Windows and Linux: `cd windows && npm install && npm run tauri dev`
- 
- ## Rules
- - Swift 6, SwiftUI + AppKit. No third-party dependencies unless truly unavoidable. The character is drawn in code (`Canvas` + `TimelineView`), no Rive/Lottie/images.
-```
-
-**File**: `README.md` (modified, +8/-6)
-```diff
-@@ -77,14 +77,14 @@ rest of the differences.
- 
- ### Linux
- 
--Linux packages are published in [Releases](https://github.com/Louis-CFM/coucou/releases)
--under `linux-v*` tags; the first one is on its way. Until it lands, [build from source](#build-from-source).
--Once it's there:
-+The first Linux build is out as a beta: download it from [Coucou for Linux 0.1.1 (beta)](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.1.1), x86_64 only for now. Later versions will be in [Releases](https://github.com/Louis-CFM/coucou/releases) under `linux-v*` tags.
- 
- - **AppImage** (any distribution): `chmod +x Coucou-Linux-*.AppImage`, then run it.
- - **Debian / Ubuntu**: `sudo apt install ./Coucou-Linux-*.deb`
- - **Fedora / openSUSE**: `sudo dnf install ./Coucou-Linux-*.rpm`
- 
-+Check a download with `sha256sum -c SHA256SUMS --ignore-missing`. Gemini CLI, Antigravity and the Google AI and OpenAI chat are macOS only for now.
-+
- The island sits on the top edge on compositors with layer-shell — COSMIC, KDE
- Plasma, Hyprland, Sway and other wlroots compositors. GNOME has no layer-shell,
- so there it opens as a regular window. See [`windows/README.md`](windows/README.md#linux).
-@@ -114,8 +114,10 @@ npm run pack                # installer lands in windows/release/
- gtk-layer-shell and appindicator development packages (Debian/Ubuntu names below).
- 
- ```bash
--sudo apt install libwebkit2gtk-4.1-dev libgtk-layer-shell-dev \
--  libayatana-appindicator3-dev librsvg2-dev libssl-dev patchelf
-+sudo apt install build-essential pkg-config \
-+  libwebkit2gtk-4.1-dev libgtk-layer-shell-dev libayatana-appindicator3-dev \
-+  librsvg2-dev libssl-dev libdbus-1-dev patchelf \
-+  gstreamer1.0-plugins-base gstreamer1.0-plugins-good
- git clone https://github.com/Louis-CFM/coucou.git
- cd coucou/windows
- npm install
-@@ -143,7 +145,7 @@ If Coucou isn't running, the hook exits immediately: **Claude Code is never bloc
- 
- | Do this | Mochi does that |
- |---|---|
--| Hover the notch (top edge on Windows) | peeks out and says hi 👋 |
-+| Hover the notch (top edge on Windows and Linux) | peeks out and says hi 👋 |
- | Click it | opens |
- | Hover Mochi | blinks, eyes grow |
- | Click Mochi | squish + annoyed |
-```
-
-**File**: `docs/AGENTS.md` (modified, +31/-4)
-```diff
-@@ -1,6 +1,6 @@
- # Coucou — third-party agent integration
- 
--Any tool that can write to a Unix domain socket (macOS) or a named pipe (Windows) can send events to Coucou and have its own pill next to Claude Code.
-+Any tool that can write to a Unix domain socket (macOS, Linux) or a named pipe (Windows) can send events to Coucou and have its own pill next to Claude Code.
- 
- ## The `coucou_agent` field
- 
-@@ -38,6 +38,20 @@ Same pattern with the Windows relay:
- }
- ```
- 
-+## Hook command (Linux)
-+
-+Same pattern with the Linux relay. Coucou copies the relay to `~/.local/share/coucou/bin/coucou-hook` at startup.
-+
-+```json
-+{
-+  "hooks": {
-+    "UserPromptSubmit": [
-+      { "type": "command", "command": "/path/to/coucou-hook --agent my-tool" }
-+    ]
-+  }
-+}
-+```
-+
- ## Payload format
- 
- The relay adds `coucou_agent` to the JSON it forwards. You can also add it yourself if you talk to the socket directly:
-@@ -55,6 +69,7 @@ Send newline-terminated JSON to the socket:
- - **macOS (GitHub build):** `~/Library/Application Support/NotchBuddy/nb.sock`
- - **macOS (App Store build):** `~/Library/Containers/fr.louisraille.Coucou/Data/nb.sock`
- - **Windows:** `\\.\pipe\coucou-<user-SID>`
-+- **Linux:** `$XDG_RUNTIME_DIR/coucou.sock` (usually `/run/user/<uid>/coucou.sock`). Only your own user account can connect.
- 
- ## Supported events
- 
-@@ -121,9 +136,21 @@ island's `tool_name` / `session_id`.
- 
- ### Any other tool
- 
--Follow the generic pattern: call `nb-hook --agent <your-name> <EventName>` (macOS)
--or `coucou-hook.exe --agent <your-name> <EventName>` (Windows) and let the relay
--forward the event.
-+Follow the generic pattern: call `nb-hook --agent <your-name> <EventName>` (macOS),
-+`coucou-hook.exe --agent <your-name> <EventName>` (Windows)
-+or `~/.local/share/coucou/bin/coucou-hook --agent <your-name> <EventName>` (Linux)
-+and let the relay forward the event.
-+
-+## Quick test (Linux)
-+
-+With Coucou running:
-+
-+```sh
-+echo '{"hook_event_name":"UserPromptSubmit","session_id":"t1","prompt":"hello","coucou_agent":"demo"}' \
-+  | ~/.local/share/coucou/bin/coucou-hook --agent demo
-+```
-+
-+A "demo" pill should appear in the island.
- 
- ## Quick test (macOS)
- 
-```
-
-**File**: `docs/index.html` (modified, +2/-2)
-```diff
-@@ -8,6 +8,6 @@ <h1>A tiny friend that lives in your notch</h1>
- <a class="btn" href="https://github.com/Louis-CFM/coucou/releases/latest">Download for Mac</a><a class="btn ghost" href="https://github.com/Louis-CFM/coucou">View on GitHub</a>
- <img class="demo" src="media/demo.gif" alt="Coucou in action">
- </div>
--<div class="card"><b>Private by design.</b> No account, no analytics, no tracking. Your keys stay in your Keychain, or in Windows Credential Manager. <a href="privacy.html">Read the privacy policy</a>.</div>
--<p class="meta">Requires macOS 15 or later. No notch? Mochi sits in a small bar at the top of the screen. The Windows download is paused for now: Microsoft Defender wrongly flags the unsigned installer, and it will come back once that’s fixed. Windows users can <a href="https://github.com/Louis-CFM/coucou/tree/main/windows#build-it-yourself">build it from source</a>.</p>
-+<div class="card"><b>Private by design.</b> No account, no analytics, no tracking. Your keys stay in your Keychain, Windows Credential Manager or the Linux Secret Service. <a href="privacy.html">Read the privacy policy</a>.</div>
-+<p class="meta">Requires macOS 15 or later. No notch? Mochi sits in a small bar at the top of the screen. The Windows download is paused for now: Microsoft Defender wrongly flags the unsigned installer, and it will come back once that’s fixed. Windows users can <a href="https://github.com/Louis-CFM/coucou/tree/main/windows#build-it-yourself">build it from source</a>. Linux: a beta is out (AppImage, .deb, .rpm), <a href="https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.1.1">download it here</a>.</p>
- <footer>© 2026 Louis Raillé · Coucou is free and open source (MIT) · <a href="https://github.com/Louis-CFM/coucou">GitHub</a> · <a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a> · <a href="legal.html">Legal notice</a></footer></div></body></html>
-```
-
-**File**: `docs/privacy.html` (modified, +12/-12)
-```diff
-@@ -17,13 +17,13 @@ <h2>2. Data we collect</h2>
- <h2>3. Data stored on your computer</h2>
- <table>
- <tr><th>What</th><th>Where</th><th>Why</th></tr>
--<tr><td>API keys and tokens you enter (Anthropic, Google AI, OpenAI, Stripe, GitHub, Vercel, Resend, Notion, Cal.com, n8n)</td><td>macOS Keychain, or Windows Credential Manager</td><td>To call these services on your behalf</td></tr>
--<tr><td>Preferences (sound, delays, active pill selection, chat provider and model, shortcut)</td><td>App preferences on your Mac, or <code>%APPDATA%\Coucou</code> on Windows</td><td>To remember your settings</td></tr>
--<tr><td>Files you drop on the notch</td><td>A copy in the app’s own folder (on Windows: <code>%LOCALAPPDATA%\Coucou</code>)</td><td>So you can ask a question about them or attach them to an email</td></tr>
-+<tr><td>API keys and tokens you enter (Anthropic, Google AI, OpenAI, Stripe, GitHub, Vercel, Resend, Notion, Cal.com, n8n)</td><td>macOS Keychain, Windows Credential Manager, or the Secret Service on Linux (GNOME Keyring, KWallet)</td><td>To call these services on your behalf</td></tr>
-+<tr><td>Preferences (sound, delays, active pill selection, chat provider and model, shortcut)</td><td>App preferences on your Mac, or <code>%APPDATA%\Coucou</code> on Windows; <code>~/.config/coucou</code> on Linux</td><td>To remember your settings</td></tr>
-+<tr><td>Files you drop on the notch</td><td>A copy in the app’s own folder (on Windows: <code>%LOCALAPPDATA%\Coucou</code>; on Linux: <code>~/.local/share/coucou</code>)</td><td>So you can ask a question about them or attach them to an email</td></tr>
- <tr><td>Claude Code session events (project name, current step, permission requests)</td><td>In memory only</td><td>To show them in the notch</td></tr>
--<tr><td>Diagnostic log (event and tool names, project names, HTTP status codes — no commands, content or API keys)</td><td><code>~/Library/Logs/NotchBuddy</code> on Mac (App Store: same path inside the container); <code>%LOCALAPPDATA%\Coucou\coucou.log</code> on Windows. Capped at 1 MB. Never leaves your computer.</td><td>To help diagnose connection issues between Claude Code and Coucou</td></tr>
-+<tr><td>Diagnostic log (event and tool names, project names, HTTP status codes — no commands, content or API keys)</td><td><code>~/Library/Logs/NotchBuddy</code> on Mac (App Store: same path inside the container); <code>%LOCALAPPDATA%\Coucou\coucou.log</code> on Windows; <code>~/.local/share/coucou/coucou.log</code> on Linux. Capped at 1 MB. Never leaves your computer.</td><td>To help diagnose connection issues between Claude Code and Coucou</td></tr>
- </table>
--<p>You can delete all of this at any time by removing your keys in Settings, then deleting the app and its folder in <code>~/Library/Application Support/NotchBuddy</code> (or the app’s container for the App Store version). On Windows: uninstall Coucou from Settings → Apps, then delete <code>%APPDATA%\Coucou</code> and <code>%LOCALAPPDATA%\Coucou</code>.</p>
-+<p>You can delete all of this at any time by removing your keys in Settings, then deleting the app and its folder in <code>~/Library/Application Support/NotchBuddy</code> (or the app’s container for the App Store version). On Windows: uninstall Coucou from Settings → Apps, then delete <code>%APPDATA%\Coucou</code> and <code>%LOCALAPPDATA%\Coucou</code>. On Linux: remove the package (<code>sudo apt remove coucou</code> or <code>sudo dnf remove coucou</code>) or delete the AppImage, then delete <code>~/.config/coucou</code>, <code>~/.local/share/coucou</code>, <code>~/.local/share/fr.louisraille.coucou</code> and <code>~/.cache/coucou</code>.</p>
- 
- <h2>4. Services you connect yourself</h2>
- <p>Coucou only talks to the services you configure, directly from your Mac, using your own keys. Those services process your data under their own privacy policies:</p>
-@@ -42,7 +42,7 @@ <h2>6. Email</h2>
- <p>When you send a file by email, the message is created and sent by your own Mail app. Coucou never sends email by itself.</p>
- 
- <h2>7. System permissions</h2>
--<p>Depending on the version and the features you use, macOS may ask you to allow Automation (Mail, Terminal), Accessibility (to read the title of the window you attach) or Screen Recording (to capture a window you attach). These are only used for the feature you triggered and can be revoked at any time in System Settings → Privacy &amp; Security. The Windows version asks for no special permission and no administrator rights.</p>
-+<p>Depending on the version and the features you use, macOS may ask you to allow Automation (Mail, Terminal), Accessibility (to read the title of the window you attach) or Screen Recording (to capture a window you attach). These are only used for the feature you triggered and can be revoked at any time in System Settings → Privacy &amp; Security. The Windows and Linux versions ask for no special permission. On Linux, installing the .deb or .rpm package needs administrator rights; the AppImage doesn't
-```
-
-**File**: `docs/support.html` (modified, +6/-0)
-```diff
-@@ -15,6 +15,8 @@ <h3>macOS says it can’t verify the app</h3>
- <p>The current Mac build isn’t notarized by Apple yet. The first time, open <b>System Settings → Privacy &amp; Security</b>, scroll down and click <b>Open Anyway</b>. You only need to do it once.</p>
- <h3>Where is the Windows download?</h3>
- <p>It is paused for now. Microsoft Defender wrongly flags the unsigned Windows installer as malware; a false-positive report is under review at Microsoft, and the installer will come back once it’s cleared and signed. Until then you can <a href="https://github.com/Louis-CFM/coucou/tree/main/windows#build-it-yourself">build it from source</a>.</p>
-+<h3>Is there a Linux version?</h3>
-+<p>Yes, in beta: an AppImage, a .deb and a .rpm for x86_64, in <a href="https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.1.1">Coucou for Linux 0.1.1 (beta)</a>. The island sits on the top edge with compositors that support layer-shell (COSMIC, KDE Plasma, Hyprland, Sway…); on GNOME it opens as a regular window. Gemini CLI, Antigravity and the Google AI and OpenAI chat are macOS only for now. Please report anything odd in the <a href="https://github.com/Louis-CFM/coucou/issues">issues</a>.</p>
- <h3>Mochi doesn’t show my Claude Code sessions</h3>
- <p>Open Settings → Claude Code → <b>Install hooks</b>, review the changes, confirm, then start a new Claude Code session.</p>
- <h3>Can I use Coucou with Gemini CLI or Antigravity (agy)? (macOS)</h3>
-@@ -36,6 +38,7 @@ <h3>Does it work without a notch?</h3>
- <h3>How do I uninstall?</h3>
- <p>Remove hooks first: <b>Settings → Claude Code → Uninstall</b>, and if you installed them, also <b>Settings → Gemini CLI → Uninstall</b> and <b>Settings → Antigravity → Uninstall</b>. Then quit the app and move it to the Trash. Optionally delete <code>~/Library/Application Support/NotchBuddy</code>.</p>
- <p>On Windows: same <b>Uninstall</b> button for the hooks, then Windows Settings → Apps → <b>Coucou</b> → Uninstall. Optionally delete <code>%LOCALAPPDATA%\Coucou</code>.</p>
-+<p>On Linux: same <b>Uninstall</b> button for the hooks, then <code>sudo apt remove coucou</code> or <code>sudo dnf remove coucou</code>, or delete the AppImage. Optionally delete <code>~/.config/coucou</code>, <code>~/.local/share/coucou</code>, <code>~/.local/share/fr.louisraille.coucou</code> and <code>~/.cache/coucou</code>.</p>
- </section>
- <hr>
- <section id="fr" lang="fr">
-@@ -49,6 +52,8 @@ <h3>macOS dit qu’il ne peut pas vérifier l’app</h3>
- <p>La version Mac actuelle n’est pas encore notarisée par Apple. La première fois, ouvre <b>Réglages Système → Confidentialité et sécurité</b>, descends et clique sur <b>Ouvrir quand même</b>. Une seule fois suffit.</p>
- <h3>Où est le téléchargement Windows ?</h3>
- <p>Il est en pause pour le moment. Microsoft Defender détecte à tort l’installeur Windows (non signé) comme un malware ; un signalement de faux positif est en cours d’analyse chez Microsoft, et l’installeur reviendra dès que ce sera réglé et signé. En attendant, tu peux <a href="https://github.com/Louis-CFM/coucou/tree/main/windows#build-it-yourself">le compiler depuis le code source</a>.</p>
-+<h3>Y a-t-il une version Linux ?</h3>
-+<p>Oui, en bêta : une AppImage, un .deb et un .rpm pour x86_64, dans <a href="https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.1.1">Coucou for Linux 0.1.1 (beta)</a>. L’island se place sur le bord du haut avec les compositeurs qui gèrent layer-shell (COSMIC, KDE Plasma, Hyprland, Sway…) ; sous GNOME, elle s’ouvre dans une fenêtre normale. Gemini CLI, Antigravity et le chat avec Google AI et OpenAI sont pour l’instant réservés au Mac. Signale tout souci dans les <a href="https://github.com/Louis-CFM/coucou/issues">issues</a>.</p>
- <h3>Mochi n’affiche pas mes sessions Claude Code</h3>
- <p>Réglages → Claude Code → <b>Install hooks</b>, vérifie les changements, confirme, puis lance une nouvelle session Claude Code.</p>
- <h3>Puis-je utiliser Coucou avec Gemini CLI ou Antigravity (agy) ? (macOS)</h3>
-@@ -70,5 +75,6 @@ <h3>Ça marche sans notch ?</h3>
- <h3>Comment désinstaller ?</h3>
- <p>Retire d’abord les hooks : <b>Réglages → Claude Code → Uninstall</b>, et si tu les as installés, aussi <b>Réglages → Gemini CLI → Uninstall</b> et <b>Réglages → Antigravity → Uninstall</b>. Puis quitte l’app et mets-la à la corbeille. Tu peux aussi supprimer <code>~/Library/Application Support/NotchBuddy</code>.</p>
- <p>Sous Windows : le même bouton <b>Uninstall</b> pour les hooks, puis Paramètres Windows → Applications → <b>Coucou</b> → Désinstaller. Tu peux aussi supprimer <code>%LOCALAPPDATA%\Coucou</code>.</p>
-+<p>Sous Linux : le même bouton <b>Uninstall</b> pour les hooks, puis <code>sudo apt remove coucou</code> ou <code>sudo dnf remove coucou</code>, ou supprime l’AppImage. Tu peux aussi supprimer <code>~/.config/coucou</code>, <code>~/.local/share/coucou</code>, <code>~/.local/share/fr.louisraille.coucou</code> et <code>~/.cache/coucou</code>.</p>
- </section>
- <footer>© 2026 Louis Raillé · Coucou is
-```
-
-**File**: `docs/terms.html` (modified, +4/-4)
-```diff
-@@ -8,7 +8,7 @@ <h1>Terms of Use</h1>
- <div class="meta">Last updated: October 2, 2026</div>
- 
- <h2>1. The app</h2>
--<p>Coucou is a free app for macOS and Windows published by Louis Raillé. Its source code is available on <a href="https://github.com/Louis-CFM/coucou">GitHub</a> under the MIT License. By downloading or using Coucou, you accept these terms.</p>
-+<p>Coucou is a free app for macOS, Windows and Linux published by Louis Raillé. Its source code is available on <a href="https://github.com/Louis-CFM/coucou">GitHub</a> under the MIT License. By downloading or using Coucou, you accept these terms.</p>
- 
- <h2>2. Licence</h2>
- <ul>
-@@ -26,7 +26,7 @@ <h2>5. No warranty</h2>
- <p>Coucou is provided “as is”, without warranty of any kind. To the extent permitted by law, the developer is not liable for any damage arising from its use, including data loss, unexpected actions approved through the app, or charges from third-party services. Nothing in these terms limits rights you have under mandatory consumer protection law.</p>
- 
- <h2>6. Trademarks</h2>
--<p>Claude and Claude Code are trademarks of Anthropic, PBC. Mac, macOS and Mac App Store are trademarks of Apple Inc. Google, Gemini, OpenAI, Codex, Cursor, Visual Studio Code, Antigravity, Stripe, GitHub, Vercel, Resend, Notion, Cal.com and n8n are trademarks of their respective owners. Coucou is an independent project and is not affiliated with, endorsed or sponsored by any of them.</p>
-+<p>Claude and Claude Code are trademarks of Anthropic, PBC. Mac, macOS and Mac App Store are trademarks of Apple Inc. Google, Gemini, OpenAI, Codex, Cursor, Visual Studio Code, Antigravity, Windows, Linux, Stripe, GitHub, Vercel, Resend, Notion, Cal.com and n8n are trademarks of their respective owners. Coucou is an independent project and is not affiliated with, endorsed or sponsored by any of them.</p>
- 
- <h2>7. Changes and termination</h2>
- <p>These terms may be updated; the new version will be published here with a new date. You can stop using Coucou at any time by deleting it.</p>
-@@ -44,7 +44,7 @@ <h1>Conditions d’utilisation</h1>
- <div class="meta">Dernière mise à jour : 2 octobre 2026</div>
- 
- <h2>1. L’app</h2>
--<p>Coucou est une app gratuite pour macOS et Windows publiée par Louis Raillé. Son code source est disponible sur <a href="https://github.com/Louis-CFM/coucou">GitHub</a> sous licence MIT. En téléchargeant ou en utilisant Coucou, tu acceptes ces conditions.</p>
-+<p>Coucou est une app gratuite pour macOS, Windows et Linux publiée par Louis Raillé. Son code source est disponible sur <a href="https://github.com/Louis-CFM/coucou">GitHub</a> sous licence MIT. En téléchargeant ou en utilisant Coucou, tu acceptes ces conditions.</p>
- 
- <h2>2. Licence</h2>
- <ul>
-@@ -62,7 +62,7 @@ <h2>5. Absence de garantie</h2>
- <p>Coucou est fourni « en l’état », sans garantie d’aucune sorte. Dans les limites permises par la loi, le développeur n’est pas responsable des dommages liés à son utilisation, notamment une perte de données, une action autorisée par erreur via l’app ou des frais facturés par un service tiers. Rien dans ces conditions ne limite les droits que te garantit le droit de la consommation.</p>
- 
- <h2>6. Marques</h2>
--<p>Claude et Claude Code sont des marques d’Anthropic, PBC. Mac, macOS et Mac App Store sont des marques d’Apple Inc. Google, Gemini, OpenAI, Codex, Cursor, Visual Studio Code, Antigravity, Stripe, GitHub, Vercel, Resend, Notion, Cal.com et n8n sont des marques de leurs propriétaires respectifs. Coucou est un projet indépendant, sans lien avec eux et ni approuvé ni sponsorisé par eux.</p>
-+<p>Claude et Claude Code sont des marques d’Anthropic, PBC. Mac, macOS et Mac App Store sont des marques d’Apple Inc. Google, Gemini, OpenAI, Codex, Cursor, Visual Studio Code, Antigravity, Windows, Linux, Stripe, GitHub, Vercel, Resend, Notion, Cal.com et n8n sont des marques de leurs propriétaires respectifs. Coucou est un projet indépendant, sans lien avec eux et ni approuvé ni sponsorisé par eux.</p>
- 
- <h2>7. Modifications et fin</h2>
- <p>Ces conditions peuvent évoluer ; la nouvelle version sera publiée ici avec une nouvelle date. Tu peux arrêter d’utiliser Coucou à tout moment en le supprimant.</p>
-```
-
-**File**: `windows/README.md` (modified, +4/-2)
-```diff
-@@ -153,8 +153,10 @@ The same app builds for Linux: everything that differs lives in
- `src-tauri/src/platform/`, and the relay's transport in `hook/src/unix.rs`.
- 
- ```bash
--sudo apt install libwebkit2gtk-4.1-dev libgtk-layer-shell-dev \
--  libayatana-appindicator3-dev librsvg2-dev libssl-dev patchelf
-+sudo apt install build-essential pkg-config \
-+  libwebkit2gtk-4.1-dev libgtk-layer-shell-dev libayatana-appindicator3-dev \
-+  librsvg2-dev libssl-dev libdbus-1-dev patchelf \
-+  gstreamer1.0-plugins-base gstreamer1.0-plugins-good
- npm install
- npm run tauri dev      # live-reloading development build
- npm run pack           # AppImage, .deb and .rpm in windows/release/
-```
-
----
-
-### Incident Patch 12: `b804f079` (2026-10-01)
-**Commit Message**: Don't inject the debug entitlement into Release builds (#89)
-
-**File**: `NotchBuddy/NotchBuddy.xcodeproj/project.pbxproj` (modified, +1/-0)
-```diff
-@@ -546,6 +546,7 @@
- 				CODE_SIGNING_REQUIRED = YES;
- 				CODE_SIGN_ENTITLEMENTS = Resources/Coucou.entitlements;
- 				CODE_SIGN_IDENTITY = "Developer ID Application";
-+				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
- 				CODE_SIGN_STYLE = Manual;
- 				COPY_PHASE_STRIP = NO;
- 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-```
-
-**File**: `NotchBuddy/project.yml` (modified, +1/-0)
-```diff
-@@ -22,6 +22,7 @@ settings:
-       CODE_SIGN_IDENTITY: "Developer ID Application"
-       DEVELOPMENT_TEAM: 256AUJ9555
-       OTHER_CODE_SIGN_FLAGS: "--timestamp"
-+      CODE_SIGN_INJECT_BASE_ENTITLEMENTS: NO
-       CODE_SIGN_ENTITLEMENTS: Resources/Coucou.entitlements
- 
- schemes:
-```
-
----
-
-### Incident Patch 13: `c0bb71fd` (2026-10-01)
-**Commit Message**: linux.yml: build and test pull requests that touch windows/
-
-PUBLISH stays 'false'. The publish job requires a push of a linux-v* tag,
-checked both in the build job's gate and in the job's own if:, so a pull
-request can never reach it; pull requests upload no artifacts.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01U6iHtaxRfhryJ62nLk7nDJ
-
-**File**: `.github/workflows/linux.yml` (modified, +14/-4)
-```diff
-@@ -1,8 +1,9 @@
- name: Linux
- 
- # Builds the Linux app (AppImage, .deb, .rpm) from the same Tauri project as
--# Windows. Triggered by tags like `linux-v0.1.0`, or by hand; the macOS and
--# Windows workflows are untouched.
-+# Windows. Triggered by tags like `linux-v0.1.0`, by hand, and by pull requests
-+# that touch windows/ or this file (build and test only); the macOS and Windows
-+# workflows are untouched.
- #
- # Two jobs on purpose. `build` runs npm, cargo and the AppImage tooling (which
- # downloads its own helpers) with a read-only token that is not even kept on
-@@ -13,6 +14,13 @@ on:
-     tags:
-       - 'linux-v*'
-   workflow_dispatch:
-+  # Build and test only. A pull request never uploads artifacts and never
-+  # reaches the publish job (see the two gates below), and a fork's token is
-+  # read-only anyway.
-+  pull_request:
-+    paths:
-+      - 'windows/**'
-+      - '.github/workflows/linux.yml'
- 
- permissions:
-   contents: read
-@@ -109,7 +117,7 @@ jobs:
- 
-       - name: Decide whether to publish
-         id: gate
--        run: echo "publish=${{ env.PUBLISH == 'true' && startsWith(github.ref, 'refs/tags/linux-v') }}" >> "$GITHUB_OUTPUT"
-+        run: echo "publish=${{ github.event_name == 'push' && env.PUBLISH == 'true' && startsWith(github.ref, 'refs/tags/linux-v') }}" >> "$GITHUB_OUTPUT"
- 
-       # Upload only on a manual run or when publishing a release, as on Windows.
-       # The repo is public, so artifacts are downloadable by any signed-in GitHub
-@@ -125,7 +133,9 @@ jobs:
- 
-   publish:
-     needs: build
--    if: needs.build.outputs.publish == 'true'
-+    # Checked again here, so a pull request can never get this far whatever
-+    # the build job reports.
-+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/linux-v') && needs.build.outputs.publish == 'true'
-     runs-on: ubuntu-22.04
-     permissions:
-       contents: write
-```
-
----
-
-### Incident Patch 14: `bef6558b` (2026-10-01)
-**Commit Message**: Linux: harden the relay socket, file permissions and release workflow
-
-- The relay socket only lives in a runtime directory that is ours, private
-  (no group/other bits) and not a symlink, checked on both ends; otherwise
-  hooks stay off. The hook also checks the size getsockopt returns.
-- settings.json keeps its permissions (and a dotfiles symlink) when Coucou
-  rewrites it; the temp file is created 0600.
-- The hook command is single-quoted on Unix, so sh reads the path literally.
-- ~/.local/share/coucou and ~/.config/coucou are 0700, the log 0600.
-- The relay is installed by copy-and-rename, compared by content.
-- open_in_vscode only opens an existing absolute folder.
-- linux.yml: read-only build job without persisted credentials, a separate
-  publish job with write access, PUBLISH off until a first build is checked,
-  artifacts only on manual runs or publishing (3 days), SHA256SUMS, and the
-  relay built before cargo test.
-- deb depends on gtk-layer-shell >= 0.6, which the bindings need.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01U6iHtaxRfhryJ62nLk7nDJ
-
-**File**: `.github/workflows/linux.yml` (modified, +60/-12)
-```diff
-@@ -1,8 +1,12 @@
- name: Linux
- 
- # Builds the Linux app (AppImage, .deb, .rpm) from the same Tauri project as
--# Windows and publishes the packages. Triggered by tags like `linux-v0.1.0`;
--# the macOS and Windows workflows are untouched.
-+# Windows. Triggered by tags like `linux-v0.1.0`, or by hand; the macOS and
-+# Windows workflows are untouched.
-+#
-+# Two jobs on purpose. `build` runs npm, cargo and the AppImage tooling (which
-+# downloads its own helpers) with a read-only token that is not even kept on
-+# disk. Only `publish`, which runs none of that code, may write to the repo.
- 
- on:
-   push:
-@@ -11,22 +15,30 @@ on:
-   workflow_dispatch:
- 
- permissions:
--  contents: write
-+  contents: read
- 
-+# Off until a first build has been checked by hand: run this workflow manually,
-+# download the Coucou-Linux artifact, try it, then set this to 'true' and push a
-+# linux-v* tag.
- env:
--  PUBLISH: 'true'
-+  PUBLISH: 'false'
- 
- jobs:
-   build:
-     # The oldest supported Ubuntu: an AppImage only runs on systems whose glibc
-     # is at least as new as the one it was built against.
-     runs-on: ubuntu-22.04
-+    outputs:
-+      version: ${{ steps.pack.outputs.version }}
-+      publish: ${{ steps.gate.outputs.publish }}
-     defaults:
-       run:
-         working-directory: windows
- 
-     steps:
-       - uses: actions/checkout@v4
-+        with:
-+          persist-credentials: false
- 
-       # webkit2gtk, gtk-layer-shell and appindicator to build against; patchelf
-       # and the GStreamer plugins for the AppImage, which carries its own
-@@ -74,8 +86,12 @@ jobs:
-           [ "$tag" = "$cargo" ] || bad="$bad Cargo.toml says $cargo;"
-           if [ -n "$bad" ]; then echo "tag says $tag but$bad"; exit 1; fi
- 
-+      # The app bundles target/release/coucou-hook as a resource, and its build
-+      # script refuses to run until that file exists.
-       - name: Test
--        run: cargo test --workspace
-+        run: |
-+          cargo build --release -p coucou-hook
-+          cargo test --workspace
- 
-       # linuxdeploy is itself an AppImage; runners have no FUSE, so it unpacks
-       # itself instead of mounting.
-@@ -86,26 +102,57 @@ jobs:
-         run: |
-           npm run pack
-           echo "version=$(node -p "require('./src-tauri/tauri.conf.json').version")" >> "$GITHUB_OUTPUT"
--          ls -la release
--
-+          cd release
-+          sha256sum Coucou-Linux-* > SHA256SUMS
-+          ls -la
-+          cat SHA256SUMS
-+
-+      - name: Decide whether to publish
-+        id: gate
-+        run: echo "publish=${{ env.PUBLISH == 'true' && startsWith(github.ref, 'refs/tags/linux-v') }}" >> "$GITHUB_OUTPUT"
-+
-+      # Upload only on a manual run or when publishing a release, as on Windows.
-+      # The repo is public, so artifacts are downloadable by any signed-in GitHub
-+      # user; retention-days: 3 limits exposure.
-       - uses: actions/upload-artifact@v4
-+        if: github.event_name == 'workflow_dispatch' || steps.gate.outputs.publish == 'true'
-         with:
-           name: Coucou-Linux
-           path: |
--            windows/release/Coucou-Linux-${{ steps.pack.outputs.version }}-*
-+            windows/release/Coucou-Linux-*
-+            windows/release/SHA256SUMS
-+          retention-days: 3
-+
-+  publish:
-+    needs: build
-+    if: needs.build.outputs.publish == 'true'
-+    runs-on: ubuntu-22.04
-+    permissions:
-+      contents: write
-+
-+    steps:
-+      # Only for the linux-latest tag below; nothing from the repo is run.
-+      - uses: actions/checkout@v4
-+
-+      - uses: actions/download-artifact@v4
-+        with:
-+          name: Coucou-Linux
-+          path: release
- 
-       - name: Publish the release
--        if: env.PUBLISH == 'true' && startsWith(github.ref, 'refs/tags/linux-v')
-         env:
-           GH_TOKEN: ${{ github.token }}
-+          VERSION: ${{ needs.build.outputs.version }}
-         run: |
--          v="${{ steps.pack.outputs.version }}"
-+          v="$VERSION"
-           notes="Coucou for Linux $v — Mochi at the top of your screen.
- 
-           - **AppImage** (any distribution): \`chmod +x Coucou-Linux-$v-x86_64.AppImage\` and run it.
-           - **Debian / Ubuntu**: \`sudo apt install ./Coucou-Linux-$v-amd64.deb\`
-           - **Fedora / openSUSE**: \`sudo dnf install ./Coucou-Linux-$v-x86_64.rpm\`
- 
-+          Check a download with \`sha256sum -c SHA256SUMS --ignore-missing\`.
-+
-           The island sits on the top edge on compositors with layer-shell (COSMIC,
-           KDE Plasma, Hyprland, Sway…). On GNOME it opens as a regular window."
-           # --latest=false: the macOS \`v*\` releases own the Latest slot, which
-@@ -114,16 +161,17 @@ jobs:
-             "release/Coucou-Linux-$v-x86_64.AppImage" \
-             "release/Coucou-Linux-$v-amd64.deb" \
-             "release/Coucou-Linux-$v-x86_64.rpm" \
-+            "release/SHA256SUMS" \
-             --title "Coucou for Linux $v" \
-             --notes "$notes" \
-             --latest=false
- 
-       - name: Update the rolling linu
-```
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -4,6 +4,7 @@
- 
- - Declare the tools you use in Settings: Gemini CLI, Antigravity, Anthropic, Google AI and OpenAI pills join the existing ones (Cursor and Codex pills are coming soon), and you pick the main pill.
- - Chat now supports Google AI (Gemini) and OpenAI in addition to Anthropic; switch provider and model by clicking the model name in the chat view, on macOS.
-+- Linux version: the Tauri app now builds for Linux too (AppImage, .deb, .rpm), with the island as a layer-shell overlay on Wayland and Claude Code hooks over a private Unix socket (#21) — thanks @Davy133
- - Compact island on screens without a notch (#22) — thanks @Kamasoutra
- - Only web links (http/https) open from the notch; other kinds of links from Claude or integrations are ignored (#16) — thanks @Cris1670
- - Hook socket limited to your own user account, with size and time limits; logs no longer keep commands, n8n data or full URLs, and stay under 1 MB (#16) — thanks @Cris1670 and @Vignesh-Thangamariappan
-```
-
-**File**: `README.md` (modified, +3/-1)
-```diff
-@@ -77,7 +77,9 @@ rest of the differences.
- 
- ### Linux
- 
--Grab a package from [Releases](https://github.com/Louis-CFM/coucou/releases):
-+Linux packages are published in [Releases](https://github.com/Louis-CFM/coucou/releases)
-+under `linux-v*` tags; the first one is on its way. Until it lands, [build from source](#build-from-source).
-+Once it's there:
- 
- - **AppImage** (any distribution): `chmod +x Coucou-Linux-*.AppImage`, then run it.
- - **Debian / Ubuntu**: `sudo apt install ./Coucou-Linux-*.deb`
-```
-
-**File**: `windows/hook/src/unix.rs` (modified, +17/-7)
-```diff
-@@ -15,17 +15,25 @@ use std::time::{Duration, Instant};
- use crate::CONNECT_TIMEOUT;
- 
- /// `$XDG_RUNTIME_DIR/coucou.sock`, or `/run/user/<uid>/coucou.sock` when the
--/// variable is missing (a hook started from a stripped-down environment).
-+/// variable is missing (a hook started from a stripped-down environment). The
-+/// directory must be ours and closed to everyone else, or there is no relay.
- /// Must match `platform::relay_socket_path()` in the app exactly.
- fn socket_path() -> Option<PathBuf> {
-     let dir = std::env::var_os("XDG_RUNTIME_DIR")
-         .map(PathBuf::from)
-         .filter(|p| p.is_absolute())
--        .or_else(|| {
--            let p = PathBuf::from(format!("/run/user/{}", unsafe { libc::getuid() }));
--            p.is_dir().then_some(p)
--        })?;
--    Some(dir.join("coucou.sock"))
-+        .unwrap_or_else(|| PathBuf::from(format!("/run/user/{}", unsafe { libc::getuid() })));
-+    is_private_dir(&dir).then(|| dir.join("coucou.sock"))
-+}
-+
-+/// A real directory (not a symlink), owned by us, no access for group or others.
-+fn is_private_dir(dir: &Path) -> bool {
-+    use std::os::unix::fs::MetadataExt;
-+    std::fs::symlink_metadata(dir)
-+        .map(|m| {
-+            m.file_type().is_dir() && m.uid() == unsafe { libc::getuid() } && m.mode() & 0o077 == 0
-+        })
-+        .unwrap_or(false)
- }
- 
- /// Opens the socket. Retries only while the app's backlog is full: any other
-@@ -100,5 +108,7 @@ fn server_is_same_user(stream: &UnixStream) -> bool {
-             &mut len,
-         )
-     };
--    rc == 0 && cred.uid == unsafe { libc::getuid() }
-+    rc == 0
-+        && len as usize == std::mem::size_of::<libc::ucred>()
-+        && cred.uid == unsafe { libc::getuid() }
- }
-```
-
-**File**: `windows/src-tauri/src/files.rs` (modified, +1/-0)
-```diff
-@@ -31,6 +31,7 @@ pub fn ingest(source: &str) -> Result<DroppedFile, String> {
-     }
- 
-     let dir = inbox_dir();
-+    crate::platform::ensure_private_dir(&settings::local_dir()).map_err(|e| e.to_string())?;
-     std::fs::create_dir_all(&dir).map_err(|e| e.to_string())?;
- 
-     let name = src
-```
-
-**File**: `windows/src-tauri/src/hooks.rs` (modified, +121/-4)
-```diff
-@@ -103,11 +103,27 @@ fn read_settings_lossy() -> Value {
-     read_settings().unwrap_or_else(|_| json!({}))
- }
- 
-+#[cfg(windows)]
- fn hook_command(event: &str) -> String {
-     let exe = settings::hook_exe_path().to_string_lossy().replace('\\', "/");
-     format!("\"{exe}\" {event}")
- }
- 
-+/// Claude Code runs the command through `sh`, which still reads `$`, `` ` ``
-+/// and `\` inside double quotes. Single quotes keep the path a path, whatever
-+/// the home directory is called.
-+#[cfg(unix)]
-+fn hook_command(event: &str) -> String {
-+    format!("{} {event}", sh_quote(&settings::hook_exe_path().to_string_lossy()))
-+}
-+
-+/// `s` as one single-quoted shell word: `'` becomes `'\''`, nothing else is
-+/// special inside single quotes.
-+#[cfg(unix)]
-+fn sh_quote(s: &str) -> String {
-+    format!("'{}'", s.replace('\'', r"'\''"))
-+}
-+
- fn entry_is_ours(entry: &Value) -> bool {
-     entry
-         .get("hooks")
-@@ -284,17 +300,51 @@ pub fn write(install: bool, fingerprint: &str) -> Result<String, String> {
-     let mut text = pretty(&next);
-     text.push('\n');
- 
-+    // A dotfiles setup often makes settings.json a symlink: write to the file it
-+    // points at, so the link survives the rename below.
-+    #[cfg(unix)]
-+    let path = std::fs::canonicalize(&path).unwrap_or(path);
-+
-     // Write beside the target and rename over it: a crash or a full disk leaves
-     // the original settings.json intact rather than half a file.
-     let temp = path.with_extension(format!("json.coucou-{}", std::process::id()));
--    std::fs::write(&temp, text.as_bytes()).map_err(|e| format!("write failed: {e}"))?;
-+    if let Err(err) = write_like(&temp, &path, text.as_bytes()) {
-+        let _ = std::fs::remove_file(&temp);
-+        return Err(format!("write failed: {err}"));
-+    }
-     if let Err(err) = std::fs::rename(&temp, &path) {
-         let _ = std::fs::remove_file(&temp);
-         return Err(format!("write failed: {err}"));
-     }
-     Ok(backup.to_string_lossy().to_string())
- }
- 
-+/// Writes `bytes` to `temp`, which is about to replace `original`.
-+///
-+/// On Linux a fresh file would get the umask's 0644, and settings.json can hold
-+/// API keys in its `env` block: the new file is created readable by us only,
-+/// then given the original's permissions, so the rename never widens them.
-+fn write_like(temp: &Path, original: &Path, bytes: &[u8]) -> std::io::Result<()> {
-+    use std::io::Write;
-+    let mut options = std::fs::OpenOptions::new();
-+    options.write(true).create(true).truncate(true);
-+    #[cfg(unix)]
-+    std::os::unix::fs::OpenOptionsExt::mode(&mut options, 0o600);
-+    let mut file = options.open(temp)?;
-+    file.write_all(bytes)?;
-+    #[cfg(unix)]
-+    {
-+        use std::os::unix::fs::PermissionsExt;
-+        let mode = std::fs::metadata(original)
-+            .map(|m| m.permissions().mode() & 0o777)
-+            .unwrap_or(0o600);
-+        file.set_permissions(std::fs::Permissions::from_mode(mode))?;
-+    }
-+    #[cfg(not(unix))]
-+    let _ = original;
-+    Ok(())
-+}
-+
- /// Copies the relay (coucou-hook.exe / coucou-hook) into the local data dir's
- /// bin/ on launch. In a bundled install it comes from the app resources; in
- /// `tauri dev` it sits next to the app binary in the workspace target directory.
-@@ -307,7 +357,10 @@ pub fn write(install: bool, fingerprint: &str) -> Result<String, String> {
- pub fn ensure_hook_exe(app: &AppHandle) {
-     let dest = settings::hook_exe_path();
-     let Some(dir) = dest.parent() else { return };
--    if std::fs::create_dir_all(dir).is_err() {
-+    // Nobody else may swap the relay Claude Code runs: its folder is ours only.
-+    if platform::ensure_private_dir(&settings::local_dir()).is_err()
-+        || std::fs::create_dir_all(dir).is_err()
-+    {
-         return;
-     }
- 
-@@ -335,8 +388,12 @@ pub fn ensure_hook_exe(app: &AppHandle) {
-         ));
-         return;
-     };
-+    install_relay(&src, &dest);
-+}
- 
--    let same = match (std::fs::metadata(&src), std::fs::metadata(&dest)) {
-+#[cfg(windows)]
-+fn install_relay(src: &Path, dest: &Path) {
-+    let same = match (std::fs::metadata(src), std::fs::metadata(dest)) {
-         (Ok(a), Ok(b)) => a.len() == b.len() && a.modified().ok() == b.modified().ok(),
-         _ => false,
-     };
-@@ -345,13 +402,33 @@ pub fn ensure_hook_exe(app: &AppHandle) {
-     }
-     // A hook may be running right now and hold the file open; keeping the old
-     // copy is fine, it is the same relay.
--    if let Err(err) = std::fs::copy(&src, &dest) {
-+    if let Err(err) = std::fs::copy(src, dest) {
-         if !dest.exists() {
-             crate::log::line(format!("could not install {}: {err}", platform::HOOK_EXE));
-         }
-     }
- }
- 
-+/// Linux does not keep the modification time on copy, so the contents decide.
-+/// The new relay is written beside the old one and renamed over it: a hook
-+/// starting at that moment runs either the old relay or the new one, never half
-+/// of one, and a relay that is running right now does not 
-```
-
-**File**: `windows/src-tauri/src/lib.rs` (modified, +12/-2)
-```diff
-@@ -140,16 +140,26 @@ fn open_in_vscode(path: Option<String>) -> bool {
-     // whoever is using Claude Code, and a shell would happily read `&`, `^`, `%`
-     // or `$` in a folder name as syntax. Finding the launcher ourselves and
-     // handing the path over as a separate argument keeps it a path.
-+    let path = path.filter(|p| !p.is_empty());
-+    // It arrives in a hook payload: only an existing folder, given by its full
-+    // path, goes any further. `code` would read `--something` as an option, and
-+    // xdg-open would launch a file with whatever handles its type.
-+    if let Some(p) = path.as_deref() {
-+        let p = std::path::Path::new(p);
-+        if !(p.is_absolute() && p.is_dir()) {
-+            return false;
-+        }
-+    }
-     if let Some(code) = platform::find_on_path("code") {
-         let mut cmd = Command::new(code);
--        if let Some(p) = path.as_deref().filter(|p| !p.is_empty()) {
-+        if let Some(p) = path.as_deref() {
-             cmd.arg(p);
-         }
-         if platform::no_console(&mut cmd).spawn().is_ok() {
-             return true;
-         }
-     }
--    if let Some(p) = path.as_deref().filter(|p| !p.is_empty()) {
-+    if let Some(p) = path.as_deref() {
-         platform::reveal_folder(p);
-     }
-     false
-```
-
-**File**: `windows/src-tauri/src/log.rs` (modified, +7/-2)
-```diff
-@@ -13,15 +13,20 @@ pub fn line(message: impl AsRef<str>) {
-         t.year, t.month, t.day, t.hour, t.minute, t.second
-     );
-     let dir = settings::local_dir();
--    if std::fs::create_dir_all(&dir).is_err() {
-+    if platform::ensure_private_dir(&dir).is_err() {
-         return;
-     }
-     let path = dir.join("coucou.log");
-     // Keep it from growing forever: start fresh past ~1 MB.
-     if std::fs::metadata(&path).map(|m| m.len() > 1_000_000).unwrap_or(false) {
-         let _ = std::fs::remove_file(&path);
-     }
--    if let Ok(mut file) = std::fs::OpenOptions::new().create(true).append(true).open(path) {
-+    let mut options = std::fs::OpenOptions::new();
-+    options.create(true).append(true);
-+    // Readable by us only, like the macOS log.
-+    #[cfg(unix)]
-+    std::os::unix::fs::OpenOptionsExt::mode(&mut options, 0o600);
-+    if let Ok(mut file) = options.open(path) {
-         let _ = writeln!(file, "{stamp} {}", message.as_ref());
-     }
- }
-```
-
----
-
-### Incident Patch 15: `06c57ead` (2026-09-30)
-**Commit Message**: Package and release the Linux build
-
-- tauri.linux.conf.json builds an AppImage (with its own GStreamer, so
-  the sounds play), a .deb and an .rpm; both packages depend on
-  gtk-layer-shell, the AppImage carries it
-- pack.mjs knows each platform's packages and ships Linux ones as
-  Coucou-Linux-<version>-<arch>.{AppImage,deb,rpm}, plus a rolling
-  Coucou-Linux-x86_64.AppImage; the Windows output is unchanged
-- linux.yml builds on ubuntu-22.04 (oldest glibc supported) on
-  linux-v* tags, runs the tests, and publishes a release with
-  --latest=false plus a rolling linux-latest one
-- README and windows/README document installing, building and what
-  differs on Linux
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/linux.yml` (added, +139/-0)
-```diff
-@@ -0,0 +1,139 @@
-+name: Linux
-+
-+# Builds the Linux app (AppImage, .deb, .rpm) from the same Tauri project as
-+# Windows and publishes the packages. Triggered by tags like `linux-v0.1.0`;
-+# the macOS and Windows workflows are untouched.
-+
-+on:
-+  push:
-+    tags:
-+      - 'linux-v*'
-+  workflow_dispatch:
-+
-+permissions:
-+  contents: write
-+
-+env:
-+  PUBLISH: 'true'
-+
-+jobs:
-+  build:
-+    # The oldest supported Ubuntu: an AppImage only runs on systems whose glibc
-+    # is at least as new as the one it was built against.
-+    runs-on: ubuntu-22.04
-+    defaults:
-+      run:
-+        working-directory: windows
-+
-+    steps:
-+      - uses: actions/checkout@v4
-+
-+      # webkit2gtk, gtk-layer-shell and appindicator to build against; patchelf
-+      # and the GStreamer plugins for the AppImage, which carries its own
-+      # GStreamer so the sounds play (WAV needs wavparse, in -good).
-+      - name: Install system libraries
-+        working-directory: .
-+        run: |
-+          sudo apt-get update
-+          sudo apt-get install -y \
-+            libwebkit2gtk-4.1-dev libgtk-layer-shell-dev libayatana-appindicator3-dev \
-+            librsvg2-dev libssl-dev libdbus-1-dev patchelf \
-+            gstreamer1.0-plugins-base gstreamer1.0-plugins-good
-+
-+      - uses: actions/setup-node@v4
-+        with:
-+          node-version: 22
-+          cache: npm
-+          cache-dependency-path: windows/package-lock.json
-+
-+      - name: Cache cargo
-+        uses: actions/cache@v4
-+        with:
-+          path: |
-+            ~/.cargo/registry
-+            ~/.cargo/git
-+            windows/target
-+          key: linux-cargo-${{ hashFiles('windows/Cargo.lock') }}
-+          restore-keys: linux-cargo-
-+
-+      - name: Install dependencies
-+        run: npm ci
-+
-+      # Same check as the Windows workflow: three files carry the version.
-+      - name: Check the tag and every version agree
-+        if: startsWith(github.ref, 'refs/tags/linux-v')
-+        run: |
-+          tag="${GITHUB_REF_NAME#linux-v}"
-+          conf=$(node -p "require('./src-tauri/tauri.conf.json').version")
-+          pkg=$(node -p "require('./package.json').version")
-+          cargo=$(sed -nE 's/^version\s*=\s*"(.+)"/\1/p' Cargo.toml | head -1)
-+          echo "tag=$tag tauri.conf=$conf package.json=$pkg Cargo.toml=$cargo"
-+          bad=""
-+          [ "$tag" = "$conf" ]  || bad="$bad tauri.conf.json says $conf;"
-+          [ "$tag" = "$pkg" ]   || bad="$bad package.json says $pkg;"
-+          [ "$tag" = "$cargo" ] || bad="$bad Cargo.toml says $cargo;"
-+          if [ -n "$bad" ]; then echo "tag says $tag but$bad"; exit 1; fi
-+
-+      - name: Test
-+        run: cargo test --workspace
-+
-+      # linuxdeploy is itself an AppImage; runners have no FUSE, so it unpacks
-+      # itself instead of mounting.
-+      - name: Build and pack
-+        id: pack
-+        env:
-+          APPIMAGE_EXTRACT_AND_RUN: '1'
-+        run: |
-+          npm run pack
-+          echo "version=$(node -p "require('./src-tauri/tauri.conf.json').version")" >> "$GITHUB_OUTPUT"
-+          ls -la release
-+
-+      - uses: actions/upload-artifact@v4
-+        with:
-+          name: Coucou-Linux
-+          path: |
-+            windows/release/Coucou-Linux-${{ steps.pack.outputs.version }}-*
-+
-+      - name: Publish the release
-+        if: env.PUBLISH == 'true' && startsWith(github.ref, 'refs/tags/linux-v')
-+        env:
-+          GH_TOKEN: ${{ github.token }}
-+        run: |
-+          v="${{ steps.pack.outputs.version }}"
-+          notes="Coucou for Linux $v — Mochi at the top of your screen.
-+
-+          - **AppImage** (any distribution): \`chmod +x Coucou-Linux-$v-x86_64.AppImage\` and run it.
-+          - **Debian / Ubuntu**: \`sudo apt install ./Coucou-Linux-$v-amd64.deb\`
-+          - **Fedora / openSUSE**: \`sudo dnf install ./Coucou-Linux-$v-x86_64.rpm\`
-+
-+          The island sits on the top edge on compositors with layer-shell (COSMIC,
-+          KDE Plasma, Hyprland, Sway…). On GNOME it opens as a regular window."
-+          # --latest=false: the macOS \`v*\` releases own the Latest slot, which
-+          # the site's Download for Mac button points at.
-+          gh release create "$GITHUB_REF_NAME" \
-+            "release/Coucou-Linux-$v-x86_64.AppImage" \
-+            "release/Coucou-Linux-$v-amd64.deb" \
-+            "release/Coucou-Linux-$v-x86_64.rpm" \
-+            --title "Coucou for Linux $v" \
-+            --notes "$notes" \
-+            --latest=false
-+
-+      - name: Update the rolling linux-latest release
-+        if: env.PUBLISH == 'true' && startsWith(github.ref, 'refs/tags/linux-v')
-+        env:
-+          GH_TOKEN: ${{ github.token }}
-+        run: |
-+          v="${{ steps.pack.outputs.version }}"
-+          if gh release view linux-latest >/dev/null 2>&1; then
-+            # The tag has to follow the release, as for windows-latest.
-+            git tag -f linux-latest "$GITHUB_SHA"
-+            git push -f origin linux-latest
-+            gh release edit 
-```
-
-**File**: `README.md` (modified, +38/-6)
-```diff
-@@ -4,12 +4,13 @@
- 
- # Coucou
- 
--**A tiny friend that lives in your Mac's notch — or at the top of your screen on Windows — and keeps an eye on your AI coding agent sessions.**
-+**A tiny friend that lives in your Mac's notch — or at the top of your screen on Windows and Linux — and keeps an eye on your AI coding agent sessions.**
- 
- Approve permissions, watch your agents work, drop a file, chat with Claude — all without leaving what you're doing.
- 
- ![macOS 15+](https://img.shields.io/badge/macOS-15%2B-black?logo=apple)
- ![Windows 10/11](https://img.shields.io/badge/Windows-10%2F11-0078D4?logo=windows&logoColor=white)
-+![Linux](https://img.shields.io/badge/Linux-AppImage%20%7C%20deb%20%7C%20rpm-FCC624?logo=linux&logoColor=black)
- ![Swift 6](https://img.shields.io/badge/Swift-6-F05138?logo=swift&logoColor=white)
- ![SwiftUI](https://img.shields.io/badge/SwiftUI-native-0A84FF)
- ![Tauri 2](https://img.shields.io/badge/Tauri-2-FFC131?logo=tauri&logoColor=black)
-@@ -40,9 +41,9 @@ Meet **Mochi**: a soft little squircle with big eyes that pops out of your notch
- - 🪟 **Drag Mochi onto any window** — attach that window as context for Claude *(macOS)*.
- - 🔌 **Integrations** — Stripe payments, n8n workflows, GitHub, Vercel deployments, Resend emails, Notion, Cal.com. Each one gets its own little colored Mochi.
- - 🎭 **A real character** — idle breathing, blinks, eyes on a sphere that follow your mouse, emotes, 28 handcrafted sounds, a greeting on launch.
--- 🫥 **Invisible when idle** — hides away when nothing is running, peeks out when you hover the notch (the top edge of the screen on Windows).
-+- 🫥 **Invisible when idle** — hides away when nothing is running, peeks out when you hover the notch (the top edge of the screen on Windows and Linux).
- - 🖥️ **Any Mac, notch or not** — on an iMac, a Mac mini, or a MacBook with its lid closed on an external display, Mochi sits in a small bar at the top of the screen.
--- 🔒 **Private by design** — no telemetry, no account. Keys live in your macOS Keychain or Windows Credential Manager. The app only talks to the services you plug in.
-+- 🔒 **Private by design** — no telemetry, no account. Keys live in your macOS Keychain, Windows Credential Manager or Linux Secret Service (GNOME Keyring, KWallet). The app only talks to the services you plug in.
- 
- <table>
- <tr>
-@@ -74,6 +75,18 @@ There is no notch on a PC, so the island slides out of the top edge of the scree
- instead of hiding inside one. See [`windows/README.md`](windows/README.md) for the
- rest of the differences.
- 
-+### Linux
-+
-+Grab a package from [Releases](https://github.com/Louis-CFM/coucou/releases):
-+
-+- **AppImage** (any distribution): `chmod +x Coucou-Linux-*.AppImage`, then run it.
-+- **Debian / Ubuntu**: `sudo apt install ./Coucou-Linux-*.deb`
-+- **Fedora / openSUSE**: `sudo dnf install ./Coucou-Linux-*.rpm`
-+
-+The island sits on the top edge on compositors with layer-shell — COSMIC, KDE
-+Plasma, Hyprland, Sway and other wlroots compositors. GNOME has no layer-shell,
-+so there it opens as a regular window. See [`windows/README.md`](windows/README.md#linux).
-+
- ### Build from source
- 
- **macOS** — requirements: macOS 15+, Xcode 16+, [XcodeGen](https://github.com/yonaskolb/XcodeGen).
-@@ -95,20 +108,32 @@ npm install
- npm run pack                # installer lands in windows/release/
- ```
- 
-+**Linux** — requirements: [Rust](https://rustup.rs), Node 20+, and the WebKitGTK,
-+gtk-layer-shell and appindicator development packages (Debian/Ubuntu names below).
-+
-+```bash
-+sudo apt install libwebkit2gtk-4.1-dev libgtk-layer-shell-dev \
-+  libayatana-appindicator3-dev librsvg2-dev libssl-dev patchelf
-+git clone https://github.com/Louis-CFM/coucou.git
-+cd coucou/windows
-+npm install
-+npm run pack                # AppImage, .deb and .rpm land in windows/release/
-+```
-+
- ## Setup
- 
--Click the Coucou icon in the menu bar (macOS) or in the system tray (Windows) → **Settings…**
-+Click the Coucou icon in the menu bar (macOS) or in the system tray (Windows, Linux) → **Settings…**
- 
- | What | Why | Where the key goes |
- |---|---|---|
- | **Claude Code hooks** | live sessions and approvals | **Install hooks** — Coucou backs up `~/.claude/settings.json`, merges its hooks and shows you the diff before writing anything |
- | **Gemini CLI hooks** *(macOS)* | Gemini CLI sessions in the island | **Install hooks** in Settings → Gemini CLI — backs up `~/.gemini/settings.json` |
- | **Antigravity (agy) hooks** *(macOS)* | agy sessions in the island | **Install hooks** in Settings → Antigravity — backs up `~/.gemini/config/hooks.json` |
--| **Anthropic API key** | chat and questions about files | Settings → Anthropic API · Keychain / Windows Credential Manager |
-+| **Anthropic API key** | chat and questions about files | Settings → Anthropic API · Keychain / Windows Credential Manager / Secret Service |
- | **Google AI API key** *(macOS)* | chat with Google AI (Gemini) | Settings → Chat — other providers · Keychain |
- | **OpenAI API key** *(macOS)
-```
-
-**File**: `windows/README.md` (modified, +33/-0)
-```diff
-@@ -146,3 +146,36 @@ problems. It stays on your machine.
-   attach it as context, and jumping to a specific terminal window — "Open
-   terminal" opens the working folder in VS Code when `code` is on your `PATH`.
- - Cal.com shows the next bookings as a list rather than the Mac's calendar.
-+
-+## Linux
-+
-+The same app builds for Linux: everything that differs lives in
-+`src-tauri/src/platform/`, and the relay's transport in `hook/src/unix.rs`.
-+
-+```bash
-+sudo apt install libwebkit2gtk-4.1-dev libgtk-layer-shell-dev \
-+  libayatana-appindicator3-dev librsvg2-dev libssl-dev patchelf
-+npm install
-+npm run tauri dev      # live-reloading development build
-+npm run pack           # AppImage, .deb and .rpm in windows/release/
-+```
-+
-+What changes on Linux:
-+
-+- **The island** is a gtk-layer-shell overlay anchored to the top edge, over any
-+  top panel, on compositors that support it: COSMIC, KDE Plasma, Hyprland, Sway
-+  and other wlroots compositors. GNOME has no layer-shell, so there the island
-+  is a regular window. `COUCOU_LAYER_SHELL=0` forces that mode anywhere.
-+- **Click-through** is the window's input region, kept equal to the island
-+  shape, so the compositor sends every other click to what is underneath.
-+- **Mochi's eyes** follow the pointer only while it is over the island: Wayland
-+  gives no app the cursor position anywhere else.
-+- **Claude Code hooks** go through `~/.local/share/coucou/bin/coucou-hook` and a
-+  Unix socket at `$XDG_RUNTIME_DIR/coucou.sock`. Both ends check that the other
-+  runs as the same user.
-+- **Keys** live in the Secret Service (GNOME Keyring, KWallet).
-+- **Files**: preferences in `~/.config/coucou/`, the log at
-+  `~/.local/share/coucou/coucou.log`.
-+- What the Windows build leaves out, this one does too: sending a file by
-+  email, dragging Mochi onto a window, and jumping to a specific terminal
-+  window — "Open terminal" opens the folder in VS Code.
-```
-
-**File**: `windows/scripts/pack.mjs` (modified, +64/-26)
-```diff
-@@ -1,41 +1,79 @@
--// Copies the installer Tauri buries in target/release/bundle/nsis/ into
--// windows/release/, with the name it ships under. Used by `npm run pack` and by
--// the release workflow, so both produce exactly the same file names.
-+// Copies the packages Tauri buries in target/release/bundle/ into
-+// windows/release/, with the names they ship under. Used by `npm run pack` and
-+// by the release workflows, so both produce exactly the same file names.
- 
- import { readFileSync, mkdirSync, copyFileSync, readdirSync, statSync } from "node:fs";
- import { dirname, join, resolve } from "node:path";
- import { fileURLToPath } from "node:url";
- 
- const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
--const bundleDir = join(root, "target", "release", "bundle", "nsis");
-+const bundleRoot = join(root, "target", "release", "bundle");
- const outDir = join(root, "release");
- 
- const { version } = JSON.parse(readFileSync(join(root, "src-tauri", "tauri.conf.json"), "utf8"));
- 
--let installers = [];
--try {
--  installers = readdirSync(bundleDir).filter((f) => f.endsWith("-setup.exe"));
--} catch {
--  console.error(`No installer in ${bundleDir} — run \`npm run tauri build\` first.`);
--  process.exit(1);
--}
--if (installers.length === 0) {
--  console.error(`No installer in ${bundleDir} — run \`npm run tauri build\` first.`);
-+// What each platform ships: where Tauri puts it, how to recognise it, and the
-+// names it is published under (the rolling name, when there is one, always
-+// points at the latest release).
-+const arch = process.arch === "arm64" ? "aarch64" : "x86_64";
-+const debArch = process.arch === "arm64" ? "arm64" : "amd64";
-+const PACKAGES = {
-+  win32: [
-+    {
-+      dir: "nsis",
-+      suffix: "-setup.exe",
-+      names: [`Coucou-Windows-${version}-setup.exe`, "Coucou-Windows-setup.exe"],
-+    },
-+  ],
-+  linux: [
-+    {
-+      dir: "appimage",
-+      suffix: ".AppImage",
-+      names: [`Coucou-Linux-${version}-${arch}.AppImage`, `Coucou-Linux-${arch}.AppImage`],
-+    },
-+    { dir: "deb", suffix: ".deb", names: [`Coucou-Linux-${version}-${debArch}.deb`] },
-+    { dir: "rpm", suffix: ".rpm", names: [`Coucou-Linux-${version}-${arch}.rpm`] },
-+  ],
-+};
-+
-+const packages = PACKAGES[process.platform];
-+if (!packages) {
-+  console.error(`Nothing to pack on ${process.platform}.`);
-   process.exit(1);
- }
- 
--// Newest wins, in case an older build is still lying around.
--const built = installers
--  .map((f) => join(bundleDir, f))
--  .sort((a, b) => statSync(b).mtimeMs - statSync(a).mtimeMs)[0];
-+/** The newest file in `dir` ending with `suffix`, in case an older build is still lying around. */
-+function newest(dir, suffix) {
-+  let files = [];
-+  try {
-+    files = readdirSync(dir).filter((f) => f.endsWith(suffix));
-+  } catch {
-+    return null;
-+  }
-+  if (files.length === 0) return null;
-+  return files
-+    .map((f) => join(dir, f))
-+    .sort((a, b) => statSync(b).mtimeMs - statSync(a).mtimeMs)[0];
-+}
- 
- mkdirSync(outDir, { recursive: true });
--const versioned = join(outDir, `Coucou-Windows-${version}-setup.exe`);
--const rolling = join(outDir, "Coucou-Windows-setup.exe");
--copyFileSync(built, versioned);
--copyFileSync(built, rolling);
--
--const mb = (statSync(versioned).size / 1024 / 1024).toFixed(2);
--console.log(`\n  Installer ready — ${mb} MB\n`);
--console.log(`  ${versioned}`);
--console.log(`  ${rolling}\n`);
-+const written = [];
-+for (const { dir, suffix, names } of packages) {
-+  const built = newest(join(bundleRoot, dir), suffix);
-+  if (!built) {
-+    console.error(`No *${suffix} in ${join(bundleRoot, dir)} — run \`npm run tauri build\` first.`);
-+    process.exit(1);
-+  }
-+  for (const name of names) {
-+    const dest = join(outDir, name);
-+    copyFileSync(built, dest);
-+    written.push(dest);
-+  }
-+}
-+
-+console.log("\n  Packages ready\n");
-+for (const f of written) {
-+  const mb = (statSync(f).size / 1024 / 1024).toFixed(2);
-+  console.log(`  ${f}  (${mb} MB)`);
-+}
-+console.log();
-```
-
-**File**: `windows/src-tauri/tauri.linux.conf.json` (modified, +20/-0)
-```diff
-@@ -1,9 +1,29 @@
+@@ -1,6 +1,981 @@
  {
-   "$schema": "https://schema.tauri.app/config/2",
-   "bundle": {
-+    "targets": [
-+      "appimage",
-+      "deb",
-+      "rpm"
-+    ],
-     "resources": {
-       "../target/release/coucou-hook.exe": null,
-       "../target/release/coucou-hook": "coucou-hook"
-+    },
-+    "linux": {
-+      "appimage": {
-+        "bundleMediaFramework": true
-+      },
-+      "deb": {
-+        "depends": [
-+          "libgtk-layer-shell0"
-+        ]
-+      },
-+      "rpm": {
-+        "depends": [
-+          "gtk-layer-shell"
-+        ]
+   "sourceLanguage" : "en",
+   "strings" : {
++    "whatsapp.advanced" : {
++      "extractionState" : "manual",
++      "localizations" : {
++        "ar" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "متقدم: بوابتك الخاصة"
++          }
++        },
++        "bn" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "অ্যাডভান্সড: নিজের গেটওয়ে"
++          }
++        },
++        "en" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Advanced: your own gateway"
++          }
++        },
++        "es" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Avanzado: tu propia pasarela"
++          }
++        },
++        "fr" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Avancé : ta propre passerelle"
++          }
++        },
++        "hi" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "एडवांस्ड: अपना गेटवे"
++          }
++        },
++        "id" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Lanjutan: gateway sendiri"
++          }
++        },
++        "pt-BR" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Avançado: seu próprio gateway"
++          }
++        },
++        "ru" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Дополнительно: свой шлюз"
++          }
++        },
++        "zh-Hans" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "高级：你自己的网关"
++          }
++        }
 +      }
++    },
++    "whatsapp.install" : {
++      "extractionState" : "manual",
++      "localizations" : {
++        "ar" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "تثبيت واتساب"
++          }
++        },
++        "bn" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "WhatsApp ইনস্টল করো"
++          }
++        },
++        "en" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Install WhatsApp"
++          }
++        },
++        "es" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Instalar WhatsApp"
++          }
++        },
++        "fr" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Installer WhatsApp"
++          }
++        },
++        "hi" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "WhatsApp इंस्टॉल करें"
++          }
++        },
++        "id" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Pasang WhatsApp"
++          }
++        },
++        "pt-BR" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Instalar o WhatsApp"
++          }
++        },
++        "ru" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Установить WhatsApp"
++          }
++        },
++        "zh-Hans" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "安装 WhatsApp"
++          }
++        }
++      }
++    },
++    "whatsapp.install.bad-checksum" : {
++      "extractionState" : "manual",
++      "localizations" : {
++        "ar" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "التنزيل لا يطابق الملف الذي نشره GOWA: حُذف ولم يُثبَّت شيء."
++          }
++        },
++        "bn" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "ডাউনলোড GOWA-র প্রকাশিত ফাইলের সঙ্গে মেলে না: মুছে ফেলা হয়েছে, কিছু ইনস্টল হয়নি।"
++          }
++        },
++        "en" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "The download doesn't match the file GOWA published: it was deleted, nothing was installed."
++          }
++        },
++        "es" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "La descarga no coincide con el archivo publicado por GOWA: se eliminó y no se instaló nada."
++          }
++        },
++        "fr" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Le téléchargement ne correspond pas au fichier publié par GOWA : il a été supprimé, rien n'a été installé."
++          }
++        },
++        "hi" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "डाउनलोड GOWA की फ़ाइल से मेल नहीं खाता: हटा दिया गया, कुछ इंस्टॉल नहीं हुआ।"
++          }
++        },
++        "id" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Unduhan tidak cocok dengan file dari GOWA: sudah dihapus, tidak ada yang dipasang."
++          }
++
+```
+
+**File**: `NotchBuddy/Sources/App/WhatsAppGOWAInstaller.swift` (added, +172/-0)
+```diff
+@@ -0,0 +1,172 @@
++#if !APPSTORE
++import Foundation
++import CryptoKit
++
++// "Install WhatsApp": one click instead of GitHub, a zip, xattr, chmod and a Terminal command.
++// Downloads GOWA's own latest macOS build for this Mac from its GitHub releases, checks its
++// SHA-256 against the checksums GOWA publishes, puts the binary in Coucou's GOWA folder (next
++// to the WhatsApp session it keeps) and turns on "Start GOWA automatically". GitHub build only.
++// The only network call is to GitHub, once, after the click; no message ever goes there.
++
++@MainActor
++final class WhatsAppGOWAInstaller: ObservableObject {
++    static let shared = WhatsAppGOWAInstaller()
++
++    enum Step: Equatable {
++        case idle
++        case checking
++        case downloading(megabytes: Int)
++        case verifying
++        case installing
++        case done(version: String)
++        case failed(String)
++    }
++
++    @Published private(set) var step: Step = .idle
++
++    var busy: Bool {
++        switch step {
++        case .checking, .downloading, .verifying, .installing: return true
++        default: return false
++        }
++    }
++
++    /// GOWA's version once installed by Coucou (not a secret: UserDefaults).
++    static var installedVersion: String? {
++        get { UserDefaults.standard.string(forKey: "whatsappGOWAVersion") }
++        set { UserDefaults.standard.set(newValue, forKey: "whatsappGOWAVersion") }
++    }
++
++    /// Where Coucou keeps the binary it installed.
++    static var binaryURL: URL { WhatsAppGOWAProcess.workingDirectory.appendingPathComponent("gowa") }
++
++    /// A gateway Coucou can start: the one it installed, or one the user picked.
++    static var isInstalled: Bool {
++        let path = (WhatsAppGOWAProcess.binaryPath as NSString).expandingTildeInPath
++        return !path.isEmpty && FileManager.default.isExecutableFile(atPath: path)
++    }
++
++    static var arch: String {
++        #if arch(arm64)
++        return "arm64"
++        #else
++        return "amd64"
++        #endif
++    }
++
++    private let session: URLSession = {
++        let config = URLSessionConfiguration.ephemeral
++        config.urlCache = nil
++        config.httpCookieStorage = nil
++        config.timeoutIntervalForRequest = 30
++        config.timeoutIntervalForResource = 600
++        return URLSession(configuration: config, delegate: GitHubOnly(), delegateQueue: nil)
++    }()
++
++    func install() {
++        guard !busy else { return }
++        step = .checking
++        Task { await run() }
++    }
++
++    private func run() async {
++        do {
++            // 1. Which build: GOWA's latest release, the zip for this Mac.
++            var req = URLRequest(url: WAGOWARelease.latestURL)
++            req.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")
++            let (meta, metaResponse) = try await session.data(for: req)
++            guard (metaResponse as? HTTPURLResponse)?.statusCode == 200,
++                  let release = WAGOWARelease.parse(meta),
++                  let picked = WAGOWARelease.pick(release.assets, arch: Self.arch) else {
++                throw Failure(String(localized: "whatsapp.install.no-build"))
++            }
++            var checksums: String? = nil
++            if let sums = picked.checksums {
++                let (data, _) = try await session.data(from: sums.url)
++                checksums = String(data: data, encoding: .utf8)
++            }
++            guard let expected = WAGOWARelease.expectedSHA256(for: picked.zip, checksums: checksums) else {
++                throw Failure(String(localized: "whatsapp.install.no-checksum"))
++            }
++
++            // 2. Download.
++            step = .downloading(megabytes: max(1, picked.zip.size / 1_000_000))
++            let (tmp, zipResponse) = try await session.download(from: picked.zip.url)
++            guard (zipResponse as? HTTPURLResponse)?.statusCode == 200 else { throw Failure(String(localized: "whatsapp.install.download-failed")) }
++
++            // 3. Verify: exactly the file GOWA published.
++            step = .verifying
++            let digest = try await Task.detached { () throws -> String in
++                let data = try Data(contentsOf: tmp)
++                return SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
++            }.value
++            guard digest == expected else {
++                try? FileManager.default.removeItem(at: tmp)
++                throw Failure(String(localized: "whatsapp.install.bad-checksum"))
++            }
++
++            // 4. Unzip with macOS's own ditto, put the binary in place, make it runnable.
++            step = .installing
++            let version = release.version
++            let binary = WAGOWARelease.binaryName(arch: Self.arch)
++            try await Task.detached {
++                try Self.unpack(zip: tmp, binaryName: binary)
++            }.value
++            Self.installedVersion = version
++            WhatsAppSettings.gateway = .gowa
++            KeychainStore.shared
+```
+
+**File**: `NotchBuddy/Sources/App/WhatsAppGOWAProcess.swift` (modified, +4/-1)
+```diff
+@@ -28,7 +28,7 @@ final class WhatsAppGOWAProcess {
+ 
+     /// Where GOWA keeps its own WhatsApp session (its database, not Coucou's): one folder in
+     /// Application Support, so the link survives restarts.
+-    static var workingDirectory: URL {
++    nonisolated static var workingDirectory: URL {
+         let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+         return base.appendingPathComponent("Coucou/GOWA", isDirectory: true)
      }
-   },
-   "app": {
+@@ -69,6 +69,9 @@ final class WhatsAppGOWAProcess {
+         var env = ProcessInfo.processInfo.environment
+         // The credential goes through the environment, not the command line (`ps` shows that).
+         if credential.contains(":") { env["APP_BASIC_AUTH"] = credential }
++        // GOWA's own web dashboard is not needed (Coucou is the interface): it would fetch
++        // itself from GitHub at each start.
++        env["APP_UI_ENABLED"] = "false"
+         p.environment = env
+         // GOWA's own output may name contacts or quote messages: it goes nowhere.
+         p.standardOutput = FileHandle.nullDevice
+```
+
+**File**: `NotchBuddy/Sources/App/WhatsAppGateway.swift` (modified, +55/-0)
+```diff
+@@ -235,6 +235,61 @@ enum WAGOWA {
+     }
+ }
+ 
++/// GOWA's own releases on GitHub, for "Install WhatsApp" (one click, no Terminal): which zip
++/// fits this Mac and the SHA-256 GOWA publishes for it. The release workflow (GoReleaser,
++/// .github/workflows/release.yml in GOWA's repo) names them `whatsapp_<version>_darwin_<arch>.zip`
++/// (the binary inside is `darwin-<arch>`) next to `checksums-macos.txt`.
++enum WAGOWARelease {
++    static let latestURL = URL(string: "https://api.github.com/repos/aldinokemal/go-whatsapp-web-multidevice/releases/latest")!
++
++    struct Asset: Equatable, Sendable {
++        let name: String
++        let url: URL
++        let size: Int
++        /// "sha256:<hex>" when GitHub gives it.
++        let digest: String?
++    }
++
++    /// `GET /releases/latest` → `{tag_name, assets: [{name, browser_download_url, size, digest?}]}`.
++    static func parse(_ data: Data) -> (version: String, assets: [Asset])? {
++        guard let obj = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any],
++              let tag = obj["tag_name"] as? String, let list = obj["assets"] as? [[String: Any]] else { return nil }
++        let assets: [Asset] = list.compactMap { a in
++            guard let name = a["name"] as? String, let s = a["browser_download_url"] as? String,
++                  let url = URL(string: s) else { return nil }
++            return Asset(name: name, url: url, size: (a["size"] as? Int) ?? 0, digest: a["digest"] as? String)
++        }
++        let version = tag.hasPrefix("v") ? String(tag.dropFirst()) : tag
++        return (version, assets)
++    }
++
++    /// The zip for this Mac ("arm64" or "amd64") and the macOS checksums file.
++    static func pick(_ assets: [Asset], arch: String) -> (zip: Asset, checksums: Asset?)? {
++        guard let zip = assets.first(where: { $0.name.hasPrefix("whatsapp_") && $0.name.hasSuffix("_darwin_\(arch).zip") }) else { return nil }
++        return (zip, assets.first { $0.name == "checksums-macos.txt" })
++    }
++
++    /// The binary's name inside the zip.
++    static func binaryName(arch: String) -> String { "darwin-\(arch)" }
++
++    /// The SHA-256 (lowercase hex) of `name` in a GoReleaser checksums file ("<hex>  <name>" per line),
++    /// else from GitHub's own "sha256:<hex>" digest.
++    static func expectedSHA256(for asset: Asset, checksums: String?) -> String? {
++        for line in (checksums ?? "").split(whereSeparator: \.isNewline) {
++            let parts = line.split(separator: " ", omittingEmptySubsequences: true)
++            if parts.count == 2, parts[1] == Substring(asset.name), parts[0].count == 64 { return parts[0].lowercased() }
++        }
++        if let d = asset.digest, d.hasPrefix("sha256:"), d.count == 71 { return String(d.dropFirst(7)).lowercased() }
++        return nil
++    }
++
++    /// Only GitHub serves the download (its assets redirect to githubusercontent.com).
++    static func allowedHost(_ host: String?) -> Bool {
++        guard let h = host?.lowercased() else { return false }
++        return h == "github.com" || h == "api.github.com" || h.hasSuffix(".githubusercontent.com")
++    }
++}
++
+ enum WAOpenWA {
+     /// A session: `{id (uuid), name, status, phone, pushName, …}`.
+     /// status: created|initializing|qr_ready|authenticating|ready|disconnected|action_required|failed.
+```
+
+**File**: `NotchBuddy/Sources/App/WhatsAppViews.swift` (modified, +124/-43)
+```diff
+@@ -432,6 +432,8 @@ func waTimeAgo(_ date: Date) -> String {
+ struct WhatsAppSettingsSection: View {
+     @ObservedObject private var wa = WhatsAppController.shared
+     @ObservedObject private var appState = AppState.shared
++    @ObservedObject private var installer = WhatsAppGOWAInstaller.shared
++    @State private var showAdvanced = false
+     @State private var enabled = WhatsAppSettings.enabled
+     @State private var gateway = WhatsAppSettings.gateway
+     @State private var url = KeychainStore.shared.get(WhatsAppSettings.urlKey) ?? ""
+@@ -467,50 +469,10 @@ struct WhatsAppSettingsSection: View {
+                         .foregroundColor(Color(hex: "#F4505E"))
+                 }
+ 
+-                Picker("whatsapp.gateway", selection: $gateway) {
+-                    ForEach(WAGatewayKind.allCases, id: \.self) { kind in
+-                        Text(verbatim: kind == .gowa ? "GOWA" : "OpenWA").tag(kind)
+-                    }
+-                }
+-                .pickerStyle(.segmented)
++                // One click: Coucou downloads GOWA, checks it and starts it. No Terminal.
++                if gateway == .gowa { installBlock }
+ 
+-                TextField(gateway.defaultURL, text: $url)
+-                    .textFieldStyle(.roundedBorder)
+-                SecureField(gateway == .gowa ? String(localized: "whatsapp.credential.gowa")
+-                                             : String(localized: "whatsapp.credential.openwa"),
+-                            text: $credential)
+-                    .textFieldStyle(.roundedBorder)
+-                if gateway == .gowa { autoStartRow }
+-                HStack(spacing: 6) {
+-                    Text("whatsapp.port").font(.system(size: 11))
+-                    TextField(String(WhatsAppSettings.defaultPort), text: $port)
+-                        .textFieldStyle(.roundedBorder)
+-                        .frame(width: 80)
+-                    Spacer()
+-                }
+-
+-                HStack(spacing: 8) {
+-                    Button("whatsapp.save") { save() }
+-                        .buttonStyle(.borderedProminent)
+-                    Button("whatsapp.test") {
+-                        save()
+-                        testing = true
+-                        Task {
+-                            testResult = await wa.testConnection()
+-                            testing = false
+-                        }
+-                    }
+-                    .buttonStyle(.bordered)
+-                    .disabled(testing)
+-                    if testing { ProgressView().controlSize(.small) }
+-                }
+-                if let testResult {
+-                    Text(verbatim: testResult)
+-                        .font(.system(size: 10))
+-                        .foregroundColor(Color(hex: "#8E939C"))
+-                }
+-
+-                linkState
++                if showsLinkState { linkState }
+ 
+                 // Filters
+                 Toggle("whatsapp.mute-groups", isOn: Binding(
+@@ -541,6 +503,66 @@ struct WhatsAppSettingsSection: View {
+                     .font(.system(size: 10))
+                     .foregroundColor(Color(hex: "#8E939C"))
+                     .fixedSize(horizontal: false, vertical: true)
++
++                // Your own gateway (OpenWA, another address, a password, the port): folded away.
++                DisclosureGroup(isExpanded: $showAdvanced) {
++                    VStack(alignment: .leading, spacing: 6) {
++                        Picker("whatsapp.gateway", selection: $gateway) {
++                            ForEach(WAGatewayKind.allCases, id: \.self) { kind in
++                                Text(verbatim: kind == .gowa ? "GOWA" : "OpenWA").tag(kind)
++                            }
++                        }
++                        .pickerStyle(.segmented)
++
++                        TextField(gateway.defaultURL, text: $url)
++                            .textFieldStyle(.roundedBorder)
++                        SecureField(gateway == .gowa ? String(localized: "whatsapp.credential.gowa")
++                                                     : String(localized: "whatsapp.credential.openwa"),
++                                    text: $credential)
++                            .textFieldStyle(.roundedBorder)
++                        if gateway == .gowa { autoStartRow }
++                        HStack(spacing: 6) {
++                            Text("whatsapp.port").font(.system(size: 11))
++                            TextField(String(WhatsAppSettings.defaultPort), text: $port)
++                                .textFieldStyle(.roundedBorder)
++                                .frame(width: 80)
++                            Spacer()
++                        }
++
++                        HStack(spacing: 8) {
++                            Button("whatsapp.save") { save() }
++                                .buttonStyle(.borderedProminent)
++                            Button("whatsapp.test") {
++                                save()
++                  
+```
+
+**File**: `NotchBuddy/project.yml` (modified, +2/-2)
+```diff
+@@ -137,8 +137,8 @@ targets:
+         CFBundleName: Coucou
+         CFBundleDisplayName: Coucou
+         CFBundleIdentifier: fr.louisraille.NotchBuddy
+-        CFBundleVersion: "17"
+-        CFBundleShortVersionString: "0.5.0"
++        CFBundleVersion: "18"
++        CFBundleShortVersionString: "0.5.1"
+         CFBundlePackageType: APPL
+         LSUIElement: YES
+         NSHighResolutionCapable: YES
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #259** (2026-10-06): docs: TestFlight beta button and Apple-review notice (@Louis-CFM)
-- **PR #258** (2026-10-06): docs: TestFlight link for Coucou on iPhone (@Louis-CFM)
-- **PR #257** (2026-10-06): Get Coucou on your iPhone: guide, README, website page and FAQ (@Louis-CFM)
-- **PR #255** (2026-10-05): README and site: iPhone screenshots (@Louis-CFM)
-- **PR #254** (2026-10-05): README and site: Coucou on iPhone, App Store, complete 0.1.8 notes (@Louis-CFM)
-- **PR #251** (2026-10-06): iPhone: Liquid Glass, tabs, zoom, gestures, icons, Spotlight, Focus (@Louis-CFM)
-- **PR #241** (2026-10-05): iPhone: act from notifications, answer questions, Siri, Control Center + new coucou sound (@Louis-CFM)
-- **PR #237** (closed): Open terminal: bring back the app the session runs in (@mamaral-onbench)
+- **PR #806** (closed): update (@betodoescher)
+- **PR #800** (2026-10-18): WhatsApp in one click, Mac 0.5.1 (@Louis-CFM)
+- **PR #799** (2026-10-18): Mac 0.5.0 (@Louis-CFM)
+- **PR #798** (2026-10-18): WhatsApp pill (experimental) (@Louis-CFM)
+- **PR #796** (closed): Fix/linux desktop voice (@PedroMglo)
+- **PR #783** (2026-10-16): dev-install.sh: works with macOS's bash 3.2 (@Louis-CFM)
 
 ---
 
@@ -5222,3 +3021,39 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. a crash: the thermal state change arrives off the main thread
+
+**RULE**:
+When implementing operations in `NotchBuddy/Sources/App/MachineVitals.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Louis-CFM/coucou. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `f931645e`: a crash: the thermal state change arrives off the main thread. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `NotchBuddy/Sources/App/MachineVitals.swift`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+        // Everything is received on the main thread: macOS posts some of these (the thermal
+        // state) from a background queue, and Mochi's code only runs on the main one.
+        state.$mode.removeDuplicates().receive(on: DispatchQueue.main).sink { [weak self] _ in
+        state.$mochiOnDesktop.removeDuplicates().receive(on: DispatchQueue.main).sink { [weak self] _ in
+            .receive(on: DispatchQueue.main)
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Anti-pattern to NEVER write (induced failure mode):
+        state.$mode.removeDuplicates().sink { [weak self] _ in
+        state.$mochiOnDesktop.removeDuplicates().sink { [weak self] _ in
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `f931645e` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T22:20:35.002Z",
+  "last_updated": "2026-10-19T22:26:52.460Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3469,14 +3469,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crate-crate",
-      "content_hash": "9f03702d6595f4b937583c95b3a964d0aa52b33e3cf263cbb7982619490d8dc1",
-      "verified_at": "2026-10-19T10:10:05.211Z",
+      "content_hash": "43f86458989df0ec54cd9ff430f7593939f14122abc900919ddd5d6c4434d43b",
+      "verified_at": "2026-10-19T22:26:52.460Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T10:10:05.211Z"
+      "last_updated": "2026-10-19T22:26:52.460Z"
     },
     "NucleoidAI/Nucleoid": {
       "repository": "NucleoidAI/Nucleoid",
@@ -13977,6 +13977,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T22:19:25.490Z"
+    },
+    "buriy/python-readability": {
+      "repository": "buriy/python-readability",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-buriy-python-readability",
+      "content_hash": "a49a298e87b06503e27752dcc71158a1da746526f15f0b32c28fdee6bbaf9876",
+      "verified_at": "2026-10-19T22:26:44.856Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T22:26:44.856Z"
+    },
+    "Louis-CFM/coucou": {
+      "repository": "Louis-CFM/coucou",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-louis-cfm-coucou",
+      "content_hash": "75fd60152a31b843ede172d38712ceadc8566344a57c1e04b1930d8abadcd183",
+      "verified_at": "2026-10-19T22:26:46.319Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T22:26:46.319Z"
     }
   },
   "repos": {

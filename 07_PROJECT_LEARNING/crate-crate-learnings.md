@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crate-crate-learnings.md`  
 > **Source**: github ([https://github.com/crate/crate](https://github.com/crate/crate))  
-> **Source Version**: `4d046d12`  
+> **Source Version**: `175689d8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T10:10:04.951Z  
+> **Timestamp**: 2026-10-19T22:26:52.101Z  
 > **Learning ID**: `learn-github-crate-crate`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crate-crate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/crate/crate](https://github.com/crate/crate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T10:10:04.944Z  
+> **Harvest Timestamp**: 2026-10-19T22:26:52.095Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: CrateDB is a distributed and scalable SQL database for storing and analyzing massive amounts of data in near real-time, even with complex queries. It is PostgreSQL-compatible, and based on Lucene.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: N/A
-- **Stars / Engagement**: 4443 stars
+- **Stars / Engagement**: 4444 stars
 
 ---
 
@@ -555,89 +555,218 @@ def patch_system_information(text: str, version: str, previous: str) -> str:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4d046d12` (2026-10-12)
-**Commit Message**: Remove limitation that select can't be pipelined after writes
+### Incident Patch 1: `175689d8` (2026-10-19)
+**Commit Message**: Fix DDL->DQL/DML pgwire pipelining
 
-Although it makes little sense to add a select statement to a JDBC batch
-given that the result can't be used, other clients can send an insert
-followed by select without an explicit `sync` message after the insert.
+DDL statements were deferred until `sync` in the pgwire implementation.
+That could cause "table not found" errors if the DDL statement was
+pipelined together with other statements making use of a new table.
 
-An example with psycopg:
+Relates to:
 
-    with connect(self.uri) as conn, conn.pipeline(), conn.cursor() as cur:
-        cur.execute("insert into tbl (id, x) values (1, 42)")
-        cur.execute("select x from tbl where id = %s", [1])
+- https://github.com/crate/crate/issues/20312
+- https://github.com/crate/crate/pull/20366 (contains the changes entry)
+- https://github.com/crate/crate-qa/pull/458
 
-(See https://github.com/crate/crate-qa/pull/458)
-
-**File**: `docs/appendices/release-notes/6.6.0.rst` (modified, +5/-0)
+**File**: `server/src/main/java/io/crate/protocols/postgres/PostgresNetty.java` (modified, +2/-0)
 ```diff
-@@ -63,6 +63,11 @@ SQL Standard and PostgreSQL Compatibility
- - Added a ``bool`` alias for the :ref:`boolean <type-boolean>` type for improved
-   PostgreSQL compatibility.
+@@ -70,6 +70,7 @@
+ import io.netty.channel.Channel;
+ import io.netty.channel.ChannelInitializer;
+ import io.netty.channel.ChannelPipeline;
++import io.netty.handler.flow.FlowControlHandler;
+ import io.netty.handler.ssl.SslContext;
  
-+- Extended the PostgreSQL wire protocol support for pipelining DDL or DML
-+  statements followed by DQL statements without an intermediate ``sync`` message
-+  between the statements. This is for example used by the ``psycopg`` client if
-+  using their experimental pipeline support.
-+
- Data Types
- ----------
- 
-```
-
-**File**: `server/src/main/java/io/crate/session/Session.java` (modified, +3/-4)
-```diff
-@@ -622,10 +622,9 @@ public CompletableFuture<?> execute(String portalName, int maxRows, ResultReceiv
-                 }
+ @Singleton
+@@ -192,6 +193,7 @@ protected void initChannel(Channel ch) {
+                     sslContextProvider
+                 );
+                 pipeline.addLast("frame-decoder", postgresWireProtocol.decoder);
++                pipeline.addLast("flow-control", new FlowControlHandler());
+                 pipeline.addLast("handler", postgresWireProtocol.handler);
              }
-             if (!deferredExecutionsByStmt.isEmpty()) {
--                throw new UnsupportedOperationException(
--                    "Only write operations are allowed in Batch statements");
--            }
--            if (activeExecution == null) {
-+                activeExecution = triggerDeferredExecutions(false)
-+                    .thenCompose(_ -> singleExec(portal, resultReceiver, maxRows));
-+            } else if (activeExecution == null) {
-                 activeExecution = singleExec(portal, resultReceiver, maxRows);
-             } else {
-                 activeExecution = activeExecution
+         });
 ```
 
-**File**: `server/src/test/java/io/crate/integrationtests/PostgresITest.java` (modified, +5/-4)
+**File**: `server/src/main/java/io/crate/protocols/postgres/PostgresWireProtocol.java` (modified, +13/-2)
 ```diff
-@@ -790,7 +790,7 @@ public void testExecuteBatchWithDifferentStatements() throws Exception {
+@@ -544,6 +544,7 @@ private void applyOptions(String options) {
+     private void switchToTransportProtocol(Channel channel) {
+         var pipeline = channel.pipeline();
+         pipeline.remove("frame-decoder");
++        pipeline.remove("flow-control");
+         pipeline.remove("handler");
+ 
+         // SSL is already done via PostgreSQL handshake/auth
+@@ -782,7 +783,13 @@ private void handleExecute(ByteBuf buffer, DelayableWriteChannel channel) {
+                 session.getResultFormatCodes(portalName)
+             );
+         }
+-        session.execute(portalName, maxRows, resultReceiver);
++        CompletableFuture<?> result = session.execute(portalName, maxRows, resultReceiver);
++        if (result != null) {
++            channel.config().setAutoRead(false);
++            result.whenComplete((_, f) -> {
++                channel.config().setAutoRead(true);
++            });
++        }
      }
  
-     @Test
--    public void test_execute_batch_fails_with_read_operations() throws Exception {
-+    public void test_execute_batch_with_insert_followed_by_read_operations() throws Exception {
-         try (Connection conn = DriverManager.getConnection(url(RW), properties)) {
-             conn.setAutoCommit(true);
-             Statement stmt = conn.createStatement();
-@@ -800,9 +800,10 @@ public void test_execute_batch_fails_with_read_operations() throws Exception {
-             statement.addBatch("refresh table t");
-             statement.addBatch("select count(*) from t");
+     private void handleSync(DelayableWriteChannel channel) {
+@@ -803,7 +810,11 @@ private void handleSync(DelayableWriteChannel channel) {
+             return;
+         }
+         try {
+-            session.sync(false);
++            CompletableFuture<?> sync = session.sync(false);
++            channel.config().setAutoRead(false);
++            sync.whenComplete((_, _) -> {
++                channel.config().setAutoRead(true);
++            });
  
--            assertThatThrownBy(() -> statement.executeBatch())
--                .isExactlyInstanceOf(BatchUpdateException.class)
--                .hasMessageContaining("Only write operations are allowed in Batch statements");
-+            int[] batchResult = statement.executeBatch();
-+            assertThat(batchResult).containsExactly(2, 1, 0);
-+            assertThat(statement.getUpdateCount()).isEqualTo(-1);
-+            assertThat(statement.getResultSet()).isNull();
+             // The readyForQuery msg must only be sent _after_ an operation
+             // started in a prior E(execute) msg is completed.
+```
+
+**File**: `server/src/main/java/io/crate/session/Session.java` (modified, +9/-4)
+```diff
+@@ -49,8 +49,11 @@
+ import io.crate.analyze.AnalyzedCommit;
+ import io.crate.analyze.AnalyzedDeallocate;
+ import io.crate.analyze.AnalyzedDeclare;
++import io.crate.analyze.AnalyzedDeleteStatement;
+ import io.crate.analyze.AnalyzedDiscard;
++import io.crate.analyze.AnalyzedInsertStatement;
+ import io.crate.analyze.AnalyzedStatement;
++import io.crate.analyze.AnalyzedUpdateStatement;
+ import io.crate.analyze.Analyzer;
+ import io.crate.analyze.ParamTypeHints;
+ import io.crate.analyze.ParameterTypes;
+@@ -592,9 +595,11 @@ public CompletableFuture<?> execute(String portalName, int maxRows, ResultReceiv
+                 close();
+             }
+             resultReceiver.allFinished();
+-        } else if (analyzedStmt.isWriteOperation()) {
+-            /* We defer the execution for any other statements to `sync` messages so that we can efficiently process
+-             * bulk operations. E.g. If we receive `INSERT INTO (x) VALUES (?)` bindings/execute multiple times
++        } else if (analyzedStmt instanceof AnalyzedInsertStatement
++                || analyzedStmt instanceof AnalyzedUpdateStatement
++                || analyzedStmt instanceof AnalyzedDeleteStatement) {
++            /* We defer the execution for insert, update and delete to `sync` for efficient bulk operations
++             * E.g. If we receive `INSERT INTO (x) VALUES (?)` bindings/execute multiple times
+              * We want to create bulk requests internally:                                                          /
+              * - To reduce network overhead
+              * - To have 1 disk flush per shard instead of 1 disk flush per item
+@@ -610,7 +615,7 @@ public CompletableFuture<?> execute(String portalName, int maxRows, ResultReceiv
+                 portal.preparedStmt().parsedStatement(),
+                 _ -> new ArrayList<>()
+             ).add(new DeferredExecution(portal, maxRows, resultReceiver));
+-            return resultReceiver.completionFuture();
++            return null;
+         } else {
+             if (analyzedStmt instanceof AnalyzedClose close) {
+                 String cursorName = close.cursorName();
+```
+
+**File**: `server/src/test/java/io/crate/protocols/postgres/PostgresWireProtocolTest.java` (modified, +43/-17)
+```diff
+@@ -756,11 +756,7 @@ public void testHandleCancelRequestBody() {
+             );
+ 
+         channel = new EmbeddedChannel(pg1.decoder, pg1.handler);
+-        sendStartupMessage(channel);
+-        readAuthenticationOK(channel);
+-        skipParameterMessages(channel);
+-        readKeyData(channel);
+-        readReadyForQueryMessage(channel);
++        startupHandshake();
+         ByteBuf buffer = Unpooled.buffer();
+         ClientMessages.sendParseMessage(buffer, "", "select 1", new int[0]);
+         ClientMessages.sendBindMessage(buffer, "", "", List.of());
+@@ -934,12 +930,7 @@ public CompletableFuture<ShardResponse> answer(InvocationOnMock arg0) throws Thr
+             }
+         });
+ 
+-        sendStartupMessage(channel);
+-        readAuthenticationOK(channel);
+-        skipParameterMessages(channel);
+-        readKeyData(channel);
+-        readReadyForQueryMessage(channel);
+-        assertThat(channel.outboundMessages()).isEmpty();
++        startupHandshake();
+ 
+         ByteBuf buffer = Unpooled.buffer();
+         PGType<?> textType = PGTypes.get(DataTypes.STRING);
+@@ -1030,12 +1021,7 @@ public void executeOrFail(DependencyCarrier executor,
+             );
+         channel = new EmbeddedChannel(ctx.decoder, ctx.handler);
+ 
+-        sendStartupMessage(channel);
+-        readAuthenticationOK(channel);
+-        skipParameterMessages(channel);
+-        readKeyData(channel);
+-        readReadyForQueryMessage(channel);
+-        assertThat(channel.outboundMessages()).isEmpty();
++        startupHandshake();
+ 
+         ByteBuf buffer = Unpooled.buffer();
+         PGType<?> textType = PGTypes.get(DataTypes.STRING);
+@@ -1125,6 +1111,46 @@ public void test_send_negotiate_protocol_version() {
          }
      }
  
++    @Test
++    public void test_ddl_executes_immediately() throws Exception {
++        PostgresWireProtocol ctx =
++            new PostgresWireProtocol(
++                sessions,
++                new SessionSettingRegistry(Set.of()),
++                _ -> AccessControl.DISABLED,
++                _ -> {},
++                new AlwaysOKAuthentication(() -> List.of(Role.CRATE_USER)),
++                () -> null
++            );
++        channel = new EmbeddedChannel(ctx.decoder, ctx.handler);
++
++        startupHandshake();
++        ByteBuf buffer = Unpooled.buffer();
++        ClientMessages.sendParseMessage(buffer, "", "create table tbl_ddl (x int)", new int[0]);
++        ClientMessages.sendBindMessage(buffer, "", "", List.of());
++        ClientMessages.sendExecute(buffer, "", 0);
++
++        ClientMessages.sendParseMessage(buffer, "", "select x from tbl_ddl", new int[0]);
++        ClientMessages.sendBindMessage(buffer, "", "", List.of());
++        ClientMessages.sendExecute(buffer, "", 0);
++
++        channel.writeInbound(buffer);
++
++        readParseComplete();
++        readBindComplete();
++        assertThat(ctx.session.hasDeferredExecutions()).isFalse();
++    }
++
++
++    private void startupHandshake() {
++        sendStartupMessage(channel);
++        readAuthenticationOK(channel);
++        skipParameterMessages(channel);
++        readKeyData(channel);
++        readReadyForQueryMessage(channel);
++        assertThat(channel.outboundMessages()).isEmpty();
++    }
++
+ 
+     static void sendSync(ByteBuf buffer) {
+         buffer.writeByte('S');
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #20433** (2026-10-19): Reduce mock usage in PostgresWireProtocolTest (@mfussenegger)
+- **PR #20431** (2026-10-19): Fix DDL->DQL/DML pgwire pipelining (@mfussenegger)
 - **PR #20429** (2026-10-17): Test: rerun the test if the port is taken while restarting the publisher (backport #20423) (@mergify[bot])
 - **PR #20428** (2026-10-17): Test: rerun the test if the port is taken while restarting the publisher (backport #20423) (@mergify[bot])
 - **PR #20426** (2026-10-16): Fix filtered nested CROSS JOIN rewrite to nested INNER JOINs (backport #20421) (@mergify[bot])
 - **PR #20425** (2026-10-16): Fix filtered nested CROSS JOIN rewrite to nested INNER JOINs (backport #20421) (@mergify[bot])
-- **PR #20423** (2026-10-17): Test: rerun the test if the port is taken while restarting the publisher (@jeeminso)
-- **PR #20421** (2026-10-16): Fix filtered nested CROSS JOIN rewrite to nested INNER JOINs (@jeeminso)
 
 ---
 
@@ -657,25 +786,22 @@ An example with psycopg:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Remove limitation that select can't be pipelined after writes
+## X. DDL->DQL/DML pgwire pipelining
 
 **RULE**:
-When implementing operations in `docs/appendices/release-notes/6.6.0.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate/crate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/src/main/java/io/crate/protocols/postgres/PostgresNetty.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate/crate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4d046d12`: Remove limitation that select can't be pipelined after writes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `175689d8`: DDL->DQL/DML pgwire pipelining. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/appendices/release-notes/6.6.0.rst`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/src/main/java/io/crate/protocols/postgres/PostgresNetty.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-- Extended the PostgreSQL wire protocol support for pipelining DDL or DML
-  statements followed by DQL statements without an intermediate ``sync`` message
-  between the statements. This is for example used by the ``psycopg`` client if
-  using their experimental pipeline support.
-
+import io.netty.handler.flow.FlowControlHandler;
+                pipeline.addLast("flow-control", new FlowControlHandler());
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -685,4 +811,4 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4d046d12` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `175689d8` are properly handled with clean fallback behavior.

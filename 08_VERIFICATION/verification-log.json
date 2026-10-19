@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-COO5",
-    "timestamp": "2026-10-19T06:52:08.549Z",
-    "repository": "futurice/pepperoni-app-kit",
-    "learningId": "learn-github-futurice-pepperoni-app-kit",
-    "contentHash": "ba3804092bb4d768fe1d87941cc96c28b4680108130fcf0cc4ac6534d41a2d5f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-CQAI",
-    "timestamp": "2026-10-19T06:52:10.650Z",
-    "repository": "kube-rs/kube",
-    "learningId": "learn-github-kube-rs-kube",
-    "contentHash": "064a13d110b830fe03048313650fcdfcc1e2474003536f660d3d66cbf10f56d6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-CU55",
-    "timestamp": "2026-10-19T06:52:15.641Z",
-    "repository": "weaviate/weaviate",
-    "learningId": "learn-github-weaviate-weaviate",
-    "contentHash": "6cdff9023491f93ef725e0e24b6d875be945f5ae6c814d153eb4406ba5efc732",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-EDCL",
     "timestamp": "2026-10-19T06:53:27.189Z",
     "repository": "unsloth/Qwen3.8-27B-GGUF",
@@ -7492,6 +7447,51 @@
     "contentHash": "7bb48a63db5d18ce16fba0ce3a400152d7d5bd0b846123213cc96fc5e06a42b3",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-QLF2",
+    "timestamp": "2026-10-19T22:26:44.846Z",
+    "repository": "buriy/python-readability",
+    "learningId": "learn-github-buriy-python-readability",
+    "contentHash": "a49a298e87b06503e27752dcc71158a1da746526f15f0b32c28fdee6bbaf9876",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-QMJQ",
+    "timestamp": "2026-10-19T22:26:46.310Z",
+    "repository": "Louis-CFM/coucou",
+    "learningId": "learn-github-louis-cfm-coucou",
+    "contentHash": "75fd60152a31b843ede172d38712ceadc8566344a57c1e04b1930d8abadcd183",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-QRAA",
+    "timestamp": "2026-10-19T22:26:52.450Z",
+    "repository": "crate/crate",
+    "learningId": "learn-github-crate-crate",
+    "contentHash": "43f86458989df0ec54cd9ff430f7593939f14122abc900919ddd5d6c4434d43b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

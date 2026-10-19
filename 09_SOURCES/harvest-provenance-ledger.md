@@ -3538,3 +3538,6 @@ Every entry in this ledger must capture:
 | `learn-github-archivebox-archivebox` | `https://github.com/ArchiveBox/ArchiveBox` | `2162c9bf` | Multi-dimensional audit evidence | 2026-10-19T22:19:25.483Z |
 | `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `58406d7b` | Multi-dimensional audit evidence | 2026-10-19T22:19:27.822Z |
 | `learn-github-microsoft-fluentui` | `https://github.com/microsoft/fluentui` | `9c0797ae` | Multi-dimensional audit evidence | 2026-10-19T22:20:34.994Z |
+| `learn-github-buriy-python-readability` | `https://github.com/buriy/python-readability` | `3e7a8321` | Multi-dimensional audit evidence | 2026-10-19T22:26:44.849Z |
+| `learn-github-louis-cfm-coucou` | `https://github.com/Louis-CFM/coucou` | `98a767c4` | Multi-dimensional audit evidence | 2026-10-19T22:26:46.312Z |
+| `learn-github-crate-crate` | `https://github.com/crate/crate` | `175689d8` | Multi-dimensional audit evidence | 2026-10-19T22:26:52.453Z |

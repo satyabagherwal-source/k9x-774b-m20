@@ -2223,10 +2223,10 @@
     "repository": "crate/crate",
     "platform": "github",
     "sourceUrl": "https://github.com/crate/crate",
-    "sourceVersion": "4d046d12",
+    "sourceVersion": "175689d8",
     "license": "Apache-2.0",
-    "contentHash": "9f03702d6595f4b937583c95b3a964d0aa52b33e3cf263cbb7982619490d8dc1",
-    "lastHarvestedAt": "2026-10-19T10:10:05.205Z",
+    "contentHash": "43f86458989df0ec54cd9ff430f7593939f14122abc900919ddd5d6c4434d43b",
+    "lastHarvestedAt": "2026-10-19T22:26:52.453Z",
     "learningId": "learn-github-crate-crate"
   },
   "nucleoidai-nucleoid": {
@@ -9288,5 +9288,25 @@
     "contentHash": "6e9c40159c70148ba7c938641eb4597bff3fbb9eef6f8ab05ed56fc745676458",
     "lastHarvestedAt": "2026-10-19T22:19:25.483Z",
     "learningId": "learn-github-archivebox-archivebox"
+  },
+  "buriy-python-readability": {
+    "repository": "buriy/python-readability",
+    "platform": "github",
+    "sourceUrl": "https://github.com/buriy/python-readability",
+    "sourceVersion": "3e7a8321",
+    "license": "Apache-2.0",
+    "contentHash": "a49a298e87b06503e27752dcc71158a1da746526f15f0b32c28fdee6bbaf9876",
+    "lastHarvestedAt": "2026-10-19T22:26:44.849Z",
+    "learningId": "learn-github-buriy-python-readability"
+  },
+  "louis-cfm-coucou": {
+    "repository": "Louis-CFM/coucou",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Louis-CFM/coucou",
+    "sourceVersion": "98a767c4",
+    "license": "MIT",
+    "contentHash": "75fd60152a31b843ede172d38712ceadc8566344a57c1e04b1930d8abadcd183",
+    "lastHarvestedAt": "2026-10-19T22:26:46.312Z",
+    "learningId": "learn-github-louis-cfm-coucou"
   }
 }

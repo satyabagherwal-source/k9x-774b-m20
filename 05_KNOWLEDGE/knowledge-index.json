@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T22:20:34.948Z",
-  "total_verified_learnings": 944,
+  "last_updated": "2026-10-19T22:26:52.401Z",
+  "total_verified_learnings": 946,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -5929,8 +5929,8 @@
       "slug": "crate-crate",
       "platform": "github",
       "source_url": "https://github.com/crate/crate",
-      "source_version": "4d046d12",
-      "content_hash": "9f03702d6595f4b937583c95b3a964d0aa52b33e3cf263cbb7982619490d8dc1",
+      "source_version": "175689d8",
+      "content_hash": "43f86458989df0ec54cd9ff430f7593939f14122abc900919ddd5d6c4434d43b",
       "dossier_path": "07_PROJECT_LEARNING/crate-crate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crate-crate-learnings.md",
       "promoted_rules": [
@@ -5943,6 +5943,11 @@
           "number": 2486,
           "title": "Remove limitation that select can't be pipelined after writes",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2857,
+          "title": "DDL->DQL/DML pgwire pipelining",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5950,7 +5955,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T10:10:05.149Z",
+      "verified_at": "2026-10-19T22:26:52.386Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -29039,22 +29044,35 @@
     "learn-github-louis-cfm-coucou": {
       "learning_id": "learn-github-louis-cfm-coucou",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "louis-cfm-coucou",
+      "source": "Louis-CFM/coucou",
+      "repository": "Louis-CFM/coucou",
       "slug": "louis-cfm-coucou",
       "platform": "github",
       "source_url": "https://github.com/Louis-CFM/coucou",
-      "source_version": "HEAD",
-      "content_hash": "8be5173e86eb7b13f3da25cb103ffb4faea62b4da17081afce7f750b93333440",
+      "source_version": "98a767c4",
+      "content_hash": "75fd60152a31b843ede172d38712ceadc8566344a57c1e04b1930d8abadcd183",
       "dossier_path": "07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2856,
+          "title": "a crash: the thermal state change arrives off the main thread",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.088Z"
+      "verified_at": "2026-10-19T22:26:46.245Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-louiscad-splitties": {
       "learning_id": "learn-github-louiscad-splitties",
@@ -57117,22 +57135,36 @@
     "learn-github-buriy-python-readability": {
       "learning_id": "learn-github-buriy-python-readability",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "buriy/python-readability",
       "repository": "buriy/python-readability",
       "slug": "buriy-python-readability",
       "platform": "github",
       "source_url": "https://github.com/buriy/python-readability",
-      "source_version": "main",
-      "content_hash": "b4229275fc1af78d567e30f96292206ebb875199b418e928ec5246fa4b5341cd",
+      "source_version": "3e7a8321",
+      "content_hash": "a49a298e87b06503e27752dcc71158a1da746526f15f0b32c28fdee6bbaf9876",
       "dossier_path": "07_PROJECT_LEARNING/buriy-python-readability-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/buriy-python-readability-learnings.md",
       "promoted_rules": [
-        "Rule 1631"
+        "Rule 1631",
+        {
+          "number": 2855,
+          "title": "Build: add pre-release checks",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
       ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T22:26:44.780Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-lxml-lxml": {
       "learning_id": "learn-github-lxml-lxml",
@@ -93604,6 +93636,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T22:20:34.936Z"
+    },
+    "rule-2855": {
+      "learning_id": "rule-2855",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2855,
+      "title": "Build: add pre-release checks",
+      "source_url": "https://github.com/buriy/python-readability",
+      "source_version": "3e7a8321",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T22:26:44.780Z"
+    },
+    "rule-2856": {
+      "learning_id": "rule-2856",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2856,
+      "title": "a crash: the thermal state change arrives off the main thread",
+      "source_url": "https://github.com/Louis-CFM/coucou",
+      "source_version": "98a767c4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T22:26:46.245Z"
+    },
+    "rule-2857": {
+      "learning_id": "rule-2857",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2857,
+      "title": "DDL->DQL/DML pgwire pipelining",
+      "source_url": "https://github.com/crate/crate",
+      "source_version": "175689d8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T22:26:52.386Z"
     }
   },
   "aliases": {
