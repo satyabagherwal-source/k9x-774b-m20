@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T22:06:48.447Z",
+  "last_updated": "2026-10-19T22:13:02.158Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10534,14 +10534,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-restatedev-restate",
-      "content_hash": "847cb504f37ce02194c2413bd805dff5b74416a9d0e33c9929ce60b24e767ac3",
-      "verified_at": "2026-10-19T07:21:35.011Z",
+      "content_hash": "ed8efa13ac144e83d83af408a8fef4285c62fd0a47de4f25db3b04210c647fdd",
+      "verified_at": "2026-10-19T22:12:58.322Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T07:21:35.011Z"
+      "last_updated": "2026-10-19T22:12:58.322Z"
     },
     "Kong/kubernetes-ingress-controller": {
       "repository": "Kong/kubernetes-ingress-controller",
@@ -13917,6 +13917,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T22:06:45.349Z"
+    },
+    "webrecorder/browsertrix-crawler": {
+      "repository": "webrecorder/browsertrix-crawler",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-webrecorder-browsertrix-crawler",
+      "content_hash": "a098e9b86d0c4b7014db00e7885b7ba53b2bc3413ffe33fad4539d3641d3f860",
+      "verified_at": "2026-10-19T22:12:59.812Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T22:12:59.812Z"
+    },
+    "pointfreeco/isowords": {
+      "repository": "pointfreeco/isowords",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-pointfreeco-isowords",
+      "content_hash": "ae5b4384b9be4df02957bbaee7d512abe67cbdebc1d877a37c59a13f859a38db",
+      "verified_at": "2026-10-19T22:13:02.157Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T22:13:02.157Z"
     }
   },
   "repos": {

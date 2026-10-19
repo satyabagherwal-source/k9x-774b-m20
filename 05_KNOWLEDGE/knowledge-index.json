@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T22:06:48.413Z",
-  "total_verified_learnings": 940,
+  "last_updated": "2026-10-19T22:13:02.091Z",
+  "total_verified_learnings": 942,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -35584,22 +35584,35 @@
     "learn-github-pointfreeco-isowords": {
       "learning_id": "learn-github-pointfreeco-isowords",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "pointfreeco-isowords",
+      "source": "pointfreeco/isowords",
+      "repository": "pointfreeco/isowords",
       "slug": "pointfreeco-isowords",
       "platform": "github",
       "source_url": "https://github.com/pointfreeco/isowords",
-      "source_version": "HEAD",
-      "content_hash": "35d29cd117d41f780e194435602ca608f238c9114e272d1b444b3f6d2acc1ddf",
+      "source_version": "c727d3a7",
+      "content_hash": "ae5b4384b9be4df02957bbaee7d512abe67cbdebc1d877a37c59a13f859a38db",
       "dossier_path": "07_PROJECT_LEARNING/pointfreeco-isowords-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pointfreeco-isowords-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2849,
+          "title": "GitHub CI (#199)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.069Z"
+      "verified_at": "2026-10-19T22:13:02.079Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-pointfreeco-sqlite-data": {
       "learning_id": "learn-github-pointfreeco-sqlite-data",
@@ -37240,8 +37253,8 @@
       "slug": "restatedev-restate",
       "platform": "github",
       "source_url": "https://github.com/restatedev/restate",
-      "source_version": "954797e4",
-      "content_hash": "847cb504f37ce02194c2413bd805dff5b74416a9d0e33c9929ce60b24e767ac3",
+      "source_version": "ca453814",
+      "content_hash": "ed8efa13ac144e83d83af408a8fef4285c62fd0a47de4f25db3b04210c647fdd",
       "dossier_path": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
       "promoted_rules": [
@@ -37259,6 +37272,11 @@
           "number": 2296,
           "title": "Non-Interactive Loop-Termination Invariant in Terminal Utilities",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2847,
+          "title": "[Bifrost] Cover the trim saturation boundaries with a base above 1",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37266,7 +37284,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T07:21:34.952Z",
+      "verified_at": "2026-10-19T22:12:58.256Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -57005,20 +57023,35 @@
     "learn-github-webrecorder-browsertrix-crawler": {
       "learning_id": "learn-github-webrecorder-browsertrix-crawler",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "webrecorder/browsertrix-crawler",
       "repository": "webrecorder/browsertrix-crawler",
       "slug": "webrecorder-browsertrix-crawler",
       "platform": "github",
       "source_url": "https://github.com/webrecorder/browsertrix-crawler",
-      "source_version": "main",
-      "content_hash": "b6bd9874ffebd3b96f426dbc6ed3853cb019987b70820bec96d711f870f729ae",
+      "source_version": "2cbb827e",
+      "content_hash": "a098e9b86d0c4b7014db00e7885b7ba53b2bc3413ffe33fad4539d3641d3f860",
       "dossier_path": "07_PROJECT_LEARNING/webrecorder-browsertrix-crawler-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/webrecorder-browsertrix-crawler-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2848,
+          "title": "browser: add configurable --browserStartTimeout (#1160)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T22:12:59.736Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-archivebox-archivebox": {
       "learning_id": "learn-github-archivebox-archivebox",
@@ -93418,6 +93451,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T22:06:48.405Z"
+    },
+    "rule-2847": {
+      "learning_id": "rule-2847",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2847,
+      "title": "[Bifrost] Cover the trim saturation boundaries with a base above 1",
+      "source_url": "https://github.com/restatedev/restate",
+      "source_version": "ca453814",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T22:12:58.256Z"
+    },
+    "rule-2848": {
+      "learning_id": "rule-2848",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2848,
+      "title": "browser: add configurable --browserStartTimeout (#1160)",
+      "source_url": "https://github.com/webrecorder/browsertrix-crawler",
+      "source_version": "2cbb827e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T22:12:59.736Z"
+    },
+    "rule-2849": {
+      "learning_id": "rule-2849",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2849,
+      "title": "GitHub CI (#199)",
+      "source_url": "https://github.com/pointfreeco/isowords",
+      "source_version": "c727d3a7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T22:13:02.079Z"
     }
   },
   "aliases": {

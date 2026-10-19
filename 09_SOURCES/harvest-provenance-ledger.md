@@ -3531,3 +3531,6 @@ Every entry in this ledger must capture:
 | `learn-github-webrecorder-pywb` | `https://github.com/webrecorder/pywb` | `2b310902` | Multi-dimensional audit evidence | 2026-10-19T22:06:42.888Z |
 | `learn-github-kruszoneq-macusb` | `https://github.com/Kruszoneq/macUSB` | `938f7d12` | Multi-dimensional audit evidence | 2026-10-19T22:06:45.343Z |
 | `learn-github-kgateway-dev-kgateway` | `https://github.com/kgateway-dev/kgateway` | `84b2d092` | Multi-dimensional audit evidence | 2026-10-19T22:06:48.442Z |
+| `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `ca453814` | Multi-dimensional audit evidence | 2026-10-19T22:12:58.315Z |
+| `learn-github-webrecorder-browsertrix-crawler` | `https://github.com/webrecorder/browsertrix-crawler` | `2cbb827e` | Multi-dimensional audit evidence | 2026-10-19T22:12:59.806Z |
+| `learn-github-pointfreeco-isowords` | `https://github.com/pointfreeco/isowords` | `c727d3a7` | Multi-dimensional audit evidence | 2026-10-19T22:13:02.150Z |

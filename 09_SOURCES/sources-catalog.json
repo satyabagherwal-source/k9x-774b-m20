@@ -6983,10 +6983,10 @@
     "repository": "restatedev/restate",
     "platform": "github",
     "sourceUrl": "https://github.com/restatedev/restate",
-    "sourceVersion": "954797e4",
+    "sourceVersion": "ca453814",
     "license": "NOASSERTION",
-    "contentHash": "847cb504f37ce02194c2413bd805dff5b74416a9d0e33c9929ce60b24e767ac3",
-    "lastHarvestedAt": "2026-10-19T07:21:35.005Z",
+    "contentHash": "ed8efa13ac144e83d83af408a8fef4285c62fd0a47de4f25db3b04210c647fdd",
+    "lastHarvestedAt": "2026-10-19T22:12:58.315Z",
     "learningId": "learn-github-restatedev-restate"
   },
   "kong-kubernetes-ingress-controller": {
@@ -9248,5 +9248,25 @@
     "contentHash": "cd5252d6b64fae02aaf8e87fbc0706dd7985b74571d08840b7d63925fe0cba69",
     "lastHarvestedAt": "2026-10-19T22:06:45.343Z",
     "learningId": "learn-github-kruszoneq-macusb"
+  },
+  "webrecorder-browsertrix-crawler": {
+    "repository": "webrecorder/browsertrix-crawler",
+    "platform": "github",
+    "sourceUrl": "https://github.com/webrecorder/browsertrix-crawler",
+    "sourceVersion": "2cbb827e",
+    "license": "AGPL-3.0",
+    "contentHash": "a098e9b86d0c4b7014db00e7885b7ba53b2bc3413ffe33fad4539d3641d3f860",
+    "lastHarvestedAt": "2026-10-19T22:12:59.806Z",
+    "learningId": "learn-github-webrecorder-browsertrix-crawler"
+  },
+  "pointfreeco-isowords": {
+    "repository": "pointfreeco/isowords",
+    "platform": "github",
+    "sourceUrl": "https://github.com/pointfreeco/isowords",
+    "sourceVersion": "c727d3a7",
+    "license": "NOASSERTION",
+    "contentHash": "ae5b4384b9be4df02957bbaee7d512abe67cbdebc1d877a37c59a13f859a38db",
+    "lastHarvestedAt": "2026-10-19T22:13:02.150Z",
+    "learningId": "learn-github-pointfreeco-isowords"
   }
 }

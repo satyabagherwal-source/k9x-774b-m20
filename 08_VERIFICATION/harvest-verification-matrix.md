@@ -3524,3 +3524,6 @@
 | `CYCLE-20261019-0TWZ` | `2026-10-19T22:06:42.803Z` | `webrecorder/pywb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2845` | Yes (`b2095c30...`) |
 | `CYCLE-20261019-0VVH` | `2026-10-19T22:06:45.341Z` | `Kruszoneq/macUSB` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/kruszoneq-macusb-learnings.md` | Yes (`cd5252d6...`) |
 | `CYCLE-20261019-0Y9K` | `2026-10-19T22:06:48.440Z` | `kgateway-dev/kgateway` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2846` | Yes (`dad7129d...`) |
+| `CYCLE-20261019-8VNS` | `2026-10-19T22:12:58.312Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2847` | Yes (`ed8efa13...`) |
+| `CYCLE-20261019-8WT7` | `2026-10-19T22:12:59.803Z` | `webrecorder/browsertrix-crawler` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2848` | Yes (`a098e9b8...`) |
+| `CYCLE-20261019-8YMB` | `2026-10-19T22:13:02.147Z` | `pointfreeco/isowords` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2849` | Yes (`ae5b4384...`) |
