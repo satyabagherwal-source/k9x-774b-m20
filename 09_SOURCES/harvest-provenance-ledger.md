@@ -2807,3 +2807,9 @@ Every entry in this ledger must capture:
 | `learn-github-encoredev-encore` | `https://github.com/encoredev/encore` | `09bb8c19` | Multi-dimensional audit evidence | 2026-10-19T02:27:48.927Z |
 | `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `7e35174e` | Multi-dimensional audit evidence | 2026-10-19T02:27:53.531Z |
 | `learn-github-arco-design-arco-design` | `https://github.com/arco-design/arco-design` | `e34b8bd2` | Multi-dimensional audit evidence | 2026-10-19T02:29:05.549Z |
+| `learn-github-system-ui-theme-ui` | `https://github.com/system-ui/theme-ui` | `bc875924` | Multi-dimensional audit evidence | 2026-10-19T02:37:02.493Z |
+| `learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0` | `https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0` | `hf-stabili` | Multi-dimensional audit evidence | 2026-10-19T02:37:03.258Z |
+| `learn-github-mtkennerly-ludusavi` | `https://github.com/mtkennerly/ludusavi` | `95b651aa` | Multi-dimensional audit evidence | 2026-10-19T02:37:04.228Z |
+| `learn-github-nativewind-nativewind` | `https://github.com/nativewind/nativewind` | `7dbaf182` | Multi-dimensional audit evidence | 2026-10-19T02:37:09.591Z |
+| `learn-github-crossplane-crossplane` | `https://github.com/crossplane/crossplane` | `6601fc76` | Multi-dimensional audit evidence | 2026-10-19T02:37:11.473Z |
+| `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `487620d5` | Multi-dimensional audit evidence | 2026-10-19T02:37:16.776Z |

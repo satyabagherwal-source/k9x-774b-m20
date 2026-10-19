@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apple-foundationdb-learnings.md`  
+> **Source**: github ([https://github.com/apple/foundationdb](https://github.com/apple/foundationdb))  
+> **Source Version**: `487620d5`  
+> **License**: Apache-2.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T02:37:16.555Z  
+> **Learning ID**: `learn-github-apple-foundationdb`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): apple/foundationdb
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apple-foundationdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apple/foundationdb](https://github.com/apple/foundationdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T03:03:12.258Z  
+> **Harvest Timestamp**: 2026-10-19T02:37:16.548Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: FoundationDB - the open source, distributed, transactional key-value store
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 16755 stars
+- **Stars / Engagement**: 16783 stars
 
 ---
 
@@ -597,6 +611,22 @@ AuditPhase stringToAuditPhase(std::string auditPhaseStr) {
 	}
 }
 
+bool isTransientAuditStateReadError(const Error& e) {
+	switch (e.code()) {
+	case error_code_grv_proxy_memory_limit_exceeded:
+	case error_code_commit_proxy_memory_limit_exceeded:
+	case error_code_transaction_too_old:
+	case error_code_future_version:
+	case error_code_tag_throttled:
+	case error_code_batch_transaction_throttled:
+	case error_code_database_locked:
+	case error_code_timed_out:
+		return true;
+	default:
+		return false;
+	}
+}
+
 // This is not transactional
 AsyncResult<std::vector<AuditStorageState>> getAuditStates(Database cx,
                                                            AuditType auditType,
@@ -707,23 +737,7 @@ Future<Void> clearAuditMetadataForType(Database cx,
 						clearAuditProgressMetadata(&tr, auditType, auditState.id);
 						numFinishAuditCleaned++;
 					}
-					// For a zombie audit, it is in running state
-				}
-				co_await tr.commit();
-				TraceEvent(SevDebug, "AuditUtilClearAuditMetadataForTypeEnd")
-				    .detail("AuditType", auditType)
-				    .detail("NumCleanedFinishAudits", numFinishAuditCleaned);
-				break;
-			} catch (Error& e) {
-				err = e;
-			}
-			co_await tr.onError(err);
-		}
-	} catch (Error& e) {
-		if (e.code() == error_code_actor_cancelled) {
-			throw;
-		}
-		TraceEvent(SevInf
+					// 
 ```
 
 ### Core Architecture Module: `fdbclient/RESTUtils.cpp`
@@ -1284,6 +1298,10 @@ AsyncResult<std::vector<AuditStorageState>> getAuditStates(Database cx,
                                                            Optional<int> num = Optional<int>(),
                                                            Optional<AuditPhase> phase = Optional<AuditPhase>());
 
+// True for errors from reading audit state that come from proxies under load, throttling or recoveries and succeed
+// when the read is repeated.
+bool isTransientAuditStateReadError(const Error& e);
+
 // Persist per-range audit progress (which sub-ranges have been validated).
 Future<Void> persistAuditStateByRange(Database cx, AuditStorageState auditState);
 
@@ -1417,10 +1435,7 @@ struct LocationMetadataError {
 // Bidirectional consistency check between the KeyServers and ServerKeys views of shard
 // ownership. Returns an error for each server that is missing from one side or has
 // mismatched range assignments. An empty result means the two views are consistent.
-std::vector<LocationMetadataError> checkLocationMetadataConsistency(
-    const std::unordered_map<UID, std::vector<KeyRange>>& mapFromKeyServers,
-    const std::unordered_map<UID, std::vector<KeyRange>>& mapFromServerKeys,
-    Key
+std::vector<LocationMetadataEr
 ```
 
 ### Core Architecture Module: `fdbclient/include/fdbclient/ClientWorkerInterface.h`
@@ -1919,428 +1934,6 @@ constexpr std::string_view to_string(WaitState st) {
 
 ```
 
-### Core Architecture Module: `fdbrpc/QueueModel.cpp`
-```
-/*
- * QueueModel.cpp
- *
- * This source file is part of the FoundationDB open source project
- *
- * Copyright 2013-2026 Apple Inc. and the FoundationDB project authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-#include "fdbrpc/QueueModel.h"
-#include "fdbrpc/LoadBalance.h"
-
-void QueueModel::endRequest(uint64_t id, double latency, double penalty, double delta, bool clean, bool futureVersion) {
-	auto& d = data[id];
-
-	// Remove the penalty added when starting the request.
-	d.smoothOutstanding.addDelta(-delta);
-
-	if (clean) {
-		d.latency = latency;
-	} else {
-		d.latency = std::max(d.latency, latency);
-	}
-
-	if (futureVersion) {
-		if (now() > d.increaseBackoffTime) {
-			d.futureVersionBackoff = std::min(d.futureVersionBackoff * FLOW_KNOBS->FUTURE_VERSION_BACKOFF_GROWTH,
-			                                  FLOW_KNOBS->FUTURE_VERSION_MAX_BACKOFF);
-			d.increaseBackoffTime = now() + d.futureVersionBackoff;
-		}
-		d.failedUntil = now() + d.futureVersionBackoff;
-	} else if (clean) {
-		d.futureVersionBackoff = FLOW_KNOBS->FUTURE_VERSION_INITIAL_BACKOFF;
-		d.increaseBackoffTime = 0.0;
-	}
-
-	if (penalty > 0) {
-		d.penalty = penalty;
-	}
-}
-
-QueueData const& QueueModel::getMeasurement(uint64_t id) {
-	return data[id]; // return smoothed penalty
-}
-
-double QueueModel::addRequest(uint64_t id) {
-	auto& d = data[id];
-	d.smoothOutstanding.addDelta(d.penalty);
-	return d.penalty;
-}
-
-Optional<LoadBalancedReply> getLoadBalancedReply(const LoadBalancedReply* reply) {
-	return *reply;
-}
-
-Optional<LoadBalancedReply> getLoadBalancedReply(const void*) {
-	return Optional<LoadBalancedReply>();
-}
-
-Optional<BasicLoadBalancedReply> getBasicLoadBalancedReply(const BasicLoadBalancedReply* reply) {
-	return *reply;
-}
-
-Optional<BasicLoadBalancedReply> getBasicLoadBalancedReply(const void*) {
-	return Optional<BasicLoadBalancedReply>();
-}
-
-/*
-void QueueModel::addMeasurement( uint64_t id, QueueDetails qd ){
-    if (data[new_index].count(id))
-        total_time[new_index] -= data[new_index][id].queryQueueSize;
-    data[new_index][id] = qd;
-    total_time[new_index] += qd.queryQueueSize;
-}
-
-TimeEstimate QueueModel::getTimeEstimate( uint64_t id ){
-    if (data[new_index].count(id))          // give the current estimate
-        return data[new_index][id].queryQueueSize;
-    else if (data[1-new_index].count(id))   // if not, old estimate
-        return data[1-new_index][id].queryQueueSize;
-    else									// if not, the average?
-        return getAverageTimeEstimate();
-}
-
-TimeEstimate QueueModel::getAverageTimeEstimate(){
-    if(data[new_index].size() + data[1-new_index].size() > 0)
-        return (total_time[new_index] + total_time[1-new_index]) / (data[new_index].size() + data[1-new_index].size());
-    return 0;
-}
-
-void QueueModel::expire(){
-    data[1-new_index].clear();
-    total_time[1-new_index] = 0;
-
-    new_index = 1-new_index;
-}
-*/
-
-```
-
-### Core Architecture Module: `fdbrpc/ReplicationUtils.cpp`
-```
-/*
- * ReplicationUtils.cpp
- *
- * This source file is part of the FoundationDB open source project
- *
- * Copyright 2013-2026 Apple Inc. and the FoundationDB project authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-#include "fdbrpc/ReplicationUtils.h"
-#include "flow/Hash3.h"
-#include "flow/UnitTest.h"
-#include "flow/Platform.h"
-#include "fdbrpc/ReplicationPolicy.h"
-#include "fdbrpc/Replication.h"
-
-double ratePolicy(Reference<LocalitySet>& localitySet,
-                  Reference<IReplicationPolicy> const& policy,
-                  unsigned int nTestTotal) {
-	double rating = -1.0;
-	unsigned int uniqueResults = 0;
-	int uniqueSet;
-	std::map<std::set<LocalityEntry>, int> setMap;
-	std::map<LocalityEntry, int> counterMap;
-	std::vector<LocalityEntry> results;
-
-	for (auto testIndex = 0u; testIndex < nTestTotal; testIndex++) {
-		results.clear();
-		if (!policy->selectReplicas(localitySet, results)) {
-			printf("Failed to apply policy: %s to %d entries\n", policy->info().c_str(), localitySet->size());
-			localitySet->DisplayEntries("rate");
-			ASSERT(0);
-			continue;
-		}
-
-		uniqueSet = setMap[std::set<LocalityEntry>(results.begin(), results.end())]++;
-
-		if (!uniqueSet) {
-			uniqueResults++;
-			for (auto& result : results) {
-				counterMap[result]++;
-			}
-		}
-	}
-
-	if (uniqueResults) {
-		int largestMode = 0;
-		LocalityEntry largestEntry;
-
-		for (const auto& [entry, entryCount] : counterMap) {
-			if (entryCount > largestMode) {
-				largestMode = entryCount;
-				largestEntry = entry;
-			}
-		}
-		rating = (double)largestMode / (double)uniqueResults;
-		if (g_replicationdebug > 4) {
-			printf("Rate entries:\n");
-			localitySet->DisplayEntries("rate");
-		}
-		if (g_replicationdebug > 3) {
-			printf("  largest: (%5d) %7.5f  %7d of%7u  %s",
-			       largestMode,
-			       rating,
-			       uniqueResults,
-			       nTestTotal,
-			       localitySet->getEntryInfo(largestEntry).c_str());
-		}
-	}
-
-	return rating;
-}
-
-int mostUsedZoneCount(Reference<LocalitySet>& logServerSet, std::vector<LocalityEntry>& bestSet) {
-	AttribKey indexKey = logServerSet->keyIndex("zoneid");
-	std::map<AttribValue, int> entries;
-	for (int i = 0; i < bestSet.size(); i++) {
-		Optional<AttribValue> value = logServerSet->getRecordViaEntry(bestSet[i])->getValue(indexKey);
-		entries[value.get()]++;
-	}
-	int maxEntries = 0;
-	for (const auto& [_zoneId, entryCount] : entries) {
-		maxEntries = std::max(maxEntries, entryCount);
-	}
-	return maxEntries;
-}
-
-bool findBestPolicySetSimple(int targetUniqueValueCount,
-                             Reference<LocalitySet>& logServerSet,
-                             std::vector<LocalityEntry>& bestSet,
-                             int desired) {
-	auto& mutableEntries = logServerSet->getMutableEntries();
-	// First make sure the current localitySet is able to fulfuill the policy
-	AttribKey indexKey = logServerSet->keyIndex("zoneid");
-	int uniqueValueCount = logServerSet->getKeyValueArray()[indexKey._id].size();
-
-	if (uniqueValueCount < targetUniqueValueCount) {
-		// logServerSet won't be able to fulfill the policy
-		return false;
-	}
-
-	std::map<AttribValue, std::vector<int>> entries;
-	for (int i = 0; i < mutableEntries.size(); i++) {
-		Optional<AttribValue> value = logServerSet->getRecord(mutableEntries[i]._id)->getValue(indexKey);
-		if (value.present()) {
-			entries[value.get()].push_back(i);
-		}
-	}
-
-	ASSERT_WE_THINK(uniqueValueCount == entries.size());
-	std::vector<std::vector<int>> randomizedEntries;
-	randomizedEntries.resize(entries.size());
-	for (const auto& [_zoneId, entryIndexes] : entries) {
-		randomizedEntries.push_back(entryIndexes);
-	}
-	deterministicRandom()->randomShuffle(randomizedEntries);
-
-	desired = std::max(desired, targetUniqueValueCount);
-	auto it = randomizedEntries.begin();
-	while (bestSet.size() < desired) {
-		if (!it->empty()) {
-			bestSet.push_back(mutableEntries[it->back()]);
-			it->pop_back();
-		}
-
-		++it;
-		if (it == randomizedEntries.end()) {
-			it = randomizedEntries.begin();
-		}
-	}
-
-	return true;
-}
-
-bool findBestPolicySetExpensive(std::vector<LocalityEntry>& bestResults,
-                                Reference<LocalitySet>& localitySet,
-                                Reference<IReplicationPolicy> const& policy,
-                                unsigned int nMinItems,
-                                unsigned int nSelectTests,
-                                unsigned int nPolicyTests) {
-	bool bSucceeded = true;
-	Reference<LocalitySet> bestLocalitySet, testLocalitySet;
-	std::vector<LocalityEntry> results;
-	double testRate, bestRate = -1.0;
-
-	if (g_replicationdebug > 3) {
-		printf("Finding best from LocalitySet:\n");
-		localitySet->DisplayEntries();
-	}
-
-	for (auto policyTest = 0u; policyTest < nPolicyTests; policyTest++) {
-		results.clear();
-		if (!policy->selectReplicas(localitySet, results)) {
-			bSucceeded = false;
-			break;
-		}
-
-		if (g_replicationdebug > 5) {
-			printf("policy set #%5d:\n", policyTest);
-			LocalitySet::staticDisplayEntries(localitySet, results, "result");
-		}
-
-		// Get some additional random items, if needed
-		if ((nMinItems > results.size()) && (!localitySet->random(results, results, nMinItems - results.size()))) {
-			bSucceeded = false;
-			break;
-		}
-
-		if (g_replicationdebug > 4) {
-			printf("policy with extras #%5d:\n", policyTest);
-			LocalitySet::staticDisplayEntries(localitySet, results, "extra ");
-		}
-
-		// Create the test locality Set
-		testLocalitySet = localitySet->restrict(results);
-
-		// Get the test rate
-		testRate = ratePolicy(testLocalitySet, policy, nSelectTests);
-
-		if (g_replicationdebug > 3) {
-			printf("   rate: %7.5f\n", testRate);
-		}
-
-		if (bestRate < 0.0) {
-			bestResults = results;
-			bestRate = testRate;
-			bestLocalitySet = testLocalitySet;
-		}
-		// Allow the occasional bad comparison, if buggified
-		else if (!buggify() ? (testRate < bestRate) : (testRate > bestRate)) {
-			bestResults = results;
-			bestRate = testRate;
-			bestLocalitySet = testLocalitySet;
-		}
-	}
-
-	if (g_replicationdebug > 2) {
-		printf("BestSet: %7.5f\n", bestRate);
-		if (bestRate >= 0.0)
-			bestLocalitySet->DisplayEntries();
-	}
-
-	return bSucceeded;
-}
-
-bool findBestPolicySet(std::vector<LocalityEntry>& bestResults,
-                       Reference<LocalitySet>& localitySet,
-                       Reference<IReplicationPolicy> const& policy,
-                       unsigned int nMinItems,
-                       unsigned int nSelectTests,
-                       unsigned int nPolicyTests) {
-
-	bool bestFound = false;
-
-	// Specialization for policies of shape:
-	//    - PolicyOne()
-	//    - PolicyAcross(,"zoneId",PolicyOne())
-	//    - TODO: More specializations for common policies
-	if (policy->name() == "One") {
-		bestFound = true;
-		int count = 0;
-		auto& mutableEntries = localitySet->getMutableEntries();
-		deterministicRandom()->randomShuffle(mutableEntries);
-		for (auto const& entry : mutableEntries) {
-			bestResults.push_back(entry);
-			if (++count == nMinItems)
-				break;
-		}
-	} else if (policy->name() == "Across") {
-		auto* pa = (PolicyAcross*)policy.getPtr();
-		std::set<std::string> attributeKeys;
-		pa->attributeKeys(&attributeKeys);
-		if (pa->embeddedPolicyName() == "One" && attributeKeys.size() == 1 &&
-		    *attributeKeys.begin() == "zoneid" // This algorithm can actually apply to any field
-		) {
-			bestFound = findBestPolicySetSimple(pa->getCount(), localitySet, bestResults, nMinItems);
-			if (bestFound && g_network->isSimulated()) {
-				std::vector<LocalityEntry> oldBest;
-				auto oldBestFound =
-				    findBestPolicySetExpensive(oldBest, localitySet, policy, nMinItems, nSelectTests, nPolicyTests);
-				if (!oldBestFound) {
-					TraceEvent(SevError, "FBPSMissmatch").detail("Policy", policy->info());
-				} else {
-					ASSERT(mostUsedZoneCount(localitySet, bestResults) <= mostUsedZoneCount(localitySet, oldBest));
-				}
-			}
-		} else {
-			bestFound =
-			    findBestPolicySetExpensive(bestResults, localitySet, policy, nMinItems, nSelectTests, nPolicyTests);
-		}
-	} else {
-		bestFound = findBestPolicySetExpensive(bestResults, localitySet, policy, nMinItems, nSelectTests, nPolicyTests);
-	}
-	return bestFound;
-}
-
-bool validateAllCombinations(std::vector<LocalityData>& offendingCombo,
-                             LocalityGroup const& localitySet,
-                             Reference<IReplicationPolicy> const& policy,
-                             std::vector<LocalityData> const& newItems,
-                             unsigned int nCombinationSize,
-                             bool bCheckIfValid) {
-	bool bValid = true;
-
-	// Check the current set's validity before adding combinations.
-	if (newItems.size() < nCombinationSize || localitySet.validate(policy) != bCheckIfValid) {
-		bValid = false;
-	} else {
-		bool bIsValidGroup;
-		Reference<LocalitySet> localSet = makeReference<LocalityGroup>();
-		auto* localGroup = (LocalityGroup*)localSet.getPtr();
-		localGroup->deep_copy(localitySet);
-
-		std::vector<LocalityEntry> localityGroupEntries = localGroup->getEntries();
-		int originalSize = localityGroupEntries.size();
-
-		for (int i = 0; i < newItems.size(); ++i) {
-			localGroup->add(newItems[i]);
-		}
-
-		std::string bitmask(nCombinationSize, 1); // K leading 1's
-		bitmask.resize(newItems.size(), 0); // N-K trailing 0's
-
-		std::vector<LocalityEntry> resultEntries;
-		do {
-			localityGroupEntries.resize(originalSize);
-			// [0..N-1] integers
-			for (int i = 0; i < bitmask.size(); ++i) {
-				if (bitmask[i]) {
-					localityGroupEntries.push_back(localGroup->getEntry(originalSize + i));
-				}
-			}
-
-			res
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -2349,54 +1942,9 @@ bool validateAllCombinations(std::vector<LocalityData>& offendingCombo,
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
 - **Issue #12037** (2025-03-17): **Fix a restore bug due to a race**
   *Symptoms*: Found by simulation: seed:  -f tests/slow/ApiCorrectnessAtomicRestore.toml -s 177856328 -b on Commit: 51ad8428e0fbe1d82bc76cf42b1579f51ecf2773 Compiler: clang++ Env: Rhel9 okteto  applyMutations() has processed version 801400000-803141392, and before calling sendCommitTransactionRequest(), which was going to update apply begin version to 803141392. But DID NOT wait for the transaction commit.  Then there is an update on the apply end version to 845345760, which picks up the PREVIOUS apply begin version 801400000. Thus started another applyMutation() with version range 801400000-845345760. Note because previous applyMutation() has finished and didn't wait for the transaction commit, thus the starting version is wrong. As a result, this applyMutation() re-processed version range 801400000-803141392.  The test failed during re-processing, because mutations are missing for the overlapped range.  The fix is to wait for the transaction to commit in sendCommitTransactionRequest().  This bug probably affects DR as well.  See rdar://146877552  20250317-162835-jzhou-ff4c4d6d7c51bfed             compressed=True data_size=35839754 duration=5691175 ended=100000 fail_fast=10 max_runs=100000 pass=100000 priority=100 remaining=0 runtime=1:04:00 sanity=False started=100000 stopped=20250317-173235 submitted=20250317-162835 timeout=5400 username=jzhou   # Code-Reviewer Section  The general pull request guidelines can be found [here](https://github.com/apple/foundationdb/wi
-  **Post-Mortem & Fix Analysis**:
-  >  ### Result of foundationdb-pr-clang-ide on Linux CentOS 7  * Commit ID: c0c66e624d9fc143469e26b29e3a704b09a258d9 * Duration 0:22:23 * Result: :white_check_mark: **SUCCEEDED** * Error: `N/A` * [Build Log](https://d1e0l78xbkh3xa.cloudfront.net/foundationdb/foundationdb-pr-clang-ide/8fcb2320-95f2-4a25-a6cf-be05a9116a6e.gz) terminal output (available for 30 days) * [Build Workspace](https://d1e0l78xbkh3xa.cloudfront.net/foundationdb-pr-clang-ide/8fcb2320-95f2-4a25-a6cf-be05a9116a6e/workspace.zip) zip file of the working directory (available for 30 days) 
-  >  ### Result of foundationdb-pr-macos-m1 on macOS Ventura 13.x  * Commit ID: c0c66e624d9fc143469e26b29e3a704b09a258d9 * Duration 0:41:05 * Result: :white_check_mark: **SUCCEEDED** * Error: `N/A` * [Build Log](https://d1e0l78xbkh3xa.cloudfront.net/foundationdb/foundationdb-pr-macos-m1/c37c5599-2285-4ca8-a0ec-53ac8be57442.gz) terminal output (available for 30 days) * [Build Workspace](https://d1e0l78xbkh3xa.cloudfront.net/foundationdb-pr-macos-m1/c37c5599-2285-4ca8-a0ec-53ac8be57442/workspace.zip) zip file of the working directory (available for 30 days) 
-  >  ### Result of foundationdb-pr-clang-arm on Linux CentOS 7  * Commit ID: c0c66e624d9fc143469e26b29e3a704b09a258d9 * Duration 0:49:06 * Result: :white_check_mark: **SUCCEEDED** * Error: `N/A` * [Build Log](https://d1e0l78xbkh3xa.cloudfront.net/foundationdb/foundationdb-pr-clang-arm/c02305d0-166b-40e3-8703-5b2aecdc7c90.gz) terminal output (available for 30 days) * [Build Workspace](https://d1e0l78xbkh3xa.cloudfront.net/foundationdb-pr-clang-arm/c02305d0-166b-40e3-8703-5b2aecdc7c90/workspace.zip) zip file of the working directory (available for 30 days) 
 
 - **Issue #11775** (2024-12-02): **fdbmonitor restart-delay unclear documentation**
   *Symptoms*: fdbmonitor has a field [restart-delay](https://apple.github.io/foundationdb/configuration.html#general-section). Based on the documentation: `The maximum number of seconds (subject to jitter) that fdbmonitor will delay before restarting a failed process.`. I would assume that `failed process` means a process that exits with an exit code other than 0. But the actual implementation doesn't look at the exit code: https://github.com/apple/foundationdb/blob/main/fdbmonitor/fdbmonitor.h#L395-L405 + https://github.com/apple/foundationdb/blob/main/fdbmonitor/fdbmonitor.cpp#L646. So we either have to correct the documentation or fix the behaviour in fdbmonitor.   I saw this when I looked into https://github.com/apple/foundationdb/issues/11764.
-  **Post-Mortem & Fix Analysis**:
-  > CC @spraza 
-  > I don't have a strong opinion on either but I think using the exit code and only delaying processes that have an exit code different than  0 should be delayed. My understanding of this setting is to prevent a process to crash loop directly in a short amount of time.
-  > For completeness: In the fdb-kubernetes-monitor we are only delaying the restart when the process exit code was not `0`: https://github.com/apple/foundationdb/blob/main/fdbkubernetesmonitor/monitor.go#L453-L459
-
-- **Issue #11222** (2024-03-05): **Using DNS entries in cluster file can cause SIGSEV**
-  *Symptoms*: As part of this PR: https://github.com/FoundationDB/fdb-kubernetes-operator/pull/1932 I was looking into a failure that looked like a race condition on the first glance but it's not. When I run the same test without using DNS entries everything behaves correct. I can reproduce this issue with the following steps:  1. Create a cluster that uses DNS entries in the cluster file 2. Stop the operator 3. Delete all Pods of the cluster 4. Restart the operator  Now the operator is in a crash loop and cannot recover. It seems the issue is that none of the DNS entries can be resolved, which causes the following line to throw an error: https://github.com/apple/foundationdb/blob/release-7.1/fdbclient/AutoPublicAddress.cpp#L51. The method is called in the `createDatabase` method of the NativeAPI: https://github.com/apple/foundationdb/blob/release-7.1/fdbclient/NativeAPI.actor.cpp#L2213. In the go bindings the createDatabase is called here: https://github.com/apple/foundationdb/blob/release-7.1/bindings/go/src/fdb/fdb.go#L332-L338 but it seems like the error is not correctly passed up all layers.  I only checked the go bindings for this error, but it might be the case that other bindings are also affected.  Stack trace:  ```text Error determining public address. fatal error: unexpected signal during runtime execution Error determining public address. [signal SIGSEGV: segmentation violation code=0x1 addr=0x40 pc=0x7f8c78ded03a]   goroutine 338 [syscall]: runtime.cgocall
-  **Post-Mortem & Fix Analysis**:
-  > I did a bit more debugging and it seems like the error code is not returned by the create database method and instead of a nil/null pointer an empty struct is returned, logged the value of `outdb` before and after the `fdb_create_database` method was called.  ```text Before fdb_create_database outdb: <nil> After fdb_create_database outdb: &{{{}}} error 0 ```  I have to make some changes to the code next week as I currently don't have any trace events as the code throws the error before creating the trace file here: https://github.com/apple/foundationdb/blob/release-7.1/fdbclient/NativeAPI.actor.cpp#L2213. It seems like the error is swallowed here: https://github.com/apple/foundationdb/blob/release-7.1/fdbclient/ThreadSafeTransaction.cpp#L145-L164
-  > > If you observed an issue and used DNS entries in the cluster file you might have hit: [apple/foundationdb#11222](https://github.com/apple/foundationdb/issues/11222). Especially in the case when the coordinators are not reachable.  Commenting in reply from https://github.com/FoundationDB/fdb-kubernetes-operator/pull/1949#issuecomment-1963836243 The issue was happening also without the DNS names feature, and even when using a single-process in-memory FDB. It is fairly reproducible on my end; I mitigated it by adding logic to use a wait group to track all the `C.fdb_run_network()` goroutines created, and then in the Go finalizer for the client connection wait for such wait group after calling `C.fdb_stop_network()`, but I do not exclude that better/more elegant solutions can be found.
-  > > > If you observed an issue and used DNS entries in the cluster file you might have hit: [apple/foundationdb#11222](https://github.com/apple/foundationdb/issues/11222). Especially in the case when the coordinators are not reachable. >  > Commenting in reply from [FoundationDB/fdb-kubernetes-operator#1949 (comment)](https://github.com/FoundationDB/fdb-kubernetes-operator/pull/1949#issuecomment-1963836243) The issue was happening also without the DNS names feature, and even when using a single-process in-memory FDB. It is fairly reproducible on my end; I mitigated it by adding logic to use a wait group to track all the `C.fdb_run_network()` goroutines created, and then in the Go finalizer for the client connection wait for such wait group after calling `C.fdb_stop_network()`, but I do not exclude that better/more elegant solutions can be found.  Do you mind to share the code? From what I see `fdb_stop_network` is not actively called in the FBD go bindings.
-
-- **Issue #11151** (2024-01-30): **Fix a minor compile issue (release-7.1)**
-  *Symptoms*: Fix the compile problem in release-7.1  # Code-Reviewer Section  The general pull request guidelines can be found [here](https://github.com/apple/foundationdb/wiki/FoundationDB-Commit-Process).  Please check each of the following things and check *all* boxes before accepting a PR.  - [ ] The PR has a description, explaining both the problem and the solution. - [ ] The description mentions which forms of testing were done and the testing seems reasonable. - [ ] Every function/class/actor that was touched is reasonably well documented.  ## For Release-Branches  If this PR is made against a release-branch, please also check the following:  - [ ] This change/bugfix is a cherry-pick from the next younger branch (younger `release-branch` or `main` if this is the youngest branch) - [ ] There is a good reason why this PR needs to go into a release branch and this reason is documented (either in the description above or in a linked GitHub issue) 
-  **Post-Mortem & Fix Analysis**:
-  >  ### Result of foundationdb-pr-cluster-tests on Linux CentOS 7  * Commit ID: da7e5ef063993814b550271c20cdb875d515c00e * Duration 0:07:57 * Result: :x: **FAILED** * Error: `Error while executing command: ninja -v -C build_output -j ${NPROC} all packages strip_targets. Reason: exit status 1` * [Build Log](https://d1e0l78xbkh3xa.cloudfront.net/foundationdb/foundationdb-pr-cluster-tests/25fe3e29-64ae-484d-bcdb-4756a9f3848b.gz) terminal output (available for 30 days) * [Build Workspace](https://d1e0l78xbkh3xa.cloudfront.net/error.html) zip file of the working directory (available for 30 days) * [Cluster Test Logs](https://d1e0l78xbkh3xa.cloudfront.net/error.html) zip file of the test logs (available for 30 days) 
-  >  ### Result of foundationdb-pr on Linux CentOS 7  * Commit ID: da7e5ef063993814b550271c20cdb875d515c00e * Duration 0:08:13 * Result: :x: **FAILED** * Error: `Error while executing command: ninja -v -C build_output -j ${NPROC} all packages strip_targets. Reason: exit status 1` * [Build Log](https://d1e0l78xbkh3xa.cloudfront.net/foundationdb/foundationdb-pr/be9b7c60-718b-4c77-b48a-d7062459577e.gz) terminal output (available for 30 days) * [Build Workspace](https://d1e0l78xbkh3xa.cloudfront.net/foundationdb-pr/be9b7c60-718b-4c77-b48a-d7062459577e/workspace.zip) zip file of the working directory (available for 30 days) 
-  >  ### Result of foundationdb-pr-macos-m1 on macOS Ventura 13.x  * Commit ID: da7e5ef063993814b550271c20cdb875d515c00e * Duration 0:16:09 * Result: :x: **FAILED** * Error: `Error while executing command: ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${HOME}/.ssh_key ec2-user@${MAC_EC2_HOST} /opt/homebrew/bin/bash --login -c ./build_pr_macos.sh. Reason: exit status 1` * [Build Log](https://d1e0l78xbkh3xa.cloudfront.net/foundationdb/foundationdb-pr-macos-m1/975f6ea2-e71c-4cbf-9841-dc612e145e6a.gz) terminal output (available for 30 days) * [Build Workspace](https://d1e0l78xbkh3xa.cloudfront.net/error.html) zip file of the working directory (available for 30 days) 
-
-- **Issue #10736** (2023-08-07): **Fix the go tuple tests for new go version**
-  *Symptoms*: Recently we updated the default go version in the builder image to go 1.20.6. In go 1.20 there was a change that the random generator from the math package will automatically be seeded: https://pkg.go.dev/math/rand@go1.20.7#Seed. This breaks the current go tuple tests for numerics, as those tests make use of the random generator.  In general I'm not sure how useful the random number generator is for those tests, given that we compare against a static set of values and there a specific seed is required.  # Code-Reviewer Section  The general pull request guidelines can be found [here](https://github.com/apple/foundationdb/wiki/FoundationDB-Commit-Process).  Please check each of the following things and check *all* boxes before accepting a PR.  - [x] The PR has a description, explaining both the problem and the solution. - [x] The description mentions which forms of testing were done and the testing seems reasonable. - [x] Every function/class/actor that was touched is reasonably well documented.  ## For Release-Branches  If this PR is made against a release-branch, please also check the following:  - [ ] This change/bugfix is a cherry-pick from the next younger branch (younger `release-branch` or `main` if this is the youngest branch) - [ ] There is a good reason why this PR needs to go into a release branch and this reason is documented (either in the description above or in a linked GitHub issue) 
-  **Post-Mortem & Fix Analysis**:
-  >  ### Result of foundationdb-pr-macos on macOS Ventura 13.x  * Commit ID: c9a04d799d08d62cf969c83731db42be8e7d2b9c * Duration 0:05:43 * Result: :x: **FAILED** * Error: `Error while executing command: ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${HOME}/.ssh_key ec2-user@${MAC_EC2_HOST} /usr/local/bin/bash --login -c ./build_pr_macos.sh. Reason: exit status 1` * [Build Log](https://d1e0l78xbkh3xa.cloudfront.net/foundationdb/foundationdb-pr-macos/d3148dd9-8dba-4a6e-ab23-0e734eddebdf.gz) terminal output (available for 30 days) * [Build Workspace](https://d1e0l78xbkh3xa.cloudfront.net) zip file of the working directory (available for 30 days) 
-  >  ### Result of foundationdb-pr-macos-m1 on macOS Ventura 13.x  * Commit ID: c9a04d799d08d62cf969c83731db42be8e7d2b9c * Duration 0:06:31 * Result: :x: **FAILED** * Error: `Error while executing command: ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${HOME}/.ssh_key ec2-user@${MAC_EC2_HOST} /opt/homebrew/bin/bash --login -c ./build_pr_macos.sh. Reason: exit status 1` * [Build Log](https://d1e0l78xbkh3xa.cloudfront.net/foundationdb/foundationdb-pr-macos-m1/3ff001dd-e082-40a2-b075-bf6a19f8e9ed.gz) terminal output (available for 30 days) * [Build Workspace](https://d1e0l78xbkh3xa.cloudfront.net) zip file of the working directory (available for 30 days) 
-  >  ### Result of foundationdb-pr-clang-ide on Linux CentOS 7  * Commit ID: c9a04d799d08d62cf969c83731db42be8e7d2b9c * Duration 0:19:01 * Result: :white_check_mark: **SUCCEEDED** * Error: `N/A` * [Build Log](https://d1e0l78xbkh3xa.cloudfront.net/foundationdb/foundationdb-pr-clang-ide/76e63765-031b-49bf-858d-8970a8a4bd6d.gz) terminal output (available for 30 days) * [Build Workspace](https://d1e0l78xbkh3xa.cloudfront.net/foundationdb-pr-clang-ide/76e63765-031b-49bf-858d-8970a8a4bd6d/workspace.zip) zip file of the working directory (available for 30 days) 
-
-- **Issue #10260** (2023-07-24): **GRV latency spikes due to GetHealthMetricsReply::update**
-  *Symptoms*: In one 7.1.31 cluster, we saw GRV proxy becomes CPU-hot: ![grv](https://github.com/apple/foundationdb/assets/9602186/8d280619-3edd-4d0b-af4b-bb74a92fbcf0)  The flamegraph suggested `GetHealthMetricsReply::update` is copying a lot of data, which leads to https://github.com/apple/foundationdb/blob/14859f33ca597e73400f7b98925613f3c06e6c35/fdbclient/include/fdbclient/FDBTypes.h#L1299-L1301.  We solved this by kill the Ratekeeper. But it seems the problem is that Ratekeeper is sending back `GetRateInfoReply` that is large.  cc: @sfc-gh-tclinkenbeard @sfc-gh-etschannen 
-  **Post-Mortem & Fix Analysis**:
-  > This seems to be caused by DD, which recruited over 118k storage servers and removed roughly the same amount in a 24 hour period. I guess Ratekeeper doesn't have proper TTL for its entries.
-  > This is highly likely caused by DD server tracker. Suppose that a new SS does not receive any mutation in 6 mins. During the 6 mins, SS does not receive any mutation and doe not update its `lastUpdate`. When DD server tracker updates the metric for this SS, the tracker gets the `lastUpdate` from SS. The tracker see that this `lastUpdate` is more than 5 mins ago. Thus, the tracker marks this SS is `undesired`, leading to data moves in the`undesired server` priority and the removal of the SS. This process can repeatedly occur if no mutation accesses to new SSes in a short period.  We observed that DD team tracker triggers significant amount of data moves of the`undesired server` priority. In the past 24 hour, there were 100k StorageServerStuck events. When StorageServerStuck, server->ssVersionTooFarBehind is set, which can result in data relocation request with the priority of `undesired server`.   A StorageServerStuck event is triggered if `server->metrics.get().lastUpdate` is more 
-  > I think there are two bugs here:  1. `HealthMetrics` doesn't have TTL for its entries. In the pathologic cases we found (DD keep recruiting and removing SSes), the leads to unbounded size. 2. DD's poor behavior: recruits a SS and doesn't assign any shard to it. After 5 minutes, DD considers the SS stuck and removes it.
-
-- **Issue #8882** (2023-08-23): **`S3BlobStoreEndpoint::fromString` cannot guess region from S3 URL**
-  *Symptoms*: When attempting to backup to S3 on `release-7.2`, we're seeing the following issue:  ``` fdbbackup start -C <cluster_file> -d blobstore://s3.us-west-2.amazonaws.com/<name>?bucket=<bucket_name>&sa=1  ERROR: 'Backup Container URL invalid' on URL 'blobstore://s3.us-west-2.amazonaws.com/<name>?bucket=<bucket_name>&sa=1': Failed to get region from host or parameter in url, region is required for aws v4 signature ```  This can be fixed by adding `&region=us-west-2` to the URL string, but this is a regression from `release-7.1`. `guessRegionFromDomain` should be able to detect the region automatically, but it looks like that is not the case.
-
-- **Issue #8321** (2024-05-27): **Undestructed `Database` object after Cluster Recovery completed**
-  *Symptoms*:  When a Cluster Recovery process completed, it is expected that the `ACTOR` `clusterRecoveryCore` run forever until the next recovery starts. After then, the running `clusterRecoveryCore` should be cancelled and the corresponding resources are then released. However, there are evidences show that even `clusterRecoveryCore` is cancelled, the opening `Database` object, constructed by `openDBOnServer`, will still exist for uncertain long time.  The first evidence is that, on certain FDB clusters, there are multiple `databaseLogger` `ACTOR`s running. The number of simultaneously running `ACTOR`s might cause `TraceEventThrottle` , which originated from the `TraceEvent`s of the `ACTOR`. The `ACTOR` will only be constructed when a new `DatabaseContext` object is constructed, which happens when `openDBOnServer` is called.  The second evidence is that, when the construction/destruction of `Database` objects, which wrap the corresponding`DatabaseContext` with a reference count, are logged if the object is either created by `clusterRecoveryCore`, or copied from the `clusterRecoveryCore` generated object, the log is showing that a certain amount of `Database` objects are not being destructed. These `Database` objects are constructed/copy-constructed at:  * `TransactionState` object construction. * `watchStorageServerResp` `ACTOR` creation. * `watchValue` `ACTOR` creation.  And for the `watch` related `ACTOR`s, it can be shown that they are watching these following keys:  * `
-  **Post-Mortem & Fix Analysis**:
-  > This hopefully relieve the `TraceEventThrottled_TransactionMetrics` problem. Yet this might *NOT* be the only cause of the issue.
-  > `watchStorageServerResp` is assigned to `metadata->watchFutureSS`. So for it to be cancelled, the `metadata` has to be removed. Or, we may explicitly cancel it in the catch block of `watch(Reference<Watch> watch, ...)` function or `watchValueMap(Future<Version> version, ...)` with a try-catch.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2413,1779 +1961,243 @@ bool validateAllCombinations(std::vector<LocalityData>& offendingCombo,
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4183094c` (2026-10-05)
-**Commit Message**: documentation: remove msbuild version manifest parsing
+### Incident Patch 1: `6bedaf81` (2026-10-13)
+**Commit Message**: Merge pull request #14236 from tclinkenbeard-oai/dev/tclinkenbeard/backup-restore-trace-overflow-20261006
 
-this xml parsing is not needed, the cmake code does pass
-version and release flags to sphinx-build
+Retry backup encryption key reads after disk errors
 
-**File**: `documentation/sphinx/conf.py` (modified, +3/-28)
+**File**: `fdbclient/BackupContainerFileSystem.cpp` (modified, +34/-19)
 ```diff
-@@ -52,34 +52,9 @@
- project = "FoundationDB"
- copyright = "2013-2025 Apple, Inc and the FoundationDB project authors"
+@@ -1493,28 +1493,43 @@ class BackupContainerFileSystemImpl {
+ 		co_await keyFile->sync();
+ 	}
  
--version_path = os.path.join(
--    os.path.dirname(sys.executable), "..", "..", "..", "versions.target"
--)
--if os.path.exists(version_path):
--    # Load the version information from 'versions.target'
--    import xml.etree.ElementTree as ET
--
--    tree = ET.parse(version_path)
--    root = tree.getroot()
--
--    # The version info for the project you're documenting, acts as replacement for
--    # |version| and |release|, also used in various other places throughout the
--    # built documents.
--    #
--    # The short X.Y version.
--    version = root.find(
--        ".//{http://schemas.microsoft.com/developer/msbuild/2003}PackageName"
--    ).text
--    # The full version, including alpha/beta/rc tags.
--    # FoundationDB special note: also see guide-common.rst.inc and update the link to the EC2 template
--    release = root.find(
--        ".//{http://schemas.microsoft.com/developer/msbuild/2003}Version"
--    ).text
--else:
--    # Version and release will be overridden by sphinx command line
--    version = None
--    release = None
--
-+# Version and release will be overridden by sphinx command line
-+version = None
-+release = None
- 
- # The language for content autogenerated by Sphinx. Refer to documentation
- # for a list of supported languages.
-```
-
----
-
-### Incident Patch 2: `f8e1e90a` (2026-10-05)
-**Commit Message**: Fix heap OOB read parsing globalConfigVersionKey in GRV proxy (#14196)
-
-* Fix heap OOB read parsing globalConfigVersionKey in GRV proxy
-
-Problem: globalConfigRefresh() memcpy'd sizeof(Version) (8) bytes out of
-the value read back for the system key globalConfigVersionKey
-("\xff/globalConfig/v") with no check that the value was actually that
-long. This is an ordinary system key, not the specially restricted
-"\xff\xff" range, so any client transaction that sets
-FDBTransactionOptions::ACCESS_SYSTEM_KEYS -- a standard, public
-transaction option, not an admin-gated one -- can commit an
-undersized or empty value to it directly, bypassing the versionstamp
-mechanism (GlobalConfig::trigger()) that normally produces a 10-byte
-value.
-
-Trigger: FDB's trust model treats any client with a live transaction as
-already trusted -- ACCESS_SYSTEM_KEYS is a standard, public transaction
-option, and a client with transaction access can already do essentially
-anything to the data. This isn't a privilege-escalation issue; it's a
-resilience issue. One transaction (tr->set with ACCESS_SYSTEM_KEYS, any
-length including empty) -- whether from a buggy or misbehaving client, a
-torn/partial write from a crash, or
-
-**File**: `fdbserver/grvproxy/GrvProxyServer.cpp` (modified, +59/-16)
-```diff
-@@ -40,6 +40,7 @@
- #include "flow/Buggify.h"
- #include "flow/IRandom.h"
- #include "flow/Trace.h"
-+#include "flow/UnitTest.h"
- #include "flow/flow.h"
- #include "flow/CoroUtils.h"
- #include "flow/genericactors.h"
-@@ -302,26 +303,68 @@ Future<Void> globalConfigMigrate(GrvProxyData* grvProxyData) {
- // Periodically refresh local copy of global configuration.
- Future<Void> globalConfigRefresh(GrvProxyData* grvProxyData, Version* cachedVersion, RangeResult* cachedData) {
- 	auto tr = makeReference<ReadYourWritesTransaction>(grvProxyData->cx);
--	while (true) {
--		Error err;
++	static constexpr int ENCRYPTION_KEY_MAX_RETRIES = 5;
++
+ 	static Future<Void> readEncryptionKey(std::string encryptionKeyFileName) {
+-		Reference<IAsyncFile> keyFile;
+ 		StreamCipherKey const* cipherKey = StreamCipherKey::getGlobalCipherKey();
 -		try {
--			tr->setOption(FDBTransactionOptions::READ_SYSTEM_KEYS);
--			Future<Optional<Value>> globalConfigVersionFuture = tr->get(globalConfigVersionKey);
--			Future<RangeResult> tmpCachedDataFuture = tr->getRange(globalConfigDataKeys, CLIENT_KNOBS->TOO_MANY);
--			Optional<Value> globalConfigVersion = co_await globalConfigVersionFuture;
--			RangeResult tmpCachedData = co_await tmpCachedDataFuture;
--			*cachedData = tmpCachedData;
--			if (globalConfigVersion.present()) {
--				Version parsedVersion;
--				memcpy(&parsedVersion, globalConfigVersion.get().begin(), sizeof(Version));
--				*cachedVersion = bigEndian64(parsedVersion);
-+	try {
-+		while (true) {
-+			Error err;
+-			Reference<IAsyncFile> _keyFile = co_await IAsyncFileSystem::filesystem()->open(
+-			    encryptionKeyFileName,
+-			    IAsyncFile::OPEN_NO_AIO | IAsyncFile::OPEN_READONLY | IAsyncFile::OPEN_UNCACHED,
+-			    0400);
+-			keyFile = _keyFile;
+-		} catch (Error& e) {
+-			TraceEvent(SevError, "FailedToOpenEncryptionKeyFile").error(e).detail("FileName", encryptionKeyFileName);
+-			throw e;
+-		}
+-		int bytesRead = co_await uncancellable(keyFile->read(cipherKey->data(), cipherKey->size(), 0));
+-		if (bytesRead != cipherKey->size()) {
+-			TraceEvent(SevError, "InvalidEncryptionKeyFileSize")
+-			    .detail("ExpectedSize", cipherKey->size())
+-			    .detail("ActualSize", bytesRead)
+-			    .detail("FileName", encryptionKeyFileName);
+-			throw invalid_encryption_key_file();
++		for (int retries = 0;; ++retries) {
++			const char* errorEvent = "FailedToOpenEncryptionKeyFile";
 +			try {
-+				tr->setOption(FDBTransactionOptions::READ_SYSTEM_KEYS);
-+				Future<Optional<Value>> globalConfigVersionFuture = tr->get(globalConfigVersionKey);
-+				Future<RangeResult> tmpCachedDataFuture = tr->getRange(globalConfigDataKeys, CLIENT_KNOBS->TOO_MANY);
-+				Optional<Value> globalConfigVersion = co_await globalConfigVersionFuture;
-+				RangeResult tmpCachedData = co_await tmpCachedDataFuture;
-+				// Update together: these are served to clients as a matched pair.
-+				if (globalConfigVersion.present()) {
-+					Version parsedVersion =
-+					    BinaryReader::fromStringRef<Version>(globalConfigVersion.get(), Unversioned());
-+					*cachedVersion = bigEndian64(parsedVersion);
++				Reference<IAsyncFile> keyFile = co_await IAsyncFileSystem::filesystem()->open(
++				    encryptionKeyFileName,
++				    IAsyncFile::OPEN_NO_AIO | IAsyncFile::OPEN_READONLY | IAsyncFile::OPEN_UNCACHED,
++				    0400);
++				errorEvent = "FailedToReadEncryptionKeyFile";
++				int bytesRead = co_await uncancellable(keyFile->read(cipherKey->data(), cipherKey->size(), 0));
++				if (bytesRead != cipherKey->size()) {
++					TraceEvent(SevError, "InvalidEncryptionKeyFileSize")
++					    .detail("ExpectedSize", cipherKey->size())
++					    .detail("ActualSize", bytesRead)
++					    .detail("FileName", encryptionKeyFileName);
++					throw invalid_encryption_key_file();
 +				}
-+				*cachedData = tmpCachedData;
 +				co_return;
 +			} catch (Error& e) {
-+				err = e;
- 			}
--			co_return;
-+			co_await tr->onError(err);
-+		}
-+	} catch (Error& e) {
-+		if (e.code() == error_code_actor_cancelled) {
-+			throw;
-+		}
-+		// Non-retryable error: keep the last-good cache and retry next refresh.
-+		TraceEvent(SevWarnAlways, "GlobalConfigRefreshError").errorUnsuppressed(e).suppressFor(60.0);
-+	}
-+}
-+
-+TEST_CASE("/fdbserver/GrvProxyServer/GlobalConfigVersionKeyRejectsUndersizedValue") {
-+	if (!g_network->isSimulated()) {
-+		for (int size = 0; size < sizeof(Version); ++size) {
-+			Standalone<StringRef> tooShort(std::string(size, '\x01'));
-+			try {
-+				BinaryReader::fromStringRef<Version>(tooShort, Unversioned());
-+				ASSERT(false);
-+			} catch (Error& e) {
-+				ASSERT_EQ(e.code(), error_code_serialization_failed);
++				if (e.code() == error_code_actor_cancelled) {
++					throw;
++				}
++				bool retry = e.isDiskError() && retries < ENCRYPTION_KEY_MAX_RETRIES;
++				TraceEvent(retry ? SevWarn : SevError, errorEvent)
++				    .error(e)
++				    .detail("FileName", encryptionKeyFileName)
++				    .detail("Retries", retries);
++				if (!retry) {
++					throw;
++				}
 +			}
-+		}
-+
-+		// StringRef's default constructor is data(nullptr), length(0) -- distinct
-+		// from the size-0 case above, whose backing std::string::c_str() is a
-+		// valid non-null pointer even when empty. A genuinely null data pointer
-+		// must not be dereferenced before the length check rejects the read.
-+		StringRef nullValue;
-+		ASSERT(nullValue.begin() == nullptr);
-+		try {
-+			BinaryReader::fromStringRef<Version>(nullValue, Unversioned());
-+			ASSERT(false);
- 		} catch (Error& e) {
--			err = e;
-+			ASSERT_EQ(e.code(), error_code_serialization_failed);
++			// Containers retain this setup future, so recover disk errors before publishing a permanent failure.
++			co_await delay(1.0);
  		}
--		co_await tr->onError(err);
+-		ASSERT_EQ(bytesRead, cipherKey->size());
  	}
-+
-+	// A versionstamp is 10 bytes; only the leading sizeof(Version) are used.
-+	Standalone<StringRef> versionstamp("\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00"_sr);
-+	ASSERT_EQ(BinaryReader::fromStringRef<Version>(versionstamp, Unversioned()), bigEndian64(Version(1)));
-+
-+	return Void();
- }
  
- // Handle common GlobalConfig transactions on the server side, because not all
+ 	static Future<Void> writeEncryptionMetadataIfNotExists(Reference<BackupContainerFileSystem> bc,
 ```
 
 ---
 
-### Incident Patch 3: `ab17784b` (2026-10-02)
-**Commit Message**: tests: fix fdb_test_runner fdb_version.py handling
+### Incident Patch 2: `77ca7729` (2026-10-16)
+**Commit Message**: fdbbackup: fix --min-cleanup-seconds name in help output (#14300)
 
-This situation came about from 085f9a6a5458 and f95c3a464915
-
-**File**: `tests/CMakeLists.txt` (modified, +18/-5)
+**File**: `fdbbackup/backup.cpp` (modified, +1/-1)
 ```diff
-@@ -1,13 +1,30 @@
- include(AddFdbTest)
- 
-+# Copy the fdb_test_runner package to the build dir, along with fdb_version.py
-+# generated with this build's versions, for the venv to install from there.
-+# "pyproject.toml" is used as proxy-marker for whether dir is up-to-date.
-+set(test_runner_src_dir ${PROJECT_SOURCE_DIR}/tests/TestRunner)
-+set(test_runner_pkg_dir ${PROJECT_BINARY_DIR}/tests/TestRunner)
-+file(GLOB_RECURSE test_runner_srcs ${test_runner_src_dir}/*.py)
-+add_custom_command(
-+  OUTPUT  ${test_runner_pkg_dir}/pyproject.toml
-+  DEPENDS ${test_runner_src_dir}/pyproject.toml ${test_runner_srcs}
-+  COMMAND ${CMAKE_COMMAND} -E copy_directory ${test_runner_src_dir} ${test_runner_pkg_dir}
-+  COMMENT "copy TestRunner")
-+configure_file(${test_runner_src_dir}/fdb_version.py.cmake ${test_runner_pkg_dir}/fdb_test_runner/fdb_version.py)
-+add_custom_target(test_runner_package ALL DEPENDS ${test_runner_pkg_dir}/pyproject.toml)
-+
-+# Used for ENABLE_SIMULATION_TESTS
-+set(TestRunner "${test_runner_pkg_dir}/run_test_runner.py")
-+
- # Test for setting up Python venv for client tests.
- # Adding this test as a fixture to another test allows the use of non-native Python packages within client test scripts
- # by installing dependencies from requirements.txt
- set(test_venv_cmd "")
- string(APPEND test_venv_cmd "${Python3_EXECUTABLE} -m venv ${test_venv_dir} ")
- string(APPEND test_venv_cmd "&& ${test_venv_activate} ")
- string(APPEND test_venv_cmd "&& pip install --retries 9 -r ${CMAKE_SOURCE_DIR}/tests/TestRunner/requirements.txt ")
--string(APPEND test_venv_cmd "&& pip install ${CMAKE_SOURCE_DIR}/tests/TestRunner ")
-+string(APPEND test_venv_cmd "&& pip install ${test_runner_pkg_dir} ")
- string(APPEND test_venv_cmd "&& pip install ${CMAKE_BINARY_DIR}/bindings/python ")
- 
- # The module is also included by fdbcli; register this shared fixture only once.
-@@ -54,10 +71,6 @@ if(WITH_PYTHON)
-   Or provide a path to another fdbserver")
+@@ -956,7 +956,7 @@ static void printBackupUsage(bool devhelp) {
+ 	printf("  --trace-format FORMAT\n"
+ 	       "                 Select the format of the trace files. xml (the default) and json are supported.\n"
+ 	       "                 Has no effect unless --log is specified.\n");
+-	printf("  --max-cleanup-seconds SECONDS\n"
++	printf("  --min-cleanup-seconds SECONDS\n"
+ 	       "                 Specifies the amount of time a backup or DR needs to be stale before cleanup will\n"
+ 	       "                 remove mutations for it. By default this is set to one hour.\n");
+ 	printf("  --delete-data\n"
+```
+
+---
+
+### Incident Patch 3: `7a4ca845` (2026-10-14)
+**Commit Message**: build: on rhel9 based distros, avoid linking GLIBC_2.35 symbols
+
+RHEL 9.x has glibc-2.34, but at various minor releases some
+glibc-2.35 symbols were backported. The problematic one for
+us is _dl_find_object@GLIBC_2.35 backported in RHEL 9.7 which
+causes fdb binaries to fail to start on RHEL 9.6 based systems
+or containers.
+
+This symbol actually comes from stack-unwider routines in libgcc_eh.a
+from the system gcc-11 install, but the gcc-toolset-13 which we
+sometimes alternately use (instead of our typical custom clang-19.x)
+is not linked against the new glibc-with-backports so we can use
+the needed libgcc bits from that instead. This is admittedly not a
+very thorough fix, just a way to avoid downgrading build systems for now.
+
+Also add a test that unexpected GLIBC_2.35+ symbols do not appear
+on RHEL 9.x based builds in the future, so we can at least catch it.
+
+**File**: `CMakeLists.txt` (modified, +15/-0)
+```diff
+@@ -311,6 +311,21 @@ if(WITH_DOCUMENTATION)
    endif()
- 
--  configure_file(${PROJECT_SOURCE_DIR}/tests/TestRunner/fdb_version.py.cmake ${PROJECT_BINARY_DIR}/tests/TestRunner/fdb_test_runner/fdb_version.py)
--
--  set(TestRunner "${PROJECT_SOURCE_DIR}/tests/TestRunner/run_test_runner.py")
--
-   configure_file(${PROJECT_SOURCE_DIR}/tests/CTestCustom.ctest.cmake ${PROJECT_BINARY_DIR}/CTestCustom.ctest @ONLY)
- 
-   set(MULTIREGION_IGNORE_PATTERNS "")
-```
-
-**File**: `tests/TestRunner/fdb_test_runner.egg-info/PKG-INFO` (removed, +0/-5)
-```diff
-@@ -1,5 +0,0 @@
--Metadata-Version: 2.4
--Name: fdb-test-runner
--Version: 0.1.0
--Summary: FoundationDB Test Runner utilities
--Requires-Python: >=3.9
-```
-
-**File**: `tests/TestRunner/fdb_test_runner.egg-info/SOURCES.txt` (removed, +0/-18)
-```diff
-@@ -1,18 +0,0 @@
--pyproject.toml
--fdb_test_runner/TestDirectory.py
--fdb_test_runner/TestRunner.py
--fdb_test_runner/__init__.py
--fdb_test_runner/authz_util.py
--fdb_test_runner/binary_download.py
--fdb_test_runner/cluster_args.py
--fdb_test_runner/fake_cluster.py
--fdb_test_runner/fdb_version.py
--fdb_test_runner/local_cluster.py
--fdb_test_runner/test_util.py
--fdb_test_runner/tmp_cluster.py
--fdb_test_runner/tmp_multi_cluster.py
--fdb_test_runner/upgrade_test.py
--fdb_test_runner.egg-info/PKG-INFO
--fdb_test_runner.egg-info/SOURCES.txt
--fdb_test_runner.egg-info/dependency_links.txt
--fdb_test_runner.egg-info/top_level.txt
-\ No newline at end of file
-```
-
-**File**: `tests/TestRunner/fdb_test_runner.egg-info/dependency_links.txt` (removed, +0/-1)
-```diff
-@@ -1 +0,0 @@
--
-```
-
-**File**: `tests/TestRunner/fdb_test_runner.egg-info/top_level.txt` (removed, +0/-1)
-```diff
-@@ -1 +0,0 @@
--fdb_test_runner
-```
-
-**File**: `tests/TestRunner/fdb_test_runner/fdb_version.py` (removed, +0/-4)
-```diff
-@@ -1,4 +0,0 @@
--CURRENT_VERSION = "8.0.0"
--FUTURE_VERSION = "8.1.0"
--PREV_RELEASE_VERSION = "7.4.5"
--PREV2_RELEASE_VERSION = "7.3.59"
-```
-
----
-
-### Incident Patch 4: `b7728cea` (2026-10-02)
-**Commit Message**: Use clang-tidy 19 from the build toolchain
-
-**File**: `.clang-tidy` (modified, +1/-4)
-```diff
-@@ -16,7 +16,6 @@ Checks: >
-   bugprone-macro-repeated-side-effects,
-   bugprone-misplaced-widening-cast,
-   bugprone-move-forwarding-reference,
--  bugprone-nondeterministic-pointer-iteration-order,
-   bugprone-posix-return,
-   bugprone-redundant-branch-condition,
-   bugprone-return-const-ref-from-parameter,
-@@ -58,9 +57,7 @@ Checks: >
-   readability-const-return-type,
-   readability-container-size-empty,
-   readability-delete-null-pointer,
--  readability-duplicate-include,
--  readability-inconsistent-ifelse-braces
--HeaderFilterRegex: ''
-+  readability-duplicate-include
- CheckOptions:
-   - key: bugprone-dangling-handle.HandleClasses
-     value: 'std::basic_string_view;std::experimental::basic_string_view;std::span;StringRef'
-```
-
-**File**: `.github/workflows/tidy.yml` (modified, +3/-8)
-```diff
-@@ -29,17 +29,12 @@ jobs:
-           # get history of all branches so we can find merge-base
-           fetch-depth: 0
- 
--      - name: Install clang-tidy
--        run: |
--          python3 -m venv "$RUNNER_TEMP/clang-tidy"
--          "$RUNNER_TEMP/clang-tidy/bin/python" -m pip install --disable-pip-version-check --only-binary=:all: --no-deps --require-hashes -r /dev/stdin <<'EOF'
--          clang-tidy==22.1.8 --hash=sha256:1a3de07ba82d4403d8b692ae63a5520d4db5c606014c92c24bbcef9259057bf1
--          EOF
--          echo "$RUNNER_TEMP/clang-tidy/bin" >> "$GITHUB_PATH"
--
-       - name: Validate clang-tidy configuration
-         run: |
-+          clang --version
-           clang-tidy --version
-+          clang --version | grep -q '^clang version 19\.'
-+          clang-tidy --version | grep -q 'LLVM version 19\.'
-           clang-tidy --verify-config --config-file=.clang-tidy
- 
-       - name: Configure build
-```
-
-**File**: `documentation/sphinx/source/clang-tidy.rst` (modified, +13/-13)
-```diff
-@@ -10,21 +10,18 @@ This guide explains how to run ``clang-tidy`` locally so you can fix issues befo
- What clang-tidy checks
- ======================
- 
--FoundationDB configures 59 named checks in the ``.clang-tidy`` file at the repository root.
--Use clang-tidy 22 or later for the complete check set; CI pins a checksum-verified
--clang-tidy 22.1.8 package. Inspect enabled checks with ``clang-tidy --list-checks``.
-+FoundationDB configures 57 named checks in the ``.clang-tidy`` file at the repository root.
-+Use clang-tidy 19 to match the Clang 19 build toolchain. CI uses the clang-tidy
-+provided by the build image and verifies that both tools are version 19.
-+Inspect enabled checks with ``clang-tidy --list-checks``.
- The intent is to enable more as we go forward. Here are some example rules:
- 
--* **39 Bugprone rules** -- catch potential runtime errors, including unsafe self-assignment, forwarding constructors that hide copy or move constructors, narrow accumulation initializers, mismatched argument comments, obvious infinite loops, chained comparisons, swapped arguments, integer division in floating-point calculations, missed base-class copy construction, repeated macro argument evaluation, near-miss virtual overrides, dangling returned references, incorrect erase/remove calls, incorrect POSIX error checks, discarded return values, duplicate branches, and address-dependent pointer iteration
-+* **38 Bugprone rules** -- catch potential runtime errors, including unsafe self-assignment, forwarding constructors that hide copy or move constructors, narrow accumulation initializers, mismatched argument comments, obvious infinite loops, chained comparisons, swapped arguments, integer division in floating-point calculations, missed base-class copy construction, repeated macro argument evaluation, near-miss virtual overrides, dangling returned references, incorrect erase/remove calls, incorrect POSIX error checks, discarded return values, and duplicate branches
- * **1 C++ Core Guidelines rule** -- catch unsafe captures in coroutine lambdas (``cppcoreguidelines-avoid-capturing-lambda-coroutines``)
- * **2 Misc rules** -- catch redundant expressions and RAII objects held across coroutine suspension points
- * **4 Modernize rules** -- encourage modern C++ practices (e.g., ``modernize-use-auto``, ``modernize-use-override``)
- * **6 Performance rules** -- avoid unnecessary copies, hidden range-loop conversions, repeated vector growth in simple loops, inefficient generic algorithms over associative containers, pointless moves, and move constructors that copy movable members (``performance-for-range-copy``, ``performance-implicit-conversion-in-loop``, ``performance-inefficient-vector-operation``, ``performance-inefficient-algorithm``, ``performance-move-const-arg``, ``performance-move-constructor-init``)
--* **7 Readability rules** -- improve code clarity (e.g., ``readability-container-contains``, ``readability-container-size-empty``)
--
--``HeaderFilterRegex: ''`` preserves the scope used before clang-tidy 22:
--included-header diagnostics remain filtered out, while a header checked directly
--is analyzed as the main file. This keeps CI focused on eligible touched files.
-+* **6 Readability rules** -- improve code clarity (e.g., ``readability-container-contains``, ``readability-container-size-empty``)
- 
- ``misc-coroutine-hostile-raii`` checks Flow's blocking ``MutexHolder`` and
- ``ThreadSpinLockHolder`` guards as well as ``std::lock_guard`` and
-@@ -116,19 +113,22 @@ On macOS (with Homebrew LLVM):
- 
- .. code-block:: shell
- 
--   export TIDY_DIFF=$(find $(brew --prefix llvm)/share/clang -name "clang-tidy-diff.py")
-+   export PATH="$(brew --prefix llvm@19)/bin:$PATH"
-+   export TIDY_DIFF=$(find $(brew --prefix llvm@19)/share/clang -name "clang-tidy-diff.py")
- 
- On Linux:
- 
- .. code-block:: shell
- 
--   export TIDY_DIFF=$(find /usr/lib/llvm-*/share/clang -name "clang-tidy-diff.py" | head -n 1)
-+   export PATH="/usr/lib/llvm-19/bin:$PATH"
-+   export TIDY_DIFF=$(find /usr/lib/llvm-19/share/clang -name "clang-tidy-diff.py")
- 
--To make this permanent, add to your ``~/.bashrc`` or ``~/.zshrc``:
-+To make this permanent, add the corresponding ``PATH`` and ``TIDY_DIFF`` exports
-+above to your ``~/.bashrc`` or ``~/.zshrc``, followed by:
- 
- .. code-block:: shell
- 
--   alias fdb-tidy='python3 $(find $(brew --prefix llvm 2>/dev/null || echo "/usr/lib/llvm-*") -name "clang-tidy-diff.py" | head -n 1) -p 1 -path .'
-+   alias fdb-tidy='python3 "$TIDY_DIFF" -p 1 -path .'
- 
- Step 3: Run against your changes
- ---------------------------------
-```
-
-**File**: `fdbserver/kvstore/VersionedBTree.cpp` (modified, +0/-2)
-```diff
-@@ -11189,8 +11189,6 @@ struct KVSource {
- 		for (auto& p : prefixes) {
- 			prefixesSorted.push_back(&p);
- 		}
--		// The comparator orders prefix bytes; pointee addresses never affect ordering.
--		// NOLINTNEXTLINE(bugprone-nondeterministic-pointer-iteration-order)
- 		std::sort(prefixesSorted.begin(), prefixesSorted.end(), [](const Prefix* a, const Prefix* b) {
- 			return KeyRef((uint8_t*)a->begin(), a->size()) < KeyRef((uint8_t*)b->begin(), b->size());
- 		});
-```
-
-**File**: `fdbserver/tester/TesterServer.cpp` (modified, +0/-2)
-```diff
-@@ -141,8 +141,6 @@ void printSimulatedTopology() {
- 		return;
- 	}
- 	auto processes = g_simulator->getAllProcesses();
--	// Locality fields and network addresses determine order, never ProcessInfo pointer values.
--	// NOLINTNEXTLINE(bugprone-nondeterministic-pointer-iteration-order)
- 	std::sort(processes.begin(), processes.end(), [](ISimulator::ProcessInfo* lhs, ISimulator::ProcessInfo* rhs) {
- 		auto l = lhs->locality;
- 		auto r = rhs->locality;
-```
-
-**File**: `fdbserver/workloads/UnitTests.cpp` (modified, +0/-2)
-```diff
-@@ -198,8 +198,6 @@ struct UnitTestWorkload : TestWorkload {
- 			}
- 		}
- 
--		// The comparator orders test-name bytes, never UnitTest pointer addresses.
--		// NOLINTNEXTLINE(bugprone-nondeterministic-pointer-iteration-order)
- 		std::sort(tests.begin(), tests.end(), [](auto lhs, auto rhs) {
- 			return std::string_view(lhs->name) < std::string_view(rhs->name);
- 		});
-```
-
-**File**: `flow/UnitTestRunner.cpp` (modified, +0/-1)
-```diff
-@@ -284,7 +284,6 @@ std::vector<UnitTest*> collectTests(const UnitTestRunnerOptions& options, const
- 		}
- 	}
- 
--	// NOLINTNEXTLINE(bugprone-nondeterministic-pointer-iteration-order): The comparator orders names, not addresses.
- 	std::sort(tests.begin(), tests.end(), [](auto lhs, auto rhs) {
- 		return std::string_view(lhs->name) < std::string_view(rhs->name);
- 	});
-```
-
----
-
-### Incident Patch 5: `2f937694` (2026-10-02)
-**Commit Message**: Fix LocalityData value presence checks
-
-**File**: `fdbrpc/Locality.cpp` (modified, +30/-0)
-```diff
-@@ -19,6 +19,7 @@
-  */
- 
- #include "fdbrpc/Locality.h"
-+#include "flow/UnitTest.h"
- 
- const UID LocalityData::UNSET_ID = UID(0x0ccb4e0feddb5583, 0x010f6b77d9d10ece);
- alignas(8) const StringRef LocalityData::keyProcessId = "processid"_sr;
-@@ -41,3 +42,32 @@ LBDistance::Type loadBalanceDistance(LocalityData const& loc1, LocalityData cons
- 	}
- 	return LBDistance::DISTANT;
- }
-+
-+TEST_CASE("/fdbrpc/LocalityData/isPresent") {
-+	LocalityData locality;
-+	const Standalone<StringRef> value = "value"_sr;
-+	const Standalone<StringRef> otherValue = "other"_sr;
-+	const Standalone<StringRef> emptyValue = ""_sr;
-+	const Optional<Standalone<StringRef>> unset;
-+
-+	locality.set("key"_sr, value);
-+	ASSERT(locality.isPresent("key"_sr, value));
-+	ASSERT(!locality.isPresent("key"_sr, otherValue));
-+	ASSERT(!locality.isPresent("key"_sr, unset));
-+
-+	locality.set("unset"_sr, unset);
-+	ASSERT(locality.isPresent("unset"_sr, unset));
-+	ASSERT(!locality.isPresent("unset"_sr, value));
-+	ASSERT(!locality.isPresent("unset"_sr, emptyValue));
-+
-+	locality.set("empty"_sr, emptyValue);
-+	ASSERT(locality.isPresent("empty"_sr, emptyValue));
-+	ASSERT(!locality.isPresent("empty"_sr, unset));
-+	ASSERT(!locality.isPresent("empty"_sr, value));
-+
-+	ASSERT(!locality.isPresent("missing"_sr, value));
-+	ASSERT(!locality.isPresent("missing"_sr, unset));
-+	ASSERT(!LocalityData().isPresent("missing"_sr, value));
-+	ASSERT(!LocalityData().isPresent("missing"_sr, unset));
-+	return Void();
-+}
-```
-
-**File**: `fdbrpc/include/fdbrpc/Locality.h` (modified, +1/-1)
-```diff
-@@ -61,7 +61,7 @@ struct LocalityData {
- 	bool isPresent(StringRef key) const { return (_data.find(key) != _data.end()); }
- 	bool isPresent(StringRef key, Optional<Standalone<StringRef>> value) const {
- 		auto pos = _data.find(key);
--		return (pos != _data.end()) ? false : (pos->second == value);
-+		return pos != _data.end() && pos->second == value;
- 	}
- 
- 	std::string describeValue(StringRef key) const {
-```
-
----
-
-### Incident Patch 6: `a7e0a5ad` (2026-10-02)
-**Commit Message**: Fix remaining shared-header clang-tidy warnings
-
-**File**: `fdbclient/include/fdbclient/JSONDoc.h` (modified, +2/-2)
-```diff
-@@ -122,7 +122,7 @@ struct JSONDoc {
- 			const json_spirit::mObject* curObj = curVal ? &curVal->get_obj() : pObj;
- 
- 			// Make sure key exists, if not then return false
--			if (!curObj->count(key))
-+			if (!curObj->contains(key))
- 				return false;
- 
- 			// Advance curVal
-@@ -170,7 +170,7 @@ struct JSONDoc {
- 			}
- 
- 			// Make sure key exists, if not then return false
--			if (!curObj->count(key))
-+			if (!curObj->contains(key))
- 				(*curObj)[key] = json_spirit::mValue();
- 
- 			// Advance curVal
-```
-
-**File**: `fdbclient/include/fdbclient/TaskBucket.h` (modified, +1/-3)
-```diff
-@@ -446,9 +446,7 @@ struct TaskFuncBase : IDispatched<TaskFuncBase, Standalone<StringRef>, std::func
- 		return Reference<TaskFuncBase>(dispatch(taskFuncType)());
- 	}
- 
--	static bool isValidTaskType(StringRef type) {
--		return !type.empty() && (dispatches().find(type) != dispatches().end());
--	}
-+	static bool isValidTaskType(StringRef type) { return !type.empty() && dispatches().contains(type); }
- 
- 	static bool isValidTask(Reference<Task> task) {
- 		auto itor = task->params.find(Task::reservedTaskParamKeyType);
-```
-
-**File**: `fdbclient/include/fdbclient/VersionVector.h` (modified, +1/-1)
-```diff
-@@ -95,7 +95,7 @@ struct VersionVector {
- 
- 	bool hasVersion(const Tag& tag) const {
- 		ASSERT(tag != invalidTag);
--		return versions.find(tag) != versions.end();
-+		return versions.contains(tag);
- 	}
- 
- 	// @pre assumes that the given tag has an entry in the version vector.
-```
-
-**File**: `fdbrpc/include/fdbrpc/Locality.h` (modified, +1/-1)
-```diff
-@@ -58,7 +58,7 @@ struct LocalityData {
- 
- 	void set(StringRef key, Optional<Standalone<StringRef>> value) { _data[key] = value; }
- 
--	bool isPresent(StringRef key) const { return (_data.find(key) != _data.end()); }
-+	bool isPresent(StringRef key) const { return _data.contains(key); }
- 	bool isPresent(StringRef key, Optional<Standalone<StringRef>> value) const {
- 		auto pos = _data.find(key);
- 		return (pos != _data.end()) ? false : (pos->second == value);
-```
-
-**File**: `fdbrpc/include/fdbrpc/simulator.h` (modified, +3/-7)
-```diff
-@@ -230,13 +230,11 @@ class ISimulator : public INetwork {
- 		clearedAddresses[address]++;
- 		TraceEvent("ClearAddress").detail("Address", address).detail("Value", clearedAddresses[address]);
- 	}
--	bool isCleared(NetworkAddress const& address) const {
--		return clearedAddresses.find(address) != clearedAddresses.end();
--	}
-+	bool isCleared(NetworkAddress const& address) const { return clearedAddresses.contains(address); }
- 
- 	void switchCluster(NetworkAddress const& address) { switchedCluster[address] = !switchedCluster[address]; }
- 	bool hasSwitchedCluster(NetworkAddress const& address) const {
--		return switchedCluster.find(address) != switchedCluster.end() ? switchedCluster.at(address) : false;
-+		return switchedCluster.contains(address) ? switchedCluster.at(address) : false;
- 	}
- 	void toggleGlobalSwitchCluster() { globalSwitchedCluster = !globalSwitchedCluster; }
- 	bool globalHasSwitchedCluster() const { return globalSwitchedCluster; }
-@@ -267,9 +265,7 @@ class ISimulator : public INetwork {
- 		TraceEvent("IncludeAddressAll").detail("AddressTotal", excludedAddresses.size());
- 		excludedAddresses.clear();
- 	}
--	bool isExcluded(NetworkAddress const& address) const {
--		return excludedAddresses.find(address) != excludedAddresses.end();
--	}
-+	bool isExcluded(NetworkAddress const& address) const { return excludedAddresses.contains(address); }
- 
- 	void disableSwapToMachine(Optional<Standalone<StringRef>> zoneId) { swapsDisabled.insert(zoneId); }
- 	void enableSwapToMachine(Optional<Standalone<StringRef>> zoneId) {
-```
-
-**File**: `flow/include/flow/IDispatched.h` (modified, +2/-2)
-```diff
-@@ -52,8 +52,8 @@ struct IDispatched {
- #define REGISTER_DISPATCHED_ALIAS(Type, Instance, Target, Alias)                                                       \
- 	struct Type##Instance {                                                                                            \
- 		Type##Instance() {                                                                                             \
--			ASSERT(Type::dispatches().find(Alias) == Type::dispatches().end());                                        \
--			ASSERT(Type::dispatches().find(Target) != Type::dispatches().end());                                       \
-+			ASSERT(!Type::dispatches().contains(Alias));                                                               \
-+			ASSERT(Type::dispatches().contains(Target));                                                               \
- 			Type::dispatches()[Alias] = Type::dispatches()[Target];                                                    \
- 		}                                                                                                              \
- 	};                                                                                                                 \
-```
-
-**File**: `flow/include/flow/genericactors.h` (modified, +1/-1)
-```diff
-@@ -1616,7 +1616,7 @@ Future<T> reportErrorsExcept(Future<T> in,
- 		T t = co_await in;
- 		co_return t;
- 	} catch (Error& e) {
--		if (e.code() != error_code_actor_cancelled && (!pExceptErrors || !pExceptErrors->count(e.code())))
-+		if (e.code() != error_code_actor_cancelled && (!pExceptErrors || !pExceptErrors->contains(e.code())))
- 			TraceEvent(SevError, context, id).error(e);
- 		throw;
- 	}
-```
-
----
-
-### Incident Patch 7: `5b137444` (2026-10-02)
-**Commit Message**: Fix remaining configured clang-tidy findings
-
-**File**: `bindings/flow/tester/Tester.cpp` (modified, +2/-2)
-```diff
-@@ -1516,7 +1516,7 @@ struct AtomicOPFunc : InstructionFunc {
- 		Standalone<StringRef> s3 = co_await items[2].value;
- 		Standalone<StringRef> value = Tuple::unpack(s3).getString(0);
- 
--		ASSERT(optionInfo.find(op.toString()) != optionInfo.end());
-+		ASSERT(optionInfo.contains(op.toString()));
- 
- 		FDBMutationType atomicOp = optionInfo[op.toString()];
- 
-@@ -1569,7 +1569,7 @@ struct UnitTestsFunc : InstructionFunc {
- 
- 		const uint64_t locationCacheSize = 100001;
- 		const uint64_t maxWatches = 10001;
--		const uint64_t timeout = 60 * 1000;
-+		const uint64_t timeout = 60ULL * 1000;
- 		const uint64_t noTimeout = 0;
- 		const uint64_t retryLimit = 50;
- 		const uint64_t noRetryLimit = -1;
-```
-
-**File**: `fdbcli/ExcludeCommand.cpp` (modified, +2/-3)
-```diff
-@@ -193,8 +193,7 @@ Future<Void> checkForCoordinators(Reference<IDatabase> db, std::set<AddressExclu
- 	}
- 
- 	for (const auto& c : coordinatorList) {
--		if (exclusions.find(AddressExclusion(c.ip, c.port)) != exclusions.end() ||
--		    exclusions.find(AddressExclusion(c.ip)) != exclusions.end()) {
-+		if (exclusions.contains(AddressExclusion(c.ip, c.port)) || exclusions.contains(AddressExclusion(c.ip))) {
- 			fprintf(stderr, "WARNING: %s is a coordinator!\n", c.toString().c_str());
- 			foundCoordinator = true;
- 		}
-@@ -346,7 +345,7 @@ Future<bool> excludeCommandActor(Reference<IDatabase> db, std::vector<StringRef>
- 		}
- 
- 		for (const auto& exclusion : exclusionSet) {
--			if (absentExclusions.find(exclusion) != absentExclusions.end()) {
-+			if (absentExclusions.contains(exclusion)) {
- 				if (exclusion.port == 0) {
- 					fprintf(stderr,
- 					        "  %s(Whole machine)  ---- WARNING: Missing from cluster!Be sure that you excluded the "
-```
-
-**File**: `fdbcli/fdbcli.cpp` (modified, +2/-2)
-```diff
-@@ -163,9 +163,9 @@ class FdbOptions {
- 	               Optional<StringRef> arg,
- 	               bool intrans) {
- 		auto transactionItr = transactionOptions.legalOptions.find(optionStr.toString());
--		if (transactionItr != transactionOptions.legalOptions.end())
-+		if (transactionItr != transactionOptions.legalOptions.end()) {
- 			setTransactionOption(tr, transactionItr->second, enabled, arg, intrans);
--		else {
-+		} else {
- 			fprintf(stderr,
- 			        "ERROR: invalid option '%s'. Try `help options' for a list of available options.\n",
- 			        optionStr.toString().c_str());
-```
-
-**File**: `fdbclient/SpecialKeySpace.cpp` (modified, +4/-6)
-```diff
-@@ -729,7 +729,7 @@ Future<RangeResult> DDStatsRangeImpl::getRange(ReadYourWritesTransaction* ryw,
- Key SpecialKeySpace::getManagementApiCommandOptionSpecialKey(const std::string& command, const std::string& option) {
- 	Key prefix = "options/"_sr.withPrefix(moduleToBoundary[MODULE::MANAGEMENT].begin);
- 	auto pair = command + "/" + option;
--	ASSERT(options.find(pair) != options.end());
-+	ASSERT(options.contains(pair));
- 	return prefix.withSuffix(pair);
- }
- 
-@@ -755,8 +755,7 @@ Future<RangeResult> ManagementCommandsOptionsImpl::getRange(ReadYourWritesTransa
- void ManagementCommandsOptionsImpl::set(ReadYourWritesTransaction* ryw, const KeyRef& key, const ValueRef& value) {
- 	std::string option = key.removePrefix(getKeyRange().begin).toString();
- 	// ignore all invalid keys
--	if (SpecialKeySpace::getManagementApiOptionsSet().find(option) !=
--	    SpecialKeySpace::getManagementApiOptionsSet().end()) {
-+	if (SpecialKeySpace::getManagementApiOptionsSet().contains(option)) {
- 		TraceEvent(SevDebug, "ManagementApiOption").detail("Option", option).detail("Key", key);
- 		ryw->getSpecialKeySpaceWriteMap().insert(key, std::make_pair(true, Optional<Value>(value)));
- 	}
-@@ -769,8 +768,7 @@ void ManagementCommandsOptionsImpl::clear(ReadYourWritesTransaction* ryw, const
- void ManagementCommandsOptionsImpl::clear(ReadYourWritesTransaction* ryw, const KeyRef& key) {
- 	std::string option = key.removePrefix(getKeyRange().begin).toString();
- 	// ignore all invalid keys
--	if (SpecialKeySpace::getManagementApiOptionsSet().find(option) !=
--	    SpecialKeySpace::getManagementApiOptionsSet().end()) {
-+	if (SpecialKeySpace::getManagementApiOptionsSet().contains(option)) {
- 		ryw->getSpecialKeySpaceWriteMap().rawErase(singleKeyRange(key));
- 	}
- }
-@@ -1052,7 +1050,7 @@ Future<bool> checkExclusion(Database db,
- 					if (!excluded) {
- 						totalKvStoreUsedBytesNotExcluded += used_bytes;
- 
--						if (disk_id.empty() || diskLocalities.find(disk_id) == diskLocalities.end()) {
-+						if (disk_id.empty() || !diskLocalities.contains(disk_id)) {
- 							totalKvStoreFreeBytesNotExcluded += free_bytes;
- 							if (!disk_id.empty()) {
- 								diskLocalities.insert(disk_id);
-```
-
-**File**: `fdbrpc/ReplicationUtils.cpp` (modified, +1/-1)
-```diff
-@@ -869,7 +869,7 @@ void filterLocalityDataForPolicy(const std::set<std::string>& keys, LocalityData
- 	for (auto iter = ld->_data.begin(); iter != ld->_data.end();) {
- 		auto prev = iter;
- 		iter++;
--		if (keys.find(prev->first.toString()) == keys.end()) {
-+		if (!keys.contains(prev->first.toString())) {
- 			ld->_data.erase(prev);
- 		}
- 	}
-```
-
-**File**: `fdbrpc/sim2.cpp` (modified, +4/-4)
-```diff
-@@ -218,7 +218,7 @@ struct SimClogging {
- 
- 	bool disconnected(const IPAddress& from, const IPAddress& to) {
- 		auto pair = std::make_pair(from, to);
--		if (g_simulator->speedUpSimulation || disconnectPairUntil.find(pair) == disconnectPairUntil.end()) {
-+		if (g_simulator->speedUpSimulation || !disconnectPairUntil.contains(pair)) {
- 			return false;
- 		}
- 
-@@ -2208,7 +2208,7 @@ class Sim2 final : public ISimulator, public INetworkConnections {
- 				if (!getSimulationPolicy() || getSimulationPolicy()->shouldIncludeInAvailabilityCheck(*processInfo)) {
- 					if (!processInfo->isExcluded() && !processInfo->isCleared() && processInfo->isAvailable() &&
- 					    (isProtectedAddress(processInfo->address) ||
--					     datacenterMachines.find(processInfo->locality.machineId()) == datacenterMachines.end())) {
-+					     !datacenterMachines.contains(processInfo->locality.machineId()))) {
- 						processesLeft.push_back(processInfo);
- 					} else {
- 						processesDead.push_back(processInfo);
-@@ -2689,7 +2689,7 @@ class UDPSimSocket : public IUDPSocket, ReferenceCounted<UDPSimSocket> {
- 	  : id(deterministicRandom()->randomUniqueID()), process(g_simulator->getCurrentProcess()),
- 	    peerAddress(peerAddress), actors(false), _localAddress(localAddress) {
- 		g_sim2.addressMap.emplace(_localAddress, process);
--		ASSERT(process->boundUDPSockets.find(localAddress) == process->boundUDPSockets.end());
-+		ASSERT(!process->boundUDPSockets.contains(localAddress));
- 		process->boundUDPSockets.emplace(localAddress, Reference<IUDPSocket>::addRef(this));
- 	}
- 	~UDPSimSocket() override {
-@@ -2800,7 +2800,7 @@ Future<Reference<IUDPSocket>> Sim2::createUDPSocket(NetworkAddress toAddr) {
- 		localAddress.ip = IPAddress(process->address.ip.toV4() + deterministicRandom()->randomInt(0, 256));
- 	}
- 	localAddress.port = deterministicRandom()->randomInt(40000, 60000);
--	while (process->boundUDPSockets.find(localAddress) != process->boundUDPSockets.end()) {
-+	while (process->boundUDPSockets.contains(localAddress)) {
- 		localAddress.port = deterministicRandom()->randomInt(40000, 60000);
- 	}
- 	return Reference<IUDPSocket>(makeReference<UDPSimSocket>(localAddress, toAddr));
-```
-
-**File**: `fdbserver/datadistributor/DDRelocationQueue.cpp` (modified, +2/-2)
-```diff
-@@ -927,9 +927,9 @@ void DDQueue::queueRelocation(RelocateShard rs, std::set<UID>& serversToLaunchFr
- 		}
- 
- 		if (rd.keys.contains(rrs.keys)) {
--			if (foundActiveFetching)
-+			if (foundActiveFetching) {
- 				fetchingSourcesQueue.erase(fetchingSourcesItr);
--			else if (foundActiveRelocation) {
-+			} else if (foundActiveRelocation) {
- 				firstQueue->erase(firstRelocationItr);
- 				for (int i = 1; i < rrs.src.size(); i++)
- 					queue[rrs.src[i]].erase(rrs);
-```
-
-**File**: `fdbserver/datadistributor/DataDistribution.cpp` (modified, +8/-9)
-```diff
-@@ -2263,8 +2263,7 @@ Future<Void> scheduleBulkLoadJob(Reference<DataDistributor> self, Promise<Void>
- 						// No matter whether the task range is aligned with the manifest entry range, the task
- 						// begin key must be in the manifestEntryMap. See manifestEntryMap definition for more
- 						// details.
--						ASSERT(self->bulkLoadJobManager.get().manifestEntryMap->find(task.getRange().begin) !=
--						       self->bulkLoadJobManager.get().manifestEntryMap->end());
-+						ASSERT(self->bulkLoadJobManager.get().manifestEntryMap->contains(task.getRange().begin));
- 						if (task.onAnyPhase(
- 						        { BulkLoadPhase::Complete, BulkLoadPhase::Acknowledged, BulkLoadPhase::Error })) {
- 							ASSERT(task.getRange().end == res[i + 1].key);
-@@ -3431,9 +3430,9 @@ Future<ErrorOr<Void>> trySendSnapReq(RequestStream<WorkerSnapRequest> stream, Wo
- 			    .detail("PeerAddress", stream.getEndpoint().getPrimaryAddress())
- 			    .detail("Retry", snapReqRetry);
- 			if (reply.getError().code() != error_code_request_maybe_delivered ||
--			    ++snapReqRetry > SERVER_KNOBS->SNAP_NETWORK_FAILURE_RETRY_LIMIT)
-+			    ++snapReqRetry > SERVER_KNOBS->SNAP_NETWORK_FAILURE_RETRY_LIMIT) {
- 				co_return ErrorOr<Void>(reply.getError());
--			else {
-+			} else {
- 				// retry for network failures with same snap UID to avoid snapshot twice
- 				req = WorkerSnapRequest(req.snapPayload, req.snapUID, req.role);
- 				co_await delay(snapRetryBackoff);
-@@ -3521,7 +3520,7 @@ Future<std::map<NetworkAddress, std::pair<WorkerInterface, std::string>>> getSta
- 
- 			for (const auto& tlog : *tlogs) {
- 				TraceEvent(SevDebug, "GetStatefulWorkersTLog").detail("Addr", tlog.address());
--				if (workersMap.find(tlog.address()) == workersMap.end()) {
-+				if (!workersMap.contains(tlog.address())) {
- 					TraceEvent(SevWarn, "MissingTLogWorkerInterface").detail("TlogAddress", tlog.address());
- 					throw snap_tlog_failed();
- 				}
-@@ -3546,8 +3545,8 @@ Future<std::map<NetworkAddress, std::pair<WorkerInterface, std::string>>> getSta
- 				// as we use primary addresses from storage and tlog interfaces above
- 				NetworkAddress primary = worker.interf.address();
- 				Optional<NetworkAddress> secondary = worker.interf.tLog.getEndpoint().addresses.secondaryAddress;
--				if (coordinatorsAddrSet.find(primary) != coordinatorsAddrSet.end() ||
--				    (secondary.present() && (coordinatorsAddrSet.find(secondary.get()) != coordinatorsAddrSet.end()))) {
-+				if (coordinatorsAddrSet.contains(primary) ||
-+				    (secondary.present() && coordinatorsAddrSet.contains(secondary.get()))) {
- 					if (result.contains(primary)) {
- 						ASSERT(workersMap[primary].id() == result[primary].first.id());
- 						result[primary].second.append(",coord");
-@@ -3881,9 +3880,9 @@ Future<Void> ddGetMetrics(GetDataDistributorMetricsRequest req,
- 			rep.storageMetricsList = result.get();
- 		} else {
- 			auto& metricVec = result.get();
--			if (metricVec.empty())
-+			if (metricVec.empty()) {
- 				rep.midShardSize = 0;
--			else {
-+			} else {
- 				rep.midShardSize = getMedianShardSize(metricVec.contents());
- 			}
- 		}
-```
-
----
-
-### Incident Patch 8: `05f20f61` (2026-10-02)
-**Commit Message**: Limit clang-tidy policy to four checks and retain audited lifetime fixes
-
-**File**: `.clang-tidy` (modified, +0/-2)
-```diff
-@@ -41,7 +41,6 @@ Checks: >
-   bugprone-use-after-move,
-   bugprone-virtual-near-miss,
-   cppcoreguidelines-avoid-capturing-lambda-coroutines,
--  cppcoreguidelines-avoid-reference-coroutine-parameters,
-   misc-coroutine-hostile-raii,
-   misc-redundant-expression,
-   modernize-use-auto,
-@@ -65,7 +64,6 @@ WarningsAsErrors: >
-   bugprone-branch-clone,
-   bugprone-nondeterministic-pointer-iteration-order,
-   bugprone-unused-return-value,
--  cppcoreguidelines-avoid-reference-coroutine-parameters,
-   performance-inefficient-algorithm
- HeaderFilterRegex: ''
- CheckOptions:
-```
-
-**File**: `bindings/flow/tester/Tester.cpp` (modified, +6/-2)
-```diff
-@@ -43,7 +43,9 @@ std::map<Standalone<StringRef>, Reference<Transaction>> trMap;
- const int ITERATION_PROGRESSION[] = { 256, 1000, 4096, 6144, 9216, 13824, 20736, 31104, 46656, 69984, 80000 };
- const int MAX_ITERATION = sizeof(ITERATION_PROGRESSION) / sizeof(int);
- 
--static Future<Void> runTest(Reference<FlowTesterData> data, Reference<Database> db, Standalone<StringRef> prefix);
-+static Future<Void> runTest(Reference<FlowTesterData> data,
-+                            Reference<Database> const& db,
-+                            StringRef const& prefix);
- 
- THREAD_FUNC networkThread(void* api) {
- 	// This is the fdb_flow network we're running on a thread
-@@ -1713,7 +1715,9 @@ static Future<Void> doInstructions(Reference<FlowTesterData> data) {
- 	// printf("Total num instructions:%d\n", data->instructions.size());
- }
- 
--static Future<Void> runTest(Reference<FlowTesterData> data, Reference<Database> db, Standalone<StringRef> prefix) {
-+static Future<Void> runTest(Reference<FlowTesterData> data,
-+                            Reference<Database> const& db,
-+                            StringRef const& prefix) {
- 	ASSERT(data);
- 	try {
- 		data->db = db;
-```
-
-**File**: `documentation/coro_tutorial/tutorial.cpp` (modified, +2/-2)
-```diff
-@@ -461,7 +461,7 @@ bool transaction_done(void) {
- }
- 
- template <class DB, class Fun>
--Future<Void> runTransactionWhile(DB db, Fun f) {
-+Future<Void> runTransactionWhile(DB const& db, Fun f) {
- 	Transaction tr(db);
- 	while (true) {
- 		Future<Void> onError;
-@@ -482,7 +482,7 @@ Future<Void> runTransaction(DB const& db, Fun f) {
- }
- 
- template <class DB, class Fun>
--Future<Void> runRYWTransaction(DB db, Fun f) {
-+Future<Void> runRYWTransaction(DB const& db, Fun f) {
- 	Future<Void> onError;
- 	ReadYourWritesTransaction tr(db);
- 	while (true) {
-```
-
-**File**: `documentation/sphinx/source/clang-tidy.rst` (modified, +7/-10)
-```diff
-@@ -10,34 +10,31 @@ This guide explains how to run ``clang-tidy`` locally so you can fix issues befo
- What clang-tidy checks
- ======================
- 
--FoundationDB configures 60 named checks in the ``.clang-tidy`` file at the repository root.
-+FoundationDB configures 59 named checks in the ``.clang-tidy`` file at the repository root.
- Use clang-tidy 22 or later for the complete check set; CI pins a checksum-verified
- clang-tidy 22.1.8 package. Inspect enabled checks with ``clang-tidy --list-checks``.
- The intent is to enable more as we go forward. Here are some example rules:
- 
- * **39 Bugprone rules** -- catch potential runtime errors, including unsafe self-assignment, forwarding constructors that hide copy or move constructors, narrow accumulation initializers, mismatched argument comments, obvious infinite loops, chained comparisons, swapped arguments, integer division in floating-point calculations, missed base-class copy construction, repeated macro argument evaluation, near-miss virtual overrides, dangling returned references, incorrect erase/remove calls, incorrect POSIX error checks, discarded return values, duplicate branches, and address-dependent pointer iteration
--* **2 C++ Core Guidelines rules** -- catch unsafe captures in coroutine lambdas and reference parameters in coroutines (``cppcoreguidelines-avoid-capturing-lambda-coroutines``, ``cppcoreguidelines-avoid-reference-coroutine-parameters``)
-+* **1 C++ Core Guidelines rule** -- catch unsafe captures in coroutine lambdas (``cppcoreguidelines-avoid-capturing-lambda-coroutines``)
- * **2 Misc rules** -- catch redundant expressions and RAII objects held across coroutine suspension points
- * **4 Modernize rules** -- encourage modern C++ practices (e.g., ``modernize-use-auto``, ``modernize-use-override``)
- * **6 Performance rules** -- avoid unnecessary copies, hidden range-loop conversions, repeated vector growth in simple loops, inefficient generic algorithms over associative containers, pointless moves, and move constructors that copy movable members (``performance-for-range-copy``, ``performance-implicit-conversion-in-loop``, ``performance-inefficient-vector-operation``, ``performance-inefficient-algorithm``, ``performance-move-const-arg``, ``performance-move-constructor-init``)
- * **7 Readability rules** -- improve code clarity (e.g., ``readability-container-contains``, ``readability-container-size-empty``)
- 
--The configuration's ``WarningsAsErrors`` policy makes these five checks fatal
-+The configuration's ``WarningsAsErrors`` policy makes these four checks fatal
- for ordinary and CMake-integrated clang-tidy runs as well as CI:
- 
- * ``bugprone-unused-return-value`` checks ignored results of selected standard-library functions, using its default function and return-type lists.
- * ``bugprone-branch-clone`` detects identical conditional branches.
- * ``bugprone-nondeterministic-pointer-iteration-order`` detects pointer iteration whose order depends on addresses.
--* ``cppcoreguidelines-avoid-reference-coroutine-parameters`` detects reference parameters that may outlive their referents when a coroutine suspends.
- * ``performance-inefficient-algorithm`` recommends associative-container member operations in place of slower generic algorithms.
- 
- Review any intentional exception and use a check-specific ``NOLINT`` or
--``NOLINTNEXTLINE`` with its safety rationale. For coroutine reference parameters,
--establish that the referent outlives every use, or that the coroutine copies the
--value before it can suspend and never uses the reference afterward. For pointer
--iteration, establish that changing the traversal order cannot affect observable
--behavior or simulation determinism. Do not suppress either check across whole
--files to accommodate individual safe cases.
-+``NOLINTNEXTLINE`` with its safety rationale. For pointer iteration, establish
-+that changing the traversal order cannot affect observable behavior or
-+simulation determinism. Do not suppress a check across whole files to
-+accommodate individual safe cases.
- 
- ``HeaderFilterRegex: ''`` preserves the scope used before clang-tidy 22:
- included-header diagnostics remain filtered out, while a header checked directly
-```
-
-**File**: `fdbcli/ConsistencyCheckCommand.cpp` (modified, +3/-1)
-```diff
-@@ -30,7 +30,9 @@ namespace fdb_cli {
- 
- const KeyRef consistencyCheckSpecialKey = "\xff\xff/management/consistency_check_suspended"_sr;
- 
--Future<bool> consistencyCheckCommandActor(Reference<ITransaction> tr, std::vector<StringRef> tokens, bool intrans) {
-+Future<bool> consistencyCheckCommandActor(Reference<ITransaction> tr,
-+                                          std::vector<StringRef> const& tokens,
-+                                          bool intrans) {
- 	// Here we do not proceed in a try-catch loop since the transaction is always supposed to succeed.
- 	// If not, the outer loop catch block(fdbcli.cpp) will handle the error and print out the error message
- 	tr->setOption(FDBTransactionOptions::SPECIAL_KEY_SPACE_ENABLE_WRITES);
-```
-
-**File**: `fdbcli/ConsistencyScanCommand.cpp` (modified, +1/-1)
-```diff
-@@ -41,7 +41,7 @@ Future<Void> dumpStats(ConsistencyScanState* cs, Reference<ReadYourWritesTransac
- 	co_return;
- }
- 
--Future<bool> consistencyScanCommandActor(Database db, std::vector<StringRef> tokens) {
-+Future<bool> consistencyScanCommandActor(Database db, std::vector<StringRef> const& tokens) {
- 	// Skip the command token so start at begin+1
- 	std::list<StringRef> args(tokens.begin() + 1, tokens.end());
- 
-```
-
-**File**: `fdbcli/FileConfigureCommand.cpp` (modified, +4/-1)
-```diff
-@@ -33,7 +33,10 @@
- #include "flow/ThreadHelper.h"
- namespace fdb_cli {
- 
--Future<bool> fileConfigureCommandActor(Reference<IDatabase> db, std::string filePath, bool isNewDatabase, bool force) {
-+Future<bool> fileConfigureCommandActor(Reference<IDatabase> db,
-+                                       std::string const& filePath,
-+                                       bool isNewDatabase,
-+                                       bool force) {
- 	ConfigurationResult result;
- 	std::string contents(readFileBytes(filePath, 100000));
- 	json_spirit::mValue config;
-```
-
-**File**: `fdbcli/ForceRecoveryWithDataLossCommand.cpp` (modified, +1/-1)
-```diff
-@@ -27,7 +27,7 @@
- #include "flow/ThreadHelper.h"
- namespace fdb_cli {
- 
--Future<bool> forceRecoveryWithDataLossCommandActor(Reference<IDatabase> db, std::vector<StringRef> tokens) {
-+Future<bool> forceRecoveryWithDataLossCommandActor(Reference<IDatabase> db, std::vector<StringRef> const& tokens) {
- 	if (tokens.size() != 2) {
- 		printUsage(tokens[0]);
- 		co_return false;
-```
-
----
-
-### Incident Patch 9: `7f63d738` (2026-10-02)
-**Commit Message**: Fix existing warnings from five clang-tidy checks
-
-**File**: `bindings/c/test/mako/admin_server.hpp` (modified, +7/-6)
-```diff
-@@ -70,33 +70,34 @@ using Request = boost::variant<PingRequest, StopRequest>;
- class AdminServer {
- 	const Arguments& args;
- 	pid_t server_pid;
--	boost::process::pstream pipe_to_server;
--	boost::process::pstream pipe_to_client;
-+	boost::process::v1::pstream pipe_to_server;
-+	boost::process::v1::pstream pipe_to_client;
- 	void start();
- 	void configure();
- 
- 	template <class T>
--	static void sendObject(boost::process::pstream& pipe, T obj) {
-+	static void sendObject(boost::process::v1::pstream& pipe, T obj) {
- 		boost::archive::binary_oarchive oa(pipe);
- 		oa << obj;
- 	}
- 
- 	template <class T>
--	static T receiveObject(boost::process::pstream& pipe) {
-+	static T receiveObject(boost::process::v1::pstream& pipe) {
- 		boost::archive::binary_iarchive ia(pipe);
- 		T obj;
- 		ia >> obj;
- 		return obj;
- 	}
- 
- 	template <class RequestType>
--	static void sendResponse(boost::process::pstream& pipe, typename RequestType::ResponseType obj) {
-+	static void sendResponse(boost::process::v1::pstream& pipe, typename RequestType::ResponseType obj) {
- 		sendObject(pipe, std::move(obj));
- 	}
- 
- public:
- 	explicit AdminServer(const Arguments& args)
--	  : args(args), server_pid(-1), pipe_to_server(boost::process::pipe()), pipe_to_client(boost::process::pipe()) {
-+	  : args(args), server_pid(-1), pipe_to_server(boost::process::v1::pipe()),
-+	    pipe_to_client(boost::process::v1::pipe()) {
- 		start();
- 	}
- 	~AdminServer();
-```
-
-**File**: `bindings/flow/DirectoryLayer.cpp` (modified, +2/-3)
-```diff
-@@ -138,9 +138,8 @@ Future<Void> checkVersionInternal(const DirectoryLayer* dirLayer, Reference<Tran
- 		if (versionBytes.get().size() != 12) {
- 			throw invalid_directory_layer_metadata();
- 		}
--		if (((uint32_t*)versionBytes.get().begin())[0] > DirectoryLayer::VERSION[0]) {
--			throw incompatible_directory_version();
--		} else if (((uint32_t*)versionBytes.get().begin())[1] > DirectoryLayer::VERSION[1] && writeAccess) {
-+		if (((uint32_t*)versionBytes.get().begin())[0] > DirectoryLayer::VERSION[0] ||
-+		    (((uint32_t*)versionBytes.get().begin())[1] > DirectoryLayer::VERSION[1] && writeAccess)) {
- 			throw incompatible_directory_version();
- 		}
- 	}
-```
-
-**File**: `bindings/flow/tester/Tester.cpp` (modified, +3/-9)
-```diff
-@@ -43,9 +43,7 @@ std::map<Standalone<StringRef>, Reference<Transaction>> trMap;
- const int ITERATION_PROGRESSION[] = { 256, 1000, 4096, 6144, 9216, 13824, 20736, 31104, 46656, 69984, 80000 };
- const int MAX_ITERATION = sizeof(ITERATION_PROGRESSION) / sizeof(int);
- 
--static Future<Void> runTest(Reference<FlowTesterData> const& data,
--                            Reference<Database> const& db,
--                            StringRef const& prefix);
-+static Future<Void> runTest(Reference<FlowTesterData> data, Reference<Database> db, Standalone<StringRef> prefix);
- 
- THREAD_FUNC networkThread(void* api) {
- 	// This is the fdb_flow network we're running on a thread
-@@ -1671,9 +1669,7 @@ static Future<Void> doInstructions(Reference<FlowTesterData> data) {
- 				}
- 			}
- 
--			if (isDatabase)
--				op = op.substr(0, op.size() - 9);
--			else if (isSnapshot)
-+			if (isDatabase || isSnapshot)
- 				op = op.substr(0, op.size() - 9);
- 
- 			// printf("[==========]%ld/%ld:%s:%s: isDatabase:%d, isSnapshot:%d, stack count:%ld\n",
-@@ -1717,9 +1713,7 @@ static Future<Void> doInstructions(Reference<FlowTesterData> data) {
- 	// printf("Total num instructions:%d\n", data->instructions.size());
- }
- 
--static Future<Void> runTest(Reference<FlowTesterData> const& data,
--                            Reference<Database> const& db,
--                            StringRef const& prefix) {
-+static Future<Void> runTest(Reference<FlowTesterData> data, Reference<Database> db, Standalone<StringRef> prefix) {
- 	ASSERT(data);
- 	try {
- 		data->db = db;
-```
-
-**File**: `bindings/java/JavaWorkload.cpp` (modified, +2/-0)
-```diff
-@@ -423,6 +423,8 @@ struct JVM {
- 		auto clazz = getClass("com/apple/foundationdb/testing/Promise");
- 		auto res = env->NewObject(clazz, getMethod(clazz, "<init>", "(J)V"), reinterpret_cast<jlong>(p.get()));
- 		checkException();
-+		// Java's nativePromise now owns p; JavaPromise::send deletes it after fulfillment.
-+		// NOLINTNEXTLINE(bugprone-unused-return-value)
- 		p.release();
- 		return res;
- 	}
-```
-
-**File**: `contrib/monitoring/actor_flamegraph.cpp` (modified, +1/-3)
-```diff
-@@ -148,15 +148,13 @@ int main(int argc, char* argv[]) {
- 	bool endOfArgs = false;
- 	for (int i = 1; i < argc; ++i) {
- 		std::string arg(argv[i]);
--		if (endOfArgs) {
-+		if (endOfArgs || arg[0] != '-') {
- 			files.emplace_back(arg);
- 		} else if (arg == "--") {
- 			endOfArgs = true;
- 		} else if (arg == "-h" || arg == "--") {
- 			usage(argv[0], std::cout);
- 			return 0;
--		} else if (arg[0] != '-') {
--			files.emplace_back(arg);
- 		} else {
- 			std::cerr << "Unknown argument \"" << arg << "\"" << std::endl;
- 			usage(argv[0], std::cerr);
-```
-
-**File**: `documentation/coro_tutorial/tutorial.cpp` (modified, +2/-2)
-```diff
-@@ -461,7 +461,7 @@ bool transaction_done(void) {
- }
- 
- template <class DB, class Fun>
--Future<Void> runTransactionWhile(DB const& db, Fun f) {
-+Future<Void> runTransactionWhile(DB db, Fun f) {
- 	Transaction tr(db);
- 	while (true) {
- 		Future<Void> onError;
-@@ -482,7 +482,7 @@ Future<Void> runTransaction(DB const& db, Fun f) {
- }
- 
- template <class DB, class Fun>
--Future<Void> runRYWTransaction(DB const& db, Fun f) {
-+Future<Void> runRYWTransaction(DB db, Fun f) {
- 	Future<Void> onError;
- 	ReadYourWritesTransaction tr(db);
- 	while (true) {
-```
-
-**File**: `fdbcli/ConsistencyCheckCommand.cpp` (modified, +1/-3)
-```diff
-@@ -30,9 +30,7 @@ namespace fdb_cli {
- 
- const KeyRef consistencyCheckSpecialKey = "\xff\xff/management/consistency_check_suspended"_sr;
- 
--Future<bool> consistencyCheckCommandActor(Reference<ITransaction> tr,
--                                          std::vector<StringRef> const& tokens,
--                                          bool intrans) {
-+Future<bool> consistencyCheckCommandActor(Reference<ITransaction> tr, std::vector<StringRef> tokens, bool intrans) {
- 	// Here we do not proceed in a try-catch loop since the transaction is always supposed to succeed.
- 	// If not, the outer loop catch block(fdbcli.cpp) will handle the error and print out the error message
- 	tr->setOption(FDBTransactionOptions::SPECIAL_KEY_SPACE_ENABLE_WRITES);
-```
-
-**File**: `fdbcli/ConsistencyScanCommand.cpp` (modified, +1/-1)
-```diff
-@@ -41,7 +41,7 @@ Future<Void> dumpStats(ConsistencyScanState* cs, Reference<ReadYourWritesTransac
- 	co_return;
- }
- 
--Future<bool> consistencyScanCommandActor(Database db, std::vector<StringRef> const& tokens) {
-+Future<bool> consistencyScanCommandActor(Database db, std::vector<StringRef> tokens) {
- 	// Skip the command token so start at begin+1
- 	std::list<StringRef> args(tokens.begin() + 1, tokens.end());
- 
-```
-
----
-
-### Incident Patch 10: `4a693963` (2026-10-01)
-**Commit Message**: ci: fix windows-boost-test branches list
-
-I accidentally put release-* in the wrong list,
-we don't need/want this check in "push" list
-
-**File**: `.github/workflows/windows-boost-test.yml` (modified, +0/-3)
-```diff
-@@ -2,9 +2,6 @@ name: Windows Boost CONFIG Test
- 
- on:
-   pull_request:
--    branches:
--      - main
--  push:
-     branches:
-       - main
-       - release-*
-```
-
----
-
-### Incident Patch 11: `5a4a4456` (2026-09-29)
-**Commit Message**: build: download fmt tarball instead of using git
-
-more efficient, noticeably so on some macOS or corporate systems
-
-also, more quiet if exact version not found on local system
-
-**File**: `cmake/GetFmt.cmake` (modified, +6/-4)
-```diff
-@@ -1,11 +1,13 @@
--find_package(fmt 11.1.4 EXACT CONFIG)
-+find_package(fmt 11.1.4 EXACT CONFIG QUIET)
- 
--if(NOT fmt_FOUND)
-+if(fmt_FOUND)
-+  message(STATUS "Found fmt ${fmt_VERSION} at ${fmt_DIR}")
-+else()
-   include(FetchContent)
-   FetchContent_Declare(
-     fmt
--    GIT_REPOSITORY https://github.com/fmtlib/fmt
--    GIT_TAG 11.1.4
-+    URL      "https://github.com/fmtlib/fmt/archive/11.1.4.tar.gz"
-+    URL_HASH SHA256=ac366b7b4c2e9f0dde63a59b3feb5ee59b67974b14ee5dc9ea8ad78aa2c1ee1e
-   )
-   FetchContent_MakeAvailable(fmt)
- endif()
-```
-
----
-
-### Incident Patch 12: `0c459d6b` (2026-09-30)
-**Commit Message**: Widen connection-lifecycle trace event suppression from 1s to a shared 2s knob (#14179)
-
-fdbrpc/FlowTransport.cpp rate-limited 12 connection lifecycle/error trace
-events (ConnectingTo, ConnectionExchangingConnectPacket, ConnectionReset,
-ConnectionClosed, IncompatibleConnectionClosed, PeerDestroy,
-PeerUnavailableForLongTime, RedundantConnection, ConnectionEstablished,
-ConnectedOutgoing, IncomingConnectionError, ConnectionFrom) with the same
-hardcoded suppressFor(1.0), each keyed independently and duplicated across
-13 call sites.
-
-Replace the hardcoded literal with a single new knob,
-FLOW_KNOBS->CONNECTION_EVENT_SUPPRESS_FOR (default 2.0), so these events
-stay in sync rather than drifting independently, and can be tuned as one
-group. IncomingConnection also references this knob for consistency, though
-it has no effect there: that event is tagged "IncomingConnection"_audit,
-which forces it to Type::FORCED, and suppressFor() is a no-op for anything
-that isn't Type::ENABLED (see AuditedEvent/State in flow/include/flow/Trace.h
-and BaseTraceEvent::suppressFor in flow/Trace.cpp). Added a one-line comment
-at that call site explaining why, since the code otherwise looks
-contradictory (an _au
-
-**File**: `fdbrpc/FlowTransport.cpp` (modified, +14/-13)
-```diff
-@@ -930,7 +930,7 @@ Future<Void> connectionKeeper(Reference<Peer> self,
- 				self->lastConnectTime = now();
- 
- 				TraceEvent("ConnectingTo", conn ? conn->getDebugID() : UID())
--				    .suppressFor(1.0)
-+				    .suppressFor(FLOW_KNOBS->CONNECTION_EVENT_SUPPRESS_FOR)
- 				    .detail("PeerAddr", self->destination)
- 				    .detail("PeerAddress", self->destination)
- 				    .detail("PeerReferences", self->peerReferences)
-@@ -969,7 +969,7 @@ Future<Void> connectionKeeper(Reference<Peer> self,
- 						}
- 
- 						TraceEvent("ConnectionExchangingConnectPacket", conn->getDebugID())
--						    .suppressFor(1.0)
-+						    .suppressFor(FLOW_KNOBS->CONNECTION_EVENT_SUPPRESS_FOR)
- 						    .detail("PeerAddr", self->destination)
- 						    .detail("PeerAddress", self->destination);
- 						self->prependConnectPacket();
-@@ -1047,7 +1047,7 @@ Future<Void> connectionKeeper(Reference<Peer> self,
- 				co_await (connectionWriter(self, conn) || reader || connectionMonitor(self) ||
- 				          self->resetConnection.onTrigger());
- 				TraceEvent("ConnectionReset", conn ? conn->getDebugID() : UID())
--				    .suppressFor(1.0)
-+				    .suppressFor(FLOW_KNOBS->CONNECTION_EVENT_SUPPRESS_FOR)
- 				    .detail("PeerAddr", self->destination)
- 				    .detail("PeerAddress", self->destination);
- 				throw connection_failed();
-@@ -1074,7 +1074,7 @@ Future<Void> connectionKeeper(Reference<Peer> self,
- 			if (firstConnFailedTime.present()) {
- 				if (now() - firstConnFailedTime.get() > FLOW_KNOBS->PEER_UNAVAILABLE_FOR_LONG_TIME_TIMEOUT) {
- 					TraceEvent(SevWarnAlways, "PeerUnavailableForLongTime", conn ? conn->getDebugID() : UID())
--					    .suppressFor(1.0)
-+					    .suppressFor(FLOW_KNOBS->CONNECTION_EVENT_SUPPRESS_FOR)
- 					    .detail("PeerAddr", self->destination)
- 					    .detail("PeerAddress", self->destination);
- 					firstConnFailedTime = now() - FLOW_KNOBS->PEER_UNAVAILABLE_FOR_LONG_TIME_TIMEOUT / 2.0;
-@@ -1104,14 +1104,14 @@ Future<Void> connectionKeeper(Reference<Peer> self,
- 			if (self->compatible) {
- 				TraceEvent(ok ? SevInfo : SevWarnAlways, "ConnectionClosed", conn ? conn->getDebugID() : UID())
- 				    .errorUnsuppressed(e)
--				    .suppressFor(1.0)
-+				    .suppressFor(FLOW_KNOBS->CONNECTION_EVENT_SUPPRESS_FOR)
- 				    .detail("PeerAddr", self->destination)
- 				    .detail("PeerAddress", self->destination);
- 			} else {
- 				TraceEvent(
- 				    ok ? SevInfo : SevWarnAlways, "IncompatibleConnectionClosed", conn ? conn->getDebugID() : UID())
- 				    .errorUnsuppressed(e)
--				    .suppressFor(1.0)
-+				    .suppressFor(FLOW_KNOBS->CONNECTION_EVENT_SUPPRESS_FOR)
- 				    .detail("PeerAddr", self->destination)
- 				    .detail("PeerAddress", self->destination);
- 
-@@ -1175,7 +1175,7 @@ Future<Void> connectionKeeper(Reference<Peer> self,
- 			    self->outstandingReplies == 0) {
- 				TraceEvent("PeerDestroy")
- 				    .errorUnsuppressed(e)
--				    .suppressFor(1.0)
-+				    .suppressFor(FLOW_KNOBS->CONNECTION_EVENT_SUPPRESS_FOR)
- 				    .detail("PeerAddr", self->destination)
- 				    .detail("PeerAddress", self->destination)
- 				    .detail("PeerReferences", self->peerReferences)
-@@ -1278,7 +1278,8 @@ void Peer::onIncomingConnection(Reference<Peer> self, Reference<IConnection> con
- 	    (lastConnectTime > 1.0 && now() - lastConnectTime > FLOW_KNOBS->ALWAYS_ACCEPT_DELAY)) {
- 		// Keep the new connection
- 		TraceEvent("IncomingConnection"_audit, conn->getDebugID())
--		    .suppressFor(1.0)
-+		    // suppressFor is a no-op here: _audit events are forced-enabled and never suppressible.
-+		    .suppressFor(FLOW_KNOBS->CONNECTION_EVENT_SUPPRESS_FOR)
- 		    .detail("FromAddr", conn->getPeerAddress())
- 		    .detail("CanonicalAddr", destination)
- 		    .detail("IsPublic", destination.isPublic())
-@@ -1290,7 +1291,7 @@ void Peer::onIncomingConnection(Reference<Peer> self, Reference<IConnection> con
- 	} else {
- 		// Keep our prior connection
- 		TraceEvent("RedundantConnection", conn->getDebugID())
--		    .suppressFor(1.0)
-+		    .suppressFor(FLOW_KNOBS->CONNECTION_EVENT_SUPPRESS_FOR)
- 		    .detail("FromAddr", conn->getPeerAddress().toString())
- 		    .detail("CanonicalAddr", destination)
- 		    .detail("LocalAddr", compatibleAddr);
-@@ -1740,7 +1741,7 @@ static Future<Void> connectionReader(TransportData* transport,
- 						} else {
- 							compatible = true;
- 							TraceEvent("ConnectionEstablished", conn->getDebugID())
--							    .suppressFor(1.0)
-+							    .suppressFor(FLOW_KNOBS->CONNECTION_EVENT_SUPPRESS_FOR)
- 							    .detail("Peer", conn->getPeerAddress())
- 							    .detail("PeerAddress", conn->getPeerAddress())
- 							    .detail("ConnectionId", connectionId);
-@@ -1757,7 +1758,7 @@ static Future<Void> connectionReader(TransportData* transport,
- 							peerProtocolVersion = protocolVersion;
- 							// Outgoing connection; port information should be what we expect
- 							TraceEvent("ConnectedOutgoing")
--							    .suppressFor(1.0)
-+							    .suppressFor(FLOW_KNOBS->CONNECTION_EVENT_SUPPRESS_FOR)
- 		
-```
-
-**File**: `flow/Knobs.cpp` (modified, +1/-0)
-```diff
-@@ -124,6 +124,7 @@ void FlowKnobs::initialize(Randomize randomize, IsSimulated isSimulated) {
- 	init( CONNECTION_MONITOR_UNREFERENCED_CLOSE_DELAY,         2.0 );
- 
- 	//FlowTransport
-+	init( CONNECTION_EVENT_SUPPRESS_FOR,                       2.0 );
- 	init( CONNECTION_REJECTED_MESSAGE_DELAY,                   1.0 );
- 	init( CONNECTION_ID_TIMEOUT,                             600.0 ); if( randomize && buggify() ) CONNECTION_ID_TIMEOUT = 60.0;
- 	init( CONNECTION_CLEANUP_DELAY,                          100.0 );
-```
-
-**File**: `flow/include/flow/Knobs.h` (modified, +1/-0)
-```diff
-@@ -203,6 +203,7 @@ class FlowKnobs : public KnobsImpl<FlowKnobs> {
- 	double CONNECTION_MONITOR_UNREFERENCED_CLOSE_DELAY;
- 
- 	// FlowTransport
-+	double CONNECTION_EVENT_SUPPRESS_FOR;
- 	double CONNECTION_REJECTED_MESSAGE_DELAY;
- 	double CONNECTION_ID_TIMEOUT;
- 	double CONNECTION_CLEANUP_DELAY;
-```
-
----
-
-### Incident Patch 13: `d0f1c679` (2026-09-29)
-**Commit Message**: build: fix aws-sdk-cpp "crypto" dep, for macOS and arm64
-
-This fixes BUILD_AWS_BACKUP=ON for macOS, and linux on arm64.
-The "BYO_CRYPTO" option was not properly being used, you are
-supposed to set some crypto handler callbacks manually in that
-case, which we did not do. We just happened to use extremely
-little of aws-sdk-cpp so it didn't matter much. But the BYO_CRYPTO
-option is also explicitly rejected in many cases, and generally
-unsupported, so if we can avoid it, we can fix the build with
-BUILD_AWS_BACKUP=ON in many more configurations.
-
-**File**: `cmake/awssdk.cmake` (modified, +95/-47)
-```diff
-@@ -1,113 +1,161 @@
- project(awssdk-download NONE)
- 
--# Compile the sdk with clang and libc++, since otherwise we get libc++ vs libstdc++ link errors when compiling fdb with clang
--set(AWSSDK_COMPILER_FLAGS "")
-+### This whole aws-sdk-cpp is only used for Aws::Auth::AWSCredentials
-+# to discover AWS credentials from environment variables, config files,
-+# EC2 instance metadata (which requires an http client) etc.
-+# The s3 client and even AWS request signing is re-implemented by FDB.
-+
-+set(AWSSDK_COMPILER_FLAGS "-fPIC")
- if(APPLE OR USE_LIBCXX)
--  set(AWSSDK_COMPILER_FLAGS "-stdlib=libc++ -nostdlib++")
-+  string(APPEND AWSSDK_COMPILER_FLAGS " -stdlib=libc++ -nostdlib++")
-+endif()
-+
-+if(APPLE)
-+  set(AWSSDK_LIBDIR "${CMAKE_CURRENT_BINARY_DIR}/awssdk-build/install/lib")
-+else()
-+  set(AWSSDK_LIBDIR "${CMAKE_CURRENT_BINARY_DIR}/awssdk-build/install/lib64")
  endif()
  
- include(ExternalProject)
- ExternalProject_Add(awssdk_project
-   GIT_REPOSITORY https://github.com/aws/aws-sdk-cpp.git
-   GIT_TAG c4b8cb01b0215f00740d9d72f7185ee056ced1f6 # v1.11.473
-+  GIT_SHALLOW ON
-   SOURCE_DIR "${CMAKE_CURRENT_BINARY_DIR}/awssdk-src"
-   BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/awssdk-build"
--  GIT_CONFIG advice.detachedHead=false
-   # it seems advice.detachedHead breaks something which causes aws sdk to always be rebuilt.
-   # This option forces to cmake to build the aws sdk only once and never attempt to update it
-   UPDATE_DISCONNECTED ON
--  CMAKE_ARGS -DBUILD_SHARED_LIBS=OFF        # SDK builds shared libs by default, we want static libs
-+  PATCH_COMMAND # enable s2n for macOS too
-+    sed -i.bak -e "s/UNIX AND NOT APPLE AND NOT BYO_CRYPTO/UNIX AND NOT BYO_CRYPTO/"
-+    crt/aws-crt-cpp/CMakeLists.txt
-+  COMMAND # patch cmake_minimum_required in s2n sub-sub-module
-+    sed -i.bak -E -e "s/\\(VERSION 3.0\\)/\\(VERSION 3.10\\)/"
-+    crt/aws-crt-cpp/crt/s2n/CMakeLists.txt
-+  CMAKE_ARGS
-+  -DBUILD_SHARED_LIBS=OFF        # SDK builds shared libs by default, we want static libs
-   -DENABLE_TESTING=OFF
-   -DBUILD_ONLY=core              # git repo contains SDK for every AWS product, we only want the core auth libraries
-   -DSIMPLE_INSTALL=ON
--  -DCMAKE_INSTALL_PREFIX=install # need to specify an install prefix so it doesn't install in /usr/lib - FIXME: use absolute path
--  -DBYO_CRYPTO=ON                # we have our own crypto libraries that conflict if we let aws sdk build and link its own
--  -DBUILD_CURL=ON
--  -DBUILD_ZLIB=ON
--
-+  -DCMAKE_INSTALL_PREFIX=install # need to specify an install prefix so it doesn't install in /usr/lib
-   -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
--  -DCMAKE_CXX_FLAGS=${AWSSDK_COMPILER_FLAGS}
-+  "-DCMAKE_CXX_FLAGS=${AWSSDK_COMPILER_FLAGS}"
-+  -DAWS_SDK_WARNINGS_ARE_ERRORS=OFF # newer compilers warn about code in this (older) sdk version
-+  -DUSE_CRT_HTTP_CLIENT=ON
-+  -DUSE_OPENSSL=ON
-   TEST_COMMAND ""
-   # the sdk build produces a ton of artifacts, with their own dependency tree, so there is a very specific dependency order they must be linked in
--  BUILD_BYPRODUCTS "${CMAKE_CURRENT_BINARY_DIR}/awssdk-build/install/lib64/libaws-cpp-sdk-core.a"
--  "${CMAKE_CURRENT_BINARY_DIR}/awssdk-build/install/lib64/libaws-crt-cpp.a"
--  "${CMAKE_CURRENT_BINARY_DIR}/awssdk-build/install/lib64/libaws-c-s3.a"
--  "${CMAKE_CURRENT_BINARY_DIR}/awssdk-build/install/lib64/libaws-c-auth.a"
--  "${CMAKE_CURRENT_BINARY_DIR}/awssdk-build/install/lib64/libaws-c-event-stream.a"
--  "${CMAKE_CURRENT_BINARY_DIR}/awssdk-build/install/lib64/libaws-c-http.a"
--  "${CMAKE_CURRENT_BINARY_DIR}/awssdk-build/install/lib64/libaws-c-mqtt.a"
--  "${CMAKE_CURRENT_BINARY_DIR}/awssdk-build/install/lib64/libaws-c-sdkutils.a"
--  "${CMAKE_CURRENT_BINARY_DIR}/awssdk-build/install/lib64/libaws-c-io.a"
--  "${CMAKE_CURRENT_BINARY_DIR}/awssdk-build/install/lib64/libaws-checksums.a"
--  "${CMAKE_CURRENT_BINARY_DIR}/awssdk-build/install/lib64/libaws-c-compression.a"
--  "${CMAKE_CURRENT_BINARY_DIR}/awssdk-build/install/lib64/libaws-c-cal.a"
--  "${CMAKE_CURRENT_BINARY_DIR}/awssdk-build/install/lib64/libaws-c-common.a"
--  "${CMAKE_CURRENT_BINARY_DIR}/awssdk-build/install/external-install/curl/lib/libcurl.a"
--  "${CMAKE_CURRENT_BINARY_DIR}/awssdk-build/install/external-install/zlib/lib/libz.a"
-+  BUILD_BYPRODUCTS
-+    "${AWSSDK_LIBDIR}/libaws-cpp-sdk-core.a"
-+    "${AWSSDK_LIBDIR}/libaws-crt-cpp.a"
-+    "${AWSSDK_LIBDIR}/libaws-c-s3.a"
-+    "${AWSSDK_LIBDIR}/libaws-c-auth.a"
-+    "${AWSSDK_LIBDIR}/libaws-c-event-stream.a"
-+    "${AWSSDK_LIBDIR}/libaws-c-http.a"
-+    "${AWSSDK_LIBDIR}/libaws-c-mqtt.a"
-+    "${AWSSDK_LIBDIR}/libaws-c-sdkutils.a"
-+    "${AWSSDK_LIBDIR}/libaws-c-io.a"
-+    "${AWSSDK_LIBDIR}/libaws-checksums.a"
-+    "${AWSSDK_LIBDIR}/libaws-c-compression.a"
-+    "${AWSSDK_LIBDIR}/libaws-c-cal.a"
-+    "${AWSSDK_LIBDIR}/libaws-c-common.a"
-+    "${AWSSDK_LIBDIR}/libs2n.a"
-   )
- 
- add_library(awssdk_core STATIC IMPORTED)
- add_dependencies(awssdk_core awssdk_project)
--set_target_properties(awssdk_core PROPERTIES IMPORTED_LOCATION "${CMAKE_CURRENT_BINARY_D
-```
-
----
-
-### Incident Patch 14: `0a3aff60` (2026-09-30)
-**Commit Message**: build: always include stripped main binaries in default ALL target
-
-This used to depend on whether GENERATE_DEBUG_PACKAGES was enabled.
-That was default OFF before #13904 / 776f3d95b485 but is now default
-ON for dev (it was explicitly set ON for release builds).
-
-The idea was, if GENERATE_DEBUG_PACKAGES=OFF then the `strip_only_*`
-targets should be included in default ALL target, and then if RPM
-or DEB packages were built they would use those stripped binary
-targets. But if GENERATE_DEBUG_PACKAGES=ON then it would not add
-those to default ALL target and just use original pre-stripped
-binaries for RPM or DEB package generators to split.
-
-But the `strip_only_*` targets were still built for the "packages"
-target, which release builds use, they want both debug packages
-and stripped binaries to upload as release artifacts individually.
-That is honestly a bit confusing - building rpm/deb packages does
-not need the "packages" target but has these side-effects on ALL.
-
-This can be simplified:
- * Always include `strip_only_*` targets in default ALL target
-   for the main binaries that devs expect.
- * RPM / DEB / TGZ packages always use original un-stripped binaries,
-   and if GENERATE_DEBUG
-
-**File**: `bindings/c/CMakeLists.txt` (modified, +2/-3)
-```diff
-@@ -55,6 +55,7 @@ if(OPEN_FOR_IDE)
- else()
-   add_library(fdb_c SHARED ${FDB_C_SRCS} ${fdb_c_apiversion_file} ${asm_file})
-   strip_debug_symbols(fdb_c)
-+  add_custom_target(stripped_fdb_c ALL DEPENDS strip_only_fdb_c)
- endif()
- add_dependencies(fdb_c fdb_c_generated fdb_c_options)
- add_dependencies(fdbclient fdb_c_options)
-@@ -237,9 +238,7 @@ if(NOT WIN32)
-     target_link_libraries(mako PRIVATE fdb_c fdbclient fmt::fmt Threads::Threads fdb_cpp boost_target rapidjson)
-     if(NOT OPEN_FOR_IDE)
-       strip_debug_symbols(mako)
--      if(NOT GENERATE_DEBUG_PACKAGES)
--        add_custom_target(prepare_mako_install ALL DEPENDS strip_only_mako)
--      endif()
-+      add_custom_target(prepare_mako_install ALL DEPENDS strip_only_mako)
-     endif()
-   endif()
- 
-```
-
-**File**: `cmake/InstallLayout.cmake` (modified, +4/-0)
-```diff
-@@ -44,7 +44,11 @@ set(CPACK_PROJECT_CONFIG_FILE "${CMAKE_BINARY_DIR}/packaging/CPackConfig.cmake")
- # User config
- ################################################################################
- 
-+# For debug packages, do not strip before handing to RPM or DEB generator, which will split debuginfo.
- set(GENERATE_DEBUG_PACKAGES ON CACHE BOOL "Build debug rpm/deb packages")
-+if(NOT GENERATE_DEBUG_PACKAGES)
-+  set(CPACK_STRIP_FILES ON)
-+endif()
- 
- ################################################################################
- # Alternatives config
-```
-
-**File**: `fdbbackup/CMakeLists.txt` (modified, +6/-14)
-```diff
-@@ -20,20 +20,8 @@ target_include_directories(fdbdecode PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/includ
- target_link_libraries(fdbdecode PRIVATE fdbclient)
- 
- if(NOT OPEN_FOR_IDE)
--  if(GENERATE_DEBUG_PACKAGES)
--    fdb_install(TARGETS fdbbackup DESTINATION bin COMPONENT clients)
--    fdb_install(PROGRAMS $<TARGET_FILE:fdbbackup> DESTINATION bin COMPONENT clients RENAME backup_agent)
--    fdb_install(PROGRAMS $<TARGET_FILE:fdbbackup> DESTINATION bin COMPONENT clients RENAME fdbrestore)
--    fdb_install(PROGRAMS $<TARGET_FILE:fdbbackup> DESTINATION bin COMPONENT clients RENAME dr_agent)
--    fdb_install(PROGRAMS $<TARGET_FILE:fdbbackup> DESTINATION bin COMPONENT clients RENAME fdbdr)
--  else()
--    add_custom_target(prepare_fdbbackup_install ALL DEPENDS strip_only_fdbbackup)
--    fdb_install(PROGRAMS ${CMAKE_BINARY_DIR}/packages/bin/fdbbackup DESTINATION bin COMPONENT clients)
--    fdb_install(PROGRAMS ${CMAKE_BINARY_DIR}/packages/bin/fdbbackup DESTINATION bin COMPONENT clients RENAME backup_agent)
--    fdb_install(PROGRAMS ${CMAKE_BINARY_DIR}/packages/bin/fdbbackup DESTINATION bin COMPONENT clients RENAME fdbrestore)
--    fdb_install(PROGRAMS ${CMAKE_BINARY_DIR}/packages/bin/fdbbackup DESTINATION bin COMPONENT clients RENAME dr_agent)
--    fdb_install(PROGRAMS ${CMAKE_BINARY_DIR}/packages/bin/fdbbackup DESTINATION bin COMPONENT clients RENAME fdbdr)
--  endif()
-+  add_custom_target(stripped_fdbbackup ALL DEPENDS strip_only_fdbbackup)
-+  fdb_install(TARGETS fdbbackup DESTINATION bin COMPONENT clients)
-   symlink_files(
-     LOCATION packages/bin
-     SOURCE fdbbackup
-@@ -42,6 +30,10 @@ if(NOT OPEN_FOR_IDE)
-     LOCATION bin
-     SOURCE fdbbackup
-     TARGETS fdbdr dr_agent backup_agent fdbrestore)
-+  # Install the relative symlinks created above, so all names share one binary
-+  foreach(alias IN ITEMS backup_agent fdbrestore dr_agent fdbdr)
-+    fdb_install(PROGRAMS ${CMAKE_BINARY_DIR}/bin/${alias} DESTINATION bin COMPONENT clients)
++# Make sure binaries built on newer RHEL 9 minor releases still run on older ones, see ConfigureCompiler.cmake
++if(RHEL9_BASED)
++  set(glibc_check_binaries)
++  foreach(target fdbserver fdbcli fdbbackup fdbmonitor fdb_c fdb_c_shim fdb_java)
++    if(TARGET ${target})
++      get_target_property(target_type ${target} TYPE)
++      if(target_type MATCHES "^(EXECUTABLE|SHARED_LIBRARY|MODULE_LIBRARY)$")
++        list(APPEND glibc_check_binaries $<TARGET_FILE:${target}>)
++      endif()
++    endif()
 +  endforeach()
- 
-   # Test version of backup.cpp without main() function
-   add_flow_target(EXECUTABLE NAME backup_tests SRCS backup.cpp)
-```
-
-**File**: `fdbcli/CMakeLists.txt` (modified, +2/-6)
-```diff
-@@ -18,12 +18,8 @@ if(NOT WIN32)
- endif()
- 
- if(NOT OPEN_FOR_IDE)
--  if(GENERATE_DEBUG_PACKAGES)
--    fdb_install(TARGETS fdbcli DESTINATION bin COMPONENT clients)
--  else()
--    add_custom_target(prepare_fdbcli_install ALL DEPENDS strip_only_fdbcli)
--    fdb_install(PROGRAMS ${CMAKE_BINARY_DIR}/packages/bin/fdbcli DESTINATION bin COMPONENT clients)
--  endif()
-+  add_custom_target(stripped_fdbcli ALL DEPENDS strip_only_fdbcli)
-+  fdb_install(TARGETS fdbcli DESTINATION bin COMPONENT clients)
- endif()
- 
- if (NOT WIN32 AND NOT OPEN_FOR_IDE)
-```
-
-**File**: `fdbmonitor/CMakeLists.txt` (modified, +2/-6)
-```diff
-@@ -36,12 +36,8 @@ if(NOT "${fdbmonitor_options}" STREQUAL "fdbmonitor_options-NOTFOUND")
-   set_property(TARGET fdbmonitor PROPERTY LINK_OPTIONS ${fdbmonitor_options})
- endif()
- 
--if(GENERATE_DEBUG_PACKAGES)
--  fdb_install(TARGETS fdbmonitor DESTINATION sbin COMPONENT server)
--else()
--  add_custom_target(prepare_fdbmonitor_install ALL DEPENDS strip_only_fdbmonitor)
--  fdb_install(PROGRAMS ${CMAKE_BINARY_DIR}/packages/bin/fdbmonitor DESTINATION sbin COMPONENT server)
--endif()
-+add_custom_target(stripped_fdbmonitor ALL DEPENDS strip_only_fdbmonitor)
-+fdb_install(TARGETS fdbmonitor DESTINATION sbin COMPONENT server)
- 
- # Create a local sandbox for quick manual testing without simulator
- file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/sandbox/data)
-```
-
-**File**: `fdbserver/CMakeLists.txt` (modified, +2/-6)
-```diff
-@@ -230,12 +230,8 @@ if(GPERFTOOLS_FOUND)
- endif()
- 
- if(NOT OPEN_FOR_IDE)
--  if(GENERATE_DEBUG_PACKAGES)
--    fdb_install(TARGETS fdbserver DESTINATION sbin COMPONENT server)
--  else()
--    add_custom_target(prepare_fdbserver_install ALL DEPENDS strip_only_fdbserver)
--    fdb_install(PROGRAMS ${CMAKE_BINARY_DIR}/packages/bin/fdbserver DESTINATION sbin COMPONENT server)
--  endif()
-+  add_custom_target(stripped_fdbserver ALL DEPENDS strip_only_fdbserver)
-+  fdb_install(TARGETS fdbserver DESTINATION sbin COMPONENT server)
- endif()
- 
- target_link_libraries(fdbserver PUBLIC fdbctl)
-```
-
----
-
-### Incident Patch 15: `723fa93e` (2026-09-29)
-**Commit Message**: build: java: set OUTPUT and DEPENDS for javadoc targets (#14171)
-
-... to avoid rebuilding javadoc when nothing changed.
-(It is pretty fast, but causes a screen-full of build log output.)
-
-The cmake UseJava provided create_javadoc() cannot be used
-because it does not set, or enable setting, OUTPUT and DEPENDS.
-
-**File**: `bindings/java/CMakeLists.txt` (modified, +25/-9)
-```diff
-@@ -210,16 +210,32 @@ add_jar(fdb-java ${JAVA_BINDING_SRCS} ${GENERATED_JAVA_FILES} ${CMAKE_SOURCE_DIR
-   OUTPUT_DIR ${PROJECT_BINARY_DIR}/lib VERSION ${FDB_VERSION} MANIFEST ${MANIFEST_FILE} GENERATE_NATIVE_HEADERS fdb_java_native)
- add_dependencies(fdb-java fdb_java_options)
- 
--create_javadoc(fdb
--               FILES ${JAVA_BINDING_SRCS} ${GENERATED_JAVA_FILES} ${GENERATED_JAVA_DIR}/ApiVersion.java
--               VERSION ${FDB_VERSION}
--               )
--add_dependencies(fdb_javadoc fdb_java_options) 
--
--add_custom_target(CopyJavadoc
--    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_BINARY_DIR}/javadoc/fdb ${CMAKE_CURRENT_BINARY_DIR}/../../documentation/html/javadoc
-+# create_javadoc() from cmake UseJava does not set OUTPUT and DEPENDS properly
-+# to avoid rebuilds when no files changed, so re-implement here
-+set(FDB_JAVADOC_DIR ${CMAKE_CURRENT_BINARY_DIR}/javadoc/fdb)
-+add_custom_command(
-+    OUTPUT ${FDB_JAVADOC_DIR}/index.html
-+    COMMAND ${Java_JAVADOC_EXECUTABLE} -d ${FDB_JAVADOC_DIR} -version
-+            ${JAVA_BINDING_SRCS} ${GENERATED_JAVA_FILES} ${GENERATED_JAVA_DIR}/ApiVersion.java
-+    DEPENDS ${JAVA_BINDING_SRCS} ${GENERATED_JAVA_FILES} ${GENERATED_JAVA_DIR}/ApiVersion.java fdb_java_options
-+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-+    COMMENT "Generating javadoc for fdb"
-+)
-+add_custom_target(fdb_javadoc ALL DEPENDS ${FDB_JAVADOC_DIR}/index.html)
++  add_test(NAME glibc_symbol_versions
++           COMMAND ${CMAKE_SOURCE_DIR}/contrib/check_glibc_symbol_versions.sh ${CMAKE_NM} ${glibc_check_binaries})
++endif()
 +
-+set(DOC_JAVADOC_DIR ${CMAKE_CURRENT_BINARY_DIR}/../../documentation/html/javadoc)
-+add_custom_command(
-+    OUTPUT ${DOC_JAVADOC_DIR}/index.html
-+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${FDB_JAVADOC_DIR} ${DOC_JAVADOC_DIR}
-+    DEPENDS ${FDB_JAVADOC_DIR}/index.html
-+    COMMENT "Copying javadoc to documentation directory"
-+)
-+add_custom_target(CopyJavadoc DEPENDS ${DOC_JAVADOC_DIR}/index.html)
-+
-+install(
-+    DIRECTORY ${FDB_JAVADOC_DIR}
-+    DESTINATION share/javadoc
- )
--add_dependencies(CopyJavadoc fdb_javadoc)
+ if(WIN32)
+   add_subdirectory(packaging/msi)
+ else()
+```
+
+**File**: `cmake/ConfigureCompiler.cmake` (modified, +29/-0)
+```diff
+@@ -171,6 +171,35 @@ else()
+     set(GCC YES)
+   endif()
  
- if(NOT OPEN_FOR_IDE)
-   set(FAT_JAR_BINARIES "NOTFOUND" CACHE STRING
++  set(RHEL9_BASED NO)
++  if(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND NOT CMAKE_CROSSCOMPILING)
++    cmake_host_system_information(RESULT _distrib_id QUERY DISTRIB_ID)
++    cmake_host_system_information(RESULT _distrib_id_like QUERY DISTRIB_ID_LIKE)
++    cmake_host_system_information(RESULT _distrib_version_id QUERY DISTRIB_VERSION_ID)
++    if((_distrib_id STREQUAL "rhel" OR _distrib_id_like MATCHES "(^| )rhel( |$)") AND _distrib_version_id MATCHES "^9(\\.|$)")
++      set(RHEL9_BASED YES)
++    endif()
++  endif()
++
++  # Since RHEL 9.7, the system GCC 11 (gcc >= 11.5.0-10) libgcc_eh.a unwinder calls _dl_find_object@GLIBC_2.35
++  # (backported to the RHEL 9.7 glibc 2.34). Clang selects the system GCC installation by default, so with
++  # -static-libgcc our binaries would fail to start on RHEL 9.6 and older. The gcc-toolset-13 libgcc_eh.a
++  # does not have this dependency (but newer gcc-toolsets do). The glibc_symbol_versions test checks this.
++  set(_clang_gcc_install_dir "")
++  if(CLANG AND RHEL9_BASED)
++    set(_clang_gcc_install_dir "/opt/rh/gcc-toolset-13/root/usr/lib/gcc/${CMAKE_SYSTEM_PROCESSOR}-redhat-linux/13")
++  endif()
++  env_set(CLANG_GCC_INSTALL_DIR "${_clang_gcc_install_dir}" PATH "GCC installation for clang to use (passed as --gcc-install-dir), empty for the clang default")
++  if(CLANG_GCC_INSTALL_DIR)
++    if(NOT IS_DIRECTORY "${CLANG_GCC_INSTALL_DIR}")
++      message(FATAL_ERROR "CLANG_GCC_INSTALL_DIR=${CLANG_GCC_INSTALL_DIR} does not exist. On RHEL 9 based distros, "
++                          "install gcc-toolset-13-gcc-c++, or set CLANG_GCC_INSTALL_DIR to empty to use clang's default.")
++    endif()
++    message(STATUS "Using GCC installation for clang: ${CLANG_GCC_INSTALL_DIR}")
++    add_compile_options("$<${is_cxx_compile}:--gcc-install-dir=${CLANG_GCC_INSTALL_DIR}>")
++    add_link_options("$<${is_cxx_link}:--gcc-install-dir=${CLANG_GCC_INSTALL_DIR}>")
++  endif()
++
+   # check linker flags.
+   if (USE_LD STREQUAL "DEFAULT")
+     set(USE_LD "LD")
+```
+
+**File**: `contrib/check_glibc_symbol_versions.sh` (added, +48/-0)
+```diff
+@@ -0,0 +1,48 @@
++#!/bin/bash
++#
++# Check that binaries only need glibc symbols available in the oldest glibc we support on RHEL 9 based
++# distros: RHEL 9.6 glibc 2.34 (2.34-168.el9_6). Newer RHEL 9 minor releases backport some glibc 2.35+
++# symbols, so a newer build host can produce binaries that fail to start on older systems with:
++#   version `GLIBC_2.35' not found
++#
++# Usage: check_glibc_symbol_versions.sh <nm> <binary>...
++
++set -euo pipefail
++
++MAX_GLIBC_VERSION=2.34
++
++if [[ $# -lt 2 ]]; then
++  echo "Usage: $0 <nm> <binary>..." >&2
++  exit 2
++fi
++nm=$1
++shift
++
++failed=0
++for file in "$@"; do
++  if ! undefined=$("$nm" -D --undefined-only "$file"); then
++    echo "FAIL: $nm failed on $file"
++    failed=1
++    continue
++  fi
++  bad_symbols=()
++  for symbol in $(grep -oE '[^ ]+@GLIBC_[0-9.]+$' <<<"$undefined" | sort -u); do
++    version=${symbol##*@GLIBC_}
++    if [[ $(printf '%s\n%s\n' "$MAX_GLIBC_VERSION" "$version" | sort -V | tail -n1) != "$MAX_GLIBC_VERSION" ]]; then
++      bad_symbols+=("$symbol")
++    fi
++  done
++
++  if [[ ${#bad_symbols[@]} -gt 0 ]]; then
++    echo "FAIL: $file needs glibc symbols newer than GLIBC_${MAX_GLIBC_VERSION}:"
++    printf '  %s\n' "${bad_symbols[@]}"
++    failed=1
++  else
++    echo "OK: $file"
++  fi
++done
++
++if [[ $failed -ne 0 ]]; then
++  echo "Binaries would not run on RHEL 9.6. Check that clang uses gcc-toolset-13 (CLANG_GCC_INSTALL_DIR in cmake/ConfigureCompiler.cmake)."
++  exit 1
++fi
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14222** (2026-10-06): tests: UnitTestRunner: list failed tests at the end (@ploxiln)
-- **PR #14221** (closed): Enable SHARD_ENCODE_LOCATION_METADATA by default (@saintstack)
-- **PR #14218** (2026-10-06): Use a numeric user in the Kubernetes monitor image (@arnav-ag)
-- **PR #14214** (2026-10-03): tests: fix fdb_test_runner fdb_version.py handling (@ploxiln)
-- **PR #14210** (2026-10-02): tests: fix fdb_test_runner fdb_version.py handling (@ploxiln)
-- **PR #14206** (2026-10-05): documentation: change default release-notes page to 8.0.x (@ploxiln)
-- **PR #14205** (2026-10-02): Fix LocalityData value presence checks (@tclinkenbeard-oai)
-- **PR #14201** (2026-10-03): Enable two additional clang-tidy checks and fix existing findings (@tclinkenbeard-oai)
+- **PR #14315** (closed): Do not advertise restorability from empty partitioned log files (@saintstack)
+- **PR #14314** (closed): Enterprise database and associated institutions (@hashim21223445)
+- **PR #14311** (closed): Refuse a bulkload restore of a partitioned-log backup (@saintstack)
+- **PR #14310** (closed): Validate the block format version when reading partitioned mutation logs (@saintstack)
+- **PR #14307** (2026-10-18): [release-8.0] tlog cdc test AbsoluteDeadline more robust under load (@ploxiln)
+- **PR #14304** (closed): Reject mismatched ELF architectures in Docker image artifacts (@evanbits)
 
 ---
 
@@ -4199,3 +2211,82 @@ because it does not set, or enable setting, OUTPUT and DEPENDS.
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. Merge pull request #14236 from tclinkenbeard-oai/dev/tclinkenbeard/backup-restor
+
+**RULE**:
+When implementing operations in `fdbclient/BackupContainerFileSystem.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `6bedaf81`: Merge pull request #14236 from tclinkenbeard-oai/dev/tclinkenbeard/backup-restore-trace-overflow-20261006. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `fdbclient/BackupContainerFileSystem.cpp`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c++
+// Verified production-grade fix pattern:
+	static constexpr int ENCRYPTION_KEY_MAX_RETRIES = 5;
+
+		for (int retries = 0;; ++retries) {
+			const char* errorEvent = "FailedToOpenEncryptionKeyFile";
+			try {
+				Reference<IAsyncFile> keyFile = co_await IAsyncFileSystem::filesystem()->open(
+				    encryptionKeyFileName,
+				    IAsyncFile::OPEN_NO_AIO | IAsyncFile::OPEN_READONLY | IAsyncFile::OPEN_UNCACHED,
+				    0400);
+				errorEvent = "FailedToReadEncryptionKeyFile";
+				int bytesRead = co_await uncancellable(keyFile->read(cipherKey->data(), cipherKey->size(), 0));
+				if (bytesRead != cipherKey->size()) {
+					TraceEvent(SevError, "InvalidEncryptionKeyFileSize")
+					    .detail("ExpectedSize", cipherKey->size())
+					    .detail("ActualSize", bytesRead)
+					    .detail("FileName", encryptionKeyFileName);
+					throw invalid_encryption_key_file();
+				}
+				co_return;
+			} catch (Error& e) {
+				if (e.code() == error_code_actor_cancelled) {
+					throw;
+				}
+				bool retry = e.isDiskError() && retries < ENCRYPTION_KEY_MAX_RETRIES;
+				TraceEvent(retry ? SevWarn : SevError, errorEvent)
+				    .error(e)
+				    .detail("FileName", encryptionKeyFileName)
+				    .detail("Retries", retries);
+				if (!retry) {
+					throw;
+		
+```
+
+**NEGATIVE CONSTRAINT**:
+```c++
+// Anti-pattern to NEVER write (induced failure mode):
+		Reference<IAsyncFile> keyFile;
+		try {
+			Reference<IAsyncFile> _keyFile = co_await IAsyncFileSystem::filesystem()->open(
+			    encryptionKeyFileName,
+			    IAsyncFile::OPEN_NO_AIO | IAsyncFile::OPEN_READONLY | IAsyncFile::OPEN_UNCACHED,
+			    0400);
+			keyFile = _keyFile;
+		} catch (Error& e) {
+			TraceEvent(SevError, "FailedToOpenEncryptionKeyFile").error(e).detail("FileName", encryptionKeyFileName);
+			throw e;
+		}
+		int bytesRead = co_await uncancellable(keyFile->read(cipherKey->data(), cipherKey->size(), 0));
+		if (bytesRead != cipherKey->size()) {
+			TraceEvent(SevError, "InvalidEncryptionKeyFileSize")
+			    .detail("ExpectedSize", cipherKey->size())
+			    .detail("ActualSize", bytesRead)
+			    .detail("FileName", encryptionKeyFileName);
+			throw invalid_encryption_key_file();
+		ASSERT_EQ(bytesRead, cipherKey->size());
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `6bedaf81` are properly handled with clean fallback behavior.

@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261017-K26R",
-    "timestamp": "2026-10-17T20:54:20.691Z",
-    "repository": "convaiinnovations/laya",
-    "learningId": "learn-huggingface-convaiinnovations-laya",
-    "contentHash": "72b110acb12679c63e4dfd989eaf56c00eba4be5c16b0b893c2c3ef7168ff9de",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-O7RB",
-    "timestamp": "2026-10-17T20:57:34.535Z",
-    "repository": "Edge0/Audio8-ASR-Infinite",
-    "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
-    "contentHash": "9909d14e61b425547030a89891b9fd4cac30563e2ecd72d75cf2037d7e65d7cb",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-SAEA",
-    "timestamp": "2026-10-17T21:00:44.578Z",
-    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
-    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
-    "contentHash": "b09fe2f5739ac63ecdec9511e8bc97c59995ead3bc08487363fd5ef10a454d31",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-WGMK",
-    "timestamp": "2026-10-17T21:03:59.276Z",
-    "repository": "sentence-transformers/all-MiniLM-L6-v2",
-    "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
-    "contentHash": "1e06d33d1b739b8ccd8d4b4bc431cb4e3b33dd5548b4e253673cf84fc71a45d5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-07UT",
-    "timestamp": "2026-10-17T21:06:54.533Z",
-    "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
-    "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
-    "contentHash": "fa0cebfae751435add5a153248ab35f765005fbadd98676660dc9a21cf52ac7e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-75GW",
-    "timestamp": "2026-10-17T21:12:18.032Z",
-    "repository": "black-forest-labs/flux-3-image-klein-comfy",
-    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
-    "contentHash": "d1a5090f81a42a1dd5de7157ec0d53db2c6ddf87a67d8e15c69cb40e28dcc22a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261017-DQU6",
     "timestamp": "2026-10-17T21:17:25.662Z",
     "repository": "autotrust/JEV-35B-NVFP4",
@@ -7492,6 +7402,96 @@
     "contentHash": "bd9a692bc061b9b8d81f02cb25ab63980f8be6f0f306bbe04a24392808fc98d5",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-8MFQ",
+    "timestamp": "2026-10-19T02:37:02.486Z",
+    "repository": "system-ui/theme-ui",
+    "learningId": "learn-github-system-ui-theme-ui",
+    "contentHash": "f60d14f470d77fe9b7f8cb43d11f180209fa174ce605b8196a3d5a0880d7ad73",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-8N13",
+    "timestamp": "2026-10-19T02:37:03.255Z",
+    "repository": "stabilityai/stable-diffusion-xl-base-1.0",
+    "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
+    "contentHash": "d7920d381020517ff8a2bdf8bb997223e0b01c9b58554d6e81876cfbb6476b80",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-8NRX",
+    "timestamp": "2026-10-19T02:37:04.221Z",
+    "repository": "mtkennerly/ludusavi",
+    "learningId": "learn-github-mtkennerly-ludusavi",
+    "contentHash": "4de2d7a765ed1dbf10b883bda40eee6443927d593d5ecad50f496f06601cfc75",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-8RWW",
+    "timestamp": "2026-10-19T02:37:09.584Z",
+    "repository": "nativewind/nativewind",
+    "learningId": "learn-github-nativewind-nativewind",
+    "contentHash": "0a4729518795c1c9bac22713cd15da3e3c55cb2b5c2efa7f43c56cc43f9ca161",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-8TD7",
+    "timestamp": "2026-10-19T02:37:11.467Z",
+    "repository": "crossplane/crossplane",
+    "learningId": "learn-github-crossplane-crossplane",
+    "contentHash": "a4e3b280489f98ec0372fb79bca683013e3a5f1f123d95c515535fb5dffc33c9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-8XGI",
+    "timestamp": "2026-10-19T02:37:16.770Z",
+    "repository": "apple/foundationdb",
+    "learningId": "learn-github-apple-foundationdb",
+    "contentHash": "d08b812f084c89e456ad5aacad4e3fd7af4d37abc3609f8bae2b2c1b599e997d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

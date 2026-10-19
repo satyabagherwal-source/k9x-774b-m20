@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T02:29:05.555Z",
+  "last_updated": "2026-10-19T02:37:16.781Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -318,14 +318,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
-      "content_hash": "6bb110832c9d84e5a14522a7a52448e5d01b26d2412ea34aaa9931a9ef996ace",
-      "verified_at": "2026-10-17T22:16:10.087Z",
+      "content_hash": "d7920d381020517ff8a2bdf8bb997223e0b01c9b58554d6e81876cfbb6476b80",
+      "verified_at": "2026-10-19T02:37:03.263Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T22:16:10.087Z"
+      "last_updated": "2026-10-19T02:37:03.263Z"
     },
     "meta-llama/Llama-3.1-8B-Instruct": {
       "repository": "meta-llama/Llama-3.1-8B-Instruct",
@@ -7507,6 +7507,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T02:29:05.554Z"
+    },
+    "system-ui/theme-ui": {
+      "repository": "system-ui/theme-ui",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-system-ui-theme-ui",
+      "content_hash": "f60d14f470d77fe9b7f8cb43d11f180209fa174ce605b8196a3d5a0880d7ad73",
+      "verified_at": "2026-10-19T02:37:02.498Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T02:37:02.498Z"
+    },
+    "mtkennerly/ludusavi": {
+      "repository": "mtkennerly/ludusavi",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-mtkennerly-ludusavi",
+      "content_hash": "4de2d7a765ed1dbf10b883bda40eee6443927d593d5ecad50f496f06601cfc75",
+      "verified_at": "2026-10-19T02:37:04.233Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T02:37:04.233Z"
+    },
+    "nativewind/nativewind": {
+      "repository": "nativewind/nativewind",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-nativewind-nativewind",
+      "content_hash": "0a4729518795c1c9bac22713cd15da3e3c55cb2b5c2efa7f43c56cc43f9ca161",
+      "verified_at": "2026-10-19T02:37:09.597Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T02:37:09.597Z"
+    },
+    "crossplane/crossplane": {
+      "repository": "crossplane/crossplane",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-crossplane-crossplane",
+      "content_hash": "a4e3b280489f98ec0372fb79bca683013e3a5f1f123d95c515535fb5dffc33c9",
+      "verified_at": "2026-10-19T02:37:11.478Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T02:37:11.478Z"
+    },
+    "apple/foundationdb": {
+      "repository": "apple/foundationdb",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-apple-foundationdb",
+      "content_hash": "d08b812f084c89e456ad5aacad4e3fd7af4d37abc3609f8bae2b2c1b599e997d",
+      "verified_at": "2026-10-19T02:37:16.781Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T02:37:16.781Z"
     }
   },
   "repos": {

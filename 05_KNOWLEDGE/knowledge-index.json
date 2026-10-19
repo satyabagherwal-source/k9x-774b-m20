@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T02:29:05.502Z",
-  "total_verified_learnings": 514,
+  "last_updated": "2026-10-19T02:37:16.732Z",
+  "total_verified_learnings": 519,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -1736,22 +1736,35 @@
     "learn-github-apple-foundationdb": {
       "learning_id": "learn-github-apple-foundationdb",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "apple-foundationdb",
+      "source": "apple/foundationdb",
+      "repository": "apple/foundationdb",
       "slug": "apple-foundationdb",
       "platform": "github",
       "source_url": "https://github.com/apple/foundationdb",
-      "source_version": "HEAD",
-      "content_hash": "34ba52bd8db60b872859e3ea1cd7cf4d57536510106addfd69ef9a5e58fffc55",
+      "source_version": "487620d5",
+      "content_hash": "d08b812f084c89e456ad5aacad4e3fd7af4d37abc3609f8bae2b2c1b599e997d",
       "dossier_path": "07_PROJECT_LEARNING/apple-foundationdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apple-foundationdb-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2031,
+          "title": "Merge pull request #14236 from tclinkenbeard-oai/dev/tclinkenbeard/backup-restor",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.844Z"
+      "verified_at": "2026-10-19T02:37:16.724Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-apple-sample-food-truck": {
       "learning_id": "learn-github-apple-sample-food-truck",
@@ -4930,22 +4943,35 @@
     "learn-github-crossplane-crossplane": {
       "learning_id": "learn-github-crossplane-crossplane",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "crossplane-crossplane",
+      "source": "crossplane/crossplane",
+      "repository": "crossplane/crossplane",
       "slug": "crossplane-crossplane",
       "platform": "github",
       "source_url": "https://github.com/crossplane/crossplane",
-      "source_version": "HEAD",
-      "content_hash": "a3783a1c55770ec974de8d58cef0bb44670409b7c0d58c90414e3abd50ad3a58",
+      "source_version": "6601fc76",
+      "content_hash": "a4e3b280489f98ec0372fb79bca683013e3a5f1f123d95c515535fb5dffc33c9",
       "dossier_path": "07_PROJECT_LEARNING/crossplane-crossplane-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crossplane-crossplane-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2030,
+          "title": "deps): update vulnerable dependencies [security]",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.444Z"
+      "verified_at": "2026-10-19T02:37:11.421Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-cryfs-cryfs": {
       "learning_id": "learn-github-cryfs-cryfs",
@@ -20270,7 +20296,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0",
       "source_version": "hf-stabilityai-stable-diffusion-xl-base-1.0",
-      "content_hash": "6bb110832c9d84e5a14522a7a52448e5d01b26d2412ea34aaa9931a9ef996ace",
+      "content_hash": "d7920d381020517ff8a2bdf8bb997223e0b01c9b58554d6e81876cfbb6476b80",
       "dossier_path": "07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md",
       "promoted_rules": [
@@ -20343,7 +20369,7 @@
         "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv446z5h",
         "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv4hg90r"
       ],
-      "verified_at": "2026-10-17T22:16:10.046Z",
+      "verified_at": "2026-10-19T02:37:03.193Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -27680,22 +27706,35 @@
     "learn-github-mtkennerly-ludusavi": {
       "learning_id": "learn-github-mtkennerly-ludusavi",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "mtkennerly-ludusavi",
+      "source": "mtkennerly/ludusavi",
+      "repository": "mtkennerly/ludusavi",
       "slug": "mtkennerly-ludusavi",
       "platform": "github",
       "source_url": "https://github.com/mtkennerly/ludusavi",
-      "source_version": "HEAD",
-      "content_hash": "3b09b513993a226aaa17faf69f121d90570f176f11d9c1453ef55c604d4cb620",
+      "source_version": "95b651aa",
+      "content_hash": "4de2d7a765ed1dbf10b883bda40eee6443927d593d5ecad50f496f06601cfc75",
       "dossier_path": "07_PROJECT_LEARNING/mtkennerly-ludusavi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mtkennerly-ludusavi-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2028,
+          "title": "Merge pull request #655 from Zhong-fan/fix/653-exit-duplicates-filter",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.505Z"
+      "verified_at": "2026-10-19T02:37:04.177Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-mufeedvh-code2prompt": {
       "learning_id": "learn-github-mufeedvh-code2prompt",
@@ -27999,22 +28038,35 @@
     "learn-github-nativewind-nativewind": {
       "learning_id": "learn-github-nativewind-nativewind",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "nativewind-nativewind",
+      "source": "nativewind/nativewind",
+      "repository": "nativewind/nativewind",
       "slug": "nativewind-nativewind",
       "platform": "github",
       "source_url": "https://github.com/nativewind/nativewind",
-      "source_version": "HEAD",
-      "content_hash": "4ceeb2ad26d24076f2e1311214e28ebfc2db8ea3a30ceaa307376d40217ee1b3",
+      "source_version": "7dbaf182",
+      "content_hash": "0a4729518795c1c9bac22713cd15da3e3c55cb2b5c2efa7f43c56cc43f9ca161",
       "dossier_path": "07_PROJECT_LEARNING/nativewind-nativewind-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nativewind-nativewind-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2029,
+          "title": "release): use whatBump:false to bypass broken preset loader (#1791)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.570Z"
+      "verified_at": "2026-10-19T02:37:09.533Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-nats-io-nats-server": {
       "learning_id": "learn-github-nats-io-nats-server",
@@ -35396,22 +35448,35 @@
     "learn-github-system-ui-theme-ui": {
       "learning_id": "learn-github-system-ui-theme-ui",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "system-ui-theme-ui",
+      "source": "system-ui/theme-ui",
+      "repository": "system-ui/theme-ui",
       "slug": "system-ui-theme-ui",
       "platform": "github",
       "source_url": "https://github.com/system-ui/theme-ui",
-      "source_version": "HEAD",
-      "content_hash": "e626ebf3c4e374f7617b9c500405428ca3d46b1d16a693bbe564f22349bfbbbd",
+      "source_version": "bc875924",
+      "content_hash": "f60d14f470d77fe9b7f8cb43d11f180209fa174ce605b8196a3d5a0880d7ad73",
       "dossier_path": "07_PROJECT_LEARNING/system-ui-theme-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/system-ui-theme-ui-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2027,
+          "title": "deps): bump esbuild from 0.24.0 to 0.27.2",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.805Z"
+      "verified_at": "2026-10-19T02:37:02.442Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-t8y2-dbx": {
       "learning_id": "learn-github-t8y2-dbx",
@@ -74174,6 +74239,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T02:29:05.493Z"
+    },
+    "rule-2027": {
+      "learning_id": "rule-2027",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2027,
+      "title": "deps): bump esbuild from 0.24.0 to 0.27.2",
+      "source_url": "https://github.com/system-ui/theme-ui",
+      "source_version": "bc875924",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T02:37:02.442Z"
+    },
+    "rule-2028": {
+      "learning_id": "rule-2028",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2028,
+      "title": "Merge pull request #655 from Zhong-fan/fix/653-exit-duplicates-filter",
+      "source_url": "https://github.com/mtkennerly/ludusavi",
+      "source_version": "95b651aa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T02:37:04.177Z"
+    },
+    "rule-2029": {
+      "learning_id": "rule-2029",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2029,
+      "title": "release): use whatBump:false to bypass broken preset loader (#1791)",
+      "source_url": "https://github.com/nativewind/nativewind",
+      "source_version": "7dbaf182",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T02:37:09.533Z"
+    },
+    "rule-2030": {
+      "learning_id": "rule-2030",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2030,
+      "title": "deps): update vulnerable dependencies [security]",
+      "source_url": "https://github.com/crossplane/crossplane",
+      "source_version": "6601fc76",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T02:37:11.421Z"
+    },
+    "rule-2031": {
+      "learning_id": "rule-2031",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2031,
+      "title": "Merge pull request #14236 from tclinkenbeard-oai/dev/tclinkenbeard/backup-restor",
+      "source_url": "https://github.com/apple/foundationdb",
+      "source_version": "487620d5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T02:37:16.724Z"
     }
   },
   "aliases": {
