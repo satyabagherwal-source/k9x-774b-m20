@@ -3490,3 +3490,6 @@ Every entry in this ledger must capture:
 | `learn-github-joshcarty-google-searchconsole` | `https://github.com/joshcarty/google-searchconsole` | `9ab5a265` | Multi-dimensional audit evidence | 2026-10-19T20:41:06.328Z |
 | `learn-github-gonzalezreal-swift-markdown-ui` | `https://github.com/gonzalezreal/swift-markdown-ui` | `8371aeb3` | Multi-dimensional audit evidence | 2026-10-19T20:41:10.387Z |
 | `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `d1e88ab4` | Multi-dimensional audit evidence | 2026-10-19T20:41:19.031Z |
+| `learn-github-trybyte-app-sitemap-validator` | `https://github.com/trybyte-app/sitemap-validator` | `a7fc287e` | Multi-dimensional audit evidence | 2026-10-19T20:47:13.894Z |
+| `learn-github-oblador-hush` | `https://github.com/oblador/hush` | `2e96f4f7` | Multi-dimensional audit evidence | 2026-10-19T20:47:15.060Z |
+| `learn-github-valeriansaliou-sonic` | `https://github.com/valeriansaliou/sonic` | `011c3dfd` | Multi-dimensional audit evidence | 2026-10-19T20:47:22.664Z |

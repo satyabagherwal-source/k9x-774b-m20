@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T20:35:05.886Z",
+  "last_updated": "2026-10-19T20:47:13.897Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1938,6 +1938,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-melihandic-deep-in-gsc"
+    },
+    {
+      "id": "CD-6M7D",
+      "directive_title": "harden sitemap validation and prepare v1.0.3",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "trybyte-app/sitemap-validator",
+      "source_commit": "a7fc287e",
+      "date_staged": "2026-10-19",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-trybyte-app-sitemap-validator"
     }
   ]
 }

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T20:41:18.985Z",
-  "total_verified_learnings": 915,
+  "last_updated": "2026-10-19T20:47:22.626Z",
+  "total_verified_learnings": 917,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -33213,22 +33213,29 @@
     "learn-github-oblador-hush": {
       "learning_id": "learn-github-oblador-hush",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "oblador-hush",
+      "source": "oblador/hush",
+      "repository": "oblador/hush",
       "slug": "oblador-hush",
       "platform": "github",
       "source_url": "https://github.com/oblador/hush",
-      "source_version": "HEAD",
-      "content_hash": "965871d33f78565b04902725525bfd1df7ebfff7ba259e824f41f40dec90a0ae",
+      "source_version": "2e96f4f7",
+      "content_hash": "4765fae8988faf15e1857a7be7fc60af32d1127c519d739b96e499fb7316bffd",
       "dossier_path": "07_PROJECT_LEARNING/oblador-hush-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oblador-hush-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.730Z"
+      "verified_at": "2026-10-19T20:47:15.015Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-oblador-react-native-animatable": {
       "learning_id": "learn-github-oblador-react-native-animatable",
@@ -43514,8 +43521,8 @@
       "slug": "valeriansaliou-sonic",
       "platform": "github",
       "source_url": "https://github.com/valeriansaliou/sonic",
-      "source_version": "85238906",
-      "content_hash": "503d73d7cfedda28b0f0e861ed1f3facf59fd904c8535b38def9b0d6d20da097",
+      "source_version": "011c3dfd",
+      "content_hash": "46193b7821221effe3d6db48a14356dd865073204b0bbe5a7d2656e53b5f52ac",
       "dossier_path": "07_PROJECT_LEARNING/valeriansaliou-sonic-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/valeriansaliou-sonic-learnings.md",
       "promoted_rules": [
@@ -43528,6 +43535,11 @@
           "number": 2376,
           "title": "Guarded Asymmetric Multi-Pool Thread Budgeting",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2804,
+          "title": "security): Bump `rustls` from `0.23.45` to `0.23.46`",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43535,7 +43547,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T08:07:13.275Z",
+      "verified_at": "2026-10-19T20:47:22.619Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56297,22 +56309,31 @@
     "learn-github-trybyte-app-sitemap-validator": {
       "learning_id": "learn-github-trybyte-app-sitemap-validator",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "trybyte-app/sitemap-validator",
       "repository": "trybyte-app/sitemap-validator",
       "slug": "trybyte-app-sitemap-validator",
       "platform": "github",
       "source_url": "https://github.com/trybyte-app/sitemap-validator",
-      "source_version": "main",
-      "content_hash": "0b9792f06089d3b6612d824c137cc3f94d9f91337b7ff172db78786d6cda5111",
+      "source_version": "a7fc287e",
+      "content_hash": "bb7c8e777d25a16dec4c97ba0a009257ccfe0f63ed1af29904e2af058cf98455",
       "dossier_path": "07_PROJECT_LEARNING/trybyte-app-sitemap-validator-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trybyte-app-sitemap-validator-learnings.md",
       "promoted_rules": [
         "Rule 1630"
       ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T20:47:13.840Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-lucky-media-astro-seo": {
       "learning_id": "learn-github-lucky-media-astro-seo",
@@ -92352,6 +92373,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T20:41:18.978Z"
+    },
+    "rule-2804": {
+      "learning_id": "rule-2804",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2804,
+      "title": "security): Bump `rustls` from `0.23.45` to `0.23.46`",
+      "source_url": "https://github.com/valeriansaliou/sonic",
+      "source_version": "011c3dfd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T20:47:22.619Z"
     }
   },
   "aliases": {

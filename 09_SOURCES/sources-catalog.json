@@ -7203,10 +7203,10 @@
     "repository": "valeriansaliou/sonic",
     "platform": "github",
     "sourceUrl": "https://github.com/valeriansaliou/sonic",
-    "sourceVersion": "85238906",
+    "sourceVersion": "011c3dfd",
     "license": "MPL-2.0",
-    "contentHash": "503d73d7cfedda28b0f0e861ed1f3facf59fd904c8535b38def9b0d6d20da097",
-    "lastHarvestedAt": "2026-10-19T08:07:13.341Z",
+    "contentHash": "46193b7821221effe3d6db48a14356dd865073204b0bbe5a7d2656e53b5f52ac",
+    "lastHarvestedAt": "2026-10-19T20:47:22.664Z",
     "learningId": "learn-github-valeriansaliou-sonic"
   },
   "bgreenwell-doxx": {
@@ -8998,5 +8998,25 @@
     "contentHash": "a4ef9eba2af3930a7f3c21197a957780a6213eb97926c25d513bf4538cfaa03b",
     "lastHarvestedAt": "2026-10-19T20:41:10.387Z",
     "learningId": "learn-github-gonzalezreal-swift-markdown-ui"
+  },
+  "trybyte-app-sitemap-validator": {
+    "repository": "trybyte-app/sitemap-validator",
+    "platform": "github",
+    "sourceUrl": "https://github.com/trybyte-app/sitemap-validator",
+    "sourceVersion": "a7fc287e",
+    "license": "Apache-2.0",
+    "contentHash": "bb7c8e777d25a16dec4c97ba0a009257ccfe0f63ed1af29904e2af058cf98455",
+    "lastHarvestedAt": "2026-10-19T20:47:13.894Z",
+    "learningId": "learn-github-trybyte-app-sitemap-validator"
+  },
+  "oblador-hush": {
+    "repository": "oblador/hush",
+    "platform": "github",
+    "sourceUrl": "https://github.com/oblador/hush",
+    "sourceVersion": "2e96f4f7",
+    "license": "MIT",
+    "contentHash": "4765fae8988faf15e1857a7be7fc60af32d1127c519d739b96e499fb7316bffd",
+    "lastHarvestedAt": "2026-10-19T20:47:15.060Z",
+    "learningId": "learn-github-oblador-hush"
   }
 }

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-G248",
-    "timestamp": "2026-10-19T05:58:46.712Z",
-    "repository": "hungps/flutter_pokedex",
-    "learningId": "learn-github-hungps-flutter_pokedex",
-    "contentHash": "0b60c1f239da0886224d7ea3c3fcee580c1b87701476c38ccb1ce3c628651aa5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-G49Q",
-    "timestamp": "2026-10-19T05:58:49.502Z",
-    "repository": "temporalio/temporal",
-    "learningId": "learn-github-temporalio-temporal",
-    "contentHash": "9fb4a97c64d813b46edf9968dbfb70e169c5bb1a7c98e186577952b6d6321b1c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-G54E",
-    "timestamp": "2026-10-19T05:58:50.606Z",
-    "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
-    "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
-    "contentHash": "718ed22a8afc22404a39397ddc18ae15de8228dc449f1f9fd81e964c5c86e2aa",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-G7SD",
     "timestamp": "2026-10-19T05:58:54.061Z",
     "repository": "Mintplex-Labs/anything-llm",
@@ -7490,6 +7445,51 @@
     "repository": "t8y2/dbx",
     "learningId": "learn-github-t8y2-dbx",
     "contentHash": "c4c398afb504ab3385550ae79db56d665e8cfdbe98043b823962a35b3c51f677",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-6M78",
+    "timestamp": "2026-10-19T20:47:13.892Z",
+    "repository": "trybyte-app/sitemap-validator",
+    "learningId": "learn-github-trybyte-app-sitemap-validator",
+    "contentHash": "bb7c8e777d25a16dec4c97ba0a009257ccfe0f63ed1af29904e2af058cf98455",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-6N3M",
+    "timestamp": "2026-10-19T20:47:15.058Z",
+    "repository": "oblador/hush",
+    "learningId": "learn-github-oblador-hush",
+    "contentHash": "4765fae8988faf15e1857a7be7fc60af32d1127c519d739b96e499fb7316bffd",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-6SYU",
+    "timestamp": "2026-10-19T20:47:22.662Z",
+    "repository": "valeriansaliou/sonic",
+    "learningId": "learn-github-valeriansaliou-sonic",
+    "contentHash": "46193b7821221effe3d6db48a14356dd865073204b0bbe5a7d2656e53b5f52ac",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
