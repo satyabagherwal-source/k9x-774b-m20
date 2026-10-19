@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `3ddb21ab`  
+> **Source Version**: `6e2b5850`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T15:17:56.142Z  
+> **Timestamp**: 2026-10-19T15:53:32.762Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T15:17:56.136Z  
+> **Harvest Timestamp**: 2026-10-19T15:53:32.468Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1799,588 +1799,115 @@ export function ChannelSetupDrawer({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3ddb21ab` (2026-10-19)
-**Commit Message**: feat(compute): PLAN-57 Phase 6, bounded hormonal nudges, the Compute settings group, and the upgrade story (#276)
+### Incident Patch 1: `6e2b5850` (2026-10-19)
+**Commit Message**: chore(main): release 1.9.0 (#269)
 
-Hormones (§4.7, last by design): a job the owner can see succeed on the
-pool, one the watcher saw running, gives a recall-sized dopamine lift
-(0.05); a worker still listed but offline since a fresh previous poll, a
-coordinator that goes unreachable, or a sustained embedding fallback gives
-a cortisol rise of the same size. One nudge per kind every thirty minutes
-and four per rolling hour, so two nudges of one kind can never reach the
-dream engine's 0.15 rise trigger: compute colours the mood and never
-starts a dream or a scratch note. Internal batches never lift; jobs first
-seen already finished never nudge; a poll after an idle stretch rebuilds
-its baseline instead of blaming a worker for the gap. The memory manager
-registers the nudge sink only when compute.awareness.nudges is on (default
-on), so turning it off is a no-op path whatever a plugin passes.
+Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
 
-Settings: a Compute group (label, order, help) so the compute.* rows no
-longer fall into the unlabelled bucket; compute.awareness.nudges with
-label, help and default.
-
-Upgrade: docs/network/compute.md says what the def
-
-**File**: `docs/memory/emotional-system.md` (modified, +14/-12)
+**File**: `.release-please-manifest.json` (modified, +1/-1)
 ```diff
-@@ -24,18 +24,20 @@ value = baseline + (value - baseline) × 2^(-elapsed / halfLife)
+@@ -1,3 +1,3 @@
+ {
+-  ".": "1.8.0"
++  ".": "1.9.0"
+ }
+```
+
+**File**: `CHANGELOG.md` (modified, +13/-0)
+```diff
+@@ -1,5 +1,18 @@
+ # Changelog
  
- Events stimulate specific hormones. Each event has a magnitude (how much to add) and a target hormone:
++## [1.9.0](https://github.com/Bitterbot-AI/bitterbot-desktop/compare/v1.8.0...v1.9.0) (2026-10-19)
++
++
++### Features
++
++* **compute:** PLAN-57 Phase 0, the read-only `compute` tool and its prompt section ([#268](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/268)) ([d989031](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/d9890310e5a14c6467c33dd4724b2ed1aabb89e0))
++* **compute:** PLAN-57 Phase 1, the compute state block, the watcher and durable completion delivery ([#270](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/270)) ([26fbefd](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/26fbefd04922d37664e902e0877e3b455fa22e49))
++* **compute:** PLAN-57 Phase 2, agent-initiated submit and cancel with PLAN-16 task linkage ([#272](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/272)) ([a5cbbdd](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/a5cbbdd226b97f41d6520be5293adf12d4a74820))
++* **compute:** PLAN-57 Phase 3, embedding profiles, pool-routed embeddings under an egress policy, and the migration command ([#273](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/273)) ([a0ad537](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/a0ad537969ca566f44edc74cda5ac8e5ce2c8859))
++* **compute:** PLAN-57 Phase 4, payment authority enforced at the signer for paid compute ([#274](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/274)) ([a46af5d](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/a46af5dd7b151bc5b692d0964516c3390220b2a2))
++* **compute:** PLAN-57 Phase 5, compute facts in the Niche, job episodes, and the owner's compute CLI ([#275](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/275)) ([02ebdf2](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/02ebdf27a78526c763582bdb0dcc1dedb9ecb57d))
++* **compute:** PLAN-57 Phase 6, bounded hormonal nudges, the Compute settings group, and the upgrade story ([#276](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/276)) ([3ddb21a](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/3ddb21abba9f07d45479510c9eb32837dba56308))
++
+ ## [1.8.0](https://github.com/Bitterbot-AI/bitterbot-desktop/compare/v1.7.0...v1.8.0) (2026-10-17)
  
--| Event               | Hormone            | Magnitude    | Trigger                                |
--| ------------------- | ------------------ | ------------ | -------------------------------------- |
--| `reward`            | dopamine           | +0.30        | Positive feedback                      |
--| `achievement`       | dopamine, oxytocin | +0.40, +0.20 | Task completion, breakthrough          |
--| `curiosity_high`    | dopamine           | +0.25        | Curiosity reward > 0.7                 |
--| `error`             | cortisol           | +0.30        | Bug, error, frustration                |
--| `urgency`           | cortisol           | +0.40        | Time pressure detected                 |
--| `social`            | oxytocin           | +0.30        | Personal sharing, trust building       |
--| `marketplace_sale`  | dopamine, oxytocin | +0.15, +0.05 | Skill sold on marketplace              |
--| `recall_positive`   | dopamine           | +0.05        | Retrieved positive memories            |
--| `recall_negative`   | cortisol           | +0.05        | Retrieved negative memories            |
--| `recall_relational` | oxytocin           | +0.05        | Retrieved personal/relational memories |
-+| Event               | Hormone            | Magnitude    | Trigger                                                                                               |
-+| ------------------- | ------------------ | ------------ | ----------------------------------------------------------------------------------------------------- |
-+| `reward`            | dopamine           | +0.30        | Positive feedback                                                                                     |
-+| `achievement`       | dopamine, oxytocin | +0.40, +0.20 | Task completion, breakthrough                                                                         |
-+| `curiosity_high`    | dopamine           | +0.25        | Curiosity reward > 0.7                                                                                |
-+| `error`             | cortisol           | +0.30        | Bug, error, frustration                                                                               |
-+| `urgency`           | cortisol           | +0.40        | Time pressure detected                                                                                |
-+| `social`            | oxytocin           | +0.30        | Personal sharing, trust building                                                                      |
-+| `marketplace_sale`  | dopamine, oxytocin | +0.15, +0.05 | Skill sold on marketplace                                                                             |
-+| `recall_positive`   | dopamine           | +0.05        | Retrieved positive memories                                                                           |
-+| `recall_negative`   | cortisol           | +0.05        | Retrieved negative memories                                                                           |
-+| `recall_relational` | oxytocin           | +0.05        | Retrieved personal/relational memories                                                                |
-+| `compute_success`   | dopamine           | +0.05        | A compute job you can see succeeded on the pool (rate-limited)                                        |
-+| `compute_setback`   | cortisol           | +0.05        | A pool worker went offline, the coordinator went away, or embeddings keep falling back (rate-limited) |
- 
- Note the **recall events** have smaller magnitudes (0.05) than direct events (0.10-0.40) to prevent runaway feedback loops.
  
 ```
 
-**File**: `docs/network/compute.md` (modified, +22/-0)
+**File**: `desktop/package.json` (modified, +1/-1)
 ```diff
-@@ -105,6 +105,27 @@ rules and refusal reasons are in
- - `bitterbot doctor` has two sections, "Compute embeddings" and "Compute
-   payments", read from the same local ledger.
- 
-+## Upgrading
-+
-+Compute awareness is on by default, on new installs and on upgrades alike:
-+a config without a `compute` key behaves as `compute.enabled: true`. On a
-+node without the Soapbox plugin loaded that means nothing at all. The
-+`compute` tool and its prompt section exist only when a backend (the
-+plugin with a coordinator) is loaded, the state block renders only when
-+something is actionable, the compute block in working memory appears only
-+once there is activity, and no connection is opened. An idle upgraded node
-+spends no extra tokens and dials nothing new. The Settings form does gain a
-+Compute group with every key below on every node, so the switches are
-+visible before they matter.
-+
-+What does change once the plugin is loaded and a pool exists: memory
-+embedding batches may route to eligible pool workers under the egress
-+policy (`compute.embeddings.provider: pool` is the default; set `local` to
-+keep them home), finished jobs become episodes, and compute colours the
-+agent's mood a little. Paid jobs stay off until you turn
-+`compute.paid.enabled` on. `compute.enabled: false` turns everything off at
-+once.
-+
- ## Settings
- 
- All keys live under `compute` in `~/.bitterbot/bitterbot.json` and in the
-@@ -117,6 +138,7 @@ Settings form.
- | `compute.awareness.maxTokens`            | `120`       | Token budget for that block.                                                                   |
- | `compute.awareness.creditFloor`          | `10`        | Below this many credits the block says so.                                                     |
- | `compute.awareness.wakeBudgetPerHour`    | `20`        | Most agent wakes per hour from compute completions; the rest are deferred, never dropped.      |
-+| `compute.awareness.nudges`               | `true`      | Small hormonal nudges on owner-visible successes and setbacks; rate-limited.                   |
- | `compute.pools.<id>.trust`               | `untrusted` | Which memory classes may reach the pool (see above).                                           |
- | `compute.embeddings.provider`            | `pool`      | Route memory embedding batches to eligible pool workers; `local` turns routing off.            |
- | `compute.embeddings.marginMs`            | `500`       | A worker must beat the local estimate by this much to be chosen.                               |
+@@ -1,6 +1,6 @@
+ {
+   "name": "bitterbot-control-ui",
+-  "version": "1.8.0",
++  "version": "1.9.0",
+   "private": true,
+   "description": "Bitterbot Control UI - browser-based dashboard for the gateway",
+   "type": "module",
 ```
 
-**File**: `docs/tools/compute.md` (modified, +24/-1)
+**File**: `desktop/src-tauri/Cargo.lock` (modified, +1/-1)
 ```diff
-@@ -320,6 +320,25 @@ route and class, paid jobs funded), which The Niche section reflects; a
- node with no compute activity gets no block. See
- [Compute pools](/network/compute).
+@@ -316,7 +316,7 @@ dependencies = [
  
-+## Hormones
-+
-+Compute leaves a small mark on the agent's mood, nothing more. A job you
-+can see succeed on the pool, one the watcher saw running, gives a dopamine
-+lift the size of a recalled happy memory (0.05); a worker still listed but
-+offline since the previous poll, the coordinator going unreachable, or
-+memory embeddings falling back to local for a sustained run gives a
-+cortisol rise of the same size. The node's own batches never lift; their
-+one setback is that sustained-fallback event. Jobs first seen already
-+finished (after an outage) never nudge, and a poll after an idle stretch
-+starts a fresh baseline instead of blaming the gap on a worker.
-+
-+The bounds are the point: one nudge per kind every thirty minutes and four
-+per hour, and at that size and spacing two nudges of one kind cannot add up
-+to the dream engine's hormonal rise trigger (0.15), so compute colours the
-+mood and never starts a dream or an automatic scratch note.
-+`compute.awareness.nudges: false` registers no sink at all, and every nudge
-+is then a no-op whatever the plugin passes.
-+
- ## What the agent can never do
- 
- There is no action that funds, approves or signs anything. The paid path
-@@ -346,7 +365,11 @@ secrets never reach the agent.
- To get the state block and completion delivery, also:
- 
- - open the delivery store (`ComputeDeliveryStore.open()`) and start the
--  watcher (`startComputeWatcher({ backend, store, ownerSessionKey })`);
-+  watcher (`startComputeWatcher({ backend, store, ownerSessionKey, wakeBudgetPerHour, nudges })`,
-+  passing `compute.awareness.wakeBudgetPerHour` and `compute.awareness.nudges`
-+  from the config; report an unreachable coordinator as `reachable: false`
-+  in the snapshot rather than throwing, so the state block and the setback
-+  nudge can see it);
- - record an origin for every job you submit, before or right after the
-   coordinator accepts it: `store.recordOrigin(jobId, "owner", null)` for the
-   Compute tab and CLI, `"agent"` with the task's session key for
+ [[package]]
+ name = "bitterbot-desktop"
+-version = "1.8.0"
++version = "1.9.0"
+ dependencies = [
+  "env_logger",
+  "libc",
 ```
 
-**File**: `src/compute/awareness/index.ts` (modified, +11/-0)
+**File**: `desktop/src-tauri/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -140,3 +140,14 @@ export {
-   hasComputeActivity,
-   renderComputeNicheInput,
- } from "./niche.js";
-+export {
-+  type ComputeNudge,
-+  type ComputeNudgeKind,
-+  type ComputeNudgeSink,
-+  COMPUTE_NUDGE_COOLDOWN_MS,
-+  COMPUTE_NUDGE_HOURLY_CAP,
-+  getComputeNudgeSink,
-+  nudgeCompute,
-+  registerComputeNudgeSink,
-+  resetComputeNudgesForTest,
-+} from "./nudges.js";
-```
-
-**File**: `src/compute/awareness/nudges.test.ts` (added, +261/-0)
-```diff
-@@ -0,0 +1,261 @@
-+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-+import type {
-+  ComputeBackend,
-+  ComputeJobSummary,
-+  ComputeSnapshot,
-+  ComputeWorker,
-+} from "./backend.js";
-+import { ComputeDeliveryStore } from "./deliveries.js";
-+import { resetComputeEpisodesForTest } from "./episodes.js";
-+import {
-+  COMPUTE_NUDGE_COOLDOWN_MS,
-+  COMPUTE_NUDGE_HOURLY_CAP,
-+  type ComputeNudge,
-+  nudgeCompute,
-+  registerComputeNudgeSink,
-+  resetComputeNudgesForTest,
-+} from "./nudges.js";
-+import { resetComputeStateForTest } from "./state.js";
-+import { type ComputeWatcher, startComputeWatcher } from "./watcher.js";
-+
-+const NOW = 1_700_000_000_000;
-+
-+describe("compute nudges are bounded (PLAN-57 Phase 6)", () => {
-+  afterEach(() => resetComputeNudgesForTest());
-+
-+  it("does nothing without a sink or when disabled", () => {
-+    expect(nudgeCompute({ kind: "success", reason: "x", now: NOW })).toBe(false);
-+    const sink = vi.fn();
-+    registerComputeNudgeSink(sink);
-+    expect(nudgeCompute({ kind: "success", reason: "x", enabled: false, now: NOW })).toBe(false);
-+    expect(sink).not.toHaveBeenCalled();
-+  });
-+
-+  it("allows one nudge per kind per cooldown, caps the rolling hour, and survives a throwing sink", () => {
-+    const seen: ComputeNudge[] = [];
-+    registerComputeNudgeSink((n) => {
-+      seen.push(n);
-+    });
-+    expect(nudgeCompute({ kind: "success", reason: "job a", now: NOW })).toBe(true);
-+    expect(nudgeCompute({ kind: "success", reason: "job b", now: NOW + 1000 })).toBe(false);
-+    expect(nudgeCompute({ kind: "setback", reason: "worker", now: NOW + 1000 })).toBe(true);
-+    expect(
-+      nudgeCompute({ kind: "success", reason: "job c", now: NOW + COMPUTE_NUDGE_COOLDOWN_MS }),
-+    ).toBe(true);
-+    expect(
-+      nudgeCompute({
-+        kind: "setback",
-+        reason: "again",
-+        now: NOW + COMPUTE_NUDGE_COOLDOWN_MS + 1000,
-+      }),
-+    ).toBe(true);
-+    expect(seen.map((n) => n.reason)).toEqual(["job a", "worker", "job c", "again"]);
-+    expect(seen).toHaveLength(COMPUTE_NUDGE_HOURLY_CAP);
-+    // Two kinds at one per cooldown is exactly the hourly cap; nothing more fits
-+    // until the oldest ages out of the rolling hour.
-+    expect(nudgeCompute({ kind: "success", reason: "capped", now: NOW + 59 * 60_000 })).toBe(false);
-+    expect(nudgeCompute({ kind: "success", reason: "aged out", now: NOW + 60 * 60_000 })).toBe(
-+      true,
-+    );
-+    registerComputeNudgeSink(() => {
-+      throw new Error("boom");
-+    });
-+    expect(() =>
-+      nudgeCompute({ kind: "success", reason: "x", now: NOW + 10 * 60 * 60_000 }),
-+    ).not.toThrow();
-+  });
-+});
-+
-+describe("the watcher nudges on owner-visible successes and setbacks", () => {
-+  let store: ComputeDeliveryStore;
-+  let w: ComputeWatcher | null = null;
-+  const jobs: ComputeJobSummary[] = [];
-+  const workers: ComputeWorker[] = [];
-+  const timers: Array<{ fn: () => void; ms: number }> = [];
-+  const nudges: ComputeNudge[] = [];
-+  const clock = { now: NOW };
-+  let reachable = true;
-+
-+  function worker(id: string, online = true): ComputeWorker {
-+    return {
-+      id,
-+      online,
-+      paused: false,
-+      gpu: false,
-+      cpuThreads: 2,
-+      memoryMib: 512,
-+      pools: ["lab"],
-+      projects: [],
-+      modes: ["private"],
-+    };
-+  }
-+  function job(over: Partial<ComputeJobSummary> & { id: string }): ComputeJobSummary {
-+    return {
-+      status: "running",
-+      mode: "private",
-+      scope: "lab",
-+      workload: "sha256",
-+      items: 2,
-+      attempts: 1,
-+      ...over,
-+    };
-+  }
-+  async function flush() {
-+    for (let i = 0; i < 6; i += 1) {
-+      await new Promise((r) => setImmediate(r));
-+    }
-+  }
-+  async function runTimers() {
-+    for (const t of timers.splice(0)) {
-+      t.fn();
-+      await flush();
-+    }
-+  }
-+
-+  beforeEach(() => {
-+    resetComputeStateForTest();
-+    resetComputeEpisodesForTest();
-+    resetComputeNudgesForTest();
-+    store = ComputeDeliveryStore.inMemory();
-+    jobs.length = 0;
-+    workers.length = 0;
-+    timers.length = 0;
-+    nudges.length = 0;
-+    clock.now = NOW;
-+    reachable = true;
-+    registerComputeNudgeSink((n) => {
-+      nudges.push(n);
-+    });
-+  });
-+
-+  afterEach(() => {
-+    w?.stop();
-+    w = null;
-+    store.close();
-+    resetComputeNudgesForTest();
-+  });
-+
-+  async function start(over: { nudges?: boolean } = {}) {
-+    let version = 0;
-+    const backend: ComputeBackend = {
-+      snapshot: async (): Promise<ComputeSnapshot> => ({
-+        version: ++version,
-+        asOf: clock.now,
-+        reachable,
-+        pools: [],
-+        workers: workers.slice(),
-+        jobs: jobs.slice(),
-+      }),
-+      jobs: async () => jobs.slice(),
-+      job: async (id) => jobs.find((j) => j.id === id) ?? null,
-+      result: async () => null,
-+    };
-+    w = startComputeWatcher({
-+      backend,
-+      store,
-+      ownerSessionKey: () => "agent:main:main",
-+      wakeBudgetPerHour: 20,
-+   
-```
-
-**File**: `src/compute/awareness/nudges.ts` (added, +89/-0)
-```diff
-@@ -0,0 +1,89 @@
-+/**
-+ * PLAN-57 §4.7, Phase 6: hormonal nudges from compute. Flavour, not
-+ * function: a small dopamine lift when a job the owner can see succeeds, a
-+ * small cortisol rise when a worker drops out, the coordinator goes
-+ * unreachable, or pool embeddings fall back to local for a sustained run.
-+ *
-+ * Bounded by construction: one nudge per kind per 30-minute window and a
-+ * cap per rolling hour across kinds; internal traffic never lifts (callers
-+ * only nudge successes for owner- or agent-started jobs), and the one
-+ * internal setback is the sustained-fallback event. The magnitude (0.05, the
-+ * recall class) and the spacing are chosen so that two nudges of one kind
-+ * can never add up to the dream engine's hormonal rise trigger (0.15 by
-+ * default) even before decay: compute colours the mood, it never starts a
-+ * dream. `compute.awareness.nudges: false` keeps the sink from being
-+ * registered at all, and without a sink every nudge is a no-op.
-+ */
-+
-+import { createSubsystemLogger } from "../../logging/subsystem.js";
-+
-+const log = createSubsystemLogger("compute/nudges");
-+
-+export type ComputeNudgeKind = "success" | "setback";
-+
-+export type ComputeNudge = {
-+  kind: ComputeNudgeKind;
-+  /** What happened, for the log; never rendered to the model. */
-+  reason: string;
-+  at: number;
-+};
-+
-+export type ComputeNudgeSink = (nudge: ComputeNudge) => unknown;
-+
-+/** At most one nudge of a kind inside this window. */
-+export const COMPUTE_NUDGE_COOLDOWN_MS = 30 * 60_000;
-+/** At most this many nudges of any kind per rolling hour. */
-+export const COMPUTE_NUDGE_HOURLY_CAP = 4;
-+const HOUR_MS = 60 * 60_000;
-+
-+let sink: ComputeNudgeSink | null = null;
-+const lastByKind = new Map<ComputeNudgeKind, number>();
-+let recent: number[] = [];
-+
-+export function registerComputeNudgeSink(next: ComputeNudgeSink | null): void {
-+  sink = next;
-+}
-+
-+export function getComputeNudgeSink(): ComputeNudgeSink | null {
-+  return sink;
-+}
-+
-+export function resetComputeNudgesForTest(): void {
-+  sink = null;
-+  lastByKind.clear();
-+  recent = [];
-+}
-+
-+/**
-+ * Apply a nudge if one is due. Returns true when the sink was called.
-+ * `enabled` is the config switch; callers pass `compute.awareness.nudges`.
-+ */
-+export function nudgeCompute(input: {
-+  kind: ComputeNudgeKind;
-+  reason: string;
-+  enabled?: boolean;
-+  now?: number;
-+}): boolean {
-+  if (input.enabled === false || !sink) {
-+    return false;
-+  }
-+  const now = input.now ?? Date.now();
-+  recent = recent.filter((t) => now - t < HOUR_MS);
-+  if (recent.length >= COMPUTE_NUDGE_HOURLY_CAP) {
-+    return false;
-+  }
-+  const last = lastByKind.get(input.kind);
-+  if (last !== undefined && now - last < COMPUTE_NUDGE_COOLDOWN_MS) {
-+    return false;
-+  }
-+  lastByKind.set(input.kind, now);
-+  recent.push(now);
-+  try {
-+    sink({ kind: input.kind, reason: input.reason.slice(0, 120), at: now });
-+    log.debug(`compute nudge ${input.kind}: ${input.reason}`);
-+    return true;
-+  } catch (err) {
-+    log.debug(`compute nudge sink threw: ${String(err)}`);
-+    return false;
-+  }
-+}
-```
-
-**File**: `src/compute/awareness/upgrade-idle.test.ts` (added, +58/-0)
-```diff
-@@ -0,0 +1,58 @@
-+/**
-+ * PLAN-57 Phase 6: the default-on flip on upgrade. A node whose config has
-+ * no `compute` key behaves as enabled, and on an idle node (no backend, no
-+ * pool, nothing routed) that must cost nothing: no tool, no prompt section,
-+ * no state block, no compute block in working memory, no nudges.
-+ */
-+import { afterEach, describe, expect, it } from "vitest";
-+import { buildAgentSystemPrompt } from "../../agents/system-prompt.js";
-+import { createComputeTool } from "../../agents/tools/compute-tool.js";
-+import { FIELD_DEFAULTS } from "../../config/schema.defaults.js";
-+import { buildWorkingMemorySynthesisPrompt } from "../../memory/working-memory-prompt.js";
-+import { resetComputeBackendForTest } from "./backend.js";
-+import { nudgeCompute, resetComputeNudgesForTest } from "./nudges.js";
-+import { resetComputeRuntimeForTest } from "./runtime.js";
-+import { resetComputeStateForTest, resolveComputeStateBlockFromConfig } from "./state.js";
-+
-+const upgradedConfig = {} as Record<string, never>;
-+
-+describe("upgrade to compute awareness on an idle node", () => {
-+  afterEach(() => {
-+    resetComputeBackendForTest();
-+    resetComputeRuntimeForTest();
-+    resetComputeStateForTest();
-+    resetComputeNudgesForTest();
-+  });
-+
-+  it("is on by default and costs nothing without a backend", () => {
-+    expect(FIELD_DEFAULTS["compute.enabled"]).toBe(true);
-+    expect(FIELD_DEFAULTS["compute.awareness.nudges"]).toBe(true);
-+    // No backend registered: the tool does not exist, so the prompt section does not either.
-+    expect(createComputeTool({ config: upgradedConfig })).toBeUndefined();
-+    const toolNames = ["wallet", "exec", "memory_search"];
-+    const before = buildAgentSystemPrompt({ workspaceDir: "/tmp/bitterbot", toolNames });
-+    expect(before).not.toContain("## Compute Pools");
-+    // The state block needs a snapshot; an upgraded config and no snapshot render nothing.
-+    expect(resolveComputeStateBlockFromConfig(upgradedConfig)).toBeFalsy();
-+    expect(resolveComputeStateBlockFromConfig({ compute: { enabled: true } })).toBeFalsy();
-+    // Working memory synthesis carries no compute block without facts.
-+    const synthesis = buildWorkingMemorySynthesisPrompt({
-+      oldState: "",
-+      scratchNotes: "",
-+      recentCrystals: [],
-+      dreamInsights: [],
-+      curiosityTargets: [],
-+      emergingSkills: [],
-+      hormonalState: { dopamine: 0.5, cortisol: 0.2, oxytocin: 0.4, mood: "calm" },
-+      timestamp: "2026-10-18T00:00:00Z",
-+    });
-+    expect(synthesis).not.toContain("## Input: Compute");
-+    // Nudges have no sink and no effect.
-+    expect(nudgeCompute({ kind: "success", reason: "x" })).toBe(false);
-+  });
-+
-+  it("turns everything off with the one kill switch", () => {
-+    expect(createComputeTool({ config: { compute: { enabled: false } } })).toBeUndefined();
-+    expect(resolveComputeStateBlockFromConfig({ compute: { enabled: false } })).toBeFalsy();
-+  });
-+});
-```
-
-**File**: `src/compute/awareness/watcher.ts` (modified, +57/-0)
-```diff
-@@ -24,6 +24,7 @@ import { createSubsystemLogger } from "../../logging/subsystem.js";
- import type { ComputeBackend, ComputeJobSummary, ComputeSnapshot } from "./backend.js";
- import type { ComputeDeliveryStore, ComputeJobOrigin } from "./deliveries.js";
- import { emitComputeEpisode, episodeFromJob } from "./episodes.js";
-+import { nudgeCompute } from "./nudges.js";
- import {
-   publishComputeSnapshot,
-   pushComputeTransition,
-@@ -55,6 +56,8 @@ export type ComputeWatcherOptions = {
-   /** The owner's main session: where owner-started jobs report. */
-   ownerSessionKey: () => string;
-   wakeBudgetPerHour?: number;
-+  /** PLAN-57 Phase 6: hormonal nudges on owner-visible successes and setbacks (compute.awareness.nudges, default on). */
-+  nudges?: boolean;
-   minPollMs?: number;
-   maxPollMs?: number;
-   reconcileLimit?: number;
-@@ -95,6 +98,14 @@ export function startComputeWatcher(opts: ComputeWatcherOptions): ComputeWatcher
-   let stopped = false;
-   let polling = false;
-   let lastStatuses = new Map<string, string>();
-+  // Phase 6: what the previous poll saw, to notice a worker dropping out or
-+  // the coordinator going away.
-+  let lastOnlineWorkers: Set<string> | null = null;
-+  let lastReachable: boolean | null = null;
-+  let lastPollAt: number | null = null;
-+  const nudgesOn = opts.nudges !== false;
-+  // A baseline older than this says nothing about what happened since.
-+  const baselineMaxAgeMs = 2 * maxPoll;
-   const wakes: number[] = [];
+@@ -1,6 +1,6 @@
+ [package]
+ name = "bitterbot-desktop"
+-version = "1.8.0"
++version = "1.9.0"
+ edition = "2021"
+ description = "Bitterbot desktop shell — Tauri 2 wrapper for the Control UI"
  
-   const unsubscribe = subscribe((evt) => {
-@@ -179,6 +190,45 @@ export function startComputeWatcher(opts: ComputeWatcherOptions): ComputeWatcher
-     });
-   }
- 
-+  /**
-+   * A worker that was online at the previous poll and is now listed offline,
-+   * or a coordinator that went away. The previous poll must be recent: after
-+   * an idle stretch the baseline says nothing about what happened since, and
-+   * a worker that simply left the pool is not a setback.
-+   */
-+  function noticeSetbacks(snapshot: ComputeSnapshot): void {
-+    const at = now();
-+    const fresh = lastPollAt !== null && at - lastPollAt <= baselineMaxAgeMs;
-+    if (fresh && lastReachable === true && !snapshot.reachable) {
-+      nudgeCompute({
-+        kind: "setback",
-+        reason: "coordinator unreachable",
-+        enabled: nudgesOn,
-+        now: at,
-+      });
-+    }
-+    lastReachable = snapshot.reachable;
-+    const byId = new Map(snapshot.workers.map((w) => [w.id, w]));
-+    if (fresh && lastOnlineWorkers && snapshot.reachable) {
-+      const lost = [...lastOnlineWorkers].filter((id) => {
-+        const w = byId.get(id);
-+        return w !== undefined && !w.online;
-+      });
-+      if (lost.length > 0) {
-+        nudgeCompute({
-+          kind: "setback",
-+          reason: `worker offline: ${lost.slice(0, 3).join(", ")}`,
-+          enabled: nudgesOn,
-+          now: at,
-+        });
-+      }
-+    }
-+    if (snapshot.reachable) {
-+      lastOnlineWorkers = new Set(snapshot.workers.filter((w) => w.online).map((w) => w.id));
-+    }
-+    lastPollAt = at;
-+  }
-+
-   function handleTransitions(jobs: ComputeJobSummary[]): void {
-     for (const job of jobs) {
-       const prev = lastStatuses.get(job.id);
-@@ -198,6 +248,12 @@ export function startComputeWatcher(opts: ComputeWatcherOptions): ComputeWatcher
-         linkTask(route, job);
-         // §4.7: a finished job the agent or owner started becomes an episode.
-         emitComputeEpisode(episodeFromJob(job, route, now()));
-+        // Phase 6: an owner-visible success the watcher saw in flight is a
-+        // small lift. A job first seen already finished (reconciled after an
-+        // outage, or found by a refresh during startup) does not nudge.
-+        if (job.status === "succeeded" && prev !== undefined) {
-+          nudgeCompute({ kind: "success", reason: `job ${job.id}`, enabled: nudgesOn, now: now() });
-+        }
-       }
-     }
-   }
-@@ -229,6 +285,7 @@ export function startComputeWatcher(opts: ComputeWatcherOptions): ComputeWatcher
-       const snapshot = await opts.backend.snapshot();
-       publishComputeSnapshot(snapshot);
-       setComputeInternalJobs(opts.store.internalJobIds());
-+      noticeSetbacks(snapshot);
-       handleTransitions(snapshot.jobs);
-       lastStatuses = new Map(snapshot.jobs.map((j) => [j.id, j.status]));
-       retryDeferred();
+```
+
+**File**: `desktop/src-tauri/tauri.conf.json` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ {
+   "$schema": "https://raw.githubusercontent.com/tauri-apps/tauri/dev/crates/tauri-cli/schema.json",
+   "productName": "Bitterbot",
+-  "version": "1.8.0",
++  "version": "1.9.0",
+   "identifier": "ai.bitterbot.desktop",
+   "build": {
+     "devUrl": "http://localhost:5173",
+```
+
+**File**: `extensions/discord/package.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "name": "@bitterbot/discord",
+-  "version": "1.8.0",
++  "version": "1.9.0",
+   "description": "Bitterbot Discord channel plugin",
+   "type": "module",
+   "devDependencies": {
+```
+
+**File**: `extensions/email/package.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "name": "@bitterbot/email",
+-  "version": "1.8.0",
++  "version": "1.9.0",
+   "private": true,
+   "description": "Bitterbot email channel: read a mailbox over IMAP, reply over SMTP",
+   "type": "module",
 ```
 
 #### Recent Merged Pull Requests:
@@ -2409,46 +1936,36 @@ Upgrade: docs/network/compute.md says what the def
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. compute): PLAN-57 Phase 6, bounded hormonal nudges, the Compute settings group, 
+## X. main): release 1.9.0 (#269)
 
 **RULE**:
-When implementing operations in `docs/memory/emotional-system.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3ddb21ab`: compute): PLAN-57 Phase 6, bounded hormonal nudges, the Compute settings group, and the upgrade story (#276). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6e2b5850`: main): release 1.9.0 (#269). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/memory/emotional-system.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-| Event               | Hormone            | Magnitude    | Trigger                                                                                               |
-| ------------------- | ------------------ | ------------ | ----------------------------------------------------------------------------------------------------- |
-| `reward`            | dopamine           | +0.30        | Positive feedback                                                                                     |
-| `achievement`       | dopamine, oxytocin | +0.40, +0.20 | Task completion, breakthrough                                                                         |
-| `curiosity_high`    | dopamine           | +0.25        | Curiosity reward > 0.7                                                                                |
-| `error`             | cortisol           | +0.30        | Bug, error, frustration                                                                               |
-| `urgency`           | cortisol           | +0.40        | Time pressure detected                                                                                |
-| `social`            | oxytocin           | +0.30  
+## [1.9.0](https://github.com/Bitterbot-AI/bitterbot-desktop/compare/v1.8.0...v1.9.0) (2026-10-19)
+
+
+### Features
+
+* **compute:** PLAN-57 Phase 0, the read-only `compute` tool and its prompt section ([#268](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/268)) ([d989031](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/d9890310e5a14c6467c33dd4724b2ed1aabb89e0))
+* **compute:** PLAN-57 Phase 1, the compute state block, the watcher and durable completion delivery ([#270](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/270)) ([26fbefd](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/26fbefd04922d37664e902e0877e3b455fa22e49))
+* **compute:** PLAN-57 Phase 2, agent-initiated submit and cancel with PLAN-16 task linkage ([#272](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/272)) ([a5cbbdd](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/a5cbbdd226b97f41d6520be5293adf12d4a74820))
+* **compute:** PLAN-57 Phase 3, embedding profiles, pool-routed embeddings under an egress policy, and the migration command ([#273](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/273)) ([a0ad537](https://github.com/Bitterbot-AI/bitterbot-desktop/commi
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-| Event               | Hormone            | Magnitude    | Trigger                                |
-| ------------------- | ------------------ | ------------ | -------------------------------------- |
-| `reward`            | dopamine           | +0.30        | Positive feedback                      |
-| `achievement`       | dopamine, oxytocin | +0.40, +0.20 | Task completion, breakthrough          |
-| `curiosity_high`    | dopamine           | +0.25        | Curiosity reward > 0.7                 |
-| `error`             | cortisol           | +0.30        | Bug, error, frustration                |
-| `urgency`           | cortisol           | +0.40        | Time pressure detected                 |
-| `social`            | oxytocin           | +0.30        | Personal sharing, trust building       |
-| `marketplace_sale`  | dopamine, oxytocin | +0.15, +0.05 | Skill sold on marketplace              |
-| `recall_positive`   | dopamine           | +0.05        | Retrieved positive memories            |
-| `recall_negative`   | cortisol           | +0.05        | Retrieved negative memories            |
-| `recall_relational` | oxytocin           | +0.05        | Retrieved personal/relational
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3ddb21ab` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6e2b5850` are properly handled with clean fallback behavior.

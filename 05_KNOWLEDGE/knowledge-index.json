@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T15:41:28.548Z",
-  "total_verified_learnings": 844,
+  "last_updated": "2026-10-19T15:53:33.189Z",
+  "total_verified_learnings": 845,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -2245,14 +2245,19 @@
       "slug": "arangodb-arangodb",
       "platform": "github",
       "source_url": "https://github.com/arangodb/arangodb",
-      "source_version": "a27c7cda",
-      "content_hash": "3ba447264716fed32eb840efe65e3e9d4db34ecfa4b706b5309116d5d6c445af",
+      "source_version": "f38e80e4",
+      "content_hash": "ffc25779538a444bd0e6c021228aca63979e4b9fc0f9d3d72a9b08810fee03c3",
       "dossier_path": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "promoted_rules": [
         {
           "number": 2037,
           "title": "catch crashes during upgrade cycling arangods (#23453)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2661,
+          "title": "Merge pull request #23449 from arangodb/feature/cor-1031-rbac-query-list-and-kil",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -2261,7 +2266,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T02:45:01.015Z",
+      "verified_at": "2026-10-19T15:53:33.181Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -3624,8 +3629,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "3ddb21ab",
-      "content_hash": "b2dcdc3c44902a159b57fc83233eb2190e878329b392e0eb9b2ee995b04c05e9",
+      "source_version": "6e2b5850",
+      "content_hash": "c6d2469f6c81c47e1b210325082b6d6a04eb012855b77b8dd611c3dd34212c66",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -3655,7 +3660,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T15:17:56.276Z",
+      "verified_at": "2026-10-19T15:53:32.838Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -8152,22 +8157,35 @@
     "learn-github-emergetools-pow": {
       "learning_id": "learn-github-emergetools-pow",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "emergetools-pow",
+      "source": "EmergeTools/Pow",
+      "repository": "EmergeTools/Pow",
       "slug": "emergetools-pow",
       "platform": "github",
       "source_url": "https://github.com/EmergeTools/Pow",
-      "source_version": "HEAD",
-      "content_hash": "0a4d4d2238301b104470e448ca9d82913001ede3e96a2565a45e8b7263b8bbf8",
+      "source_version": "1b4b1dda",
+      "content_hash": "78ad7ac073dce51e39e7043095cf58172b432df77dbae5dc4bd5eaa719237897",
       "dossier_path": "07_PROJECT_LEARNING/emergetools-pow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/emergetools-pow-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2660,
+          "title": "Fixes crash when using smoke effect (#42)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.788Z"
+      "verified_at": "2026-10-19T15:53:29.875Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-emilkowalski-vaul": {
       "learning_id": "learn-github-emilkowalski-vaul",
@@ -88926,6 +88944,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T15:41:28.541Z"
+    },
+    "rule-2660": {
+      "learning_id": "rule-2660",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2660,
+      "title": "Fixes crash when using smoke effect (#42)",
+      "source_url": "https://github.com/EmergeTools/Pow",
+      "source_version": "1b4b1dda",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T15:53:29.875Z"
+    },
+    "rule-2661": {
+      "learning_id": "rule-2661",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2661,
+      "title": "Merge pull request #23449 from arangodb/feature/cor-1031-rbac-query-list-and-kil",
+      "source_url": "https://github.com/arangodb/arangodb",
+      "source_version": "f38e80e4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T15:53:33.181Z"
     }
   },
   "aliases": {

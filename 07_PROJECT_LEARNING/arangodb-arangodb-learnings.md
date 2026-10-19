@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source**: github ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
-> **Source Version**: `a27c7cda`  
+> **Source Version**: `f38e80e4`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T02:45:00.845Z  
+> **Timestamp**: 2026-10-19T15:53:32.978Z  
 > **Learning ID**: `learn-github-arangodb-arangodb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T02:45:00.680Z  
+> **Harvest Timestamp**: 2026-10-19T15:53:32.433Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -988,11 +988,11 @@ my sample apple
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #23499** (2026-10-19): **rbac-tests: fix race**
+  *Symptoms*: ### Scope & Purpose  Add some debug output and fix likely race  - [x] :hankey: Bugfix 
+
 - **Issue #23495** (2026-10-17): **rbac-tests: fix versions**
   *Symptoms*: ### Scope & Purpose  Incorrect version handling in the rta_makedata_rbac  - [x] :hankey: Bugfix  
-
-- **Issue #23493** (2026-10-16): **Rename `--server.export-read-write-metrics` to `--rocksdb.*` and adjust mention of metrics endpoint (no /v2 in 4.0)**
-  *Symptoms*: Manually tested the startup option renaming with success:  <img width="4612" height="1727" alt="image" src="https://github.com/user-attachments/assets/9ed90168-e868-47e6-a3fe-9ea2771b9392" /> 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1009,368 +1009,214 @@ my sample apple
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6ab57904` (2026-10-16)
-**Commit Message**: catch crashes during upgrade cycling arangods (#23453)
+### Incident Patch 1: `f38e80e4` (2026-10-19)
+**Commit Message**: Merge pull request #23449 from arangodb/feature/cor-1031-rbac-query-list-and-kill-permissions
 
-* catch crashes during upgrade cycling arangods
-
-* stringify
-
-* be more sure about deadlines
-
-* disconnect before attempting to reconnect
-
-* connect privileged
-
-* don't silently fail upgrades
-
-* debug
-
-* fix function reference
-
-* debug
-
-* make sure to specify the passvoid (if)
-
-* revert debug
-
-**File**: `js/client/modules/@arangodb/testsuites/rta_makedata.js` (modified, +7/-2)
-```diff
-@@ -206,8 +206,11 @@ function makeDataWrapper (options) {
-       require('internal').env.INSTANCEINFO = JSON.stringify(this.instanceManager.getStructure());
-       let rc;
-       try {
--        this.instanceManager.reconnect(false);
-+        this.instanceManager.disconnect();
-+        this.instanceManager.reconnect(true);
-         rc = ct.run.rtaMakedata(this.options, this.instanceManager, testCount, messages[count-1], logFile, moreargv);
-+        this.instanceManager.disconnect();
-+        this.instanceManager.reconnect(true);
-       } catch (ex) {
-         print(`${RED}${Date()} caught exception: ${ex} while ${messages[count-1]} ${ex} - ${ex.stack}${RESET}`);
-         throw ex;
-@@ -307,11 +310,13 @@ function makeDataWrapper (options) {
-                 }
-               });
-             } catch(e) {
-+              let msg = `upgradeCycle failed by: ${e.message}\n${e.stack}`;
-+              print(`${RED}${Date()}${msg}${RESET}`);
-               res.status = false;
-               res.failed += 1;
-               res[whichRTA] = {
-                 'forceTerminate': true,
--                'message': `upgradeCycle failed by: ${e.message}\n${e.stack}`,
-+                'message': msg,
-                 'failed': 1,
-                 'status': false,
-                 'duration': 0.0
-```
-
-**File**: `js/client/modules/@arangodb/testutils/instance-manager.js` (modified, +5/-5)
-```diff
-@@ -1069,7 +1069,7 @@ class instanceManager {
-   }
-   launchFinalize(startTime) {
-     {//if (!this.options.cluster && !this.options.agency) {
--      let deadline = time() + seconds(this.startupMaxCount);
-+      let deadline = time() + seconds(this.startupMaxCount / 4);
-       this.arangods.forEach(arangod => {
-         try {
-           arangod.pingUntilReady(deadline);
-@@ -1588,12 +1588,12 @@ class instanceManager {
-     } catch (e) {
-       print(RED + Date() + " error connecting '" + this.endpoint + "' Error: " + JSON.stringify(e) + RESET);
-       if (e instanceof ArangoError && e.message.search('Connection reset by peer') >= 0) {
--        sleep(5);
--        arango.reconnect(this.endpoint, '_system', 'root', '');
-+        arango.reconnect(this.endpoint, '_system', 'root',
-+                         this.hasSetPassvoid ? this.options.password: '');
-         this.connectionHandle = arango.getConnectionHandle();
-       } else if (e instanceof ArangoError && e.message.search('service unavailable due to startup or maintenance mode') >= 0) {
--        sleep(5);
--        arango.reconnect(this.endpoint, '_system', 'root', '');
-+        arango.reconnect(this.endpoint, '_system', 'root',
-+                         this.hasSetPassvoid ? this.options.password: '');
-         this.connectionHandle = arango.getConnectionHandle();
-       } else {
-         throw e;
-```
-
-**File**: `js/client/modules/@arangodb/testutils/instance.js` (modified, +27/-3)
-```diff
-@@ -754,7 +754,23 @@ class instance {
-       print(".");
-       sleep(1);
-     }
--    print(`${Date()} upgrade of ${this.name} finished.`);
-+    print(`${Date()} upgrade of ${this.name} finished: ${JSON.stringify(this.exitStatus)}`);
-+    this.processSanitizerReports();
-+    if (this.exitStatus.hasOwnProperty('signal') &&
-+        ((this.exitStatus === 11) ||
-+         (this.exitStatus === 6))) {
-+      let msg = 'runUpgrade exited Signal(' + this.exitStatus + ') ';
-+      this.analyzeServerCrash(msg);
-+      this.serverCrashedLocal = true;
-+      this.message += msg;
-+      msg = " runUpgrade: Marking crashy";
-+      pu.serverCrashed = true;
-+      this.message += msg;
-+      print(Date() + msg + ' - ' + JSON.stringify(this.getStructure()));
-+      this.pid = null;
-+      return false;
-+    }
-+    return true;
-   }
- 
-   // //////////////////////////////////////////////////////////////////////////////
-@@ -832,8 +848,10 @@ class instance {
-     let httpOptions = makeAuthorizationHeaders(this.options, this.jwt_secret);
-     httpOptions.method = '';
-     httpOptions.returnBodyOnError = true;
-+    let count = 0;
- 
-     while (true) {
-+      count += 1;
-       this.exitStatus = this.status(false);
-       if (this.exitStatus.status === 'RUNNING') {
-         this.exitStatus = null;
-@@ -844,7 +862,7 @@ class instance {
-       try {
-         if (true) {//if (this.options.useReconnect && this.isFrontend()) {
-           if (this.jwt_secret !== '') {
--            print(`${Date()} reconnecting ${this.name} with JWT '${this.jwt_secret}' to ${this.url}`);
-+            print(`${Date()} reconnecting ${this.name} with JWT '${this.jwt_secret}' to ${this.url} - deadline ${deadline}`);
-             if (arango.reconnect(this.endpoint,
-                                  '_system',
-                                  undefined,
-@@ -875,6 +893,9 @@ class instance {
-         }
-       } catch (ex) {
-         if (time() < deadline) {
-+          if ((count % 10) === 0) {
-+            print(`${Date()} ping failed by: ${ex}`);
-+          }
-           print('.');
-           sleep(1);
-         } else {
-@@ -929,7 +950,10 @@ class instance {
-       return ret;
-     } else {
-       print(`${Date()} ${this.name} re/connecting ${this.url}`);
--      const ret = arango.reconnect(this.endpoint, '_system', 'root', '', true);
-+      const ret = arango.reconnect(this.endpoint,
-+                                   '_system', 'root',
-+                                   this.hasSetPassvoid ? this.options.password: '',
-+                                   true);
-       this.connectionHandle = arango.getConnectionHandle();
-       this.dumpConnectionTable();
-       return ret;
-```
-
-**File**: `tests/tests.yml` (modified, +0/-1)
-```diff
-@@ -214,7 +214,6 @@
-             forceOneShard: true
-             makedataDB: system_oneshard_makedata
-             suffix: cluster-oneshard
--
- - rta_makedata_rbac:
-     job: run-rbac-tests
-     suites:
-```
-
----
-
-### Incident Patch 2: `a27c7cda` (2026-10-18)
-**Commit Message**: [BTS-2481] Fix double-free on SortedCollectExecutor on hitting resource limit. (#23457)
-
-* Fix double-free on `SortedCollectExecutor` on hitting resource limit.
-
-* Update CHANGELOG for version 3.12.13
-
-Added entry for version 3.12.13 with bug fix and AQL updates.
-
----------
-
-Co-authored-by: Vadim Kondratev <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG` (modified, +3/-0)
-```diff
-@@ -1,5 +1,8 @@
- 3.12.13 (XXXX-XX-XX)
- --------------------
-+
-+* BTS-2481: Fix double-free on SortedCollectExecutor on hitting resource limit.
-+
- * AQL `UPPER()` and `LOWER()` now use the server language (`--icu-language`
-   or `--default-language`) for case mapping instead of the process locale.
-   This changes results only for Greek, Turkish, Azeri and Lithuanian.
-```
-
-**File**: `arangod/Aql/Executor/SortedCollectExecutor.cpp` (modified, +2/-6)
-```diff
-@@ -245,15 +245,11 @@ void SortedCollectExecutor::CollectGroup::writeToOutput(
-   size_t i = 0;
-   for (auto& it : infos.getGroupRegisters()) {
-     AqlValue val = this->groupValues[i];
-+    this->groupValues[i].erase();
-     AqlValueGuard guard{val, true};
--
--    auto memUsage = val.memoryUsage();
-+    infos.resourceUsageScope().decrease(val.memoryUsage());
- 
-     output.moveValueInto(it.first, _lastInputRow, &guard);
--    // ownership of value is transferred into res
--    this->groupValues[i].erase();
--
--    infos.resourceUsageScope().decrease(memUsage);
-     ++i;
-   }
- 
-```
-
-**File**: `tests/Aql/Executor/SortedCollectExecutorTest.cpp` (modified, +36/-0)
-```diff
-@@ -33,9 +33,11 @@
- #include "Aql/OutputAqlItemRow.h"
- #include "Aql/Query.h"
- #include "Aql/RegisterPlan.h"
-+#include "Basics/Exceptions.h"
- #include "Transaction/Context.h"
- #include "Transaction/Methods.h"
- 
-+#include <absl/strings/str_cat.h>
- #include <velocypack/Builder.h>
- #include <velocypack/Options.h>
- #include <functional>
-@@ -232,6 +234,40 @@ TEST_F(SortedCollectExecutorTestRowsUpstream, producer_1) {
-   }
- }
- 
-+TEST_F(SortedCollectExecutorTestRowsUpstream,
-+       resource_limit_while_writing_group_value) {
-+  // ResourceMonitor checks its limit only when usage crosses a chunk boundary,
-+  // so the group value must be at least one chunk to throw deterministically.
-+  std::string const json =
-+      absl::StrCat("\"", std::string(ResourceMonitor::chunkSize, 'x'), "\"");
-+  SharedAqlItemBlockPtr inputBlock =
-+      buildBlock<1>(itemBlockManager, {{json.c_str()}});
-+  AqlItemBlockInputRange inputRange(MainQueryState::DONE, 0, inputBlock, 0);
-+  SharedAqlItemBlockPtr outputBlock =
-+      itemBlockManager.requestBlock(1, registerInfos.numberOfOutputRegisters());
-+  OutputAqlItemRow result(outputBlock, registerInfos.getOutputRegisters(),
-+                          registerInfos.registersToKeep(),
-+                          registerInfos.registersToClear(), {});
-+
-+  auto const queryMemoryBefore = fakedQuery->resourceMonitor().current();
-+  {
-+    SingleRowFetcherHelper<::arangodb::aql::BlockPassthrough::Disable> fetcher(
-+        itemBlockManager, VPackParser::fromJson("[]")->steal(), false);
-+    SortedCollectExecutor testee(fetcher, executorInfos);
-+
-+    monitor.memoryLimit(monitor.current() + 1);
-+    bool threw = false;
-+    try {
-+      std::ignore = testee.produceRows(inputRange, result);
-+    } catch (arangodb::basics::Exception const& ex) {
-+      threw = true;
-+      EXPECT_EQ(TRI_ERROR_RESOURCE_LIMIT, ex.code());
-+    }
-+    EXPECT_TRUE(threw);
-+  }
-+  EXPECT_EQ(queryMemoryBefore, fakedQuery->resourceMonitor().current());
-+}
-+
- TEST_F(SortedCollectExecutorTestRowsUpstream, producer_2) {
-   auto input = VPackParser::fromJson("[ [1], [2], [3] ]");
-   SingleRowFetcherHelper<::arangodb::aql::BlockPassthrough::Disable> fetcher(
-```
-
----
-
-### Incident Patch 3: `993b4204` (2026-10-16)
-**Commit Message**: Merge pull request #22201 from arangodb/bug-fix/silent-arangoimport-failures
-
-Fix exit code of arangoimport in case of failure
+[COR-1031] Use new AdminMonitorAqlQueries and AdminKillAqlQueries permissions
 
 **File**: `CHANGELOG` (modified, +2/-0)
 ```diff
-@@ -749,6 +749,8 @@
- * Improve the output of fields `dbStats` for every column family
-   when calling `db._engineStats()` or calling the API `_api/engine/stats`.
+@@ -1,5 +1,7 @@
+ 3.12.13 (XXXX-XX-XX)
+ --------------------
++* COR-1031 Add new permissions AdminMonitorAqlQueries and AdminKillAqlQueries that allow for
++  for more fine-grained permission setting for aql queries.
  
-+* Return proper exit code if `arangoimport` fails.
+ * BTS-2481: Fix double-free on SortedCollectExecutor on hitting resource limit.
+ 
+```
+
+**File**: `Documentation/path_permissions.md` (modified, +4/-4)
+```diff
+@@ -992,14 +992,14 @@ SA/SW/LEG    - API is switchable between SA (superuser needed for everything), S
+ | X  |    | X  | POST   | `/_api/log`                                                  | RestLogHandler             | canUseAdmin(AdminWriteReplicatedLog      | AdminWriteReplicatedLog             | (replication2 + cluster only)            |                        |
+ | X  |    | X  | DELETE | `/_api/log`                                                  | RestLogHandler             | canUseAdmin(AdminWriteReplicatedLog      | AdminWriteReplicatedLog             | (replication2 + cluster only)            |                        |
+ | X  |    | X  | GET    | `/_api/log-internal`                                         | RestLogInternalHandler     | isSuperuser                              | SUPER                               | (replication2 + cluster only)            |                        |
+-| X  |    | X  | GET    | `/_api/query/slow`                                           | RestQueryHandler           | own user or canUseAdmin(AdminAqlQueries) | AUTHEN, own user or AdminAqlQueries | all DBs: _system + SUPER                 |                        |
+-| X  |    | X  | GET    | `/_api/query/current`                                        | RestQueryHandler           | own user or canUseAdmin(AdminAqlQueries) | AUTHEN, own user or AdminAqlQueries | all DBs: _system + SUPER                 |                        |
++| X  |    | X  | GET    | `/_api/query/slow`                                           | RestQueryHandler           | own or canUseAdmin(MonitorAqlQueries)    | AUTHEN, own/AdminMonitorAqlQueries  | all DBs: _system + SUPER                 |                        |
++| X  |    | X  | GET    | `/_api/query/current`                                        | RestQueryHandler           | own or canUseAdmin(MonitorAqlQueries)    | AUTHEN, own/AdminMonitorAqlQueries  | all DBs: _system + SUPER                 |                        |
+ | X  |    | X  | GET    | `/_api/query/properties`                                     | RestQueryHandler           | -                                        | AUTHEN                              |                                          |                        |
+ | X  |    | X  | GET    | `/_api/query/registry`                                       | RestQueryHandler           | isSuperuser                              | SUPER                               |                                          |                        |
+ | X  |    | X  | GET    | `/_api/query/rules`                                          | RestQueryHandler           | -                                        | AUTHEN                              |                                          |                        |
+ | X  |    | X  | POST   | `/_api/query`                                                | RestQueryHandler           | -                                        | AUTHEN                              |                                          |                        |
+-| X  |    | X  | DELETE | `/_api/query/{id}`                                           | RestQueryHandler           | own user or canUseAdmin(AdminAqlQueries) | AUTHEN, own user or AdminAqlQueries | all DBs: _system + SUPER                 |                        |
+-| X  |    | X  | DELETE | `/_api/query/slow`                                           | RestQueryHandler           | own user or canUseAdmin(AdminAqlQueries) | AUTHEN, own user or AdminAqlQueries | all DBs: _system + SUPER                 |                        |
++| X  |    | X  | DELETE | `/_api/query/{id}`                                           | RestQueryHandler           | own or canUseAdmin(KillAqlQueries)       | AUTHEN, own/AdminKillAqlQueries     | all DBs: _system + SUPER                 |                        |
++| X  |    | X  | DELETE | `/_api/query/slow`                                           | RestQueryHandler           | own or canUseAdmin(MonitorAqlQueries)    | AUTHEN, own/AdminMonitorAqlQueries  | all DBs: _system + SUPER                 |                        |
+ | X  |    | X  | GET    | `/_api/query-cache/entries`                                  | RestQueryCacheHandler      | -                                        | AUTHEN                              |                                          |                        |
+ | X  |    | X  | GET    | `/_api/query-cache/properties`                               | RestQueryCacheHandler      | -                                        | AUTHEN                              |                                          |                        |
+ | X  |    | X  | PUT    | `/_api/query-cache/properties`                               | RestQueryCacheHandler      | _system + canUseAdmin(AdminQueryCache)   | _system + AdminQueryCache           |                                          |                        |
+```
+
+**File**: `arangod/Auth/AuthMode.cpp` (modified, +8/-0)
+```diff
+@@ -108,6 +108,10 @@ auto describe(auth::perms::AnyAdmin auto const& admin) -> std::string {
+     return "access API call statistics (as admin)";
+   } else if constexpr (std::is_same_v<T, p::AdminAqlQueries>) {
+     return "manage AQL queries (as admin)";
++  } else if constexpr (std::is_same_v<T, p::AdminMonitorAqlQueries>) {
++    return "see the AQL queries of other users (as admin)";
++  } else if constexpr (std::is_same_v<T, p::AdminKillAqlQueries>) {
++    return "kill the AQL queries of other users (as admin)";
+   } else if constexpr (std::is_same_v<T, p::AdminShutdown>) {
+     return "shut down the server (as admin)";
+   } else if constexpr (std::is_same_v<T, p::AdminReadLogs>) {
+@@ -984,6 +988,10 @@ auto AuthMode::Rbac::check(auth::Permission permission) const -> Result {
+       return rbac::Action::AdminApiCalls;
+     } else if constexpr (std::is_same_v<T, p::AdminAqlQueries>) {
+       return rbac::Action::AdminAqlQueries;
++    } else if constexpr (std::is_same_v<T, p::AdminMonitorAqlQueries>) {
++      return rbac::Action::AdminMonitorAqlQueries;
++    } else if constexpr (std::is_same_v<T, p::AdminKillAqlQueries>) {
++      return rbac::Action::AdminKillAqlQueries;
+     } else if constexpr (std::is_same_v<T, p::AdminShutdown>) {
+       return rbac::Action::AdminShutdown;
+     } else if constexpr (std::is_same_v<T, p::AdminReadLogs>) {
+```
+
+**File**: `arangod/Auth/Permissions.cpp` (modified, +4/-0)
+```diff
+@@ -109,6 +109,10 @@ std::ostream& operator<<(std::ostream& os, Permission const& permission) {
+           [&](AdminCrashHandler const&) { os << "AdminCrashHandler"; },
+           [&](AdminApiCalls const&) { os << "AdminApiCalls"; },
+           [&](AdminAqlQueries const&) { os << "AdminAqlQueries"; },
++          [&](AdminMonitorAqlQueries const&) {
++            os << "AdminMonitorAqlQueries";
++          },
++          [&](AdminKillAqlQueries const&) { os << "AdminKillAqlQueries"; },
+           [&](AdminShutdown const&) { os << "AdminShutdown"; },
+           [&](AdminReadLogs const&) { os << "AdminReadLogs"; },
+           [&](AdminSetLogLevel const&) { os << "AdminSetLogLevel"; },
+```
+
+**File**: `arangod/Auth/Permissions.h` (modified, +7/-5)
+```diff
+@@ -92,6 +92,8 @@ struct AdminAuthReload {};
+ struct AdminCrashHandler {};
+ struct AdminApiCalls {};
+ struct AdminAqlQueries {};
++struct AdminMonitorAqlQueries {};
++struct AdminKillAqlQueries {};
+ struct AdminShutdown {};
+ struct AdminReadLogs {};
+ struct AdminSetLogLevel {};
+@@ -115,11 +117,11 @@ namespace detail {
+ using AdminList = meta::TypeList<
+     AdminReadUsers, AdminMoveShards, AdminMonitoring, AdminMonitoringInternal,
+     AdminAuthReload, AdminCrashHandler, AdminApiCalls, AdminAqlQueries,
+-    AdminShutdown, AdminReadLogs, AdminSetLogLevel, AdminOptions,
+-    AdminSupervisionState, AdminRemoveServer, AdminClusterInfo,
+-    AdminMaintenance, AdminRebalance, AdminLicense, AdminBackup,
+-    AdminReadReplicatedLog, AdminWriteReplicatedLog, AdminDump, AdminRestore,
+-    AdminWalAccess, AdminReadAgency, AdminQueryCache>;
++    AdminMonitorAqlQueries, AdminKillAqlQueries, AdminShutdown, AdminReadLogs,
++    AdminSetLogLevel, AdminOptions, AdminSupervisionState, AdminRemoveServer,
++    AdminClusterInfo, AdminMaintenance, AdminRebalance, AdminLicense,
++    AdminBackup, AdminReadReplicatedLog, AdminWriteReplicatedLog, AdminDump,
++    AdminRestore, AdminWalAccess, AdminReadAgency, AdminQueryCache>;
+ }
+ 
+ template<typename T>
+```
+
+**File**: `arangod/Auth/Rbac/Actions.h` (modified, +2/-0)
+```diff
+@@ -70,6 +70,8 @@ enum class Action {
+   AdminWriteAqlFunctions,
+   AdminQueryCache,
+   AdminReadUsers,
++  AdminMonitorAqlQueries,
++  AdminKillAqlQueries,
+ };
+ 
+ namespace resources {
+```
+
+**File**: `arangod/Auth/Rbac/ServiceImpl.cpp` (modified, +8/-0)
+```diff
+@@ -68,6 +68,10 @@ auto actionToWireString(Action action) -> std::string_view {
+       return "db:AdminApiCalls";
+     case Action::AdminAqlQueries:
+       return "db:AdminAqlQueries";
++    case Action::AdminMonitorAqlQueries:
++      return "db:AdminMonitorAqlQueries";
++    case Action::AdminKillAqlQueries:
++      return "db:AdminKillAqlQueries";
+     case Action::AdminShutdown:
+       return "db:AdminShutdown";
+     case Action::AdminReadLogs:
+@@ -181,6 +185,10 @@ auto describe(Action action) -> std::string_view {
+       return "access API call statistics (as admin)";
+     case Action::AdminAqlQueries:
+       return "manage AQL queries (as admin)";
++    case Action::AdminMonitorAqlQueries:
++      return "see the AQL queries of other users (as admin)";
++    case Action::AdminKillAqlQueries:
++      return "kill the AQL queries of other users (as admin)";
+     case Action::AdminShutdown:
+       return "shut down the server (as admin)";
+     case Action::AdminReadLogs:
+```
+
+**File**: `arangod/Utils/ExecContext.cpp` (modified, +12/-5)
+```diff
+@@ -547,14 +547,21 @@ Result ExecContext::canReadUser(std::string_view userName) const {
+   return can(ReadUser{.name{userName}});
+ }
+ 
+-Result ExecContext::canAccessQuery(std::string_view queryUser) const {
+-  using namespace auth::perms;
+-  // own queries are always accessible, unless the request was not
+-  // authenticated.
++/// @brief returns true if the AQL query of the given user may be seen or
++/// removed from the slow query list
++Result ExecContext::canMonitorQuery(std::string_view queryUser) const {
++  if (!_authMode.isUnauthenticated() && queryUser == user()) {
++    return {};
++  }
++  return can(auth::perms::AdminMonitorAqlQueries{});
++}
 +
- * COR-53: Fixed handling of forced vector index hints in AQL, so it is
-   handled properly by changing the order of optimization rules.
- 
-```
-
-**File**: `client-tools/Import/ImportFeature.cpp` (modified, +3/-0)
-```diff
-@@ -401,6 +401,7 @@ void ImportFeature::start() {
-     }
- 
-     if (!ok) {
-+      ret = EXIT_FAILURE;
-       auto const& msgs = ih.getErrorMessages();
-       if (!msgs.empty()) {
-         LOG_TOPIC("46995", ERR, arangodb::Logger::FIXME) << "error message(s):";
-@@ -412,9 +413,11 @@ void ImportFeature::start() {
-   } catch (std::exception const& ex) {
-     LOG_TOPIC("a7dca", ERR, arangodb::Logger::FIXME)
-         << "caught exception: " << ex.what();
-+    ret = EXIT_FAILURE;
-   } catch (...) {
-     LOG_TOPIC("fc131", ERR, arangodb::Logger::FIXME)
-         << "caught unknown exception";
-+    ret = EXIT_FAILURE;
++/// @brief returns true if the AQL query of the given user may be killed
++Result ExecContext::canKillQuery(std::string_view queryUser) const {
+   if (!_authMode.isUnauthenticated() && queryUser == user()) {
+     return {};
    }
+-  return can(AdminAqlQueries{});
++  return can(auth::perms::AdminKillAqlQueries{});
+ }
  
-   *_result = ret;
+ /// @brief returns true if the given user may be created.
 ```
 
-**File**: `js/client/modules/@arangodb/testsuites/importing.js` (modified, +3/-1)
-```diff
-@@ -102,7 +102,8 @@ const impTodos = [{
-   data: tu.makePathUnix(fs.join(testPaths.importing[1], 'import-1.csv')),
-   coll: 'UnitTestsImportCsvNonoCreate',
-   type: 'csv',
--  create: 'false'
-+  create: 'false',
-+  expectFailure: true,
- }, {
-   id: 'csv1',
-   data: tu.makePathUnix(fs.join(testPaths.importing[1], 'import-1.csv')),
-@@ -269,6 +270,7 @@ const impTodos = [{
-   coll: 'UnitTestsImportCsvBrokenHeaders',
-   type: 'csv',
-   create: 'true',
-+  expectFailure: true,
- }, {
-   id: 'tsv1',
-   data: tu.makePathUnix(fs.join(testPaths.importing[1], 'import-1.tsv')),
-```
+---
 
-**File**: `js/client/modules/@arangodb/testutils/result-processing.js` (modified, +1/-0)
+### Incident Patch 2: `5f6b44a5` (2026-10-19)
+**Commit Message**: Merge pull request #23463 from arangodb/feature/adapt-default-value-for-jwt-renewal-threshold
+
+Set jwt-renewal-threshold default to server renewal thresholde
+
+**File**: `client-tools/Shell/ClientFeatureOptions.h` (modified, +1/-1)
 ```diff
-@@ -51,6 +51,7 @@ const internalMembers = [
-   'crashreport',
-   'code',
-   'exitCode',
-+  'exit',
-   'error',
-   'status',
-   'skipped',
+@@ -39,7 +39,7 @@ struct ClientFeatureOptions {
+   std::string jwtToken;
+   double connectionTimeout{5.0};
+   double requestTimeout{1200.0};
+-  double jwtRenewalThreshold{300.0};
++  double jwtRenewalThreshold{150.0};
+   uint64_t maxPacketSize{1024 * 1024 * 1024};
+   uint64_t compressRequestThreshold{0};
+   uint64_t sslProtocol;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #23499** (2026-10-19): rbac-tests: fix race (@RheaAyase)
 - **PR #23495** (2026-10-17): rbac-tests: fix versions (@RheaAyase)
 - **PR #23493** (2026-10-16): Rename `--server.export-read-write-metrics` to `--rocksdb.*` and adjust mention of metrics endpoint (no /v2 in 4.0) (@Simran-B)
+- **PR #23492** (2026-10-19): arangosh: Improve description of --connect and flag uncommon (@Simran-B)
 - **PR #23489** (2026-10-16): [COR-1174] Fix locale usage in LOWER and UPPER (@jbajic)
 - **PR #23488** (2026-10-16): Expand comment (@jbajic)
-- **PR #23483** (2026-10-16): [4.0] Add ability to build also non-maintainer ECR-based images within the testing pipeline (@KVS85)
-- **PR #23482** (2026-10-16): Add ability to build also non-maintainer ECR-based images within the testing pipeline (@KVS85)
 
 ---
 
@@ -1390,35 +1236,29 @@ Fix exit code of arangoimport in case of failure
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. catch crashes during upgrade cycling arangods (#23453)
+## X. Merge pull request #23449 from arangodb/feature/cor-1031-rbac-query-list-and-kil
 
 **RULE**:
-When implementing operations in `js/client/modules/@arangodb/testsuites/rta_makedata.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6ab57904`: catch crashes during upgrade cycling arangods (#23453). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f38e80e4`: Merge pull request #23449 from arangodb/feature/cor-1031-rbac-query-list-and-kill-permissions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `js/client/modules/@arangodb/testsuites/rta_makedata.js`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-        this.instanceManager.disconnect();
-        this.instanceManager.reconnect(true);
-        this.instanceManager.disconnect();
-        this.instanceManager.reconnect(true);
-              let msg = `upgradeCycle failed by: ${e.message}\n${e.stack}`;
-              print(`${RED}${Date()}${msg}${RESET}`);
-                'message': msg,
+* COR-1031 Add new permissions AdminMonitorAqlQueries and AdminKillAqlQueries that allow for
+  for more fine-grained permission setting for aql queries.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-        this.instanceManager.reconnect(false);
-                'message': `upgradeCycle failed by: ${e.message}\n${e.stack}`,
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6ab57904` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f38e80e4` are properly handled with clean fallback behavior.

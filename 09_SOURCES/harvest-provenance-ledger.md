@@ -3341,3 +3341,6 @@ Every entry in this ledger must capture:
 | `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `f18a1372` | Multi-dimensional audit evidence | 2026-10-19T15:31:57.149Z |
 | `learn-github-kudoleh-ios-clean-architecture-mvvm` | `https://github.com/kudoleh/iOS-Clean-Architecture-MVVM` | `a68da3e3` | Multi-dimensional audit evidence | 2026-10-19T15:41:22.394Z |
 | `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `827381d6` | Multi-dimensional audit evidence | 2026-10-19T15:41:28.576Z |
+| `learn-github-emergetools-pow` | `https://github.com/EmergeTools/Pow` | `1b4b1dda` | Multi-dimensional audit evidence | 2026-10-19T15:53:29.926Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `6e2b5850` | Multi-dimensional audit evidence | 2026-10-19T15:53:32.908Z |
+| `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `f38e80e4` | Multi-dimensional audit evidence | 2026-10-19T15:53:33.237Z |

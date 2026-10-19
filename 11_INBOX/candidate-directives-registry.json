@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T15:11:39.751Z",
+  "last_updated": "2026-10-19T15:53:32.912Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1872,6 +1872,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Generic header title rejected",
       "learning_id": "learn-github-projectdiscovery-nuclei"
+    },
+    {
+      "id": "CD-OXRK",
+      "directive_title": "main): release 1.9.0 (#269)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Bitterbot-AI/bitterbot-desktop",
+      "source_commit": "6e2b5850",
+      "date_staged": "2026-10-19",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop"
     }
   ]
 }

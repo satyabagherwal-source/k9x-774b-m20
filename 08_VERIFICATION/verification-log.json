@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-K4XD",
-    "timestamp": "2026-10-19T03:13:59.281Z",
-    "repository": "goss-org/goss",
-    "learningId": "learn-github-goss-org-goss",
-    "contentHash": "a7ba8ab4c2a6ac4cccf05d966fbe40753c097000342f52f7b84280ee3dcf74a5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-K6U8",
-    "timestamp": "2026-10-19T03:14:01.760Z",
-    "repository": "Contrastive-LM/CLM-v0.1-8B",
-    "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
-    "contentHash": "c52ceed47b9b61914af121f1c677b1017f4312729b988941e1ee997ef43c9f51",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-K9QG",
-    "timestamp": "2026-10-19T03:14:05.512Z",
-    "repository": "StarRocks/starrocks",
-    "learningId": "learn-github-starrocks-starrocks",
-    "contentHash": "15e4fad01dfccea7cf407044e888ab6df7be7e2a24ce78500c3bae9ddd9cc8ef",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-S8VD",
     "timestamp": "2026-10-19T03:20:17.641Z",
     "repository": "nvidia/Nemotron-3-Diarization",
@@ -7490,6 +7445,51 @@
     "repository": "apple/foundationdb",
     "learningId": "learn-github-apple-foundationdb",
     "contentHash": "1ce9eec897d368442ba49a820a4d2e91b4dc2b6068a1fd9cc6bf74325a465627",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-OVGJ",
+    "timestamp": "2026-10-19T15:53:29.923Z",
+    "repository": "EmergeTools/Pow",
+    "learningId": "learn-github-emergetools-pow",
+    "contentHash": "78ad7ac073dce51e39e7043095cf58172b432df77dbae5dc4bd5eaa719237897",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-OXRD",
+    "timestamp": "2026-10-19T15:53:32.905Z",
+    "repository": "Bitterbot-AI/bitterbot-desktop",
+    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+    "contentHash": "c6d2469f6c81c47e1b210325082b6d6a04eb012855b77b8dd611c3dd34212c66",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-OY0F",
+    "timestamp": "2026-10-19T15:53:33.231Z",
+    "repository": "arangodb/arangodb",
+    "learningId": "learn-github-arangodb-arangodb",
+    "contentHash": "ffc25779538a444bd0e6c021228aca63979e4b9fc0f9d3d72a9b08810fee03c3",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
