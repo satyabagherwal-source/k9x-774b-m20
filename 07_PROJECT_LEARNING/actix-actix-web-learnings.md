@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/actix-actix-web-learnings.md`  
 > **Source**: github ([https://github.com/actix/actix-web](https://github.com/actix/actix-web))  
-> **Source Version**: `cb58a7de`  
+> **Source Version**: `2db7119a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T03:13:51.838Z  
+> **Timestamp**: 2026-10-19T18:10:15.132Z  
 > **Learning ID**: `learn-github-actix-actix-web`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/actix-actix-web-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/actix/actix-web](https://github.com/actix/actix-web))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T03:13:51.832Z  
+> **Harvest Timestamp**: 2026-10-19T18:10:13.913Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Actix Web is a powerful, pragmatic, and extremely fast web framework for Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 24869 stars
+- **Stars / Engagement**: 24871 stars
 
 ---
 
@@ -1316,11 +1316,15 @@ impl Files {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4341** (2026-10-17): **docs: note on_connect must be called before bind**
-  *Symptoms*: ## PR Type  Other (docs)  ## PR Checklist  - [ ] Tests for the changes have been added / updated. (docs only) - [x] Documentation comments have been added / updated. - [x] A changelog entry has been made for the appropriate packages. - [x] Format code with the latest stable rustfmt. - [ ] (Team) Label with affected crates and semver status.  ## Overview  `on_connect` is captured when a listener is bound, so calling it after `bind()` silently does nothing. That tripped up the reporter in #3684. This adds a short "Call Order" section to the `on_connect` docs saying so.  AI disclosure: I used an AI assistant to help draft this. I checked the behavior against the `bind`/`listen` code paths and built the docs myself.  Closes #3684
+- **Issue #4345** (2026-10-19): **chore(files): update http-range to 0.1.6**
+  *Symptoms*: ## PR Type  Other  ## PR Checklist  - [x] Tests for the changes have been added / updated. - [x] Documentation comments have been added / updated. - [x] A changelog entry has been made for the appropriate packages. - [x] Format code with the latest stable rustfmt. - [x] (Team) Label with affected crates and semver status.  ## Overview  Update the `http-range` dependency in `actix-files` to 0.1.6. Remove the local range-unit normalization because the updated dependency handles case-insensitive range units.
+  **Post-Mortem & Fix Analysis**:
+  > <!-- code-coverage-overview --> ### Code coverage overview  <b>Languages:</b> Rust <h4>Rust / code-coverage/cargo-llvm-cov</h4>  <table> <tr> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:main">main</span> <a id="cc-sha-link" href="/actix/actix-web/commit/fc7e7b38292f5020ab000b527f066d82bd94cbcd">fc7e7b3</a></th> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:chore/http-range-0.1.6">chore/http-range-0.1...</span> <a id="cc-sha-link" href="/actix/actix-web/commit/82fbac20868143e6df59cec1894a58441bdb665c">82fbac2</a></th> <th scope="col">+/-</th> </tr> <tr> <td>84%</td> <td>84%</td> <td>0%</td> </tr> </table>  <details> <summary>View coverage of the 2 most impacted files.</summary>  <table> <tr> <th scope="col">File</th> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:main">main</span> <a id="cc-sha-link" href="/actix/actix-web/commit/fc7e7b38292f5020ab000b527f066d82bd94cbcd">fc7e7b3</a></th> <th scope="col"><span id="cc-branch-bad
 
-- **Issue #4335** (2026-10-17): **fix(files): use file index for Windows ETags**
-  *Symptoms*: ## PR Type  Bug Fix  ## PR Checklist  - [x] Tests for the changes have been added / updated. - [x] Documentation comments have been added / updated. - [x] A changelog entry has been made for the appropriate packages. - [x] Format code with the latest stable rustfmt. - [x] (Team) Label with affected crates and semver status.  ## Overview  Use the Windows file index when generating `NamedFile` ETags. This distinguishes files that have the same size and modification time, so an `If-None-Match` request for one file does not incorrectly match another. Add a regression test for this case on Unix and Windows.
+- **Issue #4344** (2026-10-19): **ci: use preinstalled OpenSSL on Windows**
+  *Symptoms*: ## PR Type  Other (CI)  ## PR Checklist  - [x] Tests for the changes have been added / updated. (N/A: existing Windows CI jobs validate the setup.) - [x] Documentation comments have been added / updated. (N/A: CI workflow change only.) - [x] A changelog entry has been made for the appropriate packages. (N/A: no package changes.) - [x] Format code with the latest stable rustfmt. (N/A: no Rust changes; CI formatting check passed.) - [x] (Team) Label with affected crates and semver status. (N/A: no crate or release impact.)  ## Overview  Windows CI can fail before compilation when Chocolatey's community feed returns HTTP 503, as in https://github.com/actix/actix-web/actions/runs/39244314133/job/118032641515?pr=4339.  Use the full OpenSSL development package already installed in the Windows runner image in both CI workflows. Select the static libraries from `lib\VC\x64\MT` and keep Rust's existing static CRT setting. This removes the per-job Chocolatey download.  Validation:  - Prettier passed for both changed workflow files. - `zizmor --offline .github/workflows/ci.yml .github/workflows/ci-post-merge.yml` passed with no findings. - Both OpenSSL setup scripts passed `bash -n`. - Windows [MSRV](https://github.com/actix/actix-web/actions/runs/39246838229/job/118040862765) and [stable](https://github.com/actix/actix-web/actions/runs/39246838229/job/118040862862) CI jobs passed, including linking and tests. The nightly workflow uses the same setup and runs after merge.  
+  **Post-Mortem & Fix Analysis**:
+  > <!-- code-coverage-overview --> ### Code coverage overview  <b>Languages:</b> Rust <h4>Rust / code-coverage/cargo-llvm-cov</h4>  <table> <tr> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:main">main</span> <a id="cc-sha-link" href="/actix/actix-web/commit/e2d691f379edbb2ef53dece60569e36b5a0e9bf6">e2d691f</a></th> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:t3/fix-windows-openssl-ci">t3/fix-windows-opens...</span> <a id="cc-sha-link" href="/actix/actix-web/commit/fdb90920ca86433039bf44d3a30a766fe838eeb6">fdb9092</a></th> <th scope="col">+/-</th> </tr> <tr> <td>84%</td> <td>84%</td> <td>0%</td> </tr> </table>  :information_source: Calculations represent line coverage. Results may change as calculations are updated.  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1337,457 +1341,420 @@ impl Files {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e00f9e1a` (2026-10-17)
-**Commit Message**: build(deps): bump actions/upload-code-coverage from 1.4.1 to 1.4.4 (#4306)
+### Incident Patch 1: `ff27b4ad` (2026-10-19)
+**Commit Message**: fix(files): evaluate preconditions before range requests (#4336)
 
-Bumps [actions/upload-code-coverage](https://github.com/actions/upload-code-coverage) from 1.4.1 to 1.4.4.
-- [Release notes](https://github.com/actions/upload-code-coverage/releases)
-- [Changelog](https://github.com/actions/upload-code-coverage/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/actions/upload-code-coverage/compare/1c15be36fc3733ba839b1dd643bd9556e4426dc1...2b21a77928be8d5168c2b9581a67f2adbebacc52)
+* fix(files): evaluate preconditions before range requests
 
----
-updated-dependencies:
-- dependency-name: actions/upload-code-coverage
-  dependency-version: 1.4.4
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
+* docs(files): add changelog entry
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+* test(files): split range precondition regressions
 
-**File**: `.github/workflows/actions.lock` (modified, +4/-4)
+* test(files): clarify range precondition assertions
+
+**File**: `actix-files/CHANGES.md` (modified, +1/-0)
 ```diff
-@@ -19,7 +19,7 @@ workflows:
-         - 'useblacksmith/checkout@25227e61ff9dafe400e22fa487b673eac4e4409a'
-     '.github/workflows/coverage.yml':
-         - 'actions-rust-lang/setup-rust-toolchain@ecabd13d1c56bd1345c230e542e9144811ad706f'
--        - 'actions/upload-code-coverage@1c15be36fc3733ba839b1dd643bd9556e4426dc1'
-+        - 'actions/upload-code-coverage@2b21a77928be8d5168c2b9581a67f2adbebacc52'
-         - 'taiki-e/install-action@ab6895351a88b908e96a4697860d4ffea5e57dbe'
-         - 'useblacksmith/checkout@25227e61ff9dafe400e22fa487b673eac4e4409a'
-     '.github/workflows/labeler.yml':
-@@ -55,9 +55,9 @@ dependencies:
-         commit: 'sha1-bf12e9b00b37c5c0ca2b87b79b2daf7891dbda13'
-         owner_id: 44036562
-         repo_id: 177139928
--    'actions/upload-code-coverage@1c15be36fc3733ba839b1dd643bd9556e4426dc1':
--        ref: 'v1.4.1'
--        commit: 'sha1-1c15be36fc3733ba839b1dd643bd9556e4426dc1'
-+    'actions/upload-code-coverage@2b21a77928be8d5168c2b9581a67f2adbebacc52':
-+        ref: 'v1.4.4'
-+        commit: 'sha1-2b21a77928be8d5168c2b9581a67f2adbebacc52'
-         owner_id: 44036562
-         repo_id: 1220171870
-     'embarkstudios/cargo-deny-action@3c6349835b2b7b196a839186cb8b78e02f7b5f25':
-```
-
-**File**: `.github/workflows/coverage.yml` (modified, +1/-1)
-```diff
-@@ -41,7 +41,7 @@ jobs:
- 
-       - name: Upload coverage to GitHub
-         if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
--        uses: actions/upload-code-coverage@1c15be36fc3733ba839b1dd643bd9556e4426dc1 # v1.4.1
-+        uses: actions/upload-code-coverage@2b21a77928be8d5168c2b9581a67f2adbebacc52 # v1.4.4
-         with:
-           file: cobertura.xml
-           language: Rust
-```
-
----
-
-### Incident Patch 2: `0ea63743` (2026-10-17)
-**Commit Message**: build(deps): bump taiki-e/install-action from 2.87.21 to 2.87.27 (#4324)
-
-Bumps [taiki-e/install-action](https://github.com/taiki-e/install-action) from 2.87.21 to 2.87.27.
-- [Release notes](https://github.com/taiki-e/install-action/releases)
-- [Changelog](https://github.com/taiki-e/install-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/taiki-e/install-action/compare/4cef1412cce204788f482e778a0b9187f9626a29...ab6895351a88b908e96a4697860d4ffea5e57dbe)
-
----
-updated-dependencies:
-- dependency-name: taiki-e/install-action
-  dependency-version: 2.87.27
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-Co-authored-by: Yuki Okushi <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/actions.lock` (modified, +9/-9)
-```diff
-@@ -1,26 +1,26 @@
- # This file is machine-generated by `gh actions-lock`.
- # Do not edit by hand; run `gh actions-lock` to update.
- # Docs: https://gh.io/actions-lockfile
--version: 'v0.0.2'
-+version: 'v0.0.3'
- workflows:
-     '.github/workflows/bench.yml':
-         - 'useblacksmith/checkout@25227e61ff9dafe400e22fa487b673eac4e4409a'
-     '.github/workflows/ci-post-merge.yml':
-         - 'actions-rust-lang/setup-rust-toolchain@ecabd13d1c56bd1345c230e542e9144811ad706f'
-         - 'ilammy/setup-nasm@72793074d3c8cdda771dba85f6deafe00623038b'
-         - 'rui314/setup-mold@10ca16bf91dc22e05ebdc935cad9c75ea248f621'
--        - 'taiki-e/install-action@4cef1412cce204788f482e778a0b9187f9626a29'
-+        - 'taiki-e/install-action@ab6895351a88b908e96a4697860d4ffea5e57dbe'
-         - 'useblacksmith/checkout@25227e61ff9dafe400e22fa487b673eac4e4409a'
-     '.github/workflows/ci.yml':
-         - 'actions-rust-lang/setup-rust-toolchain@ecabd13d1c56bd1345c230e542e9144811ad706f'
-         - 'ilammy/setup-nasm@72793074d3c8cdda771dba85f6deafe00623038b'
-         - 'rui314/setup-mold@10ca16bf91dc22e05ebdc935cad9c75ea248f621'
--        - 'taiki-e/install-action@4cef1412cce204788f482e778a0b9187f9626a29'
-+        - 'taiki-e/install-action@ab6895351a88b908e96a4697860d4ffea5e57dbe'
-         - 'useblacksmith/checkout@25227e61ff9dafe400e22fa487b673eac4e4409a'
-     '.github/workflows/coverage.yml':
-         - 'actions-rust-lang/setup-rust-toolchain@ecabd13d1c56bd1345c230e542e9144811ad706f'
-         - 'actions/upload-code-coverage@1c15be36fc3733ba839b1dd643bd9556e4426dc1'
--        - 'taiki-e/install-action@4cef1412cce204788f482e778a0b9187f9626a29'
-+        - 'taiki-e/install-action@ab6895351a88b908e96a4697860d4ffea5e57dbe'
-         - 'useblacksmith/checkout@25227e61ff9dafe400e22fa487b673eac4e4409a'
-     '.github/workflows/labeler.yml':
-         - 'actions/labeler@bf12e9b00b37c5c0ca2b87b79b2daf7891dbda13'
-@@ -30,12 +30,12 @@ workflows:
-         - 'embarkstudios/cargo-deny-action@3c6349835b2b7b196a839186cb8b78e02f7b5f25'
-         - 'giraffate/clippy-action@13b9d32482f25d29ead141b79e7e04e7900281e0'
-         - 'taiki-e/cache-cargo-install-action@9ee83daaa7b96a6fab930949ecf1122bba04a389'
--        - 'taiki-e/install-action@4cef1412cce204788f482e778a0b9187f9626a29'
-+        - 'taiki-e/install-action@ab6895351a88b908e96a4697860d4ffea5e57dbe'
-         - 'useblacksmith/checkout@25227e61ff9dafe400e22fa487b673eac4e4409a'
-         - 'zizmorcore/zizmor-action@cc914d7f3750a2d13d75c7f184a1060aa0e9d482'
-     '.github/workflows/semver-checks.yml':
-         - 'actions-rust-lang/setup-rust-toolchain@ecabd13d1c56bd1345c230e542e9144811ad706f'
--        - 'taiki-e/install-action@4cef1412cce204788f482e778a0b9187f9626a29'
-+        - 'taiki-e/install-action@ab6895351a88b908e96a4697860d4ffea5e57dbe'
-         - 'useblacksmith/checkout@25227e61ff9dafe400e22fa487b673eac4e4409a'
- dependencies:
-     'actions-rust-lang/setup-rust-toolchain@ecabd13d1c56bd1345c230e542e9144811ad706f':
-@@ -97,9 +97,9 @@ dependencies:
-         repo_id: 588643148
-         uses:
-             - 'actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9'
--    'taiki-e/install-action@4cef1412cce204788f482e778a0b9187f9626a29':
--        ref: 'v2.87.21'
--        commit: 'sha1-4cef1412cce204788f482e778a0b9187f9626a29'
-+    'taiki-e/install-action@ab6895351a88b908e96a4697860d4ffea5e57dbe':
-+        ref: 'v2.87.27'
-+        commit: 'sha1-ab6895351a88b908e96a4697860d4ffea5e57dbe'
-         owner_id: 43724913
-         repo_id: 442947557
-     'useblacksmith/checkout@25227e61ff9dafe400e22fa487b673eac4e4409a':
-```
-
-**File**: `.github/workflows/ci-post-merge.yml` (modified, +2/-2)
-```diff
-@@ -53,7 +53,7 @@ jobs:
-           toolchain: ${{ matrix.version.version }}
- 
-       - name: Install just, cargo-hack, cargo-nextest, cargo-ci-cache-clean
--        uses: taiki-e/install-action@4cef1412cce204788f482e778a0b9187f9626a29 # v2.87.21
-+        uses: taiki-e/install-action@ab6895351a88b908e96a4697860d4ffea5e57dbe # v2.87.27
-         with:
-           tool: just,cargo-hack,cargo-nextest,cargo-ci-cache-clean
- 
-@@ -93,7 +93,7 @@ jobs:
-           cache-key: feature-powerset-${{ matrix.partition }}
- 
-       - name: Install just, cargo-hack
--        uses: taiki-e/install-action@4cef1412cce204788f482e778a0b9187f9626a29 # v2.87.21
-+        uses: taiki-e/install-action@ab6895351a88b908e96a4697860d4ffea5e57dbe # v2.87.27
-         with:
-           tool: just,cargo-hack
- 
-```
-
-**File**: `.github/workflows/ci.yml` (modified, +2/-2)
-```diff
-@@ -68,7 +68,7 @@ jobs:
-           toolchain: ${{ matrix.version.version }}
- 
-       - name: Install just, cargo-hack, cargo-nextest, cargo-ci-cache-clean
--        uses: taiki-e/install-action@4cef1412cce204788f482e778a0b9187f9626a29 # v2.87.21
-+        uses: taiki-e/install-action@ab6895351a88b908e96a4697860d4ffea5e57dbe # v2.87.27
-         with:
-           tool: just,cargo-hack,cargo-nextest,cargo-ci-cache-clean
- 
-@@ -103,7 +103,7 @@ jobs:
-           toolchain: nightly
- 
-       - name: Install just
--        uses: taiki-e/install-action@4cef1412cce204788f482e778a0b9187f9626a29 # v2.87.21
-+        uses: taiki-e/install-action@ab6895351a88b908e96a4697860d4ffea5e57dbe # v2.87.27
-         with:
-           tool: just
- 
-```
-
-**File**: `.github/workflows/coverage.yml` (modified, +1/-1)
-```diff
-@@ -32,7 +32,7 @@ jobs:
-           components: llvm-tools
- 
-       - name: Install just, cargo-llvm-cov, cargo-nextest
--        uses: taiki-e/install-action@4cef1412cce204788f482e778a0b9187f9626a29 # v2.87.21
-+        uses: taiki-e/install-action@ab6895351a88b908e96a4697860d4ffea5e57dbe # v2.87.27
-         with:
-           tool: just,cargo-llvm-cov,cargo-nextest
- 
-```
-
-**File**: `.github/workflows/lint.yml` (modified, +1/-1)
-```diff
-@@ -117,7 +117,7 @@ jobs:
-           toolchain: ${{ vars.RUST_VERSION_EXTERNAL_TYPES }}
- 
-       - name: Install just
--        uses: taiki-e/install-action@4cef1412cce204788f482e778a0b9187f9626a29 # v2.87.21
-+        uses: taiki-e/install-action@ab6895351a88b908e96a4697860d4ffea5e57dbe # v2.87.27
-         with:
-           tool: just
- 
-```
-
-**File**: `.github/workflows/semver-checks.yml` (modified, +1/-1)
-```diff
-@@ -23,7 +23,7 @@ jobs:
-           toolchain: stable
- 
-       - name: Install cargo-semver-checks
--        uses: taiki-e/install-action@4cef1412cce204788f482e778a0b9187f9626a29 # v2.87.21
-+        uses: taiki-e/install-action@ab6895351a88b908e96a4697860d4ffea5e57dbe # v2.87.27
-         with:
-           tool: cargo-semver-checks
- 
-```
-
----
-
-### Incident Patch 3: `01937da0` (2026-10-11)
-**Commit Message**: fix(http): advertise upgrades without changing connection state (#4300)
-
-**File**: `actix-http/CHANGES.md` (modified, +1/-0)
-```diff
-@@ -2,6 +2,7 @@
- 
+@@ -3,6 +3,7 @@
  ## Unreleased
  
-+- Emit required `Connection` options for HTTP/1 response upgrade advertisements without changing connection state.
- - Parse all HTTP/1 `Connection` header options consistently.
- - Only treat `Expect: 100-continue` as a continue expectation in HTTP/1.1 requests.
+ - Ignore `If-Unmodified-Since` when `If-Match` is present when serving a `NamedFile`.
++- Evaluate request preconditions before processing Range headers when serving a `NamedFile`.
+ 
+ ## 0.7.1
  
 ```
 
-**File**: `actix-http/src/h1/codec.rs` (modified, +39/-1)
+**File**: `actix-files/src/lib.rs` (modified, +54/-0)
 ```diff
-@@ -199,7 +199,45 @@ impl Encoder<Message<(Response<()>, BodySize)>> for Codec {
- #[cfg(test)]
- mod tests {
-     use super::*;
--    use crate::HttpMessage as _;
-+    use crate::{
-+        header::{HeaderValue, UPGRADE},
-+        HttpMessage as _, StatusCode,
-+    };
-+
+@@ -492,6 +492,60 @@ mod tests {
+         assert_eq!(response.status(), StatusCode::RANGE_NOT_SATISFIABLE);
+     }
+ 
 +    #[actix_rt::test]
-+    async fn upgrade_advertisement_preserves_keep_alive() {
-+        for (version, camel_case, connection) in [
-+            ("HTTP/1.1", false, "connection: upgrade\r\n"),
-+            ("HTTP/1.1", true, "Connection: Upgrade\r\n"),
-+            ("HTTP/1.0", false, "connection: keep-alive, upgrade\r\n"),
-+            ("HTTP/1.0", true, "Connection: keep-alive, upgrade\r\n"),
-+        ] {
-+            let mut codec = Codec::default();
-+            let mut request = BytesMut::from(
-+                format!("GET / {version}\r\nHost: localhost\r\nConnection: keep-alive\r\n\r\n")
-+                    .as_bytes(),
++    async fn test_named_file_if_none_match_before_range() {
++        let req = TestRequest::get().to_http_request();
++        let resp = NamedFile::open("Cargo.toml").unwrap().into_response(&req);
++        let etag = resp.headers().get(header::ETAG).unwrap().clone();
++
++        for range in ["bytes=999999999-", "bytes=0-9"] {
++            let req = TestRequest::get()
++                .insert_header((header::IF_NONE_MATCH, etag.clone()))
++                .insert_header((header::RANGE, range))
++                .to_http_request();
++            let resp = NamedFile::open("Cargo.toml").unwrap().into_response(&req);
++
++            assert_eq!(
++                resp.status(),
++                StatusCode::NOT_MODIFIED,
++                "matching If-None-Match with {range} should return 304"
 +            );
-+            codec.decode(&mut request).unwrap().unwrap();
-+
-+            let mut response = Response::with_body(StatusCode::OK, ());
-+            response.head_mut().set_camel_case_headers(camel_case);
-+            response
-+                .headers_mut()
-+                .insert(UPGRADE, HeaderValue::from_static("websocket"));
-+
-+            let mut output = BytesMut::new();
-+            codec
-+                .encode(Message::Item((response, BodySize::Sized(0))), &mut output)
-+                .unwrap();
-+            let output = std::str::from_utf8(&output).unwrap();
-+
 +            assert!(
-+                output.contains(connection),
-+                "missing {connection:?}: {output}"
++                !resp.headers().contains_key(header::CONTENT_RANGE),
++                "conditional response with {range} should omit Content-Range"
 +            );
-+            assert!(codec.keep_alive());
++            assert!(
++                body::to_bytes(resp.into_body()).await.unwrap().is_empty(),
++                "conditional response with {range} should have an empty body"
++            );
 +        }
 +    }
- 
++
++    #[actix_rt::test]
++    async fn test_named_file_if_match_before_range() {
++        for range in ["bytes=999999999-", "bytes=0-9"] {
++            let req = TestRequest::get()
++                .insert_header((header::IF_MATCH, "\"stale\""))
++                .insert_header((header::RANGE, range))
++                .to_http_request();
++            let resp = NamedFile::open("Cargo.toml").unwrap().into_response(&req);
++
++            assert_eq!(
++                resp.status(),
++                StatusCode::PRECONDITION_FAILED,
++                "nonmatching If-Match with {range} should return 412"
++            );
++            assert!(
++                !resp.headers().contains_key(header::CONTENT_RANGE),
++                "conditional response with {range} should omit Content-Range"
++            );
++            assert!(
++                body::to_bytes(resp.into_body()).await.unwrap().is_empty(),
++                "conditional response with {range} should have an empty body"
++            );
++        }
++    }
++
      #[actix_rt::test]
-     async fn test_http_request_chunked_payload_and_next_message() {
+     async fn test_named_file_if_range_etag() {
+         let file = NamedFile::open("Cargo.toml").unwrap();
 ```
 
-**File**: `actix-http/src/h1/dispatcher_tests.rs` (modified, +51/-0)
+**File**: `actix-files/src/named.rs` (modified, +9/-9)
 ```diff
-@@ -1079,6 +1079,57 @@ async fn upgrade_response_does_not_close_unfinished_payload() {
-     .await;
- }
+@@ -554,6 +554,15 @@ impl NamedFile {
  
-+#[cfg(feature = "ws")]
-+#[actix_rt::test]
-+async fn unsupported_websocket_version_closes_connection() {
-+    let buf = TestSeqBuffer::new(http_msg(
-+        r"
-+        GET /ws HTTP/1.1
-+        Host: localhost
-+        Connection: Upgrade
-+        Upgrade: websocket
-+        Sec-WebSocket-Version: 8
-+        Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==
+         res.insert_header((header::ACCEPT_RANGES, "bytes"));
+ 
++        if precondition_failed {
++            return res.status(StatusCode::PRECONDITION_FAILED).finish();
++        } else if not_modified {
++            return res
++                .status(StatusCode::NOT_MODIFIED)
++                .body(body::None::new())
++                .map_into_boxed_body();
++        }
 +
-+        ",
-+    ));
+         let mut length = self.md.len();
+         let mut offset = 0;
+         let mut ranged_req = false;
+@@ -586,15 +595,6 @@ impl NamedFile {
+             };
+         };
+ 
+-        if precondition_failed {
+-            return res.status(StatusCode::PRECONDITION_FAILED).finish();
+-        } else if not_modified {
+-            return res
+-                .status(StatusCode::NOT_MODIFIED)
+-                .body(body::None::new())
+-                .map_into_boxed_body();
+-        }
+-
+         let reader = chunked::new_chunked_read(length, offset, self.file, self.read_mode_threshold);
+ 
+         if ranged_req {
+```
+
+---
+
+### Incident Patch 2: `5ec81594` (2026-10-19)
+**Commit Message**: fix(actix-files): handle range units per RFC 9110 (#4340)
+
+* fix(actix-files): handle range units per RFC 9110
+
+* docs(files): add changelog entry
+
+* test(files): move range unit coverage into unit tests
+
+* test(files): remove redundant invalid range coverage
+
+**File**: `actix-files/CHANGES.md` (modified, +1/-0)
+```diff
+@@ -6,6 +6,7 @@
+ - Evaluate request preconditions before processing Range headers when serving a `NamedFile`.
+ - Ignore Range headers for methods other than GET when serving a `NamedFile`.
+ - Return 412 for matching If-None-Match on methods other than GET and HEAD, and ignore If-Modified-Since on those methods when serving a `NamedFile`.
++- Accept case-insensitive byte range units and ignore unknown range units when serving a `NamedFile`.
+ 
+ ## 0.7.1
+ 
+```
+
+**File**: `actix-files/src/lib.rs` (modified, +51/-0)
+```diff
+@@ -644,6 +644,57 @@ mod tests {
+         }
+     }
+ 
++    #[actix_web::test]
++    async fn byte_range_units_are_case_insensitive() {
++        let file = tempfile::NamedTempFile::new().unwrap();
++        fs::write(file.path(), b"0123456789").unwrap();
 +
-+    let services = HttpFlow::new(
-+        fn_service(|req: Request| {
-+            ready(crate::ws::handshake(req.head()).map(|mut res| res.finish()))
-+        }),
-+        ExpectHandler,
-+        None::<UpgradeHandler>,
-+    );
++        for range in ["Bytes=2-4", "BYTES=2-4", "bYtEs=2-4", "bytes=2-4"] {
++            let req = TestRequest::get()
++                .insert_header((header::RANGE, range))
++                .to_http_request();
++            let response = NamedFile::open(file.path()).unwrap().into_response(&req);
 +
-+    let h1 = Dispatcher::new(
-+        buf.clone(),
-+        services,
-+        ServiceConfig::default(),
-+        None,
-+        OnConnectData::default(),
-+    );
-+    let mut h1 = pin!(h1);
++            assert_eq!(
++                response.status(),
++                StatusCode::PARTIAL_CONTENT,
++                "range {range} should produce the expected status"
++            );
++            assert_eq!(
++                response.headers().get(header::CONTENT_RANGE).unwrap(),
++                "bytes 2-4/10"
++            );
++            assert_eq!(
++                body::to_bytes(response.into_body()).await.unwrap(),
++                b"234"[..]
++            );
++        }
++    }
 +
-+    lazy(|cx| {
-+        let result = h1.as_mut().poll(cx);
++    #[actix_web::test]
++    async fn unknown_range_units_are_ignored() {
++        let file = tempfile::NamedTempFile::new().unwrap();
++        fs::write(file.path(), b"0123456789").unwrap();
 +
-+        assert!(
-+            matches!(result, Poll::Ready(Ok(()))),
-+            "rejected handshake did not finish: {result:?}"
++        for range in ["items=2-4", "BYTESX=2-4", "items=first", "items=100-200"] {
++            let req = TestRequest::get()
++                .insert_header((header::RANGE, range))
++                .to_http_request();
++            let response = NamedFile::open(file.path()).unwrap().into_response(&req);
++
++            assert_eq!(
++                response.status(),
++                StatusCode::OK,
++                "range {range} should produce the expected status"
++            );
++            assert!(!response.headers().contains_key(header::CONTENT_RANGE));
++            assert_eq!(
++                body::to_bytes(response.into_body()).await.unwrap(),
++                b"0123456789"[..]
++            );
++        }
++    }
++
+     #[actix_rt::test]
+     async fn test_named_file_if_range_etag() {
+         let file = NamedFile::open("Cargo.toml").unwrap();
+```
+
+**File**: `actix-files/src/named.rs` (modified, +18/-1)
+```diff
+@@ -1,4 +1,5 @@
+ use std::{
++    borrow::Cow,
+     fs::Metadata,
+     io,
+     path::{Path, PathBuf},
+@@ -575,9 +576,25 @@ impl NamedFile {
+             .get(header::RANGE)
+             .filter(|_| req.method() == Method::GET)
+             .filter(|_| if_range_matches(etag.as_ref(), last_modified, req))
++            // RFC 9110 section 14.2 requires unknown range units to be ignored.
++            .filter(|ranges| {
++                ranges
++                    .to_str()
++                    .ok()
++                    .and_then(|value| value.split_once('='))
++                    .is_none_or(|(unit, _)| unit.eq_ignore_ascii_case("bytes"))
++            })
+         {
+             if let Ok(ranges_header) = ranges.to_str() {
+-                if let Some(range) = HttpRange::parse(ranges_header, length)
++                // Range units are case-insensitive, but http-range requires literal `bytes=`.
++                let ranges_header = match ranges_header.split_once('=') {
++                    Some((unit, set)) if unit.eq_ignore_ascii_case("bytes") && unit != "bytes" => {
++                        Cow::Owned(format!("bytes={set}"))
++                    }
++                    _ => Cow::Borrowed(ranges_header),
++                };
++
++                if let Some(range) = HttpRange::parse(&ranges_header, length)
+                     .ok()
+                     .and_then(|ranges| ranges.first().copied())
+                 {
+```
+
+---
+
+### Incident Patch 3: `2c4fe2a2` (2026-10-19)
+**Commit Message**: fix(files): apply conditional response rules by request method (#4339)
+
+* fix(files): apply conditional response rules by request method
+
+* docs(files): add changelog entry
+
+* test(files): separate conditional tests by method
+
+**File**: `actix-files/CHANGES.md` (modified, +1/-0)
+```diff
+@@ -5,6 +5,7 @@
+ - Ignore `If-Unmodified-Since` when `If-Match` is present when serving a `NamedFile`.
+ - Evaluate request preconditions before processing Range headers when serving a `NamedFile`.
+ - Ignore Range headers for methods other than GET when serving a `NamedFile`.
++- Return 412 for matching If-None-Match on methods other than GET and HEAD, and ignore If-Modified-Since on those methods when serving a `NamedFile`.
+ 
+ ## 0.7.1
+ 
+```
+
+**File**: `actix-files/src/lib.rs` (modified, +98/-0)
+```diff
+@@ -110,6 +110,104 @@ mod tests {
+         assert_eq!(m, mime::APPLICATION_OCTET_STREAM);
+     }
+ 
++    #[actix_rt::test]
++    async fn test_if_none_match_get_and_head() {
++        let file = NamedFile::open("Cargo.toml").unwrap();
++        let etag = file.etag().unwrap().to_string();
++
++        for method in [Method::GET, Method::HEAD] {
++            for value in [etag.as_str(), "*"] {
++                let req = TestRequest::default()
++                    .method(method.clone())
++                    .insert_header((header::IF_NONE_MATCH, value))
++                    .to_http_request();
++                let resp = NamedFile::open("Cargo.toml").unwrap().into_response(&req);
++
++                assert_eq!(
++                    resp.status(),
++                    StatusCode::NOT_MODIFIED,
++                    "{method} with matching If-None-Match {value} should return 304"
++                );
++                assert!(
++                    body::to_bytes(resp.into_body()).await.unwrap().is_empty(),
++                    "{method} with matching If-None-Match {value} should have an empty body"
++                );
++            }
++        }
++    }
++
++    #[actix_rt::test]
++    async fn test_if_none_match_post() {
++        let file = NamedFile::open("Cargo.toml").unwrap();
++        let etag = file.etag().unwrap().to_string();
++
++        for value in [etag.as_str(), "*"] {
++            let req = TestRequest::post()
++                .insert_header((header::IF_NONE_MATCH, value))
++                .to_http_request();
++            let resp = NamedFile::open("Cargo.toml").unwrap().into_response(&req);
++
++            assert_eq!(
++                resp.status(),
++                StatusCode::PRECONDITION_FAILED,
++                "POST with matching If-None-Match {value} should return 412"
++            );
++            assert!(
++                body::to_bytes(resp.into_body()).await.unwrap().is_empty(),
++                "POST with matching If-None-Match {value} should have an empty body"
++            );
++        }
++    }
++
++    #[actix_rt::test]
++    async fn test_if_modified_since_get_and_head() {
++        let file = NamedFile::open("Cargo.toml").unwrap();
++        let since = file.last_modified().unwrap();
++
++        for method in [Method::GET, Method::HEAD] {
++            let req = TestRequest::default()
++                .method(method.clone())
++                .insert_header((header::IF_MODIFIED_SINCE, since))
++                .to_http_request();
++            let resp = NamedFile::open("Cargo.toml").unwrap().into_response(&req);
++
++            assert_eq!(
++                resp.status(),
++                StatusCode::NOT_MODIFIED,
++                "{method} with matching If-Modified-Since should return 304"
++            );
++            assert!(
++                body::to_bytes(resp.into_body()).await.unwrap().is_empty(),
++                "{method} with matching If-Modified-Since should have an empty body"
++            );
++        }
++    }
++
++    #[actix_rt::test]
++    async fn test_if_modified_since_post() {
++        let file = NamedFile::open("Cargo.toml").unwrap();
++        let since = file.last_modified().unwrap();
++
++        let req = TestRequest::post()
++            .insert_header((header::IF_MODIFIED_SINCE, since))
++            .to_http_request();
++        let resp = file.into_response(&req);
++
++        assert_eq!(
++            resp.status(),
++            StatusCode::OK,
++            "POST should ignore If-Modified-Since and return 200"
 +        );
 +
-+        let output = buf.take_write_buf();
-+        let response = str::from_utf8(&output).unwrap();
++        let bytes = body::to_bytes(resp.into_body()).await.unwrap();
 +
-+        assert!(response.starts_with("HTTP/1.1 426 Unsupported WebSocket version\r\n"));
-+        assert!(response.contains("connection: close, upgrade\r\n"));
-+        assert!(response.contains("upgrade: websocket\r\n"));
-+        assert!(response.contains("sec-websocket-version: 13\r\n"));
-+    })
-+    .await;
-+}
++        assert_eq!(
++            bytes.as_ref(),
++            fs::read("Cargo.toml").unwrap(),
++            "POST should return the full file despite If-Modified-Since"
++        );
++    }
 +
- // fix in #2624 reverted temporarily
- // complete fix tracked in #2745
- #[ignore]
+     #[actix_rt::test]
+     async fn test_if_modified_since_without_if_none_match() {
+         let file = NamedFile::open("Cargo.toml").unwrap();
 ```
 
-**File**: `actix-http/src/h1/encoder.rs` (modified, +22/-4)
+**File**: `actix-files/src/named.rs` (modified, +4/-2)
 ```diff
-@@ -12,6 +12,7 @@ use crate::{
-     body::BodySize,
-     header::{
-         map::Value, HeaderMap, HeaderName, CONNECTION, CONTENT_LENGTH, DATE, TRANSFER_ENCODING,
-+        UPGRADE,
-     },
-     helpers, ConnectionType, RequestHeadType, Response, ServiceConfig, StatusCode, Version,
- };
-@@ -115,22 +116,39 @@ pub(crate) trait MessageType: Sized {
-         }
+@@ -504,10 +504,12 @@ impl NamedFile {
+             false
+         };
  
-         // Connection
--        match conn_type {
--            ConnectionType::Upgrade => {
-+        // Response upgrade advertisements need a connection option (RFC 9110, Section 7.8).
-+        let has_upgrade = self.status().is_some() && self.headers().contains_key(UPGRADE);
++        let is_get_or_head = matches!(*req.method(), Method::GET | Method::HEAD);
 +
-+        match (conn_type, has_upgrade) {
-+            (ConnectionType::Close, true) if version >= Version::HTTP_11 => {
-+                if camel_case {
-+                    dst.put_slice(b"Connection: close, upgrade\r\n")
-+                } else {
-+                    dst.put_slice(b"connection: close, upgrade\r\n")
-+                }
-+            }
-+            (ConnectionType::KeepAlive, true) if version < Version::HTTP_11 => {
-+                if camel_case {
-+                    dst.put_slice(b"Connection: keep-alive, upgrade\r\n")
-+                } else {
-+                    dst.put_slice(b"connection: keep-alive, upgrade\r\n")
-+                }
-+            }
-+            (ConnectionType::Upgrade, _) | (_, true) => {
-                 if camel_case {
-                     dst.put_slice(b"Connection: Upgrade\r\n")
-                 } else {
-                     dst.put_slice(b"connection: upgrade\r\n")
-                 }
-             }
--            ConnectionType::KeepAlive if version < Version::HTTP_11 => {
-+            (ConnectionType::KeepAlive, false) if version < Version::HTTP_11 => {
-                 if camel_case {
-                     dst.put_slice(b"Connection: keep-alive\r\n")
-                 } else {
-                     dst.put_slice(b"connection: keep-alive\r\n")
-                 }
-             }
--            ConnectionType::Close if version >= Version::HTTP_11 => {
-+            (ConnectionType::Close, false) if version >= Version::HTTP_11 => {
-                 if camel_case {
-                     dst.put_slice(b"Connection: close\r\n")
-                 } else {
-```
-
-**File**: `actix-http/src/ws/mod.rs` (modified, +2/-5)
-```diff
-@@ -9,9 +9,7 @@ use base64::prelude::*;
- use derive_more::{Display, Error, From};
- use http::{header, Method, StatusCode};
+         // check last modified
+         let not_modified = if !none_match(etag.as_ref(), req) {
+             true
+-        } else if req.headers().contains_key(header::IF_NONE_MATCH) {
++        } else if !is_get_or_head || req.headers().contains_key(header::IF_NONE_MATCH) {
+             false
+         } else if let (Some(ref m), Some(header::IfModifiedSince(ref since))) =
+             (last_modified, req.get_header())
+@@ -554,7 +556,7 @@ impl NamedFile {
  
--use crate::{
--    body::BoxBody, header::HeaderValue, ConnectionType, RequestHead, Response, ResponseBuilder,
--};
-+use crate::{body::BoxBody, header::HeaderValue, RequestHead, Response, ResponseBuilder};
+         res.insert_header((header::ACCEPT_RANGES, "bytes"));
  
- mod codec;
- mod dispatcher;
-@@ -148,7 +146,6 @@ impl From<HandshakeError> for Response<BoxBody> {
-                 #[allow(clippy::declare_interior_mutable_const)]
-                 const HV_WEBSOCKET: HeaderValue = HeaderValue::from_static("websocket");
-                 let mut res = Response::new(StatusCode::UPGRADE_REQUIRED);
--                res.head_mut().set_connection_type(ConnectionType::Upgrade);
-                 res.headers_mut().insert(header::UPGRADE, HV_WEBSOCKET);
-                 res.headers_mut()
-                     .insert(header::SEC_WEBSOCKET_VERSION, HV_13);
-@@ -423,7 +420,7 @@ mod tests {
-         assert_eq!(resp.status(), StatusCode::BAD_REQUEST);
-         let resp: Response<BoxBody> = HandshakeError::UnsupportedVersion.into();
-         assert_eq!(resp.status(), StatusCode::UPGRADE_REQUIRED);
--        assert!(resp.upgrade());
-+        assert!(!resp.upgrade());
-         assert_eq!(resp.headers().get(header::UPGRADE).unwrap(), "websocket");
-         assert_eq!(
-             resp.headers().get(header::SEC_WEBSOCKET_VERSION).unwrap(),
+-        if precondition_failed {
++        if precondition_failed || (not_modified && !is_get_or_head) {
+             return res.status(StatusCode::PRECONDITION_FAILED).finish();
+         } else if not_modified {
+             return res
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4345** (2026-10-19): chore(files): update http-range to 0.1.6 (@robjtede)
+- **PR #4344** (2026-10-19): ci: use preinstalled OpenSSL on Windows (@robjtede)
 - **PR #4341** (2026-10-17): docs: note on_connect must be called before bind (@TheNetherWatcher)
-- **PR #4335** (2026-10-17): fix(files): use file index for Windows ETags (@robjtede)
-- **PR #4334** (2026-10-17): fix(files): honor If-Range on range requests (@Arthur031221)
-- **PR #4333** (2026-10-17): chore: ignore `RUSTSEC-2026-0348` (@JohnTitor)
-- **PR #4330** (closed): build(deps): bump trybuild from 1.0.121 to 1.0.122 (@dependabot[bot])
-- **PR #4329** (closed): build(deps): bump rand from 0.10.2 to 0.10.3 (@dependabot[bot])
+- **PR #4340** (2026-10-19): fix(actix-files): handle range units per RFC 9110 (@robjtede)
+- **PR #4339** (2026-10-19): fix(files): apply conditional response rules by request method (@robjtede)
+- **PR #4338** (2026-10-19): fix(files): give If-Match precedence over If-Unmodified-Since (@robjtede)
 
 ---
 
@@ -1807,34 +1774,28 @@ Co-authored-by: Yuki Okushi <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump actions/upload-code-coverage from 1.4.1 to 1.4.4 (#4306)
+## X. files): evaluate preconditions before range requests (#4336)
 
 **RULE**:
-When implementing operations in `.github/workflows/actions.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in actix/actix-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `actix-files/CHANGES.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in actix/actix-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e00f9e1a`: build(deps): bump actions/upload-code-coverage from 1.4.1 to 1.4.4 (#4306). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ff27b4ad`: files): evaluate preconditions before range requests (#4336). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/actions.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `actix-files/CHANGES.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        - 'actions/upload-code-coverage@2b21a77928be8d5168c2b9581a67f2adbebacc52'
-    'actions/upload-code-coverage@2b21a77928be8d5168c2b9581a67f2adbebacc52':
-        ref: 'v1.4.4'
-        commit: 'sha1-2b21a77928be8d5168c2b9581a67f2adbebacc52'
+- Evaluate request preconditions before processing Range headers when serving a `NamedFile`.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        - 'actions/upload-code-coverage@1c15be36fc3733ba839b1dd643bd9556e4426dc1'
-    'actions/upload-code-coverage@1c15be36fc3733ba839b1dd643bd9556e4426dc1':
-        ref: 'v1.4.1'
-        commit: 'sha1-1c15be36fc3733ba839b1dd643bd9556e4426dc1'
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e00f9e1a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ff27b4ad` are properly handled with clean fallback behavior.

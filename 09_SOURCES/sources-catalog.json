@@ -5193,10 +5193,10 @@
     "repository": "actix/actix-web",
     "platform": "github",
     "sourceUrl": "https://github.com/actix/actix-web",
-    "sourceVersion": "cb58a7de",
+    "sourceVersion": "2db7119a",
     "license": "Apache-2.0",
-    "contentHash": "420f2dab0594cd919e0f2e90529755d96d29f4f3a2cc6b6e95b363f574374c6e",
-    "lastHarvestedAt": "2026-10-19T03:13:52.120Z",
+    "contentHash": "8a64c3c3cc2bc471fba3b8c06801d0bcdeae248e659c8b41d5e84a8adc71e28e",
+    "lastHarvestedAt": "2026-10-19T18:10:15.426Z",
     "learningId": "learn-github-actix-actix-web"
   },
   "wix-react-native-ui-lib": {
@@ -6073,10 +6073,10 @@
     "repository": "ClickHouse/ClickHouse",
     "platform": "github",
     "sourceUrl": "https://github.com/ClickHouse/ClickHouse",
-    "sourceVersion": "110043e5",
+    "sourceVersion": "8c0552d4",
     "license": "Apache-2.0",
-    "contentHash": "9d229a024e26dab6fb34a6b4e5d7404d0f4b6368555a212969fd4196f87dc159",
-    "lastHarvestedAt": "2026-10-19T05:05:46.160Z",
+    "contentHash": "b8ec47d6fa809c4ed33ce17a1726bc5e263ff228861a366280c80aeab19fde34",
+    "lastHarvestedAt": "2026-10-19T18:10:27.274Z",
     "learningId": "learn-github-clickhouse-clickhouse"
   },
   "dockview-dockview": {
@@ -6413,10 +6413,10 @@
     "repository": "prometheus/prometheus",
     "platform": "github",
     "sourceUrl": "https://github.com/prometheus/prometheus",
-    "sourceVersion": "c052a79d",
+    "sourceVersion": "0b57789d",
     "license": "Apache-2.0",
-    "contentHash": "e4fbce6d73653996a7b91b3dfdbba8a286048f3dfc7ffe43f5e4a5274c688b1f",
-    "lastHarvestedAt": "2026-10-19T05:51:56.531Z",
+    "contentHash": "ce91c206d9a00f102f0307c5358c54498aa3c38f497e23a0dbda320b53e6d217",
+    "lastHarvestedAt": "2026-10-19T18:10:22.436Z",
     "learningId": "learn-github-prometheus-prometheus"
   },
   "meilisearch-meilisearch": {
@@ -8538,5 +8538,25 @@
     "contentHash": "a1820d0cd75eb49766b3f980bc2c24c6cba4f1a9f59b7f38a26a7043aa97de66",
     "lastHarvestedAt": "2026-10-19T18:02:59.289Z",
     "learningId": "learn-github-zoontek-react-native-bootsplash"
+  },
+  "melbahja-seo": {
+    "repository": "melbahja/seo",
+    "platform": "github",
+    "sourceUrl": "https://github.com/melbahja/seo",
+    "sourceVersion": "cd4e4122",
+    "license": "MIT",
+    "contentHash": "2bea717f84aba147741363c4e3934097795d1a4a7fe88546fe23186c375a74f0",
+    "lastHarvestedAt": "2026-10-19T18:10:15.619Z",
+    "learningId": "learn-github-melbahja-seo"
+  },
+  "kdchang-reactjs101": {
+    "repository": "kdchang/reactjs101",
+    "platform": "github",
+    "sourceUrl": "https://github.com/kdchang/reactjs101",
+    "sourceVersion": "9a6f238b",
+    "license": "NOASSERTION",
+    "contentHash": "4cf00ff447532311394f9c9e0e3e90c240cab2de789c29e3a2bdd286cc29e68c",
+    "lastHarvestedAt": "2026-10-19T18:10:20.351Z",
+    "learningId": "learn-github-kdchang-reactjs101"
   }
 }

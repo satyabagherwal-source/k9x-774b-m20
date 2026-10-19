@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-4Y4F",
-    "timestamp": "2026-10-19T04:26:09.471Z",
-    "repository": "cycloidio/terracognita",
-    "learningId": "learn-github-cycloidio-terracognita",
-    "contentHash": "16e59c59c215a271c97568b987a3044de4343e550d47c1bd29674726118e1cce",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-51CN",
-    "timestamp": "2026-10-19T04:26:13.655Z",
-    "repository": "activeloopai/deeplake",
-    "learningId": "learn-github-activeloopai-deeplake",
-    "contentHash": "e1658e54aba666147f5a92f67f15804483b5bac346acc3b1e205de87f4e89c55",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-64DZ",
-    "timestamp": "2026-10-19T04:27:04.247Z",
-    "repository": "vikejs/vike",
-    "learningId": "learn-github-vikejs-vike",
-    "contentHash": "5cd7ac015b0f84c768126a0a78b344888cd394d92c1968d5fec3a37cfd1232b1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-6KM7",
-    "timestamp": "2026-10-19T04:27:25.279Z",
-    "repository": "Altworld/Hemmingway-1",
-    "learningId": "learn-huggingface-altworld-hemmingway-1",
-    "contentHash": "0b1840965baf93ea9bd803f80f7edd92dcf09fe4b2855360b10e966388fdada9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-78QU",
-    "timestamp": "2026-10-19T04:27:56.550Z",
-    "repository": "NVIDIA/cuda-rust",
-    "learningId": "learn-github-nvidia-cuda-rust",
-    "contentHash": "1b69e032ed40d258b3aacdc070f9e7b5381438130efc13b3fd08e4e404c18b2c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-EZR3",
     "timestamp": "2026-10-19T04:33:58.143Z",
     "repository": "typestack/routing-controllers",
@@ -7492,6 +7417,81 @@
     "contentHash": "a7f52116b1c45fd26342f25937376fd9df073204d2c4123bdea03a3f4416dbd7",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-KQV3",
+    "timestamp": "2026-10-19T18:10:15.423Z",
+    "repository": "actix/actix-web",
+    "learningId": "learn-github-actix-actix-web",
+    "contentHash": "8a64c3c3cc2bc471fba3b8c06801d0bcdeae248e659c8b41d5e84a8adc71e28e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-KR0G",
+    "timestamp": "2026-10-19T18:10:15.616Z",
+    "repository": "melbahja/seo",
+    "learningId": "learn-github-melbahja-seo",
+    "contentHash": "2bea717f84aba147741363c4e3934097795d1a4a7fe88546fe23186c375a74f0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-KUNX",
+    "timestamp": "2026-10-19T18:10:20.349Z",
+    "repository": "kdchang/reactjs101",
+    "learningId": "learn-github-kdchang-reactjs101",
+    "contentHash": "4cf00ff447532311394f9c9e0e3e90c240cab2de789c29e3a2bdd286cc29e68c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-KW9T",
+    "timestamp": "2026-10-19T18:10:22.433Z",
+    "repository": "prometheus/prometheus",
+    "learningId": "learn-github-prometheus-prometheus",
+    "contentHash": "ce91c206d9a00f102f0307c5358c54498aa3c38f497e23a0dbda320b53e6d217",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-L007",
+    "timestamp": "2026-10-19T18:10:27.271Z",
+    "repository": "ClickHouse/ClickHouse",
+    "learningId": "learn-github-clickhouse-clickhouse",
+    "contentHash": "b8ec47d6fa809c4ed33ce17a1726bc5e263ff228861a366280c80aeab19fde34",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source**: github ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
-> **Source Version**: `110043e5`  
+> **Source Version**: `8c0552d4`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T05:05:45.907Z  
+> **Timestamp**: 2026-10-19T18:10:27.014Z  
 > **Learning ID**: `learn-github-clickhouse-clickhouse`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T05:05:45.901Z  
+> **Harvest Timestamp**: 2026-10-19T18:10:27.006Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ClickHouse® is a real-time analytics database management system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 50478 stars
+- **Stars / Engagement**: 50489 stars
 
 ---
 
@@ -219,7 +219,7 @@ public:
     static bool constantTimeEquals(const Digest & d1, const Digest & d2);
     /// Compares two Digest values using a constant-time comparison
     /// algorithm. This can be used to prevent timing attacks
-    /// (as discussed in <https://codahale.com/a-lesson-in-timing-attacks/>).
+    /// (as discussed in <https://web.archive.org/web/20090901005747/http://codahale.com/a-lesson-in-timing-attacks/>).
 
 protected:
     virtual void updateImpl(const void * data, std::size_t length) = 0;
@@ -1317,11 +1317,11 @@ private:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #126008** (2026-10-18): **Web terminal: arbitrary PTY input crashes the whole server (replxx cursor/buffer desync)**
-  *Symptoms*: ## Summary  The web terminal (`/webterminal`) runs an embedded `clickhouse-client` — including its **replxx** line editor — *inside the server process* (`DB::ClientEmbedded::run`). Sending a short burst of arbitrary / invalid‑UTF‑8 bytes as terminal input to an authenticated web‑terminal WebSocket desyncs replxx's cursor index (`_pos`) from its line buffer (`_data`), causing an out‑of‑bounds access inside replxx. Because the editor lives in the server, **the entire ClickHouse server crashes** (not just the session). Any user who can authenticate to the web terminal can trigger this → server‑wide denial of service, with memory‑safety (OOB `std::vector`/`UnicodeString` access) implications.  ## Version `26.10.1.2457`, git hash `1d85cfe23dc59ab982362867a1acc5aa3d8c6bef`. Reproduced on **both** the Debug (`_LIBCPP_HARDENING_MODE_EXTENSIVE`) and RelWithDebInfo builds from the same source.  ## Impact - Crash of the whole server process (all connections dropped) from a single authenticated   web‑terminal session. `enable_webterminal` is **on by default**. - Memory unsafety: out‑of‑bounds reads/writes on `replxx::UnicodeString` / its backing   `std::vector<char32_t>`. The Debug build aborts on a libc++ hardening assertion; the release   build takes SIGSEGV. The same editor is used by the **SSH PTY** endpoint (`tcp_ssh_port`),   which runs the identical `ClientEmbedded` + replxx path, so that surface is expected to be   affected too.  ## Reproduction Enable the web terminal (default) 
+- **Issue #126739** (2026-10-19): **Bad cast from type DB::ColumnBLOB to DB::ColumnAggregateFunction. (LOGICAL_ERROR) due to dictionary creating**
+  *Symptoms*: ### Company or project name  XWAY   ### Describe what's wrong  Query: ```SQL SELECT entity_id,        argMaxIf(bucket, date, warehouse_type = 'FBS') as col1,        argMaxIf(bucket, date, warehouse_type = 'FBO') as col2 FROM distributed_table WHERE date >= yesterday() GROUP BY entity_id; ``` works fine but if you use it as query in dictionary you gonna get an error `DB::Exception: Bad cast from type DB::ColumnBLOB to DB::ColumnAggregateFunction. (LOGICAL_ERROR) (version 26.3.12.3 (official))` TABLE IS DISTRIBUTED tmp fix is to add SETTINGS enable_parallel_blocks_marshalling=0 @nickitat   ### Does it reproduce on the most recent release?  Yes  ### How to reproduce  use query from subj all fields are UInt32 try to create dictionary out of it  ### Expected behavior  dictionary creates without additional settings  ### Error message and/or stacktrace  _No response_  ### Related issues and pull requests  _No response_  ### Additional context  _No response_
 
-- **Issue #125945** (2026-10-19): **intExp10 narrows an integer exponent to int before the saturation check: intExp10(4294967297) = 10 and intExp10(2147483648) = 0 (intExp2 was fixed in #105054, intExp10 was not)**
-  *Symptoms*: ### Company or project name  _No response_  ### Describe what's wrong   `intExp10(x)` is documented to return `0` for a too-small argument and `18446744073709551615` for a too-big one (changelog of #75312). For integer arguments, the saturation checks are never reached. `IntExp10Impl::apply` (`src/Functions/intExp10.cpp:30-40`) runs the `< 0` and `>= 20` checks only inside `if constexpr (std::is_floating_point_v<A>)`, and then calls `intExp10(static_cast<int>(a))`. An integer exponent is therefore narrowed to `int` first:  - `intExp10(4294967297)` (2^32 + 1) = `10` - `intExp10(4294967315)` (2^32 + 19) = `10000000000000000000` - `intExp10(4294967296)` (2^32) = `1` - `intExp10(2147483648)` (2^31) = `0`, because it becomes a negative int - `intExp10(-4294967295)` = `10`, a negative exponent giving a result greater than 1  The same value passed as `Float64` saturates correctly: `intExp10(toFloat64(4294967297))` = 18446744073709551615.  #105054 ("Fix JIT-compiled `intExp2` for out-of-range inputs", merged 2026-05-15) fixed exactly this in `intExp2`. It moved the `< 0` / `>= 64` checks out of the floating-point branch, so integers are range-checked before the narrowing (`src/Functions/intExp2.cpp:37-46`, "Range-check before the narrowing `static_cast<int>` below"). `intExp10` still has the old structure.   ### Does it reproduce on the most recent release?  Yes  ### How to reproduce   Version 26.9.19.9 (latest release) and master 26.10.1.2399 (`23b0bca6`), default settings.  ```sql 
+- **Issue #126053** (2026-10-19): **Iceberg REST catalog: a namespace level with `\x1f` is created but cannot be addressed, and breaks `SHOW TABLES` of every `DataLakeCatalog` database on the catalog**
+  *Symptoms*: 🕵️   Two halves:  1. **Embedded catalog server.** `CreateNamespace` accepts a level that contains `\x1f`, the unit separator the Iceberg REST spec uses between namespace levels. `validateNamespace` (`src/Server/IcebergRESTCatalog/IcebergRESTCatalogHandler.cpp`) only rejects empty and over-long levels. Every later request for that namespace splits its name on `\x1f`, so it answers 404 (`Namespace does not exist: a.b`). The namespace can never be loaded or dropped through the API. 2. **ClickHouse REST client.** `encodeNamespaceForURI` (`src/Databases/DataLake/RestCatalog.cpp`) only turns `.` into `%1F` and copies every other byte into the URL unencoded. A namespace with a control character gives a raw `Poco::Exception` `Bad URI syntax` (Code 1000). Because the client lists the whole catalog, `SHOW TABLES` on the `DataLakeCatalog` database fails as a whole, not only for that namespace. Levels with `?`, `#`, `%` or spaces would also corrupt the request URL instead of being percent-encoded.  ### Does it reproduce on the most recent release?  The server half: no, the embedded catalog is not released yet. The client half (`encodeNamespaceForURI`, since 2025-12) affects released versions against any REST catalog that allows such names. Reproduced on master 26.10.1.1. The decoding change in #125791 does not change it: the decoded segment is still split on `\x1f`.  ### How to reproduce  Embedded catalog with warehouse `fuzz_wh`:  ```bash W=http://localhost:8182/v1/fuzz_wh curl -s -X P
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1338,282 +1338,623 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `282195fd` (2026-10-17)
-**Commit Message**: Merge pull request #126311 from groeneai/praktika-bedrock-converse-read-timeout
+### Incident Patch 1: `8c0552d4` (2026-10-19)
+**Commit Message**: Merge pull request #124480 from groeneai/fix-or-like-chain-shared-alias
 
-Give the praktika Bedrock Converse client a read timeout that fits a reasoning turn
+Fix `NOT_FOUND_COLUMN_IN_BLOCK` when an alias of an `OR` chain of `LIKE` conditions is reused by `GROUP BY` and other clauses
 
-**File**: `ci/praktika/orchestrator/ai/bedrock_openai.py` (modified, +13/-1)
+**File**: `src/Analyzer/Passes/ConvertOrLikeChainPass.cpp` (modified, +6/-16)
 ```diff
-@@ -43,6 +43,10 @@
- # the Anthropic provider's cap.
- _MAX_TOOL_ROUNDS = 12
+@@ -595,22 +595,12 @@ class ConvertOrLikeChainVisitor : public InDepthQueryTreeVisitorWithContext<Conv
+         /// Clone the optimized OR node
+         auto optimized_or_clone = node->clone();
  
-+# converse() is non-streaming, so a whole reasoning turn must arrive within one
-+# socket read.
-+_CONVERSE_READ_TIMEOUT_S = 600
+-        /// Create AND of the optimized OR with indexHint:
+-        /// optimized_or AND indexHint(original_like_chain)
+-        auto and_node = std::make_shared<FunctionNode>("and");
+-        and_node->getArguments().getNodes().push_back(std::move(optimized_or_clone));
+-        and_node->getArguments().getNodes().push_back(std::move(index_hint_node));
+-        and_node->resolveAsFunction(and_function_resolver);
+-
+-        /// Mark the AND node as processed to prevent re-visiting
+-        processed_nodes.insert(and_node.get());
+-
+-        /// Also mark the cloned OR inside AND as processed
+-        if (auto * or_child = and_node->getArguments().getNodes()[0]->as<FunctionNode>())
+-            processed_nodes.insert(or_child);
+-
+-        /// Replace the original node with the AND expression
+-        node = std::move(and_node);
++        /// Mark the cloned OR as processed to prevent re-visiting
++        processed_nodes.insert(optimized_or_clone->as<FunctionNode>());
 +
- # Appended to the system prompt for the forced final write-up once the model
- # exhausts its tool-call budget: stop investigating and produce the review now,
- # so the loop yields real text instead of another tool call.
-@@ -142,6 +146,7 @@ def _get_client(self):
-         if self._client is None:
-             try:
-                 import boto3
-+                from botocore.config import Config
-             except ImportError as e:  # boto3 is a core dep; guard anyway
-                 raise RuntimeError(
-                     "boto3 not installed; required for AI_PROVIDER='bedrock-openai'"
-@@ -151,7 +156,14 @@ def _get_client(self):
-                 raise RuntimeError(
-                     "no AWS region for Bedrock; set Settings.AWS_REGION or AWS_REGION"
-                 )
--            self._client = boto3.client("bedrock-runtime", region_name=region)
-+            self._client = boto3.client(
-+                "bedrock-runtime",
-+                region_name=region,
-+                config=Config(
-+                    read_timeout=_CONVERSE_READ_TIMEOUT_S,
-+                    retries={"max_attempts": 1, "mode": "standard"},
-+                ),
-+            )
-         return self._client
- 
-     def complete(
-```
-
----
-
-### Incident Patch 2: `893dc436` (2026-10-18)
-**Commit Message**: Address review: require a completed test run for LLVM coverage
-
-`test_result.status` does not prove that the run completed: aborted runs
-(exit codes `2`, `143`, etc.) are reported as `FAIL`, and the check-errors
-aggregation can turn a runner-level `ERROR` into `FAIL`. Such runs could
-still publish a profile and, with the previous commit, reset the job to `OK`.
-
-`FTResultsProcessor` now records `run_completed` before any aggregation:
-the runner printed `All tests have finished`, no queries hung, and it did not
-abort or stop early. The coverage profile is merged (and the job status reset)
-only for completed runs.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `ci/jobs/functional_tests.py` (modified, +10/-5)
-```diff
-@@ -1268,6 +1268,7 @@ def start():
-             Path(stale).unlink()
- 
-     test_result = None
-+    test_run_completed = False
-     if res and JobStages.TEST in stages:
-         stop_watch_ = Utils.Stopwatch()
-         step_name = "Tests"
-@@ -1347,6 +1348,7 @@ def start():
-             is_bugfix_validation=is_labeled_bugfix_validation,
-             allow_no_tests=is_flaky_check or is_targeted_check,
-         )
-+        test_run_completed = ft_res_processor.run_completed
-         if is_bugfix_validation:
-             # The job name carries only the architecture, so a row is attributable
-             # to a build type only through this label. Set before it is published.
-@@ -1851,14 +1853,17 @@ def collect_logs():
-             print(f"Removing pre-existing {merged_file}")
-             os.unlink(merged_file)
- 
--        # A missing test_result means the test stage never ran, and a runner-level
--        # ERROR means it terminated unexpectedly; either way the .profraw files
--        # understate coverage. FAIL is a completed run and still publishes.
--        if test_result is None or test_result.is_error():
-+        # A missing test_result means the test stage never ran, and an incomplete
-+        # run (unexpected termination, server death, kill by signal, early stop)
-+        # leaves .profraw files that understate coverage. A completed run with
-+        # failed tests still publishes. `test_result.status` is not enough here:
-+        # aborts are reported as `FAIL`, and the check-errors aggregation can turn
-+        # a runner-level `ERROR` into `FAIL`.
-+        if test_result is None or not test_run_completed:
-             _gate_reason = (
-                 "the test stage did not run"
-                 if test_result is None
--                else "the test runner terminated unexpectedly (runner-level ERROR)"
-+                else "the test run did not complete"
-             )
-             print(
-                 f"ERROR: {_gate_reason}, so this shard's coverage is incomplete; "
-```
-
-**File**: `ci/jobs/scripts/functional_tests_results.py` (modified, +22/-1)
-```diff
-@@ -83,7 +83,8 @@
- NO_TESTS_FILTERED_OUT_SIGN = (
-     "No tests were run because every explicitly requested test was filtered out"
- )
--SUCCESS_FINISH_SIGNS = ["All tests have finished", NO_TESTS_SIGN]
-+ALL_TESTS_FINISHED_SIGN = "All tests have finished"
-+SUCCESS_FINISH_SIGNS = [ALL_TESTS_FINISHED_SIGN, NO_TESTS_SIGN]
- 
- RETRIES_SIGN = "Some tests were restarted"
- 
-@@ -111,12 +112,17 @@ class Summary:
-         hung: bool = False
-         retries: bool = False
-         success_finish: bool = False
-+        all_tests_finished: bool = False
-         no_tests_run: bool = False
-         test_end: bool = True
- 
-     def __init__(self, wd):
-         self.tests_output_file = f"{wd}/test_result.txt"
-         self.debug_files = []
-+        # Set by `run`: whether the runner went through the whole test list.
-+        # Unlike the result status, it is not affected by later aggregation
-+        # (e.g. `extend_sub_results` turning a runner-level `ERROR` into `FAIL`).
-+        self.run_completed = False
- 
-     def _process_test_output(self):
-         total = 0
-@@ -127,6 +133,7 @@ def _process_test_output(self):
-         hung = False
-         retries = False
-         success_finish = False
-+        all_tests_finished = False
-         no_tests_run = False
-         test_results = []
-         test_end = True
-@@ -138,6 +145,8 @@ def _process_test_output(self):
- 
-                 if any(s in line for s in SUCCESS_FINISH_SIGNS):
-                     success_finish = True
-+                if ALL_TESTS_FINISHED_SIGN in line:
-+                    all_tests_finished = True
-                 if NO_TESTS_FILTERED_OUT_SIGN in line:
-                     no_tests_run = True
-                 # Ignore hung check report, since it may be quite large.
-@@ -236,6 +245,7 @@ def _process_test_output(self):
-             test_results=test_results,
-             hung=hung,
-             success_finish=success_finish,
-+            all_tests_finished=all_tests_finished,
-             no_tests_run=no_tests_run,
-             retries=retries,
-         )
-@@ -253,6 +263,17 @@ def run(
-         s = self._process_test_output()
-         test_results = s.test_results
- 
-+        # A completed run went through the whole test list: failed tests are
-+        # allowed, but not an abort (server death, kill by signal, hung check),
-+        # an early stop on too many failures or on the time limit, or hung queries.
-+        self.run_completed = (
-+            s.all_tests_finished
-+            and not s.hung
-+            and runner_exit_code not in ABORTED_RUN_EXIT_CODES
-+            and runner_exit_code
-+            not in (MAX_FAILURES_EXIT_CODE, GLOBAL_TIME_LIMIT_EXIT_CODE)
-+        )
-+
-         if s.no_tests_run and allow_no_tests and not s.hung:
-             # The job was given an explicit list of tests (a flaky or targeted
-             # check), and `clickhouse-test` explicitly proved it
-```
-
----
-
-### Incident Patch 3: `110043e5` (2026-10-18)
-**Commit Message**: Merge pull request #126109 from alwaysprince05/fix-intexp10-integer-truncation-125945
-
-Fix intExp10 returning nonsense for integer arguments with magnitude >= 2^31
-
-**File**: `src/Functions/intExp10.cpp` (modified, +10/-4)
-```diff
-@@ -33,11 +33,17 @@ struct IntExp10Impl
-             {
-                 if (std::isnan(a))
-                     throw Exception(ErrorCodes::BAD_ARGUMENTS, "intExp10 must not be called with nan");
--                if (a < 0)
--                    return 0;
--                if (a >= 20)
--                    return std::numeric_limits<UInt64>::max();
-             }
-+
-+            /// Range-check before the narrowing `static_cast<int>` below. Without this, integer
-+            /// inputs whose magnitude exceeds `INT_MAX` (e.g. `UInt32` near `2^32`, `Int64`
-+            /// near `INT64_MAX`) get implementation-defined truncation and return nonsense.
-+            if constexpr (is_signed_v<A>)
-+                if (a < A{0})
-+                    return 0;
-+            if (a >= A{20})
-+                return std::numeric_limits<UInt64>::max();
-+
-             return intExp10(static_cast<int>(a));
-         }
++        /// Rewrite the node in place to optimized_or AND indexHint(original_like_chain), as it may be shared by several references.
++        function_node->getArguments().getNodes() = {std::move(optimized_or_clone), std::move(index_hint_node)};
++        function_node->resolveAsFunction(and_function_resolver);
      }
+ private:
+     const FunctionOverloadResolverPtr or_function_resolver;
 ```
 
-**File**: `tests/queries/0_stateless/05401_intexp10_integer_overflow.reference` (added, +16/-0)
+**File**: `tests/queries/0_stateless/05346_optimize_or_like_chain_shared_alias.reference` (added, +23/-0)
 ```diff
-@@ -0,0 +1,16 @@
-+18446744073709551615
-+18446744073709551615
-+18446744073709551615
+@@ -0,0 +1,23 @@
 +0
-+18446744073709551615
++1
++1	4
 +0
-+18446744073709551615
-+18446744073709551615
-+10000000000000000000
-+18446744073709551615
++1
 +0
-+1000000000000000
-+1000000000000000
-+10000000000000000000
-+18446744073709551615
++1
++0
++1
++\N
++0
++1
++0
++1
++0	8
++0	12
++1	4
++0
++1
++0	1
++1	1
++0	8
++1	4
+```
+
+**File**: `tests/queries/0_stateless/05346_optimize_or_like_chain_shared_alias.sql` (added, +21/-0)
+```diff
+@@ -0,0 +1,21 @@
++-- Random settings limits: optimize_or_like_chain=(1, None)
++
++SET enable_identifier_resolve_cache = 1;
++
++DROP TABLE IF EXISTS t_or_like_shared;
++CREATE TABLE t_or_like_shared (s String, ns Nullable(String), ls LowCardinality(String), n UInt64) ENGINE = MergeTree ORDER BY n;
++INSERT INTO t_or_like_shared SELECT toString(number % 3), if(number = 5, NULL, toString(number % 3)), toString(number % 3), number FROM numbers(12);
++
++SELECT (s LIKE '%a%' OR s LIKE '%b%' OR s LIKE '%c%' OR s LIKE '%1%') AS r FROM t_or_like_shared GROUP BY r ORDER BY r;
++SELECT (s LIKE '%a%' OR s LIKE '%b%' OR s LIKE '%c%' OR s LIKE '%1%') AS r, count() FROM t_or_like_shared GROUP BY r HAVING r;
++SELECT (s ILIKE '%A%' OR s ILIKE '%B%' OR s ILIKE '%C%' OR s ILIKE '%1%') AS r FROM t_or_like_shared GROUP BY r ORDER BY r;
++SELECT (s LIKE 'a%' OR s LIKE 'b%' OR s LIKE 'c%' OR s LIKE 'd%' OR s LIKE 'e%' OR s LIKE 'f%' OR s LIKE 'g%' OR s LIKE 'h%' OR s LIKE 'i%' OR s LIKE '1%') AS r FROM t_or_like_shared GROUP BY r ORDER BY r;
++SELECT (ns LIKE '%a%' OR ns LIKE '%b%' OR ns LIKE '%c%' OR ns LIKE '%1%') AS r FROM t_or_like_shared GROUP BY r ORDER BY r;
++SELECT (ls LIKE '%a%' OR ls LIKE '%b%' OR ls LIKE '%c%' OR ls LIKE '%1%') AS r FROM t_or_like_shared GROUP BY r ORDER BY r;
++SELECT (s LIKE '%a%' OR s LIKE '%b%' OR s LIKE '%c%' OR s LIKE '%1%' OR ls LIKE '%a%' OR ls LIKE '%b%' OR ls LIKE '%c%' OR ls LIKE '%2%') AS r FROM t_or_like_shared GROUP BY r ORDER BY r;
++SELECT (s LIKE '%a%' OR s LIKE '%b%' OR s LIKE '%c%' OR s LIKE '%1%') AS r, count() FROM t_or_like_shared GROUP BY r WITH ROLLUP ORDER BY r, count();
++WITH if(s LIKE '%a%' OR s LIKE '%b%' OR s LIKE '%c%' OR s LIKE '%1%', s, 'z') AS h SELECT (h LIKE '%a%' OR h LIKE '%b%' OR h LIKE '%c%' OR h LIKE '%1%') AS r FROM t_or_like_shared GROUP BY r ORDER BY r;
++SELECT (s LIKE '%a%' OR s LIKE '%b%' OR s LIKE '%c%' OR s LIKE '%1%') AS r, indexHint(r) FROM t_or_like_shared GROUP BY r ORDER BY r;
++SELECT (s LIKE '%a%' OR s LIKE '%b%' OR s LIKE '%c%' OR s LIKE '%1%') AS r, count() FROM t_or_like_shared GROUP BY r ORDER BY ALL SETTINGS enable_identifier_resolve_cache = 0;
++
++DROP TABLE t_or_like_shared;
+```
+
+---
+
+### Incident Patch 2: `2134b447` (2026-10-19)
+**Commit Message**: Merge pull request #125828 from groeneai/fix-group-by-key-in-if-chain-and-order-by-tuple
+
+Fix wrong results and `NOT_FOUND_COLUMN_IN_BLOCK` for a `GROUP BY` key inside an `if` chain or an `ORDER BY` tuple
+
+**File**: `src/Analyzer/FunctionNode.h` (modified, +3/-0)
+```diff
+@@ -209,6 +209,9 @@ class FunctionNode final : public IQueryTreeNode
+             wrap_with_nullable = true;
+     }
+ 
++    /// Whether `convertToNullable` was called, also when the result type cannot be `Nullable` and did not change.
++    bool isConvertedToNullable() const { return wrap_with_nullable; }
++
+     void dumpTreeImpl(WriteBuffer & buffer, FormatState & format_state, size_t indent) const override;
+ 
+ protected:
+```
+
+**File**: `src/Analyzer/Passes/IfChainToMultiIfPass.cpp` (modified, +61/-2)
+```diff
+@@ -3,9 +3,13 @@
+ 
+ #include <Analyzer/InDepthQueryTreeVisitor.h>
+ #include <Analyzer/FunctionNode.h>
++#include <Analyzer/Passes/OptimizeKeyExpressionsUtils.h>
++#include <Analyzer/QueryNode.h>
+ #include <Core/Settings.h>
+ #include <Functions/multiIf.h>
+ 
++#include <unordered_set>
++
+ namespace DB
+ {
+ namespace Setting
+@@ -19,6 +23,39 @@ namespace Setting
+ namespace
+ {
+ 
++/// The `if` nodes of the query, outside of its subqueries, that are `GROUP BY` keys, collected before any of them is rewritten.
++std::unordered_set<QueryTreeNodePtr> collectGroupByKeyIfNodes(const QueryNode & query_node)
++{
++    auto is_if = [](const QueryTreeNodePtr & node)
++    {
++        const auto * function_node = node->as<FunctionNode>();
++        return function_node && function_node->getFunctionName() == "if" && function_node->getArguments().getNodes().size() == 3;
++    };
++
++    auto if_keys = getGroupByKeys(query_node);
++    std::erase_if(if_keys, [&](const auto & key) { return !is_if(key); });
++
++    std::unordered_set<QueryTreeNodePtr> result;
++    if (if_keys.empty())
++        return result;
++
++    std::vector<const IQueryTreeNode *> nodes{&query_node};
++    while (!nodes.empty())
++    {
++        const auto * node = nodes.back();
++        nodes.pop_back();
++        for (const auto & child : node->getChildren())
++        {
++            if (!child || child->getNodeType() == QueryTreeNodeType::QUERY || child->getNodeType() == QueryTreeNodeType::UNION)
++                continue;
++            if (is_if(child) && isGroupByKeyAfterAggregation(child, if_keys))
++                result.insert(child);
++            nodes.push_back(child.get());
++        }
++    }
++    return result;
++}
++
+ class IfChainToMultiIfPassVisitor : public InDepthQueryTreeVisitorWithContext<IfChainToMultiIfPassVisitor>
+ {
+ public:
+@@ -28,10 +65,19 @@ class IfChainToMultiIfPassVisitor : public InDepthQueryTreeVisitorWithContext<If
+     explicit IfChainToMultiIfPassVisitor(FunctionOverloadResolverPtr multi_if_function_ptr_, ContextPtr context)
+         : Base(std::move(context))
+         , multi_if_function_ptr(std::move(multi_if_function_ptr_))
+-    {}
++    {
++        group_by_key_if_nodes_stack.emplace_back();
++    }
+ 
+     void enterImpl(QueryTreeNodePtr & node)
+     {
++        if (const auto * query_node = node->as<QueryNode>())
++        {
++            group_by_key_if_nodes_stack.push_back(
++                getSettings()[Setting::optimize_if_chain_to_multiif] ? collectGroupByKeyIfNodes(*query_node) : std::unordered_set<QueryTreeNodePtr>{});
++            return;
++        }
++
+         if (!getSettings()[Setting::optimize_if_chain_to_multiif])
+             return;
+ 
+@@ -53,6 +99,10 @@ class IfChainToMultiIfPassVisitor : public InDepthQueryTreeVisitorWithContext<If
+             if (!if_chain_function_node || if_chain_function_node->getFunctionName() != "if" || if_chain_function_node->getArguments().getNodes().size() != 3)
+                 break;
+ 
++            /// A `GROUP BY` key is read from the aggregation result, so it is not spliced into the chain.
++            if (if_chain_function_node->isConvertedToNullable() || group_by_key_if_nodes_stack.back().contains(if_chain_node))
++                break;
++
+             /// Replace last `multiIf` argument with `if` function arguments
+ 
+             multi_if_arguments.pop_back();
+@@ -78,14 +128,23 @@ class IfChainToMultiIfPassVisitor : public InDepthQueryTreeVisitorWithContext<If
+             return;
+ 
+         /// A `group_by_use_nulls` copy of a GROUP BY key is the key made Nullable: rewrite it like the key and keep it Nullable.
+-        if (!multi_if_function->getResultType()->equals(*function_node->getResultType()))
++        if (function_node->isConvertedToNullable())
+             multi_if_function->convertToNullable();
+ 
+         node = std::move(multi_if_function);
+     }
+ 
++    void leaveImpl(QueryTreeNodePtr & node)
++    {
++        if (node->getNodeType() == QueryTreeNodeType::QUERY)
++            group_by_key_if_nodes_stack.pop_back();
++    }
++
+ private:
+     FunctionOverloadResolverPtr multi_if_function_ptr;
++
++    /// For each enclosing query, its `if` nodes that are `GROUP BY` keys; the first set is for an expression outside of any query.
++    std::vector<std::unordered_set<QueryTreeNodePtr>> group_by_key_if_nodes_stack;
+ };
+ 
+ }
+```
+
+**File**: `src/Analyzer/Passes/OptimizeKeyExpressionsUtils.cpp` (modified, +32/-0)
+```diff
+@@ -1,9 +1,13 @@
+ #include <Analyzer/Passes/OptimizeKeyExpressionsUtils.h>
+ 
++#include <algorithm>
+ #include <queue>
+ #include <vector>
+ 
+ #include <Analyzer/FunctionNode.h>
++#include <Analyzer/ListNode.h>
++#include <Analyzer/QueryNode.h>
++#include <Analyzer/ValidationUtils.h>
+ #include <Core/ColumnsWithTypeAndName.h>
+ #include <DataTypes/IDataType.h>
+ #include <DataTypes/TypeTree.h>
+@@ -174,4 +178,32 @@ QueryTreeNodes unwrapInjectiveFunctionsInKeys(
+     return new_keys;
+ }
+ 
++QueryTreeNodes getGroupByKeys(const QueryNode & query_node)
++{
++    QueryTreeNodes keys;
++    if (!query_node.hasGroupBy())
++        return keys;
++
++    for (const auto & node : query_node.getGroupBy().getNodes())
++    {
++        if (query_node.isGroupByWithGroupingSets())
++        {
++            const auto & grouping_set_keys = node->as<ListNode &>().getNodes();
++            keys.insert(keys.end(), grouping_set_keys.begin(), grouping_set_keys.end());
++        }
++        else
++        {
++            keys.push_back(node);
++        }
++    }
++    return keys;
++}
++
++bool isGroupByKeyAfterAggregation(const QueryTreeNodePtr & node, const QueryTreeNodes & group_by_keys)
++{
++    if (const auto * function_node = node->as<FunctionNode>(); function_node && function_node->isConvertedToNullable())
++        return true;
++    return std::ranges::any_of(group_by_keys, [&](const auto & key) { return compareGroupByKeys(node, key); });
++}
++
+ }
+```
+
+**File**: `src/Analyzer/Passes/OptimizeKeyExpressionsUtils.h` (modified, +9/-0)
+```diff
+@@ -6,6 +6,8 @@
+ namespace DB
+ {
+ 
++class QueryNode;
++
+ /** Shared helpers for cleaning up the key list of `GROUP BY` and `LIMIT BY`. Both group rows by
+   * the distinct combinations of their key values. A key is dropped or rewritten only when this
+   * grouping stays the same and the old value can still be computed from the keys that remain, so
+@@ -29,4 +31,11 @@ void removeKeysThatAreFunctionsOfOtherKeys(QueryTreeNodes & keys);
+ QueryTreeNodes unwrapInjectiveFunctionsInKeys(
+     const QueryTreeNodes & keys, bool allow_suspicious_types, const QueryTreeNodePtrWithHashSet * keys_to_keep = nullptr);
+ 
++/// The `GROUP BY` keys of `query_node`, of all grouping sets.
++QueryTreeNodes getGroupByKeys(const QueryNode & query_node);
++
++/// Returns true if `node`, in an expression computed after `GROUP BY`, is a key, read from the aggregation result.
++/// Under `group_by_use_nulls` the analyzer replaces a key there with a copy converted to `Nullable`, not equal to the key.
++bool isGroupByKeyAfterAggregation(const QueryTreeNodePtr & node, const QueryTreeNodes & group_by_keys);
++
+ }
+```
+
+**File**: `src/Analyzer/Passes/OrderByTupleEliminationPass.cpp` (modified, +6/-1)
+```diff
+@@ -2,6 +2,7 @@
+ 
+ #include <Analyzer/InDepthQueryTreeVisitor.h>
+ #include <Analyzer/FunctionNode.h>
++#include <Analyzer/Passes/OptimizeKeyExpressionsUtils.h>
+ #include <Analyzer/QueryNode.h>
+ #include <Analyzer/SortNode.h>
+ #include <Functions/FunctionFactory.h>
+@@ -21,13 +22,17 @@ class OrderByTupleEliminationVisitor : public InDepthQueryTreeVisitor<OrderByTup
+         if (!query_node || !query_node->hasOrderBy())
+             return;
+ 
++        const auto group_by_keys = getGroupByKeys(*query_node);
++
+         QueryTreeNodes result_nodes;
+ 
+         for (auto & sort_node : query_node->getOrderBy().getNodes())
+         {
+             auto & sort_node_typed = sort_node->as<SortNode &>();
+             auto * function_expression = sort_node_typed.getExpression()->as<FunctionNode>();
+-            if (sort_node_typed.withFill() || !function_expression || function_expression->getFunctionName() != "tuple")
++            /// Splitting a key would read its arguments, which do not exist after aggregation.
++            if (sort_node_typed.withFill() || !function_expression || function_expression->getFunctionName() != "tuple"
++                || isGroupByKeyAfterAggregation(sort_node_typed.getExpression(), group_by_keys))
+             {
+                 result_nodes.push_back(sort_node);
+                 continue;
+```
+
+**File**: `tests/queries/0_stateless/05397_group_by_key_in_if_chain_and_order_by_tuple.reference` (added, +70/-0)
+```diff
+@@ -0,0 +1,70 @@
++1	q	1
++1	\N	1
++2	p	1
++2	\N	1
++\N	\N	2
++3
++1	q	1
++1	\N	1
++2	p	1
++2	\N	1
++\N	\N	2
++1	[]	1
++1	[3]	1
++2	[]	1
++2	[2]	1
++\N	[]	2
++0	q	1
++0	\N	1
++1	q	1
++1	\N	1
++2	p	1
++2	\N	1
++3	q	1
++3	\N	1
++\N	\N	4
++0	q
++1	q
++2	p
++3	q
++1
++3
++5
++0
++2
++4
++1	u
++3	w
++5	w
++0	y
++2	y
++4	y
++1
++(0)	4
++(1)	3
++(2)	3
++\N	10
++0	(0)
++1	(1)
++0	\N
++1	\N
++\N	\N
++(0)	4
++(1)	3
++(2)	3
++(0)	4
++(0)	10
++(1)	3
++(2)	3
++(0)	4
++(1)	3
++(2)	3
++\N	10
++(0,0)	2
++(0,1)	2
++(0,2)	2
++(1,0)	2
++(1,1)	2
++(1,2)	2
++\N	12
 +0
 ```
 
-**File**: `tests/queries/0_stateless/05401_intexp10_integer_overflow.sql` (added, +31/-0)
+**File**: `tests/queries/0_stateless/05397_group_by_key_in_if_chain_and_order_by_tuple.sql` (added, +31/-0)
 ```diff
 @@ -0,0 +1,31 @@
-+-- Regression test for #125945: `intExp10` narrowed integer inputs to `int`
-+-- before range-checking, so values with magnitude >= 2^31 returned nonsense.
-+-- After the fix, integer inputs saturate the same way `intExp2` does (see #105054).
++-- An if chain or an ORDER BY tuple that contains a GROUP BY key reads the key from the aggregation result.
 +
-+-- Literal 4294967297 is UInt64 in ClickHouse; before the fix static_cast<int> took
-+-- the low 32 bits and returned 10, now it saturates.
-+SELECT intExp10(4294967297);
++SET optimize_if_transform_strings_to_enum = 0;
 +
-+-- Literal 2147483648 is UInt32; before the fix it truncated to INT_MIN and returned 0,
-+-- now it saturates.
-+SELECT intExp10(2147483648);
++-- A constant-condition `if` key nested in an `if` chain (#125803).
++SELECT n, if(n = 5, toString(n), if(1, if(n > 1, 'p', 'q'), 'z')) AS e, count() FROM (SELECT arrayJoin([1, 2]) AS n) GROUP BY ROLLUP(n, if(1, if(n > 1, 'p', 'q'), 'z')) ORDER BY ALL SETTINGS group_by_use_nulls = 1, optimize_if_chain_to_multiif = 1;
++SELECT count() FROM (SELECT n, if(n = 5, toString(n), if(1, if(n > 1, 'p', 'q'), 'z')) AS e FROM (SELECT arrayJoin([1, 2]) AS n) GROUP BY ROLLUP(n, if(1, if(n > 1, 'p', 'q'), 'z')) HAVING e IS NULL SETTINGS group_by_use_nulls = 1, optimize_if_chain_to_multiif = 1);
 +
-+-- Integer casts with magnitude > INT_MAX
-+SELECT intExp10(toInt64(4294967297)); -- saturates
-+SELECT intExp10(toInt64(-4294967297)); -- returns 0
-+SELECT intExp10(toInt64(9223372036854775807)); -- INT64_MAX saturates
-+SELECT intExp10(toInt64(-9223372036854775807)); -- returns 0
-+SELECT intExp10(toUInt64(18446744073709551611)); -- saturates
-+SELECT intExp10(toUInt32(4294967295)); -- saturates
++-- A plain `if` key nested in an `if` chain.
++SELECT n, if(n = 5, toString(n), if(n > 1, 'p', 'q')) AS e, count() FROM (SELECT arrayJoin([1, 2]) AS n) GROUP BY ROLLUP(n, if(n > 1, 'p', 'q')) ORDER BY ALL SETTINGS group_by_use_nulls = 1, optimize_if_chain_to_multiif = 1;
++SELECT n, if(n = 5, [toUInt8(n)], if(n > 1, [2], [3])) AS e, count() FROM (SELECT arrayJoin([1, 2]) AS n) GROUP BY ROLLUP(n, if(n > 1, [2], [3])) ORDER BY ALL SETTINGS group_by_use_nulls = 1, optimize_if_chain_to_multiif = 1;
++SELECT n, if(n = 5, toString(n), if(m > 1, 'p', 'q')) AS e, count() FROM (SELECT number AS n, number % 3 AS m FROM numbers(4)) GROUP BY ROLLUP(n, if(m > 1, 'p', 'q')) ORDER BY ALL SETTINGS group_by_use_nulls = 1, optimize_if_chain_to_multiif = 1;
++SELECT n, if(n = 5, toString(n), if(m > 1, 'p', 'q')) AS e FROM (SELECT number AS n, number % 3 AS m FROM numbers(4)) GROUP BY n, if(m > 1, 'p', 'q') ORDER BY n SETTINGS group_by_use_nulls = 0, optimize_if_chain_to_multiif = 1;
 +
-+-- Behavior at normal boundaries is unchanged
-+SELECT intExp10(19); -- 10000000000000000000
-+SELECT intExp10(20); -- saturates
-+SELECT intExp10(-5); -- 0
-+SELECT intExp10(15); -- 1000000000000000
-+SELECT intExp10(toInt32(15)); -- 1000000000000000
++-- A key whose `then` branch is itself a chain.
++SELECT n FROM (SELECT number AS n, number % 2 = 1 AS a, number % 3 = 1 AS p, number % 5 = 1 AS q FROM numbers(6)) GROUP BY n, if(a, if(p, 'u', if(q, 'v', 'w')), 'y') ORDER BY if(n = 5, 'x', if(a, if(p, 'u', if(q, 'v', 'w')), 'y')), n SETTINGS group_by_use_nulls = 0, optimize_if_chain_to_multiif = 1;
++SELECT n, if(a, if(p, 'u', if(q, 'v', 'w')), 'y') AS k FROM (SELECT number AS n, number % 2 = 1 AS a, number % 3 = 1 AS p, number % 5 = 1 AS q FROM numbers(6)) GROUP BY n, k ORDER BY if(n = 5, 'x', k), n SETTINGS group_by_use_nulls = 0, optimize_if_chain_to_multiif = 1, enable_identifier_resolve_cache = 1;
 +
-+-- Float path unchanged (checked before the range checks, same as intExp2)
-+SELECT intExp10(19.5); -- 10000000000000000000
-+SELECT intExp10(20.5); -- saturates
-+SELECT intExp10(-5.0); -- 0
++-- A chain without a key is still rewritten.
++SELECT count() FROM (EXPLAIN QUERY TREE SELECT n, if(n = 1, 'a', if(n = 2, 'b', 'c')) FROM (SELECT arrayJoin([1, 2]) AS n) GROUP BY ROLLUP(n) SETTINGS group_by_use_nulls = 1, optimize_if_chain_to_multiif = 1) WHERE explain ILIKE '%function_name: multiIf%';
++
++-- A tuple key in ORDER BY (#125804).
++SELECT if(1, tuple(a), tuple(0)) AS k, count() FROM (SELECT number % 3 AS a FROM numbers(10)) GROUP BY ROLLUP(k) ORDER BY k SETTINGS group_by_use_nulls = 1, optimize_if_chain_to_multiif = 0;
++SELECT a, if(1, tuple(a), tuple(0)) AS k FROM (SELECT number % 2 AS a FROM numbers(4)) GROUP BY ROLLUP(a, k) ORDER BY k, a SETTINGS group_by_use_nulls = 1, optimize_if_chain_to_multiif = 0;
++SELECT if(1, tuple(a), tuple(0)) AS k, count() FROM (SELECT number % 3 AS a FROM numbers(10)) GROUP BY k ORDER BY k SETTINGS group_by_use_nulls = 0, optimize_if_chain_to_multiif = 0;
++SELECT if(1, tuple(a), tuple(0)) AS k, count() FROM (SELECT number % 3 AS a FROM numbers(10)) GROUP BY ROLLUP(k) ORDER BY k SETTINGS group_by_use_nulls = 0, optimize_if_chain_to_multiif = 0;
++SELECT if(1, tuple(a), tuple(0)) AS k, count() FROM (SELECT number % 3 AS a FROM numbers(10)) GROUP BY CUBE(k) ORDER BY ALL SETTINGS group_by_use_nulls = 1, optimize_if_chain_to_multiif = 0;
++SELECT if(1, tuple(a, b), tuple(0, 0)) AS k, count() FROM (SELECT number % 2 AS a, number % 3 AS b FROM numbers(12)) GROUP BY GROUPING SETS ((k), ()) ORDER BY k SETTINGS group_by_use_nulls = 1, optimize_if_chain_to_multiif = 0;
++
++-- A tuple of keys that is not itself a key is still split.
++SELECT count() FROM (EXPLAIN QUERY TREE SELECT a, b FROM (SELECT number % 2 AS a, number % 3 AS b FROM numbers(12)) GROUP BY ROLLUP(a, b) ORDER BY tuple(a, b) SETTINGS group_by_use_nulls = 1, optimize_if_chain_to_multiif = 0) WHERE explain ILIKE '%function_name: tuple%';
+```
+
+---
+
+### Incident Patch 3: `74d99c64` (2026-10-18)
+**Commit Message**: Merge pull request #125735 from groeneai/fix-and-compare-chain-budget-alias-copies
+
+Fix `NOT_FOUND_COLUMN_IN_BLOCK` when the `optimize_and_compare_chain` budget runs out between copies of an alias
+
+**File**: `src/Analyzer/Passes/LogicalExpressionOptimizerPass.cpp` (modified, +58/-16)
+```diff
+@@ -1735,20 +1735,22 @@ class LogicalExpressionOptimizerVisitor : public InDepthQueryTreeVisitorWithCont
+ public:
+     using Base = InDepthQueryTreeVisitorWithContext<LogicalExpressionOptimizerVisitor>;
+ 
+-    explicit LogicalExpressionOptimizerVisitor(ContextPtr context)
++    enum class Mode : uint8_t
++    {
++        JOIN_ON_AND_COMPARE_CHAIN,
++        OTHER_REWRITES,
++    };
++
++    LogicalExpressionOptimizerVisitor(ContextPtr context, Mode mode_)
+         : Base(std::move(context))
++        , mode(mode_)
+         , and_compare_chain_max_hash_work(getSettings()[Setting::optimize_and_compare_chain_max_hash_work])
+         , and_compare_chain_hash_work_start(getTreeHashWorkCounter())
+     {}
+ 
+-    /// Work budget for tryOptimizeAndCompareChain, measured directly in nodes hashed by getTreeHash
+-    /// (its dominant cost). We snapshot the global counter when the visitor starts and stop the
+-    /// optimization once it has hashed more than `and_compare_chain_max_hash_work` nodes for this
+-    /// query. On queries with very many / very large AND-comparison chains this caps a cost that
+-    /// otherwise dominates analysis while folding nothing (e.g. a 16x16 SQL ray-trace: ~72s -> ~3s),
+-    /// while normal queries hash only thousands of nodes and never approach the budget. Stopping
+-    /// early is always safe -- it only forgoes an optimization, never changes results.
+-    /// The budget is the `optimize_and_compare_chain_max_hash_work` setting (0 disables it).
++    const Mode mode;
++
++    /// Work budget of the compare-chain traversal, in nodes hashed by getTreeHash (its dominant cost).
+     const size_t and_compare_chain_max_hash_work = 0;
+     const size_t and_compare_chain_hash_work_start = 0;
+ 
+@@ -1761,6 +1763,28 @@ class LogicalExpressionOptimizerVisitor : public InDepthQueryTreeVisitorWithCont
+             && getTreeHashWorkCounter() - and_compare_chain_hash_work_start > and_compare_chain_max_hash_work;
+     }
+ 
++    /// `and` nodes the compare chain appended conjuncts to, with their state before the first append.
++    struct AndNodeBeforeCompareChain
++    {
++        size_t arguments_size;
++        FunctionBasePtr function;
++    };
++    std::unordered_map<QueryTreeNodePtr, AndNodeBeforeCompareChain> and_nodes_before_compare_chain;
++
++    /// All or nothing per query: equal copies of an expression (a SELECT alias and its GROUP BY key) must be rewritten alike.
++    void revertAndCompareChainIfBudgetExceeded()
++    {
++        if (!andCompareChainHashBudgetExceeded())
++            return;
++        for (const auto & [node, before] : and_nodes_before_compare_chain)
++        {
++            auto & function_node = node->as<FunctionNode &>();
++            function_node.getArguments().getNodes().resize(before.arguments_size);
++            function_node.resolveAsFunction(before.function);
++        }
++        and_nodes_before_compare_chain.clear();
++    }
++
+     /// Memoized "this subtree contains a correlated subquery" bit, keyed by node identity.
+     /// tryOptimizeAndCompareChain runs for every `and` node, and skipping a chain that holds a
+     /// correlated subquery requires walking its subtree; without memoization a deeply nested AND
+@@ -1881,14 +1905,22 @@ class LogicalExpressionOptimizerVisitor : public InDepthQueryTreeVisitorWithCont
+         if (auto * join_node = node->as<JoinNode>())
+         {
+             /// Operator <=> is not supported outside of JOIN ON section
+-            if (join_node->hasJoinExpression())
++            if (mode == Mode::JOIN_ON_AND_COMPARE_CHAIN && join_node->hasJoinExpression())
+             {
+                 JoinOnLogicalExpressionOptimizerVisitor join_on_visitor(*join_node, getContext());
+                 join_on_visitor.visit(join_node->getJoinExpression());
+             }
+             return;
+         }
+ 
++        if (mode == Mode::JOIN_ON_AND_COMPARE_CHAIN)
++        {
++            auto * function_node = node->as<FunctionNode>();
++            if (function_node && function_node->getFunctionName() == "and" && getSettings()[Setting::optimize_and_compare_chain])
++                tryOptimizeAndCompareChain(node);
++            return;
++        }
++
+         auto * function_node = node->as<FunctionNode>();
+ 
+         if (!function_node)
+@@ -1902,11 +1934,6 @@ class LogicalExpressionOptimizerVisitor : public InDepthQueryTreeVisitorWithCont
+ 
+         if (function_node->getFunctionName() == "and")
+         {
+-            /// Run transitive inference first so that the conflict detector can see inferred equalities.
+-            /// E.g. `x = 3 AND x = y AND y = 5` — the compare-chain pass infers `x = 5`,
+-            /// then the equals-chain pass detects `x = 3` vs `x = 5` and collapses to FALSE.
+-            if (getSettings()[Setting::optimize_and_compare_chain])
+-                tryOptimizeAndCompareChain(node);
+             tryOptimizeAndCompareNotEqualsChain(node);
+             return;
+         }
+@@ -1920,6 +1947,9 @@ class LogicalExpressionOptimizerVisitor : public InDepth
+```
+
+**File**: `src/Core/Settings.cpp` (modified, +1/-1)
+```diff
+@@ -10090,7 +10090,7 @@ Detect conflicting and redundant comparison conditions on the same expression wi
+ )", 0, \
+         {"26.7", false, true, "New setting to detect conflicting and redundant comparison conditions on the same expression within AND chains."}) \
+     DECLARE(UInt64, optimize_and_compare_chain_max_hash_work, 5'000'000, R"(
+-Work budget for the `optimize_and_compare_chain` optimization during query analysis, measured in the number of query-tree nodes hashed by `getTreeHash` (the dominant cost of this optimization). Once a query has hashed more than this many nodes while applying the optimization, it stops applying it for the rest of the query. This bounds analysis time for queries with very many or very large `AND`-chains of comparisons, where the optimization can otherwise dominate analysis while folding nothing. Stopping early is always safe: it only forgoes an optimization and never changes results. Set to `0` to disable the budget (unlimited).
++Work budget for the `optimize_and_compare_chain` optimization during query analysis, measured in the number of query-tree nodes hashed by `getTreeHash` (the dominant cost of this optimization). If applying the optimization to a query hashes more than this many nodes, the optimization is not applied to that query. This bounds analysis time for queries with very many or very large `AND`-chains of comparisons, where the optimization can otherwise dominate analysis while folding nothing. Stopping early is always safe: it only forgoes an optimization and never changes results. Set to `0` to disable the budget (unlimited).
+ )", 0, \
+         {"26.7", 0, 5'000'000, "New setting that bounds the work of the `optimize_and_compare_chain` optimization (measured in query-tree nodes hashed) so it cannot dominate analysis of queries with very many or very large `AND`-chains of comparisons. The previous value `0` (unlimited) reproduces the pre-26.7 behavior where the optimization was uncapped, so `compatibility` set to an earlier version keeps deriving transitive predicates without a budget. Set to `0` to disable the budget."}) \
+     DECLARE(Bool, push_external_roles_in_interserver_queries, true, R"(
+```
+
+**File**: `tests/queries/0_stateless/05394_optimize_and_compare_chain_budget_alias_copies.reference` (added, +6/-0)
+```diff
+@@ -0,0 +1,6 @@
++122 0
++122 1
++122 0
++122 1
++122 1
++2
+```
+
+**File**: `tests/queries/0_stateless/05394_optimize_and_compare_chain_budget_alias_copies.sh` (added, +26/-0)
+```diff
+@@ -0,0 +1,26 @@
++#!/usr/bin/env bash
++
++CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
++# shellcheck source=../shell_config.sh
++. "$CUR_DIR"/../shell_config.sh
++
++# The `optimize_and_compare_chain_max_hash_work` budget must never make two copies of an expression (a SELECT alias and its GROUP BY key) be rewritten differently.
++
++# Runs the statement once per budget and `enable_identifier_resolve_cache` value; SETTINGS_PLACEHOLDER marks where the settings go.
++function sweep()
++{
++    for budget in $(seq 0 10 600); do
++        for cache in 0 1; do
++            echo "${1/SETTINGS_PLACEHOLDER/SETTINGS optimize_and_compare_chain = 1, optimize_and_compare_chain_max_hash_work = $budget, enable_identifier_resolve_cache = $cache} FORMAT TSV;"
++        done
++    done | $CLICKHOUSE_CLIENT | sort | uniq -c | sed 's/^ *//'
++}
++
++query="SELECT (number < (number + 1)) AND ((number + 1) < 3) AS r FROM numbers(5) GROUP BY r"
++
++sweep "$query ORDER BY r SETTINGS_PLACEHOLDER"
++sweep "$query SETTINGS_PLACEHOLDER"
++# The derivation is applied to both copies or to none.
++sweep "SELECT count() IN (0, 2) FROM (EXPLAIN QUERY TREE $query SETTINGS_PLACEHOLDER) WHERE explain ILIKE '%function_name: indexHint%'"
++
++$CLICKHOUSE_CLIENT -q "SELECT count() FROM (EXPLAIN QUERY TREE $query SETTINGS optimize_and_compare_chain = 1, optimize_and_compare_chain_max_hash_work = 5000000) WHERE explain ILIKE '%function_name: indexHint%'"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #126622** (closed): Do not let --format override the FORMAT clause of the query in clickhouse-client and clickhouse-local (@tripleaceme)
-- **PR #126619** (2026-10-19): Backport #126120 to 26.10: Fix out-of-bounds accesses in the replxx line editor (@robot-clickhouse-ci-2)
-- **PR #126618** (2026-10-19): Backport #126120 to 26.9: Fix out-of-bounds accesses in the replxx line editor (@robot-clickhouse-ci-2)
-- **PR #126617** (2026-10-19): Backport #126120 to 26.8: Fix out-of-bounds accesses in the replxx line editor (@robot-clickhouse-ci-2)
-- **PR #126596** (closed): Fix two issues of the columns cache for Parquet found in review (@alexey-milovidov)
-- **PR #126590** (closed): Address review of `clean-old-worktrees-global`: submodule refs and fresh process check (@alexey-milovidov)
+- **PR #126734** (2026-10-19): Backport #126039 to 26.9: Do not print runtime addresses in fatal error reports (@robot-ch-test-poll3)
+- **PR #126732** (2026-10-19): Backport #125893 to 26.9: Fix a crash and lost rows on INSERT when a row policy of a table read by a materialized view uses `IN <source table>` (@robot-ch-test-poll3)
+- **PR #126727** (2026-10-19): Backport #113877 to 26.7: Fix out-of-bounds write on a long codec chain (@robot-clickhouse)
+- **PR #126720** (2026-10-19): Backport #126120 to 26.7: Fix out-of-bounds accesses in the replxx line editor (@robot-clickhouse)
+- **PR #126719** (2026-10-19): Backport #126120 to 26.3: Fix out-of-bounds accesses in the replxx line editor (@robot-clickhouse)
+- **PR #126718** (2026-10-19): Backport #125785 to 26.7: Use constant-time comparison for TOTP codes and plaintext passwords (@robot-ch-test-poll2)
 
 ---
 
@@ -1633,40 +1974,48 @@ Fix intExp10 returning nonsense for integer arguments with magnitude >= 2^31
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #126311 from groeneai/praktika-bedrock-converse-read-timeout
+## X. Merge pull request #124480 from groeneai/fix-or-like-chain-shared-alias
 
 **RULE**:
-When implementing operations in `ci/praktika/orchestrator/ai/bedrock_openai.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/Analyzer/Passes/ConvertOrLikeChainPass.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `282195fd`: Merge pull request #126311 from groeneai/praktika-bedrock-converse-read-timeout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8c0552d4`: Merge pull request #124480 from groeneai/fix-or-like-chain-shared-alias. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ci/praktika/orchestrator/ai/bedrock_openai.py`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Analyzer/Passes/ConvertOrLikeChainPass.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-# converse() is non-streaming, so a whole reasoning turn must arrive within one
-# socket read.
-_CONVERSE_READ_TIMEOUT_S = 600
+        /// Mark the cloned OR as processed to prevent re-visiting
+        processed_nodes.insert(optimized_or_clone->as<FunctionNode>());
 
-                from botocore.config import Config
-            self._client = boto3.client(
-                "bedrock-runtime",
-                region_name=region,
-                config=Config(
-                    read_timeout=_CONVERSE_READ_TIMEOUT_S,
-                    retries={"max_attempts": 1, "mode": "standard"},
-                ),
-            )
+        /// Rewrite the node in place to optimized_or AND indexHint(original_like_chain), as it may be shared by several references.
+        function_node->getArguments().getNodes() = {std::move(optimized_or_clone), std::move(index_hint_node)};
+        function_node->resolveAsFunction(and_function_resolver);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-            self._client = boto3.client("bedrock-runtime", region_name=region)
+        /// Create AND of the optimized OR with indexHint:
+        /// optimized_or AND indexHint(original_like_chain)
+        auto and_node = std::make_shared<FunctionNode>("and");
+        and_node->getArguments().getNodes().push_back(std::move(optimized_or_clone));
+        and_node->getArguments().getNodes().push_back(std::move(index_hint_node));
+        and_node->resolveAsFunction(and_function_resolver);
+
+        /// Mark the AND node as processed to prevent re-visiting
+        processed_nodes.insert(and_node.get());
+
+        /// Also mark the cloned OR inside AND as processed
+        if (auto * or_child = and_node->getArguments().getNodes()[0]->as<FunctionNode>())
+            processed_nodes.insert(or_child);
+
+        /// Replace the original node with the AND expression
+        node = std::move(and_node);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `282195fd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8c0552d4` are properly handled with clean fallback behavior.

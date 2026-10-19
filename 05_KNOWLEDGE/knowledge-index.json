@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T18:03:58.632Z",
-  "total_verified_learnings": 869,
+  "last_updated": "2026-10-19T18:10:27.229Z",
+  "total_verified_learnings": 871,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -351,14 +351,19 @@
       "slug": "actix-actix-web",
       "platform": "github",
       "source_url": "https://github.com/actix/actix-web",
-      "source_version": "cb58a7de",
-      "content_hash": "420f2dab0594cd919e0f2e90529755d96d29f4f3a2cc6b6e95b363f574374c6e",
+      "source_version": "2db7119a",
+      "content_hash": "8a64c3c3cc2bc471fba3b8c06801d0bcdeae248e659c8b41d5e84a8adc71e28e",
       "dossier_path": "07_PROJECT_LEARNING/actix-actix-web-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/actix-actix-web-learnings.md",
       "promoted_rules": [
         {
           "number": 2059,
           "title": "build(deps): bump actions/upload-code-coverage from 1.4.1 to 1.4.4 (#4306)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2728,
+          "title": "files): evaluate preconditions before range requests (#4336)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -367,7 +372,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T03:13:52.050Z",
+      "verified_at": "2026-10-19T18:10:15.363Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -5209,14 +5214,19 @@
       "slug": "clickhouse-clickhouse",
       "platform": "github",
       "source_url": "https://github.com/ClickHouse/ClickHouse",
-      "source_version": "110043e5",
-      "content_hash": "9d229a024e26dab6fb34a6b4e5d7404d0f4b6368555a212969fd4196f87dc159",
+      "source_version": "8c0552d4",
+      "content_hash": "b8ec47d6fa809c4ed33ce17a1726bc5e263ff228861a366280c80aeab19fde34",
       "dossier_path": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "promoted_rules": [
         {
           "number": 2161,
           "title": "Merge pull request #126311 from groeneai/praktika-bedrock-converse-read-timeout",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2732,
+          "title": "Merge pull request #124480 from groeneai/fix-or-like-chain-shared-alias",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -5225,7 +5235,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T05:05:46.112Z",
+      "verified_at": "2026-10-19T18:10:27.220Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -26490,22 +26500,35 @@
     "learn-github-kdchang-reactjs101": {
       "learning_id": "learn-github-kdchang-reactjs101",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "kdchang-reactjs101",
+      "source": "kdchang/reactjs101",
+      "repository": "kdchang/reactjs101",
       "slug": "kdchang-reactjs101",
       "platform": "github",
       "source_url": "https://github.com/kdchang/reactjs101",
-      "source_version": "HEAD",
-      "content_hash": "48af2dbe544db9e2cb6efb757160c2f3098a95a43931380fd45a0d5be16f860a",
+      "source_version": "9a6f238b",
+      "content_hash": "4cf00ff447532311394f9c9e0e3e90c240cab2de789c29e3a2bdd286cc29e68c",
       "dossier_path": "07_PROJECT_LEARNING/kdchang-reactjs101-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kdchang-reactjs101-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2730,
+          "title": "type in ch.01",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.771Z"
+      "verified_at": "2026-10-19T18:10:20.298Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-keenthemes-reui": {
       "learning_id": "learn-github-keenthemes-reui",
@@ -35491,14 +35514,19 @@
       "slug": "prometheus-prometheus",
       "platform": "github",
       "source_url": "https://github.com/prometheus/prometheus",
-      "source_version": "c052a79d",
-      "content_hash": "e4fbce6d73653996a7b91b3dfdbba8a286048f3dfc7ffe43f5e4a5274c688b1f",
+      "source_version": "0b57789d",
+      "content_hash": "ce91c206d9a00f102f0307c5358c54498aa3c38f497e23a0dbda320b53e6d217",
       "dossier_path": "07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
       "promoted_rules": [
         {
           "number": 2206,
           "title": "Update module golang.org/x/net to v0.60.0 [SECURITY] (#19979)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2731,
+          "title": "storage/remote: reduce NHCB conversion CPU and memory",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -35507,7 +35535,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T05:51:56.479Z",
+      "verified_at": "2026-10-19T18:10:22.380Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55008,20 +55036,35 @@
     "learn-github-melbahja-seo": {
       "learning_id": "learn-github-melbahja-seo",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "melbahja/seo",
       "repository": "melbahja/seo",
       "slug": "melbahja-seo",
       "platform": "github",
       "source_url": "https://github.com/melbahja/seo",
-      "source_version": "cd4e412239",
-      "content_hash": "13732fd8c4e5145eecddcccdd5ad1b311d7450ce445e2a816a09959b6d97d6c3",
+      "source_version": "cd4e4122",
+      "content_hash": "2bea717f84aba147741363c4e3934097795d1a4a7fe88546fe23186c375a74f0",
       "dossier_path": "07_PROJECT_LEARNING/melbahja-seo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/melbahja-seo-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2729,
+          "title": "minor fixes and schema added to constructor",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:12:57.837Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T18:10:15.558Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-alfa546-crawler": {
       "learning_id": "learn-github-alfa546-crawler",
@@ -90493,6 +90536,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T18:03:58.620Z"
+    },
+    "rule-2728": {
+      "learning_id": "rule-2728",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2728,
+      "title": "files): evaluate preconditions before range requests (#4336)",
+      "source_url": "https://github.com/actix/actix-web",
+      "source_version": "2db7119a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T18:10:15.363Z"
+    },
+    "rule-2729": {
+      "learning_id": "rule-2729",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2729,
+      "title": "minor fixes and schema added to constructor",
+      "source_url": "https://github.com/melbahja/seo",
+      "source_version": "cd4e4122",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T18:10:15.558Z"
+    },
+    "rule-2730": {
+      "learning_id": "rule-2730",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2730,
+      "title": "type in ch.01",
+      "source_url": "https://github.com/kdchang/reactjs101",
+      "source_version": "9a6f238b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T18:10:20.298Z"
+    },
+    "rule-2731": {
+      "learning_id": "rule-2731",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2731,
+      "title": "storage/remote: reduce NHCB conversion CPU and memory",
+      "source_url": "https://github.com/prometheus/prometheus",
+      "source_version": "0b57789d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T18:10:22.380Z"
+    },
+    "rule-2732": {
+      "learning_id": "rule-2732",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2732,
+      "title": "Merge pull request #124480 from groeneai/fix-or-like-chain-shared-alias",
+      "source_url": "https://github.com/ClickHouse/ClickHouse",
+      "source_version": "8c0552d4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T18:10:27.220Z"
     }
   },
   "aliases": {

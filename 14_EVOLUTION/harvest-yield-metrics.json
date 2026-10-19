@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T18:03:58.682Z",
-  "total_cycles_completed": 3375,
-  "total_learnings_persisted": 3375,
-  "total_rules_promoted": 2526,
+  "last_updated": "2026-10-19T18:10:27.284Z",
+  "total_cycles_completed": 3380,
+  "total_learnings_persisted": 3380,
+  "total_rules_promoted": 2531,
   "history": [
-    {
-      "timestamp": "2026-10-19T11:36:17.940Z",
-      "repository": "lapce/lapce",
-      "learningId": "learn-github-lapce-lapce",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T11:36:19.673Z",
-      "repository": "stabilityai/stable-diffusion-3-medium",
-      "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T11:42:06.446Z",
-      "repository": "bigscience/bloom",
-      "learningId": "learn-huggingface-bigscience-bloom",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T11:42:07.114Z",
-      "repository": "nguyenphutrong/quotio",
-      "learningId": "learn-github-nguyenphutrong-quotio",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T11:42:12.173Z",
-      "repository": "sindresorhus/Gifski",
-      "learningId": "learn-github-sindresorhus-gifski",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T11:48:30.966Z",
       "repository": "openai/gpt-oss-20b",
@@ -1403,6 +1368,41 @@
       "repository": "vuetifyjs/vuetify",
       "learningId": "learn-github-vuetifyjs-vuetify",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T18:10:15.430Z",
+      "repository": "actix/actix-web",
+      "learningId": "learn-github-actix-actix-web",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T18:10:15.623Z",
+      "repository": "melbahja/seo",
+      "learningId": "learn-github-melbahja-seo",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T18:10:20.356Z",
+      "repository": "kdchang/reactjs101",
+      "learningId": "learn-github-kdchang-reactjs101",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T18:10:22.439Z",
+      "repository": "prometheus/prometheus",
+      "learningId": "learn-github-prometheus-prometheus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T18:10:27.284Z",
+      "repository": "ClickHouse/ClickHouse",
+      "learningId": "learn-github-clickhouse-clickhouse",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

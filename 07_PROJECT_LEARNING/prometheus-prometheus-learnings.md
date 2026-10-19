@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/prometheus-prometheus-learnings.md`  
 > **Source**: github ([https://github.com/prometheus/prometheus](https://github.com/prometheus/prometheus))  
-> **Source Version**: `c052a79d`  
+> **Source Version**: `0b57789d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T05:51:56.304Z  
+> **Timestamp**: 2026-10-19T18:10:22.167Z  
 > **Learning ID**: `learn-github-prometheus-prometheus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/prometheus-prometheus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/prometheus/prometheus](https://github.com/prometheus/prometheus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T05:51:56.297Z  
+> **Harvest Timestamp**: 2026-10-19T18:10:22.160Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Prometheus monitoring system and time series database.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 66637 stars
+- **Stars / Engagement**: 66648 stars
 
 ---
 
@@ -740,6 +740,7 @@ package remote
 
 import (
 	"context"
+	"encoding/binary"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -766,6 +767,7 @@ import (
 	"github.com/prometheus/prometheus/model/metadata"
 	"github.com/prometheus/prometheus/model/relabel"
 	"github.com/prometheus/prometheus/model/timestamp"
+	"github.com/prometheus/prometheus/model/value"
 	"github.com/prometheus/prometheus/prompb"
 	writev2 "github.com/prometheus/prometheus/prompb/io/prometheus/write/v2"
 	"github.com/prometheus/prometheus/schema"
@@ -789,6 +791,7 @@ const (
 	reasonDroppedSeries              = "dropped_series"
 	reasonUnintentionalDroppedSeries = "unintentionally_dropped_series"
 	reasonNHCBNotSupported           = "nhcb_in_rw1_not_supported"
+	reasonNHCBConversionError        = "nhcb_to_classic_conversion_error"
 )
 
 type queueManagerMetrics struct {
@@ -963,8 +966,7 @@ func newQueueManagerMetrics(r prometheus.Registerer, rn, e string) *queueManager
 			Namespace:   namespace,
 			Subsystem:   subsystem,
 			Name:        "queue_highest_timestamp_seconds",
-			Help:        "Highest timestamp that was enqueued, in seconds since epoch. Initialized to 0 when no data has been received yet.",
-			ConstLabels: constLa
+			Help:        "H
 ```
 
 ### Core Architecture Module: `tsdb/chunks/chunk_write_queue.go`
@@ -1525,338 +1527,503 @@ func openDir(path string) (fd syscall.Handle, err error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9a7d196a` (2026-10-14)
-**Commit Message**: Update module golang.org/x/net to v0.60.0 [SECURITY] (#19979)
+### Incident Patch 1: `b321ea8c` (2026-10-17)
+**Commit Message**: storage/remote: reduce NHCB conversion CPU and memory
+
+Skip the retired-boundary scan when the bucket layout is unchanged; it ran
+for every sample, costing quadratic work in the bucket count. Also size the
+output for the series actually emitted.
+
+Share bucket layouts and their formatted le values between series instead
+of copying the bounds per series, and build the classic labels from them
+instead of formatting le values for every sample. Add
+histogram.ClassicBucketCounts, which returns the cumulative bucket counts,
+count and sum of an NHCB in a reusable buffer, and build
+ConvertNHCBToClassic on it.
+
+On an 8-vCPU Xeon, BenchmarkNHCBRepeatedBounds: -35% time at 10 buckets,
+-46% at 100, -85% at 5000, -54% to -66% allocs/op.
+BenchmarkNHCBSeriesMemory: about 130 B less retained per series with 12
+bounds.
+
+Signed-off-by: Arve Knudsen <[REDACTED_EMAIL]>
+
+**File**: `model/histogram/convert.go` (modified, +57/-37)
+```diff
+@@ -17,52 +17,40 @@ import (
+ 	"errors"
+ 	"fmt"
+ 	"math"
++	"slices"
+ 
+ 	"github.com/prometheus/common/model"
+ 
+ 	"github.com/prometheus/prometheus/model/labels"
+ 	"github.com/prometheus/prometheus/model/value"
+ )
+ 
+-// ConvertNHCBToClassic converts Native Histogram Custom Buckets (NHCB) to classic histogram series.
+-// This conversion is needed in various scenarios where users need to get NHCB back to classic histogram format,
+-// such as Remote Write v1 for external system compatibility and migration use cases.
+-//
+-// When calling this function, caller must ensure that provided nhcb is valid NHCB histogram.
+-func ConvertNHCBToClassic(nhcb any, lset labels.Labels, lsetBuilder *labels.Builder, emitSeriesFn func(labels labels.Labels, value float64) error) error {
+-	baseName := lset.Get(model.MetricNameLabel)
+-	if baseName == "" {
+-		return errors.New("metric name label '__name__' is missing")
+-	}
+-
+-	// We preserve original labels and restore them after conversion.
+-	// This is to ensure that no modifications are made to the original labels
+-	// that the queue_manager relies on.
+-	oldLabels := lsetBuilder.Labels()
+-	defer lsetBuilder.Reset(oldLabels)
+-
++// ClassicBucketCounts returns the cumulative bucket counts of a valid NHCB, one per
++// custom bound followed by +Inf, along with its count and sum. It reuses buf.
++// Every returned value of a stale marker is a stale marker.
++func ClassicBucketCounts(nhcb any, buf []float64) (buckets []float64, count, sum float64, err error) {
+ 	var (
+ 		customValues    []float64
+ 		positiveBuckets []float64
+-		count, sum      float64
+ 		idx             int // This index is to track buckets in Classic Histogram
+ 		currIdx         int // This index is to track buckets in Native Histogram
+ 	)
+ 
+ 	switch h := nhcb.(type) {
+ 	case *Histogram:
+ 		if !IsCustomBucketsSchema(h.Schema) {
+-			return errors.New("unsupported histogram schema, not a NHCB")
++			return nil, 0, 0, errors.New("unsupported histogram schema, not a NHCB")
+ 		}
+ 
+ 		// Validate the histogram before conversion.
+ 		// The caller must ensure that the provided histogram is valid NHCB.
+ 		if h.Validate() != nil {
+-			return errors.New(h.Validate().Error())
++			return nil, 0, 0, errors.New(h.Validate().Error())
+ 		}
+ 
+ 		customValues = h.CustomValues
+-		positiveBuckets = make([]float64, len(customValues)+1)
++		positiveBuckets = slices.Grow(buf[:0], len(customValues)+1)[:len(customValues)+1]
++		clear(positiveBuckets)
+ 
+ 		// Histograms are in delta format so we first bring them to absolute format.
+ 		acc := int64(0)
+@@ -80,16 +68,17 @@ func ConvertNHCBToClassic(nhcb any, lset labels.Labels, lsetBuilder *labels.Buil
+ 		sum = h.Sum
+ 	case *FloatHistogram:
+ 		if !IsCustomBucketsSchema(h.Schema) {
+-			return errors.New("unsupported histogram schema, not a NHCB")
++			return nil, 0, 0, errors.New("unsupported histogram schema, not a NHCB")
+ 		}
+ 
+ 		// Validate the histogram before conversion.
+ 		// The caller must ensure that the provided histogram is valid NHCB.
+ 		if h.Validate() != nil {
+-			return errors.New(h.Validate().Error())
++			return nil, 0, 0, errors.New(h.Validate().Error())
+ 		}
+ 		customValues = h.CustomValues
+-		positiveBuckets = make([]float64, len(customValues)+1)
++		positiveBuckets = slices.Grow(buf[:0], len(customValues)+1)[:len(customValues)+1]
++		clear(positiveBuckets)
+ 
+ 		for _, span := range h.PositiveSpans {
+ 			// Since Float Histogram is already in absolute format we should
+@@ -105,36 +94,67 @@ func ConvertNHCBToClassic(nhcb any, lset labels.Labels, lsetBuilder *labels.Buil
+ 		count = h.Count
+ 		sum = h.Sum
+ 	default:
+-		return fmt.Errorf("unsupported histogram type: %T", h)
++		return nil, 0, 0, fmt.Errorf("unsupported histogram type: %T", h)
+ 	}
+ 
++	// Classic buckets are cumulative, and every value of a stale marker is stale.
+ 	isStale := value.IsStaleNaN(sum)
+ 	currCount := float64(0)
+-	for i, val := range customValues {
++	for i := range positiveBuckets {
+ 		currCount += positiveBuckets[i]
+-		bucketVal := currCount
++		positiveBuckets[i] = currCount
+ 		if isStale {
+-			bucketVal = sum
++			positiveBuckets[i] = sum
+ 		}
++	}
++	if isStale {
++		count = sum
++	}
++	return positiveBuckets, count, sum, nil
++}
++
++// ConvertNHCBToClassic converts Native Histogram Custom Buckets (NHCB) to classic histogram series.
++// This conversion is needed in various scenarios where users need to get NHCB back to classic histogram format,
++// such as Remote Write v1 for external system compatibility and migration use cases.
++//
++// When calling this function, caller must ensure that provided nhcb is valid NHCB histogram.
++func ConvertNHCBToClassic(nhcb any, lset labels.Labels, lsetBuilder *labels.Builder, emitSeriesFn func(labels labels.Labels, value float64) error) error {
++	baseName := lset.Get(model.MetricNameLabel)
++	if baseName == "" {
++		return errors.New("metric name label '__name__' is missing")
++	}
++
++	// We preserve original labels and restore them after conversion.
++	// This is to ensure that no modification
+```
+
+**File**: `model/histogram/convert_test.go` (modified, +14/-0)
+```diff
+@@ -15,6 +15,7 @@ package histogram
+ 
+ import (
+ 	"math"
++	"slices"
+ 	"testing"
+ 
+ 	"github.com/prometheus/common/model"
+@@ -334,6 +335,19 @@ func TestConvertNHCBToClassicHistogram(t *testing.T) {
+ 						require.Equal(t, expSample.val, emittedSamples[i].val, "value mismatch at index %d", i)
+ 					}
+ 				}
++
++				// A reused buffer must not leak earlier values into skipped buckets.
++				buckets, count, sum, err := ClassicBucketCounts(tt.nhcb, slices.Repeat([]float64{42}, 16))
++				require.NoError(t, err)
++				counts := append(buckets, count, sum)
++				require.Len(t, counts, len(emittedSamples))
++				for i, s := range emittedSamples {
++					if value.IsStaleNaN(s.val) {
++						require.True(t, value.IsStaleNaN(counts[i]), "expected stale NaN count at index %d", i)
++					} else {
++						require.Equal(t, s.val, counts[i], "count mismatch at index %d", i)
++					}
++				}
+ 			}
+ 		})
+ 	}
+```
+
+**File**: `storage/remote/queue_manager.go` (modified, +114/-19)
+```diff
+@@ -15,6 +15,7 @@ package remote
+ 
+ import (
+ 	"context"
++	"encoding/binary"
+ 	"errors"
+ 	"fmt"
+ 	"log/slog"
+@@ -445,11 +446,14 @@ type QueueManager struct {
+ 	protoMsg    remoteapi.WriteMessageType
+ 	compr       compression.Type
+ 
+-	seriesMtx        sync.Mutex // Covers seriesLabels, seriesMetadata, droppedSeries, nhcbSeriesBounds and builder.
++	seriesMtx        sync.Mutex // Covers seriesLabels, seriesMetadata, droppedSeries, the NHCB fields and builder.
+ 	seriesLabels     map[chunks.HeadSeriesRef]labels.Labels
+ 	seriesMetadata   map[chunks.HeadSeriesRef]*metadata.Metadata
+ 	droppedSeries    map[chunks.HeadSeriesRef]struct{}
+-	nhcbSeriesBounds map[chunks.HeadSeriesRef][]float64
++	nhcbSeriesBounds map[chunks.HeadSeriesRef]*nhcbLayout // Layout of each converted NHCB series.
++	nhcbLayouts      map[string]*nhcbLayout               // Keyed by the encoded bounds.
++	nhcbLayoutKey    []byte                               // Scratch space for layout keys.
++	nhcbCounts       []float64                            // Scratch space for bucket counts.
+ 	builder          *labels.Builder
+ 
+ 	seriesSegmentMtx     sync.Mutex // Covers seriesSegmentIndexes - if you also lock seriesMtx, take seriesMtx first.
+@@ -525,7 +529,8 @@ func NewQueueManager(
+ 		seriesMetadata:       make(map[chunks.HeadSeriesRef]*metadata.Metadata),
+ 		seriesSegmentIndexes: make(map[chunks.HeadSeriesRef]int),
+ 		droppedSeries:        make(map[chunks.HeadSeriesRef]struct{}),
+-		nhcbSeriesBounds:     make(map[chunks.HeadSeriesRef][]float64),
++		nhcbSeriesBounds:     make(map[chunks.HeadSeriesRef]*nhcbLayout),
++		nhcbLayouts:          make(map[string]*nhcbLayout),
+ 		builder:              labels.NewBuilder(labels.EmptyLabels()),
+ 
+ 		numShards:   cfg.MinShards,
+@@ -840,18 +845,18 @@ outer:
+ 			continue
+ 		}
+ 		if t.convertNHCBToClassic {
+-			if bounds, ok := t.nhcbSeriesBounds[e.Ref]; ok {
++			if layout, ok := t.nhcbSeriesBounds[e.Ref]; ok {
+ 				if baseName := lbls.Get(model.MetricNameLabel); baseName != "" {
+-					bound := math.Inf(1)
+-					for _, b := range bounds {
++					le := layout.le[len(layout.bounds)] // +Inf, for values above every bound.
++					for i, b := range layout.bounds {
+ 						if e.V <= b {
+-							bound = b
++							le = layout.le[i]
+ 							break
+ 						}
+ 					}
+ 					t.builder.Reset(lbls)
+ 					t.builder.Set(model.MetricNameLabel, baseName+"_bucket")
+-					t.builder.Set(model.BucketLabel, labels.FormatOpenMetricsFloat(bound))
++					t.builder.Set(model.BucketLabel, le)
+ 					lbls = t.builder.Labels()
+ 				}
+ 			}
+@@ -888,12 +893,54 @@ outer:
+ 	return true
+ }
+ 
++// nhcbLayout is a bucket layout shared by the NHCB series that use it.
++type nhcbLayout struct {
++	bounds []float64
++	le     []string // Formatted bounds, followed by +Inf.
++	key    string
++	refs   int // Series sharing the layout.
++}
++
++// acquireNHCBLayout requires seriesMtx and returns a new reference to the shared layout for bounds.
++// Each reference must be released with releaseNHCBLayout.
++func (t *QueueManager) acquireNHCBLayout(bounds []float64) *nhcbLayout {
++	// The key is the bounds' exact bit patterns. Converting it inside the map index avoids an allocation.
++	t.nhcbLayoutKey = t.nhcbLayoutKey[:0]
++	for _, b := range bounds {
++		t.nhcbLayoutKey = binary.LittleEndian.AppendUint64(t.nhcbLayoutKey, math.Float64bits(b))
++	}
++	layout, ok := t.nhcbLayouts[string(t.nhcbLayoutKey)]
++	if !ok {
++		// Copy the bounds, which belong to the caller's histogram.
++		layout = &nhcbLayout{bounds: slices.Clone(bounds), le: make([]string, 0, len(bounds)+1), key: string(t.nhcbLayoutKey)}
++		for _, b := range bounds {
++			layout.le = append(layout.le, labels.FormatOpenMetricsFloat(b))
++		}
++		layout.le = append(layout.le, labels.FormatOpenMetricsFloat(math.Inf(1)))
++		t.nhcbLayouts[layout.key] = layout
++	}
++	layout.refs++
++	return layout
++}
++
++// releaseNHCBLayout requires seriesMtx and drops a reference, forgetting the layout once unused.
++func (t *QueueManager) releaseNHCBLayout(layout *nhcbLayout) {
++	layout.refs--
++	if layout.refs == 0 {
++		delete(t.nhcbLayouts, layout.key)
++	}
++}
++
+ // convertAndEnqueueNHCB converts an NHCB histogram (using the already-relabeled seriesLabels)
+ // into classic _bucket, _count, and _sum samples while holding seriesMtx, then enqueues them
+ // after releasing the lock. Caller must hold t.seriesMtx on entry; this method unlocks it.
+ // A replacement follows the converted stale markers when changing sample type.
+ func (t *QueueManager) convertAndEnqueueNHCB(ref chunks.HeadSeriesRef, st, ts int64, nhcb any, customValues []float64, isStale bool, lbls labels.Labels, meta *metadata.Metadata, replacement *timeSeries) bool {
+-	prevBounds, wasActive := t.nhcbSeriesBounds[ref]
++	prev, wasActive := t.nhcbSeriesBounds[ref]
++	var prevBounds []float64
++	if wasActive {
++		prevBounds = prev.bounds
++	}
+ 	if nhcb == nil {
+ 		customValues = prevBounds
+ 		nhcb = &histogram.Histogram{
+@@ -903,8 +950,16 @@ func (t *QueueManager) convertAndEnqueueNHCB(ref chunks.HeadSeriesR
+```
+
+**File**: `storage/remote/queue_manager_test.go` (modified, +109/-1)
+```diff
+@@ -23,6 +23,7 @@ import (
+ 	"net/http"
+ 	"net/http/httptest"
+ 	"os"
++	"runtime"
+ 	"runtime/pprof"
+ 	"slices"
+ 	"strconv"
+@@ -1430,6 +1431,81 @@ func BenchmarkSampleSend(b *testing.B) {
+ 	}
+ }
+ 
++// BenchmarkNHCBRepeatedBounds converts samples whose bucket layout never changes, the common case.
++func BenchmarkNHCBRepeatedBounds(b *testing.B) {
++	for _, buckets := range []int{10, 100, 1000, 5000} {
++		b.Run(strconv.Itoa(buckets), func(b *testing.B) {
++			m, stop := newTestNHCBQueueManager(b, NewNopWriteClient(), nhcbQueueTestOptions{protoMsg: remoteapi.WriteV1MessageType})
++			defer stop()
++			m.StoreSeries([]record.RefSeries{{Ref: 1, Labels: labels.FromStrings("__name__", "latency")}}, 0)
++			h := &histogram.Histogram{
++				Schema: histogram.CustomBucketsSchema, CustomValues: make([]float64, buckets),
++				PositiveSpans:   []histogram.Span{{Length: uint32(buckets + 1)}},
++				PositiveBuckets: make([]int64, buckets+1), Count: uint64(buckets + 1),
++				Sum: float64((buckets+1)*(buckets+1)) / 2,
++			}
++			for i := range h.CustomValues {
++				h.CustomValues[i] = float64(i + 1)
++			}
++			h.PositiveBuckets[0] = 1
++			require.NoError(b, h.Validate())
++			samples := []record.RefHistogramSample{{Ref: 1, T: 1, H: h}}
++			require.True(b, m.AppendHistograms(samples))
++			b.ReportAllocs()
++			for b.Loop() {
++				samples[0].T++
++				if !m.AppendHistograms(samples) {
++					b.Fatal("append stopped")
++				}
++			}
++		})
++	}
++}
++
++// BenchmarkNHCBSeriesMemory reports the conversion state retained per series when every series shares one layout.
++func BenchmarkNHCBSeriesMemory(b *testing.B) {
++	const seriesCount = 10000
++	h := &histogram.Histogram{
++		Schema:        histogram.CustomBucketsSchema,
++		CustomValues:  []float64{0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10, 25},
++		PositiveSpans: []histogram.Span{{Length: 13}}, PositiveBuckets: make([]int64, 13), Count: 13, Sum: 42,
++	}
++	h.PositiveBuckets[0] = 1
++	require.NoError(b, h.Validate())
++	series := make([]record.RefSeries, 0, seriesCount)
++	samples := make([]record.RefHistogramSample, 0, seriesCount)
++	for i := range seriesCount {
++		ref := chunks.HeadSeriesRef(i + 1)
++		series = append(series, record.RefSeries{Ref: ref, Labels: labels.FromStrings("__name__", "latency", "series", strconv.Itoa(i))})
++		samples = append(samples, record.RefHistogramSample{Ref: ref, T: 1, H: h})
++	}
++	liveHeap := func() int64 {
++		runtime.GC()
++		runtime.GC() // The second cycle also empties sync.Pool victim caches.
++		var ms runtime.MemStats
++		runtime.ReadMemStats(&ms)
++		return int64(ms.HeapAlloc)
++	}
++	var retained int64
++	for b.Loop() {
++		b.StopTimer()
++		m, stop := newTestNHCBQueueManager(b, NewNopWriteClient(), nhcbQueueTestOptions{protoMsg: remoteapi.WriteV1MessageType})
++		m.StoreSeries(series, 0)
++		before := liveHeap()
++		b.StartTimer()
++		if !m.AppendHistograms(samples) {
++			b.Fatal("append stopped")
++		}
++		b.StopTimer()
++		// Flush the shards so that only conversion state remains.
++		stop()
++		retained = liveHeap() - before
++		runtime.KeepAlive(m)
++		b.StartTimer()
++	}
++	b.ReportMetric(float64(retained)/seriesCount, "retained-B/series")
++}
++
+ // Check how long it takes to add N series, including external labels processing.
+ func BenchmarkStoreSeries(b *testing.B) {
+ 	externalLabels := []labels.Label{
+@@ -3015,7 +3091,7 @@ type nhcbQueueTestOptions struct {
+ 	batchSendDeadline    time.Duration
+ }
+ 
+-func newTestNHCBQueueManager(t *testing.T, c WriteClient, opts nhcbQueueTestOptions) (*QueueManager, func()) {
++func newTestNHCBQueueManager(t testing.TB, c WriteClient, opts nhcbQueueTestOptions) (*QueueManager, func()) {
+ 	t.Helper()
+ 	cfg := config.DefaultQueueConfig
+ 	cfg.MaxSamplesPerSend = 1000
+@@ -3670,6 +3746,38 @@ func TestAppendToConvertNHCBToClassic(t *testing.T) {
+ 		}
+ 	})
+ 
++	t.Run("shared bucket layouts", func(t *testing.T) {
++		m, stop := newTestNHCBQueueManager(t, NewTestWriteClient(remoteapi.WriteV1MessageType), nhcbQueueTestOptions{protoMsg: remoteapi.WriteV1MessageType})
++		defer stop()
++		other := record.RefSeries{Ref: 2, Labels: labels.FromStrings("__name__", "latency", "job", "web")}
++		m.StoreSeries([]record.RefSeries{baseSeries, other}, 0)
++		appendTo := func(ref chunks.HeadSeriesRef, h *histogram.Histogram, ts int64) {
++			t.Helper()
++			require.True(t, m.AppendHistograms([]record.RefHistogramSample{{Ref: ref, T: ts, H: h}}))
++		}
++		appendTo(baseSeries.Ref, newHistogram(), 1000)
++		appendTo(other.Ref, newHistogram(), 1000)
++		require.Len(t, m.nhcbLayouts, 1)
++		shared := m.nhcbSeriesBounds[baseSeries.Ref]
++		require.Same(t, shared, m.nhcbSeriesBounds[other.Ref])
++		require.Equal(t, 2, shared.refs)
++
++		changed := newHistogram()
++		changed.CustomValues = []float64{1, 3}
++		require.NoError(t, changed.Validate())
++		appendTo(other.Ref, changed, 2000)
++		require.Len(t, m.nhcbLayouts, 2)
++		require.Equal(t, 1, shared.refs)
++
++		appendTo(other.Ref, &histogram.Histogram{Sum: math.Float64frombits(value.StaleNaN)}, 3000)
++		require.Len(t, m.nhcbLayouts, 
+```
+
+---
+
+### Incident Patch 2: `ab4e1474` (2026-10-19)
+**Commit Message**: chore(deps): update mantine ui (#19959)
 
 Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
+
+
+---
+
+### Incident Patch 3: `12d0bb05` (2026-10-19)
+**Commit Message**: fix(deps): update github.com/hashicorp/nomad/api digest to df630b2 (#19946)
+
+* Update github.com/hashicorp/nomad/api digest to 0c8fe41
+
+* fix(deps): update github.com/hashicorp/nomad/api digest to df630b2
+
+---------
+
+Signed-off-by: Owen Williams <[REDACTED_EMAIL]>
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+Co-authored-by: Owen Williams <[REDACTED_EMAIL]>
+
+**File**: `documentation/examples/remote_storage/go.sum` (modified, +2/-2)
+```diff
+@@ -219,8 +219,8 @@ github.com/hashicorp/go-version v1.9.0 h1:CeOIz6k+LoN3qX9Z0tyQrPtiB1DFYRPfCIBtaX
+ github.com/hashicorp/go-version v1.9.0/go.mod h1:fltr4n8CU8Ke44wwGCBoEymUuxUHl09ZGVZPK5anwXA=
+ github.com/hashicorp/golang-lru v1.0.2 h1:dV3g9Z/unq5DpblPpw+Oqcv4dU/1omnb4Ok8iPY6p1c=
+ github.com/hashicorp/golang-lru v1.0.2/go.mod h1:iADmTwqILo4mZ8BN3D2Q6+9jd8WM5uGBxy+E8yxSoD4=
+-github.com/hashicorp/nomad/api v0.0.0-20260921181219-70519e8467e4 h1:rdmRR5W+xT9EGDud5i4NI53Np/GjOdrWVMcNzHo8gqI=
+-github.com/hashicorp/nomad/api v0.0.0-20260921181219-70519e8467e4/go.mod h1:x/V7eEDwMx7UTOAb/Bc4mMsTfy5GdOP4sQY0a4Mmm1g=
++github.com/hashicorp/nomad/api v0.0.0-20261016150620-df630b26e78a h1:0xNjvsiVDfVPCkQx/Ws1VSOVL+tWPzqEViIhDjBfkuM=
++github.com/hashicorp/nomad/api v0.0.0-20261016150620-df630b26e78a/go.mod h1:x/V7eEDwMx7UTOAb/Bc4mMsTfy5GdOP4sQY0a4Mmm1g=
+ github.com/hashicorp/serf v0.10.4 h1:TCQOrJXHZ1Xf80c4WBhMM9OwUFgDaIP0R+YvoQUKadI=
+ github.com/hashicorp/serf v0.10.4/go.mod h1:l+s5Q1OSPWU6b9l9m7ODJzTp7mLevSaVzAI03Nka2F0=
+ github.com/hetznercloud/hcloud-go/v2 v2.48.0 h1:P3biOxqEufOxp2xBEZTZGIl56xK4sFbwLkCW/52AbiE=
+```
+
 **File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -249,7 +249,7 @@ require (
- 	go.uber.org/zap v1.28.0 // indirect
- 	golang.org/x/crypto v0.57.0 // indirect
- 	golang.org/x/exp v0.0.0-20260709172345-9ea1abe57597 // indirect
--	golang.org/x/net v0.59.0 // indirect
-+	golang.org/x/net v0.60.0 // indirect
- 	golang.org/x/term v0.46.0 // indirect
- 	golang.org/x/time v0.16.0
- 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260921155816-b14227669459 // indirect
+@@ -42,7 +42,7 @@ require (
+ 	github.com/gophercloud/gophercloud/v2 v2.15.0
+ 	github.com/grafana/regexp v0.0.0-20250905093917-f7b3be9d1853
+ 	github.com/hashicorp/consul/api v1.34.5
+-	github.com/hashicorp/nomad/api v0.0.0-20260921181219-70519e8467e4
++	github.com/hashicorp/nomad/api v0.0.0-20261016150620-df630b26e78a
+ 	github.com/hetznercloud/hcloud-go/v2 v2.48.0
+ 	github.com/ionos-cloud/sdk-go/v6 v6.3.11
+ 	github.com/json-iterator/go v1.1.12
 ```
 
 **File**: `go.sum` (modified, +2/-2)
 ```diff
-@@ -647,8 +647,8 @@ golang.org/x/net v0.0.0-20220722155237-a158d28d115b/go.mod h1:XRhObCWvk6IyKnWLug
- golang.org/x/net v0.6.0/go.mod h1:2Tu9+aMcznHK/AK1HMvgo6xiTLG5rD5rZLDS+rp2Bjs=
- golang.org/x/net v0.10.0/go.mod h1:0qNGK6F8kojg2nk9dLZ2mShWaEBan6FAoqfSigmmuDg=
- golang.org/x/net v0.13.0/go.mod h1:zEVYFnQC7m/vmpQFELhcD1EWkZlX69l4oqgmer6hfKA=
--golang.org/x/net v0.59.0 h1:5zfYln+w5XCxwrnMMJPufRgNoXEaGxl0wo5GqPXyues=
--golang.org/x/net v0.59.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
-+golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
-+golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
- golang.org/x/oauth2 v0.37.0 h1:JUlcxA8oAtauLfiH8FX2/FkAWHAdi0QtGCGc+hofE98=
- golang.org/x/oauth2 v0.37.0/go.mod h1:IxwZNxUULJmpBFf9K/9NTMSIfZZuvuTy1gGxhigP/58=
- golang.org/x/sync v0.0.0-20181108010431-42b317875d0f/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
-```
-
-**File**: `internal/tools/go.mod` (modified, +6/-6)
-```diff
-@@ -87,14 +87,14 @@ require (
- 	go.uber.org/multierr v1.11.0 // indirect
- 	go.uber.org/zap v1.28.0 // indirect
- 	go.yaml.in/yaml/v3 v3.0.5 // indirect
--	golang.org/x/crypto v0.56.0 // indirect
-+	golang.org/x/crypto v0.57.0 // indirect
- 	golang.org/x/exp v0.0.0-20260824195058-e88cd73687aa // indirect
--	golang.org/x/mod v0.40.0 // indirect
--	golang.org/x/net v0.58.0 // indirect
-+	golang.org/x/mod v0.41.0 // indirect
-+	golang.org/x/net v0.60.0 // indirect
- 	golang.org/x/sync v0.23.0 // indirect
--	golang.org/x/sys v0.47.0 // indirect
--	golang.org/x/term v0.45.0 // indirect
--	golang.org/x/text v0.41.0 // indirect
-+	golang.org/x/sys v0.48.0 // indirect
-+	golang.org/x/term v0.46.0 // indirect
-+	golang.org/x/text v0.42.0 // indirect
- 	google.golang.org/genproto/googleapis/api v0.0.0-20260904194346-d0f1323225a4 // indirect
- 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260904194346-d0f1323225a4 // indirect
- 	google.golang.org/grpc v1.83.2 // indirect
-```
-
-**File**: `internal/tools/go.sum` (modified, +12/-12)
-```diff
-@@ -202,20 +202,20 @@ go.yaml.in/yaml/v3 v3.0.5/go.mod h1:HVTZu1O7/Vkt2N+BFy8Zza+lnLsABggaTM2ZpNIGuKg=
- golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
- golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=
- golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
--golang.org/x/crypto v0.56.0 h1:GUh5Ii4J5jtcseSMiRqr1jXCNHoxjeV9Fmekc2oLy6Y=
--golang.org/x/crypto v0.56.0/go.mod h1:OMW5y6CY9l38uPLmxU6l6pwcXp1obtLo3e6gT7gQR2I=
-+golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
-+golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
- golang.org/x/exp v0.0.0-20260824195058-e88cd73687aa h1:QSyA8ishJCyT21kER9KwNt0b7BM3iRK4x9QXhjN5Fdk=
- golang.org/x/exp v0.0.0-20260824195058-e88cd73687aa/go.mod h1:zeBbvyFKDaLwa7CH/zI8KXt7gTl14SF7sO08Pl5jBCM=
- golang.org/x/mod v0.2.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
- golang.org/x/mod v0.3.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
--golang.org/x/mod v0.40.0 h1:hUv+3cXcdRHz08UmSiOob7sadHig73uo5bkXxQ/tvUs=
--golang.org/x/mod v0.40.0/go.mod h1:0/weTWkPWGBikyTWAX3dkjVztMmBA5hM0DH6BElSupE=
-+golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
-+golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
- golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3/go.mod h1:t9HGtf8HONx5eT2rtn7q6eTqICYqUVnKs3thJo3Qplg=
- golang.org/x/net v0.0.0-20190620200207-3b0461eec859/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
- golang.org/x/net v0.0.0-20200226121028-0de0cce0169b/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
- golang.org/x/net v0.0.0-20201021035429-f5854403a974/go.mod h1:sp8m0HH+o8qH0wwXwYZr8TS3Oi6o0r6Gce1SSxlDquU=
--golang.org/x/net v0.58.0 h1:ynWG7rqYi4ccpTEuPZ2QGWHktVEM9DMCj9yzDE0Q7To=
--golang.org/x/net v0.58.0/go.mod h1:YwCddHnFlT7eLQqVprV19OnhLGtc5xOKgE0RyqgfWAU=
-+golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
-+golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
- golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
-@@ -224,14 +224,14 @@ golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
- golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20190412213103-97732733099d/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
- golang.org/x/sys v0.0.0-20200930185726-fdedc70b468f/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
--golang.org/x/sys v0.47.0 h1:o7XGOvZQCADBQQ4Y7VNq2dRWQR7JmOUW8Kxx4ZsNgWs=
--golang.org/x/sys v0.47.0/go.mod h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=
--golang.org/x/term v0.45.0 h1:NwWyBmoJCbfTHpxrWoZ9C6/VxOf7ic219I8xZZFdrf0=
--golang.org/x/term v0.45.0/go.mod h1:9aqxs0blBcrm/n0L9QW0aRVD+ktan8ssZromtqJC43w=
-+golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
-+golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
-+golang.org/x/term v0.46.0 h1:3+OXuTbaKDgwk8jTi3aSLHRlmWqHEUDUtxnbFigO4YE=
-+golang.org/x/term v0.46.0/go.mod h1:+K02xbkittuwc0Am4abfA3Fc+XRGXkvBXNO88NCXPoc=
- golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
- golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
--golang.org/x/text v0.41.0 h1:vz/seA0lnX87Othu2f/0L24RcgrXD9/YFTSuGjj3rH8=
--golang.org/x/text v0.41.0/go.mod h1:jvf1O8ajNzZqhSrQBPbutR/EB83Cc0CFrezNQIwbb5M=
-+golang.org/x/text v0.42.0 h1:JbOZXgfeCPU9gacVtYliJqOhD+zhrEqK4LfdpmlUZqI=
-+golang.org/x/text v0.42.0/go.mod h1:ojzP1Z+2QtioaF8DTtO8K5q7JWVVYwZKenzujK0Zd0E=
- golang.org/x/tools v0.0.0-20180917221912-90fa682c2a6e/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
- golang.org/x/tools v0.0.0-20191119224855-298f0cb1881e/go.mod h1:b+2E5dAYhXwXZwtnZ6UAqBI28+e2cm9otk0dWdXHAEo=
- golang.org/x/tools v0.0.0-20200619180055-7c47624df98f/go.mod h1:EkVYQZoAsY45+roYkvgYkIh4xh/qjgUK9TdY2XT94GE=
-```
-
-**File**: `web/ui/mantine-ui/src/promql/tools/go.mod` (modified, +3/-3)
-```diff
-@@ -18,9 +18,9 @@ require (
- 	github.com/prometheus/common v0.70.1 // indirect
- 	github.com/prometheus/procfs v0.21.1 // indirect
- 	go.uber.org/atomic v1.11.0 // indirect
--	golang.org/x/net v0.58.0 // indirect
--	golang.org/x/sys v0.47.0 // indirect
--	golang.org/x/text v0.41.0 // indirect
-+	golang.org/x/net v0.60.0 // indirect
-+	golang.org/x/sys v0.48.0 // indirect
-+	golang.org/x/text v0.42.0 // indirect
- 	google.golang.org/grpc v1.83.2 // indirect
- 	google.golang.org/protobuf v1.36.12-0.20260120151049-f2248ac996af // indirect
- )
-```
-
-**File**: `web/ui/mantine-ui/src/promql/tools/go.sum` (modified, +10/-10)
-```diff
-@@ -128,20 +128,20 @@ go.uber.org/goleak v1.3.0 h1:2K3zAYmnTNqV73imy9J1T3WC+gmCePx2hEGkimedGto=
- go.uber.org/goleak v1.3.0/go.mod h1:CoHD4mav9JJNrW/WLlf7HGZPjdw8EucARQHekz1X6bE=
- go.yaml.in/yaml/v2 v2.4.4 h1:tuyd0P+2Ont/d6e2rl3be67goVK4R6deVxCUX5vyPaQ=
- go.yaml.in/yaml/v2 v2.4.4/go.mod h1:gMZqIpDtDqOfM0uNfy0SkpRhvUryYH0Z6wdMYcacYXQ=
--golang.org/x/crypto v0.55.0 h1:+KWHjbgOaAQ66dh/YlkZKHlz9ZUlq61AFirAR9ntP8M=
--golang.org/x/crypto v0.55.0/go.mod h1:uq0V9dE/fzQuJtbnL+2EhWOE63vo164FY8xqEnV9xis=
-+golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
-+golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
- golang.org/x/exp v0.0.0-20260709172345-9ea1abe57597 h1:qLvzZeaANDgyVOA8pyHCOStGlXn0rseXma+GQjeuv2g=
- golang.org/x/exp v0.0.0-20260709172345-9ea1abe57597/go.mod h1:EdfpwwqSu+0Li0mzskwHU6FWDV3t9Q+RZDo3QMUtL3Q=
--golang.org/x/net v0.58.0 h1:ynWG7rqYi4ccpTEuPZ2QGWHktVEM9DMCj9yzDE0Q7To=
--golang.org/x/net v0.58.0/go.mod h1:YwCddHnFlT7eLQqVprV19OnhLGtc5xOKgE0RyqgfWAU=
-+golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
-+golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
- golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
- golang.org/x/oauth2 v0.36.0/go.mod h1:YDBUJMTkDnJS+A4BP4eZBjCqtokkg1hODuPjwiGPO7Q=
--golang.org/x/sync v0.22.0 h1:SZjpbeLmrCk4xhRSZFNZW5gFUeCeFgjekvI/+gfScek=
--golang.org/x/sync v0.22.0/go.mod h1:9xrNwdLfx4jkKbNva9FpL6vEN7evnE43NNNJQ2LF3+0=
--golang.org/x/sys v0.47.0 h1:o7XGOvZQCADBQQ4Y7VNq2dRWQR7JmOUW8Kxx4ZsNgWs=
--golang.org/x/sys v0.47.0/go.mod h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=
--golang.org/x/text v0.41.0 h1:vz/seA0lnX87Othu2f/0L24RcgrXD9/YFTSuGjj3rH8=
--golang.org/x/text v0.41.0/go.mod h1:jvf1O8ajNzZqhSrQBPbutR/EB83Cc0CFrezNQIwbb5M=
-+golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
-+golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
-+golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
-+golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
-+golang.org/x/text v0.42.0 h1:JbOZXgfeCPU9gacVtYliJqOhD+zhrEqK4LfdpmlUZqI=
-+golang.org/x/text v0.42.0/go.mod h1:ojzP1Z+2QtioaF8DTtO8K5q7JWVVYwZKenzujK0Zd0E=
- golang.org/x/time v0.15.0 h1:bbrp8t3bGUeFOx08pvsMYRTCVSMk89u4tKbNOZbp88U=
- golang.org/x/time v0.15.0/go.mod h1:Y4YMaQmXwGQZoFaVFk4YpCt4FLQMYKZe9oeV/f4MSno=
- google.golang.org/api v0.290.0 h1:eMw0Xo+IfbbMlKmW7aHvpyQRv9RCXuWx/vs8AD+0x9A=
-```
-
----
-
-### Incident Patch 2: `ee295d6f` (2026-10-16)
-**Commit Message**: Merge pull request #20024 from linasm/fix-histogram-equality-skip-buckets
-
-fix(PromQL): never skip histogram buckets for ==, !=, changes(), count_values()
-
-**File**: `promql/engine.go` (modified, +22/-1)
-```diff
-@@ -5407,13 +5407,34 @@ func detectHistogramStatsDecoding(expr parser.Expr) {
- 					// buckets.
- 					n.SkipHistogramBuckets = false
- 					break pathLoop
-+				case "changes":
-+					// Detecting a change compares whole
-+					// histograms, including their buckets.
-+					n.SkipHistogramBuckets = false
-+					break pathLoop
-+				}
-+
-+			case *parser.AggregateExpr:
-+				if p.Op == parser.COUNT_VALUES {
-+					// The value label is the string
-+					// representation of the whole histogram,
-+					// including its buckets.
-+					n.SkipHistogramBuckets = false
-+					break pathLoop
- 				}
- 
- 			case *parser.BinaryExpr:
--				if p.Op == parser.TRIM_UPPER || p.Op == parser.TRIM_LOWER {
-+				switch p.Op {
-+				case parser.TRIM_UPPER, parser.TRIM_LOWER:
- 					// Trimming depends on buckets, we will not skip them.
- 					n.SkipHistogramBuckets = false
- 					break pathLoop
-+				case parser.EQLC, parser.NEQ:
-+					// Comparing histograms for (in)equality
-+					// takes the buckets into account, we will
-+					// not skip them.
-+					n.SkipHistogramBuckets = false
-+					break pathLoop
- 				}
- 			}
- 		}
-```
-
-**File**: `promql/promqltest/testdata/native_histograms.test` (modified, +41/-0)
-```diff
-@@ -2671,3 +2671,44 @@ eval instant at 1m histogram_fraction(13, +Inf, cbh) * histogram_count(cbh)
-   {} 5.6
- 
- clear
-+
-+# Comparing histograms for (in)equality needs the buckets, even if the
-+# surrounding function would otherwise allow skipping them.
-+load 1m
-+  hist_eq_a {{schema:0 count:4 sum:10 buckets:[1 2 1]}}x5
-+  hist_eq_b {{schema:0 count:4 sum:10 buckets:[2 1 1]}}x5
-+
-+eval instant at 2m hist_eq_a == hist_eq_b
-+
-+eval instant at 2m histogram_count(hist_eq_a == hist_eq_b)
-+
-+eval instant at 2m histogram_sum(hist_eq_a == hist_eq_b)
-+
-+eval instant at 2m histogram_count(hist_eq_a != hist_eq_b)
-+  {} 4
-+
-+eval instant at 2m histogram_sum(hist_eq_a != hist_eq_b)
-+  {} 10
-+
-+clear
-+
-+# Detecting changes and counting distinct values needs the buckets, even if
-+# the surrounding function would otherwise allow skipping them.
-+load 1m
-+  hist_changes {{schema:0 count:4 sum:10 buckets:[1 2 1]}} {{schema:0 count:4 sum:10 buckets:[2 1 1]}}x2
-+  hist_values_a {{schema:0 count:4 sum:10 buckets:[1 2 1]}}x2
-+  hist_values_b {{schema:0 count:4 sum:10 buckets:[2 1 1]}}x2
-+
-+eval instant at 2m changes(hist_changes[5m])
-+  {} 1
-+
-+eval instant at 2m histogram_count(hist_changes and changes(hist_changes[5m]) > 0)
-+  {} 4
-+
-+eval instant at 2m count(count_values("value", {__name__=~"hist_values_.*"}))
-+  {} 2
-+
-+eval instant at 2m histogram_count(hist_values_a and on() count(count_values("value", {__name__=~"hist_values_.*"})) > 1)
-+  {} 4
-+
-+clear
-```
-
----
-
-### Incident Patch 3: `80a3b629` (2026-10-15)
-**Commit Message**: fix(PromQL): never skip histogram buckets for changes and count_values
-
-changes() compares consecutive histograms with FloatHistogram.Equals,
-and count_values uses the string representation of a histogram as the
-value label. Both take the buckets into account. When the vector
-selector was (indirectly) wrapped in histogram_count, histogram_sum or
-histogram_avg, buckets were skipped during decoding, so histograms that
-only differ in their buckets were treated as equal. For example,
-histogram_count(h and changes(h[5m]) > 0) returned no result although
-the buckets of h changed.
-
-Do not skip buckets if changes() or count_values is found in the path.
-
-```release-notes
-[BUGFIX] PromQL: Fix `changes()` and `count_values` on native histograms giving wrong results when nested inside `histogram_count()`, `histogram_sum()` or `histogram_avg()`.
-```
-
-Signed-off-by: linasm <[REDACTED_EMAIL]>
-
-**File**: `promql/engine.go` (modified, +14/-0)
-```diff
-@@ -4857,6 +4857,20 @@ func detectHistogramStatsDecoding(expr parser.Expr) {
- 					// buckets.
- 					n.SkipHistogramBuckets = false
- 					break pathLoop
-+				case "changes":
-+					// Detecting a change compares whole
-+					// histograms, including their buckets.
-+					n.SkipHistogramBuckets = false
-+					break pathLoop
-+				}
-+
-+			case *parser.AggregateExpr:
-+				if p.Op == parser.COUNT_VALUES {
-+					// The value label is the string
-+					// representation of the whole histogram,
-+					// including its buckets.
-+					n.SkipHistogramBuckets = false
-+					break pathLoop
- 				}
- 
- 			case *parser.BinaryExpr:
-```
-
-**File**: `promql/promqltest/testdata/native_histograms.test` (modified, +21/-0)
-```diff
-@@ -2554,3 +2554,24 @@ eval instant at 2m histogram_sum(hist_eq_a != hist_eq_b)
-   {} 10
- 
- clear
-+
-+# Detecting changes and counting distinct values needs the buckets, even if
-+# the surrounding function would otherwise allow skipping them.
-+load 1m
-+  hist_changes {{schema:0 count:4 sum:10 buckets:[1 2 1]}} {{schema:0 count:4 sum:10 buckets:[2 1 1]}}x2
-+  hist_values_a {{schema:0 count:4 sum:10 buckets:[1 2 1]}}x2
-+  hist_values_b {{schema:0 count:4 sum:10 buckets:[2 1 1]}}x2
-+
-+eval instant at 2m changes(hist_changes[5m])
-+  {} 1
-+
-+eval instant at 2m histogram_count(hist_changes and changes(hist_changes[5m]) > 0)
-+  {} 4
-+
-+eval instant at 2m count(count_values("value", {__name__=~"hist_values_.*"}))
-+  {} 2
-+
-+eval instant at 2m histogram_count(hist_values_a and on() count(count_values("value", {__name__=~"hist_values_.*"})) > 1)
-+  {} 4
-+
-+clear
+@@ -311,8 +311,8 @@ github.com/hashicorp/golang-lru v1.0.2 h1:dV3g9Z/unq5DpblPpw+Oqcv4dU/1omnb4Ok8iP
+ github.com/hashicorp/golang-lru v1.0.2/go.mod h1:iADmTwqILo4mZ8BN3D2Q6+9jd8WM5uGBxy+E8yxSoD4=
+ github.com/hashicorp/memberlist v0.6.0 h1:hhVDLQUzWkLaitLLSrxLLqSD2l2+qiOz1DMr5zb9EQQ=
+ github.com/hashicorp/memberlist v0.6.0/go.mod h1:a2lqh8KICpm8JibWOmuld7DaA+9QU1YcUtTTTMAtt/M=
+-github.com/hashicorp/nomad/api v0.0.0-20260921181219-70519e8467e4 h1:rdmRR5W+xT9EGDud5i4NI53Np/GjOdrWVMcNzHo8gqI=
+-github.com/hashicorp/nomad/api v0.0.0-20260921181219-70519e8467e4/go.mod h1:x/V7eEDwMx7UTOAb/Bc4mMsTfy5GdOP4sQY0a4Mmm1g=
++github.com/hashicorp/nomad/api v0.0.0-20261016150620-df630b26e78a h1:0xNjvsiVDfVPCkQx/Ws1VSOVL+tWPzqEViIhDjBfkuM=
++github.com/hashicorp/nomad/api v0.0.0-20261016150620-df630b26e78a/go.mod h1:x/V7eEDwMx7UTOAb/Bc4mMsTfy5GdOP4sQY0a4Mmm1g=
+ github.com/hashicorp/serf v0.10.4 h1:TCQOrJXHZ1Xf80c4WBhMM9OwUFgDaIP0R+YvoQUKadI=
+ github.com/hashicorp/serf v0.10.4/go.mod h1:l+s5Q1OSPWU6b9l9m7ODJzTp7mLevSaVzAI03Nka2F0=
+ github.com/hetznercloud/hcloud-go/v2 v2.48.0 h1:P3biOxqEufOxp2xBEZTZGIl56xK4sFbwLkCW/52AbiE=
 ```
 
 #### Recent Merged Pull Requests:
@@ -1885,28 +2052,75 @@ Signed-off-by: linasm <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update module golang.org/x/net to v0.60.0 [SECURITY] (#19979)
+## X. storage/remote: reduce NHCB conversion CPU and memory
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `model/histogram/convert.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9a7d196a`: Update module golang.org/x/net to v0.60.0 [SECURITY] (#19979). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b321ea8c`: storage/remote: reduce NHCB conversion CPU and memory. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `model/histogram/convert.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	golang.org/x/net v0.60.0 // indirect
+	"slices"
+// ClassicBucketCounts returns the cumulative bucket counts of a valid NHCB, one per
+// custom bound followed by +Inf, along with its count and sum. It reuses buf.
+// Every returned value of a stale marker is a stale marker.
+func ClassicBucketCounts(nhcb any, buf []float64) (buckets []float64, count, sum float64, err error) {
+			return nil, 0, 0, errors.New("unsupported histogram schema, not a NHCB")
+			return nil, 0, 0, errors.New(h.Validate().Error())
+		positiveBuckets = slices.Grow(buf[:0], len(customValues)+1)[:len(customValues)+1]
+		clear(positiveBuckets)
+			return nil, 0, 0, errors.New("unsupported histogram schema, not a NHCB")
+			return nil, 0, 0, errors.New(h.Validate().Error())
+		positiveBuckets = slices.Grow(buf[:0], len(customValues)+1)[:len(customValues)+1]
+		clear(positiveBuckets)
+		return nil, 0, 0, fmt.Errorf("unsupported histogram type: %T", h)
+	// Classic buckets are cumulative, and every value of a stale marker is stale.
+	for i := range positiveBuckets {
+		positiveBuckets[i] = currCount
+			positiveBuckets[i] = sum
+	}
+	if isStale {
+		count = sum
+	}
+	return positiveBuckets, count, sum, nil
+}
+
+// ConvertNHCBToClassic converts Native Histogram Custom Bucket
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	golang.org/x/net v0.59.0 // indirect
+// ConvertNHCBToClassic converts Native Histogram Custom Buckets (NHCB) to classic histogram series.
+// This conversion is needed in various scenarios where users need to get NHCB back to classic histogram format,
+// such as Remote Write v1 for external system compatibility and migration use cases.
+//
+// When calling this function, caller must ensure that provided nhcb is valid NHCB histogram.
+func ConvertNHCBToClassic(nhcb any, lset labels.Labels, lsetBuilder *labels.Builder, emitSeriesFn func(labels labels.Labels, value float64) error) error {
+	baseName := lset.Get(model.MetricNameLabel)
+	if baseName == "" {
+		return errors.New("metric name label '__name__' is missing")
+	}
+
+	// We preserve original labels and restore them after conversion.
+	// This is to ensure that no modifications are made to the original labels
+	// that the queue_manager relies on.
+	oldLabels := lsetBuilder.Labels()
+	defer lsetBuilder.Reset(oldLabels)
+
+		count, sum      float64
+			return errors.New("unsupported histogram schema, not a NHCB")
+			return errors.New(h.Validate().Error())
+		positiveBuckets = make([]float64, len(customValues)+1)
+			return errors.New("unsupported histogram schema, not a NHCB")
+			ret
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9a7d196a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b321ea8c` are properly handled with clean fallback behavior.
