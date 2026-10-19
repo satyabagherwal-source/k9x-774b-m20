@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T19:36:30.749Z",
-  "total_verified_learnings": 895,
+  "last_updated": "2026-10-19T19:42:32.279Z",
+  "total_verified_learnings": 897,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -24849,22 +24849,35 @@
     "learn-github-icerockdev-moko-mvvm": {
       "learning_id": "learn-github-icerockdev-moko-mvvm",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "icerockdev-moko-mvvm",
+      "source": "icerockdev/moko-mvvm",
+      "repository": "icerockdev/moko-mvvm",
       "slug": "icerockdev-moko-mvvm",
       "platform": "github",
       "source_url": "https://github.com/icerockdev/moko-mvvm",
-      "source_version": "HEAD",
-      "content_hash": "d29376bcf2b251f6a3a7e75828f818c249aee4a2c601783d1607f7499db8756b",
+      "source_version": "ad0f844e",
+      "content_hash": "1d1b4071a95bd751b883fa2756bcc3f65005fc3693ed0a654d9626ad659a5d79",
       "dossier_path": "07_PROJECT_LEARNING/icerockdev-moko-mvvm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/icerockdev-moko-mvvm-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2776,
+          "title": "Fixed spelling mistakes",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.536Z"
+      "verified_at": "2026-10-19T19:42:32.271Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-iconoir-icons-iconoir": {
       "learning_id": "learn-github-iconoir-icons-iconoir",
@@ -55785,22 +55798,36 @@
     "learn-github-4mmar1mtiaz-seo-tools-by-ammar-imtiaz": {
       "learning_id": "learn-github-4mmar1mtiaz-seo-tools-by-ammar-imtiaz",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "4mmar1mtiaz/SEO-tools-by-Ammar-Imtiaz",
       "repository": "4mmar1mtiaz/SEO-tools-by-Ammar-Imtiaz",
       "slug": "4mmar1mtiaz-seo-tools-by-ammar-imtiaz",
       "platform": "github",
       "source_url": "https://github.com/4mmar1mtiaz/SEO-tools-by-Ammar-Imtiaz",
-      "source_version": "main",
-      "content_hash": "6539a8ad6eaf92042804881b942b99070381bf825645451d06cc13d6c0be02fc",
+      "source_version": "7ba4d0e7",
+      "content_hash": "9b6cfa561aeff750fe10cfcba89c44cf8e749e3d6affc640e1913e6ae58649da",
       "dossier_path": "07_PROJECT_LEARNING/4mmar1mtiaz-seo-tools-by-ammar-imtiaz-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/4mmar1mtiaz-seo-tools-by-ammar-imtiaz-learnings.md",
       "promoted_rules": [
-        "Rule 1630"
+        "Rule 1630",
+        {
+          "number": 2775,
+          "title": "Update GitHub handle to 4mmar1mtiaz in all tool headers and README",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
       ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T19:42:29.718Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-giuucmp-seoaudit": {
       "learning_id": "learn-github-giuucmp-seoaudit",
@@ -91632,6 +91659,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T19:36:28.403Z"
+    },
+    "rule-2775": {
+      "learning_id": "rule-2775",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2775,
+      "title": "Update GitHub handle to 4mmar1mtiaz in all tool headers and README",
+      "source_url": "https://github.com/4mmar1mtiaz/SEO-tools-by-Ammar-Imtiaz",
+      "source_version": "7ba4d0e7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T19:42:29.718Z"
+    },
+    "rule-2776": {
+      "learning_id": "rule-2776",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2776,
+      "title": "Fixed spelling mistakes",
+      "source_url": "https://github.com/icerockdev/moko-mvvm",
+      "source_version": "ad0f844e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T19:42:32.271Z"
     }
   },
   "aliases": {

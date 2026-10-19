@@ -8798,5 +8798,25 @@
     "contentHash": "a6ef30e0310d4ae3f44ffe275fe403a5c77a22fb83fafcdf68fb3cc42a7eb6f6",
     "lastHarvestedAt": "2026-10-19T19:36:30.802Z",
     "learningId": "learn-github-realm-realm-kotlin"
+  },
+  "4mmar1mtiaz-seo-tools-by-ammar-imtiaz": {
+    "repository": "4mmar1mtiaz/SEO-tools-by-Ammar-Imtiaz",
+    "platform": "github",
+    "sourceUrl": "https://github.com/4mmar1mtiaz/SEO-tools-by-Ammar-Imtiaz",
+    "sourceVersion": "7ba4d0e7",
+    "license": "MIT",
+    "contentHash": "9b6cfa561aeff750fe10cfcba89c44cf8e749e3d6affc640e1913e6ae58649da",
+    "lastHarvestedAt": "2026-10-19T19:42:29.762Z",
+    "learningId": "learn-github-4mmar1mtiaz-seo-tools-by-ammar-imtiaz"
+  },
+  "icerockdev-moko-mvvm": {
+    "repository": "icerockdev/moko-mvvm",
+    "platform": "github",
+    "sourceUrl": "https://github.com/icerockdev/moko-mvvm",
+    "sourceVersion": "ad0f844e",
+    "license": "Apache-2.0",
+    "contentHash": "1d1b4071a95bd751b883fa2756bcc3f65005fc3693ed0a654d9626ad659a5d79",
+    "lastHarvestedAt": "2026-10-19T19:42:32.312Z",
+    "learningId": "learn-github-icerockdev-moko-mvvm"
   }
 }

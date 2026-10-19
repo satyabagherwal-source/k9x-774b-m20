@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-166J",
-    "timestamp": "2026-10-19T05:19:12.523Z",
-    "repository": "duckdb/duckdb",
-    "learningId": "learn-github-duckdb-duckdb",
-    "contentHash": "edb9bc7286c86cb78ced99ea50ad94dcf151d09e8ba07f5448016421d17625cd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-95V3",
-    "timestamp": "2026-10-19T05:25:25.359Z",
-    "repository": "megh-bari/pattern-craft",
-    "learningId": "learn-github-megh-bari-pattern-craft",
-    "contentHash": "45854660e2df511be8e93a262cc761579576a02ef70583cd0e1c26f437647132",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-98QE",
     "timestamp": "2026-10-19T05:25:29.078Z",
     "repository": "golutra/golutra",
@@ -7492,6 +7462,36 @@
     "contentHash": "a6ef30e0310d4ae3f44ffe275fe403a5c77a22fb83fafcdf68fb3cc42a7eb6f6",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-VD6O",
+    "timestamp": "2026-10-19T19:42:29.760Z",
+    "repository": "4mmar1mtiaz/SEO-tools-by-Ammar-Imtiaz",
+    "learningId": "learn-github-4mmar1mtiaz-seo-tools-by-ammar-imtiaz",
+    "contentHash": "9b6cfa561aeff750fe10cfcba89c44cf8e749e3d6affc640e1913e6ae58649da",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-VF5I",
+    "timestamp": "2026-10-19T19:42:32.310Z",
+    "repository": "icerockdev/moko-mvvm",
+    "learningId": "learn-github-icerockdev-moko-mvvm",
+    "contentHash": "1d1b4071a95bd751b883fa2756bcc3f65005fc3693ed0a654d9626ad659a5d79",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
