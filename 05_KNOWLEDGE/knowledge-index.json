@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T04:47:11.530Z",
-  "total_verified_learnings": 612,
+  "last_updated": "2026-10-19T04:53:09.224Z",
+  "total_verified_learnings": 617,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -9061,22 +9061,35 @@
     "learn-github-genkit-ai-genkit": {
       "learning_id": "learn-github-genkit-ai-genkit",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "genkit-ai-genkit",
+      "source": "genkit-ai/genkit",
+      "repository": "genkit-ai/genkit",
       "slug": "genkit-ai-genkit",
       "platform": "github",
       "source_url": "https://github.com/genkit-ai/genkit",
-      "source_version": "HEAD",
-      "content_hash": "c6f5cbf7bf228d47b94076da3747481b10b8ea971da0ddbeda2ffa2d1779556f",
+      "source_version": "59ba69c5",
+      "content_hash": "69cfb975f2f8e853ed55ff1ccc6b34a05ed28086738c4a10a6f06567faa237be",
       "dossier_path": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2152,
+          "title": "py/plugins/google-genai): widen API error mapping, detect blocked prompts (#6370",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.041Z"
+      "verified_at": "2026-10-19T04:53:09.219Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-getsentry-mobilebuildmcp": {
       "learning_id": "learn-github-getsentry-mobilebuildmcp",
@@ -9917,22 +9930,35 @@
     "learn-github-gotham-rs-gotham": {
       "learning_id": "learn-github-gotham-rs-gotham",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "gotham-rs-gotham",
+      "source": "gotham-rs/gotham",
+      "repository": "gotham-rs/gotham",
       "slug": "gotham-rs-gotham",
       "platform": "github",
       "source_url": "https://github.com/gotham-rs/gotham",
-      "source_version": "HEAD",
-      "content_hash": "ff61f2a212bd8b917905f10937cb8120b75d26d7457fa9ca46a295fe0813e772",
+      "source_version": "53fe844b",
+      "content_hash": "ea37a84fe4fec7adbfd941920171178ad02f16b2d9aa035d7984eae43a3b43c5",
       "dossier_path": "07_PROJECT_LEARNING/gotham-rs-gotham-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gotham-rs-gotham-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2147,
+          "title": "broken mime type test",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.176Z"
+      "verified_at": "2026-10-19T04:52:56.564Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-gptme-gptme": {
       "learning_id": "learn-github-gptme-gptme",
@@ -21070,7 +21096,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
       "source_version": "hf-taichuai-zdtaichu5.0-9b",
-      "content_hash": "1d64a93ad9fe5da8e44d1405d2933f81b8f1ff1ba720979a7c376744d047e9ea",
+      "content_hash": "1c72a561e3c70dc9fdfbafddabced2c7b019ddf2937c3f933fbeb2f541c20d98",
       "dossier_path": "07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md",
       "promoted_rules": [
@@ -21220,6 +21246,21 @@
           "number": 1562,
           "title": "Preserve Context‑Length Contract",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2149,
+          "title": "Consistent Image Tokenization and Embedding Alignment",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2150,
+          "title": "Unified Data‑Type Across Vision and Language Backbones",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2151,
+          "title": "Respecting Maximum Context Length in Tokenization",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -21240,7 +21281,7 @@
         "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv45zyde",
         "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv4ja6oo"
       ],
-      "verified_at": "2026-10-17T23:23:20.432Z",
+      "verified_at": "2026-10-19T04:53:04.037Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -22603,22 +22644,29 @@
     "learn-github-htmlstreamofficial-preline": {
       "learning_id": "learn-github-htmlstreamofficial-preline",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "htmlstreamofficial-preline",
+      "source": "htmlstreamofficial/preline",
+      "repository": "htmlstreamofficial/preline",
       "slug": "htmlstreamofficial-preline",
       "platform": "github",
       "source_url": "https://github.com/htmlstreamofficial/preline",
-      "source_version": "HEAD",
-      "content_hash": "9c3d07210a81c4ade4ecaf8b24b7862bc6689f758dd6b5d6d3e59dbdc368c264",
+      "source_version": "05ca5999",
+      "content_hash": "5083e7e87435dcb186b98d464aaa1f3d83f9713d4ac59a28ed63fc6c24cfc877",
       "dossier_path": "07_PROJECT_LEARNING/htmlstreamofficial-preline-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/htmlstreamofficial-preline-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.497Z"
+      "verified_at": "2026-10-19T04:52:55.143Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-httprunner-httprunner": {
       "learning_id": "learn-github-httprunner-httprunner",
@@ -32867,22 +32915,35 @@
     "learn-github-react-native-webrtc-react-native-webrtc": {
       "learning_id": "learn-github-react-native-webrtc-react-native-webrtc",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "react-native-webrtc-react-native-webrtc",
+      "source": "react-native-webrtc/react-native-webrtc",
+      "repository": "react-native-webrtc/react-native-webrtc",
       "slug": "react-native-webrtc-react-native-webrtc",
       "platform": "github",
       "source_url": "https://github.com/react-native-webrtc/react-native-webrtc",
-      "source_version": "HEAD",
-      "content_hash": "d49142a8309af72dd7b0beb12c59a5190e0a958786bd24628cff5693cb168c4e",
+      "source_version": "580735e4",
+      "content_hash": "441e6fac6b0089350f8c3a1e5ae93830f9405ccd16c3639f4b2c100e482e726d",
       "dossier_path": "07_PROJECT_LEARNING/react-native-webrtc-react-native-webrtc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-native-webrtc-react-native-webrtc-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2148,
+          "title": "android): guard against duplicate onActivityResult in screen capture",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.217Z"
+      "verified_at": "2026-10-19T04:53:00.948Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-react-navigation-react-navigation": {
       "learning_id": "learn-github-react-navigation-react-navigation",
@@ -33437,22 +33498,29 @@
     "learn-github-rook-rook": {
       "learning_id": "learn-github-rook-rook",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "rook-rook",
+      "source": "rook/rook",
+      "repository": "rook/rook",
       "slug": "rook-rook",
       "platform": "github",
       "source_url": "https://github.com/rook/rook",
-      "source_version": "HEAD",
-      "content_hash": "8c936921645be5a5004acc4f08b58dd8d4abc6e3186de26f7fc276dcb8c06f87",
+      "source_version": "cdfb3c2f",
+      "content_hash": "76958713ce02a22b91f676e044a74b692a82ed47ab2e1e62919bb51929e1996f",
       "dossier_path": "07_PROJECT_LEARNING/rook-rook-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rook-rook-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.301Z"
+      "verified_at": "2026-10-19T04:53:03.444Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-rowboatlabs-rowboat": {
       "learning_id": "learn-github-rowboatlabs-rowboat",
@@ -77211,6 +77279,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T04:47:11.522Z"
+    },
+    "rule-2147": {
+      "learning_id": "rule-2147",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2147,
+      "title": "broken mime type test",
+      "source_url": "https://github.com/gotham-rs/gotham",
+      "source_version": "53fe844b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:52:56.564Z"
+    },
+    "rule-2148": {
+      "learning_id": "rule-2148",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2148,
+      "title": "android): guard against duplicate onActivityResult in screen capture",
+      "source_url": "https://github.com/react-native-webrtc/react-native-webrtc",
+      "source_version": "580735e4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:53:00.948Z"
+    },
+    "rule-2149": {
+      "learning_id": "rule-2149",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2149,
+      "title": "Consistent Image Tokenization and Embedding Alignment",
+      "source_url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
+      "source_version": "hf-taichuai-zdtaichu5.0-9b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:53:04.037Z"
+    },
+    "rule-2150": {
+      "learning_id": "rule-2150",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2150,
+      "title": "Unified Data‑Type Across Vision and Language Backbones",
+      "source_url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
+      "source_version": "hf-taichuai-zdtaichu5.0-9b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:53:04.037Z"
+    },
+    "rule-2151": {
+      "learning_id": "rule-2151",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2151,
+      "title": "Respecting Maximum Context Length in Tokenization",
+      "source_url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
+      "source_version": "hf-taichuai-zdtaichu5.0-9b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:53:04.037Z"
+    },
+    "rule-2152": {
+      "learning_id": "rule-2152",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2152,
+      "title": "py/plugins/google-genai): widen API error mapping, detect blocked prompts (#6370",
+      "source_url": "https://github.com/genkit-ai/genkit",
+      "source_version": "59ba69c5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T04:53:09.219Z"
     }
   },
   "aliases": {

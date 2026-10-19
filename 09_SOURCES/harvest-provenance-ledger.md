@@ -2928,3 +2928,9 @@ Every entry in this ledger must capture:
 | `learn-github-rcbyr-keen-slider` | `https://github.com/rcbyr/keen-slider` | `520c757a` | Multi-dimensional audit evidence | 2026-10-19T04:47:03.433Z |
 | `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `f40f8dc6` | Multi-dimensional audit evidence | 2026-10-19T04:47:06.008Z |
 | `learn-github-postgresml-postgresml` | `https://github.com/postgresml/postgresml` | `caf2b6cc` | Multi-dimensional audit evidence | 2026-10-19T04:47:11.581Z |
+| `learn-github-htmlstreamofficial-preline` | `https://github.com/htmlstreamofficial/preline` | `05ca5999` | Multi-dimensional audit evidence | 2026-10-19T04:52:55.186Z |
+| `learn-github-gotham-rs-gotham` | `https://github.com/gotham-rs/gotham` | `53fe844b` | Multi-dimensional audit evidence | 2026-10-19T04:52:56.621Z |
+| `learn-github-react-native-webrtc-react-native-webrtc` | `https://github.com/react-native-webrtc/react-native-webrtc` | `580735e4` | Multi-dimensional audit evidence | 2026-10-19T04:53:00.991Z |
+| `learn-github-rook-rook` | `https://github.com/rook/rook` | `cdfb3c2f` | Multi-dimensional audit evidence | 2026-10-19T04:53:03.478Z |
+| `learn-huggingface-taichuai-zdtaichu5-0-9b` | `https://huggingface.co/TaichuAI/ZDTaichu5.0-9B` | `hf-taichua` | Multi-dimensional audit evidence | 2026-10-19T04:53:04.073Z |
+| `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `59ba69c5` | Multi-dimensional audit evidence | 2026-10-19T04:53:09.255Z |

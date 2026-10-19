@@ -455,8 +455,8 @@
     "sourceUrl": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
     "sourceVersion": "hf-taichuai-zdtaichu5.0-9b",
     "license": "Open-Source",
-    "contentHash": "1d64a93ad9fe5da8e44d1405d2933f81b8f1ff1ba720979a7c376744d047e9ea",
-    "lastHarvestedAt": "2026-10-17T23:23:20.475Z",
+    "contentHash": "1c72a561e3c70dc9fdfbafddabced2c7b019ddf2937c3f933fbeb2f541c20d98",
+    "lastHarvestedAt": "2026-10-19T04:53:04.073Z",
     "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b"
   },
   "hf-phocinae-phocinae-largha-150m-v1": {
@@ -5928,5 +5928,55 @@
     "contentHash": "139f6e082c52eba25840962f61a58c0eb130bd977a0c9994c4dfb944d565fe33",
     "lastHarvestedAt": "2026-10-19T04:47:11.581Z",
     "learningId": "learn-github-postgresml-postgresml"
+  },
+  "htmlstreamofficial-preline": {
+    "repository": "htmlstreamofficial/preline",
+    "platform": "github",
+    "sourceUrl": "https://github.com/htmlstreamofficial/preline",
+    "sourceVersion": "05ca5999",
+    "license": "NOASSERTION",
+    "contentHash": "5083e7e87435dcb186b98d464aaa1f3d83f9713d4ac59a28ed63fc6c24cfc877",
+    "lastHarvestedAt": "2026-10-19T04:52:55.186Z",
+    "learningId": "learn-github-htmlstreamofficial-preline"
+  },
+  "gotham-rs-gotham": {
+    "repository": "gotham-rs/gotham",
+    "platform": "github",
+    "sourceUrl": "https://github.com/gotham-rs/gotham",
+    "sourceVersion": "53fe844b",
+    "license": "NOASSERTION",
+    "contentHash": "ea37a84fe4fec7adbfd941920171178ad02f16b2d9aa035d7984eae43a3b43c5",
+    "lastHarvestedAt": "2026-10-19T04:52:56.621Z",
+    "learningId": "learn-github-gotham-rs-gotham"
+  },
+  "react-native-webrtc-react-native-webrtc": {
+    "repository": "react-native-webrtc/react-native-webrtc",
+    "platform": "github",
+    "sourceUrl": "https://github.com/react-native-webrtc/react-native-webrtc",
+    "sourceVersion": "580735e4",
+    "license": "MIT",
+    "contentHash": "441e6fac6b0089350f8c3a1e5ae93830f9405ccd16c3639f4b2c100e482e726d",
+    "lastHarvestedAt": "2026-10-19T04:53:00.991Z",
+    "learningId": "learn-github-react-native-webrtc-react-native-webrtc"
+  },
+  "rook-rook": {
+    "repository": "rook/rook",
+    "platform": "github",
+    "sourceUrl": "https://github.com/rook/rook",
+    "sourceVersion": "cdfb3c2f",
+    "license": "Apache-2.0",
+    "contentHash": "76958713ce02a22b91f676e044a74b692a82ed47ab2e1e62919bb51929e1996f",
+    "lastHarvestedAt": "2026-10-19T04:53:03.478Z",
+    "learningId": "learn-github-rook-rook"
+  },
+  "genkit-ai-genkit": {
+    "repository": "genkit-ai/genkit",
+    "platform": "github",
+    "sourceUrl": "https://github.com/genkit-ai/genkit",
+    "sourceVersion": "59ba69c5",
+    "license": "Apache-2.0",
+    "contentHash": "69cfb975f2f8e853ed55ff1ccc6b34a05ed28086738c4a10a6f06567faa237be",
+    "lastHarvestedAt": "2026-10-19T04:53:09.255Z",
+    "learningId": "learn-github-genkit-ai-genkit"
   }
 }

@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rook-rook-learnings.md`  
+> **Source**: github ([https://github.com/rook/rook](https://github.com/rook/rook))  
+> **Source Version**: `cdfb3c2f`  
+> **License**: Apache-2.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T04:53:03.394Z  
+> **Learning ID**: `learn-github-rook-rook`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): rook/rook
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rook-rook-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rook/rook](https://github.com/rook/rook))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T03:31:34.542Z  
+> **Harvest Timestamp**: 2026-10-19T04:53:03.390Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: Storage Orchestration for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 13672 stars
+- **Stars / Engagement**: 13685 stars
 
 ---
 
@@ -1388,445 +1402,17 @@ func quanityToInt64(qty string) (*int64, error) {
 
 ```
 
-### Core Architecture Module: `pkg/operator/k8sutil/cmdreporter/cmdreporter.go`
-```
-/*
-Copyright 2019 The Rook Authors. All rights reserved.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-	http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
-package cmdreporter
-
-import (
-	"context"
-	"fmt"
-	"path"
-	"strconv"
-	"time"
-
-	"github.com/coreos/pkg/capnslog"
-	"github.com/pkg/errors"
-	cephv1 "github.com/rook/rook/pkg/apis/ceph.rook.io/v1"
-	"github.com/rook/rook/pkg/daemon/util"
-	"github.com/rook/rook/pkg/operator/k8sutil"
-	batch "k8s.io/api/batch/v1"
-	v1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/fields"
-	watch "k8s.io/apimachinery/pkg/watch"
-	"k8s.io/client-go/kubernetes"
-)
-
-const (
-	// CmdReporterContainerName defines the name of the CmdReporter container which runs the
-	// 'rook cmd-reporter' command.
-	CmdReporterContainerName = "cmd-reporter"
-
-	// CopyBinariesInitContainerName defines the name of the CmdReporter init container which copies
-	// the 'rook' binary.
-	CopyBinariesInitContainerName = "init-copy-binaries"
-
-	// CopyBinariesMountDir defines the dir into which the 'rook' binary will be copied
-	// in the CmdReporter job pod's containers.
-	CopyBinariesMountDir = "/rook/copied-binaries"
-)
-
-var logger = capnslog.NewPackageLogger("github.com/rook/rook", "CmdReporter")
-
-type CmdReporterInterface interface {
-	Job() *batch.Job
-	Run(ctx context.Context, timeout time.Duration) (stdout, stderr string, retcode int, retErr error)
-}
-
-// CmdReporter is a wrapper for Rook's cmd-reporter commandline utility allowing operators to use
-// the utility without fully specifying the job, pod, and container templates manually.
-type CmdReporter struct {
-	// inputs
-	clientset kubernetes.Interface
-
-	// filled in during creation
-	job *batch.Job
-}
-
-type cmdReporterCfg struct {
-	clientset       kubernetes.Interface
-	ownerInfo       *k8sutil.OwnerInfo
-	appName         string
-	jobName         string
-	jobNamespace    string
-	cmd             []string
-	args            []string
-	rookImage       string
-	runImage        string
-	imagePullPolicy v1.PullPolicy
-	resources       cephv1.ResourceSpec
-}
-
-// New creates a new CmdReporter.
-//
-// All parameters must be set with the exception of the arg list which is allowed to be empty.
-//
-// The common app label will be applied to the job and pod specs which CmdReporter creates
-// identified by the app name specified. The job and the configmap which returns the result of the
-// job will be identified with the job name specified. Everything will be created in the job
-// namespace and will be owned by the owner reference given.
-//
-// The Rook image defines the Rook image from which the 'rook' binary will be taken in
-// order to run the cmd and args in the run image. If the run image is the same as the Rook image,
-// then the command will run without the binaries being copied from the same Rook image.
-func New(
-	clientset kubernetes.Interface,
-	ownerInfo *k8sutil.OwnerInfo,
-	appName, jobName, jobNamespace string,
-	cmd, args []string,
-	rookImage, runImage string,
-	imagePullPolicy v1.PullPolicy,
-	resources cephv1.ResourceSpec,
-) (CmdReporterInterface, error) {
-	cfg := &cmdReporterCfg{
-		clientset:       clientset,
-		ownerInfo:       ownerInfo,
-		appName:         appName,
-		jobName:         jobName,
-		jobNamespace:    jobNamespace,
-		cmd:             cmd,
-		args:            args,
-		rookImage:       rookImage,
-		runImage:        runImage,
-		imagePullPolicy: imagePullPolicy,
-		resources:       resources,
-	}
-
-	// Validate contents of config struct, not inputs to function to catch any developer errors
-	// mis-assigning config items to the struct.
-	if cfg.clientset == nil || cfg.ownerInfo == nil {
-		return nil, fmt.Errorf("clientset [%+v] and owner info [%+v] must be specified", cfg.clientset, cfg.ownerInfo)
-	}
-	if cfg.appName == "" || cfg.jobName == "" || cfg.jobNamespace == "" {
-		return nil, fmt.Errorf("app name [%s], job name [%s], and job namespace [%s] must be specified", cfg.appName, cfg.jobName, cfg.jobNamespace)
-	}
-	// at least one command must be set, and it cannot be an empty string
-	if len(cfg.cmd) == 0 || cfg.cmd[0] == "" {
-		return nil, fmt.Errorf("command [%+v] must be specified", cfg.cmd)
-	}
-	if cfg.rookImage == "" || cfg.runImage == "" {
-		return nil, fmt.Errorf("rook image [%s] and run image [%s] must be specified", cfg.rookImage, cfg.runImage)
-	}
-
-	job, err := cfg.initJobSpec()
-	if err != nil {
-		return nil, fmt.Errorf("failed to create Kubernetes job spec for CmdReporter job %s. %+v", jobName, err)
-	}
-	return &CmdReporter{
-		clientset: cfg.clientset,
-		job:       job,
-	}, nil
-}
-
-// Job returns a pointer to the basic, filled-out Kubernetes job which will run the CmdReporter. The
-// operator may add additional information to this spec, such as labels, environment variables,
-// volumes, volume mounts, etc. before the CmdReporter is run.
-func (cr *CmdReporter) Job() *batch.Job {
-	return cr.job
-}
-
-// Run runs the Kubernetes job and waits for the output ConfigMap. It returns the stdout, stderr,
-// and retcode of the command as long as the image ran it, even if the retcode is nonzero (failure).
-// An error is reported only if the command was not run to completion successfully. When this
-// returns, the ConfigMap is cleaned up (destroyed).
-func (cr *CmdReporter) Run(ctx context.Context, timeout time.Duration) (stdout, stderr string, retcode int, retErr error) {
-	jobName := cr.job.Name
-	namespace := cr.job.Namespace
-	errMsg := fmt.Sprintf("failed to run CmdReporter %s successfully", jobName)
-
-	// the configmap MUST be deleted, because we will wait on its presence to determine when the
-	// job is done running
-	delOpts := &k8sutil.DeleteOptions{}
-	delOpts.Wait = true
-	delOpts.ErrorOnTimeout = true
-	// configmap's name will be the same as the app
-	err := k8sutil.DeleteConfigMap(ctx, cr.clientset, jobName, namespace, delOpts)
-	if err != nil {
-		return "", "", -1, fmt.Errorf("%s. failed to delete existing results ConfigMap %s. %+v", errMsg, jobName, err)
-	}
-
-	if err := k8sutil.RunReplaceableJob(ctx, cr.clientset, cr.job, true); err != nil {
-		return "", "", -1, fmt.Errorf("%s. failed to run job. %+v", errMsg, err)
-	}
-
-	if err := cr.waitForConfigMap(ctx, timeout); err != nil {
-		return "", "", -1, fmt.Errorf("%s. failed waiting for results ConfigMap %s. %+v", errMsg, jobName, err)
-	}
-	logger.Debugf("job %s has returned results", jobName)
-
-	resultMap, err := cr.clientset.CoreV1().ConfigMaps(namespace).Get(ctx, jobName, metav1.GetOptions{})
-	if err != nil {
-		return "", "", -1, fmt.Errorf("%s. results ConfigMap %s should be available, but got an error instead. %+v", errMsg, jobName, err)
-	}
-
-	if err := k8sutil.DeleteBatchJob(ctx, cr.clientset, namespace, jobName, false); err != nil {
-		logger.Errorf("continuing after failing delete job %s; user may need to delete it manually. %+v", jobName, err)
-	}
-
-	// just to be explicit: delete idempotently, and don't wait for delete to complete
-	delOpts = &k8sutil.DeleteOptions{MustDelete: false, WaitOptions: k8sutil.WaitOptions{Wait: false}}
-	if err := k8sutil.DeleteConfigMap(ctx, cr.clientset, jobName, namespace, delOpts); err != nil {
-		logger.Errorf("continuing after failing to delete ConfigMap %s for job %s; user may need to delete it manually. %+v",
-			jobName, jobName, err)
-	}
-
-	dat := resultMap.Data
-	var ok bool
-	if stdout, ok = dat[util.CmdReporterConfigMapStdoutKey]; !ok {
-		return "", "", -1, fmt.Errorf("%s. cmd-reporter did not populate stdout in ConfigMap", errMsg)
-	}
-	if stderr, ok = dat[util.CmdReporterConfigMapStderrKey]; !ok {
-		return "", "", -1, fmt.Errorf("%s. cmd-reporter did not populate stderr in ConfigMap", errMsg)
-	}
-	var strRetcode string
-	if strRetcode, ok = dat[util.CmdReporterConfigMapRetcodeKey]; !ok {
-		return "", "", -1, fmt.Errorf("%s. cmd-reporter did not populate retcode in ConfigMap", errMsg)
-	}
-	if retcode, err = strconv.Atoi(strRetcode); err != nil {
-		return "", "", -1, fmt.Errorf("%s. cmd-reporter returned a retcode value [%s] that could not be parsed to an int. %+v", errMsg, strRetcode, err)
-	}
-
-	return stdout, stderr, retcode, nil
-}
-
-// return a watcher or nil if the configmap exists
-func (cr *CmdReporter) newWatcher(ctx context.Context) (watch.Interface, error) {
-	jobName := cr.job.Name
-	namespace := cr.job.Namespace
-
-	listOpts := metav1.ListOptions{
-		TypeMeta: metav1.TypeMeta{
-			Kind: "ConfigMap",
-		},
-		FieldSelector: fields.OneTermEqualSelector("metadata.name", jobName).String(),
-	}
-
-	list, err := cr.clientset.CoreV1().ConfigMaps(namespace).List(ctx, listOpts)
-	if err != nil {
-		return nil, fmt.Errorf("failed to list the current ConfigMaps in order to start ConfigMap watcher. %+v", err)
-	}
-	if len(list.Items) > 0 {
-		return nil, nil // exists
-	}
-
-	watchOpts := listOpts.DeepCopy()
-	watchOpts.Watch = true
-	watchOpts.ResourceVersion = list.ResourceVersion
-
-	watcher, err := cr.clientset.CoreV1().ConfigMaps(namespace).Watch(ctx, *watchOpts)
-	if err != nil {
-		return nil, fmt.Errorf("failed to start ConfigMap watcher. %+v", err)
-	}
-
-	return watcher, nil
-}
-
-// return nil when the configmap exists
-func (cr *CmdReporter) waitForConfigMap(ctx context.Context, timeout time.Duration) error {
-	jobName := cr.job.Name
-
-	watcher, err := cr.newWatcher(ctx)
-	if err != nil {
-		return fmt.Errorf("failed to start watcher for the results ConfigMap. %+v", err)
-	}
-	if watcher == nil {
-		return nil
-	}
-	defer func() {
-		if watcher != nil {
-			watcher.Stop()
-		}
-	}()
-
-	// timeout timer cannot be started inline in the select statement, or the timeout will be
-	// restarted any time k8s hangs up on the watcher and a new watcher is started
-	ctxWithTimeout, cancelFunc := conte
-```
-
-### Core Architecture Module: `pkg/operator/k8sutil/configmap.go`
-```
-/*
-Copyright 2019 The Rook Authors. All rights reserved.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-	http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
-package k8sutil
-
-import (
-	"context"
-	"fmt"
-	"os"
-	"time"
-
-	"github.com/pkg/errors"
-	v1 "k8s.io/api/core/v1"
-	kerrors "k8s.io/apimachinery/pkg/api/errors"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/types"
-	"k8s.io/client-go/kubernetes"
-)
-
-var loadedOperatorSettings bool
-
-// DeleteConfigMap deletes a ConfigMap.
-func DeleteConfigMap(ctx context.Context, clientset kubernetes.Interface, cmName, namespace string, opts *DeleteOptions) error {
-	k8sOpts := BaseKubernetesDeleteOptions()
-	delete := func() error { return clientset.CoreV1().ConfigMaps(namespace).Delete(ctx, cmName, *k8sOpts) }
-	verify := func() error {
-		_, err := clientset.CoreV1().ConfigMaps(namespace).Get(ctx, cmName, metav1.GetOptions{})
-		return err
-	}
-	resource := fmt.Sprintf("ConfigMap %s", cmName)
-	defaultWaitOptions := &WaitOptions{RetryCount: 20, RetryInterval: 2 * time.Second}
-	return DeleteResource(delete, verify, resource, opts, defaultWaitOptions)
-}
-
-func CreateOrUpdateConfigMap(ctx context.Context, clientset kubernetes.Interface, cm *v1.ConfigMap) (*v1.ConfigMap, error) {
-	name := cm.GetName()
-	namespace := cm.GetNamespace()
-	existingCm, err := clientset.CoreV1().ConfigMaps(namespace).Get(ctx, name, metav1.GetOptions{})
-	if err != nil {
-		if kerrors.IsNotFound(err) {
-			cm, err := clientset.CoreV1().ConfigMaps(namespace).Create(ctx, cm, metav1.CreateOptions{})
-			if err != nil {
-				return nil, errors.Wrapf(err, "failed to create %q configmap", name)
-			}
-			return cm, nil
-		}
-
-		return nil, errors.Wrapf(err, "failed to retrieve %q configmap.", name)
-	}
-
-	existingCm.Data = cm.Data
-	existingCm.OwnerReferences = cm.OwnerReferences
-	if existingCm, err := clientset.CoreV1().ConfigMaps(namespace).Update(ctx, existingCm, metav1.UpdateOptions{}); err != nil {
-		return nil, errors.Wrapf(err, "failed to update existing %q configmap", existingCm.Name)
-	}
-
-	return existingCm, nil
-}
-
-// GetOperatorSetting gets the operator setting from Env Var merged with ConfigMap
-// returns defaultValue if setting is not found
-func GetOperatorSetting(settingName, defaultValue string) string {
-	if !loadedOperatorSettings {
-		logger.Warningf("WARNING: attempting to load operator setting %q before configmap is loaded", settingName)
-	}
-	if settingValue, ok := os.LookupEnv(settingName); ok {
-		return settingValue
-	}
-	return defaultValue
-}
-
-func ApplyOperatorSettingsConfigmap(ctx context.Context, clientset kubernetes.Interface) error {
-	namespacedName := types.NamespacedName{Namespace: os.Getenv(PodNamespaceEnvVar), Name: "rook-ceph-operator-config"}
-	logger.Debugf("loading operator settings configmap from %v", namespacedName)
-	opConfig, err := clientset.CoreV1().ConfigMaps(namespacedName.Namespace).Get(ctx, namespacedName.Name, metav1.GetOptions{})
-	if err != nil {
-		if kerrors.IsNotFound(err) {
-			loadedOperatorSettings = true
-			logger.Debug("operator's configmap resource not found. will use default value or env var.")
-			return nil
-		}
-		return err
-	}
-
-	for key, value := range opConfig.Data {
-		currentValue := os.Getenv(key)
-		if currentValue == value {
-			continue
-		}
-		logger.Infof("operator setting %q = %q", key, value)
-		if err := os.Setenv(key, value); err != nil {
-			logger.Errorf("failed to set env var %q = %q. %v", key, value, err)
-		}
-	}
-	loadedOperatorSettings = true
-	logger.Debug("done loading operator settings configmap")
-	return nil
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #18427** (2026-09-21): **`util.retry` is stuck for 600 seconds if the cephCluster is updated while retry is running.**
-  *Symptoms*: <!-- **Are you in the right place?** 1. For issues or feature requests, please create an issue in this repository. 2. For general technical and non-technical questions, we are happy to help you on our [Rook.io Slack](https://slack.rook.io/). 3. Did you already search the existing open issues for anything similar? -->  **Is this a bug report or feature request?** * Bug Report  **Deviation from expected behavior:** - util.retry retries with cancelled context.  **Expected behavior:** - util.retry should stop retrying with cancelled context.  **How to reproduce it (minimal and precise):** <!-- Please let us know any circumstances for reproduction of your bug. --> - Update the cephcluster such that operator will check `ok-to-stop` on mons. For example, upgrade cluster.  - Ensure that `ok-to-stop` logic is retried.  - Now update the cephCluster so that operator manager is reloaded.    **File(s) to submit**:  * Cluster CR (custom resource), typically called `cluster.yaml`, if necessary  **Logs to submit**:  ``` 618:  2026-09-07T01:53:51.754194172Z  util: retrying after 1m0s, last error: deployment rook-ceph-mon-a cannot be stopped. . Error EBUSY: not enough monitors would be available (b) after stopping mons a: exit status 16   1434: 2026-09-07T01:54:51.754426823Z  util: retrying after 1m0s, last error: deployment rook-ceph-mon-a cannot be stopped. : context canceled   1500: 2026-09-07T01:55:51.755376250Z  util: retrying after 1m0s, last error: deployment rook-ceph-mon-a cannot be s
+- **Issue #18559** (2026-10-15): **OSD CRUSH weight is not updated after OSD PVC expansion (Rook v1.19.11) – wrong `MAX AVAIL` / pool `%USED`**
+  *Symptoms*: **Is this a bug report or feature request?** * Bug Report (possibly related to #14430 / #14435)  **Deviation from expected behavior:**  After the OSD PVCs were expanded, the CRUSH weights of the OSDs stayed at their old values. Rook did not correct them, not even after restarting the operator and a full reconcile.  State before the manual fix (`ceph osd df tree`, shortened):  ``` ID   CLASS  WEIGHT   REWEIGHT  SIZE     %USE   VAR   PGS  NAME  0    ssd  0.19530   1.00000  300 GiB  60.00  1.00  145  osd.0  3    ssd  0.04880   1.00000  300 GiB  60.00  1.00  145  osd.3  1    ssd  0.04880   1.00000  300 GiB  60.03  1.00  145  osd.1 ```  The weights correspond to roughly 200 / 50 / 50 GiB, while all three OSDs are 300 GiB (PVC `spec.resources.requests.storage` = `status.capacity.storage` = 300Gi).  Ceph estimates `MAX AVAIL` from CRUSH weights, so it was understated:  ``` ceph df (before):  ceph-filesystem-data0  %USED 77.10  MAX AVAIL 53 GiB ceph df (after manual `ceph osd crush reweight` to 0.29297 on all OSDs):                    ceph-filesystem-data0  %USED 62.73  MAX AVAIL 105 GiB ```  Actual utilization was identical in both cases (~60% on every OSD, `VAR 1.00`), so only the capacity estimate was wrong. This affects CephFS-reported size, pool-usage alerts and the dashboard.  **Expected behavior:**  After an OSD PVC is expanded and the OSD is resized, the OSD CRUSH weight is updated to match the new size (as proposed in #14430 / #14435).  **How to reproduce it (minimal and pre
 
-- **Issue #18398** (2026-09-16): **Changing the default pool placement makes objects in existing buckets unreadable**
-  *Symptoms*: ### Affected versions  all(1.18+)  ### Steps to reproduce  Store with two placements, `p1` default:  ```yaml spec:   sharedPools:     poolPlacements:       - {name: p1, default: true, metadataPoolName: p1-meta, dataPoolName: p1-data}       - {name: p2,                metadataPoolName: p2-meta, dataPoolName: p2-data} ```  ``` PUT /b1   LocationConstraint: <zonegroup>:default-placement PUT /b1/obj   body: DATA GET /b1/obj   -> 200 DATA ```  Move `default: true` from `p1` to `p2`, wait for reconcile, restart the RGW pod:  ``` GET /                  -> 200, b1 still listed GET /b1?list-type=2    -> 200, zero keys GET /b1/obj            -> 404 NoSuchKey ```  Nothing is deleted — the object is still in `p1-data`. Moving `default: true` back to `p1` restores access.  #### Which buckets are affected  Only buckets whose `placement_rule` is `default-placement`. Buckets on a named placement (`p1`, `p2`, …) are never affected — Rook does not re-point those entries.  ### Cause  In RGW, placement is split across the two JSONs:  - **zonegroup** — which placement names exist, and which one is the default:    ```json   {     "default_placement": "p1",     "placement_targets": [       {"name": "default-placement"}, {"name": "p1"}, {"name": "p2"}     ]   }   ```  - **zone** — what pools each of those names actually maps to:    ```json   {     "placement_pools": [       {"key": "default-placement", "val": {"index_pool": "p1-meta:...", "storage_classes": {"STANDARD": {"data_pool": "p1-data:..."}}
-
-- **Issue #18379** (2026-09-14): **osd: callCephVolume logs ceph.cephx_lockbox_secret at DEBUG, the level OSD jobs are pinned to**
-  *Symptoms*: > This is @jhoblitt's AI agent.  **Is this a bug report or feature request?** * Bug Report  **Deviation from expected behavior:**  `callCephVolume` logs the full `ceph-volume` response at DEBUG on every successful call:  https://github.com/rook/rook/blob/ed913a842168d8620d972a9563390a294c1930e5/pkg/daemon/ceph/osd/volume.go#L1590  and at ERROR when the call fails:  https://github.com/rook/rook/blob/ed913a842168d8620d972a9563390a294c1930e5/pkg/daemon/ceph/osd/volume.go#L1583  For `ceph-volume lvm list` and `ceph-volume raw list`, that response carries the `ceph.cephx_lockbox_secret` tag for every encrypted OSD, so the lockbox secret lands in the OSD prepare pod log on every reconcile. It is not opt-in: every OSD-side job pins its own log level to DEBUG regardless of what the operator runs at —  - provision: https://github.com/rook/rook/blob/ed913a842168d8620d972a9563390a294c1930e5/pkg/operator/ceph/cluster/osd/provision_spec.go#L206 - key rotation: https://github.com/rook/rook/blob/ed913a842168d8620d972a9563390a294c1930e5/pkg/operator/ceph/cluster/osd/key_rotation.go#L72 - replace: https://github.com/rook/rook/blob/ed913a842168d8620d972a9563390a294c1930e5/pkg/operator/ceph/cluster/osd/replace_job.go#L135  This sits outside the model `pkg/util/logging.go` establishes, where DEBUG is meant to be credential-free and only the undocumented `ROOK_LOG_LEVEL=TRACE_INSECURE` unlocks output that may carry secrets:  https://github.com/rook/rook/blob/ed913a842168d8620d972a9563390a294c1930
-  **Post-Mortem & Fix Analysis**:
-  > I'd like to work on this.
-  > On second look I won't be able to pick this one up right now — leaving it available for someone else.
-  > I will take this. Plan: redact the lockbox secret from the ceph-volume response before `callCephVolume` logs it at DEBUG, with a unit test that feeds a response containing `ceph.cephx_lockbox_secret` and asserts the logged text does not.
-
-- **Issue #18370** (2026-09-21): **Ceph mons wedge / never hold quorum on Ubuntu 26.04 HA (kernel 7.0.0-31-generic); identical stack healthy on 22.04**
-  *Symptoms*: Is this a bug report or feature request? - Bug Report  Deviation from expected behavior:  On a fresh HA cluster with nodes running Ubuntu 26.04 (kernel 7.0.0-31-generic), the Ceph MONs cannot hold a stable quorum. The cluster briefly reaches HEALTH_OK (~6 minutes) and then flaps to HEALTH_ERR with failed to get status ... timed out. MONs settle into probing/electing and never re-form quorum. At least one MON process wedges: its local admin socket becomes unresponsive (ceph --admin-daemon /run/ceph/ceph-mon.<id>.asok mon_status hangs / times out), while the process sits in State: S on futex_do_wait at ~0% CPU (only a few seconds of CPU over 20+ minutes). MON logs repeatedly show:  cephx server client.admin: handle_request failed to decode CephXAuthenticate: End of buffer [buffer:2]  Because quorum never stabilizes, the operator keeps skipping reconcile since ceph health is HEALTH_ERR, and CephBlockPool/rbdpool never leaves Progressing, so the install blocks waiting for it to become Ready.  Key point: the identical Rook + Ceph + Kubernetes stack is healthy on Ubuntu 22.04 HA, and the same 26.04 image works fine in single-node mode (which does not deploy Ceph). The failure appears only on Ubuntu 26.04 in the HA (multi-MON) configuration.  Expected behavior:  MONs form a stable quorum, the MON admin socket stays responsive, ceph status returns HEALTH_OK with mon: 3 daemons, quorum a,b,c, and CephBlockPool/rbdpool reaches Ready — exactly as it does with the same stack on Ubuntu 22
-  **Post-Mortem & Fix Analysis**:
-  > If the mons are not maintaining quorum, the kernel or nftables sound like they could be related since those are the main differences in the env. There are no other networking differences? You might open a [Ceph tracker](https://tracker.ceph.com/) to see if the core ceph team knows of any issues with that config. 
-  > > If the mons are not maintaining quorum, the kernel or nftables sound like they could be related since those are the main differences in the env. There are no other networking differences? You might open a [Ceph tracker](https://tracker.ceph.com/) to see if the core ceph team knows of any issues with that config.  Thanks — we chased the networking angle you pointed at. Findings:  kube-proxy runs in IPVS mode, and Rook advertises the mons on Service ClusterIPs, so all mon↔mon msgr traffic is IPVS-load-balanced. On Ubuntu 26.04 (Linux 7.0.0-31-generic), kube-proxy's IPVS conntrack workarounds are gated on kernel version and don't recognize 7.0, so it left:    - net.netfilter.nf_conntrack_tcp_be_liberal = 0 (should be 1 for IPVS)    - net.ipv4.vs.conn_reuse_mode = 1 (the classic kubernetes#81775 issue)   We set both correctly on every node (be_liberal=1, conn_reuse_mode=0). It helps but doesn't fully fix it — on a fresh HA install the mon quorum still flaps (quorum_age resets to seconds;
-  > Ceph-tracker is here btw. https://tracker.ceph.com/issues/80470  No assigners or replies as of now.
-
-- **Issue #18291** (2026-08-26): **security.cephx.*.keyGeneration CRD schema invalid: uint32 Maximum exceeds int32 format bound**
-  *Symptoms*: ## Bug Report  **Is this a bug report or feature request?** * Bug Report  ### Deviation from expected behavior  Setting `spec.security.cephx.daemon.keyRotationPolicy: KeyGeneration` plus any `spec.security.cephx.daemon.keyGeneration` value on a `CephCluster` fails Kubernetes API server validation, regardless of the value supplied:  ``` CephCluster.ceph.rook.io "storage" is invalid: <nil>: Invalid value: "": Maximum boundary value must be of type integer with format int32 in spec.security.cephx.daemon.keyGeneration ```  This makes it impossible to use the new CephX key rotation feature (introduced to remediate CVE-2025-30156) for daemon keys on any cluster running this CRD version. The same struct (`CephxConfig`) is reused for `security.cephx.csi` and `security.cephx.rbdMirrorPeer`, so those are presumably affected identically, though I have only reproduced it against `daemon`.  ### Expected behavior  Setting a valid, increasing `keyGeneration` value (e.g. `2`) with `keyRotationPolicy: KeyGeneration` should be accepted by the API server and trigger key rotation as documented in [CephX Keys and Rotation](https://rook.io/docs/rook/latest-release/Storage-Configuration/Advanced/cephx-key-rotation/).  ### How to reproduce it  1. Run Rook v1.20.6 (bug also present on `master` as of 2026-08-26 — see root cause below). 2. Apply a `CephCluster` (via Helm `rook-ceph-cluster` chart or directly) with:    ```yaml    spec:      security:        cephx:          daemon:            keyRotation
-  **Post-Mortem & Fix Analysis**:
-  > It appears you are using an old CRD version. The latest has a new kubebuilder directive on the type that resolves the issue: `// +kubebuilder:validation:Format=int64`  https://github.com/rook/rook/blob/ba8a5e4cad2b8267832a3158f379b25888572b19/pkg/apis/ceph.rook.io/v1/types.go#L398-L409 
-  > Thanks for confirming and for the quick turnaround!  I can see the +kubebuilder:validation:Format=int64 annotation is already merged on release-1.20/master. 
-
-- **Issue #18287** (2026-08-27): **configureStretchCluster unconditionally sets election strategy, breaking all reconciles on stretch clusters running Ceph Squid**
-  *Symptoms*: **Is this a bug report or feature request?** * Bug Report  **Deviation from expected behavior:**  On a stretch cluster that is already in stretch mode, every `CephCluster` reconcile fails after upgrading Ceph from Reef to Squid:  ``` failed to reconcile CephCluster "rook-ceph/rook-ceph": failed to reconcile cluster "rook-ceph": failed to configure local ceph cluster: failed to create cluster: failed to start ceph monitors: failed to configure stretch mons: failed to enable stretch cluster: failed to enable stretch cluster election strategy: exit status 22 ```  The `CephCluster` CR never leaves `Progressing` / `"Configuring Ceph Mons"`. Other controllers (`op-mon`, `ceph-csi`, `cephclient`, `op-config`) keep working and the Ceph cluster stays `HEALTH_OK` and fully serving, but no `CephCluster` spec change is ever applied and Rook will not create or replace mon/OSD daemons.  The underlying Ceph call fails because **Squid added a guard that Reef did not have**:  ``` $ ceph mon set election_strategy connectivity Error EINVAL: Stretch mode is enabled, so you cannot change the election strategy; please disable stretch mode first! ```  Under Reef this call was a harmless no-op when the strategy was already `connectivity`, so the unconditional call went unnoticed.  **Cause:** `pkg/operator/ceph/cluster/mon/mon.go` — `configureStretchCluster()` calls `EnableStretchElectionStrategy()` unconditionally, and `startMons` invokes it on every reconcile whenever `c.spec.IsStretchCluster()`:  
-  **Post-Mortem & Fix Analysis**:
-  > I see the change in https://github.com/ceph/ceph/pull/59515, which based on the backports recently, expect it's included in: - Squd 19.2.5 - Tentacle 20.2.3  @kamoltat Is it expected that an idempotent request to set the election strategy be rejected? Rook's general pattern is to make idempotent calls, so it seems we need to change this to first check before calling. 
-  > Hi @travisn, honestly I should have made it in such a way that idempotent requests are safe. Given the currently situation, it might be faster to fix this on the rook side. However, I can also make the changes on Ceph's side, plus going forward I will make sure Ceph is designed to handle idempotent requests safely.
-  > @kamoltat Thanks for the confirmation, we will go ahead with the fix on the Rook side for now. 
-
-- **Issue #18256** (2026-08-27): **muteHealthWarning is applied infinitely in a loop**
-  *Symptoms*: <!-- **Are you in the right place?** 1. For issues or feature requests, please create an issue in this repository. 2. For general technical and non-technical questions, we are happy to help you on our [Rook.io Slack](https://slack.rook.io/). 3. Did you already search the existing open issues for anything similar? -->  **Is this a bug report or feature request?** * Bug Report  **Deviation from expected behavior:** As I'm running a cluster on some nodes with kernel <7 - I still need to continue using the older `aes` key format, hence I muted the warnings in the config:  ```yaml     muteHealthWarning:       AUTH_INSECURE_SERVICE_KEY_TYPE:         policy: mute       AUTH_INSECURE_SERVICE_TICKETS:         policy: mute ``` yet, the `INFO` level message is emitted on every loop infinitely now ``` 2026-08-24 01:25:13.189720 I | cephclient: [rook-ceph] successfully configured health warning mute "AUTH_INSECURE_SERVICE_KEY_TYPE"="mute"  2026-08-24 01:25:14.234219 I | cephclient: [rook-ceph] successfully configured health warning mute "AUTH_INSECURE_SERVICE_TICKETS"="mute" ``` The cluster health detail looks as expected - muted as sticky:  ``` (MUTED, STICKY) [ERR] AUTH_INSECURE_SERVICE_KEY_TYPE: 6 auth service entities with insecure key types     entity mon. using insecure key type: aes     entity osd.0 using insecure key type: aes     entity osd.1 using insecure key type: aes     entity osd.2 using insecure key type: aes     entity osd.3 using insecure key type: aes     entity mgr.a u
-  **Post-Mortem & Fix Analysis**:
-  > @zerkms To be clear, how often are you seeing the log messages? Once every reconcile? Or they are continuously printing and filling up your log?   edit: Nevermind, I see now it's printing every 60s in the log.
-  > As a workaround, you could just remove the muteHealthWarning settings from the cephcluster CR and the warnings would remain muted.
-  > > remove the muteHealthWarning settings from the cephcluster CR and the warnings would remain muted.  Oh, would that also be an expected behaviour? It almost feels that if you remove a mute - it should remove it from the ceph runtime state.
-
-- **Issue #18254** (2026-08-24): **volume attachment is being deleted after node drain (migrating keys)**
-  *Symptoms*: **Is this a bug report or feature request?** * Bug Report  **Deviation from expected behavior:**  After `kubectl drain` and `kubectl uncordon` pods mounting pvcs won't come up.  **Expected behavior:**  pods come up as normal.  **How to reproduce it (minimal and precise):**  After upgrading to v1.20.6 I followed "CephX Keys and Rotation" from the documentation. This went fine until section "Migrating CSI keys to a new key type" number 5.  I did `kubectl drain --ignore-daemonsets --delete-emptydir-data node1` and waited for the node to successfully draining. Then I did `kubectl uncordon node1`. I waited for `ceph status` to show that everything is back to normal (and degradation is treated).  But some pods remained in state 'ContainerCreating'. Looking at describe pod shows something like this: ```   Warning  FailedAttachVolume  4m20s (x739 over 19m)  attachdetach-controller  AttachVolume.Attach failed for volume "pvc-b9dda9de-bbaf-42ae-b68f-accc35d4a12d" : rpc error: code = Internal desc = failed to find volume "0001-0009-rook-ceph-0000000000000002-1ff3d126-80fd-42d8-8ec7-a684a20140e6" for service account check: failed to establish the connection: failed to get connection: connecting failed: rados: ret=-22, Invalid argument ```  After `kubectl delete pod` to force a restart I see:  ```   Warning  FailedAttachVolume  3m15s (x500 over 13m)  attachdetach-controller  AttachVolume.Attach failed for volume "pvc-75b7d4d8-d1ab-484b-bbad-07e71cdab7ce" : volume attachment is being delet
-  **Post-Mortem & Fix Analysis**:
-  > Since I have trouble uploading the file, here is the cluster.yaml. I'm using helm for deployment.  ```yaml # try solving slow operations in BlueStore warning # see: https://github.com/rook/rook/discussions/15403 # -- Cluster ceph.conf override # configOverride: configOverride: |   [global]   bdev_enable_discard = false   bluestore_slow_ops_warn_lifetime = 60   bluestore_slow_ops_warn_threshold = 10    osd_scrub_begin_hour = 22   osd_scrub_end_hour = 10   osd_scrub_max_interval = 1209600  # 14 days (in seconds)   osd_scrub_min_interval = 259200   # 3 days   osd_deep_scrub_interval = 1209600 # 14 days  # Installs a debugging toolbox deployment toolbox:   # -- Enable Ceph debugging pod deployment. See [toolbox](../Troubleshooting/ceph-toolbox.md)   enabled: true  monitoring:   # -- Enable Prometheus integration, will also create necessary RBAC rules to allow Operator to create ServiceMonitors.   # Monitoring requires Prometheus to be pre-installed   enabled: true   # -- Whether to create 
-  > Looking in the logs of the ctrlplugin pods for both cephfs and rbd I see a lot of messages like  ``` E0822 18:24:33.622843       1 utils.go:366] ID: 557 Req-ID: 0001-0009-rook-ceph-0000000000000001-7d0979f7-b39b-42cd-a18c-5730513f91c6 GRPC error: rpc error: code = Internal desc = failed to generate volume from volume ID 0001-0009-rook-ceph-0000000000000001-7d0979f7-b39b-42cd-a18c-5730513f91c6: failed to get connection: connecting failed: rados: ret=-22, Invalid argument E0822 18:24:54.782780       1 utils.go:366] ID: 559 Req-ID: snapshot-7aa56d6b-b913-433e-90e3-9bdae34a0f15 GRPC error: rpc error: code = Internal desc = failed to get connection: connecting failed: rados: ret=-22, Invalid argument ```  Restarting both pods didn't change anything.
-  > @pfaelzerchen I think this issue was identified and fixed in Ceph-CSI, with a new release this morning. https://github.com/ceph/ceph-csi/releases/tag/v3.17.1  Can you upgrade CSI to 3.17.1 and see if the issue is resolved?
+- **Issue #18525** (2026-10-13): **No-out flag on node-rotation not cleared with numerical values on zone-domain**
+  *Symptoms*: <!-- **Are you in the right place?** 1. For issues or feature requests, please create an issue in this repository. 2. For general technical and non-technical questions, we are happy to help you on our [Rook.io Slack](https://slack.rook.io/). 3. Did you already search the existing open issues for anything similar? -->  **Is this a bug report or feature request?** * Bug Report  **Deviation from expected behavior:** A node-rotation (cordon+eviction) sets no-out flags before a PDB is cleared. The flag is set on OSDs instead of the group. Reason: My failureDomain is set to `zone`, and my zone-labels contain strings with numerical values (`01`, `02`, `03`).   Code: pkg/daemon/ceph/client/osd.go runs SetFlagOnCrushUnit → ceph osd set-group noout <crushUnit>. UpdateFlagOnCrushUnit only checks crush_node_flags (IsFlagSetOnCrushUnit). The caller is updateNoout in pkg/operator/ceph/disruption/clusterdisruption/osd.go. Ceph side: the osd set-group handler (OSDMonitor.cc) tries parse_osd_id() before the CRUSH name lookup. So set-group noout 01 sets the flag on osd.1, not on zone 01, and Ceph has no syntax to force the bucket name.  With numeric failure-domain names, the drained zone gets no noout protection, the flag on osd.N is never removed, giving a permanent HEALTH_WARN OSD_FLAGS.  **Expected behavior:** The flags should be set on the group.  **How to reproduce it (minimal and precise):** <!-- Please let us know any circumstances for reproduction of your bug. --> - 3 node cluster (One
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1843,1557 +1429,181 @@ func ApplyOperatorSettingsConfigmap(ctx context.Context, clientset kubernetes.In
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9f8960d3` (2026-10-05)
-**Commit Message**: Merge pull request #18472 from silentirk/fix-encrypted
+### Incident Patch 1: `d58b5ed6` (2026-10-16)
+**Commit Message**: Merge pull request #18573 from travisn/mergify-fix-release-1.20-go125
 
-osd: respect per-device encryptedDevice config
+ci: drop go 1.25 build check from release-1.20 automerge rule
 
-**File**: `cmd/rook/ceph/osd.go` (modified, +1/-0)
+**File**: `.mergify.yml` (modified, +0/-1)
 ```diff
-@@ -415,6 +415,7 @@ func parseDevices(devices string) ([]osddaemon.DesiredDevice, error) {
- 		d.DeviceClass = cd.StoreConfig.DeviceClass
- 		d.InitialWeight = cd.StoreConfig.InitialWeight
- 		d.MetadataDevice = cd.StoreConfig.MetadataDevice
-+		d.EncryptedDevice = cd.StoreConfig.EncryptedDevice
- 
- 		if d.OSDsPerDevice < 1 {
- 			return nil, errors.Errorf("osds per device should be greater than 0 (%d)", d.OSDsPerDevice)
-```
-
-**File**: `cmd/rook/ceph/osd_test.go` (modified, +5/-1)
-```diff
-@@ -43,7 +43,8 @@ func TestParseDesiredDevices(t *testing.T) {
- 		{
- 			ID: "nvme01",
- 			StoreConfig: osdcfg.StoreConfig{
--				OSDsPerDevice: 5,
-+				OSDsPerDevice:   5,
-+				EncryptedDevice: true,
- 			},
- 		},
- 	}
-@@ -60,6 +61,9 @@ func TestParseDesiredDevices(t *testing.T) {
- 	assert.Equal(t, 1, result[0].OSDsPerDevice)
- 	assert.Equal(t, 1, result[1].OSDsPerDevice)
- 	assert.Equal(t, 5, result[2].OSDsPerDevice)
-+	assert.False(t, result[0].EncryptedDevice)
-+	assert.False(t, result[1].EncryptedDevice)
-+	assert.True(t, result[2].EncryptedDevice)
- 	assert.False(t, result[0].IsFilter)
- 	assert.False(t, result[1].IsFilter)
- 	assert.False(t, result[2].IsFilter)
-```
-
-**File**: `pkg/daemon/ceph/osd/daemon.go` (modified, +6/-1)
-```diff
-@@ -515,8 +515,13 @@ func getAvailableDevices(context *clusterd.Context, agent *OsdAgent) (*DeviceOsd
- 					} else if strings.HasPrefix(desiredDevice.Name, "/dev/") {
- 						matched = matchDevLinks(device.DevLinks, desiredDevice.Name)
- 					}
-+					if matched && device.Type == sys.PartType && desiredDevice.EncryptedDevice {
-+						logger.Infof("partition %q is not picked because encrypted OSD on partition is not allowed", device.Name)
-+						matched = false
-+						continue
-+					}
- 					if matched && device.Type == sys.LVMType {
--						if agent.storeConfig.EncryptedDevice {
-+						if agent.storeConfig.EncryptedDevice || desiredDevice.EncryptedDevice {
- 							logger.Infof("logical volume %q is not picked because encrypted OSD on LV is not allowed", device.Name)
- 							matched = false
- 							continue
-```
-
-**File**: `pkg/daemon/ceph/osd/daemon_test.go` (modified, +19/-0)
-```diff
-@@ -506,6 +506,25 @@ NAME="sdb1" SIZE="30" TYPE="part" PKNAME="sdb"`, nil
- 	assert.Equal(t, 1, len(mapping.Entries))
- 	assert.Equal(t, -1, mapping.Entries["sdt1"].Data)
- 
-+	// per-device encryption on a disk
-+	agent.devices = []DesiredDevice{{Name: "sdd", EncryptedDevice: true}}
-+	mapping, err = getAvailableDevices(context, agent)
-+	assert.Nil(t, err)
-+	assert.Equal(t, 1, len(mapping.Entries))
-+	assert.True(t, mapping.Entries["sdd"].Config.EncryptedDevice)
-+
-+	// partition with per-device encryption is rejected
-+	agent.devices = []DesiredDevice{{Name: "sdt1", EncryptedDevice: true}}
-+	mapping, err = getAvailableDevices(context, agent)
-+	assert.Nil(t, err)
-+	assert.Equal(t, 0, len(mapping.Entries))
-+
-+	// logical volume with per-device encryption is rejected
-+	agent.devices = []DesiredDevice{{Name: "/dev/mapper/vg1-lv1", EncryptedDevice: true}}
-+	mapping, err = getAvailableDevices(context, agent)
-+	assert.Nil(t, err)
-+	assert.Equal(t, 0, len(mapping.Entries))
-+
- 	// test on PVC
- 	context.Devices = []*sys.LocalDisk{
- 		{Name: "/mnt/set1-0-data-qfhfk", RealPath: "/dev/xvdcy", Type: "data"},
-```
-
-**File**: `pkg/daemon/ceph/osd/device.go` (modified, +1/-0)
-```diff
-@@ -47,6 +47,7 @@ type DesiredDevice struct {
- 	DatabaseSizeMB     int
- 	DeviceClass        string
- 	InitialWeight      string
-+	EncryptedDevice    bool
- 	IsFilter           bool
- 	IsDevicePathFilter bool
- }
-```
-
-**File**: `pkg/daemon/ceph/osd/replace.go` (modified, +1/-1)
-```diff
-@@ -421,7 +421,7 @@ func (a *OsdAgent) buildReplacementPrepareArgs(osdID int, dataDevice, dbLV strin
- 		if dbLV != "" {
- 			args = append(args, blockDBFlag, dbLV)
- 		}
--		if a.storeConfig.EncryptedDevice {
-+		if a.storeConfig.EncryptedDevice || entry.Config.EncryptedDevice {
- 			args = append(args, encryptedFlag)
- 		}
- 	}
-```
-
-**File**: `pkg/daemon/ceph/osd/replace_test.go` (modified, +21/-6)
-```diff
-@@ -472,11 +472,12 @@ func TestBuildReplacementPrepareArgs(t *testing.T) {
- 	}
- 
- 	tests := []struct {
--		name     string
--		store    config.StoreConfig
--		dbLV     string
--		useRaw   bool
--		expected []string
-+		name            string
-+		store           config.StoreConfig
-+		deviceEncrypted bool
-+		dbLV            string
-+		useRaw          bool
-+		expected        []string
- 	}{
- 		{
- 			name:   "raw single-disk",
-@@ -520,12 +521,26 @@ func TestBuildReplacementPrepareArgs(t *testing.T) {
- 				"--dmcrypt", "--crush-device-class", "hdd",
- 			},
- 		},
-+		{
-+			name:            "lvm shared-metadata per-device encrypted",
-+			store:           config.StoreConfig{StoreType: "bluestore"},
-+			deviceEncrypted: true,
-+			dbLV:            "ceph-db-vg/osd-db-y",
-+			useRaw:          false,
-+			expected: []string{
-+				"-oL", "ceph-volume", "--log-path", logPath, "lvm", "prepare", "--bluestore",
-+				"--osd-id", "0", "--data", "/dev/vdb", "--block.db", "ceph-db-vg/osd-db-y",
-+				"--dmcrypt", "--crush-device-class", "hdd",
-+			},
-+		},
- 	}
- 
- 	for _, tc := range tests {
- 		t.Run(tc.name, func(t *testing.T) {
- 			a := &OsdAgent{storeConfig: tc.store}
--			args := a.buildReplacementPrepareArgs(0, "/dev/vdb", tc.dbLV, entry, tc.useRaw, logPath)
-+			e := *entry
-+			e.Config.EncryptedDevice = tc.deviceEncrypted
-+			args := a.buildReplacementPrepareArgs(0, "/dev/vdb", tc.dbLV, &e, tc.useRaw, logPath)
- 			assert.Equal(t, tc.expected, args)
- 		})
- 	}
-```
-
-**File**: `pkg/daemon/ceph/osd/volume.go` (modified, +24/-1)
-```diff
-@@ -532,6 +532,12 @@ func isSafeToUseRawMode(device *DeviceOsdIDEntry) bool {
- 		return false
- 	}
- 
-+	// ceph-volume raw mode does not support encryption yet
-+	if device.Config.EncryptedDevice {
-+		logger.Debugf("won't use raw mode for disk %q since encryption is enabled", device.Config.Name)
-+		return false
-+	}
-+
- 	// ceph-volume raw mode does not support more than one OSD per disk
- 	if device.Config.OSDsPerDevice > 1 {
- 		logger.Debugf("won't use raw mode for disk %q since osd per device is %d", device.Config.Name, device.Config.OSDsPerDevice)
-@@ -548,7 +554,7 @@ func isSafeToUseRawMode(device *DeviceOsdIDEntry) bool {
- }
- 
- func lvmModeAllowed(device *DeviceOsdIDEntry, storeConfig *config.StoreConfig) bool {
--	if device.DeviceInfo.Type == sys.PartType && storeConfig.EncryptedDevice {
-+	if device.DeviceInfo.Type == sys.PartType && (storeConfig.EncryptedDevice || device.Config.EncryptedDevice) {
- 		logger.Infof("skipping partition %q for lvm mode since encryption is not supported on partitions with a `metadataDevice` or `osdsPerDevice > 1`", device.Config.Name)
- 		return false
- 	}
-@@ -758,19 +764,25 @@ func (a *OsdAgent) initializeDevicesLVMMode(context *clusterd.Context, devices *
- 				}
- 
- 				logger.Infof("using %s as metadataDevice for device %s and let ceph-volume lvm batch decide how to create volumes", md, deviceArg)
-+				deviceEncrypted := strconv.FormatBool(a.storeConfig.EncryptedDevice || device.Config.EncryptedDevice)
- 				if _, ok := metadataDevices[md]; ok {
- 					// Fail when two devices using the same metadata device have different values for osdsPerDevice
- 					metadataDevices[md]["devices"] += " " + deviceArg
- 					if deviceOSDCount != metadataDevices[md]["osdsperdevice"] {
- 						return errors.Errorf("metadataDevice (%s) has more than 1 osdsPerDevice value set: %s != %s", md, deviceOSDCount, metadataDevices[md]["osdsperdevice"])
- 					}
-+					// Fail when two devices using the same metadata device have different values for encryptedDevice
-+					if deviceEncrypted != metadataDevices[md]["encrypted"] {
-+						return errors.Errorf("metadataDevice (%s) has more than 1 encryptedDevice value set: %s != %s", md, deviceEncrypted, metadataDevices[md]["encrypted"])
-+					}
- 				} else {
- 					metadataDevices[md] = make(map[string]string)
- 					metadataDevices[md]["osdsperdevice"] = deviceOSDCount
- 					if device.Config.DeviceClass != "" {
- 						metadataDevices[md]["deviceclass"] = device.Config.DeviceClass
- 					}
- 					metadataDevices[md]["devices"] = deviceArg
-+					metadataDevices[md]["encrypted"] = deviceEncrypted
- 				}
- 				if metadataDevice.Type == sys.PartType {
- 					if a.metadataDevice != "" && device.Config.MetadataDevice == "" {
-@@ -804,6 +816,10 @@ func (a *OsdAgent) initializeDevicesLVMMode(context *clusterd.Context, devices *
- 					deviceArg,
- 				}...)
- 
-+				if device.Config.EncryptedDevice && !a.storeConfig.EncryptedDevice {
-+					immediateExecuteArgs = append(immediateExecuteArgs, encryptedFlag)
-+				}
-+
- 				// assign the device class specific to the device
- 				immediateExecuteArgs = a.appendDeviceClassArg(device, immediateExecuteArgs)
- 
-@@ -899,6 +915,10 @@ func (a *OsdAgent) initializeDevicesLVMMode(context *clusterd.Context, devices *
- 			}...)
- 		}
- 
-+		if conf["encrypted"] == "true" && !a.storeConfig.EncryptedDevice {
-+			mdArgs = append(mdArgs, encryptedFlag)
-+		}
-+
- 		if _, ok := conf["deviceclass"]; ok {
- 			mdArgs = append(mdArgs, []string{
- 				crushDeviceClassFlag,
-@@ -1237,13 +1257,15 @@ func GetCephVolumeLVMOSDs(context *clusterd.Context, clusterInfo *client.Cluster
- 			continue
- 		}
- 		var osdFSID, osdDeviceClass string
-+		var osdEncrypted bool
- 		for _, osd := range osdInfo {
- 			if osd.Tags.ClusterFSID != cephfsid {
- 				logger.Infof("skipping osd%d: %q running on a different ceph cluster %q", id, osd.Tags.OSDFSID, osd.Tags.ClusterFSID)
- 				continue
- 			}
- 			osdFSID = osd.Tags.OSDFSID
- 			osdDeviceClass = osd.Tags.CrushDeviceClass
-+			osdEncrypted = osd.Tags.Encrypted == "1"
- 
- 			// If no lv is specified let's take the one we discovered
- 			if lv == "" {
-@@ -1279,6 +1301,7 @@ func GetCephVolumeLVMOSDs(context *clusterd.Context, clusterInfo *client.Cluster
- 			CVMode:        cvMode,
- 			Store:         osdStore,
- 			DeviceClass:   osdDeviceClass,
-+			Encrypted:     osdEncrypted,
- 		}
- 		osds = append(osds, osd)
- 	}
+@@ -222,7 +222,6 @@ pull_request_rules:
+       - "check-success=helm-unittests"
+       - "check-success=lint"
+       - "check-success=lint-test"
+-      - "check-success=linux-build-all (1.25)"
+       - "check-success=linux-build-all (1.26)"
+       - "check-success=misspell"
+       - "check-success=modcheck"
 ```
 
 ---
 
-### Incident Patch 2: `10af0b70` (2026-10-05)
-**Commit Message**: Merge pull request #18476 from banlor/fix/nvmeof-cpu-percent-ar007
-
-monitoring: correct NVMe-oF gateway CPU alert percentage
-
-**File**: `.github/workflows/helm-unittests.yaml` (modified, +7/-0)
-```diff
-@@ -29,3 +29,10 @@ jobs:
- 
-       - name: Unit test the helm charts
-         run: make test.helm
-+
-+      - name: Unit test Prometheus alert rules
-+        run: |
-+          docker run --rm --entrypoint promtool \
-+            -v "$PWD/deploy/charts/rook-ceph-cluster:/rules:ro" \
-+            --workdir /rules prom/prometheus:v3.14.0 \
-+            test rules tests/localrules.yaml tests/nvmeof-cpu.yaml
-```
-
-**File**: `deploy/charts/rook-ceph-cluster/prometheus/localrules.yaml` (modified, +1/-1)
-```diff
-@@ -834,7 +834,7 @@ groups:
-         annotations:
-           description: "Typically, high CPU may indicate degraded performance. Consider increasing the number of reactor cores"
-           summary: "CPU used by {{ $labels.instance }} NVMe-oF Gateway is high on cluster {{ $labels.cluster }}"
--        expr: "label_replace(avg by(instance, cluster) (rate(ceph_nvmeof_reactor_seconds_total{mode=\"busy\"}[1m])),\"instance\",\"$1\",\"instance\",\"(.*):.*\") > 80.00"
-+        expr: "100 * label_replace(avg by(instance, cluster) (rate(ceph_nvmeof_reactor_seconds_total{mode=\"busy\"}[1m])),\"instance\",\"$1\",\"instance\",\"(.*):.*\") > 80.00"
-         for: "10m"
-         labels:
-           severity: "warning"
-```
-
-**File**: `deploy/charts/rook-ceph-cluster/tests/nvmeof-cpu.yaml` (added, +46/-0)
-```diff
-@@ -0,0 +1,46 @@
-+rule_files:
-+  - ../prometheus/localrules.yaml
-+evaluation_interval: 15s
-+fuzzy_compare: true
-+tests:
-+  - name: busy seconds averaged across poll threads and gateways
-+    interval: 15s
-+    input_series:
-+      - series: 'ceph_nvmeof_reactor_seconds_total{cluster="mycluster",instance="gw-a:10008",name="poll-0",mode="busy"}'
-+        values: '0+13.5x80'
-+      - series: 'ceph_nvmeof_reactor_seconds_total{cluster="mycluster",instance="gw-a:10008",name="poll-1",mode="busy"}'
-+        values: '0+13.5x80'
-+      - series: 'ceph_nvmeof_reactor_seconds_total{cluster="mycluster",instance="gw-b:10008",name="poll-0",mode="busy"}'
-+        values: '0+7.5x80'
-+    promql_expr_test:
-+      - expr: '100 * label_replace(avg by(instance, cluster) (rate(ceph_nvmeof_reactor_seconds_total{mode="busy"}[1m])),"instance","$1","instance","(.*):.*")'
-+        eval_time: 15m
-+        exp_samples:
-+          - labels: '{cluster="mycluster",instance="gw-a"}'
-+            value: 90
-+          - labels: '{cluster="mycluster",instance="gw-b"}'
-+            value: 50
-+    alert_rule_test:
-+      - eval_time: 5m
-+        alertname: NVMeoFHighGatewayCPU
-+        exp_alerts: []
-+      - eval_time: 15m
-+        alertname: NVMeoFHighGatewayCPU
-+        exp_alerts:
-+          - exp_labels:
-+              cluster: mycluster
-+              instance: gw-a
-+              severity: warning
-+              type: ceph_default
-+            exp_annotations:
-+              summary: CPU used by gw-a NVMe-oF Gateway is high on cluster mycluster
-+              description: Typically, high CPU may indicate degraded performance. Consider increasing the number of reactor cores
-+  - name: exactly 80 percent stays below strict threshold
-+    interval: 15s
-+    input_series:
-+      - series: 'ceph_nvmeof_reactor_seconds_total{cluster="mycluster",instance="gw-c:10008",name="poll-0",mode="busy"}'
-+        values: '0+12x80'
-+    alert_rule_test:
-+      - eval_time: 15m
-+        alertname: NVMeoFHighGatewayCPU
-+        exp_alerts: []
-```
-
----
-
-### Incident Patch 3: `592015de` (2026-10-05)
-**Commit Message**: build(deps): bump sigs.k8s.io/controller-runtime
-
-Bumps the k8s-dependencies group with 1 update: [sigs.k8s.io/controller-runtime](https://github.com/kubernetes-sigs/controller-runtime).
-
-
-Updates `sigs.k8s.io/controller-runtime` from 0.25.1 to 0.25.2
-- [Release notes](https://github.com/kubernetes-sigs/controller-runtime/releases)
-- [Changelog](https://github.com/kubernetes-sigs/controller-runtime/blob/main/RELEASE.md)
-- [Commits](https://github.com/kubernetes-sigs/controller-runtime/compare/v0.25.1...v0.25.2)
-
----
-updated-dependencies:
-- dependency-name: sigs.k8s.io/controller-runtime
-  dependency-version: 0.25.2
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-  dependency-group: k8s-dependencies
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `go.mod` (modified, +1/-1)
-```diff
-@@ -53,7 +53,7 @@ require (
- 	k8s.io/cloud-provider v0.37.1
- 	k8s.io/utils v0.0.0-20260707023825-cf1189d6abe3
- 	sigs.k8s.io/container-object-storage-interface/client v0.2.2
--	sigs.k8s.io/controller-runtime v0.25.1
-+	sigs.k8s.io/controller-runtime v0.25.2
- 	sigs.k8s.io/mcs-api v0.5.2
- 	sigs.k8s.io/yaml v1.6.0
- )
-```
-
-**File**: `go.sum` (modified, +2/-2)
-```diff
-@@ -2201,8 +2201,8 @@ sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.0.14/go.mod h1:LEScyz
- sigs.k8s.io/container-object-storage-interface/client v0.2.2 h1:TARggRey9sQkDv94w3b+aBav0gCgM61sgWVWU8zKMDg=
- sigs.k8s.io/container-object-storage-interface/client v0.2.2/go.mod h1:RQSwGVkJ9vBo02N1tTWmqHqykln8K2d/dHgdXWie2I4=
- sigs.k8s.io/controller-runtime v0.2.2/go.mod h1:9dyohw3ZtoXQuV1e766PHUn+cmrRCIcBh6XIMFNMZ+I=
--sigs.k8s.io/controller-runtime v0.25.1 h1:BKgU9OeE8xv8EbbM8cY0NVzTQs35rokkdq1jh12fMb4=
--sigs.k8s.io/controller-runtime v0.25.1/go.mod h1:4QqLdT6z/L6Olj8JJCtvztid4/fnIiYsfaTFScegctc=
-+sigs.k8s.io/controller-runtime v0.25.2 h1:bEkK3PVOIVK9X8QWLGVhJgmFc++47vfT6wakSzAOLsQ=
-+sigs.k8s.io/controller-runtime v0.25.2/go.mod h1:4QqLdT6z/L6Olj8JJCtvztid4/fnIiYsfaTFScegctc=
- sigs.k8s.io/json v0.0.0-20211020170558-c049b76a60c6/go.mod h1:p4QtZmO4uMYipTQNzagwnNoseA6OxSUutVw05NhYDRs=
- sigs.k8s.io/json v0.0.0-20220713155537-f223a00ba0e2/go.mod h1:B8JuhiUyNFVKdsE8h686QcCxMaH6HrOAZj4vswFpcB0=
- sigs.k8s.io/json v0.0.0-20250730193827-2d320260d730 h1:IpInykpT6ceI+QxKBbEflcR5EXP7sU1kvOlxwZh5txg=
-```
-
----
-
-### Incident Patch 4: `0c5d5e11` (2026-10-01)
-**Commit Message**: build(deps): bump the github-dependencies group across 1 directory with 9 updates
-
-Bumps the github-dependencies group with 9 updates in the / directory:
-
-| Package | From | To |
-| --- | --- | --- |
-| [github.com/IBM/keyprotect-go-client](https://github.com/IBM/keyprotect-go-client) | `0.17.3` | `1.0.0` |
-| [github.com/aws/aws-sdk-go-v2](https://github.com/aws/aws-sdk-go-v2) | `1.47.0` | `1.47.1` |
-| [github.com/aws/aws-sdk-go-v2/config](https://github.com/aws/aws-sdk-go-v2) | `1.33.4` | `1.33.6` |
-| [github.com/aws/aws-sdk-go-v2/credentials](https://github.com/aws/aws-sdk-go-v2) | `1.20.4` | `1.20.6` |
-| [github.com/aws/aws-sdk-go-v2/service/s3](https://github.com/aws/aws-sdk-go-v2) | `1.113.0` | `1.113.4` |
-| [github.com/aws/aws-sdk-go-v2/service/sns](https://github.com/aws/aws-sdk-go-v2) | `1.47.0` | `1.47.2` |
-| [github.com/aws/smithy-go](https://github.com/aws/smithy-go) | `1.28.1` | `1.28.2` |
-| [github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring](https://github.com/prometheus-operator/prometheus-operator) | `0.94.0` | `0.94.1` |
-| [github.com/prometheus-operator/prometheus-operator/pkg/client](https://github.com/prometheus-operator/prometheus-operator) | 
-
-**File**: `go.mod` (modified, +19/-19)
-```diff
-@@ -11,12 +11,12 @@ replace (
- 
- require (
- 	github.com/IBM/keyprotect-go-client v0.17.3
--	github.com/aws/aws-sdk-go-v2 v1.47.0
--	github.com/aws/aws-sdk-go-v2/config v1.33.4
--	github.com/aws/aws-sdk-go-v2/credentials v1.20.4
--	github.com/aws/aws-sdk-go-v2/service/s3 v1.113.0
--	github.com/aws/aws-sdk-go-v2/service/sns v1.47.0
--	github.com/aws/smithy-go v1.28.1
-+	github.com/aws/aws-sdk-go-v2 v1.47.1
-+	github.com/aws/aws-sdk-go-v2/config v1.33.6
-+	github.com/aws/aws-sdk-go-v2/credentials v1.20.6
-+	github.com/aws/aws-sdk-go-v2/service/s3 v1.113.4
-+	github.com/aws/aws-sdk-go-v2/service/sns v1.47.2
-+	github.com/aws/smithy-go v1.28.2
- 	github.com/banzaicloud/k8s-objectmatcher v1.8.0
- 	github.com/ceph/ceph-csi-operator/api v0.0.0-20260701062509-bc21847a37a7
- 	github.com/ceph/ceph-csi/api v0.0.0-20241216133622-88b7e0d6684f
-@@ -33,8 +33,8 @@ require (
- 	github.com/kube-object-storage/lib-bucket-provisioner v0.0.0-20260420161730-5164e3746489
- 	github.com/libopenstorage/secrets v0.0.0-20240416031220-a17cf7f72c6c
- 	github.com/pkg/errors v0.9.1
--	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.94.0
--	github.com/prometheus-operator/prometheus-operator/pkg/client v0.94.0
-+	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.94.1
-+	github.com/prometheus-operator/prometheus-operator/pkg/client v0.94.1
- 	github.com/rook/rook/pkg/apis v0.0.0-20241216163035-3170ac6a0c58
- 	github.com/sethvargo/go-password v0.4.0
- 	github.com/spf13/cobra v1.10.2
-@@ -70,18 +70,18 @@ require (
- 	github.com/ansel1/merry v1.8.1 // indirect
- 	github.com/ansel1/merry/v2 v2.2.2 // indirect
- 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.20 // indirect
--	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.0 // indirect
--	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.3 // indirect
--	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.3 // indirect
--	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.3 // indirect
-+	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.1 // indirect
-+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.4 // indirect
-+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.4 // indirect
-+	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.4 // indirect
- 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.19 // indirect
--	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.3 // indirect
--	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.3 // indirect
--	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.3 // indirect
--	github.com/aws/aws-sdk-go-v2/service/signin v1.10.0 // indirect
--	github.com/aws/aws-sdk-go-v2/service/sso v1.38.0 // indirect
--	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.43.0 // indirect
--	github.com/aws/aws-sdk-go-v2/service/sts v1.50.0 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.5 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.4 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.4 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/signin v1.10.1 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/sso v1.38.1 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.43.1 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/sts v1.51.1 // indirect
- 	github.com/beorn7/perks v1.0.1 // indirect
- 	github.com/blang/semver/v4 v4.0.0 // indirect
- 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
-```
-
-**File**: `go.sum` (modified, +38/-38)
-```diff
-@@ -488,44 +488,44 @@ github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5/go.mod h1:wHh0iHkY
- github.com/asaskevich/govalidator v0.0.0-20180720115003-f9ffefc3facf/go.mod h1:lB+ZfQJz7igIIfQNfa7Ml4HSf2uFQQRzpGGRXenZAgY=
- github.com/asaskevich/govalidator v0.0.0-20190424111038-f61b66f89f4a/go.mod h1:lB+ZfQJz7igIIfQNfa7Ml4HSf2uFQQRzpGGRXenZAgY=
- github.com/aws/aws-sdk-go v1.44.164/go.mod h1:aVsgQcEevwlmQ7qHE9I3h+dtQgpqhFB+i8Phjh7fkwI=
--github.com/aws/aws-sdk-go-v2 v1.47.0 h1:0jsHallhJCeaU0Ko48c/3FK1ctOQ7NpzggxriJOQ8MQ=
--github.com/aws/aws-sdk-go-v2 v1.47.0/go.mod h1:bttEH6JqnUL8LepvDVfdrds/fZ5bCIxzpe3abyUrhDU=
-+github.com/aws/aws-sdk-go-v2 v1.47.1 h1:uOIZnp4PK3ZhKI0dNrJrhTEsLxbpXHTAJlwoS1pvAtw=
-+github.com/aws/aws-sdk-go-v2 v1.47.1/go.mod h1:bttEH6JqnUL8LepvDVfdrds/fZ5bCIxzpe3abyUrhDU=
- github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.20 h1:GPRlPwz40I2B2VrBEASOA3Bi77NyeqejNLkifosX0rs=
- github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.20/go.mod h1:g7PNzKcsOKWb4fkSRBA7BZVAS6Y8IcxzN+nRohhQ1Q8=
--github.com/aws/aws-sdk-go-v2/config v1.33.4 h1:FzvkXKSzwqHni4U7nDigHg4jjtqMpVUuHgmZfSoJVQ0=
--github.com/aws/aws-sdk-go-v2/config v1.33.4/go.mod h1:VZqGZnZsCWVfK/iGPptJIyNIX3XEX6iQU2Rel4sLrr8=
--github.com/aws/aws-sdk-go-v2/credentials v1.20.4 h1:hTvrJJseKbvw32kmiE0G+u/9ZqpqscjDrTigHIXP2qs=
--github.com/aws/aws-sdk-go-v2/credentials v1.20.4/go.mod h1:gWp9O1ZBWwpcIrgV+mVHk4gZUurAEDkgypu/OXOlIaw=
--github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.0 h1:AM4hHjww+PSFtt6E+UrBrPlZkWsePCLEt9AjkfQX+yM=
--github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.0/go.mod h1:3x/yXezeQjpOvBb4jEMxrS8SXvpdvJ5abv6l5c1gWM8=
--github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.3 h1:Hp/VgjP0BysR3OgLlR057Vz2LcbbVnoWeJ+3qWiS/fY=
--github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.3/go.mod h1:nwGV5qw7F1IZPgxCvA/ph8N2TAuz+BkRG/bXn808qMA=
--github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.3 h1:MUaM4f+kj1ZIBPZfUS8cxP1GKXXZtHJjAthy93AN7SM=
--github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.3/go.mod h1:6YmVmEVRI5ZZzRjCSsb9SryKH0hAlMRdgA7kG9aDvBU=
--github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.3 h1:fuSCw4Z2qfRCztMPO3GXJNSiEp6Wee+WOLwrHHUMy9c=
--github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.3/go.mod h1:6SxcHheD1pPR5+kWm1wGvjlL/YqUsh267sAfEmN4K7A=
-+github.com/aws/aws-sdk-go-v2/config v1.33.6 h1:MBjkSTLczek/UgiK+EYPIoRTqE7gP8vtW3OFbFo7Nug=
-+github.com/aws/aws-sdk-go-v2/config v1.33.6/go.mod h1:grRAFzdAZJrwcbasJRg2MPvIrVjtlfXllHssN6+E1JE=
-+github.com/aws/aws-sdk-go-v2/credentials v1.20.6 h1:NpAFXCU7NzXNkdGK3zQTtsRJ+3v9tZQV0xcdRw8uBdw=
-+github.com/aws/aws-sdk-go-v2/credentials v1.20.6/go.mod h1:mcZCoiPnyMvP8VMNbygNX5lLqSlkYJIMPODylQMurOk=
-+github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.1 h1:8gALAAmacnIXh+z6VkdDanv4/IkG5APdg4DZLDTmLog=
-+github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.1/go.mod h1:Z7IJhJU+poOdJjUR2wpyY21ossQ1XS/R3Lk9Msq5kM4=
-+github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.4 h1:CLq4+8UHCI+ZZYl/EuJxXovaIVN2xeeT8JV+dsApQ5E=
-+github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.4/go.mod h1:Wv4q5sAM04xAMkoOedxLx2inVf6K5FdxYp+A61L+q/0=
-+github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.4 h1:dD4MR81I7YkpEBRk6UP9rocC2QnT3qVuXwzlYTtfGEs=
-+github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.4/go.mod h1:EcXV1kAFd5XwSkDHlj94gnF3q5CkJyYiIJfH8N0VmrE=
-+github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.4 h1:7Wo47d/xn/7KttCSBd8EGYeZ7ULRFRkUHr6vkZPBzVQ=
-+github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.4/go.mod h1:tDB2IVC1xC3vX8o+6uRlzhTxP3g1b77CZXFX/oD2FnQ=
- github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.19 h1:bAdDl/HkGCcGPoe25ToSHEw23VIxt6CT5fLcg111BKg=
- github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.19/go.mod h1:KaUzbLxv4CeSxh6ZCl9B4m7CuFenS8kUEaDs+f/DQr4=
--github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.3 h1:BHKCSX4QXERe8So8rbWqaM7owqOmDJxATXgJwGng22A=
--github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.3/go.mod h1:GqWeeKfYfezihA2KfFL9l7ohEdZWe1tuFWh3GfyNSnE=
--github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.3 h1:bON1rJf67TSTDCKg816AAIE4xSTtoo9tl0XRkO72R+I=
--github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.3/go.mod h1:c5BBpjJcQXpfeq9iASyVKA3T6vX6B6LEXY4mL/gklDY=
--github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.3 h1:L8vIOxylma91TcR96NFTEC07G3JDwSl+CvK2b+IODms=
--github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.3/go.mod h1:fmPIZQzTExYuBNWFyi1P7IoDjvskgphXqK1yObMzusM=
--github.com/aws/aws-sdk-go-v2/service/s3 v1.113.0 h1:0slwIjBv1sEigSUW4EfTtNw9mbHl0PlOUPX9Y1C/eLE=
--github.com/aws/aws-sdk-go-v2/service/s3 v1.113.0/go.mod h1:/uA+2Qj4jd5qBWagVC1AyzzDFXVK997E7U04w7Kw0wI=
--github.com/aws/aws-sdk-go-v2/service/signin v1.10.0 h1:ZD5qFpWcaOKdTuhBi431pIDkCgrMkMlMT6jlpSPoIRI=
--github.com/aws/aws-sdk-go-v2/service/signin v1.10.0/go.mod h1:8Nuuf+tR346PjJ3MvZPh9pekbLiLQFWJhzMXfwy7alA=
--github.com/aws/aws-sdk-go-v2/service/sns v1.47.0 h1:LG0eB968S17nXOj6wfXasPvRXhlcN0xq26m4kaNbG
-```
-
----
-
-### Incident Patch 5: `63ab8854` (2026-09-29)
-**Commit Message**: Merge pull request #18453 from banlor/fix/pool-growth-threshold
-
-monitoring: fix pool growth alert threshold
-
-**File**: `deploy/charts/rook-ceph-cluster/prometheus/localrules.yaml` (modified, +1/-1)
-```diff
-@@ -566,7 +566,7 @@ groups:
-         annotations:
-           description: "Pool '{{ $labels.name }}' will be full in less than 5 days assuming the average fill-up rate of the past 48 hours."
-           summary: "Pool growth rate may soon exceed capacity on cluster {{ $labels.cluster }}"
--        expr: "(predict_linear(avg by (cluster,pool_id) (ceph_pool_percent_used)[2d:], 3600 * 24 * 5) * on(cluster,pool_id) group_right() avg by (cluster,pool_id, name) (ceph_pool_metadata)) >= 95"
-+        expr: "(predict_linear(avg by (cluster,pool_id) (ceph_pool_percent_used)[2d:], 3600 * 24 * 5) * on(cluster,pool_id) group_right() avg by (cluster,pool_id, name) (ceph_pool_metadata)) >= 0.95"
-         for: "1h"
-         labels:
-           oid: "1.3.6.1.4.1.50495.1.2.1.9.2"
-```
-
-**File**: `deploy/charts/rook-ceph-cluster/tests/localrules.yaml` (added, +52/-0)
-```diff
-@@ -0,0 +1,52 @@
-+# Run from this directory with: promtool test rules localrules.yaml
-+# Do not use the *_test.yaml suffix, which is reserved for helm-unittest suites.
-+# Percent-used values from Ceph are fractions. A fast-growing pool must alert,
-+# while a flat pool and a slow-growing pool must not.
-+rule_files:
-+  - ../prometheus/localrules.yaml
-+evaluation_interval: 1h
-+tests:
-+  - interval: 1h
-+    input_series:
-+      - series: 'ceph_pool_percent_used{cluster="mycluster",pool_id="1",instance="mgr-a"}'
-+        values: '0.30+0.01x48'
-+      - series: 'ceph_pool_percent_used{cluster="mycluster",pool_id="2",instance="mgr-a"}'
-+        values: '0.20+0x48'
-+      - series: 'ceph_pool_percent_used{cluster="mycluster",pool_id="3",instance="mgr-a"}'
-+        values: '0.20+0.0002x48'
-+      - series: 'ceph_pool_metadata{cluster="mycluster",pool_id="1",name="growing",instance="mgr-a"}'
-+        values: '1+0x48'
-+      - series: 'ceph_pool_metadata{cluster="mycluster",pool_id="2",name="flat",instance="mgr-a"}'
-+        values: '1+0x48'
-+      - series: 'ceph_pool_metadata{cluster="mycluster",pool_id="3",name="slow",instance="mgr-a"}'
-+        values: '1+0x48'
-+    alert_rule_test:
-+      - eval_time: 1h
-+        alertname: CephPoolGrowthWarning
-+        exp_alerts: [] # the 1h pending period has not elapsed
-+      - eval_time: 2h
-+        alertname: CephPoolGrowthWarning
-+        exp_alerts:
-+          - exp_labels:
-+              cluster: mycluster
-+              pool_id: "1"
-+              name: growing
-+              severity: warning
-+              type: ceph_default
-+              oid: 1.3.6.1.4.1.50495.1.2.1.9.2
-+            exp_annotations:
-+              summary: Pool growth rate may soon exceed capacity on cluster mycluster
-+              description: Pool 'growing' will be full in less than 5 days assuming the average fill-up rate of the past 48 hours.
-+      - eval_time: 48h
-+        alertname: CephPoolGrowthWarning
-+        exp_alerts:
-+          - exp_labels:
-+              cluster: mycluster
-+              pool_id: "1"
-+              name: growing
-+              severity: warning
-+              type: ceph_default
-+              oid: 1.3.6.1.4.1.50495.1.2.1.9.2
-+            exp_annotations:
-+              summary: Pool growth rate may soon exceed capacity on cluster mycluster
-+              description: Pool 'growing' will be full in less than 5 days assuming the average fill-up rate of the past 48 hours.
-```
-
-**File**: `deploy/examples/monitoring/localrules.yaml` (modified, +1/-1)
-```diff
-@@ -571,7 +571,7 @@ spec:
-           annotations:
-             description: "Pool '{{ $labels.name }}' will be full in less than 5 days assuming the average fill-up rate of the past 48 hours."
-             summary: "Pool growth rate may soon exceed capacity on cluster {{ $labels.cluster }}"
--          expr: "(predict_linear(avg by (cluster,pool_id) (ceph_pool_percent_used)[2d:], 3600 * 24 * 5) * on(cluster,pool_id) group_right() avg by (cluster,pool_id, name) (ceph_pool_metadata)) >= 95"
-+          expr: "(predict_linear(avg by (cluster,pool_id) (ceph_pool_percent_used)[2d:], 3600 * 24 * 5) * on(cluster,pool_id) group_right() avg by (cluster,pool_id, name) (ceph_pool_metadata)) >= 0.95"
-           for: "1h"
-           labels:
-             oid: "1.3.6.1.4.1.50495.1.2.1.9.2"
-```
-
----
-
-### Incident Patch 6: `41c99840` (2026-09-24)
-**Commit Message**: monitoring: fix pool growth alert threshold
-
-ceph_pool_percent_used reports a fraction, but the alert threshold
-assumes a percentage. Change the threshold from 95 to 0.95 in the
-Helm chart rules and example configuration. Keep for: 1h unchanged.
-
-Add tests for fast-growing, slow-growing, and constant pool usage.
-Exclude the test file from the packaged Helm chart.
-
-Signed-off-by: Mikhail Basov <[REDACTED_EMAIL]>
-
-**File**: `deploy/charts/rook-ceph-cluster/prometheus/localrules.yaml` (modified, +1/-1)
-```diff
-@@ -566,7 +566,7 @@ groups:
-         annotations:
-           description: "Pool '{{ $labels.name }}' will be full in less than 5 days assuming the average fill-up rate of the past 48 hours."
-           summary: "Pool growth rate may soon exceed capacity on cluster {{ $labels.cluster }}"
--        expr: "(predict_linear(avg by (cluster,pool_id) (ceph_pool_percent_used)[2d:], 3600 * 24 * 5) * on(cluster,pool_id) group_right() avg by (cluster,pool_id, name) (ceph_pool_metadata)) >= 95"
-+        expr: "(predict_linear(avg by (cluster,pool_id) (ceph_pool_percent_used)[2d:], 3600 * 24 * 5) * on(cluster,pool_id) group_right() avg by (cluster,pool_id, name) (ceph_pool_metadata)) >= 0.95"
-         for: "1h"
-         labels:
-           oid: "1.3.6.1.4.1.50495.1.2.1.9.2"
-```
-
-**File**: `deploy/charts/rook-ceph-cluster/tests/localrules.yaml` (added, +52/-0)
-```diff
-@@ -0,0 +1,52 @@
-+# Run from this directory with: promtool test rules localrules.yaml
-+# Do not use the *_test.yaml suffix, which is reserved for helm-unittest suites.
-+# Percent-used values from Ceph are fractions. A fast-growing pool must alert,
-+# while a flat pool and a slow-growing pool must not.
-+rule_files:
-+  - ../prometheus/localrules.yaml
-+evaluation_interval: 1h
-+tests:
-+  - interval: 1h
-+    input_series:
-+      - series: 'ceph_pool_percent_used{cluster="mycluster",pool_id="1",instance="mgr-a"}'
-+        values: '0.30+0.01x48'
-+      - series: 'ceph_pool_percent_used{cluster="mycluster",pool_id="2",instance="mgr-a"}'
-+        values: '0.20+0x48'
-+      - series: 'ceph_pool_percent_used{cluster="mycluster",pool_id="3",instance="mgr-a"}'
-+        values: '0.20+0.0002x48'
-+      - series: 'ceph_pool_metadata{cluster="mycluster",pool_id="1",name="growing",instance="mgr-a"}'
-+        values: '1+0x48'
-+      - series: 'ceph_pool_metadata{cluster="mycluster",pool_id="2",name="flat",instance="mgr-a"}'
-+        values: '1+0x48'
-+      - series: 'ceph_pool_metadata{cluster="mycluster",pool_id="3",name="slow",instance="mgr-a"}'
-+        values: '1+0x48'
-+    alert_rule_test:
-+      - eval_time: 1h
-+        alertname: CephPoolGrowthWarning
-+        exp_alerts: [] # the 1h pending period has not elapsed
-+      - eval_time: 2h
-+        alertname: CephPoolGrowthWarning
-+        exp_alerts:
-+          - exp_labels:
-+              cluster: mycluster
-+              pool_id: "1"
-+              name: growing
-+              severity: warning
-+              type: ceph_default
-+              oid: 1.3.6.1.4.1.50495.1.2.1.9.2
-+            exp_annotations:
-+              summary: Pool growth rate may soon exceed capacity on cluster mycluster
-+              description: Pool 'growing' will be full in less than 5 days assuming the average fill-up rate of the past 48 hours.
-+      - eval_time: 48h
-+        alertname: CephPoolGrowthWarning
-+        exp_alerts:
-+          - exp_labels:
-+              cluster: mycluster
-+              pool_id: "1"
-+              name: growing
-+              severity: warning
-+              type: ceph_default
-+              oid: 1.3.6.1.4.1.50495.1.2.1.9.2
-+            exp_annotations:
-+              summary: Pool growth rate may soon exceed capacity on cluster mycluster
-+              description: Pool 'growing' will be full in less than 5 days assuming the average fill-up rate of the past 48 hours.
-```
-
-**File**: `deploy/examples/monitoring/localrules.yaml` (modified, +1/-1)
-```diff
-@@ -571,7 +571,7 @@ spec:
-           annotations:
-             description: "Pool '{{ $labels.name }}' will be full in less than 5 days assuming the average fill-up rate of the past 48 hours."
-             summary: "Pool growth rate may soon exceed capacity on cluster {{ $labels.cluster }}"
--          expr: "(predict_linear(avg by (cluster,pool_id) (ceph_pool_percent_used)[2d:], 3600 * 24 * 5) * on(cluster,pool_id) group_right() avg by (cluster,pool_id, name) (ceph_pool_metadata)) >= 95"
-+          expr: "(predict_linear(avg by (cluster,pool_id) (ceph_pool_percent_used)[2d:], 3600 * 24 * 5) * on(cluster,pool_id) group_right() avg by (cluster,pool_id, name) (ceph_pool_metadata)) >= 0.95"
-           for: "1h"
-           labels:
-             oid: "1.3.6.1.4.1.50495.1.2.1.9.2"
-```
-
----
-
-### Incident Patch 7: `2ad3e5d1` (2026-09-28)
-**Commit Message**: build(deps): bump github/codeql-action/upload-sarif
-
-Bumps [github/codeql-action/upload-sarif](https://github.com/github/codeql-action) from 4.38.1 to 4.38.2.
-- [Release notes](https://github.com/github/codeql-action/releases)
-- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/github/codeql-action/compare/1c5b675653bb5c22dbe9b12b556ec555138e09fd...2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2)
-
----
-updated-dependencies:
-- dependency-name: github/codeql-action/upload-sarif
-  dependency-version: 4.38.2
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/scorecards.yml` (modified, +1/-1)
-```diff
-@@ -65,6 +65,6 @@ jobs:
-       # Upload the results to GitHub's code scanning dashboard (optional).
-       # Commenting out will disable upload of results to your repo's Code Scanning dashboard
-       - name: "Upload to code-scanning"
--        uses: github/codeql-action/upload-sarif@1c5b675653bb5c22dbe9b12b556ec555138e09fd # v4.38.1
-+        uses: github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
-         with:
-           sarif_file: results.sarif
-```
-
----
-
-### Incident Patch 8: `ed973952` (2026-09-28)
-**Commit Message**: build(deps): bump the k8s-dependencies group with 5 updates
-
-Bumps the k8s-dependencies group with 5 updates:
-
-| Package | From | To |
-| --- | --- | --- |
-| [k8s.io/api](https://github.com/kubernetes/api) | `0.37.0` | `0.37.1` |
-| [k8s.io/apimachinery](https://github.com/kubernetes/apimachinery) | `0.37.0` | `0.37.1` |
-| [k8s.io/cli-runtime](https://github.com/kubernetes/cli-runtime) | `0.37.0` | `0.37.1` |
-| [k8s.io/client-go](https://github.com/kubernetes/client-go) | `0.37.0` | `0.37.1` |
-| [k8s.io/cloud-provider](https://github.com/kubernetes/cloud-provider) | `0.37.0` | `0.37.1` |
-
-
-Updates `k8s.io/api` from 0.37.0 to 0.37.1
-- [Commits](https://github.com/kubernetes/api/compare/v0.37.0...v0.37.1)
-
-Updates `k8s.io/apimachinery` from 0.37.0 to 0.37.1
-- [Commits](https://github.com/kubernetes/apimachinery/compare/v0.37.0...v0.37.1)
-
-Updates `k8s.io/cli-runtime` from 0.37.0 to 0.37.1
-- [Commits](https://github.com/kubernetes/cli-runtime/compare/v0.37.0...v0.37.1)
-
-Updates `k8s.io/client-go` from 0.37.0 to 0.37.1
-- [Changelog](https://github.com/kubernetes/client-go/blob/master/CHANGELOG.md)
-- [Commits](https://github.com/kubernetes/client-go/compare/v0.37.0...v0.37.1)
-
-Updates `k8
-
-**File**: `go.mod` (modified, +6/-6)
-```diff
-@@ -45,12 +45,12 @@ require (
- 	go.yaml.in/yaml/v3 v3.0.5
- 	golang.org/x/sync v0.23.0
- 	gopkg.in/ini.v1 v1.67.3
--	k8s.io/api v0.37.0
-+	k8s.io/api v0.37.1
- 	k8s.io/apiextensions-apiserver v0.37.0
--	k8s.io/apimachinery v0.37.0
--	k8s.io/cli-runtime v0.37.0
--	k8s.io/client-go v0.37.0
--	k8s.io/cloud-provider v0.37.0
-+	k8s.io/apimachinery v0.37.1
-+	k8s.io/cli-runtime v0.37.1
-+	k8s.io/client-go v0.37.1
-+	k8s.io/cloud-provider v0.37.1
- 	k8s.io/utils v0.0.0-20260707023825-cf1189d6abe3
- 	sigs.k8s.io/container-object-storage-interface/client v0.2.2
- 	sigs.k8s.io/controller-runtime v0.25.1
-@@ -172,7 +172,7 @@ require (
- 	gopkg.in/inf.v0 v0.9.1 // indirect
- 	k8s.io/klog/v2 v2.140.0 // indirect
- 	k8s.io/kube-openapi v0.0.0-20260821135717-be32def86098 // indirect
--	k8s.io/streaming v0.37.0 // indirect
-+	k8s.io/streaming v0.37.1 // indirect
- 	sigs.k8s.io/json v0.0.0-20250730193827-2d320260d730 // indirect
- 	sigs.k8s.io/kustomize/api v0.21.1 // indirect
- 	sigs.k8s.io/kustomize/kyaml v0.21.1 // indirect
-```
-
-**File**: `go.sum` (modified, +12/-12)
-```diff
-@@ -2118,8 +2118,8 @@ k8s.io/api v0.20.1/go.mod h1:KqwcCVogGxQY3nBlRpwt+wpAMF/KjaCc7RpywacvqUo=
- k8s.io/api v0.20.4/go.mod h1:++lNL1AJMkDymriNniQsWRkMDzRaX2Y/POTUi8yvqYQ=
- k8s.io/api v0.23.5/go.mod h1:Na4XuKng8PXJ2JsploYYrivXrINeTaycCGcYgF91Xm8=
- k8s.io/api v0.26.0/go.mod h1:k6HDTaIFC8yn1i6pSClSqIwLABIcLV9l5Q4EcngKnQg=
--k8s.io/api v0.37.0 h1:Z//Vj9N7RA/yS2sDmxyeo7h+RR4zbUrd2vrd3Z0TbB4=
--k8s.io/api v0.37.0/go.mod h1:LKXgcJWMc+f4OLbP5SFR8rulEg07zZhpi/zMULiBImk=
-+k8s.io/api v0.37.1 h1:l6N77U7tjwB5L056bgrBTJIEdevac/naBZ3iSvDNfpM=
-+k8s.io/api v0.37.1/go.mod h1:zSlbB1YpJ1YQlFVQy20UYll81UJSJJUMLhkhvg6Z78M=
- k8s.io/apiextensions-apiserver v0.0.0-20190409022649-727a075fdec8/go.mod h1:IxkesAMoaCRoLrPJdZNZUQp9NfZnzqaVzLhb2VEQzXE=
- k8s.io/apiextensions-apiserver v0.18.3/go.mod h1:TMsNGs7DYpMXd+8MOCX8KzPOCx8fnZMoIGB24m03+JE=
- k8s.io/apiextensions-apiserver v0.20.1/go.mod h1:ntnrZV+6a3dB504qwC5PN/Yg9PBiDNt1EVqbW2kORVk=
-@@ -2134,22 +2134,22 @@ k8s.io/apimachinery v0.20.1/go.mod h1:WlLqWAHZGg07AeltaI0MV5uk1Omp8xaN0JGLY6gkRp
- k8s.io/apimachinery v0.20.4/go.mod h1:WlLqWAHZGg07AeltaI0MV5uk1Omp8xaN0JGLY6gkRpU=
- k8s.io/apimachinery v0.23.5/go.mod h1:BEuFMMBaIbcOqVIJqNZJXGFTP4W6AycEpb5+m/97hrM=
- k8s.io/apimachinery v0.26.0/go.mod h1:tnPmbONNJ7ByJNz9+n9kMjNP8ON+1qoAIIC70lztu74=
--k8s.io/apimachinery v0.37.0 h1:Np2AbDtf8x6RDHiD8T9LbKJ9gaegeVNa8yNm5FuGKm0=
--k8s.io/apimachinery v0.37.0/go.mod h1:RN3nhprFSCxOi5Selxd7oMTXOe/c+ZbcE7Im+TS2zkE=
-+k8s.io/apimachinery v0.37.1 h1:hGCYyvKHCwtwMitj2vU4vYx0Z16N9GyZk9BBnz0wDAE=
-+k8s.io/apimachinery v0.37.1/go.mod h1:jF84AyUi/IRIXRot5f+lm6MpxoWI+F1XgjaMmwCdTFw=
- k8s.io/apiserver v0.18.3/go.mod h1:tHQRmthRPLUtwqsOnJJMoI8SW3lnoReZeE861lH8vUw=
- k8s.io/apiserver v0.20.1/go.mod h1:ro5QHeQkgMS7ZGpvf4tSMx6bBOgPfE+f52KwvXfScaU=
--k8s.io/cli-runtime v0.37.0 h1:U3XakUeirBQJMz5688r04z74SIHSE7V5SIZ6Ho5JyBM=
--k8s.io/cli-runtime v0.37.0/go.mod h1:qiQMFkKwFFuPH6zy953On+nc3qfpEHAIDrJmAuRz5Vg=
-+k8s.io/cli-runtime v0.37.1 h1:3mir5bM4XjMJHW3SMRk++3Ylf4YQne0XFFsW+IGT85U=
-+k8s.io/cli-runtime v0.37.1/go.mod h1:g3VQOm71f//aNbp79g0az9jBRTrvPjAHz7WxVysbZ4M=
- k8s.io/client-go v0.18.3/go.mod h1:4a/dpQEvzAhT1BbuWW09qvIaGw6Gbu1gZYiQZIi1DMw=
- k8s.io/client-go v0.19.0/go.mod h1:H9E/VT95blcFQnlyShFgnFT9ZnJOAceiUHM3MlRC+mU=
- k8s.io/client-go v0.19.2/go.mod h1:S5wPhCqyDNAlzM9CnEdgTGV4OqhsW3jGO1UM1epwfJA=
- k8s.io/client-go v0.20.0/go.mod h1:4KWh/g+Ocd8KkCwKF8vUNnmqgv+EVnQDK4MBF4oB5tY=
- k8s.io/client-go v0.20.1/go.mod h1:/zcHdt1TeWSd5HoUe6elJmHSQ6uLLgp4bIJHVEuy+/Y=
- k8s.io/client-go v0.23.5/go.mod h1:flkeinTO1CirYgzMPRWxUCnV0G4Fbu2vLhYCObnt/r4=
--k8s.io/client-go v0.37.0 h1:nsN31fy8wBySuZ+QRnKmrjRSQLOG2rvoGN0tKd12zhQ=
--k8s.io/client-go v0.37.0/go.mod h1:FcGqw+Ll/gNQiq+nPGY1Oyt9y7SgDh1d3MW3RFDEbn0=
--k8s.io/cloud-provider v0.37.0 h1:pJpZfsFC3kuFqWODuE6ReZK/oysNu86Bm9IDfsO82wo=
--k8s.io/cloud-provider v0.37.0/go.mod h1:q17nnGXsvnd9o24QY6Mtvs+pSitAMUKOWkx6lT7G9tY=
-+k8s.io/client-go v0.37.1 h1:QTv/5ha4jAHtW9qxxVBkQVFBRDb4jHfFopQqqMdc+wM=
-+k8s.io/client-go v0.37.1/go.mod h1:dnAPtTnCNY38Ho04D2KdY1F4IKausa9UbqaAZKl60SY=
-+k8s.io/cloud-provider v0.37.1 h1:ejOg9OYS7hMNCF34RdVFLeHTURzI8DLi1hWBgsO8WFo=
-+k8s.io/cloud-provider v0.37.1/go.mod h1:XyEj6/9SS2oGQMSF6wa7r4Vp2fewx+uAMkhN3UMTiLI=
- k8s.io/code-generator v0.18.3/go.mod h1:TgNEVx9hCyPGpdtCWA34olQYLkh3ok9ar7XfSsr8b6c=
- k8s.io/code-generator v0.19.0/go.mod h1:moqLn7w0t9cMs4+5CQyxnfA/HV8MF6aAVENF+WZZhgk=
- k8s.io/code-generator v0.20.0/go.mod h1:UsqdF+VX4PU2g46NC2JRs4gc+IfrctnwHb76RNbWHJg=
-@@ -2181,8 +2181,8 @@ k8s.io/kube-openapi v0.0.0-20211115234752-e816edb12b65/go.mod h1:sX9MT8g7NVZM5lV
- k8s.io/kube-openapi v0.0.0-20221012153701-172d655c2280/go.mod h1:+Axhij7bCpeqhklhUTe3xmOn6bWxolyZEeyaFpjGtl4=
- k8s.io/kube-openapi v0.0.0-20260821135717-be32def86098 h1:z5+pcu1jTyKK5mNTe2/+x+U6Uuv9jRVOJQLaBJJMpeI=
- k8s.io/kube-openapi v0.0.0-20260821135717-be32def86098/go.mod h1:0/mqHCVhlumdJ3BhCfnjSZQE037nAhNodh1/hK0T8/I=
--k8s.io/streaming v0.37.0 h1:iPBUZLZiKt5bV+lxJurASMOV07VuBhNpiwJt2//AWrM=
--k8s.io/streaming v0.37.0/go.mod h1:APlJR26ZWRcVy5bIEj0QRrKUXROtBHPcxl2NT7EAzPU=
-+k8s.io/streaming v0.37.1 h1:TpzVfQeFuVndn2g9mFqxy1UcUYPwDzqjUmwR/IzJCWc=
-+k8s.io/streaming v0.37.1/go.mod h1:APlJR26ZWRcVy5bIEj0QRrKUXROtBHPcxl2NT7EAzPU=
- k8s.io/utils v0.0.0-20190506122338-8fab8cb257d5/go.mod h1:sZAwmy6armz5eXlNoLmJcl4F1QuKu7sr+mFQ0byX7Ew=
- k8s.io/utils v0.0.0-20200324210504-a9aa75ae1b89/go.mod h1:sZAwmy6armz5eXlNoLmJcl4F1QuKu7sr+mFQ0byX7Ew=
- k8s.io/utils v0.0.0-20200729134348-d5654de09c73/go.mod h1:jPW/WVKK9YHAvNhRxK0md/EJ228hCsBRufyofKtW8HA=
-```
-
-**File**: `pkg/apis/go.mod` (modified, +3/-3)
-```diff
-@@ -16,8 +16,8 @@ require (
- 	github.com/openshift/api v0.0.0-20241216151652-de9de05a8e43
- 	github.com/pkg/errors v0.9.1
- 	github.com/stretchr/testify v1.12.1
--	k8s.io/api v0.37.0
--	k8s.io/apimachinery v0.37.0
-+	k8s.io/api v0.37.1
-+	k8s.io/apimachinery v0.37.1
- 	k8s.io/utils v0.0.0-20260707023825-cf1189d6abe3
- )
- 
-@@ -81,7 +81,7 @@ require (
- 	google.golang.org/protobuf v1.36.12 // indirect
- 	gopkg.in/evanphx/json-patch.v4 v4.13.0 // indirect
- 	gopkg.in/inf.v0 v0.9.1 // indirect
--	k8s.io/client-go v0.37.0 // indirect
-+	k8s.io/client-go v0.37.1 // indirect
- 	k8s.io/klog/v2 v2.140.0 // indirect
- 	k8s.io/kube-openapi v0.0.0-20260821135717-be32def86098 // indirect
- 	sigs.k8s.io/json v0.0.0-20250730193827-2d320260d730 // indirect
-```
-
-**File**: `pkg/apis/go.sum` (modified, +6/-6)
-```diff
-@@ -1435,8 +1435,8 @@ k8s.io/api v0.20.1/go.mod h1:KqwcCVogGxQY3nBlRpwt+wpAMF/KjaCc7RpywacvqUo=
- k8s.io/api v0.20.4/go.mod h1:++lNL1AJMkDymriNniQsWRkMDzRaX2Y/POTUi8yvqYQ=
- k8s.io/api v0.23.5/go.mod h1:Na4XuKng8PXJ2JsploYYrivXrINeTaycCGcYgF91Xm8=
- k8s.io/api v0.26.0/go.mod h1:k6HDTaIFC8yn1i6pSClSqIwLABIcLV9l5Q4EcngKnQg=
--k8s.io/api v0.37.0 h1:Z//Vj9N7RA/yS2sDmxyeo7h+RR4zbUrd2vrd3Z0TbB4=
--k8s.io/api v0.37.0/go.mod h1:LKXgcJWMc+f4OLbP5SFR8rulEg07zZhpi/zMULiBImk=
-+k8s.io/api v0.37.1 h1:l6N77U7tjwB5L056bgrBTJIEdevac/naBZ3iSvDNfpM=
-+k8s.io/api v0.37.1/go.mod h1:zSlbB1YpJ1YQlFVQy20UYll81UJSJJUMLhkhvg6Z78M=
- k8s.io/apiextensions-apiserver v0.0.0-20190409022649-727a075fdec8/go.mod h1:IxkesAMoaCRoLrPJdZNZUQp9NfZnzqaVzLhb2VEQzXE=
- k8s.io/apiextensions-apiserver v0.18.3/go.mod h1:TMsNGs7DYpMXd+8MOCX8KzPOCx8fnZMoIGB24m03+JE=
- k8s.io/apiextensions-apiserver v0.20.1/go.mod h1:ntnrZV+6a3dB504qwC5PN/Yg9PBiDNt1EVqbW2kORVk=
-@@ -1449,8 +1449,8 @@ k8s.io/apimachinery v0.20.1/go.mod h1:WlLqWAHZGg07AeltaI0MV5uk1Omp8xaN0JGLY6gkRp
- k8s.io/apimachinery v0.20.4/go.mod h1:WlLqWAHZGg07AeltaI0MV5uk1Omp8xaN0JGLY6gkRpU=
- k8s.io/apimachinery v0.23.5/go.mod h1:BEuFMMBaIbcOqVIJqNZJXGFTP4W6AycEpb5+m/97hrM=
- k8s.io/apimachinery v0.26.0/go.mod h1:tnPmbONNJ7ByJNz9+n9kMjNP8ON+1qoAIIC70lztu74=
--k8s.io/apimachinery v0.37.0 h1:Np2AbDtf8x6RDHiD8T9LbKJ9gaegeVNa8yNm5FuGKm0=
--k8s.io/apimachinery v0.37.0/go.mod h1:RN3nhprFSCxOi5Selxd7oMTXOe/c+ZbcE7Im+TS2zkE=
-+k8s.io/apimachinery v0.37.1 h1:hGCYyvKHCwtwMitj2vU4vYx0Z16N9GyZk9BBnz0wDAE=
-+k8s.io/apimachinery v0.37.1/go.mod h1:jF84AyUi/IRIXRot5f+lm6MpxoWI+F1XgjaMmwCdTFw=
- k8s.io/apiserver v0.18.3/go.mod h1:tHQRmthRPLUtwqsOnJJMoI8SW3lnoReZeE861lH8vUw=
- k8s.io/apiserver v0.20.1/go.mod h1:ro5QHeQkgMS7ZGpvf4tSMx6bBOgPfE+f52KwvXfScaU=
- k8s.io/client-go v0.18.3/go.mod h1:4a/dpQEvzAhT1BbuWW09qvIaGw6Gbu1gZYiQZIi1DMw=
-@@ -1459,8 +1459,8 @@ k8s.io/client-go v0.19.2/go.mod h1:S5wPhCqyDNAlzM9CnEdgTGV4OqhsW3jGO1UM1epwfJA=
- k8s.io/client-go v0.20.0/go.mod h1:4KWh/g+Ocd8KkCwKF8vUNnmqgv+EVnQDK4MBF4oB5tY=
- k8s.io/client-go v0.20.1/go.mod h1:/zcHdt1TeWSd5HoUe6elJmHSQ6uLLgp4bIJHVEuy+/Y=
- k8s.io/client-go v0.23.5/go.mod h1:flkeinTO1CirYgzMPRWxUCnV0G4Fbu2vLhYCObnt/r4=
--k8s.io/client-go v0.37.0 h1:nsN31fy8wBySuZ+QRnKmrjRSQLOG2rvoGN0tKd12zhQ=
--k8s.io/client-go v0.37.0/go.mod h1:FcGqw+Ll/gNQiq+nPGY1Oyt9y7SgDh1d3MW3RFDEbn0=
-+k8s.io/client-go v0.37.1 h1:QTv/5ha4jAHtW9qxxVBkQVFBRDb4jHfFopQqqMdc+wM=
-+k8s.io/client-go v0.37.1/go.mod h1:dnAPtTnCNY38Ho04D2KdY1F4IKausa9UbqaAZKl60SY=
- k8s.io/code-generator v0.18.3/go.mod h1:TgNEVx9hCyPGpdtCWA34olQYLkh3ok9ar7XfSsr8b6c=
- k8s.io/code-generator v0.19.0/go.mod h1:moqLn7w0t9cMs4+5CQyxnfA/HV8MF6aAVENF+WZZhgk=
- k8s.io/code-generator v0.20.0/go.mod h1:UsqdF+VX4PU2g46NC2JRs4gc+IfrctnwHb76RNbWHJg=
-```
-
----
-
-### Incident Patch 9: `1880ff34` (2026-09-28)
-**Commit Message**: build(deps): bump reviewdog/action-misspell from 1.30.0 to 1.30.1
-
-Bumps [reviewdog/action-misspell](https://github.com/reviewdog/action-misspell) from 1.30.0 to 1.30.1.
-- [Release notes](https://github.com/reviewdog/action-misspell/releases)
-- [Commits](https://github.com/reviewdog/action-misspell/compare/5f62a0ac088400bd1a3283bbb109efc5a22e8171...7cea3d501cb3834c688e08c89ed77b71764d1784)
-
----
-updated-dependencies:
-- dependency-name: reviewdog/action-misspell
-  dependency-version: 1.30.1
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/codespell.yaml` (modified, +1/-1)
-```diff
-@@ -57,4 +57,4 @@ jobs:
-         with:
-           fetch-depth: 0
-       - name: misspell
--        uses: reviewdog/action-misspell@5f62a0ac088400bd1a3283bbb109efc5a22e8171 # v1.30.0
-+        uses: reviewdog/action-misspell@7cea3d501cb3834c688e08c89ed77b71764d1784 # v1.30.1
-```
-
----
-
-### Incident Patch 10: `91b6b9d8` (2026-08-04)
-**Commit Message**: core: make kernelMountOptions conditional on requireMsgr2
-
-The test manifests were unconditionally setting ms_mode to prefer-crc in
-kernelMountOptions for all test clusters. The Ceph and Helm upgrade
-tests initally run a v1.19.5 cluster, which has requireMsgr2=false, so
-monitors serve on port 6789 but the kernel CephFS client uses msgr2,
-causing a protocol mismatch. This change makes kernelMountOptions
-conditional, ms_mode=prefer-crc is added only when requireMsgr2=true.
-
-Signed-off-by: Prabhala Tara Aasrita <[REDACTED_EMAIL]>
-
-**File**: `tests/framework/installer/ceph_manifests.go` (modified, +9/-6)
-```diff
-@@ -255,20 +255,23 @@ spec:
- `
- 	}
- 
--	msMode := "prefer-crc"
- 	if m.settings.ConnectionsEncrypted {
--		msMode = "secure"
--	}
--	clusterSpec += `
-+		clusterSpec += `
-+  csi:
-+    cephfs:
-+      kernelMountOptions: ms_mode=secure`
-+	} else if m.settings.RequireMsgr2 {
-+		clusterSpec += `
-   csi:
-     cephfs:
--      kernelMountOptions: ms_mode=` + msMode + `
-+      kernelMountOptions: ms_mode=prefer-crc`
-+	}
-+	return clusterSpec + `
-   priorityClassNames:
-     mon: system-node-critical
-     osd: system-node-critical
-     mgr: system-cluster-critical
- `
--	return clusterSpec
- }
- 
- func (m *CephManifestsMaster) GetBlockSnapshotClass(snapshotClassName, reclaimPolicy string) string {
-```
-
----
-
-### Incident Patch 11: `82dbab56` (2026-07-30)
-**Commit Message**: core: set msgr2 as required by default
-
-The msgrv2 protocol is required by default. This requires
-the v5.11 kernel. If this version or newer of the kernel
-is not available, disable msgrv2 with the cephcluster setting
-network.connections.requireMsgr2: true.
-
+### Incident Patch 2: `8f77fd52` (2026-10-15)
+**Commit Message**: ci: drop go 1.25 build check from release-1.20 automerge rule
+
+The release-1.20 branch removed go 1.25 support (build matrix is now
+go-version: ["1.26"] only), so the 'linux-build-all (1.25)' check no
+longer runs on release-1.20 backport PRs. The Mergify automerge rule for
+release-1.20 still required that check, so its conditions could never be
+satisfied and backport PRs (e.g. #18570) were never enqueued or merged
+despite being approved with all checks green.
+
+Remove the stale 'linux-build-all (1.25)' condition so release-1.20
+backports can auto-merge again.
+
+Co-Authored-By: Claude Opus 4.8 <[REDACTED_EMAIL]>
 Signed-off-by: Travis Nielsen <[REDACTED_EMAIL]>
 
-**File**: `PendingReleaseNotes.md` (modified, +3/-0)
+**File**: `.mergify.yml` (modified, +0/-1)
 ```diff
-@@ -6,6 +6,9 @@
- - The OSD prepare job now fails, and is retried by Kubernetes, when a freshly prepared device is
-   missing from the `ceph-volume raw list` output, instead of silently reporting fewer OSDs than
-   were prepared (which left OSDs registered in the osdmap with no OSD deployment created).
-+- Ceph msgrv2 is required by default. Msgrv2 requires the 5.11 kernel. If you have an older kernel, disable the msgrv2 protocol
-+  with the CephCluster CR setting `network.connections.requireMsgr2: false`. If using the helm chart, this same value is applied
-+  under the `cephClusterSpec` of the values.
- 
- ## Features
- 
-```
-
-**File**: `deploy/charts/rook-ceph-cluster/values.yaml` (modified, +1/-1)
-```diff
-@@ -216,7 +216,7 @@ cephClusterSpec:
-       # Whether to require communication over msgr2. If true, the msgr v1 port (6789) will be disabled
-       # and clients will be required to connect to the Ceph cluster with the v2 port (3300).
-       # Requires a kernel that supports msgr v2 (kernel 5.11 or CentOS 8.4 or newer).
--      requireMsgr2: false
-+      requireMsgr2: true
-   #   # enable host networking
-   #   provider: host
-   #   # EXPERIMENTAL: enable the Multus network provider
-```
-
-**File**: `deploy/examples/cluster-test.yaml` (modified, +3/-0)
-```diff
-@@ -36,6 +36,9 @@ spec:
-     enabled: true
-   crashCollector:
-     disable: true
-+  network:
-+    connections:
-+      requireMsgr2: true
-   storage:
-     useAllNodes: true
-     useAllDevices: true
-```
-
-**File**: `deploy/examples/cluster.yaml` (modified, +1/-1)
-```diff
-@@ -130,7 +130,7 @@ spec:
-       # Whether to require communication over msgr2. If true, the msgr v1 port (6789) will be disabled
-       # and clients will be required to connect to the Ceph cluster with the v2 port (3300).
-       # Requires a kernel that supports msgr v2 (kernel 5.11 or CentOS 8.4 or newer).
--      requireMsgr2: false
-+      requireMsgr2: true
-     # enable host networking
-     #provider: host
-     # enable the Multus network provider
-```
-
-**File**: `tests/integration/ceph_upgrade_test.go` (modified, +2/-2)
-```diff
-@@ -522,9 +522,9 @@ func (s *UpgradeSuite) upgradeToMaster() {
- 	// that the manifests point to master.
- 	require.NoError(s.T(), s.installer.CreateNetworkPolicies())
- 
-+	logger.Info("Requiring msgr2 during helm upgrade to test the port conversion from 6789 to 3300")
-+	s.settings.RequireMsgr2 = true
- 	if s.settings.UseHelm {
--		logger.Info("Requiring msgr2 during helm upgrade to test the port conversion from 6789 to 3300")
--		s.settings.RequireMsgr2 = true
- 		// Upgrade the operator chart
- 		err := s.installer.UpgradeRookOperatorViaHelm()
- 		require.NoError(s.T(), err, "failed to upgrade the operator chart")
+@@ -222,7 +222,6 @@ pull_request_rules:
+       - "check-success=helm-unittests"
+       - "check-success=lint"
+       - "check-success=lint-test"
+-      - "check-success=linux-build-all (1.25)"
+       - "check-success=linux-build-all (1.26)"
+       - "check-success=misspell"
+       - "check-success=modcheck"
 ```
 
 ---
 
-### Incident Patch 12: `b9392fcc` (2026-09-22)
-**Commit Message**: docs: update the upgrade guide for v1.21
+### Incident Patch 3: `3b0cdbef` (2026-10-14)
+**Commit Message**: Merge pull request #18564 from trukhinyuri/fix/osd-empty-update-selector
 
-This change updates the upgrade guide to reflect v1.21 changes.
+osd: avoid empty label selector when all OSDs in batch are skipped
 
-Co-authored-by: Blaine Gardner <[REDACTED_EMAIL]>
-Signed-off-by: Michael Adam <[REDACTED_EMAIL]>
-
-**File**: `Documentation/Upgrade/rook-upgrade.md` (modified, +35/-54)
+**File**: `pkg/operator/ceph/cluster/osd/update.go` (modified, +12/-5)
 ```diff
-@@ -14,14 +14,15 @@ We welcome feedback and opening issues!
- 
- ## Supported Versions
- 
--This guide is for upgrading from **Rook v1.19.x to Rook v1.20.x**.
-+This guide is for upgrading from **Rook v1.20.x to Rook v1.21.x**.
- 
- Please refer to the upgrade guides from previous releases for supported upgrade paths.
- Rook upgrades are only supported between official releases.
- 
- For a guide to upgrade previous versions of Rook, please refer to the version of documentation for
- those releases.
- 
-+* [Upgrade 1.19 to 1.20](https://rook.io/docs/rook/v1.20/Upgrade/rook-upgrade/)
- * [Upgrade 1.18 to 1.19](https://rook.io/docs/rook/v1.19/Upgrade/rook-upgrade/)
- * [Upgrade 1.17 to 1.18](https://rook.io/docs/rook/v1.18/Upgrade/rook-upgrade/)
- * [Upgrade 1.16 to 1.17](https://rook.io/docs/rook/v1.17/Upgrade/rook-upgrade/)
-@@ -34,13 +35,16 @@ those releases.
-     official releases. Builds from the master branch can have functionality changed or removed at any
-     time without compatibility support and without prior notice.
- 
--## Breaking changes in v1.20
-+## Breaking changes in v1.21
- 
--* **CSI drivers are admin-managed via the ceph-csi-operator.** Rook no longer deploys CSI
--    drivers. Existing CSI settings that were configured through the `rook-ceph-operator-config`
--    ConfigMap must be migrated to the ceph-csi-operator resources. The following sections will guide
--    you through this conversion.
- 
-+* Helm OCI chart tags no longer include the `v` prefix (e.g., `1.21.0` instead of `v1.21.0`). Update any scripts or tooling that reference the chart by tag.
-+* Ceph msgrv2 is required by default.
-+    * Msgrv2 requires the 5.11 kernel. If you have an older kernel, disable the msgrv2 protocol
-+        with the CephCluster CR setting `network.connections.requireMsgr2: false`. If using the helm chart, this same value is applied
-+        under the `cephClusterSpec` of the values.
-+    * To preserve compatibility, existing volume mounts will continue to use the msgrv1 protocol until they are drained and remounted.
-+    * Ceph mons will not exclusively require msgrv2 until new mons are deployed during mon failover.
- * The minimum supported Kubernetes version is v1.32.
- 
- ## Considerations
-@@ -57,24 +61,24 @@ With this upgrade guide, there are a few notes to consider:
- 
- Unless otherwise noted due to extenuating requirements, upgrades from one patch release of Rook to
- another are as simple as updating the common resources and the image of the Rook operator. For
--example, when Rook v1.20.1 is released, the process of updating from v1.20.0 is as simple as running
-+example, when Rook v1.21.1 is released, the process of updating from v1.21.0 is as simple as running
- the following:
- 
- ```console
--git clone --single-branch --depth=1 --branch v1.20.1 https://github.com/rook/rook.git
-+git clone --single-branch --depth=1 --branch v1.21.1 https://github.com/rook/rook.git
- cd rook/deploy/examples
- ```
- 
- If the Rook Operator or CephCluster are deployed into a different namespace than
--`rook-ceph`, see the [Update common resources and CRDs](#2-update-common-resources-and-crds)
-+`rook-ceph`, see the [Update common resources and CRDs](#1-update-common-resources-and-crds)
- section for instructions on how to change the default namespaces in `common.yaml`.
- 
--Then, apply the latest changes from v1.20, update CSI operator resources, and update the Rook
-+Then, apply the latest changes from v1.21, update CSI operator resources, and update the Rook
- Operator image.
- 
- ```console
- kubectl apply -f common.yaml -f crds.yaml -f csi-operator.yaml
--kubectl -n rook-ceph set image deploy/rook-ceph-operator rook-ceph-operator=rook/ceph:v1.20.1
-+kubectl -n rook-ceph set image deploy/rook-ceph-operator rook-ceph-operator=rook/ceph:v1.21.1
- ```
- 
- A good practice is to update Rook common resources from the example
-@@ -143,9 +147,9 @@ In order to successfully upgrade a Rook cluster, the following prerequisites mus
- 
- ## Rook Operator Upgrade
- 
--The examples given in this guide upgrade a live Rook cluster running `v1.19.6` to
--the version `v1.20.0`. This upgrade should work from any official patch release of Rook v1.19 to any
--official patch release of v1.20.
-+The examples given in this guide upgrade a live Rook cluster running `v1.19.11` to
-+the version `v1.21.0`. This upgrade should work from any official patch release of Rook v1.20 to any
-+official patch release of v1.21.
- 
- Let's get started!
- 
-@@ -160,31 +164,8 @@ export ROOK_OPERATOR_NAMESPACE=rook-ceph
- export ROOK_CLUSTER_NAMESPACE=rook-ceph
- ```
- 
--### **1. Save existing CSI settings**
- 
--If custom CSI settings are required, in previous releases they were applied in the ConfigMap `rook-ceph-operator-config`
--as defined in `operator.yaml`, or in the `rook-ceph` helm chart. Starting in Rook v1.18, Rook
--converted these Rook settings in the Ceph-CSI operator settings and automatically created the
--`OperatorConfig` and `Driver` CRs.
--
--Before upgrading to v1.20, retrieve these CRs to get your desired sett
-```
-
----
-
-### Incident Patch 13: `328387d8` (2026-09-04)
-**Commit Message**: security: drop command output from unmarshal error text
-
-Three unmarshal failures wrapped their raw input into the returned error, and
-that input is a credential-bearing command response in every case: a
-radosgw-admin user document, which carries the user's S3 access and secret
-keys, and ceph-volume list output, which carries ceph.cephx_lockbox_secret
-for encrypted OSDs.
-
-These errors do not stop at the operator log. The object store user error is
-reported through ReportReconcileResult, which writes it to a Kubernetes event
-and the CephObjectStore status, and the ceph-volume list error becomes
-OrchestrationStatus.Message, which the OSD provisioning job writes to a
-ConfigMap. Each is readable without the access needed to read the Secret the
-value belongs in. The third site is the OSD replacement path, which carries
-the same payload from the same command.
-
-Report the response size in place of the response. A type error already names
-the offending field, but json.SyntaxError reports only its own message and
-never its offset, and a malformed response is the likelier failure for
-ceph-volume list calls: callCephVolume avoids combined output precisely
-because stderr contamination breaks t
-
-**File**: `pkg/daemon/ceph/osd/replace.go` (modified, +1/-1)
-```diff
-@@ -51,7 +51,7 @@ func cephVolumeLVMList(context *clusterd.Context, osdID int) ([]cvLVMListEntry,
+@@ -219,12 +219,14 @@ func (c *updateConfig) updateExistingOSDs(errs *provisionErrors) {
+ 		listIDs = append(listIDs, strconv.Itoa(osdID))
  	}
- 	var listResult map[string][]cvLVMListEntry
- 	if err := json.Unmarshal([]byte(result), &listResult); err != nil {
--		return nil, errors.Wrapf(err, "failed to unmarshal ceph-volume lvm list result for osd.%d. %s", osdID, result)
-+		return nil, errors.Wrapf(err, "failed to unmarshal ceph-volume lvm list result for osd.%d (%d bytes)", osdID, len(result))
- 	}
- 	return listResult[strconv.Itoa(osdID)], nil
- }
-```
-
-**File**: `pkg/daemon/ceph/osd/replace_test.go` (modified, +21/-0)
-```diff
-@@ -691,3 +691,24 @@ func TestIsCryptsetupNotActive(t *testing.T) {
- 	assert.False(t, isCryptsetupNotActive(errors.New("exit status 1")))
- 	assert.False(t, isCryptsetupNotActive(nil))
- }
-+
-+func TestCephVolumeLVMListParseFailureDoesNotLeakLockboxSecret(t *testing.T) {
-+	// the raw ceph-volume response carries ceph.cephx_lockbox_secret even though
-+	// osdTags does not map it, so the payload must not ride along with the error
-+	const lockboxSecret = "EXAMPLELOCKBOXSECRET00000000000000000001"
-+	badResult := `{"3": [{"type": "block", "path": 12345, "tags": {"ceph.encrypted": "1", "ceph.cephx_lockbox_secret": "` + lockboxSecret + `"}}]}`
-+
-+	executor := &exectest.MockExecutor{}
-+	executor.MockExecuteCommandWithOutput = func(command string, args ...string) (string, error) {
-+		if command == "stdbuf" && args[4] == "lvm" && args[5] == "list" {
-+			return badResult, nil
+ 
+-	// when waiting on deployments to be updated, only list OSDs we intend to update specifically by ID
+-	listFunc := c.cluster.getFuncToListDeploymentsWithIDs(listIDs)
++	if len(updatedDeployments) > 0 {
++		// when waiting on deployments to be updated, only list OSDs we intend to update specifically by ID
++		listFunc := c.cluster.getFuncToListDeploymentsWithIDs(listIDs)
+ 
+-	failures := updateMultipleDeploymentsAndWaitFunc(c.cluster.clusterInfo.Context, c.cluster.context.Clientset, updatedDeployments, listFunc)
+-	for _, f := range failures {
+-		errs.addError("%v", errors.Wrapf(f.Error, "failed to update OSD deployment %q", f.ResourceName))
++		failures := updateMultipleDeploymentsAndWaitFunc(c.cluster.clusterInfo.Context, c.cluster.context.Clientset, updatedDeployments, listFunc)
++		for _, f := range failures {
++			errs.addError("%v", errors.Wrapf(f.Error, "failed to update OSD deployment %q", f.ResourceName))
 +		}
-+		return "", errors.Errorf("unknown command %s %s", command, args)
-+	}
-+
-+	_, err := cephVolumeLVMList(&clusterd.Context{Executor: executor}, 3)
-+
-+	require.Error(t, err)
-+	assert.NotContains(t, err.Error(), lockboxSecret)
-+	assert.Contains(t, err.Error(), "cvLVMListEntry.path of type string")
-+}
-```
-
-**File**: `pkg/daemon/ceph/osd/volume.go` (modified, +4/-1)
-```diff
-@@ -1220,7 +1220,10 @@ func GetCephVolumeLVMOSDs(context *clusterd.Context, clusterInfo *client.Cluster
- 	var cephVolumeResult map[string][]osdInfo
- 	err = json.Unmarshal([]byte(result), &cephVolumeResult)
- 	if err != nil {
--		return nil, errors.Wrapf(err, "failed to unmarshal ceph-volume %s list results. %s", cvMode, result)
-+		// the payload carries ceph.cephx_lockbox_secret for encrypted OSDs, and this
-+		// error reaches the OSD status ConfigMap. A syntax error reports only its
-+		// message, so report the response size in place of the response.
-+		return nil, errors.Wrapf(err, "failed to unmarshal ceph-volume %s list results (%d bytes)", cvMode, len(result))
  	}
  
- 	for name, osdInfo := range cephVolumeResult {
+ 	// If there were failures, don't retry them. If it's a transitory k8s/etcd issue, the next
+@@ -366,6 +368,11 @@ func (e *existenceList) Exists(osdID int) bool {
+ 
+ // return a function that will list only OSD deployments with the IDs given
+ func (c *Cluster) getFuncToListDeploymentsWithIDs(osdIDs []string) func() (*appsv1.DeploymentList, error) {
++	if len(osdIDs) == 0 {
++		return func() (*appsv1.DeploymentList, error) {
++			return &appsv1.DeploymentList{}, nil
++		}
++	}
+ 	selector := fmt.Sprintf("ceph-osd-id in (%s)", strings.Join(osdIDs, ", "))
+ 	listOpts := metav1.ListOptions{
+ 		LabelSelector: selector, // e.g. 'ceph-osd-id in (1, 3, 5, 7, 9)'
 ```
 
-**File**: `pkg/daemon/ceph/osd/volume_test.go` (modified, +53/-0)
+**File**: `pkg/operator/ceph/cluster/osd/update_test.go` (modified, +36/-0)
 ```diff
-@@ -1870,6 +1870,59 @@ func TestCephVolumeResponseIsNotLoggedWithLockboxSecret(t *testing.T) {
- 	assert.Contains(t, logOutput, "dbe407e0-c1cb-495e-b30a-02e01de6c8ae")
+@@ -141,6 +141,8 @@ func Test_updateExistingOSDs(t *testing.T) {
+ 		deployments []*appsv1.Deployment,
+ 		listFunc func() (*appsv1.DeploymentList, error),
+ 	) k8sutil.Failures {
++		_, err := listFunc()
++		assert.NoError(t, err)
+ 		for _, d := range deployments {
+ 			deploymentsUpdated = append(deploymentsUpdated, d.Name)
+ 		}
+@@ -1011,3 +1013,37 @@ func TestCluster_rotateCephxKey(t *testing.T) {
+ 		assert.Equal(t, rotateCalledForEntity, "osd.2")
+ 	})
  }
- 
-+func TestCephVolumeLVMResultParseFailureDoesNotLeakLockboxSecret(t *testing.T) {
-+	// ceph-volume list output carries ceph.cephx_lockbox_secret for encrypted OSDs.
-+	// This error becomes OrchestrationStatus.Message, which the OSD provisioning job
-+	// writes to a ConfigMap, so the payload must not ride along with it.
-+	const lockboxSecret = "EXAMPLELOCKBOXSECRET00000000000000000001"
-+	tags := `"tags": {"ceph.osd_fsid": "9ee6a1e7-1c3f-4c1e-9a5b-0c4b1f2d3e4f", "ceph.encrypted": "1", "ceph.cephx_lockbox_secret": "` + lockboxSecret + `"}`
 +
-+	tests := []struct {
-+		name   string
-+		result string
-+		// the field a type error names; empty when the error is a syntax error,
-+		// which reports only its own message
-+		namesField string
-+	}{
-+		{
-+			// path is a string in osdInfo, so a number is the shape a ceph-volume
-+			// schema change would take
-+			name:       "type error",
-+			result:     `{"0": [{"name": "osd-block-9ee6a1e7", "path": 12345, ` + tags + `, "type": "block"}]}`,
-+			namesField: "osdInfo.path of type string",
-+		},
-+		{
-+			// callCephVolume warns that stderr contamination breaks the unmarshal, so
-+			// a malformed response is the likelier failure here
-+			name:   "truncated response",
-+			result: `{"0": [{"name": "osd-block-9ee6a1e7", ` + tags,
-+		},
++func Test_getFuncToListDeploymentsWithIDs(t *testing.T) {
++	namespace := "rook-ceph"
++	clientset := fake.NewClientset()
++	ctx := &clusterd.Context{
++		Clientset: clientset,
 +	}
-+
-+	for _, tc := range tests {
-+		t.Run(tc.name, func(t *testing.T) {
-+			executor := &exectest.MockExecutor{}
-+			executor.MockExecuteCommandWithOutput = func(command string, args ...string) (string, error) {
-+				if command == "stdbuf" && args[4] == "lvm" && args[5] == "list" {
-+					return tc.result, nil
-+				}
-+				return "", errors.Errorf("unknown command %s %s", command, args)
-+			}
-+
-+			context := &clusterd.Context{Executor: executor}
-+			_, err := GetCephVolumeLVMOSDs(context, &cephclient.ClusterInfo{Namespace: "name"}, "4bfe8b72-5e69-4330-b6c0-4d914db8ab89", "", false, false)
-+
-+			require.Error(t, err)
-+			assert.NotContains(t, err.Error(), lockboxSecret)
-+			// the response size is the only context a syntax error leaves
-+			assert.Contains(t, err.Error(), fmt.Sprintf("(%d bytes)", len(tc.result)))
-+			if tc.namesField != "" {
-+				assert.Contains(t, err.Error(), tc.namesField)
-+			}
-+		})
++	clusterInfo := &cephclient.ClusterInfo{
++		Namespace:   namespace,
++		CephVersion: cephver.Squid,
++		Context:     t.Context(),
 +	}
-+}
++	clusterInfo.SetName("mycluster")
++	clusterInfo.OwnerInfo = cephclient.NewMinimumOwnerInfo(t)
++	c := New(ctx, clusterInfo, cephv1.ClusterSpec{}, "rook/rook:master")
 +
- func TestParseCephVolumeRawResult(t *testing.T) {
- 	executor := &exectest.MockExecutor{}
- 	executor.MockExecuteCommandWithOutput = func(command string, args ...string) (string, error) {
-```
-
-**File**: `pkg/operator/ceph/object/user.go` (modified, +5/-1)
-```diff
-@@ -56,7 +56,11 @@ func decodeUser(data string) (*ObjectUser, int, error) {
- 	var user admin.User
- 	err := json.Unmarshal([]byte(data), &user)
- 	if err != nil {
--		return nil, RGWErrorParse, errors.Wrapf(err, "failed to unmarshal json. %s", data)
-+		// the payload is a radosgw-admin user document, which carries the user's S3
-+		// keys. A type error names the offending field, but a syntax error reports
-+		// only its message, so report the response size in its place.
-+		logger.Tracef("failed to unmarshal user json: %s", data) // only trace(insecure) logged because the response carries the user's S3 keys
-+		return nil, RGWErrorParse, errors.Wrapf(err, "failed to unmarshal user json (%d bytes)", len(data))
- 	}
- 
- 	rookUser := ObjectUser{UserID: user.ID, DisplayName: &user.DisplayName, Email: &user.Email}
-```
-
-**File**: `pkg/operator/ceph/object/user_test.go` (added, +122/-0)
-```diff
-@@ -0,0 +1,122 @@
-+/*
-+Copyright 2026 The Rook Authors. All rights reserved.
++	d0 := getDummyDeploymentOnNode(clientset, c, "node0", 0)
++	createDeploymentOrPanic(clientset, d0)
 +
-+Licensed under the Apache License, Version 2.0 (the "License");
-+you may not use this file except in compliance with the License.
-+You may obtain a copy of the License at
-+
-+	http://www.apache.org/licenses/LICENSE-2.0
-+
-+Unless required by applicable law or agreed to in writing, software
-+distributed under the License is distributed on an "AS IS" BASIS,
-+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+See the License for the specific language governing permissions and
-+limitations under the License.
-+*/
-+
-+package object
-+
-+import (
-+	"bytes"
-+	"fmt"
-+	"os"
-+	"testing"
-+
-+	"github.com/coreos/pkg/capnslog"
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+func TestDecodeUserDoesNotLeakKeys(t *testing.T) {
-+	// decodeUser is handed radosgw-admin user output, which carries the user's S3
-+	// keys. Its error reaches a Kubernetes event and the CephObjectStore status by
-+	// way of the admin-ops and dashboard user provisioning.
-+	const (
-+		accessKey = "EXAMPLEACCESSKEYID01"
-+		secretKey = "EXAMPLEUSERSECRETKEY0000000000000000000001"
-+	)
-+	keys := `"keys": [{"user": "my-user", "access_key": "` + accessKey + `", "secret_key": "` + secretKey + `"}]`
-+
-+	tests := []struct {
-+		name string
-+		json string
-+		// the field a type error names; empty when the error is a syntax error,
-+		// which reports only its own message
-+		namesField string
-+	}{
-+		{
-+			// max_buckets is an int in admin.User, so a string is the shape a schema
-+			// change across Ceph versions would take
-+			name:       "type error",
-+			json:       `{"user_id": "my-user", "max_buckets": "not-an-int", ` + keys + `}`,
-+			namesField: "max_buckets",
-+		},
-+		{
-+			name: "truncated response",
-+			json: `{"user_id": "my-user", ` + keys,
-+		},
-+	}
-+
-+	for _, tc := range tests {
-+		t.Run(tc.name, func(t *testing.T) {
-+			_, code, err := decodeUser(tc.json)
-+
-+			require.Error(t, err)
-+			assert.Equal(t, RGWErrorParse, code)
-+			assert.NotContains(t, err.Error(), secretKey)
-+			assert.NotContains(t, err.Error(), accessKey)
-+			// the response size is the only context a syntax error leaves
-+			assert.Contains(t, err.Error(), fmt.Sprintf("(%d bytes)", len(tc.json)))
-+			if tc.namesField != "" {
-+				assert.Contains(t, err.Error(), tc.namesField)
-+			}
-+		})
-+	}
-+}
-+
-+// captureLogsAtLevel redirects the capnslog sink into a buffer at the given level
-+// for the duration of the test, restoring the package default afterwards so later
-+// tests still log to stderr and never at TRACE.
-+func captureLogsAtLevel(t *testing.T, level capnslog.LogLevel) *bytes.Buffer {
-+	t.Helper()
-+
-+	logBuf := bytes.NewBuffer([]byte{})
-+	capnslog.SetFormatter(capnslog.NewLogFormatter(logBuf, "", 0))
-+	capnslog.SetGlobalLogLevel(level)
-+	t.Cleanup(func() {
-+		capnslog.SetFormatter(capnslog.NewDefaultFormatter(os.Stderr))
-+		capnslog.SetGlobalLogLevel(capnslog.INFO)
++	t.Run("empty OSD IDs returns empty list without invalid selector error", func(t *testing.T) {
++		listFunc := c.getFuncToListDeploymentsWithIDs([]string{})
++		list, err := listFunc()
++		assert.NoError(t, err)
++		assert.Empty(t, list.Items)
 +	})
 +
-+	return logBuf
++	t.Run("non-empty OSD IDs filters matching deployments", func(t *testing.T) {
++		listFunc := c.getFuncToListDeploymentsWithIDs([]string{"0"})
++		list, err := listFunc()
++		assert.NoError(t, err)
++		assert.Len(t, list.Items, 1)
++		assert.Equal(t, "rook-ceph-osd-0", list.Items[0].Name)
++	})
 +}
-+
-+func TestDecodeUserLogsRawResponseOnlyUnderTrace(t *testing.T) {
-+	// the raw response is the only way to tell a truncated document from a schema
-+	// change, but it carries the user's S3 keys, so it is logged only at the TRACE
-+	// level that ROOK_LOG_LEVEL=TRACE_INSECURE unlocks.
-+	const secretKey = "EXAMPLEUSERSECRETKEY0000000000000000000001"
-+	badJSON := `{"user_id": "my-user", "keys": [{"secret_key": "` + secretKey + `"}]`
-+
-+	for _, tc := range []struct {
-+		level  capnslog.LogLevel
-+		logged bool
-+	}{
-+		{level: capnslog.DEBUG, logged: false},
-+		{level: capnslog.TRACE, logged: true},
-+	} {
-+		t.Run(tc.level.String(), func(t *testing.T) {
-+			logBuf := captureLogsAtLevel(t, tc.level)
-+
-+			_, _, err := decodeUser(badJSON)
-+
-+			require.Error(t, err)
-+			assert.NotContains(t, err.Error(), secretKey)
-+			if tc.logged {
-+				assert.Contains(t, logBuf.String(), secretKey)
-+			} else {
-+				assert.NotContains(t, logBuf.String(), secretKey)
-+			}
-+		})
+```
+
+**File**: `pkg/operator/k8sutil/deployment.go` (modified, +4/-0)
+```diff
+@@ -228,6 +228,10 @@ func WaitForDeploymentsToUpdate(
+ 	progressDeadlineSeconds *int32,
+ 	listFunc func() (*appsv1.DeploymentList, error),
+ ) Failures {
++	if len(deploymentsUpdated) == 0 {
++		return Failures{}
 +	}
-+}
++
+ 	// do not modify the input!
+ 	waitingOn := DeploymentsUpdated{}
+ 	maps.Copy(waitingOn, deploymentsUpdated)
 ```
 
----
-
-### Incident Patch 14: `98c1fad2` (2026-09-22)
-**Commit Message**: Merge pull request #18208 from jhoblitt/build/crds-mktemp-tmpdir
-
-build: fix TMPDIR handling and mode of generated helm resources.yaml
-
-**File**: `build/crds/build-crds.sh` (modified, +4/-1)
+**File**: `pkg/operator/k8sutil/deployment_test.go` (modified, +1/-0)
 ```diff
-@@ -70,7 +70,7 @@ EOF
- }
+@@ -329,6 +329,7 @@ func TestWaitForDeploymentsToUpdate(t *testing.T) {
+ 		}
+ 		runTest()
+ 		assert.Len(t, failures, 0)
++		assert.Equal(t, 0, timesCalled)
+ 	})
  
- build_helm_resources() {
--  TMP_FILE=$(mktemp -q /tmp/resources.XXXXXX || exit 1)
-+  TMP_FILE=$(mktemp "${TMPDIR:-/tmp}/resources.XXXXXX" || exit 1)
-   echo "Generating helm resources.yaml to temp file: $TMP_FILE"
-   {
-     # add header
-@@ -85,6 +85,9 @@ build_helm_resources() {
-     echo "{{- end }}"
-   } >>"$TMP_FILE"
-   echo "updating helm crds file $CEPH_HELM_CRDS_FILE_PATH from temp file"
-+  # mktemp creates the file 0600 and mv carries that mode over to the
-+  # destination, so the mode has to be set before the move.
-+  chmod 0644 "$TMP_FILE"
-   mv "$TMP_FILE" "$CEPH_HELM_CRDS_FILE_PATH"
- }
- 
-```
-
----
-
-### Incident Patch 15: `ff6e5c69` (2026-09-21)
-**Commit Message**: Merge pull request #18440 from travisn/fix-mergify-partition-device-v19
-
-ci: fix mergify automerge for release-1.21 backports
-
-**File**: `.mergify.yml` (modified, +1/-1)
-```diff
-@@ -304,7 +304,7 @@ pull_request_rules:
-       - "check-success=canary-tests / multi-cluster-mirroring (quay.io/ceph/ceph:v20, v1.37.0)"
-       - "check-success=canary-tests / multus-public-and-cluster (quay.io/ceph/ceph:v20, v1.37.0)"
-       - "check-success=canary-tests / osd-with-metadata-device (quay.io/ceph/ceph:v20, v1.37.0)"
--      - "check-success=canary-tests / osd-with-metadata-partition-device (quay.io/ceph/ceph:v20, v1.37.0)"
-+      - "check-success=canary-tests / osd-with-metadata-partition-device (quay.io/ceph/ceph:v19, v1.37.0)"
-       - "check-success=canary-tests / pvc (quay.io/ceph/ceph:v20, v1.37.0)"
-       - "check-success=canary-tests / pvc-db (quay.io/ceph/ceph:v20, v1.37.0)"
-       - "check-success=canary-tests / pvc-db-wal (quay.io/ceph/ceph:v20, v1.37.0)"
+ 	t.Run("wait successful", func(t *testing.T) {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #18508** (2026-10-05): osd: filter rbd devices from LVM scans in raw-mode activation (release-1.20) (@jhoblitt)
-- **PR #18507** (2026-10-05): osd: respect per-device encryptedDevice config (backport #18472) (@mergify[bot])
-- **PR #18505** (2026-10-05): monitoring: correct NVMe-oF gateway CPU alert percentage (backport #18476) (@mergify[bot])
-- **PR #18504** (2026-10-05): monitoring: correct NVMe-oF gateway CPU alert percentage (backport #18476) (@mergify[bot])
-- **PR #18503** (2026-10-05): csi: add a setting to skip creating the csi operator resources (backport #18373) (@mergify[bot])
-- **PR #18502** (2026-10-05): csi: add a setting to skip creating the csi operator resources (backport #18373) (@mergify[bot])
-- **PR #18501** (2026-10-05): csi: update csi-driver and ceph-csi-operator (backport #18498) (@mergify[bot])
-- **PR #18500** (closed): build(deps): bump the github-dependencies group with 2 updates (@dependabot[bot])
+- **PR #18580** (2026-10-16): Add status.message on Rook custom resources (backport #18533) (@mergify[bot])
+- **PR #18576** (2026-10-16): ci: remove hardcoded nvmeof image from test example (@OdedViner)
+- **PR #18573** (2026-10-16): ci: drop go 1.25 build check from release-1.20 automerge rule (@travisn)
+- **PR #18572** (2026-10-15): object: ignore the dashboard's per-realm credential map (backport #18425) (@mergify[bot])
+- **PR #18571** (2026-10-15): osd: avoid empty label selector when all OSDs in batch are skipped (backport #18564) (@mergify[bot])
+- **PR #18570** (2026-10-15): osd: avoid empty label selector when all OSDs in batch are skipped (backport #18564) (@mergify[bot])
 
 ---
 

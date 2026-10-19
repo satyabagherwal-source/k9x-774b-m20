@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T04:47:11.595Z",
+  "last_updated": "2026-10-19T04:53:09.259Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -558,14 +558,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-taichuai-zdtaichu5-0-9b",
-      "content_hash": "1d64a93ad9fe5da8e44d1405d2933f81b8f1ff1ba720979a7c376744d047e9ea",
-      "verified_at": "2026-10-17T23:23:20.478Z",
+      "content_hash": "1c72a561e3c70dc9fdfbafddabced2c7b019ddf2937c3f933fbeb2f541c20d98",
+      "verified_at": "2026-10-19T04:53:04.090Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T23:23:20.478Z"
+      "last_updated": "2026-10-19T04:53:04.090Z"
     },
     "Comfy-Org/Qwen-Image-2.1": {
       "repository": "Comfy-Org/Qwen-Image-2.1",
@@ -9007,6 +9007,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T04:47:11.594Z"
+    },
+    "htmlstreamofficial/preline": {
+      "repository": "htmlstreamofficial/preline",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-htmlstreamofficial-preline",
+      "content_hash": "5083e7e87435dcb186b98d464aaa1f3d83f9713d4ac59a28ed63fc6c24cfc877",
+      "verified_at": "2026-10-19T04:52:55.190Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T04:52:55.190Z"
+    },
+    "gotham-rs/gotham": {
+      "repository": "gotham-rs/gotham",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-gotham-rs-gotham",
+      "content_hash": "ea37a84fe4fec7adbfd941920171178ad02f16b2d9aa035d7984eae43a3b43c5",
+      "verified_at": "2026-10-19T04:52:56.627Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T04:52:56.627Z"
+    },
+    "react-native-webrtc/react-native-webrtc": {
+      "repository": "react-native-webrtc/react-native-webrtc",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-react-native-webrtc-react-native-webrtc",
+      "content_hash": "441e6fac6b0089350f8c3a1e5ae93830f9405ccd16c3639f4b2c100e482e726d",
+      "verified_at": "2026-10-19T04:53:00.995Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T04:53:00.995Z"
+    },
+    "rook/rook": {
+      "repository": "rook/rook",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-rook-rook",
+      "content_hash": "76958713ce02a22b91f676e044a74b692a82ed47ab2e1e62919bb51929e1996f",
+      "verified_at": "2026-10-19T04:53:03.481Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T04:53:03.481Z"
+    },
+    "genkit-ai/genkit": {
+      "repository": "genkit-ai/genkit",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-genkit-ai-genkit",
+      "content_hash": "69cfb975f2f8e853ed55ff1ccc6b34a05ed28086738c4a10a6f06567faa237be",
+      "verified_at": "2026-10-19T04:53:09.259Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T04:53:09.259Z"
     }
   },
   "repos": {
