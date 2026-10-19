@@ -2253,8 +2253,8 @@
     "officialUrl": "https://github.com/cryfs/cryfs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-19T14:21:06.383Z",
-    "lastVerified": "2026-10-19T14:21:06.383Z",
+    "lastChecked": "2026-10-19T17:25:03.496Z",
+    "lastVerified": "2026-10-19T17:25:03.496Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cryfs-cryfs",
@@ -7042,12 +7042,12 @@
     "revisionIdentifier": "e33b17ae"
   },
   "aome510-spotify-player": {
-    "name": "aome510/spotify-player",
+    "name": "spotify-player",
     "officialUrl": "https://github.com/aome510/spotify-player",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-19T02:18:19.859Z",
-    "lastVerified": "2026-10-19T02:18:19.859Z",
+    "lastChecked": "2026-10-19T17:24:53.499Z",
+    "lastVerified": "2026-10-19T17:24:53.499Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aome510-spotify-player",
@@ -7056,7 +7056,8 @@
     "recentFixesCount": 10,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "7dc9d17a"
   },
   "builderio-builder": {
     "name": "BuilderIO/builder",
@@ -10685,12 +10686,12 @@
     "revisionIdentifier": "7fcb3b54"
   },
   "apache-incubator-pegasus": {
-    "name": "apache/incubator-pegasus",
+    "name": "incubator-pegasus",
     "officialUrl": "https://github.com/apache/incubator-pegasus",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-10-19T04:19:40.940Z",
-    "lastVerified": "2026-10-19T04:19:40.940Z",
+    "lastChecked": "2026-10-19T17:25:06.079Z",
+    "lastVerified": "2026-10-19T17:25:06.079Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-apache-incubator-pegasus",
@@ -10699,7 +10700,8 @@
     "recentFixesCount": 10,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "75015467"
   },
   "someengineering-fixinventory": {
     "name": "fixinventory",
@@ -14107,12 +14109,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "databricks-click": {
-    "name": "databricks/click",
+    "name": "click",
     "officialUrl": "https://github.com/databricks/click",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-19T05:05:39.747Z",
-    "lastVerified": "2026-10-19T05:05:39.747Z",
+    "lastChecked": "2026-10-19T17:25:00.955Z",
+    "lastVerified": "2026-10-19T17:25:00.955Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-databricks-click",
@@ -14121,7 +14123,8 @@
     "recentFixesCount": 14,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "47ff7d1b"
   },
   "dagucloud-dagu": {
     "name": "dagucloud/dagu",
@@ -18301,8 +18304,8 @@
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-19T16:56:17.849Z",
-    "lastVerified": "2026-10-19T16:56:17.849Z",
+    "lastChecked": "2026-10-19T17:25:08.496Z",
+    "lastVerified": "2026-10-19T17:25:08.496Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-synalinks-synalinks-skills",
@@ -21725,12 +21728,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "shadcn-ui-taxonomy": {
-    "name": "shadcn-ui/taxonomy",
+    "name": "taxonomy",
     "officialUrl": "https://github.com/shadcn-ui/taxonomy",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-19T06:04:38.925Z",
-    "lastVerified": "2026-10-19T06:04:38.925Z",
+    "lastChecked": "2026-10-19T17:24:51.001Z",
+    "lastVerified": "2026-10-19T17:24:51.001Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-shadcn-ui-taxonomy",
@@ -21739,7 +21742,8 @@
     "recentFixesCount": 15,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "298a8857"
   },
   "shadcn-ui-ui": {
     "name": "shadcn-ui-ui",
@@ -21792,18 +21796,19 @@
     "revisionIdentifier": "cfeaa4a4"
   },
   "software-mansion-react-native-screens": {
-    "name": "software-mansion-react-native-screens",
+    "name": "software-mansion/react-native-screens",
     "officialUrl": "https://github.com/software-mansion/react-native-screens",
     "sourceType": "github",
-    "technology": "code-repository",
-    "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-02T03:28:12.514Z",
-    "lastVerified": "2026-10-02T03:28:12.514Z",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-19T17:25:07.648Z",
+    "lastVerified": "2026-10-19T17:25:07.648Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
-    "learningId": null,
-    "promotedRulesCount": 0,
-    "recentFixesCount": 0,
+    "learningId": "learn-github-software-mansion-react-native-screens",
+    "contentHash": "9dc666b430707d2f1a69149087304c95e4347f5c585b1a59134baf1081ecb2a9",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 8,
+    "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   },
@@ -25058,9 +25063,9 @@
   "sarfrz-novacrawl": {
     "name": "NovaCrawl",
     "officialUrl": "https://github.com/SArfrz/NovaCrawl",
-    "lastChecked": "2026-10-18T05:54:17.765Z",
+    "lastChecked": "2026-10-19T17:24:55.950Z",
     "revisionIdentifier": "68c95079df",
-    "lastVerified": "2026-10-18T05:54:17.766Z"
+    "lastVerified": "2026-10-19T17:24:55.950Z"
   },
   "ildrm-northstar-seo": {
     "name": "northstar-seo",
@@ -26321,8 +26326,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-19T17:18:37.427Z",
-    "lastVerified": "2026-10-19T17:18:37.427Z",
+    "lastChecked": "2026-10-19T17:25:11.560Z",
+    "lastVerified": "2026-10-19T17:25:11.560Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",

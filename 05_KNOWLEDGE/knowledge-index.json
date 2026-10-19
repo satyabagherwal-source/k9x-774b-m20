@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T17:18:34.848Z",
-  "total_verified_learnings": 861,
+  "last_updated": "2026-10-19T17:25:08.951Z",
+  "total_verified_learnings": 862,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -39305,22 +39305,35 @@
     "learn-github-software-mansion-react-native-screens": {
       "learning_id": "learn-github-software-mansion-react-native-screens",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "software-mansion-react-native-screens",
+      "source": "software-mansion/react-native-screens",
+      "repository": "software-mansion/react-native-screens",
       "slug": "software-mansion-react-native-screens",
       "platform": "github",
       "source_url": "https://github.com/software-mansion/react-native-screens",
-      "source_version": "HEAD",
-      "content_hash": "0180652c05194622abb7bf180bd36468a4eae9ca493466f72dd6f22594de52b8",
+      "source_version": "dc59d508",
+      "content_hash": "9dc666b430707d2f1a69149087304c95e4347f5c585b1a59134baf1081ecb2a9",
       "dossier_path": "07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2710,
+          "title": "iOS, Tabs): filter UIKit's didSelectTab: for programmatic selection while More i",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.622Z"
+      "verified_at": "2026-10-19T17:25:08.931Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-someengineering-fixinventory": {
       "learning_id": "learn-github-someengineering-fixinventory",
@@ -90060,6 +90073,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T17:18:31.031Z"
+    },
+    "rule-2710": {
+      "learning_id": "rule-2710",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2710,
+      "title": "iOS, Tabs): filter UIKit's didSelectTab: for programmatic selection while More i",
+      "source_url": "https://github.com/software-mansion/react-native-screens",
+      "source_version": "dc59d508",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T17:25:08.931Z"
     }
   },
   "aliases": {

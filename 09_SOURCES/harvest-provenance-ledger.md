@@ -3386,3 +3386,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-mistralai-timestral-209m` | `https://huggingface.co/mistralai/Timestral-209M` | `hf-mistral` | Multi-dimensional audit evidence | 2026-10-19T17:18:30.894Z |
 | `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `29c60bbb` | Multi-dimensional audit evidence | 2026-10-19T17:18:31.106Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `508b0013` | Multi-dimensional audit evidence | 2026-10-19T17:18:34.892Z |
+| `learn-github-software-mansion-react-native-screens` | `https://github.com/software-mansion/react-native-screens` | `dc59d508` | Multi-dimensional audit evidence | 2026-10-19T17:25:09.024Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T17:18:34.899Z",
+  "last_updated": "2026-10-19T17:25:09.031Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -12732,6 +12732,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T17:18:30.901Z"
+    },
+    "software-mansion/react-native-screens": {
+      "repository": "software-mansion/react-native-screens",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-software-mansion-react-native-screens",
+      "content_hash": "9dc666b430707d2f1a69149087304c95e4347f5c585b1a59134baf1081ecb2a9",
+      "verified_at": "2026-10-19T17:25:09.031Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T17:25:09.031Z"
     }
   },
   "repos": {

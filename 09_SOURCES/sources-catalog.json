@@ -8458,5 +8458,15 @@
     "contentHash": "3639530b5599ca33bdeee25586118c518645335e9f18aece083e48da1cf72bbd",
     "lastHarvestedAt": "2026-10-19T17:18:30.894Z",
     "learningId": "learn-huggingface-mistralai-timestral-209m"
+  },
+  "software-mansion-react-native-screens": {
+    "repository": "software-mansion/react-native-screens",
+    "platform": "github",
+    "sourceUrl": "https://github.com/software-mansion/react-native-screens",
+    "sourceVersion": "dc59d508",
+    "license": "MIT",
+    "contentHash": "9dc666b430707d2f1a69149087304c95e4347f5c585b1a59134baf1081ecb2a9",
+    "lastHarvestedAt": "2026-10-19T17:25:09.024Z",
+    "learningId": "learn-github-software-mansion-react-native-screens"
   }
 }

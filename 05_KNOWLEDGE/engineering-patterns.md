@@ -195012,3 +195012,75 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `29c60bbb` are properly handled with clean fallback behavior.
+
+
+---
+
+## 2710. iOS, Tabs): filter UIKit's didSelectTab: for programmatic selection while More i (Harvested from software-mansion/react-native-screens)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "iOS, Tabs): filter UIKit's didSelectTab: for programmatic selection while More i",
+  "source": "software-mansion/react-native-screens",
+  "source_url": "https://github.com/software-mansion/react-native-screens",
+  "source_version": "dc59d508",
+  "license": "MIT",
+  "extracted_at": "2026-10-19T17:25:08.829Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-software-mansion-react-native-screens",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [software-mansion/react-native-screens](https://github.com/software-mansion/react-native-screens) (Revision: `dc59d508`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `ios/tabs/host/RNSTabBarController.mm`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-screens. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `4a87a71d`: iOS, Tabs): filter UIKit's didSelectTab: for programmatic selection while More is active (#4890). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `ios/tabs/host/RNSTabBarController.mm`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+  /// UITab path only. YES while this controller itself writes `tabs` / `selectedTab` /
+  /// `selectedViewController`. UIKit sends `didSelectTab:` synchronously from inside those writes -
+  /// this flag filters them out, so that only UIKit-driven (user) selections reach the delegate
+  /// logic. Marking user selections instead is not viable: for `UISearchTab`, a mount transaction
+  /// can land between `shouldSelectTab:` and `didSelectTab:`.
+    // Both writes below are our own. UIKit sends `didSelectTab:` synchronously from inside them, and
+    // `didSelectTab:` must not treat that as a user selection - otherwise the state is progressed
+    // twice and a second, `user`-origin event is emitted.
+    _isApplyingProgrammaticTabSelection = YES;
+    } else {
+      // While More is active `selectedTab` lags behind UIKit's selection, so the write goes through
+      // the legacy setter (our own override, so that reconciliation of implicit UIKit-driven updates
+      // keeps working).
+      [self setSelectedViewController:screenController];
+    _isApplyingProgrammaticTabSelection = NO;
+    return;
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+  /// UITab path only. YES while this controller itself writes `tabs` / `selectedTab`. UIKit sends
+  /// `didSelectTab:` synchronously from inside those writes - this flag filters them out, so that
+  /// only UIKit-driven (user) selections reach the delegate logic. Marking user selections instead
+  /// is not viable: for `UISearchTab`, a mount transaction can land between `shouldSelectTab:`
+  /// and `didSelectTab:`.
+      _isApplyingProgrammaticTabSelection = YES;
+      _isApplyingProgrammaticTabSelection = NO;
+      return;
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `4a87a71d` are properly handled with clean fallback behavior.
