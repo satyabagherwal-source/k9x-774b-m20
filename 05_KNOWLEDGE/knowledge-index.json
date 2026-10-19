@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T12:26:38.019Z",
-  "total_verified_learnings": 814,
+  "last_updated": "2026-10-19T12:32:50.312Z",
+  "total_verified_learnings": 815,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -12420,10 +12420,15 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Aleph-Alpha/Kolibri-1",
       "source_version": "hf-aleph-alpha-kolibri-1",
-      "content_hash": "e02678ba7a24e737bdaad9927f5c7a8921542846fd00f2f7ec7a872fffc1415a",
+      "content_hash": "ba5c1c012de6db39abde2ba658576b71d10b43d7e5b3255e1ac2dfcf77d406ae",
       "dossier_path": "07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md",
       "promoted_rules": [
+        {
+          "number": 969,
+          "title": "Hybrid Attention Layer Interleaving Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 1140,
           "title": "Hybrid 2D-Blocked FP8 MoE Quantization Isolation Invariant",
@@ -12453,6 +12458,16 @@
           "number": 1433,
           "title": "Non-Normalized Top-K MoE Routing Weight Preservation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2574,
+          "title": "MoE Router Precision Isolation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2575,
+          "title": "Special Token Semantic Decoupling Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -12472,7 +12487,7 @@
         "learn-huggingface-hf-aleph-alpha-kolibri-1-mv3xbaa0",
         "learn-huggingface-hf-aleph-alpha-kolibri-1-mv4c0zvx"
       ],
-      "verified_at": "2026-10-18T03:18:41.066Z",
+      "verified_at": "2026-10-19T12:32:50.298Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -30616,22 +30631,35 @@
     "learn-github-momenbasel-puremac": {
       "learning_id": "learn-github-momenbasel-puremac",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "momenbasel-puremac",
+      "source": "momenbasel/PureMac",
+      "repository": "momenbasel/PureMac",
       "slug": "momenbasel-puremac",
       "platform": "github",
       "source_url": "https://github.com/momenbasel/PureMac",
-      "source_version": "HEAD",
-      "content_hash": "5d090dba4e7726640d8ff605beff3108412f9d4f2d9c7b986bde4561cfce98a2",
+      "source_version": "20870f6b",
+      "content_hash": "7cb85c26e06cc41e34219ced9a9a1101a91341c892c611bd8e589b593c72f241",
       "dossier_path": "07_PROJECT_LEARNING/momenbasel-puremac-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/momenbasel-puremac-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2573,
+          "title": "code): move the legacy XcodeBuildMCP DerivedData root to the Trash",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.472Z"
+      "verified_at": "2026-10-19T12:32:47.074Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-moorcheh-ai-memanto": {
       "learning_id": "learn-github-moorcheh-ai-memanto",
@@ -64241,14 +64269,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 969,
       "title": "Hybrid Attention Layer Interleaving Invariant",
-      "source_url": "https://huggingface.co/Qwen/Qwen3.8-27B",
-      "source_version": "hf-qwen-qwen3.8-27b",
+      "source_url": "https://huggingface.co/Aleph-Alpha/Kolibri-1",
+      "source_version": "hf-aleph-alpha-kolibri-1",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-19T01:16:28.025Z"
+      "verified_at": "2026-10-19T12:32:50.298Z"
     },
     "rule-970": {
       "learning_id": "rule-970",
@@ -86994,6 +87022,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T12:26:38.006Z"
+    },
+    "rule-2573": {
+      "learning_id": "rule-2573",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2573,
+      "title": "code): move the legacy XcodeBuildMCP DerivedData root to the Trash",
+      "source_url": "https://github.com/momenbasel/PureMac",
+      "source_version": "20870f6b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T12:32:47.074Z"
+    },
+    "rule-2574": {
+      "learning_id": "rule-2574",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2574,
+      "title": "MoE Router Precision Isolation Invariant",
+      "source_url": "https://huggingface.co/Aleph-Alpha/Kolibri-1",
+      "source_version": "hf-aleph-alpha-kolibri-1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T12:32:50.298Z"
+    },
+    "rule-2575": {
+      "learning_id": "rule-2575",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2575,
+      "title": "Special Token Semantic Decoupling Invariant",
+      "source_url": "https://huggingface.co/Aleph-Alpha/Kolibri-1",
+      "source_version": "hf-aleph-alpha-kolibri-1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T12:32:50.298Z"
     }
   },
   "aliases": {

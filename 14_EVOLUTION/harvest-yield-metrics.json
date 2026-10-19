@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T12:26:38.072Z",
-  "total_cycles_completed": 3208,
-  "total_learnings_persisted": 3208,
-  "total_rules_promoted": 2361,
+  "last_updated": "2026-10-19T12:32:50.356Z",
+  "total_cycles_completed": 3210,
+  "total_learnings_persisted": 3210,
+  "total_rules_promoted": 2365,
   "history": [
-    {
-      "timestamp": "2026-10-19T06:52:08.555Z",
-      "repository": "futurice/pepperoni-app-kit",
-      "learningId": "learn-github-futurice-pepperoni-app-kit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T06:52:10.657Z",
-      "repository": "kube-rs/kube",
-      "learningId": "learn-github-kube-rs-kube",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T06:52:15.647Z",
       "repository": "weaviate/weaviate",
@@ -1403,6 +1389,20 @@
       "repository": "milanvarady/Applite",
       "learningId": "learn-github-milanvarady-applite",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T12:32:47.140Z",
+      "repository": "momenbasel/PureMac",
+      "learningId": "learn-github-momenbasel-puremac",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T12:32:50.356Z",
+      "repository": "Aleph-Alpha/Kolibri-1",
+      "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

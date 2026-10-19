@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T12:26:38.076Z",
+  "last_updated": "2026-10-19T12:32:50.358Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1339,14 +1339,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-aleph-alpha-kolibri-1",
-      "content_hash": "e02678ba7a24e737bdaad9927f5c7a8921542846fd00f2f7ec7a872fffc1415a",
-      "verified_at": "2026-10-18T03:18:41.114Z",
+      "content_hash": "ba5c1c012de6db39abde2ba658576b71d10b43d7e5b3255e1ac2dfcf77d406ae",
+      "verified_at": "2026-10-19T12:32:50.358Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T03:18:41.114Z"
+      "last_updated": "2026-10-19T12:32:50.358Z"
     },
     "Qwen/Qwen3-4B": {
       "repository": "Qwen/Qwen3-4B",
@@ -12027,6 +12027,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T12:26:38.075Z"
+    },
+    "momenbasel/PureMac": {
+      "repository": "momenbasel/PureMac",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-momenbasel-puremac",
+      "content_hash": "7cb85c26e06cc41e34219ced9a9a1101a91341c892c611bd8e589b593c72f241",
+      "verified_at": "2026-10-19T12:32:47.142Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T12:32:47.142Z"
     }
   },
   "repos": {

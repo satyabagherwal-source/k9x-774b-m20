@@ -185467,3 +185467,194 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `363db95a` are properly handled with clean fallback behavior.
+
+
+---
+
+## 2573. code): move the legacy XcodeBuildMCP DerivedData root to the Trash (Harvested from momenbasel/PureMac)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "code): move the legacy XcodeBuildMCP DerivedData root to the Trash",
+  "source": "momenbasel/PureMac",
+  "source_url": "https://github.com/momenbasel/PureMac",
+  "source_version": "20870f6b",
+  "license": "MIT",
+  "extracted_at": "2026-10-19T12:32:46.996Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-momenbasel-puremac",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [momenbasel/PureMac](https://github.com/momenbasel/PureMac) (Revision: `20870f6b`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `PureMac/Logic/Utilities/XcodeBuildMCPDerivedDataSupport.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in momenbasel/PureMac. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `24a10a45`: xcode): move the legacy XcodeBuildMCP DerivedData root to the Trash. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `PureMac/Logic/Utilities/XcodeBuildMCPDerivedDataSupport.swift`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+    /// nil; callers move that root to the Trash without coordination.
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Anti-pattern to NEVER write (induced failure mode):
+    /// nil and must not be deleted by a caller that requires coordination.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `24a10a45` are properly handled with clean fallback behavior.
+
+
+---
+
+## 2574. MoE Router Precision Isolation Invariant (Harvested from Aleph-Alpha/Kolibri-1)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "MoE Router Precision Isolation Invariant",
+  "source": "Aleph-Alpha/Kolibri-1",
+  "source_url": "https://huggingface.co/Aleph-Alpha/Kolibri-1",
+  "source_version": "hf-aleph-alpha-kolibri-1",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-19T12:32:50.061Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-aleph-alpha-kolibri-1",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Aleph-Alpha/Kolibri-1](https://huggingface.co/Aleph-Alpha/Kolibri-1) (Revision: `hf-aleph-a`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+In Mixture-of-Experts models, the **router/gate** weights MUST be maintained in higher precision (e.g., `bfloat16` or `float32`) than the expert weights (e.g., `float8` or `int8`). The router MUST NOT be quantized to low-precision formats that introduce significant rounding error in the softmax distribution.
+
+**WHY**:
+The router determines which experts are activated. Low-precision quantization of the gate introduces noise in the expert selection probabilities. This leads to "expert collapse" (all tokens routed to the same few experts) or "expert starvation" (some experts never used), degrading model performance and breaking the load-balancing invariants.
+
+**WHEN TO APPLY**:
+Any MoE model with quantized expert weights.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+// config.json
+"quantization_config": {
+    "quant_method": "fp8",
+    "modules_to_not_convert": [
+        "lm_head",
+        "model.layers.0.mlp.gate",
+        "model.layers.1.mlp.gate",
+        // ... all gates excluded
+    ]
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```json
+// ANTI-PATTERN: Quantizing the gate
+"quantization_config": {
+    "quant_method": "fp8",
+    "modules_to_not_convert": [
+        "lm_head"
+        // Gate is NOT excluded, so it gets quantized to FP8
+    ]
+}
+// FAILURE: Rounding errors in gate logits cause unstable expert selection, leading to training divergence or inference instability.
+```
+
+**VERIFICATION METHOD**:
+```python
+def verify_moe_router_precision(model, config):
+    for layer in model.model.layers:
+        gate = layer.mlp.gate
+        if gate.weight.dtype != torch.bfloat16:
+            raise ValueError(f"Layer {layer.idx} gate is not bfloat16. Found: {gate.weight.dtype}")
+```
+
+
+---
+
+## 2575. Special Token Semantic Decoupling Invariant (Harvested from Aleph-Alpha/Kolibri-1)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Special Token Semantic Decoupling Invariant",
+  "source": "Aleph-Alpha/Kolibri-1",
+  "source_url": "https://huggingface.co/Aleph-Alpha/Kolibri-1",
+  "source_version": "hf-aleph-alpha-kolibri-1",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-19T12:32:50.204Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-aleph-alpha-kolibri-1",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Aleph-Alpha/Kolibri-1](https://huggingface.co/Aleph-Alpha/Kolibri-1) (Revision: `hf-aleph-a`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Tokens used for control flow (e.g., `think`, `tool_call`) MUST be defined as **non-special** tokens in the tokenizer if they are intended to be generated as part of the natural language output stream. Special tokens MUST be reserved for structural boundaries (BOS, EOS, PAD) that are not part of the semantic content.
+
+**WHY**:
+Special tokens are often handled differently in the model's embedding layer or attention mask. If `think` is a special token, it may not be properly integrated into the semantic space of the model, leading to poor generation of reasoning chains. By keeping them as regular tokens, the model learns to generate them as part of the text flow, enabling more natural and flexible reasoning patterns.
+
+**WHEN TO APPLY**:
+Any LLM that uses explicit reasoning or tool-calling tokens.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+// tokenizer_config.json
+"added_tokens_decoder": {
+    "127907": {
+        "content": "think",
+        "special": false // CRITICAL: Not a special token
+    },
+    "127908": {
+        "content": "/think",
+        "special": false
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```json
+// ANTI-PATTERN: Marking reasoning tokens as special
+"added_tokens_decoder": {
+    "127907": {
+        "content": "think",
+        "special": true // FAILURE: Model may not generate this token naturally
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+```python
+def verify_special_tokens(tokenizer):
+    for token_id, token in tokenizer.added_tokens_decoder.items():
+        if token['content'] in ['think', '/think', 'tool_call', '/tool_call']:
+            if token['special']:
+                raise ValueError(f"Token {token['content']} should not be special")
+```

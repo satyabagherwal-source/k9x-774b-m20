@@ -3238,3 +3238,5 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `9d3b1ffd` | Multi-dimensional audit evidence | 2026-10-19T12:20:29.098Z |
 | `learn-huggingface-baidu-unlimited-ocr` | `https://huggingface.co/baidu/Unlimited-OCR` | `hf-baidu-u` | Multi-dimensional audit evidence | 2026-10-19T12:26:32.183Z |
 | `learn-github-milanvarady-applite` | `https://github.com/milanvarady/Applite` | `cf9712ae` | Multi-dimensional audit evidence | 2026-10-19T12:26:38.068Z |
+| `learn-github-momenbasel-puremac` | `https://github.com/momenbasel/PureMac` | `20870f6b` | Multi-dimensional audit evidence | 2026-10-19T12:32:47.136Z |
+| `learn-huggingface-aleph-alpha-kolibri-1` | `https://huggingface.co/Aleph-Alpha/Kolibri-1` | `hf-aleph-a` | Multi-dimensional audit evidence | 2026-10-19T12:32:50.353Z |

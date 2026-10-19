@@ -1015,8 +1015,8 @@
     "sourceUrl": "https://huggingface.co/Aleph-Alpha/Kolibri-1",
     "sourceVersion": "hf-aleph-alpha-kolibri-1",
     "license": "Open-Source",
-    "contentHash": "e02678ba7a24e737bdaad9927f5c7a8921542846fd00f2f7ec7a872fffc1415a",
-    "lastHarvestedAt": "2026-10-18T03:18:41.111Z",
+    "contentHash": "ba5c1c012de6db39abde2ba658576b71d10b43d7e5b3255e1ac2dfcf77d406ae",
+    "lastHarvestedAt": "2026-10-19T12:32:50.353Z",
     "learningId": "learn-huggingface-aleph-alpha-kolibri-1"
   },
   "hf-speridlabs-iris-3b": {
@@ -7998,5 +7998,15 @@
     "contentHash": "05f1271aa33a715bb2c41d1468fca2f256d0746a2b100ac64292910f0fdc0878",
     "lastHarvestedAt": "2026-10-19T12:26:38.068Z",
     "learningId": "learn-github-milanvarady-applite"
+  },
+  "momenbasel-puremac": {
+    "repository": "momenbasel/PureMac",
+    "platform": "github",
+    "sourceUrl": "https://github.com/momenbasel/PureMac",
+    "sourceVersion": "20870f6b",
+    "license": "MIT",
+    "contentHash": "7cb85c26e06cc41e34219ced9a9a1101a91341c892c611bd8e589b593c72f241",
+    "lastHarvestedAt": "2026-10-19T12:32:47.136Z",
+    "learningId": "learn-github-momenbasel-puremac"
   }
 }

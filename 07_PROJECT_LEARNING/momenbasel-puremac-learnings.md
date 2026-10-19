@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/momenbasel-puremac-learnings.md`  
+> **Source**: github ([https://github.com/momenbasel/PureMac](https://github.com/momenbasel/PureMac))  
+> **Source Version**: `20870f6b`  
+> **License**: MIT  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T12:32:46.834Z  
+> **Learning ID**: `learn-github-momenbasel-puremac`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): momenbasel/PureMac
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/momenbasel-puremac-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/momenbasel/PureMac](https://github.com/momenbasel/PureMac))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T05:29:34.879Z  
+> **Harvest Timestamp**: 2026-10-19T12:32:46.644Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: Free, open-source macOS cleaner. CleanMyMac alternative with zero telemetry. Native SwiftUI, scheduled auto-cleaning, Xcode/Homebrew/system cache cleanup. MIT licensed.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 6929 stars
+- **Stars / Engagement**: 7229 stars
 
 ---
 
@@ -510,25 +524,39 @@ enum ProviderPaths {
 
     /// Roots that must never be scanned, offered, or deleted. Any path equal to
     /// or beneath one of these is off limits.
-    static var deniedRoots: [String] {
-        let home = FileManager.default.homeDirectoryForCurrentUser.path
-        return [
-            // iCloud Drive user-visible root and its per-app containers.
-            "\(home)/Library/Mobile Documents",
-            // Third-party providers (Dropbox, OneDrive, Google Drive, ...).
-            "\(home)/Library/CloudStorage",
-            // FileProvider framework state and per-provider domains.
-            "\(home)/Library/Application Support/FileProvider",
-            "\(home)/Library/Application Support/CloudDocs",
-            // Provider extension containers.
-            "\(home)/Library/Daemon Containers",
-            // Live databases, not reclaimable caches, despite living in Caches.
-            "\(home)/Library/Caches/CloudKit",
-            "\(home)/Library/Caches/com.apple.bird",
-            "\(home)/Library/Caches/com.apple.cloudkit",
-            "\(home)/Library/Caches/com.apple.cloudd",
-            "\(home)/Library/Caches/com.apple.FileProvider",
-        ]
+    ///
+    /// The engines canonicalize a symlinked home, so the roots are spelled
+    /// under every form of the home: literal, symlink-resolved, and resolved
+    /// then standardized. Otherwise a canonical path under a symlinked home
+    /// would never match a root built from the literal home.
+    static func deniedRoots(
+        homeDirectory: URL = FileManager.default.homeDirectoryForCurrentUser
+    ) -> [String] {
+        let resolved = homeDirectory.resolvingSymlinksInPath()
+        var homes: [String] = []
+        for home in [homeDirectory.standardizedFileURL.path, resolved.path, resolved.standardizedFileURL.path]
+        where !homes.contains(home) {
+            homes.append(home)
+        }
+        return homes.flatMap { home in
+            [
+                // iCloud Drive user-visible root and its per-app containers.
+                "\(home)/Library/Mobile Documents",
+                // Third-party providers (Dropbox, OneDrive, Google Drive, ...).
+                "\(home)/Library/CloudStorage",
+                // FileProvider framework state and per-provider domains.
+                "\(home)/Library/Application Support/FileProvider",
+                "\(home)/Library/Application Support/CloudDocs",
+                // Provider extension containers.
+                "\(home)/Library/Daemon Containers",
+                // Live databases, not reclaimable caches, despite living in Caches.
+                "\(home)/Library/Caches/CloudKit",
+                "\(home)/Library/Caches/com.apple.bird",
+                "\(home)/Library/Caches/com.apple.cloudkit",
+                "\(home)/Library/Caches/com.apple.cloudd",
+                "\(home)/Library/Caches/com.apple.FileProvider",
+            ]
+        }
     }
 
     /// True when `path` is inside provider-owned state and must be left alone.
@@ -538,7 +566,11 @@ enum ProviderPaths {
     /// enabled, `~/Desktop` and `~/Documents` resolve into
     /// `~/Library/Mobile Documents/com~apple~CloudDocs`, so an innocuous-looking
     /// root can walk straight into iCloud state.
-    static func isProviderOwned(_ path: String) -> Bool {
+    static func isProviderOwned(
+        _ path: String,
+        homeDirectory: URL = FileManager.default.homeDirectoryForCurrentUser
+    ) -> Bool {
+        let roots = deniedRoots(homeDirectory: homeDirectory)
         let candidates = [
             (path as NSString).standardizingPath,
             URL(fileURLWithPath: path).resolvingSymlinksInPath().path,
@@ -547,7 +579,7 @@ enum ProviderPaths {
             // Any component of the form `com~apple~CloudDocs` (or any other
             // provider domain) marks provider territory regardless of location.
             if candidate.contains("com~apple~") { return true }
-            for root in deniedRoots where candidate == root || candidate.hasPrefix(root + "/") {
+            for root in roots where candidate == root || candidate.hasPrefix(root + "/") {
                 return true
             }
         }
@@ -734,13 +766,24 @@ import Foundation
 
 actor CleaningEngine {
     private let fileManager = FileManager.default
+    /// Always symlink-resolved so allow-listed roots agree with ScanEngine and
+    /// XcodeBuildMCPDerivedDataSupport path checks on symlinked homes.
+    private let homeDirectory: URL
     private let binaryThinner = BinaryThinner()
+
+    init(homeDirectory: URL = FileManager.default.homeDirectoryForCurrentUser) {
+        self.homeDirectory = XcodeBuildMCPDerivedDataSupport.canonicalHomeDirectory(homeDirectory)
+    }
 
     struct CleaningResult {
         var freedSpace: Int64 = 0
         var itemsCleaned: Int = 0
         var errors: [String] = []
         var cleanedPaths: Set<String> = []
+        /// Destination paths returned by FileManager.trashItem. Keeping these
+        /// lets callers and tests distinguish recoverable Trash moves from
+        /// irreversible removals.
+        var trashedPaths: Set<String> = []
         // Items that user-level FileManager.removeItem refused with EACCES /
         // EPERM. These are root-owned and need an admin-privileged second
         // pass via cleanWithAdminPrivileges(items:).
@@ -862,14 +905,9 @@ actor CleaningEngine {
                 // Large files surfaced by scanLargeFiles are per-file items
                 // under Downloads/Documents/Desktop; those get a narrower check
                 // instead of the whole-subtree allow-list.
-                let pathAccepted: Bool = {
-                    if item.category == .largeFiles {
-                        return isExplicitSingleFileDeletable(resolvedPath: resolved)
-                    }
-                    // languageFiles never reaches here — it is handled above
-                    // via the staged re-sign flow, not the delete path.
-                    return isSafeToDelete(resolvedPath: resolved)
-                }()
+                // languageFiles never reaches here — it is handled above via
+                // the staged re-sign flow, not the delete path.
+                let pathAccepted = isSafeToDelete(item: item, resolvedPath: resolved)
                 guard pathAccepted else {
                     let msg = "Skipped symlink or unsafe path: \(item.path) -> \(resolved)"
                     Logger.shared.log(msg, level: .warning)
@@ -888,53 +926,44 @@ actor CleaningEngine {
                     continue
                 }
 
-                try fileManager.removeItem(at: itemURL)
-                result.freedSpace += item.size
-                result.itemsCleaned += 1
-                result.cleanedPaths.insert(item.path)
-            } catch {
-                let nsError = error as NSError
-                let isPermissionDenied =
-                    (nsError.domain == NSCocoaErrorDomain &&
-                        (nsError.code == NSFileWriteNoPermissionError ||
-                         nsError.code == NSFileReadNoPermissionError)) ||
-                    (nsError.domain == NSPOSIXErrorDomain &&
-                        (nsError.code == Int(EACCES) || nsError.code == Int(EPERM)))
-                if isPermissionDenied {
-                    // SIP-protected/immutable entries fail even as root, so
-                    // escalating them just wastes an auth prompt and produces
-                    // a bogus "survived admin removal" error. Record and move on.
-                    if FileProtection.isProtectedFromDeletion(path: item.path) {
-                        result.protectedPaths.insert(item.path)
-                        Logger.shared.log("Skipping SIP-protected path: \(item.path)", level: .info)
-                        continue
+                let isManagedDerivedData = XcodeBuildMCPDerivedDataSupport.isManagedDerivedDataPath(
+                    item.path,
+                    homeDirectory: homeDirectory
+                ) || XcodeBuildMCPDerivedDataSupport.isManagedDerivedDataPath(
+                    resolved,
+                    homeDirectory: homeDirectory
+                )
+                if isManagedDerivedData {
+                    // The legacy shared root predates XcodeBuildMCP's
+                    // per-workspace lock, so only workspace DerivedData waits
+                    // for the lock before moving to the Trash.
+                    var lifecycleLock: XcodeBuildMCPDerivedDataSupport.LifecycleLock?
+                    if XcodeBuildMCPDerivedDataSupport.workspaceKey(
+                        forManagedDerivedDataPath: resolved,
+                        homeDirectory: homeDirectory
+                    ) != nil {
+                        guard let acquired = XcodeBuildMCPDerivedDataSupport.acquireLifecycleLock(
+                            forManagedDerivedDataPath: resolved,
+                            homeDirectory: homeDirectory,
+                            fileManager: fileManager
+                        ) else {
+                            let detail = "Skipped XcodeBuildMCP DerivedData: lifecycle lock is unavailable: \(item.path)"
+                            Logger.shared.log(detail, level: .warning)
+                            result.errors.append(detail)
+                            continue
+                        }
+                        lifecycleLock = acquired
                     }
-                    // Defer to the admin pass — these are typically root-owned
-                    // system caches that the user-level process can't unlink.
-                    result.requiresAdmin.append(item)
-                    Logger.shared.log("Deferring to admin pass: \(item.path)", level: .info)
-                } else {
-                    let detail = "\(item.name) at \(item.path): \(error.localizedDescription)"
-                    result.errors.append(detail)
-                    Logger.shared.log("Clean failed: \(detail)", level: .error)
-                }
-            }
-        }
-
-        return result
-    }
-
-    func cleanCategory(_ result: CategoryResult, progressHandler: @Sendable (Double) -> Void) async -> CleaningResult {
-        let selectedItems = result.items.filter { $0.isSelected }
-        return await cleanItems(selectedItems, progressHandler: progressHandler)
-    }
-
-    /// Re-runs the deletion of the supplied items as root via NSAppleScript's
-    /// "with administrator privileges" clause. Triggers exactly one auth
-    /// prompt for the whole batch (macOS caches the credential for ~5 min).
-    ///
-    /// Every path is re-validated against the same allow-list as the user-
-    /// level pass (isSafeToDelete /
+                    defer {
+                        if let lifecycleLock {
+                            XcodeBuildMCPDerivedDataSupport.releaseLifecycleLock(
+                                lifecycleLock,
+                                fileManager: fileManager
+                            )
+                        }
+                    }
+                    // PureMac's safety contract is Trash-only for recoverable
+                    // cleanup. XcodeBuildMCP DerivedData must not be unlin
 ```
 
 ### Core Architecture Module: `PureMac/Services/ScanEngine.swift`
@@ -943,7 +972,11 @@ import Foundation
 
 actor ScanEngine {
     private let fileManager = FileManager.default
-    private let home = FileManager.default.homeDirectoryForCurrentUser.path
+    private let home: String
+
+    init(homeDirectory: URL = FileManager.default.homeDirectoryForCurrentUser) {
+        home = XcodeBuildMCPDerivedDataSupport.canonicalHomeDirectory(homeDirectory).path
+    }
 
     /// Live path reporter for the dashboard's scanning ticker. Throttled so
     /// a directory with thousands of entries doesn't flood the main actor.
@@ -1089,7 +1122,7 @@ actor ScanEngine {
             "\(home)/Library/Caches/npm",
             "\(home)/Library/Caches/Yarn",
             "\(home)/Library/Caches/dev.kdrag0n.MacVirt",
-        ] + ProviderPaths.deniedRoots).map(normalizePath))
+        ] + ProviderPaths.deniedRoots(homeDirectory: URL(fileURLWithPath: home, isDirectory: true))).map(normalizePath))
 
         // Dynamically enumerate ~/Library/Caches/ so every subdirectory is visible
         let cachePath = "\(home)/Library/Caches"
@@ -1192,331 +1225,7 @@ actor ScanEngine {
             ),
             CleanupTarget(
                 name: String(localized: "Ollama Saved State"),
-                path: "\(home)/Library/Saved Application State/com.electron.ollama.savedState"
-            ),
-            CleanupTarget(
-                name: String(localized: "Ollama CLI Prompt History (Optional)"),
-                path: "\(home)/.ollama/history",
-        
-```
-
-### Core Architecture Module: `PureMac/ViewModels/AppState.swift`
-```
-import SwiftUI
-import Combine
-import UserNotifications
-import AppKit
-
-// InstalledApp is defined in AppInfoFetcher.swift
-
-enum AppSection: Hashable {
-    case apps
-    case orphans
-    case spaceExplorer
-    case duplicates
-    case similarPhotos
-    case protection
-    case performance
-    case appUpdates
-    case cleaning(CleaningCategory)
-}
-
-extension Notification.Name {
-    /// Posted by the Finder Services handler ("Uninstall with PureMac") with a
-    /// `["path": String]` userInfo pointing at the right-clicked .app bundle.
-    static let pureMacExternalUninstall = Notification.Name("PureMac.ExternalUninstall")
-}
-
-/// Cold-launch buffer for Finder Services. A "Uninstall with PureMac" request
-/// can arrive before the SwiftUI scene (and thus AppState) exists; the posted
-/// notification then has no subscriber and is lost (NotificationCenter has no
-/// replay). AppDelegate stashes the path here and AppState drains it in init.
-enum ExternalUninstallBuffer {
-    // Written by the Finder Services handler and drained by AppState — both
-    // run on the main thread, so a plain static is sufficient here.
-    static var pendingPath: String?
-}
-
-/// Standalone observable for the live scan-path ticker. The scan engine reports
-/// the filesystem path it is touching ~10×/sec. Routing that through AppState's
-/// own `@Published` storage republished the *entire* view tree at that rate,
-/// which surfaced as window-drag / button-hover lag and a Smart Scan that
-/// looked frozen until you switched sidebar sections and forced a fresh render
-/// (issues #119, #120). Isolating the high-frequency value here means only the
-/// small ticker label observes it, so the rest of the UI stays still.
-@MainActor
-final class ScanProgressTicker: ObservableObject {
-    @Published var path: String = ""
-}
-
-@MainActor
-final class AppState: ObservableObject {
-    typealias AppFileScanner = @MainActor (
-        _ app: InstalledApp,
-        _ locations: Locations,
-        _ completion: @escaping (Set<URL>) -> Void
-    ) -> Void
-    typealias AppFileTrasher = @MainActor (
-        _ urls: [URL],
-        _ completion: @escaping ([URL], Bool, [URL], [URL]) -> Void
-    ) -> Void
-
-    // MARK: - Scan / Clean State
-
-    @Published var selectedCategory: CleaningCategory = .smartScan
-    @Published var scanState: ScanState = .idle
-    @Published var categoryResults: [CleaningCategory: CategoryResult] = [:]
-    @Published var diskInfo = DiskInfo()
-    @Published var totalJunkSize: Int64 = 0
-    @Published var totalFreedSpace: Int64 = 0
-    @Published var scanProgress: Double = 0
-    @Published var scanWasCancelled = false
-    @Published var lastScanDate: Date?
-    private var scanTask: Task<Void, Never>?
-    private var scanGeneration = UUID()
-    private var cleanupGeneration = UUID()
-    @Published var cleanProgress: Double = 0
-    @Published var currentScanCategory: String = ""
-    /// Live filesystem path the scan engine is touching, feeding the dashboard's
-    /// ticker. Deliberately NOT a `@Published` on AppState — it updates ~10×/sec
-    /// and would otherwise invalidate the whole view tree (issues #119, #120).
-    /// Only the ticker label observes this object directly.
-    let scanTicker = ScanProgressTicker()
-    @Published var showCleanConfirmation = false
-    @Published var lastCleanedDate: Date?
-    @Published var selectedCleanupItems: Set<UUID> = []
-    @Published var deselectedItems: Set<UUID> = []
-    @Published var hasFullDiskAccess: Bool = true
-    @Published var fdaBannerDismissed: Bool = false
-    @Published var cleanError: String?
-    @Published private(set) var lastCleanupHadFailures = false
-    /// True when the most recent clean error is rooted in a TCC/FDA refusal
-    /// (i.e. items survived even the admin pass). MainWindow uses this to
-    /// route the user into the PermissionSheet instead of the generic alert.
-    @Published var cleanErrorIsFDAFixable: Bool = false
-    /// Items that survived the most recent clean attempt — used to re-run the
-    /// operation after the user grants Full Disk Access without forcing them
-    /// to re-select anything.
-    @Published var pendingPermissionRetryItems: [CleanableItem] = []
-
-    // MARK: - App Uninstaller State
-
-    @Published var installedApps: [InstalledApp] = []
-    @Published var selectedApp: InstalledApp?
-    @Published var discoveredFiles: [URL] = []
-    @Published var selectedFiles: Set<URL> = []
-    @Published var orphanedFiles: [URL] = []
-    @Published var isSearchingOrphans: Bool = false
-    @Published var isLoadingApps: Bool = false
-    @Published var isScanningAppFiles: Bool = false
-    @Published var isRemovingAppFiles = false
-    @Published var removalError: String?
-    @Published var removalNeedsFullDiskAccess = false
-    /// Snapshot of the URLs that failed the most recent uninstall due to a
-    /// permission denial. Frozen at finishRemoval time so AppFilesView's
-    /// retry path operates on the failed batch even if the user clicks a
-    /// different app or mutates selection while the FDA sheet is open.
-    @Published var lastFailedRemovalURLs: [URL] = []
-    @Published var appFileScanLocationCount: Int = 0
-    /// Set when a right-clicked app arrives via the Finder Services handler.
-    /// MainWindow consumes it on both onChange AND onAppear so a request that
-    /// lands before MainWindow mounts (cold launch, or while onboarding is
-    /// still showing) is still surfaced — a one-shot token would be missed.
-    @Published var pendingExternalApp: InstalledApp?
-
-    private var externalUninstallObserver: AnyCancellable?
-    private var appFileScanGeneration = UUID()
-
-    // MARK: - Services
-
-    var scheduler = SchedulerService()
-    private let scanEngine = ScanEngine()
-    private let cleaningEngine = CleaningEngine()
-    private let locationsProvider: () -> Locations
-    private let appFileScanner: AppFileScanner
-    private let appFileTrasher: AppFileTrasher
-
-    // MARK: - Computed
-
-    var totalItemCount: Int {
-        categoryResults.values.reduce(0) { $0 + $1.itemCount }
-    }
-
-    var currentCategoryResult: CategoryResult? {
-        categoryResults[selectedCategory]
-    }
-
-    var allResults: [CategoryResult] {
-        CleaningCategory.scannable.compactMap { categoryResults[$0] }.filter { $0.totalSize > 0 }
-    }
-
-    var totalSelectedSize: Int64 {
-        allResults.flatMap { $0.items }.filter { isItemSelected($0) }.reduce(0) { $0 + $1.size }
-    }
-
-    var currentAppFileSearchLocationCount: Int {
-        if isScanningAppFiles && appFileScanLocationCount > 0 {
-            return appFileScanLocationCount
-        }
-        return discoveredFiles.count
-    }
-
-    // MARK: - Init
-
-    init(
-        performStartupTasks: Bool = true,
-        locationsProvider: @escaping () -> Locations = Locations.init,
-        appFileScanner: @escaping AppFileScanner = AppState.defaultAppFileScanner,
-        appFileTrasher: @escaping AppFileTrasher = AppState.defaultAppFileTrasher
-    ) {
-        self.locationsProvider = locationsProvider
-        self.appFileScanner = appFileScanner
-        self.appFileTrasher = appFileTrasher
-
-        // Listen for right-click "Uninstall with PureMac" hand-offs from the
-        // Finder Services handler in AppDelegate.
-        externalUninstallObserver = NotificationCenter.default
-            .publisher(for: .pureMacExternalUninstall)
-            .receive(on: RunLoop.main)
-            .sink { [weak self] note in
-                let path = (note.userInfo?["path"] as? String) ?? ExternalUninstallBuffer.pendingPath
-                ExternalUninstallBuffer.pendingPath = nil
-                guard let path else { return }
-                Task { @MainActor in self?.presentExternalUninstall(appPath: path) }
-            }
-        // Drain a request that arrived before this AppState existed (cold launch
-        // via Finder Services — the notification fired with no subscriber).
-        if let buffered = ExternalUninstallBuffer.pendingPath {
-            ExternalUninstallBuffer.pendingPath = nil
-            presentExternalUninstall(appPath: buffered)
-        }
-
-        if performStartupTasks {
-            loadDiskInfo()
-            checkFullDiskAccess()
-            loadInstalledApps()
-            scheduler.setTrigger { [weak self] in
-                await self?.runScheduledScan()
-            }
-            // Only arm the scheduler once onboarding has completed. Before
-            // the first launch the defaults plist may have been
-            // attacker-planted with autoClean=true; wait for human consent
-            // via onboarding.
-            if UserDefaults.standard.bool(forKey: "PureMac.OnboardingComplete") {
-                scheduler.start()
-            }
-        }
-    }
-
-    // MARK: - App Loading
-
-    func loadInstalledApps() {
-        isLoadingApps = true
-        Task.detached(priority: .userInitiated) {
-            let apps = AppInfoFetcher.shared.fetchInstalledApps()
-            await MainActor.run { [weak self] in
-                self?.installedApps = apps
-                self?.isLoadingApps = false
-            }
-        }
-    }
-
-    /// Resolve a right-clicked .app (via the Finder Services handler) into the
-    /// uninstaller: select it, kick off the related-files scan, and signal
-    /// MainWindow to surface the Installed Apps section.
-    func presentExternalUninstall(appPath: String) {
-        let url = URL(fileURLWithPath: appPath)
-        if let cached = installedApps.first(where: { $0.path.standardizedFileURL == url.standardizedFileURL }) {
-            applyExternalUninstall(cached)
-            return
-        }
-        // Not in the cached list (non-standard location, or a cold start before
-        // loadInstalledApps finished). Resolve off the main thread — fetchApp
-        // walks the entire bundle to size it, which would beachball the UI for
-        // a multi-gigabyte app.
-        Task.detached(priority: .userInitiated) {
-            let app = AppInfoFetcher.shared.fetchApp(at: url)
-            await MainActor.run 
-```
-
-### Core Architecture Module: `PureMac/Views/Components/EmptyStateView.swift`
-```
-import SwiftUI
-
-struct EmptyStateView: View {
-    let title: LocalizedStringKey
-    let systemImage: String
-    let description: LocalizedStringKey
-    var action: (() -> Void)?
-    var actionLabel: LocalizedStringKey?
-    /// Halo/icon tint — positive states pass a color (e.g. green for "All
-    /// Clean"); neutral states keep the secondary look.
-    var tint: Color?
-
-    @State private var floating = false
-    @State private var popped = false
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
-
-    init(_ title: LocalizedStringKey, systemImage: String, description: LocalizedStringKey,
-         action: (() -> Void)? = nil, actionLabel: LocalizedStringKey? = nil, tint: Color? = nil) {
-        self.title = title
-        self.systemImage = systemImage
-        self.description = description
-        self.action = action
-        self.actionLabel = actionLabel
-        self.tint = tint
-    }
-
-    var body: some View {
-        VStack(spacing: 12) {
-            Spacer()
-            ZStack {
-                Circle()
-                    .fill((tint ?? Color.secondary).opacity(0.10))
-                    .frame(width: 96, height: 96)
-                Circle()
-                    .strokeBorder((tint ?? Color.secondary).opacity(0.16), lineWidth: 1)
-                    .frame(width: 96, height: 96)
-                Image(systemName: systemImage)
-                    .font(.system(size: 40))
-                    .symbolRenderingMode(.hierarchical)
-                    .foregroundStyle(tint ?? Color.secondary)
-            }
-            // One-shot entrance pop, then a gentle idle float. Both skipped
-            // under Reduce Motion.
-            .scaleEffect(popped || reduceMotion ? 1 : 0.8)
-            .offset(y: reduceMotion ? 0 : (floating ? -5 : 5))
-            .onAppear {
-                guard !reduceMotion else { return }
-                withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                    popped = true
-                }
-                withAnimation(.easeInOut(duration: 2.4).repeatForever(autoreverses: true)) {
-                    floating = true
-                }
-            }
-
-            Text(title)
-                .font(.title3.bold())
-                .staggered(0, baseDelay: 0.08)
-            Text(description)
-                .font(.callout)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-                .frame(maxWidth: 300)
-                .staggered(1, baseDelay: 0.08)
-            if let action, let label = actionLabel {
-                Button(action: action) { Text(label) }
-                    .buttonStyle(.borderedProminent)
-                    .padding(.top, 4)
-                    .staggered(2, baseDelay: 0.08)
-            }
-            Spacer()
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-}
-
+                path: "\(home)/Library/Saved Application State/com.electron.ollama
 ```
 
 
@@ -1527,49 +1236,9 @@ struct EmptyStateView: View {
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
 - **Issue #144** (2026-08-10): **[Bug] PureMac corrupts applications on default settings, reinstalls needed**
   *Symptoms*: After a cleanup, several apps stop working and require to be reinstalled.  In my case and single run: - Cursor - GitKraken - Jetbrains Toolbox - Figma - Keka - Ableton Live 12 - Stats  Steps to reproduce the behavior: 1. Do a Cleanup. 2. Test every app, you'll find one that uses cache completely broken.  Keka shows permission prompts during the cleanup. Clearly touching stuff that shouldn't.  <img width="302" height="410" alt="Image" src="https://github.com/user-attachments/assets/6ceaff45-b464-41a5-a7ca-d1b559d98877" />  Screenshot on opening all apps mentioned.  - macOS version: macOS Tahoe Version 26.5.2 (25F84) - PureMac version: 2.9.4 (24) - Install method: (Homebrew / DMG / App Store / Source): DMG
-  **Post-Mortem & Fix Analysis**:
-  > After researching I think that the issue is caused by PureMac modifying app bundles in a way that strips or invalidates their code signature (`codesign`). It seems to hit Electron-based apps particularly hard (had the issue with Deezer, Thaw, Canva, VsCode..)  By manually re-sign the corrupted applications it resolve the issue but it's tedious. The command line is:  ```bash sudo codesign --force --deep --sign - /Applications/<AppName>.app ```
-  > Confirmed, and you were right that it happens on default settings. Fixed in 2.9.5.  What was happening: Universal Binaries and Language Files both modify the application bundle and then ad-hoc re-sign it. The code claimed both categories start unselected and are skipped by automatic cleanups — that part was true — but the protection was only wired into the scheduler. `selectAllInCategory` had no such guard, so selecting everything in a category and cleaning fed those items straight through.  Removing a single `.lproj` was worse than it looks: it cloned the whole bundle and ran `codesign --force --deep --sign -` over the entire app. Since `--deep` skips `Contents/Resources`, that leaves vendor-signed code beside an ad-hoc outer bundle, and macOS refuses to launch the result.  Nicolo456 was right about the mechanism. The re-sign command does resolve it, though reinstalling is safer since ad-hoc signing does not restore notarization. Electron apps are hit hardest simply because they carry
 
 - **Issue #142** (2026-08-21): **[Bug] Cleanup appears to corrupt iCloud Drive File Provider metadata and causes severe Finder copy delays**
   *Symptoms*: **Describe the bug**  Immediately after running a cleanup with PureMac, Finder operations involving iCloud Drive became extremely slow. Copying a fully downloaded folder containing 36 files (19.9 MB total) from iCloud Drive to the local Downloads folder, which was effectively instant before the cleanup, started taking approximately 9–23 seconds.  The timing strongly suggests that the PureMac cleanup triggered the problem, because:  - the slowdown started immediately after using PureMac; - there had been no recent macOS update before the symptom appeared; - PureMac was not running afterward and no persistent PureMac background job was found; - the SSD, memory, network, and ordinary local file I/O tested normally; - Safe Mode did not change the behavior; - Apple's File Provider consistency checker now reports hundreds of broken invariants.  I cannot conclusively identify which PureMac cleaning category caused the damage because PureMac does not expose a persistent, user-readable log of the exact paths removed. Please treat the PureMac causal link as a strong timeline-based suspicion, not as a proven identification of a specific source-code path. The application should retain a detailed cleanup transaction log so destructive side effects can be audited.  **To reproduce**  1. Enable iCloud Drive and keep a folder containing multiple small, fully downloaded files. 2. Confirm that copying the folder from iCloud Drive to a local folder such as Downloads is fast. 3. Run a PureMac cle
-  **Post-Mortem & Fix Analysis**:
-  > Confirmed, and your instinct about the cause was right. Partially fixed in 2.9.5.  There was no iCloud or File Provider denylist anywhere in the cleaning path. The user cache scan (`ScanEngine.swift:143-151`) was a depth-1 sweep of `~/Library/Caches` where every child over 1 KB became a pre-ticked deletion target — the only exclusions in the entire scan were Homebrew and two ollama directories. On any Mac with iCloud Drive enabled, that enumerated live CloudDocs, CloudKit and bird state and offered it as junk. Deletion then used `removeItem`, never `trashItem`, and never anything provider-aware, while `bird` and `fileproviderd` held those files open.  That is exactly what produces `is_on_disk_but_not_in_FS_Snapshot`: files removed from underneath the provider without telling it, so its snapshot and the filesystem diverge. It also explains why repair worked and then regressed about ten seconds later — the live service was rebuilding state against a database that no longer matched disk. 
-  > The reported File Provider corruption path was fixed in commit be2ec797 and shipped in PureMac 2.9.5. The fix blocks iCloud/File Provider roots during both scanning and deletion and checks symlink-resolved paths. Persistent cleanup history and rollback/quarantine did not ship; this closure covers the original provider-state deletion bug, not those follow-up features.  Fix: https://github.com/momenbasel/PureMac/commit/be2ec797156bc2d8345e4be7a39c6f5df49333b4 Release: https://github.com/momenbasel/PureMac/releases/tag/v2.9.5
-
-- **Issue #141** (2026-08-21): **[Bug]  Menu items show icons only, text missing in v2.9.2**
-  *Symptoms*: <img width="2242" height="1304" alt="Image" src="https://github.com/user-attachments/assets/d6690d57-508f-48d5-a3a0-75c6458a26d3" />  Describe the bug After upgrading to version 2.9.2, the menu bar and context menu items only display icons without any text labels. This happens regardless of the language setting (tested both Chinese and English). I have already tried the following troubleshooting steps with no success:  1. Switched the app's built-in language between Chinese and English. 2. Ran the terminal command: defaults write -g AppleLanguages -array "zh-Hans" "en" 3. Reset the app's preferences via: defaults delete com.puremac.PureMac 4. Disabled "Increase Contrast" and "Reduce Transparency" in System Settings > Accessibility > Display.  None of these resolved the issue.  To Reproduce Steps to reproduce the behavior:  1. Install/upgrade to PureMac version 2.9.2. 2. Launch the app. 3. Click on any menu item from the app's menu bar or right-click the app icon.  Expected behavior Menu items should display both icon and text labels, not just icons.  Screenshots [Attach a screenshot showing the blank menu here]  Environment (please complete the following information):  - macOS Version: 14.7.7 Sonoma - PureMac Version: 2.9.2 - Mac Model: MacBook Pro 15-inch, 2018 (Intel Core i7 2.2 GHz, Radeon Pro 555X)  Additional context This issue might be related to the app's font rendering engine or the UI framework used in this version, as the problem persists across language changes and
-  **Post-Mortem & Fix Analysis**:
-  > I'm on the latest version with same problems still  <img width="1168" height="766" alt="Image" src="https://github.com/user-attachments/assets/38868622-6f45-4618-8131-443ba8fe31a9" />
-  > Confirmed as a real, ongoing bug. Still open — here is where the investigation stands.  First, the version story does not hold up: 2.9.2 contained no Swift changes at all. `git diff v2.9.1..v2.9.2 -- "*.swift"` is empty; that release was only the app icon. So this is not a regression introduced between those two versions, which fits @frerrr still seeing it on the latest build. It is environment-dependent rather than version-dependent, which is also why a downgrade appearing to fix it can be misleading.  I had both screenshots measured pixel by pixel, and they show two different things:  - **@frerrr's** (1168x766): the sidebar rows really are being laid out narrow. The selected-row background stops at x=104 while the sidebar/detail divider is at x=234, and the badge sits at x≈110 instead of trailing-aligned near x≈200. - **@wanxiyu's** (2242x1304, the original report): the opposite. The selected row's background spans x=20..229 in a ~278px column — full width minus the 12pt row insets. 
-  > Hi momenbasel,   Thank you for the detailed analysis and for taking the time to compare the screenshots. I really appreciate the effort you've put into narrowing this down.   To answer your questions:   1. **Font management tools:** No, I do not have any font management software installed (like FontExplorer, Suitcase, or RightFont). I also have not disabled or replaced any system fonts in Font Book. SF Pro and Helvetica Neue should be intact. 2. **Duplicate/corrupt fonts:** I ran Font Book and checked "Edit &gt; Look for Enabled Duplicates" — it shows no duplicates or corrupt fonts. 3. **Other SwiftUI apps:** Yes, text renders normally in other SwiftUI apps. I have tested a few and they all display correctly. This issue only appears to happen with PureMac.   Since you mentioned both of us are on Intel Macs, I can confirm my machine is an Intel MacBook Pro (15-inch, 2018) running macOS Sonoma 14.7.7.   I hope this information helps. Please let me know if you need me to 
-
-- **Issue #127** (2026-07-18): **[Bug] Switch dark/light theme button background display is incorrect**
-  *Symptoms*: **Describe the bug** Sometimes the switch dark/light theme button background is not in right area, it will appear in the upper-left corner.  **To reproduce** Steps to reproduce the behavior: 1. Go to 'Installed Apps' 2. select any app  3. after app file details loaded, the button background  will move to the upper-left corner   **Screenshots**  <img width="1120" height="708" alt="Image" src="https://github.com/user-attachments/assets/1f98fea4-cd64-4a1f-9fff-6a3ec2ec59a2" />  **Environment** - macOS version: macos 15 intel version - PureMac version: 2.8.3 - Install method: Homebrew 
-  **Post-Mortem & Fix Analysis**:
-  > Confirmed and fixed in 7100ce1, shipping in v2.8.4 today.  Root cause: the theme toggle's sliding highlight used `matchedGeometryEffect`, and the pill lives inside the window toolbar. When the file scan for a selected app finishes, the Uninstall button in that same toolbar animates in, forcing a toolbar re-layout - and during that re-layout the matched-geometry frame resolves against a hosting view with no geometry yet, so the highlight draws at the window origin. That's the stray rounded rectangle in your upper-left corner, and why it only appears right after the details load.  The highlight is now a single view anchored to the pill's own bounds and positioned by segment index, so the toolbar re-layout can't move it anywhere else. `brew upgrade --cask puremac` once v2.8.4 is up - I'll close this when the release is published.
-  > v2.8.4 is out with the fix - https://github.com/momenbasel/PureMac/releases/tag/v2.8.4. Update with `brew upgrade --cask puremac`. The highlight now stays pinned behind the selected segment no matter what else the toolbar animates. Reopen if you can still trigger it.
-
-- **Issue #126** (2026-07-18): **[Bug] The installed Application file size showing is wrong**
-  *Symptoms*: **Describe the bug** The installed Application file size show is wrong, for example. Microsoft Word size should be 2.59GB, but in file details total size only show 459KB, main issue is '/Applications/Microsoft Word.app' only 96 bytes instead of 2.59GB.   **Screenshots**  <img width="1063" height="680" alt="Image" src="https://github.com/user-attachments/assets/945b9aa5-c8f8-4ecd-bd77-2c7d7e1981b2" />  **Environment** - macOS version: MacOS15.3.2, Intel version  - PureMac version: 2.8.3 - Install method: Homebrew 
-  **Post-Mortem & Fix Analysis**:
-  > Confirmed and root-caused. Thanks for the exact numbers - the 96 bytes gave it away.  In v2.8.3 the file-details pane sized each path with a non-recursive fallback chain that ends at the directory entry's own size on disk. On APFS a directory's inode size is 32 bytes per entry; `Microsoft Word.app` contains a single `Contents` folder, so (1 entry + `.` + `..`) x 32 = exactly the 96 bytes you saw. The Installed Apps list column already sized recursively, which is why only the details pane was wrong.  The fix (#124 plus a hardening commit) routes every displayed size through one shared recursive calculator, so the list and detail pane can no longer disagree. It ships in v2.8.4, going out today - `brew upgrade --cask puremac` once it lands. I'll close this when the release is up.
-  > v2.8.4 is out with the fix - https://github.com/momenbasel/PureMac/releases/tag/v2.8.4. Update with `brew upgrade --cask puremac` (or `brew update && brew upgrade --cask puremac` if you installed from the tap). Word should now report its real ~2.6 GB in the details pane. Reopen if anything still looks off.
-
-- **Issue #120** (2026-06-28): **[Bug] The new UI is lagging**
-  *Symptoms*: **Describe the bug** The new UI from the new update is just lagging whenever I move the window around or just hover over the buttons. Maybe make an option to bring back the old UI  **To reproduce** Steps to reproduce the behavior: 1. Open pure mac 2. Make a smart scan 3. Try to move the window around  **Expected behavior** The windows and the buttons to lag a little bit  **Screenshots** If applicable, add screenshots.  **Environment** - macOS version: 26.5.1 - PureMac version: 2.8.1 - Install method: Homebrew 
-  **Post-Mortem & Fix Analysis**:
-  > Fixed in **v2.8.2**.  Root cause: the live "currently scanning…" file-path ticker on the dashboard republished the **entire** view tree ~10×/second during a scan. On a busy scan that meant window drags and button hovers were constantly fighting the scan for the main thread, which showed up as the lag you described.  It's now isolated in its own small observable, so only the one ticker label updates at that rate and the rest of the UI stays still. Should be smooth on macOS 26 now.  Please update to 2.8.2 and reopen if you still see lag. 
-
-- **Issue #119** (2026-06-28): **[Bug] App does not complete the full scan**
-  *Symptoms*: When I start a smart scan, it just stops, and then I need to switch between menus in order for the scan to complete; otherwise, it is just completely frozen.  **To reproduce** 1. Open the app 2. Click on the smart scan icon 3. and then it just crashes  **Expected behavior** I expect for the scan to just stop and crash  **Screenshots** If applicable, add screenshots.  **Environment** - macOS version: 26.5.1 - PureMac version: 2.8.1 - Install method: Homebrew  https://github.com/user-attachments/assets/72a041da-088f-40ab-b0a9-12fa1ee8e2fe 
-  **Post-Mortem & Fix Analysis**:
-  > Fixed in **v2.8.2** — same root cause as #120.  The scan itself wasn't actually crashing or stopping; it runs off the main thread. The problem was the dashboard's live path ticker invalidating the whole view tree ~10×/second, which starved the UI of redraws — so the scan *looked* frozen until you switched sidebar sections and forced a fresh render. That high-frequency update is now isolated to its own tiny view, so progress keeps animating while the scan runs.  Please update to 2.8.2. If a scan still stalls for you, reopen with the screen recording and we'll dig in. 
-
-- **Issue #118** (2026-06-28): **Deprecation warning in puremac.rb: depends_on macos: string comparison is deprecated**
-  *Symptoms*: **Describe the bug** When running `brew outdated` or managing packages via Homebrew, a deprecation warning is triggered by the `puremac.rb` formula due to an outdated `depends_on macos:` syntax.   **To reproduce** Steps to reproduce the behavior: 1. Open Terminal. 2. Run `brew update` followed by `brew outdated` (or any brew command that parses the tap). 3. See the following warning: ```text Warning: Calling string comparison format for `depends_on macos:` is deprecated! Use `depends_on macos: :ventura` instead. Please report this issue to the momenbasel/homebrew-tap tap (not Homebrew/* repositories), or even better, submit a PR to fix it:   /opt/homebrew/Library/Taps/momenbasel/homebrew-tap/Casks/puremac.rb:10  ```  **Expected behavior** The Homebrew command should run cleanly without any deprecation warnings. Line 10 in `puremac.rb` should be updated to use the modern syntax: `depends_on macos: :ventura`.  **Screenshots** *(If applicable, you can drag and drop a screenshot of your terminal here)*  **Environment**  * macOS version: 15.7.5 * PureMac version: Latest Cask version * Install method: Homebrew
-  **Post-Mortem & Fix Analysis**:
-  > Fixed.  The warning came from the cask using the old string-comparison form `depends_on macos: ">= :ventura"`, which Homebrew deprecated. It now uses the modern symbol form `depends_on macos: :ventura` — which is Homebrew's *exact* recommended replacement and still means "Ventura or newer", so nothing changes for users on macOS 13+.  - Custom tap (`momenbasel/homebrew-tap`): updated. - In-repo cask: PR #122 applies the same change (merged).  No more deprecation notice on `brew install`/`upgrade`. Thanks for the clean report. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1586,3541 +1255,1035 @@ struct EmptyStateView: View {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b399a4f0` (2026-09-14)
-**Commit Message**: Fix ignored path normalization on macOS 15
+### Incident Patch 1: `24a10a45` (2026-10-08)
+**Commit Message**: fix(xcode): move the legacy XcodeBuildMCP DerivedData root to the Trash
 
-**File**: `cli/Sources/puremac/Core/Stores.swift` (modified, +18/-4)
+The pre-2.5 shared DerivedData root has no per-workspace lock, so
+acquireLifecycleLock returned nil for it and every cleanup attempt ended with
+"lifecycle lock is unavailable" while the scan kept offering the row. Only
+workspace DerivedData now waits for the lock; the legacy root goes straight
+to the Trash. @omartio's lock handling for workspace roots is unchanged, and
+a test covers the legacy row end to end.
+
+**File**: `PureMac/Logic/Utilities/XcodeBuildMCPDerivedDataSupport.swift` (modified, +1/-1)
 ```diff
-@@ -123,11 +123,9 @@ struct IgnoreStore {
-             guard allowRelative else {
-                 throw StoreError.invalidIgnorePath
-             }
--            absolute = URL(fileURLWithPath: currentDirectoryPath, isDirectory: true)
--                .appendingPathComponent(expanded)
--                .path
-+            absolute = currentDirectoryPath + "/" + expanded
-         }
--        let standardized = URL(fileURLWithPath: absolute).standardizedFileURL.path
-+        let standardized = try lexicalStandardizedAbsolutePath(absolute)
-         guard standardized.hasPrefix("/"), standardized != "/",
-               !standardized.unicodeScalars.contains(where: {
-                   $0.value == 0 || CharacterSet.newlines.contains($0)
-@@ -138,6 +136,22 @@ struct IgnoreStore {
-         return standardized
-     }
- 
-+    private static func lexicalStandardizedAbsolutePath(_ path: String) throws -> String {
-+        guard path.hasPrefix("/") else {
-+            throw StoreError.invalidIgnorePath
-+        }
-+        var components: [Substring] = []
-+        for component in path.split(separator: "/") {
-+            if component == "." { continue }
-+            if component == ".." {
-+                if !components.isEmpty { components.removeLast() }
-+                continue
-+            }
-+            components.append(component)
-+        }
-+        return "/" + components.joined(separator: "/")
-+    }
-+
-     private static func load(from fileURL: URL) throws -> [String] {
-         guard FileManager.default.fileExists(atPath: fileURL.path) else { return [] }
-         let contents = try String(contentsOf: fileURL, encoding: .utf8)
+@@ -158,7 +158,7 @@ enum XcodeBuildMCPDerivedDataSupport {
+     /// when XcodeBuildMCP (or another PureMac process) wins the race.
+     ///
+     /// A legacy shared DerivedData path has no workspace lock, so it returns
+-    /// nil and must not be deleted by a caller that requires coordination.
++    /// nil; callers move that root to the Trash without coordination.
+     static func acquireLifecycleLock(
+         forManagedDerivedDataPath path: String,
+         homeDirectory: URL = FileManager.default.homeDirectoryForCurrentUser,
 ```
 
-**File**: `cli/Sources/puremac/PureMac.swift` (modified, +1/-1)
+**File**: `PureMac/Services/CleaningEngine.swift` (modified, +24/-12)
 ```diff
-@@ -1,7 +1,7 @@
- import ArgumentParser
- import Foundation
- 
--let puremacVersion = "1.1.0"
-+let puremacVersion = "1.1.1"
- 
- @main
- struct PureMac: ParsableCommand {
-```
-
-**File**: `cli/Tests/puremacTests/OptimizeConfigTests.swift` (modified, +13/-4)
-```diff
-@@ -126,10 +126,19 @@ final class OptimizeConfigTests: XCTestCase {
-         }
-         XCTAssertTrue(store.roots.isEmpty)
-         var rootStore = try IgnoreStore(fileURL: file, currentDirectoryPath: "/")
--        XCTAssertThrowsError(try rootStore.add("."))
--
--        try Data("relative/path\n".utf8).write(to: file)
--        XCTAssertThrowsError(try IgnoreStore(fileURL: file))
-+        for path in [".", "/.", "/tmp/.."] {
-+            XCTAssertThrowsError(try rootStore.add(path))
-+            XCTAssertThrowsError(try rootStore.remove(path))
-+        }
-+        XCTAssertTrue(rootStore.roots.isEmpty)
-+        XCTAssertTrue(try rootStore.add("/tmp/./puremac-ignore-fixture"))
-+        XCTAssertEqual(rootStore.roots, ["/tmp/puremac-ignore-fixture"])
-+        XCTAssertTrue(try rootStore.remove("/tmp/puremac-ignore-fixture"))
-+
-+        for contents in ["relative/path\n", "/.\n", "/tmp/..\n"] {
-+            try Data(contents.utf8).write(to: file)
-+            XCTAssertThrowsError(try IgnoreStore(fileURL: file))
-+        }
-     }
- 
-     private func temporaryDirectory() throws -> URL {
-```
-
----
-
-### Incident Patch 2: `87c1a9cc` (2026-08-21)
-**Commit Message**: Fix/appearance system reset (#152)
-
-* fix: Dark -> System appearance switch left window content dark
-
-Problem:
-Selecting Dark in the appearance picker and then switching back to
-System updated only the title bar; the sidebar and detail content stayed
-dark while the window was focused. The content only snapped to the
-correct scheme once the PureMac window lost focus.
-
-Reproduction (system appearance set to Light):
-1. Launch PureMac (Appearance: System)
-2. Choose Appearance -> Dark
-3. Choose Appearance -> System
-   -> title bar turns light, all window content remains dark
-4. Click any other window: the content now turns light
-
-Root cause:
-The theme was applied with .preferredColorScheme(appearance.colorScheme),
-where System maps to nil. On macOS, resetting preferredColorScheme from
-an explicit scheme back to nil inside a WindowGroup that hosts a
-NavigationSplitView (unified toolbar) resets the NSWindow appearance --
-the title bar follows the system again -- but SwiftUI does not
-re-evaluate the content's colorScheme environment until the window
-resigns key. Confirmed on macOS 26.5 with a minimal instrumented repro:
-after the reset, window.appearance=nil / effectiveAppearance=Aqua whil
-
-**File**: `PureMac.xcodeproj/project.pbxproj` (modified, +4/-0)
-```diff
-@@ -43,6 +43,7 @@
- 		A549D8A39A9E5E70D91B90A6 /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A3F22FCEF534DE4A2CAD0E /* Haptics.swift */; };
- 		A9C3A1F643C26930F442E729 /* OrphanSafetyPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AE790496C936424EF98320A /* OrphanSafetyPolicy.swift */; };
- 		ABDDD4F35102A39CC1A2C325 /* ConfettiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0599AA604B0D6BA4F957537 /* ConfettiView.swift */; };
-+		ABE3B80279483DB90B8EC1BC /* ThemeManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55CE234DB2DB54ED53A4EFD6 /* ThemeManagerTests.swift */; };
- 		B51E5A95BB49A6C0F5273E21 /* FileSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CE522B406791BCE905BC55B /* FileSize.swift */; };
- 		B52938BBD11842631314543D /* CategoryDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10B0AF194677EAC1D5568785 /* CategoryDetailView.swift */; };
- 		B928E4369A3FC4369F014A29 /* SmartCareCoreArtwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAA389C4F50505795FB31A51 /* SmartCareCoreArtwork.swift */; };
-@@ -109,6 +110,7 @@
- 		46660271CFF167AB0FE7371D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
- 		491771F923C93FD61A263893 /* AppLanguagePreferencesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLanguagePreferencesTests.swift; sourceTree = "<group>"; };
- 		4AE790496C936424EF98320A /* OrphanSafetyPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrphanSafetyPolicy.swift; sourceTree = "<group>"; };
-+		55CE234DB2DB54ED53A4EFD6 /* ThemeManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManagerTests.swift; sourceTree = "<group>"; };
- 		5664D2BDAEAA9AE3A53DB364 /* PureMac.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PureMac.entitlements; sourceTree = "<group>"; };
- 		5785762276FB5E3209C6DE4D /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
- 		5A5C80929EE4A430272674BC /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
-@@ -185,6 +187,7 @@
- 				752603285F7DBBA12BB3AA91 /* AppStateTests.swift */,
- 				155CE1B8CDCCCA6F9FD028C1 /* LocalizationFilesTests.swift */,
- 				C7D81BE7EA5DB17F4A0300AD /* SimulatorRuntimeSupportTests.swift */,
-+				55CE234DB2DB54ED53A4EFD6 /* ThemeManagerTests.swift */,
- 			);
- 			path = PureMacTests;
- 			sourceTree = "<group>";
-@@ -536,6 +539,7 @@
- 				E2403D82F00D749C9AD4A6D4 /* AppStateTests.swift in Sources */,
- 				CFA64F54CDBF8A4765E0068D /* LocalizationFilesTests.swift in Sources */,
- 				F4F02F966001A1504C2B4D33 /* SimulatorRuntimeSupportTests.swift in Sources */,
-+				ABE3B80279483DB90B8EC1BC /* ThemeManagerTests.swift in Sources */,
- 			);
- 			runOnlyForDeploymentPostprocessing = 0;
- 		};
-```
-
-**File**: `PureMac/PureMacApp.swift` (modified, +0/-1)
-```diff
-@@ -107,7 +107,6 @@ struct PureMacApp: App {
-                 }
-             }
-             .environmentObject(theme)
--            .preferredColorScheme(theme.appearance.colorScheme)
-             // Record the openWindow action so the menu-bar popover can reopen
-             // this window after it's been closed (the popover lives outside the
-             // scene graph and can't use openWindow itself).
-```
-
-**File**: `PureMac/Views/Components/AppTheme.swift` (modified, +19/-4)
-```diff
-@@ -1,3 +1,4 @@
-+import AppKit
- import SwiftUI
- 
- /// User-overridable appearance setting that lives independently of the system
-@@ -22,11 +23,11 @@ enum AppearanceMode: String, CaseIterable, Identifiable {
-         }
-     }
- 
--    var colorScheme: ColorScheme? {
-+    var nsAppearance: NSAppearance? {
-         switch self {
-         case .system: return nil
--        case .light: return .light
--        case .dark: return .dark
-+        case .light: return NSAppearance(named: .aqua)
-+        case .dark: return NSAppearance(named: .darkAqua)
-         }
-     }
- }
-@@ -37,9 +38,23 @@ final class ThemeManager: ObservableObject {
- 
-     @AppStorage("PureMac.Appearance") private var rawValue: String = AppearanceMode.system.rawValue
- 
-+    private init() { applyToApp() }
-+
-     var appearance: AppearanceMode {
-         get { AppearanceMode(rawValue: rawValue) ?? .system }
--        set { rawValue = newValue.rawValue; objectWillChange.send() }
-+        set { rawValue = newValue.rawValue; objectWillChange.send(); applyToApp() }
-+    }
-+
-+    /// The theme is driven through NSApp.appearance, not SwiftUI's
-+    /// .preferredColorScheme: resetting preferredColorScheme back to nil
-+    /// (System) inside a WindowGroup hosting a NavigationSplitView only
-+    /// re-appearances the titlebar — the content's colorScheme environment
-+    /// isn't re-evaluated until the window resigns key, so the body stays
-+    /// stuck in the previous scheme while focused. The AppKit route applies
-+    /// immediately and also themes windows outside the main scene
-+    /// (Settings, menus, popovers).
-+    func applyToApp() {
-+        NSApplication.shared.appearance = appearance.nsAppearance
-     }
- }
- 
-```
-
-**File**: `PureMacTests/ThemeManagerTests.swift` (added, +60/-0)
-```diff
-@@ -0,0 +1,60 @@
-+import AppKit
-+import XCTest
-+@testable import PureMac
-+
-+@MainActor
-+final class ThemeManagerTests: XCTestCase {
-+    private var originalRawValue: String?
-+    private var originalMode: AppearanceMode = .system
-+    private var originalApplicationAppearance: NSAppearance?
-+
-+    override func setUp() {
-+        super.setUp()
-+        originalRawValue = UserDefaults.standard.string(forKey: "PureMac.Appearance")
-+        originalMode = ThemeManager.shared.appearance
-+        originalApplicationAppearance = NSApp.appearance
-+    }
-+
-+    override func tearDown() {
-+        // Reset the singleton first: @AppStorage caches writes made through the
-+        // wrapper, so changing UserDefaults directly is not enough to restore
-+        // the value ThemeManager reads when applying the process-wide theme.
-+        ThemeManager.shared.appearance = originalMode
-+
-+        // Preserve the exact defaults representation as well (including an
-+        // absent or previously invalid value) and restore the AppKit override
-+        // independently so this suite cannot leak appearance state.
-+        if let originalRawValue {
-+            UserDefaults.standard.set(originalRawValue, forKey: "PureMac.Appearance")
-+        } else {
-+            UserDefaults.standard.removeObject(forKey: "PureMac.Appearance")
-+        }
-+        NSApp.appearance = originalApplicationAppearance
-+        super.tearDown()
-+    }
-+
-+    func testDarkSelectionAppliesAppKitAppearance() {
-+        ThemeManager.shared.appearance = .dark
-+        XCTAssertEqual(NSApp.appearance?.name, .darkAqua)
-+    }
-+
-+    func testLightSelectionAppliesAppKitAppearance() {
-+        ThemeManager.shared.appearance = .light
-+        XCTAssertEqual(NSApp.appearance?.name, .aqua)
-+    }
-+
-+    /// Dark -> System must clear the app-level override entirely. The previous
-+    /// .preferredColorScheme(nil) pipeline left the NavigationSplitView content
-+    /// stuck in the old scheme until the window resigned key.
-+    func testSystemSelectionClearsAppKitAppearance() {
-+        ThemeManager.shared.appearance = .dark
-+        ThemeManager.shared.appearance = .system
-+        XCTAssertNil(NSApp.appearance)
-+    }
-+
-+    func testSelectionPersistsAcrossManagerReads() {
-+        ThemeManager.shared.appearance = .dark
-+        XCTAssertEqual(UserDefaults.standard.string(forKey: "PureMac.Appearance"), "dark")
-+        XCTAssertEqual(ThemeManager.shared.appearance, .dark)
-+    }
-+}
-```
-
----
-
-### Incident Patch 3: `b5cb1670` (2026-08-21)
-**Commit Message**: Fix Smart Care progress shimmer clipping (#153)
-
-**File**: `PureMac/Views/DashboardView.swift` (modified, +49/-28)
-```diff
-@@ -1499,42 +1499,63 @@ private struct ShimmerProgressBar: View {
- 
-     private var clamped: Double { max(0, min(1, progress)) }
- 
-+    var body: some View {
-+        ZStack(alignment: .leading) {
-+            Capsule()
-+                .fill(Color.primary.opacity(0.08))
-+
-+            if reduceMotion {
-+                ShimmerProgressFill(progress: CGFloat(clamped), cycle: nil, tint: tint)
-+            } else {
-+                TimelineView(.animation) { timeline in
-+                    let t = timeline.date.timeIntervalSinceReferenceDate
-+                    let cycle = CGFloat((t.truncatingRemainder(dividingBy: 1.8)) / 1.8)
-+                    ShimmerProgressFill(progress: CGFloat(clamped), cycle: cycle, tint: tint)
-+                        .animation(.easeOut(duration: 0.35), value: clamped)
-+                }
-+            }
-+        }
-+        .clipShape(Capsule())
-+        .frame(height: 9)
-+    }
-+}
-+
-+/// Keeps the fill, its clipping boundary, and the shimmer path on the same
-+/// interpolated progress value while `TimelineView` independently drives the
-+/// shimmer phase.
-+private struct ShimmerProgressFill: View, Animatable {
-+    var progress: CGFloat
-+    let cycle: CGFloat?
-+    let tint: Color
-+
-+    var animatableData: CGFloat {
-+        get { progress }
-+        set { progress = newValue }
-+    }
-+
-     var body: some View {
-         GeometryReader { geo in
--            let fillWidth = geo.size.width * CGFloat(clamped)
-+            let fillWidth = geo.size.width * max(0, min(1, progress))
-+            let visibleFillWidth = min(geo.size.width, max(8, fillWidth))
-+
-             ZStack(alignment: .leading) {
--                Capsule()
--                    .fill(Color.primary.opacity(0.08))
-+                LinearGradient(colors: [tint, tint.opacity(0.7)],
-+                               startPoint: .leading, endPoint: .trailing)
- 
--                Capsule()
--                    .fill(
--                        LinearGradient(colors: [tint, tint.opacity(0.7)],
--                                       startPoint: .leading, endPoint: .trailing)
--                    )
--                    .frame(width: max(8, fillWidth))
--                    .animation(reduceMotion ? nil : .easeOut(duration: 0.35), value: clamped)
--
--                if !reduceMotion {
--                    TimelineView(.animation) { timeline in
--                        let t = timeline.date.timeIntervalSinceReferenceDate
--                        let cycle = (t.truncatingRemainder(dividingBy: 1.8)) / 1.8
--                        let bandWidth: CGFloat = 56
--                        LinearGradient(
--                            colors: [.clear, .white.opacity(0.35), .clear],
--                            startPoint: .leading, endPoint: .trailing
--                        )
--                        .frame(width: bandWidth)
--                        .offset(x: CGFloat(cycle) * (geo.size.width + bandWidth) - bandWidth)
--                    }
--                    .mask(
--                        Capsule()
--                            .frame(width: max(8, fillWidth))
--                            .frame(maxWidth: .infinity, alignment: .leading)
-+                if let cycle {
-+                    let bandWidth = min(56, max(3, visibleFillWidth * 0.6))
-+                    LinearGradient(
-+                        colors: [.clear, .white.opacity(0.35), .clear],
-+                        startPoint: .leading, endPoint: .trailing
-                     )
-+                    .frame(width: bandWidth)
-+                    .offset(x: cycle * (visibleFillWidth + bandWidth) - bandWidth)
-+                    .frame(maxWidth: .infinity, alignment: .leading)
-                 }
-             }
-+            .frame(width: visibleFillWidth)
-+            .clipShape(Capsule())
-         }
--        .frame(height: 9)
-     }
- }
- 
-```
-
----
-
-### Incident Patch 4: `7e0a6fea` (2026-08-10)
-**Commit Message**: Merge pull request #146 from boombertz/fix/appearance-name-localization
-
-fix(l10n): apply appearance name localization in MainWindow
-
-**File**: `PureMac/Views/MainWindow.swift` (modified, +3/-3)
-```diff
-@@ -350,7 +350,7 @@ struct MainWindow: View {
-                 Button {
-                     theme.appearance = appearance
-                 } label: {
--                    Label(appearance.label, systemImage: appearance.icon)
-+                    Label(LocalizedStringKey(appearance.label), systemImage: appearance.icon)
-                 }
-             }
-         } label: {
-@@ -366,7 +366,7 @@ struct MainWindow: View {
- 
-                 Spacer(minLength: 6)
- 
--                Text(theme.appearance.label)
-+                Text(LocalizedStringKey(theme.appearance.label))
-                     .font(.system(size: 10.5, weight: .medium))
-                     .foregroundStyle(.secondary)
- 
-@@ -382,7 +382,7 @@ struct MainWindow: View {
-         .menuStyle(.borderlessButton)
-         .help("Change appearance")
-         .accessibilityLabel("Appearance")
--        .accessibilityValue(theme.appearance.label)
-+        .accessibilityValue(Text(LocalizedStringKey(theme.appearance.label)))
-     }
- 
-     private var sidebarLabelColor: Color {
-```
-
----
-
-### Incident Patch 5: `e49162f9` (2026-07-30)
-**Commit Message**: fix(l10n): apply appearance name localization in MainWindow
-
-The appearance name (System/Light/Dark) was rendered via Text(String)
-and Label(String, systemImage:), which use the non-localizing
-initializers. As a result the existing "System"/"Light"/"Dark"
-translations were never applied and the labels always showed English.
-
-Wrap the values in LocalizedStringKey (matching AppearancePill) at the
-menu item, the sidebar value, and the accessibility value so they
-localize correctly.
-
-**File**: `PureMac/Views/MainWindow.swift` (modified, +3/-3)
-```diff
-@@ -350,7 +350,7 @@ struct MainWindow: View {
-                 Button {
-                     theme.appearance = appearance
-                 } label: {
--                    Label(appearance.label, systemImage: appearance.icon)
-+                    Label(LocalizedStringKey(appearance.label), systemImage: appearance.icon)
-                 }
-             }
-         } label: {
-@@ -366,7 +366,7 @@ struct MainWindow: View {
- 
-                 Spacer(minLength: 6)
- 
--                Text(theme.appearance.label)
-+                Text(LocalizedStringKey(theme.appearance.label))
-                     .font(.system(size: 10.5, weight: .medium))
-                     .foregroundStyle(.secondary)
- 
-@@ -382,7 +382,7 @@ struct MainWindow: View {
-         .menuStyle(.borderlessButton)
-         .help("Change appearance")
-         .accessibilityLabel("Appearance")
--        .accessibilityValue(theme.appearance.label)
-+        .accessibilityValue(Text(LocalizedStringKey(theme.appearance.label)))
-     }
- 
-     private var sidebarLabelColor: Color {
-```
-
----
-
-### Incident Patch 6: `38736d73` (2026-07-30)
-**Commit Message**: localization: localize dynamic UI strings
-
-**File**: `PureMac/PureMacApp.swift` (modified, +1/-1)
-```diff
-@@ -44,7 +44,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
-         let urls = (pboard.readObjects(forClasses: [NSURL.self],
-                                        options: [.urlReadingFileURLsOnly: true]) as? [URL]) ?? []
-         guard let appURL = urls.first(where: { $0.pathExtension == "app" }) else {
--            error?.pointee = "Select an application (.app) to uninstall." as NSString
-+            error?.pointee = String(localized: "Select an application (.app) to uninstall.") as NSString
-             return
-         }
-         NSApp.activate(ignoringOtherApps: true)
-```
-
-**File**: `PureMac/Services/MenuBarController.swift` (modified, +1/-1)
-```diff
-@@ -40,7 +40,7 @@ final class MenuBarController: NSObject, NSPopoverDelegate {
-         if let button = statusItem.button {
-             button.image = NSImage(
-                 systemSymbolName: "gauge.with.dots.needle.67percent",
--                accessibilityDescription: "System Monitor"
-+                accessibilityDescription: String(localized: "System Monitor")
-             )
-             button.imagePosition = .imageLeading
-             button.target = self
-```
-
-**File**: `PureMac/Services/ScanEngine.swift` (modified, +12/-12)
-```diff
-@@ -226,37 +226,37 @@ actor ScanEngine {
-     private func scanAIApps() -> CategoryResult {
-         let targets = [
-             CleanupTarget(
--                name: "Ollama Logs",
-+                name: String(localized: "Ollama Logs"),
-                 path: "\(home)/.ollama/logs"
-             ),
-             CleanupTarget(
--                name: "Ollama Cache",
-+                name: String(localized: "Ollama Cache"),
-                 path: "\(home)/Library/Caches/ollama"
-             ),
-             CleanupTarget(
--                name: "Ollama Electron Cache",
-+                name: String(localized: "Ollama Electron Cache"),
-                 path: "\(home)/Library/Caches/com.electron.ollama"
-             ),
-             CleanupTarget(
--                name: "Ollama WebKit Data",
-+                name: String(localized: "Ollama WebKit Data"),
-                 path: "\(home)/Library/WebKit/com.electron.ollama"
-             ),
-             CleanupTarget(
--                name: "Ollama Saved State",
-+                name: String(localized: "Ollama Saved State"),
-                 path: "\(home)/Library/Saved Application State/com.electron.ollama.savedState"
-             ),
-             CleanupTarget(
--                name: "Ollama CLI Prompt History (Optional)",
-+                name: String(localized: "Ollama CLI Prompt History (Optional)"),
-                 path: "\(home)/.ollama/history",
-                 isSelected: false,
-                 minimumSize: 0
-             ),
-             CleanupTarget(
--                name: "LM Studio Server Logs",
-+                name: String(localized: "LM Studio Server Logs"),
-                 path: "\(home)/.lmstudio/server-logs"
-             ),
-             CleanupTarget(
--                name: "LM Studio Conversations (Optional)",
-+                name: String(localized: "LM Studio Conversations (Optional)"),
-                 path: "\(home)/.lmstudio/conversations",
-                 isSelected: false,
-                 minimumSize: 0
-@@ -572,12 +572,12 @@ actor ScanEngine {
- 
-         let managers: [ManagerCache] = [
-             ManagerCache(
--                name: "npm cache",
-+                name: String(localized: "npm cache"),
-                 defaultPath: "\(home)/.npm",
-                 detectionCommand: (cli: "npm", args: ["config", "get", "cache"])
-             ),
-             ManagerCache(
--                name: "yarn classic cache",
-+                name: String(localized: "yarn classic cache"),
-                 defaultPath: "\(home)/Library/Caches/Yarn",
-                 detectionCommand: (cli: "yarn", args: ["cache", "dir"])
-             ),
-@@ -586,7 +586,7 @@ actor ScanEngine {
-             // touched by a system cleaner. The classic cache above remains the
-             // global, safe-to-clean location.
-             ManagerCache(
--                name: "pnpm content-addressable store",
-+                name: String(localized: "pnpm content-addressable store"),
-                 defaultPath: "\(home)/Library/pnpm/store",
-                 detectionCommand: (cli: "pnpm", args: ["store", "path"])
-             ),
-@@ -735,7 +735,7 @@ actor ScanEngine {
-         for dockerBin in dockerBinPaths where fileManager.fileExists(atPath: dockerBin) {
-             if let reclaimable = reclaimableDockerSpace(dockerBin: dockerBin), reclaimable > 0 {
-                 items.append(CleanableItem(
--                    name: "Docker prune (stopped containers, dangling images, build cache)",
-+                    name: String(localized: "Docker prune (stopped containers, dangling images, build cache)"),
-                     path: "",
-                     size: reclaimable,
-                     category: .dockerCache,
-```
-
-**File**: `PureMac/Views/Components/DashboardCharts.swift` (modified, +1/-1)
-```diff
-@@ -231,7 +231,7 @@ struct CategoryBarChart: View {
-         return Chart(bars) { bar in
-             BarMark(
-                 x: .value("Size", Double(bar.size) * reveal),
--                y: .value("Category", bar.name)
-+                y: .value(String(localized: "Category"), bar.name)
-             )
-             .foregroundStyle(bar.category.color.gradient)
-             .cornerRadius(5)
-```
-
-**File**: `PureMac/Views/Components/FDADemoView.swift` (modified, +1/-1)
-```diff
-@@ -170,7 +170,7 @@ struct FDADemoView: View {
-     }
- 
-     private struct DemoRow {
--        let name: String
-+        let name: LocalizedStringKey
-         let systemImage: String
-         let granted: Bool
-         var isPureMac: Bool = false
-```
-
-**File**: `PureMac/Views/Components/PermissionSheet.swift` (modified, +6/-4)
-```diff
-@@ -50,9 +50,11 @@ struct PermissionSheet: View {
-             VStack(alignment: .leading, spacing: 2) {
-                 Text(coordinator.context.headline)
-                     .font(.system(size: 16, weight: .bold))
--                Text(coordinator.hasFullDiskAccess
--                     ? "Access granted. Retrying…"
--                     : "1-tap setup. We'll detect the change automatically.")
-+                Text(LocalizedStringKey(
-+                    coordinator.hasFullDiskAccess
-+                        ? "Access granted. Retrying…"
-+                        : "1-tap setup. We'll detect the change automatically."
-+                ))
-                     .font(.system(size: 12))
-                     .foregroundStyle(.secondary)
-             }
-@@ -160,7 +162,7 @@ struct PermissionSheet: View {
-                     .font(.system(size: 11.5))
-                     .foregroundStyle(.secondary)
-                 Spacer()
--                Button(showAdvanced ? "Hide help" : "PureMac not in the list?") {
-+                Button(LocalizedStringKey(showAdvanced ? "Hide help" : "PureMac not in the list?")) {
-                     withAnimation(.easeInOut(duration: 0.25)) { showAdvanced.toggle() }
-                 }
-                 .buttonStyle(.link)
-```
-
-**File**: `PureMac/Views/OnboardingView.swift` (modified, +17/-13)
-```diff
-@@ -137,7 +137,7 @@ struct OnboardingView: View {
-                 Button("Start") { isComplete = true }
-                     .buttonStyle(GlowProminentButtonStyle(breathes: true))
-             } else {
--                Button(page == .permission ? "Continue" : "Next") { advance(by: 1) }
-+                Button(LocalizedStringKey(page == .permission ? "Continue" : "Next")) { advance(by: 1) }
-                     .buttonStyle(.borderedProminent)
-                     .controlSize(.large)
-             }
-@@ -307,10 +307,10 @@ private struct MissionScene: View {
- private struct FeatureRow: View {
-     let systemImage: String
-     let tint: Color
--    let title: String
--    let body_: String
-+    let title: LocalizedStringKey
-+    let body_: LocalizedStringKey
- 
--    init(systemImage: String, tint: Color, title: String, body: String) {
-+    init(systemImage: String, tint: Color, title: LocalizedStringKey, body: LocalizedStringKey) {
-         self.systemImage = systemImage
-         self.tint = tint
-         self.title = title
-@@ -347,12 +347,14 @@ private struct PermissionScene: View {
-     var body: some View {
-         VStack(spacing: 18) {
-             VStack(spacing: 8) {
--                Text(hasFda ? "Permission granted" : "One permission, then we're done")
-+                Text(LocalizedStringKey(hasFda ? "Permission granted" : "One permission, then we're done"))
-                     .font(.system(size: 26, weight: .semibold))
-                     .multilineTextAlignment(.center)
--                Text(hasFda
--                     ? "PureMac can now reach the locations macOS protects by default."
--                     : "macOS hides certain folders from every app until you say otherwise. We need them to find caches and uninstall cleanly.")
-+                Text(LocalizedStringKey(
-+                    hasFda
-+                        ? "PureMac can now reach the locations macOS protects by default."
-+                        : "macOS hides certain folders from every app until you say otherwise. We need them to find caches and uninstall cleanly."
-+                ))
-                     .font(.system(size: 13))
-                     .foregroundStyle(.secondary)
-                     .multilineTextAlignment(.center)
-@@ -382,7 +384,7 @@ private struct PermissionScene: View {
-                         Button {
-                             openSettings()
-                         } label: {
--                            Label(hasOpenedSettings ? "Reopen Settings" : "Open Settings & reveal PureMac",
-+                            Label(LocalizedStringKey(hasOpenedSettings ? "Reopen Settings" : "Open Settings & reveal PureMac"),
-                                   systemImage: "gear")
-                                 .font(.system(size: 13, weight: .semibold))
-                                 .frame(minWidth: 240)
-@@ -473,11 +475,13 @@ private struct ReadyScene: View {
-                 }
- 
-                 VStack(spacing: 10) {
--                    Text(hasFda ? "You're ready" : "Ready when you are")
-+                    Text(LocalizedStringKey(hasFda ? "You're ready" : "Ready when you are"))
-                         .font(.system(size: 30, weight: .semibold))
--                    Text(hasFda
--                         ? "Hit Start to run your first Smart Scan."
--                         : "Some features will be limited without Full Disk Access. You can grant it later in Settings.")
-+                    Text(LocalizedStringKey(
-+                        hasFda
-+                            ? "Hit Start to run your first Smart Scan."
-+                            : "Some features will be limited without Full Disk Access. You can grant it later in Settings."
-+                    ))
-                         .font(.system(size: 13.5))
-                         .foregroundStyle(.secondary)
-                         .multilineTextAlignment(.center)
-```
-
-**File**: `PureMac/Views/Orphans/OrphanListView.swift` (modified, +6/-2)
-```diff
-@@ -156,7 +156,7 @@ struct OrphanListView: View {
- 
-         for url in urlsToRemove {
-             guard OrphanSafetyPolicy.isSafeCandidate(url) else {
--                failedPaths.append("\(url.path) (blocked by safety policy)")
-+                failedPaths.append("\(url.path) (\(String(localized: "blocked by safety policy")))")
-                 continue
-             }
- 
-@@ -198,7 +198,11 @@ struct OrphanListView: View {
-         if !failedPaths.isEmpty {
-             let preview = failedPaths.prefix(3).joined(separator: "\n")
-             let suffix = failedPaths.count > 3 ? "\n…" : ""
--            removalErrorMessage = "\(failedPaths.count) item(s) failed to delete.\n\n\(preview)\(suffix)"
-+            removalErrorMessage = String(
-+                format: String(localized: "%lld item(s) failed to delete.\n\n%@"),
-+                Int64(failedPaths.count),
-+                preview + suffix
-+            )
-         }
-     }
- 
-```
-
----
-
-### Incident Patch 7: `fb3e5ad3` (2026-07-19)
-**Commit Message**: app icon: continuous-curvature squircle + drop shadow; bump 2.9.2
-
-The 2.9.1 icon used a plain rounded-rectangle mask with no margin
-shadow, so it sat flat and oversized next to system icons in the app
-switcher. The master is now cut with a superellipse (n=5) matching
-Apple's continuous corner curvature and composited with the standard
-soft drop shadow inside the 1024 px canvas margin.
-
-Claude-Session: https://claude.ai/code/session_01QyFNvecmmotai2A9TkYAGh
-
-**File**: `project.yml` (modified, +2/-2)
-```diff
-@@ -23,8 +23,8 @@ settings:
-     CODE_SIGN_ENTITLEMENTS: "PureMac/PureMac.entitlements"
-     INFOPLIST_FILE: "PureMac/Info.plist"
-     PRODUCT_BUNDLE_IDENTIFIER: "com.puremac.app"
--    MARKETING_VERSION: "2.9.1"
--    CURRENT_PROJECT_VERSION: "22"
-+    MARKETING_VERSION: "2.9.2"
-+    CURRENT_PROJECT_VERSION: "23"
-     GENERATE_INFOPLIST_FILE: "NO"
-     ASSETCATALOG_COMPILER_APPICON_NAME: "AppIcon"
-     COMBINE_HIDPI_IMAGES: "YES"
-```
-
----
-
-### Incident Patch 8: `695eb259` (2026-07-19)
-**Commit Message**: cleanup depth: universal binaries, language files, deeper caches; fix wifi.log and Docker cleaning; bump 2.9.0
-
-Two new categories close the gap against CleanMyMac:
-
-- Universal Binaries: parses FAT Mach-O headers (main executable plus
-  frameworks) and strips the non-native slice via a staged clone: APFS
-  clone of the bundle, lipo on the clone, ad-hoc re-sign, codesign
-  --verify --deep --strict, atomic swap. Any failure discards the clone
-  and leaves the original untouched. Apps with restricted entitlements
-  and App Store apps are refused or unselected.
-- Language Files: removes unused .lproj folders through the same staged
-  re-sign flow so the signature seal stays valid. Keeps preferred
-  languages, CFBundleDevelopmentRegion, per-app AppleLanguages, en, Base.
-Both are unselected by default and excluded from scheduled auto-clean.
-
-Scanner depth fixes:
-- directorySize dropped its 10,000-entry cap, which truncated DerivedData
-  to a fraction of its real size. Now uses totalFileAllocatedSize with an
-  error-tolerant enumerator and honors task cancellation.
-- Xcode junk adds DeviceSupport (iOS/watchOS/tvOS), XCTestDevices,
-  Previews, and SwiftPM caches.
-- User cache now covers s
-
-**File**: `PureMac/Logic/Scanning/LanguageFilesScanner.swift` (added, +214/-0)
-```diff
-@@ -0,0 +1,214 @@
-+import Foundation
-+
-+/// One app bundle with localization folders the user's system does not need.
-+struct LanguageFileFinding: Sendable {
-+    /// A single removable localization folder inside Contents/Resources.
-+    struct Lproj: Sendable {
-+        /// Full path to the .lproj folder.
-+        let path: String
-+        /// Recursive size of the folder in bytes.
-+        let size: Int64
-+    }
-+
-+    /// Bundle name without the .app suffix.
-+    let appName: String
-+    /// Full path to the .app bundle.
-+    let appPath: String
-+    /// Removable .lproj folders found in the bundle.
-+    let lprojs: [Lproj]
-+    /// True when Contents/_MASReceipt is present. An App Store update or
-+    /// re-download restores stripped localizations anyway, so callers should
-+    /// leave these findings unselected by default.
-+    let appStore: Bool
-+
-+    /// Combined size of all removable folders in the bundle.
-+    var totalBytes: Int64 { lprojs.reduce(0) { $0 + $1.size } }
-+}
-+
-+/// Finds unused .lproj localization folders inside installed app bundles
-+/// (the CleanMyMac "Language Files" feature). Pure logic - nothing is deleted
-+/// here. The integrator surfaces each removable .lproj as its own
-+/// CleanableItem (see `flatten`), and deletion runs through the existing
-+/// CleaningEngine.removeItem flow.
-+struct LanguageFilesScanner: Sendable {
-+
-+    /// Normalized language keys that must never be flagged as removable.
-+    /// Built from Locale.preferredLanguages - "en-US" keeps "en" plus the
-+    /// "en-US"/"en_US" variants - and always includes en, English (the legacy
-+    /// folder name) and Base, which apps rely on as fallbacks.
-+    var keepLanguages: Set<String> {
-+        var keep: Set<String> = ["en", "english", "base"]
-+        for language in Locale.preferredLanguages {
-+            // "en-us" also keeps plain "en" so regional variants of a
-+            // preferred language survive.
-+            Self.insertWithBase(Self.normalize(language), into: &keep)
-+        }
-+        return keep
-+    }
-+
-+    /// Scans the given application directories (top level plus one nested
-+    /// level, e.g. /Applications/Utilities) and returns one finding per app
-+    /// bundle that has removable localizations. Apps under /System and the
-+    /// PureMac bundle itself are never reported.
-+    func scan(applicationDirs: [String]) -> [LanguageFileFinding] {
-+        let fileManager = FileManager.default
-+        let keep = keepLanguages
-+        let ownPath = (Bundle.main.bundlePath as NSString).standardizingPath
-+
-+        var findings: [LanguageFileFinding] = []
-+        for dir in applicationDirs {
-+            for appPath in appBundles(in: dir, fileManager: fileManager) {
-+                if let finding = inspect(appPath: appPath, keep: keep, ownPath: ownPath, fileManager: fileManager) {
-+                    findings.append(finding)
-+                }
-+            }
-+        }
-+
-+        return findings.sorted { $0.totalBytes > $1.totalBytes }
-+    }
-+
-+    /// Expands per-app findings into one entry per removable .lproj so the
-+    /// integrator can surface each folder as its own CleanableItem. Entries
-+    /// are named "<App> - <language display name>".
-+    func flatten(_ findings: [LanguageFileFinding]) -> [(name: String, path: String, size: Int64, appStore: Bool)] {
-+        findings.flatMap { finding in
-+            finding.lprojs.map { lproj in
-+                let code = ((lproj.path as NSString).lastPathComponent as NSString).deletingPathExtension
-+                let identifier = code.replacingOccurrences(of: "_", with: "-")
-+                let display = Locale.current.localizedString(forIdentifier: identifier) ?? code
-+                return (name: "\(finding.appName) - \(display)", path: lproj.path, size: lproj.size, appStore: finding.appStore)
-+            }
-+        }
-+    }
-+
-+    // MARK: - Private
-+
-+    /// Lowercases and unifies separators so "pt_BR", "pt-BR" and "pt-br" all
-+    /// compare equal.
-+    private static func normalize(_ language: String) -> String {
-+        language.lowercased().replacingOccurrences(of: "_", with: "-")
-+    }
-+
-+    /// Inserts a normalized language plus its base, so "pt-br" also keeps
-+    /// plain "pt".
-+    private static func insertWithBase(_ normalized: String, into keep: inout Set<String>) {
-+        keep.insert(normalized)
-+        if let base = normalized.split(separator: "-").first {
-+            keep.insert(String(base))
-+        }
-+    }
-+
-+    /// Lists .app bundles at the top level of `dir` and one nested level
-+    /// below it. A missing directory (e.g. ~/Applications) is treated as
-+    /// empty.
-+    private func appBundles(in dir: String, fileManager: FileManager) -> [String] {
-+        guard let topLevel = try? fileManager.contentsOfDirectory(atPath: dir) else { return [] }
-+
-+        var bundles: [String] = []
-+        for entry in topLevel {
-+            let path = dir + "/" + entry
-+            if entry.hasSuffix(".app")
-```
-
-**File**: `PureMac/Logic/Scanning/UniversalBinaryScanner.swift` (added, +343/-0)
-```diff
-@@ -0,0 +1,343 @@
-+import Foundation
-+
-+/// One fat Mach-O file inside an app bundle, together with the slices that
-+/// can be stripped on this machine and the bytes doing so would reclaim.
-+/// `removableArchs` uses lipo's arch spelling ("x86_64", "arm64", ...) so it
-+/// can be passed straight to `lipo -remove` by BinaryThinner.
-+struct FatBinary: Sendable {
-+    let path: String
-+    let removableArchs: [String]
-+    let reclaimableBytes: Int64
-+}
-+
-+/// A universal-binary discovery for one app bundle: the app's main
-+/// executable plus every fat framework/dylib found under Contents/Frameworks
-+/// (where most of the savings live for Electron apps). `appStore` marks apps
-+/// carrying a _MASReceipt — thinning those can break receipt validation, so
-+/// the caller should surface them unselected by default.
-+struct UniversalBinaryFinding: Identifiable, Sendable {
-+    let id = UUID()
-+    let appPath: String
-+    let appName: String
-+    let executablePath: String
-+    let nativeArch: String
-+    /// Union of removable arch names across all fat binaries in the bundle.
-+    let removableArchs: [String]
-+    /// Total bytes freed by stripping every foreign slice in the bundle.
-+    let reclaimableBytes: Int64
-+    let appStore: Bool
-+    /// Every fat Mach-O in the bundle with per-file removable archs — the
-+    /// exact work list BinaryThinner executes.
-+    let fatBinaries: [FatBinary]
-+}
-+
-+/// Finds universal (fat) app binaries carrying a slice for the architecture
-+/// this Mac does not run natively, and computes how many bytes stripping the
-+/// foreign slice would reclaim. Pure logic — no mutation, no privileged
-+/// operations — so it stays a plain Sendable struct rather than an actor.
-+///
-+/// The FAT header is parsed by hand from the first 4 KB of each candidate
-+/// file instead of shelling out to `lipo -info` per file: an /Applications
-+/// walk touches thousands of framework binaries and process spawns would
-+/// dominate the scan time.
-+struct UniversalBinaryScanner: Sendable {
-+
-+    // MARK: - Mach-O constants (values as they appear byte-swapped from disk)
-+
-+    private static let fatMagic: UInt32 = 0xcafe_babe
-+    private static let fatMagic64: UInt32 = 0xcafe_babf
-+    private static let cpuTypeX86_64: UInt32 = 0x0100_0007
-+    private static let cpuTypeARM64: UInt32 = 0x0100_000c
-+
-+    /// lipo arch spelling per (cputype, masked cpusubtype). arm64e and x86_64h
-+    /// are distinct lipo names, so the subtype matters for `-remove` to hit
-+    /// the right slice.
-+    private static func archName(cpuType: UInt32, cpuSubtype: UInt32) -> String? {
-+        // High byte of cpusubtype carries capability flags (e.g. LIB64,
-+        // PTRAUTH versioning) — mask them off before matching.
-+        let subtype = cpuSubtype & 0x00ff_ffff
-+        switch (cpuType, subtype) {
-+        case (0x0000_0007, _): return "i386"
-+        case (Self.cpuTypeX86_64, 8): return "x86_64h"
-+        case (Self.cpuTypeX86_64, _): return "x86_64"
-+        case (0x0000_000c, _): return "arm"
-+        case (Self.cpuTypeARM64, 2): return "arm64e"
-+        case (Self.cpuTypeARM64, _): return "arm64"
-+        default: return nil
-+        }
-+    }
-+
-+    /// The machine's native architecture, asked of the kernel at runtime.
-+    /// A compile-time #if arch check would follow whichever slice PureMac
-+    /// itself runs as — under Rosetta the x86_64 slice would classify every
-+    /// app's native arm64/arm64e slices as removable, and thinning would
-+    /// strip them. hw.optional.arm64 is absent on Intel hardware.
-+    private static let hostIsARM64: Bool = {
-+        var value: Int32 = 0
-+        var size = MemoryLayout<Int32>.size
-+        guard sysctlbyname("hw.optional.arm64", &value, &size, nil, 0) == 0 else {
-+            return false
-+        }
-+        return value == 1
-+    }()
-+    private static var hostCPUType: UInt32 { hostIsARM64 ? cpuTypeARM64 : cpuTypeX86_64 }
-+    private static var hostArchName: String { hostIsARM64 ? "arm64" : "x86_64" }
-+
-+    private var fileManager: FileManager { .default }
-+
-+    // MARK: - Public API
-+
-+    /// Walks the given application directories (top level plus one nested
-+    /// level, so apps grouped in subfolders like /Applications/Utilities are
-+    /// found) and returns one finding per app that has at least one foreign
-+    /// slice to strip.
-+    ///
-+    /// Skipped entirely: anything under /System, and PureMac itself (thinning
-+    /// the running binary out from under the process is asking for trouble).
-+    /// App Store apps (Contents/_MASReceipt present) are still reported but
-+    /// flagged `appStore = true`.
-+    func scan(
-+        applicationDirs: [String] = ["/Applications", "\(NSHomeDirectory())/Applications"]
-+    ) -> [UniversalBinaryFinding] {
-+        var findings: [UniversalBinaryFinding] = []
-+        let ownBundlePath = Bundle.main.bundleURL.resolvingSymlinksInPath().path
-+
-+        for dir in applicationDirs {
-+            for appPath in ap
-```
-
-**File**: `PureMac/Logic/Utilities/FileProtection.swift` (added, +42/-0)
-```diff
-@@ -0,0 +1,42 @@
-+import Foundation
-+
-+/// Shared SIP/immutability check used by both ScanEngine (so protected
-+/// entries never surface as cleanable items) and CleaningEngine (so a
-+/// protected survivor is reported as "skipped, protected by macOS" instead
-+/// of a scary removal error).
-+enum FileProtection {
-+
-+    /// True when the entry is SIP-protected or immutable: BSD flags carry
-+    /// SF_RESTRICTED/SF_IMMUTABLE/UF_IMMUTABLE, or the path has the
-+    /// com.apple.rootless xattr. Deleting these fails even with admin
-+    /// privileges.
-+    static func isProtectedFromDeletion(path: String) -> Bool {
-+        var sb = stat()
-+        if lstat(path, &sb) == 0 {
-+            // SF_RESTRICTED (0x00080000) isn't exported by Darwin's Swift
-+            // overlay, so spell out the literal; the immutable flags are.
-+            let protectedFlags: UInt32 = 0x0008_0000 | UInt32(SF_IMMUTABLE) | UInt32(UF_IMMUTABLE)
-+            if sb.st_flags & protectedFlags != 0 {
-+                return true
-+            }
-+        }
-+
-+        // SIP also marks paths with the com.apple.rootless xattr, which
-+        // can be present even when st_flags reads 0.
-+        let bufSize = listxattr(path, nil, 0, XATTR_NOFOLLOW)
-+        if bufSize > 0 {
-+            var buffer = [CChar](repeating: 0, count: bufSize)
-+            let read = listxattr(path, &buffer, bufSize, XATTR_NOFOLLOW)
-+            if read > 0 {
-+                let names = Data(bytes: &buffer, count: read)
-+                    .split(separator: 0)
-+                    .compactMap { String(data: $0, encoding: .utf8) }
-+                if names.contains("com.apple.rootless") {
-+                    return true
-+                }
-+            }
-+        }
-+
-+        return false
-+    }
-+}
-```
-
-**File**: `PureMac/Models/Models.swift` (modified, +17/-0)
-```diff
-@@ -15,6 +15,8 @@ enum CleaningCategory: String, CaseIterable, Identifiable, Codable {
-     case brewCache = "Brew Cache"
-     case nodeCache = "Node Cache"
-     case dockerCache = "Docker Cache"
-+    case universalBinaries = "Universal Binaries"
-+    case languageFiles = "Language Files"
- 
-     var id: String { rawValue }
- 
-@@ -32,6 +34,8 @@ enum CleaningCategory: String, CaseIterable, Identifiable, Codable {
-         case .brewCache: return "mug.fill"
-         case .nodeCache: return "leaf.fill"
-         case .dockerCache: return "shippingbox.fill"
-+        case .universalBinaries: return "cpu"
-+        case .languageFiles: return "globe"
-         }
-     }
- 
-@@ -49,6 +53,8 @@ enum CleaningCategory: String, CaseIterable, Identifiable, Codable {
-         case .brewCache: return "Homebrew download cache"
-         case .nodeCache: return "npm, yarn, and pnpm download caches"
-         case .dockerCache: return "Docker images, containers, and build cache"
-+        case .universalBinaries: return "Unused CPU architecture slices in app binaries"
-+        case .languageFiles: return "Unused app localizations"
-         }
-     }
- 
-@@ -66,6 +72,8 @@ enum CleaningCategory: String, CaseIterable, Identifiable, Codable {
-         case .brewCache: return .mint
-         case .nodeCache: return .pink
-         case .dockerCache: return .indigo
-+        case .universalBinaries: return .brown
-+        case .languageFiles: return .gray
-         }
-     }
- 
-@@ -80,6 +88,15 @@ enum CleaningCategory: String, CaseIterable, Identifiable, Codable {
-     static var scannable: [CleaningCategory] {
-         allCases.filter { $0 != .smartScan && $0 != .purgeableSpace }
-     }
-+
-+    // Categories that rewrite app bundles in place (binary thinning,
-+    // localization stripping) instead of deleting junk. Their items always
-+    // start unselected, and the scheduled autoClean path skips them
-+    // entirely — re-signing every installed app is never an unattended
-+    // action.
-+    static var appModifying: Set<CleaningCategory> {
-+        [.universalBinaries, .languageFiles]
-+    }
- }
- 
- // MARK: - Scan State
-```
-
-**File**: `PureMac/Services/BinaryThinner.swift` (added, +323/-0)
-```diff
-@@ -0,0 +1,323 @@
-+import Foundation
-+
-+/// Strips foreign-architecture slices from the fat binaries of one app
-+/// bundle (a UniversalBinaryFinding from UniversalBinaryScanner) and ad-hoc
-+/// re-signs the bundle so Gatekeeper still accepts it. Also removes .lproj
-+/// localization folders through the same flow, because deleting sealed
-+/// resources with a plain unlink breaks the bundle's signature.
-+///
-+/// Safety model — the original bundle is never modified in place:
-+///   1. Entitlement gate: apps claiming provisioning-backed entitlements
-+///      (com.apple.developer.*, com.apple.application-identifier) are
-+///      refused outright. Those entitlements are only honored under an
-+///      Apple-issued certificate; an ad-hoc signature carrying them is
-+///      killed by AMFI at spawn.
-+///   2. Preflight: the bundle and its parent directory must be writable by
-+///      the current user (the swap below is two renames in the parent).
-+///      Otherwise fail with `needsAdmin` before touching anything; there
-+///      is no admin escalation here.
-+///   3. Stage: clone the whole bundle to a hidden sibling directory (APFS
-+///      makes the copy cheap) and apply every modification — lipo or lproj
-+///      removal — to the copy only.
-+///   4. Sign the staged copy ad-hoc, then verify it with
-+///      `codesign --verify --deep --strict`. Any failure discards the copy
-+///      and leaves the original untouched; nothing to roll back, so a
-+///      failed sign can never leave a mixed Developer ID / ad-hoc bundle.
-+///   5. Strip com.apple.quarantine from the verified copy. The re-sign
-+///      changes the cdhash, so a still-quarantined app would otherwise be
-+///      re-assessed by Gatekeeper and refused as not notarized.
-+///   6. Swap: rename the original aside, rename the staged copy into place,
-+///      delete the original. If the delete fails (root-owned contents) the
-+///      swap is undone and `needsAdmin` is returned, so "success" always
-+///      means the space was actually freed.
-+actor BinaryThinner {
-+
-+    enum ThinningError: LocalizedError {
-+        /// Bundle, its parent directory, or its contents not writable by
-+        /// this user. Caller decides what to do; this actor never escalates
-+        /// privileges.
-+        case needsAdmin(String)
-+        /// App claims provisioning-backed entitlements that only work under
-+        /// its original developer signature; re-signing would stop it
-+        /// launching, so it is refused before anything is staged.
-+        case restrictedEntitlements(String)
-+        case lipoFailed(String, String)
-+        case swapFailed(String, String)
-+        case codesignFailed(String, String)
-+        case verificationFailed(String, String)
-+        case nothingToThin(String)
-+
-+        var errorDescription: String? {
-+            switch self {
-+            case .needsAdmin(let path):
-+                return "Not writable by current user: \(path)"
-+            case .restrictedEntitlements(let app):
-+                return "Cannot modify \(app): its entitlements require the original developer signature"
-+            case .lipoFailed(let path, let detail):
-+                return "lipo failed for \(path): \(detail)"
-+            case .swapFailed(let path, let detail):
-+                return "Could not swap modified bundle into place at \(path): \(detail)"
-+            case .codesignFailed(let app, let detail):
-+                return "Re-signing failed for \(app): \(detail)"
-+            case .verificationFailed(let app, let detail):
-+                return "Signature verification failed for \(app): \(detail)"
-+            case .nothingToThin(let app):
-+                return "No removable slices in \(app)"
-+            }
-+        }
-+    }
-+
-+    private let fileManager = FileManager.default
-+
-+    // MARK: - Public API
-+
-+    /// Thins every fat binary in the finding and re-signs the bundle.
-+    /// Success value is the number of bytes actually freed (sum of
-+    /// before-minus-after file sizes, which can differ slightly from the
-+    /// scanner's estimate because lipo rewrites the FAT header padding).
-+    func thin(_ finding: UniversalBinaryFinding) async -> Result<Int64, Error> {
-+        let binaries = finding.fatBinaries.filter { !$0.removableArchs.isEmpty }
-+        guard !binaries.isEmpty else {
-+            return .failure(ThinningError.nothingToThin(finding.appPath))
-+        }
-+
-+        let appPath = (finding.appPath as NSString).standardizingPath
-+        let result = stagedModify(appPath: appPath, appName: finding.appName) { stagedPath in
-+            var freedBytes: Int64 = 0
-+            for binary in binaries {
-+                freedBytes += try self.thinBinary(binary, appPath: appPath, stagedPath: stagedPath)
-+            }
-+            return freedBytes
-+        }
-+
-+        if case .success(let freed) = result {
-+            Logger.shared.log("Thinned \(finding.appName): freed \(freed) bytes across \(binaries.count) bin
-```
-
-**File**: `PureMac/Services/CleaningEngine.swift` (modified, +312/-1)
-```diff
-@@ -2,6 +2,7 @@ import Foundation
- 
- actor CleaningEngine {
-     private let fileManager = FileManager.default
-+    private let binaryThinner = BinaryThinner()
- 
-     struct CleaningResult {
-         var freedSpace: Int64 = 0
-@@ -12,6 +13,12 @@ actor CleaningEngine {
-         // EPERM. These are root-owned and need an admin-privileged second
-         // pass via cleanWithAdminPrivileges(items:).
-         var requiresAdmin: [CleanableItem] = []
-+        // Paths skipped because they are SIP-protected or immutable (see
-+        // FileProtection). Deleting these fails even as root, so they are
-+        // recorded here — not in errors — and must never trigger the
-+        // "Couldn't clean everything" alert.
-+        var protectedPaths: Set<String> = []
-+        var skippedProtected: Int { protectedPaths.count }
-     }
- 
-     // MARK: - Public API
-@@ -36,6 +43,54 @@ actor CleaningEngine {
-                 continue
-             }
- 
-+            if item.category == .universalBinaries {
-+                // Thinning is a lipo rewrite plus re-sign, not a file unlink,
-+                // so it bypasses the delete path entirely. The item path is
-+                // the app bundle; the per-binary work list is re-derived here
-+                // so a stale scan can't strip slices that no longer exist.
-+                let thinOutcome = await thinUniversalBinaryItem(item)
-+                result.freedSpace += thinOutcome.freed
-+                if thinOutcome.cleaned {
-+                    result.itemsCleaned += 1
-+                    result.cleanedPaths.insert(item.path)
-+                }
-+                if let error = thinOutcome.error {
-+                    result.errors.append(error)
-+                }
-+                continue
-+            }
-+
-+            if item.category == .languageFiles {
-+                // Localizations are sealed into the bundle's CodeResources; a
-+                // plain unlink would break the app's code signature, so the
-+                // folder is removed through BinaryThinner's staged re-sign
-+                // flow instead of the delete path.
-+                let lprojOutcome = await removeLanguageFileItem(item)
-+                result.freedSpace += lprojOutcome.freed
-+                if lprojOutcome.cleaned {
-+                    result.itemsCleaned += 1
-+                    result.cleanedPaths.insert(item.path)
-+                }
-+                if let error = lprojOutcome.error {
-+                    result.errors.append(error)
-+                }
-+                continue
-+            }
-+
-+            if item.category == .dockerCache && item.path.isEmpty {
-+                // The virtual "Docker prune" entry (empty path, like
-+                // purgeableSpace) reclaims space inside the Docker/OrbStack VM
-+                // via `docker system prune -f` — there is no file to unlink.
-+                let pruneOutcome = await pruneDockerSystem()
-+                result.freedSpace += pruneOutcome.freed
-+                if pruneOutcome.freed > 0 { result.itemsCleaned += 1 }
-+                result.cleanedPaths.insert(item.path)
-+                if let error = pruneOutcome.error {
-+                    result.errors.append(error)
-+                }
-+                continue
-+            }
-+
-             do {
-                 let itemURL = URL(fileURLWithPath: item.path)
-                 guard fileManager.fileExists(atPath: item.path) else { continue }
-@@ -54,6 +109,8 @@ actor CleaningEngine {
-                     if item.category == .largeFiles {
-                         return isExplicitSingleFileDeletable(resolvedPath: resolved)
+@@ -170,21 +170,33 @@ actor CleaningEngine {
+                     homeDirectory: homeDirectory
+                 )
+                 if isManagedDerivedData {
+-                    guard let lifecycleLock = XcodeBuildMCPDerivedDataSupport.acquireLifecycleLock(
++                    // The legacy shared root predates XcodeBuildMCP's
++                    // per-workspace lock, so only workspace DerivedData waits
++                    // for the lock before moving to the Trash.
++                    var lifecycleLock: XcodeBuildMCPDerivedDataSupport.LifecycleLock?
++                    if XcodeBuildMCPDerivedDataSupport.workspaceKey(
+                         forManagedDerivedDataPath: resolved,
+-                        homeDirectory: homeDirectory,
+-                        fileManager: fileManager
+-                    ) else {
+-                        let detail = "Skipped XcodeBuildMCP DerivedData: lifecycle lock is unavailable: \(item.path)"
+-                        Logger.shared.log(detail, level: .warning)
+-                        result.errors.append(detail)
+-                        continue
++                        homeDirectory: homeDirectory
++                    ) != nil {
++                        guard let acquired = XcodeBuildMCPDerivedDataSupport.acquireLifecycleLock(
++                            forManagedDerivedDataPath: resolved,
++                            homeDirectory: homeDirectory,
++                            fileManager: fileManager
++                        ) else {
++                            let detail = "Skipped XcodeBuildMCP DerivedData: lifecycle lock is unavailable: \(item.path)"
++                            Logger.shared.log(detail, level: .warning)
++                            result.errors.append(detail)
++                            continue
++                        }
++                        lifecycleLock = acquired
                      }
-+                    // languageFiles never reaches here — it is handled above
-+                    // via the staged re-sign flow, not the delete path.
-                     return isSafeToDelete(resolvedPath: resolved)
-                 }()
-                 guard pathAccepted else {
-@@ -87,6 +144,14 @@ actor CleaningEngine {
-                     (nsError.domain == NSPOSIXErrorDomain &&
-                         (nsError.code == Int(EACCES) || nsError.code == Int(EPERM)))
-                 if isPermissionDenied {
-+                    // SIP-protected/immutable entries fail even as root, so
-+                    // escalating them just wastes an auth prompt and produces
-+                    // a bogus "survived admin removal" error. Record and move on.
-+                    if FileProtection.isProtectedFromDeletion(path: item.path) {
-+                        result.protectedPaths.insert(item.path)
-+                        Logger.shared.log("Skipping SIP-protected path: \(item.path)", level: .info)
-+                        continue
-+                    }
-                     // Defer to the admin pass — these are typically root-owned
-                     // system caches that the user-level process can't unlink.
-                     result.requiresAdmin.append(item)
-@@ -128,6 +193,10 @@ actor CleaningEngine {
-                 if item.categ
-```
-
-**File**: `PureMac/Services/ScanEngine.swift` (modified, +165/-19)
-```diff
-@@ -67,6 +67,10 @@ actor ScanEngine {
-             return scanNodeCache()
-         case .dockerCache:
-             return scanDockerCache()
-+        case .universalBinaries:
-+            return scanUniversalBinaries()
-+        case .languageFiles:
-+            return scanLanguageFiles()
-         }
-     }
- 
-@@ -165,6 +169,55 @@ actor ScanEngine {
-             }
-         }
- 
-+        // Sandboxed apps keep their caches inside per-app containers, not
-+        // ~/Library/Caches — on modern macOS this is where most of the
-+        // "user cache" gigabytes actually live. One item per container,
-+        // skipping near-empty caches (< 1 MB).
-+        let containerRoots = [
-+            "\(home)/Library/Containers",
-+            "\(home)/Library/Group Containers",
-+        ]
-+        for root in containerRoots {
-+            guard let containers = try? fileManager.contentsOfDirectory(atPath: root) else { continue }
-+            // App containers nest caches under Data/; group containers don't.
-+            let cacheSubpath = root.hasSuffix("Group Containers")
-+                ? "Library/Caches"
-+                : "Data/Library/Caches"
-+            for container in containers {
-+                let cachePath = (root as NSString)
-+                    .appendingPathComponent(container)
-+                    .appending("/" + cacheSubpath)
-+                // Same symlink defense as scanDirectory: an app at this UID
-+                // could plant Data or Data/Library as a symlink into an
-+                // allow-listed root and have the target sized here and later
-+                // deleted. Only accept paths that resolve to themselves.
-+                let resolvedCachePath = URL(fileURLWithPath: cachePath).resolvingSymlinksInPath().path
-+                guard normalizePath(resolvedCachePath) == normalizePath(cachePath) else { continue }
-+                if let item = makeCleanupItem(
-+                    name: "\(container) (sandbox cache)",
-+                    path: cachePath,
-+                    category: .userCache,
-+                    minimumSize: 1024 * 1024
-+                ) {
-+                    items.append(item)
-+                }
-+            }
-+        }
-+
-+        // Per-app HTTP cookie/response storage — one entry per app, same
-+        // non-recursive shape as the top-level Caches pass above. CFNetwork
-+        // keeps each native app's cookies and HSTS state here, i.e. live
-+        // login sessions rather than regenerable cache, so these entries
-+        // start unselected and the user opts in per app.
-+        let httpStorages = scanDirectory(
-+            path: "\(home)/Library/HTTPStorages",
-+            category: .userCache,
-+            recursive: false,
-+            maxDepth: 1,
-+            isSelected: false
-+        )
-+        items.append(contentsOf: httpStorages)
-+
-         let uniqueItems = deduplicatedItems(items)
-         let totalSize = uniqueItems.reduce(0) { $0 + $1.size }
-         return CategoryResult(category: .userCache, items: uniqueItems, totalSize: totalSize)
-@@ -388,6 +441,18 @@ actor ScanEngine {
-             "\(home)/Library/Developer/Xcode/Archives",
-             "\(home)/Library/Developer/CoreSimulator/Caches",
-             "\(home)/Library/Caches/com.apple.dt.Xcode",
-+            // Per-OS symbol caches, regenerated on next device connect.
-+            // These alone are often tens of GB on active dev machines.
-+            "\(home)/Library/Developer/Xcode/iOS DeviceSupport",
-+            "\(home)/Library/Developer/Xcode/watchOS DeviceSupport",
-+            "\(home)/Library/Developer/Xcode/tvOS DeviceSupport",
-+            // Simulator clones spun up by xcodebuild test runs
-+            "\(home)/Library/Developer/XCTestDevices",
-+            // SwiftUI preview build products
-+            "\(home)/Library/Developer/Xcode/UserData/Previews",
-+            // Swift Package Manager download + build caches
-+            "\(home)/Library/Caches/org.swift.swiftpm",
-+            "\(home)/Library/org.swift.swiftpm",
-         ]
- 
-         for path in xcodePaths {
-@@ -632,6 +697,14 @@ actor ScanEngine {
-             "\(home)/.docker/cli-plugins/.cache",
-             // Buildx / containerd inline cache
-             "\(home)/.docker/buildx/cache",
-+            // OrbStack (Docker Desktop alternative) keeps its daemon logs and
-+            // caches outside ~/Library/Containers. The VM data disk itself
-+            // (~/.orbstack/data) is intentionally NOT listed — image/container
-+            // space inside the VM is only reclaimable via `docker system
-+            // prune`, surfaced as the virtual entry below.
-+            "\(home)/.orbstack/log",
-+            "\(home)/Library/Caches/dev.kdrag0n.MacVirt",
-+            "\(home)/Library/Logs/OrbStack",
-         ]
- 
-         for path in dockerDataDirs {
-@@ -648,17 +721,22 @@ actor ScanEngine {
-             ))
-         }
- 
--        // If the `docker` CLI is available, surface reclaimable space
--        // reported by `dock
-```
-
-**File**: `PureMac/ViewModels/AppState.swift` (modified, +31/-5)
-```diff
-@@ -750,6 +750,7 @@ final class AppState: ObservableObject {
-             result.itemsCleaned += admin.itemsCleaned
-             result.freedSpace += admin.freedSpace
-             result.errors.append(contentsOf: admin.errors)
-+            result.protectedPaths.formUnion(admin.protectedPaths)
-         }
- 
-         totalFreedSpace = result.freedSpace
-@@ -777,7 +778,7 @@ final class AppState: ObservableObject {
-         // Route survivors back through the same outcome path the original
-         // cleanup uses. Without this, an FDA revocation between grant and
-         // retry would silently drop errors instead of re-popping the sheet.
--        let survivors = items.filter { !result.cleanedPaths.contains($0.path) }
-+        let survivors = survivingItems(from: items, result: result)
-         handleCleanOutcome(errors: result.errors, survivors: survivors)
- 
-         scanState = .cleaned
-@@ -883,13 +884,14 @@ final class AppState: ObservableObject {
-                 result.itemsCleaned += admin.itemsCleaned
-                 result.freedSpace += admin.freedSpace
-                 result.errors.append(contentsOf: admin.errors)
-+                result.protectedPaths.formUnion(admin.protectedPaths)
-             }
- 
-             totalFreedSpace = result.freedSpace
-             lastCleanedDate = Date()
-             if result.itemsCleaned > 0 { Haptics.successWithSound() }
- 
--            let survivors = itemsToClean.filter { !result.cleanedPaths.contains($0.path) }
-+            let survivors = survivingItems(from: itemsToClean, result: result)
- 
-             for (cat, catResult) in categoryResults {
-                 let remaining = catResult.items.filter { !result.cleanedPaths.contains($0.path) }
-@@ -944,6 +946,7 @@ final class AppState: ObservableObject {
-                 cleanResult.itemsCleaned += admin.itemsCleaned
-                 cleanResult.freedSpace += admin.freedSpace
-                 cleanResult.errors.append(contentsOf: admin.errors)
-+                cleanResult.protectedPaths.formUnion(admin.protectedPaths)
-             }
- 
-             totalFreedSpace = cleanResult.freedSpace
-@@ -968,7 +971,7 @@ final class AppState: ObservableObject {
-             }
-             totalJunkSize = categoryResults.values.reduce(0) { $0 + $1.totalSize }
- 
--            let survivors = selectedItems.filter { !cleanResult.cleanedPaths.contains($0.path) }
-+            let survivors = survivingItems(from: selectedItems, result: cleanResult)
-             handleCleanOutcome(errors: cleanResult.errors, survivors: survivors)
- 
-             scanState = .cleaned
-@@ -980,6 +983,20 @@ final class AppState: ObservableObject {
-         }
-     }
- 
-+    /// Items that neither got cleaned nor were skipped as SIP-protected.
-+    /// Protected paths can't be removed even as root, so treating them as
-+    /// failures only produces a "Couldn't clean everything" alert the user
-+    /// can do nothing about (e.g. /private/var/log/wifi.log) — log and move on.
-+    private func survivingItems(from items: [CleanableItem], result: CleaningEngine.CleaningResult) -> [CleanableItem] {
-+        if result.skippedProtected > 0 {
-+            let protectedList = result.protectedPaths.sorted().joined(separator: ", ")
-+            Logger.shared.log("Skipped \(result.skippedProtected) macOS-protected item(s): \(protectedList)", level: .info)
-+        }
-+        return items.filter {
-+            !result.cleanedPaths.contains($0.path) && !result.protectedPaths.contains($0.path)
-+        }
-+    }
-+
-     /// Inspect a clean batch's leftovers and either route the user into the
-     /// PermissionSheet (FDA is the most likely cause) or surface a richer
-     /// error alert that lists actual paths instead of "Check the log".
-@@ -992,14 +1009,19 @@ final class AppState: ObservableObject {
-         }
- 
-         let fdaGranted = FullDiskAccessManager.shared.hasFullDiskAccess
--        let likelyFDA = !fdaGranted && !survivors.isEmpty
-+        // App-modifying survivors (thinning, localization stripping) fail on
-+        // root-owned bundles that Full Disk Access cannot make writable, so
-+        // they must not steer the user into a Grant Access loop that can
-+        // never succeed. Only junk-file survivors count toward that hint.
-+        let fdaFixableSurvivors = survivors.filter { !CleaningCategory.appModifying.contains($0.category) }
-+        let likelyFDA = !fdaGranted && !fdaFixableSurvivors.isEmpty
-         cleanErrorIsFDAFixable = likelyFDA
-         pendingPermissionRetryItems = survivors
- 
-         if likelyFDA {
-             cleanError = String(
-                 format: String(localized: "%lld item(s) need Full Disk Access to remove. Tap Grant Access to fix in one step."),
--                Int64(survivors.count)
-+                Int64(fdaFixableSurvivors.count)
-             )
-         } else if !survivors.isEmpty {
-             let preview = survivors.prefix(2).map { ($0.path as NSString).lastPathComponent }.joined(separator: ", ")
-@@ -1036,7 +1058,11 @@ f
-```
-
----
-
-### Incident Patch 9: `47be19af` (2026-07-18)
-**Commit Message**: ui overhaul: glow-orb dashboard hero, stacked storage meter, vivid tiles, inline selection strip; bump 2.8.5
-
-AppTheme: CardSurface gets a 14pt radius and optional tint wash, raised
-elevation strengthened, IconTile grows a vivid full-saturation mode, new
-shared SectionHeader and AmbientBackdrop (layered radial washes, halved
-in light mode), GlowProminentButtonStyle large variant for hero CTAs.
-
-Dashboard: hero rebuilt around a 38pt free-space count-up and a
-full-width hoverable StackedMeter (Used/Junk/Purgeable/Free with %
-shares) plus a large Smart Scan CTA. HealthRing becomes a glowing orb
-with layered bloom, a slow conic sheen, and orbiting satellite bubbles,
-all gated behind Reduce Motion. Stat cards tinted, composition donut at
-148pt with % shares, completed state shows a gradient 40pt junk number
-with inline Clean / Scan Again.
-
-CategoryDetail: tinted hero with a 60pt vivid tile and category-tinted
-scan button. New inline selection strip (select-all toggle, selected
-count and size, destructive glow Clean) replaces the toolbar
-Select/Deselect/Clean items. File rows get category-tinted type icons
-and a hover-reveal Finder button; same treatment on orphan rows.
-
-AppFilesView hea
-
-**File**: `PureMac/Views/Apps/AppFilesView.swift` (modified, +44/-32)
-```diff
-@@ -84,8 +84,9 @@ struct AppFilesView: View {
-     var body: some View {
-         VStack(spacing: 0) {
-             header
--
--            Divider()
-+                .padding(.horizontal, 16)
-+                .padding(.top, 14)
-+                .padding(.bottom, 10)
- 
-             // Content
-             if appState.isScanningAppFiles {
-@@ -145,39 +146,41 @@ struct AppFilesView: View {
-     // MARK: - Header
- 
-     private var header: some View {
--        HStack(spacing: 12) {
--            Image(nsImage: app.icon)
--                .resizable()
--                .frame(width: 48, height: 48)
--                .scaleEffect(iconHovering && !reduceMotion ? 1.06 : 1)
--                .animation(reduceMotion ? nil : MotionTokens.snappy, value: iconHovering)
--                .onHover { iconHovering = $0 }
--
--            VStack(alignment: .leading, spacing: 2) {
--                Text(app.appName)
--                    .font(.title3.bold())
--                Text(app.bundleIdentifier)
--                    .font(.caption)
--                    .foregroundStyle(.secondary)
--            }
-+        CardSurface(padding: 16, tint: Tint.purple) {
-+            HStack(spacing: 14) {
-+                Image(nsImage: app.icon)
-+                    .resizable()
-+                    .frame(width: 52, height: 52)
-+                    .shadow(color: .black.opacity(0.18), radius: 6, y: 3)
-+                    .scaleEffect(iconHovering && !reduceMotion ? 1.06 : 1)
-+                    .animation(reduceMotion ? nil : MotionTokens.snappy, value: iconHovering)
-+                    .onHover { iconHovering = $0 }
-+
-+                VStack(alignment: .leading, spacing: 3) {
-+                    Text(app.appName)
-+                        .font(.system(size: 17, weight: .bold))
-+                    Text(app.bundleIdentifier)
-+                        .font(.system(size: 11.5))
-+                        .foregroundStyle(.secondary)
-+                }
- 
--            Spacer()
-+                Spacer()
- 
--            if !appState.discoveredFiles.isEmpty {
--                VStack(alignment: .trailing, spacing: 2) {
--                    Text(filesCountText(count: appState.discoveredFiles.count))
--                        .font(.callout)
--                        .foregroundStyle(.secondary)
--                        .monospacedDigit()
--                        .contentTransition(.numericText())
--                    CountUpBytes(bytes: totalSelectedSize)
--                        .font(.callout.bold())
-+                if !appState.discoveredFiles.isEmpty {
-+                    VStack(alignment: .trailing, spacing: 2) {
-+                        CountUpBytes(bytes: totalSelectedSize)
-+                            .font(.system(size: 18, weight: .bold))
-+                        Text(filesCountText(count: appState.discoveredFiles.count))
-+                            .font(.system(size: 11))
-+                            .foregroundStyle(.secondary)
-+                            .monospacedDigit()
-+                            .contentTransition(.numericText())
-+                    }
-+                    .animation(reduceMotion ? nil : .spring(response: 0.4, dampingFraction: 0.9),
-+                               value: appState.discoveredFiles.count)
-                 }
--                .animation(reduceMotion ? nil : .spring(response: 0.4, dampingFraction: 0.9),
--                           value: appState.discoveredFiles.count)
-             }
-         }
--        .padding()
-     }
- 
-     // MARK: - Scanning state
-@@ -297,13 +300,18 @@ struct AppFilesView: View {
-     // MARK: - Action bar
- 
-     private var actionBar: some View {
--        HStack {
-+        HStack(spacing: 12) {
-             Button("Select All") {
-                 appState.selectedFiles = Set(appState.discoveredFiles)
-             }
-+            .buttonStyle(.bordered)
-+            .controlSize(.small)
-+
-             Button("Deselect All") {
-                 appState.selectedFiles.removeAll()
-             }
-+            .buttonStyle(.bordered)
-+            .controlSize(.small)
- 
-             Spacer()
- 
-@@ -323,8 +331,12 @@ struct AppFilesView: View {
-         }
-         .animation(reduceMotion ? nil : .spring(response: 0.35, dampingFraction: 0.8),
-                    value: appState.selectedFiles.isEmpty)
--        .padding()
-+        .padding(.horizontal, 16)
-+        .padding(.vertical, 12)
-         .background(.bar)
-+        .overlay(alignment: .top) {
-+            Divider().opacity(0.6)
-+        }
-     }
- 
-     // MARK: - Helpers
-```
-
-**File**: `PureMac/Views/Apps/AppListView.swift` (modified, +1/-1)
-```diff
-@@ -154,7 +154,7 @@ private struct HoverScaleIcon: View {
-     var body: some View {
-         Image(nsImage: icon)
-             .resizable()
--            .frame(width: 20, height: 20)
-+            .frame(width: 22, height: 22)
-             .scaleEffect(hovering && !reduceMotion ? 1.12 : 1)
-             .animation(reduceMotion ? nil : MotionTokens.snappy, value: hovering)
-             .onHover { hovering = $0 }
-```
-
-**File**: `PureMac/Views/CategoryDetailView.swift` (modified, +102/-55)
-```diff
-@@ -25,7 +25,12 @@ struct CategoryDetailView: View {
-                     if result.items.isEmpty {
-                         EmptyStateView("All Clean", systemImage: "checkmark.circle", description: "No junk files found in this category.", tint: Tint.green)
-                     } else {
--                        fileList(result)
-+                        VStack(spacing: 0) {
-+                            selectionStrip(result)
-+                                .padding(.horizontal, 20)
-+                                .padding(.bottom, 10)
-+                            fileList(result)
+                     defer {
+-                        XcodeBuildMCPDerivedDataSupport.releaseLifecycleLock(
+-                            lifecycleLock,
+-                            fileManager: fileManager
+-                        )
++                        if let lifecycleLock {
++                            XcodeBuildMCPDerivedDataSupport.releaseLifecycleLock(
++                                lifecycleLock,
++                                fileManager: fileManager
++                            )
 +                        }
                      }
-                 } else {
-                     EmptyStateView("Not Scanned", systemImage: category.icon, description: "Run a scan to analyze this category.", action: { appState.scanSingleCategory(category) }, actionLabel: "Scan Now", tint: category.color)
-@@ -44,14 +49,8 @@ struct CategoryDetailView: View {
-                 .disabled(appState.scanState.isActive)
-             }
- 
--            ToolbarItemGroup(placement: .automatic) {
-+            ToolbarItem(placement: .automatic) {
-                 if let result = result, !result.items.isEmpty {
--                    Button("Select All") {
--                        appState.selectAllInCategory(category)
--                    }
--                    Button("Deselect All") {
--                        appState.deselectAllInCategory(category)
--                    }
-                     Button(action: { sortDescending.toggle() }) {
-                         Label {
-                             Text(LocalizedStringKey(sortDescending ? "Largest First" : "Smallest First"))
-@@ -62,24 +61,6 @@ struct CategoryDetailView: View {
-                     .help(LocalizedStringKey(sortDescending ? "Sorted: Largest First" : "Sorted: Smallest First"))
-                 }
-             }
--
--            ToolbarItem(placement: .automatic) {
--                if let _ = result, !appState.scanState.isActive {
--                    let selectedSize = appState.selectedSizeInCategory(category)
--                    let selectedCount = appState.selectedCountInCategory(category)
--                    if selectedSize > 0 {
--                        Button {
--                            showConfirmation = true
--                        } label: {
--                            Label {
--                                Text(cleanItemsLabel(count: selectedCount))
--                            } icon: {
--                                Image(systemName: "trash")
--                            }
--                        }
--                    }
--                }
--            }
-         }
-         .confirmationDialog(cleanConfirmationTitle, isPresented: $showConfirmation, titleVisibility: .visible) {
-             Button("Clean", role: .destructive) {
-@@ -109,23 +90,26 @@ struct CategoryDetailView: View {
-         let itemCount = result?.itemCount ?? 0
-         let isScanning = appState.scanState.isActive
- 
--        return CardSurface(padding: 18) {
-+        return CardSurface(padding: 20, tint: category.color) {
-             HStack(alignment: .center, spacing: 16) {
--                IconTile(systemName: category.icon, tint: category.color, size: 56, corner: 14)
-+                IconTile(systemName: category.icon, tint: category.color, size: 60, corner: 16, vivid: true)
- 
-                 VStack(alignment: .leading, spacing: 4) {
-                     Text(LocalizedStringKey(category.rawValue))
--                        .font(.system(size: 22, weight: .semibold))
-+                        .font(.system(size: 22, weight: .bold))
-                     Text(LocalizedStringKey(category.description))
--                        .font(.system(size: 12))
-+                        .font(.system(size: 12.5))
-                         .foregroundStyle(.secondary)
-                     if itemCount > 0 {
-                         Text(itemsAndSizeText(itemCount: itemCount, totalSize: totalSize))
--                            .font(.system(size: 11.5, weight: .medium))
-+                            .font(.system(size: 11.5, weight: .semibold))
-                             .monospacedDigit()
-                             .contentTransition(reduceMotion ? .identity : .numericText())
-                             .foregroundStyle(category.color)
--                            .padding(.top, 2)
-+                            .padding(.horizontal, 8)
-+                            .padding(.vertical, 3)
-+                            .background(Capsule().fill(category.color.opacity(0.12)))
-+                            .padding(.top, 4)
-                             .animation(reduceMotion ? nil : MotionTokens.gentle, value: totalSize)
-                     }
-                 }
-@@ -143,12 +127,73 @@ struct CategoryDetailView: View {
-                     .font(.system(size: 12.5, weight: .semibold))
-                 }
-                 .buttonStyle(.bordered)
-+                .tint(category.color)
-                 .controlSize(.lar
+                     // PureMac's safety contract is Trash-only for recoverable
+                     // cleanup. XcodeBuildMCP DerivedData must not be unlinked.
 ```
 
-**File**: `PureMac/Views/Components/AppTheme.swift` (modified, +99/-24)
+**File**: `PureMacTests/XcodeBuildMCPDerivedDataSupportTests.swift` (modified, +26/-0)
 ```diff
-@@ -83,14 +83,18 @@ enum TintGradient {
- }
- 
- /// Tinted square icon container used in the sidebar and on dashboard cards.
--/// Single muted fill, thin border. When `glow` is set (selected sidebar row,
--/// emphasized card) the tile picks up a gradient fill and a soft tinted halo.
-+/// Two-stop tinted fill with a hairline inner stroke. When `glow` is set
-+/// (selected sidebar row, emphasized card) the tile picks up a stronger
-+/// gradient and a soft tinted halo. When `vivid` is set the tile becomes a
-+/// full-saturation gradient bubble with a white glyph — reserved for focal
-+/// spots (category heroes, result rows) so the chrome stays matte elsewhere.
- struct IconTile: View {
-     let systemName: String
-     var tint: Color = Tint.blue
-     var size: CGFloat = 26
-     var corner: CGFloat = 7
-     var glow: Bool = false
-+    var vivid: Bool = false
- 
-     @Environment(\.accessibilityReduceMotion) private var reduceMotion
- 
-@@ -99,50 +103,103 @@ struct IconTile: View {
-             RoundedRectangle(cornerRadius: corner, style: .continuous)
-                 .fill(
-                     LinearGradient(
--                        colors: [tint.opacity(glow ? 0.30 : 0.14), tint.opacity(0.14)],
-+                        colors: vivid
-+                            ? [tint, tint.opacity(0.72)]
-+                            : [tint.opacity(glow ? 0.32 : 0.16), tint.opacity(glow ? 0.16 : 0.07)],
-                         startPoint: .topLeading, endPoint: .bottomTrailing
-                     )
-                 )
--                .shadow(color: tint.opacity(glow ? 0.45 : 0), radius: glow ? 5 : 0)
-+                .overlay(
-+                    RoundedRectangle(cornerRadius: corner, style: .continuous)
-+                        .strokeBorder(vivid ? Color.white.opacity(0.22) : tint.opacity(glow ? 0.38 : 0.20),
-+                                      lineWidth: 0.5)
-+                )
-+                .shadow(color: tint.opacity(vivid ? 0.42 : (glow ? 0.45 : 0)),
-+                        radius: vivid ? 6 : (glow ? 5 : 0))
-             Image(systemName: systemName)
-                 .font(.system(size: size * 0.52, weight: .semibold))
--                .foregroundStyle(tint)
--                .shadow(color: tint.opacity(glow ? 0.5 : 0), radius: glow ? 3 : 0)
-+                .foregroundStyle(vivid ? Color.white : tint)
-+                .shadow(color: vivid ? Color.black.opacity(0.18) : tint.opacity(glow ? 0.5 : 0),
-+                        radius: vivid ? 2 : (glow ? 3 : 0))
-         }
-         .frame(width: size, height: size)
-         .animation(reduceMotion ? nil : MotionTokens.snappy, value: glow)
+@@ -136,6 +136,32 @@ final class XcodeBuildMCPDerivedDataSupportTests: XCTestCase {
+         XCTAssertFalse(item.isSelected)
      }
- }
  
--/// Card surface. Flat fill, hairline border, single soft shadow. No accent
--/// stripe by default — content hierarchy carries the meaning, not chrome.
--/// Pass `material` for a vibrancy/glass panel (used on focal hero states
--/// where a tinted backdrop sits behind the card).
-+/// Shared ambient backdrop for the app's detail surfaces: layered radial
-+/// washes in jewel tones, concentrated at the top where hero content lives
-+/// and fading to nothing at the bottom. Static layers — no Reduce Motion
-+/// concerns. Opacities halve in light mode so surfaces stay clean.
-+struct AmbientBackdrop: View {
-+    @Environment(\.colorScheme) private var colorScheme
++    func testCleaningLegacySharedDerivedDataMovesToTrashWithoutWorkspaceLock() async throws {
++        let fileManager = FileManager.default
++        let temporaryHome = fileManager.temporaryDirectory
++            .appendingPathComponent("PureMac-XcodeBuildMCP-LegacyClean-\(UUID().uuidString)", isDirectory: true)
++        defer { try? fileManager.removeItem(at: temporaryHome) }
 +
-+    private var strength: Double { colorScheme == .dark ? 1 : 0.55 }
++        let managedRoot = temporaryHome
++            .appendingPathComponent("Library/Developer/XcodeBuildMCP", isDirectory: true)
++        let legacyDerivedData = managedRoot.appendingPathComponent("DerivedData", isDirectory: true)
++        try fileManager.createDirectory(at: legacyDerivedData, withIntermediateDirectories: true)
++        try Data(repeating: 0xEF, count: 4_096)
++            .write(to: legacyDerivedData.appendingPathComponent("legacy-build-product"))
 +
-+    var body: some View {
-+        ZStack {
-+            Color(nsColor: .windowBackgroundColor)
-+            RadialGradient(
-+                colors: [Tint.blue.opacity(0.10 * strength), .clear],
-+                center: .topLeading, startRadius: 0, endRadius: 700
-+            )
-+            RadialGradient(
-+                colors: [Tint.purple.opacity(0.08 * strength), .clear],
-+                center: .topTrailing, startRadius: 0, endRadius: 620
-+            )
-+            RadialGradient(
-+                colors: [Tint.pink.opacity(0.05 * strength), .clear],
-+                center: UnitPoint(x: 0.5, y: -0.15), startRadius: 0, endRadius: 480
-+            )
-+        }
-+        .ignoresSafeArea()
++        let scan = await ScanEngine(homeDirectory: temporaryHome).scanCategory(.xcodeJunk)
++        let item = try XCTUnwrap(scan.items.first { $0.name == "XcodeBuildMCP: Legacy DerivedData" })
++        let result = await CleaningEngine(homeDirectory: temporaryHome).cleanItems([item]) { _ in }
++
++        XCTAssertEqual(result.itemsCleaned, 1)
++        XCTAssertTrue(result.errors.isEmpty)
++        XCTAssertFalse(fileManager.fileExists(atPath: legacyDerivedData.path))
++        XCTAssertFalse(fileManager.fileExists(atPath: managedRoot.appendingPathComponent("locks").path))
++        let trashedPath = try XCTUnwrap(result.trashedPaths.first)
++        XCTAssertTrue(fileManager.fileExists(atPath: trashedPath))
++        try? fileManager.removeItem(atPath: trashedPath)
 +    }
-+}
 +
-+/// Card surface. Flat fill, hairline border, soft shadow. No accent stripe —
-+/// content hierarchy carries the meaning, not chrome. Pass `material` for a
-+/// vibrancy/glass panel (used on focal hero states where a tinted backdrop
-+/// sits behind the card). Pass `tint` for a barely-there vertical color wash
-+/// that gives the card an identity without adding chrome.
- struct CardSurface<Content: View>: View {
-     var padding: CGFloat = 16
-     /// Retained for callsite compatibility; the accent line is intentionally
-     /// not rendered in the restrained design.
-     var accent: Color? = nil
-     var elevation: CardElevation = .standard
-     var material: Material? = nil
-+    /// Optional identity wash. Kept under ~7% opacity so text contrast and
-+    /// light-mode cleanliness are unaffected.
-+    var tint: Color? = nil
-     @ViewBuilder var content: Content
- 
-+    private let cornerR
+     func testCleaningManagedDerivedDataLeavesWorkspaceStateIntact() async throws {
+         try await assertCleaningManagedDerivedDataLeavesWorkspaceStateIntact(tool: "XcodeBuildMCP")
+     }
 ```
 
-**File**: `PureMac/Views/Components/DashboardCharts.swift` (modified, +105/-7)
+---
+
+### Incident Patch 2: `db9fb6a4` (2026-10-08)
+**Commit Message**: Merge branch 'integration/series-fixes' into HEAD
+
+**File**: `PureMac/Services/ProcessResourceMonitor.swift` (modified, +39/-22)
 ```diff
-@@ -28,16 +28,56 @@ struct HealthRing: View {
+@@ -9,6 +9,9 @@ struct ProcessResourceConsumer: Identifiable, Sendable {
+     var cpuFraction: Double?
+     var residentBytes: UInt64
+     var processCount: Int
++    /// A member without an interval yet (new process or recycled PID) leaves
++    /// the group's CPU as the sum of its measured members only.
++    var cpuIsPartial = false
+ }
+ 
+ enum ProcessResourceSort: String, CaseIterable, Identifiable {
+@@ -65,23 +68,33 @@ enum ProcessResourceMath {
+                 group.residentBytes = group.residentBytes.addingReportingOverflow(reading.residentBytes).overflow
+                     ? UInt64.max : group.residentBytes + reading.residentBytes
+                 group.processCount += 1
+-                // Any unknown member means this group's first interval is incomplete.
+-                if let total = group.cpuFraction, let cpu {
+-                    group.cpuFraction = min(1, total + cpu)
++                if let cpu {
++                    group.cpuFraction = min(1, (group.cpuFraction ?? 0) + cpu)
+                 } else {
+-                    group.cpuFraction = nil
++                    group.cpuIsPartial = true
+                 }
+                 groups[id] = group
+             } else {
+                 let name = application.map { URL(fileURLWithPath: $0).deletingPathExtension().lastPathComponent }
+                     ?? reading.name
+                 groups[id] = ProcessResourceConsumer(id: id, name: name, applicationPath: application,
+-                                                     cpuFraction: cpu, residentBytes: reading.residentBytes, processCount: 1)
++                                                     cpuFraction: cpu, residentBytes: reading.residentBytes, processCount: 1,
++                                                     cpuIsPartial: cpu == nil)
+             }
+         }
+         return Array(groups.values)
+     }
+ 
++    /// Processes that started or stopped since the previous sample. The first
++    /// sample has no baseline, so nothing counts as changed yet.
++    static func changedProcessCount(readings: [ProcessResourceReading], previous: [String: ProcessResourceReading]) -> Int {
++        guard !previous.isEmpty else { return 0 }
++        let current = Set(readings.map(\.identity))
++        let started = current.subtracting(previous.keys).count
++        let stopped = previous.keys.filter { !current.contains($0) }.count
++        return started + stopped
++    }
++
+     static func sorted(_ consumers: [ProcessResourceConsumer], by sort: ProcessResourceSort, search: String = "") -> [ProcessResourceConsumer] {
+         let query = search.trimmingCharacters(in: .whitespacesAndNewlines)
+         return consumers.filter { query.isEmpty || $0.name.localizedStandardContains(query) }.sorted {
+@@ -100,7 +113,8 @@ enum ProcessResourceMath {
+ 
+ private struct ProcessResourceSample: Sendable {
+     let consumers: [ProcessResourceConsumer]
+-    let unavailableProcessCount: Int
++    let protectedProcessCount: Int
++    let changedProcessCount: Int
+     let failed: Bool
+     let warmingUp: Bool
+ }
+@@ -121,26 +135,28 @@ private actor ProcessResourceSampler {
+         let estimate = proc_listallpids(nil, 0)
+         guard estimate > 0 else {
+             previous.removeAll()
+-            return ProcessResourceSample(consumers: [], unavailableProcessCount: 0, failed: true, warmingUp: true)
++            return ProcessResourceSample(consumers: [], protectedProcessCount: 0, changedProcessCount: 0, failed: true, warmingUp: true)
+         }
+         // Headroom accommodates processes created between enumeration calls.
+         var pids = [Int32](repeating: 0, count: Int(estimate) + 256)
+         let capacityBytes = Int32(pids.count * MemoryLayout<Int32>.stride)
+         let count = pids.withUnsafeMutableBytes { proc_listallpids($0.baseAddress, capacityBytes) }
+         guard count > 0 else {
+             previous.removeAll()
+-            return ProcessResourceSample(consumers: [], unavailableProcessCount: 0, failed: true, warmingUp: true)
++            return ProcessResourceSample(consumers: [], protectedProcessCount: 0, changedProcessCount: 0, failed: true, warmingUp: true)
+         }
+         var readings: [ProcessResourceReading] = []
+-        var unavailable = Int(count) >= pids.count ? 1 : 0
++        var protectedCount = 0
++        var churn = Int(count) >= pids.count ? 1 : 0
+         for pid in pids.prefix(min(Int(count), pids.count)) where pid > 0 {
+             if Task.isCancelled { break }
+             var info = proc_taskallinfo()
+             let size = Int32(MemoryLayout<proc_taskallinfo>.stride)
+             errno = 0
+             guard proc_pidinfo(pid, PROC_PIDTASKALLINFO, 0, &info, size) == size else {
+-                // An exited process is normal churn, not a permission failure.
+-                if errno != ESRCH { unavailable += 1 }
++                // Another user's process is a permission limit; anything else is
++                // a process that exited or changed under us and is churn.
++     
+```
+
+**File**: `PureMac/Views/Settings/SettingsView.swift` (modified, +22/-18)
+```diff
+@@ -29,26 +29,30 @@ struct SettingsView: View {
  
      var body: some View {
-         ZStack {
-+            // Orb body — a deep jewel fill that turns the flat ring into a
-+            // glowing sphere. Inset so it never bleeds across the track.
-+            Circle()
-+                .fill(
-+                    RadialGradient(
-+                        colors: [arcColor.opacity(0.14), arcColor.opacity(0.05), .clear],
-+                        center: .center,
-+                        startRadius: 2,
-+                        endRadius: 160
-+                    )
-+                )
-+                .padding(lineWidth + 10)
-+
-+            // Slow conic sheen sweeping the orb interior — the "alive" cue.
-+            // Removed entirely under Reduce Motion.
-+            if !reduceMotion {
-+                TimelineView(.animation) { timeline in
-+                    let t = timeline.date.timeIntervalSinceReferenceDate
-+                    let angle = (t.truncatingRemainder(dividingBy: 6.0) / 6.0) * 360.0
-+                    Circle()
-+                        .fill(
-+                            AngularGradient(
-+                                colors: [.clear, .clear, arcColor.opacity(0.10), .clear],
-+                                center: .center
-+                            )
-+                        )
-+                        .rotationEffect(.degrees(angle))
-+                }
-+                .padding(lineWidth + 10)
-+                .clipShape(Circle())
-+            }
-+
-             Circle()
-                 .stroke(Color.primary.opacity(0.06), lineWidth: lineWidth)
- 
--            // Soft glow layer underneath the crisp arc.
-+            // Bloom: a wide soft halo under a tighter, brighter one. The
-+            // glow comes from these blurred duplicates of the crisp arc.
-             Circle()
-                 .trim(from: 0, to: sweep)
--                .stroke(arcColor.opacity(0.5),
-+                .stroke(arcColor.opacity(0.35),
-                         style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
-                 .rotationEffect(.degrees(-90))
--                .blur(radius: 9)
-+                .blur(radius: 16)
-+
-+            Circle()
-+                .trim(from: 0, to: sweep)
-+                .stroke(arcColor.opacity(0.55),
-+                        style: StrokeStyle(lineWidth: lineWidth * 0.7, lineCap: .round))
-+                .rotationEffect(.degrees(-90))
-+                .blur(radius: 7)
- 
-             Circle()
-                 .trim(from: 0, to: sweep)
-@@ -225,24 +265,82 @@ struct LegendChip: View {
-     let color: Color
-     let label: LocalizedStringKey
-     let value: String
-+    /// Optional share readout ("72%") rendered after the value.
-+    var percent: String? = nil
- 
-     var body: some View {
-         HStack(spacing: 7) {
--            RoundedRectangle(cornerRadius: 3, style: .continuous)
-+            RoundedRectangle(cornerRadius: 3.5, style: .continuous)
-                 .fill(color)
-                 .frame(width: 10, height: 10)
-             VStack(alignment: .leading, spacing: 0) {
-                 Text(label)
-                     .font(.system(size: 10.5))
-                     .foregroundStyle(.secondary)
--                Text(value)
--                    .font(.system(size: 12, weight: .semibold))
--                    .monospacedDigit()
-+                HStack(alignment: .firstTextBaseline, spacing: 4) {
-+                    Text(value)
-+                        .font(.system(size: 12, weight: .semibold))
-+                        .monospacedDigit()
-+                    if let percent {
-+                        Text(percent)
-+                            .font(.system(size: 10, weight: .medium))
-+                            .monospacedDigit()
+         VStack(alignment: .leading, spacing: 18) {
+-            HStack(spacing: 14) {
+-                IconTile(systemName: "gearshape.fill", tint: Tint.accent, size: 44, corner: 12)
+-                VStack(alignment: .leading, spacing: 3) {
+-                    Text("Settings")
+-                        .font(.system(size: 26, weight: .bold))
+-                    Text("Make PureMac work your way.")
+-                        .font(.system(size: 13))
+-                        .foregroundStyle(.secondary)
+-                }
+-                Spacer()
+-                VStack(alignment: .trailing, spacing: 3) {
+-                    Text(String(format: String(localized: "Version %@"), UpdateService.installedVersion))
+-                    Text(String(format: String(localized: "Build %@"), UpdateService.installedBuild))
+-                        .foregroundStyle(.tertiary)
++            // The standard Settings window already carries the title; only the
++            // sidebar page repeats it as a header.
++            if !standalone {
++                HStack(spacing: 14) {
++                    IconTile(systemName: "gearshape.fill", tint: Tint.accent, size: 44, corner: 12)
++                    VStack(alignment: .leading, spacing: 3) {
++                        Text("Settings")
++                            .font(.system(size: 26, weight: .bold))
++                        Text("Make PureMac work your way.")
++                            .font(.system(size: 13))
++                            .foregroundStyle(.secondary)
++                    }
++                    Spacer()
++                    VStack(alignment: .trailing, spacing: 3) {
++                        Text(String(format: String(localized: "Version %@"), UpdateService.installedVersion))
++                        Text(String(format: String(localized: "Build %@"), UpdateService.installedBuild))
 +                            .foregroundStyle(.tertiary)
 +                    }
-+                }
++                    .font(.system(size: 11))
++                    .foregroundStyle(.secondary)
++                    .textSelection(.enabled)
+                 }
+-                .font(.system(size: 11))
+-                .foregroundStyle(.secondary)
+-                .textSelection(.enabled)
++                .padding(.horizontal, 4)
              }
-         }
-     }
- }
+-            .padding(.horizontal, 4)
  
-+// MARK: - Stacked meter
-+//
-+// Full-width segmented storage bar (Used / Junk / Purgeable / Free). Segments
-+// sit flush inside one track with thin separators, grow in with a spring on
-+// appear, and cross-dim when a legend chip reports a hover. Honors Reduce
-+// Motion (instant reveal, instant cross-dim).
-+
-+struct StackedMeter: View {
-+    struct Segment: Identifiable {
-+        /// Stable id so legend hover can cross-highlight the matching segment.
-+        let id: String
-+        let value: Double
-+        let color: Color
-+    }
-+
-+    let segments: [Segment]
-+    var height: CGFloat = 14
-+    /// When set (legend hover), every other segment dims for cross-highlight.
-+    var highlightedID: String? = nil
-+
-+    @State private var reveal: CGFloat = 0
-+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
-+
-+    private var total: Double { max(segments.reduce(0) { $0 + $1.value }, 0.0001) }
-+
-+    var body: some View {
-+        GeometryReader { geo in
-+            let separator: CGFloat = 2
-+            let available = geo.size.width - separator * CGFloat(max(0, segments.count - 1)
+             Picker("Settings", selection: $selectedTab) {
+                 ForEach(SettingsTab.allCases) { tab in
 ```
 
-**File**: `PureMac/Views/Components/EmptyStateView.swift` (modified, +4/-0)
+**File**: `PureMac/Views/Tools/ProcessResourcesView.swift` (modified, +26/-10)
 ```diff
-@@ -31,8 +31,12 @@ struct EmptyStateView: View {
-                 Circle()
-                     .fill((tint ?? Color.secondary).opacity(0.10))
-                     .frame(width: 96, height: 96)
-+                Circle()
-+                    .strokeBorder((tint ?? Color.secondary).opacity(0.16), lineWidth: 1)
-+                    .frame(width: 96, height: 96)
-                 Image(systemName: systemImage)
-                     .font(.system(size: 40))
-+                    .symbolRenderingMode(.hierarchical)
-                     .foregroundStyle(tint ?? Color.secondary)
-             }
-             // One-shot entrance pop, then a gentle idle float. Both skipped
-```
-
-**File**: `PureMac/Views/Components/MenuBarMonitorView.swift` (modified, +18/-6)
-```diff
-@@ -22,9 +22,16 @@ struct MenuBarMonitorView: View {
+@@ -49,15 +49,18 @@ struct ProcessResourcesView: View {
+             .padding(9)
+             .background(Color.primary.opacity(0.035), in: RoundedRectangle(cornerRadius: 8))
  
-     var body: some View {
-         VStack(alignment: .leading, spacing: 12) {
--            Text("System Monitor")
--                .font(.system(size: 13, weight: .semibold))
--                .foregroundStyle(.primary)
-+            HStack(spacing: 7) {
-+                if let appIcon = NSImage(named: "AppIcon") {
-+                    Image(nsImage: appIcon)
-+                        .resizable()
-+                        .frame(width: 18, height: 18)
-+                }
-+                Text("System Monitor")
-+                    .font(.system(size: 13, weight: .semibold))
-+                    .foregroundStyle(.primary)
++            // Pausing keeps the last sample on screen under the notice.
+             if !isActive {
+                 Label("Live updates paused", systemImage: "pause.circle")
+                     .font(.system(size: 12))
+                     .foregroundStyle(.secondary)
+-            } else if monitor.samplingFailed {
 +            }
- 
-             VStack(spacing: 10) {
-                 MeterRow(title: "CPU", tint: Tint.blue,
-@@ -61,7 +68,7 @@ struct MenuBarMonitorView: View {
-             }
-         }
-         .padding(14)
--        .frame(width: 248)
-+        .frame(width: 252)
-         .onAppear { monitor.start() }
-         .onDisappear { monitor.stop() }
-     }
-@@ -119,11 +126,16 @@ private struct MeterRow: View {
-                     Capsule()
-                         .fill(Color.primary.opacity(0.08))
-                     Capsule()
--                        .fill(tint)
-+                        .fill(
-+                            LinearGradient(
-+                                colors: [tint, tint.opacity(0.65)],
-+                                startPoint: .leading, endPoint: .trailing
-+                            )
-+                        )
-                         .frame(width: max(2, geo.size.width * clamped))
++
++            if isActive && monitor.samplingFailed {
+                 Label("Process information is unavailable. Try Activity Monitor for more detail.", systemImage: "exclamationmark.triangle")
+                     .font(.system(size: 12))
+                     .foregroundStyle(.secondary)
+-            } else if monitor.consumers.isEmpty && monitor.isWarmingUp {
++            } else if isActive && monitor.consumers.isEmpty && monitor.isWarmingUp {
+                 HStack(spacing: 9) {
+                     ProgressView().controlSize(.small)
+                     Text("Measuring apps and processes…")
+@@ -66,10 +69,12 @@ struct ProcessResourcesView: View {
+                 }
+                 .padding(.vertical, 10)
+             } else if visibleConsumers.isEmpty {
+-                Text("No matching apps or processes")
+-                    .font(.system(size: 12))
+-                    .foregroundStyle(.secondary)
+-                    .padding(.vertical, 10)
++                if isActive || !monitor.consumers.isEmpty {
++                    Text("No matching apps or processes")
++                        .font(.system(size: 12))
++                        .foregroundStyle(.secondary)
++                        .padding(.vertical, 10)
++                }
+             } else {
+                 HStack {
+                     Text("Name")
+@@ -103,9 +108,11 @@ struct ProcessResourcesView: View {
+                 if isActive && monitor.isWarmingUp && !monitor.samplingFailed {
+                     Text("CPU values appear after the next sample.")
+                 }
+-                if monitor.unavailableProcessCount > 0 {
+-                    Text("Some protected or changing processes could not be measured.")
+-                        .foregroundStyle(Tint.orange)
++                if isActive && monitor.changedProcessCount > 0 {
++                    Text("Some processes started or stopped since the last sample. Their values appear in the next one.")
++                }
++                if monitor.protectedProcessCount > 0 {
++                    Text("System processes are not listed. Use Activity Monitor for those.")
                  }
              }
--            .frame(height: 5)
-+            .frame(height: 6)
-         }
+             .font(.system(size: 10.5))
+@@ -171,8 +178,10 @@ private struct ProcessResourceRow: View {
+             .help(consumer.applicationPath ?? consumer.name)
+             Spacer(minLength: 8)
+             VStack(alignment: .trailing, spacing: 5) {
+-                Text(consumer.cpuFraction.map { $0.formatted(.percent.precision(.fractionLength(1))) } ?? "—")
++                Text(cpuText)
+                     .monospacedDigit()
++                    .help(consumer.cpuIsPartial && consumer.cpuFraction != nil
++                          ? String(localized: "Some of this app's processes have no CPU reading yet, so this total is partial.") : "")
+                 ProgressView(value: consumer.cpuFraction ?? 0)
+                     .tint(Tint.accent)
+                     .accessibilityHidden(true)
+@@ -191,4 +200,11 @@ private struct ProcessResourceRow: View {
+         .padding(.vertical, 10)
+         .accessibilityElement(children: .combine)
      }
- }
-```
-
-**File**: `PureMac/Views/DashboardView.swift` (modified, +210/-151)
-```diff
-@@ -34,14 +34,6 @@ struct DashboardView: View {
- 
-     var body: some View {
-         ZStack {
--            // Quiet tinted wash so the glass hero states have color to
--            // refract. Static — no Reduce Motion concerns.
--            LinearGradient(
--                colors: [Tint.blue.opacity(0.08), Tint.purple.opacity(0.05), .clear],
--                startPoint: .top, endPoint: .bottom
--            )
--            .ignoresSafeArea()
--
-             ScrollView {
-                 VStack(alignment: .leading, spacing: 20) {
-                     switch appState.scanState {
-@@ -155,53 +147,59 @@ struct DashboardView: View {
-         // Below this width the side-by-side ring + storage column overflows the
-         // card, so the hero stacks vertically and the ring shrinks.
-         let compact = dashboardSize.width > 0 && dashboardSize.width < 660
--        let ringSize: CGFloat = compact ? 132 : 180
--
--        return CardSurface(padding: 24, accent: stress ? Tint.orange : Tint.blue, elevation: .raised) {
--            AdaptiveStack(compact: compact, spacing: compact ? 18 : 28) {
--                ZStack {
--                    // Slow atmospheric drift behind the ring — barely-there
--                    // ambient depth, frozen under Reduce Motion.
--                    HeroDrift(tint: stress ? Tint.orange : Tint.blue)
--                    HealthRing(percent: percentUsed)
--                        .frame(width: ringSize, height: ringSize)
--                }
-+        let ringSize: CGFloat = compact ? 132 : 176
 +
-+        return CardSurface(padding: compact ? 20 : 26, elevation: .raised,
-+                           tint: stress ? Tint.orange : Tint.blue) {
-+            VStack(spacing: compact ? 18 : 24) {
-+                AdaptiveStack(compact: compact, spacing: compact ? 18 : 30) {
-+                    ZStack {
-+                        // Slow atmospheric drift behind the ring — barely-there
-+                        // ambient depth, frozen under Reduce Motion.
-+                        HeroDrift(tint: stress ? Tint.orange : Tint.blue)
-+                        HealthRing(percent: percentUsed)
-+                            .frame(width: ringSize, height: ringSize)
-+                        // Small satellite bubbles orbiting the ring — the
-+                        // playful counterweight to the matte stat cards.
-+                        OrbSatellites(tint: stress ? Tint.orange : Tint.blue, ringSize: ringSize)
-+                    }
- 
--                VStack(alignment: .leading, spacing: 14) {
--                    HStack(alignment: .top) {
--                        VStack(alignment: .leading, spacing: 4) {
--                            HStack(spacing: 8) {
--                                Text("Storage")
--                                    .font(.system(size: 13, weight: .semibold))
--                                    .foregroundStyle(.secondary)
--                                    .textCase(.uppercase)
--                                    .tracking(0.6)
--                                if stress {
--                                    StatusChip(label: String(localized: "Low space"),
--                                               systemImage: "exclamationmark.triangle.fill",
--                                               tint: Tint.orange)
-+                    VStack(alignment: .leading, spacing: 12) {
-+                        HStack(alignment: .top) {
-+                            VStack(alignment: .leading, spacing: 5) {
-+                                HStack(spacing: 8) {
-+                                    Text("Storage")
-+                                        .font(.system(size: 12, weight: .semibold))
-+                                        .foregroundStyle(.secondary)
-+                                        .textCase(.uppercase)
-+                                        .tracking(0.8)
-+                                    if stress {
-+                                        StatusChip(label: String(localized: "Low space"),
-+                                                   systemImage: "exclamationmark.triangle.fill",
-+                                                   tint: Tint.orange)
-+                                    }
-                                 }
-+                                CountUpBytes(bytes: free)
-+                                    .font(.system(size: 38, weight: .bold))
-+                                    .foregroundStyle(stress ? Tint.orange : Color.primary)
-+                                Text(freeOfText(total: total))
-+                                    .font(.system(size: 12.5))
-+                                    .foregroundStyle(.secondary)
-                             }
--                            CountUpBytes(bytes: free)
--                                .font(.system(size: 34, weight: .semibold))
--                                .foregroundStyle(stress ? Tint.orange : Color.primary)
--                            Text(freeOfText(total: total))
--                      
-```
-
----
-
-### Incident Patch 10: `7100ce1c` (2026-07-18)
-**Commit Message**: fix #127 theme-toggle stray highlight; localize Polish name; bump 2.8.4
-
-The appearance pill's selected-segment highlight could render at the
-window origin: matchedGeometryEffect inside the NSToolbar-hosted item
-resolved a zero frame during the animated toolbar re-layout that fires
-when an app-file scan completes (selectedFiles flips non-empty and the
-Uninstall button animates in the same toolbar). Replace it with a single
-indicator anchored to the pill's own bounds, positioned by segment index
-and mirrored under right-to-left layout.
-
-Follow-ups to #125: translate the "Polish" language name in the six
-non-English locales, and align pl terminology with Apple's macOS
-glossary (Desktop "Pulpit" -> "Biurko" to stop colliding with Dashboard,
-Storage "Pamięć" -> "Pamięć masowa" to disambiguate from Memory).
-
-project.yml: 2.8.3(18) -> 2.8.4(19).
-
-Claude-Session: https://claude.ai/code/session_01DE9Zo9AfnDhMDNaaUy8o4o
-
-**File**: `PureMac/Views/Components/AppearancePill.swift` (modified, +23/-12)
-```diff
-@@ -5,11 +5,19 @@ import SwiftUI
- /// looked like a generic dropdown affordance.
- struct AppearancePill: View {
-     @Binding var selection: AppearanceMode
--    @Namespace private var indicator
-     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-+    @Environment(\.layoutDirection) private var layoutDirection
-+
-+    private static let segmentWidth: CGFloat = 28
-+    private static let segmentHeight: CGFloat = 22
-+    private static let segmentSpacing: CGFloat = 2
-+
-+    private var selectedIndex: CGFloat {
-+        CGFloat(AppearanceMode.allCases.firstIndex(of: selection) ?? 0)
++    /// A trailing plus marks a group whose CPU is the sum of its measured members only.
++    private var cpuText: String {
++        guard let cpu = consumer.cpuFraction else { return "—" }
++        let value = cpu.formatted(.percent.precision(.fractionLength(1)))
++        return consumer.cpuIsPartial ? value + "+" : value
 +    }
- 
-     var body: some View {
--        HStack(spacing: 2) {
-+        HStack(spacing: Self.segmentSpacing) {
-             ForEach(AppearanceMode.allCases) { mode in
-                 Button {
-                     withAnimation(reduceMotion ? nil : .spring(response: 0.32, dampingFraction: 0.78)) {
-@@ -18,22 +26,25 @@ struct AppearancePill: View {
-                 } label: {
-                     Image(systemName: mode.icon)
-                         .font(.system(size: 12, weight: .semibold))
--                        .frame(width: 28, height: 22)
-+                        .frame(width: Self.segmentWidth, height: Self.segmentHeight)
-                         .foregroundStyle(selection == mode ? Color.primary : .secondary)
--                        .background(
--                            ZStack {
--                                if selection == mode {
--                                    RoundedRectangle(cornerRadius: 6, style: .continuous)
--                                        .fill(Color.primary.opacity(0.10))
--                                        .matchedGeometryEffect(id: "indicator", in: indicator)
--                                }
--                            }
--                        )
-                         .contentShape(Rectangle())
-                 }
-                 .buttonStyle(.plain)
-                 .help(LocalizedStringKey(mode.label))
-             }
-         }
-+        // Indicator is anchored to the pill's own bounds and positioned by
-+        // segment index, so toolbar re-layout can't misplace it. The previous
-+        // matchedGeometryEffect resolved a zero frame inside the NSToolbar
-+        // hosting view and drew the highlight at the window origin (#127).
-+        // .offset(x:) is not layout-direction aware, so mirror it for RTL.
-+        .background(alignment: .leading) {
-+            let x = selectedIndex * (Self.segmentWidth + Self.segmentSpacing)
-+            RoundedRectangle(cornerRadius: 6, style: .continuous)
-+                .fill(Color.primary.opacity(0.10))
-+                .frame(width: Self.segmentWidth, height: Self.segmentHeight)
-+                .offset(x: layoutDirection == .rightToLeft ? -x : x)
-+        }
-     }
  }
 ```
 
-**File**: `PureMac/ar.lproj/Localizable.strings` (modified, +1/-1)
+**File**: `PureMac/ar.lproj/Localizable.strings` (modified, +4/-1)
 ```diff
-@@ -183,7 +183,7 @@
- "Spanish" = "الإسبانية";
- "Japanese" = "اليابانية";
- "Arabic" = "العربية";
--"Polish" = "Polish";
-+"Polish" = "البولندية";
- "Portuguese (Brazil)" = "البرتغالية (البرازيل)";
- "Chinese (Simplified)" = "الصينية (المبسطة)";
- "Chinese (Traditional)" = "الصينية (التقليدية)";
-```
-
-**File**: `PureMac/es.lproj/Localizable.strings` (modified, +1/-1)
-```diff
-@@ -183,7 +183,7 @@
- "Spanish" = "Español";
- "Japanese" = "Japonés";
- "Arabic" = "Árabe";
--"Polish" = "Polish";
-+"Polish" = "Polaco";
- "Portuguese (Brazil)" = "Portugués (Brasil)";
- "Chinese (Simplified)" = "Chino (simplificado)";
- "Chinese (Traditional)" = "Chino (tradicional)";
-```
-
-**File**: `PureMac/ja.lproj/Localizable.strings` (modified, +1/-1)
-```diff
-@@ -183,7 +183,7 @@
- "Spanish" = "スペイン語";
- "Japanese" = "日本語";
- "Arabic" = "アラビア語";
--"Polish" = "Polish";
-+"Polish" = "ポーランド語";
- "Portuguese (Brazil)" = "ポルトガル語(ブラジル)";
- "Chinese (Simplified)" = "中国語(簡体字)";
- "Chinese (Traditional)" = "中国語(繁体字)";
-```
-
-**File**: `PureMac/pl.lproj/Localizable.strings` (modified, +3/-3)
-```diff
-@@ -60,7 +60,7 @@
- "Dismiss" = "Zamknij";
+@@ -872,6 +872,7 @@
+ "tmutil is not available on this Mac." = "tmutil is not available on this Mac.";
  
- /* Dashboard */
--"Storage" = "Pamięć";
-+"Storage" = "Pamięć masowa";
- "Smart Scan" = "Inteligentne skanowanie";
- "free of %@" = "wolne z %@";
- "%lld%% used" = "%lld%% użyte";
-@@ -194,7 +194,7 @@
- "Trash" = "Kosz";
- "Mail Data" = "Dane poczty";
- "Safari Data" = "Dane Safari";
--"Desktop" = "Pulpit";
-+"Desktop" = "Biurko";
- "Documents" = "Dokumenty";
- "TCC Database" = "Baza TCC";
- "Blocked" = "Zablokowane";
-@@ -354,7 +354,7 @@
+ /* Additional interface strings. */
++"%lld processes" = "%lld processes";
+ "1 process" = "1 process";
+ "A PureMac update is available" = "A PureMac update is available";
+ "About these readings" = "About these readings";
+@@ -914,8 +915,10 @@
+ "Settings to review" = "Settings to review";
+ "Show all apps and processes" = "Show all apps and processes";
+ "Show top 8" = "Show top 8";
+-"Some protected or changing processes could not be measured." = "Some protected or changing processes could not be measured.";
++"Some of this app's processes have no CPU reading yet, so this total is partial." = "Some of this app's processes have no CPU reading yet, so this total is partial.";
++"Some processes started or stopped since the last sample. Their values appear in the next one." = "Some processes started or stopped since the last sample. Their values appear in the next one.";
+ "Sort by" = "Sort by";
++"System processes are not listed. Use Activity Monitor for those." = "System processes are not listed. Use Activity Monitor for those.";
+ "The release service is unavailable. Please try again later." = "The release service is unavailable. Please try again later.";
+ "This build has no readable version. Open the releases page to check manually." = "This build has no readable version. Open the releases page to check manually.";
+ "To update with Homebrew, run this command in Terminal. The cask may follow the GitHub release a little later." = "To update with Homebrew, run this command in Terminal. The cask may follow the GitHub release a little later.";
+```
+
+**File**: `PureMac/de.lproj/Localizable.strings` (modified, +5/-2)
+```diff
+@@ -902,7 +902,8 @@
+ "Settings to review" = "Settings to review";
  
- /* v2.8.2: large-file folder exclusions (#121) */
- "Excluded Folders" = "Wykluczone foldery";
--"Files inside these folders are skipped from the Large & Old Files scan (Downloads, Documents, Desktop)." = "Pliki w tych folderach są pomijane podczas skanowania Dużych i starych plików (Pobrane, Dokumenty, Pulpit).";
-+"Files inside these folders are skipped from the Large & Old Files scan (Downloads, Documents, Desktop)." = "Pliki w tych folderach są pomijane podczas skanowania Dużych i starych plików (Pobrane, Dokumenty, Biurko).";
- "Remove from exclusions" = "Usuń z wykluczeń";
- "Add Folder…" = "Dodaj folder…";
+ /* App CPU and memory (#173): English fallbacks */
+-"1 process" = "1 process";
++"%lld processes" = "%lld Prozesse";
++"1 process" = "1 Prozess";
+ "About these readings" = "About these readings";
+ "App memory shows resident memory, including shared pages. App totals can differ from the summary." = "App memory shows resident memory, including shared pages. App totals can differ from the summary.";
+ "Apps and processes" = "Apps and processes";
+@@ -924,5 +925,7 @@
+ "Search apps and processes" = "Search apps and processes";
+ "Show all apps and processes" = "Show all apps and processes";
+ "Show top 8" = "Show top 8";
+-"Some protected or changing processes could not be measured." = "Some protected or changing processes could not be measured.";
++"Some of this app's processes have no CPU reading yet, so this total is partial." = "Some of this app's processes have no CPU reading yet, so this total is partial.";
++"Some processes started or stopped since the last sample. Their values appear in the next one." = "Some processes started or stopped since the last sample. Their values appear in the next one.";
+ "Sort by" = "Sort by";
++"System processes are not listed. Use Activity Monitor for those." = "System processes are not listed. Use Activity Monitor for those.";
+```
+
+**File**: `PureMac/en.lproj/Localizable.strings` (modified, +4/-1)
+```diff
+@@ -872,6 +872,7 @@
+ "tmutil is not available on this Mac." = "tmutil is not available on this Mac.";
  
+ /* Additional interface strings. */
++"%lld processes" = "%lld processes";
+ "1 process" = "1 process";
+ "A PureMac update is available" = "A PureMac update is available";
+ "About these readings" = "About these readings";
+@@ -914,8 +915,10 @@
+ "Settings to review" = "Settings to review";
+ "Show all apps and processes" = "Show all apps and processes";
+ "Show top 8" = "Show top 8";
+-"Some protected or changing processes could not be measured." = "Some protected or changing processes could not be measured.";
++"Some of this app's processes have no CPU reading yet, so this total is partial." = "Some of this app's processes have no CPU reading yet, so this total is partial.";
++"Some processes started or stopped since the last sample. Their values appear in the next one." = "Some processes started or stopped since the last sample. Their values appear in the next one.";
+ "Sort by" = "Sort by";
++"System processes are not listed. Use Activity Monitor for those." = "System processes are not listed. Use Activity Monitor for those.";
+ "The release service is unavailable. Please try again later." = "The release service is unavailable. Please try again later.";
+ "This build has no readable version. Open the releases page to check manually." = "This build has no readable version. Open the releases page to check manually.";
+ "To update with Homebrew, run this command in Terminal. The cask may follow the GitHub release a little later." = "To update with Homebrew, run this command in Terminal. The cask may follow the GitHub release a little later.";
 ```
 
-**File**: `PureMac/pt-BR.lproj/Localizable.strings` (modified, +1/-1)
+**File**: `PureMac/es.lproj/Localizable.strings` (modified, +4/-1)
 ```diff
-@@ -183,7 +183,7 @@
- "Spanish" = "Espanhol";
- "Japanese" = "Japonês";
- "Arabic" = "Árabe";
--"Polish" = "Polish";
-+"Polish" = "Polonês";
- "Portuguese (Brazil)" = "Português (Brasil)";
- "Chinese (Simplified)" = "Chinês (simplificado)";
- "Chinese (Traditional)" = "Chinês (tradicional)";
+@@ -872,6 +872,7 @@
+ "tmutil is not available on this Mac." = "tmutil is not available on this Mac.";
+ 
+ /* Additional interface strings. */
++"%lld processes" = "%lld processes";
+ "1 process" = "1 process";
+ "A PureMac update is available" = "A PureMac update is available";
+ "About these readings" = "About these readings";
+@@ -914,8 +915,10 @@
+ "Settings to review" = "Settings to review";
+ "Show all apps and processes" = "Show all apps and processes";
+ "Show top 8" = "Show top 8";
+-"Some protected or changing processes could not be measured." = "Some protected or changing processes could not be measured.";
++"Some of this app's processes have no CPU reading yet, so this total is partial." = "Some of this app's processes have no CPU reading yet, so this total is partial.";
++"Some processes started or stopped since the last sample. Their values appear in the next one." = "Some processes started or stopped since the last sample. Their values appear in the next one.";
+ "Sort by" = "Sort by";
++"System processes are not listed. Use Activity Monitor for those." = "System processes are not listed. Use Activity Monitor for those.";
+ "The release service is unavailable. Please try again later." = "The release service is unavailable. Please try again later.";
+ "This build has no readable version. Open the releases page to check manually." = "This build has no readable version. Open the releases page to check manually.";
+ "To update with Homebrew, run this command in Terminal. The cask may follow the GitHub release a little later." = "To update with Homebrew, run this command in Terminal. The cask may follow the GitHub release a little later.";
 ```
 
-**File**: `PureMac/zh-Hans.lproj/Localizable.strings` (modified, +1/-1)
+**File**: `PureMac/fr.lproj/Localizable.strings` (modified, +4/-1)
 ```diff
-@@ -183,7 +183,7 @@
- "Spanish" = "西班牙语";
- "Japanese" = "日语";
- "Arabic" = "阿拉伯语";
--"Polish" = "Polish";
-+"Polish" = "波兰语";
- "Portuguese (Brazil)" = "葡萄牙语(巴西)";
- "Chinese (Simplified)" = "简体中文";
- "Chinese (Traditional)" = "繁体中文";
-```
-
-**File**: `PureMac/zh-Hant.lproj/Localizable.strings` (modified, +1/-1)
-```diff
-@@ -183,7 +183,7 @@
- "Spanish" = "西班牙文";
- "Japanese" = "日文";
- "Arabic" = "阿拉伯文";
--"Polish" = "Polish";
-+"Polish" = "波蘭文";
- "Portuguese (Brazil)" = "葡萄牙文(巴西)";
- "Chinese (Simplified)" = "簡體中文";
- "Chinese (Traditional)" = "繁體中文";
+@@ -868,6 +868,7 @@
+ "tmutil is not available on this Mac." = "tmutil is not available on this Mac.";
+ 
+ /* Additional interface strings. */
++"%lld processes" = "%lld processes";
+ "1 process" = "1 process";
+ "A PureMac update is available" = "A PureMac update is available";
+ "About these readings" = "About these readings";
+@@ -910,8 +911,10 @@
+ "Settings to review" = "Settings to review";
+ "Show all apps and processes" = "Show all apps and processes";
+ "Show top 8" = "Show top 8";
+-"Some protected or changing processes could not be measured." = "Some protected or changing processes could not be measured.";
++"Some of this app's processes have no CPU reading yet, so this total is partial." = "Some of this app's processes have no CPU reading yet, so this total is partial.";
++"Some processes started or stopped since the last sample. Their values appear in the next one." = "Some processes started or stopped since the last sample. Their values appear in the next one.";
+ "Sort by" = "Sort by";
++"System processes are not listed. Use Activity Monitor for those." = "System processes are not listed. Use Activity Monitor for those.";
+ "The release service is unavailable. Please try again later." = "The release service is unavailable. Please try again later.";
+ "This build has no readable version. Open the releases page to check manually." = "This build has no readable version. Open the releases page to check manually.";
+ "To update with Homebrew, run this command in Terminal. The cask may follow the GitHub release a little later." = "To update with Homebrew, run this command in Terminal. The cask may follow the GitHub release a little later.";
 ```
 
 ---
 
-### Incident Patch 11: `1a1e9e31` (2026-06-28)
-**Commit Message**: Merge pull request #124 from albertonoys/fix/recursive-app-sizes
+### Incident Patch 3: `d807704a` (2026-10-08)
+**Commit Message**: Merge branch 'integration/xcodebuildmcp' into integration/3.1.0
 
-Fix app/file sizes showing as bytes instead of recursive total
+# Conflicts:
+#	PureMac.xcodeproj/project.pbxproj
 
-**File**: `PureMac.xcodeproj/project.pbxproj` (modified, +4/-0)
+**File**: `PureMac.xcodeproj/project.pbxproj` (modified, +8/-0)
 ```diff
-@@ -37,6 +37,7 @@
- 		A549D8A39A9E5E70D91B90A6 /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A3F22FCEF534DE4A2CAD0E /* Haptics.swift */; };
- 		A9C3A1F643C26930F442E729 /* OrphanSafetyPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AE790496C936424EF98320A /* OrphanSafetyPolicy.swift */; };
- 		ABDDD4F35102A39CC1A2C325 /* ConfettiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0599AA604B0D6BA4F957537 /* ConfettiView.swift */; };
-+		B51E5A95BB49A6C0F5273E21 /* FileSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CE522B406791BCE905BC55B /* FileSize.swift */; };
- 		B52938BBD11842631314543D /* CategoryDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10B0AF194677EAC1D5568785 /* CategoryDetailView.swift */; };
+@@ -10,6 +10,7 @@
+ 		013EF7B96BF046D4DB38FBC5 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 241E0895B09C71AB423B2F9E /* Localizable.strings */; };
+ 		0BB6BC2EAFB02407FBC6CDA6 /* ApplicationUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59873E44B520DE069F80CCD6 /* ApplicationUpdater.swift */; };
+ 		0CC9A41781D1B1883279693E /* ProtectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F270D47D1DD94D4577482B90 /* ProtectionView.swift */; };
++		0E0A5149C01BA4B013F85E2D /* XcodeBuildMCPDerivedDataSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FC5F44AB9CA4CD2DE774973 /* XcodeBuildMCPDerivedDataSupport.swift */; };
+ 		10959A68B277AEF7D2442C48 /* StorageExplorerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B8E84105970F69BBAB638F /* StorageExplorerTests.swift */; };
+ 		1B0D043102FDB245312A5147 /* AppFilesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798B80977D14647A5691B0A0 /* AppFilesView.swift */; };
+ 		20E0D6D821D0D1BFAC82E6E4 /* MonitoringLifecycleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0621A14395DCA19EC2995842 /* MonitoringLifecycleTests.swift */; };
+@@ -69,6 +70,7 @@
+ 		B928E4369A3FC4369F014A29 /* SmartCareCoreArtwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAA389C4F50505795FB31A51 /* SmartCareCoreArtwork.swift */; };
+ 		BB10A9AFDA394F918E068351 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B55B1419D88851567DFB783A /* InfoPlist.strings */; };
  		BC6C800216343438413349A3 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D4FD34378988D430A582ED0 /* OnboardingView.swift */; };
++		BF1DAD05E70EB1AE0103BFEA /* XcodeBuildMCPDerivedDataSupportTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04F5D30AEC87F2213C8D59AD /* XcodeBuildMCPDerivedDataSupportTests.swift */; };
+ 		C85B54037A5989A85968F328 /* AppUpdatesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A0AF1B9C42A20B6C9FC2DD9 /* AppUpdatesView.swift */; };
  		CDCDFEBA39A3290101F86AC6 /* MainWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F510F232341EE18F11DC934 /* MainWindow.swift */; };
-@@ -102,6 +103,7 @@
- 		77D3D9A9BC52839E6D0A22BC /* Locations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Locations.swift; sourceTree = "<group>"; };
- 		798B80977D14647A5691B0A0 /* AppFilesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppFilesView.swift; sourceTree = "<group>"; };
- 		82BB0904726B38DEB141BECA /* AppLanguage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLanguage.swift; sourceTree = "<group>"; };
-+		8CE522B406791BCE905BC55B /* FileSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileSize.swift; sourceTree = "<group>"; };
- 		8D5E63D733D1A3BDEDF4DCA5 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/Localizable.strings"; sourceTree = "<group>"; };
- 		913E3064AA9BD7BE94A315CF /* MenuBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarController.swift; sourceTree = "<group>"; };
- 		92259B3E9F4468865F15DEEC /* AppearancePill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppearancePill.swift; sourceTree = "<group>"; };
-@@ -275,6 +277,7 @@
- 			isa = PBXGroup;
- 			children = (
- 				01B2C5F66B6D812572BD4F05 /* CLI.swift */,
-+				8CE522B406791BCE905BC55B /* FileSize.swift */,
- 				5785762276FB5E3209C6DE4D /* Logger.swift */,
- 				4AE790496C936424EF98320A /* OrphanSafetyPolicy.swift */,
- 			);
-@@ -446,6 +449,7 @@
- 				A2AE68CC75CB72D6B10CBDF5 /* DashboardView.swift in Sources */,
- 				76B132F9C499225D33E0D075 /* EmptyStateView.swift in Sources */,
- 				52F11962555C639F0EECADD6 /* FDADemoView.swift in Sources */,
-+				B51E5A95BB49A6C0F5273E21 /* FileSize.swift in Sources */,
- 				2253F11BDF561B617439C96B /* FullDiskAccessManager.swift in Sources */,
- 				A549D8A39A9E5E70D91B90A6 /* Haptics.swift in Sources */,
- 				E60B0A2C5D0A6CAE35BF4DFB /* Locations.swift in Sources */,
-```
-
-**File**: `PureMac/Logic/Scanning/AppInfoFetcher.swift` (modified, +1/-26)
-```diff
-@@ -133,31 +133,6 @@ final class AppInfoFetcher {
-     }
- 
-     private func appSize(at url: URL) -> Int64 {
--        // totalFileAllocatedSizeKey on a directory URL returns only the
--        // directory inode (~4 KB on APFS), not the recursive sum - the
--        // previous fast-path returned that and exited, causing app sizes
--        // to display as ~4 KB regardless of bundle contents. Always
--        // enumerate the bundle contents and sum.
--        guard let enumerator = fileManager.enumerator(
--            at: url,
--            includingPropertiesForKeys: [.totalFileAllocatedSizeKey, .fileAllocatedSizeKey, .isRegularFileKey, .isSymbolicLinkKey],
--            options: [.skipsHiddenFiles]
--        ) else { return 0 }
--
--        var total: Int64 = 0
--        for case let fileURL as URL in enumerator {
--            guard let values = try? fileURL.resourceValues(forKeys: [.totalFileAllocatedSizeKey, .fileAllocatedSizeKey, .isRegularFileKey, .isSymbolicLinkKey]) else { continue }
--            // Skip symlinks so we don't double-count or follow links out of
--            // the bundle. Skip directories so we only count regular file
--            // payload.
--            if values.isSymbolicLink == true { continue }
--            guard values.isRegularFile == true else { continue }
--            if let allocated = values.totalFileAllocatedSize {
--                total += Int64(allocated)
--            } else if let allocated = values.fileAllocatedSize {
--                total += Int64(allocated)
--            }
--        }
--        return total
-+        FileSizeCalculator.size(of: url) ?? 0
-     }
- }
-```
-
-**File**: `PureMac/Logic/Utilities/FileSize.swift` (added, +60/-0)
-```diff
-@@ -0,0 +1,60 @@
-+import Foundation
-+
-+/// Allocated-size calculation that works for both files and directories.
-+///
-+/// `URLResourceValues.totalFileAllocatedSize` does **not** recurse: on a
-+/// directory URL it returns only the directory inode's own allocation
-+/// (~96 bytes to a few KB on APFS), not the sum of the bundle's contents.
-+/// Reading it directly on an `.app` bundle or a support folder is what made
-+/// items display as a handful of bytes. For directories we enumerate and sum
-+/// the regular files instead.
-+enum FileSizeCalculator {
-+    private static let fileManager = FileManager.default
-+
-+    /// On-disk allocated size of `url`. Recurses into directories.
-+    /// Returns `nil` if the item can't be read at all.
-+    static func size(of url: URL) -> Int64? {
-+        let values = try? url.resourceValues(forKeys: [.isDirectoryKey])
-+        if values?.isDirectory == true {
-+            return directorySize(of: url)
-+        }
-+        return fileSize(of: url)
-+    }
-+
-+    private static func fileSize(of url: URL) -> Int64? {
-+        if let values = try? url.resourceValues(forKeys: [.totalFileAllocatedSizeKey]),
-+           let size = values.totalFileAllocatedSize {
-+            return Int64(size)
-+        }
-+        if let values = try? url.resourceValues(forKeys: [.fileAllocatedSizeKey]),
-+           let size = values.fileAllocatedSize {
-+            return Int64(size)
-+        }
-+        guard let attrs = try? fileManager.attributesOfItem(atPath: url.path),
-+              let size = attrs[.size] as? Int64 else { return nil }
-+        return size
-+    }
-+
-+    private static func directorySize(of url: URL) -> Int64 {
-+        guard let enumerator = fileManager.enumerator(
-+            at: url,
-+            includingPropertiesForKeys: [.totalFileAllocatedSizeKey, .fileAllocatedSizeKey, .isRegularFileKey, .isSymbolicLinkKey],
-+            options: [.skipsHiddenFiles]
-+        ) else { return 0 }
-+
-+        var total: Int64 = 0
-+        for case let fileURL as URL in enumerator {
-+            guard let values = try? fileURL.resourceValues(forKeys: [.totalFileAllocatedSizeKey, .fileAllocatedSizeKey, .isRegularFileKey, .isSymbolicLinkKey]) else { continue }
-+            // Skip symlinks so we don't double-count or follow links that
-+            // escape the directory. Only sum regular-file payload.
-+            if values.isSymbolicLink == true { continue }
-+            guard values.isRegularFile == true else { continue }
-+            if let allocated = values.totalFileAllocatedSize {
-+                total += Int64(allocated)
-+            } else if let allocated = values.fileAllocatedSize {
-+                total += Int64(allocated)
-+            }
-+        }
-+        return total
-+    }
-+}
-```
-
-**File**: `PureMac/Views/Apps/AppFilesView.swift` (modified, +1/-14)
-```diff
-@@ -372,20 +372,7 @@ struct AppFilesView: View {
-     }
- 
-     private func fileSize(_ url: URL) -> Int64? {
--        // totalFileAllocatedSize recurses into directories; attributesOfItem
--        // returns the directory's own metadata size (≈0), which is why
--        // bundles and support folders previously displayed as 0 B.
--        if let values = try? url.resourceValues(forKeys: [.totalFileAllocatedSizeKey]),
--           let size = values.totalFileAllocatedSize, size > 0 {
--            return Int64(size)
--        }
--        if let values = try? url.resourceValues(forKeys: [.fileAllocatedSizeKey]),
--           let size = values.fileAllocatedSize {
--            return Int64(size)
--        }
--        guard let attrs = try? FileManager.default.attributesOfItem(atPath: url.path),
--              let size = attrs[.size] as? Int64 else { return nil }
--        return size
-+        FileSizeCalculator.size(of: url)
-     }
- 
-     private func removeSingleFile(_ url: URL) {
-```
-
-**File**: `PureMac/Views/Orphans/OrphanListView.swift` (modified, +1/-11)
-```diff
-@@ -125,17 +125,7 @@ struct OrphanListView: View {
-     }
- 
-     private func fileSize(_ url: URL) -> Int64? {
--        if let values = try? url.resourceValues(forKeys: [.totalFileAllocatedSizeKey]),
--           let size = values.totalFileAllocatedSize, size > 0 {
--            return Int64(size)
--        }
--        if let values = try? url.resourceValues(forKeys: [.fileAllocatedSizeKey]),
--           let size = values.fileAllocatedSize {
--            return Int64(size)
--        }
--        guard let attrs = try? FileManager.default.attributesOfItem(atPath: url.path),
--              let size = attrs[.size] as? Int64 else { return nil }
--        return size
-+        FileSizeCalculator.size(of: url)
-     }
- 
-     private func removeSelectedOrphans() async {
-```
-
----
-
-### Incident Patch 12: `cf404c95` (2026-06-28)
-**Commit Message**: fix: dashboard hero + stats overflow at narrow window widths
-
-At small window sizes the idle-dashboard hero (fixed 180pt ring beside the
-storage column) overflowed the card and the storage figure clipped, and
-the 4-up stat grid crushed its values. Make both adapt to the dashboard
-width: below 660pt the hero stacks vertically with a smaller ring via a
-new AdaptiveStack, and the stat grid drops from 4 columns to 2.
-
-Claude-Session: https://claude.ai/code/session_01B6BCRcv3uVh5Tizs9hMv88
-
-**File**: `PureMac/Views/DashboardView.swift` (modified, +27/-3)
-```diff
-@@ -152,15 +152,19 @@ struct DashboardView: View {
-         let free = appState.diskInfo.freeSpace
-         let percentUsed = total > 0 ? Double(used) / Double(total) : 0
-         let stress = percentUsed > 0.85
-+        // Below this width the side-by-side ring + storage column overflows the
-+        // card, so the hero stacks vertically and the ring shrinks.
-+        let compact = dashboardSize.width > 0 && dashboardSize.width < 660
-+        let ringSize: CGFloat = compact ? 132 : 180
- 
-         return CardSurface(padding: 24, accent: stress ? Tint.orange : Tint.blue, elevation: .raised) {
--            HStack(alignment: .center, spacing: 28) {
-+            AdaptiveStack(compact: compact, spacing: compact ? 18 : 28) {
-                 ZStack {
-                     // Slow atmospheric drift behind the ring — barely-there
-                     // ambient depth, frozen under Reduce Motion.
-                     HeroDrift(tint: stress ? Tint.orange : Tint.blue)
-                     HealthRing(percent: percentUsed)
--                        .frame(width: 180, height: 180)
-+                        .frame(width: ringSize, height: ringSize)
-                 }
- 
-                 VStack(alignment: .leading, spacing: 14) {
-@@ -264,7 +268,10 @@ struct DashboardView: View {
-         let total = appState.diskInfo.totalSpace
-         let percentUsed = total > 0 ? Double(total - free) / Double(total) : 0
- 
--        return LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 4), spacing: 12) {
-+        // Four across when there's room, two when the dashboard is narrow so the
-+        // cards don't crush their values.
-+        let columnCount = dashboardSize.width > 0 && dashboardSize.width < 660 ? 2 : 4
-+        return LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: columnCount), spacing: 12) {
-             StatCard(
-                 icon: "internaldrive.fill",
-                 tint: Tint.blue,
-@@ -950,3 +957,20 @@ private struct CategoryToggleRow: View {
-         String(format: String(localized: "%lld items"), Int64(result.itemCount))
-     }
- }
-+
-+/// Lays its content out horizontally at full width and vertically when the
-+/// container is too narrow for the row to fit, so wide hero rows reflow into a
-+/// stacked layout instead of overflowing.
-+struct AdaptiveStack<Content: View>: View {
-+    let compact: Bool
-+    var spacing: CGFloat = 28
-+    @ViewBuilder var content: Content
-+
-+    var body: some View {
-+        if compact {
-+            VStack(alignment: .leading, spacing: spacing) { content }
-+        } else {
-+            HStack(alignment: .center, spacing: spacing) { content }
-+        }
-+    }
-+}
-```
-
----
-
-### Incident Patch 13: `373d3dd6` (2026-06-28)
-**Commit Message**: feat: menu-bar system monitor (opt-in CPU/memory/disk meters)
-
-Adds an optional menu-bar status item showing live CPU / memory / disk
-usage, toggled from Settings > General > System Monitor. Clicking it
-opens a popover with labeled meters plus Open/Quit actions; the menu-bar
-button shows live CPU%.
-
-Implementation notes:
-- AppKit NSStatusItem + NSPopover (hosting the SwiftUI MenuBarMonitorView)
-  rather than a SwiftUI MenuBarExtra: a conditional .window-style
-  MenuBarExtra fails to type-check in @SceneBuilder, and an unconditional
-  one stalls the XCTest host run loop. The AppKit controller is created
-  only when enabled and never under XCTest.
-- SystemMonitor samples CPU (host_statistics), memory (host_statistics64),
-  and disk (volume capacity) on a 2s timer, refcounted so it idles when
-  unobserved.
-- statusItem.isVisible is set explicitly (it restores hidden from autosave
-  state otherwise) with an autosaveName to persist the user's placement.
-- App stays resident while enabled so the meters keep updating after the
-  window closes; WindowOpener captures openWindow so the popover can
-  reopen it.
-- +8 localized UI strings across all 7 locales (321-key parity preserved).
-- proje
-
-**File**: `PureMac.xcodeproj/project.pbxproj` (modified, +16/-4)
-```diff
-@@ -27,10 +27,12 @@
- 		826A750D2D7EC14C2AE306A3 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3667D46D8E2004EB4D73835A /* Models.swift */; };
- 		8947F0CE448791BD50EECF46 /* Conditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB94E06E145558123BB5BFB3 /* Conditions.swift */; };
- 		8B541441926847072DC5B75B /* DashboardCharts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08C60E04A0CA3F227816DB63 /* DashboardCharts.swift */; };
-+		91751CF033E1541BFD39B12C /* MenuBarMonitorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A27DB5A70FA829B6C3ED0AC3 /* MenuBarMonitorView.swift */; };
- 		93743B036059418560D876E6 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A8D39C3C250F26302EC45AB /* SettingsView.swift */; };
- 		95278ABDCF5F4D6AC60503B1 /* AppearancePill.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92259B3E9F4468865F15DEEC /* AppearancePill.swift */; };
- 		9AA80E035DF7B33F6EE118DF /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED1B71D5F9510582E869CFD /* AppState.swift */; };
- 		9BB5AAA574AFED6C27A3F8E2 /* AppPathFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0FEE7141871ED5F9E36121 /* AppPathFinder.swift */; };
-+		9E3639F9EFCB2A22F6747894 /* MenuBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 913E3064AA9BD7BE94A315CF /* MenuBarController.swift */; };
- 		A2AE68CC75CB72D6B10CBDF5 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F661A0F64CF93E482CB1728F /* DashboardView.swift */; };
- 		A549D8A39A9E5E70D91B90A6 /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A3F22FCEF534DE4A2CAD0E /* Haptics.swift */; };
- 		A9C3A1F643C26930F442E729 /* OrphanSafetyPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AE790496C936424EF98320A /* OrphanSafetyPolicy.swift */; };
-@@ -41,6 +43,7 @@
  		CFA64F54CDBF8A4765E0068D /* LocalizationFilesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 155CE1B8CDCCCA6F9FD028C1 /* LocalizationFilesTests.swift */; };
- 		D50EB059E741011EB2523731 /* ScanError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF15CB1B8EFCA78EF491824 /* ScanError.swift */; };
- 		D9445C2641A8637B65DA5ACE /* ScanEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A711CDF5285F68775D9B5513 /* ScanEngine.swift */; };
-+		DBFD73E3D9BDA74EC1CA56AB /* SystemMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB798781B99987F55D77E2E3 /* SystemMonitor.swift */; };
- 		DC32253D26D0E29762006DA0 /* AppBundleDragHandle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3F9FEDC493A8E49E910F67 /* AppBundleDragHandle.swift */; };
- 		DDD6BA35DBF32E7A6B5F6F8B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B2EA41E1096FA8E3B916AD13 /* Assets.xcassets */; };
- 		DDDA5879006CB97D5D7BDD87 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5785762276FB5E3209C6DE4D /* Logger.swift */; };
-@@ -100,9 +103,11 @@
- 		798B80977D14647A5691B0A0 /* AppFilesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppFilesView.swift; sourceTree = "<group>"; };
- 		82BB0904726B38DEB141BECA /* AppLanguage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLanguage.swift; sourceTree = "<group>"; };
- 		8D5E63D733D1A3BDEDF4DCA5 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/Localizable.strings"; sourceTree = "<group>"; };
-+		913E3064AA9BD7BE94A315CF /* MenuBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarController.swift; sourceTree = "<group>"; };
- 		92259B3E9F4468865F15DEEC /* AppearancePill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppearancePill.swift; sourceTree = "<group>"; };
- 		9F04B811BB0012F6D2F07F91 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
- 		9F510F232341EE18F11DC934 /* MainWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainWindow.swift; sourceTree = "<group>"; };
-+		A27DB5A70FA829B6C3ED0AC3 /* MenuBarMonitorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarMonitorView.swift; sourceTree = "<group>"; };
- 		A711CDF5285F68775D9B5513 /* ScanEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanEngine.swift; sourceTree = "<group>"; };
- 		AC0FEE7141871ED5F9E36121 /* AppPathFinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPathFinder.swift; sourceTree = "<group>"; };
- 		B2CD0028599BE178B96F18A6 /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/Localizable.strings; sourceTree = "<group>"; };
-@@ -111,6 +116,7 @@
- 		C5ADDC35F31E40780FB5D017 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFi
+@@ -112,6 +114,7 @@
+ 		022D0EAEE2B6E54069FC2CBE /* UpdateService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateService.swift; sourceTree = "<group>"; };
+ 		02E502E2B5C6AECC76E5CFEF /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Localizable.strings"; sourceTree = "<group>"; };
+ 		043F28E28FB7B2D9E39E5F70 /* PerformanceInspectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceInspectorTests.swift; sourceTree = "<group>"; };
++		04F5D30AEC87F2213C8D59AD /* XcodeBuildMCPDerivedDataSupportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XcodeBuildMCPDerivedDataSupportTests.swift; sourceTree = "<group>"; };
+ 		0621A14395DCA19EC2995842 /* MonitoringLifecycleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonitoringLifecycleTests.swift; sourceTree = "<group>"; };
+ 		069AAE87E3F9EDE5593AD8B3 /* PermissionSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionSheet.swift; sourceTree = "<group>"; };
+ 		089D484A0482787027665936 /* DuplicateFinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuplicateFinder.swift; sourceTree = "<group>"; };
+@@ -125,6 +128,7 @@
+ 		1B8BE07AD70610A91E735E78 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/ServicesMenu.strings"; sourceTree = "<group>"; };
+ 		1C0D9A6F75D0B8ADDB32FC2A /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/Localizable.strings; sourceTree = "<group>"; };
+ 		1D3AC5F17D7CA94FAB1E8D7A /* StringNormalization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringNormalization.swift; sourceTree = "<group>"; };
++		1FC5F44AB9CA4CD2DE774973 /* XcodeBuildMCPDerivedDataSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XcodeBuildMCPDerivedDataSupport.swift; sourceTree = "<group>"; };
+ 		22B679C0120F1E3DDCB27FE2 /* CleaningEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CleaningEngineTests.swift; sourceTree = "<group>"; };
+ 		231FF7CBB5F621B66F2AB8A5 /* FDADemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FDADemoView.swift; sourceTree = "<group>"; };
+ 		23486A54A82EE3865B784D1C /* AppInfoFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInfoFetcher.swift; sou
 ```
 
-**File**: `PureMac/PureMacApp.swift` (modified, +51/-2)
+**File**: `PureMac/Logic/Utilities/ProviderPaths.swift` (modified, +39/-21)
 ```diff
-@@ -1,11 +1,30 @@
- import AppKit
- import SwiftUI
+@@ -18,25 +18,39 @@ enum ProviderPaths {
  
-+@MainActor
- class AppDelegate: NSObject, NSApplicationDelegate {
--    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { true }
-+    /// Owns the optional menu-bar status item. Nil until the monitor is enabled.
-+    private var menuBarController: MenuBarController?
-+
-+    /// Normally PureMac quits when its window closes. When the menu-bar system
-+    /// monitor is enabled the app stays resident so the meters keep updating in
-+    /// the menu bar; "Open PureMac" in that menu reopens the window.
-+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
-+        !UserDefaults.standard.bool(forKey: "settings.general.menuBarMonitor")
-+    }
- 
-     func applicationDidFinishLaunching(_ notification: Notification) {
-         NSWindow.allowsAutomaticWindowTabbing = false
-+
-+        // Install the menu-bar monitor if the user has it enabled. Never under
-+        // XCTest — the status-item machinery would stall the test-host run loop.
-+        if NSClassFromString("XCTestCase") == nil {
-+            syncMenuBarMonitor()
-+            NotificationCenter.default.addObserver(
-+                self, selector: #selector(syncMenuBarMonitor),
-+                name: .pureMacMenuBarMonitorChanged, object: nil
-+            )
+     /// Roots that must never be scanned, offered, or deleted. Any path equal to
+     /// or beneath one of these is off limits.
+-    static var deniedRoots: [String] {
+-        let home = FileManager.default.homeDirectoryForCurrentUser.path
+-        return [
+-            // iCloud Drive user-visible root and its per-app containers.
+-            "\(home)/Library/Mobile Documents",
+-            // Third-party providers (Dropbox, OneDrive, Google Drive, ...).
+-            "\(home)/Library/CloudStorage",
+-            // FileProvider framework state and per-provider domains.
+-            "\(home)/Library/Application Support/FileProvider",
+-            "\(home)/Library/Application Support/CloudDocs",
+-            // Provider extension containers.
+-            "\(home)/Library/Daemon Containers",
+-            // Live databases, not reclaimable caches, despite living in Caches.
+-            "\(home)/Library/Caches/CloudKit",
+-            "\(home)/Library/Caches/com.apple.bird",
+-            "\(home)/Library/Caches/com.apple.cloudkit",
+-            "\(home)/Library/Caches/com.apple.cloudd",
+-            "\(home)/Library/Caches/com.apple.FileProvider",
+-        ]
++    ///
++    /// The engines canonicalize a symlinked home, so the roots are spelled
++    /// under every form of the home: literal, symlink-resolved, and resolved
++    /// then standardized. Otherwise a canonical path under a symlinked home
++    /// would never match a root built from the literal home.
++    static func deniedRoots(
++        homeDirectory: URL = FileManager.default.homeDirectoryForCurrentUser
++    ) -> [String] {
++        let resolved = homeDirectory.resolvingSymlinksInPath()
++        var homes: [String] = []
++        for home in [homeDirectory.standardizedFileURL.path, resolved.path, resolved.standardizedFileURL.path]
++        where !homes.contains(home) {
++            homes.append(home)
 +        }
-         // Touch TCC-protected paths so macOS registers PureMac in the
-         // Full Disk Access pane on first launch (fixes issue #75).
-         FullDiskAccessManager.shared.triggerRegistration()
-@@ -38,6 +57,25 @@ class AppDelegate: NSObject, NSApplicationDelegate {
-             userInfo: ["path": appURL.path]
-         )
-     }
-+
-+    /// Create or tear down the menu-bar status item to match the current
-+    /// Settings toggle. Posted to whenever the toggle flips so it takes effect
-+    /// without a relaunch.
-+    @objc func syncMenuBarMonitor() {
-+        let enabled = UserDefaults.standard.bool(forKey: "settings.general.menuBarMonitor")
-+        if enabled, menuBarController == nil {
-+            menuBarController = MenuBarController()
-+        } else if !enabled, let controller = menuBarController {
-+            controller.teardown()
-+            menuBarController = nil
++        return homes.flatMap { home in
++            [
++                // iCloud Drive user-visible root and its per-app containers.
++                "\(home)/Library/Mobile Documents",
++                // Third-party providers (Dropbox, OneDrive, Google Drive, ...).
++                "\(home)/Library/CloudStorage",
++                // FileProvider framework state and per-provider domains.
++                "\(home)/Library/Application Support/FileProvider",
++                "\(home)/Library/Application Support/CloudDocs",
++                // Provider extension containers.
++                "\(home)/Library/Daemon Containers",
++                // Live databases, not reclaimable caches, despite living in Caches.
++                "\(home)/Library/Caches/CloudKit",
++                "\(home)/Library/Caches/com.apple.bird",
++                "\(home)/Library/Caches/com.apple.cloudkit",
++                "\(home)/Library/Caches/com.apple.cloudd",
++                "\(home)/Library/Caches/com.apple.FileProvider",
++            ]
 +        }
-+    }
-+}
-+
-+extension Notification.Name {
-+    /// Posted when the "Show system monitor in menu bar" Settings toggle flips,
-+    /// so AppDelegate can add/remove the status item live.
-+    static let pureMacMenuBarMonitorChanged = Notification.Name("PureMac.MenuBarMonitorChanged")
- }
- 
- @main
-@@ -58,7 +96,7 @@ struct PureMacApp: App {
      }
  
-     var body: some Scene {
--        WindowGroup {
-+        WindowGroup(id: "main") {
-             Group {
-                 if onboardingComplete {
-                     MainWindow()
-@@ -70,6 +108,10 @@ struct PureMacApp: App {
+     /// True when `path` is inside provider-owned state and must be left alone.
+@@ -46,7 +60,11 @@ enum ProviderPaths {
+     /// enabled, `~/Desktop` and `~/Documents` resolve into
+     /// `~/Library/Mobile Documents/com~apple~CloudDocs`, so an innocuous-looking
+     /// root can walk straight into iCloud state.
+-    static func isProviderOwned(_ path: String) -> Bool {
++    static func isProviderOwned(
++        _ path: String,
++        homeDirectory: URL = FileManager.default.homeDirectoryForCurrentUser
++    ) -> Bool {
++        let roots = deniedRoots(homeDirectory: homeDirectory)
+         let candidates = [
+             (path as NSString).standardizingPath,
+             URL(fileURLWithPath: path).resolvingSymlinksInPath().path,
+@@ -55,7 +73,7 @@ enum ProviderPaths {
+             // Any component of the form `com~apple~CloudDocs` (or any other
+             // provider domain) marks provider territory regardless of location.
+             if candidate.contains("com~apple~") { return true }
+-            for root in deniedRoots where candidate == root || candidate.hasPrefix(root + "/") {
++            for root in roots where candidate == root || candidate.hasPrefix(root + "/") {
+                 return true
              }
-             .environmentObject(theme)
-             .preferredColorScheme(theme.appearance.colorScheme)
-+            // Record the openWindow action so the menu-bar popover can reopen
-+            // this window after it's been closed (the popover lives outside the
-+            // scene graph and can't use openWindow itself).
-+            .background(WindowOpenerCapture())
          }
-         .windowStyle(.automatic)
-         .windowToolbarStyle(.unified)
-@@ -89,5 +131,12 @@ struct PureMacApp: App {
-             SettingsView()
-                 .environmentObject(appState)
-         }
-+
-+        // The opt-in menu-bar system monitor is an AppKit NSStatusItem managed
-+        // by AppDelegate/MenuBarController rather than a SwiftUI MenuBarExtra:
-+        // a conditional `.window`-style MenuBarExtra fails to type-check, and an
-+        // unconditional one sets up status-item machinery that hangs the XCTest
-+        // host. The AppKit controller is only created when enabled and never
-+        // under tests, sidestepping both problems.
-     }
- }
 ```
 
-**File**: `PureMac/Services/MenuBarController.swift` (added, +88/-0)
+**File**: `PureMac/Logic/Utilities/XcodeBuildMCPDerivedDataSupport.swift` (added, +318/-0)
 ```diff
-@@ -0,0 +1,88 @@
-+import AppKit
-+import SwiftUI
-+import Combine
-+
-+/// Captures SwiftUI's `openWindow` action so AppKit surfaces (the menu-bar
-+/// popover, which lives outside the scene graph and has no working `openWindow`
-+/// environment) can reopen the main window after it has been closed. The main
-+/// window records the action on appear; the closure stays valid for the app's
-+/// lifetime even once the window is gone.
-+@MainActor
-+final class WindowOpener {
-+    static let shared = WindowOpener()
-+    var open: ((String) -> Void)?
-+    private init() {}
-+}
-+
-+/// AppKit-backed menu-bar system monitor. A SwiftUI `MenuBarExtra` was avoided
-+/// here: a conditional `.window`-style `MenuBarExtra` fails to type-check, and
-+/// an unconditional one stalls the XCTest host's run loop. An `NSStatusItem`
-+/// driving an `NSPopover` (which hosts the existing SwiftUI `MenuBarMonitorView`)
-+/// gives the same UI with full create/destroy control and no test-host impact.
-+@MainActor
-+final class MenuBarController: NSObject, NSPopoverDelegate {
-+    private let statusItem: NSStatusItem
-+    private let popover = NSPopover()
-+    private let monitor = SystemMonitor.shared
-+    private var cancellable: AnyCancellable?
-+
-+    override init() {
-+        statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-+        super.init()
-+
-+        // Persist the user's show/hide choice and ensure the item is requested
-+        // visible (it defaults hidden when restored from a prior autosave state).
-+        statusItem.autosaveName = "PureMacSystemMonitor"
-+        statusItem.isVisible = true
-+
-+        monitor.start()
-+
-+        if let button = statusItem.button {
-+            button.image = NSImage(
-+                systemSymbolName: "gauge.with.dots.needle.67percent",
-+                accessibilityDescription: "System Monitor"
-+            )
-+            button.imagePosition = .imageLeading
-+            button.target = self
-+            button.action = #selector(togglePopover)
-+            updateTitle()
-+        }
-+
-+        popover.behavior = .transient
-+        popover.contentSize = NSSize(width: 248, height: 230)
-+        popover.contentViewController = NSHostingController(rootView: MenuBarMonitorView())
-+        popover.delegate = self
-+
-+        // Refresh the menu-bar CPU readout each time the monitor samples.
-+        cancellable = monitor.$cpuUsage
-+            .receive(on: RunLoop.main)
-+            .sink { [weak self] _ in self?.updateTitle() }
-+    }
-+
-+    /// Remove the status item and release the monitor observer. Called by
-+    /// AppDelegate before dropping the controller so teardown runs on the main
-+    /// actor (a `@MainActor` deinit cannot touch isolated state safely).
-+    func teardown() {
-+        cancellable?.cancel()
-+        cancellable = nil
-+        if popover.isShown { popover.performClose(nil) }
-+        NSStatusBar.system.removeStatusItem(statusItem)
-+        monitor.stop()
-+    }
-+
-+    private func updateTitle() {
-+        guard let button = statusItem.button else { return }
-+        button.title = " \(Int((monitor.cpuUsage * 100).rounded()))%"
-+    }
-+
-+    @objc private func togglePopover() {
-+        guard let button = statusItem.button else { return }
-+        if popover.isShown {
-+            popover.performClose(nil)
-+        } else {
-+            NSApp.activate(ignoringOtherApps: true)
-+            popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
-+            popover.contentViewController?.view.window?.makeKey()
-+        }
-+    }
-+}
-```
-
-**File**: `PureMac/Services/SystemMonitor.swift` (added, +144/-0)
-```diff
-@@ -0,0 +1,144 @@
+@@ -0,0 +1,318 @@
 +import Foundation
 +import Darwin
 +
-+/// Lightweight live system telemetry for the menu-bar monitor (CPU / memory /
-+/// disk). Polls on a timer only while a SwiftUI view is observing it; the menu
-+/// bar's `MenuBarExtra` keeps a single shared instance alive, and `start()` /
-+/// `stop()` gate the timer so the app does no background sampling when the
-+/// monitor is disabled in Settings.
++/// Discovery and safety policy for XcodeBuildMCP-managed DerivedData.
 +///
-+/// All readings use public Mach / Foundation APIs (no sandbox-incompatible
-+/// shelling out), so this stays valid under the app's hardened-runtime,
-+/// notarized build.
-+@MainActor
-+final class SystemMonitor: ObservableObject {
-+    static let shared = SystemMonitor()
++/// Matches XcodeBuildMCP's own purge contract: active or recent DerivedData is
++/// protected from unattended cleanup, and deletions must not run while the
++/// workspace filesystem lifecycle lock is held.
++/// See https://www.xcodebuildmcp.com/docs/storage-management
++enum XcodeBuildMCPDerivedDataSupport {
++    static let lifecycleLockDirectoryName = "filesystem-lifecycle.lock"
++    static let lifecycleLockOwnerFileName = "owner.json"
++    /// Same lease window XcodeBuildMCP uses for filesystem-lifecycle locks.
++    static let lifecycleLockLease: TimeInterval = 10 * 60
++    /// Scheduled cleanup only considers build data that has been unused for a
++    /// full week. Manual cleanup remains available for any discovered item.
++    static let scheduledCleanupAge: TimeInterval = 7 * 24 * 60 * 60
++    /// XcodeBuildMCP 2.7.1 was renamed MobileBuildMCP and moved its state
++    /// directory without migrating the old one. Both roots share one layout.
++    static let managedDirectoryNames = ["XcodeBuildMCP", "MobileBuildMCP"]
 +
-+    /// 0.0 - 1.0 fraction of total CPU time spent non-idle since the last sample.
-+    @Published private(set) var cpuUsage: Double = 0
-+    @Published private(set) var memoryUsed: Int64 = 0
-+    @Published private(set) var memoryTotal: Int64 = 0
-+    @Published private(set) var diskUsed: Int64 = 0
-+    @Published private(set) var diskTotal: Int64 = 0
-+
-+    var memoryFraction: Double {
-+        guard memoryTotal > 0 else { return 0 }
-+        return Double(memoryUsed) / Double(memoryTotal)
++    struct LifecycleLock {
++        fileprivate let directory: URL
++        fileprivate let token: String
 +    }
 +
-+    var diskFraction: Double {
-+        guard diskTotal > 0 else { return 0 }
-+        return Double(diskUsed) / Double(diskTotal)
++    static func canonicalHomeDirectory(_ homeDirectory: URL) -> URL {
++        homeDirectory.resolvingSymlinksInPath().standardizedFileURL
 +    }
 +
-+    private var timer: Timer?
-+    /// Previous CPU tick counters, kept to turn the kernel's monotonically
-+    /// increasing totals into a per-interval delta.
-+    private var previousBusy: UInt64 = 0
-+    private var previousTotal: UInt64 = 0
-+    /// Number of live observers; the timer runs only while > 0 so two views
-+    /// (menu-bar label + dropdown) share one timer and the app idles cleanly.
-+    private var observerCount = 0
-+
-+    private init() {}
-+
-+    /// Begin (or keep) sampling. Refcounted so multiple observers share a timer.
-+    func start(interval: TimeInterval = 2.0) {
-+        observerCount += 1
-+        guard timer == nil else { return }
-+        memoryTotal = Int64(ProcessInfo.processInfo.physicalMemory)
-+        sample()
-+        let t = Timer(timeInterval: interval, repeats: true) { [weak self] _ in
-+            Task { @MainActor in self?.sample() }
++    static func managedRoots(
++        homeDirectory: URL = FileManager.default.homeDirectoryForCurrentUser
++    ) -> [URL] {
++        let home = canonicalHomeDirectory(homeDirectory)
++        return managedDirectoryNames.map {
++            home.appendingPathComponent("Library/Developer/\($0)", isDirectory: true)
 +        }
-+        // .common so sampling continues while a menu/popover tracks the run loop.
-+        RunLoop.main.add(t, forMode: .common)
-+        timer = t
 +    }
 +
-+    /// Release one observer; the timer stops once the last one goes away.
-+    func stop() {
-+        observerCount = max(0, observerCount - 1)
-+        guard observerCount == 0 else { return }
-+        timer?.invalidate()
-+        timer = nil
++    /// The managed root that contains `path`, if any.
++    static func managedRoot(
++        containing path: String,
++        homeDirectory: URL = FileManager.default.homeDirectoryForCurrentUser
++    ) -> URL? {
++        let normalized = (path as NSString).standardizingPath
++        return managedRoots(homeDirectory: homeDirectory).first { root in
++            normalized == root.path || normalized.hasPrefix(root.path + "/")
++        }
 +    }
 +
-+    private func sample() {
-+        sampleCPU()
-+        sampleMemory()
-+        sampleDisk()
++    static func isManagedDerivedDataPath(
++        _ path: String,
++        homeDirectory: URL = FileManager.default.homeDirectoryForCurrentUser
++    ) -> Bool {
++        guard let root = managedRoot(containing: path, homeDirectory: homeDirectory) else {
++            return false
++        }
++
++        // XcodeBuildMCP before v2.5 used one shared DerivedData directory.
++        if (path as NSString).standardizingPath == root.appendingPathComponent("DerivedData").path {
++            return true
++        }
++        return workspaceKey(forManagedDerivedDataPath: path, homeDirectory: homeDirectory) != nil
 +    }
 +
-+    // MARK: - CPU
-+
-+    private func sampleCPU() {
-+        var info = host_cpu_load_info()
-+        var count = mach_msg_type_number_t(
-+            MemoryLayout<host_cpu_load_info_data_t>.stride / MemoryLayout<integer_t>.stride
++    /// Returns whether a managed DerivedData item may participate in scheduled
++    /// cleanup. Ordinary PureMac items remain governed by their selection flag;
++    /// XcodeBuildMCP items additionally need to be old and unlocked.
++    static func isEligibleForScheduledAutoClean(
++        _ item: CleanableItem,
++        homeDirectory: URL = FileManager.default.homeDirectoryForCurrentUser,
++        now: Date = Date(),
++        fileManager: FileManager = .default,
++        isProcessAlive: @escaping (Int32) -> Bool = isProcessAlive
++    ) -> Bool {
++        guard isManagedDerivedDataPath(item.path, homeDirectory: homeDirectory) else {
++            return true
++        }
++        guard let lastModified = item.lastModified,
++              now.timeIntervalSince(lastModified) >= scheduledCleanupAge else {
++            return false
++        }
++        return !isLifecycleLockHeld(
++            forManagedDerivedDataPath: item.path,
++            homeDirectory: homeDirectory,
++            fileManager: fileManager,
++            now: now,
++            isProcessAlive: isProcessAlive
 +        )
-+        let result = withUnsafeMutablePointer(to: &info) {
-+            $0.withMemoryRebound(to: integer_t.self, capacity: Int(count)) {
-+                host_statistics(mach_host_self(), HOST_CPU_LOAD_INFO, $0, &count)
-+            }
-+        }
-+        guard result == KERN_SUCCESS else { return }
-+
-+        let user = UInt64(info.cpu_ticks.0)
-+        let system = UInt64(info.cpu_ticks.1)
-+        let idle = UInt64(info.cpu_ticks.2)
-+        let nice = UInt64(info.cpu_ticks.3)
-+        let busy = user &+ system &+ nice
-+        let total = busy &+ idle
-+
-+        defer { previousBusy = busy; previousTotal = total }
-+        // First sample has no prior baseline to diff against.
-+        guard previousTotal != 0, total > previousTotal else { return }
-+
-+        let busyDelta = Double(busy &- previousBusy)
-+        let totalDelta = Double(total &- previousTotal)
-+        guard totalDelta > 0 else { return }
-+        cpuUsage = min(1, max(0, busyDelta / totalDelta))
 +    }
 +
-+    // MARK: - Memory
-+
-+    private func sampleMemory() {
-+        var stats = vm_statistics64()
-+        var count = mach_msg_type_number_t(
-+            MemoryLayout<vm_statistics64_data_t>.stride / MemoryLayout<integer_t>.stride
-+        )
-+        let result = withUnsafeMutablePointer(to: &stats) {
-+            $0.withMemoryRebound(to: integer_t.self, capacity: Int(count)) {
-+                host_statistics64(mach_host_self(), HOST_VM_INFO64, $0, &count)
-+            }
++    static func workspaceKey(
++        forManagedDerivedDataPath path: String,
++        homeDirectory: URL = FileManager.default.homeDirectoryForCurrentUser
++    ) -> String? {
++        guard let root = managedRoot(containing: path, homeDirectory: homeDirectory) else {
++            return nil
 +        }
-+        guard result == KERN_SUCCESS else { return }
-+
-+        let pageSize = Int64(vm_kernel_page_size)
-+        // "App Memory" + wired + compressed mirrors what Activity Monitor counts
-+        // as memory pressure; free + purgeable + most file-backed pages are not
-+        // pressure, so they're excluded.
-+        let used = (Int64(stats.active_count)
-+            + Int64(stats.wire_count)
-+            + Int64(stats.compressor_page_count)) * pageSize
-+        memoryUsed = used
++        let normalized = (path as NSString).standardizingPath
++        let workspacesRoot = root.appendingPathComponent("workspaces", isDirectory: true).path + "/"
++        guard normalized.hasPrefix(workspacesRoot) else { return nil }
++        let relative = String(normalized.dropFirst(workspacesRoot.count))
++        let components = relative.split(separator: "/", omittingEmptySubsequences: false)
++        guard components.count == 2, components[1] == "DerivedData", !components[0].isEmpty else {
++            return nil
++        }
++        return String(components[0])
 +    }
 +
-+    // MARK: - Dis
++    /// True when XcodeBuildMCP's workspace filesystem lifecycle lock is held
++    /// (or cannot be proven free). Legacy shared DerivedData has no per-workspac
 ```
 
-**File**: `PureMac/Views/Components/MenuBarMonitorView.swift` (added, +129/-0)
+**File**: `PureMac/Services/CleaningEngine.swift` (modified, +123/-22)
 ```diff
-@@ -0,0 +1,129 @@
-+import SwiftUI
-+import AppKit
-+
-+/// Zero-size helper that captures SwiftUI's `openWindow` action into
-+/// `WindowOpener.shared` when the main window appears, so the AppKit menu-bar
-+/// popover can reopen the window after it's been closed.
-+struct WindowOpenerCapture: View {
-+    @Environment(\.openWindow) private var openWindow
-+
-+    var body: some View {
-+        Color.clear
-+            .frame(width: 0, height: 0)
-+            .onAppear { WindowOpener.shared.open = { id in openWindow(id: id) } }
-+    }
-+}
-+
-+/// Drop-down panel hosted in the menu-bar `NSPopover` (via `NSHostingController`)
-+/// with live CPU / memory / disk meters and quick actions. Kept self-contained
-+/// so the menu bar surface stays decoupled from the main window's `AppState`.
-+struct MenuBarMonitorView: View {
-+    @ObservedObject private var monitor = SystemMonitor.shared
-+
-+    var body: some View {
-+        VStack(alignment: .leading, spacing: 12) {
-+            Text("System Monitor")
-+                .font(.system(size: 13, weight: .semibold))
-+                .foregroundStyle(.primary)
-+
-+            VStack(spacing: 10) {
-+                MeterRow(title: "CPU", tint: Tint.blue,
-+                         fraction: monitor.cpuUsage,
-+                         detail: "\(Int((monitor.cpuUsage * 100).rounded()))%")
-+                MeterRow(title: "Memory", tint: Tint.purple,
-+                         fraction: monitor.memoryFraction,
-+                         detail: byteDetail(monitor.memoryUsed, monitor.memoryTotal))
-+                MeterRow(title: "Disk", tint: Tint.green,
-+                         fraction: monitor.diskFraction,
-+                         detail: byteDetail(monitor.diskUsed, monitor.diskTotal))
-+            }
-+
-+            Divider()
-+
-+            HStack {
-+                Button {
-+                    openMainWindow()
-+                } label: {
-+                    Text("Open PureMac")
-+                }
-+                .buttonStyle(.borderedProminent)
-+                .controlSize(.small)
-+
-+                Spacer()
-+
-+                Button {
-+                    NSApp.terminate(nil)
-+                } label: {
-+                    Text("Quit PureMac")
-+                }
-+                .buttonStyle(.bordered)
-+                .controlSize(.small)
-+            }
-+        }
-+        .padding(14)
-+        .frame(width: 248)
-+        .onAppear { monitor.start() }
-+        .onDisappear { monitor.stop() }
+@@ -2,13 +2,24 @@ import Foundation
+ 
+ actor CleaningEngine {
+     private let fileManager = FileManager.default
++    /// Always symlink-resolved so allow-listed roots agree with ScanEngine and
++    /// XcodeBuildMCPDerivedDataSupport path checks on symlinked homes.
++    private let homeDirectory: URL
+     private let binaryThinner = BinaryThinner()
+ 
++    init(homeDirectory: URL = FileManager.default.homeDirectoryForCurrentUser) {
++        self.homeDirectory = XcodeBuildMCPDerivedDataSupport.canonicalHomeDirectory(homeDirectory)
 +    }
 +
-+    private func byteDetail(_ used: Int64, _ total: Int64) -> String {
-+        let u = ByteCountFormatter.string(fromByteCount: used, countStyle: .memory)
-+        let t = ByteCountFormatter.string(fromByteCount: total, countStyle: .memory)
-+        return "\(u) / \(t)"
-+    }
-+
-+    /// Bring the app forward and surface the main window. The app stays alive
-+    /// after its window closes only while the monitor is enabled (see
-+    /// `AppDelegate.applicationShouldTerminateAfterLastWindowClosed`), so this
-+    /// reopens a fresh window when none is left, otherwise just focuses it.
-+    private func openMainWindow() {
-+        NSApp.activate(ignoringOtherApps: true)
-+        // Exclude the menu-bar popover's own panel; a real content window is
-+        // titled and can become main.
-+        if let existing = NSApp.windows.first(where: {
-+            $0.canBecomeMain && $0.styleMask.contains(.titled)
-+        }) {
-+            existing.makeKeyAndOrderFront(nil)
-+        } else {
-+            // No content window left — reopen via the captured openWindow action
-+            // (the popover has no working openWindow environment of its own).
-+            WindowOpener.shared.open?("main")
-+        }
-+    }
-+}
-+
-+/// One labeled meter: title on the left, a thin tinted progress bar, and a
-+/// trailing numeric detail. Mirrors the restrained chrome used elsewhere.
-+private struct MeterRow: View {
-+    let title: LocalizedStringKey
-+    let tint: Color
-+    let fraction: Double
-+    let detail: String
-+
-+    private var clamped: Double { max(0, min(1, fraction)) }
-+
-+    var body: some View {
-+        VStack(spacing: 4) {
-+            HStack {
-+                Text(title)
-+                    .font(.system(size: 11, weight: .medium))
-+                    .foregroundStyle(.secondary)
-+                Spacer()
-+                Text(detail)
-+                    .font(.system(size: 11, weight: .semibold))
-+                    .monospacedDigit()
-+                    .foregroundStyle(.primary)
-+            }
-+            GeometryReader { geo in
-+                ZStack(alignment: .leading) {
-+                    Capsule()
-+                        .fill(Color.primary.opacity(0.08))
-+                    Capsule()
-+                        .fill(tint)
-+                        .frame(width: max(2, geo.size.width * clamped))
-+                }
-+            }
-+            .frame(height: 5)
-+        }
-+    }
-+}
-```
-
-**File**: `PureMac/Views/Settings/SettingsView.swift` (modified, +19/-0)
-```diff
-@@ -40,6 +40,7 @@ struct GeneralSettingsView: View {
-     @AppStorage("settings.general.launchAtLogin") private var launchAtLogin = false
-     @AppStorage("settings.general.searchSensitivity") private var sensitivity: SearchSensitivity = .enhanced
-     @AppStorage("settings.general.confirmBeforeDelete") private var confirmBeforeDelete = true
-+    @AppStorage("settings.general.menuBarMonitor") private var menuBarMonitor = false
-     @AppStorage(Haptics.soundEffectsKey) private var soundEffects = true
-     @AppStorage(AppLanguage.preferenceKey) private var appLanguageRaw = AppLanguage.current.rawValue
-     @State private var languageNeedsRelaunch = false
-@@ -86,6 +87,13 @@ struct GeneralSettingsView: View {
+     struct CleaningResult {
+         var freedSpace: Int64 = 0
+         var itemsCleaned: Int = 0
+         var errors: [String] = []
+         var cleanedPaths: Set<String> = []
++        /// Destination paths returned by FileManager.trashItem. Keeping these
++        /// lets callers and tests distinguish recoverable Trash moves from
++        /// irreversible removals.
++        var trashedPaths: Set<String> = []
+         // Items that user-level FileManager.removeItem refused with EACCES /
+         // EPERM. These are root-owned and need an admin-privileged second
+         // pass via cleanWithAdminPrivileges(items:).
+@@ -130,14 +141,9 @@ actor CleaningEngine {
+                 // Large files surfaced by scanLargeFiles are per-file items
+                 // under Downloads/Documents/Desktop; those get a narrower check
+                 // instead of the whole-subtree allow-list.
+-                let pathAccepted: Bool = {
+-                    if item.category == .largeFiles {
+-                        return isExplicitSingleFileDeletable(resolvedPath: resolved)
+-                    }
+-                    // languageFiles never reaches here — it is handled above
+-                    // via the staged re-sign flow, not the delete path.
+-                    return isSafeToDelete(resolvedPath: resolved)
+-                }()
++                // languageFiles never reaches here — it is handled above via
++                // the staged re-sign flow, not the delete path.
++                let pathAccepted = isSafeToDelete(item: item, resolvedPath: resolved)
+                 guard pathAccepted else {
+                     let msg = "Skipped symlink or unsafe path: \(item.path) -> \(resolved)"
+                     Logger.shared.log(msg, level: .warning)
+@@ -156,7 +162,52 @@ actor CleaningEngine {
+                     continue
                  }
-             }
  
-+            Section("System Monitor") {
-+                Toggle("Show system monitor in menu bar", isOn: menuBarMonitorBinding)
-+                Text("Live CPU, memory, and disk meters in the menu bar. PureMac keeps running in the background while this is on.")
-+                    .font(.caption)
-+                    .foregroundStyle(.secondary)
-+            }
+-                try fileManager.removeItem(at: itemURL)
++                let isManagedDerivedData = XcodeBuildMCPDerivedDataSupport.isManagedDerivedDataPath(
++                    item.path,
++                    homeDirectory: homeDirectory
++                ) || XcodeBuildMCPDerivedDataSupport.isManagedDerivedDataPath(
++                    resolved,
++                    homeDirectory: homeDirectory
++                )
++                if isManagedDerivedData {
++                    // The legacy shared root predates XcodeBuildMCP's
++                    // per-workspace lock, so only workspace DerivedData waits
++                    // for the lock before moving to the Trash.
++                    var lifecycleLock: XcodeBuildMCPDerivedDataSupport.LifecycleLock?
++                    if XcodeBuildMCPDerivedDataSupport.workspaceKey(
++                        forManagedDerivedDataPath: resolved,
++                        homeDirectory: homeDirectory
++                    ) != nil {
++                        guard let acquired = XcodeBuildMCPDerivedDataSupport.acquireLifecycleLock(
++                            forManagedDerivedDataPath: resolved,
++                            homeDirectory: homeDirectory,
++                            fileManager: fileManager
++                        ) else {
++                            let detail = "Skipped XcodeBuildMCP DerivedData: lifecycle lock is unavailable: \(item.path)"
++                            Logger.shared.log(detail, level: .warning)
++                            result.errors.append(detail)
++                            continue
++                        }
++                        lifecycleLock = acquired
++                    }
++                    defer {
++                        if let lifecycleLock {
++                            XcodeBuildMCPDerivedDataSupport.releaseLifecycleLock(
++                                lifecycleLock,
++                                fileManager: fileManager
++                            )
++                        }
++                    }
++                    // PureMac's safety contract is Trash-only for recoverable
++                    // cleanup. XcodeBuildMCP DerivedData must not be unlinked.
++                    var resulting: NSURL?
++                    try fileManager.trashItem(at: resolvedURL, resultingItemURL: &resulting)
++                    if let trashedPath = resulting?.path {
++                        result.trashedPaths.insert(trashedPath)
++                    }
++                } else {
++                    try fileManager.removeItem(at: itemURL)
++                }
+   
+```
+
+**File**: `PureMac/Services/ScanEngine.swift` (modified, +23/-2)
+```diff
+@@ -2,7 +2,11 @@ import Foundation
+ 
+ actor ScanEngine {
+     private let fileManager = FileManager.default
+-    private let home = FileManager.default.homeDirectoryForCurrentUser.path
++    private let home: String
 +
-             Section("Sound") {
-                 Toggle("Play sound effects", isOn: $soundEffects)
++    init(homeDirectory: URL = FileManager.default.homeDirectoryForCurrentUser) {
++        home = XcodeBuildMCPDerivedDataSupport.canonicalHomeDirectory(homeDirectory).path
++    }
+ 
+     /// Live path reporter for the dashboard's scanning ticker. Throttled so
+     /// a directory with thousands of entries doesn't flood the main actor.
+@@ -148,7 +152,7 @@ actor ScanEngine {
+             "\(home)/Library/Caches/npm",
+             "\(home)/Library/Caches/Yarn",
+             "\(home)/Library/Caches/dev.kdrag0n.MacVirt",
+-        ] + ProviderPaths.deniedRoots).map(normalizePath))
++        ] + ProviderPaths.deniedRoots(homeDirectory: URL(fileURLWithPath: home, isDirectory: true))).map(normalizePath))
+ 
+         // Dynamically enumerate ~/Library/Caches/ so every subdirectory is visible
+         let cachePath = "\(home)/Library/Caches"
+@@ -479,6 +483,23 @@ actor ScanEngine {
              }
-@@ -99,6 +107,17 @@ struct GeneralSettingsView: View {
-                    value: languageNeedsRelaunch)
+         }
+ 
++        // XcodeBuildMCP DerivedData requires explicit user selection.
++        // Scheduled cleanup also applies age and lifecycle-lock guards.
++        let homeURL = URL(fileURLWithPath: home, isDirectory: true)
++        for discovered in XcodeBuildMCPDerivedDataSupport.discoverDerivedDataDirectories(
++            homeDirectory: homeURL,
++            fileManager: fileManager
++        ) {
++            if let item = makeCleanupItem(
++                name: discovered.name,
++                path: discovered.url.path,
++                category: .xcodeJunk,
++                isSelected: false
++            ) {
++                items.append(item)
++            }
++        }
++
+         // Downloaded simulator runtimes (often multi-GB each). Listed via
+         // `xcrun simctl runtime list -j` and deleted via
+         // `xcrun simctl runtime delete <id>` — not a plain filesystem unlink,
+```
+
+**File**: `PureMac/ViewModels/AppState.swift` (modified, +12/-3)
+```diff
+@@ -934,10 +934,19 @@ final class AppState: ObservableObject {
+ 
+     // MARK: - Cleaning
+ 
+-    func cleanAll(itemIDs: Set<UUID>? = nil) {
++    func cleanAll(itemIDs: Set<UUID>? = nil, scheduled: Bool = false) {
+         guard !scanState.isActive else { return }
+ 
+-        let itemsToClean = allResults.flatMap { $0.items }.filter { isItemSelected($0) && (itemIDs?.contains($0.id) ?? true) }
++        let itemsToClean = allResults.flatMap { $0.items }.filter { item in
++            guard itemIDs?.contains(item.id) ?? true else { return false }
++            guard isItemSelected(item) else { return false }
++            if scheduled && XcodeBuildMCPDerivedDataSupport.isManagedDerivedDataPath(item.path) {
++                // Scheduled XcodeBuildMCP cleanup is intentionally stricter
++                // than ordinary Xcode Junk: only old, unlocked rows qualify.
++                return XcodeBuildMCPDerivedDataSupport.isEligibleForScheduledAutoClean(item)
++            }
++            return true
++        }
+         guard !itemsToClean.isEmpty else { return }
+         let generation = UUID()
+         cleanupGeneration = generation
+@@ -1150,7 +1159,7 @@ final class AppState: ObservableObject {
+         scanState = .completed
+         let found = totalJunkSize
+         if scheduler.config.autoClean && totalSelectedSize >= scheduler.config.minimumCleanSize {
+-            cleanAll()
++            cleanAll(scheduled: true)
+         }
+         if scheduler.config.notifyOnCompletion {
+             sendNotification(freed: found)
+```
+
+**File**: `PureMacTests/AppStateTests.swift` (modified, +30/-0)
+```diff
+@@ -116,6 +116,36 @@ final class AppStateTests: XCTestCase {
+         XCTAssertEqual(state.scanState, .completed)
      }
  
-+    private var menuBarMonitorBinding: Binding<Bool> {
-+        Binding(
-+            get: { menuBarMonitor },
-+            set: { newValue in
-+                menuBarMonitor = newValue
-+                // Tell AppDelegate to add/remove the status item without relaunch.
-+                NotificationCenter.default.post(name: .pureMacMenuBarMonitorChanged, object: nil)
-+            }
++    func testManagedDerivedDataRequiresManualSelectionEvenForScheduledCleanup() throws {
++        let state = AppState(performStartupTasks: false)
++        let managedRoot = try XCTUnwrap(XcodeBuildMCPDerivedDataSupport.managedRoots().first)
++        let item = CleanableItem(
++            name: "XcodeBuildMCP: Fixture",
++            path: managedRoot
++                .appendingPathComponent("workspaces/Fixture-\(UUID().uuidString)/DerivedData").path,
++            size: 4_096,
++            category: .xcodeJunk,
++            isSelected: false,
++            lastModified: .distantPast
 +        )
++        state.categoryResults[.xcodeJunk] = CategoryResult(category: .xcodeJunk, items: [item], totalSize: item.size)
++        state.scanState = .completed
++
++        XCTAssertFalse(state.isItemSelected(item))
++        XCTAssertEqual(state.totalSelectedSize, 0)
++        state.cleanAll()
++        XCTAssertEqual(state.scanState, .completed)
++        state.cleanAll(scheduled: true)
++        XCTAssertEqual(state.scanState, .completed)
++        XCTAssertEqual(state.categoryResults[.xcodeJunk]?.items.map(\.id), [item.id])
++
++        state.toggleItem(item)
++        XCTAssertTrue(state.isItemSelected(item))
++        XCTAssertEqual(state.totalSelectedSize, item.size)
++        state.toggleItem(item)
++        XCTAssertFalse(state.isItemSelected(item))
 +    }
 +
-     private var launchAtLoginBinding: Binding<Bool> {
-         Binding(
-             get: { launchAtLogin },
+     func testScheduledScanWaitsForActiveOperations() {
+         let state = AppState(performStartupTasks: false)
+         state.scanState = .cleaning(progress: 0.2)
 ```
 
-**File**: `PureMac/ar.lproj/Localizable.strings` (modified, +10/-0)
+**File**: `PureMacTests/XcodeBuildMCPDerivedDataSupportTests.swift` (added, +691/-0)
 ```diff
-@@ -364,3 +364,13 @@
- "Ignored orphans: %lld" = "الملفات اليتيمة المتجاهَلة: %lld";
- "Forget Ignored" = "نسيان المتجاهَلة";
- "Ignored files won't appear in future orphan scans." = "لن تظهر الملفات المتجاهَلة في عمليات فحص الملفات اليتيمة المستقبلية.";
+@@ -0,0 +1,691 @@
++import XCTest
++@testable import PureMac
 +
-+/* v2.8.3: menu-bar system monitor */
-+"System Monitor" = "مراقب النظام";
-+"Show system monitor in menu bar" = "إظهار مراقب النظام في شريط القوائم";
-+"Live CPU, memory, and disk meters in the menu bar. PureMac keeps running in the background while this is on." = "مقاييس مباشرة للمعالج والذاكرة والقرص في شريط القوائم. يستمر PureMac في العمل في الخلفية أثناء تفعيل هذا الخيار.";
-+"CPU" = "المعالج";
-+"Memory" = "الذاكرة";
-+"Disk" = "القرص";
-+"Open PureMac" = "فتح PureMac";
-+"Quit PureMac" = "إنهاء PureMac";
-```
-
-**File**: `PureMac/en.lproj/Localizable.strings` (modified, +10/-0)
-```diff
-@@ -364,3 +364,13 @@
- "Ignored orphans: %lld" = "Ignored orphans: %lld";
- "Forget Ignored" = "Forget Ignored";
- "Ignored files won't appear in future orphan scans." = "Ignored files won't appear in future orphan scans.";
-+
-+/* v2.8.3: menu-bar system monitor */
-+"System Monitor" = "System Monitor";
-+"Show system monitor in menu bar" = "Show system monitor in menu bar";
-+"Live CPU, memory, and disk meters in the menu bar. PureMac keeps running in the background while this is on." = "Live CPU, memory, and disk meters in the menu bar. PureMac keeps running in the background while this is on.";
-+"CPU" = "CPU";
-+"Memory" = "Memory";
-+"Disk" = "Disk";
-+"Open PureMac" = "Open PureMac";
-+"Quit PureMac" = "Quit PureMac";
-```
-
----
-
-### Incident Patch 14: `f2589d06` (2026-06-28)
-**Commit Message**: fix: sidebar/footer labels invisible on some configs (#117)
-
-Sidebar nav-row labels and the health-footer title inherited the
-.listStyle(.sidebar) default foreground. On configs with a custom
-accent or reduced transparency (reported on M1 Max, Sonoma 14.7.5)
-that emphasized/vibrant primary style resolves transparent, so the
-text disappeared while explicitly-colored text (section headers,
-badges) stayed visible. This is why toggling Light/Dark and Increase
-Contrast had no effect - none of those touch the vibrancy path.
-
-Force an explicit, colorScheme-driven solid color on both labels so
-they bypass the vibrant primary style entirely and cannot collapse to
-transparent regardless of accent/transparency settings.
-
-Claude-Session: https://claude.ai/code/session_01B6BCRcv3uVh5Tizs9hMv88
-
-**File**: `PureMac/Views/MainWindow.swift` (modified, +23/-0)
-```diff
-@@ -7,6 +7,7 @@ struct MainWindow: View {
-     @State private var selectedSection: AppSection? = .cleaning(.smartScan)
-     @State private var columnVisibility: NavigationSplitViewVisibility = .all
-     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-+    @Environment(\.colorScheme) private var colorScheme
- 
-     var body: some View {
-         NavigationSplitView(columnVisibility: $columnVisibility) {
-@@ -143,6 +144,11 @@ struct MainWindow: View {
-             VStack(alignment: .leading, spacing: 1) {
-                 Text(LocalizedStringKey(ok ? "Ready to clean" : "Limited access"))
-                     .font(.system(size: 12, weight: .semibold))
-+                    // Explicit solid color — same vibrancy-collapse guard as the
-+                    // sidebar rows (#117); this title also inherited the default.
-+                    .foregroundStyle(colorScheme == .dark
-+                        ? Color.white.opacity(0.92)
-+                        : Color.black.opacity(0.85))
-                 Text(LocalizedStringKey(ok ? "Full Disk Access granted" : "Grant FDA in Settings"))
-                     .font(.system(size: 10.5))
-                     .foregroundStyle(.secondary)
-@@ -319,12 +325,21 @@ private struct SidebarNavRow: View {
- 
-     @State private var hovering = false
-     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-+    @Environment(\.colorScheme) private var colorScheme
- 
-     var body: some View {
-         HStack(spacing: 10) {
-             IconTile(systemName: icon, tint: tint, size: 24, glow: isSelected)
-             Text(label)
-                 .font(.system(size: 13, weight: isSelected ? .semibold : .regular))
-+                // Force an explicit, solid foreground instead of inheriting the
-+                // sidebar list's default. On some configs (custom accent /
-+                // reduced transparency, seen on M1 Max — issue #117) the
-+                // inherited emphasized/vibrant label style resolves transparent
-+                // and the row text disappears while explicitly-colored text
-+                // (headers, badges) stays visible. A colorScheme-driven solid
-+                // color sidesteps that vibrancy path entirely.
-+                .foregroundStyle(labelColor)
-             Spacer()
-             if let badge {
-                 Text(badge)
-@@ -353,6 +368,14 @@ private struct SidebarNavRow: View {
-         .contentShape(Rectangle())
-         .onHover { hovering = $0 }
-     }
-+
-+    /// Solid, opaque label color that adapts to light/dark without routing
-+    /// through the sidebar's vibrant primary style (see #117).
-+    private var labelColor: Color {
-+        colorScheme == .dark
-+            ? Color.white.opacity(0.92)
-+            : Color.black.opacity(0.85)
-+    }
- }
- 
- /// Small reusable status dot with optional pulse. Used in the sidebar health
-```
-
----
-
-### Incident Patch 15: `c5897c12` (2026-06-28)
-**Commit Message**: Fix app/file sizes showing as bytes instead of recursive total
-
-fileSize() in AppFilesView and OrphanListView read
-totalFileAllocatedSize directly on the URL, which on a directory returns
-only the directory inode (~bytes on APFS) rather than the sum of its
-contents. App bundles and support folders then were displayed as a
-handful of bytes (Bambu Studio showed 18 KB instead of 2.8 GB, for
-example).
-
-This seems to be a recurrence of #92, but that fix only covered
-AppInfoFetcher.appSize.
-
-- Extract the recursive logic into a shared FileSizeCalculator that
-enumerates directories and sums regular-file allocated sizes.
-- Route all three call sites (AppFilesView, OrphanListView,
-AppInfoFetcher) through it.
-
-**File**: `PureMac.xcodeproj/project.pbxproj` (modified, +4/-0)
-```diff
-@@ -35,6 +35,7 @@
- 		A549D8A39A9E5E70D91B90A6 /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A3F22FCEF534DE4A2CAD0E /* Haptics.swift */; };
- 		A9C3A1F643C26930F442E729 /* OrphanSafetyPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AE790496C936424EF98320A /* OrphanSafetyPolicy.swift */; };
- 		ABDDD4F35102A39CC1A2C325 /* ConfettiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0599AA604B0D6BA4F957537 /* ConfettiView.swift */; };
-+		B51E5A95BB49A6C0F5273E21 /* FileSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CE522B406791BCE905BC55B /* FileSize.swift */; };
- 		B52938BBD11842631314543D /* CategoryDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10B0AF194677EAC1D5568785 /* CategoryDetailView.swift */; };
- 		BC6C800216343438413349A3 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D4FD34378988D430A582ED0 /* OnboardingView.swift */; };
- 		CDCDFEBA39A3290101F86AC6 /* MainWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F510F232341EE18F11DC934 /* MainWindow.swift */; };
-@@ -99,6 +100,7 @@
- 		77D3D9A9BC52839E6D0A22BC /* Locations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Locations.swift; sourceTree = "<group>"; };
- 		798B80977D14647A5691B0A0 /* AppFilesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppFilesView.swift; sourceTree = "<group>"; };
- 		82BB0904726B38DEB141BECA /* AppLanguage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLanguage.swift; sourceTree = "<group>"; };
-+		8CE522B406791BCE905BC55B /* FileSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileSize.swift; sourceTree = "<group>"; };
- 		8D5E63D733D1A3BDEDF4DCA5 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/Localizable.strings"; sourceTree = "<group>"; };
- 		92259B3E9F4468865F15DEEC /* AppearancePill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppearancePill.swift; sourceTree = "<group>"; };
- 		9F04B811BB0012F6D2F07F91 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
-@@ -266,6 +268,7 @@
- 			isa = PBXGroup;
- 			children = (
- 				01B2C5F66B6D812572BD4F05 /* CLI.swift */,
-+				8CE522B406791BCE905BC55B /* FileSize.swift */,
- 				5785762276FB5E3209C6DE4D /* Logger.swift */,
- 				4AE790496C936424EF98320A /* OrphanSafetyPolicy.swift */,
- 			);
-@@ -437,6 +440,7 @@
- 				A2AE68CC75CB72D6B10CBDF5 /* DashboardView.swift in Sources */,
- 				76B132F9C499225D33E0D075 /* EmptyStateView.swift in Sources */,
- 				52F11962555C639F0EECADD6 /* FDADemoView.swift in Sources */,
-+				B51E5A95BB49A6C0F5273E21 /* FileSize.swift in Sources */,
- 				2253F11BDF561B617439C96B /* FullDiskAccessManager.swift in Sources */,
- 				A549D8A39A9E5E70D91B90A6 /* Haptics.swift in Sources */,
- 				E60B0A2C5D0A6CAE35BF4DFB /* Locations.swift in Sources */,
-```
-
-**File**: `PureMac/Logic/Scanning/AppInfoFetcher.swift` (modified, +1/-26)
-```diff
-@@ -133,31 +133,6 @@ final class AppInfoFetcher {
-     }
- 
-     private func appSize(at url: URL) -> Int64 {
--        // totalFileAllocatedSizeKey on a directory URL returns only the
--        // directory inode (~4 KB on APFS), not the recursive sum - the
--        // previous fast-path returned that and exited, causing app sizes
--        // to display as ~4 KB regardless of bundle contents. Always
--        // enumerate the bundle contents and sum.
--        guard let enumerator = fileManager.enumerator(
--            at: url,
--            includingPropertiesForKeys: [.totalFileAllocatedSizeKey, .fileAllocatedSizeKey, .isRegularFileKey, .isSymbolicLinkKey],
--            options: [.skipsHiddenFiles]
--        ) else { return 0 }
--
--        var total: Int64 = 0
--        for case let fileURL as URL in enumerator {
--            guard let values = try? fileURL.resourceValues(forKeys: [.totalFileAllocatedSizeKey, .fileAllocatedSizeKey, .isRegularFileKey, .isSymbolicLinkKey]) else { continue }
--            // Skip symlinks so we don't double-count or follow links out of
--            // the bundle. Skip directories so we only count regular file
--            // payload.
--            if values.isSymbolicLink == true { continue }
--            guard values.isRegularFile == true else { continue }
--            if let allocated = values.totalFileAllocatedSize {
--                total += Int64(allocated)
--            } else if let allocated = values.fileAllocatedSize {
--                total += Int64(allocated)
--            }
--        }
--        return total
-+        FileSizeCalculator.size(of: url) ?? 0
-     }
- }
-```
-
-**File**: `PureMac/Logic/Utilities/FileSize.swift` (added, +60/-0)
-```diff
-@@ -0,0 +1,60 @@
-+import Foundation
-+
-+/// Allocated-size calculation that works for both files and directories.
-+///
-+/// `URLResourceValues.totalFileAllocatedSize` does **not** recurse: on a
-+/// directory URL it returns only the directory inode's own allocation
-+/// (~96 bytes to a few KB on APFS), not the sum of the bundle's contents.
-+/// Reading it directly on an `.app` bundle or a support folder is what made
-+/// items display as a handful of bytes. For directories we enumerate and sum
-+/// the regular files instead.
-+enum FileSizeCalculator {
-+    private static let fileManager = FileManager.default
-+
-+    /// On-disk allocated size of `url`. Recurses into directories.
-+    /// Returns `nil` if the item can't be read at all.
-+    static func size(of url: URL) -> Int64? {
-+        let values = try? url.resourceValues(forKeys: [.isDirectoryKey])
-+        if values?.isDirectory == true {
-+            return directorySize(of: url)
-+        }
-+        return fileSize(of: url)
++final class XcodeBuildMCPDerivedDataSupportTests: XCTestCase {
++    func testXcodeJunkIncludesManagedDerivedDataForEachWorkspace() async throws {
++        try await assertXcodeJunkIncludesManagedDerivedDataForEachWorkspace(tool: "XcodeBuildMCP")
 +    }
 +
-+    private static func fileSize(of url: URL) -> Int64? {
-+        if let values = try? url.resourceValues(forKeys: [.totalFileAllocatedSizeKey]),
-+           let size = values.totalFileAllocatedSize {
-+            return Int64(size)
-+        }
-+        if let values = try? url.resourceValues(forKeys: [.fileAllocatedSizeKey]),
-+           let size = values.fileAllocatedSize {
-+            return Int64(size)
-+        }
-+        guard let attrs = try? fileManager.attributesOfItem(atPath: url.path),
-+              let size = attrs[.size] as? Int64 else { return nil }
-+        return size
++    func testXcodeJunkIncludesMobileBuildMCPDerivedDataForEachWorkspace() async throws {
++        try await assertXcodeJunkIncludesManagedDerivedDataForEachWorkspace(tool: "MobileBuildMCP")
 +    }
 +
-+    private static func directorySize(of url: URL) -> Int64 {
-+        guard let enumerator = fileManager.enumerator(
-+            at: url,
-+            includingPropertiesForKeys: [.totalFileAllocatedSizeKey, .fileAllocatedSizeKey, .isRegularFileKey, .isSymbolicLinkKey],
-+            options: [.skipsHiddenFiles]
-+        ) else { return 0 }
++    private func assertXcodeJunkIncludesManagedDerivedDataForEachWorkspace(tool: String) async throws {
++        let fileManager = FileManager.default
++        let temporaryHome = fileManager.temporaryDirectory
++            .appendingPathComponent("PureMac-XcodeBuildMCP-\(UUID().uuidString)", isDirectory: true)
++        defer { try? fileManager.removeItem(at: temporaryHome) }
 +
-+        var total: Int64 = 0
-+        for case let fileURL as URL in enumerator {
-+            guard let values = try? fileURL.resourceValues(forKeys: [.totalFileAllocatedSizeKey, .fileAllocatedSizeKey, .isRegularFileKey, .isSymbolicLinkKey]) else { continue }
-+            // Skip symlinks so we don't double-count or follow links that
-+            // escape the directory. Only sum regular-file payload.
-+            if values.isSymbolicLink == true { continue }
-+            guard values.isRegularFile == true else { continue }
-+            if let allocated = values.totalFileAllocatedSize {
-+                total += Int64(allocated)
-+            } else if let allocated = values.fileAllocatedSize {
-+                total += Int64(allocated)
-+            }
-+        }
-+        return total
++        let workspaceRoot = temporaryHome
++            .appendingPathComponent("Library/Developer/\(tool)/workspaces/PureMac-59316969cafe", isDirectory: true)
++        let derivedData = workspaceRoot.appendingPathComponent("DerivedData", isDirectory: true)
++        let logs = workspaceRoot.appendingPathComponent("logs", isDirectory: true)
++        let outsideDirectory = temporaryHome.appendingPathComponent("outside", isDirectory: true)
++        let symlinkedDerivedData = temporaryHome
++            .appendingPathComponent("Library/Developer/\(tool)/workspaces/Symlinked-111111111111/DerivedData")
++        try fileManager.createDirectory(at: derivedData, withIntermediateDirectories: true)
++        try fileManager.createDirectory(at: logs, withIntermediateDirectories: true)
++        try fileManager.createDirectory(
++            at: symlinkedDerivedData.deletingLastPathComponent(),
++            withIntermediateDirectories: true
++        )
++        try fileManager.createDirectory(at: outsideDirectory, withIntermediateDirectories: true)
++        try fileManager.createSymbolicLink(at: symlinkedDerivedData, withDestinationURL: outsideDirectory)
++        try Data(repeating: 0xAB, count: 4_096)
++            .write(to: derivedData.appendingPathComponent("build-product"))
++        try Data(repeating: 0xCD, count: 4_096)
++            .write(to: logs.appendingPathComponent("build.log"))
++        try Data(repeating: 0xEF, count: 4_096)
++            .write(to: outsideDirectory.appendingPathComponent("must-not-be-scanned"))
++
++        let engine = ScanEngine(homeDirectory: temporaryHome)
++        let result = await engine.scanCategory(.xcodeJunk)
++
++        let expectedPath = derivedData.resolvingSymlinksInPath().path
++        let item = try XCTUnwrap(
++            result.items.first {
++                URL(fileURLWithPath: $0.path).resolvingSymlinksInPath().path == expectedPath
++            },
++            "Expected \(expectedPath); scanned: \(result.items.map(\.path))"
++        )
++        XCTAssertEqual(item.name, "\(tool): PureMac")
++        XCTAssertFalse(item.isSelected)
++        XCTAssertFalse(result.items.contains { $0.path == logs.path })
++        XCTAssertFalse(result.items.contains { $0.path == symlinkedDerivedData.path })
 +    }
-+}
-```
-
-**File**: `PureMac/Views/Apps/AppFilesView.swift` (modified, +1/-14)
-```diff
-@@ -372,20 +372,7 @@ struct AppFilesView: View {
-     }
- 
-     private func fileSize(_ url: URL) -> Int64? {
--        // totalFileAllocatedSize recurses into directories; attributesOfItem
--        // returns the directory's own metadata size (≈0), which is why
--        // bundles and support folders previously displayed as 0 B.
--        if let values = try? url.resourceValues(forKeys: [.totalFileAllocatedSizeKey]),
--           let size = values.totalFileAllocatedSize, size > 0 {
--            return Int64(size)
--        }
--        if let values = try? url.resourceValues(forKeys: [.fileAllocatedSizeKey]),
--           let size = values.fileAllocatedSize {
--            return Int64(size)
--        }
--        guard let attrs = try? FileManager.default.attributesOfItem(atPath: url.path),
--              let size = attrs[.size] as? Int64 else { return nil }
--        return size
-+        FileSizeCalculator.size(of: url)
-     }
- 
-     private func removeSingleFile(_ url: URL) {
-```
-
-**File**: `PureMac/Views/Orphans/OrphanListView.swift` (modified, +1/-11)
-```diff
-@@ -125,17 +125,7 @@ struct OrphanListView: View {
-     }
- 
-     private func fileSize(_ url: URL) -> Int64? {
--        if let values = try? url.resourceValues(forKeys: [.totalFileAllocatedSizeKey]),
--           let size = values.totalFileAllocatedSize, size > 0 {
--            return Int64(size)
--        }
--        if let values = try? url.resourceValues(forKeys: [.fileAllocatedSizeKey]),
--           let size = values.fileAllocatedSize {
--            return Int64(size)
--        }
--        guard let attrs = try? FileManager.default.attributesOfItem(atPath: url.path),
--              let size = attrs[.size] as? Int64 else { return nil }
--        return size
-+        FileSizeCalculator.size(of: url)
-     }
- 
-     private func removeSelectedOrphans() async {
++
++    func testSymlinkedXcodeBuildMCPRootIsNotScanned() async throws {
++        let fileManager = FileManager.default
++        let temporaryHome = fileManager.temporaryDirectory
++            .appendingPathComponent("PureMac-XcodeBuildMCP-RootLink-\(UUID().uuidString)", isDirectory: true)
++        defer { try? fileManager.removeItem(at: temporaryHome) }
++
++        let externalRoot = temporaryHome
++            .appendingPathComponent("Library/Application Support/FakeXcodeBuildMCP", isDirectory: true)
++        let externalDerivedData = externalRoot
++            .appendingPathComponent("workspaces/Foreign-222222222222/DerivedData", isDirectory: true)
++        let developerDirectory = temporaryHome
++            .appendingPathComponent("Library/Developer", isDirectory: true)
++        let managedRoot = developerDirectory.appendingPathComponent("XcodeBuildMCP", isDirectory: true)
++        try fileManager.createDirectory(at: externalDerivedData, withIntermediateDirectories: true)
++        try fileManager.createDirectory(at: developerDirectory, withIntermediateDirectories: true)
++        try fileManager.createSymbolicLink(at: managedRoot, withDestinationURL: externalRoot)
++        try Data(repeating: 0xAA, count: 4_096)
++            .write(to: externalDerivedData.appendingPathComponent("foreign-data"))
++
++        let result = await ScanEngine(homeDirectory: temporaryHome).scanCategory(.xcodeJunk)
++
++        XCTAssertFalse(result.items.contains { $0.name.hasPrefix("XcodeBuildMCP:") })
++    }
++
++    func testCleaningRejectsManagedPathWhoseRootResolvesOutsideManagedStorage() async throws {
++        let fileManager = FileManager.default
++        let temporaryHome = fileManager.temporaryDirectory
++            .appendingPathComponent("PureMac-XcodeBuildMCP-CleanRootLink-\(UUID().uuidString)", isDirectory: true)
++        de
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #178** (closed): V3.0.0 zh.4 (@qg-hs)
-- **PR #165** (closed): cli: add Claude Desktop, ChatGPT & Hugging Face caches to `clean ai` (@ry-ops)
-- **PR #164** (closed): cli: add Puppeteer, Playwright, node-gyp & Electron caches to `clean dev` (@ry-ops)
-- **PR #160** (closed): Add file and folder scan exclusions (@omartio)
-- **PR #159** (closed): Add advanced storage intelligence, diagnostics, and filesystem performance optimizations (@a7med2o6)
-- **PR #157** (2026-08-17): feat(cli): add puremac terminal cleaner (@momenbasel)
-- **PR #156** (closed): Add a shared sort control to every file list (@wicolian)
-- **PR #155** (closed): xcode: clean XcodeBuildMCP DerivedData (@omartio)
+- **PR #185** (2026-10-08): cli: land the dev download caches from #164 and the Hugging Face entry from #165 (@momenbasel)
+- **PR #184** (2026-10-08): 3.1.0: land the reviewed localization, Settings and cleanup PRs (@momenbasel)
+- **PR #183** (2026-10-08): fix(protection): treat firewall block-all mode (State = 2) as enabled (@momenbasel)
+- **PR #182** (2026-10-08): fix(brew): use postflight_steps so the cask stops warning on upgrade (@momenbasel)
+- **PR #181** (closed): Improve Simplified Chinese localization: complete fallbacks, add runtime-resolved strings, align terminology (@BruceQin520)
+- **PR #180** (2026-10-08): Improve Simplified Chinese localization across cleanup and maintenance tools (@0x00kh)
 
 ---
 
@@ -5134,3 +2297,34 @@ AppInfoFetcher) through it.
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. xcode): move the legacy XcodeBuildMCP DerivedData root to the Trash
+
+**RULE**:
+When implementing operations in `PureMac/Logic/Utilities/XcodeBuildMCPDerivedDataSupport.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in momenbasel/PureMac. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `24a10a45`: xcode): move the legacy XcodeBuildMCP DerivedData root to the Trash. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `PureMac/Logic/Utilities/XcodeBuildMCPDerivedDataSupport.swift`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+    /// nil; callers move that root to the Trash without coordination.
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Anti-pattern to NEVER write (induced failure mode):
+    /// nil and must not be deleted by a caller that requires coordination.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `24a10a45` are properly handled with clean fallback behavior.

@@ -3231,3 +3231,5 @@
 | `CYCLE-20261019-2XPJ` | `2026-10-19T12:20:29.095Z` | `dathere/qsv` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/dathere-qsv-learnings.md` | Yes (`61e0fa41...`) |
 | `CYCLE-20261019-APV8` | `2026-10-19T12:26:32.180Z` | `baidu/Unlimited-OCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md` | Yes (`4855a6ab...`) |
 | `CYCLE-20261019-AUEP` | `2026-10-19T12:26:38.065Z` | `milanvarady/Applite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2572` | Yes (`05f1271a...`) |
+| `CYCLE-20261019-IR6M` | `2026-10-19T12:32:47.134Z` | `momenbasel/PureMac` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2573` | Yes (`7cb85c26...`) |
+| `CYCLE-20261019-ITNY` | `2026-10-19T12:32:50.350Z` | `Aleph-Alpha/Kolibri-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 969, Rule 2574, Rule 2575` | Yes (`ba5c1c01...`) |

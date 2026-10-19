@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-1DAA",
-    "timestamp": "2026-10-19T01:07:25.186Z",
-    "repository": "skyzh/mini-lsm",
-    "learningId": "learn-github-skyzh-mini-lsm",
-    "contentHash": "25d12bd5f74f4b7246f560d94a717b506b1ab5200d6ec73416413ad1644cee16",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-5CJB",
-    "timestamp": "2026-10-19T01:10:30.839Z",
-    "repository": "PaulLeCam/react-leaflet",
-    "learningId": "learn-github-paullecam-react-leaflet",
-    "contentHash": "d56a8b8b10c408e03ef57c24f924f0479016e712ce4f78133b579e79d0997cbc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-CTAF",
     "timestamp": "2026-10-19T01:16:19.143Z",
     "repository": "ekmas/neobrutalism-components",
@@ -7492,6 +7462,36 @@
     "contentHash": "05f1271aa33a715bb2c41d1468fca2f256d0746a2b100ac64292910f0fdc0878",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-IR6M",
+    "timestamp": "2026-10-19T12:32:47.134Z",
+    "repository": "momenbasel/PureMac",
+    "learningId": "learn-github-momenbasel-puremac",
+    "contentHash": "7cb85c26e06cc41e34219ced9a9a1101a91341c892c611bd8e589b593c72f241",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-ITNY",
+    "timestamp": "2026-10-19T12:32:50.350Z",
+    "repository": "Aleph-Alpha/Kolibri-1",
+    "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
+    "contentHash": "ba5c1c012de6db39abde2ba658576b71d10b43d7e5b3255e1ac2dfcf77d406ae",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
