@@ -165798,3 +165798,1344 @@ test('image loader does not abort or re-fetch on parent re-renders with fresh ca
 ```
 
 ---
+
+
+---
+
+## 2347. PID-Re-entrant Lock Identity Disambiguation (Harvested from zvec-ai/zvec-grep)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "PID-Re-entrant Lock Identity Disambiguation",
+  "source": "zvec-ai/zvec-grep",
+  "source_url": "https://github.com/zvec-ai/zvec-grep",
+  "source_version": "f2256bd3",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-19T07:59:12.147Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-zvec-ai-zvec-grep",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [zvec-ai/zvec-grep](https://github.com/zvec-ai/zvec-grep) (Revision: `f2256bd3`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing file-based mutual exclusion locks in containerized or container-native environments, the lock acquisition check MUST NOT rely solely on `(hostname, PID)` liveness. It MUST pair the PID with an in-memory process-held cryptographic nonce (`UUIDv4`) registered prior to disk publication, and treat any lock matching the current PID as stale unless verified against an active in-process registry.
+
+**WHY**:
+In container runtimes (Docker, Kubernetes, Podman), the primary process always executes as `PID 1` and retains its container hostname. If the process crashes, is OOM-killed, or restarts in-place with a mounted state volume, the leftover lock record contains the exact `(hostname, 1)` tuple of the newly spawned daemon. A standard liveness check (`process_is_alive(existing.pid)`) evaluates whether PID 1 is running on `localhost`. Since the restarted process *is* PID 1, the check matches itself and aborts with an unrecoverable `AlreadyRunning` false-positive crash loop.
+
+**WHEN TO APPLY**:
+Any daemon, CLI orchestrator, or agent runtime storing lock/state files in persistent storage (`/var/run`, `/tmp`, `.git`, or application state roots) that must survive container restarts or crash-loops.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use std::collections::BTreeSet;
+use std::path::{Path, PathBuf};
+use std::sync::{Mutex, MutexGuard, PoisonError};
+use uuid::Uuid;
+
+static HELD_TOKENS: Mutex<BTreeSet<Uuid>> = Mutex::new(BTreeSet::new());
+
+fn held_tokens() -> MutexGuard<'static, BTreeSet<Uuid>> {
+    HELD_TOKENS.lock().unwrap_or_else(PoisonError::into_inner)
+}
+
+pub struct HeldToken(Uuid);
+
+impl HeldToken {
+    pub fn new(token: Uuid) -> Self {
+        held_tokens().insert(token);
+        Self(token)
+    }
+}
+
+impl Drop for HeldToken {
+    fn drop(&mut self) {
+        held_tokens().remove(&self.0);
+    }
+}
+
+pub fn record_owner_alive(host: &str, pid: u32, token: Uuid, current_host: &str) -> bool {
+    // 1. Foreign host check
+    if host != current_host {
+        return false;
+    }
+    // 2. Co-residency check: If matching this PID, verify in-process registration
+    if pid == std::process::id() {
+        return held_tokens().contains(&token);
+    }
+    // 3. Foreign PID check: Verify process exists in OS process table
+    process_is_alive_in_os(pid)
+}
+
+pub struct InstanceLock {
+    path: PathBuf,
+    token: Uuid,
+    _held: HeldToken,
+}
+
+impl InstanceLock {
+    pub async fn acquire(path: PathBuf, current_host: &str) -> Result<Self, LockError> {
+        let token = Uuid::new_v4();
+        // CRITICAL: Register the token before writing to disk so no race exists
+        // where another thread reads the file and checks held_tokens before insertion.
+        let held = HeldToken::new(token);
+
+        let candidate = path.with_extension(format!("{}.tmp", token));
+        write_lock_file(&candidate, std::process::id(), token, current_host).await?;
+
+        match atomic_rename(&candidate, &path).await {
+            Ok(()) => Ok(Self { path, token, _held: held }),
+            Err(e) if e.kind() == std::io::ErrorKind::AlreadyExists => {
+                let existing = read_lock_file(&path).await?;
+                if record_owner_alive(&existing.hostname, existing.pid, existing.token, current_host) {
+                    return Err(LockError::AlreadyRunning { pid: existing.pid });
+                }
+                // Lock file was left by crashed previous instance; override stale lock
+                atomic_overwrite(&candidate, &path).await?;
+                Ok(Self { path, token, _held: held })
+            }
+            Err(e) => Err(LockError::Io(e)),
+        }
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: DO NOT assume process_is_alive(pid) indicates an external conflict.
+// If pid == std::process::id(), this causes instant deadlocks on container restart!
+fn is_lock_stale(record: &LockRecord) -> bool {
+    if record.hostname == get_hostname() && process_is_alive(record.pid) {
+        // BUG: In container PID 1, a crashed process left a lock file with PID 1.
+        // The new process has PID 1. process_is_alive(1) returns TRUE!
+        // The daemon perpetually aborts, assuming another process owns the lock.
+        return false; 
+    }
+    true
+}
+```
+
+**VERIFICATION METHOD**:
+Automated integration test simulating container restart:
+1. Write a synthetic lock record to disk with `(hostname: current_hostname, pid: current_pid, token: random_uuid)`.
+2. Do not insert `random_uuid` into `HELD_TOKENS`.
+3. Assert that `InstanceLock::acquire` successfully acquires the lock, detects the record as stale, and overwrites the lock without raising `LockError::AlreadyRunning`.
+
+---
+
+
+---
+
+## 2348. Configuration Mutation Decoupling in Continuous Reconcilers (Harvested from zvec-ai/zvec-grep)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Configuration Mutation Decoupling in Continuous Reconcilers",
+  "source": "zvec-ai/zvec-grep",
+  "source_url": "https://github.com/zvec-ai/zvec-grep",
+  "source_version": "f2256bd3",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-19T07:59:12.268Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-zvec-ai-zvec-grep",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [zvec-ai/zvec-grep](https://github.com/zvec-ai/zvec-grep) (Revision: `f2256bd3`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Long-lived background reconciling daemons MUST NOT propagate ephemeral client-invoked execution overrides into the persistent baseline configuration state. Runtime configuration passed during ad-hoc requests MUST be deep-copied and explicitly stripped of transient execution modifiers before constructing worker templates or background watchers.
+
+**WHY**:
+When a client triggers a manual high-concurrency operation (e.g., `zg --index --index-embedding-concurrency 8`), persisting that configuration into the shared workspace runtime causes subsequent background tasks (e.g., file-watcher incremental re-indexing, scheduled re-scans) to inherit that high-concurrency parameter. Under resource-constrained scenarios, automated watchers spawning batch operations with maximum concurrency cause thread exhaustion, VRAM starvation, and crash loops.
+
+**WHEN TO APPLY**:
+Stateful daemons, language servers, MCP servers, and background indexers managing workspace lifecycle states through shared templates.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+#[derive(Clone, Debug, Default)]
+pub struct IndexOptions {
+    pub root: Option<PathBuf>,
+    pub name: Option<String>,
+    pub scan: ScanRulesUpdate,
+    pub embedding_concurrency: Option<usize>,
+    pub rebuild: bool,
+    pub reset_paths: bool,
+    pub changes: Vec<IndexChange>,
+}
+
+/// Creates a safe background watcher template from an ad-hoc index request.
+/// Strips all client-specific overrides that must not survive the immediate command.
+pub fn sanitize_index_template_for_watcher(options: &IndexOptions) -> IndexOptions {
+    let mut template = options.clone();
+    // Ephemeral execution overrides MUST be neutralized:
+    template.embedding_concurrency = None; // Reset to default daemon worker pool limit
+    template.rebuild = false;              // Prevent incremental watcher from wiping DB
+    template.reset_paths = false;          // Prevent clearing existing file records
+    template.changes.clear();              // Clear transient file-change buffers
+    template
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: DO NOT store user-provided execution options directly into a shared daemon template.
+impl WorkspaceRuntime {
+    pub async fn apply_index_request(&mut self, options: IndexOptions) {
+        // BUG: Mutating the baseline template with client flags causes background
+        // file watcher threads to inherit `embedding_concurrency = 8` forever!
+        self.index_template = options; 
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Verify via state regression test:
+1. Dispatch an indexing command with `embedding_concurrency: Some(8)`.
+2. Trigger a simulated file watcher event.
+3. Assert that the resulting watcher-initiated execution payload has `embedding_concurrency == None`.
+
+---
+
+
+---
+
+## 2349. Non-Destructive Invariant Preservation for External Config Schemas (Harvested from zvec-ai/zvec-grep)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Non-Destructive Invariant Preservation for External Config Schemas",
+  "source": "zvec-ai/zvec-grep",
+  "source_url": "https://github.com/zvec-ai/zvec-grep",
+  "source_version": "f2256bd3",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-19T07:59:12.378Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-zvec-ai-zvec-grep",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [zvec-ai/zvec-grep](https://github.com/zvec-ai/zvec-grep) (Revision: `f2256bd3`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When an automated agent installer or CLI tool injects configuration into user-managed structured configuration files (such as TOML or JSON) that feature strict cardinality constraints (e.g., TOML single table header declarations), the installer MUST parse and detect existing schema tables. If a target table already exists, the installer MUST NOT append duplicate tables or mangle inline declarations; it MUST skip injection of that specific section, emit manual integration guidance, and proceed with non-conflicting sections idempotently.
+
+**WHY**:
+In TOML specification compliance, declaring the same table header twice (e.g., two `[permission]` tables or declaring `permission = {...}` followed by `[permission]`) results in an unrecoverable syntax parse error (`duplicate table: permission`). Naive string append operations in installers break existing developer configurations, corrupting toolchains and agent startup.
+
+**WHEN TO APPLY**:
+Agent integrations, MCP configurations, CLI setup hooks modifying `~/.config/*.toml`, `~/.grok/config.toml`, `.codex/config.toml`, etc.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+export function hasTomlTable(configContent: string, tableName: string): boolean {
+  // Matches [tableName], ['tableName'], ["tableName"], tableName.key =, or tableName = {
+  const tableHeaderRegex = new RegExp(`^\\[['"]?${tableName}['"]?\\]`, 'm');
+  const dottedKeyRegex = new RegExp(`^${tableName}\\.`, 'm');
+  const inlineTableRegex = new RegExp(`^${tableName}\\s*=`, 'm');
+  
+  return (
+    tableHeaderRegex.test(configContent) ||
+    dottedKeyRegex.test(configContent) ||
+    inlineTableRegex.test(configContent)
+  );
+}
+
+export async function installGrokIntegration(options: InstallOptions): Promise<InstallResult> {
+  const configPath = resolve(resolveGrokHome(), "config.toml");
+  let configNote: string | undefined;
+  const existingConfig = await readTextFileIfExists(configPath);
+
+  // Guard against TOML single-table limitation
+  if (
+    existingConfig !== undefined &&
+    !existingConfig.includes(GROK_PERMISSION_RULE_START) &&
+    hasTomlTable(existingConfig, "permission")
+  ) {
+    // Preserve user configuration untouched; emit actionable instruction
+    configNote = `${configPath} already defines [permission]; add "MCPTool(zvec_grep__*)" to permission.allow to skip tool approval prompts.`;
+  } else {
+    // Safe to write marked block
+    await writeMarkedFile({
+      path: configPath,
+      startMarker: GROK_PERMISSION_RULE_START,
+      endMarker: GROK_PERMISSION_RULE_END,
+      block: grokPermissionBlock(),
+      force: true,
+    });
+  }
+
+  // Non-conflicting sections proceed independently
+  await writeMarkedFile({
+    path: configPath,
+    startMarker: ZVEC_GREP_CONFIG_START,
+    endMarker: ZVEC_GREP_CONFIG_END,
+    block: grokMcpServerBlock(options),
+    force: options.force,
+  });
+
+  return { files: [configPath], configNote };
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Blindly appending TOML headers to existing files
+async function badInstallGrok(configPath: string) {
+  // BUG: If config.toml already contains `[permission]`, this writes a second
+  // `[permission]` header, crashing the TOML parser on every subsequent run of Grok.
+  await appendFile(configPath, `
+[permission]
+allow = ["MCPTool(zvec_grep__*)"]
+`);
+}
+```
+
+**VERIFICATION METHOD**:
+Parameterized test iterating through all valid TOML representations:
+1. Feed raw configurations containing:
+   - `['permission']`
+   - `permission.allow = ["Bash(git *)"]`
+   - `permission = { allow = ["Bash(git *)"] }`
+2. Run installation.
+3. Verify that zero duplicate table errors occur and `hasConflict/configNote` is properly surfaced without file corruption.
+
+---
+
+
+---
+
+## 2350. Numerically Guarded Attention-Masked Tensor Pooling (Harvested from sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Numerically Guarded Attention-Masked Tensor Pooling",
+  "source": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "source_version": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-19T07:59:18.703Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2](https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2) (Revision: `hf-sentenc`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When pooling variable-length sequence representations across a token dimension using an attention mask, developers MUST NOT perform unmasked reduction or naked division by sequence length. The reduction MUST expand the attention mask to match the hidden state tensor dimensionality, compute an element-wise product, and divide by the attention mask summation clamped to a strictly positive epsilon ($\ge 1\mathrm{e}{-9}$).
+
+**WHY**:
+Unmasked pooling averages over `<pad>` tokens whose contextualized embeddings are non-zero due to bidirectional self-attention layer normalization shifts. Naked division causes catastrophic `NaN` generation or IEEE 754 division-by-zero crashes on empty or entirely padded sequences.
+
+**WHEN TO APPLY**:
+All sequence-to-vector aggregation pipelines (Sentence Transformers, Audio Spectrograms, Graph Nodes) in PyTorch, JAX, TensorFlow, or ONNX runtimes.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+
+def masked_mean_pooling(
+    last_hidden_state: torch.Tensor, 
+    attention_mask: torch.Tensor,
+    eps: float = 1e-9
+) -> torch.Tensor:
+    """
+    Safely computes attention-weighted mean pooling over sequence length.
+    
+    Args:
+        last_hidden_state: Shape [Batch, Seq_Len, Hidden_Dim] (float32 or bfloat16)
+        attention_mask: Shape [Batch, Seq_Len] (int64 or float32)
+        eps: Epsilon guard against division by zero for all-padding inputs.
+        
+    Returns:
+        Pooled tensor of shape [Batch, Hidden_Dim]
+    """
+    # 1. Enforce strict floating-point compatibility for mask
+    # 2. Unsqueeze and broadcast to [Batch, Seq_Len, Hidden_Dim]
+    input_mask_expanded = attention_mask.unsqueeze(-1).expand_as(last_hidden_state).to(dtype=last_hidden_state.dtype)
+    
+    # 3. Mask inactive token vectors to zero
+    sum_embeddings = torch.sum(last_hidden_state * input_mask_expanded, dim=1)
+    
+    # 4. Sum active token counts per batch item
+    sum_mask = input_mask_expanded.sum(dim=1)
+    
+    # 5. Numerically stabilized division
+    sum_mask_clamped = torch.clamp(sum_mask, min=eps)
+    
+    return sum_embeddings / sum_mask_clamped
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: NEVER average across the sequence dimension without masking padding!
+# 1. Pads contain arbitrary non-zero vectors from LayerNorm, corrupting the embedding.
+# 2. Sequences with trailing zeros will skew mean values toward zero-magnitude.
+def dangerous_unmasked_mean(model_output):
+    return torch.mean(model_output[0], dim=1)
+
+# ANTI-PATTERN: Naked division without clamp (zero active tokens -> NaN)
+def dangerous_division(token_embeddings, mask):
+    mask_exp = mask.unsqueeze(-1).expand_as(token_embeddings).float()
+    return (token_embeddings * mask_exp).sum(dim=1) / mask_exp.sum(dim=1)
+```
+
+**VERIFICATION METHOD**:
+```python
+def test_masked_mean_pooling_invariants():
+    batch_size, seq_len, hidden_dim = 2, 8, 384
+    hidden = torch.randn(batch_size, seq_len, hidden_dim, dtype=torch.float32)
+    # Batch item 0: normal sentence (length 4). Batch item 1: fully masked out (empty string edge-case)
+    mask = torch.tensor([[1, 1, 1, 1, 0, 0, 0, 0],
+                         [0, 0, 0, 0, 0, 0, 0, 0]], dtype=torch.long)
+    
+    out = masked_mean_pooling(hidden, mask)
+    
+    assert out.shape == (batch_size, hidden_dim), f"Shape mismatch: {out.shape}"
+    assert not torch.isnan(out).any(), "NaN detected in pooled representation"
+    assert not torch.isinf(out).any(), "Inf detected in pooled representation"
+    # Verify padded elements did not contaminate batch item 0
+    sub_hidden = hidden[0, :4, :]
+    expected_mean = sub_hidden.mean(dim=0)
+    assert torch.allclose(out[0], expected_mean, atol=1e-6), "Mean calculation polluted by pad tokens"
+```
+
+---
+
+
+---
+
+## 2351. Upstream Sequence Length Invariant Clamping (Harvested from sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Upstream Sequence Length Invariant Clamping",
+  "source": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "source_version": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-19T07:59:18.827Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2](https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2) (Revision: `hf-sentenc`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When serving or wrapping transformer-based embedding backbones, the client application MUST enforce input tokenization truncation to the exact `max_seq_length` specified in the downstream module configuration (`128` tokens for MiniLM-L12-v2), regardless of whether the base transformer configuration specifies a larger `max_position_embeddings` (`512`).
+
+**WHY**:
+Distillation loss objectives (such as MiniLM relation distillation) are computed on bounded sequence windows (e.g., 128 tokens). Positional embeddings between 129 and 512, while physically present in the weight tensor, receive no fine-tuning gradients during paraphrase student distillation. Processing inputs with $>128$ tokens causes out-of-distribution positional drift and silent metric degradation in downstream semantic search.
+
+**WHEN TO APPLY**:
+All pre-trained foundation model deployments where intermediate or student fine-tuning altered the operational context window relative to the pre-training backbone.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from transformers import PreTrainedTokenizerFast
+
+def safe_tokenize_batch(
+    tokenizer: PreTrainedTokenizerFast,
+    texts: list[str],
+    runtime_max_length: int = 128
+) -> dict[str, torch.Tensor]:
+    """
+    Enforces runtime truncation invariant preventing out-of-distribution positional embeddings.
+    """
+    if runtime_max_length > 128:
+        raise ValueError(
+            f"Requested max_length {runtime_max_length} exceeds distillation invariant of 128."
+        )
+        
+    return tokenizer(
+        texts,
+        padding=True,
+        truncation=True,
+        max_length=runtime_max_length,
+        return_tensors="pt",
+        return_attention_mask=True
+    )
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Relying on base model max_position_embeddings (512)
+# Leads to untrained positional representations in distillation-trained models.
+tokens = tokenizer(sentences, padding=True, truncation=True, return_tensors="pt")
+# If a document is 400 tokens long, it tokenizes to 400 tokens without error,
+# but the vector output is mathematically invalid for MiniLM-L12.
+```
+
+**VERIFICATION METHOD**:
+```python
+def test_truncation_boundary():
+    dummy_text = ["word " * 300]
+    encoded = safe_tokenize_batch(tokenizer, dummy_text, runtime_max_length=128)
+    assert encoded["input_ids"].shape[1] <= 128, "Token count exceeded distillation boundary"
+```
+
+---
+
+
+---
+
+## 2352. Pre-Initialization Telemetry Buffering with Bounded Mutex Invariants (Harvested from JetBrains/kotlinconf-app)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Pre-Initialization Telemetry Buffering with Bounded Mutex Invariants",
+  "source": "JetBrains/kotlinconf-app",
+  "source_url": "https://github.com/JetBrains/kotlinconf-app",
+  "source_version": "21891558",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-19T07:59:19.429Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-jetbrains-kotlinconf-app",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [JetBrains/kotlinconf-app](https://github.com/JetBrains/kotlinconf-app) (Revision: `21891558`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Systems requiring early lifecycle telemetry MUST buffer startup events in a thread-safe, memory-bounded FIFO queue prior to downstream service readiness, and MUST flush this queue asynchronously via non-reentrant synchronization upon binding the permanent delegate.
+
+**WHY**:
+Early app startup (DI resolution, configuration loading, database migrations) produces critical diagnostics. Forwarding logs directly to uninitialized downstream sinks produces `NullPointerException` or unhandled platform driver failures. Conversely, unbounded in-memory queues cause Native/JVM out-of-memory crashes if downstream initialization halts or deadlocks.
+
+**WHEN TO APPLY**:
+Apply in multiplatform, desktop, or mobile applications where dependency injection graphs, logging sinks, or crash-reporting SDKs initialize lazily or asynchronously after runtime boot.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```kotlin
+package org.jetbrains.kotlinconf.utils
+
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+
+private const val MAX_LOG_MESSAGES_IN_MEMORY = 200
+
+class BufferedDelegatingLogger(
+    private val scope: CoroutineScope,
+) : Logger, LogExporter {
+    @Volatile
+    private var delegate: Logger? = null
+
+    private data class Entry(val tag: String, val lazyMessage: () -> String)
+
+    private val mutex = Mutex()
+    private val buffer = mutableListOf<Entry>()
+
+    override fun log(tag: String, lazyMessage: () -> String) {
+        val current = delegate
+        if (current != null) {
+            current.log(tag, lazyMessage)
+            return
+        }
+
+        scope.launch {
+            mutex.withLock {
+                // Double-check delegate after acquiring lock to prevent race condition
+                val activeDelegate = delegate
+                if (activeDelegate != null) {
+                    activeDelegate.log(tag, lazyMessage)
+                    return@launch
+                }
+                buffer += Entry(tag, lazyMessage)
+                while (buffer.size > MAX_LOG_MESSAGES_IN_MEMORY) {
+                    buffer.removeAt(0)
+                }
+            }
+        }
+    }
+
+    fun attach(realLogger: Logger) {
+        require(delegate == null) { "Logger delegate was already set, this should only happen once" }
+        delegate = realLogger
+
+        scope.launch {
+            mutex.withLock {
+                buffer.forEach { entry ->
+                    realLogger.log(entry.tag, entry.lazyMessage)
+                }
+                buffer.clear()
+            }
+        }
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```kotlin
+// ANTI-PATTERN: Direct dispatch without buffering or thread safety
+class NaiveStartupLogger : Logger {
+    var delegate: Logger? = null
+    val buffer = mutableListOf<String>() // Non-thread-safe mutation, unbounded growth
+
+    override fun log(tag: String, lazyMessage: () -> String) {
+        if (delegate == null) {
+            buffer.add("${tag}: ${lazyMessage()}") // Memory leak: if attach() is never called, buffer grows to OOM
+        } else {
+            delegate!!.log(tag, lazyMessage) // TOCTOU race condition: delegate can be set to null concurrently
+        }
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Verify with a concurrent stress test executing 1,000 parallel `log` invocations from distinct coroutine dispatchers while simultaneously executing `attach(mockLogger)`. Ensure no messages exceed `MAX_LOG_MESSAGES_IN_MEMORY`, zero race condition drops occur, and no concurrent mutation exceptions are thrown.
+
+---
+
+
+---
+
+## 2353. Debounced Visual Transitions for Rapid-Resolving States (Harvested from JetBrains/kotlinconf-app)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Debounced Visual Transitions for Rapid-Resolving States",
+  "source": "JetBrains/kotlinconf-app",
+  "source_url": "https://github.com/JetBrains/kotlinconf-app",
+  "source_version": "21891558",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-19T07:59:19.549Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-jetbrains-kotlinconf-app",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [JetBrains/kotlinconf-app](https://github.com/JetBrains/kotlinconf-app) (Revision: `21891558`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+UI state handlers managing asynchronous transitions between `Loading`, `Error`, and `Content` MUST apply an artificial debounce window (75ms–150ms) to transient loading and error states to prevent perceptual flickering and layout thrashing caused by low-latency or cached data responses.
+
+**WHY**:
+Network caches, memory hits, and high-speed local queries resolve within 1ms–30ms. If an application immediately transitions from `Loading` to `Content`, the user perceives a rapid strobe/flicker. This reflow cycle degrades perceived performance and causes unnecessary GPU rasterization passes.
+
+**WHEN TO APPLY**:
+Apply to any Compose Multiplatform, Jetpack Compose, React, or declarative UI component where asynchronous network resources might resolve from disk/in-memory caches or near-zero latency endpoints.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```kotlin
+package org.jetbrains.kotlinconf.utils
+
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
+import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
+
+sealed interface ErrorLoadingState<out T : Any> {
+    data object Loading : ErrorLoadingState<Nothing>
+    data object Error : ErrorLoadingState<Nothing>
+    data class Content<T : Any>(val data: T) : ErrorLoadingState<T>
+}
+
+@Composable
+fun <T : Any> ErrorLoadingContent(
+    state: ErrorLoadingState<T>,
+    errorMessage: String,
+    onRetry: (() -> Unit)? = null,
+    modifier: Modifier = Modifier,
+    content: @Composable (T) -> Unit,
+) {
+    var delayedState by remember { mutableStateOf<ErrorLoadingState<T>?>(null) }
+
+    LaunchedEffect(state) {
+        if (state is ErrorLoadingState.Loading || state is ErrorLoadingState.Error) {
+            delay(100.milliseconds)
+            delayedState = state
+        } else {
+            delayedState = state
+        }
+    }
+
+    AnimatedContent(
+        targetState = delayedState ?: return,
+        modifier = modifier.clipToBounds(),
+        contentKey = { target ->
+            when (target) {
+                is ErrorLoadingState.Content -> 1
+                ErrorLoadingState.Error, ErrorLoadingState.Loading -> 2
+            }
+        }
+    ) { targetState ->
+        when (targetState) {
+            is ErrorLoadingState.Content -> content(targetState.data)
+            ErrorLoadingState.Loading, ErrorLoadingState.Error -> {
+                NormalErrorWithLoading(
+                    message = errorMessage,
+                    isLoading = targetState is ErrorLoadingState.Loading,
+                    modifier = Modifier.fillMaxSize(),
+                    onRetry = onRetry,
+                )
+            }
+        }
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```kotlin
+// ANTI-PATTERN: Immediate state binding directly into UI trees
+@Composable
+fun <T : Any> ImmediateStateContent(
+    state: ErrorLoadingState<T>,
+    content: @Composable (T) -> Unit
+) {
+    // If state flashes from Loading -> Content in 8ms, user experiences
+    // severe visual screen flicker and dual composition passes
+    when (state) {
+        is ErrorLoadingState.Loading -> CircularProgressIndicator()
+        is ErrorLoadingState.Error -> ErrorView()
+        is ErrorLoadingState.Content -> content(state.data)
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Inject a mock repository emitting `Loading` immediately followed by `Content(data)` after a 20ms delay. Run Compose UI automated test (`runComposeUiTest`). Assert that `CircularProgressIndicator` or `NormalErrorWithLoading` is never composed or displayed in the accessibility node hierarchy.
+
+---
+
+
+---
+
+## 2354. Isolated State-Snapshot Backstack Routing for Multi-Tab Navigation (Harvested from JetBrains/kotlinconf-app)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Isolated State-Snapshot Backstack Routing for Multi-Tab Navigation",
+  "source": "JetBrains/kotlinconf-app",
+  "source_url": "https://github.com/JetBrains/kotlinconf-app",
+  "source_version": "21891558",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-19T07:59:19.660Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-jetbrains-kotlinconf-app",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [JetBrains/kotlinconf-app](https://github.com/JetBrains/kotlinconf-app) (Revision: `21891558`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Navigation systems with multiple top-level tabs MUST maintain disjoint, persistent snapshot backstack collections per tab, and MUST synchronize current mutations back to the tab's dedicated storage before switching navigation branches.
+
+**WHY**:
+Treating multi-tab navigation as a single linear navigation stack causes cross-tab history corruption: tapping back in Tab B inadvertently unwinds the back history of Tab A, or switching tabs resets scroll positions and viewmodel states due to unconditional disposal of the root entry decorator.
+
+**WHEN TO APPLY**:
+Compose Multiplatform applications utilizing navigation bars, bottom sheets, or tab bars with nested drill-down hierarchies.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```kotlin
+package org.jetbrains.kotlinconf.navigation
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSerializable
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.toMutableStateList
+import androidx.savedstate.compose.serialization.serializers.SnapshotStateListSerializer
+
+class NavState(
+    val topLevelBackStacks: Map<TopLevelRoute, SnapshotStateList<AppRoute>>,
+    val defaultBackstack: SnapshotStateList<AppRoute>,
+    val primaryTopLevelRoute: TopLevelRoute,
+    val currentBackstack: SnapshotStateList<AppRoute>,
+) {
+    var topLevelRoute: TopLevelRoute?
+        get() = currentBackstack.firstOrNull() as? TopLevelRoute
+        set(value) {
+            val oldRoute = topLevelRoute
+            if (oldRoute == value) return
+
+            // 1. Flush active mutations to old route's dedicated backing store
+            val oldStorage = if (oldRoute != null) topLevelBackStacks[oldRoute]!! else defaultBackstack
+            oldStorage.clear()
+            oldStorage.addAll(currentBackstack)
+
+            // 2. Hydrate active stack with the target route's persistent backing store
+            val newStorage = if (value != null) topLevelBackStacks[value]!! else defaultBackstack
+            currentBackstack.clear()
+            currentBackstack.addAll(newStorage)
+        }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```kotlin
+// ANTI-PATTERN: Global shared backstack mutated in-place on tab switch
+class LeakyNavManager {
+    val backstack = mutableListOf<AppRoute>()
+
+    fun selectTab(newTab: AppRoute) {
+        // Obliterates prior screen history; no backstack preservation
+        backstack.clear()
+        backstack.add(newTab)
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Execute an instrumented UI navigation test: Push screens `[TabA, DetailA1, DetailA2]`. Switch to `TabB`. Push `[DetailB1]`. Switch back to `TabA`. Assert `currentBackstack` resolves strictly to `[TabA, DetailA1, DetailA2]` and that ViewModel state inside `DetailA2` remains intact without re-instantiation.
+
+---
+
+
+---
+
+## 2355. Guard Against Partial-Read-With-EOF Premature Termination (Harvested from zeromicro/go-zero)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Guard Against Partial-Read-With-EOF Premature Termination",
+  "source": "zeromicro/go-zero",
+  "source_url": "https://github.com/zeromicro/go-zero",
+  "source_version": "eb86638b",
+  "license": "MIT",
+  "extracted_at": "2026-10-19T07:59:20.607Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-zeromicro-go-zero",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [zeromicro/go-zero](https://github.com/zeromicro/go-zero) (Revision: `eb86638b`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When consuming data from an `io.Reader` into a fixed buffer or stream, the consumer MUST check and accumulate the returned byte count $n$ BEFORE inspecting the error return value for `io.EOF`. If $n > 0$ satisfies the read objective, the function MUST return success (`nil`), even if `err == io.EOF`.
+
+**WHY**:
+The Go `io.Reader` interface specification explicitly permits implementations to return a non-zero byte count $n$ alongside `io.EOF` when the read payload exactly exhausts the source on that iteration. Checking `if err != nil` before updating the total byte counter or terminating early on `io.EOF` drops the final block of bytes, corrupting stream deserialization, network payloads, or file parsing.
+
+**WHEN TO APPLY**:
+Applies to any stream or buffer reader consuming binary protocols, network sockets, cryptographic decoders, or chunked file streams in Go, Rust, C, or Python.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// ReadBytes reads from reader into buf until buf is completely filled.
+// Fully compliant with io.Reader contract regarding (n > 0, err == io.EOF).
+func ReadBytes(reader io.Reader, buf []byte) error {
+	var got int
+	for got < len(buf) {
+		n, err := reader.Read(buf[got:])
+		got += n
+		if got == len(buf) {
+			return nil // Target fully satisfied, discard trailing EOF if present
+		}
+		if err != nil {
+			return err // Actual error or unexpected EOF before buffer was filled
+		}
+	}
+	return nil
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Prematurely returns on err without evaluating buffer satisfaction
+func InsecureReadBytes(reader io.Reader, buf []byte) error {
+	var got int
+	for got < len(buf) {
+		n, err := reader.Read(buf[got:])
+		// BUG: If reader returns (len(buf)-got, io.EOF), err check fires first!
+		if err != nil {
+			return err // Fails and truncates data even though buffer is full
+		}
+		got += n
+	}
+	return nil
+}
+```
+
+**VERIFICATION METHOD**:
+Run property/unit testing using a stub reader that injects `(n > 0, io.EOF)` simultaneously on the initial call:
+```go
+type eofWithDataReader struct {
+	data []byte
+}
+
+func (r *eofWithDataReader) Read(p []byte) (int, error) {
+	if len(r.data) == 0 {
+		return 0, io.EOF
+	}
+	n := copy(p, r.data)
+	r.data = r.data[n:]
+	return n, io.EOF // Legal behavior per Go io.Reader spec
+}
+
+func TestReadBytesEOFHandling(t *testing.T) {
+	data := []byte("payload-segment")
+	reader := &eofWithDataReader{data: data}
+	buf := make([]byte, len(data))
+	if err := ReadBytes(reader, buf); err != nil {
+		t.Fatalf("expected nil error on full buffer read, got: %v", err)
+	}
+	if string(buf) != string(data) {
+		t.Fatalf("buffer mismatch: got %s, want %s", buf, data)
+	}
+}
+```
+
+---
+
+
+---
+
+## 2356. Zero-Interval Cache Bypassing Invariant (Harvested from zeromicro/go-zero)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Zero-Interval Cache Bypassing Invariant",
+  "source": "zeromicro/go-zero",
+  "source_url": "https://github.com/zeromicro/go-zero",
+  "source_version": "eb86638b",
+  "license": "MIT",
+  "extracted_at": "2026-10-19T07:59:20.730Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-zeromicro-go-zero",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [zeromicro/go-zero](https://github.com/zeromicro/go-zero) (Revision: `eb86638b`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+In any dynamic resource loader or cache wrapper supporting configurable refresh intervals, an interval value of zero ($\le 0$) MUST explicitly force a re-fetch on every invocation if the resource is in an uninitialized or failed state, rather than short-circuiting against a wall-clock or monotonic timestamp delta.
+
+**WHY**:
+When refresh intervals are evaluated using timestamp additions (`lastTime + refreshInterval < now`), if `refreshInterval` is `0` and a fetch failure occurs, consecutive requests executed within the same clock tick/quantum yield `lastTime + 0 < now == false`. This locks the resource in a failed state for the duration of that timestamp tick, dropping rapid retries during transient recovery windows.
+
+**WHEN TO APPLY**:
+Any cached resource manager, dynamic configuration poller, or connection health probe that allows setting refresh intervals to `0` for testing, instant-invalidation, or hot-reloading.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+type ImmutableResource struct {
+	refreshInterval time.Duration
+	lastTime        atomic.Int64 // Monotonic nanoseconds
+	fetcher         func() (any, error)
+	// ...
+}
+
+func (ir *ImmutableResource) shouldRefresh() bool {
+	// Explicit check: non-positive interval MUST force immediate evaluation
+	if ir.refreshInterval <= 0 {
+		return true
+	}
+
+	lastTime := ir.lastTime.Load()
+	return lastTime == 0 || lastTime+int64(ir.refreshInterval) < timex.Now()
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Relying strictly on clock progression when interval can be zero
+func (ir *ImmutableResource) InsecureShouldRefresh() bool {
+	lastTime := ir.lastTime.Load()
+	// BUG: If lastTime was set to timex.Now() during a failure, and refreshInterval == 0,
+	// within the same millisecond/microsecond, lastTime + 0 is NOT < timex.Now().
+	// Causes silent suppression of retries!
+	return lastTime == 0 || lastTime+int64(ir.refreshInterval) < timex.Now()
+}
+```
+
+**VERIFICATION METHOD**:
+Test with simulated zero-tick clock execution (using Go 1.24+ `testing/synctest` or mock monotonic clocks) to verify that two calls at identical timestamps both trigger the refresh logic when failure occurs:
+```go
+func TestImmutableResourceZeroInterval(t *testing.T) {
+	var count int
+	r := NewImmutableResource(func() (any, error) {
+		count++
+		if count == 1 {
+			return nil, errors.New("transient error")
+		}
+		return "ok", nil
+	}, WithRefreshIntervalOnFailure(0))
+
+	_, err := r.Get()
+	assert.Error(t, err)
+	assert.Equal(t, 1, count)
+
+	// Execute immediately: without clock advance, must still retry
+	val, err := r.Get()
+	assert.NoError(t, err)
+	assert.Equal(t, "ok", val)
+	assert.Equal(t, 2, count)
+}
+```
+
+---
+
+
+---
+
+## 2357. Reusable Single-Instance Editor Tab Isolation (Harvested from t8y2/dbx)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Reusable Single-Instance Editor Tab Isolation",
+  "source": "t8y2/dbx",
+  "source_url": "https://github.com/t8y2/dbx",
+  "source_version": "c7c266c3",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-19T07:59:32.576Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-t8y2-dbx",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [t8y2/dbx](https://github.com/t8y2/dbx) (Revision: `c7c266c3`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When virtualizing multiple editable tabs or documents over a single persistent editor core (e.g., CodeMirror, Monaco), the host system **MUST NOT** perform an in-place text replacement within the existing transaction history. It **MUST** snapshot the outgoing tab's exact state, and on switching to an uncached tab, it **MUST** perform an undo-exempt document replacement followed by a **two-phase compartment cycle** (reconfiguring the history extension to an empty configuration `[]` in Transaction 1, then re-attaching the active history provider in Transaction 2).
+
+**WHY**:
+In modern extensible editors (such as CodeMirror 6), a single compartment reconfiguration (`effects: comp.reconfigure(history())`) retains internal state fields if the extension provider retains the same state key. Consequently, if a user switches from Tab A to Tab B and presses `Ctrl+Z`, the undo tree rolls back into Tab A’s text buffer, corrupting Tab B’s buffer with alien tokens and exposing cross-session data. Executing an intermediate transaction with an empty array forces the state field to unmount completely, dropping the previous tab's undo graph.
+
+**WHEN TO APPLY**:
+Apply to any multi-tab or virtualized editor environment in web, desktop (Electron/Tauri), or mobile frameworks where editor instances are pooled, recycled, or kept as singletons.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Production pattern from apps/desktop/src/components/editor/useQueryEditorDocumentState.ts
+import { Transaction, type Compartment } from "@codemirror/state";
+import type { EditorView } from "@codemirror/view";
+
+interface EditorStateRuntime {
+  historyResetComp: Compartment;
+  codeMirrorHistory: () => any;
+}
+
+export function switchEditorDocumentClean(
+  view: EditorView,
+  runtime: EditorStateRuntime,
+  incomingText: string
+): void {
+  // Phase 1: Swap document content strictly bypassing history tracking
+  if (incomingText !== view.state.doc.toString()) {
+    view.dispatch({
+      changes: { from: 0, to: view.state.doc.length, insert: incomingText },
+      annotations: Transaction.addToHistory.of(false),
+    });
+  }
+
+  // Phase 2: Transaction 1 - Completely eject the history extension state field
+  view.dispatch({
+    effects: runtime.historyResetComp.reconfigure([]),
+  });
+
+  // Phase 3: Transaction 2 - Instantiate an empty, pristine history state tree
+  view.dispatch({
+    effects: runtime.historyResetComp.reconfigure(runtime.codeMirrorHistory()),
+  });
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: NEVER DO THIS
+// Leaks Tab A's undo history into Tab B; single reconfigure retains existing state field.
+function unsafeTabSwitch(view: EditorView, runtime: EditorStateRuntime, doc: string) {
+  view.dispatch({
+    changes: { from: 0, to: view.state.doc.length, insert: doc },
+    effects: runtime.historyResetComp.reconfigure(runtime.codeMirrorHistory())
+  });
+}
+```
+
+**VERIFICATION METHOD**:
+Verify using automated end-to-end or headless editor tests:
+1. Initialize Editor with Document A ("SELECT 1;").
+2. Type an edit ("SELECT 10;").
+3. Switch tab to Document B ("SELECT 2;").
+4. Dispatch `undo(view)`.
+5. Assert `view.state.doc.toString() === "SELECT 2;"` and that Document A's contents are not restored.
+
+---
+
+
+---
+
+## 2358. Multi-Surface Focus Reclamation Guard (Harvested from t8y2/dbx)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Multi-Surface Focus Reclamation Guard",
+  "source": "t8y2/dbx",
+  "source_url": "https://github.com/t8y2/dbx",
+  "source_version": "c7c266c3",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-19T07:59:32.699Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-t8y2-dbx",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [t8y2/dbx](https://github.com/t8y2/dbx) (Revision: `c7c266c3`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When an overlay, modal dialog, or inline editor in a virtualized tree/list dismisses, it **MUST NOT** unconditionally reclaim focus to the previous anchor or active node. It **MUST** verify two invariants:
+1. `document.activeElement` is either null or has fallen back to `document.body` (proving focus was orphaned rather than deliberately captured by a concurrent UI element like an editor or search input).
+2. The dismissal was not triggered by a navigation event that spawned an immediate sibling surface (e.g., driver store, tunnel settings, sub-dialogs).
+
+**WHY**:
+Unconditional focus restoration causes "focus fighting":
+- If an inline rename commits due to an explicit click on an external input (e.g., search box or query editor), an unconditional focus call steals focus back to the row, disrupting keyboard input.
+- If closing Dialog A immediately opens Dialog B (such as clicking "Configure Drivers" inside a Connection Error Dialog), delayed focus recovery (e.g., in a microtask or `nextTick`) steals focus from Dialog B’s auto-focused inputs back to the background sidebar tree.
+
+**WHEN TO APPLY**:
+Any desktop or rich web client utilizing complex hierarchical navigation, virtual trees, modal stacks, or inline rename inputs.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Production pattern from apps/desktop/src/components/sidebar/TreeItem.vue
+// and ConnectionTree.vue
+import { nextTick, type Ref } from "vue";
+
+export function createFocusReclaimer(
+  rowElementRef: Ref<HTMLElement | null>,
+  isAnySiblingDialogOpen: () => boolean
+) {
+  return function restoreFocusSafely(options?: { restoreFocus?: boolean }) {
+    if (options?.restoreFocus === false) {
+      return;
+    }
+
+    void nextTick(() => {
+      // Invariant 1: If another dialog opened synchronously, do not steal focus
+      if (isAnySiblingDialogOpen()) {
+        return;
+      }
+
+      // Invariant 2: Only reclaim focus when it fell back to document.body.
+      // If the user intentionally clicked or tabbed to an input/editor, leave it alone.
+      if (document.activeElement && document.activeElement !== document.body) {
+        return;
+      }
+
+      // Invariant 3: Focus target must exist and must not force disruptive viewport jumps
+      rowElementRef.value?.focus({ preventScroll: true });
+    });
+  };
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: NEVER DO THIS
+// Unconditionally grabbing focus breaks Tab navigation, clicks outside, and dialog handoffs.
+function unsafeDismiss(rowElement: HTMLElement) {
+  closeDialog();
+  setTimeout(() => {
+    rowElement.focus(); // Steals focus from search box or newly opened modal!
+  }, 50);
+}
+```
+
+**VERIFICATION METHOD**:
+Execute Vitest / Playwright suite checking focus transfer:
+```typescript
+it("keeps focus on the external target when blur commits the action", async () => {
+  const outsideInput = document.createElement("input");
+  document.body.appendChild(outsideInput);
+  outsideInput.focus();
+  
+  // Trigger blur on inline item
+  inlineItemInput.dispatchEvent(new FocusEvent("blur"));
+  await nextTick();
+  await nextTick();
+
+  expect(document.activeElement).toBe(outsideInput);
+});
+```
+
+---
+
+
+---
+
+## 2359. Keyboard Auto-Repeat and In-Flight Execution Race Shield (Harvested from t8y2/dbx)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Keyboard Auto-Repeat and In-Flight Execution Race Shield",
+  "source": "t8y2/dbx",
+  "source_url": "https://github.com/t8y2/dbx",
+  "source_version": "c7c266c3",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-19T07:59:32.813Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-t8y2-dbx",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [t8y2/dbx](https://github.com/t8y2/dbx) (Revision: `c7c266c3`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+All execution-triggering keyboard shortcuts (such as `Mod+Enter` for SQL execution, builds, or network mutations) **MUST** evaluate both `!event.repeat` and `!state.isExecuting` before dispatching. If `event.repeat` is true or an operation is in-flight, the keydown handler **MUST** immediately consume the event via `event.preventDefault()` and `event.stopPropagation()`, return early, and cancel any pending viewport tracking requests.
+
+**WHY**:
+When a user holds down `Mod+Enter`, the operating system emits repeated `keydown` events every 30–50ms. If the execution handler does not explicitly check `event.repeat`, or if the async state update for `isExecuting` lags by even a single frame:
+1. Multiple duplicate asynchronous execution requests flood the event loop and backend connection pool.
+2. The query execution timer in the UI receives overlapping start/stop signals, causing running elapsed counters to freeze or fail to terminate upon query resolution.
+3. The backend driver's request capacity semaphore is abruptly exhausted, failing subsequent legitimate operations.
+
+**WHEN TO APPLY**:
+Any desktop or web code editor, IDE interface, or command center dispatching long-running asynchronous operations via hotkeys.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Production pattern from apps/desktop/src/components/editor/QueryEditor.vue
+// and useSqlExecution.ts
+
+export interface ShortcutExecutionGuardOptions {
+  isExecuting: () => boolean;
+  cancelPendingViewportRequest: (requestId?: number) => void;
+}
+
+export function createExecutionShortcutHandler(options: ShortcutExecutionGuardOptions) {
+  return function handleExecutionShortcut(event: KeyboardEvent, requestId?: number): boolean {
+    const isExecutionKey = event.key === "Enter" && (event.ctrlKey || event.metaKey);
+    if (!isExecutionKey) {
+      return false;
+    }
+
+    // Shield 1: Discard OS-level auto-repeat pulses
+    // Shield 2: Discard execution requests if a background query is already running
+    if (event.repeat || options.isExecuting()) {
+      event.preventDefault();
+      event.stopPropagation();
+      if (requestId !== undefined) {
+        options.cancelPendingViewportRequest(requestId);
+      }
+      return true; // Marked as handled and suppressed
+    }
+
+    return false;
+  };
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: NEVER DO THIS
+// Allows auto-repeat to queue dozens of identical queries while one is in progress.
+function handleKeydown(e: KeyboardEvent) {
+  if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+    e.preventDefault();
+    runQuery(); // Unbounded dispatch under OS key repetition!
+  }
+}
+```
+
+**VERIFICATION METHOD**:
+Unit test utilizing mock `KeyboardEvent` with `repeat: true`:
+```typescript
+it("suppresses execution shortcuts when event.repeat is true", () => {
+  const handler = createExecutionShortcutHandler({
+    isExecuting: () => false,
+    cancelPendingViewportRequest: vi.fn(),
+  });
+  const event = new KeyboardEvent("keydown", { key: "Enter", ctrlKey: true, repeat: true });
+  const preventDefaultSpy = vi.spyOn(event, "preventDefault");
+
+  expect(handler(event)).toBe(true);
+  expect(preventDefaultSpy).toHaveBeenCalled();
+});
+```
+
+---

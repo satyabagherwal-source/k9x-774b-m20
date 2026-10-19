@@ -3076,3 +3076,8 @@ Every entry in this ledger must capture:
 | `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `d886456a` | Multi-dimensional audit evidence | 2026-10-19T07:51:27.980Z |
 | `learn-github-neondatabase-neon` | `https://github.com/neondatabase/neon` | `fa504217` | Multi-dimensional audit evidence | 2026-10-19T07:51:39.344Z |
 | `learn-github-necolas-react-native-web` | `https://github.com/necolas/react-native-web` | `e5534a13` | Multi-dimensional audit evidence | 2026-10-19T07:51:42.729Z |
+| `learn-github-zvec-ai-zvec-grep` | `https://github.com/zvec-ai/zvec-grep` | `f2256bd3` | Multi-dimensional audit evidence | 2026-10-19T07:59:12.509Z |
+| `learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-19T07:59:18.962Z |
+| `learn-github-jetbrains-kotlinconf-app` | `https://github.com/JetBrains/kotlinconf-app` | `21891558` | Multi-dimensional audit evidence | 2026-10-19T07:59:19.790Z |
+| `learn-github-zeromicro-go-zero` | `https://github.com/zeromicro/go-zero` | `eb86638b` | Multi-dimensional audit evidence | 2026-10-19T07:59:20.860Z |
+| `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `c7c266c3` | Multi-dimensional audit evidence | 2026-10-19T07:59:32.941Z |

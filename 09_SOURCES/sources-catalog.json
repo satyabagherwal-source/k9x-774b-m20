@@ -705,8 +705,8 @@
     "sourceUrl": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
     "sourceVersion": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
     "license": "Open-Source",
-    "contentHash": "983658020163401ddacc8b7f84c47bd8c11661cfc6d64e8cadb32be959834c67",
-    "lastHarvestedAt": "2026-10-18T00:51:38.050Z",
+    "contentHash": "703af8f9941ca7a58681334dea06578fd4ad48e793b2cd78b33e32f19bd14332",
+    "lastHarvestedAt": "2026-10-19T07:59:18.962Z",
     "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2"
   },
   "hf-google-bert-bert-base-uncased": {
@@ -7128,5 +7128,45 @@
     "contentHash": "6b6ea446af368fd87a6b9803ac1858bff750c73cefc089197657e4ef6721fe2e",
     "lastHarvestedAt": "2026-10-19T07:51:42.729Z",
     "learningId": "learn-github-necolas-react-native-web"
+  },
+  "zvec-ai-zvec-grep": {
+    "repository": "zvec-ai/zvec-grep",
+    "platform": "github",
+    "sourceUrl": "https://github.com/zvec-ai/zvec-grep",
+    "sourceVersion": "f2256bd3",
+    "license": "Apache-2.0",
+    "contentHash": "06f03d4ace2f43c67abbd9687e095310970a74d4f5d498d8b0951005e0e143c3",
+    "lastHarvestedAt": "2026-10-19T07:59:12.509Z",
+    "learningId": "learn-github-zvec-ai-zvec-grep"
+  },
+  "jetbrains-kotlinconf-app": {
+    "repository": "JetBrains/kotlinconf-app",
+    "platform": "github",
+    "sourceUrl": "https://github.com/JetBrains/kotlinconf-app",
+    "sourceVersion": "21891558",
+    "license": "Apache-2.0",
+    "contentHash": "a4efa0109327569f66adddb4714276abe8572125863c0bf99fb05d1777b2b18c",
+    "lastHarvestedAt": "2026-10-19T07:59:19.790Z",
+    "learningId": "learn-github-jetbrains-kotlinconf-app"
+  },
+  "zeromicro-go-zero": {
+    "repository": "zeromicro/go-zero",
+    "platform": "github",
+    "sourceUrl": "https://github.com/zeromicro/go-zero",
+    "sourceVersion": "eb86638b",
+    "license": "MIT",
+    "contentHash": "c503bc6f36b5632158ef184172c42d8d3ba6a76c778d8a282830bcce536b05db",
+    "lastHarvestedAt": "2026-10-19T07:59:20.860Z",
+    "learningId": "learn-github-zeromicro-go-zero"
+  },
+  "t8y2-dbx": {
+    "repository": "t8y2/dbx",
+    "platform": "github",
+    "sourceUrl": "https://github.com/t8y2/dbx",
+    "sourceVersion": "c7c266c3",
+    "license": "Apache-2.0",
+    "contentHash": "a3f897e8f22124327105e853f69ce370cbdac0a7300edecf730d412decd2985a",
+    "lastHarvestedAt": "2026-10-19T07:59:32.941Z",
+    "learningId": "learn-github-t8y2-dbx"
   }
 }

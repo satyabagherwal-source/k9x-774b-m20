@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T07:51:42.733Z",
-  "total_cycles_completed": 3046,
-  "total_learnings_persisted": 3046,
-  "total_rules_promoted": 2133,
+  "last_updated": "2026-10-19T07:59:32.945Z",
+  "total_cycles_completed": 3051,
+  "total_learnings_persisted": 3051,
+  "total_rules_promoted": 2146,
   "history": [
-    {
-      "timestamp": "2026-10-19T03:53:49.794Z",
-      "repository": "XingChen-AGI/Xing4.0-29B-A4B",
-      "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T03:53:50.638Z",
-      "repository": "Checkmarx/kics",
-      "learningId": "learn-github-checkmarx-kics",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T03:53:54.702Z",
-      "repository": "olric-data/olric",
-      "learningId": "learn-github-olric-data-olric",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T03:54:36.502Z",
-      "repository": "carbon-design-system/carbon-components-svelte",
-      "learningId": "learn-github-carbon-design-system-carbon-components-svelte",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T04:00:43.835Z",
-      "repository": "SupersonicLabs/Julia-1",
-      "learningId": "learn-huggingface-supersoniclabs-julia-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T04:00:43.884Z",
       "repository": "shadcn-ui/lint",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-10-19T07:51:42.733Z",
       "repository": "necolas/react-native-web",
       "learningId": "learn-github-necolas-react-native-web",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T07:59:12.512Z",
+      "repository": "zvec-ai/zvec-grep",
+      "learningId": "learn-github-zvec-ai-zvec-grep",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T07:59:18.965Z",
+      "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T07:59:19.793Z",
+      "repository": "JetBrains/kotlinconf-app",
+      "learningId": "learn-github-jetbrains-kotlinconf-app",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T07:59:20.868Z",
+      "repository": "zeromicro/go-zero",
+      "learningId": "learn-github-zeromicro-go-zero",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T07:59:32.945Z",
+      "repository": "t8y2/dbx",
+      "learningId": "learn-github-t8y2-dbx",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

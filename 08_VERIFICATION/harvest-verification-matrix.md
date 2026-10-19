@@ -3069,3 +3069,8 @@
 | `CYCLE-20261019-GZ56` | `2026-10-19T07:51:27.978Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2338, Rule 2339, Rule 2340` | Yes (`d831b0e7...`) |
 | `CYCLE-20261019-H7WT` | `2026-10-19T07:51:39.341Z` | `neondatabase/neon` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2341, Rule 2342, Rule 2343` | Yes (`cc5037e8...`) |
 | `CYCLE-20261019-HAIV` | `2026-10-19T07:51:42.727Z` | `necolas/react-native-web` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2344, Rule 2345, Rule 2346` | Yes (`6b6ea446...`) |
+| `CYCLE-20261019-QXKQ` | `2026-10-19T07:59:12.506Z` | `zvec-ai/zvec-grep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2347, Rule 2348, Rule 2349` | Yes (`06f03d4a...`) |
+| `CYCLE-20261019-R2JZ` | `2026-10-19T07:59:18.959Z` | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2350, Rule 2351` | Yes (`703af8f9...`) |
+| `CYCLE-20261019-R36Z` | `2026-10-19T07:59:19.787Z` | `JetBrains/kotlinconf-app` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2352, Rule 2353, Rule 2354` | Yes (`a4efa010...`) |
+| `CYCLE-20261019-R40P` | `2026-10-19T07:59:20.857Z` | `zeromicro/go-zero` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2355, Rule 2356` | Yes (`c503bc6f...`) |
+| `CYCLE-20261019-RDCA` | `2026-10-19T07:59:32.938Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2357, Rule 2358, Rule 2359` | Yes (`a3f897e8...`) |

@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261018-M91O",
-    "timestamp": "2026-10-18T22:35:41.772Z",
-    "repository": "callstack/react-native-paper",
-    "learningId": "learn-github-callstack-react-native-paper",
-    "contentHash": "875861b1d2275902e4eafd58618e6e4e2e93900f3d054b070cd1cf3cc7a24ec3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-MCKP",
-    "timestamp": "2026-10-18T22:35:46.345Z",
-    "repository": "tensorchord/pgvecto.rs",
-    "learningId": "learn-github-tensorchord-pgvecto-rs",
-    "contentHash": "0fcbccb0c5edfe590c6d2c99c57d69b620fb5510459a2a698c88df7b41142231",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-MCOK",
-    "timestamp": "2026-10-18T22:35:46.484Z",
-    "repository": "RustCrypto/hashes",
-    "learningId": "learn-github-rustcrypto-hashes",
-    "contentHash": "161cd9faa61cff9417da1171f3f4b79ccb955d2080fe84b44e20328f956f74bb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-U3NJ",
-    "timestamp": "2026-10-18T22:41:48.031Z",
-    "repository": "onlook-dev/onlook",
-    "learningId": "learn-github-onlook-dev-onlook",
-    "contentHash": "f0a6df71c9e09576c69056acb3cf701e967690c004366ee59a9d84cdec0f5125",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-U40W",
-    "timestamp": "2026-10-18T22:41:48.512Z",
-    "repository": "unhappychoice/gitlogue",
-    "learningId": "learn-github-unhappychoice-gitlogue",
-    "contentHash": "ecb7cd45948d160b52219cd169ae12bc1424087214f89c78f0c57f44ffc30291",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261018-U4H9",
     "timestamp": "2026-10-18T22:41:49.101Z",
     "repository": "fastify/fastify",
@@ -7490,6 +7415,81 @@
     "repository": "necolas/react-native-web",
     "learningId": "learn-github-necolas-react-native-web",
     "contentHash": "6b6ea446af368fd87a6b9803ac1858bff750c73cefc089197657e4ef6721fe2e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-QXKQ",
+    "timestamp": "2026-10-19T07:59:12.506Z",
+    "repository": "zvec-ai/zvec-grep",
+    "learningId": "learn-github-zvec-ai-zvec-grep",
+    "contentHash": "06f03d4ace2f43c67abbd9687e095310970a74d4f5d498d8b0951005e0e143c3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-R2JZ",
+    "timestamp": "2026-10-19T07:59:18.959Z",
+    "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
+    "contentHash": "703af8f9941ca7a58681334dea06578fd4ad48e793b2cd78b33e32f19bd14332",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-R36Z",
+    "timestamp": "2026-10-19T07:59:19.787Z",
+    "repository": "JetBrains/kotlinconf-app",
+    "learningId": "learn-github-jetbrains-kotlinconf-app",
+    "contentHash": "a4efa0109327569f66adddb4714276abe8572125863c0bf99fb05d1777b2b18c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-R40P",
+    "timestamp": "2026-10-19T07:59:20.857Z",
+    "repository": "zeromicro/go-zero",
+    "learningId": "learn-github-zeromicro-go-zero",
+    "contentHash": "c503bc6f36b5632158ef184172c42d8d3ba6a76c778d8a282830bcce536b05db",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-RDCA",
+    "timestamp": "2026-10-19T07:59:32.938Z",
+    "repository": "t8y2/dbx",
+    "learningId": "learn-github-t8y2-dbx",
+    "contentHash": "a3f897e8f22124327105e853f69ce370cbdac0a7300edecf730d412decd2985a",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

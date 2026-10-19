@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T07:51:42.735Z",
+  "last_updated": "2026-10-19T07:59:32.948Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -890,14 +890,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
-      "content_hash": "983658020163401ddacc8b7f84c47bd8c11661cfc6d64e8cadb32be959834c67",
-      "verified_at": "2026-10-18T00:51:38.053Z",
+      "content_hash": "703af8f9941ca7a58681334dea06578fd4ad48e793b2cd78b33e32f19bd14332",
+      "verified_at": "2026-10-19T07:59:18.968Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T00:51:38.053Z"
+      "last_updated": "2026-10-19T07:59:18.968Z"
     },
     "google-bert/bert-base-uncased": {
       "repository": "google-bert/bert-base-uncased",
@@ -10736,6 +10736,66 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T07:51:42.735Z"
+    },
+    "zvec-ai/zvec-grep": {
+      "repository": "zvec-ai/zvec-grep",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-zvec-ai-zvec-grep",
+      "content_hash": "06f03d4ace2f43c67abbd9687e095310970a74d4f5d498d8b0951005e0e143c3",
+      "verified_at": "2026-10-19T07:59:12.515Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T07:59:12.515Z"
+    },
+    "JetBrains/kotlinconf-app": {
+      "repository": "JetBrains/kotlinconf-app",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-jetbrains-kotlinconf-app",
+      "content_hash": "a4efa0109327569f66adddb4714276abe8572125863c0bf99fb05d1777b2b18c",
+      "verified_at": "2026-10-19T07:59:19.796Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T07:59:19.796Z"
+    },
+    "zeromicro/go-zero": {
+      "repository": "zeromicro/go-zero",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-zeromicro-go-zero",
+      "content_hash": "c503bc6f36b5632158ef184172c42d8d3ba6a76c778d8a282830bcce536b05db",
+      "verified_at": "2026-10-19T07:59:20.871Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T07:59:20.871Z"
+    },
+    "t8y2/dbx": {
+      "repository": "t8y2/dbx",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-t8y2-dbx",
+      "content_hash": "a3f897e8f22124327105e853f69ce370cbdac0a7300edecf730d412decd2985a",
+      "verified_at": "2026-10-19T07:59:32.947Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T07:59:32.947Z"
     }
   },
   "repos": {

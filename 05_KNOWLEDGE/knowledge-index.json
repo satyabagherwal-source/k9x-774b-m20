@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T07:51:42.695Z",
-  "total_verified_learnings": 727,
+  "last_updated": "2026-10-19T07:59:32.895Z",
+  "total_verified_learnings": 731,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -21311,7 +21311,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
       "source_version": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
-      "content_hash": "983658020163401ddacc8b7f84c47bd8c11661cfc6d64e8cadb32be959834c67",
+      "content_hash": "703af8f9941ca7a58681334dea06578fd4ad48e793b2cd78b33e32f19bd14332",
       "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md",
       "promoted_rules": [
@@ -21362,6 +21362,16 @@
           "number": 1401,
           "title": "Dual-Cap Sequence Truncation Guard",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2350,
+          "title": "Numerically Guarded Attention-Masked Tensor Pooling",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2351,
+          "title": "Upstream Sequence Length Invariant Clamping",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -21382,7 +21392,7 @@
         "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv48pqnn",
         "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv4m2r5u"
       ],
-      "verified_at": "2026-10-18T00:51:38.005Z",
+      "verified_at": "2026-10-19T07:59:18.898Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -24571,22 +24581,45 @@
     "learn-github-jetbrains-kotlinconf-app": {
       "learning_id": "learn-github-jetbrains-kotlinconf-app",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "jetbrains-kotlinconf-app",
+      "source": "JetBrains/kotlinconf-app",
+      "repository": "JetBrains/kotlinconf-app",
       "slug": "jetbrains-kotlinconf-app",
       "platform": "github",
       "source_url": "https://github.com/JetBrains/kotlinconf-app",
-      "source_version": "HEAD",
-      "content_hash": "c0ba53f669a5ab3eba405981b5054ec4511af6f6d14898aec7ce7e63235222b3",
+      "source_version": "21891558",
+      "content_hash": "a4efa0109327569f66adddb4714276abe8572125863c0bf99fb05d1777b2b18c",
       "dossier_path": "07_PROJECT_LEARNING/jetbrains-kotlinconf-app-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jetbrains-kotlinconf-app-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2352,
+          "title": "Pre-Initialization Telemetry Buffering with Bounded Mutex Invariants",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2353,
+          "title": "Debounced Visual Transitions for Rapid-Resolving States",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2354,
+          "title": "Isolated State-Snapshot Backstack Routing for Multi-Tab Navigation",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.674Z"
+      "verified_at": "2026-10-19T07:59:19.731Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-jgravelle-jcodemunch-mcp": {
       "learning_id": "learn-github-jgravelle-jcodemunch-mcp",
@@ -38219,22 +38252,45 @@
     "learn-github-t8y2-dbx": {
       "learning_id": "learn-github-t8y2-dbx",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "t8y2-dbx",
+      "source": "t8y2/dbx",
+      "repository": "t8y2/dbx",
       "slug": "t8y2-dbx",
       "platform": "github",
       "source_url": "https://github.com/t8y2/dbx",
-      "source_version": "HEAD",
-      "content_hash": "64b89d96a8cbec7a1134cbbaf7c7c76c8441a0c52af83dfe9199ca03c42fda6c",
+      "source_version": "c7c266c3",
+      "content_hash": "a3f897e8f22124327105e853f69ce370cbdac0a7300edecf730d412decd2985a",
       "dossier_path": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2357,
+          "title": "Reusable Single-Instance Editor Tab Isolation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2358,
+          "title": "Multi-Surface Focus Reclamation Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2359,
+          "title": "Keyboard Auto-Repeat and In-Flight Execution Race Shield",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.810Z"
+      "verified_at": "2026-10-19T07:59:32.883Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-tabbyml-tabby": {
       "learning_id": "learn-github-tabbyml-tabby",
@@ -42473,22 +42529,40 @@
     "learn-github-zeromicro-go-zero": {
       "learning_id": "learn-github-zeromicro-go-zero",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "zeromicro-go-zero",
+      "source": "zeromicro/go-zero",
+      "repository": "zeromicro/go-zero",
       "slug": "zeromicro-go-zero",
       "platform": "github",
       "source_url": "https://github.com/zeromicro/go-zero",
-      "source_version": "HEAD",
-      "content_hash": "203dd75174687e41d4472d682f274c0fe013c4d7c40d0ad875116472eb685f05",
+      "source_version": "eb86638b",
+      "content_hash": "c503bc6f36b5632158ef184172c42d8d3ba6a76c778d8a282830bcce536b05db",
       "dossier_path": "07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2355,
+          "title": "Guard Against Partial-Read-With-EOF Premature Termination",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2356,
+          "title": "Zero-Interval Cache Bypassing Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.522Z"
+      "verified_at": "2026-10-19T07:59:20.800Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-zeronsh-zeron": {
       "learning_id": "learn-github-zeronsh-zeron",
@@ -42887,22 +42961,45 @@
     "learn-github-zvec-ai-zvec-grep": {
       "learning_id": "learn-github-zvec-ai-zvec-grep",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "zvec-ai-zvec-grep",
+      "source": "zvec-ai/zvec-grep",
+      "repository": "zvec-ai/zvec-grep",
       "slug": "zvec-ai-zvec-grep",
       "platform": "github",
       "source_url": "https://github.com/zvec-ai/zvec-grep",
-      "source_version": "HEAD",
-      "content_hash": "e6eef09357343d4aae17c18c9771d2b8a16fcf47304934d3fc6afff1bf72eaaf",
+      "source_version": "f2256bd3",
+      "content_hash": "06f03d4ace2f43c67abbd9687e095310970a74d4f5d498d8b0951005e0e143c3",
       "dossier_path": "07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2347,
+          "title": "PID-Re-entrant Lock Identity Disambiguation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2348,
+          "title": "Configuration Mutation Decoupling in Continuous Reconcilers",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2349,
+          "title": "Non-Destructive Invariant Preservation for External Config Schemas",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.596Z"
+      "verified_at": "2026-10-19T07:59:12.449Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "rule-1": {
       "learning_id": "rule-1",
@@ -81998,6 +82095,188 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T07:51:42.683Z"
+    },
+    "rule-2347": {
+      "learning_id": "rule-2347",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2347,
+      "title": "PID-Re-entrant Lock Identity Disambiguation",
+      "source_url": "https://github.com/zvec-ai/zvec-grep",
+      "source_version": "f2256bd3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:59:12.449Z"
+    },
+    "rule-2348": {
+      "learning_id": "rule-2348",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2348,
+      "title": "Configuration Mutation Decoupling in Continuous Reconcilers",
+      "source_url": "https://github.com/zvec-ai/zvec-grep",
+      "source_version": "f2256bd3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:59:12.449Z"
+    },
+    "rule-2349": {
+      "learning_id": "rule-2349",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2349,
+      "title": "Non-Destructive Invariant Preservation for External Config Schemas",
+      "source_url": "https://github.com/zvec-ai/zvec-grep",
+      "source_version": "f2256bd3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:59:12.449Z"
+    },
+    "rule-2350": {
+      "learning_id": "rule-2350",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2350,
+      "title": "Numerically Guarded Attention-Masked Tensor Pooling",
+      "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "source_version": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:59:18.898Z"
+    },
+    "rule-2351": {
+      "learning_id": "rule-2351",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2351,
+      "title": "Upstream Sequence Length Invariant Clamping",
+      "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "source_version": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:59:18.898Z"
+    },
+    "rule-2352": {
+      "learning_id": "rule-2352",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2352,
+      "title": "Pre-Initialization Telemetry Buffering with Bounded Mutex Invariants",
+      "source_url": "https://github.com/JetBrains/kotlinconf-app",
+      "source_version": "21891558",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:59:19.731Z"
+    },
+    "rule-2353": {
+      "learning_id": "rule-2353",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2353,
+      "title": "Debounced Visual Transitions for Rapid-Resolving States",
+      "source_url": "https://github.com/JetBrains/kotlinconf-app",
+      "source_version": "21891558",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:59:19.731Z"
+    },
+    "rule-2354": {
+      "learning_id": "rule-2354",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2354,
+      "title": "Isolated State-Snapshot Backstack Routing for Multi-Tab Navigation",
+      "source_url": "https://github.com/JetBrains/kotlinconf-app",
+      "source_version": "21891558",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:59:19.731Z"
+    },
+    "rule-2355": {
+      "learning_id": "rule-2355",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2355,
+      "title": "Guard Against Partial-Read-With-EOF Premature Termination",
+      "source_url": "https://github.com/zeromicro/go-zero",
+      "source_version": "eb86638b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:59:20.800Z"
+    },
+    "rule-2356": {
+      "learning_id": "rule-2356",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2356,
+      "title": "Zero-Interval Cache Bypassing Invariant",
+      "source_url": "https://github.com/zeromicro/go-zero",
+      "source_version": "eb86638b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:59:20.800Z"
+    },
+    "rule-2357": {
+      "learning_id": "rule-2357",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2357,
+      "title": "Reusable Single-Instance Editor Tab Isolation",
+      "source_url": "https://github.com/t8y2/dbx",
+      "source_version": "c7c266c3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:59:32.883Z"
+    },
+    "rule-2358": {
+      "learning_id": "rule-2358",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2358,
+      "title": "Multi-Surface Focus Reclamation Guard",
+      "source_url": "https://github.com/t8y2/dbx",
+      "source_version": "c7c266c3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:59:32.883Z"
+    },
+    "rule-2359": {
+      "learning_id": "rule-2359",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2359,
+      "title": "Keyboard Auto-Repeat and In-Flight Execution Race Shield",
+      "source_url": "https://github.com/t8y2/dbx",
+      "source_version": "c7c266c3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:59:32.883Z"
     }
   },
   "aliases": {
