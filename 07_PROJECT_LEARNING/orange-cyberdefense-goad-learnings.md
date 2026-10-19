@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/orange-cyberdefense-goad-learnings.md`  
+> **Source**: github ([https://github.com/Orange-Cyberdefense/GOAD](https://github.com/Orange-Cyberdefense/GOAD))  
+> **Source Version**: `992307ad`  
+> **License**: GPL-3.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T02:55:02.342Z  
+> **Learning ID**: `learn-github-orange-cyberdefense-goad`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): Orange-Cyberdefense/GOAD
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/orange-cyberdefense-goad-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Orange-Cyberdefense/GOAD](https://github.com/Orange-Cyberdefense/GOAD))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T03:07:29.801Z  
+> **Harvest Timestamp**: 2026-10-19T02:55:02.334Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: game of active directory
 - **Primary Language / Ecosystem**: PowerShell
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 8433 stars
+- **Stars / Engagement**: 8503 stars
 
 ---
 
@@ -2778,163 +2792,6 @@ class Command:
 
 ```
 
-### Core Architecture Module: `goad/command/cmd_factory.py`
-```
-from goad.command.windows import WindowsCommand
-from goad.command.linux import LinuxCommand
-from goad.command.wsl import WslCommand
-from goad.utils import Utils
-
-
-class CommandFactory:
-
-    @staticmethod
-    def get_command():
-        if Utils.is_wsl():
-            return WslCommand()
-        elif Utils.is_windows():
-            return WindowsCommand()
-        return LinuxCommand()
-
-```
-
-### Core Architecture Module: `goad/command/linux.py`
-```
-import sys
-import os
-from goad.command.cmd import Command
-import subprocess
-
-from goad.goadpath import GoadPath
-from goad.log import Log
-from goad.utils import Utils
-
-
-class LinuxCommand(Command):
-
-    def __init__(self):
-        super().__init__()
-        self.vagrant_bin = 'vagrant'
-        self.terraform_bin = 'terraform'
-
-    # CHECK
-    def check_gem(self, gem_name):
-        try:
-            result = subprocess.run(['gem', 'list'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-            if gem_name in result.stdout:
-                Log.success(f'ruby gem {gem_name} is installed')
-                return True
-            else:
-                Log.warning(f'ruby gem {gem_name} not installed')
-                return False
-        except FileNotFoundError:
-            Log.error("Ruby or gem is not installed or not found in PATH.")
-            return False
-
-    def check_vmware(self):
-        return self.is_in_path('vmrun')
-
-    def check_vmware_utility(self):
-        try:
-            result = subprocess.run(
-                ['systemctl', 'is-active', '--quiet', 'vagrant-vmware-utility'],
-                check=True
-            )
-            Log.success(f'vmware utility is installed')
-            return True
-        except subprocess.CalledProcessError:
-            Log.error("vagrant-vmware-utility is not installed")
-            return False
-
-    def check_ovftool(self):
-        try:
-            result = subprocess.run(['ovftool', '-v'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, cwd='.')
-            fields = result.stdout.split(' ')
-            if len(fields) > 2:
-                version = fields[2]
-                Log.success(f'Ovftool version {version} is installed')
-                return True
-            else:
-                Log.error(f'Failed to parse ovftool version')
-                return False
-        except FileNotFoundError:
-            Log.error("ovftool is not installed or not found in PATH.")
-            return False
-
-    def check_virtualbox(self):
-        return self.is_in_path('VBoxManage')
-
-    def check_ludus(self):
-        return self.is_in_path('ludus')
-
-    # RUN
-    def run_ludus(self, args, path, api_key, user_id='', impersonation=False):
-        env = os.environ.copy()
-        if "LUDUS_API_KEY" not in os.environ:
-            Log.info('Using api key from config file')
-            env["LUDUS_API_KEY"] = api_key
-        else:
-            Log.info('Using api key from env')
-        result = None
-        try:
-            command = 'ludus '
-            if impersonation:
-                command += f'--user {user_id} '
-            command += args
-            Log.info('CWD: ' + Utils.get_relative_path(str(path)))
-            Log.cmd(command)
-            result = subprocess.run(command, cwd=path, stderr=sys.stderr, stdout=sys.stdout, shell=True, env=env)
-        except subprocess.CalledProcessError as e:
-            Log.error(f"An error occurred while running the command: {e}")
-        return result.returncode == 0
-
-    def run_ludus_result(self, command, path, api_key, do_log=True, user_id='', impersonation=False):
-        result = None
-        env = os.environ.copy()
-        if "LUDUS_API_KEY" not in os.environ:
-            Log.info('Using api key from config file')
-            env["LUDUS_API_KEY"] = api_key
-        else:
-            Log.info('Using api key from env')
-        try:
-            cmd = ['ludus']
-            if impersonation:
-                cmd += ['--user', user_id]
-            cmd += command
-            if do_log:
-                Log.info('CWD: ' + Utils.get_relative_path(str(path)))
-                Log.cmd(' '.join(cmd))
-            result = subprocess.run(cmd, cwd=path,
-                                    stdout=subprocess.PIPE,
-                                    stderr=subprocess.PIPE,
-                                    text=True,
-                                    env=env
-                                    )
-            if result.returncode != 0:
-                print(f"Error: {result.stderr}")
-                return None
-
-            return result.stdout
-        except subprocess.CalledProcessError as e:
-            Log.error(f"An error occurred while running the command: {e}")
-        return None
-
-    def run_docker_ansible(self, args, path, ansible_path, sudo):
-        result = None
-        try:
-            ansible_command = 'ansible-playbook '
-            ansible_command += args
-            command = f"{sudo} docker run -ti --rm --network host -h goadansible -v {GoadPath.get_project_path()}:/goad -w {ansible_path} goadansible /bin/bash -c '{ansible_command}'"
-            Log.cmd(command)
-            result = subprocess.run(command, cwd=path, stderr=sys.stderr, stdout=sys.stdout, shell=True)
-        except subprocess.CalledProcessError as e:
-            Log.error(f"An error occurred while running the command: {e}")
-            return False
-        return result.returncode == 0
-
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -2948,10 +2805,6 @@ class LinuxCommand(Command):
 
 - **Issue #281** (2024-12-18): **Not working - Windows  - [-] 3 fails abort. [-] Something wrong during the provisioning task : build.yml - VMWARE**
   *Symptoms*: GOAD-Light/vmware/vm/192.168.56.X (048df9-goad-light-vmware) > install [*] Launch providing [*] CWD: \workspace\048df9-goad-light-vmware\provider [*] Running command : vagrant.exe up Bringing machine 'GOAD-Light-DC01' up with 'vmware_desktop' provider... Bringing machine 'GOAD-Light-DC02' up with 'vmware_desktop' provider... Bringing machine 'GOAD-Light-SRV02' up with 'vmware_desktop' provider... Bringing machine 'PROVISIONING' up with 'vmware_desktop' provider... ==> GOAD-Light-DC01: Checking if box 'StefanScherer/windows_2019' version '2021.05.15' is up to date... ==> GOAD-Light-DC01: Machine is already running. ==> GOAD-Light-DC02: Checking if box 'StefanScherer/windows_2019' version '2021.05.15' is up to date... ==> GOAD-Light-DC02: Machine is already running. ==> GOAD-Light-SRV02: Checking if box 'StefanScherer/windows_2019' version '2021.05.15' is up to date... ==> GOAD-Light-SRV02: Machine is already running. ==> PROVISIONING: Checking if box 'bento/ubuntu-22.04' version '202309.08.0' is up to date... ==> PROVISIONING: Machine is already running. [*] Prepare jumpbox if needed [*] Launch scp C:\Users\feder\Downloads\GOAD\scripts\setup_local_jumpbox.sh -> vagrant@192.168.56.3:~/setup.sh [*] CWD: \workspace\048df9-goad-light-vmware [*] Running command : scp -o StrictHostKeyChecking=no -i C:\Users\feder\Downloads\GOAD\workspace\048df9-goad-light-vmware\provider\.vagrant\machines\PROVISIONING\vmware_desktop\ private_key C:\Users\feder\Downloads\GOAD\scr
-  **Post-Mortem & Fix Analysis**:
-  > you can now retry : ``` ./goad.sh > cd 048df9-goad-light-vmware (048df9-goad-light-vmware) > install ```  and tell me if it's ok now :)
-  > HI , I have the same issue, but  after I do git merge update and reinstall, the problem is still there. I check the host machine (my windows). It does not have route to 192.168.56.0/24. By the way, I found need to use administrator to install. 
-  > > HI , I have the same issue, but after I do git merge update and reinstall, the problem is still there. I check the host machine (my windows). It does not have route to 192.168.56.0/24. By the way, I found need to use administrator to install.  I achieved partial success. My first installation attempt was unsuccessful (because I didn't use administrative privileges). At that time, vmnet2 had already been set up, but there was no DHCP. I reconfigured VMware's vmnet2 network to use DHCP, and after that, the script was able to log in and execute commands.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2968,7 +2821,44 @@ class LinuxCommand(Command):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7ae54d16` (2026-03-12)
+### Incident Patch 1: `ba8ef63a` (2026-03-10)
+**Commit Message**: fix ludus v2 fix regression
+
+**File**: `goad/provider/ludus/ludus.py` (modified, +11/-10)
+```diff
+@@ -10,16 +10,17 @@ def _get_ludus_major_version(config):
+     """Run `ludus version` and return the major version number (1 or 2). Defaults to 1 on failure or the value of LUDUS_VERSION environment variable."""
+     if 'LUDUS_VERSION' in os.environ:
+         return int(os.environ['LUDUS_VERSION'])
+-    api_key = config.get_value('ludus', 'ludus_api_key', 'not_set')
+-    command = CommandFactory.get_command()
+-    # Version command does not require a lab path; cwd=None uses current directory
+-    output = command.run_ludus_result(['version'], None, api_key, do_log=False)
+-    if not output:
+-        return 1
+-    # Match first digit sequence (e.g. "1.2.3", "v2.0.0", "Version: 2.0.0")
+-    match = re.search(r'(\d+)\.(\d+)\.(\d+)', output)
+-    if match:
+-        return int(match.group(1))
++    # THERE is a regression with that on other providers so fallback to export LUDUS_VERSION=2 for v2
++    # api_key = config.get_value('ludus', 'ludus_api_key', 'not_set')
++    # command = CommandFactory.get_command()
++    # ## Version command does not require a lab path; cwd=None uses current directory
++    # output = command.run_ludus_result(['version'], None, api_key, do_log=False)
++    # if not output:
++    #     return 1
++    # # Match first digit sequence (e.g. "1.2.3", "v2.0.0", "Version: 2.0.0")
++    # match = re.search(r'(\d+)\.(\d+)\.(\d+)', output)
++    # if match:
++    #     return int(match.group(1))
+     return 1
+ 
+ 
+```
+
+---
+
+### Incident Patch 2: `7ae54d16` (2026-03-12)
 **Commit Message**: fix compatibility
 
 **File**: `goad/command/cmd.py` (modified, +8/-3)
@@ -3039,7 +2929,7 @@ Observed empirical fixes and code patches:
 
 ---
 
-### Incident Patch 2: `2c39dc9a` (2026-03-11)
+### Incident Patch 3: `2c39dc9a` (2026-03-11)
 **Commit Message**: fix(ludus): 🐛 fix SSH options to not store host keys; allows duplicate builds on the same IP range (i.e. destroy then rebuild)
 
 Signed-off-by: kernel-sanders <[REDACTED_EMAIL]>
@@ -3057,834 +2947,13 @@ Signed-off-by: kernel-sanders <[REDACTED_EMAIL]>
  force_dns_server=no
 ```
 
----
-
-### Incident Patch 3: `1ba51a1f` (2026-03-10)
-**Commit Message**: fix(ludus): 🐛 refactor ludus provider for less code re-use and better version checking
-
-Signed-off-by: kernel-sanders <[REDACTED_EMAIL]>
-
-**File**: `goad/provider/ludus/ludus.py` (modified, +261/-24)
-```diff
-@@ -1,34 +1,271 @@
--"""Ludus provider router: detects Ludus version and delegates to the correct implementation."""
--
--import re
-+from goad.provider.provider import Provider
- from goad.command.cmd_factory import CommandFactory
--from goad.log import Log
- from goad.utils import *
-+from goad.log import Log
-+import json
-+import time
- 
- 
- def _get_ludus_major_version(config):
--    """Run `ludus version` and return the major version number (1 or 2). Defaults to 1 on failure or the value of LUDUS_VERSION environment variable."""
-+    """Run `ludus version` and return the major version number (1 or 2).
-+
-+    Falls back to the LUDUS_VERSION env var, then defaults to 1.
-+    """
-     if 'LUDUS_VERSION' in os.environ:
-         return int(os.environ['LUDUS_VERSION'])
--    # THERE is a regression with that on other providers so fallback to export LUDUS_VERSION=2 for v2
--    # api_key = config.get_value('ludus', 'ludus_api_key', 'not_set')
--    # command = CommandFactory.get_command()
--    # ## Version command does not require a lab path; cwd=None uses current directory
--    # output = command.run_ludus_result(['version'], None, api_key, do_log=False)
--    # if not output:
--    #     return 1
--    # # Match first digit sequence (e.g. "1.2.3", "v2.0.0", "Version: 2.0.0")
--    # match = re.search(r'(\d+)\.(\d+)\.(\d+)', output)
--    # if match:
--    #     return int(match.group(1))
-+    api_key = config.get_value('ludus', 'ludus_api_key', 'not_set')
-+    command = CommandFactory.get_command()
-+    output = command.run_ludus_result(['version', '--json'], None, api_key, do_log=False)
-+    if not output:
-+        return 1
-+    try:
-+        version_json = json.loads(output)
-+        version = version_json.get('version', '')
-+        if version:
-+            return int(version.split('.')[0])
-+    except (json.JSONDecodeError, KeyError, ValueError):
-+        pass
-     return 1
- 
- 
--def get_ludus_provider(lab_name, config):
--    """Return the appropriate Ludus provider instance for the installed Ludus version."""
--    major = _get_ludus_major_version(config)
--    if major == 2:
--        from goad.provider.ludus.ludus2 import Ludus2Provider
--        return Ludus2Provider(lab_name, config)
--    from goad.provider.ludus.ludus1 import Ludus1Provider
--    return Ludus1Provider(lab_name, config)
-+class LudusProvider(Provider):
-+    provider_name = LUDUS
-+    default_provisioner = PROVISIONING_LOCAL
-+    allowed_provisioners = [PROVISIONING_LOCAL, PROVISIONING_RUNNER]
-+    update_ip_range = True
-+
-+    def __init__(self, lab_name, config):
-+        super().__init__(lab_name)
-+        self.api_key = config.get_value('ludus', 'ludus_api_key', 'not_set')
-+        self.use_impersonation = config.get_value('ludus', 'use_impersonation', 'no') == 'yes'
-+        self.lab_user = 'GOAD'
-+        self.major_version = _get_ludus_major_version(config)
-+
-+    def _user_command(self, args):
-+        """Build a user-related command list, adding the v1 URL prefix when needed."""
-+        if self.major_version < 2:
-+            return ['--url', 'https://127.0.0.1:8081'] + args
-+        return args
-+
-+    def set_lab_user(self, lab_user):
-+        if self.use_impersonation:
-+            self.lab_user = lab_user
-+
-+    def get_ludus_user(self):
-+        ludus_user = None
-+        ludus_version = self.command.run_ludus_result(["version"], self.path, self.api_key)
-+        if ludus_version is None:
-+            Log.error('Error to contact ludus.')
-+            return None
-+        if 'No API key loaded' in ludus_version:
-+            Log.error('Please add the ludus api key to HOME/.goad/goad.ini file')
-+        else:
-+            Log.success('Api key is set')
-+            if self.use_impersonation:
-+                command = self._user_command(['user', 'list', '--json'])
-+                ludus_users = self.command.run_ludus_result(command, self.path, self.api_key)
-+                print(ludus_users)
-+                users = json.loads(ludus_users)
-+                if len(users) > 0:
-+                    Log.info(f'Current user name : {users[0]["name"]}')
-+                    Log.info(f'Current user ID   : {users[0]["userID"]}')
-+                    Log.info(f'User is admin     : {users[0]["isAdmin"]}')
-+                    if not users[0]["isAdmin"]:
-+                        Log.error('User must be admin')
-+                    else:
-+                        ludus_user = users[0]["userID"]
-+            else:
-+                ludus_user = 'ok'
-+        return ludus_user
-+
-+    def check(self):
-+        Log.info(f"Using Ludus {self.major_version} provider")
-+        check = super().check()
-+        check_ludus = self.command.check_ludus()
-+        if check_ludus:
-+            current_ludus_user = self.get_ludus_user()
-+            if current_ludus_user is not None:
-+                check_ludus = True
-+
-+        checks = [
-+            self.command.check_disk(),
-+            self.command.check_ram(),
-+            self.command.check_ansible()
-+        ]
-+      
-```
-
-**File**: `goad/provider/ludus/ludus1.py` (removed, +0/-173)
-```diff
-@@ -1,173 +0,0 @@
--from goad.provider.provider import Provider
--from goad.utils import *
--from goad.log import Log
--import json
--import time
--
--
--class Ludus1Provider(Provider):
--    provider_name = LUDUS
--    default_provisioner = PROVISIONING_LOCAL
--    allowed_provisioners = [PROVISIONING_LOCAL, PROVISIONING_RUNNER]
--    update_ip_range = True
--
--    def __init__(self, lab_name, config):
--        super().__init__(lab_name)
--        self.api_key = config.get_value('ludus', 'ludus_api_key', 'not_set')
--        if config.get_value('ludus', 'use_impersonation', 'no') == 'yes':
--            self.use_impersonation = True
--        else:
--            self.use_impersonation = False
--        self.lab_user = 'GOAD'
--
--    def set_lab_user(self, lab_user):
--        # user is <LAB>-<randomid>
--        if self.use_impersonation:
--            self.lab_user = lab_user
--
--    def get_ludus_user(self):
--        ludus_user = None
--        ludus_version = self.command.run_ludus_result(["version"], self.path, self.api_key)
--        if ludus_version is None:
--            Log.error('Error to contact ludus.')
--            return None
--        if 'No API key loaded' in ludus_version:
--            Log.error('Please add the ludus api key to HOME/.goad/goad.ini file')
--        else:
--            Log.success('Api key is set')
--            if self.use_impersonation:
--                command = ['--url', 'https://127.0.0.1:8081', 'user', 'list', '--json']
--                ludus_users = self.command.run_ludus_result(command, self.path, self.api_key)
--                print(ludus_users)
--                users = json.loads(ludus_users)
--                if len(users) > 0:
--                    Log.info(f'Current user name : {users[0]["name"]}')
--                    Log.info(f'Current user ID   : {users[0]["userID"]}')
--                    Log.info(f'User is admin     : {users[0]["isAdmin"]}')
--                    if not users[0]["isAdmin"]:
--                        Log.error('User must be admin')
--                    else:
--                        ludus_user = users[0]["userID"]
--            else:
--                ludus_user = 'ok'
--        return ludus_user
--
--    def check(self):
--        Log.info("Using Ludus 1 provider")
--        check = super().check()
--        check_ludus = self.command.check_ludus()
--        if check_ludus:
--            current_ludus_user = self.get_ludus_user()
--            if current_ludus_user is not None:
--                check_ludus = True
--
--        checks = [
--            self.command.check_disk(),
--            self.command.check_ram(),
--            self.command.check_ansible()
--        ]
--        return check and check_ludus and all(checks)
--
--    def user_exist(self, user_to_test):
--        user_exist = False
--        command = ['--url', 'https://127.0.0.1:8081', 'user', 'list', 'all', '--json']
--        ludus_users = self.command.run_ludus_result(command, self.path, self.api_key)
--        users = json.loads(ludus_users)
--        for user in users:
--            if user['userID'] == user_to_test:
--                Log.success(f'User {user_to_test} already exist')
--                user_exist = True
--                break
--        return user_exist
--
--    def install(self):
--        current_ludus_user = ''
--        if self.use_impersonation:
--            # check current ludus user
--            current_ludus_user = self.get_ludus_user()
--            if current_ludus_user is None:
--                return False
--
--            # check ludus user exist
--            if not self.user_exist(self.lab_user):
--                Log.info('Lab user does not exist create it')
--                command = ['--url', 'https://127.0.0.1:8081', 'user', 'add', '-n', self.lab_user, '-i', self.lab_user]
--                user_creation = self.command.run_ludus_result(command, self.path, self.api_key)
--                Log.info('Lab user created')
--
--            if not self.user_exist(self.lab_user):
--                Log.error('Lab user creation error')
--                return False
--
--        set_config_result = self.command.run_ludus(f'range config set -f config.yml', self.path, self.api_key, self.lab_user, self.use_impersonation)
--        if not set_config_result:
--            return False
--
--        deploy_result = self.command.run_ludus(f'range deploy', self.path, self.api_key, self.lab_user, self.use_impersonation)
--        if not deploy_result:
--            return False
--
--        while True:
--            command = ['range', 'status', '--json']
--            ludus_status = self.command.run_ludus_result(command, self.path, self.api_key, do_log=False, user_id=self.lab_user, impersonation=self.use_impersonation)
--            if ludus_status is None:
--                return False
--            try:
--                range_status = json.loads(ludus_status)
--                range_state = range_status['rangeState']
--                if range_state == 'ERROR':
--                    Log.error('Error during deployment')
--                    self.comm
-```
-
-**File**: `goad/provider/ludus/ludus2.py` (removed, +0/-184)
-```diff
-@@ -1,184 +0,0 @@
--from goad.provider.provider import Provider
--from goad.utils import *
--from goad.log import Log
--import json
--import time
--
--
--class Ludus2Provider(Provider):
--    provider_name = LUDUS
--    default_provisioner = PROVISIONING_LOCAL
--    allowed_provisioners = [PROVISIONING_LOCAL, PROVISIONING_RUNNER]
--    update_ip_range = True
--
--    def __init__(self, lab_name, config):
--        super().__init__(lab_name)
--        self.api_key = config.get_value('ludus', 'ludus_api_key', 'not_set')
--        if config.get_value('ludus', 'use_impersonation', 'no') == 'yes':
--            self.use_impersonation = True
--        else:
--            self.use_impersonation = False
--        self.lab_user = 'GOAD'
--
--    def set_lab_user(self, lab_user):
--        # user is <LAB>-<randomid>
--        if self.use_impersonation:
--            self.lab_user = lab_user
--
--    def get_ludus_user(self):
--        ludus_user = None
--        ludus_version = self.command.run_ludus_result(["version"], self.path, self.api_key)
--        if ludus_version is None:
--            Log.error('Error to contact ludus.')
--            return None
--        if 'No API key loaded' in ludus_version:
--            Log.error('Please add the ludus api key to HOME/.goad/goad.ini file')
--        else:
--            Log.success('Api key is set')
--            if self.use_impersonation:
--                command = ['user', 'list', '--json']
--                ludus_users = self.command.run_ludus_result(command, self.path, self.api_key)
--                print(ludus_users)
--                users = json.loads(ludus_users)
--                if len(users) > 0:
--                    Log.info(f'Current user name : {users[0]["name"]}')
--                    Log.info(f'Current user ID   : {users[0]["userID"]}')
--                    Log.info(f'User is admin     : {users[0]["isAdmin"]}')
--                    if not users[0]["isAdmin"]:
--                        Log.error('User must be admin')
--                    else:
--                        ludus_user = users[0]["userID"]
--            else:
--                ludus_user = 'ok'
--        return ludus_user
--
--    def check(self):
--        Log.info("Using Ludus 2 provider")
--        check = super().check()
--        check_ludus = self.command.check_ludus()
--        if check_ludus:
--            current_ludus_user = self.get_ludus_user()
--            if current_ludus_user is not None:
--                check_ludus = True
--
--        checks = [
--            self.command.check_disk(),
--            self.command.check_ram(),
--            self.command.check_ansible()
--        ]
--        return check and check_ludus and all(checks)
--
--    def user_exist(self, user_to_test):
--        user_exist = False
--        command = ['user', 'list', 'all', '--json']
--        ludus_users = self.command.run_ludus_result(command, self.path, self.api_key)
--        users = json.loads(ludus_users)
--        for user in users:
--            if user['userID'] == user_to_test:
--                Log.success(f'User {user_to_test} already exist')
--                user_exist = True
--                break
--        return user_exist
--
--    def install(self):
--        current_ludus_user = ''
--        if self.use_impersonation:
--            # check current ludus user
--            current_ludus_user = self.get_ludus_user()
--            if current_ludus_user is None:
--                return False
--
--            # check ludus user exist
--            if not self.user_exist(self.lab_user):
--                Log.info('Lab user does not exist create it')
--                # Create a random password
--                password = ''.join(random.choices(string.ascii_letters + string.digits, k=12))
--                command = ['user', 'add', '-n', self.lab_user, '-i', self.lab_user, '-e', f'{self.lab_user}@ludus.internal', '-p', password]
--                user_creation = self.command.run_ludus_result(command, self.path, self.api_key)
--                Log.info('Lab user created')
--
--            if not self.user_exist(self.lab_user):
--                Log.error('Lab user creation error')
--                return False
--
--        set_config_result = self.command.run_ludus(f'range config set -f config.yml', self.path, self.api_key, self.lab_user, self.use_impersonation)
--        if not set_config_result:
--            return False
--
--        deploy_result = self.command.run_ludus(f'range deploy', self.path, self.api_key, self.lab_user, self.use_impersonation)
--        if not deploy_result:
--            return False
--
--        while True:
--            command = ['range', 'status', '--json']
--            ludus_status = self.command.run_ludus_result(command, self.path, self.api_key, do_log=False, user_id=self.lab_user, impersonation=self.use_impersonation)
--            if ludus_status is None:
--                return False
--            try:
--                range_status = json.loads(ludus_status)
--                range_state = range_status['rangeState']
--                if range_state == 'ERRO
-```
-
-**File**: `goad/provider/provider_factory.py` (modified, +2/-2)
-```diff
-@@ -14,7 +14,7 @@
- if Dependencies.proxmox_enabled:
-     from goad.provider.terraform.proxmox import ProxmoxProvider
- if Dependencies.ludus_enabled:
--    from goad.provider.ludus.ludus import get_ludus_provider
-+    from goad.provider.ludus.ludus import LudusProvider
- 
- 
- class ProviderFactory:
-@@ -35,5 +35,5 @@ def get_provider(provider_name, lab_name, config):
-         elif provider_name == AWS and Dependencies.aws_enabled:
-             provider = AwsProvider(lab_name, config)
-         elif provider_name == LUDUS and Dependencies.ludus_enabled:
--            provider = get_ludus_provider(lab_name, config)
-+            provider = LudusProvider(lab_name, config)
-         return provider
-```
-
----
-
-### Incident Patch 4: `ff467788` (2026-03-10)
-**Commit Message**: fix doc for ludus v2
-
-**File**: `docs/mkdocs/docs/providers/ludus.md` (modified, +3/-0)
-```diff
-@@ -12,6 +12,9 @@
-     To add GOAD on Ludus please use goad directly on the server.
-     By now goad can work only directly on the server and not from a workstation client.
- 
-+!!! info "V2"
-+    for ludus v2 create an environment variable : `export LUDUS_VERSION=2`
-+
- - Install Ludus : [https://docs.ludus.cloud/docs/quick-start/install-ludus/](https://docs.ludus.cloud/docs/quick-start/install-ludus/)
- 
- - Be sure to create an **admin** user and keep his api key
-```
-
-**File**: `docs/mkdocs/docs/references.md` (modified, +1/-1)
-```diff
-@@ -9,7 +9,7 @@
- 
- - NHA WriteUp :
-     - [crypt0ace's blog NHA writeup](https://crypt0ace.github.io/posts/NHA-Part-1/)
--    - [mr-stark's blog NHA writeup](https://mr-stark.notion.site/NINJA-HACKER-ACADEMY-12179e9ad7c980c4a3b7c35e03cd501f)
-+    - [mr-stark's blog NHA writeup](https://www.notion.so/mr-stark/NINJA-HACKER-ACADEMY-30c79e9ad7c98066a0f9f8c4c0892be5)
- 
- - Podcast
-     - [Hackn'speak episode 0x1B (FR)](https://podcasts-francais.fr/podcast/hack-n-speak)
-```
-
----
-
-### Incident Patch 5: `ba8ef63a` (2026-03-10)
-**Commit Message**: fix ludus v2 fix regression
-
-**File**: `goad/provider/ludus/ludus.py` (modified, +11/-10)
-```diff
-@@ -10,16 +10,17 @@ def _get_ludus_major_version(config):
-     """Run `ludus version` and return the major version number (1 or 2). Defaults to 1 on failure or the value of LUDUS_VERSION environment variable."""
-     if 'LUDUS_VERSION' in os.environ:
-         return int(os.environ['LUDUS_VERSION'])
--    api_key = config.get_value('ludus', 'ludus_api_key', 'not_set')
--    command = CommandFactory.get_command()
--    # Version command does not require a lab path; cwd=None uses current directory
--    output = command.run_ludus_result(['version'], None, api_key, do_log=False)
--    if not output:
--        return 1
--    # Match first digit sequence (e.g. "1.2.3", "v2.0.0", "Version: 2.0.0")
--    match = re.search(r'(\d+)\.(\d+)\.(\d+)', output)
--    if match:
--        return int(match.group(1))
-+    # THERE is a regression with that on other providers so fallback to export LUDUS_VERSION=2 for v2
-+    # api_key = config.get_value('ludus', 'ludus_api_key', 'not_set')
-+    # command = CommandFactory.get_command()
-+    # ## Version command does not require a lab path; cwd=None uses current directory
-+    # output = command.run_ludus_result(['version'], None, api_key, do_log=False)
-+    # if not output:
-+    #     return 1
-+    # # Match first digit sequence (e.g. "1.2.3", "v2.0.0", "Version: 2.0.0")
-+    # match = re.search(r'(\d+)\.(\d+)\.(\d+)', output)
-+    # if match:
-+    #     return int(match.group(1))
-     return 1
- 
- 
-```
-
----
-
-### Incident Patch 6: `9df56171` (2026-03-05)
-**Commit Message**: fix bot and disable vagrant
-
-**File**: `ad/DRACARYS/data/inventory_disable_vagrant` (modified, +1/-1)
-```diff
-@@ -4,7 +4,7 @@
- ; ------------------------------------------------
- dc01 ansible_host={{ip_range}}.10 dns_domain=dc01 dict_key=dc01 ansible_user=drogon@dracarys.lab ansible_password=sUIjHxs1i0yxZsGBreh0
- srv01 ansible_host={{ip_range}}.11 dns_domain=dc01 dict_key=srv01 ansible_user=drogon@dracarys.lab ansible_password=sUIjHxs1i0yxZsGBreh0
--lx01 ansible_host={{ip_range}}.12  dict_key=lx01 ansible_connection=ssh ansible_ssh_common_args='-o StrictHostKeyChecking=no' ansible_user=drogon@dracarys.lab ansible_password=sUIjHxs1i0yxZsGBreh0
-+lx01 ansible_host={{ip_range}}.12  dict_key=lx01 ansible_connection=ssh ansible_ssh_common_args='-o StrictHostKeyChecking=no' ansible_user=drogon ansible_password=sUIjHxs1i0yxZsGBreh0
- 
- [all:vars]
- ; domain_name : folder inside ad/
-```
-
-**File**: `ad/DRACARYS/files/srv01/bot_ssh.ps1` (modified, +1/-1)
-```diff
-@@ -1,4 +1,4 @@
--$User = "viserion@dracarys.lab"
-+$User = "viserion"
- $SSHHost = "syrax"
- $Password = "aLHtz1WvIVmeV4Zh4CDE"
- 
-```
-
----
-
-### Incident Patch 7: `95f676f6` (2026-03-05)
-**Commit Message**: fix time errors
-
-**File**: `ansible/roles/linux/add_linux_to_domain/handlers/main.yml` (modified, +2/-2)
-```diff
-@@ -8,7 +8,7 @@
-     name: sssd
-     state: restarted
- 
--- name: Restart timesyncd
-+- name: Restart chrony
-   ansible.builtin.systemd:
--    name: systemd-timesyncd
-+    name: chrony
-     state: restarted
-\ No newline at end of file
-```
-
-**File**: `ansible/roles/linux/add_linux_to_domain/tasks/main.yml` (modified, +42/-10)
-```diff
-@@ -192,20 +192,52 @@
-   ansible.builtin.command:
-     cmd: "ntpdate -u {{ dc_ip }}"
- 
--- name: Ensure systemd-timesyncd is enabled
--  ansible.builtin.systemd:
--    name: systemd-timesyncd
--    enabled: yes
--    state: started
-+- name: Install chrony
-+  ansible.builtin.apt:
-+    name: chrony
-+    state: present
-+    update_cache: yes
- 
--- name: Configure systemd-timesyncd to use DC
-+- name: Configure DC as NTP server
-   ansible.builtin.lineinfile:
--    path: /etc/systemd/timesyncd.conf
--    regexp: '^NTP='
--    line: "NTP={{ dc_ip }}"
-+    path: /etc/chrony/chrony.conf
-+    regexp: '^server {{ dc_ip }}'
-+    line: "server {{ dc_ip }} iburst"
-     state: present
-+    insertafter: EOF
-+  notify:
-+    - Restart chrony
-+
-+- name: Remove default Ubuntu NTP pools
-+  ansible.builtin.replace:
-+    path: /etc/chrony/chrony.conf
-+    regexp: '^pool .*$'
-+    replace: ''
-   notify:
--    - Restart timesyncd
-+    - Restart chrony
-+
-+- name: Set makestep to 1 -1
-+  ansible.builtin.lineinfile:
-+    path: /etc/chrony/chrony.conf
-+    regexp: '^makestep'
-+    line: "makestep 1 -1"
-+    state: present
-+  notify:
-+    - Restart chrony
-+
-+- name: Ensure chrony is started and enabled
-+  ansible.builtin.systemd:
-+    name: chrony
-+    state: started
-+    enabled: yes
-+
-+- name: Set RTC in local timezone and adjust system clock
-+  ansible.builtin.command:
-+    cmd: timedatectl set-local-rtc 1 --adjust-system-clock
-+
-+- name: Force immediate time sync
-+  ansible.builtin.command:
-+    cmd: chronyc -a makestep
- 
- - name: Remove faulty ad_server line to enable auto-discovery
-   lineinfile:
-```
-
----
-
-### Incident Patch 8: `83186cdc` (2026-03-05)
-**Commit Message**: fix box version
-
-**File**: `ad/DRACARYS/providers/virtualbox/Vagrantfile` (modified, +2/-1)
-```diff
-@@ -18,7 +18,8 @@ boxes =
-   },
-   { :name => "DRACARYS-LX01",
-     :ip => "{{ip_range}}.12",
--    :box => "bento/ubuntu-24.04", 
-+    :box => "bento/ubuntu-24.04",
-+    :box_version => "202510.26.0",
-     :os => "linux",
-     :cpus => 2,
-     :mem => 3000,
-```
-
-**File**: `ad/DRACARYS/providers/vmware/Vagrantfile` (modified, +2/-1)
-```diff
-@@ -18,7 +18,8 @@ boxes =
-   },
-   { :name => "DRACARYS-LX01",
-     :ip => "{{ip_range}}.12",
--    :box => "bento/ubuntu-24.04", 
-+    :box => "bento/ubuntu-24.04",
-+    :box_version => "202510.26.0",
-     :os => "linux",
-     :cpus => 2,
-     :mem => 3000,
-```
-
----
-
-### Incident Patch 9: `a2072076` (2026-03-04)
-**Commit Message**: fix gssapi error
-
-**File**: `ansible/roles/linux/add_linux_to_domain/handlers/main.yml` (modified, +5/-0)
-```diff
-@@ -1,4 +1,9 @@
- - name: Restart SSH
-   service:
-     name: ssh
-+    state: restarted
-+
-+- name: Restart SSSD
-+  systemd:
-+    name: sssd
-     state: restarted
-\ No newline at end of file
-```
-
-**File**: `ansible/roles/linux/add_linux_to_domain/tasks/main.yml` (modified, +9/-0)
-```diff
-@@ -175,3 +175,12 @@
-     dest: /etc/resolv.conf
-     state: link
-     force: yes
-+
-+- name: Remove faulty ad_server line to enable auto-discovery
-+  lineinfile:
-+    path: /etc/sssd/sssd.conf
-+    regexp: '^ad_server\s*='
-+    state: absent
-+    backup: yes
-+  notify:
-+    - Restart SSSD
-\ No newline at end of file
-```
-
----
-
-### Incident Patch 10: `4e9dd982` (2026-03-04)
-**Commit Message**: fix dns on linux joined computer
-
-**File**: `ansible/roles/linux/add_linux_to_domain/tasks/main.yml` (modified, +8/-1)
-```diff
-@@ -167,4 +167,11 @@
- - name: restart systemd-resolved
-   systemd:
-     name: systemd-resolved
--    state: restarted
-\ No newline at end of file
-+    state: restarted
-+
-+- name: Fix symlink resolv.conf
-+  file:
-+    src: /run/systemd/resolve/resolv.conf
-+    dest: /etc/resolv.conf
-+    state: link
-+    force: yes
-```
-
----
-
-### Incident Patch 11: `358dc265` (2026-03-03)
-**Commit Message**: fix dns on linux joined computer
-
-**File**: `ansible/roles/linux/add_linux_to_domain/tasks/main.yml` (modified, +9/-4)
-```diff
-@@ -158,8 +158,13 @@
-     "sudo realm join --client-software=sssd {{ domain }}"
-   ignore_errors: yes
- 
--- name: change nameserver ip
-+- name: Define domain DNS in resolved.conf
-   lineinfile:
--    path: /etc/resolv.conf
--    regexp: '^nameserver '
--    line: "nameserver {{dc_ip}}"
-+    path: /etc/systemd/resolved.conf
-+    regexp: '^#?DNS='
-+    line: "DNS={{dc_ip}}"
-+
-+- name: restart systemd-resolved
-+  systemd:
-+    name: systemd-resolved
-+    state: restarted
-\ No newline at end of file
-```
-
----
-
-### Incident Patch 12: `f49ff138` (2026-03-03)
-**Commit Message**: add dns to linux host
-
-**File**: `ansible/roles/linux/add_linux_to_domain/tasks/main.yml` (modified, +6/-0)
-```diff
-@@ -157,3 +157,9 @@
-   shell:
-     "sudo realm join --client-software=sssd {{ domain }}"
-   ignore_errors: yes
-+
-+- name: change nameserver ip
-+  lineinfile:
-+    path: /etc/resolv.conf
-+    regexp: '^nameserver '
-+    line: "nameserver {{dc_ip}}"
-```
-
----
-
-### Incident Patch 13: `5bba572e` (2026-03-03)
-**Commit Message**: add ram on linux vm
-
-**File**: `ad/DRACARYS/providers/ludus/config.yml` (modified, +1/-1)
-```diff
-@@ -22,6 +22,6 @@ ludus:
-     template: ubuntu-24.04-x64-server-template
-     vlan: 10
-     ip_last_octet: 12
--    ram_gb: 2
-+    ram_gb: 4
-     cpus: 2
-     linux: true
-```
-
-**File**: `ad/DRACARYS/providers/proxmox/linux.tf` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@
-   name               = "LX01"
-   desc               = "LX01 - DRACARYS"
-   cores              = 2
--  memory             = 2024
-+  memory             = 4096
-   clone              = "Ubuntu_2404_x64"
-   dns                = "{{ip_range}}.1"
-   ip                 = "{{ip_range}}.12/24"
-```
-
----
-
-### Incident Patch 14: `9ed51b4e` (2026-03-03)
-**Commit Message**: fix disable vagrant
-
-**File**: `ad/DRACARYS/data/inventory_disable_vagrant` (modified, +3/-3)
-```diff
-@@ -2,9 +2,9 @@
- ; ------------------------------------------------
- ; dracarys.lab
- ; ------------------------------------------------
--dc01 ansible_host={{ip_range}}.10 dns_domain=dc01 dict_key=dc01 ansible_user=administrator@dracarys.lab ansible_password=Ufe-bVXSx9rk
--srv01 ansible_host={{ip_range}}.11 dns_domain=dc01 dict_key=srv01 ansible_user=administrator@dracarys.lab ansible_password=Ufe-bVXSx9rk
--lx01 ansible_host={{ip_range}}.12  dict_key=lx01 ansible_connection=ssh ansible_ssh_common_args='-o StrictHostKeyChecking=no' ansible_user=administrator@dracarys.lab ansible_password=Ufe-bVXSx9rk
-+dc01 ansible_host={{ip_range}}.10 dns_domain=dc01 dict_key=dc01 ansible_user=drogon@dracarys.lab ansible_password=sUIjHxs1i0yxZsGBreh0
-+srv01 ansible_host={{ip_range}}.11 dns_domain=dc01 dict_key=srv01 ansible_user=drogon@dracarys.lab ansible_password=sUIjHxs1i0yxZsGBreh0
-+lx01 ansible_host={{ip_range}}.12  dict_key=lx01 ansible_connection=ssh ansible_ssh_common_args='-o StrictHostKeyChecking=no' ansible_user=drogon@dracarys.lab ansible_password=sUIjHxs1i0yxZsGBreh0
- 
- [all:vars]
- ; domain_name : folder inside ad/
-```
-
-**File**: `ansible/disable_vagrant.yml` (modified, +1/-0)
-```diff
-@@ -6,5 +6,6 @@
- 
- - name: "Disable vagrant"
-   hosts: linux_domain
-+  become: yes
-   roles:
-     - { role: 'linux/disable_user', tags: 'disable_vagrant', username: "vagrant"}
-\ No newline at end of file
-```
-
-**File**: `ansible/enable_vagrant.yml` (modified, +1/-0)
-```diff
-@@ -6,5 +6,6 @@
- 
- - name: "Disable vagrant"
-   hosts: linux_domain
-+  become: yes
-   roles:
-     - { role: 'linux/enable_user', tags: 'enable_user', username: "vagrant"}
-\ No newline at end of file
-```
-
----
-
-### Incident Patch 15: `9d061e95` (2026-03-03)
-**Commit Message**: fix proxmox windows 2025 usage
-
-**File**: `template/provider/proxmox/windows.tf` (modified, +1/-0)
-```diff
-@@ -31,6 +31,7 @@ resource "proxmox_virtual_environment_vm" "bgp" {
-     cpu {
-       cores   = each.value.cores
-       sockets = 1
-+      type    = "host"
-     }
- 
-     memory {
-```
-
 #### Recent Merged Pull Requests:
+- **PR #526** (closed): chore: stage upstream PR batch A for testing (@agnivesh)
 - **PR #506** (closed): Update inventory - elk (@ghost)
 - **PR #505** (closed): Update inventory - wazuh (@ghost)
 - **PR #504** (closed): Update inventory - guacamole (@ghost)
 - **PR #503** (closed): Update inventory - extension, lx01 (@ghost)
 - **PR #499** (closed): Adfs and stuff (@ryokubaka)
-- **PR #486** (2026-03-12): Pr/485 (@Mayfly277)
-- **PR #485** (2026-03-12): Ludus 2 support refactor (@kernel-sanders)
-- **PR #484** (2026-03-10): feat(providers): ✨ add ludus 2 compatibility (@kernel-sanders)
 
 ---
 
@@ -3898,3 +2967,53 @@ Signed-off-by: kernel-sanders <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. ludus v2 fix regression
+
+**RULE**:
+When implementing operations in `goad/provider/ludus/ludus.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Orange-Cyberdefense/GOAD. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `ba8ef63a`: ludus v2 fix regression. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing PowerShell data structures, boundary deserialization, API parsing, or resource lifecycles matching `goad/provider/ludus/ludus.py`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```powershell
+// Verified production-grade fix pattern:
+    # THERE is a regression with that on other providers so fallback to export LUDUS_VERSION=2 for v2
+    # api_key = config.get_value('ludus', 'ludus_api_key', 'not_set')
+    # command = CommandFactory.get_command()
+    # ## Version command does not require a lab path; cwd=None uses current directory
+    # output = command.run_ludus_result(['version'], None, api_key, do_log=False)
+    # if not output:
+    #     return 1
+    # # Match first digit sequence (e.g. "1.2.3", "v2.0.0", "Version: 2.0.0")
+    # match = re.search(r'(\d+)\.(\d+)\.(\d+)', output)
+    # if match:
+    #     return int(match.group(1))
+```
+
+**NEGATIVE CONSTRAINT**:
+```powershell
+// Anti-pattern to NEVER write (induced failure mode):
+    api_key = config.get_value('ludus', 'ludus_api_key', 'not_set')
+    command = CommandFactory.get_command()
+    # Version command does not require a lab path; cwd=None uses current directory
+    output = command.run_ludus_result(['version'], None, api_key, do_log=False)
+    if not output:
+        return 1
+    # Match first digit sequence (e.g. "1.2.3", "v2.0.0", "Version: 2.0.0")
+    match = re.search(r'(\d+)\.(\d+)\.(\d+)', output)
+    if match:
+        return int(match.group(1))
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `ba8ef63a` are properly handled with clean fallback behavior.

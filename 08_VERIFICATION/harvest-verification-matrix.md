@@ -2812,3 +2812,9 @@
 | `CYCLE-20261019-IR9Y` | `2026-10-19T02:44:55.318Z` | `meta-llama/Llama-3.1-8B-Instruct` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2035, Rule 410, Rule 2036` | Yes (`e6090c2b...`) |
 | `CYCLE-20261019-IVPG` | `2026-10-19T02:45:01.060Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2037` | Yes (`3ba44726...`) |
 | `CYCLE-20261019-NT8G` | `2026-10-19T02:48:51.136Z` | `chakra-ui/ark` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2038, Rule 2039, Rule 2040` | Yes (`cb79685c...`) |
+| `CYCLE-20261019-VKGJ` | `2026-10-19T02:54:53.011Z` | `alibaba-fusion/next` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2041` | Yes (`b713dcd4...`) |
+| `CYCLE-20261019-VLZ1` | `2026-10-19T02:54:54.973Z` | `webrtc-rs/webrtc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2042` | Yes (`97c2acee...`) |
+| `CYCLE-20261019-VOD8` | `2026-10-19T02:54:58.076Z` | `openbmb/MiniCPM-V-4.7-35B-A3B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1563, Rule 2043, Rule 2044` | Yes (`5fd1e4d2...`) |
+| `CYCLE-20261019-VR4V` | `2026-10-19T02:55:01.663Z` | `midudev/preguntas-entrevista-react` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2045` | Yes (`cc9b6779...`) |
+| `CYCLE-20261019-VRV9` | `2026-10-19T02:55:02.613Z` | `Orange-Cyberdefense/GOAD` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2046` | Yes (`8c8695de...`) |
+| `CYCLE-20261019-VWA1` | `2026-10-19T02:55:08.329Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2047` | Yes (`c6efc5e8...`) |

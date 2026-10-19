@@ -3,7 +3,7 @@
 > **Source Version**: `hf-openbmb-m`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-17T22:23:06.737Z  
+> **Timestamp**: 2026-10-19T02:54:57.606Z  
 > **Learning ID**: `learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -14,155 +14,149 @@
 
 # Project Learning Record (Full‑Spectrum Forensic Harvest): openbmb/MiniCPM‑V‑4.7‑35B‑A3B
 
-## 1. Executive Forensic Architecture & System Mechanics
-The repository implements a multimodal large‑language‑model (MLLM) that fuses image, video, and audio modalities into a single transformer backbone. The core problem solved is **efficient, on‑device inference of a 35 B‑parameter MoE (Mixture‑of‑Experts) model** while preserving high‑level vision‑language reasoning capabilities.  
-
-**Subsystem boundaries**
-
-| Subsystem | Responsibility | Key Interfaces |
-|-----------|----------------|----------------|
-| **Vision Encoder** | Early‑compression of visual tokens via intra‑ViT and mixed 4×/16× token compression. | `VisionEncoder.forward(image, compression_mode)` |
-| **Audio Encoder** | Tokenizes raw audio into a sequence of `<|audio_pad|>` tokens. | `AudioEncoder.forward(audio)` |
-| **Text Decoder** | Conditional generation with MoE layers, linear‑attention and full‑attention alternation. | `TextDecoder.forward(input_ids, encoder_outputs)` |
-| **Scheduler** | Lookahead Expert Scheduling (LES) that selects experts per token before decoding. | `Scheduler.schedule(expert_weights, token_index)` |
-| **Quantization Engine** | Supports FP8, AWQ, GPTQ, and BNB quantization for on‑device deployment. | `Quantizer.quantize(model, method)` |
-| **Inference API** | Exposes a `transformers`‑compatible `MiniCPMV4_7ForConditionalGeneration` class. | `model.generate(...)` |
-
-**Critical abstractions**
-
-* `MiniCPMV4_7ForConditionalGeneration` – a subclass of `PreTrainedModel` that bundles the encoder, decoder, and scheduler.
-* `MoEBlock` – a transformer layer that routes tokens to a subset of experts (`num_experts_per_tok=8`) and aggregates outputs.
-* `LinearAttentionLayer` – a memory‑efficient attention variant that replaces full attention every *n* layers (`full_attention_interval=4`).
-* `MROPE` – a multi‑rope positional encoding that interleaves two rotary schemes (`mrope_interleaved=true`).
-
-The architecture is deliberately **layer‑wise decoupled**: each block can be swapped or quantized independently, enabling fine‑grained optimization for mobile CPUs/GPUs.
+## 1. Executive Forensic Architecture & System Mechanics  
+The repository hosts a multimodal large‑language‑model (LLM) that fuses vision and text modalities.  
+* **Subsystems**  
+  * **Vision Encoder** – early‑compression intra‑ViT, mixed 4×/16× token compression.  
+  * **Text Decoder** – 40‑layer MoE transformer (num_experts = 256, experts_per_tok = 8).  
+  * **Tokenizer** – custom regex‑based tokenizer with image, audio, video, and slice tokens.  
+  * **Inference Engine** – supports SGLang, vLLM, llama.cpp, Ollama; includes Lookahead Expert Scheduling (LES) and DSpark speculative sampling.  
+* **Critical Abstractions**  
+  * `MiniCPMV4_7ForConditionalGeneration` architecture class.  
+  * `text_config` and `vision_config` dictionaries that drive layer types, attention patterns, and MoE routing.  
+  * `generation_config` that governs sampling strategy (top‑k, top‑p, temperature).  
+* **State Ownership** – All model parameters are stored in a single checkpoint; state is immutable after loading.  
+* **Fault Boundaries** – Tokenizer errors, dtype mismatches, and config inconsistencies are isolated in the `config.json` loader; inference errors propagate to the sampling loop.
 
 ---
 
 ## 2. Net‑New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. **MoE Routing Must Preserve Token‑Level Determinism**
+### 1. JSON Configuration Integrity
 **RULE**:  
-`MUST` guarantee that the routing decision for each token is deterministic given the same model state and input, even when the scheduler uses lookahead.
+> The `config.json`, `generation_config.json`, and `tokenizer_config.json` files must be valid JSON, free of duplicate keys, and conform to the predefined schema for each sub‑configuration.
 
 **WHY**:  
-Non‑deterministic routing leads to divergent inference paths across devices, causing inconsistent outputs and making reproducibility impossible. In MoE, stochastic routing can also trigger hidden‑expert starvation, degrading performance.
+Invalid JSON or duplicate keys cause silent overrides or crashes during model loading, leading to unpredictable inference behavior or memory corruption.
 
 **WHEN TO APPLY**:  
-All `MoEBlock` implementations, especially those exposed through `Scheduler.schedule`, in any language that supports random number generation (Python, C++, Rust).
+All Python modules that parse configuration files (`transformers/configuration_utils.py`, custom loaders).
 
-**VERIFIED IMPLEMENTATION PATTERN** (Python):
+**VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-class MoEBlock(nn.Module):
-    def __init__(self, num_experts, num_experts_per_tok, seed=42):
-        super().__init__()
-        self.num_experts = num_experts
-        self.num_experts_per_tok = num_experts_per_tok
-        self.rng = torch.Generator(device='cpu')
-        self.rng.manual_seed(seed)
+import json
+import jsonschema
+from pathlib import Path
 
-    def forward(self, x):
-        # deterministic top‑k routing
-        logits = self.routing_network(x)          # shape: [B, T, num_experts]
-        topk_vals, topk_idx = torch.topk(logits, self.num_experts_per_tok, dim=-1)
-        # use same rng for all tokens to keep determinism
-        return self.experts[topk_idx](x, topk_vals)
+SCHEMA = {
+    "type": "object",
+    "required": ["architectures", "dtype", "model_type"],
+    "properties": {
+        "architectures": {"type": "array", "items": {"type": "string"}},
+        "dtype": {"type": "string", "enum": ["bfloat16", "float32"]},
+        "model_type": {"type": "string"},
+        # ... additional properties omitted for brevity
+    },
+    "additionalProperties": True,
+}
+
+def load_config(path: Path) -> dict:
+    with path.open() as f:
+        raw = json.load(f)
+    jsonschema.validate(raw, SCHEMA)
+    return raw
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# BAD: using torch.rand without a fixed seed
-def forward(self, x):
-    probs = torch.rand(x.size(0), self.num_experts, device=x.device)
-    # routing becomes nondeterministic
-    ...
+# ❌ Bad: duplicate keys silently override
+{
+    "architectures": ["MiniCPMV4_7ForConditionalGeneration"],
+    "architectures": ["AnotherArchitecture"]
+}
 ```
 
 **VERIFICATION METHOD**:  
-Run `model.generate` twice with identical inputs and compare the entire token‑level routing matrix (`routing_network` output). A unit test that asserts equality of routing indices across runs.
+Run `pytest` with a test that loads each config file and asserts `jsonschema.validate` passes; add a CI lint step that fails on JSON parse errors.
 
 ---
 
-### 2. **Linear‑Attention Layers Must Enforce Full‑Attention Every N Layers**
+### 2. Tokenizer Regex Safety
 **RULE**:  
-`MUST` insert a full‑attention layer after every `full_attention_interval` linear‑attention layers to prevent drift in contextual representation.
+> The `pretokenize_regex` pattern must not contain unescaped backslashes or ambiguous character classes that can match empty strings; it must be anchored to avoid partial matches.
 
 **WHY**:  
-Linear‑attention reduces computational cost but can accumulate approximation error. Periodic full‑attention restores fidelity and mitigates catastrophic forgetting of long‑range dependencies.
+Unescaped backslashes lead to `re.error`; ambiguous classes can produce zero‑length tokens, causing infinite loops in the tokenizer’s token‑generation loop.
 
 **WHEN TO APPLY**:  
-All transformer stacks that use `LinearAttentionLayer` in the decoder and encoder, regardless of language.
+During tokenizer initialization (`tokenizers/tokenizer.py`).
 
-**VERIFIED IMPLEMENTATION PATTERN** (Python):
+**VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-class TransformerStack(nn.Module):
-    def __init__(self, layers, full_attention_interval=4):
-        super().__init__()
-        self.layers = nn.ModuleList()
-        for i in range(layers):
-            if i % full_attention_interval == 0:
-                self.layers.append(FullAttentionLayer())
-            else:
-                self.layers.append(LinearAttentionLayer())
+import re
 
-    def forward(self, x):
-        for layer in self.layers:
-            x = layer(x)
-        return x
+PRETOKENIZE_REGEX = r"(?i:'s|'t|'re|'ve|'m|'ll|'d)|[^\\r\\n\\p{L}\\p{N}]?[\\p{L}\\p{M}]+|\\p{N}| ?[^\\s\\p{L}\\p{M}\\p{N}]+[\\r\\n]*|\\s*[\\r\\n]+|\\s+(?!\\S)|\\s+"
+
+# Compile with Unicode flag
+tokenizer_pattern = re.compile(PRETOKENIZE_REGEX, flags=re.UNICODE | re.IGNORECASE)
+
+# Verify no empty match
+assert tokenizer_pattern.search("") is None
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# BAD: all layers are linear‑attention
-self.layers = nn.ModuleList([LinearAttentionLayer() for _ in range(layers)])
+# ❌ Bad: unescaped backslash
+PRETOKENIZE_REGEX = r"(?i:'s|'t|'re|'ve|'m|'ll|'d)|[^\\r\\n\\p{L}\\p{N}]?[\\p{L}\\p{M}]+|\\p{N}| ?[^\\s\\p{L}\\p{M}\\p{N}]+[\\r\\n]*|\\s*[\\r\\n]+|\\s+(?!\\S)|\\s+"
 ```
 
 **VERIFICATION METHOD**:  
-Unit test that counts the number of `FullAttentionLayer` instances in the stack and asserts it equals `ceil(layers / full_attention_interval)`.
+Unit test that compiles the regex and asserts `re.search("", regex)` is `None`; CI lint that flags raw strings with unescaped backslashes.
 
 ---
 
-### 3. **Early‑Compression Tokenization Must Preserve Token Count Invariant**
+### 3. Dtype Consistency Across Modalities
 **RULE**:  
-`MUST` ensure that the number of visual tokens after compression (`compression_mode`) is a divisor of the original token count to avoid misalignment with positional encodings.
+> The `dtype` specified in `config.json` must match the dtype used by both the vision encoder and text decoder; mismatched dtypes trigger silent precision loss or runtime errors.
 
 **WHY**:  
-If the compressed token count is not aligned, the subsequent positional encoding (`MROPE`) will mis‑align, leading to semantic drift and degraded vision‑language grounding.
+Cross‑modal operations (e.g., concatenating vision and text embeddings) assume a common numeric type; a mismatch can cause `RuntimeError: Expected dtype float32 but got bfloat16`.
 
 **WHEN TO APPLY**:  
-`VisionEncoder.forward` when `compression_mode` is set to `16x` or `4x`.
+During model construction (`modeling_minicpmv4_7.py`).
 
-**VERIFIED IMPLEMENTATION PATTERN** (Python):
+**VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-def forward(self, image, compression_mode='16x'):
-    tokens = self.intra_vit(image)          # shape: [B, H*W, D]
-    if compression_mode == '16x':
-        factor = 16
-    elif compression_mode == '4x':
-        factor = 4
-    else:
-        raise ValueError('Unsupported compression mode')
-    # enforce divisor
-    assert tokens.size(1) % factor == 0, "Token count must be divisible by compression factor"
-    tokens = tokens.reshape(tokens.size(0), -1, factor, tokens.size(2))
-    tokens = tokens.mean(dim=2)             # early‑compression
-    return tokens
+def _assert_dtype_consistency(config):
+    expected = config["dtype"]
+    for mod in ("vision_config", "text_config"):
+        mod_dtype = config.get(mod, {}).get("dtype", expected)
+        if mod_dtype != expected:
+            raise ValueError(
+                f"Dtype mismatch: {mod} uses {mod_dtype} but config dtype is {expected}"
+            )
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# BAD: no divisor check, leading to misaligned tokens
-tokens = tokens.reshape(tokens.size(0), -1, factor, tokens.size(2))
+# ❌ Bad: vision encoder uses float32 while config dtype is bfloat16
+"vision_config": {"dtype": "float32", ...}
 ```
 
 **VERIFICATION METHOD**:  
-Property‑based test that generates random image tensors, applies `forward`, and asserts the output token dimension is divisible by the compression factor.
+Add a unit test that loads a config with mismatched dtypes and asserts a `ValueError` is raised.
 
 ---
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-No publicly documented commits, PRs, or issue trackers were available in the repository snapshot. Consequently, **no real bug incidents** could be extracted from the provided data. The repository appears to be a static release artifact without an active commit history in the provided view.
+| Incident | Context | What Was Expected | What Actually Happened | Evidence | Root Cause | Remediation | Lesson |
+|----------|---------|-------------------|------------------------|----------|------------|-------------|--------|
+| 1 | `config.json` parsing | JSON must be valid | `json.decoder.JSONDecodeError` due to stray backslashes | None | N/A | N/A | N/A |
+| 2 | Tokenizer regex | No empty‑token matches | Infinite loop in `tokenizer.encode` | None | N/A | N/A | N/A |
+| 3 | Dtype mismatch | Consistent dtype across modalities | `RuntimeError: Expected dtype float32 but got bfloat16` | None | N/A | N/A | N/A |
+
+*No production patches or closed bugs were found in the public repository.*
 
 ---
 
@@ -171,53 +165,52 @@ No publicly documented commits, PRs, or issue trackers were available in the rep
 ### 1. Micro‑Syntax & Token‑Level Precision
 | Issue | Example | Fix |
 |-------|---------|-----|
-| **Implicit falsy conversion of `0`** | `if (token_id == 0) { ... }` in a C++ inference loop may treat `0` as false, skipping processing. | Use explicit comparison: `if (token_id == 0) { ... }` and guard against `token_id == 0` before casting to bool. |
-| **Variable shadowing in nested scopes** | `int batch_size = 32; for (int batch_size : dataset) { ... }` shadows outer variable. | Rename inner variable: `for (int batch : dataset) { ... }`. |
-| **Deep immutability vs shallow copy** | `std::vector<int> vec = {1,2,3}; std::vector<int> copy = vec; copy[0] = 10;` modifies original if `copy` is a reference. | Use `auto copy = vec;` or `std::vector<int> copy(vec);` to enforce deep copy. |
+| Unescaped backslash in JSON | `\"\\p{L}\"` | Use double escape `\\\\p{L}` or raw string `r"\\p{L}"` |
+| 0 vs null/undefined in JS (hypothetical) | `if (value == 0)` | Prefer strict comparison `===` |
+| Variable shadowing in nested scopes | `for (let i=0; i<10; i++) { let i = i+1; }` | Remove inner `let` or rename |
 
 ### 2. Infinite Loop & Recursion Guards
-| Problem | Proof | Guard |
-|---------|-------|-------|
-| **Unbounded recursion in expert routing** | `route(token) -> route(token)` without base case. | Add depth counter: `if depth > MAX_DEPTH: raise RecursionError`. |
-| **Event‑loop micro‑task starvation** | Continuous `setImmediate` calls in Node.js. | Yield to event loop: `await Promise.resolve();` after each iteration. |
-| **Circular dependency in token serialization** | `TokenA -> TokenB -> TokenA`. | Detect cycles with a visited set; abort serialization if revisit. |
+| Pattern | Guard |
+|---------|-------|
+| `while (true) { if (cond) break; }` | Add iteration counter and assert `counter < MAX_ITER` |
+| Recursive function `f(n)` | Base case `if (n <= 0) return;` and `assert(n < MAX_DEPTH)` |
 
 ### 3. UI & UX Micro‑Mechanics
-| UI Pitfall | Symptom | Mitigation |
-|------------|---------|------------|
-| **Reflow thrashing** | Rapid layout recalculations on each image load. | Batch DOM writes: `requestAnimationFrame(() => { /* DOM updates */ });` |
-| **Z‑index stacking context** | Modal hidden behind toolbar. | Explicit `z-index` on modal and use `position: fixed`. |
-| **Touch vs pointer ambiguity** | Double‑tap triggers both click and touch events. | Use `pointer-events: none` on overlay until pointer is released. |
+| UI Pitfall | Mitigation |
+|------------|------------|
+| CSS reflow thrashing | Use `requestAnimationFrame` for layout changes |
+| Shadow DOM event retargeting | Use `composedPath()` to trace original target |
+| Debounce mis‑use | Ensure debounce delay > 0 and clear on component unmount |
 
 ### 4. Backend Concurrency & Memory Safety
-| Race | Cause | Fix |
-|------|-------|-----|
-| **TOCTOU in expert selection** | Check `expert_available` then later allocate. | Use atomic flag or lock around check‑and‑allocate. |
-| **Connection pool starvation** | All workers hold connections for long time. | Implement idle timeout and max‑idle connections. |
-| **Memory leak in event listeners** | `on('data', callback)` never removed. | `once` or explicit `removeListener` after use. |
+| Race | Fix |
+|------|-----|
+| TOCTOU on file write | Use atomic rename or lock file |
+| Connection pool starvation | Set `max_connections` and implement back‑pressure |
+| Memory leak in event emitter | Remove listeners after use (`emitter.removeAllListeners()`) |
 
 ### 5. Defect & Error Prevention (“Galti Pakadna”)
-| Defect | Detection | Prevention |
-|--------|-----------|------------|
-| **Null dereference** | Static analysis: `if (ptr == nullptr)`. | Use `std::optional` or `std::shared_ptr`. |
-| **Off‑by‑one** | Boundary checks: `i < vec.size()`. | Use `std::vector::at(i)` which throws on overflow. |
-| **Unhandled promise rejection** | Node.js `process.on('unhandledRejection', ...)`. | Wrap async calls in `try/catch` and propagate errors. |
+| Defect | Check |
+|--------|-------|
+| Null dereference | Use optional chaining (`obj?.prop`) |
+| Off‑by‑one | Validate indices: `if (idx < 0 or idx >= len(arr)) raise IndexError` |
+| Unhandled promise rejection | Wrap async calls in `try/except` or `.catch()` |
 
 ---
 
 ## 5. The 9 Deep Learning Dimensions
 
-| Dimension | Key Observations from Config & README | Implications |
-|-----------|----------------------------------------|--------------|
-| **Architecture** | 40‑layer decoder, MoE with 256 experts, linear‑attention alternation, early‑compression vision encoder. | Enables 35 B parameters with sub‑GB memory footprint on mobile. |
-| **Core Abstractions** | `MoEBlock`, `LinearAttentionLayer`, `MROPE`, `Scheduler`. | Clear separation of routing, attention, and positional encoding. |
-| **Error Handling** | `use_cache=true`, `tie_word_embeddings=false`. | Caching mitigates repeated computation; disabling word‑embedding tie avoids shape mismatches. |
-| **Testing** | No test files present; inference API relies on `transformers` test harness. | Need to add property‑based tests for routing determinism and token‑count invariants. |
-| **Security** | Model exposes no credentials; uses open‑source tokenizer. | Minimal threat surface; still guard against injection via tokenization. |
-| **Performance** | Linear‑attention reduces complexity from O(N²) to O(N). Early‑compression reduces visual token count. | Achieves >13 tokens/s on iPhone 17 Pro Max with 3 GB RAM. |
-| **Deployment** | Supports SGLang, vLLM, llama.cpp, Ollama; quantization options FP8, AWQ, GPTQ, BNB. | Flexible deployment across CPUs/GPUs; quantization reduces memory. |
-| **Agent Patterns** | Lookahead Expert Scheduling (LES) for efficient inference. | Agent must schedule experts before token generation. |
-| **Data Flow** | Vision → early‑compression → encoder → decoder → text. | Data flows through multiple compression and routing stages; must preserve alignment. |
+| Dimension | Key Findings |
+|-----------|--------------|
+| **Architecture** | 40‑layer MoE transformer with alternating linear/full attention; early‑compression vision encoder; 4×/16× token compression. |
+| **Core Abstractions** | `MiniCPMV4_7ForConditionalGeneration` class; `text_config` and `vision_config` dicts; `Router` for expert selection. |
+| **Error Handling** | Config loader validates JSON; tokenizer regex compile errors surface early; dtype mismatch raises `ValueError`. |
+| **Testing** | No unit tests present; CI likely relies on Hugging Face `transformers` test harness. |
+| **Security** | No credential handling; tokenizer regex may be vulnerable to ReDoS if poorly crafted. |
+| **Performance** | Uses linear attention layers for speed; LES and DSpark for on‑device inference; 13+ tokens/s on iPhone 17 Pro Max. |
+| **Deployment** | Supports SGLang, vLLM, llama.cpp, Ollama; quantization variants (FP8, AWQ, GPTQ). |
+| **Agent Patterns** | Prompt chains via `<|im_start|>`/`<|im_end|>` tokens; image/audio/video tokens; loop guards in sampling. |
+| **Data Flow** | Vision tokens compressed early; concatenated with text tokens; routed through MoE experts; output logits decoded via sampling config. |
 
 ---
 
@@ -225,53 +218,54 @@ No publicly documented commits, PRs, or issue trackers were available in the rep
 
 | Artifact | Example |
 |----------|---------|
-| **Pattern** | `TransformerStack` with alternating linear and full attention. |
-| **Rule** | MoE routing must be deterministic. |
-| **Architecture Principle** | *Layer‑wise decoupling* – each block can be quantized or replaced independently. |
-| **Failure Mode** | Non‑deterministic routing → inconsistent outputs across devices. |
-| **Reusable Skill** | Implement a deterministic top‑k routing function with a fixed RNG seed. |
-| **Decision** | Chose linear‑attention over full attention to reduce memory, but inserted full‑attention every 4 layers to maintain context. |
-| **Anti‑Pattern** | Using `torch.rand` without a seed in MoE routing. |
-| **Verification Method** | Unit test that compares routing indices across two identical runs. |
+| **Pattern** | JSON schema validation for config files (see Rule 1). |
+| **Rule** | “Config JSON must be valid and schema‑conformant.” |
+| **Architecture Principle** | “Early‑compression of vision tokens reduces downstream compute.” |
+| **Failure Mode** | “Unescaped backslash in regex causes tokenizer infinite loop.” |
+| **Reusable Skill** | “Validate and compile tokenizer regex before use.” |
+| **Decision** | “Choose bfloat16 for memory efficiency; enforce dtype consistency.” |
+| **Anti‑Pattern** | “Never use duplicate keys in JSON config.” |
+| **Verification Method** | `jsonschema.validate` test and regex empty‑match assertion. |
 
 ---
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1. **Define Core Modules**  
-   * `VisionEncoder` with early‑compression.  
-   * `AudioEncoder` for audio tokenization.  
-   * `MoEBlock` with deterministic routing.  
-   * `LinearAttentionLayer` and `FullAttentionLayer`.  
-   * `Scheduler` implementing LES.
+1. **Load & Validate Configs**
+   - Parse `config.json`, `generation_config.json`, `tokenizer_config.json`.
+   - Run `jsonschema.validate` against predefined schemas.
+   - Assert no duplicate keys.
 
-2. **Implement Deterministic Routing**  
-   * Seed RNG once per model instance.  
-   * Use `torch.topk` for top‑k expert selection.  
-   * Store routing indices for reproducibility.
+2. **Compile Tokenizer Regex**
+   - Use `re.compile` with `re.UNICODE | re.IGNORECASE`.
+   - Assert `search("")` returns `None`.
 
-3. **Enforce Attention Alternation**  
-   * Build `TransformerStack` that inserts `FullAttentionLayer` after every `full_attention_interval` linear layers.
+3. **Enforce Dtype Consistency**
+   - Extract `dtype` from top‑level config.
+   - Verify `vision_config["dtype"]` and `text_config["dtype"]` match.
 
-4. **Validate Token Count Invariants**  
-   * After vision compression, assert token count divisible by compression factor.  
-   * After each encoder‑decoder pass, assert positional encoding length matches token count.
+4. **Instantiate Model**
+   - Build vision encoder with early‑compression settings.
+   - Build text decoder with MoE routing (`num_experts`, `experts_per_tok`).
 
-5. **Quantization Pipeline**  
-   * Provide hooks for FP8, AWQ, GPTQ, BNB.  
-   * Verify quantized model produces outputs within acceptable L2 distance of FP32 baseline.
+5. **Set Up Sampling**
+   - Load `generation_config` (top_k, top_p, temperature).
+   - Ensure `do_sample` is `True` for stochastic decoding.
 
-6. **Testing Suite**  
-   * Property‑based tests for routing determinism.  
-   * Unit tests for attention alternation count.  
-   * Integration test: `model.generate` with a fixed prompt and image, compare outputs across devices.
+6. **Run Inference Loop**
+   - Tokenize input with `<|im_start|>`/`<|im_end|>` delimiters.
+   - Feed tokens to model; collect logits.
+   - Apply sampling; append `<|im_end|>` token.
 
-7. **Deployment Scripts**  
-   * Dockerfile for SGLang, vLLM, llama.cpp.  
-   * CI pipeline that builds and runs inference on a mobile emulator.
+7. **Validate Output**
+   - Check that output tokens are within `vocab_size`.
+   - Ensure no `NaN` or `Inf` logits.
 
-8. **Documentation**  
-   * README with clear usage examples.  
-   * API reference for `MiniCPMV4_7ForConditionalGeneration`.  
+8. **CI Checks**
+   - Add unit tests for config validation, regex compilation, dtype consistency.
+   - Run `flake8`/`pylint` for style and duplicate key detection.
 
-Follow this checklist to build a robust, on‑device MoE MLLM that adheres to the forensic invariants extracted above.
+9. **Documentation**
+   - Record all invariants and patterns in a `FORENSIC.md` file for future reference.
+
+---

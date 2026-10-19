@@ -1365,8 +1365,8 @@
     "sourceUrl": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
     "sourceVersion": "hf-openbmb-minicpm-v-4.7-35b-a3b",
     "license": "Open-Source",
-    "contentHash": "1f4d89e0c997a004cafdf08c7d2ad21e1cbff580c863bfa50ef4d7686347f1e4",
-    "lastHarvestedAt": "2026-10-17T22:23:07.116Z",
+    "contentHash": "5fd1e4d2104f92edf5620fc3784d45f20c9b2d3a8281f74916dd947f925369ff",
+    "lastHarvestedAt": "2026-10-19T02:54:58.078Z",
     "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b"
   },
   "hf-openbmb-minicpm-v-4.7-1b": {
@@ -5028,5 +5028,55 @@
     "contentHash": "cb79685c44cb717d83f3e5a6110257f3e7bc6e436b6c92ed953e35747d3f1a8a",
     "lastHarvestedAt": "2026-10-19T02:48:51.143Z",
     "learningId": "learn-github-chakra-ui-ark"
+  },
+  "alibaba-fusion-next": {
+    "repository": "alibaba-fusion/next",
+    "platform": "github",
+    "sourceUrl": "https://github.com/alibaba-fusion/next",
+    "sourceVersion": "d5582ba6",
+    "license": "MIT",
+    "contentHash": "b713dcd427d2c835294c815da4714c789832578cd3d00a3bb64ab15ee24b80f7",
+    "lastHarvestedAt": "2026-10-19T02:54:53.018Z",
+    "learningId": "learn-github-alibaba-fusion-next"
+  },
+  "webrtc-rs-webrtc": {
+    "repository": "webrtc-rs/webrtc",
+    "platform": "github",
+    "sourceUrl": "https://github.com/webrtc-rs/webrtc",
+    "sourceVersion": "f6b017b0",
+    "license": "Apache-2.0",
+    "contentHash": "97c2aceec87e1810c66296512a7c060c1a38fa1a2985629a3e7f6de676e12b5e",
+    "lastHarvestedAt": "2026-10-19T02:54:54.979Z",
+    "learningId": "learn-github-webrtc-rs-webrtc"
+  },
+  "midudev-preguntas-entrevista-react": {
+    "repository": "midudev/preguntas-entrevista-react",
+    "platform": "github",
+    "sourceUrl": "https://github.com/midudev/preguntas-entrevista-react",
+    "sourceVersion": "7093d802",
+    "license": "MIT",
+    "contentHash": "cc9b6779d92e9c93e8932c66ac2041575cd85720421beb82f20d45dbfc7ec288",
+    "lastHarvestedAt": "2026-10-19T02:55:01.670Z",
+    "learningId": "learn-github-midudev-preguntas-entrevista-react"
+  },
+  "orange-cyberdefense-goad": {
+    "repository": "Orange-Cyberdefense/GOAD",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Orange-Cyberdefense/GOAD",
+    "sourceVersion": "992307ad",
+    "license": "GPL-3.0",
+    "contentHash": "8c8695de433fe789d2b3b1924e65e7c5acaa141287a4142df53932aa5c354b7d",
+    "lastHarvestedAt": "2026-10-19T02:55:02.621Z",
+    "learningId": "learn-github-orange-cyberdefense-goad"
+  },
+  "trinodb-trino": {
+    "repository": "trinodb/trino",
+    "platform": "github",
+    "sourceUrl": "https://github.com/trinodb/trino",
+    "sourceVersion": "a966380e",
+    "license": "Apache-2.0",
+    "contentHash": "c6efc5e86b36ce549faa47f86469f132b90b516f606bdbb9c6eb8d312cbfdc18",
+    "lastHarvestedAt": "2026-10-19T02:55:08.336Z",
+    "learningId": "learn-github-trinodb-trino"
   }
 }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T02:48:51.148Z",
+  "last_updated": "2026-10-19T02:55:08.350Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2121,14 +2121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
-      "content_hash": "1f4d89e0c997a004cafdf08c7d2ad21e1cbff580c863bfa50ef4d7686347f1e4",
-      "verified_at": "2026-10-17T22:23:07.119Z",
+      "content_hash": "5fd1e4d2104f92edf5620fc3784d45f20c9b2d3a8281f74916dd947f925369ff",
+      "verified_at": "2026-10-19T02:54:58.083Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T22:23:07.119Z"
+      "last_updated": "2026-10-19T02:54:58.083Z"
     },
     "openbmb/MiniCPM-V-4.7-1B": {
       "repository": "openbmb/MiniCPM-V-4.7-1B",
@@ -7657,6 +7657,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T02:48:51.148Z"
+    },
+    "alibaba-fusion/next": {
+      "repository": "alibaba-fusion/next",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-alibaba-fusion-next",
+      "content_hash": "b713dcd427d2c835294c815da4714c789832578cd3d00a3bb64ab15ee24b80f7",
+      "verified_at": "2026-10-19T02:54:53.032Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T02:54:53.032Z"
+    },
+    "webrtc-rs/webrtc": {
+      "repository": "webrtc-rs/webrtc",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-webrtc-rs-webrtc",
+      "content_hash": "97c2aceec87e1810c66296512a7c060c1a38fa1a2985629a3e7f6de676e12b5e",
+      "verified_at": "2026-10-19T02:54:54.984Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T02:54:54.984Z"
+    },
+    "midudev/preguntas-entrevista-react": {
+      "repository": "midudev/preguntas-entrevista-react",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-midudev-preguntas-entrevista-react",
+      "content_hash": "cc9b6779d92e9c93e8932c66ac2041575cd85720421beb82f20d45dbfc7ec288",
+      "verified_at": "2026-10-19T02:55:01.675Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T02:55:01.675Z"
+    },
+    "Orange-Cyberdefense/GOAD": {
+      "repository": "Orange-Cyberdefense/GOAD",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-orange-cyberdefense-goad",
+      "content_hash": "8c8695de433fe789d2b3b1924e65e7c5acaa141287a4142df53932aa5c354b7d",
+      "verified_at": "2026-10-19T02:55:02.626Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T02:55:02.626Z"
+    },
+    "trinodb/trino": {
+      "repository": "trinodb/trino",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-trinodb-trino",
+      "content_hash": "c6efc5e86b36ce549faa47f86469f132b90b516f606bdbb9c6eb8d312cbfdc18",
+      "verified_at": "2026-10-19T02:55:08.350Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T02:55:08.350Z"
     }
   },
   "repos": {

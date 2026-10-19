@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T02:48:51.146Z",
-  "total_cycles_completed": 2789,
-  "total_learnings_persisted": 2789,
-  "total_rules_promoted": 1822,
+  "last_updated": "2026-10-19T02:55:08.347Z",
+  "total_cycles_completed": 2795,
+  "total_learnings_persisted": 2795,
+  "total_rules_promoted": 1830,
   "history": [
-    {
-      "timestamp": "2026-10-18T23:14:27.059Z",
-      "repository": "mitmproxy/mitmproxy",
-      "learningId": "learn-github-mitmproxy-mitmproxy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T23:14:30.930Z",
-      "repository": "parthsarthi03/raptor",
-      "learningId": "learn-github-parthsarthi03-raptor",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T23:20:25.053Z",
-      "repository": "gluestack/gluestack-ui",
-      "learningId": "learn-github-gluestack-gluestack-ui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T23:20:28.034Z",
-      "repository": "zeronsh/zeron",
-      "learningId": "learn-github-zeronsh-zeron",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T23:20:32.635Z",
-      "repository": "welldone-software/why-did-you-render",
-      "learningId": "learn-github-welldone-software-why-did-you-render",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T23:20:33.223Z",
-      "repository": "BAAI/bge-large-en-v1.5",
-      "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-18T23:20:37.387Z",
       "repository": "projectdiscovery/nuclei",
@@ -1403,6 +1361,48 @@
       "repository": "chakra-ui/ark",
       "learningId": "learn-github-chakra-ui-ark",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T02:54:53.022Z",
+      "repository": "alibaba-fusion/next",
+      "learningId": "learn-github-alibaba-fusion-next",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T02:54:54.982Z",
+      "repository": "webrtc-rs/webrtc",
+      "learningId": "learn-github-webrtc-rs-webrtc",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T02:54:58.081Z",
+      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
+      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T02:55:01.673Z",
+      "repository": "midudev/preguntas-entrevista-react",
+      "learningId": "learn-github-midudev-preguntas-entrevista-react",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T02:55:02.624Z",
+      "repository": "Orange-Cyberdefense/GOAD",
+      "learningId": "learn-github-orange-cyberdefense-goad",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T02:55:08.347Z",
+      "repository": "trinodb/trino",
+      "learningId": "learn-github-trinodb-trino",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

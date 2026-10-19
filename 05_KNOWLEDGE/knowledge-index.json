@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T02:48:51.097Z",
-  "total_verified_learnings": 524,
+  "last_updated": "2026-10-19T02:55:08.288Z",
+  "total_verified_learnings": 529,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -1080,22 +1080,35 @@
     "learn-github-alibaba-fusion-next": {
       "learning_id": "learn-github-alibaba-fusion-next",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "alibaba-fusion-next",
+      "source": "alibaba-fusion/next",
+      "repository": "alibaba-fusion/next",
       "slug": "alibaba-fusion-next",
       "platform": "github",
       "source_url": "https://github.com/alibaba-fusion/next",
-      "source_version": "HEAD",
-      "content_hash": "afb436abea6f37e111c6d0887890d92eb61a59862a7fe305d7105ce9f2ee7707",
+      "source_version": "d5582ba6",
+      "content_hash": "b713dcd427d2c835294c815da4714c789832578cd3d00a3bb64ab15ee24b80f7",
       "dossier_path": "07_PROJECT_LEARNING/alibaba-fusion-next-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/alibaba-fusion-next-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2041,
+          "title": "Tools): change components mian.scss import order when run the command npm run st",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.723Z"
+      "verified_at": "2026-10-19T02:54:52.957Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-alibaba-page-agent": {
       "learning_id": "learn-github-alibaba-page-agent",
@@ -26924,22 +26937,35 @@
     "learn-github-midudev-preguntas-entrevista-react": {
       "learning_id": "learn-github-midudev-preguntas-entrevista-react",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "midudev-preguntas-entrevista-react",
+      "source": "midudev/preguntas-entrevista-react",
+      "repository": "midudev/preguntas-entrevista-react",
       "slug": "midudev-preguntas-entrevista-react",
       "platform": "github",
       "source_url": "https://github.com/midudev/preguntas-entrevista-react",
-      "source_version": "HEAD",
-      "content_hash": "fdfbbb449031c46bd4b016354bf5badb14403fa2cbf1d9e0eb78822c6917ab8f",
+      "source_version": "7093d802",
+      "content_hash": "cc9b6779d92e9c93e8932c66ac2041575cd85720421beb82f20d45dbfc7ec288",
       "dossier_path": "07_PROJECT_LEARNING/midudev-preguntas-entrevista-react-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/midudev-preguntas-entrevista-react-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2045,
+          "title": "ui): redesign with minimal monochrome theme and Geist fonts",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.336Z"
+      "verified_at": "2026-10-19T02:55:01.607Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-mijick-popups": {
       "learning_id": "learn-github-mijick-popups",
@@ -30032,22 +30058,35 @@
     "learn-github-orange-cyberdefense-goad": {
       "learning_id": "learn-github-orange-cyberdefense-goad",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "orange-cyberdefense-goad",
+      "source": "Orange-Cyberdefense/GOAD",
+      "repository": "Orange-Cyberdefense/GOAD",
       "slug": "orange-cyberdefense-goad",
       "platform": "github",
       "source_url": "https://github.com/Orange-Cyberdefense/GOAD",
-      "source_version": "HEAD",
-      "content_hash": "31b6f2990751ce60e30110318642268f469dd68098e915ccf7e22a7c9ad9e067",
+      "source_version": "992307ad",
+      "content_hash": "8c8695de433fe789d2b3b1924e65e7c5acaa141287a4142df53932aa5c354b7d",
       "dossier_path": "07_PROJECT_LEARNING/orange-cyberdefense-goad-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/orange-cyberdefense-goad-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2046,
+          "title": "ludus v2 fix regression",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.909Z"
+      "verified_at": "2026-10-19T02:55:02.556Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-orange-opensource-hurl": {
       "learning_id": "learn-github-orange-opensource-hurl",
@@ -37067,22 +37106,35 @@
     "learn-github-trinodb-trino": {
       "learning_id": "learn-github-trinodb-trino",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "trinodb-trino",
+      "source": "trinodb/trino",
+      "repository": "trinodb/trino",
       "slug": "trinodb-trino",
       "platform": "github",
       "source_url": "https://github.com/trinodb/trino",
-      "source_version": "HEAD",
-      "content_hash": "8bcf1e77a614aee4305d77e909491d8564f03068e393c907f00c810b699a42fd",
+      "source_version": "a966380e",
+      "content_hash": "c6efc5e86b36ce549faa47f86469f132b90b516f606bdbb9c6eb8d312cbfdc18",
       "dossier_path": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2047,
+          "title": "Bump the web-ui-dependencies group",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.070Z"
+      "verified_at": "2026-10-19T02:55:08.272Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-trpc-group-trpc-agent-go": {
       "learning_id": "learn-github-trpc-group-trpc-agent-go",
@@ -38386,22 +38438,35 @@
     "learn-github-webrtc-rs-webrtc": {
       "learning_id": "learn-github-webrtc-rs-webrtc",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "webrtc-rs-webrtc",
+      "source": "webrtc-rs/webrtc",
+      "repository": "webrtc-rs/webrtc",
       "slug": "webrtc-rs-webrtc",
       "platform": "github",
       "source_url": "https://github.com/webrtc-rs/webrtc",
-      "source_version": "HEAD",
-      "content_hash": "a554099b61029c86a021bfb0b9a0423efbb166a0343dc93e5e01d1d1db563ba4",
+      "source_version": "f6b017b0",
+      "content_hash": "97c2aceec87e1810c66296512a7c060c1a38fa1a2985629a3e7f6de676e12b5e",
       "dossier_path": "07_PROJECT_LEARNING/webrtc-rs-webrtc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/webrtc-rs-webrtc-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2042,
+          "title": "[v0.21.x] fix: release TURN allocations on close() on both runtimes (#903) (#912",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.319Z"
+      "verified_at": "2026-10-19T02:54:54.916Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-weizhena-deep-research-skills": {
       "learning_id": "learn-github-weizhena-deep-research-skills",
@@ -47046,7 +47111,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
       "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b",
-      "content_hash": "1f4d89e0c997a004cafdf08c7d2ad21e1cbff580c863bfa50ef4d7686347f1e4",
+      "content_hash": "5fd1e4d2104f92edf5620fc3784d45f20c9b2d3a8281f74916dd947f925369ff",
       "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md",
       "promoted_rules": [
@@ -47154,6 +47219,21 @@
           "number": 1550,
           "title": "**Early‑Compression Tokenization Must Preserve Token Count Invariant**",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1563,
+          "title": "JSON Configuration Integrity",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 2043,
+          "title": "Tokenizer Regex Safety",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2044,
+          "title": "Dtype Consistency Across Modalities",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47161,7 +47241,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-17T22:23:07.075Z",
+      "verified_at": "2026-10-19T02:54:58.008Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -67606,15 +67686,15 @@
       "learning_id": "rule-1563",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1563,
-      "title": "JSON Configuration Integrity Rule (Harvested from XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "JSON Configuration Integrity",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
+      "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.820Z"
+      "verified_at": "2026-10-19T02:54:58.008Z"
     },
     "rule-1564": {
       "learning_id": "rule-1564",
@@ -74525,6 +74605,104 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T02:48:51.090Z"
+    },
+    "rule-2041": {
+      "learning_id": "rule-2041",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2041,
+      "title": "Tools): change components mian.scss import order when run the command npm run st",
+      "source_url": "https://github.com/alibaba-fusion/next",
+      "source_version": "d5582ba6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T02:54:52.957Z"
+    },
+    "rule-2042": {
+      "learning_id": "rule-2042",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2042,
+      "title": "[v0.21.x] fix: release TURN allocations on close() on both runtimes (#903) (#912",
+      "source_url": "https://github.com/webrtc-rs/webrtc",
+      "source_version": "f6b017b0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T02:54:54.916Z"
+    },
+    "rule-2043": {
+      "learning_id": "rule-2043",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2043,
+      "title": "Tokenizer Regex Safety",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
+      "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T02:54:58.008Z"
+    },
+    "rule-2044": {
+      "learning_id": "rule-2044",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2044,
+      "title": "Dtype Consistency Across Modalities",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
+      "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T02:54:58.008Z"
+    },
+    "rule-2045": {
+      "learning_id": "rule-2045",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2045,
+      "title": "ui): redesign with minimal monochrome theme and Geist fonts",
+      "source_url": "https://github.com/midudev/preguntas-entrevista-react",
+      "source_version": "7093d802",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T02:55:01.607Z"
+    },
+    "rule-2046": {
+      "learning_id": "rule-2046",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2046,
+      "title": "ludus v2 fix regression",
+      "source_url": "https://github.com/Orange-Cyberdefense/GOAD",
+      "source_version": "992307ad",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T02:55:02.556Z"
+    },
+    "rule-2047": {
+      "learning_id": "rule-2047",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2047,
+      "title": "Bump the web-ui-dependencies group",
+      "source_url": "https://github.com/trinodb/trino",
+      "source_version": "a966380e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T02:55:08.272Z"
     }
   },
   "aliases": {

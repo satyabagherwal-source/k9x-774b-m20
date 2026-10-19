@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/webrtc-rs-webrtc-learnings.md`  
+> **Source**: github ([https://github.com/webrtc-rs/webrtc](https://github.com/webrtc-rs/webrtc))  
+> **Source Version**: `f6b017b0`  
+> **License**: Apache-2.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T02:54:54.688Z  
+> **Learning ID**: `learn-github-webrtc-rs-webrtc`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): webrtc-rs/webrtc
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/webrtc-rs-webrtc-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/webrtc-rs/webrtc](https://github.com/webrtc-rs/webrtc))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T02:23:53.562Z  
+> **Harvest Timestamp**: 2026-10-19T02:54:54.679Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: Async-friendly WebRTC implementation in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 5159 stars
+- **Stars / Engagement**: 5160 stars
 
 ---
 
@@ -2339,506 +2353,6 @@ async fn async_main(cli: Cli) -> Result<()> {
 
 ```
 
-### Core Architecture Module: `examples/data-channels-offer-answer/data-channels-offer.rs`
-```
-//! Offer side of the offer/answer example.
-//!
-//! Run `answer` first, then `offer`.  They exchange SDP over HTTP and send
-//! random messages to each other via a WebRTC data channel every 5 seconds.
-//!
-//! Usage:
-//!   cargo run --example offer -- [--offer-address 0.0.0.0:50000] [--answer-address localhost:60000] [-d]
-
-use std::io::Write;
-use std::sync::Arc;
-use std::time::Duration;
-
-use anyhow::Result;
-use bytes::BytesMut;
-use clap::Parser;
-use futures::FutureExt;
-use hyper::{Body, Client, Method, Request};
-use signal::get_local_ip;
-use webrtc::data_channel::DataChannelEvent;
-use webrtc::peer_connection::{
-    MediaEngine, RTCConfigurationBuilder, RTCIceGatheringState, RTCIceServer,
-    RTCPeerConnectionState, Registry, register_default_interceptors,
-};
-use webrtc::peer_connection::{PeerConnection, PeerConnectionBuilder, PeerConnectionEventHandler};
-use webrtc::runtime::{Sender, channel};
-
-#[path = "../common/mod.rs"]
-mod common;
-use common::{block_on, runtime, sleep};
-
-#[derive(Parser)]
-#[command(name = "offer", about = "WebRTC offer side")]
-struct Cli {
-    #[arg(long, default_value = "0.0.0.0:50000")]
-    offer_address: String,
-    #[arg(long, default_value = "localhost:60000")]
-    answer_address: String,
-    #[arg(short, long)]
-    debug: bool,
-}
-
-#[derive(Clone)]
-struct OfferHandler {
-    gather_complete_tx: Sender<()>,
-    done_tx: Sender<()>,
-}
-
-#[async_trait::async_trait]
-impl PeerConnectionEventHandler for OfferHandler {
-    async fn on_ice_gathering_state_change(&self, state: RTCIceGatheringState) {
-        if state == RTCIceGatheringState::Complete {
-            let _ = self.gather_complete_tx.try_send(());
-        }
-    }
-
-    async fn on_connection_state_change(&self, state: RTCPeerConnectionState) {
-        println!("Peer connection state: {state}");
-        if state == RTCPeerConnectionState::Failed {
-            let _ = self.done_tx.try_send(());
-        }
-    }
-}
-
-fn main() -> Result<()> {
-    let cli = Cli::parse();
-    if cli.debug {
-        env_logger::Builder::new()
-            .format(|buf, record| {
-                writeln!(
-                    buf,
-                    "{}:{} [{}] {} - {}",
-                    record.file().unwrap_or("unknown"),
-                    record.line().unwrap_or(0),
-                    record.level(),
-                    chrono::Local::now().format("%H:%M:%S.%6f"),
-                    record.args()
-                )
-            })
-            .filter(None, log::LevelFilter::Trace)
-            .init();
-    }
-    block_on(async_main(cli))
-}
-
-async fn async_main(cli: Cli) -> Result<()> {
-    let (done_tx, mut done_rx) = channel::<()>(1);
-    let (ctrlc_tx, mut ctrlc_rx) = channel::<()>(1);
-    ctrlc::set_handler(move || {
-        let _ = ctrlc_tx.try_send(());
-    })?;
-
-    let runtime = runtime();
-
-    let (gather_tx, mut gather_rx) = channel::<()>(1);
-
-    let mut media = MediaEngine::default();
-    media.register_default_codecs()?;
-    let registry = register_default_interceptors(Registry::new(), &mut media)?;
-
-    let peer_connection = PeerConnectionBuilder::new()
-        .with_configuration(
-            RTCConfigurationBuilder::new()
-                .with_ice_servers(vec![RTCIceServer {
-                    urls: vec!["stun:stun.l.google.com:19302".to_owned()],
-                    ..Default::default()
-                }])
-                .build(),
-        )
-        .with_media_engine(media)
-        .with_interceptor_registry(registry)
-        .with_handler(Arc::new(OfferHandler {
-            gather_complete_tx: gather_tx,
-            done_tx: done_tx.clone(),
-        }))
-        .with_runtime(runtime.clone())
-        .with_udp_addrs(vec![format!("{}:0", get_local_ip())])
-        .build()
-        .await?;
-
-    // Create the data channel
-    let data_channel = peer_connection.create_data_channel("data", None).await?;
-
-    // Event loop for the data channel: wait for open, then send every 5 s and print received messages
-    runtime.spawn(Box::pin(async move {
-        let mut opened = false;
-        let label = match data_channel.label().await {
-            Ok(l) => l,
-            Err(e) => {
-                eprintln!("Failed to get data channel label: {e}");
-                return;
-            }
-        };
-        let id = data_channel.id();
-        let mut count = 0u32;
-        let mut send_timer = Box::pin(sleep(Duration::from_secs(5)));
-
-        loop {
-            if opened {
-                futures::select! {
-                    event = data_channel.poll().fuse() => {
-                        match event {
-                            Some(DataChannelEvent::OnMessage(msg)) => {
-                                let text = String::from_utf8(msg.data.to_vec()).unwrap_or_default();
-                                println!("Message from DataChannel '{label}': '{text}'");
-                            }
-                            Some(DataChannelEvent::OnClose) | None => break,
-                            _ => {}
-                        }
-                    }
-                    _ = send_timer.as_mut().fuse() => {
-                        let message = format!("offer-{count}");
-                        count += 1;
-                        println!("Sending '{message}'");
-                        let _ = data_channel.send(BytesMut::from(message.as_bytes())).await;
-                        send_timer = Box::pin(sleep(Duration::from_secs(5)));
-                    }
-                }
-            } else {
-                match data_channel.poll().await {
-                    Some(DataChannelEvent::OnOpen) => {
-                        println!("Data channel '{label}'-'{id}' open");
-                        opened = true;
-                        send_timer = Box::pin(sleep(Duration::from_secs(5)));
-                    }
-                    Some(DataChannelEvent::OnClose) | None => break,
-                    _ => {}
-                }
-            }
-        }
-
-        println!("exit loop for DataChannel '{label}'-'{id}'");
-    }));
-
-    // Create offer and wait for ICE gathering to complete (non-trickle)
-    let offer = peer_connection.create_offer(None).await?;
-
-    // Sets the LocalDescription, and starts our UDP listeners
-    peer_connection.set_local_description(offer).await?;
-
-    // Block until ICE Gathering is complete, disabling trickle ICE
-    // we do this because we only can exchange one signaling message
-    // in a production application you should exchange ICE Candidates via OnICECandidate
-    let _ = gather_rx.recv().await;
-
-    let offer_sdp = peer_connection
-        .local_description()
-        .await
-        .ok_or_else(|| anyhow::anyhow!("no local description"))?;
-
-    // Start our HTTP server to receive the answer SDP
-    let offer_port = cli
-        .offer_address
-        .split(':')
-        .last()
-        .and_then(|p| p.parse::<u16>().ok())
-        .unwrap_or(50000);
-    let mut sdp_rx = signal::http_sdp_server(offer_port).await;
-    println!("Listening on http://{}", cli.offer_address);
-
-    // POST the offer SDP to the answer side
-    let payload = serde_json::to_string(&offer_sdp)?;
-    let req = Request::builder()
-        .method(Method::POST)
-        .uri(format!("http://{}/sdp", cli.answer_address))
-        .header("content-type", "application/json; charset=utf-8")
-        .body(Body::from(payload))?;
-    Client::new().request(req).await?;
-
-    // Wait for the answer SDP
-    let answer_str = sdp_rx
-        .recv()
-        .await
-        .ok_or_else(|| anyhow::anyhow!("answer channel closed"))?;
-    let answer_sdp = serde_json::from_str(&answer_str)?;
-    peer_connection.set_remote_description(answer_sdp).await?;
-
-    println!("Press ctrl-c to stop");
-    futures::select! {
-        _ = done_rx.recv().fuse() => {
-            println!("received done signal!");
-        }
-        _ = ctrlc_rx.recv().fuse() => {
-            println!("received ctrl-c signal!");
-        }
-    }
-
-    peer_connection.close().await?;
-
-    Ok(())
-}
-
-```
-
-### Core Architecture Module: `examples/data-channels-simple/data-channels-simple.rs`
-```
-//! data-channels-simple is a simple datachannel demo with HTTP signaling server.
-//!
-//! This example demonstrates:
-//! - HTTP server for WebRTC signaling
-//! - Browser-based DataChannel communication
-//! - ICE candidate exchange via HTTP endpoints
-//! - Real-time messaging between browser and Rust server
-
-use anyhow::Result;
-use futures::FutureExt;
-use hyper::service::{make_service_fn, service_fn};
-use hyper::{Body, Method, Request, Response, Server, StatusCode};
-use log::{error, info};
-use std::net::SocketAddr;
-use std::sync::Arc;
-use std::time::Duration;
-use webrtc::data_channel::{DataChannel, DataChannelEvent};
-use webrtc::peer_connection::{PeerConnection, PeerConnectionBuilder, PeerConnectionEventHandler};
-use webrtc::peer_connection::{
-    RTCConfigurationBuilder, RTCIceCandidateInit, RTCIceGatheringState, RTCIceServer,
-    RTCPeerConnectionState, RTCSessionDescription,
-};
-use webrtc::runtime::{Runtime, Sender, channel};
-
-#[path = "../common/mod.rs"]
-mod common;
-use common::{block_on, runtime, timeout};
-
-const DEMO_HTML: &str = include_str!("demo.html");
-
-// ── Shared state for HTTP handlers ─────────────────────────────────────────────
-
-#[derive(Clone)]
-struct AppState {
-    offer_tx: Sender<(
-        RTCSessionDescription,
-        Sender<Result<RTCSessionDescription, String>>,
-    )>,
-    candidate_tx: Sender<RTCIceCandidateInit>,
-}
-
-// ── WebRTC event handler ───────────────────────────────────────────────────────
-
-struct Handler {
-    gather_complete_tx: Sender<()>,
-    runtime: Arc<dyn Runtime>,
-}
-
-#[async_trait::async_trait]
-impl PeerConnectionEventHandler for Handler {
-    async fn on_ice_gathering_state_change(&self, state: RTCIceGatheringState) {
-        if state == RTCIceGatheringState::Complete {
-            let _ = self.gather_complete_tx.try_send(());
-        }
-    }
-
-    async fn on_connection_state_change(&self, state: RTCPeerConnectionState) {
-        info!("Connection state: {}", state);
-    }
-
-    async fn on_data_channel(&self, dc: Arc<dyn DataChannel>) {
-        let runtime = self.runtime.clone();
-        runtime.spawn(Box::pin(async move {
-            let label = dc.label().await.unwrap_or_default();
-            info!("New DataChannel: '{}'", label);
-            while let Some(event) = dc.poll().await {
-                match event {
-                    DataChannelEvent::OnOpen => {
-                        info!("DataChannel '{}' open, sending greeting", label);
-                        if let Err(e) = dc.send_text("Hello from Rust server!").await {
-                            error!("Failed to send greeting: {}", e);
-                        }
-                    }
-                    DataChannelEvent::OnMessage(msg) => {
-                        let text = String::from_utf8_lossy(&msg.data);
-                        info!("Received from '{}': {}", label, text);
-                    }
-                    DataChannelEvent::OnClose => {
-                        info!("DataChannel '{}' closed", label);
-                        break;
-                    }
-                    _ => {}
-                }
-            }
-        }));
-    }
-}
-
-// ── Entry point ────────────────────────────────────────────────────────────────
-
-fn main() -> Result<()> {
-    block_on(async_main())
-}
-
-async fn async_main() -> Result<()> {
-    env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info")).init();
-
-    let runtime = runtime();
-
-    let (offer_tx, mut offer_rx) = channel::<(
-        RTCSessionDescription,
-        Sender<Result<RTCSessionDescription, String>>,
-    )>(8);
-    let (candidate_tx, mut candidate_rx) = channel::<RTCIceCandidateInit>(8);
-
-    let state = Arc::new(AppState {
-        offer_tx,
-        candidate_tx,
-    });
-
-    // Start HTTP signaling server in background
-    let addr: SocketAddr = "127.0.0.1:8080".parse()?;
-    info!("Signaling server started on http://{}", addr);
-
-    let state_clone = state.clone();
-    runtime.spawn(Box::pin(async move {
-        let make_svc = make_service_fn(move |_| {
-            let state = state_clone.clone();
-            async move {
-                Ok::<_, hyper::Error>(service_fn(move |req| handle_request(req, state.clone())))
-            }
-        });
-        let server = Server::bind(&addr).serve(make_svc);
-        if let Err(e) = server.await {
-            error!("HTTP server error: {}", e);
-        }
-    }));
-
-    // Main loop: process offers and ICE candidates forwarded from HTTP handlers
-    let mut peer_connection: Option<Arc<dyn PeerConnection>> = None;
-
-    loop {
-        futures::select! {
-            msg = offer_rx.recv().fuse() => {
-                let Some((offer, response_tx)) = msg else { break };
-                info!("Received offer from browser");
-
-                let (gather_tx, mut gather_rx) = channel::<()>(1);
-                let handler = Arc::new(Handler {
-                    gather_complete_tx: gather_tx,
-                    runtime: runtime.clone(),
-                });
-
-                let config = RTCConfigurationBuilder::new()
-                    .with_ice_servers(vec![RTCIceServer {
-                        urls: vec!["stun:stun.l.google.com:19302".to_string()],
-                        ..Default::default()
-                    }])
-                    .build();
-
-                match PeerConnectionBuilder::new()
-                    .with_configuration(config)
-                    .with_handler(handler)
-                    .with_runtime(runtime.clone())
-                    .with_udp_addrs(vec!["0.0.0.0:0".to_string()])
-                    .build()
-                    .await
-                {
-                    Ok(pc) => {
-                        if let Err(e) = pc.set_remote_description(offer).await {
-                            response_tx.try_send(Err(e.to_string())).ok();
-                            continue;
-                        }
-                        match pc.create_answer(None).await {
-                            Ok(answer) => {
-                                if let Err(e) = pc.set_local_description(answer).await {
-                                    response_tx.try_send(Err(e.to_string())).ok();
-                                    continue;
-                                }
-                                // Wait for ICE gathering to complete before returning the answer
-                                let _ = timeout(Duration::from_secs(5), gather_rx.recv()).await;
-                                match pc.local_description().await {
-                                    Some(local_desc) => {
-                                        response_tx.try_send(Ok(local_desc)).ok();
-                                    }
-                                    None => {
-                                        response_tx
-                                            .try_send(Err("No local description".to_string()))
-                                            .ok();
-                                        continue;
-                                    }
-                                }
-                                let pc: Arc<dyn PeerConnection> = Arc::new(pc);
-                                peer_connection = Some(pc);
-                            }
-                            Err(e) => {
-                                response_tx.try_send(Err(e.to_string())).ok();
-                            }
-                        }
-                    }
-                    Err(e) => {
-                        response_tx.try_send(Err(e.to_string())).ok();
-                    }
-                }
-            }
-
-            msg = candidate_rx.recv().fuse() => {
-                let Some(candidate) = msg else { break };
-                if let Some(pc) = peer_connection.as_ref() {
-                    if let Err(e) = pc.add_ice_candidate(candidate).await {
-                        error!("Failed to add ICE candidate: {}", e);
-                    }
-                }
-            }
-        }
-    }
-
-    Ok(())
-}
-
-// ── HTTP request handler ───────────────────────────────────────────────────────
-
-async fn handle_request(
-    req: Request<Body>,
-    state: Arc<AppState>,
-) -> Result<Response<Body>, hyper::Error> {
-    match (req.method(), req.uri().path()) {
-        // Serve demo HTML
-        (&Method::GET, "/") => Ok(Response::builder()
-            .header("Content-Type", "text/html")
-            .body(Body::from(DEMO_HTML))
-            .unwrap()),
-
-        // Handle SDP offer → return answer with ICE candidates
-        (&Method::POST, "/offer") => {
-            let body_bytes = hyper::body::to_bytes(req.into_body()).await?;
-            let body_str = String::from_utf8_lossy(&body_bytes);
-
-            let offer: RTCSessionDescription = match serde_json::from_str(&body_str) {
-                Ok(o) => o,
-                Err(e) => {
-                    return Ok(Response::builder()
-                        .status(StatusCode::BAD_REQUEST)
-                        .body(Body::from(e.to_string()))
-                        .unwrap());
-                }
-            };
-
-            let (response_tx, mut response_rx) =
-                channel::<Result<RTCSessionDescription, String>>(8);
-
-            if state.offer_tx.try_send((offer, response_tx)).is_err() {
-                return Ok(Response::builder()
-                    .status(StatusCode::INTERNAL_SERVER_ERROR)
-                    .body(Body::from("WebRTC loop not running"))
-                    .unwrap());
-            }
-
-            match response_rx.recv().await {
-                Some(Ok(answer)) => {
-                    let json = serde_json::to_string(&answer).unwrap();
-                    Ok(Response::builder()
-                        .header("Content-Type", "application/json")
-                        .body(Body::from(json))
-                        .unwrap())
-                }
-                Some(Err(e)) => Ok(Response::builder()
-                    .status(StatusCode::INTERNAL_SERVER_ERROR)
-                    .body(Body::from(e))
-                    .unwrap()),
-                None => Ok
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -2852,41 +2366,6 @@ async fn handle_request(
 
 - **Issue #777** (2026-06-24): **better handling on socket recv error**
   *Symptoms*: 
-
-- **Issue #776** (2026-07-31): **RTCDataChannel transitions to Closed state after a single failed delivery with max_retransmits(0)**
-  *Symptoms*: ### **Description** I am reporting a behavior in `webrtc-rs` that seems to violate the expected behavior of unreliable Data Channels as defined in **RFC 8831**.   When a Data Channel is configured with `ordered = false` and `max_retransmits = 0`, a single failed transmission attempt (due to transient network loss) causes the channel to transition to the `Closed` state immediately, rather than simply dropping the packet.  ### **RFC References** 1.  **[RFC 8831, Section 6.1](https://datatracker.ietf.org/doc/html/rfc8831#section-6.1):**     > *"Limiting the number of retransmissions to zero, combined with unordered delivery, provides a UDP-like service..."*          A UDP-like service should inherently tolerate packet loss. Closing the entire association due to a single dropped packet contradicts the core purpose of "Partial Reliability".  2.  **[RFC 4960 (SCTP), Section 8](https://datatracker.ietf.org/doc/html/rfc4960#section-8):**     SCTP should only fail an association after reaching `Association.Max.Retransmits` thresholds. A packet that is not retransmitted because of the **PR-SCTP** policy (as per **RFC 3758**) should be silently discarded by the sender's stack once the policy is met, without terminating the SCTP association or closing the Data Channel.  ### **Observed Behavior** In `webrtc-rs`, if I simulate a network drop (e.g., `sudo iptables -A OUTPUT -o lo -j DROP`) and call `data_channel.send()`, the channel state moves to `Closed` immediately.   * **Comparison with
-  **Post-Mortem & Fix Analysis**:
-  > in commit [4f518fb](https://github.com/webrtc-rs/webrtc/commit/4f518fb1eef95f389826b44bd1c1c182f71ec3d1), I added a new integration test to try to reproduce this issue, but #776 does not reproduce on current master. I built a deterministic reproduction rather than assume, and the channel stays Open.  What I checked in the code  Three places the report implicates, all fine:  - SCTP association — on_retransmission_failure handles Timer::T3RTX with an explicit comment that it does not fail the association ("T3-rtx timer will not fail by design"). Only T1-init and T1-cookie set an error, which is handshake, not data. - DCEP mapping — ordered: false + max_retransmits: Some(0) correctly produces PartialReliableRexmitUnordered with reliability parameter 0. - PR-SCTP abandonment — RFC 3758 §3.5 C2 and FORWARD-TSN generation are implemented; abandoned chunks are retired, not escalated.  And nothing in the data-channel or driver code closes a channel on a write error — the core write path only l
-
-- **Issue #774** (2026-06-23): **Fix IPV6 ICE gather failure issue**
-  *Symptoms*: [2026-02-10T00:23:39Z DEBUG webrtc::ice_gatherer] Resolved STUN server stun.l.google.com:19302 to 74.125.250.129:19302 [2026-02-10T00:23:39Z DEBUG webrtc::ice_gatherer] STUN client bound to 0.0.0.0:46260 [2026-02-10T00:23:39Z DEBUG webrtc::ice_gatherer] Resolving STUN server: stun.l.google.com:19302 [2026-02-10T00:23:39Z DEBUG webrtc::ice_gatherer] Resolved STUN server stun.l.google.com:19302 to [2001:4860:4864:5:8000::1]:19302 [2026-02-10T00:23:39Z DEBUG webrtc::ice_gatherer] STUN client bound to [::]:45307 [2026-02-10T00:23:39Z TRACE webrtc::peer_connection_driver] Sent 20 bytes to 74.125.250.129:19302 from 0.0.0.0:46260 [2026-02-10T00:23:39Z ERROR webrtc::peer_connection_driver] Failed to send to [2001:4860:4864:5:8000::1]:19302 from [::]:45307: Network is unreachable (os error 101) [2026-02-10T00:23:39Z TRACE webrtc::peer_connection_driver] Received 32 bytes from 74.125.250.129:19302 [2026-02-10T00:23:39Z ERROR webrtc::peer_connection] I/O error: the DTLS transport has not started yet test test_stun_gathering_with_google_stun has been running for over 60 seconds
-
-- **Issue #737** (2026-03-11): **Negotiating codecs when sender supports multiple options**
-  *Symptoms*: I want to send media over WHIP. My app supports multiple encoders, so I don't want to enforce a specific codec when creating a track. I want to resolve which codec to use based on the result of the codec negotiation. I would be grateful for any suggestions on how to approach it.  ##  Current scenario with webrtc-rs 0.13  - create peer connection - create audio and video transceiver - create offer, send it to WHIP endpoint, receive answer - set_local_description - set_remote_description (fails at this point) - replace both tracks with negotiated values based on `RTCRtpSendParameters` from `RTCRtpSender`  Failure scenario: For example, if the server supports only H264, but VP8 is first on our list of codecs (in MediaEngine), then set_remote_description will fail. If H264 is first on the list of codecs, it would work.  It looks like here https://github.com/webrtc-rs/webrtc/blob/master/webrtc/src/peer_connection/peer_connection_internal.rs when creating a transceiver, some codec is already assigned. My understanding is that behavior like that is expected for tracks, but not transceivers.  I'm able to make it work if, before calling set_remote_description, I call `replace_track`. However, this would require me to parse the offer and answer on my own and resolve what codec should be used. This would basically duplicate a resolution logic that is already in webrtc-rs, so I'm assuming that is not an intended approach.  ##  Current scenario with webrtc-rs 0.11  We have this scenario w
-  **Post-Mortem & Fix Analysis**:
-  > Thanks for reporting this issue.   Do you have any existing example code or tests to reproduce this issue? If not, you may submit an example like https://github.com/webrtc-rs/webrtc/tree/master/examples/examples, so I can reproduce this issue with your example locally and fix it.
-  > Hi I created example here https://github.com/wkozyra95/webrtc/blob/repro_whip_codec_negotiation/examples/examples/whip/whip.rs. It will fail if you stream it to the WHIP server that supports H264, but does not support VP8. However if you move [registering vp8](https://github.com/wkozyra95/webrtc/blob/repro_whip_codec_negotiation/examples/examples/whip/whip.rs#L24) after h264 it would work.   By default, It's connecting to `https://g.webrtc.live-video.net:4443/v2/offer` (which is a Twitch url) and you need to [provide token](https://github.com/wkozyra95/webrtc/blob/repro_whip_codec_negotiation/examples/examples/whip/whip.rs#L209) to run it. However you can switch `send_offer` with `fake_send_offer` [here](https://github.com/wkozyra95/webrtc/blob/repro_whip_codec_negotiation/examples/examples/whip/whip.rs#L66) to mock WHIP sdp exchange, or test that with any other WHIP server that does not support VP8.
-  > [Add support for multi codec negotiation #741](https://github.com/webrtc-rs/webrtc/pull/741) is merged.  by default, it is enabled.   If you want to disable multi codec negotiation, you can `settingEngine.disable_media_engine_multiple_codecs(true);`
-
-- **Issue #641** (2024-12-11): **Upgrade to 0.12.0 broke TURN**
-  *Symptoms*: Hey, I just saw that an upgrade broke my turn setup. TURN no longer works after upgrading to 0.12.0. The TURN server is coturn. The coturn configuration is below.  ``` bps-capacity=400000000 external-ip=103.97.203.7 fingerprint listening-port=3478 lt-cred-mech max-bps=1000000 max-port=65535 min-port=49152 realm= relay-ip=103.97.203.7 syslog tls-listening-port=5349 total-quota=0 user=user:password ```  When turn:[domain] and the credentials user:password is used, the login attempt does not even register with coturn and it fails ErrTurnCredentials. This happens regardless of whether `no-stun` or `fingerprint` is enabled or not, or a realm is set.  This has broken connectivity in two servers so far.  Thank you.  Regards, Rishi
-  **Post-Mortem & Fix Analysis**:
-  > Also, can confirm that the older builds work fine. Their logins register when run with `turnserver -v`.
-  > BTW additional details: none of the servers/clients have a public IP, so sometimes I _need_ TURN. They are all behind NAT. Sometimes STUN works, sometimes it doesn't, and it is expected. TURN is the only publicly available endpoint they can connect to.
-  > that's weird, TURN crate doesn't have actual code changes, only upgrades dependencies crates utils and stun.   what's the command for TURN client to connect to your coturn server?
-
-- **Issue #616** (2026-01-31): **mdns storm**
-  *Symptoms*: I'm using the latest version of the `webrtc` crate to connect nodes between servers and webclients. Recently I had problems in my home network, and it turned out that my nodes running on my server using webrtc create mdns storms:  ```log 08:32:16.365924 fwpr100p0 Out IP fricklebox.fritz.box.mdns > mdns.mcast.net.mdns: 0 A (QM)? 53854a1e-1c02-4df1-932a-c3f8bad7784f.local. (60) 08:32:16.365924 fwpr100p0 Out IP fricklebox.fritz.box.mdns > mdns.mcast.net.mdns: 0 A (QM)? 53854a1e-1c02-4df1-932a-c3f8bad7784f.local. (60) 08:32:16.365926 eno4  Out IP fricklebox.fritz.box.mdns > mdns.mcast.net.mdns: 0 A (QM)? 53854a1e-1c02-4df1-932a-c3f8bad7784f.local. (60) 08:32:16.365928 eno1  Out IP fricklebox.fritz.box.mdns > mdns.mcast.net.mdns: 0 A (QM)? 53854a1e-1c02-4df1-932a-c3f8bad7784f.local. (60) 08:32:16.365928 eno4  Out IP fricklebox.fritz.box.mdns > mdns.mcast.net.mdns: 0 A (QM)? 53854a1e-1c02-4df1-932a-c3f8bad7784f.local. (60) ```  Lots and lots of them. If I correlated this correctly, it tries to find the mdns of a remote web-client, which will never be in the local network.  Is there something to do to calm down these mdns storms? I tried to look how to configure the `mdns` part in the documentation, but didn't find how to do that.  The nodes are running in a docker container - might this impact how `mdns` interacts with the network?
-  **Post-Mortem & Fix Analysis**:
-  > I added the following lines to the setup of the `APIBuilder` from the `/examples` directory. I'm not really sure what the consequences of it are with regard to running it on the local network. I guess it still will manage to find the nodes locally.  Also not sure if I should keep the issue open or not. Without turning off the `mdns` module, I still have the flood of messages.  ```rust         // There seems to be some trouble with mdns where it can flood the local network         // with requests - so turn it off.         let mut setting_engine = SettingEngine::default();         setting_engine.set_ice_multicast_dns_mode(MulticastDnsMode::Disabled);          // Create the API object with the MediaEngine         let api = APIBuilder::new()             .with_media_engine(m)             .with_interceptor_registry(registry)             .with_setting_engine(setting_engine)             .build(); ```
-  > I see lot of mdns error messages when a peer connection is closed. It seems like the mdns connection is not stopped when the peer connection is closed. Tracking down the call from `peer_connection.stop()` leads to here:  https://github.com/webrtc-rs/webrtc/blob/fc3a0aaa0d17bfd8cacfc141a77334bc1e94c2e6/ice/src/agent/mod.rs#L342  I think this should have a `close_multicast_conn()` here somewhere.  I'm disabling mdns for now using the above method.
-  > Ah, that might be it. My nodes do reconnect quite often, which might lead to having lots of mdns requests going on.  I didn't try it out yet, but here is a PR: https://github.com/webrtc-rs/webrtc/pull/636  @r-byondlabs - is that what you think should happen?
-
-- **Issue #614** (2026-01-31): **DTLSListener gets stuck in accept when DTLS Handshake fails**
-  *Symptoms*: I'm not sure if this is intentional or not but the problem is in essence that `DTLSConn::new()` has no timeout within the `accept()` function. So whenever a handshake fails for various reasons, accept will not be able to return any new connection.  ```rs     async fn accept(&self) -> UtilResult<(Arc<dyn Conn + Send + Sync>, SocketAddr)> {         let (conn, raddr) = self.parent.accept().await?;         let dtls_conn = DTLSConn::new(conn, self.config.clone(), false, None)             .await             .map_err(util::Error::from_std)?;         Ok((Arc::new(dtls_conn), raddr))     } ```  This happens for example with my laptop, which has wifi and ethernet ports. Opening a DTLSListener on this device on `0.0.0.0:4242` accepts connections via WIFI and Ethernet (two separate ips), however the Ethernet port is preferred leading to response messages being sent only via the Ethernet port.  Connecting to the WIFI IP leads to `self.parent.accept().await?` returning successfully, however the `DTLSConn::new()` call blocks indefinitely since the Handshake fails. Therefore `accept` never returns, which leaves the `DTLSListener` in a broken state.  ![image](https://github.com/user-attachments/assets/d626ee69-52e7-46e3-9878-30c5f98a2604)  the attached image illustrates the problem: 192.168.178.189 is the wifi port on the laptop and 192.168.178.172 is the ethernet port. The Client Hello is sent to the WIFI port but the Helly Verify Request is received from the ethernet p
-  **Post-Mortem & Fix Analysis**:
-  > Unfortunately we are facing the same problem. Sometimes connecting our NB-IoT devices via [a CoAP Library](https://github.com/Covertness/coap-rs) fails due to packet loss. Afterwards no new handshakes are possible and we are forced to restart the server.   The mentioned library uses webrtc-rs for DTLS handshakes too
-  > The `DTLSListener` itself is not used anywhere in the project besides the DTLS example apparently.  @rainliu could you comment on [this](https://github.com/webrtc-rs/webrtc/blob/632f8a553e2018ce05ad5af63da1a0355cc036bc/dtls/src/listener.rs#L74C9-L74C19) line? What was the plan here? The difference to the [pion](https://github.com/pion/dtls) implementation seems to be that here the handshake is done in `DTLSConn::new()` whereas pion defers it until the first read / write request on the connection.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2903,99 +2382,470 @@ async fn handle_request(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7dba2537` (2026-10-03)
-**Commit Message**: fix(runtime): don't block the smol executor in connect_tcp (#917)
+### Incident Patch 1: `caa7f072` (2026-09-27)
+**Commit Message**: [v0.21.x] fix: release TURN allocations on close() on both runtimes (#903) (#912)
 
-The smol runtime's connect_tcp called the blocking
-std::net::TcpStream::connect inside its async block, so a dial that
-gets no answer held the executor thread for the OS connect timeout
-(135 s on Linux). Connect through smol's Async<TcpStream>::connect
-instead, as the tokio runtime already does.
+* fix(turn): release allocations when TURN clients are retired (port of #895)
 
-The test dials a loopback listener whose accept queue is full and
-requires a 200 ms timer to win the race. It is Linux-only because it
-relies on Linux dropping SYNs for a full accept queue. socket2 is added
-as a dev-dependency to set the listen backlog.
+#895 landed on v0.20.x only. On master, retiring the TURN relayer's clients
+dropped them without releasing their allocations, so the server kept each
+one until its lifetime expired: on close(), on an ICE-restart rebind, and
+on a configuration change that recreates the clients.
 
-Assisted-by: claude:claude-opus-5-5
-Assisted-by: chatgpt:gpt-6-pro
+Port it:
 
-**File**: `Cargo.toml` (modified, +3/-0)
+- RTCTurnRelayer::remove_client takes release_allocation. When set and the
+  client has a relay, Relay::close queues an authenticated Refresh with
+  LIFETIME=0 (RFC 8656 §7), drained into retirement_wouts, which poll_write
+  sends first and which a configuration reset does not clear. A socket
+  write failure retires without releasing: the socket can no longer
+  deliver it.
+- The driver sends those releases on both exit paths (the closing check at
+  the top of the loop and the Close event), through a small
+  release_turn_allocations helper, and before an ICE-restart rebind drops
+  the old sockets, since a release from a new socket would not match the
+  allocation's 5-tuple.
+
+master's rtc-turn takes the time explicitly, so Relay::close is pa
+
+**File**: `src/peer_connection/driver.rs` (modified, +86/-6)
 ```diff
-@@ -68,6 +68,9 @@ async-executor = "1.14.0"
- async-io = "2.6.0"
- futures-lite = "2.6.1"
+@@ -44,8 +44,10 @@ use rtc::shared::{FourTuple, TaggedBytesMut, TransportContext, TransportProtocol
+ use rtc::{rtcp, rtp};
+ use std::collections::hash_map::Entry;
+ use std::collections::{HashMap, VecDeque};
++use std::future::Future;
+ use std::io::IoSliceMut;
+ use std::net::{IpAddr, SocketAddr, ToSocketAddrs};
++use std::pin::Pin;
+ use std::sync::Arc;
+ use std::sync::atomic::Ordering;
+ use std::time::{Duration, Instant};
+@@ -134,6 +136,67 @@ const DEFAULT_TIMEOUT_DURATION: Duration = Duration::from_secs(86400); // 1 day
+ /// by elapsed time catches every shape.
+ const MIN_IMMEDIATE_TIMEOUT_INTERVAL: Duration = Duration::from_millis(1);
  
-+# For the smol `connect_tcp` test: a listen backlog, which std cannot set.
-+socket2 = "0.6.5"
++thread_local! {
++    /// The connection whose driver task this thread is polling at this moment, or `0`.
++    static POLLING_DRIVER: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
++}
 +
- [[example]]
- name = "custom-runtime"
- path = "examples/custom-runtime/custom-runtime.rs"
-```
-
-**File**: `src/runtime/smol.rs` (modified, +44/-5)
-```diff
-@@ -156,11 +156,8 @@ impl Runtime for SmolRuntime {
-         remote_addr: SocketAddr,
-     ) -> Pin<Box<dyn Future<Output = io::Result<Arc<dyn AsyncTcpStream>>> + Send + 'a>> {
-         Box::pin(async move {
--            let std_stream = std::net::TcpStream::connect(remote_addr)?;
--            std_stream.set_nonblocking(true)?;
--            let std_stream2 = std_stream.try_clone()?;
--            let read_io = ::smol::Async::new(std_stream)?;
--            let write_io = ::smol::Async::new(std_stream2)?;
-+            let read_io = ::smol::Async::<std::net::TcpStream>::connect(remote_addr).await?;
-+            let write_io = ::smol::Async::new(read_io.get_ref().try_clone()?)?;
-             let local_addr = read_io.get_ref().local_addr()?;
-             let peer_addr = read_io.get_ref().peer_addr()?;
-             Ok(Arc::new(TcpStream {
-@@ -411,3 +408,45 @@ impl AsyncTcpStream for TcpStream {
-         Ok(self.peer_addr)
-     }
- }
++/// Identifies a connection for [`POLLING_DRIVER`].
++fn driver_id(inner: &Arc<PeerConnectionRef>) -> usize {
++    Arc::as_ptr(inner) as usize
++}
 +
-+// Linux only: once a listener's accept queue is full, Linux drops further SYNs, which keeps
-+// the next connect pending without leaving the machine. Other kernels may refuse or admit
-+// that connection instead, so the fixture only works on Linux.
-+#[cfg(all(test, target_os = "linux"))]
-+mod tests {
-+    use super::*;
-+    use std::time::Duration;
++/// Whether the caller is running inside `inner`'s own driver task.
++///
++/// Application callbacks are awaited on the driver task, so this is true for a `close()`
++/// called from one of them. Waiting there for the driver to finish can never succeed (it cannot
++/// make progress until the callback returns), and aborting it would cut off the TURN releases it
++/// sends on its way out.
++pub(crate) fn is_polling_driver(inner: &Arc<PeerConnectionRef>) -> bool {
++    POLLING_DRIVER.with(|polling| polling.get()) == driver_id(inner)
++}
 +
-+    /// A connect whose handshake is still in flight must yield, not block the executor.
-+    #[test]
-+    fn connect_tcp_does_not_block_the_executor() {
-+        let listener =
-+            socket2::Socket::new(socket2::Domain::IPV4, socket2::Type::STREAM, None).unwrap();
-+        listener
-+            .bind(&SocketAddr::from(([127, 0, 0, 1], 0)).into())
-+            .unwrap();
-+        listener.listen(1).unwrap();
-+        let addr = listener.local_addr().unwrap().as_socket().unwrap();
-+        // Fill the accept queue until a handshake stalls.
-+        let mut queued = Vec::new();
-+        while let Ok(stream) =
-+            std::net::TcpStream::connect_timeout(&addr, Duration::from_millis(200))
-+        {
-+            queued.push(stream);
-+            assert!(queued.len() < 8, "accept queue never filled");
++/// Runs a connection's driver future, recording on the polling thread for the duration of every
++/// poll which connection it belongs to, so [`is_polling_driver`] can answer from inside it.
++///
++/// Recorded per poll rather than per task because a multi-threaded runtime may poll the task on a
++/// different thread each time; everything the driver awaits, callbacks included, runs within one
++/// of those polls.
++pub(crate) struct DriverTask {
++    id: usize,
++    future: Pin<Box<dyn Future<Output = ()> + Send>>,
++}
++
++impl DriverTask {
++    pub(crate) fn new(
++        inner: &Arc<PeerConnectionRef>,
++        future: impl Future<Output = ()> + Send + 'static,
++    ) -> Self {
++        Self {
++            id: driver_id(inner),
++            future: Box::pin(future),
 +        }
-+
-+        // The timer can only win if connect_tcp handed control back while still pending.
-+        let dialed = ::smol::block_on(::smol::future::or(
-+            async { Some(SmolRuntime.connect_tcp(addr).await.map(|_| ())) },
-+            async {
-+                ::smol::Timer::after(Duration::from_millis(200)).await;
-+                None
-+            },
-+        ));
-+        assert!(
-+            dialed.is_none(),
-+            "connect_tcp did not stay pending: {dialed:?}"
-+        );
 +    }
 +}
++
++impl Future for DriverTask {
++    type Output = ();
++
++    fn poll(self: Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> std::task::Poll<()> {
++        /// Restores the previous marker even if the poll panics.
++        struct Restore(usize);
++        impl Drop for Restore {
++            fn drop(&mut self) {
++                POLLING_DRIVER.with(|polling| polling.set(self.0));
++            }
++        }
++
++        let this = self.get_mut();
++        let _restore = Restore(POLLING_DRIVER.with(|polling| polling.replace(this.id)));
++        this.future.as_mut().poll(cx)
++    }
++}
++
+ /// Insert `sender` for `channel_id`, returning `true` if the channel should be announced.
+ pub(crate) fn insert_data_channel_event_sender(
+     data_channels: &mut HashMap<RTCDataChannelId, Sender<DataChannelEvent>>,
+@@ -563,6 +626,15 @@ where
+     async fn bind_transports(&mut self) -> Result<()> {
+         let runtime = Arc::clone(&self.inner.runtime);
+ 
++        // Release TURN allocations while the old UDP sockets still exist. Rebinding drops them
++        // below, and a Refresh(0) sent from a new socket would not match the allocation's
++        // 5-tuple, leaving it on the server until it expires. The initial bind has no previous
++        // generation to release.
++        if !self.udp_sockets.is_empty() {
++            self.turn_relayer.close()?;
++            self.poll_writes().await?;
++        }
++
+         // Drop before binding — see above. Also drops every accepted TCP stream, which is
+         // correct: they belong to the generation being replaced.
+         self.udp_sockets.clear();
+@@ -766,9 +838,7 @@ where
+             // momentarily full channel), this check still guarantees the loop —
+             // and thus a dedicated reactor thread — terminates instead of leaking.
+             if self.inner.closing.load(Ordering::Acquire) {
+-                if let Err(err) = self.turn_relayer.close() {
+-                    error!("Failed to close turn_relayer: {}", err);
+-                }
++                self.release_turn_allocations().await;
+                 return Ok(());
+             }
+ 
+@@ -1678,9 +1748,7 @@ where
+                 self.tcp_transport.register_stream(four_tuple, stream);
+             }
+             PeerConnectionDriverEvent::Close => {
+-                if let Err(err) = self.turn_relayer.close() {
+-                    error!("Failed to close turn_relayer: {}", err);
+-                }
++                self.release_turn_allocations().await;
+                 return true;
+             }
+         }
+@@ -1837,6 +1905,18 @@ where
+         messages
+     }
+ 
++    /// Releases every TURN allocation (Refresh with LIFETIME=0) and se
+```
+
+**File**: `src/peer_connection/mod.rs` (modified, +53/-28)
+```diff
+@@ -68,7 +68,7 @@ use std::sync::atomic::{AtomicBool, Ordering};
+ 
+ use driver::{
+     APPLICATION_TO_DRIVER_EVENT_CHANNEL_CAPACITY, DRIVER_TO_DATA_CHANNEL_EVENT_CHANNEL_CAPACITY,
+-    PeerConnectionDriver,
++    DriverTask, PeerConnectionDriver, is_polling_driver,
+ };
+ 
+ use rtc::data_channel::{RTCDataChannelId, RTCDataChannelInit};
+@@ -449,6 +449,13 @@ pub trait PeerConnection: crate::sealed::Sealed + Send + Sync + 'static {
+     /// [`DataChannel::send`] calls blocked awaiting
+     /// capacity are woken with [`Error::ErrDataChannelClosed`].
+     ///
++    /// TURN allocations are released on a best-effort basis: a Refresh with LIFETIME 0 is sent
++    /// for each one before this returns, so the server frees them now rather than when their
++    /// lifetime expires. `close()` waits at most about 100 ms for that; if the connection's
++    /// driver cannot send them in time, it is stopped anyway and the allocations expire on the
++    /// server. Called from an event-handler callback, which runs on the driver itself, it returns
++    /// without waiting and the releases are sent as soon as the callback returns.
++    ///
+     /// # Errors
+     ///
+     /// Returns an error if the driver could not be reached to perform the shutdown.
+@@ -716,15 +723,25 @@ pub trait PeerConnection: crate::sealed::Sealed + Send + Sync + 'static {
+ ///
+ /// Not exposed directly — obtained as an opaque `impl PeerConnection` from
+ /// [`PeerConnectionBuilder::build`].
++/// How long `close()` waits for the driver to finish its exit path before aborting it.
++///
++/// The exit path is local work: queue the TURN releases and hand them to the socket, with no
++/// round trip, so it normally completes in a few milliseconds. This only caps the case of a driver
++/// that cannot get there promptly — one blocked in an application callback, say — where releasing
++/// the allocations is best effort and `close()` must not be held up for it.
++const DRIVER_STOP_TIMEOUT: Duration = Duration::from_millis(100);
++
+ pub(crate) struct PeerConnectionImpl {
+     inner: Arc<PeerConnectionRef>,
+     driver_handle: Mutex<Option<Box<dyn JoinHandle>>>,
++    /// Ends (`recv` returns `None`) once the driver future is gone, whether it ran to completion
++    /// or was aborted: its sender lives in that future. `close()` waits on it.
++    driver_stopped: Mutex<Option<crate::runtime::Receiver<()>>>,
+     /// Whether the driver runs on the shared bounded reactor pool (a task pinned to
+-    /// one pool thread) rather than the general async runtime. When true, `close()`
+-    /// waits for that task to finish and then aborts it, and `Drop` signals it to
+-    /// stop (via [`PeerConnectionRef::closing`]) so a driver task is not left
+-    /// running on a pool thread if the connection is dropped without an explicit
+-    /// `close()`.
++    /// one pool thread) rather than the general async runtime. When true, `Drop`
++    /// signals it to stop (via [`PeerConnectionRef::closing`]) so a driver task is not
++    /// left running on a pool thread if the connection is dropped without an explicit
++    /// `close()`. (`close()` itself treats both runtimes alike.)
+     dedicated_reactor: bool,
+ }
+ 
+@@ -979,6 +996,7 @@ impl PeerConnectionImpl {
+                 ice_restart_rebind_pending: AtomicBool::new(false),
+             }),
+             driver_handle: Mutex::new(None),
++            driver_stopped: Mutex::new(None),
+             dedicated_reactor: dedicated_reactor_pool_size > 0,
+         };
+ 
+@@ -995,7 +1013,10 @@ impl PeerConnectionImpl {
+         // future, build the driver, report the init outcome, then run the event
+         // loop to completion.
+         let inner = peer_connection.inner.clone();
++        let (driver_stopped_tx, driver_stopped_rx) = channel::<()>(1);
+         let run_driver = async move {
++            // Dropped with this future, which is what `close()` waits for.
++            let _driver_stopped = driver_stopped_tx;
+             let mut driver = PeerConnectionDriver::new(
+                 inner,
+                 udp_addrs,
+@@ -1018,12 +1039,14 @@ impl PeerConnectionImpl {
+             driver.signal_stopped();
+         };
+ 
++        let run_driver = DriverTask::new(&peer_connection.inner, run_driver);
+         let driver_handle = if dedicated_reactor_pool_size > 0 {
+             runtime.spawn_reactor(dedicated_reactor_pool_size, Box::pin(run_driver))
+         } else {
+             runtime.spawn(Box::pin(run_driver))
+         };
+         *peer_connection.driver_handle.lock().await = Some(driver_handle);
++        *peer_connection.driver_stopped.lock().await = Some(driver_stopped_rx);
+ 
+         // Surface init errors here rather than swallowing them on the driver
+         // thread. The driver reports its init outcome exactly once; a closed
+@@ -1097,30 +1120,31 @@ impl PeerConnection for PeerConnectionImpl {
+             .await;
+ 
+         let driver_handle = self.driver_handle.lock().await.take();
++        let driver_stopped = self.driver_stopped.lock().awa
+```
+
+**File**: `src/peer_connection/transport/turn_relayer.rs` (modified, +30/-5)
+```diff
+@@ -69,6 +69,10 @@ pub(crate) struct RTCTurnRelayer {
+     pending_permissions: HashMap<rtc::stun::message::TransactionId, PendingPermission>,
+     pending_permission_pairs: HashMap<(SocketAddr, SocketAddr), rtc::stun::message::TransactionId>,
+     pending_packets: HashMap<(SocketAddr, SocketAddr), VecDeque<TaggedBytesMut>>,
++    /// Refresh(LIFETIME=0) requests queued while retiring a TURN client. They must survive a
++    /// configuration reset (which clears `wouts`) and go out on the socket that owns the
++    /// allocation, so they are kept apart and sent first.
++    retirement_wouts: VecDeque<TaggedBytesMut>,
+     wouts: VecDeque<TaggedBytesMut>,
+     routs: VecDeque<TaggedBytesMut>,
+     events: VecDeque<RTCTurnRelayEventOut>,
+@@ -96,6 +100,7 @@ impl RTCTurnRelayer {
+             pending_permissions: HashMap::new(),
+             pending_permission_pairs: HashMap::new(),
+             pending_packets: HashMap::new(),
++            retirement_wouts: VecDeque::new(),
+             wouts: VecDeque::new(),
+             routs: VecDeque::new(),
+             events: VecDeque::new(),
+@@ -131,7 +136,7 @@ impl RTCTurnRelayer {
+ 
+         let keys: Vec<FourTuple> = self.clients.keys().copied().collect();
+         for key in keys {
+-            self.remove_client(key);
++            self.remove_client(key, true);
+         }
+         self.relay_addrs.clear();
+         self.pending_permissions.clear();
+@@ -507,8 +512,24 @@ impl RTCTurnRelayer {
+         }
+     }
+ 
+-    fn remove_client(&mut self, four_tuple: FourTuple) {
++    /// Drops a TURN client. With `release_allocation`, a live allocation is released first
++    /// (RFC 8656 §7: a Refresh with LIFETIME 0) instead of being left on the server until its
++    /// lifetime expires.
++    fn remove_client(&mut self, four_tuple: FourTuple, release_allocation: bool) {
+         if let Some(mut managed_client) = self.clients.remove(&four_tuple) {
++            // `Client::close` only clears transaction state; the release is `Relay::close`,
++            // which queues an authenticated Refresh(LIFETIME=0). Clear the old transactions
++            // first, then create and drain the release so the driver sends it on the socket
++            // that owns the allocation.
++            let _ = managed_client.client.close();
++            if release_allocation && let Some(relay_addr) = managed_client.relay_addr {
++                if let Ok(mut relay) = managed_client.client.relay(relay_addr) {
++                    let _ = relay.close(self.runtime.now());
++                }
++                while let Some(msg) = managed_client.client.poll_write() {
++                    self.retirement_wouts.push_back(msg);
++                }
++            }
+             if let Some(relay_addr) = managed_client.relay_addr.take() {
+                 self.relay_addrs.remove(&relay_addr);
+                 self.pending_packets
+@@ -518,7 +539,6 @@ impl RTCTurnRelayer {
+                 self.pending_permission_pairs
+                     .retain(|(addr, _), _| *addr != relay_addr);
+             }
+-            let _ = managed_client.client.close();
+         }
+     }
+ 
+@@ -645,6 +665,9 @@ impl Protocol<TaggedBytesMut, TaggedBytesMut, RTCTurnRelayEventIn> for RTCTurnRe
+     }
+ 
+     fn poll_write(&mut self) -> Option<Self::Wout> {
++        if let Some(msg) = self.retirement_wouts.pop_front() {
++            return Some(msg);
++        }
+         for managed_client in self.clients.values_mut() {
+             while let Some(msg) = managed_client.client.poll_write() {
+                 self.wouts.push_back(msg);
+@@ -656,7 +679,9 @@ impl Protocol<TaggedBytesMut, TaggedBytesMut, RTCTurnRelayEventIn> for RTCTurnRe
+     fn handle_event(&mut self, evt: RTCTurnRelayEventIn) -> Result<()> {
+         match evt {
+             RTCTurnRelayEventIn::SocketWriteFailure(four_tuple) => {
+-                self.remove_client(four_tuple);
++                // The socket is already unusable, so a Refresh(0) could not be delivered; the
++                // server reclaims this allocation when its lifetime expires.
++                self.remove_client(four_tuple, false);
+                 self.maybe_emit_gathering_complete();
+             }
+         }
+@@ -795,7 +820,7 @@ impl Protocol<TaggedBytesMut, TaggedBytesMut, RTCTurnRelayEventIn> for RTCTurnRe
+     fn close(&mut self) -> Result<()> {
+         let keys: Vec<FourTuple> = self.clients.keys().copied().collect();
+         for key in keys {
+-            self.remove_client(key);
++            self.remove_client(key, true);
+         }
+         Ok(())
+     }
+```
+
+**File**: `tests/turn_release_on_close.rs` (added, +426/-0)
+```diff
+@@ -0,0 +1,426 @@
++//! Regression test for webrtc#903: `close()` must release the connection's TURN allocations.
++//!
++//! A TURN allocation is released with a Refresh carrying LIFETIME=0 (RFC 8656 §7). The driver
++//! sends those releases on its way out, but on the general runtime `close()` used to abort the
++//! driver without waiting, so whether the releases went out was a race — and on master they were
++//! never queued at all (webrtc#895 had landed on v0.20.x only). The server kept the allocations
++//! until their lifetime expired.
++//!
++//! The same release is owed when an ICE restart rebinds the sockets: the old allocation belongs to
++//! a socket that is about to be dropped, and a release sent from its replacement would not match
++//! the allocation's 5-tuple.
++//!
++//! A mock TURN server counts the releases it receives. Each close case is repeated because the
++//! old failure was a race.
++use std::net::{IpAddr, Ipv4Addr, SocketAddr};
++use std::sync::Arc;
++use std::sync::atomic::{AtomicUsize, Ordering};
++use std::time::{Duration, Instant};
++
++use rtc::peer_connection::configuration::setting_engine::SettingEngineBuilder;
++use rtc::stun::attributes::{ATTR_NONCE, ATTR_REALM};
++use rtc::stun::error_code::CODE_UNAUTHORIZED;
++use rtc::stun::message::{
++    CLASS_ERROR_RESPONSE, CLASS_SUCCESS_RESPONSE, Getter, METHOD_ALLOCATE,
++    METHOD_CREATE_PERMISSION, METHOD_REFRESH, Message as StunMessage, MessageType,
++};
++use rtc::stun::textattrs::{Nonce, Realm};
++use rtc::turn::proto::lifetime::Lifetime;
++use rtc::turn::proto::relayaddr::RelayedAddress;
++use webrtc::peer_connection::{
++    MediaEngine, PeerConnection, PeerConnectionBuilder, PeerConnectionEventHandler,
++    RTCConfigurationBuilder, RTCIceGatheringState, RTCIceServer, RTCIceTransportPolicy,
++};
++use webrtc::runtime::{AsyncUdpSocket, Mutex, Receiver, Sender, channel};
++
++mod common;
++use common::{block_on, runtime, sleep, timeout};
++
++/// Each case is repeated this many times: the old failure was a race on the general runtime.
++const RUNS: usize = 5;
++
++/// How long after `close()` returns the release may take to reach the mock server.
++const RELEASE_TIMEOUT: Duration = Duration::from_secs(2);
++
++/// What the mock TURN server has seen.
++#[derive(Default)]
++struct Counts {
++    allocations: AtomicUsize,
++    releases: AtomicUsize,
++}
++
++/// A TURN server that grants every authenticated Allocate and counts Refresh(LIFETIME=0).
++async fn run_mock_turn_server(
++    socket: Arc<dyn AsyncUdpSocket>,
++    relay_addr: SocketAddr,
++    counts: Arc<Counts>,
++) {
++    let mut buf = vec![0u8; 2048];
++    loop {
++        let Ok((n, peer_addr)) = socket.recv_from(&mut buf).await else {
++            break;
++        };
++        let mut msg = StunMessage::new();
++        msg.raw = buf[..n].to_vec();
++        if msg.decode().is_err() {
++            continue;
++        }
++
++        let mut response = StunMessage::new();
++        let built = match msg.typ.method {
++            METHOD_ALLOCATE if msg.get(ATTR_NONCE).is_err() => response.build(&[
++                Box::new(msg.transaction_id),
++                Box::new(MessageType::new(METHOD_ALLOCATE, CLASS_ERROR_RESPONSE)),
++                Box::new(CODE_UNAUTHORIZED),
++                Box::new(Realm::new(ATTR_REALM, "webrtc.rs".to_owned())),
++                Box::new(Nonce::new(ATTR_NONCE, "nonce".to_owned())),
++            ]),
++            METHOD_ALLOCATE => {
++                counts.allocations.fetch_add(1, Ordering::SeqCst);
++                response.build(&[
++                    Box::new(msg.transaction_id),
++                    Box::new(MessageType::new(METHOD_ALLOCATE, CLASS_SUCCESS_RESPONSE)),
++                    Box::new(RelayedAddress {
++                        ip: relay_addr.ip(),
++                        port: relay_addr.port(),
++                    }),
++                    Box::new(Lifetime(Duration::from_secs(600))),
++                ])
++            }
++            METHOD_REFRESH => {
++                let mut lifetime = Lifetime::default();
++                let release = lifetime.get_from(&msg).is_ok() && lifetime.0.is_zero();
++                if release {
++                    counts.releases.fetch_add(1, Ordering::SeqCst);
++                }
++                response.build(&[
++                    Box::new(msg.transaction_id),
++                    Box::new(MessageType::new(METHOD_REFRESH, CLASS_SUCCESS_RESPONSE)),
++                    Box::new(Lifetime(if release {
++                        Duration::ZERO
++                    } else {
++                        Duration::from_secs(600)
++                    })),
++                ])
++            }
++            METHOD_CREATE_PERMISSION => response.build(&[
++                Box::new(msg.transaction_id),
++                Box::new(MessageType::new(
++                    METHOD_CREATE_PERMISSION,
++                    CLASS_SUCCESS_RESPONSE,
++                )),
++            ]),
++            _ => continue,
++        };
++        if built.is_err() {
++            continue;
 ```
 
 ---
@@ -3465,142 +3315,7 @@ r
 
 ---
 
-### Incident Patch 3: `c0bc204a` (2026-09-26)
-**Commit Message**: fix(stun_gatherer): complete gathering when a STUN server does not answer (#910)
-
-Each STUN client sends a single Binding request, but poll_event retired a
-client only when its response produced a server-reflexive candidate. Every
-other outcome kept it in stun_clients:
-
-- a timed-out request (the `_` arm logged "STUN error: TransactionTimeOut"
-  at error! and moved on);
-- a response without a usable XOR-MAPPED-ADDRESS, or one whose candidate
-  could not be built (those paths `continue`d).
-
-StunGatheringComplete is only sent once stun_clients is empty, so one local
-address that cannot reach one STUN server (a VPN or cellular interface,
-say) left the gatherer in Gathering for good with nothing scheduled to
-move it. The driver's finish_gathering_if_ready waits for both STUN and
-TURN completion, so the end-of-candidates marker was never added and ICE
-gathering never reached Complete; an application waiting for gathering to
-finish before sending its SDP hung. It repeated on every ICE restart. The
-TURN relayer already treats its transaction timeout as finished.
-
-Treat every event as the end of that client's transaction and retire it,
-so the existing emptiness check sends StunGatheringCom
-
-**File**: `src/peer_connection/transport/stun_gatherer.rs` (modified, +272/-42)
-```diff
-@@ -239,6 +239,48 @@ impl RTCStunGatherer {
-         Ok(())
-     }
- 
-+    /// The server-reflexive candidate a Binding response reports, or `None` if the response
-+    /// cannot yield one. Either way the transaction is over.
-+    fn server_reflexive_candidate(
-+        msg: &StunMessage,
-+        four_tuple: FourTuple,
-+    ) -> Option<RTCIceCandidateInit> {
-+        let mut xor_addr = XorMappedAddress::default();
-+        if let Err(err) = xor_addr.get_from(msg) {
-+            warn!(
-+                "STUN response from {} to {} has no usable XOR-MAPPED-ADDRESS: {}",
-+                four_tuple.peer_addr, four_tuple.local_addr, err
-+            );
-+            return None;
-+        }
-+        let config = CandidateServerReflexiveConfig {
-+            base_config: CandidateConfig {
-+                network: "udp".to_owned(),
-+                address: xor_addr.ip.to_string(),
-+                port: xor_addr.port,
-+                component: 1,
-+                ..Default::default()
-+            },
-+            rel_addr: four_tuple.local_addr.ip().to_string(),
-+            rel_port: four_tuple.local_addr.port(),
-+            ..Default::default()
-+        };
-+        let candidate = match config.new_candidate_server_reflexive() {
-+            Ok(candidate) => candidate,
-+            Err(err) => {
-+                error!("Failed to new_candidate_server_reflexive: {}", err);
-+                return None;
-+            }
-+        };
-+        match RTCIceCandidate::from(&candidate).to_json() {
-+            Ok(candidate_init) => Some(candidate_init),
-+            Err(err) => {
-+                error!("Failed to RTCIceCandidate to json: {}", err);
-+                None
-+            }
-+        }
-+    }
-+
-     /// Gather a single srflx candidate, skipping servers without a matching address family.
-     fn gather_from_stun_server(
-         runtime: &dyn Runtime,
-@@ -335,59 +377,52 @@ impl Protocol<TaggedBytesMut, (), RTCStunGatherEventIn> for RTCStunGatherer {
-     }
- 
-     fn poll_event(&mut self) -> Option<Self::Eout> {
--        let mut four_tuples = HashSet::new();
-+        // Each client sends a single Binding request, so any event ends it: a response, usable
-+        // or not, a timeout, or a stop. Every such client is retired below, which is what lets
-+        // gathering complete. Retiring only the ones that produced a candidate left a client
-+        // whose server never answered in the map for good, so `StunGatheringComplete` never
-+        // fired and ICE gathering never finished (webrtc#904).
-+        let mut finished = HashSet::new();
-         for stun_client in self.stun_clients.values_mut() {
-+            let four_tuple = FourTuple {
-+                local_addr: stun_client.local_addr(),
-+                peer_addr: stun_client.peer_addr(),
-+            };
-             while let Some(event) = stun_client.poll_event() {
-+                finished.insert(four_tuple);
-                 match event {
-                     StunEvent::Message(msg) => {
--                        let mut xor_addr = XorMappedAddress::default();
--                        if let Err(err) = xor_addr.get_from(&msg) {
--                            error!("Failed to get xor mapped message: {}", err);
--                            continue;
-+                        if let Some(candidate_init) =
-+                            RTCStunGatherer::server_reflexive_candidate(&msg, four_tuple)
-+                        {
-+                            self.events
-+                                .push_back(RTCStunGatherEventOut::LocalIceCandidate(
-+                                    candidate_init,
-+                                ));
-                         }
--                        let config = CandidateServerReflexiveConfig {
--                            base_config: CandidateConfig {
--                                network: "udp".to_owned(),
--                                address: xor_addr.ip.to_string(),
--                                port: xor_addr.port,
--                                component: 1,
--                                ..Default::default()
--                            },
--                            rel_addr: stun_client.local_addr().ip().to_string(),
--                            rel_port: stun_client.local_addr().port(),
--                            ..Default::default()
--                        };
--                        let candidate = match config.new_candidate_server_reflexive() {
--                            Ok(candidate) => candidate,
--                            Err(err) => {
--                                error!("Failed to new_candidate_server_reflexive: {}", err);
--                                continue;
--                            }
--                        };
--
--                        let candidate_init = match RTCIceCandidate::from(&candidate).to_json() {
--                            Ok(candidate_init) => candidate_init,
--                            Err(err) => {
--                                error!("Faile
-```
-
----
-
-### Incident Patch 4: `64b6eeeb` (2026-09-26)
+### Incident Patch 3: `64b6eeeb` (2026-09-26)
 **Commit Message**: fix(rtp_transceiver): break the PeerConnectionRef reference cycle (#906) (#909)
 
 * fix(rtp_transceiver): break the PeerConnectionRef reference cycle (#906)
@@ -4397,1107 +4112,13 @@ transceiver the appl
 +}
 ```
 
----
-
-### Incident Patch 5: `36433e53` (2026-09-20)
-**Commit Message**: fix: skip STUN servers without a matching address family (#900)
-
-* fix: skip STUN servers without a matching address family
-
-* fix(stun): parse STUN urls instead of slicing the scheme off
-
-Two problems on the resolution path, both of which produced the spurious
-"Failed to resolve STUN server" this change set out to remove.
-
-`url.strip_prefix("stun:")` handed the remainder straight to
-`resolve_host`, which needs `host:port`:
-
-  - `stun:stun.l.google.com` omits the port, which RFC 7064 permits and
-    defaults to 3478. It resolved nothing. The deleted `format!` branch
-    was meant to cover this but was already dead — the `starts_with`
-    guard makes `contains(':')` always true.
-  - `stun:host:3478?transport=udp` carries a query that RFC 7064 does not
-    define for `stun:`, but that providers ship anyway.
-    `RTCConfiguration::get_ice_servers` strips it for exactly that reason;
-    the driver bypasses it by passing the unsanitized list here, so the
-    query reached `resolve_host` and resolution failed.
-
-Parse the URL with `ice::url::Url::parse_url` — the same source of the
-3478 default that `turn_relayer` already relies on — after stripping the
-query the way `get_ice_servers` doe
-
-**File**: `src/peer_connection/transport/stun_gatherer.rs` (modified, +269/-46)
-```diff
-@@ -6,6 +6,7 @@
- 
- use crate::runtime::Runtime;
- use rtc::ice::candidate::CandidateConfig;
-+use rtc::ice::url::{SchemeType, Url as IceUrl};
- use rtc::peer_connection::configuration::{RTCIceServer, RTCIceTransportPolicy};
- use rtc::peer_connection::transport::{
-     CandidateHostConfig, CandidateServerReflexiveConfig, RTCIceCandidate, RTCIceCandidateInit,
-@@ -22,7 +23,7 @@ use std::sync::Arc;
- /*use rtc::turn::client::{
-     Client as TurnClient, ClientConfig as TurnClientConfig, Event as TurnEvent,
- };*/
--use log::{debug, error};
-+use log::{debug, error, warn};
- use rtc::peer_connection::state::RTCIceGatheringState;
- use rtc::stun::agent::StunEvent;
- use rtc::stun::message::Getter;
-@@ -160,17 +161,64 @@ impl RTCStunGatherer {
-         // Clone the handle up front so the per-server borrows below stay disjoint.
-         let runtime = Arc::clone(&self.runtime);
-         for ice_server in &self.ice_servers {
--            for url in &ice_server.urls {
--                // Only handle stun: URLs for now
--                if !url.starts_with("stun:") {
--                    continue;
-+            for raw_url in &ice_server.urls {
-+                // RFC 7064 defines no query component for `stun:`, but real-world
-+                // configurations ship `?transport=udp` on STUN URLs. Strip it rather than
-+                // reject the server, matching `RTCConfiguration::get_ice_servers` — which
-+                // exists for exactly this reason, and which the driver bypasses by handing
-+                // this gatherer the unsanitized list.
-+                let sanitized = raw_url.split('?').next().unwrap_or(raw_url);
-+
-+                let url = match IceUrl::parse_url(sanitized) {
-+                    Ok(url) => url,
-+                    Err(err) => {
-+                        // `turn:`/`turns:` belong to the TURN relayer; stay quiet about
-+                        // anything that does not claim to be STUN.
-+                        if sanitized.starts_with("stun") {
-+                            warn!("Skipping malformed STUN url {}: {}", raw_url, err);
-+                        }
-+                        continue;
-+                    }
-+                };
-+
-+                match url.scheme {
-+                    SchemeType::Stun => {}
-+                    SchemeType::Stuns => {
-+                        warn!("Skipping unsupported secure STUN url {}", raw_url);
-+                        continue;
-+                    }
-+                    // Gathered by the TURN relayer, not here.
-+                    _ => continue,
-                 }
- 
-+                // `Url` supplies RFC 7064's default port, so a `stun:host` URL with the
-+                // port omitted resolves instead of reaching `resolve_host` without one.
-+                // `parse_url` strips the brackets from an IPv6 literal, so put them back:
-+                // a bare `2001:db8::2:3478` is not a parseable socket address. A host
-+                // containing `:` can only be an IPv6 literal — DNS names never do.
-+                let server_addr = if url.host.contains(':') {
-+                    format!("[{}]:{}", url.host, url.port)
-+                } else {
-+                    format!("{}:{}", url.host, url.port)
-+                };
-+
-+                // Resolve once per URL, then only create clients for matching families.
-+                debug!("Resolving STUN server: {}", server_addr);
-+                let resolved_addrs = match runtime.resolve_host(&server_addr).await {
-+                    Ok(addrs) => addrs,
-+                    Err(err) => {
-+                        error!("Failed to resolve STUN server {}: {}", server_addr, err);
-+                        continue;
-+                    }
-+                };
-+
-                 for local_addr in &self.local_addrs {
--                    match RTCStunGatherer::gather_from_stun_server(&*runtime, *local_addr, url)
--                        .await
--                    {
--                        Ok(stun_client) => {
-+                    match RTCStunGatherer::gather_from_stun_server(
-+                        &*runtime,
-+                        *local_addr,
-+                        &resolved_addrs,
-+                    ) {
-+                        Ok(Some(stun_client)) => {
-                             self.stun_clients.insert(
-                                 FourTuple {
-                                     local_addr: stun_client.local_addr(),
-@@ -179,6 +227,7 @@ impl RTCStunGatherer {
-                                 stun_client,
-                             );
-                         }
-+                        Ok(None) => {}
-                         Err(err) => {
-                             error!("Failed to gather stun client: {}", err);
-                         }
-@@ -190,49 +239,25 @@ impl RTCStunGatherer {
-         Ok(())
-     }
- 
--    /// Gather a single srflx candidate from a STUN server
--    async fn gather_from_stun_server(
-+    /// Gather a single srflx candidate, skipping servers without a ma
-```
-
----
-
-### Incident Patch 6: `b45f9a93` (2026-09-03)
-**Commit Message**: fix 0.20 (sans-IO): TURN relayer consumes STUN Binding responses when STUN and TURN share the same server address — no srflx candidates gathered #890
-
-**File**: `rtc` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--Subproject commit 7df0a825c53155850b4e76dda03815c9902a801f
-+Subproject commit 7386413428e16cbbae16552647a972df5d655fd5
-```
-
-**File**: `src/peer_connection/transport/turn_relayer.rs` (modified, +252/-20)
-```diff
-@@ -12,7 +12,10 @@ use rtc::peer_connection::transport::{
- use rtc::sansio::Protocol;
- use rtc::shared::error::{Error, Result};
- use rtc::shared::{FourTuple, TaggedBytesMut, TransportContext, TransportProtocol};
--use rtc::stun::message::{METHOD_BINDING, Message as StunMessage, is_stun_message};
-+use rtc::stun::message::{
-+    CLASS_ERROR_RESPONSE, CLASS_INDICATION, CLASS_SUCCESS_RESPONSE, Message as StunMessage,
-+    TransactionId, is_stun_message,
-+};
- use rtc::turn::client::{
-     Client as TurnClient, ClientConfig as TurnClientConfig, Event as TurnEvent,
- };
-@@ -397,24 +400,21 @@ impl RTCTurnRelayer {
-         }
-     }
- 
-+    /// Which TURN client, if any, this inbound packet belongs to.
-+    ///
-+    /// These sockets are shared with [`RTCStunGatherer`](super::stun_gatherer::RTCStunGatherer),
-+    /// and when the configuration points `stun:` and `turn:` URLs at one `host:port` — the standard
-+    /// single-listener coturn deployment — the four-tuple is *identical* for both users. So the
-+    /// message is inspected before the four-tuple is trusted, because in that deployment an address
-+    /// match cannot say whose the packet is: a response is matched by transaction id, and only the
-+    /// framings that carry none fall back to addresses. See [webrtc#890].
-+    ///
-+    /// [webrtc#890]: https://github.com/webrtc-rs/webrtc/issues/890
-     fn matching_client_key(&self, msg: &TaggedBytesMut) -> Option<FourTuple> {
--        let exact = FourTuple::from(&msg.transport);
--        if self.clients.contains_key(&exact) {
--            return Some(exact);
--        }
--
--        let same_local: Vec<FourTuple> = self
--            .clients
--            .keys()
--            .copied()
--            .filter(|four_tuple| four_tuple.local_addr == msg.transport.local_addr)
--            .collect();
--        if same_local.is_empty() {
--            return None;
--        }
--
-+        // ChannelData is not STUN-framed and carries no transaction id, so addresses are all there
-+        // is — and they suffice, because the gatherer neither sends nor receives it.
-         if ChannelData::is_channel_data(&msg.message) {
--            return Self::match_same_local_client(&same_local, msg.transport.peer_addr);
-+            return self.match_by_local_addr(msg);
-         }
- 
-         if !is_stun_message(&msg.message) {
-@@ -427,9 +427,54 @@ impl RTCTurnRelayer {
-             return None;
-         }
- 
--        if stun_message.typ.method == METHOD_BINDING {
--            return None;
-+        match stun_message.typ.class {
-+            // Data and Send indications are not transaction-matched, so they route by address for
-+            // the same reason ChannelData does.
-+            CLASS_INDICATION => self.match_by_local_addr(msg),
-+
-+            // RFC 5389 section 7.3.3: a response belongs to whoever sent the request, identified by
-+            // transaction id and by nothing else. Every TURN request registers one, so a response
-+            // no client is waiting on is not ours — most often a Binding response for the gatherer,
-+            // arriving from the address we share with it.
-+            CLASS_SUCCESS_RESPONSE | CLASS_ERROR_RESPONSE => {
-+                self.match_by_transaction(&stun_message.transaction_id)
-+            }
-+
-+            // An inbound request on these sockets is an ICE connectivity check, which belongs to
-+            // neither this relayer nor the gatherer.
-+            _ => None,
-         }
-+    }
-+
-+    /// The client waiting on `transaction_id`.
-+    ///
-+    /// Searches every client rather than the one whose four-tuple matches, because a multi-homed
-+    /// server may answer from an address other than the one we sent to — the case
-+    /// [`match_same_local_client`](Self::match_same_local_client) exists for. A transaction id
-+    /// identifies the client outright, so that heuristic is not needed here.
-+    fn match_by_transaction(&self, transaction_id: &TransactionId) -> Option<FourTuple> {
-+        self.clients
-+            .iter()
-+            .find(|(_, managed)| managed.client.has_transaction(transaction_id))
-+            .map(|(four_tuple, _)| *four_tuple)
-+    }
-+
-+    /// The client on this packet's local socket, disambiguated by peer address.
-+    ///
-+    /// For the framings that carry no transaction id. Prefers an exact four-tuple, then falls back
-+    /// to clients sharing the local socket.
-+    fn match_by_local_addr(&self, msg: &TaggedBytesMut) -> Option<FourTuple> {
-+        let exact = FourTuple::from(&msg.transport);
-+        if self.clients.contains_key(&exact) {
-+            return Some(exact);
-+        }
-+
-+        let same_local: Vec<FourTuple> = self
-+            .clients
-+            .keys()
-+            .copied()
-+            .filter(|four_tuple| four_tuple.local_addr == msg.transport.local_addr)
-+            .collect();
- 
-         Self::match_same_local_client(&same_local, msg.transport.peer_addr)
-     }
-@@ -766,10 +811,43 @@ mod tests {
-     use rtc::peer_connection
-```
-
----
-
-### Incident Patch 7: `d89ccc43` (2026-08-31)
-**Commit Message**: update rtc pointer to fix two sctp issues
-
-**File**: `rtc` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--Subproject commit 51558ffb550bb17a540343b338e2cd4a764f3690
-+Subproject commit e530b4cecb0f87eb26ba89a610529f2bca81ed8e
-```
-
----
-
-### Incident Patch 8: `6a6c3254` (2026-08-30)
-**Commit Message**: update rtc pointer to fix sctp: permanent zero-window deadlock when the chunk dropped at buffer-full is the tail of a burst #217
-
-**File**: `rtc` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--Subproject commit d5785c9b4643d0eac37b819e5cf72cf88fa12725
-+Subproject commit 2dadde6e556a9a6abfa89a6aa9f4ef32a95126cf
-```
-
----
-
-### Incident Patch 9: `00a33a2e` (2026-08-29)
-**Commit Message**: fix RFC: Defer SCTP stream-id assignment until DTLS role is resolved (breaking API change) #199
-
-**File**: `rtc` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--Subproject commit fa17b237e20d171e2bcf113e36ec655f025e5eb3
-+Subproject commit d5785c9b4643d0eac37b819e5cf72cf88fa12725
-```
-
-**File**: `tests/data_channels_close_by_rtc_interop.rs` (modified, +2/-1)
-```diff
-@@ -32,6 +32,7 @@ use webrtc::runtime::{Runtime, Sender, channel};
- 
- mod common;
- use common::{block_on, runtime, sleep, timeout};
-+use rtc::data_channel::RTCDataChannelId;
- 
- const DEFAULT_TIMEOUT_DURATION: Duration = Duration::from_secs(30);
- 
-@@ -196,7 +197,7 @@ async fn run_test() -> Result<()> {
-     let mut rtc_connected = false;
-     let mut webrtc_connected = false;
-     let mut rtc_data_channel_opened = false;
--    let mut rtc_dc_id: Option<u16> = None;
-+    let mut rtc_dc_id: Option<RTCDataChannelId> = None;
-     let mut last_message_time = Instant::now();
-     let message_interval = Duration::from_millis(500);
-     let mut webrtc_msg_count = 0usize;
-```
-
-**File**: `tests/data_channels_create_interop.rs` (modified, +2/-1)
-```diff
-@@ -36,6 +36,7 @@ use webrtc::runtime::{Runtime, Sender, channel};
- 
- mod common;
- use common::{block_on, runtime, sleep, timeout};
-+use rtc::data_channel::RTCDataChannelId;
- 
- const DEFAULT_TIMEOUT_DURATION: Duration = Duration::from_secs(30);
- 
-@@ -208,7 +209,7 @@ async fn run_test() -> Result<()> {
-     let mut webrtc_connected = false;
-     let mut message_sent = false;
-     let mut rtc_data_channel_opened = false;
--    let mut rtc_dc_id: Option<u16> = None;
-+    let mut rtc_dc_id: Option<RTCDataChannelId> = None;
-     let mut webrtc_received = false;
-     let mut rtc_received_echo = false;
- 
-```
-
-**File**: `tests/ice_restart_by_rtc_interop.rs` (modified, +2/-1)
-```diff
-@@ -28,6 +28,7 @@ use webrtc::runtime::{Runtime, Sender, channel};
- 
- mod common;
- use common::{block_on, runtime, sleep, timeout};
-+use rtc::data_channel::RTCDataChannelId;
- 
- const DEFAULT_TIMEOUT_DURATION: Duration = Duration::from_secs(30);
- const TEST_MESSAGE: &str = "Hello before restart!";
-@@ -180,7 +181,7 @@ async fn run_test() -> Result<()> {
-     let mut buf = vec![0u8; 2000];
-     let mut rtc_connected = false;
-     let mut webrtc_connected = false;
--    let mut rtc_dc_id: Option<u16> = None;
-+    let mut rtc_dc_id: Option<RTCDataChannelId> = None;
-     let mut rtc_received: Vec<String> = Vec::new();
- 
-     log::info!("Waiting for initial connection...");
-```
-
-**File**: `tests/ice_restart_by_webrtc_interop.rs` (modified, +2/-1)
-```diff
-@@ -29,6 +29,7 @@ use webrtc::runtime::{Sender, channel};
- 
- mod common;
- use common::{block_on, runtime, sleep, timeout};
-+use rtc::data_channel::RTCDataChannelId;
- 
- const DEFAULT_TIMEOUT_DURATION: Duration = Duration::from_secs(30);
- const TEST_MESSAGE_1: &str = "Hello before restart!";
-@@ -181,7 +182,7 @@ async fn run_test() -> Result<()> {
-     let mut buf = vec![0u8; 2000];
-     let mut rtc_connected = false;
-     let mut webrtc_connected = false;
--    let mut rtc_dc_id: Option<u16> = None;
-+    let mut rtc_dc_id: Option<RTCDataChannelId> = None;
-     let mut rtc_received: Vec<String> = Vec::new();
- 
-     log::info!("Waiting for initial connection...");
-```
-
----
-
-### Incident Patch 10: `df3cd3a7` (2026-08-29)
-**Commit Message**: fix the first RTP packet of a stream traverses the whole interceptor chain before bind_remote_stream is called #207
-
-**File**: `rtc` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--Subproject commit 0a971cf1fa35fc151dd3635d40426a4915b762cb
-+Subproject commit fa17b237e20d171e2bcf113e36ec655f025e5eb3
-```
-
-**File**: `tests/flexfec03_encoder_decoder.rs` (modified, +24/-25)
-```diff
-@@ -520,15 +520,6 @@ fn flexfec03_recovers_every_dropped_packet() {
-             "the drop filter should have discarded one packet in {DROP_ONE_IN}, got {dropped:?}"
-         );
- 
--        // The claim: every packet the sender discarded was rebuilt by the decoder and handed on.
--        assert!(
--            dropped.is_subset(&recovered),
--            "these dropped sequence numbers were never recovered: {:?}\n\
--             dropped:   {dropped:?}\n\
--             recovered: {recovered:?}",
--            dropped.difference(&recovered).collect::<Vec<_>>()
--        );
--
-         // And nothing else went astray, so the recovery above is the whole story rather than one
-         // effect among several.
-         let all: BTreeSet<u16> = (1..=MEDIA_PACKETS_TO_SEND).collect();
-@@ -540,24 +531,32 @@ fn flexfec03_recovers_every_dropped_packet() {
-             all.difference(&delivered).collect::<Vec<_>>()
-         );
- 
--        // What was rebuilt that had not been lost.
--        //
--        // This should be empty and is not: the first packet of the stream is always rebuilt as
--        // well, duplicating one the receiver already had. The cause is not in the codec. A remote
--        // stream is bound to the interceptors only once its codec can be resolved from an arriving
--        // RTP payload type (`rtc`'s `endpoint.rs`, `find_track_id_by_ssrc`), and the endpoint sits
--        // application-ward of the chain — so the packet that triggers the bind has already
--        // traversed the chain by the time the bind happens. The decoder therefore never sees
--        // packet one, finds it missing when the first repair packet arrives, and rebuilds it.
-+        // Set equality in both directions: every dropped packet came back rebuilt, and nothing
-+        // else was rebuilt.
-         //
--        // Pinned rather than tolerated. If the artifact ever spreads beyond that first packet this
--        // fails, and when the bind ordering is fixed the `is_empty` case starts holding and this
--        // can be tightened to set equality.
--        let spurious: BTreeSet<u16> = recovered.difference(&dropped).copied().collect();
-+        // The second half is the one with history. Until stream establishment moved into rtc's
-+        // interceptor handler, sequence number 1 was always rebuilt as well — a duplicate of a
-+        // packet that had arrived perfectly well — because the packet that resolved the stream's
-+        // codec had already traversed the chain by the time the decoder was bound to it. See
-+        // `rtc`'s `handler/stream_establishment.rs`.
-+        assert_eq!(
-+            dropped,
-+            recovered,
-+            "every dropped sequence number must be recovered, and only those:\n\
-+             dropped:   {dropped:?}\n\
-+             recovered: {recovered:?}\n\
-+             never recovered: {:?}\n\
-+             rebuilt but never lost: {:?}",
-+            dropped.difference(&recovered).collect::<Vec<_>>(),
-+            recovered.difference(&dropped).collect::<Vec<_>>()
-+        );
-+
-+        // A recovered packet must not also have arrived: that would mean the decoder rebuilt
-+        // something it did not need to, and the sets above would agree for the wrong reason.
-         assert!(
--            spurious.is_empty() || spurious == BTreeSet::from([1]),
--            "packets were rebuilt that had not been lost: {spurious:?}\n\
--             only sequence number 1 is a known artifact of the late remote-stream bind"
-+            arrived.is_disjoint(&recovered),
-+            "a packet was both received and recovered: {:?}",
-+            arrived.intersection(&recovered).collect::<Vec<_>>()
-         );
-     });
- }
-```
-
----
-
-### Incident Patch 11: `98488a72` (2026-08-10)
-**Commit Message**: update SettingEngineBuilder
-
-**File**: `.github/workflows/cargo.yml` (modified, +6/-19)
-```diff
-@@ -111,25 +111,12 @@ jobs:
-       # webrtc#858 got in. See docs/internal-channel-overflow-policy.md.
-       - name: Bounded channels declare an overflow policy
-         run: python3 scripts/check-channel-overflow-policy.py
--      # `webrtc` cannot be packaged until the core crates it depends on are published: cargo
--      # resolves against the registry and the path dependency is stripped from the published
--      # manifest. Publication order is rtc-crypto, then the rtc protocol crates, then rtc, then
--      # webrtc. This asserts the failure is exactly that missing version and nothing else, so a
--      # different packaging break is still caught.
--      - name: Confirm packaging blocks only on core publication
--        run: |
--          if cargo package --allow-dirty 2>package.log; then
--            echo "webrtc packaged; the core crates appear to be published."
--            echo "Replace this step with a normal packaging check."
--            exit 0
--          fi
--          if grep -q 'failed to select a version for the requirement `rtc' package.log; then
--            echo "Expected: webrtc awaits the rtc 0.21.0 publish."
--            exit 0
--          fi
--          echo "webrtc packaging failed for an unexpected reason:"
--          cat package.log
--          exit 1
-+      # No packaging check here: `webrtc` cannot be packaged until the core crates are
-+      # published — cargo resolves against the registry and the path dependency is stripped
-+      # from the published manifest, so `cargo package` builds against whatever `rtc` is on
-+      # crates.io rather than the submodule. Publication order is rtc-crypto, then the rtc
-+      # protocol crates, then rtc, then webrtc. Add a plain `cargo package` step once rtc
-+      # 0.21.0 is out.
- 
-   test:
-     name: Test
-```
-
-**File**: `README.md` (modified, +87/-57)
-```diff
-@@ -64,7 +64,9 @@ alt="Recall.ai">
- 
- ## Overview
- 
--WebRTC.rs is an async-friendly WebRTC implementation in Rust, originally inspired by and largely rewriting the Pion stack. The async `webrtc` crate is a clean, ergonomic, runtime-agnostic rewrite on top of a Sans-I/O core; it ships with Tokio and smol runtime backends, and any other runtime can be plugged in by implementing one trait.
-+WebRTC.rs is an async-friendly WebRTC implementation in Rust, originally inspired by and largely rewriting the Pion
-+stack. The async `webrtc` crate is a clean, ergonomic, runtime-agnostic rewrite on top of a Sans-I/O core; it ships with
-+Tokio and smol runtime backends, and any other runtime can be plugged in by implementing one trait.
- 
- **Architecture:**
- 
-@@ -83,43 +85,45 @@ details and roadmap.
- 
- ## Getting Started
- 
--```toml
--[dependencies]
--webrtc = "0.20"
--```
--
--Or with the smol runtime instead of Tokio:
-+**Trying the `0.21` pre-release?** Cargo does not select pre-release versions from a plain
-+`"0.21"` requirement, so name it in full:
- 
- ```toml
- [dependencies]
--webrtc = { version = "0.20", default-features = false, features = ["runtime-smol"] }
-+webrtc = "0.21.0-alpha.1"
- ```
- 
- **Feature flags:**
- 
--| Feature         | Default | Description                                                             |
--|-----------------|---------|-------------------------------------------------------------------------|
--| `runtime-tokio` | ✅      | Timers, task spawning and sockets via Tokio                             |
--| `runtime-smol`  |         | The same, via smol                                                      |
--| `runtime-mock`  |         | `MockRuntime`, a deterministic virtual-clock runtime for tests (no I/O) |
--| `crypto-ring`   | ✅      | The `ring`-based crypto provider                                        |
--| `crypto-aws-lc-rs` |      | The `aws-lc-rs`-based crypto provider                                   |
-+| Feature            | Default | Description                                                             |
-+|--------------------|---------|-------------------------------------------------------------------------|
-+| `runtime-tokio`    | ✅       | Timers, task spawning and sockets via Tokio                             |
-+| `runtime-smol`     |         | The same, via smol                                                      |
-+| `runtime-mock`     |         | `MockRuntime`, a deterministic virtual-clock runtime for tests (no I/O) |
-+| `crypto-ring`      | ✅       | The `ring`-based crypto provider                                        |
-+| `crypto-aws-lc-rs` |         | The `aws-lc-rs`-based crypto provider                                   |
- 
--The runtime features are **additive**: each one only makes a built-in runtime *available*, so enabling several is safe and a single process can drive different connections on different runtimes.
-+The runtime features are **additive**: each one only makes a built-in runtime *available*, so enabling several is safe
-+and a single process can drive different connections on different runtimes.
- 
--The crypto features work the same way. Enabling both compiles both providers, and `ring` stays the default selection — so a dependency that turns on `crypto-aws-lc-rs` cannot silently change which one your application runs. Building with neither compiles no provider, and you supply your own.
-+The crypto features work the same way. Enabling both compiles both providers, and `ring` stays the default selection —
-+so a dependency that turns on `crypto-aws-lc-rs` cannot silently change which one your application runs. Building with
-+neither compiles no provider, and you supply your own.
- 
--**Bringing your own runtime.** The built-ins are not privileged — implement `webrtc::runtime::Runtime` and pass it per connection with `with_runtime`, with no `#[cfg]` edits and no fork. See the [custom-runtime example](examples/custom-runtime), which runs the full stack on `async-executor` + `async-io` with `--no-default-features` (neither Tokio nor smol compiled in).
-+**Bringing your own runtime.** The built-ins are not privileged — implement `webrtc::runtime::Runtime` and pass it per
-+connection with `with_runtime`, with no `#[cfg]` edits and no fork. See
-+the [custom-runtime example](examples/custom-runtime), which runs the full stack on `async-executor` + `async-io` with
-+`--no-default-features` (neither Tokio nor smol compiled in).
- 
--**Choosing a crypto provider.** Same story: pass one per connection through `SettingEngine`, which also means two connections in one process can use different providers.
-+**Choosing a crypto provider.** Same story: pass one per connection through `SettingEngine`, which also means two
-+connections in one process can use different providers.
- 
- ```rust
- use std::sync::Arc;
- use webrtc::peer_connection::crypto;
--use webrtc::peer_connection::SettingEngine;
-+use webrtc::peer_connection::SettingEngineBuilder;
- 
--let mut setting_engine = SettingEngine::def
-```
-
-**File**: `examples/ice-tcp-active-passive/ice-tcp-active-offer.rs` (modified, +7/-6)
-```diff
-@@ -21,7 +21,7 @@ use rtc::peer_connection::state::RTCPeerConnectionState;
- use webrtc::data_channel::DataChannelEvent;
- use webrtc::peer_connection::{
-     PeerConnection, PeerConnectionBuilder, PeerConnectionEventHandler, RTCPeerConnectionIceEvent,
--    Registry, SettingEngine,
-+    Registry, SettingEngineBuilder,
- };
- use webrtc::runtime::channel;
- 
-@@ -149,11 +149,12 @@ async fn async_main(cli: Cli) -> Result<()> {
-     media.register_default_codecs()?;
-     let registry = register_default_interceptors(Registry::new(), &mut media)?;
- 
--    let mut setting_engine = SettingEngine::default();
--    setting_engine.set_network_types(vec![
--        rtc::ice::network_type::NetworkType::Tcp4,
--        rtc::ice::network_type::NetworkType::Tcp6,
--    ]);
-+    let setting_engine = SettingEngineBuilder::new()
-+        .with_network_types(vec![
-+            rtc::ice::network_type::NetworkType::Tcp4,
-+            rtc::ice::network_type::NetworkType::Tcp6,
-+        ])
-+        .build();
- 
-     let pc = PeerConnectionBuilder::new()
-         .with_configuration(RTCConfigurationBuilder::new().build())
-```
-
-**File**: `examples/ice-tcp-active-passive/ice-tcp-passive-answer.rs` (modified, +8/-7)
-```diff
-@@ -23,7 +23,7 @@ use rtc::peer_connection::transport::RTCDtlsRole;
- use webrtc::data_channel::{DataChannel, DataChannelEvent};
- use webrtc::peer_connection::{
-     PeerConnection, PeerConnectionBuilder, PeerConnectionEventHandler, RTCPeerConnectionIceEvent,
--    SettingEngine,
-+    SettingEngineBuilder,
- };
- use webrtc::runtime::channel;
- 
-@@ -259,12 +259,13 @@ async fn async_main(cli: Cli) -> Result<()> {
-     media.register_default_codecs()?;
-     let registry = register_default_interceptors(Registry::new(), &mut media)?;
- 
--    let mut setting_engine = SettingEngine::default();
--    setting_engine.set_answering_dtls_role(RTCDtlsRole::Client)?;
--    setting_engine.set_network_types(vec![
--        rtc::ice::network_type::NetworkType::Tcp4,
--        rtc::ice::network_type::NetworkType::Tcp6,
--    ]);
-+    let setting_engine = SettingEngineBuilder::new()
-+        .with_answering_dtls_role(RTCDtlsRole::Client)
-+        .with_network_types(vec![
-+            rtc::ice::network_type::NetworkType::Tcp4,
-+            rtc::ice::network_type::NetworkType::Tcp6,
-+        ])
-+        .build();
- 
-     let pc: Arc<dyn PeerConnection> = Arc::new(
-         PeerConnectionBuilder::new()
-```
-
-**File**: `examples/ice-tcp/README.md` (modified, +14/-5)
-```diff
-@@ -1,14 +1,19 @@
- # ICE TCP Example
- 
--This example demonstrates how to establish a WebRTC connection exclusively over TCP (RFC 4571) using the async `webrtc` API.
-+This example demonstrates how to establish a WebRTC connection exclusively over TCP (RFC 4571) using the async `webrtc`
-+API.
- 
- ## About ICE TCP
- 
--ICE TCP is useful when UDP traffic is blocked by restrictive firewalls. WebRTC normally uses UDP for media and data transport, but can fall back to TCP when necessary.
-+ICE TCP is useful when UDP traffic is blocked by restrictive firewalls. WebRTC normally uses UDP for media and data
-+transport, but can fall back to TCP when necessary.
- 
- This example showcases:
--- Configuring the `PeerConnection` to only gather and listen on TCP candidates using `.with_tcp_addrs()` and leaving UDP addresses empty.
--- Customizing the DTLS role via `SettingEngine::set_answering_dtls_role(RTCDtlsRole::Client)` to act as the DTLS client when answering the connection.
-+
-+- Configuring the `PeerConnection` to only gather and listen on TCP candidates using `.with_tcp_addrs()` and leaving UDP
-+  addresses empty.
-+- Customizing the DTLS role via `SettingEngineBuilder::with_answering_dtls_role(RTCDtlsRole::Client)` to act as the DTLS
-+  client when answering the connection.
- - Serving a local web interface using `hyper` to serve static pages and handle SDP signaling.
- - Establishing a `DataChannel` over pure TCP and exchanging periodic messages.
- 
-@@ -18,14 +23,16 @@ This example showcases:
- 2. When a browser opens `http://localhost:8080`, it generates an SDP offer with both TCP and UDP candidates.
- 3. The browser sends this SDP offer to the server via an HTTP `POST` to `/doSignaling`.
- 4. The server configures the `PeerConnection`, sets the remote offer, and generates an answer.
--5. The server waits for local ICE gathering to complete (disabling trickle ICE) so that the answer includes the server's TCP passive candidate.
-+5. The server waits for local ICE gathering to complete (disabling trickle ICE) so that the answer includes the server's
-+   TCP passive candidate.
- 6. The server responds with the local SDP answer.
- 7. The browser sets the answer and initiates an active TCP connection to the server's listener on port `8443`.
- 8. Once connected, a `DataChannel` is established, and the server sends timestamp messages every 3 seconds.
- 
- ## Running the Example
- 
- ### 1. Run the Server
-+
- From the root of the project, run:
- 
- ```bash
-@@ -39,12 +46,14 @@ cargo run --example ice-tcp -- --debug
- ```
- 
- ### 2. Access the Web UI
-+
- Open your browser and navigate to:
- 
- ```
- http://localhost:8080
- ```
- 
- You will see:
-+
- - Real-time updates of the ICE connection state.
- - Inbound messages received from the server over the established TCP WebRTC data channel.
-```
-
-**File**: `examples/ice-tcp/ice-tcp.rs` (modified, +4/-3)
-```diff
-@@ -28,7 +28,7 @@ use rtc::peer_connection::transport::RTCDtlsRole;
- use signal::get_local_ip;
- use webrtc::data_channel::{DataChannel, DataChannelEvent};
- use webrtc::peer_connection::{
--    PeerConnection, PeerConnectionBuilder, PeerConnectionEventHandler, SettingEngine,
-+    PeerConnection, PeerConnectionBuilder, PeerConnectionEventHandler, SettingEngineBuilder,
- };
- use webrtc::runtime::{Mutex, Runtime, Sender, channel};
- 
-@@ -259,8 +259,9 @@ async fn async_main(_cli: Cli) -> Result<()> {
-     media.register_default_codecs()?;
-     let registry = register_default_interceptors(Registry::new(), &mut media)?;
- 
--    let mut setting_engine = SettingEngine::default();
--    setting_engine.set_answering_dtls_role(RTCDtlsRole::Client)?;
-+    let setting_engine = SettingEngineBuilder::new()
-+        .with_answering_dtls_role(RTCDtlsRole::Client)
-+        .build();
- 
-     let local_ip = get_local_ip();
-     println!("Server local IP address is: {local_ip}");
-```
-
-**File**: `examples/mdns-query-and-gather/mdns-query-and-gather.rs` (modified, +17/-14)
-```diff
-@@ -23,7 +23,8 @@ use webrtc::data_channel::{DataChannel, DataChannelEvent};
- use webrtc::peer_connection::{
-     MediaEngine, PeerConnection, PeerConnectionBuilder, PeerConnectionEventHandler,
-     RTCConfigurationBuilder, RTCIceCandidateType, RTCIceConnectionState, RTCIceGatheringState,
--    RTCIceServer, RTCPeerConnectionState, Registry, SettingEngine, register_default_interceptors,
-+    RTCIceServer, RTCPeerConnectionState, Registry, SettingEngineBuilder,
-+    register_default_interceptors,
- };
- use webrtc::runtime::{Runtime, Sender, channel};
- 
-@@ -182,21 +183,23 @@ async fn async_main(cli: Cli) -> Result<()> {
-     media.register_default_codecs()?;
-     let registry = register_default_interceptors(Registry::new(), &mut media)?;
- 
--    let mut setting_engine = SettingEngine::default();
--    setting_engine.set_answering_dtls_role(if cli.client {
--        RTCDtlsRole::Client
--    } else {
--        RTCDtlsRole::Server
--    })?;
--    setting_engine.set_multicast_dns_timeout(Some(Duration::from_secs(10)));
--    if cli.query_only {
--        setting_engine.set_multicast_dns_mode(MulticastDnsMode::QueryOnly);
-+    let builder = SettingEngineBuilder::new()
-+        .with_answering_dtls_role(if cli.client {
-+            RTCDtlsRole::Client
-+        } else {
-+            RTCDtlsRole::Server
-+        })
-+        .with_multicast_dns_timeout(Some(Duration::from_secs(10)));
-+
-+    let setting_engine = if cli.query_only {
-+        builder.with_multicast_dns_mode(MulticastDnsMode::QueryOnly)
-     } else {
--        setting_engine.set_multicast_dns_mode(MulticastDnsMode::QueryAndGather);
--        setting_engine
--            .set_multicast_dns_local_name("webrtc-rs-hides-local-ip-by-mdns.local".to_string());
--        setting_engine.set_multicast_dns_local_ip(Some(local_ip));
-+        builder
-+            .with_multicast_dns_mode(MulticastDnsMode::QueryAndGather)
-+            .with_multicast_dns_local_name("webrtc-rs-hides-local-ip-by-mdns.local".to_string())
-+            .with_multicast_dns_local_ip(Some(local_ip))
-     }
-+    .build();
- 
-     let peer_connection = PeerConnectionBuilder::new()
-         .with_configuration(
-```
-
-**File**: `examples/play-from-disk-playlist-control/play-from-disk-playlist-control.rs` (modified, +4/-3)
-```diff
-@@ -11,7 +11,7 @@ use rtc::media_stream::MediaStreamTrack;
- use rtc::peer_connection::configuration::RTCConfigurationBuilder;
- use rtc::peer_connection::configuration::interceptor_registry::register_default_interceptors;
- use rtc::peer_connection::configuration::media_engine::{MIME_TYPE_OPUS, MediaEngine};
--use rtc::peer_connection::configuration::setting_engine::SettingEngine;
-+use rtc::peer_connection::configuration::setting_engine::SettingEngineBuilder;
- use rtc::peer_connection::sdp::RTCSessionDescription;
- use rtc::peer_connection::state::RTCSignalingState;
- use rtc::peer_connection::transport::RTCDtlsRole;
-@@ -463,8 +463,9 @@ async fn handle_whep_connection(
-     tracks: Arc<Vec<OggTrack>>,
-     runtime: Arc<dyn Runtime>,
- ) -> Result<String> {
--    let mut setting_engine = SettingEngine::default();
--    setting_engine.set_answering_dtls_role(RTCDtlsRole::Server)?;
-+    let setting_engine = SettingEngineBuilder::new()
-+        .with_answering_dtls_role(RTCDtlsRole::Server)
-+        .build();
- 
-     let mut media_engine = MediaEngine::default();
-     let opus_codec = RTCRtpCodecParameters {
-```
-
----
-
-### Incident Patch 12: `869153fe` (2026-08-09)
-**Commit Message**: fix cargo doc
-
-**File**: `src/runtime/mod.rs` (modified, +4/-1)
-```diff
-@@ -166,9 +166,12 @@ pub trait Runtime: Send + Sync + Debug + 'static {
-     /// **This is the clock the sans-I/O core sees.** The core is *told* the time — through
-     /// `handle_timeout(now)` and the timestamps on inbound messages — and never reads one
-     /// itself, so whatever the driver passes down is the only clock protocol logic has. Routing
--    /// that through the runtime is what makes [`MockRuntime`](crate::runtime::mock::MockRuntime)'s
-+    /// that through the runtime is what makes the `runtime-mock` feature's `MockRuntime`
-     /// virtual clock reach ICE timeouts, DTLS retransmits and SCTP RTO.
-     ///
-+    /// (Named rather than linked: `mock` is behind the `runtime-mock` feature, so an
-+    /// intra-doc link to it does not resolve in a default-feature doc build.)
-+    ///
-     /// Defaulted to the wall clock, so existing `Runtime` implementations keep working
-     /// unchanged. A runtime with a controllable clock should override it and return that
-     /// clock's instant; one that does not will simply behave as before.
-```
-
----
-
-### Incident Patch 13: `81b4735f` (2026-08-09)
-**Commit Message**: PeerConnection driver can hot-loop on a non-advancing expired timeout #862
-
-**File**: `rtc` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--Subproject commit eb07ac297d7fd1ca23eee5c7d69d605bbb8bb5e6
-+Subproject commit efe5114f1d2eee62372b19ad5b2ce7fe343d33da
-```
-
-**File**: `src/peer_connection/driver.rs` (modified, +52/-5)
-```diff
-@@ -103,6 +103,26 @@ pub(crate) const DRIVER_TO_TRACK_LOCAL_EVENT_CHANNEL_CAPACITY: usize = 256;
- 
- const DEFAULT_TIMEOUT_DURATION: Duration = Duration::from_secs(86400); // 1 day duration
- 
-+/// The resolution at which an already-expired deadline is worth re-handling.
-+///
-+/// Network protocol timers are millisecond-grained — SCTP retransmits, ICE consent, DTLS
-+/// backoff, TURN refresh. Handling an expired deadline more than once within the same
-+/// millisecond therefore cannot advance any of them; it can only spin. So when a deadline is
-+/// already past *and* less than this has elapsed since the last time one was handled, the loop
-+/// waits out the remainder instead of looping straight back.
-+///
-+/// That waiting is the point. `select!` is the only place this loop reads sockets, takes driver
-+/// events, or notices `Close`, and the previous code reached it only when a deadline was in the
-+/// future — so a source that never advanced past `now` starved the connection *and* the
-+/// shutdown meant to end it. See [webrtc#862](https://github.com/webrtc-rs/webrtc/issues/862).
-+///
-+/// Deliberately a time bound rather than a comparison of successive deadlines. A source stuck
-+/// at one instant is only the easiest shape to spot; one returning a *different* expired
-+/// instant each time — a timer advancing slower than the clock, or a deadline derived from the
-+/// newest packet's arrival — spins exactly as hard while never repeating a value. Rate-limiting
-+/// by elapsed time catches every shape.
-+const MIN_IMMEDIATE_TIMEOUT_INTERVAL: Duration = Duration::from_millis(1);
-+
- /// Insert `sender` for `channel_id`, returning `true` if the channel should be announced.
- pub(crate) fn insert_data_channel_event_sender(
-     data_channels: &mut HashMap<RTCDataChannelId, Sender<DataChannelEvent>>,
-@@ -324,6 +344,10 @@ where
-             })
-             .collect();
-         let mut active_socket_count = udp_socket_list.len();
-+        // When an already-expired deadline was last handled, so the loop can decline to do it
-+        // again within the same millisecond. `None` once a deadline lands in the future, so a
-+        // connection behaving normally never carries state from an earlier stall.
-+        let mut last_immediate_timeout: Option<Instant> = None;
- 
-         // Batch-drain: after one datagram wakes the select, non-blockingly drain a
-         // bounded burst of additional ready datagrams from the same socket and feed
-@@ -377,13 +401,36 @@ where
-             // The runtime's clock, not the wall clock: this instant is what reaches
-             // `core.handle_timeout(now)`, so under a `MockRuntime` it is the virtual one.
-             let now = self.inner.runtime.now();
--            let delay_from_now = timeout.checked_duration_since(now).unwrap_or_default();
-+            let delay_from_now = timeout.saturating_duration_since(now);
- 
-             // 4.b handle immediate timeout
--            if delay_from_now.is_zero() {
--                self.handle_timeout(now).await?;
--                continue;
--            }
-+            // Rate-limited, not unconditional. Handling an expired deadline and looping
-+            // straight back is the right fast path, but it is also the only way this loop can
-+            // fail to reach `select!` — where sockets, driver events and `Close` are read.
-+            let delay_from_now = if delay_from_now.is_zero() {
-+                let too_soon = last_immediate_timeout
-+                    .map(|last| now.saturating_duration_since(last))
-+                    .filter(|elapsed| *elapsed < MIN_IMMEDIATE_TIMEOUT_INTERVAL);
-+
-+                match too_soon {
-+                    // Less than a millisecond since the last one: no protocol timer can have
-+                    // become due, so wait out the remainder in `select!` rather than spin.
-+                    // The timeout is handled on the next pass, with a clock that has moved.
-+                    Some(elapsed) => {
-+                        last_immediate_timeout = None;
-+                        MIN_IMMEDIATE_TIMEOUT_INTERVAL - elapsed
-+                    }
-+                    // First expired deadline, or a millisecond has passed: handle it now.
-+                    None => {
-+                        last_immediate_timeout = Some(now);
-+                        self.handle_timeout(now).await?;
-+                        continue;
-+                    }
-+                }
-+            } else {
-+                last_immediate_timeout = None;
-+                delay_from_now
-+            };
- 
-             // Wake as soon as a blocked consumer frees a slot. `Notify` stores no permit, so
-             // a naive "check, then wait" drops any wake published in between and the loop
-```
-
----
-
-### Incident Patch 14: `d7ee0f6c` (2026-07-31)
-**Commit Message**: fix default_runtime for mockRuntime
-
-**File**: `.github/workflows/cargo.yml` (modified, +15/-13)
-```diff
-@@ -27,29 +27,31 @@ jobs:
-       - name: Build
-         run: cargo build --verbose
- 
--  build-features:
--    # The runtime features are additive and each only decides whether a built-in `Runtime`
--    # type exists, so a build with any one of them — or with none at all — must compile.
--    # `--no-default-features` with no runtime is the configuration an application supplying
--    # its own `Runtime` uses; nothing in the library may reach for a built-in.
--    #
--    # Feature resolution is platform-independent, so one OS is enough here; the `build` job
--    # above still covers Linux/macOS/Windows for the default feature set.
--    name: Build (${{ matrix.features }})
-+  build-no-features:
-+    name: Build with No Default Features
-+    runs-on: ubuntu-latest
-+    steps:
-+      - uses: actions/checkout@v3
-+        with:
-+          submodules: recursive
-+      - name: Build
-+        run: cargo build --verbose --no-default-features
-+
-+  test-features:
-+    name: Unit Test with ${{ matrix.features }}
-     runs-on: ubuntu-latest
-     strategy:
-       fail-fast: false
-       matrix:
-         features:
--          - '--no-default-features'
--          - '--no-default-features --features runtime-smol'
--          - '--no-default-features --features runtime-mock'
-+          - 'runtime-smol'
-+          - 'runtime-mock'
-     steps:
-       - uses: actions/checkout@v3
-         with:
-           submodules: recursive
-       - name: Build
--        run: cargo build --verbose ${{ matrix.features }}
-+        run: cargo test --lib --verbose --no-default-features --features ${{ matrix.features }}
- 
-   test:
-     name: Test
-```
-
-**File**: `src/runtime/mod.rs` (modified, +23/-3)
-```diff
-@@ -424,15 +424,35 @@ pub trait AsyncTcpStream: Send + Sync + Debug + 'static {
- /// [`with_runtime`](crate::peer_connection::PeerConnectionBuilder::with_runtime); that
- /// also allows different connections in one process to use different runtimes.
- pub fn default_runtime() -> Option<Arc<dyn Runtime>> {
--    #[cfg(feature = "runtime-tokio")]
-+    #[cfg(all(
-+        feature = "runtime-tokio",
-+        not(feature = "runtime-smol"),
-+        not(feature = "runtime-mock")
-+    ))]
-     {
-         Some(Arc::new(TokioRuntime))
-     }
--    #[cfg(all(not(feature = "runtime-tokio"), feature = "runtime-smol"))]
-+    #[cfg(all(
-+        not(feature = "runtime-tokio"),
-+        feature = "runtime-smol",
-+        not(feature = "runtime-mock")
-+    ))]
-     {
-         Some(Arc::new(SmolRuntime))
-     }
--    #[cfg(not(any(feature = "runtime-tokio", feature = "runtime-smol")))]
-+    #[cfg(all(
-+        not(feature = "runtime-tokio"),
-+        not(feature = "runtime-smol"),
-+        feature = "runtime-mock"
-+    ))]
-+    {
-+        Some(Arc::new(MockRuntime::new()))
-+    }
-+    #[cfg(not(any(
-+        feature = "runtime-tokio",
-+        feature = "runtime-smol",
-+        feature = "runtime-mock"
-+    )))]
-     {
-         None
-     }
-```
-
----
-
-### Incident Patch 15: `f9100a7b` (2026-07-31)
-**Commit Message**: add build features in CI
-
-**File**: `.github/workflows/cargo.yml` (modified, +30/-5)
-```diff
-@@ -2,9 +2,9 @@ name: cargo
- 
- on:
-   push:
--    branches: [master, v0.17.x]
-+    branches: [ master, v0.17.x ]
-   pull_request:
--    branches: [master, v0.17.x]
-+    branches: [ master, v0.17.x ]
- 
- concurrency:
-   group: ${{ github.workflow }}-${{ github.ref }}
-@@ -14,11 +14,11 @@ env:
-   CARGO_TERM_COLOR: always
- 
- jobs:
--  build:
--    name: Build
-+  build-os:
-+    name: Build (${{ matrix.os }})
-     strategy:
-       matrix:
--        os: ['ubuntu-latest', 'macos-latest', 'windows-latest']
-+        os: [ 'ubuntu-latest', 'macos-latest', 'windows-latest' ]
-     runs-on: ${{ matrix.os }}
-     steps:
-       - uses: actions/checkout@v3
-@@ -27,6 +27,31 @@ jobs:
-       - name: Build
-         run: cargo build --verbose
- 
-+  build-features:
-+    # The runtime features are additive and each only decides whether a built-in `Runtime`
-+    # type exists, so a build with any one of them — or with none at all — must compile.
-+    # `--no-default-features` with no runtime is the configuration an application supplying
-+    # its own `Runtime` uses; nothing in the library may reach for a built-in.
-+    #
-+    # Feature resolution is platform-independent, so one OS is enough here; the `build` job
-+    # above still covers Linux/macOS/Windows for the default feature set.
-+    name: Build (${{ matrix.features }})
-+    runs-on: ubuntu-latest
-+    strategy:
-+      fail-fast: false
-+      matrix:
-+        features:
-+          - '--no-default-features'
-+          - '--no-default-features --features runtime-tokio'
-+          - '--no-default-features --features runtime-smol'
-+          - '--no-default-features --features runtime-mock'
-+    steps:
-+      - uses: actions/checkout@v3
-+        with:
-+          submodules: recursive
-+      - name: Build
-+        run: cargo build --verbose ${{ matrix.features }}
-+
-   test:
-     name: Test
-     strategy:
-```
-
 #### Recent Merged Pull Requests:
+- **PR #922** (2026-10-11): Backport to v0.21.x (@rainliu)
 - **PR #917** (2026-10-03): fix(runtime): don't block the smol executor in connect_tcp (@lovon-spec)
 - **PR #913** (2026-09-27): [v0.20.x] fix: give the driver a brief chance to release TURN allocations on close() (#903) (@yapprtc)
 - **PR #912** (2026-09-27): [v0.21.x] fix: release TURN allocations on close() on both runtimes (#903) (@yapprtc)
 - **PR #911** (2026-09-27): fix: release TURN allocations on close() on both runtimes (#903) (@yapprtc)
 - **PR #910** (2026-09-26): fix(stun_gatherer): complete gathering when a STUN server does not answer (@yapprtc)
-- **PR #909** (2026-09-26): fix(rtp_transceiver): break the PeerConnectionRef reference cycle (#906) (@yapprtc)
-- **PR #908** (2026-09-26): fix(data_channel): advertise and honour receive max-message-size (@coleleavitt)
-- **PR #905** (2026-09-26): fix(0.21): backport pre-registration data-channel event retention (@kaito-harry)
 
 ---
 
@@ -5511,3 +4132,64 @@ query the way `get_ice_servers` doe
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. [v0.21.x] fix: release TURN allocations on close() on both runtimes (#903) (#912
+
+**RULE**:
+When implementing operations in `src/peer_connection/driver.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in webrtc-rs/webrtc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `caa7f072`: [v0.21.x] fix: release TURN allocations on close() on both runtimes (#903) (#912). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/peer_connection/driver.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+use std::future::Future;
+use std::pin::Pin;
+thread_local! {
+    /// The connection whose driver task this thread is polling at this moment, or `0`.
+    static POLLING_DRIVER: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
+}
+
+/// Identifies a connection for [`POLLING_DRIVER`].
+fn driver_id(inner: &Arc<PeerConnectionRef>) -> usize {
+    Arc::as_ptr(inner) as usize
+}
+
+/// Whether the caller is running inside `inner`'s own driver task.
+///
+/// Application callbacks are awaited on the driver task, so this is true for a `close()`
+/// called from one of them. Waiting there for the driver to finish can never succeed (it cannot
+/// make progress until the callback returns), and aborting it would cut off the TURN releases it
+/// sends on its way out.
+pub(crate) fn is_polling_driver(inner: &Arc<PeerConnectionRef>) -> bool {
+    POLLING_DRIVER.with(|polling| polling.get()) == driver_id(inner)
+}
+
+/// Runs a connection's driver future, recording on the polling thread for the duration of every
+/// poll which connection it belongs to, so [`is_polling_driver`] can answer from inside it.
+///
+/// Recorded per poll rather than per task because a multi-threaded runtime may poll the task on
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+                if let Err(err) = self.turn_relayer.close() {
+                    error!("Failed to close turn_relayer: {}", err);
+                }
+                if let Err(err) = self.turn_relayer.close() {
+                    error!("Failed to close turn_relayer: {}", err);
+                }
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `caa7f072` are properly handled with clean fallback behavior.

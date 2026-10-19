@@ -2819,3 +2819,9 @@ Every entry in this ledger must capture:
 | `learn-huggingface-meta-llama-llama-3-1-8b-instruct` | `https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-19T02:44:55.320Z |
 | `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `a27c7cda` | Multi-dimensional audit evidence | 2026-10-19T02:45:01.062Z |
 | `learn-github-chakra-ui-ark` | `https://github.com/chakra-ui/ark` | `300f6f39` | Multi-dimensional audit evidence | 2026-10-19T02:48:51.143Z |
+| `learn-github-alibaba-fusion-next` | `https://github.com/alibaba-fusion/next` | `d5582ba6` | Multi-dimensional audit evidence | 2026-10-19T02:54:53.018Z |
+| `learn-github-webrtc-rs-webrtc` | `https://github.com/webrtc-rs/webrtc` | `f6b017b0` | Multi-dimensional audit evidence | 2026-10-19T02:54:54.979Z |
+| `learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-10-19T02:54:58.078Z |
+| `learn-github-midudev-preguntas-entrevista-react` | `https://github.com/midudev/preguntas-entrevista-react` | `7093d802` | Multi-dimensional audit evidence | 2026-10-19T02:55:01.670Z |
+| `learn-github-orange-cyberdefense-goad` | `https://github.com/Orange-Cyberdefense/GOAD` | `992307ad` | Multi-dimensional audit evidence | 2026-10-19T02:55:02.621Z |
+| `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `a966380e` | Multi-dimensional audit evidence | 2026-10-19T02:55:08.336Z |
