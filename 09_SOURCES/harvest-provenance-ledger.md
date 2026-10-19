@@ -3390,3 +3390,4 @@ Every entry in this ledger must capture:
 | `learn-github-speedyapply-jobspy` | `https://github.com/speedyapply/JobSpy` | `b6236bb0` | Multi-dimensional audit evidence | 2026-10-19T17:31:16.197Z |
 | `learn-github-tauri-apps-tauri` | `https://github.com/tauri-apps/tauri` | `bc1136ba` | Multi-dimensional audit evidence | 2026-10-19T17:31:25.194Z |
 | `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `45eb1b50` | Multi-dimensional audit evidence | 2026-10-19T17:31:26.924Z |
+| `learn-github-oliviertassinari-react-swipeable-views` | `https://github.com/oliviertassinari/react-swipeable-views` | `c637ad7d` | Multi-dimensional audit evidence | 2026-10-19T17:37:41.229Z |

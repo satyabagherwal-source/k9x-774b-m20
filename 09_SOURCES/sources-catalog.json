@@ -8488,5 +8488,15 @@
     "contentHash": "9d3e60f6f7b9fa8b1f51742356ef67d1317500806fadc285a25177377bcc3664",
     "lastHarvestedAt": "2026-10-19T17:31:25.194Z",
     "learningId": "learn-github-tauri-apps-tauri"
+  },
+  "oliviertassinari-react-swipeable-views": {
+    "repository": "oliviertassinari/react-swipeable-views",
+    "platform": "github",
+    "sourceUrl": "https://github.com/oliviertassinari/react-swipeable-views",
+    "sourceVersion": "c637ad7d",
+    "license": "MIT",
+    "contentHash": "b3b44a6a373e5ac4a6f906bb15760c1001b219b13e3a38141a3121a05010471f",
+    "lastHarvestedAt": "2026-10-19T17:37:41.229Z",
+    "learningId": "learn-github-oliviertassinari-react-swipeable-views"
   }
 }

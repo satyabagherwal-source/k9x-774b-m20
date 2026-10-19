@@ -3125,8 +3125,8 @@
     "officialUrl": "https://github.com/build-trust/ockam",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-19T14:33:31.003Z",
-    "lastVerified": "2026-10-19T14:33:31.003Z",
+    "lastChecked": "2026-10-19T17:37:40.895Z",
+    "lastVerified": "2026-10-19T17:37:40.895Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-build-trust-ockam",
@@ -7232,12 +7232,12 @@
     "revisionIdentifier": "6bcf5150"
   },
   "mtkennerly-ludusavi": {
-    "name": "mtkennerly/ludusavi",
+    "name": "ludusavi",
     "officialUrl": "https://github.com/mtkennerly/ludusavi",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-19T02:37:04.000Z",
-    "lastVerified": "2026-10-19T02:37:04.000Z",
+    "lastChecked": "2026-10-19T17:37:30.687Z",
+    "lastVerified": "2026-10-19T17:37:30.687Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mtkennerly-ludusavi",
@@ -7246,7 +7246,8 @@
     "recentFixesCount": 11,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "95b651aa"
   },
   "kucherenko-jscpd": {
     "name": "kucherenko/jscpd",
@@ -14296,12 +14297,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "kubeshark-kubeshark": {
-    "name": "kubeshark/kubeshark",
+    "name": "kubeshark",
     "officialUrl": "https://github.com/kubeshark/kubeshark",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-19T05:19:06.429Z",
-    "lastVerified": "2026-10-19T05:19:06.429Z",
+    "lastChecked": "2026-10-19T17:37:38.264Z",
+    "lastVerified": "2026-10-19T17:37:38.264Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kubeshark-kubeshark",
@@ -14310,7 +14311,8 @@
     "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "e27687a8"
   },
   "linkerd-linkerd2": {
     "name": "linkerd/linkerd2",
@@ -15059,12 +15061,12 @@
     "revisionIdentifier": "f432041f"
   },
   "mariadb-server": {
-    "name": "MariaDB/server",
+    "name": "server",
     "officialUrl": "https://github.com/MariaDB/server",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-10-19T04:34:12.365Z",
-    "lastVerified": "2026-10-19T04:34:12.365Z",
+    "lastChecked": "2026-10-19T17:37:43.498Z",
+    "lastVerified": "2026-10-19T17:37:43.498Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mariadb-server",
@@ -15073,7 +15075,8 @@
     "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "327437ad"
   },
   "vespa-engine-vespa": {
     "name": "vespa-engine/vespa",
@@ -18223,14 +18226,15 @@
     "officialUrl": "https://github.com/oliviertassinari/react-swipeable-views",
     "sourceType": "github",
     "technology": "JavaScript",
-    "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-04T20:11:37.099Z",
-    "lastVerified": "2026-10-04T20:11:37.099Z",
+    "lastChecked": "2026-10-19T17:37:40.321Z",
+    "lastVerified": "2026-10-19T17:37:40.321Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
-    "learningId": null,
-    "promotedRulesCount": 0,
-    "recentFixesCount": 31,
+    "learningId": "learn-github-oliviertassinari-react-swipeable-views",
+    "contentHash": "b3b44a6a373e5ac4a6f906bb15760c1001b219b13e3a38141a3121a05010471f",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 9,
+    "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   },
@@ -18271,8 +18275,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-19T17:12:09.796Z",
-    "lastVerified": "2026-10-19T17:12:09.796Z",
+    "lastChecked": "2026-10-19T17:37:45.731Z",
+    "lastVerified": "2026-10-19T17:37:45.731Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -21933,12 +21937,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "tremorlabs-tremor": {
-    "name": "tremorlabs/tremor",
+    "name": "tremor",
     "officialUrl": "https://github.com/tremorlabs/tremor",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-19T06:11:01.101Z",
-    "lastVerified": "2026-10-19T06:11:01.101Z",
+    "lastChecked": "2026-10-19T17:37:28.224Z",
+    "lastVerified": "2026-10-19T17:37:28.224Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tremorlabs-tremor",
@@ -21947,7 +21951,8 @@
     "recentFixesCount": 11,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "ca4d588f"
   },
   "trufflesecurity-trufflehog": {
     "name": "trufflehog",
@@ -25081,9 +25086,9 @@
   "booltools-booltools-seo-crawler": {
     "name": "booltools-seo-crawler",
     "officialUrl": "https://github.com/booltools/booltools-seo-crawler",
-    "lastChecked": "2026-10-18T06:00:55.075Z",
+    "lastChecked": "2026-10-19T17:37:33.211Z",
     "revisionIdentifier": "e5394ed024",
-    "lastVerified": "2026-10-18T06:00:55.075Z"
+    "lastVerified": "2026-10-19T17:37:33.211Z"
   },
   "turbopress-x-seo-auditing-software": {
     "name": "seo-auditing-software",
@@ -26330,8 +26335,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-19T17:31:29.462Z",
-    "lastVerified": "2026-10-19T17:31:29.462Z",
+    "lastChecked": "2026-10-19T17:37:45.747Z",
+    "lastVerified": "2026-10-19T17:37:45.747Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",

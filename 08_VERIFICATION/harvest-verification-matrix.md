@@ -3383,3 +3383,4 @@
 | `CYCLE-20261019-6LWJ` | `2026-10-19T17:31:16.195Z` | `speedyapply/JobSpy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2711` | Yes (`4d408234...`) |
 | `CYCLE-20261019-6SUF` | `2026-10-19T17:31:25.191Z` | `tauri-apps/tauri` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2712` | Yes (`9d3e60f6...`) |
 | `CYCLE-20261019-6U6H` | `2026-10-19T17:31:26.922Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2713` | Yes (`942b2cbe...`) |
+| `CYCLE-20261019-EUZV` | `2026-10-19T17:37:41.227Z` | `oliviertassinari/react-swipeable-views` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2714` | Yes (`b3b44a6a...`) |

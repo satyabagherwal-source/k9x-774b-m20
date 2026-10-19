@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-GKRP",
-    "timestamp": "2026-10-19T04:07:12.421Z",
-    "repository": "architect/architect",
-    "learningId": "learn-github-architect-architect",
-    "contentHash": "f2ff57da605ea3ede3c7b74659438bfb148d7263fca91d88c525853f9a1461b7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-GS8E",
     "timestamp": "2026-10-19T04:07:22.094Z",
     "repository": "ytsaurus/ytsaurus",
@@ -7490,6 +7475,21 @@
     "repository": "open-policy-agent/opa",
     "learningId": "learn-github-open-policy-agent-opa",
     "contentHash": "942b2cbe38911df5720ac27ee4171c70fd67d89d26df8ee348cc442a483b91fc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-EUZV",
+    "timestamp": "2026-10-19T17:37:41.227Z",
+    "repository": "oliviertassinari/react-swipeable-views",
+    "learningId": "learn-github-oliviertassinari-react-swipeable-views",
+    "contentHash": "b3b44a6a373e5ac4a6f906bb15760c1001b219b13e3a38141a3121a05010471f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

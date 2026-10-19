@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T17:31:26.877Z",
-  "total_verified_learnings": 864,
+  "last_updated": "2026-10-19T17:37:41.173Z",
+  "total_verified_learnings": 865,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -33169,22 +33169,35 @@
     "learn-github-oliviertassinari-react-swipeable-views": {
       "learning_id": "learn-github-oliviertassinari-react-swipeable-views",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "oliviertassinari-react-swipeable-views",
+      "source": "oliviertassinari/react-swipeable-views",
+      "repository": "oliviertassinari/react-swipeable-views",
       "slug": "oliviertassinari-react-swipeable-views",
       "platform": "github",
       "source_url": "https://github.com/oliviertassinari/react-swipeable-views",
-      "source_version": "HEAD",
-      "content_hash": "83c39933bf923c831eb238fd1459ebf5ace76d12cc4fd8074005ba4a2794cf92",
+      "source_version": "c637ad7d",
+      "content_hash": "b3b44a6a373e5ac4a6f906bb15760c1001b219b13e3a38141a3121a05010471f",
       "dossier_path": "07_PROJECT_LEARNING/oliviertassinari-react-swipeable-views-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oliviertassinari-react-swipeable-views-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2714,
+          "title": "revert change in package script",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.759Z"
+      "verified_at": "2026-10-19T17:37:41.161Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-olric-data-olric": {
       "learning_id": "learn-github-olric-data-olric",
@@ -90180,6 +90193,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T17:31:26.865Z"
+    },
+    "rule-2714": {
+      "learning_id": "rule-2714",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2714,
+      "title": "revert change in package script",
+      "source_url": "https://github.com/oliviertassinari/react-swipeable-views",
+      "source_version": "c637ad7d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T17:37:41.161Z"
     }
   },
   "aliases": {
