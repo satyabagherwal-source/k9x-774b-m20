@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T08:33:19.189Z",
+  "last_updated": "2026-10-19T08:42:31.587Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -950,14 +950,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-0-6b",
-      "content_hash": "b2e4c34d3c8c9ad7f001c6cc7a1b1d744827c6394789bdc3c04e79be87b1e0bf",
-      "verified_at": "2026-10-18T01:08:22.632Z",
+      "content_hash": "94821b997b46ee0c16b660c2dc3901664521f546188c7714fb419c196f972357",
+      "verified_at": "2026-10-19T08:40:49.492Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T01:08:22.632Z"
+      "last_updated": "2026-10-19T08:40:49.492Z"
     },
     "google-t5/t5-small": {
       "repository": "google-t5/t5-small",
@@ -4023,14 +4023,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-davidhdev-react-bits",
-      "content_hash": "48ba7500082bde8deef68155f3cbb0b19e7c9bc059576837080e0c213e0b2ea3",
-      "verified_at": "2026-10-18T21:51:58.887Z",
+      "content_hash": "c2439020a491e81870ef0af33c1aea9c8ac987557fd6011b52e57409a1829b7e",
+      "verified_at": "2026-10-19T08:40:48.116Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T21:51:58.887Z"
+      "last_updated": "2026-10-19T08:40:48.116Z"
     },
     "codewhale-hq/Codewhale": {
       "repository": "codewhale-hq/Codewhale",
@@ -5133,14 +5133,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "7f0a7cd6ae67ffd858af87ea1270b45f311c37653c7324bf9edb62b8ea8ce166",
-      "verified_at": "2026-10-18T23:08:29.480Z",
+      "content_hash": "64fe942bcbf83d68d5310ecffbf8ed423234868b2d1b1c7e1c8a0ec549a7d14b",
+      "verified_at": "2026-10-19T08:41:18.322Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T23:08:29.480Z"
+      "last_updated": "2026-10-19T08:41:18.322Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -11036,6 +11036,66 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T08:33:19.188Z"
+    },
+    "loft-sh/vcluster": {
+      "repository": "loft-sh/vcluster",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-loft-sh-vcluster",
+      "content_hash": "eb3307148a48c6e85543ef27d2ccf241a59dc8b40060980be5e02c6205620c07",
+      "verified_at": "2026-10-19T08:40:56.590Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T08:40:56.590Z"
+    },
+    "arkivanov/Decompose": {
+      "repository": "arkivanov/Decompose",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-arkivanov-decompose",
+      "content_hash": "1df3589982b5320a64d5acf546b233f2765da87a2cb7af98eea4bde28cb0ac65",
+      "verified_at": "2026-10-19T08:40:57.005Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T08:40:57.005Z"
+    },
+    "langchain4j/langchain4j": {
+      "repository": "langchain4j/langchain4j",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-langchain4j-langchain4j",
+      "content_hash": "e550d81c9704548cd19c51e42f6e8de4a333c3c74814f4a01d81ed8b097d8b91",
+      "verified_at": "2026-10-19T08:41:04.246Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T08:41:04.246Z"
+    },
+    "railwayapp/nixpacks": {
+      "repository": "railwayapp/nixpacks",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-railwayapp-nixpacks",
+      "content_hash": "90c7c2750f953f5d010019e64bf891c7a36cab71ca1f714d686f631958a0bdad",
+      "verified_at": "2026-10-19T08:42:31.587Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T08:42:31.587Z"
     }
   },
   "repos": {

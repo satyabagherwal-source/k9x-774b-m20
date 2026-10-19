@@ -745,8 +745,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-0.6B",
     "sourceVersion": "hf-qwen-qwen3-0.6b",
     "license": "Open-Source",
-    "contentHash": "b2e4c34d3c8c9ad7f001c6cc7a1b1d744827c6394789bdc3c04e79be87b1e0bf",
-    "lastHarvestedAt": "2026-10-18T01:08:22.609Z",
+    "contentHash": "94821b997b46ee0c16b660c2dc3901664521f546188c7714fb419c196f972357",
+    "lastHarvestedAt": "2026-10-19T08:40:49.489Z",
     "learningId": "learn-huggingface-qwen-qwen3-0-6b"
   },
   "hf-google-t5-t5-small": {
@@ -2593,10 +2593,10 @@
     "repository": "DavidHDev/react-bits",
     "platform": "github",
     "sourceUrl": "https://github.com/DavidHDev/react-bits",
-    "sourceVersion": "c2a1408d",
+    "sourceVersion": "e12c2219",
     "license": "NOASSERTION",
-    "contentHash": "48ba7500082bde8deef68155f3cbb0b19e7c9bc059576837080e0c213e0b2ea3",
-    "lastHarvestedAt": "2026-10-18T21:51:58.884Z",
+    "contentHash": "c2439020a491e81870ef0af33c1aea9c8ac987557fd6011b52e57409a1829b7e",
+    "lastHarvestedAt": "2026-10-19T08:40:48.112Z",
     "learningId": "learn-github-davidhdev-react-bits"
   },
   "hmbown-codewhale": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "f70d0db4",
+    "sourceVersion": "08b6eada",
     "license": "Apache-2.0",
-    "contentHash": "7f0a7cd6ae67ffd858af87ea1270b45f311c37653c7324bf9edb62b8ea8ce166",
-    "lastHarvestedAt": "2026-10-18T23:08:29.476Z",
+    "contentHash": "64fe942bcbf83d68d5310ecffbf8ed423234868b2d1b1c7e1c8a0ec549a7d14b",
+    "lastHarvestedAt": "2026-10-19T08:41:18.318Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -7328,5 +7328,45 @@
     "contentHash": "624a781a08aab5b829ccc492331f6f604b267bb51614bf910e79efc957aaad24",
     "lastHarvestedAt": "2026-10-19T08:33:19.182Z",
     "learningId": "learn-github-kubesphere-kubesphere"
+  },
+  "loft-sh-vcluster": {
+    "repository": "loft-sh/vcluster",
+    "platform": "github",
+    "sourceUrl": "https://github.com/loft-sh/vcluster",
+    "sourceVersion": "c77b9a50",
+    "license": "Apache-2.0",
+    "contentHash": "eb3307148a48c6e85543ef27d2ccf241a59dc8b40060980be5e02c6205620c07",
+    "lastHarvestedAt": "2026-10-19T08:40:56.586Z",
+    "learningId": "learn-github-loft-sh-vcluster"
+  },
+  "arkivanov-decompose": {
+    "repository": "arkivanov/Decompose",
+    "platform": "github",
+    "sourceUrl": "https://github.com/arkivanov/Decompose",
+    "sourceVersion": "d500db80",
+    "license": "Apache-2.0",
+    "contentHash": "1df3589982b5320a64d5acf546b233f2765da87a2cb7af98eea4bde28cb0ac65",
+    "lastHarvestedAt": "2026-10-19T08:40:57.001Z",
+    "learningId": "learn-github-arkivanov-decompose"
+  },
+  "langchain4j-langchain4j": {
+    "repository": "langchain4j/langchain4j",
+    "platform": "github",
+    "sourceUrl": "https://github.com/langchain4j/langchain4j",
+    "sourceVersion": "f2a5c72f",
+    "license": "Apache-2.0",
+    "contentHash": "e550d81c9704548cd19c51e42f6e8de4a333c3c74814f4a01d81ed8b097d8b91",
+    "lastHarvestedAt": "2026-10-19T08:41:04.242Z",
+    "learningId": "learn-github-langchain4j-langchain4j"
+  },
+  "railwayapp-nixpacks": {
+    "repository": "railwayapp/nixpacks",
+    "platform": "github",
+    "sourceUrl": "https://github.com/railwayapp/nixpacks",
+    "sourceVersion": "144b4f9a",
+    "license": "MIT",
+    "contentHash": "90c7c2750f953f5d010019e64bf891c7a36cab71ca1f714d686f631958a0bdad",
+    "lastHarvestedAt": "2026-10-19T08:42:31.583Z",
+    "learningId": "learn-github-railwayapp-nixpacks"
   }
 }

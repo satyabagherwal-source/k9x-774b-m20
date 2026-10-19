@@ -1,59 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T08:33:19.186Z",
-  "total_cycles_completed": 3072,
-  "total_learnings_persisted": 3072,
-  "total_rules_promoted": 2205,
+  "last_updated": "2026-10-19T08:42:31.585Z",
+  "total_cycles_completed": 3079,
+  "total_learnings_persisted": 3079,
+  "total_rules_promoted": 2225,
   "history": [
-    {
-      "timestamp": "2026-10-19T04:19:36.478Z",
-      "repository": "kcl-lang/kcl",
-      "learningId": "learn-github-kcl-lang-kcl",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T04:19:41.188Z",
-      "repository": "apache/incubator-pegasus",
-      "learningId": "learn-github-apache-incubator-pegasus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T04:26:06.755Z",
-      "repository": "benoitvallon/react-native-nw-react-calculator",
-      "learningId": "learn-github-benoitvallon-react-native-nw-react-calculator",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T04:26:09.476Z",
-      "repository": "cycloidio/terracognita",
-      "learningId": "learn-github-cycloidio-terracognita",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T04:26:13.664Z",
-      "repository": "activeloopai/deeplake",
-      "learningId": "learn-github-activeloopai-deeplake",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T04:27:04.256Z",
-      "repository": "vikejs/vike",
-      "learningId": "learn-github-vikejs-vike",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T04:27:25.288Z",
-      "repository": "Altworld/Hemmingway-1",
-      "learningId": "learn-huggingface-altworld-hemmingway-1",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T04:27:56.559Z",
       "repository": "NVIDIA/cuda-rust",
@@ -1402,6 +1353,55 @@
       "timestamp": "2026-10-19T08:33:19.186Z",
       "repository": "kubesphere/kubesphere",
       "learningId": "learn-github-kubesphere-kubesphere",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T08:40:48.115Z",
+      "repository": "DavidHDev/react-bits",
+      "learningId": "learn-github-davidhdev-react-bits",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T08:40:49.491Z",
+      "repository": "Qwen/Qwen3-0.6B",
+      "learningId": "learn-huggingface-qwen-qwen3-0-6b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T08:40:56.589Z",
+      "repository": "loft-sh/vcluster",
+      "learningId": "learn-github-loft-sh-vcluster",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T08:40:57.003Z",
+      "repository": "arkivanov/Decompose",
+      "learningId": "learn-github-arkivanov-decompose",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T08:41:04.245Z",
+      "repository": "langchain4j/langchain4j",
+      "learningId": "learn-github-langchain4j-langchain4j",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T08:41:18.320Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T08:42:31.585Z",
+      "repository": "railwayapp/nixpacks",
+      "learningId": "learn-github-railwayapp-nixpacks",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

@@ -3102,3 +3102,10 @@ Every entry in this ledger must capture:
 | `learn-github-zenbu-labs-terminal-browser` | `https://github.com/zenbu-labs/terminal-browser` | `3a405655` | Multi-dimensional audit evidence | 2026-10-19T08:32:02.414Z |
 | `learn-github-kosi-libs-kodein` | `https://github.com/kosi-libs/Kodein` | `f26ea0c9` | Multi-dimensional audit evidence | 2026-10-19T08:32:19.296Z |
 | `learn-github-kubesphere-kubesphere` | `https://github.com/kubesphere/kubesphere` | `04a29b5c` | Multi-dimensional audit evidence | 2026-10-19T08:33:19.182Z |
+| `learn-github-davidhdev-react-bits` | `https://github.com/DavidHDev/react-bits` | `e12c2219` | Multi-dimensional audit evidence | 2026-10-19T08:40:48.112Z |
+| `learn-huggingface-qwen-qwen3-0-6b` | `https://huggingface.co/Qwen/Qwen3-0.6B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-19T08:40:49.489Z |
+| `learn-github-loft-sh-vcluster` | `https://github.com/loft-sh/vcluster` | `c77b9a50` | Multi-dimensional audit evidence | 2026-10-19T08:40:56.586Z |
+| `learn-github-arkivanov-decompose` | `https://github.com/arkivanov/Decompose` | `d500db80` | Multi-dimensional audit evidence | 2026-10-19T08:40:57.001Z |
+| `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `f2a5c72f` | Multi-dimensional audit evidence | 2026-10-19T08:41:04.242Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `08b6eada` | Multi-dimensional audit evidence | 2026-10-19T08:41:18.318Z |
+| `learn-github-railwayapp-nixpacks` | `https://github.com/railwayapp/nixpacks` | `144b4f9a` | Multi-dimensional audit evidence | 2026-10-19T08:42:31.583Z |

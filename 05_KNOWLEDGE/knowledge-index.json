@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T08:33:19.138Z",
-  "total_verified_learnings": 747,
+  "last_updated": "2026-10-19T08:42:31.542Z",
+  "total_verified_learnings": 751,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -2411,22 +2411,45 @@
     "learn-github-arkivanov-decompose": {
       "learning_id": "learn-github-arkivanov-decompose",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "arkivanov-decompose",
+      "source": "arkivanov/Decompose",
+      "repository": "arkivanov/Decompose",
       "slug": "arkivanov-decompose",
       "platform": "github",
       "source_url": "https://github.com/arkivanov/Decompose",
-      "source_version": "HEAD",
-      "content_hash": "dfa55f0f7dc8f86923732c4edb3ba11d6087cd6cee65728d0345056e269422cc",
+      "source_version": "d500db80",
+      "content_hash": "1df3589982b5320a64d5acf546b233f2765da87a2cb7af98eea4bde28cb0ac65",
       "dossier_path": "07_PROJECT_LEARNING/arkivanov-decompose-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/arkivanov-decompose-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2427,
+          "title": "Guard Stale Completion Callbacks in Asynchronous State Transitions",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2428,
+          "title": "POSIX Native Mutex Resource Enclosure with GC Cleaners",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2429,
+          "title": "Deep-Link Activity Re-Initialization State Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.911Z"
+      "verified_at": "2026-10-19T08:40:56.969Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-arxanas-git-branchless": {
       "learning_id": "learn-github-arxanas-git-branchless",
@@ -4736,14 +4759,29 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "f70d0db4",
-      "content_hash": "7f0a7cd6ae67ffd858af87ea1270b45f311c37653c7324bf9edb62b8ea8ce166",
+      "source_version": "08b6eada",
+      "content_hash": "64fe942bcbf83d68d5310ecffbf8ed423234868b2d1b1c7e1c8a0ec549a7d14b",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
         {
           "number": 1827,
           "title": "datapath: Fix NAT46x64 gateway prefix conversion panic",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2433,
+          "title": "Zero-Value Struct Serialization Invariant in Go Kubernetes CRDs",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2434,
+          "title": "Guarded Feature-Flag Degradation Invariant for Cross-Version BPF Control Planes",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2435,
+          "title": "Fail-Safe Ephemeral Execution Target Lifecycle Pattern",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -4752,7 +4790,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T23:08:29.419Z",
+      "verified_at": "2026-10-19T08:41:18.267Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -6201,14 +6239,29 @@
       "slug": "davidhdev-react-bits",
       "platform": "github",
       "source_url": "https://github.com/DavidHDev/react-bits",
-      "source_version": "c2a1408d",
-      "content_hash": "48ba7500082bde8deef68155f3cbb0b19e7c9bc059576837080e0c213e0b2ea3",
+      "source_version": "e12c2219",
+      "content_hash": "c2439020a491e81870ef0af33c1aea9c8ac987557fd6011b52e57409a1829b7e",
       "dossier_path": "07_PROJECT_LEARNING/davidhdev-react-bits-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/davidhdev-react-bits-learnings.md",
       "promoted_rules": [
         {
           "number": 1746,
           "title": "Merge pull request #1107 from justelson/feat/fix-shape-magic-gpu-hang",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2419,
+          "title": "High-Frequency Layout-Decoupled Direct DOM Mutation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2420,
+          "title": "Typographic Dimension Measurement Synchronization with Font Loading Lifecycle",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2421,
+          "title": "Absolute Dimension Constraint Symmetry Across Responsive Breakpoints",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -6217,7 +6270,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:51:58.828Z",
+      "verified_at": "2026-10-19T08:40:48.060Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -20653,7 +20706,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3-0.6B",
       "source_version": "hf-qwen-qwen3-0.6b",
-      "content_hash": "b2e4c34d3c8c9ad7f001c6cc7a1b1d744827c6394789bdc3c04e79be87b1e0bf",
+      "content_hash": "94821b997b46ee0c16b660c2dc3901664521f546188c7714fb419c196f972357",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md",
       "promoted_rules": [
@@ -20665,6 +20718,21 @@
         {
           "number": 1406,
           "title": "Tied-Embedding Weight Synchronization and Slicing Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2422,
+          "title": "Multi-Terminal End-Of-Sequence Token Handling Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2423,
+          "title": "Decoupled Attention Head Dimension Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2424,
+          "title": "Presence Penalty Loop Breaker Invariant for Sub-1B Models",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -20686,7 +20754,7 @@
         "learn-huggingface-hf-qwen-qwen3-0-6b-mv494roa",
         "learn-huggingface-hf-qwen-qwen3-0-6b-mv4mie4v"
       ],
-      "verified_at": "2026-10-18T01:08:22.557Z",
+      "verified_at": "2026-10-19T08:40:49.445Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -26594,22 +26662,45 @@
     "learn-github-langchain4j-langchain4j": {
       "learning_id": "learn-github-langchain4j-langchain4j",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "langchain4j-langchain4j",
+      "source": "langchain4j/langchain4j",
+      "repository": "langchain4j/langchain4j",
       "slug": "langchain4j-langchain4j",
       "platform": "github",
       "source_url": "https://github.com/langchain4j/langchain4j",
-      "source_version": "HEAD",
-      "content_hash": "58fcd166e30ce50f1c097f5bbffe31632601f777b59375cd13f464e07214e198",
+      "source_version": "f2a5c72f",
+      "content_hash": "e550d81c9704548cd19c51e42f6e8de4a333c3c74814f4a01d81ed8b097d8b91",
       "dossier_path": "07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2430,
+          "title": "Guardrail Rewrite Immutability and Downstream Reprompt Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2431,
+          "title": "Guarded Scope Lookup and Concurrent Map Null Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2432,
+          "title": "Asynchronous Cancellation Preservation in Coroutine Stream Harvesters",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.954Z"
+      "verified_at": "2026-10-19T08:41:04.209Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-langgenius-dify": {
       "learning_id": "learn-github-langgenius-dify",
@@ -27370,22 +27461,40 @@
     "learn-github-loft-sh-vcluster": {
       "learning_id": "learn-github-loft-sh-vcluster",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "loft-sh-vcluster",
+      "source": "loft-sh/vcluster",
+      "repository": "loft-sh/vcluster",
       "slug": "loft-sh-vcluster",
       "platform": "github",
       "source_url": "https://github.com/loft-sh/vcluster",
-      "source_version": "HEAD",
-      "content_hash": "8a3d02a152f840606358be4ecd14328243dc719f90ca51ef56fd6000db63b4c0",
+      "source_version": "c77b9a50",
+      "content_hash": "eb3307148a48c6e85543ef27d2ccf241a59dc8b40060980be5e02c6205620c07",
       "dossier_path": "07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2425,
+          "title": "Two-Phase Ordered OS Signal Interruption Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2426,
+          "title": "Defensive CLI Host Mount Version Pinning Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.075Z"
+      "verified_at": "2026-10-19T08:40:56.533Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-loopx-project-loopx": {
       "learning_id": "learn-github-loopx-project-loopx",
@@ -34227,22 +34336,45 @@
     "learn-github-railwayapp-nixpacks": {
       "learning_id": "learn-github-railwayapp-nixpacks",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "railwayapp-nixpacks",
+      "source": "railwayapp/nixpacks",
+      "repository": "railwayapp/nixpacks",
       "slug": "railwayapp-nixpacks",
       "platform": "github",
       "source_url": "https://github.com/railwayapp/nixpacks",
-      "source_version": "HEAD",
-      "content_hash": "b0f38cc8a9a19e21a640e13df17ff5e4d708fdb9c130ce37ae7e636b311a6b49",
+      "source_version": "144b4f9a",
+      "content_hash": "90c7c2750f953f5d010019e64bf891c7a36cab71ca1f714d686f631958a0bdad",
       "dossier_path": "07_PROJECT_LEARNING/railwayapp-nixpacks-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/railwayapp-nixpacks-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2436,
+          "title": "Sentinel-Preserving Ordered Vector Interpolation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2437,
+          "title": "Dual-Mode Framework-vs-SPA Routing Discrimination",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2438,
+          "title": "Strict Deterministic Fallback on SemVer Major Version Ingestion",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.178Z"
+      "verified_at": "2026-10-19T08:42:31.534Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-rainbow-me-rainbow": {
       "learning_id": "learn-github-rainbow-me-rainbow",
@@ -83527,6 +83659,286 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T08:33:19.127Z"
+    },
+    "rule-2419": {
+      "learning_id": "rule-2419",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2419,
+      "title": "High-Frequency Layout-Decoupled Direct DOM Mutation",
+      "source_url": "https://github.com/DavidHDev/react-bits",
+      "source_version": "e12c2219",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:40:48.060Z"
+    },
+    "rule-2420": {
+      "learning_id": "rule-2420",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2420,
+      "title": "Typographic Dimension Measurement Synchronization with Font Loading Lifecycle",
+      "source_url": "https://github.com/DavidHDev/react-bits",
+      "source_version": "e12c2219",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:40:48.060Z"
+    },
+    "rule-2421": {
+      "learning_id": "rule-2421",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2421,
+      "title": "Absolute Dimension Constraint Symmetry Across Responsive Breakpoints",
+      "source_url": "https://github.com/DavidHDev/react-bits",
+      "source_version": "e12c2219",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:40:48.060Z"
+    },
+    "rule-2422": {
+      "learning_id": "rule-2422",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2422,
+      "title": "Multi-Terminal End-Of-Sequence Token Handling Rule",
+      "source_url": "https://huggingface.co/Qwen/Qwen3-0.6B",
+      "source_version": "hf-qwen-qwen3-0.6b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:40:49.445Z"
+    },
+    "rule-2423": {
+      "learning_id": "rule-2423",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2423,
+      "title": "Decoupled Attention Head Dimension Invariant",
+      "source_url": "https://huggingface.co/Qwen/Qwen3-0.6B",
+      "source_version": "hf-qwen-qwen3-0.6b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:40:49.445Z"
+    },
+    "rule-2424": {
+      "learning_id": "rule-2424",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2424,
+      "title": "Presence Penalty Loop Breaker Invariant for Sub-1B Models",
+      "source_url": "https://huggingface.co/Qwen/Qwen3-0.6B",
+      "source_version": "hf-qwen-qwen3-0.6b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:40:49.445Z"
+    },
+    "rule-2425": {
+      "learning_id": "rule-2425",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2425,
+      "title": "Two-Phase Ordered OS Signal Interruption Invariant",
+      "source_url": "https://github.com/loft-sh/vcluster",
+      "source_version": "c77b9a50",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:40:56.533Z"
+    },
+    "rule-2426": {
+      "learning_id": "rule-2426",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2426,
+      "title": "Defensive CLI Host Mount Version Pinning Invariant",
+      "source_url": "https://github.com/loft-sh/vcluster",
+      "source_version": "c77b9a50",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:40:56.533Z"
+    },
+    "rule-2427": {
+      "learning_id": "rule-2427",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2427,
+      "title": "Guard Stale Completion Callbacks in Asynchronous State Transitions",
+      "source_url": "https://github.com/arkivanov/Decompose",
+      "source_version": "d500db80",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:40:56.969Z"
+    },
+    "rule-2428": {
+      "learning_id": "rule-2428",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2428,
+      "title": "POSIX Native Mutex Resource Enclosure with GC Cleaners",
+      "source_url": "https://github.com/arkivanov/Decompose",
+      "source_version": "d500db80",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:40:56.969Z"
+    },
+    "rule-2429": {
+      "learning_id": "rule-2429",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2429,
+      "title": "Deep-Link Activity Re-Initialization State Guard",
+      "source_url": "https://github.com/arkivanov/Decompose",
+      "source_version": "d500db80",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:40:56.969Z"
+    },
+    "rule-2430": {
+      "learning_id": "rule-2430",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2430,
+      "title": "Guardrail Rewrite Immutability and Downstream Reprompt Invariant",
+      "source_url": "https://github.com/langchain4j/langchain4j",
+      "source_version": "f2a5c72f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:41:04.209Z"
+    },
+    "rule-2431": {
+      "learning_id": "rule-2431",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2431,
+      "title": "Guarded Scope Lookup and Concurrent Map Null Invariant",
+      "source_url": "https://github.com/langchain4j/langchain4j",
+      "source_version": "f2a5c72f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:41:04.209Z"
+    },
+    "rule-2432": {
+      "learning_id": "rule-2432",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2432,
+      "title": "Asynchronous Cancellation Preservation in Coroutine Stream Harvesters",
+      "source_url": "https://github.com/langchain4j/langchain4j",
+      "source_version": "f2a5c72f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:41:04.209Z"
+    },
+    "rule-2433": {
+      "learning_id": "rule-2433",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2433,
+      "title": "Zero-Value Struct Serialization Invariant in Go Kubernetes CRDs",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "08b6eada",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:41:18.267Z"
+    },
+    "rule-2434": {
+      "learning_id": "rule-2434",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2434,
+      "title": "Guarded Feature-Flag Degradation Invariant for Cross-Version BPF Control Planes",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "08b6eada",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:41:18.267Z"
+    },
+    "rule-2435": {
+      "learning_id": "rule-2435",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2435,
+      "title": "Fail-Safe Ephemeral Execution Target Lifecycle Pattern",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "08b6eada",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:41:18.267Z"
+    },
+    "rule-2436": {
+      "learning_id": "rule-2436",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2436,
+      "title": "Sentinel-Preserving Ordered Vector Interpolation",
+      "source_url": "https://github.com/railwayapp/nixpacks",
+      "source_version": "144b4f9a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:42:31.534Z"
+    },
+    "rule-2437": {
+      "learning_id": "rule-2437",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2437,
+      "title": "Dual-Mode Framework-vs-SPA Routing Discrimination",
+      "source_url": "https://github.com/railwayapp/nixpacks",
+      "source_version": "144b4f9a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:42:31.534Z"
+    },
+    "rule-2438": {
+      "learning_id": "rule-2438",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2438,
+      "title": "Strict Deterministic Fallback on SemVer Major Version Ingestion",
+      "source_url": "https://github.com/railwayapp/nixpacks",
+      "source_version": "144b4f9a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:42:31.534Z"
     }
   },
   "aliases": {
