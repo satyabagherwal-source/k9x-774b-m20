@@ -3311,3 +3311,10 @@ Every entry in this ledger must capture:
 | `learn-github-carbon-design-system-carbon-components-svelte` | `https://github.com/carbon-design-system/carbon-components-svelte` | `87db3ace` | Multi-dimensional audit evidence | 2026-10-19T14:52:57.493Z |
 | `learn-github-orange-opensource-hurl` | `https://github.com/Orange-OpenSource/hurl` | `bbe96304` | Multi-dimensional audit evidence | 2026-10-19T14:52:59.158Z |
 | `learn-github-ivanvorobei-swiftui` | `https://github.com/ivanvorobei/SwiftUI` | `b6cfb6d0` | Multi-dimensional audit evidence | 2026-10-19T14:53:03.256Z |
+| `learn-github-shadcn-ui-lint` | `https://github.com/shadcn-ui/lint` | `bceee0fe` | Multi-dimensional audit evidence | 2026-10-19T14:58:59.033Z |
+| `learn-github-jinxiansen-swiftui` | `https://github.com/Jinxiansen/SwiftUI` | `d8192c12` | Multi-dimensional audit evidence | 2026-10-19T14:59:08.783Z |
+| `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `831721d5` | Multi-dimensional audit evidence | 2026-10-19T14:59:08.969Z |
+| `learn-huggingface-conwayresearch-underdog-saluki-27b-1-0` | `https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0` | `hf-conwayr` | Multi-dimensional audit evidence | 2026-10-19T14:59:09.519Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `dc5a1b22` | Multi-dimensional audit evidence | 2026-10-19T14:59:12.794Z |
+| `learn-github-sfu-db-connector-x` | `https://github.com/sfu-db/connector-x` | `028aa1fc` | Multi-dimensional audit evidence | 2026-10-19T14:59:13.881Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `27dafb82` | Multi-dimensional audit evidence | 2026-10-19T14:59:16.158Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md`  
 > **Source**: github ([https://github.com/sfu-db/connector-x](https://github.com/sfu-db/connector-x))  
-> **Source Version**: `c8ae2517`  
+> **Source Version**: `028aa1fc`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T01:49:26.907Z  
+> **Timestamp**: 2026-10-19T14:59:13.665Z  
 > **Learning ID**: `learn-github-sfu-db-connector-x`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sfu-db/connector-x](https://github.com/sfu-db/connector-x))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T01:49:26.900Z  
+> **Harvest Timestamp**: 2026-10-19T14:59:13.661Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -787,675 +787,351 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e444342c` (2026-10-18)
-**Commit Message**: Merge pull request #1012 from oystersuki/fix/mysql-value-conversion-error
+### Incident Patch 1: `48a1f0a7` (2026-10-19)
+**Commit Message**: build(rust): bump itertools from 0.14.0 to 0.15.0
 
-fix(mysql): report value conversion failures as errors instead of panicking
-
-**File**: `connectorx-python/connectorx/tests/test_mysql.py` (modified, +25/-0)
-```diff
-@@ -781,3 +781,28 @@ def test_mysql_schema_fallback_without_server_side_prepare(mysql_url: str) -> No
-         empty = read_sql(mysql_url, empty_query, protocol="text", return_type="arrow")
-         assert empty.schema == expected_empty.schema
-         assert empty.num_rows == 0
-+
-+
-+@pytest.mark.parametrize("protocol", ["binary", "text"])
-+@pytest.mark.parametrize(
-+    "column",
-+    [
-+        "test_date",  # 0000-00-00
-+        "test_datetime",  # 0000-00-00 00:00:00
-+        "test_time_negative",  # -01:00:00, outside chrono NaiveTime
-+        "test_time_over_24h",  # 838:59:59, outside chrono NaiveTime
-+        "test_decimal_wide",  # 50 digits, beyond rust_decimal precision
-+    ],
-+)
-+def test_mysql_unconvertible_value_raises(mysql_url: str, protocol: str, column: str) -> None:
-+    # See test_unconvertible in scripts/mysql.sql. A value the column's Rust
-+    # type cannot hold must raise an ordinary RuntimeError naming the column,
-+    # not a PanicException, which `except Exception` cannot catch (#476, #268).
-+    with pytest.raises(RuntimeError, match=rf"Cannot produce a .*column `{column}`") as excinfo:
-+        read_sql(
-+            mysql_url,
-+            f"SELECT {column} FROM test_unconvertible",
-+            protocol=protocol,
-+        )
-+    # The error names the column's type, not the Option wrapping nullable columns.
-+    assert "Option<" not in str(excinfo.value)
-```
-
-**File**: `connectorx/src/sources/mysql/mod.rs` (modified, +35/-9)
-```diff
-@@ -19,7 +19,10 @@ use fehler::{throw, throws};
- use log::{debug, warn};
- use r2d2::{Pool, PooledConnection};
- use r2d2_mysql::{
--    mysql::{prelude::Queryable, Binary, Column, QueryResult, Row, Text},
-+    mysql::{
-+        prelude::{FromValue, Queryable},
-+        Binary, Column, QueryResult, Row, Text,
-+    },
-     MySqlConnectionManager,
- };
- use rust_decimal::Decimal;
-@@ -274,6 +277,33 @@ impl SourcePartition for MySQLSourcePartition<TextProtocol> {
-     }
- }
- 
-+/// Takes the cell at `cidx` out of `row` and converts it to `T`.
-+///
-+/// `Row::take` panics inside mysql_common when the value has no representation
-+/// in `T` (zero dates, TIME values outside a chrono `NaiveTime`, DECIMALs wider
-+/// than rust_decimal, ...). Use `take_opt` instead and report the failure as an
-+/// error naming the column (#476, #268).
-+///
-+/// `Produced` is the type named in that error: the column's Rust type, without
-+/// the `Option` of nullable columns, as in the other sources.
-+fn take_cell<T: FromValue, Produced>(
-+    row: &mut Row,
-+    ridx: usize,
-+    cidx: usize,
-+) -> Result<T, MySQLSourceError> {
-+    match row.take_opt::<T, _>(cidx) {
-+        Some(Ok(value)) => Ok(value),
-+        Some(Err(e)) => Err(ConnectorXError::cannot_produce::<Produced>(Some(format!(
-+            "column `{}` (index {}): {}",
-+            row.columns_ref()[cidx].name_str(),
-+            cidx,
-+            e
-+        )))
-+        .into()),
-+        None => Err(anyhow!("mysql cannot parse at position: ({}, {})", ridx, cidx).into()),
-+    }
-+}
-+
- pub struct MySQLBinarySourceParser<'a> {
-     iter: QueryResult<'a, 'a, 'a, Binary>,
-     rowbuf: Vec<Row>,
-@@ -346,8 +376,7 @@ macro_rules! impl_produce_binary {
-                 #[throws(MySQLSourceError)]
-                 fn produce(&'r mut self) -> $t {
-                     let (ridx, cidx) = self.next_loc()?;
--                    let res = self.rowbuf[ridx].take(cidx).ok_or_else(|| anyhow!("mysql cannot parse at position: ({}, {})", ridx, cidx))?;
--                    res
-+                    take_cell::<$t, $t>(&mut self.rowbuf[ridx], ridx, cidx)?
-                 }
-             }
- 
-@@ -357,8 +386,7 @@ macro_rules! impl_produce_binary {
-                 #[throws(MySQLSourceError)]
-                 fn produce(&'r mut self) -> Option<$t> {
-                     let (ridx, cidx) = self.next_loc()?;
--                    let res = self.rowbuf[ridx].take(cidx).ok_or_else(|| anyhow!("mysql cannot parse at position: ({}, {})", ridx, cidx))?;
--                    res
-+                    take_cell::<Option<$t>, $t>(&mut self.rowbuf[ridx], ridx, cidx)?
-                 }
-             }
-         )+
-@@ -455,8 +483,7 @@ macro_rules! impl_produce_text {
-                 #[throws(MySQLSourceError)]
-                 fn produce(&'r mut self) -> $t {
-                     let (ridx, cidx) = self.next_loc()?;
--                    let res = self.rowbuf[ridx].take(cidx).ok_or_else(|| anyhow!("mysql cannot parse at position: ({}, {})", ridx, cidx))?;
--                    res
-+                    take_cell::<$t, $t>(&mut self.rowbuf[ridx], ridx, cidx)?
-                 }
-             }
- 
-@@ -466,8 +493,7 @@ macro_rules! impl_produce_text {
-                 #[throws(MySQLSourceError)]
-                 fn produce(&'r mut self) -> Option<$t> {
-                     let (ridx, cidx) = self.next_loc()?;
--                    let res = self.rowbuf[ridx].take(cidx).ok_or_else(|| anyhow!("mysql cannot parse at position: ({}, {})", ridx, cidx))?;
--                    res
-+                    take_cell::<Option<$t>, $t>(&mut self.rowbuf[ridx], ridx, cidx)?
-                 }
-             }
-         )+
-```
-
-**File**: `connectorx/tests/test_mysql.rs` (modified, +43/-7)
-```diff
-@@ -15,7 +15,7 @@ use connectorx::{
-     prelude::*,
-     sources::mysql::{BinaryProtocol, MySQLSource, TextProtocol},
-     sql::CXQuery,
--    transports::MySQLArrowTransport,
-+    transports::{MySQLArrowTransport, MySQLArrowTransportError},
- };
- 
- #[test]
-@@ -428,7 +428,10 @@ fn assert_str_collation_schema(result: &[RecordBatch]) {
- 
- /// Run a single naked query through the Arrow transport using either the
- /// binary or text protocol.
--fn run_mysql_query(query: &str, binary: bool) -> Vec<RecordBatch> {
-+fn try_run_mysql_query(
-+    query: &str,
-+    binary: bool,
-+) -> Result<Vec<RecordBatch>, MySQLArrowTransportError> {
-     let _ = env_logger::builder().is_test(true).try_init();
-     let dburl = test_db::mysql_url();
-     let queries = [CXQuery::naked(query)];
-@@ -442,8 +445,7 @@ fn run_mysql_query(query: &str, binary: bool) -> Vec<RecordBatch> {
-             &queries,
-             None,
-         )
--        .run()
--        .unwrap();
-+        .run()?;
-     } else {
-         let builder = MySQLSource::<TextProtocol>::new(&dburl, 1).unwrap();
-         Dispatcher::<_, _, MySQLArrowTransport<TextProtocol>>::new(
-@@ -452,11 +454,14 @@ fn run_mysql_query(query: &str, binary: bool) -> Vec<RecordBatch> {
-             &queries,
-             None,
-         )
--        .run()
--        .unwrap();
-+        .run()?;
-     }
- 
--    destination.arrow().unwrap()
-+    Ok(destination.arrow()?)
-+}
-+
-+fn run_mysql_query(query: &str, binary: bool) -> Vec<RecordBatch> {
-+    try_run_mysql_query(query, binary).unwrap()
- }
- 
- #[test]
-@@ -698,3 +703,34 @@ fn test_mysql_long_unsigned() {
-             .eq(&UInt32Array::from(vec![0u32, 4294967295])));
-     }
- }
-+
-+/// Values in `test_unconvertible` are valid in MySQL but cannot be represented
-+/// by the Rust type the column maps to (see `scripts/mysql.sql`). The
-+/// conversion must surface as an error, not as a panic inside the driver
-+/// (#476, #268).
-+const UNCONVERTIBLE_COLUMNS: [&str; 5] = [
-+    "test_date",
-+    "test_datetime",
-+    "test_time_negative",
-+    "test_time_over_24h",
-+    "test_decimal_wide",
-+];
-+
-+#[test]
-+fn test_mysql_unconvertible_value_is_error() {
-+    for binary in [true, false] {
-+        for col in UNCONVERTIBLE_COLUMNS {
-+            let query = format!("select {} from test_unconvertible", col);
-+            let msg = try_run_mysql_query(&query, binary).unwrap_err().to_string();
-+            assert!(
-+                msg.contains("Cannot produce a")
-+                    && msg.contains(&format!("column `{}`", col))
-+                    && !msg.contains("Option<"),
-+                "{} (binary={}): unexpected error message: {}",
-+                query,
-+                binary,
-+                msg
-+            );
-+        }
-+    }
-+}
-```
-
-**File**: `scripts/mysql.sql` (modified, +26/-0)
-```diff
-@@ -90,3 +90,29 @@ CREATE TABLE IF NOT EXISTS test_str_collation (
- );
- 
- INSERT INTO test_str_collation VALUES (1, 'general', 'bin', 'ascii', 'text', 'textbin', 0x4442, 0x00010203, 'blob'), (2, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-+
-+DROP TABLE IF EXISTS test_unconvertible;
-+
-+-- Values that are valid in MySQL but cannot be represented by the Rust types
-+-- connector-x maps the columns to (#476, #268): zero dates, negative or
-+-- over-24h TIME values (chrono NaiveTime), and DECIMALs beyond the 28-digit
-+-- precision of rust_decimal. Row 1 holds ordinary values, row 2 the bad ones.
-+-- MySQL 8 refuses '0000-00-00' under its default sql_mode (NO_ZERO_DATE,
-+-- NO_ZERO_IN_DATE), so relax it around the insert and restore it afterwards.
-+SET @cx_saved_sql_mode = @@SESSION.sql_mode;
-+SET SESSION sql_mode = '';
-+
-+CREATE TABLE IF NOT EXISTS test_unconvertible (
-+    test_int INT,
-+    test_date DATE,
-+    test_datetime DATETIME,
-+    test_time_negative TIME,
-+    test_time_over_24h TIME,
-+    test_decimal_wide DECIMAL(65, 0)
-+);
-+
-+INSERT INTO test_unconvertible VALUES
-+    (1, '2020-01-01', '2020-01-01 00:00:00', '01:00:00', '01:00:00', 1),
-+    (2, '0000-00-00', '0000-00-00 00:00:00', '-01:00:00', '838:59:59', 12345678901234567890123456789012345678901234567890);
-+
-+SET SESSION sql_mode = @cx_saved_sql_mode;
-```
+Bumps [itertools](https://github.com/rust-itertools/itertools) from 0.14.0 to 0.15.0.
+- [Changelog](https://github.com/rust-itertools/itertools/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/rust-itertools/itertools/compare/v0.14.0...v0.15.0)
 
 ---
+updated-dependencies:
+- dependency-name: itertools
+  dependency-version: 0.15.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
 
-### Incident Patch 2: `bff52d3e` (2026-09-15)
-**Commit Message**: fix(mysql): report value conversion failures as errors instead of panicking
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
-**File**: `connectorx-python/connectorx/tests/test_mysql.py` (modified, +25/-0)
+**File**: `Cargo.lock` (modified, +12/-3)
 ```diff
-@@ -781,3 +781,28 @@ def test_mysql_schema_fallback_without_server_side_prepare(mysql_url: str) -> No
-         empty = read_sql(mysql_url, empty_query, protocol="text", return_type="arrow")
-         assert empty.schema == expected_empty.schema
-         assert empty.num_rows == 0
-+
-+
-+@pytest.mark.parametrize("protocol", ["binary", "text"])
-+@pytest.mark.parametrize(
-+    "column",
-+    [
-+        "test_date",  # 0000-00-00
-+        "test_datetime",  # 0000-00-00 00:00:00
-+        "test_time_negative",  # -01:00:00, outside chrono NaiveTime
-+        "test_time_over_24h",  # 838:59:59, outside chrono NaiveTime
-+        "test_decimal_wide",  # 50 digits, beyond rust_decimal precision
-+    ],
-+)
-+def test_mysql_unconvertible_value_raises(mysql_url: str, protocol: str, column: str) -> None:
-+    # See test_unconvertible in scripts/mysql.sql. A value the column's Rust
-+    # type cannot hold must raise an ordinary RuntimeError naming the column,
-+    # not a PanicException, which `except Exception` cannot catch (#476, #268).
-+    with pytest.raises(RuntimeError, match=rf"Cannot produce a .*column `{column}`") as excinfo:
-+        read_sql(
-+            mysql_url,
-+            f"SELECT {column} FROM test_unconvertible",
-+            protocol=protocol,
-+        )
-+    # The error names the column's type, not the Option wrapping nullable columns.
-+    assert "Option<" not in str(excinfo.value)
-```
-
-**File**: `connectorx/src/sources/mysql/mod.rs` (modified, +35/-9)
-```diff
-@@ -19,7 +19,10 @@ use fehler::{throw, throws};
- use log::{debug, warn};
- use r2d2::{Pool, PooledConnection};
- use r2d2_mysql::{
--    mysql::{prelude::Queryable, Binary, Column, QueryResult, Row, Text},
-+    mysql::{
-+        prelude::{FromValue, Queryable},
-+        Binary, Column, QueryResult, Row, Text,
-+    },
-     MySqlConnectionManager,
- };
- use rust_decimal::Decimal;
-@@ -274,6 +277,33 @@ impl SourcePartition for MySQLSourcePartition<TextProtocol> {
-     }
- }
- 
-+/// Takes the cell at `cidx` out of `row` and converts it to `T`.
-+///
-+/// `Row::take` panics inside mysql_common when the value has no representation
-+/// in `T` (zero dates, TIME values outside a chrono `NaiveTime`, DECIMALs wider
-+/// than rust_decimal, ...). Use `take_opt` instead and report the failure as an
-+/// error naming the column (#476, #268).
-+///
-+/// `Produced` is the type named in that error: the column's Rust type, without
-+/// the `Option` of nullable columns, as in the other sources.
-+fn take_cell<T: FromValue, Produced>(
-+    row: &mut Row,
-+    ridx: usize,
-+    cidx: usize,
-+) -> Result<T, MySQLSourceError> {
-+    match row.take_opt::<T, _>(cidx) {
-+        Some(Ok(value)) => Ok(value),
-+        Some(Err(e)) => Err(ConnectorXError::cannot_produce::<Produced>(Some(format!(
-+            "column `{}` (index {}): {}",
-+            row.columns_ref()[cidx].name_str(),
-+            cidx,
-+            e
-+        )))
-+        .into()),
-+        None => Err(anyhow!("mysql cannot parse at position: ({}, {})", ridx, cidx).into()),
-+    }
-+}
-+
- pub struct MySQLBinarySourceParser<'a> {
-     iter: QueryResult<'a, 'a, 'a, Binary>,
-     rowbuf: Vec<Row>,
-@@ -346,8 +376,7 @@ macro_rules! impl_produce_binary {
-                 #[throws(MySQLSourceError)]
-                 fn produce(&'r mut self) -> $t {
-                     let (ridx, cidx) = self.next_loc()?;
--                    let res = self.rowbuf[ridx].take(cidx).ok_or_else(|| anyhow!("mysql cannot parse at position: ({}, {})", ridx, cidx))?;
--                    res
-+                    take_cell::<$t, $t>(&mut self.rowbuf[ridx], ridx, cidx)?
-                 }
-             }
- 
-@@ -357,8 +386,7 @@ macro_rules! impl_produce_binary {
-                 #[throws(MySQLSourceError)]
-                 fn produce(&'r mut self) -> Option<$t> {
-                     let (ridx, cidx) = self.next_loc()?;
--                    let res = self.rowbuf[ridx].take(cidx).ok_or_else(|| anyhow!("mysql cannot parse at position: ({}, {})", ridx, cidx))?;
--                    res
-+                    take_cell::<Option<$t>, $t>(&mut self.rowbuf[ridx], ridx, cidx)?
-                 }
-             }
-         )+
-@@ -455,8 +483,7 @@ macro_rules! impl_produce_text {
-                 #[throws(MySQLSourceError)]
-                 fn produce(&'r mut self) -> $t {
-                     let (ridx, cidx) = self.next_loc()?;
--                    let res = self.rowbuf[ridx].take(cidx).ok_or_else(|| anyhow!("mysql cannot parse at position: ({}, {})", ridx, cidx))?;
--                    res
-+                    take_cell::<$t, $t>(&mut self.rowbuf[ridx], ridx, cidx)?
-                 }
-             }
- 
-@@ -466,8 +493,7 @@ macro_rules! impl_produce_text {
-                 #[throws(MySQLSourceError)]
-                 fn produce(&'r mut self) -> Option<$t> {
-                     let (ridx, cidx) = self.next_loc()?;
--                    let res = self.rowbuf[ridx].take(cidx).ok_or_else(|| anyhow!("mysql cannot parse at position: ({}, {})", ridx, cidx))?;
--                    res
-+                    take_cell::<Option<$t>, $t>(&mut self.rowbuf[ridx], ridx, cidx)?
-                 }
-             }
-         )+
-```
-
-**File**: `connectorx/tests/test_mysql.rs` (modified, +43/-7)
-```diff
-@@ -15,7 +15,7 @@ use connectorx::{
-     prelude::*,
-     sources::mysql::{BinaryProtocol, MySQLSource, TextProtocol},
-     sql::CXQuery,
--    transports::MySQLArrowTransport,
-+    transports::{MySQLArrowTransport, MySQLArrowTransportError},
- };
- 
- #[test]
-@@ -428,7 +428,10 @@ fn assert_str_collation_schema(result: &[RecordBatch]) {
- 
- /// Run a single naked query through the Arrow transport using either the
- /// binary or text protocol.
--fn run_mysql_query(query: &str, binary: bool) -> Vec<RecordBatch> {
-+fn try_run_mysql_query(
-+    query: &str,
-+    binary: bool,
-+) -> Result<Vec<RecordBatch>, MySQLArrowTransportError> {
-     let _ = env_logger::builder().is_test(true).try_init();
-     let dburl = test_db::mysql_url();
-     let queries = [CXQuery::naked(query)];
-@@ -442,8 +445,7 @@ fn run_mysql_query(query: &str, binary: bool) -> Vec<RecordBatch> {
-             &queries,
-             None,
-         )
--        .run()
--        .unwrap();
-+        .run()?;
-     } else {
-         let builder = MySQLSource::<TextProtocol>::new(&dburl, 1).unwrap();
-         Dispatcher::<_, _, MySQLArrowTransport<TextProtocol>>::new(
-@@ -452,11 +454,14 @@ fn run_mysql_query(query: &str, binary: bool) -> Vec<RecordBatch> {
-             &queries,
-             None,
-         )
--        .run()
--        .unwrap();
-+        .run()?;
-     }
- 
--    destination.arrow().unwrap()
-+    Ok(destination.arrow()?)
-+}
-+
-+fn run_mysql_query(query: &str, binary: bool) -> Vec<RecordBatch> {
-+    try_run_mysql_query(query, binary).unwrap()
- }
- 
- #[test]
-@@ -698,3 +703,34 @@ fn test_mysql_long_unsigned() {
-             .eq(&UInt32Array::from(vec![0u32, 4294967295])));
-     }
- }
-+
-+/// Values in `test_unconvertible` are valid in MySQL but cannot be represented
-+/// by the Rust type the column maps to (see `scripts/mysql.sql`). The
-+/// conversion must surface as an error, not as a panic inside the driver
-+/// (#476, #268).
-+const UNCONVERTIBLE_COLUMNS: [&str; 5] = [
-+    "test_date",
-+    "test_datetime",
-+    "test_time_negative",
-+    "test_time_over_24h",
-+    "test_decimal_wide",
-+];
-+
-+#[test]
-+fn test_mysql_unconvertible_value_is_error() {
-+    for binary in [true, false] {
-+        for col in UNCONVERTIBLE_COLUMNS {
-+            let query = format!("select {} from test_unconvertible", col);
-+            let msg = try_run_mysql_query(&query, binary).unwrap_err().to_string();
-+            assert!(
-+                msg.contains("Cannot produce a")
-+                    && msg.contains(&format!("column `{}`", col))
-+                    && !msg.contains("Option<"),
-+                "{} (binary={}): unexpected error message: {}",
-+                query,
-+                binary,
-+                msg
-+            );
-+        }
-+    }
-+}
-```
-
-**File**: `scripts/mysql.sql` (modified, +26/-0)
-```diff
-@@ -90,3 +90,29 @@ CREATE TABLE IF NOT EXISTS test_str_collation (
- );
- 
- INSERT INTO test_str_collation VALUES (1, 'general', 'bin', 'ascii', 'text', 'textbin', 0x4442, 0x00010203, 'blob'), (2, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-+
-+DROP TABLE IF EXISTS test_unconvertible;
-+
-+-- Values that are valid in MySQL but cannot be represented by the Rust types
-+-- connector-x maps the columns to (#476, #268): zero dates, negative or
-+-- over-24h TIME values (chrono NaiveTime), and DECIMALs beyond the 28-digit
-+-- precision of rust_decimal. Row 1 holds ordinary values, row 2 the bad ones.
-+-- MySQL 8 refuses '0000-00-00' under its default sql_mode (NO_ZERO_DATE,
-+-- NO_ZERO_IN_DATE), so relax it around the insert and restore it afterwards.
-+SET @cx_saved_sql_mode = @@SESSION.sql_mode;
-+SET SESSION sql_mode = '';
-+
-+CREATE TABLE IF NOT EXISTS test_unconvertible (
-+    test_int INT,
-+    test_date DATE,
-+    test_datetime DATETIME,
-+    test_time_negative TIME,
-+    test_time_over_24h TIME,
-+    test_decimal_wide DECIMAL(65, 0)
-+);
-+
-+INSERT INTO test_unconvertible VALUES
-+    (1, '2020-01-01', '2020-01-01 00:00:00', '01:00:00', '01:00:00', 1),
-+    (2, '0000-00-00', '0000-00-00 00:00:00', '-01:00:00', '838:59:59', 12345678901234567890123456789012345678901234567890);
-+
-+SET SESSION sql_mode = @cx_saved_sql_mode;
-```
-
----
-
-### Incident Patch 3: `01fbd606` (2026-10-12)
-**Commit Message**: fix(mssql): build against bb8 0.9
-
-bb8 0.9 replaced the async_trait-based ManageConnection with native
-async fns, and is_valid now takes &mut Self::Connection. Port the
-mssql-tds ConnectionManager accordingly and drop the async-trait dep.
-
-bb8-tiberius 0.8 is built on bb8 0.7, and the only bb8-tiberius release
-on bb8 0.9 needs tiberius 0.12. Rather than upgrade a driver that is
-being removed (#962), keep bb8 0.7 under the `bb8_07` alias for the
-Tiberius path only.
-
-Also update connectorx-python/Cargo.lock, which dependabot left on
-bb8 0.7 only.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `Cargo.lock` (modified, +1/-1)
-```diff
-@@ -1778,7 +1778,7 @@ version = "0.4.6"
- dependencies = [
-  "anyhow",
-  "arrow",
-- "async-trait",
-+ "bb8 0.7.1",
-  "bb8 0.9.1",
-  "bb8-tiberius",
-  "chrono",
-```
-
-**File**: `connectorx-python/Cargo.lock` (modified, +16/-4)
-```diff
-@@ -927,14 +927,26 @@ dependencies = [
-  "tokio",
+@@ -1808,7 +1808,7 @@ dependencies = [
+  "gcp-bigquery-client",
+  "hex",
+  "iai",
+- "itertools 0.14.0",
++ "itertools 0.15.0",
+  "j4rs",
+  "log",
+  "mssql-tds",
+@@ -4631,6 +4631,15 @@ dependencies = [
+  "either",
  ]
  
 +[[package]]
-+name = "bb8"
-+version = "0.9.1"
++name = "itertools"
++version = "0.15.0"
 +source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "457d7ed3f888dfd2c7af56d4975cade43c622f74bdcddfed6d4352f57acc6310"
++checksum = "8b4baf93f58d4425749ca49a51c50ebab072c5df6994d08fed93541c331481dc"
 +dependencies = [
-+ "futures-util",
-+ "parking_lot 0.12.4",
-+ "portable-atomic",
-+ "tokio",
++ "either",
 +]
 +
  [[package]]
- name = "bb8-tiberius"
- version = "0.8.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "d8a33c87124c1938413e45ab6a6655e49d9e4cd015e05db61d6ab5a4f96b2c83"
+ name = "itoa"
+ version = "1.0.18"
+@@ -6950,7 +6959,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "03da047801ff44bb6a4d407d4860c05fd70bb81714e6b2f3812603d5b145b042"
  dependencies = [
-  "async-trait",
-- "bb8",
-+ "bb8 0.7.1",
-  "futures",
-  "thiserror 1.0.69",
-  "tiberius",
-@@ -1454,8 +1466,8 @@ version = "0.4.6"
+  "heck",
+- "itertools 0.14.0",
++ "itertools 0.13.0",
+  "log",
+  "multimap",
+  "petgraph",
+@@ -6971,7 +6980,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "b570b25f7617e43d59005d0990ccb79e950a423952cea19671b7a876da390adf"
  dependencies = [
   "anyhow",
-  "arrow",
-- "async-trait",
-- "bb8",
-+ "bb8 0.7.1",
-+ "bb8 0.9.1",
-  "bb8-tiberius",
-  "chrono",
-  "chrono-tz 0.10.4",
-@@ -6666,7 +6678,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "c3d1e2c7f27f8d4cb10542a02c49005dbd6e93095799d6f3be745fae9f8fedd4"
- dependencies = [
-  "libc",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.60.2",
- ]
- 
- [[package]]
+- "itertools 0.14.0",
++ "itertools 0.13.0",
+  "proc-macro2",
+  "quote",
+  "syn 2.0.119",
 ```
 
-**File**: `connectorx/Cargo.toml` (modified, +4/-3)
+**File**: `connectorx/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -30,7 +30,9 @@ polars = { workspace = true, optional = true, features = [
- ] }
- polars-arrow = { workspace = true, optional = true }
- bb8 = { version = "0.9", optional = true }
--async-trait = { version = "0.1", optional = true }
-+# bb8-tiberius 0.8 is built on bb8 0.7; keep it for the legacy Tiberius driver
-+# until that driver is removed (#962).
-+bb8_07 = { package = "bb8", version = "0.7", optional = true }
- bb8-tiberius = { version = "0.8", optional = true }
- csv = { version = "1", optional = true }
- fallible-streaming-iterator = { version = "0.1", optional = true }
-@@ -144,14 +146,13 @@ src_mssql_tiberius = [
-   "src_mssql_common",
-   "tiberius",
-   "bb8-tiberius",
--  "bb8",
-+  "bb8_07",
- ]
- src_mssql_tds = [
-   "src_mssql_common",
-   "mssql-tds",
-   "uuid",
-   "bb8",
--  "async-trait",
- ]
- src_mysql = ["r2d2_mysql", "mysql_common", "rust_decimal", "num-traits", "r2d2"]
- src_oracle = ["oracle", "r2d2-oracle", "r2d2", "urlencoding", "rust_decimal"]
+@@ -12,7 +12,7 @@ version = "0.4.6"
+ [dependencies]
+ anyhow = "1"
+ fehler = "1"
+-itertools = "0.14"
++itertools = "0.15"
+ log = "0.4"
+ rayon = "1"
+ sqlparser = "0.37"
 ```
 
-**File**: `connectorx/src/sources/mssql/errors.rs` (modified, +1/-1)
+---
+
+### Incident Patch 2: `028aa1fc` (2026-10-19)
+**Commit Message**: Merge pull request #1000 from tschm/rhiza_fix_972_20261008
+
+ci: enforce clippy -D warnings and clear the warning backlog (#972)
+
+**File**: `.github/workflows/ci.yml` (modified, +5/-3)
 ```diff
-@@ -15,7 +15,7 @@ pub enum MsSQLSourceError {
+@@ -44,10 +44,12 @@ jobs:
+       - name: Is the code formatted?
+         run: cargo fmt --all -- --check -q
  
-     #[cfg(feature = "src_mssql_tiberius")]
-     #[error(transparent)]
--    MsSQLRuntimeError(#[from] bb8::RunError<bb8_tiberius::Error>),
-+    MsSQLRuntimeError(#[from] bb8_07::RunError<bb8_tiberius::Error>),
+-      # --all also covers connectorx-cpp (not a default member); this used to
+-      # run in both python matrix jobs instead.
++      # --all also covers connectorx-cpp (not a default member). -D warnings
++      # fails the build on any new warning. missing_docs is kept as a warning
++      # (lib.rs enables it to track the documentation backlog) until that
++      # backlog is cleared; --force-warn stops -D warnings from promoting it.
+       - name: Clippy linting
+-        run: cargo clippy --features all --all
++        run: cargo clippy --features all --all -- -D warnings --force-warn missing_docs
  
-     #[cfg(feature = "src_mssql_tiberius")]
-     #[error(transparent)]
+       - name: Check each feature gate
+         run: just test-feature-gate
 ```
 
-**File**: `connectorx/src/sources/mssql/tds_impl.rs` (modified, +1/-2)
+**File**: `connectorx-cpp/src/lib.rs` (modified, +2/-4)
 ```diff
-@@ -309,7 +309,6 @@ struct ConnectionManager {
-     url: Url,
- }
- 
--#[async_trait::async_trait]
- impl ManageConnection for ConnectionManager {
-     type Connection = TdsClient;
-     type Error = MsSQLSourceError;
-@@ -321,7 +320,7 @@ impl ManageConnection for ConnectionManager {
-             .await?)
+@@ -251,12 +251,10 @@ pub unsafe extern "C" fn connectorx_scan(conn: *const c_char, query: *const c_ch
+         result.push(cx_rb);
      }
  
--    async fn is_valid(&self, client: &mut PooledConnection<'_, Self>) -> Result<(), Self::Error> {
-+    async fn is_valid(&self, client: &mut TdsClient) -> Result<(), Self::Error> {
-         if client.is_connection_dead() {
-             return Err(anyhow!("MsSQL pooled connection is closed").into());
-         }
+-    let res = CXResult {
++    CXResult {
+         data: CXSlice::<_>::new_from_vec(result),
+         header: CXSlice::<_>::new_from_vec(names),
+-    };
+-
+-    res
++    }
+ }
+ 
+ #[repr(C)]
 ```
 
-**File**: `connectorx/src/sources/mssql/tiberius_impl.rs` (modified, +1/-1)
+**File**: `connectorx-cpp/src/plan.rs` (modified, +6/-7)
 ```diff
-@@ -16,7 +16,7 @@ use crate::{
-     utils::DummyBox,
- };
- use anyhow::anyhow;
--use bb8::{Pool, PooledConnection};
-+use bb8_07::{Pool, PooledConnection};
- use bb8_tiberius::ConnectionManager;
- use chrono::{DateTime, Utc};
- use chrono::{NaiveDate, NaiveDateTime, NaiveTime};
+@@ -1,22 +1,21 @@
+ use crate::CXFederatedPlan;
+ use connectorx::fed_rewriter::Plan;
+ use libc::c_char;
+-use std::convert::Into;
+ use std::ffi::CString;
+ 
+-impl Into<CXFederatedPlan> for Plan {
+-    fn into(self) -> CXFederatedPlan {
++impl From<Plan> for CXFederatedPlan {
++    fn from(plan: Plan) -> Self {
+         CXFederatedPlan {
+-            db_name: CString::new(self.db_name.as_str())
++            db_name: CString::new(plan.db_name.as_str())
+                 .expect("new CString error")
+                 .into_raw() as *const c_char,
+-            db_alias: CString::new(self.db_alias.as_str())
++            db_alias: CString::new(plan.db_alias.as_str())
+                 .expect("new CString error")
+                 .into_raw() as *const c_char,
+-            sql: CString::new(self.sql.as_str())
++            sql: CString::new(plan.sql.as_str())
+                 .expect("new CString error")
+                 .into_raw() as *const c_char,
+-            cardinality: self.cardinality,
++            cardinality: plan.cardinality,
+         }
+     }
+ }
+```
+
+**File**: `connectorx/src/constants.rs` (modified, +1/-1)
+```diff
+@@ -28,7 +28,7 @@ pub const RECORD_BATCH_SIZE: usize = 64 * KILO;
+ ))]
+ pub const DB_BUFFER_SIZE: usize = 32;
+ 
+-#[cfg(any(feature = "src_oracle"))]
++#[cfg(feature = "src_oracle")]
+ pub const ORACLE_ARRAY_SIZE: u32 = KILO as u32;
+ 
+ #[cfg(all(not(debug_assertions), feature = "federation"))]
+```
+
+**File**: `connectorx/src/dispatcher.rs` (modified, +13/-14)
+```diff
+@@ -1,5 +1,5 @@
+-///! This module provides [`dispatcher::Dispatcher`], the core struct in ConnectorX
+-///! that drives the data loading from a source to a destination.
++//! This module provides [`dispatcher::Dispatcher`], the core struct in ConnectorX
++//! that drives the data loading from a source to a destination.
+ use crate::{
+     data_order::{coordinate, DataOrder},
+     destinations::{Destination, DestinationPartition},
+@@ -13,6 +13,16 @@ use log::debug;
+ use rayon::prelude::*;
+ use std::marker::PhantomData;
+ 
++/// What [`Dispatcher::prepare`] returns: the negotiated data order, the source and
++/// destination partitions, and the source and destination schemas.
++pub type Prepared<'w, S, D> = (
++    DataOrder,
++    Vec<<S as Source>::Partition>,
++    Vec<<D as Destination>::Partition<'w>>,
++    Vec<<S as Source>::TypeSystem>,
++    Vec<<D as Destination>::TypeSystem>,
++);
++
+ /// A dispatcher takes a `S: Source`, a `D: Destination`, a `TP: Transport` and a vector of `queries` as input to
+ /// load data from `S` to `D` using the queries.
+ pub struct Dispatcher<'a, S, D, TP> {
+@@ -47,18 +57,7 @@ where
+         self.src.set_pre_execution_queries(pre_execution_queries);
+     }
+ 
+-    pub fn prepare(
+-        mut self,
+-    ) -> Result<
+-        (
+-            DataOrder,
+-            Vec<S::Partition>,
+-            Vec<D::Partition<'w>>,
+-            Vec<S::TypeSystem>,
+-            Vec<D::TypeSystem>,
+-        ),
+-        TP::Error,
+-    > {
++    pub fn prepare(mut self) -> Result<Prepared<'w, S, D>, TP::Error> {
+         debug!("Prepare");
+         let dorder = coordinate(S::DATA_ORDERS, D::DATA_ORDERS)?;
+         self.src.set_data_order(dorder)?;
+```
+
+**File**: `connectorx/src/fed_rewriter.rs` (modified, +1/-2)
+```diff
+@@ -88,8 +88,7 @@ fn create_sources(
+     let db_manual = jvm.create_instance("java.util.HashMap", InvocationArg::empty())?;
+ 
+     for (db_name, db_info) in db_map.iter() {
+-        if db_info.manual_info.is_some() {
+-            let manual_info = db_info.manual_info.as_ref().unwrap();
++        if let Some(manual_info) = &db_info.manual_info {
+             let schema_info = jvm.create_instance("java.util.HashMap", InvocationArg::empty())?;
+             for (name, columns) in manual_info {
+                 let arr_instance = jvm.java_list("java.lang.String", columns.to_vec())?;
+```
+
+**File**: `connectorx/src/lib.rs` (modified, +5/-0)
+```diff
+@@ -1,5 +1,10 @@
+ #![allow(clippy::upper_case_acronyms)]
+ #![warn(missing_docs)]
++// The Trino and BigQuery client errors (232 and 176 bytes) are held by value in
++// the source error enums and propagate into `ConnectorXOutError`. Boxing them
++// would change public error types; the error path is cold, so the larger
++// `Result` is not worth an API break.
++#![allow(clippy::result_large_err)]
+ 
+ //! # ConnectorX
+ //!
+```
+
+**File**: `connectorx/src/sources/mssql/tiberius_impl.rs` (modified, +11/-13)
+```diff
+@@ -61,7 +61,7 @@ pub fn mssql_config(url: &Url) -> Config {
+     }
+     config.port(url.port().unwrap_or(1433));
+     // remove the leading "/"
+-    config.database(decode(&url.path()[1..])?.to_owned());
++    config.database(decode(&url.path()[1..])?.into_owned());
+     // Using SQL Server authentication.
+     #[allow(unused)]
+     let params: HashMap<String, String> = url.query_pairs().into_owned().collect();
+@@ -75,37 +75,35 @@ pub fn mssql_config(url: &Url) -> Config {
+         _ => {
+             debug!("mssql auth through sqlserver authentication");
+             config.authentication(AuthMethod::sql_server(
+-                decode(url.username())?.to_owned(),
+-                decode(url.password().unwrap_or(""))?.to_owned(),
++                decode(url.username())?.into_owned(),
++                decode(url.password().unwrap_or(""))?.into_owned(),
+             ));
+         }
+     };
+     #[cfg(all(not(windows), not(feature = "integrated-auth-gssapi")))]
+     config.authentication(AuthMethod::sql_server(
+-        decode(url.username())?.to_owned(),
+-        decode(url.password().unwrap_or(""))?.to_owned(),
++        decode(url.username())?.into_owned(),
++        decode(url.password().unwrap_or(""))?.into_owned(),
+     ));
+ 
+     match params.get("trust_server_certificate") {
+         Some(v) if v.to_lowercase() == "true" => config.trust_cert(),
+         _ => {}
+     };
+ 
+-    match params.get("trust_server_certificate_ca") {
+-        Some(v) => config.trust_cert_ca(v),
+-        _ => {}
+-    };
++    if let Some(v) = params.get("trust_server_certificate_ca") {
++        config.trust_cert_ca(v);
++    }
+ 
+     match params.get("encrypt") {
+         Some(v) if v.to_lowercase() == "true" => config.encryption(EncryptionLevel::Required),
+         Some(v) if v.to_lowercase() == "false" => config.encryption(EncryptionLevel::Off),
+         _ => config.encryption(EncryptionLevel::NotSupported),
+     };
+ 
+-    match params.get("appname") {
+-        Some(appname) => config.application_name(decode(appname)?.to_owned()),
+-        _ => {}
+-    };
++    if let Some(appname) = params.get("appname") {
++        config.application_name(decode(appname)?.into_owned());
++    }
+ 
+     config
+ }
+```
+
+---
+
+### Incident Patch 3: `a17a2c37` (2026-10-19)
+**Commit Message**: Merge branch 'main' into rhiza_fix_972_20261008
+
+**File**: `connectorx-python/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ authors = ["Weiyuan Wu <youngw@sfu.ca>"]
+-edition = "2018"
++edition = "2021"
+ name = "connectorx-python"
+ version = "0.4.7-alpha.1"
+ license = "MIT"
+```
+
+**File**: `connectorx/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -2,7 +2,7 @@
+ authors = ["SFU Database System Lab <dsl.cs.sfu@gmail.com>"]
+ description = "Load data from databases to dataframes, the fastest way."
+ documentation = "https://docs.rs/connectorx"
+-edition = "2018"
++edition = "2021"
+ license = "MIT"
+ name = "connectorx"
+ readme = "../README.md"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1012** (2026-10-18): fix(mysql): report value conversion failures as errors instead of panicking (@oystersuki)
-- **PR #1010** (2026-10-15): fix(oracle): refuse native BOOLEAN columns on Instant Client 23.4 (@oystersuki)
-- **PR #1009** (2026-10-14): ci: skip docs deploy and contrib-readme on forks (@tschm)
-- **PR #1007** (2026-10-18): build(rust): bump libc from 0.2.189 to 0.2.190 (@dependabot[bot])
-- **PR #1003** (2026-10-15): ci: bump actions/setup-python to v6 (Node 24) (@tschm)
-- **PR #998** (2026-10-10): Upgrade mssql-tds to 0.2.0 (@saurabh500)
+- **PR #1021** (closed): build(rust): bump arrow from 56.2.1 to 60.0.0 (@dependabot[bot])
+- **PR #1020** (closed): build(rust): bump clickhouse from 0.13.3 to 0.15.3 (@dependabot[bot])
+- **PR #1019** (2026-10-19): build(rust): bump tokio from 1.53.1 to 1.53.3 (@dependabot[bot])
+- **PR #1018** (2026-10-19): build(rust): bump thiserror from 2.0.20 to 2.0.21 (@dependabot[bot])
+- **PR #1017** (2026-10-19): build(rust): bump itertools from 0.14.0 to 0.15.0 (@dependabot[bot])
+- **PR #1016** (2026-10-19): build(rust): bump polars and polars-arrow to 0.55 together (@tschm)
 
 ---
 
@@ -1475,52 +1151,41 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #1012 from oystersuki/fix/mysql-value-conversion-error
+## X. build(rust): bump itertools from 0.14.0 to 0.15.0
 
 **RULE**:
-When implementing operations in `connectorx-python/connectorx/tests/test_mysql.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sfu-db/connector-x. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sfu-db/connector-x. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e444342c`: Merge pull request #1012 from oystersuki/fix/mysql-value-conversion-error. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `48a1f0a7`: build(rust): bump itertools from 0.14.0 to 0.15.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `connectorx-python/connectorx/tests/test_mysql.py`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
+ "itertools 0.15.0",
+[[package]]
+name = "itertools"
+version = "0.15.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8b4baf93f58d4425749ca49a51c50ebab072c5df6994d08fed93541c331481dc"
+dependencies = [
+ "either",
+]
 
-
-@pytest.mark.parametrize("protocol", ["binary", "text"])
-@pytest.mark.parametrize(
-    "column",
-    [
-        "test_date",  # 0000-00-00
-        "test_datetime",  # 0000-00-00 00:00:00
-        "test_time_negative",  # -01:00:00, outside chrono NaiveTime
-        "test_time_over_24h",  # 838:59:59, outside chrono NaiveTime
-        "test_decimal_wide",  # 50 digits, beyond rust_decimal precision
-    ],
-)
-def test_mysql_unconvertible_value_raises(mysql_url: str, protocol: str, column: str) -> None:
-    # See test_unconvertible in scripts/mysql.sql. A value the column's Rust
-    # type cannot hold must raise an ordinary RuntimeError naming the column,
-    # not a PanicException, which `except Exception` cannot catch (#476, #268).
-    with pytest.raises(RuntimeError, match=rf"Cannot produce a .*column `{column}`") as excinfo:
-        read_sql(
-            mysql_url,
-            f"SELECT {column} FROM test_unconvertible",
-            protocol=protocol,
-        )
-    # The error names the column's type, not the Option wrapping nullable columns.
-    assert "Option<" not in str(excinfo.value)
+ "itertools 0.13.0",
+ "itertools 0.13.0",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+ "itertools 0.14.0",
+ "itertools 0.14.0",
+ "itertools 0.14.0",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e444342c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `48a1f0a7` are properly handled with clean fallback behavior.

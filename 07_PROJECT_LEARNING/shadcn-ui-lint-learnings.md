@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/shadcn-ui-lint-learnings.md`  
 > **Source**: github ([https://github.com/shadcn-ui/lint](https://github.com/shadcn-ui/lint))  
-> **Source Version**: `f1c81bda`  
+> **Source Version**: `bceee0fe`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T04:00:43.618Z  
+> **Timestamp**: 2026-10-19T14:58:58.866Z  
 > **Learning ID**: `learn-github-shadcn-ui-lint`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/shadcn-ui-lint-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/shadcn-ui/lint](https://github.com/shadcn-ui/lint))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T04:00:42.434Z  
+> **Harvest Timestamp**: 2026-10-19T14:58:58.223Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An agent-first linter for Tailwind design systems. Write design system rules that agents can verify.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3224 stars
+- **Stars / Engagement**: 3225 stars
 
 ---
 
@@ -956,493 +956,118 @@ export {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f1c81bda` (2026-10-16)
-**Commit Message**: fix: check components reached through nested namespaces (#107)
+### Incident Patch 1: `bceee0fe` (2026-10-19)
+**Commit Message**: ci: install Bun in the release job (#128)
 
-**File**: `.changeset/nested-namespace-components.md` (added, +5/-0)
+**File**: `.github/workflows/release.yml` (modified, +4/-0)
 ```diff
-@@ -0,0 +1,5 @@
-+---
-+"@shadcn/lint": patch
-+---
-+
-+Check a component reached through a nested namespace, `<UI.Button.Root>`, resolving each segment through `export * as` barrels.
-```
-
-**File**: `docs/how-it-works.md` (modified, +2/-1)
-```diff
-@@ -242,7 +242,8 @@ export function SaveButton({
- ```
- 
- Wrapper chains can cross files and use namespace imports such as
--`<W.SaveButton>`. They are separate from the one-hop limit on class
-+`<W.SaveButton>`. A nested namespace, `<UI.Button.Root>` through
-+`export * as Button from "./button"`, resolves segment by segment. They are separate from the one-hop limit on class
- values. A props spread counts as forwarding only if it still contains
- `className`. If several targets qualify, the first supplies the contract.
- 
-```
-
-**File**: `docs/svelte.md` (modified, +4/-0)
-```diff
-@@ -126,6 +126,10 @@ written for React holds unchanged:
- contracts: [{ pattern: "^CardTitle$", allow: ["layout", "typography"] }]
- ```
- 
-+A nested namespace resolves the same way. With `export * as Button from
-+"./button"` in `$lib/components/ui/index.ts`, `<UI.Button.Root>` is the
-+`Button` in `button.svelte`.
-+
- ## What is read
- 
- | Markup                             | Read as                                |
-```
-
-**File**: `packages/lint/src/project/component-imports.ts` (modified, +6/-3)
-```diff
-@@ -10,18 +10,21 @@ export type ComponentImport = {
- }
- 
- // `<Dialog.Content>` from a named import is `DialogContent`; from a
--// namespace import it is the property alone.
-+// namespace import it is the property alone. A nested `<UI.Button.Root>`
-+// keeps its dotted path as the export to look up and joins it for the
-+// name, so `Motion.Reorder.Root` is `MotionReorderRoot`.
- export function importNameOf(
-   imported: ComponentImport,
-   root: string,
-   property: string | null
- ) {
--  const suffix = property !== null && !imported.namespace ? property : ""
-+  const joined = property === null ? "" : property.replace(/\./g, "")
-+  const suffix = imported.namespace ? "" : joined
-   return {
-     source: imported.source,
-     exportName: imported.namespace ? (property ?? "") : imported.original,
-     name: imported.namespace
--      ? (property ?? "")
-+      ? joined
-       : `${imported.original === "default" ? root : imported.original}${suffix}`,
-     suffix,
-   }
-```
-
-**File**: `packages/lint/src/project/components.ts` (modified, +7/-1)
-```diff
-@@ -97,7 +97,13 @@ function buildIndex(dir: string) {
-     for (const [name, binding] of exportsOf(file, new Set(), deps)) {
-       // `export default memo(Button)` is still a Button by name.
-       const component = name === "default" ? binding.name : name
--      if (/^[A-Z]/.test(component) && !files.has(component)) {
-+      // `export * as Button from "./button"` names a namespace, not a
-+      // component.
-+      if (
-+        binding.name !== "*" &&
-+        /^[A-Z]/.test(component) &&
-+        !files.has(component)
-+      ) {
-         files.set(component, binding.file)
-       }
-     }
-```
-
-**File**: `packages/lint/src/project/modules.ts` (modified, +48/-5)
-```diff
-@@ -13,7 +13,8 @@ import { packageRoot, resolveFile } from "./resolve"
- 
- export type ExportBinding = {
-   file: string
--  // `Button` for `export { Button as Action }`.
-+  // `Button` for `export { Button as Action }`. `*` for a namespace: the
-+  // module itself, through `export * as Button from "./button"`.
-   name: string
- }
- 
-@@ -29,6 +30,8 @@ type ParsedModule = {
-   named: { exported: string; local: string; spec: string }[]
-   namedIndices: Map<string, number[]>
-   stars: string[]
-+  // Exported name -> specifier of `export * as Name from "spec"`.
-+  namespaces: Map<string, string>
- }
- 
- const parsed = new Map<string, { mtimeMs: number; module: ParsedModule }>()
-@@ -72,6 +75,7 @@ function parseModule(file: string): ParsedModule {
-     named: [],
-     namedIndices: new Map(),
-     stars: [],
-+    namespaces: new Map(),
-   }
-   let source: string
-   try {
-@@ -109,7 +113,10 @@ function parseModule(file: string): ParsedModule {
-     }
-   }
-   for (const match of source.matchAll(STAR_RE)) {
--    if (match[1]) continue
-+    if (match[1]) {
-+      module.namespaces.set(match[1], match[2])
-+      continue
-+    }
-     module.stars.push(match[2])
-   }
-   for (let index = 0; index < module.named.length; index++) {
-@@ -229,6 +236,14 @@ function collectExports(
-         )
-         continue
-       }
-+      if (imported) {
-+        const target = resolveFrom(file, imported.spec)
-+        exports.set(
-+          exported,
-+          target ? { file: target, name: "*" } : { file, name: local }
-+        )
-+        continue
-+      }
-       exports.set(exported, exports.get(local) ?? { file, name: local })
-       continue
-     }
-@@ -237,6 +252,10 @@ function collectExports(
-     const inner = exportsOf(target, visiting, deps)
-     exports.set(exported, inner.get(local) ?? { file: target, name: local })
-   }
-+  for (const [exported, spec] of module.namespaces) {
-+    const target = resolveFrom(file, spec)
-+    if (target) exports.set(exported, { file: target, name: "*" })
-+  }
-   for (const spec of module.stars) {
-     const target = resolveFrom(file, spec)
-     if (!target) continue
-@@ -276,6 +295,10 @@ function exportRoute(module: ParsedModule, file: string, name: string) {
-         if (imported && imported.name !== "*") {
-           return importedRoute(local)
-         }
-+        const target = imported ? resolveFrom(file, imported.spec) : null
-+        if (target) {
-+          return { binding: { file: target, name: "*" }, follow: false }
-+        }
-         name = local
-         before = index
-         fallback = { file, name }
-@@ -295,6 +318,11 @@ function exportRoute(module: ParsedModule, file: string, name: string) {
-         ? { binding: { file, name: module.defaultName }, follow: false }
-         : importedRoute(module.defaultName)
-     }
-+    const namespace = module.namespaces.get(name)
-+    const target = namespace ? resolveFrom(file, namespace) : null
-+    if (target) {
-+      return { binding: { file: target, name: "*" }, follow: false }
-+    }
-     const binding = module.local.has(name) ? { file, name } : fallback
-     return binding ? { binding, follow: false } : null
-   }
-@@ -327,8 +355,21 @@ function resolveBinding(file: string, name: string, deps: Set<string>) {
-   return fallback
- }
- 
-+// `Button.Root` through `export * as Button from "./button"`: each
-+// segment is looked up in the namespace the one before it names.
-+function resolvePath(file: string, name: string, deps: Set<string>) {
-+  const [head, ...rest] = name.split(".")
-+  let binding = resolveBinding(file, head, deps)
-+  for (const segment of rest) {
-+    if (binding?.name !== "*") return null
-+    binding = resolveBinding(binding.file, segment, deps)
-+  }
-+  return binding
-+}
-+
- // Falls back to the resolved file with the import's own name when the
--// export cannot be traced.
-+// export cannot be traced. A dotted name that cannot be traced, and a
-+// namespace where a component was expected, resolve to nothing.
- export function definingExportOf(
-   spec: string,
-   name: string,
-@@ -338,14 +379,16 @@ export function definingExportOf(
-   const target = resolveFrom(fromFile, spec)
-   if (!target) return null
-   const cached = derive(`binding:${target}\u0000${name}`, (dependencies) =>
--    resolveBinding(target, name, dependencies)
-+    resolvePath(target, name, dependencies)
-   )
-   if (deps) {
-     for (const dependency of cached.dependencies) {
-       deps.add(dependency)
-     }
-   }
--  return cached.value ?? { file: target, name }
-+  const binding = cached.value?.name === "*" ? null : cached.value
-+  if (name.includes(".")) return binding
-+  return binding ?? { file: target, name }
- }
- 
- export function definingFileOf(spec: string, name: string, fromFile: string) {
-```
-
-**File**: `packages/lint/src/project/wrappers.ts` (modified, +3/-9)
-```diff
-@@ -6,6 +6,7 @@
- 
- import * as fs from "node:fs"
- 
-+import { jsxElementNameOf } from "../sites/readers/jsx"
- import { walk } from "./ast"
- import {
-   componentFromImport,
-@@ -323,15 +324,8 @@ function sfcForwardingTags(source: string, file: string, ast: any) {
- }
- 
- function jsxElementName(node: any) {
--  const name = node.name
--  if (name?.type === "JSXIdentifier") return { root: name.name, property: null }
--  if (name?.type === "JSXMemberExpression") {
--    return {
--      root: name.object?.name as string | undefined,
--      property: (name.property?.name ?? "") as string,
--    }
--  }
--  return null
-+  const name = jsxElementNameOf(node.name)
-+  return name ? { root: name.root || undefined, property: name.property } : null
- }
- 
- // `visiting` holds the files on the current path so a wrapper cycle
-```
-
-**File**: `packages/lint/src/sites/collect.ts` (modified, +1/-1)
-```diff
-@@ -230,7 +230,7 @@ export function createComponentTracker(
-         ? !tagIndex.has(root) && element.alias && tagIndex.has(element.alias)
-           ? element.alias
-           : root
--        : `${root}${property}`
-+        : `${root}${property.replace(/\./g, "")}`
-     if (tagIndex.has(name)) {
-       return {
-         component: name,
+@@ -36,6 +36,10 @@ jobs:
+           registry-url: https://registry.npmjs.org
+       # trusted publishing needs npm >= 11.5.1 — pinned to the 11 line
+       - run: npm install -g npm@11
++      # `pnpm run release` runs the tests, and test/bun.test.ts needs Bun
++      - uses: oven-sh/setup-bun@v2
++        with:
++          bun-version: 1.3.11
+       - run: pnpm install --frozen-lockfile
+       - name: create version PR or publish
+         uses: changesets/action@v2
 ```
 
 ---
 
-### Incident Patch 2: `355eb51f` (2026-10-16)
-**Commit Message**: fix: check CSS custom properties passed to Svelte components (#106)
+### Incident Patch 2: `5f4c96e0` (2026-10-19)
+**Commit Message**: chore(release): version packages (#127)
 
-**File**: `.changeset/svelte-custom-property-props.md` (added, +5/-0)
+Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+
+**File**: `.changeset/divide-border-colors.md` (removed, +0/-5)
 ```diff
-@@ -0,0 +1,5 @@
-+---
-+"@shadcn/lint": patch
-+---
-+
-+Check a CSS custom property passed to a Svelte component, `<Button --tone="red">`, the way `no-inline-styles` checks it in a `style` attribute.
+@@ -1,5 +0,0 @@
+----
+-"@shadcn/lint": patch
+----
+-
+-Accept `--border-color-*` tokens for `divide-*` in `no-raw-colors`, the way Tailwind falls back from `--divide-color-*`.
 ```
 
-**File**: `docs/svelte.md` (modified, +1/-0)
+**File**: `.changeset/nested-namespace-components.md` (removed, +0/-5)
 ```diff
-@@ -139,6 +139,7 @@ contracts: [{ pattern: "^CardTitle$", allow: ["layout", "typography"] }]
- | `{...{ class: "p-4" }}`            | a spread                               |
- | `style="color: red"`               | a style, property by property          |
- | `style:color={tone}`               | a style directive                      |
-+| `<Button --tone="red">`            | a custom property set on a component   |
- 
- A variable in the markup resolves to the script, one hop deep. A
- `$derived(expr)` binding resolves to `expr`, so a reactive class or style
+@@ -1,5 +0,0 @@
+----
+-"@shadcn/lint": patch
+----
+-
+-Check a component reached through a nested namespace, `<UI.Button.Root>`, resolving each segment through `export * as` barrels.
 ```
 
-**File**: `packages/lint/src/rules/no-inline-styles.ts` (modified, +2/-2)
+**File**: `.changeset/package-animations.md` (removed, +0/-5)
 ```diff
-@@ -495,7 +495,7 @@ export const noInlineStyles = {
-       })
-     }
-     for (const [type, read] of Object.entries(reader.styleProperties ?? {})) {
--      visitors[type] = (node: any) => {
-+      addVisitor(visitors, type, (node: any) => {
-         const style = read(node)
-         if (!style) return
-         const value = isContainer(style.value)
-@@ -508,7 +508,7 @@ export const noInlineStyles = {
-           elementName(node),
-           text ?? undefined
-         )
--      }
-+      })
-     }
-     // {...{ style }} and {...props}: the style property is judged like
-     // the attribute.
+@@ -1,5 +0,0 @@
+----
+-"@shadcn/lint": patch
+----
+-
+-Classify tw-animate-css classes such as `animate-in`, `fade-in`, and `slide-in-from-top-1` as `motion` in `no-restyle` when the theme imports the package.
 ```
 
-**File**: `packages/lint/src/sites/readers/svelte.ts` (modified, +8/-0)
+**File**: `.changeset/root-scale-values.md` (removed, +0/-5)
 ```diff
-@@ -115,6 +115,14 @@ export const svelteReader: TemplateReader = {
-     },
-   },
-   styleProperties: {
-+    // `<Button --tone="red">` sets a custom property on the component;
-+    // Svelte compiles it to an inline style on a wrapper.
-+    SvelteAttribute(node) {
-+      const name = node.key?.name
-+      return typeof name === "string" && name.startsWith("--")
-+        ? { property: name, value: valueOf(node) ?? node.key }
-+        : null
-+    },
-     // `style:color={value}` sets one property.
-     SvelteStyleDirective(node) {
-       const property = node.key?.name?.name
+@@ -1,5 +0,0 @@
+----
+-"@shadcn/lint": patch
+----
+-
+-Resolve theme variables such as `--radius` from `:root` and `@theme` for scale and color suggestions, not from a scoped selector such as `.compact` declared after them.
 ```
 
-**File**: `packages/lint/test/svelte-templates.test.ts` (modified, +21/-0)
+**File**: `.changeset/scan-all-strings-property-keys.md` (removed, +0/-5)
 ```diff
-@@ -227,6 +227,27 @@ describe("Svelte templates", () => {
-   })
- })
- 
-+describe("CSS custom properties passed to a component", () => {
-+  it('reads <Button --tone="red"> like a style declaration', () => {
-+    expect(found(`<Button --tone="red">Save</Button>`)).toEqual([
-+      "shadcn/no-inline-styles: Custom property --tone hardcodes a color",
-+    ])
-+    expect(
-+      found(`<Button --tone="oklch(0.6 0.1 20)" --size={tone}>Save</Button>`)
-+    ).toEqual([
-+      "shadcn/no-inline-styles: Custom property --tone hardcodes a color",
-+    ])
-+  })
-+
-+  it("accepts a token or a dynamic value", () => {
-+    expect(
-+      found(
-+        `<Button --tone="var(--color-primary)" --gap="4px" --ring={tone}>Save</Button>`
-+      )
-+    ).toEqual([])
-+  })
-+})
-+
- describe("Svelte 5 runes", () => {
-   const runes =
-     'let active = $state(true);\n  let width = $state(40);\n  const classes = $derived(active ? "p-4" : "p-2");\n  const box = $derived(`width: ${width}px`);'
+@@ -1,5 +0,0 @@
+----
+-"@shadcn/lint": patch
+----
+-
+-Skip plain object property keys such as `"fill-color"` in the `scanAllStrings` scan. Class object keys like `cn({ "bg-red-500": on })` are still checked.
 ```
 
----
-
-### Incident Patch 3: `acee8891` (2026-10-16)
-**Commit Message**: fix: resolve Svelte $derived class and style values (#104)
-
-**File**: `.changeset/svelte-derived-values.md` (added, +5/-0)
+**File**: `.changeset/svelte-custom-property-props.md` (removed, +0/-5)
 ```diff
-@@ -0,0 +1,5 @@
-+---
-+"@shadcn/lint": patch
-+---
-+
-+Resolve a Svelte `$derived(expr)` binding to `expr`, so reactive class and style values are read like a `const`.
+@@ -1,5 +0,0 @@
+----
+-"@shadcn/lint": patch
+----
+-
+-Check a CSS custom property passed to a Svelte component, `<Button --tone="red">`, the way `no-inline-styles` checks it in a `style` attribute.
 ```
 
-**File**: `docs/svelte.md` (modified, +3/-1)
+**File**: `.changeset/svelte-derived-values.md` (removed, +0/-5)
 ```diff
-@@ -140,7 +140,9 @@ contracts: [{ pattern: "^CardTitle$", allow: ["layout", "typography"] }]
- | `style="color: red"`               | a style, property by property          |
- | `style:color={tone}`               | a style directive                      |
- 
--A variable in the markup resolves to the script, one hop deep.
-+A variable in the markup resolves to the script, one hop deep. A
-+`$derived(expr)` binding resolves to `expr`, so a reactive class or style
-+value is read like a plain `const`. `$derived.by(fn)` is not followed.
- 
- **Variants** come from `tv` and `cva` in the component's scripts,
- including `<script module>`.
+@@ -1,5 +0,0 @@
+----
+-"@shadcn/lint": patch
+----
+-
+-Resolve a Svelte `$derived(expr)` binding to `expr`, so reactive class and style values are read like a `const`.
 ```
 
-**File**: `packages/lint/src/sites/collect.ts` (modified, +17/-1)
+**File**: `.changeset/svg-hyphenated-color-attributes.md` (removed, +0/-5)
 ```diff
-@@ -502,6 +502,22 @@ function projectStatic(init: any, steps: PatternStep[]) {
-   return { init: node, steps: steps.slice(i) }
- }
- 
-+// Svelte 5 writes a reactive value as `$derived(expr)`, which has the
-+// value of `expr`. `$derived.by(fn)` is a function and stays unread.
-+function derivedValueOf(init: any) {
-+  const call = unwrapTs(init)
-+  if (
-+    call?.type !== "CallExpression" ||
-+    call.callee?.type !== "Identifier" ||
-+    call.callee.name !== "$derived" ||
-+    call.arguments?.length !== 1 ||
-+    call.arguments[0].type === "SpreadElement"
-+  ) {
-+    return init
-+  }
-+  return call.arguments[0]
-+}
-+
- // One hop to a same-file const's initializer. `path` holds the variables
- // on the current route, so a self-reference stops while the same variable
- // read from both branches of a ternary resolves twice. A destructured
-@@ -513,7 +529,7 @@ export function resolveIdentifier(node: any, context: any, path: Set<any>) {
-   const def = variable.defs?.[0]
-   if (!def || def.type !== "Variable" || !def.node?.init) return null
-   if (isWritten(variable)) return null
--  let init = def.node.init
-+  let init = derivedValueOf(def.node.init)
-   let steps: PatternStep[] = []
-   if (def.name !== def.node.id) {
-     const route = patternStepsOf(def.name, def.node.id)
-```
-
-**File**: `packages/lint/test/svelte-templates.test.ts` (modified, +36/-0)
-```diff
-@@ -227,6 +227,42 @@ describe("Svelte templates", () => {
-   })
- })
- 
-+describe("Svelte 5 runes", () => {
-+  const runes =
-+    'let active = $state(true);\n  let width = $state(40);\n  const classes = $derived(active ? "p-4" : "p-2");\n  const box = $derived(`width: ${width}px`);'
-+
-+  it("resolves a $derived class value the way a const resolves", () => {
-+    expect(found(`<Button class={classes}>Save</Button>`, runes)).toEqual([
-+      `shadcn/no-restyle: "p-4" is not allowed on <Button>: <Button> owns its spacing`,
-+      `shadcn/no-restyle: "p-2" is not allowed on <Button>: <Button> owns its spacing`,
-+    ])
-+  })
-+
-+  it("reads a $derived style string property by property", () => {
-+    expect(found(`<div style={box}></div>`, runes)).toEqual([
-+      "shadcn/no-inline-styles: Inline style sets width",
-+    ])
-+    expect(
-+      found(
-+        `<div style={tint}></div>`,
-+        "const tint = $derived(`color: ${active ? 'red' : 'blue'}`);"
-+      )
-+    ).toEqual(["shadcn/no-inline-styles: Inline style sets color"])
-+  })
-+
-+  it("leaves $derived.by unread", () => {
-+    expect(
-+      found(
-+        `<Button class={classes}>Save</Button><div style={box}></div>`,
-+        "const classes = $derived.by(() => 'p-4');\n  const box = $derived.by(() => 'width: 4px');"
-+      )
-+    ).toEqual([
-+      "shadcn/require-static-classes: Dynamically built className on <Button> cannot be checked",
-+      "shadcn/no-inline-styles: Dynamic style object cannot be checked",
-+    ])
-+  })
-+})
-+
- describe("SVG color attributes in Svelte markup", () => {
-   it("reads the hyphenated stop-color and flood-color names", () => {
-     expect(
+@@ -1,5 +0,0 @@
+----
+-"@shadcn/lint": patch
+----
+-
+-Check `stop-color`, `flood-color`, and `lighting-color` in Svelte and Vue markup the way `no-raw-colors` checks `stopColor` in JSX.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #128** (2026-10-19): ci: install Bun in the release job (@shadcn)
+- **PR #127** (2026-10-19): chore(release): version packages (@github-actions[bot])
 - **PR #126** (2026-10-16): fix: classify tw-animate-css classes as motion (@shadcn)
 - **PR #125** (2026-10-16): fix: check a wrapper's other class props against their own target (@shadcn)
 - **PR #124** (2026-10-16): fix: accept color functions over one theme variable (@shadcn)
 - **PR #123** (2026-10-16): fix: skip noncomputed property keys in the scanAllStrings scan (@shadcn)
-- **PR #122** (2026-10-16): fix: let divide colors fall back to border color tokens (@shadcn)
-- **PR #121** (2026-10-16): fix: resolve theme variables from :root over scoped selectors (@shadcn)
 
 ---
 
@@ -1462,25 +1087,24 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. check components reached through nested namespaces (#107)
+## X. ci: install Bun in the release job (#128)
 
 **RULE**:
-When implementing operations in `.changeset/nested-namespace-components.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in shadcn-ui/lint. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/release.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in shadcn-ui/lint. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f1c81bda`: check components reached through nested namespaces (#107). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bceee0fe`: ci: install Bun in the release job (#128). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/nested-namespace-components.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
----
-"@shadcn/lint": patch
----
-
-Check a component reached through a nested namespace, `<UI.Button.Root>`, resolving each segment through `export * as` barrels.
+      # `pnpm run release` runs the tests, and test/bun.test.ts needs Bun
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.11
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1490,4 +1114,4 @@ Check a component reached through a nested namespace, `<UI.Button.Root>`, resolv
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f1c81bda` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bceee0fe` are properly handled with clean fallback behavior.

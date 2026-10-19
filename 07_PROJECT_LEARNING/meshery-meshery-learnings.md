@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source**: github ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
-> **Source Version**: `96fb78ba`  
+> **Source Version**: `831721d5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T02:44:53.596Z  
+> **Timestamp**: 2026-10-19T14:59:08.806Z  
 > **Learning ID**: `learn-github-meshery-meshery`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T02:44:53.589Z  
+> **Harvest Timestamp**: 2026-10-19T14:59:08.801Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Meshery, the cloud native manager
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 12014 stars
+- **Stars / Engagement**: 12015 stars
 
 ---
 
@@ -804,11 +804,17 @@ if __name__ == "__main__":
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #22426** (2026-10-18): **[Docs] : Sparse Clone Instructions Should Follow the Fork-and-Pull-Request Workflow**
-  *Symptoms*: ### Current State The Cloning the Repository section of the Meshery contribution documentation instructs contributors to clone the upstream repository directly:  git clone --no-checkout --filter=blob:none https://github.com/meshery/meshery.git cd meshery  However, the contribution guidelines recommend a fork-and-pull-request workflow.  Cloning the upstream repository directly sets origin to meshery/meshery, rather than the contributor's fork. Contributors without write access to the upstream repository may need to configure their Git remotes manually before pushing changes.  This creates an inconsistency between the documented contribution workflow and the cloning instructions, which could confuse new contributors.  ### Desired State  Replace the upstream URL with a fork URL placeholder and add the upstream repository as a separate remote:  git clone --no-checkout --filter=blob:none https://github.com/YOUR-USERNAME/meshery.git cd meshery  git remote add upstream https://github.com/meshery/meshery.git  Contributors can then push their branches to their forks and fetch updates from the upstream repository.  Alternatively, the existing upstream clone command could be retained if the documentation explicitly explains how to configure the remotes afterward.  ---  ### Contributor [Guides](https://docs.meshery.io/project/contributing) and [Handbook](https://meshery.io/community#handbook) - 📚 [Instructions for contributing to documentation](https://docs.meshery.io/project/contributi
+- **Issue #22450** (2026-10-19): **[Docs] Expanding collapsible sections on homepage pushes down opposite column**
+  *Symptoms*: ### Description On the Meshery Documentation landing page (https://docs.meshery.io/), the landing page cards are paired into horizontal row containers (`<div class="flex container">`). When expanding a collapsible `<details>` item in one column (such as **Installation** or "Architectural" under *Overview & Installation* and "Concepts"), it increases the row height and pulls down the entire subsequent row.  This pushes down unaffected sections in the opposite column (e.g., *Integrations & Extensions*), creating a large empty void in the right column.  ### Expected Behavior Expanding a collapsible dropdown in the left column should only adjust elements within that column downward. Sections in the right column should maintain their independent flow and positioning without being forced down.  ## ScreenRecording :  https://github.com/user-attachments/assets/79582e3f-a3e0-4534-8b14-4bb980f5a063
+  **Post-Mortem & Fix Analysis**:
+  > Hi @AliRana30, I'd like to work on this issue.  I'll investigate the homepage card layout and fix the underlying row-height coupling so expanding a collapsible section in one column doesn't unnecessarily shift the opposite column. I'll also verify responsive behavior and both expanded and collapsed states, and share the results in a PR.  Could you please assign this issue to me?
+  > Hi  @leecalcote sir , @PARTH-TUSSLE @Maanvi212006 @dhruveshmishra   👋  I'd like to work on this issue. I reviewed the reported behavior and the screen recording, and I have a proposed approach to fix the landing page layout.  ### 🔍 Understanding of the Issue  The landing page appears to group cards into horizontal row containers using a structure similar to `<div class="flex container">`. When a `<details>` element inside one card expands, the height of its parent card increases. Because both columns participate in the same flex row, the row height is determined by the taller column, causing the next row to move down in both columns.  As a result, expanding sections such as **Installation**, **Architectural**, or **Concepts** also pushes unrelated sections in the opposite column, leaving a large blank space and disrupting the page's visual flow.  ### 💡 Proposed Solution  I'd like to investigate the landing page's component structure and CSS, then implement the smallest maintainable 
 
-- **Issue #22419** (2026-10-17): **fix(server): prevent nil pointer panic on ServiceMeshFilter without type (#20988)**
-  *Symptoms*: **[Signed-off-by: Vimal Sahani <vimalsahani2005@gmail.com>]**  Fixes #20988  ### Summary of Changes This PR resolves runtime nil pointer dereference panics in the GraphQL server resolver (`server/internal/graphql/resolver/addons.go`) when `ServiceMeshFilter` is nil or provided without an explicit `type`.  ### Root Cause 1. In `getAvailableAddons`, `*filter.Type` was dereferenced directly without validating whether `filter.Type` is nil. When a GraphQL client queries addons with a filter that omits `type`, dereferencing `*filter.Type` triggers `panic: runtime error: invalid memory address or nil pointer dereference`. 2. `filter.K8sClusterIDs` was accessed without verifying `filter != nil`. 3. In `listenToAddonState`, `filter.K8sClusterIDs` was iterated directly without guarding against `filter == nil`.  ### Fix - Added safe nil checks: `if filter != nil && len(filter.K8sClusterIDs) != 0`. - Added pointer guard: `if filter == nil || filter.Type == nil || *filter.Type == model.MeshTypeAllMesh` before dereferencing. - Guarded `listenToAddonState` subscription loop against nil `filter`.  ### Contributor Checklist - [x] Yes, I signed my commits (DCO). - [x] My changes adhere to the project's coding style guidelines.  <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  ## Summary by CodeRabbit  * **Improvements**   * Add-on availability now includes all mesh types when no mesh type filter is specified.   * Add-on state updates are scoped to the cluster IDs pro
+- **Issue #22448** (2026-10-19): **[UI] Page action buttons overlap with navigation bar while scrolling on Cloud Native Playground homepage**
+  *Symptoms*: ### Current Behavior When scrolling down the page, call-to-action buttons render over the sticky navigation bar due to stacking context / z-index layering issues, causing visual overlapping and obstructing navigation elements.  ### Desired Behavior The navigation bar should maintain a higher stacking order (z-index) than body content and interactive buttons so that scrolling content remains neatly layered behind the navbar.  ### Screenrecording  https://github.com/user-attachments/assets/9d4baca2-211b-4e86-8d1b-8b0f4dc97614
+  **Post-Mortem & Fix Analysis**:
+  >   This issue has been labeled with 'component/ui'. 🧰 Here are docs on [Contributing to Meshery UI](https://docs.meshery.io/project/contributing/contributing-ui). 🎨 Here is the [Meshery UI Figma File](https://www.figma.com/file/SMP3zxOjZztdOLtgN4dS2W/Meshery-UI?node-id=4%3A0) File. Lastly, here are docs on [Contributing to Meshery's End-to-End Tests](https://docs.meshery.io/project/contributing/contributing-ui-tests).  ---   > &nbsp; &#9; &nbsp; &#9;  &nbsp; &#9;  &nbsp; &#9; Be sure to [join the community](https://slack.meshery.io), if you haven't yet and please leave a :star: [star on the project](../stargazers) :smile: 
+  > Hi @AliRana30, I'd like to work on this issue, please assign this issue to me
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -825,414 +831,58 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d5c77d88` (2026-10-17)
-**Commit Message**: Merge pull request #22419 from VimalN2005/fix-addons-nil-type-panic-20988
+### Incident Patch 1: `831721d5` (2026-10-19)
+**Commit Message**: [Docs] Update REST API Documentation
 
-fix(server): prevent nil pointer panic on ServiceMeshFilter without type (#20988)
+Signed-off-by: meshery <[REDACTED_EMAIL]>
 
-**File**: `server/internal/graphql/resolver/addons.go` (modified, +7/-3)
+**File**: `docs/data/openapi.yml` (modified, +6/-4)
 ```diff
-@@ -9,12 +9,12 @@ import (
- 
- func (r *Resolver) getAvailableAddons(ctx context.Context, provider models.Provider, filter *model.ServiceMeshFilter) ([]*model.AddonList, error) {
- 	var cids []string
--	if len(filter.K8sClusterIDs) != 0 {
-+	if filter != nil && len(filter.K8sClusterIDs) != 0 {
- 		cids = filter.K8sClusterIDs
- 	}
- 
- 	selectors := make([]model.MeshType, 0)
--	if filter == nil || *filter.Type == model.MeshTypeAllMesh {
-+	if filter == nil || filter.Type == nil || *filter.Type == model.MeshTypeAllMesh {
- 		selectors = append(selectors, model.AllMeshType...)
- 	} else {
- 		selectors = append(selectors, *filter.Type)
-@@ -37,7 +37,11 @@ func (r *Resolver) listenToAddonState(ctx context.Context, provider models.Provi
- 
- 	go func() {
- 		r.Log.Info("Addons subscription started")
--		for _, ctxID := range filter.K8sClusterIDs {
-+		var clusterIDs []string
-+		if filter != nil {
-+			clusterIDs = filter.K8sClusterIDs
-+		}
-+		for _, ctxID := range clusterIDs {
- 			go func(ctxID string) {
- 				for {
- 					select {
-```
-
----
-
-### Incident Patch 2: `a0d853c3` (2026-10-16)
-**Commit Message**: fix(server): prevent nil pointer panic on ServiceMeshFilter without type (#20988)
-
-Signed-off-by: Vimal Sahani <[REDACTED_EMAIL]>
-
-**File**: `server/internal/graphql/resolver/addons.go` (modified, +7/-3)
-```diff
-@@ -9,12 +9,12 @@ import (
- 
- func (r *Resolver) getAvailableAddons(ctx context.Context, provider models.Provider, filter *model.ServiceMeshFilter) ([]*model.AddonList, error) {
- 	var cids []string
--	if len(filter.K8sClusterIDs) != 0 {
-+	if filter != nil && len(filter.K8sClusterIDs) != 0 {
- 		cids = filter.K8sClusterIDs
- 	}
- 
- 	selectors := make([]model.MeshType, 0)
--	if filter == nil || *filter.Type == model.MeshTypeAllMesh {
-+	if filter == nil || filter.Type == nil || *filter.Type == model.MeshTypeAllMesh {
- 		selectors = append(selectors, model.AllMeshType...)
- 	} else {
- 		selectors = append(selectors, *filter.Type)
-@@ -37,7 +37,11 @@ func (r *Resolver) listenToAddonState(ctx context.Context, provider models.Provi
- 
- 	go func() {
- 		r.Log.Info("Addons subscription started")
--		for _, ctxID := range filter.K8sClusterIDs {
-+		var clusterIDs []string
-+		if filter != nil {
-+			clusterIDs = filter.K8sClusterIDs
-+		}
-+		for _, ctxID := range clusterIDs {
- 			go func(ctxID string) {
- 				for {
- 					select {
-```
-
----
-
-### Incident Patch 3: `dc74f615` (2026-10-19)
-**Commit Message**: Merge pull request #21333 from D-source1602/fix/issue-21322-viewcmd-save-bugs
-
-fix: [mesheryctl] Two --save bugs in view commands: unconditional UserHomeDir call and missing file extension
-
-**File**: `mesheryctl/internal/cli/root/connections/view.go` (modified, +6/-6)
-```diff
-@@ -89,12 +89,6 @@ mesheryctl connection view [connection-name|connection-id] --output-format json
- 			selectedConnection = fetchedConnection
- 		}
- 
--		// Get the home directory of the user to save the output file
--		homeDir, err := os.UserHomeDir()
--		if err != nil {
--			return utils.ErrRetrieveHomeDir(errors.Wrap(err, "failed to determine user home directory"))
--		}
--
- 		outputFormatterFactory := display.OutputFormatterFactory[connection.Connection]{}
- 		outputFormatter, err := outputFormatterFactory.New(connectionViewFlagsProvided.outputFormat, *selectedConnection)
- 		if err != nil {
-@@ -107,6 +101,12 @@ mesheryctl connection view [connection-name|connection-id] --output-format json
- 		}
- 
- 		if connectionViewFlagsProvided.save {
-+			// Get the home directory of the user to save the output file
-+			homeDir, err := os.UserHomeDir()
-+			if err != nil {
-+				return utils.ErrRetrieveHomeDir(errors.Wrap(err, "failed to determine user home directory"))
-+			}
-+
- 			// Prepare the connection string for file naming since connection from local provider
- 			// can be created without a name.
- 			connectionString := func(c connection.Connection) string {
-```
-
-**File**: `mesheryctl/internal/cli/root/connections/view_test.go` (modified, +43/-4)
-```diff
-@@ -11,15 +11,12 @@ import (
- )
- 
- func TestConnectionViewCmd(t *testing.T) {
--
--	// get current directory
- 	_, filename, _, ok := runtime.Caller(0)
- 	if !ok {
- 		t.Fatal("Not able to get current working directory")
- 	}
- 	currDir := filepath.Dir(filename)
- 
--	// test scenarios for fetching data
- 	tests := []utils.MesheryListCommandTest{
- 		{
- 			Name:           "given no argument provided when connection view then throw error",
-@@ -66,6 +63,48 @@ func TestConnectionViewCmd(t *testing.T) {
- 		},
- 	}
- 
--	// Run tests
- 	utils.InvokeMesheryctlTestListCommand(t, update, ConnectionsCmd, tests, currDir, "connection")
- }
-+
-+// connectionViewRun describes the view invocation shared by the --save tests
-+// below, which assert on the file written rather than on golden output.
-+func connectionViewRun(commandDir string, args []string) utils.MesheryCommandRun {
-+	return utils.MesheryCommandRun{
-+		Cmd:        ConnectionsCmd,
-+		Args:       args,
-+		CommandDir: commandDir,
-+		Mocks: []utils.MockURL{
-+			{
-+				URL:      "/api/integrations/connections/" + connectionId,
-+				Response: "view.connection.api.response.golden",
-+			},
-+		},
-+	}
-+}
-+
-+// TestConnectionViewSaveCreatesFile verifies that --save writes a file named
-+// for the connection and the output format. The home directory is isolated so
-+// the real ~/.meshery is never touched.
-+func TestConnectionViewSaveCreatesFile(t *testing.T) {
-+	mesheryDir := utils.IsolateMesheryHome(t)
-+
-+	run := connectionViewRun(utils.CallerDir(t), []string{"view", connectionId, "--save"})
-+	if _, err := utils.RunMesheryctlCommand(t, run); err != nil {
-+		t.Fatalf("unexpected error: %v", err)
-+	}
-+
-+	utils.AssertFileExists(t, filepath.Join(mesheryDir, "connection_minikube.yaml"))
-+}
-+
-+// TestConnectionViewNoSaveWithBrokenHome verifies that view without --save
-+// succeeds when no home directory can be resolved, proving os.UserHomeDir is
-+// not called on the display-only path.
-+func TestConnectionViewNoSaveWithBrokenHome(t *testing.T) {
-+	t.Setenv("HOME", "")
-+	t.Setenv("USERPROFILE", "")
-+
-+	run := connectionViewRun(utils.CallerDir(t), []string{"view", connectionId})
-+	if _, err := utils.RunMesheryctlCommand(t, run); err != nil {
-+		t.Fatalf("view without --save should succeed even with no HOME: %v", err)
-+	}
-+}
-\ No newline at end of file
-```
-
-**File**: `mesheryctl/internal/cli/root/environments/fixtures/view.environment.api.response.golden` (added, +19/-0)
-```diff
-@@ -0,0 +1,19 @@
-+{
-+    "page": 0,
-+    "page_size": 10,
-+    "total_count": 1,
-+    "environments": [
-+        {
-+            "id": "2d2c0b60-076a-4f0a-8a63-de538570a553",
-+            "name": "test-environment",
-+            "description": "integration test",
-+            "organization_id": "2d2c0b60-076a-4f0a-8a63-de538570a553",
-+            "created_at":"2025-03-23T02:34:18.001826Z",
-+            "updated_at":"2025-03-23T02:34:18.001828Z",
-+            "deleted_at": {
-+                "Time":"0001-01-01T00:00:00Z",
-+                "Valid":false
-+            }
-+        }
-+    ]
-+}
-\ No newline at end of file
-```
-
-**File**: `mesheryctl/internal/cli/root/environments/view.go` (modified, +7/-7)
-```diff
-@@ -92,14 +92,14 @@ mesheryctl environment view --orgId [orgId]
- 			return err
- 		}
- 
--		// Get the home directory of the user to save the output file
--		homeDir, err := os.UserHomeDir()
--		if err != nil {
--			return utils.ErrRetrieveHomeDir(errors.Wrap(err, "failed to determine user home directory"))
--		}
--		environmentString := strings.ReplaceAll(fmt.Sprintf("%v", selectedEnvironment.Name), " ", "_")
--
- 		if environmentViewFlagsProvided.save {
-+			// Get the home directory of the user to save the output file
-+			homeDir, err := os.UserHomeDir()
-+			if err != nil {
-+				return utils.ErrRetrieveHomeDir(errors.Wrap(err, "failed to determine user home directory"))
-+			}
-+
-+			environmentString := strings.ReplaceAll(fmt.Sprintf("%v", selectedEnvironment.Name), " ", "_")
- 			fileName := fmt.Sprintf("environment_%s.%s", environmentString, strings.ToLower(environmentViewFlagsProvided.outputFormat))
- 			file := filepath.Join(homeDir, ".meshery", fileName)
- 			outputFormatterSaverFactory := display.OutputFormatterSaverFactory[environment.Environment]{}
-```
-
-**File**: `mesheryctl/internal/cli/root/environments/view_test.go` (added, +46/-0)
-```diff
-@@ -0,0 +1,46 @@
-+package environments
-+
-+import (
-+	"path/filepath"
-+	"testing"
-+
-+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-+)
-+
-+
-+func environmentViewRun(commandDir string, args []string) utils.MesheryCommandRun {
-+	return utils.MesheryCommandRun{
-+		Cmd:        EnvironmentCmd,
-+		Args:       args,
-+		CommandDir: commandDir,
-+		Mocks: []utils.MockURL{
-+			{
-+				URL:      "/api/environments?orgId=" + testConstants["orgId"],
-+				Response: "view.environment.api.response.golden",
-+			},
-+		},
-+	}
-+}
-+
-+
-+func TestEnvironmentViewNoSaveWithBrokenHome(t *testing.T) {
-+	t.Setenv("HOME", "")
-+	t.Setenv("USERPROFILE", "")
-+
-+	run := environmentViewRun(utils.CallerDir(t), []string{"view", "--orgId", testConstants["orgId"]})
-+	if _, err := utils.RunMesheryctlCommand(t, run); err != nil {
-+		t.Fatalf("view without --save should succeed even with no HOME: %v", err)
-+	}
-+}
-+
-+
-+func TestEnvironmentViewSaveCreatesFile(t *testing.T) {
-+	mesheryDir := utils.IsolateMesheryHome(t)
-+
-+	run := environmentViewRun(utils.CallerDir(t), []string{"view", "--orgId", testConstants["orgId"], "--save"})
-+	if _, err := utils.RunMesheryctlCommand(t, run); err != nil {
-+		t.Fatalf("unexpected error: %v", err)
-+	}
-+
-+	utils.AssertFileExists(t, filepath.Join(mesheryDir, "environment_test-environment.yaml"))
-+}
-\ No newline at end of file
-```
-
-**File**: `mesheryctl/internal/cli/root/filter/view.go` (modified, +2/-2)
-```diff
-@@ -175,12 +175,12 @@ func saveToFile(
- 	var fileName string
- 
- 	if isAll {
--		fileName = "filters_all"
-+		fileName = fmt.Sprintf("filters_all.%s", strings.ToLower(outputFormat))
- 	} else {
- 		shortID := selectedFilter.ID.String()[:8]
- 		sanitizer := strings.NewReplacer("/", "_", " ", "_")
- 		sanitizedName := sanitizer.Replace(selectedFilter.Name)
--		fileName = fmt.Sprintf("filter_%s_%s", sanitizedName, shortID)
-+		fileName = fmt.Sprintf("filter_%s_%s.%s", sanitizedName, shortID, strings.ToLower(outputFormat))
- 	}
- 
- 	file := filepath.Join(utils.MesheryFolder, fileName)
-```
-
-**File**: `mesheryctl/internal/cli/root/filter/view_test.go` (modified, +30/-5)
-```diff
-@@ -12,14 +12,12 @@ import (
- func TestViewCmd(t *testing.T) {
- 	mesheryctlflags.InitValidators(FilterCmd)
- 
--	// get current directory
- 	_, filename, _, ok := runtime.Caller(0)
- 	if !ok {
- 		t.Fatal("Not able to get current working directory")
- 	}
- 	currDir := filepath.Dir(filename)
- 
--	// test scenarios for fetching filter data
- 	ListTests := []utils.MesheryListCommandTest{
- 		{
- 			Name:             "Fetch Filter View",
-@@ -52,9 +50,36 @@ func TestViewCmd(t *testing.T) {
- 		},
- 	}
- 
--	// Run tests that capture stdout output
- 	utils.InvokeMesheryctlTestListCommand(t, update, FilterCmd, ListTests, currDir, "filter")
--
--	// Run tests that capture logger output
- 	utils.InvokeMesheryctlTestCommand(t, update, FilterCmd, loggerTests, currDir, "filter")
- }
-+
-+
-+func TestFilterViewSaveCreatesFileWithExtension(t *testing.T) {
-+	mesheryctlflags.InitValidators(FilterCmd)
-+
-+	const filterID = "957fbc9b-a655-4892-823d-375102a9587c"
-+
-+	mesheryDir := utils.IsolateMesheryHome(t)
-+
-+	run := utils.MesheryCommandRun{
-+		Cmd:        FilterCmd,
-+		Args:       []string{"view", filterID, "--output-format", "json", "--save"},
-+		CommandDir: utils.CallerDir(t),
-+		Mocks: []utils.MockURL{
-+			{
-+				URL:      "/api/filter",
-+				Response: "view.filter.api.response.golden",
-+			},
-+			{
-+				URL:      "/api/filter/" + filterID,
-+				Response: "view.id.filter.api.response.golden",
-+			},
-+		},
-+	}
-+	if _, err := utils.RunMesheryctlCommand(t, run); err != nil {
-+		t.Fatalf("unexpected error: %v", err)
-+	}
-+
-+	utils.AssertFileExists(t, filepath.Join(mesheryDir, "filter_KumaTest_957fbc9b.json"))
-+}
-\ No newline at end of file
-```
-
-**File**: `mesheryctl/internal/cli/root/relationships/fixtures/view.relationship.save.api.response.golden` (added, +30/-0)
-```diff
-@@ -0,0 +1,30 @@
-+{
-+  "page": 0,
-+  "page_size": 25,
-+  "total_count": 1,
-+  "relationships": [
-+    {
-+      "id": "aaaabbbb-cccc-dddd-eeee-111122223333",
-+      "subType": "Mount",
-+      "kind": "edge",
-+      "type": "network",
-+      "version": "v1.0.0",
-+      "evaluation policy": "OPA",
-+      "model": {
-+        "name": "kubernetes"
-+      },
-+      "metadata": {
-+        "description": "A relationship that defines network edges between components."
-+      },
-+      "selector": [
-+        {
-+          "allow": {
-+            "from": [{"kind": "Service", "model": "kubernetes"}],
-+            "to":   [{"kind": "Pod",     "model": "kubernetes"}]
-+          },
-+          "deny": {}
-+        }
-+      ]
-+    }
-+  ]
-+}
+@@ -65,14 +65,16 @@ tags:
+     description: Operations related to Meshery Academy content and curriculum
+   - name: BlowhornBinding_blowhornBindings
+     description: Operations related to Blowhorn bindings.
+-  - name: BlowhornContent_blowhornContent
+-    description: Operations related to Blowhorn content.
+   - name: BlowhornHealth_blowhornHealth
+     description: Operations related to Blowhorn health.
+   - name: BlowhornLedger_blowhornLedger
+     description: Operations related to Blowhorn ledger entries, contacts and mentees.
+   - name: BlowhornProfile_blowhornProfiles
+     description: Operations related to Blowhorn profiles.
++  - name: Claim_claims
++    description: Operations related to claims on resources.
++  - name: ContentPiece_contentPieces
++    description: Operations related to content pieces.
+   - name: Design_designs
+     description: Operations related to designs and infrastructure patterns
+   - name: Design_github
+@@ -89,14 +91,14 @@ tags:
+       workflow.
+   - name: Invitation_Invitation
+     description: Operations related to invitation
+-  - name: JobLease_jobLeases
+-    description: Operations related to shared job leases.
+   - name: PatternResource_patternResources
+     description: Operations related to Meshery pattern resources.
+   - name: Performance_Profile_performance
+     description: APIs for managing Meshery performance profiles.
+   - name: Plan_Plans
+     description: Operations related to plans
++  - name: Schedule_schedules
++    description: Operations related to organization schedules and their claims.
+   - name: Subscription_Subscriptions
+     description: Operations related to subscriptions
+   - name: Subscription_Plans
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22435** (closed): [Server] Detach DeleteContext and kubeconfig import state machine events from request context (@schizophrenicmaniac)
 - **PR #22419** (2026-10-17): fix(server): prevent nil pointer panic on ServiceMeshFilter without type (#20988) (@VimalN2005)
 - **PR #22417** (2026-10-16): docs: add Favour Adeyemo introduction (@BLVCK-MAMBA-6)
 - **PR #22416** (2026-10-16): Add Yeisrael Dawit's meeting notes (@YeisraelD)
 - **PR #22415** (2026-10-16): Add Om Parihar's introduction to meeting notes (@salvatoreOm)
 - **PR #22414** (2026-10-16): Introduction - Okoko Jerry (@OkokoJerry)
-- **PR #22413** (2026-10-16): Create parth-chandurkar introductory text.md (@ParthrChandurkar)
 
 ---
 
@@ -1252,36 +902,36 @@ fix: [mesheryctl] Two --save bugs in view commands: unconditional UserHomeDir ca
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #22419 from VimalN2005/fix-addons-nil-type-panic-20988
+## X. [Docs] Update REST API Documentation
 
 **RULE**:
-When implementing operations in `server/internal/graphql/resolver/addons.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/data/openapi.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d5c77d88`: Merge pull request #22419 from VimalN2005/fix-addons-nil-type-panic-20988. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `831721d5`: [Docs] Update REST API Documentation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/internal/graphql/resolver/addons.go`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/data/openapi.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-	if filter != nil && len(filter.K8sClusterIDs) != 0 {
-	if filter == nil || filter.Type == nil || *filter.Type == model.MeshTypeAllMesh {
-		var clusterIDs []string
-		if filter != nil {
-			clusterIDs = filter.K8sClusterIDs
-		}
-		for _, ctxID := range clusterIDs {
+  - name: Claim_claims
+    description: Operations related to claims on resources.
+  - name: ContentPiece_contentPieces
+    description: Operations related to content pieces.
+  - name: Schedule_schedules
+    description: Operations related to organization schedules and their claims.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-	if len(filter.K8sClusterIDs) != 0 {
-	if filter == nil || *filter.Type == model.MeshTypeAllMesh {
-		for _, ctxID := range filter.K8sClusterIDs {
+  - name: BlowhornContent_blowhornContent
+    description: Operations related to Blowhorn content.
+  - name: JobLease_jobLeases
+    description: Operations related to shared job leases.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d5c77d88` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `831721d5` are properly handled with clean fallback behavior.

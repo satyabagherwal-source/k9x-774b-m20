@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `469455b1`  
+> **Source Version**: `dc5a1b22`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T12:01:25.805Z  
+> **Timestamp**: 2026-10-19T14:59:12.635Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T12:01:25.796Z  
+> **Harvest Timestamp**: 2026-10-19T14:59:12.464Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25687 stars
+- **Stars / Engagement**: 25689 stars
 
 ---
 
@@ -1259,14 +1259,14 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #49462** (2026-10-19): **cilium, docs: update Maglev reassignment claims**
-  *Symptoms*: small doc change to clarify maglev lut + ecmp examples
+- **Issue #49470** (2026-10-19): **gha/conformance-gke: Accept /ci-gke arguments as a JSON string**
+  *Symptoms*: ariane passes the capture of a trigger comment to the workflow as a JSON string, so /ci-gke versions=all arrives as "versions=all". The Generate Matrix step indexes it with jq like the object that conformance-kpr-gke passes, so every /ci-gke with an argument fails before any cluster exists [1]:    jq: error (at <stdin>:1): Cannot index string with string "ipsec"  Its awk parsing also kept the closing quote, so versions=all never matched, and channel=rapid became the filter channels.channel=RAPID".  This commit turns extra-args into one JSON object first, splitting a key=value string into a single key, and both steps read every option from that object.  Fixes: 1337c87c9955 ("Add vanilla cloud-provider configs for conformance tests") 1: https://github.com/cilium/cilium/actions/runs/39252040705/job/118057961373  This PR was prepared with AIL:3. I personally checked the diff. 
+
+- **Issue #49467** (2026-10-19): **[v1.20] Backports 2026-10-19**
+  *Symptoms*:  * [x] #49453 (@aanm)  Once this PR is merged, a GitHub action will update the labels of these PRs: ```upstream-prs  49453 ``` 
   **Post-Mortem & Fix Analysis**:
   > /test
   > /test
-
-- **Issue #49453** (2026-10-19): **ci: Pass the auto-committer secrets to the base images workflow**
-  *Symptoms*: Since we stopped passing secrets to build-images-base.yaml, every Renovate push that bumps a base image fails at the "Get token" step:    AssertionError: Must supply input APP_ID  We assumed the called job would read both secrets from the environment it pins, but a reusable workflow only sees the secrets its caller passes, and the environment only decides which value a passed name gets [1]. Without them, the secrets resolve to empty strings and the run shows no error.  This commit declares both secrets again and passes only those two from the caller, so the job still does not inherit every repository and organisation secret. The values come from release-base-images-renovate even though the caller itself cannot read them.  Fixes: 87fd58644cf8 ("ci: Stop passing secrets to the base images workflow") 1: https://docs.github.com/en/actions/how-tos/reuse-automations/reuse-workflows  This PR was prepared with AIL:3. I personally checked the diff. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1283,309 +1283,109 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `469455b1` (2026-10-19)
-**Commit Message**: cilium, docs: update Maglev reassignment claims
+### Incident Patch 1: `dc5a1b22` (2026-10-19)
+**Commit Message**: gha/conformance-gke: Accept /ci-gke arguments as a JSON string
 
-Update the KPR docs about Maglev with some more concrete examples in
-terms of unrelated backend reassignments. Additionally, add a section
-on Maglev + ECMP and how the flows behave.
+ariane passes the capture of a trigger comment to the workflow as a
+JSON string, so /ci-gke versions=all arrives as "versions=all". The
+Generate Matrix step indexes it with jq like the object that
+conformance-kpr-gke passes, so every /ci-gke with an argument fails
+before any cluster exists [1]:
 
-Signed-off-by: Daniel Borkmann <[REDACTED_EMAIL]>
+  jq: error (at <stdin>:1): Cannot index string with string "ipsec"
 
-**File**: `Documentation/network/bgp-control-plane/bgp-control-plane-operation.rst` (modified, +6/-2)
+Its awk parsing also kept the closing quote, so versions=all never
+matched, and channel=rapid became the filter channels.channel=RAPID".
+
+This commit turns extra-args into one JSON object first, splitting a
+key=value string into a single key, and both steps read every option
+from that object.
+
+This commit was prepared with AIL:3. I personally checked the diff.
+
+Fixes: 1337c87c9955 ("Add vanilla cloud-provider configs for conformance tests")
+1: https://github.com/cilium/cilium/actions/runs/39252040705/job/118057961373
+
+Signed-off-by: André Martins <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/conformance-gke.yaml` (modified, +10/-9)
 ```diff
-@@ -373,12 +373,16 @@ different endpoint than before, potentially causing the connection to be reset.
+@@ -166,12 +166,15 @@ jobs:
+           # Use complete matrix in case of scheduled run
+           # main -> event_name = schedule
+           # other stable branches -> PR-number starting with v (e.g. v1.14)
+-          VERSIONS=$(echo "${EXTRA_ARGS}" | awk -F'=' '{print $2}')
+-          IPSEC=$(echo "${EXTRA_ARGS}" | sed 's/^""$/{}/' | jq -r '.["ipsec"] // false')
+-          WG=$(echo "${EXTRA_ARGS}" | sed 's/^""$/{}/' | jq -r '.["wireguard"] // false')
+-          KPR=$(echo "${EXTRA_ARGS}" | sed 's/^""$/{}/' | jq -r '.["kpr"] // false')
+-          BPFMASQV4=$(echo "${EXTRA_ARGS}" | sed 's/^""$/{}/' | jq -r '.["bpf-masq-v4"] // false')
+-          ADV_FEAT=$(echo "${EXTRA_ARGS}" | sed 's/^""$/{}/' | jq -r '.["advanced-features"] // false')
++          # ariane passes a comment's capture as a JSON string such as "versions=all", callers pass an object.
++          ARGS=$(jq -Rc '. as $raw | (try fromjson catch $raw) | if type == "object" then . elif type == "string" and contains("=") then (split("=") | {(.[0]): .[1]}) else {} end' <<< "${EXTRA_ARGS}")
++          echo "GKE_EXTRA_ARGS=${ARGS}" >> "${GITHUB_ENV}"
++          VERSIONS=$(jq -r '.versions // ""' <<< "${ARGS}")
++          IPSEC=$(jq -r '.ipsec // false' <<< "${ARGS}")
++          WG=$(jq -r '.wireguard // false' <<< "${ARGS}")
++          KPR=$(jq -r '.kpr // false' <<< "${ARGS}")
++          BPFMASQV4=$(jq -r '.["bpf-masq-v4"] // false' <<< "${ARGS}")
++          ADV_FEAT=$(jq -r '.["advanced-features"] // false' <<< "${ARGS}")
  
- If your upstream routers support ECMP with `Resilient Hashing`_, enabling
- it may help to keep the ongoing connections forwarded to the same node.
--Enabling the :ref:`maglev` feature in Cilium may also help since it increases
-+Enabling the :ref:`maglev` feature in Cilium together with DSR with
-+:ref:`IPIP <DSR mode with IPIP>` or :ref:`Geneve <DSR mode with Geneve>`
-+dispatch may also help since it increases
- the probability that all nodes select the same endpoint for the same flow.
- However, it only works for the ``externalTrafficPolicy: Cluster``. If the
- Service's ``externalTrafficPolicy`` is set to ``Local``, it is inevitable that
- all ongoing connections with the endpoints on the failed node, and connections
--forwarded to a different node than before, will be reset.
-+forwarded to a different node than before, will be reset. See
-+:ref:`maglev_ecmp` for how ECMP rehashing on the upstream routers and Maglev
-+backend selection interact, and for the share of connections that get reset.
+           # shellcheck disable=SC2193
+           if [[ "${{ github.event_name }}" == "schedule" || "${PR_NUMBER}" == v* || "$VERSIONS" == "all" ]];then
+@@ -233,10 +236,8 @@ jobs:
  
- .. _Resilient Hashing: https://www.juniper.net/documentation/us/en/software/junos/interfaces-ethernet-switches/topics/topic-map/resillient-hashing-lag-ecmp.html
- 
-```
-
-**File**: `Documentation/network/kubernetes/kubeproxy-free.rst` (modified, +192/-33)
-```diff
-@@ -496,8 +496,9 @@ in its load balancer for backend selection. This improves resiliency in case of
- failures. As well, it provides better load balancing properties since Nodes added to the cluster will
- make consistent backend selection throughout the cluster for a given 5-tuple without
- having to synchronize state with the other Nodes. Similarly, upon backend removal the backend
--lookup tables are reprogrammed with minimal disruption for unrelated backends (at most 1%
--difference in the reassignments) for the given service.
-+lookup tables are reprogrammed such that only a small fraction of the traffic of unrelated
-+backends gets reassigned for the given service (see the table of ``maglev.tableSize`` values
-+below for measured numbers).
- 
- Maglev hashing for services load balancing can be enabled by setting ``loadBalancer.algorithm=maglev``:
- 
-@@ -521,37 +522,90 @@ and ``maglev.hashSeed``.
- `Maglev <https://static.googleusercontent.com/media/research.google.com/ko//pubs/archive/44824.pdf>`__
- recommends the table size (``M``) to be significantly larger than the number of maximum expected
- backends (``N``). In practice that means that ``M`` should be larger than ``100 * N`` in
--order to guarantee the property of at most 1% difference in the reassignments on backend
--changes. ``M`` must be a prime number. Cilium uses a default size of ``16381`` for ``M``.
--The following sizes for ``M`` are supported as ``maglev.tableSize`` Helm option:
--
--+----------------------------+
--| ``maglev.tableSize`` value |
--+============================+
--| 251                        |
--+----------------------------+
--| 509                        |
--+----------------------------+
--| 1021                       |
--+----------------------------+
--| 2039                       |
--+----------------------------+
--| 4093                       |
--+----------------------------+
--| 8191                       |
--+----------------------------+
--| 16381                      |
--+----------------------------+
--| 32749                      |
--+----------------------------+
--| 65521                      |
--+----------------------------+
--| 131071                     |
--+----------------------------+
--
--For example, a ``maglev.tableSize`` of ``16381`` is suitable for a maximum of ``~160`` backends
-+order to guarantee that the share of the lookup table assigned to each backend differs by at
-+most 1%, that is, traffic is spread almost evenly across the backends. Maglev favors such even
-+load balancing over minimal disruption. Therefore, when a backend is added or removed, a small
-+fraction of the flows of unrelated backends is reassigned to a different backend as well, and
-+this fraction gets smaller with a larger ``M``. ``M`` must be a prime number. Cilium uses a
-+default size of ``16381`` for ``M``. The following sizes for ``M`` are supported as
-+``maglev.tableSize`` Helm option. For each size, the table also lists the share of flows of
-+the remaining backends which move to a different backend when one backend is removed. This is
-+the worst case for any number of backends up to the recommended maximum of ``M / 100``. The
-+numbers were measured by simulating Cilium's Maglev implementation over at least 1000 random
-+sets of backend addresses per backend count (average, with the 99th percentile in
-+parentheses):
-+
-++----------------------+------------------------+-------------------------------------+
-+| ``maglev.tableSize`` | Recommended max.       | Remaining backends' flows that move |
-+| (``M``)              | backends (``M / 100``) | when one backend is removed         |
-++======================+========================+=====================================+
-+| 251                  | 2                      | n/a                                 |
-++----------------------+------------------------+-------------------------------------+
-+| 509                  | 5                      | 2.5% (7.9%)                         |
-++----------------------+------------------------+-------------------------------------+
-+| 1021                 | 10                     | 2.8% (5.7%)                         |
-++----------------------+------------------------+-------------------------------------+
-+| 2039                 | 20                     | 2.5% (4.3%)                         |
-++----------------------+------------------------+-------------------------------------+
-+| 4093                 | 40                     | 2.2% (3.0%)                         |
-++----------------------+------------------------+-------------------------------------+
-+| 8191                 | 81                     | 1.8% (2.4%)                         |
-++----------------------+------------------------+-------------------------------------+
-+| 16381                | 163                    | 1.6% (1.8%)                         |
-++----------------------+------------------------+-------------------------------------+
-+| 32749                | 327                    | 1.2% (1.4%)      
-```
-
-**File**: `Documentation/spelling_wordlist.txt` (modified, +1/-0)
-```diff
-@@ -725,6 +725,7 @@ rc
- reStructuredText
- reachability
- readSecretsOnlyFromSecretsNamespace
-+rebalance
- rebase
- rebased
- rebasing
+       - name: Filter Matrix
+         id: set-matrix
+-        env:
+-          EXTRA_ARGS: ${{ inputs.extra-args }}
+         run: |
+-          CHANNEL=$(echo "${EXTRA_ARGS}" | grep "channel" | awk -F'=' '{print $2}' | tr '[:lower:]' '[:upper:]')
++          CHANNEL=$(jq -r '.channel // "" | ascii_upcase' <<< "${GKE_EXTRA_ARGS}")
+           if [ "$CHANNEL" == "" ];then
+             FILTER="channels.channel=REGULAR"
+           elif [ "$CHANNEL" == "NONE" ];then
 ```
 
 ---
 
-### Incident Patch 2: `0828f4a0` (2026-09-24)
-**Commit Message**: network driver: documentation updates for LogicalPool
+### Incident Patch 2: `0d72d63b` (2026-10-16)
+**Commit Message**: datapath: explicitly set `ENABLE_SRV6` to 1 in tests
 
-updated and regenerated CRD with updated docs.
-no structural changes to the API.
+Signed-off-by: Leonardo Di Giovanna <[REDACTED_EMAIL]>
 
-updated README.md with proper field references,
-as statedb table column name changed (from pool to
-LogicalPool)
-
-Signed-off-by: Bernardo Soares <[REDACTED_EMAIL]>
-
-**File**: `pkg/k8s/apis/cilium.io/client/crds/v2alpha1/ciliumnetworkdriverclusterconfigs.yaml` (modified, +5/-2)
+**File**: `bpf/tests/tc_srv6_decap.c` (modified, +1/-1)
 ```diff
-@@ -230,8 +230,11 @@ spec:
-                       Pool names must be unique.
-                     items:
-                       description: |-
--                        Pool configuration. Devices matched by the filter are advertised
--                        with the pool name as a ResourceSlice.
-+                        Pool configuration. Devices matched by the filter are tagged with the
-+                        pool name as the "pool" device attribute, used for DeviceClass CEL
-+                        selector matching. This is a logical grouping only: it does not affect
-+                        the ResourceSlice a device is advertised in — that pool is always named
-+                        after the node.
-                       properties:
-                         filter:
-                           description: |-
+@@ -8,7 +8,7 @@
+ /* Enable code paths under test */
+ #define ENABLE_IPV4 1
+ #define ENABLE_IPV6 1
+-#define ENABLE_SRV6
++#define ENABLE_SRV6 1
+ #ifdef TUNNEL_MODE
+ #undef TUNNEL_MODE
+ #endif
 ```
 
-**File**: `pkg/k8s/apis/cilium.io/client/crds/v2alpha1/ciliumnetworkdrivernodeconfigs.yaml` (modified, +5/-2)
+**File**: `bpf/tests/tc_srv6_encap.c` (modified, +1/-1)
 ```diff
-@@ -169,8 +169,11 @@ spec:
-                   Pool names must be unique.
-                 items:
-                   description: |-
--                    Pool configuration. Devices matched by the filter are advertised
--                    with the pool name as a ResourceSlice.
-+                    Pool configuration. Devices matched by the filter are tagged with the
-+                    pool name as the "pool" device attribute, used for DeviceClass CEL
-+                    selector matching. This is a logical grouping only: it does not affect
-+                    the ResourceSlice a device is advertised in — that pool is always named
-+                    after the node.
-                   properties:
-                     filter:
-                       description: |-
-```
-
-**File**: `pkg/k8s/apis/cilium.io/v2alpha1/network_driver_types.go` (modified, +5/-2)
-```diff
-@@ -148,8 +148,11 @@ type CiliumNetworkDriverNodeConfigSpec struct {
- // Name for a pool.
- type CiliumNetworkDriverPoolName string
- 
--// Pool configuration. Devices matched by the filter are advertised
--// with the pool name as a ResourceSlice.
-+// Pool configuration. Devices matched by the filter are tagged with the
-+// pool name as the "pool" device attribute, used for DeviceClass CEL
-+// selector matching. This is a logical grouping only: it does not affect
-+// the ResourceSlice a device is advertised in — that pool is always named
-+// after the node.
- //
- // +deepequal-gen=true
- type CiliumNetworkDriverDevicePoolConfig struct {
-```
-
-**File**: `pkg/networkdriver/README.md` (modified, +44/-19)
-```diff
-@@ -117,17 +117,23 @@ type DRAAllocation struct {
-     DeviceName     string
-     Manager        types.DeviceManagerType
-     PreparedDevice types.Device
--    Pool           string
-+    LogicalPool    string
-     PodUID         kube_types.UID
-     ClaimUID       kube_types.UID
-     Config         types.DeviceConfig
- }
- ```
- 
--The primary key is `AllocationKey(Pool, DeviceName)`. Secondary indexes
--support lookups by claim UID, device name, and pod UID. `PreparedDevice`
--holds the device state after setup, while `Config` records claim-specific
--settings such as the pod interface name or VLAN.
-+`LogicalPool` is the user-configured Cilium pool (`spec.pools` in the CRD)
-+the device was matched against at prepare time — it is **not** the DRA
-+`ResourceSlice` pool name (that's the node name; see
-+[Allocation lifecycle](#allocation-lifecycle) below). It is only ever used
-+for the `pool` device attribute so `DeviceClass` CEL selectors can match it.
-+
-+The primary key is `AllocationKey(LogicalPool, DeviceName)`. Secondary
-+indexes support lookups by claim UID, device name, and pod UID.
-+`PreparedDevice` holds the device state after setup, while `Config` records
-+claim-specific settings such as the pod interface name or VLAN.
- 
- The allocation table has a different lifetime from device inventory. An
- inventory row answers, “What does the device manager see now?” An allocation
-@@ -169,8 +175,13 @@ ResourceSlice publication (a change to either table wakes this loop)
-   ├─ networkdriver-dra-devices
-   │    └─ supplies the current device and its attributes
-   ├─ networkdriver-dra-allocations
--  │    └─ pins a prepared device to its recorded pool
-+  │    └─ pins a prepared device to its recorded LogicalPool attribute
-   └─ buildPoolsFromTable()
-+       ├─ groups all of the node's devices into one ResourceSlice pool,
-+       │  named after the node (stable regardless of device count)
-+       ├─ deviceSlices() splits that pool into multiple resourceslice.Slice
-+       │  batches once device count exceeds maxDevicesPerResourceSlice — the
-+       │  pool name itself never changes, only how many Slices make it up
-        └─ draPlugin.PublishResources()
- 
- Agent restart
-@@ -190,9 +201,13 @@ restore. The driver logs a warning on restart because that device may require
- manual cleanup. If the status update succeeds but the agent stops before the
- StateDB write, restart recovery can rebuild the allocation from the status.
- 
--Changes to either table trigger a new `ResourceSlice` publication. If one
--device has allocation rows that name different pools, the state is ambiguous.
--The driver logs the conflict and does not advertise that device.
-+Changes to either table trigger a new `ResourceSlice` publication. Every
-+node publishes exactly one `ResourceSlice` pool, named after the node — the
-+DRA pool name is never derived from the user-configured logical pool, and
-+it does not change as device count crosses the per-slice cap (see
-+`deviceSlices`/`maxDevicesPerResourceSlice`). If one device has allocation
-+rows that name different logical pools, the state is ambiguous. The driver
-+logs the conflict and does not advertise the device.
- 
- ### Inspecting state at runtime
- 
-@@ -202,7 +217,7 @@ kubectl -n kube-system exec <cilium-pod> -c cilium-agent -- \
-   jq '{
-     inventory: .["networkdriver-dra-devices"] | map({Name, Manager}),
-     allocations: .["networkdriver-dra-allocations"] |
--      map({DeviceName, Manager, Pool, PodUID, ClaimUID, Config})
-+      map({DeviceName, Manager, LogicalPool, PodUID, ClaimUID, Config})
-   }'
- ```
- 
-@@ -220,7 +235,7 @@ Example output for one prepared SR-IOV Virtual Function:
-     {
-       "DeviceName": "0000-03-00-1",
-       "Manager": "sr-iov",
--      "Pool": "sriov-pool",
-+      "LogicalPool": "sriov-pool",
-       "PodUID": "a1b2c3d4-...",
-       "ClaimUID": "e5f6a7b8-...",
-       "Config": {
-@@ -325,7 +340,11 @@ spec:
- #### Pool filters
- 
- Pools group devices that share a common purpose. Only devices matched by
--the pool's filter are advertised in the corresponding `ResourceSlice`.
-+the pool's filter get the pool name set on their `pool` device attribute —
-+used for `DeviceClass` CEL selector matching. This logical pool is
-+independent from the DRA `ResourceSlice` pool (`spec.pool.name`), which is
-+always the node name — see
-+[Allocation lifecycle](#allocation-lifecycle) above.
- All specified filter fields are ANDed together.
- 
- | Filter field     | SR-IOV                                                                                  | Dummy                                   |
-@@ -353,11 +372,11 @@ one pool despite passing config-time validation (e.g. when pools overlap via
- device to one pool using the following priority:
- 
- 1. **Prepared allocation** — if the allocation table contains a row for the
--   device, the recorded `Pool` is kept for as long as that allocation exists,
--   regardless of how filters re-evaluate in the meantime. If multiple rows
--   name different pools, the driver logs the 
+@@ -8,7 +8,7 @@
+ /* Enable code paths under test */
+ #define ENABLE_IPV4 1
+ #define ENABLE_IPV6 1
+-#define ENABLE_SRV6
++#define ENABLE_SRV6 1
+ #ifdef TUNNEL_MODE
+ #undef TUNNEL_MODE
+ #endif
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #49470** (2026-10-19): gha/conformance-gke: Accept /ci-gke arguments as a JSON string (@aanm)
+- **PR #49467** (2026-10-19): [v1.20] Backports 2026-10-19 (@aanm)
 - **PR #49462** (2026-10-19): cilium, docs: update Maglev reassignment claims (@borkmann)
 - **PR #49453** (2026-10-19): ci: Pass the auto-committer secrets to the base images workflow (@aanm)
 - **PR #49450** (2026-10-19): [v1.19] gwapi: Backport listener validation and conflict detection (@asauber)
 - **PR #49447** (2026-10-18): fix(deps): update module github.com/azure/azure-sdk-for-go/sdk/resourcemanager/network/armnetwork/v12 to v12.1.0 (main) (@cilium-renovate[bot])
-- **PR #49442** (2026-10-18): chore(deps): update stable lvh-images (v1.18) (patch) (@cilium-renovate[bot])
-- **PR #49438** (2026-10-19): chore(deps): update dependency sphinxcontrib-openapi to v0.10.0 (v1.20) (@cilium-renovate[bot])
 
 ---
 
@@ -1605,34 +1405,45 @@ Signed-off-by: Bernardo Soares <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cilium, docs: update Maglev reassignment claims
+## X. gha/conformance-gke: Accept /ci-gke arguments as a JSON string
 
 **RULE**:
-When implementing operations in `Documentation/network/bgp-control-plane/bgp-control-plane-operation.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/conformance-gke.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `469455b1`: cilium, docs: update Maglev reassignment claims. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dc5a1b22`: gha/conformance-gke: Accept /ci-gke arguments as a JSON string. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Documentation/network/bgp-control-plane/bgp-control-plane-operation.rst`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/conformance-gke.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-Enabling the :ref:`maglev` feature in Cilium together with DSR with
-:ref:`IPIP <DSR mode with IPIP>` or :ref:`Geneve <DSR mode with Geneve>`
-dispatch may also help since it increases
-forwarded to a different node than before, will be reset. See
-:ref:`maglev_ecmp` for how ECMP rehashing on the upstream routers and Maglev
-backend selection interact, and for the share of connections that get reset.
+          # ariane passes a comment's capture as a JSON string such as "versions=all", callers pass an object.
+          ARGS=$(jq -Rc '. as $raw | (try fromjson catch $raw) | if type == "object" then . elif type == "string" and contains("=") then (split("=") | {(.[0]): .[1]}) else {} end' <<< "${EXTRA_ARGS}")
+          echo "GKE_EXTRA_ARGS=${ARGS}" >> "${GITHUB_ENV}"
+          VERSIONS=$(jq -r '.versions // ""' <<< "${ARGS}")
+          IPSEC=$(jq -r '.ipsec // false' <<< "${ARGS}")
+          WG=$(jq -r '.wireguard // false' <<< "${ARGS}")
+          KPR=$(jq -r '.kpr // false' <<< "${ARGS}")
+          BPFMASQV4=$(jq -r '.["bpf-masq-v4"] // false' <<< "${ARGS}")
+          ADV_FEAT=$(jq -r '.["advanced-features"] // false' <<< "${ARGS}")
+          CHANNEL=$(jq -r '.channel // "" | ascii_upcase' <<< "${GKE_EXTRA_ARGS}")
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-Enabling the :ref:`maglev` feature in Cilium may also help since it increases
-forwarded to a different node than before, will be reset.
+          VERSIONS=$(echo "${EXTRA_ARGS}" | awk -F'=' '{print $2}')
+          IPSEC=$(echo "${EXTRA_ARGS}" | sed 's/^""$/{}/' | jq -r '.["ipsec"] // false')
+          WG=$(echo "${EXTRA_ARGS}" | sed 's/^""$/{}/' | jq -r '.["wireguard"] // false')
+          KPR=$(echo "${EXTRA_ARGS}" | sed 's/^""$/{}/' | jq -r '.["kpr"] // false')
+          BPFMASQV4=$(echo "${EXTRA_ARGS}" | sed 's/^""$/{}/' | jq -r '.["bpf-masq-v4"] // false')
+          ADV_FEAT=$(echo "${EXTRA_ARGS}" | sed 's/^""$/{}/' | jq -r '.["advanced-features"] // false')
+        env:
+          EXTRA_ARGS: ${{ inputs.extra-args }}
+          CHANNEL=$(echo "${EXTRA_ARGS}" | grep "channel" | awk -F'=' '{print $2}' | tr '[:lower:]' '[:upper:]')
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `469455b1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dc5a1b22` are properly handled with clean fallback behavior.

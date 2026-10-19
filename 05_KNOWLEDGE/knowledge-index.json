@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T14:53:03.222Z",
-  "total_verified_learnings": 836,
+  "last_updated": "2026-10-19T14:59:16.134Z",
+  "total_verified_learnings": 837,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -4948,8 +4948,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "469455b1",
-      "content_hash": "b9f40e159ce83b57426eae530adf3e56856e6fcfb67ad5ffc7e0cc19148844da",
+      "source_version": "dc5a1b22",
+      "content_hash": "cd2f1322c0209478c17e48b9c46c86755c72edb35bdcfc6c7acc3094057b9b8c",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -4977,6 +4977,11 @@
           "number": 2564,
           "title": "cilium, docs: update Maglev reassignment claims",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2642,
+          "title": "gha/conformance-gke: Accept /ci-gke arguments as a JSON string",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4984,7 +4989,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T12:01:26.013Z",
+      "verified_at": "2026-10-19T14:59:12.760Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -6427,8 +6432,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "9d3b1ffd",
-      "content_hash": "61e0fa41c78b6eb84e2f8eaaad06af6a3ec421f0028dcf1ee601da634712cac3",
+      "source_version": "27dafb82",
+      "content_hash": "7de1a0251c476c0e4d7148eeaa4b0893e036166313778b2345ef82a91684ebaf",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -6476,6 +6481,11 @@
           "number": 2560,
           "title": "docs(changelog): 26.0.0 Breaking Changes section",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2644,
+          "title": "benchmarks: use qsvpy314 instead of qsvpy313 for python benchmarks",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6483,7 +6493,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T12:20:29.028Z",
+      "verified_at": "2026-10-19T14:59:16.129Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -16028,10 +16038,15 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
       "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
-      "content_hash": "4691a500aef8ee82a4200e9268d5f9c62b5b0f14265c654256140588ff8c028e",
+      "content_hash": "9bf64e2d481efc4203e7d02560a400acfb84c232f9edcd60ca4b803e3c813fc2",
       "dossier_path": "07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md",
       "promoted_rules": [
+        {
+          "number": 503,
+          "title": "Decoupled Modality Loading for Memory Optimization",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 959,
           "title": "Quantization-Aware Capability Preservation",
@@ -16066,6 +16081,16 @@
           "number": 1230,
           "title": "Jinja2 Template State Management for Thinking Modes",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2640,
+          "title": "Agentic Capability Preservation Under Extreme Quantization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2641,
+          "title": "Runtime-Configurable Thinking Mode for Latency-Accuracy Trade-off",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -16084,7 +16109,7 @@
         "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv3z5aum",
         "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv4dr5p5"
       ],
-      "verified_at": "2026-10-18T04:33:18.336Z",
+      "verified_at": "2026-10-19T14:59:09.488Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25655,22 +25680,29 @@
     "learn-github-jinxiansen-swiftui": {
       "learning_id": "learn-github-jinxiansen-swiftui",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "jinxiansen-swiftui",
+      "source": "Jinxiansen/SwiftUI",
+      "repository": "Jinxiansen/SwiftUI",
       "slug": "jinxiansen-swiftui",
       "platform": "github",
       "source_url": "https://github.com/Jinxiansen/SwiftUI",
-      "source_version": "HEAD",
-      "content_hash": "2fdd8d771a7d622fa28097d89f9285b2bed1f49c845c05176d43101f6d4ca748",
+      "source_version": "d8192c12",
+      "content_hash": "28b38ca837d31a36b7427bdeb98f16cb17084f67f27377d15e0926f7cdb42d9e",
       "dossier_path": "07_PROJECT_LEARNING/jinxiansen-swiftui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jinxiansen-swiftui-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.691Z"
+      "verified_at": "2026-10-19T14:59:08.747Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-jnmetacode-agency-agents-zh": {
       "learning_id": "learn-github-jnmetacode-agency-agents-zh",
@@ -29524,14 +29556,19 @@
       "slug": "meshery-meshery",
       "platform": "github",
       "source_url": "https://github.com/meshery/meshery",
-      "source_version": "96fb78ba",
-      "content_hash": "76b1757b7f4d35dc6cb8942d8d57e0bdedb439f31810af894b9107dfb72dbeb3",
+      "source_version": "831721d5",
+      "content_hash": "fa1128a8e16b5c88650b5d489106ee895debe8ed9f831fd04d65e9bb07dc7be4",
       "dossier_path": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "promoted_rules": [
         {
           "number": 2034,
           "title": "Merge pull request #22419 from VimalN2005/fix-addons-nil-type-panic-20988",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2639,
+          "title": "[Docs] Update REST API Documentation",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -29540,7 +29577,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T02:44:53.763Z",
+      "verified_at": "2026-10-19T14:59:08.935Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37711,14 +37748,19 @@
       "slug": "sfu-db-connector-x",
       "platform": "github",
       "source_url": "https://github.com/sfu-db/connector-x",
-      "source_version": "c8ae2517",
-      "content_hash": "229fb5e65dd30ef1c5a77be851d2ae954c1ba2083b0ea9fb6f46aa1e1b2e8374",
+      "source_version": "028aa1fc",
+      "content_hash": "1dec4a2149060c28e375b797444c5610f07701c3d4743159d84440d67d925bb2",
       "dossier_path": "07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md",
       "promoted_rules": [
         {
           "number": 1989,
           "title": "Merge pull request #1012 from oystersuki/fix/mysql-value-conversion-error",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2643,
+          "title": "build(rust): bump itertools from 0.14.0 to 0.15.0",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -37727,7 +37769,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T01:49:27.078Z",
+      "verified_at": "2026-10-19T14:59:13.804Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37744,14 +37786,19 @@
       "slug": "shadcn-ui-lint",
       "platform": "github",
       "source_url": "https://github.com/shadcn-ui/lint",
-      "source_version": "f1c81bda",
-      "content_hash": "99f7cf0bb92b14fb8c5e4cfe124190ad1aefb4b89e0df2a8ba07b1e2e497024d",
+      "source_version": "bceee0fe",
+      "content_hash": "f0d9c053b2276a7fdb94e0e36ee5e550abd1a0a1a1ab49034898c1b2ffbb1020",
       "dossier_path": "07_PROJECT_LEARNING/shadcn-ui-lint-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/shadcn-ui-lint-learnings.md",
       "promoted_rules": [
         {
           "number": 2100,
           "title": "check components reached through nested namespaces (#107)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2638,
+          "title": "ci: install Bun in the release job (#128)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -37760,7 +37807,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T04:00:43.827Z",
+      "verified_at": "2026-10-19T14:58:58.998Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58233,15 +58280,15 @@
       "learning_id": "rule-503",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 503,
-      "title": "Decoupled Modality Loading for Memory Optimization (Harvested from ConwayResearch/Underdog-Saluki-27B-1.0)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Decoupled Modality Loading for Memory Optimization",
+      "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
+      "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.812Z"
+      "verified_at": "2026-10-19T14:59:09.488Z"
     },
     "rule-504": {
       "learning_id": "rule-504",
@@ -88421,6 +88468,104 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T14:53:03.213Z"
+    },
+    "rule-2638": {
+      "learning_id": "rule-2638",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2638,
+      "title": "ci: install Bun in the release job (#128)",
+      "source_url": "https://github.com/shadcn-ui/lint",
+      "source_version": "bceee0fe",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T14:58:58.998Z"
+    },
+    "rule-2639": {
+      "learning_id": "rule-2639",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2639,
+      "title": "[Docs] Update REST API Documentation",
+      "source_url": "https://github.com/meshery/meshery",
+      "source_version": "831721d5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T14:59:08.935Z"
+    },
+    "rule-2640": {
+      "learning_id": "rule-2640",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2640,
+      "title": "Agentic Capability Preservation Under Extreme Quantization",
+      "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
+      "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T14:59:09.488Z"
+    },
+    "rule-2641": {
+      "learning_id": "rule-2641",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2641,
+      "title": "Runtime-Configurable Thinking Mode for Latency-Accuracy Trade-off",
+      "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
+      "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T14:59:09.488Z"
+    },
+    "rule-2642": {
+      "learning_id": "rule-2642",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2642,
+      "title": "gha/conformance-gke: Accept /ci-gke arguments as a JSON string",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "dc5a1b22",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T14:59:12.760Z"
+    },
+    "rule-2643": {
+      "learning_id": "rule-2643",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2643,
+      "title": "build(rust): bump itertools from 0.14.0 to 0.15.0",
+      "source_url": "https://github.com/sfu-db/connector-x",
+      "source_version": "028aa1fc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T14:59:13.804Z"
+    },
+    "rule-2644": {
+      "learning_id": "rule-2644",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2644,
+      "title": "benchmarks: use qsvpy314 instead of qsvpy313 for python benchmarks",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "27dafb82",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T14:59:16.129Z"
     }
   },
   "aliases": {

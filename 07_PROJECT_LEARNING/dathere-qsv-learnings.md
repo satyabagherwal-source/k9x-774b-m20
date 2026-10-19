@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `9d3b1ffd`  
+> **Source Version**: `27dafb82`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T12:20:28.949Z  
+> **Timestamp**: 2026-10-19T14:59:15.992Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,14 +17,14 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T12:20:28.940Z  
+> **Harvest Timestamp**: 2026-10-19T14:59:15.987Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `dathere/qsv`
-- **Description**: Blazing-fast Data-Wrangling toolkit
+- **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
 - **Stars / Engagement**: 3811 stars
@@ -2252,68 +2252,220 @@ pub fn visualize_whitespace(s: &str) -> String {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9d3b1ffd` (2026-10-19)
-**Commit Message**: docs(changelog): set the 26.0.0 release date and commit count
+### Incident Patch 1: `27dafb82` (2026-10-19)
+**Commit Message**: benchmarks: use qsvpy314 instead of qsvpy313 for python benchmarks
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+[skip ci]
 
-**File**: `CHANGELOG.md` (modified, +2/-2)
+**File**: `scripts/benchmarks.sh` (modified, +3/-3)
 ```diff
-@@ -6,9 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -42,7 +42,7 @@
+ arg_pat="$1"
  
- ## [Unreleased]
+ # the version of this script
+-bm_version=9.12.0
++bm_version=9.12.1
  
--## [26.0.0] - <TBD> 🧭 The "New Angles" Release 📐
-+## [26.0.0] - 2026-10-19 🧭 The "New Angles" Release 📐
- 
--<TBD> commits since 25.0.0, and the theme is **NEW ANGLES**: four new ways to look at your data in `viz`, three of them off the usual x/y grid. Some data doesn't fit a scatter plot. Wind directions, hours of the day and months go around a circle, soil textures and vote shares are parts of a whole, and a table with six correlated measures has more dimensions than two axes can show.
-+~57 commits since 25.0.0, and the theme is **NEW ANGLES**: four new ways to look at your data in `viz`, three of them off the usual x/y grid. Some data doesn't fit a scatter plot. Wind directions, hours of the day and months go around a circle, soil textures and vote shares are parts of a whole, and a table with six correlated measures has more dimensions than two axes can show.
- 
- **POLAR.** [`viz barpolar`](https://github.com/dathere/qsv/blob/master/docs/help/viz.md) draws a wind rose: one bar per direction, clockwise from north, with compass labels (`N`, `NE`, `NNE`...) at their true bearings and `--degrees` for a numeric bearing column. The `viz smart` seasonality panel now uses polar bars too, so hour of day, day of week and month read like a clock face, starting at the top and running clockwise.
- 
+ # runs of a benchmark whose means are within this percentage of each other tie in the rank
+ # column (see the delta & rank comments near the end)
+@@ -62,7 +62,7 @@ qsv_bin=qsv
+ # The python feature is NOT compiled into the regular prebuilt (PGO-optimized) qsv;
+ # only the qsvpyNNN flavors have it. The py benchmarks are skipped if this binary is
+ # missing or was built without the python feature (see has_python below).
+-qsv_py_bin=qsvpy313
++qsv_py_bin=qsvpy314
+ # the path to the qsv binary that we dogfood to run the benchmarks
+ # we use several optional features when dogfooding qsv (apply, luau & to)
+ # and the user may be benchmarking a qsv binary variant that doesn't have these features enabled
+@@ -178,7 +178,7 @@ if command -v "$qsv_py_bin" &>/dev/null; then
+ fi
+ if [[ "$has_python" -eq 0 ]]; then
+   echo "NOTE: $qsv_py_bin not found or lacks the python feature - skipping py benchmarks."
+-  echo "      Install a python-enabled binary (e.g. qsvpy313) to benchmark the py command."
++  echo "      Install a python-enabled binary (e.g. qsvpy314) to benchmark the py command."
+ else
+   # The py_* results are recorded under $qsv_bin's version metadata, so the py binary's
+   # base version must match $qsv_bin's or the Python rows would be misattributed to the
 ```
 
 ---
 
-### Incident Patch 2: `6bc711ae` (2026-10-19)
-**Commit Message**: docs: update test counts (6,560 total)
+### Incident Patch 2: `f427334f` (2026-10-19)
+**Commit Message**: chore(mcp): v26.0.0 release of MCP Server and Claude Cowork plugin
 
-Recounted the same way as b634748c0 (registered tests, ignored/skipped
-included):
+Version sweep (manifest, package.json, package-lock, plugin.json,
+marketplace.json) and README/README-MCP/README-MCPB stamps to 26.0.0;
+minimum_qsv_version raised to 26.0.0, since the skill JSONs advertise
+viz barpolar/ternary/parcoords, funnel --area, --degrees, --no-parcoords
+and sqlp read_ndjson() named options.
 
-- integration (tests/): 4,445 -> 4,516
-- unit (src/):          1,304 -> 1,307
-- qsv binaries:         5,749 -> 5,823
-- MCP server & plugin:    737 ->   737
-- total:                6,486 -> 6,560
+CHANGELOG: promote [Unreleased] to [26.0.0] with a companion-release
+intro, and fill two gaps: the --delimiter default removed from six tool
+schemas (#4817, #4819), and qsv-schema's --ignore-case description
+(#4830, #4831).
 
-Rust counts from `cargo test -F all_features -- --list`; the MCP/Cowork
-count from `npm run test` in .claude/skills. Also updates the
-approximate figure in the Features section (~6,500 -> ~6,550). The
-"more than 6,000 tests" line still holds.
+scripts/verify-bundles.js passes against freshly built
+qsv-mcp-server-26.0.0.mcpb and qsv-data-wrangling-26.0.0.plugin.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `README.md` (modified, +2/-2)
+**File**: `.claude-plugin/marketplace.json` (modified, +2/-2)
 ```diff
-@@ -528,7 +528,7 @@ Luau will also serve as the backbone of a whole library of **qsv recipes** - reu
-  as command line interfaces go :shrug:. Its commands have numerous options but have sensible defaults. The usage text is written for a data analyst audience, not developers; and there are numerous examples in the usage text, with the tests doubling as examples as well. With [qsv pro](https://qsvpro.dathere.com), it has much expanded functionality while being easier to use with its Graphical User Interface.
- * **As Secure as Possible** - qsv is designed to be secure. It has no external runtime dependencies, is [written](https://aws.amazon.com/blogs/opensource/why-aws-loves-rust-and-how-wed-like-to-help/) [in](https://msrc.microsoft.com/blog/2019/07/why-rust-for-safe-systems-programming/) [Rust](https://opensource.googleblog.com/2023/06/rust-fact-vs-fiction-5-insights-from-googles-rust-journey-2022.html), and its codebase is automatically audited for security vulnerabilities with automated [DevSkim](https://github.com/microsoft/DevSkim#devskim), ["cargo audit"](https://rustsec.org) and [Codacy](https://app.codacy.com/gh/dathere/qsv/dashboard) Github Actions workflows.  
- It uses the latest stable Rust version, with an aggressive MSRV policy and the latest version of all its dependencies.
--It has an extensive test suite with ~6,500 tests, including several [property tests](https://medium.com/criteo-engineering/introduction-to-property-based-testing-f5236229d237) which [randomly generate](https://github.com/BurntSushi/quickcheck#quickcheck) parameters for oft-used commands.   
-+It has an extensive test suite with ~6,550 tests, including several [property tests](https://medium.com/criteo-engineering/introduction-to-property-based-testing-f5236229d237) which [randomly generate](https://github.com/BurntSushi/quickcheck#quickcheck) parameters for oft-used commands.   
- Its prebuilt binary archives are [zipsigned](https://github.com/Kijewski/zipsign#zipsign), so you can [verify their integrity](#manually-verifying-the-integrity-of-the-prebuilt-binaries-zip-archives). Its self-update mechanism automatically verifies the integrity of the prebuilt binaries archive before applying an update.
- See [Security](SECURITY.md) for more info.
- * **As Easy to Contribute to as Possible** - qsv is designed to be easy to contribute to, with a focus on maintainability. It's modular architecture allows the easy addition of self-contained commands gated by feature flags, the source code is heavily commented, the usage text is embedded, and there are helper functions that make it easy to create additional commands and supporting tests. See [Features](docs/FEATURES.md) and [Contributing](CONTRIBUTING.md) for more info.
-@@ -541,7 +541,7 @@ It can process well-formed CSVs in _any_ language so long as its UTF-8 encoded.
- Finally, though the default Geonames index of the `geocode` command is English-only, the index can be rebuilt with the `geocode index-update` subcommand with the `--languages` option to return place names in multiple languages ([with support for 254 languages](http://download.geonames.org/export/dump/alternatenames/)).
+@@ -6,14 +6,14 @@
+   },
+   "metadata": {
+     "description": "Blazingly fast data wrangling plugins for Claude Code — 57 skill-based commands for CSV, TSV, Excel, JSONL, and Parquet files",
+-    "version": "25.0.0"
++    "version": "26.0.0"
+   },
+   "plugins": [
+     {
+       "name": "qsv-data-wrangling",
+       "source": "./.claude/skills",
+       "description": "Blazingly fast tabular data wrangling with 57 qsv skill-based commands for CSV, TSV, Excel, JSONL, and Parquet files",
+-      "version": "25.0.0",
++      "version": "26.0.0",
+       "author": {
+         "name": "datHere, Inc.",
+         "email": "qsv@dathere.com",
+```
+
+**File**: `.claude/skills/.claude-plugin/plugin.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "name": "qsv-data-wrangling",
+-  "version": "25.0.0",
++  "version": "26.0.0",
+   "description": "Blazingly fast tabular data wrangling with 57 qsv skill-based commands for CSV, TSV, Excel, JSONL, and Parquet files",
+   "author": {
+     "name": "datHere, Inc.",
+```
+
+**File**: `.claude/skills/CHANGELOG.md` (modified, +6/-0)
+```diff
+@@ -7,12 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
- ## Testing
--qsv has 6,486 tests: 5,749 for the qsv binaries (4,445 integration in the [tests](https://github.com/dathere/qsv/tree/master/tests) directory + 1,304 unit across `src/` modules), plus 737 for the MCP server & Cowork plugin (in [`.claude/skills/tests`](https://github.com/dathere/qsv/tree/master/.claude/skills/tests)).
-+qsv has 6,560 tests: 5,823 for the qsv binaries (4,516 integration in the [tests](https://github.com/dathere/qsv/tree/master/tests) directory + 1,307 unit across `src/` modules), plus 737 for the MCP server & Cowork plugin (in [`.claude/skills/tests`](https://github.com/dathere/qsv/tree/master/.claude/skills/tests)).
- Most commands have their own test suite in a separate file with the convention `test_<COMMAND>.rs`.
- Apart from preventing regressions, the tests also serve as good illustrative examples, and are often linked from the usage text of each corresponding command.
+ ## [Unreleased]
  
++## [26.0.0] - 2026-10-19
++
++Companion release to qsv 26.0.0, "The New Angles Release". The MCP server tracks the qsv binary version per the policy adopted in 20.0.0, and `minimum_qsv_version` is raised to 26.0.0 because the regenerated skill JSONs advertise subcommands and options that only exist in the new binary (`viz barpolar`, `ternary` and `parcoords`, `funnel --area`, `--degrees`, `--no-parcoords`, and `sqlp`'s `read_ndjson()` named options). The headline for MCP/Cowork users is **`qsv-viz`'s new chart types**: wind roses, ternary plots, parallel coordinates and funnel areas. The skill count stays at **57**. Update your qsv binary first.
++
+ ### Changed
+ - **`qsv-sqlp` gains three `read_ndjson()` examples** for the named options it takes since the polars bump ([#4846](https://github.com/dathere/qsv/pull/4846), [#4847](https://github.com/dathere/qsv/pull/4847)): `infer_schema_length => NULL` to infer from the whole file, `schema_overrides` to type a column or read a nested object as JSON text (CSV output can't hold nested data), and `schema` with `ignore_errors` and `include_file_paths`.
+ - **`qsv-viz` skill regenerated for the new `funnel --area` option** ([#4842](https://github.com/dathere/qsv/pull/4842)), which draws a funnel as a funnel area sized by each stage's share of the total. A usage example was added.
+ - **`qsv-viz` skill regenerated for the new `ternary` subcommand** ([#4841](https://github.com/dathere/qsv/pull/4841)): a ternary plot of three parts of a whole, taken from exactly three numeric `--cols`. The `--cols`, `--series`, `--color` and `--size` descriptions cover it, and a usage example was added.
+ - **`qsv-viz` skill regenerated for the new `barpolar` subcommand** ([#4840](https://github.com/dathere/qsv/pull/4840)): a polar bar chart (wind rose) of `--x` categories, sized by `--y`/`--agg` or row counts. The `--series` and `--agg` descriptions cover it, the new `--degrees` option places numeric bearings at their true angle, and two usage examples were added.
+ - **`qsv-viz` skill regenerated for the new `parcoords` subcommand** ([#4839](https://github.com/dathere/qsv/pull/4839)): parallel coordinates across numeric `--cols`, with `--color` coloring the lines. The `--cols` and `--color` descriptions cover it, and a usage example was added. New `--no-parcoords` option turns off the matching `smart` panel, and the `--max-charts` description now says auto draws up to 65 panels.
++- **`--delimiter` no longer has a default value in six tool schemas** ([#4817](https://github.com/dathere/qsv/pull/4817), [#4819](https://github.com/dathere/qsv/pull/4819)): `qsv-count`, `qsv-excel`, `qsv-jsonl`, `qsv-readstat`, `qsv-sqlp` and `qsv-template`. The skills declared `"default": ","`, which the MCP server passes into each tool's input schema, so a client or agent that fills in schema defaults sent an explicit comma that overrode a `.tsv`/`.ssv` extension or `QSV_DEFAULT_DELIMITER`. The comma is now only mentioned in the description.
++- **`qsv-schema`'s `--ignore-case` description** follows the `schema` fixes ([#4830](https://github.com/dathere/qsv/pull/4830), [#4831](https://github.com/dathere/qsv/pull/4831)): String columns are checked against the enum threshold case-insensitively, and their `enum`/`const` values are written as case-insensitive patterns, so `validate` accepts the data the schema was inferred from.
+ 
+ ## [25.0.0] - 2026-10-14
+ 
+```
+
+**File**: `.claude/skills/README-MCP.md` (modified, +3/-3)
+```diff
+@@ -60,7 +60,7 @@ Excel and JSONL files are automatically converted to CSV before processing - no
+ 
+ The **MCP Desktop Extension** (MCPB) provides the easiest installation experience:
+ 
+-1. Download `qsv-mcp-server-<version>.mcpb` (e.g. `qsv-mcp-server-25.0.0.mcpb`) from [releases](https://github.com/dathere/qsv/releases/latest)
++1. Download `qsv-mcp-server-<version>.mcpb` (e.g. `qsv-mcp-server-26.0.0.mcpb`) from [releases](https://github.com/dathere/qsv/releases/latest)
+ 2. Open Claude Desktop Settings → Extensions
+ 3. Click "Install from file" and select the `.mcpb` file
+ 4. Configure your allowed directories when prompted
+@@ -621,8 +621,8 @@ For issues or questions:
+ 
+ ---
+ 
+-**Updated**: 2026-10-14
+-**Version**: 25.0.0
++**Updated**: 2026-10-19
++**Version**: 26.0.0
+ **Tools**: 23 tools at startup (10 core + 13 commonly-used; +1 app-only when MCP Apps enabled), all 57 discoverable via `qsv_search_tools`
+ **Skills**: 57 qsv commands
+ **Status**: Production Ready
+```
+
+**File**: `.claude/skills/README.md` (modified, +3/-3)
+```diff
+@@ -49,7 +49,7 @@ Each skill file provides:
+ 
+ **Installation**:
+ 1. Install qsv: `brew install qsv` (macOS) or see [qsv installation](https://github.com/dathere/qsv#installation)
+-2. Download `qsv-mcp-server-<version>.mcpb` (e.g. `qsv-mcp-server-25.0.0.mcpb`) from releases
++2. Download `qsv-mcp-server-<version>.mcpb` (e.g. `qsv-mcp-server-26.0.0.mcpb`) from releases
+ 3. Double-click the `.mcpb` file (opens with Claude Desktop)
+ 4. **That's it!** qsv binary path is auto-detected, no manual configuration needed
+ 5. Restart Claude Desktop
+@@ -467,8 +467,8 @@ MIT
+ 
+ ---
+ 
+-**Updated**: 2026-10-14
+-**Version**: 25.0.0
++**Updated**: 2026-10-19
++**Version**: 26.0.0
+ **Generator**: `qsv --update-mcp-skills`
+ **Skills**: 57 commands
+ **Usage Examples**: 263 from documentation
+```
+
+**File**: `.claude/skills/docs/desktop/README-MCPB.md` (modified, +2/-2)
+```diff
+@@ -576,7 +576,7 @@ Same license as qsv: MIT OR Apache-2.0
+ 
+ ---
+ 
+-**Updated**: 2026-10-14
+-**Version**: 25.0.0
++**Updated**: 2026-10-19
++**Version**: 26.0.0
+ **Format**: MCP Bundle (MCPB) v0.3
+ **Compatibility**: Claude Desktop 1.0+
+```
+
+**File**: `.claude/skills/manifest.json` (modified, +2/-2)
+```diff
+@@ -1,7 +1,7 @@
+ {
+   "manifest_version": "0.3",
+   "name": "qsv",
+-  "version": "25.0.0",
++  "version": "26.0.0",
+   "description": "Blazingly fast Data Wrangling Toolkit for Tabular Data",
+   "long_description": "Comprehensive data-wrangling toolkit for transforming, analyzing, querying & validating tabular data. Process local CSV, TSV, SSV, Excel/ODS, Parquet and JSONL files w/o uploading. Despite the warning, only accesses APPROVED DIRECTORIES on your computer.",
+   "author": {
+@@ -260,7 +260,7 @@
+         "Smart caching with stats/frequency files",
+         "Automatic Excel, Parquet and JSONL conversion"
+       ],
+-      "minimum_qsv_version": "25.0.0"
++      "minimum_qsv_version": "26.0.0"
+     }
+   }
+ }
+```
+
+**File**: `.claude/skills/package-lock.json` (modified, +2/-2)
+```diff
+@@ -1,12 +1,12 @@
+ {
+   "name": "@qsv/agent-skills",
+-  "version": "25.0.0",
++  "version": "26.0.0",
+   "lockfileVersion": 3,
+   "requires": true,
+   "packages": {
+     "": {
+       "name": "@qsv/agent-skills",
+-      "version": "25.0.0",
++      "version": "26.0.0",
+       "license": "MIT",
+       "dependencies": {
+         "@modelcontextprotocol/ext-apps": "^1.7.2",
 ```
 
 #### Recent Merged Pull Requests:
@@ -2342,30 +2494,32 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(changelog): set the 26.0.0 release date and commit count
+## X. benchmarks: use qsvpy314 instead of qsvpy313 for python benchmarks
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `scripts/benchmarks.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9d3b1ffd`: docs(changelog): set the 26.0.0 release date and commit count. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `27dafb82`: benchmarks: use qsvpy314 instead of qsvpy313 for python benchmarks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/benchmarks.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## [26.0.0] - 2026-10-19 🧭 The "New Angles" Release 📐
-~57 commits since 25.0.0, and the theme is **NEW ANGLES**: four new ways to look at your data in `viz`, three of them off the usual x/y grid. Some data doesn't fit a scatter plot. Wind directions, hours of the day and months go around a circle, soil textures and vote shares are parts of a whole, and a table with six correlated measures has more dimensions than two axes can show.
+bm_version=9.12.1
+qsv_py_bin=qsvpy314
+  echo "      Install a python-enabled binary (e.g. qsvpy314) to benchmark the py command."
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-## [26.0.0] - <TBD> 🧭 The "New Angles" Release 📐
-<TBD> commits since 25.0.0, and the theme is **NEW ANGLES**: four new ways to look at your data in `viz`, three of them off the usual x/y grid. Some data doesn't fit a scatter plot. Wind directions, hours of the day and months go around a circle, soil textures and vote shares are parts of a whole, and a table with six correlated measures has more dimensions than two axes can show.
+bm_version=9.12.0
+qsv_py_bin=qsvpy313
+  echo "      Install a python-enabled binary (e.g. qsvpy313) to benchmark the py command."
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9d3b1ffd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `27dafb82` are properly handled with clean fallback behavior.
