@@ -1,0 +1,145 @@
+name: 24-7 Multi-Agent Parallel Autonomous Harvester with Google Gemini AI
+
+# Quota & Billing Protection Policy:
+# - PUBLIC MODE : Unlimited free runner minutes. Self-Relay Dispatcher + Schedule Cron operate 24/7 continuously.
+# - PRIVATE MODE: Capped at 2,000 monthly runner minutes. Self-Relay is blocked and schedule is paused to guarantee ₹0/$0 cost.
+
+on:
+  workflow_dispatch:
+    # Allows manual trigger anytime from GitHub Web UI or CLI
+  repository_dispatch:
+    # Allows external server-to-server triggers via REST API
+    types: [trigger-harvester, 24-7-cloud-fleet]
+  schedule:
+    # 24/7 Continuous harvesting enabled in Public Mode (Zero-cost unlimited runner minutes)
+    - cron: '*/20 * * * *'
+
+concurrency:
+  group: cloud-harvester-fleet
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  cloud-multi-agent-fleet:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout AI-Builder-Brain
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js Runtime
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Configure Git Identity
+        run: |
+          git config --global user.name "satyabgherval-source"
+          git config --global user.email "315064083+satyabgherval-source@users.noreply.github.com"
+
+      - name: Verify Server-to-Server Multi-AI Swarm Pool (Live Inference Health Check)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_KEY_1: ${{ secrets.GEMINI_KEY_1 }}
+          GEMINI_KEY_2: ${{ secrets.GEMINI_KEY_2 }}
+          GEMINI_KEY_3: ${{ secrets.GEMINI_KEY_3 }}
+          GEMINI_KEY_4: ${{ secrets.GEMINI_KEY_4 }}
+          GEMINI_KEY_5: ${{ secrets.GEMINI_KEY_5 }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: |
+          node 04_WORKFLOWS/factory-engine/cloud-provider-healthcheck.mjs
+
+      - name: Execute Parallel Multi-Agent Learning Swarm (8 Domains)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY || secrets.GEMINI_KEY_2 || secrets.GEMINI_KEY_1 }}
+          GEMINI_KEY_1: ${{ secrets.GEMINI_KEY_1 }}
+          GEMINI_KEY_2: ${{ secrets.GEMINI_KEY_2 }}
+          GEMINI_KEY_3: ${{ secrets.GEMINI_KEY_3 }}
+          GEMINI_KEY_4: ${{ secrets.GEMINI_KEY_4 }}
+          GEMINI_KEY_5: ${{ secrets.GEMINI_KEY_5 }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          node 04_WORKFLOWS/factory-engine/multi-agent-fleet.mjs
+
+      - name: Commit & Push Harvested Multi-Agent Intelligence to GitHub
+        if: always()
+        run: |
+          rm -f .git/index.lock
+          if grep -q "<<<<<<<" harvest-control.json 2>/dev/null; then
+            echo "⚠️ Conflict markers detected in harvest-control.json, restoring clean HEAD state..."
+            git checkout HEAD -- harvest-control.json || true
+          fi
+          git add .
+          # Only commit if actual knowledge artifacts, rules, skills, ledgers, or queue targets were modified:
+          if git diff --staged --name-only | grep -E '^(07_PROJECT_LEARNING/|05_KNOWLEDGE/|08_VERIFICATION/|09_SOURCES/|11_INBOX/|14_EVOLUTION/|15_METADATA/|03_SKILLS/|repos\.txt|LEARNINGS\.md|\.project-brain/incidents/)'; then
+            git commit -m "feat(harvest): micro-forensic learning harvested from sources [skip ci]"
+            PUSH_SUCCESS=false
+            for i in {1..5}; do
+              rm -f .git/index.lock
+              if git push origin main; then
+                PUSH_SUCCESS=true
+                echo "✅ [REMOTE PUSH CONFIRMED] Successfully pushed to origin/main on attempt $i."
+                break
+              else
+                echo "Concurrent push detected. Rebasing and retrying ($i/5)..."
+                sleep $((2 + RANDOM % 4))
+                rm -f .git/index.lock
+                git pull --rebase origin main || git rebase --abort
+              fi
+            done
+
+            if [ "$PUSH_SUCCESS" = false ]; then
+              echo "❌ [FAILED_PERSISTENCE] Remote git push failed after 5 retries! Ephemeral runner knowledge would be lost."
+              exit 1
+            fi
+
+            # Remote Verification Barrier: Confirm origin/main genuinely contains HEAD
+            git fetch origin main
+            if ! git branch -r --contains HEAD | grep -q 'origin/main'; then
+              echo "❌ [FAILED_PERSISTENCE] Remote branch verification barrier breached! HEAD not confirmed on origin/main."
+              exit 1
+            fi
+            echo "🏆 [REMOTE VERIFICATION SUCCESS] Verified commit on remote origin/main ledger."
+          else
+            echo "ℹ️ No new knowledge files, rules, or queue targets were modified in this run (only timestamps/cursors). Skipping empty commit."
+            git checkout HEAD -- harvest-control.json 04_WORKFLOWS/factory-engine/discovery-cursor.json 2>/dev/null || true
+          fi
+
+      - name: Autonomous 24/7 Self-Relay Dispatcher
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.WORKFLOW_RELAY_TOKEN }}
+        run: |
+          echo "======================================================================"
+          echo "🔄 24/7 AUTONOMOUS CONTINUOUS LEARNING RELAY DISPATCHER"
+          echo "======================================================================"
+          VISIBILITY=$(gh repo view ${{ github.repository }} --json visibility -q .visibility 2>/dev/null || echo "PUBLIC")
+          echo "Current Repository Visibility: $VISIBILITY"
+
+          if [ "$VISIBILITY" = "PUBLIC" ]; then
+            if [ -n "$GH_TOKEN" ]; then
+              echo "🚀 Repository is PUBLIC. Dispatching next server-to-server learning cycle..."
+              # Respectful 60-second cooldown between fleet cycles to clear locks, avoid rate limits & maintain continuous 24/7 operation
+              sleep 60
+              gh workflow run 24-7-cloud-harvester.yml --repo "${{ github.repository }}" && echo "✅ Next 24/7 cycle dispatched successfully!" || echo "⚠️ Self-relay trigger deferred to cron schedule."
+            else
+              echo "ℹ️ WORKFLOW_RELAY_TOKEN not set in secrets. Falling back to cron schedule."
+            fi
+          else
+            echo "🛡️ PRIVATE MODE DETECTED: Self-Relay blocked to safeguard 2,000 monthly runner minutes quota."
+          fi
+
+      - name: 24/7 Fleet Health & Status Monitor
+        if: always()
+        run: |
+          echo "======================================================================"
+          echo "✅ 24/7 CONTINUOUS LEARNING FLEET CYCLE COMPLETED"
+          echo "======================================================================"
+          echo "Continuous learning loop governed by Self-Relay Dispatcher & GitHub Cron schedule."
+          echo "Running 24/7 autonomously in the cloud even when laptop / IDE are closed."

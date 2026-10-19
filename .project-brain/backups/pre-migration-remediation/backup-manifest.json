@@ -1,0 +1,30 @@
+{
+  "createdAt": "2026-10-18T18:18:33.735Z",
+  "files": [
+    {
+      "relPath": "05_KNOWLEDGE/engineering-patterns.md",
+      "size": 5481700,
+      "sha256": "84b0be0e5193763472dbb55d11a5d99e42c6a41abcfe8fd076147d070266ea61"
+    },
+    {
+      "relPath": "05_KNOWLEDGE/knowledge-index.json",
+      "size": 3629623,
+      "sha256": "654302d7fa4c1e3318f631860a6160dee2eed47e2c8f6ce359905dd248e46a4a"
+    },
+    {
+      "relPath": "04_WORKFLOWS/factory-engine/self-brain-harvester.mjs",
+      "size": 6779,
+      "sha256": "f164611486ba77d478143c4d8def89b32c766205fc284c23a3e564d494bf35a7"
+    },
+    {
+      "relPath": "04_WORKFLOWS/factory-engine/brain-learning-gateway.mjs",
+      "size": 56530,
+      "sha256": "412e800b838d1d50bf525c143d1b40831fa252287a4f0e013417f2bf00de4500"
+    },
+    {
+      "relPath": ".github/workflows/24-7-cloud-harvester.yml",
+      "size": 7123,
+      "sha256": "34311d5d1eeb7bd4fb14ac6e2b98e0bde59cf04fadfb41573f9c641a212f0c92"
+    }
+  ]
+}
