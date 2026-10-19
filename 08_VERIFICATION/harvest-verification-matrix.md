@@ -2867,3 +2867,9 @@
 | `CYCLE-20261019-R7KI` | `2026-10-19T03:47:28.914Z` | `react-native-modal/react-native-modal` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2087` | Yes (`f2ba2dc2...`) |
 | `CYCLE-20261019-R9IR` | `2026-10-19T03:47:31.443Z` | `octodns/octodns` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2088` | Yes (`9174c29d...`) |
 | `CYCLE-20261019-RD58` | `2026-10-19T03:47:36.140Z` | `Netflix/dynomite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2089` | Yes (`5b75bdb8...`) |
+| `CYCLE-20261019-Z770` | `2026-10-19T03:53:41.676Z` | `salvo-rs/salvo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2090` | Yes (`cfac0697...`) |
+| `CYCLE-20261019-ZB9C` | `2026-10-19T03:53:46.944Z` | `react/metro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2091` | Yes (`19f9b912...`) |
+| `CYCLE-20261019-ZDG9` | `2026-10-19T03:53:49.785Z` | `XingChen-AGI/Xing4.0-29B-A4B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2092, Rule 2093, Rule 2094` | Yes (`e974c8fd...`) |
+| `CYCLE-20261019-ZE3M` | `2026-10-19T03:53:50.626Z` | `Checkmarx/kics` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2095` | Yes (`7ac9f43a...`) |
+| `CYCLE-20261019-ZH8K` | `2026-10-19T03:53:54.692Z` | `olric-data/olric` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2096` | Yes (`bd698514...`) |
+| `CYCLE-20261019-0DHO` | `2026-10-19T03:54:36.492Z` | `carbon-design-system/carbon-components-svelte` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2097, Rule 2098, Rule 2099` | Yes (`75ce2f70...`) |

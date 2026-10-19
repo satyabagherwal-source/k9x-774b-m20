@@ -2874,3 +2874,9 @@ Every entry in this ledger must capture:
 | `learn-github-react-native-modal-react-native-modal` | `https://github.com/react-native-modal/react-native-modal` | `3e413c4c` | Multi-dimensional audit evidence | 2026-10-19T03:47:28.921Z |
 | `learn-github-octodns-octodns` | `https://github.com/octodns/octodns` | `89bd5f2a` | Multi-dimensional audit evidence | 2026-10-19T03:47:31.450Z |
 | `learn-github-netflix-dynomite` | `https://github.com/Netflix/dynomite` | `2046b05e` | Multi-dimensional audit evidence | 2026-10-19T03:47:36.147Z |
+| `learn-github-salvo-rs-salvo` | `https://github.com/salvo-rs/salvo` | `071cc161` | Multi-dimensional audit evidence | 2026-10-19T03:53:41.683Z |
+| `learn-github-react-metro` | `https://github.com/react/metro` | `2641b08f` | Multi-dimensional audit evidence | 2026-10-19T03:53:46.950Z |
+| `learn-huggingface-xingchen-agi-xing4-0-29b-a4b` | `https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B` | `hf-xingche` | Multi-dimensional audit evidence | 2026-10-19T03:53:49.791Z |
+| `learn-github-checkmarx-kics` | `https://github.com/Checkmarx/kics` | `d06cb647` | Multi-dimensional audit evidence | 2026-10-19T03:53:50.635Z |
+| `learn-github-olric-data-olric` | `https://github.com/olric-data/olric` | `c49c44a8` | Multi-dimensional audit evidence | 2026-10-19T03:53:54.699Z |
+| `learn-github-carbon-design-system-carbon-components-svelte` | `https://github.com/carbon-design-system/carbon-components-svelte` | `f4eb6edb` | Multi-dimensional audit evidence | 2026-10-19T03:54:36.499Z |

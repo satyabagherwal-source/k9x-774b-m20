@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T03:47:36.153Z",
+  "last_updated": "2026-10-19T03:54:36.505Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -453,14 +453,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
-      "content_hash": "91b49b937bdaf719c18b7af083b0be80dcb4b527df5496a4549ca0719ea3ee4b",
-      "verified_at": "2026-10-17T22:53:57.174Z",
+      "content_hash": "e974c8fd7f414ad971584e2d372d55b87fe6c465fe5c2deb04d281af71f8cbfd",
+      "verified_at": "2026-10-19T03:53:49.797Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T22:53:57.174Z"
+      "last_updated": "2026-10-19T03:53:49.797Z"
     },
     "SupersonicLabs/Julia-1": {
       "repository": "SupersonicLabs/Julia-1",
@@ -8332,6 +8332,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T03:47:36.153Z"
+    },
+    "salvo-rs/salvo": {
+      "repository": "salvo-rs/salvo",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-salvo-rs-salvo",
+      "content_hash": "cfac0697b785410e90ef52598b6a54602fddd4fc348f056c40604d2f11274a64",
+      "verified_at": "2026-10-19T03:53:41.688Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T03:53:41.688Z"
+    },
+    "react/metro": {
+      "repository": "react/metro",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-react-metro",
+      "content_hash": "19f9b912478544f7a0eba43956f34bfb4b23a87e9cb6e93af87b17a3d05334e0",
+      "verified_at": "2026-10-19T03:53:46.956Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T03:53:46.956Z"
+    },
+    "Checkmarx/kics": {
+      "repository": "Checkmarx/kics",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-checkmarx-kics",
+      "content_hash": "7ac9f43a3d021b86bb8bd19f1d7af19e9ca16d911e083e021c27dfe73a2a0a9c",
+      "verified_at": "2026-10-19T03:53:50.640Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T03:53:50.640Z"
+    },
+    "olric-data/olric": {
+      "repository": "olric-data/olric",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-olric-data-olric",
+      "content_hash": "bd698514ba711b342540a28413bf2f7f85f5ff6ddad34b0ca93a81ac545cf1a4",
+      "verified_at": "2026-10-19T03:53:54.705Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T03:53:54.705Z"
+    },
+    "carbon-design-system/carbon-components-svelte": {
+      "repository": "carbon-design-system/carbon-components-svelte",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-carbon-design-system-carbon-components-svelte",
+      "content_hash": "75ce2f709d2685c1b43f05d49e538adf61987ff9636e84de75f162256e0e0fad",
+      "verified_at": "2026-10-19T03:54:36.504Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T03:54:36.504Z"
     }
   },
   "repos": {
