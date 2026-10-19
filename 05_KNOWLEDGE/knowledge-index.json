@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T16:37:27.490Z",
-  "total_verified_learnings": 853,
+  "last_updated": "2026-10-19T16:43:50.679Z",
+  "total_verified_learnings": 854,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -4426,8 +4426,8 @@
       "slug": "carbon-design-system-carbon",
       "platform": "github",
       "source_url": "https://github.com/carbon-design-system/carbon",
-      "source_version": "48192318",
-      "content_hash": "e05c2a8268df9472f5d342dd7f38ce48b958c86ca2bbde5636fcdf1b49c1b68a",
+      "source_version": "50efc61f",
+      "content_hash": "b88fac44e346aa477aee40f75845e4907dbb0ee7ad655254c656c2f6bbdec91c",
       "dossier_path": "07_PROJECT_LEARNING/carbon-design-system-carbon-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/carbon-design-system-carbon-learnings.md",
       "promoted_rules": [
@@ -4445,6 +4445,11 @@
           "number": 2194,
           "title": "Non-Linear Pagination State Self-Correction Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2687,
+          "title": "ci): pin runners to ubuntu-24.04 (#23779)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4452,7 +4457,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T05:33:01.941Z",
+      "verified_at": "2026-10-19T16:43:34.753Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41960,22 +41965,35 @@
     "learn-github-touchlab-xcode-kotlin": {
       "learning_id": "learn-github-touchlab-xcode-kotlin",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "touchlab-xcode-kotlin",
+      "source": "touchlab/xcode-kotlin",
+      "repository": "touchlab/xcode-kotlin",
       "slug": "touchlab-xcode-kotlin",
       "platform": "github",
       "source_url": "https://github.com/touchlab/xcode-kotlin",
-      "source_version": "HEAD",
-      "content_hash": "bdf8b4d8dc23446a3334420ea4f1981eee3810952b60da66274e2b081317b98c",
+      "source_version": "00970b1c",
+      "content_hash": "83f174a0fc5f125605d011104fecfd9955d391ad1c2a3f6e8ed23d4b0dab632e",
       "dossier_path": "07_PROJECT_LEARNING/touchlab-xcode-kotlin-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/touchlab-xcode-kotlin-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2688,
+          "title": "crash for Xcode 15.3",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.030Z"
+      "verified_at": "2026-10-19T16:43:41.707Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-tradecatlabs-vibe-coding-cn": {
       "learning_id": "learn-github-tradecatlabs-vibe-coding-cn",
@@ -44543,14 +44561,19 @@
       "slug": "ydb-platform-ydb",
       "platform": "github",
       "source_url": "https://github.com/ydb-platform/ydb",
-      "source_version": "a0ec4712",
-      "content_hash": "38c77d50db1a3025e719f1a2cd2753a0d5fa92bfd41db87862c77758e75dfeb9",
+      "source_version": "81c6a3eb",
+      "content_hash": "1a364d36308f79aabff66ef126f31df8f5373ed8ad5db4aa73bf9b6e6396241f",
       "dossier_path": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "promoted_rules": [
         {
           "number": 2084,
           "title": "replication admission and lost data recovery after a group generation change by",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2689,
+          "title": "YDBBACKPORT-1260 Fix segfault when tvm is broken (#56099)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -44559,7 +44582,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T03:39:26.905Z",
+      "verified_at": "2026-10-19T16:43:50.670Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -89536,6 +89559,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T16:37:27.480Z"
+    },
+    "rule-2687": {
+      "learning_id": "rule-2687",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2687,
+      "title": "ci): pin runners to ubuntu-24.04 (#23779)",
+      "source_url": "https://github.com/carbon-design-system/carbon",
+      "source_version": "50efc61f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T16:43:34.753Z"
+    },
+    "rule-2688": {
+      "learning_id": "rule-2688",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2688,
+      "title": "crash for Xcode 15.3",
+      "source_url": "https://github.com/touchlab/xcode-kotlin",
+      "source_version": "00970b1c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T16:43:41.707Z"
+    },
+    "rule-2689": {
+      "learning_id": "rule-2689",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2689,
+      "title": "YDBBACKPORT-1260 Fix segfault when tvm is broken (#56099)",
+      "source_url": "https://github.com/ydb-platform/ydb",
+      "source_version": "81c6a3eb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T16:43:50.670Z"
     }
   },
   "aliases": {

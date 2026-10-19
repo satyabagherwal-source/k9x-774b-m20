@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-R2ZR",
-    "timestamp": "2026-10-19T03:47:22.983Z",
-    "repository": "arco-design/arco-design-vue",
-    "learningId": "learn-github-arco-design-arco-design-vue",
-    "contentHash": "f2bbd8814c0577ae66e6f790ddb97c00685dcf2947316315ce928d3a5cd7d98a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-R30U",
-    "timestamp": "2026-10-19T03:47:23.022Z",
-    "repository": "Qwen/Qwen-Image-2.1-Turbo",
-    "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo",
-    "contentHash": "da244fa3713ac70a29afdc7755076c3a10ef8bf27a8930d633e6055904fb9178",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-R3YZ",
-    "timestamp": "2026-10-19T03:47:24.251Z",
-    "repository": "telemt/telemt",
-    "learningId": "learn-github-telemt-telemt",
-    "contentHash": "ef26eb7b070052c4d4f9a98d8907242fe5fbf6ac24f52471e01268c02467cebb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-R7KI",
     "timestamp": "2026-10-19T03:47:28.914Z",
     "repository": "react-native-modal/react-native-modal",
@@ -7490,6 +7445,51 @@
     "repository": "GreptimeTeam/greptimedb",
     "learningId": "learn-github-greptimeteam-greptimedb",
     "contentHash": "2ed5a5bfd00cd5f17b64f36ebaab82aa0656c476c5be1718ac3addef17b1faf0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-HA1K",
+    "timestamp": "2026-10-19T16:43:34.808Z",
+    "repository": "carbon-design-system/carbon",
+    "learningId": "learn-github-carbon-design-system-carbon",
+    "contentHash": "b88fac44e346aa477aee40f75845e4907dbb0ee7ad655254c656c2f6bbdec91c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-HFF0",
+    "timestamp": "2026-10-19T16:43:41.772Z",
+    "repository": "touchlab/xcode-kotlin",
+    "learningId": "learn-github-touchlab-xcode-kotlin",
+    "contentHash": "83f174a0fc5f125605d011104fecfd9955d391ad1c2a3f6e8ed23d4b0dab632e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-HMBN",
+    "timestamp": "2026-10-19T16:43:50.723Z",
+    "repository": "ydb-platform/ydb",
+    "learningId": "learn-github-ydb-platform-ydb",
+    "contentHash": "1a364d36308f79aabff66ef126f31df8f5373ed8ad5db4aa73bf9b6e6396241f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

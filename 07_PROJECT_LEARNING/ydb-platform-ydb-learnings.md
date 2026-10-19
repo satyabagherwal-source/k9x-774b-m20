@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source**: github ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
-> **Source Version**: `a0ec4712`  
+> **Source Version**: `81c6a3eb`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T03:39:26.735Z  
+> **Timestamp**: 2026-10-19T16:43:50.453Z  
 > **Learning ID**: `learn-github-ydb-platform-ydb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T03:39:26.727Z  
+> **Harvest Timestamp**: 2026-10-19T16:43:50.446Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1284,709 +1284,624 @@ func Int(rand io.Reader, max *big.Int) (n *big.Int, err error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fdb98cde` (2026-10-17)
-**Commit Message**: Fix replication admission and lost data recovery after a group generation change by tracking peers by position and refreshing the recovery job context (#56048)
+### Incident Patch 1: `4df7ac75` (2026-10-19)
+**Commit Message**: YDBBACKPORT-1260 Fix segfault when tvm is broken (#56099)
 
-Co-authored-by: Yuki <[REDACTED_EMAIL]>
-
-**File**: `ydb/core/blobstorage/ut_blobstorage/recover_lost_data_generation.cpp` (added, +154/-0)
+**File**: `ydb/services/deprecated/persqueue_v0/grpc_pq_write_actor.cpp` (modified, +5/-0)
 ```diff
-@@ -0,0 +1,154 @@
-+#include <ydb/core/blobstorage/ut_blobstorage/lib/env.h>
-+#include <ydb/core/blobstorage/ut_blobstorage/lib/common.h>
-+#include <ydb/core/blobstorage/vdisk/common/vdisk_events.h>
-+
-+Y_UNIT_TEST_SUITE(RecoverLostDataGeneration) {
-+
-+    // A VDisk that lost its data runs one full sync proxy per peer. Hold the first requests of these proxies until
-+    // the group generation changes, so that no peer is synced in the old generation, then let them go. Every retry
-+    // after that must be made in the new generation, otherwise the peers reject it and recovery never completes.
-+    Y_UNIT_TEST(CompletesAfterGenerationChange) {
-+        constexpr ui32 nodeCount = 9;
-+        TEnvironmentSetup env(TEnvironmentSetup::TSettings{
-+            .NodeCount = nodeCount,
-+            .Erasure = TBlobStorageGroupType::Erasure4Plus2Block,
-+        });
-+        env.CreateBoxAndPool(1, 1);
-+        env.Sim(TDuration::Minutes(1));
-+        const ui32 groupId = env.GetGroups().front();
-+        auto info = env.GetGroupInfo(groupId);
-+        const ui32 recoveringNode = info->GetActorId(0).NodeId();
-+        const TString data(1024, 'S');
-+        const TLogoBlobID blob(1, 1, 1, 0, data.size(), 0);
-+        env.PutBlob(groupId, blob, data);
-+        env.WaitForSync(info, blob);
-+
-+        env.Cleanup();
-+        for (auto& [key, state] : env.PDiskMockStates) {
-+            if (key.first == recoveringNode) {
-+                state.Reset();
-+            }
-+        }
-+        env.Initialize();
-+
-+        const ui32 initialGeneration = info->GroupGeneration;
-+        bool hold = true;
-+        std::vector<std::unique_ptr<IEventHandle>> held;
-+        ui32 generationSeen = 0;
-+        bool recovered = false;
-+        ui32 failedReplies = 0;
-+        env.Runtime->FilterFunction = [&](ui32 nodeId, std::unique_ptr<IEventHandle>& ev) {
-+            switch (ev->GetTypeRewrite()) {
-+                case TEvBlobStorage::EvVSyncFull:
-+                    if (hold && nodeId != recoveringNode && ev->Sender.NodeId() == recoveringNode) {
-+                        held.push_back(std::move(ev));
-+                        return false;
-+                    }
-+                    break;
-+
-+                case TEvBlobStorage::EvVSyncFullResult:
-+                    if (nodeId == recoveringNode && !hold) {
-+                        const auto status = ev->Get<TEvBlobStorage::TEvVSyncFullResult>()->Record.GetStatus();
-+                        failedReplies += status != NKikimrProto::OK && status != NKikimrProto::NODATA;
-+                    }
-+                    break;
-+
-+                case TEvBlobStorage::EvVGenerationChange:
-+                    if (nodeId == recoveringNode) {
-+                        generationSeen = Max(generationSeen, ev->Get<TEvVGenerationChange>()->NewInfo->GroupGeneration);
-+                    }
-+                    break;
-+
-+                case TEvBlobStorage::EvSyncerLostDataRecovered:
-+                    if (nodeId == recoveringNode) {
-+                        recovered = true;
-+                    }
-+                    break;
-+            }
-+            return true;
-+        };
-+        auto waitUntil = [&](auto predicate, const char* phase) {
-+            for (ui32 i = 0; i != 600 && !predicate(); ++i) {
-+                env.Sim(TDuration::MilliSeconds(100));
-+            }
-+            UNIT_ASSERT_C(predicate(), phase);
-+        };
-+
-+        // every peer outside the own fail domain gets a full sync proxy
-+        const ui32 peers = info->GetTotalVDisksNum() - 1;
-+        waitUntil([&] { return held.size() >= peers; }, "Lost data recovery must start full sync with every peer");
-+        UNIT_ASSERT(!recovered);
-+
-+        // move another member of the group to the spare node to advance the generation
-+        std::set<ui32> groupNodes;
-+        for (ui32 i = 0; i != info->GetTotalVDisksNum(); ++i) {
-+            groupNodes.insert(info->GetActorId(i).NodeId());
-+        }
-+        ui32 spare = 1;
-+        while (groupNodes.contains(spare)) {
-+            ++spare;
-+        }
-+        UNIT_ASSERT(spare <= nodeCount);
-+        std::optional<ui32> sparePDiskId;
-+        const auto baseConfig = env.FetchBaseConfig();
-+        for (const auto& pdisk : baseConfig.GetPDisk()) {
-+            if (pdisk.GetNodeId() == spare) {
-+                sparePDiskId = pdisk.GetPDiskId();
-+                break;
-+            }
-+        }
-+        UNIT_ASSERT_C(sparePDiskId, "The spare node must have a registered PDisk");
-+        const auto disk = info->GetVDiskId(1);
-+        NKikimrBlobStorage::TConfigRequest request;
-+        // the controller may not yet see the restarted disks as ready; only the generation change matters here
-+        request.SetIgnoreGroupFailModelChecks(true);
-+        request.SetIgnoreDegradedGroupsChecks(true);
-+        request.SetIgnoreDisintegratedGroupsChecks(true);
-+        auto* cmd = request.AddCommand()->MutableReassignGroupDisk();
-+        cmd->SetGroupId(groupId);
-+        cmd->SetGro
-```
-
-**File**: `ydb/core/blobstorage/ut_blobstorage/replication_generation.cpp` (added, +210/-0)
-```diff
-@@ -0,0 +1,210 @@
-+#include <ydb/core/blobstorage/ut_blobstorage/lib/env.h>
-+#include <ydb/core/blobstorage/ut_blobstorage/lib/common.h>
-+#include <ydb/core/blobstorage/backpressure/queue_backpressure_client.h>
-+#include <ydb/core/blobstorage/vdisk/repl/blobstorage_repl.h>
-+
-+namespace {
-+
-+// Hold a real replication plan while its queues connect, optionally replace a
-+// different group member, then disconnect all sources before granting the plan
-+// its token. Disks on the disconnected nodes retain their contents.
-+void CheckReplicationAfterGenerationChange(bool changeGeneration, bool checkAdmission) {
-+    constexpr ui32 nodeCount = 9;
-+    TEnvironmentSetup env(TEnvironmentSetup::TSettings{
-+        .NodeCount = nodeCount,
-+        .Erasure = TBlobStorageGroupType::Erasure4Plus2Block,
-+    });
-+    env.CreateBoxAndPool(1, 1);
-+    env.Sim(TDuration::Minutes(1));
-+    const ui32 groupId = env.GetGroups().front();
-+    auto info = env.GetGroupInfo(groupId);
-+    const ui32 recoveringNode = info->GetActorId(0).NodeId();
-+    const TString data(128 * 1024, 'R');
-+    const TLogoBlobID blob(1, 1, 1, 0, data.size(), 0);
-+    env.PutBlob(groupId, blob, data);
-+    env.WaitForSync(info, blob);
-+
-+    env.Cleanup();
-+    for (auto& [key, state] : env.PDiskMockStates) {
-+        if (key.first == recoveringNode) {
-+            state.Reset();
-+        }
-+    }
-+    env.Initialize();
-+
-+    TActorId replActor;
-+    std::unique_ptr<IEventHandle> started;
-+    // Track queues by actor identity, independently of their changing VDiskID.
-+    struct TQueueState {
-+        TVDiskID VDiskId;
-+        bool Connected = false;
-+    };
-+    std::map<TActorId, std::map<TActorId, TQueueState>> queues;
-+    ui32 generationSeen = 0;
-+    ui32 resumes = 0;
-+    ui32 completedWhileIsolated = 0;
-+    bool holdPlan = true;
-+    bool isolated = false;
-+    bool tokenReceived = false;
-+    env.Runtime->FilterFunction = [&](ui32 nodeId, std::unique_ptr<IEventHandle>& ev) {
-+        if (nodeId != recoveringNode) {
-+            return true;
-+        }
-+        if (ev->GetTypeRewrite() == TEvBlobStorage::EvReplStarted && holdPlan) {
-+            UNIT_ASSERT_C(!started, "More than one replication plan on the recovering node");
-+            replActor = ev->Recipient;
-+            started = std::move(ev);
-+            return false;
-+        }
-+        if (ev->GetTypeRewrite() == TEvProxyQueueState::EventType) {
-+            const auto* msg = ev->Get<TEvProxyQueueState>();
-+            queues[ev->Recipient][ev->Sender] = {msg->VDiskId, msg->IsConnected};
-+        } else if (ev->GetTypeRewrite() == TEvVGenerationChange::EventType && ev->Recipient == replActor) {
-+            generationSeen = ev->Get<TEvVGenerationChange>()->NewInfo->GroupGeneration;
-+        } else if (ev->GetTypeRewrite() == TEvBlobStorage::EvReplToken && ev->Recipient == replActor) {
-+            tokenReceived = true;
-+        } else if (ev->GetTypeRewrite() == TEvBlobStorage::EvReplResume && ev->Sender == replActor) {
-+            ++resumes;
-+        } else if (isolated && ev->GetTypeRewrite() == TEvBlobStorage::EvReplDone
-+                && ev->Sender == replActor && ev->Cookie == 0) {
-+            ++completedWhileIsolated;
-+        }
-+        return true;
-+    };
-+    auto waitUntil = [&](auto predicate, const char* phase) {
-+        for (ui32 i = 0; i != 600 && !predicate(); ++i) {
-+            env.Sim(TDuration::MilliSeconds(100));
-+        }
-+        UNIT_ASSERT_C(predicate(), phase);
-+    };
-+    auto connected = [&] {
-+        ui32 result = 0;
-+        for (const auto& [actor, state] : queues[replActor]) {
-+            (void)actor;
-+            result += state.Connected;
-+        }
-+        return result;
-+    };
-+    waitUntil([&] { return started && connected() >= info->Type.DataParts(); },
-+        "Replication plan and connected source queues must exist before reconfiguration");
-+
-+    if (changeGeneration) {
-+        std::set<ui32> groupNodes;
-+        for (ui32 i = 0; i != info->GetTotalVDisksNum(); ++i) {
-+            groupNodes.insert(info->GetActorId(i).NodeId());
-+        }
-+        ui32 spare = 1;
-+        while (groupNodes.contains(spare)) {
-+            ++spare;
-+        }
-+        UNIT_ASSERT(spare <= nodeCount);
-+        std::optional<ui32> sparePDiskId;
-+        const auto baseConfig = env.FetchBaseConfig();
-+        for (const auto& pdisk : baseConfig.GetPDisk()) {
-+            if (pdisk.GetNodeId() == spare) {
-+                sparePDiskId = pdisk.GetPDiskId();
-+                break;
-+            }
-+        }
-+        UNIT_ASSERT_C(sparePDiskId, "The spare node must have a registered PDisk");
-+        const auto disk = info->GetVDiskId(1);
-+        NKikimrBlobStorage::TConfigRequest request;
-+        // the controller may not yet see the restarted disks as ready; only the generation change matters here
-+        request.SetIgnoreGroupFailModelChecks(true);
-+        request.SetIgnoreDegradedGroupsChecks(true);
-+        request.SetIgnoreDisintegratedGr
-```
-
-**File**: `ydb/core/blobstorage/ut_blobstorage/ut_replication/ya.make` (modified, +2/-0)
-```diff
-@@ -9,6 +9,8 @@ INCLUDE(${ARCADIA_ROOT}/ydb/tests/large.inc)
- SRCS(
-     replication.cpp
-     replication_huge.cpp
-+    replication_generation.cpp
-+    recover_lost_data_generation.cpp
- )
- 
- PEERDIR(
-```
-
-**File**: `ydb/core/blobstorage/vdisk/repl/blobstorage_repl.cpp` (modified, +16/-7)
-```diff
-@@ -180,7 +180,9 @@ namespace NKikimr {
-         TActorId ReplJobActorId;
-         std::list<std::optional<TDonorQueueItem>> DonorQueue;
-         std::deque<std::pair<TVDiskID, TDonorQueueActors>> Donors;
--        std::set<TVDiskID> ConnectedPeerDisks, ConnectedDonorDisks;
-+        // peers are tracked by their position in the group, as their generation changes with the group's one
-+        std::set<TVDiskIdShort> ConnectedPeerDisks;
-+        std::set<TVDiskID> ConnectedDonorDisks;
-         TEvResumeForce *ResumeForceToken = nullptr;
-         TInstant ReplicationEndTime;
-         bool UnrecoveredNonphantomBlobs = false;
-@@ -265,13 +267,20 @@ namespace NKikimr {
- 
-         void Handle(TEvProxyQueueState::TPtr ev) {
-             const TVDiskID& vdiskId = ev->Get()->VDiskId;
--            auto& set = vdiskId.GroupGeneration == ReplCtx->GInfo->GroupGeneration
--                ? ConnectedPeerDisks
--                : ConnectedDonorDisks;
--            if (ev->Get()->IsConnected) {
--                set.insert(vdiskId);
-+            // A peer queue keeps reporting after a generation change, possibly with the VDiskId of the previous
-+            // generation, so tell peers from donors by the queue actor rather than by the generation.
-+            const TVDiskIdShort shortId(vdiskId);
-+            const auto it = QueueActorMapPtr->find(shortId);
-+            if (it != QueueActorMapPtr->end() && it->second == ev->Sender) {
-+                if (ev->Get()->IsConnected) {
-+                    ConnectedPeerDisks.insert(shortId);
-+                } else {
-+                    ConnectedPeerDisks.erase(shortId);
-+                }
-+            } else if (ev->Get()->IsConnected) {
-+                ConnectedDonorDisks.insert(vdiskId);
-             } else {
--                set.erase(vdiskId);
-+                ConnectedDonorDisks.erase(vdiskId);
-             }
-             if (ResumeForceToken) { // if the process is blocked by number of available queues, try to kick it
-                 ResumeIfReady();
-```
-
-**File**: `ydb/core/blobstorage/vdisk/syncer/blobstorage_syncer_recoverlostdata_proxy.cpp` (modified, +2/-0)
-```diff
-@@ -154,6 +154,8 @@ namespace NKikimr {
-             auto shortTargetVDiskId = TVDiskIdShort(TargetVDiskId);
-             TargetVDiskId = msg->NewInfo->GetVDiskId(shortTargetVDiskId);
-             TargetActorId = msg->NewInfo->GetActorId(shortTargetVDiskId);
-+            // the context holds our own VDiskId; peers reject requests from the previous generation
-+            JobCtx = TSjCtx::Create(SyncerCtx, msg->NewInfo);
-         }
- 
-     public:
-```
-
----
-
-### Incident Patch 2: `55d39305` (2026-10-16)
-**Commit Message**: Return metadata timeout errors without terminating NodeWarden (#55996)
-
-Co-authored-by: Kaminskii Evgenii <[REDACTED_EMAIL]>
-
-**File**: `ydb/core/blobstorage/nodewarden/distconf_persistent_storage.cpp` (modified, +10/-1)
-```diff
-@@ -295,6 +295,12 @@ namespace NKikimr::NStorage {
-                 drivesToRead.push_back(drive.GetPath());
-             };
- 
-+            // An empty record means a successful read of an empty disk. Keep it
-+            // distinct from a failed read, whose existing metadata is still unknown.
-+            for (const auto& [path, guid] : msg.NoMetadata) {
-+                MetadataByPath.try_emplace(path);
-+            }
-+
-             for (const auto& [path, m, guid] : msg.MetadataPerPath) {
-                 MetadataByPath[path] = m;
- 
-@@ -343,7 +349,10 @@ namespace NKikimr::NStorage {
-                     const auto [begin, end] = std::ranges::remove_if(drivesToWrite, [&](const TString& path) {
-                         const auto it = MetadataByPath.find(path);
-                         if (it == MetadataByPath.end()) {
--                            return false; // this drive did not contain any metadata at all, we have to write it
-+                            // Do not overwrite unread metadata using a local commit:
-+                            // this drive may contain a newer generation. Let bootstrap
-+                            // finish so cluster quorum recovery can resolve the config.
-+                            return true;
-                         }
-                         const NKikimrBlobStorage::TPDiskMetadataRecord& m = it->second;
-                         if (!m.HasCommittedStorageConfig()) {
-```
-
-**File**: `ydb/core/blobstorage/nodewarden/distconf_ut.cpp` (modified, +212/-0)
-```diff
-@@ -1392,6 +1392,218 @@ selector_config: []
-         CheckPartialBootstrapRestart(ERestartOrder::Partitioned, TDuration::MilliSeconds(1001));
-     }
- 
-+    Y_UNIT_TEST(BootstrapWritesKnownEmptyDisk) {
-+        auto initial = MakeStorageConfig(1, 0, {1});
-+        initial.MutableSelfManagementConfig()->SetEnabled(true);
-+        initial.MutableSelfManagementConfig()->SetAutomaticBootstrap(false);
-+        auto *drive = initial.MutableBlobStorageConfig()->MutableDefineHostConfig(0)->AddDrive();
-+        drive->SetPath("/dev/disk1_2");
-+        drive->SetType(NKikimrBlobStorage::EPDiskType::ROT);
-+        NStorage::TDistributedConfigKeeper::UpdateFingerprint(&initial);
-+        auto committed = initial;
-+        committed.SetGeneration(1);
-+        NStorage::TDistributedConfigKeeper::UpdateFingerprint(&committed);
-+        TNodeWardenTestState state;
-+        state.Metadata[std::pair<ui32, TString>{1, "/dev/disk1_1"}].MutableCommittedStorageConfig()->CopyFrom(committed);
-+        const auto emptyKey = std::pair<ui32, TString>{1, "/dev/disk1_2"};
-+
-+        TTestActorSystem runtime(1);
-+        runtime.Start();
-+        Y_DEFER { runtime.Stop(); };
-+        RegisterKeeper(runtime, initial, 1, state);
-+        UNIT_ASSERT_C(SimUntil(runtime, [&] {
-+            const auto it = state.Metadata.find(emptyKey);
-+            return it != state.Metadata.end() &&
-+                it->second.GetCommittedStorageConfig().GetFingerprint() == committed.GetFingerprint();
-+        }), "Bootstrap did not write the local commit to a disk successfully read as empty");
-+    }
-+
-+    Y_UNIT_TEST(BootstrapReadErrorsAllowQuorumRecovery) {
-+        auto initial = MakeStorageConfig(9, 0, {1, 2, 3, 4, 5, 6, 7, 8, 9},
-+            TBlobStorageGroupType::ErasureMirror3dc);
-+        initial.MutableSelfManagementConfig()->SetEnabled(true);
-+        initial.MutableSelfManagementConfig()->SetAutomaticBootstrap(false);
-+        auto *bs = initial.MutableBlobStorageConfig();
-+        auto *serviceSet = bs->MutableServiceSet();
-+        auto *group = serviceSet->MutableGroups(0);
-+        const auto domains = group->GetRings(0);
-+        group->ClearRings();
-+        for (ui32 dc = 0; dc < 3; ++dc) {
-+            auto *ring = group->AddRings();
-+            for (ui32 domain = 0; domain < 3; ++domain) {
-+                const ui32 index = dc * 3 + domain;
-+                ring->AddFailDomains()->CopyFrom(domains.GetFailDomains(index));
-+                auto *id = serviceSet->MutableVDisks(index)->MutableVDiskID();
-+                id->SetRing(dc);
-+                id->SetDomain(domain);
-+                initial.MutableAllNodes(index)->MutableLocation()->SetDataCenter("dc-" + std::to_string(dc));
-+                for (ui32 disk : {2, 3}) {
-+                    auto *drive = bs->MutableDefineHostConfig(index)->AddDrive();
-+                    drive->SetPath("/dev/disk" + std::to_string(index + 1) + "_" + std::to_string(disk));
-+                    drive->SetType(NKikimrBlobStorage::EPDiskType::ROT);
-+                }
-+            }
-+        }
-+        NStorage::TDistributedConfigKeeper::UpdateFingerprint(&initial);
-+        auto older = initial;
-+        older.SetGeneration(1);
-+        NStorage::TDistributedConfigKeeper::UpdateFingerprint(&older);
-+        auto newer = older;
-+        newer.SetGeneration(2);
-+        NStorage::TDistributedConfigKeeper::UpdateFingerprint(&newer);
-+
-+        TNodeWardenTestState state;
-+        state.RequiredRootNodeId = 1;
-+        std::vector<NStorage::TSuccessfulDisk> available;
-+        std::vector<NStorage::TSuccessfulDisk> newerDisks;
-+        for (ui32 nodeId = 1; nodeId <= 9; ++nodeId) {
-+            for (ui32 disk = 1; disk <= 3; ++disk) {
-+                const TString path = "/dev/disk" + std::to_string(nodeId) + "_" + std::to_string(disk);
-+                state.Metadata[std::pair<ui32, TString>{nodeId, path}].MutableCommittedStorageConfig()->CopyFrom(
-+                    nodeId == 9 && disk != 3 ? older : newer);
-+                if (disk != 3) {
-+                    available.emplace_back(NStorage::TNodeIdentifier(newer.GetAllNodes(nodeId - 1)),
-+                        path, nodeId * 1000 + disk);
-+                    if (nodeId != 9) {
-+                        newerDisks.push_back(available.back());
-+                    }
-+                }
-+            }
-+        }
-+        UNIT_ASSERT_VALUES_EQUAL(available.size(), 18);
-+        const auto nwConfig = MakeNodeWardenConfig(newer);
-+        UNIT_ASSERT(NStorage::HasConfigQuorum(newer, available, {}, {}, *nwConfig, false));
-+        UNIT_ASSERT(NStorage::HasConfigQuorum(newer, newerDisks, {}, {}, *nwConfig, false));
-+
-+        TTestActorSystem runtime(9);
-+        runtime.Start();
-+        Y_DEFER { runtime.Stop(); };
-+        bool allowCollection = false;
-+        std::vector<std::pair<ui32, std::unique_ptr<IEventHandle>>> heldScatters;
-+        std::array<ui32, 9> failedReads{};
-+        ui32 writesBeforeCollection = 0;
-+        bool downgraded = f
-```
-
-**File**: `ydb/core/blobstorage/nodewarden/node_warden_pdisk.cpp` (modified, +6/-2)
-```diff
-@@ -1032,10 +1032,14 @@ namespace NKikimr::NStorage {
-         }
- 
-         void HandleWakeup() {
--            Y_DEBUG_ABORT("Event# %s took too long to process", EventType);
--            YDB_LOG_CRIT("TPDiskMetadataInteractionActor::Wakeup",
-+            YDB_LOG_WARN("Still waiting for PDisk metadata request",
-                 {"marker", "NW61"},
-+                {"PDiskId", PDiskKey.PDiskId},
-                 {"eventType", EventType});
-+            // Keep the request and its PDisk reference alive: timing out is not
-+            // evidence that metadata is absent, or that startup cannot finish.
-+            // Releasing the last reference here would restart a slow disk's scan.
-+            Schedule(TDuration::Seconds(30), new TEvents::TEvWakeup);
-         }
- 
-         STRICT_STFUNC(StateFunc,
-```
-
-**File**: `ydb/core/blobstorage/ut_blobstorage/pdisk_subsystem_ut.cpp` (modified, +231/-0)
-```diff
-@@ -1,6 +1,237 @@
- #include <ydb/core/blobstorage/ut_blobstorage/lib/env.h>
- 
-+namespace {
-+
-+    struct TSlowPDiskState {
-+        ui32 Starts = 0;
-+        ui32 CompletedStarts = 0;
-+        ui32 Stops = 0;
-+    };
-+
-+    // Model a PDisk that cannot service metadata until its startup scan finishes.
-+    // Destroying this actor loses its pending startup, just as stopping the worker does.
-+    class TSlowMetadataPDisk : public TActorBootstrapped<TSlowMetadataPDisk> {
-+        TSlowPDiskState& State;
-+        bool Ready = false;
-+        std::vector<std::unique_ptr<IEventHandle>> Pending;
-+
-+        void Reply(IEventHandle& ev) {
-+            if (ev.GetTypeRewrite() == NPDisk::TEvReadMetadata::EventType) {
-+                Send(ev.Sender, new NPDisk::TEvReadMetadataResult(NPDisk::EPDiskMetadataOutcome::NO_METADATA,
-+                    42), 0, ev.Cookie);
-+            } else {
-+                Send(ev.Sender, new NPDisk::TEvWriteMetadataResult(NPDisk::EPDiskMetadataOutcome::OK, 42),
-+                    0, ev.Cookie);
-+            }
-+        }
-+
-+        void HandleMetadata(TAutoPtr<IEventHandle>& ev) {
-+            if (Ready) {
-+                Reply(*ev);
-+            } else {
-+                Pending.emplace_back(ev.Release());
-+            }
-+        }
-+
-+        void FinishStartup() {
-+            Ready = true;
-+            ++State.CompletedStarts;
-+            for (const auto& ev : Pending) {
-+                Reply(*ev);
-+            }
-+            Pending.clear();
-+        }
-+
-+        void Stop() {
-+            ++State.Stops;
-+            PassAway();
-+        }
-+
-+    public:
-+        explicit TSlowMetadataPDisk(TSlowPDiskState& state)
-+            : State(state)
-+        {}
-+
-+        void Bootstrap() {
-+            ++State.Starts;
-+            Become(&TThis::StateFunc);
-+            Schedule(TDuration::Seconds(90), new TEvents::TEvWakeup);
-+        }
-+
-+        STRICT_STFUNC(StateFunc,
-+            fFunc(NPDisk::TEvReadMetadata::EventType, HandleMetadata);
-+            fFunc(NPDisk::TEvWriteMetadata::EventType, HandleMetadata);
-+            cFunc(TEvents::TSystem::Wakeup, FinishStartup);
-+            cFunc(TEvents::TSystem::Poison, Stop);
-+        )
-+    };
-+
-+    class TSlowPDiskSubsystem : public IPDiskSubsystem {
-+        TSlowPDiskState& State;
-+
-+    public:
-+        explicit TSlowPDiskSubsystem(TSlowPDiskState& state)
-+            : State(state)
-+        {}
-+
-+        void Start(const TActorContext& ctx, ui32 pdiskId, const TIntrusivePtr<TPDiskConfig>&,
-+                const NPDisk::TMainKey&, ui32 poolId, ui32 nodeId) override {
-+            const auto actor = ctx.Register(new TSlowMetadataPDisk(State), TMailboxType::HTSwap, poolId);
-+            ctx.ActorSystem()->RegisterLocalService(MakeBlobStoragePDiskID(nodeId, pdiskId), actor);
-+        }
-+    };
-+
-+    template<bool Write>
-+    void CheckSlowMetadataStartup() {
-+        TSlowPDiskState state;
-+        TEnvironmentSetup env({.NodeCount = 1, .PrepareRuntime = [&](TTestActorSystem& runtime) {
-+            runtime.SetupNodeSubSystems = [&](ui32, TActorSystemSetup* setup) {
-+                setup->RegisterSubSystem<IPDiskSubsystem>(std::make_unique<TSlowPDiskSubsystem>(state));
-+            };
-+        }});
-+        auto& runtime = env.Runtime;
-+        const ui32 nodeId = *runtime->GetNodes().begin();
-+        const auto edge = runtime->AllocateEdgeActor(nodeId);
-+        const auto warden = MakeBlobStorageNodeWardenID(nodeId);
-+        const TString path = "/mock/slow-starting-pdisk";
-+        constexpr ui64 cookie = 817;
-+        using TResult = std::conditional_t<Write, NStorage::TEvNodeWardenWriteMetadataResult,
-+            NStorage::TEvNodeWardenReadMetadataResult>;
-+        ui32 replies = 0;
-+        bool deliverReplies = false;
-+        runtime->FilterFunction = [&](ui32, std::unique_ptr<IEventHandle>& ev) {
-+            if (ev->Recipient == edge && ev->GetTypeRewrite() == TResult::EventType) {
-+                ++replies;
-+                return deliverReplies;
-+            }
-+            return true;
-+        };
-+        if constexpr (Write) {
-+            runtime->Send(new IEventHandle(warden, edge,
-+                new NStorage::TEvNodeWardenWriteMetadata(path, {}), 0, cookie), nodeId);
-+        } else {
-+            runtime->Send(new IEventHandle(warden, edge,
-+                new NStorage::TEvNodeWardenReadMetadata(path), 0, cookie), nodeId);
-+        }
-+        env.Sim(TDuration::Seconds(65));
-+        UNIT_ASSERT_VALUES_EQUAL(state.Starts, 1);
-+        UNIT_ASSERT_VALUES_EQUAL(state.CompletedStarts, 0);
-+        UNIT_ASSERT_VALUES_EQUAL_C(state.Stops, 0, "Metadata timeout destroyed a PDisk during startup");
-+        UNIT_ASSERT_VALUES_EQUAL(replies, 0);
-+        deliverReplies = true;
-+        auto response = env.WaitForEdgeActorEvent<TResult>(edge, false,
-+            runtime->GetClock() + TDuration::Seconds(30));
-+        UNIT_ASSERT_C(response, "The original startup did not finish");
-+        UNIT_ASSERT_VALUES_EQUAL(
-```
-
----
-
-### Incident Patch 3: `6951d3db` (2026-10-18)
-**Commit Message**: Fix recursive schema removal of secrets (#56074)
-
-**File**: `ydb/apps/ydb/CHANGELOG.md` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
-+* Fixed `ydb scheme rmdir --recursive` failing when a directory contains schema secrets.
- * Added support for repeating `--pile` in `ydb admin bridge failover` to disconnect multiple failed piles in one operation.
- * Added OIDC authentication with static tokens, client credentials and device authorization, configurable through `--oidc-config` YAML files, direct `--oidc-*` options, environment variables and connection profiles.
--
- * Fixed incorrect progress, speed, ETA, and final read statistics in `ydb import file parquet`.
- * Fixed false canonical result mismatches for empty optional `String` and `Utf8` values in `ydb workload ... run --check-canonical`.
- * Fixed a memory leak when closing producers in `ydb workload topic run write|full`.
-```
-
-**File**: `ydb/public/lib/ydb_cli/common/recursive_remove.cpp` (modified, +6/-0)
-```diff
-@@ -89,6 +89,10 @@ TStatus RemoveStreamingQuery(NQuery::TQueryClient& client, const TString& path,
-     return DropSchemeObject("STREAMING QUERY", client, path, settings);
+@@ -173,6 +173,11 @@ void TWriteSessionActor::Handle(TEvPQProxy::TEvDone::TPtr&, const TActorContext&
  }
  
-+TStatus RemoveSecret(NQuery::TQueryClient& client, const TString& path, const TRemoveDirectorySettings& settings) {
-+    return DropSchemeObject("SECRET", client, path, settings);
-+}
+ void TWriteSessionActor::CheckACL(const TActorContext& ctx) {
++    if (!Token) {
++        CloseSession("Cannot check ACL without a user token", NPersQueue::NErrorCode::ACCESS_DENIED, ctx);
++        return;
++    }
 +
- NYdb::NIssue::TIssues MakeIssues(const TString& error) {
-     NYdb::NIssue::TIssues issues;
-     issues.AddIssue(NYdb::NIssue::TIssue(error));
-@@ -182,6 +186,8 @@ TStatus Remove(
-         return Remove(&RemoveTransfer, schemeClient, queryClient, type, path, prompt, settings);
-     case ESchemeEntryType::StreamingQuery:
-         return Remove(&RemoveStreamingQuery, schemeClient, queryClient, type, path, prompt, settings);
-+    case ESchemeEntryType::Secret:
-+        return Remove(&RemoveSecret, schemeClient, queryClient, type, path, prompt, settings);
- 
-     default:
-         return TStatus(EStatus::UNSUPPORTED, MakeIssues(TStringBuilder()
+     Y_ABORT_UNLESS(ACLCheckInProgress);
+     Y_ABORT_UNLESS(SecurityObject);
+     NACLib::EAccessRights rights = NACLib::EAccessRights::UpdateRow;
 ```
 
-**File**: `ydb/tests/functional/ydb_cli/test_ydb_recursive_remove.py` (modified, +29/-1)
+**File**: `ydb/services/persqueue_v1/actors/write_session_actor.cpp` (modified, +5/-0)
 ```diff
-@@ -6,7 +6,7 @@
- from ydb.tests.functional.ydb_cli.ydb_cli_helpers import ydb_bin
+@@ -355,6 +355,11 @@ void TWriteSessionActor<Protocol>::Handle(TEvPQProxy::TEvDone::TPtr&, const TAct
  
- CLUSTER_CONFIG = dict(
--    extra_feature_flags=["enable_external_data_sources"],
-+    extra_feature_flags=["enable_external_data_sources", "enable_schema_secrets"],
-     query_service_config=dict(
-         available_external_data_sources=["ObjectStorage"]
-     ))
-@@ -35,6 +35,14 @@ def create_view(session, view, query="SELECT 42"):
-     )
- 
- 
-+def create_secret(session, secret):
-+    session.execute_scheme(
-+        f"""
-+        CREATE SECRET `{secret}` WITH (value = 'synthetic-value');
-+        """
-+    )
+ template <EProtocol Protocol>
+ void TWriteSessionActor<Protocol>::CheckACL(const TActorContext& ctx) {
++    if (!Token) {
++        CloseSession("Cannot check ACL without a user token", PersQueue::ErrorCode::ACCESS_DENIED, ctx);
++        return;
++    }
 +
-+
- def create_external_data_source(session, external_data_source):
-     session.execute_scheme(
-         f"""
-@@ -68,13 +76,33 @@ class TestRecursiveRemove:
-     def init_test(self, tmp_path):
-         self.tmp_path = tmp_path
+     //AFL_ENSURE(ACLCheckInProgress);
  
-+    @pytest.mark.parametrize(
-+        "path,secret", [(".", "secret"), ("secrets", "secrets/nested/secret")],
-+        ids=["database_root", "nested_directory"],
-+    )
-+    def test_secrets(self, ydb_cluster, ydb_database, ydb_client, ydb_client_session, path, secret):
-+        database_path = ydb_database
-+        driver = ydb_client(database_path)
-+        session_pool = ydb_client_session(database_path)
-+        with session_pool.checkout() as session:
-+            create_secret(session, secret)
-+            execute_ydb_cli_command(
-+                ydb_cluster.nodes[1], database_path, ["scheme", "rmdir", "--recursive", "--force", path]
-+            )
-+            assert_that(
-+                [child.name for child in driver.scheme_client.list_directory(database_path).children],
-+                only_contains(".metadata", ".sys"),
-+            )
+     NACLib::EAccessRights rights = NACLib::EAccessRights::UpdateRow;
+```
+
+---
+
+### Incident Patch 2: `10520535` (2026-10-19)
+**Commit Message**: Rebuild materialized indexes with incompatible layout instead of crashing SchemeShard on import (#55887)
+
+**File**: `ydb/core/tx/schemeshard/index/index_utils.cpp` (modified, +137/-30)
+```diff
+@@ -464,16 +464,8 @@ auto CalcFulltextCompactImplTableDescImpl(
+     const TVector<TString>& prefixColumns,
+     bool isBuild)
+ {
+-    // In rowid mode the doc id is the synthetic Uint64 __ydb_row_id (its dense low-bits seq), so the
+-    // source table may have any (incl. composite, non-integer) primary key. Otherwise the legacy
+-    // single-integer-PK doc id is used and __ydb_max_id inherits that PK's type.
+-    const bool useRowId = indexDesc && indexDesc->GetUseRowIdAsDocId();
+-
+     auto tableColumns = ExtractInfo(baseTable);
+     THashSet<TString> indexColumns;
+-    if (!useRowId) {
+-        Y_ENSURE(tableColumns.Keys.size() == 1);
+-    }
+     for (const auto & keyColumn: tableColumns.Keys) {
+         indexColumns.insert(keyColumn);
+     }
+@@ -490,6 +482,7 @@ auto CalcFulltextCompactImplTableDescImpl(
+         tokenColumnType = textColumnInfo.GetTypeId();
+     }
+ 
++    bool useRowId = !IsSingleIntegerPrimaryKey(tableColumns, baseColumnTypes);
+     NScheme::TTypeId idType = useRowId
+         ? NScheme::NTypeIds::Uint64
+         : baseColumnTypes.at(tableColumns.Keys.at(0)).GetTypeId();
+@@ -611,7 +604,18 @@ auto CalcFulltextImplTableDescImpl(
+     const TVector<TString>& prefixColumns)
+ {
+     auto tableColumns = ExtractInfo(baseTable);
+-    const bool useRowId = indexDesc.GetUseRowIdAsDocId();
++    TColumnTypes baseColumnTypes;
++    TString error;
++    Y_ENSURE(ExtractTypes(baseTable, baseColumnTypes, error), error);
++    NScheme::TTypeId tokenColumnType;
++    if (indexType == NKikimrSchemeOp::EIndexTypeGlobalJson) {
++        tokenColumnType = NScheme::NTypeIds::String;
++    } else {
++        Y_ENSURE(indexDesc.GetSettings().columns().size() == 1);
++        auto textColumnInfo = baseColumnTypes.at(indexDesc.GetSettings().columns().at(0).column());
++        tokenColumnType = textColumnInfo.GetTypeId();
++    }
 +
-     def test_various_scheme_objects(self, ydb_cluster, ydb_database, ydb_client, ydb_client_session):
-         database_path = ydb_database
-         driver = ydb_client(database_path)
-         session_pool = ydb_client_session(database_path)
-         with session_pool.checkout() as session:
-             create_table(session, "table")
-             create_view(session, "views/view")
-+            create_secret(session, "secret")
-+            create_secret(session, "secrets/nested/secret")
-             create_external_data_source(session, "externals/data_source")
-             create_external_table(session, "externals/table", "externals/data_source")
-             execute_ydb_cli_command(
+     THashSet<TString> indexColumns;
+     Y_ENSURE(indexType == NKikimrSchemeOp::EIndexTypeGlobalFulltextPlain ||
+         indexType == NKikimrSchemeOp::EIndexTypeGlobalFulltextRelevance ||
+@@ -620,6 +624,7 @@ auto CalcFulltextImplTableDescImpl(
+         indexColumns = indexDataColumns;
+     }
+     TVector<TString> docIdKeys;
++    bool useRowId = !IsSingleIntegerPrimaryKey(tableColumns, baseColumnTypes);
+     if (useRowId) {
+         docIdKeys.push_back(NFulltext::RowIdColumn);
+         indexColumns.insert(NFulltext::RowIdColumn);
+@@ -636,18 +641,6 @@ auto CalcFulltextImplTableDescImpl(
+         indexColumns.insert(prefixColumn);
+     }
+ 
+-    TColumnTypes baseColumnTypes;
+-    TString error;
+-    Y_ENSURE(ExtractTypes(baseTable, baseColumnTypes, error), error);
+-    NScheme::TTypeId tokenColumnType;
+-    if (indexType == NKikimrSchemeOp::EIndexTypeGlobalJson) {
+-        tokenColumnType = NScheme::NTypeIds::String;
+-    } else {
+-        Y_ENSURE(indexDesc.GetSettings().columns().size() == 1);
+-        auto textColumnInfo = baseColumnTypes.at(indexDesc.GetSettings().columns().at(0).column());
+-        tokenColumnType = textColumnInfo.GetTypeId();
+-    }
+-
+     NKikimrSchemeOp::TTableDescription implTableDesc;
+     implTableDesc.SetName(NTableIndex::ImplTable);
+     SetImplTablePartitionConfig(baseTablePartitionConfig, indexTableDesc, implTableDesc);
+@@ -681,13 +674,16 @@ auto CalcFulltextDocsImplTableDescImpl(
+     const auto& baseTable,
+     const NKikimrSchemeOp::TPartitionConfig& baseTablePartitionConfig,
+     const THashSet<TString>& indexDataColumns,
+-    const NKikimrSchemeOp::TTableDescription& indexTableDesc,
+-    const NKikimrSchemeOp::TFulltextIndexDescription& indexDesc)
++    const NKikimrSchemeOp::TTableDescription& indexTableDesc)
+ {
+     auto tableColumns = ExtractInfo(baseTable);
+-    const bool useRowId = indexDesc.GetUseRowIdAsDocId();
++    TColumnTypes baseColumnTypes;
++    TString error;
++    Y_ENSURE(ExtractTypes(baseTable, baseColumnTypes, error), error);
++
+     THashSet<TString> indexColumns = indexDataColumns;
+     TVector<TString> docIdKeys;
++    bool useRowId = !IsSingleIntegerPrimaryKey(tableColumns, baseColumnTypes);
+     if (useRowId) {
+         docIdKeys.push_back(NFulltext::RowIdColumn);
+         indexColumns.insert(NFulltext::RowIdColumn);
+@@ -992,20 +988,18 @@ NKikimrSchemeOp::TTableDescription CalcFulltextDocsImplTableDesc(
+     const NSchemeShard::TTableInfo::TPtr& baseTableInfo,
+     const NKikimrSchemeOp::TPartitionConfig& baseTablePartitionConfig,
+     const THashSet<TString>& indexDataColumns,
+-    const NKikimrSchemeOp::TTableDescription& indexTableDesc,
+-    const NKikimrSchemeOp::TFulltextIndexDescription& indexDesc)
++    const NKikimrSchemeOp::TTableDescription& indexTableDesc)
+ {
+-    return CalcFulltextDocsImplTableDescImpl(baseTableInfo, baseTablePartitionConfig, indexDataColumns, indexTableDesc, indexDesc);
++    return CalcFulltextDocsImplTableDescImpl(baseTableInfo, baseTablePartitionConfig, indexDataColumns, indexTableDesc);
+ }
+ 
+ NKikimrSchemeOp::TTableDescription CalcFulltextDocsImplTableDesc(
+     const NKikimrSchemeOp::TTableDescription& baseT
+```
+
+**File**: `ydb/core/tx/schemeshard/index/index_utils.h` (modified, +8/-5)
+```diff
+@@ -142,15 +142,13 @@ NKikimrSchemeOp::TTableDescription CalcFulltextDocsImplTableDesc(
+     const NSchemeShard::TTableInfo::TPtr& baseTableInfo,
+     const NKikimrSchemeOp::TPartitionConfig& baseTablePartitionConfig,
+     const THashSet<TString>& indexDataColumns,
+-    const NKikimrSchemeOp::TTableDescription& indexTableDesc,
+-    const NKikimrSchemeOp::TFulltextIndexDescription& indexDesc);
++    const NKikimrSchemeOp::TTableDescription& indexTableDesc);
+ 
+ NKikimrSchemeOp::TTableDescription CalcFulltextDocsImplTableDesc(
+     const NKikimrSchemeOp::TTableDescription& baseTableDescr,
+     const NKikimrSchemeOp::TPartitionConfig& baseTablePartitionConfig,
+     const THashSet<TString>& indexDataColumns,
+-    const NKikimrSchemeOp::TTableDescription& indexTableDesc,
+-    const NKikimrSchemeOp::TFulltextIndexDescription& indexDesc);
++    const NKikimrSchemeOp::TTableDescription& indexTableDesc);
+ 
+ NKikimrSchemeOp::TTableDescription CalcFulltextDictImplTableDesc(
+     const NSchemeShard::TTableInfo::TPtr& baseTableInfo,
+@@ -176,6 +174,10 @@ NKikimrSchemeOp::TTableDescription CalcFulltextStatsImplTableDesc(
+     const NKikimrSchemeOp::TTableDescription& indexTableDesc,
+     const TVector<TString>& prefixColumns);
+ 
++TVector<NKikimrSchemeOp::TTableDescription> CalcIndexImplTables(
++    const NKikimrSchemeOp::TTableDescription& baseTable,
++    const NKikimrSchemeOp::TIndexCreationConfig& indexDesc);
++
+ TTableColumns ExtractInfo(const NSchemeShard::TTableInfo::TPtr& tableInfo);
+ TTableColumns ExtractInfo(const NKikimrSchemeOp::TTableDescription& tableDesc);
+ TIndexColumns ExtractInfo(const NKikimrSchemeOp::TIndexCreationConfig& indexDesc);
+@@ -200,7 +202,8 @@ bool IsCompatibleKeyTypes(
+     bool uniformTable,
+     TString& explain);
+ 
+-// Fulltext and JSON indexes require exactly one Int64/Int32/Uint64/Uint32 primary key column
++// Fulltext and JSON indexes without RowId require exactly one Int64/Int32/Uint64/Uint32 primary key column
++bool IsSingleIntegerPrimaryKey(const TTableColumns& baseTableColumns, const TColumnTypes& baseColumnTypes);
+ bool CheckSingleIntegerPrimaryKey(
+     const TTableColumns& baseTableColumns,
+     const TColumnTypes& baseColumnTypes,
+```
+
+**File**: `ydb/core/tx/schemeshard/index/operation_create_build_index.cpp` (modified, +2/-2)
+```diff
+@@ -369,7 +369,7 @@ TVector<ISubOperation::TPtr> CreateBuildIndex(TOperationId opId, const TTxTransa
+ 
+             if (indexType == NKikimrSchemeOp::EIndexTypeGlobalFulltextCompactRelevance) {
+                 const THashSet<TString> indexDataColumns{indexDesc.GetDataColumnNames().begin(), indexDesc.GetDataColumnNames().end()};
+-                result.push_back(createImplTable(CalcFulltextDocsImplTableDesc(tableInfo, tableInfo->PartitionConfig(), indexDataColumns, docsTableDesc, indexDesc.GetFulltextIndexDescription())));
++                result.push_back(createImplTable(CalcFulltextDocsImplTableDesc(tableInfo, tableInfo->PartitionConfig(), indexDataColumns, docsTableDesc)));
+                 result.push_back(createImplTable(CalcFulltextStatsImplTableDesc(tableInfo, tableInfo->PartitionConfig(), statsTableDesc, prefixColumns)));
+             }
+             break;
+@@ -402,7 +402,7 @@ TVector<ISubOperation::TPtr> CreateBuildIndex(TOperationId opId, const TTxTransa
+                 indexTableDesc, indexDesc.GetFulltextIndexDescription(), indexType, prefixColumns);
+             implTableDesc.MutablePartitionConfig()->MutableCompactionPolicy()->SetKeepEraseMarkers(true);
+             result.push_back(createImplTable(std::move(implTableDesc)));
+-            result.push_back(createImplTable(CalcFulltextDocsImplTableDesc(tableInfo, tableInfo->PartitionConfig(), indexDataColumns, docsTableDesc, indexDesc.GetFulltextIndexDescription())));
++            result.push_back(createImplTable(CalcFulltextDocsImplTableDesc(tableInfo, tableInfo->PartitionConfig(), indexDataColumns, docsTableDesc)));
+             result.push_back(createImplTable(CalcFulltextDictImplTableDesc(tableInfo, tableInfo->PartitionConfig(), dictTableDesc, indexDesc.GetFulltextIndexDescription())));
+             result.push_back(createImplTable(CalcFulltextStatsImplTableDesc(tableInfo, tableInfo->PartitionConfig(), statsTableDesc, prefixColumns)));
+             break;
+```
+
+**File**: `ydb/core/tx/schemeshard/index/operation_create_indexed_table.cpp` (modified, +2/-2)
+```diff
+@@ -526,7 +526,7 @@ TVector<ISubOperation::TPtr> CreateIndexedTable(TOperationId nextId, const TTxTr
+ 
+                 if (indexType == NKikimrSchemeOp::EIndexTypeGlobalFulltextCompactRelevance) {
+                     const THashSet<TString> indexDataColumns{indexDescription.GetDataColumnNames().begin(), indexDescription.GetDataColumnNames().end()};
+-                    result.push_back(createIndexImplTable(CalcFulltextDocsImplTableDesc(baseTableDescription, baseTableDescription.GetPartitionConfig(), indexDataColumns, docsTableDesc, indexDescription.GetFulltextIndexDescription())));
++                    result.push_back(createIndexImplTable(CalcFulltextDocsImplTableDesc(baseTableDescription, baseTableDescription.GetPartitionConfig(), indexDataColumns, docsTableDesc)));
+                     result.push_back(createIndexImplTable(CalcFulltextStatsImplTableDesc(baseTableDescription, baseTableDescription.GetPartitionConfig(), statsTableDesc, prefixColumns)));
+                 }
+                 break;
+@@ -555,7 +555,7 @@ TVector<ISubOperation::TPtr> CreateIndexedTable(TOperationId nextId, const TTxTr
+                 auto prefixColumns = NTableIndex::GetFulltextPrefixColumns(indexDescription.GetKeyColumnNames());
+                 result.push_back(createIndexImplTable(CalcFulltextImplTableDesc(baseTableDescription, baseTableDescription.GetPartitionConfig(),
+                     indexDataColumns, userIndexDesc, indexDescription.GetFulltextIndexDescription(), indexType, prefixColumns)));
+-                result.push_back(createIndexImplTable(CalcFulltextDocsImplTableDesc(baseTableDescription, baseTableDescription.GetPartitionConfig(), indexDataColumns, docsTableDesc, indexDescription.GetFulltextIndexDescription())));
++                result.push_back(createIndexImplTable(CalcFulltextDocsImplTableDesc(baseTableDescription, baseTableDescription.GetPartitionConfig(), indexDataColumns, docsTableDesc)));
+                 result.push_back(createIndexImplTable(CalcFulltextDictImplTableDesc(baseTableDescription, baseTableDescription.GetPartitionConfig(), dictTableDesc, indexDescription.GetFulltextIndexDescription())));
+                 result.push_back(createIndexImplTable(CalcFulltextStatsImplTableDesc(baseTableDescription, baseTableDescription.GetPartitionConfig(), statsTableDesc, prefixColumns)));
+                 break;
+```
+
+**File**: `ydb/core/tx/schemeshard/schemeshard_import__create.cpp` (modified, +50/-9)
+```diff
+@@ -56,17 +56,34 @@ concept HasIndexPopulationMode = requires(const T& t) {
+     { t.index_population_mode() } -> std::same_as<Ydb::Import::ImportFromS3Settings::IndexPopulationMode>;
+ };
+ 
+-bool PrepareNextBuildableIndex(const TImportInfo& importInfo, ui32 itemIdx, TItem& item) {
+-    if (!NeedToBuildIndexes(importInfo, itemIdx) || !item.Table) {
++bool PrepareNextBuildableIndex(TSchemeShard* ss, TItem& item) {
++    if (!item.Table || !item.DstPathId) {
+         return false;
+     }
+ 
+-    while (item.NextIndexIdx < item.Table->indexes_size() &&
+-           NTableIndex::IsLocalTableIndex(item.Table->indexes(item.NextIndexIdx).type_case())) {
+-        ++item.NextIndexIdx;
++    const TPath tablePath = TPath::Init(item.DstPathId, ss);
++    if (!tablePath.IsResolved()) {
++        return false;
++    }
++
++    while (item.NextIndexIdx < item.Table->indexes_size()) {
++        const auto& index = item.Table->indexes(item.NextIndexIdx);
++        if (NTableIndex::IsLocalTableIndex(index.type_case())) {
++            ++item.NextIndexIdx;
++            continue;
++        }
++
++        const auto indexPath = tablePath.Child(index.name());
++        if (indexPath.IsResolved() && !indexPath.IsDeleted()) {
++            // Already materialized or built.
++            ++item.NextIndexIdx;
++            continue;
++        }
++
++        return true;
+     }
+ 
+-    return item.NextIndexIdx < item.Table->indexes_size();
++    return false;
+ }
+ 
+ THashMap<EState, int> CountItemsByState(const TVector<TItem>& items) {
+@@ -1387,9 +1404,33 @@ struct TSchemeShard::TImport::TTxProgress: public TSchemeShard::TXxport::TTxBase
+             Self->RunningImportSchemeQueryExecutors.emplace(item.SchemeQueryExecutor);
+         } else if (item.Table) {
+             TString error;
+-            if (!CreateTablePropose(Self, TTxId(), *importInfo, msg.ItemIdx, error)) {
++            TVector<TString> indexesToBuild;
++            if (!CreateTablePropose(Self, TTxId(), *importInfo, msg.ItemIdx, error, indexesToBuild)) {
+                 return CancelAndPersist(db, importInfo, msg.ItemIdx, error, "invalid table scheme");
+             }
++
++            if (!indexesToBuild.empty()) {
++                THashSet<TString> warned;
++                THashSet<TString> toBuild(indexesToBuild.begin(), indexesToBuild.end());
++                for (auto it = item.MaterializedIndexes.begin(); it != item.MaterializedIndexes.end(); ) {
++                    const auto& prefix = it->first.ImplTablePrefix;
++                    const auto pos = prefix.find('/');
++                    const TString indexName = pos == TString::npos ? prefix : prefix.substr(0, pos);
++                    if (toBuild.contains(indexName)) {
++                        if (!warned.contains(indexName)) {
++                            if (item.Issue) {
++                                item.Issue += "\n";
++                            }
++                            item.Issue += TStringBuilder() << "index '" << indexName
++                                << "' scheme is incompatible with the backup, so it will be built from the table data";
++                            warned.insert(indexName);
++                        }
++                        it = item.MaterializedIndexes.erase(it);
++                    } else {
++                        it++;
++                    }
++                }
++            }
+         }
+ 
+         if (!IsCreatedByQuery(item)) {
+@@ -1979,7 +2020,7 @@ struct TSchemeShard::TImport::TTxProgress: public TSchemeShard::TXxport::TTxBase
+                 Cancel(*importInfo, itemIdx, "issues during restore " + *issue);
+                 Self->EraseEncryptionKey(db, *importInfo);
+             } else {
+-                if (PrepareNextBuildableIndex(*importInfo, itemIdx, item)) {
++                if (PrepareNextBuildableIndex(Self, item)) {
+                     item.State = EState::BuildIndexes;
+                     AllocateTxId(*importInfo, itemIdx);
+                 } else if (item.NextChangefeedIdx < item.Changefeeds.changefeeds_size() &&
+@@ -2010,7 +2051,7 @@ struct TSchemeShard::TImport::TTxProgress: public TSchemeShard::TXxport::TTxBase
+             if (item.Table) {
+                 ++item.NextIndexIdx;
+             }
+-            if (PrepareNextBuildableIndex(*importInfo, itemIdx, item)) {
++            if (PrepareNextBuildableIndex(Self, item)) {
+                 AllocateTxId(*importInfo, itemIdx);
+             } else if (item.NextChangefeedIdx < item.Changefeeds.changefeeds_size() &&
+                        AppData()->FeatureFlags.GetEnableChangefeedsImport()) {
+```
+
+**File**: `ydb/core/tx/schemeshard/schemeshard_import_flow_proposals.cpp` (modified, +127/-2)
+```diff
+@@ -1,11 +1,13 @@
+ #include "schemeshard_import_flow_proposals.h"
+ #include "schemeshard_import_helpers.h"
+ 
++#include "index/index_utils.h"
+ #include "schemeshard_path_describer.h"
+ #include "schemeshard_xxport__helpers.h"
+ 
+ #include <ydb/core/base/auth.h>
+ #include <ydb/core/base/path.h>
++#include <ydb/core/base/table_index.h>
+ #include <ydb/core/persqueue/public/schema/schema_propose.h>
+ #include <ydb/core/protos/s3_settings.pb.h>
+ #include <ydb/core/protos/fs_settings.pb.h>
+@@ -15,6 +17,8 @@
+ 
+ #include <google/protobuf/util/time_util.h>
+ 
++#define YDB_LOG_THIS_FILE_COMPONENT NKikimrServices::IMPORT
++
+ namespace NKikimr {
+ namespace NSchemeShard {
+ 
+@@ -44,12 +48,72 @@ static bool FillDefaultValues(
+     return true;
+ }
+ 
++namespace {
++
++// Returns true if the materialized impl tables of `indexDesc` from the backup can be restored into
++// the index as it would be created in this database. Returns false (and fills `error`) when they
++// cannot - for example when a backup of a compact fulltext index is restored with
++// EnableCompactFulltextIndex off. Such an index must not be materialized.
++bool CheckIndexMaterializationCompatible(
++    const NKikimrSchemeOp::TTableDescription& baseTable,
++    const NKikimrSchemeOp::TIndexCreationConfig& indexDesc,
++    const TImportInfo::TItem& item,
++    TString& error
++) {
++    THashMap<TString, NKikimrSchemeOp::TTableDescription> expected;
++    for (auto& tbl: NTableIndex::CalcIndexImplTables(baseTable, indexDesc)) {
++        expected[tbl.GetName()] = std::move(tbl);
++    }
++
++    const TString indexPrefix = TStringBuilder() << indexDesc.GetName() << "/";
++    for (const auto& [metadata, scheme] : item.MaterializedIndexes) {
++        if (!metadata.ImplTablePrefix.StartsWith(indexPrefix)) {
++            continue;
++        }
++
++        const TString implTableName = metadata.ImplTablePrefix.substr(indexPrefix.size());
++        auto expectedIt = expected.find(implTableName);
++        if (expectedIt == expected.end()) {
++            error = TStringBuilder() << "materialized index '" << indexDesc.GetName()
++                << "' has an impl table '" << implTableName << "' unexpected in this database";
++            return false;
++        }
++
++        NKikimrSchemeOp::TTableDescription backupDesc;
++        Ydb::StatusIds::StatusCode status;
++        TString parseError;
++        if (!FillColumnDescription(backupDesc, scheme.columns(), status, error)) {
++            error = TStringBuilder() << "cannot parse the materialized scheme of '" << metadata.ImplTablePrefix
++                << "': " << parseError;
++            return false;
++        }
++        backupDesc.MutableKeyColumnNames()->CopyFrom(scheme.primary_key());
++
++        google::protobuf::util::MessageDifferencer diff;
++        // TypeId is redundant with Type, and the backup scheme is parsed without it.
++        diff.IgnoreField(NKikimrSchemeOp::TColumnDescription::descriptor()->FindFieldByName("TypeId"));
++        if (!std::equal(backupDesc.GetColumns().begin(), backupDesc.GetColumns().end(),
++                expectedIt->second.GetColumns().begin(), [&](const auto& a, const auto& b) { return diff.Compare(a, b); }) ||
++            !std::equal(backupDesc.GetKeyColumnNames().begin(), backupDesc.GetKeyColumnNames().end(),
++                expectedIt->second.GetKeyColumnNames().begin())) {
++            error = TStringBuilder() << "materialized index '" << indexDesc.GetName()
++                << "' has a scheme incompatible with this database";
++            return false;
++        }
++    }
++
++    return true;
++}
++
++} // namespace
++
+ THolder<TEvSchemeShard::TEvModifySchemeTransaction> CreateTablePropose(
+     TSchemeShard* ss,
+     TTxId txId,
+     const TImportInfo& importInfo,
+     ui32 itemIdx,
+-    TString& error
++    TString& error,
++    TVector<TString>& indexesToBuild
+ ) {
+     Y_ABORT_UNLESS(itemIdx < importInfo.Items.size());
+     const auto& item = importInfo.Items.at(itemIdx);
+@@ -99,6 +163,65 @@ THolder<TEvSchemeShard::TEvModifySchemeTransaction> CreateTablePropose(
+             return nullptr;
+         }
+ 
++        // Indexes whose materialized data in the backup does not fit the layout created in this
++        // database (e.g. a compact fulltext index restored with EnableCompactFulltextIndex off) are
++        // not created materialized here. Instead they are left out of the create request and built
++        // from the restored table data afterwards (see PrepareNextBuildableIndex).
++        if (indexedTable.IndexDescriptionSize()) {
++            const auto& baseTable = indexedTable.GetTableDescription();
++
++            // An index is materialized if the backup has impl tables for it. Before the impl-table
++            // items are created this is known from the downloaded schemes; afterwards (and after a
++            // restart) - from the already created impl-table child items.
++            THashSet<TString> materializedIndexes;
++            if (item.MaterializedIndexes.empty()) {
++                const TSt
+```
+
+**File**: `ydb/core/tx/schemeshard/schemeshard_import_flow_proposals.h` (modified, +5/-1)
+```diff
+@@ -5,12 +5,16 @@
+ namespace NKikimr {
+ namespace NSchemeShard {
+ 
++// `indexesToBuild` receives the names of the indexes whose materialized data from the backup is
++// incompatible with the layout created in this database: they are left out of the create request
++// and must be built from the restored table data.
+ THolder<TEvSchemeShard::TEvModifySchemeTransaction> CreateTablePropose(
+     TSchemeShard* ss,
+     TTxId txId,
+     const TImportInfo& importInfo,
+     ui32 itemIdx,
+-    TString& error
++    TString& error,
++    TVector<TString>& indexesToBuild
+ );
+ 
+ THolder<TEvSchemeShard::TEvModifySchemeTransaction> CreateTablePropose(
+```
+
+**File**: `ydb/core/tx/schemeshard/ut_export/ut_export.cpp` (modified, +128/-1)
+```diff
+@@ -4904,7 +4904,8 @@ state: STATE_ENABLED
+             }
+         )", s3Port));
+         env.TestWaitNotification(runtime, txId);
+-        TestGetImport(runtime, txId, "/MyRoot", Ydb::StatusIds::SUCCESS);
++        const auto importResult = TestGetImport(runtime, txId, "/MyRoot", Ydb::StatusIds::SUCCESS);
++        UNIT_ASSERT_C(importResult.GetResponse().GetEntry().GetIssues().empty(), importResult.GetResponse().GetEntry().DebugString());
+ 
+         const TString importedIndexPath = "/MyRoot/TableImported/index";
+         TestDescribeResult(DescribePrivatePath(runtime, importedIndexPath), {
+@@ -5057,6 +5058,132 @@ state: STATE_ENABLED
+         DoTestIndexMaterializationFulltext(Env(), Runtime(), S3Mock(), S3Port(), "EIndexTypeGlobalFulltextCompactRelevance");
+     }
+ 
++    // The backup is made with EnableCompactFulltextIndex=true, but is restored into a database
++    // where the flag is false. The fulltext index type is not stored in the backup: it is
++    // re-derived from the target database flag, so the restored index must be non-compact while
++    // the materialized index data is still loaded from the backup. The SchemeShard must survive
++    // this mismatch (no crash).
++    void IndexMaterializationCompactFlagMismatch(
++        TTestEnv& env, TTestBasicRuntime& runtime, TS3Mock& s3Mock, ui16 s3Port,
++        bool withRelevance, bool withRowId)
++    {
++        runtime.SetLogPriority(NKikimrServices::EXPORT, NLog::PRI_TRACE);
++        runtime.SetLogPriority(NKikimrServices::IMPORT, NLog::PRI_TRACE);
++
++        ui64 txId = 100;
++        auto expectedIndexType = withRelevance
++            ? NKikimrSchemeOp::EIndexTypeGlobalFulltextRelevance
++            : NKikimrSchemeOp::EIndexTypeGlobalFulltextPlain;
++
++        TestCreateIndexedTable(runtime, ++txId, "/MyRoot", Sprintf(R"(
++            TableDescription {
++              Name: "Table"
++              Columns { Name: "key" Type: "%s" }
++              Columns { Name: "value" Type: "Utf8" }
++              KeyColumnNames: ["key"]
++            }
++            IndexDescription {
++              Name: "index"
++              KeyColumnNames: ["value"]
++              Type: %s
++              FulltextIndexDescription {
++                Settings {
++                  columns: {
++                    column: "value"
++                    analyzers: {
++                      tokenizer: STANDARD
++                      use_filter_lowercase: true
++                    }
++                  }
++                }
++              }
++            }
++        )", withRowId ? "String" : "Uint64", withRelevance ? "EIndexTypeGlobalFulltextCompactRelevance" : "EIndexTypeGlobalFulltextCompact"));
++        env.TestWaitNotification(runtime, txId);
++
++        // Backup made with the compact flag on.
++        TestExport(runtime, ++txId, "/MyRoot", Sprintf(R"(
++            ExportToS3Settings {
++              endpoint: "localhost:%d"
++              scheme: HTTP
++              include_index_data: true
++              items {
++                source_path: "/MyRoot/Table"
++                destination_prefix: ""
++              }
++            }
++        )", s3Port));
++        env.TestWaitNotification(runtime, txId);
++        TestGetExport(runtime, txId, "/MyRoot", Ydb::StatusIds::SUCCESS);
++
++        // Sanity check: the backup was made with the compact flag on, so it contains the
++        // compact index impl tables.
++        const TVector<TString> indexColumns{"value"};
++        const auto srcIndexType = DescribePrivatePath(runtime, "/MyRoot/Table/index")
++            .GetPathDescription().GetTableIndex().GetType();
++        for (const auto& implTable : NTableIndex::GetImplTables(srcIndexType, indexColumns)) {
++            UNIT_ASSERT_C(s3Mock.GetData().FindPtr(TStringBuilder() << "/index/" << implTable << "/scheme.pb"),
++                "backup must contain the compact impl table " << implTable);
++        }
++
++        // Restore into a database without the compact flag: flip the flag and reboot the
++        // SchemeShard so that it re-reads it.
++        runtime.GetAppData().FeatureFlags.SetEnableCompactFulltextIndex(false);
++        RebootTablet(runtime, TTestTxConfig::SchemeShard, runtime.AllocateEdgeActor());
++
++        TestImport(runtime, ++txId, "/MyRoot", Sprintf(R"(
++            ImportFromS3Settings {
++              endpoint: "localhost:%d"
++              scheme: HTTP
++              items {
++                source_prefix: ""
++                destination_path: "/MyRoot/TableImported"
++              }
++              index_population_mode: INDEX_POPULATION_MODE_IMPORT
++            }
++        )", s3Port));
++        env.TestWaitNotification(runtime, txId);
++        const auto importResult = TestGetImport(runtime, txId, "/MyRoot", Ydb::StatusIds::SUCCESS);
++
++        // The mismatch must not fail the import: the index is not restored but built from the
++        // restored table data, and the reason is reported in the import issues.
++        TString importIssues;
++        for (const auto& issue : i
+```
+
+---
+
+### Incident Patch 3: `b0891a0b` (2026-10-19)
+**Commit Message**: Fix short-circuiting in change-record precharging (#56084)
+
+**File**: `ydb/core/tx/datashard/datashard_change_sending.cpp` (modified, +5/-4)
+```diff
+@@ -34,12 +34,13 @@ class TDataShard::TTxRequestChangeRecords: public TTransactionBase<TDataShard> {
+ 
+                 bodiesSize += record.BodySize;
+ 
++                // Precharge every record in the batch even if an earlier page is not ready.
+                 if (itQueue->second.LockId) {
+-                    ok = ok && db.Table<Schema::LockChangeRecords>().Key(itQueue->second.LockId, itQueue->second.LockOffset).Precharge();
+-                    ok = ok && db.Table<Schema::LockChangeRecordDetails>().Key(itQueue->second.LockId, itQueue->second.LockOffset).Precharge();
++                    ok &= db.Table<Schema::LockChangeRecords>().Key(itQueue->second.LockId, itQueue->second.LockOffset).Precharge();
++                    ok &= db.Table<Schema::LockChangeRecordDetails>().Key(itQueue->second.LockId, itQueue->second.LockOffset).Precharge();
+                 } else {
+-                    ok = ok && db.Table<Schema::ChangeRecords>().Key(record.Order).Precharge();
+-                    ok = ok && db.Table<Schema::ChangeRecordDetails>().Key(record.Order).Precharge();
++                    ok &= db.Table<Schema::ChangeRecords>().Key(record.Order).Precharge();
++                    ok &= db.Table<Schema::ChangeRecordDetails>().Key(record.Order).Precharge();
+                 }
+             }
+         }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #56086** (2026-10-18): YDB CLI release 2.34.0 (@ydbot)
-- **PR #56074** (2026-10-18): Fix recursive schema removal of secrets (@asmyasnikov)
-- **PR #56066** (2026-10-18): [Backport stable-26-4-1] PR #55959: Add a feature flag to disable client data writes (@ydbot)
-- **PR #56064** (2026-10-18): [Backport stable-26-3-1-17-backup] PR #56054: Backport client modification feature flag to stable-26-3-1 (@ydbot)
-- **PR #56058** (2026-10-17): Fix inline pile race (@alexvru)
-- **PR #56057** (2026-10-17): Mute AlterTableSetDropDefaultAsyncIndexOnColumn (@n00bcracker)
+- **PR #56154** (2026-10-19): CODEOWNERS for kqp_analyze_ut.cpp (@azevaykin)
+- **PR #56140** (2026-10-19): Update Muted tests каждый час (@naspirato)
+- **PR #56137** (closed): [Backport stable-26-3] PR #56132: add min offset to pqconfig (@ydbot)
+- **PR #56134** (2026-10-19): Fix ubsan issues in BlobStorage (#27946) (@dcherednik)
+- **PR #56131** (2026-10-19): Cache parsed DataShard change records and release serialized bodies (@CyberROFL)
+- **PR #56130** (2026-10-19): Fix statistics test synchronization and serverless database context (@azevaykin)
 
 ---
 
@@ -2006,43 +1921,25 @@ Co-authored-by: Kaminskii Evgenii <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. replication admission and lost data recovery after a group generation change by 
+## X. YDBBACKPORT-1260 Fix segfault when tvm is broken (#56099)
 
 **RULE**:
-When implementing operations in `ydb/core/blobstorage/ut_blobstorage/recover_lost_data_generation.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ydb/services/deprecated/persqueue_v0/grpc_pq_write_actor.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fdb98cde`: replication admission and lost data recovery after a group generation change by tracking peers by position and refreshing the recovery job context (#56048). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4df7ac75`: YDBBACKPORT-1260 Fix segfault when tvm is broken (#56099). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/core/blobstorage/ut_blobstorage/recover_lost_data_generation.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/services/deprecated/persqueue_v0/grpc_pq_write_actor.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-#include <ydb/core/blobstorage/ut_blobstorage/lib/env.h>
-#include <ydb/core/blobstorage/ut_blobstorage/lib/common.h>
-#include <ydb/core/blobstorage/vdisk/common/vdisk_events.h>
+    if (!Token) {
+        CloseSession("Cannot check ACL without a user token", NPersQueue::NErrorCode::ACCESS_DENIED, ctx);
+        return;
+    }
 
-Y_UNIT_TEST_SUITE(RecoverLostDataGeneration) {
-
-    // A VDisk that lost its data runs one full sync proxy per peer. Hold the first requests of these proxies until
-    // the group generation changes, so that no peer is synced in the old generation, then let them go. Every retry
-    // after that must be made in the new generation, otherwise the peers reject it and recovery never completes.
-    Y_UNIT_TEST(CompletesAfterGenerationChange) {
-        constexpr ui32 nodeCount = 9;
-        TEnvironmentSetup env(TEnvironmentSetup::TSettings{
-            .NodeCount = nodeCount,
-            .Erasure = TBlobStorageGroupType::Erasure4Plus2Block,
-        });
-        env.CreateBoxAndPool(1, 1);
-        env.Sim(TDuration::Minutes(1));
-        const ui32 groupId = env.GetGroups().front();
-        auto info = env.GetGroupInfo(groupId);
-        const ui32 recoveringNode = info->GetActorId(0).NodeId();
-        const TString data(1024, 'S');
-        const TLogoBlobID blob(1, 1, 1, 0, data.size(), 0);
-        env.PutBlob(grou
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2052,4 +1949,4 @@ Y_UNIT_TEST_SUITE(RecoverLostDataGeneration) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fdb98cde` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4df7ac75` are properly handled with clean fallback behavior.

@@ -5423,10 +5423,10 @@
     "repository": "ydb-platform/ydb",
     "platform": "github",
     "sourceUrl": "https://github.com/ydb-platform/ydb",
-    "sourceVersion": "a0ec4712",
+    "sourceVersion": "81c6a3eb",
     "license": "Apache-2.0",
-    "contentHash": "38c77d50db1a3025e719f1a2cd2753a0d5fa92bfd41db87862c77758e75dfeb9",
-    "lastHarvestedAt": "2026-10-19T03:39:26.951Z",
+    "contentHash": "1a364d36308f79aabff66ef126f31df8f5373ed8ad5db4aa73bf9b6e6396241f",
+    "lastHarvestedAt": "2026-10-19T16:43:50.726Z",
     "learningId": "learn-github-ydb-platform-ydb"
   },
   "arco-design-arco-design-vue": {
@@ -6273,10 +6273,10 @@
     "repository": "carbon-design-system/carbon",
     "platform": "github",
     "sourceUrl": "https://github.com/carbon-design-system/carbon",
-    "sourceVersion": "48192318",
+    "sourceVersion": "50efc61f",
     "license": "Apache-2.0",
-    "contentHash": "e05c2a8268df9472f5d342dd7f38ce48b958c86ca2bbde5636fcdf1b49c1b68a",
-    "lastHarvestedAt": "2026-10-19T05:33:01.991Z",
+    "contentHash": "b88fac44e346aa477aee40f75845e4907dbb0ee7ad655254c656c2f6bbdec91c",
+    "lastHarvestedAt": "2026-10-19T16:43:34.811Z",
     "learningId": "learn-github-carbon-design-system-carbon"
   },
   "emilkowalski-vaul": {
@@ -8378,5 +8378,15 @@
     "contentHash": "b9a6ec9d54aca364c1fe82e1c980f88a3b9d04968d0092ac8cc3f83c0e549fba",
     "lastHarvestedAt": "2026-10-19T16:37:20.242Z",
     "learningId": "learn-github-touchlab-skie"
+  },
+  "touchlab-xcode-kotlin": {
+    "repository": "touchlab/xcode-kotlin",
+    "platform": "github",
+    "sourceUrl": "https://github.com/touchlab/xcode-kotlin",
+    "sourceVersion": "00970b1c",
+    "license": "Apache-2.0",
+    "contentHash": "83f174a0fc5f125605d011104fecfd9955d391ad1c2a3f6e8ed23d4b0dab632e",
+    "lastHarvestedAt": "2026-10-19T16:43:41.775Z",
+    "learningId": "learn-github-touchlab-xcode-kotlin"
   }
 }

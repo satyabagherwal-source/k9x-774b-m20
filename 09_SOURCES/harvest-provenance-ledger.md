@@ -3368,3 +3368,6 @@ Every entry in this ledger must capture:
 | `learn-github-touchlab-skie` | `https://github.com/touchlab/SKIE` | `e3e85015` | Multi-dimensional audit evidence | 2026-10-19T16:37:20.242Z |
 | `learn-github-kcl-lang-kcl` | `https://github.com/kcl-lang/kcl` | `d88ede7b` | Multi-dimensional audit evidence | 2026-10-19T16:37:22.277Z |
 | `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `da88ff86` | Multi-dimensional audit evidence | 2026-10-19T16:37:27.549Z |
+| `learn-github-carbon-design-system-carbon` | `https://github.com/carbon-design-system/carbon` | `50efc61f` | Multi-dimensional audit evidence | 2026-10-19T16:43:34.811Z |
+| `learn-github-touchlab-xcode-kotlin` | `https://github.com/touchlab/xcode-kotlin` | `00970b1c` | Multi-dimensional audit evidence | 2026-10-19T16:43:41.775Z |
+| `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `81c6a3eb` | Multi-dimensional audit evidence | 2026-10-19T16:43:50.726Z |
