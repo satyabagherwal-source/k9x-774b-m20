@@ -385,8 +385,8 @@
     "sourceUrl": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
     "sourceVersion": "hf-xingchen-agi-xing4.0-29b-a4b",
     "license": "Open-Source",
-    "contentHash": "91b49b937bdaf719c18b7af083b0be80dcb4b527df5496a4549ca0719ea3ee4b",
-    "lastHarvestedAt": "2026-10-17T22:53:57.171Z",
+    "contentHash": "e974c8fd7f414ad971584e2d372d55b87fe6c465fe5c2deb04d281af71f8cbfd",
+    "lastHarvestedAt": "2026-10-19T03:53:49.791Z",
     "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b"
   },
   "hf-supersoniclabs-julia-1": {
@@ -5478,5 +5478,55 @@
     "contentHash": "5b75bdb88e944276f87c81af024889c355a55ded7f36913a439252aaf5d72359",
     "lastHarvestedAt": "2026-10-19T03:47:36.147Z",
     "learningId": "learn-github-netflix-dynomite"
+  },
+  "salvo-rs-salvo": {
+    "repository": "salvo-rs/salvo",
+    "platform": "github",
+    "sourceUrl": "https://github.com/salvo-rs/salvo",
+    "sourceVersion": "071cc161",
+    "license": "Apache-2.0",
+    "contentHash": "cfac0697b785410e90ef52598b6a54602fddd4fc348f056c40604d2f11274a64",
+    "lastHarvestedAt": "2026-10-19T03:53:41.683Z",
+    "learningId": "learn-github-salvo-rs-salvo"
+  },
+  "react-metro": {
+    "repository": "react/metro",
+    "platform": "github",
+    "sourceUrl": "https://github.com/react/metro",
+    "sourceVersion": "2641b08f",
+    "license": "MIT",
+    "contentHash": "19f9b912478544f7a0eba43956f34bfb4b23a87e9cb6e93af87b17a3d05334e0",
+    "lastHarvestedAt": "2026-10-19T03:53:46.950Z",
+    "learningId": "learn-github-react-metro"
+  },
+  "checkmarx-kics": {
+    "repository": "Checkmarx/kics",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Checkmarx/kics",
+    "sourceVersion": "d06cb647",
+    "license": "Apache-2.0",
+    "contentHash": "7ac9f43a3d021b86bb8bd19f1d7af19e9ca16d911e083e021c27dfe73a2a0a9c",
+    "lastHarvestedAt": "2026-10-19T03:53:50.635Z",
+    "learningId": "learn-github-checkmarx-kics"
+  },
+  "olric-data-olric": {
+    "repository": "olric-data/olric",
+    "platform": "github",
+    "sourceUrl": "https://github.com/olric-data/olric",
+    "sourceVersion": "c49c44a8",
+    "license": "Apache-2.0",
+    "contentHash": "bd698514ba711b342540a28413bf2f7f85f5ff6ddad34b0ca93a81ac545cf1a4",
+    "lastHarvestedAt": "2026-10-19T03:53:54.699Z",
+    "learningId": "learn-github-olric-data-olric"
+  },
+  "carbon-design-system-carbon-components-svelte": {
+    "repository": "carbon-design-system/carbon-components-svelte",
+    "platform": "github",
+    "sourceUrl": "https://github.com/carbon-design-system/carbon-components-svelte",
+    "sourceVersion": "f4eb6edb",
+    "license": "Apache-2.0",
+    "contentHash": "75ce2f709d2685c1b43f05d49e538adf61987ff9636e84de75f162256e0e0fad",
+    "lastHarvestedAt": "2026-10-19T03:54:36.499Z",
+    "learningId": "learn-github-carbon-design-system-carbon-components-svelte"
   }
 }

@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md`  
+> **Source**: github ([https://github.com/salvo-rs/salvo](https://github.com/salvo-rs/salvo))  
+> **Source Version**: `071cc161`  
+> **License**: Apache-2.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T03:53:41.426Z  
+> **Learning ID**: `learn-github-salvo-rs-salvo`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): salvo-rs/salvo
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/salvo-rs/salvo](https://github.com/salvo-rs/salvo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T02:42:47.492Z  
+> **Harvest Timestamp**: 2026-10-19T03:53:41.269Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: A powerful web framework built with a simplified design.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4438 stars
+- **Stars / Engagement**: 4450 stars
 
 ---
 
@@ -1805,312 +1819,6 @@ where
 
 ```
 
-### Core Architecture Module: `crates/core/src/conn/native_tls/listener.rs`
-```
-//! native_tls module
-use std::error::Error as StdError;
-use std::fmt::{self, Debug, Formatter};
-use std::io::{Error as IoError, Result as IoResult};
-use std::sync::Arc;
-
-use arc_swap::ArcSwapOption;
-use futures_util::stream::{BoxStream, StreamExt};
-use http::uri::Scheme;
-use tokio::io::{AsyncRead, AsyncWrite};
-use tokio_native_tls::TlsStream;
-use tokio_util::sync::CancellationToken;
-
-use super::Identity;
-use crate::Error;
-use crate::conn::tcp::{DynTcpAcceptor, TcpCoupler, ToDynTcpAcceptor};
-use crate::conn::{Accepted, Acceptor, HandshakeStream, Holding, IntoConfigStream, Listener};
-use crate::fuse::ArcFusePolicy;
-
-/// NativeTlsListener
-pub struct NativeTlsListener<S, C, T, E> {
-    config_stream: S,
-    inner: T,
-    _phantom: std::marker::PhantomData<(C, E)>,
-}
-impl<S, C, T: Debug, E> Debug for NativeTlsListener<S, C, T, E> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        f.debug_struct("NativeTlsListener")
-            .field("inner", &self.inner)
-            .finish()
-    }
-}
-impl<S, C, T, E> NativeTlsListener<S, C, T, E>
-where
-    S: IntoConfigStream<C> + Send + 'static,
-    C: TryInto<Identity, Error = E> + Send + 'static,
-    T: Listener + Send,
-    E: StdError + Send,
-{
-    /// Create a new `NativeTlsListener`.
-    #[inline]
-    pub fn new(config_stream: S, inner: T) -> Self {
-        Self {
-            config_stream,
-            inner,
-            _phantom: std::marker::PhantomData,
-        }
-    }
-}
-
-impl<S, C, T, E> Listener for NativeTlsListener<S, C, T, E>
-where
-    S: IntoConfigStream<C> + Send + 'static,
-    C: TryInto<Identity, Error = E> + Send + 'static,
-    T: Listener + Send + 'static,
-    T::Acceptor: Send + 'static,
-    <T::Acceptor as Acceptor>::Stream: AsyncRead + AsyncWrite + Unpin + Send + 'static,
-    E: StdError + Send + 'static,
-{
-    type Acceptor = NativeTlsAcceptor<T::Acceptor>;
-
-    async fn try_bind(self) -> crate::Result<Self::Acceptor> {
-        let mut config_stream = self.config_stream.into_stream().boxed();
-        let initial = config_stream.next().await.ok_or_else(|| {
-            Error::other("native_tls: config stream ended before yielding an initial tls config")
-        })?;
-        let identity = initial
-            .try_into()
-            .map_err(|err| IoError::other(err.to_string()))?;
-        let acceptor = tokio_native_tls::native_tls::TlsAcceptor::new(identity)
-            .map_err(|err| IoError::other(err.to_string()))?;
-        let current_acceptor = Arc::new(ArcSwapOption::from(Some(Arc::new(
-            tokio_native_tls::TlsAcceptor::from(acceptor),
-        ))));
-        let inner = self.inner.try_bind().await?;
-        let cancel_reload = CancellationToken::new();
-
-        tracing::info!("tls config loaded");
-        tokio::spawn(reload_configs(
-            config_stream,
-            Arc::clone(&current_acceptor),
-            cancel_reload.clone(),
-        ));
-
-        Ok(NativeTlsAcceptor::new(
-            inner,
-            current_acceptor,
-            cancel_reload,
-        ))
-    }
-}
-
-async fn reload_configs<C, E>(
-    mut config_stream: BoxStream<'static, C>,
-    current_acceptor: Arc<ArcSwapOption<tokio_native_tls::TlsAcceptor>>,
-    cancel_reload: CancellationToken,
-) where
-    C: TryInto<Identity, Error = E> + Send + 'static,
-    E: StdError + Send + 'static,
-{
-    loop {
-        tokio::select! {
-            _ = cancel_reload.cancelled() => break,
-            next = config_stream.next() => {
-                let Some(config) = next else {
-                    break;
-                };
-                match config.try_into() {
-                    Ok(identity) => match tokio_native_tls::native_tls::TlsAcceptor::new(identity) {
-                        Ok(acceptor) => {
-                            current_acceptor.store(Some(Arc::new(tokio_native_tls::TlsAcceptor::from(
-                                acceptor,
-                            ))));
-                            tracing::info!("tls config changed");
-                        }
-                        Err(err) => {
-                            tracing::error!(error = ?err, "native_tls: invalid tls config, keeping previous config");
-                        }
-                    },
-                    Err(err) => {
-                        tracing::error!(error = ?err, "native_tls: invalid tls config, keeping previous config");
-                    }
-                }
-            }
-        }
-    }
-}
-
-/// NativeTlsAcceptor
-pub struct NativeTlsAcceptor<T> {
-    inner: T,
-    holdings: Vec<Holding>,
-    current_acceptor: Arc<ArcSwapOption<tokio_native_tls::TlsAcceptor>>,
-    cancel_reload: CancellationToken,
-}
-impl<T: Debug> Debug for NativeTlsAcceptor<T> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        f.debug_struct("NativeTlsAcceptor")
-            .field("inner", &self.inner)
-            .finish()
-    }
-}
-impl<T> NativeTlsAcceptor<T>
-where
-    T: Acceptor + Send + 'static,
-    <T as Acceptor>::Stream: AsyncRead + AsyncWrite + Unpin + Send,
-{
-    /// Create a new `NativeTlsAcceptor`.
-    pub fn new(
-        inner: T,
-        current_acceptor: Arc<ArcSwapOption<tokio_native_tls::TlsAcceptor>>,
-        cancel_reload: CancellationToken,
-    ) -> Self {
-        let holdings = inner
-            .holdings()
-            .iter()
-            .map(|h| {
-                #[allow(unused_mut)]
-                let mut versions = h.http_versions.clone();
-                #[cfg(feature = "http1")]
-                if !versions.contains(&crate::http::Version::HTTP_11) {
-                    versions.push(crate::http::Version::HTTP_11);
-                }
-                #[cfg(feature = "http2")]
-                if !versions.contains(&crate::http::Version::HTTP_2) {
-                    versions.push(crate::http::Version::HTTP_2);
-                }
-                Holding {
-                    local_addr: h.local_addr.clone(),
-                    http_versions: versions,
-                    http_scheme: Scheme::HTTPS,
-                }
-            })
-            .collect();
-        Self {
-            inner,
-            holdings,
-            current_acceptor,
-            cancel_reload,
-        }
-    }
-
-    /// Get the inner `Acceptor`.
-    pub fn inner(&self) -> &T {
-        &self.inner
-    }
-
-    /// Convert this `NativeTlsAcceptor` into a boxed `DynTcpAcceptor`.
-    pub fn into_boxed(self) -> Box<dyn DynTcpAcceptor> {
-        Box::new(ToDynTcpAcceptor(self))
-    }
-}
-
-impl<T> Drop for NativeTlsAcceptor<T> {
-    fn drop(&mut self) {
-        self.cancel_reload.cancel();
-    }
-}
-
-impl<T> Acceptor for NativeTlsAcceptor<T>
-where
-    T: Acceptor + Send + 'static,
-    <T as Acceptor>::Stream: AsyncRead + AsyncWrite + Unpin + Send,
-{
-    type Coupler = TcpCoupler<Self::Stream>;
-    type Stream = HandshakeStream<TlsStream<T::Stream>>;
-
-    #[inline]
-    fn holdings(&self) -> &[Holding] {
-        &self.holdings
-    }
-
-    #[inline]
-    async fn accept(
-        &mut self,
-        fuse_policy: Option<ArcFusePolicy>,
-    ) -> IoResult<Accepted<Self::Coupler, Self::Stream>> {
-        let Accepted {
-            coupler: _,
-            stream,
-            fuse_config,
-            conn_ctrl,
-            local_addr,
-            remote_addr,
-            ..
-        } = self.inner.accept(fuse_policy).await?;
-        let Some(tls_acceptor) = self.current_acceptor.load_full() else {
-            return Err(IoError::other("native_tls: no active tls config"));
-        };
-        let conn = async move { tls_acceptor.accept(stream).await.map_err(IoError::other) };
-        Ok(Accepted {
-            coupler: TcpCoupler::new(),
-            stream: HandshakeStream::new(conn, fuse_config),
-            fuse_config,
-            conn_ctrl,
-            local_addr,
-            remote_addr,
-            http_scheme: Scheme::HTTPS,
-        })
-    }
-}
-
-```
-
-### Core Architecture Module: `crates/core/src/conn/openssl.rs`
-```
-//! OpensslListener and utils.
-mod config;
-pub use config::{Keycert, OpensslConfig, SslAcceptorBuilder};
-
-mod listener;
-pub use listener::{OpensslAcceptor, OpensslListener};
-
-#[cfg(test)]
-mod tests {
-    use std::pin::Pin;
-
-    use openssl::ssl::{SslConnector, SslMethod};
-    use tokio::io::{AsyncReadExt, AsyncWriteExt};
-    use tokio::net::TcpStream;
-    use tokio_openssl::SslStream;
-
-    use super::*;
-    use crate::conn::{Accepted, Acceptor, Listener, TcpListener};
-
-    #[tokio::test]
-    async fn test_openssl_listener() {
-        let mut acceptor = TcpListener::new("127.0.0.1:0")
-            .openssl(OpensslConfig::new(
-                Keycert::new()
-                    .key_from_path("certs/key.pem")
-                    .unwrap()
-                    .cert_from_path("certs/cert.pem")
-                    .unwrap(),
-            ))
-            .bind()
-            .await;
-        let addr = acceptor.holdings()[0].local_addr.clone().into_std().unwrap();
-
-        tokio::spawn(async move {
-            let mut connector = SslConnector::builder(SslMethod::tls()).unwrap();
-            connector.set_ca_file("certs/chain.pem").unwrap();
-
-            let ssl = connector
-                .build()
-                .configure()
-                .unwrap()
-                .into_ssl("testserver.com")
-                .unwrap();
-
-            let stream = TcpStream::connect(addr).await.unwrap();
-            let mut tls_stream = SslStream::new(ssl, stream).unwrap();
-            Pin::new(&mut tls_stream).connect().await.unwrap();
-
-            tls_stream.write_i32(518).await.unwrap();
-        });
-
-        let Accepted { mut stream, .. } = acceptor.accept(None).await.unwrap();
-        assert_eq!(stream.read_i32().await.unwrap(), 518);
-    }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -2119,9 +1827,6 @@ mod tests {
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
 - **Issue #24** (2021-05-02): **master/examples/routing.rs  Compilation fails**
   *Symptoms*: - https://github.com/salvo-rs/salvo/blob/master/examples/routing.rs  **dependencies** ``` rustc 1.51.0 (2fd73fabe 2021-03-23) Deepin GNU/Linux 20.2  [dependencies] salvo = { version = "0.11", features = ["full"] } tokio = { version = "1", features = ["full"] } ```  **code** ``` use salvo::prelude::*;  #[tokio::main] async fn main() {     let debug_mode = true;     let admin_mode = true;     let router = Router::new()         .get(index)         .push(             Router::new()                 .path("users")                 .before(auth)                 .post(create_user)                 .push(Router::new().path(r"<id:num>").post(update_user).delete(delete_user)),         )         .push(             Router::new()                 .path("users")                 .get(list_users)                 .push(Router::new().path(r"<id:num>").get(show_user)),         )         .then(|router| {             if debug_mode {                 router.push(Router::new().path("debug").get(debug))             } else {                 router             }         })         .then(|router| {             if admin_mode {                 router.push(Router::new().path("admin").get(admin))             } else {                 router             }         })         ;      Server::new(router).bind(([0, 0, 0, 0], 7878)).await; }  #[fn_handler] async fn admin(res: &mut Response) {     res.render_plain_text("Admin page"); } #[fn_handler] async fn debu
-  **Post-Mortem & Fix Analysis**:
-  > Thank you for your report, this is a bug, I have submitted the corresponding fix, hope it will help you 
-  > @driftluo Thanks for your PR.  @dollarkillerx You can use latest version 0.11.2. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2138,652 +1843,94 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9c36d16b` (2026-10-04)
-**Commit Message**: fix(quinn): finish QUIC handshakes on the connection task (#1711)
+### Incident Patch 1: `071cc161` (2026-10-11)
+**Commit Message**: fix(oapi): release the METADATA_REGISTRY read guard before recursing (#1714)
 
-* fix(quinn): finish QUIC handshakes on the connection task
+NormNode::new held a read guard on METADATA_REGISTRY across its recursion
+into child routers. With a writer-preferring RwLock (std on Linux), a
+concurrent oapi_security() write queues behind the outer guard, and the
+nested read() then queues behind the writer: both wait forever.
 
-QuinnAcceptor::accept awaited the whole QUIC handshake. That await sits
-inside JoinedListener's select!, so a TCP connection accepted mid-handshake
-dropped the future and lost the QUIC connection. And because the server
-accepts one connection at a time, each QUIC handshake held up every other
-QUIC accept for a round trip, or for tls_handshake_timeout if the client
-never finished.
+Clone the router's metadata out and drop the guard before recursing. Adds a
+test that builds documents while another thread calls oapi_security; it times
+out without the fix.
 
-accept now hands over the QuinnConnection as soon as quinn accepts the
-connection (Connecting::into_0rtt), carrying a future for the handshake.
-serve_connection awaits it on the connection's own task, still bounded by
-tls_handshake_timeout, before starting HTTP/3. The public types are
-unchanged.
-
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-
-* fix(quinn): cancel pending handshakes on graceful shutdown
-
----------
-
-Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-Co-authored-by: Chris Young <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +4/-0)
+**File**: `crates/oapi/src/routing.rs` (modified, +49/-7)
 ```diff
-@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
- 
- ### Fixed
- 
-+- A QUIC connection was dropped when a joined listener, such as the TCP side of a combined
-+  HTTP/1.1, HTTP/2 and HTTP/3 server, accepted a connection during its handshake. A client that
-+  never finished its handshake also stalled all new QUIC connections for up to
-+  `tls_handshake_timeout`.
- - Honor the `http1` and `http2` feature flags when enabling Hyper protocols. HTTP/1-only
-   builds, including WebSocket support, no longer compile `h2` unless another dependency
-   enables HTTP/2. Default protocol support is unchanged.
-```
-
-**File**: `crates/core/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -155,7 +155,7 @@ fastrand = { workspace = true }
- # Both backends on purpose: this makes rustls unable to pick a provider from crate features,
- # which is exactly the situation that used to panic. See `conn::rustls::default_crypto_provider`.
- rustls = { workspace = true, features = ["aws-lc-rs", "ring"] }
--tokio = { workspace = true, features = ["macros", "rt"] }
-+tokio = { workspace = true, features = ["macros", "rt", "test-util"] }
- 
- [lints]
- workspace = true
-```
-
-**File**: `crates/core/src/conn/quinn.rs` (modified, +14/-1)
-```diff
-@@ -4,6 +4,7 @@ use std::future::{Ready, ready};
- use std::io::Result as IoResult;
- use std::ops::{Deref, DerefMut};
- use std::sync::Arc;
-+use std::time::Duration;
- 
- use futures_util::future::{BoxFuture, FutureExt};
- use futures_util::stream::{Once, once};
-@@ -20,16 +21,28 @@ mod listener;
- pub use listener::{QuinnAcceptor, QuinnListener};
- 
- /// HTTP/3 connection.
-+///
-+/// Its QUIC handshake may still be in progress; [`Builder::serve_connection`] waits for it.
- #[allow(dead_code)]
- pub struct QuinnConnection {
-     inner: http3_quinn::Connection,
-     raw: quinn::Connection,
-+    /// Resolves once the QUIC handshake has completed (`true`) or timed out (`false`).
-+    handshake: BoxFuture<'static, bool>,
- }
- impl QuinnConnection {
--    pub(crate) fn new(raw: quinn::Connection) -> Self {
-+    /// `handshake_done` also resolves if the connection closes before the handshake completes.
-+    pub(crate) fn new(
-+        raw: quinn::Connection,
-+        handshake_done: quinn::ZeroRttAccepted,
-+        handshake_timeout: Option<Duration>,
-+    ) -> Self {
-+        let timeout = handshake_timeout.unwrap_or(Duration::MAX);
-+        let handshake = tokio::time::timeout(timeout, handshake_done).map(|done| done.is_ok());
-         Self {
-             inner: http3_quinn::Connection::new(raw.clone()),
-             raw,
-+            handshake: handshake.boxed(),
+@@ -104,14 +104,16 @@ impl NormNode {
+             metadata: inherited_metadata,
+             ..Self::default()
+         };
+-        let registry = METADATA_REGISTRY
++        // Clone out and release the guard before recursing into the children:
++        // re-acquiring a read lock while a writer is queued deadlocks.
++        let metadata = METADATA_REGISTRY
+             .read()
+-            .expect("failed to lock METADATA_REGISTRY for read");
+-        if let Some(metadata) = registry.get(&router.id) {
+-            node.metadata.tags.extend(metadata.tags.iter().cloned());
+-            node.metadata
+-                .securities
+-                .extend(metadata.securities.iter().cloned());
++            .expect("failed to lock METADATA_REGISTRY for read")
++            .get(&router.id)
++            .cloned();
++        if let Some(metadata) = metadata {
++            node.metadata.tags.extend(metadata.tags);
++            node.metadata.securities.extend(metadata.securities);
          }
-     }
-     /// Get inner quinn connection.
-```
-
-**File**: `crates/core/src/conn/quinn/builder.rs` (modified, +25/-2)
-```diff
-@@ -106,10 +106,33 @@ impl Builder {
-         graceful_stop_token: Option<CancellationToken>,
-     ) -> IoResult<()> {
-         let conn_ctrl = hyper_handler.conn_ctrl.clone();
--        let raw_conn = conn.quinn().clone();
-+        let crate::conn::quinn::QuinnConnection {
-+            inner,
-+            raw: raw_conn,
-+            handshake,
-+        } = conn;
-+        // A connection without a completed handshake has no requests to drain. Close it
-+        // promptly on graceful stop instead of keeping the server alive until it times out.
-+        let handshake_completed = tokio::select! {
-+            completed = handshake => completed,
-+            _ = async {
-+                if let Some(token) = &graceful_stop_token {
-+                    token.cancelled().await;
-+                } else {
-+                    pending::<()>().await;
-+                }
-+            } => {
-+                raw_conn.close(0u32.into(), b"server shutting down");
-+                return Ok(());
-+            }
-+        };
-+        if !handshake_completed {
-+            raw_conn.close(0u32.into(), b"handshake timed out");
-+            return Ok(());
-+        }
-         let mut conn = self
-             .inner
--            .build::<salvo_http3::quinn::Connection, bytes::Bytes>(conn.into_inner())
-+            .build::<salvo_http3::quinn::Connection, bytes::Bytes>(inner)
-             .await
-             .map_err(|e| IoError::other(format!("invalid connection: {e}")))?;
  
-```
-
-**File**: `crates/core/src/conn/quinn/listener.rs` (modified, +22/-27)
-```diff
-@@ -209,37 +209,32 @@ impl Acceptor for QuinnAcceptor {
-                 },
-                 None => None,
-             };
--            // Admission passed: take the incoming back to complete the handshake below.
--            //
--            // NOTE: the handshake await that follows is not itself cancellation-safe — if this
--            // future is dropped mid-handshake the connection is lost. Parking a mid-flight
--            // handshake future is materially more involved; only the admission phase is parked
--            // here, which closes the gap the async `FusePolicy` introduced.
-+            // Admission passed. Hand the connection over without awaiting its handshake, which
-+            // `serve_connection` awaits on the connection's own task. Awaiting it here would stall
-+            // every other accept, TCP included via `JoinedListener`, and would lose the
-+            // connection whenever this future is dropped mid-handshake.
-             let new_conn = self.pending.take().expect("incoming parked above");
--            // Of the fuse timeouts, QUIC enforces the handshake timeout here and the
--            // request-body timeout via the H3 body. The transport idle and write-stall
-+            // Of the fuse timeouts, QUIC enforces the handshake timeout in `serve_connection` and
-+            // the request-body timeout via the H3 body. The transport idle and write-stall
-             // timeouts are TCP/byte-stream concepts handled by `StraightStream`; QUIC relies on
-             // quinn's own `max_idle_timeout` and per-stream flow control instead (see the
-             // `FuseConfig` field docs).
--            let connected = match fuse_config.and_then(|config| config.tls_handshake_timeout) {
--                Some(timeout) => match tokio::time::timeout(timeout, new_conn).await {
--                    Ok(result) => result,
--                    Err(_) => continue,
--                },
--                None => new_conn.await,
--            };
--            return match connected {
--                Ok(conn) => Ok(Accepted {
--                    coupler: QuinnCoupler,
--                    stream: QuinnConnection::new(conn),
--                    fuse_config,
--                    conn_ctrl: crate::conn::ConnCtrl::new(),
--                    local_addr: self.holdings[0].local_addr.clone(),
--                    remote_addr: remote_addr.into(),
--                    http_scheme: self.holdings[0].http_scheme.clone(),
--                }),
--                Err(e) => Err(IoError::other(e.to_string())),
--            };
-+            let handshake_timeout = fuse_config.and_then(|config| config.tls_handshake_timeout);
-+            let connecting = new_conn
-+                .accept()
-+                .map_err(|e| IoError::other(e.to_string()))?;
-+            let (conn, handshake_done) = connecting
-+                .into_0rtt()
-+                .map_err(|_| IoError::other("quinn refused 0.5-RTT on a server connection"))?;
-+            return Ok(Accepted {
-+                coupler: QuinnCoupler,
-+                stream: QuinnConnection::new(conn, handshake_done, handshake_timeout),
-+                fuse_config,
-+                conn_ctrl: crate::conn::ConnCtrl::new(),
-+                local_addr: self.holdings[0].local_addr.clone(),
-+                remote_addr: remote_addr.into(),
-+                http_scheme: self.holdings[0].http_scheme.clone(),
-+            });
-         }
+         for filter in router.filters() {
+@@ -268,4 +270,44 @@ mod tests {
+             "/posts/article_{id}"
+         );
      }
- }
-```
-
-**File**: `crates/core/src/test.rs` (modified, +2/-0)
-```diff
-@@ -43,6 +43,8 @@
- mod client;
- mod request;
- mod response;
-+#[cfg(all(test, feature = "server", feature = "quinn"))]
-+mod quinn_accept;
- pub use client::TestClient;
- pub use request::{RequestBuilder, SendTarget};
- pub use response::ResponseExt;
-```
-
-**File**: `crates/core/src/test/quinn_accept.rs` (added, +235/-0)
-```diff
-@@ -0,0 +1,235 @@
-+//! Regression tests for accepting QUIC connections. Endpoints talk over an in-memory network, with
-+//! tokio's clock paused so that delays are exact. The client pads its ClientHello to span two
-+//! datagrams, as browsers' post-quantum ClientHellos do.
-+use std::collections::HashMap;
-+use std::io::{self, IoSliceMut};
-+use std::net::SocketAddr;
-+use std::pin::Pin;
-+use std::sync::atomic::{AtomicUsize, Ordering};
-+use std::sync::{Arc, Mutex};
-+use std::task::{Context, Poll, ready};
-+use std::time::Duration;
 +
-+use tokio::sync::mpsc;
-+use tokio::time::{Instant, sleep, sleep_until, timeout};
-+use tokio_util::sync::CancellationToken;
++    /// Building a document while another thread adds router metadata must not
++    /// deadlock: `NormNode::new` must not hold a registry read guard while it
++    /// recurses, or a queued writer blocks the nested read.
++    #[test]
++    fn merge_router_does_not_deadlock_against_concurrent_oapi_security() {
++        use std::sync::atomic::{AtomicBool, Ordering};
++        use std::sync::{Arc, mpsc};
++        use std::time::Duration;
 +
-+use crate::conn::JoinedAcceptor;
-+use crate::conn::quinn::QuinnAcceptor;
-+use crate::conn::rustls::{Keycert, RustlsConfig, default_crypto_provider, read_trust_anchor};
-+use crate::proto::quinn::udp::{RecvMeta, Transmit};
-+use crate::proto::quinn::{
-+    self, AsyncUdpSocket, ClientConfig, Endpoint, EndpointConfig, TokioRuntime, UdpPoller,
-+};
-+use crate::{Router, Server};
++        use salvo_core::Router;
 +
-+const ONE_WAY: Duration = Duration::from_millis(100);
-+const SHORT: Duration = Duration::from_millis(10);
++        use crate::{OpenApi, RouterExt, SecurityRequirement};
 +
-+/// Decides when the `n`th datagram a socket sends arrives, counting from 0; `None` drops it.
-+type Fate = fn(usize) -> Option<Duration>;
-+
-+type Datagram = (SocketAddr, Vec<u8>);
-+
-+/// In-memory UDP: the inboxes of all sockets, by address.
-+#[derive(Clone, Debug, Default)]
-+struct Network(Arc<Mutex<HashMap<SocketAddr, mpsc::UnboundedSender<Datagram>>>>);
-+
-+#[derive(Debug)]
-+struct Socket {
-+    addr: SocketAddr,
-+    fate: Fate,
-+    sent: AtomicUsize,
-+    outbox: mpsc::UnboundedSender<(Instant, Datagram)>,
-+    inbox: Mutex<mpsc::UnboundedReceiver<Datagram>>,
-+}
-+
-+impl Network {
-+    fn socket(&self, port: u16, fate: Fate) -> Arc<Socket> {
-+        let addr = SocketAddr::from(([127, 0, 0, 1], port));
-+        let (inbox_tx, inbox) = mpsc::unbounded_channel();
-+        self.0.lock().unwrap().insert(addr, inbox_tx);
-+        // Deliver in the order sent: quinn drops packets that arrive before their keys.
-+        let (outbox, mut queue) = mpsc::unbounded_channel::<(Instant, Datagram)>();
-+        let network = self.clone();
-+        tokio::spawn(async move {
-+            while let Some((due, (to, datagram))) = queue.recv().await {
-+                sleep_until(due).await;
-+                if let Some(inbox) = network.0.lock().unwrap().get(&to) {
-+                    let _ = inbox.send((addr, datagram));
-+                }
++        let (tx, rx) = mpsc::channel();
++        std::thread::spawn(move || {
++            let done = Arc::new(AtomicBool::new(false));
++            let writer = {
++                let done = Arc::clone(&done);
++                std::thread::spawn(move || {
++                    while !done.load(Ordering::Relaxed) {
++                        let _ =
++                            Router::new().oapi_security(SecurityRequirement::new("key", ["scope"]));
++                    }
++                })
++            };
++            for _ in 0..2_000 {
++                let tree = Router::with_path("a").push(
++                    Router::with_path("b")
++                        .push(Router::with_path("c").push(Router::with_path("d"))),
++                );
++                let _ = OpenApi::new("test", "0.0.1").merge_router(&tree);
 +            }
++            done.store(true, Ordering::Relaxed);
++            writer.join().expect("writer thread panicked");
++            tx.send(()).expect("receiver is alive");
 +        });
-+        Arc::new(Socket {
-+            addr,
-+            fate,
-+            sent: AtomicUsize::new(0),
-+            outbox,
-+            inbox: Mutex::new(inbox),
-+        })
++        rx.recv_timeout(Duration::from_secs(30))
++            .expect("merge_router deadlocked against a concurrent oapi_security");
 +    }
-+}
-+
-+impl AsyncUdpSocket for Socket {
-+    fn create_io_poller(self: Arc<Self>) -> Pin<Box<dyn UdpPoller>> {
-+        Box::pin(AlwaysWritable)
-+    }
-+
-+    fn try_send(&self, transmit: &Transmit<'_>) -> io::Result<()> {
-+        let n = self.sent.fetch_add(1, Ordering::SeqCst);
-+        if let Some(delay) = (self.fate)(n) {
-+            let datagram = (transmit.destination, transmit.contents.to_vec());
-+            let _ = self.outbox.send((Instant::now() + delay, datagram));
-+        }
-+        Ok(())
-+    }
-+
-+    fn poll_recv(
-+        &self,
-+        cx: &mut Context<'_>,
-+        bufs: &mut [IoSliceMut<'_>],
-+        meta: &mut [RecvMeta],
-+    ) -> Poll<io::Result<usize>> {
-+        let Some((from, datagram)) = ready!(self.inbox.lock().unwrap().poll_recv(cx)) else {
-+            return Poll::Pending;
-+        };
-+        bufs[0][..datagram.len()].copy_from_slice(&datagram);
-+        meta[0] = RecvMeta {
-+            addr: from,
-+            len: datagram.len(),
-+            stride: datagram.len(),
-+            ..RecvMeta::default()
-+        };
-+        Poll::Ready(Ok(1))
-+    }
-+
-+    fn local_addr(&self) -> io::Result<SocketAddr> {
-+        Ok(self.addr)
-+    }
-+}
-+
-+#[derive(Debug)]
-+struct AlwaysWritable;
-+impl UdpPoller for AlwaysWritable {
-+    fn poll_writable(self: Pin<&mut Self>, _: &mut Context<'_>) -> Poll<io::Result<()>> {
-+        Poll::Ready(Ok(()))
-+    }
-+}
-+
-+fn endpoint(socket: Arc<Socket>, server: Option<quinn::ServerConfig>) -> Endpoint {
-+    let runtime = Arc::new(TokioRuntime);
-+    Endpoint::new_with_abstract_socket(EndpointConfig::default(), server, socket, runtime).unwrap()
-+}
-+
-+fn acceptor(network: &Network, port: u16, fate: Fate) -> QuinnAcceptor {
-+    let cert = include_bytes!("../../certs/cert.pem").as_slice();
-+    let key = include_bytes!("../../certs/key.pem").as_slice();
-+    let config = RustlsConfig::new(Keycert::new().cert(cert).key(key));
-+    let socket = network.socket(port, fate);
-+    let endpoint = endpoint(socket.clone(), Some(config.try_into().unwrap()));
-+    QuinnAcceptor::new(endpoint, socket.addr, CancellationToken::new())
-+}
-+
-+fn client(network: &Network, port: u16, fate: Fate) -> Endpoint {
-+    let roots = read_trust_anchor(include_bytes!("../../certs/chain.pem")).unwrap();
-+    let mut tls =
+ }
 ```
 
 ---
 
-### Incident Patch 2: `331d1de6` (2026-10-04)
-**Commit Message**: fix(core): honor HTTP protocol feature flags (#1713)
-
-**File**: `.github/workflows/linux.yml` (modified, +27/-0)
-```diff
-@@ -120,3 +120,30 @@ jobs:
- 
-       - name: check --feature-powerset
-         run: cargo hack check --feature-powerset --depth 1 -Z avoid-dev-deps --exclude-features server --at-least-one-of aws-lc-rs,ring --exclude-no-default-features
-+
-+  protocols:
-+    name: Protocol features (${{ matrix.features }})
-+    runs-on: ubuntu-latest
-+    strategy:
-+      fail-fast: false
-+      matrix:
-+        features:
-+          - ''
-+          - 'server,http1'
-+          - 'server,http2'
-+          - 'server,http1,http2'
-+          - 'server,http1,websocket'
-+    steps:
-+      - uses: actions/checkout@v6
-+      - uses: dtolnay/rust-toolchain@stable
-+      - name: Check selected protocols
-+        run: cargo check -p salvo --no-default-features --features '${{ matrix.features }}'
-+      - name: Verify HTTP/2 is excluded when disabled
-+        if: ${{ !contains(matrix.features, 'http2') }}
-+        shell: bash
-+        run: |
-+          tree=$(cargo tree -p salvo --no-default-features --features '${{ matrix.features }}' --edges normal,build --prefix none)
-+          if grep -q '^h2 v' <<< "$tree"; then
-+            echo 'HTTP/2 was enabled unexpectedly'
-+            exit 1
-+          fi
-```
-
-**File**: `CHANGELOG.md` (modified, +6/-0)
-```diff
-@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
- 
- ## [Unreleased]
- 
-+### Fixed
-+
-+- Honor the `http1` and `http2` feature flags when enabling Hyper protocols. HTTP/1-only
-+  builds, including WebSocket support, no longer compile `h2` unless another dependency
-+  enables HTTP/2. Default protocol support is unchanged.
-+
- ## [1.0.0] - 2026-09-24
- 
- ### Security
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -81,7 +81,7 @@ http-body-util = "0.1"
- hmac = "0.13"
- hex = "0.4"
- hostname-validator = "1"
--hyper = { version = "1", features = ["full"] }
-+hyper = { version = "1", default-features = false }
- hyper-rustls = { version = "0.27", default-features = false }
- hyper-util = { version = "0.1", default-features = true }
- indexmap = "2"
-```
-
-**File**: `crates/core/Cargo.toml` (modified, +2/-2)
-```diff
-@@ -54,7 +54,7 @@ aws-lc-rs = ["tokio-rustls?/aws-lc-rs", "quinn?/rustls-aws-lc-rs"]
- ring = ["tokio-rustls?/ring", "quinn?/rustls-ring"]
- server = []
- server-handle = []
--http1 = []
-+http1 = ["hyper/http1"]
- http2 = ["hyper/http2"]
- http2-cleartext = ["http2"]
- quinn = ["dep:salvo-http3", "dep:quinn", "dep:h3-datagram", "rustls"]
-@@ -99,7 +99,7 @@ h3-datagram = { workspace = true, optional = true }
- headers = { workspace = true }
- http = { workspace = true }
- http-body-util = { workspace = true }
--hyper = { workspace = true, features = ["http1", "client", "server"] }
-+hyper = { workspace = true, features = ["client", "server"] }
- indexmap = { workspace = true }
- mime = { workspace = true }
- mime-infer = { workspace = true }
-```
-
-**File**: `crates/core/src/lib.rs` (modified, +4/-0)
-```diff
-@@ -23,6 +23,10 @@
- //! | `anyhow` | Integrate with the [`anyhow`](https://crates.io/crates/anyhow) crate | ❌ |
- //! | `eyre` | Integrate with the [`eyre`](https://crates.io/crates/eyre) crate | ❌ |
- //! | `rfc9457` | RFC 9457 Problem Details responses | ❌ |
-+//!
-+//! To build an HTTP/1-only server, disable default features and enable `server`
-+//! and `http1`. Other dependencies can still enable Hyper's HTTP/2 support through
-+//! Cargo feature unification.
- #![doc(html_favicon_url = "https://salvo.rs/favicon-32x32.png")]
- #![doc(html_logo_url = "https://salvo.rs/images/logo.svg")]
- #![cfg_attr(docsrs, feature(doc_cfg))]
-```
-
-**File**: `crates/extra/Cargo.toml` (modified, +0/-1)
-```diff
-@@ -75,7 +75,6 @@ http-body-util = { workspace = true, optional = true }
- hyper = { workspace = true, features = [
-     "server",
-     "http1",
--    "http2",
-     "client",
- ], optional = true }
- pin-project = { workspace = true, optional = true }
-```
-
-**File**: `crates/salvo/src/lib.rs` (modified, +11/-0)
-```diff
-@@ -63,6 +63,17 @@
- //! cryptography providers. Enable only one in normal builds. If Cargo feature
- //! unification enables both, call `jwt_auth::install_crypto_provider()` before
- //! any JWT operation.
-+//!
-+//! To build an HTTP/1-only server without compiling the `h2` dependency:
-+//!
-+//! ```toml
-+//! [dependencies]
-+//! salvo = { version = "1", default-features = false, features = ["server", "http1"] }
-+//! ```
-+//!
-+//! Add other features as needed. Cargo features are additive: `full`, `http2`,
-+//! `http2-cleartext`, or dependencies that enable Hyper's HTTP/2 support (such as
-+//! `proxy`, `acme`, and the OIDC client in `jwt-auth`) will compile `h2` again.
- #![doc(html_favicon_url = "https://salvo.rs/favicon-32x32.png")]
- #![doc(html_logo_url = "https://salvo.rs/images/logo.svg")]
- #![cfg_attr(docsrs, feature(doc_cfg))]
-```
-
----
-
-### Incident Patch 3: `e011f4d2` (2026-09-24)
-**Commit Message**: fix(examples): align OpenTelemetry examples with 0.33 (#1710)
-
-**File**: `examples/Cargo.toml` (modified, +1/-2)
-```diff
-@@ -42,9 +42,8 @@ futures = "0.3.31"
- opentelemetry = "0.33"
- opentelemetry-appender-tracing = "0.33"
- opentelemetry-http = "0.33"
--opentelemetry-otlp = "0.33"
-+opentelemetry-otlp = { version = "0.33", default-features = false }
- opentelemetry_sdk = "0.33"
--opentelemetry-semantic-conventions = "0.33"
- 
- argon2 = "0.5.3"
- dotenvy = "0.15.6"
-```
-
-**File**: `examples/logging-otlp/Cargo.toml` (modified, +1/-3)
-```diff
-@@ -11,9 +11,7 @@ salvo = { workspace = true, features = ["logging"] }
- tokio = { workspace = true, features = ["macros"] }
- tracing.workspace = true
- tracing-subscriber = { workspace = true, features = ["env-filter"] }
--opentelemetry = { workspace = true }
- opentelemetry-appender-tracing = { workspace = true }
--opentelemetry-otlp = { workspace = true, features = ["grpc-tonic"] }
-+opentelemetry-otlp = { workspace = true, features = ["grpc-tonic", "logs"] }
- opentelemetry_sdk = { workspace = true, features = ["rt-tokio"] }
--opentelemetry-semantic-conventions = { workspace = true }
- tracing-appender = { workspace = true }
-```
-
-**File**: `examples/otel-jaeger/Cargo.toml` (modified, +2/-7)
-```diff
-@@ -22,13 +22,8 @@ salvo = { workspace = true, features = ["affix-state", "otel"] }
- tokio = { workspace = true, features = ["macros"] }
- tracing.workspace = true
- tracing-subscriber.workspace = true
--opentelemetry = { workspace = true, features = ["metrics"] }
-+opentelemetry = { workspace = true, features = ["trace"] }
- reqwest = { workspace = true }
- opentelemetry-http.workspace = true
- opentelemetry_sdk = { workspace = true, features = ["rt-tokio"] }
--opentelemetry-otlp = { workspace = true, features = [
--    "http-proto",
--    "tonic",
--    "trace",
--    "reqwest",
--] }
-+opentelemetry-otlp = { workspace = true, features = ["grpc-tonic", "trace"] }
-```
-
-**File**: `examples/otel-jaeger/README.md` (modified, +1/-1)
-```diff
-@@ -3,7 +3,7 @@
- First make sure you have a running version of the Jaeger instance you want to send data to:
- 
- ```shell
--docker run -d -e COLLECTOR_OTLP_ENABLED=true -p6831:6831/udp -p6832:6832/udp -p16686:16686 -p14268:14268 jaegertracing/all-in-one:latest
-+docker run -d -e COLLECTOR_OTLP_ENABLED=true -p16686:16686 -p4317:4317 jaegertracing/all-in-one:latest
- ```
- 
- Launch the servers:
-```
-
-**File**: `examples/otel-jaeger/src/client.rs` (modified, +1/-1)
-```diff
-@@ -13,7 +13,7 @@ fn init_tracer_provider() -> SdkTracerProvider {
-     global::set_text_map_propagator(TraceContextPropagator::new());
-     let exporter = opentelemetry_otlp::SpanExporter::builder()
-         .with_tonic()
--        .with_endpoint("http://localhost:14268/api/traces")
-+        .with_endpoint("http://localhost:4317")
-         .build()
-         .expect("failed to create exporter");
-     SdkTracerProvider::builder()
-```
-
----
-
-### Incident Patch 4: `fcff5db2` (2026-09-24)
-**Commit Message**: build(deps): upgrade OpenTelemetry crates to 0.33 together (#1709)
-
-**File**: `Cargo.toml` (modified, +4/-4)
-```diff
-@@ -96,10 +96,10 @@ multimap = "0.10"
- native-tls = "0.2"
- nix = { version = "0.31", default-features = false }
- openssl = { version = "0.10" }
--opentelemetry = { version = "0.32", default-features = false }
--opentelemetry-http = { version = "0.32", default-features = false }
--opentelemetry-semantic-conventions = { version = "0.32", default-features = false }
--opentelemetry_sdk = { version = "0.32", default-features = false }
-+opentelemetry = { version = "0.33", default-features = false }
-+opentelemetry-http = { version = "0.33", default-features = false }
-+opentelemetry-semantic-conventions = { version = "0.33", default-features = false }
-+opentelemetry_sdk = { version = "0.33", default-features = false }
- parking_lot = "0.12"
- path-slash = "0.2"
- percent-encoding = "2"
-```
-
-**File**: `crates/otel/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -27,7 +27,7 @@ opentelemetry-http = { workspace = true }
- opentelemetry-semantic-conventions = { workspace = true, features = [
-     "semconv_experimental",
- ] }
--opentelemetry = { workspace = true, features = ["metrics"] }
-+opentelemetry = { workspace = true, features = ["metrics", "trace"] }
- percent-encoding = { workspace = true }
- salvo_core = { workspace = true, default-features = false }
- tracing = { workspace = true }
-```
-
-**File**: `examples/Cargo.toml` (modified, +7/-7)
-```diff
-@@ -39,12 +39,12 @@ eyre = "0.6.12"
- tera = "1.20.1"
- futures = "0.3.31"
- 
--opentelemetry = "0.32"
--opentelemetry-appender-tracing = "0.32"
--opentelemetry-http = "0.32"
--opentelemetry-otlp = "0.32"
--opentelemetry_sdk = "0.32"
--opentelemetry-semantic-conventions = "0.32"
-+opentelemetry = "0.33"
-+opentelemetry-appender-tracing = "0.33"
-+opentelemetry-http = "0.33"
-+opentelemetry-otlp = "0.33"
-+opentelemetry_sdk = "0.33"
-+opentelemetry-semantic-conventions = "0.33"
- 
- argon2 = "0.5.3"
- dotenvy = "0.15.6"
-@@ -80,4 +80,4 @@ salvo-oapi = { path = "../crates/oapi" }
- rand_core = "0.9.3"
- 
- toasty = { version = "0.8.0", default-features = false }
--jiff = "0.2.23"
-\ No newline at end of file
-+jiff = "0.2.23"
-```
-
----
-
-### Incident Patch 5: `6aec86a8` (2026-09-24)
+### Incident Patch 2: `6aec86a8` (2026-09-24)
 **Commit Message**: fix(serve-static): block paths beneath dot directories (#1708)
 
 **File**: `crates/serve-static/src/dir.rs` (modified, +2/-6)
@@ -2875,71 +2022,7 @@ Co-authored-by: Chris Young <[REDACTED_EMAIL]>
 
 ---
 
-### Incident Patch 6: `9beb091f` (2026-09-08)
-**Commit Message**: build(deps): update zstd requirement from 0.13 to 0.14 (#1703)
-
-Updates the requirements on [zstd](https://github.com/gyscos/zstd-rs) to permit the latest version.
-- [Release notes](https://github.com/gyscos/zstd-rs/releases)
-- [Commits](https://github.com/gyscos/zstd-rs/compare/v0.13.0...v0.14.0)
-
----
-updated-dependencies:
-- dependency-name: zstd
-  dependency-version: 0.14.0
-  dependency-type: direct:production
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -152,7 +152,7 @@ x509-parser = "0.18"
- # Compress
- brotli = { version = "9", default-features = false }
- flate2 = { version = "1", default-features = false }
--zstd = { version = "0.13", default-features = false }
-+zstd = { version = "0.14", default-features = false }
- 
- [workspace.lints.rust]
- missing_debug_implementations = "warn"
-```
-
----
-
-### Incident Patch 7: `51be2933` (2026-09-07)
-**Commit Message**: build(deps): update brotli requirement from 8 to 9 (#1701)
-
-Updates the requirements on [brotli](https://github.com/dropbox/rust-brotli) to permit the latest version.
-- [Release notes](https://github.com/dropbox/rust-brotli/releases)
-- [Commits](https://github.com/dropbox/rust-brotli/compare/8.0.0...9.0.0)
-
----
-updated-dependencies:
-- dependency-name: brotli
-  dependency-version: 9.0.0
-  dependency-type: direct:production
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -149,7 +149,7 @@ uuid = "1"
- x509-parser = "0.18"
- 
- # Compress
--brotli = { version = "8", default-features = false }
-+brotli = { version = "9", default-features = false }
- flate2 = { version = "1", default-features = false }
- zstd = { version = "0.13", default-features = false }
- 
-```
-
----
-
-### Incident Patch 8: `8f5d643f` (2026-09-03)
+### Incident Patch 3: `8f5d643f` (2026-09-03)
 **Commit Message**: fix(tls): pass the rustls CryptoProvider explicitly instead of relying on crate features (#1699)
 
 * fix(tls): pass the rustls CryptoProvider explicitly
@@ -3344,877 +2427,13 @@ also make
  
 ```
 
----
-
-### Incident Patch 9: `d2773533` (2026-08-25)
-**Commit Message**: fix(webtransport): generate short-lived certificate at startup (#1698)
-
-* fix(webtransport): generate short-lived certificate at startup
-
-Generate a P-256 development certificate when the example starts and provide its SHA-256 hash to same-origin WebTransport clients.
-
-Remove the checked-in certificate, private key, and expired origin trial token. Reuse the existing AWS-LC backend for certificate generation.
-
-Fixes #1226
-
-* fix(webtransport): resolve relative client URLs
-
-Resolve WebTransport targets against the page URL before checking their origin so relative paths such as /counter continue to work.
-
-**File**: `examples/webtransport/Cargo.toml` (modified, +3/-0)
-```diff
-@@ -15,3 +15,6 @@ tracing-subscriber.workspace = true
- serde = "1"
- serde_json = "1"
- bytes = "1"
-+rcgen = { version = "0.14", default-features = false, features = ["aws_lc_rs", "pem"] }
-+sha2 = "0.11"
-+time.workspace = true
-```
-
-**File**: `examples/webtransport/certs/cert.pem` (removed, +0/-24)
-```diff
-@@ -1,24 +0,0 @@
-------BEGIN CERTIFICATE-----
--MIIEDDCCAnSgAwIBAgIQLu2TV80hCgYgZe18ovEhmzANBgkqhkiG9w0BAQsFADBZ
--MR4wHAYDVQQKExVta2NlcnQgZGV2ZWxvcG1lbnQgQ0ExFzAVBgNVBAsMDmh1eXV1
--bWlAcmlyaWthMR4wHAYDVQQDDBVta2NlcnQgaHV5dXVtaUByaXJpa2EwHhcNMTkw
--NjAxMDAwMDAwWhcNMzAwNTE5MDM0MjI2WjBCMScwJQYDVQQKEx5ta2NlcnQgZGV2
--ZWxvcG1lbnQgY2VydGlmaWNhdGUxFzAVBgNVBAsMDmh1eXV1bWlAcmlyaWthMIIB
--IjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5fRUIbEv2DjBmK7+syGVvh3I
--FWDlVjU9N7ypxauQbXPHAzpATzghLnpm5CqQFoTnJwA4//A85775djcVlsAUqen2
--ZYi+4jTYeuRLrAJ0dkrUS8/7+T0fGzGZ8obCsII5iSE2BMS7AxbqlQtClDdkNwcK
--rCuzrmIyMA8Bc2V231xIgcWFJ7en8OaZJRlYYK7kp2cJ8g0PbPnVq+9TAfFYcKEy
--FWqJsYYY36bLbWyqYXGMOtAh2bhy+YGYL3Jhk+cw7iMCjye4FbDAIQzt9cH1KGGM
--2VWZFiwn6VJquX1Z+n9KAhfzxuzYQHSrlJ+Rt++gezpTtNw8q15Ko78oiu7CLQID
--AQABo2cwZTAOBgNVHQ8BAf8EBAMCBaAwEwYDVR0lBAwwCgYIKwYBBQUHAwEwDAYD
--VR0TAQH/BAIwADAfBgNVHSMEGDAWgBSljCjB0QNrBG+8BV3nFnUyBn54jjAPBgNV
--HREECDAGhwR/AAABMA0GCSqGSIb3DQEBCwUAA4IBgQAsUrfA8deCaHYy7wB1jEVK
--pNZKRNcDKxqr/PXJQlfwwlq1qZTBzloMNTzfVBRkn/I7y+Bj/b1uYFmjQoQ3qG9s
--tIXFCYOop1cLltmWXC479/UtbEmhz0t+mzK0MFkLhxtbKqwvMGbcGGDFI/2/MGZN
--XFZXL1bclFieZxO5ePEkZSDkPcWvh9uYWCp8r7H6aAd/iwH4lDxfajyhDneRmd/v
--Mq0PgqTZhVHOP7JdVNA+6cewROyPL7ElLs66ujE9hsRvs6eXLjgLZrHOZShnoQxK
--JJv8UfoE90FX1uDt9w9i3raig/O3oePNkU263kJlR+J1rdVdYV+pCCb7L4Vk+1l3
--S4VFVGVHN8x35dISCJwZrtnqPlfpCiLjtEJOu1zJUEY2Q0n7Km3z3zQcs6iCeOQi
--O9MVJ4aiALdNvyCG7lL4+AJ/kWbwHFM6wOAKSrkpZ20msMuEgIlhCOi8PgYlKb+b
--V/lV6IJPVrAOOclgcvtfZ/LdsTxn15yLIieqgR0Lf/s=
-------END CERTIFICATE-----
-```
-
-**File**: `examples/webtransport/certs/key.pem` (removed, +0/-28)
-```diff
-@@ -1,28 +0,0 @@
-------BEGIN PRIVATE KEY-----
--MIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDl9FQhsS/YOMGY
--rv6zIZW+HcgVYOVWNT03vKnFq5Btc8cDOkBPOCEuembkKpAWhOcnADj/8Dznvvl2
--NxWWwBSp6fZliL7iNNh65EusAnR2StRLz/v5PR8bMZnyhsKwgjmJITYExLsDFuqV
--C0KUN2Q3BwqsK7OuYjIwDwFzZXbfXEiBxYUnt6fw5pklGVhgruSnZwnyDQ9s+dWr
--71MB8VhwoTIVaomxhhjfpsttbKphcYw60CHZuHL5gZgvcmGT5zDuIwKPJ7gVsMAh
--DO31wfUoYYzZVZkWLCfpUmq5fVn6f0oCF/PG7NhAdKuUn5G376B7OlO03DyrXkqj
--vyiK7sItAgMBAAECggEBAIabZmAukz4zwwe4cDm1kC0wy73P8Y9sLMCivJKMYkff
--vQBjqd91kN7fIbmwPJYiCBlpZPRU0aIqxWZwyj9rgu0Pmn9G884AdzRAzRcMfNX9
--6ZXTUsFMCRhnCaHRRsgCAuIFwdQ6wOoHERxb8gZHAm+/vHyaPFz4+D3vmr7NBy+p
--fgpdDCGwkltKI73efk6H4oAeyztDwNev/TZ3Y+O3UKuAUfVReBX0us/lYgEf/KXV
--USd7envxACy+PDcqmn/HL6IUnbrc1zB92dmSSUUtLjOz//z1zM05ME/E2keMQwsW
--7LDen0Lm0Nh6AcOCxmnN4u0lJ3nWzU7PsHJKY/LznPUCgYEA5kQq/AG6LlL9Iu1E
--Y55AB1rkvseof41liaqXVccB5tr55IF75d0wPd6jF04W+x6LwmL6EUYPRGkkOdHE
--raz9CDE3a7hWbAghxIwLrI1s+faT5aaHG9o6mTeDyfgEEoBg8X2nQHQJPayDJZcW
--kiXQyHEtj/G4m/Y+WDFXastZz8MCgYEA/6c8+cI3Slvg3CZLG9f6rdAlrOSIQynF
--muXyVeUaxrU0OPC9H3WEwWv7n4adQU2g0L6TBTdlOOiv5SPIsOPQVN2JZVdxwg0V
--n5+7/WRrI9rAXnmu1x0q1e/TZ9Msggmrn5SdHaEfuug4DnHv4nct356joDwYB2i3
--xYl+yCSMd08CgYEAqduvOaasiG9/e7w6rqGV6dcK1hDCIxVSyXKloAjlRj5SCFXb
--53x6kakh9ZcNLMEjp4kLnqJnsLc+mcg7pUHuhZSIpVWdqqN1BV+pXOgWc22JO+bT
--05/vigaBmQLzPhKlcH6YWds+1dfkBl6lr7llgfa6/Wv6GlJTOwtqyMSow7ECgYEA
--zGQ8j8ICymRihh/ndL9cH5KGTI/5kRjYb1rgQGQG4E8HDW8LBRfDp5BZf9Tz7L3P
--kJSMnmMHflQqLJxLW4EHkpH7wxYCUQ589z2R4qhiMCw4GFBYxIsBMEGpVxyyPNTW
--baM3afTjlV8LUiEtlHWMK3h9gSIKZAIIytl+jy0JUGkCgYA3wrpcG3wgXeuEtoie
--ve/kFS5JRaOeV/9OLE2JGaGaumPlN0L14kCVvb6uqLa/P88BwBUxvGQ7FDBdh4sk
--ypuSe9ZPCNDgnsbnfM8QgFqIW6MDdizLtj7no1SKeaUU3JWWc0kH2KWMw/sYZ7ec
--0tcEInxEd7FbssGfMqF9fQtnNw==
-------END PRIVATE KEY-----
-```
-
-**File**: `examples/webtransport/src/main.rs` (modified, +65/-4)
-```diff
-@@ -2,9 +2,12 @@ use std::time::Duration;
- 
- use anyhow::{Context, Result};
- use bytes::Bytes;
-+use rcgen::{CertificateParams, KeyPair};
- use salvo::conn::rustls::{Keycert, RustlsConfig};
- use salvo::prelude::*;
- use salvo::proto::webtransport;
-+use sha2::{Digest, Sha256};
-+use time::{Duration as TimeDuration, OffsetDateTime};
- use tokio::io::{AsyncRead, AsyncReadExt, AsyncWrite, AsyncWriteExt};
- use tokio::pin;
- 
-@@ -15,6 +18,41 @@ macro_rules! log_result {
-         }
-     };
- }
-+
-+#[derive(Debug)]
-+struct CertificateHash([u8; 32]);
-+
-+#[handler]
-+impl CertificateHash {
-+    async fn handle(&self) -> Json<[u8; 32]> {
-+        Json(self.0)
-+    }
-+}
-+
-+fn certificate_params(now: OffsetDateTime) -> Result<CertificateParams> {
-+    let mut params = CertificateParams::new(vec!["localhost".to_owned(), "127.0.0.1".to_owned()])?;
-+    // WebTransport permits certificate hashes only for short-lived certificates. Backdating by
-+    // one minute tolerates small clock differences while keeping the total lifetime under 14 days.
-+    params.not_before = now - TimeDuration::minutes(1);
-+    params.not_after = now + TimeDuration::days(13);
-+    Ok(params)
-+}
-+
-+fn generate_certificate() -> Result<(RustlsConfig, CertificateHash)> {
-+    let params = certificate_params(OffsetDateTime::now_utc())?;
-+    let signing_key = KeyPair::generate()?;
-+    let certificate = params.self_signed(&signing_key)?;
-+    let certificate_hash = Sha256::digest(certificate.der().as_ref()).into();
-+    let keycert = Keycert::new()
-+        .cert(certificate.pem().into_bytes())
-+        .key(signing_key.serialize_pem().into_bytes());
-+
-+    Ok((
-+        RustlsConfig::new(keycert),
-+        CertificateHash(certificate_hash),
-+    ))
-+}
-+
- async fn echo_stream<T, R>(send: T, recv: R) -> anyhow::Result<()>
- where
-     T: AsyncWrite,
-@@ -116,20 +154,19 @@ where
- }
- 
- #[tokio::main]
--async fn main() {
-+async fn main() -> Result<()> {
-     tracing_subscriber::fmt().init();
- 
--    let cert = include_bytes!("../certs/cert.pem").to_vec();
--    let key = include_bytes!("../certs/key.pem").to_vec();
-+    let (config, certificate_hash) = generate_certificate()?;
- 
-     let router = Router::new()
-         .push(Router::with_path("counter").goal(connect))
-+        .push(Router::with_path("certificate-hash").get(certificate_hash))
-         .push(
-             Router::with_path("{*path}")
-                 .get(StaticDir::new(["webtransport/static", "./static"]).defaults("client.html")),
-         );
- 
--    let config = RustlsConfig::new(Keycert::new().cert(cert.as_slice()).key(key.as_slice()));
-     let listener = TcpListener::new(("0.0.0.0", 8698)).rustls(config.clone());
- 
-     let acceptor = QuinnListener::new(config, ("0.0.0.0", 8698))
-@@ -138,4 +175,28 @@ async fn main() {
-         .await;
- 
-     Server::new(acceptor).serve(router).await;
-+    Ok(())
-+}
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+
-+    #[test]
-+    fn certificate_parameters_meet_webtransport_requirements() {
-+        let now = OffsetDateTime::now_utc();
-+        let params = certificate_params(now).unwrap();
-+
-+        assert!(params.not_before <= now);
-+        assert!(params.not_after >= now);
-+        assert!(params.not_after - params.not_before < TimeDuration::days(14));
-+    }
-+
-+    #[test]
-+    fn generated_certificate_builds_a_quinn_config() {
-+        let (config, certificate_hash) = generate_certificate().unwrap();
-+
-+        assert_ne!(certificate_hash.0, [0; 32]);
-+        config.build_quinn_config().unwrap();
-+    }
- }
-```
-
-**File**: `examples/webtransport/static/client.html` (modified, +4/-3)
-```diff
-@@ -2,15 +2,16 @@
- <html lang="en">
-   <title>WebTransport over HTTP/3 client</title>
-   <meta charset="utf-8">
--  <!-- WebTransport origin trial token. See https://developer.chrome.com/origintrials/#/view_trial/793759434324049921 -->
--  <meta http-equiv="origin-trial" content="AkSQvBVsfMTgBtlakApX94hWGyBPQJXerRc2Aq8g/sKTMF+yG62+bFUB2yIxaK1furrNH3KNNeJV00UZSZHicw4AAABceyJvcmlnaW4iOiJodHRwczovL2dvb2dsZWNocm9tZS5naXRodWIuaW86NDQzIiwiZmVhdHVyZSI6IldlYlRyYW5zcG9ydCIsImV4cGlyeSI6MTY0Mzc1OTk5OX0=">
-   <script src="client.js"></script>
-   <link rel="stylesheet" href="client.css">
-   <meta name="viewport" content="width=device-width, initial-scale=1">
-   <body>
-   <div id="top">
-     <div id="explanation">
-       This tool can be used to connect to an arbitrary WebTransport server.
-+      The example generates a short-lived development certificate at startup and
-+      automatically supplies its hash to the browser. You may need to accept the
-+      HTTPS warning for this page before connecting.
-       It has several limitations:
-       <ul>
-         <li>It can only send an entirety of a stream at once.  Once the stream
-@@ -63,4 +64,4 @@ <h2>Event log</h2>
-     </div>
-   </div>
-   </body>
--</html>
-\ No newline at end of file
-+</html>
-```
-
-**File**: `examples/webtransport/static/client.js` (modified, +24/-2)
-```diff
-@@ -4,11 +4,33 @@
- 
- let currentTransport, streamNumber, currentTransportDatagramWriter;
- 
-+async function getCertificateHash() {
-+  const response = await fetch('/certificate-hash', {cache: 'no-store'});
-+  if (!response.ok) {
-+    throw new Error(`failed to load certificate hash: HTTP ${response.status}`);
-+  }
-+
-+  const bytes = await response.json();
-+  if (!Array.isArray(bytes) || bytes.length !== 32) {
-+    throw new Error('server returned an invalid SHA-256 certificate hash');
-+  }
-+  return new Uint8Array(bytes);
-+}
-+
- // "Connect" button handler.
- async function connect() {
-   const url = document.getElementById('url').value;
-   try {
--    var transport = new WebTransport(url);
-+    const targetUrl = new URL(url, window.location.href);
-+    const options = {};
-+    if (targetUrl.origin === window.location.origin) {
-+      const certificateHash = await getCertificateHash();
-+      options.serverCertificateHashes = [{
-+        algorithm: 'sha-256',
-+        value: certificateHash,
-+      }];
-+    }
-+    var transport = new WebTransport(targetUrl.href, options);
-     addToEventLog('Initiating connection...');
-   } catch (e) {
-     addToEventLog('Failed to create connection object. ' + e, 'error');
-@@ -171,4 +193,4 @@ window.addEventListener("load", (event) => {
-   const url = window.location;
-   const counterUrl = `${url.protocol}//${url.host}/counter`;
-   document.getElementById("url").value = counterUrl;
--});
-\ No newline at end of file
-+});
-```
-
----
-
-### Incident Patch 10: `d02d3ba1` (2026-08-10)
-**Commit Message**: docs: add Seelen UI and Terraphim AI to ecosystem
-
-Signed-off-by: Chrislearn Young <[REDACTED_EMAIL]>
-
-**File**: `ECOSYSTEM.md` (modified, +4/-0)
-```diff
-@@ -12,6 +12,9 @@ If your project isn't listed here and you would like it to be, please feel free
- - [salvo-casbin](https://github.com/casbin-rs/salvo-casbin): Casbin access control hoop for salvo framework.
- 
- ## Project showcase
-+
-+- [Seelen UI](https://github.com/eythaann/Seelen-UI): A fully customizable desktop environment for Windows 10/11, powered in part by Salvo.
-+- [Terraphim AI](https://github.com/terraphim/terraphim-ai): A privacy-first, deterministic AI assistant with a Salvo-based GitHub Actions runner server.
- - [Savhub](https://github.com/savhub-ai/savhub): Easily manage your AI skills.
- - [palpo](https://github.com/palpo-matrix-server/palpo): A Rust Matrix Server Implementation.
- - [AI00 RWKV Server](https://github.com/Ai00-X/ai00_server): AI00 RWKV Server is an inference API server based on the RWKV model.
-@@ -41,6 +44,7 @@ If your project isn't listed here and you would like it to be, please feel free
- - [chia gaming](https://github.com/Chia-Network/chia-gaming) - chia-gaming Traits and Structs.
- 
- ## Tutorials
-+
- - [Rust Salvo零基础教程](https://www.bilibili.com/video/BV1FS421N71D/): Rust Salvo零基础入门教程.
- - [使用Tera和Salvo构建单词本](https://www.bilibili.com/video/BV1Kg411b75s): 使用Tera和Salvo构建一个简单的单词本Web应用.
- - [is salvo really the simplest rust web framework?](https://www.youtube.com/watch?v=tf9x97eTcpk)
-```
-
----
-
-### Incident Patch 11: `1f59eff0` (2026-08-10)
-**Commit Message**: Fix closed problem extension schemas (#1692)
-
-**File**: `crates/oapi/src/lib.rs` (modified, +46/-21)
-```diff
-@@ -801,6 +801,37 @@ fn problem_base_schema(components: &mut Components) -> RefOr<schema::Schema> {
-         .into()
- }
- 
-+#[cfg(feature = "rfc9457")]
-+fn problem_schema_with_extensions(
-+    components: &Components,
-+    base: RefOr<schema::Schema>,
-+    extensions: RefOr<schema::Schema>,
-+) -> RefOr<schema::Schema> {
-+    let extension_schema = match &extensions {
-+        RefOr::Type(schema) => Some(schema),
-+        RefOr::Ref(reference) => reference
-+            .ref_location
-+            .strip_prefix("#/components/schemas/")
-+            .and_then(|name| components.schemas.get(name))
-+            .and_then(|schema| match schema {
-+                RefOr::Type(schema) => Some(schema),
-+                RefOr::Ref(_) => None,
-+            }),
-+    };
-+
-+    if let Some(schema::Schema::Object(extension)) = extension_schema {
-+        let RefOr::Type(schema::Schema::Object(base)) = base else {
-+            unreachable!("problem base schema must be an object")
-+        };
-+        let mut extension = extension.clone();
-+        extension.properties.extend(base.properties);
-+        extension.required.extend(base.required);
-+        return RefOr::Type(schema::Schema::Object(extension));
-+    }
-+
-+    schema::AllOf::new().item(base).item(extensions).into()
-+}
-+
- #[cfg(feature = "rfc9457")]
- impl ToSchema for NoExtensions {
-     fn to_schema(_components: &mut Components) -> RefOr<schema::Schema> {
-@@ -836,10 +867,9 @@ where
-             let schema = if TypeId::of::<Extensions>() == TypeId::of::<NoExtensions>() {
-                 problem_base_schema(components)
-             } else {
--                schema::AllOf::new()
--                    .item(problem_base_schema(components))
--                    .item(Extensions::to_schema(components))
--                    .into()
-+                let extensions = Extensions::to_schema(components);
-+                let base = problem_base_schema(components);
-+                problem_schema_with_extensions(components, base, extensions)
-             };
-             components.schemas.insert(name, schema);
-         }
-@@ -864,7 +894,7 @@ where
-                 .first()
-                 .cloned()
-                 .unwrap_or_else(|| Extensions::compose(components, vec![]));
--            schema::AllOf::new().item(base).item(extensions).into()
-+            problem_schema_with_extensions(components, base, extensions)
-         }
-     }
- }
-@@ -1314,7 +1344,8 @@ mod tests {
-     #[cfg(feature = "rfc9457")]
-     #[test]
-     fn test_problem_schema_composes_typed_extensions() {
--        #[derive(ToSchema)]
-+        #[derive(serde::Serialize, ToSchema)]
-+        #[serde(deny_unknown_fields)]
-         #[allow(dead_code)]
-         struct ValidationExtensions {
-             errors: Vec<String>,
-@@ -1336,21 +1367,15 @@ mod tests {
-             .expect("typed problem component should exist");
-         let schema = serde_json::to_value(schema).expect("schema should serialize");
- 
--        assert_eq!(schema["allOf"].as_array().map(Vec::len), Some(2));
--        let extension_ref = schema["allOf"][1]["$ref"]
--            .as_str()
--            .expect("extension schema should use a component reference");
--        let extension_name = extension_ref
--            .rsplit('/')
--            .next()
--            .expect("extension reference should have a name");
--        let extension_schema = components
--            .schemas
--            .get(extension_name)
--            .expect("extension component should exist");
--        let extension_schema =
--            serde_json::to_value(extension_schema).expect("extension schema should serialize");
--        assert_eq!(extension_schema["properties"]["errors"]["type"], "array");
-+        assert!(schema.get("allOf").is_none());
-+        assert_eq!(schema["type"], "object");
-+        assert_eq!(schema["additionalProperties"], false);
-+        assert_eq!(schema["properties"]["errors"]["type"], "array");
-+        assert_eq!(schema["properties"]["status"]["type"], "integer");
-+        assert_eq!(
-+            schema["required"],
-+            json!(["errors", "type", "title", "status"])
-+        );
-     }
- 
-     #[test]
-```
-
----
-
-### Incident Patch 12: `2552db30` (2026-08-06)
-**Commit Message**: docs: fix doubled words in oapi endpoint and operation docs (#1689)
-
-**File**: `crates/oapi/docs/endpoint.md` (modified, +4/-4)
-```diff
-@@ -177,19 +177,19 @@ _**Example request body definitions.**_
- 
- * `operation_ref = ...` Define a relative or absolute URI reference to an OAS operation. This field is
-   mutually exclusive of the _`operation_id`_ field, and **must** point to an [Operation Object][operation].
--  Value can be be [`str`] or an expression such as [`include_str!`][include_str] or static
-+  Value can be [`str`] or an expression such as [`include_str!`][include_str] or static
-   [`const`][const] reference.
- 
- * `operation_id = ...` Define the name of an existing, resolvable OAS operation, as defined with a unique
-   _`operation_id`_. This field is mutually exclusive of the _`operation_ref`_ field.
--  Value can be be [`str`] or an expression such as [`include_str!`][include_str] or static
-+  Value can be [`str`] or an expression such as [`include_str!`][include_str] or static
-   [`const`][const] reference.
- 
- * `parameters(...)` A map representing parameters to pass to an operation as specified with _`operation_id`_
-   or identified by _`operation_ref`_. The key is parameter name to be used and value can
-   be any value supported by JSON or an [expression][expression] e.g. `$path.id`
-     * `name = ...` Define name for the parameter.
--      Value can be be [`str`] or an expression such as [`include_str!`][include_str] or static
-+      Value can be [`str`] or an expression such as [`include_str!`][include_str] or static
-       [`const`][const] reference.
-     * `value` = Any value that can be supported by JSON or an [expression][expression].
- 
-@@ -204,7 +204,7 @@ _**Example request body definitions.**_
- * `request_body = ...` Define a literal value or an [expression][expression] to be used as request body when
-   operation is called
- 
--* `description = ...` Define description of the link. Value supports Markdown syntax.Value can be be [`str`] or
-+* `description = ...` Define description of the link. Value supports Markdown syntax.Value can be [`str`] or
-   an expression such as [`include_str!`][include_str] or static [`const`][const] reference.
- 
- * `server(...)` Define [Server][server] object to be used by the target operation.
-```
-
-**File**: `crates/oapi/src/openapi/operation.rs` (modified, +1/-1)
-```diff
-@@ -159,7 +159,7 @@ pub struct Operation {
-     #[serde(skip_serializing_if = "Option::is_none")]
-     pub deprecated: Option<Deprecated>,
- 
--    /// Declaration which security mechanisms can be used for for the operation. Only one
-+    /// Declaration which security mechanisms can be used for the operation. Only one
-     /// [`SecurityRequirement`] must be met.
-     ///
-     /// Security for the [`Operation`] can be set to optional by adding empty security with
-```
-
----
-
-### Incident Patch 13: `48c9ca24` (2026-07-29)
-**Commit Message**: chore(oapi): update Swagger UI to v5.32.11 (#1681)
-
-**File**: `crates/oapi/src/swagger_ui.rs` (modified, +1/-1)
-```diff
-@@ -19,7 +19,7 @@ use serde::Serialize;
- use crate::html::{description_meta, escape_html, keywords_meta, script_safe_json};
- 
- #[derive(RustEmbed)]
--#[folder = "src/swagger_ui/v5.32.8"]
-+#[folder = "src/swagger_ui/v5.32.11"]
- struct SwaggerUiDist;
- 
- const INDEX_TMPL: &str = r#"
-```
-
----
-
-### Incident Patch 14: `3577a1df` (2026-07-29)
-**Commit Message**: build(deps): update syn requirement from 2 to 3 (#1676)
-
-* build(deps): update syn requirement from 2 to 3
-
-Updates the requirements on [syn](https://github.com/dtolnay/syn) to permit the latest version.
-- [Release notes](https://github.com/dtolnay/syn/releases)
-- [Commits](https://github.com/dtolnay/syn/compare/2.0.0...3.0.2)
-
----
-updated-dependencies:
-- dependency-name: syn
-  dependency-version: 3.0.2
-  dependency-type: direct:production
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-* fix macros for syn 3
-
----------
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-Co-authored-by: Chrislearn Young <[REDACTED_EMAIL]>
-
-**File**: `Cargo.toml` (modified, +1/-2)
-```diff
-@@ -104,7 +104,6 @@ path-slash = "0.2"
- percent-encoding = "2"
- pin-project = "1"
- proc-macro-crate = { version = ">= 2, <= 4" }
--proc-macro2-diagnostics = { version = "0.10", default-features = true }
- proc-macro2 = "1"
- quinn = { version = "0.11", default-features = false }
- quote = "1"
-@@ -128,7 +127,7 @@ sha2 = "0.11"
- smallvec = "1"
- socket2 = "0.6"
- subtle = "2"
--syn = "2"
-+syn = "3"
- sync_wrapper = "1"
- tempfile = ">= 3.20"
- thiserror = "2"
-```
-
-**File**: `crates/craft-macros/src/craft.rs` (modified, +11/-6)
-```diff
-@@ -98,12 +98,13 @@ impl FnReceiver {
-         let Some(recv) = method.sig.receiver() else {
-             return Ok(Self::None);
-         };
--        let ty = recv.ty.to_token_stream().to_string().replace(" ", "");
--        match ty.as_str() {
--            "&Self" => Ok(Self::Ref),
--            "Arc<Self>" | "&Arc<Self>" => Ok(Self::Arc),
--            _ => {
--                if ty.ends_with("::Arc<Self>") {
-+        match &recv.kind {
-+            syn::ReceiverKind::Reference(_, _, None) if recv.mutability.is_none() => Ok(Self::Ref),
-+            syn::ReceiverKind::Typed(_, ty) => {
-+                let ty = ty.to_token_stream().to_string().replace(' ', "");
-+                if ty == "&Self" {
-+                    Ok(Self::Ref)
-+                } else if ty == "Arc<Self>" || ty == "&Arc<Self>" || ty.ends_with("::Arc<Self>") {
-                     Ok(Self::Arc)
-                 } else {
-                     Err(syn::Error::new_spanned(
-@@ -112,6 +113,10 @@ impl FnReceiver {
-                     ))
-                 }
-             }
-+            _ => Err(syn::Error::new_spanned(
-+                method,
-+                "#[craft] method receiver must be '&self', 'Arc<Self>' or '&Arc<Self>'",
-+            )),
-         }
-     }
- }
-```
-
-**File**: `crates/oapi-macros/Cargo.toml` (modified, +0/-1)
-```diff
-@@ -38,7 +38,6 @@ compact_str = []
- proc-macro2 = { workspace = true }
- quote = { workspace = true }
- proc-macro-crate = { workspace = true }
--proc-macro2-diagnostics = { workspace = true }
- salvo-serde-util = { workspace = true }
- syn = { workspace = true, features = ["full", "extra-traits", "visit-mut"] }
- salvo_core = { workspace = true }
-```
-
-**File**: `crates/oapi-macros/src/bound.rs` (modified, +4/-3)
-```diff
-@@ -13,7 +13,6 @@ pub(crate) fn without_defaults(generics: &syn::Generics) -> syn::Generics {
-             .iter()
-             .map(|param| match param {
-                 syn::GenericParam::Type(param) => syn::GenericParam::Type(syn::TypeParam {
--                    eq_token: None,
-                     default: None,
-                     ..param.clone()
-                 }),
-@@ -109,7 +108,7 @@ pub(crate) fn with_bound(
-         fn visit_type(&mut self, ty: &'ast syn::Type) {
-             match ty {
-                 syn::Type::Array(ty) => self.visit_type(&ty.elem),
--                syn::Type::BareFn(ty) => {
-+                syn::Type::FnPtr(ty) => {
-                     for arg in &ty.inputs {
-                         self.visit_type(&arg.ty);
-                     }
-@@ -169,7 +168,7 @@ pub(crate) fn with_bound(
-                 }
-                 syn::PathArguments::Parenthesized(arguments) => {
-                     for argument in &arguments.inputs {
--                        self.visit_type(argument);
-+                        self.visit_type(&argument.ty);
-                     }
-                     self.visit_return_type(&arguments.output);
-                 }
-@@ -233,12 +232,14 @@ pub(crate) fn with_bound(
-         .map(|param| param.ident.clone())
-         .filter(|id| relevant_type_params.contains(id))
-         .map(|id| syn::TypePath {
-+            attrs: Vec::new(),
-             qself: None,
-             path: id.into(),
-         })
-         .chain(associated_type_usage.into_iter().cloned())
-         .map(|bounded_ty| {
-             syn::WherePredicate::Type(syn::PredicateType {
-+                attrs: Vec::new(),
-                 lifetimes: None,
-                 bounded_ty: syn::Type::Path(bounded_ty),
-                 colon_token: <Token![:]>::default(),
-```
-
-**File**: `crates/oapi-macros/src/diagnostic.rs` (added, +140/-0)
-```diff
-@@ -0,0 +1,140 @@
-+use proc_macro2::{Span, TokenStream};
-+use quote::{quote, quote_spanned};
-+
-+/// Diagnostic levels used by the macro implementation.
-+///
-+/// All diagnostics currently produced by this crate are errors. Help and note
-+/// messages are attached through [`Diagnostic::help`] and [`Diagnostic::note`].
-+#[derive(Clone, Copy, Debug)]
-+pub(crate) enum Level {
-+    Error,
-+}
-+
-+#[derive(Debug)]
-+pub(crate) struct Diagnostic {
-+    inner: Inner,
-+}
-+
-+#[derive(Debug)]
-+enum Inner {
-+    Syn(syn::Error),
-+    Message {
-+        span: Span,
-+        message: String,
-+        children: Vec<Child>,
-+    },
-+}
-+
-+#[derive(Debug)]
-+struct Child {
-+    level: &'static str,
-+    message: String,
-+}
-+
-+impl Diagnostic {
-+    pub(crate) fn new(message_level: Level, message: impl Into<String>) -> Self {
-+        Self::spanned(Span::call_site(), message_level, message)
-+    }
-+
-+    pub(crate) fn spanned(span: Span, _level: Level, message: impl Into<String>) -> Self {
-+        Self {
-+            inner: Inner::Message {
-+                span,
-+                message: message.into(),
-+                children: Vec::new(),
-+            },
-+        }
-+    }
-+
-+    pub(crate) fn help(self, message: impl Into<String>) -> Self {
-+        self.child("help", message)
-+    }
-+
-+    pub(crate) fn note(self, message: impl Into<String>) -> Self {
-+        self.child("note", message)
-+    }
-+
-+    fn child(mut self, level: &'static str, message: impl Into<String>) -> Self {
-+        let message = message.into();
-+        match &mut self.inner {
-+            Inner::Message { children, .. } => children.push(Child { level, message }),
-+            Inner::Syn(error) => {
-+                error.combine(syn::Error::new(error.span(), format!("{level}: {message}")));
-+            }
-+        }
-+        self
-+    }
-+
-+    pub(crate) fn emit_as_item_tokens(self) -> TokenStream {
-+        let error: syn::Error = self.into();
-+        error.to_compile_error()
-+    }
-+
-+    pub(crate) fn emit_as_expr_tokens(self) -> TokenStream {
-+        let error: syn::Error = self.into();
-+        let compile_errors = error.into_iter().map(|error| {
-+            let span = error.span();
-+            let compile_error = error.to_compile_error();
-+            quote_spanned!(span => #compile_error;)
-+        });
-+        quote!({ #(#compile_errors)* })
-+    }
-+}
-+
-+impl From<syn::Error> for Diagnostic {
-+    fn from(error: syn::Error) -> Self {
-+        Self {
-+            inner: Inner::Syn(error),
-+        }
-+    }
-+}
-+
-+impl From<Diagnostic> for syn::Error {
-+    fn from(diagnostic: Diagnostic) -> Self {
-+        match diagnostic.inner {
-+            Inner::Syn(error) => error,
-+            Inner::Message {
-+                span,
-+                mut message,
-+                children,
-+            } => {
-+                for child in children {
-+                    message.push('\n');
-+                    message.push_str(child.level);
-+                    message.push_str(": ");
-+                    message.push_str(&child.message);
-+                }
-+                syn::Error::new(span, message)
-+            }
-+        }
-+    }
-+}
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::{Diagnostic, Level};
-+
-+    #[test]
-+    fn preserves_help_and_note_messages() {
-+        let diagnostic = Diagnostic::new(Level::Error, "invalid attribute")
-+            .help("remove the attribute")
-+            .note("only supported on structs");
-+        let error: syn::Error = diagnostic.into();
-+
-+        assert_eq!(
-+            error.to_string(),
-+            "invalid attribute\nhelp: remove the attribute\nnote: only supported on structs"
-+        );
-+    }
-+
-+    #[test]
-+    fn preserves_syn_errors() {
-+        let diagnostic = Diagnostic::from(syn::Error::new(
-+            proc_macro2::Span::call_site(),
-+            "parse failed",
-+        ));
-+        let error: syn::Error = diagnostic.into();
-+
-+        assert_eq!(error.to_string(), "parse failed");
-+    }
-+}
-```
-
-**File**: `crates/oapi-macros/src/lib.rs` (modified, +2/-1)
-```diff
-@@ -21,6 +21,7 @@ use syn::{Ident, Item, Token, bracketed, parse_macro_input};
- mod attribute;
- pub(crate) mod bound;
- mod component;
-+mod diagnostic;
- mod doc_comment;
- mod endpoint;
- pub(crate) mod feature;
-@@ -35,10 +36,10 @@ mod server;
- mod shared;
- mod type_tree;
- 
--pub(crate) use proc_macro2_diagnostics::{Diagnostic, Level as DiagLevel};
- pub(crate) use salvo_serde_util::{self as serde_util, RenameRule, SerdeContainer, SerdeValue};
- 
- pub(crate) use self::component::{ComponentSchema, ComponentSchemaProps};
-+pub(crate) use self::diagnostic::{Diagnostic, Level as DiagLevel};
- pub(crate) use self::endpoint::EndpointAttr;
- pub(crate) use self::feature::Feature;
- pub(crate) use self::operation::Operation;
-```
-
-**File**: `crates/oapi-macros/src/parameter/derive.rs` (modified, +1/-1)
-```diff
-@@ -68,7 +68,7 @@ impl TryToTokens for ToParameters {
-         let (impl_generics, ty_generics, where_clause) = self.generics.split_for_impl();
- 
-         let ex_life = &Lifetime::new("'__macro_gen_ex", Span::call_site());
--        let ex_lifetime: GenericParam = LifetimeParam::new(ex_life.clone()).into();
-+        let ex_lifetime = GenericParam::Lifetime(LifetimeParam::new(ex_life.clone()));
-         let mut ex_generics = self.generics.clone();
-         ex_generics.params.insert(0, ex_lifetime);
-         let ex_impl_generics = ex_generics.split_for_impl().0;
-```
-
-**File**: `crates/oapi-macros/src/response/derive.rs` (modified, +5/-1)
-```diff
-@@ -203,7 +203,11 @@ impl TryToTokens for ToResponses<'_> {
- trait Response {
-     fn to_type(ident: &Ident) -> Type {
-         let path = Path::from(ident.clone());
--        let type_path = TypePath { path, qself: None };
-+        let type_path = TypePath {
-+            attrs: Vec::new(),
-+            path,
-+            qself: None,
-+        };
-         Type::Path(type_path)
-     }
- 
-```
-
----
-
-### Incident Patch 15: `8051ab51` (2026-07-29)
-**Commit Message**: build(deps): update serial_test requirement from 3 to 4 (#1680)
-
-Updates the requirements on [serial_test](https://github.com/palfrey/serial_test) to permit the latest version.
-- [Release notes](https://github.com/palfrey/serial_test/releases)
-- [Commits](https://github.com/palfrey/serial_test/compare/v3.0.0...v4.0.1)
-
----
-updated-dependencies:
-- dependency-name: serial_test
-  dependency-version: 4.0.1
-  dependency-type: direct:production
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `crates/oapi/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -100,7 +100,7 @@ all-features = true
- rustdoc-args = ["--cfg", "docsrs"]
- 
- [dev-dependencies]
--serial_test = "3"
-+serial_test = "4"
- assert-json-diff = { workspace = true }
- salvo_core = { workspace = true, default-features = false, features = [
-     "cookie",
-```
-
 #### Recent Merged Pull Requests:
+- **PR #1714** (2026-10-11): fix(oapi): release the METADATA_REGISTRY read guard before recursing (@ya3rub)
 - **PR #1713** (2026-10-04): Allow HTTP/1-only builds without h2 (@chrislearn)
 - **PR #1711** (2026-10-04): fix(quinn): finish QUIC handshakes on the connection task (@reinerp)
 - **PR #1710** (2026-09-24): fix(examples): align OpenTelemetry examples with 0.33 (@chrislearn)
 - **PR #1709** (2026-09-24): build(deps): upgrade OpenTelemetry crates to 0.33 together (@chrislearn)
 - **PR #1708** (2026-09-24): Fix StaticDir access to files beneath dot directories (@chrislearn)
-- **PR #1707** (closed): build(deps): update opentelemetry requirement from 0.32 to 0.33 (@dependabot[bot])
-- **PR #1706** (closed): build(deps): update opentelemetry_sdk requirement from 0.32 to 0.33 (@dependabot[bot])
-- **PR #1705** (closed): build(deps): update opentelemetry-semantic-conventions requirement from 0.32 to 0.33 (@dependabot[bot])
 
 ---
 
@@ -4228,3 +2447,67 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. oapi): release the METADATA_REGISTRY read guard before recursing (#1714)
+
+**RULE**:
+When implementing operations in `crates/oapi/src/routing.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in salvo-rs/salvo. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `071cc161`: oapi): release the METADATA_REGISTRY read guard before recursing (#1714). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/oapi/src/routing.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+        // Clone out and release the guard before recursing into the children:
+        // re-acquiring a read lock while a writer is queued deadlocks.
+        let metadata = METADATA_REGISTRY
+            .expect("failed to lock METADATA_REGISTRY for read")
+            .get(&router.id)
+            .cloned();
+        if let Some(metadata) = metadata {
+            node.metadata.tags.extend(metadata.tags);
+            node.metadata.securities.extend(metadata.securities);
+
+    /// Building a document while another thread adds router metadata must not
+    /// deadlock: `NormNode::new` must not hold a registry read guard while it
+    /// recurses, or a queued writer blocks the nested read.
+    #[test]
+    fn merge_router_does_not_deadlock_against_concurrent_oapi_security() {
+        use std::sync::atomic::{AtomicBool, Ordering};
+        use std::sync::{Arc, mpsc};
+        use std::time::Duration;
+
+        use salvo_core::Router;
+
+        use crate::{OpenApi, RouterExt, SecurityRequirement};
+
+        let (tx, rx) = mpsc::channel();
+        std::thread::spawn(move || {
+            let done = Arc::new(AtomicBool::new(false));
+            let writer = {
+                let done = Arc::clone(&
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+        let registry = METADATA_REGISTRY
+            .expect("failed to lock METADATA_REGISTRY for read");
+        if let Some(metadata) = registry.get(&router.id) {
+            node.metadata.tags.extend(metadata.tags.iter().cloned());
+            node.metadata
+                .securities
+                .extend(metadata.securities.iter().cloned());
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `071cc161` are properly handled with clean fallback behavior.

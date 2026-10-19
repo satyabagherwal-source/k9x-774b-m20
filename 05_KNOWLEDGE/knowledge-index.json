@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T03:47:36.101Z",
-  "total_verified_learnings": 567,
+  "last_updated": "2026-10-19T03:54:36.451Z",
+  "total_verified_learnings": 572,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -3787,22 +3787,45 @@
     "learn-github-carbon-design-system-carbon-components-svelte": {
       "learning_id": "learn-github-carbon-design-system-carbon-components-svelte",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "carbon-design-system-carbon-components-svelte",
+      "source": "carbon-design-system/carbon-components-svelte",
+      "repository": "carbon-design-system/carbon-components-svelte",
       "slug": "carbon-design-system-carbon-components-svelte",
       "platform": "github",
       "source_url": "https://github.com/carbon-design-system/carbon-components-svelte",
-      "source_version": "HEAD",
-      "content_hash": "1e9e54c84ffb8748b4542e88ff32974cbbef03a0bf813ac89e6ff6993f2e59f0",
+      "source_version": "f4eb6edb",
+      "content_hash": "75ce2f709d2685c1b43f05d49e538adf61987ff9636e84de75f162256e0e0fad",
       "dossier_path": "07_PROJECT_LEARNING/carbon-design-system-carbon-components-svelte-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/carbon-design-system-carbon-components-svelte-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2097,
+          "title": "Ephemeral Navigation Focus Anchor Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2098,
+          "title": "Multi-Store Co-Derivation Synchronization Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2099,
+          "title": "CSV Formula Neutralization and RFC 4180 Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.209Z"
+      "verified_at": "2026-10-19T03:54:36.443Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-carbon-design-system-carbon": {
       "learning_id": "learn-github-carbon-design-system-carbon",
@@ -4102,22 +4125,35 @@
     "learn-github-checkmarx-kics": {
       "learning_id": "learn-github-checkmarx-kics",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "checkmarx-kics",
+      "source": "Checkmarx/kics",
+      "repository": "Checkmarx/kics",
       "slug": "checkmarx-kics",
       "platform": "github",
       "source_url": "https://github.com/Checkmarx/kics",
-      "source_version": "HEAD",
-      "content_hash": "f89e43451c0174e3befd90f365e50809cbe5bd0b1c9e88923cb37919edddab70",
+      "source_version": "d06cb647",
+      "content_hash": "7ac9f43a3d021b86bb8bd19f1d7af19e9ca16d911e083e021c27dfe73a2a0a9c",
       "dossier_path": "07_PROJECT_LEARNING/checkmarx-kics-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/checkmarx-kics-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2095,
+          "title": "query): changed all dockerfile queries for case insensitive support of dockerfil",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.260Z"
+      "verified_at": "2026-10-19T03:53:50.580Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-chesterra-cccc": {
       "learning_id": "learn-github-chesterra-cccc",
@@ -21840,10 +21876,26 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
       "source_version": "hf-xingchen-agi-xing4.0-29b-a4b",
-      "content_hash": "91b49b937bdaf719c18b7af083b0be80dcb4b527df5496a4549ca0719ea3ee4b",
+      "content_hash": "e974c8fd7f414ad971584e2d372d55b87fe6c465fe5c2deb04d281af71f8cbfd",
       "dossier_path": "07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2092,
+          "title": "MLA KV-Cache Compression Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2093,
+          "title": "MoE Routing Stability Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2094,
+          "title": "YaRN RoPE Scaling Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
@@ -21862,7 +21914,7 @@
         "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv459bwg",
         "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv4ij129"
       ],
-      "verified_at": "2026-10-17T22:53:57.127Z",
+      "verified_at": "2026-10-19T03:53:49.737Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -29664,22 +29716,35 @@
     "learn-github-olric-data-olric": {
       "learning_id": "learn-github-olric-data-olric",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "olric-data-olric",
+      "source": "olric-data/olric",
+      "repository": "olric-data/olric",
       "slug": "olric-data-olric",
       "platform": "github",
       "source_url": "https://github.com/olric-data/olric",
-      "source_version": "HEAD",
-      "content_hash": "414d90fad4e0d81f80df46c9807b11902fca62892232b62345527c0a5abb5e0c",
+      "source_version": "c49c44a8",
+      "content_hash": "bd698514ba711b342540a28413bf2f7f85f5ff6ddad34b0ca93a81ac545cf1a4",
       "dossier_path": "07_PROJECT_LEARNING/olric-data-olric-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/olric-data-olric-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2096,
+          "title": "minor typo in package documentation for `ramblock`",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.762Z"
+      "verified_at": "2026-10-19T03:53:54.646Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-om-ai-lab-omagent": {
       "learning_id": "learn-github-om-ai-lab-omagent",
@@ -32194,22 +32259,35 @@
     "learn-github-react-metro": {
       "learning_id": "learn-github-react-metro",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "react-metro",
+      "source": "react/metro",
+      "repository": "react/metro",
       "slug": "react-metro",
       "platform": "github",
       "source_url": "https://github.com/react/metro",
-      "source_version": "HEAD",
-      "content_hash": "3bb02594d32fc993fedc66f139631906a51b40fc922bb26591e0a176947649a6",
+      "source_version": "2641b08f",
+      "content_hash": "19f9b912478544f7a0eba43956f34bfb4b23a87e9cb6e93af87b17a3d05334e0",
       "dossier_path": "07_PROJECT_LEARNING/react-metro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-metro-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2091,
+          "title": "metro-file-map: Fix recrawl of a directory that replaced a file or symlink (#200",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.204Z"
+      "verified_at": "2026-10-19T03:53:46.898Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-react-native-device-info-react-native-device-info": {
       "learning_id": "learn-github-react-native-device-info-react-native-device-info",
@@ -33387,22 +33465,35 @@
     "learn-github-salvo-rs-salvo": {
       "learning_id": "learn-github-salvo-rs-salvo",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "salvo-rs-salvo",
+      "source": "salvo-rs/salvo",
+      "repository": "salvo-rs/salvo",
       "slug": "salvo-rs-salvo",
       "platform": "github",
       "source_url": "https://github.com/salvo-rs/salvo",
-      "source_version": "HEAD",
-      "content_hash": "e467c0d36baa931337112d730b9078ac7ca26f36099cc9fab022f9be0d85b335",
+      "source_version": "071cc161",
+      "content_hash": "cfac0697b785410e90ef52598b6a54602fddd4fc348f056c40604d2f11274a64",
       "dossier_path": "07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2090,
+          "title": "oapi): release the METADATA_REGISTRY read guard before recursing (#1714)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.373Z"
+      "verified_at": "2026-10-19T03:53:41.629Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-samanhappy-mcphub": {
       "learning_id": "learn-github-samanhappy-mcphub",
@@ -75765,6 +75856,146 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T03:47:36.092Z"
+    },
+    "rule-2090": {
+      "learning_id": "rule-2090",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2090,
+      "title": "oapi): release the METADATA_REGISTRY read guard before recursing (#1714)",
+      "source_url": "https://github.com/salvo-rs/salvo",
+      "source_version": "071cc161",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:53:41.629Z"
+    },
+    "rule-2091": {
+      "learning_id": "rule-2091",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2091,
+      "title": "metro-file-map: Fix recrawl of a directory that replaced a file or symlink (#200",
+      "source_url": "https://github.com/react/metro",
+      "source_version": "2641b08f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:53:46.898Z"
+    },
+    "rule-2092": {
+      "learning_id": "rule-2092",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2092,
+      "title": "MLA KV-Cache Compression Invariant",
+      "source_url": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
+      "source_version": "hf-xingchen-agi-xing4.0-29b-a4b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:53:49.737Z"
+    },
+    "rule-2093": {
+      "learning_id": "rule-2093",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2093,
+      "title": "MoE Routing Stability Invariant",
+      "source_url": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
+      "source_version": "hf-xingchen-agi-xing4.0-29b-a4b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:53:49.737Z"
+    },
+    "rule-2094": {
+      "learning_id": "rule-2094",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2094,
+      "title": "YaRN RoPE Scaling Invariant",
+      "source_url": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
+      "source_version": "hf-xingchen-agi-xing4.0-29b-a4b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:53:49.737Z"
+    },
+    "rule-2095": {
+      "learning_id": "rule-2095",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2095,
+      "title": "query): changed all dockerfile queries for case insensitive support of dockerfil",
+      "source_url": "https://github.com/Checkmarx/kics",
+      "source_version": "d06cb647",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:53:50.580Z"
+    },
+    "rule-2096": {
+      "learning_id": "rule-2096",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2096,
+      "title": "minor typo in package documentation for `ramblock`",
+      "source_url": "https://github.com/olric-data/olric",
+      "source_version": "c49c44a8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:53:54.646Z"
+    },
+    "rule-2097": {
+      "learning_id": "rule-2097",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2097,
+      "title": "Ephemeral Navigation Focus Anchor Rule",
+      "source_url": "https://github.com/carbon-design-system/carbon-components-svelte",
+      "source_version": "f4eb6edb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:54:36.443Z"
+    },
+    "rule-2098": {
+      "learning_id": "rule-2098",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2098,
+      "title": "Multi-Store Co-Derivation Synchronization Rule",
+      "source_url": "https://github.com/carbon-design-system/carbon-components-svelte",
+      "source_version": "f4eb6edb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:54:36.443Z"
+    },
+    "rule-2099": {
+      "learning_id": "rule-2099",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2099,
+      "title": "CSV Formula Neutralization and RFC 4180 Invariant",
+      "source_url": "https://github.com/carbon-design-system/carbon-components-svelte",
+      "source_version": "f4eb6edb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:54:36.443Z"
     }
   },
   "aliases": {
