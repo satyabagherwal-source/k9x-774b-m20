@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T15:24:47.147Z",
-  "total_verified_learnings": 841,
+  "last_updated": "2026-10-19T15:31:57.103Z",
+  "total_verified_learnings": 843,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -10296,14 +10296,19 @@
       "slug": "gitoxidelabs-gitoxide",
       "platform": "github",
       "source_url": "https://github.com/GitoxideLabs/gitoxide",
-      "source_version": "7540f69b",
-      "content_hash": "2ed8492d2715113d0a0c750a0f58e4f3305d1ac7e6585679d0ba55b49a55641e",
+      "source_version": "46f7c7db",
+      "content_hash": "755acb34878c6531a5d1ac4b06d6640304da22c651fa625b60f51d2caaa239c1",
       "dossier_path": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "promoted_rules": [
         {
           "number": 1916,
           "title": "Update `rustls` to 0.23.46 to resolve security advisories",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2655,
+          "title": "gitoxide-core): skip occupied repository destinations during organization",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -10312,7 +10317,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T00:28:47.575Z",
+      "verified_at": "2026-10-19T15:31:45.273Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -18035,7 +18040,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google/vit-base-patch16-224",
       "source_version": "hf-google-vit-base-patch16-224",
-      "content_hash": "28be5130718fff27b121f284153d6b825ba82c0db0a7f6413162c7bde63de049",
+      "content_hash": "b0c3496ffc085cda31ba49ea1067cbd5961fdec2c1d52bbd5f0306ea6611d00d",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md",
       "promoted_rules": [
@@ -18077,7 +18082,7 @@
         "learn-huggingface-hf-google-vit-base-patch16-224-mv40bvhc",
         "learn-huggingface-hf-google-vit-base-patch16-224-mv4eaiut"
       ],
-      "verified_at": "2026-10-18T04:49:46.289Z",
+      "verified_at": "2026-10-19T15:31:42.810Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36844,14 +36849,19 @@
       "slug": "rqlite-rqlite",
       "platform": "github",
       "source_url": "https://github.com/rqlite/rqlite",
-      "source_version": "7e35174e",
-      "content_hash": "e2cc2d15895615a05a385204806696dfbe54b14f04e7f58451a289dbafd75246",
+      "source_version": "f18a1372",
+      "content_hash": "6107eafb4aa467f04130d0952e130106313664511e28218d66be088ea165549d",
       "dossier_path": "07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
       "promoted_rules": [
         {
           "number": 2023,
           "title": "Merge pull request #2972 from rqlite/cdc-no-commit-timestamp-regression",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2657,
+          "title": "Don't require non-zero probe time in Test_NodeTest_Reuse",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -36860,7 +36870,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T02:27:53.477Z",
+      "verified_at": "2026-10-19T15:31:57.092Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40006,22 +40016,35 @@
     "learn-github-sventiigi-whatsnewkit": {
       "learning_id": "learn-github-sventiigi-whatsnewkit",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "sventiigi-whatsnewkit",
+      "source": "SvenTiigi/WhatsNewKit",
+      "repository": "SvenTiigi/WhatsNewKit",
       "slug": "sventiigi-whatsnewkit",
       "platform": "github",
       "source_url": "https://github.com/SvenTiigi/WhatsNewKit",
-      "source_version": "HEAD",
-      "content_hash": "8f26a1b85570ea2aa96af6edc2467cd06cedcb89dcfc958a64f36ae36d831635",
+      "source_version": "6157c77e",
+      "content_hash": "69f2b1cd4cbc749077fdca63fc48b67331063f62cdeb564ddaae788cd965440e",
       "dossier_path": "07_PROJECT_LEARNING/sventiigi-whatsnewkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sventiigi-whatsnewkit-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2656,
+          "title": "Fixed tests",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.770Z"
+      "verified_at": "2026-10-19T15:31:50.161Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-sweetpad-dev-sweetpad": {
       "learning_id": "learn-github-sweetpad-dev-sweetpad",
@@ -88788,6 +88811,75 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T15:24:47.135Z"
+    },
+    "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4": {
+      "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
+      "repository": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
+      "slug": "hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
+      "source_version": "hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4",
+      "content_hash": "235bf1f03a3ea66bedaeee8e45b77f4247303f4ffb4f9c53e50eab3034016e2b",
+      "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T15:31:38.784Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-2655": {
+      "learning_id": "rule-2655",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2655,
+      "title": "gitoxide-core): skip occupied repository destinations during organization",
+      "source_url": "https://github.com/GitoxideLabs/gitoxide",
+      "source_version": "46f7c7db",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T15:31:45.273Z"
+    },
+    "rule-2656": {
+      "learning_id": "rule-2656",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2656,
+      "title": "Fixed tests",
+      "source_url": "https://github.com/SvenTiigi/WhatsNewKit",
+      "source_version": "6157c77e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T15:31:50.161Z"
+    },
+    "rule-2657": {
+      "learning_id": "rule-2657",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2657,
+      "title": "Don't require non-zero probe time in Test_NodeTest_Reuse",
+      "source_url": "https://github.com/rqlite/rqlite",
+      "source_version": "f18a1372",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T15:31:57.092Z"
     }
   },
   "aliases": {

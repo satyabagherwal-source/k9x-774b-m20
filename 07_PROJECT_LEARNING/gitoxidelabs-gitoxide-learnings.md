@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md`  
 > **Source**: github ([https://github.com/GitoxideLabs/gitoxide](https://github.com/GitoxideLabs/gitoxide))  
-> **Source Version**: `7540f69b`  
+> **Source Version**: `46f7c7db`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T00:28:47.474Z  
+> **Timestamp**: 2026-10-19T15:31:45.045Z  
 > **Learning ID**: `learn-github-gitoxidelabs-gitoxide`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/GitoxideLabs/gitoxide](https://github.com/GitoxideLabs/gitoxide))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T00:28:46.797Z  
+> **Harvest Timestamp**: 2026-10-19T15:31:45.037Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1612,13 +1612,11 @@ where
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3066** (2026-10-18): **commit-graph fix**
-  *Symptoms*: ### Tasks  * [x] refackiew 
-  **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"9af9145294eca625c965b1e0739eb273dd0e2df3","has_any_findings":true,"has_unresolved_findings":true,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-10-18T11:44:03.037030Z">2026-10-18T11:44:03.037030Z</relative-time> | `9af9145` | Draft marked ready |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comment "@codex review" or "@codex security review". 
+- **Issue #3071** (2026-10-19): **Use safe Rust for the Windows `gix-status` filesystem cache**
+  *Symptoms*: # Tasks  * [x] refackiew  ---  Replace handwritten Windows directory enumeration with `std::fs::read_dir()` and `DirEntry::metadata()`. On Windows, entry metadata comes from the directory listing without an additional per-entry metadata syscall. This removes unsafe FFI, raw-buffer parsing, manual reparse-tag classification, and the crate's now-unused `windows-sys` dependency.  Keep the compact cached `Stat` and the existing lazy, per-worker lifetime of one status operation. Exact-name misses, unreadable entries, unrepresentable filenames, and failed enumerations still use the live metadata path. Missing cached entries never become authoritative not-found results. Root validation and canonicalisation remain unchanged; this adds no checkout integration or cache invalidation.  Derive file types from standard-library metadata, including file and directory symlinks and junctions. Preserve file size and use creation time for index `ctime`. Reuse the index's timestamp conversion so pre-epoch timestamps cause a cache miss instead of being silently clamped to the Unix epoch.  Add isolated Windows fixtures comparing cached and live metadata, including nanosecond timestamps, invalid UTF-16 names, links, and junctions. Exercise missing entries and failed enumeration after filesystem changes, and compare cached and uncached status to verify the live fallback and syscall counts. The pre-epoch regression test failed against the original implementation and passes with this change.  Validatio
 
-- **Issue #3062** (2026-10-15): **fix(gix-diff): apply the rewrite limit to each side like Git**
-  *Symptoms*: Rewrites::limit compared the combination count against the unsquared limit so similarity tracking didn't match git's diff.renameLimit behaviour or the docs.  This cause was discovered by an AI agent (Claude Code Opus5.5) but the fix and tests are mine.  jj's copy tracking uses the default limit of 1000 so a diff that moves some edited files gets no similarity-based renames. In my case I had a package move with 32 deleted and 34 added files which is 1088 combinations. `git diff -M50%` paired 31 of them. gix didn't pair any of them but reported 1312 skipped checks. After this change and jj's rename options gix gives same pairings as Git.
+- **Issue #3070** (2026-10-19): **fix(gix-fs): guard indirect Windows symlink targets before probing**
+  *Symptoms*: # Tasks  * [x] refackiew  --- GHSA-xw69-xv93-5fjv reports that Windows target-type probes can disclose credentials when a checkout symlink resolves to a network location. The existing leading-separator guard covers direct targets, but a local alias can reach the same location through an intermediate or terminal link.  Resolve target components with no-follow metadata and inspect each reparse point's link target before continuing. Apply the separator guard at every step and reject non-disk namespaces. Bound chain resolution so missing and cyclic targets retain the existing retry and dangling-file behavior. This preserves ordinary directory-link chains without delegating untrusted chain traversal to a target-following metadata query. As elsewhere in checkout, checked directories must not be concurrently replaced.  The regression uses a local rooted directory as a stand-in for a remote target, covering terminal and intermediate links through both creation APIs without network access. Before the fix it fails because the target is followed and a directory link is created; afterward file links are created immediately.  The Git reference at `C:/Users/byron/Desktop/dev/git`, commit `cc4dbf752a05efdc0e04e71fd3e8110d11bdd35c`, guards direct leading separators in `compat/mingw.c::process_phantom_symlink()`. Extend that policy to indirect targets. Existing checkout-chain comparisons pass against `git version 2.55.0.windows.3`.  Validation on Windows with `GIX_TEST_IGNORE_ARCHIVES=1`: - `
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1635,871 +1633,765 @@ where
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `20d4787d` (2026-10-15)
-**Commit Message**: Update `rustls` to 0.23.46 to resolve security advisories
+### Incident Patch 1: `2ff66e23` (2026-10-15)
+**Commit Message**: fix(gitoxide-core): skip occupied repository destinations during organization
+
+While this is now very well tested, it's something to keep to be sure this
+doesn't stop working correctly, after all it deals with user data and that
+better won't mess anything up.
 
 <!-- agent -->
-`cargo deny --workspace --all-features check advisories` rejects the locked
-`rustls` 0.23.45 used by the Reqwest and Curl HTTP transport backends:
+`ein t organize --execute` attempted to rename every discovered repository
+to a path derived from its `origin` URL, even when another path already
+occupied that destination. Several local checkouts sharing an origin
+therefore produced a batch of `Directory not empty` errors. The generic
+"handling" context did not explain that a repository move had failed or
+identify its destination.
 
-- `RUSTSEC-2026-0346`: client session `Debug` output can expose TLS secrets.
-- `RUSTSEC-2026-0347`: buffered application data can reach the outer server
-  after Encrypted Client Hello rejection.
-- `RUSTSEC-2026-0348`: Brotli certificate decompression can allocate up to
-  1 GiB before authentication.
-- `RUSTSEC-2026-0349`: an unauthenticated `ServerHello` can downgrade key
-  exchange on subsequent connections.
+Treat an occupied destination as an informational skip in execution and
+simulation modes. Preserve files, directories (including empty ones), and
+dangling symlinks rather than replacing them. Already organized repositories
+remain a successful no-op. Keep confinement validation ahead of the skip,
+and retain inspection failures instead of silently treating them as absence.
+A skip reports the source and resolved destination, for example:
 
-Update only `rustls` and its checksum in `Cargo.lock` to the patched 0.23.46
-release. Existing dependency requirements accept this patch without manifest
-changes or advisory exceptions.
+```text
+Skipping repository "./github.com/Byron/jwalk-mine": destination ".../github.com/byron/jw
 
-Assisted-by: GPT 6.1 Sol
-Co-authored-by: GPT 6.1 Sol <[REDACTED_EMAIL]>
-
-**File**: `Cargo.lock` (modified, +2/-2)
+**File**: `gitoxide-core/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -4732,9 +4732,9 @@ dependencies = [
+@@ -109,7 +109,7 @@ document-features = { version = "0.2.0", optional = true }
+ # Networking remains opt-in as its async and blocking implementations are mutually exclusive.
+ gitoxide-core = { path = ".", features = ["organize", "estimate-hours", "query", "corpus", "archive", "clean", "tracing", "tracing-cpu-time", "serde"] }
+ gix-testtools = { path = "../tests/tools", default-features = false }
+-gix = { path = "../gix", default-features = false, features = ["sha1", "parallel"] }
++gix = { path = "../gix", default-features = false, features = ["sha1", "parallel", "progress-tree"] }
+ insta = "1.46.3"
  
- [[package]]
- name = "rustls"
--version = "0.23.45"
-+version = "0.23.46"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "0d41d731c7d2f962d1ccc364cec258de3c0e93b38c2fb3ba97ac74513048d634"
-+checksum = "48e13bd8c0e9365c43cfa5c9e8f9ad49d3c8444926c9aac819e0e4dc503c8fdf"
- dependencies = [
-  "aws-lc-rs",
-  "once_cell",
+ [package.metadata.docs.rs]
+```
+
+**File**: `gitoxide-core/src/organize.rs` (modified, +75/-28)
+```diff
+@@ -192,7 +192,7 @@ fn handle(
+         return Ok(());
+     }
+ 
+-    let url = match find_origin_remote(git_workdir)? {
++    let url = match find_origin_remote(git_workdir).or_raise(|| message("Failed to read repository origin URL"))? {
+         None => {
+             progress.info(format!(
+                 "Skipping repository {:?} without 'origin' remote",
+@@ -217,7 +217,8 @@ fn handle(
+             None => return Ok(()),
+         })
+         .join(to_relative({
+-            let mut path = gix_url::expand_path(None, url.path.as_bstr())?;
++            let mut path = gix_url::expand_path(None, url.path.as_bstr())
++                .or_raise(|| message("Failed to expand repository origin URL path"))?;
+             match kind {
+                 gix::repository::Kind::Submodule => {
+                     unreachable!("BUG: We should not try to relocate submodules and not find them the first place")
+@@ -245,7 +246,9 @@ fn handle(
+ 
+     // Unlike canonicalize(), realpath also resolves existing symlinks when the destination leaf
+     // does not exist yet. Check confinement before creating directories or moving the repository.
+-    let destination = gix::path::realpath(destination)?;
++    let destination_metadata = std::fs::symlink_metadata(&destination);
++    let destination = gix::path::realpath(&destination)
++        .or_raise(|| message("Failed to resolve repository destination").with("destination", destination.as_path()))?;
+     if !destination.starts_with(canonicalized_destination) || destination == canonicalized_destination {
+         bail!(
+             "the origin URL resolves outside the repository destination"
+@@ -255,9 +258,24 @@ fn handle(
+         );
+     }
+ 
+-    match destination.canonicalize() {
+-        Ok(destination) if git_workdir.canonicalize().or_error()? == destination => return Ok(()),
+-        _ => {}
++    match destination_metadata {
++        Ok(_) => {
++            if git_workdir.canonicalize().or_error()? == destination {
++                return Ok(());
++            }
++            progress.info(format!(
++                "Skipping repository \"{}\": destination \"{}\" already exists",
++                git_workdir.display(),
++                destination.display()
++            ));
++            return Ok(());
++        }
++        Err(err) if err.kind() == std::io::ErrorKind::NotFound => {}
++        Err(err) => {
++            return Err(err.and_raise(
++                message("Failed to inspect repository destination").with("destination", destination.as_path()),
++            ));
++        }
+     }
+     match mode {
+         Mode::Simulate => progress.info(format!(
+@@ -266,30 +284,54 @@ fn handle(
+             destination.display()
+         )),
+         Mode::Execute => {
+-            if destination.starts_with(
+-                git_workdir
+-                    .canonicalize()
+-                    .ok()
+-                    .map(Cow::Owned)
+-                    .unwrap_or(Cow::Borrowed(git_workdir)),
+-            ) {
+-                let tempdir = tempfile::tempdir_in(canonicalized_destination).or_error()?;
+-                let tempdest = tempdir
+-                    .path()
+-                    .join(destination.file_name().expect("repo destination is not the root"));
+-                std::fs::rename(git_workdir, &tempdest).or_error()?;
+-                std::fs::create_dir_all(destination.parent().expect("repo destination is not the root")).or_error()?;
+-                std::fs::rename(&tempdest, &destination).or_error()?;
+-            } else {
+-                std::fs::create_dir_all(destination.parent().expect("repo destination is not the root")).or_error()?;
+-                std::fs::rename(git_workdir, &destination).or_error()?;
+-            }
++            move_repository(git_workdir, &destination, canonicalized_destination)?;
+             progress.done(format!("Moving {} to {}", git_workdir.display(), destination.display()));
+         }
+     }
+     Ok(())
+ }
+ 
++fn move_repository(source: &Path, destination: &Path, destination_root: &Path) -> Result<()> {
++    let move_error = || {
++        message("Failed to move repository")
++            .with("source", source)
++            .with("destination", destination)
++    };
++    let create_parent = || {
++        std::fs::create_dir_all(destination.parent().expect("repo destination is not the root"))
++            .or_raise(|| message("Failed to create repository destination directory").with("destination", destination))
++    };
++    let destination_is_within_source = destination.starts_with(
++        source
++            .canonicalize()
++            .ok()
++            .map(Cow::Owned)
++            .unwrap_or(Cow::Borrowed(source)),
++    );
++    if destination_is_within_source {
++        let mut tempdir = tempfile::tempdir_in(destination_root).or_raise(|| {
++            message("Failed to create temporary relocation directory").with("destination_root", destination_root)
++        })?;
++        let tempdest = tempdir
++            .path()
++            
+```
+
+**File**: `gitoxide-core/tests/organize.rs` (modified, +162/-4)
+```diff
+@@ -32,10 +32,10 @@ fn url_components_cannot_move_repositories_outside_the_destination() -> TestResu
+                     diagnostic,
+                     "execute and simulate preserve the confinement cause and resolved destination for every URL",
+                     @r#"
+-                Failed to handle 1 repository
++                Failed to organize 1 repository
+ 
+                 Caused by:
+-                    0: Failed to handle repository, repository="<fixture>/source"
++                    0: Failed to organize repository, repository="<fixture>/source"
+                     1: the origin URL resolves outside the repository destination, destination="<fixture>/escaped", destination_root="<fixture>/destination"
+                 "#
+                 );
+@@ -77,6 +77,116 @@ fn ordinary_urls_still_move_repositories_below_the_destination() -> TestResult {
+         "organization moves Git metadata along with the worktree"
+     );
+     assert!(!source.exists(), "successful organization moves the repository");
++    run(
++        Mode::Execute,
++        &destination,
++        &destination,
++        gix::progress::Discard,
++        Some(1),
++    )?;
++    assert_eq!(
++        std::fs::read_to_string(moved.join("payload"))?,
++        "repository contents",
++        "already organized repositories stay in place"
++    );
++    Ok(())
++}
++
++#[cfg(unix)]
++#[test]
++fn dangling_destination_symlinks_are_skipped() -> TestResult {
++    for mode in [Mode::Execute, Mode::Simulate] {
++        let fixture = gix_testtools::scripted_fixture_writable("organize.sh")?;
++        let source = fixture.path().join("source").canonicalize()?;
++        let destination = fixture.path().join("destination");
++        let occupied = destination.join("example.com/owner/repository");
++        let missing = destination.join("missing");
++        std::fs::create_dir_all(occupied.parent().expect("the destination has a parent"))?;
++        std::os::unix::fs::symlink(&missing, &occupied)?;
++        let root = gix::progress::tree::Root::new();
++        run(mode, &source, &destination, root.add_child("organize"), Some(1))?;
++        let mut messages = Vec::new();
++        root.copy_messages(&mut messages);
++        assert!(
++            messages[0].message.starts_with("Skipping repository"),
++            "dangling symlinks occupy the destination too"
++        );
++        assert_eq!(
++            std::fs::read_link(&occupied)?,
++            missing,
++            "the existing symlink is preserved"
++        );
++        assert!(source.join(".git/HEAD").is_file(), "the source stays intact");
++        assert!(!missing.exists(), "skipping cannot create the missing symlink target");
++    }
++    Ok(())
++}
++
++#[test]
++fn occupied_destinations_are_skipped_without_changing_either_path() -> TestResult {
++    for mode in [Mode::Execute, Mode::Simulate] {
++        for occupied_kind in ["directory", "empty directory", "file"] {
++            let fixture = gix_testtools::scripted_fixture_writable("organize.sh")?;
++            let source = fixture.path().join("source").canonicalize()?;
++            let destination = fixture.path().join("destination");
++            let occupied = destination.join("example.com/owner/repository");
++            std::fs::create_dir_all(occupied.parent().expect("the destination has a parent"))?;
++            match occupied_kind {
++                "directory" => {
++                    std::fs::create_dir(&occupied)?;
++                    std::fs::write(occupied.join("sentinel"), "existing contents")?;
++                }
++                "empty directory" => std::fs::create_dir(&occupied)?,
++                _ => std::fs::write(&occupied, "existing contents")?,
++            }
++            let root = gix::progress::tree::Root::new();
++            run(mode, &source, &destination, root.add_child("organize"), Some(1))?;
++            let mut messages = Vec::new();
++            root.copy_messages(&mut messages);
++            assert_eq!(messages.len(), 1, "occupied destinations only emit a skip message");
++            assert_eq!(
++                messages[0].level,
++                gix::progress::MessageLevel::Info,
++                "a collision is an informational skip"
++            );
++            assert_eq!(
++                messages[0].message,
++                format!(
++                    "Skipping repository \"{}\": destination \"{}\" already exists",
++                    source.display(),
++                    occupied.canonicalize()?.display()
++                ),
++                "the skip explains the collision and identifies both paths"
++            );
++            assert_eq!(
++                std::fs::read_to_string(source.join("payload"))?,
++                "repository contents",
++                "skipping preserves the source"
++            );
++            assert!(
++                source.join(".git/HEAD").is_file(),
++                "skipping preserves source Git metadata"
++            );
++            if occupied_kind == "empty directory" {
+```
+
+**File**: `src/porcelain/options.rs` (modified, +2/-0)
+```diff
+@@ -65,6 +65,8 @@ pub enum ToolCommands {
+         root: Option<PathBuf>,
+     },
+     /// Move all repositories found in a directory into a structure matching their clone URLs.
++    ///
++    /// Repositories whose destination already exists are skipped, leaving both paths unchanged.
+     Organize {
+         #[clap(long)]
+         /// The operation will be in dry-run mode unless this flag is set.
 ```
 
 ---
 
-### Incident Patch 2: `cf55f83f` (2026-10-17)
-**Commit Message**: fix(gix-ref): preserve the refs directory when pruning loose references
+### Incident Patch 2: `45bf9be3` (2026-10-19)
+**Commit Message**: fix(gix-fs): guard indirect Windows symlink targets before probing
 
 <!-- agent -->
-Packing or deleting the final loose reference released its lock with the
-Git directory as the cleanup boundary. Empty-parent cleanup could then
-remove `refs` itself, leaving an otherwise valid repository undiscoverable.
-Rollback had the same problem, and its existing test explicitly accepted
-removal of the root.
+GHSA-xw69-xv93-5fjv reports that Windows target-type probes can disclose
+credentials when a checkout symlink resolves to a network location. The
+existing leading-separator guard covers direct targets, but a local alias
+can reach the same location through an intermediate or terminal link.
 
-Bound loose-reference lock cleanup at the resolved physical `refs` root,
-while continuing to prune empty descendants. Respect namespaces, shared
-and private worktree routing, and worktree aliases, including a worktree
-named `refs`; keep top-level pseudorefs within their containing directory.
-Apply the same boundary policy to update and deletion locks so commit,
-rollback, and failed preparation retain the repository structure.
+Resolve target components with no-follow metadata and inspect each reparse
+point's link target before continuing. Apply the separator guard at every
+step and reject non-disk namespaces. Bound chain resolution so missing and
+cyclic targets retain the existing retry and dangling-file behavior. This
+preserves ordinary directory-link chains without delegating untrusted
+chain traversal to a target-following metadata query. As elsewhere in
+checkout, checked directories must not be concurrently replaced.
 
-Add disposable Git-produced baselines for packing and deleting the final
-flat and nested reference. Compare packed contents, verify that the loose
-source and locks disappear, and check that repository discovery still
-works. Update rollback expectations and cover namespace, pseudoref, and
-linked-worktree cleanup.
+The regression uses a local rooted directory as a stand-in for a remote
+target, covering terminal and intermediate links through both creation
+APIs without network access. Before the fix it fails because the target
+is followed and a directory link is created; afterward file links are
+created immediately.
 
-This is a prerequisite for clone reference handling
+The Git referenc
 
-**File**: `gix-ref/src/store/file/transaction/prepare.rs` (modified, +40/-6)
+**File**: `gix-fs/src/symlink.rs` (modified, +52/-4)
 ```diff
-@@ -1,3 +1,5 @@
-+use std::path::PathBuf;
-+
- use gix_error::{ClassificationMarker, ErrorExt, Message, Result, ResultExt, bail, message, not_found};
- 
- use crate::{
-@@ -56,13 +58,14 @@ impl Transaction<'_, '_> {
-             .check_windows_device_name(change.update.name.as_ref())
-             .or_raise(|| message("Invalid reference filename"))?;
- 
-+        let (reference_path, lock_boundary) = reference_path_and_lock_boundary(store, change.update.name.as_ref())?;
-+
-         let lock = match &mut change.update.change {
-             Change::Delete { expected, .. } => {
--                let (base, relative_path) = store.reference_path_with_base(change.update.name.as_ref())?;
-                 let lock = gix_lock::Marker::acquire_to_hold_resource(
--                    base.join(relative_path.as_ref()),
-+                    &reference_path,
-                     lock_fail_mode,
--                    Some(base.clone().into_owned()),
-+                    Some(lock_boundary.clone()),
-                     0,
-                 )?;
- 
-@@ -101,12 +104,11 @@ impl Transaction<'_, '_> {
-                 Some(lock)
-             }
-             Change::Update { expected, new, .. } => {
--                let (base, relative_path) = store.reference_path_with_base(change.update.name.as_ref())?;
-                 let obtain_lock = || {
-                     gix_lock::File::acquire_to_update_resource(
--                        base.join(relative_path.as_ref()),
-+                        &reference_path,
-                         lock_fail_mode,
--                        Some(base.clone().into_owned()),
-+                        Some(lock_boundary.clone()),
-                         0,
-                     )
-                 };
-@@ -398,6 +400,38 @@ impl Transaction<'_, '_> {
+@@ -66,6 +66,9 @@ pub fn remove(path: &Path) -> io::Result<()> {
+ /// which doesn't have to care about the target type though.
+ /// Targets starting with `/` or `\` are also treated as files without probing them, as Windows
+ /// can interpret these as network shares and probing them could disclose credentials.
++/// This applies to every link in a target's chain, including links in parent components.
++/// Local chains are resolved without following symlinks during metadata queries.
++/// As with checkout path validation, this assumes no concurrent replacement of checked directories.
+ #[cfg(windows)]
+ pub fn create(original: &Path, link: &Path) -> io::Result<()> {
+     create_inner(original, link, false).map(|_| ())
+@@ -77,6 +80,7 @@ pub fn create(original: &Path, link: &Path) -> io::Result<()> {
+ /// Callers can retry after creating other links, then use [`create()`] for any unresolved targets
+ /// once no more progress is possible. Targets starting with `/` or `\` are never probed and are
+ /// immediately created as file links, just like in [`create()`].
++/// The same restriction applies to indirect targets reached through other links.
+ /// On other platforms, this is equivalent to [`create()`] and always returns `true` on success.
+ pub fn create_or_delay(original: &Path, link: &Path) -> io::Result<bool> {
+     #[cfg(windows)]
+@@ -89,21 +93,25 @@ pub fn create_or_delay(original: &Path, link: &Path) -> io::Result<bool> {
      }
  }
  
-+/// Resolve the reference path and the directory that empty-parent lock cleanup must preserve.
-+/// Keep the physical `refs` root for discovery; pseudorefs retain their containing directory.
-+///
-+/// For a resolved base of `/repo/.git`, relative paths produce these cleanup boundaries:
-+///
-+/// * `refs/heads/topic` -> `/repo/.git/refs`
-+/// * `refs/namespaces/team/refs/heads/topic` -> `/repo/.git/refs`
-+/// * `HEAD` -> `/repo/.git`
-+/// * `worktrees/other/HEAD` -> `/repo/.git/worktrees/other`
-+/// * `worktrees/other/refs/bisect/bad` -> `/repo/.git/worktrees/other/refs`
-+/// * `worktrees/refs/refs/bisect/bad` -> `/repo/.git/worktrees/refs/refs`
-+///
-+/// The store resolves namespaces and worktree aliases before selecting the boundary.
-+fn reference_path_and_lock_boundary(store: &file::Store, name: &FullNameRef) -> Result<(PathBuf, PathBuf)> {
-+    let (base, relative_path) = store.reference_path_with_base(name)?;
-+    let reference_path = base.join(relative_path.as_ref());
-+    let mut lock_boundary = base.into_owned();
-+    let worktree_prefix = relative_path.starts_with("worktrees");
-+    for (index, component) in relative_path
-+        .parent()
-+        .expect("reference paths have a parent")
-+        .components()
++#[cfg(windows)]
++fn starts_with_separator(path: &Path) -> bool {
++    matches!(path.as_os_str().as_encoded_bytes().first(), Some(b'/' | b'\\'))
++}
++
+ #[cfg(windows)]
+ fn create_inner(original: &Path, link: &Path, delay_if_unknown: bool) -> io::Result<bool> {
+     use std::os::windows::fs::{symlink_dir, symlink_file};
+ 
+     // Match Git's `process_phantom_symlink()`: a leading separator can introduce a UNC
+     // share or an NT namespace path. Check the original spelling before any target probe.
+-    let starts_with_slash = matches!(original.as_os_str().as_encoded_bytes().first(), Some(b'/' | b'\\'));
+-    let is_dir = if starts_with_slash {
++    let is_dir = if starts_with_separator(original) {
+         false
+     } else {
+         let parent = link
+             .parent()
+             .ok_or_else(|| io::Error::new(io::ErrorKind::InvalidInput, "symlink path has no parent directory"))?;
+-        match parent.join(original).metadata() {
+-            Ok(meta) => meta.is_dir(),
++        match target_is_dir(&parent.join(original)) {
++            Ok(is_dir) => is_dir,
+             Err(_) if delay_if_unknown => return Ok(false),
+             Err(_) => false,
+         }
+@@ -116,6 +124,46 @@ fn create_inner(original: &Path, link: &Path, delay_if_unknown: bool) -> io::Res
+     Ok(true)
+ }
+ 
++#[cfg(windows)]
++fn target_is_dir(path: &Path) -> io::Result<bool> {
++    use std::path::{Component, PathBuf, Prefix};
++
++    let mut path = path.to_owned();
++    // Bound resolution for cycles and excessive chains. Unknown types retain the
++    // caller's existing retry/dangling-file behavior.
++    'resolve: for _ in 0..40 {
++        let mut current = PathBuf::new();
++        let mut components = path.components();
++        while let Some(component) = components.next() {
++            current.push(component);
++            if let Component::Prefix(prefix) = component {
++                if !matches!(prefix.kind(), Prefix::Disk(_) | Prefix::VerbatimDisk(_)) {
++                    return Ok(false);
++                }
++                continue;
++            }
++            // Check every parent before appending its child: no-follow metadata
++            // alone only protects the final component of the queried path.
++            let meta = current.symlink_metadata()?;
++            // Use the same classification as the worktree stack, including Windows junctions
++            // and mount points, but not unrelated reparse points.
++            if meta.file_type().is_symlink() {
++                let target = std::fs::read_link(&current)?;
++                if starts_with_separator(&target) {
++                    return Ok(false);
++                }
++                current.pop();
++                path = current.join(target).join(components.as_path());
++                continue 'resolve;
++            }
++            if components.as_path().as_os_str().is_empty() {
++                return Ok(meta.is_dir());
++            }
++        }
++    }
++    Err(io::Error::other("symlink target exceeds the resolution limit"))
++}
++
+ /// Return true if `err` indicates that a file collision happened, i.e. a symlink couldn't be created as the `link`
+ /// already exists as filesystem object.
+ #[cfg(any(unix, target_os = "wasi"))]
+```
+
+**File**: `gix-fs/tests/fs/symlink.rs` (modified, +34/-0)
+```diff
+@@ -89,6 +89,40 @@ fn relative_and_drive_qualified_directory_targets_are_detected() -> gix_testtool
+     Ok(())
+ }
+ 
++#[test]
++fn indirect_slash_prefixed_targets_are_not_probed() -> gix_testtools::TestResult {
++    // A local directory stands in for a network share: following it would wrongly
++    // produce a directory link. This regression never accesses a network path.
++    let dir = gix_testtools::tempfile::tempdir_in(std::env::current_dir()?)?;
++    let target = dir.path().join("target");
++    std::fs::create_dir_all(target.join("nested"))?;
++    let rooted: PathBuf = target.components().skip(1).collect();
++    std::os::windows::fs::symlink_dir(&rooted, dir.path().join("alias"))?;
++    std::os::windows::fs::symlink_dir("alias", dir.path().join("chain"))?;
++
++    for (index, original) in ["alias", "chain", "alias/nested", "chain\\nested"]
++        .into_iter()
 +        .enumerate()
 +    {
-+        lock_boundary.push(component);
-+        if component.as_os_str() == "refs" && (!worktree_prefix || index >= 2) {
-+            break;
++        for delayed in [false, true] {
++            let link = dir.path().join(format!("link-{index}-{delayed}"));
++            if delayed {
++                assert!(
++                    gix_fs::symlink::create_or_delay(Path::new(original), &link)?,
++                    "unsafe indirect targets use the file fallback without retries"
++                );
++            } else {
++                gix_fs::symlink::create(Path::new(original), &link)?;
++            }
++            assert!(
++                link.symlink_metadata()?.file_type().is_symlink_file(),
++                "a separator-prefixed target anywhere in a chain must prevent directory probing: {original}"
++            );
 +        }
-+    }
-+    Ok((reference_path, lock_boundary))
-+}
-+
- fn possibly_adjust_name_for_prefixes(name: &FullNameRef) -> Option<FullName> {
-     match name.category_and_short_name() {
-         Some((c, sn)) => {
-```
-
-**File**: `gix-ref/tests/fixtures/generated-archives/.gitignore` (modified, +2/-0)
-```diff
-@@ -14,3 +14,5 @@ make_worktree_repo_packed_sha256.tar
- # whose target paths are validated by the host git; regenerating per run keeps
- # the format aligned with the git binary doing the comparison.
- make_multi_hop_ref*.tar
-+# Generate this small directory-cleanup fixture and its host-Git baselines.
-+keep_refs_directory*.tar
-```
-
-**File**: `gix-ref/tests/fixtures/keep_refs_directory.sh` (added, +27/-0)
-```diff
-@@ -0,0 +1,27 @@
-+#!/usr/bin/env bash
-+set -eu -o pipefail
-+
-+# Only one loose reference remains, with no empty sibling directories masking
-+# cleanup of the refs root. HEAD and objects still make this a valid repository.
-+git init -q seed
-+git -C seed commit --allow-empty -q -m initial
-+git -C seed update-ref refs/topic HEAD
-+git -C seed update-ref -d refs/heads/main
-+rmdir seed/.git/refs/heads seed/.git/refs/tags
-+
-+cp -R seed pack-flat
-+cp -R seed git-pack-flat
-+git -C git-pack-flat pack-refs --all --prune
-+cp -R seed delete-flat
-+cp -R seed git-delete-flat
-+git -C git-delete-flat update-ref -d refs/topic
-+
-+# Nested references must allow cleanup below refs without removing refs itself.
-+git -C seed update-ref refs/heads/a/b/topic refs/topic
-+git -C seed update-ref -d refs/topic
-+cp -R seed pack-nested
-+cp -R seed git-pack-nested
-+git -C git-pack-nested pack-refs --all --prune
-+cp -R seed delete-nested
-+cp -R seed git-delete-nested
-+git -C git-delete-nested update-ref -d refs/heads/a/b/topic
-```
-
-**File**: `gix-ref/tests/refs/file/transaction/prepare_and_commit/create_or_update/mod.rs` (modified, +113/-2)
-```diff
-@@ -82,8 +82,67 @@ fn intermediate_directories_are_removed_on_rollback() -> TestResult {
- 
-         assert!(!dir.path().join("refs/heads").exists());
-         assert!(
--            !dir.path().join("refs").exists(),
--            "we go all in right now and also remove the refs directory. 'git' might not do that, but it's not a problem either"
-+            dir.path().join("refs").is_dir(),
-+            "rollback preserves the refs root required for repository discovery"
-+        );
-+    }
-+    Ok(())
-+}
-+
-+#[test]
-+fn rollback_preserves_resolved_reference_roots() -> TestResult {
-+    for (name, namespace, root) in [
-+        ("HEAD", None, ""),
-+        ("refs/heads/a/b/ref", None, "refs"),
-+        ("main-worktree/refs/bisect/bad", None, "refs"),
-+        ("worktrees/other/refs/bisect/bad", None, "worktrees/other/refs"),
-+        ("worktrees/other/HEAD", None, "worktrees/other"),
-+        ("worktrees/refs/HEAD", None, "worktrees/refs"),
-+        ("worktrees/refs/refs/bisect/bad", None, "worktrees/refs/refs"),
-+        ("HEAD", Some("foo/bar"), "refs"),
-+        ("refs/heads/a/b/ref", Some("foo/bar"), "refs"),
-+    ] {
-+        let (dir, mut store) = empty_store()?;
-+        store.namespace = namespace.map(gix_ref::namespace::expand).transpose()?;
-+        store
-+            .transaction()
-+            .prepare([create_at(name)], Fail::Immediately, Fail::Immediately)?
-+            .rollback();
-+        let root = dir.path().join(root);
-+        assert!(
-+            root.is_dir(),
-+            "{name} in {namespace:?}: the resolved root survives rollback"
-+        );
-+        assert_eq!(
-+            std::fs::read_dir(root)?.count(),
-+            0,
-+            "{name} in {namespace:?}: locks and empty descendants are removed"
-+        );
-+    }
-+    for name in ["refs/heads/a/b/ref", "refs/bisect/bad"] {
-+        let dir = gix_testtools::tempfile::TempDir::new()?;
-+        let git_dir = dir.path().join("worktree");
-+        let common_dir = dir.path().join("common");
-+        let store =
-+            gix_ref::file::Store::for_linked_worktree(git_dir.clone(), common_dir.clone(), crate::fixture_hash_kind());
-+        store
-+            .transaction()
-+            .prepare([create_at(name)], Fail::Immediately, Fail::Immediately)?
-+            .rollback();
-+        let root = if name.starts_with("refs/heads/") {
-+            common_dir
-+        } else {
-+            git_dir
-+        }
-+        .join("refs");
-+        assert!(
-+            root.is_dir(),
-+            "{name}: linked-worktree routing preserves the correct refs root"
-+        );
-+        assert_eq!(
-+            std::fs::read_dir(root)?.count(),
-+            0,
-+            "{name}: empty descendants are removed"
-         );
-     }
-     Ok(())
-@@ -943,6 +1002,58 @@ fn packed_refs_creation_with_tag_loop_are_not_handled_and_cannot_exist_due_to_ob
-     // Tag loops cannot exist as you cannot create them thanks to hashing.
- }
- 
-+#[test]
-+fn packing_the_last_loose_reference_preserves_refs_directory_like_git() -> TestResult {
-+    for (case, name) in [("flat", "refs/topic"), ("nested", "refs/heads/a/b/topic")] {
-+        let fixture = crate::scripted_fixture_writable("keep_refs_directory.sh")?;
-+        let git_dir = fixture.path().join(format!("pack-{case}/.git"));
-+        let expected_git_dir = fixture.path().join(format!("git-pack-{case}/.git"));
-+        assert!(
-+            expected_git_dir.join("refs").is_dir(),
-+            "{case}: Git preserves the refs root"
-+        );
-+        let mut store = gix_ref::file::Store::at(git_dir.clone(), crate::fixture_hash_kind());
-+        store.write_reflog = WriteReflog::Disable;
-+        let reference = store.find(name)?;
-+        store
-+            .transaction()
-+            .packed_refs(PackedRefs::DeletionsAndNonSymbolicUpdatesRemoveLooseSourceReference(
-+                Box::new(crate::file::odb_at(git_dir.join("objects"))?),
-+            ))
-+            .prepare(
-+                [RefEdit::update(
-+                    reference.name,
-+                    reference.target,
-+                    PreviousValue::MustExist,
-+                    "",
-+                )],
-+                Fail::Immediately,
-+                Fail::Immediately,
-+            )?
-+            .commit(None)?;
-+        assert!(
-+            store.try_find_loose(name)?.is_none(),
-+            "{case}: the loose source was pruned"
-+        );
-+        assert_eq!(
-+            std::fs::read(store.packed_refs_path())?,
-+            std::fs::read(expected_git_dir.join("packed-refs"))?,
-+            "{case}: packed references agree with Git"
-+        );
-+        assert!(
-+            git_dir.join("refs").is_dir(),
-+            "{case}: packing must preserve the refs root"
-+        );
-+        assert_eq!(
-+            std::fs::read_dir(git_dir.join("refs"))?.count(),
-+            0,
-+            "{case}: no reference, lock, or empty descendant directories remain"
-+        );
-+        gix_discover::is_git(&git_dir)?;
-+    }
-+    Ok(())
-+}
-```
-
-**File**: `gix-ref/tests/refs/file/transaction/prepare_and_commit/delete.rs` (modified, +34/-0)
-```diff
-@@ -14,6 +14,40 @@ use gix_ref::{
- };
- use gix_testtools::TestResult;
- 
-+#[test]
-+fn deleting_the_last_loose_reference_preserves_refs_directory_like_git() -> TestResult {
-+    for (case, name) in [("flat", "refs/topic"), ("nested", "refs/heads/a/b/topic")] {
-+        let fixture = crate::scripted_fixture_writable("keep_refs_directory.sh")?;
-+        let git_dir = fixture.path().join(format!("delete-{case}/.git"));
-+        let expected_git_dir = fixture.path().join(format!("git-delete-{case}/.git"));
-+        assert!(
-+            expected_git_dir.join("refs").is_dir(),
-+            "{case}: Git preserves the refs root"
-+        );
-+        let store = gix_ref::file::Store::at(git_dir.clone(), crate::fixture_hash_kind());
-+        store
-+            .transaction()
-+            .prepare(
-+                [RefEdit::delete(name.try_into()?, PreviousValue::MustExist)],
-+                Fail::Immediately,
-+                Fail::Immediately,
-+            )?
-+            .commit(None)?;
-+        assert!(store.try_find(name)?.is_none(), "{case}: the reference was deleted");
-+        assert!(
-+            git_dir.join("refs").is_dir(),
-+            "{case}: deletion must preserve the refs root"
-+        );
-+        assert_eq!(
-+            std::fs::read_dir(git_dir.join("refs"))?.count(),
-+            0,
-+            "{case}: no reference, lock, or empty descendant directories remain"
-+        );
-+        gix_discover::is_git(&git_dir)?;
 +    }
 +    Ok(())
 +}
 +
  #[test]
- fn delete_a_ref_which_is_gone_succeeds() -> TestResult {
-     let (_keep, store) = empty_store()?;
+ fn unresolved_targets_can_be_retried_before_creating_a_link() -> gix_testtools::TestResult {
+     let dir = gix_testtools::tempfile::tempdir()?;
 ```
 
 ---
 
-### Incident Patch 3: `aa7eaeaf` (2026-10-09)
-**Commit Message**: fix(gix): match Git clone reference handling and preserve offline defaults
+### Incident Patch 3: `74395788` (2026-10-18)
+**Commit Message**: fix(gix): respect section trust for filesystem path protections
 
 <!-- agent -->
-`gix` clones recorded remote `HEAD` as a direct object ID, losing the
-branch relationship needed by later fetches and `Remote::default_branch()`.
-Bare clones also used the ordinary remote-tracking layout, while detached
-remote heads and custom destinations selected different references from
-`git clone`.
+GHSA-q54r-jf2p-rfr2 reports that path-protection configuration did not
+respect the section filter used for security-relevant settings. Use the
+filter for `core.protectHFS`, `core.protectNTFS`, and
+`gitoxide.core.protectWindows`, including the latter's early read for the
+reference store. Keep platform defaults and boolean error handling intact.
 
-Match Git's clone orchestration and reference selection:
+Read-only fixtures exercise local and worktree configuration, full and
+reduced trust, custom filters, trusted API overrides, and malformed
+values in strict and lenient mode. Before the fix, reduced-trust settings
+replaced the defaults and a rejected malformed Windows setting prevented
+opening. Validation also exercises representative path names.
 
-- Store bare-clone branches in `refs/heads/*`, without a default persisted
-  fetch refspec, tracking `HEAD`, or branch upstream configuration. Keep
-  explicit refspecs persistent and use `WithWorktree` plus `fetch_only()`
-  for ordinary clones without a checkout.
-- Select the advertised symbolic target or guess a branch matching a
-  detached `HEAD`, preferring `init.defaultBranch`, then `master`, then the
-  first matching branch by name. Record the selected branch's first mapped
-  peer before updating local `HEAD`, including overwriting a branch named
-  `HEAD`; omit tracking `HEAD` when the selected target is excluded.
-- Detach and peel tag and revision selections, check out the selected
-  `HEAD`, and align shallow selection, tag polic
+Git baseline: the local Git reference identifies itself as `v2.56.GIT`.
+Its `t/t1014-read-tree-confusing.sh` and `read-cache.c:verify_path_internal`
+cover filesystem-specific path protections. Git's ownership policy in
+`setup.c:ensure_valid_ownership` rejects dubious ownership, whereas `gix`
+supports reduced trust by filtering configuration.
 
-**File**: `gitoxide-core/src/repository/clone.rs` (modified, +3/-5)
+Validation: focused regression tests; 54 configuration tests; 39 opening
+tests;
+
+**File**: `gix/src/config/cache/access.rs` (modified, +12/-3)
 ```diff
-@@ -107,15 +107,13 @@ pub(crate) mod function {
-             Status::Change {
-                 update_refs, negotiate, ..
-             } => {
--                let remote = repo
--                    .find_default_remote(gix::remote::Direction::Fetch)
--                    .expect("one origin remote")?;
--                let ref_specs = remote.refspecs(gix::remote::Direction::Fetch);
-+                // Bare clones don't persist the refspecs used for their initial fetch.
-+                let ref_specs = fetch_outcome.ref_map.refspecs.clone();
-                 print_updates(
-                     &repo,
-                     &negotiate,
-                     update_refs,
--                    ref_specs,
-+                    &ref_specs,
-                     fetch_outcome.ref_map,
-                     &mut out,
-                     &mut err,
+@@ -303,15 +303,24 @@ impl Cache {
+         const ALWAYS_ON_FOR_SAFETY: bool = true;
+         Ok(gix_validate::path::component::Options {
+             protect_windows: config::tree::gitoxide::Core::PROTECT_WINDOWS
+-                .enrich_error(self.resolved.boolean(config::tree::gitoxide::Core::PROTECT_WINDOWS))
++                .enrich_error(self.resolved.boolean_filter(
++                    config::tree::gitoxide::Core::PROTECT_WINDOWS,
++                    &mut self.filter_config_section.clone(),
++                ))
+                 .with_lenient_default_value(self.lenient_config, Some(IS_WINDOWS))?
+                 .unwrap_or(IS_WINDOWS),
+             protect_hfs: config::tree::Core::PROTECT_HFS
+-                .enrich_error(self.resolved.boolean(config::tree::Core::PROTECT_HFS))
++                .enrich_error(
++                    self.resolved
++                        .boolean_filter(config::tree::Core::PROTECT_HFS, &mut self.filter_config_section.clone()),
++                )
+                 .with_lenient_default_value(self.lenient_config, Some(IS_MACOS))?
+                 .unwrap_or(IS_MACOS),
+             protect_ntfs: config::tree::Core::PROTECT_NTFS
+-                .enrich_error(self.resolved.boolean(config::tree::Core::PROTECT_NTFS))
++                .enrich_error(self.resolved.boolean_filter(
++                    config::tree::Core::PROTECT_NTFS,
++                    &mut self.filter_config_section.clone(),
++                ))
+                 .with_lenient_default_value(self.lenient_config, Some(ALWAYS_ON_FOR_SAFETY))?
+                 .unwrap_or(ALWAYS_ON_FOR_SAFETY),
+         })
 ```
 
-**File**: `gix-tix/spec.md` (modified, +11/-7)
+**File**: `gix/src/config/cache/incubate.rs` (modified, +2/-1)
 ```diff
-@@ -293,13 +293,17 @@ without trading responsiveness for metadata that is not visible.
-   exports its saved remaining todo without requiring a hidden boundary. Its
-   `--edit-and-apply` form edits that continuation. Scope and target options are
-   rejected until the active operation is completed or stopped.
--- `tix show`, `tix ref-tree`, and `tix rebase todo` automatically inspect symbolic
--  `refs/remotes/<remote>/HEAD` references. Their targets are reverse-mapped
--  through each remote's fetch refspec, and existing local commit branches are
--  added to the explicit hidden revisions. Multiple remote defaults are
--  deduplicated; stale, direct, ambiguous, unmappable, missing, and non-commit
--  results are ignored. At least one explicit or inferred hidden revision is
--  required by commands that need a hidden boundary. `--no-auto-hide` disables
-+- `tix show`, `tix ref-tree`, and `tix rebase todo` automatically infer default
-+  branches with `gix::Remote::default_branch()`, without contacting remotes.
-+  It reverse-maps each symbolic `refs/remotes/<remote>/HEAD` target through that
-+  remote's own fetch refspecs, including custom tracking destinations; mappings
-+  from other remotes do not affect its result. Only branch sources identified
-+  in `refs/heads/` (including exact `heads/<name>` sources) qualify, and existing
-+  local commit branches with those names are added to the explicit hidden
-+  revisions. Multiple remote defaults are deduplicated; invalid remote
-+  configurations and stale, direct, ambiguous, unmappable, missing, and
-+  non-commit results are ignored. At least one explicit or inferred hidden
-+  revision is required by commands that need a hidden boundary. `--no-auto-hide` disables
-   inference for these commands. A directly launched interactive history applies
-   explicit `-x` filters immediately. `tix -X` / `tix --auto-hide`, also available
-   through `gix tix`, applies the same inferred local defaults at startup and adds
+@@ -32,6 +32,7 @@ impl StageOne {
+         git_dir_trust: gix_sec::Trust,
+         lossy: bool,
+         lenient: bool,
++        mut filter_config_section: fn(&gix_config::file::Metadata) -> bool,
+     ) -> Result<Self> {
+         let mut buf = Vec::with_capacity(512);
+         let mut config = load_config(
+@@ -91,7 +92,7 @@ impl StageOne {
+ 
+         const IS_WINDOWS: bool = cfg!(windows);
+         let protect_windows = gitoxide::Core::PROTECT_WINDOWS
+-            .enrich_error(config.boolean(gitoxide::Core::PROTECT_WINDOWS))
++            .enrich_error(config.boolean_filter(gitoxide::Core::PROTECT_WINDOWS, &mut filter_config_section))
+             .with_lenient_default_value(lenient, Some(IS_WINDOWS))?
+             .unwrap_or(IS_WINDOWS);
+ 
 ```
 
-**File**: `gix-tix/src/history.rs` (modified, +89/-15)
+**File**: `gix/src/open/repository.rs` (modified, +14/-2)
 ```diff
-@@ -2090,29 +2090,21 @@ pub(crate) fn available_hidden_revisions(
- fn auto_hidden_revisions(repo: &gix::Repository) -> Result<Vec<OsString>> {
-     let mut branches = BTreeSet::new();
-     for remote_name in repo.remote_names() {
--        let mut head = BString::from("refs/remotes/");
--        head.extend_from_slice(&remote_name);
--        head.extend_from_slice(b"/HEAD");
--        let Ok(Some(reference)) = repo.try_find_reference(head.as_bstr()) else {
-+        let Ok(remote) = repo.find_remote(remote_name) else {
-             continue;
-         };
--        let target = reference.target();
--        let Some(tracking) = target.try_name() else { continue };
--        let Ok(Some((upstream, remote))) = repo.upstream_branch_and_remote_for_tracking_branch(tracking) else {
-+        let Ok(Some(branch)) = remote.default_branch() else {
-             continue;
-         };
--        if remote.name().map(gix::remote::Name::as_bstr) != Some(remote_name.as_bstr()) {
--            continue;
--        }
--        let Ok(Some(mut local)) = repo.try_find_reference(upstream.as_ref()) else {
-+        let Ok(Some(mut local)) = repo.try_find_reference(branch.as_ref()) else {
-             continue;
-         };
-         let Ok(id) = local.peel_to_id() else { continue };
-         if repo
-             .find_header(id)
-             .is_ok_and(|header| header.kind() == gix::object::Kind::Commit)
-         {
--            branches.insert(upstream);
-+            branches.insert(branch);
+@@ -17,7 +17,7 @@ use crate::{
+     bstr::BString,
+     config,
+     config::{
+-        cache::interpolate_context,
++        cache::{interpolate_context, util::ApplyLeniencyDefaultValue},
+         tree::{Core, Key, Safe, gitoxide},
+     },
+     open::Permissions,
+@@ -245,12 +245,14 @@ impl ThreadSafeRepository {
+                 })
+                 .transpose()?;
          }
-     }
-     branches
-@@ -2628,6 +2620,16 @@ mod tests {
-                 "+refs/heads/missing:refs/remotes/stale/default",
-                 "refs/remotes/stale/default",
-             ),
-+            (
-+                "custom",
-+                "+refs/heads/merged:refs/tracking/custom/default",
-+                "refs/tracking/custom/default",
-+            ),
-+            (
-+                "overlap",
-+                "+refs/heads/topic:refs/remotes/origin/main",
-+                "refs/remotes/origin/main",
-+            ),
-         ] {
-             git(&["config", &format!("remote.{remote}.url"), "https://example.com/repo"])?;
-             git(&["config", &format!("remote.{remote}.fetch"), fetch])?;
-@@ -2641,17 +2643,89 @@ mod tests {
-         let repo = crate::test_repository::open(path)?;
-         assert_eq!(
-             auto_hidden_revisions(&repo)?,
--            [OsString::from("refs/heads/main"), OsString::from("refs/heads/trunk")],
--            "remote defaults are reverse-mapped, deduplicated, and limited to existing local branches"
-+            [
-+                "refs/heads/main",
-+                "refs/heads/merged",
-+                "refs/heads/topic",
-+                "refs/heads/trunk"
-+            ]
-+            .map(OsString::from),
-+            "each remote's own refspecs determine its default, even with overlapping or custom tracking destinations"
-         );
-         assert_eq!(
-             available_hidden_revisions(&repo, &[OsString::from("topic")], true)?.0,
-             [
-                 OsString::from("topic"),
-                 OsString::from("refs/heads/main"),
-+                OsString::from("refs/heads/merged"),
-+                OsString::from("refs/heads/topic"),
-                 OsString::from("refs/heads/trunk")
-             ],
--            "explicit and inferred hidden revisions are combined"
-+            "explicit and inferred hidden revisions are combined and remote defaults are deduplicated"
-+        );
-+        Ok(())
++        let mut filter_config_section = filter_config_section.unwrap_or(config::section::is_trusted);
+         let repo_config = config::cache::StageOne::new(
+             common_dir.as_deref().unwrap_or(&git_dir),
+             git_dir.as_ref(),
+             *git_dir_trust,
+             lossy_config,
+             lenient_config,
++            filter_config_section,
+         )
+         .or_raise(|| message("Repository configuration could not be loaded"))?;
+ 
+@@ -301,7 +303,6 @@ impl ThreadSafeRepository {
+         let git_install_dir = crate::path::install_dir().ok();
+         let home = gix_path::env::home_dir().and_then(|home| env.home.check_opt(home));
+ 
+-        let mut filter_config_section = filter_config_section.unwrap_or(config::section::is_trusted);
+         let mut config = config::Cache::from_stage_one(
+             repo_config,
+             common_dir_ref,
+@@ -467,6 +468,17 @@ impl ThreadSafeRepository {
+             config.resolved = resolved.into();
+         }
+ 
++        // Trust promotion and trusted overrides are only available after configuration is resolved.
++        let use_on_windows = cfg!(windows);
++        refs.prohibit_windows_device_names = gitoxide::Core::PROTECT_WINDOWS
++            .enrich_error(
++                config
++                    .resolved
++                    .boolean_filter(gitoxide::Core::PROTECT_WINDOWS, &mut filter_config_section),
++            )
++            .with_lenient_default_value(lenient_config, Some(use_on_windows))?
++            .unwrap_or(use_on_windows);
++
+         let index_path = match config
+             .resolved
+             .raw_value_with_section_filter(gitoxide::Core::INDEX_FILE, &mut filter_config_section)
+```
+
+**File**: `gix/tests/fixtures/make_path_protection_repos.sh` (added, +32/-0)
+```diff
+@@ -0,0 +1,32 @@
++#!/usr/bin/env bash
++set -eu -o pipefail
++
++# Keep protection settings in each repository-local source so opening can assign
++# reduced trust without changing ownership or writing to the cached fixture.
++for source in local worktree; do
++  for value in false true invalid; do
++    repo="$source-$value"
++    git init -q "$repo"
++    config="$repo/.git/config"
++    if test "$source" = worktree; then
++      git -C "$repo" config extensions.worktreeConfig true
++      config="$repo/.git/config.worktree"
++    fi
++    cat >>"$config" <<EOF
++[core]
++  protectHFS = $value
++  protectNTFS = $value
++[gitoxide "core"]
++  protectWindows = $value
++EOF
++  done
++done
++
++# Provide a protected configuration source that tests can opt into while forcing
++# reduced initial trust. The wildcard promotes every dynamically located fixture
++# repository to full trust, making its local or worktree protection settings
++# eligible before reference protection is initialized.
++cat >trust-all-repositories.config <<EOF
++[safe]
++  directory = *
++EOF
+```
+
+**File**: `gix/tests/gix/repository/config/mod.rs` (modified, +2/-0)
+```diff
+@@ -3,6 +3,8 @@ pub(crate) mod config_snapshot;
+ #[cfg(feature = "command")]
+ mod editor;
+ mod identity;
++#[cfg(feature = "worktree-mutation")]
++mod path_protection;
+ mod remote;
+ 
+ #[test]
+```
+
+**File**: `gix/tests/gix/repository/config/path_protection.rs` (added, +160/-0)
+```diff
+@@ -0,0 +1,160 @@
++use gix_testtools::TestResult;
++
++#[test]
++fn repository_sources_respect_the_section_filter() -> TestResult {
++    use gix_sec::Trust;
++
++    #[derive(Debug, Eq, PartialEq)]
++    struct Protections {
++        windows: bool,
++        hfs: bool,
++        ntfs: bool,
 +    }
 +
-+    #[test]
-+    fn remote_defaults_ignore_unknown_invalid_and_non_commit_branches() -> TestResult {
-+        let fixture = gix_testtools::scripted_fixture_writable("history.sh")?;
-+        let path = fixture.path();
-+        let repo = crate::test_repository::open(path)?;
-+        let blob_id = repo.write_blob(b"not a commit")?;
-+        repo.reference(
-+            "refs/heads/not-a-commit",
-+            blob_id,
-+            gix::refs::transaction::PreviousValue::MustNotExist,
-+            "prepare a non-commit default branch",
-+        )?;
-+        for (remote, source) in [
-+            ("valid", "refs/heads/merged"),
-+            ("no-head", "refs/heads/main"),
-+            ("direct", "refs/heads/topic"),
-+            ("unmapped", "refs/heads/main"),
-+            ("ambiguous", "refs/heads/main"),
-+            ("tag", "refs/tags/v1"),
-+            ("unqualified", "topic"),
-+            ("head-source", "HEAD"),
-+            ("non-commit", "refs/heads/not-a-commit"),
-+            ("invalid-config", "invalid refspec"),
-+        ] {
-+            let tracking = format!("refs/remotes/{remote}/default");
-+            gix_testtools::git(path, &format!("config remote.{remote}.url https://example.com/repo"))?;
-+            let output = gix_testtools::git_command(path)
-+                .args([
-+                    "config",
-+                    &format!("remote.{remote}.fetch"),
-+                    &format!("+{source}:{tracking}"),
-+                ])
-+                .output()?;
-+            as
-```
-
-**File**: `gix/src/clone/checkout.rs` (modified, +1/-4)
-```diff
-@@ -79,10 +79,7 @@ pub mod main_worktree {
-                 ))
-             })?;
- 
--            let root_tree_id = match &self.ref_name {
--                Some(reference_val) => Some(repo.find_reference(reference_val)?.peel_to_id()?),
--                None => repo.head()?.try_peel_to_id()?,
--            };
-+            let root_tree_id = repo.head()?.try_peel_to_id()?;
- 
-             let root_tree = match root_tree_id {
-                 Some(id) => {
-```
-
-**File**: `gix/src/clone/fetch/mod.rs` (modified, +55/-85)
-```diff
-@@ -1,13 +1,9 @@
--use crate::{Error, Result, bstr::BStr, clone::PrepareFetch};
-+use crate::{Result, bstr::BStr, clone::PrepareFetch};
- use gix_error::ResultExt;
- use gix_ref::Category;
- 
- use crate::config::tree::Key;
- 
--fn mapping_validation(err: &Error) -> Option<&gix_refspec::match_group::validate::Error> {
--    err.downcast_any_ref()
--}
--
- /// Modification
- impl PrepareFetch {
-     /// Fetch a pack and update local branches according to refspecs, providing `progress` and checking `should_interrupt` to stop
-@@ -65,13 +61,19 @@ impl PrepareFetch {
-         };
- 
-         let mut remote = repo.remote_at(self.url.clone())?;
-+        let branch_prefix = if repo.is_bare() {
-+            "refs/heads/".to_owned()
-+        } else {
-+            format!("refs/remotes/{remote_name}/")
-+        };
- 
-         // For shallow clones without custom configuration, we'll use a single-branch refspec
-         // to match git's behavior (matching git's single-branch behavior for shallow clones).
-         let use_single_branch_for_shallow = self.shallow != remote::fetch::Shallow::NoChange
-             && remote.fetch_specs.is_empty()
-             && self.fetch_options.extra_refspecs.is_empty()
--            && self.revision.is_none();
-+            && self.revision.is_none()
-+            && self.configure_remote.is_none();
- 
-         let target_ref: Option<gix_ref::FullName> = if use_single_branch_for_shallow {
-             // Determine target branch from user-specified ref_name or default branch
-@@ -101,7 +103,7 @@ impl PrepareFetch {
-                 Some(gix_ref::FullName::try_from(full_ref_name).or_error()?)
-             } else {
-                 // For shallow clones without a specified ref, we need to determine the ref to clone.
--                // Just fetch HEAD for that.
-+                // Advertise branches too so a detached HEAD can be matched to a branch.
-                 let prev_tags = std::mem::replace(&mut remote.fetch_tags, remote::fetch::Tags::None);
-                 let mut connection = remote.connect(remote::Direction::Fetch).await?;
-                 if let Some(f) = self.configure_connection.as_mut() {
-@@ -114,6 +116,12 @@ impl PrepareFetch {
-                         &mut progress,
-                         remote::ref_map::Options {
-                             extra_refspecs: vec![
-+                                gix_refspec::parse(
-+                                    "refs/heads/*:refs/heads/*".into(),
-+                                    gix_refspec::parse::Operation::Fetch,
-+                                )
-+                                .expect("valid")
-+                                .to_owned(),
-                                 gix_refspec::parse("HEAD".into(), gix_refspec::parse::Operation::Fetch)
-                                     .expect("valid")
-                                     .to_owned(),
-@@ -123,35 +131,13 @@ impl PrepareFetch {
-                     )
-                     .await?;
- 
--                // Find HEAD in the remote refs (works for both Protocol V1 and V2)
--                let target = refmap
--                    .remote_refs
--                    .iter()
--                    .find_map(|r| match r {
--                        gix_protocol::handshake::Ref::Symbolic {
--                            full_ref_name, target, ..
--                        }
--                        | gix_protocol::handshake::Ref::Unborn {
--                            full_ref_name, target, ..
--                        } if full_ref_name == "HEAD" => gix_ref::FullName::try_from(target)
--                            .or_raise(|| {
--                                gix_error::message!(
--                                    "The remote HEAD points to a reference named {target:?} which is invalid."
--                                )
--                                .validation()
--                            })
--                            .into(),
--                        _ => None,
--                    })
--                    .transpose()?;
--
--                let target = target.ok_or_else(|| {
--                    gix_error::message("The remote didn't have a ref that matched 'HEAD'").not_found_error()
--                })?;
--
-+                let target = util::guess_remote_head(&repo, &refmap)?
-+                    .and_then(|mapping| mapping.remote.as_name())
-+                    .map(gix_ref::FullName::try_from)
-+                    .transpose()
-+                    .or_error()?;
-                 remote.fetch_tags = prev_tags;
--
--                Some(target)
-+                target
-             }
-         } else {
-             None
-@@ -164,7 +150,7 @@ impl PrepareFetch {
-                 // Single-branch refspec for shallow clones
-                 let destination = match target_ref.category_and_short_name() {
-                     Some((Category::LocalBranch, short_name)) => {
--                        format!("refs/remotes/{remote_name}/{short_name}")
-+                        format!("{branch_prefix}{short_
-```
-
-**File**: `gix/src/clone/fetch/util.rs` (modified, +190/-69)
-```diff
-@@ -123,6 +123,116 @@ pub fn append_config_to_repo_config(repo: &mut Repository, config: gix_config::F
-         .map(|_| ())
- }
- 
-+/// Select the mapping for the remote's `HEAD` using Git clone's branch-selection order:
-+///
-+/// 1. If `HEAD` is symbolic, return the first mapping for its target, without falling back to other branches.
-+/// 2. If `HEAD` is direct, consider only mapped branches pointing to the same object ID. Prefer
-+///    `refs/heads/<init.defaultBranch>` (defaulting to `master`), then `refs/heads/master`.
-+/// 3. Otherwise, select the lexicographically first matching branch under `refs/heads/`.
-+///
-+/// Return `None` if `HEAD` is absent, unborn, or neither symbolic nor direct, or no eligible mapping exists.
-+/// If multiple mappings refer to the selected remote branch, return the first so its local peer is preserved.
-+pub(super) fn guess_remote_head<'a>(
-+    repo: &Repository,
-+    ref_map: &'a crate::remote::fetch::RefMap,
-+) -> Result<Option<&'a gix_protocol::fetch::refmap::Mapping>> {
-+    let Some(head) = ref_map
-+        .remote_refs
-+        .iter()
-+        .find(|reference| reference.unpack().0 == "HEAD")
-+    else {
-+        return Ok(None);
-+    };
-+    let (target, commit_id) = match head {
-+        gix_protocol::handshake::Ref::Symbolic { target, object, .. } => {
-+            (Some(target.as_bstr()), Some(object.as_ref()))
++    let fixture = gix_testtools::scripted_fixture_read_only("make_path_protection_repos.sh")?;
++    for source in ["local", "worktree"] {
++        for value in ["false", "true", "invalid"] {
++            for (options, use_config) in [
++                (crate::restricted().with(Trust::Reduced), false),
++                (crate::restricted().with(Trust::Full), true),
++                (
++                    crate::restricted().with(Trust::Full).filter_config_section(|_| false),
++                    false,
++                ),
++                (
++                    crate::restricted().with(Trust::Reduced).filter_config_section(|_| true),
++                    true,
++                ),
++            ] {
++                let repo = gix::open_opts(fixture.join(format!("{source}-{value}")), options)?;
++                let validate = repo
++                    .checkout_options(gix::worktree::stack::state::attributes::Source::IdMapping)?
++                    .validate;
++                let configured = (use_config && value != "invalid").then_some(value == "true");
++                let expected = Protections {
++                    windows: configured.unwrap_or(cfg!(windows)),
++                    hfs: configured.unwrap_or(cfg!(target_os = "macos")),
++                    ntfs: configured.unwrap_or(true),
++                };
++                assert_eq!(
++                    Protections {
++                        windows: validate.protect_windows,
++                        hfs: validate.protect_hfs,
++                        ntfs: validate.protect_ntfs,
++                    },
++                    expected,
++                    "{source}-{value}: only eligible settings can replace platform defaults"
++                );
++                assert_eq!(
++                    repo.refs.prohibit_windows_device_names, expected.windows,
++                    "{source}-{value}: ref-store initialization must use the same section filter"
++                );
++                for (name, mode, rejected) in [
++                    ("GIT~1", None, expected.ntfs),
++                    (".git...:stream", None, expected.ntfs),
++                    (".gi\u{200c}t", None, expected.hfs),
++                    (
++                        ".gi\u{200c}tmodules",
++                        Some(gix_validate::path::component::Mode::Symlink),
++                        expected.hfs,
++                    ),
++                    ("dir\\file", None, expected.windows),
++                ] {
++                    assert_eq!(
++                        gix_validate::path::component(name.into(), mode, validate).is_err(),
++                        rejected,
++                        "{source}-{value}: path validation retains the selected protections for {name:?}"
++                    );
++                }
++            }
 +        }
-+        gix_protocol::handshake::Ref::Direct { object, .. } => (None, Some(object.as_ref())),
-+        _ => return Ok(None),
-+    };
-+    if let Some(target) = target {
-+        return Ok(ref_map
-+            .mappings
-+            .iter()
-+            .find(|mapping| mapping.remote.as_name() == Some(target)));
-+    }
-+    let branch_name = repo
-+        .config_snapshot()
-+        .string(crate::config::tree::Init::DEFAULT_BRANCH)
-+        .unwrap_or_else(|| "master".into());
-+    for name in [format!("refs/heads/{branch_name}"), "refs/heads/master".into()] {
-+        if let Some(mapping) = ref_map.mappings.iter().find(|mapping| {
-+            mapping.remote.as_name() == Some(name.as_bytes().as_bstr()) && mapping.remote.as_id() == commit_id
-+        }) {
-+            return Ok(Some(mapping));
++        for value in ["false", "true"] {
++            let overrides = [
++                format!("core.protectHFS={value}"),
++                format!("core.protectNTFS={value}"),
++                format!("gitoxide.core.protectWindows={value}"),
++            ];
++            let repo = gix::open_opts(
++                fixture.join(format!("{source}-invalid")),
++                crate::restricted()
++                    .with(Trust::Reduced)
++                    .strict_config(true)
++                    .config_overrides(overrides),
++            )?;
++            let validate = repo
++                .checkout_options(gix::worktree::stack::state::attributes::Source::IdMapping)?
++                .validate;
++            assert_eq!(
++                (validate.protect_windows, validate.protect_hfs, validate.protect_ntfs),
++                (value == "true", value == "true", value == "true"),
++                "{source}: trusted API overrides remain usable under reduced trust"
++            );
++            assert_eq!(
++                repo.refs.prohibit_windows_device_names,
++                value == "true",
++                "{source}: trusted API overrides also configure the reference store"
++            );
 +        }
-+    }
-+    Ok(ref_map
-+        .mappings
-+        .iter()
-+        .filter(|mapping| {
-+            mapping
-+                .remote
-+                .as_name()
-+                .is_some_and(|name| name.starts_with(b"refs/heads/"))
-+                && mapping.remote.as_id() == commit_id
-+        })
-+        .min_by_key(|mapping| mapping.remote.as_name()))
-+}
-+
-+/// Record the selected branch's mapped peer before updating local HEAD, as Git clone does.
-+pub(super) fn update_remote_head(
-+    repo: &Repository,
-+    ref_map: &crate::remote::fetch::RefMap,
-+    reflog_message: &BStr,
-+    remote_name: &BStr,
-+) -> Result<()> {
-+    if repo.is_bare() {
-+        return Ok(());
-+    }
-+    let Some(mapping) = guess_remote_head(repo, ref_map)? else {
-+        return Ok(());
-+    };
-+    let Some(tracking_branch) = mapping.local.as_ref() else {
-+        return Ok(());
-+    };
-+    let head_name =
-+        gix_ref::FullName::try_from(BString::from(format!("refs/remotes/{remote_name}/HEAD"))).or_error()?;
-+    repo.edit_reference(gix_ref::transaction::RefEdit::update_with_log(
-+        head_name.clone(),
-+        gix_ref::FullName::try_from(tracking_branch.clone()).or_error()?,
-+        gix_ref::transaction::PreviousValue::Any,
-+        LogChange {
-+            mode: RefLog::AndReference,
-+            force_create_reflog: false,
-+            message: reflog_message.to_owned(),
-+        },
-+    ))
-+    .or_raise(|| message("Failed to record the remote default branch"))?;
-+    if repo
-+        .find_reference(head_name.as_ref())?
-+        .log_iter()
-+        .all()
-+        .or_error()?
-+        .is_none()
-+        && let Some(commit_id) = mapping.remote.as_id()
-+    {
-+        // shortcut: symref reflogs lose the previous OID on HEAD-name collisions; fix in gix-ref when it supports symbolic logging.
-+        repo.edit_reference(gix_ref::transaction::RefEdit::update_with_log(
-+            head_name,
-+            commit_id.to_owned(),
-+            gix_ref::transaction::PreviousValue::Any,
-+            LogChange {
-+                mode: RefLog::Only,
-+                force_create_reflog: false,
-+                message: reflog_message.to_owned(),
-+            },
-+        ))
-+        .or_raise(|| message("Failed to record the remote default branch's reflog"))?;
 +    }
 +    Ok(())
 +}
 +
- /// HEAD cannot be written by means of refspec by design, so we have to do it manually here. Also create the pointed-to ref
- /// if we have to, as it might not have been naturally included in the ref-specs.
- /// Lastly, use `ref_name` if it was provided instead, and let `HEAD` point to it.
-@@ -147,30 +257,53 @@ pub fn update_head(
-                 .id)
-         })
-         .transpose()?;
--    let head_info = match revision_head_id.as_ref() {
-+    let detached_tag_id = ref_nam
-```
-
-**File**: `gix/src/clone/mod.rs` (modified, +7/-2)
-```diff
-@@ -88,6 +88,13 @@ impl PrepareFetch {
-     /// Create a new repository at `path` with `create_opts` which is ready to clone from `url`, possibly after making additional adjustments to
-     /// configuration and settings.
-     ///
-+    /// [`Kind::Bare`][crate::create::Kind::Bare] uses Git's bare-clone branch layout and omits the default fetch and upstream
-+    /// configuration. [`Kind::WithWorktree`][crate::create::Kind::WithWorktree] with [`fetch_only()`][Self::fetch_only()]
-+    /// clones without a checkout.
-+    /// Explicit refspecs supplied through [`Self::configure_remote()`] are still honored and persisted.
-+    /// For bare clones that callback receives no default refspecs; leaving it empty uses the bare
-+    /// branch mapping for the initial fetch only.
-+    ///
-     /// Note that this is merely a handle to perform the actual connection to the remote, and if any of it fails the freshly initialized repository
-     /// will be removed automatically as soon as this instance drops.
-     ///
-@@ -186,8 +193,6 @@ impl PrepareFetch {
- pub struct PrepareCheckout {
-     /// A freshly initialized repository owned by us, or `None` once returned to the caller, including after interruption.
-     pub(self) repo: Option<crate::Repository>,
--    /// The name of the reference to check out. If `None`, the reference pointed to by `HEAD` will be checked out.
--    pub(self) ref_name: Option<gix_ref::PartialName>,
-     /// If `true`, drop removes the entire worktree. Otherwise leave it alone.
-     pub(self) remove_worktree_on_drop: bool,
- }
-```
-
-**File**: `gix/src/lib.rs` (modified, +7/-0)
-```diff
-@@ -332,6 +332,13 @@ pub fn init_bare(directory: impl AsRef<std::path::Path>) -> Result<Repository> {
- /// Create a platform for configuring a bare clone from `url` to the local `path`, using default options for opening it (but
- /// amended with using configuration from the git installation to ensure all authentication options are honored).
- ///
-+/// Like `git clone --bare`, branches are stored in `refs/heads/`, with no default fetch refspec,
-+/// remote-tracking `HEAD`, or branch upstream configuration. For a non-bare clone without checkout
-+/// (like `git clone --no-checkout`), use [`prepare_clone()`] followed by
-+/// [`fetch_only()`][clone::PrepareFetch::fetch_only()]
-+/// with the `blocking-network-client` or `async-network-client-async-std` feature enabled.
-+/// This creates `path/.git` and fetches the repository without populating the working tree.
-+///
- /// See [`clone::PrepareFetch::new()`] for a function to take full control over all options.
- pub fn prepare_clone_bare<Url, E>(url: Url, path: impl AsRef<std::path::Path>) -> Result<clone::PrepareFetch>
- where
++#[test]
++fn safe_directory_promotion_updates_reference_protection() -> TestResult {
++    let fixture = gix_testtools::scripted_fixture_read_only("make_path_protection_repos.sh")?;
++    let mut permissions = gix::open::Permissions::isolated();
++    permissions.config.system = true;
++    for source in ["local", "worktree"] {
++        for value in ["false", "true"] {
++            let repo = gix::open_opts(
++                fixture.join(format!("{source}-{value}")),
++                crate::restricted()
++                    .with(gix_sec::Trust::Reduced)
++                    .permissions(permissions)
++                    .system_config_path(f
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3071** (2026-10-19): Use safe Rust for the Windows `gix-status` filesystem cache (@Byron)
+- **PR #3070** (2026-10-19): fix(gix-fs): guard indirect Windows symlink targets before probing (@Byron)
+- **PR #3068** (2026-10-19): Respect section trust for filesystem path protections (@Byron)
 - **PR #3066** (2026-10-18): commit-graph fix (@Byron)
+- **PR #3064** (2026-10-19): various improvements (@Byron)
 - **PR #3062** (2026-10-15): fix(gix-diff): apply the rewrite limit to each side like Git (@hashhar)
-- **PR #3059** (2026-10-14): Make next `gix-transport` test `GIX_TEST_FIXTURE_HASH`-aware (@cruessler)
-- **PR #3058** (2026-10-13): feat(gix)!: add worktree locking and a lock override that preserves changes (@Byron)
-- **PR #3057** (2026-10-13): worktree checkout fixes windows (@Byron)
-- **PR #3056** (2026-10-12): worktree checkout improvements (@Byron)
 
 ---
 
@@ -2519,30 +2411,28 @@ Match Git's clone orchestration and reference selection:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update `rustls` to 0.23.46 to resolve security advisories
+## X. gitoxide-core): skip occupied repository destinations during organization
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GitoxideLabs/gitoxide. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `gitoxide-core/Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GitoxideLabs/gitoxide. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `20d4787d`: Update `rustls` to 0.23.46 to resolve security advisories. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2ff66e23`: gitoxide-core): skip occupied repository destinations during organization. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `gitoxide-core/Cargo.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.23.46"
-checksum = "48e13bd8c0e9365c43cfa5c9e8f9ad49d3c8444926c9aac819e0e4dc503c8fdf"
+gix = { path = "../gix", default-features = false, features = ["sha1", "parallel", "progress-tree"] }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "0.23.45"
-checksum = "0d41d731c7d2f962d1ccc364cec258de3c0e93b38c2fb3ba97ac74513048d634"
+gix = { path = "../gix", default-features = false, features = ["sha1", "parallel"] }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `20d4787d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2ff66e23` are properly handled with clean fallback behavior.

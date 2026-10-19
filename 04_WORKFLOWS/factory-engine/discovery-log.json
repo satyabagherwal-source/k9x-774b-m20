@@ -18112,5 +18112,17 @@
     "downloads": 9177573,
     "qualityScore": 11800,
     "discoveredAt": "2026-10-19T07:17:45.167Z"
+  },
+  {
+    "name": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
+    "fullName": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
+    "url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4 (165 likes, 9322 downloads)",
+    "likes": 165,
+    "downloads": 9322,
+    "qualityScore": 3650,
+    "discoveredAt": "2026-10-19T15:29:25.494Z"
   }
 ]

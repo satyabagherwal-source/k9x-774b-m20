@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T15:24:47.210Z",
+  "last_updated": "2026-10-19T15:31:57.156Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1624,14 +1624,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-vit-base-patch16-224",
-      "content_hash": "28be5130718fff27b121f284153d6b825ba82c0db0a7f6413162c7bde63de049",
-      "verified_at": "2026-10-18T04:49:46.327Z",
+      "content_hash": "b0c3496ffc085cda31ba49ea1067cbd5961fdec2c1d52bbd5f0306ea6611d00d",
+      "verified_at": "2026-10-19T15:31:42.871Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T04:49:46.327Z"
+      "last_updated": "2026-10-19T15:31:42.871Z"
     },
     "google/gemma-4-31B-it": {
       "repository": "google/gemma-4-31B-it",
@@ -6184,14 +6184,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gitoxidelabs-gitoxide",
-      "content_hash": "2ed8492d2715113d0a0c750a0f58e4f3305d1ac7e6585679d0ba55b49a55641e",
-      "verified_at": "2026-10-19T00:28:47.610Z",
+      "content_hash": "755acb34878c6531a5d1ac4b06d6640304da22c651fa625b60f51d2caaa239c1",
+      "verified_at": "2026-10-19T15:31:45.335Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T00:28:47.610Z"
+      "last_updated": "2026-10-19T15:31:45.335Z"
     },
     "devhubapp/devhub": {
       "repository": "devhubapp/devhub",
@@ -7489,14 +7489,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rqlite-rqlite",
-      "content_hash": "e2cc2d15895615a05a385204806696dfbe54b14f04e7f58451a289dbafd75246",
-      "verified_at": "2026-10-19T02:27:53.536Z",
+      "content_hash": "6107eafb4aa467f04130d0952e130106313664511e28218d66be088ea165549d",
+      "verified_at": "2026-10-19T15:31:57.156Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T02:27:53.536Z"
+      "last_updated": "2026-10-19T15:31:57.156Z"
     },
     "arco-design/arco-design": {
       "repository": "arco-design/arco-design",
@@ -12432,6 +12432,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T15:24:38.179Z"
+    },
+    "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4": {
+      "repository": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4",
+      "content_hash": "235bf1f03a3ea66bedaeee8e45b77f4247303f4ffb4f9c53e50eab3034016e2b",
+      "verified_at": "2026-10-19T15:31:38.851Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T15:31:38.851Z"
+    },
+    "SvenTiigi/WhatsNewKit": {
+      "repository": "SvenTiigi/WhatsNewKit",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-sventiigi-whatsnewkit",
+      "content_hash": "69f2b1cd4cbc749077fdca63fc48b67331063f62cdeb564ddaae788cd965440e",
+      "verified_at": "2026-10-19T15:31:50.236Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T15:31:50.236Z"
     }
   },
   "repos": {

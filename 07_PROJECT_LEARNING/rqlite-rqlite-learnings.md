@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rqlite-rqlite-learnings.md`  
 > **Source**: github ([https://github.com/rqlite/rqlite](https://github.com/rqlite/rqlite))  
-> **Source Version**: `7e35174e`  
+> **Source Version**: `f18a1372`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T02:27:53.301Z  
+> **Timestamp**: 2026-10-19T15:31:56.881Z  
 > **Learning ID**: `learn-github-rqlite-rqlite`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rqlite-rqlite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rqlite/rqlite](https://github.com/rqlite/rqlite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T02:27:53.293Z  
+> **Harvest Timestamp**: 2026-10-19T15:31:56.873Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2087,194 +2087,33 @@ func forbiddenUses(file *ast.File, path string) []violation {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c6a241c8` (2026-10-18)
-**Commit Message**: Merge pull request #2972 from rqlite/cdc-no-commit-timestamp-regression
+### Incident Patch 1: `477045f5` (2026-10-18)
+**Commit Message**: Don't require non-zero probe time in Test_NodeTest_Reuse
 
-CDC Events should include Commit Timestamp
+The mock returns instantly, and on Windows the monotonic clock is
+coarse enough that time.Since reports zero, so Time stayed 0 and the
+assertion failed on AppVeyor. TimeS is always set on success, so it
+alone shows the success path ran.
 
-**File**: `CHANGELOG.md` (modified, +1/-0)
+Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
+
+**File**: `http/nodes_test.go` (modified, +5/-1)
 ```diff
-@@ -3,6 +3,7 @@
- - [PR #2967](https://github.com/rqlite/rqlite/pull/2967): Check for trailing junk in request bodies.
- - [PR #2969](https://github.com/rqlite/rqlite/pull/2969): Console schema view handles table names that collide with JavaScript object properties.
- - [PR #2971](https://github.com/rqlite/rqlite/pull/2971): Standardize on Go 1.27 for the module, CI, and release builds.
-+- [PR #2972](https://github.com/rqlite/rqlite/pull/2972): Set `CommitTimestamps` in CDC Events Group. Fixes issue [#2970](https://github.com/rqlite/rqlite/issues/2970). Thanks @gunavanthvarma-dev
- 
- ## v10.6.1 (October 16th 2026)
- ### Implementation changes and bug fixes
-```
-
-**File**: `store/store.go` (modified, +9/-11)
-```diff
-@@ -2587,18 +2587,16 @@ func (s *Store) fsmApply(l *raft.Log) (e any) {
- 		// CDC enabled? Prime collection of events.
- 		if s.cdcCollator != nil {
- 			s.cdcCollator.Reset()
--		}
--		defer func() {
--			if s.cdcCollator == nil {
--				return
--			}
--			if events := s.cdcCollator.Events(); len(events) > 0 {
--				s.cdcOutCh <- &proto.CDCIndexedEventGroup{
--					Index:  l.Index,
--					Events: events,
-+			defer func() {
-+				if events := s.cdcCollator.Events(); len(events) > 0 {
-+					s.cdcOutCh <- &proto.CDCIndexedEventGroup{
-+						Index:           l.Index,
-+						Events:          events,
-+						CommitTimestamp: time.Now().UnixMilli(),
-+					}
- 				}
--			}
--		}()
-+			}()
-+		}
- 		return s.cmdProc.Process(l.Data, s.db)
- 	}()
- 	if err != nil {
-```
-
-**File**: `store/store_cdc_test.go` (modified, +4/-0)
-```diff
-@@ -115,6 +115,10 @@ func Test_StoreCDC_Events_Single(t *testing.T) {
- 		if len(events.Events) != 1 {
- 			t.Fatalf("expected 1 CDC event, got %d", len(events.Events))
- 		}
-+		if events.CommitTimestamp == 0 {
-+			t.Fatal("Commit Timestamp is not set")
-+		}
-+
- 		ev := events.Events[0]
- 
- 		if ev.Table != "foo" {
-```
-
----
-
-### Incident Patch 2: `1e8e2bdb` (2026-10-17)
-**Commit Message**: Merge pull request #2967 from rqlite/fix-req-parser
-
-Check for trailing junk in request bodies
-
-**File**: `CHANGELOG.md` (modified, +4/-0)
-```diff
-@@ -1,3 +1,7 @@
-+## v10.6.2 (unreleased)
-+### Implementation changes and bug fixes
-+- [PR #2967](https://github.com/rqlite/rqlite/pull/2967): Check for trailing junk in request bodies.
-+
- ## v10.6.1 (October 16th 2026)
- ### Implementation changes and bug fixes
- - [PR #2959](https://github.com/rqlite/rqlite/pull/2959): Record SQL analyze start time at right point.
-```
-
-**File**: `http/request_parser.go` (modified, +10/-1)
-```diff
-@@ -117,10 +117,19 @@ func ParseRequest(r io.Reader) ([]*command.Statement, error) {
+@@ -293,9 +293,13 @@ func Test_NodeTest_Reuse(t *testing.T) {
+ 		t.Fatalf("first probe wrong: %s", asJSON(node))
  	}
  
- 	// Check that the array of statements is closed.
--	_, err = dec.Token()
-+	t, err = dec.Token()
- 	if err != nil {
- 		return nil, ErrInvalidJSON
++	// Only TimeS is checked on success. The mock returns instantly, and on
++	// Windows the monotonic clock is coarse enough that time.Since can
++	// report zero, leaving Time at 0 even though the probe succeeded.
++	// TimeS is always non-empty on success ("0s" at worst).
+ 	okGA := newMockGetAddresser("api-addr", "1.0.0", nil)
+ 	node.Test(context.Background(), okGA, "raft-addr", 0, time.Second)
+-	if !node.Reachable || !node.Leader || node.Error != "" || node.Time == 0 || node.TimeS == "" {
++	if !node.Reachable || !node.Leader || node.Error != "" || node.TimeS == "" {
+ 		t.Fatalf("second probe did not clear stale error: %s", asJSON(node))
  	}
-+	if t != json.Delim(']') {
-+		return nil, ErrInvalidRequest
-+	}
-+
-+	// The array must be the only value in the body. Anything other than
-+	// trailing whitespace -- a second JSON value, or junk -- is an error.
-+	if _, err := dec.Token(); err != io.EOF {
-+		return nil, ErrInvalidRequest
-+	}
  
- 	if len(stmts) == 0 {
- 		return nil, ErrNoStatements
-```
-
-**File**: `http/request_parser_test.go` (modified, +71/-0)
-```diff
-@@ -488,6 +488,77 @@ func Test_SingleInvalidTypeRequests(t *testing.T) {
- 	}
- }
- 
-+func Test_TrailingData(t *testing.T) {
-+	for _, tc := range []struct {
-+		name string
-+		body string
-+	}{
-+		{"junk", `["SELECT 1"] garbage`},
-+		{"junk no space", `["SELECT 1"]garbage`},
-+		{"second array", `["SELECT 1"]["SELECT 2"]`},
-+		{"second array after whitespace", `["SELECT 1"]  ["SELECT 2"]`},
-+		{"second array parameterized", `[["SELECT ?", 1]][["SELECT ?", 2]]`},
-+		{"extra closing bracket", `["SELECT 1"]]`},
-+		{"trailing comma", `["SELECT 1"],`},
-+		{"trailing object", `["SELECT 1"]{}`},
-+		{"trailing scalar", `["SELECT 1"]1`},
-+		{"trailing string", `["SELECT 1"]"SELECT 2"`},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			stmts, err := ParseRequest(bytes.NewReader([]byte(tc.body)))
-+			if err != ErrInvalidRequest {
-+				t.Fatalf("expected ErrInvalidRequest, got %v (stmts: %v)", err, stmts)
-+			}
-+		})
-+	}
-+}
-+
-+func Test_TrailingWhitespace(t *testing.T) {
-+	for _, tc := range []struct {
-+		name string
-+		body string
-+	}{
-+		{"none", `["SELECT 1"]`},
-+		{"spaces", `["SELECT 1"]   `},
-+		{"newline", "[\"SELECT 1\"]\n"},
-+		{"mixed", "  [ \"SELECT 1\" ] \t\r\n "},
-+		{"parameterized", "[[\"SELECT ?\", 1]]\n"},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			stmts, err := ParseRequest(bytes.NewReader([]byte(tc.body)))
-+			if err != nil {
-+				t.Fatalf("failed to parse request: %s", err)
-+			}
-+			if len(stmts) != 1 {
-+				t.Fatalf("incorrect number of statements returned: %d", len(stmts))
-+			}
-+		})
-+	}
-+}
-+
-+func Test_IncompleteRequest(t *testing.T) {
-+	for _, tc := range []struct {
-+		name string
-+		body string
-+	}{
-+		{"empty", ``},
-+		{"whitespace only", `   `},
-+		{"open bracket only", `[`},
-+		{"unclosed array", `["SELECT 1"`},
-+		{"unclosed array trailing comma", `["SELECT 1",`},
-+		{"unclosed string", `["SELECT 1`},
-+		{"unclosed parameterized", `[["SELECT ?", 1]`},
-+		{"unclosed inner array", `[["SELECT ?", 1`},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			stmts, err := ParseRequest(bytes.NewReader([]byte(tc.body)))
-+			if err != ErrInvalidJSON {
-+				t.Fatalf("expected ErrInvalidJSON, got %v (stmts: %v)", err, stmts)
-+			}
-+		})
-+	}
-+}
-+
- func byteSliceToStringArray(b []byte) string {
- 	var buffer bytes.Buffer
- 	buffer.WriteString("[")
 ```
 
 #### Recent Merged Pull Requests:
@@ -2282,8 +2121,8 @@ Check for trailing junk in request bodies
 - **PR #2972** (2026-10-18): CDC Events should include Commit Timestamp (@otoolep)
 - **PR #2971** (2026-10-18): Move everywhere to Go 1.27 (@otoolep)
 - **PR #2969** (2026-10-18): Console schema view handles reserved JavaScript property names (@otoolep)
+- **PR #2968** (2026-10-19): Node probes honor request context and commit exactly one result (@otoolep)
 - **PR #2967** (2026-10-17): Check for trailing junk in request bodies (@otoolep)
-- **PR #2966** (2026-10-16): Rewrite TIMESTAMP tokens where possible (@otoolep)
 
 ---
 
@@ -2303,28 +2142,32 @@ Check for trailing junk in request bodies
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #2972 from rqlite/cdc-no-commit-timestamp-regression
+## X. Don't require non-zero probe time in Test_NodeTest_Reuse
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rqlite/rqlite. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `http/nodes_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rqlite/rqlite. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c6a241c8`: Merge pull request #2972 from rqlite/cdc-no-commit-timestamp-regression. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `477045f5`: Don't require non-zero probe time in Test_NodeTest_Reuse. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `http/nodes_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-- [PR #2972](https://github.com/rqlite/rqlite/pull/2972): Set `CommitTimestamps` in CDC Events Group. Fixes issue [#2970](https://github.com/rqlite/rqlite/issues/2970). Thanks @gunavanthvarma-dev
+	// Only TimeS is checked on success. The mock returns instantly, and on
+	// Windows the monotonic clock is coarse enough that time.Since can
+	// report zero, leaving Time at 0 even though the probe succeeded.
+	// TimeS is always non-empty on success ("0s" at worst).
+	if !node.Reachable || !node.Leader || node.Error != "" || node.TimeS == "" {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	if !node.Reachable || !node.Leader || node.Error != "" || node.Time == 0 || node.TimeS == "" {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c6a241c8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `477045f5` are properly handled with clean fallback behavior.

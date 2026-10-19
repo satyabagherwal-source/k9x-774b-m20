@@ -3334,3 +3334,8 @@ Every entry in this ledger must capture:
 | `learn-github-vikejs-vike` | `https://github.com/vikejs/vike` | `4a0a6827` | Multi-dimensional audit evidence | 2026-10-19T15:24:31.591Z |
 | `learn-github-productdevbook-port-killer` | `https://github.com/productdevbook/port-killer` | `2209b0fd` | Multi-dimensional audit evidence | 2026-10-19T15:24:38.172Z |
 | `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `e3ab3625` | Multi-dimensional audit evidence | 2026-10-19T15:24:47.198Z |
+| `learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-10-19T15:31:38.844Z |
+| `learn-huggingface-google-vit-base-patch16-224` | `https://huggingface.co/google/vit-base-patch16-224` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-19T15:31:42.864Z |
+| `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `46f7c7db` | Multi-dimensional audit evidence | 2026-10-19T15:31:45.329Z |
+| `learn-github-sventiigi-whatsnewkit` | `https://github.com/SvenTiigi/WhatsNewKit` | `6157c77e` | Multi-dimensional audit evidence | 2026-10-19T15:31:50.229Z |
+| `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `f18a1372` | Multi-dimensional audit evidence | 2026-10-19T15:31:57.149Z |

@@ -1235,8 +1235,8 @@
     "sourceUrl": "https://huggingface.co/google/vit-base-patch16-224",
     "sourceVersion": "hf-google-vit-base-patch16-224",
     "license": "Open-Source",
-    "contentHash": "28be5130718fff27b121f284153d6b825ba82c0db0a7f6413162c7bde63de049",
-    "lastHarvestedAt": "2026-10-18T04:49:46.325Z",
+    "contentHash": "b0c3496ffc085cda31ba49ea1067cbd5961fdec2c1d52bbd5f0306ea6611d00d",
+    "lastHarvestedAt": "2026-10-19T15:31:42.864Z",
     "learningId": "learn-huggingface-google-vit-base-patch16-224"
   },
   "hf-google-gemma-4-31b-it": {
@@ -4043,10 +4043,10 @@
     "repository": "GitoxideLabs/gitoxide",
     "platform": "github",
     "sourceUrl": "https://github.com/GitoxideLabs/gitoxide",
-    "sourceVersion": "7540f69b",
+    "sourceVersion": "46f7c7db",
     "license": "Apache-2.0",
-    "contentHash": "2ed8492d2715113d0a0c750a0f58e4f3305d1ac7e6585679d0ba55b49a55641e",
-    "lastHarvestedAt": "2026-10-19T00:28:47.607Z",
+    "contentHash": "755acb34878c6531a5d1ac4b06d6640304da22c651fa625b60f51d2caaa239c1",
+    "lastHarvestedAt": "2026-10-19T15:31:45.329Z",
     "learningId": "learn-github-gitoxidelabs-gitoxide"
   },
   "devhubapp-devhub": {
@@ -4913,10 +4913,10 @@
     "repository": "rqlite/rqlite",
     "platform": "github",
     "sourceUrl": "https://github.com/rqlite/rqlite",
-    "sourceVersion": "7e35174e",
+    "sourceVersion": "f18a1372",
     "license": "MIT",
-    "contentHash": "e2cc2d15895615a05a385204806696dfbe54b14f04e7f58451a289dbafd75246",
-    "lastHarvestedAt": "2026-10-19T02:27:53.531Z",
+    "contentHash": "6107eafb4aa467f04130d0952e130106313664511e28218d66be088ea165549d",
+    "lastHarvestedAt": "2026-10-19T15:31:57.149Z",
     "learningId": "learn-github-rqlite-rqlite"
   },
   "arco-design-arco-design": {
@@ -8268,5 +8268,25 @@
     "contentHash": "259bbb2f69d886cc8a2c99e9f427355cad2a4c15cb4271a0611cfc6b47f49b13",
     "lastHarvestedAt": "2026-10-19T15:24:38.172Z",
     "learningId": "learn-github-productdevbook-port-killer"
+  },
+  "hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4": {
+    "repository": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
+    "sourceVersion": "hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4",
+    "license": "Open-Source",
+    "contentHash": "235bf1f03a3ea66bedaeee8e45b77f4247303f4ffb4f9c53e50eab3034016e2b",
+    "lastHarvestedAt": "2026-10-19T15:31:38.844Z",
+    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4"
+  },
+  "sventiigi-whatsnewkit": {
+    "repository": "SvenTiigi/WhatsNewKit",
+    "platform": "github",
+    "sourceUrl": "https://github.com/SvenTiigi/WhatsNewKit",
+    "sourceVersion": "6157c77e",
+    "license": "MIT",
+    "contentHash": "69f2b1cd4cbc749077fdca63fc48b67331063f62cdeb564ddaae788cd965440e",
+    "lastHarvestedAt": "2026-10-19T15:31:50.229Z",
+    "learningId": "learn-github-sventiigi-whatsnewkit"
   }
 }
