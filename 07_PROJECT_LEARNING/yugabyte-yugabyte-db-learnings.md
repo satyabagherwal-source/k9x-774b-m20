@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source**: github ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
-> **Source Version**: `b10be5ad`  
+> **Source Version**: `c37fa95e`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T03:26:55.000Z  
+> **Timestamp**: 2026-10-19T16:31:19.049Z  
 > **Learning ID**: `learn-github-yugabyte-yugabyte-db`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T03:26:54.992Z  
+> **Harvest Timestamp**: 2026-10-19T16:31:19.041Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YugabyteDB - the cloud native distributed SQL database for mission-critical applications.
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10605 stars
+- **Stars / Engagement**: 10609 stars
 
 ---
 
@@ -2249,14 +2249,14 @@ class _SshRemoteShell(object):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #35389** (2026-10-19): **[PLAT-23142] YBA: Pre-fill runtime-config dev user tags in v2 create universe**
+  *Symptoms*: ## Summary  The v1 create-universe form pre-fills **User Tags** from runtime config (PLAT-10727): when `yb.universe.user_tags.is_enforced` is true and `yb.universe.user_tags.dev_tags` is set, the form starts with those tags. Dev YBAs rely on this for cloud resource tracking. The v2 create flow started with no tags, so on those YBAs a v2 create failed backend tag enforcement unless the tags were typed by hand.  Changes: - **Pre-fill:** the Advanced step fills `dev_tags` into the tags field for AWS/GCP/Azure/OCI when the field is empty. This happens once per create flow (a new `userTagsSeeded` flag), so tags the user deletes don't come back on revisit. The User Tags accordion opens when tags are present. - **Flags:** `useRuntimeConfigValues` (the existing customer-scope fetch) now returns `devUserTags`. `is_enforced` is customer-scoped, and v1's global-scope read ignores a customer override. - **`dev_tags` formats:** `getDevUserTags`, now in the shared `universe-form/utils/helpers.ts`, accepts both `[{name, value}]` objects (HOCON / `application.conf`, as v1 expects) and `"key:value"` strings. The key is a string list, so the runtime config API rejects objects and only strings can be set at runtime. API-set values come back with escaped quotes (`[\"k:v\"]`), so the parser unescapes once and retries. Malformed entries are dropped. v1 `CreateUniverse.tsx` now uses the same parser instead of a bare `JSON.parse`, which broke the v1 form for a `"key:value"` list or an API-set value.
+  **Post-Mortem & Fix Analysis**:
+  > AgentK has started reviewing this pull request — findings will be posted here shortly.  Pushes are not reviewed automatically. Comment `/agentk review` to ask for another pass — but please only after substantial changes, not on every small push, and not for a push that just addresses the review comments.
+  >   <!-- Reviewable:start --> This change is [<img src="https://reviewable.io/review_button.svg" height="34" align="absmiddle" alt="Reviewable"/>](https://reviewable.io/reviews/yugabyte/yugabyte-db/35389) <!-- Reviewable:end --> 
+
 - **Issue #35309** (2026-10-18): **[BACKPORT 2025.2][#34805] DocDB: Remove non-block-based vector index backends (#34806)**
   *Symptoms*: ## Summary  The HNSW vector index had four backends. `USEARCH` and `HNSWLIB` saved chunks in the native usearch/hnswlib file formats, while `YB_HNSW_USEARCH` and `YB_HNSW_HNSWLIB` save block-based YbHnsw chunks that are read through the block cache. `yb_hnsw` has been the default since #29964 and `yb_hnsw_hnswlib` since #31757, so the native formats were only reachable through the hidden `vector_index_backend` flag or very old indexes. They kept native save/load paths in the wrappers and doubled the backend test matrices.  This removes the non-block-based backends: - usearch and hnswlib stay as the build engines for mutable chunks. Every saved chunk is now a YbHnsw file and every loaded chunk a `YbHnswIndex`; the native `save`/`load` code and the `backend` parameter of `Create{Usearch,Hnswlib}IndexTraits` are gone. - `HnswBackend` values 0 and 2 become `DEPRECATED_USEARCH` / `DEPRECATED_HNSWLIB`. `HnswTraits` returns `NotSupported` for them instead of loading the native file, which fails the tablet open (see the upgrade notes). - `--vector_index_backend` accepts only `yb_hnsw_usearch` and `yb_hnsw_hnswlib`. The `yb_hnsw` value is removed too: it was an alias for `yb_hnsw_usearch` while the default is `yb_hnsw_hnswlib`, which made it easy to pick the wrong backend. - `PgVectorIndexITest.Backfill` no longer forces `--vector_index_backend=usearch`. The old `TabletVectorIndexes::Verify` used `GetVector`, which only the usearch wrapper implemented; master's #34611 replaced it with
-
-- **Issue #35290** (2026-10-18): **[#34685] YSQL: Scale the hand-over window of PgCronTest.UngracefulLeaderChangeMarksJobFailed for sanitizers**
-  *Symptoms*: ## Summary  `PgCronTest.UngracefulLeaderChangeMarksJobFailed` (added in #34689) kills the pg_cron leader tserver at t0 and requires another node to start the job before t0 + `pg_cron_leader_lease_sec` (10 s) + 15 s. The 15 s must cover failure detection, the election of a new leader for the pg_cron leader tablet, the 2 * `max_clock_skew_usec` of the activation wait, one launcher iteration and the 1 s job interval.  On tsan this failed 5 of 20 runs (master 2.31.0.0-b566). In one failed run:  | t0 + | Event | |---|---| | 5.4 s | ts-3 detects the failure; ts-2 still has 0.3 s left on its own failure timer and denies the pre-election vote ("replica believes a valid leader to be alive") | | 12.6 s | ts-3 wins the election after its backoff (6-7 s on tsan) | | 24.0 s | the activation wait ends: "pg_cron starting new runs" | | 25.4 s | the job starts, 0.4 s after the sampling window closed |  The product behaved as intended; the window was too short. Multiply the 15 s by `kTimeMultiplier` (1 on regular builds, 3 on sanitizers). The check that the new leader started no earlier than one lease after t0 is unchanged.  ## Test plan  - [ ] Jenkins: `PgCronTest.UngracefulLeaderChangeMarksJobFailed` passes on all build types, including tsan. - [x] tsan, 20 repetitions (2 in parallel): `YB_TEST_PARALLELISM=2 ./yb_build.sh tsan --clang21 --cxx-test pg_cron-test --gtest_filter PgCronTest.UngracefulLeaderChangeMarksJobFailed -n 20`: 20 passed. Without this change, master tsan failed 5 of 20 (2.
-  **Post-Mortem & Fix Analysis**:
-  >   <!-- Reviewable:start --> This change is [<img src="https://reviewable.io/review_button.svg" height="34" align="absmiddle" alt="Reviewable"/>](https://reviewable.io/reviews/yugabyte/yugabyte-db/35290) <!-- Reviewable:end --> 
-  > AgentK has started reviewing this pull request — findings will be posted here shortly.  Pushes are not reviewed automatically. Comment `/agentk review` to ask for another pass — but please only after substantial changes, not on every small push, and not for a push that just addresses the review comments.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2273,771 +2273,299 @@ class _SshRemoteShell(object):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b10be5ad` (2026-10-07)
-**Commit Message**: [#28574,#30130] YSQL: Fully ungraceful ConnMgr shutdown to avoid coredumps
-
-Summary:
-Connection Manager can dump core while it is shutting down. There are two causes.
-
-1. Crash in `mm_channel_write` <- `od_worker_pool_feed` <- `od_system_server`. The system thread accepts clients and hands each one to a worker thread through that worker's task channel. An idle worker thread waits in `machine_channel_read` on its own channel, and the reader record it links into that channel lives on the worker's coroutine stack. `od_system_shutdown` stops the worker threads, but the system thread keeps accepting. A stopped worker thread that wakes up for anything other than a channel write (typically its 1 s epoll timeout) exits with its record still linked, and `machine_free` unmaps its stack. When the system thread next routes a client to that worker, `mm_channel_write` unlinks the record from unmapped memory and segfaults.
-
-2. Crashes in `exit()` -> `OPENSSL_cleanup`, and in `od_frontend_close` -> `SSL_free`. `exit(0)` runs the `atexit` handlers and tears down OpenSSL while worker threads are still running and using them.
-
-Fix: `od_system_shutdown` no longer stops the workers, and it calls `_exit
-
-**File**: `java/yb-ysql-conn-mgr/src/test/java/org/yb/ysqlconnmgr/TestConnMgrShutdown.java` (added, +142/-0)
-```diff
-@@ -0,0 +1,142 @@
-+// Copyright (c) YugabyteDB, Inc.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
-+// in compliance with the License. You may obtain a copy of the License at
-+//
-+// http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software distributed under the License
-+// is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
-+// or implied. See the License for the specific language governing permissions and limitations
-+// under the License.
-+//
-+
-+package org.yb.ysqlconnmgr;
-+
-+import static org.yb.AssertionWrappers.assertEquals;
-+import static org.yb.AssertionWrappers.assertNotNull;
-+import static org.yb.AssertionWrappers.assertTrue;
-+import static org.yb.AssertionWrappers.fail;
-+
-+import java.nio.file.Files;
-+import java.nio.file.Paths;
-+import java.sql.Connection;
-+import java.sql.ResultSet;
-+import java.sql.Statement;
-+import java.util.concurrent.CompletableFuture;
-+import java.util.concurrent.TimeUnit;
-+
-+import org.junit.Test;
-+import org.junit.runner.RunWith;
-+import org.yb.YBTestRunner;
-+import org.yb.minicluster.LogErrorListener;
-+import org.yb.minicluster.MiniYBClusterBuilder;
-+import org.yb.minicluster.MiniYBDaemon;
-+import org.yb.pgsql.ConnectionEndpoint;
-+import org.yb.util.BuildTypeUtil;
-+import org.yb.util.RequiresLinux;
-+
-+@RequiresLinux
-+@RunWith(value = YBTestRunner.class)
-+public class TestConnMgrShutdown extends BaseYsqlConnMgr {
-+  private static final long SHUTDOWN_DELAY_MS = BuildTypeUtil.adjustTimeout(10000);
-+  private static final int WORKER_EXIT_WAIT_MS = 3000;
-+  private static final long EXIT_WAIT_MS = SHUTDOWN_DELAY_MS + 30000;
-+
-+  @Override
-+  protected void customizeMiniClusterBuilder(MiniYBClusterBuilder builder) {
-+    super.customizeMiniClusterBuilder(builder);
-+    disableWarmupRandomMode(builder);
-+    builder.addCommonTServerFlag("TEST_ysql_conn_mgr_shutdown_delay_ms",
-+        String.valueOf(SHUTDOWN_DELAY_MS));
-+  }
-+
-+  private Connection connectToConnMgr() throws Exception {
-+    return getConnectionBuilder()
-+        .withTServer(TSERVER_IDX)
-+        .withConnectionEndpoint(ConnectionEndpoint.YSQL_CONN_MGR)
-+        .connect();
-+  }
-+
-+  private void runSelectOne() throws Exception {
-+    try (Connection conn = connectToConnMgr();
-+        Statement stmt = conn.createStatement();
-+        ResultSet rs = stmt.executeQuery("SELECT 1")) {
-+      assertTrue(rs.next());
-+      assertEquals(1, rs.getInt(1));
-+    }
-+  }
-+
-+  private static boolean isProcessRunning(int pid) throws Exception {
-+    String stat;
-+    try {
-+      stat = new String(Files.readAllBytes(Paths.get("/proc/" + pid + "/stat")));
-+    } catch (java.nio.file.NoSuchFileException e) {
-+      return false;
-+    }
-+    String state = stat.substring(stat.lastIndexOf(')') + 2).split(" ")[0];
-+    return !state.equals("Z") && !state.equals("X");
-+  }
-+
-+  private static class ConnMgrExitListener implements LogErrorListener {
-+    private final CompletableFuture<String> exitLine = new CompletableFuture<>();
-+
-+    @Override
-+    public void handleLine(String line) {
-+      if (line.contains("Ysql Connection Manager exited normally")
-+          || line.contains("Ysql Connection Manager server returned with code")) {
-+        exitLine.complete(line);
-+      }
-+    }
-+
-+    @Override
-+    public void reportErrorsAtEnd() {
-+    }
-+
-+    String waitForExit(long timeoutMs) throws Exception {
-+      return exitLine.get(timeoutMs, TimeUnit.MILLISECONDS);
-+    }
-+  }
-+
-+  private MiniYBDaemon getTServerDaemon(String host) {
-+    return miniCluster.getTabletServers().values().stream()
-+        .filter(daemon -> host.equals(daemon.getLocalhostIP())).findFirst()
-+        .orElseThrow(() -> new IllegalStateException("No tserver found for host " + host));
-+  }
-+
-+  @Test
-+  public void testConnectAfterShutdownSignal() throws Exception {
-+    final String host = getPgHost(TSERVER_IDX);
-+    final int odysseyPid = getOdysseyPidForHost(host);
-+
-+    runSelectOne();
-+
-+    ConnMgrExitListener exitListener = new ConnMgrExitListener();
-+    getTServerDaemon(host).getLogPrinter().addErrorListener(exitListener);
-+
-+    Process kill = new ProcessBuilder("kill", "-INT", String.valueOf(odysseyPid)).start();
-+    assertEquals(0, kill.waitFor());
-+
-+    // Due to #22345, ConnMgr is not able to restart on it's own so this cluster is
-+    // not usable after the shutdown signal. Mark it as needing recreation so that
-+    // other tests don't try to use it.
-+    markClusterNeedsRecreation();
-+
-+    Thread.sleep(WORKER_EXIT_WAIT_MS);
-+
-+    try {
-+      runSelectOne();
-+    } catch (Exception e) {
-+      LOG.error("Connection during conn mgr shutdown failed", e);
-+      fail("Connection during conn mgr shutdown failed: " + e
-+          + "; conn mgr running: " + isProcessRunning(odysseyPid));
-+    }
-+    assertTrue("Conn mgr exited before the shutdown delay elapsed",
-+     
-```
-
-**File**: `src/odyssey/sources/sighandler.c` (modified, +35/-2)
-```diff
-@@ -81,12 +81,20 @@ static inline void yb_stats_shmem_cleanup(od_instance_t *instance)
- 	       "Deleted the shared memory segment with id %d", shmid);
- }
- 
-+/*
-+ * YB: Shutdown is ungraceful. Worker threads keep running until the process
-+ * exits, so freeing anything they may use here would race with them. We rely
-+ * on process exit to reclaim all resources.
-+ */
- od_attribute_noreturn() void od_system_shutdown(od_system_t *system,
- 						od_instance_t *instance)
- {
-+	/* YB: Worker pool cleanup is disabled */
-+#ifdef OD_SYSTEM_SHUTDOWN_CLEANUP
- 	od_worker_pool_t *worker_pool;
- 
- 	worker_pool = system->global->worker_pool;
-+#endif
- #ifdef YB_SUPPORT_FOUND
- 	// Connection manager process shuts down gracefully on receiving
- 	// SIGINT signal, but logging it makes some tests fail.
-@@ -103,10 +111,25 @@ od_attribute_noreturn() void od_system_shutdown(od_system_t *system,
- 	// YB: Cleanup shmem after cron thread has stopped
- 	yb_stats_shmem_cleanup(instance);
- 
-+	/*
-+	 * YB: Workers are deliberately not stopped, since stopping
-+	 * them unmaps coroutine stacks that may still be linked as
-+	 * channel readers
-+	 */
-+#ifdef OD_SYSTEM_SHUTDOWN_CLEANUP
- 	od_worker_pool_stop(worker_pool);
- 
--	/* Prevent OpenSSL usage during deinitialization */
- 	od_worker_pool_wait();
-+#endif
-+
-+	char *yb_shutdown_delay_ms =
-+		getenv("YB_YSQL_CONN_MGR_TEST_SHUTDOWN_DELAY_MS");
-+	if (yb_shutdown_delay_ms != NULL) {
-+		unsigned long delay_ms =
-+			strtoul(yb_shutdown_delay_ms, NULL, 10);
-+		machine_sleep(delay_ms > UINT32_MAX ? UINT32_MAX :
-+						      (uint32_t)delay_ms);
-+	}
- 
- #ifdef OD_SYSTEM_SHUTDOWN_CLEANUP
- 	od_router_free(system->global->router);
-@@ -118,7 +141,17 @@ od_attribute_noreturn() void od_system_shutdown(od_system_t *system,
- 	/* stop machinaruim and free */
- 	od_instance_free(instance);
- #endif
--	exit(0);
-+	/* YB: Give the logger thread a chance to flush queued log lines */
-+	machine_sleep(1);
-+
-+	/*
-+	 * YB: Call _exit instead of exit(0) to avoid running atexit handlers.
-+	 * This is because cleanup of OpenSSL races against new client conns
-+	 * undergoing TLS handshake. Since the memory is anyway reclaimed by the
-+	 * OS and we're doing ungraceful shutdown, it's okay to skip the atexit
-+	 * handlers.
-+	 */
-+	_exit(0);
- }
- 
- void od_system_signal_handler(void *arg)
-```
-
-**File**: `src/yb/yql/ysql_conn_mgr_wrapper/ysql_conn_mgr_wrapper.cc` (modified, +10/-0)
-```diff
-@@ -240,6 +240,10 @@ DEFINE_NON_RUNTIME_CONN_MGR_FLAG(bool, cert_auth, true,
-     "which is what makes the connection manager verify the client certificate the same way "
-     "PostgreSQL would.");
- 
-+DEFINE_test_flag(uint32, ysql_conn_mgr_shutdown_delay_ms, 0,
-+    "Time (in ms) that Ysql Connection Manager waits during SIGINT/SIGTERM shutdown before the "
-+    "process exits.");
-+
- namespace {
- 
- bool ValidateLogSettings(const char* flag_name, const std::string& value) {
-@@ -394,6 +398,12 @@ Status YsqlConnMgrWrapper::Start() {
-   // to start if the provider did not come up.
-   proc_->SetEnv(YSQL_CONN_MGR_REQUIRE_FIPS, FLAGS_openssl_require_fips ? "true" : "false");
- 
-+  unsetenv("YB_YSQL_CONN_MGR_TEST_SHUTDOWN_DELAY_MS");
-+  if (FLAGS_TEST_ysql_conn_mgr_shutdown_delay_ms > 0) {
-+    proc_->SetEnv("YB_YSQL_CONN_MGR_TEST_SHUTDOWN_DELAY_MS",
-+                  std::to_string(FLAGS_TEST_ysql_conn_mgr_shutdown_delay_ms));
-+  }
-+
- #ifdef THREAD_SANITIZER
-   // Disable thread leak detection for the Ysql Connection Manager (Odyssey) process.
-   // Worker threads may not be joined before exit(0) on SIGINT/SIGTERM shutdown.
-```
-
----
-
-### Incident Patch 2: `08a56060` (2026-10-17)
-**Commit Message**: [#34685,#34686] YSQL: Fix issues with pg_cron leader failover (#34689)
+### Incident Patch 1: `aa99998c` (2026-10-19)
+**Commit Message**: [#25308] DocDB: Fix AshGeoPartitionedTransactionTest.TestNonEmptyAshMetadata DCHECK on promotion race (#35304)
 
 ## Summary
 
-Two bugs on an ungraceful pg_cron leader change (the leader node
-crashes, stops, or is cut off from the cluster).
+When a blocking transaction is promoted,
+`WaitQueue::Impl::UpdateWaitersOnBlockerPromotion` removes each affected
+waiter with `PurgeWaiter`, but it doesn't hold the lock for the whole
+operation. Another signal path, such as another blocker resolving or
+`Poll`, can purge the same waiter first, so the
+`DCHECK(!waiters_to_signal.empty())` fired on a normal race and crashed
+debug builds. The `DCHECK` is now a `VLOG_IF(1, ...)`, which tolerates
+an already-purged waiter the same way `InvokeWaiterCallback` does, and
+waiters that are still present are re-queued as before.
 
-**#34685: new leader does not wait out the old lease.**
-`PgCronLeaderService::Activate` makes a new leader wait until the
-previous leader's lease must have expired (`pg_cron_leader_lease_sec` +
-2 * `max_clock_skew_usec`) before it starts jobs. It added
-`pg_cron_leader_lease_sec` as microseconds, so the wait was about 1 s
-instead of one lease (60 s by default). An old leader that is alive but
-cut off keeps running its jobs until its lease expires, so the new
-leader could run the same jobs at the same time.
+---
+_Produced fully automatically by csi-fix.py: Claude Opus (5.5) analyzed
+the failure logs, wrote the change, and verified it locally._
 
-- Fix: add the lease in seconds. After a leader change, no job now
-starts for one lease, as designed.
-- With the correct wait, the new leader starts 2 * `max_clock_skew_usec`
-(1 s) after the old lease ends. The old leader stops a job only on its
-next launcher iteration after the lease ends (up to 1 s), plus the time
-for the job's worker to exit; a test saw 1.9 s, with both nodes running
-the job for 0.8 s. So the lease the tserver publishes to postgres now
-ends min(3 s, lease - refresh
+## Test plan
 
-**File**: `src/postgres/src/backend/utils/cache/inval.c` (modified, +1/-1)
+./yb_build.sh fastdebug --gcc15 --cxx-test
+geo_transactions_promotion-test --gtest-filter
+AshGeoPartitionedTransactionTest.TestNonEmptyAshMetadata -n 180
+YB_TEST_YB_CONTROLLER=0 YB_ENABLE_YSQL_CONN_MGR_IN_JAVA_TESTS=true
+--stop-at-failure -- -p 6
+Ran the above locally with no failures.
+Before the fix, this test reproduced locally (same test command 
+
+**File**: `src/yb/docdb/wait_queue.cc` (modified, +3/-1)
 ```diff
-@@ -882,7 +882,7 @@ CallSystemCacheCallbacks(void)
- 	InvalidateSystemCachesExtended(true, true /* yb_callback */ );
- }
- 
--static void
-+void
- YbMaybeRefreshCache(void)
- {
- 	uint64_t	shared_catalog_version = YbGetSharedCatalogVersion();
-```
-
-**File**: `src/postgres/src/include/utils/inval.h` (modified, +1/-0)
-```diff
-@@ -71,5 +71,6 @@ extern bool yb_refresh_cache_in_progress;
- extern void CallSystemCacheCallbacks(void);
- extern int	YbGetNumInvalMessagesInTxn(int subgroup);
- extern void YbAddNumInvalMessagesInTxn(int subgroup, int nmsgs);
-+extern void YbMaybeRefreshCache(void);
- 
- #endif							/* INVAL_H */
-```
-
-**File**: `src/postgres/third-party-extensions/pg_cron/src/job_metadata.c` (modified, +31/-0)
-```diff
-@@ -98,6 +98,9 @@ static Oid GetRoleOidIfCanLogin(char *username);
- static entry * ParseSchedule(char *scheduleText);
- static bool TryParseInterval(char *scheduleText, uint32 *secondsInterval);
- 
-+/* YB declarations */
-+static void YbEnsureFreshCatalog(void);
-+
- 
- /* SQL-callable functions */
- PG_FUNCTION_INFO_V1(cron_schedule);
-@@ -543,6 +546,7 @@ NextRunId(void)
- 	bool failOK = true;
- 	MemoryContext originalContext = CurrentMemoryContext;
- 
-+	YbEnsureFreshCatalog();
- 	StartTransactionCommand();
- 	PushActiveSnapshot(GetTransactionSnapshot());
- 
-@@ -830,6 +834,7 @@ void
- InvalidateJobCacheCallback(Datum argument, Oid relationId)
- {
- 	if (relationId == CachedCronJobRelationId ||
-+		relationId == InvalidOid ||
- 		CachedCronJobRelationId == InvalidOid)
- 	{
- 		CronJobCacheValid = false;
-@@ -873,6 +878,7 @@ LoadCronJobList(void)
- 	MemoryContext originalContext = CurrentMemoryContext;
- 
- 	SetCurrentStatementStartTimestamp();
-+	YbEnsureFreshCatalog();
- 	StartTransactionCommand();
- 	PushActiveSnapshot(GetTransactionSnapshot());
- 
-@@ -1084,6 +1090,7 @@ InsertJobRunDetail(int64 runId, int64 *jobId, char *database, char *username, ch
- 	MemoryContext originalContext = CurrentMemoryContext;
- 
- 	SetCurrentStatementStartTimestamp();
-+	YbEnsureFreshCatalog();
- 	StartTransactionCommand();
- 	PushActiveSnapshot(GetTransactionSnapshot());
- 
-@@ -1153,6 +1160,7 @@ UpdateJobRunDetail(int64 runId, int32 *job_pid, char *status, char *return_messa
- 	MemoryContext originalContext = CurrentMemoryContext;
- 
- 	SetCurrentStatementStartTimestamp();
-+	YbEnsureFreshCatalog();
- 	StartTransactionCommand();
- 	PushActiveSnapshot(GetTransactionSnapshot());
- 
-@@ -1424,6 +1432,7 @@ MarkPendingRunsAsFailed(void)
- 	MemoryContext originalContext = CurrentMemoryContext;
- 
- 	SetCurrentStatementStartTimestamp();
-+	YbEnsureFreshCatalog();
- 	StartTransactionCommand();
- 	PushActiveSnapshot(GetTransactionSnapshot());
- 
-@@ -1450,6 +1459,10 @@ MarkPendingRunsAsFailed(void)
- 	if (SPI_exec(querybuf.data, 0) != SPI_OK_UPDATE)
- 		elog(ERROR, "SPI_exec failed: %s", querybuf.data);
- 
-+	if (IsYugaByteEnabled())
-+		ereport(LOG, (errmsg("pg_cron marked " UINT64_FORMAT " pending runs as failed",
-+							 SPI_processed)));
-+
- 	pfree(querybuf.data);
- 
- 	SPI_finish();
-@@ -1586,3 +1599,21 @@ TryParseInterval(char *scheduleText, uint32 *secondsInterval)
- 
- 	return false;
- }
-+
-+
-+/*
-+ * Reset the catalog read time in legacy catalog mode, and check the catalog
-+ * version where AcceptInvalidationMessages does not, as PostgresMain does
-+ * before each statement.
-+ */
-+static void
-+YbEnsureFreshCatalog(void)
-+{
-+	if (!IsYugaByteEnabled())
-+		return;
-+
-+	if (YBCIsLegacyModeForCatalogOps())
-+		YbInvalidateCatalogSnapshot();
-+	if (!YBCIsObjectLockingEnabled() || !YbIsInvalidationMessageEnabled())
-+		YbMaybeRefreshCache();
-+}
-```
-
-**File**: `src/postgres/third-party-extensions/pg_cron/src/task_states.c` (modified, +0/-10)
-```diff
-@@ -21,9 +21,6 @@
- #include "utils/hsearch.h"
- #include "utils/memutils.h"
- 
--/* YB includes */
--#include "pg_yb_utils.h"
--#include "catalog/yb_catalog_version.h"
- 
- /* forward declarations */
- static HTAB * CreateCronTaskHash(void);
-@@ -84,13 +81,6 @@ CreateCronTaskHash(void)
- void
- RefreshTaskHash(void)
- {
--	/* YB Note: Always read the latest entries in the catalog */
--	if (IsYugaByteEnabled())
--	{
--		YbInvalidateCatalogSnapshot();
--		YbUpdateCatalogCacheVersion(YbGetMasterCatalogVersion());
--	}
--
- 	List *jobList = NIL;
- 	ListCell *jobCell = NULL;
- 	CronTask *task = NULL;
-```
-
-**File**: `src/yb/integration-tests/pg_cron-test.cc` (modified, +261/-19)
-```diff
-@@ -12,6 +12,7 @@
- //
- 
- #include <chrono>
-+#include <optional>
- 
- #include "yb/client/session.h"
- #include "yb/client/table_handle.h"
-@@ -29,6 +30,7 @@
- 
- #include "yb/util/backoff_waiter.h"
- #include "yb/util/monotime.h"
-+#include "yb/util/tostring.h"
- 
- #include "yb/yql/cql/ql/util/statement_result.h"
- #include "yb/yql/pgwrapper/libpq_utils.h"
-@@ -40,7 +42,10 @@ namespace yb {
- 
- constexpr auto kTableName = "tbl1";
- constexpr auto kDefaultJobName = "Job1";
--constexpr auto kJobListRefreshInterval = 10;
-+// cron.yb_job_list_refresh_interval and pg_cron_leader_lease_sec for the fixture. A new leader
-+// starts running jobs one lease after it became leader.
-+constexpr auto kInterval = 10;
-+constexpr auto kServerRestartedMessage = "server restarted";
- constexpr auto kFailedJobStatus = "failed";
- constexpr auto kRunningJobStatus = "running";
- const client::YBTableName service_table_name =
-@@ -64,10 +69,10 @@ class PgCronTest : public MiniClusterTestWithClient<ExternalMiniCluster> {
-     opts.extra_tserver_flags.push_back("--enable_pg_cron=true");
- 
-     opts.extra_tserver_flags.push_back(
--        Format("--ysql_pg_conf_csv=cron.yb_job_list_refresh_interval=$0", kJobListRefreshInterval));
-+        Format("--ysql_pg_conf_csv=cron.yb_job_list_refresh_interval=$0", kInterval));
-     opts.extra_tserver_flags.push_back("--pg_cron_leadership_refresh_sec=1");
-     opts.extra_tserver_flags.push_back(
--        Format("--pg_cron_leader_lease_sec=$0", kJobListRefreshInterval));
-+        Format("--pg_cron_leader_lease_sec=$0", kInterval));
- 
-     cluster_.reset(new ExternalMiniCluster(opts));
-     ASSERT_OK(cluster_->Start());
-@@ -203,7 +208,9 @@ class PgCronTest : public MiniClusterTestWithClient<ExternalMiniCluster> {
- 
-           return row_block->row_count() > 0;
-         },
--        CoarseMonoClock::Now() + kTimeout, "Waiting for data in pg cron leader table");
-+        // The leader writes the first row at the first minute boundary after it becomes active,
-+        // which can itself take one lease if the leader moves during setup.
-+        CoarseMonoClock::Now() + kTimeout + 60s, "Waiting for data in pg cron leader table");
-   }
- 
-   Result<int64_t> GetPersistedLastMinute() {
-@@ -247,6 +254,182 @@ class PgCronTest : public MiniClusterTestWithClient<ExternalMiniCluster> {
-     return pids;
-   }
- 
-+  // Returns the runid, and the pid of the backend executing it, of the most recent run of the job
-+  // that is in the 'running' state.
-+  Result<std::tuple<int64_t, int32_t>> GetRunningRun(int64 job_id) {
-+    return conn_->FetchRow<int64_t, int32_t>(Format(
-+        "SELECT runid, job_pid FROM cron.job_run_details WHERE jobid = $0 AND status = '$1' "
-+        "ORDER BY start_time DESC LIMIT 1",
-+        job_id, kRunningJobStatus));
-+  }
-+
-+  Result<std::string> GetRunMessage(int64 runid) {
-+    return conn_->FetchRow<std::string>(Format(
-+        "SELECT return_message FROM cron.job_run_details WHERE runid = $0", runid));
-+  }
-+
-+  // Number of runs of the job that started after the given run.
-+  Result<int64_t> CountRunsAfter(int64 job_id, int64 runid) {
-+    return conn_->FetchRow<pgwrapper::PGUint64>(Format(
-+        "SELECT COUNT(*) FROM cron.job_run_details WHERE jobid = $0 AND runid > $1", job_id,
-+        runid));
-+  }
-+
-+  // Waits for a specific run (identified by runid) to reach the given status. Unlike
-+  // WaitForJobStatus this tracks a single run, so it is stable even as the job keeps rescheduling.
-+  Status WaitForRunStatus(int64 runid, const std::string& status) {
-+    Status s = LoggedWaitFor(
-+        [this, runid, status]() -> Result<bool> {
-+          return VERIFY_RESULT(conn_->FetchRow<pgwrapper::PGUint64>(Format(
-+                     "SELECT COUNT(*) FROM cron.job_run_details WHERE runid = $0 AND status = '$1'",
-+                     runid, status))) > 0;
-+        },
-+        kTimeout, Format("Wait for run $0 to have status '$1'", runid, status));
-+    if (!s.ok()) {
-+      LOG(INFO) << "job_run_details on failure:\n"
-+                << conn_->FetchAllAsString(
-+                       "SELECT runid, jobid, status, return_message FROM cron.job_run_details "
-+                       "ORDER BY runid",
-+                       " | ", "\n");
-+    }
-+    return s;
-+  }
-+
-+  // Returns the indexes of the tservers that have a backend executing the given job command.
-+  Result<std::set<size_t>> NodesRunningQuery(const std::string& job_command) {
-+    std::set<size_t> nodes;
-+    for (size_t idx = 0; idx < cluster_->num_tablet_servers(); ++idx) {
-+      auto conn = VERIFY_RESULT(cluster_->ConnectToDB("yugabyte", idx));
-+      if (VERIFY_RESULT(conn.FetchRow<pgwrapper::PGUint64>(Format(
-+              "SELECT COUNT(*) FROM pg_stat_activity WHERE query = '$0'", job_command))) > 0) {
-+        nodes.insert(idx);
-+      }
-+    }
-+    return nodes;
-+  }
-+
-+  Status WaitForQueryOnlyOnNode(const std::string& job_command, size_t idx) {
-+    return LoggedWaitFor(
-+        [this, &job_command, idx]() -> Result<bool> 
-```
-
-**File**: `src/yb/tserver/stateful_services/pg_cron_leader_service.cc` (modified, +14/-6)
-```diff
-@@ -55,6 +55,8 @@ namespace {
- constexpr uint32 kPgCronJsonVersion1 = 1;
- constexpr char kPgCronJsonVersion[] = "version";
- constexpr char kPgCronJsonLastMinute[] = "last_minute";
-+// How long before the lease ends this node stops its in-flight pg_cron jobs.
-+constexpr int64_t kJobStopMarginSec = 3;
- }  // namespace
- 
- PgCronLeaderService::PgCronLeaderService(
-@@ -81,9 +83,9 @@ void PgCronLeaderService::Activate() {
-       VLOG_WITH_FUNC(1) << "Leader for term 1. Activating immediately";
-       leader_activate_time_ = MonoTime::Min();
-     } else {
--      leader_activate_time_ =
--          MonoTime::Now() + MonoDelta::FromMicroseconds(
--                                FLAGS_pg_cron_leader_lease_sec + 2 * FLAGS_max_clock_skew_usec);
-+      leader_activate_time_ = MonoTime::Now() +
-+                              MonoDelta::FromSeconds(FLAGS_pg_cron_leader_lease_sec) +
-+                              MonoDelta::FromMicroseconds(2 * FLAGS_max_clock_skew_usec);
-       LOG_WITH_FUNC(INFO) << "Waiting until " << leader_activate_time_.ToFormattedString()
-                           << " for lease of the old leader to expire";
-     }
-@@ -136,10 +138,16 @@ void PgCronLeaderService::RefreshLeaderLease() {
-     return;
-   }
- 
--  // We are the leader. Renew the lease.
-+  // We are the leader: renew the lease. The lease ends kJobStopMarginSec early, to leave time to
-+  // stop running jobs before a new leader, which waits out the full lease, starts.
-   const auto lease_end = now + MonoDelta::FromSeconds(FLAGS_pg_cron_leader_lease_sec);
--  VLOG_WITH_FUNC(1) << "Setting leader lease to " << lease_end.ToFormattedString();
--  set_cron_leader_lease_fn_(lease_end);
-+  const auto stop_margin = std::clamp<int64_t>(
-+      static_cast<int64_t>(FLAGS_pg_cron_leader_lease_sec) -
-+          static_cast<int64_t>(FLAGS_pg_cron_leadership_refresh_sec) - 1,
-+      0, kJobStopMarginSec);
-+  VLOG_WITH_FUNC(1) << "Setting leader lease to " << lease_end.ToFormattedString()
-+                    << " minus " << stop_margin << " s";
-+  set_cron_leader_lease_fn_(lease_end - MonoDelta::FromSeconds(stop_margin));
- }
- 
- Status PgCronLeaderService::SetLastMinute(int64_t last_minute, CoarseTimePoint deadline) {
+@@ -1645,7 +1645,9 @@ class WaitQueue::Impl {
+           continue;
+         }
+         auto waiters_to_signal = txn_it->second->PurgeWaiter(waiter->request_id);
+-        DCHECK(!waiters_to_signal.empty())
++        // The waiter may have been concurrently purged by another signal (e.g. another blocker
++        // resolving, or Poll), as in InvokeWaiterCallback.
++        VLOG_IF(1, waiters_to_signal.empty())
+             << "Did not find waiter to signal during promotion " << waiter->id
+             << ", request_id: " << waiter->request_id;
+         for (const auto& waiter_to_signal : waiters_to_signal) {
 ```
 
 ---
 
-### Incident Patch 3: `3de43b4f` (2026-10-17)
-**Commit Message**: [#34535] build: Clean up PGO builds and document their use for microbenchmarks (#35089)
+### Incident Patch 2: `dd0c75ac` (2026-10-14)
+**Commit Message**: [PLAT-22180][NUX]- User's  latest preference for creating a Universe using Guided or Expert Mode needs to be saved in their profile.
 
 Summary:
-PGO build cleanup in `yb_build.sh`, with the benchmark workflow as the first user:
+Revamp create-universe always opened in Guided mode, so users who prefer Expert had to re-select it every time. Persist the last mode used on a successful create in the user’s profile (Users.settings), and seed the wizard from that on open.
 
-- A build root keeps the profile it was configured with; later builds without `--pgo-data-path` rely on that (the release pipeline's initdb step runs without the flag). The build now logs when a cached profile is in effect, and giving a different `--pgo-data-path` re-runs CMake instead of being silently ignored.
-- `YB_USE_EXTERNAL_BUILD_ROOT=1` produced an empty Python venv, because `activate_virtualenv` linked the requirements files into `build/` while the venv lived under the external parent directory; the links now go where the venv is.
-- In a `prof_gen` build, `--cxx-benchmark` writes the profile to `<build_root>/pgo-profiles/<ir|csir>/<name>-<pid>-<module>.profraw` (one file per instrumented executable or shared library, previous raw files of the benchmark removed first) instead of the current directory, and prints the `llvm-profdata merge` command.
-- `--pgo-instrument-type` and `--pgo-data-path` get help text; `prof_gen` was already listed among the build types.
+**Changes**
+  - Store create_universe_form_mode as "Guided" | "Expert Mode" under Users.settings (same update_profile / userSettings path as other UI prefs).
+  - Seed resilienceFormMode once when the revamp wizard mounts; missing or invalid values fall back to Guided.
+  - After create API success, write the mode used for that create; preference-write failures are swallowed so create is not blocked. Await the write before navigating so the request is not aborted.
+  - Revamp create-universe only. No Profile UI control, no same-session Redux patch, no legacy create UI, no schema/migration.
 
-The contributor build-and-test pag
+Test Plan:
+  - cd managed/ui && npx vitest run src/redesign/features-v2/universe/create-universe/helpers/createUniverseFormModePreference.test.ts (3 passed)
+  - Manual (revamp /create-universe):
+      - User with no sett
 
-**File**: `build-support/common-build-env.sh` (modified, +8/-7)
+**File**: `managed/ui/src/redesign/features-v2/universe/create-universe/CreateUniverse.tsx` (modified, +22/-1)
 ```diff
-@@ -2264,13 +2264,14 @@ activate_virtualenv() {
+@@ -8,6 +8,7 @@
+  */
  
-   log "Activating python virtual env"
+ import { useEffect, useMemo, useRef, useState } from 'react';
++import { useSelector } from 'react-redux';
+ import { useMethods } from 'react-use';
+ import { useQuery } from 'react-query';
+ import { useTranslation } from 'react-i18next';
+@@ -32,6 +33,8 @@ import {
+   fetchCreateUniverseDbVersions,
+   fetchCreateUniverseProviders
+ } from './helpers/generalSettingsDefaults';
++import { resolveCreateUniverseFormMode } from './helpers/createUniverseFormModePreference';
++import { RESILIENCE_FORM_MODE } from './fields/FieldNames';
+ //style imports
+ import './styles/override.css';
  
--  # Symlink the requirements files into the top level build directory
--  # We assume $YB_SRC_ROOT/build is already created by initialize_yugabyte_bash_common having
--  # already been called.
--  [[ -f "${YB_SRC_ROOT}/build/requirements.txt" ]] \
--    || ln -sf "${YB_SRC_ROOT}/requirements.txt" "${YB_SRC_ROOT}/build/"
--  [[ -f "${YB_SRC_ROOT}/build/requirements_frozen.txt" ]] \
--    || ln -sf "${YB_SRC_ROOT}/requirements_frozen.txt" "${YB_SRC_ROOT}/build/"
-+  # Symlink the requirements files into the directory that holds the virtualenv, which is where
-+  # yb_activate_virtualenv looks for them. This is $YB_SRC_ROOT/build, or the external build parent
-+  # directory when YB_USE_EXTERNAL_BUILD_ROOT=1.
-+  mkdir -p "${virtualenv_parent_dir}"
-+  [[ -f "${virtualenv_parent_dir}/requirements.txt" ]] \
-+    || ln -sf "${YB_SRC_ROOT}/requirements.txt" "${virtualenv_parent_dir}/"
-+  [[ -f "${virtualenv_parent_dir}/requirements_frozen.txt" ]] \
-+    || ln -sf "${YB_SRC_ROOT}/requirements_frozen.txt" "${virtualenv_parent_dir}/"
+@@ -69,9 +72,27 @@ const CreateHeader = styled('div')(() => ({
+   minWidth: '1200px'
+ }));
  
-   yb_activate_virtualenv "${virtualenv_parent_dir}"
- 
++function buildInitialFormState(
++  settings?: Record<string, unknown> | null
++): createUniverseFormProps {
++  const resilienceFormMode = resolveCreateUniverseFormMode(settings);
++  return {
++    ...initialCreateUniverseFormState,
++    resilienceAndRegionsSettings: {
++      ...initialCreateUniverseFormState.resilienceAndRegionsSettings!,
++      [RESILIENCE_FORM_MODE]: resilienceFormMode
++    }
++  };
++}
++
+ export function CreateUniverse() {
+   const { t } = useTranslation('translation', { keyPrefix: 'createUniverseV2.steps' });
+-  const restoreContextData = useMethods(createUniverseFormMethods, initialCreateUniverseFormState);
++  const userSettings = useSelector(
++    (state: any) => state.customer.currentUser?.data?.settings as Record<string, unknown> | null
++  );
++  // Seed once from profile available at mount; never late-overwrite if settings arrive later.
++  const [initialFormState] = useState(() => buildInitialFormState(userSettings));
++  const restoreContextData = useMethods(createUniverseFormMethods, initialFormState);
+   const [{ activeStep, resilienceType, generalSettings }] = restoreContextData;
+   const isK8s =
+     generalSettings?.cloud === CloudType.kubernetes ||
 ```
 
-**File**: `build-support/yb_build_cmd_line.sh` (modified, +9/-0)
+**File**: `managed/ui/src/redesign/features-v2/universe/create-universe/helpers/createUniverseFormModePreference.test.ts` (added, +40/-0)
 ```diff
-@@ -176,6 +176,15 @@ Build options:
-     https://llvm.org/docs/LinkTimeOptimization.html and https://clang.llvm.org/docs/ThinLTO.html).
-     Can also be specified by setting environment variable YB_LINKING_TYPE to thin-lto or full-lto.
-     Set YB_LINKING_TYPE to 'dynamic' to disable LTO.
-+  --pgo-instrument-type <ir|csir>
-+    With the prof_gen build type: instrument the build for profile-guided optimization (PGO) with
-+    IR or context-sensitive IR profiles. A benchmark run with --cxx-benchmark in such a build
-+    writes its profile to <build_root>/pgo-profiles/<instrumentation type>/.
-+  --pgo-data-path <profdata_file>
-+    Compile and link with the given merged llvm-profdata profile (-fprofile-use). Works with any
-+    build type; the release pipeline uses it with --full-lto. The build root remembers the profile:
-+    later builds without this flag keep using it, giving a different path re-runs CMake and
-+    rebuilds, and building without a profile again needs a different build root or --clean.
-   --no-initdb, --skip-initdb
-     Skip the initdb step. The initdb build step is mostly single-threaded and can be executed on a
-     low-CPU build machine even if the majority of the build is being executed on a high-CPU host.
+@@ -0,0 +1,40 @@
++import { describe, expect, it } from 'vitest';
++import { ResilienceFormMode } from '../steps/resilence-regions/dtos';
++import {
++  CREATE_UNIVERSE_FORM_MODE_SETTINGS_KEY,
++  resolveCreateUniverseFormMode
++} from './createUniverseFormModePreference';
++
++describe('resolveCreateUniverseFormMode', () => {
++  it('returns Guided when unset', () => {
++    expect(resolveCreateUniverseFormMode(undefined)).toBe(ResilienceFormMode.GUIDED);
++    expect(resolveCreateUniverseFormMode(null)).toBe(ResilienceFormMode.GUIDED);
++    expect(resolveCreateUniverseFormMode({})).toBe(ResilienceFormMode.GUIDED);
++  });
++
++  it('returns stored Guided or Expert Mode', () => {
++    expect(
++      resolveCreateUniverseFormMode({
++        [CREATE_UNIVERSE_FORM_MODE_SETTINGS_KEY]: ResilienceFormMode.GUIDED
++      })
++    ).toBe(ResilienceFormMode.GUIDED);
++    expect(
++      resolveCreateUniverseFormMode({
++        [CREATE_UNIVERSE_FORM_MODE_SETTINGS_KEY]: ResilienceFormMode.EXPERT_MODE
++      })
++    ).toBe(ResilienceFormMode.EXPERT_MODE);
++  });
++
++  it('falls back to Guided for unknown values', () => {
++    expect(
++      resolveCreateUniverseFormMode({
++        [CREATE_UNIVERSE_FORM_MODE_SETTINGS_KEY]: 'EXPERT_MODE'
++      })
++    ).toBe(ResilienceFormMode.GUIDED);
++    expect(
++      resolveCreateUniverseFormMode({
++        [CREATE_UNIVERSE_FORM_MODE_SETTINGS_KEY]: true
++      })
++    ).toBe(ResilienceFormMode.GUIDED);
++  });
++});
 ```
 
-**File**: `docs/content/stable/contribute/core-database/build-and-test.md` (modified, +35/-0)
+**File**: `managed/ui/src/redesign/features-v2/universe/create-universe/helpers/createUniverseFormModePreference.ts` (added, +33/-0)
 ```diff
-@@ -190,6 +190,41 @@ LTO builds need an LTO third-party archive; the published one is built for AlmaL
- 
- Note that a high parallelism could result in failures if system resources are overused.
- 
-+### Profile-guided optimization for microbenchmarks
+@@ -0,0 +1,33 @@
++import axios from 'axios';
++import { ROOT_URL } from '@app/config';
++import { ResilienceFormMode } from '../steps/resilence-regions/dtos';
 +
-+Release binaries are built with profile-guided optimization (PGO) from a sysbench workload, so their code layout and inlining differ from a plain `release` build.
-+You can build a microbenchmark the same way, with a profile you collect yourself.
-+It is opt-in and takes two builds, both with `--full-lto`, since PGO is only used together with LTO.
++/** Per-user sticky default for revamp create-universe Guided/Expert. */
++export const CREATE_UNIVERSE_FORM_MODE_SETTINGS_KEY = 'create_universe_form_mode';
 +
-+First, build and run the benchmark instrumented for profiling (`prof_gen` is a release build with profile counters; the benchmark's own timings in this run are meaningless):
++export function resolveCreateUniverseFormMode(
++  settings?: Record<string, unknown> | null
++): ResilienceFormMode {
++  const raw = settings?.[CREATE_UNIVERSE_FORM_MODE_SETTINGS_KEY];
++  if (raw === ResilienceFormMode.GUIDED || raw === ResilienceFormMode.EXPERT_MODE) {
++    return raw;
++  }
++  return ResilienceFormMode.GUIDED;
++}
 +
-+```sh
-+./yb_build.sh prof_gen --full-lto --pgo-instrument-type=ir --cxx-benchmark mutex-benchmark
-+```
-+
-+The raw profiles are written to `<build_root>/pgo-profiles/ir/` (one file per instrumented executable or shared library; each run replaces the benchmark's previous ones), and the command prints the `llvm-profdata merge` invocation that turns them into one `.profdata` file.
-+Then build and run the benchmark with that profile:
-+
-+```sh
-+YB_USE_EXTERNAL_BUILD_ROOT=1 ./yb_build.sh release --full-lto --no-ccache \
-+    --pgo-data-path <build_root>/pgo-profiles/ir/mutex-benchmark.profdata --cxx-benchmark mutex-benchmark
-+```
-+
-+`--no-ccache` matters with an old ccache such as the AlmaLinux 8 package (3.7): it can serve objects that ignore the profile ([ccache issue 582](https://github.com/ccache/ccache/issues/582)).
-+A build root remembers its profile: later builds in it without `--pgo-data-path` keep using it, and only a different profile, a different build root, or `--clean` changes that.
-+`YB_USE_EXTERNAL_BUILD_ROOT=1` puts this build under `<source root>__build/`, so your regular `release` build root stays a plain release build.
-+Release binaries add a second, context-sensitive pass (`--pgo-instrument-type=csir` with the first profile as `--pgo-data-path`); one pass is enough for a benchmark.
-+
-+When to use it: to check whether a change behaves the same way in a PGO-optimized build, or whether a result is fragile under a different code layout.
-+It is not a substitute for a plain `release` or `--full-lto` number, and it has downsides:
-+
-+- A profile collected from the benchmark itself optimizes the benchmark's loop, so it overstates gains that a production profile, collected from a server workload, would not see.
-+  In an A/B comparison, a profile collected on one side favors that side; use the same profile for both, or profile each side the same way and say so.
-+- Only code the profiling run executed gets profile data; everything else is laid out as cold.
-+- A stale profile is accepted silently: the build disables the profile-mismatch warnings, and functions whose code changed simply get no data.
-+  Collect a new profile after changing the measured code.
-+- It needs Clang and a second full build of the benchmark's dependencies.
-+
- ### Test frameworks
- 
- #### C++ (external) mini cluster
++/** Fire-and-forget profile write; never throws (create must not fail on this). */
++export async function persistCreateUniverseFormMode(
++  user: { uuid?: string; role?: string } | null | undefined,
++  mode: ResilienceFormMode
++): Promise<void> {
++  if (!user?.uuid || !user.role) return;
++  try {
++    const cUUID = localStorage.getItem('customerId');
++    await axios.put(`${ROOT_URL}/customers/${cUUID}/users/${user.uuid}/update_profile`, {
++      role: user.role,
++      userSettings: { [CREATE_UNIVERSE_FORM_MODE_SETTINGS_KEY]: mode }
++    });
++  } catch {
++    // swallow
++  }
++}
 ```
 
-**File**: `yb_build.sh` (modified, +36/-0)
+**File**: `managed/ui/src/redesign/features-v2/universe/create-universe/steps/review-summary/ReviewAndSummary.tsx` (modified, +9/-2)
 ```diff
-@@ -512,12 +512,32 @@ run_cxx_benchmark() {
-     fatal "Could not find benchmark program '$cxx_benchmark_program_name' in" \
-           "$BUILD_ROOT/benchmarks-*. Only programs added with ADD_YB_BENCHMARK are placed there."
-   fi
-+  # In a prof_gen (PGO-instrumented) build, collect the profile under the build root instead of
-+  # the current directory, in a subdirectory named after the instrumentation type (ir or csir), and
-+  # show how to merge it for a later --pgo-data-path build. %m keeps the executable and each
-+  # instrumented shared library in their own raw file, as clang's default pattern does; previous
-+  # raw files of this benchmark are removed so the merge sees one run.
-+  local pgo_profile_dir=""
-+  if [[ $build_type == "prof_gen" ]]; then
-+    pgo_profile_dir=$BUILD_ROOT/pgo-profiles/$pgo_instrument_type
-+    mkdir -p "$pgo_profile_dir"
-+    rm -f "$pgo_profile_dir/$cxx_benchmark_name"-*.profraw
-+  fi
-   (
-     set_sanitizer_runtime_options
-+    if [[ -n $pgo_profile_dir ]]; then
-+      export LLVM_PROFILE_FILE=$pgo_profile_dir/$cxx_benchmark_name-%p-%m.profraw
-+    fi
-     set +u  # "set -u" fails on an empty benchmark_args with bash < 4.4 (macOS /bin/bash).
-     set -x
-     "${benchmark_paths[0]}" "${benchmark_args[@]}"
-   )
-+  if [[ -n $pgo_profile_dir ]]; then
-+    log "PGO profile written to $pgo_profile_dir. To merge it for a --pgo-data-path build:"
-+    log "  ${YB_LLVM_TOOLCHAIN_DIR:-<llvm toolchain>}/bin/llvm-profdata merge" \
-+        "-o $pgo_profile_dir/$cxx_benchmark_name.profdata" \
-+        "$pgo_profile_dir/$cxx_benchmark_name-*.profraw"
-+  fi
- }
+@@ -1,4 +1,5 @@
+ import { forwardRef, useContext, useImperativeHandle } from 'react';
++import { useSelector } from 'react-redux';
+ import { useQuery } from 'react-query';
+ import { useYBToast } from '../../helpers/ToastUtils';
+ import { useTranslation } from 'react-i18next';
+@@ -26,6 +27,8 @@ import { mapCreateUniversePayload, getDedicatedTserverMasterCounts } from '../..
+ import { Region } from '../../../../../features/universe/universe-form/utils/dto';
+ import { createErrorMessage } from '@app/redesign/features/universe/universe-form/utils/helpers';
+ import { CloudType } from '@app/redesign/helpers/dtos';
++import { ResilienceFormMode } from '../resilence-regions/dtos';
++import { persistCreateUniverseFormMode } from '../../helpers/createUniverseFormModePreference';
  
- register_file_to_rebuild() {
-@@ -1064,8 +1084,24 @@ if [[ $build_type == "prof_gen" ]]; then
-   cmake_opts+=( "-DYB_PGO_INSTRUMENT_TYPE=$pgo_instrument_type" )
- fi
+ //icons
+ import UniverseIcon from '../../../../../assets/clusters.svg';
+@@ -107,6 +110,9 @@ export const ReviewAndSummary = forwardRef<StepsRef>((_, forwardRef) => {
+   const toast = useYBToast();
+   const payload = mapCreateUniversePayload({ ...context });
+   const createUniverse = useCreateUniverse();
++  const currentUser = useSelector((state: any) => state.customer.currentUser?.data);
++  const formMode =
++    resilienceAndRegionsSettings?.resilienceFormMode ?? ResilienceFormMode.GUIDED;
+   const dedicatedCounts = getDedicatedTserverMasterCounts(
+     resilienceAndRegionsSettings,
+     nodesAvailabilitySettings
+@@ -136,9 +142,10 @@ export const ReviewAndSummary = forwardRef<StepsRef>((_, forwardRef) => {
+               }
+             }
+           )
+-          .then((resp) => {
++          .then(async (resp) => {
+             if (resp.resource_uuid) {
+-              // Navigate to the universe details page after creation
++              // Await so navigation does not abort the preference PUT; failures are swallowed.
++              await persistCreateUniverseFormMode(currentUser, formMode);
+               window.location.href = `/universes/${resp.resource_uuid}`;
+             }
+           })
+```
+
+---
+
+### Incident Patch 3: `d60353da` (2026-10-19)
+**Commit Message**: [#35278] YSQL: Fix org.yb.ysqlconnmgr.TestDropAndRenameDb#TestConcurrentOperations (#35279)
+
+## Summary
+
+On TSAN builds, each `CREATE DATABASE` takes 60-170s, mostly because the
+master is flushing its catalog. The test creates
+`NUM_DB_CONCURRENCY_TESTING` (`5`) databases one after another before
+the concurrent phase starts, so it hits the 540s test timeout during the
+concurrent DROP phase. The `DROP DATABASE ... failed` errors appear only
+after the timeout, while the cluster shuts down.
+`NUM_DB_CONCURRENCY_TESTING` is now
+`BuildTypeUtil.nonSanitizerVsSanitizer(5, 2)`, which removes three slow
+serial creates on sanitizer builds and still runs the same 30-thread
+connect, drop and reject checks.
+
+---
+_Produced fully automatically by csi-fix.py: Claude Opus (5.5) analyzed
+the failure logs, wrote the change, and verified it locally._
+
+## Test plan
+
+./yb_build.sh tsan --clang21 --java-test
+'org.yb.ysqlconnmgr.TestDropAndRenameDb#TestConcurrentOperations' -n 100
+--stop-at-failure -- -p 6
+Ran the above locally with no failures.
+Before the fix, this test reproduced locally (same test command and -p /
+env as above, without --stop-at-failure) -- with the CSI dashboard rate
+for reference:
+- cl
+
+**File**: `java/yb-ysql-conn-mgr/src/test/java/org/yb/ysqlconnmgr/TestDropAndRenameDb.java` (modified, +3/-1)
+```diff
+@@ -51,7 +51,9 @@ public class TestDropAndRenameDb extends BaseYsqlConnMgr {
+   private static final String TEST_DB_MOVE_DB_FAILS = "test_db_name_move_db_fails";
  
-+# The profile path lives in CMakeCache.txt once cmake has seen it, and a build root keeps it until a
-+# different one is given: later invocations without --pgo-data-path (the release pipeline's initdb
-+# step, test runs) must not change how the root is compiled. So re-run cmake only when a different
-+# profile is given explicitly, and say so when a cached profile is in effect.
-+cached_pgo_data_path=""
-+if [[ -f $BUILD_ROOT/CMakeCache.txt ]]; then
-+  cached_pgo_data_path=$(sed -n 's/^YB_PGO_DATA_PATH:[A-Z]*=//p' "$BUILD_ROOT/CMakeCache.txt")
-+fi
- if [[ $pgo_data_path != "" ]]; then
-   cmake_opts+=( "-DYB_PGO_DATA_PATH=$pgo_data_path" )
-+  if [[ -n $cached_pgo_data_path && $cached_pgo_data_path != "$pgo_data_path" &&
-+        ${force_no_run_cmake} == "false" ]]; then
-+    log "PGO profile changed from '${cached_pgo_data_path}' to '${pgo_data_path}', re-running CMake"
-+    force_run_cmake=true
-+  fi
-+elif [[ -n $cached_pgo_data_path ]]; then
-+  log "Using the PGO profile recorded in this build root: ${cached_pgo_data_path}" \
-+      "(use a different build root, or --clean, to build without it)"
- fi
+   private static final int NUM_THREADS_DB_CONCURRENCY_TESTING = 30;
+-  private static final int NUM_DB_CONCURRENCY_TESTING = 5;
++  // CREATE DATABASE takes over a minute on sanitizer builds; keep the test within its timeout.
++  private static final int NUM_DB_CONCURRENCY_TESTING =
++      BuildTypeUtil.nonSanitizerVsSanitizer(5, 2);
+   private static final int NUM_RETRIES = 10;
+   private static final int IDLE_CONNECTION_TIME_SECS = 5;
  
- if [[ $bolt_enabled == "true" ]]; then
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #35389** (2026-10-19): [PLAT-23142] YBA: Pre-fill runtime-config dev user tags in v2 create universe (@haikarthikssk)
 - **PR #35309** (2026-10-18): [BACKPORT 2025.2][#34805] DocDB: Remove non-block-based vector index backends (#34806) (@yb-agentk-dev[bot])
+- **PR #35304** (2026-10-19): [#25308] DocDB: Fix AshGeoPartitionedTransactionTest.TestNonEmptyAshMetadata DCHECK on promotion race (@csi-fix)
 - **PR #35290** (2026-10-18): [#34685] YSQL: Scale the hand-over window of PgCronTest.UngracefulLeaderChangeMarksJobFailed for sanitizers (@iSignal)
-- **PR #35246** (closed): [#35240] YSQL: Update PgCatalogVersionTest.InvalMessageSampleDDLs expected values after DROP COLUMN change (@csi-fix)
-- **PR #35245** (2026-10-18): [#35244] DocDB: Fix PgExplicitRowLockingTest.ExplicitRowLockingMultipleTablesErrorMessage/kTrue (@csi-fix)
-- **PR #35236** (2026-10-18): [BACKPORT 2025.2][#34735] YSQL: Route pk-filtered vector index searches to the matching tablets (#34738) (@yb-agentk-dev[bot])
-- **PR #35235** (2026-10-18): [#35234] YSQL: Fix PgDdlAtomicityStressTest.Main/colocated_fail_probability_of_catalog_writes_by_ddl_verification (@csi-fix)
+- **PR #35287** (2026-10-19): [#35286] YSQL: Fix PgBgWorkersTest.ValidateIdleWaitEventsNotPresent by reading the ASH wait event only once (@csi-fix)
+- **PR #35279** (2026-10-19): [#35278] YSQL: Fix org.yb.ysqlconnmgr.TestDropAndRenameDb#TestConcurrentOperations (@csi-fix)
 
 ---
 
@@ -3057,60 +2585,30 @@ The contributor build-and-test pag
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [#28574,#30130] YSQL: Fully ungraceful ConnMgr shutdown to avoid coredumps
+## X. [#25308] DocDB: Fix AshGeoPartitionedTransactionTest.TestNonEmptyAshMetadata DCH
 
 **RULE**:
-When implementing operations in `java/yb-ysql-conn-mgr/src/test/java/org/yb/ysqlconnmgr/TestConnMgrShutdown.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/yb/docdb/wait_queue.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b10be5ad`: [#28574,#30130] YSQL: Fully ungraceful ConnMgr shutdown to avoid coredumps. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `aa99998c`: [#25308] DocDB: Fix AshGeoPartitionedTransactionTest.TestNonEmptyAshMetadata DCHECK on promotion race (#35304). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `java/yb-ysql-conn-mgr/src/test/java/org/yb/ysqlconnmgr/TestConnMgrShutdown.java`.
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/yb/docdb/wait_queue.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c
 // Verified production-grade fix pattern:
-// Copyright (c) YugabyteDB, Inc.
-//
-// Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
-// in compliance with the License. You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software distributed under the License
-// is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
-// or implied. See the License for the specific language governing permissions and limitations
-// under the License.
-//
-
-package org.yb.ysqlconnmgr;
-
-import static org.yb.AssertionWrappers.assertEquals;
-import static org.yb.AssertionWrappers.assertNotNull;
-import static org.yb.AssertionWrappers.assertTrue;
-import static org.yb.AssertionWrappers.fail;
-
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.yb.YBTestRunner;
-import org.yb.minicluster.LogErrorListener;
-import org.yb.minicluster.Min
+        // The waiter may have been concurrently purged by another signal (e.g. another blocker
+        // resolving, or Poll), as in InvokeWaiterCallback.
+        VLOG_IF(1, waiters_to_signal.empty())
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        DCHECK(!waiters_to_signal.empty())
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b10be5ad` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `aa99998c` are properly handled with clean fallback behavior.

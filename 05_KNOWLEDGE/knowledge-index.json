@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T16:24:49.602Z",
-  "total_verified_learnings": 851,
+  "last_updated": "2026-10-19T16:31:19.287Z",
+  "total_verified_learnings": 852,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -37519,22 +37519,35 @@
     "learn-github-sayaka-sh-spmp": {
       "learning_id": "learn-github-sayaka-sh-spmp",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "sayaka-sh-spmp",
+      "source": "sayaka-sh/spmp",
+      "repository": "sayaka-sh/spmp",
       "slug": "sayaka-sh-spmp",
       "platform": "github",
       "source_url": "https://github.com/sayaka-sh/spmp",
-      "source_version": "HEAD",
-      "content_hash": "6940878d95e88175d60e47abaec68bf02761ac7e37f3488c398e77fae2b31e25",
+      "source_version": "2fb03e84",
+      "content_hash": "c13dbe1a461c7b40e869829936467e8332b826828b6fa3ea4132436a8ab46e81",
       "dossier_path": "07_PROJECT_LEARNING/sayaka-sh-spmp-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sayaka-sh-spmp-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2681,
+          "title": "Build with JDK23",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.395Z"
+      "verified_at": "2026-10-19T16:31:10.399Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-sayanarijit-xplr": {
       "learning_id": "learn-github-sayanarijit-xplr",
@@ -44706,14 +44719,19 @@
       "slug": "yugabyte-yugabyte-db",
       "platform": "github",
       "source_url": "https://github.com/yugabyte/yugabyte-db",
-      "source_version": "b10be5ad",
-      "content_hash": "49c739da5f88785308bc1d6181c0da21bd543fb83ca31f5590a69683cf5288af",
+      "source_version": "c37fa95e",
+      "content_hash": "d8c185f9362f7054007974909b9ed27f0381dd53996ecf82a7155e29f2eb7087",
       "dossier_path": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "promoted_rules": [
         {
           "number": 2074,
           "title": "[#28574,#30130] YSQL: Fully ungraceful ConnMgr shutdown to avoid coredumps",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2682,
+          "title": "[#25308] DocDB: Fix AshGeoPartitionedTransactionTest.TestNonEmptyAshMetadata DCH",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -44722,7 +44740,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T03:26:55.210Z",
+      "verified_at": "2026-10-19T16:31:19.275Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -54057,17 +54075,23 @@
       "slug": "serpapi-google-search-results-nodejs",
       "platform": "github",
       "source_url": "https://github.com/serpapi/google-search-results-nodejs",
-      "source_version": "HEAD",
-      "content_hash": "53727d4ead342bb2ddcacd57090e4d28cb62a7701007a1990e8e781401ed138a",
+      "source_version": "f6d03fc9",
+      "content_hash": "a0c2cd8df2bdd865dcc60fc0c36c34161d7cc851892b928bc7f03b75518e55a3",
       "dossier_path": "07_PROJECT_LEARNING/serpapi-google-search-results-nodejs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/serpapi-google-search-results-nodejs-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2680,
+          "title": "dev dependency security issues",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T04:59:14.844Z",
+      "verified_at": "2026-10-19T16:31:09.290Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -89385,6 +89409,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T16:24:49.591Z"
+    },
+    "rule-2680": {
+      "learning_id": "rule-2680",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2680,
+      "title": "dev dependency security issues",
+      "source_url": "https://github.com/serpapi/google-search-results-nodejs",
+      "source_version": "f6d03fc9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T16:31:09.290Z"
+    },
+    "rule-2681": {
+      "learning_id": "rule-2681",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2681,
+      "title": "Build with JDK23",
+      "source_url": "https://github.com/sayaka-sh/spmp",
+      "source_version": "2fb03e84",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T16:31:10.399Z"
+    },
+    "rule-2682": {
+      "learning_id": "rule-2682",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2682,
+      "title": "[#25308] DocDB: Fix AshGeoPartitionedTransactionTest.TestNonEmptyAshMetadata DCH",
+      "source_url": "https://github.com/yugabyte/yugabyte-db",
+      "source_version": "c37fa95e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T16:31:19.275Z"
     }
   },
   "aliases": {

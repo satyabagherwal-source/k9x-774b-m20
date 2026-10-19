@@ -1823,10 +1823,10 @@
     "repository": "serpapi/google-search-results-nodejs",
     "platform": "github",
     "sourceUrl": "https://github.com/serpapi/google-search-results-nodejs",
-    "sourceVersion": "HEAD",
-    "license": "Open-Source",
-    "contentHash": "53727d4ead342bb2ddcacd57090e4d28cb62a7701007a1990e8e781401ed138a",
-    "lastHarvestedAt": "2026-10-18T04:59:14.934Z",
+    "sourceVersion": "f6d03fc9",
+    "license": "MIT",
+    "contentHash": "a0c2cd8df2bdd865dcc60fc0c36c34161d7cc851892b928bc7f03b75518e55a3",
+    "lastHarvestedAt": "2026-10-19T16:31:09.358Z",
     "learningId": "learn-github-serpapi-google-search-results-nodejs"
   },
   "serpapi-google-search-results-python": {
@@ -5323,10 +5323,10 @@
     "repository": "yugabyte/yugabyte-db",
     "platform": "github",
     "sourceUrl": "https://github.com/yugabyte/yugabyte-db",
-    "sourceVersion": "b10be5ad",
+    "sourceVersion": "c37fa95e",
     "license": "NOASSERTION",
-    "contentHash": "49c739da5f88785308bc1d6181c0da21bd543fb83ca31f5590a69683cf5288af",
-    "lastHarvestedAt": "2026-10-19T03:26:55.271Z",
+    "contentHash": "d8c185f9362f7054007974909b9ed27f0381dd53996ecf82a7155e29f2eb7087",
+    "lastHarvestedAt": "2026-10-19T16:31:19.334Z",
     "learningId": "learn-github-yugabyte-yugabyte-db"
   },
   "react95-react95": {
@@ -8358,5 +8358,15 @@
     "contentHash": "14b8597ce54327590c15e796c630c2a4dd43261e4182e34582cadced88ff201b",
     "lastHarvestedAt": "2026-10-19T16:24:46.437Z",
     "learningId": "learn-github-exyte-popupview"
+  },
+  "sayaka-sh-spmp": {
+    "repository": "sayaka-sh/spmp",
+    "platform": "github",
+    "sourceUrl": "https://github.com/sayaka-sh/spmp",
+    "sourceVersion": "2fb03e84",
+    "license": "GPL-3.0",
+    "contentHash": "c13dbe1a461c7b40e869829936467e8332b826828b6fa3ea4132436a8ab46e81",
+    "lastHarvestedAt": "2026-10-19T16:31:10.470Z",
+    "learningId": "learn-github-sayaka-sh-spmp"
   }
 }

@@ -3361,3 +3361,6 @@ Every entry in this ledger must capture:
 | `learn-github-davo20019-seo-analysis` | `https://github.com/davo20019/seo-analysis` | `902c09fd` | Multi-dimensional audit evidence | 2026-10-19T16:24:45.082Z |
 | `learn-github-exyte-popupview` | `https://github.com/exyte/PopupView` | `99695337` | Multi-dimensional audit evidence | 2026-10-19T16:24:46.437Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `508b0013` | Multi-dimensional audit evidence | 2026-10-19T16:24:49.660Z |
+| `learn-github-serpapi-google-search-results-nodejs` | `https://github.com/serpapi/google-search-results-nodejs` | `f6d03fc9` | Multi-dimensional audit evidence | 2026-10-19T16:31:09.358Z |
+| `learn-github-sayaka-sh-spmp` | `https://github.com/sayaka-sh/spmp` | `2fb03e84` | Multi-dimensional audit evidence | 2026-10-19T16:31:10.470Z |
+| `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `c37fa95e` | Multi-dimensional audit evidence | 2026-10-19T16:31:19.334Z |
