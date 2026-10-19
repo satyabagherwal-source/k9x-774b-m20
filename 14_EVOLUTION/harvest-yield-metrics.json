@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T08:14:49.144Z",
-  "total_cycles_completed": 3062,
-  "total_learnings_persisted": 3062,
-  "total_rules_promoted": 2177,
+  "last_updated": "2026-10-19T08:23:08.660Z",
+  "total_cycles_completed": 3067,
+  "total_learnings_persisted": 3067,
+  "total_rules_promoted": 2190,
   "history": [
-    {
-      "timestamp": "2026-10-19T04:13:11.103Z",
-      "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
-      "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T04:13:11.176Z",
-      "repository": "franken-ui/ui",
-      "learningId": "learn-github-franken-ui-ui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T04:13:13.395Z",
-      "repository": "DataDog/glommio",
-      "learningId": "learn-github-datadog-glommio",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T04:13:19.393Z",
-      "repository": "pytest-dev/pytest-testinfra",
-      "learningId": "learn-github-pytest-dev-pytest-testinfra",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T04:13:20.951Z",
-      "repository": "lingodotdev/lingo.dev",
-      "learningId": "learn-github-lingodotdev-lingo-dev",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T04:13:25.264Z",
       "repository": "StarTrail-org/LEANN",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-10-19T08:14:49.144Z",
       "repository": "SeaQL/sea-orm",
       "learningId": "learn-github-seaql-sea-orm",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T08:22:26.445Z",
+      "repository": "MobileNativeFoundation/Store",
+      "learningId": "learn-github-mobilenativefoundation-store",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T08:22:31.034Z",
+      "repository": "nats-io/nats-server",
+      "learningId": "learn-github-nats-io-nats-server",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T08:22:33.473Z",
+      "repository": "BAAI/bge-m3",
+      "learningId": "learn-huggingface-baai-bge-m3",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T08:22:50.607Z",
+      "repository": "str4d/rage",
+      "learningId": "learn-github-str4d-rage",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T08:23:08.660Z",
+      "repository": "memvid/memvid",
+      "learningId": "learn-github-memvid-memvid",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

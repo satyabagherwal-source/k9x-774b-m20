@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T08:14:49.112Z",
-  "total_verified_learnings": 739,
+  "last_updated": "2026-10-19T08:23:08.614Z",
+  "total_verified_learnings": 743,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -13160,7 +13160,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/BAAI/bge-m3",
       "source_version": "hf-baai-bge-m3",
-      "content_hash": "c9b6d0ba31bcef39a552cde7455ff7307bc6662a25d4dbd4ba4bc75c29bb9eb6",
+      "content_hash": "8e6a45af08825e8d2631e21e6f7e3a5e9bc651d62d7947129fb5cd1048c05fb4",
       "dossier_path": "07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md",
       "promoted_rules": [
@@ -13177,6 +13177,16 @@
         {
           "number": 1404,
           "title": "Evaluation Query-Leakage Prohibition in Information Retrieval Harnesses",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2396,
+          "title": "Invariant Boundary Proof for Evaluation Query-Document ID Deduplication",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2397,
+          "title": "Absolute Positional Offset Invariant in Extended RoBERTa Architectures",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -13198,7 +13208,7 @@
         "learn-huggingface-hf-baai-bge-m3-mv4910r9",
         "learn-huggingface-hf-baai-bge-m3-mv4meu5h"
       ],
-      "verified_at": "2026-10-18T01:01:24.818Z",
+      "verified_at": "2026-10-19T08:22:33.417Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -28341,22 +28351,45 @@
     "learn-github-memvid-memvid": {
       "learning_id": "learn-github-memvid-memvid",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "memvid-memvid",
+      "source": "memvid/memvid",
+      "repository": "memvid/memvid",
       "slug": "memvid-memvid",
       "platform": "github",
       "source_url": "https://github.com/memvid/memvid",
-      "source_version": "HEAD",
-      "content_hash": "1e5b79643feaae0c9ac13fe3ad1bc3f6b3be58b67fd47c335bee195839e12c0b",
+      "source_version": "e6bd9f7b",
+      "content_hash": "27681cccbf757a3f2230f376f02a98eb6291f236774033bb567b1ba3bff42bde",
       "dossier_path": "07_PROJECT_LEARNING/memvid-memvid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/memvid-memvid-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2401,
+          "title": "Ephemeral Engine RAII Teardown Ordering",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2402,
+          "title": "Physical Layout Growth Invariant Propagation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2403,
+          "title": "Idiomatic Fallible Lookup via Guard Clause Decomposition (`let-else`)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.253Z"
+      "verified_at": "2026-10-19T08:23:08.603Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-mertjf-tailblocks": {
       "learning_id": "learn-github-mertjf-tailblocks",
@@ -29334,22 +29367,40 @@
     "learn-github-mobilenativefoundation-store": {
       "learning_id": "learn-github-mobilenativefoundation-store",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "mobilenativefoundation-store",
+      "source": "MobileNativeFoundation/Store",
+      "repository": "MobileNativeFoundation/Store",
       "slug": "mobilenativefoundation-store",
       "platform": "github",
       "source_url": "https://github.com/MobileNativeFoundation/Store",
-      "source_version": "HEAD",
-      "content_hash": "687423bac7f43c9dc2b444ac60b5633d40bec0b6465da9a82c11b42a444fa816",
+      "source_version": "74a5988f",
+      "content_hash": "5988e494bb1659331c97a0f29d5c033b518e7a08b92e9222836e42d85ab11090",
       "dossier_path": "07_PROJECT_LEARNING/mobilenativefoundation-store-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mobilenativefoundation-store-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2391,
+          "title": "Inverted Lock Polarity Elimination in Composite Mutex/Shared-Lock Topologies",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2392,
+          "title": "Atomic Snapshot-Ack Pattern for Asynchronous Pipeline Discard Elimination",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.396Z"
+      "verified_at": "2026-10-19T08:22:26.388Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-moby-buildkit": {
       "learning_id": "learn-github-moby-buildkit",
@@ -30192,22 +30243,45 @@
     "learn-github-nats-io-nats-server": {
       "learning_id": "learn-github-nats-io-nats-server",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "nats-io-nats-server",
+      "source": "nats-io/nats-server",
+      "repository": "nats-io/nats-server",
       "slug": "nats-io-nats-server",
       "platform": "github",
       "source_url": "https://github.com/nats-io/nats-server",
-      "source_version": "HEAD",
-      "content_hash": "92625928da81fd1e2ee5dd498b9cbefc8a5652265804bf65674bded1504ed08d",
+      "source_version": "b55d9693",
+      "content_hash": "250e789ae3513e492809f3e168706f3abb223f75aac4422d8cc32c0932e14493",
       "dossier_path": "07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2393,
+          "title": "Two-Phase Synchronous State Transition for Asynchronous Teardown",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2394,
+          "title": "Upstream Ingress Interest Pruning at Collection Source",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2395,
+          "title": "Pointer-to-Slice Allocation Invariant for `sync.Pool`",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.573Z"
+      "verified_at": "2026-10-19T08:22:30.978Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-nats-io-nats-go": {
       "learning_id": "learn-github-nats-io-nats-go",
@@ -37891,22 +37965,45 @@
     "learn-github-str4d-rage": {
       "learning_id": "learn-github-str4d-rage",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "str4d-rage",
+      "source": "str4d/rage",
+      "repository": "str4d/rage",
       "slug": "str4d-rage",
       "platform": "github",
       "source_url": "https://github.com/str4d/rage",
-      "source_version": "HEAD",
-      "content_hash": "e503b967f7e6fc4a94ccb61578dc19d5a63e304443252192651c9aa1eb3fe28f",
+      "source_version": "b5b68c4f",
+      "content_hash": "ba7eda3d38d98ef1ea47762588d525b69fc04c29f6eca0413293ca1214c7484f",
       "dossier_path": "07_PROJECT_LEARNING/str4d-rage-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/str4d-rage-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2398,
+          "title": "Guarded Buffered Async EOF Termination Pattern",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2399,
+          "title": "Zero-Residual Base64 Canonical Parsing Verification",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2400,
+          "title": "Feature-Decoupled Facade Invariant in Modular Crates",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.724Z"
+      "verified_at": "2026-10-19T08:22:50.551Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-strands-agents-harness-sdk": {
       "learning_id": "learn-github-strands-agents-harness-sdk",
@@ -82930,6 +83027,188 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T08:14:49.104Z"
+    },
+    "rule-2391": {
+      "learning_id": "rule-2391",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2391,
+      "title": "Inverted Lock Polarity Elimination in Composite Mutex/Shared-Lock Topologies",
+      "source_url": "https://github.com/MobileNativeFoundation/Store",
+      "source_version": "74a5988f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:22:26.388Z"
+    },
+    "rule-2392": {
+      "learning_id": "rule-2392",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2392,
+      "title": "Atomic Snapshot-Ack Pattern for Asynchronous Pipeline Discard Elimination",
+      "source_url": "https://github.com/MobileNativeFoundation/Store",
+      "source_version": "74a5988f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:22:26.388Z"
+    },
+    "rule-2393": {
+      "learning_id": "rule-2393",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2393,
+      "title": "Two-Phase Synchronous State Transition for Asynchronous Teardown",
+      "source_url": "https://github.com/nats-io/nats-server",
+      "source_version": "b55d9693",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:22:30.978Z"
+    },
+    "rule-2394": {
+      "learning_id": "rule-2394",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2394,
+      "title": "Upstream Ingress Interest Pruning at Collection Source",
+      "source_url": "https://github.com/nats-io/nats-server",
+      "source_version": "b55d9693",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:22:30.978Z"
+    },
+    "rule-2395": {
+      "learning_id": "rule-2395",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2395,
+      "title": "Pointer-to-Slice Allocation Invariant for `sync.Pool`",
+      "source_url": "https://github.com/nats-io/nats-server",
+      "source_version": "b55d9693",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:22:30.978Z"
+    },
+    "rule-2396": {
+      "learning_id": "rule-2396",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2396,
+      "title": "Invariant Boundary Proof for Evaluation Query-Document ID Deduplication",
+      "source_url": "https://huggingface.co/BAAI/bge-m3",
+      "source_version": "hf-baai-bge-m3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:22:33.417Z"
+    },
+    "rule-2397": {
+      "learning_id": "rule-2397",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2397,
+      "title": "Absolute Positional Offset Invariant in Extended RoBERTa Architectures",
+      "source_url": "https://huggingface.co/BAAI/bge-m3",
+      "source_version": "hf-baai-bge-m3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:22:33.417Z"
+    },
+    "rule-2398": {
+      "learning_id": "rule-2398",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2398,
+      "title": "Guarded Buffered Async EOF Termination Pattern",
+      "source_url": "https://github.com/str4d/rage",
+      "source_version": "b5b68c4f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:22:50.551Z"
+    },
+    "rule-2399": {
+      "learning_id": "rule-2399",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2399,
+      "title": "Zero-Residual Base64 Canonical Parsing Verification",
+      "source_url": "https://github.com/str4d/rage",
+      "source_version": "b5b68c4f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:22:50.551Z"
+    },
+    "rule-2400": {
+      "learning_id": "rule-2400",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2400,
+      "title": "Feature-Decoupled Facade Invariant in Modular Crates",
+      "source_url": "https://github.com/str4d/rage",
+      "source_version": "b5b68c4f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:22:50.551Z"
+    },
+    "rule-2401": {
+      "learning_id": "rule-2401",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2401,
+      "title": "Ephemeral Engine RAII Teardown Ordering",
+      "source_url": "https://github.com/memvid/memvid",
+      "source_version": "e6bd9f7b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:23:08.603Z"
+    },
+    "rule-2402": {
+      "learning_id": "rule-2402",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2402,
+      "title": "Physical Layout Growth Invariant Propagation",
+      "source_url": "https://github.com/memvid/memvid",
+      "source_version": "e6bd9f7b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:23:08.603Z"
+    },
+    "rule-2403": {
+      "learning_id": "rule-2403",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2403,
+      "title": "Idiomatic Fallible Lookup via Guard Clause Decomposition (`let-else`)",
+      "source_url": "https://github.com/memvid/memvid",
+      "source_version": "e6bd9f7b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T08:23:08.603Z"
     }
   },
   "aliases": {

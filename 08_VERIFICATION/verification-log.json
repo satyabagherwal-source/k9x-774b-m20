@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261018-2DUJ",
-    "timestamp": "2026-10-18T22:48:14.491Z",
-    "repository": "matrixorigin/matrixone",
-    "learningId": "learn-github-matrixorigin-matrixone",
-    "contentHash": "00d9ecea4561cff1fdfab4755a33b261f477dd1a0da1f01aac9e0aee1f2b7eb6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-A5DL",
-    "timestamp": "2026-10-18T22:54:16.761Z",
-    "repository": "fallow-rs/fallow",
-    "learningId": "learn-github-fallow-rs-fallow",
-    "contentHash": "960d8d8bf4b4e447b399a714c3f2ab9e5f1bfe56cf27d95c12e4a9674dc83da1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-A7PE",
-    "timestamp": "2026-10-18T22:54:19.778Z",
-    "repository": "expo/create-react-native-app",
-    "learningId": "learn-github-expo-create-react-native-app",
-    "contentHash": "55e650eecbf9fa31e5212764613b0dcb438d58f423fa823b5251ac2a452ce781",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-AA6H",
-    "timestamp": "2026-10-18T22:54:22.985Z",
-    "repository": "cdk-team/CDK",
-    "learningId": "learn-github-cdk-team-cdk",
-    "contentHash": "002063b124dafddc73fa2526a465ec81d52cd2f75d02e91e4fc58e06381ae7cf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-AB72",
-    "timestamp": "2026-10-18T22:54:24.302Z",
-    "repository": "BAAI/bge-base-en-v1.5",
-    "learningId": "learn-huggingface-baai-bge-base-en-v1-5",
-    "contentHash": "d3603c1743e5e85cefcf2580357903dd8683634607cca81066f6a3995e8ce6a0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261018-AD7L",
     "timestamp": "2026-10-18T22:54:26.913Z",
     "repository": "nexus-xyz/nexus-zkvm",
@@ -7490,6 +7415,81 @@
     "repository": "SeaQL/sea-orm",
     "learningId": "learn-github-seaql-sea-orm",
     "contentHash": "b8d4f7edb960904da3e32b30e4ed9fb8d9ff6bab9749b16a9ae65601e8c5d7cf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-KT52",
+    "timestamp": "2026-10-19T08:22:26.438Z",
+    "repository": "MobileNativeFoundation/Store",
+    "learningId": "learn-github-mobilenativefoundation-store",
+    "contentHash": "5988e494bb1659331c97a0f29d5c033b518e7a08b92e9222836e42d85ab11090",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-KWOK",
+    "timestamp": "2026-10-19T08:22:31.028Z",
+    "repository": "nats-io/nats-server",
+    "learningId": "learn-github-nats-io-nats-server",
+    "contentHash": "250e789ae3513e492809f3e168706f3abb223f75aac4422d8cc32c0932e14493",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-KYKB",
+    "timestamp": "2026-10-19T08:22:33.467Z",
+    "repository": "BAAI/bge-m3",
+    "learningId": "learn-huggingface-baai-bge-m3",
+    "contentHash": "8e6a45af08825e8d2631e21e6f7e3a5e9bc651d62d7947129fb5cd1048c05fb4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-LBS9",
+    "timestamp": "2026-10-19T08:22:50.601Z",
+    "repository": "str4d/rage",
+    "learningId": "learn-github-str4d-rage",
+    "contentHash": "ba7eda3d38d98ef1ea47762588d525b69fc04c29f6eca0413293ca1214c7484f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-LPPP",
+    "timestamp": "2026-10-19T08:23:08.653Z",
+    "repository": "memvid/memvid",
+    "learningId": "learn-github-memvid-memvid",
+    "contentHash": "27681cccbf757a3f2230f376f02a98eb6291f236774033bb567b1ba3bff42bde",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

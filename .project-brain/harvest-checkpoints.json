@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T08:14:49.146Z",
+  "last_updated": "2026-10-19T08:23:08.663Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -935,14 +935,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baai-bge-m3",
-      "content_hash": "c9b6d0ba31bcef39a552cde7455ff7307bc6662a25d4dbd4ba4bc75c29bb9eb6",
-      "verified_at": "2026-10-18T01:01:24.873Z",
+      "content_hash": "8e6a45af08825e8d2631e21e6f7e3a5e9bc651d62d7947129fb5cd1048c05fb4",
+      "verified_at": "2026-10-19T08:22:33.476Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T01:01:24.873Z"
+      "last_updated": "2026-10-19T08:22:33.476Z"
     },
     "Qwen/Qwen3-0.6B": {
       "repository": "Qwen/Qwen3-0.6B",
@@ -10916,6 +10916,66 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T08:14:49.146Z"
+    },
+    "MobileNativeFoundation/Store": {
+      "repository": "MobileNativeFoundation/Store",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-mobilenativefoundation-store",
+      "content_hash": "5988e494bb1659331c97a0f29d5c033b518e7a08b92e9222836e42d85ab11090",
+      "verified_at": "2026-10-19T08:22:26.447Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T08:22:26.447Z"
+    },
+    "nats-io/nats-server": {
+      "repository": "nats-io/nats-server",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-nats-io-nats-server",
+      "content_hash": "250e789ae3513e492809f3e168706f3abb223f75aac4422d8cc32c0932e14493",
+      "verified_at": "2026-10-19T08:22:31.037Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T08:22:31.037Z"
+    },
+    "str4d/rage": {
+      "repository": "str4d/rage",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-str4d-rage",
+      "content_hash": "ba7eda3d38d98ef1ea47762588d525b69fc04c29f6eca0413293ca1214c7484f",
+      "verified_at": "2026-10-19T08:22:50.610Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T08:22:50.610Z"
+    },
+    "memvid/memvid": {
+      "repository": "memvid/memvid",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-memvid-memvid",
+      "content_hash": "27681cccbf757a3f2230f376f02a98eb6291f236774033bb567b1ba3bff42bde",
+      "verified_at": "2026-10-19T08:23:08.662Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T08:23:08.662Z"
     }
   },
   "repos": {

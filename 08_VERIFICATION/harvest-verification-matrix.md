@@ -3085,3 +3085,8 @@
 | `CYCLE-20261019-AM6Z` | `2026-10-19T08:14:30.875Z` | `go-kratos/kratos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2382, Rule 2383, Rule 2384` | Yes (`9127db13...`) |
 | `CYCLE-20261019-ANLB` | `2026-10-19T08:14:32.687Z` | `Tencent-TDS/KuiklyUI` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2385, Rule 2386, Rule 2387` | Yes (`26719e22...`) |
 | `CYCLE-20261019-B0AC` | `2026-10-19T08:14:49.140Z` | `SeaQL/sea-orm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2388, Rule 2389, Rule 2390` | Yes (`b8d4f7ed...`) |
+| `CYCLE-20261019-KT52` | `2026-10-19T08:22:26.438Z` | `MobileNativeFoundation/Store` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2391, Rule 2392` | Yes (`5988e494...`) |
+| `CYCLE-20261019-KWOK` | `2026-10-19T08:22:31.028Z` | `nats-io/nats-server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2393, Rule 2394, Rule 2395` | Yes (`250e789a...`) |
+| `CYCLE-20261019-KYKB` | `2026-10-19T08:22:33.467Z` | `BAAI/bge-m3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2396, Rule 2397` | Yes (`8e6a45af...`) |
+| `CYCLE-20261019-LBS9` | `2026-10-19T08:22:50.601Z` | `str4d/rage` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2398, Rule 2399, Rule 2400` | Yes (`ba7eda3d...`) |
+| `CYCLE-20261019-LPPP` | `2026-10-19T08:23:08.653Z` | `memvid/memvid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2401, Rule 2402, Rule 2403` | Yes (`27681ccc...`) |

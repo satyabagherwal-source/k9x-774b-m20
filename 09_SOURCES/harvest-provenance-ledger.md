@@ -3092,3 +3092,8 @@ Every entry in this ledger must capture:
 | `learn-github-go-kratos-kratos` | `https://github.com/go-kratos/kratos` | `668db92c` | Multi-dimensional audit evidence | 2026-10-19T08:14:30.877Z |
 | `learn-github-tencent-tds-kuiklyui` | `https://github.com/Tencent-TDS/KuiklyUI` | `b7ee272a` | Multi-dimensional audit evidence | 2026-10-19T08:14:32.689Z |
 | `learn-github-seaql-sea-orm` | `https://github.com/SeaQL/sea-orm` | `0c14cae4` | Multi-dimensional audit evidence | 2026-10-19T08:14:49.142Z |
+| `learn-github-mobilenativefoundation-store` | `https://github.com/MobileNativeFoundation/Store` | `74a5988f` | Multi-dimensional audit evidence | 2026-10-19T08:22:26.441Z |
+| `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `b55d9693` | Multi-dimensional audit evidence | 2026-10-19T08:22:31.031Z |
+| `learn-huggingface-baai-bge-m3` | `https://huggingface.co/BAAI/bge-m3` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-19T08:22:33.470Z |
+| `learn-github-str4d-rage` | `https://github.com/str4d/rage` | `b5b68c4f` | Multi-dimensional audit evidence | 2026-10-19T08:22:50.604Z |
+| `learn-github-memvid-memvid` | `https://github.com/memvid/memvid` | `e6bd9f7b` | Multi-dimensional audit evidence | 2026-10-19T08:23:08.656Z |

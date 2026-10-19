@@ -735,8 +735,8 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-m3",
     "sourceVersion": "hf-baai-bge-m3",
     "license": "Open-Source",
-    "contentHash": "c9b6d0ba31bcef39a552cde7455ff7307bc6662a25d4dbd4ba4bc75c29bb9eb6",
-    "lastHarvestedAt": "2026-10-18T01:01:24.870Z",
+    "contentHash": "8e6a45af08825e8d2631e21e6f7e3a5e9bc651d62d7947129fb5cd1048c05fb4",
+    "lastHarvestedAt": "2026-10-19T08:22:33.470Z",
     "learningId": "learn-huggingface-baai-bge-m3"
   },
   "hf-qwen-qwen3-0.6b": {
@@ -7248,5 +7248,45 @@
     "contentHash": "b8d4f7edb960904da3e32b30e4ed9fb8d9ff6bab9749b16a9ae65601e8c5d7cf",
     "lastHarvestedAt": "2026-10-19T08:14:49.142Z",
     "learningId": "learn-github-seaql-sea-orm"
+  },
+  "mobilenativefoundation-store": {
+    "repository": "MobileNativeFoundation/Store",
+    "platform": "github",
+    "sourceUrl": "https://github.com/MobileNativeFoundation/Store",
+    "sourceVersion": "74a5988f",
+    "license": "Apache-2.0",
+    "contentHash": "5988e494bb1659331c97a0f29d5c033b518e7a08b92e9222836e42d85ab11090",
+    "lastHarvestedAt": "2026-10-19T08:22:26.441Z",
+    "learningId": "learn-github-mobilenativefoundation-store"
+  },
+  "nats-io-nats-server": {
+    "repository": "nats-io/nats-server",
+    "platform": "github",
+    "sourceUrl": "https://github.com/nats-io/nats-server",
+    "sourceVersion": "b55d9693",
+    "license": "Apache-2.0",
+    "contentHash": "250e789ae3513e492809f3e168706f3abb223f75aac4422d8cc32c0932e14493",
+    "lastHarvestedAt": "2026-10-19T08:22:31.031Z",
+    "learningId": "learn-github-nats-io-nats-server"
+  },
+  "str4d-rage": {
+    "repository": "str4d/rage",
+    "platform": "github",
+    "sourceUrl": "https://github.com/str4d/rage",
+    "sourceVersion": "b5b68c4f",
+    "license": "Apache-2.0",
+    "contentHash": "ba7eda3d38d98ef1ea47762588d525b69fc04c29f6eca0413293ca1214c7484f",
+    "lastHarvestedAt": "2026-10-19T08:22:50.604Z",
+    "learningId": "learn-github-str4d-rage"
+  },
+  "memvid-memvid": {
+    "repository": "memvid/memvid",
+    "platform": "github",
+    "sourceUrl": "https://github.com/memvid/memvid",
+    "sourceVersion": "e6bd9f7b",
+    "license": "Apache-2.0",
+    "contentHash": "27681cccbf757a3f2230f376f02a98eb6291f236774033bb567b1ba3bff42bde",
+    "lastHarvestedAt": "2026-10-19T08:23:08.656Z",
+    "learningId": "learn-github-memvid-memvid"
   }
 }
