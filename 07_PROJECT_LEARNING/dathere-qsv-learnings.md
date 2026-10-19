@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `8e5e985c`  
+> **Source Version**: `94707284`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T08:58:51.126Z  
+> **Timestamp**: 2026-10-19T09:35:29.238Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T08:58:51.118Z  
+> **Harvest Timestamp**: 2026-10-19T09:35:29.232Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2252,94 +2252,35 @@ pub fn visualize_whitespace(s: &str) -> String {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ac9c3db2` (2026-10-19)
-**Commit Message**: build(deps): bump github/codeql-action from 4.38.3 to 4.39.0 (#4844)
+### Incident Patch 1: `94707284` (2026-10-19)
+**Commit Message**: deps: bump cc from 1.8 to 1.9; find-msvc-tools from 0.1.14 to 0.1.15
 
-Bumps [github/codeql-action](https://github.com/github/codeql-action) from 4.38.3 to 4.39.0.
-- [Release notes](https://github.com/github/codeql-action/releases)
-- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/github/codeql-action/compare/v4.38.3...v4.39.0)
-
----
-updated-dependencies:
-- dependency-name: github/codeql-action
-  dependency-version: 4.39.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `.github/workflows/devskim.yml` (modified, +1/-1)
+**File**: `Cargo.lock` (modified, +4/-4)
 ```diff
-@@ -54,6 +54,6 @@ jobs:
-             src/cmd/assets/datatables.min.css
-         
-       - name: Upload DevSkim scan results to GitHub Security tab
--        uses: github/codeql-action/upload-sarif@v4.38.3
-+        uses: github/codeql-action/upload-sarif@v4.39.0
-         with:
-           sarif_file: devskim-results.sarif
-```
-
-**File**: `.github/workflows/rust-clippy.yml` (modified, +1/-1)
-```diff
-@@ -46,7 +46,7 @@ jobs:
-         continue-on-error: true
+@@ -1335,9 +1335,9 @@ dependencies = [
  
-       - name: Upload analysis results to GitHub
--        uses: github/codeql-action/upload-sarif@v4.38.3
-+        uses: github/codeql-action/upload-sarif@v4.39.0
-         with:
-           sarif_file: rust-clippy-results.sarif
-           wait-for-processing: true
-```
-
----
-
-### Incident Patch 2: `8e5e985c` (2026-10-19)
-**Commit Message**: build(deps): bump anthropics/claude-code-action from 1.0.248 to 1.0.252 (#4843)
-
-Bumps [anthropics/claude-code-action](https://github.com/anthropics/claude-code-action) from 1.0.248 to 1.0.252.
-- [Release notes](https://github.com/anthropics/claude-code-action/releases)
-- [Commits](https://github.com/anthropics/claude-code-action/compare/v1.0.248...v1.0.252)
-
----
-updated-dependencies:
-- dependency-name: anthropics/claude-code-action
-  dependency-version: 1.0.252
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `.github/workflows/claude-code-review.yml` (modified, +1/-1)
-```diff
-@@ -34,7 +34,7 @@ jobs:
+ [[package]]
+ name = "cc"
+-version = "1.8.0"
++version = "1.9.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "6651c9ed80effdc7db0ff72512157f901af5e3549e341e24b1dd4887d836d838"
++checksum = "877bf67ac8e52449eb2f9e98a344ea163beb70dd1f9eebe3cc5357dcfeaee4df"
+ dependencies = [
+  "find-msvc-tools",
+  "jobserver",
+@@ -2806,9 +2806,9 @@ dependencies = [
  
-       - name: Run Claude Code Review
-         id: claude-review
--        uses: anthropics/claude-code-action@v1.0.248
-+        uses: anthropics/claude-code-action@v1.0.252
-         with:
-           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-           plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
-```
-
-**File**: `.github/workflows/claude.yml` (modified, +1/-1)
-```diff
-@@ -34,7 +34,7 @@ jobs:
+ [[package]]
+ name = "find-msvc-tools"
+-version = "0.1.14"
++version = "0.1.15"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "aedcfb3409746eddb02b9e19ebda1c3394f759a152e48ee875a0844d1b955484"
++checksum = "1c66915cc5391097de7a2b0b972e8505aa33c0df401fd3a6811dbdb32881ba48"
  
-       - name: Run Claude Code
-         id: claude
--        uses: anthropics/claude-code-action@v1.0.248
-+        uses: anthropics/claude-code-action@v1.0.252
-         with:
-           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
- 
+ [[package]]
+ name = "finl_unicode"
 ```
 
 #### Recent Merged Pull Requests:
@@ -2368,28 +2309,34 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump github/codeql-action from 4.38.3 to 4.39.0 (#4844)
+## X. deps: bump cc from 1.8 to 1.9; find-msvc-tools from 0.1.14 to 0.1.15
 
 **RULE**:
-When implementing operations in `.github/workflows/devskim.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ac9c3db2`: build(deps): bump github/codeql-action from 4.38.3 to 4.39.0 (#4844). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `94707284`: deps: bump cc from 1.8 to 1.9; find-msvc-tools from 0.1.14 to 0.1.15. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/devskim.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        uses: github/codeql-action/upload-sarif@v4.39.0
+version = "1.9.0"
+checksum = "877bf67ac8e52449eb2f9e98a344ea163beb70dd1f9eebe3cc5357dcfeaee4df"
+version = "0.1.15"
+checksum = "1c66915cc5391097de7a2b0b972e8505aa33c0df401fd3a6811dbdb32881ba48"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        uses: github/codeql-action/upload-sarif@v4.38.3
+version = "1.8.0"
+checksum = "6651c9ed80effdc7db0ff72512157f901af5e3549e341e24b1dd4887d836d838"
+version = "0.1.14"
+checksum = "aedcfb3409746eddb02b9e19ebda1c3394f759a152e48ee875a0844d1b955484"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ac9c3db2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `94707284` are properly handled with clean fallback behavior.

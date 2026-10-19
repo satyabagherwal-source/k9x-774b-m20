@@ -795,8 +795,8 @@
     "sourceUrl": "https://huggingface.co/amazon/chronos-2",
     "sourceVersion": "hf-amazon-chronos-2",
     "license": "Open-Source",
-    "contentHash": "76f5dafa08474ecb1cad303954d4054c506a3fa4b8b2e942d0d1763e946cad56",
-    "lastHarvestedAt": "2026-10-18T01:45:18.031Z",
+    "contentHash": "bc8482afacb30e02e6c8b49caece9ad0341b12404a1d6e729f2be325b16f5f15",
+    "lastHarvestedAt": "2026-10-19T09:40:15.262Z",
     "learningId": "learn-huggingface-amazon-chronos-2"
   },
   "hf-compvis-stable-diffusion-v1-4": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "8e5e985c",
+    "sourceVersion": "94707284",
     "license": "NOASSERTION",
-    "contentHash": "811b2473e4d71dcbe32a5e348bfdcd669b126defbccea7d78e4232750f725be1",
-    "lastHarvestedAt": "2026-10-19T08:58:51.379Z",
+    "contentHash": "42234c5218c0f2a66024b0ef516ddd64e703a4d294d920902aa8802da6de2ebf",
+    "lastHarvestedAt": "2026-10-19T09:35:29.447Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -2403,10 +2403,10 @@
     "repository": "kubeedge/kubeedge",
     "platform": "github",
     "sourceUrl": "https://github.com/kubeedge/kubeedge",
-    "sourceVersion": "68df9c23",
+    "sourceVersion": "48feb970",
     "license": "Apache-2.0",
-    "contentHash": "8e1d5b5c10717259e0d8c9773be7be56aabbf27407f1ac4b82a561652b90d03e",
-    "lastHarvestedAt": "2026-10-18T21:26:19.845Z",
+    "contentHash": "07eaac25d30d54f5bbe678605b25c24b033de9cf9d342c7f9d708453fad1fa85",
+    "lastHarvestedAt": "2026-10-19T09:35:22.645Z",
     "learningId": "learn-github-kubeedge-kubeedge"
   },
   "giancarloerra-socraticode": {
@@ -3003,10 +3003,10 @@
     "repository": "Megabit/Blazorise",
     "platform": "github",
     "sourceUrl": "https://github.com/Megabit/Blazorise",
-    "sourceVersion": "f48a88f9",
+    "sourceVersion": "f5ef5fbf",
     "license": "NOASSERTION",
-    "contentHash": "3437382cfc9e108005f6b85b66f4c3f11d9bd1935983f997a0246c3195c0851f",
-    "lastHarvestedAt": "2026-10-18T22:35:34.022Z",
+    "contentHash": "5dd312b9f72c3de9a04b75297c3ccd49cde1d1690eb872fc352a0af69fd25f87",
+    "lastHarvestedAt": "2026-10-19T09:41:56.774Z",
     "learningId": "learn-github-megabit-blazorise"
   },
   "metalbear-co-mirrord": {
@@ -7528,5 +7528,35 @@
     "contentHash": "e1e4e54e74da1956d8130eab5cad0006dec17115956d250a3057accf2a71a4db",
     "lastHarvestedAt": "2026-10-19T09:19:17.850Z",
     "learningId": "learn-github-oceanbase-oceanbase"
+  },
+  "microsoft-react-native-windows": {
+    "repository": "microsoft/react-native-windows",
+    "platform": "github",
+    "sourceUrl": "https://github.com/microsoft/react-native-windows",
+    "sourceVersion": "cf0d3767",
+    "license": "NOASSERTION",
+    "contentHash": "986c81cd90fbd8f6b4cfde0afd61a31eeef9dd1749182c6830a394e1812bf88b",
+    "lastHarvestedAt": "2026-10-19T09:35:20.737Z",
+    "learningId": "learn-github-microsoft-react-native-windows"
+  },
+  "paradedb-paradedb": {
+    "repository": "paradedb/paradedb",
+    "platform": "github",
+    "sourceUrl": "https://github.com/paradedb/paradedb",
+    "sourceVersion": "fa7c7432",
+    "license": "AGPL-3.0",
+    "contentHash": "67e6367e4ce55053a21951853eef357bf1cfde31b3382a26702717ef2628cc6d",
+    "lastHarvestedAt": "2026-10-19T09:35:27.490Z",
+    "learningId": "learn-github-paradedb-paradedb"
+  },
+  "imsnif-diskonaut": {
+    "repository": "imsnif/diskonaut",
+    "platform": "github",
+    "sourceUrl": "https://github.com/imsnif/diskonaut",
+    "sourceVersion": "65cd8290",
+    "license": "MIT",
+    "contentHash": "608a96cdd961d640de6ea1915ad43e2eee906108ab2e9a98d2a181a9c848a9a0",
+    "lastHarvestedAt": "2026-10-19T09:38:57.582Z",
+    "learningId": "learn-github-imsnif-diskonaut"
   }
 }

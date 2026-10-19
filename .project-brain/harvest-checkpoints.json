@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T09:19:17.856Z",
+  "last_updated": "2026-10-19T09:41:56.780Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1024,14 +1024,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-amazon-chronos-2",
-      "content_hash": "76f5dafa08474ecb1cad303954d4054c506a3fa4b8b2e942d0d1763e946cad56",
-      "verified_at": "2026-10-18T01:45:18.033Z",
+      "content_hash": "bc8482afacb30e02e6c8b49caece9ad0341b12404a1d6e729f2be325b16f5f15",
+      "verified_at": "2026-10-19T09:40:15.268Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T01:45:18.033Z"
+      "last_updated": "2026-10-19T09:40:15.268Z"
     },
     "CompVis/stable-diffusion-v1-4": {
       "repository": "CompVis/stable-diffusion-v1-4",
@@ -3678,14 +3678,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "811b2473e4d71dcbe32a5e348bfdcd669b126defbccea7d78e4232750f725be1",
-      "verified_at": "2026-10-19T08:58:51.385Z",
+      "content_hash": "42234c5218c0f2a66024b0ef516ddd64e703a4d294d920902aa8802da6de2ebf",
+      "verified_at": "2026-10-19T09:35:29.453Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T08:58:51.385Z"
+      "last_updated": "2026-10-19T09:35:29.453Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -3738,14 +3738,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kubeedge-kubeedge",
-      "content_hash": "8e1d5b5c10717259e0d8c9773be7be56aabbf27407f1ac4b82a561652b90d03e",
-      "verified_at": "2026-10-18T21:26:19.847Z",
+      "content_hash": "07eaac25d30d54f5bbe678605b25c24b033de9cf9d342c7f9d708453fad1fa85",
+      "verified_at": "2026-10-19T09:35:22.650Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T21:26:19.847Z"
+      "last_updated": "2026-10-19T09:35:22.650Z"
     },
     "giancarloerra/SocratiCode": {
       "repository": "giancarloerra/SocratiCode",
@@ -4623,14 +4623,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-megabit-blazorise",
-      "content_hash": "3437382cfc9e108005f6b85b66f4c3f11d9bd1935983f997a0246c3195c0851f",
-      "verified_at": "2026-10-18T22:35:34.031Z",
+      "content_hash": "5dd312b9f72c3de9a04b75297c3ccd49cde1d1690eb872fc352a0af69fd25f87",
+      "verified_at": "2026-10-19T09:41:56.779Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T22:35:34.031Z"
+      "last_updated": "2026-10-19T09:41:56.779Z"
     },
     "metalbear-co/mirrord": {
       "repository": "metalbear-co/mirrord",
@@ -11336,6 +11336,51 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T09:19:17.856Z"
+    },
+    "microsoft/react-native-windows": {
+      "repository": "microsoft/react-native-windows",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-microsoft-react-native-windows",
+      "content_hash": "986c81cd90fbd8f6b4cfde0afd61a31eeef9dd1749182c6830a394e1812bf88b",
+      "verified_at": "2026-10-19T09:35:20.743Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T09:35:20.743Z"
+    },
+    "paradedb/paradedb": {
+      "repository": "paradedb/paradedb",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-paradedb-paradedb",
+      "content_hash": "67e6367e4ce55053a21951853eef357bf1cfde31b3382a26702717ef2628cc6d",
+      "verified_at": "2026-10-19T09:35:27.495Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T09:35:27.495Z"
+    },
+    "imsnif/diskonaut": {
+      "repository": "imsnif/diskonaut",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-imsnif-diskonaut",
+      "content_hash": "608a96cdd961d640de6ea1915ad43e2eee906108ab2e9a98d2a181a9c848a9a0",
+      "verified_at": "2026-10-19T09:38:57.588Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T09:38:57.588Z"
     }
   },
   "repos": {

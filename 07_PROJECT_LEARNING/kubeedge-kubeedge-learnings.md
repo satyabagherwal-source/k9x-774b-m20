@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kubeedge-kubeedge-learnings.md`  
 > **Source**: github ([https://github.com/kubeedge/kubeedge](https://github.com/kubeedge/kubeedge))  
-> **Source Version**: `68df9c23`  
+> **Source Version**: `48feb970`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T21:26:19.725Z  
+> **Timestamp**: 2026-10-19T09:35:22.434Z  
 > **Learning ID**: `learn-github-kubeedge-kubeedge`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kubeedge-kubeedge-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kubeedge/kubeedge](https://github.com/kubeedge/kubeedge))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T21:26:19.271Z  
+> **Harvest Timestamp**: 2026-10-19T09:35:22.428Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Kubernetes Native Edge Computing Framework (project under CNCF)
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 7606 stars
+- **Stars / Engagement**: 7608 stars
 
 ---
 
@@ -1212,11 +1212,11 @@ func RuleContains(rulePath, rule2Path string) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7357** (2026-10-19): **tests/e2e: poll for running pods instead of watching for updates**
+  *Symptoms*: **What type of PR is this?**  /kind flake  **What this PR does / why we need it**:  `WaitForPodsRunning` in `tests/e2e/utils` registered only an `UpdateFunc` on its informer. The informer's initial list is delivered as Add events, so a pod that reached Running between the snapshot taken by the caller (`CreatePodTest` lists the pods one second after creating them) and the start of the informer was never counted, and a pod that stays Running produces no further update. The wait then ran into its 240s timeout although the pod had been Running the whole time.  This is the `Wait for pods come into running status timeout: 4m0s` failure at `tests/e2e/utils/pod.go:211` that the E2e jobs hit from time to time, for example `E2E_POD_DEPLOYMENT_4` in run 36444032371 (#7329) and run 36398668876 (#7321), and `E2E_POD_DEPLOYMENT_5` on QUIC in run 37785580036 (#7296). In the first of these the edge log shows the pod's container starting about 40ms before the wait began and no further status change for four minutes, which is exactly the window the informer misses.  The informer is replaced with the polling loop `CheckPodDeleteState` in the same file already uses: get each pod every 4s, write its status back into the list, and finish once all of them are Running.  **Which issue(s) this PR fixes**:  None. The related failing runs are listed above.  **Special notes for your reviewer**:  - Adding an `AddFunc` to the informer would have closed the window but kept the rest: the unbuffered `signal` 
+
 - **Issue #7354** (2026-10-16): **nodetask: add unit tests for the ConfigUpdateJob reconcile handler**
   *Symptoms*: **What type of PR is this?**  /kind test  **What this PR does / why we need it**:  `cloud/pkg/controllermanager/nodetask/configupdatejob_handler.go` has no unit tests (0% coverage on master), while the NodeUpgradeJob and ImagePrePullJob handlers next to it are tested. This PR adds `configupdatejob_handler_test.go`, which covers every method of `ConfigUpdateJobReconcileHandler` and follows the style of the existing handler tests:  - `GetJob`: found, not found, and a client error. - `AddFinalizer`, `RemoveFinalizer` and `NoFinalizer` against a fake client. - `NotInitialized`, `IsFinalPhase` and `IsDeleted`. - `InitNodesStatus`: a node verification failure, and the job's node names and label selector being used to find the nodes. - `CalculateStatus`: tasks in progress, failures above and within the failure tolerance, no tolerance set, and a stale reason being cleared. - `UpdateJobStatus`: success and failure. - `CheckTimeout`: each case that skips the check, a timeout from the last action time or from the job creation time, finished node tasks left unchanged, an invalid action time, and a failed status update.  Coverage of `configupdatejob_handler.go` goes from 0% to 100% of its statements, and the `nodetask` package goes from 64.1% to 85.4%.  **Which issue(s) this PR fixes**:  None. This PR only adds tests.  **Special notes for your reviewer**:  - `CheckTimeout` runs against the controller-runtime fake client instead of patching `GetJob`/`UpdateJobStatus`, so the timed-out stat
-
-- **Issue #7343** (2026-09-29): **controllermanager: escape resource names in JSON patch paths**
-  *Symptoms*: **What type of PR is this?**  /kind bug  **What this PR does / why we need it**:  `ResourcesOverrider` inserts qualified resource names such as `nvidia.com/gpu` verbatim into JSON Patch paths. The slash is parsed as a path separator, so replacing an existing request or limit returns a missing-path error.  Escape the resource-name token with the existing `EscapeJsonPointer` helper for both requests and limits. The patch keeps the current `replace` operation and override selection behavior.  Regression tests cover request-only, limit-only, and combined overrides for qualified names; a name containing both `~` and `/`; and ordinary resource paths.  **Which issue(s) this PR fixes**:  Fixes #7341  **Special notes for your reviewer**:  - The change applies to existing `requests` and `limits` maps. Handling absent parent maps is outside this patch. - `make verify` — PASS. - `make test WHAT=cloud` — PASS. - `make integrationtest` — PASS on Ubuntu 22.04.5 with native containerd (edge device 14/14, metaserver 1/1, cloud controller-manager 36/36). - Focused package tests, EdgeApplication subtree tests, `go vet`, and focused race tests — PASS.  **Does this PR introduce a user-facing change?**:  ```release-note Fixed EdgeApplication resource overrides for qualified resource names such as nvidia.com/gpu in existing request and limit maps. ```
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1233,1128 +1233,196 @@ func RuleContains(rulePath, rule2Path string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e0efc034` (2026-09-24)
-**Commit Message**: fix(viaduct): make fifo teardown safe and release parked QUIC readers
+### Incident Patch 1: `48feb970` (2026-10-19)
+**Commit Message**: Merge pull request #7357 from ryoheimorimoto/fix/e2e-wait-pods-running-flake
 
-MessageFifo.Close closed the channel that Put sends on. Put runs on a
-connection's read loop while Close runs on the teardown path, so a
-message arriving while a connection was being torn down crashed the
-process with "send on closed channel". This is reachable today on the
-WebSocket transport: WSConnection closes the fifo in Close, and the edge
-calls UnInit on a live connection during certificate rotation and on
-module stop. A unit test running Put against Close reproduces the panic
-on the first iteration, and a connection-level test that closes a
-WSConnection while the peer keeps sending reproduces it on the real
-transport path.
+tests/e2e: poll for running pods instead of watching for updates
 
-Put and Close are now serialized by a mutex. Close marks the fifo closed
-and closes the channel under the lock, and Put takes the same lock and
-drops the message once the fifo is closed, so it neither panics nor
-blocks. Get stays a plain receive, since a closed buffered channel still
-hands out what is buffered before reporting the close. The overflow
-path runs under the lock as well, so the slot freed by dropping the
-oldest message cannot be taken by another stream's producer before t
-
-**File**: `edge/pkg/edgehub/clients/quicclient/quicclient_test.go` (modified, +40/-0)
+**File**: `tests/e2e/utils/pod.go` (modified, +20/-61)
 ```diff
-@@ -263,3 +263,43 @@ func TestReceive(t *testing.T) {
+@@ -28,7 +28,6 @@ import (
+ 	"k8s.io/apimachinery/pkg/labels"
+ 	"k8s.io/apimachinery/pkg/util/wait"
+ 	clientset "k8s.io/client-go/kubernetes"
+-	"k8s.io/client-go/tools/cache"
+ 	"k8s.io/client-go/tools/clientcmd"
+ 	"k8s.io/klog/v2"
+ 
+@@ -147,67 +146,27 @@ func WaitForPodsRunning(c clientset.Interface, podList *v1.PodList, timeout time
+ 		Fatalf("podList should not be empty")
+ 	}
+ 
+-	podRunningCount := 0
+-	for _, pod := range podList.Items {
+-		if pod.Status.Phase == v1.PodRunning {
+-			podRunningCount++
++	gomega.Eventually(func() int {
++		var count int
++		for i := range podList.Items {
++			pod := &podList.Items[i]
++			current, err := GetPod(c, pod.Namespace, pod.Name)
++			if err != nil {
++				Errorf("get pod %s/%s error: %v", pod.Namespace, pod.Name, err)
++				continue
++			}
++
++			pod.Status = current.Status
++			if pod.Status.Phase == v1.PodRunning {
++				count++
++				continue
++			}
++
++			Infof("Pod %s/%s is still %s", pod.Namespace, pod.Name, pod.Status.Phase)
+ 		}
+-	}
+ 
+-	if podRunningCount == len(podList.Items) {
+-		Infof("All pods come into running status")
+-		return
+-	}
++		return count
++	}, timeout, 4*time.Second).Should(gomega.Equal(len(podList.Items)), "not all pods reached the Running phase")
+ 
+-	// define signal
+-	signal := make(chan struct{})
+-
+-	// define list watcher
+-	listWatcher := cache.NewListWatchFromClient(c.CoreV1().RESTClient(), "pods", v1.NamespaceAll, fields.Everything())
+-
+-	// new controller
+-	_, controller := cache.NewInformer(listWatcher, &v1.Pod{}, 0,
+-		cache.ResourceEventHandlerFuncs{
+-			// receive update events
+-			UpdateFunc: func(oldObj, newObj interface{}) {
+-				// check update obj
+-				p, ok := newObj.(*v1.Pod)
+-				if !ok {
+-					Fatalf("Failed to cast observed object to pod")
+-				}
+-
+-				// calculate the pods in running status
+-				count := 0
+-				for i := range podList.Items {
+-					// update pod status in podList
+-					if podList.Items[i].Name == p.Name {
+-						Infof("PodName: %s PodStatus: %s", p.Name, p.Status.Phase)
+-						podList.Items[i].Status = p.Status
+-					}
+-					// check if the pod is in running status
+-					if podList.Items[i].Status.Phase == v1.PodRunning {
+-						count++
+-					}
+-				}
+-
+-				// send an end signal when all pods are in running status
+-				if len(podList.Items) == count {
+-					signal <- struct{}{}
+-				}
+-			},
+-		},
+-	)
+-
+-	// run controller
+-	podChan := make(chan struct{})
+-	go controller.Run(podChan)
+-	defer close(podChan)
+-
+-	// wait for a signal or timeout
+-	select {
+-	case <-signal:
+-		Infof("All pods come into running status")
+-	case <-time.After(timeout):
+-		Fatalf("Wait for pods come into running status timeout: %v", timeout)
+-	}
++	Infof("All pods come into running status")
+ }
+```
+
+---
+
+### Incident Patch 2: `615ad009` (2026-10-19)
+**Commit Message**: Merge pull request #7291 from adity1raut/fix/node-upgrade-report-precedence
+
+edge/taskmanager: fix operator precedence in node upgrade reportActionStatus
+
+**File**: `edge/pkg/taskmanager/actions/nodeupgradejob.go` (modified, +3/-3)
+```diff
+@@ -322,9 +322,9 @@ func (nodeUpgradeJobActionHandler) reportActionStatus(jobname, nodename, action
+ 	}
+ 	var extend string
+ 	if resp, ok := resp.(*nodeUpgradeJobActionResponse); ok &&
+-		action == string(operationsv1alpha2.NodeUpgradeJobActionBackUp) ||
+-		action == string(operationsv1alpha2.NodeUpgradeJobActionUpgrade) ||
+-		action == string(operationsv1alpha2.NodeUpgradeJobActionRollBack) {
++		(action == string(operationsv1alpha2.NodeUpgradeJobActionBackUp) ||
++			action == string(operationsv1alpha2.NodeUpgradeJobActionUpgrade) ||
++			action == string(operationsv1alpha2.NodeUpgradeJobActionRollBack)) {
+ 		extend = taskmsg.FormatNodeUpgradeJobExtend(resp.FromVersion, resp.ToVersion)
+ 	}
+ 	body := taskmsg.UpstreamMessage{
+```
+
+**File**: `edge/pkg/taskmanager/actions/nodeupgradejob_test.go` (modified, +24/-1)
+```diff
+@@ -362,17 +362,37 @@ func TestNodeUpgradeJobReportActionStatus(t *testing.T) {
+ 			},
+ 			action: string(operationsv1alpha2.NodeUpgradeJobActionBackUp),
+ 		},
++		{
++			name:        "backup pre-run failed",
++			resp:        &baseActionResponse{err: errors.New("test error")},
++			action:      string(operationsv1alpha2.NodeUpgradeJobActionBackUp),
++			extendEmpty: true,
++		},
++		{
++			name:        "upgrade pre-run failed",
++			resp:        &baseActionResponse{err: errors.New("test error")},
++			action:      string(operationsv1alpha2.NodeUpgradeJobActionUpgrade),
++			extendEmpty: true,
++		},
++		{
++			name:        "rollback pre-run failed",
++			resp:        &baseActionResponse{err: errors.New("test error")},
++			action:      string(operationsv1alpha2.NodeUpgradeJobActionRollBack),
++			extendEmpty: true,
++		},
+ 	}
+ 
+ 	h := nodeUpgradeJobActionHandler{
+ 		logger: klog.Background(),
+ 	}
+ 	for _, c := range cases {
+ 		t.Run(c.name, func(t *testing.T) {
++			var reported bool
+ 			patches := gomonkey.NewPatches()
+ 			defer patches.Reset()
+ 
+ 			patches.ApplyFunc(message.ReportNodeTaskStatus, func(_res taskmsg.Resource, msgbody taskmsg.UpstreamMessage) {
++				reported = true
+ 				assert.Equal(t, c.action, msgbody.Action)
+ 				if c.extendEmpty {
+ 					assert.Empty(t, msgbody.Extend)
+@@ -387,7 +407,10 @@ func TestNodeUpgradeJobReportActionStatus(t *testing.T) {
+ 				}
+ 			})
+ 
+-			h.reportActionStatus(jobName, nodeName, c.action, c.resp)
++			require.NotPanics(t, func() {
++				h.reportActionStatus(jobName, nodeName, c.action, c.resp)
++			})
++			assert.True(t, reported)
  		})
  	}
  }
-+
-+// TestUnInitReleasesBlockedReceive covers the reconnect path end to end over a
-+// real QUIC session. EdgeHub's routeToEdge sits in Receive, and UnInit is the
-+// only teardown the edge reaches: the reconnect loop calls it on the dead
-+// client before connecting again. Receive has to return so that goroutine can
-+// exit, otherwise every reconnect leaves one behind, blocked on the previous
-+// connection.
-+func TestUnInitReleasesBlockedReceive(t *testing.T) {
-+	newTestServer(t)
-+
-+	qc := newTestQuicClient("uninit", "/tmp/edge.crt", "/tmp/edge.key", "/tmp/edge.crt")
-+	if err := qc.Init(); err != nil {
-+		t.Fatalf("failed to init, err: %v", err)
-+	}
-+
-+	received := make(chan error, 1)
-+	go func() {
-+		_, err := qc.Receive()
-+		received <- err
-+	}()
-+
-+	// Confirm the reader is parked, so the test cannot pass with a teardown
-+	// that only makes later reads fail.
-+	select {
-+	case err := <-received:
-+		t.Fatalf("Receive() returned before UnInit, err: %v", err)
-+	case <-time.After(200 * time.Millisecond):
-+	}
-+
-+	qc.UnInit()
-+
-+	select {
-+	case err := <-received:
-+		if err == nil {
-+			t.Error("Receive() returned a nil error after UnInit, want an error")
-+		}
-+	case <-time.After(5 * time.Second):
-+		t.Fatal("Receive() is still blocked after UnInit; the reader of the closed connection leaked")
-+	}
-+}
-```
-
-**File**: `pkg/viaduct/pkg/client/client.go` (modified, +4/-4)
-```diff
-@@ -40,10 +40,10 @@ type Options struct {
- 	// transport (handleMessage in pkg/viaduct/pkg/conn/ws.go). It surfaces a
- 	// stalled half-open TCP connection as a read error within ReadDeadline
- 	// instead of waiting for the kernel TCP retransmission timeout
--	// (tcp_retries2, ~15min on Linux). Currently honored only by the
--	// WebSocket transport; QUIC has the same defect (SetReadDeadline is a
--	// no-op there too) and will be addressed in a separate PR. Zero means
--	// no read deadline (legacy behavior).
-+	// (tcp_retries2, ~15min on Linux). Honored by the WebSocket transport
-+	// only: QUIC detects a half-open path through the session idle timeout
-+	// of the transport itself, so it needs no deadline here. Zero means no
-+	// read deadline (legacy behavior).
- 	ReadDeadline time.Duration
- 	// consumer for raw data
- 	Consumer io.Writer
-```
-
-**File**: `pkg/viaduct/pkg/conn/quic.go` (modified, +12/-0)
-```diff
-@@ -257,6 +257,11 @@ func (conn *QuicConnection) handleMessage(stream *smgr.Stream) {
- // close the session
- func (conn *QuicConnection) Close() error {
- 	conn.state.State = api.StatDisconnected
-+	// Release readers parked in ReadMessage: messageFifo.Get blocks on an
-+	// open channel, so without this a reader of a torn-down connection
-+	// (EdgeHub's routeToEdge) never returns and its goroutine leaks once
-+	// per reconnect.
-+	conn.messageFifo.Close()
- 	conn.streamManager.Destroy()
- 	return conn.session.Close()
- }
-@@ -325,6 +330,13 @@ func (conn *QuicConnection) ReadMessage(msg *model.Message) error {
- 	return conn.messageFifo.Get(msg)
- }
- 
-+// SetReadDeadline is not implemented for QUIC: the deadline is recorded but
-+// never applied to a read, so a caller asking for pending reads to time out
-+// does not get that yet. Separately, the transport does not use stream read
-+// deadlines for liveness (the WebSocket transport does): stream reads see no
-+// data on an idle-but-healthy session, because QUIC keepalive travels at
-+// session level, so a half-open path surfaces through the session idle
-+// timeout of the transport instead.
- func (conn *QuicConnection) SetReadDeadline(t time.Time) error {
- 	conn.readDeadline = t
- 	return nil
-```
-
-**File**: `pkg/viaduct/pkg/conn/quic_test.go` (added, +115/-0)
-```diff
-@@ -0,0 +1,115 @@
-+/*
-+Copyright 2026 The KubeEdge Authors.
-+
-+Licensed under the Apache License, Version 2.0 (the "License");
-+you may not use this file except in compliance with the License.
-+You may obtain a copy of the License at
-+
-+    http://www.apache.org/licenses/LICENSE-2.0
-+
-+Unless required by applicable law or agreed to in writing, software
-+distributed under the License is distributed on an "AS IS" BASIS,
-+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+See the License for the specific language governing permissions and
-+limitations under the License.
-+*/
-+
-+package conn
-+
-+import (
-+	"testing"
-+	"time"
-+
-+	"github.com/golang/mock/gomock"
-+
-+	"github.com/kubeedge/beehive/pkg/core/model"
-+	"github.com/kubeedge/kubeedge/pkg/viaduct/mocks"
-+	"github.com/kubeedge/kubeedge/pkg/viaduct/pkg/api"
-+	"github.com/kubeedge/kubeedge/pkg/viaduct/pkg/lane"
-+)
-+
-+// newTestQuicConn builds a connection over a mocked session. No stream is
-+// registered with the stream manager, so the Destroy call inside Close is a
-+// no-op here and the test stays focused on the teardown of the connection.
-+func newTestQuicConn(t *testing.T) *QuicConnection {
-+	t.Helper()
-+	ctrl := gomock.NewController(t)
-+	session := mocks.NewMockSession(ctrl)
-+	session.EXPECT().Close().Return(nil).AnyTimes()
-+	return NewQuicConn(&ConnectionOptions{
-+		ConnType: api.ProtocolTypeQuic,
-+		ConnUse:  api.UseTypeMessage,
-+		Base:     session,
-+		CtrlLane: lane.NewLane(api.ProtocolTypeQuic, mocks.NewMockStream(ctrl)),
-+		State:    &ConnectionState{State: api.StatConnected},
-+	})
-+}
-+
-+// TestNewQuicConnWiresMessageFifo guards the wiring Close depends on: without
-+// a fifo the connection would panic on teardown instead of releasing readers.
-+func TestNewQuicConnWiresMessageFifo(t *testing.T) {
-+	conn := newTestQuicConn(t)
-+
-+	if conn.messageFifo == nil {
-+		t.Fatal("NewQuicConn left messageFifo nil")
-+	}
-+	if conn.syncKeeper == nil {
-+		t.Fatal("NewQuicConn left syncKeeper nil")
-+	}
-+	if conn.streamManager == nil {
-+		t.Fatal("NewQuicConn left streamManager nil")
-+	}
-+}
-+
-+// TestCloseReleasesBlockedReadMessage guards the invariant that tearing the
-+// connection down releases its reader. ReadMessage parks on the message fifo,
-+// and EdgeHub's reconnect loop calls UnInit (which reaches Close) before
-+// starting the next connection: a reader that is never released leaks one
-+// goroutine per reconnect and keeps holding the previous connection.
-+func TestCloseReleasesBlockedReadMessage(t *testing.T) {
-+	conn := newTestQuicConn(t)
-+
-+	blocked := make(chan error, 1)
-+	go func() {
-+		msg := &model.Message{}
-+		blocked <- conn.ReadMessage(msg)
-+	}()
-+
-+	// Confirm the reader is parked, so the test cannot pass with a Close
-+	// that only makes later reads fail.
-+	select {
-+	case err := <-blocked:
-+		t.Fatalf("ReadMessage returned before Close: %v", err)
-+	case <-time.After(100 * time.Millisecond):
-+	}
-+
-+	if err := conn.Close(); err != nil {
-+		t.Fatalf("Close: %v", err)
-+	}
-+
-+	select {
-+	case err := <-blocked:
-+		if err == nil {
-+			t.Fatal("ReadMessage returned a nil error after Close, want the fifo error")
-+		}
-+	case <-time.After(5 * time.Second):
-+		t.Fatal("ReadMessage is still blocked after Close; the reader was not released")
-+	}
-+}
-+
-+// TestCloseIsIdempotent covers the teardown being reached twice on the server
-+// side, where serveSession closes the connection when AcceptStream fails and
-+// the owner closes it again afterwards.
-+func TestCloseIsIdempotent(t *testing.T) {
-+	conn := newTestQuicConn(t)
-+
-+	if err := conn.Close(); err != nil {
-+		t.Fatalf("first Close: %v", err)
-+	}
-+	if err := conn.Close(); err != nil {
-+		t.Fatalf("second Close: %v", err)
-+	}
-+	if conn.state.State != api.StatDisconnected {
-+		t.Fatalf("state = %q, want %q", conn.state.State, api.StatDisconnected)
-+	}
-+}
-```
-
-**File**: `pkg/viaduct/pkg/conn/ws_test.go` (modified, +40/-0)
-```diff
-@@ -32,6 +32,7 @@ import (
- 	"github.com/kubeedge/kubeedge/pkg/viaduct/pkg/api"
- 	"github.com/kubeedge/kubeedge/pkg/viaduct/pkg/fifo"
- 	"github.com/kubeedge/kubeedge/pkg/viaduct/pkg/keeper"
-+	"github.com/kubeedge/kubeedge/pkg/viaduct/pkg/lane"
- )
- 
- var upgrader = websocket.Upgrader{
-@@ -459,3 +460,42 @@ func TestSetWriteDeadlinePropagatesToWSConn(t *testing.T) {
- 		t.Fatal("expected immediate write error after past deadline; SetWriteDeadline did not propagate")
- 	}
- }
-+
-+// TestCloseWhileDeliveringDoesNotPanic models the edge's UnInit on a live
-+// connection (certificate rotation, module stop) while CloudHub keeps sending:
-+// handleMessage delivers into the fifo on its own goroutine while Close runs
-+// on the reconnect loop. Before Put and Close were serialized, this crashed
-+// the process with "send on closed channel".
-+func TestCloseWhileDeliveringDoesNotPanic(t *testing.T) {
-+	for i := 0; i < 300; i++ {
-+		serverConn, clientConn := wsTestPair(t)
-+		conn := NewWSConn(&ConnectionOptions{
-+			ConnType:  api.ProtocolTypeWS,
-+			ConnUse:   api.UseTypeMessage,
-+			Base:      clientConn,
-+			State:     &ConnectionState{State: api.StatConnected},
-+			AutoRoute: false, // edge setting: messages are queued for ReadMessage
-+		})
-+		go conn.handleMessage()
-+
-+		stop := make(chan struct{})
-+		go func() {
-+			l := lane.NewLane(api.ProtocolTypeWS, serverConn)
-+			for {
-+				select {
-+				case <-stop:
-+					return
-+				default:
-+				}
-+				msg := model.NewMessage("").BuildRouter("cloud", "x", "res", "op").FillBody("payload")
-+				if err := l.WriteMessage(msg); err != nil {
-+					return
-+				}
-+			}
-+		}()
-+		time.Sleep(2 * time.Millisecond)
-+		_ = conn.Close()
-+		close(stop)
-+		_ = serverConn.Close()
-+	}
-+}
-```
-
-**File**: `pkg/viaduct/pkg/fifo/msgfifo.go` (modified, +34/-13)
-```diff
-@@ -11,8 +11,9 @@ import (
- )
- 
- type MessageFifo struct {
--	fifo      chan model.Message
--	closeOnce sync.Once
-+	fifo   chan model.Message
-+	mu     sync.Mutex
-+	closed bool
- }
- 
- // set the fifo capacity to MessageFiFoSizeMax
-@@ -23,20 +24,34 @@ func NewMessageFifo() *MessageFifo {
- }
- 
- // Put put the message into fifo
-+//
-+// Put runs on the connection's read loop while Close runs on the teardown
-+// path, so the two are serialized by the lock: a Put that starts after Close
-+// is dropped instead of sending on a closed channel.
- func (f *MessageFifo) Put(msg *model.Message) {
--	select {
--	case f.fifo <- *msg:
--	default:
--		// discard the old message
--		<-f.fifo
--		// push into fifo
--		f.fifo <- *msg
--		klog.Warning("too many message received, fifo overflow")
-+	f.mu.Lock()
-+	defer f.mu.Unlock()
-+	if f.closed {
-+		return
- 	}
-+	// Only Put sends, and it holds the lock, so a free slot seen here stays
-+	// free until the send below. The drop is non-blocking because Get may
-+	// empty the fifo meanwhile.
-+	if len(f.fifo) == cap(f.fifo) {
-+		select {
-+		case <-f.fifo:
-+			klog.Warning("too many message received, fifo overflow")
-+		default:
-+		}
-+	}
-+	f.fifo <- *msg
- }
- 
- // Get get message from fifo
- // this api is blocked when the fifo is empty
-+//
-+// Get takes no lock on purpose: a channel receive is safe against concurrent
-+// Put and Close, and blocking under f.mu would stall both.
- func (f *MessageFifo) Get(msg *model.Message) error {
- 	var ok bool
- 	*msg, ok = <-f.fifo
-@@ -46,8 +61,14 @@ func (f *MessageFifo) Get(msg *model.Message) error {
- 	return nil
- }
- 
-+// Close releases the callers blocked in Get. Messages already buffered are
-+// still delivered by Get before it reports the close.
- func (f *MessageFifo) Close() {
--	f.closeOnce.Do(func() {
--		close(f.fifo)
--	})
-+	f.mu.Lock()
-+	defer f.mu.Unlock()
-+	if f.closed {
-+		return
-+	}
-+	f.closed = true
-+	close(f.fifo)
- }
-```
-
-**File**: `pkg/viaduct/pkg/fifo/msgfifo_test.go` (modified, +132/-0)
-```diff
-@@ -17,10 +17,14 @@ limitations under the License.
- package fifo
- 
- import (
-+	"io"
-+	"os"
-+	"sync"
- 	"testing"
- 	"time"
- 
- 	"github.com/stretchr/testify/assert"
-+	"k8s.io/klog/v2"
- 
- 	"github.com/kubeedge/beehive/pkg/core/model"
- 	"github.com/kubeedge/kubeedge/pkg/viaduct/pkg/comm"
-@@ -118,6 +122,134 @@ func TestMessageFifo_Close(t *testing.T) {
- 	})
- }
- 
-+// TestMessageFifo_Close_ReleasesBlockedGet covers the reason Close exists: a
-+// caller already parked in Get has to be released, otherwise the reader of a
-+// torn-down connection never returns.
-+func TestMessageFifo_Close_ReleasesBlockedGet(t *testing.T) {
-+	f := NewMessageFifo()
-+
-+	released := make(chan error, 1)
-+	go func() {
-+		var msg model.Message
-+		released <- f.Get(&msg)
-+	}()
-+
-+	select {
-+	case <-released:
-+		t.Fatal("Get returned before Close")
-+	case <-time.After(50 * time.Millisecond):
-+	}
-+
-+	f.Close()
-+
-+	select {
-+	case err := <-released:
-+		assert.Error(t, err)
-+	case <-time.After(time.Second):
-+		t.Fatal("Get is still blocked after Close")
-+	}
-+}
-+
-+// TestMessageFifo_Close_ConcurrentWithPut covers the Put/Close overlap: Put
-+// runs on a connection read loop while Close runs on the teardown path, and
-+// an unsynchronized close of the channel panics with "send on closed channel".
-+func TestMessageFifo_Close_ConcurrentWithPut(t *testing.T) {
-+	assert.NotPanics(t, func() {
-+		for i := 0; i < 100; i++ {
-+			f := NewMessageFifo()
-+			var wg sync.WaitGroup
-+			wg.Add(2)
-+			go func() {
-+				defer wg.Done()
-+				for j := 0; j < 50; j++ {
-+					f.Put(&model.Message{Header: model.MessageHeader{ID: "concurrent"}})
-+				}
-+			}()
-+			go func() {
-+				defer wg.Done()
-+				f.Close()
-+			}()
-+			wg.Wait()
-+		}
-+	})
-+}
-+
-+// TestMessageFifo_Put_DropsAfterClose covers Put after Close: it must return
-+// without sending, because the channel is closed and a send would panic.
-+func TestMessageFifo_Put_DropsAfterClose(t *testing.T) {
-+	f := NewMessageFifo()
-+	f.Close()
-+
-+	for i := 0; i < 100; i++ {
-+		f.Put(&model.Message{Header: model.MessageHeader{ID: "late"}})
-+	}
-+
-+	var msg model.Message
-+	assert.Error(t, f.Get(&msg))
-+}
-+
-+// TestMessageFifo_Put_ReturnsWhenClosedDuringOverflow runs several producers
-+// (one per QUIC stream) through the overflow path while Close lands. Producers
-+// have to stay serialized there: one that blocked on its send while holding
-+// the lock would also keep Close from returning, so Close runs behind the
-+// timeout too.
-+func TestMessageFifo_Put_ReturnsWhenClosedDuringOverflow(t *testing.T) {
-+	// Every overflow logs a warning and this test overflows tens of
-+	// thousands of times, which would bury the rest of the -v output.
-+	klog.LogToStderr(false)
-+	klog.SetOutput(io.Discard)
-+	t.Cleanup(func() {
-+		klog.Flush()
-+		klog.SetOutput(os.Stderr)
-+		klog.LogToStderr(true)
-+	})
-+
-+	for round := 0; round < 50; round++ {
-+		f := NewMessageFifo()
-+		for i := 0; i < comm.MessageFiFoSizeMax; i++ {
-+			f.Put(&model.Message{Header: model.MessageHeader{ID: "fill"}})
-+		}
-+
-+		var wg sync.WaitGroup
-+		for p := 0; p < 4; p++ {
-+			wg.Add(1)
-+			go func() {
-+				defer wg.Done()
-+				for j := 0; j < 500; j++ {
-+					f.Put(&model.Message{Header: model.MessageHeader{ID: "late"}})
-+				}
-+			}()
-+		}
-+		time.Sleep(time.Millisecond) // let the producers reach the overflow path
-+
-+		finished := make(chan struct{})
-+		go func() {
-+			f.Close()
-+			wg.Wait()
-+			close(finished)
-+		}()
-+		select {
-+		case <-finished:
-+		case <-time.After(3 * time.Second):
-+			t.Fatalf("round %d: a producer is still blocked in Put after Close", round)
-+		}
-+	}
-+}
-+
-+// TestMessageFifo_Close_DrainsBufferedMessages documents that a close does not
-+// discard messages that were already delivered into the fifo.
-+func TestMessageFifo_Close_DrainsBufferedMessages(t *testing.T) {
-+	f := NewMessageFifo()
-+	f.Put(&model.Message{Header: model.MessageHeader{ID: "buffered"}})
-+	f.Close()
-+
-+	var msg model.Message
-+	assert.NoError(t, f.Get(&msg))
-+	assert.Equal(t, "buffered", msg.Header.ID)
-+
-+	assert.Error(t, f.Get(&msg))
-+}
-+
- func TestMessageFifo_Get_Blocking(t *testing.T) {
- 	f := NewMessageFifo()
- 	msg := &model.Message{Header: model.MessageHeader{ID: "async"}}
-```
-
----
-
-### Incident Patch 2: `8fe8e619` (2026-07-31)
-**Commit Message**: fix(viaduct): respect read deadline on WSConnection
-
-WSConnection.SetReadDeadline stored the deadline in a struct field but
-did not propagate it to the underlying gorilla/websocket connection,
-and handleMessage never applied a read deadline, so a half-open TCP
-socket (e.g. after a WiFi switchover) blocked on ReadMessage until the
-kernel's TCP retransmission timeout (net.ipv4.tcp_retries2=15, ~15
-minutes on Linux), keeping the edge node NotReady for 15-20 minutes.
-
-Wire WebSocketConfig.ReadDeadline through wsclient.Options to
-ConnectionOptions.ReadDeadlineInterval and into WSConnection, and arm
-it on every handleMessage iteration. To keep idle-but-healthy
-connections alive, pingLoop sends WebSocket protocol pings every half
-interval and a pong handler extends the deadline on every pong; the
-peer answers pings automatically (gorilla's default ping handler), so
-no CloudHub change is needed. A transient WriteControl timeout does
-not stop the ping loop; on a terminal write error the loop closes the
-connection so the read loop unblocks immediately, and it exits quietly
-when the read loop already tore the connection down. The ping period
-is guarded against degenerate sub-2ns intervals.
-
-C
-
-**File**: `edge/pkg/edgehub/clients/wsclient/websocket.go` (modified, +1/-0)
-```diff
-@@ -73,6 +73,7 @@ func (wsc *WebSocketClient) Init() error {
- 
- 	option := wsclient.Options{
- 		HandshakeTimeout: wsc.config.HandshakeTimeout,
-+		ReadDeadline:     wsc.config.ReadDeadline,
- 		TLSConfig:        tlsConfig,
- 		Type:             api.ProtocolTypeWS,
- 		Addr:             wsc.config.URL,
-```
-
-**File**: `pkg/viaduct/pkg/client/client.go` (modified, +9/-0)
-```diff
-@@ -36,6 +36,15 @@ type Options struct {
- 	AutoRoute bool
- 	// HandshakeTimeout is the maximum duration that the cryptographic handshake may take.
- 	HandshakeTimeout time.Duration
-+	// ReadDeadline is a per-iteration read deadline applied by the WebSocket
-+	// transport (handleMessage in pkg/viaduct/pkg/conn/ws.go). It surfaces a
-+	// stalled half-open TCP connection as a read error within ReadDeadline
-+	// instead of waiting for the kernel TCP retransmission timeout
-+	// (tcp_retries2, ~15min on Linux). Currently honored only by the
-+	// WebSocket transport; QUIC has the same defect (SetReadDeadline is a
-+	// no-op there too) and will be addressed in a separate PR. Zero means
-+	// no read deadline (legacy behavior).
-+	ReadDeadline time.Duration
- 	// consumer for raw data
- 	Consumer io.Writer
- }
-```
-
-**File**: `pkg/viaduct/pkg/client/ws.go` (modified, +2/-1)
-```diff
-@@ -66,7 +66,8 @@ func (c *WSClient) Connect() (conn.Connection, error) {
- 				Headers:          c.exOpts.Header.Clone(),
- 				PeerCertificates: peerCerts,
- 			},
--			AutoRoute: c.options.AutoRoute,
-+			AutoRoute:            c.options.AutoRoute,
-+			ReadDeadlineInterval: c.options.ReadDeadline,
- 		}), nil
- 	}
- 
-```
-
-**File**: `pkg/viaduct/pkg/conn/factory.go` (modified, +7/-0)
-```diff
-@@ -2,6 +2,7 @@ package conn
- 
- import (
- 	"io"
-+	"time"
- 
- 	"k8s.io/klog/v2"
- 
-@@ -30,6 +31,12 @@ type ConnectionOptions struct {
- 	AutoRoute bool
- 	// OnReadTransportErr
- 	OnReadTransportErr func(nodeID, projectID string)
-+	// ReadDeadlineInterval is applied by handleMessage to the underlying
-+	// connection on every iteration so a stalled half-open TCP socket
-+	// surfaces as a read error within this interval. Zero means no read
-+	// deadline (legacy behavior). The duration semantics distinguish this
-+	// from WSConnection.ReadDeadline (a time.Time absolute deadline).
-+	ReadDeadlineInterval time.Duration
- }
- 
- // get connection interface by ConnTye
-```
-
-**File**: `pkg/viaduct/pkg/conn/ws.go` (modified, +114/-23)
-```diff
-@@ -20,30 +20,32 @@ import (
- )
- 
- type WSConnection struct {
--	WriteDeadline      time.Time
--	ReadDeadline       time.Time
--	handler            mux.Handler
--	wsConn             *websocket.Conn
--	state              *ConnectionState
--	syncKeeper         *keeper.SyncKeeper
--	connUse            api.UseType
--	consumer           io.Writer
--	autoRoute          bool
--	messageFifo        *fifo.MessageFifo
--	locker             sync.Mutex
--	OnReadTransportErr func(nodeID, projectID string)
-+	WriteDeadline        time.Time
-+	ReadDeadline         time.Time
-+	handler              mux.Handler
-+	wsConn               *websocket.Conn
-+	state                *ConnectionState
-+	syncKeeper           *keeper.SyncKeeper
-+	connUse              api.UseType
-+	consumer             io.Writer
-+	autoRoute            bool
-+	messageFifo          *fifo.MessageFifo
-+	locker               sync.Mutex
-+	OnReadTransportErr   func(nodeID, projectID string)
-+	readDeadlineInterval time.Duration
- }
- 
- func NewWSConn(options *ConnectionOptions) *WSConnection {
- 	return &WSConnection{
--		wsConn:             options.Base.(*websocket.Conn),
--		handler:            options.Handler,
--		syncKeeper:         keeper.NewSyncKeeper(),
--		state:              options.State,
--		connUse:            options.ConnUse,
--		autoRoute:          options.AutoRoute,
--		messageFifo:        fifo.NewMessageFifo(),
--		OnReadTransportErr: options.OnReadTransportErr,
-+		wsConn:               options.Base.(*websocket.Conn),
-+		handler:              options.Handler,
-+		syncKeeper:           keeper.NewSyncKeeper(),
-+		state:                options.State,
-+		connUse:              options.ConnUse,
-+		autoRoute:            options.AutoRoute,
-+		messageFifo:          fifo.NewMessageFifo(),
-+		OnReadTransportErr:   options.OnReadTransportErr,
-+		readDeadlineInterval: options.ReadDeadlineInterval,
- 	}
- }
- 
-@@ -99,16 +101,105 @@ func (conn *WSConnection) handleRawData() {
- 	}
- }
- 
-+// pingLoop keeps guaranteed inbound traffic flowing on an otherwise idle
-+// connection by sending WebSocket protocol pings every half of
-+// readDeadlineInterval. The pongs sent back by the peer (gorilla answers
-+// pings automatically as long as its read loop is running) reset the read
-+// deadline via the pong handler registered in handleMessage, so the deadline
-+// only expires when the connection is genuinely stalled.
-+func (conn *WSConnection) pingLoop(stop <-chan struct{}) {
-+	period := conn.readDeadlineInterval / 2
-+	if period <= 0 {
-+		// In-repo configuration is int32 seconds (>= 1s), but the field
-+		// takes a raw Duration: guard the integer division against sub-2ns
-+		// values so NewTicker cannot panic.
-+		period = time.Millisecond
-+	}
-+	ticker := time.NewTicker(period)
-+	defer ticker.Stop()
-+	for {
-+		select {
-+		case <-stop:
-+			return
-+		case <-ticker.C:
-+			// WriteControl is safe for concurrent use with the data-plane
-+			// writes going through conn.locker.
-+			if err := conn.wsConn.WriteControl(websocket.PingMessage, nil, time.Now().Add(period)); err != nil {
-+				var netErr net.Error
-+				if errors.As(err, &netErr) && netErr.Timeout() {
-+					// The write lock was held past the deadline (e.g. a
-+					// large message on a slow link); the connection may
-+					// well be healthy. Keep pinging — liveness is judged
-+					// by the read deadline, not here.
-+					continue
-+				}
-+				// If handleMessage already tore the connection down (stop is
-+				// closed), this error is a consequence of that shutdown, not a
-+				// new failure: exit quietly without a misleading log or a
-+				// double close.
-+				select {
-+				case <-stop:
-+					return
-+				default:
-+				}
-+				// The connection is gone (closed or broken); close it so the
-+				// read loop unblocks immediately instead of waiting for the
-+				// read deadline to expire.
-+				klog.V(2).Infof("ping loop stopped: %v", err)
-+				_ = conn.wsConn.Close()
-+				return
-+			}
-+		}
-+	}
-+}
-+
- func (conn *WSConnection) handleMessage() {
-+	if conn.readDeadlineInterval > 0 {
-+		// A read deadline alone would tear down idle-but-healthy
-+		// connections: nothing guarantees cloud-to-edge traffic within the
-+		// interval (EdgeHub's keepalive is one-way; CloudHub sends no
-+		// response to it). pingLoop provides that guarantee at the
-+		// WebSocket protocol level, and every pong extends the deadline
-+		// here, so expiry now means the peer stopped answering entirely.
-+		conn.wsConn.SetPongHandler(func(string) error {
-+			return conn.wsConn.SetReadDeadline(time.Now().Add(conn.readDeadlineInterval))
-+		})
-+		stopPing := make(chan struct{})
-+		defer close(stopPing)
-+		go conn.pingLoop(stopPing)
-+	}
- 	for {
-+		// Arm/refresh the read deadline so a half-open TCP connection
-+		// surfaces as a read error within readDeadlineInterval instead of
-+		// waiting for kernel TCP retransmission (tcp_retries2, ~15min on Linux).
-+		if conn.readDeadlineInterval > 0 {
-+			_ = conn.wsConn.SetReadDeadline(time.Now().Add(conn.readDeadlineInterval))
-+		}
- 		msg := &model.Message{}
-
-```
-
-**File**: `pkg/viaduct/pkg/conn/ws_test.go` (modified, +338/-0)
-```diff
-@@ -18,6 +18,8 @@ package conn
- 
- import (
- 	"bytes"
-+	"context"
-+	"net"
- 	"net/http"
- 	"net/http/httptest"
- 	"strings"
-@@ -26,7 +28,10 @@ import (
- 
- 	"github.com/gorilla/websocket"
- 
-+	"github.com/kubeedge/beehive/pkg/core/model"
- 	"github.com/kubeedge/kubeedge/pkg/viaduct/pkg/api"
-+	"github.com/kubeedge/kubeedge/pkg/viaduct/pkg/fifo"
-+	"github.com/kubeedge/kubeedge/pkg/viaduct/pkg/keeper"
- )
- 
- var upgrader = websocket.Upgrader{
-@@ -121,3 +126,336 @@ func TestHandleRawDataDoesNotPanic(t *testing.T) {
- 		t.Errorf("unexpected payload: got %q, want %q", consumer.Bytes(), payload)
- 	}
- }
-+
-+// newTestWSConn spins up a server-side websocket and connects a client to
-+// it. With serverReads=true the server runs a normal read loop, which makes
-+// gorilla answer the client's pings with pongs automatically (an idle but
-+// healthy peer). With serverReads=false the server swallows bytes at the TCP
-+// level without WebSocket-level processing, so pings are never answered —
-+// emulating a stalled/half-open peer while keeping the TCP connection open.
-+// The returned WSConnection is configured with the supplied read deadline
-+// interval; the caller must close srv to release the goroutine.
-+func newTestWSConn(t *testing.T, readDeadlineInterval time.Duration, serverReads bool) (*WSConnection, *httptest.Server) {
-+	t.Helper()
-+
-+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		c, err := upgrader.Upgrade(w, r, nil)
-+		if err != nil {
-+			t.Errorf("upgrade: %v", err)
-+			return
-+		}
-+		defer c.Close()
-+		if serverReads {
-+			// Hold the connection without sending anything so the client
-+			// side blocks on Read; pings are auto-answered with pongs.
-+			for {
-+				if _, _, err := c.ReadMessage(); err != nil {
-+					return
-+				}
-+			}
-+		}
-+		// Stalled peer: consume raw bytes so the TCP connection stays
-+		// open but no pong (or any frame) is ever sent back.
-+		buf := make([]byte, 1024)
-+		for {
-+			if _, err := c.UnderlyingConn().Read(buf); err != nil {
-+				return
-+			}
-+		}
-+	}))
-+
-+	wsURL := "ws" + strings.TrimPrefix(srv.URL, "http")
-+	wsConn, _, err := websocket.DefaultDialer.Dial(wsURL, nil)
-+	if err != nil {
-+		srv.Close()
-+		t.Fatalf("dial: %v", err)
-+	}
-+
-+	conn := &WSConnection{
-+		wsConn:               wsConn,
-+		state:                &ConnectionState{State: api.StatConnected, Headers: http.Header{}},
-+		connUse:              api.UseTypeMessage,
-+		messageFifo:          fifo.NewMessageFifo(),
-+		syncKeeper:           keeper.NewSyncKeeper(),
-+		readDeadlineInterval: readDeadlineInterval,
-+	}
-+	return conn, srv
-+}
-+
-+// TestHandleMessageReadDeadlineFiresWithinInterval verifies the half-open
-+// detection: when readDeadlineInterval is set and the peer stops answering
-+// entirely (not even pongs), handleMessage exits within roughly that
-+// interval. Without the fix the goroutine would block until kernel TCP
-+// retransmission timeout (~15min).
-+func TestHandleMessageReadDeadlineFiresWithinInterval(t *testing.T) {
-+	conn, srv := newTestWSConn(t, 100*time.Millisecond, false)
-+	defer srv.Close()
-+
-+	done := make(chan struct{})
-+	go func() {
-+		conn.handleMessage()
-+		close(done)
-+	}()
-+
-+	select {
-+	case <-done:
-+	case <-time.After(2 * time.Second):
-+		t.Fatal("handleMessage did not return within 2s; deadline not applied")
-+	}
-+
-+	// messageFifo must be closed so callers blocked on Get() observe the
-+	// error immediately rather than waiting for the next keepalive failure.
-+	msg := &model.Message{}
-+	if err := conn.ReadMessage(msg); err == nil {
-+		t.Fatal("expected ReadMessage to return error after handleMessage timeout")
-+	}
-+}
-+
-+// TestHandleMessageZeroReadDeadlineKeepsLegacyBehavior verifies that the
-+// existing zero-value behavior (no deadline = block forever) is preserved.
-+func TestHandleMessageZeroReadDeadlineKeepsLegacyBehavior(t *testing.T) {
-+	conn, srv := newTestWSConn(t, 0, true)
-+	defer srv.Close()
-+
-+	done := make(chan struct{})
-+	go func() {
-+		conn.handleMessage()
-+		close(done)
-+	}()
-+
-+	select {
-+	case <-done:
-+		t.Fatal("handleMessage returned unexpectedly with no read deadline")
-+	case <-time.After(300 * time.Millisecond):
-+		// expected: blocks indefinitely
-+	}
-+
-+	// Cleanup: close the underlying conn to unblock the goroutine.
-+	_ = conn.wsConn.Close()
-+	<-done
-+}
-+
-+// TestHandleMessagePingKeepsIdleConnectionAlive verifies that an idle but
-+// healthy connection is NOT torn down by the read deadline: pingLoop keeps
-+// sending pings, the peer answers with pongs, and each pong extends the
-+// deadline. Only after the peer stops answering does the deadline fire.
-+func TestHandleMessagePingKeepsIdleConnectionAlive(t *testing.T) {
-+	// Generous interval so that a scheduling hiccup on a loaded CI runner
-+	// (ping every interval/2, pong must arrive within interval) does not
-+	// fail the test spuriously.
-+	interval := 800 * time.Millisecond
-+	conn, srv := newTestWSConn(t, interval, true)
-+	defer srv.Close()
-+
-+	done := make(chan struct{})
-+	go fun
-```
-
-**File**: `pkg/viaduct/pkg/lane/ws.go` (modified, +6/-1)
-```diff
-@@ -3,6 +3,7 @@ package lane
- import (
- 	"errors"
- 	"io"
-+	"net"
- 	"time"
- 
- 	"github.com/gorilla/websocket"
-@@ -30,7 +31,11 @@ func NewWSLane(van interface{}) *WSLane {
- func (l *WSLane) Read(p []byte) (int, error) {
- 	_, msgData, err := l.conn.ReadMessage()
- 	if err != nil {
--		if !errors.Is(err, io.EOF) {
-+		// A deadline expiry is the designed half-open detection path when a
-+		// read deadline is armed (see conn.WSConnection.handleMessage); it
-+		// is reported there, not here.
-+		var netErr net.Error
-+		if !errors.Is(err, io.EOF) && !(errors.As(err, &netErr) && netErr.Timeout()) {
- 			klog.Errorf("read message error(%+v)", err)
- 		}
- 		return len(msgData), err
-```
-
-**File**: `pkg/viaduct/pkg/lane/ws_test.go` (added, +110/-0)
-```diff
-@@ -0,0 +1,110 @@
-+/*
-+Copyright 2026 The KubeEdge Authors.
-+
-+Licensed under the Apache License, Version 2.0 (the "License");
-+you may not use this file except in compliance with the License.
-+You may obtain a copy of the License at
-+
-+    http://www.apache.org/licenses/LICENSE-2.0
-+
-+Unless required by applicable law or agreed to in writing, software
-+distributed under the License is distributed on an "AS IS" BASIS,
-+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+See the License for the specific language governing permissions and
-+limitations under the License.
-+*/
-+
-+package lane
-+
-+import (
-+	"errors"
-+	"net"
-+	"net/http"
-+	"net/http/httptest"
-+	"strings"
-+	"testing"
-+	"time"
-+
-+	"github.com/gorilla/websocket"
-+)
-+
-+// newWSPair returns a connected server/client websocket pair backed by an
-+// httptest server; both are closed on cleanup.
-+func newWSPair(t *testing.T) (server, client *websocket.Conn) {
-+	t.Helper()
-+	upgrader := websocket.Upgrader{CheckOrigin: func(*http.Request) bool { return true }}
-+	serverChan := make(chan *websocket.Conn, 1)
-+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		c, err := upgrader.Upgrade(w, r, nil)
-+		if err != nil {
-+			t.Errorf("upgrade: %v", err)
-+			return
-+		}
-+		serverChan <- c
-+	}))
-+	t.Cleanup(srv.Close)
-+
-+	c, _, err := websocket.DefaultDialer.Dial("ws"+strings.TrimPrefix(srv.URL, "http"), nil)
-+	if err != nil {
-+		t.Fatalf("dial: %v", err)
-+	}
-+	t.Cleanup(func() { _ = c.Close() })
-+
-+	select {
-+	case s := <-serverChan:
-+		t.Cleanup(func() { _ = s.Close() })
-+		return s, c
-+	case <-time.After(2 * time.Second):
-+		t.Fatal("timeout waiting for the server side of the websocket")
-+		return nil, nil
-+	}
-+}
-+
-+// TestWSLaneReadReturnsDeadlineTimeout verifies that an expired read deadline
-+// surfaces as a net.Error timeout from Read (the designed half-open detection
-+// path, reported by the caller rather than logged here).
-+func TestWSLaneReadReturnsDeadlineTimeout(t *testing.T) {
-+	_, client := newWSPair(t)
-+	if err := client.SetReadDeadline(time.Now().Add(-time.Second)); err != nil {
-+		t.Fatalf("SetReadDeadline: %v", err)
-+	}
-+
-+	_, err := NewWSLane(client).Read(make([]byte, 16))
-+	var netErr net.Error
-+	if !errors.As(err, &netErr) || !netErr.Timeout() {
-+		t.Fatalf("expected a timeout net.Error, got %v", err)
-+	}
-+}
-+
-+// TestWSLaneReadPropagatesPeerClose verifies that a close initiated by the
-+// peer is returned to the caller as a non-timeout error.
-+func TestWSLaneReadPropagatesPeerClose(t *testing.T) {
-+	server, client := newWSPair(t)
-+	if err := server.Close(); err != nil {
-+		t.Fatalf("server close: %v", err)
-+	}
-+
-+	_, err := NewWSLane(client).Read(make([]byte, 16))
-+	if err == nil {
-+		t.Fatal("expected an error after the peer closed the connection")
-+	}
-+	var netErr net.Error
-+	if errors.As(err, &netErr) && netErr.Timeout() {
-+		t.Fatalf("peer close must not be reported as a timeout: %v", err)
-+	}
-+}
-+
-+// TestWSLaneReadDelivers verifies the happy path used by the tests above:
-+// a frame written by the peer is returned from Read.
-+func TestWSLaneReadDelivers(t *testing.T) {
-+	server, client := newWSPair(t)
-+	if err := server.WriteMessage(websocket.BinaryMessage, []byte("hello")); err != nil {
-+		t.Fatalf("server write: %v", err)
-+	}
-+
-+	buf := make([]byte, 16)
-+	n, err := NewWSLane(client).Read(buf)
-+	if err != nil || n != len("hello") {
-+		t.Fatalf("Read = (%d, %v), want (%d, nil)", n, err, len("hello"))
-+	}
-+}
-```
-
----
-
-### Incident Patch 3: `617a496c` (2026-09-03)
-**Commit Message**: tests: fix modbus mapper image import for the cri-o e2e job
-
-The cri-o container runtime e2e job is still failing on master after
-#7263. The mapper image is now imported, but the modbus-mapper pod
-never leaves Pending and E2E_MAPPER_1 times out:
-
-  Loaded image(s): localhost/v1.0.0:latest
-  + sudo podman tag localhost/v1.0.0:latest modbus-e2e-mapper:v1.0.0
-  successfully import modbus mapper image to CRI-O
-  ...
-  Wait for pods come into running status timeout: 4m0s
-
-#7263 takes the loaded image name from the podman load output, which
-handles podman releases naming the archive either localhost/v1.0.0:latest
-or after its original repository:tag. It then tags the image with the
-short name modbus-e2e-mapper:v1.0.0, which podman stores as
-localhost/modbus-e2e-mapper:v1.0.0. CRI-O resolves the short image name
-in the e2e deployment to docker.io/library/modbus-e2e-mapper:v1.0.0, so
-the image is not found locally and the pod cannot start.
-
-Keep reading the loaded name from the load output, but tag it with the
-fully qualified docker.io/library name CRI-O looks up, and fail the
-import step if that image is still missing so the problem surfaces here
-instead of as a pod timeout later.
-
-Signed
-
-**File**: `tests/scripts/generate_mapper.sh` (modified, +14/-3)
-```diff
-@@ -60,16 +60,27 @@ docker build -f Dockerfile_nostream -t ${mapper_image} . && echo "successfully b
- docker save -o modbus-mapper.tar ${mapper_image}
- 
- if [[ "${CONTAINER_RUNTIME}" = "cri-o" ]]; then
--  # Keep the short mapper image name used by the e2e deployment.
-+  # CRI-O resolves the short image name used by the e2e deployment to
-+  # docker.io/library/<name>, so the image has to be stored under that name.
-+  # A podman tag with a short target name stores localhost/<name> instead,
-+  # which CRI-O never finds, so always tag with the fully qualified name.
-+  crio_mapper_image=docker.io/library/${mapper_image}
-+  # Depending on the podman release, the loaded archive is named either after
-+  # the repository:tag it was saved with or localhost/v1.0.0:latest, so take
-+  # the name from the load output.
-   load_output=$(sudo podman load -i modbus-mapper.tar)
-   echo "${load_output}"
-   loaded_image=$(printf '%s\n' "${load_output}" | awk -F': ' '/^Loaded image/ {print $2}' | tail -n 1)
-   if [[ -z "${loaded_image}" ]]; then
-     echo "failed to detect loaded modbus mapper image name"
-     exit 1
-   fi
--  if [[ "${loaded_image}" != "${mapper_image}" ]]; then
--    sudo podman tag "${loaded_image}" "${mapper_image}"
-+  if [[ "${loaded_image}" != "${crio_mapper_image}" ]]; then
-+    sudo podman tag "${loaded_image}" "${crio_mapper_image}"
-+  fi
-+  if ! sudo podman image exists "${crio_mapper_image}"; then
-+    echo "modbus mapper image ${crio_mapper_image} not found in CRI-O storage"
-+    exit 1
-   fi
-   echo "successfully import modbus mapper image to CRI-O"
- elif [[ "${CONTAINER_RUNTIME}" = "isulad" ]]; then
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7357** (2026-10-19): tests/e2e: poll for running pods instead of watching for updates (@ryoheimorimoto)
 - **PR #7354** (2026-10-16): nodetask: add unit tests for the ConfigUpdateJob reconcile handler (@adity1raut)
 - **PR #7343** (closed): controllermanager: escape resource names in JSON patch paths (@nzy0804)
 - **PR #7342** (closed): controllermanager: escape resource names in JSON patch paths (@nzy0804)
 - **PR #7329** (2026-10-16): fix(viaduct): make fifo teardown safe and release parked QUIC readers (@ryoheimorimoto)
 - **PR #7324** (2026-09-23): Upgrade golang to 1.25.14 (@Shelley-BaoYue)
-- **PR #7323** (2026-09-22): ci: use GitHub-hosted ARM64 runners (@Shelley-BaoYue)
 
 ---
 
@@ -2374,65 +1442,88 @@ Signed
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. viaduct): make fifo teardown safe and release parked QUIC readers
+## X. Merge pull request #7357 from ryoheimorimoto/fix/e2e-wait-pods-running-flake
 
 **RULE**:
-When implementing operations in `edge/pkg/edgehub/clients/quicclient/quicclient_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubeedge/kubeedge. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tests/e2e/utils/pod.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubeedge/kubeedge. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e0efc034`: viaduct): make fifo teardown safe and release parked QUIC readers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `48feb970`: Merge pull request #7357 from ryoheimorimoto/fix/e2e-wait-pods-running-flake. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `edge/pkg/edgehub/clients/quicclient/quicclient_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/e2e/utils/pod.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
+	gomega.Eventually(func() int {
+		var count int
+		for i := range podList.Items {
+			pod := &podList.Items[i]
+			current, err := GetPod(c, pod.Namespace, pod.Name)
+			if err != nil {
+				Errorf("get pod %s/%s error: %v", pod.Namespace, pod.Name, err)
+				continue
+			}
 
-// TestUnInitReleasesBlockedReceive covers the reconnect path end to end over a
-// real QUIC session. EdgeHub's routeToEdge sits in Receive, and UnInit is the
-// only teardown the edge reaches: the reconnect loop calls it on the dead
-// client before connecting again. Receive has to return so that goroutine can
-// exit, otherwise every reconnect leaves one behind, blocked on the previous
-// connection.
-func TestUnInitReleasesBlockedReceive(t *testing.T) {
-	newTestServer(t)
+			pod.Status = current.Status
+			if pod.Status.Phase == v1.PodRunning {
+				count++
+				continue
+			}
 
-	qc := newTestQuicClient("uninit", "/tmp/edge.crt", "/tmp/edge.key", "/tmp/edge.crt")
-	if err := qc.Init(); err != nil {
-		t.Fatalf("failed to init, err: %v", err)
-	}
-
-	received := make(chan error, 1)
-	go func() {
-		_, err := qc.Receive()
-		received <- err
-	}()
-
-	// Confirm the reader is parked, so the test cannot pass with a teardown
-	// that only makes later reads fail.
-	select {
-	case err := <-received:
-		t.Fatalf("Receive() returned before UnInit, err: %v", err)
-	case <-time.After(200 * time.Millisecond):
-	}
-
-	qc.UnInit()
-
-	select {
-	case err := <-received:
-		if err == nil {
-			t.Error("Receive() returned a nil error after UnInit, want an error")
-		}
-	case <-time.After(5 * time.Second):
-		t.Fatal("Receive()
+			Infof("Pod %s/%s is still %s", pod.Namespace, pod.Name, pod.Status.Phase)
+		return count
+	}, timeout, 4*time.Second).Should(gomega.Equal(len(podList.Items)), "not all pods reached the Running phase")
+	Infof("All pods come into running status")
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	"k8s.io/client-go/tools/cache"
+	podRunningCount := 0
+	for _, pod := range podList.Items {
+		if pod.Status.Phase == v1.PodRunning {
+			podRunningCount++
+	}
+	if podRunningCount == len(podList.Items) {
+		Infof("All pods come into running status")
+		return
+	}
+	// define signal
+	signal := make(chan struct{})
+
+	// define list watcher
+	listWatcher := cache.NewListWatchFromClient(c.CoreV1().RESTClient(), "pods", v1.NamespaceAll, fields.Everything())
+
+	// new controller
+	_, controller := cache.NewInformer(listWatcher, &v1.Pod{}, 0,
+		cache.ResourceEventHandlerFuncs{
+			// receive update events
+			UpdateFunc: func(oldObj, newObj interface{}) {
+				// check update obj
+				p, ok := newObj.(*v1.Pod)
+				if !ok {
+					Fatalf("Failed to cast observed object to pod")
+				}
+
+				// calculate the pods in running status
+				count := 0
+				for i := range podList.Items {
+					// update pod status in podList
+					if podList.Items[i].Name == p.Name {
+						Infof("PodName: %s PodStatus: %s", p.Name, p.Status.Phase)
+						podList.Items[i].Status = p.Status
+					}
+					// check if the pod is in running status
+					if podList.Items[i].Status.Phase == v1.PodRunning {
+						count++
+					}
+				}
+
+				// send a
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e0efc034` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `48feb970` are properly handled with clean fallback behavior.

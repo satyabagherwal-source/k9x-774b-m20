@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T09:19:17.795Z",
-  "total_verified_learnings": 767,
+  "last_updated": "2026-10-19T09:41:56.738Z",
+  "total_verified_learnings": 771,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -6223,8 +6223,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "8e5e985c",
-      "content_hash": "811b2473e4d71dcbe32a5e348bfdcd669b126defbccea7d78e4232750f725be1",
+      "source_version": "94707284",
+      "content_hash": "42234c5218c0f2a66024b0ef516ddd64e703a4d294d920902aa8802da6de2ebf",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -6252,6 +6252,11 @@
           "number": 2449,
           "title": "build(deps): bump github/codeql-action from 4.38.3 to 4.39.0 (#4844)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2471,
+          "title": "deps: bump cc from 1.8 to 1.9; find-msvc-tools from 0.1.14 to 0.1.15",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6259,7 +6264,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T08:58:51.326Z",
+      "verified_at": "2026-10-19T09:35:29.403Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -12536,7 +12541,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/amazon/chronos-2",
       "source_version": "hf-amazon-chronos-2",
-      "content_hash": "76f5dafa08474ecb1cad303954d4054c506a3fa4b8b2e942d0d1763e946cad56",
+      "content_hash": "bc8482afacb30e02e6c8b49caece9ad0341b12404a1d6e729f2be325b16f5f15",
       "dossier_path": "07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md",
       "promoted_rules": [],
@@ -12558,7 +12563,7 @@
         "learn-huggingface-hf-amazon-chronos-2-mv49o8cx",
         "learn-huggingface-hf-amazon-chronos-2-mv4n1u6n"
       ],
-      "verified_at": "2026-10-18T01:45:17.988Z",
+      "verified_at": "2026-10-19T09:40:15.208Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -24177,22 +24182,35 @@
     "learn-github-imsnif-diskonaut": {
       "learning_id": "learn-github-imsnif-diskonaut",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "imsnif-diskonaut",
+      "source": "imsnif/diskonaut",
+      "repository": "imsnif/diskonaut",
       "slug": "imsnif-diskonaut",
       "platform": "github",
       "source_url": "https://github.com/imsnif/diskonaut",
-      "source_version": "HEAD",
-      "content_hash": "1db018f73f8eda24bd73f3d3c18cbd79d315b53e8bf46403a7d0f56bdf13bd4e",
+      "source_version": "65cd8290",
+      "content_hash": "608a96cdd961d640de6ea1915ad43e2eee906108ab2e9a98d2a181a9c848a9a0",
       "dossier_path": "07_PROJECT_LEARNING/imsnif-diskonaut-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/imsnif-diskonaut-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2472,
+          "title": "ui): allow zooming in/out/reset (#61)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.564Z"
+      "verified_at": "2026-10-19T09:38:57.539Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-infiniflow-infinity": {
       "learning_id": "learn-github-infiniflow-infinity",
@@ -26385,14 +26403,19 @@
       "slug": "kubeedge-kubeedge",
       "platform": "github",
       "source_url": "https://github.com/kubeedge/kubeedge",
-      "source_version": "68df9c23",
-      "content_hash": "8e1d5b5c10717259e0d8c9773be7be56aabbf27407f1ac4b82a561652b90d03e",
+      "source_version": "48feb970",
+      "content_hash": "07eaac25d30d54f5bbe678605b25c24b033de9cf9d342c7f9d708453fad1fa85",
       "dossier_path": "07_PROJECT_LEARNING/kubeedge-kubeedge-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kubeedge-kubeedge-learnings.md",
       "promoted_rules": [
         {
           "number": 1723,
           "title": "viaduct): make fifo teardown safe and release parked QUIC readers",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2469,
+          "title": "Merge pull request #7357 from ryoheimorimoto/fix/e2e-wait-pods-running-flake",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -26401,7 +26424,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:26:19.821Z",
+      "verified_at": "2026-10-19T09:35:22.594Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -28522,22 +28545,35 @@
     "learn-github-megabit-blazorise": {
       "learning_id": "learn-github-megabit-blazorise",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "megabit-blazorise",
+      "source": "Megabit/Blazorise",
+      "repository": "Megabit/Blazorise",
       "slug": "megabit-blazorise",
       "platform": "github",
       "source_url": "https://github.com/Megabit/Blazorise",
-      "source_version": "HEAD",
-      "content_hash": "48f341456c03f32074bb7c66926fdc36ae6731f3599102878f1f033c6645d1ac",
+      "source_version": "f5ef5fbf",
+      "content_hash": "5dd312b9f72c3de9a04b75297c3ccd49cde1d1690eb872fc352a0af69fd25f87",
       "dossier_path": "07_PROJECT_LEARNING/megabit-blazorise-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/megabit-blazorise-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2473,
+          "title": "FilePicker: support @bind-Files and preloaded files (#6857)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.226Z"
+      "verified_at": "2026-10-19T09:41:56.729Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-megh-bari-pattern-craft": {
       "learning_id": "learn-github-megh-bari-pattern-craft",
@@ -29202,22 +29238,35 @@
     "learn-github-microsoft-react-native-windows": {
       "learning_id": "learn-github-microsoft-react-native-windows",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "microsoft-react-native-windows",
+      "source": "microsoft/react-native-windows",
+      "repository": "microsoft/react-native-windows",
       "slug": "microsoft-react-native-windows",
       "platform": "github",
       "source_url": "https://github.com/microsoft/react-native-windows",
-      "source_version": "HEAD",
-      "content_hash": "0a3cd13be8a22202ce5509024e6695963986151b229fd26b759e2f71b90d214f",
+      "source_version": "cf0d3767",
+      "content_hash": "986c81cd90fbd8f6b4cfde0afd61a31eeef9dd1749182c6830a394e1812bf88b",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2468,
+          "title": "crash modifying outline property (#16386)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.330Z"
+      "verified_at": "2026-10-19T09:35:20.692Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-microsoft-security-101": {
       "learning_id": "learn-github-microsoft-security-101",
@@ -33208,22 +33257,35 @@
     "learn-github-paradedb-paradedb": {
       "learning_id": "learn-github-paradedb-paradedb",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "paradedb-paradedb",
+      "source": "paradedb/paradedb",
+      "repository": "paradedb/paradedb",
       "slug": "paradedb-paradedb",
       "platform": "github",
       "source_url": "https://github.com/paradedb/paradedb",
-      "source_version": "HEAD",
-      "content_hash": "bee7926a832d9534662ac3a921ecd9b091d556b03fa4a5bd3304e3eb2790af5e",
+      "source_version": "fa7c7432",
+      "content_hash": "67e6367e4ce55053a21951853eef357bf1cfde31b3382a26702717ef2628cc6d",
       "dossier_path": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2470,
+          "title": "launch the background merger under backpressure and release its pins per candida",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.982Z"
+      "verified_at": "2026-10-19T09:35:27.441Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-parthjadhav-app-store-screenshots": {
       "learning_id": "learn-github-parthjadhav-app-store-screenshots",
@@ -84618,6 +84680,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T09:19:17.784Z"
+    },
+    "rule-2468": {
+      "learning_id": "rule-2468",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2468,
+      "title": "crash modifying outline property (#16386)",
+      "source_url": "https://github.com/microsoft/react-native-windows",
+      "source_version": "cf0d3767",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T09:35:20.693Z"
+    },
+    "rule-2469": {
+      "learning_id": "rule-2469",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2469,
+      "title": "Merge pull request #7357 from ryoheimorimoto/fix/e2e-wait-pods-running-flake",
+      "source_url": "https://github.com/kubeedge/kubeedge",
+      "source_version": "48feb970",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T09:35:22.594Z"
+    },
+    "rule-2470": {
+      "learning_id": "rule-2470",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2470,
+      "title": "launch the background merger under backpressure and release its pins per candida",
+      "source_url": "https://github.com/paradedb/paradedb",
+      "source_version": "fa7c7432",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T09:35:27.442Z"
+    },
+    "rule-2471": {
+      "learning_id": "rule-2471",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2471,
+      "title": "deps: bump cc from 1.8 to 1.9; find-msvc-tools from 0.1.14 to 0.1.15",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "94707284",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T09:35:29.403Z"
+    },
+    "rule-2472": {
+      "learning_id": "rule-2472",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2472,
+      "title": "ui): allow zooming in/out/reset (#61)",
+      "source_url": "https://github.com/imsnif/diskonaut",
+      "source_version": "65cd8290",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T09:38:57.539Z"
+    },
+    "rule-2473": {
+      "learning_id": "rule-2473",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2473,
+      "title": "FilePicker: support @bind-Files and preloaded files (#6857)",
+      "source_url": "https://github.com/Megabit/Blazorise",
+      "source_version": "f5ef5fbf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T09:41:56.729Z"
     }
   },
   "aliases": {

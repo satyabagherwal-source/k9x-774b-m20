@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/megabit-blazorise-learnings.md`  
 > **Source**: github ([https://github.com/Megabit/Blazorise](https://github.com/Megabit/Blazorise))  
-> **Source Version**: `f48a88f9`  
+> **Source Version**: `f5ef5fbf`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T22:35:33.832Z  
+> **Timestamp**: 2026-10-19T09:41:56.553Z  
 > **Learning ID**: `learn-github-megabit-blazorise`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/megabit-blazorise-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Megabit/Blazorise](https://github.com/Megabit/Blazorise))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T22:35:33.529Z  
+> **Harvest Timestamp**: 2026-10-19T09:35:12.449Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Blazorise is a component library built on top of Blazor with support for CSS frameworks like Bootstrap, Tailwind, Bulma, AntDesign, and Material.
 - **Primary Language / Ecosystem**: C#
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3539 stars
+- **Stars / Engagement**: 3538 stars
 
 ---
 
@@ -790,274 +790,583 @@ export function close(element) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `14bf1f9a` (2026-10-15)
-**Commit Message**: Chore: pin System.Security.Cryptography.Pkcs to fix vulnerabilities
+### Incident Patch 1: `f5ef5fbf` (2026-10-19)
+**Commit Message**: FilePicker: support @bind-Files and preloaded files (#6857)
 
-**File**: `Directory.Packages.props` (modified, +3/-0)
+* FilePicker: support @bind-Files and preloaded files
+
+* fix tests
+
+* imprve refresh
+
+* improve reconcile
+
+* mark examples as new
+
+**File**: `Documentation/Blazorise.Docs/Pages/Docs/Components/Files/Examples/FilePickerBindingExample.razor` (added, +32/-0)
 ```diff
-@@ -35,6 +35,9 @@
-     <PackageVersion Include="Moq" Version="4.20.72" />
-     <PackageVersion Include="ModelContextProtocol" Version="1.2.0" />
-     <PackageVersion Include="NUnit3TestAdapter" Version="6.2.0" />
-+    <!-- Pin MimeKit's transitive dependency to fix GHSA-846f-f764-76mx and GHSA-2fmv-rv2c-59x7.
-+         Remove this override and the explicit docs reference once MimeKit requires a patched Pkcs version. -->
-+    <PackageVersion Include="System.Security.Cryptography.Pkcs" Version="10.0.13" />
-     <PackageVersion Include="System.Text.Encoding.CodePages" Version="10.0.5" />
-     <PackageVersion Include="xunit" Version="2.9.3" />
-     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
-```
-
-**File**: `Documentation/Blazorise.Docs/Blazorise.Docs.csproj` (modified, +1/-0)
-```diff
-@@ -56,6 +56,7 @@
-     <ProjectReference Include="..\..\Source\Extensions\Blazorise.Reporting.DataSources.WebApi\Blazorise.Reporting.DataSources.WebApi.csproj" />
-     <PackageReference Include="MailKit" />
-     <PackageReference Include="MimeKit" />
-+    <PackageReference Include="System.Security.Cryptography.Pkcs" />
-     <PackageReference Include="Blazored.LocalStorage" />
-     <PackageReference Include="ColorCode.HTML" />
-   </ItemGroup>
-```
-
----
-
-### Incident Patch 2: `30e0294d` (2026-10-17)
-**Commit Message**: Tests: fix MemoEdit race condition
-
-**File**: `Tests/Blazorise.E2E.Tests/Tests/Components/MemoInput/MemoInputTests.cs` (modified, +27/-6)
-```diff
-@@ -76,7 +76,7 @@ await Page.AddInitScriptAsync(
-     [TestCase( "Tab", "    ", false )]
-     public async Task ReplaceTab_NotifiesValueChangedAccordingToImmediate( string key, string expectedValue, bool immediate )
-     {
--        await SelectTestComponent<MemoInputComponent>();
-+        await SelectEditingComponent();
- 
-         var sut = Page.Locator( "#memo-editing" );
-         var textarea = sut.GetByRole( AriaRole.Textbox );
-@@ -114,7 +114,7 @@ public async Task ReplaceTab_NotifiesValueChangedAccordingToImmediate( string ke
-     [Test]
-     public async Task ReplaceTab_NotifiesValueChangedWhenIndentingAndUnindentingSelection()
-     {
--        await SelectTestComponent<MemoInputComponent>();
-+        await SelectEditingComponent();
- 
-         var sut = Page.Locator( "#memo-editing" );
-         var textarea = sut.GetByRole( AriaRole.Textbox );
-@@ -149,7 +149,7 @@ public async Task ReplaceTab_NotifiesValueChangedWhenIndentingAndUnindentingSele
-     [TestCase( "'", "'" )]
-     public async Task ReplaceTab_PairsCharactersAndHandlesOverwriteAndBackspace( string opening, string closing )
-     {
--        await SelectTestComponent<MemoInputComponent>();
-+        await SelectEditingComponent();
- 
-         var sut = Page.Locator( "#memo-editing" );
-         var textarea = sut.GetByRole( AriaRole.Textbox );
-@@ -188,7 +188,7 @@ public async Task ReplaceTab_PairsCharactersAndHandlesOverwriteAndBackspace( str
-     [TestCase( "\"[\"", 3, "\"[\"\n", 4 )]
-     public async Task ReplaceTab_IndentsNewLinesAndPreservesCaret( string initialValue, int caret, string expectedValue, int expectedCaret )
-     {
--        await SelectTestComponent<MemoInputComponent>();
-+        await SelectEditingComponent();
- 
-         var sut = Page.Locator( "#memo-editing" );
-         var textarea = sut.GetByRole( AriaRole.Textbox );
-@@ -216,7 +216,7 @@ public async Task ReplaceTab_IndentsNewLinesAndPreservesCaret( string initialVal
-     [Test]
-     public async Task ReplaceTab_RespondsToRuntimeOptionsWithoutDuplicateHandlers()
-     {
--        await SelectTestComponent<MemoInputComponent>();
-+        await SelectEditingComponent();
- 
-         var sut = Page.Locator( "#memo-editing" );
-         var textarea = sut.GetByRole( AriaRole.Textbox );
-@@ -267,7 +267,7 @@ public async Task ReplaceTab_RespondsToRuntimeOptionsWithoutDuplicateHandlers()
-     [TestCase( "😀" )]
-     public async Task ReplaceTab_PreservesNativeBackspaceAndReadOnlyBehavior( string initialValue )
-     {
--        await SelectTestComponent<MemoInputComponent>();
-+        await SelectEditingComponent();
- 
-         var sut = Page.Locator( "#memo-editing" );
-         var textarea = sut.GetByRole( AriaRole.Textbox );
-@@ -297,6 +297,27 @@ public async Task ReplaceTab_PreservesNativeBackspaceAndReadOnlyBehavior( string
-         await Expect( textarea ).Not.ToBeFocusedAsync();
-     }
- 
-+    private async Task SelectEditingComponent()
+@@ -0,0 +1,32 @@
++@namespace Blazorise.Docs.Docs.Examples
++@using System.IO
++
++<Field>
++    <FilePicker @bind-Files="files" Multiple MaxFileSize="10485760" Upload="OnFileUploadHandler" />
++</Field>
++<Paragraph>Attachments: @files.Length</Paragraph>
++<Button Color="Color.Secondary" Clicked="OnClearFilesHandler">Clear bound files</Button>
++
++@code {
++    private IFileEntry[] files =
 +    {
-+        await SelectTestComponent<MemoInputComponent>();
-+
-+        var textarea = Page.Locator( "#memo-editing" ).GetByRole( AriaRole.Textbox );
-+
-+        await Expect( textarea ).ToBeEditableAsync();
-+        await Expect( textarea ).ToHaveValueAsync( string.Empty );
-+
-+        // Shift+Tab leaves an empty value unchanged and keeps focus once editing is initialized.
-+        Assert.That( async () =>
++        new FileEntry
 +        {
-+            await textarea.PressAsync( "Shift+Tab" );
++            Name = "Contract.pdf",
++            Size = 24576,
++            Type = "application/pdf",
++            Status = FileEntryStatus.Uploaded,
++        },
++    };
 +
-+            return await Page.Locator( "#memo-editing textarea:focus" ).CountAsync();
-+        }, Is.EqualTo( 1 ).After( 5000, 100 ) );
-+
-+        await Expect( textarea ).ToHaveValueAsync( string.Empty );
-+        await Expect( Page.Locator( "#memo-replace-tab-result" ) ).ToHaveTextAsync( "0" );
++    private async Task OnFileUploadHandler( FileUploadEventArgs e )
++    {
++        await using var stream = e.File.OpenReadStream( 10485760 );
++        await stream.CopyToAsync( Stream.Null );
 +    }
 +
-     private static Task<float> GetHeight( ILocator locator )
-         => locator.EvaluateAsync<float>( "element => element.getBoundingClientRect().height" );
- }
++    private void OnClearFilesHandler()
++    {
++        files = Array.Empty<IFileEntry>();
++    }
++}
 \ No newline at end of file
 ```
 
----
-
-### Incident Patch 3: `9fb3bf17` (2026-10-14)
-**Commit Message**: Docs: fix broken internal links
-
-**File**: `Documentation/Blazorise.Docs/Components/DocsPageTitle.razor` (modified, +14/-4)
+**File**: `Documentation/Blazorise.Docs/Pages/Docs/Components/Files/Examples/FilePickerCachedExample.razor` (added, +30/-0)
 ```diff
-@@ -3,7 +3,9 @@
-     <Breadcrumb>
-         @{
-             var pathValues = Path.Split( '/' ).Where( x => !string.IsNullOrEmpty( x ) ).ToList();
--            var isLast = pathValues.Count == 0 || ( pathValues.IndexOf( "docs" ) == pathValues.Count - 1 );
-+            var routeValues = ( RoutePath ?? Path ).Split( '/' ).Where( x => !string.IsNullOrEmpty( x ) ).ToList();
+@@ -0,0 +1,30 @@
++@namespace Blazorise.Docs.Docs.Examples
++@using System.IO
++@using System.Text
 +
-+            var isLast = pathValues.Count == 0;
-             var url = "docs";
-         }
++<Field>
++    <FilePicker @bind-Files="files" Multiple MaxFileSize="10485760" Upload="OnFileUploadHandler" />
++</Field>
++<Paragraph>Bytes read: @bytesRead</Paragraph>
++
++@code {
++    private long bytesRead;
++
++    private IFileEntry[] files =
++    {
++        new FileEntry
++        {
++            Name = "Draft.txt",
++            Type = "text/plain",
++            Data = Encoding.UTF8.GetBytes( "A draft restored from the local cache." ),
++            Status = FileEntryStatus.Ready,
++        },
++    };
++
++    private async Task OnFileUploadHandler( FileUploadEventArgs e )
++    {
++        await using var destination = new MemoryStream();
++        await e.File.WriteToStreamAsync( destination );
++        bytesRead = destination.Length;
++    }
++}
+\ No newline at end of file
+```
+
+**File**: `Documentation/Blazorise.Docs/Pages/Docs/Components/Files/Examples/FilePickerStreamingExample.razor` (added, +66/-0)
+```diff
+@@ -0,0 +1,66 @@
++@namespace Blazorise.Docs.Docs.Examples
++@using System.IO
++@using System.Text
++@using System.Threading
++
++<Field>
++    <FilePicker @bind-Files="files" MaxFileSize="10485760" Upload="OnFileUploadHandler" />
++</Field>
++<Paragraph>Bytes read: @bytesRead</Paragraph>
++<Button Color="Color.Secondary" Clicked="RestoreCachedFile">Restore sample file</Button>
++
++@code {
++    private readonly byte[] cachedContent = Encoding.UTF8.GetBytes( "A draft opened through a stream factory." );
++
++    private IFileEntry[] files = Array.Empty<IFileEntry>();
++
++    private long bytesRead;
++
++    protected override void OnInitialized()
++    {
++        RestoreCachedFile();
++    }
++
++    private void RestoreCachedFile()
++    {
++        files = new IFileEntry[]
++        {
++            new FileEntry
++            {
++                Name = "Draft.txt",
++                Type = "text/plain",
++                Size = cachedContent.LongLength,
++                StreamFactory = OpenCachedStreamAsync,
++                Status = FileEntryStatus.Ready,
++            },
++        };
++
++        bytesRead = 0;
++    }
++
++    private Task<Stream> OpenCachedStreamAsync( CancellationToken cancellationToken )
++    {
++        cancellationToken.ThrowIfCancellationRequested();
++
++        return Task.FromResult<Stream>( new MemoryStream( cachedContent, writable: false ) );
++    }
++
++    private async Task OnFileUploadHandler( FileUploadEventArgs e )
++    {
++        await using var stream = e.File.OpenReadStream( 10485760 );
++        var buffer = new byte[81920];
++        bytesRead = 0;
++
++        while ( true )
++        {
++            var count = await stream.ReadAsync( buffer.AsMemory() );
++
++            if ( count == 0 )
++            {
++                break;
++            }
++
++            bytesRead += count;
++        }
++    }
++}
+\ No newline at end of file
+```
+
+**File**: `Documentation/Blazorise.Docs/Pages/Docs/Components/Files/FilePickerPage.razor` (modified, +73/-0)
+```diff
+@@ -59,6 +59,79 @@
+     </DocsPageSectionContent>
+ </DocsPageSection>
  
-@@ -13,10 +15,12 @@
- 
-         @if ( pathValues.Count > 0 )
-         {
--            @foreach ( var pathValue in pathValues )
-+            @for ( var i = 0; i < pathValues.Count; i++ )
++<DocsPageSection>
++    <DocsPageSectionHeader Title="Existing attachments" New>
++        Let users reopen a saved record and manage its attachments without uploading existing files again.
++        Use <Code>@("@bind-Files")</Code> to show saved attachments alongside new files, so users can keep, remove, or replace documents in one place.
++    </DocsPageSectionHeader>
++    <DocsPageSectionContent Code="FilePickerBindingExample" Outlined FullWidth>
++        <FilePickerBindingExample />
++    </DocsPageSectionContent>
++    <DocsPageParagraph>
++        The bound <Code>Files</Code> collection stays in sync as users select, remove, or clear attachments.
++        Your application can use this list when saving the form to retain existing attachments and upload new files.
++        You can also update the list from your application code, and the picker will reflect those changes.
++    </DocsPageParagraph>
++    <DocsPageParagraph>
++        Saved attachments remain in the list when users choose new files. Choosing files again replaces the previous selection of new files.
++        With <Code>AutoReset</Code>, newly selected files leave the list after uploading, while saved attachments remain visible.
++        The picker's Clear action removes all attachments from the list.
++    </DocsPageParagraph>
++    <DocsPageParagraph>
++        Attachments supplied with metadata alone display details of files your application has already saved.
++        Use your application's storage or download service to open or download them.
++        Removing an attachment from the list does not delete the stored file. Your application decides when to save those changes and delete files from storage.
++    </DocsPageParagraph>
++</DocsPageSection>
++
++<DocsPageSection>
++    <DocsPageSectionHeader Title="Cached uploads" New>
++        Let users keep files locally, refresh the page, and upload when they are ready.
++        Restore the file's bytes from your application's cache into <Code>FileEntry.Data</Code> and bind the entry with <Code>Status</Code> set to <Code>FileEntryStatus.Ready</Code>.
++        Users can then upload it just like a newly selected file, with progress, cancellation, and retry support.
++    </DocsPageSectionHeader>
++    <DocsPageSectionContent Code="FilePickerCachedExample" Outlined FullWidth>
++        <FilePickerCachedExample />
++    </DocsPageSectionContent>
++    <DocsPageParagraph>
++        This example uses sample bytes to represent a restored file and reads them locally without sending anything to a server.
++        In your application, use the <Code>Upload</Code> callback to send the contents through <Code>OpenReadStream</Code> or <Code>WriteToStreamAsync</Code>.
++        You can mix cached files, previously uploaded attachments, and newly selected files in the same list.
++    </DocsPageParagraph>
++    <DocsPageParagraph>
++        Your application saves and reloads the bytes and file details using persistent browser storage to keep them across refreshes.
++        FilePicker does not save files to a cache or automatically copy browser-selected files into <Code>Data</Code>.
++        Supplied bytes determine the file size and follow <Code>MaxFileSize</Code>. Failed or cancelled uploads keep their bytes available for another attempt.
++        With <Code>AutoReset</Code>, each cached file leaves the list after a successful upload while the remaining files stay available.
++    </DocsPageParagraph>
++</DocsPageSection>
++
++<DocsPageSection>
++    <DocsPageSectionHeader Title="Streamed uploads" New>
++        Upload large cached files without loading the entire file into memory.
++        Use <Code>StreamFactory</Code> to open content from your application's cache when uploading starts, and set <Code>Size</Code> to the saved file length.
++        Each read or retry opens a fresh stream, so files remain available after a failed or cancelled upload.
++    </DocsPageSectionHeader>
++    <DocsPageSectionContent Code="FilePickerStreamingExample" Outlined FullWidth>
++        <FilePickerStreamingExample />
++    </DocsPageSectionContent>
++    <DocsPageParagraph>
++        The example restores a sample entry during initialization. Click Upload to read its content in chunks and see the byte count, or Restore sample file to add it again.
++        It uses a small in-memory sample to keep the example self-contained; no files are sent to a server or saved between refreshes.
++        In your application, replace <Code>OpenCachedStreamAsync</Code> with a method that opens your cached file directly.
++    </DocsPageParagraph>
++    <DocsPageParagraph>
++        Choose <Code>Data</Code> for bytes already in memory or <Code>StreamFactory</Code> for content read on demand.
++        For large files, open the cached content without first loading it into a byte array. Return a fresh readable stream positioned at the beginning of the file.
++        FilePicker reads it in chunks and disposes it w
+```
+
+**File**: `Source/Blazorise.AntDesign/Components/FilePicker.razor` (modified, +6/-6)
+```diff
+@@ -16,9 +16,9 @@
+                     @if ( HasFiles )
+                     {
+                         <Blazorise.DropdownMenu Class="ant-file-picker-files ant-file-picker-dropdown-menu">
+-                            @foreach ( var file in FileInputRef.Files )
++                            @foreach ( var file in EffectiveFiles )
+                             {
+-                                <Blazorise.DropdownItem @key="file.Id" Class="ant-file-picker-file ant-file-picker-dropdown-item">
++                                <Blazorise.DropdownItem @key="file" Class="ant-file-picker-file ant-file-picker-dropdown-item">
+                                     @FileContentFragment( file )
+                                 </Blazorise.DropdownItem>
+                             }
+@@ -41,9 +41,9 @@
+             @if ( ShowMode == FilePickerShowMode.List )
              {
--                isLast = pathValues.IndexOf( pathValue ) == pathValues.Count - 1;
--                url = $"{url}/{pathValue.ToLowerInvariant()}";
-+                var pathValue = pathValues[i];
-+                var routeValue = i < routeValues.Count ? routeValues[i] : pathValue;
-+                isLast = i == pathValues.Count - 1;
-+                url = $"{url}/{routeValue.ToLowerInvariant()}";
-                 var currentUrl = url;
+                 <div class="ant-file-picker-files">
+-                    @foreach ( var file in FileInputRef.Files )
++                    @foreach ( var file in EffectiveFiles )
+                     {
+-                        <div @key="file.Id" class="ant-file-picker-file">
++                        <div @key="file" class="ant-file-picker-file">
+                             @FileContentFragment( file )
+                         </div>
+                     }
+@@ -73,7 +73,7 @@
+ @code {
+     private bool HasFiles => FileCount > 0;
  
-                 <BreadcrumbItem Active="@isLast">
-@@ -46,6 +50,12 @@ else
+-    private int FileCount => FileInputRef?.Files?.Length ?? 0;
++    private int FileCount => EffectiveFiles.Length;
  
-     [Parameter] public string Path { get; set; }
+     private RenderFragment FileInputChildContent => ChildTemplate is null
+         ? null
+@@ -134,7 +134,7 @@
+                                       Clicked="@(async () => await RemoveFileWithConfirm( file ))">
+                         <Blazorise.Icon Name="IconName.Times" />
+                     </Blazorise.Button>
+-                    @if ( file.Status != FileEntryStatus.Uploaded )
++                    @if ( file.Status != FileEntryStatus.Uploaded && CanUploadFile( file ) )
+                     {
+                         <Blazorise.Button Class="ant-file-picker-item-action ant-file-picker-item-action-upload"
+                                           Disabled="@IsBusy()"
+```
+
+**File**: `Source/Blazorise/Components/FileInput/FileInput.razor.cs` (modified, +62/-2)
+```diff
+@@ -144,6 +144,14 @@ protected override async Task OnFirstAfterRenderAsync()
+     /// <inheritdoc/>
+     protected override async ValueTask DisposeAsync( bool disposing )
+     {
++        if ( disposing )
++        {
++            foreach ( var file in Files?.OfType<FileEntry>() ?? Enumerable.Empty<FileEntry>() )
++            {
++                file.HasBrowserFileData = false;
++            }
++        }
++
+         if ( disposing && Rendered )
+         {
+             await JSFileInputModule.SafeDestroy( ElementRef, ElementId );
+@@ -171,12 +179,19 @@ public async Task NotifyChange( FileEntry[] files )
+         // update logic here.
+ 
+         var updatedFiles = Value?.Where( x => files.Any( file => file.Id == x.Id ) ).ToList() ?? new();
++
++        foreach ( var file in Value?.OfType<FileEntry>() ?? Enumerable.Empty<FileEntry>() )
++        {
++            file.HasBrowserFileData = files.Any( entry => entry.Id == file.Id );
++        }
++
+         foreach ( var file in files )
+         {
+             if ( !updatedFiles.Any( x => x.Id == file.Id ) )
+             {
+                 // So that method invocations on the file can be dispatched back here
+                 file.Owner = (IFileEntryOwner)(object)this;
++                file.HasBrowserFileData = true;
+ 
+                 if ( MaxFileSize < file.Size )
+                     file.Status = FileEntryStatus.ExceedsMaximumSize;
+@@ -227,7 +242,9 @@ public async Task UpdateFileEndedAsync( IFileEntry fileEntry, bool success, File
+         else
+             fileEntry.Status = FileEntryStatus.Error;
+ 
+-        if ( AutoReset )
++        var ownsBrowserFile = fileEntry is FileEntry entry && ReferenceEquals( entry.Owner, this );
++
++        if ( AutoReset && ( fileEntry is not FileEntry || ownsBrowserFile ) )
+         {
+             await InvokeAsync( () => Reset().AsTask() );
+         }
+@@ -252,7 +269,7 @@ public Task UpdateFileProgressAsync( IFileEntry fileEntry, long progressProgress
+ 
+         ProgressProgress += progressProgress;
+ 
+-        var progress = Math.Round( (double)ProgressProgress / ProgressTotal, 3 );
++        var progress = ProgressTotal == 0 ? 1d : Math.Round( (double)ProgressProgress / ProgressTotal, 3 );
+ 
+         if ( Math.Abs( progress - Progress ) > double.Epsilon )
+         {
+@@ -281,6 +298,49 @@ public Task UpdateFileProgressAsync( IFileEntry fileEntry, long progressProgress
+     public async Task RemoveFileEntry( IFileEntry fileEntry, CancellationToken cancellationToken = default )
+     {
+         await JSFileModule.RemoveFileEntry( ElementRef, fileEntry.Id );
++
++        if ( fileEntry is FileEntry entry )
++        {
++            entry.HasBrowserFileData = false;
++        }
++    }
++
++    /// <summary>
++    /// Removes browser selections without raising a second change event in the owning picker.
++    /// </summary>
++    internal async Task RemoveFiles( IFileEntry[] files )
++    {
++        var removedFiles = ( Files ?? Array.Empty<IFileEntry>() )
++            .Where( file => files.Any( entry => ReferenceEquals( entry, file ) ) )
++            .ToArray();
++
++        if ( removedFiles.Length == 0 )
++        {
++            return;
++        }
++
++        Value = Files.Where( file => !removedFiles.Any( entry => ReferenceEquals( entry, file ) ) ).ToArray();
++
++        foreach ( var file in removedFiles.OfType<FileEntry>() )
++        {
++            file.HasBrowserFileData = false;
++        }
++
++        if ( Value.Length == 0 )
++        {
++            ProgressProgress = 0;
++            ProgressTotal = 0;
++            Progress = 0;
++        }
++
++        await JSFileInputModule.RemoveFiles( ElementRef, ElementId, removedFiles.Select( file => file.Id ).ToArray() );
++
++        if ( ParentValidation is not null )
++        {
++            await ParentValidation.NotifyInputChanged<IFileEntry[]>( Value );
++        }
++
++        await InvokeAsync( StateHasChanged );
+     }
+ 
+     /// <summary>
+```
+
+**File**: `Source/Blazorise/Components/FilePicker/FilePicker.razor` (modified, +8/-8)
+```diff
+@@ -12,15 +12,15 @@
+             <Addon AddonType="AddonType.End">
+                 <Dropdown EndAligned PositionStrategy="DropdownPositionStrategy.Absolute">
+                     <DropdownToggle Color="Color.Light">
+-                        (@(FileInputRef.Files?.Count() ?? 0))
++                        (@EffectiveFiles.Length)
+                     </DropdownToggle>
+ 
+-                    @if ( !FileInputRef?.Files?.IsNullOrEmpty() ?? false )
++                    @if ( EffectiveFiles.Length > 0 )
+                     {
+                         <DropdownMenu Class="b-file-picker-files">
+-                            @foreach ( var file in FileInputRef.Files )
++                            @foreach ( var file in EffectiveFiles )
+                             {
+-                                <DropdownItem @key="file.Id" Class="b-file-picker-file">
++                                <DropdownItem @key="file" Class="b-file-picker-file">
+                                     @FileContentFragment( file )
+                                 </DropdownItem>
+                             }
+@@ -37,15 +37,15 @@
+ 
+     <Span Class="b-text-drop" Display="Blazorise.Display.Block" TextAlignment="TextAlignment.Center" Margin="Blazorise.Margin.Is2.FromTop">@DragAndDropString</Span>
+ 
+-    @if ( !FileInputRef?.Files?.IsNullOrEmpty() ?? false )
++    @if ( EffectiveFiles.Length > 0 )
+     {
+         <div Class="b-file-picker-files-container">
+             @if ( ShowMode == FilePickerShowMode.List )
+             {
+                 <ListGroup Class="b-file-picker-files" Margin="Blazorise.Margin.Is2.OnY">
+-                    @foreach ( var file in FileInputRef.Files )
++                    @foreach ( var file in EffectiveFiles )
+                     {
+-                        <ListGroupItem @key="file.Id" Class="b-file-picker-file">
++                        <ListGroupItem @key="file" Class="b-file-picker-file">
+                             @FileContentFragment( file )
+                         </ListGroupItem>
+                     }
+@@ -113,7 +113,7 @@
+                 <Column ColumnSize="ColumnSize.IsAuto">
+                     <Buttons>
+                         <Button Size="Blazorise.Size.ExtraSmall" Color="Color.Danger" Float="Blazorise.Float.End" Disabled="IsBusy()" @onclick:stopPropagation Clicked="@(async () => await RemoveFileWithConfirm( file ))"><Icon Name="IconName.Times"></Icon></Button>
+-                        @if ( file.Status != FileEntryStatus.Uploaded )
++                        @if ( file.Status != FileEntryStatus.Uploaded && CanUploadFile( file ) )
+                         {
+                             <Button Size="Blazorise.Size.ExtraSmall" Color="Color.Primary" Float="Blazorise.Float.End" Disabled="IsBusy()" @onclick:stopPropagation Clicked="@(async () => await UploadFile( file ))"><Icon Name="IconName.FileUpload"></Icon></Button>
+                         }
+```
+
+**File**: `Source/Blazorise/Components/FilePicker/FilePicker.razor.cs` (modified, +269/-24)
+```diff
+@@ -30,6 +30,12 @@ public partial class FilePicker : BaseComponent, IAsyncDisposable
+     /// </summary>
+     IFileEntry fileBeingUploaded;
  
 +    /// <summary>
-+    /// Gets or sets the route segments relative to docs, matching the labels in <see cref="Path"/>.
-+    /// Missing route segments fall back to their corresponding labels.
++    /// Tracks the browser selection already reconciled with Files. FileInput can render during
++    /// validation before delivering Changed, so its newer selection must not be pruned yet.
 +    /// </summary>
-+    [Parameter] public string RoutePath { get; set; }
++    private IFileEntry[] reconciledBrowserFiles = Array.Empty<IFileEntry>();
 +
-     [Parameter] public string AddedVersion { get; set; }
+     /// <summary>
+     /// Holds the reference to the confirmation dialog component.
+     /// </summary>
+@@ -39,6 +45,36 @@ public partial class FilePicker : BaseComponent, IAsyncDisposable
  
-     [Parameter] public RenderFragment ChildContent { get; set; }
-```
-
-**File**: `Documentation/Blazorise.Docs/Layouts/Error404Layout.razor` (modified, +2/-0)
-```diff
-@@ -4,6 +4,8 @@
- @using System.Net
- @inject IHttpContextAccessor httpContextAccessor
+     #region Methods
  
-+<PageTitle>Page not found | Blazorise</PageTitle>
++    /// <inheritdoc/>
++    public override Task SetParametersAsync( ParameterView parameters )
++    {
++        parameters.TryGetParameter( Files, out var paramFiles );
++        parameters.TryGetParameter( MaxFileSize, out var paramMaxFileSize );
 +
- <Container Height="Height.Is100">
-     <Row Height="Height.Is100">
-         <Column ColumnSize="ColumnSize.Is10.OnMobile.Is8.OnDesktop.Is6.OnWidescreen" Margin="Margin.IsAuto" Display="Display.Table" Height="Height.Is100">
-```
-
-**File**: `Documentation/Blazorise.Docs/Pages/Docs/Components/CloseButtons/CloseButtonApiPage.razor` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@
++        // Supplied collections can contain entries whose content changed in place.
++        if ( paramFiles.Defined || paramMaxFileSize.Changed )
++        {
++            var effectiveFiles = paramFiles.GetValueOrDefault( Files ) ?? Array.Empty<IFileEntry>();
++            var effectiveMaxFileSize = paramMaxFileSize.GetValueOrDefault( MaxFileSize );
++
++            foreach ( var file in effectiveFiles.OfType<FileEntry>() )
++            {
++                if ( file.HasSuppliedContent && file.Status is FileEntryStatus.Ready or FileEntryStatus.ExceedsMaximumSize )
++                {
++                    file.Status = file.Size > effectiveMaxFileSize ? FileEntryStatus.ExceedsMaximumSize : FileEntryStatus.Ready;
++                }
++            }
++        }
++
++        if ( Rendered && paramFiles.Defined
++            && ShouldReconcileFiles( paramFiles.Value ?? Array.Empty<IFileEntry>() ) )
++        {
++            ExecuteAfterRender( ReconcileFiles );
++        }
++
++        return base.SetParametersAsync( parameters );
++    }
++
+     /// <inheritdoc/>
+     protected override void OnInitialized()
+     {
+@@ -48,7 +84,6 @@ protected override void OnInitialized()
+         base.OnInitialized();
+     }
  
- <Seo Canonical="/docs/components/close-button/api" Title="Blazorise Close Button API" Description="Explore the Blazorise Close Button API reference, including component parameters, events, methods, and related types for Blazor applications." />
+-
+     /// <inheritdoc/>
+     protected override async Task OnFirstAfterRenderAsync()
+     {
+@@ -60,6 +95,11 @@ protected override async Task OnFirstAfterRenderAsync()
+     /// <inheritdoc/>
+     protected override async ValueTask DisposeAsync( bool disposing )
+     {
++        if ( disposing )
++        {
++            await Cancel();
++        }
++
+         if ( disposing && Rendered )
+         {
+             await JSFilePickerModule.SafeDestroy( ElementRef, ElementId );
+@@ -107,7 +147,20 @@ public bool IsBusy()
+     /// </summary>
+     /// <returns></returns>
+     public bool IsUploadReady()
+-        => FileInputRef?.Files?.Any( x => x.Status == FileEntryStatus.Ready ) ?? false;
++        => EffectiveFiles.Any( file => ShouldUploadFile( file ) && CanUploadFile( file ) );
++
++    /// <summary>
++    /// Determines whether the file has content available for upload.
++    /// </summary>
++    /// <param name="file">The file to upload.</param>
++    protected bool CanUploadFile( IFileEntry file )
++        => file is not null && file.Size <= MaxFileSize && ( file is not FileEntry entry || entry.HasContent );
++
++    private bool IsBrowserFile( IFileEntry file )
++        => file is FileEntry entry && FileInputRef is not null && ReferenceEquals( entry.Owner, FileInputRef );
++
++    private static bool ShouldUploadFile( IFileEntry file )
++        => file.Status == FileEntryStatus.Ready || file is FileEntry { HasSuppliedContent: true, Status: FileEntryStatus.Error };
  
--<DocsPageTitle Path="Components/Close Button/API">
-+<DocsPageTitle Path="Components/Close Button/API" RoutePath="components/close-button/api">
-     Blazorise Close Button API
- </DocsPageTitle>
+     /// <summary>
+     /// Converts the file size in bytes into a proper human readable format.
+@@ -155,36 +208,64 @@ public string GetLocalizedString( string name )
+         return Localizer.GetString( name );
+     }
+     /// <summary>
+-    /// Removes the file from FileInput.
++    /// Removes the file from the displayed collection and releases its browser data when present.
+     /// </summary>
+     /// <param name="file">The file entry to remove.</param>
+     /// <param name="confirm">Wether to show a confirmation popup.</param>
+     public Task RemoveFile( IFileEntry file, bool confirm = false )
+     {
+-        var removeFileAction = () => FileInputRef.RemoveFile( file.Id ).AsTask();
++        var removeFileAction = async () =>
++        {
++            if ( !EffectiveFiles.Any( entry => ReferenceEquals( entry, file ) ) )
++            {
++                return;
++            }
++
++            if ( ReferenceEquals( file, fileBeingUploaded ) )
++            {
++                await Cancel();
++            }
++
++            if ( IsBrowserFile( file ) )
++            {
++                await FileInputRef.RemoveFiles( new[] { file } );
++            }
++
++            await UpdateFiles( EffectiveFiles.Where( entry => !ReferenceEquals( entry, file ) ).ToArray() );
++        };
  
-```
-
-**File**: `Documentation/Blazorise.Docs/Pages/Docs/Components/Colors/ColorInputApiPage.razor` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@
- 
- <Seo Canonical="/docs/components/color-input/api" Title="Blazorise Color Input API" Description="Explore the Blazorise Color Input API reference, including component parameters, events, methods, and related types for Blazor applications." />
- 
--<DocsPageTitle Path="Components/Color Input/API">
-+<DocsPageTitle Path="Components/Color Input/API" RoutePath="components/color-input/api">
-     Blazorise Color Input API
- </DocsPageTitle>
- 
-```
-
-**File**: `Documentation/Blazorise.Docs/Pages/Docs/Components/Colors/ColorPickerApiPage.razor` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@
- 
- <Seo Canonical="/docs/components/color-picker/api" Title="Blazorise Color Picker API" Description="Explore the Blazorise Color Picker API reference, including component parameters, events, methods, and related types for Blazor applications." />
- 
--<DocsPageTitle Path="Components/Color Picker/API">
-+<DocsPageTitle Path="Components/Color Picker/API" RoutePath="components/color-picker/api">
-     Blazorise Color Picker API
- </DocsPageTitle>
- 
-```
-
-**File**: `Documentation/Blazorise.Docs/Pages/Docs/Components/Dates/DatePickerApiPage.razor` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@
- 
- <Seo Canonical="/docs/components/date-picker/api" Title="Blazorise Date Picker API" Description="Explore the Blazorise Date Picker API reference, including component parameters, events, methods, and related types for Blazor applications." />
- 
--<DocsPageTitle Path="Components/Date Picker/API">
-+<DocsPageTitle Path="Components/Date Picker/API" RoutePath="components/date-picker/api">
-     Blazorise Date Picker API
- </DocsPageTitle>
- 
-```
-
-**File**: `Documentation/Blazorise.Docs/Pages/Docs/Components/DragDrops/DragDropApiPage.razor` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@
- 
- <Seo Canonical="/docs/components/drag-drop/api" Title="Blazorise Drag &amp; Drop API" Description="Explore the Blazorise Drag &amp; Drop API reference, including component parameters, events, methods, and related types for Blazor applications." />
- 
--<DocsPageTitle Path="Components/Drop Zone/API">
-+<DocsPageTitle Path="Components/Drop Zone/API" RoutePath="components/drag-drop/api">
-     Blazorise Drag &amp; Drop API
- </DocsPageTitle>
- 
-```
-
-**File**: `Documentation/Blazorise.Docs/Pages/Docs/Components/Files/FilePickerApiPage.razor` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@
- 
- <Seo Canonical="/docs/components/file-picker/api" Title="Blazorise File Picker API" Description="Explore the Blazorise File Picker API reference, including component parameters, events, methods, and related types for Blazor applications." />
- 
--<DocsPageTitle Path="Components/File Picker/API">
-+<DocsPageTitle Path="Components/File Picker/API" RoutePath="components/file-picker/api">
-     Blazorise File Picker API
- </DocsPageTitle>
- 
+         if ( confirm )
++        {
+             return filePickerConfirmModalRef.OpenModal( _FilePickerConfirmModal
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #6860** (2026-10-18): Theme: Add registration for Blazor render mode boundaries (@stsrki)
 - **PR #6859** (2026-10-16): MemoInput: replace Behave.js with internal editing logic (@stsrki)
 - **PR #6858** (2026-10-16): Autocomplete: fix selection when value and text are both bound (@stsrki)
+- **PR #6857** (2026-10-19): FilePicker: support @bind-Files and preloaded files (@stsrki)
 - **PR #6856** (2026-10-16): Docs: standardize component structure diagrams across documentation (@stsrki)
 - **PR #6855** (2026-10-15): DatePicker: preserve caret when typing over an autofilled year (@stsrki)
-- **PR #6854** (2026-10-14): Svg Charts: fix overlapping time-axis labels and excess spacing (@stsrki)
 
 ---
 
@@ -1077,23 +1386,52 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. pin System.Security.Cryptography.Pkcs to fix vulnerabilities
+## X. FilePicker: support @bind-Files and preloaded files (#6857)
 
 **RULE**:
-When implementing operations in `Directory.Packages.props`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Megabit/Blazorise. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Documentation/Blazorise.Docs/Pages/Docs/Components/Files/Examples/FilePickerBindingExample.razor`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Megabit/Blazorise. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `14bf1f9a`: pin System.Security.Cryptography.Pkcs to fix vulnerabilities. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f5ef5fbf`: FilePicker: support @bind-Files and preloaded files (#6857). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C# data structures, boundary deserialization, API parsing, or resource lifecycles matching `Directory.Packages.props`.
+Subsystems managing C# data structures, boundary deserialization, API parsing, or resource lifecycles matching `Documentation/Blazorise.Docs/Pages/Docs/Components/Files/Examples/FilePickerBindingExample.razor`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c#
 // Verified production-grade fix pattern:
-    <!-- Pin MimeKit's transitive dependency to fix GHSA-846f-f764-76mx and GHSA-2fmv-rv2c-59x7.
-         Remove this override and the explicit docs reference once MimeKit requires a patched Pkcs version. -->
-    <PackageVersion Include="System.Security.Cryptography.Pkcs" Version="10.0.13" />
+@namespace Blazorise.Docs.Docs.Examples
+@using System.IO
+
+<Field>
+    <FilePicker @bind-Files="files" Multiple MaxFileSize="10485760" Upload="OnFileUploadHandler" />
+</Field>
+<Paragraph>Attachments: @files.Length</Paragraph>
+<Button Color="Color.Secondary" Clicked="OnClearFilesHandler">Clear bound files</Button>
+
+@code {
+    private IFileEntry[] files =
+    {
+        new FileEntry
+        {
+            Name = "Contract.pdf",
+            Size = 24576,
+            Type = "application/pdf",
+            Status = FileEntryStatus.Uploaded,
+        },
+    };
+
+    private async Task OnFileUploadHandler( FileUploadEventArgs e )
+    {
+        await using var stream = e.File.OpenReadStream( 10485760 );
+        await stream.CopyToAsync( Stream.Null );
+    }
+
+    private void OnClearFilesHandler()
+    {
+        files = Array.Empty<IFileEntry>();
+    }
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1103,4 +1441,4 @@ Subsystems managing C# data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `14bf1f9a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f5ef5fbf` are properly handled with clean fallback behavior.

@@ -1,59 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T09:19:17.854Z",
-  "total_cycles_completed": 3101,
-  "total_learnings_persisted": 3101,
-  "total_rules_promoted": 2254,
+  "last_updated": "2026-10-19T09:41:56.777Z",
+  "total_cycles_completed": 3108,
+  "total_learnings_persisted": 3108,
+  "total_rules_promoted": 2260,
   "history": [
-    {
-      "timestamp": "2026-10-19T04:53:03.480Z",
-      "repository": "rook/rook",
-      "learningId": "learn-github-rook-rook",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T04:53:04.075Z",
-      "repository": "TaichuAI/ZDTaichu5.0-9B",
-      "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T04:53:09.257Z",
-      "repository": "genkit-ai/genkit",
-      "learningId": "learn-github-genkit-ai-genkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T04:59:12.622Z",
-      "repository": "Phocinae/Phocinae-Largha-150M-v1",
-      "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T04:59:12.777Z",
-      "repository": "guokaigdg/animal-island-ui",
-      "learningId": "learn-github-guokaigdg-animal-island-ui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T04:59:15.873Z",
-      "repository": "nezhahq/nezha",
-      "learningId": "learn-github-nezhahq-nezha",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T04:59:19.916Z",
-      "repository": "tiajinsha/JKVideo",
-      "learningId": "learn-github-tiajinsha-jkvideo",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T04:59:22.653Z",
       "repository": "juicedata/juicefs",
@@ -1402,6 +1353,55 @@
       "timestamp": "2026-10-19T09:19:17.854Z",
       "repository": "oceanbase/oceanbase",
       "learningId": "learn-github-oceanbase-oceanbase",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T09:35:20.740Z",
+      "repository": "microsoft/react-native-windows",
+      "learningId": "learn-github-microsoft-react-native-windows",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T09:35:22.648Z",
+      "repository": "kubeedge/kubeedge",
+      "learningId": "learn-github-kubeedge-kubeedge",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T09:35:27.493Z",
+      "repository": "paradedb/paradedb",
+      "learningId": "learn-github-paradedb-paradedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T09:35:29.450Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T09:38:57.586Z",
+      "repository": "imsnif/diskonaut",
+      "learningId": "learn-github-imsnif-diskonaut",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T09:40:15.265Z",
+      "repository": "amazon/chronos-2",
+      "learningId": "learn-huggingface-amazon-chronos-2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T09:41:56.777Z",
+      "repository": "Megabit/Blazorise",
+      "learningId": "learn-github-megabit-blazorise",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

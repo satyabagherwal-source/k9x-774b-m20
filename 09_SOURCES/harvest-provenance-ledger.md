@@ -3131,3 +3131,10 @@ Every entry in this ledger must capture:
 | `learn-github-oblador-react-native-vector-icons` | `https://github.com/oblador/react-native-vector-icons` | `666a7437` | Multi-dimensional audit evidence | 2026-10-19T09:19:07.512Z |
 | `learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k` | `https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k` | `hf-timm-mo` | Multi-dimensional audit evidence | 2026-10-19T09:19:11.068Z |
 | `learn-github-oceanbase-oceanbase` | `https://github.com/oceanbase/oceanbase` | `5e8a63d2` | Multi-dimensional audit evidence | 2026-10-19T09:19:17.850Z |
+| `learn-github-microsoft-react-native-windows` | `https://github.com/microsoft/react-native-windows` | `cf0d3767` | Multi-dimensional audit evidence | 2026-10-19T09:35:20.737Z |
+| `learn-github-kubeedge-kubeedge` | `https://github.com/kubeedge/kubeedge` | `48feb970` | Multi-dimensional audit evidence | 2026-10-19T09:35:22.645Z |
+| `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `fa7c7432` | Multi-dimensional audit evidence | 2026-10-19T09:35:27.490Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `94707284` | Multi-dimensional audit evidence | 2026-10-19T09:35:29.447Z |
+| `learn-github-imsnif-diskonaut` | `https://github.com/imsnif/diskonaut` | `65cd8290` | Multi-dimensional audit evidence | 2026-10-19T09:38:57.582Z |
+| `learn-huggingface-amazon-chronos-2` | `https://huggingface.co/amazon/chronos-2` | `hf-amazon-` | Multi-dimensional audit evidence | 2026-10-19T09:40:15.262Z |
+| `learn-github-megabit-blazorise` | `https://github.com/Megabit/Blazorise` | `f5ef5fbf` | Multi-dimensional audit evidence | 2026-10-19T09:41:56.774Z |

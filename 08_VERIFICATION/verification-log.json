@@ -1,110 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261018-G187",
-    "timestamp": "2026-10-18T23:26:50.935Z",
-    "repository": "boardgameio/boardgame.io",
-    "learningId": "learn-github-boardgameio-boardgame-io",
-    "contentHash": "8bc354bd6981e9b46bcc45fe224c11ca0be39ad21d1121a270c63490586fb801",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-G3BD",
-    "timestamp": "2026-10-18T23:26:53.641Z",
-    "repository": "dragonflyoss/dragonfly",
-    "learningId": "learn-github-dragonflyoss-dragonfly",
-    "contentHash": "8efb881b299cbb3156734ede0faba3c6f09d3a37319189e78f04e92acc2faa98",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-G4TN",
-    "timestamp": "2026-10-18T23:26:55.595Z",
-    "repository": "zai-org/GLM-5.3",
-    "learningId": "learn-huggingface-zai-org-glm-5-3",
-    "contentHash": "cb34c7ea8b00760ffc88b0b0747d9fb1c19922a6ec877b170d6a2582aba77c23",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-G5AK",
-    "timestamp": "2026-10-18T23:26:56.204Z",
-    "repository": "sigstore/cosign",
-    "learningId": "learn-github-sigstore-cosign",
-    "contentHash": "2bbcaa5bb3d26f41c9a36c9047396832aec14eb6cfd78f2a22e1d03873c7f5a0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-G7BE",
-    "timestamp": "2026-10-18T23:26:58.826Z",
-    "repository": "LLPhant/LLPhant",
-    "learningId": "learn-github-llphant-llphant",
-    "contentHash": "db2e94a4160861c1d90fe1df3baacbd185daf1fc3eecf638c32224731195045c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-NLUD",
-    "timestamp": "2026-10-18T23:32:44.245Z",
-    "repository": "ant-design/pro-components",
-    "learningId": "learn-github-ant-design-pro-components",
-    "contentHash": "e9961ddf69440b20466741b37f947940637ff7d932da3d6db7391c08a72b2621",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-NNAR",
-    "timestamp": "2026-10-18T23:32:46.131Z",
-    "repository": "ratatui/ratatui",
-    "learningId": "learn-github-ratatui-ratatui",
-    "contentHash": "ef7239960f74cec9b897c8a87d6c18b50cb53edb90190698d547104504448598",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261018-NRB9",
     "timestamp": "2026-10-18T23:32:51.333Z",
     "repository": "invertase/react-native-firebase",
@@ -7490,6 +7385,111 @@
     "repository": "oceanbase/oceanbase",
     "learningId": "learn-github-oceanbase-oceanbase",
     "contentHash": "e1e4e54e74da1956d8130eab5cad0006dec17115956d250a3057accf2a71a4db",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-6KDB",
+    "timestamp": "2026-10-19T09:35:20.735Z",
+    "repository": "microsoft/react-native-windows",
+    "learningId": "learn-github-microsoft-react-native-windows",
+    "contentHash": "986c81cd90fbd8f6b4cfde0afd61a31eeef9dd1749182c6830a394e1812bf88b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-6LUA",
+    "timestamp": "2026-10-19T09:35:22.642Z",
+    "repository": "kubeedge/kubeedge",
+    "learningId": "learn-github-kubeedge-kubeedge",
+    "contentHash": "07eaac25d30d54f5bbe678605b25c24b033de9cf9d342c7f9d708453fad1fa85",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-6PKV",
+    "timestamp": "2026-10-19T09:35:27.487Z",
+    "repository": "paradedb/paradedb",
+    "learningId": "learn-github-paradedb-paradedb",
+    "contentHash": "67e6367e4ce55053a21951853eef357bf1cfde31b3382a26702717ef2628cc6d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-6R39",
+    "timestamp": "2026-10-19T09:35:29.445Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "42234c5218c0f2a66024b0ef516ddd64e703a4d294d920902aa8802da6de2ebf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-B7OS",
+    "timestamp": "2026-10-19T09:38:57.580Z",
+    "repository": "imsnif/diskonaut",
+    "learningId": "learn-github-imsnif-diskonaut",
+    "contentHash": "608a96cdd961d640de6ea1915ad43e2eee906108ab2e9a98d2a181a9c848a9a0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-CVMK",
+    "timestamp": "2026-10-19T09:40:15.260Z",
+    "repository": "amazon/chronos-2",
+    "learningId": "learn-huggingface-amazon-chronos-2",
+    "contentHash": "bc8482afacb30e02e6c8b49caece9ad0341b12404a1d6e729f2be325b16f5f15",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-F1YB",
+    "timestamp": "2026-10-19T09:41:56.771Z",
+    "repository": "Megabit/Blazorise",
+    "learningId": "learn-github-megabit-blazorise",
+    "contentHash": "5dd312b9f72c3de9a04b75297c3ccd49cde1d1690eb872fc352a0af69fd25f87",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
