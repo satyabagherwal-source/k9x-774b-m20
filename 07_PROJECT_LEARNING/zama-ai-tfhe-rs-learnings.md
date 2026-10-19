@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source**: github ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
-> **Source Version**: `bcdba2b0`  
+> **Source Version**: `e87d6a92`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T23:02:10.317Z  
+> **Timestamp**: 2026-10-19T11:54:55.127Z  
 > **Learning ID**: `learn-github-zama-ai-tfhe-rs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T23:02:10.053Z  
+> **Harvest Timestamp**: 2026-10-19T11:54:55.120Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: TFHE-rs: A Pure Rust implementation of the TFHE Scheme for Boolean and Integer Arithmetics Over Encrypted Data.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 1673 stars
+- **Stars / Engagement**: 1674 stars
 
 ---
 
@@ -1927,617 +1927,15 @@ struct pbs_buffer<Torus, PBS_TYPE::MULTI_BIT> : public pbs_buffer_base {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a856fe70` (2026-10-09)
-**Commit Message**: fix(integer): overflow flag of signed overflowing scalar add/sub for out-of-range scalars
+### Incident Patch 1: `e87d6a92` (2026-10-19)
+**Commit Message**: fix(integer): adapt test call sites SizeRequirements
 
-Signed overflowing scalar add/sub and unsigned overflowing add
-(sub was fine) would give invalid an invalid overflow flag when the
-scalar was out of range of the radix, but fitted the number of blocks,
-due to the fact that we allow scalars of the opposite signedness.
-e.g RadixCiphertext with signed scalar like i8, i16, etc
-    SignedRadixCiphertext with unsigned scalar like u8, u16, etc
+`chore(integer): prepare for vector tests` renamed `TestBuilder::block_counts`
+to `size_requirements` and changed the fixed case builders to take
+`(SizeRequirements, &TestContext)`.
 
-Another bug was due to not correctly sign extending small signed types
-like i8
-Same bug also happened in unsigned overflowing sub
-
-**File**: `tfhe/src/integer/gpu/server_key/radix/scalar_add.rs` (modified, +1/-0)
-```diff
-@@ -382,6 +382,7 @@ impl CudaServerKey {
-                 .iter_as::<u64>()
-                 .skip(ct_left.ciphertext.d_blocks.lwe_ciphertext_count().0);
- 
-+        // FIXME(gpu): use `ScalarOverflowFlagSource`
-         let extra_blocks_have_correct_value = if scalar < Scalar::ZERO {
-             extra_scalar_block_iter.all(|block| block == (self.message_modulus.0 - 1))
-         } else {
-```
-
-**File**: `tfhe/src/integer/gpu/server_key/radix/scalar_sub.rs` (modified, +1/-0)
-```diff
-@@ -213,6 +213,7 @@ impl CudaServerKey {
-                 .iter_as::<u64>()
-                 .skip(ct_left.ciphertext.d_blocks.lwe_ciphertext_count().0);
- 
-+        // FIXME(gpu): use `ScalarOverflowFlagSource`
-         let extra_blocks_have_correct_value = if scalar < Scalar::ZERO {
-             extra_scalar_block_iter.all(|block| block == (self.message_modulus.0 - 1))
-         } else {
-```
-
-**File**: `tfhe/src/integer/gpu/server_key/radix/tests_signed/legacy_default_tests.rs` (modified, +378/-9)
-```diff
-@@ -1,21 +1,25 @@
- //! Pre-harness versions of the signed default operation tests still used by the GPU backend.
- //!
--//! FIXME(gpu): the CPU tests for these operations moved to
--//! `radix_parallel::test_harness` (see `radix_parallel::tests_signed::test_scalar_shift` and
--//! `test_scalar_rotate`), which also exercises inputs at the maximum degree and noise level.
--//! The GPU full propagation cannot take blocks at the maximum degree yet.
--//! Once it is aligned with the CPU one point the GPU wrappers at the harness
--//! tests and delete this file.
-+//! FIXME(gpu): the CPU tests for these operations moved to `radix_parallel::test_harness`
-+//! (see `radix_parallel::tests_signed::test_scalar_shift`, `test_scalar_rotate`,
-+//! `test_scalar_add` and `test_scalar_sub`), which also exercises inputs at the maximum
-+//! degree and noise level. The GPU full propagation cannot take blocks at the maximum degree
-+//! yet. The overflowing scalar tests also cover scalars that fit the radix blocks but not
-+//! the signed range, for which the GPU implementations return the opposite overflow flag:
-+//! the CPU fix is `ScalarOverflowFlagSource` in `radix_parallel::scalar_add`, which the GPU
-+//! can reuse. Once both are addressed point the GPU wrappers at the harness tests and delete
-+//! this file.
- use crate::integer::keycache::KEY_CACHE;
- use crate::integer::server_key::radix_parallel::tests_cases_unsigned::FunctionExecutor;
- use crate::integer::server_key::radix_parallel::tests_signed::{
-     random_non_zero_value, rotate_left_helper, rotate_right_helper, signed_add_under_modulus,
--    signed_left_shift_under_modulus, signed_right_shift_under_modulus,
-+    signed_left_shift_under_modulus, signed_overflowing_add_under_modulus,
-+    signed_overflowing_sub_under_modulus, signed_right_shift_under_modulus,
- };
- use crate::integer::server_key::radix_parallel::tests_unsigned::{
--    nb_tests_smaller_for_params, NB_CTXT,
-+    nb_tests_smaller_for_params, MAX_NB_CTXT, NB_CTXT,
- };
--use crate::integer::{IntegerKeyKind, RadixClientKey, SignedRadixCiphertext};
-+use crate::integer::{BooleanBlock, IntegerKeyKind, RadixClientKey, SignedRadixCiphertext};
- use crate::shortint::parameters::*;
- use rand::Rng;
- use std::sync::Arc;
-@@ -285,3 +289,368 @@ where
-         }
-     }
- }
-+
-+pub(crate) fn legacy_signed_default_overflowing_scalar_sub_test<P, T>(param: P, mut executor: T)
-+where
-+    P: Into<TestParameters>,
-+    T: for<'a> FunctionExecutor<
-+        (&'a SignedRadixCiphertext, i64),
-+        (SignedRadixCiphertext, BooleanBlock),
-+    >,
-+{
-+    let param = param.into();
-+    let nb_tests_smaller = nb_tests_smaller_for_params(param);
-+    let (cks, mut sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
-+    let cks = RadixClientKey::from((cks, NB_CTXT));
-+    sks.set_deterministic_pbs_execution(true);
-+    let sks = Arc::new(sks);
-+
-+    let mut rng = rand::thread_rng();
-+
-+    // message_modulus^vec_length
-+    let modulus = (cks.parameters().message_modulus().0.pow(NB_CTXT as u32) / 2) as i64;
-+
-+    executor.setup(&cks, sks.clone());
-+
-+    let hardcoded_values = [
-+        (-modulus, 1),
-+        (modulus - 1, -1),
-+        (1, -modulus),
-+        (-1, modulus - 1),
-+    ];
-+    for (clear_0, clear_1) in hardcoded_values {
-+        let ctxt_0 = cks.encrypt_signed(clear_0);
-+
-+        let (ct_res, result_overflowed) = executor.execute((&ctxt_0, clear_1));
-+        let (expected_result, expected_overflowed) =
-+            signed_overflowing_sub_under_modulus(clear_0, clear_1, modulus);
-+
-+        let decrypted_result: i64 = cks.decrypt_signed(&ct_res);
-+        let decrypted_overflowed = cks.decrypt_bool(&result_overflowed);
-+        assert_eq!(
-+            decrypted_result, expected_result,
-+            "Invalid result for overflowing_sub, for ({clear_0} - {clear_1}) % {modulus} \
-+             expected {expected_result}, got {decrypted_result}"
-+        );
-+        assert_eq!(
-+            decrypted_overflowed,
-+            expected_overflowed,
-+            "Invalid overflow flag result for overflowing_sub for ({clear_0} - {clear_1}) % {modulus} \
-+             expected overflow flag {expected_overflowed}, got {decrypted_overflowed}"
-+        );
-+        assert_eq!(result_overflowed.0.degree.get(), 1);
-+        assert_eq!(result_overflowed.0.noise_level(), NoiseLevel::NOMINAL);
-+    }
-+
-+    for _ in 0..nb_tests_smaller {
-+        let clear_0 = rng.gen::<i64>() % modulus;
-+        let clear_1 = rng.gen::<i64>() % modulus;
-+
-+        let ctxt_0 = cks.encrypt_signed(clear_0);
-+
-+        let (ct_res, result_overflowed) = executor.execute((&ctxt_0, clear_1));
-+        let (tmp_ct, tmp_o) = executor.execute((&ctxt_0, clear_1));
-+        assert!(ct_res.block_carries_are_empty());
-+        assert_eq!(ct_res, tmp_ct, "Failed determinism check, \n\n\n msg0: {clear_0}, \n\n\nct: {ctxt_0:?}, \n\n\nclear: {clear_1:?}\n\n\n");
-+        assert_eq!(tmp_o, result_overflowed, "Failed determinism check, \n\n\n msg0: {clear_0}, \n\n
-```
-
-**File**: `tfhe/src/integer/gpu/server_key/radix/tests_signed/test_scalar_add.rs` (modified, +3/-3)
-```diff
-@@ -1,10 +1,10 @@
-+use super::legacy_default_tests::legacy_signed_default_overflowing_scalar_add_test;
- use crate::integer::gpu::server_key::radix::tests_unsigned::{
-     create_gpu_parameterized_test, GpuFunctionExecutor,
- };
- use crate::integer::gpu::CudaServerKey;
- use crate::integer::server_key::radix_parallel::tests_signed::test_scalar_add::{
--    signed_default_overflowing_scalar_add_test, signed_default_scalar_add_test,
--    signed_unchecked_scalar_add_test,
-+    signed_default_scalar_add_test, signed_unchecked_scalar_add_test,
- };
- use crate::shortint::parameters::test_params::*;
- use crate::shortint::parameters::*;
-@@ -34,5 +34,5 @@ where
-     P: Into<TestParameters>,
- {
-     let executor = GpuFunctionExecutor::new(&CudaServerKey::signed_overflowing_scalar_add);
--    signed_default_overflowing_scalar_add_test(param, executor);
-+    legacy_signed_default_overflowing_scalar_add_test(param, executor);
- }
-```
-
-**File**: `tfhe/src/integer/gpu/server_key/radix/tests_signed/test_scalar_sub.rs` (modified, +3/-4)
-```diff
-@@ -1,10 +1,9 @@
-+use super::legacy_default_tests::legacy_signed_default_overflowing_scalar_sub_test;
- use crate::integer::gpu::server_key::radix::tests_unsigned::{
-     create_gpu_parameterized_test, GpuFunctionExecutor,
- };
- use crate::integer::gpu::CudaServerKey;
--use crate::integer::server_key::radix_parallel::tests_signed::test_scalar_sub::{
--    signed_default_overflowing_scalar_sub_test, signed_unchecked_scalar_sub_test,
--};
-+use crate::integer::server_key::radix_parallel::tests_signed::test_scalar_sub::signed_unchecked_scalar_sub_test;
- use crate::shortint::parameters::test_params::*;
- use crate::shortint::parameters::*;
- 
-@@ -24,5 +23,5 @@ where
-     P: Into<TestParameters>,
- {
-     let executor = GpuFunctionExecutor::new(&CudaServerKey::signed_overflowing_scalar_sub);
--    signed_default_overflowing_scalar_sub_test(param, executor);
-+    legacy_signed_default_overflowing_scalar_sub_test(param, executor);
- }
-```
-
-**File**: `tfhe/src/integer/server_key/radix_parallel/scalar_add.rs` (modified, +317/-20)
-```diff
-@@ -2,10 +2,306 @@ use crate::core_crypto::prelude::{SignedNumeric, UnsignedNumeric};
- use crate::integer::block_decomposition::{BlockDecomposer, DecomposableInto};
- use crate::integer::ciphertext::IntegerRadixCiphertext;
- use crate::integer::{BooleanBlock, RadixCiphertext, ServerKey, SignedRadixCiphertext};
-+use crate::shortint::parameters::MessageModulus;
- use crate::shortint::Ciphertext;
- 
- use rayon::prelude::*;
- 
-+/// How the overflow flag of an overflowing scalar addition or subtraction is obtained.
-+///
-+/// Decided from the scalar alone, see [`Self::for_signed_radix`] and
-+/// [`Self::for_unsigned_radix`].
-+///
-+/// Only the flag is concerned: the FHE operation works on the scalar truncated to the radix
-+/// width, which is congruent to the scalar modulo the radix modulus, so the result it
-+/// computes is the exact one reduced to the radix width whatever the scalar, with nothing to
-+/// accommodate. With `n` the radix bit width and `s'` the truncated scalar:
-+///
-+/// `s' ≡ s (mod 2ⁿ)  ⇒  lhs ± s' ≡ lhs ± s (mod 2ⁿ)`
-+#[derive(Copy, Clone, PartialEq, Eq, Debug)]
-+pub(crate) enum ScalarOverflowFlagSource {
-+    /// The scalar is beyond what the radix blocks can hold: the operation always overflows
-+    TriviallyTrue,
-+    /// The scalar fits the radix blocks but not the radix range: the FHE flag is the opposite
-+    /// of the exact one
-+    InvertedFhe,
-+    /// The scalar is in the radix range: the FHE flag is exact
-+    Fhe,
-+}
-+
-+impl ScalarOverflowFlagSource {
-+    /// Decides how the overflow flag of an overflowing scalar addition or subtraction between
-+    /// a signed radix of `num_blocks` blocks of `message_modulus` and `scalar` is obtained.
-+    ///
-+    /// The FHE operation only sees the scalar truncated to the radix's block count. This
-+    /// means the scalar value the FHE operation will see may not be interpreted 'correctly'
-+    /// and the flag may need to be inverted; the result is correct either way, see
-+    /// [`ScalarOverflowFlagSource`].
-+    ///
-+    /// This contains the logic to figure out how to handle this situation, as well as the
-+    /// explanations to convince it's correct.
-+    ///
-+    /// The explanations in the code are made for the subtraction, but the same logic
-+    /// and principles apply for the addition.
-+    pub(crate) fn for_signed_radix<Scalar>(
-+        scalar: Scalar,
-+        num_blocks: usize,
-+        message_modulus: MessageModulus,
-+    ) -> Self
-+    where
-+        Scalar: DecomposableInto<u8>,
-+    {
-+        assert!(num_blocks > 0, "input radix must not be empty");
-+
-+        // The check is done on the scalar itself, not on the bit flipped version the
-+        // subtraction adds
-+        let mut decomposer = BlockDecomposer::new(scalar, message_modulus.0.ilog2())
-+            .iter_as::<u8>()
-+            .skip(num_blocks - 1);
-+
-+        if scalar < Scalar::ZERO {
-+            let sign_bit_is_not_set = decomposer.next().is_some_and(|v| {
-+                let sign_bit = v as u64 / (message_modulus.0 / 2);
-+                sign_bit == 0
-+            });
-+            let top_is_not_all_sign_bit = decomposer.any(|v| v != (message_modulus.0 - 1) as u8);
-+
-+            if top_is_not_all_sign_bit {
-+                Self::TriviallyTrue
-+            } else if sign_bit_is_not_set {
-+                // (With `n` the radix bit width)
-+                //
-+                // The clear is negative, bits above the radix width are all sign bits.
-+                // However, the bit that is at the position of the radix's sign bit is 0.
-+                // This means the clear `s` has a value in the range `[-2ⁿ, -2ⁿ⁻¹[`
-+                // or (`[-2ⁿ, -2ⁿ⁻¹ - 1]`)
-+                // e.g: signed radix of 8 bits (n=8), clear of 16 bits, under these conditions,
-+                // the clear is in `[-256, -128[` (or `[-256, -129]`)
-+                //
-+                // But since the overflowing_sub done later will only see the truncated version
-+                // of the clear, it will see a number `s'` in the range `[0, 2ⁿ⁻¹[`
-+                // i.e it will see `s' = s + 2ⁿ`
-+                // e.g: taking the example before, the scalar was in `[-256, -128[`, the truncated
-+                // version given to the FHE op will be interpreted as `[-256 + 256, -128 + 256[`
-+                // `=> [0, 128[`
-+                //
-+                // We don't know the radix value, so we have to do the FHE overflowing_sub, but
-+                // its overflow flag has to be flipped.
-+                // The exact result is `lhs - s = lhs - (s' - 2ⁿ) = (lhs - s') + 2ⁿ`,
-+                // i.e the FHE result shifted by a full modulus of the radix.
-+                //
-+                // * lhs is in `[-2ⁿ⁻¹, 2ⁿ⁻¹ - 1]`, s' is in `[0, 2ⁿ⁻¹ - 1]`
-+                // => `lhs - s'` is in `[-2ⁿ + 1, 2ⁿ⁻¹ - 1]` (not considering the modulo)
-+                // => The subtraction can only "underflow", since only the minimum is below
-+                //    the radix's minimum (
-```
-
-**File**: `tfhe/src/integer/server_key/radix_parallel/scalar_sub.rs` (modified, +22/-24)
-```diff
-@@ -1,3 +1,4 @@
-+use super::scalar_add::ScalarOverflowFlagSource;
- use crate::core_crypto::prelude::{Cleartext, SignedNumeric, UnsignedNumeric};
- use crate::integer::block_decomposition::{BlockDecomposer, DecomposableInto};
- use crate::integer::ciphertext::IntegerRadixCiphertext;
-@@ -153,10 +154,14 @@ impl ServerKey {
-     {
-         assert!(!lhs.blocks.is_empty(), "lhs cannot be empty");
- 
--        let scalar_blocks = BlockDecomposer::new(scalar, self.message_modulus().0.ilog2())
--            .iter_as::<u8>()
--            .take(lhs.blocks.len())
--            .collect::<Vec<_>>();
-+        // Zero extended to the radix width when the scalar is narrower
-+        let scalar_blocks = BlockDecomposer::with_block_count(
-+            scalar,
-+            self.message_modulus().0.ilog2(),
-+            lhs.blocks.len(),
-+        )
-+        .iter_as::<u8>()
-+        .collect::<Vec<_>>();
- 
-         // If the block does not have a carry after the subtraction, it means it needs to
-         // borrow from the next block
-@@ -229,10 +234,11 @@ impl ServerKey {
-             .map(|chunk| self.pack_block_chunk(chunk))
-             .collect::<Vec<_>>();
- 
--        let packed_scalar_blocks = BlockDecomposer::new(scalar, packed_modulus.ilog2())
--            .iter_as::<u8>()
--            .take(packed_blocks.len())
--            .collect::<Vec<_>>();
-+        // Zero extended to the radix width when the scalar is narrower
-+        let packed_scalar_blocks =
-+            BlockDecomposer::with_block_count(scalar, packed_modulus.ilog2(), packed_blocks.len())
-+                .iter_as::<u8>()
-+                .collect::<Vec<_>>();
- 
-         let num_blocks = lhs.blocks.len();
-         // When the number of blocks is not even, the last packed block's
-@@ -639,18 +645,14 @@ impl ServerKey {
-     where
-         Scalar: SignedNumeric + DecomposableInto<u8> + std::ops::Not<Output = Scalar>,
-     {
-+        assert!(!lhs.blocks.is_empty(), "input radix must not be empty");
-         self.clean_inplace_for_default_op(lhs);
- 
--        // The trivial overflow check has to be done on the scalar not its bit flipped version
--        let mut decomposer = BlockDecomposer::new(scalar, self.message_modulus().0.ilog2())
--            .iter_as::<u8>()
--            .skip(lhs.blocks.len());
--
--        let trivially_overflowed = if scalar < Scalar::ZERO {
--            decomposer.any(|v| v != (self.message_modulus().0 - 1) as u8)
--        } else {
--            decomposer.any(|v| v != 0)
--        };
-+        let flag_source = ScalarOverflowFlagSource::for_signed_radix(
-+            scalar,
-+            lhs.blocks.len(),
-+            self.message_modulus(),
-+        );
- 
-         const INPUT_CARRY: bool = true;
-         let flipped_scalar = !scalar;
-@@ -665,14 +667,10 @@ impl ServerKey {
-             lhs,
-             decomposed_flipped_scalar,
-             INPUT_CARRY,
--            !trivially_overflowed,
-+            flag_source != ScalarOverflowFlagSource::TriviallyTrue,
-         );
- 
--        if trivially_overflowed {
--            self.create_trivial_boolean_block(true)
--        } else {
--            maybe_overflow.expect("overflow computation was requested")
--        }
-+        flag_source.overflow_flag(self, maybe_overflow)
-     }
- 
-     pub fn signed_overflowing_scalar_sub_parallelized<Scalar>(
-```
-
-**File**: `tfhe/src/integer/server_key/radix_parallel/test_harness.rs` (modified, +8/-0)
-```diff
-@@ -812,6 +812,13 @@ pub(crate) trait ClearInteger:
-     /// Implementations decompose the scalar in blocks, and an excess confined to the block
-     /// holding the radix's top bits, combined with a non zero in-range part, is a known blind
-     /// spot that `radix_max + 1` alone does not exercise.
-+    ///
-+    /// Whatever the scalar type, a value that fits the radix blocks but not the radix range,
-+    /// with `n` the radix bit width: `[radix_max + 1, 2ⁿ[` and `[-2ⁿ, radix_min[` for a signed
-+    /// radix, `[-2ⁿ, 0[` for an unsigned one, is seen by an implementation working on the
-+    /// scalar reduced to the radix width as a value on the other side of the range, and the
-+    /// overflow flag it computes has to be flipped. The signed values include both ends of
-+    /// each band, `2ⁿ - 1` and `-2ⁿ`, which reduce to -1 and 0.
-     fn scalar_edges(radix_bits: u32, type_bits: u32) -> Vec<Self>;
- 
-     /// Random scalar of `type_bits` bits: half of the draws fit in a radix of `radix_bits`
-@@ -905,6 +912,7 @@ impl ClearInteger for Int {
-                 // Every radix bit set plus a single excess bit: 2^radix_bits - 1 and its
-                 // negative counterpart -2^radix_bits - 1, then 2^(radix_bits + 1) - 1
-                 Some(Self::max(radix_bits + 1).value()),
-+                Some(Self::min(radix_bits + 1).value()),
-                 Self::min(radix_bits + 1).value().checked_sub(1),
-                 (radix_bits + 2 <= MAX_RADIX_BITS).then(|| Self::max(radix_bits + 2).value()),
-             ];
-```
-
----
-
-### Incident Patch 2: `ebb022d7` (2026-10-12)
-**Commit Message**: fix(integer): propagate dirty inputs in unsigned overflowing sum
-
-`unsigned_overflowing_sum_ciphertexts_parallelized` has a wrong
-cleanging: it filtered-out dirty input in the loop meant to find
-and clean them.
-
-Migrate the sum test to the new harness, which is the first Vec
-based test, so adding the mssing pieces to make it work.
-
-**File**: `tfhe/src/integer/gpu/server_key/radix/tests_unsigned/legacy_default_tests.rs` (modified, +71/-2)
-```diff
-@@ -2,11 +2,12 @@
- //!
- //! FIXME(gpu): the CPU tests for these operations moved to
- //! `radix_parallel::test_harness` (see `radix_parallel::tests_unsigned::test_add`,
--//! `test_scalar_add`, `test_scalar_shift` and `test_scalar_rotate`), which also exercises inputs
--//! at the maximum degree and noise level.
-+//! `test_scalar_add`, `test_scalar_shift`, `test_scalar_rotate` and `test_sum`), which also
-+//! exercises inputs at the maximum degree and noise level.
- //! The GPU full propagation cannot take blocks at the maximum degree yet.
- //! Once it is aligned with the CPU one point the GPU wrappers at the harness
- //! tests and delete this file.
-+use crate::integer::ciphertext::{IntegerCiphertext, IntegerRadixCiphertext};
- use crate::integer::keycache::KEY_CACHE;
- use crate::integer::server_key::radix_parallel::tests_cases_unsigned::FunctionExecutor;
- use crate::integer::server_key::radix_parallel::tests_unsigned::{
-@@ -534,3 +535,71 @@ where
-         }
-     }
- }
-+
-+pub(crate) fn legacy_default_sum_ciphertexts_vec_test<P, T>(param: P, mut executor: T)
-+where
-+    P: Into<TestParameters>,
-+    T: for<'a> FunctionExecutor<&'a Vec<RadixCiphertext>, Option<RadixCiphertext>>,
-+{
-+    let param = param.into();
-+    let nb_tests_smaller = nb_tests_smaller_for_params(param);
-+    let (cks, mut sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
-+    let cks = RadixClientKey::from((cks, NB_CTXT));
-+    sks.set_deterministic_pbs_execution(true);
-+    let sks = Arc::new(sks);
-+
-+    let mut rng = rand::thread_rng();
-+
-+    // message_modulus^vec_length
-+    let modulus = cks.parameters().message_modulus().0.pow(NB_CTXT as u32);
-+
-+    executor.setup(&cks, sks.clone());
-+
-+    for len in [1, 2, 15, 16, 17, 64, 65] {
-+        for _ in 0..nb_tests_smaller {
-+            let clears = (0..len)
-+                .map(|_| rng.gen::<u64>() % modulus)
-+                .collect::<Vec<_>>();
-+
-+            let mut ctxts = clears
-+                .iter()
-+                .copied()
-+                .map(|clear| cks.encrypt(clear))
-+                .collect::<Vec<_>>();
-+
-+            // One of the inputs has non empty carries, to exercise the path where the
-+            // implementation has to propagate an input before summing. The other inputs
-+            // are left clean, so both paths are covered.
-+            let extra_clear = rng.gen::<u64>() % modulus;
-+            let extra_ctxt = cks.encrypt(extra_clear);
-+            let dirty_index = rng.gen_range(0..ctxts.len());
-+            sks.unchecked_add_assign(&mut ctxts[dirty_index], &extra_ctxt);
-+            assert!(!ctxts[dirty_index].block_carries_are_empty());
-+
-+            // Another input has empty carries but a noise level above nominal, so the noise
-+            // half of the cleanliness check is exercised too. No cheap operation raises the
-+            // noise without also filling the carries, so the metadata is set directly. The
-+            // real noise being lower than advertised does not matter for what is tested here.
-+            if ctxts.len() >= 2 {
-+                let noisy_index = (dirty_index + 1) % ctxts.len();
-+                for block in ctxts[noisy_index].blocks_mut() {
-+                    block.set_noise_level(
-+                        NoiseLevel::NOMINAL + NoiseLevel::NOMINAL,
-+                        sks.key.max_noise_level,
-+                    );
-+                }
-+                assert!(ctxts[noisy_index].block_carries_are_empty());
-+                assert!(!ctxts[noisy_index].is_clean());
-+            }
-+
-+            let ct_res = executor.execute(&ctxts).unwrap();
-+            let res: u64 = cks.decrypt(&ct_res);
-+            let clear = (clears.iter().sum::<u64>() + extra_clear) % modulus;
-+
-+            assert_eq!(res, clear);
-+
-+            let ct_res_2 = executor.execute(&ctxts).unwrap();
-+            assert_eq!(ct_res, ct_res_2, "Failed determinism check");
-+        }
-+    }
-+}
-```
-
-**File**: `tfhe/src/integer/gpu/server_key/radix/tests_unsigned/test_add.rs` (modified, +6/-3)
-```diff
-@@ -1,4 +1,7 @@
--use super::legacy_default_tests::{legacy_default_add_test, legacy_default_overflowing_add_test};
-+use super::legacy_default_tests::{
-+    legacy_default_add_test, legacy_default_overflowing_add_test,
-+    legacy_default_sum_ciphertexts_vec_test,
-+};
- use crate::core_crypto::gpu::{get_number_of_gpus, CudaStreams};
- use crate::integer::gpu::ciphertext::CudaUnsignedRadixCiphertext;
- use crate::integer::gpu::server_key::radix::tests_signed::GpuMultiDeviceFunctionExecutor;
-@@ -7,7 +10,7 @@ use crate::integer::gpu::server_key::radix::tests_unsigned::{
- };
- use crate::integer::gpu::CudaServerKey;
- use crate::integer::server_key::radix_parallel::tests_cases_unsigned::{
--    default_sum_ciphertexts_vec_test, unchecked_add_assign_test, unchecked_add_test,
-+    unchecked_add_assign_test, unchecked_add_test,
- };
- use crate::shortint::parameters::test_params::*;
- use crate::shortint::parameters::*;
-@@ -93,7 +96,7 @@ where
-         sks.sum_ciphertexts(ctxt, &streams)
-     };
-     let executor = GpuFunctionExecutor::new(sum_vec);
--    default_sum_ciphertexts_vec_test(param, executor);
-+    legacy_default_sum_ciphertexts_vec_test(param, executor);
- }
- 
- fn integer_default_overflowing_add<P>(param: P)
-```
-
-**File**: `tfhe/src/integer/server_key/radix_parallel/sum.rs` (modified, +2/-6)
-```diff
-@@ -312,12 +312,8 @@ impl ServerKey {
-             .collect::<Vec<_>>();
-         ciphertexts
-             .par_iter_mut()
--            .filter(|ct| ct.block_carries_are_empty())
--            .for_each(|ct| {
--                if !ct.block_carries_are_empty() {
--                    self.full_propagate_parallelized(&mut *ct);
--                }
--            });
-+            .filter(|ct| !ct.is_clean())
-+            .for_each(|ct| self.full_propagate_parallelized(&mut *ct));
- 
-         self.unchecked_unsigned_overflowing_sum_ciphertexts_vec_parallelized(ciphertexts)
-     }
-```
-
-**File**: `tfhe/src/integer/server_key/radix_parallel/test_harness.rs` (modified, +43/-0)
-```diff
-@@ -47,6 +47,49 @@ pub(crate) fn default_block_requirements(params: TestParameters) -> Vec<SizeRequ
-         .collect()
- }
- 
-+/// Block budget for a vector operation about as costly as a sum.
-+///
-+/// Operations doing more work per block need a smaller budget to run in a comparable time,
-+/// hence [`vec_size_requirements_with_budget`].
-+pub(crate) const DEFAULT_VEC_BLOCK_BUDGET: u32 = 128;
-+
-+/// [`vec_size_requirements_with_budget`] with [`DEFAULT_VEC_BLOCK_BUDGET`].
-+pub(crate) fn vec_size_requirements(
-+    ctx: &TestContext,
-+    vec_lens: impl IntoIterator<Item = u32>,
-+) -> Vec<SizeRequirements> {
-+    vec_size_requirements_with_budget(ctx, vec_lens, DEFAULT_VEC_BLOCK_BUDGET)
-+}
-+
-+/// Block counts to pair with each of `vec_lens`, for a test taking a vector input.
-+///
-+/// The cost of a vector operation grows with both the number of elements and the number of
-+/// blocks of each element, so sweeping the two axes independently is too slow. The block
-+/// count is instead made to shrink as the vector grows, which keeps the total amount of
-+/// work per case roughly flat while still reaching both ends of both axes: short vectors
-+/// are tested with wide radixes, long vectors with narrow ones.
-+///
-+/// `budget` is how many blocks a case may use in total, summed over the elements of one
-+/// input vector. It is only a budget, not a hard limit: an element is never given less
-+/// than one block, so a vector longer than `budget` goes over it. The right value depends
-+/// on how costly the tested operation is per block, so each test picks its own, starting
-+/// from [`DEFAULT_VEC_BLOCK_BUDGET`].
-+pub(crate) fn vec_size_requirements_with_budget(
-+    ctx: &TestContext,
-+    vec_lens: impl IntoIterator<Item = u32>,
-+    budget: u32,
-+) -> Vec<SizeRequirements> {
-+    let max_n_blocks = max_block_requirement(ctx.params);
-+    vec_lens
-+        .into_iter()
-+        .map(|vec_len| SizeRequirements {
-+            // `max(1)` as the empty vector has no element to size, any block count does
-+            n_blocks: (budget / vec_len.max(1)).clamp(1, max_n_blocks),
-+            vec_len: Some(vec_len),
-+        })
-+        .collect()
-+}
-+
- /// Environment variable overriding the seed used by [`TestBuilder`]
- /// (decimal or `0x`-prefixed hex).
- /// The seed is printed by every run so the cases of a failing run (clear values, input
-```
+But a merge of another PR was made just before so they did not use this
+new API leading to broken test build
 
 **File**: `tfhe/src/integer/server_key/radix_parallel/tests_cases_unsigned.rs` (modified, +0/-1)
 ```diff
@@ -2545,336 +1943,138 @@ based test, so adding the mssing pieces to make it work.
  pub(crate) use crate::integer::server_key::radix_parallel::tests_unsigned::test_sub::default_sub_test;
  pub(crate) use crate::integer::server_key::radix_parallel::tests_unsigned::test_sub::unchecked_sub_test;
  #[cfg(feature = "gpu")]
--pub(crate) use crate::integer::server_key::radix_parallel::tests_unsigned::test_sum::default_sum_ciphertexts_vec_test;
- #[cfg(feature = "gpu")]
+-#[cfg(feature = "gpu")]
  pub(crate) use crate::integer::server_key::radix_parallel::tests_unsigned::test_vector_find::{
      default_contains_clear_test_case, default_contains_test_case,
+     default_first_index_in_clears_test_case, default_first_index_of_clear_test_case,
 ```
 
-**File**: `tfhe/src/integer/server_key/radix_parallel/tests_unsigned/mod.rs` (modified, +0/-11)
+**File**: `tfhe/src/integer/server_key/radix_parallel/tests_signed/mod.rs` (modified, +8/-2)
 ```diff
-@@ -259,17 +259,6 @@ pub(crate) fn overflowing_add_under_modulus<T: UnsignedInteger>(
-     (result % modulus, overflowed || result >= modulus)
- }
+@@ -30,7 +30,9 @@ pub(crate) mod test_vector_comparisons;
  
--pub(crate) fn overflowing_sum_slice_under_modulus(elems: &[u64], modulus: u64) -> (u64, bool) {
--    let mut s = 0u64;
--    let mut o = false;
--    for e in elems.iter().copied() {
--        let (curr_s, curr_o) = overflowing_add_under_modulus(s, e, modulus);
--        s = curr_s;
--        o |= curr_o;
--    }
--    (s, o)
--}
--
- pub(crate) fn overflowing_mul_under_modulus(a: u64, b: u64, modulus: u64) -> (u64, bool) {
-     let (mut result, mut overflow) = a.overflowing_mul(b);
-     overflow |= result >= modulus;
-```
-
-**File**: `tfhe/src/integer/server_key/radix_parallel/tests_unsigned/test_sum.rs` (modified, +59/-186)
-```diff
-@@ -1,215 +1,88 @@
--use crate::integer::keycache::KEY_CACHE;
--use crate::integer::server_key::radix_parallel::tests_cases_unsigned::{FunctionExecutor, NB_CTXT};
--use crate::integer::server_key::radix_parallel::tests_unsigned::{
--    nb_tests_smaller_for_params, overflowing_sum_slice_under_modulus, CpuFunctionExecutor,
+ use crate::core_crypto::prelude::SignedInteger;
+ use crate::integer::keycache::KEY_CACHE;
+-use crate::integer::server_key::radix_parallel::test_harness::TestScalar;
 +use crate::integer::server_key::radix_parallel::test_harness::{
-+    vec_size_requirements, ExecuteOn, TestBuilder, TestContext,
++    SizeRequirements, TestContext, TestScalar,
++};
+ use crate::integer::server_key::radix_parallel::tests_unsigned::{
+     nb_tests_for_params, MAX_NB_CTXT, NB_CTXT,
  };
-+use crate::integer::server_key::radix_parallel::tests_unsigned::CpuFunctionExecutor;
- use crate::integer::tests::create_parameterized_test;
--use crate::integer::{
--    IntegerCiphertext, IntegerKeyKind, IntegerRadixCiphertext, RadixCiphertext, RadixClientKey,
--    ServerKey,
--};
-+use crate::integer::tests::uint::Uint;
-+use crate::integer::{BooleanBlock, RadixCiphertext, ServerKey};
- #[cfg(tarpaulin)]
- use crate::shortint::parameters::coverage_parameters::*;
- use crate::shortint::parameters::test_params::*;
- use crate::shortint::parameters::*;
--use rand::Rng;
--use std::sync::Arc;
- 
- create_parameterized_test!(integer_default_unsigned_overflowing_sum_ciphertexts_vec);
- create_parameterized_test!(integer_default_sum_ciphertexts_vec);
- 
-+/// Vector lengths both sum tests cover.
-+const VEC_LENS: [u32; 8] = [0, 1, 2, 15, 16, 17, 64, 65];
-+
- fn integer_default_unsigned_overflowing_sum_ciphertexts_vec<P>(param: P)
- where
-     P: Into<TestParameters>,
- {
--    integer_default_unsigned_overflowing_sum_ciphertexts_test(param);
-+    let ctx = TestContext::from_env(param);
-+    // Same inference problem as in `integer_default_sum_ciphertexts_vec`
-+    let overflowing_sum_vec =
-+        |sks: &ServerKey, ctxts: &[RadixCiphertext]| -> Option<(RadixCiphertext, BooleanBlock)> {
-+            sks.unsigned_overflowing_sum_ciphertexts_parallelized(ctxts)
-+        };
-+    let mut executor = CpuFunctionExecutor::new(overflowing_sum_vec);
-+    executor.setup_with_server_key(ctx.server_key());
-+    default_unsigned_overflowing_sum_ciphertexts_vec_test(&ctx, executor);
-+}
-+
-+pub(crate) fn default_unsigned_overflowing_sum_ciphertexts_vec_test<E>(
+@@ -640,7 +642,11 @@ pub(crate) fn random_non_zero_value(rng: &mut ThreadRng, modulus: i64) -> i64 {
+ /// A negative scalar has to be sign extended to the radix width, a zero extension turns
+ /// `-1i8` into `255` on any radix wider than 8 bits. The overflowing scalar tests with an
+ /// `i64` scalar never see this, the radix is at most as wide as the scalar there.
+-pub(crate) fn narrow_scalar_cases(radix_bits: u32) -> Vec<(Int, TestScalar<i8>)> {
++pub(crate) fn narrow_scalar_cases(
++    size_requirements: SizeRequirements,
 +    ctx: &TestContext,
-+    executor: E,
-+) where
-+    E: ExecuteOn<(Vec<RadixCiphertext>,), Option<(RadixCiphertext, BooleanBlock)>>,
-+{
-+    // Same lengths as `default_sum_ciphertexts_vec_test`
-+    TestBuilder::new(ctx)
-+        .size_requirements(vec_size_requirements(ctx, VEC_LENS))
-+        .n_random(2)
-+        .execute(executor, |(clears,): (Vec<Uint>,)| {
-+            let bits = clears.first()?.bits();
-+            let mut overflowed = false;
-+            let sum = clears.iter().copied().fold(Uint::zero(bits), |acc, clear| {
-+                let (sum, overflow) = acc.overflowing_add(clear);
-+                overflowed |= overflow;
-+                sum
-+            });
-+            Some((sum, overflowed))
-+        });
- }
- 
- fn integer_default_sum_ciphertexts_vec<P>(param: P)
- where
-     P: Into<TestParameters>,
- {
-+    let ctx = TestContext::from_env(param);
-     // Without this the compiler seems lost, and outputs errors about
-     // 'one type is more general than the other' probably because the
-     // `sum_ciphertexts_parallelized` is generic over the input collection
--    let sum_vec = |sks: &ServerKey, ctxt: &Vec<RadixCiphertext>| -> Option<RadixCiphertext> {
--        sks.sum_ciphertexts_parallelized(ctxt)
-+    let sum_vec = |sks: &ServerKey, ctxts: &[RadixCiphertext]| -> Option<RadixCiphertext> {
-+        sks.sum_ciphertexts_parallelized(ctxts)
-     };
--    let executor = CpuFunctionExecutor::new(sum_vec);
--    default_sum_ciphertexts_vec_test(param, executor);
-+    let mut executor = CpuFunctionExecutor::new(sum_vec);
-+    executor.setup_with_server_key(ctx.server_key());
-+    default_sum_ciphertexts_vec_test(&ctx, executor);
- }
- 
--pub(crate) fn integer_default_unsigned_overflowing_sum_ciphertexts_test<P>(param: P)
-+pub(crate) fn default_sum_ciphertexts_vec_test<E>(ctx: &TestContext, executor: E)
- where
--    P: Into<TestParameters>,
-+    E: ExecuteOn<(Vec<RadixCiphertext>,), Option<RadixCiphertext>>,
- {
--    let param = param.into();
--    let nb_tests_smaller = nb_tests_smaller_for_params(param);
--    let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
--    let cks = RadixClientKey::from((cks, NB_CTXT));
--
--    let mut rng = rand::thread_rng();
--
--    // message_modulus^vec_length
--    let modulus = cks.parameters().message_modulus().0.pow(NB_CTXT as u32);
--
--    for len in [1, 2, 15, 16, 17, 64, 65] {
--        for _ in 0..nb_tests_smaller {
--            let clears = (0..len)
--                .map(|_| rng.gen::<u64>() % modulus)
--                .collect::<Vec<_>>();
--
--            let ctxts = clears
--                .iter()
--                .copied()
--                .map(|clear| cks.encrypt(clear))
--                .collect::<Vec<_>>();
--
--            let (ct_res, overflow_res) = sks
--                .unsigned_overflowing_sum_ciphertexts_parallelized(&ctxts)
--                .unwrap();
--
--            asse
++) -> Vec<(Int, TestScalar<i8>)> {
++    let radix_bits = ctx.radix_bits(size_requirements.n_blocks);
+     let scalars = [i8::MIN, -1, 1, i8::MAX];
+     [
+         Int::min(radix_bits),
 ```
 
----
-
-### Incident Patch 3: `bcdba2b0` (2026-10-13)
-**Commit Message**: fix(hlapi): make sum call default sum not unchecked
-
-Just a small hardening and consistency fix
-
-**File**: `tfhe/src/high_level_api/integers/signed/ops.rs` (modified, +2/-2)
+**File**: `tfhe/src/integer/server_key/radix_parallel/tests_unsigned/mod.rs` (modified, +8/-2)
 ```diff
-@@ -67,7 +67,7 @@ where
-                     .collect::<Vec<_>>();
-                 cpu_key
-                     .pbs_key()
--                    .sum_ciphertexts_parallelized(ciphertexts.iter())
-+                    .sum_ciphertexts_vec_parallelized(ciphertexts)
-                     .map_or_else(
-                         || {
-                             let radix: crate::integer::SignedRadixCiphertext =
-@@ -154,7 +154,7 @@ where
-                     .collect::<Vec<_>>();
-                 cpu_key
-                     .pbs_key()
--                    .sum_ciphertexts_parallelized(ciphertexts.iter())
-+                    .sum_ciphertexts_vec_parallelized(ciphertexts)
-                     .map_or_else(
-                         || {
-                             let radix: crate::integer::SignedRadixCiphertext =
-```
-
-**File**: `tfhe/src/high_level_api/integers/unsigned/ops.rs` (modified, +2/-2)
-```diff
-@@ -74,7 +74,7 @@ where
-                 let ciphertexts = iter.map(|elem| elem.ciphertext.into_cpu()).collect();
-                 cpu_key
-                     .pbs_key()
--                    .unchecked_sum_ciphertexts_vec_parallelized(ciphertexts)
-+                    .sum_ciphertexts_vec_parallelized(ciphertexts)
-                     .map_or_else(
-                         || {
-                             Self::new(
-@@ -169,7 +169,7 @@ where
-                 let msg_mod = cpu_key.pbs_key().message_modulus();
-                 cpu_key
-                     .pbs_key()
--                    .unchecked_sum_ciphertexts_vec_parallelized(ciphertexts)
-+                    .sum_ciphertexts_vec_parallelized(ciphertexts)
-                     .map_or_else(
-                         || {
-                             Self::new(
-```
-
-**File**: `tfhe/src/integer/server_key/radix_parallel/sum.rs` (modified, +13/-9)
-```diff
-@@ -180,17 +180,11 @@ impl ServerKey {
-     /// Computes the sum of the ciphertexts in parallel.
-     ///
-     /// - Returns None if ciphertexts is empty
--    ///
--    /// See [Self::unchecked_sum_ciphertexts_parallelized] for constraints
--    pub fn sum_ciphertexts_parallelized<'a, T, C>(&self, ciphertexts: C) -> Option<T>
-+    /// - Expects all ciphertexts to have the same size
-+    pub fn sum_ciphertexts_vec_parallelized<T>(&self, mut ciphertexts: Vec<T>) -> Option<T>
-     where
--        C: IntoIterator<Item = &'a T>,
--        T: IntegerRadixCiphertext + 'a,
-+        T: IntegerRadixCiphertext,
-     {
--        let mut ciphertexts = ciphertexts
--            .into_iter()
--            .map(Clone::clone)
--            .collect::<Vec<T>>();
-         ciphertexts
-             .par_iter_mut()
-             .filter(|ct| !ct.is_clean())
-@@ -199,6 +193,16 @@ impl ServerKey {
-         self.unchecked_sum_ciphertexts_vec_parallelized(ciphertexts)
-     }
+@@ -43,7 +43,9 @@ use crate::core_crypto::commons::generators::DeterministicSeeder;
+ use crate::core_crypto::prelude::UnsignedInteger;
+ use crate::integer::keycache::KEY_CACHE;
+ use crate::integer::oprf::OprfServerKey;
+-use crate::integer::server_key::radix_parallel::test_harness::TestScalar;
++use crate::integer::server_key::radix_parallel::test_harness::{
++    SizeRequirements, TestContext, TestScalar,
++};
+ use crate::integer::server_key::radix_parallel::tests_long_run::OpSequenceFunctionExecutor;
+ use crate::integer::tests::create_parameterized_test;
+ use crate::integer::tests::uint::Uint;
+@@ -958,7 +960,11 @@ where
  
-+    /// See [Self::sum_ciphertexts_vec_parallelized]
-+    pub fn sum_ciphertexts_parallelized<'a, T, C>(&self, ciphertexts: C) -> Option<T>
-+    where
-+        C: IntoIterator<Item = &'a T>,
-+        T: IntegerRadixCiphertext + 'a,
-+    {
-+        let ciphertexts = ciphertexts.into_iter().map(Clone::clone).collect();
-+        self.sum_ciphertexts_vec_parallelized(ciphertexts)
-+    }
-+
-     /// - Expects all ciphertexts to have empty carries
-     /// - Expects all ciphertexts to have the same size
-     pub fn unchecked_unsigned_overflowing_sum_ciphertexts_vec_parallelized(
+ /// Test using smaller scalar type than the radix in order to make sure block decomposition is
+ /// correct
+-pub(crate) fn narrow_scalar_cases(radix_bits: u32) -> Vec<(Uint, TestScalar<u8>)> {
++pub(crate) fn narrow_scalar_cases(
++    size_requirements: SizeRequirements,
++    ctx: &TestContext,
++) -> Vec<(Uint, TestScalar<u8>)> {
++    let radix_bits = ctx.radix_bits(size_requirements.n_blocks);
+     let mut lhs_values = vec![
+         Uint::zero(radix_bits),
+         Uint::one(radix_bits),
 ```
 
-**File**: `tfhe/src/integer/server_key/radix_parallel/tests_unsigned/test_sum.rs` (modified, +47/-1)
+**File**: `tfhe/src/integer/server_key/radix_parallel/tests_unsigned/test_scalar_add.rs` (modified, +11/-3)
 ```diff
 @@ -1,5 +1,5 @@
  use crate::integer::server_key::radix_parallel::test_harness::{
--    vec_size_requirements, ExecuteOn, TestBuilder, TestContext,
-+    vec_size_requirements, ExecuteOn, SizeRequirements, TestBuilder, TestContext,
+-    default_scalar_fixed_cases, ExecuteOn, TestBuilder, TestContext, TestScalar,
++    default_scalar_fixed_cases, ExecuteOn, SizeRequirements, TestBuilder, TestContext, TestScalar,
  };
- use crate::integer::server_key::radix_parallel::tests_unsigned::CpuFunctionExecutor;
- use crate::integer::tests::create_parameterized_test;
-@@ -16,6 +16,50 @@ create_parameterized_test!(integer_default_sum_ciphertexts_vec);
- /// Vector lengths both sum tests cover.
- const VEC_LENS: [u32; 8] = [0, 1, 2, 15, 16, 17, 64, 65];
- 
-+/// Random tests do not exercise the non overflow case a lot (ever?)
-+///
-+/// So we provide fixed cases that do not create a result that overflows
-+fn sum_boundary_fixed_cases(
+ use crate::integer::server_key::radix_parallel::tests_cases_unsigned::default_overflowing_scalar_add_test;
+ use crate::integer::server_key::radix_parallel::tests_unsigned::{
+@@ -69,7 +69,11 @@ where
+ /// against zero, one, the radix maximum and just past it, the negatives whose low
+ /// `radix_bits` bits are all set (-1) or all clear (-2ⁿ), just past them, and the scalar
+ /// type bounds.
+-fn signed_scalar_on_unsigned_radix_cases(radix_bits: u32) -> Vec<(Uint, TestScalar<i64>)> {
++fn signed_scalar_on_unsigned_radix_cases(
 +    size_requirements: SizeRequirements,
 +    ctx: &TestContext,
-+) -> Vec<(Vec<Uint>,)> {
-+    let vec_len = size_requirements
-+        .vec_len
-+        .expect("sum tests need SizeRequirements with a vec_len") as usize;
-+    if vec_len == 0 {
-+        // Nothing to choose, and the empty input is already covered by the random cases
-+        return vec![];
-+    }
-+
-+    let bits = ctx.radix_bits(size_requirements.n_blocks);
-+    let max = Uint::max(bits);
-+    let vec_of_zeros = vec![Uint::zero(bits); vec_len];
-+
-+    let mut cases = vec![vec_of_zeros.clone()];
-+
-+    // Sum of a single one and many zeros and sum of single max value and many zeros
-+    for value in [Uint::one(bits), max] {
-+        let mut case = vec_of_zeros.clone();
-+        case[0] = value;
-+        cases.push(case);
-+    }
-+
-+    if vec_len > 1 {
-+        // We want to sum many ones, but we have to make sure it won't overflow
-+        if vec_len as u128 <= max.value() {
-+            cases.push(vec![Uint::one(bits); vec_len]);
-+        }
-+
-+        // Smallest overflow there is, one past the largest sum that fits
-+        let mut case = vec_of_zeros;
-+        case[0] = max;
-+        case[1] = Uint::one(bits);
-+        cases.push(case);
-+    }
-+
-+    cases.into_iter().map(|clears| (clears,)).collect()
-+}
-+
- fn integer_default_unsigned_overflowing_sum_ciphertexts_vec<P>(param: P)
- where
-     P: Into<TestParameters>,
-@@ -41,6 +85,7 @@ pub(crate) fn default_unsigned_overflowing_sum_ciphertexts_vec_test<E>(
++) -> Vec<(Uint, TestScalar<i64>)> {
++    let radix_bits = ctx.radix_bits(size_requirements.n_blocks);
+     let mut scalars: Vec<i128> = vec![0, 1, -1, -2, i128::from(i64::MIN), i128::from(i64::MAX)];
+     if radix_bits < i64::BITS {
+         let two_pow_radix_bits = 1i128 << radix_bits;
+@@ -134,7 +138,11 @@ where
+ {
+     let scalar_width = u8::BITS.div_ceil(ctx.bits_per_block());
      TestBuilder::new(ctx)
-         .size_requirements(vec_size_requirements(ctx, VEC_LENS))
-         .n_random(2)
-+        .fixed_cases(sum_boundary_fixed_cases)
-         .execute(executor, |(clears,): (Vec<Uint>,)| {
-             let bits = clears.first()?.bits();
-             let mut overflowed = false;
-@@ -76,6 +121,7 @@ where
+-        .block_counts(vec![1, scalar_width, scalar_width + 1, 2 * scalar_width])
++        .size_requirements(
++            [1, scalar_width, scalar_width + 1, 2 * scalar_width]
++                .map(SizeRequirements::new_scalar)
++                .to_vec(),
++        )
+         .n_random(0)
+         .fixed_cases(narrow_scalar_cases)
+         .execute(executor, |(lhs, rhs): (Uint, TestScalar<u8>)| {
+```
+
+**File**: `tfhe/src/integer/server_key/radix_parallel/tests_unsigned/test_scalar_sub.rs` (modified, +6/-2)
+```diff
+@@ -2,7 +2,7 @@ use std::sync::Arc;
+ 
+ use crate::integer::keycache::KEY_CACHE;
+ use crate::integer::server_key::radix_parallel::test_harness::{
+-    default_scalar_fixed_cases, ExecuteOn, TestBuilder, TestContext, TestScalar,
++    default_scalar_fixed_cases, ExecuteOn, SizeRequirements, TestBuilder, TestContext, TestScalar,
+ };
+ use crate::integer::server_key::radix_parallel::tests_cases_unsigned::{
+     default_scalar_sub_test, FunctionExecutor,
+@@ -93,7 +93,11 @@ where
+ {
+     let scalar_width = u8::BITS.div_ceil(ctx.bits_per_block());
      TestBuilder::new(ctx)
-         .size_requirements(vec_size_requirements(ctx, VEC_LENS))
-         .n_random(2)
-+        .fixed_cases(sum_boundary_fixed_cases)
-         .execute(executor, |(clears,): (Vec<Uint>,)| {
-             let bits = clears.first()?.bits();
-             Some(
+-        .block_counts(vec![1, scalar_width, scalar_width + 1, 2 * scalar_width])
++        .size_requirements(
++            [1, scalar_width, scalar_width + 1, 2 * scalar_width]
++                .map(SizeRequirements::new_scalar)
++                .to_vec(),
++        )
+         .n_random(0)
+         .fixed_cases(narrow_scalar_cases)
+         .execute(executor, |(lhs, rhs): (Uint, TestScalar<u8>)| {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4080** (2026-10-19): fix(integer): adapt test call sites SizeRequirements (@tmontaigu)
 - **PR #4072** (2026-10-16): chore: mark crates we don't publish as publish = false (@IceTDrinker)
+- **PR #4069** (2026-10-19): Tm/degree 1.6.5 (@tmontaigu)
 - **PR #4067** (2026-10-16): chore: pin CSPRNG (@IceTDrinker)
 - **PR #4066** (closed): backport ci fixes (@IceTDrinker)
 - **PR #4065** (closed): wip trigger (@IceTDrinker)
-- **PR #4064** (2026-10-16): Tm/backport degree 1.6.1 (@tmontaigu)
-- **PR #4063** (2026-10-16): chore(data-extractor): bump rustls (@nsarlin-zama)
 
 ---
 
@@ -2888,34 +2088,3 @@ Just a small hardening and consistency fix
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. integer): overflow flag of signed overflowing scalar add/sub for out-of-range sc
-
-**RULE**:
-When implementing operations in `tfhe/src/integer/gpu/server_key/radix/scalar_add.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `a856fe70`: integer): overflow flag of signed overflowing scalar add/sub for out-of-range scalars. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tfhe/src/integer/gpu/server_key/radix/scalar_add.rs`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-        // FIXME(gpu): use `ScalarOverflowFlagSource`
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a856fe70` are properly handled with clean fallback behavior.

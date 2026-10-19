@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T11:48:38.365Z",
-  "total_cycles_completed": 3183,
-  "total_learnings_persisted": 3183,
-  "total_rules_promoted": 2342,
+  "last_updated": "2026-10-19T11:55:00.445Z",
+  "total_cycles_completed": 3189,
+  "total_learnings_persisted": 3189,
+  "total_rules_promoted": 2349,
   "history": [
-    {
-      "timestamp": "2026-10-19T06:26:18.158Z",
-      "repository": "ionic-team/ionic-framework",
-      "learningId": "learn-github-ionic-team-ionic-framework",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T06:26:21.508Z",
-      "repository": "PSRben/VisionHOPE",
-      "learningId": "learn-huggingface-psrben-visionhope",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T06:26:22.898Z",
-      "repository": "lysine-dev/okio",
-      "learningId": "learn-github-lysine-dev-okio",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T06:26:25.394Z",
-      "repository": "nginx/kubernetes-ingress",
-      "learningId": "learn-github-nginx-kubernetes-ingress",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T06:26:30.645Z",
-      "repository": "milvus-io/milvus",
-      "learningId": "learn-github-milvus-io-milvus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T06:32:30.615Z",
-      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
-      "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T06:32:30.622Z",
       "repository": "cosscom/ui",
@@ -1402,6 +1360,48 @@
       "timestamp": "2026-10-19T11:48:38.365Z",
       "repository": "SwiftUIX/SwiftUIX",
       "learningId": "learn-github-swiftuix-swiftuix",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T11:54:44.479Z",
+      "repository": "mui/base-ui",
+      "learningId": "learn-github-mui-base-ui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T11:54:50.401Z",
+      "repository": "MochiDiffusion/MochiDiffusion",
+      "learningId": "learn-github-mochidiffusion-mochidiffusion",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T11:54:55.316Z",
+      "repository": "zama-ai/tfhe-rs",
+      "learningId": "learn-github-zama-ai-tfhe-rs",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T11:54:55.694Z",
+      "repository": "meta-llama/Llama-2-7b-chat-hf",
+      "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T11:54:59.086Z",
+      "repository": "matrixorigin/matrixone",
+      "learningId": "learn-github-matrixorigin-matrixone",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T11:55:00.445Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T11:48:38.368Z",
+  "last_updated": "2026-10-19T11:55:00.448Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1264,14 +1264,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
-      "content_hash": "d8786888b7e25a11b1649cf499afb96b2326e129d074003bfe65a4488c536e8c",
-      "verified_at": "2026-10-18T02:58:24.127Z",
+      "content_hash": "cb173428e6788e22dc95fd50c76d18cf9440c43f354a7664d8cf3ebc0c76aa25",
+      "verified_at": "2026-10-19T11:54:55.697Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T02:58:24.127Z"
+      "last_updated": "2026-10-19T11:54:55.697Z"
     },
     "meta-llama/Llama-2-7b": {
       "repository": "meta-llama/Llama-2-7b",
@@ -3679,14 +3679,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "8f4de18d005f8daacee8f554e06ce5114947e982d09ad9cbc1dd17a911e8f5c7",
-      "verified_at": "2026-10-19T11:28:05.018Z",
+      "content_hash": "030cda2c79e2b7281bb271cc600dc1eab35b72d6e8a524fb37e9228840681698",
+      "verified_at": "2026-10-19T11:55:00.448Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T11:28:05.018Z"
+      "last_updated": "2026-10-19T11:55:00.448Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -4879,14 +4879,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-matrixorigin-matrixone",
-      "content_hash": "00d9ecea4561cff1fdfab4755a33b261f477dd1a0da1f01aac9e0aee1f2b7eb6",
-      "verified_at": "2026-10-18T22:48:14.501Z",
+      "content_hash": "5551923c6ffaf2f1df9ad96d2dc83ec6bd01ececc9e551ca6fc43d16fdd8059e",
+      "verified_at": "2026-10-19T11:54:59.088Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T22:48:14.501Z"
+      "last_updated": "2026-10-19T11:54:59.088Z"
     },
     "fallow-rs/fallow": {
       "repository": "fallow-rs/fallow",
@@ -5044,14 +5044,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zama-ai-tfhe-rs",
-      "content_hash": "c5719b6091795eb582476deb1a63bdc2a46692d5672f6877dc2e10e1c8e39810",
-      "verified_at": "2026-10-18T23:02:10.536Z",
+      "content_hash": "986bf6d822599445a4179852fbf55896d72b5068996db25a541f9c51260b83d1",
+      "verified_at": "2026-10-19T11:54:55.319Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T23:02:10.536Z"
+      "last_updated": "2026-10-19T11:54:55.319Z"
     },
     "doobidoo/mcp-memory-service": {
       "repository": "doobidoo/mcp-memory-service",
@@ -6319,14 +6319,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mui-base-ui",
-      "content_hash": "72e7c1f3ddadadc6f4d4a11565fb29ab82cccc3c69126b5ae4b60e6e3d105784",
-      "verified_at": "2026-10-19T00:41:05.382Z",
+      "content_hash": "7b525dcce5d8d03a27be11f2198aded1eab5584731f2adc877fdb94b58737d08",
+      "verified_at": "2026-10-19T11:54:44.482Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T00:41:05.382Z"
+      "last_updated": "2026-10-19T11:54:44.482Z"
     },
     "ekzhang/bore": {
       "repository": "ekzhang/bore",
@@ -11937,6 +11937,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T11:48:38.367Z"
+    },
+    "MochiDiffusion/MochiDiffusion": {
+      "repository": "MochiDiffusion/MochiDiffusion",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-mochidiffusion-mochidiffusion",
+      "content_hash": "be2ad43ee00be30a9eaae2d4d33444447718aea98448f3490966e3851a8b05b5",
+      "verified_at": "2026-10-19T11:54:50.403Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T11:54:50.403Z"
     }
   },
   "repos": {

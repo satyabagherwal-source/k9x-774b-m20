@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source**: github ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
-> **Source Version**: `2508ce70`  
+> **Source Version**: `308b6b87`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T22:48:14.409Z  
+> **Timestamp**: 2026-10-19T11:54:58.811Z  
 > **Learning ID**: `learn-github-matrixorigin-matrixone`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T22:48:14.402Z  
+> **Harvest Timestamp**: 2026-10-19T11:54:58.647Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1917,11 +1917,14 @@ func (rc *ReadContext) GetTracker() *TransactionTracker {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #30536** (2026-10-18): **fix(morpc): retain writer buffers until write loop exits**
-  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [x] BUG - [ ] Improvement - [ ] Documentation - [ ] Feature - [x] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Fixes #30532  ## What this PR does / why we need it:  Public MORPC client-session close could release the transport reference owned by an active writer. When the application read owner also closed, Goetty freed the buffers while Encode/Flush still used them, explaining the zero-capacity ByteBuf panic during restart shutdown.  Separate socket interruption from final buffer release using existing Goetty ownership: public close disconnects and cancels writes; only the writer finalizer or rejected-start rollback releases the writer reference. Keep generation-aware session retirement unchanged. This adds no lock, copy, allocation, or per-message work to the normal path and changes no wire/storage format or dependency.  Deterministic regression coverage uses real Goetty sessions and explicit barriers to check borrowed-buffer lifetime, rejected writer startup, blocked flush/payload writes, message release, and final buffer reclamation. The active-Encode test fails on the unchanged production base (two buffers freed prematurely) and passes with this fix. This reproduces the lifetime defect; it does not claim to reproduce the exact original CI instruction interleaving.  Validation (Linux/amd64, Go 1.27.1, canonical isolated native build):  - Full MORPC normal and race suites pass. - Three new regression 
+- **Issue #30589** (2026-10-19): **fix(plan): report errno 1452 for INSERT foreign-key violations (#30540)**
+  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [x] BUG - [ ] Improvement - [ ] Documentation - [ ] Feature - [ ] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  issue #30540  ## What this PR does / why we need it:  A foreign-key violation raised by INSERT-family statements was reported to the client as internal error **20101** (`internal error: Cannot add or update a child row: a foreign key constraint fails`, sqlstate HY000) instead of MySQL errno **1452** (ER_NO_REFERENCED_ROW_2, sqlstate 23000). Root cause: the planner embedded a **2-argument untyped `assert()`**, whose runtime fallback is `moerr.NewInternalError`; the error never carried `ErrFKNoReferencedRow2` (20471), so the frontend's wire mapping (mysqlCode == ER_UNKNOWN_ERROR → send internal code) leaked 20101. The internal→mysql mapping 20471→1452/23000 always existed and is correct — the code was lost at plan time.  This PR embeds the **typed 3-argument assert** (errType `fk_no_referenced_row`, already supported by the runtime and used by the UPDATE path) at every INSERT-side emitter:  1. `buildModernChildFkAssert` (plain INSERT, and REPLACE which reuses it), 2. the ON DUPLICATE KEY UPDATE **action-row** foreign-key asserts, 3. the ON DUPLICATE KEY UPDATE **final-image** foreign-key asserts, 4. the legacy `appendForeignConstrantPlan`, which previously appended the errType argument only for UPDATE.  This also fixes the ALTER ... COPY backfill path: its validation INSERT goes through the same m
 
-- **Issue #30535** (2026-10-18): **test(ut): stabilize cooperative helper cancellation fixtures**
-  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [x] BUG - [ ] Improvement - [ ] Documentation - [ ] Feature - [x] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Related to #30281.  ## What this PR does / why we need it:  Cooperative cancellation fixtures shortened the helper grace period to one second, below the runner's supported minimum. Under delayed completion, the parent KILLs the helper before its acknowledgement, retains the private report, and returns 125; the engine fixture's missing-report check then reports 92. This matches the failure boundary in [the PR #30513 Ubuntu UT job](https://github.com/matrixorigin/matrixone/actions/runs/39136968810/job/117703366829?pr=30513).  Remove the three artificial grace overrides and use the existing 60-tick default. Strengthen the engine-registration and heavy/plan cases using their existing FIFOs: hold completion publication until the fifth real grace tick, verify the report is still unconsumed, then release and verify acknowledgement 143. Preserve the original cancellation entry points, real liveness/KILL/drain logic, exact report assertions and forced-stop controls. Production scripts and the outer test deadline stay unchanged. No retries, new sleeps or extra fixture processes are added.  Validation on Go 1.27.1:  - A controlled short-grace mutation of the final tests fails both roots through actual KILL/empty acknowledgement/retained report, reproducing 125 and 92. The default-grace tests pass. This iso
+- **Issue #30586** (2026-10-19): **design: atomic event-ledger sink profile for Kafka Connect and NiFi**
+  *Symptoms*: ## Design review only  Design for #29857 and implementation PR #30561. This PR contains only the design document so the design decision is distinct from implementation review.  Please review the exact design revision [`b2d0e15e38`](https://github.com/jiangxinmeng1/matrixone/blob/b2d0e15e38/docs/design/issue_29857_sink_profile.md) and record an explicit design-phase approval or blocking findings. The implementation PR remains blocked until that decision is recorded.  The document defines the event frame, MatrixOne transaction and checkpoint authority, owner epochs, ambiguous COMMIT recovery, broker/topic retention constraints, resource bounds, operational limits, and fault-injection acceptance matrix. 
+  **Post-Mortem & Fix Analysis**:
+  > ### Qodo reviews are paused for this user.  Troubleshooting steps vary by plan [Learn more →](https://docs.qodo.ai/subscription-plans#what-you%E2%80%99ll-see-when-reviews-are-paused)   **On a Teams plan?** Reviews resume once this user has a paid seat *and* their Git account is linked in Qodo. [Link Git account →](https://docs.qodo.ai/subscription-plans#linking-a-git-account)  **Using GitHub Enterprise Server, GitLab Self-Managed, or Bitbucket Data Center?** These require an Enterprise plan - Contact us [Contact us →](https://docs.qodo.ai/qodo-support#support) 
+  > **mo-bot review · `mo-bot-xupeng` · superseded**  Commit: `c2b5b5fa6e124263a65bfde096f0f69a5e666d2c`  "interrupted"  <!-- mo-bot-review:v1 {"service":"mo-bot-xupeng","job":"25ac60a5af12e574b1675824","head":"c2b5b5fa6e124263a65bfde096f0f69a5e666d2c","state":"superseded"} -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1938,689 +1941,1398 @@ func (rc *ReadContext) GetTracker() *TransactionTracker {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `68e642fd` (2026-10-18)
-**Commit Message**: fix: avoid global lineage gate during ALTER COPY preparation (#29798)
+### Incident Patch 1: `8ef2eaf4` (2026-10-19)
+**Commit Message**: fix(python-sdk): enforce handshake, TLS, redaction and async deadlines (#30074)
 
-### Design record
+### Problem and behavior
 
-- Added versioned design: `docs/design/20261010-alter-copy-pre-publication.md`.
-- The design records the speculative-preparation/publication split, authoritative after-copy source-frontier revalidation, persisted-delete coverage, actual nested lock state, terminal retry and whole-transaction rollback ownership, transaction-local relation and workspace-write handling, alternatives, compatibility, source-state cost model, and validation map.
-- Independent design approval of that exact revision is still required before implementation approval.
+Lazy engine construction previously counted as a successful connection; TLS settings, failed-state cleanup, password diagnostics and async deadlines were incomplete.
 
-### Root cause
+Require an authenticated probe before reporting success, dispose/clear failed engines, preserve connection timeout overrides and sync socket/charset options, and apply the AsyncClient.execute deadline through pool acquisition, execution, fetch and transaction completion. Required synchronous TLS uses a verifying SSLContext and rejects peers without TLS before authentication, including old PyMySQL. Password prompts use mysql -p; connection errors are sanitized before logging/wrapping and suppress the original display chain. Keep the exact SQLAlchemy 1.4 aiomysql pre-ping compatibility guard.
 
-`ALTER TABLE ... COPY` acquired the transaction-scoped global SNAPSHOT lineage-owner gate before temporary-table creation, physical row copy, auto-increment reconciliation, and unaffected-index cloning. Every independent branch ALTER therefore held the stable `mo_catalog.mo_feature_registry` row for `SNAPSHOT` until commit. Under the reported 500-worker workload, unrelated ALTERs serialized behind each other and eventually returned MySQL 1205 lock-wait timeouts or MySQL 2013 connection losses.
+The escaped-password follow-up handles both raw and repr/JSON-escaped forms, including backslashes, quotes, control characters and printable Unicode. Longer escaped forms are removed first to avoid partial replacements. Cancellation is not proof of server rollback; uncertain writes require reconciliation before retry. Indepen
 
-Moving physical work before that gate also exp
-
-**File**: `docs/design/20261010-alter-copy-pre-publication.md` (added, +134/-0)
+**File**: `clients/python/CONNECTION_POLICIES.md` (added, +38/-0)
 ```diff
-@@ -0,0 +1,134 @@
-+# ALTER COPY pre-publication design
+@@ -0,0 +1,38 @@
++# Connection and timeout contracts
 +
-+- Status: proposed; independent design approval required before implementation approval.
-+- Issue: #29208.
-+- Implementation PR: #29798.
-+- Design trigger: materially changes the COPY ALTER concurrency, retry, and lifecycle model.
-+- Supersedes: none; extends the RC lifecycle contract in [20260929-rc-lifecycle-protocol.md](20260929-rc-lifecycle-protocol.md).
++`Client.connect()` creates an engine and requires an authenticated SELECT 1 before
++reporting success. Initial probe failures dispose the failed engine and clear its
++state. `connected()` reports successful initialization, not a live health probe;
++use a query for live health. Reconnect disposes the old engine. Failed disposal
++also clears the client's connected state, while preserving its error.
 +
-+## Problem
++`ssl_mode='required'` uses a certificate/hostname-verifying SSLContext. `ssl_ca`
++selects a CA file; without it, system roots are used. Peers without TLS are refused
++before authentication on older and current PyMySQL. `disabled` explicitly disables
++TLS. `preferred` follows the driver's opportunistic behavior unless a CA is
++supplied, in which case certificate verification is requested. A client certificate
++requires a CA or required mode. This policy change may reject previously accepted
++untrusted endpoints; configure a trusted test/organization CA rather than disabling
++verification on a required connection.
 +
-+`ALTER TABLE ... COPY` currently acquires the global SNAPSHOT lineage gate before physical preparation. The gate is transaction-scoped and intentionally broad, so unrelated branch ALTERs serialize behind each other and can eventually return lock-wait timeouts or connection losses under high concurrency.
++Constructor `connection_timeout` is inherited unless connect explicitly overrides
++it. The synchronous engine also passes query_timeout as read/write inactivity
++limits and the configured charset. Async connect applies its connection deadline
++and passes its driver connect timeout. `AsyncClient.execute()` applies query_timeout
++to the full call (pool wait, execution, fetch and transaction completion).
++Cancellation propagates and SQLAlchemy releases/invalidates the interrupted
++connection. This is a client deadline, not a guaranteed server-side KILL operation.
++Independently managed Session calls retain their own transaction/deadline scope.
 +
-+The correctness invariant is unchanged: publication must not expose a stale or inconsistent source snapshot, and every source or lineage mutation that could invalidate the copy must be detected before publication.
++A timed-out write can have an unknown commit outcome. Reconcile before retry;
++TimeoutError or cancellation is not proof of rollback. No automatic retry is added.
 +
-+## Goals
++Connection diagnostics use an interactive `mysql -p` prompt, redact any configured
++password echoed in the driver error, and suppress the original exception's display
++chain. The SDK depends on `SQLAlchemy[asyncio]` so supported async runtimes are
++installed instead of silently leaving async imports unavailable.
 +
-+- Let independent ALTER COPY operations prepare physical work without waiting on each other’s global lineage gate.
-+- Preserve atomic publication and global ordering for genuinely conflicting lifecycle owners.
-+- Keep speculative preparation from retaining source database or source catalog locks.
-+- Use an existing authoritative source-commit frontier instead of constructing a full CDC replay pipeline.
-+- Make post-physical source races terminal so RC statement retry cannot repeat a full copy while retaining publication locks.
-+- Bound the redesign to ALTER COPY and existing lifecycle protocols.
-+
-+## Non-goals
-+
-+- Remove or weaken the global SNAPSHOT lineage gate.
-+- Change DATA BRANCH, Snapshot, PITR, restore, or GC ownership.
-+- Introduce a new distributed protocol or persistence format.
-+- Change unrelated DDL paths.
-+
-+## Selected design
-+
-+### Transaction and mode coverage
-+
-+For a non-temporary relation, all transaction modes use the same ordering: physical preparation first, then publication admission and validation. Mode-specific admission is:
-+
-+- pessimistic RC uses broad-table lifecycle admission;
-+- other pessimistic modes use the pessimistic lineage-owner gate;
-+- optimistic transactions perform no prepublication source locks and still validate the resolved source before publication.
-+
-+`ErrTxnWriteConflict` is transaction-fatal in the frontend rollback policy. Autocommit and explicit transactions therefore roll back through the frontend transaction owner; the ALTER statement never silently retries the conflict.
-+
-+### Pre-publication phase
-+
-+The transaction resolves the source and records the copy timestamp, then performs transaction-local preparation:
-+
-+1. create the temporary target relation;
-+2. copy source rows at the recorded timestamp;
-+3. reconcile auto-increment state;
-+4. clone unaffected indexes, including lock-disabled cleanup of transaction-created replacement hidden tables.
-+
-+The temporary CREATE, row copy, and nested replacement-index cleanup use `WithDisableLock`, so nested execution acquires neither pre-pipeline metadata/table locks nor row-lock operators. The lock-free policy is a property of the whole statement tree, not only the statements the compiler itself issues: the internal SQL executor carries it on the nested statement context, so service-owned catalog SQL triggered by the same statement — partition-service metadata writes and auto-increment allocator column writes, both of which run on service executors with fresh statement options — inherits `WithDisableLock` too. Without that inheritance a partitioned or AUTO_INCREMENT preparation would retain public catalog locks that publication admission cannot certify as private, reintroducing FastFail failures for unrelated publishers; the rows those services write address keys unique to the in-flight private preparation, so the same isolation argument as the private CREATE applies. The temporary CREATE also skips transient index CDC and idxcron task registration; because no tasks are registered, ALTER skips their catalog cleanup deletes, while post-rename publication retains the existing final task-registration path. The registration opt-out is a property of that one nested compiler generation only: `Compile.clear` resets the flag with the other per-statement flags before the object returns to the global reuse pool, and `NewCompile` re-initializes it, so the suppression cannot reach an unrelated later `CREATE TABLE`. Row copy, allocator reconciliation, and index cloning operate through the current transaction and can consume engine/workspace resources; they may retain table locks on transaction-created replacement or index tables, but not source database/catalog/name locks. No global lineage gate is held.
-+
-+In pessimistic RC the copy timestamp is recorded by advancing the transaction snapshot through `databranchutils.AdvanceLineageSnapshot` before preparation begins. The workspace owns that advancement — `Workspace.AdvanceSnapshot` relocates transaction-local tombs
++Transport regression tests require an isolated TLS CN with a test certificate
++having only IP:127.0.0.1 in its SAN, a plaintext CN, an existing disposable test
++database, and MO_SDK_ONLINE=1, MO_TLS_CA, MO_TLS_PORT and MO_PLAIN_PORT. Tests use
++synthetic credentials and do not commit test private keys/certificates.
 ```
 
-**File**: `pkg/common/moerr/txn.go` (modified, +1/-0)
+**File**: `clients/python/matrixone/_connection_options.py` (added, +78/-0)
 ```diff
-@@ -19,6 +19,7 @@ var wholeTxnRollbackCodes = [...]uint16{
- 	ErrLockTableNotFound, ErrDeadlockCheckBusy, ErrLockConflict,
- 	ErrRemoteLockWaitTimeout, ErrLockWaitTimeout, ErrTxnUnknown,
- 	ErrBackendClosed, ErrNoAvailableBackend, ErrBackendCannotConnect,
-+	ErrTxnWriteConflict,
- }
- 
- // WholeTxnRollbackCodes returns a copy for diagnostics/tests without exposing
+@@ -0,0 +1,78 @@
++# Copyright 2026 Matrix Origin
++# Licensed under the Apache License, Version 2.0.
++
++"""Explicit connection security and timeout options shared by SDK clients."""
++
++import json
++import math
++import ssl
++
++import pymysql
++from pymysql.constants import CLIENT
++
++
++def positive_timeout(value, name):
++    if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or value <= 0:
++        raise ValueError('%s must be positive and finite' % name)
++    return value
++
++
++def redact_error(error, password):
++    message = str(error)
++    if not password:
++        return message
++    # DBAPI errors format their args with repr(), and SQLAlchemy embeds that
++    # representation in its own message. Match escaped forms before the raw
++    # password so replacing a raw substring cannot break the escaped match.
++    quoted = repr(password)
++    # Remove only the enclosing quote's escape, preserving escaped backslashes
++    # and printable Unicode. The surrounding error can choose either quote.
++    escaped = quoted[1:-1].replace('\\' + quoted[0], quoted[0])
++    representations = {
++        password,
++        repr(password)[1:-1],
++        ascii(password)[1:-1],
++        escaped,
++        escaped.replace("'", "\\'"),
++        escaped.replace('"', '\\"'),
++        json.dumps(password)[1:-1],
++        json.dumps(password, ensure_ascii=False)[1:-1],
++    }
++    for value in sorted(representations, key=len, reverse=True):
++        message = message.replace(value, '***')
++    return message
++
++
++def tls_options(params):
++    mode = params.get('ssl_mode', 'preferred')
++    if mode not in ('disabled', 'preferred', 'required'):
++        raise ValueError('ssl_mode must be disabled, preferred or required')
++    if mode == 'disabled':
++        return {'ssl_disabled': True}
++    if mode == 'required' or params.get('ssl_ca'):
++        context = ssl.create_default_context(cafile=params.get('ssl_ca'))
++        # Explicit context preserves hostname checking when system roots are
++        # used; some driver versions disable it when no ca path is supplied.
++        if params.get('ssl_cert'):
++            context.load_cert_chain(params['ssl_cert'], params.get('ssl_key'))
++        return {'ssl': context}
++    if params.get('ssl_cert') or params.get('ssl_key'):
++        raise ValueError('A client certificate requires ssl_ca or ssl_mode=required')
++    return {}
++
++
++class TLSRequiredConnection(pymysql.connections.Connection):
++    """Fail before authentication when a peer cannot negotiate required TLS.
++
++    Older supported PyMySQL versions otherwise silently fall back to plaintext.
++    Certificate and hostname verification are handled by the SSLContext.
++    """
++
++    def _request_authentication(self):
++        if not self.server_capabilities & CLIENT.SSL:
++            raise pymysql.err.OperationalError(2026, 'TLS is required but the server does not advertise TLS')
++        return super()._request_authentication()
++
++
++def connect_required_tls(dialect, record, args, params):
++    return TLSRequiredConnection(*args, **params)
 ```
 
-**File**: `pkg/frontend/rollback_on_error_test.go` (modified, +5/-0)
+**File**: `clients/python/matrixone/async_client.py` (modified, +55/-11)
 ```diff
-@@ -119,6 +119,9 @@ func TestStaticRollbackSetIsInfrastructureOnly(t *testing.T) {
- 	// a genuine infrastructure failure still ends the transaction, with or
- 	// without the session variable
- 	require.True(t, isErrorRollbackWholeTxn(moerr.NewDeadLockDetectedNoCtx()))
-+	require.True(t, isErrorRollbackWholeTxn(
-+		moerr.NewTxnWriteConflict(context.Background(), "concurrent source change"),
-+	))
- }
+@@ -606,7 +606,7 @@ async def connect(
+         account: Optional[str] = None,
+         role: Optional[str] = None,
+         charset: str = "utf8mb4",
+-        connection_timeout: int = 30,
++        connection_timeout: Optional[int] = None,
+         auto_commit: bool = True,
+         on_connect: Optional[Union[ConnectionHook, List[Union[ConnectionAction, str]], Callable]] = None,
+     ):
+@@ -624,7 +624,7 @@ async def connect(
+             account: Optional account name (will be combined with user if user doesn't contain '#' or ':')
+             role: Optional role name (will be combined with user if user doesn't contain '#' or ':')
+             charset: Character set for the connection (default: utf8mb4)
+-            connection_timeout: Connection timeout in seconds (default: 30)
++            connection_timeout: Override constructor connection timeout; None inherits it
+             auto_commit: Enable autocommit (default: True)
+             on_connect: Connection hook to execute after successful connection.
+                        Can be:
+@@ -650,6 +650,14 @@ async def my_callback(client):
+             await client.connect(host, port, user, password, database,
+                                on_connect=my_callback)
+         """
++        from ._connection_options import positive_timeout
++
++        positive_timeout(self.query_timeout, 'query_timeout')
++        timeout = self.connection_timeout if connection_timeout is None else connection_timeout
++        positive_timeout(timeout, 'connection_timeout')
++        if self._engine is not None:
++            await self.disconnect()
++        self.connection_timeout = timeout
+         try:
+             # Build final login info based on user parameter and optional account/role
+             final_user, parsed_info = self._build_login_info(user, account, role)
+@@ -666,15 +674,20 @@ async def my_callback(client):
+                 "database": database,
+                 "charset": charset,
+                 "autocommit": auto_commit,
+-                "connect_timeout": connection_timeout,
++                "connect_timeout": timeout,
+             }
  
- // unknownVarSession is a FeSession whose system-variable lookup fails, which
-@@ -264,6 +267,8 @@ func newErrorRollbackWholeTxn(code uint16) error {
- 		return moerr.NewNoAvailableBackendNoCtx()
- 	case moerr.ErrBackendCannotConnect:
- 		return moerr.NewBackendCannotConnectNoCtx("test")
-+	case moerr.ErrTxnWriteConflict:
-+		return moerr.NewTxnWriteConflictNoCtx("test")
- 	default:
- 		panic(fmt.Sprintf("unsupported error code %d", code))
- 	}
+             # Create SQLAlchemy async engine instead of direct aiomysql connection
+             self._engine = self._create_async_engine()
+ 
+             # Test the connection by executing a simple query
+-            async with self._engine.begin() as conn:
+-                await conn.execute(text("SELECT 1"))
++            import asyncio
++
++            async def probe():
++                async with self._engine.begin() as conn:
++                    await conn.execute(text("SELECT 1"))
++
++            await asyncio.wait_for(probe(), timeout=timeout)
+ 
+             # Initialize vector managers after successful connection
+             self._initialize_vector_managers()
+@@ -694,21 +707,31 @@ async def my_callback(client):
+                 # Execute the hook once immediately for the initial connection
+                 await self._execute_connection_hook_immediately(on_connect)
+ 
+-        except Exception as e:
++        except BaseException as e:
++            engine, self._engine = self._engine, None
++            if engine is not None:
++                try:
++                    await engine.dispose()
++                except Exception:
++                    pass
++            if not isinstance(e, Exception):
++                raise
++            from ._connection_options import redact_error
++
++            error_msg = redact_error(e, password)
+             self.logger.log_connection(host, port, final_user, database or "default", success=False)
+-            self.logger.log_error(e, context="Async connection")
++            self.logger.log_error(ConnectionError(error_msg), context="Async connection")
+ 
+             # Provide user-friendly error messages for common issues
+-            error_msg = str(e)
+             if 'Unknown database' in error_msg or '1049' in error_msg:
+                 db_name = database or "default"
+                 raise ConnectionError(
+                     f"Database '{db_name}' does not exist. Please create it first:\n"
+-                    f"  mysql -h{host} -P{port} -u{user.split('#')[0] if '#' in user else user} -p{password} "
++                    f"  mysql -h{host} -P{port} -u{user.split('#')[0] if '#' in user else user} -p "
+                     f"-e \"CREATE DATABASE {db_name}\""
+-                ) from e
++                ) from None
+             else:
+-                raise ConnectionError(f"Failed to connect to MatrixOne: {e}") from e
++                raise ConnectionError(f"Failed to connect to MatrixOne: {error_msg}") from None
+ 
+     def _setup_connection_hook(
+         self, on_connect: Union[ConnectionHook, List[Union[ConnectionAction, str]], Callable]
+@@ -871,9 +894,18 @@ def _create_async_engine(self) -> AsyncEngine:
+             pool_recycle=3600,  # Recycle connections after 1 hour
+             pool_pre_ping=True,  # Verify connections before use
+             pool_reset_on_return="commit",  # Reset co
 ```
 
-**File**: `pkg/frontend/util_test.go` (modified, +1/-0)
+**File**: `clients/python/matrixone/client.py` (modified, +52/-19)
 ```diff
-@@ -1457,6 +1457,7 @@ func Test_isErrorRollbackWholeTxn(t *testing.T) {
- 	assert.Equal(t, true, isErrorRollbackWholeTxn(moerr.NewBackendClosedNoCtx()))
- 	assert.Equal(t, true, isErrorRollbackWholeTxn(moerr.NewNoAvailableBackendNoCtx()))
- 	assert.Equal(t, true, isErrorRollbackWholeTxn(moerr.NewBackendCannotConnectNoCtx("test")))
-+	assert.Equal(t, true, isErrorRollbackWholeTxn(moerr.NewTxnWriteConflictNoCtx("test")))
- }
+@@ -441,7 +441,7 @@ def connect(
+         account: Optional[str] = None,
+         role: Optional[str] = None,
+         charset: str = "utf8mb4",
+-        connection_timeout: int = 30,
++        connection_timeout: Optional[int] = None,
+         auto_commit: bool = True,
+         on_connect: Optional[Union[ConnectionHook, List[Union[ConnectionAction, str]], Callable]] = None,
+     ) -> None:
+@@ -463,7 +463,7 @@ def connect(
+             account: Optional account name (will be combined with user if user doesn't contain '#' or ':')
+             role: Optional role name (will be combined with user if user doesn't contain '#' or ':')
+             charset: Character set for the connection (default: utf8mb4)
+-            connection_timeout: Connection timeout in seconds (default: 30)
++            connection_timeout: Override constructor connection timeout; None inherits it
+             auto_commit: Enable autocommit (default: True)
+             on_connect: Connection hook to execute after successful connection.
+                        Can be:
+@@ -489,6 +489,16 @@ def my_callback(client):
+             client.connect(host, port, user, password, database,
+                           on_connect=my_callback)
+         """
++        from ._connection_options import positive_timeout
++
++        positive_timeout(self.query_timeout, 'query_timeout')
++        timeout = self.connection_timeout if connection_timeout is None else connection_timeout
++        positive_timeout(timeout, 'connection_timeout')
++        if ssl_mode not in ('disabled', 'preferred', 'required'):
++            raise ValueError('ssl_mode must be disabled, preferred or required')
++        if self._engine is not None:
++            self.disconnect()
++        self.connection_timeout = timeout
+         # Build final login info based on user parameter and optional account/role
+         final_user, parsed_info = self._build_login_info(user, account, role)
  
- func TestNewErrorRollbackWholeTxnCoversEveryCode(t *testing.T) {
+@@ -502,7 +512,8 @@ def my_callback(client):
+             "password": password,
+             "database": database,
+             "charset": charset,
+-            "connect_timeout": connection_timeout,
++            "connect_timeout": timeout,
++            "ssl_mode": ssl_mode,
+             "autocommit": auto_commit,
+             "ssl_disabled": ssl_mode == "disabled",
+             "ssl_verify_cert": ssl_mode == "required",
+@@ -520,6 +531,10 @@ def my_callback(client):
+         try:
+             # Create SQLAlchemy engine with connection pooling
+             self._engine = self._create_engine()
++            # Engine construction is lazy; do not report success until an
++            # authenticated connection has completed a real query.
++            with self._engine.connect() as connection:
++                connection.exec_driver_sql("SELECT 1")
+             self.logger.log_connection(host, port, final_user, database, success=True)
+ 
+             # Initialize managers after engine is created
+@@ -541,20 +556,30 @@ def my_callback(client):
+                 # Execute the hook once immediately for the initial connection
+                 self._execute_connection_hook_immediately(on_connect)
+ 
+-        except Exception as e:
++        except BaseException as e:
++            engine, self._engine = self._engine, None
++            if engine is not None:
++                try:
++                    engine.dispose()
++                except Exception:
++                    pass  # Preserve the primary connection failure.
++            if not isinstance(e, Exception):
++                raise
++            from ._connection_options import redact_error
++
++            error_msg = redact_error(e, password)
+             self.logger.log_connection(host, port, final_user, database, success=False)
+-            self.logger.log_error(e, context="Connection")
++            self.logger.log_error(ConnectionError(error_msg), context="Connection")
+ 
+             # Provide user-friendly error messages for common issues
+-            error_msg = str(e)
+             if 'Unknown database' in error_msg or '1049' in error_msg:
+                 raise ConnectionError(
+                     f"Database '{database}' does not exist. Please create it first:\n"
+-                    f"  mysql -h{host} -P{port} -u{user.split('#')[0] if '#' in user else user} -p{password} "
++                    f"  mysql -h{host} -P{port} -u{user.split('#')[0] if '#' in user else user} -p "
+                     f"-e \"CREATE DATABASE {database}\""
+-                ) from e
++                ) from None
+             else:
+-                raise ConnectionError(f"Failed to connect to MatrixOne: {e}") from e
++                raise ConnectionError(f"Failed to connect to MatrixOne: {error_msg}") from None
+ 
+     def _setup_connection_hook(
+         self, on_connect: Union[ConnectionHook, List[Union[ConnectionAction, str]], Callable]
+@@ -722,13 +747,15 @@ def _create_engine(self) -> Engine:
+         """Create SQLAlchemy engine with connection pooling"""
+         # Build connection URL using SQLA
 ```
 
-**File**: `pkg/sql/compile/alter.go` (modified, +403/-197)
+**File**: `clients/python/pyproject.toml` (modified, +1/-1)
 ```diff
-@@ -89,6 +89,11 @@ type alterDataBranchLineagePlan struct {
- 	fixedCopyTS              bool
- }
- 
-+type alterDataBranchLineageInspection struct {
-+	participates bool
-+	plan         alterDataBranchLineagePlan
-+}
-+
- func alterCopySQLAtLineageSnapshot(sql string, plan alterDataBranchLineagePlan) string {
- 	if !plan.enabled || !plan.fixedCopyTS {
- 		return sql
-@@ -228,17 +233,20 @@ func (c *Compile) alterTableParticipatesInDataBranch(oldTableID uint64) (bool, e
- func (c *Compile) alterTableHasHistoricalBranchSource(
- 	oldTableID uint64,
- 	databaseName, tableName string,
-+	lockHistoricalSource bool,
- ) (bool, error) {
- 	return alterDataBranchHistoricalSourceExists(
- 		func(sql string) (executor.Result, error) {
- 			return c.runSqlWithResult(sql, int32(catalog.System_Account))
- 		},
- 		[]string{
--			alterDataBranchHistoricalSnapshotSourceSQL(
-+			alterDataBranchHistoricalSnapshotSourceProbeSQL(
- 				c.proc.GetSessionInfo().Account, databaseName, tableName, oldTableID,
-+				lockHistoricalSource, 0,
- 			),
--			alterDataBranchHistoricalPitrSourceSQL(
-+			alterDataBranchHistoricalPitrSourceProbeSQL(
- 				c.proc.GetSessionInfo().Account, databaseName, tableName, oldTableID,
-+				lockHistoricalSource, 0,
- 			),
- 		},
- 	)
-@@ -301,26 +309,47 @@ func (c *Compile) lockDataBranchLineageOwnerLifecyclePessimistic() error {
- 	)
- }
- 
--func (c *Compile) prepareAlterDataBranchLineage(
-+func (c *Compile) inspectAlterDataBranchLineage(
- 	oldTableID uint64,
- 	databaseName, tableName string,
- 	statement string,
--) (alterDataBranchLineagePlan, error) {
-+	lockHistoricalSource bool,
-+) (alterDataBranchLineageInspection, error) {
- 	participates, err := c.alterTableParticipatesInDataBranch(oldTableID)
- 	if err != nil {
--		return alterDataBranchLineagePlan{}, err
-+		return alterDataBranchLineageInspection{}, err
-+	}
-+	lineagePlan, err := c.inspectAlterDataBranchLineageState(
-+		participates, oldTableID, databaseName, tableName, statement, lockHistoricalSource,
-+	)
-+	if err != nil {
-+		return alterDataBranchLineageInspection{}, err
- 	}
-+	return alterDataBranchLineageInspection{
-+		participates: participates,
-+		plan:         lineagePlan,
-+	}, nil
-+}
-+
-+func (c *Compile) inspectAlterDataBranchLineageState(
-+	participates bool,
-+	oldTableID uint64,
-+	databaseName, tableName string,
-+	statement string,
-+	lockHistoricalSource bool,
-+) (alterDataBranchLineagePlan, error) {
- 	hasLiveLineage := false
-+	var err error
- 	if participates {
- 		// ALTER-only rows preserve physical history for a snapshot or PITR but
- 		// are not logical data branches. Inspect the complete connected
- 		// component so an ALTER generation neither triggers a false transaction
- 		// restriction nor hides a live logical sibling behind an ancestor.
--		ownershipDAG, dagErr := c.loadAlterDataBranchDAG(false)
-+		dag, dagErr := c.loadAlterDataBranchDAG(false)
- 		if dagErr != nil {
- 			return alterDataBranchLineagePlan{}, dagErr
- 		}
--		if ownershipDAG.ComponentHasLiveLogicalBranch(oldTableID) {
-+		if dag.ComponentHasLiveLogicalBranch(oldTableID) {
- 			op := c.proc.GetTxnOperator()
- 			opts := op.TxnOptions()
- 			// TRUNCATE commits the transaction that preceded the statement and
-@@ -343,19 +372,12 @@ func (c *Compile) prepareAlterDataBranchLineage(
- 				return alterDataBranchLineagePlan{}, err
- 			}
- 		}
--		if err = c.compactExpiredAlterDataBranchLineage(time.Time{}); err != nil {
--			return alterDataBranchLineagePlan{}, err
--		}
--		dag, dagErr := c.loadAlterDataBranchDAG(false)
--		if dagErr != nil {
--			return alterDataBranchLineagePlan{}, dagErr
--		}
- 		hasLiveLineage = dag.SubtreeHasLiveNode(oldTableID)
- 	}
- 	preserveHistoricalSource := false
- 	if !hasLiveLineage {
- 		if preserveHistoricalSource, err = c.alterTableHasHistoricalBranchSource(
--			oldTableID, databaseName, tableName,
-+			oldTableID, databaseName, tableName, lockHistoricalSource,
- 		); err != nil {
- 			return alterDataBranchLineagePlan{}, err
- 		}
-@@ -370,6 +392,64 @@ func (c *Compile) prepareAlterDataBranchLineage(
- 	}, nil
- }
- 
-+func (c *Compile) prepareAlterDataBranchLineage(
-+	oldTableID uint64,
-+	databaseName, tableName string,
-+	statement string,
-+) (alterDataBranchLineagePlan, error) {
-+	inspection, err := c.inspectAlterDataBranchLineage(
-+		oldTableID, databaseName, tableName, statement, true,
-+	)
-+	if err != nil || !inspection.participates {
-+		return inspection.plan, err
-+	}
-+	if err = c.compactExpiredAlterDataBranchLineage(time.Time{}); err != nil {
-+		return alterDataBranchLineagePlan{}, err
-+	}
-+	lineagePlan, err := c.inspectAlterDataBranchLineageState(
-+		true, oldTableID, databaseName, tableName, statement, true,
-+	)
-+	return lineagePlan, err
-+}
-+
-+func (c *Compile) completeAlterDataBranchLineagePlan(
-+	lineagePlan alterDataBranchLineagePlan,
-+	oldTableID uint64,
-+	databaseName, tableName string,
-+) (alterDataBranchLineagePlan, error) {
-+	if lineagePlan.enabled {
-+		return lineagePlan, nil
-+	}
-+	hasLatestHistory, err := c.alterTableHasLatestHistoricalBranchSource(
-+		oldTableID, databaseName, tableNa
+@@ -33,7 +33,7 @@ requires-python = ">=3.8"
+ dependencies = [
+     "PyMySQL>=1.0.0",
+     "aiomysql>=0.2.0",
+-    "SQLAlchemy>=1.4.0,<3.0.0",
++    "SQLAlchemy[asyncio]>=1.4.0,<3.0.0",
+     "typing-extensions>=4.0.0",
+     "python-dateutil>=2.8.0",
+     "numpy>=1.20.0",
 ```
 
-**File**: `pkg/sql/compile/alter_test.go` (modified, +1272/-20)
+**File**: `clients/python/tests/offline/test_async_client_query_comprehensive.py` (modified, +1/-0)
 ```diff
-@@ -20,6 +20,8 @@ import (
- 	"fmt"
- 	"slices"
- 	"strings"
-+	"sync"
-+	"sync/atomic"
- 	"testing"
- 	"time"
+@@ -247,6 +247,7 @@ async def __aexit__(self, exc_type, exc_val, exc_tb):
+         class MockEngine:
+             def __init__(self, connection):
+                 self.connection = connection
++                self.dialect = Mock()
  
-@@ -644,6 +646,62 @@ func TestPrepareAlterDataBranchLineageAllowsHistoricalSourceTxn(t *testing.T) {
- 	}
- }
+             def begin(self):
+                 return MockBeginContext(self.connection)
+```
+
+**File**: `clients/python/tests/offline/test_connection_contracts.py` (added, +190/-0)
+```diff
+@@ -0,0 +1,190 @@
++# Copyright 2026 Matrix Origin
++# Licensed under the Apache License, Version 2.0.
++
++import asyncio
++import ssl
++from unittest.mock import AsyncMock, MagicMock, Mock
++
++import pytest
++
++from matrixone import Client
++from matrixone.async_client import AsyncClient
++from matrixone._connection_options import TLSRequiredConnection, tls_options
++from matrixone.exceptions import ConnectionError
++
++
++def test_failed_probe_disposes_engine_and_clears_state(monkeypatch):
++    client = Client(logger=Mock())
++    engine = MagicMock()
++    engine.connect.return_value.__enter__.return_value.exec_driver_sql.side_effect = RuntimeError('unreachable')
++    monkeypatch.setattr(client, '_create_engine', lambda: engine)
++    with pytest.raises(ConnectionError, match='unreachable'):
++        client.connect(database='test', on_connect=[])
++    assert not client.connected()
++    engine.dispose.assert_called_once()
++    assert not any(call.kwargs.get('success') is True for call in client.logger.log_connection.call_args_list)
++
++
++def test_success_requires_authenticated_query(monkeypatch):
++    client = Client(logger=Mock(), connection_timeout=17)
++    engine = MagicMock()
++    monkeypatch.setattr(client, '_create_engine', lambda: engine)
++    monkeypatch.setattr(client, '_detect_backend_version', lambda: None)
++    client.connect(database='test', on_connect=[])
++    engine.connect.return_value.__enter__.return_value.exec_driver_sql.assert_called_once_with('SELECT 1')
++    assert client._connection_params['connect_timeout'] == 17
++    assert client.connected()
++    client.disconnect()
++
++
++@pytest.mark.parametrize('mode', ['disabled', 'preferred', 'required'])
++def test_security_policy_context(mode):
++    options = tls_options({'ssl_mode': mode})
++    if mode == 'required':
++        context = options['ssl']
++        assert context.verify_mode == ssl.CERT_REQUIRED
++        assert context.check_hostname
++    elif mode == 'disabled':
++        assert options == {'ssl_disabled': True}
++    else:
++        assert options == {}
++
++
++def test_required_tls_refused_before_authentication():
++    import pymysql
++
++    connection = TLSRequiredConnection.__new__(TLSRequiredConnection)
++    connection.server_capabilities = 0
++    with pytest.raises(pymysql.err.OperationalError, match='does not advertise TLS'):
++        connection._request_authentication()
++
++
++def test_connection_error_redacts_password_and_suppresses_traceback_chain(monkeypatch):
++    client = Client(logger=Mock())
++    secret = 'synthetic-password-marker'
++    monkeypatch.setattr(client, '_create_engine', Mock(side_effect=RuntimeError('1049 ' + secret)))
++    with pytest.raises(ConnectionError) as result:
++        client.connect(database='test', password=secret, on_connect=[])
++    assert secret not in str(result.value)
++    assert result.value.__suppress_context__
++    assert secret not in str(client.logger.log_error.call_args)
++    assert '-p ' in str(result.value)
++
++
++@pytest.mark.parametrize('value', [0, -1, True, float('nan'), float('inf')])
++def test_invalid_timeouts_rejected_without_engine(value, monkeypatch):
++    client = Client(logger=Mock(), query_timeout=value)
++    factory = Mock()
++    monkeypatch.setattr(client, '_create_engine', factory)
++    with pytest.raises(ValueError):
++        client.connect(database='test', on_connect=[])
++    factory.assert_not_called()
++
++
++@pytest.mark.asyncio
++async def test_async_deadline_cancels_the_operation():
++    client = AsyncClient(logger=Mock(), query_timeout=0.02)
++    finished = asyncio.Event()
++
++    async def stalled(*args):
++        try:
++            await asyncio.Event().wait()
++        finally:
++            finished.set()
++
++    client._execute = stalled
++    with pytest.raises(asyncio.TimeoutError):
++        await client.execute('SELECT 1')
++    assert finished.is_set()
++
++
++@pytest.mark.asyncio
++async def test_async_explicit_cancellation_propagates():
++    client = AsyncClient(logger=Mock(), query_timeout=10)
++    started = asyncio.Event()
++
++    async def stalled(*args):
++        started.set()
++        await asyncio.Event().wait()
++
++    client._execute = stalled
++    task = asyncio.create_task(client.execute('SELECT 1'))
++    await started.wait()
++    task.cancel()
++    with pytest.raises(asyncio.CancelledError):
++        await task
++
++
++@pytest.mark.asyncio
++async def test_async_failed_probe_clears_engine(monkeypatch):
++    client = AsyncClient(logger=Mock(), connection_timeout=0.02)
++    engine = MagicMock()
++    engine.dispose = AsyncMock()
++
++    class Context:
++        async def __aenter__(self):
++            await asyncio.Event().wait()
++
++        async def __aexit__(self, *args):
++            pass
++
++    engine.begin.return_value = Context()
++    monkeypatch.setattr(client, '_create_async_engine', lambda: engine)
++    with pytest.raises(ConnectionError):
++        await client.connect(database='test', on_connect=[])
++    assert not client.connected()
++    engine.dispose.assert_awaited_once()
++
+```
+
+**File**: `clients/python/tests/offline/test_connection_redaction_transport.py` (added, +99/-0)
+```diff
+@@ -0,0 +1,99 @@
++# Copyright 2026 Matrix Origin
++# Licensed under the Apache License, Version 2.0.
++
++"""Real drivers receiving a MySQL ERR greeting, without replacing engine factories."""
++
++import socket
++import threading
++from contextlib import contextmanager
++from unittest.mock import Mock
++
++import pytest
++
++from matrixone import Client
++from matrixone.async_client import AsyncClient
++from matrixone.exceptions import ConnectionError
++
++
++@contextmanager
++def error_peer(password):
++    listener = socket.socket()
++    listener.bind(('127.0.0.1', 0))
++    listener.listen()
++    listener.settimeout(5)
++    failures = []
++
++    def serve():
++        try:
++            with listener.accept()[0] as connection:
++                payload = b'\xff\x15\x04#28000' + ('Access denied; echoed password: ' + password).encode('utf8')
++                connection.sendall(len(payload).to_bytes(3, 'little') + b'\x00' + payload)
++        except BaseException as error:
++            failures.append(error)
++
++    thread = threading.Thread(target=serve, daemon=True)
++    thread.start()
++    try:
++        yield listener.getsockname()[1]
++    finally:
++        thread.join(6)
++        listener.close()
++        assert not thread.is_alive()
++        assert not failures
++
++
++def assert_redacted(client, error, password):
++    # Inspect the actual logged exception, before Mock's own repr escaping.
++    logged = client.logger.log_error.call_args.args[0]
++    for value in {password, repr(password)[1:-1], password.encode('unicode_escape').decode('ascii')}:
++        assert value not in str(error)
++        assert value not in str(logged)
++    assert 'Access denied' in str(error)
++    assert error.__suppress_context__
++    assert not client.connected()
++
++
++PASSWORDS = [
++    'synthetic-plain-marker',
++    r'synthetic\backslash-marker',
++    'synthetic\\quote\'"-marker',
++    'synthetic\ncontrol\\-marker',
++]
++
++
++@pytest.mark.parametrize('password', PASSWORDS)
++def test_public_sync_connection_redacts_driver_representation(password):
++    client = Client(logger=Mock(), connection_timeout=2)
++    with error_peer(password) as port:
++        with pytest.raises(ConnectionError) as error:
++            client.connect(
++                host='127.0.0.1', port=port, user='probe', password=password, database='probe', on_connect=[]
++            )
++    assert_redacted(client, error.value, password)
++
++
++@pytest.mark.asyncio
++@pytest.mark.parametrize('password', PASSWORDS)
++async def test_public_async_connection_redacts_driver_representation(password):
++    client = AsyncClient(logger=Mock(), connection_timeout=2)
++    with error_peer(password) as port:
++        with pytest.raises(ConnectionError) as error:
++            await client.connect(
++                host='127.0.0.1', port=port, user='probe', password=password, database='probe', on_connect=[]
++            )
++    assert_redacted(client, error.value, password)
++
++
++@pytest.mark.parametrize('password', ["雪\\quote'", '雪\n\\quote"', "both\\'\"\t雪"])
++@pytest.mark.parametrize('message', ["driver's error: %s", 'driver "error": %s'])
++def test_redaction_handles_quote_choice_and_printable_unicode(password, message):
++    from pymysql.err import OperationalError
++    from sqlalchemy.exc import OperationalError as WrappedError
++
++    from matrixone._connection_options import redact_error
++
++    error = WrappedError(None, None, OperationalError(1045, message % password))
++    redacted = redact_error(error, password)
++    assert '***' in redacted
++    assert '雪' not in redacted
++    assert 'driver' in redacted
+```
+
+---
+
+### Incident Patch 2: `87328274` (2026-10-19)
+**Commit Message**: fix(plan): align DECIMAL DIV result domains with MySQL (#30171)
+
+DECIMAL DIV currently publishes BIGINT for narrow CTAS/view outputs and loses an unsigned integer operand's result domain during implicit casts. A negative quotient can consequently reach INSERT ... ON DUPLICATE KEY UPDATE and replace an existing row.
+
+- Derive DIV display precision and signedness from the original DECIMAL/integer operands. Keep 64-bit arithmetic and infer INT/BIGINT independently at CTAS/view schema boundaries, including folded constants and transparent projections.
+- Add a stable unsigned DECIMAL DIV overload using exact Decimal256 arithmetic. Accept the full uint64 range and negative fractions truncating to zero; reject negative nonzero or overflowing results before downstream writes. Preserve legacy overload 0 and integer/BIT execution contracts.
+- Preserve typed peers during prepared parameter inference and require MORPC v121 for the new expression contract at worker placement, send/receive, and persisted-expression boundaries. Preserve the independent coordinator-only fence for dependent subquery programs.
+
+- Preserve SELECT division-by-zero diagnostics for unsigned DECIMAL DIV through the exist
+
+**File**: `pkg/defines/const.go` (modified, +2/-1)
+```diff
+@@ -156,7 +156,8 @@ const (
+ 	MORPCVersion118    int64 = 118 // transactional database defaults and table charset alteration
+ 	MORPCVersion119    int64 = 119 // coordinator-owned parameterized subquery programs
+ 	MORPCVersion120    int64 = 120 // current-session KILL authorization and proxy disconnect cleanup
+-	MORPCLatestVersion       = MORPCVersion120
++	MORPCVersion121    int64 = 121 // exact unsigned DECIMAL DIV result domain
++	MORPCLatestVersion       = MORPCVersion121
+ )
  
-+func TestInspectAlterDataBranchLineageSeesBranchCreatedAfterPreflight(t *testing.T) {
-+	const (
-+		oldTableID    = uint64(42)
-+		parentTableID = uint64(41)
-+		database      = "test"
-+		table         = "dept"
-+	)
-+	ctrl := gomock.NewController(t)
-+	defer ctrl.Finish()
-+	spyExec := &alterCopyInsertSpyExecutor{
-+		resultSequences: make(map[string][]executor.Result),
-+		results:         make(map[string]executor.Result),
-+	}
-+	c := newAlterCopyPrecheckCompile(t, ctrl, spyExec)
-+	txnOperator := mock_frontend.NewMockTxnOperator(ctrl)
-+	txnOperator.EXPECT().TxnOptions().Return(txn.TxnOptions{Autocommit: true}).AnyTimes()
-+	txnOperator.EXPECT().Txn().Return(txn.TxnMeta{}).AnyTimes()
-+	c.proc.Base.TxnOperator = txnOperator
-+	participationSQL := alterDataBranchParticipationSQL(oldTableID)
-+	metadataSQL := "select table_id, p_table_id, clone_ts, creator, level, table_deleted from mo_catalog.mo_branch_metadata"
-+	emptyParticipation := newAlterCopyFixedResult(
-+		t, c.proc.Mp(), types.T_int32.ToType(), []int32{},
-+	)
-+	liveParticipation := newAlterCopyFixedResult(
-+		t, c.proc.Mp(), types.T_int32.ToType(), []int32{1},
-+	)
-+	spyExec.resultSequences[participationSQL] = []executor.Result{
-+		emptyParticipation, liveParticipation,
-+	}
-+	spyExec.results[metadataSQL] = newAlterLineageMetadataResult(
-+		t, c.proc.Mp(), []uint64{oldTableID}, []uint64{parentTableID}, []int64{100},
-+		[]uint64{uint64(catalog.System_Account)}, []string{"table"}, []bool{false},
-+	)
+ // DefaultLockWaitTimeoutSeconds is shared by the frontend default and by
+```
+
+**File**: `pkg/pb/plan/decimal_integer_division_protocol_test.go` (added, +46/-0)
+```diff
+@@ -0,0 +1,46 @@
++// Copyright 2026 Matrix Origin
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
 +
-+	preflight, err := c.inspectAlterDataBranchLineage(
-+		oldTableID, database, table, "ALTER", false,
-+	)
-+	require.NoError(t, err)
-+	require.False(t, preflight.participates)
-+	require.False(t, preflight.plan.enabled)
++package plan
 +
-+	afterGate, err := c.inspectAlterDataBranchLineage(
-+		oldTableID, database, table, "ALTER", true,
-+	)
-+	require.NoError(t, err)
-+	require.True(t, afterGate.participates)
-+	require.True(t, afterGate.plan.enabled)
-+	require.Equal(t, []string{
-+		participationSQL,
-+		alterDataBranchHistoricalSnapshotSourceProbeSQL("", database, table, oldTableID, false, 0),
-+		alterDataBranchHistoricalPitrSourceProbeSQL("", database, table, oldTableID, false, 0),
-+		participationSQL,
-+		metadataSQL,
-+	}, spyExec.executedSQLs)
-+}
++import (
++	"github.com/stretchr/testify/require"
++	"testing"
++)
 +
- func TestPrepareAlterDataBranchLineageAllowsHistoricalOnlyGenerationInExplicitTxn(t *testing.T) {
- 	const (
- 		oldTableID    = uint64(42)
-@@ -732,6 +790,95 @@ func TestAdvanceAlterDataBranchLineageSnapshotUsesWorkspace(t *testing.T) {
- 	require.Equal(t, int64(2000), cloneTS)
- }
- 
-+// TestAlterCopyRetainsWorkspaceAdvancedSnapshotOnEveryReturn pins the ownership
-+// contract of databranchutils.AdvanceLineageSnapshot inside ALTER COPY: once
-+// the workspace has advanced (relocating transaction-local tombstones to their
-+// post-flush row locations), every ALTER COPY return path must retain that
-+// workspace-owned snapshot. Rewinding only the transaction timestamp leaves the
-+// workspace and the snapshot in different generations and resurrects relocated
-+// deletes, the defect removed from main by #29539.
-+func TestAlterCopyRetainsWorkspaceAdvancedSnapshotOnEveryReturn(t *testing.T) {
-+	const initialSnapshot = int64(1000)
-+	advanceErr := errors.New("workspace advance failed")
-+	copyErr := errors.New("stop after physical ALTER COPY")
++func TestDecimalIntegerDivisionRemoteFeature(t *testing.T) {
 +	for _, tc := range []struct {
-+		name string
-+		// advanceFails returns before any physical work; otherwise the physical
-+		// row copy fails, exercising the post-advancement error return.
-+		advanceFails bool
++		name               string
++		function, overload int64
++		width, scale       int32
++		want               bool
 +	}{
-+		{name: "advance failure", advanceFails: true},
-+		{name: "physical copy failure"},
++		{"unsigned", 14, 1, 7, 0, true}, {"signed display", 14, 0, 8, 0, true},
++		{"legacy", 14, 0, 64, -1, false}, {"unrelated function", 13, 0, 8, 0, false},
 +	} {
 +		t.Run(tc.name, func(t *testing.T) {
-+			ctrl := gomock.NewController(t)
-+			defer ctrl.Finish()
-+
-+			exec := &alterCopyInsertSpyExecutor{
-+				createSQL: "create table dept_copy",
-+				insertSQL: "insert into dept_copy select * from dept",
-+				insertErr: copyErr,
++			expr := &Expr{Typ: Type{Id: 24, Width: tc.width, Scale: tc.scale}, Expr: &Expr_F{F: &Function{Func: &ObjectRef{Obj: tc.function<<32 | tc.overload}}}}
++			bytes, err := expr.Marshal()
++			require.NoError(t, err)
++			var decoded Expr
++			require.NoError(t, decoded.Unmarshal(bytes))
++			features, err := RequiredRemoteExpressionFeatures(&decoded)
++			require.NoError(t, err)
++			require.Equal(t, tc.want, features.DecimalIntegerDivisionSemantics)
++			if tc.want {
++				require.True(t, features.Any())
 +			}
-+			stubAlterCopySourceLocks(t, nil)
-+			scope, compile := newAlterCopyGateConcurrencyFixture(
-+				t, ctrl, exec, "rc-snapshot-retain", initialSnapshot,
-+			)
-+
-+			current := timestamp.Timestamp{PhysicalTime: initialSnapshot}
-+			advances := 0
-+			ws := &Ws{advanceSnapshot: func(_ context.Context, ts timestamp.Timestamp) error {
-+				if tc.advanceFails {
-+					return advanceErr
++		})
++	}
++}
+```
+
+**File**: `pkg/pb/plan/string_literal_form.go` (modified, +5/-0)
+```diff
+@@ -421,6 +421,7 @@ type RemoteExpressionFeatures struct {
+ 	SpatialDistanceSemantics          bool
+ 	PreparedPrecisionScalar           bool
+ 	DecimalDivisionSemantics          bool
++	DecimalIntegerDivisionSemantics   bool // v121: unsigned DIV overload and display precision
+ 	// SpecialIntegerConsumers requires v98 independently of private CASTs.
+ 	SpecialIntegerConsumers                 bool
+ 	TemporalResultContracts                 bool
+@@ -459,6 +460,7 @@ func (features RemoteExpressionFeatures) Any() bool {
+ 		features.PreparedPrecisionScalar ||
+ 		features.SpecialIntegerConsumers ||
+ 		features.DecimalDivisionSemantics ||
++		features.DecimalIntegerDivisionSemantics ||
+ 		features.TemporalResultContracts ||
+ 		features.InvalidTemporalResultContract ||
+ 		features.NormalizedIntervalUnits ||
+@@ -990,6 +992,9 @@ func RequiredRemoteExpressionFeatures(owner any) (features RemoteExpressionFeatu
+ 					(current.Typ.Id == 32 || current.Typ.Id == 33 || current.Typ.Id == 34) {
+ 					features.DecimalDivisionSemantics = true
+ 				}
++				if id == 14 && (overload == 1 || (overload == 0 && current.Typ.Width > 0 && current.Typ.Width <= 20 && current.Typ.Scale == 0)) {
++					features.DecimalIntegerDivisionSemantics = true
 +				}
-+				// The workspace owns the transfer: relocated tombstones and the
-+				// operator snapshot move to the advanced generation together.
-+				current = timestamp.Timestamp{PhysicalTime: ts.PhysicalTime + 1}
-+				advances++
-+				return nil
-+			}}
-+			txnOperator := mock_frontend.NewMockTxnOperator(ctrl)
-+			txnOperator.EXPECT().GetWorkspace().Return(ws).AnyTimes()
-+			txnOperator.EXPECT().Txn().Return(txn.TxnMeta{
-+				Mode:      txn.TxnMode_Pessimistic,
-+				Isolation: txn.TxnIsolation_RC,
-+			}).AnyTimes()
-+			txnOperator.EXPECT().TxnOptions().Retu
+ 				// Function IDs live in the function registry, which cannot be
+ 				// imported here because the planner depends on this package.
+ 				if id == 189 { // legacy TO_INTERVAL: ambiguous across pre-v97 and v97 binaries
 ```
 
-**File**: `pkg/sql/compile/compile.go` (modified, +26/-5)
+**File**: `pkg/sql/colexec/division_warning_folding_test.go` (modified, +13/-2)
 ```diff
-@@ -156,6 +156,10 @@ func NewCompile(
- 	c.startAt = startAt
- 	c.disableRetry = false
- 	c.retryTimes = 0
-+	// Start every new compilation with the ordinary index-registration policy.
-+	// The ALTER COPY private preparation opts out through its executor options;
-+	// that opt-out must not survive into this object's next pool generation.
-+	c.skipIndexTaskRegistration = false
- 	c.ncpu = system.GoMaxProcs()
- 	c.lockMeta = NewLockMeta()
- 	// TODO: The action of updating the WriteOffset logic should be executed in the `func (c *Compile) Run(_ uint64)` method.
-@@ -566,6 +570,7 @@ func (c *Compile) clear() {
- 	c.keepAutoIncrement = 0
- 	c.lastInsertIDBaseline = 0
- 	c.disableLock = false
-+	c.skipIndexTaskRegistration = false
- 	c.prePipelineLockTableID = 0
- 	c.icebergScanPlanner = nil
+@@ -27,7 +27,7 @@ import (
+ )
  
-@@ -839,15 +844,19 @@ func (c *Compile) printPipeline() {
- // 1. lock table.
- // 2. init data source.
- func (c *Compile) prePipelineInitializer() (startedSources []*materialized.Source, err error) {
--	// do table lock.
--	if err = c.lockMeta.doLock(c.e, c.proc); err != nil {
--		return nil, err
-+	if !c.disableLock {
-+		// do table lock.
-+		if err = c.lockMeta.doLock(c.e, c.proc); err != nil {
-+			return nil, err
-+		}
- 	}
- 	if err = c.unresolvedIndexHintError(); err != nil {
- 		return nil, err
- 	}
--	if err = c.lockTable(); err != nil {
--		return nil, err
-+	if !c.disableLock {
-+		if err = c.lockTable(); err != nil {
-+			return nil, err
-+		}
- 	}
- 	if err = c.maybePromoteLoadUniqueIndexes(); err != nil {
- 		return nil, err
-@@ -9516,6 +9525,9 @@ func (c *Compile) compileDelete(node *plan.Node, ss []*Scope) ([]*Scope, error)
- }
- 
- func (c *Compile) compileLock(node *plan.Node, ss []*Scope) ([]*Scope, error) {
-+	if c.disableLock {
-+		return ss, nil
-+	}
- 	lockRows := make([]*plan.LockTarget, 0, len(node.LockTargets))
- 	localizeLockPlan := c.loadUniqueIndexPromotion != nil || c.prePipelineLockTableID != 0
- 	promotedNewTable := false
-@@ -11143,6 +11155,8 @@ func (c *Compile) runSqlWithResultAndOptions(
- 
- 	lower := c.getLower()
- 
-+	options = c.internalStatementOption(options)
-+
- 	if c.pn != nil {
- 		if qry, ok := c.pn.Plan.(*plan.Plan_Ddl); ok {
- 			if qry.Ddl.DdlType == plan.DataDefinition_DROP_DATABASE {
-@@ -11206,6 +11220,13 @@ func (c *Compile) runSqlWithResultAndOptions(
- 	return exec.Exec(ctx, sql, opts)
- }
- 
-+func (c *Compile) internalStatementOption(options executor.StatementOption) executor.StatementOption {
-+	if c.disableLock {
-+		return options.WithDisableLock()
-+	}
-+	return options
-+}
-+
- func (c *Compile) fatalLog(retry int, err error) {
- 	if err == nil {
- 		return
+ func TestDivisionWarningRuntimeFolding(t *testing.T) {
+-	for _, name := range []string{"/", "div", "%"} {
++	for _, name := range []string{"/", "div", "%", "unsigned decimal div"} {
+ 		for _, parent := range []string{"direct", "coalesce"} {
+ 			t.Run(name+"/"+parent, func(t *testing.T) {
+ 				proc := testutil.NewProcess(t, testutil.WithFileService(nil))
+@@ -38,12 +38,23 @@ func TestDivisionWarningRuntimeFolding(t *testing.T) {
+ 				sink := &preparedCastWarningSession{}
+ 				proc.WarningSink = sink
+ 				literal := func(n int64) *plan.Expr {
++					if name == "unsigned decimal div" {
++						return &plan.Expr{Typ: types.T_uint64.ToType().PlanType(), Expr: &plan.Expr_Lit{Lit: &plan.Literal{Value: &plan.Literal_U64Val{U64Val: uint64(n)}}}}
++					}
+ 					if name == "/" {
+ 						return &plan.Expr{Typ: types.T_float64.ToType().PlanType(), Expr: &plan.Expr_Lit{Lit: &plan.Literal{Value: &plan.Literal_Dval{Dval: float64(n)}}}}
+ 					}
+ 					return &plan.Expr{Typ: types.T_int64.ToType().PlanType(), Expr: &plan.Expr_Lit{Lit: &plan.Literal{Value: &plan.Literal_I64Val{I64Val: n}}}}
+ 				}
+-				expr := bindTestFunction(t, proc, name, literal(1), literal(0))
++				var expr *plan.Expr
++				if name == "unsigned decimal div" {
++					dividend := &plan.Expr{Typ: types.New(types.T_decimal64, 10, 3).PlanType(), Expr: &plan.Expr_Lit{Lit: &plan.Literal{Value: &plan.Literal_Decimal64Val{Decimal64Val: &plan.Decimal64{A: 1000}}}}}
++					expr = bindTestFunction(t, proc, "div", dividend, literal(0))
++					expr.GetF().Args[0] = bindTestCast(t, proc, 0, dividend, types.New(types.T_decimal256, 10, 3))
++					expr.GetF().Args[1] = bindTestCast(t, proc, 0, literal(0), types.New(types.T_decimal256, 20, 0))
++				} else {
++					expr = bindTestFunction(t, proc, name, literal(1), literal(0))
++				}
+ 				if parent == "coalesce" {
+ 					expr = bindTestFunction(t, proc, "coalesce", expr, literal(7))
+ 				}
 ```
 
-**File**: `pkg/sql/compile/compile_test.go` (modified, +82/-0)
+**File**: `pkg/sql/compile/decimal_division_protocol_test.go` (modified, +64/-0)
 ```diff
-@@ -18,6 +18,8 @@ import (
- 	"context"
- 	"errors"
- 	"fmt"
-+	goruntime "runtime"
-+	godebug "runtime/debug"
- 	"sync/atomic"
- 	"testing"
- 	"time"
-@@ -160,6 +162,71 @@ func TestCompileClearResetsExecutionType(t *testing.T) {
- 	require.Zero(t, c.prePipelineLockTableID, "pooled compiles must not retain a backfill lock request")
+@@ -91,3 +91,67 @@ func TestDecimalDivisionProtocolUnknownWorkerFallsBack(t *testing.T) {
+ 	require.NoError(t, c.constrainRemoteExpressionWorkers(qry))
+ 	require.Equal(t, plan2.ExecTypeAP_ONECN, c.execType)
  }
- 
-+func TestCompileClearResetsSkipIndexTaskRegistration(t *testing.T) {
-+	// The ALTER COPY private replica create opts out of index task
-+	// registration on its executor Compile. Exercise the pool reset directly,
-+	// independent of which object sync.Pool would choose for the next
-+	// allocation: a released Compile must not hand that suppression to an
-+	// unrelated frontend statement.
-+	c := &Compile{
-+		proc:                      testutil.NewProcess(t),
-+		MessageBoard:              message.NewMessageBoard(),
-+		affectRows:                new(atomic.Uint64),
-+		skipIndexTaskRegistration: true,
-+	}
-+	c.clear()
-+	require.False(t, c.skipIndexTaskRegistration,
-+		"a pooled compile must not retain the private index-registration policy")
-+}
 +
-+func TestCompilePoolHandoffClearsPrivateIndexRegistrationPolicy(t *testing.T) {
-+	// Reproduce the frontend ownership boundary: the private ALTER COPY
-+	// executor releases its Compile, then an ordinary frontend statement
-+	// allocates the next generation from the global reuse pool. Two layers
-+	// hold that boundary: Release runs clear() before sync.Pool.Put, and
-+	// NewCompile re-initializes the flag after sync.Pool.Get.
-+	//
-+	// sync.Pool's documented contract permits Put to discard values and Get
-+	// to return an unrelated object, and the race runtime drops Put values
-+	// deliberately (runtime_randn(4) in sync/pool.go), so pointer identity
-+	// between the released and the reallocated compile cannot be required.
-+	// The oracle is the policy of every object the public constructor
-+	// returns: each round seeds the pool with the exact leak payload and
-+	// asserts the ordinary registration policy on the constructed frontend
-+	// compile. A leak can only travel through a Put that the pool kept, and
-+	// every kept Put is a round whose frontend object is unconditionally
-+	// checked, so drops never mask a leaked policy. The deterministic
-+	// clear() reset layer stays covered, pool-free, by
-+	// TestCompileClearResetsSkipIndexTaskRegistration.
-+	oldProcs := goruntime.GOMAXPROCS(1)
-+	defer goruntime.GOMAXPROCS(oldProcs)
-+	oldPercent := godebug.SetGCPercent(-1)
-+	defer godebug.SetGCPercent(oldPercent)
-+
-+	const handoffs = 16
-+	sameObject := 0
-+	for round := 0; round < handoffs; round++ {
-+		private := NewCompile("test", "test", "create table __mo_alter_copy_replica", "", "",
-+			nil, testutil.NewProcess(t), nil, false, nil, time.Now())
-+		// txnExecutor.Exec sets this for the private replica create's nested
-+		// compiler (sql_executor.go), which Release returns to the pool.
-+		private.skipIndexTaskRegistration = true
-+		private.Release()
-+
-+		frontend := NewCompile("test", "test", "create table ordinary", "", "",
-+			nil, testutil.NewProcess(t), nil, false, nil, time.Now())
-+		require.False(t, frontend.skipIndexTaskRegistration,
-+			"round %d: a frontend compile must not inherit the private preparation policy", round)
-+		frontend.Release()
-+		if frontend == private {
-+			sameObject++
-+		}
-+	}
-+	// Informational only: the race runtime drops Put values purposefully, so
-+	// zero reuse observations is a legitimate outcome, never a failure.
-+	t.Logf("pool handed back the released compile in %d/%d rounds", sameObject, handoffs)
-+}
-+
- func TestCompileMongoDBQueryDiagnosticsAreRedacted(t *testing.T) {
- 	for _, sql := range []string{
- 		`select * from mongo_events where __mo_query = '{"filter":{"password":"super-secret-value"}}'`,
-@@ -1148,6 +1215,21 @@ func TestCompileLockNonCandidatePreservesExactMainMutation(t *testing.T) {
- 	require.Same(t, target, c.lockTables[target.TableId])
- }
- 
-+func TestCompileLockDisabledSkipsAllStatementLocks(t *testing.T) {
-+	c := NewMockCompile(t)
-+	c.disableLock = true
-+	target := &plan.LockTarget{TableId: 42, LockTable: true}
-+	node := &plan.Node{LockTargets: []*plan.LockTarget{target}}
-+	scope := &Scope{}
-+
-+	got, err := c.compileLock(node, []*Scope{scope})
++func TestDecimalIntegerDivisionProtocol(t *testing.T) {
++	c, client := expressionProtocolTestCompile(t)
++	expr := decimalDivisionProtocolExpr(types.T_uint64)
++	expr.Typ = planpb.Type{Id: int32(types.T_uint64), Width: 7, Scale: 0}
++	expr.GetF().Func.Obj = function.EncodeOverloadID(function.INTEGER_DIV, function.DecimalIntegerDivUnsignedOverload)
++	qry := &planpb.Query{Nodes: []*planpb.Node{{ProjectList: []*planpb.Expr{expr}}}, Steps: []int32{0}}
++	op := projection.NewArgument()
++	defer op.Release()
++	op.ProjectList = []*planpb.Expr{expr}
++	scope := &Scope{Magic: Remote, Proc: c.proc, NodeInfo: engine.Node{Id: "old-worker", Addr: "remote:6001"}, RootOp: op}
++	client.version = defines.MORPCVersion120
++	c.execType = plan2.ExecTypeAP_MULTICN
++	c.cnList = engine.Nodes{{Id: "old-worker", Addr: "remote:6001", Mcpu: 4}}
++	require.NoError(t, c.constrainRemoteExpressionWorkers(qry))
++	require.Equal(t, plan2.ExecTypeAP_ONECN, c.execType)
++	_, err := encodeRemoteScope(scope, c.proc)
++	require.ErrorContains(t, err, "remote destination")
++	client.version = defines.MORPCVersion121
++	c.execType = plan2.ExecTypeAP_MULTICN
++	c.cnList = engine.Nodes{{Id: "old-worker", Addr: "remote:6001", Mcpu: 4}}
++	require.NoError(t, c.constrainRemoteExpressionWorkers(qry))
++	require.Equal(t, plan2.ExecTypeAP_MULTICN, c.execType)
++	data, err := encodeRemoteScope(scope, c.proc)
 +	require.NoError(t, err)
-+	require.Equal(t, []*Scope{scope}, got)
-+	require.Nil(t, scope.RootOp)
-+	require.Empty(t, c.lockTables)
-+	require.Equal(t, []*plan.LockTarget{target}, node.LockTargets)
++	var wire pipeline.Pipeline
++	require.NoError(t, wire.Unmarshal(data))
++	require.Equal(t, expr.GetF().Func.Obj, wire.InstructionList[0].ProjectList[0].GetF().Func.Obj)
++	rt := moruntime.ServiceRuntime(c.proc.GetService())
++	rt.SetGlobalVariables(moruntime.MOProtocolVersion, defines.MORPCVersion120)
++	require.ErrorContains(t, validateRemoteExpressionPipelineProtocol(c.proc, &wire), "version 121")
++	rt.SetGlobalVariables(moruntime.MOProtocolVersion, defines.MORPCVersion121)
++	require.NoError(t, validateRemoteExpressionPipelineProtocol(c.proc, &wire))
++	required, err := plan2.RequiredPersistedExpressionProtocolVersion(expr)
++	require.NoError(t, err)
++	require.Equal(t, defines.MORPCVersion121, required)
++	t.Run("dependent_program", func(t *testing.T) {
++		dependent := &planpb.Expr{Typ: expr.Typ, Expr: &planpb.Expr_Dependent{Dependent: &planpb.DependentExpr{
++			ProgramId: 1, Inputs: []*planpb.Expr{expr},
++		}}}
++		features, err := planpb.RequiredRemoteExpressionFeatures(dependent)
++		require.NoError(t, err)
++		require.True(t, features.DependentPrograms)
++		require.True(t, features.DecimalIntegerDivisionSemantics)
++		floor, err := plan2.RequiredPersistedExpressionProtocolVersion(dependent)
++		require.NoError(t, err)
++		require.Equal(t, defines.MORPCVersion121, floor)
++		// DIV capability does not grant a worker the coordinator's program owner.
++		op.ProjectList = []*planpb.Expr{dependent}
++		defer func() { op.ProjectList = []*planpb.Expr{expr} }()
++		_, err = encodeRemoteScope(scope, c.proc)
++		require.ErrorContains(t, err, "coordinator execution owner")
++		data, err := (&pipeline.Pipeline{InstructionList: []*pipeline.Instruction{{ProjectList: []*planpb.Expr{dependent}}}}).Marshal()
++		require.NoError(t, err)
++		_, err = decodeScope(data, c.proc, true, nil)
++		require.ErrorContains(t, err, "coordinator execution owner")
++	})
++	// Historical overload zero remains admitted after immediate-predecessor rollback.
++	rt.SetGlobalVariables(moruntime.MOProtocolVersion, defines.MORPCVersion120)
++	expr.GetF().Func.Obj = function.EncodeOverloadID(function.INTEGER_DIV, 0)
++	expr.Typ = planpb.Type{Id: int32(types.T_int64), Width: 64, Scale: -1}
++	require.NoError(t, validateRemoteExpressionPipelineProtocol(c.proc, &pipeline.Pipeline{InstructionList: []*pipeline.Instruction{{ProjectList: []*planpb.Expr{expr}}}}))
++	require.Equal(t, client.calls, client.releases)
++}
+```
+
+**File**: `pkg/sql/compile/expression_destination_protocol.go` (modified, +3/-0)
+```diff
+@@ -72,6 +72,9 @@ func validateRemoteExpressionDestination(proc *process.Process, p *pipeline.Pipe
+ 		{features.PreparedPrecisionScalar, defines.MORPCVersion95,
+ 			"prepared scalar precision requires a versioned remote destination",
+ 			"remote destination does not support prepared scalar precision (MORPC version %d)"},
++		{features.DecimalIntegerDivisionSemantics, defines.MORPCVersion121,
++			"decimal integer division requires a versioned remote destination",
++			"remote destination does not support decimal integer division (MORPC version %d)"},
+ 		{features.DecimalDivisionSemantics, defines.MORPCVersion97,
+ 			"decimal division requires a versioned remote destination",
+ 			"remote destination does not support decimal division (MORPC version %d)"},
+```
+
+**File**: `pkg/sql/compile/expression_protocol.go` (modified, +3/-0)
+```diff
+@@ -89,6 +89,9 @@ func remoteExpressionProtocolVersion(features plan.RemoteExpressionFeatures) int
+ 	if features.PreparedPrecisionScalar {
+ 		required = max(required, defines.MORPCVersion95)
+ 	}
++	if features.DecimalIntegerDivisionSemantics {
++		required = max(required, defines.MORPCVersion121)
++	}
+ 	if features.DecimalDivisionSemantics {
+ 		required = max(required, defines.MORPCVersion97)
+ 	}
+```
+
+**File**: `pkg/sql/compile/remoterun.go` (modified, +3/-0)
+```diff
+@@ -2327,6 +2327,9 @@ func validateRemoteExpressionFeatures(proc *process.Process, features plan.Remot
+ 	if features.DecimalStatisticalResultContracts && (!hasProtocolVersion || protocolVersion < defines.MORPCVersion113) {
+ 		return moerr.NewNotSupportedNoCtx("decimal statistical DOUBLE results require MORPC protocol version 113")
+ 	}
++	if features.DecimalIntegerDivisionSemantics && (!hasProtocolVersion || protocolVersion < defines.MORPCVersion121) {
++		return moerr.NewNotSupportedNoCtx("decimal integer division requires MORPC protocol version 121")
++	}
+ 	if features.DateNumericResultContracts && (!hasProtocolVersion || protocolVersion < defines.MORPCVersion112) {
+ 		return moerr.NewNotSupportedNoCtx("signed date result contracts require MORPC protocol version 112")
+ 	}
+```
+
+---
+
+### Incident Patch 3: `95eb0f0c` (2026-10-19)
+**Commit Message**: fix: enforce session ownership for KILL and processlist (#30299)
+
+Authorize SQL KILL against the authenticated current-session identity and pin the target generation through the action. Ordinary users can affect their own sessions, account administrators their account, and sys/moadmin the cluster. Filter processlist rows before materialization using the same current statement identity.
+
+Forward original SQL through the existing proxy backend, preserving role/user changes. Keep trusted disconnect cleanup separate from SQL authorization: complete terminal tunnel close before capturing its backend, use a bounded cleanup context, and never retry uncertain effects or fall back to re-authenticating the original login. Remote KILL has one outstanding RPC and a 10-second total bound.
+
+Rebase preserves main's SQL-mode/warning setup and samples account/user/role under the existing TenantInfo lock. Merge the authoritative query.proto additively and regenerate query.pb.go with the repository-pinned tooling. Published main methods and field tags remain unchanged. Preserve main capability 119; these new methods require 120 at sender and receiver, including 119→120→119 rollback.
+
+Fix fixture owne
+
+**File**: `docs/design/session-authorization.md` (added, +108/-0)
+```diff
+@@ -0,0 +1,108 @@
++# Current-session KILL authorization and processlist visibility — design v2
++
++Owner issues: MatrixOne #30276 and #30278. Implementation: https://github.com/matrixorigin/matrixone/pull/30299. This versioned design records the current contract; approval evidence is retained in the task record.
++
++Design-first review: **APPROVED v2**, gpt-6-astra, reasoning_effort=medium, canonical collaboration session `/root/proxy_design`, 2026-10-15. Exact inspected base: `8795f3699b40504376343fa1acda8b4619f0c76e`. Design-only inspection; no source edits, builds, runtime tests or GitHub writes by this reviewer. Prior `design.md` evidence is reused and its local authorization/lifecycle and processlist conclusions remain applicable. This delta supersedes its unresolved proxy disposition. User explicitly chose full current-identity behavior, preserving legitimate KILL after SET ROLE and COM_CHANGE_USER.
++
++## Classification and evidence
++
++The original local authorization fixes are ordinary bug fixes. Complete closure now changes the CN internal wire protocol and ownership across proxy/frontend/query service; the feature-design gate applies because of wire compatibility, distributed routing and security boundaries. A document in the implementation PR is acceptable because this distinct design-first approval precedes implementation. This is the required versioned design, not an additional request for user approval.
++
++At inspected base, proxy `makeEvent` consumes single KILL commands; `handleKill` locates target CN and reauthenticates using the ORIGINAL handshake in `connAndExec`. `cacheIdentityChanged` records but cannot refresh changes to user or active role. Thus authorizing that temporary session still permits an original administrator to kill another user after changing to an ordinary identity. Conversely legitimate upgrades and same-current-user actions can fail. Disconnect cleanup also authenticates the original login. SQL request admission in `RoutineManager.Handler` already pins the executing session against COM_CHANGE_USER/reset/migration; normal SQL ordering is the correct owner of current identity.
++
++Production frontend connection IDs come from HAkeeper `AllocateIDByKey(ConnIDAllocKey)`; local incremental IDs are only the nil-HAkeeper unit-test fallback. Existing proxy global routing scans processlist; it is not a separate authoritative directory. Existing query RPC is a trusted internal control plane, already supporting reset/migration and account-wide kill. SQL/MySQL users cannot directly invoke its handlers. This design preserves that trust model; deployments must already isolate query-service RPC from untrusted clients. No user-supplied SQL principal or trusted boolean is introduced.
++
++## Invariants and contract
++
++Authenticated sys+moadmin may act globally; non-sys+accountadmin within its account; others only same account AND same user. Sys membership or username root alone grants nothing. Missing authenticated identity fails closed. Active role means the role of the current executing session, including earlier successful statements in a multi-statement request. Failed identity-changing commands preserve whatever identity the existing authentication/role implementation leaves installed; the proxy neither guesses nor replays it.
++
++Each SQL KILL executes on its existing authenticated backend, authorizes against the target's pinned current session generation, and has at most one selected target effect. No target CN forwards again. Target disappearance is distinct from permission denial or transport failure. A denied target is never canceled or closed. IDs above uint32 are rejected before lookup or conversion. Existing QUERY/CONNECTION/default, statement-ID and local self-KILL semantics are retained. Statement ID remains subject to current kernel semantics (killQuery currently cancels the request regardless of that string); this fix does not invent new semantics.
++
++Processlist remains the prior design: fetchSessions receives authenticated Account/User/Role from proc.SessionInfo, requests SysTenant only for actual sys+moadmin, and filters every returned row before vector materialization. Ordinary users see own rows, account admins own-account rows, moadmin all. SHOW, direct processlist() and information_schema view converge here. Empty identity and malformed/nil rows fail closed. Prepared execution must use current session information. No processlist wire change or SQL privilege catalog change.
++
++## Chosen architecture
++
++### 1. Forward SQL through the existing proxy tunnel
++
++`pkg/proxy/event.go`: stop consuming KILL. Remove the `tree.Kill` event case and obsolete killEvent definition/helpers, TypeKill references if otherwise unused, and the matching dispatch/handleKill in `client_conn.go`. The original packet travels through the ordinary c2s/s2c pipes. Do not replace it with a second writer, `ExecStmt`, synthetic OK/ERR, or a temporary connection. Update event/tunnel fixtures to expect KIL
+```
+
+**File**: `pkg/cnservice/server_query.go` (modified, +33/-0)
+```diff
+@@ -142,6 +142,8 @@ func (s *service) initQueryService() error {
+ }
+ 
+ func (s *service) initQueryCommandHandler() {
++	s.addQueryCommandHandler(query.CmdMethod_KillSession, s.handleKillSession)
++	s.addQueryCommandHandler(query.CmdMethod_DisconnectSession, s.handleDisconnectSession)
+ 	s.addQueryCommandHandler(query.CmdMethod_KillConn, s.handleKillConn)
+ 	s.addQueryCommandHandler(query.CmdMethod_AlterAccount, s.handleAlterAccount)
+ 	s.addQueryCommandHandler(query.CmdMethod_TraceSpan, s.handleTraceSpan)
+@@ -961,3 +963,34 @@ func (s *service) handleWorkspaceThresholdRequest(
+ 
+ 	return nil
+ }
++
++// SQL authorization is performed by the owning frontend routine manager. These
++// trusted RPC handlers never execute SQL or forward to another CN.
++func (s *service) handleKillSession(ctx context.Context, req *query.Request, resp *query.Response, _ *morpc.Buffer) error {
++	if req == nil || req.KillSessionRequest == nil {
++		return moerr.NewInvalidInput(ctx, "missing kill session request")
++	}
++	if err := qclient.CheckMethodVersion(ctx, s.serviceID(), req); err != nil {
++		return err
++	}
++	found, err := s.mo.GetRoutineManager().KillSession(ctx, req.KillSessionRequest)
++	if err != nil {
++		return err
++	}
++	resp.KillSessionResponse = &query.KillSessionResponse{Found: found}
++	return nil
 +}
 +
- func TestCompileLockPrePipelineTargetAdmission(t *testing.T) {
- 	for _, tc := range []struct {
- 		name      string
++func (s *service) handleDisconnectSession(ctx context.Context, req *query.Request, resp *query.Response, _ *morpc.Buffer) error {
++	if req == nil || req.DisconnectSessionRequest == nil {
++		return moerr.NewInvalidInput(ctx, "missing disconnect session request")
++	}
++	if err := qclient.CheckMethodVersion(ctx, s.serviceID(), req); err != nil {
++		return err
++	}
++	if err := s.mo.GetRoutineManager().DisconnectSession(ctx, req.DisconnectSessionRequest.ConnID); err != nil {
++		return err
++	}
++	resp.DisconnectSessionResponse = &query.DisconnectSessionResponse{}
++	return nil
++}
 ```
 
----
-
-### Incident Patch 2: `ff7f0183` (2026-10-18)
-**Commit Message**: test: set a finite spill budget for shared SQL fixtures (#30488)
-
-## What type of PR is this?
-
-- [ ] API-change
-- [ ] BUG
-- [ ] Improvement
-- [ ] Documentation
-- [ ] Feature
-- [x] Test and CI
-- [ ] Code Refactoring
-
-## Which issue(s) this PR fixes:
-
-- #30480
-
-## What this PR does / why we need it:
-
-The shared embedded SQL fixture inherited the production automatic spill
-policy. When the LOCAL filesystem had at most 16 GiB free, that policy
-allowed only one byte of spill, so all four conversion-warning RETURNING
-cases failed before reaching their result and diagnostic assertions.
-
-Give each shared feature-test CN an explicit 64 MiB process spill
-allowance before startup. Reuse the existing fixture and retain every
-SQL statement and assertion. Production emergency headroom and dedicated
-admission-rejection fixtures retain their configuration. The allowance
-does not preallocate disk space; it is a per-process cap and an explicit
-floor for the shared CN ledger, whose automatic capacity can be larger.
-
-Validation on Go 1.27.1 / macOS arm64 using the repository CGo wrapper:
-
-- With an unchanged Go overlay injecting a 4 GiB available-disk sample
-at the actual sampler boundary, the origina
-
-**File**: `pkg/embed/testing.go` (modified, +3/-0)
+**File**: `pkg/cnservice/server_query_test.go` (modified, +62/-0)
 ```diff
-@@ -564,6 +564,9 @@ func adjustBasicClusterService(svc ServiceOperator) {
- 				config.CN.LockService.MaxFixedSliceSize = 10001
- 				config.CN.LockService.MaxLockRowCount = 10000
- 				config.CN.Frontend.SkipCheckUser = false
-+				// Bounded success-path tests own their spill allowance instead of
-+				// depending on the production policy's 16 GiB free-disk headroom.
-+				config.CN.Frontend.ProcessLimitationSpillSize = 64 << 20
- 				// The shared feature-test fixture is a fully upgraded cluster.
- 				config.CN.AutoIncrement.EnableAutoIDCache = true
- 				config.CN.Frontend.Iceberg.Enable = true
+@@ -1793,3 +1793,65 @@ func (h *fakeIcebergCacheInvalidationHandler) InvalidateIcebergCache(ctx context
+ 	h.req = req
+ 	return h.removed, nil
+ }
++
++func TestSessionControlHandlers(t *testing.T) {
++	ctl := gomock.NewController(t)
++	server := mock_moserver.NewMockServer(ctl)
++	server.EXPECT().GetRoutineManager().Return(&frontend.RoutineManager{}).AnyTimes()
++	sid := "session-control-handlers"
++	rt := moruntime.DefaultRuntime()
++	moruntime.SetupServiceBasedRuntime(sid, rt)
++	t.Cleanup(func() { moruntime.CompareAndDeleteServiceBasedRuntime(sid, rt) })
++	rt.SetGlobalVariables(moruntime.MOProtocolVersion, defines.MORPCVersion120)
++	s := &service{mo: server, cfg: &Config{UUID: sid}}
++	ctx := context.Background()
++	for _, req := range []*query.Request{nil, {}} {
++		require.Error(t, s.handleKillSession(ctx, req, &query.Response{}, nil))
++		require.Error(t, s.handleDisconnectSession(ctx, req, &query.Response{}, nil))
++	}
++	req := &query.Request{CmdMethod: query.CmdMethod_KillSession, KillSessionRequest: &query.KillSessionRequest{ConnID: 123}}
++	require.Error(t, s.handleKillSession(ctx, req, &query.Response{}, nil))
++	req.KillSessionRequest.Principal = &query.KillSessionPrincipal{Account: "sys", User: "root", Role: "moadmin"}
++	rsp := &query.Response{}
++	require.NoError(t, s.handleKillSession(ctx, req, rsp, nil))
++	require.NotNil(t, rsp.KillSessionResponse)
++	require.False(t, rsp.KillSessionResponse.Found)
++	req.KillSessionRequest.ConnID = 1<<32 + 123
++	require.Error(t, s.handleKillSession(ctx, req, &query.Response{}, nil))
++	rsp = &query.Response{}
++	require.NoError(t, s.handleDisconnectSession(ctx, &query.Request{CmdMethod: query.CmdMethod_DisconnectSession, DisconnectSessionRequest: &query.DisconnectSessionRequest{ConnID: 123}}, rsp, nil))
++	require.NotNil(t, rsp.DisconnectSessionResponse)
++}
++
++// A receiver must reject rollback before looking up or acting on any routine.
++// Leaving mo nil makes an accidentally admitted operation fail this test.
++func TestSessionControlHandlersRejectRollback(t *testing.T) {
++	sid := "session-control-rollback"
++	rt := moruntime.DefaultRuntime()
++	moruntime.SetupServiceBasedRuntime(sid, rt)
++	t.Cleanup(func() { moruntime.CompareAndDeleteServiceBasedRuntime(sid, rt) })
++	s := &service{cfg: &Config{UUID: sid}}
++	ctx := context.Background()
++	kill := &query.Request{CmdMethod: query.CmdMethod_KillSession, KillSessionRequest: &query.KillSessionRequest{ConnID: 123}}
++	disconnect := &query.Request{CmdMethod: query.CmdMethod_DisconnectSession, DisconnectSessionRequest: &query.DisconnectSessionRequest{ConnID: 123}}
++	for _, version := range []int64{defines.MORPCVersion119, defines.MORPCVersion120, defines.MORPCVersion119} {
++		rt.SetGlobalVariables(moruntime.MOProtocolVersion, version)
++		if version == defines.MORPCVersion120 {
++			s.mo = mock_moserver.NewMockServer(gomock.NewController(t))
++			s.mo.(*mock_moserver.MockServer).EXPECT().GetRoutineManager().Return(&frontend.RoutineManager{}).Times(2)
++			rsp := &query.Response{}
++			kill.KillSessionRequest.Principal = &query.KillSessionPrincipal{Account: "sys", User: "root", Role: "moadmin"}
++			require.NoError(t, s.handleKillSession(ctx, kill, rsp, nil))
++			require.NotNil(t, rsp.KillSessionResponse)
++			require.NoError(t, s.handleDisconnectSession(ctx, disconnect, rsp, nil))
++			require.NotNil(t, rsp.DisconnectSessionResponse)
++			s.mo = nil
++			continue
++		}
++		rsp := &query.Response{}
++		require.ErrorContains(t, s.handleKillSession(ctx, kill, rsp, nil), "unsupported protocol version 120")
++		require.Nil(t, rsp.KillSessionResponse)
++		require.ErrorContains(t, s.handleDisconnectSession(ctx, disconnect, rsp, nil), "unsupported protocol version 120")
++		require.Nil(t, rsp.DisconnectSessionResponse)
++	}
++}
 ```
 
----
-
-### Incident Patch 3: `adbdd5c7` (2026-10-18)
-**Commit Message**: fix(tests): renew view query context after cluster restart (#30517)
-
-由 LW 授权的 ChatGPT Personal 智能体提交。
-
-`TestViewDescriptionTwoCN` reused its initial three-minute SQL context after releasing and reacquiring the cluster lifecycle lease. A competing package can hold admission beyond that context's deadline: the restart succeeds but the following metadata query fails immediately.
-
-Cancel the first generation's context before restart, then create and defer cancellation of a fresh three-minute query context after `cluster.Start()` succeeds. Existing SQL, view metadata, persistence, identity and cleanup assertions remain intact. No timeout is extended and admission is unchanged.
-
-**Scope:** 1 file, +4/-0. No validation workflow or injection helper is included.
-Product commit: `1c5bc4a36d0362b5a0ffe6c257ec9031fe81b028`, parent/tested main `3c07fac240311d6f2b706674614ed6034e97ff79`.
-Independent review agent: **Approve**, including exact remote file/hash, actual test evidence and final delivery object.
-
-### Actual verification
-
-[Successful fork validation 39098117472](https://github.com/MatrixAdventurer/matrixone/actions/runs/39098117472), fixed verification commit `83ed8484f8ac69e90620860ea
-
-**File**: `pkg/tests/sqlintegration/multicn/view_description_test.go` (modified, +4/-0)
+**File**: `pkg/defines/const.go` (modified, +2/-1)
 ```diff
-@@ -164,7 +164,11 @@ func TestViewDescriptionTwoCN(t *testing.T) {
- 	require.NoError(t, second.Close())
- 	second = nil
- 	require.NoError(t, cluster.Close())
-+	cancel()
- 	require.NoError(t, cluster.Start())
-+	// Lifecycle admission must not consume the restarted generation's query budget.
-+	ctx, restartCancel := context.WithTimeout(context.Background(), 3*time.Minute)
-+	defer restartCancel()
- 	require.Equal(t, firstID, cn0.ServiceID())
- 	require.Equal(t, secondID, cn1.ServiceID())
- 	require.NotSame(t, oldFirst, cn0.RawService())
+@@ -155,7 +155,8 @@ const (
+ 	MORPCVersion117    int64 = 117 // versioned collation-aware LEAST/GREATEST ordering
+ 	MORPCVersion118    int64 = 118 // transactional database defaults and table charset alteration
+ 	MORPCVersion119    int64 = 119 // coordinator-owned parameterized subquery programs
+-	MORPCLatestVersion       = MORPCVersion119
++	MORPCVersion120    int64 = 120 // current-session KILL authorization and proxy disconnect cleanup
++	MORPCLatestVersion       = MORPCVersion120
+ )
+ 
+ // DefaultLockWaitTimeoutSeconds is shared by the frontend default and by
+```
+
+**File**: `pkg/frontend/kill.go` (added, +188/-0)
+```diff
+@@ -0,0 +1,188 @@
++// Copyright 2026 Matrix Origin
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package frontend
++
++import (
++	"context"
++	"math"
++	"strings"
++	"time"
++
++	"github.com/matrixorigin/matrixone/pkg/clusterservice"
++	"github.com/matrixorigin/matrixone/pkg/common/moerr"
++	"github.com/matrixorigin/matrixone/pkg/pb/metadata"
++	"github.com/matrixorigin/matrixone/pkg/pb/query"
++	qclient "github.com/matrixorigin/matrixone/pkg/queryservice/client"
++)
++
++func killPrincipal(tenant *TenantInfo) *query.KillSessionPrincipal {
++	if tenant == nil {
++		return nil
++	}
++	tenant.mu.Lock()
++	defer tenant.mu.Unlock()
++	return &query.KillSessionPrincipal{
++		AccountID: tenant.TenantID, UserID: tenant.UserID,
++		Account: tenant.Tenant, User: tenant.User, Role: tenant.DefaultRole,
++	}
++}
++
++func validKillPrincipal(p *query.KillSessionPrincipal) bool {
++	return p != nil && p.Account != "" && p.User != "" && p.Role != "" &&
++		(strings.EqualFold(p.Account, sysAccountName) == (p.AccountID == sysAccountID))
++}
++
++func canKillSession(caller, target *query.KillSessionPrincipal) bool {
++	if !validKillPrincipal(caller) || !validKillPrincipal(target) {
++		return false
++	}
++	sys := strings.EqualFold(caller.Account, sysAccountName)
++	if sys && strings.EqualFold(caller.Role, moAdminRoleName) {
++		return true
++	}
++	return caller.AccountID == target.AccountID &&
++		((!sys && strings.EqualFold(caller.Role, accountAdminRoleName)) || caller.UserID == target.UserID)
++}
++
++// killLocal pins the target generation from authorization through cancellation.
++// Absence is separate from denial so only absence can trigger remote routing.
++func (rm *RoutineManager) killLocal(ctx context.Context, principal *query.KillSessionPrincipal,
++	callerID, targetID uint64, killConnection bool, statementID string,
++) (bool, error) {
++	if targetID > math.MaxUint32 {
++		return false, moerr.NewInvalidInputf(ctx, "connection id %d exceeds uint32", targetID)
++	}
++	if !validKillPrincipal(principal) {
++		return false, moerr.NewInternalError(ctx, "access denied: missing authenticated KILL identity")
++	}
++	if err := ctx.Err(); err != nil {
++		return false, err
++	}
++	rt := rm.getRoutineByConnID(uint32(targetID))
++	if rt == nil {
++		return false, nil
++	}
++	rt.mc.Lock()
++	if rt.mc.closed || rt.mc.inProgress {
++		rt.mc.Unlock()
++		return true, moerr.NewInternalError(ctx, "cannot kill a closed or changing session")
++	}
++	ses := rt.getSession()
++	if ses == nil || !canKillSession(principal, killPrincipal(ses.GetTenantInfo())) {
++		rt.mc.Unlock()
++		return true, moerr.NewInternalError(ctx, "access denied: KILL requires session ownership or an administrative role")
++	}
++	if err := ctx.Err(); err != nil {
++		rt.mc.Unlock()
++		return true, err
++	}
++	killMyself := callerID == targetID
++	if !killConnection {
++		rt.killQuery(killMyself, statementID)
++		rt.mc.Unlock()
++		return true, nil
++	}
++	// Seal identity-changing admission before releasing the guard. Closing the
++	// protocol can enter routine cleanup and must happen outside this lock.
++	rt.mc.closed = true
++	rt.mc.cond.Broadcast()
++	rt.mc.Unlock()
++	rt.killConnection(killMyself)
++	return true, nil
++}
++
++// KillSession is a local-only operation for the trusted CN query service.
++// A remote request cannot claim the local self-KILL exception or forward again.
++func (rm *RoutineManager) KillSession(ctx context.Context, req *query.KillSessionRequest) (bool, error) {
++	if req == nil {
++		return false, moerr.NewInvalidInput(ctx, "missing kill session request")
++	}
++	return rm.killLocal(ctx, req.Principal, math.MaxUint64, req.ConnID, req.KillConnection, req.StatementID)
++}
++
++// DisconnectSession is trusted proxy lifecycle cleanup, independent of SQL
++// identity. The captured backend cannot be cached/reassigned during this call.
++func (rm *RoutineManager) DisconnectSession(ctx context.Context, connID uint32) error {
++	if err := ctx.Err(); err != nil {
++		return err
++	}
++	if rt := rm.getRoutineByConnID(connID); rt != nil {
++		rt.beginClose()
++		rt.killConnection(false)
++	}
++	return nil
++}
++
++func killSession(ctx context.Context, ses *Session, targetID uint64, connection bool, statementID string) error {
++	principal := killPrincipal(ses.GetTenantInfo())
++	found, err := getRtMgr(ses.GetService()).killLocal(ctx, principal, uint64(ses.GetConnectionID()), targetID, connection, statementID)
++	if found || err != nil {
++		return err
++	}
++	qc := getPu(ses.GetService()).QueryClient
++	if qc == nil {
++		return moerr.NewInter
+```
+
+**File**: `pkg/frontend/kill_test.go` (added, +267/-0)
+```diff
+@@ -0,0 +1,267 @@
++// Copyright 2026 Matrix Origin
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package frontend
++
++import (
++	"context"
++	"errors"
++	"math"
++	"testing"
++	"time"
++
++	"github.com/matrixorigin/matrixone/pkg/pb/metadata"
++	"github.com/matrixorigin/matrixone/pkg/pb/query"
++	qclient "github.com/matrixorigin/matrixone/pkg/queryservice/client"
++	"github.com/stretchr/testify/require"
++)
++
++func killTestIdentity(account string, aid uint32, user string, uid uint32, role string) *TenantInfo {
++	return &TenantInfo{Tenant: account, TenantID: aid, User: user, UserID: uid, DefaultRole: role}
++}
++
++func TestKillSessionAuthorization(t *testing.T) {
++	ordinary := killTestIdentity("sys", 0, "ordinary", 7, "public")
++	owner := killTestIdentity("acme", 10, "owner", 7, "public")
++	tests := []struct {
++		name           string
++		caller, target *TenantInfo
++		allow          bool
++	}{
++		{"sys ordinary cannot kill root", ordinary, killTestIdentity("sys", 0, "root", 0, "moadmin"), false},
++		{"sys own user across roles", ordinary, killTestIdentity("sys", 0, "ordinary", 7, "analyst"), true},
++		{"same account other user", owner, killTestIdentity("acme", 10, "other", 8, "public"), false},
++		{"same user other account", owner, killTestIdentity("other", 11, "owner", 7, "public"), false},
++		{"same name different user ID", owner, killTestIdentity("acme", 10, "owner", 8, "public"), false},
++		{"same user", owner, owner, true},
++		{"account admin own account", killTestIdentity("acme", 10, "admin", 9, "accountadmin"), owner, true},
++		{"account admin other account", killTestIdentity("other", 11, "admin", 9, "accountadmin"), owner, false},
++		{"sys accountadmin not global", killTestIdentity("sys", 0, "admin", 9, "accountadmin"), owner, false},
++		{"non sys moadmin not global", killTestIdentity("other", 11, "admin", 9, "moadmin"), owner, false},
++		{"moadmin global", killTestIdentity("sys", 0, "admin", 9, "moadmin"), owner, true},
++		{"root name not authority", killTestIdentity("sys", 0, "root", 0, "public"), owner, false},
++		{"missing caller", nil, owner, false}, {"missing target", owner, nil, false},
++		{"empty role", killTestIdentity("acme", 10, "owner", 7, ""), owner, false},
++		{"inconsistent sys ID", killTestIdentity("sys", 10, "admin", 9, "moadmin"), owner, false},
++	}
++	for _, tt := range tests {
++		for _, connection := range []bool{false, true} {
++			t.Run(tt.name+map[bool]string{false: "/query", true: "/connection"}[connection], func(t *testing.T) {
++				rt, _ := newUnitTestRoutine(t, 100)
++				ses := &Session{tenant: tt.target}
++				rt.setSession(ses)
++				ses.SetQueryInExecute(true)
++				reqCtx, cancel := context.WithCancel(context.Background())
++				defer cancel()
++				rt.setCancelRequestFunc(cancel)
++				rm := &RoutineManager{routinesByConnID: map[uint32]*Routine{100: rt}}
++				found, err := rm.killLocal(context.Background(), killPrincipal(tt.caller), 1, 100, connection, "statement")
++				if tt.allow {
++					require.NoError(t, err)
++					require.True(t, found)
++					if connection {
++						require.True(t, rt.isCancelled())
++						require.True(t, rt.mc.closed)
++					} else {
++						require.ErrorIs(t, reqCtx.Err(), context.Canceled)
++						require.False(t, ses.GetQueryInExecute())
++					}
++				} else {
++					require.Error(t, err)
++					require.NoError(t, reqCtx.Err())
++					require.False(t, rt.isCancelled())
++					require.False(t, rt.mc.closed)
++					require.True(t, ses.GetQueryInExecute())
++				}
++			})
++		}
++	}
++}
++
++func TestKillSessionGenerationAndBoundaries(t *testing.T) {
++	rt, _ := newUnitTestRoutine(t, 100)
++	old := killTestIdentity("acme", 10, "old", 7, "public")
++	next := killTestIdentity("acme", 10, "next", 8, "public")
++	rt.setSession(&Session{tenant: old})
++	rm := &RoutineManager{routinesByConnID: map[uint32]*Routine{100: rt}}
++	reqCtx, cancel := context.WithCancel(context.Background())
++	defer cancel()
++	rt.setCancelRequestFunc(cancel)
++	// A lifecycle transition owns admission. KILL must reject without waiting for it.
++	rt.mc.Lock()
++	rt.mc.inProgress = true
++	rt.mc.Unlock()
++	found, err := rm.killLocal(context.Background(), killPrincipal(old), 1, 100, false, "")
++	require.True(t, found)
++	require.Error(t, err)
++	require.NoError(t, reqCtx.Err())
++	rt.mc.Lock()
++	rt.setSession(&Session{tenant: next})
++	rt.mc.inProgress = false
++	rt.mc.Unlock()
++	found, err = rm.killLocal(context.Background(), killPrincipal(old), 1, 100, false, "")
++	require.True(t, found)
++	require.Error(t, err)
++	re
+```
+
+**File**: `pkg/frontend/mysql_cmd_executor.go` (modified, +7/-17)
+```diff
+@@ -3755,16 +3755,8 @@ func handleSwitchRole(ses FeSession, execCtx *ExecCtx, sr *tree.SetRole) error {
+ }
+ 
+ func doKill(ses *Session, execCtx *ExecCtx, k *tree.Kill) error {
+-	var err error
+-	//true: kill a connection
+-	//false: kill a query in a connection
+-	idThatKill := uint64(ses.GetConnectionID())
+-	if !k.Option.Exist || k.Option.Typ == tree.KillTypeConnection {
+-		err = getRtMgr(ses.GetService()).kill(execCtx.reqCtx, true, idThatKill, k.ConnectionId, "")
+-	} else {
+-		err = getRtMgr(ses.GetService()).kill(execCtx.reqCtx, false, idThatKill, k.ConnectionId, k.StmtOption.StatementId)
+-	}
+-	return err
++	killConnection := !k.Option.Exist || k.Option.Typ == tree.KillTypeConnection
++	return killSession(execCtx.reqCtx, ses, k.ConnectionId, killConnection, k.StmtOption.StatementId)
+ }
+ 
+ // handleKill kill a connection or query
+@@ -4814,18 +4806,16 @@ func refreshStatementScopedSessionInfo(ses FeSession, proc *process.Process) {
+ 	if proc == nil || proc.Base == nil {
+ 		return
+ 	}
+-	// SessionInfo is reused across statements.  Role changes update the
+-	// session's TenantInfo, so refresh the trusted names at the same boundary
+-	// as the other statement-scoped fields before planning or execution.
++	// Refresh the authenticated snapshot at every statement boundary, including
++	// later statements within a COM_QUERY and prepared EXECUTE.
++	proc.Base.SessionInfo.Account, proc.Base.SessionInfo.User, proc.Base.SessionInfo.Role = "", "", ""
+ 	if ses != nil {
+ 		if tenant := ses.GetTenantInfo(); tenant != nil {
+-			// Read both names under one lock. Besides avoiding two lock
+-			// acquisitions on every statement, this keeps the account/role pair
+-			// from being sampled across a concurrent role transition.
+ 			tenant.mu.Lock()
+-			account, role := tenant.getTenantUnsafe(), tenant.getDefaultRoleUnsafe()
++			account, user, role := tenant.Tenant, tenant.User, tenant.DefaultRole
+ 			tenant.mu.Unlock()
+ 			proc.Base.SessionInfo.Account = account
++			proc.Base.SessionInfo.User = user
+ 			proc.Base.SessionInfo.Role = role
+ 		}
+ 	}
+```
+
+**File**: `pkg/frontend/mysql_cmd_executor_test.go` (modified, +17/-0)
+```diff
+@@ -5702,6 +5702,23 @@ func TestRefreshStatementScopedSessionInfo(t *testing.T) {
+ 	setPu("", config.NewParameterUnit(&config.FrontendParameters{}, nil, nil, nil))
+ 	ses := NewSession(ctx, "", &testMysqlWriter{}, nil)
+ 	proc := &process.Process{Base: &process.BaseProcess{}}
++	ses.SetTenantInfo(killTestIdentity("sys", 0, "root", 0, "moadmin"))
++	refreshStatementScopedSessionInfo(ses, proc)
++	require.Equal(t, "sys", proc.Base.SessionInfo.Account)
++	require.Equal(t, "root", proc.Base.SessionInfo.User)
++	require.Equal(t, "moadmin", proc.Base.SessionInfo.Role)
++	// Statements within one request reuse proc, including prepared EXECUTE.
++	ses.tenant.SetDefaultRole("public")
++	refreshStatementScopedSessionInfo(ses, proc)
++	require.Equal(t, "public", proc.Base.SessionInfo.Role)
++	ses.tenant.SetDefaultRole("moadmin")
++	refreshStatementScopedSessionInfo(ses, proc)
++	require.Equal(t, "moadmin", proc.Base.SessionInfo.Role)
++	ses.SetTenantInfo(nil)
++	refreshStatementScopedSessionInfo(ses, proc)
++	require.Empty(t, proc.Base.SessionInfo.Account)
++	require.Empty(t, proc.Base.SessionInfo.User)
++	require.Empty(t, proc.Base.SessionInfo.Role)
+ 
+ 	require.NoError(t, ses.SetSessionSysVar(ctx, "sql_mode", "ANSI_QUOTES"))
+ 	refreshStatementScopedSessionInfo(ses, proc)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #30536** (2026-10-18): fix(morpc): retain writer buffers until write loop exits (@XuPeng-SH)
-- **PR #30535** (2026-10-18): test(ut): stabilize cooperative helper cancellation fixtures (@XuPeng-SH)
-- **PR #30533** (2026-10-18): [Bug]: Preserve region fallback for SQL dynamic S3 (@Ariznawlll)
-- **PR #30526** (2026-10-18): fix(sql): preserve UTF-8 boundaries in scalar warning echoes (@aptend)
-- **PR #30525** (2026-10-18): fix(ci): keep Iceberg adapter checksums synchronized (@XuPeng-SH)
-- **PR #30519** (2026-10-18): fix(fileservice): avoid draining COS responses on close (@iamlinjunhong)
+- **PR #30589** (2026-10-19): fix(plan): report errno 1452 for INSERT foreign-key violations (#30540) (@daviszhen)
+- **PR #30586** (closed): design: atomic event-ledger sink profile for Kafka Connect and NiFi (@jiangxinmeng1)
+- **PR #30585** (closed): design: atomic event-ledger sink profile for Kafka Connect and NiFi (@loveRhythm1990)
+- **PR #30580** (2026-10-19): [4.2-dev] fix(disttae): restore RC statement transfer state on rollback (@XuPeng-SH)
+- **PR #30576** (2026-10-19): [4.2-dev] fix: preserve tombstones across lineage snapshot advances (@XuPeng-SH)
+- **PR #30546** (2026-10-19): fix(frontend): allow session scope for information_schema_stats_expiry (#30473) (@daviszhen)
 
 ---
 
@@ -2640,39 +3352,39 @@ Independent review agent: **Approve**, including exact remote file/hash, actual 
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. avoid global lineage gate during ALTER COPY preparation (#29798)
+## X. python-sdk): enforce handshake, TLS, redaction and async deadlines (#30074)
 
 **RULE**:
-When implementing operations in `docs/design/20261010-alter-copy-pre-publication.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `clients/python/CONNECTION_POLICIES.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `68e642fd`: avoid global lineage gate during ALTER COPY preparation (#29798). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8ef2eaf4`: python-sdk): enforce handshake, TLS, redaction and async deadlines (#30074). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/design/20261010-alter-copy-pre-publication.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `clients/python/CONNECTION_POLICIES.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-# ALTER COPY pre-publication design
+# Connection and timeout contracts
 
-- Status: proposed; independent design approval required before implementation approval.
-- Issue: #29208.
-- Implementation PR: #29798.
-- Design trigger: materially changes the COPY ALTER concurrency, retry, and lifecycle model.
-- Supersedes: none; extends the RC lifecycle contract in [20260929-rc-lifecycle-protocol.md](20260929-rc-lifecycle-protocol.md).
+`Client.connect()` creates an engine and requires an authenticated SELECT 1 before
+reporting success. Initial probe failures dispose the failed engine and clear its
+state. `connected()` reports successful initialization, not a live health probe;
+use a query for live health. Reconnect disposes the old engine. Failed disposal
+also clears the client's connected state, while preserving its error.
 
-## Problem
+`ssl_mode='required'` uses a certificate/hostname-verifying SSLContext. `ssl_ca`
+selects a CA file; without it, system roots are used. Peers without TLS are refused
+before authentication on older and current PyMySQL. `disabled` explicitly disables
+TLS. `preferred` follows the driver's opportunistic behavior unless a CA is
+supplied, in which case certificate verification is requested. A client certificate
+requires a CA or required mode. This policy change may reject previously accepted
+untrusted endpoints; configure a trusted test/organization CA rather than disabling
+verification on a required connection.
 
-`ALTER TABLE ... COPY` currently acquires the global SNAPSHOT lineage gate before physical preparation. The gate is transaction-scoped and intentionally broad, so unrelated branch ALTERs serialize behind each other and can eventually return lock-wait timeouts or connection losses under high concurrency.
-
-The correctness invariant is unchanged: publication must not expose a stale or inconsistent source snapshot, and every source or lineage mutation that could invalidate the copy must be detected before publication.
-
-## Goals
-
-- Let independent ALTER COPY operations prepare physical work without waiting on each other’s global lineage gate.
-- Preserve atomic publication and global ordering for genuinely conflicting lifecycle owners.
-- Keep speculative preparation from retaining source 
+Constructor `connection_timeout` is inherited unless connect explicitly overrides
+it. The synchronous engine also passes query_timeout as read/write inac
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2682,4 +3394,4 @@ The correctness invariant is unchanged: publication must not expose a stale or i
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `68e642fd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8ef2eaf4` are properly handled with clean fallback behavior.

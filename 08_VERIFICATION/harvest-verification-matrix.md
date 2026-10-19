@@ -3206,3 +3206,9 @@
 | `CYCLE-20261019-XTNY` | `2026-10-19T11:48:30.958Z` | `openai/gpt-oss-20b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md` | Yes (`ce6071ad...`) |
 | `CYCLE-20261019-XUMO` | `2026-10-19T11:48:32.208Z` | `tw93/Pake` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2552` | Yes (`d2bb389e...`) |
 | `CYCLE-20261019-XZDI` | `2026-10-19T11:48:38.358Z` | `SwiftUIX/SwiftUIX` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2553` | Yes (`6bd4dc26...`) |
+| `CYCLE-20261019-5TVD` | `2026-10-19T11:54:44.473Z` | `mui/base-ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2554` | Yes (`7b525dcc...`) |
+| `CYCLE-20261019-5YFT` | `2026-10-19T11:54:50.393Z` | `MochiDiffusion/MochiDiffusion` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2555` | Yes (`be2ad43e...`) |
+| `CYCLE-20261019-628C` | `2026-10-19T11:54:55.308Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md` | Yes (`986bf6d8...`) |
+| `CYCLE-20261019-62IW` | `2026-10-19T11:54:55.688Z` | `meta-llama/Llama-2-7b-chat-hf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2556, Rule 2557, Rule 2558` | Yes (`cb173428...`) |
+| `CYCLE-20261019-6553` | `2026-10-19T11:54:59.079Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2559` | Yes (`5551923c...`) |
+| `CYCLE-20261019-666U` | `2026-10-19T11:55:00.438Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2560` | Yes (`030cda2c...`) |

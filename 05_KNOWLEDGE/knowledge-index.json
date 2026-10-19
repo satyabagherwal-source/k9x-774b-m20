@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T11:48:38.294Z",
-  "total_verified_learnings": 808,
+  "last_updated": "2026-10-19T11:55:00.396Z",
+  "total_verified_learnings": 809,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -6349,8 +6349,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "8d6bc495",
-      "content_hash": "8f4de18d005f8daacee8f554e06ce5114947e982d09ad9cbc1dd17a911e8f5c7",
+      "source_version": "7453abcc",
+      "content_hash": "030cda2c79e2b7281bb271cc600dc1eab35b72d6e8a524fb37e9228840681698",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -6393,6 +6393,11 @@
           "number": 2537,
           "title": "docs(README): mention qsv-client for running qsv from Python",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2560,
+          "title": "docs(changelog): 26.0.0 Breaking Changes section",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6400,7 +6405,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T11:28:04.911Z",
+      "verified_at": "2026-10-19T11:55:00.383Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -18654,7 +18659,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Llama-2-7b-chat-hf",
       "source_version": "hf-meta-llama-llama-2-7b-chat-hf",
-      "content_hash": "d8786888b7e25a11b1649cf499afb96b2326e129d074003bfe65a4488c536e8c",
+      "content_hash": "cb173428e6788e22dc95fd50c76d18cf9440c43f354a7664d8cf3ebc0c76aa25",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md",
       "promoted_rules": [
@@ -18717,6 +18722,21 @@
           "number": 1596,
           "title": "Chat Template Immutability and Special Token Integrity",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2556,
+          "title": "Deterministic Weight Sharding & Atomic Loading",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2557,
+          "title": "Chat Template Determinism & Injection Prevention",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2558,
+          "title": "Generation Parameter Bounds & Degenerate Loop Prevention",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -18736,7 +18756,7 @@
         "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv3wsd49",
         "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv4bhyss"
       ],
-      "verified_at": "2026-10-18T02:58:24.088Z",
+      "verified_at": "2026-10-19T11:54:55.629Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -28618,17 +28638,23 @@
       "slug": "matrixorigin-matrixone",
       "platform": "github",
       "source_url": "https://github.com/matrixorigin/matrixone",
-      "source_version": "2508ce70",
-      "content_hash": "00d9ecea4561cff1fdfab4755a33b261f477dd1a0da1f01aac9e0aee1f2b7eb6",
+      "source_version": "308b6b87",
+      "content_hash": "5551923c6ffaf2f1df9ad96d2dc83ec6bd01ececc9e551ca6fc43d16fdd8059e",
       "dossier_path": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2559,
+          "title": "python-sdk): enforce handshake, TLS, redaction and async deadlines (#30074)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T22:48:14.457Z",
+      "verified_at": "2026-10-19T11:54:59.012Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -30190,22 +30216,35 @@
     "learn-github-mochidiffusion-mochidiffusion": {
       "learning_id": "learn-github-mochidiffusion-mochidiffusion",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "mochidiffusion-mochidiffusion",
+      "source": "MochiDiffusion/MochiDiffusion",
+      "repository": "MochiDiffusion/MochiDiffusion",
       "slug": "mochidiffusion-mochidiffusion",
       "platform": "github",
       "source_url": "https://github.com/MochiDiffusion/MochiDiffusion",
-      "source_version": "HEAD",
-      "content_hash": "545d7f34ac8590a9352871c55b122994d9a2209c2fc0b4029aa9acd3640449bb",
+      "source_version": "5e978c69",
+      "content_hash": "be2ad43ee00be30a9eaae2d4d33444447718aea98448f3490966e3851a8b05b5",
       "dossier_path": "07_PROJECT_LEARNING/mochidiffusion-mochidiffusion-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mochidiffusion-mochidiffusion-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2555,
+          "title": "keep Quick Look bound to a State mirror",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.405Z"
+      "verified_at": "2026-10-19T11:54:50.317Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-modelcontextprotocol-csharp-sdk": {
       "learning_id": "learn-github-modelcontextprotocol-csharp-sdk",
@@ -30740,14 +30779,19 @@
       "slug": "mui-base-ui",
       "platform": "github",
       "source_url": "https://github.com/mui/base-ui",
-      "source_version": "8e91039a",
-      "content_hash": "72e7c1f3ddadadc6f4d4a11565fb29ab82cccc3c69126b5ae4b60e6e3d105784",
+      "source_version": "8c2b3182",
+      "content_hash": "7b525dcce5d8d03a27be11f2198aded1eab5584731f2adc877fdb94b58737d08",
       "dossier_path": "07_PROJECT_LEARNING/mui-base-ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mui-base-ui-learnings.md",
       "promoted_rules": [
         {
           "number": 1928,
           "title": "Bump next to 16.3.8 [SECURITY] (#5953)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2554,
+          "title": "[checkbox][switch][radio] Respect a render element's aria-label over associated",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -30756,7 +30800,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T00:41:05.338Z",
+      "verified_at": "2026-10-19T11:54:44.418Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43903,8 +43947,8 @@
       "slug": "zama-ai-tfhe-rs",
       "platform": "github",
       "source_url": "https://github.com/zama-ai/tfhe-rs",
-      "source_version": "bcdba2b0",
-      "content_hash": "c5719b6091795eb582476deb1a63bdc2a46692d5672f6877dc2e10e1c8e39810",
+      "source_version": "e87d6a92",
+      "content_hash": "986bf6d822599445a4179852fbf55896d72b5068996db25a541f9c51260b83d1",
       "dossier_path": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "promoted_rules": [
@@ -43919,7 +43963,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T23:02:10.483Z",
+      "verified_at": "2026-10-19T11:54:55.216Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -86585,6 +86629,104 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T11:48:38.277Z"
+    },
+    "rule-2554": {
+      "learning_id": "rule-2554",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2554,
+      "title": "[checkbox][switch][radio] Respect a render element's aria-label over associated",
+      "source_url": "https://github.com/mui/base-ui",
+      "source_version": "8c2b3182",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T11:54:44.418Z"
+    },
+    "rule-2555": {
+      "learning_id": "rule-2555",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2555,
+      "title": "keep Quick Look bound to a State mirror",
+      "source_url": "https://github.com/MochiDiffusion/MochiDiffusion",
+      "source_version": "5e978c69",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T11:54:50.317Z"
+    },
+    "rule-2556": {
+      "learning_id": "rule-2556",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2556,
+      "title": "Deterministic Weight Sharding & Atomic Loading",
+      "source_url": "https://huggingface.co/meta-llama/Llama-2-7b-chat-hf",
+      "source_version": "hf-meta-llama-llama-2-7b-chat-hf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T11:54:55.629Z"
+    },
+    "rule-2557": {
+      "learning_id": "rule-2557",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2557,
+      "title": "Chat Template Determinism & Injection Prevention",
+      "source_url": "https://huggingface.co/meta-llama/Llama-2-7b-chat-hf",
+      "source_version": "hf-meta-llama-llama-2-7b-chat-hf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T11:54:55.629Z"
+    },
+    "rule-2558": {
+      "learning_id": "rule-2558",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2558,
+      "title": "Generation Parameter Bounds & Degenerate Loop Prevention",
+      "source_url": "https://huggingface.co/meta-llama/Llama-2-7b-chat-hf",
+      "source_version": "hf-meta-llama-llama-2-7b-chat-hf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T11:54:55.629Z"
+    },
+    "rule-2559": {
+      "learning_id": "rule-2559",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2559,
+      "title": "python-sdk): enforce handshake, TLS, redaction and async deadlines (#30074)",
+      "source_url": "https://github.com/matrixorigin/matrixone",
+      "source_version": "308b6b87",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T11:54:59.012Z"
+    },
+    "rule-2560": {
+      "learning_id": "rule-2560",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2560,
+      "title": "docs(changelog): 26.0.0 Breaking Changes section",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "7453abcc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T11:55:00.383Z"
     }
   },
   "aliases": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `8d6bc495`  
+> **Source Version**: `7453abcc`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T11:28:04.632Z  
+> **Timestamp**: 2026-10-19T11:55:00.173Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T11:28:04.623Z  
+> **Harvest Timestamp**: 2026-10-19T11:55:00.164Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2252,228 +2252,159 @@ pub fn visualize_whitespace(s: &str) -> String {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8d6bc495` (2026-10-19)
-**Commit Message**: docs(README): mention qsv-client for running qsv from Python
+### Incident Patch 1: `7453abcc` (2026-10-19)
+**Commit Message**: docs(changelog): 26.0.0 Breaking Changes section
 
-[skip ci]
+Move the two output-changing behaviors from the Highlights' IMPORTANT box
+into a "Breaking Changes" section (with its own anchor), leaving a one-line
+pointer in the Highlights. Adds how to keep commas: unset
+QSV_DEFAULT_DELIMITER or pass --delimiter , to excel/jsonl/readstat.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `README.md` (modified, +3/-0)
+**File**: `CHANGELOG.md` (modified, +6/-4)
 ```diff
-@@ -137,6 +137,9 @@
- > [!TIP]
- > To install the qsv MCP Server and/or the qsv Claude Cowork plugin, see the [Getting Started guide](.claude/skills/docs/guides/START_HERE.md).
+@@ -22,10 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
-+> [!TIP]
-+> To run qsv from Python, use **[qsv-client](https://github.com/dathere/qsv-client)** (`pip install qsv-client`). It stops qsv and every process qsv started on a timeout, raises typed exceptions instead of making you parse stderr, and reports the installed binary's version, features and commands. It has sync and asyncio clients and no runtime dependencies. qsv itself is not bundled: install qsv 25.0.0 or later using one of the options below.
+ **Saying what you mean.** `--delimiter` and `QSV_DEFAULT_DELIMITER` now follow the documented precedence in seven commands, `schema` output validates the CSV it was inferred from (`--ignore-case`, `--enum-threshold` and non-ASCII string lengths), `count --width` is fixed for quoted fields, and `geoconvert` handles GeoJSON features with different properties.
+ 
+-> [!IMPORTANT]
+-> **Why 26.0.0: two changes can alter existing output.**
+-> - `excel`, `jsonl` and `readstat` now follow `QSV_DEFAULT_DELIMITER` on output, as other qsv writers already do. If you set it only to read semicolon files, these three now write semicolons to stdout too ([#4819](https://github.com/dathere/qsv/pull/4819)).
+-> - `schema` can generate stricter schemas: a column with a single value in the input now always gets a `const` constraint, so `validate` rejects later data with any other value there. Generate schemas from representative data, and loosen `const`/`enum` where values are expected to change ([#4830](https://github.com/dathere/qsv/pull/4830)).
++This is 26.0.0 rather than 25.1.0 because two changes can alter existing output; see [Breaking Changes](#v26-breaking-changes).
+ 
+ Same data, new angles.
+ 
+@@ -39,6 +36,11 @@ Thanks to everyone who made 26.0.0 possible:
+ ---
+ <a id="v26-changes" name="v26-changes"></a>
+ 
++<a id="v26-breaking-changes" name="v26-breaking-changes"></a>
++### Breaking Changes
++- **`excel`, `jsonl` and `readstat` now follow `QSV_DEFAULT_DELIMITER` on output** ([#4819](https://github.com/dathere/qsv/pull/4819)), as other qsv writers already do. If you set it only to read semicolon files, these three now write semicolons to stdout as well. Unset it for those commands, or pass `--delimiter ,`, to keep commas.
++- **`schema` can generate stricter schemas** ([#4830](https://github.com/dathere/qsv/pull/4830)). A column that holds a single value in the input now always gets a `const` constraint, which most files with a low-cardinality column used to lose, so `validate` rejects later data with any other value there (e.g. a changed phone number or URL). Generate schemas from a representative dataset, and loosen or remove `const`/`enum` constraints where values are expected to change.
 +
- ### Option 0: qsv pro
- 
- If you prefer to explore your data using a graphical interface instead of the command-line, feel free to try out **[qsv pro](https://qsvpro.dathere.com)**. Leveraging qsv, qsv pro can help you quickly analyze spreadsheet data by just dropping a file, along with many other interactive features. Learn more at [qsvpro.dathere.com](https://qsvpro.dathere.com) or download qsv pro directly by clicking one of the badges below.
+ ### Added
+ - **`viz parcoords` and a parallel-coordinates panel in `viz smart`** ([#4839](https://github.com/dathere/qsv/pull/4839)), using the new plotly.js 3.7 trace types from [#4838](https://github.com/dathere/qsv/pull/4838). `viz parcoords` draws one line per row across the numeric `--cols` and colors the lines by an optional numeric `--color` column; drag along an axis to filter rows. It is the numeric counterpart of `viz parcats`. `viz smart` adds the panel when 3 or more measures correlate (|r| ≥ 0.3), reusing the columns it already reads for the correlation heatmap. It shows up to 6 axes, ordered so neighboring axes are the strongest pairs, and samples down to 5,000 lines. Pass `--no-parcoords` to leave it out. The auto `--max-charts 0` ceiling rises from 64 to 65 panels, so the new panel doesn't push a per-column chart out of a wide Data Schematic. The viz gallery now renders WebGL figures and Data Schematic iframes only near the viewport: with every figure live at once it exceeded Chrome's limit on WebGL contexts, which left splom, 3D and map figures blank.
+ - **`viz barpolar` (wind rose), and polar bars for the `viz smart` seasonality panel** ([#4840](https://github.com/dathere/qsv/pull/4840)), using plotly.js's `barpolar` trace from [#4838](https://github.com/dathere/qsv/pull/4838). `viz barpolar` draws one bar per `--x` category, clockwise from north, as long as the `--agg` of `--y` (sum by default) or the row count when `--y` is omitted; `--series` stacks colored segments, in numeric order when the series are bins like `0-10`/`10-20`. Compass labels (`N`, `NE`, `NNE`...) sit at their true bearings on a full 8- or 16-point rose, so a direction with no data stays an empty slot. Other labels get evenly spaced slots, and the new `--degrees` option places a numeric bearing column at its real angle instead. The seasonality panel (hour of day, day of week, month) now draws one bar per phase instead of a filled line ring, so each hour, day or month is its own hover target, and reads like a 24-hour dial: the first phase (00h, Mon, Jan) at the top, running clockwise (it previously started at 3 o'clock and ran counterclockwise). With `--theme plotly_dark`, polar charts (`viz radar` and `viz barpolar`) now get a dark polar background and grid instead of a white disc, via the plotly.rs pin. The gallery gains a wind-rose figure built from a synthetic `wind_obs.csv`.
 ```
 
 ---
 
-### Incident Patch 2: `6665f1d3` (2026-10-19)
-**Commit Message**: docs(sqlp): show read_ndjson named options in USAGE (#4847)
+### Incident Patch 2: `64baaa57` (2026-10-19)
+**Commit Message**: chore: bump version to 26.0.0
 
-* docs(sqlp): show read_ndjson named options in USAGE
+- Cargo.toml/Cargo.lock: 26.0.0
+- Regenerate the 57 MCP skill JSONs (one version line each). Help docs
+  are unchanged.
+- Regenerate shell completions for 80 commands. More than version churn:
+  they also pick up viz barpolar, parcoords and ternary, and the new
+  shared viz options, which shipped without a completions regen.
+- test_geocode: update country populations. Geonames' countryInfo was
+  refreshed after the 25.0.0 index was built (US 327167434 -> 341784857,
+  CA, MX, CN, PH likewise), and the 26.0.0 index is rebuilt from it.
 
-read_ndjson() takes scan_ndjson's options as named arguments since the
-polars bump (#4846, pola-rs/polars#29954): schema, schema_overrides,
-infer_schema_length, ignore_errors and include_file_paths. Add USAGE
-examples for each, including schema_overrides => VARCHAR to read nested
-objects as JSON text (CSV output can't hold nested data).
-
-Adds sqlp_read_ndjson_named_options; regenerates docs/help/sqlp.md and the
-qsv-sqlp skill JSON.
+The 26.0.0 Geonames index assets are built and staged locally; until they
+are uploaded to the release, geocode/viz-map tests that download the index
+will fail in CI, as with every version bump.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* docs(changelog): cite #4847
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `.claude/skills/CHANGELOG.md` (modified, +1/-0)
+**File**: `.claude/skills/qsv/qsv-blake3.json` (modified, +1/-1)
 ```diff
-@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- ## [Unreleased]
- 
- ### Changed
-+- **`qsv-sqlp` gains three `read_ndjson()` examples** for the named options it takes since the polars bump ([#4846](https://github.com/dathere/qsv/pull/4846), [#4847](https://github.com/dathere/qsv/pull/4847)): `infer_schema_length => NULL` to infer from the whole file, `schema_overrides` to type a column or read a nested object as JSON text (CSV output can't hold nested data), and `schema` with `ignore_errors` and `include_file_paths`.
- - **`qsv-viz` skill regenerated for the new `funnel --area` option** ([#4842](https://github.com/dathere/qsv/pull/4842)), which draws a funnel as a funnel area sized by each stage's share of the total. A usage example was added.
- - **`qsv-viz` skill regenerated for the new `ternary` subcommand** ([#4841](https://github.com/dathere/qsv/pull/4841)): a ternary plot of three parts of a whole, taken from exactly three numeric `--cols`. The `--cols`, `--series`, `--color` and `--size` descriptions cover it, and a usage example was added.
- - **`qsv-viz` skill regenerated for the new `barpolar` subcommand** ([#4840](https://github.com/dathere/qsv/pull/4840)): a polar bar chart (wind rose) of `--x` categories, sized by `--y`/`--agg` or row counts. The `--series` and `--agg` descriptions cover it, the new `--degrees` option places numeric bearings at their true angle, and two usage examples were added.
+@@ -1,6 +1,6 @@
+ {
+   "name": "qsv-blake3",
+-  "version": "25.0.0",
++  "version": "26.0.0",
+   "description": "Compute or check BLAKE3 hashes of files.",
+   "category": "utility",
+   "command": {
 ```
 
-**File**: `.claude/skills/qsv/qsv-sqlp.json` (modified, +12/-0)
+**File**: `.claude/skills/qsv/qsv-cat.json` (modified, +1/-1)
 ```diff
-@@ -253,6 +253,18 @@
-       "description": "read_csv() takes Polars' scan_csv options as named arguments (name => value), e.g. for a semicolon-delimited file with comment lines and no header row:",
-       "command": "qsv sqlp SKIP_INPUT \"select * from read_csv('data.csv', separator => ';', comment_prefix => '#', has_header => false)\""
-     },
-+    {
-+      "description": "read_ndjson() takes Polars' scan_ndjson options the same way: schema, schema_overrides, infer_schema_length, ignore_errors and include_file_paths. Infer the schema from the whole file, so a key that first appears late isn't dropped (by default, only the first 100 rows are used):",
-+      "command": "qsv sqlp SKIP_INPUT \"select * from read_ndjson('events.jsonl', infer_schema_length => NULL)\""
-+    },
-+    {
-+      "description": "Type a column, and read a nested object as its JSON text. CSV output can't hold nested data, so this avoids the \"CSV format does not support nested data\" error:",
-+      "command": "qsv sqlp SKIP_INPUT \"select * from read_ndjson('events.jsonl', schema_overrides => {'date': 'DATE', 'payload': 'VARCHAR'})\""
-+    },
-+    {
-+      "description": "Use an explicit schema, turn values that don't fit it into nulls, and add a column with each row's source file:",
-+      "command": "qsv sqlp SKIP_INPUT \"select * from read_ndjson('events.jsonl', schema => {'id': 'INT', 'name': 'VARCHAR'}, ignore_errors => true, include_file_paths => 'source')\""
-+    },
-     {
-       "description": "note that you can also use read_csv() to read compressed files directly gzip, zstd and zlib automatic decompression are supported",
-       "command": "qsv sqlp SKIP_INPUT \"select * from read_csv('data.csv.gz')\""
+@@ -1,6 +1,6 @@
+ {
+   "name": "qsv-cat",
+-  "version": "25.0.0",
++  "version": "26.0.0",
+   "description": "Concatenate CSV files by row or by column.",
+   "category": "utility",
+   "command": {
 ```
 
-**File**: `CHANGELOG.md` (modified, +1/-1)
+**File**: `.claude/skills/qsv/qsv-count.json` (modified, +1/-1)
 ```diff
-@@ -28,7 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- ### Changed
- - **deps: Polars bumped to upstream rev [`b951cd7`](https://github.com/pola-rs/polars/commit/b951cd7072489d54276b38586924ea4a21b838dc)** (from `2742ad3`, [#4846](https://github.com/dathere/qsv/pull/4846)). New in `sqlp`:
-   - **`REGEXP_REPLACE(str, pattern, replacement[, flags])` and `DATE_TRUNC(unit, ts)`** ([#29967](https://github.com/pola-rs/polars/pull/29967)). `REGEXP_REPLACE` follows PostgreSQL: it replaces only the first match unless you pass the `'g'` flag, and `'i'` ignores case.
--  - **A `read_ndjson()` table function** ([#29954](https://github.com/pola-rs/polars/pull/29954)), e.g. `qsv sqlp SKIP_INPUT "SELECT * FROM read_ndjson('data.ndjson')"`.
-+  - **A `read_ndjson()` table function** ([#29954](https://github.com/pola-rs/polars/pull/29954)), e.g. `qsv sqlp SKIP_INPUT "SELECT * FROM read_ndjson('data.ndjson')"`. Like `read_csv()`, it takes named options: `schema`, `schema_overrides`, `infer_schema_length`, `ignore_errors` and `include_file_paths`. `schema_overrides => {'payload': 'VARCHAR'}` reads a nested object as JSON text, which avoids "CSV format does not support nested data" on CSV output. The `sqlp` USAGE now has examples ([#4847](https://github.com/dathere/qsv/pull/4847)).
-   - **Computed `GROUP BY` keys on the same column work** ([#29965](https://github.com/pola-rs/polars/pull/29965)). `GROUP BY ip % 3, ip % 2` used to fail with "group_by keys contained duplicate output name 'ip'".
-   - Also faster Parquet reads and `LIKE` filters, and more numerically stable `ewm_std`/`ewm_var`.
- - **deps: plotly.rs 0.15.0** ([#4836](https://github.com/dathere/qsv/pull/4836)). `viz` now builds against the plotly.rs 0.15.0 release branch ([plotly/plotly.rs#442](https://github.com/plotly/plotly.rs/pull/442)) until it is published to crates.io. qsv doesn't use the Kaleido backend or EPS export that 0.15.0 removes, and the embedded plotly.js bundle is unchanged (3.7.0). The viz gallery dashboards were regenerated with 25.0.0. The pin now tracks the branch's final commit ([#4838](https://github.com/dathere/qsv/pull/4838)), which exposes every plotly.js 3.7 trace type; existing `viz` output is unchanged.
+@@ -1,6 +1,6 @@
+ {
+   "name": "qsv-count",
+-  "version": "25.0.0",
++  "version": "26.0.0",
+   "description": "Count the rows and optionally compile record width statistics of a CSV file. (11.87 seconds for a 15gb, 28m row NYC 311 dataset without an index. Instantaneous with an index.) If the `polars` feature is enabled, uses Polars' multithreaded, mem-mapped CSV reader for fast counts even without an index",
+   "category": "aggregation",
+   "command": {
 ```
 
-**File**: `docs/help/sqlp.md` (modified, +23/-0)
+**File**: `.claude/skills/qsv/qsv-datefmt.json` (modified, +1/-1)
 ```diff
-@@ -257,6 +257,29 @@ qsv sqlp SKIP_INPUT "select * from read_csv('data.csv') order by col1 desc limit
- qsv sqlp SKIP_INPUT "select * from read_csv('data.csv', separator => ';', comment_prefix => '#', has_header => false)"
- ```
- 
-+> read_ndjson() takes Polars' scan_ndjson options the same way: schema, schema_overrides,
-+> infer_schema_length, ignore_errors and include_file_paths.
-+> Infer the schema from the whole file, so a key that first appears late isn't dropped
-+> (by default, only the first 100 rows are used):
-+
-+```console
-+qsv sqlp SKIP_INPUT "select * from read_ndjson('events.jsonl', infer_schema_length => NULL)"
-+```
-+
-+> Type a column, and read a nested object as its JSON text. CSV output can't hold nested
-+> data, so this avoids the "CSV format does not support nested data" error:
-+
-+```console
-+qsv sqlp SKIP_INPUT "select * from read_ndjson('events.jsonl', schema_overrides => {'date': 'DATE', 'payload': 'VARCHAR'})"
-+```
-+
-+> Use an explicit schema, turn values that don't fit it into nulls, and add a column with
-+> each row's source file:
-+
-+```console
-+qsv sqlp SKIP_INPUT "select * from read_ndjson('events.jsonl', schema => {'id': 'INT', 'name': 'VARCHAR'}, ignore_errors => true, include_file_paths => 'source')"
-+```
-+
- > note that you can also use read_csv() to read compressed files directly
- > gzip, zstd and zlib automatic decompression are supported
- 
+@@ -1,6 +1,6 @@
+ {
+   "name": "qsv-datefmt",
+-  "version": "25.0.0",
++  "version": "26.0.0",
+   "description": "Formats recognized date fields (19 formats recognized) to a specified date format using strftime date format specifiers.",
+   "category": "transformation",
+   "command": {
 ```
 
-**File**: `src/cmd/sqlp.rs` (modified, +12/-0)
+**File**: `.claude/skills/qsv/qsv-dedup.json` (modified, +1/-1)
 ```diff
-@@ -136,6 +136,18 @@ Examples:
-   # semicolon-delimited file with comment lines and no header row:
-   $ qsv sqlp SKIP_INPUT "select * from read_csv('data.csv', separator => ';', comment_prefix => '#', has_header => false)"
- 
-+  # read_ndjson() takes Polars' scan_ndjson options the same way: schema, schema_overrides,
-+  # infer_schema_length, ignore_errors and include_file_paths.
-+  # Infer the schema from the whole file, so a key that first appears late isn't dropped
-+  # (by default, only the first 100 rows are used):
-+  $ qsv sqlp SKIP_INPUT "select * from read_ndjson('events.jsonl', infer_schema_length => NULL)"
-+  # Type a column, and read a nested object as its JSON text. CSV output can't hold nested
-+  # data, so this avoids the "CSV format does not support nested data" error:
-+  $ qsv sqlp SKIP_INPUT "select * from read_ndjson('events.jsonl', schema_overrides => {'date': 'DATE', 'payload': 'VARCHAR'})"
-+  # Use an explicit schema, turn values that don't fit it into nulls, and add a column with
-+  # each row's source file:
-+  $ qsv sqlp SKIP_INPUT "select * from read_ndjson('events.jsonl', schema => {'id': 'INT', 'name': 'VARCHAR'}, ignore_errors => true, include_file_paths => 'source')"
-+
-   # note that you can also use read_csv() to read compressed files directly
-   # gzip, zstd and zlib automatic decompression are supported
-   $ qsv sqlp SKIP_INPUT "select * from read_csv('data.csv.gz')"
+@@ -1,6 +1,6 @@
+ {
+   "name": "qsv-dedup",
+-  "version": "25.0.0",
++  "version": "26.0.0",
+   "description": "Remove duplicate rows (See also `extdedup`, `extsort`, `sort` & `sortcheck` commands).",
+   "category": "utility",
+   "command": {
 ```
 
-**File**: `tests/test_sqlp.rs` (modified, +61/-0)
+**File**: `.claude/skills/qsv/qsv-describegpt.json` (modified, +1/-1)
 ```diff
-@@ -6577,6 +6577,67 @@ fn sqlp_read_ndjson_table_function() {
-     assert_eq!(got, expected);
- }
- 
-+#[test]
-+fn sqlp_read_ndjson_named_options() {
-+    // pola-rs/polars#29954: read_ndjson() takes scan_ndjson's options as named
-+    // arguments, as documented in sqlp's USAGE.
-+    let wrk = Workdir::new("sqlp_read_ndjson_named_options");
-+    wrk.create_from_string(
-+        "ev.ndjson",
-+        "{\"id\":1,\"date\":\"2024-01-15\",\"payload\":{\"k\":1}}\n{\"id\":2,\"date\":\"\
-+         2024-02-15\",\"payload\":{\"k\":2},\"late\":\"x\"}\n",
-+    );
-+
-+    // infer_schema_length => NULL scans the whole file, so `late` (absent from
-+    // the first row) is kept.
-+    let mut cmd = wrk.command("sqlp");
-+    cmd.arg("SKIP_INPUT").arg(
-+        "SELECT id, late FROM read_ndjson('ev.ndjson', infer_schema_length => NULL) ORDER BY id",
-+    );
-+    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
-+    assert_eq!(
-+        got,
-+        vec![svec!["id", "late"], svec!["1", ""], svec!["2", "x"]]
-+    );
-+
-+    // schema_overrides types `date` and reads the nested `payload` as JSON text,
-+    // which CSV output can hold; include_file_paths adds the source column.
-+    let mut cmd = wrk.command("sqlp");
-+    cmd.arg("SKIP_INPUT").arg(
-+        "SELECT id, YEAR(date) AS y, payload, src FROM read_ndjson('ev.ndjson', schema_overrides \
-+         => {'date': 'DATE', 'payload': 'VARCHAR'}, infer_schema_length => 1, include_file_paths \
-+         => 'src') ORDER BY id",
-+    );
-+    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
-+    assert_eq!(
-+        got,
-+        vec![
-+            svec!["id", "y", "payload", "src"],
-+            svec!["1", "2024", r#"{"k": 1}"#, "ev.ndjson"],
-+            svec!["2", "2024", r#"{"k": 2}"#, "ev.ndjson"],
-+        ]
-+    );
-+
-+    // schema + ignore_errors turns a value that doesn't fit the schema into a null.
-+    wrk.create_from_string("bad.ndjson", "{\"id\":1}\n{\"id\":\"oops\"}\n{\"id\":3}\n");
-+    let mut cmd = wrk.command("sqlp");
-+    cmd.arg("SKIP_INPUT").arg(
-+        "SELECT id, id IS NULL AS was_bad FROM read_ndjson('bad.ndjson', schema => {'id': 'INT'}, \
-+         ignore_errors => true)",
-+    );
-+    // (a second column keeps the null row from being a blank line the CSV reader skips)
-+    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
-+    assert_eq!(
-+        got,
-+        vec![
-+            svec!["id", "was_bad"],
-+            svec!["1", "false"],
-+            svec!["", "true"],
-+            svec!["3", "false"]
-+        ]
-+    );
-+}
-+
- #[test]
- fn sqlp_group_by_computed_keys() {
-     // pola-rs/polars#29965 fixed wrong results and name clashes for computed
+@@ -1,6 +1,6 @@
+ {
+   "name": "qsv-describegpt",
+-  "version": "25.0.0",
++  "version": "26.0.0",
+   "description": "Infer a \"neuro-symbolic\" Data Dictionary, Description & Tags or ask questions about a CSV with a configurable, MiniJinja prompt file, using any OpenAI API-compatible cloud/local LLM. (e.g. Markdown, JSON, TOON, JSON Schema, Semantic Markdown, OKF, Everything, Content Type inferencing, Spanish, Mandarin, Controlled Tags; --prompt \"What are the top 10 complaint types by community board & borough by year?\" - deterministic, hallucination-free SQL RAG result; iterative, session-based SQL RAG refinement - refined SQL RAG result)",
+   "category": "documentation",
+   "command": {
+```
+
+**File**: `.claude/skills/qsv/qsv-diff.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "name": "qsv-diff",
+-  "version": "25.0.0",
++  "version": "26.0.0",
+   "description": "Find the difference between two CSVs with ludicrous speed! e.g. _compare two CSVs with 1M rows x 9 columns in under 600ms!_",
+   "category": "utility",
+   "command": {
+```
+
+**File**: `.claude/skills/qsv/qsv-enum.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "name": "qsv-enum",
+-  "version": "25.0.0",
++  "version": "26.0.0",
+   "description": "Add a new column enumerating rows by adding a column of incremental or uuid identifiers. Can also be used to copy a column or fill a new column with a constant value.",
+   "category": "utility",
+   "command": {
 ```
 
 #### Recent Merged Pull Requests:
@@ -2502,30 +2433,36 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(README): mention qsv-client for running qsv from Python
+## X. docs(changelog): 26.0.0 Breaking Changes section
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8d6bc495`: docs(README): mention qsv-client for running qsv from Python. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7453abcc`: docs(changelog): 26.0.0 Breaking Changes section. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-> [!TIP]
-> To run qsv from Python, use **[qsv-client](https://github.com/dathere/qsv-client)** (`pip install qsv-client`). It stops qsv and every process qsv started on a timeout, raises typed exceptions instead of making you parse stderr, and reports the installed binary's version, features and commands. It has sync and asyncio clients and no runtime dependencies. qsv itself is not bundled: install qsv 25.0.0 or later using one of the options below.
+This is 26.0.0 rather than 25.1.0 because two changes can alter existing output; see [Breaking Changes](#v26-breaking-changes).
+<a id="v26-breaking-changes" name="v26-breaking-changes"></a>
+### Breaking Changes
+- **`excel`, `jsonl` and `readstat` now follow `QSV_DEFAULT_DELIMITER` on output** ([#4819](https://github.com/dathere/qsv/pull/4819)), as other qsv writers already do. If you set it only to read semicolon files, these three now write semicolons to stdout as well. Unset it for those commands, or pass `--delimiter ,`, to keep commas.
+- **`schema` can generate stricter schemas** ([#4830](https://github.com/dathere/qsv/pull/4830)). A column that holds a single value in the input now always gets a `const` constraint, which most files with a low-cardinality column used to lose, so `validate` rejects later data with any other value there (e.g. a changed phone number or URL). Generate schemas from a representative dataset, and loosen or remove `const`/`enum` constraints where values are expected to change.
 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+> [!IMPORTANT]
+> **Why 26.0.0: two changes can alter existing output.**
+> - `excel`, `jsonl` and `readstat` now follow `QSV_DEFAULT_DELIMITER` on output, as other qsv writers already do. If you set it only to read semicolon files, these three now write semicolons to stdout too ([#4819](https://github.com/dathere/qsv/pull/4819)).
+> - `schema` can generate stricter schemas: a column with a single value in the input now always gets a `const` constraint, so `validate` rejects later data with any other value there. Generate schemas from representative data, and loosen `const`/`enum` where values are expected to change ([#4830](https://github.com/dathere/qsv/pull/4830)).
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8d6bc495` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7453abcc` are properly handled with clean fallback behavior.

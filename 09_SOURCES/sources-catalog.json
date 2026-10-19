@@ -965,8 +965,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Llama-2-7b-chat-hf",
     "sourceVersion": "hf-meta-llama-llama-2-7b-chat-hf",
     "license": "Open-Source",
-    "contentHash": "d8786888b7e25a11b1649cf499afb96b2326e129d074003bfe65a4488c536e8c",
-    "lastHarvestedAt": "2026-10-18T02:58:24.124Z",
+    "contentHash": "cb173428e6788e22dc95fd50c76d18cf9440c43f354a7664d8cf3ebc0c76aa25",
+    "lastHarvestedAt": "2026-10-19T11:54:55.691Z",
     "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf"
   },
   "hf-meta-llama-llama-2-7b": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "8d6bc495",
+    "sourceVersion": "7453abcc",
     "license": "NOASSERTION",
-    "contentHash": "8f4de18d005f8daacee8f554e06ce5114947e982d09ad9cbc1dd17a911e8f5c7",
-    "lastHarvestedAt": "2026-10-19T11:28:05.012Z",
+    "contentHash": "030cda2c79e2b7281bb271cc600dc1eab35b72d6e8a524fb37e9228840681698",
+    "lastHarvestedAt": "2026-10-19T11:55:00.441Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -3173,10 +3173,10 @@
     "repository": "matrixorigin/matrixone",
     "platform": "github",
     "sourceUrl": "https://github.com/matrixorigin/matrixone",
-    "sourceVersion": "2508ce70",
+    "sourceVersion": "308b6b87",
     "license": "Apache-2.0",
-    "contentHash": "00d9ecea4561cff1fdfab4755a33b261f477dd1a0da1f01aac9e0aee1f2b7eb6",
-    "lastHarvestedAt": "2026-10-18T22:48:14.494Z",
+    "contentHash": "5551923c6ffaf2f1df9ad96d2dc83ec6bd01ececc9e551ca6fc43d16fdd8059e",
+    "lastHarvestedAt": "2026-10-19T11:54:59.082Z",
     "learningId": "learn-github-matrixorigin-matrixone"
   },
   "fallow-rs-fallow": {
@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "bcdba2b0",
+    "sourceVersion": "e87d6a92",
     "license": "NOASSERTION",
-    "contentHash": "c5719b6091795eb582476deb1a63bdc2a46692d5672f6877dc2e10e1c8e39810",
-    "lastHarvestedAt": "2026-10-18T23:02:10.529Z",
+    "contentHash": "986bf6d822599445a4179852fbf55896d72b5068996db25a541f9c51260b83d1",
+    "lastHarvestedAt": "2026-10-19T11:54:55.311Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {
@@ -4133,10 +4133,10 @@
     "repository": "mui/base-ui",
     "platform": "github",
     "sourceUrl": "https://github.com/mui/base-ui",
-    "sourceVersion": "8e91039a",
+    "sourceVersion": "8c2b3182",
     "license": "MIT",
-    "contentHash": "72e7c1f3ddadadc6f4d4a11565fb29ab82cccc3c69126b5ae4b60e6e3d105784",
-    "lastHarvestedAt": "2026-10-19T00:41:05.378Z",
+    "contentHash": "7b525dcce5d8d03a27be11f2198aded1eab5584731f2adc877fdb94b58737d08",
+    "lastHarvestedAt": "2026-10-19T11:54:44.476Z",
     "learningId": "learn-github-mui-base-ui"
   },
   "ekzhang-bore": {
@@ -7938,5 +7938,15 @@
     "contentHash": "6bd4dc26274f9a55bf1c215733c181e17b1a270f4c9a9be9a37b57f53c4d8423",
     "lastHarvestedAt": "2026-10-19T11:48:38.361Z",
     "learningId": "learn-github-swiftuix-swiftuix"
+  },
+  "mochidiffusion-mochidiffusion": {
+    "repository": "MochiDiffusion/MochiDiffusion",
+    "platform": "github",
+    "sourceUrl": "https://github.com/MochiDiffusion/MochiDiffusion",
+    "sourceVersion": "5e978c69",
+    "license": "GPL-3.0",
+    "contentHash": "be2ad43ee00be30a9eaae2d4d33444447718aea98448f3490966e3851a8b05b5",
+    "lastHarvestedAt": "2026-10-19T11:54:50.397Z",
+    "learningId": "learn-github-mochidiffusion-mochidiffusion"
   }
 }

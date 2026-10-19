@@ -3213,3 +3213,9 @@ Every entry in this ledger must capture:
 | `learn-huggingface-openai-gpt-oss-20b` | `https://huggingface.co/openai/gpt-oss-20b` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-19T11:48:30.962Z |
 | `learn-github-tw93-pake` | `https://github.com/tw93/Pake` | `19c32e68` | Multi-dimensional audit evidence | 2026-10-19T11:48:32.212Z |
 | `learn-github-swiftuix-swiftuix` | `https://github.com/SwiftUIX/SwiftUIX` | `3a99044b` | Multi-dimensional audit evidence | 2026-10-19T11:48:38.361Z |
+| `learn-github-mui-base-ui` | `https://github.com/mui/base-ui` | `8c2b3182` | Multi-dimensional audit evidence | 2026-10-19T11:54:44.476Z |
+| `learn-github-mochidiffusion-mochidiffusion` | `https://github.com/MochiDiffusion/MochiDiffusion` | `5e978c69` | Multi-dimensional audit evidence | 2026-10-19T11:54:50.397Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `e87d6a92` | Multi-dimensional audit evidence | 2026-10-19T11:54:55.311Z |
+| `learn-huggingface-meta-llama-llama-2-7b-chat-hf` | `https://huggingface.co/meta-llama/Llama-2-7b-chat-hf` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-19T11:54:55.691Z |
+| `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `308b6b87` | Multi-dimensional audit evidence | 2026-10-19T11:54:59.082Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `7453abcc` | Multi-dimensional audit evidence | 2026-10-19T11:55:00.441Z |
