@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261017-PAXY",
-    "timestamp": "2026-10-17T23:46:23.014Z",
-    "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
-    "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
-    "contentHash": "f5aa99691150bf4ef0855e3aa7056acc14296fa8cf72cff8a162aa408d9823c6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-T1G2",
-    "timestamp": "2026-10-17T23:49:17.330Z",
-    "repository": "unsloth/Qwen-Image-2.1-GGUF",
-    "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
-    "contentHash": "2263d69a516779cca76d20ccf12befda89b7cdd54efd5bef1c4c1538d1f3e837",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-XE1Y",
-    "timestamp": "2026-10-17T23:52:40.294Z",
-    "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
-    "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
-    "contentHash": "7db57221498dc9b5b93bd14aee0c902d57e24ce40eb8dd288e84a9c67fe790d2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-1M85",
-    "timestamp": "2026-10-17T23:55:57.509Z",
-    "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
-    "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
-    "contentHash": "edc84877f41576dfc9cc24a6f326b9f8c79481bdc7046da1d21d8f04c3e4604d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-5UM3",
-    "timestamp": "2026-10-17T23:59:15.003Z",
-    "repository": "Alissonerdx/BFS-Best-Face-Swap",
-    "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap",
-    "contentHash": "020b326aa33607761d3d4f8a953e4adec8d8ba1f061dcd808ed75b2b67a178ed",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-AG8C",
-    "timestamp": "2026-10-18T00:02:49.644Z",
-    "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
-    "contentHash": "33a0a4804878d9a374d82647bc8ef92c395ea62e3f8a098608368ea2f8609ca4",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261018-EDLR",
     "timestamp": "2026-10-18T00:05:52.863Z",
     "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
@@ -7490,6 +7400,96 @@
     "repository": "yugabyte/yugabyte-db",
     "learningId": "learn-github-yugabyte-yugabyte-db",
     "contentHash": "49c739da5f88785308bc1d6181c0da21bd543fb83ca31f5590a69683cf5288af",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-8HOT",
+    "timestamp": "2026-10-19T03:32:55.565Z",
+    "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
+    "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
+    "contentHash": "a876ef793e18b3e63398db5f8c5c11c112384d8fd4405b6a460030f35072ec10",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-8HUB",
+    "timestamp": "2026-10-19T03:32:55.763Z",
+    "repository": "React95/React95",
+    "learningId": "learn-github-react95-react95",
+    "contentHash": "88e795ad598c759efc38c6bfa91486f59d93ebe1d35dc68d204174b0640e5bac",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-8IQB",
+    "timestamp": "2026-10-19T03:32:56.915Z",
+    "repository": "embassy-rs/embassy",
+    "learningId": "learn-github-embassy-rs-embassy",
+    "contentHash": "75f8235c4627ef6ca809685e8f879af954c71f93444de5451b6ebddd20ab93e0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-8NC9",
+    "timestamp": "2026-10-19T03:33:02.889Z",
+    "repository": "jpush/aurora-imui",
+    "learningId": "learn-github-jpush-aurora-imui",
+    "contentHash": "72fe6d650d0a8c14bd5c37625527143fa3bb943e558a39fa70d262aa77e82503",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-8OWM",
+    "timestamp": "2026-10-19T03:33:04.918Z",
+    "repository": "decodingai-magazine/llm-twin-course",
+    "learningId": "learn-github-decodingai-magazine-llm-twin-course",
+    "contentHash": "4e57fc31e8f162d369783c9fedb7047fabaf3634ca628d3ca52d586b44af26fd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-8SEP",
+    "timestamp": "2026-10-19T03:33:09.457Z",
+    "repository": "GreptimeTeam/greptimedb",
+    "learningId": "learn-github-greptimeteam-greptimedb",
+    "contentHash": "5489cc4b032c1d0dfcfd790b6a1b947d32ea4a187f696d35f0bc7aebacba0ca1",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

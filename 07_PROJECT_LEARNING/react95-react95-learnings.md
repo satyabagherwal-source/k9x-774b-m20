@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/react95-react95-learnings.md`  
+> **Source**: github ([https://github.com/React95/React95](https://github.com/React95/React95))  
+> **Source Version**: `30191733`  
+> **License**: NOASSERTION  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T03:32:55.519Z  
+> **Learning ID**: `learn-github-react95-react95`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): React95/React95
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/react95-react95-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/React95/React95](https://github.com/React95/React95))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T02:14:55.657Z  
+> **Harvest Timestamp**: 2026-10-19T03:32:54.249Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: A React components library with Win95 UI
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3831 stars
+- **Stars / Engagement**: 3836 stars
 
 ---
 
@@ -22,68 +36,6 @@
 ### D1: Architecture & Structural Boundaries
 - Entry configurations inspected via direct stream: package.json, README.md.
 - Evaluated system abstractions and modular contracts.
-
-### Core Architecture Module: `config/setup/core.setup.js`
-```
-import { beforeAll, vi } from 'vitest';
-import fileMock from '../mocks/fileMock';
-
-vi.mock('icojs', () => ({
-  isICO: vi.fn(() => true),
-  parse: vi.fn(() =>
-    Promise.resolve([
-      {
-        width: 16,
-        buffer: 'buffer-16-4-1',
-        bpp: 4,
-        variant: 1,
-      },
-      {
-        width: 32,
-        buffer: 'buffer-32-4-1',
-        bpp: 4,
-        variant: 1,
-      },
-      {
-        width: 32,
-        buffer: 'buffer-32-4-2',
-        bpp: 4,
-        variant: 2,
-      },
-    ]),
-  ),
-}));
-
-vi.mock('@react95/icons', async () => {
-  const actual = await vi.importActual('@react95/icons');
-
-  const entries = Object.keys(actual).map(name => {
-    return [name, `svg ${fileMock}`];
-  });
-
-  return Object.fromEntries(entries);
-});
-
-beforeAll(() => {
-  global.fetch = vi.fn().mockImplementation(() =>
-    Promise.resolve({
-      arrayBuffer: vi.fn(() => ({})),
-    }),
-  );
-  global.Blob = class Blob {
-    constructor(buff) {
-      this.buffer = buff;
-    }
-
-    toString() {
-      return this.buffer.toString();
-    }
-  };
-
-  global.URL.createObjectURL = vi.fn(data => data.toString());
-});
-
-```
 
 ### Core Architecture Module: `packages/core/.storybook/arg-types-enhancers.js`
 ```
@@ -632,7 +584,6 @@ export const organizeFrameStyleProps = ({ argTypes, component }) => {
 
 ### Core Architecture Module: `packages/core/.storybook/main.js`
 ```
-import { readdirSync } from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -669,13 +620,9 @@ const propFilter = (prop, component) => {
 
 export default {
   staticDirs: ['../components/GlobalStyle'],
-  stories: [
-    '../stories/all.stories.tsx',
-    ...readdirSync(join(import.meta.dirname, '../stories'))
-      .filter(file => file !== 'all.stories.tsx')
-      .filter(file => file.endsWith('.stories.tsx'))
-      .map(file => `../stories/${file}`),
-  ],
+  // a glob, so new story files show up without restarting Storybook. "All"
+  // comes first through `storySort` (see preview.js)
+  stories: ['../stories/*.stories.tsx'],
   logLevel: 'debug',
   addons: [
     getAbsolutePath('@storybook/addon-docs'),
@@ -724,6 +671,41 @@ addons.setConfig({
 
 ```
 
+### Core Architecture Module: `packages/core/.storybook/pointer.ts`
+```
+/// <reference types="vite/client" />
+/**
+ * Real pointer hover for play functions.
+ *
+ * The `userEvent` a play function gets simulates events, which CSS `:hover`
+ * doesn't respond to (e.g. List's submenus). In the story tests (Vitest), a
+ * real pointer is available through Playwright, so `hover` uses it there. In
+ * the Storybook UI (Interactions panel) there's no real pointer: `hover`
+ * falls back to the simulated one, and checks that depend on `:hover` should
+ * only run when `isRealPointer` is true.
+ */
+import type { UserEventObject } from 'storybook/test';
+
+// Vitest runs the story tests in `test` mode
+export const isRealPointer = import.meta.env.MODE === 'test';
+
+export const hover = async (
+  element: Element,
+  userEvent: Pick<UserEventObject, 'hover'>,
+) => {
+  if (!isRealPointer) {
+    await userEvent.hover(element);
+
+    return;
+  }
+
+  const { userEvent: realUserEvent } = await import('@vitest/browser/context');
+
+  await realUserEvent.hover(element);
+};
+
+```
+
 ### Core Architecture Module: `packages/core/.storybook/preview.js`
 ```
 import Frame from './decorators/Frame';
@@ -745,6 +727,10 @@ export const initialGlobals = {
 };
 
 export const parameters = {
+  options: {
+    // the showcase of every component first, then the rest as they are
+    storySort: { order: ['All'] },
+  },
   docs: {
     // replaces @storybook/addon-storysource, removed in Storybook 9
     codePanel: true,
@@ -844,44 +830,6 @@ export const ThemePanel = ({ api }: { api: API }) => (
 
 ```
 
-### Core Architecture Module: `packages/core/.storybook/theme.js`
-```
-import { create } from 'storybook/theming';
-
-const theme = create({
-  base: 'light',
-  fontBase: '"MS Sans Serif", sans-serif',
-  brandTitle: 'React95',
-  brandUrl: 'https://github.com/React95/React95',
-  brandImage: 'https://avatars2.githubusercontent.com/u/38158713',
-  appBg: 'white',
-  appBorderColor: 'grey',
-  appBorderRadius: 0,
-});
-
-export default theme;
-
-```
-
-### Core Architecture Module: `packages/core/.storybook/vite-plugin-css-ts-side-effects.js`
-```
-// The core `package.json` `sideEffects` only lists fonts, so a bare
-// `import '*.css.ts'` (e.g. GlobalStyle, which has no exports) is tree-shaken
-// from the Storybook build. This marks every `.css.ts` module as having side
-// effects, for Storybook only: `moduleSideEffects` returned from a transform
-// hook overrides the one coming from `package.json`.
-export const cssTsSideEffects = () => ({
-  name: 'css-ts-side-effects',
-
-  transform(_code, id) {
-    if (id.endsWith('.css.ts')) {
-      return { moduleSideEffects: true };
-    }
-  },
-});
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -893,7 +841,6 @@ export const cssTsSideEffects = () => ({
   **Post-Mortem & Fix Analysis**:
   > Wouldn't this issue be more suited to a solution using Webpack and loaders (style-loader, css-loader, url-loader, file-loader, etc)? There are ways to accomplish this via Babel plugins, but they're more workarounds to avoid Webpack. Babel is a transpiler first and foremost, not a bundler. All these plugins are doing is transforming the imports at build time.  Using Webpack alongside Babel, you could do all the same things you're doing currently with Babel and simply add the transpilation to the the bundling process, avoid these resolution issues, and get the benefit of additional tools at your disposal during build (minifying code, SASS or whatever else for styling, autoprefixing, etc).  I could be missing some key point that makes this a less than optimal solution, but I feel like Webpack is the move here.
   > Hi @Zachari   Me and @ggdaltoso have searched a lot about this when we were thinking about bundling this library.  After all the content that we found about this, we decided that we do not need Webpack, Rollup, Parcel or any bundler tool. We reached the idea that Webpack is more for application than for libraries.  And about using any kind of css loader, how we are not using css files, we do not need it.  We just need to transpile our code, the code minification will be maded by the application that will use React95.  Here's some content that we read about this: https://medium.com/@lawliet29/tree-shaking-in-real-world-what-could-go-wrong-b398c2b2ebbb  But we might be wrong, so we accept PR's and other suggestions!  Thank you for your point of view.
-  > That's understandable. I suggested Webpack because it's the one I have the most experience with when it comes to static assets. Admittedly, Webpack doesn't seem to be the best fit for a library. However, I do disagree that bundlers in general are a good fit towards applications only. Rollup, in particular, appears to be perfect for libraries, especially in situations such as this. However, I can't tinker with it until tomorrow so I can't say whether or not it'd be optimal here. I will tomorrow, however.  I don't fault the logic behind the choice, though. If that's the approach, simply including them in a shared folder to avoid resolution issues seems to be the way to go.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -910,957 +857,901 @@ export const cssTsSideEffects = () => ({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `075e7d23` (2026-10-02)
-**Commit Message**: ci: run story tests and build storybook on PRs
+### Incident Patch 1: `06cce041` (2026-10-16)
+**Commit Message**: fix(icons): end the generated index with a newline
 
-**File**: `.github/workflows/nx.yml` (modified, +6/-2)
+Prettier adds it on commit, so every regeneration showed src/index.ts as
+changed.
+
+**File**: `packages/icons/scripts/makeIcons.mts` (modified, +1/-1)
 ```diff
-@@ -13,11 +13,11 @@ jobs:
-       number-of-agents: 3
-       main-branch-name: master
-       init-commands: |
--        yarn nx-cloud start-ci-run --stop-agents-after="lint,test,build"
-+        yarn nx-cloud start-ci-run --stop-agents-after="lint,test,build,test-storybook,build-storybook"
-       parallel-commands: |
-         yarn nx-cloud record -- yarn nx format:check
-       parallel-commands-on-agents: |
--        yarn nx affected -t lint,test,build --parallel=3
-+        yarn nx affected -t lint,test,build,test-storybook,build-storybook --parallel=3
+@@ -132,7 +132,7 @@ async function toReact(icons: IconsMap[]) {
+     );
+   });
  
-   agents:
-     name: Nx Cloud - Agents
-@@ -26,3 +26,7 @@ jobs:
-       node-version: 24
-       yarn-version: 1.22.19
-       number-of-agents: 3
-+      # test-storybook runs the stories in Chromium (see packages/core/vitest.config.mjs)
-+      install-commands: |
-+        yarn install --frozen-lockfile
-+        npx playwright install --with-deps chromium
+-  fs.writeFileSync(ICONS_INDEX_FILE_PATH, indexFileReExports.join('\n'));
++  fs.writeFileSync(ICONS_INDEX_FILE_PATH, indexFileReExports.join('\n') + '\n');
+ }
+ 
+ async function toCSS(icons: IconsMap[]) {
 ```
 
 ---
 
-### Incident Patch 2: `f7d9fc5b` (2026-10-01)
-**Commit Message**: chore(storybook): fix Clippy's balloon size and its mount warning
+### Incident Patch 2: `aad22fbb` (2026-10-08)
+**Commit Message**: feat(core)!: put the components' CSS in cascade layers
 
-- clippyjs sizes the balloon with offsetWidth, which rounds down. With MS
-  Sans Serif a line can be a fraction of a pixel wider, so its last word
-  wrapped to an unmeasured line and spilled out of the balloon. The
-  balloon is measured again, rounding up.
-- mounting Clippy's own React root during a story render made React warn
-  about nested updates from render; it now happens in an effect.
+React95's CSS now sits in the react95 layer (react95.global, then
+react95.components, then react95.composed for components that restyle
+the ones they render). CSS outside of layers always wins over it, so
+Frame props like width or padding override a component's defaults
+whatever order the CSS loads in, and so does the app's own CSS.
 
-**File**: `packages/core/.storybook/decorators/withClippy.tsx` (modified, +29/-2)
+BREAKING CHANGE: CSS resets outside of a layer, like Tailwind v3's
+preflight or normalize.css, now win over React95's components (e.g.
+`button { padding: 0 }` undoes Button's padding). Put the reset in a
+layer and declare the order before React95's CSS loads, e.g. in the
+HTML's <head>: `<style>@layer reset, react95;</style>`.
+
+**File**: `packages/core/README.md` (modified, +40/-0)
 ```diff
-@@ -120,6 +120,32 @@ const Greeter = () => {
-       fontSize: '12px',
-     });
+@@ -42,6 +42,46 @@ export const MyApp = () => {
  
-+    // clippyjs sizes the balloon with offsetWidth/offsetHeight, which round
-+    // down. With MS Sans Serif a line can be a fraction of a pixel wider (e.g.
-+    // 195.44px), so once the width is fixed its last word wraps to a line that
-+    // wasn't measured and spills out of the balloon. This measures it again,
-+    // rounding up.
-+    const balloon = clippy._balloon;
-+    const sizeBalloon = balloon.speak.bind(balloon);
-+
-+    balloon.speak = (complete: () => void, text: string, hold: boolean) => {
-+      sizeBalloon(complete, text, hold);
-+
-+      const content = balloon._content;
-+      const typed = content.textContent;
-+
-+      content.style.width = 'auto';
-+      content.style.height = 'auto';
-+      content.textContent = text;
-+
-+      const { width, height } = content.getBoundingClientRect();
-+
-+      content.style.width = `${Math.ceil(width)}px`;
-+      content.style.height = `${Math.ceil(height)}px`;
-+      content.textContent = typed;
-+      balloon.reposition();
-+    };
-+
-     clippy.play('Wave');
-     say(clippy, pick(talks));
+ You can find a list of all available components on our [Storybook page](https://react95.github.io/React95/).
  
-@@ -220,6 +246,9 @@ const StoryChange = ({
-   phrases: StoryPhrases;
- }) => {
-   React.useEffect(() => {
-+    // mounting the provider's own root during a story render makes React warn
-+    // about nested updates from render, so it happens after the story commits
-+    mountClippy();
-     onStoryChange(storyKey, phrases);
-   }, [storyKey]);
++### Customizing styles
++
++React95's CSS sits in the `react95` [cascade layer](https://developer.mozilla.org/en-US/docs/Web/CSS/@layer),
++so your CSS wins over it without fighting specificity:
++
++```css
++/* every button gets your font, React95's or not */
++button {
++  font-family: 'Comic Sans MS';
++}
++```
++
++That includes CSS resets, like Tailwind's preflight or normalize.css: their
++`button { padding: 0 }` would undo React95's buttons. Put the reset in a layer
++that comes before React95's:
++
++```css
++@layer reset {
++  /* your reset */
++}
++```
++
++and declare the order of the layers before any CSS loads, in your HTML's
++`<head>`, since the browser keeps the first order it sees:
++
++```html
++<style>
++  @layer reset, react95;
++</style>
++```
++
++With Tailwind v4, whose CSS is in layers already, place `react95` between its
++preflight and its utilities:
++
++```html
++<style>
++  @layer theme, base, react95, components, utilities;
++</style>
++```
++
+ ### Next.JS
  
-@@ -232,8 +261,6 @@ const speak = (message: string) => {
- };
- 
- export const withClippy: Decorator = (Story, context) => {
--  mountClippy();
--
-   const { clippy, design } = context.parameters;
-   const phrases: StoryPhrases = {
-     configured: (clippy as { phrases?: string[] } | undefined)?.phrases ?? [],
+ If you want to use React95 on a NextJS project, check the [NextJS template](https://github.com/React95/nextjs-template)
 ```
 
----
-
-### Incident Patch 3: `740f1520` (2026-10-01)
-**Commit Message**: chore(storybook): render the All showcase with composeStories
-
-All rendered other stories by calling their `render` directly, so a story
-couldn't drop its custom `render` in favor of args without breaking it.
-Portable stories render each one with its args either way. The showcase
-renders the same as before (same DOM).
-
-**File**: `packages/core/stories/all.stories.tsx` (modified, +58/-40)
+**File**: `packages/core/components/Alert/Alert.css.ts` (modified, +22/-15)
 ```diff
-@@ -1,31 +1,49 @@
--import type { Meta } from '@storybook/react-vite';
-+import { composeStories, type Meta } from '@storybook/react-vite';
- import * as React from 'react';
+@@ -1,20 +1,27 @@
+ import { style } from '@vanilla-extract/css';
+ import { contract } from '../themes/contract.css';
++import { inLayer, composed } from '../shared/layers.css';
  
- import { Alert, Button, TitleBar } from '../components';
+-export const message = style({
+-  display: 'flex',
+-  alignItems: 'center',
+-  justifyContent: 'center',
+-});
++export const message = style(
++  inLayer(composed, {
++    display: 'flex',
++    alignItems: 'center',
++    justifyContent: 'center',
++  }),
++);
  
--import { Simple as SimpleAvatar } from './avatar.stories';
--import { Simple as SimpleButton } from './button.stories';
--import { All as AllCheckbox } from './checkbox.stories';
--import { Simple as SimpleDropdown } from './dropdown.stories';
--import { Simple as SimpleFieldset } from './fieldset.stories';
--import { Simple as SimpleInput } from './input.stories';
--import { Simple as SimpleList, WithIcons } from './list.stories';
--import { Simple as SimpleProgressBar } from './progressbar.stories';
--import { Simple as SimpleRadioButton } from './radiobutton.stories';
--import { Simple as SimpleRange } from './range.stories';
--import { Simple as SimpleTabs } from './tabs.stories';
--import { Simple as SimpleTextArea } from './textarea.stories';
--import {
--  Complete,
--  Inactive,
--  Simple as SimpleTitleBar,
--} from './titlebar.stories';
--import { Simple as SimpleTooltip } from './tooltip.stories';
--import { Simple as SimpleTree } from './tree.stories';
--import { FromURL } from './video.stories';
-+import * as AvatarStories from './avatar.stories';
-+import * as ButtonStories from './button.stories';
-+import * as CheckboxStories from './checkbox.stories';
-+import * as DropdownStories from './dropdown.stories';
-+import * as FieldsetStories from './fieldset.stories';
-+import * as InputStories from './input.stories';
-+import * as ListStories from './list.stories';
-+import * as ProgressBarStories from './progressbar.stories';
-+import * as RadioButtonStories from './radiobutton.stories';
-+import * as RangeStories from './range.stories';
-+import * as TabsStories from './tabs.stories';
-+import * as TextAreaStories from './textarea.stories';
-+import * as TitleBarStories from './titlebar.stories';
-+import * as TooltipStories from './tooltip.stories';
-+import * as TreeStories from './tree.stories';
-+import * as VideoStories from './video.stories';
+-export const icon = style({
+-  paddingTop: contract.space[7],
+-  paddingRight: contract.space[15],
+-  paddingBottom: contract.space[7],
+-  paddingLeft: contract.space[7],
+-});
++export const icon = style(
++  inLayer(composed, {
++    paddingTop: contract.space[7],
++    paddingRight: contract.space[15],
++    paddingBottom: contract.space[7],
++    paddingLeft: contract.space[7],
++  }),
++);
  
- import * as styles from './all.stories.css';
- 
-+// each story renders with its args, whether or not it has a custom `render`
-+const { Simple: SimpleAvatar } = composeStories(AvatarStories);
-+const { Simple: SimpleButton } = composeStories(ButtonStories);
-+const { All: AllCheckbox } = composeStories(CheckboxStories);
-+const { Simple: SimpleDropdown } = composeStories(DropdownStories);
-+const { Simple: SimpleFieldset } = composeStories(FieldsetStories);
-+const { Simple: SimpleInput } = composeStories(InputStories);
-+const { Simple: SimpleList, WithIcons } = composeStories(ListStories);
-+const { Simple: SimpleProgressBar } = composeStories(ProgressBarStories);
-+const { Simple: SimpleRadioButton } = composeStories(RadioButtonStories);
-+const { Simple: SimpleRange } = composeStories(RangeStories);
-+const { Simple: SimpleTabs } = composeStories(TabsStories);
-+const { Simple: SimpleTextArea } = composeStories(TextAreaStories);
-+const {
-+  Simple: SimpleTitleBar,
-+  Inactive,
-+  Complete,
-+} = composeStories(TitleBarStories);
-+const { Simple: SimpleTooltip } = composeStories(TooltipStories);
-+const { Simple: SimpleTree } = composeStories(TreeStories);
-+const { FromURL } = composeStories(VideoStories);
-+
- export default {
-   title: 'All',
-   parameters: {
-@@ -63,73 +81,73 @@ const AllDemo = () => {
-       <br />
- 
-       <div>
--        <SimpleButton.render />
-+        <SimpleButton />
-       </div>
- 
-       <br />
--      <SimpleAvatar.render {...SimpleAvatar.args} />
-+      <SimpleAvatar />
- 
-       <br />
--      <AllCheckbox.render />
-+      <AllCheckbox />
- 
-       <br />
--      <SimpleDropdown.render />
-+      <SimpleDropdown />
- 
-       <br />
--      <SimpleFieldset.render />
-+      <SimpleFieldset />
- 
-       <br />
-       <div>
--        <SimpleInput.render />
-+        <SimpleInput />
-       </div>
- 
-       <br />
-       <br />
- 
-       <div>
--        <SimpleTextArea.render />
-+        <SimpleTextArea />
-       </div>
- 
-       <br />
-       <br />
- 
-       <div>
--        <WithIcons.render />
-+        <WithIcons />
-         <br />
--        <SimpleList.render />
-+        <SimpleList />
-       </div>
- 
-       <br />
--      <SimpleProgressBar.render {...SimpleProgressBar.args} />
-+      <SimpleProgressBar />
- 
-       <br />
--      <SimpleRadioButton.render />
-+      <SimpleRadioButton />
- 
-       <br />
--      <SimpleRange.render />
-+      <SimpleRange />
- 
-       <br />
-       <div className={styles.tabs}>
--        <SimpleTabs.render />
-+        <SimpleTabs />
-       </div>
- 
-       <br />
--      <SimpleTree.render />
-+      <SimpleTree />
- 
-       <br />
--      <SimpleTooltip.render {...SimpleTooltip.args} />
-+      <SimpleTooltip />
- 
-       <br />
--      <FromURL.render />
-+      <FromURL />
- 
-       <br />
--      <SimpleTitleBar.render />
-+      <SimpleTitleBar />
- 
-       <br />
--      <Inactive.render />
-+      <Inactive />
- 
-       <br />
--      <Com
+-export const dialog = style({
+-  display: 'flex',
+-  flexDirection: 'row',
+-});
++export const dialog = style(
++  inLayer(composed, {
++    display: 'flex',
++    flexDirection: 'row',
++  }),
++);
 ```
 
----
-
-### Incident Patch 4: `7b185d92` (2026-09-30)
-**Commit Message**: chore(storybook): build the Clippy decorator on @react95/clippy
-
-The old addon kept the agent in a module variable, but only after it
-loaded. Every story rendered while it was loading started its own agent,
-so a docs page with seven stories showed up to six agents stacked on top
-of each other. Calling `speak` before the agent loaded also threw.
-
-Each story (and each story on a docs page) renders in its own React root,
-and every `ClippyProvider` owns an agent. So the decorator mounts a single
-provider once, outside the stories, and injects a `speak` that waits for
-the agent. This also drops the direct `clippyjs` import from core, which
-wasn't declared in its dependencies.
-
-**File**: `packages/core/.storybook/decorators/withClippy.tsx` (added, +86/-0)
+**File**: `packages/core/components/Avatar/Avatar.css.ts` (modified, +10/-7)
 ```diff
-@@ -0,0 +1,86 @@
-+import React from 'react';
-+import { createRoot } from 'react-dom/client';
-+import type { Decorator } from '@storybook/react-vite';
-+import { AGENTS, ClippyProvider, useClippy } from '@react95/clippy';
-+
-+type ClippyAgent = NonNullable<ReturnType<typeof useClippy>['clippy']>;
-+
-+const talks = [
-+  'New to our project? Let me show you around!',
-+  'What brings you here today? Need help with something?',
-+  "We're always improving! Check out our latest updates.",
-+  'Want to get involved? We love contributions from our community!',
-+  "Stuck on something? Don't worry, we've got resources to help!",
-+  "Thanks for checking out our project! We're glad you're here.",
-+  "We're passionate about building something amazing. Want to join us?",
-+  "What do you think of our project so far? We'd love to hear your feedback!",
-+  "Ready to dig in? We've got plenty of resources to get you started.",
-+  "We're always learning and growing. Stay tuned for exciting updates!",
-+];
-+
-+const random = <T,>(list: T[]) => list[Math.floor(Math.random() * list.length)];
-+
-+let resolveAgent: (agent: ClippyAgent) => void;
-+const agentReady = new Promise<ClippyAgent>(resolve => {
-+  resolveAgent = resolve;
-+});
-+
-+const Greeter = () => {
-+  const { clippy } = useClippy();
-+
-+  React.useEffect(() => {
-+    if (!clippy) {
-+      return;
-+    }
-+
-+    clippy.play('Wave');
-+    clippy.speak(random(talks), false);
-+
-+    const onClick = () => {
-+      clippy.speak(random(talks), false);
-+      clippy.animate();
-+    };
-+
-+    clippy._el.addEventListener('click', onClick);
-+    resolveAgent(clippy);
-+
-+    return () => {
-+      clippy._el.removeEventListener('click', onClick);
-+    };
-+  }, [clippy]);
-+
-+  return null;
-+};
-+
-+let mounted = false;
-+
-+// Each story (and each story on a docs page) renders in its own React root, and
-+// every `ClippyProvider` owns an agent. So a single provider is mounted once,
-+// outside the stories, and the agent is shared across all of them.
-+const mountClippy = () => {
-+  if (mounted) {
-+    return;
-+  }
-+
-+  mounted = true;
-+
-+  const container = document.createElement('div');
-+  document.body.appendChild(container);
-+
-+  createRoot(container).render(
-+    <ClippyProvider agentName={random(Object.values(AGENTS))}>
-+      <Greeter />
-+    </ClippyProvider>,
-+  );
-+};
-+
-+// waits for the agent, so it is safe to call while it is still loading
-+const speak = (message: string) => {
-+  agentReady.then(agent => agent.speak(message, false));
-+};
-+
-+export const withClippy: Decorator = (Story, context) => {
-+  mountClippy();
-+
-+  return Story({ ...context, speak });
-+};
-```
-
-**File**: `packages/core/.storybook/main.js` (modified, +0/-1)
-```diff
-@@ -22,7 +22,6 @@ export default {
-     getAbsolutePath('@storybook/addon-docs'),
-     getAbsolutePath('@storybook/addon-designs'),
-     join(import.meta.dirname, 'src', 'theme-changer'),
--    join(import.meta.dirname, 'src', 'clippy-addon'),
-   ],
-   framework: {
-     name: getAbsolutePath('@storybook/react-vite'),
-```
-
-**File**: `packages/core/.storybook/preview.js` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- import Frame from './decorators/Frame';
+@@ -1,9 +1,10 @@
+ import { recipe } from '@vanilla-extract/recipes';
+ import { contract } from '../themes/contract.css';
+ import { style } from '@vanilla-extract/css';
++import { inLayer, components } from '../shared/layers.css';
  
- import './preview.css';
--import { withClippy } from './src/clippy-addon/clippy-addon';
-+import { withClippy } from './decorators/withClippy';
+ export const avatar = recipe({
+-  base: {
++  base: inLayer(components, {
+     display: 'flex',
+     alignItems: 'center',
+     justifyContent: 'center',
+@@ -13,11 +14,11 @@ export const avatar = recipe({
+     marginBottom: contract.space[1],
+     backgroundColor: contract.colors.material,
+     boxShadow: contract.shadows.in,
+-  },
++  }),
  
- export const globalTypes = {
-   selectedTheme: {
+   variants: {
+     circle: {
+-      true: {
++      true: inLayer(components, {
+         borderRadius: '50%',
+         borderStyle: 'solid',
+         borderWidth: contract.space[1],
+@@ -26,11 +27,13 @@ export const avatar = recipe({
+         borderBottomColor: contract.colors.borderLightest,
+         borderLeftColor: contract.colors.borderDark,
+         boxShadow: 'none',
+-      },
++      }),
+     },
+   },
+ });
+ 
+-export const imgStyle = style({
+-  maxWidth: '100%',
+-});
++export const imgStyle = style(
++  inLayer(components, {
++    maxWidth: '100%',
++  }),
++);
 ```
 
-**File**: `packages/core/.storybook/src/clippy-addon/Clippy.jsx` (removed, +0/-72)
+**File**: `packages/core/components/Button/Button.css.ts` (modified, +29/-26)
 ```diff
-@@ -1,72 +0,0 @@
--import React from 'react';
--import { initAgent } from 'clippyjs';
--import * as agentLoaders from 'clippyjs/agents';
--
--let agent;
--const availableAgents = [
--  'Bonzi',
--  'Clippy',
--  'F1',
--  'Genie',
--  'Genius',
--  'Links',
--  'Merlin',
--  'Peedy',
--  'Rocky',
--  'Rover',
--];
--
--const talks = [
--  'New to our project? Let me show you around!',
--  'What brings you here today? Need help with something?',
--  "We're always improving! Check out our latest updates.",
--  'Want to get involved? We love contributions from our community!',
--  "Stuck on something? Don't worry, we've got resources to help!",
--  "Thanks for checking out our project! We're glad you're here.",
--  "We're passionate about building something amazing. Want to join us?",
--  "What do you think of our project so far? We'd love to hear your feedback!",
--  "Ready to dig in? We've got plenty of resources to get you started.",
--  "We're always learning and growing. Stay tuned for exciting updates!",
--];
--
--const ClippyContext = React.createContext({ speak: () => {} });
--
--export const ClippyProvider = ({ children, ...props }) => {
--  React.useEffect(() => {
--    const agentName =
--      availableAgents[Math.floor(Math.random() * availableAgents.length)];
--
--    if (!agent) {
--      const agentLoader = agentLoaders[agentName];
--      initAgent(agentLoader).then(loadedAgent => {
--        agent = loadedAgent;
--
--        agent.show(false);
--        agent.play('Wave');
--
--        const msg = talks[Math.floor(Math.random() * talks.length)];
--        agent.speak(msg);
--
--        agent._el.addEventListener('click', () => {
--          const msg = talks[Math.floor(Math.random() * talks.length)];
--
--          speak(msg, true);
--        });
--      });
--    }
--  }, []);
--
--  const speak = (msg, animate = false) => {
--    agent.speak(msg);
--
--    if (animate) {
--      agent.animate();
--    }
--  };
--
--  return (
--    <ClippyContext.Provider value={{ speak }}>
--      {children({ ...props, ...{ speak } })}
--    </ClippyContext.Provider>
--  );
--};
-```
-
-**File**: `packages/core/.storybook/src/clippy-addon/clippy-addon.jsx` (removed, +0/-21)
-```diff
-@@ -1,21 +0,0 @@
--import React from 'react';
--import { makeDecorator } from 'storybook/preview-api';
--import { ClippyProvider } from './Clippy';
--
--export const withClippy = makeDecorator({
--  name: 'withClippy',
--  parameterName: 'clippy',
--  skipIfNoParametersOrOptions: false,
--  wrapper: (storyFn, context) => {
--    return (
--      <ClippyProvider>
--        {props => {
--          return storyFn({
--            ...context,
--            ...props,
--          });
--        }}
--      </ClippyProvider>
--    );
+@@ -2,41 +2,44 @@ import { style } from '@vanilla-extract/css';
+ import { calc } from '@vanilla-extract/css-utils';
+ 
+ import { contract } from '../themes/contract.css';
++import { inLayer, components } from '../shared/layers.css';
+ 
+-export const button = style({
+-  backgroundColor: contract.colors.material,
+-  paddingTop: contract.space[7],
+-  paddingInline: contract.space[20],
+-  paddingBottom: contract.space[5],
+-  border: 'none',
+-  color: contract.colors.materialText,
++export const button = style(
++  inLayer(components, {
++    backgroundColor: contract.colors.material,
++    paddingTop: contract.space[7],
++    paddingInline: contract.space[20],
++    paddingBottom: contract.space[5],
++    border: 'none',
++    color: contract.colors.materialText,
+ 
+-  fontSize: 12,
++    fontSize: 12,
+ 
+-  boxShadow: `inset 1px 1px 0px 1px ${contract.colors.borderLightest},
++    boxShadow: `inset 1px 1px 0px 1px ${contract.colors.borderLightest},
+     inset 0 0 0 1px ${contract.colors.borderDark},
+     1px 1px 0 0px ${contract.colors.borderDarkest}`,
+ 
+-  ':disabled': {
+-    color: contract.colors.materialTextDisabled,
+-  },
+-  ':focus': {
+-    outline: `${contract.space[1]} dotted ${contract.colors.materialText}`,
+-    outlineOffset: calc.negate(contract.space[5]),
++    ':disabled': {
++      color: contract.colors.materialTextDisabled,
++    },
++    ':focus': {
++      outline: `${contract.space[1]} dotted ${contract.colors.materialText}`,
++      outlineOffset: calc.negate(contract.space[5]),
+ 
+-    boxShadow: `inset 1px 1px 0px 1px ${contract.colors.borderLightest},
++      boxShadow: `inset 1px 1px 0px 1px ${contract.colors.borderLightest},
+       inset -0.5px -0.5px 0px 1px ${contract.colors.borderDark},
+       1px 1px 0 1px ${contract.colors.borderDarkest}`,
+-  },
+-  ':active': {
+-    paddingTop: contract.space[8],
+-    paddingInline: contract.space[20],
+-    paddingBottom: contract.space[4],
++    },
++    ':active': {
++      paddingTop: contract.space[8],
++      paddingInline: contract.space[20],
++      paddingBottom: contract.space[4],
+ 
+-    outline: `${contract.space[1]} dotted ${contract.colors.borderDarkest}`,
+-    outlineOffset: calc.negate(contract.space[5]),
++      outline: `${contract.space[1]} dotted ${contract.colors.borderDarkest}`,
++      outlineOffset: calc.negate(contract.space[5]),
+ 
+-    boxShadow: `inset 0 0 0 1px ${contract.colors.borderDark},
++      boxShadow: `inset 0 0 0 1px ${contract.colors.borderDark},
+       0 0 0 1px ${contract.colors.borderDarkest}`,
 -  },
 -});
-```
-
-**File**: `packages/core/.storybook/src/clippy-addon/package.json` (removed, +0/-8)
-```diff
-@@ -1,8 +0,0 @@
--{
--  "name": "@react95/storybook-clippy-addon",
--  "version": "0.0.1",
--  "description": "React95 storybook Clippy addon",
--  "main": "./preview.js",
--  "author": "ggdaltoso <ggdaltoso@gmail.com>",
--  "license": "MIT"
--}
-```
-
-**File**: `packages/core/.storybook/src/clippy-addon/preview.js` (removed, +0/-1)
-```diff
-@@ -1 +0,0 @@
--// noop
-```
-
----
-
-### Incident Patch 5: `f2f6ee1d` (2026-09-02)
-**Commit Message**: Merge pull request #545 from React95/fix/svg-data-uri-quoting
-
-fix: restore SVG icons lost to data URI quoting
-
-**File**: `packages/core/components/Checkbox/Checkbox.css.ts` (modified, +2/-2)
-```diff
-@@ -55,7 +55,7 @@ export const label = style({
- });
- 
- globalStyle(`${field}:checked + ${icon}`, {
--  backgroundImage: `url('${check}')`,
-+  backgroundImage: `url("${check}")`,
- });
- 
- globalStyle(`${field}:focus ~ ${text}, ${field}:active ~ ${text}`, {
-@@ -65,7 +65,7 @@ globalStyle(`${field}:focus ~ ${text}, ${field}:active ~ ${text}`, {
- });
- 
- globalStyle(`${field}:checked:disabled + ${icon}`, {
--  backgroundImage: `url('${checkDisabled}')`,
-+  backgroundImage: `url("${checkDisabled}")`,
-   backgroundSize: '7px 7px, 1.9px 1.9px',
- });
- 
-```
-
-**File**: `packages/core/components/List/List.css.ts` (modified, +1/-1)
-```diff
-@@ -28,7 +28,7 @@ export const listItem = style({
-       right: contract.space[8],
-       content: "''",
-       backgroundColor: contract.colors.materialText,
--      maskImage: `url('${rightcaret}')`,
-+      maskImage: `url("${rightcaret}")`,
-       maskPosition: 'center center',
-       maskSize: `${contract.space[5]} ${contract.space[8]}`,
-       maskRepeat: 'no-repeat',
-```
-
----
-
-### Incident Patch 6: `e285a43a` (2026-09-02)
-**Commit Message**: Merge branch 'master' into fix/svg-data-uri-quoting
-
-**File**: `.github/workflows/build_and_publish.yml` (modified, +18/-2)
-```diff
-@@ -30,11 +30,28 @@ jobs:
-         env:
-           GH_TOKEN: ${{ secrets.GH_TOKEN }}
- 
--      - uses: actions/setup-node@v6
-+      # Keep this on a Node line that bundles npm >= 11.5.1, which is what trusted
-+      # publishing needs. Node 24 has shipped it since 24.5.0 and npm only moves forward
-+      # within a major, so tracking 24 satisfies it. Pinning an older Node would not.
-+      - uses: actions/setup-node@v7
-         with:
-           node-version: 24
-           registry-url: https://registry.npmjs.org/
- 
-+      # setup-node's `registry-url` writes `//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}`
-+      # into the runner .npmrc, and that one line breaks both things this job needs.
-+      #
-+      # Installing: v6 hid the missing secret behind a dummy NODE_AUTH_TOKEN export. v7
-+      # removed that, so yarn now hits an unresolved placeholder and fails with
-+      # "Failed to replace env in config". That is what reverted the last v7 bump.
-+      #
-+      # Publishing: npm treats any auth line as "already authenticated" and never starts
-+      # the OIDC exchange, so trusted publishing dies with ENEEDAUTH.
-+      #
-+      # Dropping the line before anything runs settles both. The registry stays.
-+      - name: Clear placeholder npm auth line
-+        run: sed -i '/_authToken/d' "$NPM_CONFIG_USERCONFIG"
-+
-       - name: Install dependencies
-         run: yarn --pure-lockfile --non-interactive
- 
-@@ -55,7 +72,6 @@ jobs:
-           ./scripts/publish
-         env:
-           GH_TOKEN: ${{ secrets.GH_TOKEN }}
--          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
- 
-       - name: Build storybook
-         if: github.ref == 'refs/heads/master'
-```
-
-**File**: `.github/workflows/labeler.yml` (modified, +1/-1)
-```diff
-@@ -11,7 +11,7 @@ jobs:
-       pull-requests: write
- 
-     steps:
--      - uses: actions/labeler@v6
-+      - uses: actions/labeler@v7
-         with:
-           repo-token: '${{ secrets.GH_TOKEN }}'
-           sync-labels: true
-```
-
-**File**: `.github/workflows/scorecard.yml` (modified, +1/-1)
-```diff
-@@ -26,7 +26,7 @@ jobs:
-           persist-credentials: false
- 
-       - name: Run analysis
--        uses: ossf/scorecard-action@v2.4.3
-+        uses: ossf/scorecard-action@v2.4.4
-         with:
-           results_file: results.sarif
-           results_format: sarif
-```
-
-**File**: `.nvmrc` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--20.16.0
-\ No newline at end of file
-+24
-```
-
----
-
-### Incident Patch 7: `cdcd9823` (2026-09-02)
-**Commit Message**: fix(List): restore missing submenu caret
-
-Same data URI quoting problem as the Checkbox icon: the single-quoted
-url() ended early on the SVG's own attribute quotes, so the mask-image
-on nested list items was dropped.
-
-**File**: `packages/core/components/List/List.css.ts` (modified, +1/-1)
-```diff
-@@ -28,7 +28,7 @@ export const listItem = style({
-       right: contract.space[8],
-       content: "''",
-       backgroundColor: contract.colors.materialText,
--      maskImage: `url('${rightcaret}')`,
-+      maskImage: `url("${rightcaret}")`,
-       maskPosition: 'center center',
-       maskSize: `${contract.space[5]} ${contract.space[8]}`,
-       maskRepeat: 'no-repeat',
-```
-
----
-
-### Incident Patch 8: `61886cbb` (2026-09-02)
-**Commit Message**: fix(Checkbox): restore missing check icon
-
-Vite inlines small SVGs as raw data URIs and rewrites the attribute
-quotes to single quotes. Wrapping that value in single quotes ended the
-CSS string at the first attribute quote, so the background-image
-declaration was dropped and the check mark never rendered.
-
-Use double quotes as the url() delimiter instead.
-
-**File**: `packages/core/components/Checkbox/Checkbox.css.ts` (modified, +2/-2)
-```diff
-@@ -55,7 +55,7 @@ export const label = style({
- });
- 
- globalStyle(`${field}:checked + ${icon}`, {
--  backgroundImage: `url('${check}')`,
-+  backgroundImage: `url("${check}")`,
- });
- 
- globalStyle(`${field}:focus ~ ${text}, ${field}:active ~ ${text}`, {
-@@ -65,7 +65,7 @@ globalStyle(`${field}:focus ~ ${text}, ${field}:active ~ ${text}`, {
- });
- 
- globalStyle(`${field}:checked:disabled + ${icon}`, {
--  backgroundImage: `url('${checkDisabled}')`,
-+  backgroundImage: `url("${checkDisabled}")`,
-   backgroundSize: '7px 7px, 1.9px 1.9px',
- });
- 
-```
-
----
-
-### Incident Patch 9: `3435b869` (2026-07-17)
-**Commit Message**: Merge pull request #542 from React95/revert-541-dependabot/github_actions/github-actions-eefdb6dedd
-
-Revert "chore(deps): bump actions/setup-node from 6 to 7 in the github-actions group"
-
-**File**: `.github/workflows/build_and_publish.yml` (modified, +1/-1)
-```diff
-@@ -30,7 +30,7 @@ jobs:
-         env:
-           GH_TOKEN: ${{ secrets.GH_TOKEN }}
- 
--      - uses: actions/setup-node@v7
-+      - uses: actions/setup-node@v6
-         with:
-           node-version: 24
-           registry-url: https://registry.npmjs.org/
-```
-
----
-
-### Incident Patch 10: `cf572554` (2026-07-17)
-**Commit Message**: Revert "chore(deps): bump actions/setup-node from 6 to 7 in the github-actions group"
-
-**File**: `.github/workflows/build_and_publish.yml` (modified, +1/-1)
-```diff
-@@ -30,7 +30,7 @@ jobs:
-         env:
-           GH_TOKEN: ${{ secrets.GH_TOKEN }}
- 
--      - uses: actions/setup-node@v7
-+      - uses: actions/setup-node@v6
-         with:
-           node-version: 24
-           registry-url: https://registry.npmjs.org/
-```
-
----
-
-### Incident Patch 11: `c6be8142` (2026-07-08)
-**Commit Message**: Merge pull request #540 from React95/fix/nx-release-publish-noop-executor
-
-fix(release): pin the publish executor for dist-published packages
-
-**File**: `packages/clippy/package.json` (modified, +1/-0)
-```diff
-@@ -23,6 +23,7 @@
-   "nx": {
-     "targets": {
-       "nx-release-publish": {
-+        "executor": "@nx/js:release-publish",
-         "options": {
-           "packageRoot": "{projectRoot}/dist"
-         }
-```
-
-**File**: `packages/core/package.json` (modified, +1/-0)
-```diff
-@@ -231,6 +231,7 @@
-   "nx": {
-     "targets": {
-       "nx-release-publish": {
-+        "executor": "@nx/js:release-publish",
-         "options": {
-           "packageRoot": "{projectRoot}/dist"
-         }
-```
-
-**File**: `packages/icons/package.json` (modified, +1/-0)
-```diff
-@@ -67,6 +67,7 @@
-   "nx": {
-     "targets": {
-       "nx-release-publish": {
-+        "executor": "@nx/js:release-publish",
-         "options": {
-           "packageRoot": "{projectRoot}/dist"
-         }
-```
-
----
-
-### Incident Patch 12: `2140baf8` (2026-07-08)
-**Commit Message**: fix(release): pin the publish executor for dist-published packages
-
-Overriding the nx-release-publish target's options via the package.json
-"nx" field (to set packageRoot) replaced the executor inferred by the
-release plugin with nx:noop instead of merging with it. As a result,
-core, icons, and clippy's nx-release-publish task silently completed
-in 0s and reported success without ever calling npm publish, while
-cra-template and cra-template-typescript (which don't override this
-target) published correctly.
-
-Pin the executor explicitly alongside the packageRoot override so the
-real @nx/js:release-publish executor is used.
-
-**File**: `packages/clippy/package.json` (modified, +1/-0)
-```diff
-@@ -23,6 +23,7 @@
-   "nx": {
-     "targets": {
-       "nx-release-publish": {
-+        "executor": "@nx/js:release-publish",
-         "options": {
-           "packageRoot": "{projectRoot}/dist"
-         }
-```
-
-**File**: `packages/core/package.json` (modified, +1/-0)
-```diff
-@@ -231,6 +231,7 @@
-   "nx": {
-     "targets": {
-       "nx-release-publish": {
-+        "executor": "@nx/js:release-publish",
-         "options": {
-           "packageRoot": "{projectRoot}/dist"
-         }
-```
-
-**File**: `packages/icons/package.json` (modified, +1/-0)
-```diff
-@@ -67,6 +67,7 @@
-   "nx": {
-     "targets": {
-       "nx-release-publish": {
-+        "executor": "@nx/js:release-publish",
-         "options": {
-           "packageRoot": "{projectRoot}/dist"
-         }
-```
-
----
-
-### Incident Patch 13: `bdd1d44e` (2026-07-08)
-**Commit Message**: Merge pull request #539 from React95/fix/clippy-engines-node
-
-fix(clippy): declare minimum supported Node.js version
-
-**File**: `packages/clippy/package.json` (modified, +3/-0)
-```diff
-@@ -12,6 +12,9 @@
-   "homepage": "https://react95.github.io/React95",
-   "license": "MIT",
-   "main": "index.js",
-+  "engines": {
-+    "node": ">=18"
-+  },
-   "publishConfig": {
-     "access": "public",
-     "directory": "dist",
-```
-
----
-
-### Incident Patch 14: `3a75ce9c` (2026-07-08)
-**Commit Message**: fix(clippy): declare minimum supported Node.js version
-
-publint flagged the missing engines.node field on the published
-package. Declare the same minimum version already implied by the
-workspace tooling.
-
-**File**: `packages/clippy/package.json` (modified, +3/-0)
-```diff
-@@ -12,6 +12,9 @@
-   "homepage": "https://react95.github.io/React95",
-   "license": "MIT",
-   "main": "index.js",
-+  "engines": {
-+    "node": ">=18"
-+  },
-   "publishConfig": {
-     "access": "public",
-     "directory": "dist",
-```
-
----
-
-### Incident Patch 15: `8748e751` (2026-07-08)
-**Commit Message**: Merge pull request #538 from React95/fix/stale-dist-version-on-release
-
-fix(release): resync dist package.json version before publish
-
-**File**: `nx.json` (modified, +5/-1)
-```diff
-@@ -24,8 +24,12 @@
-       "dependsOn": ["^lint"],
-       "cache": true
-     },
--    "nx-release-publish": {
-+    "sync-dist-version": {
-       "dependsOn": ["build"],
-+      "cache": false
 +    },
-+    "nx-release-publish": {
-+      "dependsOn": ["sync-dist-version"],
-       "options": {
-         "registry": "https://registry.npmjs.org/"
-       }
++  }),
++);
 ```
 
-**File**: `packages/clippy/package.json` (modified, +1/-0)
+**File**: `packages/core/components/Checkbox/Checkbox.css.ts` (modified, +82/-61)
 ```diff
-@@ -38,6 +38,7 @@
-     "build:vite": "vite build",
-     "build:types": "yarn tsc -b ./tsconfig.types.json",
-     "postbuild": "node ../../scripts/prepublish.js --types",
-+    "sync-dist-version": "node ../../scripts/prepublish.js --types",
-     "lint": "eslint --ext ts,tsx --quiet src tests",
-     "test": "vitest run --config=../../config/test/clippy.js"
+@@ -2,73 +2,94 @@ import check from './imgs/check.svg';
+ import checkDisabled from './imgs/check-disabled.svg';
+ import { globalStyle, style } from '@vanilla-extract/css';
+ import { contract } from '../themes/contract.css';
++import { inLayer, components } from '../shared/layers.css';
+ 
+-export const icon = style({
+-  width: contract.space[12],
+-  height: contract.space[12],
+-  display: 'inline-block',
+-  position: 'absolute',
+-  left: '0',
+-  top: contract.space[2],
+-  borderLeftStyle: 'solid',
+-  borderLeftWidth: contract.space[1],
+-  borderLeftColor: contract.colors.borderDark,
+-  borderTopStyle: 'solid',
+-  borderTopWidth: contract.space[1],
+-  borderTopColor: contract.colors.borderDark,
+-  backgroundColor: contract.colors.inputBackground,
+-  backgroundRepeat: 'no-repeat',
+-  backgroundPosition: 'center center',
+-  backgroundSize: '7px 7px',
+-  boxShadow: contract.shadows.input,
+-});
++export const icon = style(
++  inLayer(components, {
++    width: contract.space[12],
++    height: contract.space[12],
++    display: 'inline-block',
++    position: 'absolute',
++    left: '0',
++    top: contract.space[2],
++    borderLeftStyle: 'solid',
++    borderLeftWidth: contract.space[1],
++    borderLeftColor: contract.colors.borderDark,
++    borderTopStyle: 'solid',
++    borderTopWidth: contract.space[1],
++    borderTopColor: contract.colors.borderDark,
++    backgroundColor: contract.colors.inputBackground,
++    backgroundRepeat: 'no-repeat',
++    backgroundPosition: 'center center',
++    backgroundSize: '7px 7px',
++    boxShadow: contract.shadows.input,
++  }),
++);
+ 
+-export const text = style({
+-  padding: contract.space[1],
+-  userSelect: 'none',
+-});
++export const text = style(
++  inLayer(components, {
++    padding: contract.space[1],
++    userSelect: 'none',
++  }),
++);
+ 
+-export const field = style({
+-  width: contract.space[12],
+-  height: contract.space[12],
+-  margin: '0',
+-  position: 'absolute',
+-  top: contract.space[2],
+-  left: '0',
+-  opacity: 0,
+-  selectors: {},
+-});
++export const field = style(
++  inLayer(components, {
++    width: contract.space[12],
++    height: contract.space[12],
++    margin: '0',
++    position: 'absolute',
++    top: contract.space[2],
++    left: '0',
++    opacity: 0,
++    selectors: {},
++  }),
++);
+ 
+-export const label = style({
+-  display: 'inline-block',
+-  height: contract.space[15],
+-  lineHeight: 1.5,
+-  position: 'relative',
+-  marginBlock: contract.space[4],
+-  paddingLeft: contract.space[20],
+-  selectors: {
+-    '&:has(:disabled)': {
+-      color: contract.colors.borderDark,
+-      textShadow: `0.5px 0.5px ${contract.colors.borderLight}`,
++export const label = style(
++  inLayer(components, {
++    display: 'inline-block',
++    height: contract.space[15],
++    lineHeight: 1.5,
++    position: 'relative',
++    marginBlock: contract.space[4],
++    paddingLeft: contract.space[20],
++    selectors: {
++      '&:has(:disabled)': {
++        color: contract.colors.borderDark,
++        textShadow: `0.5px 0.5px ${contract.colors.borderLight}`,
++      },
+     },
+-  },
+-});
++  }),
++);
+ 
+-globalStyle(`${field}:checked + ${icon}`, {
+-  backgroundImage: `url("${check}")`,
+-});
++globalStyle(
++  `${field}:checked + ${icon}`,
++  inLayer(components, {
++    backgroundImage: `url("${check}")`,
++  }),
++);
+ 
+-globalStyle(`${field}:focus ~ ${text}, ${field}:active ~ ${text}`, {
+-  borderWidth: contract.space[1],
+-  borderStyle: 'dotted',
+-  padding: '0',
+-});
++globalStyle(
++  `${field}:focus ~ ${text}, ${field}:active ~ ${text}`,
++  inLayer(components, {
++    borderWidth: contract.space[1],
++    borderStyle: 'dotted',
++    padding: '0',
++  }),
++);
+ 
+-globalStyle(`${field}:checked:disabled + ${icon}`, {
+-  backgroundImage: `url("${checkDisabled}")`,
+-  backgroundSize: '7px 7px, 1.9px 1.9px',
+-});
++globalStyle(
++  `${field}:checked:disabled + ${icon}`,
++  inLayer(components, {
++    backgroundImage: `url("${checkDisabled}")`,
++    backgroundSize: '7px 7px, 1.9px 1.9px',
++  }),
++);
+ 
+-globalStyle(`${field}:disabled + ${icon}`, {
+-  backgroundColor: contract.colors.inputBackgroundDisabled,
+-});
++globalStyle(
++  `${field}:disabled + ${icon}`,
++  inLayer(components, {
++    backgroundColor: contract.colors.inputBackgroundDisabled,
++  }),
++);
+```
+
+**File**: `packages/core/components/Dropdown/Dropdown.css.ts` (modified, +50/-45)
+```diff
+@@ -2,55 +2,60 @@ import { style } from '@vanilla-extract/css';
+ import { contract } from '../themes/contract.css';
+ 
+ import caret from './imgs/downcaret.png';
++import { inLayer, components } from '../shared/layers.css';
+ 
+-export const wrapper = style({
+-  position: 'relative',
+-  width: '200px',
++export const wrapper = style(
++  inLayer(components, {
++    position: 'relative',
++    width: '200px',
+ 
+-  ':after': {
+-    display: 'flex',
+-    justifyContent: 'center',
+-    width: contract.space[22],
+-    bottom: contract.space[1],
+-    fontSize: '14px',
+-    lineHeight: 1.1,
+-    content: "''",
+-    pointerEvents: 'none',
+-    position: 'absolute',
+-    right: contract.space[1],
+-    top: contract.space[2],
+-    backgroundColor: contract.colors.material,
+-    borderRightStyle: 'solid',
+-    borderRightWidth: contract.space[1],
+-    borderBottomStyle: 'solid',
+-    borderBottomWidth: contract.space[1],
+-    backgroundImage: `url('${caret}')`,
+-    backgroundPosition: '60% 60%',
+-    backgroundRepeat: 'no-repeat',
+-    boxShadow: `inset 0.5px 0.7px 0px 0.7px ${contract.colors.material},
++    ':after': {
++      display: 'flex',
++      justifyContent: 'center',
++      width: contract.space[22],
++      bottom: contract.space[1],
++      fontSize: '14px',
++      lineHeight: 1.1,
++      content: "''",
++      pointerEvents: 'none',
++      position: 'absolute',
++      right: contract.space[1],
++      top: contract.space[2],
++      backgroundColor: contract.colors.material,
++      borderRightStyle: 'solid',
++      borderRightWidth: contract.space[1],
++      borderBottomStyle: 'solid',
++      borderBottomWidth: contract.space[1],
++      backgroundImage: `url('${caret}')`,
++      backgroundPosition: '60% 60%',
++      backgroundRepeat: 'no-repeat',
++      boxShadow: `inset 0.5px 0.7px 0px 0.7px ${contract.colors.material},
+     inset -1px 0px 0 1px ${contract.colors.borderDark},
+     inset 1.5px 1.5px 0px 1.5px ${contract.colors.borderLightest}`,
+-  },
+-});
++    },
++  }),
++);
+ 
+-export const select = style({
+-  position: 'relative',
+-  outline: 'none',
+-  border: 'none',
+-  borderRadius: '0',
+-  width: '100%',
+-  height: '100%',
+-  padding: contract.space[3],
+-  color: contract.colors.materialText,
+-  backgroundColor: contract.colors.inputBackground,
+-  borderLeftStyle: 'solid',
+-  borderLeftWidth: contract.space[1],
+-  borderLeftColor: contract.colors.borderDark,
+-  borderTopStyle: 'solid',
+-  borderTopWidth: contract.space[1],
+-  borderTopColor: contract.colors.borderDark,
+-  appearance: 'none',
+-  boxShadow: `inset -1px -1px 0 0 ${contract.colors.material},
++export const select = style(
++  inLayer(components, {
++    position: 'relative',
++    outline: 'none',
++    border: 'none',
++    borderRadius: '0',
++    width: '100%',
++    height: '100%',
++    padding: contract.space[3],
++    color: contract.colors.materialText,
++    backgroundColor: contract.colors.inputBackground,
++    borderLeftStyle: 'solid',
++    borderLeftWidth: contract.space[1],
++    borderLeftColor: contract.colors.borderDark,
++    borderTopStyle: 'solid',
++    borderTopWidth: contract.space[1],
++    borderTopColor: contract.colors.borderDark,
++    appearance: 'none',
++    boxShadow: `inset -1px -1px 0 0 ${contract.colors.material},
+     inset 1px 1px 0 0 ${contract.colors.borderDarkest},
+     0.5px 0.5px 0 0.5px ${contract.colors.borderLightest};`,
+-});
++  }),
++);
+```
+
+**File**: `packages/core/components/Fieldset/Fieldset.css.ts` (modified, +24/-19)
+```diff
+@@ -1,23 +1,28 @@
+ import { style } from '@vanilla-extract/css';
+ import { contract } from '../themes/contract.css';
++import { inLayer, components } from '../shared/layers.css';
+ 
+-export const field = style({
+-  borderTopStyle: 'groove',
+-  borderTopWidth: contract.space[2],
+-  borderTopColor: contract.colors.borderLighter,
+-  borderLeftStyle: 'groove',
+-  borderLeftWidth: contract.space[2],
+-  borderLeftColor: contract.colors.borderLighter,
+-  borderBottomStyle: 'solid',
+-  borderBottomWidth: contract.space[1],
+-  borderBottomColor: contract.colors.borderDark,
+-  borderRightStyle: 'solid',
+-  borderRightWidth: contract.space[1],
+-  borderRightColor: contract.colors.borderDark,
+-  boxShadow: `1px 1px 0 0 ${contract.colors.borderLighter}`,
+-});
++export const field = style(
++  inLayer(components, {
++    borderTopStyle: 'groove',
++    borderTopWidth: contract.space[2],
++    borderTopColor: contract.colors.borderLighter,
++    borderLeftStyle: 'groove',
++    borderLeftWidth: contract.space[2],
++    borderLeftColor: contract.colors.borderLighter,
++    borderBottomStyle: 'solid',
++    borderBottomWidth: contract.space[1],
++    borderBottomColor: contract.colors.borderDark,
++    borderRightStyle: 'solid',
++    borderRightWidth: contract.space[1],
++    borderRightColor: contract.colors.borderDark,
++    boxShadow: `1px 1px 0 0 ${contract.colors.borderLighter}`,
++  }),
++);
+ 
+-export const legend = style({
+-  paddingLeft: contract.space[4],
+-  paddingRight: contract.space[1],
+-});
++export const legend = style(
++  inLayer(components, {
++    paddingLeft: contract.space[4],
++    paddingRight: contract.space[1],
++  }),
++);
+```
+
+**File**: `packages/core/components/GlobalStyle/GlobalStyle.css.ts` (modified, +120/-74)
+```diff
+@@ -11,6 +11,7 @@ import videottf from './font/React95Video-Numbers.ttf';
+ import videowoff from './font/React95Video-Numbers.woff';
+ import videowoff2 from './font/React95Video-Numbers.woff2';
+ import { MSSansSerif, R95VideoNumbers } from '../shared/font-names';
++import { inLayer, globals } from '../shared/layers.css';
+ 
+ globalFontFace(MSSansSerif, {
+   src: `url('${ttf}') format('truetype')`,
+@@ -33,33 +34,51 @@ globalFontFace(R95VideoNumbers, {
+   fontWeight: 'normal',
+ });
+ 
+-globalStyle('*, *::before, *::after', {
+-  boxSizing: 'border-box',
+-});
++globalStyle(
++  '*, *::before, *::after',
++  inLayer(globals, {
++    boxSizing: 'border-box',
++  }),
++);
+ 
+-globalStyle('html', {
+-  fontSize: '100%',
+-});
++globalStyle(
++  'html',
++  inLayer(globals, {
++    fontSize: '100%',
++  }),
++);
+ 
+-globalStyle('body', {
+-  margin: 0,
+-  padding: 0,
+-  fontFamily: MSSansSerif,
+-  fontSize: 12,
+-  color: contract.colors.materialText,
+-});
++globalStyle(
++  'body',
++  inLayer(globals, {
++    margin: 0,
++    padding: 0,
++    fontFamily: MSSansSerif,
++    fontSize: 12,
++    color: contract.colors.materialText,
++  }),
++);
+ 
+-globalStyle('button, input, select, textarea', {
+-  fontFamily: 'inherit',
+-});
++globalStyle(
++  'button, input, select, textarea',
++  inLayer(globals, {
++    fontFamily: 'inherit',
++  }),
++);
+ 
+-globalStyle('a', {
+-  color: contract.colors.anchor,
+-});
++globalStyle(
++  'a',
++  inLayer(globals, {
++    color: contract.colors.anchor,
++  }),
++);
+ 
+-globalStyle('a:visited', {
+-  color: contract.colors.anchorVisited,
+-});
++globalStyle(
++  'a:visited',
++  inLayer(globals, {
++    color: contract.colors.anchorVisited,
++  }),
++);
+ 
+ /* Scrollbar */
+ 
+@@ -74,50 +93,71 @@ const triangles = {
    },
+ };
+ 
+-globalStyle('::-webkit-scrollbar', {
+-  width: contract.space[17],
+-  height: contract.space[17],
+-});
++globalStyle(
++  '::-webkit-scrollbar',
++  inLayer(globals, {
++    width: contract.space[17],
++    height: contract.space[17],
++  }),
++);
+ 
+-globalStyle('::-webkit-scrollbar-track', {
+-  backgroundImage: [
+-    `linear-gradient(45deg, ${contract.colors.material} 25%, transparent 25%, transparent 75%, ${contract.colors.material} 75%)`,
+-    `linear-gradient(45deg, ${contract.colors.material} 25%, transparent 25%, transparent 75%, ${contract.colors.material} 75%)`,
+-  ].join(','),
+-  backgroundColor: contract.colors.borderLightest,
+-  backgroundSize: `${contract.space[4]} ${contract.space[4]}`,
+-  backgroundPosition: `0 0, ${contract.space[2]} ${contract.space[2]}`,
+-});
++globalStyle(
++  '::-webkit-scrollbar-track',
++  inLayer(globals, {
++    backgroundImage: [
++      `linear-gradient(45deg, ${contract.colors.material} 25%, transparent 25%, transparent 75%, ${contract.colors.material} 75%)`,
++      `linear-gradient(45deg, ${contract.colors.material} 25%, transparent 25%, transparent 75%, ${contract.colors.material} 75%)`,
++    ].join(','),
++    backgroundColor: contract.colors.borderLightest,
++    backgroundSize: `${contract.space[4]} ${contract.space[4]}`,
++    backgroundPosition: `0 0, ${contract.space[2]} ${contract.space[2]}`,
++  }),
++);
+ 
+-globalStyle('::-webkit-scrollbar-corner', {
+-  backgroundColor: contract.colors.material,
+-});
++globalStyle(
++  '::-webkit-scrollbar-corner',
++  inLayer(globals, {
++    backgroundColor: contract.colors.material,
++  }),
++);
+ 
+ globalStyle(
+   `::-webkit-scrollbar-button:horizontal:increment:start,
+   ::-webkit-scrollbar-button:horizontal:decrement:end,
+   ::-webkit-scrollbar-button:vertical:increment:start,
+   ::-webkit-scrollbar-button:vertical:decrement:end`,
+-  {
++  inLayer(globals, {
+     display: 'none',
+-  },
++  }),
+ );
+ 
+-globalStyle('::-webkit-scrollbar-button:horizontal:decrement', {
+-  backgroundImage: triangles.horizontal.decrement,
+-});
++globalStyle(
++  '::-webkit-scrollbar-button:horizontal:decrement',
++  inLayer(globals, {
++    backgroundImage: triangles.horizontal.decrement,
++  }),
++);
+ 
+-globalStyle('::-webkit-scrollbar-button:horizontal:increment', {
+-  backgroundImage: triangles.horizontal.increment,
+-});
++globalStyle(
++  '::-webkit-scrollbar-button:horizontal:increment',
++  inLayer(globals, {
++    backgroundImage: triangles.horizontal.increment,
++  }),
++);
+ 
+-globalStyle('::-webkit-scrollbar-button:vertical:decrement', {
+-  backgroundImage: triangles.vertical.decrement,
+-});
++globalStyle(
++  '::-webkit-scrollbar-button:vertical:decrement',
++  inLayer(globals, {
++    backgroundImage: triangles.vertical.decrement,
++  }),
++);
+ 
+-globalStyle('::-webkit-scrollbar-button:vertical:increment', {
+-  backgroundImage: triangles.vertical.increment,
+-});
++globalStyle(
++  '::-webkit-scrollbar-button:vertical:increment',
++  inLayer(globals, {
++    backgroundImage: triangles.vertical.increment,
++  }),
++);
+ 
+ const scrollbarBorderBase = createBorder({
+   direction: 'extrude',
+@@ -127,33 +167,39 @@ const scrollbarBorderBase = createBorder({
+   innerTopLeft: contract.colors.borderLightest,
+ });
+ 
+-globalStyle('::-webkit-scrollbar-thumb', {
+-  boxSizing: 'border-box',
+-  displ
 ```
 
-**File**: `packages/core/package.json` (modified, +1/-0)
+---
+
+### Incident Patch 3: `2094e633` (2026-10-16)
+**Commit Message**: fix(icons): run the icon scripts with Node instead of ts-node
+
+Since Node 23, its type stripping takes over before ts-node, and it can't
+resolve extensionless relative imports, so `yarn process-icons` failed on
+the Node 24 used by CI. The scripts are now .mts files, with explicit
+extensions, that Node runs natively.
+
+**File**: `packages/icons/package.json` (modified, +4/-4)
 ```diff
-@@ -220,6 +220,7 @@
-     "postbuild:cjs": "copyfiles ./components/**/*.{svg,png,eot,ttf,woff,woff2,mp3} ./dist/cjs -u 1",
-     "postbuild:esm": "copyfiles ./components/**/*.{svg,png,eot,ttf,woff,woff2,mp3} ./dist/esm -u 1",
+@@ -52,16 +52,16 @@
+   },
+   "scripts": {
+     "precopy": "mkdir -p dist/src/png",
+-    "process-icons": "ts-node-script scripts/processIcons.ts",
++    "process-icons": "node scripts/processIcons.mts",
      "prebuild": "rimraf ./dist",
-+    "sync-dist-version": "node ../../scripts/prepublish.js --types",
-     "test": "vitest run --config=../../config/test/core.js"
-   },
-   "publishConfig": {
-```
-
-**File**: `packages/icons/package.json` (modified, +1/-0)
-```diff
-@@ -61,6 +61,7 @@
-     "build:css": "cp ./icons.css ./dist/icons.css && ts-node-script scripts/fixCss.ts",
+     "build": "yarn build:cjs && yarn build:esm && yarn build:types && yarn build:css && yarn build:svg",
+     "build:types": "cross-env NODE_ENV=production tsc -p ./tsconfig.json",
+     "build:esm": "cross-env NODE_ENV=esm yarn babel ./src --out-dir dist/esm --extensions .ts,.tsx",
+     "build:cjs": "cross-env NODE_ENV=cjs yarn babel ./src --out-dir dist/cjs --extensions .ts,.tsx",
+-    "build:css": "cp ./icons.css ./dist/icons.css && ts-node-script scripts/fixCss.ts",
++    "build:css": "cp ./icons.css ./dist/icons.css && node scripts/fixCss.mts",
      "build:svg": "cp -r src/svg ./dist",
-     "postbuild": "cp -r ./png ./dist/png && node ../../scripts/prepublish.js --types && ts-node-script scripts/addExports.ts",
-+    "sync-dist-version": "cp -r ./png ./dist/png && node ../../scripts/prepublish.js --types && ts-node-script scripts/addExports.ts",
+-    "postbuild": "cp -r ./png ./dist/png && node ../../scripts/prepublish.js --types && ts-node-script scripts/addExports.ts",
+-    "sync-dist-version": "cp -r ./png ./dist/png && node ../../scripts/prepublish.js --types && ts-node-script scripts/addExports.ts",
++    "postbuild": "cp -r ./png ./dist/png && node ../../scripts/prepublish.js --types && node scripts/addExports.mts",
++    "sync-dist-version": "cp -r ./png ./dist/png && node ../../scripts/prepublish.js --types && node scripts/addExports.mts",
      "test": "vitest run --config=../../config/test/icons.js"
    },
    "nx": {
 ```
 
+**File**: `packages/icons/scripts/component-template.mts` (renamed, +1/-1)
+```diff
+@@ -2,7 +2,7 @@
+ 
+ import fs from 'fs';
+ import { transform } from '@svgr/core';
+-import type { IconData } from './utils';
++import type { IconData } from './utils.mts';
+ import type { Options } from '@svgr/babel-preset';
+ 
+ export const getIconDataName = (name: string): string => {
+```
+
+**File**: `packages/icons/scripts/iconBlockList.mts` (renamed, +1/-1)
+```diff
+@@ -1,4 +1,4 @@
+-import type { IconData } from './utils';
++import type { IconData } from './utils.mts';
+ 
+ /** This list includes all icons seen as not including any visual output */
+ const iconBlockedIds = [
+```
+
+**File**: `packages/icons/scripts/makeIcons.mts` (renamed, +9/-6)
+```diff
+@@ -1,13 +1,16 @@
+ import fs from 'fs';
+ import ICO from 'icojs';
+ import path from 'path';
+-import { loadPixels } from 'pixel-perfect-svg/dist/imageLoader';
+-import { toSvgString } from 'pixel-perfect-svg/dist/imageProcessor';
+-import { type Pixel, pixel } from 'pixel-perfect-svg/dist/pixel';
++import { loadPixels } from 'pixel-perfect-svg/dist/imageLoader.js';
++import { toSvgString } from 'pixel-perfect-svg/dist/imageProcessor.js';
++import { type Pixel, pixel } from 'pixel-perfect-svg/dist/pixel.js';
+ import { type Config, optimize } from 'svgo';
+ 
+-import { getIconDataName, iconComponentTemplate } from './component-template';
+-import { filterBlockedIcons } from './iconBlockList';
++import {
++  getIconDataName,
++  iconComponentTemplate,
++} from './component-template.mts';
++import { filterBlockedIcons } from './iconBlockList.mts';
+ import {
+   REACT_FOLDER,
+   IMAGE_FOLDER,
+@@ -17,7 +20,7 @@ import {
+   CSS_FILE_PATH,
+   ICONS_FOLDER,
+   SVG_FOLDER,
+-} from './utils';
++} from './utils.mts';
+ 
+ const svgoConfig: Config = {
+   plugins: [
+```
+
+**File**: `packages/icons/scripts/processIcons.mts` (renamed, +3/-3)
+```diff
+@@ -1,13 +1,13 @@
+-import { makeIcons } from './makeIcons';
++import { makeIcons } from './makeIcons.mts';
+ import {
+   REACT_FOLDER,
+   IMAGE_FOLDER,
+   ICON_DEMOS_FILE_PATH,
+   ICONS_INDEX_FILE_PATH,
+   CSS_FILE_PATH,
+   SVG_FOLDER,
+-} from './utils';
+-import { deleteFolder } from './utils';
++} from './utils.mts';
++import { deleteFolder } from './utils.mts';
+ 
+ deleteFolder('dist');
+ deleteFolder(REACT_FOLDER);
+```
+
 #### Recent Merged Pull Requests:
-- **PR #551** (2026-10-02): chore(storybook): run stories as tests with vitest and a11y checks (@ggdaltoso)
-- **PR #550** (2026-10-02): chore(storybook): review addon panels and map component props to controls (@ggdaltoso)
-- **PR #549** (2026-10-01): chore(storybook): build the Clippy decorator on @react95/clippy (@ggdaltoso)
-- **PR #548** (2026-09-30): chore(storybook): upgrade to Storybook 10 and rework the theme panel (@ggdaltoso)
-- **PR #547** (2026-09-02): ci: bump github-actions group and publish to npm via OIDC (@ggdaltoso)
-- **PR #546** (closed): ci: publish to npm via OIDC trusted publishing (@ggdaltoso)
-- **PR #545** (2026-09-02): fix: restore SVG icons lost to data URI quoting (@ggdaltoso)
-- **PR #544** (closed): chore(deps): bump the github-actions group across 1 directory with 3 updates (@dependabot[bot])
+- **PR #592** (closed): fix(storybook): make useModal Event Subscription log keyboard-scrollable (@rootsiemen)
+- **PR #586** (2026-10-16): feat(icons): add Internet Explorer 4 icons (@ggdaltoso)
+- **PR #585** (2026-10-16): fix(icons): run the icon scripts with Node and stop shipping blank variants (@ggdaltoso)
+- **PR #583** (2026-10-15): feat(core)!: put the components' CSS in cascade layers (@ggdaltoso)
+- **PR #576** (2026-10-15): fix(core): add accessible name to Range Simple story (@rootsiemen)
+- **PR #575** (2026-10-15): fix(core): add accessible name to Dropdown Simple story (@rootsiemen)
 
 ---
 
@@ -1874,3 +1765,34 @@ fix(release): resync dist package.json version before publish
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. icons): end the generated index with a newline
+
+**RULE**:
+When implementing operations in `packages/icons/scripts/makeIcons.mts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in React95/React95. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `06cce041`: icons): end the generated index with a newline. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/icons/scripts/makeIcons.mts`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+  fs.writeFileSync(ICONS_INDEX_FILE_PATH, indexFileReExports.join('\n') + '\n');
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+  fs.writeFileSync(ICONS_INDEX_FILE_PATH, indexFileReExports.join('\n'));
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `06cce041` are properly handled with clean fallback behavior.

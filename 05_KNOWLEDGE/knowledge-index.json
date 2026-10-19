@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T03:26:55.223Z",
-  "total_verified_learnings": 553,
+  "last_updated": "2026-10-19T03:33:09.419Z",
+  "total_verified_learnings": 558,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -5655,22 +5655,35 @@
     "learn-github-decodingai-magazine-llm-twin-course": {
       "learning_id": "learn-github-decodingai-magazine-llm-twin-course",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "decodingai-magazine-llm-twin-course",
+      "source": "decodingai-magazine/llm-twin-course",
+      "repository": "decodingai-magazine/llm-twin-course",
       "slug": "decodingai-magazine-llm-twin-course",
       "platform": "github",
       "source_url": "https://github.com/decodingai-magazine/llm-twin-course",
-      "source_version": "HEAD",
-      "content_hash": "41cad5df24a5eee015dee0cd6f92dc37b2082a2b34290cc9070b86a464763753",
+      "source_version": "04e12f37",
+      "content_hash": "4e57fc31e8f162d369783c9fedb7047fabaf3634ca628d3ca52d586b44af26fd",
       "dossier_path": "07_PROJECT_LEARNING/decodingai-magazine-llm-twin-course-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/decodingai-magazine-llm-twin-course-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2078,
+          "title": "None type on cleaning data",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.552Z"
+      "verified_at": "2026-10-19T03:33:04.856Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-decolua-9router": {
       "learning_id": "learn-github-decolua-9router",
@@ -6937,22 +6950,35 @@
     "learn-github-embassy-rs-embassy": {
       "learning_id": "learn-github-embassy-rs-embassy",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "embassy-rs-embassy",
+      "source": "embassy-rs/embassy",
+      "repository": "embassy-rs/embassy",
       "slug": "embassy-rs-embassy",
       "platform": "github",
       "source_url": "https://github.com/embassy-rs/embassy",
-      "source_version": "HEAD",
-      "content_hash": "fe7b8aa64e951d7ae523c700bb03f070404137f41b4cb3456b8c0cb63646756b",
+      "source_version": "262fdba5",
+      "content_hash": "75f8235c4627ef6ca809685e8f879af954c71f93444de5451b6ebddd20ab93e0",
       "dossier_path": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2076,
+          "title": "use process_block inside process_blocks_padded",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.779Z"
+      "verified_at": "2026-10-19T03:32:56.866Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-emberstack-kubernetes-reflector": {
       "learning_id": "learn-github-emberstack-kubernetes-reflector",
@@ -9799,22 +9825,35 @@
     "learn-github-greptimeteam-greptimedb": {
       "learning_id": "learn-github-greptimeteam-greptimedb",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "greptimeteam-greptimedb",
+      "source": "GreptimeTeam/greptimedb",
+      "repository": "GreptimeTeam/greptimedb",
       "slug": "greptimeteam-greptimedb",
       "platform": "github",
       "source_url": "https://github.com/GreptimeTeam/greptimedb",
-      "source_version": "HEAD",
-      "content_hash": "45e469ef50b76be38ec344b73166da19b71dfb9a9342677c25171deeb5a1320c",
+      "source_version": "baa56301",
+      "content_hash": "5489cc4b032c1d0dfcfd790b6a1b947d32ea4a187f696d35f0bc7aebacba0ca1",
       "dossier_path": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2079,
+          "title": "log-store): refuse to open object store WAL regions whose history is missing (#9",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.206Z"
+      "verified_at": "2026-10-19T03:33:09.410Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-grpc-grpc-rust": {
       "learning_id": "learn-github-grpc-grpc-rust",
@@ -19130,7 +19169,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf",
       "source_version": "hf-prism-ml-ternary-bonsai-2-27b-gguf",
-      "content_hash": "b883147ac51fd34cf15cc31798e5c8b700e2cbeeb2d1cde5a933cc9981703c33",
+      "content_hash": "a876ef793e18b3e63398db5f8c5c11c112384d8fd4405b6a460030f35072ec10",
       "dossier_path": "07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md",
       "promoted_rules": [
@@ -19175,7 +19214,7 @@
         "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv44xvpe",
         "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv4i78uo"
       ],
-      "verified_at": "2026-10-17T22:44:10.920Z",
+      "verified_at": "2026-10-19T03:32:55.493Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -23582,22 +23621,35 @@
     "learn-github-jpush-aurora-imui": {
       "learning_id": "learn-github-jpush-aurora-imui",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "jpush-aurora-imui",
+      "source": "jpush/aurora-imui",
+      "repository": "jpush/aurora-imui",
       "slug": "jpush-aurora-imui",
       "platform": "github",
       "source_url": "https://github.com/jpush/aurora-imui",
-      "source_version": "HEAD",
-      "content_hash": "c33a9f60aa5f5ce53350fc2758cb29786a8f6671d28bc210e714b89608ed1022",
+      "source_version": "fb74b792",
+      "content_hash": "72fe6d650d0a8c14bd5c37625527143fa3bb943e558a39fa70d262aa77e82503",
       "dossier_path": "07_PROJECT_LEARNING/jpush-aurora-imui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jpush-aurora-imui-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2077,
+          "title": "inputview crash bug",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.731Z"
+      "verified_at": "2026-10-19T03:33:02.831Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-jtrivedi-wave": {
       "learning_id": "learn-github-jtrivedi-wave",
@@ -32334,22 +32386,35 @@
     "learn-github-react95-react95": {
       "learning_id": "learn-github-react95-react95",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "react95-react95",
+      "source": "React95/React95",
+      "repository": "React95/React95",
       "slug": "react95-react95",
       "platform": "github",
       "source_url": "https://github.com/React95/React95",
-      "source_version": "HEAD",
-      "content_hash": "db7912a0dcd1f332466a5635edc7cafad775a73f63cb4d94105dc666ae54e569",
+      "source_version": "30191733",
+      "content_hash": "88e795ad598c759efc38c6bfa91486f59d93ebe1d35dc68d204174b0640e5bac",
       "dossier_path": "07_PROJECT_LEARNING/react95-react95-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react95-react95-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2075,
+          "title": "icons): end the generated index with a newline",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.231Z"
+      "verified_at": "2026-10-19T03:32:55.718Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-reactive-resume-reactive-resume": {
       "learning_id": "learn-github-reactive-resume-reactive-resume",
@@ -75387,6 +75452,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T03:26:55.210Z"
+    },
+    "rule-2075": {
+      "learning_id": "rule-2075",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2075,
+      "title": "icons): end the generated index with a newline",
+      "source_url": "https://github.com/React95/React95",
+      "source_version": "30191733",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:32:55.718Z"
+    },
+    "rule-2076": {
+      "learning_id": "rule-2076",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2076,
+      "title": "use process_block inside process_blocks_padded",
+      "source_url": "https://github.com/embassy-rs/embassy",
+      "source_version": "262fdba5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:32:56.866Z"
+    },
+    "rule-2077": {
+      "learning_id": "rule-2077",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2077,
+      "title": "inputview crash bug",
+      "source_url": "https://github.com/jpush/aurora-imui",
+      "source_version": "fb74b792",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:33:02.832Z"
+    },
+    "rule-2078": {
+      "learning_id": "rule-2078",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2078,
+      "title": "None type on cleaning data",
+      "source_url": "https://github.com/decodingai-magazine/llm-twin-course",
+      "source_version": "04e12f37",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:33:04.856Z"
+    },
+    "rule-2079": {
+      "learning_id": "rule-2079",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2079,
+      "title": "log-store): refuse to open object store WAL regions whose history is missing (#9",
+      "source_url": "https://github.com/GreptimeTeam/greptimedb",
+      "source_version": "baa56301",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T03:33:09.410Z"
     }
   },
   "aliases": {

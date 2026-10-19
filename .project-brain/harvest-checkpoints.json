@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T03:26:55.285Z",
+  "last_updated": "2026-10-19T03:33:09.468Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -423,14 +423,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
-      "content_hash": "b883147ac51fd34cf15cc31798e5c8b700e2cbeeb2d1cde5a933cc9981703c33",
-      "verified_at": "2026-10-17T22:44:10.967Z",
+      "content_hash": "a876ef793e18b3e63398db5f8c5c11c112384d8fd4405b6a460030f35072ec10",
+      "verified_at": "2026-10-19T03:32:55.573Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T22:44:10.967Z"
+      "last_updated": "2026-10-19T03:32:55.573Z"
     },
     "Viggle/Qwen-Image-2.1-viggle-turbo": {
       "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
@@ -8107,6 +8107,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T03:26:55.285Z"
+    },
+    "React95/React95": {
+      "repository": "React95/React95",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-react95-react95",
+      "content_hash": "88e795ad598c759efc38c6bfa91486f59d93ebe1d35dc68d204174b0640e5bac",
+      "verified_at": "2026-10-19T03:32:55.775Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T03:32:55.775Z"
+    },
+    "embassy-rs/embassy": {
+      "repository": "embassy-rs/embassy",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-embassy-rs-embassy",
+      "content_hash": "75f8235c4627ef6ca809685e8f879af954c71f93444de5451b6ebddd20ab93e0",
+      "verified_at": "2026-10-19T03:32:56.929Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T03:32:56.929Z"
+    },
+    "jpush/aurora-imui": {
+      "repository": "jpush/aurora-imui",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-jpush-aurora-imui",
+      "content_hash": "72fe6d650d0a8c14bd5c37625527143fa3bb943e558a39fa70d262aa77e82503",
+      "verified_at": "2026-10-19T03:33:02.897Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T03:33:02.897Z"
+    },
+    "decodingai-magazine/llm-twin-course": {
+      "repository": "decodingai-magazine/llm-twin-course",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-decodingai-magazine-llm-twin-course",
+      "content_hash": "4e57fc31e8f162d369783c9fedb7047fabaf3634ca628d3ca52d586b44af26fd",
+      "verified_at": "2026-10-19T03:33:04.925Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T03:33:04.925Z"
+    },
+    "GreptimeTeam/greptimedb": {
+      "repository": "GreptimeTeam/greptimedb",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-greptimeteam-greptimedb",
+      "content_hash": "5489cc4b032c1d0dfcfd790b6a1b947d32ea4a187f696d35f0bc7aebacba0ca1",
+      "verified_at": "2026-10-19T03:33:09.468Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T03:33:09.468Z"
     }
   },
   "repos": {

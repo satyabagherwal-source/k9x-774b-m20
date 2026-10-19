@@ -355,8 +355,8 @@
     "sourceUrl": "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf",
     "sourceVersion": "hf-prism-ml-ternary-bonsai-2-27b-gguf",
     "license": "Open-Source",
-    "contentHash": "b883147ac51fd34cf15cc31798e5c8b700e2cbeeb2d1cde5a933cc9981703c33",
-    "lastHarvestedAt": "2026-10-17T22:44:10.964Z",
+    "contentHash": "a876ef793e18b3e63398db5f8c5c11c112384d8fd4405b6a460030f35072ec10",
+    "lastHarvestedAt": "2026-10-19T03:32:55.568Z",
     "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf"
   },
   "hf-viggle-qwen-image-2.1-viggle-turbo": {
@@ -5328,5 +5328,55 @@
     "contentHash": "49c739da5f88785308bc1d6181c0da21bd543fb83ca31f5590a69683cf5288af",
     "lastHarvestedAt": "2026-10-19T03:26:55.271Z",
     "learningId": "learn-github-yugabyte-yugabyte-db"
+  },
+  "react95-react95": {
+    "repository": "React95/React95",
+    "platform": "github",
+    "sourceUrl": "https://github.com/React95/React95",
+    "sourceVersion": "30191733",
+    "license": "NOASSERTION",
+    "contentHash": "88e795ad598c759efc38c6bfa91486f59d93ebe1d35dc68d204174b0640e5bac",
+    "lastHarvestedAt": "2026-10-19T03:32:55.770Z",
+    "learningId": "learn-github-react95-react95"
+  },
+  "embassy-rs-embassy": {
+    "repository": "embassy-rs/embassy",
+    "platform": "github",
+    "sourceUrl": "https://github.com/embassy-rs/embassy",
+    "sourceVersion": "262fdba5",
+    "license": "Apache-2.0",
+    "contentHash": "75f8235c4627ef6ca809685e8f879af954c71f93444de5451b6ebddd20ab93e0",
+    "lastHarvestedAt": "2026-10-19T03:32:56.923Z",
+    "learningId": "learn-github-embassy-rs-embassy"
+  },
+  "jpush-aurora-imui": {
+    "repository": "jpush/aurora-imui",
+    "platform": "github",
+    "sourceUrl": "https://github.com/jpush/aurora-imui",
+    "sourceVersion": "fb74b792",
+    "license": "MIT",
+    "contentHash": "72fe6d650d0a8c14bd5c37625527143fa3bb943e558a39fa70d262aa77e82503",
+    "lastHarvestedAt": "2026-10-19T03:33:02.892Z",
+    "learningId": "learn-github-jpush-aurora-imui"
+  },
+  "decodingai-magazine-llm-twin-course": {
+    "repository": "decodingai-magazine/llm-twin-course",
+    "platform": "github",
+    "sourceUrl": "https://github.com/decodingai-magazine/llm-twin-course",
+    "sourceVersion": "04e12f37",
+    "license": "MIT",
+    "contentHash": "4e57fc31e8f162d369783c9fedb7047fabaf3634ca628d3ca52d586b44af26fd",
+    "lastHarvestedAt": "2026-10-19T03:33:04.920Z",
+    "learningId": "learn-github-decodingai-magazine-llm-twin-course"
+  },
+  "greptimeteam-greptimedb": {
+    "repository": "GreptimeTeam/greptimedb",
+    "platform": "github",
+    "sourceUrl": "https://github.com/GreptimeTeam/greptimedb",
+    "sourceVersion": "baa56301",
+    "license": "Apache-2.0",
+    "contentHash": "5489cc4b032c1d0dfcfd790b6a1b947d32ea4a187f696d35f0bc7aebacba0ca1",
+    "lastHarvestedAt": "2026-10-19T03:33:09.463Z",
+    "learningId": "learn-github-greptimeteam-greptimedb"
   }
 }

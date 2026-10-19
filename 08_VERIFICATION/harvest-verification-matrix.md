@@ -2849,3 +2849,9 @@
 | `CYCLE-20261019-0KI4` | `2026-10-19T03:26:45.964Z` | `czy0729/Bangumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2073` | Yes (`2f8c2f1c...`) |
 | `CYCLE-20261019-0OPT` | `2026-10-19T03:26:51.425Z` | `aquasecurity/tfsec` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/aquasecurity-tfsec-learnings.md` | Yes (`9ae10440...`) |
 | `CYCLE-20261019-0ROG` | `2026-10-19T03:26:55.264Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2074` | Yes (`49c739da...`) |
+| `CYCLE-20261019-8HOT` | `2026-10-19T03:32:55.565Z` | `prism-ml/Ternary-Bonsai-2-27B-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md` | Yes (`a876ef79...`) |
+| `CYCLE-20261019-8HUB` | `2026-10-19T03:32:55.763Z` | `React95/React95` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2075` | Yes (`88e795ad...`) |
+| `CYCLE-20261019-8IQB` | `2026-10-19T03:32:56.915Z` | `embassy-rs/embassy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2076` | Yes (`75f8235c...`) |
+| `CYCLE-20261019-8NC9` | `2026-10-19T03:33:02.889Z` | `jpush/aurora-imui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2077` | Yes (`72fe6d65...`) |
+| `CYCLE-20261019-8OWM` | `2026-10-19T03:33:04.918Z` | `decodingai-magazine/llm-twin-course` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2078` | Yes (`4e57fc31...`) |
+| `CYCLE-20261019-8SEP` | `2026-10-19T03:33:09.457Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2079` | Yes (`5489cc4b...`) |

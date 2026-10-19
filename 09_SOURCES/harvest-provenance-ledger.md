@@ -2856,3 +2856,9 @@ Every entry in this ledger must capture:
 | `learn-github-czy0729-bangumi` | `https://github.com/czy0729/Bangumi` | `45860379` | Multi-dimensional audit evidence | 2026-10-19T03:26:45.970Z |
 | `learn-github-aquasecurity-tfsec` | `https://github.com/aquasecurity/tfsec` | `b692c20b` | Multi-dimensional audit evidence | 2026-10-19T03:26:51.428Z |
 | `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `b10be5ad` | Multi-dimensional audit evidence | 2026-10-19T03:26:55.271Z |
+| `learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf` | `https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf` | `hf-prism-m` | Multi-dimensional audit evidence | 2026-10-19T03:32:55.568Z |
+| `learn-github-react95-react95` | `https://github.com/React95/React95` | `30191733` | Multi-dimensional audit evidence | 2026-10-19T03:32:55.770Z |
+| `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `262fdba5` | Multi-dimensional audit evidence | 2026-10-19T03:32:56.923Z |
+| `learn-github-jpush-aurora-imui` | `https://github.com/jpush/aurora-imui` | `fb74b792` | Multi-dimensional audit evidence | 2026-10-19T03:33:02.892Z |
+| `learn-github-decodingai-magazine-llm-twin-course` | `https://github.com/decodingai-magazine/llm-twin-course` | `04e12f37` | Multi-dimensional audit evidence | 2026-10-19T03:33:04.920Z |
+| `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `baa56301` | Multi-dimensional audit evidence | 2026-10-19T03:33:09.463Z |
