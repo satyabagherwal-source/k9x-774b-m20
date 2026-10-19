@@ -1773,10 +1773,10 @@
     "repository": "ISTIFANO/seo-auditor",
     "platform": "github",
     "sourceUrl": "https://github.com/ISTIFANO/seo-auditor",
-    "sourceVersion": "HEAD",
-    "license": "Open-Source",
-    "contentHash": "25856b7326db72b881cb1122cb7c814729029c44ddaf6f9a4768eedef68be853",
-    "lastHarvestedAt": "2026-10-18T04:59:13.728Z",
+    "sourceVersion": "87ba51e6",
+    "license": "MIT",
+    "contentHash": "1381771a39eec6c318d9d35b53cffc5010324ee2498d5ed03deda0d00a98e8f8",
+    "lastHarvestedAt": "2026-10-19T15:59:33.917Z",
     "learningId": "learn-github-istifano-seo-auditor"
   },
   "code-forge-io-seo-tools": {
@@ -5073,10 +5073,10 @@
     "repository": "trinodb/trino",
     "platform": "github",
     "sourceUrl": "https://github.com/trinodb/trino",
-    "sourceVersion": "a966380e",
+    "sourceVersion": "b55d9247",
     "license": "Apache-2.0",
-    "contentHash": "c6efc5e86b36ce549faa47f86469f132b90b516f606bdbb9c6eb8d312cbfdc18",
-    "lastHarvestedAt": "2026-10-19T02:55:08.336Z",
+    "contentHash": "4f7c78e75c343e8f2e7a6987ce44a38e32cbebeb7f6e00d1193fe1656ca54ff3",
+    "lastHarvestedAt": "2026-10-19T15:59:43.204Z",
     "learningId": "learn-github-trinodb-trino"
   },
   "pinterest-gestalt": {
@@ -8308,5 +8308,15 @@
     "contentHash": "78ad7ac073dce51e39e7043095cf58172b432df77dbae5dc4bd5eaa719237897",
     "lastHarvestedAt": "2026-10-19T15:53:29.926Z",
     "learningId": "learn-github-emergetools-pow"
+  },
+  "swiftwebui-swiftwebui": {
+    "repository": "SwiftWebUI/SwiftWebUI",
+    "platform": "github",
+    "sourceUrl": "https://github.com/SwiftWebUI/SwiftWebUI",
+    "sourceVersion": "2a5fe83a",
+    "license": "Apache-2.0",
+    "contentHash": "435bc9f7fbaa08148d80f8400f93a60588d12e65ec5f1de17e1ca43ec522bacf",
+    "lastHarvestedAt": "2026-10-19T15:59:35.874Z",
+    "learningId": "learn-github-swiftwebui-swiftwebui"
   }
 }

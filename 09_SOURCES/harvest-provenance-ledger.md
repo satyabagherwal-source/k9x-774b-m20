@@ -3344,3 +3344,6 @@ Every entry in this ledger must capture:
 | `learn-github-emergetools-pow` | `https://github.com/EmergeTools/Pow` | `1b4b1dda` | Multi-dimensional audit evidence | 2026-10-19T15:53:29.926Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `6e2b5850` | Multi-dimensional audit evidence | 2026-10-19T15:53:32.908Z |
 | `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `f38e80e4` | Multi-dimensional audit evidence | 2026-10-19T15:53:33.237Z |
+| `learn-github-istifano-seo-auditor` | `https://github.com/ISTIFANO/seo-auditor` | `87ba51e6` | Multi-dimensional audit evidence | 2026-10-19T15:59:33.917Z |
+| `learn-github-swiftwebui-swiftwebui` | `https://github.com/SwiftWebUI/SwiftWebUI` | `2a5fe83a` | Multi-dimensional audit evidence | 2026-10-19T15:59:35.874Z |
+| `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `b55d9247` | Multi-dimensional audit evidence | 2026-10-19T15:59:43.204Z |

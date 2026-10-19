@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-S8VD",
-    "timestamp": "2026-10-19T03:20:17.641Z",
-    "repository": "nvidia/Nemotron-3-Diarization",
-    "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
-    "contentHash": "e38b97afbdaaff3f9b473a9c6ade44ad148fee5767a98d075607b3fbac19fa63",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-S8XD",
-    "timestamp": "2026-10-19T03:20:17.713Z",
-    "repository": "lobehub/lobe-ui",
-    "learningId": "learn-github-lobehub-lobe-ui",
-    "contentHash": "4582b1af249d8f61ac846a47a94b827f1a33d5e598b826e802af86049990b527",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-S9NN",
-    "timestamp": "2026-10-19T03:20:18.659Z",
-    "repository": "gitui-org/gitui",
-    "learningId": "learn-github-gitui-org-gitui",
-    "contentHash": "9ca9f9ca3645e881e0a9f518229c5721e843bb04dced279d02042a3761ef5754",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-SDNE",
     "timestamp": "2026-10-19T03:20:23.834Z",
     "repository": "ZSeven-W/openpencil",
@@ -7490,6 +7445,51 @@
     "repository": "arangodb/arangodb",
     "learningId": "learn-github-arangodb-arangodb",
     "contentHash": "ffc25779538a444bd0e6c021228aca63979e4b9fc0f9d3d72a9b08810fee03c3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-WOBF",
+    "timestamp": "2026-10-19T15:59:33.915Z",
+    "repository": "ISTIFANO/seo-auditor",
+    "learningId": "learn-github-istifano-seo-auditor",
+    "contentHash": "1381771a39eec6c318d9d35b53cffc5010324ee2498d5ed03deda0d00a98e8f8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-WPTS",
+    "timestamp": "2026-10-19T15:59:35.872Z",
+    "repository": "SwiftWebUI/SwiftWebUI",
+    "learningId": "learn-github-swiftwebui-swiftwebui",
+    "contentHash": "435bc9f7fbaa08148d80f8400f93a60588d12e65ec5f1de17e1ca43ec522bacf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-WVHD",
+    "timestamp": "2026-10-19T15:59:43.201Z",
+    "repository": "trinodb/trino",
+    "learningId": "learn-github-trinodb-trino",
+    "contentHash": "4f7c78e75c343e8f2e7a6987ce44a38e32cbebeb7f6e00d1193fe1656ca54ff3",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T15:53:33.189Z",
-  "total_verified_learnings": 845,
+  "last_updated": "2026-10-19T15:59:43.164Z",
+  "total_verified_learnings": 846,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -40171,22 +40171,35 @@
     "learn-github-swiftwebui-swiftwebui": {
       "learning_id": "learn-github-swiftwebui-swiftwebui",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "swiftwebui-swiftwebui",
+      "source": "SwiftWebUI/SwiftWebUI",
+      "repository": "SwiftWebUI/SwiftWebUI",
       "slug": "swiftwebui-swiftwebui",
       "platform": "github",
       "source_url": "https://github.com/SwiftWebUI/SwiftWebUI",
-      "source_version": "HEAD",
-      "content_hash": "1908601f52eccc82660a82c8ff1cbfbe907fa5d9b2c755837bd46691130230bd",
+      "source_version": "2a5fe83a",
+      "content_hash": "435bc9f7fbaa08148d80f8400f93a60588d12e65ec5f1de17e1ca43ec522bacf",
       "dossier_path": "07_PROJECT_LEARNING/swiftwebui-swiftwebui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/swiftwebui-swiftwebui-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2663,
+          "title": "Use `@resultBuilder` for ViewBuilder",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.783Z"
+      "verified_at": "2026-10-19T15:59:35.814Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-swirlai-swirl-search": {
       "learning_id": "learn-github-swirlai-swirl-search",
@@ -42094,14 +42107,19 @@
       "slug": "trinodb-trino",
       "platform": "github",
       "source_url": "https://github.com/trinodb/trino",
-      "source_version": "a966380e",
-      "content_hash": "c6efc5e86b36ce549faa47f86469f132b90b516f606bdbb9c6eb8d312cbfdc18",
+      "source_version": "b55d9247",
+      "content_hash": "4f7c78e75c343e8f2e7a6987ce44a38e32cbebeb7f6e00d1193fe1656ca54ff3",
       "dossier_path": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "promoted_rules": [
         {
           "number": 2047,
           "title": "Bump the web-ui-dependencies group",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2664,
+          "title": "flaky JDBC testCancellation",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -42110,7 +42128,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T02:55:08.272Z",
+      "verified_at": "2026-10-19T15:59:43.154Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53804,17 +53822,23 @@
       "slug": "istifano-seo-auditor",
       "platform": "github",
       "source_url": "https://github.com/ISTIFANO/seo-auditor",
-      "source_version": "HEAD",
-      "content_hash": "25856b7326db72b881cb1122cb7c814729029c44ddaf6f9a4768eedef68be853",
+      "source_version": "87ba51e6",
+      "content_hash": "1381771a39eec6c318d9d35b53cffc5010324ee2498d5ed03deda0d00a98e8f8",
       "dossier_path": "07_PROJECT_LEARNING/istifano-seo-auditor-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/istifano-seo-auditor-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2662,
+          "title": "Extend Issue (pillar + recommended_fix) and Page with crawl signals",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T04:59:13.653Z",
+      "verified_at": "2026-10-19T15:59:33.859Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -88972,6 +88996,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T15:53:33.181Z"
+    },
+    "rule-2662": {
+      "learning_id": "rule-2662",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2662,
+      "title": "Extend Issue (pillar + recommended_fix) and Page with crawl signals",
+      "source_url": "https://github.com/ISTIFANO/seo-auditor",
+      "source_version": "87ba51e6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T15:59:33.859Z"
+    },
+    "rule-2663": {
+      "learning_id": "rule-2663",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2663,
+      "title": "Use `@resultBuilder` for ViewBuilder",
+      "source_url": "https://github.com/SwiftWebUI/SwiftWebUI",
+      "source_version": "2a5fe83a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T15:59:35.814Z"
+    },
+    "rule-2664": {
+      "learning_id": "rule-2664",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2664,
+      "title": "flaky JDBC testCancellation",
+      "source_url": "https://github.com/trinodb/trino",
+      "source_version": "b55d9247",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T15:59:43.154Z"
     }
   },
   "aliases": {

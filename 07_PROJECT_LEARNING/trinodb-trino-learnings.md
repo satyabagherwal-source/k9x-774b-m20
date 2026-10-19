@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source**: github ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
-> **Source Version**: `a966380e`  
+> **Source Version**: `b55d9247`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T02:55:08.064Z  
+> **Timestamp**: 2026-10-19T15:59:42.978Z  
 > **Learning ID**: `learn-github-trinodb-trino`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T02:55:08.057Z  
+> **Harvest Timestamp**: 2026-10-19T15:59:42.972Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Official repository of Trino, the distributed SQL query engine for big data, formerly known as PrestoSQL (https://trino.io)
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13344 stars
+- **Stars / Engagement**: 13348 stars
 
 ---
 
@@ -1862,189 +1862,85 @@ export const SqlBlock = ({ language, code }) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `469cf186` (2026-10-18)
-**Commit Message**: Bump the web-ui-dependencies group
+### Incident Patch 1: `57d8048e` (2026-10-16)
+**Commit Message**: Fix flaky JDBC testCancellation
 
-Bumps the web-ui-dependencies group in /core/trino-web-ui/src/main/resources/webapp with 5 updates:
+Remote database logs are traced asynchronously, so the log entry of the
+CREATE VIEW statement for the sleeping view could arrive after tracing
+started and be mistaken for the scan of the view. The test then killed
+the query before the remote scan started, so no cancellation was ever
+logged.
 
-| Package | From | To |
-| --- | --- | --- |
-| [@types/lodash](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/HEAD/types/lodash) | `4.17.25` | `4.17.26` |
-| [prettier](https://github.com/prettier/prettier) | `3.9.9` | `3.9.10` |
-| [baseline-browser-mapping](https://github.com/web-platform-dx/baseline-browser-mapping) | `2.11.27` | `2.11.29` |
-| [node-releases](https://github.com/chicoxyzzy/node-releases) | `2.0.57` | `2.0.59` |
-| [update-browserslist-db](https://github.com/browserslist/update-db) | `1.3.3` | `1.3.4` |
-
-
-Updates `@types/lodash` from 4.17.25 to 4.17.26
-- [Release notes](https://github.com/DefinitelyTyped/DefinitelyTyped/releases)
-- [Commits](https://github.com/DefinitelyTyped/DefinitelyTyped/commits/HEAD/types/lodash)
-
-Updates `prettier` from 3.9.9 to 3.9.10
-- [Release notes](https://github.com/prettier/prettier/releases)
-- [Changelog](https://github.com/prettier/prettier/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/prettier/prettier/compare/3.9.9...3.9.10)
-
-Updates `baseline-browser-mapping` from 2.11.27 to 2.11.2
-
-**File**: `core/trino-web-ui/src/main/resources/webapp/bun.lock` (modified, +7/-7)
+**File**: `plugin/trino-base-jdbc/src/test/java/io/trino/plugin/jdbc/BaseJdbcConnectorTest.java` (modified, +9/-2)
 ```diff
-@@ -26,7 +26,7 @@
-       },
-       "devDependencies": {
-         "@eslint/js": "^9.39.5",
--        "@types/lodash": "^4.17.25",
-+        "@types/lodash": "^4.17.26",
-         "@types/lodash.merge": "^4.6.9",
-         "@types/react": "^19.3.0",
-         "@types/react-dom": "^19.3.0",
-@@ -38,7 +38,7 @@
-         "eslint-plugin-react-hooks": "^5.2.0",
-         "eslint-plugin-react-refresh": "^0.5.7",
-         "globals": "^16.5.0",
--        "prettier": "^3.9.9",
-+        "prettier": "^3.9.10",
-         "typescript": "^6.0.3",
-         "typescript-eslint": "^8.71.1",
-         "vite": "npm:rolldown-vite@^7.3.1",
-@@ -307,7 +307,7 @@
+@@ -1571,7 +1571,7 @@ public void testCancellation()
+         try (TestView sleepingView = createSleepingView(new Duration(1, MINUTES))) {
+             String tableNameToScan = sleepingView.getName().toLowerCase(ENGLISH);
  
-     "@types/json-schema": ["@types/json-schema@7.0.15", "", {}, "sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA=="],
+-            RemoteLogTracingEvent runningTracingEvent = new RemoteLogTracingEvent(event -> event.getQuery().toLowerCase(ENGLISH).contains(tableNameToScan) && event.getStatus() == RUNNING);
++            RemoteLogTracingEvent runningTracingEvent = new RemoteLogTracingEvent(event -> isScanOf(event, tableNameToScan) && event.getStatus() == RUNNING);
+             startTracingDatabaseEvent(runningTracingEvent);
  
--    "@types/lodash": ["@types/lodash@4.17.25", "", {}, "sha512-+K1NIO8I+F9/wNulfVvu23QYd0Pe9/OCqRrim4NoYIf1VoEDL90Ve4ClzpyqBLc7NpGGWRvYNCKZ1BE/Jpf8dQ=="],
-+    "@types/lodash": ["@types/lodash@4.17.26", "", {}, "sha512-48NWfiY6oNcKOh47Z4h+sIvwcQR91h6KPhaYKgeMIrkT2jV82Gy90SErj60vW8jQbeMSOSbhIv3bZ7JoqPPVhA=="],
+             String query = "SELECT * FROM " + sleepingView.getName();
+@@ -1580,7 +1580,7 @@ public void testCancellation()
+             assertEventually(() -> assertThat(runningTracingEvent.hasHappened()).isTrue());
+             stopTracingDatabaseEvent(runningTracingEvent);
  
-     "@types/lodash.merge": ["@types/lodash.merge@4.6.9", "", { "dependencies": { "@types/lodash": "*" } }, "sha512-23sHDPmzd59kUgWyKGiOMO2Qb9YtqRO/x4IhkgNUiPQ1+5MUVqi6bCZeq9nBJ17msjIMbEIO5u+XW4Kz6aGUhQ=="],
- 
-@@ -387,7 +387,7 @@
- 
-     "balanced-match": ["balanced-match@1.0.2", "", {}, "sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw=="],
- 
--    "baseline-browser-mapping": ["baseline-browser-mapping@2.11.27", "", { "bin": { "baseline-browser-mapping": "dist/cli.cjs" } }, "sha512-ElY12DaROGuan+lMmZ8Cvo/ZUbXPe7Enc/9VU/b1T3Kp4dwytRcNdR8DoSJN5SNJT/CuvcCA0DHDVmMOCePdRQ=="],
-+    "baseline-browser-mapping": ["baseline-browser-mapping@2.11.29", "", { "bin": { "baseline-browser-mapping": "dist/cli.cjs" } }, "sha512-YeesxhUmR4h5y5V8KF8iBCqJb8YFrBJ++XBTeGcWIaQOYXGN19JM0FoiOjAhwuDoln8owMgXcWBmgHtYSkky2w=="],
- 
-     "batch-processor": ["batch-processor@1.0.0", "", {}, "sha512-xoLQD8gmmR32MeuBHgH0Tzd5PuSZx71ZsbhVxOCRbgktZEPe4SQy7s9Z50uPp0F/f7iw2XmkHN2xkgbMfckMDA=="],
- 
-@@ -771,7 +771,7 @@
- 
-     "node-exports-info": ["node-exports-info@1.6.2", "", { "dependencies": { "array.prototype.flatmap": "^1.3.3", "es-errors": "^1.3.0", "object.entries": "^1.1.9", "semver": "^6.3.1" } }, "sha512-kXs9Go0cah0qHVV2v389IXQLdLCeE1xfFtjOAF+iobu0OIoG1pje8At2vMHyaPMiPMnG/LWP50twML21eMcAag=="],
- 
--    "node-releases": ["node-releases@2.0.57", "", {}, "sha512-kQK9LGGFiHtrWiNhZtA7Qbw17AQz+dmsEKODRIVTXA9+e5MS/2gZEBhYJt13GrAz5/IOZKddH/0Z3TP/Zgo+yw=="],
-+    "node-releases": ["node-releases@2.0.59", "", {}, "sha512-5qr2okC4ItAI0hG5SaV0HoYMpnM/Y6+Oqr7AmPYy/2uEoGvS+GbSKLeRxSS1uAdu59yz0ouzcuXievSgg///WA=="],
- 
-     "object-assign": ["object-assign@4.1.1", "", {}, "sha512-rJgTQnkUnH1sFw8yT6VSU3zD3sWmu6sZhIseY8VX+GRu3P6F7Fu+JNDoXfklElbLJSnc3FUQHVe4cU5hj+BcUg=="],
- 
-@@ -817,7 +817,7 @@
- 
-     "prelude-ls": ["prelude-ls@1.2.1", "", {}, "sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g=="],
- 
--    "prettier": ["prettier@3.9.9", "", { "bin": { "prettier": "bin/prettier.cjs" } }, "sha512-Z/CJHIkdujO/OtN7nXUii0Rf3VT5SRuhjBA82Xvu2XhBUgX3nhP67T0LHceBdQLex7OOFGTox+Q5Yg8Jk2Qivg=="],
-+    "prettier": ["prettier@3.9.10", "", { "bin": { "prettier": "bin/prettier.cjs" } }, "sha512-skGHTH1Yb9QvaTC4hWnRTzEYtCpApF0UMBPz+t/0ZPzP8ihefo/btKd+QA7pUE0fEwA1SbS/NmhyEcstdXOIdA=="],
- 
-     "prop-types": ["prop-types@15.8.1", "", { "dependencies": { "loose-envify": "^1.4.0", "object-assign": "^4.1.1", "react-is": "^16.13.1" } }, "sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg=="],
- 
-@@ -935,7 +935,7 @@
- 
-     "unbox-primitive": ["unbox-primitive@1.1.0", "", { "dependencies": { "call-bound": "^1.0.3", "has-bigints": "^1.0.2", "has-symbols": "^1.1.0", "which-boxed-primitive": "^1.1.1" } }, "sha512-nWJ91DjeOkej/TA8pXQ3myruKpKEYgqvpw9lz4OPHj/NWFNluYrjbz9j01CJ8yKQd2g4jFoOkINCTW2I5LEEyw=="],
- 
--    "update-browserslist-db": ["update-browserslist-db@1.3.3", "", { "dependencies": { "escalade": "^3.2.0", "picocolors": "^1.1.1" }, "peerDependencies": { "browserslist": ">= 4.21.0" }, "bin": { "update-browserslist-db": "cli.js" } }, "sha512-pJ2sYawQS0R/WI928Gj5GlPhTGzbMelq0+4INtSYNDV9ErKJcX6xjGWkoG/VnB3dpUm00zALaqkrUD77pO5TDQ=="],
-+    "update-browserslist-db": ["update-browserslist-db@1.3.4", "", { "dependencies": { "escalade": "^3.2.0", "picocolors": "^1.1.1" }, "peerDependencies": { "browserslist": ">= 4.21.0" }, "bin": { "update-browserslist-db": "cli.js" } }, "sha512-t8wonIOdQyOjtPd2VktlBu6QjTVTks6v8bSi7kd0r2Vll8TK1JYDZtRRdbmCHOAMphkZgrzK+L+vXK4pyZ8t4A=="],
- 
-     "uri-js": ["uri-js@4.4.1", "", { "dependencies": { "punycode": "^2.1.0" } }, "sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg=="],
- 
-```
-
-**File**: `core/trino-web-ui/src/main/resources/webapp/package.json` (modified, +2/-2)
-```diff
-@@ -38,7 +38,7 @@
-   },
-   "devDependencies": {
-     "@eslint/js": "^9.39.5",
--    "@types/lodash": "^4.17.25",
-+    "@types/lodash": "^4.17.26",
-     "@types/lodash.merge": "^4.6.9",
-     "@types/react": "^19.3.0",
-     "@types/react-dom": "^19.3.0",
-@@ -50,7 +50,7 @@
-     "eslint-plugin-react-hooks": "^5.2.0",
-     "eslint-plugin-react-refresh": "^0.5.7",
-     "globals": "^16.5.0",
--    "prettier": "^3.9.9",
-+    "prettier": "^3.9.10",
-     "typescript": "^6.0.3",
-     "typescript-eslint": "^8.71.1",
-     "vite": "npm:rolldown-vite@^7.3.1"
-```
-
----
-
-### Incident Patch 2: `951e5838` (2026-10-16)
-**Commit Message**: Raise per-node query memory limit for Hive ACID tests
-
-Local exchange buffers are now charged to the memory pool, so writes
-reserve up to 128 MB more. With the 3 GB product test heap, CTAS of
-tpch.sf10.orders in testDeleteOverManySplits peaks close to the default
-per-node limit of 30% of the heap, and exceeds it on some runs.
-
-Tests run one query at a time, so use the 2 GB limit of the TPC
-environments.
-
-**File**: `testing/trino-product-tests/src/test/java/io/trino/tests/product/hive/HiveTransactionalEnvironment.java` (modified, +13/-0)
-```diff
-@@ -21,6 +21,7 @@
- import org.intellij.lang.annotations.Language;
- import org.testcontainers.containers.Container.ExecResult;
- import org.testcontainers.containers.Network;
-+import org.testcontainers.images.builder.Transferable;
- import org.testcontainers.trino.TrinoContainer;
- 
- import java.sql.Connection;
-@@ -109,6 +110,18 @@ public void start()
-                         .build())
-                 .withCatalog("tpch", Map.of("connector.name", "tpch"))
-                 .build();
-+        trino.withCopyToContainer(
-+                Transferable.of(
-+                        """
-+                        coordinator=true
-+                        node-scheduler.include-coordinator=true
-+                        discovery.uri=http://localhost:8080
-+                        catalog.management=${ENV:CATALOG_MANAGEMENT}
-+                        cache-manager.config-files=etc/cache-manager-memory.properties
-+                        # Tests run one query at a time
-+                        query.max-memory-per-node=2GB
-+                        """),
-+                "/etc/trino/config.properties");
-         TrinoProductTestContainer.startAndWait(trino);
+-            RemoteLogTracingEvent cancelledTracingEvent = new RemoteLogTracingEvent(event -> event.getQuery().toLowerCase(ENGLISH).contains(tableNameToScan) && event.getStatus() == CANCELLED);
++            RemoteLogTracingEvent cancelledTracingEvent = new RemoteLogTracingEvent(event -> isScanOf(event, tableNameToScan) && event.getStatus() == CANCELLED);
+             startTracingDatabaseEvent(cancelledTracingEvent);
+             assertUpdate(format("CALL system.runtime.kill_query(query_id => '%s', message => '%s')", queryId, "Killed by test"));
+             future.get();
+@@ -1589,6 +1589,13 @@ public void testCancellation()
+         }
      }
  
++    private static boolean isScanOf(RemoteDatabaseEvent event, String tableName)
++    {
++        // Remote logs arrive asynchronously, so the CREATE VIEW of the sleeping view may be traced too
++        String query = event.getQuery().toLowerCase(ENGLISH);
++        return query.startsWith("select") && query.contains(tableName);
++    }
++
+     protected void startTracingDatabaseEvent(RemoteLogTracingEvent event)
+     {
+         throw new UnsupportedOperationException();
 ```
 
 ---
 
-### Incident Patch 3: `20d762f7` (2026-10-18)
-**Commit Message**: Fix invalid dependabot configuration for github actions
+### Incident Patch 2: `12bc22d9` (2026-10-19)
+**Commit Message**: Remove deprecated FunctionMetadata.Builder
+.noDescription
 
-**File**: `.github/dependabot.yml` (modified, +0/-2)
+**File**: `core/trino-spi/src/main/java/io/trino/spi/function/FunctionMetadata.java` (modified, +0/-10)
 ```diff
-@@ -11,8 +11,6 @@ updates:
-       # Apply 7 day cooldown to avoid updating dependencies right away. This reduces the opportunity window
-       # when supply chain is compromised.
-       default-days: 7
--      semver-minor-days: 21
--      semver-major-days: 42
-   - package-ecosystem: "maven"
-     directory: "/"
-     schedule:
+@@ -316,16 +316,6 @@ public Builder neverFails(Predicate<BoundSignature> neverFails)
+             return this;
+         }
+ 
+-        /**
+-         * @deprecated Use {@link #description(String)} with an empty string.
+-         */
+-        @Deprecated
+-        public Builder noDescription()
+-        {
+-            this.description = "";
+-            return this;
+-        }
+-
+         public Builder description(String description)
+         {
+             requireNonNull(description, "description is null");
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #31652** (2026-10-19): Bump com.github.luben:zstd-jni from 1.5.7-22 to 1.5.7-23 (@dependabot[bot])
-- **PR #31651** (2026-10-19): Bump io.airlift:aircompressor-v3 from 3.10 to 3.11 (@dependabot[bot])
-- **PR #31649** (2026-10-19): Bump the web-ui-dependencies group in /core/trino-web-ui/src/main/resources/webapp with 5 updates (@dependabot[bot])
-- **PR #31648** (2026-10-19): Bump org.codehaus.woodstox:stax2-api from 4.3.1 to 4.3.2 (@dependabot[bot])
-- **PR #31646** (2026-10-18): Fix dependabot configuration for github actions (@wendigo)
-- **PR #31642** (2026-10-17): Compute SortedPositionLinks size once per factory (@raunaqmorarka)
+- **PR #31670** (2026-10-19): Bump io.airlift:aircompressor-v3 from 3.11 to 3.12 (@dependabot[bot])
+- **PR #31669** (closed): Classify Parquet lazy block read failures as external errors (@p3tr0sz)
+- **PR #31667** (2026-10-19): Remove duplicate license header (@krvikash)
+- **PR #31665** (2026-10-19): Remove deprecated method from ConnectorAccessControl (@ebyhr)
+- **PR #31664** (2026-10-19): Remove deprecated AbstractConnectorTableFunction constructor (@ebyhr)
+- **PR #31660** (2026-10-19): Retry transient errors when listing BigQuery tables (@krvikash)
 
 ---
 
@@ -2064,40 +1960,37 @@ environments.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Bump the web-ui-dependencies group
+## X. flaky JDBC testCancellation
 
 **RULE**:
-When implementing operations in `core/trino-web-ui/src/main/resources/webapp/bun.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `plugin/trino-base-jdbc/src/test/java/io/trino/plugin/jdbc/BaseJdbcConnectorTest.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `469cf186`: Bump the web-ui-dependencies group. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `57d8048e`: flaky JDBC testCancellation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/trino-web-ui/src/main/resources/webapp/bun.lock`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugin/trino-base-jdbc/src/test/java/io/trino/plugin/jdbc/BaseJdbcConnectorTest.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-        "@types/lodash": "^4.17.26",
-        "prettier": "^3.9.10",
-    "@types/lodash": ["@types/lodash@4.17.26", "", {}, "sha512-48NWfiY6oNcKOh47Z4h+sIvwcQR91h6KPhaYKgeMIrkT2jV82Gy90SErj60vW8jQbeMSOSbhIv3bZ7JoqPPVhA=="],
-    "baseline-browser-mapping": ["baseline-browser-mapping@2.11.29", "", { "bin": { "baseline-browser-mapping": "dist/cli.cjs" } }, "sha512-YeesxhUmR4h5y5V8KF8iBCqJb8YFrBJ++XBTeGcWIaQOYXGN19JM0FoiOjAhwuDoln8owMgXcWBmgHtYSkky2w=="],
-    "node-releases": ["node-releases@2.0.59", "", {}, "sha512-5qr2okC4ItAI0hG5SaV0HoYMpnM/Y6+Oqr7AmPYy/2uEoGvS+GbSKLeRxSS1uAdu59yz0ouzcuXievSgg///WA=="],
-    "prettier": ["prettier@3.9.10", "", { "bin": { "prettier": "bin/prettier.cjs" } }, "sha512-skGHTH1Yb9QvaTC4hWnRTzEYtCpApF0UMBPz+t/0ZPzP8ihefo/btKd+QA7pUE0fEwA1SbS/NmhyEcstdXOIdA=="],
-    "update-browserslist-db": ["update-browserslist-db@1.3.4", "", { "dependencies": { "escalade": "^3.2.0", "picocolors": "^1.1.1" }, "peerDependencies": { "browserslist": ">= 4.21.0" }, "bin": { "update-browserslist-db": "cli.js" } }, "sha512-t8wonIOdQyOjtPd2VktlBu6QjTVTks6v8bSi7kd0r2Vll8TK1JYDZtRRdbmCHOAMphkZgrzK+L+vXK4pyZ8t4A=="],
+            RemoteLogTracingEvent runningTracingEvent = new RemoteLogTracingEvent(event -> isScanOf(event, tableNameToScan) && event.getStatus() == RUNNING);
+            RemoteLogTracingEvent cancelledTracingEvent = new RemoteLogTracingEvent(event -> isScanOf(event, tableNameToScan) && event.getStatus() == CANCELLED);
+    private static boolean isScanOf(RemoteDatabaseEvent event, String tableName)
+    {
+        // Remote logs arrive asynchronously, so the CREATE VIEW of the sleeping view may be traced too
+        String query = event.getQuery().toLowerCase(ENGLISH);
+        return query.startsWith("select") && query.contains(tableName);
+    }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-        "@types/lodash": "^4.17.25",
-        "prettier": "^3.9.9",
-    "@types/lodash": ["@types/lodash@4.17.25", "", {}, "sha512-+K1NIO8I+F9/wNulfVvu23QYd0Pe9/OCqRrim4NoYIf1VoEDL90Ve4ClzpyqBLc7NpGGWRvYNCKZ1BE/Jpf8dQ=="],
-    "baseline-browser-mapping": ["baseline-browser-mapping@2.11.27", "", { "bin": { "baseline-browser-mapping": "dist/cli.cjs" } }, "sha512-ElY12DaROGuan+lMmZ8Cvo/ZUbXPe7Enc/9VU/b1T3Kp4dwytRcNdR8DoSJN5SNJT/CuvcCA0DHDVmMOCePdRQ=="],
-    "node-releases": ["node-releases@2.0.57", "", {}, "sha512-kQK9LGGFiHtrWiNhZtA7Qbw17AQz+dmsEKODRIVTXA9+e5MS/2gZEBhYJt13GrAz5/IOZKddH/0Z3TP/Zgo+yw=="],
-    "prettier": ["prettier@3.9.9", "", { "bin": { "prettier": "bin/prettier.cjs" } }, "sha512-Z/CJHIkdujO/OtN7nXUii0Rf3VT5SRuhjBA82Xvu2XhBUgX3nhP67T0LHceBdQLex7OOFGTox+Q5Yg8Jk2Qivg=="],
-    "update-browserslist-db": ["update-browserslist-db@1.3.3", "", { "dependencies": { "escalade": "^3.2.0", "picocolors": "^1.1.1" }, "peerDependencies": { "browserslist": ">= 4.21.0" }, "bin": { "update-browserslist-db": "cli.js" } }, "sha512-pJ2sYawQS0R/WI928Gj5GlPhTGzbMelq0+4INtSYNDV9ErKJcX6xjGWkoG/VnB3dpUm00zALaqkrUD77pO5TDQ=="],
+            RemoteLogTracingEvent runningTracingEvent = new RemoteLogTracingEvent(event -> event.getQuery().toLowerCase(ENGLISH).contains(tableNameToScan) && event.getStatus() == RUNNING);
+            RemoteLogTracingEvent cancelledTracingEvent = new RemoteLogTracingEvent(event -> event.getQuery().toLowerCase(ENGLISH).contains(tableNameToScan) && event.getStatus() == CANCELLED);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `469cf186` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `57d8048e` are properly handled with clean fallback behavior.
