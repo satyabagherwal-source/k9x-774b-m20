@@ -825,8 +825,8 @@
     "sourceUrl": "https://huggingface.co/microsoft/FrogNano-4B-2609",
     "sourceVersion": "hf-microsoft-frognano-4b-2609",
     "license": "Open-Source",
-    "contentHash": "3ddffd65a19db82978ec46636aefdef08b30a26dfdde45cc84cc787a80b752fd",
-    "lastHarvestedAt": "2026-10-18T01:58:59.186Z",
+    "contentHash": "7b9b806dea0958146c7580f5d36d3389fc22ec0c2cc8f78e98fe4c1b8dc1c16c",
+    "lastHarvestedAt": "2026-10-19T10:09:51.639Z",
     "learningId": "learn-huggingface-microsoft-frognano-4b-2609"
   },
   "hf-hexgrad-kokoro-82m": {
@@ -2223,10 +2223,10 @@
     "repository": "crate/crate",
     "platform": "github",
     "sourceUrl": "https://github.com/crate/crate",
-    "sourceVersion": "c5226df3",
+    "sourceVersion": "4d046d12",
     "license": "Apache-2.0",
-    "contentHash": "ad6dad0b2055d6621ac4b0c03ebece11115ecb4bba620faa0139385f13ca4e4d",
-    "lastHarvestedAt": "2026-10-18T21:07:49.078Z",
+    "contentHash": "9f03702d6595f4b937583c95b3a964d0aa52b33e3cf263cbb7982619490d8dc1",
+    "lastHarvestedAt": "2026-10-19T10:10:05.205Z",
     "learningId": "learn-github-crate-crate"
   },
   "nucleoidai-nucleoid": {
@@ -7638,5 +7638,25 @@
     "contentHash": "6809f2f82f2309298e634d1f29414d7f5219e60b690741c4b4c2827f17e75647",
     "lastHarvestedAt": "2026-10-19T10:03:42.815Z",
     "learningId": "learn-github-touchlab-kampkit"
+  },
+  "biomejs-biome": {
+    "repository": "biomejs/biome",
+    "platform": "github",
+    "sourceUrl": "https://github.com/biomejs/biome",
+    "sourceVersion": "c4199d79",
+    "license": "Apache-2.0",
+    "contentHash": "3345fca8a6df2ee03422dbe6a6941fd824d5cd10a546df27bc21083efdb4af8b",
+    "lastHarvestedAt": "2026-10-19T10:09:55.659Z",
+    "learningId": "learn-github-biomejs-biome"
+  },
+  "msasikanth-twine": {
+    "repository": "msasikanth/twine",
+    "platform": "github",
+    "sourceUrl": "https://github.com/msasikanth/twine",
+    "sourceVersion": "ca63e338",
+    "license": "GPL-3.0",
+    "contentHash": "904048898b550788fc3c22ab7c289c24221c22add17b47e56d45bfcf3bd124ab",
+    "lastHarvestedAt": "2026-10-19T10:10:01.820Z",
+    "learningId": "learn-github-msasikanth-twine"
   }
 }

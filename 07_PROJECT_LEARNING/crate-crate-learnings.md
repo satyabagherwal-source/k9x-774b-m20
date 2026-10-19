@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crate-crate-learnings.md`  
 > **Source**: github ([https://github.com/crate/crate](https://github.com/crate/crate))  
-> **Source Version**: `c5226df3`  
+> **Source Version**: `4d046d12`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T21:07:48.889Z  
+> **Timestamp**: 2026-10-19T10:10:04.951Z  
 > **Learning ID**: `learn-github-crate-crate`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crate-crate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/crate/crate](https://github.com/crate/crate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T21:07:48.505Z  
+> **Harvest Timestamp**: 2026-10-19T10:10:04.944Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -555,752 +555,80 @@ def patch_system_information(text: str, version: str, previous: str) -> str:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cf6214b9` (2026-10-07)
-**Commit Message**: Disable optimizer_reorder_nested_loop_join rule by default
+### Incident Patch 1: `4d046d12` (2026-10-12)
+**Commit Message**: Remove limitation that select can't be pipelined after writes
 
-Fixes a regression, introduced with https://github.com/crate/crate/pull/14172/
+Although it makes little sense to add a select statement to a JDBC batch
+given that the result can't be used, other clients can send an insert
+followed by select without an explicit `sync` message after the insert.
 
-Optimer rule could do an undesired swap for non-distributed join running on many nodes.
+An example with psycopg:
 
-We can't make all swap decisions in Rule as it doesn't have all required information, so disabling the rule
-and again making all swap decisions in the execution plan construction, where we have all required information.
+    with connect(self.uri) as conn, conn.pipeline(), conn.cursor() as cur:
+        cur.execute("insert into tbl (id, x) values (1, 42)")
+        cur.execute("select x from tbl where id = %s", [1])
 
-**File**: `docs/appendices/release-notes/6.4.7.rst` (modified, +4/-0)
+(See https://github.com/crate/crate-qa/pull/458)
+
+**File**: `docs/appendices/release-notes/6.6.0.rst` (modified, +5/-0)
 ```diff
-@@ -82,3 +82,7 @@ Fixes
+@@ -63,6 +63,11 @@ SQL Standard and PostgreSQL Compatibility
+ - Added a ``bool`` alias for the :ref:`boolean <type-boolean>` type for improved
+   PostgreSQL compatibility.
  
-   A ``NOT`` condition like ``t1.x = t2.y AND NOT (t1.a = t2.b)`` was turned into
-   ``t1.x = t2.y AND (t1.a = t2.b)``.
++- Extended the PostgreSQL wire protocol support for pipelining DDL or DML
++  statements followed by DQL statements without an intermediate ``sync`` message
++  between the statements. This is for example used by the ``psycopg`` client if
++  using their experimental pipeline support.
 +
-+- Disabled the optimizer rule ``optimizer_reorder_nested_loop_join`` by default
-+  to fix a performance regression of cross and outer joins that could happen if
-+  a query was run on multiple nodes and table statistics were available.
-```
-
-**File**: `docs/appendices/release-notes/6.5.1.rst` (modified, +4/-0)
-```diff
-@@ -82,3 +82,7 @@ Fixes
- 
-   A ``NOT`` condition like ``t1.x = t2.y AND NOT (t1.a = t2.b)`` was turned into
-   ``t1.x = t2.y AND (t1.a = t2.b)``.
-+
-+- Disabled the optimizer rule ``optimizer_reorder_nested_loop_join`` by default
-+  to fix a performance regression of cross and outer joins that could happen if
-+  a query was run on multiple nodes and table statistics were available.
-```
-
-**File**: `server/src/main/java/io/crate/planner/operators/NestedLoopJoin.java` (modified, +7/-3)
-```diff
-@@ -154,9 +154,13 @@ public ExecutionPlan build(DependencyCarrier executor,
-         boolean expectedRowsAvailable = lhStats.numDocs() != -1 && rhStats.numDocs() != -1;
-         if (expectedRowsAvailable) {
-             if (!orderByWasPushedDown && joinType.supportsInversion() &&
--                (blockNlPossible && lhStats.numDocs() > rhStats.numDocs())) {
--                // For block nested loop, the left side should always be smaller. Benchmarks have shown that the
--                // performance decreases if the left side is much larger and no limit is applied.
-+                ((isDistributed && lhStats.numDocs() < rhStats.numDocs() && left.resultDescription().orderBy() == null) ||
-+                 (blockNlPossible && lhStats.numDocs() > rhStats.numDocs()))) {
-+                // 1) The right side is always broadcast-ed, so for performance reasons we switch the tables so that
-+                //    the right table is the smaller (numOfRows). If left relation has a pushed-down OrderBy that needs
-+                //    to be preserved, then the switch is not possible.
-+                // 2) For block nested loop, the left side should always be smaller. Benchmarks have shown that the
-+                //    performance decreases if the left side is much larger and no limit is applied.
-                 ExecutionPlan tmpExecutionPlan = left;
-                 left = right;
-                 right = tmpExecutionPlan;
-```
-
-**File**: `server/src/main/java/io/crate/planner/optimizer/rule/ReorderNestedLoopJoin.java` (modified, +5/-0)
-```diff
-@@ -41,6 +41,11 @@ public Pattern<NestedLoopJoin> pattern() {
-         return pattern;
-     }
- 
-+    @Override
-+    public boolean defaultEnabled() {
-+        return false;
-+    }
-+
-     @Override
-     public LogicalPlan apply(NestedLoopJoin nestedLoop,
-                              Captures captures,
-```
-
-**File**: `server/src/test/java/io/crate/integrationtests/JoinIntegrationTest.java` (modified, +8/-9)
-```diff
-@@ -1504,15 +1504,14 @@ public void test_cross_join_on_top_of_fetch() throws Exception {
- 
-         String stmt = "SELECT * FROM (select a from tt1 order by b desc limit 1) i, tt2 WHERE c >= 50";
-         assertThat(execute("explain (costs false) " + stmt)).hasLines(
--            "Eval[a, a, b, c]",
--            "  └ NestedLoopJoin[CROSS]",
--            "    ├ Collect[doc.tt2 | [a, b, c] | (c >= 50)]",
--            "    └ Rename[a] AS i",
--            "      └ Eval[a]",
--            "        └ Fetch[a, b]",
--            "          └ Limit[1;0]",
--            "            └ OrderBy[b DESC]",
--            "              └ Collect[doc.tt1 | [_fetchid, b] | true]"
-+            "NestedLoopJoin[CROSS]",
-+            "  ├ Rename[a] AS i",
-+            "  │  └ Eval[a]",
-+            "  │    └ Fetch[a, b]",
-+            "  │      └ Limit[1;0]",
-+            "  │        └ OrderBy[b DESC]",
-+            "  │          └ Collect[doc.tt1 | [_fetchid, b] | true]",
-+            "  └ Collect[doc.tt2 | [a, b, c] | (c >= 50)]"
-         );
-         assertThat(execute(stmt)).hasRowCount(51);
-     }
-```
-
-**File**: `server/src/test/java/io/crate/integrationtests/PgCatalogITest.java` (modified, +1/-1)
-```diff
-@@ -297,7 +297,7 @@ public void testPgSettingsTable() throws Exception {
-             "optimizer_remove_order_beneath_insert| true| Indicates if the optimizer rule RemoveOrderBeneathInsert is activated.| NULL| NULL",
-             "optimizer_remove_redundant_eval| true| Indicates if the optimizer rule RemoveRedundantEval is activated.| NULL| NULL",
-             "optimizer_reorder_hash_join| true| Indicates if the optimizer rule ReorderHashJoin is activated.| NULL| NULL",
--            "optimizer_reorder_nested_loop_join| true| Indicates if the optimizer rule ReorderNestedLoopJoin is activated.| NULL| NULL",
-+            "optimizer_reorder_nested_loop_join| false| Indicates if the optimizer rule ReorderNestedLoopJoin is activated.| NULL| NULL",
-             "optimizer_rewrite_distinct_agg_to_group_by| true| Indicates if the optimizer rule RewriteDistinctAggToGroupBy is activated.| NULL| NULL",
-             "optimizer_rewrite_filter_on_cross_join_to_inner_join| true| Indicates if the optimizer rule RewriteFilterOnCrossJoinToInnerJoin is activated.| NULL| NULL",
-             "optimizer_rewrite_filter_on_outer_join_to_inner_join| true| Indicates if the optimizer rule RewriteFilterOnOuterJoinToInnerJoin is activated.| NULL| NULL",
-```
-
-**File**: `server/src/test/java/io/crate/integrationtests/ShowIntegrationTest.java` (modified, +1/-1)
-```diff
-@@ -441,7 +441,7 @@ public void testShowAll() {
-             "optimizer_remove_order_beneath_insert| true| Indicates if the optimizer rule RemoveOrderBeneathInsert is activated.",
-             "optimizer_remove_redundant_eval| true| Indicates if the optimizer rule RemoveRedundantEval is activated.",
-             "optimizer_reorder_hash_join| true| Indicates if the optimizer rule ReorderHashJoin is activated.",
--            "optimizer_reorder_nested_loop_join| true| Indicates if the optimizer rule ReorderNestedLoopJoin is activated.",
-+            "optimizer_reorder_nested_loop_join| false| Indicates if the optimizer rule ReorderNestedLoopJoin is activated.",
-             "optimizer_rewrite_distinct_agg_to_group_by| true| Indicates if the optimizer rule RewriteDistinctAggToGroupBy is activated.",
-             "optimizer_rewrite_filter_on_cross_join_to_inner_join| true| Indicates if the optimizer rule RewriteFilterOnCrossJoinToInnerJoin is activated.",
-             "optimizer_rewrite_filter_on_outer_join_to_inner_join| true| Indicates if the optimizer rule RewriteFilterOnOuterJoinToInnerJoin is activated.",
-```
-
-**File**: `server/src/test/java/io/crate/integrationtests/UserSessionIntegrationTest.java` (modified, +2/-1)
-```diff
-@@ -69,7 +69,8 @@ public void test_sys_sessions() {
-             String mostRecentJobId = session.getMostRecentJobID().toString();
-             assertThat(response).hasRows(
-                 "crate| test| localhost| http| false| {application_name=NULL, datestyle=ISO, " +
--                    "disabled_optimizer_rules=optimizer_equi_join_to_lookup_join, enable_hashjoin=false, " +
-+                    "disabled_optimizer_rules=optimizer_equi_join_to_lookup_join,optimizer_reorder_nested_loop_join, " +
-+                    "enable_hashjoin=false, " +
-                     "error_on_unknown_object_key=true, insert_select_fail_fast=false, " +
-                     "memory.operation_limit=0, search_path=pg_catalog,doc, " +
-                     "statement_timeout=10s}| select auth_user, session_user, client_address, " +
-```
-
----
-
-### Incident Patch 2: `e421987c` (2026-10-12)
-**Commit Message**: Revert "Implement loose index scan for numeric values"
-
-This reverts commit a4a57de4b27369ae5568c1a01a917a42949a3d92.
-
-Causes performance regressions in cases with a cardinality ratio > 15%
-This reverts it for 6.5 with the plan to readd it later with
-improvements to avoid the performance regressions or fallback to the old
-path for certain cardinality ratios
-
-**File**: `docs/appendices/release-notes/6.5.0.rst` (modified, +0/-5)
-```diff
-@@ -234,11 +234,6 @@ Performance and Resilience Improvements
-   Lucene's term dictionary. Such queries now take 41% less time to complete in
-   our benchmark for high-cardinality columns.
- 
--- Improved the performance of ``GROUP BY`` queries where the grouping key is a
--  numeric column by taking advantage of Lucene's BKD trees. The speed up depends
--  on a number of factors, such as a column's cardinality ratio, but can range
--  from 20% up to two orders of magnitude.
--
- Administration and Operations
- -----------------------------
+ Data Types
+ ----------
  
 ```
 
-**File**: `server/src/main/java/io/crate/execution/engine/collect/GroupByOptimizedIterator.java` (modified, +5/-111)
+**File**: `server/src/main/java/io/crate/session/Session.java` (modified, +3/-4)
 ```diff
-@@ -34,7 +34,6 @@
- import java.util.function.Supplier;
- 
- import org.apache.lucene.index.DocValues;
--import org.apache.lucene.index.FieldInfo;
- import org.apache.lucene.index.LeafReader;
- import org.apache.lucene.index.LeafReaderContext;
- import org.apache.lucene.index.PostingsEnum;
-@@ -217,100 +216,6 @@ private static Iterable<Row> keysToRows(Map<String, Long> countsByKey) {
-             .iterator();
-     }
- 
--    /// Returns a batchIterator that reads the BKD points index instead of scanning documents, for:
--    ///
--    ///     `SELECT numKey FROM t GROUP BY numKey`
--    ///
--    /// Only works for a keys-only GROUP BY on a single numeric column and without a WHERE clause.
--    /// Returns null for other queries.
--    @Nullable
--    static BatchIterator<Row> tryUseLooseIndexScan(IndexShard indexShard,
--                                                   RoutedCollectPhase collectPhase,
--                                                   CollectTask collectTask) {
--        GroupProjection groupProjection = singleKeyGroupProjection(collectPhase.projections());
--        if (groupProjection == null) {
--            return null;
--        }
--        if (!groupProjection.values().isEmpty()) {
--            // There are three cases:
--            //   1. count(*),                            e.g. SELECT x, count(*) FROM tbl GROUP BY x
--            //   2. aggregates over the key column,       e.g. SELECT x, avg(x) FROM tbl GROUP BY x
--            //   3. aggregates over a different column,   e.g. SELECT x, avg(y) FROM tbl GROUP BY x
--            //
--            // (1) and (2) can be implemented with just the PointTree, but currently aren't.
--            //
--            // (3) requires doc values, and they cannot be driven from PointValues, because
--            // PointValues is ordered by value: advanceExact requires a doc id >= the current one
--            // (see DocValuesIterator), while a value-ordered traversal hands out doc ids in
--            // arbitrary order.
--            return null;
--        }
--        if (!collectPhase.where().equals(Literal.BOOLEAN_TRUE)) {
--            // In theory a WHERE clause that uses only this key column could be pushed down to the
--            // PointTree, but that's currently not implemented.
--            // Any other WHERE clause, using other columns, cannot work at all.
--            return null;
--        }
--
--        Reference docKeyRef = getKeyRef(collectPhase.toCollect(), groupProjection.keys().getFirst());
--        if (docKeyRef == null) {
--            return null; // group by on a non-reference
--        }
--        final Reference keyRef = DocReferences.docRefToRegularRef(docKeyRef);
--        if (!LooseIndexScan.supportsType(keyRef.valueType())) {
--            return null; // not a type that CrateDB indexes as a single point dimension
--        }
--        if (keyRef.indexType() == IndexType.NONE) {
--            return null; // INDEX OFF, no points written
--        }
--
--        int bytesPerValue = pointWidth(
--            () -> indexShard.acquireSearcher("loose-index-scan:" + formatSource(collectPhase)), keyRef.storageIdent());
--        if (bytesPerValue < 0) {
--            return null;
--        }
--
--        ShardId shardId = indexShard.shardId();
--        SharedShardContext sharedShardContext = collectTask.sharedShardContexts().getOrCreateContext(shardId);
--        var searcherRef = sharedShardContext.acquireSearcher("loose-index-scan:" + formatSource(collectPhase));
--        collectTask.addSearcher(sharedShardContext.readerId(), searcherRef);
--
--        return LooseIndexScan.iterator(
--            searcherRef.item(),
--            keyRef,
--            bytesPerValue,
--            collectTask.getRamAccounting(),
--            collectTask.killToken()
--        );
--    }
--
--    /**
--     * The point width of `fieldName`, or -1 if the loose index scan cannot be used because the
--     * column has no points at all, or is indexed with more than one dimension.
--     */
--    static int pointWidth(Supplier<Engine.Searcher> acquireSearcher, String fieldName) {
--        // Acquires a separate searcher for the same reason as hasHighCardinalityRatio: going through
--        // sharedShardContexts() and then bailing out causes issues in the fallback logic later on.
--        try (var searcher = acquireSearcher.get()) {
--            // Enough to inspect only the first segment that contains the field since Lucene makes sure all segments
--            // use the same dimension.
--            // A segment can lack the field entirely if the column was added after it was written, or if every
--            // doc in it has a NULL value.
--            for (LeafReaderContext leaf : searcher.getIndexReader().leaves()) {
--                FieldInfo fieldInfo = leaf.reader().getFieldInfos().fieldInfo(fieldName);
--                if (fieldInfo == null) {
--                    continue;
--                }
--                assert fieldInfo.getPointIndexDimensionCount() > 0
--                    : "pointWidth() ca
-```
-
-**File**: `server/src/main/java/io/crate/execution/engine/collect/LooseIndexScan.java` (removed, +0/-559)
-```diff
-@@ -1,559 +0,0 @@
--/*
-- * Licensed to Crate.io GmbH ("Crate") under one or more contributor
-- * license agreements.  See the NOTICE file distributed with this work for
-- * additional information regarding copyright ownership.  Crate licenses
-- * this file to you under the Apache License, Version 2.0 (the "License");
-- * you may not use this file except in compliance with the License.  You may
-- * obtain a copy of the License at
-- *
-- *   http://www.apache.org/licenses/LICENSE-2.0
-- *
-- * Unless required by applicable law or agreed to in writing, software
-- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
-- * License for the specific language governing permissions and limitations
-- * under the License.
-- *
-- * However, if you have executed another commercial license agreement
-- * with Crate these terms will supersede the license and you may use the
-- * software solely pursuant to the terms of the relevant commercial agreement.
-- */
--
--package io.crate.execution.engine.collect;
--
--import java.io.IOException;
--import java.io.UncheckedIOException;
--import java.util.ArrayList;
--import java.util.Iterator;
--import java.util.List;
--import java.util.NoSuchElementException;
--import java.util.PriorityQueue;
--import java.util.Set;
--
--import org.apache.lucene.index.LeafReader;
--import org.apache.lucene.index.PointValues;
--import org.apache.lucene.index.PointValues.IntersectVisitor;
--import org.apache.lucene.index.PointValues.PointTree;
--import org.apache.lucene.index.PointValues.Relation;
--import org.apache.lucene.search.IndexSearcher;
--import org.apache.lucene.util.ArrayUtil;
--import org.apache.lucene.util.ArrayUtil.ByteArrayComparator;
--import org.apache.lucene.util.Bits;
--import org.apache.lucene.util.RamUsageEstimator;
--import org.apache.lucene.util.bkd.BKDConfig;
--import org.jspecify.annotations.Nullable;
--
--import io.crate.common.concurrent.Killable.Token;
--import io.crate.data.BatchIterator;
--import io.crate.data.InMemoryBatchIterator;
--import io.crate.data.Row;
--import io.crate.data.RowN;
--import io.crate.data.SentinelRow;
--import io.crate.data.breaker.RamAccounting;
--import io.crate.metadata.IndexType;
--import io.crate.metadata.Reference;
--import io.crate.types.ByteType;
--import io.crate.types.DataType;
--import io.crate.types.DateType;
--import io.crate.types.DoubleType;
--import io.crate.types.FloatType;
--import io.crate.types.IntegerType;
--import io.crate.types.LongType;
--import io.crate.types.ShortType;
--import io.crate.types.StorageSupport;
--import io.crate.types.TimestampType;
--
--/**
-- * Loose index scan (a.k.a. skip scan) over the BKD points index of a single numeric column. This can be used to serve
-- * a keys-only GROUP BY without reading documents.
-- * <p>
-- * A BKD tree with one dimension (which is what is used for numeric columns) has all the values in leaf blocks sorted.
-- * With that, a left-to-right traversal yields every point in ascending value order.
-- * <p>
-- * Deduplication is then a comparison against the previously emitted value. The key optimization is when finding a node
-- * for which {@code min == max}. This means that the whole subtree holds a single distinct value. That is the "loose"
-- * part.
-- * <p>
-- * Applicability is decided by {@link GroupByOptimizedIterator#tryUseLooseIndexScan}.
-- */
--final class LooseIndexScan {
--
--    /// Types CrateDB indexes as a single point dimension, and whose [StorageSupport#decode(byte[])]
--    /// can turn a packed point back into a value.
--    ///
--    /// `ip` and NUMERIC(19..38) are 1-dimension points too, but are left out for now: they need more
--    /// complex logic for comparison and decoding. `boolean` and `text` write no points at all.
--    private static final Set<Integer> SUPPORTED_TYPE_IDS = Set.of(
--        ByteType.ID,
--        ShortType.ID,
--        IntegerType.ID,
--        LongType.ID,
--        FloatType.ID,
--        DoubleType.ID,
--        DateType.ID,
--        TimestampType.ID_WITH_TZ,
--        TimestampType.ID_WITHOUT_TZ
--    );
--
--    static boolean supportsType(DataType<?> type) {
--        return SUPPORTED_TYPE_IDS.contains(type.id());
--    }
--
--    private LooseIndexScan() {
--    }
--
--    /**
--     * Distinct values of `keyRef`, read from the points index.
--     */
--    static BatchIterator<Row> iterator(IndexSearcher searcher,
--                                       Reference keyRef,
--                                       int bytesPerValue,
--                                       RamAccounting ramAccounting,
--                                       Token killToken) {
--        return InMemoryBatchIterator.of(
--            rows(searcher, keyRef, bytesPerValue, ramAccounting, killToken),
--            SentinelRow.SENTINEL,
--            // distinct values loaded lazily from each segment
--            true
--        );
--    }
--
--    // The distinct values as single cell rows, produced lazily.
--    private static Iterable<Row> rows(Ind
-```
-
-**File**: `server/src/main/java/io/crate/execution/engine/collect/LuceneShardCollectorProvider.java` (modified, +0/-8)
-```diff
-@@ -169,14 +169,6 @@ protected BatchIterator<Row> getProjectionFusedIterator(RoutedCollectPhase norma
-         if (it != null) {
-             return it;
-         }
--        it = GroupByOptimizedIterator.tryUseLooseIndexScan(
--            indexShard,
--            normalizedPhase,
--            collectTask
--        );
--        if (it != null) {
--            return it;
--        }
-         it = GroupByOptimizedIterator.tryOptimizeStringKeys(
-             nodeCtx.functions(),
-             referenceResolver,
-```
-
-**File**: `server/src/main/java/io/crate/types/ByteType.java` (modified, +0/-7)
-```diff
-@@ -26,7 +26,6 @@
- import java.util.function.Function;
- import java.util.function.Predicate;
- 
--import org.apache.lucene.util.NumericUtils;
- import org.elasticsearch.common.io.stream.StreamInput;
- import org.elasticsearch.common.io.stream.StreamOutput;
- import org.elasticsearch.common.xcontent.XContentParser;
-@@ -64,12 +63,6 @@ public Byte decode(int input) {
-             return (byte) input;
-         }
- 
--        // byte is indexed by IntIndexer, so its points are 4 bytes wide.
--        @Override
--        public Byte decode(byte[] packedPoint) {
--            return (byte) NumericUtils.sortableBytesToInt(packedPoint, 0);
--        }
--
-         @SuppressWarnings({ "rawtypes", "unchecked" })
-         public LuceneCollectorExpression<Number> getLuceneExpression(Reference ref,
-                                                                      Predicate<Reference> isParentIgnored) {
-```
-
-**File**: `server/src/main/java/io/crate/types/DateType.java` (modified, +0/-6)
-```diff
-@@ -32,7 +32,6 @@
- import java.util.function.Function;
- import java.util.function.Predicate;
- 
--import org.apache.lucene.util.NumericUtils;
- import org.apache.lucene.util.RamUsageEstimator;
- import org.elasticsearch.common.io.stream.StreamInput;
- import org.elasticsearch.common.io.stream.StreamOutput;
-@@ -87,11 +86,6 @@ public ValueIndexer<Long> valueIndexer(RelationName table,
-             return new LongIndexer(ref);
-         }
- 
--        @Override
--        public Long decode(byte[] packedPoint) {
--            return NumericUtils.sortableBytesToLong(packedPoint, 0);
--        }
--
-         @Override
-         public LuceneCollectorExpression<Long> getLuceneExpression(Reference ref,
-                                                                    Predicate<Reference> isParentIgnored) {
-```
-
-**File**: `server/src/main/java/io/crate/types/DoubleType.java` (modified, +0/-5)
-```diff
-@@ -124,11 +124,6 @@ public ValueIndexer<Number> valueIndexer(RelationName table,
-             return new DoubleIndexer(ref);
-         }
- 
--        @Override
--        public Double decode(byte[] packedPoint) {
--            return NumericUtils.sortableLongToDouble(NumericUtils.sortableBytesToLong(packedPoint, 0));
--        }
--
-         @Override
-         public LuceneCollectorExpression<Double> getLuceneExpression(Reference ref,
-                                                                      Predicate<Reference> isParentIgnored) {
-```
-
-**File**: `server/src/main/java/io/crate/types/FloatType.java` (modified, +0/-5)
-```diff
-@@ -124,11 +124,6 @@ public ValueIndexer<Float> valueIndexer(RelationName table,
-             return new FloatIndexer(ref);
-         }
- 
--        @Override
--        public Float decode(byte[] packedPoint) {
--            return NumericUtils.sortableIntToFloat(NumericUtils.sortableBytesToInt(packedPoint, 0));
--        }
--
-         @Override
-         public LuceneCollectorExpression<Float> getLuceneExpression(Reference ref,
-                                                                     Predicate<Reference> isParentIgnored) {
-```
-
----
-
-### Incident Patch 3: `c3aa9e26` (2026-08-21)
-**Commit Message**: Fix filtered nested CROSS JOIN rewrite to nested INNER JOINs
-
-RewriteFilterOnCrossJoinToInnerJoin generated an invalid HashJoin condition for
-filtered nested CROSS JOINs.
-
-For example, it produced this plan:
-
-    Eval[x, y, z]
-      └ HashJoin[INNER | (((x = y) AND (x = z)) AND (y = z))]
-        ├ NestedLoopJoin[CROSS]
-        │  ├ Collect[doc.t3 | [z] | true]
-        │  └ Collect[doc.t2 | [y] | true]
-        └ Collect[doc.t1 | [x] | true]
-
-The `y = z` predicate references only one side of the top-level HashJoin.
-During hash matching, it affects the hash calculation for only one side,
-causing the hash lookup to miss matching rows.
-
-The intended plan is:
-
-    Eval[x, y, z]
-      └ HashJoin[INNER | ((x = y) AND (x = z))]
-        ├ HashJoin[INNER | (y = z)]
-        │  ├ Collect[doc.t3 | [z] | true]
-        │  └ Collect[doc.t2 | [y] | true]
-        └ Collect[doc.t1 | [x] | true]
-
-Fix this by:
-
-1. Preserving equi-join filters in RewriteFilterOnCrossJoinToInnerJoin if they
-   do not reference both sides of the current cross join.
-2. Allowing MoveFilterBeneathJoin to push the preserved filter below the outer
-   join, so RewriteFilterOnCrossJoinToInnerJoin can be applied again.
-
-**File**: `docs/appendices/release-notes/6.4.7.rst` (modified, +16/-0)
-```diff
-@@ -106,3 +106,19 @@ Fixes
- 
-   Previously, the resulting plan would contain a cross join. With the fix, the
-   plan contains inner joins only and hence the query performs better.
-+
-+- Fixed an issue that caused queries with filtered nested ``CROSS JOIN``s to
-+  return incorrect results when ``optimizer_eliminate_cross_join`` was set to
-+  ``false`` and a filter above the join tree referenced only one side of the
-+  current cross join, e.g.::
-+
-+    SET optimizer_eliminate_cross_join = false;
-+
-+    SELECT t1.x, t2.y, t3.z
-+    FROM t1
-+    CROSS JOIN t2
-+    CROSS JOIN t3
-+    WHERE t1.x = t2.y
-+      AND t1.x = t3.z
-+      AND t2.y = t3.z;
-+
-```
-
-**File**: `docs/appendices/release-notes/6.5.1.rst` (modified, +16/-0)
-```diff
-@@ -111,3 +111,19 @@ Fixes
- 
-   Previously, the resulting plan would contain a cross join. With the fix, the
-   plan contains inner joins only and hence the query performs better.
-+
-+- Fixed an issue that caused queries with filtered nested ``CROSS JOIN``s to
-+  return incorrect results when ``optimizer_eliminate_cross_join`` was set to
-+  ``false`` and a filter above the join tree referenced only one side of the
-+  current cross join, e.g.::
-+
-+    SET optimizer_eliminate_cross_join = false;
-+
-+    SELECT t1.x, t2.y, t3.z
-+    FROM t1
-+    CROSS JOIN t2
-+    CROSS JOIN t3
-+    WHERE t1.x = t2.y
-+      AND t1.x = t3.z
-+      AND t2.y = t3.z;
-+
-```
-
-**File**: `server/src/main/java/io/crate/planner/optimizer/rule/MoveFilterBeneathJoin.java` (modified, +1/-3)
-```diff
-@@ -120,9 +120,7 @@ public LogicalPlan apply(Filter filter,
-         }
-         var splitQueries = QuerySplitter.split(query);
-         final int initialParts = splitQueries.size();
--        if (splitQueries.size() == 1 && splitQueries.keySet().iterator().next().size() > 1) {
--            return null;
--        }
-+
-         var lhs = join.lhs();
-         var rhs = join.rhs();
- 
-```
-
-**File**: `server/src/main/java/io/crate/planner/optimizer/rule/RewriteFilterOnCrossJoinToInnerJoin.java` (modified, +7/-8)
-```diff
-@@ -31,6 +31,7 @@
- import java.util.Set;
- 
- import io.crate.analyze.relations.QuerySplitter;
-+import io.crate.common.collections.Sets;
- import io.crate.expression.operator.AndOperator;
- import io.crate.expression.symbol.Symbol;
- import io.crate.metadata.RelationName;
-@@ -71,27 +72,25 @@ public LogicalPlan apply(Filter equiJoinConditionFilter, Captures captures, Cont
-         JoinPlan crossJoin = captures.get(joinCapture);
- 
-         Map<Set<RelationName>, Symbol> filterQuery = QuerySplitter.split(equiJoinConditionFilter.query());
--        HashSet<RelationName> relationNamesInFilterQuery = new HashSet<>();
-+        HashSet<RelationName> lhsRelations = new HashSet<>(crossJoin.lhs().relationNames());
-+        HashSet<RelationName> rhsRelations = new HashSet<>(crossJoin.rhs().relationNames());
- 
-         ArrayList<Symbol> newJoinCondition = new ArrayList<>();
-         ArrayList<Symbol> newFilterQuery = new ArrayList<>();
- 
-         for (var entry : filterQuery.entrySet()) {
-             Set<RelationName> key = entry.getKey();
-             Symbol value = entry.getValue();
--            if (EquiJoinDetector.isEquiJoin(value)) {
--                relationNamesInFilterQuery.addAll(key);
-+            boolean referencesLhs = Sets.intersection(key, lhsRelations).isEmpty() == false;
-+            boolean referencesRhs = Sets.intersection(key, rhsRelations).isEmpty() == false;
-+            if (EquiJoinDetector.isEquiJoin(value) && referencesLhs && referencesRhs) {
-                 newJoinCondition.add(value);
-             } else {
-                 newFilterQuery.add(value);
+@@ -622,10 +622,9 @@ public CompletableFuture<?> execute(String portalName, int maxRows, ResultReceiv
+                 }
              }
-         }
- 
--        HashSet<RelationName> sources = new HashSet<>();
--        sources.addAll(crossJoin.lhs().relationNames());
--        sources.addAll(crossJoin.rhs().relationNames());
--
--        if (sources.containsAll(relationNamesInFilterQuery)) {
-+        if (newJoinCondition.isEmpty() == false) {
-             return Filter.create(
-                 new JoinPlan(
-                     crossJoin.lhs(),
+             if (!deferredExecutionsByStmt.isEmpty()) {
+-                throw new UnsupportedOperationException(
+-                    "Only write operations are allowed in Batch statements");
+-            }
+-            if (activeExecution == null) {
++                activeExecution = triggerDeferredExecutions(false)
++                    .thenCompose(_ -> singleExec(portal, resultReceiver, maxRows));
++            } else if (activeExecution == null) {
+                 activeExecution = singleExec(portal, resultReceiver, maxRows);
+             } else {
+                 activeExecution = activeExecution
 ```
 
-**File**: `server/src/test/java/io/crate/planner/operators/JoinTest.java` (modified, +2/-2)
+**File**: `server/src/test/java/io/crate/integrationtests/PostgresITest.java` (modified, +5/-4)
 ```diff
-@@ -1638,8 +1638,8 @@ public void test_filter_on_nested_cross_join_to_nested_inner_joins() {
-         );
- 
-         assertThat(plan).hasOperators(
--            "HashJoin[INNER | (((x = y) AND (x = z)) AND (y = z))]",
--            "  ├ NestedLoopJoin[CROSS]",
-+            "HashJoin[INNER | ((x = z) AND (y = z))]",
-+            "  ├ HashJoin[INNER | (x = y)]",
-             "  │  ├ Collect[doc.t1 | [x] | (x > 1)]",
-             "  │  └ Collect[doc.t2 | [y] | (y > 2)]",
-             "  └ Collect[doc.t3 | [z] | (z > 3)]"
-```
-
-**File**: `server/src/test/java/io/crate/planner/operators/LogicalPlannerTest.java` (modified, +1/-0)
-```diff
-@@ -87,6 +87,7 @@ public void prepare() throws IOException {
-             .addTable(TableDefinitions.USER_TABLE_DEFINITION)
-             .addTable(T3.T1_DEFINITION)
-             .addTable(T3.T2_DEFINITION)
-+            .addTable(T3.T3_DEFINITION)
-             .addView(new RelationName("doc", "v2"), "SELECT a, x FROM doc.t1")
-             .addView(new RelationName("doc", "v3"), "SELECT a, x FROM doc.t1");
-         if (WARM.compareAndSet(false, true)) {
-```
-
-**File**: `server/src/test/java/io/crate/planner/optimizer/rule/MoveFilterBeneathJoinTest.java` (modified, +35/-0)
-```diff
-@@ -441,6 +441,41 @@ public void test_push_filter_down_to_cross_join() {
-         );
+@@ -790,7 +790,7 @@ public void testExecuteBatchWithDifferentStatements() throws Exception {
      }
  
-+    @Test
-+    public void test_push_filter_referencing_multiple_relations_down_to_nested_join() {
-+        var join1 = new JoinPlan(t1, t2, JoinType.CROSS, null);
-+        var join2 = new JoinPlan(join1, t3, JoinType.INNER, e.asSymbol("doc.t2.b = doc.t3.c"));
-+        var filter = new Filter(join2, e.asSymbol("doc.t1.a = doc.t2.b"));
-+
-+        assertThat(filter).hasOperators(
-+            "Filter[(a = b)]",
-+            "  └ Join[INNER | (b = c)]",
-+            "    ├ Join[CROSS]",
-+            "    │  ├ Collect[doc.t1 | [a] | true]",
-+            "    │  └ Collect[doc.t2 | [b] | true]",
-+            "    └ Collect[doc.t3 | [c] | true]"
-+        );
-+
-+        var rule = new MoveFilterBeneathJoin();
-+        var match = rule.pattern().accept(filter, Captures.empty());
-+
-+        assertThat(match.isPresent()).isTrue();
-+        assertThat(match.value()).isEqualTo(filter);
-+
-+        var result = rule.apply(match.value(),
-+            match.captures(),
-+            e.ruleContext());
-+
-+        assertThat(result).hasOperators(
-+            "Join[INNER | (b = c)]",
-+            "  ├ Filter[(a = b)]",
-+            "  │  └ Join[CROSS]",
-+            "  │    ├ Collect[doc.t1 | [a] | true]",
-+            "  │    └ Collect[doc.t2 | [b] | true]",
-+            "  └ Collect[doc.t3 | [c] | true]"
-+        );
-+    }
-+
      @Test
-     public void test_push_filter_down_to_preserved_side_of_left_nested_join() {
-         var joinCondition1 = e.asSymbol("doc.t1.a = doc.t2.b");
-```
-
-**File**: `server/src/test/java/io/crate/planner/optimizer/rule/RewriteFilterOnCrossJoinToInnerJoinTest.java` (modified, +8/-7)
-```diff
-@@ -140,11 +140,12 @@ public void test_rewrite_equ_join_filter_on_top_of_nested_cross_join_to_inner_jo
-             e.ruleContext());
+-    public void test_execute_batch_fails_with_read_operations() throws Exception {
++    public void test_execute_batch_with_insert_followed_by_read_operations() throws Exception {
+         try (Connection conn = DriverManager.getConnection(url(RW), properties)) {
+             conn.setAutoCommit(true);
+             Statement stmt = conn.createStatement();
+@@ -800,9 +800,10 @@ public void test_execute_batch_fails_with_read_operations() throws Exception {
+             statement.addBatch("refresh table t");
+             statement.addBatch("select count(*) from t");
  
-         assertThat(result).hasOperators(
--            "Join[INNER | ((a = b) AND (a = c))]",
--            "  ├ Collect[doc.t3 | [c] | true]",
--            "  └ Join[CROSS]",
--            "    ├ Collect[doc.t1 | [a] | true]",
--            "    └ Collect[doc.t2 | [b] | true]"
-+            "Filter[(a = b)]",
-+            "  └ Join[INNER | (a = c)]",
-+            "    ├ Collect[doc.t3 | [c] | true]",
-+            "    └ Join[CROSS]",
-+            "      ├ Collect[doc.t1 | [a] | true]",
-+            "      └ Collect[doc.t2 | [b] | true]"
-         );
+-            assertThatThrownBy(() -> statement.executeBatch())
+-                .isExactlyInstanceOf(BatchUpdateException.class)
+-                .hasMessageContaining("Only write operations are allowed in Batch statements");
++            int[] batchResult = statement.executeBatch();
++            assertThat(batchResult).containsExactly(2, 1, 0);
++            assertThat(statement.getUpdateCount()).isEqualTo(-1);
++            assertThat(statement.getResultSet()).isNull();
+         }
      }
  
-@@ -174,8 +175,8 @@ public void test_rewrite_equ_join_filter_on_top_of_nested__cross_join_to_inner_j
-             e.ruleContext());
- 
-         assertThat(result).hasOperators(
--            "Filter[(a > 1)]",
--            "  └ Join[INNER | ((a = b) AND (a = c))]",
-+            "Filter[((a = b) AND (a > 1))]",
-+            "  └ Join[INNER | (a = c)]",
-             "    ├ Collect[doc.t3 | [c] | true]",
-             "    └ Join[CROSS]",
-             "      ├ Collect[doc.t1 | [a] | true]",
 ```
 
 #### Recent Merged Pull Requests:
@@ -1329,24 +657,25 @@ Fix this by:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Disable optimizer_reorder_nested_loop_join rule by default
+## X. Remove limitation that select can't be pipelined after writes
 
 **RULE**:
-When implementing operations in `docs/appendices/release-notes/6.4.7.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate/crate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/appendices/release-notes/6.6.0.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate/crate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cf6214b9`: Disable optimizer_reorder_nested_loop_join rule by default. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4d046d12`: Remove limitation that select can't be pipelined after writes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/appendices/release-notes/6.4.7.rst`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/appendices/release-notes/6.6.0.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
+- Extended the PostgreSQL wire protocol support for pipelining DDL or DML
+  statements followed by DQL statements without an intermediate ``sync`` message
+  between the statements. This is for example used by the ``psycopg`` client if
+  using their experimental pipeline support.
 
-- Disabled the optimizer rule ``optimizer_reorder_nested_loop_join`` by default
-  to fix a performance regression of cross and outer joins that could happen if
-  a query was run on multiple nodes and table statistics were available.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1356,4 +685,4 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cf6214b9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4d046d12` are properly handled with clean fallback behavior.

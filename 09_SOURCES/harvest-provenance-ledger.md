@@ -3150,3 +3150,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local` | `https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-10-19T10:03:36.551Z |
 | `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `ef6d36ac` | Multi-dimensional audit evidence | 2026-10-19T10:03:38.931Z |
 | `learn-github-touchlab-kampkit` | `https://github.com/touchlab/KaMPKit` | `4af02006` | Multi-dimensional audit evidence | 2026-10-19T10:03:42.815Z |
+| `learn-huggingface-microsoft-frognano-4b-2609` | `https://huggingface.co/microsoft/FrogNano-4B-2609` | `hf-microso` | Multi-dimensional audit evidence | 2026-10-19T10:09:51.639Z |
+| `learn-github-biomejs-biome` | `https://github.com/biomejs/biome` | `c4199d79` | Multi-dimensional audit evidence | 2026-10-19T10:09:55.659Z |
+| `learn-github-msasikanth-twine` | `https://github.com/msasikanth/twine` | `ca63e338` | Multi-dimensional audit evidence | 2026-10-19T10:10:01.820Z |
+| `learn-github-crate-crate` | `https://github.com/crate/crate` | `4d046d12` | Multi-dimensional audit evidence | 2026-10-19T10:10:05.205Z |

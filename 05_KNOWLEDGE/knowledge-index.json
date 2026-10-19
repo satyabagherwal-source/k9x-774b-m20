@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T10:03:42.756Z",
-  "total_verified_learnings": 779,
+  "last_updated": "2026-10-19T10:10:05.161Z",
+  "total_verified_learnings": 781,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -3440,22 +3440,35 @@
     "learn-github-biomejs-biome": {
       "learning_id": "learn-github-biomejs-biome",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "biomejs-biome",
+      "source": "biomejs/biome",
+      "repository": "biomejs/biome",
       "slug": "biomejs-biome",
       "platform": "github",
       "source_url": "https://github.com/biomejs/biome",
-      "source_version": "HEAD",
-      "content_hash": "60ecf303824292c4519b422d47e3b0e472ff227ce427024692899b6918053513",
+      "source_version": "c4199d79",
+      "content_hash": "3345fca8a6df2ee03422dbe6a6941fd824d5cd10a546df27bc21083efdb4af8b",
       "dossier_path": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2484,
+          "title": "daemon): various fixes (#12441)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.083Z"
+      "verified_at": "2026-10-19T10:09:55.605Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-bitnami-sealed-secrets": {
       "learning_id": "learn-github-bitnami-sealed-secrets",
@@ -5579,14 +5592,19 @@
       "slug": "crate-crate",
       "platform": "github",
       "source_url": "https://github.com/crate/crate",
-      "source_version": "c5226df3",
-      "content_hash": "ad6dad0b2055d6621ac4b0c03ebece11115ecb4bba620faa0139385f13ca4e4d",
+      "source_version": "4d046d12",
+      "content_hash": "9f03702d6595f4b937583c95b3a964d0aa52b33e3cf263cbb7982619490d8dc1",
       "dossier_path": "07_PROJECT_LEARNING/crate-crate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crate-crate-learnings.md",
       "promoted_rules": [
         {
           "number": 1706,
           "title": "Disable optimizer_reorder_nested_loop_join rule by default",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2486,
+          "title": "Remove limitation that select can't be pipelined after writes",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -5595,7 +5613,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:07:49.037Z",
+      "verified_at": "2026-10-19T10:10:05.149Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -19389,7 +19407,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/microsoft/FrogNano-4B-2609",
       "source_version": "hf-microsoft-frognano-4b-2609",
-      "content_hash": "3ddffd65a19db82978ec46636aefdef08b30a26dfdde45cc84cc787a80b752fd",
+      "content_hash": "7b9b806dea0958146c7580f5d36d3389fc22ec0c2cc8f78e98fe4c1b8dc1c16c",
       "dossier_path": "07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md",
       "promoted_rules": [],
@@ -19409,7 +19427,7 @@
         "learn-huggingface-hf-microsoft-frognano-4b-2609-mv49zxkw",
         "learn-huggingface-hf-microsoft-frognano-4b-2609-mv4nczd5"
       ],
-      "verified_at": "2026-10-18T01:58:59.142Z",
+      "verified_at": "2026-10-19T10:09:51.587Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -30318,22 +30336,35 @@
     "learn-github-msasikanth-twine": {
       "learning_id": "learn-github-msasikanth-twine",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "msasikanth-twine",
+      "source": "msasikanth/twine",
+      "repository": "msasikanth/twine",
       "slug": "msasikanth-twine",
       "platform": "github",
       "source_url": "https://github.com/msasikanth/twine",
-      "source_version": "HEAD",
-      "content_hash": "40ad9a2405718da08720f602f38572bb1fc55658a9faca1cf01829d4204546f5",
+      "source_version": "ca63e338",
+      "content_hash": "904048898b550788fc3c22ab7c289c24221c22add17b47e56d45bfcf3bd124ab",
       "dossier_path": "07_PROJECT_LEARNING/msasikanth-twine-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/msasikanth-twine-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2485,
+          "title": "Bundle SQLite native libraries for macOS App Store builds",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.500Z"
+      "verified_at": "2026-10-19T10:10:01.756Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-mtkennerly-ludusavi": {
       "learning_id": "learn-github-mtkennerly-ludusavi",
@@ -85017,6 +85048,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T10:03:42.745Z"
+    },
+    "rule-2484": {
+      "learning_id": "rule-2484",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2484,
+      "title": "daemon): various fixes (#12441)",
+      "source_url": "https://github.com/biomejs/biome",
+      "source_version": "c4199d79",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T10:09:55.605Z"
+    },
+    "rule-2485": {
+      "learning_id": "rule-2485",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2485,
+      "title": "Bundle SQLite native libraries for macOS App Store builds",
+      "source_url": "https://github.com/msasikanth/twine",
+      "source_version": "ca63e338",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T10:10:01.756Z"
+    },
+    "rule-2486": {
+      "learning_id": "rule-2486",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2486,
+      "title": "Remove limitation that select can't be pipelined after writes",
+      "source_url": "https://github.com/crate/crate",
+      "source_version": "4d046d12",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T10:10:05.150Z"
     }
   },
   "aliases": {

@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261018-3UZ9",
-    "timestamp": "2026-10-18T23:45:22.581Z",
-    "repository": "internet-development/www-sacred",
-    "learningId": "learn-github-internet-development-www-sacred",
-    "contentHash": "9e74309fc3cf6ce083170890feb23731979a57d91c4fd6edeae06c27d6e66ae0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-3VXM",
-    "timestamp": "2026-10-18T23:45:23.818Z",
-    "repository": "Rigellute/spotify-tui",
-    "learningId": "learn-github-rigellute-spotify-tui",
-    "contentHash": "205e6ba9c71a7a88d0b2cb20be9c417263d53e4d9d28f75567afc9bdeda8c52d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-408K",
-    "timestamp": "2026-10-18T23:45:29.396Z",
-    "repository": "Nozbe/WatermelonDB",
-    "learningId": "learn-github-nozbe-watermelondb",
-    "contentHash": "caf3ad997963f50cb6bb085c968bad9a3a4887051379e611ffbee73ad7edb82f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-41NK",
-    "timestamp": "2026-10-18T23:45:31.232Z",
-    "repository": "dosco/graphjin",
-    "learningId": "learn-github-dosco-graphjin",
-    "contentHash": "f218ce341989878ccc9c6d8e8b9bfe4b79e54e0b2016979fa02a1be007f6e8d8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261018-42BJ",
     "timestamp": "2026-10-18T23:45:32.095Z",
     "repository": "jialinyyzz/humanizer",
@@ -7490,6 +7430,66 @@
     "repository": "touchlab/KaMPKit",
     "learningId": "learn-github-touchlab-kampkit",
     "contentHash": "6809f2f82f2309298e634d1f29414d7f5219e60b690741c4b4c2827f17e75647",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-EYAC",
+    "timestamp": "2026-10-19T10:09:51.636Z",
+    "repository": "microsoft/FrogNano-4B-2609",
+    "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
+    "contentHash": "7b9b806dea0958146c7580f5d36d3389fc22ec0c2cc8f78e98fe4c1b8dc1c16c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-F1E0",
+    "timestamp": "2026-10-19T10:09:55.656Z",
+    "repository": "biomejs/biome",
+    "learningId": "learn-github-biomejs-biome",
+    "contentHash": "3345fca8a6df2ee03422dbe6a6941fd824d5cd10a546df27bc21083efdb4af8b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-F655",
+    "timestamp": "2026-10-19T10:10:01.817Z",
+    "repository": "msasikanth/twine",
+    "learningId": "learn-github-msasikanth-twine",
+    "contentHash": "904048898b550788fc3c22ab7c289c24221c22add17b47e56d45bfcf3bd124ab",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-F8R6",
+    "timestamp": "2026-10-19T10:10:05.202Z",
+    "repository": "crate/crate",
+    "learningId": "learn-github-crate-crate",
+    "contentHash": "9f03702d6595f4b937583c95b3a964d0aa52b33e3cf263cbb7982619490d8dc1",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
