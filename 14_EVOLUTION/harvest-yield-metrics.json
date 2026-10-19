@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T05:52:52.005Z",
-  "total_cycles_completed": 2958,
-  "total_learnings_persisted": 2958,
-  "total_rules_promoted": 1994,
+  "last_updated": "2026-10-19T05:58:54.068Z",
+  "total_cycles_completed": 2964,
+  "total_learnings_persisted": 2964,
+  "total_rules_promoted": 2001,
   "history": [
-    {
-      "timestamp": "2026-10-19T02:03:23.554Z",
-      "repository": "etcd-io/etcd",
-      "learningId": "learn-github-etcd-io-etcd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T02:09:48.184Z",
-      "repository": "wasm-bindgen/wasm-pack",
-      "learningId": "learn-github-wasm-bindgen-wasm-pack",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T02:09:52.290Z",
-      "repository": "openbmb/MiniCPM-V-4.7-1B",
-      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T02:09:52.329Z",
-      "repository": "software-mansion/react-native-gesture-handler",
-      "learningId": "learn-github-software-mansion-react-native-gesture-handler",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T02:09:55.287Z",
-      "repository": "aws/aws-cdk",
-      "learningId": "learn-github-aws-aws-cdk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T02:10:00.945Z",
-      "repository": "cockroachdb/cockroach",
-      "learningId": "learn-github-cockroachdb-cockroach",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T02:12:33.019Z",
       "repository": "react95-io/React95",
@@ -1403,6 +1361,48 @@
       "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
       "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T05:58:41.147Z",
+      "repository": "dip/cmdk",
+      "learningId": "learn-github-dip-cmdk",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T05:58:42.395Z",
+      "repository": "graphprotocol/graph-node",
+      "learningId": "learn-github-graphprotocol-graph-node",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T05:58:46.716Z",
+      "repository": "hungps/flutter_pokedex",
+      "learningId": "learn-github-hungps-flutter_pokedex",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T05:58:49.507Z",
+      "repository": "temporalio/temporal",
+      "learningId": "learn-github-temporalio-temporal",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T05:58:50.609Z",
+      "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+      "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T05:58:54.068Z",
+      "repository": "Mintplex-Labs/anything-llm",
+      "learningId": "learn-github-mintplex-labs-anything-llm",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -2981,3 +2981,9 @@
 | `CYCLE-20261019-79M8` | `2026-10-19T05:51:56.528Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2206` | Yes (`e4fbce6d...`) |
 | `CYCLE-20261019-7CX6` | `2026-10-19T05:52:00.810Z` | `meilisearch/meilisearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2207` | Yes (`636de5a1...`) |
 | `CYCLE-20261019-8GF3` | `2026-10-19T05:52:51.999Z` | `XiaomiMiMo/MiMo-V2.6-Pro-RL` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2208, Rule 2209, Rule 2210` | Yes (`18e15d14...`) |
+| `CYCLE-20261019-FXTJ` | `2026-10-19T05:58:41.143Z` | `dip/cmdk` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/pacocoursey-cmdk-learnings.md` | Yes (`9140e0fd...`) |
+| `CYCLE-20261019-FYRP` | `2026-10-19T05:58:42.373Z` | `graphprotocol/graph-node` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2211` | Yes (`96de2d20...`) |
+| `CYCLE-20261019-G248` | `2026-10-19T05:58:46.712Z` | `hungps/flutter_pokedex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2212` | Yes (`0b60c1f2...`) |
+| `CYCLE-20261019-G49Q` | `2026-10-19T05:58:49.502Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2213` | Yes (`9fb4a97c...`) |
+| `CYCLE-20261019-G54E` | `2026-10-19T05:58:50.606Z` | `orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2214, Rule 1538, Rule EXISTING` | Yes (`718ed22a...`) |
+| `CYCLE-20261019-G7SD` | `2026-10-19T05:58:54.061Z` | `Mintplex-Labs/anything-llm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2215` | Yes (`037a6fed...`) |

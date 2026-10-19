@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T05:52:51.961Z",
-  "total_verified_learnings": 660,
+  "last_updated": "2026-10-19T05:58:54.034Z",
+  "total_verified_learnings": 665,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -10220,22 +10220,35 @@
     "learn-github-graphprotocol-graph-node": {
       "learning_id": "learn-github-graphprotocol-graph-node",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "graphprotocol-graph-node",
+      "source": "graphprotocol/graph-node",
+      "repository": "graphprotocol/graph-node",
       "slug": "graphprotocol-graph-node",
       "platform": "github",
       "source_url": "https://github.com/graphprotocol/graph-node",
-      "source_version": "HEAD",
-      "content_hash": "df2d71defb99702e5b2d511a54fb5cbcb1e431591f026a95268a9adab408751e",
+      "source_version": "6838f4e3",
+      "content_hash": "96de2d20d26f5ca59055880bbf60114c9d0afaa8754a6981b2307ae410903dcc",
       "dossier_path": "07_PROJECT_LEARNING/graphprotocol-graph-node-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/graphprotocol-graph-node-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2211,
+          "title": "store: split dump batches by byte size to avoid 2GB Arrow column overflow (#6646",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.190Z"
+      "verified_at": "2026-10-19T05:58:42.344Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-gravitl-netmaker": {
       "learning_id": "learn-github-gravitl-netmaker",
@@ -19366,7 +19379,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
       "source_version": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
-      "content_hash": "edc84877f41576dfc9cc24a6f326b9f8c79481bdc7046da1d21d8f04c3e4604d",
+      "content_hash": "718ed22a8afc22404a39397ddc18ae15de8228dc449f1f9fd81e964c5c86e2aa",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md",
       "promoted_rules": [
@@ -19442,6 +19455,21 @@
           "number": 1365,
           "title": "Sliding Window Attention (SWA) KV Cache Boundary Pinning Rule",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1538,
+          "title": "Quantization Precision & Numerical Stability Guard",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 2214,
+          "title": "Model Artifact Integrity & Supply Chain Verification",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": "EXISTING",
+          "title": "Context Window & Memory Bound Enforcement",
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -19462,7 +19490,7 @@
         "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv472vwd",
         "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv4kczwh"
       ],
-      "verified_at": "2026-10-17T23:55:57.466Z",
+      "verified_at": "2026-10-19T05:58:50.577Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -23069,22 +23097,35 @@
     "learn-github-hungps-flutter_pokedex": {
       "learning_id": "learn-github-hungps-flutter_pokedex",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hungps-flutter_pokedex",
+      "source": "hungps/flutter_pokedex",
+      "repository": "hungps/flutter_pokedex",
       "slug": "hungps-flutter_pokedex",
       "platform": "github",
       "source_url": "https://github.com/hungps/flutter_pokedex",
-      "source_version": "HEAD",
-      "content_hash": "8a92fe2ca9f1479b9a25aab9bdc9191e8dcb4e7ac3fadb2bdccd9a39e5373355",
+      "source_version": "7e2b6d49",
+      "content_hash": "0b60c1f239da0886224d7ea3c3fcee580c1b87701476c38ccb1ce3c628651aa5",
       "dossier_path": "07_PROJECT_LEARNING/hungps-flutter_pokedex-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hungps-flutter_pokedex-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2212,
+          "title": "Merge pull request #90 from hungps/fix/deprecated-imperative-gradle-plugins",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.518Z"
+      "verified_at": "2026-10-19T05:58:46.683Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-hunvreus-basecoat": {
       "learning_id": "learn-github-hunvreus-basecoat",
@@ -28329,22 +28370,35 @@
     "learn-github-mintplex-labs-anything-llm": {
       "learning_id": "learn-github-mintplex-labs-anything-llm",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "mintplex-labs-anything-llm",
+      "source": "Mintplex-Labs/anything-llm",
+      "repository": "Mintplex-Labs/anything-llm",
       "slug": "mintplex-labs-anything-llm",
       "platform": "github",
       "source_url": "https://github.com/Mintplex-Labs/anything-llm",
-      "source_version": "HEAD",
-      "content_hash": "93dfe2413471f2dd4a7fc5387fe5a61cd203f2bd59091c07a871b7788720443d",
+      "source_version": "d7d68e75",
+      "content_hash": "037a6fed0bb01dca95a260963211d6328234c86e7d3323a857968c877dd9fd4a",
       "dossier_path": "07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2215,
+          "title": "Built-in LLM for Docker (embedded_lemonade) (#6719)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.382Z"
+      "verified_at": "2026-10-19T05:58:54.028Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-mirascope-mirascope": {
       "learning_id": "learn-github-mirascope-mirascope",
@@ -37775,22 +37829,35 @@
     "learn-github-temporalio-temporal": {
       "learning_id": "learn-github-temporalio-temporal",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "temporalio-temporal",
+      "source": "temporalio/temporal",
+      "repository": "temporalio/temporal",
       "slug": "temporalio-temporal",
       "platform": "github",
       "source_url": "https://github.com/temporalio/temporal",
-      "source_version": "HEAD",
-      "content_hash": "38f61e7a4cbf052946fb7826bce3ee694ad115664db0988d0342c7f20f76cdd1",
+      "source_version": "f4318206",
+      "content_hash": "9fb4a97c64d813b46edf9968dbfb70e169c5bb1a7c98e186577952b6d6321b1c",
       "dossier_path": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2213,
+          "title": "timeskipping clock mismatch (#12609)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.902Z"
+      "verified_at": "2026-10-19T05:58:49.473Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-tencent-omi": {
       "learning_id": "learn-github-tencent-omi",
@@ -69172,15 +69239,15 @@
       "learning_id": "rule-1538",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1538,
-      "title": "Quantization Precision & Numerical Stability Guard (Harvested from orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Quantization Precision & Numerical Stability Guard",
+      "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+      "source_version": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.820Z"
+      "verified_at": "2026-10-19T05:58:50.577Z"
     },
     "rule-1539": {
       "learning_id": "rule-1539",
@@ -78826,6 +78893,103 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T05:52:51.950Z"
+    },
+    "learn-github-dip-cmdk": {
+      "learning_id": "learn-github-dip-cmdk",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "dip/cmdk",
+      "repository": "dip/cmdk",
+      "slug": "pacocoursey-cmdk",
+      "platform": "github",
+      "source_url": "https://github.com/pacocoursey/cmdk",
+      "source_version": "dd2250ed",
+      "content_hash": "9140e0fd684e74d1948b911604de744f57f8169a0f6a5286461f14d87feb81cd",
+      "dossier_path": "07_PROJECT_LEARNING/pacocoursey-cmdk-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/pacocoursey-cmdk-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T05:58:41.114Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-2211": {
+      "learning_id": "rule-2211",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2211,
+      "title": "store: split dump batches by byte size to avoid 2GB Arrow column overflow (#6646",
+      "source_url": "https://github.com/graphprotocol/graph-node",
+      "source_version": "6838f4e3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:58:42.344Z"
+    },
+    "rule-2212": {
+      "learning_id": "rule-2212",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2212,
+      "title": "Merge pull request #90 from hungps/fix/deprecated-imperative-gradle-plugins",
+      "source_url": "https://github.com/hungps/flutter_pokedex",
+      "source_version": "7e2b6d49",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:58:46.683Z"
+    },
+    "rule-2213": {
+      "learning_id": "rule-2213",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2213,
+      "title": "timeskipping clock mismatch (#12609)",
+      "source_url": "https://github.com/temporalio/temporal",
+      "source_version": "f4318206",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:58:49.473Z"
+    },
+    "rule-2214": {
+      "learning_id": "rule-2214",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2214,
+      "title": "Model Artifact Integrity & Supply Chain Verification",
+      "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+      "source_version": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:58:50.577Z"
+    },
+    "rule-2215": {
+      "learning_id": "rule-2215",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2215,
+      "title": "Built-in LLM for Docker (embedded_lemonade) (#6719)",
+      "source_url": "https://github.com/Mintplex-Labs/anything-llm",
+      "source_version": "d7d68e75",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T05:58:54.028Z"
     }
   },
   "aliases": {

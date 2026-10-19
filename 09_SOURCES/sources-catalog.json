@@ -555,8 +555,8 @@
     "sourceUrl": "https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
     "sourceVersion": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "edc84877f41576dfc9cc24a6f326b9f8c79481bdc7046da1d21d8f04c3e4604d",
-    "lastHarvestedAt": "2026-10-17T23:55:57.512Z",
+    "contentHash": "718ed22a8afc22404a39397ddc18ae15de8228dc449f1f9fd81e964c5c86e2aa",
+    "lastHarvestedAt": "2026-10-19T05:58:50.607Z",
     "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf"
   },
   "hf-alissonerdx-bfs-best-face-swap": {
@@ -6428,5 +6428,55 @@
     "contentHash": "636de5a12800c7c02d0c6e92424a139199cc9cb03429be3f0f0c40d39a1afb0d",
     "lastHarvestedAt": "2026-10-19T05:52:00.813Z",
     "learningId": "learn-github-meilisearch-meilisearch"
+  },
+  "pacocoursey-cmdk": {
+    "repository": "dip/cmdk",
+    "platform": "github",
+    "sourceUrl": "https://github.com/pacocoursey/cmdk",
+    "sourceVersion": "dd2250ed",
+    "license": "MIT",
+    "contentHash": "9140e0fd684e74d1948b911604de744f57f8169a0f6a5286461f14d87feb81cd",
+    "lastHarvestedAt": "2026-10-19T05:58:41.145Z",
+    "learningId": "learn-github-dip-cmdk"
+  },
+  "graphprotocol-graph-node": {
+    "repository": "graphprotocol/graph-node",
+    "platform": "github",
+    "sourceUrl": "https://github.com/graphprotocol/graph-node",
+    "sourceVersion": "6838f4e3",
+    "license": "Apache-2.0",
+    "contentHash": "96de2d20d26f5ca59055880bbf60114c9d0afaa8754a6981b2307ae410903dcc",
+    "lastHarvestedAt": "2026-10-19T05:58:42.384Z",
+    "learningId": "learn-github-graphprotocol-graph-node"
+  },
+  "hungps-flutter_pokedex": {
+    "repository": "hungps/flutter_pokedex",
+    "platform": "github",
+    "sourceUrl": "https://github.com/hungps/flutter_pokedex",
+    "sourceVersion": "7e2b6d49",
+    "license": "NOASSERTION",
+    "contentHash": "0b60c1f239da0886224d7ea3c3fcee580c1b87701476c38ccb1ce3c628651aa5",
+    "lastHarvestedAt": "2026-10-19T05:58:46.713Z",
+    "learningId": "learn-github-hungps-flutter_pokedex"
+  },
+  "temporalio-temporal": {
+    "repository": "temporalio/temporal",
+    "platform": "github",
+    "sourceUrl": "https://github.com/temporalio/temporal",
+    "sourceVersion": "f4318206",
+    "license": "MIT",
+    "contentHash": "9fb4a97c64d813b46edf9968dbfb70e169c5bb1a7c98e186577952b6d6321b1c",
+    "lastHarvestedAt": "2026-10-19T05:58:49.504Z",
+    "learningId": "learn-github-temporalio-temporal"
+  },
+  "mintplex-labs-anything-llm": {
+    "repository": "Mintplex-Labs/anything-llm",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Mintplex-Labs/anything-llm",
+    "sourceVersion": "d7d68e75",
+    "license": "MIT",
+    "contentHash": "037a6fed0bb01dca95a260963211d6328234c86e7d3323a857968c877dd9fd4a",
+    "lastHarvestedAt": "2026-10-19T05:58:54.065Z",
+    "learningId": "learn-github-mintplex-labs-anything-llm"
   }
 }

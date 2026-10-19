@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T05:52:52.008Z",
+  "last_updated": "2026-10-19T05:58:54.070Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -694,14 +694,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
-      "content_hash": "edc84877f41576dfc9cc24a6f326b9f8c79481bdc7046da1d21d8f04c3e4604d",
-      "verified_at": "2026-10-17T23:55:57.515Z",
+      "content_hash": "718ed22a8afc22404a39397ddc18ae15de8228dc449f1f9fd81e964c5c86e2aa",
+      "verified_at": "2026-10-19T05:58:50.611Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T23:55:57.515Z"
+      "last_updated": "2026-10-19T05:58:50.611Z"
     },
     "Alissonerdx/BFS-Best-Face-Swap": {
       "repository": "Alissonerdx/BFS-Best-Face-Swap",
@@ -9728,6 +9728,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T05:52:00.819Z"
+    },
+    "dip/cmdk": {
+      "repository": "dip/cmdk",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-dip-cmdk",
+      "content_hash": "9140e0fd684e74d1948b911604de744f57f8169a0f6a5286461f14d87feb81cd",
+      "verified_at": "2026-10-19T05:58:41.149Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T05:58:41.149Z"
+    },
+    "graphprotocol/graph-node": {
+      "repository": "graphprotocol/graph-node",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-graphprotocol-graph-node",
+      "content_hash": "96de2d20d26f5ca59055880bbf60114c9d0afaa8754a6981b2307ae410903dcc",
+      "verified_at": "2026-10-19T05:58:42.396Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T05:58:42.396Z"
+    },
+    "hungps/flutter_pokedex": {
+      "repository": "hungps/flutter_pokedex",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-hungps-flutter_pokedex",
+      "content_hash": "0b60c1f239da0886224d7ea3c3fcee580c1b87701476c38ccb1ce3c628651aa5",
+      "verified_at": "2026-10-19T05:58:46.717Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T05:58:46.717Z"
+    },
+    "temporalio/temporal": {
+      "repository": "temporalio/temporal",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-temporalio-temporal",
+      "content_hash": "9fb4a97c64d813b46edf9968dbfb70e169c5bb1a7c98e186577952b6d6321b1c",
+      "verified_at": "2026-10-19T05:58:49.508Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T05:58:49.508Z"
+    },
+    "Mintplex-Labs/anything-llm": {
+      "repository": "Mintplex-Labs/anything-llm",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-mintplex-labs-anything-llm",
+      "content_hash": "037a6fed0bb01dca95a260963211d6328234c86e7d3323a857968c877dd9fd4a",
+      "verified_at": "2026-10-19T05:58:54.070Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T05:58:54.070Z"
     }
   },
   "repos": {

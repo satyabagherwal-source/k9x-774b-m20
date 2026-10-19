@@ -2988,3 +2988,9 @@ Every entry in this ledger must capture:
 | `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `c052a79d` | Multi-dimensional audit evidence | 2026-10-19T05:51:56.531Z |
 | `learn-github-meilisearch-meilisearch` | `https://github.com/meilisearch/meilisearch` | `541dd6e9` | Multi-dimensional audit evidence | 2026-10-19T05:52:00.813Z |
 | `learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-10-19T05:52:52.001Z |
+| `learn-github-dip-cmdk` | `https://github.com/pacocoursey/cmdk` | `dd2250ed` | Multi-dimensional audit evidence | 2026-10-19T05:58:41.145Z |
+| `learn-github-graphprotocol-graph-node` | `https://github.com/graphprotocol/graph-node` | `6838f4e3` | Multi-dimensional audit evidence | 2026-10-19T05:58:42.384Z |
+| `learn-github-hungps-flutter_pokedex` | `https://github.com/hungps/flutter_pokedex` | `7e2b6d49` | Multi-dimensional audit evidence | 2026-10-19T05:58:46.713Z |
+| `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `f4318206` | Multi-dimensional audit evidence | 2026-10-19T05:58:49.504Z |
+| `learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf` | `https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-19T05:58:50.607Z |
+| `learn-github-mintplex-labs-anything-llm` | `https://github.com/Mintplex-Labs/anything-llm` | `d7d68e75` | Multi-dimensional audit evidence | 2026-10-19T05:58:54.065Z |
