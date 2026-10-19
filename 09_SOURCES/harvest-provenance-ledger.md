@@ -3054,3 +3054,9 @@ Every entry in this ledger must capture:
 | `learn-github-influxdata-influxdb` | `https://github.com/influxdata/influxdb` | `06200ef9` | Multi-dimensional audit evidence | 2026-10-19T07:10:13.828Z |
 | `learn-github-angular-angular` | `https://github.com/angular/angular` | `e0260db5` | Multi-dimensional audit evidence | 2026-10-19T07:10:45.636Z |
 | `learn-github-devspace-sh-devspace` | `https://github.com/devspace-sh/devspace` | `8ff62607` | Multi-dimensional audit evidence | 2026-10-19T07:11:01.371Z |
+| `learn-huggingface-google-embeddinggemma-2` | `https://huggingface.co/google/embeddinggemma-2` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-19T07:21:24.184Z |
+| `learn-github-tangshimin-mujing` | `https://github.com/tangshimin/MuJing` | `9ca8c14e` | Multi-dimensional audit evidence | 2026-10-19T07:21:32.245Z |
+| `learn-github-chroma-core-chroma` | `https://github.com/chroma-core/chroma` | `ddc17cd7` | Multi-dimensional audit evidence | 2026-10-19T07:21:33.879Z |
+| `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `954797e4` | Multi-dimensional audit evidence | 2026-10-19T07:21:35.005Z |
+| `learn-github-kong-kubernetes-ingress-controller` | `https://github.com/Kong/kubernetes-ingress-controller` | `39edf7f0` | Multi-dimensional audit evidence | 2026-10-19T07:21:35.564Z |
+| `learn-huggingface-comfy-org-z_image_turbo` | `https://huggingface.co/Comfy-Org/z_image_turbo` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-19T07:21:36.169Z |

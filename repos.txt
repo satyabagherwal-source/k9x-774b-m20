@@ -4302,3 +4302,7 @@ https://github.com/trhhubsd/ARTEX
 # --- Automatically Discovered by AI Scout Engine [2026-10-18T22:23:00.009Z] ---
 # [AI-AGENTS] AhmadHassan-BTed/OpenOPC-Shadow-Adapter (804 score) - Zero-modification Human-in-the-Loop adapter for OpenOPC's agentic DAG runtime.
 https://github.com/AhmadHassan-BTed/OpenOPC-Shadow-Adapter
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-19T07:19:53.158Z] ---
+# [HUGGINGFACE-AI-MODELS] Comfy-Org/z_image_turbo (11800 score) - Verified Hugging Face Model: Comfy-Org/z_image_turbo (980 likes, 9177573 downloa
+https://huggingface.co/Comfy-Org/z_image_turbo

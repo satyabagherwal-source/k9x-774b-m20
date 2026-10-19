@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261018-XJOE",
-    "timestamp": "2026-10-18T22:16:29.150Z",
-    "repository": "kgateway-dev/kgateway",
-    "learningId": "learn-github-kgateway-dev-kgateway",
-    "contentHash": "b88d720afe1ad308662bd4f3327da6889a674a8afef3ec9d142891c4f53899ad",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-XM2U",
-    "timestamp": "2026-10-18T22:16:32.262Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "ac806ecea4bd0cce97f28ed52b8f34759ff4447fa88dc00bb6f89bddac205a64",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-XNDD",
-    "timestamp": "2026-10-18T22:16:33.937Z",
-    "repository": "vearch/vearch",
-    "learningId": "learn-github-vearch-vearch",
-    "contentHash": "8b3265d67e31e6f3f1f76c572a179726729873ee744ff5820947046fb541ef1d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-YIEV",
-    "timestamp": "2026-10-18T22:17:14.167Z",
-    "repository": "themesberg/flowbite",
-    "learningId": "learn-github-themesberg-flowbite",
-    "contentHash": "fa8ac8822e6662bbac1d92790323afbad88c7307992ed7adbeb7406d0788d08b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-6445",
-    "timestamp": "2026-10-18T22:23:08.885Z",
-    "repository": "AhmadHassan-BTed/OpenOPC-Shadow-Adapter",
-    "learningId": "learn-github-ahmadhassan-bted-openopc-shadow-adapter",
-    "contentHash": "03a67347722a5b8ac730c20608db129cbec42b90b9a89bd0c76eb999864891f9",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261018-65HA",
-    "timestamp": "2026-10-18T22:23:10.654Z",
-    "repository": "FalkorDB/FalkorDB",
-    "learningId": "learn-github-falkordb-falkordb",
-    "contentHash": "42169437da3a3b13dce676826f31a84101157cc4aa2fdc51f930cda4413b1058",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261018-68CS",
     "timestamp": "2026-10-18T22:23:14.380Z",
     "repository": "CrawlCove/hreflang-checker",
@@ -7490,6 +7400,96 @@
     "repository": "devspace-sh/devspace",
     "learningId": "learn-github-devspace-sh-devspace",
     "contentHash": "b9c7645da4e55ddf4c2e830f7d34cea93289c9fb4cab18087bceb023be198857",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-EBBP",
+    "timestamp": "2026-10-19T07:21:24.181Z",
+    "repository": "google/embeddinggemma-2",
+    "learningId": "learn-huggingface-google-embeddinggemma-2",
+    "contentHash": "9f30114701c8e63b8415476ee20146ac86aedaefd301e8a344ff5ed769911d0e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-EHJN",
+    "timestamp": "2026-10-19T07:21:32.243Z",
+    "repository": "tangshimin/MuJing",
+    "learningId": "learn-github-tangshimin-mujing",
+    "contentHash": "5766a4399effbd2252e74a0ee21c45d8666c6599bdeb5eb15508554b985157b2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-EIT0",
+    "timestamp": "2026-10-19T07:21:33.876Z",
+    "repository": "chroma-core/chroma",
+    "learningId": "learn-github-chroma-core-chroma",
+    "contentHash": "317507d2a352d6d8e82b8d85d3dd3ba9c0a3862da1db3720546f193b198e9125",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-EJOB",
+    "timestamp": "2026-10-19T07:21:35.003Z",
+    "repository": "restatedev/restate",
+    "learningId": "learn-github-restatedev-restate",
+    "contentHash": "847cb504f37ce02194c2413bd805dff5b74416a9d0e33c9929ce60b24e767ac3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-EK3T",
+    "timestamp": "2026-10-19T07:21:35.561Z",
+    "repository": "Kong/kubernetes-ingress-controller",
+    "learningId": "learn-github-kong-kubernetes-ingress-controller",
+    "contentHash": "b580f4339cd7bb9a524266bc7b95a77feb827cc657a9a918e214a2be31e0e435",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-EKKM",
+    "timestamp": "2026-10-19T07:21:36.166Z",
+    "repository": "Comfy-Org/z_image_turbo",
+    "learningId": "learn-huggingface-comfy-org-z_image_turbo",
+    "contentHash": "c1d0f2ac3615229986c6f14f160475794001271616f18163f71c170b4f6ac4f6",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
     "barriers": {

@@ -665,8 +665,8 @@
     "sourceUrl": "https://huggingface.co/google/embeddinggemma-2",
     "sourceVersion": "hf-google-embeddinggemma-2",
     "license": "Open-Source",
-    "contentHash": "7c72724cae876ee738c491a9b00daca129adcfb4c9675bb994c6e1969091ae33",
-    "lastHarvestedAt": "2026-10-18T00:35:22.066Z",
+    "contentHash": "9f30114701c8e63b8415476ee20146ac86aedaefd301e8a344ff5ed769911d0e",
+    "lastHarvestedAt": "2026-10-19T07:21:24.184Z",
     "learningId": "learn-huggingface-google-embeddinggemma-2"
   },
   "hf-unsloth-embeddinggemma-2-gguf": {
@@ -6958,5 +6958,55 @@
     "contentHash": "b9c7645da4e55ddf4c2e830f7d34cea93289c9fb4cab18087bceb023be198857",
     "lastHarvestedAt": "2026-10-19T07:11:01.371Z",
     "learningId": "learn-github-devspace-sh-devspace"
+  },
+  "tangshimin-mujing": {
+    "repository": "tangshimin/MuJing",
+    "platform": "github",
+    "sourceUrl": "https://github.com/tangshimin/MuJing",
+    "sourceVersion": "9ca8c14e",
+    "license": "GPL-3.0",
+    "contentHash": "5766a4399effbd2252e74a0ee21c45d8666c6599bdeb5eb15508554b985157b2",
+    "lastHarvestedAt": "2026-10-19T07:21:32.245Z",
+    "learningId": "learn-github-tangshimin-mujing"
+  },
+  "chroma-core-chroma": {
+    "repository": "chroma-core/chroma",
+    "platform": "github",
+    "sourceUrl": "https://github.com/chroma-core/chroma",
+    "sourceVersion": "ddc17cd7",
+    "license": "Apache-2.0",
+    "contentHash": "317507d2a352d6d8e82b8d85d3dd3ba9c0a3862da1db3720546f193b198e9125",
+    "lastHarvestedAt": "2026-10-19T07:21:33.879Z",
+    "learningId": "learn-github-chroma-core-chroma"
+  },
+  "restatedev-restate": {
+    "repository": "restatedev/restate",
+    "platform": "github",
+    "sourceUrl": "https://github.com/restatedev/restate",
+    "sourceVersion": "954797e4",
+    "license": "NOASSERTION",
+    "contentHash": "847cb504f37ce02194c2413bd805dff5b74416a9d0e33c9929ce60b24e767ac3",
+    "lastHarvestedAt": "2026-10-19T07:21:35.005Z",
+    "learningId": "learn-github-restatedev-restate"
+  },
+  "kong-kubernetes-ingress-controller": {
+    "repository": "Kong/kubernetes-ingress-controller",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Kong/kubernetes-ingress-controller",
+    "sourceVersion": "39edf7f0",
+    "license": "Apache-2.0",
+    "contentHash": "b580f4339cd7bb9a524266bc7b95a77feb827cc657a9a918e214a2be31e0e435",
+    "lastHarvestedAt": "2026-10-19T07:21:35.564Z",
+    "learningId": "learn-github-kong-kubernetes-ingress-controller"
+  },
+  "hf-comfy-org-z_image_turbo": {
+    "repository": "Comfy-Org/z_image_turbo",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Comfy-Org/z_image_turbo",
+    "sourceVersion": "hf-comfy-org-z_image_turbo",
+    "license": "Open-Source",
+    "contentHash": "c1d0f2ac3615229986c6f14f160475794001271616f18163f71c170b4f6ac4f6",
+    "lastHarvestedAt": "2026-10-19T07:21:36.169Z",
+    "learningId": "learn-huggingface-comfy-org-z_image_turbo"
   }
 }

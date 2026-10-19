@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T07:11:01.343Z",
-  "total_verified_learnings": 711,
+  "last_updated": "2026-10-19T07:21:36.125Z",
+  "total_verified_learnings": 716,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -4561,22 +4561,45 @@
     "learn-github-chroma-core-chroma": {
       "learning_id": "learn-github-chroma-core-chroma",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "chroma-core-chroma",
+      "source": "chroma-core/chroma",
+      "repository": "chroma-core/chroma",
       "slug": "chroma-core-chroma",
       "platform": "github",
       "source_url": "https://github.com/chroma-core/chroma",
-      "source_version": "HEAD",
-      "content_hash": "9727be0b6f6bfdff63d29f5a423e19f84b15a6c533700ff88badbe9fbc2b63f0",
+      "source_version": "ddc17cd7",
+      "content_hash": "317507d2a352d6d8e82b8d85d3dd3ba9c0a3862da1db3720546f193b198e9125",
       "dossier_path": "07_PROJECT_LEARNING/chroma-core-chroma-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/chroma-core-chroma-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2291,
+          "title": "RAII Scoped Resource Budgeting for Native C-Runtime Handles",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2292,
+          "title": "Two-Phase Tombstone Catalog Authorization for Destructive Filesystem Reclamation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2293,
+          "title": "Deep In-Memory Parameter Boundary Enforcement for Computational Engines",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.296Z"
+      "verified_at": "2026-10-19T07:21:33.826Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-chromedevtools-chrome-devtools-mcp": {
       "learning_id": "learn-github-chromedevtools-chrome-devtools-mcp",
@@ -16805,7 +16828,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google/embeddinggemma-2",
       "source_version": "hf-google-embeddinggemma-2",
-      "content_hash": "7c72724cae876ee738c491a9b00daca129adcfb4c9675bb994c6e1969091ae33",
+      "content_hash": "9f30114701c8e63b8415476ee20146ac86aedaefd301e8a344ff5ed769911d0e",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-embeddinggemma-2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-embeddinggemma-2-learnings.md",
       "promoted_rules": [
@@ -16822,6 +16845,21 @@
         {
           "number": 1390,
           "title": "BFloat16 Precision for Stable On-Device Inference",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2285,
+          "title": "Heterogeneous Attention Stride and Asymmetric Head-Dimension Sizing",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2286,
+          "title": "Multi-Modal Matryoshka Representation Truncation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2287,
+          "title": "Modality Delimiter Protocol & Non-Overlapping Sentinel Token Isolation",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -16843,7 +16881,7 @@
         "learn-huggingface-hf-google-embeddinggemma-2-mv489kut",
         "learn-huggingface-hf-google-embeddinggemma-2-mv4ljeb8"
       ],
-      "verified_at": "2026-10-18T00:35:22.020Z",
+      "verified_at": "2026-10-19T07:21:24.133Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25404,22 +25442,45 @@
     "learn-github-kong-kubernetes-ingress-controller": {
       "learning_id": "learn-github-kong-kubernetes-ingress-controller",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "kong-kubernetes-ingress-controller",
+      "source": "Kong/kubernetes-ingress-controller",
+      "repository": "Kong/kubernetes-ingress-controller",
       "slug": "kong-kubernetes-ingress-controller",
       "platform": "github",
       "source_url": "https://github.com/Kong/kubernetes-ingress-controller",
-      "source_version": "HEAD",
-      "content_hash": "e2d044cee452d03b48f8238f4306cf9d41b97a34c1018856b132125d2c39bfcf",
+      "source_version": "39edf7f0",
+      "content_hash": "b580f4339cd7bb9a524266bc7b95a77feb827cc657a9a918e214a2be31e0e435",
       "dossier_path": "07_PROJECT_LEARNING/kong-kubernetes-ingress-controller-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kong-kubernetes-ingress-controller-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2297,
+          "title": "Invariant Route Splitting on Context-Dependent Plugins",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2298,
+          "title": "Multi-Instance Non-Primary Controller Reconciliation Suppression",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2299,
+          "title": "Asynchronous Pod Lifecycle Exclusion in Test and Health Harnesses",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.841Z"
+      "verified_at": "2026-10-19T07:21:35.512Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-kortix-ai-suna": {
       "learning_id": "learn-github-kortix-ai-suna",
@@ -34313,22 +34374,45 @@
     "learn-github-restatedev-restate": {
       "learning_id": "learn-github-restatedev-restate",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "restatedev-restate",
+      "source": "restatedev/restate",
+      "repository": "restatedev/restate",
       "slug": "restatedev-restate",
       "platform": "github",
       "source_url": "https://github.com/restatedev/restate",
-      "source_version": "HEAD",
-      "content_hash": "d765b9cd526fa5485e347d689f67077d22ddb0a137f37cc6d60e6b5023e9464d",
+      "source_version": "954797e4",
+      "content_hash": "847cb504f37ce02194c2413bd805dff5b74416a9d0e33c9929ce60b24e767ac3",
       "dossier_path": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2294,
+          "title": "Deterministic Entity ID Derivation in Distributed State Machine Replicas",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2295,
+          "title": "Type Alignment for Analytical Query Pushdown Engines",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2296,
+          "title": "Non-Interactive Loop-Termination Invariant in Terminal Utilities",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.260Z"
+      "verified_at": "2026-10-19T07:21:34.952Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-revenuecat-purchases-ios": {
       "learning_id": "learn-github-revenuecat-purchases-ios",
@@ -38208,22 +38292,45 @@
     "learn-github-tangshimin-mujing": {
       "learning_id": "learn-github-tangshimin-mujing",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "tangshimin-mujing",
+      "source": "tangshimin/MuJing",
+      "repository": "tangshimin/MuJing",
       "slug": "tangshimin-mujing",
       "platform": "github",
       "source_url": "https://github.com/tangshimin/MuJing",
-      "source_version": "HEAD",
-      "content_hash": "5804fae5f213209ce3603d8cdd0b8715d960b81eac814bc2e1efd38dadba4657",
+      "source_version": "9ca8c14e",
+      "content_hash": "5766a4399effbd2252e74a0ee21c45d8666c6599bdeb5eb15508554b985157b2",
       "dossier_path": "07_PROJECT_LEARNING/tangshimin-mujing-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tangshimin-mujing-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2288,
+          "title": "Invariant Filter String Escaping for Native Process Command Lines",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2289,
+          "title": "State-Reset Invariant on Active Vocabulary Substitution",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2290,
+          "title": "Non-Blocking Coroutine Offloading Over runBlocking in UI State Containers",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.854Z"
+      "verified_at": "2026-10-19T07:21:32.194Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-tarrysingh-artificial-intelligence-deep-learning-machine-learning-tutorials": {
       "learning_id": "learn-github-tarrysingh-artificial-intelligence-deep-learning-machine-learning-tutorials",
@@ -80672,6 +80779,282 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T07:11:01.335Z"
+    },
+    "rule-2285": {
+      "learning_id": "rule-2285",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2285,
+      "title": "Heterogeneous Attention Stride and Asymmetric Head-Dimension Sizing",
+      "source_url": "https://huggingface.co/google/embeddinggemma-2",
+      "source_version": "hf-google-embeddinggemma-2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:21:24.133Z"
+    },
+    "rule-2286": {
+      "learning_id": "rule-2286",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2286,
+      "title": "Multi-Modal Matryoshka Representation Truncation Invariant",
+      "source_url": "https://huggingface.co/google/embeddinggemma-2",
+      "source_version": "hf-google-embeddinggemma-2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:21:24.133Z"
+    },
+    "rule-2287": {
+      "learning_id": "rule-2287",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2287,
+      "title": "Modality Delimiter Protocol & Non-Overlapping Sentinel Token Isolation",
+      "source_url": "https://huggingface.co/google/embeddinggemma-2",
+      "source_version": "hf-google-embeddinggemma-2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:21:24.133Z"
+    },
+    "rule-2288": {
+      "learning_id": "rule-2288",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2288,
+      "title": "Invariant Filter String Escaping for Native Process Command Lines",
+      "source_url": "https://github.com/tangshimin/MuJing",
+      "source_version": "9ca8c14e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:21:32.194Z"
+    },
+    "rule-2289": {
+      "learning_id": "rule-2289",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2289,
+      "title": "State-Reset Invariant on Active Vocabulary Substitution",
+      "source_url": "https://github.com/tangshimin/MuJing",
+      "source_version": "9ca8c14e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:21:32.194Z"
+    },
+    "rule-2290": {
+      "learning_id": "rule-2290",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2290,
+      "title": "Non-Blocking Coroutine Offloading Over runBlocking in UI State Containers",
+      "source_url": "https://github.com/tangshimin/MuJing",
+      "source_version": "9ca8c14e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:21:32.194Z"
+    },
+    "rule-2291": {
+      "learning_id": "rule-2291",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2291,
+      "title": "RAII Scoped Resource Budgeting for Native C-Runtime Handles",
+      "source_url": "https://github.com/chroma-core/chroma",
+      "source_version": "ddc17cd7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:21:33.826Z"
+    },
+    "rule-2292": {
+      "learning_id": "rule-2292",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2292,
+      "title": "Two-Phase Tombstone Catalog Authorization for Destructive Filesystem Reclamation",
+      "source_url": "https://github.com/chroma-core/chroma",
+      "source_version": "ddc17cd7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:21:33.826Z"
+    },
+    "rule-2293": {
+      "learning_id": "rule-2293",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2293,
+      "title": "Deep In-Memory Parameter Boundary Enforcement for Computational Engines",
+      "source_url": "https://github.com/chroma-core/chroma",
+      "source_version": "ddc17cd7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:21:33.826Z"
+    },
+    "rule-2294": {
+      "learning_id": "rule-2294",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2294,
+      "title": "Deterministic Entity ID Derivation in Distributed State Machine Replicas",
+      "source_url": "https://github.com/restatedev/restate",
+      "source_version": "954797e4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:21:34.952Z"
+    },
+    "rule-2295": {
+      "learning_id": "rule-2295",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2295,
+      "title": "Type Alignment for Analytical Query Pushdown Engines",
+      "source_url": "https://github.com/restatedev/restate",
+      "source_version": "954797e4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:21:34.952Z"
+    },
+    "rule-2296": {
+      "learning_id": "rule-2296",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2296,
+      "title": "Non-Interactive Loop-Termination Invariant in Terminal Utilities",
+      "source_url": "https://github.com/restatedev/restate",
+      "source_version": "954797e4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:21:34.952Z"
+    },
+    "rule-2297": {
+      "learning_id": "rule-2297",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2297,
+      "title": "Invariant Route Splitting on Context-Dependent Plugins",
+      "source_url": "https://github.com/Kong/kubernetes-ingress-controller",
+      "source_version": "39edf7f0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:21:35.512Z"
+    },
+    "rule-2298": {
+      "learning_id": "rule-2298",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2298,
+      "title": "Multi-Instance Non-Primary Controller Reconciliation Suppression",
+      "source_url": "https://github.com/Kong/kubernetes-ingress-controller",
+      "source_version": "39edf7f0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:21:35.512Z"
+    },
+    "rule-2299": {
+      "learning_id": "rule-2299",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2299,
+      "title": "Asynchronous Pod Lifecycle Exclusion in Test and Health Harnesses",
+      "source_url": "https://github.com/Kong/kubernetes-ingress-controller",
+      "source_version": "39edf7f0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:21:35.512Z"
+    },
+    "learn-huggingface-comfy-org-z_image_turbo": {
+      "learning_id": "learn-huggingface-comfy-org-z_image_turbo",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Comfy-Org/z_image_turbo",
+      "repository": "Comfy-Org/z_image_turbo",
+      "slug": "hf-comfy-org-z_image_turbo",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Comfy-Org/z_image_turbo",
+      "source_version": "hf-comfy-org-z_image_turbo",
+      "content_hash": "c1d0f2ac3615229986c6f14f160475794001271616f18163f71c170b4f6ac4f6",
+      "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-z_image_turbo-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-z_image_turbo-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 2300,
+          "title": "Decoupled Heterogeneous Quantization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2301,
+          "title": "LoRA Distillation Residual Patch Scaling Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T07:21:36.114Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-2300": {
+      "learning_id": "rule-2300",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2300,
+      "title": "Decoupled Heterogeneous Quantization Invariant",
+      "source_url": "https://huggingface.co/Comfy-Org/z_image_turbo",
+      "source_version": "hf-comfy-org-z_image_turbo",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:21:36.114Z"
+    },
+    "rule-2301": {
+      "learning_id": "rule-2301",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2301,
+      "title": "LoRA Distillation Residual Patch Scaling Invariant",
+      "source_url": "https://huggingface.co/Comfy-Org/z_image_turbo",
+      "source_version": "hf-comfy-org-z_image_turbo",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T07:21:36.114Z"
     }
   },
   "aliases": {

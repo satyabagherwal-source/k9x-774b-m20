@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T07:11:01.374Z",
-  "total_cycles_completed": 3024,
-  "total_learnings_persisted": 3024,
-  "total_rules_promoted": 2071,
+  "last_updated": "2026-10-19T07:21:36.172Z",
+  "total_cycles_completed": 3030,
+  "total_learnings_persisted": 3030,
+  "total_rules_promoted": 2088,
   "history": [
-    {
-      "timestamp": "2026-10-19T03:26:51.432Z",
-      "repository": "aquasecurity/tfsec",
-      "learningId": "learn-github-aquasecurity-tfsec",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T03:26:55.275Z",
-      "repository": "yugabyte/yugabyte-db",
-      "learningId": "learn-github-yugabyte-yugabyte-db",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T03:32:55.571Z",
-      "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
-      "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T03:32:55.773Z",
-      "repository": "React95/React95",
-      "learningId": "learn-github-react95-react95",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T03:32:56.926Z",
-      "repository": "embassy-rs/embassy",
-      "learningId": "learn-github-embassy-rs-embassy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T03:33:02.895Z",
-      "repository": "jpush/aurora-imui",
-      "learningId": "learn-github-jpush-aurora-imui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T03:33:04.923Z",
       "repository": "decodingai-magazine/llm-twin-course",
@@ -1402,6 +1360,48 @@
       "timestamp": "2026-10-19T07:11:01.374Z",
       "repository": "devspace-sh/devspace",
       "learningId": "learn-github-devspace-sh-devspace",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T07:21:24.187Z",
+      "repository": "google/embeddinggemma-2",
+      "learningId": "learn-huggingface-google-embeddinggemma-2",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T07:21:32.249Z",
+      "repository": "tangshimin/MuJing",
+      "learningId": "learn-github-tangshimin-mujing",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T07:21:33.883Z",
+      "repository": "chroma-core/chroma",
+      "learningId": "learn-github-chroma-core-chroma",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T07:21:35.009Z",
+      "repository": "restatedev/restate",
+      "learningId": "learn-github-restatedev-restate",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T07:21:35.567Z",
+      "repository": "Kong/kubernetes-ingress-controller",
+      "learningId": "learn-github-kong-kubernetes-ingress-controller",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T07:21:36.172Z",
+      "repository": "Comfy-Org/z_image_turbo",
+      "learningId": "learn-huggingface-comfy-org-z_image_turbo",
       "promotedRulesCount": 2,
       "status": "PROMOTED"
     }

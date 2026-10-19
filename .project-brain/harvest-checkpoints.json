@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T07:11:01.376Z",
+  "last_updated": "2026-10-19T07:21:36.175Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -830,14 +830,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-embeddinggemma-2",
-      "content_hash": "7c72724cae876ee738c491a9b00daca129adcfb4c9675bb994c6e1969091ae33",
-      "verified_at": "2026-10-18T00:35:22.069Z",
+      "content_hash": "9f30114701c8e63b8415476ee20146ac86aedaefd301e8a344ff5ed769911d0e",
+      "verified_at": "2026-10-19T07:21:24.189Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T00:35:22.069Z"
+      "last_updated": "2026-10-19T07:21:24.189Z"
     },
     "unsloth/embeddinggemma-2-GGUF": {
       "repository": "unsloth/embeddinggemma-2-GGUF",
@@ -10496,6 +10496,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T07:11:01.376Z"
+    },
+    "tangshimin/MuJing": {
+      "repository": "tangshimin/MuJing",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-tangshimin-mujing",
+      "content_hash": "5766a4399effbd2252e74a0ee21c45d8666c6599bdeb5eb15508554b985157b2",
+      "verified_at": "2026-10-19T07:21:32.252Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T07:21:32.252Z"
+    },
+    "chroma-core/chroma": {
+      "repository": "chroma-core/chroma",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-chroma-core-chroma",
+      "content_hash": "317507d2a352d6d8e82b8d85d3dd3ba9c0a3862da1db3720546f193b198e9125",
+      "verified_at": "2026-10-19T07:21:33.885Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T07:21:33.885Z"
+    },
+    "restatedev/restate": {
+      "repository": "restatedev/restate",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-restatedev-restate",
+      "content_hash": "847cb504f37ce02194c2413bd805dff5b74416a9d0e33c9929ce60b24e767ac3",
+      "verified_at": "2026-10-19T07:21:35.011Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T07:21:35.011Z"
+    },
+    "Kong/kubernetes-ingress-controller": {
+      "repository": "Kong/kubernetes-ingress-controller",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-kong-kubernetes-ingress-controller",
+      "content_hash": "b580f4339cd7bb9a524266bc7b95a77feb827cc657a9a918e214a2be31e0e435",
+      "verified_at": "2026-10-19T07:21:35.570Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T07:21:35.570Z"
+    },
+    "Comfy-Org/z_image_turbo": {
+      "repository": "Comfy-Org/z_image_turbo",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-comfy-org-z_image_turbo",
+      "content_hash": "c1d0f2ac3615229986c6f14f160475794001271616f18163f71c170b4f6ac4f6",
+      "verified_at": "2026-10-19T07:21:36.175Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T07:21:36.175Z"
     }
   },
   "repos": {
