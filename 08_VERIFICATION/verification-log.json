@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-OBAK",
-    "timestamp": "2026-10-19T04:13:13.388Z",
-    "repository": "DataDog/glommio",
-    "learningId": "learn-github-datadog-glommio",
-    "contentHash": "22d3d33bcc6cbbef0e6109cb722924cceb643de493625edc11f1dcdd99cead0b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-OFX5",
     "timestamp": "2026-10-19T04:13:19.385Z",
     "repository": "pytest-dev/pytest-testinfra",
@@ -7490,6 +7475,21 @@
     "repository": "vespa-engine/vespa",
     "learningId": "learn-github-vespa-engine-vespa",
     "contentHash": "28c91bb298f421f2ad037825dc1768d0e6368a222e6bb072df94ce3c60daaca1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-V7JT",
+    "timestamp": "2026-10-19T17:50:23.993Z",
+    "repository": "zoontek/react-native-permissions",
+    "learningId": "learn-github-zoontek-react-native-permissions",
+    "contentHash": "065d2680c518d1131b42c013a4feb7831a9bf1e81ed81f0b472fc0482d9e558e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

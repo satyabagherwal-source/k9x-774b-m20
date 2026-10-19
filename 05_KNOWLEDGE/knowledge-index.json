@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T17:44:03.793Z",
-  "total_verified_learnings": 866,
+  "last_updated": "2026-10-19T17:50:23.941Z",
+  "total_verified_learnings": 867,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -45577,22 +45577,35 @@
     "learn-github-zoontek-react-native-permissions": {
       "learning_id": "learn-github-zoontek-react-native-permissions",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "zoontek-react-native-permissions",
+      "source": "zoontek/react-native-permissions",
+      "repository": "zoontek/react-native-permissions",
       "slug": "zoontek-react-native-permissions",
       "platform": "github",
       "source_url": "https://github.com/zoontek/react-native-permissions",
-      "source_version": "HEAD",
-      "content_hash": "a27445ae98710219d3f212c23d9e70e6ce469981b7b1ea862631c857a0b365f6",
+      "source_version": "4f9f820e",
+      "content_hash": "065d2680c518d1131b42c013a4feb7831a9bf1e81ed81f0b472fc0482d9e558e",
       "dossier_path": "07_PROJECT_LEARNING/zoontek-react-native-permissions-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zoontek-react-native-permissions-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2718,
+          "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.582Z"
+      "verified_at": "2026-10-19T17:50:23.925Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-zseven-w-openpencil": {
       "learning_id": "learn-github-zseven-w-openpencil",
@@ -90272,6 +90285,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T17:44:03.780Z"
+    },
+    "rule-2718": {
+      "learning_id": "rule-2718",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2718,
+      "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
+      "source_url": "https://github.com/zoontek/react-native-permissions",
+      "source_version": "4f9f820e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T17:50:23.925Z"
     }
   },
   "aliases": {

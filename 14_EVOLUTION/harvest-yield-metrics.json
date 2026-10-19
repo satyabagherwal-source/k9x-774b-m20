@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T17:44:03.846Z",
-  "total_cycles_completed": 3364,
-  "total_learnings_persisted": 3364,
-  "total_rules_promoted": 2515,
+  "last_updated": "2026-10-19T17:50:24.001Z",
+  "total_cycles_completed": 3365,
+  "total_learnings_persisted": 3365,
+  "total_rules_promoted": 2516,
   "history": [
-    {
-      "timestamp": "2026-10-19T11:21:30.760Z",
-      "repository": "openai/gpt-oss-120b",
-      "learningId": "learn-huggingface-openai-gpt-oss-120b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T11:21:33.056Z",
       "repository": "sxyazi/yazi",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-19T17:44:03.846Z",
       "repository": "vespa-engine/vespa",
       "learningId": "learn-github-vespa-engine-vespa",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T17:50:24.001Z",
+      "repository": "zoontek/react-native-permissions",
+      "learningId": "learn-github-zoontek-react-native-permissions",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

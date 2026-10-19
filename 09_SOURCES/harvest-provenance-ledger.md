@@ -3394,3 +3394,4 @@ Every entry in this ledger must capture:
 | `learn-github-kucherenko-jscpd` | `https://github.com/kucherenko/jscpd` | `a69362a9` | Multi-dimensional audit evidence | 2026-10-19T17:43:51.409Z |
 | `learn-github-rainbow-me-rainbow` | `https://github.com/rainbow-me/rainbow` | `0e6ad90a` | Multi-dimensional audit evidence | 2026-10-19T17:43:56.446Z |
 | `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `0521b006` | Multi-dimensional audit evidence | 2026-10-19T17:44:03.842Z |
+| `learn-github-zoontek-react-native-permissions` | `https://github.com/zoontek/react-native-permissions` | `4f9f820e` | Multi-dimensional audit evidence | 2026-10-19T17:50:23.996Z |
