@@ -6673,10 +6673,10 @@
     "repository": "milvus-io/milvus",
     "platform": "github",
     "sourceUrl": "https://github.com/milvus-io/milvus",
-    "sourceVersion": "3fb4f56c",
+    "sourceVersion": "b7b227fe",
     "license": "Apache-2.0",
-    "contentHash": "e021a1ce67e5cc4aa8ee469b407f1023d3b58863fe93e8cc09e8cdfcad75fb25",
-    "lastHarvestedAt": "2026-10-19T06:26:30.642Z",
+    "contentHash": "5dd53dc71cde53f710c86d9e13351e28361945d96681a7f04df8753c536a0a75",
+    "lastHarvestedAt": "2026-10-19T19:29:58.443Z",
     "learningId": "learn-github-milvus-io-milvus"
   },
   "ynqa-jnv": {
@@ -6993,10 +6993,10 @@
     "repository": "Kong/kubernetes-ingress-controller",
     "platform": "github",
     "sourceUrl": "https://github.com/Kong/kubernetes-ingress-controller",
-    "sourceVersion": "39edf7f0",
+    "sourceVersion": "41fa3e37",
     "license": "Apache-2.0",
-    "contentHash": "b580f4339cd7bb9a524266bc7b95a77feb827cc657a9a918e214a2be31e0e435",
-    "lastHarvestedAt": "2026-10-19T07:21:35.564Z",
+    "contentHash": "7b836a29a358686d16cdcdead46626701e11bb108037ac5598339bb6d6bff545",
+    "lastHarvestedAt": "2026-10-19T19:29:53.428Z",
     "learningId": "learn-github-kong-kubernetes-ingress-controller"
   },
   "hf-comfy-org-z_image_turbo": {
@@ -8758,5 +8758,25 @@
     "contentHash": "5373cafddf8d705d290b4f4b955dd00eff26bc20614e226633bc92c515639f1a",
     "lastHarvestedAt": "2026-10-19T19:22:24.331Z",
     "learningId": "learn-github-touchlab-droidconkotlin"
+  },
+  "manojahi-serpiq": {
+    "repository": "manojahi/serpiq",
+    "platform": "github",
+    "sourceUrl": "https://github.com/manojahi/serpiq",
+    "sourceVersion": "f3330d7e",
+    "license": "MIT",
+    "contentHash": "2a915365b1d04ed06eb950c7e1eb03fc18465c03dae6048967841ee0ddff7566",
+    "lastHarvestedAt": "2026-10-19T19:29:49.154Z",
+    "learningId": "learn-github-manojahi-serpiq"
+  },
+  "juullabs-kable": {
+    "repository": "JuulLabs/kable",
+    "platform": "github",
+    "sourceUrl": "https://github.com/JuulLabs/kable",
+    "sourceVersion": "ff0d09e6",
+    "license": "Apache-2.0",
+    "contentHash": "09cdcdbdea24ab756620ac828d68778982de9bf0a1cc83348b7d788c84ee194a",
+    "lastHarvestedAt": "2026-10-19T19:29:51.911Z",
+    "learningId": "learn-github-juullabs-kable"
   }
 }

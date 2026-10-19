@@ -3444,3 +3444,7 @@
 | `CYCLE-20261019-5FNB` | `2026-10-19T19:22:19.895Z` | `NVIDIA/cuda-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2768` | Yes (`08ae60d9...`) |
 | `CYCLE-20261019-5GU3` | `2026-10-19T19:22:21.435Z` | `berkaycubuk/kitsune` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2769` | Yes (`a6cf6290...`) |
 | `CYCLE-20261019-5J2G` | `2026-10-19T19:22:24.328Z` | `touchlab/DroidconKotlin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2770` | Yes (`5373cafd...`) |
+| `CYCLE-20261019-F2AN` | `2026-10-19T19:29:49.151Z` | `manojahi/serpiq` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/manojahi-serpiq-learnings.md` | Yes (`2a915365...`) |
+| `CYCLE-20261019-F4F8` | `2026-10-19T19:29:51.908Z` | `JuulLabs/kable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2771` | Yes (`09cdcdbd...`) |
+| `CYCLE-20261019-F5LD` | `2026-10-19T19:29:53.425Z` | `Kong/kubernetes-ingress-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2772` | Yes (`7b836a29...`) |
+| `CYCLE-20261019-F9GP` | `2026-10-19T19:29:58.441Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2773` | Yes (`5dd53dc7...`) |

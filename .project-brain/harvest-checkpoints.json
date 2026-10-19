@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T19:22:24.338Z",
+  "last_updated": "2026-10-19T19:29:58.451Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10069,14 +10069,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-milvus-io-milvus",
-      "content_hash": "e021a1ce67e5cc4aa8ee469b407f1023d3b58863fe93e8cc09e8cdfcad75fb25",
-      "verified_at": "2026-10-19T06:26:30.647Z",
+      "content_hash": "5dd53dc71cde53f710c86d9e13351e28361945d96681a7f04df8753c536a0a75",
+      "verified_at": "2026-10-19T19:29:58.451Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T06:26:30.647Z"
+      "last_updated": "2026-10-19T19:29:58.451Z"
     },
     "ynqa/jnv": {
       "repository": "ynqa/jnv",
@@ -10549,14 +10549,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kong-kubernetes-ingress-controller",
-      "content_hash": "b580f4339cd7bb9a524266bc7b95a77feb827cc657a9a918e214a2be31e0e435",
-      "verified_at": "2026-10-19T07:21:35.570Z",
+      "content_hash": "7b836a29a358686d16cdcdead46626701e11bb108037ac5598339bb6d6bff545",
+      "verified_at": "2026-10-19T19:29:53.435Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T07:21:35.570Z"
+      "last_updated": "2026-10-19T19:29:53.435Z"
     },
     "Comfy-Org/z_image_turbo": {
       "repository": "Comfy-Org/z_image_turbo",
@@ -13182,6 +13182,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T19:22:24.338Z"
+    },
+    "manojahi/serpiq": {
+      "repository": "manojahi/serpiq",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-manojahi-serpiq",
+      "content_hash": "2a915365b1d04ed06eb950c7e1eb03fc18465c03dae6048967841ee0ddff7566",
+      "verified_at": "2026-10-19T19:29:49.163Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T19:29:49.163Z"
+    },
+    "JuulLabs/kable": {
+      "repository": "JuulLabs/kable",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-juullabs-kable",
+      "content_hash": "09cdcdbdea24ab756620ac828d68778982de9bf0a1cc83348b7d788c84ee194a",
+      "verified_at": "2026-10-19T19:29:51.917Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T19:29:51.917Z"
     }
   },
   "repos": {

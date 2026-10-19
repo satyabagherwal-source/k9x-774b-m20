@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T19:22:24.335Z",
-  "total_cycles_completed": 3421,
-  "total_learnings_persisted": 3421,
-  "total_rules_promoted": 2570,
+  "last_updated": "2026-10-19T19:29:58.448Z",
+  "total_cycles_completed": 3425,
+  "total_learnings_persisted": 3425,
+  "total_rules_promoted": 2573,
   "history": [
-    {
-      "timestamp": "2026-10-19T13:07:58.650Z",
-      "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
-      "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T13:08:01.581Z",
-      "repository": "cachix/devenv",
-      "learningId": "learn-github-cachix-devenv",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T13:08:51.659Z",
-      "repository": "twostraws/ControlRoom",
-      "learningId": "learn-github-twostraws-controlroom",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T13:14:44.783Z",
-      "repository": "watchexec/watchexec",
-      "learningId": "learn-github-watchexec-watchexec",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T13:14:51.453Z",
       "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-19T19:22:24.335Z",
       "repository": "touchlab/DroidconKotlin",
       "learningId": "learn-github-touchlab-droidconkotlin",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T19:29:49.160Z",
+      "repository": "manojahi/serpiq",
+      "learningId": "learn-github-manojahi-serpiq",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T19:29:51.915Z",
+      "repository": "JuulLabs/kable",
+      "learningId": "learn-github-juullabs-kable",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T19:29:53.432Z",
+      "repository": "Kong/kubernetes-ingress-controller",
+      "learningId": "learn-github-kong-kubernetes-ingress-controller",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T19:29:58.448Z",
+      "repository": "milvus-io/milvus",
+      "learningId": "learn-github-milvus-io-milvus",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

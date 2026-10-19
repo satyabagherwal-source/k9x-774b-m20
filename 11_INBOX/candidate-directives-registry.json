@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T18:48:45.890Z",
+  "last_updated": "2026-10-19T19:29:49.159Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1894,6 +1894,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Generic header title rejected",
       "learning_id": "learn-github-a4csi-schema-org-validate"
+    },
+    {
+      "id": "CD-F2AV",
+      "directive_title": "harden core utilities, add vitest suite, contributing guide",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "manojahi/serpiq",
+      "source_commit": "f3330d7e",
+      "date_staged": "2026-10-19",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-manojahi-serpiq"
     }
   ]
 }

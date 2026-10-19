@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source**: github ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
-> **Source Version**: `3fb4f56c`  
+> **Source Version**: `b7b227fe`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T06:26:30.449Z  
+> **Timestamp**: 2026-10-19T19:29:58.167Z  
 > **Learning ID**: `learn-github-milvus-io-milvus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T06:26:30.442Z  
+> **Harvest Timestamp**: 2026-10-19T19:29:58.159Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Milvus is a high-performance, cloud-native vector database built for scalable vector ANN search
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 46422 stars
+- **Stars / Engagement**: 46434 stars
 
 ---
 
@@ -1412,11 +1412,14 @@ BENCHMARK_MAIN();
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #54372** (2026-10-17): **fix: drop zero-count tokens in ConcurrentBM25Stats like BM25Stats.Minus**
-  *Symptoms*: issue: #53949  ## What  UT-GO on master fails every run in `internal/storage`:  - `TestConcurrentBM25StatsUnlockedMatchesSerial` (`bm25_stats_concurrent_test.go:123`) - `TestConcurrentBM25StatsMergeFrom` (`bm25_stats_concurrent_test.go:149`)  #53819 made `BM25Stats.Minus` delete a token once its count reaches zero. `ConcurrentBM25Stats` (#53950) kept the zero entries, so a token taken back to zero is `{token: 0}` in the concurrent table and absent from the serial one. Both PRs were green on their own heads; they merged on master about nine hours apart.  ## Change  - Every write path of `ConcurrentBM25Stats` (locked per-token and split merges, `MergeUnlocked`/`MinusUnlocked`, `MergeFrom`) deletes a token whose count becomes zero, matching `BM25Stats.Minus`. Tokens of removed segments no longer stay in the table or count toward `MemSize`. `BuildIDF` is unchanged: a missing token and a zero count give the same IDF. - The tests compare against the serial stats without zero counts, because `BM25Stats.Merge` keeps a zero it reaches from a negative count, so its zero entries depend on the order of operations. - New `TestConcurrentBM25StatsDropsZeroCounts`: merges and takes back the same stats on each write path, below and above the split threshold, and expects an empty table.  3.0 and 2.6 do not have the #53819 change to `BM25Stats.Minus`, so #54273 and #54274 are not affected.  ## Test  - Master as is: both tests fail 4 of 4 runs. - New tests on the old `ConcurrentBM25Stats`: `Test
+- **Issue #54423** (2026-10-19): **enhance: [hotfix-2.6.24] cache sealed JSON index validity**
+  *Symptoms*: Backport #54422 to `hotfix-2.6.24`.  Cache the comparable-value bitmap once per sealed JSON reader to avoid repeated Tantivy scans for null checks. No index format change.  Validation: identical patch to #54422, whose C++/Go unit and integration CI passed. Formatting/diff checks passed; local native tests and lint are blocked by native dependencies.  issue: #50976 pr: #54422 
+  **Post-Mortem & Fix Analysis**:
+  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: To complete the [pull request process](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process), please assign **chyezh** after the PR has been reviewed. You can assign the PR to them by writing `/assign @chyezh` in a comment when ready.  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=milvus-io%2Fmilvus).  <details open> Needs approval from an approver in each of these files:  - **[internal/core/OWNERS](https://github.com/milvus-io/milvus/blob/hotfix-2.6.24/internal/core/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["chyezh"]} -->
+  > [ci-v2-notice] Notice: New ci-v2 system is enabled for this PR.  To rerun ci-v2 checks, comment with: - /ci-rerun-code-check  // for ci-v2/code-check - /ci-rerun-code-check-macos  // for Code Checker MacOS (GitHub Actions) - /ci-rerun-build  // for ci-v2/build - /ci-rerun-build-all  // for ci-v2/build-all (multi-arch builds) - /ci-rerun-buildenv  // for ci-v2/build-env (build milvus-env builder images; update .env after the new tag is ready) - /ci-rerun-ut-integration  // for ci-v2/ut-integration, will rerun ci-v2/build - /ci-rerun-ut-go  // for ci-v2/ut-go, will rerun ci-v2/build - /ci-rerun-ut-cpp  // for ci-v2/ut-cpp - /ci-rerun-ut  // for all ci-v2/ut-integration, ci-v2/ut-go, ci-v2/ut-cpp, will rerun ci-v2/build - /ci-rerun-e2e-default  // for ci-v2/e2e-default - /ci-rerun-e2e-pulsar-wp  // for ci-v2/e2e-pulsar-wp (GCP branch-equivalent Pulsar + Woodpecker Python E2E) - /ci-rerun-e2e-amd  // for ci-v2/e2e-amd (e2e pool dispatcher) - /ci-rerun-e2e-dist-wp  // for ci-v2/e2e-dist-wp 
 
-- **Issue #54360** (2026-10-17): **fix: [2.6] initialize VectorArray in PrepareResultFieldData for empty pages**
-  *Symptoms*: issue: #54240 related master pr: #51164  ### What  `PrepareResultFieldData` on 2.6 has no `VectorField_VectorArray` case. For an `ArrayOfVector` field, including a StructArray vector sub-field (reached through the existing `StructArrays` recursion), the prepared output column ends up with a nil `VectorArray` payload.  When query pagination skips every matching row (`offset >= match count`), the reducer appends no rows. `FillRetrieveResultIfEmpty` does not rebuild the result because the field list is non-empty, so the nil payload reaches the client. The Go SDK then rejects it with `FieldData type not matched`.  ### Fix  Add the same `VectorArray` initializer that master has, from #51164: `Dim`, `ElementType`, and an empty `Data` with capacity `topK`. This does not backport the rest of the element-nullable feature.  Unlike master's initializer, `VectorArray.dim` falls back to the enclosing `VectorField.dim` when the nested dim is 0. On 2.6, sealed segments build the VectorArray output without setting `VectorArray.dim`. On an empty page the client has no rows to infer the dim from, so without the fallback it fails with `vector array ... has unknown dim`. All required proto fields and the analogous empty-field construction (`gen_empty_field_data.go`) already exist on 2.6.  ### Tests  - New `TestFieldData/TestPrepareFieldData/vector_array`. - New `TestFieldData/TestPrepareFieldData/struct_array_with_vector_array_empty_page`, which covers the `topK=0` struct sub-field case. - New `
+- **Issue #54420** (2026-10-19): **enhance: reuse JSON null offsets in packed indexes**
+  *Symptoms*: Scalar JSON path INVERTED indexes need a complete comparable-row mask for null and negated predicates. Historical packed artifacts can contain only whole-field null offsets; newer nullable projections alone do not identify whether an old artifact is complete.  Add the optional `json_null_offsets_complete` boolean to the existing V3 packed metadata. Marked indexes reuse the existing null-offset payload and validity bitmap. Unmarked/false artifacts reconstruct validity once during loading, before reader publication. Keep EXISTS metadata separate and leave ARRAY, ordinary scalar indexes, JSON flat, NGRAM, and HYBRID outside this capability. No global engine-version bump or additional bitmap entry is introduced.  Numeric comparability follows the historical finite-range mask, including STRING_TO_DOUBLE NaN/infinity. Reloading an old artifact repeats recovery; remote artifacts are not rewritten.  The master loader performs legacy recovery on the local I/O executor and moves the result into the existing reader validity bitmap. Newly built scalar JSON INVERTED projections reject non-finite cast results; because projection is shared, this also applies to new scattered-format builds.  issue: #50976 Design: [Persist complete JSON path null offsets](https://github.com/sunby/milvus/blob/e136f5f1f5f4eaca6d37269bf8072865d924522b/docs/design-docs/design_docs/20261019-json-path-packed-null-offsets.md)  Validation: - Built the native `index_tests` target on macOS ARM64; all 23 tests passed wi
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1433,1644 +1436,353 @@ BENCHMARK_MAIN();
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `840041e0` (2026-10-19)
-**Commit Message**: fix: remove canceled DQL tasks from queue (#52939)
+### Incident Patch 1: `a8a19994` (2026-10-19)
+**Commit Message**: fix: account Tantivy snapshot sizes from retained components (#54377)
 
-Remove canceled DQL tasks from the Proxy unissued queue when the request
-context ends, and skip canceled or expired tasks before worker
-execution. The cleanup hook is registered before waiting and remains
-immutable afterward, so it does not require per-task synchronization.
+issue: #54239
 
-Validation: scheduler and condition tests passed with `-race -count=3`,
-including blocked-worker regression tests for both pools; scoped lint
-passed. Removing the worker-entry check makes all four
-cancellation/deadline regression cases fail. `run_clang_format.sh`
-passed. Full `make lint-fix` was run but is blocked locally by
-incompatible native storage headers (`LoonFilesystemMetricsList`);
-hosted CI remains required.
+Growing text snapshot publication asks Tantivy for its payload size
+while writers and background merges remain active. Walking every managed
+file can parse unfinished 4–7-byte output and abort across the Rust C
+ABI. It also counts files outside the reader's snapshot. Reopening
+snapshot filenames alone is insufficient because garbage collection can
+remove those paths while the reader still owns their data.
 
-issue: #52936
+Sum component lengths retained by one captured searcher instead. Use the
+merged https://github.com/zilliztech/tantivy/pull/36, with commit
+`f63b81a72e5a7cb08220fca1d45fbf7e9ebb2c14` recorded in `Cargo.lock`. It
+records footer-stripped lengths as each segment opens, including its
+exact deletion generation, without additional I/O, and rejects truncated
+footer metadata before slicing it. Remove the redundant `rand = "0.7"`
+dev dependency, which conflicted with the existing production rand
+dependency and prevented the regression target from compiling.
 
----------
+`Cargo.toml` keeps the Git URL without an explicit `rev`; the checked-in
+lockfile selects the merged commit.
 
-Signed-off-by: sunby <[REDACTED_EMAIL]>
+A TODO at snapshot creation documents f
 
-**File**: `internal/proxy/condition_test.go` (modified, +40/-0)
+**File**: `internal/core/thirdparty/tantivy/tantivy-binding/Cargo.lock` (modified, +9/-68)
 ```diff
-@@ -19,6 +19,7 @@ package proxy
- import (
- 	"context"
- 	"sync"
-+	"sync/atomic"
- 	"testing"
- 	"time"
+@@ -1151,17 +1151,6 @@ dependencies = [
+  "byteorder",
+ ]
  
-@@ -120,3 +121,42 @@ func TestTaskCondition_Notify(t *testing.T) {
- 	}()
- 	wg.Wait()
- }
-+
-+func TestTaskCondition_OnContextDone(t *testing.T) {
-+	t.Run("success", func(t *testing.T) {
-+		condition := NewTaskCondition(context.Background())
-+		var calls atomic.Int32
-+		condition.SetOnContextDone(func() {
-+			calls.Add(1)
-+		})
-+
-+		condition.Notify(nil)
-+		assert.NoError(t, condition.WaitToFinish())
-+		assert.Zero(t, calls.Load())
-+	})
-+
-+	t.Run("task error", func(t *testing.T) {
-+		condition := NewTaskCondition(context.Background())
-+		var calls atomic.Int32
-+		condition.SetOnContextDone(func() {
-+			calls.Add(1)
-+		})
-+
-+		condition.Notify(errors.New("task failed"))
-+		assert.Error(t, condition.WaitToFinish())
-+		assert.Zero(t, calls.Load())
-+	})
-+
-+	t.Run("context canceled", func(t *testing.T) {
-+		ctx, cancel := context.WithCancel(context.Background())
-+		condition := NewTaskCondition(ctx)
-+		var calls atomic.Int32
-+		condition.SetOnContextDone(func() {
-+			calls.Add(1)
-+		})
-+
-+		cancel()
-+		assert.Error(t, condition.WaitToFinish())
-+		assert.Equal(t, int32(1), calls.Load())
-+	})
-+}
+-[[package]]
+-name = "getrandom"
+-version = "0.1.16"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "8fc3cb4d91f53b50155bdcfd23f6a4c39ae1969c2ae85982b135750cccaf5fce"
+-dependencies = [
+- "cfg-if",
+- "libc",
+- "wasi 0.9.0+wasi-snapshot-preview1",
+-]
+-
+ [[package]]
+ name = "getrandom"
+ version = "0.2.16"
+@@ -3003,7 +2992,7 @@ dependencies = [
+ [[package]]
+ name = "ownedbytes"
+ version = "0.7.0"
+-source = "git+https://github.com/zilliztech/tantivy.git#fef3c2a5748bdb2b2c2f8ca1d9fc125a0d1e8b71"
++source = "git+https://github.com/zilliztech/tantivy.git#f63b81a72e5a7cb08220fca1d45fbf7e9ebb2c14"
+ dependencies = [
+  "stable_deref_trait",
+ ]
+@@ -3334,19 +3323,6 @@ version = "5.3.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "69cdb34c158ceb288df11e18b4bd39de994f6657d83847bdffdbd7f346754b0f"
+ 
+-[[package]]
+-name = "rand"
+-version = "0.7.3"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "6a6b1679d49b24bbfe0c803429aa1874472f50d9b363131f0e89fc356b544d03"
+-dependencies = [
+- "getrandom 0.1.16",
+- "libc",
+- "rand_chacha 0.2.2",
+- "rand_core 0.5.1",
+- "rand_hc",
+-]
+-
+ [[package]]
+ name = "rand"
+ version = "0.8.5"
+@@ -3368,16 +3344,6 @@ dependencies = [
+  "rand_core 0.9.3",
+ ]
+ 
+-[[package]]
+-name = "rand_chacha"
+-version = "0.2.2"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f4c8ed856279c9737206bf725bf36935d8666ead7aa69b52be55af369d193402"
+-dependencies = [
+- "ppv-lite86",
+- "rand_core 0.5.1",
+-]
+-
+ [[package]]
+ name = "rand_chacha"
+ version = "0.3.1"
+@@ -3398,15 +3364,6 @@ dependencies = [
+  "rand_core 0.9.3",
+ ]
+ 
+-[[package]]
+-name = "rand_core"
+-version = "0.5.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "90bde5296fc891b0cef12a6d03ddccc162ce7b2aff54160af9338f8d40df6d19"
+-dependencies = [
+- "getrandom 0.1.16",
+-]
+-
+ [[package]]
+ name = "rand_core"
+ version = "0.6.4"
+@@ -3435,15 +3392,6 @@ dependencies = [
+  "rand 0.8.5",
+ ]
+ 
+-[[package]]
+-name = "rand_hc"
+-version = "0.2.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ca3129af7b92a17112d59ad498c6f81eaf463253766b90396d39ea7a39d6613c"
+-dependencies = [
+- "rand_core 0.5.1",
+-]
+-
+ [[package]]
+ name = "rayon"
+ version = "1.11.0"
+@@ -3978,7 +3926,7 @@ dependencies = [
+ [[package]]
+ name = "tantivy"
+ version = "0.23.0"
+-source = "git+https://github.com/zilliztech/tantivy.git#fef3c2a5748bdb2b2c2f8ca1d9fc125a0d1e8b71"
++source = "git+https://github.com/zilliztech/tantivy.git#f63b81a72e5a7cb08220fca1d45fbf7e9ebb2c14"
+ dependencies = [
+  "aho-corasick",
+  "arc-swap",
+@@ -4054,7 +4002,6 @@ dependencies = [
+  "once_cell",
+  "pinyin",
+  "prost",
+- "rand 0.7.3",
+  "rand 0.9.2",
+  "regex",
+  "reqwest",
+@@ -4086,7 +4033,7 @@ dependencies = [
+ [[package]]
+ name = "tantivy-bitpacker"
+ version = "0.6.0"
+-source = "git+https://github.com/zilliztech/tantivy.git#fef3c2a5748bdb2b2c2f8ca1d9fc125a0d1e8b71"
++source = "git+https://github.com/zilliztech/tantivy.git#f63b81a72e5a7cb08220fca1d45fbf7e9ebb2c14"
+ dependencies = [
+  "bitpacking 0.9.2",
+ ]
+@@ -4109,7 +4056,7 @@ dependencies = [
+ [[package]]
+ name = "tantivy-columnar"
+ version = "0.3.0"
+-source = "git+https://github.com/zilliztech/tantivy.git#fef3c2a5748bdb2b2c2f8ca1d9fc125a0d1e8b71"
++source = "git+https://github.com/zilliztech/tantivy.git#f63b81a72e5a7cb08220fca1d45fbf7e9ebb2c14"
+ dependencies = [
+  "downcast-rs",
+  "fastdivide",
+@@ -4136,7 +4083,7 @@ dependencies = [
+ [[package]]
+ name = "tantivy-common"
+ version = "0.7.0"
+-source = "git+https://github.com/zilliztech/tantivy.git#fef3c2a5748bdb2b2c2f8ca1d9fc125a0d1e8b71"
++source = "git+https://github.com/zilliztech/tantivy.git#f63b81a72e5a7cb08220fca1d45fbf7e9ebb2c14"
+ dependencies = [
+  "async-trait",
+  "byteorder",
+@@ -4179,7 +4126,7 @@ dependencies = [
+ [[package]]
+ name = "tantivy-query-grammar"
+ version = "0.22.0"
+-source = "git+https://github.com/zilliztech/tantivy.git#fef3c2a5748bdb2b2c2f8ca1d9fc125a0d1e8b71"
++source = "git+https://github.com/zilliztech/tantivy.git#f63b81a72e5a7cb08220fca1d45fbf7e9ebb2c14"
+ dependencies = [
+  "nom",
+ ]
+@@ -4197,7 +4144,7 @@ dependencies = [
+ [[package]]
+ name = "tantivy-sstable"
+ version = "0.3.0"
+-source = "git+https://github.com/zilliztech/tantivy.git#fef3c2a5748bdb2b2c2f8ca1d9fc125a0d1e8b71"
++source = "git+https://github.com/zilliztech/tantivy.git#f63b81a72e5a7cb08220fca1d45fbf7e9ebb2c14"
+ dependencies = [
+  "futures-util",
+  "itertools 0.14.0",
+@@ -4219,7 +4166,7 @@ dependencies = [
+ [[package]]
+ name = "tantivy-stacker"
+ version = "0.3.0"
+-source = "git+https://github.com/zilliztech/tantivy.git#fef3c2a5748bdb2b2c2f8ca1d9fc125a0d1e8b71"
++source = "git+https://github.com/zilliztech/tantivy.git#f63b81a72e5a7cb08220fca1d45fbf7e9ebb2c14"
+ dependencies = [
+  "murmurhash32",
+  "rand_distr",
+@@ -4237,7 +4184,7 @@ dependencies = [
+ [[package]]
+ name = "tantivy-tokenizer-api"
+ version = "0.3.0"
+-sourc
 ```
 
-**File**: `internal/proxy/scheduler/task_scheduler.go` (modified, +43/-10)
+**File**: `internal/core/thirdparty/tantivy/tantivy-binding/Cargo.toml` (modified, +0/-1)
 ```diff
-@@ -43,7 +43,6 @@ type TaskQueue interface {
- 	utChan() <-chan int
- 	utEmpty() bool
- 	utFull() bool
--	addUnissuedTask(t taskmodel.Task) error
- 	FrontUnissuedTask() taskmodel.Task
- 	PopUnissuedTask() taskmodel.Task
- 	AddActiveTask(t taskmodel.Task)
-@@ -95,22 +94,22 @@ func (queue *BaseTaskQueue) IsFull() bool {
- 	return queue.utFull()
- }
+@@ -70,7 +70,6 @@ flate2 = "1.1.0"
+ tar = "0.4.44"
  
--func (queue *BaseTaskQueue) addUnissuedTask(t taskmodel.Task) error {
-+func (queue *BaseTaskQueue) addUnissuedTask(t taskmodel.Task) (*list.Element, error) {
- 	queue.utLock.Lock()
- 	defer queue.utLock.Unlock()
- 
- 	if queue.utFull() {
--		return merr.WrapErrTooManyRequests(int32(queue.GetMaxTaskNum()))
-+		return nil, merr.WrapErrTooManyRequests(int32(queue.GetMaxTaskNum()))
- 	}
--	queue.unissuedTasks.PushBack(t)
-+	element := queue.unissuedTasks.PushBack(t)
- 	// utBufChan is an edge-triggered, capacity-1 notifier: a pending token
- 	// means "the unissued list is non-empty, wake the scheduler". Concurrent
- 	// sends coalesce; the scheduler drains the list on each wake.
- 	select {
- 	case queue.utBufChan <- 1:
- 	default:
- 	}
--	return nil
-+	return element, nil
- }
- 
- func (queue *BaseTaskQueue) FrontUnissuedTask() taskmodel.Task {
-@@ -155,6 +154,18 @@ func (queue *BaseTaskQueue) popUnissuedTasks(filter func(taskmodel.Task) bool) [
- 	return removed
- }
- 
-+// removeUnissuedTask removes element only if it is still waiting in this queue.
-+// list.Remove is a no-op if the scheduler has already popped the element.
-+func (queue *BaseTaskQueue) removeUnissuedTask(element *list.Element) {
-+	if element == nil {
-+		return
-+	}
-+
-+	queue.utLock.Lock()
-+	defer queue.utLock.Unlock()
-+	queue.unissuedTasks.Remove(element)
-+}
-+
- func (queue *BaseTaskQueue) AddActiveTask(t taskmodel.Task) {
- 	queue.atLock.Lock()
- 	defer queue.atLock.Unlock()
-@@ -199,10 +210,10 @@ func (queue *BaseTaskQueue) getTaskByReqID(reqID taskmodel.UniqueID) taskmodel.T
- 	return nil
- }
- 
--func (queue *BaseTaskQueue) Enqueue(t taskmodel.Task) error {
-+func (queue *BaseTaskQueue) enqueue(t taskmodel.Task) (*list.Element, error) {
- 	err := t.OnEnqueue()
- 	if err != nil {
--		return err
-+		return nil, err
- 	}
- 
- 	// Fast-fail when the queue is already full, before any potentially-blocking
-@@ -213,7 +224,7 @@ func (queue *BaseTaskQueue) Enqueue(t taskmodel.Task) error {
- 	full := queue.utFull()
- 	queue.utLock.RUnlock()
- 	if full {
--		return merr.WrapErrTooManyRequests(int32(queue.GetMaxTaskNum()))
-+		return nil, merr.WrapErrTooManyRequests(int32(queue.GetMaxTaskNum()))
- 	}
- 
- 	var ts taskmodel.Timestamp
-@@ -222,12 +233,12 @@ func (queue *BaseTaskQueue) Enqueue(t taskmodel.Task) error {
- 		ts = tsoutil.ComposeTS(time.Now().UnixMilli(), 0)
- 		id, err = t.GetMetaCache().AllocID(t.TraceCtx())
- 		if err != nil {
--			return err
-+			return nil, err
- 		}
- 	} else {
- 		ts, err = queue.tsoAllocatorIns.AllocOne(t.TraceCtx())
- 		if err != nil {
--			return err
-+			return nil, err
- 		}
- 		// we always use same msg id and ts for now.
- 		id = taskmodel.UniqueID(ts)
-@@ -239,6 +250,11 @@ func (queue *BaseTaskQueue) Enqueue(t taskmodel.Task) error {
- 	return queue.addUnissuedTask(t)
- }
- 
-+func (queue *BaseTaskQueue) Enqueue(t taskmodel.Task) error {
-+	_, err := queue.enqueue(t)
-+	return err
-+}
-+
- func (queue *BaseTaskQueue) SetMaxTaskNum(num int64) {
- 	queue.maxTaskNumMtx.Lock()
- 	defer queue.maxTaskNumMtx.Unlock()
-@@ -316,6 +332,18 @@ type DqTaskQueue struct {
- 	*BaseTaskQueue
- }
- 
-+func (queue *DqTaskQueue) Enqueue(t taskmodel.Task) error {
-+	element, err := queue.enqueue(t)
-+	if err != nil {
-+		return err
-+	}
-+
-+	t.SetOnContextDone(func() {
-+		queue.removeUnissuedTask(element)
-+	})
-+	return nil
-+}
-+
- type ClearTaskQueueResult struct {
- 	QueuedCleared int64
- }
-@@ -586,6 +614,11 @@ func (sched *TaskScheduler) queryLoop() {
- 					p = subTaskPool
- 				}
- 				p.Submit(func() (struct{}, error) {
-+					// Submit may wait for a worker after the task has left the queue.
-+					if err := task.TraceCtx().Err(); err != nil {
-+						task.Notify(err)
-+						return struct{}{}, nil
-+					}
- 					sched.processTask(task, sched.DqQueue)
- 					return struct{}{}, nil
- 				})
-```
-
-**File**: `internal/proxy/scheduler/task_scheduler_context_test.go` (added, +179/-0)
-```diff
-@@ -0,0 +1,179 @@
-+// Licensed to the LF AI & Data foundation under one
-+// or more contributor license agreements. See the NOTICE file
-+// distributed with this work for additional information
-+// regarding copyright ownership. The ASF licenses this file
-+// to you under the Apache License, Version 2.0 (the
-+// "License"); you may not use this file except in compliance
-+// with the License. You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package scheduler
-+
-+import (
-+	"context"
-+	"sync"
-+	"sync/atomic"
-+	"testing"
-+	"time"
-+
-+	"github.com/bytedance/mockey"
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/milvus-io/milvus/pkg/v3/util/conc"
-+)
-+
-+type queryLoopTestTask struct {
-+	*mockDqlTask
-+	subTask          bool
-+	preExecute       func()
-+	preExecuteCalls  atomic.Int32
-+	executeCalls     atomic.Int32
-+	postExecuteCalls atomic.Int32
-+	notified         chan error
-+}
-+
-+func (t *queryLoopTestTask) IsSubTask() bool {
-+	return t.subTask
-+}
-+
-+func (t *queryLoopTestTask) PreExecute(context.Context) error {
-+	t.preExecuteCalls.Add(1)
-+	if t.preExecute != nil {
-+		t.preExecute()
-+	}
-+	return nil
-+}
-+
-+func (t *queryLoopTestTask) Execute(context.Context) error {
-+	t.executeCalls.Add(1)
-+	return nil
-+}
-+
-+func (t *queryLoopTestTask) PostExecute(context.Context) error {
-+	t.postExecuteCalls.Add(1)
-+	return nil
-+}
-+
-+func (t *queryLoopTestTask) Notify(err error) {
-+	t.mockDqlTask.Notify(err)
-+	t.notified <- err
-+}
-+
-+func TestTaskScheduler_QueryLoopContextDoneBeforeExecution(t *testing.T) {
-+	for _, subTask := range []bool{false, true} {
-+		poolName := "main pool"
-+		if subTask {
-+			poolName = "subtask pool"
-+		}
-+		t.Run(poolName, func(t *testing.T) {
-+			for _, outcome := range []string{"canceled", "deadline exceeded", "live"} {
-+				t.Run(outcome, func(t *testing.T) {
-+					pools := []*conc.Pool[struct{}]{conc.NewPool[struct{}](1), conc.NewPool[struct{}](1)}
-+					t.Cleanup(func() {
-+						for _, pool := range pools {
-+							pool.Release()
-+						}
-+					})
-+
-+					// Keep the actual pools so Waiting proves Submit is blocked before cancellation.
-+					nextPool := 0
-+					poolMock := mockey.MockGeneric(conc.NewPool[struct{}]).To(func(_ int, _ ...conc.PoolOption) *conc.Pool[struct{}] {
-+						pool := pools[nextPool]
-+						nextPool++
-+						return pool
-+					}).Build()
-+					t.Cleanup(func() { poolMock.UnPatch() })
-+
-+					sched, err := NewTaskScheduler(context.Background(), newMockTsoAllocator())
-+					require.NoError(t, err)
-+					release := make(chan struct{})
-+					var releaseOnce sync.Once
-+					releaseWorker := func() { releaseOnce.Do(func() { close(release) }) }
-+					t.Cleanup(func() {
-+						releaseWorker()
-+						sched.Close()
-+					})
-+					sched.wg.Add(1)
-+					go sched.queryLoop()
-+
-+					started := make(chan struct{})
-+					blockingTask := &queryLoopTestTask{
-+						mockDqlTask: newDefaultMockDqlTask(),
-+						subTask:     subTask,
-+						preExecute: func() {
-+							close(started)
-+							<-release
-+						},
-+						notified: make(chan error, 1),
-+					}
-+					require.NoError(t, sched.DqQueue.Enqueue(blockingTask))
-+					select {
-+					case <-started:
-+					case <-time.After(5 * time.Second):
-+						t.Fatal("first task did not occupy the worker")
-+					}
-+
-+					ctx, cancel := context.WithCancel(context.Background())
-+					if outcome == "deadline exceeded" {
-+						cancel()
-+						ctx, cancel = context.WithTimeout(context.Background(), time.Second)
-+					}
-+					t.Cleanup(cancel)
-+					task := &queryLoopTestTask{
-+						mockDqlTask: newMockDqlTask(ctx),
-+						subTask:     subTask,
-+						notified:    make(chan error, 1),
-+					}
-+					require.NoError(t, sched.DqQueue.Enqueue(task))
-+
-+					pool := pools[0]
-+					if subTask {
-+						pool = pools[1]
-+					}
-+					require.Eventually(t, func() bool { return pool.Waiting() == 1 }, 5*time.Second, time.Millisecond)
-+					require.True(t, sched.DqQueue.utEmpty())
-+
-+					var expectedErr error
-+					switch outcome {
-+					case "canceled":
-+						require.NoError(t, ctx.Err(), "cancel only after Submit starts waiting")
-+						cancel()
-+						expectedErr = context.Canceled
-+					case "deadline exceeded":
-+						<-ctx.Done()
-+						expectedErr = context.DeadlineExceeded
-+					}
-+					if expectedErr != nil {
-+						require.ErrorIs(t, task.WaitToFinish(), expectedErr)
-+					}
-+					releaseWorker()
-+
-+					select {
-+					case err := <-task.notified:
-+						require.ErrorIs(t, err, expectedErr)
-+					case <-time.After(5 * time.Second):
-+						t.Fatal("submitted task was not notified")
-+					}
-+					var expectedCalls int32
-+					if expectedErr == nil {
-+						expectedCalls = 1
-+						req
-```
-
-**File**: `internal/proxy/scheduler/task_scheduler_test.go` (modified, +32/-0)
-```diff
-@@ -122,6 +122,38 @@ func TestBaseTaskQueue(t *testing.T) {
- 	assert.Error(t, err)
- }
- 
-+func TestDqTaskQueue_RemoveUnissuedTaskOnContextDone(t *testing.T) {
-+	t.Run("remove queued task", func(t *testing.T) {
-+		ctx, cancel := context.WithCancel(context.Background())
-+		queue := newDqTaskQueue(newMockTsoAllocator())
-+		task := newMockDqlTask(ctx)
-+
-+		assert.NoError(t, queue.Enqueue(task))
-+		assert.Equal(t, 1, queue.unissuedTasks.Len())
-+
-+		cancel()
-+		assert.Error(t, task.WaitToFinish())
-+		assert.True(t, queue.utEmpty())
-+		assert.Nil(t, queue.getTaskByReqID(task.ID()))
-+	})
-+
-+	t.Run("popped task is unchanged", func(t *testing.T) {
-+		ctx, cancel := context.WithCancel(context.Background())
-+		queue := newDqTaskQueue(newMockTsoAllocator())
-+		poppedTask := newMockDqlTask(ctx)
-+		queuedTask := newDefaultMockDqlTask()
-+
-+		assert.NoError(t, queue.Enqueue(poppedTask))
-+		assert.NoError(t, queue.Enqueue(queuedTask))
-+		assert.Same(t, poppedTask, queue.PopUnissuedTask())
-+
-+		cancel()
-+		assert.Error(t, poppedTask.WaitToFinish())
-+		assert.Equal(t, 1, queue.unissuedTasks.Len())
-+		assert.Same(t, queuedTask, queue.FrontUnissuedTask())
-+	})
-+}
-+
- func TestDdTaskQueue(t *testing.T) {
- 	var err error
- 	var unissuedTask taskmodel.Task
-```
-
-**File**: `internal/proxy/taskmodel/condition.go` (modified, +12/-0)
-```diff
-@@ -27,6 +27,7 @@ type Condition interface {
- 	WaitToFinish() error
- 	Notify(err error)
- 	Ctx() context.Context
-+	SetOnContextDone(handler func())
- }
- 
- // make sure interface implementation
-@@ -36,12 +37,17 @@ var _ Condition = (*TaskCondition)(nil)
- type TaskCondition struct {
- 	done chan error
- 	ctx  context.Context
-+
-+	onContextDone func()
- }
- 
- // WaitToFinish waits until the TaskCondition is notified or context done or canceled
- func (tc *TaskCondition) WaitToFinish() error {
- 	select {
- 	case <-tc.ctx.Done():
-+		if tc.onContextDone != nil {
-+			tc.onContextDone()
-+		}
- 		return errors.Wrap(tc.ctx.Err(), "proxy TaskCondition context Done")
- 	case err := <-tc.done:
- 		return err
-@@ -58,6 +64,12 @@ func (tc *TaskCondition) Ctx() context.Context {
- 	return tc.ctx
- }
- 
-+// SetOnContextDone registers a handler invoked when WaitToFinish returns because its context is done.
-+// Registration must complete before WaitToFinish begins, and the handler must not change after waiting starts.
-+func (tc *TaskCondition) SetOnContextDone(handler func()) {
-+	tc.onContextDone = handler
-+}
-+
- // NewTaskCondition creates a TaskCondition with provided context
- func NewTaskCondition(ctx context.Context) *TaskCondition {
- 	return &TaskCondition{
-```
-
-**File**: `internal/proxy/taskmodel/task.go` (modified, +1/-0)
-```diff
-@@ -50,6 +50,7 @@ type Task interface {
- 	PostExecute(ctx context.Context) error
- 	WaitToFinish() error
- 	Notify(err error)
-+	SetOnContextDone(handler func())
- 	CanSkipAllocTimestamp() bool
- 	GetMetaCache() metacache.Cache
- 	SetOnEnqueueTime()
-```
-
----
-
-### Incident Patch 2: `2ca2a79d` (2026-10-17)
-**Commit Message**: fix: drop zero-count tokens in ConcurrentBM25Stats like BM25Stats.Minus (#54372)
-
-issue: #53949
-
-## What
-
-UT-GO on master fails every run in `internal/storage`:
-
-- `TestConcurrentBM25StatsUnlockedMatchesSerial`
-(`bm25_stats_concurrent_test.go:123`)
-- `TestConcurrentBM25StatsMergeFrom`
-(`bm25_stats_concurrent_test.go:149`)
-
-#53819 made `BM25Stats.Minus` delete a token once its count reaches
-zero. `ConcurrentBM25Stats` (#53950) kept the zero entries, so a token
-taken back to zero is `{token: 0}` in the concurrent table and absent
-from the serial one. Both PRs were green on their own heads; they merged
-on master about nine hours apart.
-
-## Change
-
-- Every write path of `ConcurrentBM25Stats` (locked per-token and split
-merges, `MergeUnlocked`/`MinusUnlocked`, `MergeFrom`) deletes a token
-whose count becomes zero, matching `BM25Stats.Minus`. Tokens of removed
-segments no longer stay in the table or count toward `MemSize`.
-`BuildIDF` is unchanged: a missing token and a zero count give the same
-IDF.
-- The tests compare against the serial stats without zero counts,
-because `BM25Stats.Merge` keeps a zero it reaches from a negative count,
-so its zero entries depend on the order of operations
-
-**File**: `internal/storage/bm25_stats_concurrent.go` (modified, +14/-4)
-```diff
-@@ -111,7 +111,17 @@ func (c *ConcurrentBM25Stats) MinusUnlocked(stats *BM25Stats) {
- 
- func (c *ConcurrentBM25Stats) applyUnlocked(rows map[uint32]int32, sign int32) {
- 	for token, count := range rows {
--		c.shards[shardOf(token)].rowsWithToken[token] += sign * count
-+		addTokenCount(c.shards[shardOf(token)].rowsWithToken, token, sign*count)
-+	}
-+}
-+
-+// addTokenCount adds delta to the count of token and drops the token once its count is zero,
-+// like BM25Stats.Minus, so tokens of removed segments do not stay in the table.
-+func addTokenCount(rows map[uint32]int32, token uint32, delta int32) {
-+	if count := rows[token] + delta; count != 0 {
-+		rows[token] = count
-+	} else {
-+		delete(rows, token)
- 	}
- }
- 
-@@ -120,7 +130,7 @@ func (c *ConcurrentBM25Stats) apply(rows map[uint32]int32, sign int32) {
- 		for token, count := range rows {
- 			shard := &c.shards[shardOf(token)]
- 			shard.Lock()
--			shard.rowsWithToken[token] += sign * count
-+			addTokenCount(shard.rowsWithToken, token, sign*count)
- 			shard.Unlock()
- 		}
- 		return
-@@ -148,7 +158,7 @@ func (c *ConcurrentBM25Stats) apply(rows map[uint32]int32, sign int32) {
- 		shard := &c.shards[s]
- 		shard.Lock()
- 		for _, tc := range split[s] {
--			shard.rowsWithToken[tc.token] += sign * tc.count
-+			addTokenCount(shard.rowsWithToken, tc.token, sign*tc.count)
- 		}
- 		shard.Unlock()
- 	}
-@@ -170,7 +180,7 @@ func (c *ConcurrentBM25Stats) MergeFrom(other *ConcurrentBM25Stats) {
- 			src.RLock()
- 			dst.Lock()
- 			for token, count := range src.rowsWithToken {
--				dst.rowsWithToken[token] += count
-+				addTokenCount(dst.rowsWithToken, token, count)
- 			}
- 			dst.Unlock()
- 			src.RUnlock()
-```
-
-**File**: `internal/storage/bm25_stats_concurrent_test.go` (modified, +41/-3)
-```diff
-@@ -47,6 +47,44 @@ func allTokensTF(vocab int32) []byte {
- 	return typeutil.CreateAndSortSparseFloatRow(all)
- }
- 
-+// nonZeroCounts drops the zero counts BM25Stats keeps when a merge brings a token back to zero;
-+// ConcurrentBM25Stats drops a token whenever its count reaches zero.
-+func nonZeroCounts(rows map[uint32]int32) map[uint32]int32 {
-+	out := make(map[uint32]int32, len(rows))
-+	for token, count := range rows {
-+		if count != 0 {
-+			out[token] = count
-+		}
-+	}
-+	return out
-+}
-+
-+// Taking back everything that was merged must leave no tokens, on every write path.
-+func TestConcurrentBM25StatsDropsZeroCounts(t *testing.T) {
-+	r := rand.New(rand.NewSource(21))
-+	// below and above the split threshold of the locked path
-+	for _, rows := range []int{20, 2000} {
-+		s := randomBM25Stats(r, rows, 20000)
-+
-+		c := NewConcurrentBM25Stats()
-+		c.Merge(s)
-+		c.Minus(s)
-+		assert.Empty(t, c.Snapshot().rowsWithToken, "Minus, %d rows", rows)
-+		assert.Zero(t, c.MemSize()-NewConcurrentBM25Stats().MemSize(), "Minus, %d rows", rows)
-+
-+		c.MergeUnlocked(s)
-+		c.MinusUnlocked(s)
-+		assert.Empty(t, c.Snapshot().rowsWithToken, "MinusUnlocked, %d rows", rows)
-+
-+		negative := NewConcurrentBM25Stats()
-+		negative.Minus(s)
-+		c.Merge(s)
-+		c.MergeFrom(negative)
-+		assert.Empty(t, c.Snapshot().rowsWithToken, "MergeFrom, %d rows", rows)
-+		assert.Zero(t, c.NumRow())
-+	}
-+}
-+
- func TestConcurrentBM25StatsMatchesSerial(t *testing.T) {
- 	// both the per-token path (small stats) and the split path (large stats)
- 	for _, tc := range []struct {
-@@ -95,7 +133,7 @@ func TestConcurrentBM25StatsMatchesSerial(t *testing.T) {
- 			got := c.Snapshot()
- 			assert.Equal(t, expected.NumRow(), c.NumRow())
- 			assert.Equal(t, expected.NumToken(), c.NumToken())
--			assert.Equal(t, expected.rowsWithToken, got.rowsWithToken)
-+			assert.Equal(t, nonZeroCounts(expected.rowsWithToken), got.rowsWithToken)
- 			assert.Equal(t, expected.GetAvgdl(), c.GetAvgdl())
- 			tf := allTokensTF(tc.vocab)
- 			assert.Equal(t, expected.BuildIDF(tf), c.BuildIDF(tf))
-@@ -120,7 +158,7 @@ func TestConcurrentBM25StatsUnlockedMatchesSerial(t *testing.T) {
- 		}
- 		assert.Equal(t, expected.NumRow(), c.NumRow())
- 		assert.Equal(t, expected.NumToken(), c.NumToken())
--		assert.Equal(t, expected.rowsWithToken, c.Snapshot().rowsWithToken)
-+		assert.Equal(t, nonZeroCounts(expected.rowsWithToken), c.Snapshot().rowsWithToken)
- 		tf := allTokensTF(20000)
- 		assert.Equal(t, expected.BuildIDF(tf), c.BuildIDFUnlocked(tf))
- 		assert.Equal(t, c.BuildIDF(tf), c.BuildIDFUnlocked(tf))
-@@ -146,7 +184,7 @@ func TestConcurrentBM25StatsMergeFrom(t *testing.T) {
- 	got := a.Snapshot()
- 	assert.Equal(t, expected.NumRow(), a.NumRow())
- 	assert.Equal(t, expected.NumToken(), a.NumToken())
--	assert.Equal(t, expected.rowsWithToken, got.rowsWithToken)
-+	assert.Equal(t, nonZeroCounts(expected.rowsWithToken), got.rowsWithToken)
- }
- 
- // A search during preload reads current while segments merge into it. It must never see a token in more
-```
-
----
-
-### Incident Patch 3: `e93d9b7d` (2026-10-16)
-**Commit Message**: fix: stop serializing BM25 IDF stats merges and holding every segment's stats during delegator recovery (#53950)
-
-issue: #53949
-
-## What
-
-A delegator recreated after a streaming node failure becomes serviceable
-only after every sealed segment of its shard is registered with it, and
-each registration merges the segment's BM25 stats into the shard-wide
-IDF stats (`idfOracle.current`). Both ways of doing that merge were
-serialized per shard, and on master the second one also held every
-segment's stats in memory at once. This PR has three commits.
-
-### 1. Shard the IDF stats by token
-
-`preloadSealed` merged each preloaded segment under the oracle write
-lock, so a shard registered segments at the speed of one map merge.
-`storage.ConcurrentBM25Stats` splits the token table into 32 shards,
-each with its own lock. Every token lives in exactly one shard, so it
-takes the same memory as `BM25Stats`, and merges of different segments
-run in parallel. `current` becomes a table of these per BM25 field,
-preloads merge under the oracle read lock, and `BuildIDF` shares the IDF
-formula with `BM25Stats` (same result bit for bit). The split buffers of
-large merges are pooled.
-
-### 2. One diff in SyncDi
-
-**File**: `internal/querynodev2/delegator/distribution.go` (modified, +4/-1)
-```diff
-@@ -515,8 +515,11 @@ func (d *distribution) SyncTargetVersion(action *querypb.SyncAction, partitions
- 	// depends on the snapshot just generated.
- 	d.genSnapshot()
- 	if d.idfOracle != nil {
--		d.idfOracle.SetNext(d.current.Load())
-+		// Mark the growing segments replaced by sealed ones before publishing the target: the sync of this
-+		// target counts their sealed stats and must drop the growing ones in the same step. SetNext syncs the
-+		// first target before returning and later ones may sync before a mark placed after it.
- 		d.idfOracle.LazyRemoveGrowings(action.GetTargetVersion(), redundantGrowings...)
-+		d.idfOracle.SetNext(d.current.Load())
- 	}
- 	d.updateServiceable("SyncTargetVersion")
+ [dev-dependencies]
+-rand = "0.7"
+ criterion = "0.5"
+ tempfile = "3.0"
  
 ```
 
-**File**: `internal/querynodev2/delegator/idf_oracle.go` (modified, +488/-83)
+**File**: `internal/core/thirdparty/tantivy/tantivy-binding/src/index_reader.rs` (modified, +273/-16)
 ```diff
-@@ -189,6 +189,10 @@ type sealedBm25Stats struct {
- 	localDir  string
- 	fieldList []int64 // bm25 field list
- 	diskSize  int64   // total disk size of local files
-+
-+	// version changes whenever what the segment contributes to current changes:
-+	// activation and its field list. Written with the struct lock held.
-+	version uint64
- }
+@@ -7,7 +7,7 @@ use tantivy::fastfield::FastValue;
+ use tantivy::query::{BooleanQuery, Query, RangeQuery, RegexQuery, TermQuery, TermSetQuery};
+ use tantivy::schema::{Field, IndexRecordOption};
+ use tantivy::tokenizer::{NgramTokenizer, TokenStream, Tokenizer};
+-use tantivy::{Directory, HasLen, Index, IndexReader, ReloadPolicy, Term};
++use tantivy::{Index, IndexReader, ReloadPolicy, Term};
  
- func (s *sealedBm25Stats) HasField(fieldID int64) bool {
-@@ -218,6 +222,7 @@ func (s *sealedBm25Stats) addFieldsLocked(fieldIDs []int64) {
- 			continue
- 		}
- 		s.fieldList = append(s.fieldList, fieldID)
-+		s.version++
- 	}
- }
+ use crate::bitset_wrapper::BitsetWrapper;
+ use crate::docid_collector::{DocIdCollector, DocIdCollectorI64};
+@@ -95,6 +95,8 @@ impl IndexReaderWrapper {
+         index: Arc<Index>,
+         set_bitset: SetBitsetFn,
+     ) -> Result<IndexReaderWrapper> {
++        // TODO: Reuse unchanged SegmentReaders upstream by (segment_id, delete_opstamp)
++        // when creating a new snapshot, while keeping previously published snapshots fixed.
+         IndexReaderWrapper::from_index_with_policy(index, set_bitset, ReloadPolicy::Manual)
+     }
  
-@@ -247,6 +252,9 @@ func (s *sealedBm25Stats) RetainFields(fieldIDs map[int64]struct{}) int64 {
- 		}
- 		removedDiskSize += fieldDiskSize
- 	}
-+	if len(kept) != len(s.fieldList) {
-+		s.version++
-+	}
- 	s.fieldList = kept
- 	if removedDiskSize > s.diskSize {
- 		removedDiskSize = s.diskSize
-@@ -279,13 +287,28 @@ func (s *sealedBm25Stats) Remove() {
- func (s *sealedBm25Stats) FetchStats() (map[int64]*storage.BM25Stats, error) {
- 	s.RLock()
- 	defer s.RUnlock()
-+	return s.fetchFieldsLocked(s.fieldList)
-+}
+@@ -149,21 +151,14 @@ impl IndexReaderWrapper {
+     }
  
-+// fetchSnapshot reads the stats together with the version and field list they belong to.
-+func (s *sealedBm25Stats) fetchSnapshot() (bm25Stats, uint64, []int64, error) {
-+	s.RLock()
-+	defer s.RUnlock()
-+	stats, err := s.fetchFieldsLocked(s.fieldList)
-+	if err != nil {
-+		return nil, 0, nil, err
-+	}
-+	return stats, s.version, slices.Clone(s.fieldList), nil
-+}
-+
-+// fetchFieldsLocked reads the stats of the given fields. Caller must hold the lock (read or write).
-+func (s *sealedBm25Stats) fetchFieldsLocked(fieldIDs []int64) (map[int64]*storage.BM25Stats, error) {
- 	if s.removed {
- 		return nil, merr.WrapErrServiceInternalMsg("sealed bm25 stats for segment %d already removed", s.segmentID)
- 	}
+     pub fn index_size_bytes(&self) -> Result<u64> {
+-        let dir = self.index.directory();
+-        let mut total: u64 = 0;
+-        for path in dir.list_managed_files() {
+-            match dir.open_read(&path) {
+-                Ok(file_slice) => {
+-                    total += file_slice.len() as u64;
+-                }
+-                Err(_e) => {
+-                    // Some legacy/unsupported files may fail to open (e.g., old tantivy versions).
+-                    // Skip unreadable files to provide a best-effort byte-size estimation instead of failing hard.
+-                    continue;
+-                }
+-            }
+-        }
+-        Ok(total)
++        // Read only retained, committed component lengths. Managed paths can
++        // include unfinished merge outputs or disappear while an old reader lives.
++        let searcher = self.reader.searcher();
++        Ok(searcher
++            .segment_readers()
++            .iter()
++            .map(|segment| segment.num_bytes())
++            .sum())
+     }
  
- 	stats := make(map[int64]*storage.BM25Stats)
--	for _, fieldID := range s.fieldList {
-+	for _, fieldID := range fieldIDs {
- 		fieldDir := path.Join(s.localDir, fmt.Sprintf("%d", fieldID))
- 		entries, err := os.ReadDir(fieldDir)
- 		if err != nil {
-@@ -362,6 +385,140 @@ func (s bm25Stats) RetainFields(fieldIDs map[int64]struct{}) {
- 	}
- }
+     pub(crate) fn search(&self, q: &dyn Query, bitset: *mut c_void) -> Result<()> {
+@@ -942,6 +937,268 @@ mod test {
  
-+// idfSyncParallelism bounds the goroutines that read sealed segment stats in SyncDistribution.
-+const idfSyncParallelism = 8
-+
-+// idfSyncMaxAttempts bounds how often SyncDistribution restarts when the BM25 fields change while it reads stats.
-+const idfSyncMaxAttempts = 3
-+
-+// syncDistributionAfterFetchHook runs in tests between reading stats outside the lock and applying them.
-+var syncDistributionAfterFetchHook func()
-+
-+// statsTable is the shard-wide BM25 stats of each BM25 field. Merge and Minus are safe for
-+// concurrent use, so loads holding only the oracle read lock can merge in parallel.
-+// Changing the field set (SyncFunctions) needs the oracle write lock.
-+type statsTable struct {
-+	mu     sync.RWMutex // guards fields
-+	fields map[int64]*storage.ConcurrentBM25Stats
-+}
-+
-+func newStatsTable(functions []*schemapb.FunctionSchema) *statsTable {
-+	t := &statsTable{fields: make(map[int64]*storage.ConcurrentBM25Stats)}
-+	for _, function := range functions {
-+		if function.GetType() == schemapb.FunctionType_BM25 {
-+			t.fields[function.GetOutputFieldIds()[0]] = storage.NewConcurrentBM25Stats()
-+		}
-+	}
-+	return t
-+}
-+
-+func (t *statsTable) field(fieldID int64) *storage.ConcurrentBM25Stats {
-+	t.mu.RLock()
-+	stats, ok := t.fields[fieldID]
-+	t.mu.RUnlock()
-+	if ok {
-+		return stats
-+	}
-+
-+	t.mu.Lock()
-+	defer t.mu.Unlock()
-+	if stats, ok = t.fields[fieldID]; !ok {
-+		stats = storage.NewConcurrentBM25Stats()
-+		t.fields[fieldID] = stats
-+	}
-+	return stats
-+}
-+
-+func (t *statsTable) Merge(stats bm25Stats) {
-+	for fieldID, s := range stats {
-+		if s != nil {
-+			t.field(fieldID).Merge(s)
-+		}
-+	}
-+}
-+
-+func (t *statsTable) Minus(stats bm25Stats) {
-+	for fieldID, s := range stats {
-+		if s != nil {
-+			t.field(fieldID).Minus(s)
-+		}
-+	}
-+}
-+
-+// MergeExclusive and MinusExclusive are Merge and Minus for callers holding the oracle write lock,
-+// which keeps every other reader and writer of current out, so the shard locks are skipped.
-+func (t *statsTable) MergeExclusive(stats bm25Stats) {
-+	for fieldID, s := range stats {
-+		if s != nil {
-+			t.field(fieldID).MergeUnlocked(s)
-+		}
-+	}
-+}
-+
-+func (t *statsTable) MinusExclusive(stats bm25Stats) {
-+	for fieldID, s := range stats {
-+		if s != nil {
-+			t.field(fieldID).MinusUnlocked(s)
-+		}
-+	}
-+}
-+
-+func (t *statsTable) GetStats(fieldID int64) (*storage.ConcurrentBM25Stats, error) {
-+	t.mu.RLock()
-+	defer t.mu.RUnlock()
-+	stats, ok := t.fields[fieldID]
-+	if !ok {
-+		return nil, merr.WrapErrFieldNotFound(fieldID, "not in idf oracle BM25 stats")
-+	}
-+	return stats, nil
-+}
-+
-+func (t *statsTable) NumRow() int64 {
-+	t.mu.RLock()
-+	defer t.mu.RUnlock()
-+	for _, stats := range t.fields {
-+		return stats.NumRow()
-+	}
-+	return 0
-+}
-+
-+func (t *statsTable) MemSize() int64 {
-+	t.mu.RLock()
-+	defer t.mu.RUnlock()
-+	size := int64(0)
-+	for _, stats := range t.fields {
-+		size += stats.MemSize()
-+	}
-```
-
-**File**: `internal/querynodev2/delegator/idf_oracle_sync_test.go` (added, +599/-0)
-```diff
-@@ -0,0 +1,599 @@
-+// Licensed to the LF AI & Data foundation under one
-+// or more contributor license agreements. See the NOTICE file
-+// distributed with this work for additional information
-+// regarding copyright ownership. The ASF licenses this file
-+// to you under the Apache License, Version 2.0 (the
-+// "License"); you may not use this file except in compliance
-+// with the License. You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package delegator
-+
-+import (
-+	"bytes"
-+	"context"
-+	"fmt"
-+	"math/rand"
-+	"os"
-+	"path"
-+	"sync"
-+	"testing"
-+	"time"
-+
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/mock"
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/milvus-io/milvus-proto/go-api/v3/schemapb"
-+	"github.com/milvus-io/milvus/internal/mocks"
-+	"github.com/milvus-io/milvus/internal/storage"
-+	"github.com/milvus-io/milvus/pkg/v3/proto/datapb"
-+	"github.com/milvus-io/milvus/pkg/v3/proto/querypb"
-+	"github.com/milvus-io/milvus/pkg/v3/util/merr"
-+	"github.com/milvus-io/milvus/pkg/v3/util/typeutil"
-+)
-+
-+// These tests change the sealed segments while SyncDistribution is between reading the stats
-+// of the segments it activates or deactivates (outside the oracle lock) and applying them
-+// (under the oracle lock), through syncDistributionAfterFetchHook.
-+
-+const syncTestVocab = 64
-+
-+func newSyncTestOracle(t *testing.T, fieldIDs ...int64) *idfOracle {
-+	functions := make([]*schemapb.FunctionSchema, 0, len(fieldIDs))
-+	for _, fieldID := range fieldIDs {
-+		functions = append(functions, &schemapb.FunctionSchema{
-+			Type:           schemapb.FunctionType_BM25,
-+			InputFieldIds:  []int64{fieldID - 1},
-+			OutputFieldIds: []int64{fieldID},
-+		})
-+	}
-+	o := NewIDFOracle("sync-test-channel", functions).(*idfOracle)
-+	o.dirPath = t.TempDir()
-+	o.Start()
-+	t.Cleanup(o.Close)
-+	return o
-+}
-+
-+func syncTestFunctions(fieldIDs ...int64) []*schemapb.FunctionSchema {
-+	functions := make([]*schemapb.FunctionSchema, 0, len(fieldIDs))
-+	for _, fieldID := range fieldIDs {
-+		functions = append(functions, &schemapb.FunctionSchema{
-+			Type:           schemapb.FunctionType_BM25,
-+			InputFieldIds:  []int64{fieldID - 1},
-+			OutputFieldIds: []int64{fieldID},
-+		})
-+	}
-+	return functions
-+}
-+
-+func randomSyncTestStats(r *rand.Rand, rows int) *storage.BM25Stats {
-+	stats := storage.NewBM25Stats()
-+	for i := 0; i < rows; i++ {
-+		row := map[uint32]float32{}
-+		for j := 0; j < 4; j++ {
-+			row[uint32(r.Int31n(syncTestVocab))] += 1
-+		}
-+		stats.Append(row)
-+	}
-+	return stats
-+}
-+
-+// syncTestSegment serves the stats files of one sealed segment from a mock chunk manager.
-+type syncTestSegment struct {
-+	id    int64
-+	stats map[int64]*storage.BM25Stats
-+	cm    *mocks.ChunkManager
-+}
-+
-+func newSyncTestSegment(t *testing.T, id int64, stats map[int64]*storage.BM25Stats) *syncTestSegment {
-+	seg := &syncTestSegment{id: id, stats: stats, cm: mocks.NewChunkManager(t)}
-+	for fieldID, s := range stats {
-+		data, err := s.Serialize()
-+		require.NoError(t, err)
-+		seg.cm.EXPECT().Reader(mock.Anything, seg.remotePath(fieldID)).RunAndReturn(
-+			func(context.Context, string) (storage.FileReader, error) {
-+				return &bytesFileReader{bytes.NewReader(data)}, nil
-+			}).Maybe()
-+	}
-+	return seg
-+}
-+
-+func (s *syncTestSegment) remotePath(fieldID int64) string {
-+	return fmt.Sprintf("bm25stats/seg_%d/field_%d/0", s.id, fieldID)
-+}
-+
-+func (s *syncTestSegment) loadInfo(fieldIDs ...int64) *querypb.SegmentLoadInfo {
-+	logs := make([]*datapb.FieldBinlog, 0, len(fieldIDs))
-+	for _, fieldID := range fieldIDs {
-+		logs = append(logs, bm25LogsForField(fieldID, s.remotePath(fieldID))...)
-+	}
-+	return &querypb.SegmentLoadInfo{Bm25Logs: logs}
-+}
-+
-+// load registers the segment with the given fields. Before the first target (targetVersion 0)
-+// the segment is preloaded and active; after it, the segment stays inactive until a sync activates it.
-+func (s *syncTestSegment) load(t *testing.T, o *idfOracle, fieldIDs ...int64) {
-+	require.NoError(t, o.LoadSealed(context.Background(), s.id, s.loadInfo(fieldIDs...), s.cm))
-+}
-+
-+func syncTestSnapshot(version int64, segIDs ...int64) *snapshot {
-+	segments := make([]SegmentEntry, 0, len(segIDs))
-+	for _, segID := range segIDs {
-+		segments = append(segments, SegmentEntry{NodeID: 1, SegmentID: segID, TargetVersion: version})
-+	}
-+	return &snapshot{dist: []SnapshotItem{{NodeID: 1, Segments: segments}}, targetVersion: version}
-+}
-+
-+// syncWithHook runs SyncDistribution for the snapshot, running hook once between the
-+// unlocked stats read and the locked apply.
-+func syncWithHook(t *testing.T, o *idfOracle, snap *snaps
-```
-
-**File**: `internal/querynodev2/delegator/idf_oracle_test.go` (modified, +149/-8)
-```diff
-@@ -20,8 +20,10 @@ import (
- 	"bytes"
- 	"context"
- 	"fmt"
-+	"math/rand"
- 	"os"
- 	"path"
-+	"sync"
- 	"testing"
- 	"time"
+     use super::IndexReaderWrapper;
  
-@@ -494,6 +496,141 @@ func (suite *IDFOracleSuite) TestLoadSealedFailureCleanup() {
- 	suite.True(os.IsNotExist(statErr))
- }
- 
-+// setFieldForTest replaces the stats of one field.
-+func (t *statsTable) setFieldForTest(fieldID int64, stats *storage.BM25Stats) {
-+	concurrent := storage.NewConcurrentBM25Stats()
-+	concurrent.Merge(stats)
-+	t.mu.Lock()
-+	defer t.mu.Unlock()
-+	t.fields[fieldID] = concurrent
-+}
++    #[test]
++    fn test_index_size_bytes_ignores_incomplete_files() {
++        use std::{io::Write, path::Path};
 +
-+// genOverlapStats builds stats of rows drawing tokens from [0, vocab), so different segments share tokens.
-+func (suite *IDFOracleSuite) genOverlapStats(r *rand.Rand, rows int, vocab uint32) map[int64]*storage.BM25Stats {
-+	result := map[int64]*storage.BM25Stats{102: storage.NewBM25Stats()}
-+	for i := 0; i < rows; i++ {
-+		row := map[uint32]float32{}
-+		for j := 0; j < 8; j++ {
-+			row[uint32(r.Int31n(int32(vocab)))] += 1
-+		}
-+		result[102].Append(row)
-+	}
-+	return result
-+}
++        use tantivy::{directory::TerminatingWrite, Directory};
 +
-+// assertIDFEqual checks that the oracle builds the same IDF and avgdl as expected for every token.
-+func (suite *IDFOracleSuite) assertIDFEqual(expected *storage.BM25Stats, vocab uint32) {
-+	all := map[uint32]float32{}
-+	for i := uint32(0); i < vocab; i++ {
-+		all[i] = 1
-+	}
-+	tf := typeutil.CreateAndSortSparseFloatRow(all)
-+	idf, avgdl, err := suite.idfOracle.BuildIDF(102, &schemapb.SparseFloatArray{Contents: [][]byte{tf}, Dim: int64(vocab)})
-+	suite.Require().NoError(err)
-+	suite.Equal(expected.GetAvgdl(), avgdl)
-+	suite.Equal(typeutil.SparseFloatBytesToMap(expected.BuildIDF(tf)), typeutil.SparseFloatBytesToMap(idf[0]))
-+}
++        use crate::{
++            array::{free_rust_result, Value},
++            index_reader_c::tantivy_index_size_bytes,
++            index_writer::IndexWriterWrapper,
++            TantivyIndexVersion,
++        };
 +
-+func (suite *IDFOracleSuite) TestConcurrentPreloadMatchesSerial() {
-+	const segNum, vocab = 200, 500
-+	r := rand.New(rand.NewSource(7))
++        for in_ram in [true, false] {
++            let directory = tempfile::tempdir().unwrap();
++            let mut writer = IndexWriterWrapper::create_text_writer(
++                "text",
++                directory.path().to_str().unwrap(),
++                "default",
++                "",
++                "",
++                1,
++                15_000_000,
++                in_ram,
++                false,
++                TantivyIndexVersion::V7,
++            )
++            .unwrap();
++            writer.add("committed text", Some(0)).unwrap();
++            writer.commit().unwrap();
++            let mut reader = writer.create_snapshot_reader(set_bitset).unwrap();
++            let expected = reader.index_size_bytes().unwrap();
++            assert!(expected > 0);
 +
-+	segStats := make(map[int64]*storage.BM25Stats, segNum)
-+	cms := make(map[int64]*mocks.ChunkManager, segNum)
-+	logs := make(map[int64][]*datapb.FieldBinlog, segNum)
-+	for segID := int64(1); segID <= segNum; segID++ {
-+		stats := suite.genOverlapStats(r, 20, vocab)
-+		data, err := stats[102].Serialize()
-+		suite.Require().NoError(err)
-+		remotePath := fmt.Sprintf("bm25stats/seg_%d/field_102/0", segID)
-+		cm := mocks.NewChunkManager(suite.T())
-+		cm.EXPECT().Reader(mock.Anything, remotePath).Return(&bytesFileReader{bytes.NewReader(data)}, nil)
-+		segStats[segID], cms[segID] = stats[102], cm
-+		logs[segID] = bm25LogsForField(102, remotePath)
-+	}
++            for size in [4, 5, 6, 7, 0, 1, 2, 3, 8] {
++                // ManagedDirectory registers the path before creating the file.
++                // Flushing without terminating exposes an unfinished merge output.
++                let path = format!("unfinished-{size}.idx");
++                let path = Path::new(&path);
++                let mut output = reader.index.directory().open_write(path).unwrap();
++                output.write_all(&vec![0; size]).unwrap();
++                output.flush().unwrap();
++                assert!(reader.index.directory().list_managed_files().contains(path));
++                assert_eq!(
++                    reader.index.directory().atomic_read(path).unwrap().len(),
++                    size
++                );
 +
-+	// load all segments concurrently while searches and memory accounting read the oracle
-+	var wg sync.WaitGroup
-+	stop := make(chan struct{})
-+	readerDone := make(chan struct{})
-+	go func() {
-+		defer close(readerDone)
-+		tf := typeutil.CreateAndSortSparseFloatRow(map[uint32]float32{1: 1})
-+		for {
-+			select {
-+			case <-stop:
-+				return
-+			default:
-+				suite.idfOracle.BuildIDF(102, &schemapb.SparseFloatArray{Contents: [][]byte{tf}, Dim: 2})
-+				suite.idfOracle.MemorySize()
-+			}
-+		}
-+	}()
-+	errs := make(chan error, segNum)
-+	for segID := int64(1); segID <= segNum; segID++ {
-+		wg.Add(1)
-+		go func(segID int64) {
-+			defer wg.Done()
-+			errs <- suite.idfOracle.LoadSealed(context.Background(), segID, &querypb.SegmentLoadInfo{Bm25Logs: logs[segID]}, cms[segID])
-+		}(segID)
-+	}
-+	wg.Wait()
-+	close(stop)
-+	<-readerDone
-+	close(errs)
-+	for err := range errs {
-+		suite.Require().NoError(err)
-+	}
++                // Exercise the same C ABI used while publishing growing text readers.
++                let result = tantivy_index_size_bytes(&mut reader as *mut _ as *mut c_void);
++                assert!(result.success);
++                match result.value {
++                    Value::U64(bytes) => assert_eq!(bytes, expected),
++                    _ => panic!("expected a byte count"),
++                }
++                free_rust_result(result);
 +
-+	expected := storage.NewBM25Stats()
-+	for _, stats := range segStats {
-+		expected.Merge(stats)
-+	}
-+	suite.assertIDFEqual(expected, vocab)
++                output.terminate().unwrap();
++                assert_eq!(reader.index_size_bytes().unwrap(), expected);
++            }
++        }
++    }
 +
-+	// first target keeps the odd segments: the even ones are deactivated through the parallel merge
-+	seals := []int64{}
-+	expected = storage.NewBM25Stats()
-+	for segID := int64(1); segID <= segNum; segID += 2 {
-+		seals = append(seals, segID)
-+		expected.Merge(segStats[segID])
-+	}
-+	suite.updateSnapshot(seals, []int64{}, []int64{})
-+	suite.idfOracle.SetNext(suite.snapshot)
-+	suite.waitTargetVersion(suite.targetVersion)
-+	suite.assertIDFEqual(expected, vocab)
-+}
++    #[test]
++    fn test_index_size_bytes_pins_committed_segments() {
++        use tantivy::{merge_policy::NoMergePolicy, Directory};
 +
-+func (suite *IDFOracleSuite) TestFetchStatsDiff() {
-+	suite.registerSealed(1, 1, 5)
-+	suite.registerSealed(2, 5, 9)
-+	kept, ok := suite.idfOracle.sealed.Get(1)
-+	suite.Require().True(ok)
-+	removed, ok := suite.idfOracle.sealed.Get(2)
-+	suite.Require().True(ok)
-+
-+	// one activated, one deactivated: the diff holds the difference and records what was read
-+	add := &statsCandidate{seg: kept}
-+	sub := &statsCandidate{seg: removed, minus: true}
-+	diff, err := fetchStatsDiff(map[int64]*statsCandidate{1: add, 2: sub})
-+	suite.NoError(err)
-+	suite.Equal(int64(0), diff.NumRow())
-+	suite.Equal([]int64{102}, add.fields)
-+	suite.Equal(kept.version, add.version)
-+
-+	diff, err = fetchStatsDiff(map[int64]*statsCandidate{1: {seg: kept}})
-+	suite.NoError(err)
-+	suite.Equal(int64(4), diff.NumRow())
-+
-+	removed.Remove()
-+	_, err = fetchStatsDiff(map[int64]*statsCandidate{1: {seg: kept}, 2: {seg: removed}})
-+	suite.Error(err)
-+
-+	diff, err = fetchStatsDiff(nil)
-+	suite.NoError(err)
-+	suite.Equal(int64(0), diff.NumRow())
-+}
-+
- func TestI
-```
-
-**File**: `internal/storage/bm25_stats_concurrent.go` (added, +262/-0)
-```diff
-@@ -0,0 +1,262 @@
-+// Licensed to the LF AI & Data foundation under one
-+// or more contributor license agreements. See the NOTICE file
-+// distributed with this work for additional information
-+// regarding copyright ownership. The ASF licenses this file
-+// to you under the Apache License, Version 2.0 (the
-+// "License"); you may not use this file except in compliance
-+// with the License. You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package storage
-+
-+import (
-+	"sync"
-+	"sync/atomic"
-+
-+	"github.com/milvus-io/milvus/pkg/v3/util/paramtable"
-+	"github.com/milvus-io/milvus/pkg/v3/util/typeutil"
-+)
-+
-+const (
-+	// concurrentBM25StatsShardBits sets 32 shards; each token belongs to exactly one shard.
-+	concurrentBM25StatsShardBits = 5
-+	concurrentBM25StatsShards    = 1 << concurrentBM25StatsShardBits
-+
-+	// below this many tokens a merge locks the shard per token instead of splitting the stats first
-+	concurrentBM25StatsSplitThreshold = 1024
-+)
-+
-+// ConcurrentBM25Stats holds the same data as BM25Stats with the token table split into shards,
-+// each guarded by its own lock, so concurrent merges of different stats proceed in parallel.
-+// Every token lives in exactly one shard, so it takes the same memory as a single BM25Stats.
-+// A reader running concurrently with a merge may observe that merge partially applied.
-+//
-+// A concurrent BuildIDF still never sees more rows containing a token than rows in total, which would
-+// make the IDF negative: Merge and MergeFrom add the row count before the token counts, and BuildIDF reads
-+// the token counts before the row count. Minus does not keep this, so it must not run concurrently with BuildIDF.
-+//
-+// The shard locks cost an atomic update per token, which matters on hot paths that are already
-+// serialized by the caller. The Unlocked methods skip them: MergeUnlocked and MinusUnlocked need
-+// the caller to hold c exclusively, and BuildIDFUnlocked needs that no write runs concurrently.
-+type ConcurrentBM25Stats struct {
-+	shards    [concurrentBM25StatsShards]bm25StatsShard
-+	numRow    atomic.Int64
-+	numToken  atomic.Int64
-+	nextShard atomic.Uint32 // rotates the first shard a large merge writes to, to spread contention
-+}
-+
-+type bm25StatsShard struct {
-+	sync.RWMutex
-+	rowsWithToken map[uint32]int32
-+}
-+
-+type tokenCount struct {
-+	token uint32
-+	count int32
-+}
-+
-+var splitBufferPool = sync.Pool{New: func() any {
-+	split := make([][]tokenCount, concurrentBM25StatsShards)
-+	return &split
-+}}
-+
-+func NewConcurrentBM25Stats() *ConcurrentBM25Stats {
-+	c := &ConcurrentBM25Stats{}
-+	for i := range c.shards {
-+		c.shards[i].rowsWithToken = map[uint32]int32{}
-+	}
-+	return c
-+}
-+
-+// shardOf spreads tokens with Fibonacci hashing, so shards stay balanced even if token low bits are not uniform.
-+func shardOf(token uint32) uint32 {
-+	return (token * 2654435769) >> (32 - concurrentBM25StatsShardBits)
-+}
-+
-+// Merge adds stats into c. Safe for concurrent use.
-+func (c *ConcurrentBM25Stats) Merge(stats *BM25Stats) {
-+	// the row count goes first, see the type comment
-+	c.numRow.Add(stats.numRow)
-+	c.numToken.Add(stats.numToken)
-+	c.apply(stats.rowsWithToken, 1)
-+}
-+
-+// Minus subtracts stats from c. Safe for concurrent use with other writes, but not with BuildIDF.
-+func (c *ConcurrentBM25Stats) Minus(stats *BM25Stats) {
-+	c.apply(stats.rowsWithToken, -1)
-+	c.numRow.Add(-stats.numRow)
-+	c.numToken.Add(-stats.numToken)
-+}
-+
-+// MergeUnlocked adds stats into c. The caller must hold c exclusively.
-+func (c *ConcurrentBM25Stats) MergeUnlocked(stats *BM25Stats) {
-+	c.applyUnlocked(stats.rowsWithToken, 1)
-+	c.numRow.Add(stats.numRow)
-+	c.numToken.Add(stats.numToken)
-+}
-+
-+// MinusUnlocked subtracts stats from c. The caller must hold c exclusively.
-+func (c *ConcurrentBM25Stats) MinusUnlocked(stats *BM25Stats) {
-+	c.applyUnlocked(stats.rowsWithToken, -1)
-+	c.numRow.Add(-stats.numRow)
-+	c.numToken.Add(-stats.numToken)
-+}
-+
-+func (c *ConcurrentBM25Stats) applyUnlocked(rows map[uint32]int32, sign int32) {
-+	for token, count := range rows {
-+		c.shards[shardOf(token)].rowsWithToken[token] += sign * count
-+	}
-+}
-+
-+func (c *ConcurrentBM25Stats) apply(rows map[uint32]int32, sign int32) {
-+	if len(rows) < concurrentBM25StatsSplitThreshold {
-+		for token, count := range rows {
-+			shard := &c.shards[shardOf(token)]
-+			shard.Lock()
-+			shard.rowsWithToken[token] += sign * count
-+			shard.Unlock()
-+		}
-+		return
-+	}
-+
-+	// the split buffers are reused across merges: a recovering delegator merges thousands of
-+	// segments with hundreds of thousands of tokens each, and fresh buffers per merge pile up as garbage
-+	buf
-```
-
-**File**: `internal/storage/bm25_stats_concurrent_bench_test.go` (added, +133/-0)
-```diff
-@@ -0,0 +1,133 @@
-+// Licensed to the LF AI & Data foundation under one
-+// or more contributor license agreements. See the NOTICE file
-+// distributed with this work for additional information
-+// regarding copyright ownership. The ASF licenses this file
-+// to you under the Apache License, Version 2.0 (the
-+// "License"); you may not use this file except in compliance
-+// with the License. You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package storage
-+
-+import (
-+	"fmt"
-+	"math/rand"
-+	"sync"
-+	"testing"
-+
-+	"github.com/milvus-io/milvus/pkg/v3/util/typeutil"
-+)
-+
-+// The benchmarks compare BM25Stats (master) and ConcurrentBM25Stats on the paths that run outside
-+// recovery, the way idfOracle calls them: BuildIDF under the oracle read lock (every BM25 search)
-+// and a small Merge under the oracle write lock (UpdateGrowing, every insert batch).
-+
-+const benchVocab = 2_000_000
-+
-+type benchTables struct {
-+	tokens     []uint32
-+	plain      *BM25Stats
-+	concurrent *ConcurrentBM25Stats
-+}
-+
-+var (
-+	benchOnce sync.Once
-+	benchData benchTables
-+)
-+
-+func loadBenchTables() benchTables {
-+	benchOnce.Do(func() {
-+		r := rand.New(rand.NewSource(1))
-+		tokens := make([]uint32, benchVocab)
-+		plain := NewBM25Stats()
-+		for i := range tokens {
-+			tokens[i] = r.Uint32()
-+			plain.rowsWithToken[tokens[i]] += 1 + int32(r.Intn(100))
-+		}
-+		plain.numRow, plain.numToken = 12_000_000, 600_000_000
-+		concurrent := NewConcurrentBM25Stats()
-+		concurrent.Merge(plain)
-+		benchData = benchTables{tokens: tokens, plain: plain, concurrent: concurrent}
-+	})
-+	return benchData
-+}
-+
-+func benchQuery(r *rand.Rand, tokens []uint32, n int) []byte {
-+	row := make(map[uint32]float32, n)
-+	for len(row) < n {
-+		row[tokens[r.Intn(len(tokens))]] = 1
-+	}
-+	return typeutil.CreateAndSortSparseFloatRow(row)
-+}
-+
-+func BenchmarkBuildIDF(b *testing.B) {
-+	data := loadBenchTables()
-+	for _, queryTokens := range []int{8, 128, 512} {
-+		queries := make([][]byte, 64)
-+		r := rand.New(rand.NewSource(int64(queryTokens)))
-+		for i := range queries {
-+			queries[i] = benchQuery(r, data.tokens, queryTokens)
-+		}
-+		for _, perCPU := range []int{1, 4} {
-+			run := func(b *testing.B, buildIDF func(tf []byte) []byte) {
-+				var oracle sync.RWMutex
-+				b.SetParallelism(perCPU)
-+				b.ResetTimer()
-+				b.RunParallel(func(pb *testing.PB) {
-+					i := 0
-+					for pb.Next() {
-+						oracle.RLock()
-+						buildIDF(queries[i%len(queries)])
-+						oracle.RUnlock()
-+						i++
-+					}
-+				})
-+			}
-+			name := fmt.Sprintf("tokens=%d/goroutinesPerCPU=%d", queryTokens, perCPU)
-+			b.Run(name+"/plain", func(b *testing.B) { run(b, data.plain.BuildIDF) })
-+			b.Run(name+"/concurrent", func(b *testing.B) { run(b, data.concurrent.BuildIDF) })
-+			b.Run(name+"/concurrent-unlocked", func(b *testing.B) { run(b, data.concurrent.BuildIDFUnlocked) })
-+		}
-+	}
-+}
-+
-+func BenchmarkUpdateGrowing(b *testing.B) {
-+	data := loadBenchTables()
-+	for _, rows := range []int{1, 100} {
-+		r := rand.New(rand.NewSource(int64(rows)))
-+		batches := make([]*BM25Stats, 64)
-+		for i := range batches {
-+			batches[i] = NewBM25Stats()
-+			for j := 0; j < rows; j++ {
-+				row := map[uint32]float32{}
-+				for k := 0; k < 50; k++ {
-+					row[data.tokens[r.Intn(len(data.tokens))]] += 1
-+				}
-+				batches[i].Append(row)
-+			}
-+		}
-+		run := func(b *testing.B, merge func(s *BM25Stats)) {
-+			var oracle sync.RWMutex
-+			b.ResetTimer()
-+			for i := 0; i < b.N; i++ {
-+				oracle.Lock()
-+				merge(batches[i%len(batches)])
-+				oracle.Unlock()
-+			}
-+		}
-+		// both tables keep growing their counts, which does not change their size
-+		plain := data.plain.Clone()
-+		concurrent := NewConcurrentBM25Stats()
-+		concurrent.Merge(plain)
-+		b.Run(fmt.Sprintf("rows=%d/plain", rows), func(b *testing.B) { run(b, plain.Merge) })
-+		b.Run(fmt.Sprintf("rows=%d/concurrent", rows), func(b *testing.B) { run(b, concurrent.Merge) })
-+		b.Run(fmt.Sprintf("rows=%d/concurrent-unlocked", rows), func(b *testing.B) { run(b, concurrent.MergeUnlocked) })
-+	}
-+}
-```
-
-**File**: `internal/storage/bm25_stats_concurrent_test.go` (added, +236/-0)
-```diff
-@@ -0,0 +1,236 @@
-+// Licensed to the LF AI & Data foundation under one
-+// or more contributor license agreements. See the NOTICE file
-+// distributed with this work for additional information
-+// regarding copyright ownership. The ASF licenses this file
-+// to you under the Apache License, Version 2.0 (the
-+// "License"); you may not use this file except in compliance
-+// with the License. You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package storage
-+
-+import (
-+	"math/rand"
-+	"sync"
-+	"testing"
-+
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/milvus-io/milvus/pkg/v3/util/typeutil"
-+)
-+
-+func randomBM25Stats(r *rand.Rand, rows int, vocab int32) *BM25Stats {
-+	stats := NewBM25Stats()
-+	for i := 0; i < rows; i++ {
-+		row := map[uint32]float32{}
-+		for j := 0; j < 8; j++ {
-+			row[uint32(r.Int31n(vocab))] += 1
-+		}
-+		stats.Append(row)
-+	}
-+	return stats
-+}
-+
-+func allTokensTF(vocab int32) []byte {
-+	all := map[uint32]float32{}
-+	for i := int32(0); i < vocab; i++ {
-+		all[uint32(i)] = 1
-+	}
-+	return typeutil.CreateAndSortSparseFloatRow(all)
-+}
-+
-+func TestConcurrentBM25StatsMatchesSerial(t *testing.T) {
-+	// both the per-token path (small stats) and the split path (large stats)
-+	for _, tc := range []struct {
-+		name  string
-+		rows  int
-+		vocab int32
-+	}{
-+		{"small", 20, 200},
-+		{"large", 2000, 20000},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			r := rand.New(rand.NewSource(11))
-+			adds := make([]*BM25Stats, 64)
-+			for i := range adds {
-+				adds[i] = randomBM25Stats(r, tc.rows, tc.vocab)
-+			}
-+			minus := adds[:16]
-+
-+			expected := NewBM25Stats()
-+			for _, s := range adds {
-+				expected.Merge(s)
-+			}
-+			for _, s := range minus {
-+				expected.Minus(s)
-+			}
-+
-+			c := NewConcurrentBM25Stats()
-+			var wg sync.WaitGroup
-+			for _, s := range adds {
-+				wg.Add(1)
-+				go func(s *BM25Stats) {
-+					defer wg.Done()
-+					c.Merge(s)
-+				}(s)
-+			}
-+			wg.Wait()
-+			for _, s := range minus {
-+				wg.Add(1)
-+				go func(s *BM25Stats) {
-+					defer wg.Done()
-+					c.Minus(s)
-+				}(s)
-+			}
-+			wg.Wait()
-+
-+			got := c.Snapshot()
-+			assert.Equal(t, expected.NumRow(), c.NumRow())
-+			assert.Equal(t, expected.NumToken(), c.NumToken())
-+			assert.Equal(t, expected.rowsWithToken, got.rowsWithToken)
-+			assert.Equal(t, expected.GetAvgdl(), c.GetAvgdl())
-+			tf := allTokensTF(tc.vocab)
-+			assert.Equal(t, expected.BuildIDF(tf), c.BuildIDF(tf))
-+		})
-+	}
-+}
-+
-+func TestConcurrentBM25StatsUnlockedMatchesSerial(t *testing.T) {
-+	// below and above the split threshold of the locked path
-+	for _, rows := range []int{20, 2000} {
-+		r := rand.New(rand.NewSource(int64(rows)))
-+		expected := NewBM25Stats()
-+		c := NewConcurrentBM25Stats()
-+		for i := 0; i < 16; i++ {
-+			s := randomBM25Stats(r, rows, 20000)
-+			expected.Merge(s)
-+			c.MergeUnlocked(s)
-+			if i%4 == 0 {
-+				expected.Minus(s)
-+				c.MinusUnlocked(s)
-+			}
-+		}
-+		assert.Equal(t, expected.NumRow(), c.NumRow())
-+		assert.Equal(t, expected.NumToken(), c.NumToken())
-+		assert.Equal(t, expected.rowsWithToken, c.Snapshot().rowsWithToken)
-+		tf := allTokensTF(20000)
-+		assert.Equal(t, expected.BuildIDF(tf), c.BuildIDFUnlocked(tf))
-+		assert.Equal(t, c.BuildIDF(tf), c.BuildIDFUnlocked(tf))
-+	}
-+}
-+
-+func TestConcurrentBM25StatsMergeFrom(t *testing.T) {
-+	r := rand.New(rand.NewSource(5))
-+	expected := NewBM25Stats()
-+	a, b := NewConcurrentBM25Stats(), NewConcurrentBM25Stats()
-+	for i := 0; i < 10; i++ {
-+		s := randomBM25Stats(r, 500, 5000)
-+		expected.Merge(s)
-+		if i%2 == 0 {
-+			a.Merge(s)
-+		} else {
-+			b.Minus(s) // MergeFrom must carry negative counts too
-+			expected.Minus(s)
-+			expected.Minus(s)
-+		}
-+	}
-+	a.MergeFrom(b)
-+	got := a.Snapshot()
-+	assert.Equal(t, expected.NumRow(), a.NumRow())
-+	assert.Equal(t, expected.NumToken(), a.NumToken())
-+	assert.Equal(t, expected.rowsWithToken, got.rowsWithToken)
-+}
-+
-+// A search during preload reads current while segments merge into it. It must never see a token in more
-+// rows than the row count, which gives a negative IDF that the worker rejects as an invalid sparse vector.
-+func TestConcurrentBM25StatsBuildIDFNeverNegativeDuringMerge(t *testing.T) {
-+	const vocab = 2048 // above the split threshold, like a real segment
-+	// every row holds every token, so after any set of whole merges each token is in exactly numRow rows
-+	row := map[uint32]float32{}
-+	for i := uint32(0); i < vocab; i++ {
-+		row[i] = 1
-+	}
-+	segment := NewBM25Stats()
-+	for i := 0; i < 4; i++ {
-+		segment.Append(row)
-+	}
-+	tf := allTokensTF(vocab)
-+
-+	for _, merge := range []struct {
-+		name string
-+		fn   func
-```
-
-**File**: `internal/storage/stats.go` (modified, +6/-2)
-```diff
-@@ -509,12 +509,16 @@ func (m *BM25Stats) BuildIDF(tf []byte) (idf []byte) {
- 	for idx := 0; idx < numElements; idx++ {
- 		key := typeutil.SparseFloatRowIndexAt(tf, idx)
- 		value := typeutil.SparseFloatRowValueAt(tf, idx)
--		nq := m.rowsWithToken[key]
--		typeutil.SparseFloatRowSetAt(idf, idx, key, value*float32(math.Log(1+(float64(m.numRow)-float64(nq)+0.5)/(float64(nq)+0.5))))
-+		typeutil.SparseFloatRowSetAt(idf, idx, key, bm25TermIDF(value, m.numRow, m.rowsWithToken[key]))
- 	}
- 	return idf
- }
- 
-+// bm25TermIDF weights a query term by its IDF given the total row count and the rows containing the term.
-+func bm25TermIDF(value float32, numRow int64, nq int32) float32 {
-+	return value * float32(math.Log(1+(float64(numRow)-float64(nq)+0.5)/(float64(nq)+0.5)))
-+}
-+
- func (m *BM25Stats) GetAvgdl() float64 {
- 	if m.numRow == 0 || m.numToken == 0 {
- 		return 0
++        for in_ram in [true, false] {
++            let directory = tempfile::tempdir().unwrap();
++            let mut s
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #54372** (2026-10-17): fix: drop zero-count tokens in ConcurrentBM25Stats like BM25Stats.Minus (@czs007)
-- **PR #54360** (2026-10-17): fix: [2.6] initialize VectorArray in PrepareResultFieldData for empty pages (@xiaofan-luan)
-- **PR #54356** (2026-10-19): enhance: [3.0] Import StorageV3 snapshots with L0 deletes (@weiliu1031)
-- **PR #54347** (2026-10-18): build(deps): bump Rust to 1.94 in builder images and install scripts (@yanbinyang)
-- **PR #54346** (2026-10-16): enhance: materialize only paginated query results (@xiaofan-luan)
-- **PR #54336** (2026-10-19): fix: [2.6] Preserve load priority in LoadBatchFieldData (@sparknack)
+- **PR #54423** (2026-10-19): enhance: [hotfix-2.6.24] cache sealed JSON index validity (@sunby)
+- **PR #54420** (closed): enhance: reuse JSON null offsets in packed indexes (@sunby)
+- **PR #54408** (2026-10-19): fix: [3.0] require root for telemetry administration (@liliu-z)
+- **PR #54398** (2026-10-19): test: [cp3.0] Backport data integrity diagnostics and nullable import coverage (@yanliang567)
+- **PR #54395** (2026-10-19): test: mock DqTaskQueue.Enqueue in proxy search tests (@sunby)
+- **PR #54387** (2026-10-19): enhance: [3.0] migrate result-fill helpers to snapshot (#54187) (@congqixia)
 
 ---
 
@@ -3090,67 +1802,82 @@ large merges are pooled.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. remove canceled DQL tasks from queue (#52939)
+## X. account Tantivy snapshot sizes from retained components (#54377)
 
 **RULE**:
-When implementing operations in `internal/proxy/condition_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/core/thirdparty/tantivy/tantivy-binding/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `840041e0`: remove canceled DQL tasks from queue (#52939). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a8a19994`: account Tantivy snapshot sizes from retained components (#54377). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/proxy/condition_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/core/thirdparty/tantivy/tantivy-binding/Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"sync/atomic"
-
-func TestTaskCondition_OnContextDone(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
-		condition := NewTaskCondition(context.Background())
-		var calls atomic.Int32
-		condition.SetOnContextDone(func() {
-			calls.Add(1)
-		})
-
-		condition.Notify(nil)
-		assert.NoError(t, condition.WaitToFinish())
-		assert.Zero(t, calls.Load())
-	})
-
-	t.Run("task error", func(t *testing.T) {
-		condition := NewTaskCondition(context.Background())
-		var calls atomic.Int32
-		condition.SetOnContextDone(func() {
-			calls.Add(1)
-		})
-
-		condition.Notify(errors.New("task failed"))
-		assert.Error(t, condition.WaitToFinish())
-		assert.Zero(t, calls.Load())
-	})
-
-	t.Run("context canceled", func(t *testing.T) {
-		ctx, cancel := context.WithCancel(context.Background())
-		condition := NewTaskCondition(ctx)
-		var calls atomic.Int32
-		condition.SetOnContextDone(func() {
-			calls.Add(1)
-		})
-
-		cancel()
-		assert.Error(t, condition.WaitToFinish())
-		assert.Equal(t, int32(1), calls.Load())
-	})
-}
+source = "git+https://github.com/zilliztech/tantivy.git#f63b81a72e5a7cb08220fca1d45fbf7e9ebb2c14"
+source = "git+https://github.com/zilliztech/tantivy.git#f63b81a72e5a7cb08220fca1d45fbf7e9ebb2c14"
+source = "git+https://github.com/zilliztech/tantivy.git#f63b81a72e5a7cb08220fca1d45fbf7e9ebb2c14"
+source = "git+https://github.com/zilliztech/tantivy.git#f63b81a72e5a7cb08220fca1d45fbf7e9ebb2c14"
+source = "git+https://github.com/zilliztech/tantivy.git#f63b81a72e5a7cb08220fca1d45fbf7e9ebb2c14"
+source = "git+https://github.com/zilliztech/tantivy.git#f63b81a72e5a7cb08220fca1d45fbf7e9ebb2c14"
+source = "git+https://github.com/zilliztech/tantivy.git#f63b81a72e5a7cb08220fca1d45fbf7e9ebb2c14"
+source = "git+https://github.com/zilliztech/tantivy.git#f63b81a72e5a7cb08220fca1d45fbf7e9ebb2c14"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+[[package]]
+name = "getrandom"
+version = "0.1.16"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8fc3cb4d91f53b50155bdcfd23f6a4c39ae1969c2ae85982b135750cccaf5fce"
+dependencies = [
+ "cfg-if",
+ "libc",
+ "wasi 0.9.0+wasi-snapshot-preview1",
+]
+
+source = "git+https://github.com/zilliztech/tantivy.git#fef3c2a5748bdb2b2c2f8ca1d9fc125a0d1e8b71"
+[[package]]
+name = "rand"
+version = "0.7.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6a6b1679d49b24bbfe0c803429aa1874472f50d9b363131f0e89fc356b544d03"
+dependencies = [
+ "getrandom 0.1.16",
+ "libc",
+ "rand_chacha 0.2.2",
+ "rand_core 0.5.1",
+ "rand_hc",
+]
+
+[[package]]
+name = "rand_chacha"
+version = "0.2.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f4c8ed856279c9737206bf725bf36935d8666ead7aa69b52be55af369d193402"
+dependencies = [
+ "ppv-lite86",
+ "rand_core 0.5.1",
+]
+
+[[package]]
+name = "rand_core"
+version = "0.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "90bde5296fc891b0cef12a6d03ddccc162ce7b2aff54160af9338f8d40df6d19"
+dependencies = [
+ "getrandom 0.1.16",
+]
+
+[[package]]
+name = "rand_hc"
+version = "0.2.0"
+source = "r
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `840041e0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a8a19994` are properly handled with clean fallback behavior.

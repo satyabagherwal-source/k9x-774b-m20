@@ -3451,3 +3451,7 @@ Every entry in this ledger must capture:
 | `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `a25a5857` | Multi-dimensional audit evidence | 2026-10-19T19:22:19.901Z |
 | `learn-github-berkaycubuk-kitsune` | `https://github.com/berkaycubuk/kitsune` | `f6bd4da3` | Multi-dimensional audit evidence | 2026-10-19T19:22:21.438Z |
 | `learn-github-touchlab-droidconkotlin` | `https://github.com/touchlab/DroidconKotlin` | `27f3e87c` | Multi-dimensional audit evidence | 2026-10-19T19:22:24.331Z |
+| `learn-github-manojahi-serpiq` | `https://github.com/manojahi/serpiq` | `f3330d7e` | Multi-dimensional audit evidence | 2026-10-19T19:29:49.154Z |
+| `learn-github-juullabs-kable` | `https://github.com/JuulLabs/kable` | `ff0d09e6` | Multi-dimensional audit evidence | 2026-10-19T19:29:51.911Z |
+| `learn-github-kong-kubernetes-ingress-controller` | `https://github.com/Kong/kubernetes-ingress-controller` | `41fa3e37` | Multi-dimensional audit evidence | 2026-10-19T19:29:53.428Z |
+| `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `b7b227fe` | Multi-dimensional audit evidence | 2026-10-19T19:29:58.443Z |

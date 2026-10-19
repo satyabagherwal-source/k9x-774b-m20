@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T19:22:24.268Z",
-  "total_verified_learnings": 891,
+  "last_updated": "2026-10-19T19:29:58.396Z",
+  "total_verified_learnings": 893,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -26387,22 +26387,35 @@
     "learn-github-juullabs-kable": {
       "learning_id": "learn-github-juullabs-kable",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "juullabs-kable",
+      "source": "JuulLabs/kable",
+      "repository": "JuulLabs/kable",
       "slug": "juullabs-kable",
       "platform": "github",
       "source_url": "https://github.com/JuulLabs/kable",
-      "source_version": "HEAD",
-      "content_hash": "ba6f7359c954d1d30a71467b9dd6ca1af8acff7d7e2358fc236f2561017dd637",
+      "source_version": "ff0d09e6",
+      "content_hash": "09cdcdbdea24ab756620ac828d68778982de9bf0a1cc83348b7d788c84ee194a",
       "dossier_path": "07_PROJECT_LEARNING/juullabs-kable-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/juullabs-kable-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2771,
+          "title": "Update Rust crate uuid to v1.24.1 (#1255)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.747Z"
+      "verified_at": "2026-10-19T19:29:51.840Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-k3s-io-k3s": {
       "learning_id": "learn-github-k3s-io-k3s",
@@ -27053,8 +27066,8 @@
       "slug": "kong-kubernetes-ingress-controller",
       "platform": "github",
       "source_url": "https://github.com/Kong/kubernetes-ingress-controller",
-      "source_version": "39edf7f0",
-      "content_hash": "b580f4339cd7bb9a524266bc7b95a77feb827cc657a9a918e214a2be31e0e435",
+      "source_version": "41fa3e37",
+      "content_hash": "7b836a29a358686d16cdcdead46626701e11bb108037ac5598339bb6d6bff545",
       "dossier_path": "07_PROJECT_LEARNING/kong-kubernetes-ingress-controller-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kong-kubernetes-ingress-controller-learnings.md",
       "promoted_rules": [
@@ -27072,6 +27085,11 @@
           "number": 2299,
           "title": "Asynchronous Pod Lifecycle Exclusion in Test and Health Harnesses",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2772,
+          "title": "dependencies): bump `moby/go-archive` and `x.net` (#8114)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -27079,7 +27097,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T07:21:35.512Z",
+      "verified_at": "2026-10-19T19:29:53.371Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -30695,14 +30713,19 @@
       "slug": "milvus-io-milvus",
       "platform": "github",
       "source_url": "https://github.com/milvus-io/milvus",
-      "source_version": "3fb4f56c",
-      "content_hash": "e021a1ce67e5cc4aa8ee469b407f1023d3b58863fe93e8cc09e8cdfcad75fb25",
+      "source_version": "b7b227fe",
+      "content_hash": "5dd53dc71cde53f710c86d9e13351e28361945d96681a7f04df8753c536a0a75",
       "dossier_path": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "promoted_rules": [
         {
           "number": 2242,
           "title": "remove canceled DQL tasks from queue (#52939)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2773,
+          "title": "account Tantivy snapshot sizes from retained components (#54377)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -30711,7 +30734,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T06:26:30.600Z",
+      "verified_at": "2026-10-19T19:29:58.383Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55693,22 +55716,31 @@
     "learn-github-manojahi-serpiq": {
       "learning_id": "learn-github-manojahi-serpiq",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "manojahi/serpiq",
       "repository": "manojahi/serpiq",
       "slug": "manojahi-serpiq",
       "platform": "github",
       "source_url": "https://github.com/manojahi/serpiq",
-      "source_version": "main",
-      "content_hash": "f37224c1fbb3d2723e3f2ccda5e45b7a1a6198dbf259a6fd4da900a9b37f7f58",
+      "source_version": "f3330d7e",
+      "content_hash": "2a915365b1d04ed06eb950c7e1eb03fc18465c03dae6048967841ee0ddff7566",
       "dossier_path": "07_PROJECT_LEARNING/manojahi-serpiq-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/manojahi-serpiq-learnings.md",
       "promoted_rules": [
         "Rule 1630"
       ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T19:29:49.090Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-tmolavi-siteprobe": {
       "learning_id": "learn-github-tmolavi-siteprobe",
@@ -91522,6 +91554,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T19:22:24.251Z"
+    },
+    "rule-2771": {
+      "learning_id": "rule-2771",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2771,
+      "title": "Update Rust crate uuid to v1.24.1 (#1255)",
+      "source_url": "https://github.com/JuulLabs/kable",
+      "source_version": "ff0d09e6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T19:29:51.840Z"
+    },
+    "rule-2772": {
+      "learning_id": "rule-2772",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2772,
+      "title": "dependencies): bump `moby/go-archive` and `x.net` (#8114)",
+      "source_url": "https://github.com/Kong/kubernetes-ingress-controller",
+      "source_version": "41fa3e37",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T19:29:53.371Z"
+    },
+    "rule-2773": {
+      "learning_id": "rule-2773",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2773,
+      "title": "account Tantivy snapshot sizes from retained components (#54377)",
+      "source_url": "https://github.com/milvus-io/milvus",
+      "source_version": "b7b227fe",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T19:29:58.383Z"
     }
   },
   "aliases": {

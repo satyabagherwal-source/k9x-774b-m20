@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-T4JJ",
-    "timestamp": "2026-10-19T05:12:57.151Z",
-    "repository": "dragonflydb/dragonfly",
-    "learningId": "learn-github-dragonflydb-dragonfly",
-    "contentHash": "3563cde104dbb2947a0b439525aad376cf19390707727a54cb7f07d48f90c91c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-0VUM",
-    "timestamp": "2026-10-19T05:18:59.134Z",
-    "repository": "danielpetho/fancy",
-    "learningId": "learn-github-danielpetho-fancy",
-    "contentHash": "591dd576f8250143e66b9f3f37bfa64c1ded8090eed7e30edede5b2c9e08cb9f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-0WH6",
-    "timestamp": "2026-10-19T05:18:59.946Z",
-    "repository": "Dicklesworthstone/destructive_command_guard",
-    "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
-    "contentHash": "bd6c64876c849ed85f29ecb1f0a8146dcd8e32731866d9d915806ed6cbc40b5c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-0ZH2",
-    "timestamp": "2026-10-19T05:19:03.830Z",
-    "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
-    "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
-    "contentHash": "f5692bcad981b5781e09a6e8eacd7d82346c4dc29b0252a723dd6b61a440930c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-0ZUE",
     "timestamp": "2026-10-19T05:19:04.310Z",
     "repository": "xinthink/react-native-material-kit",
@@ -7490,6 +7430,66 @@
     "repository": "touchlab/DroidconKotlin",
     "learningId": "learn-github-touchlab-droidconkotlin",
     "contentHash": "5373cafddf8d705d290b4f4b955dd00eff26bc20614e226633bc92c515639f1a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-F2AN",
+    "timestamp": "2026-10-19T19:29:49.151Z",
+    "repository": "manojahi/serpiq",
+    "learningId": "learn-github-manojahi-serpiq",
+    "contentHash": "2a915365b1d04ed06eb950c7e1eb03fc18465c03dae6048967841ee0ddff7566",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-F4F8",
+    "timestamp": "2026-10-19T19:29:51.908Z",
+    "repository": "JuulLabs/kable",
+    "learningId": "learn-github-juullabs-kable",
+    "contentHash": "09cdcdbdea24ab756620ac828d68778982de9bf0a1cc83348b7d788c84ee194a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-F5LD",
+    "timestamp": "2026-10-19T19:29:53.425Z",
+    "repository": "Kong/kubernetes-ingress-controller",
+    "learningId": "learn-github-kong-kubernetes-ingress-controller",
+    "contentHash": "7b836a29a358686d16cdcdead46626701e11bb108037ac5598339bb6d6bff545",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-F9GP",
+    "timestamp": "2026-10-19T19:29:58.441Z",
+    "repository": "milvus-io/milvus",
+    "learningId": "learn-github-milvus-io-milvus",
+    "contentHash": "5dd53dc71cde53f710c86d9e13351e28361945d96681a7f04df8753c536a0a75",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
