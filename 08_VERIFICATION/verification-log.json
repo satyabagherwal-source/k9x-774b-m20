@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261017-HNB3",
-    "timestamp": "2026-10-17T17:36:30.783Z",
-    "repository": "microsoft/FrogNano-4B-2609",
-    "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
-    "contentHash": "ea58ed1c31ec573fcd7d85a71f056371c45fde2f9e81d0c12836c293d4c80189",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-LMPZ",
-    "timestamp": "2026-10-17T17:39:36.647Z",
-    "repository": "hexgrad/Kokoro-82M",
-    "learningId": "learn-huggingface-hexgrad-kokoro-82m",
-    "contentHash": "c00dae97f0eeb8c52e968c82fcce07990474a32f6c6b32807c98b17f7b6fbaa8",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-POXS",
-    "timestamp": "2026-10-17T17:42:46.144Z",
-    "repository": "vllm-sr/d3",
-    "learningId": "learn-huggingface-vllm-sr-d3",
-    "contentHash": "f2913a4f7acd6d763a1c9d7f11a84b2c66e4c6191f69157e249f7c58911db7b2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-U3WM",
-    "timestamp": "2026-10-17T17:46:12.166Z",
-    "repository": "openai/whisper-large-v3",
-    "learningId": "learn-huggingface-openai-whisper-large-v3",
-    "contentHash": "cc118c3d8f7bb21227eaf4d1df358b05f1b123c6022d0a343022c0b9938a5b9a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-YISK",
-    "timestamp": "2026-10-17T17:49:38.084Z",
-    "repository": "black-forest-labs/FLUX.1-schnell",
-    "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell",
-    "contentHash": "ac46ae6a1dc58cbf196ca2e375a726f6dc27926b26cf48586882855c8fafebb7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-2FJB",
-    "timestamp": "2026-10-17T17:52:40.487Z",
-    "repository": "MiniMaxAI/MiniMax-H3",
-    "learningId": "learn-huggingface-minimaxai-minimax-h3",
-    "contentHash": "2f4ccb421f3d91e6988b07fae40d58331b617a4c9d24ae0f91e84db6930ca511",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261017-6NTC",
     "timestamp": "2026-10-17T17:55:57.840Z",
     "repository": "Qwen/Qwen3.8-Flash-Next",
@@ -7490,6 +7400,96 @@
     "repository": "cozodb/cozo",
     "learningId": "learn-github-cozodb-cozo",
     "contentHash": "a5d0f863fddce868d8d996592f9e8ebebcbee7b831e71380cca392a49056ae89",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-KT5Q",
+    "timestamp": "2026-10-19T01:22:32.222Z",
+    "repository": "elrumordelaluz/reactour",
+    "learningId": "learn-github-elrumordelaluz-reactour",
+    "contentHash": "f2f499b9154162e884fb87476556863eb2f910ec72c76d5ea7ed7a86c8d05fab",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-KU5U",
+    "timestamp": "2026-10-19T01:22:33.522Z",
+    "repository": "pemistahl/grex",
+    "learningId": "learn-github-pemistahl-grex",
+    "contentHash": "9c5417b130df844b5c4750f72af542fb1d8c3aaccd4ac2f7029371c8464f2018",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-KXYS",
+    "timestamp": "2026-10-19T01:22:38.452Z",
+    "repository": "gorhom/react-native-bottom-sheet",
+    "learningId": "learn-github-gorhom-react-native-bottom-sheet",
+    "contentHash": "4be21436ed8cd9a394a64bc1e02d6a8dba73095337030de25ece70c3b5c2e81e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-KZD7",
+    "timestamp": "2026-10-19T01:22:40.267Z",
+    "repository": "black-forest-labs/FLUX.1-dev",
+    "learningId": "learn-huggingface-black-forest-labs-flux-1-dev",
+    "contentHash": "7bf1eba532dc9943a5176cde1ec11920fde718073f6d1f8bf1ab99f22040524f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-L17T",
+    "timestamp": "2026-10-19T01:22:42.665Z",
+    "repository": "zarf-dev/zarf",
+    "learningId": "learn-github-zarf-dev-zarf",
+    "contentHash": "26d38d67dd9976af68b2e70a6613c8a3e9504a996a4482701fbded7fdf5c2286",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-L457",
+    "timestamp": "2026-10-19T01:22:46.459Z",
+    "repository": "vlcn-io/cr-sqlite",
+    "learningId": "learn-github-vlcn-io-cr-sqlite",
+    "contentHash": "e4ea73724ff07cb492fb154a5545f37b1d9f37a35acfb11606b45b2332e537b8",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T01:16:32.510Z",
-  "total_verified_learnings": 465,
+  "last_updated": "2026-10-19T01:22:46.422Z",
+  "total_verified_learnings": 470,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -6542,22 +6542,35 @@
     "learn-github-elrumordelaluz-reactour": {
       "learning_id": "learn-github-elrumordelaluz-reactour",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "elrumordelaluz-reactour",
+      "source": "elrumordelaluz/reactour",
+      "repository": "elrumordelaluz/reactour",
       "slug": "elrumordelaluz-reactour",
       "platform": "github",
       "source_url": "https://github.com/elrumordelaluz/reactour",
-      "source_version": "HEAD",
-      "content_hash": "c897fc7806a7c062d3e02dc2dff0a2f0fede059a6dea30b1d1255c83b5f1815e",
+      "source_version": "f38832ff",
+      "content_hash": "f2f499b9154162e884fb87476556863eb2f910ec72c76d5ea7ed7a86c8d05fab",
       "dossier_path": "07_PROJECT_LEARNING/elrumordelaluz-reactour-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/elrumordelaluz-reactour-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1963,
+          "title": "tour): scope disableActions to its declaring step",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.775Z"
+      "verified_at": "2026-10-19T01:22:32.180Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-embassy-rs-embassy": {
       "learning_id": "learn-github-embassy-rs-embassy",
@@ -9094,22 +9107,35 @@
     "learn-github-gorhom-react-native-bottom-sheet": {
       "learning_id": "learn-github-gorhom-react-native-bottom-sheet",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "gorhom-react-native-bottom-sheet",
+      "source": "gorhom/react-native-bottom-sheet",
+      "repository": "gorhom/react-native-bottom-sheet",
       "slug": "gorhom-react-native-bottom-sheet",
       "platform": "github",
       "source_url": "https://github.com/gorhom/react-native-bottom-sheet",
-      "source_version": "HEAD",
-      "content_hash": "e4f682ef4061d068c4f1294f0f8440aec72eddd6aa4ceaa4aab0f6dc95909488",
+      "source_version": "9bfbeb52",
+      "content_hash": "4be21436ed8cd9a394a64bc1e02d6a8dba73095337030de25ece70c3b5c2e81e",
       "dossier_path": "07_PROJECT_LEARNING/gorhom-react-native-bottom-sheet-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gorhom-react-native-bottom-sheet-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1965,
+          "title": "read window height from a shared value on ui thread",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.171Z"
+      "verified_at": "2026-10-19T01:22:38.409Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-goss-org-goss": {
       "learning_id": "learn-github-goss-org-goss",
@@ -12316,7 +12342,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
       "source_version": "hf-black-forest-labs-flux.1-dev",
-      "content_hash": "e12c11a7efe9af031e37d6c5627e269dc13a79b3f868563bb3df6f3feda181c0",
+      "content_hash": "7bf1eba532dc9943a5176cde1ec11920fde718073f6d1f8bf1ab99f22040524f",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md",
       "promoted_rules": [
@@ -12400,6 +12426,16 @@
           "number": 1534,
           "title": "Asymmetric Mixed-Precision Quantization Barrier",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1966,
+          "title": "Precision-Aware Weight Serialization for Large-Scale Neural Networks",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1967,
+          "title": "VRAM-Constrained Inference Pipeline Orchestration",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -12420,7 +12456,7 @@
         "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv43g3lp",
         "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv4goq8m"
       ],
-      "verified_at": "2026-10-17T21:38:04.787Z",
+      "verified_at": "2026-10-19T01:22:40.223Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -30080,22 +30116,35 @@
     "learn-github-pemistahl-grex": {
       "learning_id": "learn-github-pemistahl-grex",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "pemistahl-grex",
+      "source": "pemistahl/grex",
+      "repository": "pemistahl/grex",
       "slug": "pemistahl-grex",
       "platform": "github",
       "source_url": "https://github.com/pemistahl/grex",
-      "source_version": "HEAD",
-      "content_hash": "bf519251d94718494367369a4ddb33104c5e4cd05e3f79bc7a2584a89e6b9809",
+      "source_version": "99cc3477",
+      "content_hash": "9c5417b130df844b5c4750f72af542fb1d8c3aaccd4ac2f7029371c8464f2018",
       "dossier_path": "07_PROJECT_LEARNING/pemistahl-grex-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pemistahl-grex-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1964,
+          "title": "Try to fix Rust targets on Windows",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.011Z"
+      "verified_at": "2026-10-19T01:22:33.478Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-permify-permify": {
       "learning_id": "learn-github-permify-permify",
@@ -37260,22 +37309,35 @@
     "learn-github-vlcn-io-cr-sqlite": {
       "learning_id": "learn-github-vlcn-io-cr-sqlite",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "vlcn-io-cr-sqlite",
+      "source": "vlcn-io/cr-sqlite",
+      "repository": "vlcn-io/cr-sqlite",
       "slug": "vlcn-io-cr-sqlite",
       "platform": "github",
       "source_url": "https://github.com/vlcn-io/cr-sqlite",
-      "source_version": "HEAD",
-      "content_hash": "6012e07668b8a3d242ab65873cd8081e6bf32908fda14d7e5c0f632f52bc5398",
+      "source_version": "43ab94ca",
+      "content_hash": "e4ea73724ff07cb492fb154a5545f37b1d9f37a35acfb11606b45b2332e537b8",
       "dossier_path": "07_PROJECT_LEARNING/vlcn-io-cr-sqlite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vlcn-io-cr-sqlite-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1969,
+          "title": "a mistake where we were only using the current DB's site_id instead of the curre",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.251Z"
+      "verified_at": "2026-10-19T01:22:46.415Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-vllm-project-vllm": {
       "learning_id": "learn-github-vllm-project-vllm",
@@ -38498,22 +38560,35 @@
     "learn-github-zarf-dev-zarf": {
       "learning_id": "learn-github-zarf-dev-zarf",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "zarf-dev-zarf",
+      "source": "zarf-dev/zarf",
+      "repository": "zarf-dev/zarf",
       "slug": "zarf-dev-zarf",
       "platform": "github",
       "source_url": "https://github.com/zarf-dev/zarf",
-      "source_version": "HEAD",
-      "content_hash": "8020ebaf2ec30690871f834cb42a93ae5f3fe9fd1ee33882e505a7680acf7b28",
+      "source_version": "efdd6a86",
+      "content_hash": "26d38d67dd9976af68b2e70a6613c8a3e9504a996a4482701fbded7fdf5c2286",
       "dossier_path": "07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1968,
+          "title": "ensure chart order is preserved in state (#5477)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.507Z"
+      "verified_at": "2026-10-19T01:22:42.621Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-zed-industries-zed": {
       "learning_id": "learn-github-zed-industries-zed",
@@ -72640,6 +72715,104 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T01:16:32.506Z"
+    },
+    "rule-1963": {
+      "learning_id": "rule-1963",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1963,
+      "title": "tour): scope disableActions to its declaring step",
+      "source_url": "https://github.com/elrumordelaluz/reactour",
+      "source_version": "f38832ff",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:22:32.180Z"
+    },
+    "rule-1964": {
+      "learning_id": "rule-1964",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1964,
+      "title": "Try to fix Rust targets on Windows",
+      "source_url": "https://github.com/pemistahl/grex",
+      "source_version": "99cc3477",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:22:33.478Z"
+    },
+    "rule-1965": {
+      "learning_id": "rule-1965",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1965,
+      "title": "read window height from a shared value on ui thread",
+      "source_url": "https://github.com/gorhom/react-native-bottom-sheet",
+      "source_version": "9bfbeb52",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:22:38.409Z"
+    },
+    "rule-1966": {
+      "learning_id": "rule-1966",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1966,
+      "title": "Precision-Aware Weight Serialization for Large-Scale Neural Networks",
+      "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
+      "source_version": "hf-black-forest-labs-flux.1-dev",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:22:40.223Z"
+    },
+    "rule-1967": {
+      "learning_id": "rule-1967",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1967,
+      "title": "VRAM-Constrained Inference Pipeline Orchestration",
+      "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
+      "source_version": "hf-black-forest-labs-flux.1-dev",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:22:40.223Z"
+    },
+    "rule-1968": {
+      "learning_id": "rule-1968",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1968,
+      "title": "ensure chart order is preserved in state (#5477)",
+      "source_url": "https://github.com/zarf-dev/zarf",
+      "source_version": "efdd6a86",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:22:42.621Z"
+    },
+    "rule-1969": {
+      "learning_id": "rule-1969",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1969,
+      "title": "a mistake where we were only using the current DB's site_id instead of the curre",
+      "source_url": "https://github.com/vlcn-io/cr-sqlite",
+      "source_version": "43ab94ca",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:22:46.415Z"
     }
   },
   "aliases": {

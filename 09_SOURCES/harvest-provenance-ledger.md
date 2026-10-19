@@ -2746,3 +2746,9 @@ Every entry in this ledger must capture:
 | `learn-huggingface-qwen-qwen3-8-27b` | `https://huggingface.co/Qwen/Qwen3.8-27B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-19T01:16:28.055Z |
 | `learn-github-sealerio-sealer` | `https://github.com/sealerio/sealer` | `e426153a` | Multi-dimensional audit evidence | 2026-10-19T01:16:28.950Z |
 | `learn-github-cozodb-cozo` | `https://github.com/cozodb/cozo` | `481af058` | Multi-dimensional audit evidence | 2026-10-19T01:16:32.537Z |
+| `learn-github-elrumordelaluz-reactour` | `https://github.com/elrumordelaluz/reactour` | `f38832ff` | Multi-dimensional audit evidence | 2026-10-19T01:22:32.228Z |
+| `learn-github-pemistahl-grex` | `https://github.com/pemistahl/grex` | `99cc3477` | Multi-dimensional audit evidence | 2026-10-19T01:22:33.528Z |
+| `learn-github-gorhom-react-native-bottom-sheet` | `https://github.com/gorhom/react-native-bottom-sheet` | `9bfbeb52` | Multi-dimensional audit evidence | 2026-10-19T01:22:38.459Z |
+| `learn-huggingface-black-forest-labs-flux-1-dev` | `https://huggingface.co/black-forest-labs/FLUX.1-dev` | `hf-black-f` | Multi-dimensional audit evidence | 2026-10-19T01:22:40.272Z |
+| `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `efdd6a86` | Multi-dimensional audit evidence | 2026-10-19T01:22:42.671Z |
+| `learn-github-vlcn-io-cr-sqlite` | `https://github.com/vlcn-io/cr-sqlite` | `43ab94ca` | Multi-dimensional audit evidence | 2026-10-19T01:22:46.465Z |

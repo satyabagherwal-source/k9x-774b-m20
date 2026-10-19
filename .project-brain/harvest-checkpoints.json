@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T01:16:32.541Z",
+  "last_updated": "2026-10-19T01:22:46.470Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -228,14 +228,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-black-forest-labs-flux-1-dev",
-      "content_hash": "e12c11a7efe9af031e37d6c5627e269dc13a79b3f868563bb3df6f3feda181c0",
-      "verified_at": "2026-10-17T21:38:04.827Z",
+      "content_hash": "7bf1eba532dc9943a5176cde1ec11920fde718073f6d1f8bf1ab99f22040524f",
+      "verified_at": "2026-10-19T01:22:40.277Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T21:38:04.827Z"
+      "last_updated": "2026-10-19T01:22:40.277Z"
     },
     "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF": {
       "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
@@ -6757,6 +6757,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T01:16:32.541Z"
+    },
+    "elrumordelaluz/reactour": {
+      "repository": "elrumordelaluz/reactour",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-elrumordelaluz-reactour",
+      "content_hash": "f2f499b9154162e884fb87476556863eb2f910ec72c76d5ea7ed7a86c8d05fab",
+      "verified_at": "2026-10-19T01:22:32.233Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T01:22:32.233Z"
+    },
+    "pemistahl/grex": {
+      "repository": "pemistahl/grex",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-pemistahl-grex",
+      "content_hash": "9c5417b130df844b5c4750f72af542fb1d8c3aaccd4ac2f7029371c8464f2018",
+      "verified_at": "2026-10-19T01:22:33.533Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T01:22:33.533Z"
+    },
+    "gorhom/react-native-bottom-sheet": {
+      "repository": "gorhom/react-native-bottom-sheet",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-gorhom-react-native-bottom-sheet",
+      "content_hash": "4be21436ed8cd9a394a64bc1e02d6a8dba73095337030de25ece70c3b5c2e81e",
+      "verified_at": "2026-10-19T01:22:38.471Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T01:22:38.471Z"
+    },
+    "zarf-dev/zarf": {
+      "repository": "zarf-dev/zarf",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-zarf-dev-zarf",
+      "content_hash": "26d38d67dd9976af68b2e70a6613c8a3e9504a996a4482701fbded7fdf5c2286",
+      "verified_at": "2026-10-19T01:22:42.675Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T01:22:42.675Z"
+    },
+    "vlcn-io/cr-sqlite": {
+      "repository": "vlcn-io/cr-sqlite",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-vlcn-io-cr-sqlite",
+      "content_hash": "e4ea73724ff07cb492fb154a5545f37b1d9f37a35acfb11606b45b2332e537b8",
+      "verified_at": "2026-10-19T01:22:46.470Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T01:22:46.470Z"
     }
   },
   "repos": {

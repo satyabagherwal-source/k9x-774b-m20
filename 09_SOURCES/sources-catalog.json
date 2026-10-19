@@ -215,8 +215,8 @@
     "sourceUrl": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
     "sourceVersion": "hf-black-forest-labs-flux.1-dev",
     "license": "Open-Source",
-    "contentHash": "e12c11a7efe9af031e37d6c5627e269dc13a79b3f868563bb3df6f3feda181c0",
-    "lastHarvestedAt": "2026-10-17T21:38:04.824Z",
+    "contentHash": "7bf1eba532dc9943a5176cde1ec11920fde718073f6d1f8bf1ab99f22040524f",
+    "lastHarvestedAt": "2026-10-19T01:22:40.272Z",
     "learningId": "learn-huggingface-black-forest-labs-flux-1-dev"
   },
   "hf-francisring-prism": {
@@ -4428,5 +4428,55 @@
     "contentHash": "a5d0f863fddce868d8d996592f9e8ebebcbee7b831e71380cca392a49056ae89",
     "lastHarvestedAt": "2026-10-19T01:16:32.537Z",
     "learningId": "learn-github-cozodb-cozo"
+  },
+  "elrumordelaluz-reactour": {
+    "repository": "elrumordelaluz/reactour",
+    "platform": "github",
+    "sourceUrl": "https://github.com/elrumordelaluz/reactour",
+    "sourceVersion": "f38832ff",
+    "license": "MIT",
+    "contentHash": "f2f499b9154162e884fb87476556863eb2f910ec72c76d5ea7ed7a86c8d05fab",
+    "lastHarvestedAt": "2026-10-19T01:22:32.228Z",
+    "learningId": "learn-github-elrumordelaluz-reactour"
+  },
+  "pemistahl-grex": {
+    "repository": "pemistahl/grex",
+    "platform": "github",
+    "sourceUrl": "https://github.com/pemistahl/grex",
+    "sourceVersion": "99cc3477",
+    "license": "Apache-2.0",
+    "contentHash": "9c5417b130df844b5c4750f72af542fb1d8c3aaccd4ac2f7029371c8464f2018",
+    "lastHarvestedAt": "2026-10-19T01:22:33.528Z",
+    "learningId": "learn-github-pemistahl-grex"
+  },
+  "gorhom-react-native-bottom-sheet": {
+    "repository": "gorhom/react-native-bottom-sheet",
+    "platform": "github",
+    "sourceUrl": "https://github.com/gorhom/react-native-bottom-sheet",
+    "sourceVersion": "9bfbeb52",
+    "license": "MIT",
+    "contentHash": "4be21436ed8cd9a394a64bc1e02d6a8dba73095337030de25ece70c3b5c2e81e",
+    "lastHarvestedAt": "2026-10-19T01:22:38.459Z",
+    "learningId": "learn-github-gorhom-react-native-bottom-sheet"
+  },
+  "zarf-dev-zarf": {
+    "repository": "zarf-dev/zarf",
+    "platform": "github",
+    "sourceUrl": "https://github.com/zarf-dev/zarf",
+    "sourceVersion": "efdd6a86",
+    "license": "Apache-2.0",
+    "contentHash": "26d38d67dd9976af68b2e70a6613c8a3e9504a996a4482701fbded7fdf5c2286",
+    "lastHarvestedAt": "2026-10-19T01:22:42.671Z",
+    "learningId": "learn-github-zarf-dev-zarf"
+  },
+  "vlcn-io-cr-sqlite": {
+    "repository": "vlcn-io/cr-sqlite",
+    "platform": "github",
+    "sourceUrl": "https://github.com/vlcn-io/cr-sqlite",
+    "sourceVersion": "43ab94ca",
+    "license": "MIT",
+    "contentHash": "e4ea73724ff07cb492fb154a5545f37b1d9f37a35acfb11606b45b2332e537b8",
+    "lastHarvestedAt": "2026-10-19T01:22:46.465Z",
+    "learningId": "learn-github-vlcn-io-cr-sqlite"
   }
 }
