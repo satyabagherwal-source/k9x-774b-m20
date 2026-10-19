@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T13:49:39.185Z",
-  "total_verified_learnings": 826,
+  "last_updated": "2026-10-19T13:55:51.570Z",
+  "total_verified_learnings": 827,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -8926,14 +8926,19 @@
       "slug": "fallow-rs-fallow",
       "platform": "github",
       "source_url": "https://github.com/fallow-rs/fallow",
-      "source_version": "d406a14e",
-      "content_hash": "960d8d8bf4b4e447b399a714c3f2ab9e5f1bfe56cf27d95c12e4a9674dc83da1",
+      "source_version": "77f2b8b1",
+      "content_hash": "22ea2f7f256dc6788b1f05bacde6e6e4e87d1825d3b9fd8922e016eea0449028",
       "dossier_path": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "promoted_rules": [
         {
           "number": 1807,
           "title": "oxlint): read .oxlintrc.jsonc and oxlint.config.mts (#3567)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2615,
+          "title": "deps): fix vulnerable dependencies in the review app and demo project (#3615)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -8942,7 +8947,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T22:54:16.705Z",
+      "verified_at": "2026-10-19T13:55:47.671Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42427,22 +42432,35 @@
     "learn-github-vanniktech-gradle-maven-publish-plugin": {
       "learning_id": "learn-github-vanniktech-gradle-maven-publish-plugin",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "vanniktech-gradle-maven-publish-plugin",
+      "source": "vanniktech/gradle-maven-publish-plugin",
+      "repository": "vanniktech/gradle-maven-publish-plugin",
       "slug": "vanniktech-gradle-maven-publish-plugin",
       "platform": "github",
       "source_url": "https://github.com/vanniktech/gradle-maven-publish-plugin",
-      "source_version": "HEAD",
-      "content_hash": "b789f9ebf073cd24913b655d35e7fb579b47afc30b0fb18a80019e19764a8035",
+      "source_version": "6ba9aead",
+      "content_hash": "bf72827bc9b9f1730e5ffb95b0e254e2fb72d43b4122d8ace944d4392ca2aa60",
       "dossier_path": "07_PROJECT_LEARNING/vanniktech-gradle-maven-publish-plugin-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vanniktech-gradle-maven-publish-plugin-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2616,
+          "title": "Update plugin buildconfig to v6.1.2 (#1452)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.187Z"
+      "verified_at": "2026-10-19T13:55:51.559Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-vasu-devs-justhireme": {
       "learning_id": "learn-github-vasu-devs-justhireme",
@@ -51809,7 +51827,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/pyannote/speaker-diarization-community-1",
       "source_version": "hf-pyannote-speaker-diarization-community-1",
-      "content_hash": "0670755a92e1e45d7ca6f12a6f5201ed26609fb2b117adfdab62e557e8cc0d90",
+      "content_hash": "5a04f8b2f88a22cdf68dd60e4cec68f2110db37cee596de251bc8b8919c4e3e8",
       "dossier_path": "07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-community-1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-community-1-learnings.md",
       "promoted_rules": [
@@ -51829,7 +51847,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T03:58:20.235Z",
+      "verified_at": "2026-10-19T13:55:45.661Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -87895,6 +87913,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T13:49:39.174Z"
+    },
+    "rule-2615": {
+      "learning_id": "rule-2615",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2615,
+      "title": "deps): fix vulnerable dependencies in the review app and demo project (#3615)",
+      "source_url": "https://github.com/fallow-rs/fallow",
+      "source_version": "77f2b8b1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T13:55:47.671Z"
+    },
+    "rule-2616": {
+      "learning_id": "rule-2616",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2616,
+      "title": "Update plugin buildconfig to v6.1.2 (#1452)",
+      "source_url": "https://github.com/vanniktech/gradle-maven-publish-plugin",
+      "source_version": "6ba9aead",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T13:55:51.559Z"
     }
   },
   "aliases": {

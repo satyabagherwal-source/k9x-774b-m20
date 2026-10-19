@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md`  
 > **Source**: github ([https://github.com/fallow-rs/fallow](https://github.com/fallow-rs/fallow))  
-> **Source Version**: `d406a14e`  
+> **Source Version**: `77f2b8b1`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T22:54:16.540Z  
+> **Timestamp**: 2026-10-19T13:55:47.457Z  
 > **Learning ID**: `learn-github-fallow-rs-fallow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fallow-rs/fallow](https://github.com/fallow-rs/fallow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T22:54:15.506Z  
+> **Harvest Timestamp**: 2026-10-19T13:55:47.448Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Codebase intelligence for TypeScript and JavaScript. Health, complexity hotspots, duplication, architecture boundaries, circular dependencies, design-system drift, and unused code, from one graph. CLI, GitHub Action, LSP, MCP, and VS Code. Rust, MIT licensed.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5177 stars
+- **Stars / Engagement**: 5182 stars
 
 ---
 
@@ -1760,337 +1760,988 @@ export const NoteComposer = ({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5ada5d28` (2026-10-17)
-**Commit Message**: fix(oxlint): read .oxlintrc.jsonc and oxlint.config.mts (#3567)
+### Incident Patch 1: `8a6cbdc4` (2026-10-19)
+**Commit Message**: chore(deps): fix vulnerable dependencies in the review app and demo project (#3615)
 
-Fixes #3525
+* chore(deps): update sample-app fixture and demo-project dependencies
 
-Thanks @gwynnnplaine for the clear report and the analysis.
+Refresh the sample-app fixture lockfile so source-map-js, postcss,
+browserslist and baseline-browser-mapping resolve to patched versions.
+Raise the @faker-js/faker range in the demo project to ^10.5.0. The demo
+source does not import faker, so the bump does not change its behavior.
 
-## What changed
+Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
 
-- The Oxlint plugin now matches `.oxlintrc.{json,jsonc}`, `oxlint.json` and `oxlint.config.{ts,mts}`.
-- New fixtures for `.oxlintrc.jsonc` and `oxlint.config.mts`. Each one has `jsPlugins` at the top level and in `overrides`, plus a local plugin file. The `.jsonc` fixture has line comments, block comments and trailing commas.
-- The plugin rule reference in `.agents/rules/plugins.md` lists the new names.
-- A changelog fragment.
+* chore(deps): drop sprintf-js from the review app through global-agent 4
 
-## Why
+Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
 
-Oxlint finds four config file names on its own: `.oxlintrc.json`, `.oxlintrc.jsonc`, `oxlint.config.ts` and `oxlint.config.mts`. Fallow matched only two of them. With `.oxlintrc.jsonc` or `oxlint.config.mts`, fallow did not read the config. Packages in `jsPlugins` showed as unused dev dependencies, and `oxlint.config.mts` showed as an unused file. `oxlint.json` stays in the list for older setups.
+---------
 
-## Test evidence
+Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
 
-- Reproduction: `cargo test -p fallow-core --test integration_test issue_3525` fails on `main` for both fixtures (`eslint-plugin-top-level` reported as unused) and passes with the fix.
-
-
-**File**: `.agents/rules/plugins.md` (modified, +1/-1)
+**File**: `apps/review-electron/fixtures/sample-app/package-lock.json` (modified, +34/-34)
 ```diff
-@@ -31,7 +31,7 @@ paths:
- - **Prisma**: `generator { provider = "..." }` extraction from default `schema.prisma` / `prisma/schema.prisma` files and the multi-file `prisma/schema/*.prisma` layout; credits custom-generator npm packages; skips `datasource` providers, shell-command form (`node ./gen.js`), relative-path form, and commented-out providers. Custom schema paths configured via `prisma.config.ts`'s `schema` field are out of scope (filesystem fallback is non-recursive); users with non-canonical layouts fall back to `ignoreDependencies`.
- - **AdonisJS**: v5 `.adonisrc.json` (`preloads`, `providers`, `commands`, `aceProviders` mixed string / `{ file, environment }` forms; `aliases` → path-alias table; `metaFiles[].pattern` → always-used; `types` declarations). v6 / v7 `adonisrc.ts` (walks `defineConfig({...})` for thunk-wrapped `() => import('SPEC')` in `preloads` / `providers` / `commands`, `directories.*` overrides → extra entry patterns, project `package.json#imports` → Node subpath path aliases). `@ioc:` v5 IoC virtual import prefix suppresses `unlisted-dependency` for runtime-resolved container imports.
- - **Fumadocs**: activates on `fumadocs-mdx`, `fumadocs-core`, `fumadocs-ui`, or a root/workspace `source.config.{ts,tsx,js,jsx,mts,mjs,cts,cjs}` file. Keeps `source.config.*` and generated `.source/**/*.{ts,tsx,js,jsx,mts,mjs,cts,cjs}` modules alive, traverses the hidden `.source` directory when active, suppresses `fumadocs-mdx:*` virtual imports, credits packages imported by `source.config.*`, and extracts literal `dir` values from `defineCollections`, `defineDocs`, and direct `defineConfig({ collections })` object entries as Markdown/MDX/JSON/YAML content roots.
--- **Oxlint**: parses `.oxlintrc.json`, `oxlint.json`, and `oxlint.config.ts`; `jsPlugins` string entries, tuple first-elements, and alias-object specifier values are credited as npm dependencies; relative/absolute plugin paths are recorded as support setup files; built-in Oxlint plugin names are ignored for dependency credit.
-+- **Oxlint**: parses `.oxlintrc.json`, `.oxlintrc.jsonc`, `oxlint.json`, `oxlint.config.ts`, and `oxlint.config.mts`; `jsPlugins` string entries, tuple first-elements, and alias-object specifier values are credited as npm dependencies; relative/absolute plugin paths are recorded as support setup files; built-in Oxlint plugin names are ignored for dependency credit.
- - **Oxfmt**: keeps `.oxfmtrc.{json,jsonc}` and `oxfmt.config.{ts,mts,cts,js,mjs,cjs}` alive at the root or inside workspaces; credits static package imports from TypeScript configs (usually `defineConfig` from `oxfmt` itself); treats `oxfmt` as a tooling dependency. Oxfmt configs carry formatting options only (no plugins, extends, or presets), so there is nothing else to extract. The `vite.config.*` `.fmt` field stays owned by the Vite plugin.
- - **Wuchale**: keeps documented `wuchale.config.js` files alive at the root or inside workspaces; credits package imports/requires from those config files; treats `wuchale` and `@wuchale/vite-plugin` as tooling dependencies; and follows static `configFile` values passed to `@wuchale/vite-plugin` in `vite.config.*` only when they point at JavaScript config modules. Dynamic values and unsupported `wuchale.config.ts` files remain reportable.
- 
+@@ -1244,9 +1244,9 @@
+       }
+     },
+     "node_modules/baseline-browser-mapping": {
+-      "version": "2.10.38",
+-      "resolved": "https://registry.npmjs.org/baseline-browser-mapping/-/baseline-browser-mapping-2.10.38.tgz",
+-      "integrity": "sha512-31/02mVB4yuQU6adKk5SlY6m+mxDwUq5KZkyYgnLrrKl7TEm1+3PyDtDBz2kOv/wxZz41GHsvV1A/u6RmiyBvw==",
++      "version": "2.11.29",
++      "resolved": "https://registry.npmjs.org/baseline-browser-mapping/-/baseline-browser-mapping-2.11.29.tgz",
++      "integrity": "sha512-YeesxhUmR4h5y5V8KF8iBCqJb8YFrBJ++XBTeGcWIaQOYXGN19JM0FoiOjAhwuDoln8owMgXcWBmgHtYSkky2w==",
+       "dev": true,
+       "license": "Apache-2.0",
+       "bin": {
+@@ -1257,9 +1257,9 @@
+       }
+     },
+     "node_modules/browserslist": {
+-      "version": "4.28.2",
+-      "resolved": "https://registry.npmjs.org/browserslist/-/browserslist-4.28.2.tgz",
+-      "integrity": "sha512-48xSriZYYg+8qXna9kwqjIVzuQxi+KYWp2+5nCYnYKPTr0LvD89Jqk2Or5ogxz0NUMfIjhh2lIUX/LyX9B4oIg==",
++      "version": "4.29.4",
++      "resolved": "https://registry.npmjs.org/browserslist/-/browserslist-4.29.4.tgz",
++      "integrity": "sha512-2TcbbiwXEq+N0kD36tykpCfyyQigUXmuwNQbnPp4Xk4PX9JOqVIKjJlIDjpH7uY6tmRGoAd+apeT1p60T8wsdA==",
+       "dev": true,
+       "funding": [
+         {
+@@ -1277,11 +1277,11 @@
+       ],
+       "license": "MIT",
+       "dependencies": {
+-        "baseline-browser-mapping": "^2.10.12",
+-        "caniuse-lite": "^1.0.30001782",
+-        "electron-to-chromium": "^1.5.328",
+-        "node-releases": "^2.0.36",
+-        "update-browserslist-db": "^1.2.3"
++        "baseline-browser-mapping": "^2.11.29",
++        "caniuse-lite": "^1.0.30001816",
++        "electron-to-chromium": "^1.5.459",
++        "node-releases": "^2.0.59",
++        "update-browserslist-db": "^1.3.4"
+       },
+       "bin": {
+         "browserslist": "cli.js"
+@@ -1291,9 +1291,9 @@
+       }
+     },
+     "node_modules/caniuse-lite": {
+-      "version": "1.0.30001799",
+-      "resolved": "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001799.tgz",
+-      "integrity": "sha512-hG1bReV+OUU+MOqK4t/ZWI0tZOyz3rqS9XuhOUz1cIcbwBKjOyJEJuw9ER5JuNyqxNk8u/JUVbGibBOL1yrjFw==",
++      "version": "1.0.30001816",
++      "resolved": "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001816.tgz",
++      "integrity": "sha512-+8Yx7BXCoqk6IF8yTicjfUR6D/ldJzdlsodlEOiOSPmhK844WIgk67/zIQaGAOxNkZyyvBlrRFnLvqKIoqbAFw==",
+       "dev": true,
+       "funding": [
+         {
+@@ -1344,9 +1344,9 @@
+       }
+     },
+     "node_modules/electron-to-chromium": {
+-      "version": "1.5.376",
+-      "resolved": "https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.5.376.tgz",
+-      "integrity": "sha512-cUVA7/RvbFTEuw/i3obUwDTRIXojaxkResf+ibByPFxjc6XK3VNtcQXV0NSbAlJ0FMjcJGgftVVB4Qo184EXvA==",
++      "version": "1.5.459",
++      "resolved": "https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.5.459.tgz",
++      "integrity": "sha512-4SC9HHSFjO/liAhifpdOL5hG9b4BP7/5G3y3UPZVO8trlAXr1CaUEEJL0gWK3kOcYcZrOA5rkwG45Gra/lTIgg==",
+       "dev": true,
+       "license": "ISC"
+     },
+@@ -1496,9 +1496,9 @@
+       "license": "MIT"
+     },
+     "node_modules/nanoid": {
+-      "version": "3.3.14",
+-      "resolved": "https://registry.npmjs.org/nanoid/-/nanoid-3.3.14.tgz",
+-      "integrity": "sha512-U9kYi5bpVMEI31yC8iw4bJJp0avcHXA0W8/wNfLfnvJYzihQo2ZRPYPvpAAd570HAcCBjCTN7vnr+v4StKl1IQ==",
++      "version": "3.3.20",
++      "resolved": "https://registry.npmjs.org/nanoid/-/nanoid-3.3.20.tgz",
++      "integrity": "sha512-uKdg2G3GNCKQn9byYOpxbGqrT2fGO5KRt5J/8b3pok8rT6qxGWF6hxMyJiEYtAf+FVyYuD9hRaDqX5uPFYJ4ZQ==",
+       "dev": true,
+       "funding": [
+         {
+@@ -1515,9 +1515,9 @@
+       }
+     },
+     "node_modules/node-releases": {
+-      "version": "2.0.48",
+-      "resolved": "https://registry.npmjs.org/node-releases/-/node-releases-2.0.48.tgz",
+-      "integrity": "sha512-1uz8041X6LoI6ZSdZacM9lVY28vuzDlSKitnpbSNK0RfKoIJkX29NBPVEFXhnuSuEOA9Ww0xnPJ+ILWbGAv8DA==",
++      "version": "2.0.59",
++      "resolved": "https://registry.npmjs.org/node-releases/-/node-releases-2.0.59.tgz",
++      "integrity": "sha512-5qr2okC4ItAI0hG5SaV0HoYMpnM/Y6+Oqr7AmPYy/2uEoGvS+GbSKLeRxSS1uAdu59yz0ouzcuXievSgg///WA==",
+       "dev": true,
+       "license": "MIT",
+       "engines": {
+@@ -1545,9 +1545,9 @@
+       }
+     },
+     "node_modules/postcss": {
+-      "version": "8.5.15",
+-      "resolved": "https://registry.npmjs.org/postcss/-/postcss-8.5.15.tgz",
+-      "integrity": "sha512-FfR8sjd4em2T6fb3I2MwAJU7HWVMr9zba+enmQeeWFfCbm+UOC/0X4DS8XtpUTMwWMGbjKYP7xjfNekzyGmB3A==",
++      "version": "8.5.31",
++      "resolved": "https://registry.npmjs.org/postcss/-/postcss-8.5.31.tgz",
++      "integrity": "sha512-YUbWYCgErwnMAVkjUnYa+KlMBzGpHwiIt/DE7f0G33AuX2LH9UcTk6KgWxd3zRU+pN3u/C+Xl3EnMLM4Hea7Sg==",
+       "dev": true,
+       "funding": [
+         {
+@@ -1565,9 +1565,9 @@
+       ],
+       "license": "MIT",
+       "dependencies": {
+-        "nanoid": "^3.3.12",
++        
 ```
 
-**File**: `changelog.d/fix-oxlint-config-names.md` (added, +10/-0)
+**File**: `apps/review-electron/package-lock.json` (modified, +20/-87)
+```diff
+@@ -5694,15 +5694,6 @@
+       "dev": true,
+       "license": "MIT"
+     },
+-    "node_modules/boolean": {
+-      "version": "3.2.0",
+-      "resolved": "https://registry.npmjs.org/boolean/-/boolean-3.2.0.tgz",
+-      "integrity": "sha512-d0II/GO9uf9lfUHH2BQsjxzRJZBdsjgsBiW4BvhWk/3qoKwQFjIDVN19PfX8F2D/r9PCMTtLWjYVCFrpeYUzsw==",
+-      "deprecated": "Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.",
+-      "dev": true,
+-      "license": "MIT",
+-      "optional": true
+-    },
+     "node_modules/brace-expansion": {
+       "version": "5.0.12",
+       "resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-5.0.12.tgz",
+@@ -6231,14 +6222,6 @@
+         "node": ">=8"
+       }
+     },
+-    "node_modules/detect-node": {
+-      "version": "2.1.0",
+-      "resolved": "https://registry.npmjs.org/detect-node/-/detect-node-2.1.0.tgz",
+-      "integrity": "sha512-T0NIuQpnTvFDATNuHN5roPwSBG83rFsuO+MXXH9/3N1eFbn4wcPjttvjMLEPWJ0RGUYgQE7cGgS3tNxbqCGM7g==",
+-      "dev": true,
+-      "license": "MIT",
+-      "optional": true
+-    },
+     "node_modules/detect-node-es": {
+       "version": "1.1.0",
+       "resolved": "https://registry.npmjs.org/detect-node-es/-/detect-node-es-1.1.0.tgz",
+@@ -6874,14 +6857,6 @@
+         "node": ">= 0.4"
+       }
+     },
+-    "node_modules/es6-error": {
+-      "version": "4.1.1",
+-      "resolved": "https://registry.npmjs.org/es6-error/-/es6-error-4.1.1.tgz",
+-      "integrity": "sha512-Um/+FxMr9CISWh0bi5Zv0iOD+4cFh5qLeks1qhAopKVAJw3drgKbKySikp7wGhDL0HPeaja0P5ULZrxLkniUVg==",
+-      "dev": true,
+-      "license": "MIT",
+-      "optional": true
+-    },
+     "node_modules/esbuild": {
+       "version": "0.25.12",
+       "resolved": "https://registry.npmjs.org/esbuild/-/esbuild-0.25.12.tgz",
+@@ -7267,19 +7242,17 @@
+       }
+     },
+     "node_modules/global-agent": {
+-      "version": "3.0.0",
+-      "resolved": "https://registry.npmjs.org/global-agent/-/global-agent-3.0.0.tgz",
+-      "integrity": "sha512-PT6XReJ+D07JvGoxQMkT6qji/jVNfX/h364XHZOWeRzy64sSFr+xJ5OX7LI3b4MPQzdL4H8Y8M0xzPpsVMwA8Q==",
++      "version": "4.1.3",
++      "resolved": "https://registry.npmjs.org/global-agent/-/global-agent-4.1.3.tgz",
++      "integrity": "sha512-KUJEViiuFT3I97t+GYMikLPJS2Lfo/S2F+DQuBWzuzaMPnvt5yyZePzArx36fBzpGTxZjIpDbXLeySLgh+k76g==",
+       "dev": true,
+       "license": "BSD-3-Clause",
+       "optional": true,
+       "dependencies": {
+-        "boolean": "^3.0.1",
+-        "es6-error": "^4.1.1",
+-        "matcher": "^3.0.0",
+-        "roarr": "^2.15.3",
+-        "semver": "^7.3.2",
+-        "serialize-error": "^7.0.1"
++        "globalthis": "^1.0.2",
++        "matcher": "^4.0.0",
++        "semver": "^7.3.5",
++        "serialize-error": "^8.1.0"
+       },
+       "engines": {
+         "node": ">=10.0"
+@@ -7650,14 +7623,6 @@
+       "dev": true,
+       "license": "MIT"
+     },
+-    "node_modules/json-stringify-safe": {
+-      "version": "5.0.1",
+-      "resolved": "https://registry.npmjs.org/json-stringify-safe/-/json-stringify-safe-5.0.1.tgz",
+-      "integrity": "sha512-ZClg6AaYvamvYEE82d3Iyd3vSSIjQ+odgjaTzRuO3s7toCdFKczob2i0zCh7JE8kWn17yvAWhUVxvqGwUalsRA==",
+-      "dev": true,
+-      "license": "ISC",
+-      "optional": true
+-    },
+     "node_modules/json5": {
+       "version": "2.2.3",
+       "resolved": "https://registry.npmjs.org/json5/-/json5-2.2.3.tgz",
+@@ -7992,9 +7957,9 @@
+       }
+     },
+     "node_modules/matcher": {
+-      "version": "3.0.0",
+-      "resolved": "https://registry.npmjs.org/matcher/-/matcher-3.0.0.tgz",
+-      "integrity": "sha512-OkeDaAZ/bQCxeFAozM55PKcKU0yJMPGifLwV4Qgjitu+5MoAfSQN4lsLJeXZ1b8w0x+/Emda6MZgXS1jvsapng==",
++      "version": "4.0.0",
++      "resolved": "https://registry.npmjs.org/matcher/-/matcher-4.0.0.tgz",
++      "integrity": "sha512-S6x5wmcDmsDRRU/c2dkccDwQPXoFczc5+HpQ2lON8pnvHlnvHAHj5WlLVvw6n6vNyHuVugYrFohYxbS+pvFpKQ==",
+       "dev": true,
+       "license": "MIT",
+       "optional": true,
+@@ -8003,6 +7968,9 @@
+       },
+       "engines": {
+         "node": ">=10"
++      },
++      "funding": {
++        "url": "https://github.com/sponsors/sindresorhus"
+       }
+     },
+     "node_modules/math-intrinsics": {
+@@ -9011,25 +8979,6 @@
+         "rimraf": "bin.js"
+       }
+     },
+-    "node_modules/roarr": {
+-      "version": "2.15.4",
+-      "resolved": "https://registry.npmjs.org/roarr/-/roarr-2.15.4.tgz",
+-      "integrity": "sha512-CHhPh+UNHD2GTXNYhPWLnU8ONHdI+5DI+4EYIAOaiD63rHeYlZvyh8P+in5999TTSFgUYuKUAjzRI4mdh/p+2A==",
+-      "dev": true,
+-      "license": "BSD-3-Clause",
+-      "optional": true,
+-      "dependencies": {
+-        "boolean": "^3.0.1",
+-        "detect-node": "^2.0.4",
+-        "globalthis": "^1.0.1",
+-        "json-stringify-safe": "^5.0.1",
+-        "semver-compare": "^1.0.0",
+-        "sprintf-js": "^1.1.2"
+-      },
+-      "engines": {
+-        "node": ">=8.0"
+-      }
+-    },
+     "node_modules/rollup": {
+       "version": "4.62.2",
+       "resolved": "https://registry.npmjs.org/rollup/-
+```
+
+**File**: `apps/review-electron/package.json` (modified, +3/-0)
+```diff
+@@ -59,5 +59,8 @@
+       ],
+       "category": "public.app-category.developer-tools"
+     }
++  },
++  "overrides": {
++    "global-agent": "^4.1.3"
+   }
+ }
+```
+
+**File**: `assets/demo-project/package.json` (modified, +1/-1)
+```diff
+@@ -5,7 +5,7 @@
+     "moment": "^2.30.0"
+   },
+   "devDependencies": {
+-    "@faker-js/faker": "^9.0.0",
++    "@faker-js/faker": "^10.5.0",
+     "typescript": "^5.4.0"
+   }
+ }
+```
+
+---
+
+### Incident Patch 2: `018adfc5` (2026-10-19)
+**Commit Message**: fix(mutation): report undiscovered tests as partial, select Vitest config, show progress (#3608)
+
+- A mutation run is partial, with the completion reason test-files-not-discovered, when the runner does not list a statically mapped test file. An empty survivor list from such a run is no longer reported as complete.
+- The new --runner-config flag (config key mutation.runnerConfig) selects an existing Vitest configuration for the run. The path must be a file inside the project root.
+- Human output shows phase progress on stderr: runner setup, baseline, mutant execution with counts, and finalization. JSON stdout is unchanged, and --quiet hides the progress.
+
+Closes #3596
+Closes #3598
+Closes #3599
+
+Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
+
+**File**: `.agents/skills/fallow/references/cli-reference.md` (modified, +1/-1)
+```diff
+@@ -53,7 +53,7 @@ Every fallow command with its purpose and key flags. The table is regenerated fr
+ | `type-aware` | Inspect the optional TypeScript semantic companion |  |
+ | `doctor` | Diagnose project readiness without analysis or mutation |  |
+ | `similar-code` | Find semantically similar functions with a pinned local model (opt-in) | `--threshold`, `--min-lines`, `--top`, `--file` |
+-| `mutation` | Measure how well the tests detect changes in the code (opt-in) | `--all`, `--plan`, `--max-mutants`, `--time-budget`, `--concurrency`, `--runtime`, `--allow-dirty`, `--allow-side-effects` |
++| `mutation` | Measure how well the tests detect changes in the code (opt-in) | `--all`, `--plan`, `--max-mutants`, `--time-budget`, `--concurrency`, `--runtime`, `--runner-config`, `--allow-dirty`, `--allow-side-effects` |
+ | `inspect` | Compose one evidence bundle for a file or exported symbol | `--file <path>`, `--symbol <file>:<export>` |
+ | `trace` | Trace a symbol's call chain, or with `--path` the shortest import path between two modules (best-effort, syntactic; OFF the ranked path) | `symbol`, `--path <FROM> <TO>`, `--eager-only`, `--callers`, `--callees`, `--depth` |
+ | `trace-error` | Resolve a runtime stack trace's frames to the definitions they name (best-effort, syntactic; OFF the ranked path) | `trace_file` |
+```
+
+**File**: `.claude/skills/fallow/references/cli-reference.md` (modified, +1/-1)
+```diff
+@@ -53,7 +53,7 @@ Every fallow command with its purpose and key flags. The table is regenerated fr
+ | `type-aware` | Inspect the optional TypeScript semantic companion |  |
+ | `doctor` | Diagnose project readiness without analysis or mutation |  |
+ | `similar-code` | Find semantically similar functions with a pinned local model (opt-in) | `--threshold`, `--min-lines`, `--top`, `--file` |
+-| `mutation` | Measure how well the tests detect changes in the code (opt-in) | `--all`, `--plan`, `--max-mutants`, `--time-budget`, `--concurrency`, `--runtime`, `--allow-dirty`, `--allow-side-effects` |
++| `mutation` | Measure how well the tests detect changes in the code (opt-in) | `--all`, `--plan`, `--max-mutants`, `--time-budget`, `--concurrency`, `--runtime`, `--runner-config`, `--allow-dirty`, `--allow-side-effects` |
+ | `inspect` | Compose one evidence bundle for a file or exported symbol | `--file <path>`, `--symbol <file>:<export>` |
+ | `trace` | Trace a symbol's call chain, or with `--path` the shortest import path between two modules (best-effort, syntactic; OFF the ranked path) | `symbol`, `--path <FROM> <TO>`, `--eager-only`, `--callers`, `--callees`, `--depth` |
+ | `trace-error` | Resolve a runtime stack trace's frames to the definitions they name (best-effort, syntactic; OFF the ranked path) | `trace_file` |
+```
+
+**File**: `changelog.d/fix-mutation-test-files-not-discovered.md` (added, +9/-0)
+```diff
+@@ -0,0 +1,9 @@
++### Fixed
++
++- **A mutation run in which the runner does not list a static test file is
++  now `partial`.** The tests of such a file never run, but the run reported
++  `completion.status: "complete"`. An empty survivor list then looked
++  conclusive. The completion now has the new reason
++  `test-files-not-discovered`, the same name as the `errors` entry that
++  names the files. The exit code does not change.
++  (Closes [#3596](https://github.com/fallow-rs/fallow/issues/3596))
+```
+
+**File**: `changelog.d/mutation-run-progress.md` (added, +11/-0)
+```diff
+@@ -0,0 +1,11 @@
++### Added
++
++- **A human `fallow mutation` run now shows phase progress on stderr.** The
++  lines name the runner setup, the baseline run, the mutant runs with
++  done and total counts, the retries, and the final worktree check and
++  report. A long phase prints a line at a fixed interval, also in captured
++  non-TTY output, so a slow run does not look stalled. `--quiet` and
++  `--format json` print no progress lines, and stdout does not change. The
++  programmatic API has `run_mutation_with_progress` with the
++  `MutationProgress` events.
++  (Closes [#3599](https://github.com/fallow-rs/fallow/issues/3599))
+```
+
+**File**: `changelog.d/mutation-runner-config.md` (added, +11/-0)
+```diff
+@@ -0,0 +1,11 @@
++### Added
++
++- **`fallow mutation --runner-config <path>` selects the Vitest config of
++  a run.** A project that keeps its integration, UI or browser tests in a
++  separate Vitest config can now run mutants against those tests. The
++  `mutation.runnerConfig` config key sets the same file, and the flag
++  wins. The file must exist inside the project root, and only the Vitest
++  runner accepts it. A static test file that the selected config does not
++  include stays visible as a `test-files-not-discovered` error. `--config`
++  still selects the Fallow config.
++  (Closes [#3598](https://github.com/fallow-rs/fallow/issues/3598))
+```
+
+**File**: `crates/api/src/lib.rs` (modified, +5/-4)
+```diff
+@@ -168,7 +168,8 @@ pub use markdown_output::{
+     build_grouped_markdown, build_health_markdown, build_markdown, build_walkthrough_markdown,
+ };
+ pub use mutation::{
+-    MutationRunOptions, MutationRunScope, apply_mutation_verdicts, validate_mutation_verdicts,
++    MutationProgress, MutationProgressSink, MutationRunOptions, MutationRunScope,
++    apply_mutation_verdicts, validate_mutation_verdicts,
+ };
+ pub use output_contracts::{
+     AuditOutput, BoundariesListLogicalGroup, BoundariesListRule, BoundariesListZone,
+@@ -197,9 +198,9 @@ pub use runtime::{
+     review_similar_code, run_architecture, run_audit, run_boundary_violations,
+     run_circular_dependencies, run_combined, run_complexity_with_runner, run_dead_code,
+     run_dead_code_with_baseline, run_decision_surface, run_duplication, run_feature_flags,
+-    run_health, run_health_with_runner, run_mutation, run_similar_code, run_trace_clone,
+-    run_trace_dependency, run_trace_error, run_trace_export, run_trace_file, run_trace_import_path,
+-    select_similar_code_candidate_snapshot, serialize_health_report_json,
++    run_health, run_health_with_runner, run_mutation, run_mutation_with_progress, run_similar_code,
++    run_trace_clone, run_trace_dependency, run_trace_error, run_trace_export, run_trace_file,
++    run_trace_import_path, select_similar_code_candidate_snapshot, serialize_health_report_json,
+ };
+ pub use runtime_json::{
+     serialize_architecture_programmatic_json, serialize_audit_programmatic_json,
+```
+
+**File**: `crates/api/src/mutation/e2e_tests.rs` (modified, +250/-1)
+```diff
+@@ -2,7 +2,7 @@ use std::fs;
+ use std::process::Command;
+ 
+ use fallow_engine::changed_files::clear_ambient_git_env;
+-use std::path::Path;
++use std::path::{Path, PathBuf};
+ use std::time::Duration;
+ 
+ use crate::mutation::{MutationRunOptions, MutationRunScope};
+@@ -370,6 +370,55 @@ fn invalid_limits_are_refused() {
+     );
+ }
+ 
++#[test]
++fn a_runner_config_must_be_a_vitest_file_inside_the_root() {
++    let project = small_project();
++    let root = project.path();
++    fs::write(
++        root.join("vitest.integration.config.mjs"),
++        "export default {};\n",
++    )
++    .expect("write");
++    let outside = tempfile::tempdir().expect("dir");
++    fs::write(
++        outside.path().join("vitest.config.mjs"),
++        "export default {};\n",
++    )
++    .expect("write");
++    let refused = |runner_config: PathBuf| {
++        let mut plan = options(root, MutationRunScope::All);
++        plan.runner_config = Some(runner_config);
++        let error = plan_mutation(&plan).unwrap_err();
++        assert_eq!(
++            error.code.as_deref(),
++            Some("FALLOW_INVALID_MUTATION_OPTIONS")
++        );
++        assert_eq!(error.context.as_deref(), Some("mutation.runnerConfig"));
++        error.message
++    };
++    assert!(refused(PathBuf::from("vitest.missing.config.mjs")).contains("is not a file"));
++    assert!(refused(PathBuf::from("src")).contains("is not a file"));
++    assert!(refused(outside.path().join("vitest.config.mjs")).contains("outside the project root"));
++
++    let mut plan = options(root, MutationRunScope::All);
++    plan.runner_config = Some(PathBuf::from("vitest.integration.config.mjs"));
++    plan_mutation(&plan).expect("a Vitest config inside the root is valid");
++
++    // The config key selects the file too, and only Vitest reads one.
++    fs::write(
++        root.join(".fallowrc.json"),
++        r#"{"mutation":{"runner":"node-test","runnerConfig":"vitest.integration.config.mjs"}}"#,
++    )
++    .expect("write");
++    let error = plan_mutation(&options(root, MutationRunScope::All)).unwrap_err();
++    assert_eq!(error.context.as_deref(), Some("mutation.runnerConfig"));
++    assert!(
++        error.message.contains("needs the Vitest runner"),
++        "{}",
++        error.message
++    );
++}
++
+ /// The end-to-end run needs a symlink to `node_modules`, so it runs on Unix
+ /// only. Its helper lives in the same module, so no item is dead on Windows.
+ #[cfg(unix)]
+@@ -870,4 +919,204 @@ mod end_to_end {
+         assert_eq!(runner.runtime.name, "bun");
+         assert_math_statuses(&report);
+     }
++
++    /// The fixture of #3596: the root Vitest config includes only the unit
++    /// test, and a second config includes the integration test. The runner
++    /// does not list the integration test, so its tests never run.
++    fn two_config_project(package: &Path, root_include: &str) -> (tempfile::TempDir, PathBuf) {
++        let project = tempfile::tempdir().expect("dir");
++        let root = dunce::canonicalize(project.path()).expect("root");
++        let files = [
++            (
++                "package.json",
++                r#"{"name":"mutation-discovery-repro","private":true,"type":"module","scripts":{"test":"vitest run","test:integration":"vitest run --config vitest.integration.config.mjs"},"devDependencies":{"vitest":"5.0.4"}}"#
++                    .to_owned(),
++            ),
++            (
++                "src/math.ts",
++                "export const add = (a: number, b: number): number => a + b;\n".to_owned(),
++            ),
++            (
++                "test/unit.test.ts",
++                "import { expect, test } from \"vitest\";\nimport { add } from \"../src/math\";\ntest(\"nonnegative\", () => { expect(add(2, 2)).toBeGreaterThanOrEqual(0); });\n"
++                    .to_owned(),
++            ),
++            (
++                "test/integration.test.ts",
++                "import { expect, test } from \"vitest\";\nimport { add } from \"../src/math\";\ntest(\"adds exactly\", () => { expect(add(2, 2)).toBe(4); });\n"
++                    .to_owned(),
++            ),
++            (
++                "vitest.config.mjs",
++                format!("export default {{ test: {{ include: [\"{root_include}\"] }} }};\n"),
++            ),
++            (
++                "vitest.integration.config.mjs",
++                "export default { test: { include: [\"test/integration.test.ts\"] } };\n"
++                    .to_owned(),
++            ),
++            (".gitignore", "node_modules\n".to_owned()),
++        ];
++        for (file, content) in files {
++            let target = root.join(file);
++            fs::create_dir_all(target.parent().expect("parent")).expect("dir");
++            fs::write(&target, content).expect("write");
++        }
++        fs::create_dir_all(root.join("node_modules")).expect("dir");
++        std::os::unix::fs::symlink(
++            package.join("node_modules/vitest"),
++            root.join("node_modules/vitest"),
++        )
++        .expect("symlink");
++        
+```
+
+**File**: `crates/api/src/mutation/mod.rs` (modified, +48/-0)
+```diff
+@@ -58,6 +58,48 @@ impl Default for MutationRunScope {
+     }
+ }
+ 
++/// A phase event of a mutation run, for a caller that shows progress.
++///
++/// [`crate::run_mutation_with_progress`] sends the events in run order. A
++/// run with no covered mutant and no test file skips the runner phases.
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++#[non_exhaustive]
++pub enum MutationProgress {
++    /// The plan is ready. The runner setup starts: the runtime, the
++    /// companion install and the runner start.
++    Setup {
++        /// The planned mutants.
++        mutants: usize,
++    },
++    /// The baseline run starts: the test files run with no active mutant.
++    Baseline {
++        /// The test files of the baseline run.
++        test_files: usize,
++    },
++    /// The mutant runs. The first event has `done` 0, and each finished
++    /// mutant sends one event.
++    Mutants {
++        /// The mutants that finished.
++        done: usize,
++        /// The mutants that this phase runs. A cached result is not in it.
++        total: usize,
++    },
++    /// The retries of survivors and timeouts. The first event has `done` 0.
++    Retries {
++        /// The retries that finished.
++        done: usize,
++        /// The retries that this phase runs.
++        total: usize,
++    },
++    /// The tests stopped. The worktree check, the survivor type check and
++    /// the report start.
++    Finalize,
++}
++
++/// Receives the [`MutationProgress`] events of a run. The scheduler sends
++/// the mutant events from its worker threads.
++pub type MutationProgressSink<'a> = &'a (dyn Fn(MutationProgress) + Sync);
++
+ /// Options of [`crate::run_mutation`] and [`crate::plan_mutation`].
+ #[derive(Debug, Clone, Default)]
+ pub struct MutationRunOptions {
+@@ -91,6 +133,12 @@ pub struct MutationRunOptions {
+     /// The timeout of the companion `init` and the dry run. `None` uses
+     /// 120 seconds.
+     pub runner_timeout: Option<Duration>,
++    /// The config file of the test runner, for example a separate Vitest
++    /// config of the integration tests. A relative path is relative to the
++    /// project root. The file must exist inside the project root. `None`
++    /// uses the `mutation.runnerConfig` config key, else the default config
++    /// discovery of the runner. Only the Vitest runner reads a config file.
++    pub runner_config: Option<PathBuf>,
+     /// The files that the caller writes after the run, for example the
+     /// `--output-file` report. The worktree check leaves them out, so an old
+     /// report does not make the worktree dirty. A relative path is relative
+```
+
+---
+
+### Incident Patch 3: `d1b35640` (2026-10-19)
+**Commit Message**: fix(impact): leave a newer-schema store unchanged on every write (#3607)
+
+An older fallow binary no longer rewrites an Impact store that a newer fallow wrote. impact enable, impact disable and init --decline exit 2 with an error that names the store schema. Audit and combined runs do not record into such a store. The store file stays unchanged.
+
+Fixes #3597
+
+Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
+
+**File**: `changelog.d/fix-impact-preserve-newer-schema-store.md` (added, +10/-0)
 ```diff
 @@ -0,0 +1,10 @@
 +### Fixed
 +
-+- **The Oxlint plugin now reads `.oxlintrc.jsonc` and `oxlint.config.mts`.**
-+  Oxlint finds these config files on its own, but fallow did not read them.
-+  Packages in their `jsPlugins` lists, at the top level and in `overrides`,
-+  showed as unused dependencies, and `oxlint.config.mts` showed as an unused
-+  file. Fallow now reads every config file name that Oxlint finds. Comments
-+  and trailing commas in `.oxlintrc.jsonc` parse correctly. Thanks
-+  [@gwynnnplaine](https://github.com/gwynnnplaine) for the report and the
-+  analysis. (Closes [#3525](https://github.com/fallow-rs/fallow/issues/3525))
++- **An older fallow no longer drops data from an Impact store that a newer
++  fallow wrote.** A project-local fallow could rewrite the shared store through
++  its own older model, and fields it did not know were lost. Every write path
++  now leaves such a store unchanged. `fallow impact enable`, `fallow impact
++  disable`, and `fallow init --decline` exit with code 2 and name the store
++  schema and the fallow version of the newest record. Audit and combined runs do not
++  record into it. Reads stay available.
++  (Closes [#3597](https://github.com/fallow-rs/fallow/issues/3597))
 ```
 
-**File**: `crates/core/src/plugins/oxlint.rs` (modified, +7/-1)
+**File**: `crates/cli/src/cli_impact.rs` (modified, +25/-6)
 ```diff
-@@ -17,7 +17,13 @@ use super::{Plugin, PluginResult};
+@@ -91,8 +91,8 @@ pub fn dispatch_impact(
+         return render_impact_all(quiet, output, json_style, sort, limit);
+     }
+     match subcommand {
+-        Some(ImpactCli::Enable) => impact_enable(root, quiet),
+-        Some(ImpactCli::Disable) => impact_disable(root, quiet),
++        Some(ImpactCli::Enable) => impact_enable(root, quiet, output),
++        Some(ImpactCli::Disable) => impact_disable(root, quiet, output),
+         Some(ImpactCli::Default { state }) => impact_set_default(state, quiet),
+         Some(ImpactCli::Reset { all }) => impact_reset(root, all, quiet),
+         Some(ImpactCli::Statusline) => render_impact_statusline(root),
+@@ -116,8 +116,11 @@ pub fn render_impact_statusline(root: &Path) -> ExitCode {
+ }
  
- const ENABLERS: &[&str] = &["oxlint"];
+ /// Enable Fallow Impact for this project; print the first-enable guidance.
+-fn impact_enable(root: &Path, quiet: bool) -> ExitCode {
+-    let newly = impact::enable(root);
++fn impact_enable(root: &Path, quiet: bool, output: fallow_config::OutputFormat) -> ExitCode {
++    let newly = match impact::enable(root) {
++        Ok(newly) => newly,
++        Err(newer) => return refuse_newer_store(&newer, output),
++    };
+     if !quiet {
+         if newly {
+             println!(
+@@ -137,9 +140,25 @@ fn impact_enable(root: &Path, quiet: bool) -> ExitCode {
+     ExitCode::SUCCESS
+ }
  
--const CONFIG_PATTERNS: &[&str] = &[".oxlintrc.json", "oxlint.json", "oxlint.config.ts"];
-+/// Oxlint discovers `.oxlintrc.json`, `.oxlintrc.jsonc`, `oxlint.config.ts`
-+/// and `oxlint.config.mts` on its own. `oxlint.json` stays for older setups.
-+const CONFIG_PATTERNS: &[&str] = &[
-+    ".oxlintrc.{json,jsonc}",
-+    "oxlint.json",
-+    "oxlint.config.{ts,mts}",
-+];
- 
- const ALWAYS_USED: &[&str] = CONFIG_PATTERNS;
- 
++/// Report a store that a newer Fallow wrote. The store stays unchanged.
++fn refuse_newer_store(
++    newer: &impact::NewerStoreSchema,
++    output: fallow_config::OutputFormat,
++) -> ExitCode {
++    crate::emit_known_failure(
++        &newer.message(),
++        2,
++        output,
++        telemetry::FailureReason::Validation,
++    )
++}
++
+ /// Disable Fallow Impact for this project; history is retained.
+-fn impact_disable(root: &Path, quiet: bool) -> ExitCode {
+-    let was_enabled = impact::disable(root);
++fn impact_disable(root: &Path, quiet: bool, output: fallow_config::OutputFormat) -> ExitCode {
++    let was_enabled = match impact::disable(root) {
++        Ok(was_enabled) => was_enabled,
++        Err(newer) => return refuse_newer_store(&newer, output),
++    };
+     if !quiet {
+         println!(
+             "{}",
 ```
 
-**File**: `crates/core/tests/integration_test.rs` (modified, +2/-0)
+**File**: `crates/cli/src/impact.rs` (modified, +267/-55)
 ```diff
-@@ -493,6 +493,8 @@ mod issue_329_pnpm_catalog;
- mod issue_334_unresolved_catalog_ref;
- #[path = "integration_test/issue_336_unused_overrides.rs"]
- mod issue_336_unused_overrides;
-+#[path = "integration_test/issue_3525_oxlint_config_names.rs"]
-+mod issue_3525_oxlint_config_names;
- #[path = "integration_test/issue_358_custom_eslint_config.rs"]
- mod issue_358_custom_eslint_config;
- #[path = "integration_test/issue_359_empty_catalog_group.rs"]
-```
-
-**File**: `crates/core/tests/integration_test/issue_3525_oxlint_config_names.rs` (added, +54/-0)
-```diff
-@@ -0,0 +1,54 @@
-+use super::common::{create_config, fixture_path};
+@@ -538,7 +538,7 @@ fn parse_store(content: &str, path: &Path) -> ImpactStore {
+         Ok(store) => {
+             if store.schema_version > STORE_SCHEMA_VERSION {
+                 tracing::warn!(
+-                    "fallow impact: store at {} has schema_version {} but this build understands up to {}; reading it as best-effort, fields this build does not know are dropped on the next write. Upgrade fallow to read it fully.",
++                    "fallow impact: store at {} has schema_version {} but this build understands up to {}; reading it as best-effort. This build does not write to it, so the store stays unchanged. Upgrade fallow to read it fully.",
+                     path.display(),
+                     store.schema_version,
+                     STORE_SCHEMA_VERSION,
+@@ -547,15 +547,94 @@ fn parse_store(content: &str, path: &Path) -> ImpactStore {
+             store
+         }
+         Err(err) => {
+-            tracing::warn!(
+-                "fallow impact: ignoring unreadable store at {} ({err}); run `fallow impact enable` to reset it",
+-                path.display()
+-            );
++            if let Some(newer) = newer_schema_in(content, path) {
++                tracing::warn!("{}", newer.message());
++            } else {
++                tracing::warn!(
++                    "fallow impact: ignoring unreadable store at {} ({err}); run `fallow impact enable` to reset it",
++                    path.display()
++                );
++            }
+             ImpactStore::default()
+         }
+     }
+ }
+ 
++/// An Impact store written by a newer Fallow. This build refuses to write it,
++/// because a typed round trip through the older [`ImpactStore`] drops every
++/// field and every record shape that this build does not know.
++#[derive(Debug, Clone, PartialEq, Eq)]
++pub struct NewerStoreSchema {
++    path: PathBuf,
++    schema_version: u32,
++    writer_version: Option<String>,
++}
 +
-+/// Oxlint discovers `.oxlintrc.jsonc` and `oxlint.config.mts` on its own. The
-+/// plugin must read both files and credit `jsPlugins` at the top level and in
-+/// `overrides`.
-+fn assert_oxlint_config_credits_js_plugins(fixture: &str, config_file: &str) {
-+    let root = fixture_path(fixture);
-+    let config = create_config(root);
-+    let results = fallow_core::analyze(&config).expect("analysis should succeed");
-+
-+    let unused_dev_dependencies: Vec<&str> = results
-+        .unused_dev_dependencies
-+        .iter()
-+        .map(|dep| dep.dep.package_name.as_str())
-+        .collect();
-+
-+    for plugin in ["eslint-plugin-top-level", "eslint-plugin-override-only"] {
-+        assert!(
-+            !unused_dev_dependencies.contains(&plugin),
-+            "{plugin} should be credited through {config_file} jsPlugins, got {unused_dev_dependencies:?}"
-+        );
++impl NewerStoreSchema {
++    /// The user-facing explanation, with the next step.
++    #[must_use]
++    pub fn message(&self) -> String {
++        let writer = self
++            .writer_version
++            .as_deref()
++            .map_or_else(String::new, |version| {
++                format!(" (newest record by fallow {version})")
++            });
++        format!(
++            "fallow impact: the store at {} has schema_version {}{writer}, but this build supports up to schema_version {}. The store is unchanged. Upgrade fallow, or use the newer fallow binary, to change or record Impact data for this project.",
++            self.path.display(),
++            self.schema_version,
++            STORE_SCHEMA_VERSION,
++        )
 +    }
-+    assert!(
-+        unused_dev_dependencies.contains(&"eslint-plugin-unused-control"),
-+        "unreferenced control dependency should still be reported, got {unused_dev_dependencies:?}"
-+    );
++}
 +
-+    let unused_files: Vec<String> = results
-+        .unused_files
++/// Read only the schema marker and the newest writer version of a raw store.
++/// This works when the typed parse fails, because a newer schema can change
++/// the shape of a known field. Returns `None` for a supported or corrupt store.
++fn newer_schema_in(content: &str, path: &Path) -> Option<NewerStoreSchema> {
++    let raw: serde_json::Value = serde_json::from_str(content).ok()?;
++    let schema_version = raw.get("schema_version")?.as_u64()?;
++    if schema_version <= u64::from(STORE_SCHEMA_VERSION) {
++        return None;
++    }
++    Some(NewerStoreSchema {
++        path: path.to_path_buf(),
++        schema_version: u32::try_from(schema_version).unwrap_or(u32::MAX),
++        writer_version: newest_writer_version(&raw),
++    })
++}
++
++/// The fallow version on the newest record of either track, when present.
++fn newest_writer_version(raw: &serde_json::Value) -> Option<String> {
++    ["records", "project_records"]
 +        .iter()
-+        .filter_map(|file| {
-+            file.file
-+                .path
-+                .file_name()
-+                .map(|name| name.to_string_lossy().into_owned())
++        .filter_map(|track| raw.get(*track)?.as_array()?.last())
++        .filter_map(|record| {
++            let timestamp = record.get("timestamp")?.as_str()?;
++            let version = record.get("version")?.as_str()?;
++            Some((timestamp, version))
 +        })
-+        .collect();
-+    for file in [config_file, "local-plugin.js"] {
-+        assert!(
-+            !unused_files.contains(&file.to_string()),
-+            "{file} should be used through the Oxlint config, got {unused_files:?}"
++        .max_by(|a, b| a.0.cmp(b.0))
++        .map(|(_, version)| version.to_owned())
++}
++
++/// Load the store for a load, mutate, and save cycle. Refuses a store that a
++/// newer Fallow wrote, so the caller leaves the file unchanged. Every write
++/// path must use this instead of [`load`].
++fn load_for_write(root: &Path) -> Result<ImpactStore, NewerStoreSchema> {
++    let Some(path) = store_path(root) else {
++        return Ok(ImpactStore::default());
++    };
++    let Ok(content) = std::fs::read_to_string(&path) else {
++        return Ok(migrate_legacy_store(root));
++    };
++    if let Some(newer) = newer_schema_in(&content, &path) {
++        return Err(newer);
++    }
++    Ok(parse_store(&content, &path))
++}
++
+ /// Persist the store best-effort using atomic replace. No-op when no config dir
+ /// is resolvable (e.g. stripped CI env). NEVER writes into the analyzed repo.
+ fn save(store: &ImpactStore, root: &Path) {
+@@ -710,32 +789,42 @@ fn migrate_legacy_store(root: &Path) -> ImpactStore {
+ /// Enable Impact tracking for THIS project (an explicit per-repo decision that
+ /// overrides the 
+```
+
+**File**: `crates/cli/src/init.rs` (modified, +7/-1)
+```diff
+@@ -709,7 +709,13 @@ pub fn run_init(opts: &InitOptions<'_>) -> ExitCode {
+ /// (no new state file); this neither enables Impact tracking nor writes a
+ /// config file.
+ fn run_init_decline(root: &Path, quiet: bool) -> ExitCode {
+-    let newly = crate::impact::decline_onboarding(root);
++    let newly = match crate::impact::decline_onboarding(root) {
++        Ok(newly) => newly,
++        Err(newer) => {
++            eprintln!("{}", newer.message());
++            return ExitCode::from(2);
++        }
++    };
+     if !quiet {
+         println!(
+             "{}",
+```
+
+**File**: `crates/cli/tests/integration/impact_store_schema_tests.rs` (added, +110/-0)
+```diff
+@@ -0,0 +1,110 @@
++//! An older binary must not rewrite an Impact store that a newer Fallow wrote.
++
++use std::path::{Path, PathBuf};
++
++use super::common::{CommandOutput, run_fallow_raw_with_env};
++
++const FUTURE_SCHEMA: u32 = 999;
++
++/// Isolated user config dirs for every platform the store path resolves on.
++fn isolated_env(home: &Path) -> Vec<(&'static str, String)> {
++    let utf8 = |path: &Path| path.to_str().expect("utf8 path").to_owned();
++    vec![
++        ("HOME", utf8(home)),
++        ("USERPROFILE", utf8(home)),
++        ("APPDATA", utf8(&home.join("AppData"))),
++        ("XDG_CONFIG_HOME", utf8(&home.join(".config"))),
++    ]
++}
++
++fn run_isolated(home: &Path, args: &[&str]) -> CommandOutput {
++    let env = isolated_env(home);
++    let env: Vec<(&str, &str)> = env.iter().map(|(k, v)| (*k, v.as_str())).collect();
++    run_fallow_raw_with_env(args, &env)
++}
++
++/// The single per-project store file under the isolated config dir.
++fn find_store(home: &Path) -> PathBuf {
++    let bases = [
++        home.join("Library").join("Application Support"),
++        home.join(".config"),
++        home.join("AppData"),
++    ];
++    let mut found = Vec::new();
++    for base in bases {
++        let Ok(entries) = std::fs::read_dir(base.join("fallow").join("impact")) else {
++            continue;
++        };
++        found.extend(
++            entries
++                .flatten()
++                .map(|entry| entry.path())
++                .filter(|path| path.extension().is_some_and(|ext| ext == "json")),
 +        );
 +    }
++    assert_eq!(found.len(), 1, "expected one store file, found {found:?}");
++    found.remove(0)
++}
++
++fn read(path: &Path) -> String {
++    std::fs::read_to_string(path).expect("read store")
 +}
 +
 +#[test]
-+fn oxlintrc_jsonc_credits_top_level_and_override_js_plugins() {
-+    assert_oxlint_config_credits_js_plugins("issue-3525-oxlint-jsonc", ".oxlintrc.jsonc");
-+}
++fn older_binary_leaves_a_newer_schema_store_unchanged() {
++    let home = tempfile::tempdir().expect("home tempdir");
++    let project = tempfile::tempdir().expect("project tempdir");
++    let root = project.path().to_str().expect("utf8 root");
 +
-+#[test]
-+fn oxlint_config_mts_credits_top_level_and_override_js_plugins() {
-+    assert_oxlint_config_credits_js_plugins("issue-3525-oxlint-mts", "oxlint.config.mts");
-+}
-```
-
-**File**: `tests/fixtures/issue-3525-oxlint-jsonc/.oxlintrc.jsonc` (added, +11/-0)
-```diff
-@@ -0,0 +1,11 @@
-+// Oxlint discovers this file name on its own.
-+{
-+  /* Block comments are valid too. */
-+  "jsPlugins": ["eslint-plugin-top-level"],
-+  "overrides": [
-+    {
-+      "files": ["*.ts"],
-+      "jsPlugins": ["eslint-plugin-override-only", "./plugins/local-plugin.js"],
-+    },
-+  ],
-+}
-```
-
-**File**: `tests/fixtures/issue-3525-oxlint-jsonc/package.json` (added, +13/-0)
-```diff
-@@ -0,0 +1,13 @@
-+{
-+  "name": "issue-3525-oxlint-jsonc",
-+  "private": true,
-+  "scripts": {
-+    "lint": "oxlint"
-+  },
-+  "devDependencies": {
-+    "eslint-plugin-override-only": "1.0.0",
-+    "eslint-plugin-top-level": "1.0.0",
-+    "eslint-plugin-unused-control": "1.0.0",
-+    "oxlint": "1.0.0"
-+  }
-+}
-```
-
-**File**: `tests/fixtures/issue-3525-oxlint-jsonc/plugins/local-plugin.js` (added, +3/-0)
-```diff
-@@ -0,0 +1,3 @@
-+export default {
-+  rules: {},
-+};
-```
-
----
-
-### Incident Patch 2: `de4643ef` (2026-10-18)
-**Commit Message**: test: move the lock-conflict override fixtures to patched path-to-regexp (#3585)
-
-* test: move the pnpm override fixture to patched path-to-regexp
-
-OpenSSF Scorecard ignores the osv-scanner.toml of this fixture and still
-reported GHSA-37ch-88jc-xwx2. The test checks the merge-conflict lines of
-the lockfile, not the override version, so the fixture now uses 0.1.13 and
-the ignore entry that had no effect is removed.
-
-* test: match the 0.1.13 integrity hash and move the npm fixture too
-
-The pnpm fixture kept the 0.1.12 integrity hash under the 0.1.13 key. The
-npm sibling fixture also pinned path-to-regexp 0.1.12; it and the NPM_OURS
-splice text now use 0.1.13.
-
-**File**: `crates/core/tests/integration_test/issue_336_unused_overrides.rs` (modified, +1/-1)
-```diff
-@@ -812,7 +812,7 @@ const NPM_CONFLICT_FIXTURE: &str = "npm-lock-merge-conflict-overrides";
- const NPM_OURS: &str = r#"    "node_modules/express": {
-       "version": "4.21.2",
-       "dependencies": {
--        "path-to-regexp": "0.1.12"
-+        "path-to-regexp": "0.1.13"
-       }
-     },
- "#;
-```
-
-**File**: `tests/fixtures/npm-lock-merge-conflict-overrides/package-lock.json` (modified, +2/-2)
-```diff
-@@ -14,11 +14,11 @@
-     "node_modules/express": {
-       "version": "4.21.2",
-       "dependencies": {
--        "path-to-regexp": "0.1.12"
-+        "path-to-regexp": "0.1.13"
-       }
-     },
-     "node_modules/path-to-regexp": {
--      "version": "0.1.12"
-+      "version": "0.1.13"
-     }
-   }
- }
-```
-
-**File**: `tests/fixtures/npm-lock-merge-conflict-overrides/package.json` (modified, +1/-1)
-```diff
-@@ -7,6 +7,6 @@
-     "express": "^4.21.2"
-   },
-   "overrides": {
--    "path-to-regexp": "0.1.12"
-+    "path-to-regexp": "0.1.13"
-   }
- }
-```
-
-**File**: `tests/fixtures/pnpm-lock-merge-conflict-overrides/osv-scanner.toml` (modified, +0/-5)
-```diff
-@@ -4,8 +4,3 @@
- ignore = true
- reason = "Test fixture lockfile: analysis input, not a fallow dependency."
- 
--# OpenSSF Scorecard still reported this ID with the override above, so it is
--# also listed by ID.
--[[IgnoredVulns]]
--id = "GHSA-37ch-88jc-xwx2"
--reason = "Test fixture lockfile: analysis input, not a fallow dependency."
-```
-
-**File**: `tests/fixtures/pnpm-lock-merge-conflict-overrides/package.json` (modified, +1/-1)
-```diff
-@@ -8,7 +8,7 @@
-   },
-   "pnpm": {
-     "overrides": {
--      "path-to-regexp": "0.1.12"
-+      "path-to-regexp": "0.1.13"
-     }
-   }
- }
-```
-
-**File**: `tests/fixtures/pnpm-lock-merge-conflict-overrides/pnpm-lock.yaml` (modified, +5/-5)
-```diff
-@@ -5,7 +5,7 @@ settings:
-   excludeLinksFromLockfile: false
- 
- overrides:
--  path-to-regexp: 0.1.12
-+  path-to-regexp: 0.1.13
- 
- importers:
- 
-@@ -21,13 +21,13 @@ packages:
-     resolution: {integrity: sha512-28HqgMZAmih1Czt9ny7qr6ek2qddF4FclbMzwhCREB6OFfH+rXAnuNCwo1/wFvrtbgsQDb4kSbX9de9lFbrXnA==}
-     engines: {node: '>= 0.10.0'}
- 
--  path-to-regexp@0.1.12:
--    resolution: {integrity: sha512-RA1GjUVMnvYFxuqovrEqZoxxW5NUZqbwKtYz/Tt7nXerk0LbLblQmrsgdeOxV5SFHf0UDggjS/bSeOZwt1pmEQ==}
-+  path-to-regexp@0.1.13:
-+    resolution: {integrity: sha512-A/AGNMFN3c8bOlvV9RreMdrv7jsmF9XIfDeCd87+I8RNg6s78BhJxMu69NEMHBSJFxKidViTEdruRwEk/WIKqA==}
- 
- snapshots:
- 
-   express@4.21.2:
-     dependencies:
--      path-to-regexp: 0.1.12
-+      path-to-regexp: 0.1.13
- 
--  path-to-regexp@0.1.12: {}
-+  path-to-regexp@0.1.13: {}
-```
-
----
-
-### Incident Patch 3: `157c3528` (2026-10-18)
-**Commit Message**: chore: list the fixture path-to-regexp advisory by ID (#3583)
-
-OpenSSF Scorecard still reported GHSA-37ch-88jc-xwx2 in a test fixture
-lockfile with the package override in place.
-
-**File**: `tests/fixtures/pnpm-lock-merge-conflict-overrides/osv-scanner.toml` (modified, +6/-0)
-```diff
-@@ -3,3 +3,9 @@
- [[PackageOverrides]]
- ignore = true
- reason = "Test fixture lockfile: analysis input, not a fallow dependency."
++    let enable = run_isolated(
++        home.path(),
++        &["impact", "enable", "--root", root, "--quiet"],
++    );
++    assert_eq!(enable.code, 0, "seed enable failed: {}", enable.stderr);
++    let store = find_store(home.path());
 +
-+# OpenSSF Scorecard still reported this ID with the override above, so it is
-+# also listed by ID.
-+[[IgnoredVulns]]
-+id = "GHSA-37ch-88jc-xwx2"
-+reason = "Test fixture lockfile: analysis input, not a fallow dependency."
++    let future = format!(
++        r#"{{"schema_version":{FUTURE_SCHEMA},"enabled":false,"records":[],"future_field":{{"sentinel":"preserve"}}}}"#
++    );
++    std::fs::write(&store, &future).expect("seed future store");
++
++    for args in [
++        [
++            "impact", "disable", "--root", root, "--format", "json", "--quiet",
++        ],
++        [
++            "impact", "enable", "--root", root, "--format", "json", "--quiet",
++        ],
++    ] {
++        let output = run_isolated(home.path(), &args);
++        assert_eq!(
++            output.code, 2,
++            "{args:?} must refuse a newer store: {} {}",
++            output.stdout, output.stderr
++        );
++        let text = format!("{}{}", output.stdout, output.stderr);
++        assert!(
++            text.contains(&format!("schema_version {FUTURE_SCHEMA}")),
++            "{args:?} must name the store schema: {text}"
++        );
++        assert_eq!(
++            read(&store),
++            future,
++            "{args:?} must leave the store unchanged"
++        );
++    }
++
++    let decline = run_isolated(
++        home.path(),
++        &["init", "--decline", "--root", root, "--quiet"],
++    );
++    assert_eq!(decline.code, 2, "init --decline must refuse a newer store");
++    assert_eq!(read(&store), future);
++
++    let status = run_isolated(
++        home.path(),
++        &["impact", "--root", root, "--format", "json", "--quiet"],
++    );
++    assert_eq!(status.code, 0, "reads stay available: {}", status.stderr);
++    assert_eq!(read(&store), future);
++}
+```
+
+**File**: `crates/cli/tests/integration/main.rs` (modified, +1/-0)
+```diff
+@@ -68,6 +68,7 @@ mod health_group_trend_tests;
+ mod health_mutation_report_tests;
+ mod health_score_baseline_summary_tests;
+ mod health_tests;
++mod impact_store_schema_tests;
+ mod init_tests;
+ mod inspect_tests;
+ mod json_format_tests;
+```
+
+**File**: `docs/backwards-compatibility.md` (modified, +12/-0)
+```diff
+@@ -1012,6 +1012,18 @@ These are documented for the rare CI script that depended on the old behavior. N
+   fallow reading a schema 7 store degrades the way it always has: the
+   statusline reports the store as written by a newer build rather than as off.
+ 
++- **An older fallow does not write an Impact store that a newer fallow wrote.**
++  When the local store has a `schema_version` above the version this build
++  supports, every write path leaves the file unchanged. `fallow impact enable`,
++  `fallow impact disable`, and `fallow init --decline` exit with code 2 and an
++  error that names the store schema and the fallow version of the newest
++  record. An audit or combined run does not record and logs the same message.
++  The periodic digest does not appear. Reads (`fallow impact`, `fallow impact
++  status`, the statusline) stay best-effort. Before this change, an older
++  build rewrote the store through its own typed model and dropped every field
++  it did not know. Refusal is safer than a round trip of unknown keys, because
++  a newer schema can also change the meaning or the shape of a known field.
++
+ - **`code_execute` bounds the value a snippet returns, not only the fallow JSON
+   it reads.** `max_output_bytes` previously capped host-call output alone, and
+   any snippet result was returned whole with `ok:true`. The serialized result is
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3587** (2026-10-18): docs: add GOVERNANCE.md and an architecture overview (@BartWaardenburg)
-- **PR #3586** (2026-10-18): docs(readme): add the OpenSSF Baseline badge (@BartWaardenburg)
-- **PR #3585** (2026-10-18): test: move the pnpm override fixture to patched path-to-regexp (@BartWaardenburg)
-- **PR #3584** (2026-10-18): chore(release): ship LICENSE in the fallow npm package (@BartWaardenburg)
-- **PR #3583** (2026-10-18): chore: list the fixture path-to-regexp advisory by ID (@BartWaardenburg)
-- **PR #3582** (2026-10-18): docs(release): wait for release PR checks with a count guard (@BartWaardenburg)
+- **PR #3615** (2026-10-19): chore(deps): fix vulnerable dependencies in the review app and demo project (@BartWaardenburg)
+- **PR #3611** (2026-10-19): ci: wait for the approved npm root in one release job (@BartWaardenburg)
+- **PR #3610** (2026-10-19): ci: let every CI push run on main finish (@BartWaardenburg)
+- **PR #3609** (2026-10-19): ci: check only pull request commits in the DCO and commit lint steps (@BartWaardenburg)
+- **PR #3608** (2026-10-19): fix(mutation): report undiscovered tests as partial, select Vitest config, show progress (@BartWaardenburg)
+- **PR #3607** (2026-10-19): fix(impact): leave a newer-schema store unchanged on every write (@BartWaardenburg)
 
 ---
 
@@ -2110,28 +2761,62 @@ lockfile with the package override in place.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. oxlint): read .oxlintrc.jsonc and oxlint.config.mts (#3567)
+## X. deps): fix vulnerable dependencies in the review app and demo project (#3615)
 
 **RULE**:
-When implementing operations in `.agents/rules/plugins.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fallow-rs/fallow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/review-electron/fixtures/sample-app/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fallow-rs/fallow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5ada5d28`: oxlint): read .oxlintrc.jsonc and oxlint.config.mts (#3567). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8a6cbdc4`: deps): fix vulnerable dependencies in the review app and demo project (#3615). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.agents/rules/plugins.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/review-electron/fixtures/sample-app/package-lock.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **Oxlint**: parses `.oxlintrc.json`, `.oxlintrc.jsonc`, `oxlint.json`, `oxlint.config.ts`, and `oxlint.config.mts`; `jsPlugins` string entries, tuple first-elements, and alias-object specifier values are credited as npm dependencies; relative/absolute plugin paths are recorded as support setup files; built-in Oxlint plugin names are ignored for dependency credit.
+      "version": "2.11.29",
+      "resolved": "https://registry.npmjs.org/baseline-browser-mapping/-/baseline-browser-mapping-2.11.29.tgz",
+      "integrity": "sha512-YeesxhUmR4h5y5V8KF8iBCqJb8YFrBJ++XBTeGcWIaQOYXGN19JM0FoiOjAhwuDoln8owMgXcWBmgHtYSkky2w==",
+      "version": "4.29.4",
+      "resolved": "https://registry.npmjs.org/browserslist/-/browserslist-4.29.4.tgz",
+      "integrity": "sha512-2TcbbiwXEq+N0kD36tykpCfyyQigUXmuwNQbnPp4Xk4PX9JOqVIKjJlIDjpH7uY6tmRGoAd+apeT1p60T8wsdA==",
+        "baseline-browser-mapping": "^2.11.29",
+        "caniuse-lite": "^1.0.30001816",
+        "electron-to-chromium": "^1.5.459",
+        "node-releases": "^2.0.59",
+        "update-browserslist-db": "^1.3.4"
+      "version": "1.0.30001816",
+      "resolved": "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001816.tgz",
+      "integrity": "sha512-+8Yx7BXCoqk6IF8yTicjfUR6D/ldJzdlsodlEOiOSPmhK844WIgk67/zIQaGAOxNkZyyvBlrRFnLvqKIoqbAFw==",
+      "version": "1.5.459",
+      "resolved": "https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.5.459.tgz",
+      "integrity": "sha512-4SC9HHSFjO/liAhifpdOL5hG9b4BP7/5G3y3UPZVO8trlAXr1CaUEEJL0gWK3kOcYcZrOA5rkwG45Gra/lTIgg==",
+    
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-- **Oxlint**: parses `.oxlintrc.json`, `oxlint.json`, and `oxlint.config.ts`; `jsPlugins` string entries, tuple first-elements, and alias-object specifier values are credited as npm dependencies; relative/absolute plugin paths are recorded as support setup files; built-in Oxlint plugin names are ignored for dependency credit.
+      "version": "2.10.38",
+      "resolved": "https://registry.npmjs.org/baseline-browser-mapping/-/baseline-browser-mapping-2.10.38.tgz",
+      "integrity": "sha512-31/02mVB4yuQU6adKk5SlY6m+mxDwUq5KZkyYgnLrrKl7TEm1+3PyDtDBz2kOv/wxZz41GHsvV1A/u6RmiyBvw==",
+      "version": "4.28.2",
+      "resolved": "https://registry.npmjs.org/browserslist/-/browserslist-4.28.2.tgz",
+      "integrity": "sha512-48xSriZYYg+8qXna9kwqjIVzuQxi+KYWp2+5nCYnYKPTr0LvD89Jqk2Or5ogxz0NUMfIjhh2lIUX/LyX9B4oIg==",
+        "baseline-browser-mapping": "^2.10.12",
+        "caniuse-lite": "^1.0.30001782",
+        "electron-to-chromium": "^1.5.328",
+        "node-releases": "^2.0.36",
+        "update-browserslist-db": "^1.2.3"
+      "version": "1.0.30001799",
+      "resolved": "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001799.tgz",
+      "integrity": "sha512-hG1bReV+OUU+MOqK4t/ZWI0tZOyz3rqS9XuhOUz1cIcbwBKjOyJEJuw9ER5JuNyqxNk8u/JUVbGibBOL1yrjFw==",
+      "version": "1.5.376",
+      "resolved": "https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.5.376.tgz",
+      "integrity": "sha512-cUVA7/RvbFTEuw/i3obUwDTRIXojaxkResf+ibByPFxjc6XK3VNtcQXV0NSbAlJ0FMjcJGgftVVB4Qo184EXvA==",
+    
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5ada5d28` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8a6cbdc4` are properly handled with clean fallback behavior.

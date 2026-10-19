@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T13:49:39.237Z",
+  "last_updated": "2026-10-19T13:55:51.621Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2404,14 +2404,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-pyannote-speaker-diarization-community-1",
-      "content_hash": "0670755a92e1e45d7ca6f12a6f5201ed26609fb2b117adfdab62e557e8cc0d90",
-      "verified_at": "2026-10-18T03:58:20.288Z",
+      "content_hash": "5a04f8b2f88a22cdf68dd60e4cec68f2110db37cee596de251bc8b8919c4e3e8",
+      "verified_at": "2026-10-19T13:55:45.719Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T03:58:20.288Z"
+      "last_updated": "2026-10-19T13:55:45.719Z"
     },
     "meta-models/Muse-Spark-Open-816B-A42B": {
       "repository": "meta-models/Muse-Spark-Open-816B-A42B",
@@ -4894,14 +4894,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fallow-rs-fallow",
-      "content_hash": "960d8d8bf4b4e447b399a714c3f2ab9e5f1bfe56cf27d95c12e4a9674dc83da1",
-      "verified_at": "2026-10-18T22:54:16.773Z",
+      "content_hash": "22ea2f7f256dc6788b1f05bacde6e6e4e87d1825d3b9fd8922e016eea0449028",
+      "verified_at": "2026-10-19T13:55:47.733Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T22:54:16.773Z"
+      "last_updated": "2026-10-19T13:55:47.733Z"
     },
     "expo/create-react-native-app": {
       "repository": "expo/create-react-native-app",
@@ -12207,6 +12207,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T13:49:39.236Z"
+    },
+    "vanniktech/gradle-maven-publish-plugin": {
+      "repository": "vanniktech/gradle-maven-publish-plugin",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-vanniktech-gradle-maven-publish-plugin",
+      "content_hash": "bf72827bc9b9f1730e5ffb95b0e254e2fb72d43b4122d8ace944d4392ca2aa60",
+      "verified_at": "2026-10-19T13:55:51.620Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T13:55:51.620Z"
     }
   },
   "repos": {

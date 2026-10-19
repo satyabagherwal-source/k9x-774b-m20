@@ -3275,3 +3275,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf` | `https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF` | `hf-liquida` | Multi-dimensional audit evidence | 2026-10-19T13:43:23.068Z |
 | `learn-huggingface-black-forest-labs-flux-3-image-klein` | `https://huggingface.co/black-forest-labs/flux-3-image-klein` | `hf-black-f` | Multi-dimensional audit evidence | 2026-10-19T13:49:31.284Z |
 | `learn-github-react-native-maps-react-native-maps` | `https://github.com/react-native-maps/react-native-maps` | `39c6fd17` | Multi-dimensional audit evidence | 2026-10-19T13:49:39.230Z |
+| `learn-huggingface-pyannote-speaker-diarization-community-1` | `https://huggingface.co/pyannote/speaker-diarization-community-1` | `hf-pyannot` | Multi-dimensional audit evidence | 2026-10-19T13:55:45.712Z |
+| `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `77f2b8b1` | Multi-dimensional audit evidence | 2026-10-19T13:55:47.727Z |
+| `learn-github-vanniktech-gradle-maven-publish-plugin` | `https://github.com/vanniktech/gradle-maven-publish-plugin` | `6ba9aead` | Multi-dimensional audit evidence | 2026-10-19T13:55:51.614Z |

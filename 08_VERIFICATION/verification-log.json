@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-JF8E",
-    "timestamp": "2026-10-19T01:49:27.134Z",
-    "repository": "sfu-db/connector-x",
-    "learningId": "learn-github-sfu-db-connector-x",
-    "contentHash": "229fb5e65dd30ef1c5a77be851d2ae954c1ba2083b0ea9fb6f46aa1e1b2e8374",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-LE0D",
-    "timestamp": "2026-10-19T01:50:58.861Z",
-    "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
-    "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
-    "contentHash": "5472ee89cabd6082f45f710b677a17951c3bf2145d195e7381a71d3524ef37b0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-T26R",
-    "timestamp": "2026-10-19T01:56:56.787Z",
-    "repository": "stenciljs/core",
-    "learningId": "learn-github-stenciljs-core",
-    "contentHash": "c7f1d9a1ecc7790e845a12527c47a9dae44077a914707842bc3207ce58b59cd2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-T481",
     "timestamp": "2026-10-19T01:56:59.425Z",
     "repository": "chmln/sd",
@@ -7490,6 +7445,51 @@
     "repository": "react-native-maps/react-native-maps",
     "learningId": "learn-github-react-native-maps-react-native-maps",
     "contentHash": "1f785bf2314889d6a07c214c93c80b550f1d3722c24bfdc99238511fb3206c0f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-HGOD",
+    "timestamp": "2026-10-19T13:55:45.709Z",
+    "repository": "pyannote/speaker-diarization-community-1",
+    "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
+    "contentHash": "5a04f8b2f88a22cdf68dd60e4cec68f2110db37cee596de251bc8b8919c4e3e8",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-HI8C",
+    "timestamp": "2026-10-19T13:55:47.724Z",
+    "repository": "fallow-rs/fallow",
+    "learningId": "learn-github-fallow-rs-fallow",
+    "contentHash": "22ea2f7f256dc6788b1f05bacde6e6e4e87d1825d3b9fd8922e016eea0449028",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-HL8B",
+    "timestamp": "2026-10-19T13:55:51.611Z",
+    "repository": "vanniktech/gradle-maven-publish-plugin",
+    "learningId": "learn-github-vanniktech-gradle-maven-publish-plugin",
+    "contentHash": "bf72827bc9b9f1730e5ffb95b0e254e2fb72d43b4122d8ace944d4392ca2aa60",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

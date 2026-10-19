@@ -1555,8 +1555,8 @@
     "sourceUrl": "https://huggingface.co/pyannote/speaker-diarization-community-1",
     "sourceVersion": "hf-pyannote-speaker-diarization-community-1",
     "license": "Open-Source",
-    "contentHash": "0670755a92e1e45d7ca6f12a6f5201ed26609fb2b117adfdab62e557e8cc0d90",
-    "lastHarvestedAt": "2026-10-18T03:58:20.284Z",
+    "contentHash": "5a04f8b2f88a22cdf68dd60e4cec68f2110db37cee596de251bc8b8919c4e3e8",
+    "lastHarvestedAt": "2026-10-19T13:55:45.712Z",
     "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1"
   },
   "hf-meta-models-muse-spark-open-816b-a42b": {
@@ -3183,10 +3183,10 @@
     "repository": "fallow-rs/fallow",
     "platform": "github",
     "sourceUrl": "https://github.com/fallow-rs/fallow",
-    "sourceVersion": "d406a14e",
+    "sourceVersion": "77f2b8b1",
     "license": "MIT",
-    "contentHash": "960d8d8bf4b4e447b399a714c3f2ab9e5f1bfe56cf27d95c12e4a9674dc83da1",
-    "lastHarvestedAt": "2026-10-18T22:54:16.764Z",
+    "contentHash": "22ea2f7f256dc6788b1f05bacde6e6e4e87d1825d3b9fd8922e016eea0449028",
+    "lastHarvestedAt": "2026-10-19T13:55:47.727Z",
     "learningId": "learn-github-fallow-rs-fallow"
   },
   "expo-create-react-native-app": {
@@ -8118,5 +8118,15 @@
     "contentHash": "1f785bf2314889d6a07c214c93c80b550f1d3722c24bfdc99238511fb3206c0f",
     "lastHarvestedAt": "2026-10-19T13:49:39.230Z",
     "learningId": "learn-github-react-native-maps-react-native-maps"
+  },
+  "vanniktech-gradle-maven-publish-plugin": {
+    "repository": "vanniktech/gradle-maven-publish-plugin",
+    "platform": "github",
+    "sourceUrl": "https://github.com/vanniktech/gradle-maven-publish-plugin",
+    "sourceVersion": "6ba9aead",
+    "license": "Apache-2.0",
+    "contentHash": "bf72827bc9b9f1730e5ffb95b0e254e2fb72d43b4122d8ace944d4392ca2aa60",
+    "lastHarvestedAt": "2026-10-19T13:55:51.614Z",
+    "learningId": "learn-github-vanniktech-gradle-maven-publish-plugin"
   }
 }
