@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-0MM7",
-    "timestamp": "2026-10-19T07:10:45.631Z",
-    "repository": "angular/angular",
-    "learningId": "learn-github-angular-angular",
-    "contentHash": "8515bfa48c1450fc7544205e5f0fa0e8f424001e10ddee52cc1c40a6bedeffd4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-0YRD",
-    "timestamp": "2026-10-19T07:11:01.369Z",
-    "repository": "devspace-sh/devspace",
-    "learningId": "learn-github-devspace-sh-devspace",
-    "contentHash": "b9c7645da4e55ddf4c2e830f7d34cea93289c9fb4cab18087bceb023be198857",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-EBBP",
-    "timestamp": "2026-10-19T07:21:24.181Z",
-    "repository": "google/embeddinggemma-2",
-    "learningId": "learn-huggingface-google-embeddinggemma-2",
-    "contentHash": "9f30114701c8e63b8415476ee20146ac86aedaefd301e8a344ff5ed769911d0e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-EHJN",
     "timestamp": "2026-10-19T07:21:32.243Z",
     "repository": "tangshimin/MuJing",
@@ -7492,6 +7447,51 @@
     "contentHash": "99f6e08bd14a9d20036de23a015b7be99b91afd9dd31b73c8c8a73b214d5177f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-130R",
+    "timestamp": "2026-10-19T23:02:53.835Z",
+    "repository": "fb55/css-select",
+    "learningId": "learn-github-fb55-css-select",
+    "contentHash": "56b2f4ff3f1865a19dc1e34fe64a37d5da1595584911e563e1dd494a57bd29d8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-1401",
+    "timestamp": "2026-10-19T23:02:55.105Z",
+    "repository": "sindresorhus/KeyboardShortcuts",
+    "learningId": "learn-github-sindresorhus-keyboardshortcuts",
+    "contentHash": "ee7372977c53eceafce2285adff63e27e8e21efbd898f78e7f8517d348a24678",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-1YSO",
+    "timestamp": "2026-10-19T23:03:35.016Z",
+    "repository": "lingui/js-lingui",
+    "learningId": "learn-github-lingui-js-lingui",
+    "contentHash": "38c88659f937363b7540fba9b7722d1de508ad3f2d919dc3f9b4b8e8bbe71c93",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T22:56:19.721Z",
-  "total_verified_learnings": 954,
+  "last_updated": "2026-10-19T23:03:34.964Z",
+  "total_verified_learnings": 956,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -28670,14 +28670,29 @@
       "slug": "lingui-js-lingui",
       "platform": "github",
       "source_url": "https://github.com/lingui/js-lingui",
-      "source_version": "b0355f26",
-      "content_hash": "d6a782a296c53a3178a65c13f75dc5965dae5bdb9788cba4d72e16c907fd6bcc",
+      "source_version": "60e823f9",
+      "content_hash": "38c88659f937363b7540fba9b7722d1de508ad3f2d919dc3f9b4b8e8bbe71c93",
       "dossier_path": "07_PROJECT_LEARNING/lingui-js-lingui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lingui-js-lingui-learnings.md",
       "promoted_rules": [
         {
           "number": 1945,
           "title": "cli): don't compile twice per change in watch mode without --debounce (#2722)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2877,
+          "title": "Pure Recursive Deep Cloner Invariant (No In-Place Configuration Mutation)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2878,
+          "title": "ICU Choice Format Parameter Order Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2879,
+          "title": "SFC Virtual Script AST Source-Location Relational Offset Invariant",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -28686,7 +28701,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T01:00:54.052Z",
+      "verified_at": "2026-10-19T23:03:34.948Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39634,22 +39649,35 @@
     "learn-github-sindresorhus-keyboardshortcuts": {
       "learning_id": "learn-github-sindresorhus-keyboardshortcuts",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "sindresorhus-keyboardshortcuts",
+      "source": "sindresorhus/KeyboardShortcuts",
+      "repository": "sindresorhus/KeyboardShortcuts",
       "slug": "sindresorhus-keyboardshortcuts",
       "platform": "github",
       "source_url": "https://github.com/sindresorhus/KeyboardShortcuts",
-      "source_version": "HEAD",
-      "content_hash": "eae8324b81723310ff39235a095605bc2eecefb14ce23d65493e139212db88b0",
+      "source_version": "772133d9",
+      "content_hash": "ee7372977c53eceafce2285adff63e27e8e21efbd898f78e7f8517d348a24678",
       "dossier_path": "07_PROJECT_LEARNING/sindresorhus-keyboardshortcuts-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sindresorhus-keyboardshortcuts-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2876,
+          "title": "release build crash with Swift 6.3 compiler",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.564Z"
+      "verified_at": "2026-10-19T23:02:55.040Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-siteline-swiftui-introspect": {
       "learning_id": "learn-github-siteline-swiftui-introspect",
@@ -57434,20 +57462,35 @@
     "learn-github-fb55-css-select": {
       "learning_id": "learn-github-fb55-css-select",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "fb55/css-select",
       "repository": "fb55/css-select",
       "slug": "fb55-css-select",
       "platform": "github",
       "source_url": "https://github.com/fb55/css-select",
-      "source_version": "main",
-      "content_hash": "2aadecb728930df229846ff7db2a144acea0b44ec08b454f83ce4d50a7dd4f30",
+      "source_version": "66d88088",
+      "content_hash": "56b2f4ff3f1865a19dc1e34fe64a37d5da1595584911e563e1dd494a57bd29d8",
       "dossier_path": "07_PROJECT_LEARNING/fb55-css-select-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fb55-css-select-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2875,
+          "title": "build(deps): bump github/codeql-action from 4.38.3 to 4.39.0 (#1920)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
-      "verification_status": "EMPIRICAL_VERIFIED",
-      "verified": true,
+      "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-18T06:55:35.697040Z"
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-19T23:02:53.750Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-cheeriojs-dom-serializer": {
       "learning_id": "learn-github-cheeriojs-dom-serializer",
@@ -94073,6 +94116,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T22:56:19.713Z"
+    },
+    "rule-2875": {
+      "learning_id": "rule-2875",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2875,
+      "title": "build(deps): bump github/codeql-action from 4.38.3 to 4.39.0 (#1920)",
+      "source_url": "https://github.com/fb55/css-select",
+      "source_version": "66d88088",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T23:02:53.750Z"
+    },
+    "rule-2876": {
+      "learning_id": "rule-2876",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2876,
+      "title": "release build crash with Swift 6.3 compiler",
+      "source_url": "https://github.com/sindresorhus/KeyboardShortcuts",
+      "source_version": "772133d9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T23:02:55.040Z"
+    },
+    "rule-2877": {
+      "learning_id": "rule-2877",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2877,
+      "title": "Pure Recursive Deep Cloner Invariant (No In-Place Configuration Mutation)",
+      "source_url": "https://github.com/lingui/js-lingui",
+      "source_version": "60e823f9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T23:03:34.948Z"
+    },
+    "rule-2878": {
+      "learning_id": "rule-2878",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2878,
+      "title": "ICU Choice Format Parameter Order Invariant",
+      "source_url": "https://github.com/lingui/js-lingui",
+      "source_version": "60e823f9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T23:03:34.948Z"
+    },
+    "rule-2879": {
+      "learning_id": "rule-2879",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2879,
+      "title": "SFC Virtual Script AST Source-Location Relational Offset Invariant",
+      "source_url": "https://github.com/lingui/js-lingui",
+      "source_version": "60e823f9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T23:03:34.948Z"
     }
   },
   "aliases": {

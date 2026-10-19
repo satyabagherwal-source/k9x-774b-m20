@@ -4283,10 +4283,10 @@
     "repository": "lingui/js-lingui",
     "platform": "github",
     "sourceUrl": "https://github.com/lingui/js-lingui",
-    "sourceVersion": "b0355f26",
+    "sourceVersion": "60e823f9",
     "license": "MIT",
-    "contentHash": "d6a782a296c53a3178a65c13f75dc5965dae5bdb9788cba4d72e16c907fd6bcc",
-    "lastHarvestedAt": "2026-10-19T01:00:54.109Z",
+    "contentHash": "38c88659f937363b7540fba9b7722d1de508ad3f2d919dc3f9b4b8e8bbe71c93",
+    "lastHarvestedAt": "2026-10-19T23:03:35.019Z",
     "learningId": "learn-github-lingui-js-lingui"
   },
   "nasiko-labs-nasiko": {
@@ -9388,5 +9388,25 @@
     "contentHash": "eae923ce66c4184db4915f73fbcf669cf6be5f7ad1b49ee4093f3cb56b2e8942",
     "lastHarvestedAt": "2026-10-19T22:56:11.959Z",
     "learningId": "learn-github-kitlangton-hex"
+  },
+  "fb55-css-select": {
+    "repository": "fb55/css-select",
+    "platform": "github",
+    "sourceUrl": "https://github.com/fb55/css-select",
+    "sourceVersion": "66d88088",
+    "license": "BSD-2-Clause",
+    "contentHash": "56b2f4ff3f1865a19dc1e34fe64a37d5da1595584911e563e1dd494a57bd29d8",
+    "lastHarvestedAt": "2026-10-19T23:02:53.838Z",
+    "learningId": "learn-github-fb55-css-select"
+  },
+  "sindresorhus-keyboardshortcuts": {
+    "repository": "sindresorhus/KeyboardShortcuts",
+    "platform": "github",
+    "sourceUrl": "https://github.com/sindresorhus/KeyboardShortcuts",
+    "sourceVersion": "772133d9",
+    "license": "MIT",
+    "contentHash": "ee7372977c53eceafce2285adff63e27e8e21efbd898f78e7f8517d348a24678",
+    "lastHarvestedAt": "2026-10-19T23:02:55.107Z",
+    "learningId": "learn-github-sindresorhus-keyboardshortcuts"
   }
 }

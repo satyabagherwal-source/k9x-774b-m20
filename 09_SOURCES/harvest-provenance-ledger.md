@@ -3552,3 +3552,6 @@ Every entry in this ledger must capture:
 | `learn-github-inikulin-parse5` | `https://github.com/inikulin/parse5` | `43d8ca05` | Multi-dimensional audit evidence | 2026-10-19T22:56:09.183Z |
 | `learn-github-kitlangton-hex` | `https://github.com/kitlangton/Hex` | `3e300721` | Multi-dimensional audit evidence | 2026-10-19T22:56:11.959Z |
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `e855796c` | Multi-dimensional audit evidence | 2026-10-19T22:56:19.762Z |
+| `learn-github-fb55-css-select` | `https://github.com/fb55/css-select` | `66d88088` | Multi-dimensional audit evidence | 2026-10-19T23:02:53.838Z |
+| `learn-github-sindresorhus-keyboardshortcuts` | `https://github.com/sindresorhus/KeyboardShortcuts` | `772133d9` | Multi-dimensional audit evidence | 2026-10-19T23:02:55.107Z |
+| `learn-github-lingui-js-lingui` | `https://github.com/lingui/js-lingui` | `60e823f9` | Multi-dimensional audit evidence | 2026-10-19T23:03:35.019Z |

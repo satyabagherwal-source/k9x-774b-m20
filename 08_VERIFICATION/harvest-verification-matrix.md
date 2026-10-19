@@ -3545,3 +3545,6 @@
 | `CYCLE-20261019-SESD` | `2026-10-19T22:56:09.181Z` | `inikulin/parse5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2872` | Yes (`f6279e9b...`) |
 | `CYCLE-20261019-SGXG` | `2026-10-19T22:56:11.956Z` | `kitlangton/Hex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2873` | Yes (`eae923ce...`) |
 | `CYCLE-20261019-SMY7` | `2026-10-19T22:56:19.759Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2874` | Yes (`99f6e08b...`) |
+| `CYCLE-20261019-130R` | `2026-10-19T23:02:53.835Z` | `fb55/css-select` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2875` | Yes (`56b2f4ff...`) |
+| `CYCLE-20261019-1401` | `2026-10-19T23:02:55.105Z` | `sindresorhus/KeyboardShortcuts` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2876` | Yes (`ee737297...`) |
+| `CYCLE-20261019-1YSO` | `2026-10-19T23:03:35.016Z` | `lingui/js-lingui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2877, Rule 2878, Rule 2879` | Yes (`38c88659...`) |

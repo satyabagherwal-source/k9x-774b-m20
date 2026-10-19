@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T22:56:19.765Z",
-  "total_cycles_completed": 3522,
-  "total_learnings_persisted": 3522,
-  "total_rules_promoted": 2675,
+  "last_updated": "2026-10-19T23:03:35.023Z",
+  "total_cycles_completed": 3525,
+  "total_learnings_persisted": 3525,
+  "total_rules_promoted": 2680,
   "history": [
-    {
-      "timestamp": "2026-10-19T16:12:10.636Z",
-      "repository": "Checkmarx/kics",
-      "learningId": "learn-github-checkmarx-kics",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T16:18:09.809Z",
-      "repository": "taiga-family/taiga-ui",
-      "learningId": "learn-github-taiga-family-taiga-ui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T16:18:17.783Z",
-      "repository": "sergdort/ModernCleanArchitectureSwiftUI",
-      "learningId": "learn-github-sergdort-moderncleanarchitectureswiftui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T16:18:20.321Z",
       "repository": "nolabs-ai/nono",
@@ -1403,6 +1382,27 @@
       "repository": "volcengine/OpenViking",
       "learningId": "learn-github-volcengine-openviking",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T23:02:53.842Z",
+      "repository": "fb55/css-select",
+      "learningId": "learn-github-fb55-css-select",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T23:02:55.112Z",
+      "repository": "sindresorhus/KeyboardShortcuts",
+      "learningId": "learn-github-sindresorhus-keyboardshortcuts",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T23:03:35.023Z",
+      "repository": "lingui/js-lingui",
+      "learningId": "learn-github-lingui-js-lingui",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
