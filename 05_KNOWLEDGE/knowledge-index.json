@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T12:54:08.017Z",
-  "total_verified_learnings": 818,
+  "last_updated": "2026-10-19T13:00:29.973Z",
+  "total_verified_learnings": 819,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -18048,7 +18048,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
       "source_version": "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw",
-      "content_hash": "f2ed96535ecec80963d6cd22154d228ec24cea8dbec61c837cc9f0493bf9e6f8",
+      "content_hash": "5bcec07517b256f20b566953c7bbbf72012e0835f2204581f1fbd111e4ea591d",
       "dossier_path": "07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md",
       "promoted_rules": [
@@ -18085,7 +18085,7 @@
         "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv3xqg2c",
         "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv4cgfx7"
       ],
-      "verified_at": "2026-10-18T03:31:29.941Z",
+      "verified_at": "2026-10-19T13:00:15.398Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36269,14 +36269,19 @@
       "slug": "risingwavelabs-risingwave",
       "platform": "github",
       "source_url": "https://github.com/risingwavelabs/risingwave",
-      "source_version": "10f34562",
-      "content_hash": "9f7dfef835d0244382dfd1ddff02f78c7d4883c1d42d7c73a1447f2b3cd111e0",
+      "source_version": "a6100edc",
+      "content_hash": "f16f76b97211ce9d291a95d9de9c5ce03355c7dbdd537a10f6ddc4bd09fa06b0",
       "dossier_path": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
       "promoted_rules": [
         {
           "number": 1881,
           "title": "stream): support changelog over a singleton input (#27524)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2588,
+          "title": "connector): support native Pulsar JSON schemas (#27454)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -36285,7 +36290,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T23:51:52.542Z",
+      "verified_at": "2026-10-19T13:00:29.959Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39933,22 +39938,35 @@
     "learn-github-tableproapp-tablepro": {
       "learning_id": "learn-github-tableproapp-tablepro",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "tableproapp-tablepro",
+      "source": "TableProApp/TablePro",
+      "repository": "TableProApp/TablePro",
       "slug": "tableproapp-tablepro",
       "platform": "github",
       "source_url": "https://github.com/TableProApp/TablePro",
-      "source_version": "HEAD",
-      "content_hash": "fbfc3ae90974ff3e62fa6a7a6159b949a7303dfe3faf5b73e4c80cbcb56125fe",
+      "source_version": "d931a3d7",
+      "content_hash": "0f23f53a387da65073768f1f296facf0e7eaa718bcc6f41baac607a641409659",
       "dossier_path": "07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2587,
+          "title": "linux): translate the SSH field checks and connection write errors (#3586)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.820Z"
+      "verified_at": "2026-10-19T13:00:23.382Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-tabularisdb-tabularis": {
       "learning_id": "learn-github-tabularisdb-tabularis",
@@ -87299,6 +87317,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T12:54:08.005Z"
+    },
+    "rule-2587": {
+      "learning_id": "rule-2587",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2587,
+      "title": "linux): translate the SSH field checks and connection write errors (#3586)",
+      "source_url": "https://github.com/TableProApp/TablePro",
+      "source_version": "d931a3d7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T13:00:23.382Z"
+    },
+    "rule-2588": {
+      "learning_id": "rule-2588",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2588,
+      "title": "connector): support native Pulsar JSON schemas (#27454)",
+      "source_url": "https://github.com/risingwavelabs/risingwave",
+      "source_version": "a6100edc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T13:00:29.960Z"
     }
   },
   "aliases": {

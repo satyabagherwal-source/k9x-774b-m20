@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T12:54:08.085Z",
+  "last_updated": "2026-10-19T13:00:30.028Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1384,14 +1384,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
-      "content_hash": "f2ed96535ecec80963d6cd22154d228ec24cea8dbec61c837cc9f0493bf9e6f8",
-      "verified_at": "2026-10-18T03:31:29.970Z",
+      "content_hash": "5bcec07517b256f20b566953c7bbbf72012e0835f2204581f1fbd111e4ea591d",
+      "verified_at": "2026-10-19T13:00:15.457Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T03:31:29.970Z"
+      "last_updated": "2026-10-19T13:00:15.457Z"
     },
     "pablodawson/MiniMax-H3-360-Orbit-LoRA": {
       "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
@@ -5779,14 +5779,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-risingwavelabs-risingwave",
-      "content_hash": "9f7dfef835d0244382dfd1ddff02f78c7d4883c1d42d7c73a1447f2b3cd111e0",
-      "verified_at": "2026-10-18T23:51:52.594Z",
+      "content_hash": "f16f76b97211ce9d291a95d9de9c5ce03355c7dbdd537a10f6ddc4bd09fa06b0",
+      "verified_at": "2026-10-19T13:00:30.028Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T23:51:52.594Z"
+      "last_updated": "2026-10-19T13:00:30.028Z"
     },
     "mertJF/tailblocks": {
       "repository": "mertJF/tailblocks",
@@ -12087,6 +12087,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T12:53:23.797Z"
+    },
+    "TableProApp/TablePro": {
+      "repository": "TableProApp/TablePro",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-tableproapp-tablepro",
+      "content_hash": "0f23f53a387da65073768f1f296facf0e7eaa718bcc6f41baac607a641409659",
+      "verified_at": "2026-10-19T13:00:23.457Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T13:00:23.457Z"
     }
   },
   "repos": {

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T12:54:08.081Z",
-  "total_cycles_completed": 3218,
-  "total_learnings_persisted": 3218,
-  "total_rules_promoted": 2377,
+  "last_updated": "2026-10-19T13:00:30.025Z",
+  "total_cycles_completed": 3221,
+  "total_learnings_persisted": 3221,
+  "total_rules_promoted": 2379,
   "history": [
-    {
-      "timestamp": "2026-10-19T07:09:54.342Z",
-      "repository": "medialab/xan",
-      "learningId": "learn-github-medialab-xan",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T07:09:55.815Z",
-      "repository": "canberkkkkkk/ema-lightning",
-      "learningId": "learn-huggingface-canberkkkkkk-ema-lightning",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T07:10:10.751Z",
-      "repository": "onejs/one",
-      "learningId": "learn-github-onejs-one",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T07:10:13.831Z",
       "repository": "influxdata/influxdb",
@@ -1403,6 +1382,27 @@
       "repository": "FermionResearch/Phonon-2",
       "learningId": "learn-huggingface-fermionresearch-phonon-2",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T13:00:15.454Z",
+      "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+      "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T13:00:23.454Z",
+      "repository": "TableProApp/TablePro",
+      "learningId": "learn-github-tableproapp-tablepro",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T13:00:30.025Z",
+      "repository": "risingwavelabs/risingwave",
+      "learningId": "learn-github-risingwavelabs-risingwave",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -3248,3 +3248,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-qwen-qwen3-4b` | `https://huggingface.co/Qwen/Qwen3-4B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-19T12:45:53.263Z |
 | `learn-github-github-copilotforxcode` | `https://github.com/github/CopilotForXcode` | `258d4577` | Multi-dimensional audit evidence | 2026-10-19T12:53:23.791Z |
 | `learn-huggingface-fermionresearch-phonon-2` | `https://huggingface.co/FermionResearch/Phonon-2` | `hf-fermion` | Multi-dimensional audit evidence | 2026-10-19T12:54:08.077Z |
+| `learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw` | `https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | `hf-infatos` | Multi-dimensional audit evidence | 2026-10-19T13:00:15.450Z |
+| `learn-github-tableproapp-tablepro` | `https://github.com/TableProApp/TablePro` | `d931a3d7` | Multi-dimensional audit evidence | 2026-10-19T13:00:23.450Z |
+| `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `a6100edc` | Multi-dimensional audit evidence | 2026-10-19T13:00:30.021Z |

@@ -3241,3 +3241,6 @@
 | `CYCLE-20261019-ZLRG` | `2026-10-19T12:45:53.260Z` | `Qwen/Qwen3-4B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2579, Rule 2580, Rule 2581` | Yes (`1abb3ed3...`) |
 | `CYCLE-20261019-99E4` | `2026-10-19T12:53:23.788Z` | `github/CopilotForXcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2582, Rule 2583` | Yes (`beafcd8e...`) |
 | `CYCLE-20261019-A7KA` | `2026-10-19T12:54:08.074Z` | `FermionResearch/Phonon-2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2584, Rule 2585, Rule 2586` | Yes (`3ae678ed...`) |
+| `CYCLE-20261019-I313` | `2026-10-19T13:00:15.447Z` | `Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md` | Yes (`5bcec075...`) |
+| `CYCLE-20261019-I97C` | `2026-10-19T13:00:23.448Z` | `TableProApp/TablePro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2587` | Yes (`0f23f53a...`) |
+| `CYCLE-20261019-IE9U` | `2026-10-19T13:00:30.018Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2588` | Yes (`f16f76b9...`) |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source**: github ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
-> **Source Version**: `10f34562`  
+> **Source Version**: `a6100edc`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T23:51:52.375Z  
+> **Timestamp**: 2026-10-19T13:00:29.745Z  
 > **Learning ID**: `learn-github-risingwavelabs-risingwave`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T23:51:52.367Z  
+> **Harvest Timestamp**: 2026-10-19T13:00:29.737Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Event streaming platform for agentic AI. Continuously ingest, transform, and serve event streams in real time, at scale.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9375 stars
+- **Stars / Engagement**: 9378 stars
 
 ---
 
@@ -1077,1242 +1077,778 @@ pub(crate) use def_path_lookup;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3ac60532` (2026-10-15)
-**Commit Message**: fix(stream): support changelog over a singleton input (#27524)
+### Incident Patch 1: `a6100edc` (2026-10-19)
+**Commit Message**: feat(connector): support native Pulsar JSON schemas (#27454)
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `e2e_test/streaming/changelog.slt` (modified, +62/-0)
+**File**: `e2e_test/source_inline/pulsar/schema_registry.slt` (modified, +95/-1)
 ```diff
-@@ -215,3 +215,65 @@ drop table t4;
- 
+@@ -18,6 +18,18 @@ drop source if exists pulsar_avro_schema_mismatch;
  statement ok
- drop table wide;
-+
-+# Changelog over a singleton input, and a downstream job over that changelog.
+ drop source if exists pulsar_avro_schema_upsert;
+ 
 +statement ok
-+create table single_t (v int);
-+
-+statement ok
-+create materialized view single_mv as select count(*) as c from single_t;
++drop materialized view if exists pulsar_json_schema_mv;
 +
 +statement ok
-+create materialized view single_log as with x as changelog from single_mv select * from x;
++drop source if exists pulsar_json_schema;
 +
 +statement ok
-+insert into single_t values (1), (2);
++drop source if exists pulsar_json_schema_mismatch;
 +
 +statement ok
-+insert into single_t values (3);
++drop source if exists pulsar_json_schema_upsert;
++
+ system ok
+ python3 e2e_test/commands/pulsar_util.py drop-topic -t 'persistent://public/default/rw-schema-avro' --force
+ 
+@@ -41,7 +53,7 @@ EOF
+ 
+ system ok
+ python3 e2e_test/source_inline/pulsar/produce_schema_test_records.py --schema-type json --topic 'persistent://public/default/rw-schema-json' <<EOF
+-{"id":3,"name":"Carol"}
++{"id":1,"name":"Alice"}
+ EOF
+ 
+ statement error expected Pulsar AVRO schema, got JSON
+@@ -92,6 +104,88 @@ select id, name, category from pulsar_avro_schema_mv;
+ 3 Carol unknown
+ 
+ 
++statement error expected Pulsar JSON schema, got AVRO
++create source pulsar_json_schema_mismatch
++with (
++  connector = 'pulsar',
++  service.url = '${PULSAR_BROKER_URL}',
++  topic = 'persistent://public/default/rw-schema-avro',
++  scan.startup.mode = 'earliest'
++)
++format plain encode json (
++  schema.pulsar.url = '${PULSAR_HTTP_URL}'
++);
++
++statement error Pulsar schema requires connector = 'pulsar' with FORMAT PLAIN ENCODE AVRO or JSON
++create source pulsar_json_schema_upsert
++with (
++  connector = 'pulsar',
++  service.url = '${PULSAR_BROKER_URL}',
++  topic = 'persistent://public/default/rw-schema-json',
++  scan.startup.mode = 'earliest'
++)
++format upsert encode json (
++  schema.pulsar.url = '${PULSAR_HTTP_URL}'
++);
 +
 +statement ok
-+delete from single_t where v = 1;
++create source pulsar_json_schema
++with (
++  connector = 'pulsar',
++  service.url = '${PULSAR_BROKER_URL}',
++  topic = 'persistent://public/default/rw-schema-json',
++  scan.startup.mode = 'earliest'
++)
++format plain encode json (
++  schema.pulsar.url = '${PULSAR_HTTP_URL}'
++);
 +
-+# changelog_op: 1 = insert, 3 = update insert, 4 = update delete
-+query II
-+select c, changelog_op from single_log order by _changelog_row_id;
++query T
++select substring(definition, 1, position(' WITH' in definition) - 1) from rw_sources where name = 'pulsar_json_schema';
 +----
-+0 1
-+0 4
-+2 3
-+2 4
-+3 3
-+3 4
-+2 3
++CREATE SOURCE pulsar_json_schema (id INT, name CHARACTER VARYING)
++
++statement error alter source with schema registry
++alter source pulsar_json_schema add column category varchar;
++
++system ok
++python3 e2e_test/source_inline/pulsar/produce_schema_test_records.py --schema-type json --schema-version 1 --topic 'persistent://public/default/rw-schema-json' <<EOF
++{"id":2,"name":"Bob","category":"premium"}
++EOF
++
++system ok
++python3 e2e_test/source_inline/pulsar/produce_schema_test_records.py --schema-type json --topic 'persistent://public/default/rw-schema-json' <<EOF
++{"id":3,"name":"Carol"}
++EOF
 +
 +statement ok
-+create materialized view single_log_downstream as select c, changelog_op, _changelog_row_id as id from single_log;
++alter source pulsar_json_schema refresh schema;
 +
-+statement ok
-+insert into single_t values (4);
-+
-+query II
-+select c, changelog_op from single_log_downstream order by id;
++query T
++select substring(definition, 1, position(' WITH' in definition) - 1) from rw_sources where name = 'pulsar_json_schema';
 +----
-+0 1
-+0 4
-+2 3
-+2 4
-+3 3
-+3 4
-+2 3
-+2 4
-+3 3
++CREATE SOURCE pulsar_json_schema (id INT, name CHARACTER VARYING, category CHARACTER VARYING)
 +
 +statement ok
-+drop materialized view single_log_downstream;
++create materialized view pulsar_json_schema_mv as
++select id, name, category from pulsar_json_schema;
++
++# JSON payloads are decoded as-is, so fields missing from older messages are NULL rather than
++# the schema default.
++query ITT rowsort retry 10 backoff 1s
++select id, name, category from pulsar_json_schema_mv;
++----
++1 Alice NULL
++2 Bob premium
++3 Carol NULL
++
 +
 +statement ok
-+drop materialized view single_log;
++drop materialized view pulsar_json_schema_mv;
 +
 +statement ok
-+drop materialized view single_mv;
++drop source pulsar_json_schema;
 +
-+statement ok
-+drop table single_t;
+ statement ok
+ drop materialized view pulsar_avro_schema_mv;
+ 
 ```
 
-**File**: `src/bench/sink_bench/main.rs` (modified, +1/-1)
+**File**: `src/connector/src/parser/avro/pulsar_resolver.rs` (modified, +13/-15)
 ```diff
-@@ -384,7 +384,7 @@ async fn consume_log_stream<S: Sink>(
-         sink_writer_param.meta_client = Some(SinkMetaClient::MockMetaClient(MockMetaClient::new(
-             coordinator,
-         )));
--        sink_writer_param.vnode_bitmap = Some(Bitmap::ones(1));
-+        sink_writer_param.vnode_bitmap = Bitmap::ones(1);
-     }
-     let log_sinker = sink.new_log_sinker(sink_writer_param).await.unwrap();
-     match log_sinker.consume_log_and_sink(&mut log_reader).await {
-```
-
-**File**: `src/connector/src/sink/coordinate.rs` (modified, +1/-7)
-```diff
-@@ -21,7 +21,6 @@ use anyhow::anyhow;
- use async_trait::async_trait;
+@@ -14,14 +14,15 @@
+ 
+ use std::sync::Arc;
+ 
+-use anyhow::Context;
+ use apache_avro::Schema;
+ use moka::future::Cache;
  use risingwave_common::bail;
- use risingwave_common::bitmap::Bitmap;
--use risingwave_common::hash::VnodeBitmapExt;
- use risingwave_pb::connector_service::SinkMetadata;
- use tracing::{info, warn};
  
-@@ -58,12 +57,7 @@ impl<W: SinkWriter<CommitMetadata = Option<SinkMetadata>>> CoordinatedLogSinker<
-                 .sink_coordinate_client()
-                 .await,
-             param,
--            // Singleton actors do not carry a vnode bitmap. For sink coordination, the only
--            // writer owns the singleton fragment's sole vnode.
--            vnode_bitmap: writer_param
--                .vnode_bitmap
--                .clone()
--                .unwrap_or_else(|| Bitmap::singleton().clone()),
-+            vnode_bitmap: writer_param.vnode_bitmap.clone(),
-             commit_checkpoint_interval,
-             sink_writer_metrics: SinkWriterMetrics::new(writer_param),
+ use crate::error::ConnectorResult;
+-use crate::schema::pulsar_schema::{Client, PulsarSchemaInfo};
+-use crate::source::pulsar::topic::{Topic, parse_topic};
++use crate::schema::pulsar_schema::{
++    Client, PulsarSchema, PulsarSchemaInfo, parse_partitioned_topic,
++};
++use crate::source::pulsar::topic::Topic;
+ 
+ /// Fetch schemas of a single Pulsar topic and cache writer schemas by version.
+ /// Each parser configuration owns a resolver and shares it with its clones through `Arc`.
+@@ -35,30 +36,27 @@ pub struct PulsarSchemaCache {
+ 
+ impl PulsarSchemaCache {
+     pub fn new(pulsar_client: Client, topic: &str) -> ConnectorResult<Self> {
+-        let mut topic = parse_topic(topic)?;
+-        topic.topic = topic.topic_str_without_partition()?;
+-        topic.partition_index = None;
+         Ok(Self {
+-            topic,
++            topic: parse_partitioned_topic(topic)?,
+             writer_schemas: Cache::new(u64::MAX),
+             pulsar_client,
          })
-```
-
-**File**: `src/connector/src/sink/mod.rs` (modified, +3/-3)
-```diff
-@@ -80,7 +80,7 @@ use risingwave_common::array::ArrayError;
- use risingwave_common::bitmap::Bitmap;
- use risingwave_common::catalog::{ColumnDesc, Field, Schema};
- use risingwave_common::config::StreamingConfig;
--use risingwave_common::hash::ActorId;
-+use risingwave_common::hash::{ActorId, VnodeBitmapExt};
- use risingwave_common::metrics::{
-     LabelGuardedHistogram, LabelGuardedHistogramVec, LabelGuardedIntCounter,
-     LabelGuardedIntCounterVec, LabelGuardedIntGaugeVec,
-@@ -674,7 +674,7 @@ impl SinkMetrics {
- pub struct SinkWriterParam {
-     // TODO(eric): deprecate executor_id
-     pub executor_id: ExecutorId,
--    pub vnode_bitmap: Option<Bitmap>,
-+    pub vnode_bitmap: Bitmap,
-     pub meta_client: Option<SinkMetaClient>,
-     // The val has two effect:
-     // 1. Indicates that the sink will accpect the data chunk with extra partition value column.
-@@ -779,7 +779,7 @@ impl SinkWriterParam {
-     pub fn for_test() -> Self {
-         SinkWriterParam {
-             executor_id: Default::default(),
--            vnode_bitmap: Default::default(),
-+            vnode_bitmap: Bitmap::singleton().clone(),
-             meta_client: Default::default(),
-             extra_partition_col_idx: Default::default(),
- 
-```
-
-**File**: `src/frontend/planner_test/tests/testdata/input/changelog.yaml` (modified, +9/-0)
-```diff
-@@ -32,3 +32,12 @@
-     with c as changelog from t key (missing) select * from c;
-   expected_outputs:
-   - binder_error
-+
-+- name: changelog over a singleton input
-+  sql: |
-+    create table t (v int);
-+    create materialized view mv as select count(*) as c from t;
-+    with x as changelog from mv select * from x;
-+  expected_outputs:
-+  - stream_plan
-+  - stream_dist_plan
-```
-
-**File**: `src/frontend/planner_test/tests/testdata/output/changelog.yaml` (modified, +32/-0)
-```diff
-@@ -127,3 +127,35 @@
-     create table t (id int);
-     with c as changelog from t key (missing) select * from c;
-   binder_error: 'Item not found: Invalid column: missing'
-+- name: changelog over a singleton input
-+  sql: |
-+    create table t (v int);
-+    create materialized view mv as select count(*) as c from t;
-+    with x as changelog from mv select * from x;
-+  stream_plan: |-
-+    StreamMaterialize { columns: [c, changelog_op, _changelog_row_id(hidden)], stream_key: [_changelog_row_id], pk_columns: [_changelog_row_id], pk_conflict: NoCheck }
-+    └─StreamChangeLog
-+      └─StreamTableScan { table: mv, columns: [mv.c], stream_scan_type: SnapshotBackfill, stream_key: [], pk: [], dist: Single }
-+  stream_dist_plan: |+
-+    Fragment 0
-+    StreamMaterialize { columns: [c, changelog_op, _changelog_row_id(hidden)], stream_key: [_changelog_row_id], pk_columns: [_changelog_row_id], pk_conflict: NoCheck }
-+    └── StreamChangeLog
-+        └── StreamTableScan { table: mv, columns: [mv.c], stream_scan_type: SnapshotBackfill, stream_key: [], pk: [], dist: Single } { tables: [ StreamScan: 0 ] }
-+            ├── Upstream
-+            └── BatchPlanNode
-+
-+    Table 0
-+    ├── columns: [ vnode, epoch, row_count, is_epoch_finished, _rw_timestamp ]
-+    ├── primary key: [ $0 ASC ]
-+    ├── value indices: [ 1, 2, 3 ]
-+    ├── distribution key: [ 0 ]
-+    ├── read pk prefix len hint: 1
-+    └── vnode column idx: 0
-+
-+    Table 4294967294
-+    ├── columns: [ c, changelog_op, _changelog_row_id, _rw_timestamp ]
-+    ├── primary key: [ $2 ASC ]
-+    ├── value indices: [ 0, 1, 2 ]
-+    ├── distribution key: []
-+    └── read pk prefix len hint: 1
-+
-```
-
-**File**: `src/frontend/src/optimizer/plan_node/logical_changelog.rs` (modified, +12/-9)
-```diff
-@@ -223,14 +223,18 @@ impl ToStream for LogicalChangeLog {
-             input
-         };
- 
--        let dist = input.distribution();
--        let distribution_keys = match dist {
-+        let row_id_index = self.schema().fields().len() - 1;
-+        // The changelog row id encodes the vnode of the input row, so the output of a
-+        // hash-distributed input is hash-distributed by the row id. A singleton input stays
-+        // in its singleton fragment.
-+        let (distribution_keys, dist) = match input.distribution() {
-             Distribution::HashShard(distribution_keys)
--            | Distribution::UpstreamHashShard(distribution_keys, _) => distribution_keys.clone(),
--            Distribution::Single => {
--                vec![]
--            }
--            _ => {
-+            | Distribution::UpstreamHashShard(distribution_keys, _) => (
-+                distribution_keys.clone(),
-+                Distribution::HashShard(vec![row_id_index]),
-+            ),
-+            Distribution::Single => (vec![], Distribution::Single),
-+            dist => {
-                 return Err(BindError(format!(
-                     "ChangeLog requires input to be hash distributed, single, but got {:?}",
-                     dist
-@@ -239,10 +243,9 @@ impl ToStream for LogicalChangeLog {
-             }
-         };
-         let core = self.core.clone_with_input(input);
--        let row_id_index = self.schema().fields().len() - 1;
-         let plan = StreamChangeLog::new_with_dist(
-             core,
--            Distribution::HashShard(vec![row_id_index]),
-+            dist,
-             distribution_keys.into_iter().map(|k| k as u32).collect(),
-         )
-         .into();
-```
-
-**File**: `src/stream/src/common/log_store_impl/kv_log_store/mod.rs` (modified, +21/-21)
-```diff
-@@ -509,7 +509,7 @@ pub struct KvLogStoreFactory<S: StateStore> {
- 
-     table_catalog: Table,
- 
--    vnodes: Option<Arc<Bitmap>>,
-+    vnodes: Arc<Bitmap>,
- 
-     max_buffer_row_count: usize,
-     chunk_size: usize,
-@@ -530,7 +530,7 @@ impl<S: StateStore> KvLogStoreFactory<S> {
-     pub(crate) fn new(
-         state_store: S,
-         table_catalog: Table,
--        vnodes: Option<Arc<Bitmap>>,
-+        vnodes: Arc<Bitmap>,
-         max_buffer_row_count: usize,
-         chunk_size: usize,
-         metrics: KvLogStoreMetrics,
-@@ -688,7 +688,7 @@ mod tests {
-         let factory = KvLogStoreFactory::new(
-             test_env.storage.clone(),
-             table.clone(),
--            Some(Arc::new(bitmap)),
-+            Arc::new(bitmap),
-             max_row_count,
-             1024,
-             KvLogStoreMetrics::for_test(),
-@@ -811,7 +811,7 @@ mod tests {
-         let factory = KvLogStoreFactory::new(
-             test_env.storage.clone(),
-             table.clone(),
--            Some(bitmap.clone()),
-+            bitmap.clone(),
-             max_row_count,
-             1024,
-             KvLogStoreMetrics::for_test(),
-@@ -908,7 +908,7 @@ mod tests {
-         let factory = KvLogStoreFactory::new(
-             test_env.storage.clone(),
-             table.clone(),
--            Some(bitmap),
-+            bitmap,
-             max_row_count,
-             1024,
-             KvLogStoreMetrics::for_test(),
-@@ -1005,7 +1005,7 @@ mod tests {
-         let factory = KvLogStoreFactory::new(
-             test_env.storage.clone(),
-             table.clone(),
--            Some(bitmap.clone()),
-+            bitmap.clone(),
-             max_row_count,
-             1024,
-             KvLogStoreMetrics::for_test(),
-@@ -1128,7 +1128,7 @@ mod tests {
-         let factory = KvLogStoreFactory::new(
-             test_env.storage.clone(),
-             table.clone(),
--            Some(bitmap),
-+            bitmap,
-             max_row_count,
-             1024,
-             KvLogStoreMetrics::for_test(),
-@@ -1228,7 +1228,7 @@ mod tests {
-         let factory1 = KvLogStoreFactory::new(
-             test_env.storage.clone(),
-             table.clone(),
--            Some(vnodes1),
-+            vnodes1,
-             10 * TEST_DATA_SIZE,
-             1024,
-             KvLogStoreMetrics::for_test(),
-@@ -1239,7 +1239,7 @@ mod tests {
-         let factory2 = KvLogStoreFactory::new(
-             test_env.storage.clone(),
-             table.clone(),
--            Some(vnodes2),
-+            vnodes2,
-             10 * TEST_DATA_SIZE,
-             1024,
-             KvLogStoreMetrics::for_test(),
-@@ -1378,7 +1378,7 @@ mod tests {
-         let factory = KvLogStoreFactory::new(
-             test_env.storage.clone(),
-             table.clone(),
--            Some(vnodes),
-+            vnodes,
-             10 * TEST_DATA_SIZE,
-             1024,
-             KvLogStoreMetrics::for_test(),
-@@ -1451,7 +1451,7 @@ mod tests {
-         let factory = KvLogStoreFactory::new(
-             test_env.storage.clone(),
-             table.clone(),
--            Some(Arc::new(bitmap)),
-+            Arc::new(bitmap),
-             0,
-             1024,
-             KvLogStoreMetrics::for_test(),
-@@ -1601,7 +1601,7 @@ mod tests {
-         let factory = KvLogStoreFactory::new(
-             test_env.storage.clone(),
-             table.clone(),
--            Some(bitmap.clone()),
-+            bitmap.clone(),
-             1024,
-             1024,
-             KvLogStoreMetrics::for_test(),
-@@ -1721,7 +1721,7 @@ mod tests {
-         let factory = KvLogStoreFactory::new(
-             test_env.storage.clone(),
-             table.clone(),
--            Some(bitmap.clone()),
-+            bitmap.clone(),
-             1024,
-             1024,
-             KvLogStoreMetrics::for_test(),
-@@ -1792,7 +1792,7 @@ mod tests {
-         let factory = KvLogStoreFactory::new(
-             test_env.storage.clone(),
-             table.clone(),
--            Some(bitmap.clone()),
-+            bitmap.clone(),
-             1024,
-             1024,
-             KvLogStoreMetrics::for_test(),
-@@ -1966,7 +1966,7 @@ mod tests {
-         let factory = KvLogStoreFactory::new(
-             test_env.storage.clone(),
-             table.clone(),
--            Some(bitmap.clone()),
-+            bitmap.clone(),
-             max_row_count,
-             1024,
-             KvLogStoreMetrics::for_test(),
-@@ -2057,7 +2057,7 @@ mod tests {
-         let factory = KvLogStoreFactory::new(
-             test_env.storage.clone(),
-             table.clone(),
--            Some(bitmap.clone()),
-+            bitmap.clone(),
-             max_row_count,
-             1024,
-             KvLogStoreMetrics::for_test(),
-@@ -2133,7 +2133,7 @@ mod tests {
-         let factory = KvLogStoreFactory::new(
-             test_env.storage.clone(),
-             table.clone(),
--            Some(bitmap),
-+            bitmap,
-             max_row_count,
-             1024,
-             KvLogStoreMetrics::for_test(),
-@@ -2192,7 +2192,7 @@ mod tests {
-```
-
----
-
-### Incident Patch 2: `0a7901b4` (2026-10-12)
-**Commit Message**: fix(cdc): start SQL Server sources on databases with no recent change (#27441)
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `ci/docker-compose.yml` (modified, +1/-0)
-```diff
-@@ -295,6 +295,7 @@ services:
-       - db
-       - message_queue
-       - mysql
-+      - sqlserver-server
-     volumes:
-       - ..:/risingwave
-     stop_grace_period: 30s
-```
-
-**File**: `ci/scripts/e2e-source-cron-only-test.sh` (modified, +2/-0)
-```diff
-@@ -33,6 +33,8 @@ tar xf ./risingwave-connector.tar.gz -C ./connector-node
- 
- echo "--- Install dependencies"
- python3 -m pip install --break-system-packages -r ./e2e_test/requirements.txt
-+install_sqlserver_client
-+export SQLCMDSERVER=sqlserver-server SQLCMDUSER=SA SQLCMDPASSWORD="SomeTestOnly@SA" SQLCMDPORT=1433
- 
- echo "--- e2e, cron_only inline source tests"
- RUST_LOG="debug,risingwave_stream=info,risingwave_batch=info,risingwave_storage=info,risingwave_meta=info" \
-```
-
-**File**: `e2e_test/source_inline/cdc/sql_server/cron_only/sql_server_idle_start.slt.serial` (added, +79/-0)
-```diff
-@@ -0,0 +1,79 @@
-+control substitution on
-+
-+# A shared source must start on a database whose CDC tables are quiet. While no change is captured,
-+# the capture job records an idle row (tran_id = 0x00) in `cdc.lsn_time_mapping` about every 5
-+# minutes, so the start position of a new source is past the last transaction.
-+
-+# ------------ data prepare stage ------------
-+system ok
-+sqlcmd -C -d master -Q "IF DB_ID('sqlserver_idle_db') IS NOT NULL BEGIN ALTER DATABASE sqlserver_idle_db SET SINGLE_USER WITH ROLLBACK IMMEDIATE; DROP DATABASE sqlserver_idle_db; END; IF SUSER_ID('rw_idle_login') IS NOT NULL DROP LOGIN rw_idle_login; CREATE DATABASE sqlserver_idle_db;" -b
-+
-+system ok
-+sqlcmd -C -d sqlserver_idle_db -Q "EXEC sys.sp_cdc_enable_db; CREATE TABLE dbo.idle_t (id INT PRIMARY KEY, v VARCHAR(20)); EXEC sys.sp_cdc_enable_table @source_schema = 'dbo', @source_name = 'idle_t', @role_name = NULL; INSERT INTO dbo.idle_t VALUES (1, 'a');" -b
-+
-+# A login without VIEW SERVER STATE, which cannot read the status of SQL Server Agent.
-+system ok
-+sqlcmd -C -d sqlserver_idle_db -Q "CREATE LOGIN rw_idle_login WITH PASSWORD = 'IdleLogin@123', CHECK_POLICY = OFF; CREATE USER rw_idle_user FOR LOGIN rw_idle_login; ALTER ROLE db_owner ADD MEMBER rw_idle_user;" -b
-+
-+# Wait until an idle row follows the last captured transaction.
-+system ok
-+sqlcmd -C -d sqlserver_idle_db -Q "DECLARE @waited INT = 0; WHILE NOT EXISTS (SELECT 1 FROM cdc.lsn_time_mapping WHERE tran_id = 0x00 AND start_lsn > (SELECT MAX(start_lsn) FROM cdc.lsn_time_mapping WHERE tran_id <> 0x00)) BEGIN IF @waited >= 600 THROW 50000, 'no idle row after 10 minutes', 1; WAITFOR DELAY '00:00:01'; SET @waited += 1; END;" -b
-+
-+# ------------ create source and table stage ------------
-+statement ok
-+CREATE SOURCE mssql_idle_source WITH (
-+    connector = 'sqlserver-cdc',
-+    hostname = '${SQLCMDSERVER:sqlserver-server}',
-+    port = '${SQLCMDPORT:1433}',
-+    username = '${SQLCMDUSER:SA}',
-+    password = '${SQLCMDPASSWORD}',
-+    database.name = 'sqlserver_idle_db',
-+);
-+
-+# The validator checks `sys.fn_cdc_get_max_lsn()` instead of the Agent status.
-+statement ok
-+CREATE SOURCE mssql_idle_source_no_server_state WITH (
-+    connector = 'sqlserver-cdc',
-+    hostname = '${SQLCMDSERVER:sqlserver-server}',
-+    port = '${SQLCMDPORT:1433}',
-+    username = 'rw_idle_login',
-+    password = 'IdleLogin@123',
-+    database.name = 'sqlserver_idle_db',
-+);
-+
-+statement ok
-+CREATE TABLE idle_t (
-+    id INT,
-+    v VARCHAR,
-+    PRIMARY KEY (id)
-+) FROM mssql_idle_source TABLE 'sqlserver_idle_db.dbo.idle_t';
-+
-+statement ok
-+CREATE TABLE idle_t_no_server_state (
-+    id INT,
-+    v VARCHAR,
-+    PRIMARY KEY (id)
-+) FROM mssql_idle_source_no_server_state TABLE 'sqlserver_idle_db.dbo.idle_t';
-+
-+# ------------ add rows stage ------------
-+system ok
-+sqlcmd -C -d sqlserver_idle_db -Q "INSERT INTO dbo.idle_t VALUES (2, 'b');" -b
-+
-+query IT retry 60 backoff 1s
-+SELECT id, v FROM idle_t ORDER BY id;
-+----
-+1 a
-+2 b
-+
-+query IT retry 60 backoff 1s
-+SELECT id, v FROM idle_t_no_server_state ORDER BY id;
-+----
-+1 a
-+2 b
-+
-+# ------------ drop stage ------------
-+statement ok
-+DROP SOURCE mssql_idle_source CASCADE;
-+
-+statement ok
-+DROP SOURCE mssql_idle_source_no_server_state CASCADE;
-```
-
-**File**: `java/connector-node/risingwave-connector-service/src/main/java/com/risingwave/connector/source/common/SqlServerValidator.java` (modified, +52/-12)
-```diff
-@@ -32,6 +32,8 @@ public class SqlServerValidator extends DatabaseValidator implements AutoCloseab
-     static final Logger LOG = LoggerFactory.getLogger(SqlServerValidator.class);
-     private static final int CDC_TABLE_TYPE =
-             Catalog.Table.CdcTableType.CDC_TABLE_TYPE_SQLSERVER.getNumber();
-+    // `status` of a running service in `sys.dm_server_services`.
-+    private static final int SERVICE_STATUS_RUNNING = 4;
- 
-     private final TableSchema tableSchema;
- 
-@@ -98,24 +100,62 @@ public void validateDbConfig() {
-             throw ValidatorUtils.internalError(e.getMessage());
-         }
-         if (isCdcSourceJob) {
--            try (var stmt =
--                    jdbcConnection.prepareStatement(
--                            ValidatorUtils.getSql("sqlserver.sql.agent.enabled"))) {
--                // check whether sql server agent is enabled. It's required to run
--                // fn_cdc_get_max_lsn
--                var res = stmt.executeQuery();
--                while (res.next()) {
--                    if (res.wasNull()) {
--                        throw ValidatorUtils.invalidArgument(
--                                "Sql Server's sql server agent is not activated.\nYou can check it by running `SELECT servicename, startup_type_desc, status_desc FROM sys.dm_server_services WHERE servicename LIKE 'SQL Server Agent%'` in Sql Server.");
--                    }
--                }
-+            try {
-+                validateCaptureJob();
-             } catch (SQLException e) {
-                 throw ValidatorUtils.internalError(e.getMessage());
-             }
-         }
      }
  
-+    /**
-+     * Changes are recorded by the CDC capture job, which SQL Server Agent runs. Without it, the
-+     * source would start but never receive any change.
-+     */
-+    private void validateCaptureJob() throws SQLException {
-+        if (checkAgentStatus()) {
-+            return;
-+        }
-+        // Without the Agent status, a NULL max LSN means that the capture job has never run in
-+        // this database.
-+        try (var stmt =
-+                        jdbcConnection.prepareStatement(
-+                                ValidatorUtils.getSql("sqlserver.max.lsn"));
-+                var res = stmt.executeQuery()) {
-+            if (res.next() && res.getBytes(1) == null) {
-+                throw ValidatorUtils.invalidArgument(
-+                        "No change has been captured in Sql Server database '"
-+                                + dbName
-+                                + "' yet: sys.fn_cdc_get_max_lsn() returns NULL.\nPlease make sure SQL Server Agent is running. If CDC was just enabled, retry after its capture job has run.");
-+            }
-+        }
-+    }
-+
-+    /**
-+     * Throws if SQL Server Agent is not running. Returns false if its status cannot be read, which
-+     * needs VIEW SERVER STATE.
-+     */
-+    private boolean checkAgentStatus() {
-+        try (var stmt =
-+                        jdbcConnection.prepareStatement(
-+                                ValidatorUtils.getSql("sqlserver.agent.status"));
-+                var res = stmt.executeQuery()) {
-+            if (!res.next()) {
-+                return false;
-+            }
-+            if (res.getInt("status") != SERVICE_STATUS_RUNNING) {
-+                throw ValidatorUtils.invalidArgument(
-+                        "SQL Server Agent is not running (status: "
-+                                + res.getString("status_desc")
-+                                + ").\nSql Server CDC needs it to run the capture job. Please start SQL Server Agent.");
-+            }
-+            return true;
-+        } catch (SQLException e) {
-+            LOG.info("Cannot read the status of SQL Server Agent: {}", e.getMessage());
-+            return false;
-+        }
-+    }
-+
-     @Override
-     public void validateUserPrivilege() {
-         try {
-```
-
-**File**: `java/connector-node/risingwave-connector-service/src/main/resources/validate_sql.properties` (modified, +2/-1)
-```diff
-@@ -51,6 +51,7 @@ sqlserver.table.cdc.enabled=SELECT COUNT(*) FROM cdc.change_tables AS ct INNER J
- sqlserver.pk=SELECT k.column_name FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS t INNER JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE k ON t.constraint_name = k.constraint_name AND t.table_name = k.table_name WHERE t.constraint_type = 'PRIMARY KEY' AND t.table_schema = ? AND t.table_name = ?
- sqlserver.table_schema=SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ? ORDER BY ORDINAL_POSITION
- sqlserver.has.perms=SELECT HAS_PERMS_BY_NAME('cdc.' + ct.capture_instance + '_CT', 'OBJECT', 'SELECT') FROM cdc.change_tables AS ct INNER JOIN sys.tables AS t ON ct.source_object_id = t.object_id INNER JOIN sys.schemas AS s ON t.schema_id = s.schema_id WHERE s.name = ? AND t.name = ?
--sqlserver.sql.agent.enabled=SELECT sys.fn_cdc_get_max_lsn()
-+sqlserver.agent.status=SELECT status, status_desc FROM sys.dm_server_services WHERE servicename LIKE N'SQL Server Agent (%'
-+sqlserver.max.lsn=SELECT sys.fn_cdc_get_max_lsn()
- sqlserver.case.sensitive=WITH collations AS (SELECT name, CASE WHEN description like '%case-insensitive%' THEN 0 WHEN description like '%case-sensitive%' THEN 1 END isCaseSensitive FROM sys.fn_helpcollations()) SELECT * FROM collations WHERE name = CONVERT(varchar, DATABASEPROPERTYEX( ? ,'collation'));
- citus.distributed_table=select citus_table_type from citus_tables where table_name=?::regclass
-```
-
-**File**: `java/connector-node/risingwave-source-cdc/src/main/java/io/debezium/connector/sqlserver/SqlServerStreamingChangeEventSource.java` (modified, +6/-6)
-```diff
-@@ -346,8 +346,12 @@ public boolean executeIteration(
-                                 lastProcessedPosition,
-                                 maxTransactionsPerIteration);
+-    fn parse_schema(raw_schema: PulsarSchemaInfo) -> ConnectorResult<Arc<Schema>> {
+-        if !raw_schema.r#type.eq_ignore_ascii_case("AVRO") {
+-            bail!("expected Pulsar AVRO schema, got {}", raw_schema.r#type);
++    /// Only `AVRO` schemas can be used, as payloads are decoded as Avro binary. A `JSON` schema
++    /// carries the same Avro definition, but its payloads are JSON text.
++    fn parse_avro_schema(raw_schema: PulsarSchemaInfo) -> ConnectorResult<Arc<Schema>> {
++        match raw_schema.parse()? {
++            PulsarSchema::Avro(schema) => Ok(Arc::new(schema)),
++            PulsarSchema::Json(_) => bail!("expected Pulsar AVRO schema, got JSON"),
+         }
+-        let schema =
+-            Schema::parse_str(&raw_schema.data).context("failed to parse Pulsar Avro schema")?;
+-        Ok(Arc::new(schema))
+     }
  
--                // Shouldn't happen if the agent is running, but it is better to guard against such
--                // situation
-+                // A successful query proves that streaming is connected. An unavailable toLsn only
-+                // means that no transaction has been captured after the start position yet.
-+                if (connectedSignaled.compareAndSet(false, true) && onConnectedCallback != null) {
-+                    onConnectedCallback.run();
-+                }
-+
-                 if (!toLsn.isAvailable()) {
-                     if (checkAgent) {
-                         try {
-@@ -370,10 +374,6 @@ public boolean executeIteration(
-                     checkAgent = true;
+     /// Fetches the current latest schema for a parser's reader schema and caches its version.
+     pub async fn get_latest(&self) -> ConnectorResult<Arc<Schema>> {
+         let raw_schema = self.pulsar_client.get_schema(&self.topic, None).await?;
+         let version = raw_schema.version;
+-        let schema = Self::parse_schema(raw_schema)?;
++        let schema = Self::parse_avro_schema(raw_schema)?;
+         self.writer_schemas
+             .insert(version, Arc::clone(&schema))
+             .await;
+@@ -80,7 +78,7 @@ impl PulsarSchemaCache {
+                         raw_schema.version
+                     );
                  }
- 
--                if (connectedSignaled.compareAndSet(false, true) && onConnectedCallback != null) {
--                    onConnectedCallback.run();
--                }
--
-                 // There is no change in the database
-                 if (toLsn.compareTo(lastProcessedPosition.getCommitLsn()) <= 0
-                         && streamingExecutionContext.getShouldIncreaseFromLsn()) {
+-                Self::parse_schema(raw_schema)
++                Self::parse_avro_schema(raw_schema)
+             })
+             .await
+             .map_err(Into::into)
 ```
 
----
-
-### Incident Patch 3: `5a2ba996` (2026-10-15)
-**Commit Message**: fix(stream): recover CDC backfill from snapshot read failures (#27269)
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `java/connector-node/risingwave-connector-service/src/main/java/com/risingwave/connector/source/common/MySqlValidator.java` (modified, +31/-15)
+**File**: `src/connector/src/parser/json_parser.rs` (modified, +22/-1)
 ```diff
-@@ -226,7 +226,7 @@ private void validateTableSchema() throws SQLException {
-             }
-         }
+@@ -24,15 +24,20 @@
+ use std::collections::BTreeMap;
  
--        // check whether PK constraint match source table definition
-+        // Check column names and types against the source table definition.
-         try (var stmt =
-                 jdbcConnection.prepareStatement(ValidatorUtils.getSql("mysql.table_schema"))) {
-             stmt.setString(1, dbName);
-@@ -251,12 +251,10 @@ boolean isUnsigned() {
+ use anyhow::Context as _;
++use risingwave_common::bail;
+ use risingwave_common::catalog::Field;
+ use risingwave_connector_codec::JsonSchema;
++use risingwave_connector_codec::decoder::avro::avro_schema_to_fields;
  
-             // field name (lowercase) -> ColumnInfo
-             var upstreamSchema = new HashMap<String, ColumnInfo>();
--            var pkFields = new HashSet<String>();
-             var res = stmt.executeQuery();
-             while (res.next()) {
-                 var field = res.getString(1);
-                 var dataType = res.getString(2);
--                var key = res.getString(3);
-                 long charMaxLength = res.getLong(4);
-                 var columnType = res.getString(5); // Get full column type (e.g., "bigint unsigned")
-                 // In MySQL, some types (such as text/blob) will return 4294967295 for
-@@ -266,9 +264,6 @@ boolean isUnsigned() {
-                 }
-                 upstreamSchema.put(
-                         field.toLowerCase(), new ColumnInfo(dataType, charMaxLength, columnType));
--                if (key.equalsIgnoreCase("PRI")) {
--                    pkFields.add(field.toLowerCase());
--                }
-             }
+-use super::utils::{bytes_from_url, get_kafka_topic};
++use super::utils::{bytes_from_url, get_kafka_topic, get_pulsar_topic};
+ use super::{JsonProperties, SchemaRegistryConfig};
+ use crate::error::ConnectorResult;
+ use crate::parser::AccessBuilder;
+ use crate::parser::unified::AccessImpl;
+ use crate::parser::unified::json::{JsonAccess, JsonParseOptions};
++use crate::schema::pulsar_schema::{
++    self, PulsarSchema, PulsarSchemaConfig, parse_partitioned_topic,
++};
+ use crate::schema::schema_registry::{Client, handle_sr_list};
  
-             // All columns defined must exist in upstream database
-@@ -296,8 +291,20 @@ boolean isUnsigned() {
-                                     + e.getValue());
-                 }
-             }
-+        }
+ #[derive(Debug)]
+@@ -121,6 +126,22 @@ pub async fn fetch_json_schema_and_map_to_columns(
+         .map_err(Into::into)
+ }
  
--            primaryKeyCheck(tableSchema, pkFields);
-+        try (var stmt = jdbcConnection.prepareStatement(ValidatorUtils.getSql("mysql.pk"))) {
-+            stmt.setString(1, dbName);
-+            stmt.setString(2, tableName);
-+            var pkFields = new ArrayList<String>();
++/// Fetches the latest Pulsar `JSON` schema of the source topic and maps it to columns.
++///
++/// Pulsar stores `JSON` schemas as Avro record definitions, while payloads are plain JSON without
++/// a schema-registry header. JSON is self-describing, so only the latest schema is needed.
++pub async fn fetch_pulsar_json_schema_and_map_to_columns(
++    config: &PulsarSchemaConfig,
++    props: &BTreeMap<String, String>,
++) -> ConnectorResult<Vec<Field>> {
++    let client = pulsar_schema::Client::new(config)?;
++    let topic = parse_partitioned_topic(get_pulsar_topic(props)?)?;
++    match client.get_schema(&topic, None).await?.parse()? {
++        PulsarSchema::Json(schema) => Ok(avro_schema_to_fields(&schema, None)?),
++        PulsarSchema::Avro(_) => bail!("expected Pulsar JSON schema, got AVRO"),
++    }
++}
 +
-+            try (var res = stmt.executeQuery()) {
-+                while (res.next()) {
-+                    pkFields.add(res.getString(1));
-+                }
-+            }
-+
-+            primaryKeyCheck(tableSchema.getPrimaryKeys(), pkFields);
-         }
-     }
- 
-@@ -308,22 +315,31 @@ public void close() throws Exception {
-         }
-     }
- 
--    private static void primaryKeyCheck(TableSchema sourceSchema, Set<String> pkFields)
-+    static void primaryKeyCheck(List<String> expectedPkFields, List<String> pkFields)
-             throws RuntimeException {
--        if (sourceSchema.getPrimaryKeys().size() != pkFields.size()) {
-+        if (pkFields.isEmpty()) {
-+            throw ValidatorUtils.invalidArgument(
-+                    "Upstream MySQL primary key metadata is empty; expected columns "
-+                            + expectedPkFields);
-+        }
-+
-+        if (expectedPkFields.size() != pkFields.size()) {
-             throw ValidatorUtils.invalidArgument(
-                     "Primary key mismatch: the SQL schema defines "
--                            + sourceSchema.getPrimaryKeys().size()
-+                            + expectedPkFields.size()
-                             + " primary key columns, but the source table in MySQL has "
-                             + pkFields.size()
-                             + " columns.");
-         }
--        for (var colName : sourceSchema.getPrimaryKeys()) {
--            if (!pkFields.contains(colName.toLowerCase())) {
-+
-+        for (int i = 0; i < expectedPkFields.size(); i++) {
-+            if (!pkFields.get(i).equalsIgnoreCase(expectedPkFields.get(i))) {
-                 throw ValidatorUtils.invalidArgument(
--                        "Primary key mismatch: The primary key list of the source table in MySQL does not contain '"
--                                + colName
--                                + "'.");
-+                        "Primary key mismatch: upstream MySQL primary key columns "
-+                                + pkFields
-+                                + " do not match expected columns "
-+                                + expectedPkFields
-+                                + " in order.");
-             }
-         }
-     }
+ #[cfg(test)]
+ mod tests {
+     use std::vec;
 ```
 
-**File**: `java/connector-node/risingwave-connector-service/src/main/resources/validate_sql.properties` (modified, +1/-0)
+**File**: `src/connector/src/schema/pulsar_schema/mod.rs` (modified, +1/-1)
 ```diff
-@@ -2,6 +2,7 @@ mysql.bin_log=show variables like 'log_bin'
- mysql.bin_format=show variables like 'binlog_format'
- mysql.bin_row_image=show variables like 'binlog_row_image'
- mysql.table=SELECT count(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?
-+mysql.pk=SELECT COLUMN_NAME FROM information_schema.STATISTICS WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ? AND INDEX_NAME = 'PRIMARY' ORDER BY SEQ_IN_INDEX
- mysql.table_schema=SELECT COLUMN_NAME, DATA_TYPE, COLUMN_KEY, NUMERIC_PRECISION, COLUMN_TYPE FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ? ORDER BY ORDINAL_POSITION
- mysql.grants=SHOW GRANTS FOR CURRENT_USER()
- mysql.check_db_exist=SELECT count(*) FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = ?
+@@ -16,4 +16,4 @@ mod client;
+ mod schema;
+ 
+ pub use client::{Client, PULSAR_SCHEMA_AUTH_TOKEN_KEY, PULSAR_SCHEMA_URL_KEY, PulsarSchemaConfig};
+-pub use schema::{PulsarSchemaInfo, PulsarSchemaVersion};
++pub use schema::{PulsarSchema, PulsarSchemaInfo, PulsarSchemaVersion, parse_partitioned_topic};
 ```
 
-**File**: `java/connector-node/risingwave-connector-service/src/test/java/com/risingwave/connector/source/common/MySqlValidatorTest.java` (modified, +31/-0)
+**File**: `src/connector/src/schema/pulsar_schema/schema.rs` (modified, +60/-0)
 ```diff
-@@ -16,12 +16,43 @@
+@@ -13,15 +13,51 @@
+ // limitations under the License.
  
- package com.risingwave.connector.source.common;
+ use anyhow::Context;
++use apache_avro::Schema;
++use risingwave_common::bail;
+ use serde::Deserialize;
  
-+import static org.junit.Assert.assertEquals;
- import static org.junit.Assert.assertFalse;
-+import static org.junit.Assert.assertThrows;
- import static org.junit.Assert.assertTrue;
++use crate::error::ConnectorResult;
++use crate::source::pulsar::topic::{Topic, parse_topic};
++
+ #[derive(Debug, Deserialize)]
+ pub struct PulsarSchemaInfo {
+     pub version: i64,
+     pub r#type: String,
+     pub data: String,
+ }
  
-+import io.grpc.Status;
-+import io.grpc.StatusRuntimeException;
-+import java.util.List;
- import org.junit.Test;
++/// A Pulsar schema by type. Pulsar stores both `AVRO` and `JSON` schemas as Avro record
++/// definitions, but their payloads are Avro binary and plain JSON respectively.
++#[derive(Debug)]
++pub enum PulsarSchema {
++    Avro(Schema),
++    Json(Schema),
++}
++
++impl PulsarSchemaInfo {
++    /// Parses the schema definition according to its type.
++    pub fn parse(&self) -> ConnectorResult<PulsarSchema> {
++        let wrap = match self.r#type.to_ascii_uppercase().as_str() {
++            "AVRO" => PulsarSchema::Avro,
++            "JSON" => PulsarSchema::Json,
++            _ => bail!("unsupported Pulsar schema type {}", self.r#type),
++        };
++        let schema = Schema::parse_str(&self.data)
++            .with_context(|| format!("failed to parse Pulsar {} schema", self.r#type))?;
++        Ok(wrap(schema))
++    }
++}
++
++/// Returns the partitioned topic, i.e. the topic without partition suffix, as schemas are shared
++/// by all partitions.
++pub fn parse_partitioned_topic(topic: &str) -> ConnectorResult<Topic> {
++    let mut topic = parse_topic(topic)?;
++    topic.topic = topic.topic_str_without_partition()?;
++    topic.partition_index = None;
++    Ok(topic)
++}
++
+ #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+ pub struct PulsarSchemaVersion(pub i64);
  
- public class MySqlValidatorTest {
-+    @Test
-+    public void testPrimaryKeyMismatch() {
-+        for (var upstream :
-+                List.of(
-+                        List.<String>of(),
-+                        List.of("tenant", "id"),
-+                        List.of("id"),
-+                        List.of("id", "tenant", "extra"),
-+                        List.of("id", "other"))) {
-+            var error =
-+                    assertThrows(
-+                            StatusRuntimeException.class,
-+                            () ->
-+                                    MySqlValidator.primaryKeyCheck(
-+                                            List.of("id", "tenant"), upstream));
-+            assertEquals(Status.Code.INVALID_ARGUMENT, error.getStatus().getCode());
-+        }
+@@ -50,6 +86,30 @@ mod tests {
+         assert_eq!(schema.r#type, "AVRO");
+     }
+ 
++    #[test]
++    fn json_schema_definition_is_parsed_as_avro() {
++        let schema: PulsarSchemaInfo = serde_json::from_value(serde_json::json!({
++            "version": 0,
++            "type": "JSON",
++            "data": r#"{"type":"record","name":"Event","fields":[{"name":"id","type":"int"}]}"#,
++        }))
++        .unwrap();
++        assert!(matches!(
++            schema.parse().unwrap(),
++            PulsarSchema::Json(Schema::Record(_))
++        ));
 +    }
 +
-+    @Test
-+    public void testEmptyPrimaryKeysAreRejected() {
-+        assertThrows(
-+                StatusRuntimeException.class,
-+                () -> MySqlValidator.primaryKeyCheck(List.of(), List.of()));
++    #[test]
++    fn unsupported_schema_type_is_rejected() {
++        let schema: PulsarSchemaInfo =
++            serde_json::from_str(r#"{"version":0,"type":"PROTOBUF","data":"{}"}"#).unwrap();
++        assert_eq!(
++            schema.parse().unwrap_err().to_string(),
++            "unsupported Pulsar schema type PROTOBUF"
++        );
 +    }
 +
-     @Test
-     public void testBinlogMonitorSatisfiesReplicationClient() {
-         assertTrue(
+     #[test]
+     fn pulsar_schema_version_is_signed_big_endian() {
+         assert_eq!(
 ```
 
-**File**: `src/connector/src/source/cdc/external/mysql.rs` (modified, +89/-6)
+**File**: `src/frontend/src/handler/alter_source_column.rs` (modified, +10/-2)
 ```diff
-@@ -666,6 +666,7 @@ impl MySqlExternalTableReader {
-         // Query MySQL primary key infos for type casting.
-         let upstream_mysql_pk_infos =
-             Self::query_upstream_pk_infos(&pool, &database, &table).await?;
-+        Self::validate_upstream_pk_columns(&upstream_mysql_pk_infos, &rw_schema, &pk_indices)?;
-         // Get MySQL version
-         let (major_version, minor_version, is_mariadb) = Self::get_mysql_version(&pool).await?;
-         let mysql_version = (major_version, minor_version);
-@@ -709,12 +710,16 @@ impl MySqlExternalTableReader {
-         let mut conn = pool.get_conn().await?;
+@@ -17,7 +17,9 @@ use risingwave_common::catalog::max_column_id;
+ use risingwave_connector::source::{SourceEncode, SourceStruct, extract_source_struct};
+ use risingwave_sqlparser::ast::{AlterSourceOperation, ObjectName};
  
-         // Query primary key columns and their data types.
--        let sql = "SELECT COLUMN_NAME, COLUMN_TYPE
--            FROM INFORMATION_SCHEMA.COLUMNS
--            WHERE TABLE_SCHEMA = ?
--            AND TABLE_NAME = ?
--            AND COLUMN_KEY = 'PRI'
--            ORDER BY ORDINAL_POSITION";
-+        let sql = "SELECT s.COLUMN_NAME, c.COLUMN_TYPE
-+            FROM INFORMATION_SCHEMA.STATISTICS AS s
-+            JOIN INFORMATION_SCHEMA.COLUMNS AS c
-+              ON c.TABLE_SCHEMA = s.TABLE_SCHEMA
-+             AND c.TABLE_NAME = s.TABLE_NAME
-+             AND c.COLUMN_NAME = s.COLUMN_NAME
-+            WHERE s.TABLE_SCHEMA = ?
-+              AND s.TABLE_NAME = ?
-+              AND s.INDEX_NAME = 'PRIMARY'
-+            ORDER BY s.SEQ_IN_INDEX";
- 
-         let rs: Vec<mysql_async::Row> = conn.exec(sql, (database, table)).await?;
- 
-@@ -732,6 +737,45 @@ impl MySqlExternalTableReader {
-         Ok(column_infos)
-     }
- 
-+    fn validate_upstream_pk_columns(
-+        upstream_pk_infos: &[(String, ColumnType)],
-+        rw_schema: &Schema,
-+        pk_indices: &[usize],
-+    ) -> ConnectorResult<()> {
-+        let expected_pk_names = pk_indices
-+            .iter()
-+            .map(|&index| rw_schema.fields[index].name.as_str())
-+            .collect_vec();
-+        let upstream_pk_names = upstream_pk_infos
-+            .iter()
-+            .map(|(name, _)| name.as_str())
-+            .collect_vec();
-+
-+        if upstream_pk_names.is_empty() {
-+            return Err(anyhow!(
-+                "upstream MySQL primary key metadata is empty; expected columns {:?}",
-+                expected_pk_names
-+            )
-+            .into());
-+        }
-+
-+        if upstream_pk_names.len() != expected_pk_names.len()
-+            || upstream_pk_names
-+                .iter()
-+                .zip_eq_fast(&expected_pk_names)
-+                .any(|(upstream, expected)| !upstream.eq_ignore_ascii_case(expected))
+-use super::create_source::{generate_stream_graph_for_source, reject_variant_columns};
++use super::create_source::{
++    generate_stream_graph_for_source, reject_variant_columns, uses_pulsar_schema,
++};
+ use super::create_table::bind_sql_columns;
+ use super::{HandlerArgs, RwPgResponse};
+ use crate::Binder;
+@@ -77,7 +79,13 @@ pub async fn handle_alter_source_column(
+             )
+             .into());
+         }
+-        SourceEncode::Json if catalog.info.use_schema_registry => {
++        SourceEncode::Json
++            if catalog.info.use_schema_registry
++                || uses_pulsar_schema(
++                    &catalog.info.format_encode_options,
++                    &catalog.info.format_encode_secret_refs,
++                ) =>
 +        {
-+            return Err(anyhow!(
-+                "upstream MySQL primary key columns {:?} do not match expected columns {:?}",
-+                upstream_pk_names,
-+                expected_pk_names
-+            )
-+            .into());
-+        }
+             return Err(ErrorCode::NotSupported(
+                 "alter source with schema registry".to_owned(),
+                 "try `ALTER SOURCE .. FORMAT .. ENCODE .. (...)` instead".to_owned(),
+```
+
+**File**: `src/frontend/src/handler/create_source.rs` (modified, +11/-2)
+```diff
+@@ -42,11 +42,11 @@ use risingwave_connector::parser::additional_columns::{
+ use risingwave_connector::parser::{
+     AvroParserConfig, DEBEZIUM_IGNORE_KEY, DebeziumAvroParserConfig, ProtobufParserConfig,
+     SchemaLocation, SpecificParserConfig, TimestamptzHandling,
+-    fetch_json_schema_and_map_to_columns,
++    fetch_json_schema_and_map_to_columns, fetch_pulsar_json_schema_and_map_to_columns,
+ };
+ use risingwave_connector::schema::AWS_GLUE_SCHEMA_ARN_KEY;
+ use risingwave_connector::schema::pulsar_schema::{
+-    PULSAR_SCHEMA_AUTH_TOKEN_KEY, PULSAR_SCHEMA_URL_KEY,
++    PULSAR_SCHEMA_AUTH_TOKEN_KEY, PULSAR_SCHEMA_URL_KEY, PulsarSchemaConfig,
+ };
+ use risingwave_connector::schema::schema_registry::{
+     SCHEMA_REGISTRY_BACKOFF_DURATION_KEY, SCHEMA_REGISTRY_BACKOFF_FACTOR_KEY,
+@@ -167,6 +167,15 @@ fn try_consume_schema_registry_config_from_options(
+     });
+ }
+ 
++/// Returns whether the Pulsar schema is used, with `schema.pulsar.url` set directly or as a secret.
++pub(crate) fn uses_pulsar_schema<V>(
++    format_encode_options: &BTreeMap<String, String>,
++    format_encode_secret_refs: &BTreeMap<String, V>,
++) -> bool {
++    format_encode_options.contains_key(PULSAR_SCHEMA_URL_KEY)
++        || format_encode_secret_refs.contains_key(PULSAR_SCHEMA_URL_KEY)
++}
 +
+ fn try_consume_pulsar_schema_config_from_options(
+     format_encode_options: &mut BTreeMap<String, String>,
+ ) {
+```
+
+**File**: `src/frontend/src/handler/create_source/external_schema.rs` (modified, +25/-10)
+```diff
+@@ -308,16 +308,30 @@ async fn bind_columns_from_source_for_non_cdc(
+                 );
+             }
+ 
+-            let schema_config = get_json_schema_location(&mut format_encode_options_to_consume)?;
+-            stream_source_info.use_schema_registry =
+-                json_schema_infer_use_schema_registry(&schema_config);
++            if let Some(config) =
++                PulsarSchemaConfig::from_options(&format_encode_options_to_consume)?
++            {
++                Some(
++                    extract_pulsar_json_table_schema(
++                        &config,
++                        &options_with_secret,
++                        &mut format_encode_options_to_consume,
++                    )
++                    .await?,
++                )
++            } else {
++                let schema_config =
++                    get_json_schema_location(&mut format_encode_options_to_consume)?;
++                stream_source_info.use_schema_registry =
++                    json_schema_infer_use_schema_registry(&schema_config);
+ 
+-            extract_json_table_schema(
+-                &schema_config,
+-                &options_with_secret,
+-                &mut format_encode_options_to_consume,
+-            )
+-            .await?
++                extract_json_table_schema(
++                    &schema_config,
++                    &options_with_secret,
++                    &mut format_encode_options_to_consume,
++                )
++                .await?
++            }
+         }
+         (Format::None, Encode::None) => {
+             if options_with_secret.is_iceberg_connector() {
+@@ -472,7 +486,8 @@ pub fn schema_has_schema_registry(schema: &FormatEncodeOptions) -> bool {
+         Encode::Avro | Encode::Protobuf => true,
+         Encode::Json => {
+             let mut options = WithOptions::try_from(schema.row_options()).unwrap();
+-            matches!(get_json_schema_location(options.inner_mut()), Ok(Some(_)))
++            uses_pulsar_schema(&options, options.secret_ref())
++                || matches!(get_json_schema_location(options.inner_mut()), Ok(Some(_)))
+         }
+         _ => false,
+     }
+```
+
+---
+
+### Incident Patch 2: `c3013864` (2026-10-19)
+**Commit Message**: feat(iceberg): support GCS vended credentials with native Google authentication (#27528)
+
+Signed-off-by: Mingzhuo Yin <[REDACTED_EMAIL]>
+
+**File**: `Cargo.lock` (modified, +7/-6)
+```diff
+@@ -7811,7 +7811,7 @@ dependencies = [
+ [[package]]
+ name = "iceberg"
+ version = "0.10.0"
+-source = "git+https://github.com/risingwavelabs/iceberg-rust.git?rev=edc64dc1975eb05a8b795f920980d9bee206eb61#edc64dc1975eb05a8b795f920980d9bee206eb61"
++source = "git+https://github.com/risingwavelabs/iceberg-rust.git?rev=f501ff0c245b4b625fe52feaf6125c69f7132557#f501ff0c245b4b625fe52feaf6125c69f7132557"
+ dependencies = [
+  "aes-gcm",
+  "anyhow",
+@@ -7870,7 +7870,7 @@ dependencies = [
+ [[package]]
+ name = "iceberg-catalog-glue"
+ version = "0.10.0"
+-source = "git+https://github.com/risingwavelabs/iceberg-rust.git?rev=edc64dc1975eb05a8b795f920980d9bee206eb61#edc64dc1975eb05a8b795f920980d9bee206eb61"
++source = "git+https://github.com/risingwavelabs/iceberg-rust.git?rev=f501ff0c245b4b625fe52feaf6125c69f7132557#f501ff0c245b4b625fe52feaf6125c69f7132557"
+ dependencies = [
+  "anyhow",
+  "async-trait",
+@@ -7885,7 +7885,7 @@ dependencies = [
+ [[package]]
+ name = "iceberg-catalog-rest"
+ version = "0.10.0"
+-source = "git+https://github.com/risingwavelabs/iceberg-rust.git?rev=edc64dc1975eb05a8b795f920980d9bee206eb61#edc64dc1975eb05a8b795f920980d9bee206eb61"
++source = "git+https://github.com/risingwavelabs/iceberg-rust.git?rev=f501ff0c245b4b625fe52feaf6125c69f7132557#f501ff0c245b4b625fe52feaf6125c69f7132557"
+ dependencies = [
+  "async-trait",
+  "base64 0.22.1",
+@@ -7907,7 +7907,7 @@ dependencies = [
+ [[package]]
+ name = "iceberg-compaction-core"
+ version = "0.1.0"
+-source = "git+https://github.com/nimtable/iceberg-compaction.git?rev=d29d6fac6639cf236168e1017af605ddc0d87f0d#d29d6fac6639cf236168e1017af605ddc0d87f0d"
++source = "git+https://github.com/nimtable/iceberg-compaction.git?rev=708a4d9c233cc8e615c189d4b1d2bb113736e387#708a4d9c233cc8e615c189d4b1d2bb113736e387"
+ dependencies = [
+  "async-stream",
+  "async-trait",
+@@ -7936,7 +7936,7 @@ dependencies = [
+ [[package]]
+ name = "iceberg-datafusion"
+ version = "0.10.0"
+-source = "git+https://github.com/risingwavelabs/iceberg-rust.git?rev=edc64dc1975eb05a8b795f920980d9bee206eb61#edc64dc1975eb05a8b795f920980d9bee206eb61"
++source = "git+https://github.com/risingwavelabs/iceberg-rust.git?rev=f501ff0c245b4b625fe52feaf6125c69f7132557#f501ff0c245b4b625fe52feaf6125c69f7132557"
+ dependencies = [
+  "anyhow",
+  "async-trait",
+@@ -7952,7 +7952,7 @@ dependencies = [
+ [[package]]
+ name = "iceberg-storage-opendal"
+ version = "0.10.0"
+-source = "git+https://github.com/risingwavelabs/iceberg-rust.git?rev=edc64dc1975eb05a8b795f920980d9bee206eb61#edc64dc1975eb05a8b795f920980d9bee206eb61"
++source = "git+https://github.com/risingwavelabs/iceberg-rust.git?rev=f501ff0c245b4b625fe52feaf6125c69f7132557#f501ff0c245b4b625fe52feaf6125c69f7132557"
+ dependencies = [
+  "anyhow",
+  "async-trait",
+@@ -7967,6 +7967,7 @@ dependencies = [
+  "reqsign-aws-v4",
+  "reqsign-azure-storage",
+  "reqsign-core",
++ "reqsign-google",
+  "serde",
+  "tokio",
+  "typetag",
+```
+
+**File**: `Cargo.toml` (modified, +4/-4)
+```diff
+@@ -176,10 +176,10 @@ hashbrown0_16 = { package = "hashbrown", version = "0.16.1", features = [
+ ] }
+ hytra = "0.1"
+ # branch dev_rebase_main_20260807
+-iceberg = { git = "https://github.com/risingwavelabs/iceberg-rust.git", rev = "edc64dc1975eb05a8b795f920980d9bee206eb61" }
+-iceberg-catalog-glue = { git = "https://github.com/risingwavelabs/iceberg-rust.git", rev = "edc64dc1975eb05a8b795f920980d9bee206eb61" }
+-iceberg-catalog-rest = { git = "https://github.com/risingwavelabs/iceberg-rust.git", rev = "edc64dc1975eb05a8b795f920980d9bee206eb61" }
+-iceberg-storage-opendal = { git = "https://github.com/risingwavelabs/iceberg-rust.git", rev = "edc64dc1975eb05a8b795f920980d9bee206eb61", features = [
++iceberg = { git = "https://github.com/risingwavelabs/iceberg-rust.git", rev = "f501ff0c245b4b625fe52feaf6125c69f7132557" }
++iceberg-catalog-glue = { git = "https://github.com/risingwavelabs/iceberg-rust.git", rev = "f501ff0c245b4b625fe52feaf6125c69f7132557" }
++iceberg-catalog-rest = { git = "https://github.com/risingwavelabs/iceberg-rust.git", rev = "f501ff0c245b4b625fe52feaf6125c69f7132557" }
++iceberg-storage-opendal = { git = "https://github.com/risingwavelabs/iceberg-rust.git", rev = "f501ff0c245b4b625fe52feaf6125c69f7132557", features = [
+     "opendal-azblob",
+     "opendal-azdls",
+     "opendal-fs",
+```
+
+**File**: `src/connector/src/connector_common/iceberg/mod.rs` (modified, +133/-4)
+```diff
+@@ -189,8 +189,11 @@ pub struct IcebergCommon {
+ 
+     /// Security type for REST catalog authentication.
+     /// Supported values: `none`, `oauth2`, `google`.
+-    /// When set to `google`, uses Iceberg's `GoogleAuthManager` (requires Iceberg 1.10+)
+-    /// for authentication using Google Application Default Credentials (ADC).
++    /// When set to `google`, native REST catalogs authenticate using
++    /// `gcs.credential` or Google Application Default Credentials (ADC).
++    /// JNI REST catalogs use Java's `GoogleAuthManager` with ADC;
++    /// `gcs.credential` only configures Rust `FileIO` storage credentials.
++    /// Vended credentials use the native Rust REST catalog.
+     #[serde(rename = "catalog.security")]
+     pub catalog_security: Option<String>,
+ 
+@@ -207,8 +210,8 @@ pub struct IcebergCommon {
+     /// - `org.apache.iceberg.aws.s3.S3FileIO` for Amazon S3 (default)
+     /// - `org.apache.iceberg.gcp.gcs.GCSFileIO` for Google Cloud Storage
+     /// - `org.apache.iceberg.azure.adlsv2.ADLSFileIO` for Azure Data Lake Storage Gen2
+-    /// Google Cloud Lakehouse Iceberg REST catalogs with credential vending require
+-    /// `org.apache.iceberg.gcp.gcs.GCSFileIO`.
++    /// Applies only to JNI catalogs. Native REST catalogs route storage by URI
++    /// and support GCS vended credentials without a Java `FileIO` class.
+     #[serde(rename = "catalog.io_impl")]
+     pub catalog_io_impl: Option<String>,
+ }
+@@ -653,10 +656,43 @@ impl IcebergCommon {
+         Ok(CatalogBuildPlan::Storage(config))
+     }
+ 
++    fn validate_native_rest_catalog_auth(
++        &self,
++        disable_default_credential: bool,
++    ) -> ConnectorResult<()> {
++        if disable_default_credential
++            && self
++                .catalog_security
++                .as_deref()
++                .is_some_and(|security| security.eq_ignore_ascii_case("google"))
++            && self.gcs_credential.is_none()
++        {
++            // Google token refresh uses ADC without a GCS credential, even when
++            // a catalog token or OAuth credential was explicitly provided.
++            bail!(
++                "`catalog.security=google` requires `gcs.credential` when `DISABLE_DEFAULT_CREDENTIAL=true`"
++            );
++        }
 +        Ok(())
 +    }
 +
-     /// Check whether a column is `BIGINT UNSIGNED`.
-     ///
-     /// Frontend up-casts narrower unsigned integer types, and non-integer unsigned types
-@@ -1034,6 +1078,45 @@ mod tests {
+     fn build_native_rest_catalog_props(&self) -> ConnectorResult<CatalogBuildPlan> {
++        self.validate_native_rest_catalog_auth(env_var_is_true(DISABLE_DEFAULT_CREDENTIAL))?;
++
+         let mut iceberg_configs = HashMap::new();
+         iceberg_configs.extend(self.adls_file_io_props()?);
+ 
++        if self
++            .catalog_security
++            .as_deref()
++            .is_some_and(|security| security.eq_ignore_ascii_case("google"))
++        {
++            iceberg_configs.insert("rest.auth.type".to_owned(), "google".to_owned());
++        }
++        if let Some(scopes) = &self.gcp_auth_scopes {
++            iceberg_configs.insert("gcp.auth.scopes".to_owned(), scopes.clone());
++        }
++
+         // check gcs credential or s3 access key and secret key
+         if let Some(gcs_credential) = &self.gcs_credential {
+             iceberg_configs.insert(GCS_CREDENTIALS_JSON.to_owned(), gcs_credential.clone());
+@@ -1306,6 +1342,99 @@ mod tests {
          );
      }
  
 +    #[test]
-+    fn test_validate_upstream_pk_columns() {
-+        let rw_schema = Schema::new(vec![
-+            Field::with_name(DataType::Int64, "id"),
-+            Field::with_name(DataType::Varchar, "tenant"),
-+        ]);
-+        let int_type = || ColumnType::BigInt(Default::default());
-+        let validate = |pk_infos: &[(String, ColumnType)]| {
-+            MySqlExternalTableReader::validate_upstream_pk_columns(pk_infos, &rw_schema, &[0, 1])
++    fn test_gcs_vended_rest_catalog_passes_google_authentication() {
++        let common = IcebergCommon {
++            catalog_uri: Some("https://catalog.example".to_owned()),
++            warehouse_path: Some("gs://bucket/warehouse".to_owned()),
++            catalog_security: Some("google".to_owned()),
++            gcp_auth_scopes: Some("scope-a,scope-b".to_owned()),
++            gcs_credential: Some("service-account-json".to_owned()),
++            catalog_header: Some("x-goog-user-project=billing-project".to_owned()),
++            vended_credentials: Some(true),
++            ..test_common("rest")
 +        };
-+
-+        let valid_pk_infos = vec![
-+            ("id".to_owned(), int_type()),
-+            ("tenant".to_owned(), int_type()),
-+        ];
-+        assert!(validate(&valid_pk_infos).is_ok());
-+
-+        for invalid_pk_infos in [
-+            // incorrect order
-+            vec![
-+                ("tenant".to_owned(), int_type()),
-+                ("id".to_owned(), int_type()),
-+            ],
-+            // incomplete
-+            vec![("id".to_owned(), int_type())],
-+            // extra index
-+            vec![
-+                ("id".to_owned(), int_type()),
-+                ("tenant".to_owned(), int_type()),
-+                ("extra".to_owned(), int_type()),
-+            ],
-+        ] {
-+            assert!(
-+                validate(&invalid_pk_infos).is_err(),
-+                "unexpectedly accepted {invalid_pk_infos:?}"
-+            );
-+        }
++        assert_eq!(
++            common.resolve_catalog_kind().unwrap(),
++            IcebergCatalogKind::Rest(IcebergCatalogRuntime::NativeRust)
++        );
++        let CatalogBuildPlan::NativeRest(props) = common.build_native_rest_catalog_props().unwrap()
++        else {
++            panic!("expected native REST catalog");
++        };
++        assert_eq!(props["rest.auth.type"], "google");
++        assert_eq!(props["gcp.auth.scopes"], "scope-a,scope-b");
++        assert_eq!(props[GCS_CREDENTIALS_JSON], "service-account-json");
++        assert_eq!(props["warehouse"], "gs://bucket/warehouse");
++        assert_eq!(
++            props["header.X-Iceberg-Access-Delegation"],
++            "vended-credentials"
++        );
++        assert_eq!(props["header.x-goog-user-project"], "billing-project");
++        assert!(!props.contains_key("io-impl"));
 +    }
 +
-     #[test]
-     fn test_mysql_unsigned_bigint_type_detection() {
-         for ty_name in [
++    #[test]
++    fn test_native_google_catalog_supports_adc_without_storage_credentials() {
++        let common = IcebergCommon {
++            catalog_uri: Some("https://catalog.example".to_owned()),
++            catalog_security: Some("google".t
 ```
 
-**File**: `src/stream/src/executor/backfill/cdc/cdc_backfill.rs` (modified, +624/-313)
+**File**: `src/connector/with_options_connection.yaml` (modified, +7/-4)
 ```diff
-@@ -13,12 +13,11 @@
- // limitations under the License.
- 
- use std::collections::BTreeMap;
--use std::future::Future;
- use std::pin::Pin;
- 
- use either::Either;
-+use futures::stream;
- use futures::stream::select_with_strategy;
--use futures::{Stream, stream};
- use itertools::Itertools;
- use risingwave_common::array::{DataChunk, Op};
- use risingwave_common::bail;
-@@ -33,16 +32,17 @@ use risingwave_connector::parser::{
- };
- use risingwave_connector::source::cdc::CdcScanOptions;
- use risingwave_connector::source::cdc::external::{
--    CdcOffset, ExternalCdcTableType, ExternalTableReaderImpl,
-+    CdcOffset, CdcOffsetParseFunc, ExternalCdcTableType, ExternalTableReaderImpl,
- };
- use risingwave_connector::source::{SourceColumnDesc, SourceContext, SourceCtrlOpts};
--use risingwave_pb::common::ThrottleType;
- use rw_futures_util::pausable;
- use thiserror_ext::AsReport;
--use tracing::Instrument;
- 
- use crate::executor::backfill::cdc::state::CdcBackfillState;
- use crate::executor::backfill::cdc::upstream_table::external::ExternalStorageTable;
-+use crate::executor::backfill::cdc::upstream_table::reader::{
-+    build_reader_and_poll_upstream, create_table_reader_with_retry,
-+};
- use crate::executor::backfill::cdc::upstream_table::snapshot::{
-     SnapshotReadArgs, UpstreamTableRead, UpstreamTableReader,
- };
-@@ -52,7 +52,7 @@ use crate::executor::backfill::utils::{
- };
- use crate::executor::monitor::CdcBackfillMetrics;
- use crate::executor::prelude::*;
--use crate::executor::source::get_infinite_backoff_strategy;
-+use crate::executor::{Mutation, TableId};
- use crate::task::CreateMviewProgressReporter;
- 
- /// `split_id`, `is_finished`, `row_count`, `cdc_offset` all occupy 1 column each.
-@@ -71,6 +71,157 @@ fn can_poll_upstream_while_creating_reader(
-     current_pk_pos.is_none() || pk_comparisons_are_known
- }
- 
-+/// Result of handling an upstream message while no snapshot is running.
-+enum NoSnapshotUpstreamOutcome {
-+    /// Forward the message downstream, if any, and keep going.
-+    /// `None` means nothing to emit: a watermark, or a chunk with no visible rows to emit.
-+    Continue(Option<Message>),
-+    /// The actor is stopped: forward the barrier and exit the executor.
-+    Stop(Barrier),
-+}
-+
-+/// Snapshot cursor together with the PK comparisons needed to filter upstream changes
-+/// against it.
-+#[derive(Clone, Copy)]
-+struct SnapshotCursor<'a> {
-+    pk_pos: &'a OwnedRow,
-+    pk_needs_unsigned_i64_compare: &'a [bool],
-+}
-+
-+struct NoSnapshotUpstreamHandler<'a, S: StateStore> {
-+    actor_ctx: &'a ActorContextRef,
-+    metrics: &'a CdcBackfillMetrics,
-+    table_id: TableId,
-+    upstream_table_name: &'a str,
-+    offset_parse_func: &'a mut CdcOffsetParseFunc,
-+    output_indices: &'a [usize],
-+    pk_indices: &'a [usize],
-+    pk_order: &'a [OrderType],
-+    /// `None` means the next snapshot starts from the beginning.
-+    cursor: Option<SnapshotCursor<'a>>,
-+    total_snapshot_row_count: u64,
-+    state_impl: &'a mut CdcBackfillState<S>,
-+    last_binlog_offset: &'a mut Option<CdcOffset>,
-+    is_snapshot_paused: &'a mut bool,
-+    rate_limit_rps: &'a mut Option<u32>,
-+}
-+
-+impl<S: StateStore> NoSnapshotUpstreamHandler<'_, S> {
-+    async fn handle_upstream(
-+        &mut self,
-+        msg: Message,
-+    ) -> StreamExecutorResult<NoSnapshotUpstreamOutcome> {
-+        match msg {
-+            Message::Barrier(barrier) => {
-+                if let Some(mutation) = barrier.mutation.as_deref() {
-+                    match mutation {
-+                        Mutation::Pause => {
-+                            *self.is_snapshot_paused = true;
-+                            tracing::info!(
-+                                table_id = %self.table_id,
-+                                upstream_table_name = self.upstream_table_name,
-+                                "snapshot is paused by barrier"
-+                            );
-+                        }
-+                        Mutation::Resume => {
-+                            *self.is_snapshot_paused = false;
-+                            tracing::info!(
-+                                table_id = %self.table_id,
-+                                upstream_table_name = self.upstream_table_name,
-+                                "snapshot is resumed by barrier"
-+                            );
-+                        }
-+                        Mutation::Throttle(_) => {
-+                            if let Some(entry) =
-+                                mutation.backfill_throttle_config(self.actor_ctx.fragment_id)
-+                            {
-+                                *self.rate_limit_rps = entry.rate_limit;
-+                            }
-+                        }
-+                        mutation if mutation.is_stop(self.actor_ctx.id) => {
-+                            tracing::info!(
-+                                table_id = %self.table_id,
-+                                upstream_table_name = self.upstream_table_name,
-+                                "CdcBackfill has
+@@ -174,8 +174,11 @@ IcebergConnection:
+     comments: |-
+       Security type for REST catalog authentication.
+       Supported values: `none`, `oauth2`, `google`.
+-      When set to `google`, uses Iceberg's `GoogleAuthManager` (requires Iceberg 1.10+)
+-      for authentication using Google Application Default Credentials (ADC).
++      When set to `google`, native REST catalogs authenticate using
++      `gcs.credential` or Google Application Default Credentials (ADC).
++      JNI REST catalogs use Java's `GoogleAuthManager` with ADC;
++      `gcs.credential` only configures Rust `FileIO` storage credentials.
++      Vended credentials use the native Rust REST catalog.
+     required: false
+   - name: gcp.auth.scopes
+     field_type: String
+@@ -194,8 +197,8 @@ IcebergConnection:
+       - `org.apache.iceberg.aws.s3.S3FileIO` for Amazon S3 (default)
+       - `org.apache.iceberg.gcp.gcs.GCSFileIO` for Google Cloud Storage
+       - `org.apache.iceberg.azure.adlsv2.ADLSFileIO` for Azure Data Lake Storage Gen2
+-      Google Cloud Lakehouse Iceberg REST catalogs with credential vending require
+-      `org.apache.iceberg.gcp.gcs.GCSFileIO`.
++      Applies only to JNI catalogs. Native REST catalogs route storage by URI
++      and support GCS vended credentials without a Java `FileIO` class.
+     required: false
+   - name: catalog.jdbc.user
+     field_type: String
 ```
 
-**File**: `src/stream/src/executor/backfill/cdc/cdc_backill_v2.rs` (modified, +6/-52)
+**File**: `src/connector/with_options_sink.yaml` (modified, +7/-4)
 ```diff
-@@ -13,40 +13,37 @@
- // limitations under the License.
- 
- use std::collections::BTreeMap;
--use std::future::Future;
--use std::pin::Pin;
- 
- use either::Either;
-+use futures::stream;
- use futures::stream::select_with_strategy;
--use futures::{Stream, stream};
- use itertools::Itertools;
- use risingwave_common::bitmap::BitmapBuilder;
- use risingwave_common::catalog::{ColumnDesc, Field};
- use risingwave_common::row::RowDeserializer;
- use risingwave_common::util::iter_util::ZipEqFast;
- use risingwave_common::util::sort_util::{OrderType, cmp_datum};
- use risingwave_connector::source::cdc::CdcScanOptions;
--use risingwave_connector::source::cdc::external::{
--    CdcOffset, ExternalCdcTableType, ExternalTableReaderImpl,
--};
-+use risingwave_connector::source::cdc::external::{CdcOffset, ExternalCdcTableType};
- use risingwave_connector::source::{CdcTableSnapshotSplit, CdcTableSnapshotSplitRaw};
- use rw_futures_util::pausable;
- use thiserror_ext::AsReport;
--use tracing::Instrument;
- 
- use crate::executor::backfill::cdc::cdc_backfill::{
-     get_cdc_json_parse_handling_from_properties, transform_upstream,
- };
- use crate::executor::backfill::cdc::state_v2::{CdcStateRecord, ParallelizedCdcBackfillState};
- use crate::executor::backfill::cdc::upstream_table::external::ExternalStorageTable;
-+use crate::executor::backfill::cdc::upstream_table::reader::{
-+    build_reader_and_poll_upstream, create_table_reader_with_retry,
-+};
- use crate::executor::backfill::cdc::upstream_table::snapshot::{
-     SplitSnapshotReadArgs, UpstreamTableRead, UpstreamTableReader,
- };
- use crate::executor::backfill::utils::{get_cdc_chunk_last_offset, mapping_chunk, mapping_message};
- use crate::executor::prelude::*;
--use crate::executor::source::get_infinite_backoff_strategy;
-+use crate::task::ActorId;
- use crate::task::cdc_progress::CdcProgressReporter;
--use crate::task::{ActorId, FragmentId};
- 
- pub struct ParallelizedCdcBackfillExecutor<S: StateStore> {
-     actor_ctx: ActorContextRef,
-@@ -1056,49 +1053,6 @@ fn is_rightmost_bound(row: &OwnedRow) -> bool {
-     row.iter().all(|d| d.is_none())
- }
- 
--async fn build_reader_and_poll_upstream(
--    upstream: &mut (impl Stream<Item = StreamExecutorResult<Message>> + Unpin),
--    future: &mut Pin<Box<impl Future<Output = ExternalTableReaderImpl>>>,
--) -> StreamExecutorResult<Either<Message, ExternalTableReaderImpl>> {
--    tokio::select! {
--        biased;
--        reader = &mut *future => Ok(Either::Right(reader)),
--        msg = upstream.next() => {
--            msg.transpose()?
--                .map(Either::Left)
--                .ok_or_else(|| anyhow::anyhow!(
--                    "upstream closed while creating CDC table reader"
--                ).into())
--        }
--    }
--}
--
--async fn create_table_reader_with_retry(
--    external_table: ExternalStorageTable,
--    actor_id: ActorId,
--    fragment_id: FragmentId,
--) -> ExternalTableReaderImpl {
--    let backoff = get_infinite_backoff_strategy();
--
--    tokio_retry::Retry::spawn(backoff, || async {
--        match external_table.create_table_reader().await {
--            Ok(reader) => Ok(reader),
--            Err(error) => {
--                tracing::warn!(
--                    error = %error.as_report(),
--                    actor_id = %actor_id,
--                    fragment_id = %fragment_id,
--                    "failed to create CDC table reader; retrying"
--                );
--                Err(error)
--            }
--        }
--    })
--    .instrument(tracing::info_span!("create_cdc_table_reader_with_retry"))
--    .await
--    .expect("retry creating CDC table reader until success")
--}
--
- impl<S: StateStore> Execute for ParallelizedCdcBackfillExecutor<S> {
-     fn execute(self: Box<Self>) -> BoxedMessageStream {
-         self.execute_inner().boxed()
+@@ -644,8 +644,11 @@ IcebergConfig:
+     comments: |-
+       Security type for REST catalog authentication.
+       Supported values: `none`, `oauth2`, `google`.
+-      When set to `google`, uses Iceberg's `GoogleAuthManager` (requires Iceberg 1.10+)
+-      for authentication using Google Application Default Credentials (ADC).
++      When set to `google`, native REST catalogs authenticate using
++      `gcs.credential` or Google Application Default Credentials (ADC).
++      JNI REST catalogs use Java's `GoogleAuthManager` with ADC;
++      `gcs.credential` only configures Rust `FileIO` storage credentials.
++      Vended credentials use the native Rust REST catalog.
+     required: false
+   - name: gcp.auth.scopes
+     field_type: String
+@@ -664,8 +667,8 @@ IcebergConfig:
+       - `org.apache.iceberg.aws.s3.S3FileIO` for Amazon S3 (default)
+       - `org.apache.iceberg.gcp.gcs.GCSFileIO` for Google Cloud Storage
+       - `org.apache.iceberg.azure.adlsv2.ADLSFileIO` for Azure Data Lake Storage Gen2
+-      Google Cloud Lakehouse Iceberg REST catalogs with credential vending require
+-      `org.apache.iceberg.gcp.gcs.GCSFileIO`.
++      Applies only to JNI catalogs. Native REST catalogs route storage by URI
++      and support GCS vended credentials without a Java `FileIO` class.
+     required: false
+   - name: database.name
+     field_type: String
 ```
 
-**File**: `src/stream/src/executor/backfill/cdc/state.rs` (modified, +26/-1)
+**File**: `src/connector/with_options_source.yaml` (modified, +7/-4)
 ```diff
-@@ -92,8 +92,13 @@ impl<S: StateStore> CdcBackfillState<S> {
-                 };
- 
-                 let current_pk_pos = state[1..state_len - 3].to_vec();
-+                let current_pk_pos = if current_pk_pos.iter().all(Option::is_none) {
-+                    None
-+                } else {
-+                    Some(OwnedRow::new(current_pk_pos))
-+                };
-                 Ok(CdcStateRecord {
--                    current_pk_pos: Some(OwnedRow::new(current_pk_pos)),
-+                    current_pk_pos,
-                     is_finished,
-                     last_cdc_offset: cdc_offset,
-                     row_count,
-@@ -111,6 +116,12 @@ impl<S: StateStore> CdcBackfillState<S> {
-         row_count: u64,
-         is_finished: bool,
-     ) -> StreamExecutorResult<()> {
-+        // An unfinished backfill without a snapshot cursor has no progress to persist.
-+        // Skip it so recovery starts a fresh backfill instead of resuming from NULL PK cells.
-+        if !is_finished && current_pk_pos.is_none() {
-+            return Ok(());
-+        }
-+
-         // schema: | `split_id` | `pk...` | `backfill_finished` | `row_count` | `cdc_offset` |
-         let state = self.cached_state.as_mut_slice();
-         let split_id = Some(ScalarImpl::from(self.split_id.clone()));
-@@ -138,6 +149,20 @@ impl<S: StateStore> CdcBackfillState<S> {
-         Ok(())
-     }
- 
-+    /// Modify the backfill state and persist it at `new_epoch`.
-+    pub async fn mutate_and_commit_state(
-+        &mut self,
-+        current_pk_pos: Option<OwnedRow>,
-+        last_cdc_offset: Option<CdcOffset>,
-+        row_count: u64,
-+        is_finished: bool,
-+        new_epoch: EpochPair,
-+    ) -> StreamExecutorResult<()> {
-+        self.mutate_state(current_pk_pos, last_cdc_offset, row_count, is_finished)
-+            .await?;
-+        self.commit_state(new_epoch).await
-+    }
-+
-     /// Persist the state to storage
-     pub async fn commit_state(&mut self, new_epoch: EpochPair) -> StreamExecutorResult<()> {
-         self.state_table
+@@ -345,8 +345,11 @@ IcebergProperties:
+     comments: |-
+       Security type for REST catalog authentication.
+       Supported values: `none`, `oauth2`, `google`.
+-      When set to `google`, uses Iceberg's `GoogleAuthManager` (requires Iceberg 1.10+)
+-      for authentication using Google Application Default Credentials (ADC).
++      When set to `google`, native REST catalogs authenticate using
++      `gcs.credential` or Google Application Default Credentials (ADC).
++      JNI REST catalogs use Java's `GoogleAuthManager` with ADC;
++      `gcs.credential` only configures Rust `FileIO` storage credentials.
++      Vended credentials use the native Rust REST catalog.
+     required: false
+   - name: gcp.auth.scopes
+     field_type: String
+@@ -365,8 +368,8 @@ IcebergProperties:
+       - `org.apache.iceberg.aws.s3.S3FileIO` for Amazon S3 (default)
+       - `org.apache.iceberg.gcp.gcs.GCSFileIO` for Google Cloud Storage
+       - `org.apache.iceberg.azure.adlsv2.ADLSFileIO` for Azure Data Lake Storage Gen2
+-      Google Cloud Lakehouse Iceberg REST catalogs with credential vending require
+-      `org.apache.iceberg.gcp.gcs.GCSFileIO`.
++      Applies only to JNI catalogs. Native REST catalogs route storage by URI
++      and support GCS vended credentials without a Java `FileIO` class.
+     required: false
+   - name: database.name
+     field_type: String
 ```
 
-**File**: `src/stream/src/executor/backfill/cdc/upstream_table/mod.rs` (modified, +1/-0)
+**File**: `src/storage/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -13,4 +13,5 @@
- // limitations under the License.
- 
- pub mod external;
-+pub(crate) mod reader;
- pub mod snapshot;
+@@ -34,7 +34,7 @@ futures = { version = "0.3", default-features = false, features = ["alloc"] }
+ futures-async-stream = { workspace = true }
+ hex = "0.4"
+ iceberg = { workspace = true }
+-iceberg-compaction-core = { git = "https://github.com/nimtable/iceberg-compaction.git", rev = "d29d6fac6639cf236168e1017af605ddc0d87f0d" }
++iceberg-compaction-core = { git = "https://github.com/nimtable/iceberg-compaction.git", rev = "708a4d9c233cc8e615c189d4b1d2bb113736e387" }
+ itertools = { workspace = true }
+ libc = "0.2"
+ lz4 = "1.28.0"
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #27536** (2026-10-16): feat(storage): support bounded PK-index compaction planning (@silver-ymz)
 - **PR #27532** (2026-10-16): fix(stream): forward buffered upstream rows when arrangement backfill finishes on a barrier (@chenzl25)
 - **PR #27530** (2026-10-16): fix(iceberg): ignore commit epoch markers on replace snapshots (@chenzl25)
+- **PR #27528** (2026-10-19): feat(iceberg): support GCS vended credentials with native Google authentication (@silver-ymz)
 - **PR #27527** (2026-10-15): fix(frontend): check CREATE privilege before fetching schema (#27513) (@risingwave-ci)
 - **PR #27526** (2026-10-15): fix(frontend): check CREATE privilege before fetching schema (#27513) (@risingwave-ci)
-- **PR #27525** (2026-10-15): fix(frontend): check CREATE privilege before fetching schema (#27513) (@risingwave-ci)
 
 ---
 
@@ -2332,89 +1868,73 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. stream): support changelog over a singleton input (#27524)
+## X. connector): support native Pulsar JSON schemas (#27454)
 
 **RULE**:
-When implementing operations in `e2e_test/streaming/changelog.slt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `e2e_test/source_inline/pulsar/schema_registry.slt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3ac60532`: stream): support changelog over a singleton input (#27524). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a6100edc`: connector): support native Pulsar JSON schemas (#27454). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e_test/streaming/changelog.slt`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e_test/source_inline/pulsar/schema_registry.slt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-
-# Changelog over a singleton input, and a downstream job over that changelog.
 statement ok
-create table single_t (v int);
+drop materialized view if exists pulsar_json_schema_mv;
 
 statement ok
-create materialized view single_mv as select count(*) as c from single_t;
+drop source if exists pulsar_json_schema;
 
 statement ok
-create materialized view single_log as with x as changelog from single_mv select * from x;
+drop source if exists pulsar_json_schema_mismatch;
 
 statement ok
-insert into single_t values (1), (2);
+drop source if exists pulsar_json_schema_upsert;
+
+{"id":1,"name":"Alice"}
+statement error expected Pulsar JSON schema, got AVRO
+create source pulsar_json_schema_mismatch
+with (
+  connector = 'pulsar',
+  service.url = '${PULSAR_BROKER_URL}',
+  topic = 'persistent://public/default/rw-schema-avro',
+  scan.startup.mode = 'earliest'
+)
+format plain encode json (
+  schema.pulsar.url = '${PULSAR_HTTP_URL}'
+);
+
+statement error Pulsar schema requires connector = 'pulsar' with FORMAT PLAIN ENCODE AVRO or JSON
+create source pulsar_json_schema_upsert
+with (
+  connector = 'pulsar',
+  service.url = '${PULSAR_BROKER_URL}',
+  topic = 'persistent://public/default/rw-schema-json',
+  scan.startup.mode = 'earliest'
+)
+format upsert encode json (
+  schema.pulsar.url = '${PULSAR_HTTP_URL}'
+);
 
 statement ok
-insert into single_t values (3);
-
-statement ok
-delete from single_t where v = 1;
-
-# changelog_op: 1 = insert, 3 = update insert, 4 = update delete
-query II
-select c, changelog_op from single_log order by _changelog_row_id;
-----
-0 1
-0 4
-2 3
-2 4
-3 3
-3 4
-2 3
-
-statement ok
-create materialized view single_log_downstream as select c, changelog_op, _changelog_row_id as id from single_log;
-
-statement ok
-insert into single_t values (4);
-
-query II
-select c, changelog_op from single_log_downstream order by id;
-----
-0 1
-0 4
-2 3
-2 4
-3 3
-3 4
-2 3
-2 4
-3 3
-
-statement ok
-drop materialized view single_log_downstream;
-
-statement ok
-drop materialized view single_log;
-
-statement ok
-drop materialized view single_mv;
-
-statement ok
-drop table single_t;
+create source pulsar_json_schema
+with (
+  connector = 'pulsar',
+  service.url = '${PULSAR_BROKER_URL}',
+  topic = 'persistent://public/default/rw-schema-json',
+  scan.startup.mode = 'earliest'
+)
+format 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+{"id":3,"name":"Carol"}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3ac60532` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a6100edc` are properly handled with clean fallback behavior.

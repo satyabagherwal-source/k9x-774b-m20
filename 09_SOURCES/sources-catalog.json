@@ -1055,8 +1055,8 @@
     "sourceUrl": "https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
     "sourceVersion": "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw",
     "license": "Open-Source",
-    "contentHash": "f2ed96535ecec80963d6cd22154d228ec24cea8dbec61c837cc9f0493bf9e6f8",
-    "lastHarvestedAt": "2026-10-18T03:31:29.968Z",
+    "contentHash": "5bcec07517b256f20b566953c7bbbf72012e0835f2204581f1fbd111e4ea591d",
+    "lastHarvestedAt": "2026-10-19T13:00:15.450Z",
     "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw"
   },
   "hf-pablodawson-minimax-h3-360-orbit-lora": {
@@ -3773,10 +3773,10 @@
     "repository": "risingwavelabs/risingwave",
     "platform": "github",
     "sourceUrl": "https://github.com/risingwavelabs/risingwave",
-    "sourceVersion": "10f34562",
+    "sourceVersion": "a6100edc",
     "license": "Apache-2.0",
-    "contentHash": "9f7dfef835d0244382dfd1ddff02f78c7d4883c1d42d7c73a1447f2b3cd111e0",
-    "lastHarvestedAt": "2026-10-18T23:51:52.586Z",
+    "contentHash": "f16f76b97211ce9d291a95d9de9c5ce03355c7dbdd537a10f6ddc4bd09fa06b0",
+    "lastHarvestedAt": "2026-10-19T13:00:30.021Z",
     "learningId": "learn-github-risingwavelabs-risingwave"
   },
   "mertjf-tailblocks": {
@@ -8038,5 +8038,15 @@
     "contentHash": "beafcd8e069421b549a9913afb49fa235932b7a1c6f9de12d6f445206195281a",
     "lastHarvestedAt": "2026-10-19T12:53:23.791Z",
     "learningId": "learn-github-github-copilotforxcode"
+  },
+  "tableproapp-tablepro": {
+    "repository": "TableProApp/TablePro",
+    "platform": "github",
+    "sourceUrl": "https://github.com/TableProApp/TablePro",
+    "sourceVersion": "d931a3d7",
+    "license": "AGPL-3.0",
+    "contentHash": "0f23f53a387da65073768f1f296facf0e7eaa718bcc6f41baac607a641409659",
+    "lastHarvestedAt": "2026-10-19T13:00:23.450Z",
+    "learningId": "learn-github-tableproapp-tablepro"
   }
 }

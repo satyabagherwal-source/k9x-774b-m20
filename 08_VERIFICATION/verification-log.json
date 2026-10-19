@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-KXYS",
-    "timestamp": "2026-10-19T01:22:38.452Z",
-    "repository": "gorhom/react-native-bottom-sheet",
-    "learningId": "learn-github-gorhom-react-native-bottom-sheet",
-    "contentHash": "4be21436ed8cd9a394a64bc1e02d6a8dba73095337030de25ece70c3b5c2e81e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-KZD7",
-    "timestamp": "2026-10-19T01:22:40.267Z",
-    "repository": "black-forest-labs/FLUX.1-dev",
-    "learningId": "learn-huggingface-black-forest-labs-flux-1-dev",
-    "contentHash": "7bf1eba532dc9943a5176cde1ec11920fde718073f6d1f8bf1ab99f22040524f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-L17T",
-    "timestamp": "2026-10-19T01:22:42.665Z",
-    "repository": "zarf-dev/zarf",
-    "learningId": "learn-github-zarf-dev-zarf",
-    "contentHash": "26d38d67dd9976af68b2e70a6613c8a3e9504a996a4482701fbded7fdf5c2286",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-L457",
     "timestamp": "2026-10-19T01:22:46.459Z",
     "repository": "vlcn-io/cr-sqlite",
@@ -7492,6 +7447,51 @@
     "contentHash": "3ae678eda3c16bd08e14e04d4f14e5dc271f0e7356919d45229f83967b69bcbc",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-I313",
+    "timestamp": "2026-10-19T13:00:15.447Z",
+    "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+    "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
+    "contentHash": "5bcec07517b256f20b566953c7bbbf72012e0835f2204581f1fbd111e4ea591d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-I97C",
+    "timestamp": "2026-10-19T13:00:23.448Z",
+    "repository": "TableProApp/TablePro",
+    "learningId": "learn-github-tableproapp-tablepro",
+    "contentHash": "0f23f53a387da65073768f1f296facf0e7eaa718bcc6f41baac607a641409659",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-IE9U",
+    "timestamp": "2026-10-19T13:00:30.018Z",
+    "repository": "risingwavelabs/risingwave",
+    "learningId": "learn-github-risingwavelabs-risingwave",
+    "contentHash": "f16f76b97211ce9d291a95d9de9c5ce03355c7dbdd537a10f6ddc4bd09fa06b0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
