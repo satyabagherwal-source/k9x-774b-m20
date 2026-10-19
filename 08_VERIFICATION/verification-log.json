@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-SK7Z",
-    "timestamp": "2026-10-19T01:28:33.887Z",
-    "repository": "fujiapple852/trippy",
-    "learningId": "learn-github-fujiapple852-trippy",
-    "contentHash": "f54a2ce87acb70a815979fc01afceb46616843b4a5ba1b0e290163d1b240aade",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-SPL2",
-    "timestamp": "2026-10-19T01:28:40.838Z",
-    "repository": "BuilderIO/builder",
-    "learningId": "learn-github-builderio-builder",
-    "contentHash": "d181a147705fdf37e5c6aa0eaf79db90984e4aa96f1adbacbf05de1d60dbd14c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-SQVW",
-    "timestamp": "2026-10-19T01:28:42.524Z",
-    "repository": "gocrane/crane",
-    "learningId": "learn-github-gocrane-crane",
-    "contentHash": "959600e3281e50c6189fb71fd560cffea0314bb2c00d2fdcf706583c707db306",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-STSU",
-    "timestamp": "2026-10-19T01:28:46.302Z",
-    "repository": "AmrDeveloper/GQL",
-    "learningId": "learn-github-amrdeveloper-gql",
-    "contentHash": "f5d091e1acec458db3483176ccc5445e27fae24f8c225e39d8609ff78e193273",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-0KEW",
     "timestamp": "2026-10-19T01:34:47.384Z",
     "repository": "keenthemes/reui",
@@ -7492,6 +7432,66 @@
     "contentHash": "8f635c1fa2b9c8aa228ea82f8d3c81dc2f20519156a4703773220cf5034d6f1c",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-0PT6",
+    "timestamp": "2026-10-19T13:14:44.778Z",
+    "repository": "watchexec/watchexec",
+    "learningId": "learn-github-watchexec-watchexec",
+    "contentHash": "4c7f91f4a4417e430abb6721e66ee821b20da25bcb75b7902aba44cbc7381042",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-0UYG",
+    "timestamp": "2026-10-19T13:14:51.448Z",
+    "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
+    "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
+    "contentHash": "cf552bd79d73e14495b2be931578cc1b7293729603f9edf8efe1257eec5fbd75",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-0VOT",
+    "timestamp": "2026-10-19T13:14:52.397Z",
+    "repository": "jacklandrin/OnlySwitch",
+    "learningId": "learn-github-jacklandrin-onlyswitch",
+    "contentHash": "2a44c2a920499235cc8ca3ee46e3fa971169fa3799845beba1fcbddecc6157a6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-0XAX",
+    "timestamp": "2026-10-19T13:14:54.489Z",
+    "repository": "nolabs-ai/nono",
+    "learningId": "learn-github-nolabs-ai-nono",
+    "contentHash": "c1812149842fc9d299dea7fba5a8557ba2d3a8246592308471c25339d05fd935",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

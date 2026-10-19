@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/watchexec-watchexec-learnings.md`  
 > **Source**: github ([https://github.com/watchexec/watchexec](https://github.com/watchexec/watchexec))  
-> **Source Version**: `8a2c443f`  
+> **Source Version**: `87bd4693`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T22:16:20.767Z  
+> **Timestamp**: 2026-10-19T13:14:44.605Z  
 > **Learning ID**: `learn-github-watchexec-watchexec`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/watchexec-watchexec-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/watchexec/watchexec](https://github.com/watchexec/watchexec))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T22:16:19.871Z  
+> **Harvest Timestamp**: 2026-10-19T13:14:44.441Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Executes commands in response to file modifications
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7238 stars
+- **Stars / Engagement**: 7240 stars
 
 ---
 
@@ -1084,157 +1084,449 @@ impl GitInfo {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3479df1c` (2026-10-04)
-**Commit Message**: fix(supervisor): take the command state mutably when resuming a pause
+### Incident Patch 1: `614e7d67` (2026-10-16)
+**Commit Message**: Keep a run's timeout from stopping the next run
 
-TestChild::id() takes &mut self, so resuming a paused command under the test
-configuration failed to compile; missed because cargo check and clippy without
---all-targets do not compile the test configuration.
+The --timeout timer stopped the job, not the run it was started for.
+If it fired during a restart, the stop reached the new run as it
+spawned, and that run was killed and reported as "timed out after
+0ms".
 
-**File**: `crates/supervisor/src/job/task.rs` (modified, +6/-6)
+Job::stop_running_with_signal sends the stop at high priority, so it
+reaches the command running now, and leaves a stop already under way
+alone. The timeout uses it.
+
+**File**: `crates/cli/src/config.rs` (modified, +4/-5)
 ```diff
-@@ -238,7 +238,7 @@ pub fn start_job(command: Arc<Command>) -> (Job, JoinHandle<()>) {
- 								}
- 								Control::Stop => {
- 									#[cfg(unix)]
--									resume_paused_command(&mut paused, &command_state);
-+									resume_paused_command(&mut paused, &mut command_state);
- 									#[cfg(unix)]
- 									{
- 										end_pause_watch(&mut pause_watch);
-@@ -271,7 +271,7 @@ pub fn start_job(command: Arc<Command>) -> (Job, JoinHandle<()>) {
+@@ -1457,13 +1457,12 @@ fn setup_process(
+ 		async move {
+ 			let timed_out = if let Some(timeout) = timeout_config.timeout {
+ 				tokio::select! {
++					// A run that has ended has not timed out, even if its timer is also due.
++					biased;
+ 					_ = job.to_wait() => false,
+ 					_ = tokio::time::sleep(timeout) => {
+-						if cfg!(windows) {
+-							job.stop().await;
+-						} else {
+-							job.stop_with_signal(timeout_config.stop_signal, timeout_config.stop_timeout).await;
+-						}
++						// Stop this run, not the one a restart queued behind it.
++						job.stop_running_with_signal(timeout_config.stop_signal, timeout_config.stop_timeout).await;
+ 						true
+ 					}
+ 				}
+```
+
+**File**: `crates/supervisor/src/job/job.rs` (modified, +15/-0)
+```diff
+@@ -148,6 +148,21 @@ impl Job {
+ 		}
+ 	}
+ 
++	/// Gracefully stop the command that is running now.
++	///
++	/// Like [`stop_with_signal()`](Job::stop_with_signal), but the control message is sent with
++	/// higher priority than normal, like [`to_wait()`](Job::to_wait)'s, so it targets the actively
++	/// running command, not the one that will be running after the rest of the queued controls get
++	/// done. If that command is already being stopped gracefully, as by a restart, this leaves the
++	/// stop under way as it is.
++	pub fn stop_running_with_signal(&self, signal: Signal, grace: Duration) -> Ticket {
++		if cfg!(unix) {
++			self.send_controls([Control::GracefulStop { signal, grace }], Priority::High)
++		} else {
++			self.send_controls([Control::Stop], Priority::High)
++		}
++	}
++
+ 	/// Restart the command if it's running, or start it if it's not.
+ 	pub fn restart(&self) -> Ticket {
+ 		self.send_controls([Control::Stop, Control::Start], Priority::Normal)
+```
+
+**File**: `crates/supervisor/src/job/task.rs` (modified, +14/-8)
+```diff
+@@ -270,16 +270,22 @@ pub fn start_job(command: Arc<Command>) -> (Job, JoinHandle<()>) {
+ 									}
  								}
  								Control::GracefulStop { signal, grace } => {
- 									#[cfg(unix)]
--									resume_paused_command(&mut paused, &command_state);
-+									resume_paused_command(&mut paused, &mut command_state);
- 									if let CommandState::Running { child, .. } = &mut command_state {
- 										try_with_handler!(signal_child(signal, child).await);
+-									#[cfg(unix)]
+-									resume_paused_command(&mut paused, &mut command_state);
+-									if let CommandState::Running { child, .. } = &mut command_state {
+-										try_with_handler!(signal_child(signal, child).await);
++									// Only a high priority stop gets here while a graceful stop is
++									// under way: the command is already being stopped.
++									if stop_timer.is_some() {
++										trace!("graceful stop already under way, skip");
++									} else {
++										#[cfg(unix)]
++										resume_paused_command(&mut paused, &mut command_state);
++										if let CommandState::Running { child, .. } = &mut command_state {
++											try_with_handler!(signal_child(signal, child).await);
  
-@@ -283,7 +283,7 @@ pub fn start_job(command: Arc<Command>) -> (Job, JoinHandle<()>) {
+-										trace!(?grace, "setting up graceful stop timer");
+-										stop_timer.replace(Timer::stop(grace, done));
+-										return Loop::Skip;
++											trace!(?grace, "setting up graceful stop timer");
++											stop_timer.replace(Timer::stop(grace, done));
++											return Loop::Skip;
++										}
++										trace!("child isn't running, skip");
+ 									}
+-									trace!("child isn't running, skip");
  								}
  								Control::TryRestart => {
  									#[cfg(unix)]
--									resume_paused_command(&mut paused, &command_state);
-+									resume_paused_command(&mut paused, &mut command_state);
- 									#[cfg(unix)]
- 									{
- 										end_pause_watch(&mut pause_watch);
-@@ -342,7 +342,7 @@ pub fn start_job(command: Arc<Command>) -> (Job, JoinHandle<()>) {
- 								}
- 								Control::TryGracefulRestart { signal, grace } => {
- 									#[cfg(unix)]
--									resume_paused_command(&mut paused, &command_state);
-+									resume_paused_command(&mut paused, &mut command_state);
- 									if let CommandState::Running { child, .. } = &mut command_state {
- 										try_with_handler!(signal_child(signal, child).await);
- 
-@@ -358,7 +358,7 @@ pub fn start_job(command: Arc<Command>) -> (Job, JoinHandle<()>) {
- 									trace!("continuing a graceful try-restart");
- 
- 									#[cfg(unix)]
--									resume_paused_command(&mut paused, &command_state);
-+									resume_paused_command(&mut paused, &mut command_state);
- 									#[cfg(unix)]
- 									{
- 										end_pause_watch(&mut pause_watch);
-@@ -784,7 +784,7 @@ fn try_grant_foreground(foreground_grant: &mut Option<ForegroundGrant>, pgrp: Pi
- /// restarting a paused command must continue it first for graceful termination to work at
- /// all; without this, a graceful stop of a paused command pends until the force-kill timeout.
- #[cfg(unix)]
--fn resume_paused_command(paused: &mut Option<i32>, command_state: &CommandState) {
-+fn resume_paused_command(paused: &mut Option<i32>, command_state: &mut CommandState) {
- 	if paused.take().is_none() {
- 		return;
- 	}
 ```
 
----
-
-### Incident Patch 2: `8a2c443f` (2026-10-09)
-**Commit Message**: Fix cfg-gated imports in CLI config (#1145)
-
-**File**: `crates/cli/src/config.rs` (modified, +6/-2)
+**File**: `crates/supervisor/src/job/test.rs` (modified, +44/-0)
 ```diff
-@@ -1,13 +1,13 @@
- use std::{
- 	borrow::Cow,
- 	collections::HashMap,
--	env::{var, var_os},
-+	env::var,
- 	ffi::OsStr,
- 	fmt,
- 	fs::File,
- 	io::{IsTerminal, Write},
- 	iter::once,
--	path::{Path, PathBuf},
-+	path::Path,
- 	process::{ExitCode, Stdio},
- 	sync::{
- 		atomic::{AtomicBool, AtomicU8, Ordering},
-@@ -33,6 +33,9 @@ use watchexec::{
- use watchexec_events::{Event, KeyCode, Keyboard, Priority, ProcessEnd, Tag};
- use watchexec_signals::Signal;
+@@ -573,6 +573,50 @@ async fn graceful_restart() {
+ 	task.abort();
+ }
  
-+#[cfg(windows)]
-+use std::{env::var_os, path::PathBuf};
++/// A graceful stop for the running command, sent while a restart waits out its grace period,
++/// must reach the command being restarted and leave the restart to finish, rather than queue
++/// behind the restart and stop the command it starts next. `--timeout` relies on this.
++#[cfg(unix)]
++#[tokio::test]
++async fn stop_running_during_restart_spares_the_next_command() {
++	use nix::sys::signal::Signal;
 +
- use crate::{
- 	args::{
- 		command::{EnvVar, WrapMode},
-@@ -1345,6 +1348,7 @@ fn test_parse_path_resolves_before_validating() {
- #[cfg(test)]
- fn test_shell_spec_whitespace_is_trimmed() {
- 	use clap::Parser;
-+	use std::path::PathBuf;
- 
- 	for spec in ["sh ", " sh", "  sh  "] {
- 		let args = Args::parse_from(["watchexec", &format!("--shell={spec}"), "echo", "hi"]);
++	let (job, task) = start_job(ungraceful_command());
++	job.start().await;
++
++	let restart = job.restart_with_signal(
++		watchexec_signals::Signal::User1,
++		Duration::from_millis(GRACE),
++	);
++	sleep(Duration::from_millis(GRACE / 2)).await;
++	job.stop_running_with_signal(
++		watchexec_signals::Signal::User2,
++		Duration::from_millis(GRACE),
++	)
++	.await;
++	tokio::time::timeout(Duration::from_millis(GRACE * 10), restart)
++		.await
++		.expect("the restart should still finish");
++
++	expect_state!(
++		job,
++		CommandState::Running { .. },
++		"the restart started the next command"
++	);
++	let second = get_child(&job).await;
++	let got_user2 = |child: &super::TestChild| {
++		child.calls.iter().any(
++			|(_, call)| matches!(call, TestChildCall::Signal(sig) if *sig == Signal::SIGUSR2 as i32),
++		)
++	};
++	assert!(
++		!got_user2(&second),
++		"the stop meant for the restarted command reached the next one"
++	);
++
++	task.abort();
++}
++
+ #[tokio::test]
+ async fn graceful_stop_beyond_grace() {
+ 	let (job, task) = start_job(ungraceful_command());
 ```
 
 ---
 
-### Incident Patch 3: `6d23fa0c` (2026-10-09)
-**Commit Message**: Merge branch 'main' into fix-cfg-gated-imports
+### Incident Patch 2: `87bd4693` (2026-10-19)
+**Commit Message**: fix: keep stops and signals from reaching the next run (#1154)
 
-**File**: `.github/workflows/release-cli.yml` (modified, +3/-3)
+**File**: `crates/cli/src/config.rs` (modified, +9/-9)
 ```diff
-@@ -176,7 +176,7 @@ jobs:
+@@ -567,9 +567,10 @@ pub fn make_config(args: &Args, state: &State) -> Result<Config> {
+ 				// pass all other signals on
+ 				for signal in signals {
+ 					match signal_map.get(&signal) {
++						// To the command running now, not one a restart has queued.
+ 						Some(Some(mapped)) => {
+ 							debug!(?signal, ?mapped, "passing mapped signal");
+-							job.signal(*mapped);
++							job.signal_running(*mapped);
+ 						}
+ 						Some(None) => {
+ 							debug!(?signal, "discarding signal");
+@@ -578,13 +579,13 @@ pub fn make_config(args: &Args, state: &State) -> Result<Config> {
+ 							debug!(?signal, "passing signal on");
+ 							#[cfg(unix)]
+ 							if signal == Signal::TerminalSuspend {
+-								job.signal(signal).await;
++								job.signal_running(signal).await;
+ 								suspend_self();
+ 							} else {
+-								job.signal(signal);
++								job.signal_running(signal);
+ 							}
+ 							#[cfg(not(unix))]
+-							job.signal(signal);
++							job.signal_running(signal);
+ 						}
+ 					}
+ 				}
+@@ -1457,13 +1458,12 @@ fn setup_process(
+ 		async move {
+ 			let timed_out = if let Some(timeout) = timeout_config.timeout {
+ 				tokio::select! {
++					// A run that has ended has not timed out, even if its timer is also due.
++					biased;
+ 					_ = job.to_wait() => false,
+ 					_ = tokio::time::sleep(timeout) => {
+-						if cfg!(windows) {
+-							job.stop().await;
+-						} else {
+-							job.stop_with_signal(timeout_config.stop_signal, timeout_config.stop_timeout).await;
+-						}
++						// Stop this run, not the one a restart queued behind it.
++						job.stop_running_with_signal(timeout_config.stop_signal, timeout_config.stop_timeout).await;
+ 						true
+ 					}
+ 				}
+```
+
+**File**: `crates/supervisor/src/job/job.rs` (modified, +24/-0)
+```diff
+@@ -148,6 +148,21 @@ impl Job {
+ 		}
+ 	}
  
-       - name: Install cargo-generate-rpm
-         if: startsWith(matrix.name, 'linux-')
--        uses: taiki-e/install-action@v2.87.20
-+        uses: taiki-e/install-action@v2.87.22
-         with:
-           tool: cargo-generate-rpm
++	/// Gracefully stop the command that is running now.
++	///
++	/// Like [`stop_with_signal()`](Job::stop_with_signal), but the control message is sent with
++	/// higher priority than normal, like [`to_wait()`](Job::to_wait)'s, so it targets the actively
++	/// running command, not the one that will be running after the rest of the queued controls get
++	/// done. If that command is already being stopped gracefully, as by a restart, this leaves the
++	/// stop under way as it is.
++	pub fn stop_running_with_signal(&self, signal: Signal, grace: Duration) -> Ticket {
++		if cfg!(unix) {
++			self.send_controls([Control::GracefulStop { signal, grace }], Priority::High)
++		} else {
++			self.send_controls([Control::Stop], Priority::High)
++		}
++	}
++
+ 	/// Restart the command if it's running, or start it if it's not.
+ 	pub fn restart(&self) -> Ticket {
+ 		self.send_controls([Control::Stop, Control::Start], Priority::Normal)
+@@ -204,6 +219,15 @@ impl Job {
+ 		self.control(Control::Signal(sig))
+ 	}
  
-@@ -193,7 +193,7 @@ jobs:
++	/// Send a signal to the command that is running now.
++	///
++	/// Like [`signal()`](Job::signal), but the control message is sent with higher priority than
++	/// normal, like [`to_wait()`](Job::to_wait)'s, so it targets the actively running command, not
++	/// the one that will be running after the rest of the queued controls get done.
++	pub fn signal_running(&self, sig: Signal) -> Ticket {
++		self.send_controls([Control::Signal(sig)], Priority::High)
++	}
++
+ 	/// Stop the command, then mark it for garbage collection.
+ 	///
+ 	/// The underlying control messages are sent like normal, so they wait for all pending controls
+```
+
+**File**: `crates/supervisor/src/job/task.rs` (modified, +14/-8)
+```diff
+@@ -270,16 +270,22 @@ pub fn start_job(command: Arc<Command>) -> (Job, JoinHandle<()>) {
+ 									}
+ 								}
+ 								Control::GracefulStop { signal, grace } => {
+-									#[cfg(unix)]
+-									resume_paused_command(&mut paused, &mut command_state);
+-									if let CommandState::Running { child, .. } = &mut command_state {
+-										try_with_handler!(signal_child(signal, child).await);
++									// Only a high priority stop gets here while a graceful stop is
++									// under way: the command is already being stopped.
++									if stop_timer.is_some() {
++										trace!("graceful stop already under way, skip");
++									} else {
++										#[cfg(unix)]
++										resume_paused_command(&mut paused, &mut command_state);
++										if let CommandState::Running { child, .. } = &mut command_state {
++											try_with_handler!(signal_child(signal, child).await);
  
-       - name: Install cross
-         if: matrix.cross
--        uses: taiki-e/install-action@v2.87.20
-+        uses: taiki-e/install-action@v2.87.22
-         with:
-           tool: cross
+-										trace!(?grace, "setting up graceful stop timer");
+-										stop_timer.replace(Timer::stop(grace, done));
+-										return Loop::Skip;
++											trace!(?grace, "setting up graceful stop timer");
++											stop_timer.replace(Timer::stop(grace, done));
++											return Loop::Skip;
++										}
++										trace!("child isn't running, skip");
+ 									}
+-									trace!("child isn't running, skip");
+ 								}
+ 								Control::TryRestart => {
+ 									#[cfg(unix)]
+```
+
+**File**: `crates/supervisor/src/job/test.rs` (modified, +81/-0)
+```diff
+@@ -573,6 +573,87 @@ async fn graceful_restart() {
+ 	task.abort();
+ }
  
-@@ -262,7 +262,7 @@ jobs:
-       - uses: actions/checkout@v7
++/// A graceful stop for the running command, sent while a restart waits out its grace period,
++/// must reach the command being restarted and leave the restart to finish, rather than queue
++/// behind the restart and stop the command it starts next. `--timeout` relies on this.
++#[cfg(unix)]
++#[tokio::test]
++async fn stop_running_during_restart_spares_the_next_command() {
++	use nix::sys::signal::Signal;
++
++	let (job, task) = start_job(ungraceful_command());
++	job.start().await;
++
++	let restart = job.restart_with_signal(
++		watchexec_signals::Signal::User1,
++		Duration::from_millis(GRACE),
++	);
++	sleep(Duration::from_millis(GRACE / 2)).await;
++	job.stop_running_with_signal(
++		watchexec_signals::Signal::User2,
++		Duration::from_millis(GRACE),
++	)
++	.await;
++	tokio::time::timeout(Duration::from_millis(GRACE * 10), restart)
++		.await
++		.expect("the restart should still finish");
++
++	expect_state!(
++		job,
++		CommandState::Running { .. },
++		"the restart started the next command"
++	);
++	let second = get_child(&job).await;
++	let got_user2 = |child: &super::TestChild| {
++		child.calls.iter().any(
++			|(_, call)| matches!(call, TestChildCall::Signal(sig) if *sig == Signal::SIGUSR2 as i32),
++		)
++	};
++	assert!(
++		!got_user2(&second),
++		"the stop meant for the restarted command reached the next one"
++	);
++
++	task.abort();
++}
++
++/// A signal for the running command, sent while a restart waits out its grace period, must reach
++/// the command being restarted rather than queue behind the restart and reach the next one as it
++/// spawns, before it can handle the signal. Forwarded signals rely on this.
++#[cfg(unix)]
++#[tokio::test]
++async fn signal_running_during_restart_reaches_the_restarted_command() {
++	use nix::sys::signal::Signal;
++
++	let (job, task) = start_job(ungraceful_command());
++	job.start().await;
++	let first = get_child(&job).await;
++
++	let restart = job.restart_with_signal(
++		watchexec_signals::Signal::User1,
++		Duration::from_millis(GRACE),
++	);
++	sleep(Duration::from_millis(GRACE / 2)).await;
++	job.signal_running(watchexec_signals::Signal::User2).await;
++	tokio::time::timeout(Duration::from_millis(GRACE * 10), restart)
++		.await
++		.expect("the restart should still finish");
++
++	let second = get_child(&job).await;
++	let got_user2 = |child: &super::TestChild| {
++		child.calls.iter().any(
++			|(_, call)| matches!(call, TestChildCall::Signal(sig) if *sig == Signal::SIGUSR2 as i32),
++		)
++	};
++	assert!(
++		got_user2(&first),
++		"the restarted command did not get the signal"
++	);
++	assert!(!got_user2(&second), "the signal reached the next command");
++
++	task.abort();
++}
++
+ #[tokio::test]
+ async fn graceful_stop_beyond_grace() {
+ 	let (job, task) = start_job(ungraceful_command());
+```
+
+---
+
+### Incident Patch 3: `4fe32401` (2026-10-19)
+**Commit Message**: fix: start when HOME does not exist (#1153)
+
+**File**: `crates/cli/src/dirs.rs` (modified, +27/-4)
+```diff
+@@ -12,6 +12,19 @@ use watchexec::paths::common_prefix;
  
-       - name: Install b3sum
--        uses: taiki-e/install-action@v2.87.20
-+        uses: taiki-e/install-action@v2.87.22
-         with:
-           tool: b3sum
+ use crate::args::{command::CommandArgs, filtering::FilteringArgs, Args};
  
++/// The home directory, canonicalised. One that cannot be resolved, as when HOME names a
++/// directory that does not exist, is treated as no home directory.
++async fn canonical_home(home: Option<PathBuf>) -> Option<PathBuf> {
++	let home = home?;
++	match canonicalize(&home).await {
++		Ok(dir) => Some(dir),
++		Err(err) => {
++			debug!(?home, %err, "home directory cannot be resolved, ignoring it");
++			None
++		}
++	}
++}
++
+ pub async fn project_origin(
+ 	FilteringArgs {
+ 		project_origin,
+@@ -25,10 +38,7 @@ pub async fn project_origin(
+ 		debug!(?origin, "project origin override");
+ 		canonicalize(origin).await.into_diagnostic()?
+ 	} else {
+-		let homedir = match dirs::home_dir() {
+-			None => None,
+-			Some(dir) => Some(canonicalize(dir).await.into_diagnostic()?),
+-		};
++		let homedir = canonical_home(dirs::home_dir()).await;
+ 		debug!(?homedir, "home directory");
+ 
+ 		// The watched paths aren't resolved yet at this point (that needs the origin), so do it
+@@ -361,6 +371,19 @@ mod tests {
+ 		);
+ 	}
+ 
++	/// A home directory that does not exist, as HOME is in a Nix build or for a service with no
++	/// home, is no home directory: it must not stop watchexec from starting.
++	#[tokio::test]
++	async fn a_missing_home_directory_is_none() {
++		let tmp = tempfile::tempdir().expect("tempdir");
++		let missing = tmp.path().join("homeless-shelter");
++		assert_eq!(canonical_home(Some(missing)).await, None);
++		assert_eq!(
++			canonical_home(Some(tmp.path().to_owned())).await,
++			Some(canonicalize(tmp.path()).await.expect("canonicalize"))
++		);
++	}
++
+ 	/// Only Windows canonicalises to the verbatim form, but the handling is not platform-specific.
+ 	#[tokio::test]
+ 	async fn canonicalize_does_not_return_a_verbatim_path() {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1154** (2026-10-19): fix: keep stops and signals from reaching the next run (@fzakaria)
+- **PR #1153** (2026-10-19): Start when HOME does not exist (@fzakaria)
 - **PR #1145** (2026-10-09): Fix cfg-gated imports in CLI config (@passcod)
 - **PR #1144** (closed): release (@passcod)
 - **PR #1143** (2026-10-06): release (@passcod)
 - **PR #1141** (2026-10-06): chore(deps): bump taiki-e/install-action from 2.87.20 to 2.87.22 (@dependabot[bot])
-- **PR #1140** (2026-10-05): fix(docs): preserve apostrophes in generated markdown manual (@GhostCoder6969)
-- **PR #1139** (2026-10-05): feat(supervisor): hand the terminal back to a resumed command (@passcod)
 
 ---
 
@@ -1254,38 +1546,35 @@ configuration failed to compile; missed because cargo check and clippy without
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. supervisor): take the command state mutably when resuming a pause
+## X. Keep a run's timeout from stopping the next run
 
 **RULE**:
-When implementing operations in `crates/supervisor/src/job/task.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in watchexec/watchexec. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/cli/src/config.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in watchexec/watchexec. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3479df1c`: supervisor): take the command state mutably when resuming a pause. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `614e7d67`: Keep a run's timeout from stopping the next run. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/supervisor/src/job/task.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/cli/src/config.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-									resume_paused_command(&mut paused, &mut command_state);
-									resume_paused_command(&mut paused, &mut command_state);
-									resume_paused_command(&mut paused, &mut command_state);
-									resume_paused_command(&mut paused, &mut command_state);
-									resume_paused_command(&mut paused, &mut command_state);
-fn resume_paused_command(paused: &mut Option<i32>, command_state: &mut CommandState) {
+					// A run that has ended has not timed out, even if its timer is also due.
+					biased;
+						// Stop this run, not the one a restart queued behind it.
+						job.stop_running_with_signal(timeout_config.stop_signal, timeout_config.stop_timeout).await;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-									resume_paused_command(&mut paused, &command_state);
-									resume_paused_command(&mut paused, &command_state);
-									resume_paused_command(&mut paused, &command_state);
-									resume_paused_command(&mut paused, &command_state);
-									resume_paused_command(&mut paused, &command_state);
-fn resume_paused_command(paused: &mut Option<i32>, command_state: &CommandState) {
+						if cfg!(windows) {
+							job.stop().await;
+						} else {
+							job.stop_with_signal(timeout_config.stop_signal, timeout_config.stop_timeout).await;
+						}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3479df1c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `614e7d67` are properly handled with clean fallback behavior.

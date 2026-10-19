@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T13:08:51.601Z",
-  "total_verified_learnings": 820,
+  "last_updated": "2026-10-19T13:14:54.466Z",
+  "total_verified_learnings": 821,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -23204,10 +23204,26 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF",
       "source_version": "hf-venastine-research-xing4.0-29b-a4b-gguf",
-      "content_hash": "59c076a5f96e8b19b28114d1cc8499461cc092b3dddfde968719ee14fdb1b2a6",
+      "content_hash": "cf552bd79d73e14495b2be931578cc1b7293729603f9edf8efe1257eec5fbd75",
       "dossier_path": "07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 2598,
+          "title": "MoE Routing Stability via Shared Experts & Dense Initialization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2599,
+          "title": "YaRN Context Extension Frequency Interpolation Invariants",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2600,
+          "title": "GGUF Quantization Metadata Consistency",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
@@ -23225,7 +23241,7 @@
         "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv3xybf6",
         "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv4co4ot"
       ],
-      "verified_at": "2026-10-18T03:38:25.121Z",
+      "verified_at": "2026-10-19T13:14:51.416Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25162,22 +25178,35 @@
     "learn-github-jacklandrin-onlyswitch": {
       "learning_id": "learn-github-jacklandrin-onlyswitch",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "jacklandrin-onlyswitch",
+      "source": "jacklandrin/OnlySwitch",
+      "repository": "jacklandrin/OnlySwitch",
       "slug": "jacklandrin-onlyswitch",
       "platform": "github",
       "source_url": "https://github.com/jacklandrin/OnlySwitch",
-      "source_version": "HEAD",
-      "content_hash": "9f8f3af07b42bda7a02bd319adbf9059e4e16ce4feccbe45bf7cc9a4012c1163",
+      "source_version": "72d42b8a",
+      "content_hash": "2a44c2a920499235cc8ca3ee46e3fa971169fa3799845beba1fcbddecc6157a6",
       "dossier_path": "07_PROJECT_LEARNING/jacklandrin-onlyswitch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jacklandrin-onlyswitch-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2601,
+          "title": "stabilize Dock preview positioning",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.645Z"
+      "verified_at": "2026-10-19T13:14:52.365Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-jackwener-opencli": {
       "learning_id": "learn-github-jackwener-opencli",
@@ -32003,8 +32032,8 @@
       "slug": "nolabs-ai-nono",
       "platform": "github",
       "source_url": "https://github.com/nolabs-ai/nono",
-      "source_version": "e50e2c4e",
-      "content_hash": "b910691a9b8652b97c698bec9014040c182e6487ad6b450bb9b7d2a9696f69ca",
+      "source_version": "279c26ae",
+      "content_hash": "c1812149842fc9d299dea7fba5a8557ba2d3a8246592308471c25339d05fd935",
       "dossier_path": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "promoted_rules": [
@@ -32017,6 +32046,11 @@
           "number": 2488,
           "title": "linux): opt-in namespace isolation (NEP-0004) (#2145)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2602,
+          "title": "proxy): tolerate skew in certificates (#2126)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -32024,7 +32058,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T10:16:21.065Z",
+      "verified_at": "2026-10-19T13:14:54.460Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43101,14 +43135,19 @@
       "slug": "watchexec-watchexec",
       "platform": "github",
       "source_url": "https://github.com/watchexec/watchexec",
-      "source_version": "8a2c443f",
-      "content_hash": "6de8224ed964d88ff0a18195b68d3b610e97b6217202e5da5a63991f1594ce5b",
+      "source_version": "87bd4693",
+      "content_hash": "4c7f91f4a4417e430abb6721e66ee821b20da25bcb75b7902aba44cbc7381042",
       "dossier_path": "07_PROJECT_LEARNING/watchexec-watchexec-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/watchexec-watchexec-learnings.md",
       "promoted_rules": [
         {
           "number": 1766,
           "title": "supervisor): take the command state mutably when resuming a pause",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2597,
+          "title": "Keep a run's timeout from stopping the next run",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -43117,7 +43156,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T22:16:20.920Z",
+      "verified_at": "2026-10-19T13:14:44.749Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -87505,6 +87544,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T13:08:51.592Z"
+    },
+    "rule-2597": {
+      "learning_id": "rule-2597",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2597,
+      "title": "Keep a run's timeout from stopping the next run",
+      "source_url": "https://github.com/watchexec/watchexec",
+      "source_version": "87bd4693",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T13:14:44.749Z"
+    },
+    "rule-2598": {
+      "learning_id": "rule-2598",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2598,
+      "title": "MoE Routing Stability via Shared Experts & Dense Initialization",
+      "source_url": "https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF",
+      "source_version": "hf-venastine-research-xing4.0-29b-a4b-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T13:14:51.416Z"
+    },
+    "rule-2599": {
+      "learning_id": "rule-2599",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2599,
+      "title": "YaRN Context Extension Frequency Interpolation Invariants",
+      "source_url": "https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF",
+      "source_version": "hf-venastine-research-xing4.0-29b-a4b-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T13:14:51.416Z"
+    },
+    "rule-2600": {
+      "learning_id": "rule-2600",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2600,
+      "title": "GGUF Quantization Metadata Consistency",
+      "source_url": "https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF",
+      "source_version": "hf-venastine-research-xing4.0-29b-a4b-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T13:14:51.416Z"
+    },
+    "rule-2601": {
+      "learning_id": "rule-2601",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2601,
+      "title": "stabilize Dock preview positioning",
+      "source_url": "https://github.com/jacklandrin/OnlySwitch",
+      "source_version": "72d42b8a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T13:14:52.365Z"
+    },
+    "rule-2602": {
+      "learning_id": "rule-2602",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2602,
+      "title": "proxy): tolerate skew in certificates (#2126)",
+      "source_url": "https://github.com/nolabs-ai/nono",
+      "source_version": "279c26ae",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T13:14:54.460Z"
     }
   },
   "aliases": {

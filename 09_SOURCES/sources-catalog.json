@@ -1075,8 +1075,8 @@
     "sourceUrl": "https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF",
     "sourceVersion": "hf-venastine-research-xing4.0-29b-a4b-gguf",
     "license": "Open-Source",
-    "contentHash": "59c076a5f96e8b19b28114d1cc8499461cc092b3dddfde968719ee14fdb1b2a6",
-    "lastHarvestedAt": "2026-10-18T03:38:25.166Z",
+    "contentHash": "cf552bd79d73e14495b2be931578cc1b7293729603f9edf8efe1257eec5fbd75",
+    "lastHarvestedAt": "2026-10-19T13:14:51.450Z",
     "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf"
   },
   "hf-naiveai-naive-n0.5-flash": {
@@ -2353,10 +2353,10 @@
     "repository": "nolabs-ai/nono",
     "platform": "github",
     "sourceUrl": "https://github.com/nolabs-ai/nono",
-    "sourceVersion": "e50e2c4e",
+    "sourceVersion": "279c26ae",
     "license": "Apache-2.0",
-    "contentHash": "b910691a9b8652b97c698bec9014040c182e6487ad6b450bb9b7d2a9696f69ca",
-    "lastHarvestedAt": "2026-10-19T10:16:21.121Z",
+    "contentHash": "c1812149842fc9d299dea7fba5a8557ba2d3a8246592308471c25339d05fd935",
+    "lastHarvestedAt": "2026-10-19T13:14:54.492Z",
     "learningId": "learn-github-nolabs-ai-nono"
   },
   "dathere-qsv": {
@@ -2823,10 +2823,10 @@
     "repository": "watchexec/watchexec",
     "platform": "github",
     "sourceUrl": "https://github.com/watchexec/watchexec",
-    "sourceVersion": "8a2c443f",
+    "sourceVersion": "87bd4693",
     "license": "Apache-2.0",
-    "contentHash": "6de8224ed964d88ff0a18195b68d3b610e97b6217202e5da5a63991f1594ce5b",
-    "lastHarvestedAt": "2026-10-18T22:16:20.965Z",
+    "contentHash": "4c7f91f4a4417e430abb6721e66ee821b20da25bcb75b7902aba44cbc7381042",
+    "lastHarvestedAt": "2026-10-19T13:14:44.781Z",
     "learningId": "learn-github-watchexec-watchexec"
   },
   "streetwriters-notesnook": {
@@ -8058,5 +8058,15 @@
     "contentHash": "8f635c1fa2b9c8aa228ea82f8d3c81dc2f20519156a4703773220cf5034d6f1c",
     "lastHarvestedAt": "2026-10-19T13:08:51.656Z",
     "learningId": "learn-github-twostraws-controlroom"
+  },
+  "jacklandrin-onlyswitch": {
+    "repository": "jacklandrin/OnlySwitch",
+    "platform": "github",
+    "sourceUrl": "https://github.com/jacklandrin/OnlySwitch",
+    "sourceVersion": "72d42b8a",
+    "license": "MIT",
+    "contentHash": "2a44c2a920499235cc8ca3ee46e3fa971169fa3799845beba1fcbddecc6157a6",
+    "lastHarvestedAt": "2026-10-19T13:14:52.399Z",
+    "learningId": "learn-github-jacklandrin-onlyswitch"
   }
 }

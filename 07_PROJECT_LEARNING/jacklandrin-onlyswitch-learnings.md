@@ -1,19 +1,33 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/jacklandrin-onlyswitch-learnings.md`  
+> **Source**: github ([https://github.com/jacklandrin/OnlySwitch](https://github.com/jacklandrin/OnlySwitch))  
+> **Source Version**: `72d42b8a`  
+> **License**: MIT  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T13:14:52.232Z  
+> **Learning ID**: `learn-github-jacklandrin-onlyswitch`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): jacklandrin/OnlySwitch
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/jacklandrin-onlyswitch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/jacklandrin/OnlySwitch](https://github.com/jacklandrin/OnlySwitch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T05:29:45.332Z  
+> **Harvest Timestamp**: 2026-10-19T13:14:51.976Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `jacklandrin/OnlySwitch`
-- **Description**: ⚙️ All-in-One menu bar app, hide 💻MacBook Pro's notch, dark mode, AirPods, Shortcuts
+- **Description**: 👑 The all-in-one macOS menu bar companion: customizable controls, system monitor, AI Agent, Shortcuts, widgets, remote control, and more.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 5965 stars
+- **Stars / Engagement**: 5994 stars
 
 ---
 
@@ -193,6 +207,155 @@ public extension ControlItemViewState {
     }
 }
 
+```
+
+### Core Architecture Module: `Modules/Sources/RemoteCore/AphroditeRemoteModels.swift`
+```
+import Foundation
+#if canImport(FoundationXML)
+import FoundationXML
+#endif
+
+public enum AphroditeRemoteHTMLValidator {
+    public static let maximumDocumentBytes = 1_048_576
+    public static func validated(_ html: String) -> String? {
+        guard html.utf8.count <= maximumDocumentBytes else { return nil }
+        let trimmed = html.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard let expression = try? NSRegularExpression(pattern: #"(?is)^\s*(?:<!doctype\s+html[^>]*>\s*)?<html\b[^>]*>.*</html>\s*$"#),
+              expression.firstMatch(in: trimmed, range: NSRange(trimmed.startIndex..., in: trimmed)) != nil else { return nil }
+        return trimmed
+    }
+}
+
+public enum AphroditeRemoteSVGValidator {
+    public static let maximumBytes = 32_768
+    public static func validated(_ svg: String) -> String? {
+        let candidate = svg.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard candidate.isEmpty == false, candidate.utf8.count <= maximumBytes,
+              candidate.contains("<!") == false, candidate.contains("<?") == false else { return nil }
+        let delegate = AphroditeRemoteSVGValidationDelegate()
+        let parser = XMLParser(data: Data(candidate.utf8))
+        parser.shouldProcessNamespaces = false
+        parser.shouldResolveExternalEntities = false
+        parser.delegate = delegate
+        return parser.parse() && delegate.isValid ? candidate : nil
+    }
+}
+
+private final class AphroditeRemoteSVGValidationDelegate: NSObject, XMLParserDelegate {
+    private static let containers: Set<String> = ["svg", "g", "defs", "linearGradient", "radialGradient"]
+    private static let shapes: Set<String> = ["path", "rect", "circle", "ellipse", "line", "polyline", "polygon"]
+    private static let elements = containers.union(shapes).union(["stop"])
+    private static let numericAttributes: Set<String> = ["width", "height", "x", "y", "rx", "ry", "cx", "cy", "r", "fx", "fy", "x1", "y1", "x2", "y2", "stroke-width"]
+    private static let opacityAttributes: Set<String> = ["opacity", "fill-opacity", "stroke-opacity", "stop-opacity"]
+    private static let numberPattern = #"[-+]?(?:\d+(?:\.\d+)?|\.\d+)(?:[eE][-+]?\d+)?"#
+    private static let idPattern = #"[A-Za-z_][A-Za-z0-9_.-]*"#
+    private static let numberExpression = try! NSRegularExpression(pattern: numberPattern)
+    private(set) var isValid = true
+    private var depth = 0, elementCount = 0, visibleShapeCount = 0, nonRenderingDepth = 0, pathDataLength = 0, numberCount = 0
+
+    func parser(_ parser: XMLParser, didStartElement name: String, namespaceURI: String?, qualifiedName: String?, attributes: [String: String] = [:]) {
+        guard isValid else { parser.abortParsing(); return }
+        depth += 1; elementCount += 1
+        guard depth <= 64, elementCount <= 256, Self.elements.contains(name) else { reject(parser); return }
+        if elementCount == 1 {
+            guard name == "svg", attributes["xmlns"] == "http://www.w3.org/2000/svg", attributes["viewBox"].map(validViewBox) == true else { reject(parser); return }
+        } else if name == "svg" { reject(parser); return }
+        guard attributes.allSatisfy({ validAttribute(name: $0.key, value: $0.value, element: name, isRoot: elementCount == 1) }) else { reject(parser); return }
+        if Self.shapes.contains(name), nonRenderingDepth == 0 { visibleShapeCount += 1 }
+        if ["defs", "linearGradient", "radialGradient"].contains(name) { nonRenderingDepth += 1 }
+    }
+    func parser(_ parser: XMLParser, didEndElement name: String, namespaceURI: String?, qualifiedName: String?) {
+        if ["defs", "linearGradient", "radialGradient"].contains(name) { nonRenderingDepth -= 1 }; depth -= 1
+    }
+    func parserDidEndDocument(_ parser: XMLParser) { isValid = depth == 0 && visibleShapeCount > 0 }
+    func parser(_ parser: XMLParser, parseErrorOccurred: Error) { isValid = false }
+    func parser(_ parser: XMLParser, validationErrorOccurred: Error) { isValid = false }
+    func parser(_ parser: XMLParser, foundProcessingInstructionWithTarget: String, data: String?) { reject(parser) }
+    func parser(_ parser: XMLParser, foundExternalEntityDeclarationWithName: String, publicID: String?, systemID: String?) { reject(parser) }
+    func parser(_ parser: XMLParser, foundInternalEntityDeclarationWithName: String, value: String?) { reject(parser) }
+    private func validAttribute(name: String, value: String, element: String, isRoot: Bool) -> Bool {
+        switch name {
+        case "xmlns": isRoot && value == "http://www.w3.org/2000/svg"
+        case "viewBox": isRoot && validViewBox(value)
+        case "id": matches(value, Self.idPattern)
+        case let key where Self.numericAttributes.contains(key): validNumber(value)
+        case let key where Self.opacityAttributes.contains(key): validNumber(value) && (parsedNumbers(value).first.map { (0...1).contains($0) } ?? false)
+        case "offset": value.hasSuffix("%") ? (Double(value.dropLast()).map { (0...100).contains($0) } ?? false) : (validNumber(value) && (parsedNumbers(value).first.map { (0...1).contains($0) } ?? false))
+        case "fill", "stroke", "stop-color": value == "none" || matches(value, #"#(?:[0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})"#) || matches(value, #"url\(#[A-Za-z_][A-Za-z0-9_.-]*\)"#)
+        case "stroke-linecap": ["butt", "round", "square"].contains(value)
+        case "stroke-linejoin": ["miter", "round", "bevel"].contains(value)
+        case "transform", "gradientTransform": matches(value, #"(?:(?:matrix|translate|scale|rotate)\(\s*"# + Self.numberPattern + #"(?:\s*(?:,|\s)\s*"# + Self.numberPattern + #"){0,5}\s*\)\s*)+"#) && consumeNumbers(value, maximum: 24)
+        case "gradientUnits": ["objectBoundingBox", "userSpaceOnUse"].contains(value)
+        case "spreadMethod": ["pad", "reflect", "repeat"].contains(value)
+        case "d": element == "path" && validPath(value)
+        case "points": (element == "polyline" || element == "polygon") && validPoints(value)
+        default: false
+        }
+    }
+    private func validViewBox(_ value: String) -> Bool { let v = parsedNumbers(value); return v.count == 4 && v.allSatisfy { $0.isFinite && abs($0) <= 1_000_000 } && v[2] > 0 && v[3] > 0 && v[2] <= 512 && v[3] <= 512 }
+    private func validNumber(_ value: String) -> Bool { matches(value, Self.numberPattern) && (parsedNumbers(value).first.map { $0.isFinite && abs($0) <= 1_000_000 } ?? false) }
+    private func validPath(_ value: String) -> Bool { pathDataLength += value.utf8.count; return pathDataLength <= 16_384 && matches(value, #"[MmLlHhVvCcSsQqTtAaZz][MmLlHhVvCcSsQqTtAaZz0-9,.+\-eE\s]*"#) && consumeNumbers(value, maximum: 2_048) }
+    private func validPoints(_ value: String) -> Bool { let v = parsedNumbers(value); return v.count >= 4 && v.count.isMultiple(of: 2) && v.allSatisfy { $0.isFinite && abs($0) <= 1_000_000 } && consumeNumbers(value, maximum: 2_048) }
+    private func consumeNumbers(_ value: String, maximum: Int) -> Bool { let m = Self.numberExpression.matches(in: value, range: NSRange(value.startIndex..., in: value)); let v = m.compactMap { Range($0.range, in: value).flatMap { Double(value[$0]) } }; guard v.count == m.count, v.allSatisfy({ $0.isFinite && abs($0) <= 1_000_000 }) else { return false }; numberCount += v.count; return v.count <= maximum && numberCount <= 2_048 }
+    private func parsedNumbers(_ value: String) -> [Double] { guard matches(value, #"(?:"# + Self.numberPattern + #")(?:[\s,]+"# + Self.numberPattern + #")*"#) else { return [] }; return value.split(whereSeparator: { $0 == "," || $0.isWhitespace }).compactMap { Double($0) } }
+    private func matches(_ value: String, _ pattern: String) -> Bool { (try? NSRegularExpression(pattern: "^(?:\(pattern))$").firstMatch(in: value, range: NSRange(value.startIndex..., in: value))) != nil }
+    private func reject(_ parser: XMLParser) { isValid = false; parser.abortParsing() }
+}
+
+public enum AphroditeRemoteValidationError: Error, Equatable, Sendable {
+    case invalidTitle
+    case invalidHTML
+    case invalidIcon
+    case invalidDescriptor
+    case duplicateAppID
+    case invalidChunk
+    case snapshotTooLarge
+    case unsupportedFormatVersion
+}
+
+public struct AphroditePersonalTool: Codable, Equatable, Identifiable, Sendable {
+    public static let currentFormatVersion = 1
+    public static let maximumHTMLBytes = 1_048_576
+    public static let maximumIconBytes = 131_072
+    public static let maximumTitleCharacters = 80
+
+    public let id: UUID
+    public let title: String
+    public let html: String
+    public let iconSVG: String?
+    public let updatedAt: Date
+    public let formatVersion: Int
+
+    public init(id: UUID, title: String, html: String, iconSVG: String? = nil, updatedAt: Date) throws {
+        let title = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard title.isEmpty == false, title.count <= Self.maximumTitleCharacters else {
+            throw AphroditeRemoteValidationError.invalidTitle
+        }
+        guard html.utf8.count <= Self.maximumHTMLBytes,
+              let html = AphroditeRemoteHTMLValidator.validated(html) else {
+            throw AphroditeRemoteValidationError.invalidHTML
+        }
+        let validatedIcon = iconSVG.flatMap(AphroditeRemoteSVGValidator.validated)
+        if iconSVG != nil, validatedIcon == nil {
+            throw AphroditeRemoteValidationError.invalidIcon
+        }
+        self.id = id
+        self.title = title
+        self.html = html
+        self.iconSVG = validatedIcon
+        self.updatedAt = updatedAt
+        self.formatVersion = Self.currentFormatVersion
+    }
+
+    public init(from decoder: any Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        guard try values.decode(Int.self, forKey: .formatVersion) == Self.currentFormatVersion else {
+            throw AphroditeRemoteValidationError.unsupportedFormatVersion
+        }
+        try self.init(
+            id: values.decode(UUID.self, forKey: .id),
+            t
 ```
 
 ### Core Architecture Module: `Modules/Sources/RemoteCore/CodexUsageModels.swift`
@@ -694,6 +857,10 @@ public enum RemoteMessage: Codable, Equatable, Sendable {
     case systemMonitorSnapshot(SystemMonitorSnapshot)
     case codexUsageRequest(RemoteCodexUsageRequest)
     case codexUsageResult(RemoteCodexUsageResult)
+    case aphroditeLibraryRequest
+    case aphroditeLibraryManifest(AphroditeRemoteLibraryManifest)
+    case aphroditeDocumentChunk(AphroditeRemoteDocumentChunk)
+    case aphroditeTransferComplete(UUID)
     case ping(UInt64)
     case pong(UInt64)
     case credentialRevoked
@@ -738,6 +905,10 @@ public enum RemoteMessage: Codable, Equatable, Sendable {
         case systemMonitorSnapshot
         case codexUsageRequest
         case codexUsageResult
+        case aphroditeLibraryRequest
+        case aphroditeLibraryManifest
+        case aphroditeDocumentChunk
+        case aphroditeTransferComplete
         case ping
         case pong
         case credentialRevoked
@@ -800,96 +971,7 @@ public enum RemoteMessage: Codable, Equatable, Sendable {
         case .soundMixerCommand:
             self = .soundMixerCommand(try container.decode(RemoteSoundMixerCommand.self, forKey: .payload))
         case .systemMonitorSubscriptionUpdate:
-            self = .systemMonitorSubscriptionUpdate(try container.decode(Bool.self, forKey: .payload))
-        case .systemMonitorSnapshot:
-            self = .systemMonitorSnapshot(try container.decode(SystemMonitorSnapshot.self, forKey: .payload))
-        case .codexUsageRequest:
-            self = .codexUsageRequest(try container.decode(RemoteCodexUsageRequest.self, forKey: .payload))
-       
-```
-
-### Core Architecture Module: `Modules/Sources/RemoteCore/RemotePairingTeardownPolicy.swift`
-```
-public enum RemotePairingTeardownPhase: Equatable, Sendable {
-    case provisional
-    case committing
-    case authenticated
-    case other
-}
-
-public enum RemotePairingTeardownAction: Equatable, Sendable {
-    case preserveDurablePreparedTransaction
-    case performNormalCleanup
-}
-
-public enum RemotePairingTeardownPolicy {
-    public static func action(for phase: RemotePairingTeardownPhase) -> RemotePairingTeardownAction {
-        phase == .provisional ? .preserveDurablePreparedTransaction : .performNormalCleanup
-    }
-}
-
-```
-
-### Core Architecture Module: `Modules/Sources/RemoteCore/RemoteProtocolError.swift`
-```
-public struct RemoteProtocolError: Codable, Error, Equatable, Sendable {
-    public enum Code: String, Codable, Sendable {
-        case upgradeRequired
-        case authenticationFailed
-        case pairingExpired
-        case pairingRateLimited
-        case controlNotFound
-        case controlUnavailable
-        case actionNotSupported
-        case executionFailed
-        case requestTimedOut
-        case invalidFrame
-        case replayDetected
-    }
-
-    public let code: Code
-    public let message: String
-
-    public init(code: Code, message: String) {
-        self.code = code
-        self.message = message
-    }
-}
-
-```
-
-### Core Architecture Module: `Modules/Sources/RemoteCore/RemoteProtocolVersion.swift`
-```
-public struct RemoteProtocolVersion: Codable, Equatable, Sendable {
-    public static let current = Self(major: 1, minor: 5)
-
-    public let major: UInt16
-    public let minor: UInt16
-
-    public init(major: UInt16, minor: UInt16) {
-        self.major = major
-        self.minor = minor
-    }
-
-    public func isCompatible(with other: Self) -> Bool {
-        negotiated(with: other) != nil
-    }
-
-    public func negotiated(with other: Self) -> Self? {
-        guard major == other.major else { return nil }
-        return Self(major: major, minor: min(minor, other.minor))
-    }
-
-    public var supportsAuthenticatedRevocation: Bool { minor >= 1 }
-    public var supportsTransactionalPairing: Bool { minor >= 2 }
-    /// Mixer messages are only valid after both peers negotiated this capability.
-    public var supportsSoundMixerRemote: Bool { minor >= 3 }
-    /// System Monitor messages are only valid after both peers negotiated this capability.
-    public var supportsSystemMonitorRemote: Bool { minor >= 4 }
-    /// Codex usage messages are only valid after both peers negotiated this capability.
-    public var supportsCodexUsageRemote: Bool { minor >= 5 }
-}
-
+            self = .systemMonitorSubscriptionU
 ```
 
 
@@ -909,7 +991,6 @@ public struct RemoteProtocolVersion: Codable, Equatable, Sendable {
   **Post-Mortem & Fix Analysis**:
   > Same here with M1 Mac mini but on MacOS 12.2 Beta.  ------------------------------------- Translated Report (Full Report Below) -------------------------------------  Process:               OnlySwitch [26205] Path:                  /Applications/Only Switch.app/Contents/MacOS/OnlySwitch Identifier:            jacklandrin.OnlySwitch Version:               2.0 (35) Code Type:             ARM-64 (Native) Parent Process:        launchd [1] User ID:               501  Date/Time:             2022-01-13 18:05:31.4275 -0500 OS Version:            macOS 12.2 (21D5039d) Report Version:        12 Anonymous UUID:        EC51302F-8BF8-5E71-231C-762A4AD64A1B   Time Awake Since Boot: 180000 seconds  System Integrity Protection: enabled  Crashed Thread:        0  Dispatch queue: com.apple.main-thread  Exception Type:        EXC_BREAKPOINT (SIGTRAP) Exception Codes:       0x0000000000000001, 0x00000001cc1d4798 Exception Note:        EXC_CORPSE_NOTIFY  Termination Reason:  
   > Same issue and solution. https://github.com/sindresorhus/Gifski/commit/ac180e4e76acaa9b230bbb401b8bb364c2f2f424
-  > It fixed in version 2.1
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -926,1676 +1007,1294 @@ public struct RemoteProtocolVersion: Codable, Equatable, Sendable {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `30d25c53` (2026-10-05)
-**Commit Message**: fix Campaign position
+### Incident Patch 1: `a5470b29` (2026-10-16)
+**Commit Message**: fix: stabilize Dock preview positioning
 
-**File**: `OnlySwitch/Features/RemoteAccess/Campaign/OnlyRemoteCampaignWindowController.swift` (modified, +57/-11)
+**File**: `OnlySwitch/Features/DockPreview/DockPreviewClient.swift` (modified, +10/-6)
 ```diff
-@@ -3,6 +3,9 @@ import ComposableArchitecture
- import Extensions
+@@ -80,14 +80,18 @@ private final class DockPreviewRuntime {
+         observationTask?.cancel()
+         lastHover = nil
+ 
+-        return AsyncStream { continuation in
++        return AsyncStream(bufferingPolicy: .bufferingNewest(1)) { continuation in
+             let task = Task { @MainActor [weak self] in
+                 defer { continuation.finish() }
++                var stabilizer = DockHoverStabilizer()
+                 while !Task.isCancelled {
+-                    let event = self?.resolvedHover(at: CGEvent(source: nil)?.location)
+-                    let changedApp = event?.pid != self?.lastHover?.pid
++                    let directHit = self?.dockHover(at: CGEvent(source: nil)?.location)
++                    let event = self?.resolvedHover(dockHover: directHit)
+                     self?.lastHover = event
+-                    if changedApp {
++                    if case let .changed(event) = stabilizer.update(
++                        event,
++                        isDirectHit: directHit != nil
++                    ) {
+                         continuation.yield(event)
+                     }
+                     do {
+@@ -203,8 +207,8 @@ private final class DockPreviewRuntime {
+         }
+     }
+ 
+-    private func resolvedHover(at point: CGPoint?) -> DockHoverEvent? {
+-        if let hover = dockHover(at: point) {
++    private func resolvedHover(dockHover: DockHoverEvent?) -> DockHoverEvent? {
++        if let hover = dockHover {
+             pendingExitSince = nil
+             return hover
+         }
+```
+
+**File**: `OnlySwitch/Features/DockPreview/DockPreviewFeature.swift` (modified, +25/-7)
+```diff
+@@ -27,6 +27,7 @@ struct DockPreviewFeature {
+         var authorization = DockPreviewAuthorization.unknown
+         var isObserving = false
+         var hoverGeneration: UInt64 = 0
++        var hover: DockHoverEvent?
+         var preview: Preview?
+         var status: Status = .idle
+         var showPermissionHelp = false
+@@ -84,6 +85,7 @@ struct DockPreviewFeature {
+                     let wasEnabled = state.isEnabled
+                     state.isEnabled = false
+                     state.isObserving = false
++                    state.hover = nil
+                     state.preview = nil
+                     state.status = .permissionRequired
+                     state.showPermissionHelp = requested
+@@ -99,7 +101,14 @@ struct DockPreviewFeature {
+                 guard state.isEnabled, state.isObserving, state.authorization.isAuthorized else {
+                     return .none
+                 }
++                if let hover, hover.pid == state.hover?.pid {
++                    state.hover = hover
++                    state.preview?.itemFrame = hover.itemFrame
++                    state.preview?.screenFrame = hover.screenFrame
++                    return .none
++                }
+                 state.hoverGeneration &+= 1
++                state.hover = hover
+                 state.preview = nil
+                 guard let hover else {
+                     state.status = .idle
+@@ -127,13 +136,14 @@ struct DockPreviewFeature {
+             case let .windowsLoaded(generation, hover, result):
+                 guard state.isEnabled, state.isObserving,
+                       generation == state.hoverGeneration else { return .none }
++                let currentHover = state.hover ?? hover
+                 switch result {
+                 case let .success(windows) where !windows.isEmpty:
+                     state.preview = .init(
+                         generation: generation,
+-                        appName: hover.appName,
+-                        itemFrame: hover.itemFrame,
+-                        screenFrame: hover.screenFrame,
++                        appName: currentHover.appName,
++                        itemFrame: currentHover.itemFrame,
++                        screenFrame: currentHover.screenFrame,
+                         windows: windows
+                     )
+                     state.status = .idle
+@@ -165,9 +175,9 @@ struct DockPreviewFeature {
+                 case .failure:
+                     state.preview = .init(
+                         generation: generation,
+-                        appName: hover.appName,
+-                        itemFrame: hover.itemFrame,
+-                        screenFrame: hover.screenFrame,
++                        appName: currentHover.appName,
++                        itemFrame: currentHover.itemFrame,
++                        screenFrame: currentHover.screenFrame,
+                         windows: []
+                     )
+                     state.status = .captureFailed
+@@ -207,8 +217,15 @@ struct DockPreviewFeature {
+                 state.showPermissionHelp = false
+                 return .none
+ 
+-            case .escapePressed, .pointerExited:
++            case .escapePressed:
++                state.hoverGeneration &+= 1
++                state.preview = nil
++                state.status = .idle
++                return .merge(.cancel(id: CancelID.catalog), .cancel(id: CancelID.captures))
++
++            case .pointerExited:
+                 state.hoverGeneration &+= 1
++                state.hover = nil
+                 state.preview = nil
+                 state.status = .idle
+                 return .merge(.cancel(id: CancelID.catalog), .cancel(id: CancelID.captures))
+@@ -253,6 +270,7 @@ struct DockPreviewFeature {
+         state.authorization = .unknown
+         state.isObserving = false
+         state.hoverGeneration &+= 1
++        state.hover = nil
+         state.preview = nil
+         state.status = .idle
+     }
+```
+
+**File**: `OnlySwitch/Features/DockPreview/DockPreviewModels.swift` (modified, +51/-0)
+```diff
+@@ -18,6 +18,57 @@ struct DockHoverEvent: Equatable, Sendable {
+     var screenFrame: CGRect
+ }
+ 
++// At the observer's 80 ms interval, three equal direct hits avoid anchoring
++// the first preview to a frame sampled during Dock reveal or magnification.
++struct DockHoverStabilizer: Sendable {
++    enum Update: Equatable {
++        case unchanged
++        case changed(DockHoverEvent?)
++    }
++
++    private var candidate: DockHoverEvent?
++    private var candidateCount = 0
++    private var emitted: DockHoverEvent?
++
++    mutating func update(
++        _ event: DockHoverEvent?,
++        isDirectHit: Bool = true
++    ) -> Update {
++        guard let event else {
++            candidate = nil
++            candidateCount = 0
++            guard emitted != nil else { return .unchanged }
++            emitted = nil
++            return .changed(nil)
++        }
++
++        guard isDirectHit else {
++            candidate = nil
++            candidateCount = 0
++            return .unchanged
++        }
++
++        guard event != emitted else {
++            candidate = nil
++            candidateCount = 0
++            return .unchanged
++        }
++
++        if candidate == event {
++            candidateCount += 1
++        } else {
++            candidate = event
++            candidateCount = 1
++        }
++
++        guard candidateCount >= 3 else { return .unchanged }
++        emitted = event
++        candidate = nil
++        candidateCount = 0
++        return .changed(event)
++    }
++}
++
+ struct DockPreviewWindow: Equatable, Identifiable, Sendable {
+     var id: CGWindowID
+     var title: String
+```
+
+**File**: `OnlySwitch/Features/DockPreview/DockPreviewPanelController.swift` (modified, +28/-1)
+```diff
+@@ -4,6 +4,11 @@ import Extensions
+ import Observation
  import SwiftUI
  
-+private let campaignWindowContentSize = NSSize(width: 460, height: 395)
-+private let qrCodeWindowContentSize = NSSize(width: 400, height: 440)
++struct DockPreviewScreenFrame: Equatable, Sendable {
++    let frame: CGRect
++    let visibleFrame: CGRect
++}
 +
  @MainActor
- final class OnlyRemoteCampaignWindowController: NSWindowController, NSWindowDelegate {
-     private let store: StoreOf<OnlyRemoteCampaignFeature>
-@@ -18,7 +21,7 @@ final class OnlyRemoteCampaignWindowController: NSWindowController, NSWindowDele
+ final class DockPreviewPanelController {
+     private let store: StoreOf<DockPreviewFeature>
+@@ -80,7 +85,10 @@ final class DockPreviewPanelController {
+         let frame = Self.frame(
+             size: size,
+             item: preview.itemFrame,
+-            visibleScreen: preview.screenFrame
++            visibleScreen: Self.currentVisibleScreen(
++                for: preview.itemFrame,
++                fallback: preview.screenFrame
++            )
+         )
+         panel.setFrame(frame, display: true)
+         updatePreviewFrame(frame)
+@@ -114,6 +122,25 @@ final class DockPreviewPanelController {
+         origin.y = min(max(origin.y, visibleScreen.minY), visibleScreen.maxY - size.height)
+         return CGRect(origin: origin, size: size)
+     }
++
++    static func currentVisibleScreen(for item: CGRect, fallback: CGRect) -> CGRect {
++        resolvedVisibleScreen(
++            for: item,
++            fallback: fallback,
++            screens: NSScreen.screens.map {
++                DockPreviewScreenFrame(frame: $0.frame, visibleFrame: $0.visibleFrame)
++            }
++        )
++    }
++
++    static func resolvedVisibleScreen(
++        for item: CGRect,
++        fallback: CGRect,
++        screens: [DockPreviewScreenFrame]
++    ) -> CGRect {
++        let itemCenter = CGPoint(x: item.midX, y: item.midY)
++        return screens.first(where: { $0.frame.contains(itemCenter) })?.visibleFrame ?? fallback
++    }
+ }
+ 
+ private final class DockPreviewPanel: NSPanel {
+```
+
+**File**: `OnlySwitchTests/DockPreview/DockPreviewFeatureTests.swift` (modified, +145/-0)
+```diff
+@@ -4,6 +4,126 @@ import Testing
+ 
+ @MainActor
+ struct DockPreviewFeatureTests {
++    @Test
++    func permissionRevocationClearsTheCurrentHover() async {
++        let hover = DockHoverEvent(pid: 42, appName: "TextEdit", itemFrame: .zero, screenFrame: .zero)
++        let store = TestStore(initialState: DockPreviewFeature.State(
++            isEnabled: true, authorization: .authorized, isObserving: true, hover: hover
++        )) { DockPreviewFeature() }
++
++        await store.send(.authorizationChanged(.unknown, requested: false)) {
++            $0.isEnabled = false
++            $0.authorization = .unknown
++            $0.isObserving = false
++            $0.hover = nil
++            $0.status = .permissionRequired
++        }
++        await store.finish()
++    }
++
++    @Test
++    func firstHoverWaitsForDockRevealToSettle() {
++        var stabilizer = DockHoverStabilizer()
++        var hover = DockHoverEvent(
++            pid: 42, appName: "TextEdit",
++            itemFrame: CGRect(x: 500, y: -40, width: 64, height: 64),
++            screenFrame: CGRect(x: 0, y: 0, width: 1_440, height: 900)
++        )
++        #expect(stabilizer.update(hover) == .unchanged)
++        hover.itemFrame.origin.y = -10
++        #expect(stabilizer.update(hover) == .unchanged)
++        hover.itemFrame.origin.y = 16
++        #expect(stabilizer.update(hover) == .unchanged)
++        #expect(stabilizer.update(hover) == .unchanged)
++        #expect(stabilizer.update(hover) == .changed(hover))
++        #expect(stabilizer.update(hover) == .unchanged)
++
++        hover.itemFrame.size.height = 96
++        #expect(stabilizer.update(hover) == .unchanged)
++        #expect(stabilizer.update(hover) == .unchanged)
++        #expect(stabilizer.update(hover) == .changed(hover))
++        #expect(stabilizer.update(nil) == .changed(nil))
++        #expect(stabilizer.update(hover) == .unchanged)
++    }
++
++    @Test
++    func leavingBeforeDockSettlesNeverShowsAPreview() {
++        var stabilizer = DockHoverStabilizer()
++        let hover = DockHoverEvent(pid: 42, appName: "TextEdit", itemFrame: .zero, screenFrame: .zero)
++        #expect(stabilizer.update(hover) == .unchanged)
++        #expect(stabilizer.update(nil) == .unchanged)
++        #expect(stabilizer.update(hover) == .unchanged)
++        #expect(stabilizer.update(hover) == .unchanged)
++        #expect(stabilizer.update(hover) == .changed(hover))
++    }
++
++    @Test
++    func exitGraceDoesNotCountAsStableDockGeometry() {
++        var stabilizer = DockHoverStabilizer()
++        let hover = DockHoverEvent(pid: 42, appName: "TextEdit", itemFrame: .zero, screenFrame: .zero)
++        #expect(stabilizer.update(hover) == .unchanged)
++        for _ in 0..<5 {
++            #expect(stabilizer.update(hover, isDirectHit: false) == .unchanged)
++        }
++        #expect(stabilizer.update(hover) == .unchanged)
++        #expect(stabilizer.update(hover) == .unchanged)
++        #expect(stabilizer.update(hover) == .changed(hover))
++        #expect(stabilizer.update(hover, isDirectHit: false) == .unchanged)
++        #expect(stabilizer.update(nil) == .changed(nil))
++    }
++
++    @Test
++    func sameAppGeometryMovesPreviewWithoutReloadingWindows() async {
++        let original = DockHoverEvent(pid: 42, appName: "TextEdit", itemFrame: .zero, screenFrame: .zero)
++        var moved = original
++        moved.itemFrame = CGRect(x: 500, y: 16, width: 96, height: 96)
++        let window = DockPreviewWindow(
++            id: 1, title: "Document", pid: 42, frame: .zero,
++            isActivatable: true, thumbnailData: Data([1, 2, 3])
++        )
++        let store = TestStore(initialState: DockPreviewFeature.State(
++            isEnabled: true, authorization: .authorized, isObserving: true,
++            hoverGeneration: 1, hover: original,
++            preview: .init(generation: 1, appName: original.appName,
++                           itemFrame: original.itemFrame, screenFrame: original.screenFrame,
++                           windows: [window])
++        )) { DockPreviewFeature() }
++
++        await store.send(.hovered(moved)) {
++            $0.hover = moved
++            $0.preview?.itemFrame = moved.itemFrame
++        }
++        #expect(store.state.preview?.windows == [window])
++        #expect(store.state.hoverGeneration == 1)
++        await store.finish()
++    }
++
++    @Test
++    func catalogResultUsesLatestGeometryAndDismissalSurvivesMovement() async {
++        let original = DockHoverEvent(pid: 42, appName: "TextEdit", itemFrame: .zero, screenFrame: .zero)
++        var moved = original
++        moved.itemFrame = CGRect(x: 500, y: 16, width: 96, height: 96)
++        let store = TestStore(initialState: DockPreviewFeature.State(
++            isEnabled: true, authorization: .authorized, isObserving: true,
++            hoverGeneration: 1, hover: original, status: .loading
++        )) { DockPreviewFeature() }
++
++        await store.send(.hovered(moved)) { $0.hover = moved }
++        await store.send(.windowsLoaded(generation: 1, hove
+```
+
+---
+
+### Incident Patch 2: `f490703a` (2026-10-16)
+**Commit Message**: Fix Aphrodite panel scrolling and text insets
+
+**File**: `Modules/Package.swift` (modified, +1/-0)
+```diff
+@@ -158,6 +158,7 @@ let package = Package(
+         .target(
+             name: "Aphrodite",
+             dependencies: [
++                .product(name: "SwiftUIIntrospect", package: "swiftui-introspect"),
+                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+                 "OnlyAgent",
+                 "Defines",
+```
+
+**File**: `Modules/Sources/Aphrodite/AphroditeEditorView.swift` (modified, +1/-0)
+```diff
+@@ -86,6 +86,7 @@ public struct AphroditeEditorView: View {
+                     }
+                 }
+                 TextEditor(text: Binding(get: { store.editPrompt }, set: { store.send(.editPromptChanged($0)) }))
++                    .aphroditeTextEditorInset()
+                     .frame(minHeight: 80)
+                     .accessibilityLabel("Describe a change".localized())
+                     .disabled(store.isEditing)
+```
+
+**File**: `Modules/Sources/Aphrodite/AphroditeTextEditorInset.swift` (added, +20/-0)
+```diff
+@@ -0,0 +1,20 @@
++import SwiftUI
++
++#if os(macOS)
++@_spi(Advanced) import SwiftUIIntrospect
++
++extension View {
++    func aphroditeTextEditorInset() -> some View {
++        introspect(.textEditor, on: .macOS(.v26...)) { textView in
++            let current = textView.textContainerInset
++            let desired = CGSize(width: current.width, height: max(current.height, 8))
++            guard current != desired else { return }
++            textView.textContainerInset = desired
++        }
++    }
++}
++#else
++extension View {
++    func aphroditeTextEditorInset() -> some View { self }
++}
++#endif
+```
+
+**File**: `Modules/Sources/Aphrodite/AphroditeViews.swift` (modified, +28/-6)
+```diff
+@@ -27,7 +27,9 @@ public struct AphroditeSettingsView: View {
+                 .onChange(of: isVisible) { _ in NotificationCenter.default.post(name: .changeSettings, object: nil) }
+             Section {
+                 TextEditor(text: Binding(get: { store.prompt }, set: { store.send(.promptChanged($0)) }))
+-                    .frame(minHeight: 100).accessibilityLabel("Describe your mini app".localized())
++                    .aphroditeTextEditorInset()
++                    .frame(minHeight: 100)
++                    .accessibilityLabel("Describe your mini app".localized())
+                 Picker("Provider".localized(), selection: Binding(get: { store.selection?.provider ?? .openai }, set: { store.send(.providerSelected($0)) })) {
+                     ForEach(ModelProvider.allCases, id: \.self) { Text($0.aphroditeDisplayName).tag($0) }
+                 }
+@@ -131,20 +133,30 @@ public struct AphroditeSettingsView: View {
+ 
+ @available(macOS 26.0, *)
+ public struct AphroditePanelView: View {
+-    @State private var store: StoreOf<AphroditeReducer>
++    private let store: StoreOf<AphroditeReducer>
++    private let maximumRunningHeight: CGFloat?
+     @State private var webContentHeight: CGFloat = 240
+-    public init(store: StoreOf<AphroditeReducer> = Store(initialState: .init()) { AphroditeReducer() }) { _store = State(initialValue: store) }
++    @State private var runningHeaderHeight: CGFloat = 0
++    public init(store: StoreOf<AphroditeReducer>, maximumRunningHeight: CGFloat? = nil) {
++        self.store = store
++        self.maximumRunningHeight = maximumRunningHeight
++    }
+     public var body: some View {
+         Group {
+             if let id = store.selectedAppID, let app = store.apps[id: id] {
+                 VStack(spacing: 8) {
+-                    HStack { Button("Back".localized(), systemImage: "chevron.left") { store.send(.selectApp(nil)) }; Text(app.title).font(.headline); Spacer() }.padding()
++                    HStack { Button("Back".localized(), systemImage: "chevron.left") { store.send(.selectApp(nil)) }; Text(app.title).font(.headline); Spacer() }
++                        .padding()
++                        .background(GeometryReader { proxy in
++                            Color.clear.preference(key: AphroditeRunningHeaderHeightKey.self, value: proxy.size.height)
++                        })
+                     #if os(macOS)
+                     SecureAphroditeWebView(app: app, onContentHeightChange: { webContentHeight = $0 })
+-                        .frame(height: webContentHeight)
++                        .frame(height: runningWebViewHeight)
+                     #endif
+                 }
+                 .aphroditePanelSurface()
++                .onPreferenceChange(AphroditeRunningHeaderHeightKey.self) { runningHeaderHeight = $0 }
+             } else if store.storageState == .failed {
+                 VStack(spacing: 12) {
+                     ContentUnavailableView("Aphrodite could not load your saved apps.".localized(), systemImage: "exclamationmark.triangle")
+@@ -170,9 +182,19 @@ public struct AphroditePanelView: View {
+                 .frame(maxWidth: .infinity, alignment: .topLeading)
+             }
+         }
+-        .task { store.send(.task) }
++        .task { store.send(.reloadLibrary) }
+         .onReceive(NotificationCenter.default.publisher(for: .aphroditeLibraryChanged).receive(on: RunLoop.main)) { _ in store.send(.reloadLibrary) }
+     }
++
++    private var runningWebViewHeight: CGFloat {
++        guard let maximumRunningHeight, maximumRunningHeight.isFinite else { return webContentHeight }
++        return min(webContentHeight, max(1, maximumRunningHeight - runningHeaderHeight - 8))
++    }
++}
++
++private struct AphroditeRunningHeaderHeightKey: PreferenceKey {
++    static let defaultValue: CGFloat = 0
++    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) { value = nextValue() }
+ }
+ 
+ public struct AphroditeUnavailableView: View {
+```
+
+**File**: `Modules/Tests/Integration/AphroditeWebHeightHarness.swift` (modified, +38/-1)
+```diff
+@@ -137,8 +137,9 @@ struct AphroditeWebHeightHarness {
+         guard try callChild("read", in: secondOriginView.view) == "41" else {
+             throw Failure(message: "Deleting one app origin cleared another app's localStorage")
+         }
++        try assertCappedWebViewReachesAndActivatesItsBottomControl()
+         withExtendedLifetime([sameOriginView.coordinator, sameOriginView.handler, secondOriginView.coordinator, secondOriginView.handler, deletedOriginView.coordinator, deletedOriginView.handler]) {}
+-        print("PASS: actual webview sizing, Light/Dark matchMedia, persistent per-app localStorage, exact-origin deletion, blocked sessionStorage/IndexedDB, cross-origin parent isolation, and isolated handler verified")
++        print("PASS: actual webview sizing, capped internal scrolling to a bottom control, Light/Dark matchMedia, persistent per-app localStorage, exact-origin deletion, blocked sessionStorage/IndexedDB, cross-origin parent isolation, and isolated handler verified")
+     }
+ 
+     private static func removeStorage(for appIDs: [UUID]) {
+@@ -175,6 +176,42 @@ struct AphroditeWebHeightHarness {
+         return (view, coordinator, handler)
+     }
+ 
++    @available(macOS 26.0, *)
++    private static func assertCappedWebViewReachesAndActivatesItsBottomControl() throws {
++        let app = AphroditeApp(id: UUID(), html: """
++        <!doctype html><html><body style="margin:0;height:2600px"><button id="bottom" style="position:absolute;top:2500px">Bottom action</button><script>
++        document.getElementById('bottom').addEventListener('click', () => { document.title = 'clicked'; });
++        addEventListener('message', event => {
++          if (event.data === 'scroll-bottom') { scrollTo(0, document.documentElement.scrollHeight); parent.postMessage({type:'aphrodite-test', value: String(scrollY)}, '*'); }
++          if (event.data === 'click-bottom') { document.getElementById('bottom').click(); parent.postMessage({type:'aphrodite-test', value: document.title}, '*'); }
++        });
++        </script></body></html>
++        """)
++        let configuration = WKWebViewConfiguration()
++        configuration.websiteDataStore = .nonPersistent()
++        let handler = AphroditeGeneratedDocumentSchemeHandler(app: app)
++        configuration.setURLSchemeHandler(handler, forURLScheme: AphroditeAppOrigin.scheme)
++        let view = WKWebView(frame: CGRect(x: 0, y: 0, width: 320, height: 180), configuration: configuration)
++        let coordinator = SecureAphroditeWebView.Coordinator { _ in }
++        coordinator.app = app
++        coordinator.schemeHandler = handler
++        coordinator.installReporter(in: configuration.userContentController)
++        coordinator.beginNavigation(in: configuration.userContentController)
++        view.navigationDelegate = coordinator
++        let window = NSWindow(contentRect: view.frame, styleMask: .borderless, backing: .buffered, defer: false)
++        window.contentView = view
++        window.orderFront(nil)
++        defer { view.stopLoading(); coordinator.teardown(configuration.userContentController); window.close() }
++        view.loadHTMLString(AphroditeSandboxDocument.make(origin: AphroditeAppOrigin(appID: app.id)), baseURL: AphroditeSandboxDocument.wrapperBaseURL)
++        guard let offset = try callChild("scroll-bottom", in: view).flatMap(Double.init), offset > 2_000 else {
++            throw Failure(message: "Capped Aphrodite web view could not reach the generated document bottom")
++        }
++        guard try callChild("click-bottom", in: view) == "clicked" else {
++            throw Failure(message: "Bottom control was not activatable after capped scrolling")
++        }
++        withExtendedLifetime([coordinator, handler]) {}
++    }
++
+     @available(macOS 26.0, *)
+     private static func callChild(_ command: String, in view: WKWebView) throws -> String? {
+         let readinessDeadline = Date().addingTimeInterval(10)
+```
+
+**File**: `Modules/Tests/ModulesTests/AphroditeTests.swift` (modified, +45/-0)
+```diff
+@@ -1035,6 +1035,51 @@ struct AphroditeReducerTests {
+         #expect(store.state.editPrompt == "Make it blue")
+         await store.finish()
+     }
++
++    @MainActor
++    @Test func returningToAPanelRefreshKeepsItsOpenAppWhenItStillExists() async {
++        let app = AphroditeApp(id: UUID(), title: "Counter", html: completeHTML, createdAt: .distantPast, updatedAt: .distantPast)
++        let store = TestStore(initialState: AphroditeReducer.State(apps: [app], storageState: .ready).withModels(Dictionary(uniqueKeysWithValues: ModelProvider.allCases.map { ($0, []) }))) { AphroditeReducer() } withDependencies: {
++            $0.aphroditePersistence.load = { .init(apps: [app]) }
++        }
++
++        await store.send(.selectApp(app.id)) { $0.selectedAppID = app.id }
++        await store.send(.reloadLibrary)
++        await store.receive(\.libraryReloaded)
++        #expect(store.state.selectedAppID == app.id)
++        await store.finish()
++    }
++
++    @MainActor
++    @Test func returningToAPanelRefreshClosesAnAppDeletedWhileHidden() async {
++        let app = AphroditeApp(id: UUID(), title: "Counter", html: completeHTML, createdAt: .distantPast, updatedAt: .distantPast)
++        let store = TestStore(initialState: AphroditeReducer.State(apps: [app], storageState: .ready).withModels(Dictionary(uniqueKeysWithValues: ModelProvider.allCases.map { ($0, []) }))) { AphroditeReducer() } withDependencies: {
++            $0.aphroditePersistence.load = { .init() }
++        }
++
++        await store.send(.selectApp(app.id)) { $0.selectedAppID = app.id }
++        await store.send(.reloadLibrary)
++        await store.receive(\.libraryReloaded) {
++            $0.apps = []
++            $0.selectedAppID = nil
++        }
++        await store.finish()
++    }
++
++    @MainActor
++    @Test func returningToAPanelDoesNotReopenAnAppAfterBack() async {
++        let app = AphroditeApp(id: UUID(), title: "Counter", html: completeHTML, createdAt: .distantPast, updatedAt: .distantPast)
++        let store = TestStore(initialState: AphroditeReducer.State(apps: [app], storageState: .ready).withModels(Dictionary(uniqueKeysWithValues: ModelProvider.allCases.map { ($0, []) }))) { AphroditeReducer() } withDependencies: {
++            $0.aphroditePersistence.load = { .init(apps: [app]) }
++        }
++
++        await store.send(.selectApp(app.id)) { $0.selectedAppID = app.id }
++        await store.send(.selectApp(nil)) { $0.selectedAppID = nil }
++        await store.send(.reloadLibrary)
++        await store.receive(\.libraryReloaded)
++        #expect(store.state.selectedAppID == nil)
++        await store.finish()
++    }
+ }
+ 
+ struct AphroditeShareTests {
+```
+
+**File**: `OnlySwitch/Features/OnlyControl/OnlyControlView.swift` (modified, +21/-1)
+```diff
+@@ -26,6 +26,8 @@ struct OnlyControlView: View {
+     @ObservedObject private var authenticatorStore = AuthenticatorStore.shared
+     @ObservedObject private var soundMixerVM = SoundMixerVM.shared
+     @State private var currentDate = Date()
++    @State private var aphroditeStore: StoreOf<AphroditeReducer>
++    @State private var sectionViewportHeight: CGFloat?
+     @AppStorage(UserDefaults.Key.showCodexUsageTab) private var showCodexUsageTab = true
+     @AppStorage(UserDefaults.Key.showSystemMonitorTab) private var showSystemMonitorTab = true
+     @AppStorage(UserDefaults.Key.showAphroditeTab) private var showAphroditeTab = true
+@@ -34,6 +36,7 @@ struct OnlyControlView: View {
+ 
+     init(store: StoreOf<OnlyControlReducer>) {
          self.store = store
- 
-         let window = NSWindow(
--            contentRect: .zero,
-+            contentRect: NSRect(origin: .zero, size: campaignWindowContentSize),
-             styleMask: [.titled, .closable, .fullSizeContentView],
-             backing: .buffered,
-             defer: false
-@@ -64,9 +67,9 @@ final class OnlyRemoteCampaignWindowController: NSWindowController, NSWindowDele
- 
-         window.title = "OnlyRemote for iPhone and iPad".localized()
-         NSApp.activate(ignoringOtherApps: true)
--        window.center()
-         showWindow(nil)
-         window.makeKeyAndOrderFront(nil)
-+        centerWhenPresented(window, contentSize: campaignWindowContentSize)
++        _aphroditeStore = State(initialValue: Store(initialState: .init()) { AphroditeReducer() })
      }
- 
-     func windowWillClose(_ notification: Notification) {
-@@ -81,15 +84,16 @@ final class QRCodeWindowController: NSWindowController {
-     static let shared = QRCodeWindowController()
- 
-     private init() {
--        let window = NSWindow(
--            contentRect: NSRect(x: 0, y: 0, width: 440, height: 500),
-+        let window = QRCodeWindow(
-+            contentRect: NSRect(origin: .zero, size: qrCodeWindowContentSize),
-             styleMask: [.borderless],
-             backing: .buffered,
-             defer: false
-         )
-         window.isMovableByWindowBackground = true
-         window.isReleasedWhenClosed = false
-         window.backgroundColor = .windowBackgroundColor
-+        window.hasShadow = true
-         super.init(window: window)
-     }
- 
-@@ -102,9 +106,40 @@ final class QRCodeWindowController: NSWindowController {
-             rootView: QRCodeView(url: url, close: { [weak self] in self?.close() })
-         )
-         NSApp.activate(ignoringOtherApps: true)
--        window.center()
-         showWindow(nil)
-         window.makeKeyAndOrderFront(nil)
-+        centerWhenPresented(window, contentSize: qrCodeWindowContentSize)
-+    }
-+}
-+
-+private final class QRCodeWindow: NSWindow {
-+    override var canBecomeKey: Bool { true }
-+    override var canBecomeMain: Bool { true }
-+}
-+
-+@MainActor
-+private func centerOnCurrentScreen(_ window: NSWindow) {
-+    let mouseLocation = NSEvent.mouseLocation
-+    let screen = NSScreen.screens.first { $0.frame.contains(mouseLocation) } ?? NSScreen.main
-+    guard let screen else { return }
-+
-+    let frame = window.frame
-+    window.setFrameOrigin(
-+        NSPoint(
-+            x: screen.frame.midX - frame.width / 2,
-+            y: screen.frame.midY - frame.height / 2
-+        )
-+    )
-+}
-+
-+@MainActor
-+private func centerWhenPresented(_ window: NSWindow, contentSize: NSSize) {
-+    window.setContentSize(contentSize)
-+    centerOnCurrentScreen(window)
-+    Task { @MainActor [weak window] in
-+        guard let window else { return }
-+        window.setContentSize(contentSize)
-+        centerOnCurrentScreen(window)
-     }
- }
- 
-@@ -113,29 +148,40 @@ private struct QRCodeView: View {
-     let close: () -> Void
  
      var body: some View {
--        ZStack(alignment: .topTrailing) {
-+        VStack(spacing: 16) {
-             AsyncImage(url: url) { phase in
-                 if let image = phase.image {
-                     image.resizable().interpolation(.none).scaledToFit()
-                 } else if phase.error != nil {
--                    Image(systemName: "qrcode").font(.system(size: 180)).foregroundStyle(.secondary)
-+                    Image(systemName: "qrcode").font(.system(size: 140)).foregroundStyle(.secondary)
-                 } else {
-                     ProgressView()
-                 }
+@@ -65,6 +68,9 @@ struct OnlyControlView: View {
+                         sectionContent
+                     }
+                     .frame(maxHeight: .infinity)
++                    .background(GeometryReader { proxy in
++                        Color.clear.preference(key: OnlyControlSectionViewportHeightKey.self, value: proxy.size.height)
++                    })
+ 
+                     if store.selectedSection != .aphrodite {
+                         footer
+@@ -86,6 +92,9 @@ struct OnlyControlView: View {
+             .onChange(of: sections) { availableSections in
+                 store.send(.availableSectionsChanged(availableSections))
              }
--            .padding(24)
--
-+            .frame(width: 260, height: 260)
-+
-+            VStack(spacing: 6) {
-+                Text("Download OnlyRemote on the App Store".localized())
-+                    .font(.headline)
-+                Text("Control OnlySwitch from your iPhone or iPad".localized())
-+                    .font(.subheadline)
-+                    .foregroundStyle(.secondary)
-+                    .multilineTextAlignment(.center)
++            .onPreferenceChange(OnlyControlSectionViewportHeightKey.self) { height in
++                sectionViewportHeight = height.isFinite && height > 0 ? height : nil
 +            }
-+        }
-+        .frame(maxWidth: .infinity, maxHeight: .infinity)
-+        .overlay(alignment: .topTrailing) {
-             Button(action: close) {
-                 Image(systemName: "xmark")
-                     .font(.headline.weight(.semibold))
-                     .padding(8)
-                     .background(.regularMaterial, in: Circle())
-             }
-             .buttonStyle(.plain)
--            .padding(14)
-+            .padding(16)
-             .accessibilityLabel("Close".localized())
          }
--        .frame(width: 
-```
-
----
-
-### Incident Patch 2: `f225ff81` (2026-10-05)
-**Commit Message**: fix natural scolling
-
-**File**: `AGENTS.md` (modified, +2/-1)
-```diff
-@@ -25,7 +25,7 @@ Skills are opt-in by task context. First inspect the task and repository; then l
- | `swiftui-pro` (`doc/skills/swiftui-pro/SKILL.md`) | Reviewing, designing, or implementing SwiftUI views, view state, navigation, accessibility, animations, or SwiftUI performance | The task does not inspect or change SwiftUI code |
- | `swift-concurrency-pro` (`doc/skills/swift-concurrency-pro/SKILL.md`) | Reviewing, designing, or implementing Swift concurrency, actors, `Sendable`, isolation, async streams, cancellation, or strict-concurrency fixes | The task does not inspect or change concurrency code |
- | `swift-testing-pro` (`doc/skills/swift-testing-pro/SKILL.md`) | Writing, migrating, reviewing, or improving Swift Testing/XCTest code or test strategy | No test code or test strategy is in scope |
--| `app-store-review` (`doc/skills/app-store-review/SKILL.md`) | Reviewing macOS app code for App Store Review Guidelines, submission readiness, safety, privacy, legal, design, business, or performance risks | The task is not related to App Store compliance or release readiness |
-+| `app-store-review` (`doc/skills/app-store-review/SKILL.md`) | The user explicitly requests an App Store submission-readiness review | Any macOS app task; App Store constraints are out of scope by default for this project |
- | `writing-plans` (`doc/skills/writing-plans/SKILL.md`) | The user requests a multi-step implementation plan, or the workflow's plan step is accepted | The user declines a plan or the task is small and self-contained |
- 
- Use the narrowest applicable skill. If several conditions match, load the smallest set that covers the work and state the selection in the task update. Skill instructions may route to more specific references; follow only those references needed for the current task. For the project-local `writing-plans` skill, always save plans as `doc/plan/YYYY-MM-DD-<feature-name>.md`; this project location overrides any generic default path in the skill.
-@@ -39,6 +39,7 @@ Use the narrowest applicable skill. If several conditions match, load the smalle
- - Prefer focused, composable modules and reusable abstractions over expanding monolithic files.
- - Maintain Swift 6 concurrency safety, including explicit sendability and actor isolation at networking, persistence, and process-boundary crossings.
- - Treat shell commands, Apple Events, keychain access, system settings, and user permissions as security-sensitive effects that require explicit dependencies and testable failure handling.
-+- Do not evaluate macOS app changes against App Store constraints unless the user explicitly requests an App Store submission-readiness review.
- - Design new or substantially changed UI with modern platform styling, adopting Liquid Glass where supported, providing compatible fallbacks, supporting light and dark modes, and adapting layouts for macOS, iPhone, and iPad sizes as applicable.
- - Translate every new user-facing string into every language supported by OnlySwitch; do not ship newly added source-only strings.
- - Avoid unrelated formatting or refactoring. Update documentation when a change alters an architectural decision or workflow.
-```
-
-**File**: `Config/Versions/OnlySwitchRemote.xcconfig` (modified, +1/-1)
-```diff
-@@ -1,2 +1,2 @@
- // Independent build number for the iOS remote app.
--CURRENT_PROJECT_VERSION = 11
-+CURRENT_PROJECT_VERSION = 12
-```
-
-**File**: `Localization/Localizable.xcstrings` (modified, +21/-21)
-```diff
-@@ -48234,127 +48234,127 @@
-         }
-       }
-     },
--    "Reverse Scroll Direction" : {
-+    "Natural Scrolling" : {
-       "extractionState" : "manual",
-       "localizations" : {
-         "cs" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "Obrátit směr posouvání"
-+            "value" : "Přirozené posouvání"
-           }
-         },
-         "de" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "Scrollrichtung umkehren"
-+            "value" : "Natürliches Scrollen"
-           }
-         },
-         "en" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "Reverse Scroll Direction"
-+            "value" : "Natural Scrolling"
-           }
-         },
-         "es" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "Invertir dirección de desplazamiento"
-+            "value" : "Desplazamiento natural"
-           }
-         },
-         "fil" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "Baligtarin ang Direksyon ng Pag-scroll"
-+            "value" : "Natural na Pag-scroll"
-           }
-         },
-         "fr" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "Inverser le sens du défilement"
-+            "value" : "Défilement naturel"
-           }
-         },
-         "hr" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "Obrni smjer pomicanja"
-+            "value" : "Prirodno pomicanje"
-           }
-         },
-         "it" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "Inverti direzione di scorrimento"
-+            "value" : "Scorrimento naturale"
-           }
-         },
-         "ja" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "スクロール方向を反転"
-+            "value" : "ナチュラルスクロール"
-           }
-         },
-         "ko" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "스크롤 방향 반전"
-+            "value" : "자연스러운 스크롤"
-           }
-         },
-         "nl" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "Scrollrichting omkeren"
-+            "value" : "Natuurlijk scrollen"
-           }
-         },
-         "pl" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "Odwróć kierunek przewijania"
-+            "value" : "Naturalne przewijanie"
-           }
-         },
-         "pt-BR" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "Inverter direção da rolagem"
-+            "value" : "Rolagem natural"
-           }
-         },
-         "ru" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "Инвертировать направление прокрутки"
-+            "value" : "Естественная прокрутка"
-           }
-         },
-         "sk" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "Obrátiť smer posúvania"
-+            "value" : "Prirodzené posúvanie"
-           }
-         },
-         "so" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "Rog jihada rogista"
-+            "value" : "Rogista dabiiciga ah"
-           }
-         },
-         "tr" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "Kaydırma Yönünü Tersine Çevir"
-+            "value" : "Doğal Kaydırma"
-           }
-         },
-         "uk" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "Інвертувати напрямок прокручування"
-+            "value" : "Природне прокручування"
-           }
-         },
-         "zh-Hans" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "反转滚动方向"
-+            "value" : "自然滚动"
-           }
-         },
-         "zh-Hant" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "反轉捲動方向"
-+            "value" : "自然捲動"
-           }
-         }
-       }
-```
-
-**File**: `Modules/Sources/Extensions/UserDefaultsKeys.swift` (modified, +3/-1)
-```diff
-@@ -40,6 +40,8 @@ public extension UserDefaults {
-         //Switch
-         public static let SwitchState = "SwitchStateKey"
-         public static let didInstallReverseScrollDirectionSwitch = "didInstallReverseScrollDirectionSwitchKey"
-+        public static let reverseScrollDirectionEnabled = "reverseScrollDirectionEnabledKey"
-+        public static let reverseScrollDirectionOriginalNaturalScrolling = "reverseScrollDirectionOriginalNaturalScrollingKey"
-         //Shortcuts
-         public static let shortcutsDic = "shortcutsDicKey"
-         //Sort
-@@ -111,7 +113,7 @@ public extension UserDefaults {
-             WorkDuration, RestDuration, RestAlert, WorkAlert, AllowNotificationAlert, PTimerCycleCount,
-             soundWaveEffectDisplay, volume, allowNotificationChangingStation, allowNotificationTrack, radioEnable,
-             isMenubarCollapse, autoCollapseMenubarTime, menubarCollapsable,
--            SwitchState,
-+            SwitchState, reverseScrollDirectionEnabled,
-             shortcutsDic,
-             orderWeight, onlyControlOrderWeight,
-             soundMixerEnabled,
-```
-
-**File**: `Modules/Sources/Switches/ShellCommandDefine.swift` (modified, +0/-6)
-```diff
-@@ -137,12 +137,6 @@ public struct ShowDockRecentCMD:SwitchCMD {
-     public static let status:String = "defaults read com.apple.dock show-recents"
- }
- 
--public struct ReverseScrollDirectionCMD: SwitchCMD {
--    public static let status = "defaults read -g com.apple.swipescrolldirection"
--    public static let on = "defaults write -g com.apple.swipescrolldirection -bool false"
--    public static let off = "defaults write -g com.apple.swipescrolldirection -bool true"
--}
--
- public struct ShorcutsCMD {
-     public static let getList = "shortcuts list"
- 
-```
-
-**File**: `Modules/Sources/Switches/SwitchType.swift` (modified, +1/-1)
-```diff
-@@ -352,7 +352,7 @@ public enum SwitchType: UInt64, CaseIterable, Sendable {
-             )
-         case .reverseScrollDirection:
-             return SwitchBarInfo(
--                title: "Reverse Scroll Direction",
-+                title: "Natural Scrolling",
-                 onImage: NSImage(systemSymbolName: "computermouse.fill"),
-                 offImage: NSImage(systemSymbolName: "computermouse")
-             )
-```
-
-**File**: `OnlySwitch/AppDelegate.swift` (modified, +2/-0)
-```diff
-@@ -206,6 +206,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
-         setupDesktopPet()
- 
-         SwitchManager.shared.registerSwitchesShouldShow()
-+        _ = ReverseScrollDirectionController.shared.currentStatus()
- 
-         blManager = BluetoothDevicesManager.shared
-         RadioStationSwitch.shared.setDefaultRadioStations()
-@@ -239,6 +240,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
      }
  
-     func applicationWillTerminate(_ notification: Notification) {
-+        ReverseScrollDirectionController.shared.suspendForTermination()
-         stopDesktopPetPomodoroRefresh()
-         OnlyControlWindow.shared.onVisibilityChanged = nil
-         NotificationCenter.default.removeObserver(
-```
-
-**File**: `OnlySwitch/EverySwitch/ReverseScrollDirectionSwitch.swift` (modified, +483/-4)
-```diff
-@@ -1,8 +1,489 @@
-+@preconcurrency import ApplicationServices
-+@preconcurrency import CoreGraphics
-+import Darwin
- import Defines
- import Extensions
- import Foundation
- import Switches
- 
-+struct ScrollWheelEventTraits: Equatable, Sendable {
-+    let isContinuous: Bool
-+    let scrollPhase: Int64
-+    let momentumPhase: Int64
-+    let tabletDeviceID: Int64
-+    let sourceUserData: Int64
-+    let vertical: VerticalScrollDeltas
-+    let horizontal: VerticalScrollDeltas
-+
-+    var shouldInvert: Bool {
-+        isContinuous == false
-+            && scrollPhase == 0
-+            && momentumPhase == 0
-+            && tabletDeviceID == 0
-+            && sourceUserData != ScrollDirectionEventTap.syntheticEventTag
-+            && vertical.hasMovement
-+            && horizontal.hasMovement == false
-+    }
-+}
-+
-+struct VerticalScrollDeltas: Equatable, Sendable {
-+    let line: Int64
-+    let point: Int64
-+    /// `scrollWheelEventFixedPtDeltaAxis*` stores a signed 16.16 fixed-point
-+    /// integer. Reading and writing it as an integer preserves the raw value
-+    /// that AppKit receives from a physical wheel.
-+    let fixedPoint: Int64
-+
-+    var hasMovement: Bool {
-+        line != 0 || point != 0 || fixedPoint != 0
-+    }
-+
-+    var inverted: Self {
-+        Self(
-+            line: Self.safelyNegating(line),
-+            point: Self.safelyNegating(point),
-+            fixedPoint: Self.safelyNegating(fixedPoint)
-+        )
-+    }
-+
-+    private static func safelyNegating(_ value: Int64) -> Int64 {
-+        value == .min ? .max : -value
-+    }
-+}
-+
-+struct ReverseScrollRuntimeState: Equatable, Sendable {
-+    private(set) var isRequested: Bool
-+    private(set) var isRunning = false
-+
-+    init(isRequested: Bool) {
-+        self.isRequested = isRequested
-+    }
-+
-+    var currentStatus: Bool {
-+        isRequested && isRunning
-+    }
-+
-+    mutating func didStart() {
-+        isRunning = true
-+    }
-+
-+    mutating func didStop() {
-+        isRunning = false
-+    }
-+
-+    mutating func setRequested(_ isRequested: Bool) {
-+        self.isRequested = isRequested
-+        if !isRequested {
-+            isRunning = false
-+        }
-+    }
-+}
-+
-+struct GlobalScrollDirectionPreference: Sendable {
-+    let setNatural: @MainActor @Sendable (Bool) -> Bool
-+
-+    static let live = Self(
-+        setNatural: { isNatural in
-+            let key = "com.apple.swipescrolldirection" as CFString
-+            CFPreferencesSetValue(
-+                key,
-+                NSNumber(value: isNatural),
-+                kCFPreferencesAnyApplication,
-+                kCFPreferencesCurrentUser,
-+                kCFPreferencesAnyHost
-+            )
-+            let didSynchronize = CFPreferencesSynchronize(
-+                kCFPreferencesAnyApplication,
-+                kCFPreferencesCurrentUser,
-+                kCFPreferencesAnyHost
-+            )
-+            applyScrollDirectionImmediately(isNatural)
-+            let storedValue = CFPreferencesCopyValue(
-+                key,
-+                kCFPreferencesAnyApplication,
-+                kCFPreferencesCurrentUser,
-+                kCFPreferencesAnyHost
-+            )
-+            return didSynchronize && (storedValue as? NSNumber)?.boolValue == isNatural
-+        }
-+    )
-+
-+    private static func applyScrollDirectionImmediately(_ isNatural: Bool) {
-+        typealias ApplyScrollDirection = @convention(c) (Bool) -> Void
-+        let frameworkPath = "/System/Library/PrivateFrameworks/PreferencePanesSupport.framework/PreferencePanesSupport"
-+
-+        if let handle = dlopen(frameworkPath, RTLD_LAZY | RTLD_LOCAL) {
-+            defer { dlclose(handle) }
-+            if let symbol = dlsym(handle, "setSwipeScrollDirection") {
-+                let apply = unsafeBitCast(symbol, to: ApplyScrollDirection.self)
-+                apply(isNatural)
-+                return
-+            }
-+        }
-+
-+        DistributedNotificationCenter.default().post(
-+            name: Notification.Name("SwipeScrollDirectionDidChangeNotification"),
-+            object: nil
-+        )
-+    }
-+}
-+
-+@MainActor
-+@discardableResult
-+func restoreLegacyScrollDirectionIfNeeded(
-+    defaults: UserDefaults,
-+    preference: GlobalScrollDirectionPreference
-+) -> Bool {
-+    let key = UserDefaults.Key.reverseScrollDirectionOriginalNaturalScrolling
-+    guard let originalValue = defaults.object(forKey: key) as? Bool else {
-+        return true
-+    }
-+    guard preference.setNatural(originalValue) else {
-+        return false
-+    }
-+    defaults.removeObject(forKey: key)
-+    return true
-+}
-+
-+/// Owns the event tap and every one of its Core Foundation resources on one
-+/// dedicated run-loop thread. `NSLock` protects only the small lifecycle
-+/// snapshot that is read from the main actor.
-+final class ScrollDirectionEventTap: @unchecked Sendable {
-+    static let syntheticEventTag: Int64 = 0x4F53_5357_4956_4E54
-+
-+    private let lock = NSLock()
-+    private var thread: Thread?
-+    private var runLoop: CFRunLoop?
-+    priv
-```
-
----
-
-### Incident Patch 3: `f4883b45` (2026-10-04)
-**Commit Message**: fix translation
-
-**File**: `Config/Versions/OnlySwitch.xcconfig` (modified, +1/-1)
-```diff
-@@ -1,2 +1,2 @@
- // Shared build number for the macOS app and its embedded components.
--CURRENT_PROJECT_VERSION = 281
-+CURRENT_PROJECT_VERSION = 282
-```
-
-**File**: `Localization/Localizable.xcstrings` (modified, +9/-9)
-```diff
-@@ -7962,7 +7962,7 @@
-         "cs" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "Control OnlySwitch z vašeho iPhone nebo iPad, když jsou obě zařízení ve stejné místní síti."
-+            "value" : "Ovládejte OnlySwitch z iPhonu nebo iPadu, když jsou obě zařízení ve stejné místní síti."
-           }
-         },
-         "de" : {
-@@ -7992,13 +7992,13 @@
-         "hr" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "Control OnlySwitch s vašeg iPhonea ili iPada kada su oba uređaja na istoj lokalnoj mreži."
-+            "value" : "Upravljajte aplikacijom OnlySwitch sa svog iPhonea ili iPada kada su oba uređaja na istoj lokalnoj mreži."
-           }
-         },
-         "it" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "Controlla solo il passaggio dal tuo iPhone o iPad quando entrambi i dispositivi si trovano sulla stessa rete locale."
-+            "value" : "Controlla OnlySwitch dal tuo iPhone o iPad quando entrambi i dispositivi sono sulla stessa rete locale."
-           }
-         },
-         "ja" : {
-@@ -8022,7 +8022,7 @@
-         "pl" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "Control OnlySwitch z iPhone'a lub iPada, gdy oba urządzenia znajdują się w tej samej sieci lokalnej."
-+            "value" : "Steruj OnlySwitch z iPhone’a lub iPada, gdy oba urządzenia są w tej samej sieci lokalnej."
-           }
-         },
-         "pt-BR" : {
-@@ -8046,31 +8046,31 @@
-         "so" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "Ka xakamee KeliyaSwitch ka iPhone-kaaga ama iPad-kaaga marka labada qalabba ay ku jiraan isku shabakad maxalli ah."
-+            "value" : "Ka maamul OnlySwitch iPhone-kaaga ama iPad-kaaga marka labada qalab ay ku jiraan isla shabakadda maxalliga ah."
-           }
-         },
-         "tr" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "Her iki cihaz da aynı yerel ağda olduğunda Yalnızca Kontrol iPhone veya iPad'inizden geçiş yapın."
-+            "value" : "Her iki cihaz aynı yerel ağdayken OnlySwitch’i iPhone veya iPad’inizden kontrol edin."
-           }
-         },
-         "uk" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "Control OnlySwitch з вашого iPhone або iPad, коли обидва пристрої підключені до однієї локальної мережі."
-+            "value" : "Керуйте OnlySwitch з iPhone або iPad, коли обидва пристрої підключені до однієї локальної мережі."
-           }
-         },
-         "zh-Hans" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "当 iPhone 或 iPad 位于同一本地网络时，仅控制这两个设备的切换。"
-+            "value" : "当 iPhone 或 iPad 与 Mac 连接到同一局域网时，即可通过 iPhone 或 iPad 控制 OnlySwitch。"
-           }
-         },
-         "zh-Hant" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "當 iPhone 或 iPad 位於同一本地網路時，僅控制這兩個裝置的切換。"
-+            "value" : "當 iPhone 或 iPad 與 Mac 連線至同一區域網路時，即可透過 iPhone 或 iPad 控制 OnlySwitch。"
-           }
-         }
-       }
-```
-
----
-
-### Incident Patch 4: `15b161a2` (2026-10-01)
-**Commit Message**: bump build version
-
-**File**: `Config/Versions/OnlySwitch.xcconfig` (modified, +1/-1)
-```diff
-@@ -1,2 +1,2 @@
- // Shared build number for the macOS app and its embedded components.
--CURRENT_PROJECT_VERSION = 278
-+CURRENT_PROJECT_VERSION = 279
-```
-
-**File**: `Config/Versions/OnlySwitchRemote.xcconfig` (modified, +1/-1)
-```diff
-@@ -1,2 +1,2 @@
- // Independent build number for the iOS remote app.
--CURRENT_PROJECT_VERSION = 10
-+CURRENT_PROJECT_VERSION = 11
-```
-
-**File**: `OnlySwitch.xcodeproj/project.pbxproj` (modified, +7/-7)
-```diff
-@@ -406,9 +406,6 @@
- 		C0E000000000000000000004 /* RemoteSystemMonitorConfigurationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0E000000000000000000024 /* RemoteSystemMonitorConfigurationView.swift */; };
- 		C0E000000000000000000005 /* RemoteSystemMonitorConfigurationFeatureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0E000000000000000000025 /* RemoteSystemMonitorConfigurationFeatureTests.swift */; };
- 		C0F000000000000000000001 /* RemoteSystemMonitorWaterfallLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F000000000000000000021 /* RemoteSystemMonitorWaterfallLayout.swift */; };
--		DABA00000000000000000002 /* GlobalSettingsFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = DABA00000000000000000022 /* GlobalSettingsFeature.swift */; };
--		DABA00000000000000000003 /* GlobalSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DABA00000000000000000023 /* GlobalSettingsView.swift */; };
--		DABA00000000000000000004 /* RemoteIdleTimerClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = DABA00000000000000000024 /* RemoteIdleTimerClient.swift */; };
- 		C1A0B00118E9202600000001 /* PrivilegedOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1A0B00318E9202600000001 /* PrivilegedOperation.swift */; };
- 		C1A0B00218E9202600000001 /* PrivilegedOperationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1A0B00418E9202600000001 /* PrivilegedOperationTests.swift */; };
- 		C1A0C00118E9202600000001 /* PrivilegedOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1A0B00318E9202600000001 /* PrivilegedOperation.swift */; };
-@@ -431,6 +428,9 @@
- 		D35C00012F12000100D35C01 /* DesktopPet in Frameworks */ = {isa = PBXBuildFile; productRef = D35C00022F12000100D35C01 /* DesktopPet */; };
- 		D35C00042F12000100D35C01 /* DesktopPet in Frameworks */ = {isa = PBXBuildFile; productRef = D35C00032F12000100D35C01 /* DesktopPet */; };
- 		D418A0C2EBC2CD7CCD451615 /* SoundMixerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E43EF22E4BA4D2E63E454D7 /* SoundMixerService.swift */; };
-+		DABA00000000000000000002 /* GlobalSettingsFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = DABA00000000000000000022 /* GlobalSettingsFeature.swift */; };
-+		DABA00000000000000000003 /* GlobalSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DABA00000000000000000023 /* GlobalSettingsView.swift */; };
-+		DABA00000000000000000004 /* RemoteIdleTimerClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = DABA00000000000000000024 /* RemoteIdleTimerClient.swift */; };
- 		F3A300000000000000000020 /* OnlySwitchRemoteApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3A300000000000000000010 /* OnlySwitchRemoteApp.swift */; };
- 		F3A300000000000000000021 /* RemoteAppFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3A300000000000000000011 /* RemoteAppFeature.swift */; };
- 		F3A300000000000000000022 /* RemoteAppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3A300000000000000000012 /* RemoteAppView.swift */; };
-@@ -912,6 +912,7 @@
- 		C0E000000000000000000023 /* RemoteSystemMonitorConfigurationFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteSystemMonitorConfigurationFeature.swift; sourceTree = "<group>"; };
- 		C0E000000000000000000024 /* RemoteSystemMonitorConfigurationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteSystemMonitorConfigurationView.swift; sourceTree = "<group>"; };
- 		C0E000000000000000000025 /* RemoteSystemMonitorConfigurationFeatureTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteSystemMonitorConfigurationFeatureTests.swift; sourceTree = "<group>"; };
-+		C0F000000000000000000021 /* RemoteSystemMonitorWaterfallLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteSystemMonitorWaterfallLayout.swift; sourceTree = "<group>"; };
- 		C1A0B00318E9202600000001 /* PrivilegedOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivilegedOperation.swift; sourceTree = "<group>"; };
- 		C1A0B00418E9202600000001 /* PrivilegedOperationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivilegedOperationTests.swift; sourceTree = "<group>"; };
- 		C1A0C10318E9202600000001 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
-@@ -929,6 +930,9 @@
- 		C1A0F00518E9202600000001 /* PrivilegedAccessViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivilegedAccessViewModel.swift; sourceTree = "<group>"; };
- 		C1A0F00618E9202600000001 /* PrivilegedAccessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivilegedAccessView.swift; sourceTree = "<group>"; };
- 		C1A0F00818E9202600000001 /* PrivilegedAccessViewModelTests.
-```
-
----
-
-### Incident Patch 5: `8afbe4f2` (2026-09-26)
-**Commit Message**: fix battery volume position
-
-**File**: `OnlySwitch/Features/SwitchItem/SwitchBar/SwitchBarView.swift` (modified, +0/-1)
-```diff
-@@ -31,7 +31,6 @@ struct SwitchBarView: View {
-             
-             if switchOption.switchType == .airPods {
-                 AirPodsBatteryView(batteryValues: convertBattery(info: switchOption.info))
--                    .offset(x: 60)
-             } else if switchOption.switchType == .pomodoroTimer {
-                 TimerCountDownView(ptswitch: switchOption.switchOperator as! PomodoroTimerSwitch)
-             }
-```
-
----
-
-### Incident Patch 6: `1934a3f5` (2026-09-25)
-**Commit Message**: bump build version
-
-**File**: `Config/Versions/OnlySwitch.xcconfig` (modified, +1/-1)
-```diff
-@@ -1,2 +1,2 @@
- // Shared build number for the macOS app and its embedded components.
--CURRENT_PROJECT_VERSION = 275
-+CURRENT_PROJECT_VERSION = 276
-```
-
----
-
-### Incident Patch 7: `fdd14523` (2026-09-25)
-**Commit Message**: update build version
-
-**File**: `Config/Versions/OnlySwitch.xcconfig` (modified, +1/-1)
-```diff
-@@ -1,2 +1,2 @@
- // Shared build number for the macOS app and its embedded components.
--CURRENT_PROJECT_VERSION = 274
-+CURRENT_PROJECT_VERSION = 275
-```
-
----
-
-### Incident Patch 8: `68ca29b5` (2026-09-24)
-**Commit Message**: fix: localize network detail labels
-
-**File**: `Localization/Localizable.xcstrings` (modified, +16/-0)
-```diff
-@@ -26774,6 +26774,22 @@
-     "%@ model unavailable" : { "extractionState" : "manual", "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "%@ model unavailable" } } } },
-     "%d logical cores" : { "extractionState" : "manual", "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "%d logical cores" } } } },
-     "%d physical cores" : { "extractionState" : "manual", "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "%d physical cores" } } } },
-+    "%d dBm" : { "extractionState" : "manual", "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "%d dBm" } } } },
-+    "%.0f Mbps" : { "extractionState" : "manual", "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "%.0f Mbps" } } } },
-+    "Addresses" : { "extractionState" : "manual", "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Addresses" } } } },
-+    "Down" : { "extractionState" : "manual", "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Down" } } } },
-+    "Hardware address" : { "extractionState" : "manual", "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Hardware address" } } } },
-+    "Interface" : { "extractionState" : "manual", "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Interface" } } } },
-+    "Local IPv4" : { "extractionState" : "manual", "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Local IPv4" } } } },
-+    "Local IPv6" : { "extractionState" : "manual", "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Local IPv6" } } } },
-+    "No active Wi-Fi or Ethernet interface" : { "extractionState" : "manual", "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "No active Wi-Fi or Ethernet interface" } } } },
-+    "Network details unavailable" : { "extractionState" : "manual", "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Network details unavailable" } } } },
-+    "Public IP addresses are retrieved from the ipify service." : { "extractionState" : "manual", "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Public IP addresses are retrieved from the ipify service." } } } },
-+    "Public IPv4" : { "extractionState" : "manual", "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Public IPv4" } } } },
-+    "Public IPv6" : { "extractionState" : "manual", "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Public IPv6" } } } },
-+    "Signal" : { "extractionState" : "manual", "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Signal" } } } },
-+    "Transmit rate" : { "extractionState" : "manual", "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Transmit rate" } } } },
-+    "Up" : { "extractionState" : "manual", "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Up" } } } },
-     "CPU" : { "extractionState" : "manual", "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "CPU" } } } },
-     "CPU %@" : { "extractionState" : "manual", "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "CPU %@" } } } },
-     "Controls" : { "extractionState" : "manual", "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Controls" } } } },
-```
-
-**File**: `OnlySwitch/Features/SystemMonitor/SystemMonitorPanelView.swift` (modified, +2/-2)
-```diff
-@@ -449,12 +449,12 @@ struct SystemMonitorPanelView: View {
-                 networkDetailRow("Network".localized(), value: ssid)
-             }
-             if let signalStrength = interface.signalStrength {
--                networkDetailRow("Signal".localized(), value: "\(signalStrength) dBm")
-+                networkDetailRow("Signal".localized(), value: "%d dBm".localizedFormat(signalStrength))
-             }
-             if let transmitRate = interface.transmitRateMbps, transmitRate > 0 {
-                 networkDetailRow(
-                     "Transmit rate".localized(),
--                    value: String(format: "%.0f Mbps", transmitRate)
-+                    value: "%.0f Mbps".localizedFormat(transmitRate)
-                 )
-             }
-             if let macAddress = interface.macAddress {
-```
-
----
-
-### Incident Patch 9: `58632086` (2026-09-24)
-**Commit Message**: fix: validate network interface sockaddr lengths
-
-**File**: `OnlySwitch/Features/SystemMonitor/MacSystemMonitorCollector.swift` (modified, +17/-2)
-```diff
-@@ -295,6 +295,17 @@ enum NetworkDetailsSampler {
+@@ -144,7 +153,13 @@ struct OnlyControlView: View {
      }
  
-     private static func numericAddress(_ address: UnsafePointer<sockaddr>) -> String? {
-+        let minimumLength: Int
-+        switch Int32(address.pointee.sa_family) {
-+        case AF_INET:
-+            minimumLength = MemoryLayout<sockaddr_in>.size
-+        case AF_INET6:
-+            minimumLength = MemoryLayout<sockaddr_in6>.size
-+        default:
-+            return nil
-+        }
-+        guard Int(address.pointee.sa_len) >= minimumLength else { return nil }
-+
-         var host = Array(repeating: CChar(0), count: Int(NI_MAXHOST))
-         let result = getnameinfo(
-             address,
-@@ -313,12 +324,16 @@ enum NetworkDetailsSampler {
-     private static func macAddress(_ address: UnsafePointer<sockaddr>) -> String? {
-         let linkAddress = UnsafeRawPointer(address).assumingMemoryBound(to: sockaddr_dl.self)
-         let length = Int(linkAddress.pointee.sdl_alen)
-+        let nameLength = Int(linkAddress.pointee.sdl_nlen)
-         guard length > 0,
--              let dataOffset = MemoryLayout<sockaddr_dl>.offset(of: \sockaddr_dl.sdl_data)
-+              let dataOffset = MemoryLayout<sockaddr_dl>.offset(of: \sockaddr_dl.sdl_data),
-+              Int(address.pointee.sa_len) >= dataOffset,
-+              nameLength <= Int(address.pointee.sa_len) - dataOffset,
-+              length <= Int(address.pointee.sa_len) - dataOffset - nameLength
-         else { return nil }
- 
-         let bytes = UnsafeRawPointer(linkAddress)
--            .advanced(by: dataOffset + Int(linkAddress.pointee.sdl_nlen))
-+            .advanced(by: dataOffset + nameLength)
-             .assumingMemoryBound(to: UInt8.self)
-         return (0 ..< length)
-             .map { String(format: "%02X", bytes[$0]) }
-```
-
----
-
-### Incident Patch 10: `c3489cb4` (2026-09-24)
-**Commit Message**: fix: classify M3 temperature sensors
-
-**File**: `OnlySwitch/Features/SystemMonitor/MacSystemMonitorCollector.swift` (modified, +17/-7)
-```diff
-@@ -66,6 +66,13 @@ enum MemoryPressureSampler {
- enum SMCTemperatureCodec {
-     private static let sp78 = fourCharacterCode("sp78")
-     private static let floatingPoint = fourCharacterCode("flt ")
-+    private static let m3CPUKeys: Set<String> = [
-+        "Tf04", "Tf09", "Tf0A", "Tf0B", "Tf0D", "Tf0E",
-+        "Tf44", "Tf49", "Tf4A", "Tf4B", "Tf4D", "Tf4E"
-+    ]
-+    private static let m3GPUKeys: Set<String> = [
-+        "Tf14", "Tf18", "Tf19", "Tf1A", "Tf24", "Tf28", "Tf29", "Tf2A"
-+    ]
- 
-     static func decode(dataType: UInt32, bytes: [UInt8]) -> Double? {
-         switch dataType {
-@@ -92,26 +99,29 @@ enum SMCTemperatureCodec {
- 
-     static func isCPUKey(_ key: String, chipModel: String?) -> Bool {
-         if key.hasPrefix("Tp") || key.hasPrefix("Te") { return true }
--        guard key.hasPrefix("Tf"), let chipModel else { return false }
--        return chipModel.range(of: #"\bM3(?:\s|$)"#, options: .regularExpression) != nil
-+        return isM3(chipModel) && m3CPUKeys.contains(key)
-     }
- 
--    static func isGPUKey(_ key: String) -> Bool {
--        key.hasPrefix("Tg")
-+    static func isGPUKey(_ key: String, chipModel: String?) -> Bool {
-+        key.hasPrefix("Tg") || (isM3(chipModel) && m3GPUKeys.contains(key))
-     }
- 
-     static func isCPUKey(_ key: UInt32, chipModel: String?) -> Bool {
-         isCPUKey(string(for: key), chipModel: chipModel)
-     }
- 
--    static func isGPUKey(_ key: UInt32) -> Bool {
--        isGPUKey(string(for: key))
-+    static func isGPUKey(_ key: UInt32, chipModel: String?) -> Bool {
-+        isGPUKey(string(for: key), chipModel: chipModel)
-     }
- 
-     private static func fourCharacterCode(_ value: String) -> UInt32 {
-         value.utf8.reduce(UInt32(0)) { ($0 << 8) | UInt32($1) }
-     }
- 
-+    private static func isM3(_ chipModel: String?) -> Bool {
-+        chipModel?.range(of: #"\bM3(?:\s|$)"#, options: .regularExpression) != nil
-+    }
-+
-     private static func string(for value: UInt32) -> String {
-         String(decoding: [
-             UInt8((value >> 24) & 0xFF), UInt8((value >> 16) & 0xFF),
-@@ -268,7 +278,7 @@ private struct PrivateAppleSiliconMetricsReader {
-             guard let key = key(at: index) else { continue }
-             let name = Self.string(for: key)
-             let isCPU = SMCTemperatureCodec.isCPUKey(name, chipModel: chipModel)
--            let isGPU = SMCTemperatureCodec.isGPUKey(name)
-+            let isGPU = SMCTemperatureCodec.isGPUKey(name, chipModel: chipModel)
-             guard isCPU || isGPU, let keyInfo = readKeyInfo(key: key) else { continue }
- 
-             let sensor = TemperatureSensor(
-```
-
-**File**: `OnlySwitchTests/SystemMonitor/MacSystemMonitorCollectorTests.swift` (modified, +9/-5)
-```diff
-@@ -62,16 +62,20 @@ struct MacSystemMonitorCollectorTests {
-     func sensorKeySelectionKeepsCPUAndGPUClassesSeparate() {
-         let cpuPerformance = fourCharacterCode("Tp0P")
-         let cpuEfficiency = fourCharacterCode("Te0P")
--        let cpuFrequency = fourCharacterCode("Tf0P")
-+        let m3CPU = fourCharacterCode("Tf04")
-+        let m3GPU = fourCharacterCode("Tf14")
-         let gpu = fourCharacterCode("Tg0P")
- 
-         #expect(SMCTemperatureCodec.isCPUKey(cpuPerformance, chipModel: "Apple M4 Max"))
-         #expect(SMCTemperatureCodec.isCPUKey(cpuEfficiency, chipModel: "Apple M4 Max"))
--        #expect(SMCTemperatureCodec.isCPUKey(cpuFrequency, chipModel: "Apple M3 Max"))
--        #expect(SMCTemperatureCodec.isCPUKey(cpuFrequency, chipModel: "Apple M4 Max") == false)
-+        #expect(SMCTemperatureCodec.isCPUKey(m3CPU, chipModel: "Apple M3 Max"))
-+        #expect(SMCTemperatureCodec.isCPUKey(m3GPU, chipModel: "Apple M3 Max") == false)
-+        #expect(SMCTemperatureCodec.isCPUKey(m3CPU, chipModel: "Apple M4 Max") == false)
-         #expect(SMCTemperatureCodec.isCPUKey(gpu, chipModel: "Apple M4 Max") == false)
--        #expect(SMCTemperatureCodec.isGPUKey(gpu))
--        #expect(SMCTemperatureCodec.isGPUKey(cpuPerformance) == false)
-+        #expect(SMCTemperatureCodec.isGPUKey(m3GPU, chipModel: "Apple M3 Max"))
-+        #expect(SMCTemperatureCodec.isGPUKey(m3CPU, chipModel: "Apple M3 Max") == false)
-+        #expect(SMCTemperatureCodec.isGPUKey(gpu, chipModel: "Apple M4 Max"))
-+        #expect(SMCTemperatureCodec.isGPUKey(cpuPerformance, chipModel: "Apple M4 Max") == false)
-     }
- 
-     @Test
-```
-
----
-
-### Incident Patch 11: `a34136e6` (2026-09-24)
-**Commit Message**: Fix Apple Silicon temperatures and dark monitor contrast
-
-**File**: `OnlySwitch/Features/SystemMonitor/MacSystemMonitorCollector.swift` (modified, +181/-45)
-```diff
-@@ -59,36 +59,118 @@ enum MemoryPressureSampler {
-     }
- }
- 
--/// Reads Apple Silicon GPU counters exposed through undocumented IOKit services.
-+/// Decodes the SMC temperature payload formats used by Apple Silicon Macs.
-+///
-+/// Keeping byte decoding and key classification separate from the private IOKit transport makes
-+/// the most failure-prone part of the integration deterministic and testable.
-+enum SMCTemperatureCodec {
-+    private static let sp78 = fourCharacterCode("sp78")
-+    private static let floatingPoint = fourCharacterCode("flt ")
-+
-+    static func decode(dataType: UInt32, bytes: [UInt8]) -> Double? {
-+        switch dataType {
-+        case sp78:
-+            guard bytes.count >= 2 else { return nil }
-+            let raw = Int16(bitPattern: (UInt16(bytes[0]) << 8) | UInt16(bytes[1]))
-+            return Double(raw) / 256
-+        case floatingPoint:
-+            guard bytes.count >= 4 else { return nil }
-+            let bitPattern = UInt32(bytes[0])
-+                | (UInt32(bytes[1]) << 8)
-+                | (UInt32(bytes[2]) << 16)
-+                | (UInt32(bytes[3]) << 24)
-+            let value = Double(Float(bitPattern: bitPattern))
-+            return value.isFinite ? value : nil
-+        default:
-+            return nil
-+        }
-+    }
-+
-+    static func isPlausible(_ celsius: Double) -> Bool {
-+        celsius.isFinite && (10 ..< 125).contains(celsius)
-+    }
-+
-+    static func isCPUKey(_ key: String, chipModel: String?) -> Bool {
-+        if key.hasPrefix("Tp") || key.hasPrefix("Te") { return true }
-+        guard key.hasPrefix("Tf"), let chipModel else { return false }
-+        return chipModel.range(of: #"\bM3(?:\s|$)"#, options: .regularExpression) != nil
-+    }
-+
-+    static func isGPUKey(_ key: String) -> Bool {
-+        key.hasPrefix("Tg")
-+    }
-+
-+    static func isCPUKey(_ key: UInt32, chipModel: String?) -> Bool {
-+        isCPUKey(string(for: key), chipModel: chipModel)
-+    }
-+
-+    static func isGPUKey(_ key: UInt32) -> Bool {
-+        isGPUKey(string(for: key))
-+    }
-+
-+    private static func fourCharacterCode(_ value: String) -> UInt32 {
-+        value.utf8.reduce(UInt32(0)) { ($0 << 8) | UInt32($1) }
-+    }
-+
-+    private static func string(for value: UInt32) -> String {
-+        String(decoding: [
-+            UInt8((value >> 24) & 0xFF), UInt8((value >> 16) & 0xFF),
-+            UInt8((value >> 8) & 0xFF), UInt8(value & 0xFF)
-+        ], as: UTF8.self)
-+    }
-+}
-+
-+/// Reads Apple Silicon GPU counters and CPU/GPU sensors exposed through undocumented IOKit services.
- ///
- /// `AGXAccelerator`'s `PerformanceStatistics`, `gpu-core-count`, and the AppleSMC user client
- /// are implementation details rather than supported macOS APIs. They are intentionally confined
- /// to this type, only used on Apple Silicon, and treated as optional so an OS or hardware change
- /// cannot affect monitor availability or process stability. This path is unsuitable for Mac App
- /// Store distribution without separately validating Apple's current review policy.
--private struct PrivateAppleSiliconGPUReader {
-+private struct PrivateAppleSiliconMetricsReader {
-     struct Reading {
-         let usage: Double?
--        let temperatureCelsius: Double?
-+        let cpuTemperatureCelsius: Double?
-+        let gpuTemperatureCelsius: Double?
-+    }
-+
-+    private struct TemperatureSensor {
-+        let key: UInt32
-+        let name: String
-+        let dataType: UInt32
-+        let dataSize: UInt32
-+    }
-+
-+    private struct TemperatureSensors {
-+        let cpu: [TemperatureSensor]
-+        let gpu: [TemperatureSensor]
-     }
- 
-     private static let maximumSensorKeys = 4_096
-     private var smcConnection: io_connect_t = IO_OBJECT_NULL
--    private var gpuTemperatureKeys: [UInt32]?
--
--    mutating func sample() -> Reading {
--        guard Self.isAppleSilicon else { return Reading(usage: nil, temperatureCelsius: nil) }
-+    private var temperatureSensors: TemperatureSensors?
-+
-+    mutating func sample(chipModel: String?) -> Reading {
-+        guard Self.isAppleSilicon else {
-+            return Reading(
-+                usage: nil,
-+                cpuTemperatureCelsius: nil,
-+                gpuTemperatureCelsius: nil
-+            )
-+        }
-+        let temperatures = readTemperatures(chipModel: chipModel)
-         return Reading(
-             usage: Self.readUsage(),
--            temperatureCelsius: readTemperature()
-+            cpuTemperatureCelsius: temperatures.cpu,
-+            gpuTemperatureCelsius: temperatures.gpu
-         )
-     }
- 
-     mutating func close() {
-         guard smcConnection != IO_OBJECT_NULL else { return }
-         IOServiceClose(smcConnection)
-         smcConnection = IO_OBJECT_NULL
--        gpuTemperatureKeys = nil
-+        temperatureSensors = nil
-     }
- 
-     static func coreCount() -> Int? {
-@@ -149,16 +231,22 @@ private struct PrivateAppleSiliconGPUReader {
-         return nil
-     }
- 
--    private mutating func readTemperature() -> Double? {
-
-```
-
-**File**: `OnlySwitch/Features/SystemMonitor/SystemMonitorPanelView.swift` (modified, +28/-6)
-```diff
-@@ -70,9 +70,24 @@ enum SystemMonitorMemoryPressurePresentation {
- }
- 
- struct SystemMonitorSectionBar: View {
-+    @Environment(\.colorScheme) private var colorScheme
-     let sections: [SectionBar.Section]
-     @Binding var selection: SectionBar.Section
- 
-+    private var selectedForeground: Color {
-+        colorScheme == .dark ? .white : .primary
-+    }
-+
-+    private var selectedFill: Color {
-+        colorScheme == .dark
-+            ? Color(red: 0.05, green: 0.38, blue: 0.76).opacity(0.82)
-+            : Color.accentColor.opacity(0.18)
-+    }
-+
-+    private var selectedStroke: Color {
-+        colorScheme == .dark ? .white.opacity(0.34) : Color.accentColor.opacity(0.38)
-+    }
-+
-     var body: some View {
-         HStack(spacing: 4) {
-             ForEach(sections, id: \.self) { section in
-@@ -86,14 +101,14 @@ struct SystemMonitorSectionBar: View {
-                     .contentShape(Rectangle())
-                 }
-                 .buttonStyle(.plain)
--                .foregroundStyle(selection == section ? .primary : .secondary)
-+                .foregroundStyle(selection == section ? selectedForeground : .secondary)
-                 .background {
-                     Capsule()
--                        .fill(selection == section ? Color.accentColor.opacity(0.18) : .clear)
-+                        .fill(selection == section ? selectedFill : .clear)
-                         .overlay {
-                             Capsule()
-                                 .strokeBorder(
--                                    selection == section ? Color.accentColor.opacity(0.32) : .clear,
-+                                    selection == section ? selectedStroke : .clear,
-                                     lineWidth: 1
-                                 )
-                         }
-@@ -133,6 +148,7 @@ struct SystemMonitorPanelContainer: View {
- }
- 
- struct SystemMonitorPanelView: View {
-+    @Environment(\.colorScheme) private var colorScheme
-     let store: StoreOf<SystemMonitorReducer>
-     @State private var preferences = Preferences.shared.systemMonitorPreferences
- 
-@@ -175,6 +191,12 @@ struct SystemMonitorPanelView: View {
-         SystemMonitorMetric.allCases.filter(preferences.enabledPanelMetrics.contains)
-     }
- 
-+    private var processorAccent: Color {
-+        colorScheme == .dark
-+            ? Color(red: 0.20, green: 0.68, blue: 1)
-+            : .accentColor
-+    }
-+
-     @ViewBuilder
-     private func metricCard(
-         _ metric: SystemMonitorMetric,
-@@ -224,7 +246,7 @@ struct SystemMonitorPanelView: View {
-         @ViewBuilder content: (Double) -> Content
-     ) -> some View {
-         VStack(alignment: .leading, spacing: 10) {
--            metricHeader(title, symbolName: symbolName, tint: .accentColor)
-+            metricHeader(title, symbolName: symbolName, tint: processorAccent)
-             processorDetails(processor, metricName: title)
-             switch availability {
-             case let .available(value):
-@@ -250,10 +272,10 @@ struct SystemMonitorPanelView: View {
-                     .foregroundStyle(.secondary)
-             }
-             ProgressView(value: usage)
--                .tint(.accentColor)
-+                .tint(processorAccent)
-             SystemMonitorChartView(
-                 points: history,
--                tint: .accentColor,
-+                tint: processorAccent,
-                 accessibilityLabel: "Usage history".localized(),
-                 valueDescription: SystemMonitorFormatter.percentage
-             )
-```
-
----
-
-### Incident Patch 12: `775ce78f` (2026-09-24)
-**Commit Message**: Fix system monitor process names
-
-**File**: `OnlySwitch/Features/SystemMonitor/MacSystemMonitorCollector.swift` (modified, +27/-6)
-```diff
-@@ -682,16 +682,37 @@ private extension MacSystemMonitorCollector {
-         }
- 
-         var nameBuffer = Array(repeating: CChar(0), count: Int(MAXCOMLEN) + 1)
--        let nameLength = proc_name(pid, &nameBuffer, UInt32(nameBuffer.count))
--        guard nameLength > 0 else { return nil }
-+        let nameLength = nameBuffer.withUnsafeMutableBufferPointer { buffer in
-+            guard let baseAddress = buffer.baseAddress else { return Int32(0) }
-+            return proc_name(pid, baseAddress, UInt32(buffer.count))
-+        }
- 
--        return ProcessCounters(
--            cpuNanoseconds: values.cpuNanoseconds,
--            residentBytes: values.residentBytes,
--            name: String(
-+        let name: String
-+        if nameLength > 0 {
-+            name = String(
-                 decoding: nameBuffer.prefix(Int(nameLength)).map { UInt8(bitPattern: $0) },
-                 as: UTF8.self
-             )
-+        } else {
-+            var pathBuffer = Array(repeating: CChar(0), count: Int(MAXPATHLEN) * 4)
-+            let pathLength = pathBuffer.withUnsafeMutableBufferPointer { buffer in
-+                guard let baseAddress = buffer.baseAddress else { return Int32(0) }
-+                return proc_pidpath(pid, baseAddress, UInt32(buffer.count))
-+            }
-+            if pathLength > 0 {
-+                let executableName = URL(fileURLWithPath: String(cString: pathBuffer)).lastPathComponent
-+                name = executableName.isEmpty ? "Process \(pid)" : executableName
+     private var aphroditePage: some View {
+-        Group { if #available(macOS 26.0, *) { AphroditePanelView() } else { AphroditeUnavailableView() } }
++        Group {
++            if #available(macOS 26.0, *) {
++                AphroditePanelView(store: aphroditeStore, maximumRunningHeight: sectionViewportHeight)
 +            } else {
-+                // Keep otherwise valid resource counters visible even when macOS withholds the
-+                // process name and path for a protected process.
-+                name = "Process \(pid)"
++                AphroditeUnavailableView()
 +            }
 +        }
-+
-+        return ProcessCounters(
-+            cpuNanoseconds: values.cpuNanoseconds,
-+            residentBytes: values.residentBytes,
-+            name: name
-         )
-     }
- }
-```
-
----
-
-### Incident Patch 13: `430f8adc` (2026-09-24)
-**Commit Message**: Fix AirPods battery header layout
-
-**File**: `OnlySwitch/Features/OnlyControl/OnlyControlView.swift` (modified, +18/-15)
-```diff
-@@ -137,25 +137,28 @@ struct OnlyControlView: View {
      }
  
      private var controlHeader: some View {
--        HStack(alignment: .bottom) {
--            Text(currentDate, style: .time)
--                .font(.system(size: 60, weight: .bold, design: .rounded))
--                .foregroundStyle(colorScheme == .dark ? .white : .black)
--                .onReceive(timer) { _ in
--                    currentDate = Date()
--                }
-+        VStack(alignment: .leading, spacing: 4) {
-+            HStack(alignment: .bottom, spacing: 16) {
-+                Text(currentDate, style: .time)
-+                    .font(.system(size: 60, weight: .bold, design: .rounded))
-+                    .foregroundStyle(colorScheme == .dark ? .white : .black)
-+                    .layoutPriority(1)
-+                    .onReceive(timer) { _ in
-+                        currentDate = Date()
-+                    }
- 
--            if store.isAirPodsConnected && !store.airPodsBatteryValues.isEmpty {
--                AirPodsBatteryView(batteryValues: store.airPodsBatteryValues)
-+                Spacer(minLength: 16)
-+
-+                TimerCountDownView(ptswitch: PomodoroTimerSwitch.shared, showImage: true)
-+                    .font(.system(size: 20, weight: .bold, design: .rounded))
-                     .padding(.bottom, 8)
--                    .padding(.leading, 24)
-             }
- 
--            Spacer(minLength: 16)
--
--            TimerCountDownView(ptswitch: PomodoroTimerSwitch.shared, showImage: true)
--                .font(.system(size: 20, weight: .bold, design: .rounded))
--                .padding(.bottom, 8)
-+            if store.isAirPodsConnected && !store.airPodsBatteryValues.isEmpty {
-+                AirPodsBatteryView(batteryValues: store.airPodsBatteryValues)
-+                    .fixedSize(horizontal: true, vertical: false)
-+                    .accessibilityLabel("AirPods battery levels".localized())
-+            }
-         }
-         .frame(maxWidth: .infinity, alignment: .leading)
-     }
-```
-
-**File**: `OnlySwitch/Features/SwitchItem/SwitchBar/AirPodsBatteryView.swift` (modified, +8/-9)
-```diff
-@@ -30,31 +30,30 @@ struct AirPodsBatteryView: View {
-         HStack(spacing: 8) {
-             ForEach(batteryValues.indices, id:\.self) { index in
-                 HStack(spacing: 4) {
--                    ZStack{
-+                    ZStack {
-                         Circle()
--                            .foregroundColor(.gray)
-+                            .foregroundStyle(.gray)
-                             .frame(width: 10, height: 10)
-                         Text(batteryText[index])
-                             .font(.system(size:7))
--                            .foregroundColor(.white)
-+                            .foregroundStyle(.white)
-                     }
-                     
-                     HStack {
-                         Rectangle()
--                            .foregroundColor(batteryColor(for: batteryValues[index]))
-+                            .foregroundStyle(batteryColor(for: batteryValues[index]))
-                             .frame(width: CGFloat(batteryValues[index]) * viewWidth, height: viewHeight)
-                         Spacer()
-                             .frame(width: ((1.0 - CGFloat(batteryValues[index])) * viewWidth))
-                     }
-                     .frame(width: viewWidth, height: viewHeight)
--                  .overlay(RoundedRectangle(cornerRadius: 2).stroke(colorScheme == .dark ? .white : .black, lineWidth: 1))
--                  .overlay(Text("\(Int(batteryValues[index] * 100))%")
--                            .font(.system(size:6)).fontWeight(.medium))
-+                    .overlay(RoundedRectangle(cornerRadius: 2).stroke(colorScheme == .dark ? .white : .black, lineWidth: 1))
-+                    .overlay(Text("\(Int(batteryValues[index] * 100))%")
-+                        .font(.system(size: 6).weight(.medium)))
-                 }
--                
-             }
-         }
--        .frame(width: viewWidth)
-+        .fixedSize(horizontal: true, vertical: false)
-     }
+@@ -484,3 +499,8 @@ final class OnlyControlWindow: NSWindow, NSWindowDelegate {
+ private final class OnlyControlHostingView: NSHostingView<OnlyControlView> {
+     override var mouseDownCanMoveWindow: Bool { true }
  }
- 
++
++private struct OnlyControlSectionViewportHeightKey: PreferenceKey {
++    static let defaultValue: CGFloat = 0
++    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) { value = nextValue() }
++}
 ```
 
----
-
-### Incident Patch 14: `76d6402b` (2026-09-24)
-**Commit Message**: fix list height
-
-**File**: `OnlySwitch/Features/OnlySwitchList/OnlySwitchListView.swift` (modified, +1/-1)
+**File**: `OnlySwitch/Features/OnlySwitchList/OnlySwitchListView.swift` (modified, +9/-1)
 ```diff
-@@ -114,7 +114,7 @@ struct OnlySwitchListView: View {
-         .onChange(of: sections) { _ in
-             reconcileSectionSelection()
-         }
--        .frame(width: listWidth , height: scrollViewHeight + (switchVM.showAds ? 172 : 132))
-+        .frame(width: listWidth , height: scrollViewHeight + (switchVM.showAds ? 184 : 144))
+@@ -6,6 +6,7 @@
+ //
+ 
+ import AppKit
++import ComposableArchitecture
+ import Defines
+ import Authenticator
+ import SwiftUI
+@@ -38,6 +39,7 @@ struct OnlySwitchListView: View {
+     @State private var measuredChromeHeight: CGFloat = 144
+     @State private var maximumPanelHeight = NSScreen.main?.visibleFrame.height ?? CGFloat(700)
+     @State private var presentedPanelHeight: CGFloat?
++    @State private var aphroditeStore: StoreOf<AphroditeReducer>
+     @AppStorage(UserDefaults.Key.showCodexUsageTab) private var showCodexUsageTab = true
+     @AppStorage(UserDefaults.Key.showSystemMonitorTab) private var showSystemMonitorTab = true
+     @AppStorage(UserDefaults.Key.showAphroditeTab) private var showAphroditeTab = true
+@@ -49,6 +51,7 @@ struct OnlySwitchListView: View {
+ 
+     init(onPanelSizeChange: @escaping @MainActor (CGSize) -> Void = { _ in }) {
+         self.onPanelSizeChange = onPanelSizeChange
++        _aphroditeStore = State(initialValue: Store(initialState: .init()) { AphroditeReducer() })
      }
      
-     var singleSwitchList: some View {
+     var body: some View {
+@@ -96,7 +99,12 @@ struct OnlySwitchListView: View {
+                                 CodexUsagePanelContainer(managesScrolling: false)
+                             }
+                         case .aphrodite:
+-                            if #available(macOS 26.0, *) { AphroditePanelView() }
++                            if #available(macOS 26.0, *) {
++                                AphroditePanelView(
++                                    store: aphroditeStore,
++                                    maximumRunningHeight: max(0, maximumPanelHeight - measuredChromeHeight)
++                                )
++                            }
+                             else { AphroditeUnavailableView() }
+                         }
+                     }
 ```
 
 ---
 
-### Incident Patch 15: `e8e4e7f6` (2026-09-24)
-**Commit Message**: fix: coordinate system monitor background sampling
+### Incident Patch 3: `2ac98061` (2026-10-15)
+**Commit Message**: feat: group and search built-in switches
 
-**File**: `Modules/Sources/SystemMonitor/SystemMonitorReducer.swift` (modified, +1/-10)
+**File**: `Localization/Localizable.xcstrings` (modified, +225/-0)
 ```diff
-@@ -5,7 +5,6 @@ public struct SystemMonitorReducer {
-     @ObservableState
-     public struct State: Equatable {
-         public var isVisible = false
--        public var enabledMenuBarMetrics: Set<SystemMonitorMetric> = []
-         public var expandedMetrics: Set<SystemMonitorMetric> = []
-         public var snapshot: SystemMonitorSnapshot?
-         public var history = SystemMonitorHistory()
-@@ -14,15 +13,13 @@ public struct SystemMonitorReducer {
- 
-         public init(
-             isVisible: Bool = false,
--            enabledMenuBarMetrics: Set<SystemMonitorMetric> = [],
-             expandedMetrics: Set<SystemMonitorMetric> = [],
-             snapshot: SystemMonitorSnapshot? = nil,
-             history: SystemMonitorHistory = SystemMonitorHistory(),
-             lastFailure: String? = nil,
-             isSampling: Bool = false
-         ) {
-             self.isVisible = isVisible
--            self.enabledMenuBarMetrics = enabledMenuBarMetrics
-             self.expandedMetrics = expandedMetrics
-             self.snapshot = snapshot
-             self.history = history
-@@ -31,13 +28,12 @@ public struct SystemMonitorReducer {
-         }
- 
-         var requiresSampling: Bool {
--            isVisible || enabledMenuBarMetrics.isEmpty == false
-+            isVisible
-         }
-     }
- 
-     public enum Action: Equatable {
-         case visibilityChanged(Bool)
--        case menuBarMetricsChanged(Set<SystemMonitorMetric>)
-         case toggleExpandedMetric(SystemMonitorMetric)
-         case snapshotReceived(SystemMonitorSnapshot)
-         case streamFailed(String)
-@@ -58,11 +54,6 @@ public struct SystemMonitorReducer {
-                 state.isVisible = isVisible
-                 return samplingEffect(wasSampling: wasSampling, state: &state)
- 
--            case let .menuBarMetricsChanged(metrics):
--                let wasSampling = state.requiresSampling
--                state.enabledMenuBarMetrics = metrics
--                return samplingEffect(wasSampling: wasSampling, state: &state)
--
-             case let .toggleExpandedMetric(metric):
-                 guard metric.supportsDisclosure else { return .none }
- 
+@@ -1,6 +1,231 @@
+ {
+   "sourceLanguage" : "en",
+   "strings" : {
++    "Audio" : {
++      "extractionState" : "manual",
++      "localizations" : {
++        "cs" : { "stringUnit" : { "state" : "translated", "value" : "Zvuk" } },
++        "de" : { "stringUnit" : { "state" : "translated", "value" : "Audio" } },
++        "en" : { "stringUnit" : { "state" : "translated", "value" : "Audio" } },
++        "es" : { "stringUnit" : { "state" : "translated", "value" : "Audio" } },
++        "fil" : { "stringUnit" : { "state" : "translated", "value" : "Tunog" } },
++        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Audio" } },
++        "hr" : { "stringUnit" : { "state" : "translated", "value" : "Zvuk" } },
++        "it" : { "stringUnit" : { "state" : "translated", "value" : "Audio" } },
++        "ja" : { "stringUnit" : { "state" : "translated", "value" : "オーディオ" } },
++        "ko" : { "stringUnit" : { "state" : "translated", "value" : "오디오" } },
++        "nl" : { "stringUnit" : { "state" : "translated", "value" : "Audio" } },
++        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Dźwięk" } },
++        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Áudio" } },
++        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Аудио" } },
++        "sk" : { "stringUnit" : { "state" : "translated", "value" : "Zvuk" } },
++        "so" : { "stringUnit" : { "state" : "translated", "value" : "Maqal" } },
++        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Ses" } },
++        "uk" : { "stringUnit" : { "state" : "translated", "value" : "Аудіо" } },
++        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "音频" } },
++        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "音訊" } }
++      }
++    },
++    "Built-In" : {
++      "extractionState" : "manual",
++      "localizations" : {
++        "cs" : { "stringUnit" : { "state" : "translated", "value" : "Vestavěné" } },
++        "de" : { "stringUnit" : { "state" : "translated", "value" : "Integriert" } },
++        "en" : { "stringUnit" : { "state" : "translated", "value" : "Built-In" } },
++        "es" : { "stringUnit" : { "state" : "translated", "value" : "Integrados" } },
++        "fil" : { "stringUnit" : { "state" : "translated", "value" : "Mga Nakapaloob" } },
++        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Intégrés" } },
++        "hr" : { "stringUnit" : { "state" : "translated", "value" : "Ugrađeno" } },
++        "it" : { "stringUnit" : { "state" : "translated", "value" : "Integrati" } },
++        "ja" : { "stringUnit" : { "state" : "translated", "value" : "内蔵" } },
++        "ko" : { "stringUnit" : { "state" : "translated", "value" : "내장 기능" } },
++        "nl" : { "stringUnit" : { "state" : "translated", "value" : "Ingebouwd" } },
++        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Wbudowane" } },
++        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Integrados" } },
++        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Встроенные" } },
++        "sk" : { "stringUnit" : { "state" : "translated", "value" : "Vstavané" } },
++        "so" : { "stringUnit" : { "state" : "translated", "value" : "Ku dhex jira" } },
++        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Yerleşik" } },
++        "uk" : { "stringUnit" : { "state" : "translated", "value" : "Вбудовані" } },
++        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "内置" } },
++        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "內建" } }
++      }
++    },
++    "Cleanup & Storage" : {
++      "extractionState" : "manual",
++      "localizations" : {
++        "cs" : { "stringUnit" : { "state" : "translated", "value" : "Čištění a úložiště" } },
++        "de" : { "stringUnit" : { "state" : "translated", "value" : "Bereinigung & Speicher" } },
++        "en" : { "stringUnit" : { "state" : "translated", "value" : "Cleanup & Storage" } },
++        "es" : { "stringUnit" : { "state" : "translated", "value" : "Limpieza y almacenamiento" } },
++        "fil" : { "stringUnit" : { "state" : "translated", "value" : "Paglilinis at imbakan" } },
++        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Nettoyage et stockage" } },
++        "hr" : { "stringUnit" : { "state" : "translated", "value" : "Čišćenje i pohrana" } },
++        "it" : { "stringUnit" : { "state" : "translated", "value" : "Pulizia e archiviazione" } },
++        "ja" : { "stringUnit" : { "state" : "translated", "value" : "クリーンアップとストレージ" } },
++        "ko" : { "stringUnit" : { "state" : "translated", "value" : "정리 및 저장 공간" } },
++        "nl" : { "stringUnit" : { "state" : "translated", "value" : "Opschonen en opslag" } },
++        "pl" : { "stringUnit" : { "state" : "translated", "value" : "Czyszczenie i pamięć" } },
++        "pt-BR" : { "stringUnit" : { "state" : "translated", "value" : "Limpeza e armazenamento" } },
++        "ru" : { "stringUnit" 
 ```
 
-**File**: `OnlySwitch/Features/SystemMonitor/SystemMonitorPanelView.swift` (modified, +0/-2)
+**File**: `OnlySwitch.xcodeproj/project.pbxproj` (modified, +8/-0)
 ```diff
-@@ -140,7 +140,6 @@ struct SystemMonitorPanelView: View {
-         }
-         .padding(15)
-         .onAppear {
--            store.send(.menuBarMetricsChanged(preferences.menuBarMetrics))
-             store.send(.visibilityChanged(true))
-         }
-         .onDisappear {
-@@ -149,7 +148,6 @@ struct SystemMonitorPanelView: View {
-         .onReceive(NotificationCenter.default.publisher(for: .systemMonitorPreferencesChanged)) { notification in
-             guard let updated = notification.object as? SystemMonitorPreferences else { return }
-             preferences = updated
--            store.send(.menuBarMetricsChanged(updated.menuBarMetrics))
-         }
-     }
- 
+@@ -18,6 +18,8 @@
+ 		0406EDD32ACB664D0015F4D0 /* EvolutionGalleryService+Live.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0406EDD22ACB664D0015F4D0 /* EvolutionGalleryService+Live.swift */; };
+ 		040C6EAA276B7D4500291DEB /* CustomizeVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 040C6EA9276B7D4500291DEB /* CustomizeVM.swift */; };
+ 		040C6EAC276B7D9F00291DEB /* CustomizeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 040C6EAB276B7D9F00291DEB /* CustomizeView.swift */; };
++		B1C100000000000000000002 /* BuiltInSwitchCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C100000000000000000001 /* BuiltInSwitchCatalog.swift */; };
++		B1C100000000000000000005 /* BuiltInSwitchCatalogTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C100000000000000000004 /* BuiltInSwitchCatalogTests.swift */; };
+ 		040E97272760FF3E003D9D42 /* MetadataExtractorError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 040E97262760FF3E003D9D42 /* MetadataExtractorError.swift */; };
+ 		041927682AEBFFA60041185B /* CBTrueToneClient++.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041927672AEBFFA60041185B /* CBTrueToneClient++.swift */; };
+ 		0419276B2AEC124B0041185B /* KeyboardShortcutsDefine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0419276A2AEC124B0041185B /* KeyboardShortcutsDefine.swift */; };
+@@ -619,6 +621,8 @@
+ 		0406EDD22ACB664D0015F4D0 /* EvolutionGalleryService+Live.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EvolutionGalleryService+Live.swift"; sourceTree = "<group>"; };
+ 		040C6EA9276B7D4500291DEB /* CustomizeVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomizeVM.swift; sourceTree = "<group>"; };
+ 		040C6EAB276B7D9F00291DEB /* CustomizeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomizeView.swift; sourceTree = "<group>"; };
++		B1C100000000000000000001 /* BuiltInSwitchCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuiltInSwitchCatalog.swift; sourceTree = "<group>"; };
++		B1C100000000000000000004 /* BuiltInSwitchCatalogTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuiltInSwitchCatalogTests.swift; sourceTree = "<group>"; };
+ 		040CD2BD27579CEA002E0CC6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+ 		040E97262760FF3E003D9D42 /* MetadataExtractorError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MetadataExtractorError.swift; sourceTree = "<group>"; };
+ 		041927672AEBFFA60041185B /* CBTrueToneClient++.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CBTrueToneClient++.swift"; sourceTree = "<group>"; };
+@@ -1188,6 +1192,7 @@
+ 				B90000000000000000000003 /* SystemMonitor */,
+ 				C1A0B00518E9202600000001 /* PrivilegedOperations */,
+ 				F3A400000000000000000013 /* RemoteAccess */,
++				B1C100000000000000000004 /* BuiltInSwitchCatalogTests.swift */,
+ 				B82700022700000000C0DE01 /* MenuBarIconHidingTests.swift */,
+ 				041D725628353A160083092D /* OnlySwitchTests.swift */,
+ 				A9AD00020000000000000001 /* AdsModelTests.swift */,
+@@ -1813,6 +1818,7 @@
+ 		04BF977227908ECE00E7C0E2 /* Customize */ = {
+ 			isa = PBXGroup;
+ 			children = (
++				B1C100000000000000000001 /* BuiltInSwitchCatalog.swift */,
+ 				040C6EAB276B7D9F00291DEB /* CustomizeView.swift */,
+ 				040C6EA9276B7D4500291DEB /* CustomizeVM.swift */,
+ 			);
+@@ -2796,6 +2802,7 @@
+ 			isa = PBXSourcesBuildPhase;
+ 			buildActionMask = 2147483647;
+ 			files = (
++				B1C100000000000000000005 /* BuiltInSwitchCatalogTests.swift in Sources */,
+ 				CADE00000000000000000001 /* RemoteCodexUsageProviderTests.swift in Sources */,
+ 				B90000000000000000000002 /* MacSystemMonitorCollectorTests.swift in Sources */,
+ 				B90100000000000000000002 /* SystemMonitorPreferencesTests.swift in Sources */,
+@@ -2896,6 +2903,7 @@
+ 			isa = PBXSourcesBuildPhase;
+ 			buildActionMask = 2147483647;
+ 			files = (
++				B1C100000000000000000002 /* BuiltInSwitchCatalog.swift in Sources */,
+ 				B90000000000000000000005 /* MacSystemMonitorCollector.swift in Sources */,
+ 				B90400000000000000000005 /* SystemMonitorStatusItemController.swift in Sources */,
+ 				B90100000000000000000005 /* SystemMonitorSettingsView.swift in Sources */,
 ```
 
-**File**: `OnlySwitch/Features/SystemMonitor/SystemMonitorStatusItemController.swift` (modified, +40/-15)
+**File**: `OnlySwitch/Features/Settings/Customize/BuiltInSwitchCatalog.swift` (added, +142/-0)
 ```diff
-@@ -22,42 +22,52 @@ protocol SystemMonitorStatusItemFactory: AnyObject {
- @MainActor
- final class SystemMonitorStatusItemController {
-     private let factory: any SystemMonitorStatusItemFactory
--    private let client: SystemMonitorClient
-+    private let clientFactory: @Sendable (TimeInterval) -> SystemMonitorClient
-     private let onClick: @MainActor () -> Void
-     private var items: [SystemMonitorMetric: any SystemMonitorStatusItemHandle] = [:]
-+    private var enabledMetrics: Set<SystemMonitorMetric> = []
-+    private var refreshInterval: TimeInterval?
-     private var latestSnapshot: SystemMonitorSnapshot?
-     private var samplingTask: Task<Void, Never>?
-     private var samplingGeneration = 0
- 
-     init(
-         factory: any SystemMonitorStatusItemFactory = AppKitSystemMonitorStatusItemFactory(),
--        client: SystemMonitorClient = MacSystemMonitorCollector.liveClient(),
-+        clientFactory: @escaping @Sendable (TimeInterval) -> SystemMonitorClient = {
-+            MacSystemMonitorCollector.liveClient(refreshInterval: $0)
-+        },
-         onClick: @escaping @MainActor () -> Void = {}
-     ) {
-         self.factory = factory
--        self.client = client
-+        self.clientFactory = clientFactory
-         self.onClick = onClick
-     }
- 
-+    convenience init(
-+        factory: any SystemMonitorStatusItemFactory,
-+        client: SystemMonitorClient,
-+        onClick: @escaping @MainActor () -> Void = {}
-+    ) {
-+        self.init(factory: factory, clientFactory: { _ in client }, onClick: onClick)
+@@ -0,0 +1,142 @@
++//
++//  BuiltInSwitchCatalog.swift
++//  OnlySwitch
++//
++
++import Extensions
++import Foundation
++import Switches
++
++enum BuiltInSwitchSection: CaseIterable, Identifiable, Sendable {
++    case audio
++    case displayAndAppearance
++    case desktopAndFinder
++    case cleanupAndStorage
++    case productivityAndTools
++    case other
++
++    var id: Self { self }
++
++    var titleKey: String {
++        switch self {
++        case .audio:
++            "Audio"
++        case .displayAndAppearance:
++            "Display & Appearance"
++        case .desktopAndFinder:
++            "Desktop & Finder"
++        case .cleanupAndStorage:
++            "Cleanup & Storage"
++        case .productivityAndTools:
++            "Productivity & Tools"
++        case .other:
++            "Other"
++        }
 +    }
 +
-     func apply(_ preferences: SystemMonitorPreferences) {
-         let selectedMetrics = preferences.menuBarMetrics
-+        let metricsChanged = selectedMetrics != enabledMetrics
-+        let intervalChanged = refreshInterval != preferences.refreshInterval
-+        enabledMetrics = selectedMetrics
-+        refreshInterval = preferences.refreshInterval
- 
--        for metric in SystemMonitorMetric.allCases where !selectedMetrics.contains(metric) {
--            guard let item = items.removeValue(forKey: metric) else { continue }
--            item.remove()
--        }
--
--        for metric in SystemMonitorMetric.allCases where selectedMetrics.contains(metric) {
--            guard items[metric] == nil else { continue }
--            let item = factory.makeStatusItem(for: metric)
--            item.setAction(onClick)
--            item.update(Self.presentation(for: metric, snapshot: latestSnapshot))
--            items[metric] = item
-+        if metricsChanged {
-+            rebuildItems(for: selectedMetrics)
-         }
- 
-         if items.isEmpty {
-             stopSampling()
-         } else {
-+            if intervalChanged {
-+                stopSampling()
++    func contains(_ type: SwitchType) -> Bool {
++        BuiltInSwitchCatalog.section(for: type) == self
++    }
++}
++
++enum BuiltInSwitchCatalog {
++    typealias Localize = (_ key: String) -> String
++
++    static func section(for type: SwitchType) -> BuiltInSwitchSection {
++        switch type {
++        case .mute, .muteMicrophone, .airPods, .radioStation, .spotify,
++             .applemusic, .backNoises, .soundMixer:
++            .audio
++
++        case .darkMode, .topNotch, .screenSaver, .nightShift, .screenTest,
++             .dimScreen, .trueTone, .keyLight:
++            .displayAndAppearance
++
++        case .hiddeDesktop, .autohideDock, .autohideMenuBar, .hiddenFiles,
++             .showUserLibrary, .showExtensionName, .smallLaunchpadIcon,
++             .showFinderPathbar, .dockRecent, .hideMenubarIcons, .hideWindows,
++             .topSticker, .desktopPet, .reverseScrollDirection:
++            .desktopAndFinder
++
++        case .xcodeCache, .emptyTrash, .emptyPasteboard, .ejectDiscs:
++            .cleanupAndStorage
++
++        case .keepAwake, .bluetooth, .pomodoroTimer, .lowpowerMode, .fkey,
++             .aiCommender, .authenticator, .codexUsage, .systemMonitor,
++             .aphrodite:
++            .productivityAndTools
++
++        @unknown default:
++            .other
++        }
++    }
++
++    static func sectioned(types: [SwitchType])
++        -> [(section: BuiltInSwitchSection, types: [SwitchType])]
++    {
++        BuiltInSwitchSection.allCases.compactMap { section in
++            let matchingTypes = types.filter(section.contains)
++            return matchingTypes.isEmpty ? nil : (section, matchingTypes)
++        }
++    }
++
++    @MainActor
++    static func sections(
++        items: [CustomizeItem],
++        matching query: String,
++        locale: Locale = .current,
++        localize: Localize = { $0.localized() }
++    ) -> [(section: BuiltInSwitchSection, items: [CustomizeItem])] {
++        BuiltInSwitchSection.allCases.compactMap { section in
++            let sectionMatches = matches(
++                sourceTitle: section.titleKey,
++                query: query,
++                locale: locale,
++                localize: localize
++            )
++            let matchingItems = items.filter { item in
++                section.contains(item.type)
++                    && (sectionMatches || matches(
++                        sourceTitle: item.barInfo.title,
++                        query: query,
++                        locale: locale,
++                        localize: localize
++                    ))
 +            }
-             startSamplingIfNeeded()
-         }
-     }
-@@ -78,11 +88,26 @@ final class SystemMonitorStatusItemController {
- }
- 
- private extension SystemMonitorStatusItemController {
-+    func rebuildItems(for selectedMetrics: Set<SystemMonitorMetric>) {
-+        for item in items.values {
-+            item.remove()
-+        }
-+        items.removeAll(keepingCapacity: true)
-+
-+        for metric in SystemMonitorMetric.allCases where selectedMetrics.contains(metric) {
-+            let item = factory.makeStatusItem(for: metric)
-+            item.setAction(onClick)
-+            item.update(Self.presentation(for: metric, snapshot: latestSnapshot))
-+            items[metric] = item
++            return matchingItems.isEmpty ? nil : (section, matchingItems)
 +        }
 +    }
 +
-     func startSamplingIfNeeded() {
-         guard samplingTask == nil else { return }
-+        guard let refreshInterval else { return }
-         samplingGeneration += 1
-         let generation = samplingGeneration
--        let client = client
-+        let client = clientFactory(refreshInterval)
- 
-         samplingTask = Task { @MainActor [weak self] in
-             do {
-```
-
-**File**: `OnlySwitch/StatusBar/StatusBarController.swift` (modified, +0/-3)
-```diff
-@@ -93,9 +93,6 @@ class StatusBarController {
- 
-         let monitorPreferences = Preferences.shared.systemMonitorPreferences
-         systemMonitorStatusItems = SystemMonitorStatusItemController(
--            client: MacSystemMonitorCollector.liveClient(
--                refreshInterval: monitorPreferences.refreshInterval
--            ),
-             onClick: { [weak self] in
-                 self?.togglePopover(sender: nil)
-             }
-```
-
-**File**: `OnlySwitchTests/SystemMonitor/SystemMonitorStatusItemControllerTests.swift` (modified, +96/-8)
-```diff
-@@ -21,21 +21,29 @@ struct SystemMonitorStatusItemControllerTests {
-     }
- 
-     @Test
--    func applyingNewPreferencesRemovesDeselectedItemsAndKeepsExistingItems() {
--        let factory = RecordingSystemMonitorStatusItemFactory()
-+    func incrementalPreferenceChangesRebuildTheSameCanonicalOrderAsColdLaunch() {
-+        let incrementalFactory = RecordingSystemMonitorStatusItemFactory()
-         let controller = SystemMonitorStatusItemController(
--            factory: factory,
-+            factory: incrementalFactory,
-             client: .finished
-         )
-         controller.apply(.init(menuBarMetrics: [.cpu, .network]))
--        let originalNetworkItem = factory.items[.network]
-+        let originalCPUItem = incrementalFactory.items[.cpu]
-+        let originalNetworkItem = incrementalFactory.items[.network]
- 
-         controller.apply(.init(menuBarMetrics: [.memory, .network]))
- 
--        #expect(factory.createdMetrics == [.cpu, .network, .memory])
--        #expect(factory.items[.cpu]?.removeCount == 1)
--        #expect(factory.items[.network] === originalNetworkItem)
--        #expect(factory.items[.network]?.removeCount == 0)
-+        let coldFactory = RecordingSystemMonitorStatusItemFactory()
-+        let coldController = SystemMonitorStatusItemController(
-+            factory: coldFactory,
-+            client: .finished
++    @MainActor
++    static func matches(
++        _ item: CustomizeItem,
++        query: String,
++        locale: Locale = .current,
++        localize: Localize = { $0.localized() }
++    ) -> Bool {
++        matches(
++            sourceTitle: item.barInfo.title,
++            query: query,
++            locale: locale,
++            localize: localize
 +        )
-+        coldController.apply(.init(menuBarMetrics: [.memory, .network]))
-+
-+        #expect(originalCPUItem?.removeCount == 1)
-+        #expect(originalNetworkItem?.removeCount == 1)
-+        #expect(Array(incrementalFactory.createdMetrics.suffix(2)) == coldFactory.createdMetrics)
-+        #expect(coldFactory.createdMetrics == [.memory, .network])
-     }
- 
-     @Test
-@@ -100,6 +108,51 @@ struct SystemMonitorStatusItemControllerTests {
-         #expect(factory.items[.cpu]?.removeCount == 1)
-         #expect(factory.items[.disk]?.removeCount == 1)
-     }
-+
-+    @Test
-+    func metricChangesKeepOneUpstreamAndDisablingTheLastItemCancelsIt() async {
-+        let factory = RecordingSystemMonitorStatusItemFactory()
-+        let clients = RecordingMonitorClientFactory()
-+        let controller = SystemMonitorStatusItemController(
-+            factory: factory,
-+            clientFactory: clients.makeClient(refreshInterval:)
-+        )
-+
-+        controller.apply(.init(menuBarMetrics: [.cpu]))
-+        await Task.yield()
-+        controller.apply(.init(menuBarMetrics: [.cpu, .network]))
-+        await Task.yield()
-+
-+        #expect(clients.streamStartCount == 1)
-+
-+        controller.apply(.init(menuBarMetrics: []))
-+        for _ in 0..<10 where clients.terminationCount == 0 {
-+            await Task.yield()
-+        }
-+
-+        #expect(clients.terminationCount == 1)
 +    }
 +
-+    @Test
-+    func changingRefreshIntervalRestartsTheUpstreamWithTheNewInterval() async {
-+        let factory = RecordingSystemMonitorStatusItemFactory()
-+        let clients = RecordingMonitorClientFactory()
-+        let controller = SystemMonitorStatusItemController(
-+            factory: factory,
-+            clientFactory: clients.makeClient(refreshInterval:)
-+        )
++    static func matches(
++        sourceTitle: String,
++        query: String,
++        locale: Locale = .current,
++        localize: Localize = { $0.localized() }
++    ) -> Bool {
++        let needle = query.trimmingCharacters(in: .whitespacesAndNewlines)
++        guard needle.isEmpty == false else { return true }
 +
-+        controller.apply(.init(menuBarMetrics: [.cpu], refreshInterval: 1))
-+        await Task.yield()
-+        controller.apply(.init(menuBarMetrics: [.cpu], refreshInterval: 2))
-+        for _ in 0..<10 where clients.streamStartCount < 2 {
-+            await Task.yield()
-+        }
-+
-+        #expect(clients.requestedIntervals == [1, 2])
-+        #expect(clients.streamStartCount == 2)
-+        #expect(clients.terminationCount == 1)
-+    }
- }
- 
- @MainActor
-@@ -145,3 +198,38 @@ private extension SystemMonitorClient {
-         }
-     }
- }
-+
-+private final class RecordingMonitorClientFactory: @unchecked Sendable {
-+    private let lock = NSLock()
-+    private var intervals: [TimeInterval] = []
-+    private var starts = 0
-+    private var terminations = 0
-+
-+    var requestedIntervals: [TimeInterval] {
-+        lock.withLock { intervals }
-+    }
-+
-+    var streamStartCount: Int {
-+        lock.withLock { starts }
-+    }
-+
-+    var terminationCount: Int {
-+        lock.withLock { terminations }
-+    }
-+
-+    func makeClient(refreshInterval: TimeInterval) -> SystemMonitorClient {
-+        lock.withLock { intervals.append(refreshInterval) }
-+        return SystemMonitorClient { [weak self] in
-+            guard let self else {
-+                return AsyncThrowingStream { $0.finish() }
-+            }
-+            self.lock.withLock { self.starts += 1 }
-+            return AsyncThrowingStream { continuation in
-+                continuation.onTermination = { [weak self] _ in
-+                    guard let self else { return }
-+                    self.lock.withLock { self.terminations += 1 }
-+                }
-+            }
++        return [localize(sourceTitle), sourceTitle].contains { candidate in
++            candidate.range(
++                of: needle,
++                options: [.caseInsensitive, .diacriticInsensitive, .widthInsensitive],
++                locale: locale
++            ) != nil
 +        }
 +    }
 +}
+```
+
+**File**: `OnlySwitch/Features/Settings/Customize/CustomizeVM.swift` (modified, +10/-0)
+```diff
+@@ -28,6 +28,16 @@ class CustomizeVM:ObservableObject {
+             }))
+         }
+     }
++
++    func sections(matching query: String, currentLanguage: String)
++        -> [(section: BuiltInSwitchSection, items: [CustomizeItem])]
++    {
++        BuiltInSwitchCatalog.sections(
++            items: allSwitches,
++            matching: query,
++            locale: Locale(identifier: currentLanguage)
++        )
++    }
+ }
+ 
+ @MainActor
+```
+
+**File**: `OnlySwitch/Features/Settings/Customize/CustomizeView.swift` (modified, +83/-27)
+```diff
+@@ -14,27 +14,71 @@ import Utilities
+ struct CustomizeView: View {
+     @ObservedObject var customizeVM = CustomizeVM.shared
+     @ObservedObject var langManager = LanguageManager.sharedManager
++    @State private var searchText = ""
++
+     var body: some View {
+-        VStack(alignment:.leading) {
++        let currentLanguage = langManager.currentLang
++        let sections = customizeVM.sections(
++            matching: searchText,
++            currentLanguage: currentLanguage
++        )
++
++        VStack(alignment: .leading) {
+             Text("To add or remove any switches on list".localized())
+                 .padding(10)
++            TextField(
++                "Search Built-In Switches".localized(),
++                text: $searchText
++            )
++            .textFieldStyle(.roundedBorder)
++            .accessibilityLabel(Text("Search Built-In Switches".localized()))
++            .environment(\.locale, Locale(identifier: currentLanguage))
++            .padding(.horizontal, 10)
++
+             ScrollView {
+-                VStack{
+-                    ForEach(customizeVM.allSwitches, id: \.type) { item in
+-                        CustomizeRowView(item: item, currentLang: langManager.currentLang)
++                LazyVStack(alignment: .leading, spacing: 16) {
++                    if sections.isEmpty {
++                        VStack(spacing: 8) {
++                            Image(systemName: "magnifyingglass")
++                                .font(.title2)
++                                .accessibilityHidden(true)
++                            Text("No Built-In Switches Found".localized())
++                                .foregroundStyle(.secondary)
++                        }
++                        .accessibilityElement(children: .ignore)
++                        .accessibilityLabel(Text("No Built-In Switches Found".localized()))
++                        .frame(maxWidth: .infinity)
++                        .padding(.top, 24)
++                    } else {
++                        ForEach(sections, id: \.section.id) { section in
++                            VStack(alignment: .leading, spacing: 8) {
++                                Text(section.section.titleKey.localized())
++                                    .font(.headline)
++                                    .foregroundStyle(.secondary)
++                                    .accessibilityAddTraits(.isHeader)
++                                    .padding(.horizontal)
++
++                                ForEach(section.items, id: \.type) { item in
++                                    CustomizeRowView(
++                                        item: item,
++                                        currentLang: currentLanguage
++                                    )
++                                }
++                            }
++                            .accessibilityElement(children: .contain)
++                        }
+                     }
+                 }
+-                
++                .padding(.vertical, 8)
+             }
+             Divider()
+-                .padding(.bottom,10)
++                .padding(.bottom, 10)
+         }
+         .toast(isPresenting: $customizeVM.showErrorToast) {
+             AlertToast(displayMode: .alert,
+                        type: .error(.red),
+                        title: customizeVM.errorInfo.localized())
+         }
+-        
+     }
+ }
+ 
+@@ -44,20 +88,27 @@ private struct CustomizeRowView: View {
+     let currentLang: String
+ 
+     var body: some View {
++        let localizedTitle = item.barInfo.title.localized()
++
+         HStack {
+-            Toggle("", isOn: $item.toggle)
++            Toggle(localizedTitle, isOn: $item.toggle)
++                .labelsHidden()
++                .accessibilityLabel(Text(localizedTitle))
+             if let iconImage = item.iconImage {
+                 Image(nsImage: iconImage)
+                     .renderingMode(.template)
+                     .resizable()
+                     .scaledToFit()
+                     .frame(width: 25, height: 25)
++                    .accessibilityHidden(true)
+             }
+-            Text(item.barInfo.title.localized())
+-                .frame(width:170, alignment: .leading)
++            Text(localizedTitle)
++                .frame(width: 170, alignment: .leading)
+                 .padding(.trailing, 10)
++                .accessibilityHidden(true)
+             KeyboardShortcuts.Recorder(for: item.keyboardShortcutName)
+-                .environment(\.locale, .init(identifier: currentLang))//Localizable follow system
++                .environment(\.locale, Locale(identifier: currentLang))
++                .accessibilityLabel(Text("\(localizedTitle), \("Shortcuts".localized())"))
+             extraSettingsButton
+                 .padding(.leading, 10)
+ 
+@@ -69,33 +120,38 @@ private struct CustomizeRowView: View {
+     @ViewBuilder
+     private var extraSettingsButton: some View {
+         if item.type == .hideMenubarIcons {
+-        
+```
+
+**File**: `OnlySwitch/Features/Settings/SettingsView/SettingsVM.swift` (modified, +9/-0)
+```diff
+@@ -31,6 +31,15 @@ enum SettingsItem: String, CaseIterable {
+     case PrivilegedAccess = "Privileged Switch Access"
+     case iOSRemote = "iOS Remote"
+     case About = "About"
++
++    var titleLocalizationKey: String {
++        switch self {
++        case .Customize:
++            "Built-In"
++        default:
++            rawValue
++        }
++    }
+ }
+ 
+ @MainActor
+```
+
+**File**: `OnlySwitch/Features/Settings/SettingsView/SettingsView.swift` (modified, +4/-4)
+```diff
+@@ -27,9 +27,9 @@ struct SettingsView: View {
+                 ForEach(settingVM.settingItems, id:\.self ) { item in
+                     NavigationLink{
+                         page(item: item)
+-                            .navigationTitle(item.rawValue.localized())
++                            .navigationTitle(item.titleLocalizationKey.localized())
+                     } label:{
+-                        Text(item.rawValue.localized())
++                        Text(item.titleLocalizationKey.localized())
+                             .id(currentLang)
+                             .frame(minWidth: 190, alignment:.leading)
+                             .lineLimit(2)
+@@ -56,7 +56,7 @@ struct SettingsView: View {
+             List(selection:$settingVM.selection) {
+                 ForEach(settingVM.settingItems, id:\.self ) { item in
+                     NavigationLink(value: item) {
+-                        Text(item.rawValue.localized())
++                        Text(item.titleLocalizationKey.localized())
+                             .id(currentLang)
+                             .frame(minWidth: 190, alignment:.leading)
+                             .lineLimit(2)
+@@ -67,7 +67,7 @@ struct SettingsView: View {
+         }, detail: {
+             let selection = settingVM.selection ?? .General
+             page(item: selection)
+-                .navigationTitle(selection.rawValue.localized())
++                .navigationTitle(selection.titleLocalizationKey.localized())
+         })
+     }
+ 
+```
+
+**File**: `OnlySwitchTests/BuiltInSwitchCatalogTests.swift` (added, +225/-0)
+```diff
+@@ -0,0 +1,225 @@
++import Foundation
++import Switches
++import Testing
++@testable import OnlySwitch
++
++struct BuiltInSwitchCatalogTests {
++    @Test("Customize keeps its routing identifier and displays Built-In")
++    func customizeSettingsDisplayNameDoesNotChangeItsIdentifier() {
++        #expect(SettingsItem.Customize.rawValue == "Customize")
++        #expect(SettingsItem.Customize.titleLocalizationKey == "Built-In")
++    }
++
++    @Test("Built-In catalog keys have complete English and Simplified Chinese translations")
++    func catalogKeysAreLocalized() throws {
++        let expectedTranslations = [
++            (key: "Built-In", english: "Built-In", simplifiedChinese: "内置"),
++            (key: "Search Built-In Switches", english: "Search Built-In Switches", simplifiedChinese: "搜索内置开关"),
++            (key: "No Built-In Switches Found", english: "No Built-In Switches Found", simplifiedChinese: "未找到内置开关"),
++            (key: "Audio", english: "Audio", simplifiedChinese: "音频"),
++            (key: "Display & Appearance", english: "Display & Appearance", simplifiedChinese: "显示与外观"),
++            (key: "Desktop & Finder", english: "Desktop & Finder", simplifiedChinese: "桌面与访达"),
++            (key: "Cleanup & Storage", english: "Cleanup & Storage", simplifiedChinese: "清理与存储"),
++            (key: "Productivity & Tools", english: "Productivity & Tools", simplifiedChinese: "效率与工具"),
++            (key: "Other", english: "Other", simplifiedChinese: "其他")
++        ]
++        let catalog = try localizationCatalog()
++
++        for expected in expectedTranslations {
++            let entry = try #require(catalog[expected.key] as? [String: Any])
++            let localizations = try #require(entry["localizations"] as? [String: Any])
++            #expect(localizedValue(in: localizations, language: "en") == expected.english)
++            #expect(localizedValue(in: localizations, language: "zh-Hans") == expected.simplifiedChinese)
++        }
++    }
++
++    @Test("Every Built-In catalog key covers the app's existing languages")
++    func catalogKeysCoverEveryLanguage() throws {
++        let keys = [
++            "Built-In", "Search Built-In Switches", "No Built-In Switches Found",
++            "Audio", "Display & Appearance", "Desktop & Finder",
++            "Cleanup & Storage", "Productivity & Tools", "Other"
++        ]
++        let catalog = try localizationCatalog()
++        let supportedLanguages: Set<String> = [
++            "cs", "de", "en", "es", "fil", "fr", "hr", "it", "ja", "ko",
++            "nl", "pl", "pt-BR", "ru", "sk", "so", "tr", "uk", "zh-Hans", "zh-Hant"
++        ]
++
++        for key in keys {
++            let entry = try #require(catalog[key] as? [String: Any])
++            let localizations = try #require(entry["localizations"] as? [String: Any])
++            #expect(Set(localizations.keys) == supportedLanguages, "Missing translations for \(key)")
++            #expect(localizations.keys.allSatisfy {
++                guard let value = localizedValue(in: localizations, language: $0) else { return false }
++                return value.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false
++            }, "Empty translation for \(key)")
++        }
++    }
++
++    @Test("Every switch belongs to exactly one functional section")
++    func sectionsCoverEverySwitchExactlyOnce() {
++        let grouped = BuiltInSwitchCatalog.sectioned(types: SwitchType.allCases)
++        let groupedTypes = grouped.flatMap(\.types)
++
++        #expect(groupedTypes.count == SwitchType.allCases.count)
++        #expect(Set(groupedTypes).count == SwitchType.allCases.count)
++        #expect(Set(groupedTypes) == Set(SwitchType.allCases))
++    }
++
++    @Test("Switch ordering inside each section follows SwitchType.allCases")
++    func sectionOrderingIsStable() {
++        let sourceIndexes = Dictionary(
++            uniqueKeysWithValues: SwitchType.allCases.enumerated().map { ($1, $0) }
++        )
++
++        for group in BuiltInSwitchCatalog.sectioned(types: SwitchType.allCases) {
++            let indexes = group.types.compactMap { sourceIndexes[$0] }
++            #expect(indexes == indexes.sorted(), "Ordering changed in \(group.section)")
++        }
++    }
++
++    @Test("Audio controls are grouped together")
++    func audioSectionContainsRelatedControls() throws {
++        let audio = try #require(
++            BuiltInSwitchCatalog.sectioned(types: SwitchType.allCases)
++                .first(where: { $0.section == .audio })
++        )
++
++        #expect(audio.types.contains(.mute))
++        #expect(audio.types.contains(.muteMicrophone))
++        #expect(audio.types.contains(.soundMixer))
++        #expect(audio.types.contains(.applemusic))
++    }
++
++    @Test("Search matches the injected current-language title")
++    func localizedQueryMatchesLocalizedTitle() {
++        let matches = BuiltInSwitchCatalog.matches(
++            sourceTitle: "Dark Mode",
++            query: "深色",
++            locale: Locale(identifier: "zh-Hans"),
++          
 ```
 
 #### Recent Merged Pull Requests:
@@ -2605,8 +2304,6 @@ Observed empirical fixes and code patches:
 - **PR #215** (2026-08-11): Fix Show List shortcut being treated as a right-click (@EhsanAzish80)
 - **PR #213** (2026-08-10): feat: add a per-app sound mixer switch (@lou1s19)
 - **PR #211** (2026-07-13): Add Desktop Pet feature information to README (@jacklandrin)
-- **PR #209** (2026-07-12): docs: add TakoAPI directory badge (@oratis)
-- **PR #207** (2026-07-12): feat: sync external monitor brightness via DDC/CI (F1/F2 follows on all displays) (@lou1s19)
 
 ---
 
@@ -2620,3 +2317,48 @@ Observed empirical fixes and code patches:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. stabilize Dock preview positioning
+
+**RULE**:
+When implementing operations in `OnlySwitch/Features/DockPreview/DockPreviewClient.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jacklandrin/OnlySwitch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `a5470b29`: stabilize Dock preview positioning. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `OnlySwitch/Features/DockPreview/DockPreviewClient.swift`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+        return AsyncStream(bufferingPolicy: .bufferingNewest(1)) { continuation in
+                var stabilizer = DockHoverStabilizer()
+                    let directHit = self?.dockHover(at: CGEvent(source: nil)?.location)
+                    let event = self?.resolvedHover(dockHover: directHit)
+                    if case let .changed(event) = stabilizer.update(
+                        event,
+                        isDirectHit: directHit != nil
+                    ) {
+    private func resolvedHover(dockHover: DockHoverEvent?) -> DockHoverEvent? {
+        if let hover = dockHover {
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Anti-pattern to NEVER write (induced failure mode):
+        return AsyncStream { continuation in
+                    let event = self?.resolvedHover(at: CGEvent(source: nil)?.location)
+                    let changedApp = event?.pid != self?.lastHover?.pid
+                    if changedApp {
+    private func resolvedHover(at point: CGPoint?) -> DockHoverEvent? {
+        if let hover = dockHover(at: point) {
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `a5470b29` are properly handled with clean fallback behavior.

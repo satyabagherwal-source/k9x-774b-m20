@@ -3254,3 +3254,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-pablodawson-minimax-h3-360-orbit-lora` | `https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA` | `hf-pabloda` | Multi-dimensional audit evidence | 2026-10-19T13:07:58.645Z |
 | `learn-github-cachix-devenv` | `https://github.com/cachix/devenv` | `ff0d7e76` | Multi-dimensional audit evidence | 2026-10-19T13:08:01.577Z |
 | `learn-github-twostraws-controlroom` | `https://github.com/twostraws/ControlRoom` | `c8c7d4cf` | Multi-dimensional audit evidence | 2026-10-19T13:08:51.656Z |
+| `learn-github-watchexec-watchexec` | `https://github.com/watchexec/watchexec` | `87bd4693` | Multi-dimensional audit evidence | 2026-10-19T13:14:44.781Z |
+| `learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf` | `https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF` | `hf-venasti` | Multi-dimensional audit evidence | 2026-10-19T13:14:51.450Z |
+| `learn-github-jacklandrin-onlyswitch` | `https://github.com/jacklandrin/OnlySwitch` | `72d42b8a` | Multi-dimensional audit evidence | 2026-10-19T13:14:52.399Z |
+| `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `279c26ae` | Multi-dimensional audit evidence | 2026-10-19T13:14:54.492Z |

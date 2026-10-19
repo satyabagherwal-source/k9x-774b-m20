@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T13:08:51.659Z",
-  "total_cycles_completed": 3224,
-  "total_learnings_persisted": 3224,
-  "total_rules_promoted": 2387,
+  "last_updated": "2026-10-19T13:14:54.495Z",
+  "total_cycles_completed": 3228,
+  "total_learnings_persisted": 3228,
+  "total_rules_promoted": 2393,
   "history": [
-    {
-      "timestamp": "2026-10-19T07:21:24.187Z",
-      "repository": "google/embeddinggemma-2",
-      "learningId": "learn-huggingface-google-embeddinggemma-2",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T07:21:32.249Z",
-      "repository": "tangshimin/MuJing",
-      "learningId": "learn-github-tangshimin-mujing",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T07:21:33.883Z",
-      "repository": "chroma-core/chroma",
-      "learningId": "learn-github-chroma-core-chroma",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T07:21:35.009Z",
-      "repository": "restatedev/restate",
-      "learningId": "learn-github-restatedev-restate",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T07:21:35.567Z",
       "repository": "Kong/kubernetes-ingress-controller",
@@ -1403,6 +1375,34 @@
       "repository": "twostraws/ControlRoom",
       "learningId": "learn-github-twostraws-controlroom",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T13:14:44.783Z",
+      "repository": "watchexec/watchexec",
+      "learningId": "learn-github-watchexec-watchexec",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T13:14:51.453Z",
+      "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
+      "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T13:14:52.402Z",
+      "repository": "jacklandrin/OnlySwitch",
+      "learningId": "learn-github-jacklandrin-onlyswitch",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T13:14:54.495Z",
+      "repository": "nolabs-ai/nono",
+      "learningId": "learn-github-nolabs-ai-nono",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
