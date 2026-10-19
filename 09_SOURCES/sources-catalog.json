@@ -1355,8 +1355,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/JEV-35B",
     "sourceVersion": "hf-autotrust-jev-35b",
     "license": "Open-Source",
-    "contentHash": "8e5b6de583a6f513cec0599d23abaf2d31268e9e8e0b0a94b1b327450ba42822",
-    "lastHarvestedAt": "2026-10-17T22:12:37.606Z",
+    "contentHash": "6f37d61c8d2f9d4ba13eabc963b203fc9e2386b6e41b6069d6d64ab99f16b09c",
+    "lastHarvestedAt": "2026-10-19T02:27:40.646Z",
     "learningId": "learn-huggingface-autotrust-jev-35b"
   },
   "hf-openbmb-minicpm-v-4.7-35b-a3b": {
@@ -4878,5 +4878,55 @@
     "contentHash": "948e6556a185bc6d71e4409153e2a692bb6fd9ddbf6446df6dfd54a034ffdb42",
     "lastHarvestedAt": "2026-10-19T02:18:32.964Z",
     "learningId": "learn-github-apache-shardingsphere"
+  },
+  "sharkdp-pastel": {
+    "repository": "sharkdp/pastel",
+    "platform": "github",
+    "sourceUrl": "https://github.com/sharkdp/pastel",
+    "sourceVersion": "01d4252a",
+    "license": "Apache-2.0",
+    "contentHash": "abb3a862f997c20fb031bbd3effeba39bd20b4142377ad3ce5fe1b1dd702a222",
+    "lastHarvestedAt": "2026-10-19T02:27:41.572Z",
+    "learningId": "learn-github-sharkdp-pastel"
+  },
+  "ivpusic-react-native-image-crop-picker": {
+    "repository": "ivpusic/react-native-image-crop-picker",
+    "platform": "github",
+    "sourceUrl": "https://github.com/ivpusic/react-native-image-crop-picker",
+    "sourceVersion": "a18a50d4",
+    "license": "MIT",
+    "contentHash": "86a019bfad1bda345acb4f8b1013cf51508c877a9da0cab97b6056612550c131",
+    "lastHarvestedAt": "2026-10-19T02:27:46.114Z",
+    "learningId": "learn-github-ivpusic-react-native-image-crop-picker"
+  },
+  "encoredev-encore": {
+    "repository": "encoredev/encore",
+    "platform": "github",
+    "sourceUrl": "https://github.com/encoredev/encore",
+    "sourceVersion": "09bb8c19",
+    "license": "MPL-2.0",
+    "contentHash": "591380bca75f8faa0bd8bcf78c0cbe28aa0f7928a6e18f3de2a306e4f65dbc0f",
+    "lastHarvestedAt": "2026-10-19T02:27:48.927Z",
+    "learningId": "learn-github-encoredev-encore"
+  },
+  "rqlite-rqlite": {
+    "repository": "rqlite/rqlite",
+    "platform": "github",
+    "sourceUrl": "https://github.com/rqlite/rqlite",
+    "sourceVersion": "7e35174e",
+    "license": "MIT",
+    "contentHash": "e2cc2d15895615a05a385204806696dfbe54b14f04e7f58451a289dbafd75246",
+    "lastHarvestedAt": "2026-10-19T02:27:53.531Z",
+    "learningId": "learn-github-rqlite-rqlite"
+  },
+  "arco-design-arco-design": {
+    "repository": "arco-design/arco-design",
+    "platform": "github",
+    "sourceUrl": "https://github.com/arco-design/arco-design",
+    "sourceVersion": "e34b8bd2",
+    "license": "MIT",
+    "contentHash": "bd9a692bc061b9b8d81f02cb25ab63980f8be6f0f306bbe04a24392808fc98d5",
+    "lastHarvestedAt": "2026-10-19T02:29:05.549Z",
+    "learningId": "learn-github-arco-design-arco-design"
   }
 }

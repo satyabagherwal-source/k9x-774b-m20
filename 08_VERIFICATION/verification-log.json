@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261017-VH18",
-    "timestamp": "2026-10-17T20:35:13.532Z",
-    "repository": "zai-org/GLM-5.3",
-    "learningId": "learn-huggingface-zai-org-glm-5-3",
-    "contentHash": "68a275a7bb6cdf7d30aae766fb7d36c2b103fce16be55e92f786826a741d58e3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-ZU8Q",
-    "timestamp": "2026-10-17T20:38:37.274Z",
-    "repository": "mudler/locate-anything.cpp-gguf",
-    "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf",
-    "contentHash": "2915f4d55312852b5ba528ca2c1ac141525afa6063eec0e0bba812fe3cc195c1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-3HX5",
-    "timestamp": "2026-10-17T20:41:27.929Z",
-    "repository": "OpenMOSS-Team/MOSS-Image-Base",
-    "learningId": "learn-huggingface-openmoss-team-moss-image-base",
-    "contentHash": "5d181fa2e435923997934691fe624535adf93a7ca70c08ed2cc167b4f3082b24",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-7LSD",
-    "timestamp": "2026-10-17T20:44:39.565Z",
-    "repository": "jialinyyzz/humanizer",
-    "learningId": "learn-huggingface-jialinyyzz-humanizer",
-    "contentHash": "cf5882f57c0768aeee803d0aeb11727fa05c23f2e4b63eaaf8ac0e99da78cb9a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-BNSO",
-    "timestamp": "2026-10-17T20:47:48.792Z",
-    "repository": "autotrust/JEV-27B-VL",
-    "learningId": "learn-huggingface-autotrust-jev-27b-vl",
-    "contentHash": "7f5420ff2c38f5582b9a2c517a0bee1b14c46df576f0e29bdd34ce7ad8618051",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261017-FKF6",
-    "timestamp": "2026-10-17T20:50:51.042Z",
-    "repository": "autotrust/GEV-26B-Decide",
-    "learningId": "learn-huggingface-autotrust-gev-26b-decide",
-    "contentHash": "f53b921c153c4fa8406cec32eff7294fc7a0a1983520b15077b05e8c610a8e5d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261017-K26R",
     "timestamp": "2026-10-17T20:54:20.691Z",
     "repository": "convaiinnovations/laya",
@@ -7492,6 +7402,96 @@
     "contentHash": "8305f9188c8e683d2692ceae5d748a7e330e5fd48f61e48b5d8c06737329cd87",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-WKWY",
+    "timestamp": "2026-10-19T02:27:40.643Z",
+    "repository": "autotrust/JEV-35B",
+    "learningId": "learn-huggingface-autotrust-jev-35b",
+    "contentHash": "6f37d61c8d2f9d4ba13eabc963b203fc9e2386b6e41b6069d6d64ab99f16b09c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-WLMP",
+    "timestamp": "2026-10-19T02:27:41.569Z",
+    "repository": "sharkdp/pastel",
+    "learningId": "learn-github-sharkdp-pastel",
+    "contentHash": "abb3a862f997c20fb031bbd3effeba39bd20b4142377ad3ce5fe1b1dd702a222",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-WP4R",
+    "timestamp": "2026-10-19T02:27:46.107Z",
+    "repository": "ivpusic/react-native-image-crop-picker",
+    "learningId": "learn-github-ivpusic-react-native-image-crop-picker",
+    "contentHash": "86a019bfad1bda345acb4f8b1013cf51508c877a9da0cab97b6056612550c131",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-WRAX",
+    "timestamp": "2026-10-19T02:27:48.921Z",
+    "repository": "encoredev/encore",
+    "learningId": "learn-github-encoredev-encore",
+    "contentHash": "591380bca75f8faa0bd8bcf78c0cbe28aa0f7928a6e18f3de2a306e4f65dbc0f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-WUUR",
+    "timestamp": "2026-10-19T02:27:53.523Z",
+    "repository": "rqlite/rqlite",
+    "learningId": "learn-github-rqlite-rqlite",
+    "contentHash": "e2cc2d15895615a05a385204806696dfbe54b14f04e7f58451a289dbafd75246",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-YEF9",
+    "timestamp": "2026-10-19T02:29:05.541Z",
+    "repository": "arco-design/arco-design",
+    "learningId": "learn-github-arco-design-arco-design",
+    "contentHash": "bd9a692bc061b9b8d81f02cb25ab63980f8be6f0f306bbe04a24392808fc98d5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

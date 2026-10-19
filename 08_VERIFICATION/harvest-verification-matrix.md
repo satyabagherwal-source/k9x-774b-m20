@@ -2794,3 +2794,9 @@
 | `CYCLE-20261019-KQL1` | `2026-10-19T02:18:28.117Z` | `infracost/infracost` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2017` | Yes (`cfcdc183...`) |
 | `CYCLE-20261019-KUBM` | `2026-10-19T02:18:32.962Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2018` | Yes (`948e6556...`) |
 | `CYCLE-20261019-LXFP` | `2026-10-19T02:19:23.653Z` | `OpenMOSS-Team/MOSS-Image-SFT` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2019, Rule 2020` | Yes (`8305f918...`) |
+| `CYCLE-20261019-WKWY` | `2026-10-19T02:27:40.643Z` | `autotrust/JEV-35B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md` | Yes (`6f37d61c...`) |
+| `CYCLE-20261019-WLMP` | `2026-10-19T02:27:41.569Z` | `sharkdp/pastel` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/sharkdp-pastel-learnings.md` | Yes (`abb3a862...`) |
+| `CYCLE-20261019-WP4R` | `2026-10-19T02:27:46.107Z` | `ivpusic/react-native-image-crop-picker` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2021` | Yes (`86a019bf...`) |
+| `CYCLE-20261019-WRAX` | `2026-10-19T02:27:48.921Z` | `encoredev/encore` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2022` | Yes (`591380bc...`) |
+| `CYCLE-20261019-WUUR` | `2026-10-19T02:27:53.523Z` | `rqlite/rqlite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2023` | Yes (`e2cc2d15...`) |
+| `CYCLE-20261019-YEF9` | `2026-10-19T02:29:05.541Z` | `arco-design/arco-design` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2024, Rule 2025, Rule 2026` | Yes (`bd9a692b...`) |

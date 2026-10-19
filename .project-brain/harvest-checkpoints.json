@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T02:19:23.664Z",
+  "last_updated": "2026-10-19T02:29:05.555Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2106,14 +2106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-autotrust-jev-35b",
-      "content_hash": "8e5b6de583a6f513cec0599d23abaf2d31268e9e8e0b0a94b1b327450ba42822",
-      "verified_at": "2026-10-17T22:12:37.609Z",
+      "content_hash": "6f37d61c8d2f9d4ba13eabc963b203fc9e2386b6e41b6069d6d64ab99f16b09c",
+      "verified_at": "2026-10-19T02:27:40.651Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T22:12:37.609Z"
+      "last_updated": "2026-10-19T02:27:40.651Z"
     },
     "openbmb/MiniCPM-V-4.7-35B-A3B": {
       "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
@@ -7432,6 +7432,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T02:18:32.967Z"
+    },
+    "sharkdp/pastel": {
+      "repository": "sharkdp/pastel",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-sharkdp-pastel",
+      "content_hash": "abb3a862f997c20fb031bbd3effeba39bd20b4142377ad3ce5fe1b1dd702a222",
+      "verified_at": "2026-10-19T02:27:41.579Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T02:27:41.579Z"
+    },
+    "ivpusic/react-native-image-crop-picker": {
+      "repository": "ivpusic/react-native-image-crop-picker",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-ivpusic-react-native-image-crop-picker",
+      "content_hash": "86a019bfad1bda345acb4f8b1013cf51508c877a9da0cab97b6056612550c131",
+      "verified_at": "2026-10-19T02:27:46.119Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T02:27:46.119Z"
+    },
+    "encoredev/encore": {
+      "repository": "encoredev/encore",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-encoredev-encore",
+      "content_hash": "591380bca75f8faa0bd8bcf78c0cbe28aa0f7928a6e18f3de2a306e4f65dbc0f",
+      "verified_at": "2026-10-19T02:27:48.932Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T02:27:48.932Z"
+    },
+    "rqlite/rqlite": {
+      "repository": "rqlite/rqlite",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-rqlite-rqlite",
+      "content_hash": "e2cc2d15895615a05a385204806696dfbe54b14f04e7f58451a289dbafd75246",
+      "verified_at": "2026-10-19T02:27:53.536Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T02:27:53.536Z"
+    },
+    "arco-design/arco-design": {
+      "repository": "arco-design/arco-design",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-arco-design-arco-design",
+      "content_hash": "bd9a692bc061b9b8d81f02cb25ab63980f8be6f0f306bbe04a24392808fc98d5",
+      "verified_at": "2026-10-19T02:29:05.554Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T02:29:05.554Z"
     }
   },
   "repos": {

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T02:19:23.631Z",
-  "total_verified_learnings": 509,
+  "last_updated": "2026-10-19T02:29:05.502Z",
+  "total_verified_learnings": 514,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -2002,22 +2002,45 @@
     "learn-github-arco-design-arco-design": {
       "learning_id": "learn-github-arco-design-arco-design",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "arco-design-arco-design",
+      "source": "arco-design/arco-design",
+      "repository": "arco-design/arco-design",
       "slug": "arco-design-arco-design",
       "platform": "github",
       "source_url": "https://github.com/arco-design/arco-design",
-      "source_version": "HEAD",
-      "content_hash": "6c213b65bab696ca360a87d61446aca358d806d5963adf197063d24852c56d3f",
+      "source_version": "e34b8bd2",
+      "content_hash": "bd9a692bc061b9b8d81f02cb25ab63980f8be6f0f306bbe04a24392808fc98d5",
       "dossier_path": "07_PROJECT_LEARNING/arco-design-arco-design-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/arco-design-arco-design-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2024,
+          "title": "Dimension-Observer State Idempotency Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2025,
+          "title": "Viewport-Anchored Layout Mutation Decoupling Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2026,
+          "title": "Presumptive Fallback Prevention Rule for Dual-Controlled State",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.890Z"
+      "verified_at": "2026-10-19T02:29:05.493Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-arco-design-arco-design-vue": {
       "learning_id": "learn-github-arco-design-arco-design-vue",
@@ -6843,22 +6866,35 @@
     "learn-github-encoredev-encore": {
       "learning_id": "learn-github-encoredev-encore",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "encoredev-encore",
+      "source": "encoredev/encore",
+      "repository": "encoredev/encore",
       "slug": "encoredev-encore",
       "platform": "github",
       "source_url": "https://github.com/encoredev/encore",
-      "source_version": "HEAD",
-      "content_hash": "66e038131f58c9996f16fdc00fd7942fdb790161127009c1cebca00fe4865cb1",
+      "source_version": "09bb8c19",
+      "content_hash": "591380bca75f8faa0bd8bcf78c0cbe28aa0f7928a6e18f3de2a306e4f65dbc0f",
       "dossier_path": "07_PROJECT_LEARNING/encoredev-encore-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/encoredev-encore-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2022,
+          "title": "codegen: fix test builds of files with secrets",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:00.795Z"
+      "verified_at": "2026-10-19T02:27:48.875Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-envoyproxy-envoy": {
       "learning_id": "learn-github-envoyproxy-envoy",
@@ -22740,22 +22776,35 @@
     "learn-github-ivpusic-react-native-image-crop-picker": {
       "learning_id": "learn-github-ivpusic-react-native-image-crop-picker",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "ivpusic-react-native-image-crop-picker",
+      "source": "ivpusic/react-native-image-crop-picker",
+      "repository": "ivpusic/react-native-image-crop-picker",
       "slug": "ivpusic-react-native-image-crop-picker",
       "platform": "github",
       "source_url": "https://github.com/ivpusic/react-native-image-crop-picker",
-      "source_version": "HEAD",
-      "content_hash": "c6285b64a3d9c6d58ede59ba7f45571cba78083df2089a7cd0fd4bb9db0dbc0f",
+      "source_version": "a18a50d4",
+      "content_hash": "86a019bfad1bda345acb4f8b1013cf51508c877a9da0cab97b6056612550c131",
       "dossier_path": "07_PROJECT_LEARNING/ivpusic-react-native-image-crop-picker-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ivpusic-react-native-image-crop-picker-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2021,
+          "title": "return creationDate for videos picked from gallery (#2243)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:01.637Z"
+      "verified_at": "2026-10-19T02:27:46.062Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-iziz-libphonenumber-ios": {
       "learning_id": "learn-github-iziz-libphonenumber-ios",
@@ -32348,22 +32397,35 @@
     "learn-github-rqlite-rqlite": {
       "learning_id": "learn-github-rqlite-rqlite",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "rqlite-rqlite",
+      "source": "rqlite/rqlite",
+      "repository": "rqlite/rqlite",
       "slug": "rqlite-rqlite",
       "platform": "github",
       "source_url": "https://github.com/rqlite/rqlite",
-      "source_version": "HEAD",
-      "content_hash": "18931809a443b05e271dc1fb8286b37d54c0c711b78b7ef29c65256d53fc2a32",
+      "source_version": "7e35174e",
+      "content_hash": "e2cc2d15895615a05a385204806696dfbe54b14f04e7f58451a289dbafd75246",
       "dossier_path": "07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2023,
+          "title": "Merge pull request #2972 from rqlite/cdc-no-commit-timestamp-regression",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.312Z"
+      "verified_at": "2026-10-19T02:27:53.477Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-rsuite-rsuite": {
       "learning_id": "learn-github-rsuite-rsuite",
@@ -33417,22 +33479,29 @@
     "learn-github-sharkdp-pastel": {
       "learning_id": "learn-github-sharkdp-pastel",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "sharkdp-pastel",
+      "source": "sharkdp/pastel",
+      "repository": "sharkdp/pastel",
       "slug": "sharkdp-pastel",
       "platform": "github",
       "source_url": "https://github.com/sharkdp/pastel",
-      "source_version": "HEAD",
-      "content_hash": "9adfdce0665d363e9c9ceafd44990d331701bcf4ec7a047bd12bdd630a8a0be0",
+      "source_version": "01d4252a",
+      "content_hash": "abb3a862f997c20fb031bbd3effeba39bd20b4142377ad3ce5fe1b1dd702a222",
       "dossier_path": "07_PROJECT_LEARNING/sharkdp-pastel-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sharkdp-pastel-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.474Z"
+      "verified_at": "2026-10-19T02:27:41.512Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-shifthackz-stable-diffusion-kmp": {
       "learning_id": "learn-github-shifthackz-stable-diffusion-kmp",
@@ -46795,7 +46864,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/JEV-35B",
       "source_version": "hf-autotrust-jev-35b",
-      "content_hash": "8e5b6de583a6f513cec0599d23abaf2d31268e9e8e0b0a94b1b327450ba42822",
+      "content_hash": "6f37d61c8d2f9d4ba13eabc963b203fc9e2386b6e41b6069d6d64ab99f16b09c",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md",
       "promoted_rules": [],
@@ -46804,7 +46873,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-17T22:12:37.561Z",
+      "verified_at": "2026-10-19T02:27:40.581Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -74021,6 +74090,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T02:19:23.626Z"
+    },
+    "rule-2021": {
+      "learning_id": "rule-2021",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2021,
+      "title": "return creationDate for videos picked from gallery (#2243)",
+      "source_url": "https://github.com/ivpusic/react-native-image-crop-picker",
+      "source_version": "a18a50d4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T02:27:46.062Z"
+    },
+    "rule-2022": {
+      "learning_id": "rule-2022",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2022,
+      "title": "codegen: fix test builds of files with secrets",
+      "source_url": "https://github.com/encoredev/encore",
+      "source_version": "09bb8c19",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T02:27:48.875Z"
+    },
+    "rule-2023": {
+      "learning_id": "rule-2023",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2023,
+      "title": "Merge pull request #2972 from rqlite/cdc-no-commit-timestamp-regression",
+      "source_url": "https://github.com/rqlite/rqlite",
+      "source_version": "7e35174e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T02:27:53.477Z"
+    },
+    "rule-2024": {
+      "learning_id": "rule-2024",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2024,
+      "title": "Dimension-Observer State Idempotency Rule",
+      "source_url": "https://github.com/arco-design/arco-design",
+      "source_version": "e34b8bd2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T02:29:05.493Z"
+    },
+    "rule-2025": {
+      "learning_id": "rule-2025",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2025,
+      "title": "Viewport-Anchored Layout Mutation Decoupling Rule",
+      "source_url": "https://github.com/arco-design/arco-design",
+      "source_version": "e34b8bd2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T02:29:05.493Z"
+    },
+    "rule-2026": {
+      "learning_id": "rule-2026",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2026,
+      "title": "Presumptive Fallback Prevention Rule for Dual-Controlled State",
+      "source_url": "https://github.com/arco-design/arco-design",
+      "source_version": "e34b8bd2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T02:29:05.493Z"
     }
   },
   "aliases": {

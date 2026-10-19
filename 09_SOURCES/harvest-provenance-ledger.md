@@ -2801,3 +2801,9 @@ Every entry in this ledger must capture:
 | `learn-github-infracost-infracost` | `https://github.com/infracost/infracost` | `8854f1ed` | Multi-dimensional audit evidence | 2026-10-19T02:18:28.122Z |
 | `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `319a369d` | Multi-dimensional audit evidence | 2026-10-19T02:18:32.964Z |
 | `learn-huggingface-openmoss-team-moss-image-sft` | `https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT` | `hf-openmos` | Multi-dimensional audit evidence | 2026-10-19T02:19:23.660Z |
+| `learn-huggingface-autotrust-jev-35b` | `https://huggingface.co/autotrust/JEV-35B` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-19T02:27:40.646Z |
+| `learn-github-sharkdp-pastel` | `https://github.com/sharkdp/pastel` | `01d4252a` | Multi-dimensional audit evidence | 2026-10-19T02:27:41.572Z |
+| `learn-github-ivpusic-react-native-image-crop-picker` | `https://github.com/ivpusic/react-native-image-crop-picker` | `a18a50d4` | Multi-dimensional audit evidence | 2026-10-19T02:27:46.114Z |
+| `learn-github-encoredev-encore` | `https://github.com/encoredev/encore` | `09bb8c19` | Multi-dimensional audit evidence | 2026-10-19T02:27:48.927Z |
+| `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `7e35174e` | Multi-dimensional audit evidence | 2026-10-19T02:27:53.531Z |
+| `learn-github-arco-design-arco-design` | `https://github.com/arco-design/arco-design` | `e34b8bd2` | Multi-dimensional audit evidence | 2026-10-19T02:29:05.549Z |

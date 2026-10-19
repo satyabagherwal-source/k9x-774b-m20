@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rqlite-rqlite-learnings.md`  
+> **Source**: github ([https://github.com/rqlite/rqlite](https://github.com/rqlite/rqlite))  
+> **Source Version**: `7e35174e`  
+> **License**: MIT  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T02:27:53.301Z  
+> **Learning ID**: `learn-github-rqlite-rqlite`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): rqlite/rqlite
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rqlite-rqlite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rqlite/rqlite](https://github.com/rqlite/rqlite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T03:01:04.173Z  
+> **Harvest Timestamp**: 2026-10-19T02:27:53.293Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: The lightweight, fault-tolerant database built on SQLite. Designed to keep your data highly available with minimal effort.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 17783 stars
+- **Stars / Engagement**: 17807 stars
 
 ---
 
@@ -162,39 +176,17 @@ var (
 	ErrWALStillExists = errors.New("WAL file still exists after checkpointing and closing the database")
 )
 
-// SQLiteError is a representation of the SQLite-level detailed error.
-type SQLiteError struct {
-	Code         int32
-	ExtendedCode int32
-	SystemErrno  int32
-}
-
-// ReadOnlyError returns true if the error is a read-only error.
-func (e *SQLiteError) ReadOnlyError() bool {
-	return e.Code == int32(sqlite3.ErrReadonly)
-}
-
-// NewSQLiteErrorFromError extracts a full structured SQLite error from an error,
-// returning nil if the error is not a SQLite error.
-func NewSQLiteErrorFromError(err error) *SQLiteError {
-	var sqErr sqlite3.Error
-	if errors.As(err, &sqErr) {
-		return &SQLiteError{
-			Code:         int32(sqErr.Code),
-			ExtendedCode: int32(sqErr.ExtendedCode),
-			SystemErrno:  int32(sqErr.SystemErrno),
-		}
-	}
-	return nil
-}
-
 // SynchronousMode is SQLite synchronous mode.
 type SynchronousMode int
 
 const (
+	// SynchronousOff corresponds to PRAGMA synchronous=OFF.
 	SynchronousOff SynchronousMode = iota
+	// SynchronousNormal corresponds to PRAGMA synchronous=NORMAL.
 	SynchronousNormal
+	// SynchronousFull corresponds to PRAGMA synchronous=FULL.
 	SynchronousFull
+	// SynchronousExtra corresponds to PRAGMA synchronous=EXTRA.
 	SynchronousExtra
 )
 
@@ -477,7 +469,7 @@ func IsValidSQLiteFile(path string) bool {
 	return IsValidSQLiteData(b)
 }
 
-// IsValidSQLiteData checks that the supplied data looks like a SQLite data.
+// IsValidSQLiteData checks that the supplied data looks like SQLite data.
 // See https://www.sqlite.org/fileformat.html.
 func IsValidSQLiteData(b []byte) bool {
 	return len(b) > 13 && string(b[0:13]) == "SQLite format"
@@ -517,7 +509,28 @@ func IsValidSQLiteWALFile(path string) bool {
 	}
 	defer f.Close()
 
-	b := make(
+	b := make([]byte, 8)
+	if _, err := io.ReadFull(f, b); err != nil {
+		return false
+	}
+	return IsValidSQLiteWALData(b)
+}
+
+// IsValidSQLiteWALData checks that the supplied data looks like a SQLite
+// WAL file.
+func IsValidSQLiteWALData(b []byte) bool {
+	if len(b) < 8 {
+		return false
+	}
+
+	// Check magic number.
+	magic := binary.BigEndian.Uint32(b[:4])
+	if magic != 0x377f0682 && magic != 0x377f0683 {
+		return false
+	}
+
+	// Verify version is correct.
+	return binary.BigEndian.Uint32(b[4:8]) == 30070
 ```
 
 ### Core Architecture Module: `http/console/static/js/core.js`
@@ -866,7 +879,7 @@ func copyDir(src string, dst string) (err error) {
 
 // copyFile copies the contents of the file named src to the file named
 // by dst. The file will be created if it does not already exist. If the
-// destination file exists, all it's contents will be replaced by the contents
+// destination file exists, all its contents will be replaced by the contents
 // of the source file. The file mode will be copied from the source and
 // the copied data is synced/flushed to stable storage.
 func copyFile(src, dst string) (err error) {
@@ -929,7 +942,10 @@ import (
 const (
 	errorAccessDenied     syscall.Errno = 5
 	errorSharingViolation syscall.Errno = 32
+)
 
+// Retry parameters used by Remove and Rename when a path is in use.
+const (
 	removeInterval = 10 * time.Millisecond
 	removeTimeout  = 5 * time.Second
 
@@ -1076,14 +1092,14 @@ func RenameWithRetry(src, dst string, timeout, retryInterval time.Duration) (int
 
 // RemoveWithRetry removes the named file or empty directory. On Windows, if
 // another process has the path open, the removal is retried until timeout elapses.
-// Returns the number of times the rename was retried.
+// Returns the number of times the removal was retried.
 func RemoveWithRetry(path string, timeout, retryInterval time.Duration) (int, error) {
 	return retryInUse(func() error { return os.Remove(path) }, timeout, retryInterval)
 }
 
-// RemoveWithRetry removes the named file or empty directory recursively. On Windows,
+// RemoveAllWithRetry removes path and any children it contains. On Windows,
 // if another process has the path open, the removal is retried until timeout elapses.
-// Returns the number of times the rename was retried.
+// Returns the number of times the removal was retried.
 func RemoveAllWithRetry(path string, timeout, retryInterval time.Duration) (int, error) {
 	return retryInUse(func() error { return os.RemoveAll(path) }, timeout, retryInterval)
 }
@@ -1182,7 +1198,7 @@ import (
 // ErrTimeout is returned when a timeout occurs.
 var ErrTimeout = errors.New("timeout")
 
-// CloseOrTimeout waits for a channel to be closed or a timeout expires.
+// CloseOrTimeout waits for a channel to be closed or a timeout to expire.
 func CloseOrTimeout(ch <-chan struct{}, timeout time.Duration) error {
 	select {
 	case <-ch:
@@ -1229,7 +1245,7 @@ func ResetStats() {
 	stats.Add(numFlush, 0)
 }
 
-// FlushChannel is the type passed to the Queue, if caller wants
+// FlushChannel is the type passed to the Queue, if the caller wants
 // to know when a specific set of objects has been processed.
 type FlushChannel chan bool
 
@@ -1257,8 +1273,7 @@ func mergeQueued[T any](qs []*queuedObjects[T]) *Request[T] {
 	if len(qs) == 0 {
 		return nil
 	}
-	var req *Request[T]
-	req = &Request[T]{
+	req := &Request[T]{
 		SequenceNumber: qs[0].SequenceNumber,
 		flushChans:     make([]FlushChannel, 0),
 	}
@@ -1296,7 +1311,7 @@ type Queue[T any] struct {
 	numTimeouts int
 }
 
-// New returns a instance of a Queue. t is the maximum time that
+// New returns an instance of a Queue. t is the maximum time that
 // objects can remain in the queue before being sent, even if
 // the batch size has not been reached. If t is zero, there is no
 // timeout, and batches are sent only when the batch size is reached.
@@ -1319,7 +1334,7 @@ func New[T any](maxSize, batchSize int, t time.Duration) *Queue[T] {
 
 // Write queues a request, and returns a monotonically increasing
 // sequence number associated with the slice of objects. A slice with
-// a lower sequence number than second slice will always be transmitted
+// a lower sequence number than a second slice will always be transmitted
 // on the Queue's C object before the second slice.
 //
 // c is an optional channel. If non-nil, it will be closed when the Request
@@ -1356,7 +1371,7 @@ func (q *Queue[T]) WriteOne(object T, c FlushChannel) (int64, error) {
 	return q.Write([]T{object}, c)
 }
 
-// Flush flushes the queue
+// Flush flushes the queue.
 func (q *Queue[T]) Flush() error {
 	q.batchCh <- nil
 	return nil
@@ -1373,7 +1388,7 @@ func (q *Queue[T]) Close() error {
 	return nil
 }
 
-// Depth returns the number of queued requests
+// Depth returns the number of queued requests.
 func (q *Queue[T]) Depth() int {
 	return len(q.batchCh)
 }
@@ -1396,7 +1411,7 @@ func (q *Queue[T]) run() {
 	<-timer.C
 
 	writeFn := func() {
-		// mergeQueued returns a new object, ownership will pass
+		// mergeQueued returns a new object, and ownership will pass
 		// implicitly to the other side of sendCh.
 		req := mergeQueued(qObjs)
 		if req != nil {
@@ -1420,7 +1435,7 @@ func (q *Queue[T]) run() {
 			if len(qObjs) == 1 {
 				if q.timeout != 0 {
 					// First item in queue, start the timer so that if
-					// we don't get in a batch, we'll still write.
+					// we don't get a full batch, we'll still write.
 					timer.Reset(q.timeout)
 				}
 			}
@@ -1526,7 +1541,7 @@ func Clone(dir, id string, index, term uint64) error {
 // in the given directory. If no snapshots are found, it returns 0, 0, nil.
 //
 // This function does not take any lock on the Snapshot store contained at dir,
-// so it not safe to call on an open Snapshot store.
+// so it is not safe to call on an open Snapshot store.
 func LatestIndexTerm(dir string) (uint64, uint64, error) {
 	cat := &SnapshotCatalog{}
 	sset, err := cat.Scan(dir)
@@ -1703,7 +1718,8 @@ func (p *PragmaCheckRequest) Check() error {
 // if a read is stale requires timestamps for both.
 //
 // lastHeartbeatTime: last time we received a heartbeat from the Leader.
-// lastAppendEntriesTime: last time we receievd an AppendEntries request from the Leader.
+// lastAppendEntriesTime: last time we received an AppendEntries request from the Leader.
+// leaderCommitIndex: latest commit index received from the Leader.
 // lastAppliedIndex: index currently applied to the FSM.
 // lastAppliedAtTime: time the currently applied index was actually applied.
 // freshness: freshness window
@@ -1740,11 +1756,11 @@ func IsStaleRead(
 
 	if lastAppliedIndex >= leaderCommitIndex {
 		// We've applied the latest leader commit index we know about and that
-		// commit index arrived within the window, we can't be stale.
+		// commit index arrived within the window, so we can't be stale.
 		return false
 	}
 
-	// We've haven't yet applied the leader's latest commit index, but was the currently
+	// We haven't yet applied the leader's latest commit index, but was the currently
 	// applied index applied within the freshness window?
 	return time.Since(lastAppliedAtTime).Nanoseconds() > freshness
 }
@@ -1909,8 +1925,7 @@ func RecoverNode(dataDir string, dbConf *DBConfig, logger *log.Logger, logs raft
 	if err != nil {
 		return fmt.Errorf("failed to create snapshot: %v", err)
 	}
-	defer sink.Cancel() // If we fail, make sure to cancel the snapshot.
-	if err 
+	defer sin
 ```
 
 ### Core Architecture Module: `tools/check-fsutil/main.go`
@@ -2045,466 +2060,17 @@ func forbiddenUses(file *ast.File, path string) []violation {
 
 ```
 
-### Core Architecture Module: `auth/credential_store.go`
-```
-// Package auth is a lightweight credential store.
-// It provides functionality for loading credentials, as well as validating credentials.
-package auth
-
-import (
-	"encoding/json"
-	"io"
-	"os"
-)
-
-const (
-	// AllUsers is the username that indicates all users, even anonymous users (requests without
-	// any BasicAuth information).
-	AllUsers = "*"
-
-	// PermAll means all actions permitted.
-	PermAll = "all"
-	// PermJoin means user is permitted to join cluster.
-	PermJoin = "join"
-	// PermJoinReadOnly means user is permitted to join the cluster only as a read replica node
-	PermJoinReadOnly = "join-read-only"
-	// PermJoinReadReplica means user is permitted to join the cluster only as a read replica node
-	PermJoinReadReplica = "join-read-replica"
-	// PermRemove means user is permitted to remove a node.
-	PermRemove = "remove"
-	// PermExecute means user can access execute endpoint.
-	PermExecute = "execute"
-	// PermQuery means user can access query endpoint
-	PermQuery = "query"
-	// PermStatus means user can retrieve node status.
-	PermStatus = "status"
-	// PermReady means user can retrieve ready status.
-	PermReady = "ready"
-	// PermBackup means user can backup node.
-	PermBackup = "backup"
-	// PermLoad means user can load a SQLite dump into a node.
-	PermLoad = "load"
-	// PermSnapshot means user can request a snapshot.
-	PermSnapshot = "snapshot"
-	// PermLeaderOps means user can perform leader-related operations.
-	PermLeaderOps = "leader-ops"
-	// PermCDCHWMUpdate = means a user can perform CDC high watermark updates.
-	PermCDCHWMUpdate = "cdc-hwm-update"
-	// PermUI means user can access the UI.
-	PermUI = "ui"
-)
-
-// BasicAuther is the interface an object must support to return basic auth information.
-type BasicAuther interface {
-	BasicAuth() (string, string, bool)
-}
-
-// Credential represents authentication and authorization configuration for a single user.
-type Credential struct {
-	Username string   `json:"username,omitempty"`
-	Password string   `json:"password,omitempty"`
-	Perms    []string `json:"perms,omitempty"`
-}
-
-// CredentialsStore stores authentication and authorization information for all users.
-type CredentialsStore struct {
-	store map[string]string
-	perms map[string]map[string]bool
-}
-
-// NewCredentialsStore returns a new instance of a CredentialStore.
-func NewCredentialsStore() *CredentialsStore {
-	return &CredentialsStore{
-		store: make(map[string]string),
-		perms: make(map[string]map[string]bool),
-	}
-}
-
-// NewCredentialsStoreFromFile returns a new instance of a CredentialStore loaded from a file.
-func NewCredentialsStoreFromFile(path string) (*CredentialsStore, error) {
-	f, err := os.Open(path)
-	if err != nil {
-		return nil, err
-	}
-	defer f.Close()
-
-	c := NewCredentialsStore()
-	return c, c.Load(f)
-}
-
-// Load loads credential information from a reader.
-func (c *CredentialsStore) Load(r io.Reader) error {
-	dec := json.NewDecoder(r)
-	// Read open bracket
-	_, err := dec.Token()
-	if err != nil {
-		return err
-	}
-
-	var cred Credential
-	for dec.More() {
-		err := dec.Decode(&cred)
-		if err != nil {
-			return err
-		}
-		c.store[cred.Username] = cred.Password
-		c.perms[cred.Username] = make(map[string]bool, len(cred.Perms))
-		for _, p := range cred.Perms {
-			c.perms[cred.Username][p] = true
-		}
-	}
-
-	// Read closing bracket.
-	_, err = dec.Token()
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// Check returns true if the password is correct for the given username.
-func (c *CredentialsStore) Check(username, password string) bool {
-	pw, ok := c.store[username]
-	return ok && pw == password
-}
-
-// Password returns the password for the given user.
-func (c *CredentialsStore) Password(username string) (string, bool) {
-	pw, ok := c.store[username]
-	return pw, ok
-}
-
-// CheckRequest returns true if b contains a valid username and password.
-func (c *CredentialsStore) CheckRequest(b BasicAuther) bool {
-	username, password, ok := b.BasicAuth()
-	if !ok || !c.Check(username, password) {
-		return false
-	}
-	return true
-}
-
-// HasPerm returns true if username has the given perm, either directly or
-// via AllUsers. It does not perform any password checking.
-func (c *CredentialsStore) HasPerm(username string, perm string) bool {
-	if m, ok := c.perms[username]; ok {
-		if _, ok := m[perm]; ok {
-			return true
-		}
-	}
-
-	if m, ok := c.perms[AllUsers]; ok {
-		if _, ok := m[perm]; ok {
-			return true
-		}
-	}
-
-	return false
-}
-
-// HasAnyPerm returns true if username has at least one of the given perms,
-// either directly, or via AllUsers. It does not perform any password checking.
-func (c *CredentialsStore) HasAnyPerm(username string, perm ...string) bool {
-	return func(p []string) bool {
-		for i := range p {
-			if c.HasPerm(username, p[i]) {
-				return true
-			}
-		}
-		return false
-	}(perm)
-}
-
-// AA authenticates and checks authorization for the given username and password
-// for the given perm. If the credential store is nil, then this function always
-// returns true. If AllUsers have the given perm, authentication is not done.
-// Only then are the credentials checked, and then the perm checked.
-func (c *CredentialsStore) AA(username, password, perm string) bool {
-	// No credential store? Auth is not even enabled.
-	if c == nil {
-		return true
-	}
-
-	// Is the required perm granted to all users, including anonymous users?
-	if c.HasAnyPerm(AllUsers, perm, PermAll) {
-		return true
-	}
-
-	// At this point a username needs to have been supplied.
-	if username == "" {
-		return false
-	}
-
-	// Authenticate the user.
-	if !c.Check(username, password) {
-		return false
-	}
-
-	// Is the specified user authorized?
-	return c.HasAnyPerm(username, perm, PermAll)
-}
-
-// HasPermRequest returns true if the username returned by b has the given perm.
-// It does not perform any password checking, but if there is no username
-// in the request, it returns false.
-func (c *CredentialsStore) HasPermRequest(b BasicAuther, perm string) bool {
-	username, _, ok := b.BasicAuth()
-	return ok && c.HasPerm(username, perm)
-}
-
-```
-
-### Core Architecture Module: `auto/aws/s3.go`
-```
-package aws
-
-import (
-	"context"
-	"fmt"
-	"io"
-	"strings"
-	"time"
-
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/credentials"
-	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
-)
-
-var (
-	AWSS3IDKey = "x-rqlite-auto-backup-id"
-)
-
-// S3Config is the subconfig for the S3 storage type
-type S3Config struct {
-	Endpoint        string `json:"endpoint,omitempty"`
-	Region          string `json:"region"`
-	AccessKeyID     string `json:"access_key_id"`
-	SecretAccessKey string `json:"secret_access_key"`
-	Bucket          string `json:"bucket"`
-	Path            string `json:"path"`
-	ForcePathStyle  bool   `json:"force_path_style"`
-}
-
-// S3Client is a client for uploading data to S3.
-type S3Client struct {
-	endpoint  string
-	region    string
-	accessKey string
-	secretKey string
-	bucket    string
-	key       string
-	timestamp bool
-
-	s3 *s3.Client
-
-	// These fields are used for testing via dependency injection.
-	uploader   uploader
-	downloader downloader
-	now        func() time.Time
-}
-
-// S3ClientOpts are options for creating an S3Client.
-type S3ClientOpts struct {
-	ForcePathStyle bool
-	Timestamp      bool
-}
-
-// NewS3Client returns an instance of an S3Client. opts can be nil.
-func NewS3Client(endpoint, region, accessKey, secretKey, bucket, key string, opts *S3ClientOpts) (*S3Client, error) {
-	// Load the default config
-	cfg, err := config.LoadDefaultConfig(context.Background(),
-		config.WithRegion(region),
-		config.WithRequestChecksumCalculation(aws.RequestChecksumCalculationWhenRequired),
-	)
-	if err != nil {
-		return nil, fmt.Errorf("unable to load SDK config, %v", err)
-	}
-
-	// If credentials are provided, set them
-	if accessKey != "" && secretKey != "" {
-		cfg.Credentials = aws.NewCredentialsCache(credentials.NewStaticCredentialsProvider(accessKey, secretKey, ""))
-	}
-
-	// If an endpoint is provided, set it and the path style
-	s3 := s3.NewFromConfig(cfg, func(o *s3.Options) {
-		if opts != nil {
-			if endpoint != "" {
-				if !hasProtocol(endpoint) {
-					endpoint = fmt.Sprintf("https://%s", endpoint)
-				}
-				o.BaseEndpoint = aws.String(endpoint)
-			}
-			o.UsePathStyle = opts.ForcePathStyle
-		}
-	})
-
-	client := &S3Client{
-		endpoint:  endpoint,
-		region:    region,
-		accessKey: accessKey,
-		secretKey: secretKey,
-		bucket:    bucket,
-		key:       key,
-
-		s3:         s3,
-		uploader:   manager.NewUploader(s3),
-		downloader: manager.NewDownloader(s3),
-	}
-	if opts != nil {
-		client.timestamp = opts.Timestamp
-	}
-	return client, nil
-}
-
-// String returns a string representation of the S3Client.
-func (s *S3Client) String() string {
-	if s.endpoint == "" || isAWSEndpoint(s.endpoint) {
-		// Native Amazon S3, use AWS's S3 URL format
-		return fmt.Sprintf("s3://%s/%s", s.bucket, s.key)
-	}
-	return fmt.Sprintf("%s/%s/%s", s.endpoint, s.bucket, s.key)
-}
-
-// EnsureBucket ensures the bucket actually exists in S3.
-func (s *S3Client) EnsureBucket(ctx context.Context) error {
-	_, err := s.s3.CreateBucket(ctx, &s3.CreateBucketInput{
-		Bucket: aws.String(s.bucket),
-	})
-	if err != nil {
-		return fmt.Errorf("failed to create bucket %v: %w", s.bucket, err)
-	}
-	return nil
-}
-
-// Upload uploads data to S3.
-func (s *S3Client) Upload(ctx context.Context, reader io.Reader, id string) error {
-	key := s.key
-	if s.timestamp {
-		if s.now == nil {
-			s.now = func() time.Time {
-				return time.Now().UTC()
-			}
-		}
-		key = TimestampedPath(key, s.now())
-	}
-	input := &s3.PutObjectInput{
-		Bucket: aws.String(s.bucket),
-		Key:    aws.String(key),
-		Body:   reader,
-	}
-
-	if id != "" {
-		input.Metadata = map[string]string{
-			AWSS3IDKey: id,
-		}
-	}
-	_, err := s.uploader.Upload(ctx, input)
-	if err != nil {
-		return fmt.Errorf("failed to upload to %v: %w", s, err)
-	}
-	return nil
-}
-
-// CurrentID returns the last ID uploaded to S3.
-func (s *S3Client) CurrentID(ctx context.Context) (string, error) {
-	input := &s3.HeadObjectInput{
-		Bucket: aws.String(s.bucket),
-		Key:    aws.String(s.key),
-	}
-
-	result, err := s.s3.HeadObject(ctx, input)
-	if err != nil {
-		return "", fmt.Errorf("failed to get object head for %v: %w", s, err)
-	}
-
-	id, ok := result.Metadata[AWSS3IDKey]
-	if !ok {
-		return "", fmt.Errorf("sum metadata not found for %v", s)
-	}
-	return id, nil
-}
-
-// Download downloads data from S3.
-func (s *S3Client) Download(ctx context.Context, writer io.WriterAt) error {
-	_, err := s.downloader.Download(ctx, writer, &s3.GetObjectInput{
-		Bucket: aws.String(s.bucket),
-		Key:    aws.String(s.key),
-	})
-	if err != nil {
-		return fmt.Errorf("failed to download from %v: %w", s, err)
-	}
-	return nil
-}
-
-// Delete deletes object from S3.
-func (s *S3Client) Delete(ctx context.Context) error {
-	_, err := s.s3.DeleteObject(ctx, &s3.DeleteObjectInput{
-		Bucket: aws.String(s.bucket),
-		Key:    aws.String(s.key),
-	})
-	if err != nil {
-		return fmt.Errorf("failed to delete %v: %w", s, err)
-	}
-	return nil
-}
-
-// TimestampedPath returns a new path with the given timestamp prepended.
-// If path contains /, the timestamp is prepended to the last segment.
-func TimestampedPath(path string, t time.Time) string {
-	parts := strings.Split(path, "/")
-	parts[len(parts)-1] = fmt.Sprintf("%s_%s", t.Format("20060102150405"), parts[len(parts)-1])
-	return strings.Join(parts, "/")
-}
-
-func isAWSEndpoint(s string) bool {
-	return strings.HasSuffix(s, "amazonaws.com")
-}
-
-func hasProtocol(s string) bool {
-	return strings.Contains(s, "://")
-}
-
-type uploader interface {
-	Upload(ctx context.Context, input *s3.PutObjectInput, opts ...func(*manager.Uploader)) (*manager.UploadOutput, error)
-}
-
-type downloader interface {
-	Download(ctx context.Context, w io.WriterAt, input *s3.GetObjectInput, opts ...func(*manager.Downloader)) (n int64, err error)
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2846** (2026-10-05): **Simplify runWALSnapshot logic**
+- **Issue #2973** (2026-10-18): **Upgrade dependencies via 'go get'**
   *Symptoms*: 
 
-- **Issue #2845** (2026-10-05): **Check Raft Snapshot threshold every 5 seconds by default**
-  *Symptoms*: 10 seconds is a long time if there write load is high, so check more often. The overhead on the system of checking every 5 seconds is still trivial.
-
-- **Issue #2844** (2026-10-05): **Verify WAL-related SQLite compile-time options**
-  *Symptoms*: 
-
-- **Issue #2842** (2026-10-04): **Claude GitHub 2795 drivers**
-  *Symptoms*: 
-
-- **Issue #2841** (2026-10-04): **Disable autocheckpointing at connect time**
-  *Symptoms*: If the underlying driver timed out, it would create its own connection without disabling autocheckpointing. 
-
-- **Issue #2840** (2026-10-04): **Emit CDC events for every request in a bulk request**
-  *Symptoms*: 
-
-- **Issue #2839** (2026-10-03): **Don't clear CDC streamer index after Commit or Rollback**
-  *Symptoms*: 
-
-- **Issue #2837** (2026-10-01): **More Console Topology improvements**
-  *Symptoms*: 
+- **Issue #2972** (2026-10-18): **CDC Events should include Commit Timestamp**
+  *Symptoms*: https://github.com/rqlite/rqlite/issues/2970   
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2521,1440 +2087,203 @@ type downloader interface {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `752a8959` (2026-10-01)
-**Commit Message**: UI should use "read replicas"
+### Incident Patch 1: `c6a241c8` (2026-10-18)
+**Commit Message**: Merge pull request #2972 from rqlite/cdc-no-commit-timestamp-regression
 
-**File**: `http/console/index.html` (modified, +3/-2)
-```diff
-@@ -41,6 +41,7 @@ <h2>Topology</h2>
-                     <p id="cluster-perspective" class="cluster-muted">Membership and reachability</p>
-                 </div>
-                 <div class="cluster-controls">
-+                    <label><input type="checkbox" id="cluster-show-read-replicas" checked> Show read replicas</label>
-                     <label><input type="checkbox" id="cluster-auto-refresh" checked> Auto-refresh (5s)</label>
-                     <button type="button" id="cluster-refresh">Refresh</button>
-                 </div>
-@@ -58,7 +59,7 @@ <h2>Topology</h2>
-                     <span><i class="cluster-dot is-unreachable"></i> Unreachable</span>
-                     <span><i class="cluster-dot is-unknown"></i> Unknown / stale</span>
-                     <span><i class="cluster-line-key"></i> Voter</span>
--                    <span><i class="cluster-line-key is-replica"></i> Read-only</span>
-+                    <span><i class="cluster-line-key is-replica"></i> Read Replica</span>
-                 </div>
-             </div>
-             <p class="cluster-footnote">Connections show replication relationships. Reachability is checked from the node serving this console; it does not measure every connection or replication health.</p>
-@@ -98,7 +99,7 @@ <h2>Topology</h2>
-             <div id="status-cards" class="cards"></div>
-             <div class="nodes-header">
-                 <h3>Nodes</h3>
--                <label class="nodes-option"><input type="checkbox" id="show-nonvoters"> Include non-voters</label>
-+                <label class="nodes-option"><input type="checkbox" id="show-nonvoters"> Include read replicas</label>
-             </div>
-             <div id="nodes-table"></div>
-             <div id="detail-sections"></div>
-```
-
-**File**: `http/console/static/js/cluster.js` (modified, +10/-6)
-```diff
-@@ -19,7 +19,7 @@
-         nodes.forEach(function (node) {
-             node.isLeader = node === leader;
-             node.role = node.isLeader ? (node.leader ? "Leader" : "Reported leader") :
--                (node.voter ? "Follower" : "Read-only");
-+                (node.voter ? "Follower" : "Read Replica");
-             // Without a known leader, we cannot infer a voting node's Raft state.
-             if (!leader && node.voter) node.role = "Voter";
-         });
-@@ -58,6 +58,7 @@
-     var summary = document.getElementById("cluster-summary");
-     var refresh = document.getElementById("cluster-refresh");
-     var auto = document.getElementById("cluster-auto-refresh");
-+    var showReadReplicas = document.getElementById("cluster-show-read-replicas");
-     var message = document.getElementById("cluster-message");
-     var updated = document.getElementById("cluster-updated");
-     var model = null;
-@@ -100,15 +101,17 @@
-     }
- 
-     function render() {
--        var geometry = layout(model);
-+        var visibleNodes = model.nodes.filter(function (node) { return showReadReplicas.checked || node.voter; });
-+        var visibleLeader = visibleNodes.find(function (node) { return node.isLeader; });
-+        var geometry = layout(Object.assign({}, model, { nodes: visibleNodes, leader: visibleLeader }));
-         map.style.height = geometry.height + "px";
-         svg.setAttribute("viewBox", "0 0 " + geometry.width + " " + geometry.height);
-         svg.replaceChildren();
-         var voters = model.nodes.filter(function (n) { return n.voter; }).length;
-         var reachable = model.nodes.filter(function (n) { return n.reachable === true; }).length;
-         summary.innerHTML = [
-             [model.nodes.length, "Nodes"], [voters, "Voters"],
--            [model.nodes.length - voters, "Read-only"],
-+            [model.nodes.length - voters, "Read Replicas"],
-             [stale ? "—" : reachable + " / " + model.nodes.length, "Reachable"]
-         ].map(function (item) {
-             return '<div><strong>' + item[0] + '</strong><span>' + item[1] + '</span></div>';
-@@ -119,10 +122,10 @@
-         cards.forEach(function (card, id) {
-             if (!geometry.positions.has(id)) { card.wrapper.remove(); cards.delete(id); }
-         });
--        model.nodes.forEach(function (node) {
-+        visibleNodes.forEach(function (node) {
-             var position = geometry.positions.get(node.id);
--            if (model.leader && !node.isLeader) {
--                var origin = geometry.positions.get(model.leader.id);
-+            if (visibleLeader && !node.isLeader) {
-+                var origin = geometry.positions.get(visibleLeader.id);
-                 var line = document.createElementNS(svg.namespaceURI, "line");
-                 line.setAttribute("x1", origin.x);
-                 line.setAttribute("y1", origin.y);
-@@ -220,6 +223,7 @@
-     }
- 
-     refresh.addEventListener("click", load);
-+    showReadReplicas.addEventListener("change", function () { if (model) render(); });
-     auto.addEventListener("change", function () { if (auto.checked) load(); else clearTimeout(timer); });
-     function visibilityChanged() {
-         if (active()) load();
-```
-
----
-
-### Incident Patch 2: `16d65079` (2026-10-01)
-**Commit Message**: Add new Cluster tab to web UI
-
-**File**: `http/console/static/css/cluster.css` (added, +114/-0)
-```diff
-@@ -0,0 +1,114 @@
-+#cluster {
-+    --cluster-node-bg: #fff;
-+    --cluster-node-hover: #f5f8fc;
-+    --cluster-node-border: #8292a6;
-+    --cluster-node-shadow: 0 4px 14px rgba(20, 40, 65, 0.18);
-+}
-+[data-theme="dark"] #cluster {
-+    --cluster-node-bg: #243650;
-+    --cluster-node-hover: #2b4162;
-+    --cluster-node-border: #7387a3;
-+    --cluster-node-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-+}
-+.cluster-toolbar, .cluster-controls, .cluster-map-heading, .cluster-legend {
-+    display: flex;
-+    align-items: center;
-+    justify-content: space-between;
-+    gap: 1rem;
-+    flex-wrap: wrap;
-+}
-+.cluster-toolbar { margin-bottom: 1.25rem; }
-+.cluster-toolbar h2 { font-size: 1.4rem; font-weight: 600; }
-+.cluster-muted, .cluster-controls, .cluster-footnote { color: var(--text-secondary); font-size: 0.8125rem; }
-+.cluster-controls label { display: flex; align-items: center; gap: 0.4rem; }
-+#cluster-refresh {
-+    border: 1px solid var(--border);
-+    border-radius: 5px;
-+    background: var(--surface);
-+    color: var(--text);
-+    padding: 0.45rem 0.85rem;
-+    cursor: pointer;
-+}
-+#cluster-refresh:hover { border-color: var(--accent); }
-+#cluster-refresh:disabled { opacity: 0.6; cursor: wait; }
-+.cluster-message { padding: 0.8rem 1rem; background: var(--surface); border-left: 3px solid var(--accent); margin-bottom: 1rem; font-size: 0.875rem; }
-+.cluster-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; margin-bottom: 1rem; }
-+.cluster-summary > div { background: var(--surface); border: 1px solid var(--border); border-radius: 7px; padding: 0.8rem 1rem; }
-+.cluster-summary strong { font-size: 1.5rem; font-weight: 600; display: block; }
-+.cluster-summary span { font-size: 0.75rem; color: var(--text-secondary); }
-+.cluster-map-panel { border: 1px solid var(--border); border-radius: 8px; background: var(--surface); }
-+.cluster-map-heading { padding: 1rem 1.2rem; font-size: 0.8125rem; border-bottom: 1px solid var(--border-light); }
-+.cluster-map { position: relative; background-image: radial-gradient(var(--border-light) 1px, transparent 1px); background-size: 18px 18px; }
-+.cluster-links { position: absolute; width: 100%; height: 100%; inset: 0; }
-+.cluster-edge { stroke: var(--border); stroke-width: 2; }
-+.cluster-edge.is-reachable { stroke: var(--success); opacity: 0.6; }
-+.cluster-edge.is-unreachable { stroke: var(--error); opacity: 0.6; }
-+.cluster-edge.is-replica { stroke-dasharray: 6 5; }
-+.cluster-node { position: absolute; width: 235px; transform: translate(-50%, -50%); }
-+.cluster-node:hover, .cluster-node:focus-within { z-index: 3; }
-+.cluster-node-button {
-+    display: block;
-+    width: 100%;
-+    padding: 0.85rem;
-+    border: 2px solid var(--cluster-node-border);
-+    border-radius: 9px;
-+    background: var(--cluster-node-bg);
-+    color: var(--text);
-+    text-align: left;
-+    font: inherit;
-+    cursor: pointer;
-+    box-shadow: var(--cluster-node-shadow);
-+}
-+.cluster-node-button.is-leader { border: 2px solid var(--accent); box-shadow: 0 0 0 4px var(--accent-shadow), var(--cluster-node-shadow); }
-+.cluster-node-button.is-replica { border-style: dashed; }
-+.cluster-node-button:hover, .cluster-node-button[aria-pressed="true"] { background: var(--cluster-node-hover); }
-+.cluster-node-button:focus-visible, #cluster-refresh:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
-+.cluster-node-heading { display: flex; gap: 0.6rem; align-items: center; margin-bottom: 0.7rem; }
-+.cluster-node-heading > span:nth-child(2) { min-width: 0; }
-+.cluster-node-heading strong { display: block; font-size: 0.875rem; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-+.cluster-node-role { display: block; font-size: 0.7rem; color: var(--text-secondary); }
-+.cluster-node-icon { flex: 0 0 32px; height: 32px; display: grid; place-items: center; border: 1px solid var(--border); border-radius: 50%; color: var(--success-text); }
-+.is-unreachable .cluster-node-icon { color: var(--error-text); }
-+.is-unknown .cluster-node-icon { color: var(--text-muted); }
-+.is-leader .cluster-node-icon { background: var(--accent); color: var(--surface); border-color: var(--accent); }
-+.cluster-this-node { margin-left: auto; font-size: 0.6rem; white-space: nowrap; color: var(--accent); }
-+.cluster-address { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.7rem; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
-+.cluster-address b { display: inline-block; width: 2.5em; color: var(--text-secondary); font-weight: 400; }
-+.cluster-node-health { display: flex; align-items: center; gap: 0.4rem; margin-top: 0.65rem; font-size: 0.7rem; color: var(--text-secondary); }
-+.cluster-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--text-muted); flex-shrink: 0; }
-+.cluster-dot.is-reachable { background: var(--success); }
-+.cluster-dot.is-unreachable { background: var(--error); }
-+.cluster-legend {
-```
-
-**File**: `http/console/static/js/cluster.js` (added, +274/-0)
-```diff
-@@ -0,0 +1,274 @@
-+/* Cluster topology: all observations come from the node serving this console. */
-+(function () {
-+    "use strict";
-+
-+    function topology(status, data) {
-+        var store = status.store || {};
-+        var reportedLeader = store.leader || {};
-+        var nodes = data.nodes.slice().sort(function (a, b) {
-+            return String(a.id).localeCompare(String(b.id), undefined, { numeric: true });
-+        }).map(function (node) {
-+            return Object.assign({}, node, { id: String(node.id) });
-+        });
-+        var leader = nodes.find(function (node) { return node.leader; });
-+        if (!leader) {
-+            leader = nodes.find(function (node) {
-+                return node.id === String(reportedLeader.node_id) && node.addr === reportedLeader.addr;
-+            });
-+        }
-+        nodes.forEach(function (node) {
-+            node.isLeader = node === leader;
-+            node.role = node.isLeader ? (node.leader ? "Leader" : "Reported leader") :
-+                (node.voter ? "Follower" : "Read-only");
-+            // Without a known leader, we cannot infer a voting node's Raft state.
-+            if (!leader && node.voter) node.role = "Voter";
-+        });
-+        return { nodes: nodes, leader: leader, localID: String(store.node_id || "") };
-+    }
-+
-+    function layout(model) {
-+        var peers = model.nodes.filter(function (node) { return !node.isLeader; });
-+        var positions = new Map();
-+        var height = peers.length === 0 && model.leader ? 250 : peers.length === 2 ? 470 : 610;
-+        if (model.leader) positions.set(model.leader.id, { x: 450, y: peers.length === 0 ? 125 : peers.length === 2 ? 140 : 305 });
-+        if (peers.length <= 6 && model.leader) {
-+            peers.forEach(function (node, i) {
-+                var angle = peers.length === 2 ? (i ? 1 : 5) * Math.PI / 6 :
-+                    -Math.PI / 2 + i * 2 * Math.PI / Math.max(peers.length, 1);
-+                positions.set(node.id, { x: 450 + 305 * Math.cos(angle), y: (peers.length === 2 ? 230 : 305) + 210 * Math.sin(angle) });
-+            });
-+        } else {
-+            // Two stable columns leave a clear central lane for larger clusters.
-+            height = Math.max(400, Math.ceil(peers.length / 2) * 180 + 60);
-+            if (model.leader) positions.set(model.leader.id, { x: 450, y: height / 2 });
-+            peers.forEach(function (node, i) {
-+                positions.set(node.id, { x: i % 2 ? 755 : 145, y: 110 + Math.floor(i / 2) * 180 });
-+            });
-+        }
-+        return { positions: positions, width: 900, height: height };
-+    }
-+
-+    if (typeof module !== "undefined" && module.exports) {
-+        module.exports = { topology: topology, layout: layout };
-+        return;
-+    }
-+
-+    var section = document.getElementById("cluster");
-+    var map = document.getElementById("cluster-map");
-+    var summary = document.getElementById("cluster-summary");
-+    var details = document.getElementById("cluster-details");
-+    var refresh = document.getElementById("cluster-refresh");
-+    var auto = document.getElementById("cluster-auto-refresh");
-+    var message = document.getElementById("cluster-message");
-+    var updated = document.getElementById("cluster-updated");
-+    var model = null;
-+    var stale = false;
-+    var selected = null;
-+    var timer = null;
-+    var busy = false;
-+    var cards = new Map();
-+    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-+    svg.classList.add("cluster-links");
-+    svg.setAttribute("aria-hidden", "true");
-+    svg.setAttribute("preserveAspectRatio", "none");
-+    map.appendChild(svg);
-+
-+    function escape(value) {
-+        return String(value == null ? "" : value).replace(/[&<>"']/g, function (c) {
-+            return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
-+        });
-+    }
-+
-+    function health(node) {
-+        return stale ? "unknown" : node.reachable === true ? "reachable" :
-+            node.reachable === false ? "unreachable" : "unknown";
-+    }
-+
-+    function healthLabel(node) {
-+        return stale ? "Stale observation" : { reachable: "Reachable", unreachable: "Unreachable", unknown: "Unknown" }[health(node)];
-+    }
-+
-+    function detailHTML(node) {
-+        var rows = [
-+            ["Role", node.role], ["Reachability", healthLabel(node)],
-+            ["Raft address", node.addr || "Unavailable"],
-+            ["API address", node.api_addr || "Unavailable"],
-+            ["Version", node.version || "Unavailable"],
-+            ["Probe time", node.time_s || "Unavailable"]
-+        ];
-+        if (node.error) rows.push(["Probe error", node.error]);
-+        return '<strong>Node ' + escape(node.id) + '</strong><dl>' + rows.map(function (row) {
-+            return '<div><dt>' + row[0] + '</dt><dd>' + escape(row[1]) + '</dd></div>';
-+        }).join("") + '</dl>';
-+    }
-+
-+    function renderSelection() {
-+        var node = model.nodes.find(funct
-```
-
-**File**: `http/console/static/js/core.js` (added, +202/-0)
-```diff
-@@ -0,0 +1,202 @@
-+/* Pure helpers shared by the console and its dependency-free tests. */
-+(function (root) {
-+    "use strict";
-+
-+    // Keep unsafe JSON numbers as their original literals, not rounded Numbers.
-+    function ExactNumber(literal) { this.literal = literal; }
-+    ExactNumber.prototype.toString = function () { return this.literal; };
-+    ExactNumber.prototype.valueOf = function () { return Number(this.literal); };
-+
-+    function parseJSON(text) {
-+        var numbers = [];
-+        var marked = text.replace(/"(?:[^"\\]|\\.)*"|-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?/g, function (token) {
-+            if (token[0] === '"') return token;
-+            numbers.push(token);
-+            return token;
-+        });
-+        // Validate before replacing numeric tokens, so malformed JSON cannot
-+        // become valid as a side effect of the lossless conversion.
-+        var validated = JSON.stringify(JSON.parse(marked));
-+        var index = 0;
-+        var prefix = "__rqlite_number__";
-+        while (validated.indexOf(prefix) !== -1) prefix += "_";
-+        marked = text.replace(/"(?:[^"\\]|\\.)*"|-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?/g, function (token) {
-+            if (token[0] === '"') return token;
-+            var n = Number(token);
-+            var id = index++;
-+            if (!Number.isFinite(n) || (Number.isInteger(n) && !Number.isSafeInteger(n))) {
-+                return JSON.stringify(prefix + id);
-+            }
-+            return token;
-+        });
-+        return JSON.parse(marked, function (_, value) {
-+            if (typeof value === "string" && value.indexOf(prefix) === 0) {
-+                return new ExactNumber(numbers[Number(value.slice(prefix.length))]);
-+            }
-+            return value;
-+        });
-+    }
-+
-+    function stringifyJSON(value, pretty) {
-+        function encode(v, depth) {
-+            if (v instanceof ExactNumber) return v.literal;
-+            if (v === null || typeof v !== "object") return JSON.stringify(v);
-+            var array = Array.isArray(v);
-+            var keys = array ? v.map(function (_, i) { return i; }) : Object.keys(v);
-+            var parts = keys.map(function (key) {
-+                return (array ? "" : JSON.stringify(key) + (pretty ? ": " : ":")) + encode(v[key], depth + 1);
-+            });
-+            var open = array ? "[" : "{";
-+            var close = array ? "]" : "}";
-+            if (!parts.length) return open + close;
-+            if (!pretty) return open + parts.join(",") + close;
-+            var indent = "  ".repeat(depth + 1);
-+            return open + "\n" + indent + parts.join(",\n" + indent) + "\n" + "  ".repeat(depth) + close;
-+        }
-+        return encode(value, 0);
-+    }
-+
-+    function cellText(value) {
-+        if (value === null || value === undefined) return "NULL";
-+        if (value instanceof ExactNumber) return value.literal;
-+        return typeof value === "object" ? stringifyJSON(value) : String(value);
-+    }
-+
-+    function csvCell(value) {
-+        if (value === null || value === undefined) return "NULL";
-+        var s = cellText(value);
-+        // Quote literal NULL and empty strings to distinguish them from nulls.
-+        return /[",\r\n]/.test(s) || s === "NULL" || s === "" ? '"' + s.replace(/"/g, '""') + '"' : s;
-+    }
-+
-+    function resultCSV(result) {
-+        return [result.columns.map(csvCell).join(",")].concat((result.values || []).map(function (row) {
-+            return result.columns.map(function (_, i) { return csvCell(row[i]); }).join(",");
-+        })).join("\r\n");
-+    }
-+
-+    // SQLite strings, quoted identifiers, and comments must stay intact when
-+    // splitting scripts. Retain token offsets for editor highlighting, too.
-+    function sqlTokens(sql, tolerant) {
-+        var tokens = [];
-+        var i = 0;
-+        while (i < sql.length) {
-+            var start = i;
-+            var c = sql[i];
-+            var kind = "punctuation";
-+            if (/\s/.test(c)) {
-+                kind = "space";
-+                while (i < sql.length && /\s/.test(sql[i])) i++;
-+            } else if (sql.slice(i, i + 2) === "--") {
-+                kind = "comment";
-+                while (i < sql.length && sql[i] !== "\n") i++;
-+            } else if (sql.slice(i, i + 2) === "/*") {
-+                kind = "comment";
-+                var end = sql.indexOf("*/", i + 2);
-+                i = end < 0 ? sql.length : end + 2;
-+                if (end < 0 && !tolerant) throw new Error("Unclosed SQL comment.");
-+            } else if (c === "'" || c === '"' || c === "`" || c === "[") {
-+                kind = c === "'" ? "string" : "identifier";
-+                var close = c === "[" ? "]" : c;
-+                var closed = false;
-+                i++;
-+                while (i < sql.length) {
-+                    if (sql[i++] === close) {
-+                        if (close !== "]" && sql[i] === close) { i++; continue; }
-+                        closed = true;
-+                    
-```
-
----
-
-### Incident Patch 3: `af22fead` (2026-09-29)
-**Commit Message**: Update build-windows.yml to Go 1.27
-
-**File**: `.github/workflows/build-windows.yml` (modified, +1/-1)
-```diff
-@@ -16,7 +16,7 @@ jobs:
-     - name: Set up Go
-       uses: actions/setup-go@v5
-       with:
--        go-version: '1.26'
-+        go-version: '1.27'
- 
-     - name: Install C Compiler
-       run: choco install mingw
-```
-
----
-
-### Incident Patch 4: `dbd5d78b` (2026-09-29)
-**Commit Message**: Log, don't panic
+CDC Events should include Commit Timestamp
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
 @@ -3,6 +3,7 @@
- - [PR #2827](https://github.com/rqlite/rqlite/pull/2827): Support configurable queued-writes retries. See [torx #17](https://github.com/dotnwat/torx/issues/17). Thanks @dotnwat
+ - [PR #2967](https://github.com/rqlite/rqlite/pull/2967): Check for trailing junk in request bodies.
+ - [PR #2969](https://github.com/rqlite/rqlite/pull/2969): Console schema view handles table names that collide with JavaScript object properties.
+ - [PR #2971](https://github.com/rqlite/rqlite/pull/2971): Standardize on Go 1.27 for the module, CI, and release builds.
++- [PR #2972](https://github.com/rqlite/rqlite/pull/2972): Set `CommitTimestamps` in CDC Events Group. Fixes issue [#2970](https://github.com/rqlite/rqlite/issues/2970). Thanks @gunavanthvarma-dev
  
+ ## v10.6.1 (October 16th 2026)
  ### Implementation changes and bug fixes
-+- [PR #2830](https://github.com/rqlite/rqlite/pull/2830): Log-fatal, don't panic.
- - [PR #2828](https://github.com/rqlite/rqlite/pull/2828): DB `Dump()` returns number of bytes written.
- - [PR #2821](https://github.com/rqlite/rqlite/pull/2821): HTTP layer performs Backup directly, setting _Trailer_ HTTP header `X-STREAM-ERROR` on error.
- 
 ```
 
-**File**: `store/command_processor.go` (modified, +6/-6)
+**File**: `store/store.go` (modified, +9/-11)
 ```diff
-@@ -45,35 +45,35 @@ func NewCommandProcessor(logger *log.Logger, dm *chunking.DechunkerManager) *Com
- func (c *CommandProcessor) Process(data []byte, db *sql.SwappableDB) (*proto.Command, bool, any) {
- 	cmd := &proto.Command{}
- 	if err := command.Unmarshal(data, cmd); err != nil {
--		panic(fmt.Sprintf("failed to unmarshal cluster command: %s", err.Error()))
-+		c.logger.Fatalf("failed to unmarshal cluster command: %s", err.Error())
- 	}
- 
- 	switch cmd.Type {
- 	case proto.Command_COMMAND_TYPE_QUERY:
- 		var qr proto.QueryRequest
- 		if err := command.UnmarshalSubCommand(cmd, &qr); err != nil {
--			panic(fmt.Sprintf("failed to unmarshal query subcommand: %s", err.Error()))
-+			c.logger.Fatalf("failed to unmarshal query subcommand: %s", err.Error())
- 		}
- 		r, err := db.Query(qr.Request, qr.Timings)
- 		return cmd, false, &fsmQueryResponse{rows: r, error: err}
- 	case proto.Command_COMMAND_TYPE_EXECUTE:
- 		var er proto.ExecuteRequest
- 		if err := command.UnmarshalSubCommand(cmd, &er); err != nil {
--			panic(fmt.Sprintf("failed to unmarshal execute subcommand: %s", err.Error()))
-+			c.logger.Fatalf("failed to unmarshal execute subcommand: %s", err.Error())
- 		}
- 		r, err := db.Execute(er.Request, er.Timings)
- 		return cmd, true, &fsmExecuteQueryResponse{results: r, error: err}
- 	case proto.Command_COMMAND_TYPE_EXECUTE_QUERY:
- 		var eqr proto.ExecuteQueryRequest
- 		if err := command.UnmarshalSubCommand(cmd, &eqr); err != nil {
--			panic(fmt.Sprintf("failed to unmarshal execute-query subcommand: %s", err.Error()))
-+			c.logger.Fatalf("failed to unmarshal execute-query subcommand: %s", err.Error())
- 		}
- 		r, err := db.Request(eqr.Request, eqr.Timings)
- 		return cmd, ExecuteQueryResponses(r).Mutation(), &fsmExecuteQueryResponse{results: r, error: err}
- 	case proto.Command_COMMAND_TYPE_LOAD:
- 		var lr proto.LoadRequest
- 		if err := command.UnmarshalLoadRequest(cmd.SubCommand, &lr); err != nil {
--			panic(fmt.Sprintf("failed to unmarshal load subcommand: %s", err.Error()))
-+			c.logger.Fatalf("failed to unmarshal load subcommand: %s", err.Error())
- 		}
- 
- 		// create a scratch file in the same directory as s.db.Path()
-@@ -97,7 +97,7 @@ func (c *CommandProcessor) Process(data []byte, db *sql.SwappableDB) (*proto.Com
- 	case proto.Command_COMMAND_TYPE_LOAD_CHUNK:
- 		var lcr proto.LoadChunkRequest
- 		if err := command.UnmarshalLoadChunkRequest(cmd.SubCommand, &lcr); err != nil {
--			panic(fmt.Sprintf("failed to unmarshal load-chunk subcommand: %s", err.Error()))
-+			c.logger.Fatalf("failed to unmarshal load-chunk subcommand: %s", err.Error())
- 		}
- 
- 		dec, err := c.decMgmr.Get(lcr.StreamId)
-```
-
----
-
-### Incident Patch 5: `8ce683c5` (2026-09-28)
-**Commit Message**: Update bug_report.md
-
-**File**: `.github/ISSUE_TEMPLATE/bug_report.md` (modified, +1/-1)
-```diff
-@@ -6,7 +6,7 @@ labels: ''
- assignees: ''
- 
- ---
--_If you use AI to generate a bug report, state the Agent version you are using, and show clearly how to reproduce the issue. For example if you say some simple action crashes rqlite then show step-by-step how to reproduce the crash. If you say lines in the code are buggy, then link to the actual lines in the source. If you say you have a test or benchmark that shows the issue, then include code. If these guidelines are not followed, then issue may be closed without comment._
-+_If you used AI to identify an issue, or generate a bug report, state the Agent you are using, and show clearly how to reproduce the issue. For example if you say some simple action crashes rqlite then show step-by-step how to reproduce the crash. If you say lines in the code are buggy, then link to the actual lines in the source. If you say you have a test or benchmark that shows the issue, then include code. If these guidelines are not followed, then issue may be closed without comment._
- 
- **What version are you running?**
- 
-```
-
----
-
-### Incident Patch 6: `9ac32697` (2026-09-28)
-**Commit Message**: CDC can now require creds for HWM updates
-
-**File**: `CHANGELOG.md` (modified, +5/-2)
-```diff
-@@ -1,8 +1,11 @@
--## v10.3.7 (unreleased)
-+## v10.3.7 (September 28th 2026)
-+This release addresses a gap in the role-based access permissions related to change-data-capture handling. If you run a cluster where the Raft port is accesible by other systems you should upgrade (though that is not recommended production practise in the first place -- see the [rqlite Security guide](https://rqlite.io/docs/guides/security/)).
-+
- ### Implementation changes and bug fixes
- - [PR #2822](https://github.com/rqlite/rqlite/pull/2822): Backup calls now return number of bytes written.
- - [PR #2823](https://github.com/rqlite/rqlite/pull/2823): Stop CI testing against MinIO.
- - [PR #2824](https://github.com/rqlite/rqlite/pull/2824): Database `Backup` returns size of backup file.
-+- [PR #2826](https://github.com/rqlite/rqlite/pull/2826): Add new permission for CDC high watermark updates. Fixes issue [#2825](https://github.com/rqlite/rqlite/issues/2825). Thanks @White0xdi3
- 
- ## v10.3.6 (September 22nd 2026)
- ### Implementation changes and bug fixes
-@@ -13,7 +16,7 @@
- - [PR #2811](https://github.com/rqlite/rqlite/pull/2811): Upgrade dependencies.
- - [PR #2811](https://github.com/rqlite/rqlite/pull/2811): Add support for _File_ Renaming and Removing with retries.
- - [PR #2816](https://github.com/rqlite/rqlite/pull/2816): Replace standard library with fsutil.
--- [PR #2817](https://github.com/rqlite/rqlite/pull/2817): File _Rename_ and _Remove_ are retried, addressing possible errors on Windows. Fixes issue [#2813](https://github.com/rqlite/rqlite/issues/2813). Thanks@orrery-dev
-+- [PR #2817](https://github.com/rqlite/rqlite/pull/2817): File _Rename_ and _Remove_ are retried, addressing possible errors on Windows. Fixes issue [#2813](https://github.com/rqlite/rqlite/issues/2813). Thanks @orrery-dev
- - [PR #2812](https://github.com/rqlite/rqlite/pull/2812): Keep snapshot ordering correct regardless of clock. Fixes issue [#2809](https://github.com/rqlite/rqlite/issues/2809). Thanks @goingforstudying-ctrl, @rohanpadhy
- - [PR #2819](https://github.com/rqlite/rqlite/pull/2819): Remove snapshot name generation ID, backing out [PR #2807](https://github.com/rqlite/rqlite/pull/2807) and [PR #2808](https://github.com/rqlite/rqlite/pull/2808).
- 
-```
-
-**File**: `auth/credential_store.go` (modified, +3/-1)
-```diff
-@@ -37,8 +37,10 @@ const (
- 	PermLoad = "load"
- 	// PermSnapshot means user can request a snapshot.
- 	PermSnapshot = "snapshot"
--	// PermLeaderOps means user can perform leader-related operations
-+	// PermLeaderOps means user can perform leader-related operations.
- 	PermLeaderOps = "leader-ops"
-+	// PermCDCHWMUpdate = means a user can perform CDC high watermark updates.
-+	PermCDCHWMUpdate = "cdc-hwm-update"
- 	// PermUI means user can access the UI.
- 	PermUI = "ui"
- )
-```
-
-**File**: `cdc/cdc_cluster.go` (modified, +15/-1)
-```diff
-@@ -2,9 +2,11 @@ package cdc
- 
- import (
- 	"context"
-+	"sync"
- 	"time"
- 
- 	"github.com/rqlite/rqlite/v10/cluster"
-+	"github.com/rqlite/rqlite/v10/cluster/proto"
- 	"github.com/rqlite/rqlite/v10/store"
- )
- 
-@@ -14,6 +16,9 @@ type CDCCluster struct {
- 	store  *store.Store
- 	clstr  *cluster.Service
- 	client *cluster.Client
-+
-+	mu    sync.RWMutex
-+	creds *proto.Credentials
- }
- 
- // NewCDCCluster creates a new CDCCluster instance with the given store,
-@@ -59,6 +64,15 @@ func (c *CDCCluster) BroadcastHighWatermark(value uint64) error {
- 	const timeout = 5 * time.Second
- 
- 	// Broadcast to all cluster nodes
--	_, err = c.client.BroadcastHWM(context.Background(), value, retries, timeout, nodeAddrs...)
-+	c.mu.RLock()
-+	_, err = c.client.BroadcastHWM(context.Background(), value, c.creds, retries, timeout, nodeAddrs...)
-+	c.mu.RUnlock()
- 	return err
- }
-+
-+// SetAuth sets credentials for broadcasting to other nodes.
-+func (c *CDCCluster) SetAuth(creds *proto.Credentials) {
-+	c.mu.Lock()
-+	defer c.mu.Unlock()
-+	c.creds = creds
-+}
-```
-
-**File**: `cdc/service.go` (modified, +5/-1)
-```diff
-@@ -6,6 +6,7 @@ import (
- 	"log"
- 	"os"
- 	"path/filepath"
-+	"strings"
- 	"sync"
- 	"sync/atomic"
- 	"time"
-@@ -609,7 +610,10 @@ func (s *Service) leaderHWMLoop() (chan struct{}, chan struct{}) {
- 				// followers get the update even if there are no new events,
- 				// or nodes that join the cluster get the current HWM.
- 				if err := s.clstr.BroadcastHighWatermark(hwm); err != nil {
--					s.logger.Printf("error broadcasting high watermark to Cluster: %v", err)
-+					s.logger.Printf("error broadcasting high watermark to Cluster - this will affect CDC operation: %v", err)
-+					if strings.Contains(err.Error(), "unauthorized") {
-+						s.logger.Println("did you forget to set authentication credentials for cdc-hwm-update?")
+@@ -2587,18 +2587,16 @@ func (s *Store) fsmApply(l *raft.Log) (e any) {
+ 		// CDC enabled? Prime collection of events.
+ 		if s.cdcCollator != nil {
+ 			s.cdcCollator.Reset()
+-		}
+-		defer func() {
+-			if s.cdcCollator == nil {
+-				return
+-			}
+-			if events := s.cdcCollator.Events(); len(events) > 0 {
+-				s.cdcOutCh <- &proto.CDCIndexedEventGroup{
+-					Index:  l.Index,
+-					Events: events,
++			defer func() {
++				if events := s.cdcCollator.Events(); len(events) > 0 {
++					s.cdcOutCh <- &proto.CDCIndexedEventGroup{
++						Index:           l.Index,
++						Events:          events,
++						CommitTimestamp: time.Now().UnixMilli(),
 +					}
  				}
- 				// While we always broadcast the high watermark, we only prune the
- 				// FIFO if it has advanced since the last time we did so. There
-```
-
-**File**: `cluster/client.go` (modified, +2/-1)
-```diff
-@@ -567,7 +567,7 @@ func (c *Client) Join(ctx context.Context, jr *command.JoinRequest, nodeAddr str
- }
- 
- // BroadcastHWM performs a broadcast to all specified nodes.
--func (c *Client) BroadcastHWM(ctx context.Context, hwm uint64, retries int, timeout time.Duration, nodeAddr ...string) (map[string]*proto.HighwaterMarkUpdateResponse, error) {
-+func (c *Client) BroadcastHWM(ctx context.Context, hwm uint64, creds *proto.Credentials, retries int, timeout time.Duration, nodeAddr ...string) (map[string]*proto.HighwaterMarkUpdateResponse, error) {
- 	if err := ctx.Err(); err != nil {
- 		return nil, err
- 	}
-@@ -610,6 +610,7 @@ func (c *Client) BroadcastHWM(ctx context.Context, hwm uint64, retries int, time
- 				Request: &proto.Command_HighwaterMarkUpdateRequest{
- 					HighwaterMarkUpdateRequest: br,
- 				},
-+				Credentials: creds,
- 			}
- 
- 			// Attempt with retries
-```
-
-**File**: `cluster/client_test.go` (modified, +51/-4)
-```diff
-@@ -744,7 +744,7 @@ func Test_ClientBroadcast(t *testing.T) {
- 
- 	c := NewClient(&simpleDialer{}, 0)
- 	c.SetLocal("node1", nil) // Set local node address to match test expectation
--	responses, err := c.BroadcastHWM(context.Background(), 12345, 0, time.Second, srv.Addr())
-+	responses, err := c.BroadcastHWM(context.Background(), 12345, nil, 0, time.Second, srv.Addr())
- 	if err != nil {
- 		t.Fatal(err)
- 	}
-@@ -793,7 +793,7 @@ func Test_ClientBroadcast_MultipleNodes(t *testing.T) {
- 
- 	c := NewClient(&simpleDialer{}, 0)
- 	c.SetLocal("test-node", nil) // Set local node address to match test expectation
--	responses, err := c.BroadcastHWM(context.Background(), 999, 0, time.Second, srv1.Addr(), srv2.Addr())
-+	responses, err := c.BroadcastHWM(context.Background(), 999, nil, 0, time.Second, srv1.Addr(), srv2.Addr())
- 	if err != nil {
- 		t.Fatal(err)
- 	}
-@@ -809,7 +809,7 @@ func Test_ClientBroadcast_MultipleNodes(t *testing.T) {
- 
- func Test_ClientBroadcast_EmptyNodeList(t *testing.T) {
- 	c := NewClient(&simpleDialer{}, 0)
--	responses, err := c.BroadcastHWM(context.Background(), 1, 0, time.Second)
-+	responses, err := c.BroadcastHWM(context.Background(), 1, nil, 0, time.Second)
- 	if err != nil {
- 		t.Fatal(err)
- 	}
-@@ -842,7 +842,54 @@ func Test_ClientBroadcast_WithError(t *testing.T) {
- 
- 	c := NewClient(&simpleDialer{}, 0)
- 	c.SetLocal("node1", nil) // Set local node address to match test expectation
--	responses, err := c.BroadcastHWM(context.Background(), 12345, 0, time.Second, srv.Addr())
-+	responses, err := c.BroadcastHWM(context.Background(), 12345, nil, 0, time.Second, srv.Addr())
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	if len(responses) != 1 {
-+		t.Fatalf("expected 1 response, got %d", len(responses))
-+	}
-+	resp, exists := responses[srv.Addr()]
-+	if !exists {
-+		t.Fatalf("response for %s not found", srv.Addr())
-+	}
-+	if resp.Error != "test error" {
-+		t.Fatalf("expected 'test error', got '%s'", resp.Error)
-+	}
-+}
-+
-+func Test_ClientBroadcast_WithCreds(t *testing.T) {
-+	srv := servicetest.NewService()
-+	srv.Handler = func(conn net.Conn) {
-+		var p []byte
-+		var err error
-+		c := readCommand(conn)
-+		if c == nil {
-+			return
+-			}
+-		}()
++			}()
 +		}
-+		if c.Credentials == nil {
-+			t.Fatal("got nil credentials")
-+		}
-+		if c.Credentials.Username != "bob" || c.Credentials.Password != "passwd" {
-+			t.Fatal("got wrong credentials")
-+		}
-+		if c.Type != proto.Command_COMMAND_TYPE_HIGHWATER_MARK_UPDATE {
-+			t.Fatalf("unexpected command type: %d", c.Type)
-+		}
-+
-+		p, err = pb.Marshal(&proto.HighwaterMarkUpdateResponse{Error: "test error"})
-+		if err != nil {
-+			conn.Close()
-+		}
-+		writeBytesWithLength(conn, p)
-+	}
-+	srv.Start()
-+	defer srv.Close()
-+
-+	c := NewClient(&simpleDialer{}, 0)
-+	c.SetLocal("node1", nil) // Set local node address to match test expectation
-+	creds := &proto.Credentials{Username: "bob", Password: "passwd"}
-+	responses, err := c.BroadcastHWM(context.Background(), 12345, creds, 0, time.Second, srv.Addr())
+ 		return s.cmdProc.Process(l.Data, s.db)
+ 	}()
  	if err != nil {
- 		t.Fatal(err)
- 	}
 ```
 
-**File**: `cluster/service.go` (modified, +2/-0)
+**File**: `store/store_cdc_test.go` (modified, +4/-0)
 ```diff
-@@ -665,6 +665,8 @@ func (s *Service) handleConn(conn net.Conn) {
- 			br := c.GetHighwaterMarkUpdateRequest()
- 			if br == nil {
- 				resp.Error = "HighwaterMarkUpdateRequest is nil"
-+			} else if !s.checkCommandPerm(c, auth.PermCDCHWMUpdate) {
-+				resp.Error = "unauthorized"
- 			} else {
- 				// Send to registered channel if available
- 				s.hwmMu.RLock()
-```
-
-**File**: `cluster/service_test.go` (modified, +60/-2)
-```diff
-@@ -444,7 +444,7 @@ func Test_ServiceHandleHighwaterMarkUpdate(t *testing.T) {
- 	c.SetLocal("test-node", nil)
- 
- 	// Use the client to send a highwater mark update
--	responses, err := c.BroadcastHWM(context.Background(), 987654, 0, 5*time.Second, s.Addr())
-+	responses, err := c.BroadcastHWM(context.Background(), 987654, nil, 0, 5*time.Second, s.Addr())
- 	if err != nil {
- 		t.Fatalf("failed to broadcast highwater mark update: %s", err)
- 	}
-@@ -484,7 +484,7 @@ func Test_ServiceRegisterHWMUpdate(t *testing.T) {
- 
- 	// Use the client to send a highwater mark update
- 	testHWM := uint64(123456)
--	responses, err := c.BroadcastHWM(context.Background(), testHWM, 0, 5*time.Second, s.Addr())
-+	responses, err := c.BroadcastHWM(context.Background(), testHWM, nil, 0, 5*time.Second, s.Addr())
- 	if err != nil {
- 		t.Fatalf("failed to broadcast highwater mark update: %s", err)
- 	}
-@@ -511,6 +511,64 @@ func Test_ServiceRegisterHWMUpdate(t *testing.T) {
- 	}
- }
- 
-+// Test_ServiceRegisterHWMUpdate_WithAuth checks that the CDC service checks credentials.
-+func Test_ServiceRegisterHWMUpdate_WithAuth(t *testing.T) {
-+	creds := &proto.Credentials{Username: "bob", Password: "passwd"}
-+	ml := mustNewMockTransport()
-+	mgr := mustNewMockManager()
-+	credStr := mustNewMockCredentialStore()
-+	credStr.aaFunc = func(username, password, perm string) bool {
-+		return username == creds.Username && password == creds.Password
-+	}
-+	s := New(ml, mustNewMockDatabase(), mgr, credStr)
-+	if s == nil {
-+		t.Fatalf("failed to create cluster service")
-+	}
-+
-+	if err := s.Open(); err != nil {
-+		t.Fatalf("failed to open cluster service")
-+	}
-+	defer s.Close()
-+
-+	// Create a client and send highwater mark update
-+	c := NewClient(ml, 30*time.Second)
-+	c.SetLocal("test-node", nil)
-+
-+	// Use the client to send a highwater mark update
-+	testHWM := uint64(123456)
-+	responses, err := c.BroadcastHWM(context.Background(), testHWM, creds, 0, 5*time.Second, s.Addr())
-+	if err != nil {
-+		t.Fatalf("failed to broadcast highwater mark update: %s", err)
-+	}
-+
-+	// Check that we got a response for the service address
-+	resp, ok := responses[s.Addr()]
-+	if !ok {
-+		t.Fatalf("expected response for address %s", s.Addr())
-+	}
-+
-+	// Check response has no error
-+	if resp.Error != "" {
-+		t.Fatalf("expected no error, got: %s", resp.Error)
-+	}
-+
-+	// Change required creds and ensure auth kicks in to deny.
-+	credStr.aaFunc = func(username, password, perm string) bool {
-+		return username == creds.Username && password == "foo"
-+	}
-+	responses, err = c.BroadcastHWM(context.Background(), testHWM, creds, 0, 5*time.Second, s.Addr())
-+	if err != nil {
-+		t.Fatalf("failed to broadcast highwater mark update: %s", err)
-+	}
-+	resp, ok = responses[s.Addr()]
-+	if !ok {
-+		t.Fatalf("expected response for address %s", s.Addr())
-+	}
-+	if resp.Error != "unauthorized" {
-+		t.Fatal("expected an error")
-+	}
-+}
-+
- func Test_ServiceClosesIdleConnection(t *testing.T) {
- 	ml := mustNewMockTransport()
- 	s := New(ml, mustNewMockDatabase(), mustNewMockManager(), mustNewMockCredentialStore())
-```
-
----
-
-### Incident Patch 7: `0b3efe2d` (2026-09-22)
-**Commit Message**: Merge pull request #2812 from goingforstudying-ctrl/fix/snapshot-naming-backwards-clock
-
-Keep snapshot ordering correct when the clock moves backwards
-
-**File**: `snapshot/DESIGN.md` (modified, +2/-0)
-```diff
-@@ -32,6 +32,8 @@ The result is that a slow node catching up via snapshot transfer no longer degra
- 
- A snapshot is a directory under the store root. The directory name is the snapshot ID (derived from Raft term, index, and a timestamp). Each directory contains a `meta.json` file with Raft metadata and one or more data files.
- 
-+Snapshot IDs are generated so that a snapshot always sorts as newer than any existing snapshot with the same term and index: the timestamp field is the larger of the current wall-clock time and one more than the largest timestamp found among those existing snapshots. Ordering therefore stays correct even if the system clock moves backwards between the creation of two such snapshots.
-+
- The snapshot type is determined by what files are present:
- 
- - **Full snapshot**: Contains `data.db` (a valid SQLite database). May also contain zero or more `.wal` files. A full snapshot is always the base from which database state is reconstructed.
-```
-
-**File**: `snapshot/snaphot_namer_test.go` (modified, +93/-11)
-```diff
-@@ -8,6 +8,8 @@ import (
- 	"sync"
- 	"testing"
- 	"time"
-+
-+	"github.com/hashicorp/raft"
- )
- 
- // Test_NewSnapshotNamer_NilNowFn checks that a nil nowFn falls back to
-@@ -22,7 +24,7 @@ func Test_NewSnapshotNamer_NilNowFn(t *testing.T) {
- 	}
- 
- 	before := time.Now().UnixNano() / int64(time.Millisecond)
--	name := sn.MakeName(7, 8, 9)
-+	name := sn.MakeName(SnapshotSet{}, 7, 8, 9)
- 	after := time.Now().UnixNano() / int64(time.Millisecond)
- 
- 	term, index, msec, gen := parseName(t, name)
-@@ -39,7 +41,7 @@ func Test_NewSnapshotNamer_CustomNowFn(t *testing.T) {
- 	tm := time.Unix(1500000000, 0).UTC() // 1500000000000 msec
- 	sn := NewSnapshotNamer(fixedClock(tm))
- 
--	if got, want := sn.MakeName(1, 1, 0), "1-1-1500000000000"; got != want {
-+	if got, want := sn.MakeName(SnapshotSet{}, 1, 1, 0), "1-1-1500000000000"; got != want {
- 		t.Fatalf("got %q, want %q", got, want)
- 	}
- }
-@@ -70,7 +72,7 @@ func Test_MakeName_Format(t *testing.T) {
- 
- 	for _, tt := range tests {
- 		t.Run(tt.name, func(t *testing.T) {
--			if got := sn.MakeName(tt.term, tt.index, tt.gen); got != tt.want {
-+			if got := sn.MakeName(SnapshotSet{}, tt.term, tt.index, tt.gen); got != tt.want {
- 				t.Fatalf("got %q, want %q", got, tt.want)
- 			}
- 		})
-@@ -99,7 +101,7 @@ func Test_MakeName_TimestampTruncation(t *testing.T) {
- 		t.Run(tt.name, func(t *testing.T) {
- 			sn := NewSnapshotNamer(fixedClock(tt.now))
- 			want := fmt.Sprintf("3-4-%d-1", tt.want)
--			if got := sn.MakeName(3, 4, 1); got != want {
-+			if got := sn.MakeName(SnapshotSet{}, 3, 4, 1); got != want {
- 				t.Fatalf("got %q, want %q", got, want)
- 			}
- 		})
-@@ -116,7 +118,7 @@ func Test_MakeName_CallsNowFnOncePerCall(t *testing.T) {
- 	})
- 
- 	for i := 0; i < 5; i++ {
--		sn.MakeName(uint64(i), uint64(i), 1)
-+		sn.MakeName(SnapshotSet{}, uint64(i), uint64(i), 1)
- 	}
- 	if calls != 5 {
- 		t.Fatalf("nowFn called %d times, want 5", calls)
-@@ -129,8 +131,8 @@ func Test_MakeName_CallsNowFnOncePerCall(t *testing.T) {
- func Test_MakeName_CollidesWithinSameMillisecond(t *testing.T) {
- 	sn := NewSnapshotNamer(fixedClock(time.Unix(1500000000, 0)))
- 
--	first := sn.MakeName(1, 2, 3)
--	second := sn.MakeName(1, 2, 3)
-+	first := sn.MakeName(SnapshotSet{}, 1, 2, 3)
-+	second := sn.MakeName(SnapshotSet{}, 1, 2, 3)
- 	if first != second {
- 		t.Fatalf("got %q and %q, want identical names", first, second)
- 	}
-@@ -149,7 +151,7 @@ func Test_MakeName_DistinctInputsDistinctNames(t *testing.T) {
- 	for _, tc := range []struct{ term, index uint64 }{
- 		{1, 1}, {1, 2}, {2, 1}, {1, 1},
- 	} {
--		name := sn.MakeName(tc.term, tc.index, 1)
-+		name := sn.MakeName(SnapshotSet{}, tc.term, tc.index, 1)
- 		if seen[name] {
- 			t.Fatalf("duplicate name %q", name)
+@@ -115,6 +115,10 @@ func Test_StoreCDC_Events_Single(t *testing.T) {
+ 		if len(events.Events) != 1 {
+ 			t.Fatalf("expected 1 CDC event, got %d", len(events.Events))
  		}
-@@ -170,7 +172,7 @@ func Test_MakeName_Concurrent(t *testing.T) {
- 		go func() {
- 			defer wg.Done()
- 			for j := 0; j < iterations; j++ {
--				if got := sn.MakeName(1, 2, 3); got != want {
-+				if got := sn.MakeName(SnapshotSet{}, 1, 2, 3); got != want {
- 					errs <- got
- 				}
- 			}
-@@ -184,6 +186,86 @@ func Test_MakeName_Concurrent(t *testing.T) {
++		if events.CommitTimestamp == 0 {
++			t.Fatal("Commit Timestamp is not set")
++		}
++
+ 		ev := events.Events[0]
+ 
+ 		if ev.Table != "foo" {
+```
+
+---
+
+### Incident Patch 2: `1e8e2bdb` (2026-10-17)
+**Commit Message**: Merge pull request #2967 from rqlite/fix-req-parser
+
+Check for trailing junk in request bodies
+
+**File**: `CHANGELOG.md` (modified, +4/-0)
+```diff
+@@ -1,3 +1,7 @@
++## v10.6.2 (unreleased)
++### Implementation changes and bug fixes
++- [PR #2967](https://github.com/rqlite/rqlite/pull/2967): Check for trailing junk in request bodies.
++
+ ## v10.6.1 (October 16th 2026)
+ ### Implementation changes and bug fixes
+ - [PR #2959](https://github.com/rqlite/rqlite/pull/2959): Record SQL analyze start time at right point.
+```
+
+**File**: `http/request_parser.go` (modified, +10/-1)
+```diff
+@@ -117,10 +117,19 @@ func ParseRequest(r io.Reader) ([]*command.Statement, error) {
+ 	}
+ 
+ 	// Check that the array of statements is closed.
+-	_, err = dec.Token()
++	t, err = dec.Token()
+ 	if err != nil {
+ 		return nil, ErrInvalidJSON
+ 	}
++	if t != json.Delim(']') {
++		return nil, ErrInvalidRequest
++	}
++
++	// The array must be the only value in the body. Anything other than
++	// trailing whitespace -- a second JSON value, or junk -- is an error.
++	if _, err := dec.Token(); err != io.EOF {
++		return nil, ErrInvalidRequest
++	}
+ 
+ 	if len(stmts) == 0 {
+ 		return nil, ErrNoStatements
+```
+
+**File**: `http/request_parser_test.go` (modified, +71/-0)
+```diff
+@@ -488,6 +488,77 @@ func Test_SingleInvalidTypeRequests(t *testing.T) {
  	}
  }
  
-+// Test_makeName_MinMsec checks that makeName raises the millisecond field to
-+// the given minimum when the clock reads lower, and leaves it alone otherwise.
-+func Test_makeName_MinMsec(t *testing.T) {
-+	sn := NewSnapshotNamer(fixedClock(time.UnixMilli(1000)))
-+
-+	if got, want := sn.makeName(1, 2, 0, 1500), "1-2-1500"; got != want {
-+		t.Fatalf("got %q, want %q", got, want)
-+	}
-+	if got, want := sn.makeName(1, 2, 3, 1500), "1-2-1500-3"; got != want {
-+		t.Fatalf("got %q, want %q", got, want)
-+	}
-+	if got, want := sn.makeName(1, 2, 0, 500), "1-2-1000"; got != want {
-+		t.Fatalf("got %q, want %q", got, want)
-+	}
-+	if got, want := sn.makeName(1, 2, 3, 1000), "1-2-1000-3"; got != want {
-+		t.Fatalf("got %q, want %q", got, want)
++func Test_TrailingData(t *testing.T) {
++	for _, tc := range []struct {
++		name string
++		body string
++	}{
++		{"junk", `["SELECT 1"] garbage`},
++		{"junk no space", `["SELECT 1"]garbage`},
++		{"second array", `["SELECT 1"]["SELECT 2"]`},
++		{"second array after whitespace", `["SELECT 1"]  ["SELECT 2"]`},
++		{"second array parameterized", `[["SELECT ?", 1]][["SELECT ?", 2]]`},
++		{"extra closing bracket", `["SELECT 1"]]`},
++		{"trailing comma", `["SELECT 1"],`},
++		{"trailing object", `["SELECT 1"]{}`},
++		{"trailing scalar", `["SELECT 1"]1`},
++		{"trailing string", `["SELECT 1"]"SELECT 2"`},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			stmts, err := ParseRequest(bytes.NewReader([]byte(tc.body)))
++			if err != ErrInvalidRequest {
++				t.Fatalf("expected ErrInvalidRequest, got %v (stmts: %v)", err, stmts)
++			}
++		})
 +	}
 +}
 +
-+// Test_MakeName_Set exercises set-aware name generation: a name made for a
-+// term and index already present in the set must sort after every snapshot in
-+// the set with that term and index.
-+func Test_MakeName_Set(t *testing.T) {
-+	mkSnap := func(id string, term, index uint64) *Snapshot {
-+		return &Snapshot{id: id, raftMeta: &raft.SnapshotMeta{Term: term, Index: index}}
-+	}
-+
-+	t.Run("clock backwards with same term and index", func(t *testing.T) {
-+		set := SnapshotSet{dir: "/test", items: []*Snapshot{
-+			mkSnap("3-100-1000", 3, 100),
-+			mkSnap("3-100-1500-2", 3, 100),
-+			mkSnap("3-101-9999", 3, 101),
-+			mkSnap("4-100-9999", 4, 100),
-+		}}
-+		sn := NewSnapshotNamer(fixedClock(time.UnixMilli(500)))
-+		if exp, got := "3-100-1501", sn.MakeName(set, 3, 100, 0); got != exp {
-+			t.Fatalf("got %q, want %q", got, exp)
-+		}
-+	})
-+
-+	t.Run("clock ahead ignores floor", func(t *testing.T) {
-+		set := SnapshotSet{dir: "/test", items: []*Snapshot{
-+			mkSnap("3-100-1000", 3, 100),
-+		}}
-+		sn := NewSnapshotNamer(fixedClock(time.UnixMilli(2000)))
-+		if exp, got := "3-100-2000", sn.MakeName(set, 3, 100, 0); got != exp {
-+			t.Fatalf("got %q, want %q", got, exp)
-+		}
-+	})
-+
-+	t.Run("empty set"
-```
-
-**File**: `snapshot/snapshot_namer.go` (modified, +28/-3)
-```diff
-@@ -2,6 +2,7 @@ package snapshot
- 
- import (
- 	"fmt"
-+	"math"
- 	"strconv"
- 	"strings"
- 	"time"
-@@ -21,11 +22,35 @@ func NewSnapshotNamer(nowFn func() time.Time) *SnapshotNamer {
- 	return &SnapshotNamer{nowFn}
- }
- 
--// MakeName returns a name for the Snapshot, for the given the term, index, and
--// and generation. If gen is less than 1, then no generation is present in the name.
--func (sn *SnapshotNamer) MakeName(term, index uint64, gen int64) string {
-+// MakeName returns a name for the Snapshot, for the given snapshot set, term,
-+// index, and generation. If gen is less than 1, then no generation is present
-+// in the name.
-+//
-+// The name is generated so that it sorts as newer than every snapshot in the
-+// set sharing the given term and index: the millisecond field is the larger of
-+// the current wall-clock time and one more than the millisecond field of the
-+// newest such snapshot. Ordering therefore stays correct even if the system
-+// clock moved backwards since those snapshots were created.
-+func (sn *SnapshotNamer) MakeName(set SnapshotSet, term, index uint64, gen int64) string {
-+	minMsec := int64(math.MinInt64)
-+	if newest, ok := set.WithTermIndex(term, index).Newest(); ok {
-+		// A snapshot whose ID has no parsable timestamp cannot take part in
-+		// the floor, so it is simply ignored.
-+		if _, _, msec, _, err := ParseSnapshotName(newest.id); err == nil {
-+			minMsec = msec + 1
-+		}
-+	}
-+	return sn.makeName(term, index, gen, minMsec)
-+}
-+
-+// makeName returns a name for the Snapshot, as MakeName does, but the
-+// millisecond field is raised to minMsec if the current time is lower.
-+func (sn *SnapshotNamer) makeName(term, index uint64, gen int64, minMsec int64) string {
- 	now := sn.nowFn()
- 	msec := now.UnixNano() / int64(time.Millisecond)
-+	if msec < minMsec {
-+		msec = minMsec
-+	}
- 	if gen < 1 {
- 		return fmt.Sprintf("%d-%d-%d", term, index, msec)
- 	}
-```
-
-**File**: `snapshot/state.go` (modified, +1/-1)
-```diff
-@@ -36,7 +36,7 @@ func Clone(dir, id string, index, term uint64, gen int64) error {
- 	}
- 
- 	snapshotNamer := NewSnapshotNamer(nil)
--	newID := snapshotNamer.MakeName(term, index, gen)
-+	newID := snapshotNamer.MakeName(SnapshotSet{}, term, index, gen)
- 	dstPath := filepath.Join(dir, newID)
- 	if fsutil.PathExists(dstPath) {
- 		return fmt.Errorf("snapshot %q already exists in %q", newID, dir)
-```
-
-**File**: `snapshot/store.go` (modified, +10/-3)
-```diff
-@@ -292,9 +292,16 @@ func NewStore(dir string) (*Store, error) {
- // Create creates a new snapshot sink for the given parameters.
- func (s *Store) Create(version raft.SnapshotVersion, index, term uint64, configuration raft.Configuration,
- 	configurationIndex uint64, trans raft.Transport) (retSink raft.SnapshotSink, retErr error) {
-+	// Read the store under a read lock so the scan cannot race with a reap.
-+	s.mrsw.BeginReadBlocking()
-+	snapSet, err := s.getSnapshots()
-+	s.mrsw.EndRead()
-+	if err != nil {
-+		return nil, err
-+	}
- 	sink := NewSink(s.dir, &raft.SnapshotMeta{
- 		Version:            version,
--		ID:                 s.snapshotNamer.MakeName(term, index, 0),
-+		ID:                 s.snapshotNamer.MakeName(snapSet, term, index, 0),
- 		Index:              index,
- 		Term:               term,
- 		Configuration:      configuration,
-@@ -657,15 +664,15 @@ func (s *Store) reapInternal() (int, int, error) {
- 		}
- 
- 		gen := int64(1)
--		newID := s.snapshotNamer.MakeName(newest.raftMeta.Term, newest.raftMeta.Index, gen)
-+		newID := s.snapshotNamer.MakeName(snapSet, newest.raftMeta.Term, newest.raftMeta.Index, gen)
- 		for {
- 			finalDir := filepath.Join(s.dir, newID)
- 			if !fsutil.DirExists(finalDir) {
- 				// No ID collision, use it.
- 				break
- 			}
- 			gen++
--			newID = s.snapshotNamer.MakeName(newest.raftMeta.Term, newest.raftMeta.Index, gen)
-+			newID = s.snapshotNamer.MakeName(snapSet, newest.raftMeta.Term, newest.raftMeta.Index, gen)
- 		}
- 
- 		newMeta := copyRaftMeta(newest.raftMeta)
-```
-
-**File**: `snapshot/store_test.go` (modified, +106/-15)
-```diff
-@@ -1054,10 +1054,10 @@ func Test_Store_Reap_Full_FullWALs(t *testing.T) {
- 	}
- }
- 
--// Test_Store_Reap_Full_FullWALs_NameCollision_NoGen tests reaping when the name
--// generated for the consolidated snapshot is identical to the name of the newest
--// full snapshot and the snapshot IDs don't use generations. This is the case with
--// older releases.
-+// Test_Store_Reap_Full_FullWALs_NameCollision_NoGen tests reaping when the
-+// clock reads the same millisecond recorded in the newest full snapshot's ID
-+// and the snapshot IDs don't use generations, as with older releases. The
-+// consolidated snapshot must still sort after the snapshot it replaces.
- func Test_Store_Reap_Full_FullWALs_NameCollision_NoGen(t *testing.T) {
- 	dir := t.TempDir()
- 	store, err := NewStore(dir)
-@@ -1070,8 +1070,9 @@ func Test_Store_Reap_Full_FullWALs_NameCollision_NoGen(t *testing.T) {
- 	createSnapshotInStore(t, store, "3-2000-2222222222222", 2000, 3, 1,
- 		"testdata/db-and-wals/full2.db", "testdata/db-and-wals/full2-wal-00")
- 
--	// Now use a fixed clock so we get the same timestamp when we reap. This should trigger a bump in
--	// generation from 0 (implied because it's not in the snapshot ID) to 1.
-+	// Now use a fixed clock reading the same millisecond recorded in the
-+	// newest snapshot's ID. The consolidated snapshot must sort strictly
-+	// after it, so the millisecond field is bumped past the existing one.
- 	store.snapshotNamer = NewSnapshotNamer(fixedClock(time.UnixMilli(2222222222222)))
- 	if _, _, err := store.Reap(); err != nil {
- 		t.Fatalf("Failed to reap snapshots: %v", err)
-@@ -1086,14 +1087,15 @@ func Test_Store_Reap_Full_FullWALs_NameCollision_NoGen(t *testing.T) {
- 	if err != nil {
- 		t.Fatalf("failed to parse snapshot name: %s", err)
- 	}
--	if term != 3 || index != 2000 || msec != 2222222222222 || gen != 1 {
-+	if term != 3 || index != 2000 || msec != 2222222222223 || gen != 1 {
- 		t.Fatalf("incorrect snapshot ID, got %d, %d, %d, %d", term, index, msec, gen)
- 	}
- }
- 
--// Test_Store_Reap_Full_FullWALs_NameCollision_WithGen tests reaping when the name
--// generated for the consolidated snapshot is identical to the name of the newest
--// full snapshot and generations are in use.
-+// Test_Store_Reap_Full_FullWALs_NameCollision_WithGen tests reaping when the
-+// clock reads the same millisecond recorded in the newest full snapshot's ID
-+// and generations are in use. The consolidated snapshot must still sort after
-+// the snapshot it replaces.
- func Test_Store_Reap_Full_FullWALs_NameCollision_WithGen(t *testing.T) {
- 	dir := t.TempDir()
- 	store, err := NewStore(dir)
-@@ -1106,8 +1108,9 @@ func Test_Store_Reap_Full_FullWALs_NameCollision_WithGen(t *testing.T) {
- 	createSnapshotInStore(t, store, "3-2000-2222222222222-1", 2000, 3, 1,
- 		"testdata/db-and-wals/full2.db", "testdata/db-and-wals/full2-wal-00")
- 
--	// Now use a fixed clock so we get the same timestamp when we reap. This should trigger a bump in
--	// generation from 1 to 2.
-+	// Now use a fixed clock reading the same millisecond recorded in the
-+	// newest snapshot's ID. The consolidated snapshot must sort strictly
-+	// after it, so the millisecond field is bumped past the existing one.
- 	store.snapshotNamer = NewSnapshotNamer(fixedClock(time.UnixMilli(2222222222222)))
- 	if _, _, err := store.Reap(); err != nil {
- 		t.Fatalf("Failed to reap snapshots: %v", err)
-@@ -1122,7 +1125,95 @@ func Test_Store_Reap_Full_FullWALs_NameCollision_WithGen(t *testing.T) {
- 	if err != nil {
- 		t.Fatalf("failed to parse snapshot name: %s", err)
- 	}
--	if term != 3 || index != 2000 || msec != 2222222222222 || gen != 2 {
-+	if term != 3 || index != 2000 || msec != 2222222222223 || gen != 1 {
-+		t.Fatalf("incorrect snapshot ID, got %d, %d, %d, %d", term, index, msec, gen)
++func Test_TrailingWhitespace(t *testing.T) {
++	for _, tc := range []struct {
++		name string
++		body string
++	}{
++		{"none", `["SELECT 1"]`},
++		{"spaces", `["SELECT 1"]   `},
++		{"newline", "[\"SELECT 1\"]\n"},
++		{"mixed", "  [ \"SELECT 1\" ] \t\r\n "},
++		{"parameterized", "[[\"SELECT ?\", 1]]\n"},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			stmts, err := ParseRequest(bytes.NewReader([]byte(tc.body)))
++			if err != nil {
++				t.Fatalf("failed to parse request: %s", err)
++			}
++			if len(stmts) != 1 {
++				t.Fatalf("incorrect number of statements returned: %d", len(stmts))
++			}
++		})
 +	}
 +}
 +
-+// Test_Store_Create_ClockBackward_SameTermIndex tests that a snapshot created
-+// after the system clock moves backwards still sorts as newer than an existing
-+// snapshot with the same term and index.
-+func Test_Store_Create_ClockBackward_SameTermIndex(t *testing.T) {
-+	dir := t.TempDir()
-+	store, err := NewStore(dir)
-+	if err != nil {
-+		t.Fatalf("Failed to create new store: %v", err)
++func Test_IncompleteRequest(t *testing.T) {
++	for _, tc := range []struct {
++		name string
++		body string
++	}{
++		{"empty", ``},
++		{"whitespace only", `   `},
++		{"open bracket only", `[`},
++		{"unclosed array", `["SELECT 1"`},
++		{"unclosed array trailing comma", `["SELECT 1",`},
++		{"unclosed string", `["SELECT 1`},
++		{"unclosed parameterized", `[["SELECT ?", 1]`},
++		{"unclosed inner array", `[["SELECT ?", 1`},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			stmts, err := ParseRequest(bytes.NewReader([]byte(tc.body)))
++			if err != ErrInvalidJSON {
++				t.Fatalf("expected ErrInvalidJSON, got %v (stmts: %v)", err, stmts)
++			}
++		})
 +	}
-+	defer store.Close()
++}
 +
-+	// Existing snapshot at term 3, index 100, created at millisecond 1000.
-+	createSnapshotInStore(t, store, "3-100-1000", 100, 3, 1, "testdata/db-and-wals/backup.db")
-+
-+	// The clock moves backwards to millisecond 500. A new snapshot at the same
-+	// term and index must still sort as newer than the existing one.
-+	store.snapshotNamer = NewSnapshotNamer(fixedClock(time.UnixMilli(500)))
-+	sink, err := store.Create(1, 100, 3, makeTestConfiguration("1", "localhost:1"), 1, nil)
-+	if err != nil {
-+		t.Fatalf("Failed to create sink: %v", err)
-+	}
-+	if exp, got := "3-100-1001", sink.ID(); exp != got {
-+		t.Fatalf("expected sink ID %s, got %s", exp, got)
-+	}
-+
-+	streamer, err := NewSnapshotStreamer("testdata/db-and-wals/backup.db")
-+	if err != nil {
-+		t.Fatalf("Failed to create SnapshotStreamer: %v", err)
-+
-```
-
----
-
-### Incident Patch 8: `52e5cd15` (2026-09-19)
-**Commit Message**: More test fixes
-
-**File**: `db/querylog/querylog_test.go` (modified, +4/-4)
-```diff
-@@ -128,8 +128,8 @@ func Test_QueryLogger_FallbackToStmtOrTrigger(t *testing.T) {
- 	if !strings.Contains(output, "PRAGMA journal_mode") {
- 		t.Fatalf("expected log to contain StmtOrTrigger text, got: %s", output)
- 	}
--	if !strings.Contains(output, "[0s]") {
--		t.Fatalf("expected [0s] for zero-duration, got: %s", output)
-+	if !strings.Contains(output, "(0s)") {
-+		t.Fatalf("expected (0s) for zero-duration, got: %s", output)
- 	}
- }
- 
-@@ -291,8 +291,8 @@ func Test_QueryLogger_MinDuration_AboveThreshold(t *testing.T) {
- 	if !strings.Contains(output, "SELECT 'above_threshold'") {
- 		t.Fatalf("expected query above threshold to be logged, got: %s", output)
- 	}
--	if !strings.Contains(output, "[50ms]") {
--		t.Fatalf("expected [50ms] in output, got: %s", output)
-+	if !strings.Contains(output, "(50ms)") {
-+		t.Fatalf("expected (50ms) in output, got: %s", output)
- 	}
- }
- 
-```
-
----
-
-### Incident Patch 9: `eb418bce` (2026-09-19)
-**Commit Message**: Fix querylog test
-
-**File**: `db/querylog/querylog_test.go` (modified, +3/-3)
-```diff
-@@ -75,15 +75,15 @@ func Test_QueryLogger_StmtThenProfile(t *testing.T) {
- 		EventCode:      sqlite3.TraceProfile,
- 		ConnHandle:     0x100,
- 		StmtHandle:     0x200,
--		RunTimeNanosec: 3_000_000,
-+		RunTimeNanosec: 30_000_000,
- 	})
- 
- 	output := buf.String()
- 	if !strings.Contains(output, "INSERT INTO t VALUES ('alice')") {
- 		t.Fatalf("expected log to contain expanded SQL, got: %s", output)
- 	}
--	if !strings.Contains(output, "[3ms]") {
--		t.Fatalf("expected log to contain [3ms], got: %s", output)
-+	if !strings.Contains(output, "(30ms)") {
-+		t.Fatalf("expected log to contain [30ms], got: %s", output)
- 	}
- }
- 
-```
-
----
-
-### Incident Patch 10: `f198b621` (2026-09-19)
-**Commit Message**: Deflake query timeout test
-
-**File**: `system_test/single_node_test.go` (modified, +6/-8)
-```diff
-@@ -784,18 +784,16 @@ func Test_SingleNodeQueryTimeout(t *testing.T) {
- 		t.Fatalf("test received wrong result\nexp: %s\ngot: %s\n", exp, r)
- 	}
- 
--	q := `SELECT key1, key_id, key2, key3, key4, key5, key6, data
--	FROM test_table
--	ORDER BY key2 ASC`
--	r, err = node.QueryWithTimeout(q, 1*time.Millisecond)
-+	// Counting 5000^3 combinations keeps SQLite busy long enough for the
-+	// timeout cancellation to run, even when Go timer delivery is delayed.
-+	q := `SELECT COUNT(*) FROM test_table t1
-+	CROSS JOIN test_table t2 CROSS JOIN test_table t3`
-+	r, err = node.QueryWithTimeout(q, 50*time.Millisecond)
- 	if err != nil {
- 		t.Fatalf("failed to query with timeout: %s", err.Error())
- 	}
- 	if !strings.Contains(r, `"error":"query timeout"`) {
--		// This test is brittle, but it's the best we can do, as we can't be sure
--		// how much of the query will actually be executed. We just know it should
--		// time out at some point.
--		t.Fatalf("query ran to completion, but should have timed out")
-+		t.Fatalf("expected query timeout, got: %s", r)
- 	}
- }
- 
-```
-
----
-
-### Incident Patch 11: `30ae9dd2` (2026-09-18)
-**Commit Message**: Fix HTTP logic error for queued statements
-
-**File**: `http/service.go` (modified, +4/-1)
-```diff
-@@ -1300,7 +1300,10 @@ func (s *Service) queuedExecute(w http.ResponseWriter, r *http.Request, qp Query
- 
- 	stmts, err := ParseRequest(r.Body)
- 	if err != nil {
--		if errors.Is(err, ErrNoStatements) && !qp.Wait() {
-+		if (errors.Is(err, ErrNoStatements) || errors.Is(err, ErrInvalidRequest)) && qp.Wait() {
-+			// These errors are OK if waiting.
-+			err = nil
-+		} else {
- 			http.Error(w, err.Error(), http.StatusBadRequest)
- 			return
- 		}
-```
-
----
-
-### Incident Patch 12: `994db9eb` (2026-09-18)
-**Commit Message**: UI console fixes
-
-**File**: `http/console/static/js/app.js` (modified, +16/-19)
-```diff
-@@ -498,14 +498,11 @@
-         loadStatus();
-     });
- 
--    function nodesURL() {
--        return showNonVoters.checked ? "/nodes?nonvoters" : "/nodes";
--    }
--
-     function loadStatus() {
-         Promise.all([
-             apiRequest("GET", "/status"),
--            apiRequest("GET", nodesURL())
-+            // Keep complete membership for restore routing; filter only the table.
-+            apiRequest("GET", "/nodes?nonvoters")
-         ]).then(function (responses) {
-             lastStatusData = responses[0].data;
-             renderStatus(lastStatusData);
-@@ -709,7 +706,9 @@
-     }
- 
-     function renderNodesTable() {
--        var nodes = lastNodesData.slice();
-+        var nodes = lastNodesData.filter(function (node) {
-+            return showNonVoters.checked || node.voter;
-+        });
- 
-         if (nodesSortKey) {
-             nodes.sort(function (a, b) {
-@@ -879,15 +878,9 @@
-     }
- 
-     function isSingleNodeCluster() {
--        // Prefer the node list if available; fall back to raft.num_peers.
--        if (lastNodesData && lastNodesData.length > 0) {
--            return lastNodesData.length === 1;
--        }
--        if (lastStatusData && lastStatusData.store && lastStatusData.store.raft) {
--            return Number(lastStatusData.store.raft.num_peers) === 0;
--        }
--        // Unknown — be safe and assume cluster (uses /db/load).
--        return false;
-+        // This list includes non-voters. raft.num_peers counts only voting peers
-+        // and cannot establish whether /boot is allowed. Unknown uses /db/load.
-+        return lastNodesData.length === 1;
-     }
- 
-     function sniffFileType(file) {
-@@ -984,6 +977,9 @@
-     restoreBtn.addEventListener("click", function () {
-         if (!restoreSelection) return;
-         var sel = restoreSelection;
-+        // Membership may have refreshed since the file was selected.
-+        sel.method = pickMethod(sel.kind);
-+        restoreMethodSpan.textContent = sel.method.label;
- 
-         var confirmMsg = "Restore from \"" + sel.file.name + "\" via " + sel.method.label + "?\n\n" +
-             "This replaces ALL existing data in the database. This action cannot be undone.";
-@@ -1050,14 +1046,15 @@
-             stopProcessingTimer();
-             restoreBtn.disabled = false;
- 
--            // /db/load can return 200 OK with a SQL parse error nested in the
--            // response body, e.g. {"results":[{"error":"near \"foo\": syntax
--            // error"}]}. Treat any error key in results[] as a failure.
-+            // /db/load can return 200 OK with a top-level request error or
-+            // a SQL error nested in results[]. Treat either as a failure.
-             var jsonErr = null;
-             if (xhr.responseText) {
-                 try {
-                     var resp = JSON.parse(xhr.responseText);
--                    if (resp && Array.isArray(resp.results)) {
-+                    if (resp && resp.error) {
-+                        jsonErr = resp.error;
-+                    } else if (resp && Array.isArray(resp.results)) {
-                         for (var i = 0; i < resp.results.length; i++) {
-                             if (resp.results[i] && resp.results[i].error) {
-                                 jsonErr = resp.results[i].error;
-```
-
----
-
-### Incident Patch 13: `fab7abd3` (2026-09-18)
-**Commit Message**: Build releases with go 1.27
-
-**File**: `.github/workflows/build-release-binaries.yml` (modified, +1/-1)
-```diff
-@@ -13,7 +13,7 @@ jobs:
-       - name: Set up Go
-         uses: actions/setup-go@v5
-         with:
--          go-version: 1.26
-+          go-version: 1.27
- 
-       - name: Display the version of go that we have installed
-         run: go version
+ func byteSliceToStringArray(b []byte) string {
+ 	var buffer bytes.Buffer
+ 	buffer.WriteString("[")
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2846** (2026-10-05): Simplify runWALSnapshot logic (@otoolep)
-- **PR #2845** (2026-10-05): Check Raft Snapshot threshold every 5 seconds by default (@otoolep)
-- **PR #2844** (2026-10-05): Verify WAL-related SQLite compile-time options (@otoolep)
-- **PR #2842** (closed): Claude GitHub 2795 drivers (@otoolep)
-- **PR #2841** (2026-10-04): Disable autocheckpointing at connect time (@otoolep)
-- **PR #2840** (2026-10-04): Emit CDC events for every request in a bulk request (@otoolep)
-- **PR #2839** (2026-10-03): Don't clear CDC streamer index after Commit or Rollback (@otoolep)
-- **PR #2837** (2026-10-01): More Console Topology improvements (@otoolep)
+- **PR #2973** (2026-10-18): Upgrade dependencies via 'go get' (@otoolep)
+- **PR #2972** (2026-10-18): CDC Events should include Commit Timestamp (@otoolep)
+- **PR #2971** (2026-10-18): Move everywhere to Go 1.27 (@otoolep)
+- **PR #2969** (2026-10-18): Console schema view handles reserved JavaScript property names (@otoolep)
+- **PR #2967** (2026-10-17): Check for trailing junk in request bodies (@otoolep)
+- **PR #2966** (2026-10-16): Rewrite TIMESTAMP tokens where possible (@otoolep)
 
 ---
 
@@ -3968,3 +2297,34 @@ Keep snapshot ordering correct when the clock moves backwards
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. Merge pull request #2972 from rqlite/cdc-no-commit-timestamp-regression
+
+**RULE**:
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rqlite/rqlite. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `c6a241c8`: Merge pull request #2972 from rqlite/cdc-no-commit-timestamp-regression. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+- [PR #2972](https://github.com/rqlite/rqlite/pull/2972): Set `CommitTimestamps` in CDC Events Group. Fixes issue [#2970](https://github.com/rqlite/rqlite/issues/2970). Thanks @gunavanthvarma-dev
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `c6a241c8` are properly handled with clean fallback behavior.

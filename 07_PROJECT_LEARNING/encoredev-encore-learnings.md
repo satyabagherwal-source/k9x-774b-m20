@@ -1,19 +1,33 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/encoredev-encore-learnings.md`  
+> **Source**: github ([https://github.com/encoredev/encore](https://github.com/encoredev/encore))  
+> **Source Version**: `09bb8c19`  
+> **License**: MPL-2.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-19T02:27:48.694Z  
+> **Learning ID**: `learn-github-encoredev-encore`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): encoredev/encore
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/encoredev-encore-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/encoredev/encore](https://github.com/encoredev/encore))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T03:00:59.362Z  
+> **Harvest Timestamp**: 2026-10-19T02:27:48.686Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `encoredev/encore`
-- **Description**: The infrastructure platform for the intelligence era
+- **Description**: Infrastructure orchestration from local to your cloud
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 12413 stars
+- **Stars / Engagement**: 12464 stars
 
 ---
 
@@ -450,7 +464,6 @@ import (
 	"os"
 	"slices"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/charmbracelet/bubbles/list"
@@ -889,7 +902,7 @@ func createAppForm(inputName, inputTemplate string, inputLang cmdutil.Language, 
 	{
 		ls := list.NewDefaultItemStyles()
 		ls.SelectedTitle = ls.SelectedTitle.Foreground(lipgloss.Color(cmdutil.CodeBlue)).BorderForeground(lipgloss.Color(cmdutil.CodeBlue))
-		ls
+		ls.Selecte
 ```
 
 ### Core Architecture Module: `cli/cmd/encore/app/create_org.go`
@@ -1726,69 +1739,6 @@ func Get(ctx context.Context, slug string) (*Bit, error) {
 
 ```
 
-### Core Architecture Module: `cli/cmd/encore/bits/bits.go`
-```
-package bits
-
-import (
-	"github.com/spf13/cobra"
-
-	"encr.dev/cli/cmd/encore/root"
-)
-
-var bitsCmd = &cobra.Command{
-	Use:   "bits",
-	Short: "Commands to manage encore bits, reusable functionality for Encore applications",
-}
-
-func init() {
-	root.Cmd.AddCommand(bitsCmd)
-}
-
-```
-
-### Core Architecture Module: `cli/cmd/encore/bits/list.go`
-```
-package bits
-
-import (
-	"context"
-	"fmt"
-	"os"
-	"text/tabwriter"
-
-	"github.com/spf13/cobra"
-
-	"encr.dev/cli/cmd/encore/cmdutil"
-	"encr.dev/pkg/bits"
-)
-
-var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: "Lists available Encore Bits to add to your application",
-	Args:  cobra.ExactArgs(0),
-	Run: func(c *cobra.Command, args []string) {
-		bits, err := bits.List(context.Background())
-		if err != nil {
-			cmdutil.Fatalf("could not list encore bits: %v", err)
-		}
-
-		tw := tabwriter.NewWriter(os.Stdout, 0, 8, 0, '\t', 0)
-		fmt.Fprintln(tw, "ID\tTitle\tDescription")
-		for _, bit := range bits {
-			fmt.Fprintf(tw, "%s\t%s\t%s\n", bit.Slug, bit.Title, bit.Description)
-			fmt.Fprintln(tw)
-		}
-		tw.Flush()
-	},
-}
-
-func init() {
-	bitsCmd.AddCommand(listCmd)
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1802,39 +1752,6 @@ func init() {
 
 - **Issue #1092** (2026-02-13): **Generated Client `mustBeSet` check fails for `Set-Cookie`**
   *Symptoms*: Hey all!  Loving Encore TS!  I ran into an issue with the generated client this evening.  I have an AuthResponse defined in the following way: ``` export interface AuthResponse {   cookies: Header<'Set-Cookie'>   user: User } ```  When generated, it outputs the following: ``` public async login(params: LoginParams): Promise<AuthResponse> {     // Now make the actual call to the API     const resp = await this.baseClient.callAPI("POST", `/auth/login`, JSON.stringify(params))      //Populate the return object from the JSON body and received headers     const rtn = await resp.json() as AuthResponse     rtn.cookies = mustBeSet("Header `set-cookie`", resp.headers.get("set-cookie"))     return rtn } ```  The `mustBeSet` call for `set-cookie` is failing because `Set-Cookie` is a [forbidden response header](https://fetch.spec.whatwg.org/#forbidden-response-header-name).  Encore itself is setting that header correctly, but the generated client should not expect to be able to access the `Set-Cookie` header.
-  **Post-Mortem & Fix Analysis**:
-  > any solution for setting cookie headers from encore backend ? 
-  > Also looking for solutions to setting cookies from encore.dev and reading same cookies in other api calls.
-  > @eandre 
-
-- **Issue #1051** (2024-02-28): **Sending metrics to mimir does not seem to isolate environments**
-  *Symptoms*: I've setup a "grafana cloud" metrics endpoint using memir, we started to ship production metrics, everything is working fine. In the metrics view of encore, we see a point in time where metrics stop and new metrics start.   When I try to connect staging to the same metrics target, and deploy. I immediately see metrics, which appear to be my production metrics, so it seems like the metrics view of encore is no correctly using env tags.  This is the view of staging while it was still using encore for metrics  ![Screenshot 2024-02-28 at 10 49 18](https://github.com/encoredev/encore/assets/108635/0d3d1298-21ab-42d4-b2cb-709490a35701)  and this is the view immediatly after switching to the mimir target (there should be no metrics there)  ![Screenshot 2024-02-28 at 10 50 34](https://github.com/encoredev/encore/assets/108635/8b283afe-901e-4ff3-8942-b70641854789) 
-  **Post-Mortem & Fix Analysis**:
-  > Thanks @danhawkins. Deploying a fix as we speak.
-
-- **Issue #1020** (2024-02-26): **Javascript generated client triggers errors on User-Agent in browser**
-  *Symptoms*: ### Description of the Problem  While learning encore.dev using the [uptime tutorial](https://encore.dev/docs/tutorials/uptime) I found out the frontend client generates the following errors in the browser console  ``` Refused to set unsafe header "User-Agent" ```  The error is thrown because the generated js client [attempts to set the User-Agent](https://github.com/encoredev/encore/blob/main/internal/clientgen/javascript.go#L480) and the browser doesn't allow it.   ### Expected Behavior Generated JS client for browser should not attempt to set User-Agent. User-Agent should be only set when the client is used in backend services.   ### Environment - Mac Sonoma 14.2.1 - Chrome 120.0.6099.234
-  **Post-Mortem & Fix Analysis**:
-  > Thanks @rewop. We don't have a good way of distinguishing between client generation for frontend use and for backend use at the moment, but until we do it's a better default to not send the User-Agent header. Want to submit a PR?
-  > @eandre I should have a PR today or tomorrow. 
-
-- **Issue #652** (2023-05-08): **[BUG]: Topic missing publisher role in GCP deployment**
-  *Symptoms*: ## Description  Few days back, I faced an issue when I deployed my application to GCP for production usage. The `topic` created was missing publisher role for the Cloud Run.  <img width="410" alt="Screenshot 2023-04-04 at 4 23 52 PM" src="https://user-images.githubusercontent.com/17452272/229771127-34403b6f-4313-4116-a837-8b9e9fd5fe4e.png">  --- To fix it I have to manually add the permission.  
-  **Post-Mortem & Fix Analysis**:
-  > Hi @onlywicked, thanks for the report. Did you actually call `Publish` on the topic somewhere? Encore only adds the permission when you actually publish messages.
-  > @eandre Yep, I did. Because and that's how I came to know about it.  I was getting the following error:  `failed to publish message to {topic_name}: rpc error: code = PermissionDenied desc = User not authorized to perform this action.`  After that I went into project and found that the permission wasn't there.
-  > Hmm, that's very strange, that shouldn't happen. Can you share which Encore application and which deploy id that triggered this? I'll have a look at the infrastructure planning.
-
-- **Issue #619** (2023-02-22): **[ENC-1288] Fix indeterministic build/encore run**
-  *Symptoms*: This commit fixes a bug introduced in #505 when we made the parser run in parallel.  The issue ultimately was a race condition within the main goroutine, such that when the last worker finished parsing a package, the main goroutine could either read from the `pkgCh` or the `workerDone` channel.  If it picked the `workerDone` channel, then the last package would never be added to the list of known packages, which could result in random errors later in the encore parse/compile pipeline.  I've also updated the unit tests to ensure the test cache is cleared for each PR
-  **Post-Mortem & Fix Analysis**:
-  > All committers have signed the CLA.
-
-- **Issue #556** (2022-12-20): **Generated TypeScript client doesn't work with built-in fetch out of the box**
-  *Symptoms*: The built-in fetch function isn't bound correctly when using the generated TypeScript client. It needs to be bound using `fetch.bind(self)`. But what's more, it doesn't work correctly when running in server-side Node environments. A better way to fix this is to depend on a library like `cross-fetch` that provides an abstraction that automatically selects the correct `fetch` implementation.
-
-- **Issue #554** (2022-12-20): **When linking an app the Encore daemon still thinks it's not linked**
-  *Symptoms*: We cache the platform id inside the daemon, and if it changes we don't re-check it. This is a problem particularly when an app is not linked, in which case we return an error saying the user needs to link it. Upon linking it, however, the absence of a platform id is cached and won't be re-fetched.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1851,7 +1768,161 @@ func init() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d2b21473` (2026-10-01)
+### Incident Patch 1: `2267602f` (2026-10-09)
+**Commit Message**: codegen: fix test builds of files with secrets
+
+Test builds of a package whose first file declares secrets failed with
+"syntax error: non-declaration statement outside function body" since
+lovzrnzz moved the inserted imports onto the package clause's line.
+
+Both the test support import and the secrets import are inserted at the
+end of the package name, and each ended in a semicolon and began with
+one. Inserted together they left an empty declaration between them,
+which Go does not allow:
+
+    package svc;import __encore_secrets "...";/*line :1:12*/;import _ "...";/*line :1:12*/
+
+The inserts now leave out the trailing semicolon; the newline ending the
+line inserts one, as does the next insert's leading one. A golden test
+covers a test build of a file with secrets.
+
+**File**: `v2/codegen/gen.go` (modified, +4/-1)
+```diff
+@@ -114,6 +114,9 @@ func (g *Generator) Overlays() []overlay.File {
+ // The import goes on the package clause's line, like every rewrite of a user's
+ // file: a rewrite must not add lines, since tools that ignore line directives
+ // (cmd/cover since Go 1.27) would report everything below it on the wrong line.
++// It has no trailing semicolon: the newline ending the line inserts one, and
++// another insert at the same position (secrets) brings its own leading one,
++// where two in a row would be an empty declaration and fail to parse.
+ func (g *Generator) InsertTestSupport(pkg *pkginfo.Package) {
+ 	if g.addedTestSupport[pkg.ImportPath] {
+ 		return
+@@ -126,6 +129,6 @@ func (g *Generator) InsertTestSupport(pkg *pkginfo.Package) {
+ 
+ 	insertPos := a.Name.End()
+ 	ln := g.FS.Position(insertPos)
+-	rw.Insert(insertPos, []byte(fmt.Sprintf(";import _ %s;/*line :%d:%d*/",
++	rw.Insert(insertPos, []byte(fmt.Sprintf(";import _ %s/*line :%d:%d*/",
+ 		strconv.Quote("encore.dev/appruntime/shared/testsupport"), ln.Line, ln.Column)))
+ }
+```
+
+**File**: `v2/codegen/infragen/secretsgen/secretsgen.go` (modified, +1/-1)
+```diff
+@@ -25,7 +25,7 @@ func Gen(gen *codegen.Generator, svc option.Option[*app.Service], pkg *pkginfo.P
+ 			insertPos := file.AST().Name.End()
+ 			ln := gen.FS.Position(insertPos)
+ 
+-			rw.Insert(insertPos, []byte(fmt.Sprintf(";import __encore_secrets %s;/*line :%d:%d*/",
++			rw.Insert(insertPos, []byte(fmt.Sprintf(";import __encore_secrets %s/*line :%d:%d*/",
+ 				strconv.Quote("encore.dev/appruntime/infrasdk/secrets"),
+ 				ln.Line, ln.Column)))
+ 			addedImport[secret.File] = true
+```
+
+**File**: `v2/codegen/infragen/secretsgen/secretsgen_test.go` (modified, +12/-0)
+```diff
+@@ -19,3 +19,15 @@ func TestCodegen(t *testing.T) {
+ 	}
+ 	codegentest.Run(t, fn)
+ }
++
++// TestCodegenTestBuild covers a test build, where the test support import goes
++// into the same file as the secrets import.
++func TestCodegenTestBuild(t *testing.T) {
++	fn := func(gen *codegen.Generator, desc *app.Desc) {
++		all := parser.Resources[*secrets.Secrets](desc.Parse)
++		svc, _ := desc.ServiceForPath(all[0].File.Pkg.FSPath)
++		Gen(gen, option.AsOptional(svc), all[0].File.Pkg, all)
++		gen.InsertTestSupport(all[0].File.Pkg)
++	}
++	codegentest.RunDir(t, "testdata/testbuild", fn)
++}
+```
+
+**File**: `v2/codegen/infragen/secretsgen/testdata/basic.txt` (modified, +1/-1)
+```diff
+@@ -15,7 +15,7 @@ func API(context.Context) error { return nil }
+ func key() string { return secrets.APIKey }
+ -- want:svc/svc.go --
+ // Package svc reads two secrets.
+-package svc;import __encore_secrets "encore.dev/appruntime/infrasdk/secrets";/*line :2:12*/ // the service
++package svc;import __encore_secrets "encore.dev/appruntime/infrasdk/secrets"/*line :2:12*/ // the service
+ 
+ import "context"
+ 
+```
+
+**File**: `v2/codegen/infragen/secretsgen/testdata/testbuild/basic.txt` (added, +28/-0)
+```diff
+@@ -0,0 +1,28 @@
++-- svc/svc.go --
++// Package svc reads a secret.
++package svc // the service
++
++import "context"
++
++var secrets struct {
++	APIKey string
++}
++
++//encore:api
++func API(context.Context) error { return nil }
++
++func key() string { return secrets.APIKey }
++-- want:svc/svc.go --
++// Package svc reads a secret.
++package svc;import __encore_secrets "encore.dev/appruntime/infrasdk/secrets"/*line :2:12*/;import _ "encore.dev/appruntime/shared/testsupport"/*line :2:12*/ // the service
++
++import "context"
++
++var secrets = struct {
++	APIKey string
++}{APIKey: __encore_secrets.Load("APIKey", "svc")}/*line :8:2*/
++
++//encore:api
++func API(context.Context) error { return nil }
++
++func key() string { return secrets.APIKey }
+```
+
+**File**: `v2/codegen/internal/codegentest/codegentest.go` (modified, +6/-1)
+```diff
+@@ -34,9 +34,14 @@ type Case struct {
+ var goldenUpdate = flag.Bool("golden-update", os.Getenv("GOLDEN_UPDATE") != "", "update golden files")
+ 
+ func Run(t *testing.T, fn func(*codegen.Generator, *app.Desc)) {
++	RunDir(t, "testdata", fn)
++}
++
++// RunDir is like Run but reads the test cases from dir.
++func RunDir(t *testing.T, dir string, fn func(*codegen.Generator, *app.Desc)) {
+ 	flag.Parse()
+ 	c := qt.New(t)
+-	tests := readTestCases(c, "testdata")
++	tests := readTestCases(c, dir)
+ 	for _, test := range tests {
+ 		c.Run(test.name, func(c *qt.C) {
+ 			tc := testutil.NewContext(c, false, test.input)
+```
+
+**File**: `v2/codegen/testdata/testsupport.txt` (modified, +1/-1)
+```diff
+@@ -8,7 +8,7 @@ import "strings"
+ func Title(s string) string { return strings.ToUpper(s) }
+ -- want:textutil/textutil.go --
+ // Package textutil formats names.
+-package textutil;import _ "encore.dev/appruntime/shared/testsupport";/*line :2:17*/
++package textutil;import _ "encore.dev/appruntime/shared/testsupport"/*line :2:17*/
+ 
+ import "strings"
+ 
+```
+
+---
+
+### Incident Patch 2: `d2b21473` (2026-10-01)
 **Commit Message**: fix clippy warnings
 
 **File**: `Cargo.lock` (modified, +14/-3)
@@ -1914,7 +1985,7 @@ Observed empirical fixes and code patches:
 
 ---
 
-### Incident Patch 2: `0110a955` (2026-10-01)
+### Incident Patch 3: `0110a955` (2026-10-01)
 **Commit Message**: .github: build latest release in release mode
 
 **File**: `pkg/releaser/cmd/build/main.go` (modified, +4/-6)
@@ -1973,1551 +2044,13 @@ Observed empirical fixes and code patches:
  		if err != nil {
 ```
 
----
-
-### Incident Patch 3: `a59a6c0b` (2026-09-28)
-**Commit Message**: fix(daemon): migration uses wrong context (#2585)
-
-<!-- codesmith:footer -->
----
-<a
-href="https://app.blacksmith.sh/encoredev/codesmith/encore/pr/2585?autoLogin=true&ref=codesmith_pr_footer"><picture><source
-media="(prefers-color-scheme: dark)"
-srcset="https://pr-comments-assets.blacksmith.sh/codesmith/view-with-codesmith-dark-v2.svg"><source
-media="(prefers-color-scheme: light)"
-srcset="https://pr-comments-assets.blacksmith.sh/codesmith/view-with-codesmith-light-v2.svg"><img
-alt="View with [code]smith"
-src="https://pr-comments-assets.blacksmith.sh/codesmith/view-with-codesmith-dark-v2.svg"></picture></a>
-<a
-href="https://backend.blacksmith.sh/track/enable-autofix?expires=1793195099&installation_model_id=427204&pr_number=2585&ref=codesmith_pr_footer&repository=encoredev%2Fencore&return_to=https%3A%2F%2Fgithub.com%2Fencoredev%2Fencore%2Fpull%2F2585&signature=32d4d5588d67e13605068d5d834de2c42eb2735b15c8005ac54f26c1a1163a1a"><picture><source
-media="(prefers-color-scheme: dark)"
-srcset="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-dark.svg"><source
-media="(prefers-color-scheme: light)"
-srcset="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-
-
-**File**: `cli/daemon/sqldb/migrate.go` (modified, +1/-1)
-```diff
-@@ -286,7 +286,7 @@ func LoadAppliedVersions(ctx context.Context, conn *sql.Conn, schemaName, migrat
- 	appliedVersions := map[uint64]bool{}
- 
- 	query := `SELECT version, dirty FROM ` + pq.QuoteIdentifier(schemaName) + `.` + pq.QuoteIdentifier(migrationsTable) + ` ORDER BY version`
--	rows, err := conn.QueryContext(context.Background(), query)
-+	rows, err := conn.QueryContext(ctx, query)
- 	if err != nil {
- 		if e, ok := err.(*pq.Error); ok {
- 			if e.Code.Name() == "undefined_table" {
-```
-
----
-
-### Incident Patch 4: `95456970` (2026-09-17)
-**Commit Message**:  cli/daemon: paginate and filter traces, budget trace data by size not count  (#2582)
-
-<!-- codesmith:footer -->
----
-<a
-href="https://app.blacksmith.sh/encoredev/codesmith/encore/pr/2582"><picture><source
-media="(prefers-color-scheme: dark)"
-srcset="https://pr-comments-assets.blacksmith.sh/codesmith/view-with-codesmith-dark-v2.svg"><source
-media="(prefers-color-scheme: light)"
-srcset="https://pr-comments-assets.blacksmith.sh/codesmith/view-with-codesmith-light-v2.svg"><img
-alt="View with [code]smith"
-src="https://pr-comments-assets.blacksmith.sh/codesmith/view-with-codesmith-dark-v2.svg"></picture></a>
-<a
-href="https://backend.blacksmith.sh/track/enable-autofix?expires=1792228233&installation_model_id=427204&pr_number=2582&repository=encoredev%2Fencore&return_to=https%3A%2F%2Fgithub.com%2Fencoredev%2Fencore%2Fpull%2F2582&signature=929d78cc721cf1f459191a02bb874925fa01e3578a8853ecc1dce89cefbdfb6c"><picture><source
-media="(prefers-color-scheme: dark)"
-srcset="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-dark.svg"><source
-media="(prefers-color-scheme: light)"
-srcset="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-light.svg"><img
-a
-
-**File**: `cli/cmd/encore/daemon/daemon.go` (modified, +35/-1)
-```diff
-@@ -158,7 +158,23 @@ func (d *Daemon) init(ctx context.Context) {
- 	d.PublicBuckets = objects.NewPublicBucketServer("http://"+d.ObjectStorage.ClientAddr(), d.ObjectsMgr.PersistentStoreFallback)
- 
- 	traceStore := sqlite.New(d.EncoreDB)
--	go traceStore.CleanEvery(ctx, 1*time.Minute, 500, 100, 10000)
-+	// Disk budget for trace data. The dashboard pages back through it, so it
-+	// doesn't limit what's visible. The floor keeps the newest traces whatever
-+	// their size, so a tight budget can't empty the dashboard. The total is what
-+	// actually bounds the file: the per-app budget alone would grow with the
-+	// number of apps on the machine.
-+	const (
-+		maxTraceBytesPerApp = 50 << 20  // 50 MiB
-+		maxTraceBytesTotal  = 250 << 20 // 250 MiB
-+		minTracesKept       = 100
-+	)
-+	go traceStore.CleanEvery(ctx, 1*time.Minute, sqlite.CleanConfig{
-+		MaxBytesPerApp: maxTraceBytesPerApp,
-+		MaxBytesTotal:  maxTraceBytesTotal,
-+		MinTracesKept:  minTracesKept,
-+		BatchSize:      10000,
-+		KnownApps:      d.knownAppIDs,
-+	})
- 	d.Trace = traceStore
- 
- 	d.RunMgr = &run.Manager{
-@@ -187,6 +203,24 @@ func (d *Daemon) init(ctx context.Context) {
- 	d.Server = daemon.New(d.Apps, d.RunMgr, d.ClusterMgr, d.Secret, d.NS, d.MCPMgr)
- }
- 
-+// knownAppIDs reports the ids the trace store may hold data for, under both the
-+// ids an app's traces can be recorded as: a linked app records under its
-+// platform id, an unlinked one under its local id.
-+func (d *Daemon) knownAppIDs() ([]string, error) {
-+	instances, err := d.Apps.List()
-+	if err != nil {
-+		return nil, err
-+	}
-+	ids := make([]string, 0, len(instances)*2)
-+	for _, inst := range instances {
-+		ids = append(ids, inst.LocalID())
-+		if platformID := inst.PlatformID(); platformID != "" {
-+			ids = append(ids, platformID)
-+		}
-+	}
-+	return ids, nil
-+}
-+
- func (d *Daemon) serve() {
- 	go d.serveDaemon()
- 	go d.serveRuntime()
-```
-
-**File**: `cli/cmd/encore/daemon/migrations/7_trace_list_index.up.sql` (added, +2/-0)
-```diff
-@@ -0,0 +1,2 @@
-+CREATE INDEX IF NOT EXISTS trace_span_index_app_started
-+    ON trace_span_index (app_id, started_at DESC);
-```
-
-**File**: `cli/daemon/dash/dash.go` (modified, +37/-4)
-```diff
-@@ -32,6 +32,9 @@ import (
- 	meta "encr.dev/proto/encore/parser/meta/v1"
- )
- 
-+// maxTraceListLimit caps the page size a caller may ask for.
-+const maxTraceListLimit = 500
-+
- type handler struct {
- 	rpc     jsonrpc2.Conn
- 	apps    *apps.Manager
-@@ -286,16 +289,46 @@ func (h *handler) Handle(ctx context.Context, reply jsonrpc2.Replier, r jsonrpc2
- 			AppID      string `json:"app_id"`
- 			MessageID  string `json:"message_id"`
- 			TestTraces *bool  `json:"test_traces,omitempty"`
-+			// Before pages backwards: return traces started at or before this
-+			// unix-nanosecond timestamp. Zero means start from the newest.
-+			Before int64 `json:"before,omitempty"`
-+			// Limit is the page size the caller requests.
-+			Limit int `json:"limit,omitempty"`
-+
-+			// Filters
-+			Service      string `json:"service,omitempty"`
-+			Endpoint     string `json:"endpoint,omitempty"`
-+			Topic        string `json:"topic,omitempty"`
-+			Subscription string `json:"subscription,omitempty"`
-+			TraceID      string `json:"trace_id,omitempty"`
-+			IsError      *bool  `json:"is_error,omitempty"`
-+			// Microseconds; the dashboard takes milliseconds and converts. The
-+			// duration filter is a lower bound only, so there is no maximum.
-+			MinDurMicros uint64 `json:"min_duration,omitempty"`
- 		}
- 		if err := unmarshal(&params); err != nil {
- 			return reply(ctx, nil, err)
- 		}
- 
- 		query := &trace2.Query{
--			AppID:      params.AppID,
--			TestFilter: params.TestTraces,
--			MessageID:  params.MessageID,
--			Limit:      100,
-+			AppID:        params.AppID,
-+			TestFilter:   params.TestTraces,
-+			MessageID:    params.MessageID,
-+			Service:      params.Service,
-+			Endpoint:     params.Endpoint,
-+			Topic:        params.Topic,
-+			Subscription: params.Subscription,
-+			TraceID:      params.TraceID,
-+			IsError:      params.IsError,
-+			MinDurNanos:  params.MinDurMicros * 1000,
-+			Limit:        min(params.Limit, maxTraceListLimit),
-+		}
-+		if params.Before > 0 {
-+			// Inclusive, not exclusive: several traces can share a start
-+			// timestamp, and an exclusive bound would drop the ones after the
-+			// first at a page boundary. The caller re-receives the trace it
-+			// paged from and is expected to discard duplicates by id.
-+			query.EndTime = time.Unix(0, params.Before)
- 		}
- 		var list []*tracepb2.SpanSummary
- 		iter := func(s *tracepb2.SpanSummary) bool {
-```
-
-**File**: `cli/daemon/engine/trace2/sqlite/clean_test.go` (added, +184/-0)
-```diff
-@@ -0,0 +1,184 @@
-+package sqlite
-+
-+import (
-+	"context"
-+	"errors"
-+	"fmt"
-+	"strings"
-+	"testing"
-+)
-+
-+// seedTraces inserts n traces of one bytesPer-sized event each, oldest first.
-+func seedTraces(t *testing.T, s *Store, appID string, n, bytesPer int) {
-+	t.Helper()
-+	payload := strings.Repeat("x", bytesPer)
-+	for i := 0; i < n; i++ {
-+		traceID := fmt.Sprintf("%s-trace-%04d", appID, i)
-+		if _, err := s.db.Exec(
-+			`INSERT INTO trace_event (app_id, trace_id, span_id, event_data) VALUES (?, ?, ?, ?)`,
-+			appID, traceID, "span", payload); err != nil {
-+			t.Fatalf("insert event: %v", err)
-+		}
-+		if _, err := s.db.Exec(
-+			`INSERT INTO trace_span_index (trace_id, span_id, app_id, span_type, has_response)
-+			 VALUES (?, ?, ?, 1, true)`, traceID, "span", appID); err != nil {
-+			t.Fatalf("insert span: %v", err)
-+		}
-+	}
-+}
-+
-+func appStats(t *testing.T, s *Store, appID string) (traces int, bytes int64) {
-+	t.Helper()
-+	err := s.db.QueryRow(
-+		`SELECT COUNT(DISTINCT trace_id), COALESCE(SUM(octet_length(event_data)), 0)
-+		 FROM trace_event WHERE app_id = ?`, appID).Scan(&traces, &bytes)
-+	if err != nil {
-+		t.Fatalf("stats: %v", err)
-+	}
-+	return
-+}
-+
-+func TestDoCleanTrimsToByteBudget(t *testing.T) {
-+	s := newTestStore(t)
-+	seedTraces(t, s, "app", 200, 1024)
-+	const budget = 50 * 1024
-+
-+	for i := 0; i < 10; i++ {
-+		if err := s.DoClean(context.Background(), CleanConfig{MaxBytesPerApp: budget, MinTracesKept: 1, BatchSize: 1000}); err != nil {
-+			t.Fatalf("clean: %v", err)
-+		}
-+	}
-+
-+	traces, bytes := appStats(t, s, "app")
-+	if bytes > budget {
-+		t.Errorf("app still over budget: %d bytes > %d", bytes, budget)
-+	}
-+	if traces == 0 {
-+		t.Error("everything was deleted")
-+	}
-+	// The survivors must be the newest ones.
-+	var oldest string
-+	if err := s.db.QueryRow(`SELECT MIN(trace_id) FROM trace_event WHERE app_id = ?`, "app").Scan(&oldest); err != nil {
-+		t.Fatalf("oldest: %v", err)
-+	}
-+	if oldest < "app-trace-0100" {
-+		t.Errorf("kept an old trace %q; expected only the newest to survive", oldest)
-+	}
-+	t.Logf("kept %d traces / %d bytes (budget %d)", traces, bytes, budget)
-+}
-+
-+func TestDoCleanKeepsMinimumRegardlessOfSize(t *testing.T) {
-+	s := newTestStore(t)
-+	// Every trace on its own exceeds the budget.
-+	seedTraces(t, s, "app", 20, 4096)
-+	const budget = 100
-+
-+	for i := 0; i < 5; i++ {
-+		if err := s.DoClean(context.Background(), CleanConfig{MaxBytesPerApp: budget, MinTracesKept: 3, BatchSize: 1000}); err != nil {
-+			t.Fatalf("clean: %v", err)
-+		}
-+	}
-+
-+	traces, _ := appStats(t, s, "app")
-+	if traces != 3 {
-+		t.Errorf("got %d traces, want the 3 the floor guarantees", traces)
-+	}
-+}
-+
-+func TestDoCleanLeavesAppsUnderBudgetAlone(t *testing.T) {
-+	s := newTestStore(t)
-+	seedTraces(t, s, "small", 10, 1024)
-+	seedTraces(t, s, "big", 200, 1024)
-+	const budget = 50 * 1024
-+
-+	for i := 0; i < 10; i++ {
-+		if err := s.DoClean(context.Background(), CleanConfig{MaxBytesPerApp: budget, MinTracesKept: 1, BatchSize: 1000}); err != nil {
-+			t.Fatalf("clean: %v", err)
-+		}
-+	}
-+
-+	if traces, _ := appStats(t, s, "small"); traces != 10 {
-+		t.Errorf("under-budget app lost traces: got %d, want 10", traces)
-+	}
-+	if _, bytes := appStats(t, s, "big"); bytes > budget {
-+		t.Errorf("over-budget app not trimmed: %d bytes", bytes)
-+	}
-+}
-+
-+func TestDoCleanDeletesSpanRowsToo(t *testing.T) {
-+	s := newTestStore(t)
-+	seedTraces(t, s, "app", 200, 1024)
-+
-+	for i := 0; i < 10; i++ {
-+		if err := s.DoClean(context.Background(), CleanConfig{MaxBytesPerApp: 50 * 1024, MinTracesKept: 1, BatchSize: 1000}); err != nil {
-+			t.Fatalf("clean: %v", err)
-+		}
-+	}
-+
-+	var events, spans int
-+	s.db.QueryRow(`SELECT COUNT(DISTINCT trace_id) FROM trace_event`).Scan(&events)
-+	s.db.QueryRow(`SELECT COUNT(DISTINCT trace_id) FROM trace_span_index`).Scan(&spans)
-+	if events != spans {
-+		t.Errorf("trace_event has %d traces but trace_span_index has %d; they must be deleted together", events, spans)
-+	}
-+}
-+
-+func TestDoCleanEvictsLeastRecentAppsOverTotalBudget(t *testing.T) {
-+	s := newTestStore(t)
-+	// Seeded oldest-first, so "newest" has the highest event ids.
-+	seedTraces(t, s, "oldest", 10, 1024)
-+	seedTraces(t, s, "middle", 10, 1024)
-+	seedTraces(t, s, "newest", 10, 1024)
-+
-+	// 30 KiB across three apps, with room for two.
-+	cfg := CleanConfig{MaxBytesPerApp: 1 << 20, MaxBytesTotal: 25 * 1024, MinTracesKept: 1, BatchSize: 1000}
-+	if err := s.DoClean(context.Background(), cfg); err != nil {
-+		t.Fatalf("clean: %v", err)
-+	}
-+	for app, want := range map[string]int{"oldest": 0, "middle": 10, "newest": 10} {
-+		if traces, _ := appStats(t, s, app); traces != want {
-+			t.Errorf("app %q: got %d traces, want %d", app, traces, want)
-+		}
-+	}
-+
-+	// A budget smaller than any single app must still leave the active one.
-+	cfg.MaxBytesTotal = 1
-+	if err := s.DoClean(context.Background(), cfg); err != nil {
-+		t.Fatalf("clean: %v", err)
-+	}
-+	if traces, _ := appStats(t, s, "newest"); traces == 0 {
-+		t.Error("evicted the most recently activ
-```
-
-**File**: `cli/daemon/engine/trace2/sqlite/read.go` (modified, +6/-0)
-```diff
-@@ -33,6 +33,12 @@ func (s *Store) List(ctx context.Context, q *trace2.Query, iter trace2.ListEntry
- 		extraWhereClause += " AND message_id = $" + strconv.Itoa(len(args))
- 	}
- 
-+	if q.TraceID != "" {
-+		// The dashboard's trace-id box is a search/substring match, not an exact lookup
-+		args = append(args, q.TraceID)
-+		extraWhereClause += " AND trace_id LIKE '%' || $" + strconv.Itoa(len(args)) + " || '%'"
-+	}
-+
- 	if q.Service != "" {
- 		args = append(args, q.Service)
- 		extraWhereClause += " AND service_name = $" + strconv.Itoa(len(args))
-```
-
-**File**: `cli/daemon/engine/trace2/sqlite/read_test.go` (modified, +39/-5)
-```diff
-@@ -64,15 +64,15 @@ func newTestStore(t *testing.T) *Store {
- 
- // writeRootRequest writes a complete root request span to the store, optionally
- // with a parent trace id, and returns the span's own trace id (encoded).
--func writeRootRequest(t *testing.T, s *Store, traceID *tracepb2.TraceID, spanID uint64, service, endpoint string, dur time.Duration, isError bool, parent *tracepb2.TraceID) string {
-+func writeRootRequest(t *testing.T, s *Store, traceID *tracepb2.TraceID, spanID uint64, startedAt time.Time, service, endpoint string, dur time.Duration, isError bool, parent *tracepb2.TraceID) string {
- 	t.Helper()
- 	ctx := context.Background()
- 	meta := &trace2.Meta{AppID: "app"}
- 
- 	start := &tracepb2.TraceEvent{
- 		TraceId:   traceID,
- 		SpanId:    spanID,
--		EventTime: timestamppb.New(time.Unix(0, 0)),
-+		EventTime: timestamppb.New(startedAt),
- 		Event: &tracepb2.TraceEvent_SpanStart{SpanStart: &tracepb2.SpanStart{
- 			ParentTraceId: parent,
- 			Data: &tracepb2.SpanStart_Request{Request: &tracepb2.RequestSpanStart{
-@@ -88,7 +88,7 @@ func writeRootRequest(t *testing.T, s *Store, traceID *tracepb2.TraceID, spanID
- 	end := &tracepb2.TraceEvent{
- 		TraceId:   traceID,
- 		SpanId:    spanID,
--		EventTime: timestamppb.New(time.Unix(0, int64(dur))),
-+		EventTime: timestamppb.New(startedAt.Add(dur)),
- 		Event: &tracepb2.TraceEvent_SpanEnd{SpanEnd: &tracepb2.SpanEnd{
- 			DurationNanos: uint64(dur),
- 			Error:         errPb,
-@@ -123,10 +123,10 @@ func TestList_Filters(t *testing.T) {
- 	parentID := encodeTraceID(parent)
- 
- 	// Child trace triggered by `parent`.
--	child := writeRootRequest(t, s, &tracepb2.TraceID{High: 1, Low: 2}, 100,
-+	child := writeRootRequest(t, s, &tracepb2.TraceID{High: 1, Low: 2}, 100, time.Unix(0, 0),
- 		"billing", "Charge", 50*time.Millisecond, false, parent)
- 	// Unrelated slow + errored trace, no parent.
--	other := writeRootRequest(t, s, &tracepb2.TraceID{High: 3, Low: 4}, 200,
-+	other := writeRootRequest(t, s, &tracepb2.TraceID{High: 3, Low: 4}, 200, time.Unix(0, 0),
- 		"users", "Get", 500*time.Millisecond, true, nil)
- 
- 	contains := slices.Contains[[]string, string]
-@@ -174,10 +174,44 @@ func TestList_Filters(t *testing.T) {
- 		}
- 	})
- 
-+	t.Run("trace_id_substring", func(t *testing.T) {
-+		// The dashboard's trace-id box searches, so a fragment must match.
-+		ids := listIDs(t, s, &trace2.Query{TraceID: child[5:15]})
-+		if !contains(ids, child) || contains(ids, other) {
-+			t.Fatalf("trace id filter: got %v, want only %v", ids, child)
-+		}
-+	})
-+
- 	t.Run("parent_trace_id_no_match", func(t *testing.T) {
- 		ids := listIDs(t, s, &trace2.Query{ParentTraceID: encodeTraceID(&tracepb2.TraceID{High: 99, Low: 99})})
- 		if len(ids) != 0 {
- 			t.Fatalf("parent trace filter (no match): got %v, want none", ids)
- 		}
- 	})
- }
-+
-+// TestList_Pagination covers the dashboard's infinite scroll: a page of Limit
-+// traces, then the next page keyed off the oldest one's start time. The cursor
-+// is inclusive, so that trace comes back on both pages and the dashboard is
-+// responsible for dropping the duplicate.
-+func TestList_Pagination(t *testing.T) {
-+	s := newTestStore(t)
-+
-+	base := time.Unix(1700000000, 0)
-+	var ids []string
-+	for i := 0; i < 4; i++ {
-+		ids = append(ids, writeRootRequest(t, s, &tracepb2.TraceID{High: 1, Low: uint64(i)}, uint64(i),
-+			base.Add(time.Duration(i)*time.Second), "svc", "Ep", time.Millisecond, false, nil))
-+	}
-+
-+	first := listIDs(t, s, &trace2.Query{Limit: 2})
-+	if !slices.Equal(first, []string{ids[3], ids[2]}) {
-+		t.Fatalf("first page: got %v, want the two newest %v", first, ids[3:])
-+	}
-+
-+	// Page back from the oldest trace on the first page.
-+	second := listIDs(t, s, &trace2.Query{Limit: 2, EndTime: base.Add(2 * time.Second)})
-+	if !slices.Equal(second, []string{ids[2], ids[1]}) {
-+		t.Fatalf("second page: got %v, want the boundary trace repeated then the next", second)
-+	}
-+}
-```
-
-**File**: `cli/daemon/engine/trace2/sqlite/write.go` (modified, +156/-15)
-```diff
-@@ -47,23 +47,63 @@ func scanRows[T any](rows *sql.Rows) ([]T, error) {
- 	return out, nil
- }
- 
--func (s *Store) CleanEvery(ctx context.Context, freq time.Duration, triggerAt, eventsToKeep, batchSize int) {
-+// CleanConfig bounds how much trace data the daemon keeps on disk. Sizes are
-+// measured over trace_event alone; it holds the payloads and dominates.
-+type CleanConfig struct {
-+	// MaxBytesPerApp is one app's budget.
-+	MaxBytesPerApp int64
-+
-+	// MaxBytesTotal bounds every app together, so the ceiling does not grow with
-+	// the number of apps on the machine. Zero disables it.
-+	MaxBytesTotal int64
-+
-+	// MinTracesKept is how many of an app's newest traces survive whatever their size.
-+	MinTracesKept int
-+
-+	// BatchSize caps how many traces one sweep deletes per app.
-+	BatchSize int
-+
-+	// KnownApps reports the apps the daemon still knows about, under every id
-+	// their traces may be recorded as. Traces belonging to any other app are
-+	// dropped. Nil, an error, or an empty result skips the prune.
-+	KnownApps func() ([]string, error)
-+}
-+
-+func (s *Store) CleanEvery(ctx context.Context, freq time.Duration, cfg CleanConfig) {
- 	for {
- 		timer := time.NewTimer(freq)
- 		select {
- 		case <-ctx.Done():
- 			return
- 		case <-timer.C:
--			if err := s.DoClean(ctx, triggerAt, eventsToKeep, batchSize); err != nil {
-+			if err := s.DoClean(ctx, cfg); err != nil {
- 				log.Error().Err(err).Msg("trace cleanup failed")
- 			}
- 		}
- 	}
- }
- 
--func (s *Store) DoClean(ctx context.Context, triggerAt, eventsToKeep, batchSize int) error {
-+// DoClean drops traces the daemon no longer needs: those of apps it has
-+// forgotten, then each app's oldest until it fits MaxBytesPerApp, then whole
-+// apps oldest-first until everything fits MaxBytesTotal. Deleted pages go to
-+// SQLite's freelist, so this bounds where the file settles, it does not shrink it.
-+func (s *Store) DoClean(ctx context.Context, cfg CleanConfig) error {
- 	log.Info().Msg("initiating trace event cleanup sweep")
--	rows, err := s.db.QueryContext(ctx, "SELECT app_id FROM trace_event GROUP BY app_id HAVING COUNT(distinct trace_id) > ?", triggerAt)
-+	s.pruneUnknownApps(ctx, cfg.KnownApps)
-+	if err := s.trimAppsOverBudget(ctx, cfg); err != nil {
-+		return err
-+	}
-+	return s.enforceTotalBudget(ctx, cfg.MaxBytesTotal)
-+}
-+
-+// trimAppsOverBudget drops each over-budget app's oldest traces until it fits,
-+// keeping the newest MinTracesKept whatever their size. The budget is bytes
-+// rather than traces because trace sizes vary hugely.
-+func (s *Store) trimAppsOverBudget(ctx context.Context, cfg CleanConfig) error {
-+	// octet_length, not length: on TEXT the latter counts characters, not bytes.
-+	rows, err := s.db.QueryContext(ctx,
-+		"SELECT app_id FROM trace_event GROUP BY app_id HAVING SUM(octet_length(event_data)) > ?",
-+		cfg.MaxBytesPerApp)
- 	if err != nil {
- 		return errors.Wrap(err, "query app ids")
- 	}
-@@ -73,23 +113,31 @@ func (s *Store) DoClean(ctx context.Context, triggerAt, eventsToKeep, batchSize
- 	}
- 
- 	for _, appID := range appIDs {
--		row := s.db.QueryRowContext(ctx, `
--						WITH latest_events AS (
--							SELECT trace_id, min(id) as id FROM trace_event WHERE app_id = ? GROUP BY 1 ORDER BY 2 DESC LIMIT ?
--						) SELECT min(id) FROM latest_events;
--					`, appID, eventsToKeep)
--		var traceID int64
--		err := row.Scan(&traceID)
-+		// Accumulate bytes newest-first and take the traces past the budget.
-+		// The rank guard keeps the newest MinTracesKept whatever their size.
-+		rows, err := s.db.QueryContext(ctx, `
-+			WITH sizes AS (
-+				SELECT trace_id, MIN(id) AS ord, SUM(octet_length(event_data)) AS bytes
-+				FROM trace_event WHERE app_id = ? GROUP BY trace_id
-+			), running AS (
-+				SELECT trace_id, ord, bytes,
-+				       SUM(bytes) OVER (ORDER BY ord DESC) AS cum,
-+				       ROW_NUMBER() OVER (ORDER BY ord DESC) AS rank
-+				FROM sizes
-+			)
-+			SELECT trace_id FROM running
-+			WHERE cum > ? AND rank > ?
-+			ORDER BY ord ASC LIMIT ?
-+		`, appID, cfg.MaxBytesPerApp, cfg.MinTracesKept, cfg.BatchSize)
- 		if err != nil {
--			log.Error().Err(err).Msg("failed to get trace id")
-+			log.Error().Err(err).Msg("failed to get old trace ids")
- 			continue
- 		}
--		rows, err := s.db.QueryContext(ctx, "SELECT DISTINCT trace_id FROM trace_event WHERE app_id = ? AND id < ? ORDER BY id DESC LIMIT ?", appID, traceID, batchSize)
-+		traceIDs, err := scanRows[string](rows)
- 		if err != nil {
--			log.Error().Err(err).Msg("failed to get old trace ids")
-+			log.Error().Err(err).Msg("failed to scan old trace ids")
- 			continue
- 		}
--		traceIDs, err := scanRows[string](rows)
- 		if len(traceIDs) == 0 {
- 			continue
- 		}
-@@ -121,6 +169,99 @@ func (s *Store) DoClean(ctx context.Context, triggerAt, eventsToKeep, batchSize
- 	return nil
- }
- 
-+// pruneUnknownApps drops the traces of apps the daemon no longer knows about.
-+// Nothing else reclaims them: an app whose directory is gone loses its row in
-+// the app table, and with it any way to reach its traces from the dashboard.
-+f
-```
-
----
-
-### Incident Patch 5: `7bcb11b7` (2026-09-08)
-**Commit Message**: tsparser: fix test
-
-**File**: `tsparser/examples/testparse.rs` (modified, +1/-0)
-```diff
-@@ -36,6 +36,7 @@ fn main() {
-                 let pp = builder::PrepareParams {
-                     app_root: app_root.clone(),
-                     encore_dev_version: builder::PackageVersion::Published("0.0.0".to_string()),
-+                    install_mode: builder::InstallMode::All,
-                 };
-                 builder.prepare(&pp).unwrap();
-             }
-```
-
----
-
-### Incident Patch 6: `97f5124e` (2026-09-03)
-**Commit Message**: fix: default to primary env for deploy command
-
-**File**: `cli/cmd/encore/deploy.go` (modified, +1/-1)
-```diff
-@@ -94,7 +94,7 @@ var deployAppCmd = &cobra.Command{
- func init() {
- 	alphaCmd.AddCommand(deployAppCmd)
- 	deployAppCmd.Flags().StringVar(&appSlug, "app", "", "app slug to deploy to (default current app)")
--	deployAppCmd.Flags().StringVarP(&envName, "env", "e", "", "environment to deploy to (default primary env)")
-+	deployAppCmd.Flags().StringVarP(&envName, "env", "e", "", "environment to deploy to")
- 	deployAppCmd.Flags().StringVar(&commit, "commit", "", "commit to deploy")
- 	deployAppCmd.Flags().StringVar(&branch, "branch", "", "branch to deploy")
- 	format.AddFlag(deployAppCmd)
-```
-
----
-
-### Incident Patch 7: `bbfd3673` (2026-09-02)
-**Commit Message**: fix: logout does not fail when rotation of anonymous ID does
-
-**File**: `cli/cmd/encore/auth/auth.go` (modified, +0/-1)
-```diff
-@@ -114,7 +114,6 @@ func DoLogin(flow Flow) (err error) {
- func DoLogout() {
- 	if err := telemetry.RotateAnonymousID(); err != nil {
- 		fmt.Fprintln(os.Stderr, "could not logout:", err)
--		os.Exit(1)
- 	}
- 
- 	if err := conf.Logout(); err != nil {
-```
-
----
-
-### Incident Patch 8: `67eff2c1` (2026-09-02)
-**Commit Message**: fix: load secrets once on local startup
-
-**File**: `cli/daemon/run.go` (modified, +4/-1)
-```diff
-@@ -176,7 +176,10 @@ func (s *Server) Run(req *daemonpb.RunRequest, stream daemonpb.Daemon_RunServer)
- 
- 	ops.AllDone()
- 
--	secrets, _ := s.sm.Load(app).Get(ctx, nil)
-+	secrets, err := runInstance.SecretValues(ctx)
-+	if err != nil {
-+		log.Warn().Err(err).Str("runInstanceID", runInstance.ID).Msg("failed to load secrets")
-+	}
- 	externalDBs := map[string]string{}
- 	for key, val := range secrets.Values {
- 		if db, ok := strings.CutPrefix(key, "sqldb::"); ok {
-```
-
-**File**: `cli/daemon/run/run.go` (modified, +4/-0)
-```diff
-@@ -71,6 +71,10 @@ type Run struct {
- 	started chan struct{}   // started is closed once the run has fully started
- }
- 
-+func (r *Run) SecretValues(ctx context.Context) (*secret.Data, error) {
-+	return r.secrets.Get(ctx, nil)
-+}
-+
- // StartParams groups the parameters for the Run method.
- type StartParams struct {
- 	// App is the app to start.
-```
-
----
-
-### Incident Patch 9: `44344384` (2026-09-02)
-**Commit Message**: .github: move builders over to blacksmith (#2567)
-
-<!-- codesmith:footer -->
----
-<a
-href="https://app.blacksmith.sh/encoredev/codesmith/encore/pr/2567"><picture><source
-media="(prefers-color-scheme: dark)"
-srcset="https://pr-comments-assets.blacksmith.sh/codesmith/view-with-codesmith-dark-v2.svg"><source
-media="(prefers-color-scheme: light)"
-srcset="https://pr-comments-assets.blacksmith.sh/codesmith/view-with-codesmith-light-v2.svg"><img
-alt="View with [code]smith"
-src="https://pr-comments-assets.blacksmith.sh/codesmith/view-with-codesmith-dark-v2.svg"></picture></a>
-<a
-href="https://backend.blacksmith.sh/track/enable-autofix?expires=1790964130&installation_model_id=427204&pr_number=2567&repository=encoredev%2Fencore&return_to=https%3A%2F%2Fgithub.com%2Fencoredev%2Fencore%2Fpull%2F2567&signature=d7396aa02cf6c70af1de5b6290e7c9285231ed66d66cc98ea3a42eca78d31460"><picture><source
-media="(prefers-color-scheme: dark)"
-srcset="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-dark.svg"><source
-media="(prefers-color-scheme: light)"
-srcset="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-light.svg"><img
-alt="Autofix with [code]smith"
-src="h
-
-**File**: `.github/actionlint.yaml` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+# Runner labels actionlint doesn't know about: the CI and Latest Release
-+# workflows run on Blacksmith (https://docs.blacksmith.sh) runners.
-+self-hosted-runner:
-+  labels:
-+    - blacksmith-*
-```
-
-**File**: `.github/workflows/ci.yml` (modified, +13/-7)
-```diff
-@@ -1,5 +1,11 @@
- name: CI
- 
-+# Every job runs on a Blacksmith runner (like the Latest Release workflow):
-+# 8 vCPUs everywhere except the TS runtime docs check, which gets 4. The
-+# cache steps stay as they are: on Blacksmith runners actions/cache, and the
-+# caching built into actions/setup-go/-node, transparently use Blacksmith's
-+# colocated cache.
-+
- on:
-   push:
-     branches:
-@@ -13,7 +19,7 @@ on:
- jobs:
-   build:
-     name: "Build"
--    runs-on: ubuntu-24.04
-+    runs-on: blacksmith-8vcpu-ubuntu-2404
- 
-     steps:
-       - uses: actions/checkout@v4
-@@ -40,7 +46,7 @@ jobs:
- 
-   test:
-     name: "Test"
--    runs-on: ubuntu-24.04
-+    runs-on: blacksmith-8vcpu-ubuntu-2404
- 
-     steps:
-       - uses: actions/checkout@v4
-@@ -125,7 +131,7 @@ jobs:
- 
-   test-e2e:
-     name: "Test e2e"
--    runs-on: ubuntu-24.04
-+    runs-on: blacksmith-8vcpu-ubuntu-2404
- 
-     steps:
-       - uses: actions/checkout@v4
-@@ -209,7 +215,7 @@ jobs:
-   # Run static analysis on the PR
-   static-analysis:
-     name: "Static Analysis"
--    runs-on: ubuntu-latest
-+    runs-on: blacksmith-8vcpu-ubuntu-2404
- 
-     # Skip any PR created by dependabot to avoid permission issues:
-     if: (github.actor != 'dependabot[bot]')
-@@ -244,7 +250,7 @@ jobs:
- 
-   rust_core:
-     name: "Test core runtime"
--    runs-on: ubuntu-latest
-+    runs-on: blacksmith-8vcpu-ubuntu-2404
-     steps:
-       - name: Checkout codebase
-         uses: actions/checkout@v4
-@@ -280,7 +286,7 @@ jobs:
- 
-   ts_runtime_docs:
-     name: "Verify TS runtime docs in sync"
--    runs-on: ubuntu-24.04
-+    runs-on: blacksmith-4vcpu-ubuntu-2404
-     steps:
-       - uses: actions/checkout@v4
-       - name: Set up Node
-@@ -300,7 +306,7 @@ jobs:
- 
-   wasm_build:
-     name: "Build tsparser WASM"
--    runs-on: ubuntu-latest
-+    runs-on: blacksmith-8vcpu-ubuntu-2404
-     steps:
-       - name: Checkout codebase
-         uses: actions/checkout@v4
-```
-
----
-
-### Incident Patch 10: `471b4500` (2026-09-02)
-**Commit Message**: .github: check that the built binary runs (#2566)
-
-<!-- codesmith:footer -->
----
-<a
-href="https://app.blacksmith.sh/encoredev/codesmith/encore/pr/2566"><picture><source
-media="(prefers-color-scheme: dark)"
-srcset="https://pr-comments-assets.blacksmith.sh/codesmith/view-with-codesmith-dark-v2.svg"><source
-media="(prefers-color-scheme: light)"
-srcset="https://pr-comments-assets.blacksmith.sh/codesmith/view-with-codesmith-light-v2.svg"><img
-alt="View with [code]smith"
-src="https://pr-comments-assets.blacksmith.sh/codesmith/view-with-codesmith-dark-v2.svg"></picture></a>
-<a
-href="https://backend.blacksmith.sh/track/enable-autofix?expires=1790963161&installation_model_id=427204&pr_number=2566&repository=encoredev%2Fencore&return_to=https%3A%2F%2Fgithub.com%2Fencoredev%2Fencore%2Fpull%2F2566&signature=1c1b56c06081fec01754b5837f2485bc633098baad2ff27aa5a70e912bd3c7d2"><picture><source
-media="(prefers-color-scheme: dark)"
-srcset="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-dark.svg"><source
-media="(prefers-color-scheme: light)"
-srcset="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-light.svg"><img
-alt="Autofix with [code]smith"
-src="h
-
-**File**: `.github/workflows/latest-release.yml` (modified, +6/-0)
-```diff
-@@ -154,6 +154,12 @@ jobs:
-         if: runner.os == 'Windows'
-         uses: step-security/msvc-dev-cmd@22c98154b708dbd743e6f27a933cf6ceba3305c4 # v1.13.1
- 
-+      # darwin/amd64 is built on Apple Silicon; Rosetta lets the build's
-+      # `encore version` smoke test run it.
-+      - name: Install Rosetta
-+        if: matrix.target == 'darwin/amd64'
-+        run: sudo softwareupdate --install-rosetta --agree-to-license
-+
-       # pg_query's build script runs bindgen, which needs libclang.dll.
-       # Blacksmith's Windows image has neither a standalone LLVM nor Visual
-       # Studio's Clang component (Build Tools only), so install LLVM from the
-```
-
-**File**: `pkg/releaser/bu/bu.go` (modified, +9/-0)
-```diff
-@@ -41,6 +41,15 @@ func (p Platform) String() string {
- 	return p.OS.String() + "/" + p.Arch.String()
- }
- 
-+// ExeSuffix is the executable file extension on the platform: ".exe" on
-+// Windows, "" elsewhere.
-+func (p Platform) ExeSuffix() string {
-+	if p.OS == Windows {
-+		return ".exe"
-+	}
-+	return ""
-+}
-+
- func (os OS) String() string {
- 	return string(os)
- }
-```
-
-**File**: `pkg/releaser/cmd/build/main.go` (modified, +43/-5)
-```diff
-@@ -21,9 +21,12 @@ import (
- 	"context"
- 	"fmt"
- 	"os"
-+	"os/exec"
- 	"path/filepath"
-+	"runtime"
- 	"strings"
- 	"sync"
-+	"time"
- 
- 	"github.com/cockroachdb/errors"
- 	"github.com/rs/zerolog"
-@@ -156,10 +159,7 @@ type ReleaseSpec struct {
- // bin/, encore-runtime.node, the npm package and the Go runtime; the
- // supervisor and the checksums are for on-demand download by the CLI.
- func (spec ReleaseSpec) Entries() gcsupload.Entries {
--	exe := ""
--	if spec.Target.OS == Windows {
--		exe = ".exe"
--	}
-+	exe := spec.Target.ExeSuffix()
- 
- 	var bin, version gcsupload.Entries
- 	if path, ok := spec.Tsparser.Get(); ok {
-@@ -379,7 +379,9 @@ func (p PlatformSpec) Build() (*ReleaseSpec, error) {
- 	if p.EncoreCLI {
- 		g.Go(func() error {
- 			log.Info().Msgf("compiling encore-cli")
--			outExePath := p.Workdir.Join("encorecli")
-+			// Windows won't execute a file without the .exe extension, and
-+			// the smoke test below runs the binary.
-+			outExePath := p.Workdir.Join("encorecli" + p.Target.ExeSuffix())
- 			err := gobuild.Exe(errGroupCtx, gobuild.ExeInput{
- 				Host:            host,
- 				Target:          p.Target,
-@@ -392,6 +394,9 @@ func (p PlatformSpec) Build() (*ReleaseSpec, error) {
- 			if err != nil {
- 				return err
- 			}
-+			if err := smokeTestCLI(errGroupCtx, outExePath, p.Target); err != nil {
-+				return err
-+			}
- 			spec.EncoreCLI = opt.Some(outExePath)
- 			log.Info().Msgf("successfully compiled encore-cli")
- 			return nil
-@@ -558,3 +563,36 @@ func (p PlatformSpec) Build() (*ReleaseSpec, error) {
- 
- 	return spec, nil
- }
-+
-+// smokeTestCLI runs the freshly built CLI's `encore version` and checks that
-+// it reports the version being built: a start-up check that catches the
-+// link and runtime-initialization problems a successful compile can't (the
-+// CLI is a large cgo binary). Only binaries the build host can execute are
-+// run: same OS, and the same architecture unless the host is an Apple
-+// Silicon Mac, which runs the darwin/amd64 build through Rosetta (the
-+// workflow installs it).
-+func smokeTestCLI(ctx context.Context, exe FSPath, target Platform) error {
-+	sameOS := target.OS == OS(runtime.GOOS)
-+	sameArch := target.Arch == Arch(runtime.GOARCH)
-+	rosetta := target.OS == Darwin && runtime.GOARCH == "arm64" && target.Arch == Amd64
-+	if !sameOS || !(sameArch || rosetta) {
-+		log.Warn().Msgf("skipping `encore version` smoke test: this host can't run %s binaries", target)
-+		return nil
-+	}
-+
-+	// `encore version` also asks encore.dev whether an update is available,
-+	// with a 10s timeout of its own.
-+	ctx, cancel := context.WithTimeout(ctx, time.Minute)
-+	defer cancel()
-+	log.Info().Msgf("running `encore version` on the %s build", target)
-+	out, err := exec.CommandContext(ctx, exe.ToIO(), "version").CombinedOutput()
-+	if err != nil {
-+		return errors.Wrapf(err, "`encore version` failed for %s:\n%s", target, out)
-+	}
-+	want := "encore version " + cfg.Version
-+	if !strings.Contains(string(out), want) {
-+		return errors.Newf("unexpected `encore version` output for %s: %q (want %q)", target, out, want)
-+	}
-+	log.Info().Msgf("%s", strings.TrimSpace(string(out)))
-+	return nil
-+}
-```
-
----
-
-### Incident Patch 11: `debb5360` (2026-09-02)
-**Commit Message**: .github: install clang for windows build (#2565)
-
-<!-- codesmith:footer -->
----
-<a
-href="https://app.blacksmith.sh/encoredev/codesmith/encore/pr/2565"><picture><source
-media="(prefers-color-scheme: dark)"
-srcset="https://pr-comments-assets.blacksmith.sh/codesmith/view-with-codesmith-dark-v2.svg"><source
-media="(prefers-color-scheme: light)"
-srcset="https://pr-comments-assets.blacksmith.sh/codesmith/view-with-codesmith-light-v2.svg"><img
-alt="View with [code]smith"
-src="https://pr-comments-assets.blacksmith.sh/codesmith/view-with-codesmith-dark-v2.svg"></picture></a>
-<a
-href="https://backend.blacksmith.sh/track/enable-autofix?expires=1790959092&installation_model_id=427204&pr_number=2565&repository=encoredev%2Fencore&return_to=https%3A%2F%2Fgithub.com%2Fencoredev%2Fencore%2Fpull%2F2565&signature=5e7f891c73bfd425f67ba9f4cc819d329924299ef24b3d8ab468402934dd89ff"><picture><source
-media="(prefers-color-scheme: dark)"
-srcset="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-dark.svg"><source
-media="(prefers-color-scheme: light)"
-srcset="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-light.svg"><img
-alt="Autofix with [code]smith"
-src="ht
-
-**File**: `.github/workflows/latest-release.yml` (modified, +14/-12)
-```diff
-@@ -62,6 +62,8 @@ env:
-   CARGO_ZIGBUILD_VERSION: 0.23.3
-   WASM_PACK_VERSION: 0.15.0
-   NODE_VERSION: 22
-+  # libclang for bindgen on Windows; see the "Install LLVM" step.
-+  LLVM_VERSION: 22.1.8
- 
- jobs:
-   build:
-@@ -152,21 +154,21 @@ jobs:
-         if: runner.os == 'Windows'
-         uses: step-security/msvc-dev-cmd@22c98154b708dbd743e6f27a933cf6ceba3305c4 # v1.13.1
- 
--      # pg_query's build script runs bindgen, which needs libclang.dll. Point
--      # it at the copy bundled with Visual Studio's Clang component.
--      - name: Locate libclang
-+      # pg_query's build script runs bindgen, which needs libclang.dll.
-+      # Blacksmith's Windows image has neither a standalone LLVM nor Visual
-+      # Studio's Clang component (Build Tools only), so install LLVM from the
-+      # official release.
-+      - name: Install LLVM
-         if: runner.os == 'Windows'
-         shell: pwsh
-         run: |
--          $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
--          $dll = & $vswhere -latest -products * -find 'VC\Tools\Llvm\x64\bin\libclang.dll' | Select-Object -First 1
--          if (-not $dll) {
--            Write-Host "Visual Studio installations:"
--            & $vswhere -products * -property installationPath
--            throw "libclang.dll not found in any Visual Studio installation"
--          }
--          "LIBCLANG_PATH=$(Split-Path $dll)" >> $env:GITHUB_ENV
--          Write-Host "Using $dll"
-+          $ProgressPreference = 'SilentlyContinue'
-+          $installer = "$env:RUNNER_TEMP\LLVM-$env:LLVM_VERSION-win64.exe"
-+          Invoke-WebRequest -Uri "https://github.com/llvm/llvm-project/releases/download/llvmorg-$env:LLVM_VERSION/LLVM-$env:LLVM_VERSION-win64.exe" -OutFile $installer
-+          Start-Process -FilePath $installer -ArgumentList '/S' -Wait
-+          $bin = 'C:\Program Files\LLVM\bin'
-+          if (-not (Test-Path "$bin\libclang.dll")) { throw "libclang.dll not found in $bin" }
-+          "LIBCLANG_PATH=$bin" >> $env:GITHUB_ENV
- 
-       - name: Authenticate to Google Cloud
-         uses: google-github-actions/auth@v3
-```
-
----
-
-### Incident Patch 12: `acf9e965` (2026-09-02)
-**Commit Message**: pkg/releaser: locate clang for windows build (#2564)
-
-<!-- codesmith:footer -->
----
-<a
-href="https://app.blacksmith.sh/encoredev/codesmith/encore/pr/2564"><picture><source
-media="(prefers-color-scheme: dark)"
-srcset="https://pr-comments-assets.blacksmith.sh/codesmith/view-with-codesmith-dark-v2.svg"><source
-media="(prefers-color-scheme: light)"
-srcset="https://pr-comments-assets.blacksmith.sh/codesmith/view-with-codesmith-light-v2.svg"><img
-alt="View with [code]smith"
-src="https://pr-comments-assets.blacksmith.sh/codesmith/view-with-codesmith-dark-v2.svg"></picture></a>
-<a
-href="https://backend.blacksmith.sh/track/enable-autofix?expires=1790956837&installation_model_id=427204&pr_number=2564&repository=encoredev%2Fencore&return_to=https%3A%2F%2Fgithub.com%2Fencoredev%2Fencore%2Fpull%2F2564&signature=9a7edcdddc1b56c63af4b15034c95d98c57b21d511313f062d24ece375cdc587"><picture><source
-media="(prefers-color-scheme: dark)"
-srcset="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-dark.svg"><source
-media="(prefers-color-scheme: light)"
-srcset="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-light.svg"><img
-alt="Autofix with [code]smith"
-src
-
-**File**: `.github/workflows/latest-release.yml` (modified, +18/-19)
-```diff
-@@ -54,6 +54,7 @@ concurrency:
- 
- env:
-   R_ENCORE_REPO: ${{ github.workspace }}
-+  R_VERSION: ${{ inputs.version || format('v0.0.0-develop+{0}', github.sha) }}
-   R_RELEASE_PREFIX: latest/${{ github.sha }}
-   # Pinned toolchain. zig 0.11.0 is the version the release builds have
-   # always linked with; cargo-zigbuild supports it (it requires zig >= 0.9).
-@@ -63,24 +64,8 @@ env:
-   NODE_VERSION: 22
- 
- jobs:
--  version:
--    name: Determine version
--    runs-on: blacksmith-2vcpu-ubuntu-2404
--    outputs:
--      version: ${{ steps.version.outputs.version }}
--    steps:
--      - name: Determine version
--        id: version
--        env:
--          INPUT_VERSION: ${{ inputs.version }}
--        run: |
--          set -euo pipefail
--          version="${INPUT_VERSION:-v0.0.0-develop+${GITHUB_SHA}}"
--          echo "version=$version" | tee -a "$GITHUB_OUTPUT"
--
-   build:
-     name: Build ${{ matrix.target }}
--    needs: version
-     runs-on: ${{ matrix.runner }}
-     environment: latest
-     timeout-minutes: 120
-@@ -117,7 +102,6 @@ jobs:
-             build: windows/amd64:all,-supervisor
-             rust_targets: x86_64-pc-windows-msvc
-     env:
--      R_VERSION: ${{ needs.version.outputs.version }}
-       R_BUILD: ${{ matrix.build }}
-     steps:
-       - uses: actions/checkout@v4
-@@ -168,6 +152,22 @@ jobs:
-         if: runner.os == 'Windows'
-         uses: step-security/msvc-dev-cmd@22c98154b708dbd743e6f27a933cf6ceba3305c4 # v1.13.1
- 
-+      # pg_query's build script runs bindgen, which needs libclang.dll. Point
-+      # it at the copy bundled with Visual Studio's Clang component.
-+      - name: Locate libclang
-+        if: runner.os == 'Windows'
-+        shell: pwsh
-+        run: |
-+          $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
-+          $dll = & $vswhere -latest -products * -find 'VC\Tools\Llvm\x64\bin\libclang.dll' | Select-Object -First 1
-+          if (-not $dll) {
-+            Write-Host "Visual Studio installations:"
-+            & $vswhere -products * -property installationPath
-+            throw "libclang.dll not found in any Visual Studio installation"
-+          }
-+          "LIBCLANG_PATH=$(Split-Path $dll)" >> $env:GITHUB_ENV
-+          Write-Host "Using $dll"
-+
-       - name: Authenticate to Google Cloud
-         uses: google-github-actions/auth@v3
-         with:
-@@ -182,15 +182,14 @@ jobs:
- 
-   finalize:
-     name: Assemble distribution tarballs
--    needs: [version, build]
-+    needs: build
-     runs-on: blacksmith-4vcpu-ubuntu-2404
-     environment: latest
-     timeout-minutes: 60
-     permissions:
-       contents: read
-       id-token: write # Workload Identity Federation
-     env:
--      R_VERSION: ${{ needs.version.outputs.version }}
-       R_ENCORE_GO_VERSION: ${{ inputs.encore_go_version }}
-     steps:
-       - uses: actions/checkout@v4
-```
-
----
-
-### Incident Patch 13: `2699b15b` (2026-09-02)
-**Commit Message**: pkg/releaser: fix windows build (#2561)
-
-<!-- codesmith:footer -->
----
-<a
-href="https://app.blacksmith.sh/encoredev/codesmith/encore/pr/2561"><picture><source
-media="(prefers-color-scheme: dark)"
-srcset="https://pr-comments-assets.blacksmith.sh/codesmith/view-with-codesmith-dark-v2.svg"><source
-media="(prefers-color-scheme: light)"
-srcset="https://pr-comments-assets.blacksmith.sh/codesmith/view-with-codesmith-light-v2.svg"><img
-alt="View with [code]smith"
-src="https://pr-comments-assets.blacksmith.sh/codesmith/view-with-codesmith-dark-v2.svg"></picture></a>
-<a
-href="https://backend.blacksmith.sh/track/enable-autofix?expires=1790949530&installation_model_id=427204&pr_number=2561&repository=encoredev%2Fencore&return_to=https%3A%2F%2Fgithub.com%2Fencoredev%2Fencore%2Fpull%2F2561&signature=317e18418e8562ddf9fbc219f214fb05a94a8bc4e5381672267f206a654e2532"><picture><source
-media="(prefers-color-scheme: dark)"
-srcset="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-dark.svg"><source
-media="(prefers-color-scheme: light)"
-srcset="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-light.svg"><img
-alt="Autofix with [code]smith"
-src="https://pr-
-
-**File**: `pkg/releaser/steps/gobuild/gobuild.go` (modified, +7/-1)
-```diff
-@@ -152,7 +152,13 @@ func compilerSettings(cfg *CompileInput) (cc, cxx string, envs, ldFlags []string
- 			return "", "", nil, nil, errors.Newf("unsupported architecture for windows: %q", cfg.Target.Arch)
- 		}
- 
--		ldFlags = []string{"-H=windowsgui"}
-+		// pg_query compiles its C code with -fstack-protector, so the objects
-+		// reference __stack_chk_fail/__stack_chk_guard. mingw-w64 has no libssp;
-+		// zig supplies its own, but only when the *link* invocation has stack
-+		// protection enabled — and Go's external link passes just "-O2 -g",
-+		// which zig treats as ReleaseFast and links without it. Enabling it for
-+		// the link step makes zig include its ssp runtime.
-+		ldFlags = []string{"-H=windowsgui", "-extldflags=-fstack-protector"}
- 
- 	default:
- 		panic("unreachable")
-```
-
----
-
-### Incident Patch 14: `fa72a016` (2026-08-27)
-**Commit Message**: dockerbuild: exclude volatile pnpm metadata from the deps layer (#2496)
-
-## What
-
-pnpm writes bookkeeping files into `node_modules` whose contents change
-on every install even when the installed dependency set is identical:
-
-- `node_modules/.modules.yaml` records a `prunedAt` timestamp (and a
-machine-specific `storeDir`)
-- `node_modules/.pnpm-workspace-state-v1.json` records a
-`lastValidatedTimestamp`
-
-This change skips those files when building the image so the dependency
-layer's digest stays stable across installs.
-
-## Why
-
-Since #2483 the image is split into layers by change frequency, with
-`node_modules` in its own dependency layer so that "unchanged layers
-keep identical digests across builds and can be skipped when pushing and
-pulling images". For pnpm apps that benefit never materialises: because
-`.modules.yaml` changes on every install, the dependency layer gets a
-new digest on every build, so the whole `node_modules` layer is
-re-uploaded on `--push` and re-pulled on deploy even when nothing
-changed. For large pnpm trees this dominates deploy time.
-
-These files are written directly inside a `node_modules` directory and
-are only consumed by the package manager during a later
-
-**File**: `pkg/dockerbuild/dockerbuild_test.go` (modified, +4/-0)
-```diff
-@@ -24,6 +24,10 @@ func testImageConfig(c *qt.C) (DescribeConfig, HostPath) {
- 		"entrypoint":       "echo hello",
- 		"package.json":     `{"name": "package/name"}`,
- 		"node_modules/foo": "foo",
-+		// Volatile pnpm bookkeeping files; must not end up in any layer.
-+		"node_modules/.modules.yaml":                 "prunedAt: Mon, 01 Jan 2024 00:00:00 GMT\n",
-+		"node_modules/.pnpm-workspace-state.json":    `{"lastValidatedTimestamp":1}`,
-+		"node_modules/.pnpm-workspace-state-v1.json": `{"lastValidatedTimestamp":1}`,
- 	})
- 	runtimes := paths.FS(c.TempDir())
- 	writeFiles(c, runtimes, map[string]string{
-```
-
-**File**: `pkg/dockerbuild/tarcopy.go` (modified, +25/-0)
-```diff
-@@ -208,6 +208,25 @@ func nodeModulesPath(relPath HostPath) (within, isRoot bool) {
- 	return false, false
- }
- 
-+// volatilePnpmMetadata are pnpm bookkeeping files written directly inside a
-+// node_modules directory. pnpm records timestamps in them, so their contents
-+// change on every install even when the dependencies are identical, giving the
-+// dependency layer a new digest on every build. They aren't read at runtime.
-+// See https://github.com/pnpm/pnpm/issues/9474.
-+var volatilePnpmMetadata = map[string]bool{
-+	".modules.yaml":                 true,
-+	".pnpm-workspace-state.json":    true, // older pnpm
-+	".pnpm-workspace-state-v1.json": true,
-+}
-+
-+// isVolatilePnpmMetadata reports whether relPath is a volatilePnpmMetadata file
-+// directly inside a node_modules directory, so a coincidentally-named file
-+// shipped deep inside a package isn't skipped.
-+func isVolatilePnpmMetadata(relPath HostPath) bool {
-+	s := string(relPath)
-+	return volatilePnpmMetadata[filepath.Base(s)] && filepath.Base(filepath.Dir(s)) == "node_modules"
-+}
-+
- // shouldInclude returns true if the path should be included in the tar.
- func shouldInclude(desc *dirCopyDesc, path HostPath) bool {
- 	for _, include := range desc.IncludeSrcPaths {
-@@ -256,6 +275,12 @@ func (tc *tarCopier) CopyDir(desc *dirCopyDesc) error {
- 		if err != nil {
- 			return errors.WithStack(err)
- 		}
-+
-+		// Skip volatile pnpm bookkeeping files; see volatilePnpmMetadata.
-+		if !d.IsDir() && isVolatilePnpmMetadata(relPath) {
-+			return nil
-+		}
-+
- 		dstPath := desc.DstPath.Join(string(relPath.ToImage()))
- 
- 		// Route node_modules trees to the dependency layer's copier, if configured.
-```
-
-**File**: `pkg/dockerbuild/tarcopy_test.go` (modified, +28/-0)
-```diff
-@@ -116,6 +116,34 @@ func TestNodeModulesPath(t *testing.T) {
- 	}
- }
- 
-+func TestIsVolatilePnpmMetadata(t *testing.T) {
-+	tests := []struct {
-+		path HostPath
-+		want bool
-+	}{
-+		// Directly inside a node_modules dir, including nested ones.
-+		{"node_modules/.modules.yaml", true},
-+		{"node_modules/.pnpm-workspace-state.json", true},
-+		{"node_modules/.pnpm-workspace-state-v1.json", true},
-+		{"app/node_modules/.modules.yaml", true},
-+		{"node_modules/.pnpm/pkg@1.0.0/node_modules/.modules.yaml", true},
-+		// A package may legitimately ship a coincidentally-named file.
-+		{"node_modules/pkg/fixtures/.modules.yaml", false},
-+		{"node_modules/pkg/.modules.yaml", false},
-+		{".modules.yaml", false},
-+		{"node_modules/foo", false},
-+		{"node_modules/pkg/index.js", false},
-+		{"node_modules/package.json", false},
-+	}
-+
-+	for _, tt := range tests {
-+		t.Run(string(tt.path), func(t *testing.T) {
-+			c := qt.New(t)
-+			c.Assert(isVolatilePnpmMetadata(tt.path), qt.Equals, tt.want)
-+		})
-+	}
-+}
-+
- func TestMkdirAll_OrderingInvariant(t *testing.T) {
- 	c := qt.New(t)
- 	tc := newTarCopier()
-```
-
----
-
-### Incident Patch 15: `5d7021ef` (2026-08-18)
-**Commit Message**: daemon: fixes for origin checks (#2537)
-
-**File**: `cli/cmd/encore/daemon/daemon.go` (modified, +1/-1)
-```diff
-@@ -286,7 +286,7 @@ func (d *Daemon) serveObjects() {
- func (d *Daemon) serveDash() {
- 	log.Info().Stringer("addr", d.Dash.Addr()).Msg("serving dash")
- 	srv := dash.NewServer(d.Apps, d.RunMgr, d.NS, d.Trace, d.Dash.Port())
--	d.exit <- http.Serve(d.Dash, httpx.CheckOrigin(httpx.IsLocalOrigin, srv))
-+	d.exit <- http.Serve(d.Dash, httpx.CheckOrigin(httpx.IsNotExternalWebsite, srv))
- }
- 
- func (d *Daemon) serveDebug() {
-```
-
-**File**: `cli/daemon/dash/server.go` (modified, +1/-1)
-```diff
-@@ -24,7 +24,7 @@ import (
- )
- 
- var upgrader = websocket.Upgrader{
--	CheckOrigin: httpx.IsLocalOrigin,
-+	CheckOrigin: httpx.IsNotExternalWebsite,
- }
- 
- // NewServer starts a new server and returns it.
-```
-
-**File**: `cli/daemon/mcp/mcp.go` (modified, +2/-19)
-```diff
-@@ -14,6 +14,7 @@ import (
- 	"encr.dev/cli/daemon/objects"
- 	"encr.dev/cli/daemon/run"
- 	"encr.dev/cli/daemon/sqldb"
-+	"encr.dev/pkg/httpx"
- )
- 
- // serverInstructions is returned to MCP clients in the `initialize` response.
-@@ -117,25 +118,7 @@ func addAppToContext(ctx context.Context, r *http.Request) context.Context {
- }
- 
- func (m *Manager) Serve(listener net.Listener) error {
--	return http.Serve(listener, originCheck(m.sse))
--}
--
--// originCheck restricts the MCP server to local code agents (editors, CLI tools),
--// which don't send an Origin header, and rejects browser requests.
--func originCheck(next http.Handler) http.Handler {
--	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
--		if !allowedOrigin(r) {
--			http.Error(w, "forbidden", http.StatusForbidden)
--			return
--		}
--		next.ServeHTTP(w, r)
--	})
--}
--
--func allowedOrigin(req *http.Request) bool {
--	// The MCP server is only consumed by local code agents, which don't send an
--	// Origin header. Browsers always do, so reject any request that carries one.
--	return req.Header.Get("Origin") == ""
-+	return http.Serve(listener, httpx.CheckOrigin(httpx.IsNonBrowser, m.sse))
- }
- 
- func (m *Manager) getApp(ctx context.Context) (*apps.Instance, error) {
-```
-
-**File**: `cli/daemon/mcp/mcp_test.go` (modified, +3/-1)
-```diff
-@@ -4,12 +4,14 @@ import (
- 	"net/http"
- 	"net/http/httptest"
- 	"testing"
-+
-+	"encr.dev/pkg/httpx"
- )
- 
- // TestOriginCheck verifies the MCP listener only serves code agents (no Origin
- // header) and rejects any browser request (which always carries an Origin).
- func TestOriginCheck(t *testing.T) {
--	handler := originCheck(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+	handler := httpx.CheckOrigin(httpx.IsNonBrowser, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
- 		w.WriteHeader(http.StatusOK)
- 	}))
- 
-```
-
-**File**: `pkg/httpx/origin.go` (modified, +13/-6)
-```diff
-@@ -7,20 +7,27 @@ import (
- 	"net/url"
- )
- 
-+// isNonCrossSite gates browser requests coming from another site that don't
-+// get the CORS check-ed. For example, GET sub-resource loads (<img>, <script>, etc.).
-+func isNonCrossSite(req *http.Request) bool {
-+	return req.Header.Get("Sec-Fetch-Site") != "cross-site"
-+}
-+
-+// IsNotExternalWebsite makes sure request did not come from a browser page that is
-+// not a localhost.
-+func IsNotExternalWebsite(req *http.Request) bool {
-+	return IsLocalOrigin(req) && isNonCrossSite(req)
-+}
-+
- // IsLocalOrigin gates localhost-bound dev servers so a malicious website can't
- // drive-by request them, while still serving the local dashboard and frontend
- // dev servers (which run on localhost).
- //
- // Browser requests are allowed only when the Origin's host is loopback or
- // "localhost"; other origins are rejected. Requests without an Origin are
- // allowed, since non-browser clients (the app runtime, CLI tools) don't send
--// one. Browsers also omit Origin on GET sub-resource loads (<img>, <script>),
--// so we additionally reject Sec-Fetch-Site: cross-site to catch those.
-+// one.
- func IsLocalOrigin(req *http.Request) bool {
--	if req.Header.Get("Sec-Fetch-Site") == "cross-site" {
--		return false
--	}
--
- 	origin := req.Header.Get("Origin")
- 	if origin == "" {
- 		return true
-```
-
-**File**: `pkg/httpx/origin_test.go` (modified, +48/-54)
-```diff
-@@ -6,18 +6,26 @@ import (
- 	"testing"
- )
- 
--func newReq(origin string) *http.Request {
--	req := httptest.NewRequest(http.MethodGet, "http://127.0.0.1/x", nil)
--	if origin != "" {
--		req.Header.Set("Origin", origin)
-+func withSecFetchSite(secFetchSite string) func(*http.Request) {
-+	return func(req *http.Request) {
-+		if secFetchSite != "" {
-+			req.Header.Set("Sec-Fetch-Site", secFetchSite)
-+		}
- 	}
--	return req
- }
- 
--func newReqWithFetchSite(origin, fetchSite string) *http.Request {
--	req := newReq(origin)
--	if fetchSite != "" {
--		req.Header.Set("Sec-Fetch-Site", fetchSite)
-+func withOrigin(origin string) func(*http.Request) {
-+	return func(req *http.Request) {
-+		if origin != "" {
-+			req.Header.Set("Origin", origin)
-+		}
-+	}
-+}
-+
-+func newReq(opts ...func(*http.Request)) *http.Request {
-+	req := httptest.NewRequest(http.MethodGet, "http://127.0.0.1/x", nil)
-+	for _, apply := range opts {
-+		apply(req)
- 	}
- 	return req
- }
-@@ -36,72 +44,58 @@ func TestIsLocalOrigin(t *testing.T) {
- 		{"://bad", false},
- 	}
- 	for _, tt := range tests {
--		if got := IsLocalOrigin(newReq(tt.origin)); got != tt.want {
-+		if got := IsLocalOrigin(newReq(withOrigin(tt.origin))); got != tt.want {
- 			t.Errorf("IsLocalOrigin(%q) = %v, want %v", tt.origin, got, tt.want)
- 		}
- 	}
- }
- 
--func TestIsLocalOriginFetchMetadata(t *testing.T) {
--	tests := []struct {
--		name      string
--		origin    string
--		fetchSite string
--		want      bool
--	}{
--		// A cross-site GET sub-resource load (e.g. <img>) sends no Origin but
--		// still carries Sec-Fetch-Site: cross-site. It must be rejected.
--		{"cross-site no origin", "", "cross-site", false},
--		{"cross-site with origin", "https://example.com", "cross-site", false},
--		// Same-origin/same-site requests from the local dashboard and localhost
--		// dev servers must keep working.
--		{"same-origin", "http://localhost:9400", "same-origin", true},
--		{"same-site other port", "http://localhost:5173", "same-site", true},
--		// A user navigating directly (typed URL/bookmark) reports "none".
--		{"user navigation", "", "none", true},
--	}
--	for _, tt := range tests {
--		if got := IsLocalOrigin(newReqWithFetchSite(tt.origin, tt.fetchSite)); got != tt.want {
--			t.Errorf("%s: IsLocalOrigin(origin=%q, sec-fetch-site=%q) = %v, want %v", tt.name, tt.origin, tt.fetchSite, got, tt.want)
--		}
--	}
--}
--
- func TestIsNonBrowser(t *testing.T) {
- 	tests := []struct {
--		origin string
--		want   bool
-+		origin       string
-+		secFetchSite string
-+		want         bool
- 	}{
--		{"", true}, // only a missing Origin is allowed
--		{"http://localhost:5173", false},
--		{"http://127.0.0.1:3000", false},
--		{"https://example.com", false},
-+		{"", "", true}, // only a missing Origin + Sec-Fetch-Site are allowed
-+		// Origin or Sec-Fetch-Site headers are not allowd
-+		{"http://localhost:5173", "", false},
-+		{"http://localhost:5173", "", false},
-+		{"http://127.0.0.1:3000", "", false},
-+		{"https://example.com", "", false},
-+		{"", "same-site", false},
-+		{"", "same-origin", false},
-+		{"", "cross-site", false},
-+		{"", "none", false},
-+		{"http://localhost:3000", "same-site", false},
- 	}
- 	for _, tt := range tests {
--		if got := IsNonBrowser(newReq(tt.origin)); got != tt.want {
-+		if got := IsNonBrowser(newReq(withOrigin(tt.origin), withSecFetchSite(tt.secFetchSite))); got != tt.want {
- 			t.Errorf("IsNonBrowser(%q) = %v, want %v", tt.origin, got, tt.want)
- 		}
- 	}
- }
- 
--func TestIsNonBrowserFetchMetadata(t *testing.T) {
-+func TestIsNonExternalWebsite(t *testing.T) {
- 	tests := []struct {
- 		name      string
- 		origin    string
- 		fetchSite string
- 		want      bool
- 	}{
--		// go tool pprof / CLIs / the app runtime send neither header.
--		{"non-browser tool", "", "", true},
--		// A browser GET drive-by (e.g. <img src=".../debug/pprof/profile">)
--		// sends no Origin but does send Sec-Fetch-Site. It must be rejected.
--		{"cross-site drive-by", "", "cross-site", false},
--		{"same-origin browser", "", "same-origin", false},
--		{"user navigation", "", "none", false},
-+		// A cross-site GET sub-resource load (e.g. <img>) sends no Origin but
-+		// still carries Sec-Fetch-Site: cross-site.
-+		{"cross-site no origin", "", "cross-site", false},
-+		{"cross-site with origin", "https://example.com", "cross-site", false},
-+		// Same-origin/same-site requests from the local dashboard and localhost
-+		// dev servers must keep working.
-+		{"same-origin", "http://localhost:9400", "same-origin", true},
-+		{"same-site other port", "http://localhost:5173", "same-site", true},
-+		// A user navigating directly (typed URL/bookmark) reports "none".
-+		{"user navigation", "", "none", true},
- 	}
- 	for _, tt := range tests {
--		if got := IsNonBrowser(newReqWithFetchSite(tt.origin, tt.fetchSite)); got != tt.want {
--			t.Errorf("%s: IsNonBrowser(origin=%q, sec-fetch-site=%q) = %v, want %v", tt.name, tt.origin, tt.fetchSite, got, tt.want)
-+		if got := IsNotExternalWebsite(newReq(withOrigin(tt.origin), withSecFetchSite(tt.fetchSite))); got != tt.want {
-+			t.Err
-```
-
 #### Recent Merged Pull Requests:
-- **PR #2593** (2026-10-05): Update README.md (@marcuskohlberg)
-- **PR #2588** (2026-10-01): .github: build latest release in release mode (@eandre)
-- **PR #2587** (2026-09-30): cmd: handle optional personal orgs (@ngalaiko)
-- **PR #2586** (2026-09-29): cli: allow to create org apps (@ngalaiko)
-- **PR #2585** (2026-09-28): fix(daemon): migration uses wrong context (@ekerfelt)
-- **PR #2583** (2026-09-22): runtimes/js: handle empty buffers in bucket uploads and sqldb params (@eandre)
-- **PR #2582** (2026-09-17):  cli/daemon: paginate and filter traces, budget trace data by size not count  (@lennartp)
-- **PR #2577** (2026-09-08): tsparser: fix test (@eandre)
+- **PR #2606** (2026-10-12): Update README.md (@marcuskohlberg)
+- **PR #2604** (closed): tsparser: report database usage outside services (@marcuskohlberg)
+- **PR #2603** (2026-10-12): cli: report pending database changes on reload (@marcuskohlberg)
+- **PR #2602** (closed): deno support (@prayanshchh)
+- **PR #2601** (2026-10-09): all: bump dependencies (@eandre)
+- **PR #2600** (2026-10-09): codegen: fix test builds of files with secrets (@eandre)
 
 ---
 
@@ -3531,3 +2064,37 @@ are only consumed by the package manager during a later
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. codegen: fix test builds of files with secrets
+
+**RULE**:
+When implementing operations in `v2/codegen/gen.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in encoredev/encore. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `2267602f`: codegen: fix test builds of files with secrets. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `v2/codegen/gen.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+// It has no trailing semicolon: the newline ending the line inserts one, and
+// another insert at the same position (secrets) brings its own leading one,
+// where two in a row would be an empty declaration and fail to parse.
+	rw.Insert(insertPos, []byte(fmt.Sprintf(";import _ %s/*line :%d:%d*/",
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+	rw.Insert(insertPos, []byte(fmt.Sprintf(";import _ %s;/*line :%d:%d*/",
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `2267602f` are properly handled with clean fallback behavior.

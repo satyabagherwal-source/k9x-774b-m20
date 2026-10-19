@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T01:49:15.026Z",
+  "last_updated": "2026-10-19T02:27:41.575Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1696,6 +1696,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Generic header title rejected",
       "learning_id": "learn-github-timvisee-ffsend"
+    },
+    {
+      "id": "CD-WLMV",
+      "directive_title": "Empirical Invariant Guard in ansi.rs",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "sharkdp/pastel",
+      "source_commit": "01d4252a",
+      "date_staged": "2026-10-19",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-github-sharkdp-pastel"
     }
   ]
 }

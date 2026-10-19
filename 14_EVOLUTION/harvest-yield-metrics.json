@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T02:19:23.662Z",
-  "total_cycles_completed": 2771,
-  "total_learnings_persisted": 2771,
-  "total_rules_promoted": 1801,
+  "last_updated": "2026-10-19T02:29:05.552Z",
+  "total_cycles_completed": 2777,
+  "total_learnings_persisted": 2777,
+  "total_rules_promoted": 1807,
   "history": [
-    {
-      "timestamp": "2026-10-18T23:02:00.480Z",
-      "repository": "flox/flox",
-      "learningId": "learn-github-flox-flox",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T23:02:06.155Z",
-      "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
-      "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T23:02:06.240Z",
-      "repository": "wix/react-native-navigation",
-      "learningId": "learn-github-wix-react-native-navigation",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T23:02:08.159Z",
-      "repository": "AliyunContainerService/pouch",
-      "learningId": "learn-github-aliyuncontainerservice-pouch",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T23:02:10.535Z",
-      "repository": "zama-ai/tfhe-rs",
-      "learningId": "learn-github-zama-ai-tfhe-rs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-18T23:02:12.734Z",
-      "repository": "doobidoo/mcp-memory-service",
-      "learningId": "learn-github-doobidoo-mcp-memory-service",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-18T23:08:13.673Z",
       "repository": "21st-dev/magic-mcp",
@@ -1403,6 +1361,48 @@
       "repository": "OpenMOSS-Team/MOSS-Image-SFT",
       "learningId": "learn-huggingface-openmoss-team-moss-image-sft",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T02:27:40.649Z",
+      "repository": "autotrust/JEV-35B",
+      "learningId": "learn-huggingface-autotrust-jev-35b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T02:27:41.577Z",
+      "repository": "sharkdp/pastel",
+      "learningId": "learn-github-sharkdp-pastel",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T02:27:46.117Z",
+      "repository": "ivpusic/react-native-image-crop-picker",
+      "learningId": "learn-github-ivpusic-react-native-image-crop-picker",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T02:27:48.930Z",
+      "repository": "encoredev/encore",
+      "learningId": "learn-github-encoredev-encore",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T02:27:53.534Z",
+      "repository": "rqlite/rqlite",
+      "learningId": "learn-github-rqlite-rqlite",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T02:29:05.552Z",
+      "repository": "arco-design/arco-design",
+      "learningId": "learn-github-arco-design-arco-design",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
