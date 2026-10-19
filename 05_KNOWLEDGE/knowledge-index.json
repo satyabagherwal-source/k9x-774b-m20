@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T12:32:50.312Z",
-  "total_verified_learnings": 815,
+  "last_updated": "2026-10-19T12:38:47.507Z",
+  "total_verified_learnings": 816,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -11012,14 +11012,19 @@
       "slug": "gravitl-netmaker",
       "platform": "github",
       "source_url": "https://github.com/gravitl/netmaker",
-      "source_version": "c5b3ecc3",
-      "content_hash": "c9aa94c4e2d5be4999f1e9ff39764c00d6daded9a392983f2789beb4602273b2",
+      "source_version": "e8c0f0bc",
+      "content_hash": "caa4c2fd17278c0e270e0961a8150dfe75d31242067671f48f3ec82b37fd2f59",
       "dossier_path": "07_PROJECT_LEARNING/gravitl-netmaker-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gravitl-netmaker-learnings.md",
       "promoted_rules": [
         {
           "number": 1873,
           "title": "NM-378: Security Bug Fixes (#4114)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2577,
+          "title": "Merge pull request #4191 from gravitl/fix-email-case-v1-7-0",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -11028,7 +11033,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T23:45:33.595Z",
+      "verified_at": "2026-10-19T12:38:47.500Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -22086,7 +22091,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/speridlabs/iris-3b",
       "source_version": "hf-speridlabs-iris-3b",
-      "content_hash": "49d9ff1eb8593947411f332f112ca13d8b1dc0d673c7c6611f67719f0f5b1acf",
+      "content_hash": "b6ad864f85f45811b448229cb3b02ad554d0ed33cff41347c68ba913d0177226",
       "dossier_path": "07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md",
       "promoted_rules": [
@@ -22144,7 +22149,7 @@
         "learn-huggingface-hf-speridlabs-iris-3b-mv3xf4f7",
         "learn-huggingface-hf-speridlabs-iris-3b-mv4c50o3"
       ],
-      "verified_at": "2026-10-18T03:22:15.211Z",
+      "verified_at": "2026-10-19T12:38:35.208Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -30994,22 +30999,35 @@
     "learn-github-nalexn-clean-architecture-swiftui": {
       "learning_id": "learn-github-nalexn-clean-architecture-swiftui",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "nalexn-clean-architecture-swiftui",
+      "source": "nalexn/clean-architecture-swiftui",
+      "repository": "nalexn/clean-architecture-swiftui",
       "slug": "nalexn-clean-architecture-swiftui",
       "platform": "github",
       "source_url": "https://github.com/nalexn/clean-architecture-swiftui",
-      "source_version": "HEAD",
-      "content_hash": "e35fbc40909c3ee97803d628f6950eecbd2934b541e20d00cc0008ae3c6cccdd",
+      "source_version": "9eca97b8",
+      "content_hash": "7150802781bd08871c26157661bcf93af507c73adb7e7284a09d8a0104cb87fe",
       "dossier_path": "07_PROJECT_LEARNING/nalexn-clean-architecture-swiftui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nalexn-clean-architecture-swiftui-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 2576,
+          "title": "Revert API version change",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.535Z"
+      "verified_at": "2026-10-19T12:38:42.363Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-nalexn-viewinspector": {
       "learning_id": "learn-github-nalexn-viewinspector",
@@ -87064,6 +87082,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T12:32:50.298Z"
+    },
+    "rule-2576": {
+      "learning_id": "rule-2576",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2576,
+      "title": "Revert API version change",
+      "source_url": "https://github.com/nalexn/clean-architecture-swiftui",
+      "source_version": "9eca97b8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T12:38:42.363Z"
+    },
+    "rule-2577": {
+      "learning_id": "rule-2577",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 2577,
+      "title": "Merge pull request #4191 from gravitl/fix-email-case-v1-7-0",
+      "source_url": "https://github.com/gravitl/netmaker",
+      "source_version": "e8c0f0bc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T12:38:47.500Z"
     }
   },
   "aliases": {

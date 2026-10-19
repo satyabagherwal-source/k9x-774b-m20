@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261019-CTAF",
-    "timestamp": "2026-10-19T01:16:19.143Z",
-    "repository": "ekmas/neobrutalism-components",
-    "learningId": "learn-github-ekmas-neobrutalism-components",
-    "contentHash": "06bf51c87d1929a089d55ba7955c98e80da2eb2790d097fb4921707d22a3c5d3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-CU71",
-    "timestamp": "2026-10-19T01:16:20.317Z",
-    "repository": "vi/websocat",
-    "learningId": "learn-github-vi-websocat",
-    "contentHash": "fd20b733ab2d87ef6ac693befa8a07551bd578826f09f34bd45a547795ec9a04",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261019-CZ6Z",
-    "timestamp": "2026-10-19T01:16:26.795Z",
-    "repository": "keybase/client",
-    "learningId": "learn-github-keybase-client",
-    "contentHash": "1d0dc3defa35d64505d80e055da333171fd6deeba961780676ba6cf0552d6dc2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261019-D05V",
     "timestamp": "2026-10-19T01:16:28.051Z",
     "repository": "Qwen/Qwen3.8-27B",
@@ -7492,6 +7447,51 @@
     "contentHash": "ba5c1c012de6db39abde2ba658576b71d10b43d7e5b3255e1ac2dfcf77d406ae",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-Q7S4",
+    "timestamp": "2026-10-19T12:38:35.236Z",
+    "repository": "speridlabs/iris-3b",
+    "learningId": "learn-huggingface-speridlabs-iris-3b",
+    "contentHash": "b6ad864f85f45811b448229cb3b02ad554d0ed33cff41347c68ba913d0177226",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-QDB5",
+    "timestamp": "2026-10-19T12:38:42.401Z",
+    "repository": "nalexn/clean-architecture-swiftui",
+    "learningId": "learn-github-nalexn-clean-architecture-swiftui",
+    "contentHash": "7150802781bd08871c26157661bcf93af507c73adb7e7284a09d8a0104cb87fe",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261019-QH9V",
+    "timestamp": "2026-10-19T12:38:47.539Z",
+    "repository": "gravitl/netmaker",
+    "learningId": "learn-github-gravitl-netmaker",
+    "contentHash": "caa4c2fd17278c0e270e0961a8150dfe75d31242067671f48f3ec82b37fd2f59",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -857,22 +857,21 @@
     "revisionIdentifier": "26134433"
   },
   "gravitl-netmaker": {
-    "name": "netmaker",
+    "name": "gravitl/netmaker",
     "officialUrl": "https://github.com/gravitl/netmaker",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-19T09:35:21.276Z",
-    "lastVerified": "2026-10-19T09:35:21.276Z",
+    "lastChecked": "2026-10-19T12:38:47.374Z",
+    "lastVerified": "2026-10-19T12:38:47.374Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gravitl-netmaker",
-    "contentHash": "c9aa94c4e2d5be4999f1e9ff39764c00d6daded9a392983f2789beb4602273b2",
+    "contentHash": "caa4c2fd17278c0e270e0961a8150dfe75d31242067671f48f3ec82b37fd2f59",
     "promotedRulesCount": 1,
-    "recentFixesCount": 16,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "c5b3ecc3"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "microsoft-security-101": {
     "name": "Security-101",
@@ -1515,12 +1514,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "sharkdp-fd": {
-    "name": "sharkdp/fd",
+    "name": "fd",
     "officialUrl": "https://github.com/sharkdp/fd",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-18T21:45:45.644Z",
-    "lastVerified": "2026-10-18T21:45:45.644Z",
+    "lastChecked": "2026-10-19T12:38:32.048Z",
+    "lastVerified": "2026-10-19T12:38:32.048Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sharkdp-fd",
@@ -1529,7 +1528,8 @@
     "recentFixesCount": 14,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "dbfe46bd"
   },
   "titanwings-distilly": {
     "name": "titanwings/distilly",
@@ -5684,12 +5684,12 @@
     "revisionIdentifier": "f38832ff"
   },
   "xiaolin-react-image-gallery": {
-    "name": "xiaolin/react-image-gallery",
+    "name": "react-image-gallery",
     "officialUrl": "https://github.com/xiaolin/react-image-gallery",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-19T01:28:31.251Z",
-    "lastVerified": "2026-10-19T01:28:31.251Z",
+    "lastChecked": "2026-10-19T12:38:29.552Z",
+    "lastVerified": "2026-10-19T12:38:29.552Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-xiaolin-react-image-gallery",
@@ -5698,7 +5698,8 @@
     "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "8b7e64c4"
   },
   "hf-inclusionai-ming-image-0.1-design": {
     "name": "inclusionAI/Ming-Image-0.1-Design",
@@ -6402,12 +6403,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dingodb-dingo": {
-    "name": "dingodb/dingo",
+    "name": "dingo",
     "officialUrl": "https://github.com/dingodb/dingo",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-10-18T23:32:57.197Z",
-    "lastVerified": "2026-10-18T23:32:57.197Z",
+    "lastChecked": "2026-10-19T12:38:44.679Z",
+    "lastVerified": "2026-10-19T12:38:44.679Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dingodb-dingo",
@@ -6416,7 +6417,8 @@
     "recentFixesCount": 25,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "bb96a741"
   },
   "margelo-react-native-vision-camera": {
     "name": "margelo/react-native-vision-camera",
@@ -7367,12 +7369,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "argoproj-argo-events": {
-    "name": "argoproj/argo-events",
+    "name": "argo-events",
     "officialUrl": "https://github.com/argoproj/argo-events",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-19T00:16:36.935Z",
-    "lastVerified": "2026-10-19T00:16:36.935Z",
+    "lastChecked": "2026-10-19T12:38:39.598Z",
+    "lastVerified": "2026-10-19T12:38:39.598Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-argoproj-argo-events",
@@ -7381,7 +7383,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "493c412d"
   },
   "krakend-krakend-ce": {
     "name": "krakend/krakend-ce",
@@ -16634,14 +16637,15 @@
     "officialUrl": "https://github.com/nalexn/clean-architecture-swiftui",
     "sourceType": "github",
     "technology": "Swift",
-    "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-09-30T22:27:39.353Z",
-    "lastVerified": "2026-09-30T22:27:39.353Z",
+    "lastChecked": "2026-10-19T12:38:42.223Z",
+    "lastVerified": "2026-10-19T12:38:42.223Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
-    "learningId": null,
-    "promotedRulesCount": 0,
-    "recentFixesCount": 31,
+    "learningId": "learn-github-nalexn-clean-architecture-swiftui",
+    "contentHash": "7150802781bd08871c26157661bcf93af507c73adb7e7284a09d8a0104cb87fe",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 17,
+    "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   },
@@ -18111,8 +18115,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-19T12:14:09.809Z",
-    "lastVerified": "2026-10-19T12:14:09.809Z",
+    "lastChecked": "2026-10-19T12:38:47.025Z",
+    "lastVerified": "2026-10-19T12:38:47.025Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -22125,12 +22129,12 @@
     "officialUrl": "https://huggingface.co/speridlabs/iris-3b",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-18T03:22:14.385Z",
-    "lastVerified": "2026-10-18T03:22:14.385Z",
+    "lastChecked": "2026-10-19T12:38:34.613Z",
+    "lastVerified": "2026-10-19T12:38:34.613Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-speridlabs-iris-3b",
-    "contentHash": "49d9ff1eb8593947411f332f112ca13d8b1dc0d673c7c6611f67719f0f5b1acf",
+    "contentHash": "b6ad864f85f45811b448229cb3b02ad554d0ed33cff41347c68ba913d0177226",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -26078,8 +26082,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-19T12:32:52.883Z",
-    "lastVerified": "2026-10-19T12:32:52.883Z",
+    "lastChecked": "2026-10-19T12:38:50.065Z",
+    "lastVerified": "2026-10-19T12:38:50.065Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",

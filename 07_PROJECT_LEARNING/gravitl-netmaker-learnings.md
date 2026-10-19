@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gravitl-netmaker-learnings.md`  
 > **Source**: github ([https://github.com/gravitl/netmaker](https://github.com/gravitl/netmaker))  
-> **Source Version**: `c5b3ecc3`  
+> **Source Version**: `e8c0f0bc`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T23:45:33.432Z  
+> **Timestamp**: 2026-10-19T12:38:47.378Z  
 > **Learning ID**: `learn-github-gravitl-netmaker`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gravitl-netmaker-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gravitl/netmaker](https://github.com/gravitl/netmaker))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T23:45:32.662Z  
+> **Harvest Timestamp**: 2026-10-19T12:38:47.374Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Netmaker makes networks with WireGuard. Netmaker automates fast, secure, and distributed virtual networks.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11831 stars
+- **Stars / Engagement**: 11832 stars
 
 ---
 
@@ -653,6 +653,50 @@ func encryptMsg(host *schema.Host, msg []byte) ([]byte, error) {
 	return ncutils.Chunk(msg, nodePubKey, serverPrivKey)
 }
 
+// deriveHostTrafficKey computes the AES-256 key shared with host, derived via
+// ECDH between the server's private traffic key and the host's public one.
+func deriveHostTrafficKey(host *schema.Host) ([]byte, error) {
+	trafficKey, err := logic.RetrievePrivateTrafficKey()
+	if err != nil {
+		return nil, err
+	}
+	serverPrivKey, err := ncutils.ConvertBytesToKey(trafficKey)
+	if err != nil {
+		return nil, err
+	}
+	hostPubKey, err := ncutils.ConvertBytesToKey(host.TrafficKeyPublic)
+	if err != nil {
+		return nil, err
+	}
+	return ncutils.DeriveSharedKey(serverPrivKey, hostPubKey)
+}
+
+// encryptMsgAESGCM compresses and AES-GCM encrypts msg for delivery to host.
+// Hosts that have upgraded past v1.8.0 get a key derived via
+// ECDH; older hosts, which only know how to decrypt with the host's raw
+// public key as the AES key (no real confidentiality), keep getting that
+// legacy scheme until they upgrade.
+func encryptMsgAESGCM(host *schema.Host, msg []byte) ([]byte, error) {
+	zipped, err := compressPayload(msg)
+	if err != nil {
+		return nil, err
+	}
+
+	legacyScheme, err := logic.VersionLessThan(host.Version, "v1.8.0")
+	if err != nil {
+		return nil, err
+	}
+	if legacyScheme {
+		return encryptAESGCM(host.TrafficKeyPublic[0:32], zipped)
+	}
+
+	key, err := deriveHostTrafficKey(host)
+	if err != nil {
+		return nil, err
+	}
+	return encryptAESGCM(key, zipped)
+}
+
 func publish(host *schema.Host, dest string, msg []byte) error {
 
 	var encrypted []byte
@@ -668,11 +712,7 @@ func publish(host *schema.Host, dest string, msg []byte) error {
 			return encryptErr
 		}
 	} else {
-		zipped, err := compressPayload(msg)
-		if err != nil {
-			return err
-		}
-		encrypted, encryptErr = encryptAESGCM(host.TrafficKeyPublic[0:32], zipped)
+		encrypted, encryptErr = encryptMsgAESGCM(host, msg)
 		if encryptErr != nil {
 			return encryptErr
 		}
@@ -744,15 +784,39 @@ package ncutils
 import (
 	"bytes"
 	"crypto/rand"
+	"crypto/sha256"
 	"fmt"
 	"io"
 
+	"golang.org/x/crypto/hkdf"
 	"golang.org/x/crypto/nacl/box"
 )
 
 const (
 	chunkSize = 16000 // 16000 bytes max message size
+
+	// trafficKeyHKDFInfo is the HKDF context label for keys derived by
+	// DeriveSharedKey. It must be identical on both ends of a connection.
+	trafficKeyHKDFInfo = "netmaker-traffic-key-v1"
 )
+
+// DeriveSharedKey derives a symmetric AES-256 key from the X25519 ECDH shared
+// secret between localPrivate and remotePublic, via HKDF-SHA256.
+//
+// This must be used instead of either key's raw bytes as a symmetric key:
+// a public key is, by definition, not secret (it is readable via the API),
+// so using it directly as an AES key provides no confidentiality. The ECDH
+// shared secret cannot be computed by anyone who only knows the two public
+// keys -- it also requires one of the two private keys.
+func DeriveSharedKey(localPrivate, remotePublic *[32]byte) ([]byte, error) {
+	var shared [32]byte
+	box.Precompute(&shared, remotePublic, localPrivate)
+	key := make([]byte, 32)
+	if _, err := io.ReadFull(hkdf.New(sha256.New, shared[:], nil, []byte(trafficKeyHKDFInfo)), key); err != nil {
+		return nil, err
+	}
+	return key, nil
+}
 
 // BoxEncrypt - encrypts traffic box
 func BoxEncrypt(message []byte, recipientPubKey *[32]byte, senderPrivateKey *[32]byte) ([]byte, error) {
@@ -953,482 +1017,480 @@ const CheckInInterval = 1
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `235db77b` (2026-10-13)
-**Commit Message**: NM-378: Security Bug Fixes (#4114)
+### Incident Patch 1: `730e6078` (2026-10-19)
+**Commit Message**: Merge pull request #4191 from gravitl/fix-email-case-v1-7-0
 
-* fix(go): return user without secrets in addUserToNetwork and removeUserFromNetwork response;
+Lower-case emails when checking invites
 
-* fix(go): authenticate host on register if host already exists;
-
-* fix(go): handle disabled user on netclient join with user;
-
-* fix(go): check egress tags and nodes belong to egress' network;
-
-* fix(go): validate egress range for pro;
-
-* fix(go): check jit request belongs to network in param and that user is the network admin of the same network;
-
-* fix(go): validate public key length on register;
-
-* fix(go): prevent user from accessing global resources by passing network id query param;
-
-* fix(go): move valid org and tenant roles from orchestrator pkg to schema pkg;
-
-* fix(go): ensure new role on update is valid for the scope;
-
-* fix(go): prevent any user from changing their org/tenant role;
-
-* fix(go): check relayed nodes and igw clients belong to the node's network;
-
-* fix(go): check if username query is declared before setting target resource id;
-
-* fix(go): ensure host name is valid;
-
-* fix(go): mask settings only for all users;
-
-* fix(go): add checks on refs passed during host update and signal peer;
-
-**File**: `auth/host_session.go` (modified, +14/-0)
+**File**: `schema/user_invites.go` (modified, +4/-4)
 ```diff
-@@ -73,6 +73,20 @@ func SessionHandler(ctx context.Context, conn *websocket.Conn) {
- 	if len(registerMessage.User) > 0 { // handle basic auth
- 		logger.Log(0, "user registration attempted with host:", registerMessage.RegisterHost.Name, "user:", registerMessage.User)
+@@ -52,19 +52,19 @@ func (u *UserInvite) Get(ctx context.Context) error {
  
-+		user := &schema.User{
-+			Username: registerMessage.User,
-+		}
-+		err = user.GetWithMembership(ctx)
-+		if err != nil {
-+			handleHostRegErr(conn, fmt.Errorf("error fetching user %s: %w", registerMessage.User, err))
-+			return
-+		}
-+
-+		if user.AccountDisabled {
-+			handleHostRegErr(conn, errors.New("user is disabled"))
-+			return
-+		}
-+
- 		if !logic.IsBasicAuthEnabled(ctx) {
- 			handleHostRegErr(conn, errors.New("basic auth is disabled"))
- 			return
-```
-
-**File**: `controllers/acls.go` (modified, +1/-1)
-```diff
-@@ -23,7 +23,7 @@ import (
- 
- func aclHandlers(r *mux.Router) {
- 	r.HandleFunc("/api/v1/acls", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(getAcls)))).
--		Methods(http.MethodGet)
-+		Methods(http.MethodGet).Queries("network", "{network}")
- 	r.HandleFunc("/api/v1/acls/egress", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(getEgressAcls)))).
- 		Methods(http.MethodGet)
- 	r.HandleFunc("/api/v1/acls/policy_types", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(aclPolicyTypes)))).
-```
-
-**File**: `controllers/dns.go` (modified, +1/-1)
-```diff
-@@ -42,7 +42,7 @@ func dnsHandlers(r *mux.Router) {
- 	r.HandleFunc("/api/dns/{network}/{domain}", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(deleteDNS)))).
- 		Methods(http.MethodDelete)
- 	r.HandleFunc("/api/v1/nameserver", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(createNs)))).Methods(http.MethodPost)
--	r.HandleFunc("/api/v1/nameserver", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(listNs)))).Methods(http.MethodGet)
-+	r.HandleFunc("/api/v1/nameserver", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(listNs)))).Methods(http.MethodGet).Queries("network", "{network}")
- 	r.HandleFunc("/api/v1/nameserver", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(updateNs)))).Methods(http.MethodPut)
- 	r.HandleFunc("/api/v1/nameserver", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(deleteNs)))).Methods(http.MethodDelete)
- 	r.HandleFunc("/api/v1/nameserver/global", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(getGlobalNs)))).Methods(http.MethodGet)
-```
-
-**File**: `controllers/egress.go` (modified, +1/-1)
-```diff
-@@ -25,7 +25,7 @@ import (
- func egressHandlers(r *mux.Router) {
- 	r.HandleFunc("/api/v1/egress/presets", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(getEgressPresets)))).Methods(http.MethodGet)
- 	r.HandleFunc("/api/v1/egress", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(createEgress)))).Methods(http.MethodPost)
--	r.HandleFunc("/api/v1/egress", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(listEgress)))).Methods(http.MethodGet)
-+	r.HandleFunc("/api/v1/egress", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(listEgress)))).Methods(http.MethodGet).Queries("network", "{network}")
- 	r.HandleFunc("/api/v1/egress", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(updateEgress)))).Methods(http.MethodPut)
- 	r.HandleFunc("/api/v1/egress", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(deleteEgress)))).Methods(http.MethodDelete)
- }
-```
-
-**File**: `controllers/enrollmentkeys.go` (modified, +13/-0)
-```diff
-@@ -14,6 +14,7 @@ import (
- 	"github.com/gorilla/mux"
- 	"github.com/gravitl/netmaker/db"
- 	"github.com/gravitl/netmaker/schema"
-+	"golang.org/x/crypto/bcrypt"
- 	"golang.org/x/exp/slog"
- 
- 	dbtypes "github.com/gravitl/netmaker/db/types"
-@@ -514,6 +515,10 @@ func handleHostRegister(w http.ResponseWriter, r *http.Request) {
- 		logic.ReturnErrorResponse(w, r, logic.FormatError(fmt.Errorf("missing traffic key"), "badrequest"))
- 		return
- 	}
-+	if len(newHost.TrafficKeyPublic) != 32 {
-+		logic.ReturnErrorResponse(w, r, logic.FormatError(errors.New("invalid public key"), "badrequest"))
-+		return
-+	}
- 
- 	trafficKey, keyErr := logic.RetrievePublicTrafficKey()
- 	if keyErr != nil {
-@@ -582,6 +587,14 @@ func handleHostRegister(w http.ResponseWriter, r *http.Request) {
- 			logic.ReturnErrorResponse(w, r, logic.FormatError(err, "internal"))
- 			return
- 		}
-+
-+		err = bcrypt.CompareHashAndPassword([]byte(currHost.HostPass), []byte(newHost.HostPass))
-+		if err != nil {
-+			err = fmt.Errorf("error verifying host's identity: %w", err)
-+			logic.ReturnErrorResponse(w, r, logic.FormatError(err, logic.UnAuthorized))
-+			return
-+		}
-+
- 		endpointChanged, _ := logic.UpdateHostFromClient(r.Context(), &newHost, currHost)
- 		if endpointChanged {
- 			logic.CheckHostPorts(r.Context(), currHost)
-```
-
-**File**: `controllers/hosts.go` (modified, +68/-5)
-```diff
-@@ -552,6 +552,36 @@ func hostUpdateFallback(w http.ResponseWriter, r *http.Request) {
- 		return
- 	}
- 	slog.Info("recieved host update", "name", hostUpdate.Host.Name, "id", hostUpdate.Host.ID, "action", hostUpdate.Action)
-+	// node, egress and signal identifiers come from the request body, so they
-+	// must be bound to the authenticated host before acting on them.
-+	switch hostUpdate.Action {
-+	case models.UpdateNode, models.UpdateMetrics:
-+		if _, errResp := ensureHostOwnsNode(r, currentHost, hostUpdate.Node.ID.String()); errResp != nil {
-+			logic.ReturnErrorResponse(w, r, *errResp)
-+			return
-+		}
-+	case models.EgressUpdate:
-+		if _, errResp := ensureHostOwnsNode(r, currentHost, hostUpdate.Node.ID.String()); errResp != nil {
-+			logic.ReturnErrorResponse(w, r, *errResp)
-+			return
-+		}
-+		e := schema.Egress{ID: hostUpdate.EgressDomain.ID}
-+		if err := e.Get(r.Context()); err != nil {
-+			logic.ReturnErrorResponse(w, r, logic.FormatError(err, logic.BadReq))
-+			return
-+		}
-+		if r.Header.Get(hostIDHeader) != logic.MasterUser {
-+			if _, ok := e.Nodes[hostUpdate.Node.ID.String()]; !ok {
-+				logic.ReturnErrorResponse(w, r, logic.FormatError(errors.New("node is not a routing node of the egress"), logic.Forbidden))
-+				return
-+			}
-+		}
-+	case models.SignalHost:
-+		if _, errResp := bindSignalToHost(r, currentHost, &hostUpdate.Signal); errResp != nil {
-+			logic.ReturnErrorResponse(w, r, *errResp)
-+			return
-+		}
-+	}
- 	switch hostUpdate.Action {
- 	case models.CheckIn:
- 		var endpointChanged, versionChanged bool
-@@ -721,6 +751,29 @@ func hostUpdateFallback(w http.ResponseWriter, r *http.Request) {
- 	logic.ReturnSuccessResponse(w, r, "updated host data")
+ func (u *UserInvite) GetValidationInvite(ctx context.Context) error {
+ 	return db.FromContext(ctx).Model(&UserInvite{}).
+-		Where("invite_code = ? AND email = ? AND type = ?", u.InviteCode, u.Email, ValidationInvite).
++		Where("invite_code = ? AND LOWER(email) = LOWER(?) AND type = ?", u.InviteCode, u.Email, ValidationInvite).
+ 		First(u).Error
  }
  
-+func ensureHostOwnsNode(r *http.Request, host *schema.Host, nodeID string) (models.Node, *models.ErrorResponse) {
-+	node, err := logic.GetNodeByID(nodeID)
-+	if err != nil {
-+		errResp := logic.FormatError(fmt.Errorf("failed to get node: %w", err), logic.BadReq)
-+		return models.Node{}, &errResp
-+	}
-+	if r.Header.Get(hostIDHeader) != logic.MasterUser && node.HostID != host.ID {
-+		errResp := logic.FormatError(errors.New(logic.Forbidden_Msg), logic.Forbidden)
-+		return models.Node{}, &errResp
-+	}
-+	return node, nil
-+}
-+
-+func bindSignalToHost(r *http.Request, host *schema.Host, signal *models.Signal) (models.Node, *models.ErrorResponse) {
-+	fromNode, errResp := ensureHostOwnsNode(r, host, signal.FromNodeID)
-+	if errResp != nil {
-+		return models.Node{}, errResp
-+	}
-+	signal.FromHostID = host.ID.String()
-+	signal.FromHostPubKey = host.PublicKey.String()
-+	return fromNode, nil
-+}
-+
- func shouldApplyEgressDomainAnsUpdate(e schema.Egress, reportedRanges []string) bool {
- 	if len(reportedRanges) == 0 {
- 		return false
-@@ -1336,10 +1389,10 @@ func signalPeer(w http.ResponseWriter, r *http.Request) {
- 		return
- 	}
- 	// confirm host exists
--	senderHost := &schema.Host{
-+	currentHost := &schema.Host{
- 		ID: hostID,
- 	}
--	err = senderHost.Get(r.Context())
-+	err = currentHost.Get(r.Context())
- 	if err != nil {
- 		logger.Log(0, r.Header.Get("user"), "failed to get host:", err.Error())
+ func (u *UserInvite) GetPendingValidationInvite(ctx context.Context) error {
+ 	return db.FromContext(ctx).Model(&UserInvite{}).
+-		Where("email = ? AND type = ?", u.Email, ValidationInvite).
++		Where("LOWER(email) = LOWER(?) AND type = ?", u.Email, ValidationInvite).
+ 		First(u).Error
+ }
+ 
+ func (u *UserInvite) GetByEmail(ctx context.Context) error {
+ 	query := db.FromContext(ctx).Model(&UserInvite{}).
+-		Where("email = ? AND type = ?", u.Email, MembershipInvite)
++		Where("LOWER(email) = LOWER(?) AND type = ?", u.Email, MembershipInvite)
+ 	if scopeID := scope.ID(ctx); scopeID != "" {
+ 		query = query.
+ 			Where(fmt.Sprintf("%s.scope = ?", userInvitesTable), scope.Level(ctx)).
+@@ -94,7 +94,7 @@ func (u *UserInvite) ListAll(ctx context.Context, options ...dbtypes.Option) ([]
+ 
+ func (u *UserInvite) DeleteByEmail(ctx context.Context) error {
+ 	query := db.FromContext(ctx).Model(&UserInvite{}).
+-		Where("email = ? AND type = ?", u.Email, MembershipInvite)
++		Where("LOWER(email) = LOWER(?) AND type = ?", u.Email, MembershipInvite)
+ 	if scopeID := scope.ID(ctx); scopeID != "" {
+ 		query = query.
+ 			Where(fmt.Sprintf("%s.scope = ?", userInvitesTable), scope.Level(ctx)).
+```
+
+---
+
+### Incident Patch 2: `91a95f64` (2026-10-12)
+**Commit Message**: fix(go): lower-case emails when checking invites;
+
+**File**: `schema/user_invites.go` (modified, +4/-4)
+```diff
+@@ -52,19 +52,19 @@ func (u *UserInvite) Get(ctx context.Context) error {
+ 
+ func (u *UserInvite) GetValidationInvite(ctx context.Context) error {
+ 	return db.FromContext(ctx).Model(&UserInvite{}).
+-		Where("invite_code = ? AND email = ? AND type = ?", u.InviteCode, u.Email, ValidationInvite).
++		Where("invite_code = ? AND LOWER(email) = LOWER(?) AND type = ?", u.InviteCode, u.Email, ValidationInvite).
+ 		First(u).Error
+ }
+ 
+ func (u *UserInvite) GetPendingValidationInvite(ctx context.Context) error {
+ 	return db.FromContext(ctx).Model(&UserInvite{}).
+-		Where("email = ? AND type = ?", u.Email, ValidationInvite).
++		Where("LOWER(email) = LOWER(?) AND type = ?", u.Email, ValidationInvite).
+ 		First(u).Error
+ }
+ 
+ func (u *UserInvite) GetByEmail(ctx context.Context) error {
+ 	query := db.FromContext(ctx).Model(&UserInvite{}).
+-		Where("email = ? AND type = ?", u.Email, MembershipInvite)
++		Where("LOWER(email) = LOWER(?) AND type = ?", u.Email, MembershipInvite)
+ 	if scopeID := scope.ID(ctx); scopeID != "" {
+ 		query = query.
+ 			Where(fmt.Sprintf("%s.scope = ?", userInvitesTable), scope.Level(ctx)).
+@@ -94,7 +94,7 @@ func (u *UserInvite) ListAll(ctx context.Context, options ...dbtypes.Option) ([]
+ 
+ func (u *UserInvite) DeleteByEmail(ctx context.Context) error {
+ 	query := db.FromContext(ctx).Model(&UserInvite{}).
+-		Where("email = ? AND type = ?", u.Email, MembershipInvite)
++		Where("LOWER(email) = LOWER(?) AND type = ?", u.Email, MembershipInvite)
+ 	if scopeID := scope.ID(ctx); scopeID != "" {
+ 		query = query.
+ 			Where(fmt.Sprintf("%s.scope = ?", userInvitesTable), scope.Level(ctx)).
+```
+
+---
+
+### Incident Patch 3: `fc73f7db` (2026-10-19)
+**Commit Message**: Fixes: Auto Select Gateway (#4176)
+
+* feat(go): add func to reassign auto assigned clients on gw disconnect;
+
+* feat(go): reassign auto assign clients on gw node disconnect through api;
+
+* feat(go): reassign auto assign clients on gw node disconnect through netclient;
+
+* feat(go): reject auto relay request if gw is disconnected;
+
+* feat(go): reassign auto-assigned gw post disconnect node update;
+
+* fix(go): assign/unassign gw in db;
+
+* fix(go): optimize unassign gw;
+
+* fix(go): use correct field name;
+
+* feat(go): optimize ReassignAutoAssignedClients;
+
+**File**: `controllers/hosts.go` (modified, +6/-15)
+```diff
+@@ -542,7 +542,7 @@ func hostUpdateFallback(w http.ResponseWriter, r *http.Request) {
  		logic.ReturnErrorResponse(w, r, logic.FormatError(err, "badrequest"))
-@@ -1359,10 +1412,20 @@ func signalPeer(w http.ResponseWriter, r *http.Request) {
- 		logic.ReturnErrorResponse(w, r, logic.FormatError(errors.New(msg), "badrequest"))
  		return
  	}
-+	fromNode, errResp := bindSignalToHost(r, currentHost, &signal)
-+	if errResp != nil {
-+		logic.ReturnErrorResponse(w, r, *errResp)
-+		return
-+	}
-+	toNode, err := logic.GetNodeByID(signal.ToNodeID)
-+	if err != nil || toNode.Network != fromNode.Network || toNode.HostID.String() != signal.ToHostID {
-+		logic.ReturnErrorResponse(w, r, logic.FormatError(errors.New("peer node is not reachable from the signalling node"), logic.Forbidden))
-+		return
-+	}
- 	signal.IsPro = servercfg.IsPro
- 	// bind the sender identity to the authenticated host rather than trusting the request body
--	signal.FromHostID = senderHost.ID.String()
--	signal.FromHostPubKey = senderHost.PublicKey.String()
-+	signal.FromHostID = currentHost.ID.String()
-+	signal.FromHostPubKey = currentHost.PublicKey.String()
- 
- 	toHostID, err := uuid.Parse(signal.ToHostID)
+-	var sendPeerUpdate, sendDeletedNodeUpdate, replacePeers, runPostureChecks bool
++	var sendPeerUpdate, sendDeletedNodeUpdate, replacePeers, runPostureChecks, reassignGwClients bool
+ 	var hostUpdate models.HostUpdate
+ 	err = json.NewDecoder(r.Body).Decode(&hostUpdate)
  	if err != nil {
-@@ -1383,7 +1446,7 @@ func signalPeer(w http.ResponseWriter, r *http.Request) {
- 		return
- 	}
- 	// the target host must share a network with the authenticated sender
--	if !logic.HostsShareNetwork(r.Context(), senderHost.ID.String(), peerHost.ID.String()) {
-+	if !logic.HostsShareNetwork(r.Context(), currentHost.ID.String(), peerHost.ID.String()) {
- 		logic.ReturnErrorResponse(
- 			w,
- 			r,
+@@ -590,20 +590,8 @@ func hostUpdateFallback(w http.ResponseWriter, r *http.Request) {
+ 			return
+ 		}
+ 	case models.UpdateNode:
+-		var displacedGwNodes []models.Node
+-		sendDeletedNodeUpdate, sendPeerUpdate, displacedGwNodes = logic.UpdateHostNode(r.Context(), &hostUpdate.Host, &hostUpdate.Node)
+-		if len(displacedGwNodes) > 0 {
+-			go func() {
+-				for _, dNode := range displacedGwNodes {
+-					dHost := &schema.Host{ID: dNode.HostID}
+-					if err := dHost.Get(db.WithContext(context.TODO())); err != nil {
+-						slog.Error("fallback disconnect gw: failed to get host for displaced node", "node", dNode.ID, "error", err)
+-						continue
+-					}
+-					mq.HostUpdate(&models.HostUpdate{Action: models.CheckAutoAssignGw, Host: *dHost, Node: dNode})
+-				}
+-			}()
+-		}
++		sendDeletedNodeUpdate, sendPeerUpdate = logic.UpdateHostNode(r.Context(), &hostUpdate.Host, &hostUpdate.Node)
++		reassignGwClients = !hostUpdate.Node.Connected
+ 	case models.UpdateMetrics:
+ 		nodeID := hostUpdate.Node.ID.String()
+ 		mq.UpdateMetricsFallBack(r.Context(), nodeID, hostUpdate.NewMetrics)
+@@ -705,6 +693,9 @@ func hostUpdateFallback(w http.ResponseWriter, r *http.Request) {
+ 			}
+ 
+ 		}
++		if reassignGwClients {
++			mq.ReassignAutoAssignedClients(ctx, hostUpdate.Node.ID.String())
++		}
+ 		if sendDeletedNodeUpdate {
+ 			_ = mq.PublishDeletedNodePeerUpdate(ctx, nil, &hostUpdate.Node)
+ 		}
 ```
 
-**File**: `controllers/middleware.go` (modified, +34/-9)
+**File**: `controllers/node.go` (modified, +12/-11)
 ```diff
-@@ -9,10 +9,35 @@ import (
- 	"github.com/gravitl/netmaker/schema"
- )
- 
-+func routeDeclaresQuery(currentRoute *mux.Route, keys ...string) bool {
-+	templates, err := currentRoute.GetQueriesTemplates()
-+	if err != nil {
-+		return false
-+	}
-+	for _, t := range templates {
-+		declaredKey := strings.SplitN(t, "=", 2)[0]
-+		for _, key := range keys {
-+			if declaredKey == key {
-+				return true
-+			}
-+		}
-+	}
-+	return false
-+}
-+
-+func routeDeclaresNetworkQuery(currentRoute *mux.Route) bool {
-+	return routeDeclaresQuery(currentRoute, "network", "network_id")
-+}
-+
-+func routeDeclaresUsernameQuery(currentRoute *mux.Route) bool {
-+	return routeDeclaresQuery(currentRoute, "username")
-+}
-+
- func userMiddleWare(handler http.Handler) http.Handler {
- 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
- 		var params = mux.Vars(r)
--		route, err := mux.CurrentRoute(r).GetPathTemplate()
-+		currentRoute := mux.CurrentRoute(r)
-+		route, err := currentRoute.GetPathTemplate()
- 		if err != nil {
- 			logic.ReturnErrorResponse(w, r, logic.FormatError(err, "badrequest"))
- 			return
-@@ -29,11 +54,12 @@ func userMiddleWare(handler http.Handler) http.Handler {
- 		r.Header.Set("TARGET_RSRC_ID", "")
- 		r.Header.Set("RAC", "")
- 		r.Header.Set("NET_ID", params["network"])
--		if r.URL.Query().Get("network") != "" {
--			r.Header.Set("NET_ID", r.URL.Query().Get("network"))
--		}
--		if r.URL.Query().Get("network_id") != "" {
--			r.Header.Set("NET_ID", r.URL.Query().Get("network_id"))
-+		if params["network"] == "" && routeDeclaresNetworkQuery(currentRoute) {
-+			if v := r.URL.Query().Get("network"); v != "" {
-+				r.Header.Set("NET_ID", v)
-+			} else if v := r.URL.Query().Get("network_id"); v != "" {
-+				r.Header.Set("NET_ID", v)
-+			}
+@@ -947,17 +947,7 @@ func updateNode(w http.ResponseWriter, r *http.Request) {
+ 				_ = logic.UpdateMetrics(ctx, newNode.ID.String(), metrics)
+ 			}
+ 			go logic.SetPeerMetricsDisconnected(ctx, newNode.ID.String())
+-			if servercfg.IsPro {
+-				displacedNodes := logic.DisplaceAutoRelayedNodes(newNode.ID.String())
+-				for _, dNode := range displacedNodes {
+-					dHost := &schema.Host{ID: dNode.HostID}
+-					if err := dHost.Get(ctx); err != nil {
+-						slog.Error("disconnect gw: failed to get host for displaced node", "node", dNode.ID, "error", err)
+-						continue
+-					}
+-					mq.HostUpdate(&models.HostUpdate{Action: models.CheckAutoAssignGw, Host: *dHost, Node: dNode})
+-				}
+-			}
++			mq.ReassignAutoAssignedClients(ctx, newNode.ID.String())
  		}
- 		if strings.Contains(route, "host") || strings.Contains(route, "nodes") || strings.Contains(route, "pending_hosts") {
- 			r.Header.Set("TARGET_RSRC", schema.HostRsrc.String())
-@@ -138,9 +164,8 @@ func userMiddleWare(handler http.Handler) http.Handler {
- 
- 		if userID, ok := params["username"]; ok {
- 			r.Header.Set("TARGET_RSRC_ID", userID)
--		} else {
--			username := r.URL.Query().Get("username")
--			if username != "" {
-+		} else if routeDeclaresUsernameQuery(currentRoute) {
-+			if username := r.URL.Query().Get("username"); username != "" {
- 				r.Header.Set("TARGET_RSRC_ID", username)
+ 		// On exit disconnect (fail open) or reconnect (restore full tunnel), push
+ 		// exit-client peer updates first before the global mesh update.
+@@ -1216,6 +1206,17 @@ func bulkUpdateNodeStatus(w http.ResponseWriter, r *http.Request) {
  			}
  		}
-```
-
-**File**: `controllers/server.go` (modified, +5/-0)
-```diff
-@@ -228,15 +228,20 @@ func getConfig(w http.ResponseWriter, r *http.Request) {
- // @Success     200 {object} models.ServerSettings
- func getSettings(w http.ResponseWriter, r *http.Request) {
- 	scfg := logic.GetServerSettings(r.Context())
-+
- 	if scfg.ClientSecret != "" {
- 		scfg.ClientSecret = logic.Mask()
- 	}
-+	if scfg.GoogleSACredsJson != "" {
-+		scfg.GoogleSACredsJson = logic.Mask()
-+	}
- 	if scfg.OktaAPIToken != "" {
- 		scfg.OktaAPIToken = logic.Mask()
- 	}
- 	if scfg.EmailSenderPassword != "" {
- 		scfg.EmailSenderPassword = logic.Mask()
- 	}
-+
- 	logic.ReturnSuccessResponseWithJson(w, r, scfg, "fetched server settings successfully")
- }
  
-```
-
----
-
-### Incident Patch 2: `04c2bf6a` (2026-10-15)
-**Commit Message**: Merge pull request #4173 from kushalShukla-web/feature/graceful-shutdown
-
-fix: add graceful shutdown handling and panic recovery for database
-
-**File**: `main.go` (modified, +19/-4)
-```diff
-@@ -66,18 +66,33 @@ func main() {
- 	fmt.Println(models.RetrieveLogo()) // print the logo
- 	initialize()                       // initial db and acls
- 	setGarbageCollection()
--	defer db.CloseDB()
--
--	// TODO: although this doesn't cause any problem, it's not the best way to do this.
--	defer ch.Close()
- 
- 	ctx, stop := signal.NotifyContext(db.WithContext(context.Background()), syscall.SIGTERM, os.Interrupt)
- 	defer stop()
- 	var waitGroup sync.WaitGroup
-+
- 	startControllers(&waitGroup, ctx) // start the api endpoint and mq and stun
- 	startHooks(ctx, &waitGroup)
-+
- 	<-ctx.Done()
-+	logger.Log(0, "Shutdown signal received, waiting for background processes to finish...")
-+
- 	waitGroup.Wait()
-+
-+	// Explicitly close database connections in order
-+	logger.Log(0, "Closing database connections...")
-+
-+	func() {
-+		defer func() {
-+			if r := recover(); r != nil {
-+				logger.Log(0, fmt.Sprintf("Recovered from panic during clickhouse shutdown: %v", r))
++		// Reassign auto-assigned clients only after every disconnected gw has been
++		// sent its node update, so clients are less likely to re-pick a gw that is
++		// still up but about to tear down.
++		if !req.Connected {
++			gwNodeIDs := make([]string, 0, len(nodeIDs))
++			for i := range nodeIDs {
++				gwNodeIDs = append(gwNodeIDs, nodeIDs[i].(string))
 +			}
-+		}()
-+		ch.Close()
-+	}()
++			mq.ReassignAutoAssignedClients(ctx, gwNodeIDs...)
++		}
 +
-+	db.CloseDB()
-+	logger.Log(0, "Shutdown complete.")
- }
- 
- func setupConfig(absoluteConfigPath string) {
+ 		// On exit disconnect (fail open) or reconnect (restore full tunnel), push
+ 		// exit-client peer updates first before the global mesh update.
+ 		seenClient := map[string]struct{}{}
 ```
 
----
-
-### Incident Patch 3: `c12b7650` (2026-10-13)
-**Commit Message**: build(deps): bump github.com/posthog/posthog-go from 1.14.0 to 1.23.1 (#4120)
-
-Bumps [github.com/posthog/posthog-go](https://github.com/posthog/posthog-go) from 1.14.0 to 1.23.1.
-- [Release notes](https://github.com/posthog/posthog-go/releases)
-- [Changelog](https://github.com/PostHog/posthog-go/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/posthog/posthog-go/compare/v1.14.0...v1.23.1)
-
----
-updated-dependencies:
-- dependency-name: github.com/posthog/posthog-go
-  dependency-version: 1.23.1
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-Co-authored-by: Abhishek Kondur <[REDACTED_EMAIL]>
-Co-authored-by: Abhishek Kondur <[REDACTED_EMAIL]>
-
-**File**: `go.mod` (modified, +2/-2)
+**File**: `logic/hosts.go` (modified, +42/-21)
 ```diff
-@@ -26,7 +26,7 @@ require (
- require (
- 	filippo.io/edwards25519 v1.2.0
- 	github.com/c-robinson/iplib v1.0.8
--	github.com/posthog/posthog-go v1.14.0
-+	github.com/posthog/posthog-go v1.23.1
+@@ -21,7 +21,6 @@ import (
+ 
+ 	"github.com/gravitl/netmaker/logger"
+ 	"github.com/gravitl/netmaker/models"
+-	"github.com/gravitl/netmaker/servercfg"
+ 	"github.com/gravitl/netmaker/utils"
  )
  
- require (
-@@ -75,7 +75,7 @@ require (
- 	github.com/go-logr/logr v1.4.4 // indirect
- 	github.com/go-logr/stdr v1.2.2 // indirect
- 	github.com/go-sql-driver/mysql v1.8.1 // indirect
--	github.com/goccy/go-json v0.10.5 // indirect
-+	github.com/goccy/go-json v0.10.6 // indirect
- 	github.com/google/s2a-go v0.1.9 // indirect
- 	github.com/googleapis/enterprise-certificate-proxy v0.3.14 // indirect
- 	github.com/googleapis/gax-go/v2 v2.18.0 // indirect
+@@ -370,7 +369,7 @@ func UpdateHostFromClient(ctx context.Context, newHost, currHost *schema.Host) (
+ }
+ 
+ // UpdateHostNode -  handles updates from client nodes
+-func UpdateHostNode(ctx context.Context, h *schema.Host, newNode *models.Node) (publishDeletedNodeUpdate, publishPeerUpdate bool, displacedGwNodes []models.Node) {
++func UpdateHostNode(ctx context.Context, h *schema.Host, newNode *models.Node) (publishDeletedNodeUpdate, publishPeerUpdate bool) {
+ 	currentNode, err := GetNodeByID(newNode.ID.String())
+ 	if err != nil {
+ 		return
+@@ -386,9 +385,6 @@ func UpdateHostNode(ctx context.Context, h *schema.Host, newNode *models.Node) (
+ 	UpsertNode(&currentNode)
+ 	if !newNode.Connected {
+ 		publishDeletedNodeUpdate = true
+-		if servercfg.IsPro {
+-			displacedGwNodes = DisplaceAutoRelayedNodes(newNode.ID.String())
+-		}
+ 		go SetPeerMetricsDisconnected(ctx, newNode.ID.String())
+ 	}
+ 	publishPeerUpdate = true
+@@ -398,27 +394,52 @@ func UpdateHostNode(ctx context.Context, h *schema.Host, newNode *models.Node) (
+ }
+ 
+ // DisplaceAutoRelayedNodes removes auto-assigned nodes from a disconnected gateway
+-// and returns the displaced nodes that need re-assignment.
+-func DisplaceAutoRelayedNodes(nodeID string) []models.Node {
+-	gwNode, err := GetNodeByID(nodeID)
+-	if err != nil || !gwNode.IsGw || len(gwNode.RelayedNodes) == 0 {
++// and returns the displaced nodes that need re-assignment, as stored after the
++// removal (i.e. no longer relayed).
++func DisplaceAutoRelayedNodes(ctx context.Context, nodeID string) []models.Node {
++	gwNode := &schema.Node{
++		ID: nodeID,
++	}
++	err := gwNode.Get(ctx)
++	if err != nil || !gwNode.IsGateway || len(gwNode.RelayedClients) == 0 {
+ 		return nil
+ 	}
+-	var newRelayedNodes []string
+-	var displacedNodes []models.Node
+-	for _, relayedNodeID := range gwNode.RelayedNodes {
+-		relayedNode, err := GetNodeByID(relayedNodeID)
+-		if err != nil {
+-			continue
++	relayedClientIDs := make([]string, 0, len(gwNode.RelayedClients))
++	for relayedClientID := range gwNode.RelayedClients {
++		relayedClientIDs = append(relayedClientIDs, relayedClientID)
++	}
++	relayedNodes, err := (&schema.Node{}).ListByIDs(ctx, relayedClientIDs)
++	if err != nil {
++		return nil
++	}
++	var displacedNodeIDs []string
++	for _, relayedNode := range relayedNodes {
++		if relayedNode.AutoAssignGateway &&
++			relayedNode.RelayedByNodeID != nil && *relayedNode.RelayedByNodeID == gwNode.ID {
++			displacedNodeIDs = append(displacedNodeIDs, relayedNode.ID)
+ 		}
+-		if relayedNode.AutoAssignGateway && relayedNode.RelayedBy == gwNode.ID.String() {
+-			displacedNodes = append(displacedNodes, relayedNode)
++	}
++	if len(displacedNodeIDs) == 0 {
++		return nil
++	}
++
++	err = gwNode.UnassignGatewayForClients(ctx, displacedNodeIDs)
++	if err != nil {
++		slog.Error("failed to unassign auto-assigned nodes from gw", "gw", nodeID, "error", err)
++		return nil
++	}
++	// re-read so callers see the cleared relay state, not the pre-removal snapshot
++	displacedNodesByID, err := GetNodesByIDs(ctx, displacedNodeIDs)
++	if err != nil {
++		return nil
++	}
++	displacedNodes := make([]models.Node, 0, len(displacedNodesByID))
++	for _, displacedNode := range displacedNodesByID {
++		// skip nodes that moved to another gw before the unassign
++		if displacedNode.IsRelayed {
+ 			continue
+ 		}
+-		newRelayedNodes = append(newRelayedNodes, relayedNodeID)
+-	}
+-	if len(displacedNodes) > 0 {
+-		UpdateRelayNodes(gwNode.ID.String(), gwNode.RelayedNodes, newRelayedNodes)
++		displacedNodes = append(displacedNodes, displacedNode)
+ 	}
+ 	return displacedNodes
+ }
 ```
 
-**File**: `go.sum` (modified, +4/-4)
+**File**: `logic/nodes.go` (modified, +2/-6)
 ```diff
-@@ -59,8 +59,8 @@ github.com/go-playground/validator/v10 v10.30.3/go.mod h1:4Axh7oCNGcoGkqLoE4YWt6
- github.com/go-sql-driver/mysql v1.7.0/go.mod h1:OXbVy3sEdcQ2Doequ6Z5BW6fXNQTmx+9S1MCJN5yJMI=
- github.com/go-sql-driver/mysql v1.8.1 h1:LedoTUt/eveggdHS9qUFC1EFSa8bU2+1pZjSRpvNJ1Y=
- github.com/go-sql-driver/mysql v1.8.1/go.mod h1:wEBSXgmK//2ZFJyE+qWnIsVGmvmEKlqwuVSjsCm7DZg=
--github.com/goccy/go-json v0.10.5 h1:Fq85nIqj+gXn/S5ahsiTlK3TmC85qgirsdTP/+DeaC4=
--github.com/goccy/go-json v0.10.5/go.mod h1:oq7eo15ShAhp70Anwd5lgX2pLfOS3QCiwU/PULtXL6M=
-+github.com/goccy/go-json v0.10.6 h1:p8HrPJzOakx/mn/bQtjgNjdTcN+/S6FcG2CTtQOrHVU=
-+github.com/goccy/go-json v0.10.6/go.mod h1:oq7eo15ShAhp70Anwd5lgX2pLfOS3QCiwU/PULtXL6M=
- github.com/golang-jwt/jwt/v4 v4.5.2 h1:YtQM7lnr8iZ+j5q71MGKkNw9Mn7AjHM68uc9g5fXeUI=
- github.com/golang-jwt/jwt/v4 v4.5.2/go.mod h1:m21LjoU+eqJr34lmDMbreY2eSTRJ1cv77w39/MY0Ch0=
- github.com/golang-sql/civil v0.0.0-20220223132316-b832511892a9 h1:au07oEsX2xN0ktxqI+Sida1w446QrXBRJ0nee3SNZlA=
-@@ -139,8 +139,8 @@ github.com/paulmach/orb v0.13.0/go.mod h1:6scRWINywA2Jf05dcjOfLfxrUIMECvTSG2MVbR
- github.com/pierrec/lz4/v4 v4.1.27 h1:+PhzhWDrjRj89TH2sw43nE3+4+W8lSxIuQadEHZyjUk=
- github.com/pierrec/lz4/v4 v4.1.27/go.mod h1:EoQMVJgeeEOMsCqCzqFm2O0cJvljX2nGZjcRIPL34O4=
- github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
--github.com/posthog/posthog-go v1.14.0 h1:pN0+v7kvKkykRQDf6E0KNYJvKqhJ+VzQGlfxYHfZMhs=
--github.com/posthog/posthog-go v1.14.0/go.mod h1:xsVOW9YImilUcazwPNEq4PJDqEZf2KeCS758zXjwkPg=
-+github.com/posthog/posthog-go v1.23.1 h1:Xw8QnH1WdCjHoqEbej7FI3CfM1g0jBJb8aBqIpBvQeM=
-+github.com/posthog/posthog-go v1.23.1/go.mod h1:seY9mmw3mYGT9i2Wr5Dn3JXWPiAkZ6aolwH/5l8eVQE=
- github.com/pquerna/otp v1.5.0 h1:NMMR+WrmaqXU4EzdGJEE1aUUI0AMRzsp96fFFWNPwxs=
- github.com/pquerna/otp v1.5.0/go.mod h1:dkJfzwRKNiegxyNb54X/3fLwhCynbMspSyWKnvi1AEg=
- github.com/prashantv/gostub v1.1.0 h1:BTyx3RfQjRHnUWaGF9oQos79AlQ5k8WNktv7VGvVH4g=
+@@ -496,22 +496,18 @@ func GetNodeByID(nodeID string) (models.Node, error) {
+ // This avoids the N+1 (and N^2) query patterns that arise when callers loop
+ // over peer IDs and call GetNodeByID per peer (e.g. status / connectivity
+ // checks driven by metrics).
+-func GetNodesByIDs(ids []string) (map[string]models.Node, error) {
++func GetNodesByIDs(ctx context.Context, ids []string) (map[string]models.Node, error) {
+ 	if len(ids) == 0 {
+ 		return map[string]models.Node{}, nil
+ 	}
+ 	_nodes, err := (&schema.Node{}).ListByIDs(
+-		db.WithContext(context.TODO()),
++		ctx,
+ 		ids,
+ 		dbtypes.WithAllPreloads(),
+ 	)
+ 	if err != nil {
+ 		return nil, err
+ 	}
+-	ctx := db.WithContext(context.TODO())
+-	if len(_nodes) > 0 {
+-		ctx = scope.WithContext(ctx, scope.TenantScope, _nodes[0].TenantID)
+-	}
+ 	modelsNodes := make([]models.Node, len(_nodes))
+ 	for i := range _nodes {
+ 		n := ConvertSchemaNodeToModelsNodeWithContext(ctx, &_nodes[i], SkipViolations())
+```
+
+**File**: `mq/publishers.go` (modified, +36/-0)
+```diff
+@@ -305,6 +305,42 @@ func PublishPeerUpdatesForExitClientsFirst(ctx context.Context, clientNodes []mo
+ 	return PublishPeerUpdate(ctx, false)
+ }
+ 
++func ReassignAutoAssignedClients(ctx context.Context, gwNodeIDs ...string) {
++	if !servercfg.IsPro {
++		return
++	}
++	// displace from every gw first, so all nodes are listed once and each peer
++	// update reflects the whole batch
++	var displacedNodes []models.Node
++	for _, gwNodeID := range gwNodeIDs {
++		displacedNodes = append(displacedNodes, logic.DisplaceAutoRelayedNodes(ctx, gwNodeID)...)
++	}
++	if len(displacedNodes) == 0 {
++		return
++	}
++	allNodes, err := logic.GetAllNodes(ctx)
++	if err != nil {
++		slog.Error("reassign auto-assigned clients: failed to list nodes", "gws", gwNodeIDs, "error", err)
++	}
++	for i := range displacedNodes {
++		node := displacedNodes[i]
++		host := &schema.Host{ID: node.HostID}
++		if err := host.Get(ctx); err != nil {
++			slog.Error("reassign auto-assigned clients: failed to get host for displaced node", "node", node.ID, "error", err)
++			continue
++		}
++
++		if allNodes != nil {
++			if err := PublishSingleHostPeerUpdate(ctx, host, allNodes, nil, nil, nil, false, nil); err != nil {
++				slog.Error("reassign auto-assigned clients: failed to publish peer update", "host", host.ID, "error", err)
++			}
++		}
++		if err := HostUpdate(&models.HostUpdate{Action: models.CheckAutoAssignGw, Host: *host, Node: node}); err != nil {
++			slog.Error("reassign auto-assigned clients: failed to send gateway check", "host", host.ID, "error", err)
++		}
++	}
++}
++
+ // NodeUpdate -- publishes a node update
+ func NodeUpdate(node *models.Node) error {
+ 	host := &schema.Host{ID: node.HostID}
+```
+
+**File**: `pro/controllers/auto_relay.go` (modified, +37/-10)
+```diff
+@@ -249,6 +249,17 @@ func autoRelayME(w http.ResponseWriter, r *http.Request) {
+ 		)
+ 		return
+ 	}
++	if !autoRelayNode.Connected {
++		logic.ReturnErrorResponse(
++			w,
++			r,
++			logic.FormatError(
++				fmt.Errorf("req-from: %s, autorelay node is disconnected", host.Name),
++				"badrequest",
++			),
++		)
++		return
++	}
+ 
+ 	var sendPeerUpdate bool
+ 	peerNode, err := logic.GetNodeByID(autoRelayReq.NodeID)
+@@ -487,6 +498,17 @@ func autoRelayMEUpdate(w http.ResponseWriter, r *http.Request) {
+ 		)
+ 		return
+ 	}
++	if !autoRelayNode.Connected {
++		logic.ReturnErrorResponse(
++			w,
++			r,
++			logic.FormatError(
++				fmt.Errorf("req-from: %s, autorelay node is disconnected", host.Name),
++				"badrequest",
++			),
++		)
++		return
++	}
+ 	if !autoRelayNode.IsGw {
+ 		logic.ReturnErrorResponse(
+ 			w,
+@@ -503,17 +525,22 @@ func autoRelayMEUpdate(w http.ResponseWriter, r *http.Request) {
+ 	// (checked on node/peerNode above and in SetAutoRelayCtx).
+ 	if node.AutoAssignGateway {
+ 		if node.RelayedBy != autoRelayReq.AutoRelayGwID {
+-			if node.RelayedBy != "" {
+-				// unset relayed node from the curr relay
+-				currRelayNode, err := logic.GetNodeByID(node.RelayedBy)
+-				if err == nil {
+-					newRelayedNodes := logic.RemoveAllFromSlice(currRelayNode.RelayedNodes, node.ID.String())
+-					logic.UpdateRelayNodes(currRelayNode.ID.String(), currRelayNode.RelayedNodes, newRelayedNodes)
+-				}
++			_node := &schema.Node{
++				ID: node.ID.String(),
++			}
++			err = _node.Get(r.Context())
++			if err != nil {
++				logic.ReturnErrorResponse(w, r, logic.FormatError(err, logic.Internal))
++				return
++			}
++			gwNodeID := autoRelayNode.ID.String()
++			_node.RelayedByNodeID = &gwNodeID
++			_node.IsIGWClient = false
++			err = _node.AssignGateway(r.Context())
++			if err != nil {
++				logic.ReturnErrorResponse(w, r, logic.FormatError(fmt.Errorf("failed to assign gw: %v", err), logic.Internal))
++				return
+ 			}
+-			newNodes := []string{node.ID.String()}
+-			newNodes = append(newNodes, autoRelayNode.RelayedNodes...)
+-			logic.UpdateRelayNodes(autoRelayNode.ID.String(), autoRelayNode.RelayedNodes, newNodes)
+ 			ctx := scope.WithContext(db.WithContext(context.Background()), scope.Level(r.Context()), scope.ID(r.Context()))
+ 			go mq.PublishPeerUpdate(ctx, false)
+ 		}
+```
+
+**File**: `pro/logic/status.go` (modified, +1/-1)
+```diff
+@@ -196,7 +196,7 @@ func buildPeerCache(ctx context.Context, node *models.Node, metrics *models.Metr
+ 	for id := range idSet {
+ 		ids = append(ids, id)
+ 	}
+-	peers, err := logic.GetNodesByIDs(ids)
++	peers, err := logic.GetNodesByIDs(ctx, ids)
+ 	if err != nil {
+ 		return map[string]models.Node{}
+ 	}
+```
+
+**File**: `schema/event.go` (modified, +1/-1)
+```diff
+@@ -227,7 +227,7 @@ func (a *Event) DeleteAllForTenant(ctx context.Context) error {
+ 
+ func (a *Event) DeleteOldEvents(ctx context.Context, retentionDays int) error {
+ 	cutoff := time.Now().AddDate(0, 0, -retentionDays)
+-	query := db.FromContext(ctx).Model(&Event{}).Where("created_at < ?", cutoff)
++	query := db.FromContext(ctx).Model(&Event{}).Where("time_stamp < ?", cutoff)
+ 	if tenantID := scope.ID(ctx); tenantID != "" {
+ 		query = dbtypes.WithFilter(fmt.Sprintf("%s.tenant_id", eventsTable), tenantID)(query)
+ 	}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4194** (2026-10-19): Ensure email usernames are lower-case (@VishalDalwadi)
+- **PR #4193** (2026-10-19): V1.7.0 develop merge  (@abhishek9686)
+- **PR #4192** (2026-10-19): Derive AES Key using ECDH (@VishalDalwadi)
+- **PR #4191** (2026-10-19): Lower-case emails when checking invites (@VishalDalwadi)
+- **PR #4190** (2026-10-19): Release v1.7.0 (@abhishek9686)
 - **PR #4185** (2026-10-16): Fixes: v1.8.0 (@VishalDalwadi)
-- **PR #4184** (2026-10-16): Add bulk api for extclient, optimise creation of extclients (@abhishek9686)
-- **PR #4183** (2026-10-15): V1.7.0 develop merge (@abhishek9686)
-- **PR #4182** (2026-10-15): Release v1.7.0 (@abhishek9686)
-- **PR #4181** (2026-10-15): V1.7.0 ext acl (@abhishek9686)
-- **PR #4180** (2026-10-14): fix ext client egress acls (@abhishek9686)
 
 ---
 
@@ -1448,41 +1510,34 @@ Co-authored-by: Abhishek Kondur <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. NM-378: Security Bug Fixes (#4114)
+## X. Merge pull request #4191 from gravitl/fix-email-case-v1-7-0
 
 **RULE**:
-When implementing operations in `auth/host_session.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gravitl/netmaker. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `schema/user_invites.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gravitl/netmaker. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `235db77b`: NM-378: Security Bug Fixes (#4114). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `730e6078`: Merge pull request #4191 from gravitl/fix-email-case-v1-7-0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `auth/host_session.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `schema/user_invites.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		user := &schema.User{
-			Username: registerMessage.User,
-		}
-		err = user.GetWithMembership(ctx)
-		if err != nil {
-			handleHostRegErr(conn, fmt.Errorf("error fetching user %s: %w", registerMessage.User, err))
-			return
-		}
-
-		if user.AccountDisabled {
-			handleHostRegErr(conn, errors.New("user is disabled"))
-			return
-		}
-
+		Where("invite_code = ? AND LOWER(email) = LOWER(?) AND type = ?", u.InviteCode, u.Email, ValidationInvite).
+		Where("LOWER(email) = LOWER(?) AND type = ?", u.Email, ValidationInvite).
+		Where("LOWER(email) = LOWER(?) AND type = ?", u.Email, MembershipInvite)
+		Where("LOWER(email) = LOWER(?) AND type = ?", u.Email, MembershipInvite)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+		Where("invite_code = ? AND email = ? AND type = ?", u.InviteCode, u.Email, ValidationInvite).
+		Where("email = ? AND type = ?", u.Email, ValidationInvite).
+		Where("email = ? AND type = ?", u.Email, MembershipInvite)
+		Where("email = ? AND type = ?", u.Email, MembershipInvite)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `235db77b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `730e6078` are properly handled with clean fallback behavior.

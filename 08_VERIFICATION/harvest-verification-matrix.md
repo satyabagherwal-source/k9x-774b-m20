@@ -3233,3 +3233,6 @@
 | `CYCLE-20261019-AUEP` | `2026-10-19T12:26:38.065Z` | `milanvarady/Applite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2572` | Yes (`05f1271a...`) |
 | `CYCLE-20261019-IR6M` | `2026-10-19T12:32:47.134Z` | `momenbasel/PureMac` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2573` | Yes (`7cb85c26...`) |
 | `CYCLE-20261019-ITNY` | `2026-10-19T12:32:50.350Z` | `Aleph-Alpha/Kolibri-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 969, Rule 2574, Rule 2575` | Yes (`ba5c1c01...`) |
+| `CYCLE-20261019-Q7S4` | `2026-10-19T12:38:35.236Z` | `speridlabs/iris-3b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md` | Yes (`b6ad864f...`) |
+| `CYCLE-20261019-QDB5` | `2026-10-19T12:38:42.401Z` | `nalexn/clean-architecture-swiftui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2576` | Yes (`71508027...`) |
+| `CYCLE-20261019-QH9V` | `2026-10-19T12:38:47.539Z` | `gravitl/netmaker` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2577` | Yes (`caa4c2fd...`) |

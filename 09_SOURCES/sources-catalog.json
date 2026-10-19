@@ -1025,8 +1025,8 @@
     "sourceUrl": "https://huggingface.co/speridlabs/iris-3b",
     "sourceVersion": "hf-speridlabs-iris-3b",
     "license": "Open-Source",
-    "contentHash": "49d9ff1eb8593947411f332f112ca13d8b1dc0d673c7c6611f67719f0f5b1acf",
-    "lastHarvestedAt": "2026-10-18T03:22:15.254Z",
+    "contentHash": "b6ad864f85f45811b448229cb3b02ad554d0ed33cff41347c68ba913d0177226",
+    "lastHarvestedAt": "2026-10-19T12:38:35.238Z",
     "learningId": "learn-huggingface-speridlabs-iris-3b"
   },
   "hf-qwen-qwen3-4b": {
@@ -3703,10 +3703,10 @@
     "repository": "gravitl/netmaker",
     "platform": "github",
     "sourceUrl": "https://github.com/gravitl/netmaker",
-    "sourceVersion": "c5b3ecc3",
+    "sourceVersion": "e8c0f0bc",
     "license": "NOASSERTION",
-    "contentHash": "c9aa94c4e2d5be4999f1e9ff39764c00d6daded9a392983f2789beb4602273b2",
-    "lastHarvestedAt": "2026-10-18T23:45:33.646Z",
+    "contentHash": "caa4c2fd17278c0e270e0961a8150dfe75d31242067671f48f3ec82b37fd2f59",
+    "lastHarvestedAt": "2026-10-19T12:38:47.541Z",
     "learningId": "learn-github-gravitl-netmaker"
   },
   "pixeltable-pixeltable": {
@@ -8008,5 +8008,15 @@
     "contentHash": "7cb85c26e06cc41e34219ced9a9a1101a91341c892c611bd8e589b593c72f241",
     "lastHarvestedAt": "2026-10-19T12:32:47.136Z",
     "learningId": "learn-github-momenbasel-puremac"
+  },
+  "nalexn-clean-architecture-swiftui": {
+    "repository": "nalexn/clean-architecture-swiftui",
+    "platform": "github",
+    "sourceUrl": "https://github.com/nalexn/clean-architecture-swiftui",
+    "sourceVersion": "9eca97b8",
+    "license": "MIT",
+    "contentHash": "7150802781bd08871c26157661bcf93af507c73adb7e7284a09d8a0104cb87fe",
+    "lastHarvestedAt": "2026-10-19T12:38:42.402Z",
+    "learningId": "learn-github-nalexn-clean-architecture-swiftui"
   }
 }

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T12:32:50.356Z",
-  "total_cycles_completed": 3210,
-  "total_learnings_persisted": 3210,
-  "total_rules_promoted": 2365,
+  "last_updated": "2026-10-19T12:38:47.543Z",
+  "total_cycles_completed": 3213,
+  "total_learnings_persisted": 3213,
+  "total_rules_promoted": 2367,
   "history": [
-    {
-      "timestamp": "2026-10-19T06:52:15.647Z",
-      "repository": "weaviate/weaviate",
-      "learningId": "learn-github-weaviate-weaviate",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T06:53:27.195Z",
-      "repository": "unsloth/Qwen3.8-27B-GGUF",
-      "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-19T06:59:21.735Z",
-      "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
-      "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-19T06:59:25.247Z",
       "repository": "topgrade-rs/topgrade",
@@ -1403,6 +1382,27 @@
       "repository": "Aleph-Alpha/Kolibri-1",
       "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T12:38:35.240Z",
+      "repository": "speridlabs/iris-3b",
+      "learningId": "learn-huggingface-speridlabs-iris-3b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T12:38:42.405Z",
+      "repository": "nalexn/clean-architecture-swiftui",
+      "learningId": "learn-github-nalexn-clean-architecture-swiftui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-19T12:38:47.543Z",
+      "repository": "gravitl/netmaker",
+      "learningId": "learn-github-gravitl-netmaker",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

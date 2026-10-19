@@ -3240,3 +3240,6 @@ Every entry in this ledger must capture:
 | `learn-github-milanvarady-applite` | `https://github.com/milanvarady/Applite` | `cf9712ae` | Multi-dimensional audit evidence | 2026-10-19T12:26:38.068Z |
 | `learn-github-momenbasel-puremac` | `https://github.com/momenbasel/PureMac` | `20870f6b` | Multi-dimensional audit evidence | 2026-10-19T12:32:47.136Z |
 | `learn-huggingface-aleph-alpha-kolibri-1` | `https://huggingface.co/Aleph-Alpha/Kolibri-1` | `hf-aleph-a` | Multi-dimensional audit evidence | 2026-10-19T12:32:50.353Z |
+| `learn-huggingface-speridlabs-iris-3b` | `https://huggingface.co/speridlabs/iris-3b` | `hf-speridl` | Multi-dimensional audit evidence | 2026-10-19T12:38:35.238Z |
+| `learn-github-nalexn-clean-architecture-swiftui` | `https://github.com/nalexn/clean-architecture-swiftui` | `9eca97b8` | Multi-dimensional audit evidence | 2026-10-19T12:38:42.402Z |
+| `learn-github-gravitl-netmaker` | `https://github.com/gravitl/netmaker` | `e8c0f0bc` | Multi-dimensional audit evidence | 2026-10-19T12:38:47.541Z |
