@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-19T01:34:48.924Z",
+  "last_updated": "2026-10-19T01:49:15.026Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1685,6 +1685,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Generic header title rejected",
       "learning_id": "learn-github-svenstaro-miniserve"
+    },
+    {
+      "id": "CD-J5W2",
+      "directive_title": "Empirical Invariant Guard in Cargo.lock",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "timvisee/ffsend",
+      "source_commit": "85aae2f3",
+      "date_staged": "2026-10-19",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-github-timvisee-ffsend"
     }
   ]
 }

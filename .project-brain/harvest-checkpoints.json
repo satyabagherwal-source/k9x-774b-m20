@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-19T01:41:20.525Z",
+  "last_updated": "2026-10-19T01:50:58.871Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -273,14 +273,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
-      "content_hash": "37a34d079f5312fbdd78081119f01f6f5877c0022a5beae3bc77a410ad39fabd",
-      "verified_at": "2026-10-17T21:54:17.154Z",
+      "content_hash": "5472ee89cabd6082f45f710b677a17951c3bf2145d195e7381a71d3524ef37b0",
+      "verified_at": "2026-10-19T01:50:58.871Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T21:54:17.154Z"
+      "last_updated": "2026-10-19T01:50:58.871Z"
     },
     "deepseek-ai/DeepSeek-R1": {
       "repository": "deepseek-ai/DeepSeek-R1",
@@ -7057,6 +7057,81 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-19T01:41:20.525Z"
+    },
+    "zhihu/griffith": {
+      "repository": "zhihu/griffith",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-zhihu-griffith",
+      "content_hash": "d954e6b007a8b5e703a25056787bd980ac2d9412b50988d66a47c51d20fb8138",
+      "verified_at": "2026-10-19T01:49:14.158Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T01:49:14.158Z"
+    },
+    "timvisee/ffsend": {
+      "repository": "timvisee/ffsend",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-timvisee-ffsend",
+      "content_hash": "77becd5be8bc4625f19c945920c0f47d69ace43afe4c1a13587af9a1dc20901e",
+      "verified_at": "2026-10-19T01:49:15.029Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T01:49:15.029Z"
+    },
+    "margelo/react-native-mmkv": {
+      "repository": "margelo/react-native-mmkv",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-margelo-react-native-mmkv",
+      "content_hash": "b84579b170cdc9599775de51b23c0ef0128f7ce2075ffff9c530ed11c395ce02",
+      "verified_at": "2026-10-19T01:49:18.352Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T01:49:18.352Z"
+    },
+    "aquasecurity/trivy": {
+      "repository": "aquasecurity/trivy",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-aquasecurity-trivy",
+      "content_hash": "158676aaafd6140e5c3a1d4ecd107d3083b8548db2390d38db6da65a9c24a35f",
+      "verified_at": "2026-10-19T01:49:21.589Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T01:49:21.589Z"
+    },
+    "sfu-db/connector-x": {
+      "repository": "sfu-db/connector-x",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-sfu-db-connector-x",
+      "content_hash": "229fb5e65dd30ef1c5a77be851d2ae954c1ba2083b0ea9fb6f46aa1e1b2e8374",
+      "verified_at": "2026-10-19T01:49:27.141Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-19T01:49:27.141Z"
     }
   },
   "repos": {

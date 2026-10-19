@@ -255,8 +255,8 @@
     "sourceUrl": "https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
     "sourceVersion": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf",
     "license": "Open-Source",
-    "contentHash": "37a34d079f5312fbdd78081119f01f6f5877c0022a5beae3bc77a410ad39fabd",
-    "lastHarvestedAt": "2026-10-17T21:54:17.151Z",
+    "contentHash": "5472ee89cabd6082f45f710b677a17951c3bf2145d195e7381a71d3524ef37b0",
+    "lastHarvestedAt": "2026-10-19T01:50:58.866Z",
     "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf"
   },
   "hf-deepseek-ai-deepseek-r1": {
@@ -4628,5 +4628,55 @@
     "contentHash": "b13a2e5b4209f2fba4fbd4890ace556d06adada765314041b2e4753373b42479",
     "lastHarvestedAt": "2026-10-19T01:41:20.520Z",
     "learningId": "learn-github-tako8ki-gobang"
+  },
+  "zhihu-griffith": {
+    "repository": "zhihu/griffith",
+    "platform": "github",
+    "sourceUrl": "https://github.com/zhihu/griffith",
+    "sourceVersion": "c36b8680",
+    "license": "MIT",
+    "contentHash": "d954e6b007a8b5e703a25056787bd980ac2d9412b50988d66a47c51d20fb8138",
+    "lastHarvestedAt": "2026-10-19T01:49:14.153Z",
+    "learningId": "learn-github-zhihu-griffith"
+  },
+  "timvisee-ffsend": {
+    "repository": "timvisee/ffsend",
+    "platform": "github",
+    "sourceUrl": "https://github.com/timvisee/ffsend",
+    "sourceVersion": "85aae2f3",
+    "license": "GPL-3.0",
+    "contentHash": "77becd5be8bc4625f19c945920c0f47d69ace43afe4c1a13587af9a1dc20901e",
+    "lastHarvestedAt": "2026-10-19T01:49:15.022Z",
+    "learningId": "learn-github-timvisee-ffsend"
+  },
+  "margelo-react-native-mmkv": {
+    "repository": "margelo/react-native-mmkv",
+    "platform": "github",
+    "sourceUrl": "https://github.com/margelo/react-native-mmkv",
+    "sourceVersion": "ca5acf0c",
+    "license": "MIT",
+    "contentHash": "b84579b170cdc9599775de51b23c0ef0128f7ce2075ffff9c530ed11c395ce02",
+    "lastHarvestedAt": "2026-10-19T01:49:18.347Z",
+    "learningId": "learn-github-margelo-react-native-mmkv"
+  },
+  "aquasecurity-trivy": {
+    "repository": "aquasecurity/trivy",
+    "platform": "github",
+    "sourceUrl": "https://github.com/aquasecurity/trivy",
+    "sourceVersion": "9dd3e28d",
+    "license": "Apache-2.0",
+    "contentHash": "158676aaafd6140e5c3a1d4ecd107d3083b8548db2390d38db6da65a9c24a35f",
+    "lastHarvestedAt": "2026-10-19T01:49:21.585Z",
+    "learningId": "learn-github-aquasecurity-trivy"
+  },
+  "sfu-db-connector-x": {
+    "repository": "sfu-db/connector-x",
+    "platform": "github",
+    "sourceUrl": "https://github.com/sfu-db/connector-x",
+    "sourceVersion": "c8ae2517",
+    "license": "MIT",
+    "contentHash": "229fb5e65dd30ef1c5a77be851d2ae954c1ba2083b0ea9fb6f46aa1e1b2e8374",
+    "lastHarvestedAt": "2026-10-19T01:49:27.136Z",
+    "learningId": "learn-github-sfu-db-connector-x"
   }
 }

@@ -2771,3 +2771,9 @@ Every entry in this ledger must capture:
 | `learn-github-react-native-image-picker-react-native-image-picker` | `https://github.com/react-native-image-picker/react-native-image-picker` | `61c0cd41` | Multi-dimensional audit evidence | 2026-10-19T01:41:13.627Z |
 | `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `44fcc131` | Multi-dimensional audit evidence | 2026-10-19T01:41:16.313Z |
 | `learn-github-tako8ki-gobang` | `https://github.com/TaKO8Ki/gobang` | `7b1b5f7e` | Multi-dimensional audit evidence | 2026-10-19T01:41:20.520Z |
+| `learn-github-zhihu-griffith` | `https://github.com/zhihu/griffith` | `c36b8680` | Multi-dimensional audit evidence | 2026-10-19T01:49:14.153Z |
+| `learn-github-timvisee-ffsend` | `https://github.com/timvisee/ffsend` | `85aae2f3` | Multi-dimensional audit evidence | 2026-10-19T01:49:15.022Z |
+| `learn-github-margelo-react-native-mmkv` | `https://github.com/margelo/react-native-mmkv` | `ca5acf0c` | Multi-dimensional audit evidence | 2026-10-19T01:49:18.347Z |
+| `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `9dd3e28d` | Multi-dimensional audit evidence | 2026-10-19T01:49:21.585Z |
+| `learn-github-sfu-db-connector-x` | `https://github.com/sfu-db/connector-x` | `c8ae2517` | Multi-dimensional audit evidence | 2026-10-19T01:49:27.136Z |
+| `learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf` | `https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | `hf-sc117-q` | Multi-dimensional audit evidence | 2026-10-19T01:50:58.866Z |

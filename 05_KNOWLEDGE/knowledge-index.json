@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-19T01:41:20.478Z",
-  "total_verified_learnings": 484,
+  "last_updated": "2026-10-19T01:50:58.824Z",
+  "total_verified_learnings": 489,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -1863,22 +1863,35 @@
     "learn-github-aquasecurity-trivy": {
       "learning_id": "learn-github-aquasecurity-trivy",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "aquasecurity-trivy",
+      "source": "aquasecurity/trivy",
+      "repository": "aquasecurity/trivy",
       "slug": "aquasecurity-trivy",
       "platform": "github",
       "source_url": "https://github.com/aquasecurity/trivy",
-      "source_version": "HEAD",
-      "content_hash": "b6d90d61f0a463b310b9149d6147fe797964d67adf41115a369a02aaba11f2e7",
+      "source_version": "9dd3e28d",
+      "content_hash": "158676aaafd6140e5c3a1d4ecd107d3083b8548db2390d38db6da65a9c24a35f",
       "dossier_path": "07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1988,
+          "title": "vex): avoid panic on CSAF advisory without a CVE (#10990)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:42:59.866Z"
+      "verified_at": "2026-10-19T01:49:21.536Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-arangodb-arangodb": {
       "learning_id": "learn-github-arangodb-arangodb",
@@ -19268,7 +19281,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
       "source_version": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf",
-      "content_hash": "37a34d079f5312fbdd78081119f01f6f5877c0022a5beae3bc77a410ad39fabd",
+      "content_hash": "5472ee89cabd6082f45f710b677a17951c3bf2145d195e7381a71d3524ef37b0",
       "dossier_path": "07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md",
       "promoted_rules": [
@@ -19278,6 +19291,16 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv3ora9g",
           "verified_at": "2026-10-11T10:34:04.896Z"
+        },
+        {
+          "number": 1990,
+          "title": "Cryptographic Delta Verification for Binary Container Transplantation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1991,
+          "title": "Alignment-Preserving Stream Offset Serialization",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -19298,7 +19321,7 @@
         "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv43ve6m",
         "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv4h47ur"
       ],
-      "verified_at": "2026-10-17T21:54:17.107Z",
+      "verified_at": "2026-10-19T01:50:58.816Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -25472,22 +25495,35 @@
     "learn-github-margelo-react-native-mmkv": {
       "learning_id": "learn-github-margelo-react-native-mmkv",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "margelo-react-native-mmkv",
+      "source": "margelo/react-native-mmkv",
+      "repository": "margelo/react-native-mmkv",
       "slug": "margelo-react-native-mmkv",
       "platform": "github",
       "source_url": "https://github.com/margelo/react-native-mmkv",
-      "source_version": "HEAD",
-      "content_hash": "ad09757fc2c0a770160241985bd2d881e0d77fe9eb26d64ecfce12311b2eb6eb",
+      "source_version": "ca5acf0c",
+      "content_hash": "b84579b170cdc9599775de51b23c0ef0128f7ce2075ffff9c530ed11c395ce02",
       "dossier_path": "07_PROJECT_LEARNING/margelo-react-native-mmkv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/margelo-react-native-mmkv-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1987,
+          "title": "deps): bump com.android.tools.build:gradle (#1080)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:02.143Z"
+      "verified_at": "2026-10-19T01:49:18.289Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-margelo-react-native-vision-camera": {
       "learning_id": "learn-github-margelo-react-native-vision-camera",
@@ -32954,22 +32990,35 @@
     "learn-github-sfu-db-connector-x": {
       "learning_id": "learn-github-sfu-db-connector-x",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "sfu-db-connector-x",
+      "source": "sfu-db/connector-x",
+      "repository": "sfu-db/connector-x",
       "slug": "sfu-db-connector-x",
       "platform": "github",
       "source_url": "https://github.com/sfu-db/connector-x",
-      "source_version": "HEAD",
-      "content_hash": "f0fa134fbab9facc91453a486f7547355718cf049fbd863e736e45fcfa7aee23",
+      "source_version": "c8ae2517",
+      "content_hash": "229fb5e65dd30ef1c5a77be851d2ae954c1ba2083b0ea9fb6f46aa1e1b2e8374",
       "dossier_path": "07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1989,
+          "title": "Merge pull request #1012 from oystersuki/fix/mysql-value-conversion-error",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.450Z"
+      "verified_at": "2026-10-19T01:49:27.078Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-shadcn-ui-lint": {
       "learning_id": "learn-github-shadcn-ui-lint",
@@ -36027,22 +36076,29 @@
     "learn-github-timvisee-ffsend": {
       "learning_id": "learn-github-timvisee-ffsend",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "timvisee-ffsend",
+      "source": "timvisee/ffsend",
+      "repository": "timvisee/ffsend",
       "slug": "timvisee-ffsend",
       "platform": "github",
       "source_url": "https://github.com/timvisee/ffsend",
-      "source_version": "HEAD",
-      "content_hash": "f68be125edcfbac5df91f2ca33a62dda7dcdbae60274e42c341f327044448e55",
+      "source_version": "85aae2f3",
+      "content_hash": "77becd5be8bc4625f19c945920c0f47d69ace43afe4c1a13587af9a1dc20901e",
       "dossier_path": "07_PROJECT_LEARNING/timvisee-ffsend-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/timvisee-ffsend-learnings.md",
       "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:03.978Z"
+      "verified_at": "2026-10-19T01:49:14.968Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-tintinweb-pi-subagents": {
       "learning_id": "learn-github-tintinweb-pi-subagents",
@@ -38946,22 +39002,35 @@
     "learn-github-zhihu-griffith": {
       "learning_id": "learn-github-zhihu-griffith",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "zhihu-griffith",
+      "source": "zhihu/griffith",
+      "repository": "zhihu/griffith",
       "slug": "zhihu-griffith",
       "platform": "github",
       "source_url": "https://github.com/zhihu/griffith",
-      "source_version": "HEAD",
-      "content_hash": "ad223c4a807b859f6027575a4ab428b3c9640b7f1753992fe80665d4df8b830a",
+      "source_version": "c36b8680",
+      "content_hash": "d954e6b007a8b5e703a25056787bd980ac2d9412b50988d66a47c51d20fb8138",
       "dossier_path": "07_PROJECT_LEARNING/zhihu-griffith-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zhihu-griffith-learnings.md",
-      "promoted_rules": [],
-      "status": "HISTORICAL_EXTRACTED",
-      "verification_status": "UNVERIFIED_EXTRACTED",
-      "verified": false,
-      "brain_readback": false,
-      "historical_duplicate_count": 0,
+      "promoted_rules": [
+        {
+          "number": 1986,
+          "title": "does not render 0 when duration and current time both are 0",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-13T17:43:04.539Z"
+      "verified_at": "2026-10-19T01:49:14.103Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     },
     "learn-github-zhizhuodemao-js-reverse-mcp": {
       "learning_id": "learn-github-zhizhuodemao-js-reverse-mcp",
@@ -73214,6 +73283,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-19T01:41:20.467Z"
+    },
+    "rule-1986": {
+      "learning_id": "rule-1986",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1986,
+      "title": "does not render 0 when duration and current time both are 0",
+      "source_url": "https://github.com/zhihu/griffith",
+      "source_version": "c36b8680",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:49:14.103Z"
+    },
+    "rule-1987": {
+      "learning_id": "rule-1987",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1987,
+      "title": "deps): bump com.android.tools.build:gradle (#1080)",
+      "source_url": "https://github.com/margelo/react-native-mmkv",
+      "source_version": "ca5acf0c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:49:18.289Z"
+    },
+    "rule-1988": {
+      "learning_id": "rule-1988",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1988,
+      "title": "vex): avoid panic on CSAF advisory without a CVE (#10990)",
+      "source_url": "https://github.com/aquasecurity/trivy",
+      "source_version": "9dd3e28d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:49:21.536Z"
+    },
+    "rule-1989": {
+      "learning_id": "rule-1989",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1989,
+      "title": "Merge pull request #1012 from oystersuki/fix/mysql-value-conversion-error",
+      "source_url": "https://github.com/sfu-db/connector-x",
+      "source_version": "c8ae2517",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:49:27.078Z"
+    },
+    "rule-1990": {
+      "learning_id": "rule-1990",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1990,
+      "title": "Cryptographic Delta Verification for Binary Container Transplantation",
+      "source_url": "https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+      "source_version": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:50:58.816Z"
+    },
+    "rule-1991": {
+      "learning_id": "rule-1991",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 1991,
+      "title": "Alignment-Preserving Stream Offset Serialization",
+      "source_url": "https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+      "source_version": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-19T01:50:58.816Z"
     }
   },
   "aliases": {
